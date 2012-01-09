@@ -683,17 +683,20 @@ namespace {
 
                 it->second->ClearBrowseInfoWnd();
                 if (it->first == DAMAGE_STAT_STRING) {
-                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(DamageIcon(), UserString("SHIP_DAMAGE_STAT_TITLE"),
-                                                                                          UserString("SHIP_DAMAGE_STAT_MAIN")));
+                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+                        DamageIcon(), UserString("SHIP_DAMAGE_STAT_TITLE"),
+                        UserString("SHIP_DAMAGE_STAT_MAIN")));
                     it->second->SetBrowseInfoWnd(browse_wnd);
                 } else if (it->first == SPEED_STAT_STRING) {
-                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(SpeedIcon(), UserString("SHIP_SPEED_STAT_TITLE"),
-                                                                                          UserString("SHIP_SPEED_STAT_MAIN")));
+                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+                        SpeedIcon(), UserString("SHIP_SPEED_STAT_TITLE"),
+                        UserString("SHIP_SPEED_STAT_MAIN")));
                     it->second->SetBrowseInfoWnd(browse_wnd);
                 } else {
                     MeterType meter_type = MeterTypeFromStatString(it->first);
                     MeterType associated_meter_type = AssociatedMeterType(meter_type);
-                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(m_ship_id, meter_type, associated_meter_type));
+                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(
+                        m_ship_id, meter_type, associated_meter_type));
                     it->second->SetBrowseInfoWnd(browse_wnd);
                 }
             }

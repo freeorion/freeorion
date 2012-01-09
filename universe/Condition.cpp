@@ -22,8 +22,7 @@ using boost::io::str;
 extern int g_indent;
 
 namespace {
-    const Fleet* FleetFromObject(const UniverseObject* obj)
-    {
+    const Fleet* FleetFromObject(const UniverseObject* obj) {
         const ObjectMap& objects = GetMainObjectMap();
         const Fleet* retval = universe_object_cast<const Fleet*>(obj);
         if (!retval) {
@@ -34,7 +33,8 @@ namespace {
     }
 
     template <class Pred>
-    void EvalImpl(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, Condition::SearchDomain search_domain, const Pred& pred)
+    void EvalImpl(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                  Condition::SearchDomain search_domain, const Pred& pred)
     {
         Condition::ObjectSet& from_set = search_domain == Condition::MATCHES ? matches : non_matches;
         Condition::ObjectSet& to_set = search_domain == Condition::MATCHES ? non_matches : matches;
@@ -49,6 +49,53 @@ namespace {
             }
         }
     }
+
+    std::map<std::string, bool> ConditionDescriptionAndTest(const std::vector<const Condition::ConditionBase*>& conditions,
+                                                            const ScriptingContext& parent_context,
+                                                            const UniverseObject* candidate_object/* = 0*/)
+    {
+        Condition::ObjectSet candidate_set, empty_set;
+        if (candidate_object)
+            candidate_set.push_back(candidate_object);
+
+        std::map<std::string, bool> retval;
+        for (std::vector<const Condition::ConditionBase*>::const_iterator it = conditions.begin();
+             it != conditions.end(); ++it)
+        {
+            const Condition::ConditionBase* condition = *it;
+            Condition::ObjectSet candidate_set_temp = candidate_set;    // preserve original for reuse
+            Condition::ObjectSet matches_set_temp = empty_set;
+            condition->Eval(parent_context, matches_set_temp, candidate_set_temp);
+
+            retval[condition->Description()] = candidate_set_temp.empty();
+        }
+        return retval;
+    }
+}
+
+std::string ConditionDescription(const std::vector<const Condition::ConditionBase*>& conditions,
+                                 const UniverseObject* candidate_object/* = 0*/)
+{
+    ScriptingContext parent_context;
+    // test candidate against all input conditions, and store descriptions of each
+    std::map<std::string, bool> condition_description_and_test_results =
+        ConditionDescriptionAndTest(conditions, parent_context, candidate_object);
+    bool all_conditions_match_candidate = true, at_least_one_condition_matches_candidate = false;
+    for (std::map<std::string, bool>::const_iterator it = condition_description_and_test_results.begin();
+         it != condition_description_and_test_results.end(); ++it)
+    {
+        all_conditions_match_candidate = all_conditions_match_candidate && it->second;
+        at_least_one_condition_matches_candidate = at_least_one_condition_matches_candidate || it->second;
+    }
+    // concatenate (non-duplicated) single-description results
+    std::string retval = UserString("ALL_OF") + " " +
+        (all_conditions_match_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
+    for (std::map<std::string, bool>::const_iterator it = condition_description_and_test_results.begin();
+         it != condition_description_and_test_results.end(); ++it)
+    {
+        retval += (it->second ? UserString("PASSED") : UserString("FAILED")) + " " + it->first;
+    }
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////

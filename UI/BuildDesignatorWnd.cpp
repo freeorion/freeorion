@@ -8,12 +8,14 @@
 #include "TechTreeWnd.h"
 #include "MapWnd.h"
 #include "EncyclopediaDetailPanel.h"
+#include "InfoPanels.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
 #include "../universe/Building.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Effect.h"
+#include "../universe/Condition.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
@@ -40,9 +42,10 @@ namespace {
 
             const Empire* empire = Empires().Lookup(m_empire_id);
 
-            boost::shared_ptr<GG::Texture>  texture;
-            std::string                     name_text;
-            std::string                     desc_text;
+            boost::shared_ptr<GG::Texture>                  texture;
+            std::string                                     name_text;
+            std::string                                     desc_text;
+            std::vector<const Condition::ConditionBase*>    location_conditions;
             switch (m_item.build_type) {
             case BT_BUILDING: {
                 texture = ClientUI::BuildingTexture(m_item.name);
@@ -148,6 +151,50 @@ namespace {
         GG::TextControl*    m_desc;
     };
 
+    std::string LocationConditionDescription(const std::string& building_name, int candidate_object_id) {
+        std::vector<const Condition::ConditionBase*> location_conditions;
+        if (const BuildingType* building_type = GetBuildingType(building_name))
+            location_conditions.push_back(building_type->Location());
+
+        return ConditionDescription(location_conditions, GetObject(candidate_object_id));
+    }
+
+    std::string LocationConditionDescription(int ship_design_id, int candidate_object_id) {
+        std::vector<const Condition::ConditionBase*> location_conditions;
+        if (const ShipDesign* ship_design = GetShipDesign(ship_design_id)) {
+            if (const HullType* hull_type = ship_design->GetHull())
+                location_conditions.push_back(hull_type->Location());
+            std::vector<std::string> parts = ship_design->Parts();
+            for (std::vector<std::string>::const_iterator it = parts.begin();
+                 it != parts.end(); ++it)
+            {
+                if (const PartType* part_type = GetPartType(*it))
+                    location_conditions.push_back(part_type->Location());
+            }
+        }
+
+        return ConditionDescription(location_conditions, GetObject(candidate_object_id));
+    }
+
+    boost::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
+                                                                    int candidate_object_id)
+    {
+        if (item.build_type == BT_BUILDING) {
+            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+                ClientUI::BuildingTexture(item.name), UserString(item.name),
+                LocationConditionDescription(item.name, candidate_object_id)));
+            return browse_wnd;
+        } else if (item.build_type == BT_SHIP) {
+            const ShipDesign* ship_design = GetShipDesign(item.design_id);
+            const std::string& name = (ship_design ? UserString(ship_design->Name()) : UserString("SHIP_DESIGN"));
+            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+                ClientUI::ShipIcon(item.design_id), name,
+                LocationConditionDescription(item.design_id, candidate_object_id)));
+            return browse_wnd;
+        } else {
+            return boost::shared_ptr<GG::BrowseInfoWnd>();
+        }
+    }
 
     ////////////////////////////////////////////////
     // ProductionItemRow
@@ -172,6 +219,8 @@ namespace {
                     m_panel->Disable(true);
                 }
             }
+            m_panel->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, production_location));
         }
 
         ProductionItemRow(GG::X w, GG::Y h, int design_id, int empire_id,
@@ -192,11 +241,12 @@ namespace {
                     m_panel->Disable(true);
                 }
             }
+            m_panel->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, production_location));
         }
 
-        const   ProductionQueue::ProductionItem& Item() const {
-            return m_item;
-        }
+        const   ProductionQueue::ProductionItem& Item() const
+        { return m_item; }
 
         void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             const GG::Pt old_size = Size();

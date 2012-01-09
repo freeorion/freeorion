@@ -84,6 +84,18 @@ namespace Condition {
     struct CreatedOnTurn;
 }
 
+/** Returns a single string which describes a vector of Conditions. If multiple
+  * conditions are passed, they are treated as if they were contained by an And
+  * condition. Subconditions within an And (or nested And) are listed as
+  * lines in a list, with duplicates removed, titled something like "All of...".
+  * Subconditions within an Or (or nested Ors) are similarly listed as lines in
+  * a list, with duplicates removed, titled something like "One of...". If a
+  * candidate object is provided, the returned string will indicate which 
+  * subconditions the candidate matches, and indicate if the overall combination
+  * of conditions matches the object. */
+std::string ConditionDescription(const std::vector<const Condition::ConditionBase*>& conditions,
+                                 const UniverseObject* candidate_object = 0);
+
 /** The base class for all Conditions. */
 struct Condition::ConditionBase
 {
