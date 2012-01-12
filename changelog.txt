@@ -13,6 +13,7 @@ Balancing:
  ~ ~ This helps avoid sudden appearances of ships in player systems, battles, and resulting loss of ship messages without warning.
  ~ Imperial palace now adds +10 to the capital planet troop meter.
  ~ Switched research output to be population based.
+ ~ Added ship shield regeneration when they have not recently fought in battles.
 
 Content:
  ~ Added techs for increasing the size of troop garrisons.
@@ -22,6 +23,7 @@ Content:
  ~ New Sitrep messages: 
  ~ ~ when a planet is terraformed by the Terraforming building.
  ~ ~ when a tame space monster is 'born'.
+ ~ AI script updates
 
 Graphics:
  ~ Made companion stars always visibile in in sidepanel.
@@ -38,6 +40,10 @@ GUI:
  ~ Made map zoom with the slider smoother.
  ~ Removed separate fleet windows that opened when double-clicking a fleet in the main fleets window.
  ~ Limited messages window history to 100 lines.
+ ~ Coloured fleet window icons with empires / monster colour.
+ ~ Tweaked tech dependency arc positions.
+ ~ Added tooltips to producible items in production screen list.
+ ~ Added highlighting to show which producible items can be produced on the selected planet.
 
 Bugs:
  ~ Fixed problem with non-Latin font character rendering.
@@ -46,6 +52,11 @@ Bugs:
  ~ Fixed bug where the tech tree view reset every time a tech was added or removed from the queue.
  ~ Fixed / prevented crashes when font files are missing.
  ~ Fixed misplaced text on tech tree tech panels.
+ ~ Fixed a crash occurring during tech tree layout.
+ ~ Fixed centring on techs on tech tree.
+ ~ Fixed issue that caused AIs to do nothing on OSX.
+ 
+ 
 
 v0.3.17 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
