@@ -2523,7 +2523,7 @@ void Empire::CheckProductionProgress()
                 Logger().debugStream() << "New Ship created on turn: " << ship->CreationTurn();
 
                 // add sitrep
-                SitRepEntry* entry = CreateShipBuiltSitRep(ship_id, system->ID());
+                SitRepEntry* entry = CreateShipBuiltSitRep(ship_id, system->ID(), ship->DesignID());
                 AddSitRepEntry(entry);
                 break;
             }

@@ -26,10 +26,11 @@ SitRepEntry* CreateTechResearchedSitRep(const std::string& tech_name) {
     return sitrep;
 }
 
-SitRepEntry* CreateShipBuiltSitRep(int ship_id, int system_id) {
+SitRepEntry* CreateShipBuiltSitRep(int ship_id, int system_id, int shipdesign_id) {
     SitRepEntry* sitrep = new SitRepEntry("SITREP_SHIP_BUILT");
     sitrep->AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
     sitrep->AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(ship_id));
+    sitrep->AddVariable(VarText::DESIGN_ID_TAG,     boost::lexical_cast<std::string>(shipdesign_id));
     return sitrep;
 }
 
