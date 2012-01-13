@@ -109,8 +109,10 @@ namespace {
                 >    ',' > channel [ _b = _1 ]
                 >    ',' > channel [ _c = _1 ]
                 >>   (
-                        ',' > channel [ construct<GG::Clr>(_a, _b, _c, _1) ]
-                        |         eps [ construct<GG::Clr>(_a, _b, _c, phoenix::val(255)) ]
+                        (
+                            ',' > channel [ _val = construct<GG::Clr>(_a, _b, _c, _1) ]
+                        )
+                        |         eps [ _val = construct<GG::Clr>(_a, _b, _c, phoenix::val(255)) ]
                      )
                 >    ')'
                 ;
