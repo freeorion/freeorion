@@ -1669,10 +1669,10 @@ private:
     void            DesignChanged();                    //!< responds to the design being changed
     void            RefreshIncompleteDesign() const;
 
-    bool           AddPartEmptySlot(const PartType* part, int slot_number);                             //!< Adds part to slot number
-    bool           AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot);  //!< Swaps part in slot # pair.first to slot # pair.second, adds given part to slot # pair.first
-    int            FindEmptySlotForPart(const PartType* part);                                          //!< Determines if a part can be added to any empty slot, returns the slot index if possible, otherwise -1   
-    
+    bool            AddPartEmptySlot(const PartType* part, int slot_number);                            //!< Adds part to slot number
+    bool            AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot); //!< Swaps part in slot # pair.first to slot # pair.second, adds given part to slot # pair.first
+    int             FindEmptySlotForPart(const PartType* part);                                         //!< Determines if a part can be added to any empty slot, returns the slot index if possible, otherwise -1   
+
     std::pair<int, int> FindSlotForPartWithSwapping(const PartType* part);                              //!< Determines if a part can be added to a slot with swapping, returns a pair containing the slot to swap and an empty slot, otherwise a pair with -1
                                                                                                         //!< This function only tries to find a way to add the given part by swapping a part already in a slot to an empty slot
                                                                                                         //!< If theres an open slot that the given part could go into but all of the occupied slots contain parts that can't swap into the open slot

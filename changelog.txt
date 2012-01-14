@@ -44,6 +44,8 @@ GUI:
  ~ Tweaked tech dependency arc positions.
  ~ Added tooltips to producible items in production screen list.
  ~ Added highlighting to show which producible items can be produced on the selected planet.
+ ~ Made automatically adding parts to ship designs more flexible; parts will be moved around to accomodate the new one, if possible and necessary.
+ ~ Improved in-game chat autocomplete.
 
 Bugs:
  ~ Fixed problem with non-Latin font character rendering.
