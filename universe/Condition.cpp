@@ -57,9 +57,9 @@ namespace {
         for (std::vector<const Condition::ConditionBase*>::const_iterator it = input_conditions.begin();
              it != input_conditions.end(); ++it)
         {
-            if (const Condition::And* and = dynamic_cast<const Condition::And*>(*it)) {
+            if (const Condition::And* and_condition = dynamic_cast<const Condition::And*>(*it)) {
                 std::vector<const Condition::ConditionBase*> flattened_operands =
-                    FlattenAndNestedConditions(and->Operands());
+                    FlattenAndNestedConditions(and_condition->Operands());
                 std::copy(flattened_operands.begin(), flattened_operands.end(), std::back_inserter(retval));
             } else {
                 retval.push_back(*it);
