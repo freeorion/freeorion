@@ -412,39 +412,71 @@ void MessageWnd::OpenForInput() {
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
 }
 
-void MessageWnd::MessageEntered() {
-    // TODO: Check if message is chat, or some other command...?
-
-    // send chat message
-    const std::string& edit_text = m_edit->Text();
-    if (!edit_text.empty()) {
-        if (m_history.size() == 1 || m_history[1] != edit_text) {
-            m_history[0] = edit_text;
-            m_history.push_front("");
-        } else {
-            m_history[0] = "";
-        }
-        while (12 < static_cast<int>(m_history.size()) + 1)
-            m_history.pop_back();
-        m_history_position = 0;
-
+namespace {
+    void SendChatMessage(const std::string& text, std::set<int> recipients) {
         ClientNetworking& net = HumanClientApp::GetApp()->Networking();
         int sender_id = HumanClientApp::GetApp()->PlayerID();
 
+        if (recipients.empty()) {
+            net.SendMessage(GlobalChatMessage(sender_id, text));
+        } else {
+            recipients.insert(sender_id);   // ensure recipient sees own sent message
+            for (std::set<int>::const_iterator it = recipients.begin(); it != recipients.end(); ++it)
+                net.SendMessage(SingleRecipientChatMessage(sender_id, *it, text));
+        }
+    }
+
+    void HandleTextCommand(const std::string& text) {
+        if (text.size() < 2)
+            return;
+
+        // extract command and parameters substrings
+        std::string command, params;
+        std::string::size_type space_pos = text.find_first_of(' ');
+        command = boost::trim_copy(text.substr(1, space_pos));
+        if (command.empty())
+            return;
+        if (space_pos != std::string::npos)
+            params = boost::trim_copy(text.substr(space_pos, std::string::npos));
+
+        // execute command matching understood syntax
+        if (boost::iequals(command, "zoom") && !params.empty()) {
+            ClientUI* client_ui = ClientUI::GetClientUI();
+            client_ui->ZoomToObject(params) || client_ui->ZoomToContent(params, true);   // params came from chat, so will be localized, so should be reverse looked up to find internal name from human-readable name for zooming to content
+        }
+    }
+}
+
+void MessageWnd::MessageEntered() {
+    std::string trimmed_text = boost::trim_copy(m_edit->Text());
+
+    m_display_show_time = GG::GUI::GetGUI()->Ticks();
+    if (trimmed_text.empty())
+        return;
+
+    // update history
+    if (m_history.size() == 1 || m_history[1] != trimmed_text) {
+        m_history[0] = trimmed_text;
+        m_history.push_front("");
+    } else {
+        m_history[0] = "";
+    }
+    while (12 < static_cast<int>(m_history.size()) + 1)
+        m_history.pop_back();
+    m_history_position = 0;
+
+    // if message starts with / treat it as a command
+    if (trimmed_text[0] == '/') {
+        HandleTextCommand(trimmed_text);
+    } else {
+        // otherwise, treat message as chat and send to recipients
         std::set<int> recipients;
         if (PlayerListWnd* player_list_wnd = ClientUI::GetClientUI()->GetPlayerListWnd())
             recipients = player_list_wnd->SelectedPlayerIDs();
-        if (recipients.empty()) {
-            net.SendMessage(GlobalChatMessage(sender_id, edit_text));
-        } else {
-            if (recipients.find(sender_id) == recipients.end())
-                recipients.insert(sender_id);   // ensure recipient sees own sent message
-            for (std::set<int>::const_iterator it = recipients.begin(); it != recipients.end(); ++it)
-                net.SendMessage(SingleRecipientChatMessage(sender_id, *it, edit_text));
-        }
+        SendChatMessage(trimmed_text, recipients);
     }
+
     m_edit->Clear();
-    m_display_show_time = GG::GUI::GetGUI()->Ticks();
 }
 
 void MessageWnd::MessageHistoryUpRequested() {
