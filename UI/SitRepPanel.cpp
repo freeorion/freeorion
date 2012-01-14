@@ -6,6 +6,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../Empire/Empire.h"
+#include "../util/OptionsDB.h"
 
 #include <GG/DrawUtil.h>
 
@@ -13,6 +14,11 @@
 
 
 namespace {
+            /** Adds options related to SitRepPanel to Options DB. */
+    void AddOptions(OptionsDB& db) {
+        db.Add("verbose-sitrep", "OPTIONS_DB_VERBOSE_SITREP_DESC",  false,  Validator<bool>());
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
         using boost::lexical_cast;
         try {
@@ -115,8 +121,10 @@ void SitRepPanel::Update() {
 
     // loop through sitreps and display
     for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
-        if (!(*sitrep_it)->Validate())
-            continue;
+        if (!GetOptionsDB().Get<bool>("verbose-sitrep")) {
+            if (!(*sitrep_it)->Validate())
+                continue;
+        }
         LinkText* link_text = new LinkText(GG::X0, GG::Y0, width, (*sitrep_it)->GetText() + " ", font, format, ClientUI::TextColor());
         GG::Connect(link_text->LinkClickedSignal,       &HandleLinkClick);
         GG::Connect(link_text->LinkDoubleClickedSignal, &HandleLinkClick);
