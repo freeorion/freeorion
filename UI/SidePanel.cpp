@@ -458,7 +458,7 @@ public:
 
 private:
     void                    DoLayout();
-
+    void                    CheckDisplayPlanets();
     void                    SetFocus(const std::string& focus); ///< set the focus of the planet to \a focus
     void                    ClickColonize();                    ///< called if colonize button is pressed
     void                    ClickInvade();                      ///< called if invade button is pressed
@@ -479,6 +479,7 @@ private:
     MilitaryPanel*          m_military_panel;           ///< contains icons representing military-related meters
     BuildingsPanel*         m_buildings_panel;          ///< contains icons representing buildings
     SpecialsPanel*          m_specials_panel;           ///< contains icons representing specials
+    StarType                m_star_type;
 };
 
 /** Container class that holds PlanetPanels.  Creates and destroys PlanetPanel
@@ -579,8 +580,7 @@ public:
             s_scanline_shader.reset();
     }
 
-    virtual void Render()
-    {
+    virtual void Render() {
         GG::Pt ul = UpperLeft(), lr = LowerRight();
         // these values ensure that wierd GLUT-sphere artifacts do not show themselves
         double axial_tilt = std::max(-30.0, std::min(static_cast<double>(m_planet.AxialTilt()), 60.0));
@@ -612,8 +612,7 @@ public:
         }
     }
 
-    void SetRotatingPlanetData(const RotatingPlanetData& planet_data)
-    {
+    void SetRotatingPlanetData(const RotatingPlanetData& planet_data) {
         m_planet_data = planet_data;
         m_surface_texture = ClientUI::GetTexture(ClientUI::ArtDir() / m_planet_data.filename, true);
     }
@@ -727,7 +726,8 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_resource_panel(0),
     m_military_panel(0),
     m_buildings_panel(0),
-    m_specials_panel(0)
+    m_specials_panel(0),
+    m_star_type(star_type)
 {
     SetName(UserString("PLANET_PANEL"));
 
@@ -739,50 +739,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
         return;
     }
 
-
-    if (GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown")) {
-        if (planet->Type() == PT_ASTEROIDS) {
-            std::vector<boost::shared_ptr<GG::Texture> > textures;
-            GetAsteroidTextures(m_planet_id, textures);
-            GG::X texture_width = textures[0]->DefaultWidth();
-            GG::Y texture_height = textures[0]->DefaultHeight();
-            GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - texture_width / 2 + 3), GG::Y0);
-
-            m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x, planet_image_pos.y,
-                                                      texture_width, texture_height, true,
-                                                      texture_width, texture_height, 0, textures,
-                                                      GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-            m_planet_graphic->SetFPS(GetAsteroidsFPS());
-            m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
-            AttachChild(m_planet_graphic);
-            m_planet_graphic->Play();
-
-        } else if (planet->Type() < NUM_PLANET_TYPES) {
-            int planet_image_sz = PlanetDiameter(planet->Size());
-            GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - planet_image_sz / 2 + 3),
-                                    GG::Y(MaxPlanetDiameter() / 2 - planet_image_sz / 2));
-
-            const std::map<PlanetType, std::vector<RotatingPlanetData> >& planet_data = GetRotatingPlanetData();
-            std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet->Type());
-            int num_planets_of_type;
-            if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet->Type())->second.size())) {
-                // using algorithm from Thomas Wang's 32 bit Mix Function; assumes that
-                // only the lower 16 bits of the system and planet ID's are significant
-                unsigned int hash_value =
-                    (static_cast<unsigned int>(m_planet_id) & 0xFFFF) + (static_cast<unsigned int>(m_planet_id) & 0xFFFF);
-                hash_value += ~(hash_value << 15);
-                hash_value ^= hash_value >> 10;
-                hash_value += hash_value << 3;
-                hash_value ^= hash_value >> 6;
-                hash_value += ~(hash_value << 11);
-                hash_value ^= hash_value >> 16;
-                m_rotating_planet_graphic =
-                    new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y, *planet, star_type,
-                                              it->second[hash_value % num_planets_of_type]);
-                AttachChild(m_rotating_planet_graphic);
-            }
-        }
-    }
+    CheckDisplayPlanets();
 
 
     // create planet name text
@@ -975,12 +932,61 @@ void SidePanel::PlanetPanel::DoLayout()
     }
 
     GG::Y min_height(MaxPlanetDiameter());
+
+    CheckDisplayPlanets();
     if (m_planet_graphic)
         min_height = m_planet_graphic->Height();
 
     Resize(GG::Pt(Width(), std::max(y, min_height)));
 
     ResizedSignal();
+}
+
+void SidePanel::PlanetPanel::CheckDisplayPlanets()
+{
+    const Planet* planet = GetObject<Planet>(m_planet_id);
+    if (GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown")) {
+        if (planet->Type() == PT_ASTEROIDS) {
+            std::vector<boost::shared_ptr<GG::Texture> > textures;
+            GetAsteroidTextures(m_planet_id, textures);
+            GG::X texture_width = textures[0]->DefaultWidth();
+            GG::Y texture_height = textures[0]->DefaultHeight();
+            GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - texture_width / 2 + 3), GG::Y0);
+
+            m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x, planet_image_pos.y,
+                                                        texture_width, texture_height, true,
+                                                        texture_width, texture_height, 0, textures,
+                                                        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            m_planet_graphic->SetFPS(GetAsteroidsFPS());
+            m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
+            AttachChild(m_planet_graphic);
+            m_planet_graphic->Play();
+        } else if (planet->Type() < NUM_PLANET_TYPES) {
+            int planet_image_sz = PlanetDiameter(planet->Size());
+            GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - planet_image_sz / 2 + 3),
+                                GG::Y(MaxPlanetDiameter() / 2 - planet_image_sz / 2));
+
+            const std::map<PlanetType, std::vector<RotatingPlanetData> >& planet_data = GetRotatingPlanetData();
+            std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet->Type());
+            int num_planets_of_type;
+            if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet->Type())->second.size())) {
+                // using algorithm from Thomas Wang's 32 bit Mix Function; assumes that
+                // only the lower 16 bits of the system and planet ID's are significant
+                unsigned int hash_value =
+                    (static_cast<unsigned int>(m_planet_id) & 0xFFFF) + (static_cast<unsigned int>(m_planet_id) & 0xFFFF);
+                hash_value += ~(hash_value << 15);
+                hash_value ^= hash_value >> 10;
+                hash_value += hash_value << 3;
+                hash_value ^= hash_value >> 6;
+                hash_value += ~(hash_value << 11);
+                hash_value ^= hash_value >> 16;
+                m_rotating_planet_graphic =
+                    new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y, *planet, m_star_type,
+                                            it->second[hash_value % num_planets_of_type]);
+                AttachChild(m_rotating_planet_graphic);
+            }
+        }
+    }
 }
 
 namespace {
