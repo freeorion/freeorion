@@ -504,16 +504,27 @@ CombatWnd* ClientUI::GetCombatWnd()
 void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
 { m_map_wnd->GetSaveGameUIData(data); }
 
-bool ClientUI::ZoomToPlanet(int id)
-{
+bool ClientUI::ZoomToObject(const std::string& name) {
+    const ObjectMap& objects = GetUniverse().Objects();
+    for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it)
+        if (boost::iequals(it->second->Name(), name))
+            return ZoomToObject(it->first);
+    return false;
+}
+
+bool ClientUI::ZoomToObject(int id) {
+    return ZoomToSystem(id)     || ZoomToPlanet(id) || ZoomToBuilding(id)   ||
+           ZoomToFleet(id)      || ZoomToShip(id);
+}
+
+bool ClientUI::ZoomToPlanet(int id) {
     // this just zooms to the appropriate system, until we create a planet window of some kind
     if (const Planet* planet = GetMainObjectMap().Object<Planet>(id))
         return ZoomToSystem(planet->SystemID());
     return false;
 }
 
-bool ClientUI::ZoomToSystem(int id)
-{
+bool ClientUI::ZoomToSystem(int id) {
     if (const System* system = GetMainObjectMap().Object<System>(id)) {
         ZoomToSystem(system);
         return true;
@@ -521,8 +532,7 @@ bool ClientUI::ZoomToSystem(int id)
     return false;
 }
 
-bool ClientUI::ZoomToFleet(int id)
-{
+bool ClientUI::ZoomToFleet(int id) {
     if (const Fleet* fleet = GetObject<Fleet>(id)) {
         ZoomToFleet(fleet);
         return true;
@@ -530,15 +540,13 @@ bool ClientUI::ZoomToFleet(int id)
     return false;
 }
 
-bool ClientUI::ZoomToShip(int id)
-{
+bool ClientUI::ZoomToShip(int id) {
     if (const Ship* ship = GetObject<Ship>(id))
         return ZoomToFleet(ship->FleetID());
     return false;
 }
 
-bool ClientUI::ZoomToBuilding(int id)
-{
+bool ClientUI::ZoomToBuilding(int id) {
     if (const Building* building = GetMainObjectMap().Object<Building>(id)) {
         ZoomToBuildingType(building->BuildingTypeName());
         return ZoomToPlanet(building->PlanetID());
@@ -546,8 +554,7 @@ bool ClientUI::ZoomToBuilding(int id)
     return false;
 }
 
-void ClientUI::ZoomToSystem(const System* system)
-{
+void ClientUI::ZoomToSystem(const System* system) {
     if (!system)
         return;
 
@@ -555,8 +562,7 @@ void ClientUI::ZoomToSystem(const System* system)
     m_map_wnd->SelectSystem(system->ID());
 }
 
-void ClientUI::ZoomToFleet(const Fleet* fleet)
-{
+void ClientUI::ZoomToFleet(const Fleet* fleet) {
     if (!fleet)
         return;
 
@@ -566,83 +572,120 @@ void ClientUI::ZoomToFleet(const Fleet* fleet)
         fleet_wnd->SelectFleet(fleet->ID());
 }
 
-bool ClientUI::ZoomToTech(const std::string& tech_name)
-{
+bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup/* = false*/) {
+    if (reverse_lookup) {
+        for (TechManager::iterator it = GetTechManager().begin(); it != GetTechManager().end(); ++it) {
+            const Tech* tech = *it;
+            if (boost::iequals(name, UserString(tech->Name())))
+                return ZoomToTech(tech->Name());
+        }
+
+        for (BuildingTypeManager::iterator it = GetBuildingTypeManager().begin(); it != GetBuildingTypeManager().end(); ++it)
+            if (boost::iequals(name, UserString(it->first)))
+                return ZoomToBuildingType(it->first);
+
+        {
+            std::vector<std::string> special_names = SpecialNames();
+            for (std::vector<std::string>::const_iterator it = special_names.begin(); it != special_names.end(); ++it)
+                if (boost::iequals(name, UserString(*it)))
+                    return ZoomToSpecial(*it);
+        }
+
+        for (HullTypeManager::iterator it = GetHullTypeManager().begin(); it != GetHullTypeManager().end(); ++it)
+            if (boost::iequals(name, UserString(it->first)))
+                return ZoomToShipHull(it->first);
+
+        for (PartTypeManager::iterator it = GetPartTypeManager().begin(); it != GetPartTypeManager().end(); ++it)
+            if (boost::iequals(name, UserString(it->first)))
+                return ZoomToShipPart(it->first);
+
+        for (SpeciesManager::iterator it = GetSpeciesManager().begin(); it != GetSpeciesManager().end(); ++it)
+            if (boost::iequals(name, UserString(it->first)))
+                return ZoomToSpecies(it->first);
+
+        return false;
+    } else {
+        // attempt to zoom to named content
+        bool success =  ZoomToTech(name)     || ZoomToBuildingType(name) || ZoomToSpecial(name) ||
+                        ZoomToShipHull(name) || ZoomToShipPart(name)     || ZoomToSpecies(name);
+        if (success)
+            return true;
+        // attempt to find a shipdesign with this name
+        // attempt to find empire with this name
+        return false;
+    }
+}
+
+bool ClientUI::ZoomToTech(const std::string& tech_name) {
     if (!GetTech(tech_name))
         return false;
     m_map_wnd->ShowTech(tech_name);
     return true;
 }
 
-bool ClientUI::ZoomToBuildingType(const std::string& building_type_name)
-{
+bool ClientUI::ZoomToBuildingType(const std::string& building_type_name) {
     if (!GetBuildingType(building_type_name))
         return false;
     m_map_wnd->ShowBuildingType(building_type_name);
     return true;
 }
 
-bool ClientUI::ZoomToSpecial(const std::string& special_name)
-{
+bool ClientUI::ZoomToSpecial(const std::string& special_name) {
     if (!GetSpecial(special_name))
         return false;
     m_map_wnd->ShowSpecial(special_name);
     return true;
 }
 
-bool ClientUI::ZoomToShipHull(const std::string& hull_name)
-{
+bool ClientUI::ZoomToShipHull(const std::string& hull_name) {
     if (!GetHullType(hull_name))
         return false;
     m_map_wnd->ShowHullType(hull_name);
     return true;
 }
 
-bool ClientUI::ZoomToShipPart(const std::string& part_name)
-{
+bool ClientUI::ZoomToShipPart(const std::string& part_name) {
     if (!GetPartType(part_name))
         return false;
     m_map_wnd->ShowPartType(part_name);
     return true;
 }
 
-bool ClientUI::ZoomToSpecies(const std::string& species_name)
-{
+bool ClientUI::ZoomToSpecies(const std::string& species_name) {
     if (!GetSpecies(species_name))
         return false;
     m_map_wnd->ShowSpecies(species_name);
     return true;
 }
 
-bool ClientUI::ZoomToShipDesign(int design_id)
-{
+bool ClientUI::ZoomToShipDesign(int design_id) {
     if (!GetShipDesign(design_id))
         return false;
     m_map_wnd->ShowShipDesign(design_id);
     return true;
 }
 
-bool ClientUI::ZoomToEmpire(int empire_id)
-{
+bool ClientUI::ZoomToEmpire(int empire_id) {
     if (!Empires().Lookup(empire_id))
         return false;
     m_map_wnd->ShowEmpire(empire_id);
     return true;
 }
 
-bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)
-{
+bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str) {
     m_map_wnd->ShowEncyclopediaEntry(str);
     return true;
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap/* = false*/)
+boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir,
+                                                          const std::string& prefix, bool mipmap/* = false*/)
 {
     TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix, mipmap);
     return prefixed_textures_and_dist.first[(*prefixed_textures_and_dist.second)()];
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n, bool mipmap/* = false*/)
+boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesystem::path& dir,
+                                                          const std::string& prefix, int n, bool mipmap/* = false*/)
 {
     assert(0 <= n);
     TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix, mipmap);
@@ -651,7 +694,8 @@ boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesyste
         prefixed_textures_and_dist.first[n % prefixed_textures_and_dist.first.size()];
 }
 
-std::vector<boost::shared_ptr<GG::Texture> > ClientUI::GetPrefixedTextures(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap/* = false*/)
+std::vector<boost::shared_ptr<GG::Texture> > ClientUI::GetPrefixedTextures(const boost::filesystem::path& dir,
+                                                                           const std::string& prefix, bool mipmap/* = false*/)
 {
     TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix, mipmap);
     return prefixed_textures_and_dist.first;
@@ -663,8 +707,7 @@ void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data)
 ClientUI* ClientUI::GetClientUI()
 { return s_the_UI; }
 
-void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/)
-{
+void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/) {
     GG::ThreeButtonDlg dlg(GG::X(320), GG::Y(200), message, GetFont(Pts()+2),
                            WndColor(), WndOuterBorderColor(), CtrlColor(), TextColor(), 1,
                            UserString("OK"));
@@ -673,8 +716,7 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
     dlg.Run();
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
-{
+boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/) {
     boost::shared_ptr<GG::Texture> retval;
     try {
         retval = HumanClientApp::GetApp()->GetTexture(path.string(), mipmap);
@@ -688,8 +730,7 @@ boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::pat
     return retval;
 }
 
-boost::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/)
-{
+boost::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/) {
      try {
         return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.font"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
      } catch (...) {
@@ -702,8 +743,7 @@ boost::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/)
     } 
 }
 
-boost::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/)
-{ 
+boost::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/) { 
     try {
         return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.font-bold"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
     } catch (...) {
@@ -716,8 +756,7 @@ boost::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/)
     }
 }
 
-boost::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts/* = TitlePts()*/)
-{ 
+boost::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts/* = TitlePts()*/) {
     try {
         return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.title-font"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
     } catch (...) {
@@ -730,7 +769,8 @@ boost::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts/* = TitlePts()*/)
    }
 }
 
-ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap)
+ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir,
+                                                            const std::string& prefix, bool mipmap)
 {
     namespace fs = boost::filesystem;
     assert(fs::is_directory(dir));

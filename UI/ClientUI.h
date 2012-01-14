@@ -67,6 +67,8 @@ public:
     void    InitTurn(int turn_number);                                  //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
     void    RestoreFromSaveData(const SaveGameUIData& elem);            //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
 
+    bool    ZoomToObject(const std::string& name);
+    bool    ZoomToObject(int id);
     bool    ZoomToPlanet(int id);                                       //!< Zooms to a particular planet on the galaxy map and opens the sidepanel to show it
     bool    ZoomToSystem(int id);                                       //!< Zooms to a particular system on the galaxy map and opens the sidepanel to show it
     bool    ZoomToFleet(int id);                                        //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
@@ -76,6 +78,7 @@ public:
     void    ZoomToSystem(const System* system);                         //!< Zooms to a particular system on the galaxy map
     void    ZoomToFleet(const Fleet* fleet);                            //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
 
+    bool    ZoomToContent(const std::string& name, bool reverse_lookup = false);
     bool    ZoomToTech(const std::string& tech_name);                  //!< Opens the technology screen and presents a description of the given technology
     bool    ZoomToBuildingType(const std::string& building_type_name); //!< Opens the production screen and presents a description of the given building type
     bool    ZoomToSpecial(const std::string& special_name);            //!< Opens the ??? screen and presents a description of the given special
