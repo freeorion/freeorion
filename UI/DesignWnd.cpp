@@ -1642,6 +1642,7 @@ public:
       * around within the design to open up a compatible slot in which to add
       * this part (and then add it).  may also do nothing. */
     void            AddPart(const PartType* part);
+    bool            CanPartBeAdded(const PartType* part);
 
     void            ClearParts();                                               //!< removes all parts from design.  hull is not altered
     void            SetHull(const std::string& hull_name);                      //!< sets the design hull to the specified hull, displaying appropriate background image and creating appropriate SlotControls
@@ -1668,6 +1669,14 @@ private:
     void            DesignChanged();                    //!< responds to the design being changed
     void            RefreshIncompleteDesign() const;
 
+    bool           AddPartEmptySlot(const PartType* part, int slot_number);                             //!< Adds part to slot number
+    bool           AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot);  //!< Swaps part in slot # pair.first to slot # pair.second, adds given part to slot # pair.first
+    int            FindEmptySlotForPart(const PartType* part);                                          //!< Determines if a part can be added to any empty slot, returns the slot index if possible, otherwise -1   
+    
+    std::pair<int, int> FindSlotForPartWithSwapping(const PartType* part);                              //!< Determines if a part can be added to a slot with swapping, returns a pair containing the slot to swap and an empty slot, otherwise a pair with -1
+                                                                                                        //!< This function only tries to find a way to add the given part by swapping a part already in a slot to an empty slot
+                                                                                                        //!< If theres an open slot that the given part could go into but all of the occupied slots contain parts that can't swap into the open slot
+                                                                                                        //!< This function will indicate that it could not add the part, even though adding the part is possible
     const HullType*                         m_hull;
     std::vector<SlotControl*>               m_slots;
     int                                     m_complete_design_id;
@@ -1821,17 +1830,76 @@ void DesignWnd::MainPanel::SetParts(const std::vector<std::string>& parts) {
 }
 
 void DesignWnd::MainPanel::AddPart(const PartType* part) {
-    if (!part) return;
-    for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots to find out that can mount part
+    if (!AddPartEmptySlot(part, FindEmptySlotForPart(part))) {
+        if (!AddPartWithSwapping(part, FindSlotForPartWithSwapping(part)))
+            Logger().debugStream() << "DesignWnd::MainPanel::AddPart(" << (part ? part->Name() : "no part") << ") couldn't find a slot for the part";
+    }      
+}
+
+bool DesignWnd::MainPanel::CanPartBeAdded(const PartType* part)
+{
+    std::pair<int, int> swap_result = FindSlotForPartWithSwapping(part);
+    return (FindEmptySlotForPart(part) >= 0 || (swap_result.first >= 0 && swap_result.second >= 0));
+}
+            
+bool DesignWnd::MainPanel::AddPartEmptySlot(const PartType* part, int slot_number)
+{
+    if (!part || slot_number < 0)
+        return false;
+    SetPart(part, slot_number);
+    return true;
+}
+
+bool DesignWnd::MainPanel::AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot)
+{
+    if (!part || swap_and_empty_slot.first < 0 || swap_and_empty_slot.second < 0)
+        return false;
+    SetPart(m_slots[swap_and_empty_slot.first]->GetPart(), swap_and_empty_slot.second);         // Move the flexible part to the first open spot
+    SetPart(part, swap_and_empty_slot.first);                                                   // Move ourself into the newly opened slot
+    return true;
+}
+
+int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part)
+{
+    int result = -1;
+
+    if (!part)
+        return result;
+    for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots to find one that can mount part
         const ShipSlotType slot_type = m_slots[i]->SlotType();
         const PartType* part_type = m_slots[i]->GetPart();          // check if this slot is empty
 
         if (!part_type && part->CanMountInSlotType(slot_type)) {    // ... and if the part can mount here
-            SetPart(part, i);                                       // add part to slot
-            return;
+            result = i;
+            return result;
         }
     }
-    Logger().debugStream() << "DesignWnd::MainPanel::AddPart(" << (part ? part->Name() : "no part") << ") couldn't find a slot for the part";
+    return result;
+}
+
+std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const PartType* part)
+{
+    // result.first = swap_slot, result.second = empty_slot
+    std::pair<int, int> result = std::make_pair(-1, -1);
+
+    if (!part)
+        return result;
+
+    for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots to find one that can mount part
+        const ShipSlotType slot_type = m_slots[i]->SlotType();
+        const PartType* part_type = m_slots[i]->GetPart();          // check if this slot is empty
+
+        if (!part_type)                                             // record an empty slot index
+            result.second = i;
+
+        // Find a slot that has a part that can be mounted in both slots
+        // And that we are compatible with 
+        if (part_type && part_type->CanMountInSlotType(SL_EXTERNAL) && part_type->CanMountInSlotType(SL_INTERNAL)
+                        && part->CanMountInSlotType(slot_type)) {   
+            result.first = i;
+        }
+    }
+    return result;
 }
 
 void DesignWnd::MainPanel::ClearParts() {
