@@ -10,7 +10,6 @@ Fleet
         "SD_MARK1"
         "SD_TROOP_SHIP"
         "SD_TROOP_SHIP"
-        "SD_TROOP_SHIP"
         ]
 
 Fleet
