@@ -1471,6 +1471,13 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
                                          GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_background->Show();
     AttachChild(m_background);
+
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+
+    // set up empty slot tool tip
+    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new IconTextBrowseWnd(SlotBackgroundTexture(m_slot_type), UserString(((slot_type == SL_EXTERNAL) ? "SL_EXTERNAL" : "SL_INTERNAL")), UserString("SL_TOOLTIP_DESC"))));
+
 }
 
 void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
@@ -1599,6 +1606,11 @@ void SlotControl::SetPart(const PartType* part_type) {
         // double click clears slot
         GG::Connect(m_part_control->DoubleClickedSignal,
                     boost::bind(&SlotControl::EmitNullSlotContentsAlteredSignal, this));
+        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+
+        // set part occupying slot's tool tip to say slot type as well
+        m_part_control->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new IconTextBrowseWnd(ClientUI::PartTexture(part_type->Name()), UserString(part_type->Name()) + " (" + UserString(((m_slot_type == SL_EXTERNAL) ? "SL_EXTERNAL" : "SL_INTERNAL")) + ")" ,UserString(part_type->Description()))));
     }
 }
 

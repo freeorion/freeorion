@@ -3173,9 +3173,11 @@ research
 # Ship Slot Types
 
 SL_EXTERNAL
-External
+External Slot
 SL_INTERNAL
-Internal
+Internal Slot
+SL_TOOLTIP_DESC
+Empty
 
 
 # Ship Part Classes
@@ -6329,7 +6331,6 @@ Distortion Modulator
 
 SP_DISTORTION_MODULATOR_DESC
 Distinguishes natural geometric irregularities from enemy ships by manipulating space-time distortions caused by all objects in the vicinity.  All objects within 0 uus have max stealth reduced by 20.  The effect is non-stacking.
-
 
 ##############
 # Ship Hulls #
