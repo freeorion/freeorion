@@ -1366,7 +1366,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 300
+            effects = SetDetection Value + 30
     graphic = ""
 
 Hull

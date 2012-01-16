@@ -942,10 +942,9 @@ void SidePanel::PlanetPanel::DoLayout()
     ResizedSignal();
 }
 
-void SidePanel::PlanetPanel::CheckDisplayPlanets()
-{
-    const Planet* planet = GetObject<Planet>(m_planet_id);
-    if (GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown")) {
+void SidePanel::PlanetPanel::CheckDisplayPlanets() {
+    const Planet* planet = GetMainObjectMap().Object<Planet>(m_planet_id);
+    if (planet && GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown")) {
         if (planet->Type() == PT_ASTEROIDS) {
             std::vector<boost::shared_ptr<GG::Texture> > textures;
             GetAsteroidTextures(m_planet_id, textures);
