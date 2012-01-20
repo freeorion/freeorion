@@ -2432,7 +2432,7 @@ SITREP_ERROR
 An unknown event occurred.
 
 SITREP_SHIP_BUILT
-'''A %shipdesign%,'%ship%' has been produced at %system%.'''
+'''A %shipdesign%, '%ship%' has been produced at %system%.'''
 
 SITREP_BUILDING_BUILT
 %building% has been produced on %planet%.
