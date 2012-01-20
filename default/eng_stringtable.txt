@@ -2510,7 +2510,7 @@ Cannot Produce Ships
 CAN_PRODUCE_SHIPS
 Can Produce Ships
 
-CANNNOT_COLONIZESPACEBOUND
+CANNNOT_COLONIZE
 Cannot Colonize Planets
 
 CAN_COLONIZE
