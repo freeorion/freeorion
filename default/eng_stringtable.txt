@@ -2432,7 +2432,7 @@ SITREP_ERROR
 An unknown event occurred.
 
 SITREP_SHIP_BUILT
-'''A %shipdesign%, '%ship%' has been produced at %system%.'''
+'''The %shipdesign%, '%ship%' has been produced at %system%.'''
 
 SITREP_BUILDING_BUILT
 %building% has been produced on %planet%.
@@ -6691,7 +6691,7 @@ Juggernaut Body
 SH_JUGGERNAUT_2_BODY_DESC
 A formidible heavy-weight space monster.
 
-SH_JUGGERNAUT_3
+SH_JUGGERNAUT_3_BODY
 Large Juggernaut Body
 SH_JUGGERNAUT_3_BODY_DESC
 A formidible heavy-weight space monster.
