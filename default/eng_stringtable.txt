@@ -2432,7 +2432,7 @@ SITREP_ERROR
 An unknown event occurred.
 
 SITREP_SHIP_BUILT
-'''The %shipdesign%, '%ship%' has been produced at %system%.'''
+The %shipdesign%, '%ship%' has been produced at %system%.
 
 SITREP_BUILDING_BUILT
 %building% has been produced on %planet%.
@@ -2447,16 +2447,28 @@ SITREP_OBJECT_DESTROYED_AT_SYSTEM
 An object was destroyed at %system%.
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
-The ship %ship% was destroyed at %system%.
+The %empire% %shipdesign% %ship% was destroyed at %system%.
+
+SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
+The %shipdesign% %ship% was destroyed at %system%.
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM
+The %empire% fleet %fleet% was destroyed at %system%.
+
+SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM
 The fleet %fleet% was destroyed at %system%.
 
 SITREP_PLANET_DESTROYED_AT_SYSTEM
+The %empire% planet %planet% was destroyed at %system%.
+
+SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM
 The planet %planet% was destroyed at %system%.
 
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
-The buidling %building% on planet %planet% was destroyed at %system%.
+The %empire% building %building% on planet %planet% was destroyed at %system%.
+
+SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
+The building %building% on planet %planet% was destroyed at %system%.
 
 SITREP_GROUND_BATTLE
 A ground battle occurred on %planet%.
