@@ -412,6 +412,9 @@ namespace {
         if (ship->X() != new_fleet->X() || ship->Y() != new_fleet->Y())
             return false;   // can't move fleets during a transfer.  can only transfer fleet at same location as ship
 
+        if (new_fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+            return false;   // not in a system
+
         if (ship->SystemID() != new_fleet->SystemID())
             return false;   // fleets need to be in same system.  probably redundant with checking position
 
@@ -431,6 +434,9 @@ namespace {
 
         if (fleet->SystemID() != target_fleet->SystemID())
             return false;   // at different systems
+
+        if (fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+            return false;   // not in a system
 
         if (fleet->X() != target_fleet->X() || fleet->Y() != target_fleet->Y())
             return false;   // at different locations.
