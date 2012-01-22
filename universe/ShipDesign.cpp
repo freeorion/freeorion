@@ -41,16 +41,14 @@ namespace {
         std::string& m_str;
     };
 
-    std::string PartTypeStatsString(const PartTypeStats& stats)
-    {
+    std::string PartTypeStatsString(const PartTypeStats& stats) {
         std::string retval;
         boost::apply_visitor(PartTypeStringVisitor(retval), stats);
         return retval;
     }
 
     boost::shared_ptr<const Effect::EffectsGroup>
-    IncreaseMeter(MeterType meter_type, double increase)
-    {
+    IncreaseMeter(MeterType meter_type, double increase) {
         typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
@@ -67,8 +65,7 @@ namespace {
     }
 
     boost::shared_ptr<const Effect::EffectsGroup>
-    IncreaseMeter(MeterType meter_type, const std::string& part_name, double increase)
-    {
+    IncreaseMeter(MeterType meter_type, const std::string& part_name, double increase) {
         typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
@@ -90,24 +87,21 @@ namespace {
             m_class(part_class),
             m_description(description)
         {}
-        void operator()(const double& d) const
-        {
+        void operator()(const double& d) const {
             std::string desc_string =
                 m_class == PC_FUEL || m_class == PC_COLONY ?
                 "PART_DESC_CAPACITY" : "PART_DESC_STRENGTH";
             m_description +=
                 str(FlexibleFormat(UserString(desc_string)) % d);
         }
-        void operator()(const DirectFireStats& stats) const
-        {
+        void operator()(const DirectFireStats& stats) const {
             m_description +=
                 str(FlexibleFormat(UserString("PART_DESC_DIRECT_FIRE_STATS"))
                     % stats.m_damage
                     % stats.m_ROF
                     % stats.m_range);
         }
-        void operator()(const LRStats& stats) const
-        {
+        void operator()(const LRStats& stats) const {
             m_description +=
                 str(FlexibleFormat(UserString("PART_DESC_LR_STATS"))
                     % stats.m_damage
@@ -118,8 +112,7 @@ namespace {
                     % stats.m_stealth
                     % stats.m_capacity);
         }
-        void operator()(const FighterStats& stats) const
-        {
+        void operator()(const FighterStats& stats) const {
             m_description +=
                 str(FlexibleFormat(UserString("PART_DESC_FIGHTER_STATS"))
                     % UserString(stats.m_type == BOMBER ? "BOMBER" : "INTERCEPTOR")
@@ -158,25 +151,20 @@ namespace {
 ////////////////////////////////////////////////
 // Free Functions                             //
 ////////////////////////////////////////////////
-const PartTypeManager& GetPartTypeManager() {
-    return PartTypeManager::GetPartTypeManager();
-}
+const PartTypeManager& GetPartTypeManager()
+{ return PartTypeManager::GetPartTypeManager(); }
 
-const PartType* GetPartType(const std::string& name) {
-    return GetPartTypeManager().GetPartType(name);
-}
+const PartType* GetPartType(const std::string& name)
+{ return GetPartTypeManager().GetPartType(name); }
 
-const HullTypeManager& GetHullTypeManager() {
-    return HullTypeManager::GetHullTypeManager();
-}
+const HullTypeManager& GetHullTypeManager()
+{ return HullTypeManager::GetHullTypeManager(); }
 
-const HullType* GetHullType(const std::string& name) {
-    return GetHullTypeManager().GetHullType(name);
-}
+const HullType* GetHullType(const std::string& name)
+{ return GetHullTypeManager().GetHullType(name); }
 
-const ShipDesign* GetShipDesign(int ship_design_id) {
-    return GetUniverse().GetShipDesign(ship_design_id);
-}
+const ShipDesign* GetShipDesign(int ship_design_id)
+{ return GetUniverse().GetShipDesign(ship_design_id); }
 
 
 /////////////////////////////////////
@@ -202,8 +190,7 @@ PartTypeManager::PartTypeManager() {
     }
 }
 
-PartTypeManager::~PartTypeManager()
-{
+PartTypeManager::~PartTypeManager() {
     for (std::map<std::string, PartType*>::iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
         delete it->second;
     }
@@ -219,13 +206,11 @@ const PartTypeManager& PartTypeManager::GetPartTypeManager() {
     return manager;
 }
 
-PartTypeManager::iterator PartTypeManager::begin() const {
-    return m_parts.begin();
-}
+PartTypeManager::iterator PartTypeManager::begin() const
+{ return m_parts.begin(); }
 
-PartTypeManager::iterator PartTypeManager::end() const {
-    return m_parts.end();
-}
+PartTypeManager::iterator PartTypeManager::end() const
+{ return m_parts.end(); }
 
 
 ////////////////////////////////////////////////
@@ -324,8 +309,7 @@ FighterStats::FighterStats(CombatFighterType type,
 ////////////////////////////////////////////////
 // PartType
 ////////////////////////////////////////////////
-void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects)
-{
+void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects) {
     switch (m_class) {
     case PC_SHORT_RANGE:
     case PC_POINT_DEFENSE:
@@ -435,8 +419,7 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
 PartType::~PartType()
 { delete m_location; }
 
-std::string PartType::StatDescription() const
-{
+std::string PartType::StatDescription() const {
     std::string retval;
     boost::apply_visitor(DescriptionVisitor(m_class, retval), m_stats);
     return retval;

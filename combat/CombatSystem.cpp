@@ -146,13 +146,11 @@ void CombatInfo::Clear() {
     destroyed_object_knowers.clear();
 }
 
-const System* CombatInfo::GetSystem() const {
-    return this->objects.Object<System>(this->system_id);
-}
+const System* CombatInfo::GetSystem() const
+{ return this->objects.Object<System>(this->system_id); }
 
-System* CombatInfo::GetSystem() {
-    return this->objects.Object<System>(this->system_id);
-}
+System* CombatInfo::GetSystem()
+{ return this->objects.Object<System>(this->system_id); }
 
 void CombatInfo::GetEmpireIdsToSerialize(std::set<int>& filtered_empire_ids, int encoding_empire) const {
     if (encoding_empire == ALL_EMPIRES) {
@@ -208,7 +206,9 @@ void CombatInfo::GetDestroyedObjectsToSerialize(std::set<int>& filtered_destroye
     filtered_destroyed_objects = this->destroyed_object_ids;
 }
 
-void CombatInfo::GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int> >& filtered_destroyed_object_knowers, int encoding_empire) const {
+void CombatInfo::GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int> >&
+    filtered_destroyed_object_knowers, int encoding_empire) const
+{
     if (encoding_empire == ALL_EMPIRES) {
         filtered_destroyed_object_knowers = this->destroyed_object_knowers;
         return;

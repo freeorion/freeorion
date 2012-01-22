@@ -352,8 +352,7 @@ const Meter* Planet::GetMeter(MeterType type) const
 double Planet::CurrentMeterValue(MeterType type) const
 { return UniverseObject::CurrentMeterValue(type); }
 
-double Planet::NextTurnCurrentMeterValue(MeterType type) const
-{
+double Planet::NextTurnCurrentMeterValue(MeterType type) const {
     MeterType max_meter_type = INVALID_METER_TYPE;
     switch (type) {
     case METER_TARGET_POPULATION:
