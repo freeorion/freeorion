@@ -929,12 +929,10 @@ void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
 bool MapWnd::InProductionViewMode() const
 { return m_in_production_view_mode; }
 
-void MapWnd::Render()
-{
+void MapWnd::Render() {
     // HACK! This is placed here so we can be sure it is executed frequently
     // (every time we render), and before we render any of the
-    // FleetWnds.  It doesn't necessarily belong in MapWnd at
-    // all.
+    // FleetWnds.  It doesn't necessarily belong in MapWnd at all.
     FleetUIManager::GetFleetUIManager().CullEmptyWnds();
 
     // save CPU / GPU activity by skipping rendering when it's not needed
@@ -951,7 +949,9 @@ void MapWnd::Render()
     glLoadIdentity();
 
     glScalef(static_cast<GLfloat>(ZoomFactor()), static_cast<GLfloat>(ZoomFactor()), 1.0f);
-    glTranslatef(static_cast<GLfloat>(Value(origin_offset.x / ZoomFactor())), static_cast<GLfloat>(Value(origin_offset.y / ZoomFactor())), 0.0f);
+    glTranslatef(static_cast<GLfloat>(Value(origin_offset.x / ZoomFactor())),
+                 static_cast<GLfloat>(Value(origin_offset.y / ZoomFactor())),
+                 0.0f);
 
     RenderGalaxyGas();
     RenderNebulae();
@@ -1627,8 +1627,7 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/)
     FleetUIManager::GetFleetUIManager().EnableOrderIssuing(enable);
 }
 
-void MapWnd::InitTurn()
-{
+void MapWnd::InitTurn() {
     int turn_number = CurrentTurn();
     Logger().debugStream() << "Initializing turn " << turn_number;
     boost::timer turn_init_timer;
@@ -1810,8 +1809,7 @@ void MapWnd::InitTurn()
     Logger().debugStream() << "MapWnd::InitTurn time: " << (turn_init_timer.elapsed() * 1000.0);
 }
 
-void MapWnd::MidTurnUpdate()
-{
+void MapWnd::MidTurnUpdate() {
     Logger().debugStream() << "MapWnd::MidTurnUpdate";
     boost::timer turn_init_timer;
 
@@ -2854,8 +2852,7 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(const Fleet* flee
     return ScreenPosOnStarane(fleet->X(), fleet->Y(), lane.first, lane.second, screen_lane_endpoints);
 }
 
-void MapWnd::RefreshFleetButtons()
-{
+void MapWnd::RefreshFleetButtons() {
     // determine fleets that need buttons so that fleets at the same location can
     // be grouped by empire owner and buttons created
     const ObjectMap& objects = GetUniverse().Objects();
@@ -2964,9 +2961,10 @@ void MapWnd::RefreshFleetButtons()
     // create new fleet buttons for fleets...
     const FleetButton::SizeType FLEETBUTTON_SIZE = FleetButtonSizeType();
 
-
     // departing fleets
-    for (std::map<const System*, std::map<int, std::vector<const Fleet*> > >::iterator departing_fleets_it = departing_fleets.begin(); departing_fleets_it != departing_fleets.end(); ++departing_fleets_it) {
+    for (std::map<const System*, std::map<int, std::vector<const Fleet*> > >::iterator departing_fleets_it = departing_fleets.begin();
+         departing_fleets_it != departing_fleets.end(); ++departing_fleets_it)
+    {
         const System* system = departing_fleets_it->first;
         int system_id = system->ID();
         const std::map<int, std::vector<const Fleet*> >& empires_map = departing_fleets_it->second;
@@ -2997,9 +2995,10 @@ void MapWnd::RefreshFleetButtons()
         }
     }
 
-
     // stationary fleets
-    for (std::map<const System*, std::map<int, std::vector<const Fleet*> > >::iterator stationary_fleets_it = stationary_fleets.begin(); stationary_fleets_it != stationary_fleets.end(); ++stationary_fleets_it) {
+    for (std::map<const System*, std::map<int, std::vector<const Fleet*> > >::iterator stationary_fleets_it = stationary_fleets.begin();
+         stationary_fleets_it != stationary_fleets.end(); ++stationary_fleets_it)
+    {
         const System* system = stationary_fleets_it->first;
         int system_id = system->ID();
         const std::map<int, std::vector<const Fleet*> >& empires_map = stationary_fleets_it->second;
@@ -3030,9 +3029,10 @@ void MapWnd::RefreshFleetButtons()
         }
     }
 
-
     // moving fleets
-    for (std::map<std::pair<double, double>, std::map<int, std::vector<const Fleet*> > >::iterator moving_fleets_it = moving_fleets.begin(); moving_fleets_it != moving_fleets.end(); ++moving_fleets_it) {
+    for (std::map<std::pair<double, double>, std::map<int, std::vector<const Fleet*> > >::iterator moving_fleets_it = moving_fleets.begin();
+         moving_fleets_it != moving_fleets.end(); ++moving_fleets_it)
+    {
         const std::map<int, std::vector<const Fleet*> >& empires_map = moving_fleets_it->second;
         //std::cout << "creating moving fleet buttons at location (" << moving_fleets_it->first.first << ", " << moving_fleets_it->first.second << ")" << std::endl;
 

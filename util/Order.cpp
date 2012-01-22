@@ -36,32 +36,24 @@ Order::Order() :
     m_executed(false)
 {}
 
-void Order::ValidateEmpireID() const
-{
+void Order::ValidateEmpireID() const {
     if (!(Empires().Lookup(EmpireID())))
         throw std::runtime_error("Invalid empire ID specified for order.");
 }
 
-void Order::Execute() const
-{
+void Order::Execute() const {
     ExecuteImpl();
     m_executed = true;
 }
 
 bool Order::Undo() const
-{
-    return UndoImpl();
-}
+{ return UndoImpl(); }
 
 bool Order::Executed() const
-{
-    return m_executed;
-}
+{ return m_executed; }
 
 bool Order::UndoImpl() const
-{
-    return false;
-}
+{ return false; }
 
 
 ////////////////////////////////////////////////
@@ -91,8 +83,7 @@ RenameOrder::RenameOrder(int empire, int object, const std::string& name) :
     }
 }
 
-void RenameOrder::ExecuteImpl() const
-{
+void RenameOrder::ExecuteImpl() const {
     ValidateEmpireID();
 
     UniverseObject* obj = GetObject(m_object);
@@ -635,12 +626,10 @@ void DeleteFleetOrder::ExecuteImpl() const {
         return;
     }
 
-    // this needs to be a no-op, instead of an exception case, because of its interaction with cancelled colonize orders
-    // that cause a fleet to be deleted, then silently reconsistuted
     if (!fleet->Empty())
         return;
 
-    GetUniverse().Delete(FleetID());
+    GetUniverse().Destroy(FleetID());
 }
 
 

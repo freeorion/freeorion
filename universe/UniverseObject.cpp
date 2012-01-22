@@ -67,8 +67,7 @@ UniverseObject::UniverseObject(const UniverseObject& rhs) :
 UniverseObject::~UniverseObject()
 {}
 
-void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis)
-{
+void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis) {
     if (copied_object == this)
         return;
     if (!copied_object) {
@@ -128,8 +127,7 @@ double UniverseObject::Y() const
 int UniverseObject::CreationTurn() const
 { return m_created_on_turn; }
 
-int UniverseObject::AgeInTurns() const
-{
+int UniverseObject::AgeInTurns() const {
     if (m_created_on_turn == BEFORE_FIRST_TURN)
         return SINCE_BEFORE_TIME_AGE;
     if ((m_created_on_turn == INVALID_GAME_TURN) || (CurrentTurn() == INVALID_GAME_TURN))
@@ -149,8 +147,7 @@ const std::map<std::string, int>& UniverseObject::Specials() const
 bool UniverseObject::HasSpecial(const std::string& name) const
 { return m_specials.find(name) != m_specials.end(); }
 
-int UniverseObject::SpecialAddedOnTurn(const std::string& name) const
-{
+int UniverseObject::SpecialAddedOnTurn(const std::string& name) const {
     std::map<std::string, int>::const_iterator it = m_specials.find(name);
     if (it == m_specials.end())
         return INVALID_GAME_TURN;
@@ -160,8 +157,7 @@ int UniverseObject::SpecialAddedOnTurn(const std::string& name) const
 const std::string& UniverseObject::TypeName() const
 { return UserString("UNIVERSEOBJECT"); }
 
-std::string UniverseObject::Dump() const
-{
+std::string UniverseObject::Dump() const {
     const System* system = GetMainObjectMap().Object<System>(this->SystemID());
 
     std::stringstream os;
@@ -188,8 +184,7 @@ std::vector<int> UniverseObject::FindObjectIDs() const
 bool UniverseObject::Contains(int object_id) const
 { return false; }
 
-bool UniverseObject::ContainedBy(int object_id) const
-{
+bool UniverseObject::ContainedBy(int object_id) const {
     const UniverseObject* object = GetMainObjectMap().Object(object_id);
     if (object)
         return object->Contains(m_id);
@@ -197,16 +192,14 @@ bool UniverseObject::ContainedBy(int object_id) const
         return false;
 }
 
-const Meter* UniverseObject::GetMeter(MeterType type) const
-{
+const Meter* UniverseObject::GetMeter(MeterType type) const {
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
     if (it != m_meters.end())
         return &(it->second);
     return 0;
 }
 
-double UniverseObject::CurrentMeterValue(MeterType type) const
-{
+double UniverseObject::CurrentMeterValue(MeterType type) const {
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
     if (it == m_meters.end())
         throw std::invalid_argument("UniverseObject::CurrentMeterValue was passed a MeterType that this UniverseObject does not have");
@@ -214,8 +207,7 @@ double UniverseObject::CurrentMeterValue(MeterType type) const
     return it->second.Current();
 }
 
-double UniverseObject::InitialMeterValue(MeterType type) const
-{
+double UniverseObject::InitialMeterValue(MeterType type) const {
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
     if (it == m_meters.end())
         throw std::invalid_argument("UniverseObject::InitialMeterValue was passed a MeterType that this UniverseObject does not have");
@@ -226,8 +218,7 @@ double UniverseObject::InitialMeterValue(MeterType type) const
 double UniverseObject::NextTurnCurrentMeterValue(MeterType type) const
 { return UniverseObject::CurrentMeterValue(type); }
 
-void UniverseObject::AddMeter(MeterType meter_type)
-{
+void UniverseObject::AddMeter(MeterType meter_type) {
     if (INVALID_METER_TYPE == meter_type)
         Logger().errorStream() << "UniverseObject::AddMeter asked to add invalid meter type!";
     else
@@ -249,14 +240,12 @@ const std::string& UniverseObject::PublicName(int empire_id) const
 UniverseObject* UniverseObject::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(const_cast<UniverseObject* const>(this)); }
 
-void UniverseObject::SetID(int id)
-{
+void UniverseObject::SetID(int id) {
     m_id = id;
     StateChangedSignal();
 }
 
-void UniverseObject::Rename(const std::string& name)
-{
+void UniverseObject::Rename(const std::string& name) {
     m_name = name;
     StateChangedSignal();
 }
@@ -267,16 +256,14 @@ void UniverseObject::Move(double x, double y)
 void UniverseObject::MoveTo(int object_id)
 { MoveTo(GetMainObjectMap().Object(object_id)); }
 
-void UniverseObject::MoveTo(UniverseObject* object)
-{
+void UniverseObject::MoveTo(UniverseObject* object) {
     if (!object)
         throw std::invalid_argument("UniverseObject::MoveTo passed an invalid object or object id");
 
     MoveTo(object->X(), object->Y());
 }
 
-void UniverseObject::MoveTo(double x, double y)
-{
+void UniverseObject::MoveTo(double x, double y) {
     //Logger().debugStream() << "UniverseObject::MoveTo(double x, double y)";
     if (x < 0.0 || Universe::UniverseWidth() < x || y < 0.0 || Universe::UniverseWidth() < y)
         Logger().debugStream() << "UniverseObject::MoveTo : Placing object \"" + m_name + "\" off the map area.";
@@ -289,23 +276,20 @@ void UniverseObject::MoveTo(double x, double y)
     StateChangedSignal();
 }
 
-Meter* UniverseObject::GetMeter(MeterType type)
-{
+Meter* UniverseObject::GetMeter(MeterType type) {
     std::map<MeterType, Meter>::iterator it = m_meters.find(type);
     if (it != m_meters.end())
         return &(it->second);
     return 0;
 }
 
-void UniverseObject::BackPropegateMeters()
-{
+void UniverseObject::BackPropegateMeters() {
     for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
         if (Meter* meter = this->GetMeter(i))
             meter->BackPropegate();
 }
 
-void UniverseObject::SetOwner(int id)
-{
+void UniverseObject::SetOwner(int id) {
     if (m_owner_empire_id != id) {
         m_owner_empire_id = id;
         StateChangedSignal();
@@ -315,8 +299,7 @@ void UniverseObject::SetOwner(int id)
      * to call empire->AddExploredSystem(system_id); */
 }
 
-void UniverseObject::SetSystem(int sys)
-{
+void UniverseObject::SetSystem(int sys) {
     //Logger().debugStream() << "UniverseObject::SetSystem(int sys)";
     if (sys != m_system_id) {
         m_system_id = sys;
@@ -330,8 +313,7 @@ void UniverseObject::AddSpecial(const std::string& name)
 void UniverseObject::RemoveSpecial(const std::string& name)
 { m_specials.erase(name); }
 
-std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const
-{
+std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const {
     std::map<MeterType, Meter> retval;
     if (vis >= VIS_PARTIAL_VISIBILITY)
         retval = m_meters;
@@ -341,8 +323,7 @@ std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const
 void UniverseObject::ResetTargetMaxUnpairedMeters()
 { GetMeter(METER_STEALTH)->ResetCurrent(); }
 
-void UniverseObject::ResetPairedActiveMeters()
-{
+void UniverseObject::ResetPairedActiveMeters() {
     // iterate over paired active meters (those that have an associated max or
     // target meter.  if another paired meter type is added to Enums.h, it
     // should be added here as well.

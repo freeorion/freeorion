@@ -11,15 +11,13 @@
 ObjectMap::ObjectMap()
 {}
 
-ObjectMap::~ObjectMap()
-{
+ObjectMap::~ObjectMap() {
     // Make sure to call ObjectMap::Clear() before destruction somewhere if
     // this ObjectMap contains any unique pointers to UniverseObject objects.
     // Otherwise, the pointed-to UniverseObjects will be leaked memory...
 }
 
-void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*/)
-{
+void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*/) {
     if (&copied_map == this)
         return;
 
@@ -29,8 +27,7 @@ void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*
         this->Copy(it->second, empire_id);
 }
 
-void ObjectMap::Copy(const UniverseObject* obj, int empire_id/* = ALL_EMPIRES*/)
-{
+void ObjectMap::Copy(const UniverseObject* obj, int empire_id/* = ALL_EMPIRES*/) {
     if (!obj)
         return;
     int object_id = obj->ID();
@@ -47,8 +44,7 @@ void ObjectMap::Copy(const UniverseObject* obj, int empire_id/* = ALL_EMPIRES*/)
     }
 }
 
-void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*/)
-{
+void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*/) {
     if (&copied_map == this)
         return;
 
@@ -69,8 +65,7 @@ void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id/*
    }
 }
 
-ObjectMap* ObjectMap::Clone(int empire_id) const
-{
+ObjectMap* ObjectMap::Clone(int empire_id) const {
     ObjectMap* retval = new ObjectMap();
     retval->Copy(*this, empire_id);
     return retval;
@@ -82,20 +77,17 @@ int ObjectMap::NumObjects() const
 bool ObjectMap::Empty() const
 { return m_objects.empty(); }
 
-const UniverseObject* ObjectMap::Object(int id) const
-{
+const UniverseObject* ObjectMap::Object(int id) const {
     const_iterator it = m_const_objects.find(id);
     return (it != m_const_objects.end() ? it->second : 0);
 }
 
-UniverseObject* ObjectMap::Object(int id)
-{
+UniverseObject* ObjectMap::Object(int id) {
     iterator it = m_objects.find(id);
     return (it != m_objects.end() ? it->second : 0);
 }
 
-std::vector<const UniverseObject*> ObjectMap::FindObjects(const std::vector<int>& object_ids) const
-{
+std::vector<const UniverseObject*> ObjectMap::FindObjects(const std::vector<int>& object_ids) const {
     std::vector<const UniverseObject*> retval;
     for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
         if (const UniverseObject* obj = Object(*it))
@@ -105,8 +97,7 @@ std::vector<const UniverseObject*> ObjectMap::FindObjects(const std::vector<int>
     return retval;
 }
 
-std::vector<UniverseObject*> ObjectMap::FindObjects(const std::vector<int>& object_ids)
-{
+std::vector<UniverseObject*> ObjectMap::FindObjects(const std::vector<int>& object_ids) {
     std::vector<UniverseObject*> retval;
     for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
         if (UniverseObject* obj = Object(*it))
@@ -116,8 +107,7 @@ std::vector<UniverseObject*> ObjectMap::FindObjects(const std::vector<int>& obje
     return retval;
 }
 
-std::vector<const UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const
-{
+std::vector<const UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const {
     std::vector<const UniverseObject*> retval;
     for (const_iterator it = m_const_objects.begin(); it != m_const_objects.end(); ++it) {
         if (UniverseObject* obj = it->second->Accept(visitor))
@@ -126,8 +116,7 @@ std::vector<const UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVi
     return retval;
 }
 
-std::vector<UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor)
-{
+std::vector<UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) {
     std::vector<UniverseObject*> retval;
     for (iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         if (UniverseObject* obj = it->second->Accept(visitor))
@@ -136,8 +125,7 @@ std::vector<UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVisitor&
     return retval;
 }
 
-std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) const
-{
+std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) const {
     std::vector<int> retval;
     for (const_iterator it = m_const_objects.begin(); it != m_const_objects.end(); ++it) {
         if (it->second->Accept(visitor))
@@ -146,8 +134,7 @@ std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) 
     return retval;
 }
 
-std::vector<int> ObjectMap::FindObjectIDs() const
-{
+std::vector<int> ObjectMap::FindObjectIDs() const {
     std::vector<int> retval;
     for (const_iterator it = m_const_objects.begin(); it != m_const_objects.end(); ++it)
         retval.push_back(it->first);
@@ -166,8 +153,7 @@ ObjectMap::const_iterator ObjectMap::const_begin() const
 ObjectMap::const_iterator ObjectMap::const_end() const
 { return m_const_objects.end(); }
 
-UniverseObject* ObjectMap::Insert(int id, UniverseObject* obj)
-{
+UniverseObject* ObjectMap::Insert(int id, UniverseObject* obj) {
     // safety checks...
     if (!obj || id == UniverseObject::INVALID_OBJECT_ID)
         return 0;
@@ -198,8 +184,7 @@ UniverseObject* ObjectMap::Insert(int id, UniverseObject* obj)
     return old_obj;
 }
 
-UniverseObject* ObjectMap::Remove(int id)
-{
+UniverseObject* ObjectMap::Remove(int id) {
     // search for object in objects maps
     std::map<int, UniverseObject*>::iterator it = m_objects.find(id);
     if (it == m_objects.end())
@@ -218,29 +203,25 @@ UniverseObject* ObjectMap::Remove(int id)
 void ObjectMap::Delete(int id)
 { delete Remove(id); }
 
-void ObjectMap::Clear()
-{
+void ObjectMap::Clear() {
     for (iterator it = m_objects.begin(); it != m_objects.end(); ++it)
         delete it->second;
     m_objects.clear();
     m_const_objects.clear();
 }
 
-void ObjectMap::swap(ObjectMap& rhs)
-{
+void ObjectMap::swap(ObjectMap& rhs) {
     m_objects.swap(rhs.m_objects);
     m_const_objects.swap(rhs.m_const_objects);
 }
 
-void ObjectMap::CopyObjectsToConstObjects()
-{
+void ObjectMap::CopyObjectsToConstObjects() {
     // remove existing entries in const objects and replace with values from non-const objects
     m_const_objects.clear();
     m_const_objects.insert(m_objects.begin(), m_objects.end());
 }
 
-std::string ObjectMap::Dump() const
-{
+std::string ObjectMap::Dump() const {
     std::ostringstream os;
     os << "ObjectMap contains UniverseObjects: " << std::endl;
     for (ObjectMap::const_iterator it = const_begin(); it != const_end(); ++it) {
