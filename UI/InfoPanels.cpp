@@ -274,8 +274,7 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     Refresh();
 }
 
-PopulationPanel::~PopulationPanel()
-{
+PopulationPanel::~PopulationPanel() {
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
     delete m_pop_stat;
     delete m_health_stat;
@@ -289,8 +288,7 @@ PopulationPanel::~PopulationPanel()
 void PopulationPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void PopulationPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
+void PopulationPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     GG::Wnd::SizeMove(ul, lr);
@@ -300,20 +298,16 @@ void PopulationPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 }
 
 void PopulationPanel::ExpandCollapseButtonPressed()
-{
-    ExpandCollapse(!s_expanded_map[m_popcenter_id]);
-}
+{ ExpandCollapse(!s_expanded_map[m_popcenter_id]); }
 
-void PopulationPanel::ExpandCollapse(bool expanded)
-{
+void PopulationPanel::ExpandCollapse(bool expanded) {
     if (expanded == s_expanded_map[m_popcenter_id]) return; // nothing to do
     s_expanded_map[m_popcenter_id] = expanded;
 
     DoExpandCollapseLayout();
 }
 
-void PopulationPanel::DoExpandCollapseLayout()
-{
+void PopulationPanel::DoExpandCollapseLayout() {
     // initially detach most things.  Some will be reattached later.
     DetachChild(m_pop_stat);    DetachChild(m_health_stat); DetachChild(m_food_consumption_stat);
 
@@ -377,8 +371,7 @@ void PopulationPanel::DoExpandCollapseLayout()
     ExpandCollapseSignal();
 }
 
-void PopulationPanel::Render() 
-{
+void PopulationPanel::Render() {
     // Draw outline and background...
 
     // copied from CUIWnd
@@ -418,8 +411,7 @@ void PopulationPanel::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void PopulationPanel::Update()
-{
+void PopulationPanel::Update() {
     const PopCenter*        pop = GetPopCenter();
     const UniverseObject*   obj = GetObject(m_popcenter_id);
         if (!obj)           obj = GetEmpireKnownObject(m_popcenter_id, HumanClientApp::GetApp()->EmpireID());
@@ -433,9 +425,9 @@ void PopulationPanel::Update()
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
-    m_pop_stat->SetValue(pop->NextTurnCurrentMeterValue(METER_POPULATION));
-    m_health_stat->SetValue(pop->NextTurnCurrentMeterValue(METER_HEALTH));
-    m_food_consumption_stat->SetValue(pop->NextTurnCurrentMeterValue(METER_FOOD_CONSUMPTION));
+    m_pop_stat->SetValue(pop->InitialMeterValue(METER_POPULATION));
+    m_health_stat->SetValue(pop->InitialMeterValue(METER_HEALTH));
+    m_food_consumption_stat->SetValue(pop->InitialMeterValue(METER_FOOD_CONSUMPTION));
 
 
     // tooltips
@@ -452,14 +444,12 @@ void PopulationPanel::Update()
     m_multi_icon_value_indicator->SetToolTip(METER_FOOD_CONSUMPTION, browse_wnd);
 }
 
-void PopulationPanel::Refresh()
-{
+void PopulationPanel::Refresh() {
     Update();
     DoExpandCollapseLayout();
 }
 
-const PopCenter* PopulationPanel::GetPopCenter() const
-{
+const PopCenter* PopulationPanel::GetPopCenter() const {
     const UniverseObject* obj = GetObject(m_popcenter_id);
     if (!obj)
         obj = GetEmpireKnownObject(m_popcenter_id, HumanClientApp::GetApp()->EmpireID());
@@ -687,8 +677,7 @@ void ResourcePanel::DoExpandCollapseLayout() {
     ExpandCollapseSignal();
 }
 
-void ResourcePanel::Render()
-{
+void ResourcePanel::Render() {
     // Draw outline and background...
 
     // copied from CUIWnd
@@ -745,8 +734,7 @@ void ResourcePanel::Render()
 void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void ResourcePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
+void ResourcePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     GG::Wnd::SizeMove(ul, lr);
@@ -755,8 +743,7 @@ void ResourcePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
         DoExpandCollapseLayout();
 }
 
-void ResourcePanel::Update()
-{
+void ResourcePanel::Update() {
     // remove any old browse wnds
     m_farming_stat->ClearBrowseInfoWnd();
     m_multi_icon_value_indicator->ClearToolTip(METER_FARMING);
@@ -818,11 +805,11 @@ void ResourcePanel::Update()
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
-    m_farming_stat->SetValue(res->NextTurnCurrentMeterValue(METER_FARMING));
-    m_mining_stat->SetValue(res->NextTurnCurrentMeterValue(METER_MINING));
-    m_industry_stat->SetValue(res->NextTurnCurrentMeterValue(METER_INDUSTRY));
-    m_research_stat->SetValue(res->NextTurnCurrentMeterValue(METER_RESEARCH));
-    m_trade_stat->SetValue(res->NextTurnCurrentMeterValue(METER_TRADE));
+    m_farming_stat->SetValue(res->InitialMeterValue(METER_FARMING));
+    m_mining_stat->SetValue(res->InitialMeterValue(METER_MINING));
+    m_industry_stat->SetValue(res->InitialMeterValue(METER_INDUSTRY));
+    m_research_stat->SetValue(res->InitialMeterValue(METER_RESEARCH));
+    m_trade_stat->SetValue(res->InitialMeterValue(METER_TRADE));
 
 
     // create an attach browse info wnds for each meter type on the icon + number stats used when collapsed and
@@ -883,14 +870,12 @@ void ResourcePanel::Update()
     m_focus_drop->SetBrowseText(focus_text);
 }
 
-void ResourcePanel::Refresh()
-{
+void ResourcePanel::Refresh() {
     Update();
     DoExpandCollapseLayout();
 }
 
-void ResourcePanel::FocusDropListSelectionChanged(GG::DropDownList::iterator selected)
-{
+void ResourcePanel::FocusDropListSelectionChanged(GG::DropDownList::iterator selected) {
     // all this funciton needs to do is emit FocusChangedSignal.  The code
     // preceeding that determines which focus was selected from the iterator 
     // parameter, does some safety checks, and disables UI sounds
@@ -923,8 +908,7 @@ void ResourcePanel::FocusDropListSelectionChanged(GG::DropDownList::iterator sel
     FocusChangedSignal(res->AvailableFoci().at(i));
 }
 
-void ResourcePanel::EnableOrderIssuing(bool enable/* = true*/)
-{
+void ResourcePanel::EnableOrderIssuing(bool enable/* = true*/) {
     const UniverseObject* obj = GetObject(m_rescenter_id);
     if (!enable || !obj || !obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         m_focus_drop->Disable();
@@ -1017,8 +1001,7 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     Refresh();
 }
 
-MilitaryPanel::~MilitaryPanel()
-{
+MilitaryPanel::~MilitaryPanel() {
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
     delete m_fleet_supply_stat;
     delete m_shield_stat;
@@ -1033,16 +1016,14 @@ MilitaryPanel::~MilitaryPanel()
     // don't need to manually delete m_expand_button, as it is attached as a child so will be deleted by ~Wnd
 }
 
-void MilitaryPanel::ExpandCollapse(bool expanded)
-{
+void MilitaryPanel::ExpandCollapse(bool expanded) {
     if (expanded == s_expanded_map[m_planet_id]) return; // nothing to do
     s_expanded_map[m_planet_id] = expanded;
 
     DoExpandCollapseLayout();
 }
 
-void MilitaryPanel::Render()
-{
+void MilitaryPanel::Render() {
     if (Height() < 1) return;   // don't render if empty
     // Draw outline and background...
 
@@ -1086,8 +1067,7 @@ void MilitaryPanel::Render()
 void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void MilitaryPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
+void MilitaryPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     GG::Wnd::SizeMove(ul, lr);
@@ -1096,8 +1076,7 @@ void MilitaryPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
         DoExpandCollapseLayout();
 }
 
-void MilitaryPanel::Update()
-{
+void MilitaryPanel::Update() {
     const UniverseObject* obj = GetObject(m_planet_id);
     if (!obj)
         obj = GetEmpireKnownObject(m_planet_id, HumanClientApp::GetApp()->EmpireID());
@@ -1111,12 +1090,12 @@ void MilitaryPanel::Update()
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
-    m_fleet_supply_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_SUPPLY));
-    m_shield_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_SHIELD));
-    m_defense_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_DEFENSE));
-    m_troops_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_TROOPS));
-    m_detection_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_DETECTION));
-    m_stealth_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_STEALTH));
+    m_fleet_supply_stat->SetValue(obj->InitialMeterValue(METER_SUPPLY));
+    m_shield_stat->SetValue(obj->InitialMeterValue(METER_SHIELD));
+    m_defense_stat->SetValue(obj->InitialMeterValue(METER_DEFENSE));
+    m_troops_stat->SetValue(obj->InitialMeterValue(METER_TROOPS));
+    m_detection_stat->SetValue(obj->InitialMeterValue(METER_DETECTION));
+    m_stealth_stat->SetValue(obj->InitialMeterValue(METER_STEALTH));
 
     // tooltips
     boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_SUPPLY));
@@ -1144,19 +1123,15 @@ void MilitaryPanel::Update()
     m_multi_icon_value_indicator->SetToolTip(METER_STEALTH, browse_wnd);
 }
 
-void MilitaryPanel::Refresh()
-{
+void MilitaryPanel::Refresh() {
     Update();
     DoExpandCollapseLayout();
 }
 
 void MilitaryPanel::ExpandCollapseButtonPressed()
-{
-    ExpandCollapse(!s_expanded_map[m_planet_id]);
-}
+{ ExpandCollapse(!s_expanded_map[m_planet_id]); }
 
-void MilitaryPanel::DoExpandCollapseLayout()
-{
+void MilitaryPanel::DoExpandCollapseLayout() {
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_planet_id]) {
 
@@ -1321,12 +1296,9 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w) :
 }
 
 bool MultiIconValueIndicator::Empty()
-{
-    return m_object_ids.empty();
-}
+{ return m_object_ids.empty(); }
 
-void MultiIconValueIndicator::Render()
-{
+void MultiIconValueIndicator::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
 
@@ -1337,13 +1309,11 @@ void MultiIconValueIndicator::Render()
 void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void MultiIconValueIndicator::Update()
-{
+void MultiIconValueIndicator::Update() {
     if (m_icons.size() != m_meter_types.size()) {
         Logger().errorStream() << "MultiIconValueIndicator::Update has inconsitent numbers of icons and meter types";
         return;
     }
-
 
     for (std::size_t i = 0; i < m_icons.size(); ++i) {
         assert(m_icons[i]);
@@ -1359,21 +1329,19 @@ void MultiIconValueIndicator::Update()
             }
             //Logger().debugStream() << "MultiIconValueIndicator::Update object:";
             //Logger().debugStream() << obj->Dump();
-            sum += obj->NextTurnCurrentMeterValue(m_meter_types[i].first);
+            sum += obj->InitialMeterValue(m_meter_types[i].first);
         }
         m_icons[i]->SetValue(sum);
     }
 }
 
-void MultiIconValueIndicator::SetToolTip(MeterType meter_type, const boost::shared_ptr<GG::BrowseInfoWnd>& browse_wnd)
-{
+void MultiIconValueIndicator::SetToolTip(MeterType meter_type, const boost::shared_ptr<GG::BrowseInfoWnd>& browse_wnd) {
     for (unsigned int i = 0; i < m_icons.size(); ++i)
         if (m_meter_types.at(i).first == meter_type)
             m_icons.at(i)->SetBrowseInfoWnd(browse_wnd);
 }
 
-void MultiIconValueIndicator::ClearToolTip(MeterType meter_type)
-{
+void MultiIconValueIndicator::ClearToolTip(MeterType meter_type) {
     for (unsigned int i = 0; i < m_icons.size(); ++i)
         if (m_meter_types.at(i).first == meter_type)
             m_icons.at(i)->ClearBrowseInfoWnd();
@@ -1396,8 +1364,7 @@ MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, int object_id, const std::vect
     Update();
 }
 
-void MultiMeterStatusBar::Render()
-{
+void MultiMeterStatusBar::Render() {
     GG::Clr DARY_GREY = GG::Clr(44, 44, 44, 255);
     GG::Clr HALF_GREY = GG::Clr(128, 128, 128, 128);
 
@@ -1490,8 +1457,7 @@ void MultiMeterStatusBar::Render()
 void MultiMeterStatusBar::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void MultiMeterStatusBar::Update()
-{
+void MultiMeterStatusBar::Update() {
     m_initial_values.clear();   // initial value of .first MeterTypes at the start of this turn
     m_projected_values.clear(); // projected current value of .first MeterTypes for the start of next turn
     m_target_max_values.clear();// current values of the .second MeterTypes in m_meter_types
@@ -1573,8 +1539,7 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     Refresh();
 }
 
-BuildingsPanel::~BuildingsPanel()
-{
+BuildingsPanel::~BuildingsPanel() {
     // delete building indicators
     for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it)
         delete *it;
@@ -1582,16 +1547,14 @@ BuildingsPanel::~BuildingsPanel()
     delete m_expand_button;
 }
 
-void BuildingsPanel::ExpandCollapse(bool expanded)
-{
+void BuildingsPanel::ExpandCollapse(bool expanded) {
     if (expanded == s_expanded_map[m_planet_id]) return; // nothing to do
     s_expanded_map[m_planet_id] = expanded;
 
     DoExpandCollapseLayout();
 }
 
-void BuildingsPanel::Render()
-{
+void BuildingsPanel::Render() {
     if (Height() < 1) return;   // don't render if empty
     // Draw outline and background...
 
@@ -1635,8 +1598,7 @@ void BuildingsPanel::Render()
 void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void BuildingsPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
+void BuildingsPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     GG::Wnd::SizeMove(ul, lr);
@@ -1645,8 +1607,7 @@ void BuildingsPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
         DoExpandCollapseLayout();
 }
 
-void BuildingsPanel::Update()
-{
+void BuildingsPanel::Update() {
     //std::cout << "BuildingsPanel::Update" << std::endl;
 
     // remove old indicators
@@ -1710,8 +1671,7 @@ void BuildingsPanel::Update()
     }
 }
 
-void BuildingsPanel::Refresh()
-{
+void BuildingsPanel::Refresh() {
     //std::cout << "BuildingsPanel::Refresh" << std::endl;
     Update();
     DoExpandCollapseLayout();
@@ -1720,8 +1680,7 @@ void BuildingsPanel::Refresh()
 void BuildingsPanel::ExpandCollapseButtonPressed()
 { ExpandCollapse(!s_expanded_map[m_planet_id]); }
 
-void BuildingsPanel::DoExpandCollapseLayout()
-{
+void BuildingsPanel::DoExpandCollapseLayout() {
     int row = 0;
     int column = 0;
     const int padding = 5;      // space around and between adjacent indicators
@@ -1801,8 +1760,7 @@ void BuildingsPanel::DoExpandCollapseLayout()
     ExpandCollapseSignal();
 }
 
-void BuildingsPanel::EnableOrderIssuing(bool enable/* = true*/)
-{
+void BuildingsPanel::EnableOrderIssuing(bool enable/* = true*/) {
     for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin();
          it != m_building_indicators.end();
          ++it)
@@ -1858,8 +1816,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type, 
     AttachChild(m_progress_bar);
 }
 
-void BuildingIndicator::Render()
-{
+void BuildingIndicator::Render() {
     // Draw outline and background...
 
     // copied from CUIWnd
@@ -1899,8 +1856,7 @@ void BuildingIndicator::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void BuildingIndicator::Refresh()
-{
+void BuildingIndicator::Refresh() {
     ClearBrowseInfoWnd();
 
     const Building* building = GetObject<Building>(m_building_id);
@@ -1938,8 +1894,7 @@ void BuildingIndicator::Refresh()
     }
 }
 
-void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
+void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     Wnd::SizeMove(ul, lr);
 
     GG::Pt child_lr = lr - ul - GG::Pt(GG::X1, GG::Y1);   // extra pixel prevents graphic from overflowing border box
@@ -1958,8 +1913,7 @@ void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     // verify that this indicator represents an existing building, and not a
     // queued production item, and that the owner of the building is this
     // client's player's empire
@@ -2024,8 +1978,7 @@ SpecialsPanel::SpecialsPanel(GG::X w, int object_id) :
     Update();
 }
 
-bool SpecialsPanel::InWindow(const GG::Pt& pt) const
-{
+bool SpecialsPanel::InWindow(const GG::Pt& pt) const {
     bool retval = false;
     for (std::vector<GG::StaticGraphic*>::const_iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
         if ((*it)->InWindow(pt))
@@ -2040,8 +1993,7 @@ void SpecialsPanel::Render()
 void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void SpecialsPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
+void SpecialsPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     GG::Wnd::SizeMove(ul, lr);
@@ -2050,8 +2002,7 @@ void SpecialsPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
         Update();
 }
 
-void SpecialsPanel::Update()
-{
+void SpecialsPanel::Update() {
     //std::cout << "SpecialsPanel::Update" << std::endl;
     for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it)
         DeleteChild(*it);
@@ -2297,11 +2248,10 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
             continue;   // if m_empire_id == -1, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
 
         const ResourceCenter* rc = dynamic_cast<const ResourceCenter*>(obj);
-        if (!rc)
-            continue;
+        if (!rc) continue;
 
         std::string name = obj->Name();
-        double production = rc->NextTurnCurrentMeterValue(ResourceToMeter(m_resource_type));
+        double production = rc->InitialMeterValue(ResourceToMeter(m_resource_type));
         m_production += production;
 
         std::string amount_text = DoubleToString(production, 3, false);
@@ -2762,7 +2712,7 @@ void MeterBrowseWnd::UpdateSummary() {
         // Primary meter holds value from turn to turn and changes slow each turn.
         // The current value of the primary meter doesn't change with focus changes
         // so its growth from turn to turn is important to show
-        double primary_current = obj->CurrentMeterValue(m_primary_meter_type);
+        double primary_current = obj->InitialMeterValue(m_primary_meter_type);
         double primary_next = obj->NextTurnCurrentMeterValue(m_primary_meter_type);
         double primary_change = primary_next - primary_current;
 
@@ -2776,7 +2726,7 @@ void MeterBrowseWnd::UpdateSummary() {
 
     } else if (primary_meter) {
         // unpaired meter total for breakdown summary
-        breakdown_total = obj->CurrentMeterValue(m_primary_meter_type);
+        breakdown_total = obj->InitialMeterValue(m_primary_meter_type);
         breakdown_meter_name = MeterToUserString(m_primary_meter_type);
     } else {
         Logger().errorStream() << "MeterBrowseWnd::UpdateSummary can't get primary meter";
@@ -2862,11 +2812,9 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             break;
 
         case ECT_BUILDING:
-            if (building = universe_object_cast<const Building*>(source)) {
-                if (planet = GetObject<Planet>(building->PlanetID())) {
+            if (building = universe_object_cast<const Building*>(source))
+                if (planet = GetObject<Planet>(building->PlanetID()))
                     name = planet->Name();
-                }
-            }
             text += boost::io::str(FlexibleFormat(UserString("TT_BUILDING")) % name % UserString(info_it->specific_cause));
             break;
 

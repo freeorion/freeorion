@@ -349,6 +349,9 @@ Meter* Planet::GetMeter(MeterType type)
 const Meter* Planet::GetMeter(MeterType type) const
 { return UniverseObject::GetMeter(type); }
 
+double Planet::InitialMeterValue(MeterType type) const
+{ return UniverseObject::InitialMeterValue(type); }
+
 double Planet::CurrentMeterValue(MeterType type) const
 { return UniverseObject::CurrentMeterValue(type); }
 

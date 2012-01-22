@@ -32,6 +32,7 @@ public:
 
     double              NextTurnPopGrowth() const;                          ///< predicted pop growth next turn, accounting for limits due to allocated food
 
+    virtual double      InitialMeterValue(MeterType type) const = 0;        ///< implementation should return the initial value of the specified meter \a type
     virtual double      CurrentMeterValue(MeterType type) const = 0;        ///< implementation should current value of the specified meter \a type
     virtual double      NextTurnCurrentMeterValue(MeterType type) const = 0;///< implementation should return an estimate of the next turn's current value of the specified meter \a type
 
