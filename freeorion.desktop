@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=FreeOrion
+GenericName=FreeOrion
+Comment=Run the FreeOrion client
+Exec=freeorion
+Icon=freeorion
+Terminal=true
+Type=Application
+Categories=Game;StrategyGame;
+URL=http://www.freeorion.org
