@@ -2450,7 +2450,7 @@ SITREP_SHIP_DESTROYED_AT_SYSTEM
 The %empire% %shipdesign% '%ship%' was destroyed at %system%.
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
-The %shipdesign% '%ship%' was destroyed at %system%.
+An unaligned %shipdesign% was destroyed at %system%.
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM
 The %empire% fleet %fleet% was destroyed at %system%.
