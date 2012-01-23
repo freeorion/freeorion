@@ -831,8 +831,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
 void Universe::ApplyMeterEffectsAndUpdateMeters()
 { ApplyMeterEffectsAndUpdateMeters(m_objects.FindObjectIDs()); }
 
-void Universe::InitMeterEstimatesAndDiscrepancies()
-{
+void Universe::InitMeterEstimatesAndDiscrepancies() {
     ScopedTimer timer("Universe::InitMeterEstimatesAndDiscrepancies");
 
     // clear old discrepancies and accounting
@@ -845,23 +844,25 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
     UpdateMeterEstimates();
 
     // determine meter max discrepancies
-    for (Effect::AccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
+    for (Effect::AccountingMap::iterator obj_it = m_effect_accounting_map.begin();
+         obj_it != m_effect_accounting_map.end(); ++obj_it)
+    {
         UniverseObject* obj = m_objects.Object(obj_it->first);    // object that has some meters
         if (!obj) {
             Logger().errorStream() << "Universe::InitMeterEstimatesAndDiscrepancies couldn't find an object that was in the effect accounting map...?";
             continue;
         }
-        std::map<MeterType, std::vector<Effect::AccountingInfo> >& meters_map = obj_it->second;
 
         // every meter has a value at the start of the turn, and a value after updating with known effects
-        for (std::map<MeterType, std::vector<Effect::AccountingInfo> >::iterator meter_type_it = meters_map.begin(); meter_type_it != meters_map.end(); ++meter_type_it) {
-            MeterType type = meter_type_it->first;
-            Meter* meter = obj->GetMeter(type);
-            assert(meter);  // all objects should only have accounting info for a meter if that meter exists
+        for (std::map<MeterType, Meter>::iterator meter_it = obj->Meters().begin();
+             meter_it != obj->Meters().end(); ++meter_it)
+        {
+            MeterType type = meter_it->first;
+            Meter& meter = meter_it->second;
             int object_id = obj->ID();
 
             // discrepancy is the difference between expected and actual meter values at start of turn
-            double discrepancy = meter->Initial() - meter->Current();
+            double discrepancy = meter.Initial() - meter.Current();
 
             if (discrepancy == 0.0) continue;   // no discrepancy for this meter
 
@@ -869,13 +870,13 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
             m_effect_discrepancy_map[object_id][type] = discrepancy;
 
             // correct current max meter estimate for discrepancy
-            meter->AddToCurrent(discrepancy);
+            meter.AddToCurrent(discrepancy);
 
             // add discrepancy adjustment to meter accounting
             Effect::AccountingInfo info;
             info.cause_type = ECT_UNKNOWN_CAUSE;
             info.meter_change = discrepancy;
-            info.running_meter_total = meter->Current();
+            info.running_meter_total = meter.Current();
 
             m_effect_accounting_map[object_id][type].push_back(info);
         }
@@ -1071,7 +1072,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     // 0) EffectsGroups from Species
     Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
-        //Logger().debugStream() << "... object (" << it->first << "): " << it->second->Name();
+        Logger().debugStream() << "... object (" << it->first << "): " << it->second->Name();
         const PopCenter* pc = dynamic_cast<const PopCenter*>(it->second);
         if (!pc) continue;
         const std::string& species_name = pc->SpeciesName();

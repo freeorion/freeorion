@@ -982,8 +982,7 @@ Empire::Empire(const std::string& name, const std::string& player_name, int empi
     Init();
 }
 
-void Empire::Init()
-{
+void Empire::Init() {
     m_resource_pools[RE_MINERALS] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_MINERALS));
     m_resource_pools[RE_FOOD] =     boost::shared_ptr<ResourcePool>(new ResourcePool(RE_FOOD));
     m_resource_pools[RE_RESEARCH] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_RESEARCH));

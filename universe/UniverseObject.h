@@ -85,6 +85,8 @@ public:
     virtual bool                Contains(int object_id) const;      ///< returns true if there is an object with id \a object_id is contained within this UniverseObject
     virtual bool                ContainedBy(int object_id) const;   ///< returns true if there is an object with id \a object_id that contains this UniverseObject
 
+    const std::map<MeterType, Meter>&
+                                Meters() const { return m_meters; } ///< returns this UniverseObject's meters
     const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     double                      CurrentMeterValue(MeterType type) const;        ///< returns current value of the specified meter \a type
     double                      InitialMeterValue(MeterType type) const;        ///< returns this turn's initial value for the speicified meter \a type
@@ -131,6 +133,8 @@ public:
     virtual void            MoveTo(double x, double y);
 
 
+    std::map<MeterType, Meter>&
+                            Meters() { return m_meters; }           ///< returns this UniverseObject's meters
     Meter*                  GetMeter(MeterType type);               ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     void                    BackPropegateMeters();                  ///< sets all this UniverseObject's meters' initial values equal to their current values
 
