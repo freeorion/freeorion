@@ -1481,7 +1481,10 @@ void MultiMeterStatusBar::Update() {
             ++num_bars;
             if (actual_meter) {
                 m_initial_values.push_back(actual_meter->Initial());
-                m_projected_values.push_back(obj->NextTurnCurrentMeterValue(meter_types_pair.first));
+                if (target_max_meter)
+                    m_projected_values.push_back(obj->NextTurnCurrentMeterValue(meter_types_pair.first));
+                else
+                    m_projected_values.push_back(actual_meter->Initial());
             } else {
                 m_initial_values.push_back(Meter::INVALID_VALUE);
                 m_projected_values.push_back(Meter::INVALID_VALUE);

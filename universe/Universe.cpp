@@ -1307,6 +1307,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes, bool 
             Logger().debugStream() << "ExecuteEffects Targets after: ";
             for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
                 Logger().debugStream() << " ... " << (*t_it)->Dump();
+            Logger().debugStream() << "";
         }
 
         // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
