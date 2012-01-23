@@ -74,10 +74,11 @@ void Building::Copy(const UniverseObject* copied_object, int empire_id) {
     if (vis >= VIS_BASIC_VISIBILITY) {
         this->m_building_type =             copied_building->m_building_type;
         this->m_planet_id =                 copied_building->m_planet_id;
-
-        if (vis >= VIS_FULL_VISIBILITY) {
-            this->m_ordered_scrapped =      copied_building->m_ordered_scrapped;
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
             this->m_produced_by_empire_id = copied_building->m_produced_by_empire_id;
+            if (vis >= VIS_FULL_VISIBILITY) {
+                this->m_ordered_scrapped =      copied_building->m_ordered_scrapped;
+            }
         }
     }
 }
@@ -85,8 +86,7 @@ void Building::Copy(const UniverseObject* copied_object, int empire_id) {
 const std::string& Building::TypeName() const
 { return UserString("BUILDING"); }
 
-std::string Building::Dump() const
-{
+std::string Building::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
     os << " building type: " << m_building_type
