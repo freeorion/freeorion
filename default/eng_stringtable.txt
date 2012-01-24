@@ -5566,7 +5566,7 @@ BLD_SHIPYARD_CON_ENGINE
 Engineering Bay
 
 BLD_SHIPYARD_CON_ENGINE_DESC
-An advanced engineering facility specializing in the assembly of the Spatial Flux Drive.  This is an upgrade to the Orbital Drydock and allows construction of Spatial Flux Hulls.  In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Antimatter Torpedo ship part.
+An advanced engineering facility specializing in the assembly of the Spatial Flux Drive.  This is an upgrade to the Orbital Drydock and allows construction of Spatial Flux Hulls.
 
 BLD_SHIPYARD_CON_MILIT_MEGAPROC
 Military Megaprocessor
@@ -5590,7 +5590,7 @@ BLD_SHIPYARD_CON_ADV_ENGINE
 Advanced Engineering Bay
 
 BLD_SHIPYARD_CON_ADV_ENGINE_DESC
-An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive, but is also capable of producing the Spatial Flux Drive.  This is an upgrade to the Orbital Drydock and allows construction of Spatial Flux Hulls and Trans-Spatial Hulls.  In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Antimatter Torpedo and Plasma Torpedo ship parts.
+An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive, but is also capable of producing the Spatial Flux Drive.  This is an upgrade to the Orbital Drydock and allows construction of Spatial Flux Hulls and Trans-Spatial Hulls.
 
 BLD_SHIPYARD_CON_MIL_LOG_ASSMBL
 Military Logistics Assembly
