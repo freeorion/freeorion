@@ -1017,8 +1017,7 @@ const GG::Clr& Empire::Color() const
 int Empire::CapitalID() const
 { return m_capital_id; }
 
-int Empire::StockpileID(ResourceType res) const
-{
+int Empire::StockpileID(ResourceType res) const {
     switch (res) {
     case RE_MINERALS:
     case RE_FOOD:
@@ -1036,8 +1035,7 @@ int Empire::StockpileID(ResourceType res) const
 void Empire::SetCapitalID(int id)
 { m_capital_id = id; }
 
-Meter* Empire::GetMeter(const std::string& name)
-{
+Meter* Empire::GetMeter(const std::string& name) {
     std::map<std::string, Meter>::iterator it = m_meters.find(name);
     if (it != m_meters.end())
         return &(it->second);
@@ -1513,8 +1511,7 @@ void Empire::UpdateFleetSupply(const std::map<int, std::set<int> >& starlanes) {
 void Empire::UpdateResourceSupply()
 { UpdateResourceSupply(this->KnownStarlanes()); }
 
-void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes)
-{
+void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes) {
     //std::cout << "Empire::UpdateResourceSupply for empire " << this->Name() << std::endl;
 
     // need to get a set of sets of systems that can exchange resources.  some sets may be just one system,
@@ -1771,8 +1768,7 @@ const std::map<int, int>& Empire::ResourceSupplyRanges() const
 const std::set<int>& Empire::SupplyUnobstructedSystems() const
 { return m_supply_unobstructed_systems; }
 
-bool Empire::FleetOrResourceSupplyableAtSystem(int system_id) const
-{
+bool Empire::FleetOrResourceSupplyableAtSystem(int system_id) const {
     if (system_id == UniverseObject::INVALID_OBJECT_ID)
         return false;
 
@@ -1804,8 +1800,7 @@ Empire::TechItr Empire::AvailableBuildingTypeEnd() const
 const std::set<int>& Empire::ExploredSystems() const
 { return m_explored_systems; }
 
-const std::map<int, std::set<int> > Empire::KnownStarlanes() const
-{
+const std::map<int, std::set<int> > Empire::KnownStarlanes() const {
     // compile starlanes leading into or out of each system
     std::map<int, std::set<int> > retval;
 
@@ -1835,8 +1830,7 @@ const std::map<int, std::set<int> > Empire::KnownStarlanes() const
     return retval;
 }
 
-const std::map<int, std::set<int> > Empire::VisibleStarlanes() const
-{
+const std::map<int, std::set<int> > Empire::VisibleStarlanes() const {
     std::map<int, std::set<int> > retval;   // compile starlanes leading into or out of each system
 
     const Universe& universe = GetUniverse();
@@ -1885,16 +1879,14 @@ Empire::SitRepItr Empire::SitRepEnd() const
 double Empire::ProductionPoints() const
 { return std::min(GetResourcePool(RE_INDUSTRY)->TotalAvailable(), GetResourcePool(RE_MINERALS)->TotalAvailable()); }
 
-const ResourcePool* Empire::GetResourcePool(ResourceType resource_type) const
-{
+const ResourcePool* Empire::GetResourcePool(ResourceType resource_type) const {
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(resource_type);
     if (it == m_resource_pools.end())
         return 0;
     return it->second.get();
 }
 
-double Empire::ResourceStockpile(ResourceType type) const
-{
+double Empire::ResourceStockpile(ResourceType type) const {
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
     if (it == m_resource_pools.end())
         throw std::invalid_argument("Empire::ResourceStockpile passed invalid ResourceType");
@@ -1904,16 +1896,14 @@ double Empire::ResourceStockpile(ResourceType type) const
 double Empire::ResourceMaxStockpile(ResourceType type) const
 { return 0.0; }
 
-double Empire::ResourceProduction(ResourceType type) const
-{
+double Empire::ResourceProduction(ResourceType type) const {
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
     if (it == m_resource_pools.end())
         throw std::invalid_argument("Empire::ResourceProduction passed invalid ResourceType");
     return it->second->Production();
 }
 
-double Empire::ResourceAvailable(ResourceType type) const
-{
+double Empire::ResourceAvailable(ResourceType type) const {
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
     if (it == m_resource_pools.end())
         throw std::invalid_argument("Empire::ResourceAvailable passed invalid ResourceType");
@@ -1926,8 +1916,7 @@ const PopulationPool& Empire::GetPopulationPool() const
 double Empire::Population() const
 { return m_population_pool.Population(); }
 
-void Empire::SetResourceStockpile(ResourceType resource_type, double stockpile)
-{
+void Empire::SetResourceStockpile(ResourceType resource_type, double stockpile) {
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(resource_type);
     if (it == m_resource_pools.end())
         throw std::invalid_argument("Empire::SetResourceStockpile passed invalid ResourceType");
@@ -1937,8 +1926,7 @@ void Empire::SetResourceStockpile(ResourceType resource_type, double stockpile)
 void Empire::SetResourceMaxStockpile(ResourceType resource_type, double max)
 {}
 
-void Empire::PlaceTechInQueue(const std::string& name, int pos/* = -1*/)
-{
+void Empire::PlaceTechInQueue(const std::string& name, int pos/* = -1*/) {
     if (name.empty() || TechResearched(name) || m_techs.find(name) != m_techs.end())
         return;
     const Tech* tech = GetTech(name);
@@ -1991,8 +1979,7 @@ void Empire::SetTechResearchProgress(const std::string& name, double progress) {
     // don't just give tech to empire, as another effect might reduce its progress before end of turn
 }
 
-void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/)
-{
+void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/) {
     if (!BuildableItem(build_type, name, location))
         Logger().debugStream() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue...";
 
@@ -2007,8 +1994,7 @@ void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, in
     m_production_queue.Update(this, m_resource_pools, m_production_progress);
 }
 
-void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos/* = -1*/)
-{
+void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos/* = -1*/) {
     if (!BuildableItem(build_type, design_id, location))
         Logger().debugStream() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue...";
 
@@ -2023,8 +2009,7 @@ void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, 
     m_production_queue.Update(this, m_resource_pools, m_production_progress);
 }
 
-void Empire::PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos/* = -1*/)
-{
+void Empire::PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos/* = -1*/) {
     if (item.build_type == BT_BUILDING)
         PlaceBuildInQueue(item.build_type, item.name, number, location, pos);
     else if (item.build_type == BT_SHIP)
@@ -2033,8 +2018,7 @@ void Empire::PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int 
         throw std::invalid_argument("Empire::PlaceBuildInQueue was passed a ProductionQueue::ProductionItem with an invalid BuildType");
 }
 
-void Empire::SetBuildQuantity(int index, int quantity)
-{
+void Empire::SetBuildQuantity(int index, int quantity) {
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
         throw std::runtime_error("Empire::SetBuildQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
     if (quantity < 1)
@@ -2047,8 +2031,7 @@ void Empire::SetBuildQuantity(int index, int quantity)
     m_production_queue.Update(this, m_resource_pools, m_production_progress);
 }
 
-void Empire::MoveBuildWithinQueue(int index, int new_index)
-{
+void Empire::MoveBuildWithinQueue(int index, int new_index) {
     if (index < new_index)
         --new_index;
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index ||
@@ -2063,8 +2046,7 @@ void Empire::MoveBuildWithinQueue(int index, int new_index)
     m_production_queue.Update(this, m_resource_pools, m_production_progress);
 }
 
-void Empire::RemoveBuildFromQueue(int index)
-{
+void Empire::RemoveBuildFromQueue(int index) {
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
         throw std::runtime_error("Empire::RemoveBuildFromQueue() : Attempted to delete a production queue item with an invalid index.");
     m_production_queue.erase(index);
@@ -2139,8 +2121,7 @@ void Empire::ConquerBuildsAtLocation(int location_id) {
     }
 }
 
-void Empire::AddTech(const std::string& name)
-{
+void Empire::AddTech(const std::string& name) {
     const Tech* tech = GetTech(name);
     if (!tech)
         Logger().errorStream() << "Empire::AddTech given and invalid tech: " << name;;
@@ -2150,8 +2131,7 @@ void Empire::AddTech(const std::string& name)
         UnlockItem(unlocked_items[i]);  // potential infinite if a tech (in)directly unlocks itself?
 }
 
-void Empire::UnlockItem(const ItemSpec& item)
-{
+void Empire::UnlockItem(const ItemSpec& item) {
     switch (item.type) {
     case UIT_BUILDING:
         AddBuildingType(item.name);
@@ -2173,8 +2153,7 @@ void Empire::UnlockItem(const ItemSpec& item)
     }
 }
 
-void Empire::AddBuildingType(const std::string& name)
-{
+void Empire::AddBuildingType(const std::string& name) {
     const BuildingType* building_type = GetBuildingType(name);
     if (!building_type) {
         Logger().errorStream() << "Empire::AddBuildingType given an invalid building type name: " << name;
@@ -2184,8 +2163,7 @@ void Empire::AddBuildingType(const std::string& name)
         m_available_building_types.insert(name);
 }
 
-void Empire::AddPartType(const std::string& name)
-{
+void Empire::AddPartType(const std::string& name) {
     const PartType* part_type = GetPartType(name);
     if (!part_type) {
         Logger().errorStream() << "Empire::AddPartType given an invalid part type name: " << name;
@@ -2195,8 +2173,7 @@ void Empire::AddPartType(const std::string& name)
         m_available_part_types.insert(name);
 }
 
-void Empire::AddHullType(const std::string& name)
-{
+void Empire::AddHullType(const std::string& name) {
     const HullType* hull_type = GetHullType(name);
     if (!hull_type) {
         Logger().errorStream() << "Empire::AddHullType given an invalid hull type name: " << name;
@@ -2206,16 +2183,14 @@ void Empire::AddHullType(const std::string& name)
         m_available_hull_types.insert(name);
 }
 
-void Empire::AddExploredSystem(int ID)
-{
+void Empire::AddExploredSystem(int ID) {
     if (GetObject<System>(ID))
         m_explored_systems.insert(ID);
     else
         Logger().errorStream() << "Empire::AddExploredSystem given an invalid system id: " << ID;
 }
 
-std::string Empire::NewShipName()
-{
+std::string Empire::NewShipName() {
     std::string retval;
     static std::vector<std::string> ship_names;
     if (ship_names.empty())
@@ -2228,8 +2203,7 @@ std::string Empire::NewShipName()
     return retval;
 }
 
-void Empire::AddShipDesign(int ship_design_id)
-{
+void Empire::AddShipDesign(int ship_design_id) {
     /* Check if design id is valid.  that is, check that it corresponds to an
      * existing shipdesign in the universe.  On clients, this means that this
      * empire knows about this ship design and the server consequently sent the
@@ -2250,8 +2224,7 @@ void Empire::AddShipDesign(int ship_design_id)
     }
 }
 
-int Empire::AddShipDesign(ShipDesign* ship_design)
-{
+int Empire::AddShipDesign(ShipDesign* ship_design) {
     Universe& universe = GetUniverse();
     /* check if there already exists this same design in the universe.  On clients, this checks whether this empire
        knows of this exact design and is trying to re-add it.  On the server, this checks whether this exact design
@@ -2286,8 +2259,7 @@ int Empire::AddShipDesign(ShipDesign* ship_design)
     return new_design_id;
 }
 
-void Empire::RemoveShipDesign(int ship_design_id)
-{
+void Empire::RemoveShipDesign(int ship_design_id) {
     if (m_ship_designs.find(ship_design_id) != m_ship_designs.end()) {
         m_ship_designs.erase(ship_design_id);
         ShipDesignsChangedSignal();
@@ -2302,8 +2274,7 @@ void Empire::AddSitRepEntry(SitRepEntry* entry)
 void Empire::RemoveTech(const std::string& name)
 { m_techs.erase(name); }
 
-void Empire::LockItem(const ItemSpec& item)
-{
+void Empire::LockItem(const ItemSpec& item) {
     switch (item.type) {
     case UIT_BUILDING:
         RemoveBuildingType(item.name);
@@ -2326,32 +2297,28 @@ void Empire::LockItem(const ItemSpec& item)
     }
 }
 
-void Empire::RemoveBuildingType(const std::string& name)
-{
+void Empire::RemoveBuildingType(const std::string& name) {
     std::set<std::string>::const_iterator it = m_available_building_types.find(name);
     if (it == m_available_building_types.end())
         Logger().debugStream() << "Empire::RemoveBuildingType asked to remove building type " << name << " that was no available to this empire";
     m_available_building_types.erase(name);
 }
 
-void Empire::RemovePartType(const std::string& name)
-{
+void Empire::RemovePartType(const std::string& name) {
     std::set<std::string>::const_iterator it = m_available_part_types.find(name);
     if (it == m_available_part_types.end())
         Logger().debugStream() << "Empire::RemovePartType asked to remove part type " << name << " that was no available to this empire";
     m_available_part_types.erase(name);
 }
 
-void Empire::RemoveHullType(const std::string& name)
-{
+void Empire::RemoveHullType(const std::string& name) {
     std::set<std::string>::const_iterator it = m_available_hull_types.find(name);
     if (it == m_available_hull_types.end())
         Logger().debugStream() << "Empire::RemoveHullType asked to remove hull type " << name << " that was no available to this empire";
     m_available_hull_types.erase(name);
 }
 
-void Empire::ClearSitRep()
-{
+void Empire::ClearSitRep() {
     for (SitRepItr it = m_sitrep_entries.begin(); it != m_sitrep_entries.end(); ++it)
         delete *it;
     m_sitrep_entries.clear();
@@ -2378,8 +2345,7 @@ namespace {
     }
 }
 
-void Empire::CheckResearchProgress()
-{
+void Empire::CheckResearchProgress() {
     SanitizeResearchQueue(m_research_queue);
 
     // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
@@ -2411,8 +2377,7 @@ void Empire::CheckResearchProgress()
     // m_resource_pools[RE_RESEARCH]->SetStockpile(m_resource_pools[RE_RESEARCH]->TotalAvailable() - m_research_queue.TotalRPsSpent());
 }
 
-void Empire::CheckProductionProgress()
-{
+void Empire::CheckProductionProgress() {
     Logger().debugStream() << "========Empire::CheckProductionProgress=======";
     // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
     // m_production_queue.Update(this, m_resource_pools, m_production_progress);
@@ -2600,8 +2565,7 @@ void Empire::CheckProductionProgress()
 void Empire::CheckTradeSocialProgress()
 { m_resource_pools[RE_TRADE]->SetStockpile(m_resource_pools[RE_TRADE]->TotalAvailable() - m_maintenance_total_cost); }
 
-void Empire::CheckGrowthFoodProgress()
-{
+void Empire::CheckGrowthFoodProgress() {
     Logger().debugStream() << "========Empire::CheckGrowthFoodProgress=======";
 
     boost::shared_ptr<ResourcePool> pool = m_resource_pools[RE_FOOD];
@@ -2686,8 +2650,7 @@ void Empire::SetName(const std::string& name)
 void Empire::SetPlayerName(const std::string& player_name)
 { m_player_name = player_name; }
 
-void Empire::InitResourcePools()
-{
+void Empire::InitResourcePools() {
     const ObjectMap& objects = GetUniverse().Objects();
     std::vector<const UniverseObject*> object_vec = objects.FindObjects(OwnedVisitor<UniverseObject>(m_id));
     std::vector<int> object_ids_vec, popcenter_ids_vec;
@@ -2742,8 +2705,7 @@ void Empire::InitResourcePools()
     }
 }
 
-void Empire::UpdateResourcePools()
-{
+void Empire::UpdateResourcePools() {
     // updating queues, allocated_rp, distribution and growth each update their respective pools,
     // (as well as the ways in which the resources are used, which needs to be done
     // simultaneously to keep things consistent)
@@ -2754,15 +2716,13 @@ void Empire::UpdateResourcePools()
     UpdatePopulationGrowth();
 }
 
-void Empire::UpdateResearchQueue()
-{
+void Empire::UpdateResearchQueue() {
     m_resource_pools[RE_RESEARCH]->Update();
     m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
     m_resource_pools[RE_RESEARCH]->ChangedSignal();
 }
 
-void Empire::UpdateProductionQueue()
-{
+void Empire::UpdateProductionQueue() {
     Logger().debugStream() << "========= Production Update for empire: " << EmpireID() << " ========";
 
     m_resource_pools[RE_MINERALS]->Update();
@@ -2772,8 +2732,7 @@ void Empire::UpdateProductionQueue()
     m_resource_pools[RE_INDUSTRY]->ChangedSignal();
 }
 
-void Empire::UpdateTradeSpending()
-{
+void Empire::UpdateTradeSpending() {
     m_resource_pools[RE_TRADE]->Update(); // recalculate total trade production
 
     // TODO: Replace with call to some other subsystem, similar to the Update...Queue functions
@@ -2795,8 +2754,7 @@ void Empire::UpdateTradeSpending()
     m_resource_pools[RE_TRADE]->ChangedSignal();
 }
 
-void Empire::UpdateFoodDistribution()
-{
+void Empire::UpdateFoodDistribution() {
     Logger().debugStream() << "======= Food distribution for empire: " << EmpireID() << " =======";
 
     m_resource_pools[RE_FOOD]->Update();  // recalculate total food production

@@ -18,14 +18,12 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_species_
-    {
+    struct insert_species_ {
         template <typename Arg1, typename Arg2>
         struct result
         { typedef void type; };
 
-        void operator()(std::map<std::string, Species*>& species, Species* specie) const
-        {
+        void operator()(std::map<std::string, Species*>& species, Species* specie) const {
             if (!species.insert(std::make_pair(specie->Name(), specie)).second) {
                 std::string error_str = "ERROR: More than one species in species.txt has the name " + specie->Name();
                 throw std::runtime_error(error_str.c_str());
@@ -34,10 +32,8 @@ namespace {
     };
     const boost::phoenix::function<insert_species_> insert_species;
 
-    struct rules
-    {
-        rules()
-        {
+    struct rules {
+        rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -104,7 +100,7 @@ namespace {
                 >   -foci(_f)
                 >   -effects(_g)
                 >   -environments(_h)
-                >    parse::label(Graphic_name) > tok.string [ insert_species(_r1, new_<Species>(_a, _b, _f, _h, _g, _c, _d, _e, _1)) ]
+                >    parse::label(Graphic_name) > tok.string [ insert_species(_r1, new_<Species>(_a, _b, _f, _h, _g, _c, _e, _d, _1)) ]
                 ;
 
             start
