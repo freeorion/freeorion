@@ -718,7 +718,7 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType,
 
     int turns = 1;  // to keep track of how man turn-iterations simulation takes to finish items
     const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
-
+    const double TOO_LONG_TIME = 0.1;   // max time in ms to spend simulating queue
 
 
     // remove from simulated queue any items that can't be built due to not
@@ -761,7 +761,8 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType,
     // cycle through items on queue, adding up their allotted PP until each is
     // finished and removed from queue until everything on queue has been
     // finished, in order to calculate expected completion times
-    while (!sim_queue.empty() && turns < TOO_MANY_TURNS) {
+    boost::timer sim_queue_timer;
+    while (!sim_queue.empty() && turns < TOO_MANY_TURNS && sim_queue_timer.elapsed() < TOO_LONG_TIME) {
         std::map<std::set<int>, double> allocated_pp;
         int projects_in_progress = 0;
 
@@ -814,7 +815,7 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType,
         }
         ++turns;
     }   // loop while (!sim_queue.empty() && turns < TOO_MANY_TURNS)
-
+    //Logger().debugStream() << "ProductionQueue::Update queue sim time: " << sim_queue_timer.elapsed() * 1000.0;
 
     // mark rest of items on simulated queue (if any) as never to be finished
     for (unsigned int i = 0; i < sim_queue.size(); ++i) {
