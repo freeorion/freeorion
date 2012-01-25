@@ -1983,6 +1983,9 @@ void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, in
     if (!BuildableItem(build_type, name, location))
         Logger().debugStream() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue...";
 
+    if (m_production_queue.size() >= 100)
+        return;
+
     ProductionQueue::Element build(build_type, name, number, number, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos) {
         m_production_queue.push_back(build);
@@ -1997,6 +2000,9 @@ void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, in
 void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos/* = -1*/) {
     if (!BuildableItem(build_type, design_id, location))
         Logger().debugStream() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue...";
+
+    if (m_production_queue.size() >= 100)
+        return;
 
     ProductionQueue::Element build(build_type, design_id, number, number, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos) {
