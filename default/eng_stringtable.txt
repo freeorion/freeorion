@@ -180,26 +180,52 @@ Small and cheap unarmed vessel designed for recon and exploration.
 
 SD_MARK1
 Mark I
-
 SD_MARK1_DESC
-Affordable armed patrol frigate.
+Basic mass-driver patrol frigate.
 
 SD_MARK2
 Mark II
-
 SD_MARK2_DESC
-Cruiser with strong defensive and offensive capabilities.
+Improved mass-driver patrol frigate.
 
 SD_MARK3
 Mark III
-
 SD_MARK3_DESC
-Advanced cruiser with heavy weaponry and armor to do the dirty work.
-        
+Advanced mass-driver patrol frigate.
+
 SD_MARK4
 Mark IV
-
 SD_MARK4_DESC
+Top-of-the-Line mass-driver patrol frigate.
+
+SD_MARK5
+Mark V
+SD_MARK5_DESC
+Basic laser patrol frigate.
+
+SD_MARK6
+Mark VI
+SD_MARK6_DESC
+Improved laser patrol frigate.
+
+SD_MARK7
+Mark VII
+SD_MARK7_DESC
+Advanced laser patrol frigate.
+
+SD_MARK8
+Mark VIII
+SD_MARK8_DESC
+Top-of-the-Line laser patrol frigate.
+
+SD_ROBOTIC1
+Robotic I
+SD_ROBOTIC1_DESC
+Advanced cruiser with heavy weaponry and armor to do the dirty work.
+        
+SD_GRAVITATING1
+Gravitating I
+SD_GRAVITATING1_DESC
 Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.
 
 SD_COLONY_SHIP

@@ -84,31 +84,103 @@ ShipDesign
         "SH_DEFENSE_GRID"
     ]
     graphic = "misc/generic.png"
-    model = "guardian"
+    model = "mark1"
 
 ShipDesign
     name = "SD_MARK3"
     description = "SD_MARK3_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_WEAPON_3"
+        "SR_WEAPON_3"
+        "SH_DEFENSE_GRID"
+    ]
+    graphic = "misc/generic.png"
+    model = "mark1"
+    
+ShipDesign
+    name = "SD_MARK4"
+    description = "SD_MARK4_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_WEAPON_4"
+        "SR_WEAPON_4"
+        "SH_DEFENSE_GRID"
+    ]
+    graphic = "misc/generic.png"
+    model = "mark1"
+    
+ShipDesign
+    name = "SD_MARK5"
+    description = "SD_MARK5_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_WEAPON_5"
+        "SR_WEAPON_5"
+        "SH_DEFENSE_GRID"
+    ]
+    graphic = "misc/generic.png"
+    model = "mark1"
+    
+ShipDesign
+    name = "SD_MARK6"
+    description = "SD_MARK6_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_WEAPON_6"
+        "SR_WEAPON_6"
+        "SH_DEFENSE_GRID"
+    ]
+    graphic = "misc/generic.png"
+    model = "mark1"
+    
+ShipDesign
+    name = "SD_MARK7"
+    description = "SD_MARK7_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_WEAPON_7"
+        "SR_WEAPON_7"
+        "SH_DEFENSE_GRID"
+    ]
+    graphic = "misc/generic.png"
+    model = "mark1"
+    
+ShipDesign
+    name = "SD_MARK8"
+    description = "SD_MARK8_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_WEAPON_8"
+        "SR_WEAPON_8"
+        "SH_DEFENSE_GRID"
+    ]
+    graphic = "misc/generic.png"
+    model = "mark1"
+
+ShipDesign
+    name = "SD_ROBOTIC1"
+    description = "SD_ROBOTIC1_DESC"
     hull = "SH_ROBOTIC"
     parts = [
         "DT_OPTICAL_SCANNER"
-        "SR_WEAPON_3"
-        "SR_WEAPON_3"
+        "SR_WEAPON_5"
+        "SR_WEAPON_5"
         "SH_DEFLECTOR"
     ]
     graphic = "misc/generic.png"
     model = "mark1"
 
 ShipDesign
-    name = "SD_MARK4"
-    description = "SD_MARK4_DESC"
+    name = "SD_GRAVITATING1"
+    description = "SD_GRAVITATING1_DESC"
     hull = "SH_SELF_GRAVITATING"
     parts = [
         "DT_OPTICAL_SCANNER"
-        "SR_WEAPON_4"
-        "SR_WEAPON_4"
-        "SR_WEAPON_4"
-        "SR_WEAPON_4"
+        "SR_WEAPON_9"
+        "SR_WEAPON_9"
+        "SR_WEAPON_9"
+        "SR_WEAPON_9"
         "SH_DEFLECTOR"
     ]
     graphic = "misc/generic.png"
