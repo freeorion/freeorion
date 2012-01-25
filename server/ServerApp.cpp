@@ -111,8 +111,7 @@ ServerApp::ServerApp() :
     m_fsm->initiate();
 }
 
-ServerApp::~ServerApp()
-{
+ServerApp::~ServerApp() {
     CleanupAIs();
     delete m_fsm;
 }
@@ -120,8 +119,7 @@ ServerApp::~ServerApp()
 void ServerApp::operator()()
 { Run(); }
 
-void ServerApp::Exit(int code)
-{
+void ServerApp::Exit(int code) {
     Logger().fatalStream() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
     exit(code);
 }
@@ -141,8 +139,7 @@ namespace {
 #include <stdlib.h>
 #endif
 
-void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data)
-{
+void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data) {
     // check if AI clients are needed for given setup data
     bool need_AIs = false;
     for (int i = 0; i < static_cast<int>(player_setup_data.size()); ++i) {
@@ -220,8 +217,7 @@ CombatData* ServerApp::CurrentCombat()
 ServerNetworking& ServerApp::Networking()
 { return s_app->m_networking; }
 
-void ServerApp::Run()
-{
+void ServerApp::Run() {
     Logger().debugStream() << "FreeOrion server waiting for network events";
     std::cout << "FreeOrion server waiting for network events" << std::endl;
     while (1) {
@@ -232,16 +228,14 @@ void ServerApp::Run()
     }
 }
 
-void ServerApp::CleanupAIs()
-{
+void ServerApp::CleanupAIs() {
     Logger().debugStream() << "ServerApp::CleanupAIs() killing " << m_ai_client_processes.size() << " AI clients.";
     for (std::vector<Process>::iterator it = m_ai_client_processes.begin(); it != m_ai_client_processes.end(); ++it)
         it->Kill();
     m_ai_client_processes.clear();
 }
 
-void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection)
-{
+void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection) {
     if (msg.SendingPlayer() != player_connection->PlayerID()) {
         Logger().errorStream() << "ServerApp::HandleMessage : Received an message with a sender ID that differs from the sending player's ID.  Terminating connection.";
         m_networking.Disconnect(player_connection);
@@ -276,8 +270,7 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
     }
 }
 
-void ServerApp::HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_connection)
-{
+void ServerApp::HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_connection) {
     switch (msg.Type()) {
     case Message::HOST_SP_GAME: m_fsm->process_event(HostSPGame(msg, player_connection));   break;
     case Message::HOST_MP_GAME: m_fsm->process_event(HostMPGame(msg, player_connection));   break;
@@ -296,8 +289,7 @@ void ServerApp::HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_c
 void ServerApp::PlayerDisconnected(PlayerConnectionPtr player_connection)
 { m_fsm->process_event(Disconnection(player_connection)); }
 
-void ServerApp::SelectNewHost()
-{
+void ServerApp::SelectNewHost() {
     int new_host_id = Networking::INVALID_PLAYER_ID;
     int old_host_id = m_networking.HostPlayerID();
 
@@ -331,8 +323,7 @@ void ServerApp::SelectNewHost()
     }
 }
 
-void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_data)
-{
+void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_data) {
     // associate player IDs with player setup data.  the player connection with
     // id == m_networking.HostPlayerID() should be the human player in
     // PlayerSetupData.  AI player connections are assigned one of the remaining
@@ -382,8 +373,7 @@ void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_d
     NewGameInit(single_player_setup_data, player_id_setup_data);
 }
 
-void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data)
-{
+void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data) {
     // associate player IDs with player setup data by matching player IDs when
     // available (human) and names (for AI clients which didn't have an ID
     // before now because the lobby data was set up without connected/established
@@ -454,8 +444,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
     NewGameInit(multiplayer_lobby_data, player_id_setup_data);
 }
 
-void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std::map<int, PlayerSetupData>& player_id_setup_data)
-{
+void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std::map<int, PlayerSetupData>& player_id_setup_data) {
     Logger().debugStream() << "ServerApp::NewGameInit";
 
     // ensure some reasonable inputs
@@ -894,12 +883,9 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 }
 
 Empire* ServerApp::GetPlayerEmpire(int player_id) const
-{
-    return Empires().Lookup(PlayerEmpireID(player_id));
-}
+{ return Empires().Lookup(PlayerEmpireID(player_id)); }
 
-int ServerApp::PlayerEmpireID(int player_id) const
-{
+int ServerApp::PlayerEmpireID(int player_id) const {
     std::map<int, int>::const_iterator it = m_player_empire_ids.find(player_id);
     if (it != m_player_empire_ids.end())
         return it->second;
@@ -907,8 +893,7 @@ int ServerApp::PlayerEmpireID(int player_id) const
         return ALL_EMPIRES;
 }
 
-int ServerApp::EmpirePlayerID(int empire_id) const
-{
+int ServerApp::EmpirePlayerID(int empire_id) const {
     for (std::map<int, int>::const_iterator it = m_player_empire_ids.begin(); it != m_player_empire_ids.end(); ++it)
         if (it->second == empire_id)
             return it->first;
@@ -916,22 +901,15 @@ int ServerApp::EmpirePlayerID(int empire_id) const
 }
 
 void ServerApp::AddEmpireTurn(int empire_id)
-{
-    m_turn_sequence[empire_id] = 0; // std::map<int, OrderSet*>
-}
+{ m_turn_sequence[empire_id] = 0; } // std::map<int, OrderSet*>
 
 void ServerApp::RemoveEmpireTurn(int empire_id)
-{
-    m_turn_sequence.erase(empire_id);
-}
+{ m_turn_sequence.erase(empire_id); }
 
 void ServerApp::SetEmpireTurnOrders(int empire_id, OrderSet* order_set)
-{
-    m_turn_sequence[empire_id] = order_set;
-}
+{ m_turn_sequence[empire_id] = order_set; }
 
-void ServerApp::ClearEmpireTurnOrders()
-{
+void ServerApp::ClearEmpireTurnOrders() {
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         if (it->second) {
             delete it->second;
@@ -940,8 +918,7 @@ void ServerApp::ClearEmpireTurnOrders()
     }
 }
 
-bool ServerApp::AllOrdersReceived()
-{
+bool ServerApp::AllOrdersReceived() {
     Logger().debugStream() << "ServerApp::AllOrdersReceived()";
 
     // Loop through to find empire ID and check for valid orders pointer
@@ -1037,7 +1014,6 @@ namespace {
     /** Returns true iff there is an appropriate combination of objects in the
       * system with id \a system_id for a combat to occur. */
     bool CombatConditionsInSystem(int system_id) {
-
         std::set<int> ids_of_empires_with_combat_fleets_here;
         std::set<int> ids_of_empires_with_fleets_here;
         GetEmpireIDsWithFleetsAndCombatFleetsAtSystem(ids_of_empires_with_fleets_here, ids_of_empires_with_combat_fleets_here, system_id);
@@ -1610,8 +1586,7 @@ namespace {
     }
 }
 
-void ServerApp::PreCombatProcessTurns()
-{
+void ServerApp::PreCombatProcessTurns() {
     EmpireManager& empires = Empires();
     ObjectMap& objects = m_universe.Objects();
 
@@ -1733,8 +1708,7 @@ void ServerApp::PreCombatProcessTurns()
     }
 }
 
-void ServerApp::ProcessCombats()
-{
+void ServerApp::ProcessCombats() {
     Logger().debugStream() << "ServerApp::ProcessCombats";
     m_networking.SendMessage(TurnProgressMessage(Message::COMBAT));
 
@@ -1816,8 +1790,7 @@ void ServerApp::ProcessCombats()
     CleanupSystemCombatInfo(system_combat_info);
 }
 
-void ServerApp::PostCombatProcessTurns()
-{
+void ServerApp::PostCombatProcessTurns() {
     EmpireManager& empires = Empires();
     ObjectMap& objects = m_universe.Objects();
 
@@ -2034,8 +2007,7 @@ void ServerApp::PostCombatProcessTurns()
     }
 }
 
-void ServerApp::CheckForEmpireEliminationOrVictory()
-{
+void ServerApp::CheckForEmpireEliminationOrVictory() {
     //EmpireManager& empires = Empires();
     //ObjectMap& objects = m_universe.Objects();
 
@@ -2185,8 +2157,7 @@ void ServerApp::CheckForEmpireEliminationOrVictory()
 void ServerApp::AddEmpireCombatTurn(int empire_id)
 { m_combat_turn_sequence[empire_id] = 0; }
 
-void ServerApp::ClearEmpireCombatTurns()
-{
+void ServerApp::ClearEmpireCombatTurns() {
     ClearEmpireCombatTurnOrders();
     m_combat_turn_sequence.clear();
 }
@@ -2194,8 +2165,7 @@ void ServerApp::ClearEmpireCombatTurns()
 void ServerApp::SetEmpireCombatTurnOrders(int empire_id, CombatOrderSet* order_set)
 { m_combat_turn_sequence[empire_id] = order_set; }
 
-void ServerApp::ClearEmpireCombatTurnOrders()
-{
+void ServerApp::ClearEmpireCombatTurnOrders() {
     for (std::map<int, CombatOrderSet*>::iterator it = m_combat_turn_sequence.begin();
          it != m_combat_turn_sequence.end();
          ++it) {
@@ -2204,8 +2174,7 @@ void ServerApp::ClearEmpireCombatTurnOrders()
     }
 }
 
-bool ServerApp::AllCombatOrdersReceived()
-{
+bool ServerApp::AllCombatOrdersReceived() {
     for (std::map<int, CombatOrderSet*>::iterator it = m_combat_turn_sequence.begin();
          it != m_combat_turn_sequence.end();
          ++it) {
@@ -2215,8 +2184,7 @@ bool ServerApp::AllCombatOrdersReceived()
     return true;
 }
 
-void ServerApp::ProcessCombatTurn()
-{
+void ServerApp::ProcessCombatTurn() {
     PathingEngine& pathing_engine = m_current_combat->m_pathing_engine;
 
     // apply combat orders
@@ -2272,8 +2240,7 @@ void ServerApp::ProcessCombatTurn()
     ++m_current_combat->m_combat_turn_number;
 }
 
-bool ServerApp::CombatTerminated()
-{
+bool ServerApp::CombatTerminated() {
     // TODO
     return false;
 }
