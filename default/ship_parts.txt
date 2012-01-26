@@ -96,7 +96,7 @@ Part
     ROF = 1
     range = 50
     buildcost = 25
-    buildtime = 3
+    buildtime = 2
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
     graphic = "icons/ship_parts/laser-3.png"
@@ -109,7 +109,7 @@ Part
     ROF = 1
     range = 50
     buildcost = 25
-    buildtime = 3
+    buildtime = 2
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
     graphic = "icons/ship_parts/laser-4.png"
@@ -135,7 +135,7 @@ Part
     ROF = 1
     range = 50
     buildcost = 100
-    buildtime = 4
+    buildtime = 3
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
     graphic = "icons/ship_parts/plasma-2.png"
@@ -148,7 +148,7 @@ Part
     ROF = 1
     range = 50
     buildcost = 100
-    buildtime = 4
+    buildtime = 3
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
     graphic = "icons/ship_parts/plasma-3.png" 
@@ -161,7 +161,7 @@ Part
     ROF = 1
     range = 50
     buildcost = 100
-    buildtime = 4
+    buildtime = 3
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
     graphic = "icons/ship_parts/plasma-4.png"
