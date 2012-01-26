@@ -1843,11 +1843,13 @@ Hull
             effects = [
                 CreateShip "SM_KRILL_2"
                 Destroy
+                /*
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
                         tag = "predefinedshipdesign" data = "SM_KRILL_2"
                         tag = "system" data = Source.SystemID
+                */
                     ]
             ]
 
@@ -1916,11 +1918,13 @@ Hull
             stackinggroup = "KRILL_2_ACTION_STACK"
             effects = [
                 CreateShip "SM_KRILL_3"
+                /*
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
                         tag = "predefinedshipdesign" data = "SM_KRILL_3"
                         tag = "system" data = Source.SystemID
+                        */
                     ]
             ]
         EffectsGroup
@@ -1945,11 +1949,13 @@ Hull
             stackinggroup = "KRILL_2_ACTION_STACK"
             effects = [
                 CreateShip "SM_KRILL_1"
+                /*
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
                         tag = "predefinedshipdesign" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID
+                        */
                     ]
             ]
             
@@ -2018,11 +2024,13 @@ Hull
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = [
                 CreateShip "SM_KRILL_4"
+                /*
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
                         tag = "predefinedshipdesign" data = "SM_KRILL_4"
                         tag = "system" data = Source.SystemID
+                        */
                     ]
             ]
         EffectsGroup
@@ -2047,11 +2055,13 @@ Hull
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = [
                 CreateShip "SM_KRILL_1"
+                /*
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
                         tag = "predefinedshipdesign" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID
+                        */
                     ]
             ]
             
@@ -2113,11 +2123,13 @@ Hull
             stackinggroup = "KRILL_4_ACTION_STACK"
             effects = [
                 CreateShip "SM_KRILL_1"
+                /*
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
                         tag = "predefinedshipdesign" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID
+                        */
                     ]
             ]
 
