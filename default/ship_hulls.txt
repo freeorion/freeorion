@@ -1849,8 +1849,8 @@ Hull
                     parameters = [
                         tag = "predefinedshipdesign" data = "SM_KRILL_2"
                         tag = "system" data = Source.SystemID
-                */
                     ]
+                */
             ]
 
         EffectsGroup
