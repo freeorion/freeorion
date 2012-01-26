@@ -84,8 +84,8 @@ namespace {
             flattened_conditions = FlattenAndNestedConditions(conditions);
         //else if (dynamic_cast<const Condition::Or*>(*conditions.begin()))
         //    flattened_conditions = FlattenOrNestedConditions(conditions);
-        //else
-        //    std::cout << "";
+        else
+            flattened_conditions = conditions;
 
         for (std::vector<const Condition::ConditionBase*>::const_iterator it = flattened_conditions.begin();
              it != flattened_conditions.end(); ++it)
@@ -5118,7 +5118,7 @@ std::string Condition::And::Dump() const
         retval += m_operands[i]->Dump();
     }
     --g_indent;
-    retval += "\n" + DumpIndent() + "]";
+    retval += "\n" + DumpIndent() + "]\n";
     return retval;
 }
 
@@ -5213,7 +5213,7 @@ std::string Condition::Or::Dump() const
         retval += m_operands[i]->Dump();
     }
     --g_indent;
-    retval += "\n" + DumpIndent() + "]";
+    retval += "\n" + DumpIndent() + "]\n";
     return retval;
 }
 
