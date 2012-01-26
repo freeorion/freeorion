@@ -507,17 +507,12 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
 }
 
 const std::set<BuildType>& BuildDesignatorWnd::BuildSelector::GetBuildTypesShown() const
-{
-   return m_build_types_shown;
-}
+{return m_build_types_shown; }
 
 const std::pair<bool, bool>& BuildDesignatorWnd::BuildSelector::GetAvailabilitiesShown() const
-{
-    return m_availabilities_shown;
-}
+{ return m_availabilities_shown; }
 
-void BuildDesignatorWnd::BuildSelector::DoLayout()
-{
+void BuildDesignatorWnd::BuildSelector::DoLayout() {
     int num_buttons = std::max(1, static_cast<int>(m_build_type_buttons.size() + m_availability_buttons.size()));
     GG::X x(0);
     GG::X button_width = ClientWidth() / num_buttons;
@@ -535,8 +530,7 @@ void BuildDesignatorWnd::BuildSelector::DoLayout()
                                 ClientSize() - GG::Pt(GG::X0, GG::Y(INNER_BORDER_ANGLE_OFFSET)));
 }
 
-void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
+void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
     // maybe later do something interesting with docking
@@ -546,8 +540,7 @@ void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt&
         DoLayout();
 }
 
-void BuildDesignatorWnd::BuildSelector::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
-{
+void BuildDesignatorWnd::BuildSelector::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
     if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) {  // resize-dragging
         GG::Pt new_lr = pt - m_drag_offset;
 
@@ -580,8 +573,7 @@ void BuildDesignatorWnd::BuildSelector::LDrag(const GG::Pt& pt, const GG::Pt& mo
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
-{
+void BuildDesignatorWnd::BuildSelector::MinimizeClicked() {
     if (!m_minimized) {
         m_minimized = true;
         m_original_size = Size();
@@ -614,8 +606,7 @@ void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool refresh_list)
-{
+void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool refresh_list) {
     //std::cout << "BuildDesignatorWnd::BuildSelector::SetBuildLocation(" << location_id << ")" << std::endl;
     if (m_build_location != location_id) {
         m_build_location = location_id;
@@ -624,8 +615,7 @@ void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool r
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRES*/, bool refresh_list/* = true*/)
-{
+void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRES*/, bool refresh_list/* = true*/) {
     if (empire_id == m_empire_id)
         return;
 
@@ -644,8 +634,7 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::Refresh()
-{
+void BuildDesignatorWnd::BuildSelector::Refresh() {
     Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::Refresh()";
     m_empire_ship_designs_changed_signal.disconnect();
     if (const Empire* empire = Empires().Lookup(m_empire_id))
@@ -656,8 +645,7 @@ void BuildDesignatorWnd::BuildSelector::Refresh()
     PopulateList();
 }
 
-void BuildDesignatorWnd::BuildSelector::ShowType(BuildType type, bool refresh_list)
-{
+void BuildDesignatorWnd::BuildSelector::ShowType(BuildType type, bool refresh_list) {
     if (m_build_types_shown.find(type) == m_build_types_shown.end()) {
         m_build_types_shown.insert(type);
         if (refresh_list)
@@ -665,8 +653,7 @@ void BuildDesignatorWnd::BuildSelector::ShowType(BuildType type, bool refresh_li
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::HideType(BuildType type, bool refresh_list)
-{
+void BuildDesignatorWnd::BuildSelector::HideType(BuildType type, bool refresh_list) {
     std::set<BuildType>::iterator it = m_build_types_shown.find(type);
     if (it != m_build_types_shown.end()) {
         m_build_types_shown.erase(it);
@@ -675,23 +662,20 @@ void BuildDesignatorWnd::BuildSelector::HideType(BuildType type, bool refresh_li
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::ShowAllTypes(bool refresh_list)
-{
+void BuildDesignatorWnd::BuildSelector::ShowAllTypes(bool refresh_list) {
     m_build_types_shown.insert(BT_BUILDING);
     m_build_types_shown.insert(BT_SHIP);
     if (refresh_list)
         Refresh();
 }
 
-void BuildDesignatorWnd::BuildSelector::HideAllTypes(bool refresh_list)
-{
+void BuildDesignatorWnd::BuildSelector::HideAllTypes(bool refresh_list) {
     m_build_types_shown.clear();
     if (refresh_list)
         Refresh();
 }
 
-void BuildDesignatorWnd::BuildSelector::ShowAvailability(bool available, bool refresh_list)
-{
+void BuildDesignatorWnd::BuildSelector::ShowAvailability(bool available, bool refresh_list) {
     if (available) {
         if (!m_availabilities_shown.first) {
             m_availabilities_shown.first = true;
@@ -707,8 +691,7 @@ void BuildDesignatorWnd::BuildSelector::ShowAvailability(bool available, bool re
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::HideAvailability(bool available, bool refresh_list)
-{
+void BuildDesignatorWnd::BuildSelector::HideAvailability(bool available, bool refresh_list) {
     if (available) {
         if (m_availabilities_shown.first) {
             m_availabilities_shown.first = false;
@@ -724,8 +707,7 @@ void BuildDesignatorWnd::BuildSelector::HideAvailability(bool available, bool re
     }
 }
 
-bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_type, const std::string& name)
-{
+bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_type, const std::string& name) {
     if (build_type != BT_BUILDING)
         throw std::invalid_argument("BuildableItemVisible was passed an invalid build type with a name");
 
@@ -750,8 +732,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
         return m_availabilities_shown.second;
 }
 
-bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_type, int design_id)
-{
+bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_type, int design_id) {
     if (build_type != BT_SHIP)
         throw std::invalid_argument("BuildableItemVisible was passed an invalid build type with an id");
 
@@ -776,8 +757,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
         return m_availabilities_shown.second;
 }
 
-void BuildDesignatorWnd::BuildSelector::PopulateList()
-{
+void BuildDesignatorWnd::BuildSelector::PopulateList() {
     //std::cout << "BuildDesignatorWnd::BuildSelector::PopulateList start" << std::endl;
     Empire* empire = Empires().Lookup(m_empire_id);
     if (!empire)
@@ -863,8 +843,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
     Logger().debugStream() << "Done";
 }
 
-void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const GG::ListBox::SelectionSet& selections)
-{
+void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const GG::ListBox::SelectionSet& selections) {
     if (selections.size() != 1)
         return;
     GG::ListBox::iterator row = *selections.begin();
@@ -896,8 +875,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const GG::ListBox::Sel
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iterator it)
-{
+void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iterator it) {
     //std::cout << "BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked" << std::endl;
     if ((*it)->Disabled())
         return;
@@ -958,27 +936,18 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
 }
 
 const std::set<BuildType>& BuildDesignatorWnd::GetBuildTypesShown() const
-{
-    return m_build_selector->GetBuildTypesShown();
-}
+{ return m_build_selector->GetBuildTypesShown(); }
 
 const std::pair<bool, bool>& BuildDesignatorWnd::GetAvailabilitiesShown() const
-{
-    return m_build_selector->GetAvailabilitiesShown();
-}
+{ return m_build_selector->GetAvailabilitiesShown(); }
 
 bool BuildDesignatorWnd::InWindow(const GG::Pt& pt) const
-{
-    return m_enc_detail_panel->InWindow(pt) || m_build_selector->InWindow(pt) || m_side_panel->InWindow(pt);
-}
+{ return m_enc_detail_panel->InWindow(pt) || m_build_selector->InWindow(pt) || m_side_panel->InWindow(pt); }
 
 bool BuildDesignatorWnd::InClient(const GG::Pt& pt) const
-{
-    return m_enc_detail_panel->InClient(pt) || m_build_selector->InClient(pt) || m_side_panel->InClient(pt);
-}
+{ return m_enc_detail_panel->InClient(pt) || m_build_selector->InClient(pt) || m_side_panel->InClient(pt); }
 
-void BuildDesignatorWnd::CenterOnBuild(int queue_idx)
-{
+void BuildDesignatorWnd::CenterOnBuild(int queue_idx) {
     SetBuild(queue_idx);
 
     const ObjectMap& objects = GetUniverse().Objects();
@@ -1002,8 +971,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx)
     }
 }
 
-void BuildDesignatorWnd::SetBuild(int queue_idx)
-{
+void BuildDesignatorWnd::SetBuild(int queue_idx) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = Empires().Lookup(empire_id);
     if (!empire) {
@@ -1028,8 +996,7 @@ void BuildDesignatorWnd::SetBuild(int queue_idx)
     m_enc_detail_panel->Refresh();
 }
 
-void BuildDesignatorWnd::SelectSystem(int system_id)
-{
+void BuildDesignatorWnd::SelectSystem(int system_id) {
     //std::cout << "BuildDesignatorWnd::SelectSystem(" << system_id << ")" << std::endl;
 
     if (system_id == SidePanel::SystemID()) {
@@ -1044,8 +1011,7 @@ void BuildDesignatorWnd::SelectSystem(int system_id)
     }
 }
 
-void BuildDesignatorWnd::SelectPlanet(int planet_id)
-{
+void BuildDesignatorWnd::SelectPlanet(int planet_id) {
     //std::cout << "BuildDesignatorWnd::SelectPlanet(" << planet_id << ")" << std::endl;
     SidePanel::SelectPlanet(planet_id);
     if (planet_id != UniverseObject::INVALID_OBJECT_ID)
@@ -1053,22 +1019,19 @@ void BuildDesignatorWnd::SelectPlanet(int planet_id)
     m_build_selector->SetBuildLocation(this->BuildLocation());
 }
 
-void BuildDesignatorWnd::Refresh()
-{
+void BuildDesignatorWnd::Refresh() {
     m_build_selector->SetEmpireID(HumanClientApp::GetApp()->EmpireID(), false);
     Update();
 }
 
-void BuildDesignatorWnd::Update()
-{
+void BuildDesignatorWnd::Update() {
     //std::cout << "BuildDesignatorWnd::Update()" << std::endl;
     SidePanel::Update();
     m_build_selector->Refresh();
     m_enc_detail_panel->Refresh();
 }
 
-void BuildDesignatorWnd::Reset()
-{
+void BuildDesignatorWnd::Reset() {
     //std::cout << "BuildDesignatorWnd::Reset()" << std::endl;
     SelectSystem(UniverseObject::INVALID_OBJECT_ID);
     ShowAllTypes(false);            // show all types without populating the list
@@ -1078,16 +1041,14 @@ void BuildDesignatorWnd::Reset()
     m_enc_detail_panel->OnUp();
 }
 
-void BuildDesignatorWnd::Clear()
-{
+void BuildDesignatorWnd::Clear() {
     //std::cout << "BuildDesignatorWnd::Clear()" << std::endl;
     SidePanel::SetSystem(UniverseObject::INVALID_OBJECT_ID);
     Reset();
     m_system_default_planets.clear();
 }
 
-void BuildDesignatorWnd::ShowType(BuildType type, bool refresh_list)
-{
+void BuildDesignatorWnd::ShowType(BuildType type, bool refresh_list) {
     Logger().errorStream() << "BuildDesignatorWnd::ShowType(" << boost::lexical_cast<std::string>(type) << ")";
     if (type == BT_BUILDING || type == BT_SHIP) {
         m_build_selector->ShowType(type, refresh_list);
@@ -1097,16 +1058,14 @@ void BuildDesignatorWnd::ShowType(BuildType type, bool refresh_list)
     }
 }
 
-void BuildDesignatorWnd::ShowAllTypes(bool refresh_list)
-{
+void BuildDesignatorWnd::ShowAllTypes(bool refresh_list) {
     m_build_selector->ShowAllTypes(refresh_list);
     m_build_selector->m_build_type_buttons[BT_BUILDING]->MarkSelectedGray();
     m_build_selector->m_build_type_buttons[BT_SHIP]->MarkSelectedGray();
 }
 
-void BuildDesignatorWnd::HideType(BuildType type, bool refresh_list)
-{
-    Logger().errorStream() << "BuildDesignatorWnd::HideType(" << boost::lexical_cast<std::string>(type) << ")";
+void BuildDesignatorWnd::HideType(BuildType type, bool refresh_list) {
+    Logger().debugStream() << "BuildDesignatorWnd::HideType(" << boost::lexical_cast<std::string>(type) << ")";
     if (type == BT_BUILDING || type == BT_SHIP) {
         m_build_selector->HideType(type, refresh_list);
         m_build_selector->m_build_type_buttons[type]->MarkNotSelected();
@@ -1115,8 +1074,7 @@ void BuildDesignatorWnd::HideType(BuildType type, bool refresh_list)
     }
 }
 
-void BuildDesignatorWnd::HideAllTypes(bool refresh_list)
-{
+void BuildDesignatorWnd::HideAllTypes(bool refresh_list) {
     m_build_selector->HideAllTypes(refresh_list);
     m_build_selector->m_build_type_buttons[BT_BUILDING]->MarkNotSelected();
     m_build_selector->m_build_type_buttons[BT_SHIP]->MarkNotSelected();
