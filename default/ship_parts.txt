@@ -27,7 +27,7 @@ Part
     name = "SR_WEAPON_2"
     description = "SR_WEAPON_2_DESC"
     class = ShortRange
-    damage = 3
+    damage = 2
     ROF = 1
     range = 50
     buildcost = 5
@@ -40,7 +40,7 @@ Part
     name = "SR_WEAPON_3"
     description = "SR_WEAPON_3_DESC"
     class = ShortRange
-    damage = 5
+    damage = 4
     ROF = 1
     range = 50
     buildcost = 5
@@ -53,7 +53,7 @@ Part
     name = "SR_WEAPON_4"
     description = "SR_WEAPON_4_DESC"
     class = ShortRange
-    damage = 8
+    damage = 7
     ROF = 1
     range = 50
     buildcost = 5
@@ -144,7 +144,7 @@ Part
     name = "SR_WEAPON_11"
     description = "SR_WEAPON_11_DESC"
     class = ShortRange
-    damage = 42
+    damage = 46
     ROF = 1
     range = 50
     buildcost = 100
