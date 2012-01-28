@@ -909,8 +909,7 @@ bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::str
     return true;
 }
 
-void ShipDesign::BuildStatCaches()
-{
+void ShipDesign::BuildStatCaches() {
     const HullType* hull = GetHullType(m_hull);
     if (!hull) {
         Logger().errorStream() << "ShipDesign::BuildStatCaches couldn't get hull with name " << m_hull;
@@ -1028,8 +1027,7 @@ void ShipDesign::BuildStatCaches()
         m_min_non_PD_weapon_range = 0.0;
 }
 
-std::string ShipDesign::Dump() const
-{
+std::string ShipDesign::Dump() const {
     std::string retval = DumpIndent() + "ShipDesign\n";
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
@@ -1214,29 +1212,23 @@ PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesig
     return manager;
 }
 
-PredefinedShipDesignManager::iterator PredefinedShipDesignManager::begin() const {
-    return m_ship_designs.begin();
-}
+PredefinedShipDesignManager::iterator PredefinedShipDesignManager::begin() const
+{ return m_ship_designs.begin(); }
 
-PredefinedShipDesignManager::iterator PredefinedShipDesignManager::end() const {
-    return m_ship_designs.end();
-}
+PredefinedShipDesignManager::iterator PredefinedShipDesignManager::end() const
+{ return m_ship_designs.end(); }
 
-PredefinedShipDesignManager::iterator PredefinedShipDesignManager::begin_monsters() const {
-    return m_monster_designs.begin();
-}
+PredefinedShipDesignManager::iterator PredefinedShipDesignManager::begin_monsters() const
+{ return m_monster_designs.begin(); }
 
-PredefinedShipDesignManager::iterator PredefinedShipDesignManager::end_monsters() const {
-    return m_monster_designs.end();
-}
+PredefinedShipDesignManager::iterator PredefinedShipDesignManager::end_monsters() const
+{ return m_monster_designs.end(); }
 
-PredefinedShipDesignManager::generic_iterator PredefinedShipDesignManager::begin_generic() const {
-    return m_design_generic_ids.begin();
-}
+PredefinedShipDesignManager::generic_iterator PredefinedShipDesignManager::begin_generic() const
+{ return m_design_generic_ids.begin(); }
 
-PredefinedShipDesignManager::generic_iterator PredefinedShipDesignManager::end_generic() const {
-    return m_design_generic_ids.end();
-}
+PredefinedShipDesignManager::generic_iterator PredefinedShipDesignManager::end_generic() const
+{ return m_design_generic_ids.end(); }
 
 int PredefinedShipDesignManager::GenericDesignID(const std::string& name) const {
     std::map<std::string, int>::const_iterator it = m_design_generic_ids.find(name);
@@ -1248,10 +1240,8 @@ int PredefinedShipDesignManager::GenericDesignID(const std::string& name) const 
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //
 ///////////////////////////////////////////////////////////
-const PredefinedShipDesignManager& GetPredefinedShipDesignManager() {
-    return PredefinedShipDesignManager::GetPredefinedShipDesignManager();
-}
+const PredefinedShipDesignManager& GetPredefinedShipDesignManager()
+{ return PredefinedShipDesignManager::GetPredefinedShipDesignManager(); }
 
-const ShipDesign* GetPredefinedShipDesign(const std::string& name) {
-    return GetUniverse().GetGenericShipDesign(name); // may return 0
-}
+const ShipDesign* GetPredefinedShipDesign(const std::string& name)
+{ return GetUniverse().GetGenericShipDesign(name); }
