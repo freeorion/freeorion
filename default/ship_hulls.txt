@@ -1924,8 +1924,8 @@ Hull
                     parameters = [
                         tag = "predefinedshipdesign" data = "SM_KRILL_3"
                         tag = "system" data = Source.SystemID
-                        */
                     ]
+                    */
             ]
         EffectsGroup
             scope = And [
@@ -1955,8 +1955,8 @@ Hull
                     parameters = [
                         tag = "predefinedshipdesign" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID
-                        */
                     ]
+                    */
             ]
             
         EffectsGroup
@@ -2030,8 +2030,8 @@ Hull
                     parameters = [
                         tag = "predefinedshipdesign" data = "SM_KRILL_4"
                         tag = "system" data = Source.SystemID
-                        */
                     ]
+                    */
             ]
         EffectsGroup
             scope = And [
@@ -2061,8 +2061,8 @@ Hull
                     parameters = [
                         tag = "predefinedshipdesign" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID
-                        */
                     ]
+                    */
             ]
             
         EffectsGroup
@@ -2129,8 +2129,8 @@ Hull
                     parameters = [
                         tag = "predefinedshipdesign" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID
-                        */
                     ]
+                    */
             ]
 
         EffectsGroup
