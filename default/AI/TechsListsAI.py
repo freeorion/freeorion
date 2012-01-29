@@ -67,7 +67,6 @@ def unusableTechsList():
 	'SHP_CRYSTAL_AST_HULL',
 	'SHP_CRYSTAL_PLATE',
         'SHP_DEATH_RAY',
-	'SHP_DEFLECTOR',
 	'SHP_DEUTERIUM_TANK',
 	'SHP_DIST_MOD',
         'SHP_DOMESTIC_MONSTER',
@@ -118,22 +117,15 @@ def unusableTechsList():
         'SHP_TITAN_HULL',
 	'SHP_TRANSSPACE_DRIVE',
         'SHP_TRANSSPACE_HULL',
-        'SHP_WEAPON_3',
-        'SHP_WEAPON_4',
-        'SHP_WEAPON_5',
-        'SHP_WEAPON_6',
-        'SHP_WEAPON_7',
-        'SHP_WEAPON_8',
-        'SHP_WEAPON_9',
-        'SHP_WEAPON_10',
+        'SHP_ZORTRIUM_PLATE',
         'SHP_WEAPON_11',
         'SHP_WEAPON_12',
         'SHP_WEAPON_13',
         'SHP_WEAPON_14',
         'SHP_WEAPON_15',
         'SHP_WEAPON_16',
-        'SHP_WEAPON_17',
-        'SHP_ZORTRIUM_PLATE']
+        'SHP_WEAPON_17'
+	]
 
     return unusableTechs
 
@@ -160,7 +152,16 @@ def primaryShipsTechsList():
     "primary ships techs"
 
     primaryShipsTechs = [
-
-        'SHP_WEAPON_2']
+        'SHP_WEAPON_2',
+        'SHP_WEAPON_3',
+        'SHP_WEAPON_4',
+        'SHP_WEAPON_5',
+		'SHP_DEFLECTOR',
+        'SHP_WEAPON_6',
+        'SHP_WEAPON_7',
+        'SHP_WEAPON_8',
+        'SHP_WEAPON_9',
+        'SHP_WEAPON_10'
+		]
 
     return primaryShipsTechs
