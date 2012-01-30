@@ -279,9 +279,14 @@ namespace {
         Logger().debugStream() << "AttackShipPlanet: ship: " << attacker->Dump() << "\nplanet: " << target->Dump();
 
         Meter* target_shield = target->GetMeter(METER_SHIELD);
+        Meter* target_defense = target->UniverseObject::GetMeter(METER_DEFENSE);
         Meter* target_construction = target->UniverseObject::GetMeter(METER_CONSTRUCTION);
         if (!target_shield) {
             Logger().errorStream() << "couldn't get target shield meter";
+            return;
+        }
+        if (!target_defense) {
+            Logger().errorStream() << "couldn't get target defense meter";
             return;
         }
         if (!target_construction) {
@@ -290,16 +295,26 @@ namespace {
         }
 
         // damage shields, limited by shield current value and damage amount.
-        // remaining damage, if any, above shield current value goes to construction
+        // remaining damage, if any, above shield current value goes to defense.
+        // remaining damage, if any, above defense current value goes to construction
         double shield_damage = std::min(target_shield->Current(), damage);
+        double defense_damage = 0.0;
         double construction_damage = 0.0;
         if (shield_damage >= target_shield->Current())
-            construction_damage = std::min(target_construction->Current(), damage - shield_damage);
+            defense_damage = std::min(target_defense->Current(), damage - shield_damage);
+
+        if (defense_damage >= target_defense->Current())
+            construction_damage = std::min(target_construction->Current(), damage - shield_damage - defense_damage);
 
         if (shield_damage >= 0) {
             target_shield->AddToCurrent(-shield_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
+        if (defense_damage >= 0) {
+            target_defense->AddToCurrent(-defense_damage);
+            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << defense_damage << " defense damage to Planet " << target->Name() << " (" << target->ID() << ")";
+        }
+
         if (construction_damage >= 0) {
             target_construction->AddToCurrent(-construction_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " construction damage to Planet " << target->Name() << " (" << target->ID() << ")";
