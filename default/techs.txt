@@ -31,7 +31,7 @@ Category
 Tech
     Name ="DEF_ROOT_DEFENSE"
     description = "DEF_ROOT_DEFENSE_DESC"
-    short_description = "DEFENSE_SHORT_DESC"
+    short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
     researchcost = 10
@@ -47,7 +47,7 @@ Tech
 Tech
     Name ="DEF_GARRISON_1"
     description = "DEF_GARRISON_1_DESC"
-    short_description = "DEFENSE_SHORT_DESC"
+    short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
     researchcost = 20
@@ -63,7 +63,7 @@ Tech
 Tech
     Name ="DEF_GARRISON_2"
     description = "DEF_GARRISON_2_DESC"
-    short_description = "DEFENSE_SHORT_DESC"
+    short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
     researchcost = 50
@@ -79,7 +79,7 @@ Tech
 Tech
     Name ="DEF_GARRISON_3"
     description = "DEF_GARRISON_3_DESC"
-    short_description = "DEFENSE_SHORT_DESC"
+    short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
     researchcost = 150
@@ -95,7 +95,7 @@ Tech
 Tech
     Name ="DEF_GARRISON_4"
     description = "DEF_GARRISON_4_DESC"
-    short_description = "DEFENSE_SHORT_DESC"
+    short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
     researchcost = 400

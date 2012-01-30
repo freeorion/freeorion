@@ -4723,6 +4723,9 @@ Improves Resource Supply
 DEFENSE_SHORT_DESC
 Improves Planetary Defense
 
+TROOPS_SHORT_DESC
+Improves Troops
+
 METER_GROWTH_SHORT_DESC
 Improves Meter Growth
 
