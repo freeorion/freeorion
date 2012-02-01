@@ -10,6 +10,7 @@ import ProductionAI
 import ResourcesAI
 import InvasionAI
 import MilitaryAI
+import sys
 
 # AIstate
 foAIstate = None
@@ -17,6 +18,7 @@ foAIstate = None
 # called when Python AI starts, before any game new game starts or saved game is resumed
 def initFreeOrionAI():
     print "Initialized FreeOrion Python AI"
+    print(sys.path)
 
 # called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
 # and set up whatever is needed for AI to generate orders

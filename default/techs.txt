@@ -525,6 +525,7 @@ Tech
     prerequisites = "LRN_FORCE_FIELD"
     unlock = Item type = Building name = "BLD_OBSERVATORY"
 
+/*
 Tech
     name = "LRN_SOLAR_MAN"
     description = "LRN_SOLAR_MAN_DESC"
@@ -538,6 +539,7 @@ Tech
         Item type = Building name = "BLD_SOL_ACCEL"
         Item type = Building name = "BLD_SOL_REJUV"
     ]
+*/
 
 Tech
     name = "LRN_SPATIAL_DISTORT_GEN"

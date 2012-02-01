@@ -736,7 +736,10 @@ BuildingType
     description = "BLD_ART_BLACK_HOLE_DESC"
     buildcost = 400
     buildtime = 10
-    location = OwnedBy TheEmpire Source.Owner
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Star type = Red
+    ]
     effectsgroups = [
         EffectsGroup
             scope = Contains Source
