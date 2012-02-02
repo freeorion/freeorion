@@ -29,24 +29,17 @@
 		3402E26A0F5A31BB00DF6FE7 /* FreeOrion.icns in Resources */ = {isa = PBXBuildFile; fileRef = 471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */; };
 		3402E5360F5A339900DF6FE7 /* vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 4710323F0CEF6A8B00A7DF2B /* vorbis.framework */; };
 		3402E5370F5A339900DF6FE7 /* Ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 471032380CEF6A7600A7DF2B /* Ogg.framework */; };
-		3402E5380F5A339900DF6FE7 /* SDL.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 471D65810A98BA7200DA9C21 /* SDL.framework */; };
 		3402E5390F5A339900DF6FE7 /* Ogre.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 349724D70F49C9220015C864 /* Ogre.framework */; };
 		3402E53D0F5A33EF00DF6FE7 /* FreeOrion in Copy Client */ = {isa = PBXBuildFile; fileRef = 8DD76F6C0486A84900D96B5E /* FreeOrion */; };
 		3402EB630F5A348B00DF6FE7 /* libjpeg.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 471D65570A98B84500DA9C21 /* libjpeg.dylib */; };
 		3402EB640F5A348B00DF6FE7 /* libIL.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 471D654E0A98B7F800DA9C21 /* libIL.dylib */; };
 		3402EB650F5A348B00DF6FE7 /* libILU.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 471D654F0A98B7F800DA9C21 /* libILU.dylib */; };
 		3402EB680F5A348B00DF6FE7 /* libpng.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34CA5AF70F4DDF690002B5DB /* libpng.dylib */; };
-		3402EB690F5A348B00DF6FE7 /* libgvplugin_dot_layout.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 349036F70F41FE870045D32F /* libgvplugin_dot_layout.dylib */; };
-		3402EB6B0F5A348B00DF6FE7 /* libcdt.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 474A95330A9A5093007F8CD7 /* libcdt.dylib */; };
-		3402EB6C0F5A348B00DF6FE7 /* libgraph.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 4746ADA50A9BBC32003D2DFC /* libgraph.dylib */; };
-		3402EB6D0F5A348B00DF6FE7 /* libpathplan.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 4746ADA80A9BBC32003D2DFC /* libpathplan.dylib */; };
-		3402EB6E0F5A348B00DF6FE7 /* libgvc.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 4746ADA60A9BBC32003D2DFC /* libgvc.dylib */; };
 		3402EB6F0F5A348B00DF6FE7 /* libBulletCollision.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34972C410F4A002F0015C864 /* libBulletCollision.dylib */; };
 		3402EB700F5A348B00DF6FE7 /* libBulletDynamics.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34972C420F4A002F0015C864 /* libBulletDynamics.dylib */; };
 		3402EB710F5A348B00DF6FE7 /* libLinearMath.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34972C430F4A002F0015C864 /* libLinearMath.dylib */; };
 		3402F0FB0F5A355D00DF6FE7 /* freeoriond in Copy Server, AI, Config */ = {isa = PBXBuildFile; fileRef = 471D5D440A98A46000DA9C21 /* freeoriond */; };
 		3402F0FC0F5A355D00DF6FE7 /* freeorionca in Copy Server, AI, Config */ = {isa = PBXBuildFile; fileRef = 471FEFD70A9A629800C36AA3 /* freeorionca */; };
-		3402F10B0F5A36C600DF6FE7 /* Cg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 3402F0FE0F5A36A400DF6FE7 /* Cg.framework */; };
 		3415B0A010851BB200009F19 /* CombatSetupWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3415B09E10851BB200009F19 /* CombatSetupWnd.cpp */; };
 		343EC6340F3F513700782AD3 /* UnicodeCharsets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6330F3F513700782AD3 /* UnicodeCharsets.cpp */; };
 		343EC6630F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC65D0F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp */; };
@@ -57,18 +50,12 @@
 		343EC67B0F3F61D000782AD3 /* PythonEnumWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6750F3F61D000782AD3 /* PythonEnumWrapper.cpp */; };
 		343EC67C0F3F61D000782AD3 /* PythonLoggingWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6760F3F61D000782AD3 /* PythonLoggingWrapper.cpp */; };
 		343EC67D0F3F61D000782AD3 /* PythonUniverseWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6780F3F61D000782AD3 /* PythonUniverseWrapper.cpp */; };
-		345716B311361D2100597A54 /* libgvc_builtins.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34636CE60F40DA6800DAEAF7 /* libgvc_builtins.dylib */; };
-		345716DC11361D6C00597A54 /* libgvc_builtins.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34636CE60F40DA6800DAEAF7 /* libgvc_builtins.dylib */; };
 		346367250F3FB07500DAEAF7 /* libIL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654E0A98B7F800DA9C21 /* libIL.dylib */; };
 		346D87EF0FC5F6080095593E /* ShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 346D87ED0FC5F6080095593E /* ShaderProgram.cpp */; };
 		346D88140FC6196D0095593E /* AsteroidBeltObstacle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 346D87E70FC5F5B00095593E /* AsteroidBeltObstacle.cpp */; };
 		346D88150FC6196D0095593E /* CombatObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 346D87E90FC5F5B00095593E /* CombatObject.cpp */; };
 		346D88160FC6196D0095593E /* Missile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 346D87EB0FC5F5B00095593E /* Missile.cpp */; };
 		348D0F5F1194D9DE0034C679 /* EntityRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 348D0F5B1194D6230034C679 /* EntityRenderer.cpp */; };
-		349036EC0F41F74F0045D32F /* libcdt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 474A95330A9A5093007F8CD7 /* libcdt.dylib */; };
-		349036ED0F41F74F0045D32F /* libgraph.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4746ADA50A9BBC32003D2DFC /* libgraph.dylib */; };
-		349036EF0F41F74F0045D32F /* libpathplan.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4746ADA80A9BBC32003D2DFC /* libpathplan.dylib */; };
-		349036F80F41FE8D0045D32F /* libgvplugin_dot_layout.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 349036F70F41FE870045D32F /* libgvplugin_dot_layout.dylib */; };
 		34972BEA0F49CBE80015C864 /* ChatWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34972BE60F49CBE80015C864 /* ChatWnd.cpp */; };
 		34972BEB0F49CBE80015C864 /* CollisionMeshConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34972BE80F49CBE80015C864 /* CollisionMeshConverter.cpp */; };
 		34972BEE0F49CBF90015C864 /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34972BEC0F49CBF90015C864 /* Sound.cpp */; };
@@ -96,7 +83,6 @@
 		34B9F9310F634A8D005BF6A4 /* SimpleVehicle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBE40F5E1EEB005BF6A4 /* SimpleVehicle.cpp */; };
 		34B9F9320F634A8D005BF6A4 /* Vec3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBEA0F5E1EEB005BF6A4 /* Vec3.cpp */; };
 		34B9F9340F634B1D005BF6A4 /* CombatOrder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2320F5A300600DF6FE7 /* CombatOrder.cpp */; };
-		34BA5BA10F8AA97400B74FE5 /* libexpat.1.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34BA5BA00F8AA95C00B74FE5 /* libexpat.1.dylib */; };
 		34BAB0BF0FC5CD7300EF792E /* AdamGlue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB0BD0FC5CD7300EF792E /* AdamGlue.cpp */; };
 		34C4495E1182716E0071E09A /* Math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44954118271590071E09A /* Math.cpp */; };
 		34C4495F1182716E0071E09A /* SerializeEmpire.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44957118271590071E09A /* SerializeEmpire.cpp */; };
@@ -111,7 +97,6 @@
 		34CA5EC50F4F4DA50002B5DB /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CA5CA60F4E18680002B5DB /* libOIS.a */; };
 		34D3CE8C11D7DA11007C1E78 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34D3CE8A11D7DA03007C1E78 /* Species.cpp */; };
 		34DD943A11360C0000265AF9 /* main.nib in Resources */ = {isa = PBXBuildFile; fileRef = 34DD943911360BFA00265AF9 /* main.nib */; };
-		34DD944711360CDD00265AF9 /* Plugin_CgProgramManager.dylib in Copy Ogre Plugins */ = {isa = PBXBuildFile; fileRef = 34DD944111360CBE00265AF9 /* Plugin_CgProgramManager.dylib */; };
 		34DD944811360CDD00265AF9 /* Plugin_OctreeSceneManager.dylib in Copy Ogre Plugins */ = {isa = PBXBuildFile; fileRef = 34DD944211360CBE00265AF9 /* Plugin_OctreeSceneManager.dylib */; };
 		34DD944911360CDD00265AF9 /* Plugin_ParticleFX.dylib in Copy Ogre Plugins */ = {isa = PBXBuildFile; fileRef = 34DD944411360CBE00265AF9 /* Plugin_ParticleFX.dylib */; };
 		34DD944A11360CDD00265AF9 /* RenderSystem_GL.dylib in Copy Ogre Plugins */ = {isa = PBXBuildFile; fileRef = 34DD944611360CBF00265AF9 /* RenderSystem_GL.dylib */; };
@@ -141,7 +126,6 @@
 		4710241E0CEF3AAC00A7DF2B /* MultiEdit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023A80CEF3AAC00A7DF2B /* MultiEdit.cpp */; };
 		471024260CEF3AAC00A7DF2B /* PtRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023B50CEF3AAC00A7DF2B /* PtRect.cpp */; };
 		471024270CEF3AAC00A7DF2B /* Scroll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023B70CEF3AAC00A7DF2B /* Scroll.cpp */; };
-		471024280CEF3AAC00A7DF2B /* SDLGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023BA0CEF3AAC00A7DF2B /* SDLGUI.cpp */; };
 		4710242A0CEF3AAC00A7DF2B /* StaticGraphic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023BC0CEF3AAC00A7DF2B /* StaticGraphic.cpp */; };
 		4710242B0CEF3AAC00A7DF2B /* StyleFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023BD0CEF3AAC00A7DF2B /* StyleFactory.cpp */; };
 		4710242C0CEF3AAC00A7DF2B /* TabWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023BE0CEF3AAC00A7DF2B /* TabWnd.cpp */; };
@@ -230,10 +214,8 @@
 		471D5E2F0A98AA1D00DA9C21 /* TurnProgressWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CE20A98A3F900DA9C21 /* TurnProgressWnd.cpp */; };
 		471D650E0A98B4C100DA9C21 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D650C0A98B4C100DA9C21 /* OpenAL.framework */; };
 		471D650F0A98B4C100DA9C21 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D650D0A98B4C100DA9C21 /* OpenGL.framework */; };
-		471D65150A98B4E100DA9C21 /* libSDLmain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D65140A98B4E100DA9C21 /* libSDLmain.a */; };
 		471D65540A98B7F800DA9C21 /* libILU.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654F0A98B7F800DA9C21 /* libILU.dylib */; };
 		471D65560A98B7F800DA9C21 /* liblog4cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D65510A98B7F800DA9C21 /* liblog4cpp.a */; };
-		471D65820A98BA7200DA9C21 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D65810A98BA7200DA9C21 /* SDL.framework */; };
 		471FEF8D0A9A629800C36AA3 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D180A98A3F900DA9C21 /* AppInterface.cpp */; };
 		471FEFB30A9A629800C36AA3 /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D0F0A98A3F900DA9C21 /* Universe.cpp */; };
 		471FEFD00A9A629800C36AA3 /* libGG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D5A300A988D5700DA9C21 /* libGG.a */; };
@@ -1047,10 +1029,8 @@
 			dstSubfolderSpec = 10;
 			files = (
 				34F0E455113F49E900A10EED /* Python.framework in Copy Frameworks */,
-				3402F10B0F5A36C600DF6FE7 /* Cg.framework in Copy Frameworks */,
 				3402E5360F5A339900DF6FE7 /* vorbis.framework in Copy Frameworks */,
 				3402E5370F5A339900DF6FE7 /* Ogg.framework in Copy Frameworks */,
-				3402E5380F5A339900DF6FE7 /* SDL.framework in Copy Frameworks */,
 				3402E5390F5A339900DF6FE7 /* Ogre.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -1073,17 +1053,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 12;
 			files = (
-				34BA5BA10F8AA97400B74FE5 /* libexpat.1.dylib in Copy Shared Libraries */,
 				3402EB630F5A348B00DF6FE7 /* libjpeg.dylib in Copy Shared Libraries */,
 				3402EB640F5A348B00DF6FE7 /* libIL.dylib in Copy Shared Libraries */,
 				3402EB650F5A348B00DF6FE7 /* libILU.dylib in Copy Shared Libraries */,
 				3402EB680F5A348B00DF6FE7 /* libpng.dylib in Copy Shared Libraries */,
-				3402EB690F5A348B00DF6FE7 /* libgvplugin_dot_layout.dylib in Copy Shared Libraries */,
-				345716DC11361D6C00597A54 /* libgvc_builtins.dylib in Copy Shared Libraries */,
-				3402EB6B0F5A348B00DF6FE7 /* libcdt.dylib in Copy Shared Libraries */,
-				3402EB6C0F5A348B00DF6FE7 /* libgraph.dylib in Copy Shared Libraries */,
-				3402EB6D0F5A348B00DF6FE7 /* libpathplan.dylib in Copy Shared Libraries */,
-				3402EB6E0F5A348B00DF6FE7 /* libgvc.dylib in Copy Shared Libraries */,
 				3402EB6F0F5A348B00DF6FE7 /* libBulletCollision.dylib in Copy Shared Libraries */,
 				3402EB700F5A348B00DF6FE7 /* libBulletDynamics.dylib in Copy Shared Libraries */,
 				3402EB710F5A348B00DF6FE7 /* libLinearMath.dylib in Copy Shared Libraries */,
@@ -1109,7 +1082,6 @@
 			dstPath = "${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}/Contents/Plugins";
 			dstSubfolderSpec = 0;
 			files = (
-				34DD944711360CDD00265AF9 /* Plugin_CgProgramManager.dylib in Copy Ogre Plugins */,
 				34DD944811360CDD00265AF9 /* Plugin_OctreeSceneManager.dylib in Copy Ogre Plugins */,
 				34DD944911360CDD00265AF9 /* Plugin_ParticleFX.dylib in Copy Ogre Plugins */,
 				34DD944A11360CDD00265AF9 /* RenderSystem_GL.dylib in Copy Ogre Plugins */,
@@ -1777,7 +1749,7 @@
 		34DD944411360CBE00265AF9 /* Plugin_ParticleFX.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_ParticleFX.dylib; sourceTree = "<group>"; };
 		34DD944511360CBE00265AF9 /* Plugin_PCZSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_PCZSceneManager.dylib; sourceTree = "<group>"; };
 		34DD944611360CBF00265AF9 /* RenderSystem_GL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = RenderSystem_GL.dylib; sourceTree = "<group>"; };
-		34F0E427113F491C00A10EED /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = dep/Frameworks/Python.framework; sourceTree = "<group>"; };
+		34F0E427113F491C00A10EED /* Python.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = Python.framework; path = dep/Frameworks/Python.framework; sourceTree = "<group>"; };
 		4710233C0CEF3AAB00A7DF2B /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		4710233D0CEF3AAB00A7DF2B /* GGDoc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GGDoc.txt; sourceTree = "<group>"; };
 		4710233F0CEF3AAB00A7DF2B /* AlignmentFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlignmentFlags.h; sourceTree = "<group>"; };
@@ -2403,7 +2375,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				345716B311361D2100597A54 /* libgvc_builtins.dylib in Frameworks */,
 				34ACA4230FFFAF9000500F40 /* IOKit.framework in Frameworks */,
 				34ACA4170FFFAF3D00500F40 /* Carbon.framework in Frameworks */,
 				9EEEEA7A13ACB91A0085B1A0 /* libboost_filesystem.a in Frameworks */,
@@ -2417,21 +2388,15 @@
 				34972C440F4A00650015C864 /* libBulletCollision.dylib in Frameworks */,
 				34972C450F4A00650015C864 /* libBulletDynamics.dylib in Frameworks */,
 				34972C460F4A00650015C864 /* libLinearMath.dylib in Frameworks */,
-				349036F80F41FE8D0045D32F /* libgvplugin_dot_layout.dylib in Frameworks */,
-				349036EC0F41F74F0045D32F /* libcdt.dylib in Frameworks */,
-				349036ED0F41F74F0045D32F /* libgraph.dylib in Frameworks */,
-				349036EF0F41F74F0045D32F /* libpathplan.dylib in Frameworks */,
 				47B6163E0CF09C1000318761 /* libFREEALUT.a in Frameworks */,
 				478418EE0CF05A5000BE4710 /* libClientCommon.a in Frameworks */,
 				346367250F3FB07500DAEAF7 /* libIL.dylib in Frameworks */,
 				478417700CF0581A00BE4710 /* libCommon.a in Frameworks */,
 				471D5D3F0A98A40900DA9C21 /* libGG.a in Frameworks */,
-				471D65150A98B4E100DA9C21 /* libSDLmain.a in Frameworks */,
 				471D650E0A98B4C100DA9C21 /* OpenAL.framework in Frameworks */,
 				471D650F0A98B4C100DA9C21 /* OpenGL.framework in Frameworks */,
 				471D65540A98B7F800DA9C21 /* libILU.dylib in Frameworks */,
 				471D65560A98B7F800DA9C21 /* liblog4cpp.a in Frameworks */,
-				471D65820A98BA7200DA9C21 /* SDL.framework in Frameworks */,
 				4710323E0CEF6A7700A7DF2B /* Ogg.framework in Frameworks */,
 				471032460CEF6A8B00A7DF2B /* vorbis.framework in Frameworks */,
 				47B60E670CF0819300318761 /* libjpeg.dylib in Frameworks */,
@@ -5060,7 +5025,6 @@
 				4710241E0CEF3AAC00A7DF2B /* MultiEdit.cpp in Sources */,
 				471024260CEF3AAC00A7DF2B /* PtRect.cpp in Sources */,
 				471024270CEF3AAC00A7DF2B /* Scroll.cpp in Sources */,
-				471024280CEF3AAC00A7DF2B /* SDLGUI.cpp in Sources */,
 				4710242A0CEF3AAC00A7DF2B /* StaticGraphic.cpp in Sources */,
 				4710242B0CEF3AAC00A7DF2B /* StyleFactory.cpp in Sources */,
 				4710242C0CEF3AAC00A7DF2B /* TabWnd.cpp in Sources */,
@@ -5884,7 +5848,6 @@
 					"$(inherited)",
 					FREEORION_BUILD_HUMAN,
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -5949,7 +5912,6 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				INFOPLIST_FILE = Info.plist;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -5968,7 +5930,6 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -6036,7 +5997,6 @@
 					"$(inherit)",
 					HAVE_CONFIG_H,
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = FREEALUT;
@@ -6055,7 +6015,6 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Library/Frameworks/SDL.framework/Headers,
@@ -6079,7 +6038,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -6099,7 +6057,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -6130,7 +6087,6 @@
 					"$(inherited)",
 					FREEORION_BUILD_HUMAN,
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/dep/local/include/graphviz",
@@ -6174,7 +6130,6 @@
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = (
@@ -6212,7 +6167,6 @@
 					"$(inherited)",
 					FREEORION_BUILD_AI,
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = (
@@ -6242,7 +6196,6 @@
 		47103BE40CF04DC700A7DF2B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = Common;
 				ZERO_LINK = NO;
 			};
@@ -6251,7 +6204,6 @@
 		471D5A3B0A988D8600DA9C21 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = GG;
 				ZERO_LINK = YES;
 			};
@@ -6264,7 +6216,6 @@
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -6277,7 +6228,6 @@
 					"$(inherited)",
 					FREEORION_BUILD_AI,
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
 			};
@@ -6286,7 +6236,6 @@
 		478417AF0CF0592E00BE4710 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ClientCommon;
 				ZERO_LINK = NO;
 			};
@@ -6299,7 +6248,6 @@
 					"$(inherit)",
 					HAVE_CONFIG_H,
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = FREEALUT;
 				SDKROOT = macosx10.6;
 				ZERO_LINK = YES;
@@ -6309,7 +6257,6 @@
 		820638A014A87AF200A83D5A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = EffectParser;
 				ZERO_LINK = NO;
 			};
@@ -6324,7 +6271,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -6392,7 +6338,6 @@
 					"$(inherit)",
 					HAVE_CONFIG_H,
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = FREEALUT;
 				SDKROOT = macosx10.6;
 				ZERO_LINK = YES;
@@ -6402,7 +6347,6 @@
 		8218682A14A9F82D009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = GG;
 				ZERO_LINK = YES;
 			};
@@ -6411,7 +6355,6 @@
 		8218682B14A9F82D009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = EffectParser;
 				ZERO_LINK = NO;
 			};
@@ -6420,7 +6363,6 @@
 		8218682C14A9F82D009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ConditionParser;
 				ZERO_LINK = NO;
 			};
@@ -6429,7 +6371,6 @@
 		8218682D14A9F82D009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = Parse;
 				ZERO_LINK = NO;
 			};
@@ -6438,7 +6379,6 @@
 		8218682E14A9F82D009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = Common;
 				ZERO_LINK = NO;
 			};
@@ -6447,7 +6387,6 @@
 		8218682F14A9F82D009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ClientCommon;
 				ZERO_LINK = NO;
 			};
@@ -6460,7 +6399,6 @@
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -6473,7 +6411,6 @@
 					"$(inherited)",
 					FREEORION_BUILD_HUMAN,
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -6486,7 +6423,6 @@
 					"$(inherited)",
 					FREEORION_BUILD_AI,
 				);
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
 			};
@@ -6500,7 +6436,6 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				INFOPLIST_FILE = Info.plist;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -6677,7 +6612,6 @@
 		8218687214AA6E77009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = AlignmentsParser;
 				ZERO_LINK = NO;
 			};
@@ -6686,7 +6620,6 @@
 		8218687314AA6E77009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = AlignmentsParser;
 				ZERO_LINK = NO;
 			};
@@ -6709,7 +6642,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -6723,7 +6655,6 @@
 		8218689814AA6F67009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = BuildingsParser;
 				ZERO_LINK = NO;
 			};
@@ -6732,7 +6663,6 @@
 		8218689914AA6F67009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = BuildingsParser;
 				ZERO_LINK = NO;
 			};
@@ -6755,7 +6685,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -6769,7 +6698,6 @@
 		821868BA14AA6FE2009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ParserMisc;
 				ZERO_LINK = NO;
 			};
@@ -6778,7 +6706,6 @@
 		821868BB14AA6FE2009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ParserMisc;
 				ZERO_LINK = NO;
 			};
@@ -6801,7 +6728,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -6815,7 +6741,6 @@
 		821868E914AA707E009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = DoubleValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -6824,7 +6749,6 @@
 		821868EA14AA707E009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = DoubleValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -6847,7 +6771,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -6861,7 +6784,6 @@
 		8218690814AA70C4009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = EnumParser;
 				ZERO_LINK = NO;
 			};
@@ -6870,7 +6792,6 @@
 		8218690914AA70C4009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = EnumParser;
 				ZERO_LINK = NO;
 			};
@@ -6893,7 +6814,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -6907,7 +6827,6 @@
 		8218692714AA70E9009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = FleetPlansParser;
 				ZERO_LINK = NO;
 			};
@@ -6916,7 +6835,6 @@
 		8218692814AA70E9009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = FleetPlansParser;
 				ZERO_LINK = NO;
 			};
@@ -6939,7 +6857,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -6953,7 +6870,6 @@
 		8218694614AA712B009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = IntValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -6962,7 +6878,6 @@
 		8218694714AA712B009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = IntValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -6985,7 +6900,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -6999,7 +6913,6 @@
 		8218696514AA7152009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ItemsParser;
 				ZERO_LINK = NO;
 			};
@@ -7008,7 +6921,6 @@
 		8218696614AA7152009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ItemsParser;
 				ZERO_LINK = NO;
 			};
@@ -7031,7 +6943,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7045,7 +6956,6 @@
 		8218698414AA7171009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = Lexer;
 				ZERO_LINK = NO;
 			};
@@ -7054,7 +6964,6 @@
 		8218698514AA7171009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = Lexer;
 				ZERO_LINK = NO;
 			};
@@ -7077,7 +6986,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7091,7 +6999,6 @@
 		821869A314AA7190009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = MonsterFleetPlansParser;
 				ZERO_LINK = NO;
 			};
@@ -7100,7 +7007,6 @@
 		821869A414AA7190009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = MonsterFleetPlansParser;
 				ZERO_LINK = NO;
 			};
@@ -7123,7 +7029,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7137,7 +7042,6 @@
 		821869C214AA71CF009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = PlanetEnvironmentValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -7146,7 +7050,6 @@
 		821869C314AA71CF009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = PlanetEnvironmentValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -7169,7 +7072,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7183,7 +7085,6 @@
 		821869E114AA71FF009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = PlanetSizeValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -7192,7 +7093,6 @@
 		821869E214AA71FF009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = PlanetSizeValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -7215,7 +7115,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7229,7 +7128,6 @@
 		82186A0014AA7235009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = PlanetTypeValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -7238,7 +7136,6 @@
 		82186A0114AA7235009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = PlanetTypeValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -7261,7 +7158,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7275,7 +7171,6 @@
 		82186A1F14AA7265009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ReportParseError;
 				ZERO_LINK = NO;
 			};
@@ -7284,7 +7179,6 @@
 		82186A2014AA7265009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ReportParseError;
 				ZERO_LINK = NO;
 			};
@@ -7307,7 +7201,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7321,7 +7214,6 @@
 		82186A3E14AA7290009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ShipDesignsParser;
 				ZERO_LINK = NO;
 			};
@@ -7330,7 +7222,6 @@
 		82186A3F14AA7290009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ShipDesignsParser;
 				ZERO_LINK = NO;
 			};
@@ -7353,7 +7244,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7367,7 +7257,6 @@
 		82186A5D14AA72B4009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ShipHullsParser;
 				ZERO_LINK = NO;
 			};
@@ -7376,7 +7265,6 @@
 		82186A5E14AA72B4009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ShipHullsParser;
 				ZERO_LINK = NO;
 			};
@@ -7399,7 +7287,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7413,7 +7300,6 @@
 		82186A7C14AA72EB009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ShipPartsParser;
 				ZERO_LINK = NO;
 			};
@@ -7422,7 +7308,6 @@
 		82186A7D14AA72EB009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ShipPartsParser;
 				ZERO_LINK = NO;
 			};
@@ -7445,7 +7330,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7459,7 +7343,6 @@
 		82186A9B14AA730C009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = SpecialsParser;
 				ZERO_LINK = NO;
 			};
@@ -7468,7 +7351,6 @@
 		82186A9C14AA730C009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = SpecialsParser;
 				ZERO_LINK = NO;
 			};
@@ -7491,7 +7373,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7505,7 +7386,6 @@
 		82186ABA14AA7344009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = SpeciesParser;
 				ZERO_LINK = NO;
 			};
@@ -7514,7 +7394,6 @@
 		82186ABB14AA7344009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = SpeciesParser;
 				ZERO_LINK = NO;
 			};
@@ -7537,7 +7416,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7551,7 +7429,6 @@
 		82186AD914AA735E009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = StarTypeValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -7560,7 +7437,6 @@
 		82186ADA14AA735E009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = StarTypeValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -7583,7 +7459,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7597,7 +7472,6 @@
 		82186AF814AA7388009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = StringValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -7606,7 +7480,6 @@
 		82186AF914AA7388009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = StringValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -7629,7 +7502,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7643,7 +7515,6 @@
 		82186B1714AA73AF009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = TechsParser;
 				ZERO_LINK = NO;
 			};
@@ -7652,7 +7523,6 @@
 		82186B1814AA73AF009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = TechsParser;
 				ZERO_LINK = NO;
 			};
@@ -7675,7 +7545,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -7689,7 +7558,6 @@
 		82186B3614AA73E1009441B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = UniverseObjectTypeValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -7698,7 +7566,6 @@
 		82186B3714AA73E1009441B8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = UniverseObjectTypeValueRefParser;
 				ZERO_LINK = NO;
 			};
@@ -7721,7 +7588,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -8083,7 +7949,6 @@
 		8230803C14A87FFB00C1BC15 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = ConditionParser;
 				ZERO_LINK = NO;
 			};
@@ -8098,7 +7963,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -8112,7 +7976,6 @@
 		82C07435149DE46200E76876 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				PRODUCT_NAME = Parse;
 				ZERO_LINK = NO;
 			};
@@ -8127,7 +7990,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
