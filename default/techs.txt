@@ -2827,34 +2827,6 @@ Tech
     ]
 
 Tech
-    name = "SHP_ANTIMAT_TORP"
-    description = "SHP_ANTIMAT_TORP_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 320
-    researchturns = 1
-    prerequisites = "SHP_SPACE_FLUX_DRIVE"
-    unlock = [
-       // Item type = ShipPart name = "LR_ANTIMATTER_TORPEDO"
-        Item type = Building name = "BLD_SHIPYARD_CON_ENGINE"
-    ]
-
-Tech
-    name = "SHP_PLASMA_TORP"
-    description = "SHP_PLASMA_TORP_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 2500
-    researchturns = 1
-    prerequisites = "SHP_TRANSSPACE_DRIVE"
-    unlock = [
-       // Item type = ShipPart name = "LR_PLASMA_TORPEDO"
-        Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
-    ]
-
-Tech
     name = "SHP_CAMO_AST_HULL"
     description = "SHP_CAMO_AST_HULL_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
@@ -3721,4 +3693,32 @@ Tech
     researchturns = 2
     prerequisites = "SHP_MAX_DISRUPT"
     unlock = Item type = ShipPart name = "LR_SPECTRAL_MISSILE"
+
+Tech
+    name = "SHP_ANTIMAT_TORP"
+    description = "SHP_ANTIMAT_TORP_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 320
+    researchturns = 1
+    prerequisites = "SHP_SPACE_FLUX_DRIVE"
+    unlock = [
+       // Item type = ShipPart name = "LR_ANTIMATTER_TORPEDO"
+        Item type = Building name = "BLD_SHIPYARD_CON_ENGINE"
+    ]
+
+Tech
+    name = "SHP_PLASMA_TORP"
+    description = "SHP_PLASMA_TORP_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 2500
+    researchturns = 1
+    prerequisites = "SHP_TRANSSPACE_DRIVE"
+    unlock = [
+       // Item type = ShipPart name = "LR_PLASMA_TORPEDO"
+        Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
+    ]
 */

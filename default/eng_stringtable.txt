@@ -4399,7 +4399,7 @@ CON_CONTGRAV_ARCH
 Controlled Gravity Architecture
 
 CON_CONTGRAV_ARCH_DESC
-'''Increases the resource supply range of all colonies by 1.
+'''Increases the max resource supply range of all colonies by 1.
 
 By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
 
@@ -4409,7 +4409,7 @@ CON_GAL_INFRA
 Galactic Infrastructure
 
 CON_GAL_INFRA_DESC
-'''Increases the resource supply range of all colonies by 1.
+'''Increases the max resource supply range of all colonies by 1.
 
 The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena.  By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
 
@@ -4644,38 +4644,6 @@ SHP_SOLAR_CONT_DESC
 
 This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility.  All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to stealth.  This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull.  Structure is extremely high, but speed and stealth are very low.  However, this ship has the ability to enter a star and hide, giving it perfect stealth on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star.  This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.'''
 
-SHP_ROOT_AGGRESSION
-Aggression
-SHP_ROOT_AGGRESSION_DESC
-'''Allows basic weapons and troop pods.'''
-
-DEF_ROOT_DEFENSE
-Self Defense
-DEF_ROOT_DEFENSE_DESC
-'''Allows planetary garrisons of +5.
-
-The concept of 'self defense' is at the root of many avenues of technological advance.'''
-
-DEF_GARRISON_1
-Planetary Garrison 1
-DEF_GARRISON_1_DESC
-'''Enables planetary garrison max of +10'''
-
-DEF_GARRISON_2
-Planetary Garrison 2
-DEF_GARRISON_2_DESC
-'''Enables planetary garrison max of +20'''
-
-DEF_GARRISON_3
-Planetary Garrison 3
-DEF_GARRISON_3_DESC
-'''Enables planetary garrison max of +40'''
-
-DEF_GARRISON_4
-Planetary Garrison 4
-DEF_GARRISON_4_DESC
-'''Enables planetary garrison max of +80'''
-
 
 #########################################
 # Tech Application Names & Descriptions #
@@ -4772,7 +4740,7 @@ CON_ORBITAL_CON
 Orbital Construction
 
 CON_ORBITAL_CON_DESC
-'''Increases the resource supply range of all colonies by 1.
+'''Increases the max resource supply range of all colonies by 1.
 
 On a planet, there is always a fixed reference direction: "up".  Microgravity is effectively isotropic.  This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment.  As well, the interior configuration of spaces in orbit must be rethought.  However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces.  Rather than a complete break from older styles, a gradual transition may be more effective.'''
 
@@ -4982,7 +4950,7 @@ PRO_ASTEROID_MINE
 Asteroid Mining
 
 PRO_ASTEROID_MINE_DESC
-'''Permits use of the Mining focus on Asteroids.
+'''Permits use of the Mining focus on asteroid belts.
 
 Mineral resource extraction from subplanetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets.  Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient.  Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities.  As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.'''
 
@@ -5055,17 +5023,55 @@ DEF_PLAN_BARRIER_SHLD_DESC
 
 Advanced Planetary Shield.  This is not cumulative with Planetary Deflector Shield.'''
 
+DEF_ROOT_DEFENSE
+Self Defense
+
+DEF_ROOT_DEFENSE_DESC
+'''Increases max troops on all planets to 5.
+
+The concept of 'self defense' is at the root of many avenues of technological advance.'''
+
+DEF_GARRISON_1
+Planetary Garrison 1
+
+DEF_GARRISON_1_DESC
+Increases max troops on all planets to 10.
+
+DEF_GARRISON_2
+Planetary Garrison 2
+
+DEF_GARRISON_2_DESC
+Increases max troops on all planets to 20.
+
+DEF_GARRISON_3
+Planetary Garrison 3
+
+DEF_GARRISON_3_DESC
+Increases max troops on all planets to 40.
+
+DEF_GARRISON_4
+Planetary Garrison 4
+
+DEF_GARRISON_4_DESC
+Increases max troops on all planets to 80.
+
+DEF_PLANET_CLOAK
+Planetary Cloaking Device
+
+DEF_PLANET_CLOAK_DESC
+By phasing parts a planet in and out of space-time, its stealth can be increased massively.
+
 SHP_FLEET_LOGISTICS
 Fleet Logistics
 
 SHP_FLEET_LOGISTICS_DESC
-Unlocks the Logistics focus setting, which increases the Supply meter of planets.
+Unlocks the Logistics focus setting, which increases the Supply meter of planets by an amount equal to one half the planet's population.
 
 SHP_FLEET_REPAIR
 Fleet Field Repair
 
 SHP_FLEET_REPAIR_DESC
-Allows ships within supply range to slowly repair damage.  Does not function immediately after battles.
+Allows ships within supply range to repair damage at a rate of 1 per turn.  Does not function immediately after battles.
 
 SHP_REINFORCED_HULL
 Reinforced Hull
@@ -5097,11 +5103,11 @@ The structure of all ships belonging to an enemy empire which are present in a s
 
 The mines have a lifetime of one turn; they are gone by the time combat begins in a system and are replaced in time for the next turn.'''
 
-DEF_PLANET_CLOAK
-Planetary Cloaking Device
+SHP_ROOT_AGGRESSION
+Aggression
 
-DEF_PLANET_CLOAK_DESC
-By phasing parts a planet in and out of space-time, its stealth can be increased massively.
+SHP_ROOT_AGGRESSION_DESC
+Allows basic weapons and troop pods.
 
 SHP_WEAPON_2
 Mass Driver 2
@@ -5523,19 +5529,19 @@ PRO_ASTEROID_MINE_II
 Advanced Asteroid Mines
 
 PRO_ASTEROID_MINE_II_DESC
-Experience with operation of initial implementations of asteroid mining techniques allows more refined methods to be devised.  The same mining facility produces an additional 10 minerals per turn.
+Experience with operation of initial implementations of asteroid mining techniques allows more refined methods to be devised.  Raises mining on all asteroid belts with the mining focus by 10.
 
 PRO_INDUSTRY_CENTER_II
 Greater Industrial Center
 
 PRO_INDUSTRY_CENTER_II_DESC
-Improved centralized management of dispersed industrial activities increases the size of increased industrial output provided.
+Improved centralized management of dispersed industrial activities increases the size of increased industrial output provided.  The bonus to industry will be double that provided by basic Industrial Centers.
 
 PRO_INDUSTRY_CENTER_III
 Supreme Industrial Center
 
 PRO_INDUSTRY_CENTER_III_DESC
-Additional experience and facilities improvements further extend the size of industrial output improvement.
+Additional experience and facilities improvements further extend the size of industrial output improvement.  The bonus to industry will be triple that provided by basic Industrial Centers.
 
 PRO_ENVIRO_MINING
 Environmentally Conscious Mining
@@ -5735,7 +5741,7 @@ Megalith
 BLD_MEGALITH_DESC
 '''The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.
 
-This building sets the owner empire's capital, overriding any existing Imperial Palace.  The planet on which it is built receives a +2 bonus to resource supply range, and has all resource meters able to reach target in a single turn.  Furthermore, all colonies belonging the empire receive a +1 bonus to resource supply range.'''
+This building sets the owner empire's capital, overriding any existing Imperial Palace.  The planet on which it is built receives a +2 bonus to max resource supply range, and has all resource meters able to reach target in a single turn.  Furthermore, all colonies belonging the empire receive a +1 bonus to max resource supply range.'''
 
 BLD_SPACE_ELEVATOR
 Space Elevator
