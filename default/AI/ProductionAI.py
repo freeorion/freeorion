@@ -61,26 +61,26 @@ def generateProductionOrders():
     if len(locationIDs) > 0 and wastedPP > 0:
         for shipDesignID in possibleShipDesigns:
             shipDesign = fo.getShipDesign(shipDesignID)
-            explorationShipName = "Scout"
-            colonyShipName = "Colony Ship"
-            outpostShipName = "Outpost Ship"
-            troopShipName = "Troop Ship"
-            if topPriority == 6 and shipDesign.name(True) == explorationShipName:
+            explorationShipName = "SD_SCOUT"
+            colonyShipName = "SD_COLONY_SHIP"
+            outpostShipName = "SD_OUTPOST_SHIP"
+            troopShipName = "SD_TROOP_SHIP"
+            if topPriority == 6 and shipDesign.name(False) == explorationShipName:
                 # exploration ship
                 print ""
                 print "adding new ship to production queue: " + shipDesign.name(True)
                 fo.issueEnqueueShipProductionOrder(shipDesignID, locationIDs[0])
-            elif topPriority == 7 and shipDesign.canColonize and shipDesign.name(True) == outpostShipName:
+            elif topPriority == 7 and shipDesign.canColonize and shipDesign.name(False) == outpostShipName:
                 # outpost ship
                 print ""
                 print "adding new ship to production queue: " + shipDesign.name(True)
                 fo.issueEnqueueShipProductionOrder(shipDesignID, locationIDs[0])
-            elif topPriority == 8 and shipDesign.canColonize and shipDesign.name(True) == colonyShipName:
+            elif topPriority == 8 and shipDesign.canColonize and shipDesign.name(False) == colonyShipName:
                 # colony ship
                 print ""
                 print "adding new ship to production queue: " + shipDesign.name(True)
                 fo.issueEnqueueShipProductionOrder(shipDesignID, locationIDs[0])
-            elif topPriority == 9 and shipDesign.canInvade and shipDesign.name(True) == troopShipName:
+            elif topPriority == 9 and shipDesign.canInvade and shipDesign.name(False) == troopShipName:
                 # troop ship
                 print ""
                 print "adding new ship to production queue: " + shipDesign.name(True)
