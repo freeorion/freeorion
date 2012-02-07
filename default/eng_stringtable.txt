@@ -5559,25 +5559,25 @@ BLD_OBSERVATORY
 Observatory
 
 BLD_OBSERVATORY_DESC
-'''An observational facility dedicated to locating and mapping the stars in the know galaxy, particularly those which are determined to be reachable via the network of starlanes.
+'''One random star will be revealed each turn to the entire galaxy.  Sometimes, a star which is already visible/explored may be revealed, resulting in no new star actually being made known to the empires in the galaxy.
 
-One random star will be revealed each turn to the entire galaxy.  Sometimes, a star which is already visible/explored may be revealed, resulting in no new star actually being made known to the empires in the galaxy.'''
+An observational facility dedicated to locating and mapping the stars in the know galaxy, particularly those which are determined to be reachable via the network of starlanes.'''
 
 BLD_CULTURE_ARCHIVES
 Cultural Archives
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Stores the sum accumulated knowledge from thousands of years of life on this planet, giving bonuses to many aspects of planetary productivity.
+'''Increases target research by 5, target farming by the planet's population, target industry by the planet's population, and target mining by half of the planet's population.
 
-Increases target research by 5, target farming by the planet's population, target industry by the planet's population, and target mining by half of the planet's population.'''
+Stores the sum accumulated knowledge from thousands of years of life on this planet, giving bonuses to many aspects of planetary productivity.'''
 
 BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-'''Represents imperial power and prestige and functions as a centre of control for the empire's holdings.
+'''Increases resource supply range by one, and sets the owner's capital.
 
-Increases resource supply range by one, and sets the owner's capital.'''
+Represents imperial power and prestige and functions as a centre of control for the empire's holdings.'''
 
 BLD_SHIPYARD_BASE
 Basic Shipyard
@@ -5589,7 +5589,9 @@ BLD_SHIPYARD_ORBITAL_DRYDOCK
 Orbital Drydock
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly.  Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.  This is an upgrade for the Basic Shipyard and is required for all constructed hulls and all further constructed hulls shipyard upgrades to be built.
+'''This is an upgrade for the Basic Shipyard and is required for all constructed hulls and all further constructed hulls shipyard upgrades to be built.
+
+When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly.  Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.'''
 
 BLD_SHIPYARD_CON_ROBO
 Robotic Processing Unit
@@ -5613,105 +5615,137 @@ BLD_SHIPYARD_CON_NANOROBO
 Nanorobotic Processing Unit
 
 BLD_SHIPYARD_CON_NANOROBO_DESC
-The production of millions of maintenance nanorobots and their connection to a single master AI requires more extensive robotics facilities than the production of a basic robotic hull.  This building is able to facilitate the construction of more advanced robotic hulls than the basic Robotic Processing Unit.  This is an upgrade for the Orbital Drydock and allows production of Nano-Robotic Hulls and Robotic Hulls.
+'''This is an upgrade for the Orbital Drydock and allows production of Nano-Robotic Hulls and Robotic Hulls.
+
+The production of millions of maintenance nanorobots and their connection to a single master AI requires more extensive robotics facilities than the production of a basic robotic hull.  This building is able to facilitate the construction of more advanced robotic hulls than the basic Robotic Processing Unit.'''
 
 BLD_SHIPYARD_CON_GEOINT
 Geointegration Facility
 
 BLD_SHIPYARD_CON_GEOINT_DESC
-When the needs of a shipyard become sufficiently great, it is no longer practical for the shipyard and the planet on which it is built to remain separate entities.  Rather, it is more useful to integrate the two into a harmonious unit, with the shipyard extending from below the surface to beyond geosynchronous orbit, making full use of all the geological aspects of the planet.  This is an upgrade to the Orbital Drydock and allows production of Titanic Hulls and Self-Gravitating Hulls.
+'''This is an upgrade to the Orbital Drydock and allows production of Titanic Hulls and Self-Gravitating Hulls.
+
+When the needs of a shipyard become sufficiently great, it is no longer practical for the shipyard and the planet on which it is built to remain separate entities.  Rather, it is more useful to integrate the two into a harmonious unit, with the shipyard extending from below the surface to beyond geosynchronous orbit, making full use of all the geological aspects of the planet.'''
 
 BLD_SHIPYARD_CON_ADV_ENGINE
 Advanced Engineering Bay
 
 BLD_SHIPYARD_CON_ADV_ENGINE_DESC
-An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive, but is also capable of producing the Spatial Flux Drive.  This is an upgrade to the Orbital Drydock and allows construction of Spatial Flux Hulls and Trans-Spatial Hulls.
+'''This is an upgrade to the Orbital Drydock and allows construction of Spatial Flux Hulls and Trans-Spatial Hulls.
+
+An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive, but is also capable of producing the Spatial Flux Drive.'''
 
 BLD_SHIPYARD_CON_MIL_LOG_ASSMBL
 Military Logistics Assembly
 
 BLD_SHIPYARD_CON_MIL_LOG_ASSMBL_DESC
-A shipyard upgrade designed to fully utilize the advancements of hull construction for the production of highly specialized flagships.  This upgrade utilizes the facilities of the Advanced Engineering Bay, the Geointegration Facility and the Nanorobotics Processing Unit, all of which, in addition to the Orbital Drydock, must be present for the construction of this upgrade.  Allows the production of the Logistics Facilitator flagship hull type.
+'''Allows the production of the Logistics Facilitator flagship hull type.
+
+A shipyard upgrade designed to fully utilize the advancements of hull construction for the production of highly specialized flagships.  This upgrade utilizes the facilities of the Advanced Engineering Bay, the Geointegration Facility and the Nanorobotics Processing Unit, all of which, in addition to the Orbital Drydock, must be present for the construction of this upgrade.'''
 
 BLD_SHIPYARD_AST
 Asteroid Processor
 
 BLD_SHIPYARD_AST_DESC
-A shipyard dedicated to the purpose of hollowing out asteroids and using them as ships' hulls.  It can only be built at an asteroid belt.  This is an upgrade to the Basic Shipyard and is required for the production of all asteroid hulls and all further asteroid hulls shipyard upgrades.
+'''This is an upgrade to the Basic Shipyard and is required for the production of all asteroid hulls and all further asteroid hulls shipyard upgrades.
+
+A shipyard dedicated to the purpose of hollowing out asteroids and using them as ships' hulls.  It can only be built at an asteroid belt.'''
 
 BLD_SHIPYARD_AST_REF
 Asteroid Reformation Processor
 
 BLD_SHIPYARD_AST_REF_DESC
-An extensive facility dedicated to fusing, shattering, deconstructing and rebuilding preexisting asteroids to form ship's parts and hulls.  This is an upgrade to the Asteroid Shipyard and allows production of Nano-Asteroid Swarms, Compound Asteroid Hulls and Scattered Asteroid Hull flagships.  In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Rock Armour Plating ship part.
+'''This is an upgrade to the Asteroid Shipyard and allows production of Nano-Asteroid Swarms, Compound Asteroid Hulls and Scattered Asteroid Hull flagships.  In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Rock Armour Plating ship part.
+
+An extensive facility dedicated to fusing, shattering, deconstructing and rebuilding preexisting asteroids to form ship's parts and hulls.'''
 
 BLD_SHIPYARD_AST_CRYSTAL
 Crystallization Module
 
 BLD_SHIPYARD_AST_CRYSTAL_DESC
-A complex facility with the special ability to crystallize asteroids and use them for parts and hulls.  This is an upgrade to the Asteroid Shipyard and allows production of Crystallized Asteroid Hulls.  In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Crystal Armour Plating ship part.
+'''This is an upgrade to the Asteroid Shipyard and allows production of Crystallized Asteroid Hulls.  In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Crystal Armour Plating ship part.
+
+A complex facility with the special ability to crystallize asteroids and use them for parts and hulls.'''
 
 BLD_SHIPYARD_ORG_ORB_INC
 Orbital Incubator
 
 BLD_SHIPYARD_ORG_ORB_INC_DESC
-A shipyard designed to meet the needs of maturing space-creatures.  Conditions within the shipyard must meet exacting specifications in order for the ships within to continue living and developing.  As such, any unfinished living ships within are liable to be destroyed if the shipyard is sufficiently damaged.  This is an upgrade to the Basic Shipyard and is required for the development of all organic hulls with the exception of the Static Multicellular Hull, and for the production of all further organic hull shipyard upgrades.
+'''This is an upgrade to the Basic Shipyard and is required for the development of all organic hulls with the exception of the Static Multicellular Hull, and for the production of all further organic hull shipyard upgrades.
+
+A shipyard designed to meet the needs of maturing space-creatures.  Conditions within the shipyard must meet exacting specifications in order for the ships within to continue living and developing.  As such, any unfinished living ships within are liable to be destroyed if the shipyard is sufficiently damaged.'''
 
 BLD_SHIPYARD_ORG_IND_ORG_ASSMBL
 Industrialized Organic Assembly
 
 BLD_SHIPYARD_ORG_IND_ORG_ASSMBL_DESC
-A shipyard upgrade capable of applying multicellular casting techniques to a hull.  This is an upgrade to the Basic Shipyard and allows the development of Static Multicellular Hulls.
+'''This is an upgrade to the Basic Shipyard and allows the development of Static Multicellular Hulls.
+
+A shipyard upgrade capable of applying multicellular casting techniques to a hull.'''
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB
 Cellular Growth Chamber
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC
-A specialized shipyard upgrade able to increase the size of monocellular organisms to truly massive proportions.  This is an upgrade to the Organic Shipyard and allows development of Protoplasmic Hulls.  The presence of this upgrade and the Xenocoordination Facility upgrade on the same planet allows development of the Endosymbiotic Hull.  The presence of these two upgrades anywhere in the empire or an ally's empire allows the production of ships with the Bio-Interceptor ship part.
+'''This is an upgrade to the Organic Shipyard and allows development of Protoplasmic Hulls.  The presence of this upgrade and the Xenocoordination Facility upgrade on the same planet allows development of the Endosymbiotic Hull.  The presence of these two upgrades anywhere in the empire or an ally's empire allows the production of ships with the Bio-Interceptor ship part.
+
+A specialized shipyard upgrade able to increase the size of monocellular organisms to truly massive proportions.'''
 
 BLD_SHIPYARD_ORG_XENO_FAC
 Xenocoordination Facility
 
 BLD_SHIPYARD_ORG_XENO_FAC_DESC
-A facility dedicated to creating a fully symbiotic relationship between a ship and its crew.  This is an upgrade to the Organic Shipyard and allows development of Symbiotic Hulls.  The presence of this upgrade and the Cellular Growth Chamber upgrade on the same planet allows development of the Endosymbiotic Hull.  The presence of these two upgrades anywhere in the empire or an ally's empire allows the production of ships with the Bio-Interceptor ship part.
+'''The presence of this upgrade and the Cellular Growth Chamber upgrade on the same planet allows development of the Endosymbiotic Hull.  The presence of these two upgrades anywhere in the empire or an ally's empire allows the production of ships with the Bio-Interceptor ship part.
+
+A facility dedicated to creating a fully symbiotic relationship between a ship and its crew.  This is an upgrade to the Organic Shipyard and allows development of Symbiotic Hulls.'''
 
 BLD_SHIPYARD_ORG_COMP_MAT_CHAMB
 Competitive Maturation Chamber
 
 BLD_SHIPYARD_ORG_COMP_MAT_CHAMB_DESC
-A breeding ground in which developing organic hulls must fight savagely and ruthlessly for survival.  This is an upgrade to the Organic Shipyard and allows development of Ravenous Hulls.  The presence of this upgrade and the Bioneural Modification Unit upgrade on the same planet allows development of the Sentient Hull.  The presence of these two upgrades anywhere in the empire or an ally's empire allows the production of ships with the Bio-Bomber ship part.
+'''This is an upgrade to the Organic Shipyard and allows development of Ravenous Hulls.  The presence of this upgrade and the Bioneural Modification Unit upgrade on the same planet allows development of the Sentient Hull.
+
+A breeding ground in which developing organic hulls must fight savagely and ruthlessly for survival.'''
 
 BLD_SHIPYARD_ORG_BIONEUR_MOD
 Bioneural Modification Unit
 
 BLD_SHIPYARD_ORG_BIONEUR_MOD_DESC
-Facilities for the direct and precise neurological adaption of a developing organic hull's mind to its body.  This is an upgrade to the Organic Shipyard and allows the development of Bio-Adaptive Hulls.  The presence of this upgrade and the Competitive Maturation Chamber upgrade on the same planet allows development of the Sentient Hull.  The presence of these two upgrades anywhere in the empire or an ally's empire allows the production of ships with the Bio-Bomber ship part.
+'''This is an upgrade to the Organic Shipyard and allows the development of Bio-Adaptive Hulls. The presence of this upgrade and the Competitive Maturation Chamber upgrade on the same planet allows development of the Sentient Hull.
+
+Facilities for the direct and precise neurological adaption of a developing organic hull's mind to its body.'''
 
 BLD_SHIPYARD_ENRG_COMP
 Energy Compressor
 
 BLD_SHIPYARD_ENRG_COMP_DESC
-A highly specialized shipyard designed to create and mount parts on large bundles of densely compressed energy.  This is a fragile process, and this shipyard will explode mightily if it takes more than a very small amount of damage.  This is an upgrade to the Basic Shipyard and is required for the formation of all energy hulls and all further energy hull shipyard upgrades.
+'''This is an upgrade to the Basic Shipyard and is required for the formation of all energy hulls and all further energy hull shipyard upgrades.
+
+A highly specialized shipyard designed to create and mount parts on large bundles of densely compressed energy.  This is a fragile process, and this shipyard will explode mightily if it takes more than a very small amount of damage.'''
 
 BLD_SHIPYARD_ENRG_FOCUS
 Controlled Energy Focusing Array
 
 BLD_SHIPYARD_ENRG_FOCUS_DESC
-A shipyard capable of controlling the shape of energy to exacting specifications, as well as conducting and magnifying tiny fluctuations in energy.  This is an upgrade to the Energy Compressor and allows formation of Fractal Energy Hulls and Quantum Energy Hulls.
+'''This is an upgrade to the Energy Compressor and allows formation of Fractal Energy Hulls and Quantum Energy Hulls.
+
+A shipyard capable of controlling the shape of energy to exacting specifications, as well as conducting and magnifying tiny fluctuations in energy.'''
 
 BLD_SHIPYARD_ENRG_SOLAR
 Solar Containment Unit
 
 BLD_SHIPYARD_ENRG_SOLAR_DESC
-The task of creating a miniature sun is a gargantuan task in and of itself.  The production of such a body on which ship parts can be safely mounted is even more so.  This is an upgrade to the Energy Compressor and allows formation of Solar Hulls.
+'''This is an upgrade to the Energy Compressor and allows formation of Solar Hulls.
+
+The task of creating a miniature sun is a gargantuan task in and of itself.  The production of such a body on which ship parts can be safely mounted is even more so.'''
 
 BLD_BIOTERROR_PROJECTOR
 Bioterror Projection Base
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity.  Gradually reduces the health of all enemy planets within four starlane jumps until the planet's population is gone.  Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon.  Ineffective if there is a Genome Bank building in the enemy empire.  This building can also be built at an outpost, provided it has a resonant moon.
+'''Gives the planet on which it is built the Bioterror focus, which decreases health on enemy planets within 4 starlane jumps at a rate of two per turn, provided the enemy empire does not contain a Genome Bank.
 
-Gives the planet on which it is built the Bioterror focus, which decreases health on enemy planets within 4 starlane jumps at a rate of two per turn, provided the enemy empire does not contain a Genome Bank.'''
+This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity.  Gradually reduces the health of all enemy planets within four starlane jumps until the planet's population is gone.  Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon.  Ineffective if there is a Genome Bank building in the enemy empire.  This building can also be built at an outpost, provided it has a resonant moon.'''
 
 BLD_LIGHTHOUSE
 Interstellar Lighthouse
@@ -5747,7 +5781,9 @@ BLD_SPACE_ELEVATOR
 Space Elevator
 
 BLD_SPACE_ELEVATOR_DESC
-An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end.  The supply meter of the planet which contains this building is tripled.
+'''The supply meter of the planet which contains this building is tripled.
+
+An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end.'''
 
 BLD_GENOME_BANK
 Genome Bank
@@ -5785,9 +5821,9 @@ BLD_ENCLAVE_VOID
 Enclave of the Void
 
 BLD_ENCLAVE_VOID_DESC
-'''The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.
+'''Multiplies target research on all planets with the Research focus by 1.5.
 
-Multiplies target research on all planets with the Research focus by 1.5.'''
+The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
 
 BLD_ART_BLACK_HOLE
 Artificial Black Hole
@@ -5799,9 +5835,9 @@ BLD_HYPER_DAM
 Hyperspatial Dam
 
 BLD_HYPER_DAM_DESC
-'''A tear in the fabric of the universe, safely controlled and harnessed.  Each planet may construct it's own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses.  Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.
+'''Increases target industry on planets with the Industry focus by the planet's population, and decreases health on such planets by 5.
 
-Increases target industry on planets with the Industry focus by the planet's population, and decreases health on such planets by 5.'''
+A tear in the fabric of the universe, safely controlled and harnessed.  Each planet may construct it's own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses.  Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
 
 BLD_SOL_ACCEL
 Solar Accelerator
@@ -5827,9 +5863,9 @@ BLD_CLONING_CENTER
 Cloning Center
 
 BLD_CLONING_CENTER_DESC
-'''Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving planet health.  However, due to political considerations, such activities must be kept a secret from those who might have ethical concerns.  As a result, this building must be hidden from the population on the dark side of a resonant moon.  This building can be built at an outpost, provided it has a resonant moon.
+'''Increases target health on all planets by 30.
 
-Increases target health on all planets by 30.'''
+Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving planet health.  However, due to political considerations, such activities must be kept a secret from those who might have ethical concerns.  As a result, this building must be hidden from the population on the dark side of a resonant moon.  This building can be built at an outpost, provided it has a resonant moon.'''
 
 BLD_TERRAFORM
 Terraforming
@@ -5847,15 +5883,17 @@ BLD_NEUTRONIUM_EXTRACTOR
 Neutronium Extractor
 
 BLD_NEUTRONIUM_EXTRACTOR_DESC
-'''Before parts can be built using Neutronium, it must be extracted from a neutron star.  Neutronium extracted at this facility is transported to Neutronium Forges throughout the empire.  This building can be built at an outpost.
+'''Permits construction of ships with Neutronium ship parts.
 
-Permits construction of ships with Neutronium ship parts.'''
+Before parts can be built using Neutronium, it must be extracted from a neutron star.  Neutronium extracted at this facility is transported to Neutronium Forges throughout the empire.  This building can be built at an outpost.'''
 
 BLD_NEUTRONIUM_FORGE
 Neutronium Forge
 
 BLD_NEUTRONIUM_FORGE_DESC
-The industrial processing of neutronium requires an extensive specialized facility.  This building is required for building any ships with neutronium parts.  Unlike most shipyards and shipyard upgrades, this building cannot be built at an outpost.
+'''This building is required for building any ships with neutronium parts.
+
+The industrial processing of neutronium requires an extensive specialized facility.  Unlike most shipyards and shipyard upgrades, this building cannot be built at an outpost.'''
 
 BLD_NEUTRONIUM_SYNTH
 Neutronium Synthesizer
@@ -5867,17 +5905,17 @@ BLD_CONC_CAMP
 Concentration Camps
 
 BLD_CONC_CAMP_DESC
-'''Ridding a planet of an undesirable species allows the introduction of a more suited species.  By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently.  This building can be built on an outpost.
+'''Decreases the planet's population at a rate of 3 per turn, and increases target industry by 5 times the planet's population.
 
-Decreases the planet's population at a rate of 3 per turn, and increases target industry by 5 times the planet's population.'''
+Ridding a planet of an undesirable species allows the introduction of a more suited species.  By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently.  This building can be built on an outpost.'''
 
 BLD_INDUSTRY_FARM
 Industrial Farms
 
 BLD_INDUSTRY_FARM_DESC
-'''Long-term adaptations to factories, shipping routes and personnel that already exist allows production of food in industrial regions with no extra cost beyond that of initially developing the additional infrastructure.
+'''This building gives a bonus to max farming equal to 1/10 of max industry for all planets in the empire.
 
-This building gives a bonus to max farming equal to 1/10 of max industry for all planets in the empire'''
+Long-term adaptations to factories, shipping routes and personnel that already exist allows production of food in industrial regions with no extra cost beyond that of initially developing the additional infrastructure.'''
 
 BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
