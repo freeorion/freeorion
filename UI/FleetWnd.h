@@ -33,11 +33,11 @@ public:
 
     //! \name Mutators //@{
     FleetWnd*       NewFleetWnd(const std::vector<int>& fleet_ids,
-                                int selected_fleet_id = UniverseObject::INVALID_OBJECT_ID,
+                                int selected_fleet_id = INVALID_OBJECT_ID,
                                 GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
 
     FleetWnd*       NewFleetWnd(int system_id, int empire_id,
-                                int selected_fleet_id = UniverseObject::INVALID_OBJECT_ID,
+                                int selected_fleet_id = INVALID_OBJECT_ID,
                                 GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
 
     void            CullEmptyWnds();
@@ -78,7 +78,7 @@ public:
     //@}
 
     //! \name Accessors //@{
-    int                     SystemID() const;                   ///< returns ID of system whose fleets are shown in this FleetWnd, which may be UniverseObject::INVALID_OBJECT_ID if this FleetWnd isn't set to show fleets of a system
+    int                     SystemID() const;                   ///< returns ID of system whose fleets are shown in this FleetWnd, which may be INVALID_OBJECT_ID if this FleetWnd isn't set to show fleets of a system
     int                     EmpireID() const;                   ///< returns ID of empire whose fleets are shown in this FleetWnd, which may be ALL_EMPIRES if this FleetWnd isn't set to show fleets of a particular empire
     bool                    ContainsFleet(int fleet_id) const;  ///< returns true if fleet with ID \a fleet_id is shown in this FleetWnd
     const std::set<int>&    FleetIDs() const;                   ///< returns IDs of all fleets shown in this FleetWnd
@@ -114,11 +114,11 @@ protected:
 private:
     /** \name Structors */ //@{
     FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
-             int selected_fleet_id = UniverseObject::INVALID_OBJECT_ID,
+             int selected_fleet_id = INVALID_OBJECT_ID,
              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
 
     FleetWnd(int system_id, int empire_id, bool order_issuing_enabled,
-             int selected_fleet_id = UniverseObject::INVALID_OBJECT_ID,
+             int selected_fleet_id = INVALID_OBJECT_ID,
              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
     //@}
 
@@ -149,7 +149,7 @@ private:
 
     std::set<int>       m_fleet_ids;        ///< IDs of fleets shown in this wnd (always.  set when creating wnd, either by being passed in directly, or found by checking indicated system for indicated empire's fleets.  If set directly, never updates.  If set by checking system, updates when the system has a fleet added or removed.
     int                 m_empire_id;        ///< ID of empire whose fleets are shown in this wnd.  May be ALL_EMPIRES if this FleetWnd wasn't set to shown a particular empire's fleets.
-    int                 m_system_id;        ///< ID of system whose fleets are shown in this wnd.  May be UniverseObject::INVALID_OBJECT_ID if this FleetWnd wasn't set to show a system's fleets.
+    int                 m_system_id;        ///< ID of system whose fleets are shown in this wnd.  May be INVALID_OBJECT_ID if this FleetWnd wasn't set to show a system's fleets.
 
     bool                m_order_issuing_enabled;
 

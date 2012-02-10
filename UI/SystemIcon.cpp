@@ -59,7 +59,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     const SpeciesManager& species_manager = GetSpeciesManager();
     const EmpireManager& empire_manager = Empires();
 
-    const System* system = objects.Object<System>(system_id);
+    const System* system = GetSystem(system_id);
     if (!system)
         return;
 
@@ -179,7 +179,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_showing_name(false)
 {
     ClientUI* ui = ClientUI::GetClientUI();
-    if (const System* system = GetEmpireKnownObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID())) {
+    if (const System* system = GetEmpireKnownSystem(m_system_id, HumanClientApp::GetApp()->EmpireID())) {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
                                               ClientUI::StarTypeFilePrefixes()[star_type],
@@ -534,9 +534,9 @@ void SystemIcon::Refresh()
     std::string name;
     m_system_connection.disconnect();
 
-    const System* system = GetObject<System>(m_system_id);
+    const System* system = GetSystem(m_system_id);
     if (!system)
-        system = GetEmpireKnownObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID());
+        system = GetEmpireKnownSystem(m_system_id, HumanClientApp::GetApp()->EmpireID());
     if (system) {
         name = system->Name();
         m_system_connection = GG::Connect(system->StateChangedSignal,   &SystemIcon::Refresh,   this,   boost::signals::at_front);

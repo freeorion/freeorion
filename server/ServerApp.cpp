@@ -972,13 +972,13 @@ namespace {
         ids_of_empires_with_fleets_here.clear();
         ids_of_empires_with_combat_fleets_here.clear();
 
-        const System* system = GetObject<System>(system_id);
+        const System* system = GetSystem(system_id);
         if (!system)
             return;
 
         std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
         for (std::vector<int>::const_iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); ++fleet_it) {
-            const Fleet* fleet = GetObject<Fleet>(*fleet_it);
+            const Fleet* fleet = GetFleet(*fleet_it);
             if (!fleet) {
                 Logger().errorStream() << "GetEmpireIDsWithFleetsAndCombatFleetsAtSystem couldn't get Fleet with id " << *fleet_it;
                 continue;
@@ -994,13 +994,13 @@ namespace {
     void GetEmpireIDsWithPlanetsAtSystem(std::set<int>& ids_of_empires_with_planets_here, int system_id) {
         ids_of_empires_with_planets_here.clear();
 
-        const System* system = GetObject<System>(system_id);
+        const System* system = GetSystem(system_id);
         if (!system)
             return;
 
         std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
         for (std::vector<int>::const_iterator planet_it = planet_ids.begin(); planet_it != planet_ids.end(); ++planet_it) {
-            const Planet* planet = GetObject<Planet>(*planet_it);
+            const Planet* planet = GetPlanet(*planet_it);
             if (!planet) {
                 Logger().errorStream() << "GetEmpireIDsWithPlanetsAtSystem couldn't get Planet with id " << *planet_it;
                 continue;
@@ -1168,7 +1168,7 @@ namespace {
 
             // update system ownership after combat.  may be necessary if the
             // combat caused planets to change ownership.
-            if (System* system = GetObject<System>(combat_info.system_id)) {
+            if (System* system = GetSystem(combat_info.system_id)) {
                 system->UpdateOwnership();
 
                 // ensure all participants get updates on system.  this ensures
@@ -1322,11 +1322,11 @@ namespace {
                 continue;
             int owner_empire_id = ship->Owner();
             int ship_id = ship->ID();
-            if (ship_id == UniverseObject::INVALID_OBJECT_ID)
+            if (ship_id == INVALID_OBJECT_ID)
                 continue;
 
             int colonize_planet_id = ship->OrderedColonizePlanet();
-            if (colonize_planet_id == UniverseObject::INVALID_OBJECT_ID)
+            if (colonize_planet_id == INVALID_OBJECT_ID)
                 continue;
             Planet* planet = objects.Object<Planet>(colonize_planet_id);
             if (!planet)
@@ -1335,7 +1335,7 @@ namespace {
             if (!planet->Unowned())
                 continue;
 
-            if (ship->SystemID() != planet->SystemID() || ship->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+            if (ship->SystemID() != planet->SystemID() || ship->SystemID() == INVALID_OBJECT_ID)
                 continue;
 
             planet_empire_colonization_ship_ids[colonize_planet_id][owner_empire_id].insert(ship_id);
@@ -1365,7 +1365,7 @@ namespace {
             }
 
             int system_id = planet->SystemID();
-            const System* system = objects.Object<System>(system_id);
+            const System* system = GetSystem(system_id);
             if (!system) {
                 Logger().errorStream() << "HandleColonization couldn't get system with id " << system_id;
                 continue;
@@ -1492,17 +1492,17 @@ namespace {
             }
             if (!ship->HasTroops())     // can't invade without troops
                 continue;
-            if (ship->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+            if (ship->SystemID() == INVALID_OBJECT_ID)
                 continue;
             int ship_id = ship->ID();
-            if (ship_id == UniverseObject::INVALID_OBJECT_ID)
+            if (ship_id == INVALID_OBJECT_ID)
                 continue;
             const ShipDesign* design = ship->Design();
             if (!design)
                 continue;
 
             int invade_planet_id = ship->OrderedInvadePlanet();
-            if (invade_planet_id == UniverseObject::INVALID_OBJECT_ID)
+            if (invade_planet_id == INVALID_OBJECT_ID)
                 continue;
             Planet* planet = objects.Object<Planet>(invade_planet_id);
             if (!planet)
@@ -1771,7 +1771,7 @@ void ServerApp::ProcessCombats() {
         // in-development 3D system.
         if (GetOptionsDB().Get<bool>("test-3d-combat")) {
             m_fsm->process_event(
-                ResolveCombat(GetObject<System>(combat_info.system_id), combat_info.empire_ids));
+                ResolveCombat(GetSystem(combat_info.system_id), combat_info.empire_ids));
             while (m_current_combat) {
                 m_io_service.run_one();
                 m_networking.HandleNextEvent();
@@ -1802,11 +1802,11 @@ void ServerApp::PostCombatProcessTurns() {
     // check for loss of empire capitals
     for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it) {
         int capital_id = empire_it->second->CapitalID();
-        if (const UniverseObject* capital = GetObject(capital_id)) {
+        if (const UniverseObject* capital = GetUniverseObject(capital_id)) {
             if (!capital->OwnedBy(empire_it->first))
-                empire_it->second->SetCapitalID(UniverseObject::INVALID_OBJECT_ID);
+                empire_it->second->SetCapitalID(INVALID_OBJECT_ID);
         } else {
-            empire_it->second->SetCapitalID(UniverseObject::INVALID_OBJECT_ID);
+            empire_it->second->SetCapitalID(INVALID_OBJECT_ID);
         }
     }
 
@@ -1913,11 +1913,11 @@ void ServerApp::PostCombatProcessTurns() {
     // check for loss of empire capitals
     for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it) {
         int capital_id = empire_it->second->CapitalID();
-        if (const UniverseObject* capital = GetObject(capital_id)) {
+        if (const UniverseObject* capital = GetUniverseObject(capital_id)) {
             if (!capital->OwnedBy(empire_it->first))
-                empire_it->second->SetCapitalID(UniverseObject::INVALID_OBJECT_ID);
+                empire_it->second->SetCapitalID(INVALID_OBJECT_ID);
         } else {
-            empire_it->second->SetCapitalID(UniverseObject::INVALID_OBJECT_ID);
+            empire_it->second->SetCapitalID(INVALID_OBJECT_ID);
         }
     }
 

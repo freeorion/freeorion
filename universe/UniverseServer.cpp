@@ -400,7 +400,7 @@ namespace {
         System* system = new System(star_type, MAX_SYSTEM_ORBITS, star_name, x, y);
 
         int new_system_id = universe.Insert(system);
-        if (new_system_id == UniverseObject::INVALID_OBJECT_ID) {
+        if (new_system_id == INVALID_OBJECT_ID) {
             throw std::runtime_error("Universe::GenerateSystem() : Attempt to insert system into the object map failed.");
         }
 
@@ -713,8 +713,7 @@ namespace Delauney {
 ////////////////////////////////////////
 // FleetPlan                          //
 ////////////////////////////////////////
-const std::string& FleetPlan::Name() const
-{
+const std::string& FleetPlan::Name() const {
     if (m_name_in_stringtable)
         return UserString(m_name);
     else
@@ -750,8 +749,7 @@ namespace {
     // static(s)
     FleetPlanManager* FleetPlanManager::s_instance = 0;
 
-    const FleetPlanManager& FleetPlanManager::GetFleetPlanManager()
-    {
+    const FleetPlanManager& FleetPlanManager::GetFleetPlanManager() {
         static FleetPlanManager manager;
         return manager;
     }
@@ -773,8 +771,7 @@ namespace {
 #endif
     }
 
-    FleetPlanManager::~FleetPlanManager()
-    {
+    FleetPlanManager::~FleetPlanManager() {
         for (std::vector<FleetPlan*>::iterator it = m_plans.begin(); it != m_plans.end(); ++it)
             delete *it;
         m_plans.clear();
@@ -807,14 +804,12 @@ namespace {
     // static(s)
     MonsterFleetPlanManager* MonsterFleetPlanManager::s_instance = 0;
 
-    const MonsterFleetPlanManager& MonsterFleetPlanManager::GetMonsterFleetPlanManager()
-    {
+    const MonsterFleetPlanManager& MonsterFleetPlanManager::GetMonsterFleetPlanManager() {
         static MonsterFleetPlanManager manager;
         return manager;
     }
 
-    MonsterFleetPlanManager::MonsterFleetPlanManager()
-    {
+    MonsterFleetPlanManager::MonsterFleetPlanManager() {
         if (s_instance)
             throw std::runtime_error("Attempted to create more than one MonsterFleetPlanManager.");
 
@@ -838,9 +833,8 @@ namespace {
     }
 
     /** returns the singleton fleet plan manager */
-    const MonsterFleetPlanManager& GetMonsterFleetPlanManager() {
-        return MonsterFleetPlanManager::GetMonsterFleetPlanManager();
-    }
+    const MonsterFleetPlanManager& GetMonsterFleetPlanManager()
+    { return MonsterFleetPlanManager::GetMonsterFleetPlanManager(); }
 };
 
 /////////////////////////////
@@ -866,14 +860,12 @@ namespace {
     // static(s)
     ItemSpecManager* ItemSpecManager::s_instance = 0;
 
-    const ItemSpecManager& ItemSpecManager::GetItemSpecManager()
-    {
+    const ItemSpecManager& ItemSpecManager::GetItemSpecManager() {
         static ItemSpecManager manager;
         return manager;
     }
 
-    ItemSpecManager::ItemSpecManager()
-    {
+    ItemSpecManager::ItemSpecManager() {
         if (s_instance)
             throw std::runtime_error("Attempted to create more than one ItemSpecManager.");
 
@@ -900,9 +892,8 @@ namespace {
     }
 
     /** returns the singleton item spec manager */
-    const ItemSpecManager& GetItemSpecManager() {
-        return ItemSpecManager::GetItemSpecManager();
-    }
+    const ItemSpecManager& GetItemSpecManager()
+    { return ItemSpecManager::GetItemSpecManager(); }
 };
 
 namespace {
@@ -1571,8 +1562,7 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
     UpdateEmpireObjectVisibilities();
 }
 
-void Universe::PopulateSystems(GalaxySetupOption density)
-{
+void Universe::PopulateSystems(GalaxySetupOption density) {
     Logger().debugStream() << "PopulateSystems";
 
     std::vector<System*> sys_vec = Objects().FindObjects<System>();
@@ -1636,8 +1626,7 @@ void Universe::PopulateSystems(GalaxySetupOption density)
     }
 }
 
-void Universe::AddStartingSpecials(GalaxySetupOption specials_freq)
-{
+void Universe::AddStartingSpecials(GalaxySetupOption specials_freq) {
     Logger().debugStream() << "AddStartingSpecials";
 
     double special_chance = UniverseDataTables()["SpecialsFrequency"][0][specials_freq] / 10000.0;
@@ -1735,8 +1724,7 @@ namespace {
     );
 }
 
-void Universe::GenerateNatives(GalaxySetupOption freq)
-{
+void Universe::GenerateNatives(GalaxySetupOption freq) {
     Logger().debugStream() << "GenerateNatives";
 
     int inverse_native_chance = UniverseDataTables()["NativeFrequency"][0][freq];
@@ -1802,8 +1790,7 @@ void Universe::GenerateNatives(GalaxySetupOption freq)
     }
 }
 
-void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
-{
+void Universe::GenerateSpaceMonsters(GalaxySetupOption freq) {
     Logger().debugStream() << "GenerateSpaceMonsters";
 
     // get overall universe chance for monster generation in a system
@@ -1937,8 +1924,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
     }
 }
 
-void Universe::GenerateStarlanes(GalaxySetupOption freq, const AdjacencyGrid& adjacency_grid)
-{
+void Universe::GenerateStarlanes(GalaxySetupOption freq, const AdjacencyGrid& adjacency_grid) {
     if (freq == GALAXY_SETUP_NONE)
         return;
 
@@ -2107,8 +2093,7 @@ void Universe::GenerateStarlanes(GalaxySetupOption freq, const AdjacencyGrid& ad
     //} // end for n
 }
 
-void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_planet_ids)
-{
+void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_planet_ids) {
     homeworld_planet_ids.clear();
 
     std::vector<System*> sys_vec = Objects().FindObjects<System>();
@@ -2137,13 +2122,13 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_plane
 
             for (unsigned int j = 0; j < homeworld_planet_ids.size(); ++j) {
                 //Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworld_planet_ids[j];
-                Planet* homeworld = GetObject<Planet>(homeworld_planet_ids[j]);
+                Planet* homeworld = GetPlanet(homeworld_planet_ids[j]);
                 if (!homeworld) {
                     Logger().errorStream() << "couldn't find homeworld!";
                     continue;
                 }
 
-                System* existing_system = GetObject<System>(homeworld->SystemID());
+                System* existing_system = GetSystem(homeworld->SystemID());
                 //Logger().debugStream() << ".... existing system ptr: " << existing_system;
 
                 if (!existing_system) {
@@ -2191,8 +2176,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_plane
     }
 }
 
-void Universe::NamePlanets()
-{
+void Universe::NamePlanets() {
     std::vector<System*> sys_vec = Objects().FindObjects<System>();
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         System* system = *it;
@@ -2201,7 +2185,7 @@ void Universe::NamePlanets()
             std::vector<int> planet_ids = system->FindObjectIDsInOrbit<Planet>(i);
             if (!planet_ids.empty()) {
                 assert(planet_ids.size() == 1);
-                Planet* planet = GetObject<Planet>(*planet_ids.begin());
+                Planet* planet = GetPlanet(*planet_ids.begin());
                 if (!planet) {
                     Logger().errorStream() << "Universe::NamePlanet couldn't get planet with id " << *planet_ids.begin();
                     continue;
@@ -2345,8 +2329,8 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
 
 
         // set ownership of home planet
-        Planet* home_planet = GetObject<Planet>(homeworld_id);
-        System* home_system = GetObject<System>(home_planet->SystemID());
+        Planet* home_planet = GetPlanet(homeworld_id);
+        System* home_system = GetSystem(home_planet->SystemID());
         if (!home_planet || !home_system) {
             Logger().errorStream() << "Couldn't get homeworld or system for generated empire...";
             continue;

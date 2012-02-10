@@ -1413,7 +1413,7 @@ ResolvingCombat::ResolvingCombat(my_context c) :
             for (std::set<int>::const_iterator ship_it = it->second[i].m_ships.begin();
                  ship_it != it->second[i].m_ships.end();
                  ++ship_it) {
-                ShipDesign* design = const_cast<ShipDesign*>(GetObject<Ship>(*ship_it)->Design());
+                ShipDesign* design = const_cast<ShipDesign*>(GetShip(*ship_it)->Design());
                 for (std::set<int>::const_iterator empire_it =
                          context<ProcessingTurn>().m_combat_empire_ids.begin();
                      empire_it != context<ProcessingTurn>().m_combat_empire_ids.end();
@@ -1479,7 +1479,7 @@ sc::result ResolvingCombat::react(const CombatTurnOrders& msg)
         int owner_id = ALL_EMPIRES;
         if (order.Type() == CombatOrder::SHIP_ORDER ||
             order.Type() == CombatOrder::SETUP_PLACEMENT_ORDER) {
-            if (UniverseObject* object = GetObject(order.ID())) {
+            if (UniverseObject* object = GetUniverseObject(order.ID())) {
                 assert(!object->Unowned());
                 owner_id = object->Owner();
             }

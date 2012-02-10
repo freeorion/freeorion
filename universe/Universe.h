@@ -271,7 +271,7 @@ public:
 
     /** Updates indicated object's meters, and if applicable, the
       * meters of objects contained within the indicated object.
-      * If \a object_id is UniverseObject::INVALID_OBJECT_ID, then all
+      * If \a object_id is INVALID_OBJECT_ID, then all
       * objects' meters are updated. */
     void            UpdateMeterEstimates(int object_id, bool update_contained_objects = false);
 
@@ -543,19 +543,6 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
-
-/** Free function UniverseObject getters. */
-UniverseObject*         GetObject(int object_id);
-UniverseObject*         GetEmpireKnownObject(int object_id, int empire_id);
-
-template <class T>
-T*                      GetObject(int object_id)
-{ return GetUniverse().Objects().template Object<T>(object_id); }
-
-template <class T>
-T*                      GetEmpireKnownObject(int object_id, int empire_id)
-{ return GetUniverse().EmpireKnownObjects(empire_id).template Object<T>(object_id); }
-
 
 /** A combination of names of ShipDesign that can be put together to make a
   * fleet of ships, and a name for such a fleet, loaded from starting_fleets.txt

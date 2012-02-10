@@ -45,7 +45,7 @@ StationaryFleetVisitor::StationaryFleetVisitor(int empire/* = ALL_EMPIRES*/) :
 {}
 
 UniverseObject* StationaryFleetVisitor::Visit(Fleet* obj) const {
-    if ((obj->FinalDestinationID() == UniverseObject::INVALID_OBJECT_ID ||
+    if ((obj->FinalDestinationID() == INVALID_OBJECT_ID ||
          obj->FinalDestinationID() == obj->SystemID()) &&
         (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;
@@ -63,9 +63,9 @@ OrderedMovingFleetVisitor::OrderedMovingFleetVisitor(int empire/* = ALL_EMPIRES*
 {}
 
 UniverseObject* OrderedMovingFleetVisitor::Visit(Fleet* obj) const {
-    if (obj->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&
+    if (obj->FinalDestinationID() != INVALID_OBJECT_ID &&
         obj->FinalDestinationID() != obj->SystemID() &&
-        obj->SystemID() != UniverseObject::INVALID_OBJECT_ID && 
+        obj->SystemID() != INVALID_OBJECT_ID && 
         (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;
     return 0;
@@ -82,8 +82,8 @@ MovingFleetVisitor::MovingFleetVisitor(int empire/* = ALL_EMPIRES*/) :
 {}
 
 UniverseObject* MovingFleetVisitor::Visit(Fleet* obj) const {
-    if (obj->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&
-        obj->SystemID() == UniverseObject::INVALID_OBJECT_ID && 
+    if (obj->FinalDestinationID() != INVALID_OBJECT_ID &&
+        obj->SystemID() == INVALID_OBJECT_ID && 
         (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;
     return 0;

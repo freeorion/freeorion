@@ -43,8 +43,6 @@ namespace {
         {}
 
         void operator()(const char* first, const char* last) const {
-            const ObjectMap& objects = GetMainObjectMap();
-
             std::string token(first, last);
 
             // special case: "%%" is interpreted to be a '%' character
@@ -59,7 +57,6 @@ namespace {
                 m_valid = false;
                 return;
             }
-
 
             const XMLElement& token_elem = m_variables.Child(token);
 
@@ -80,7 +77,7 @@ namespace {
                 token == VarText::FLEET_ID_TAG ||
                 token == VarText::BUILDING_ID_TAG)
             {
-                int object_id = UniverseObject::INVALID_OBJECT_ID;
+                int object_id = INVALID_OBJECT_ID;
                 try {
                     object_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
                 } catch (const std::exception&) {
@@ -89,7 +86,7 @@ namespace {
                     m_valid = false;
                     return;
                 }
-                const UniverseObject* obj = objects.Object(object_id);
+                const UniverseObject* obj = GetUniverseObject(object_id);
                 if (!obj) {
                     Logger().errorStream() << "SubstituteAndAppend couldn't get object with ID " << object_id;
                     m_str += UserString("ERROR");

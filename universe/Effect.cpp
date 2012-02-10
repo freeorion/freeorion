@@ -134,13 +134,13 @@ namespace {
         const Universe& universe = GetUniverse();
         const ObjectMap& objects = universe.Objects();
 
-        const System* next_system = objects.Object<System>(new_next_system);
+        const System* next_system = GetSystem(new_next_system);
         if (!next_system) {
             Logger().errorStream() << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
             return;
         }
 
-        if (new_previous_system != UniverseObject::INVALID_OBJECT_ID && !objects.Object<System>(new_previous_system)) {
+        if (new_previous_system != INVALID_OBJECT_ID && !GetSystem(new_previous_system)) {
             Logger().errorStream() << "UpdateFleetRoute couldn't get new previous system with id: " << new_previous_system;
         }
 
@@ -149,7 +149,7 @@ namespace {
 
         // recalculate route from the shortest path between first system on path and final destination
         int start_system = fleet->SystemID();
-        if (start_system == UniverseObject::INVALID_OBJECT_ID)
+        if (start_system == INVALID_OBJECT_ID)
             start_system = new_next_system;
 
         int dest_system = fleet->FinalDestinationID();
@@ -235,7 +235,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& po
     typedef Condition::ObjectSet ObjectSet;
     targets.clear();
 
-    UniverseObject* source = GetObject(source_id);
+    UniverseObject* source = GetUniverseObject(source_id);
     if (!source && m_activation) {
         Logger().errorStream() << "EffectsGroup::GetTargetSet passed invalid source object with id " << source_id;
         return;
@@ -285,7 +285,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const {
 }
 
 void EffectsGroup::Execute(int source_id, const TargetSet& targets) const {
-    UniverseObject* source = GetObject(source_id);
+    UniverseObject* source = GetUniverseObject(source_id);
 
     // execute effects on targets
     for (TargetSet::const_iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
@@ -301,7 +301,7 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets) const {
 }
 
 void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const {
-    const UniverseObject* source = GetObject(source_id);
+    const UniverseObject* source = GetUniverseObject(source_id);
     const TargetSet& targets = targets_and_cause.target_set;
 
     // execute effects on targets
@@ -348,7 +348,7 @@ void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cau
 }
 
 void EffectsGroup::ExecuteSetMeter(int source_id, const TargetSet& targets) const {
-    const UniverseObject* source = GetObject(source_id);
+    const UniverseObject* source = GetUniverseObject(source_id);
 
     // execute effects on targets
     for (TargetSet::const_iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
@@ -374,7 +374,7 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetSet& targets) cons
 }
 
 void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const {
-    const UniverseObject* source = GetObject(source_id);
+    const UniverseObject* source = GetUniverseObject(source_id);
 
     // execute effects on targets
     for (TargetSet::const_iterator target_it = targets_and_cause.target_set.begin();
@@ -1068,7 +1068,7 @@ void SetOwner::Execute(const ScriptingContext& context) const {
     if (Ship* ship = universe_object_cast<Ship*>(context.effect_target)) {
         // assigning ownership of a ship requires updating the containing
         // fleet, or splitting ship off into a new fleet at the same location
-        Fleet* fleet = GetObject<Fleet>(ship->FleetID());
+        Fleet* fleet = GetFleet(ship->FleetID());
         if (!fleet)
             return;
         if (fleet->Owner() == empire_id)
@@ -1076,7 +1076,7 @@ void SetOwner::Execute(const ScriptingContext& context) const {
 
         // move ship into new fleet
         Fleet* new_fleet = 0;
-        if (System* system = GetObject<System>(ship->SystemID()))
+        if (System* system = GetSystem(ship->SystemID()))
             new_fleet = CreateNewFleet(system, ship);
         else
             new_fleet = CreateNewFleet(ship->X(), ship->Y(), ship);
@@ -1125,7 +1125,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "CreatePlanet::Execute passed no target object";
         return;
     }
-    System* location = GetObject<System>(context.effect_target->SystemID());
+    System* location = GetSystem(context.effect_target->SystemID());
     if (!location) {
         Logger().errorStream() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
@@ -1199,7 +1199,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
     Planet* location = universe_object_cast<Planet*>(context.effect_target);
     if (!location)
         if (Building* location_building = universe_object_cast<Building*>(context.effect_target))
-            location = GetObject<Planet>(location_building->PlanetID());
+            location = GetPlanet(location_building->PlanetID());
     if (!location) {
         Logger().errorStream() << "CreateBuilding::Execute couldn't get a Planet object at which to create the building";
         return;
@@ -1286,7 +1286,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    System* system = GetObject<System>(context.effect_target->SystemID());
+    System* system = GetSystem(context.effect_target->SystemID());
     if (!system) {
         Logger().errorStream() << "CreateShip::Execute passed a target not in a system";
         return;
@@ -1511,7 +1511,7 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
     }
     System* target_system = universe_object_cast<System*>(context.effect_target);
     if (!target_system)
-        target_system = objects.Object<System>(context.effect_target->SystemID());
+        target_system = GetSystem(context.effect_target->SystemID());
     if (!target_system)
         return; // nothing to do!
 
@@ -1540,7 +1540,7 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
         const UniverseObject* endpoint_object = *it;
         const System* endpoint_system = universe_object_cast<const System*>(endpoint_object);
         if (!endpoint_system)
-            endpoint_system = objects.Object<System>(endpoint_object->SystemID());
+            endpoint_system = GetSystem(endpoint_object->SystemID());
         if (!endpoint_system)
             continue;
         endpoint_systems.insert(const_cast<System*>(endpoint_system));
@@ -1585,7 +1585,7 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
     }
     System* target_system = universe_object_cast<System*>(context.effect_target);
     if (!target_system)
-        target_system = objects.Object<System>(context.effect_target->SystemID());
+        target_system = GetSystem(context.effect_target->SystemID());
     if (!target_system)
         return; // nothing to do!
 
@@ -1614,7 +1614,7 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
         const UniverseObject* endpoint_object = *it;
         const System* endpoint_system = universe_object_cast<const System*>(endpoint_object);
         if (!endpoint_system)
-            endpoint_system = objects.Object<System>(endpoint_object->SystemID());
+            endpoint_system = GetSystem(endpoint_object->SystemID());
         if (!endpoint_system)
             continue;
         endpoint_systems.insert(const_cast<System*>(endpoint_system));
@@ -1714,11 +1714,11 @@ void MoveTo::Execute(const ScriptingContext& context) const {
     if (Fleet* fleet = universe_object_cast<Fleet*>(context.effect_target)) {
         // fleets can be inserted into the system that contains the destination object (or the 
         // destination object istelf if it is a system
-        if (System* dest_system = GetObject<System>(destination->SystemID())) {
+        if (System* dest_system = GetSystem(destination->SystemID())) {
             if (fleet->SystemID() != dest_system->ID()) {
                 dest_system->Insert(fleet);
                 ExploreSystem(dest_system->ID(), fleet);
-                UpdateFleetRoute(fleet, UniverseObject::INVALID_OBJECT_ID, UniverseObject::INVALID_OBJECT_ID);  // inserted into dest_system, so next and previous systems are invalid objects
+                UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);  // inserted into dest_system, so next and previous systems are invalid objects
             }
         } else {
             fleet->UniverseObject::MoveTo(destination);
@@ -1736,7 +1736,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             dest_fleet = universe_object_cast<const Fleet*>(destination);
             if (!dest_fleet)
                 if (const Ship* dest_ship = universe_object_cast<const Ship*>(destination))
-                    dest_fleet = GetObject<Fleet>(dest_ship->FleetID());
+                    dest_fleet = GetFleet(dest_ship->FleetID());
 
             if (dest_fleet) {
                 UpdateFleetRoute(fleet, dest_fleet->NextSystemID(), dest_fleet->PreviousSystemID());
@@ -1750,7 +1750,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
     } else if (Ship* ship = universe_object_cast<Ship*>(context.effect_target)) {
         // TODO: make sure colonization doesn't interfere with this effect, and vice versa
 
-        Fleet* old_fleet = GetObject<Fleet>(ship->FleetID());
+        Fleet* old_fleet = GetFleet(ship->FleetID());
         Fleet* dest_fleet = universe_object_cast<Fleet*>(destination);  // may be 0 if destination is not a fleet
         bool same_owners = ship->Owner() == destination->Owner();
         int dest_sys_id = destination->SystemID();
@@ -1760,7 +1760,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             // ship is moving to a different fleet owned by the same empire, so can be inserted into it
             dest_fleet->AddShip(ship->ID());    // does nothing if fleet already contains the ship
 
-        } else if (dest_sys_id == ship_sys_id && dest_sys_id != UniverseObject::INVALID_OBJECT_ID) {
+        } else if (dest_sys_id == ship_sys_id && dest_sys_id != INVALID_OBJECT_ID) {
             // ship is moving to the system it is already in, but isn't being or can't be moved into a specific fleet, so the ship
             // can be left in its current fleet and at its current location
 
@@ -1770,7 +1770,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
 
         } else {
             // need to create a new fleet for ship
-            if (System* dest_system = GetObject<System>(destination->SystemID())) {
+            if (System* dest_system = GetSystem(destination->SystemID())) {
                 CreateNewFleet(dest_system, ship);                          // creates new fleet, inserts fleet into system and ship into fleet
                 ExploreSystem(dest_system->ID(), ship);
 
@@ -1784,9 +1784,9 @@ void MoveTo::Execute(const ScriptingContext& context) const {
 
     } else if (Planet* planet = universe_object_cast<Planet*>(context.effect_target)) {
         // planets need to be located in systems, so get system that contains destination object
-        if (System* dest_system = GetObject<System>(destination->SystemID())) {
+        if (System* dest_system = GetSystem(destination->SystemID())) {
             // check if planet is already in this system.  if so, don't need to do anything
-            if (planet->SystemID() == UniverseObject::INVALID_OBJECT_ID || planet->SystemID() != dest_system->ID()) {
+            if (planet->SystemID() == INVALID_OBJECT_ID || planet->SystemID() != dest_system->ID()) {
                 //  determine if and which orbits are available
                 std::set<int> free_orbits = dest_system->FreeOrbits();
                 if (!free_orbits.empty()) {
@@ -1803,14 +1803,14 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         // or attempt to get the planet on which the destination object is located and insert target building into that
         if (Planet* dest_planet = universe_object_cast<Planet*>(destination)) {
             dest_planet->AddBuilding(building->ID());
-            if (const System* dest_system = GetObject<System>(dest_planet->SystemID()))
+            if (const System* dest_system = GetSystem(dest_planet->SystemID()))
                 ExploreSystem(dest_system->ID(), building);
 
 
         } else if (Building* dest_building = universe_object_cast<Building*>(destination)) {
-            if (Planet* dest_planet = GetObject<Planet>(dest_building->PlanetID())) {
+            if (Planet* dest_planet = GetPlanet(dest_building->PlanetID())) {
                 dest_planet->AddBuilding(building->ID());
-                if (const System* dest_system = GetObject<System>(dest_planet->SystemID()))
+                if (const System* dest_system = GetSystem(dest_planet->SystemID()))
                     ExploreSystem(dest_system->ID(), building);
             }
         }
@@ -1878,14 +1878,14 @@ void SetDestination::Execute(const ScriptingContext& context) const
     int destination_system_id = destination->SystemID();
 
     // early exit if destination is not / in a system
-    if (destination_system_id == UniverseObject::INVALID_OBJECT_ID)
+    if (destination_system_id == INVALID_OBJECT_ID)
         return;
 
     int start_system_id = target_fleet->SystemID();
-    if (start_system_id == UniverseObject::INVALID_OBJECT_ID)
+    if (start_system_id == INVALID_OBJECT_ID)
         start_system_id = target_fleet->NextSystemID();
     // abort if no valid starting system
-    if (start_system_id == UniverseObject::INVALID_OBJECT_ID)
+    if (start_system_id == INVALID_OBJECT_ID)
         return;
 
     // find shortest path for fleet's owner

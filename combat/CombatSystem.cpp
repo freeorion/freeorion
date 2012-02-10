@@ -22,7 +22,7 @@
 // CombatInfo
 ////////////////////////////////////////////////
 CombatInfo::CombatInfo() :
-    system_id(UniverseObject::INVALID_OBJECT_ID)
+    system_id(INVALID_OBJECT_ID)
 {}
 
 CombatInfo::CombatInfo(int system_id_) :
@@ -46,7 +46,7 @@ CombatInfo::CombatInfo(int system_id_) :
     std::vector<int> ship_ids = system->FindObjectIDs<Ship>();
     for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
         int ship_id = *it;
-        const Ship* ship = GetObject<Ship>(ship_id);
+        const Ship* ship = GetShip(ship_id);
         if (!ship) {
             Logger().errorStream() << "CombatInfo::CombatInfo couldn't get ship with id " << ship_id << " in system " << system->Name() << " (" << system_id << ")";
             continue;
@@ -64,7 +64,7 @@ CombatInfo::CombatInfo(int system_id_) :
     std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
     for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
         int planet_id = *it;
-        const Planet* planet = GetObject<Planet>(planet_id);
+        const Planet* planet = GetPlanet(planet_id);
         if (!planet) {
             Logger().errorStream() << "CombatInfo::CombatInfo couldn't get planet with id " << planet_id << " in system " << system->Name() << " (" << system_id << ")";
             continue;
@@ -95,7 +95,7 @@ CombatInfo::CombatInfo(int system_id_) :
     // ships
     for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
         int ship_id = *it;
-        const Ship* ship = GetObject<Ship>(ship_id);
+        const Ship* ship = GetShip(ship_id);
         if (!ship) {
             Logger().errorStream() << "CombatInfo::CombatInfo couldn't get ship with id " << ship_id << " in system " << system->Name() << " (" << system_id << ")";
             continue;
@@ -114,7 +114,7 @@ CombatInfo::CombatInfo(int system_id_) :
     // planets
     for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
         int planet_id = *it;
-        const Planet* planet = GetObject<Planet>(planet_id);
+        const Planet* planet = GetPlanet(planet_id);
         if (!planet) {
             Logger().errorStream() << "CombatInfo::CombatInfo couldn't get planet with id " << planet_id << " in system " << system->Name() << " (" << system_id << ")";
             continue;
@@ -137,7 +137,7 @@ CombatInfo::CombatInfo(int system_id_) :
 }
 
 void CombatInfo::Clear() {
-    system_id = UniverseObject::INVALID_OBJECT_ID;
+    system_id = INVALID_OBJECT_ID;
     empire_ids.clear();
     objects.Clear();
     for (std::map<int, ObjectMap>::iterator it = empire_known_objects.begin(); it != empire_known_objects.end(); ++it)

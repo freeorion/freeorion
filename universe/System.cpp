@@ -152,7 +152,7 @@ std::string System::Dump() const {
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end();) {
         int obj_id = it->second;
         ++it;
-        if (obj_id == UniverseObject::INVALID_OBJECT_ID)
+        if (obj_id == INVALID_OBJECT_ID)
             continue;
         os << obj_id << (it == m_objects.end() ? "" : ", ");
     }
@@ -202,11 +202,25 @@ const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and
     return this->PublicName(empire_id);
 }
 
-StarType System::NextOlderStarType() const
-{ return m_star; }
+StarType System::NextOlderStarType() const {
+    if (m_star <= INVALID_STAR_TYPE || m_star >= NUM_STAR_TYPES)
+        return INVALID_STAR_TYPE;
+    if (m_star >= STAR_RED)
+        return m_star;  // STAR_RED, STAR_NEUTRON, STAR_BLACK, STAR_NONE
+    if (m_star <= STAR_BLUE)
+        return STAR_BLUE;
+    return StarType(m_star + 1);
+}
 
-StarType System::NextYoungerStarType() const
-{ return m_star; }
+StarType System::NextYoungerStarType() const {
+    if (m_star <= INVALID_STAR_TYPE || m_star >= NUM_STAR_TYPES)
+        return INVALID_STAR_TYPE;
+    if (m_star >= STAR_RED)
+        return m_star;  // STAR_RED, STAR_NEUTRON, STAR_BLACK, STAR_NONE
+    if (m_star <= STAR_BLUE)
+        return STAR_BLUE;
+    return StarType(m_star - 1);
+}
 
 int System::NumStarlanes() const {
     int retval = 0;
@@ -245,10 +259,10 @@ int System::SystemID() const {
 }
 
 std::vector<int> System::FindObjectIDs() const {
-    const ObjectMap& objects = GetMainObjectMap();
+
     std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (objects.Object(it->second)) {
+        if (GetUniverseObject(it->second)) {
             retval.push_back(it->second);
         } else {
             Logger().errorStream() << "System::FindObjectIDs couldn't get Object with ID " << it->second;
@@ -258,10 +272,9 @@ std::vector<int> System::FindObjectIDs() const {
 }
 
 std::vector<int> System::FindObjectIDs(const UniverseObjectVisitor& visitor) const {
-    const ObjectMap& objects = GetMainObjectMap();
     std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const UniverseObject* obj = objects.Object(it->second)) {
+        if (const UniverseObject* obj = GetUniverseObject(it->second)) {
             if (obj->Accept(visitor))
                 retval.push_back(it->second);
         } else {
@@ -272,11 +285,10 @@ std::vector<int> System::FindObjectIDs(const UniverseObjectVisitor& visitor) con
 }
 
 std::vector<int> System::FindObjectIDsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const {
-    const ObjectMap& objects = GetMainObjectMap();
     std::vector<int> retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (const UniverseObject* obj = objects.Object(it->second)) {
+        if (const UniverseObject* obj = GetUniverseObject(it->second)) {
             if (obj->Accept(visitor))
                 retval.push_back(it->second);
         } else {
@@ -348,7 +360,7 @@ int System::Insert(UniverseObject* obj, int orbit) {
     for (std::list<UniverseObject*>::iterator it = inserted_objects.begin(); it != inserted_objects.end(); ++it) {
         std::vector<int> contained_object_ids = (*it)->FindObjectIDs();
         for (std::vector<int>::const_iterator coit = contained_object_ids.begin(); coit != contained_object_ids.end(); ++coit)
-            if (UniverseObject* cobj = GetObject(*coit))
+            if (UniverseObject* cobj = GetUniverseObject(*coit))
                 inserted_objects.push_back(cobj);
     }
 
@@ -386,7 +398,7 @@ int System::Insert(UniverseObject* obj, int orbit) {
 int System::Insert(int obj_id, int orbit) {
     if (orbit < -1)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
-    UniverseObject* object = GetMainObjectMap().Object(obj_id);
+    UniverseObject* object = GetUniverseObject(obj_id);
     if (!object)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in a System, when the object is not already in the Universe");
 
@@ -407,7 +419,7 @@ void System::Remove(UniverseObject* obj) {
     for (std::list<UniverseObject*>::iterator it = removed_objects.begin(); it != removed_objects.end(); ++it) {
         std::vector<int> contained_object_ids = (*it)->FindObjectIDs();
         for (std::vector<int>::const_iterator coit = contained_object_ids.begin(); coit != contained_object_ids.end(); ++coit)
-            if (UniverseObject* cobj = GetObject(*coit))
+            if (UniverseObject* cobj = GetUniverseObject(*coit))
                 removed_objects.push_back(cobj);
     }
 
@@ -458,7 +470,7 @@ void System::Remove(UniverseObject* obj) {
 }
 
 void System::Remove(int id)
-{ Remove(GetMainObjectMap().Object(id)); }
+{ Remove(GetUniverseObject(id)); }
 
 void System::SetStarType(StarType type) {
     m_star = type;
@@ -504,7 +516,7 @@ bool System::RemoveWormhole(int id) {
 void System::UpdateOwnership() {
     m_empires_with_planets_here.clear();
     for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
-        if (Planet* planet = GetMainObjectMap().Object<Planet>(it->second))
+        if (Planet* planet = GetPlanet(it->second))
             if (!planet->Unowned())
                 m_empires_with_planets_here.insert(planet->Owner());
 }
@@ -602,7 +614,7 @@ System::StarlaneMap System::VisibleStarlanesWormholes(int empire_id) const {
     // add any lanes an owned fleet is moving along that connect to this system
     for (std::vector<const Fleet*>::const_iterator it = moving_empire_fleets.begin(); it != moving_empire_fleets.end(); ++it) {
         const Fleet* fleet = *it;
-        if (fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID) {
+        if (fleet->SystemID() != INVALID_OBJECT_ID) {
             Logger().errorStream() << "System::VisibleStarlanesWormholes somehow got a moving fleet that had a valid system id?";
             continue;
         }
@@ -613,14 +625,14 @@ System::StarlaneMap System::VisibleStarlanesWormholes(int empire_id) const {
         // see if previous or next system is this system, and if so, is other
         // system on lane along which ship is moving one of this system's
         // starlanes or wormholes?
-        int other_lane_end_sys_id = UniverseObject::INVALID_OBJECT_ID;
+        int other_lane_end_sys_id = INVALID_OBJECT_ID;
 
         if (prev_sys_id == this->ID())
             other_lane_end_sys_id = next_sys_id;
         else if (next_sys_id == this->ID())
             other_lane_end_sys_id = prev_sys_id;
 
-        if (other_lane_end_sys_id != UniverseObject::INVALID_OBJECT_ID) {
+        if (other_lane_end_sys_id != INVALID_OBJECT_ID) {
             StarlaneMap::const_iterator lane_it = m_starlanes_wormholes.find(other_lane_end_sys_id);
             if (lane_it == m_starlanes_wormholes.end()) {
                 Logger().errorStream() << "System::VisibleStarlanesWormholes found an owned fleet moving along a starlane connected to this system that isn't also connected to one of this system's starlane-connected systems...?";
@@ -667,9 +679,8 @@ double StarlaneEntranceTangentAxis()
 { return 80.0; }
 
 double StarlaneEntranceOrbitalPosition(int from_system, int to_system) {
-    const ObjectMap& objects = GetMainObjectMap();
-    const System* system_1 = objects.Object<System>(from_system);
-    const System* system_2 = objects.Object<System>(to_system);
+    const System* system_1 = GetSystem(from_system);
+    const System* system_2 = GetSystem(to_system);
     if (!system_1 || !system_2) {
         Logger().errorStream() << "StarlaneEntranceOrbitalPosition passed invalid system id";
         return 0.0;

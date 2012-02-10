@@ -244,8 +244,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     m_fsm->initiate();
 }
 
-HumanClientApp::~HumanClientApp()
-{
+HumanClientApp::~HumanClientApp() {
     if (m_networking.Connected())
         m_networking.DisconnectFromServer();
     m_server_process.RequestTermination();
@@ -258,8 +257,7 @@ const std::string& HumanClientApp::SaveFileName() const
 bool HumanClientApp::SinglePlayerGame() const
 { return m_single_player_game; }
 
-void HumanClientApp::StartServer()
-{
+void HumanClientApp::StartServer() {
 #ifdef FREEORION_WIN32
     const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond.exe").string();
 #else
@@ -276,24 +274,21 @@ void HumanClientApp::StartServer()
     m_server_process = Process(SERVER_CLIENT_EXE, args);
 }
 
-void HumanClientApp::FreeServer()
-{
+void HumanClientApp::FreeServer() {
     m_server_process.Free();
     m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
 }
 
-void HumanClientApp::KillServer()
-{
+void HumanClientApp::KillServer() {
     m_server_process.Kill();
     m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
 }
 
-void HumanClientApp::NewSinglePlayerGame(bool quickstart)
-{
+void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     if (!GetOptionsDB().Get<bool>("force-external-server")) {
         try {
             StartServer();
@@ -409,8 +404,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
         m_connected = true;
 }
 
-void HumanClientApp::MultiPlayerGame()
-{
+void HumanClientApp::MultiPlayerGame() {
     if (m_networking.Connected()) {
         Logger().errorStream() << "HumanClientApp::MultiPlayerGame aborting because already connected to a server";
         return;
@@ -460,17 +454,12 @@ void HumanClientApp::MultiPlayerGame()
 }
 
 void HumanClientApp::StartMultiPlayerGameFromLobby()
-{
-    m_fsm->process_event(StartMPGameClicked());
-}
+{ m_fsm->process_event(StartMPGameClicked()); }
 
 void HumanClientApp::CancelMultiplayerGameFromLobby()
-{
-    m_fsm->process_event(CancelMPGameClicked());
-}
+{ m_fsm->process_event(CancelMPGameClicked()); }
 
-void HumanClientApp::SaveGame(const std::string& filename)
-{
+void HumanClientApp::SaveGame(const std::string& filename) {
     Message response_msg;
     m_networking.SendSynchronousMessage(HostSaveGameMessage(PlayerID(), filename), response_msg);
     if (response_msg.Type() != Message::SAVE_GAME) {
@@ -483,8 +472,7 @@ void HumanClientApp::SaveGame(const std::string& filename)
 void HumanClientApp::EndGame()
 { EndGame(false); }
 
-void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/)
-{
+void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     if (filename != "") {
         if (!exists(boost::filesystem::path(filename))) {
             std::string msg =
@@ -563,8 +551,7 @@ Ogre::Camera* HumanClientApp::Camera()
 Ogre::Viewport* HumanClientApp::Viewport()
 { return m_viewport; }
 
-std::pair<int, int> HumanClientApp::GetWindowWidthHeight(Ogre::RenderSystem* render_system)
-{
+std::pair<int, int> HumanClientApp::GetWindowWidthHeight(Ogre::RenderSystem* render_system) {
     int width(800), height(600);
     if (!render_system)
         return std::make_pair(width, height);
@@ -615,8 +602,7 @@ std::pair<int, int> HumanClientApp::GetWindowWidthHeight(Ogre::RenderSystem* ren
     return std::make_pair(width, height);
 }
 
-void HumanClientApp::Reinitialize()
-{
+void HumanClientApp::Reinitialize() {
     Ogre::RenderSystem* render_system = m_root->getRenderSystem();
     if (!render_system)
         return;
@@ -648,16 +634,13 @@ void HumanClientApp::Reinitialize()
 }
 
 float HumanClientApp::GLVersion() const
-{
-    return GetGLVersion();
-}
+{ return GetGLVersion(); }
 
 namespace {
     static bool enter_2d_mode_log_done(false);
 }
 
-void HumanClientApp::Enter2DMode()
-{
+void HumanClientApp::Enter2DMode() {
     Ogre::RenderWindow* window = m_root->getAutoCreatedWindow();
     unsigned int width, height, c;
     int left, top;
@@ -707,14 +690,12 @@ void HumanClientApp::Enter2DMode()
 void HumanClientApp::Exit2DMode()
 { OgreGUI::Exit2DMode(); }
 
-void HumanClientApp::StartTurn()
-{
+void HumanClientApp::StartTurn() {
     ClientApp::StartTurn();
     m_fsm->process_event(TurnEnded());
 }
 
-void HumanClientApp::HandleSystemEvents()
-{
+void HumanClientApp::HandleSystemEvents() {
     OgreGUI::HandleSystemEvents();
     if (m_connected && !m_networking.Connected()) {
         m_connected = false;
@@ -726,14 +707,12 @@ void HumanClientApp::HandleSystemEvents()
     }
 }
 
-void HumanClientApp::RenderBegin()
-{
+void HumanClientApp::RenderBegin() {
     OgreGUI::RenderBegin();
     Sound::GetSound().DoFrame();
 }
 
-void HumanClientApp::HandleMessage(Message& msg)
-{
+void HumanClientApp::HandleMessage(Message& msg) {
     if (INSTRUMENT_MESSAGE_HANDLING)
         std::cerr << "HumanClientApp::HandleMessage(" << MessageTypeStr(msg.Type()) << ")\n";
 
@@ -764,8 +743,7 @@ void HumanClientApp::HandleMessage(Message& msg)
     }
 }
 
-void HumanClientApp::HandleSaveGameDataRequest()
-{
+void HumanClientApp::HandleSaveGameDataRequest() {
     if (INSTRUMENT_MESSAGE_HANDLING)
         std::cerr << "HumanClientApp::HandleSaveGameDataRequest(" << MessageTypeStr(Message::SAVE_GAME) << ")\n";
     SaveGameUIData ui_data;
@@ -773,8 +751,7 @@ void HumanClientApp::HandleSaveGameDataRequest()
     m_networking.SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
 }
 
-void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h)
-{
+void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
     Logger().debugStream() << "HumanClientApp::HandleWindowResize(" << Value(w) << ", " << Value(h) << ")";
     if (ClientUI* ui = ClientUI::GetClientUI()) {
         if (MapWnd* map_wnd = ui->GetMapWnd())
@@ -807,22 +784,19 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h)
     }
 }
 
-void HumanClientApp::HandleWindowClose()
-{
+void HumanClientApp::HandleWindowClose() {
     Logger().debugStream() << "HumanClientApp::HandleWindowClose()";
     EndGame();
     //Exit(0);  // want to call Exit here, to cleanly quit, but doing so doesn't work on Win7
     exit(0);
 }
 
-void HumanClientApp::StartGame()
-{
+void HumanClientApp::StartGame() {
     m_game_started = true;
     Orders().Reset();
 }
 
-void HumanClientApp::Autosave()
-{
+void HumanClientApp::Autosave() {
     // autosave only on appropriate turn numbers, and when enabled for current
     // game type (single vs. multiplayer)
     int autosave_turns = GetOptionsDB().Get<int>("autosave.turns");
@@ -879,8 +853,7 @@ void HumanClientApp::Autosave()
     }
 }
 
-void HumanClientApp::EndGame(bool suppress_FSM_reset)
-{
+void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     Logger().debugStream() << "HumanClientApp::EndGame";
     m_game_started = false;
     m_networking.DisconnectFromServer();
@@ -899,8 +872,7 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset)
         m_fsm->process_event(ResetToIntroMenu());
 }
 
-void HumanClientApp::UpdateFPSLimit()
-{
+void HumanClientApp::UpdateFPSLimit() {
     if (GetOptionsDB().Get<bool>("limit-fps")) {
         double fps = GetOptionsDB().Get<double>("max-fps");
         SetMaxFPS(fps);
@@ -911,14 +883,12 @@ void HumanClientApp::UpdateFPSLimit()
     }
 }
 
-void HumanClientApp::DisconnectedFromServer()
-{
+void HumanClientApp::DisconnectedFromServer() {
     Logger().debugStream() << "HumanClientApp::DisconnectedFromServer";
     m_fsm->process_event(Disconnection());
 }
 
-void HumanClientApp::Exit(int code)
-{
+void HumanClientApp::Exit(int code) {
     if (code) {
         Logger().debugStream() << "Initiating Exit (code " << code << " - error termination)";
         exit(code);

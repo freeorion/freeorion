@@ -14,7 +14,7 @@ Effect::EffectCause::EffectCause(EffectsCauseType cause_type_, const std::string
 
 Effect::AccountingInfo::AccountingInfo() :
     EffectCause(),
-    source_id(UniverseObject::INVALID_OBJECT_ID),
+    source_id(INVALID_OBJECT_ID),
     meter_change(0.0),
     running_meter_total(0.0)
 {}
@@ -30,7 +30,7 @@ Effect::TargetsAndCause::TargetsAndCause(const TargetSet& target_set_, const Eff
 {}
 
 Effect::SourcedEffectsGroup::SourcedEffectsGroup() :
-    source_object_id(UniverseObject::INVALID_OBJECT_ID)
+    source_object_id(INVALID_OBJECT_ID)
 {}
 
 Effect::SourcedEffectsGroup::SourcedEffectsGroup(int source_object_id_, const boost::shared_ptr<const EffectsGroup>& effects_group_) :

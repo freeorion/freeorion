@@ -8,13 +8,13 @@
 // ResourcePool
 //////////////////////////////////////////////////
 ResourcePool::ResourcePool() :
-    m_stockpile_object_id(UniverseObject::INVALID_OBJECT_ID),
+    m_stockpile_object_id(INVALID_OBJECT_ID),
     m_stockpile(0.0),
     m_type(INVALID_RESOURCE_TYPE)
 {}
 
 ResourcePool::ResourcePool(ResourceType type) :
-    m_stockpile_object_id(UniverseObject::INVALID_OBJECT_ID),
+    m_stockpile_object_id(INVALID_OBJECT_ID),
     m_stockpile(0.0),
     m_type(type)
 {}
@@ -69,7 +69,7 @@ double ResourcePool::TotalAvailable() const {
 std::map<std::set<int>, double> ResourcePool::Available() const {
     std::map<std::set<int>, double> retval = m_connected_object_groups_resource_production;
 
-    if (UniverseObject::INVALID_OBJECT_ID == m_stockpile_object_id)
+    if (INVALID_OBJECT_ID == m_stockpile_object_id)
         return retval;  // early exit for no stockpile
 
     // find group that contains the stockpile, and add the stockpile to that group's production to give its availability
@@ -89,7 +89,7 @@ double ResourcePool::GroupAvailable(int object_id) const
     Logger().debugStream() << "ResourcePool::GroupAvailable(" << object_id << ")";
     // available is stockpile + production in this group
 
-    if (m_stockpile_object_id == UniverseObject::INVALID_OBJECT_ID)
+    if (m_stockpile_object_id == INVALID_OBJECT_ID)
         return GroupProduction(object_id);
 
     // need to find if stockpile object is in the requested object's group
@@ -161,7 +161,7 @@ void ResourcePool::Update() {
          obj_it != m_object_ids.end(); ++obj_it)
     {
         int object_id = *obj_it;
-        const UniverseObject* obj = GetObject(object_id);
+        const UniverseObject* obj = GetUniverseObject(object_id);
         if (!obj) {
             Logger().errorStream() << "ResourcePool::Update couldn't find object with id " << object_id;
             continue;
@@ -170,7 +170,7 @@ void ResourcePool::Update() {
 
         // is object's system in a system group?
         std::set<int> object_system_group;
-        if (object_system_id != UniverseObject::INVALID_OBJECT_ID) {
+        if (object_system_id != INVALID_OBJECT_ID) {
             for (std::set<std::set<int> >::const_iterator groups_it = m_connected_system_groups.begin();
                  groups_it != m_connected_system_groups.end(); ++groups_it)
             {
@@ -247,7 +247,7 @@ void PopulationPool::Update() {
     double future_population = 0.0;
     // sum population from all PopCenters in this pool
     for (std::vector<int>::const_iterator it = m_pop_center_ids.begin(); it != m_pop_center_ids.end(); ++it) {
-        if (const UniverseObject* obj = GetObject(*it)) {
+        if (const UniverseObject* obj = GetUniverseObject(*it)) {
             if (const PopCenter* center = dynamic_cast<const PopCenter*>(obj)) {
                 m_population += center->CurrentMeterValue(METER_POPULATION);
                 future_population += center->NextTurnCurrentMeterValue(METER_POPULATION);

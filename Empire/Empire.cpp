@@ -480,7 +480,7 @@ ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int desig
 ProductionQueue::Element::Element() :
     ordered(0),
     remaining(0),
-    location(UniverseObject::INVALID_OBJECT_ID),
+    location(INVALID_OBJECT_ID),
     allocated_pp(0.0),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1)
@@ -963,7 +963,7 @@ namespace {
 ////////////
 Empire::Empire() :
     m_id(-1),
-    m_capital_id(UniverseObject::INVALID_OBJECT_ID),
+    m_capital_id(INVALID_OBJECT_ID),
     m_resource_pools(),
     m_population_pool(),
     m_maintenance_total_cost(0)
@@ -974,7 +974,7 @@ Empire::Empire(const std::string& name, const std::string& player_name, int empi
     m_name(name),
     m_player_name(player_name),
     m_color(color),
-    m_capital_id(UniverseObject::INVALID_OBJECT_ID),
+    m_capital_id(INVALID_OBJECT_ID),
     m_resource_pools(),
     m_population_pool(),
     m_maintenance_total_cost(0)
@@ -1027,7 +1027,7 @@ int Empire::StockpileID(ResourceType res) const {
     case RE_INDUSTRY:
     case RE_RESEARCH:
     default:
-        return UniverseObject::INVALID_OBJECT_ID;
+        return INVALID_OBJECT_ID;
         break;
     }
 }
@@ -1204,7 +1204,7 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
         return false;
     }
 
-    UniverseObject* build_location = GetObject(location);
+    UniverseObject* build_location = GetUniverseObject(location);
     if (!build_location) return false;
 
     if (build_type == BT_BUILDING) {
@@ -1234,7 +1234,7 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
         return false;
     }
 
-    UniverseObject* build_location = GetObject(location);
+    UniverseObject* build_location = GetUniverseObject(location);
     if (!build_location) return false;
 
     if (build_type == BT_SHIP) {
@@ -1266,7 +1266,7 @@ void Empire::EliminationCleanup() {
     // the production queue that might actually cause some problems if left
     // uncleared after elimination
 
-    m_capital_id = UniverseObject::INVALID_OBJECT_ID;
+    m_capital_id = INVALID_OBJECT_ID;
     // m_techs
     m_research_queue.clear();
     m_research_progress.clear();
@@ -1301,13 +1301,11 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     m_fleet_supply_system_ranges.clear();
     m_resource_supply_system_ranges.clear();
 
-    const ObjectMap& objects = GetMainObjectMap();
-
     // as of this writing, only planets can distribute supplies to fleets or other planets.  If other objects
     // get the ability to distribute supplies, this should be expanded to them as well
     std::vector<const UniverseObject*> owned_planets;
     for (std::set<int>::const_iterator it = known_objects.begin(); it != known_objects.end(); ++it) {
-        if (const Planet* planet = objects.Object<Planet>(*it))
+        if (const Planet* planet = GetPlanet(*it))
             if (planet->OwnedBy(this->EmpireID()))
                 owned_planets.push_back(planet);
     }
@@ -1319,7 +1317,7 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
 
         // ensure object is within a system, from which it can distribute supplies
         int system_id = obj->SystemID();
-        if (system_id == UniverseObject::INVALID_OBJECT_ID)
+        if (system_id == INVALID_OBJECT_ID)
             continue;   // TODO: consider future special case if current object is itself a system
 
         // check if object has a construction meter
@@ -1404,7 +1402,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     for (std::vector<Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
         const Fleet* fleet = *it;
         int system_id = fleet->SystemID();
-        if (system_id == UniverseObject::INVALID_OBJECT_ID/* || known_systems.find(system_id) == known_systems.end()*/)
+        if (system_id == INVALID_OBJECT_ID/* || known_systems.find(system_id) == known_systems.end()*/)
             continue;   // not in a (potential supply unobstructed) system
         else if (fleet->OwnedBy(m_id))
             systems_containing_friendly_fleets.insert(system_id);
@@ -1769,7 +1767,7 @@ const std::set<int>& Empire::SupplyUnobstructedSystems() const
 { return m_supply_unobstructed_systems; }
 
 bool Empire::FleetOrResourceSupplyableAtSystem(int system_id) const {
-    if (system_id == UniverseObject::INVALID_OBJECT_ID)
+    if (system_id == INVALID_OBJECT_ID)
         return false;
 
     // check fleet supplyable systems
@@ -2061,7 +2059,7 @@ void Empire::RemoveBuildFromQueue(int index) {
 }
 
 void Empire::ConquerBuildsAtLocation(int location_id) {
-    if (location_id == UniverseObject::INVALID_OBJECT_ID)
+    if (location_id == INVALID_OBJECT_ID)
         throw std::invalid_argument("Empire::ConquerBuildsAtLocationFromEmpire: tried to conquer build items located at an invalid location");
 
     Logger().debugStream() << "Empire::ConquerBuildsAtLocationFromEmpire: conquering items located at " << location_id << " to empire " << m_id;
@@ -2190,7 +2188,7 @@ void Empire::AddHullType(const std::string& name) {
 }
 
 void Empire::AddExploredSystem(int ID) {
-    if (GetObject<System>(ID))
+    if (GetSystem(ID))
         m_explored_systems.insert(ID);
     else
         Logger().errorStream() << "Empire::AddExploredSystem given an invalid system id: " << ID;
@@ -2255,7 +2253,7 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
 
     if (!success) {
         Logger().errorStream() << "Empire::AddShipDesign Unable to add new design to universe";
-        return UniverseObject::INVALID_OBJECT_ID;
+        return INVALID_OBJECT_ID;
     }
 
     m_ship_designs.insert(new_design_id);
@@ -2389,7 +2387,6 @@ void Empire::CheckProductionProgress() {
     // m_production_queue.Update(this, m_resource_pools, m_production_progress);
 
     Universe& universe = GetUniverse();
-    ObjectMap& objects = universe.Objects();
 
     // go through queue, updating production progress.  If a build item is completed, create the built object or take whatever other
     // action is appropriate, and record that queue item as complete, so it can be erased from the queue
@@ -2408,7 +2405,7 @@ void Empire::CheckProductionProgress() {
             switch (m_production_queue[i].item.build_type) {
             case BT_BUILDING: {
                 int planet_id = m_production_queue[i].location;
-                Planet* planet = objects.Object<Planet>(planet_id);
+                Planet* planet = GetPlanet(planet_id);
                 if (!planet) {
                     Logger().errorStream() << "Couldn't get planet with id  " << planet_id << " on which to create building";
                     continue;
@@ -2427,10 +2424,10 @@ void Empire::CheckProductionProgress() {
             }
 
             case BT_SHIP: {
-                UniverseObject* build_location = objects.Object(m_production_queue[i].location);
+                UniverseObject* build_location = GetUniverseObject(m_production_queue[i].location);
                 System* system = universe_object_cast<System*>(build_location);
                 if (!system && build_location)
-                    system = objects.Object<System>(build_location->SystemID());
+                    system = GetSystem(build_location->SystemID());
                 // TODO: account for shipyards and/or other ship production sites that are in interstellar space, if needed
                 if (!system) {
                     Logger().errorStream() << "Empire::CheckProductionProgress couldn't get system for building new ship";
@@ -2460,7 +2457,7 @@ void Empire::CheckProductionProgress() {
                     species_name = location_pop_center->SpeciesName();
                 else if (const Ship* location_ship = universe_object_cast<const Ship*>(build_location))
                     species_name = location_ship->SpeciesName();
-                else if (const Planet* capital_planet = objects.Object<Planet>(this->CapitalID()))
+                else if (const Planet* capital_planet = GetPlanet(this->CapitalID()))
                     species_name = capital_planet->SpeciesName();
                 // else give up...
 
@@ -2524,7 +2521,7 @@ void Empire::CheckProductionProgress() {
     int stockpile_object_id = pool->StockpileObjectID();
 
 
-    if (stockpile_object_id == UniverseObject::INVALID_OBJECT_ID) {
+    if (stockpile_object_id == INVALID_OBJECT_ID) {
         // empire has nowhere to stockpile food, so has no stockpile.
         pool->SetStockpile(0.0);
         //Logger().debugStream() << "no mineral stockpile location.  stockpile is set to 0.0";
@@ -2581,7 +2578,7 @@ void Empire::CheckGrowthFoodProgress() {
 
     //Logger().debugStream() << "food stockpile object id: " << stockpile_object_id;
 
-    if (stockpile_object_id == UniverseObject::INVALID_OBJECT_ID) {
+    if (stockpile_object_id == INVALID_OBJECT_ID) {
         // empire has nowhere to stockpile food, so has no stockpile.
         pool->SetStockpile(0.0);
 
@@ -2620,7 +2617,7 @@ void Empire::CheckGrowthFoodProgress() {
             if (stockpile_group_object_ids.find(object_id) == stockpile_group_object_ids.end())
                 continue;
 
-            const UniverseObject* obj = GetObject(*it);
+            const UniverseObject* obj = GetUniverseObject(*it);
             if (!obj) {
                 Logger().debugStream() << "Empire::CheckGrowthFoodProgress couldn't get an object with id " << object_id;
                 continue;
@@ -2704,8 +2701,8 @@ void Empire::InitResourcePools() {
 
     for (std::vector<ResourceType>::const_iterator res_it = res_type_vec.begin(); res_it != res_type_vec.end(); ++res_it) {
         ResourceType res_type = *res_it;
-        int stockpile_object_id = UniverseObject::INVALID_OBJECT_ID;
-        if (const UniverseObject* stockpile_obj = objects.Object(StockpileID(res_type)))
+        int stockpile_object_id = INVALID_OBJECT_ID;
+        if (const UniverseObject* stockpile_obj = GetUniverseObject(StockpileID(res_type)))
             stockpile_object_id = stockpile_obj->ID();
         m_resource_pools[res_type]->SetStockpileObject(stockpile_object_id);
     }
@@ -2776,7 +2773,7 @@ void Empire::UpdateFoodDistribution() {
         // get subset of group objects that are PopCenters
         std::vector<std::pair<UniverseObject*, PopCenter*> > pop_in_group;
         for (std::set<int>::const_iterator obj_it = group_object_ids.begin(); obj_it != group_object_ids.end(); ++obj_it)
-            if (UniverseObject* obj = GetObject(*obj_it))
+            if (UniverseObject* obj = GetUniverseObject(*obj_it))
                 if (PopCenter* pop = dynamic_cast<PopCenter*>(obj))
                     pop_in_group.push_back(std::make_pair(obj, pop));
 

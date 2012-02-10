@@ -57,11 +57,11 @@ public:
     ClientNetworking&       Networking();        ///< returns the networking object for this client's player
 
     /** returns a universe object ID which can be used for new objects created by the client.
-        Can return UniverseObject::INVALID_OBJECT_ID if an ID cannot be created. */
+        Can return INVALID_OBJECT_ID if an ID cannot be created. */
     int                     GetNewObjectID();
 
     /** returns a design ID which can be used for a new design to uniquely identify it.
-        Can return UniverseObject::INVALID_OBJECT_ID if an ID cannot be created. */
+        Can return INVALID_OBJECT_ID if an ID cannot be created. */
     int                     GetNewDesignID();
 
     /** Emitted when a player is eliminated; in many places in the code, empires

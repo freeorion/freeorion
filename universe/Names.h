@@ -159,6 +159,8 @@
     (CounterClockwiseNextPlanetType)            \
     (NextLargerPlanetSize)                      \
     (NextSmallerPlanetSize)                     \
+    (NextOlderStarType)                         \
+    (NextYoungerStarType)                       \
     (NextSystemID)                              \
     (NoStar)                                    \
     (Not)                                       \

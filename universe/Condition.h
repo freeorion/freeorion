@@ -112,6 +112,13 @@ struct Condition::ConditionBase
                              Condition::ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const;
 
+    /** Tests all objects in universe as NON_MATCHES. */
+    void                Eval(const ScriptingContext& parent_context,
+                             Condition::ObjectSet& matches) const;
+
+    /** Tests all objects in universe as NON_MATCHES with empty ScriptingContext. */
+    void                Eval(Condition::ObjectSet& matches) const;
+
     /** Returns true iff this condition's evaluation does not reference
       * the RootCandidate objects.  This requirement ensures that if this
       * condition is a subcondition to another Condition or a ValueRef, this

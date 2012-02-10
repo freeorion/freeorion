@@ -32,6 +32,7 @@ def startNewGame():
 
 def splitFleet():
     "split all fleets"
+    print ("spitting fleets")
 
     # TODO: only after analyzing situation in map can fleet can be split
     universe = fo.getUniverse()
@@ -42,7 +43,8 @@ def splitFleet():
 
 def identifyShipDesigns():
     "identify ship designs"
-
+    print ("Identifying ship designs")
+    
     shipIDs = []
 
     universe = fo.getUniverse()
@@ -63,10 +65,12 @@ def identifyShipDesigns():
 
 def identifyFleetsRoles():
     "identify fleet roles"
+    print ("Identifying fleet roles")
 
     # assign roles to fleets
     universe = fo.getUniverse()
     for fleetID in universe.fleetIDs:
+        print ("considering fleet with id: " + str(fleetID))
         foAIstate.addFleetRole(fleetID, FleetUtilsAI.assessFleetRole(fleetID))
         # print str(fleetID) + ": " + FleetUtilsAI.assessFleetRole(fleetID)
 
@@ -100,6 +104,7 @@ def handleChatMessage(senderID, messageText):
 # at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
 # and can be sent to the server for processing.
 def generateOrders():
+    print ("Genearting Orders")
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     planetID = empire.capitalID
@@ -115,6 +120,8 @@ def generateOrders():
     foAIstate.clean(ExplorationAI.getHomeSystemID(), FleetUtilsAI.getEmpireFleetIDs())
     # ...missions
     # ...demands/priorities
+
+    print("Calling AI Modules")
 
     # call AI modules
     PriorityAI.calculatePriorities()

@@ -90,7 +90,7 @@ const double CombatShip::NON_PD_VS_FIGHTER_FACTOR = 1.0 / 50.0;
 CombatShip::CombatShip() :
     m_proximity_token(0),
     m_empire_id(ALL_EMPIRES),
-    m_ship_id(UniverseObject::INVALID_OBJECT_ID),
+    m_ship_id(INVALID_OBJECT_ID),
     m_combat_universe(0),
     m_mission_queue(),
     m_mission_weight(0.0),
@@ -641,7 +641,7 @@ void CombatShip::UpdateMissionQueue()
         break;
     }
     case ShipMission::ENTER_STARLANE: {
-        System* system = GetObject<System>(GetShip().SystemID());
+        System* system = GetSystem(GetShip().SystemID());
         assert(system);
         for (System::const_lane_iterator it = system->begin_lanes();
              it != system->end_lanes();

@@ -369,7 +369,7 @@ void Ship::MoveTo(double x, double y) {
     UniverseObject::MoveTo(x, y);
 
     // if ship is being moved away from its fleet, remove from the fleet.  otherwise, keep ship in fleet.
-    if (Fleet* fleet = GetObject<Fleet>(this->FleetID())) {
+    if (Fleet* fleet = GetFleet(this->FleetID())) {
         //Logger().debugStream() << "Ship::MoveTo removing " << this->ID() << " from fleet " << fleet->Name();
         fleet->RemoveShip(this->ID());
     }
@@ -379,7 +379,7 @@ void Ship::SetOrderedScrapped(bool b) {
     if (b == m_ordered_scrapped) return;
     m_ordered_scrapped = b;
     StateChangedSignal();
-    if (Fleet* fleet = GetObject<Fleet>(this->FleetID())) {
+    if (Fleet* fleet = GetFleet(this->FleetID())) {
         fleet->RecalculateFleetSpeed();
         fleet->StateChangedSignal();
     }
@@ -389,7 +389,7 @@ void Ship::SetColonizePlanet(int planet_id) {
     if (planet_id == m_ordered_colonize_planet_id) return;
     m_ordered_colonize_planet_id = planet_id;
     StateChangedSignal();
-    if (Fleet* fleet = GetObject<Fleet>(this->FleetID())) {
+    if (Fleet* fleet = GetFleet(this->FleetID())) {
         fleet->RecalculateFleetSpeed();
         fleet->StateChangedSignal();
     }
@@ -403,7 +403,7 @@ void Ship::SetInvadePlanet(int planet_id) {
     if (planet_id == m_ordered_invade_planet_id) return;
     m_ordered_invade_planet_id = planet_id;
     StateChangedSignal();
-    if (Fleet* fleet = GetObject<Fleet>(this->FleetID())) {
+    if (Fleet* fleet = GetFleet(this->FleetID())) {
         fleet->RecalculateFleetSpeed();
         fleet->StateChangedSignal();
     }

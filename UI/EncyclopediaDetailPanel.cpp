@@ -737,7 +737,7 @@ void EncyclopediaDetailPanel::Refresh() {
                 const UniverseObject* obj = *fleet_it;
                 std::string fleet_link = LinkTaggedIDText(VarText::FLEET_ID_TAG, obj->ID(), obj->PublicName(client_empire_id));
                 std::string system_link;
-                if (const System* system = objects.Object<System>(obj->SystemID())) {
+                if (const System* system = GetSystem(obj->SystemID())) {
                     std::string sys_name = system->ApparentName(client_empire_id);
                     system_link = LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name);
                     detailed_description += str(FlexibleFormat(UserString("OWNED_FLEET_AT_SYSTEM"))
@@ -976,7 +976,7 @@ void EncyclopediaDetailPanel::Refresh() {
     } else if (m_items_it->first == UNIVERSE_OBJECT) {
         int id = boost::lexical_cast<int>(m_items_it->second);
 
-        if (id != UniverseObject::INVALID_OBJECT_ID) {
+        if (id != INVALID_OBJECT_ID) {
             const UniverseObject* obj = objects.Object(id);
             if (!obj) {
                 Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << m_items_it->second;
@@ -1146,7 +1146,7 @@ void EncyclopediaDetailPanel::SetSpecies(const std::string& species_name) {
 }
 
 void EncyclopediaDetailPanel::SetObject(int object_id) {
-    int current_item_id = UniverseObject::INVALID_OBJECT_ID;
+    int current_item_id = INVALID_OBJECT_ID;
     if (m_items_it != m_items.end()) {
         try {
             current_item_id = boost::lexical_cast<int>(m_items_it->second);
@@ -1241,7 +1241,7 @@ void EncyclopediaDetailPanel::SetItem(const Species* species) {
 }
 
 void EncyclopediaDetailPanel::SetItem(const UniverseObject* obj) {
-    SetObject(obj ? obj->ID() : UniverseObject::INVALID_OBJECT_ID);
+    SetObject(obj ? obj->ID() : INVALID_OBJECT_ID);
 }
 
 void EncyclopediaDetailPanel::SetItem(const Empire* empire) {

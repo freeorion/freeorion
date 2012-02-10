@@ -18,40 +18,46 @@ namespace {
     void                    DumpObjects(const Universe& universe) {
         universe.Objects().Dump();
     }
-    const UniverseObject*   GetObjectA(const Universe& universe, int id) {
+    const UniverseObject*   GetUniverseObjectP(const Universe& universe, int id) {
+        //Logger().debugStream() << "GetUniverseObjectP(universe, " << id << ")";
         const UniverseObject* retval = universe.Objects().Object(id);
         if (!retval)
-            retval = GetMainObjectMap().Object(id);
+            retval = ::GetUniverseObject(id);
         return retval;
     }
-    const Fleet*            GetFleet(const Universe& universe, int id) {
+    const Fleet*            GetFleetP(const Universe& universe, int id) {
+        //Logger().debugStream() << "GetFleetP(universe, " << id << ")";
         const Fleet* retval = universe.Objects().Object<Fleet>(id);
         if (!retval)
-            retval = GetMainObjectMap().Object<Fleet>(id);
+            retval = ::GetFleet(id);
         return retval;
     }
-    const Ship*             GetShip(const Universe& universe, int id) {
+    const Ship*             GetShipP(const Universe& universe, int id) {
+        //Logger().debugStream() << "GetShipP(universe, " << id << ")";
         const Ship* retval = universe.Objects().Object<Ship>(id);
         if (!retval)
-            retval = GetMainObjectMap().Object<Ship>(id);
+            retval = ::GetShip(id);
         return retval;
     }
-    const Planet*           GetPlanet(const Universe& universe, int id) {
+    const Planet*           GetPlanetP(const Universe& universe, int id) {
+        //Logger().debugStream() << "GetPlanetP(universe, " << id << ")";
         const Planet* retval = universe.Objects().Object<Planet>(id);
         if (!retval)
-            retval = GetMainObjectMap().Object<Planet>(id);
+            retval = ::GetPlanet(id);
         return retval;
     }
-    const System*           GetSystem(const Universe& universe, int id) {
+    const System*           GetSystemP(const Universe& universe, int id) {
+        //Logger().debugStream() << "GetSystemP(universe, " << id << ")";
         const System* retval = universe.Objects().Object<System>(id);
         if (!retval)
-            retval = GetMainObjectMap().Object<System>(id);
+            retval = ::GetSystem(id);
         return retval;
     }
-    const Building*         GetBuilding(const Universe& universe, int id) {
+    const Building*         GetBuildingP(const Universe& universe, int id) {
+        //Logger().debugStream() << "GetBuildingP(universe, " << id << ")";
         const Building* retval = universe.Objects().Object<Building>(id);
         if (!retval)
-            retval = GetMainObjectMap().Object<Building>(id);
+            retval = ::GetBuilding(id);
         return retval;
     }
 
@@ -62,16 +68,16 @@ namespace {
         return universe.Objects().FindObjectIDs<Fleet>();
     }
     std::vector<int>        SystemIDs(const Universe& universe) {
-        return GetMainObjectMap().FindObjectIDs<System>();
+        return Objects().FindObjectIDs<System>();
     }
     std::vector<int>        PlanetIDs(const Universe& universe) {
-        return GetMainObjectMap().FindObjectIDs<Planet>();
+        return Objects().FindObjectIDs<Planet>();
     }
     std::vector<int>        ShipIDs(const Universe& universe) {
         return universe.Objects().FindObjectIDs<Ship>();
     }
     std::vector<int>        BuildingIDs(const Universe& universe) {
-        return GetMainObjectMap().FindObjectIDs<Building>();
+        return Objects().FindObjectIDs<Building>();
     }
 
     void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                   &Universe::UpdateMeterEstimates;
@@ -117,14 +123,17 @@ namespace {
     }
     boost::function<std::vector<int>(const Universe&, int, int, int)> LeastJumpsFunc =          &LeastJumpsPath;
 
-    bool                    SystemsConnected(const Universe& universe, int system1_id, int system2_id) {
+    bool                    SystemsConnectedP(const Universe& universe, int system1_id, int system2_id) {
+        //Logger().debugStream() << "SystemsConnected!(" << system1_id << ", " << system2_id << ")";
         try {
-            return universe.SystemsConnected(system1_id, system2_id);
+            bool retval = universe.SystemsConnected(system1_id, system2_id);
+            //Logger().debugStream() << "SystemsConnected! retval: " << retval;
+            return retval;
         } catch (...) {
         }
         return false;
     }
-    boost::function<bool(const Universe&, int, int)> SystemsConnectedFunc =                     &SystemsConnected;
+    boost::function<bool(const Universe&, int, int)> SystemsConnectedFunc =                     &SystemsConnectedP;
 
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
 
@@ -176,22 +185,21 @@ namespace FreeOrionPython {
         //    Universe    //
         ////////////////////
         class_<Universe, noncopyable>("universe", no_init)
-            .def("getObject",                   make_function(GetObjectA,   return_value_policy<reference_existing_object>()))
-            .def("getFleet",                    make_function(GetFleet,     return_value_policy<reference_existing_object>()))
-            .def("getShip",                     make_function(GetShip,      return_value_policy<reference_existing_object>()))
-            .def("getPlanet",                   make_function(GetPlanet,    return_value_policy<reference_existing_object>()))
-            .def("getSystem",                   make_function(GetSystem,    return_value_policy<reference_existing_object>()))
-            .def("getBuilding",                 make_function(GetBuilding,  return_value_policy<reference_existing_object>()))
+            .def("getObject",                   make_function(GetUniverseObjectP,   return_value_policy<reference_existing_object>()))
+            .def("getFleet",                    make_function(GetFleetP,            return_value_policy<reference_existing_object>()))
+            .def("getShip",                     make_function(GetShipP,             return_value_policy<reference_existing_object>()))
+            .def("getPlanet",                   make_function(GetPlanetP,           return_value_policy<reference_existing_object>()))
+            .def("getSystem",                   make_function(GetSystemP,           return_value_policy<reference_existing_object>()))
+            .def("getBuilding",                 make_function(GetBuildingP,         return_value_policy<reference_existing_object>()))
 
-            .add_property("allObjectIDs",       make_function(ObjectIDs,    return_value_policy<return_by_value>()))
-            .add_property("fleetIDs",           make_function(FleetIDs,     return_value_policy<return_by_value>()))
-            .add_property("systemIDs",          make_function(SystemIDs,    return_value_policy<return_by_value>()))
-            .add_property("planetIDs",          make_function(PlanetIDs,    return_value_policy<return_by_value>()))
-            .add_property("shipIDs",            make_function(ShipIDs,      return_value_policy<return_by_value>()))
-            .add_property("buildingIDs",        make_function(BuildingIDs,  return_value_policy<return_by_value>()))
+            .add_property("allObjectIDs",       make_function(ObjectIDs,            return_value_policy<return_by_value>()))
+            .add_property("fleetIDs",           make_function(FleetIDs,             return_value_policy<return_by_value>()))
+            .add_property("systemIDs",          make_function(SystemIDs,            return_value_policy<return_by_value>()))
+            .add_property("planetIDs",          make_function(PlanetIDs,            return_value_policy<return_by_value>()))
+            .add_property("shipIDs",            make_function(ShipIDs,              return_value_policy<return_by_value>()))
+            .add_property("buildingIDs",        make_function(BuildingIDs,          return_value_policy<return_by_value>()))
 
             .def("systemHasStarlane",           &Universe::SystemHasVisibleStarlanes)
-            .def("systemsConnected",            &Universe::SystemsConnected)
 
             .def("updateMeterEstimates",        UpdateMeterEstimatesVoidFunc)
 

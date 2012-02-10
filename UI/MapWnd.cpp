@@ -415,7 +415,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
     double  prev_node_y =               first_node.y;
     int     prev_sys_id =               first_node.object_id;
     int     prev_eta =                  first_node.eta;
-    int     next_sys_id =               UniverseObject::INVALID_OBJECT_ID;
+    int     next_sys_id =               INVALID_OBJECT_ID;
 
     for (std::list<MovePathNode>::const_iterator path_it = path.begin(); path_it != path.end(); ++path_it) {
         // stop rendering if end of path is indicated
@@ -427,7 +427,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
 
         // 1) Get systems at ends of lane on which current node is located.
 
-        if (node.object_id == UniverseObject::INVALID_OBJECT_ID) {
+        if (node.object_id == INVALID_OBJECT_ID) {
             // node is in open space.
             // node should have valid prev_sys_id and node.lane_end_id to get info about starlane this node is on
             prev_sys_id = node.lane_start_id;
@@ -443,7 +443,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
 
 
         // skip invalid line segments
-        if (prev_sys_id == next_sys_id || next_sys_id == UniverseObject::INVALID_OBJECT_ID || prev_sys_id == UniverseObject::INVALID_OBJECT_ID)
+        if (prev_sys_id == next_sys_id || next_sys_id == INVALID_OBJECT_ID || prev_sys_id == INVALID_OBJECT_ID)
             continue;
 
 
@@ -474,9 +474,9 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
         prev_node_x = node.x;
         prev_node_y = node.y;
         prev_eta = node.eta;
-        if (node.object_id != UniverseObject::INVALID_OBJECT_ID) {  // only need to update previous and next sys ids if current node is at a system
+        if (node.object_id != INVALID_OBJECT_ID) {  // only need to update previous and next sys ids if current node is at a system
             prev_sys_id = node.object_id;                       // to be used in next iteration
-            next_sys_id = UniverseObject::INVALID_OBJECT_ID;    // to be set in next iteration
+            next_sys_id = INVALID_OBJECT_ID;    // to be set in next iteration
         }
     }
 }
@@ -541,8 +541,8 @@ MapWnd::MapWnd() :
     m_turn_update(0),
     m_popups(),
     m_menu_showing(false),
-    m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
-    m_current_fleet_id(UniverseObject::INVALID_OBJECT_ID),
+    m_current_owned_system(INVALID_OBJECT_ID),
+    m_current_fleet_id(INVALID_OBJECT_ID),
     m_in_production_view_mode(false),
     m_sidepanel_open_before_showing_other(false),
     m_toolbar(0),
@@ -1161,7 +1161,7 @@ void MapWnd::RenderSystems()
 
             // render circles around systems that have at least one starlane, if circles are enabled.
             if (circles) {
-                if (const System* system = GetEmpireKnownObject<System>(it->first, empire_id)) {
+                if (const System* system = GetEmpireKnownSystem(it->first, empire_id)) {
                     if (system->NumStarlanes() > 0) {
                         CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
                     }
@@ -1457,7 +1457,7 @@ void MapWnd::RenderVisibilityRadii() {
         if (fleet) {
             int next_id = fleet->NextSystemID();
             int cur_id = fleet->SystemID();
-            if (next_id != UniverseObject::INVALID_OBJECT_ID && next_id != cur_id)
+            if (next_id != INVALID_OBJECT_ID && next_id != cur_id)
                 continue;
         }
 
@@ -1585,7 +1585,7 @@ void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     if (!m_dragged && !m_in_production_view_mode) {
-        SelectSystem(UniverseObject::INVALID_OBJECT_ID);
+        SelectSystem(INVALID_OBJECT_ID);
         m_side_panel->Hide();
     }
     m_dragged = false;
@@ -1931,7 +1931,7 @@ void MapWnd::InitSystemRenderingBuffers()
     for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const SystemIcon* icon = it->second;
         int system_id = it->first;
-        const System* system = GetEmpireKnownObject<System>(system_id, empire_id);
+        const System* system = GetEmpireKnownSystem(system_id, empire_id);
         if (!system) {
             Logger().errorStream() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -2086,7 +2086,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
         if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
             continue;
 
-        const System* start_system = GetEmpireKnownObject<System>(system_id, empire_id);
+        const System* start_system = GetEmpireKnownSystem(system_id, empire_id);
         if (!start_system) {
             Logger().errorStream() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -2103,7 +2103,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
             if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
                 continue;
 
-            const System* dest_system = GetEmpireKnownObject<System>(lane_it->first, empire_id);
+            const System* dest_system = GetEmpireKnownSystem(lane_it->first, empire_id);
             if (!dest_system)
                 continue;
             //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
@@ -2412,7 +2412,7 @@ void MapWnd::ShowEncyclopediaEntry(const std::string& str)
 
 void MapWnd::CenterOnObject(int id)
 {
-    if (UniverseObject* obj = GetObject(id))
+    if (UniverseObject* obj = GetUniverseObject(id))
         CenterOnMapCoord(obj->X(), obj->Y());
 }
 
@@ -2424,19 +2424,19 @@ void MapWnd::CenterOnObject(const UniverseObject* obj)
 
 void MapWnd::ReselectLastSystem()
 {
-    if (SidePanel::SystemID() != UniverseObject::INVALID_OBJECT_ID)
+    if (SidePanel::SystemID() != INVALID_OBJECT_ID)
         SelectSystem(SidePanel::SystemID());
 }
 
 void MapWnd::SelectSystem(int system_id)
 {
     //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
-    const System* system = GetObject<System>(system_id);
+    const System* system = GetSystem(system_id);
     if (!system)
-        system = GetEmpireKnownObject<System>(system_id, HumanClientApp::GetApp()->EmpireID());
-    if (!system && system_id != UniverseObject::INVALID_OBJECT_ID) {
+        system = GetEmpireKnownSystem(system_id, HumanClientApp::GetApp()->EmpireID());
+    if (!system && system_id != INVALID_OBJECT_ID) {
         Logger().errorStream() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
-        system_id = UniverseObject::INVALID_OBJECT_ID;
+        system_id = INVALID_OBJECT_ID;
     }
 
 
@@ -2448,7 +2448,7 @@ void MapWnd::SelectSystem(int system_id)
 
     if (SidePanel::SystemID() != system_id) {
         // remove map selection indicator from previously selected system
-        if (SidePanel::SystemID() != UniverseObject::INVALID_OBJECT_ID) {
+        if (SidePanel::SystemID() != INVALID_OBJECT_ID) {
             std::map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
             if (it != m_system_icons.end())
                 it->second->SetSelected(false);
@@ -2461,7 +2461,7 @@ void MapWnd::SelectSystem(int system_id)
             SidePanel::SetSystem(system_id);
 
         // place map selection indicator on newly selected system
-        if (SidePanel::SystemID() != UniverseObject::INVALID_OBJECT_ID) {
+        if (SidePanel::SystemID() != INVALID_OBJECT_ID) {
             std::map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
             if (it != m_system_icons.end())
                 it->second->SetSelected(true);
@@ -2480,7 +2480,7 @@ void MapWnd::SelectSystem(int system_id)
     // hide this mapwnd's sidepanel, in case it was hidden at some point and
     // should be visible, or is visible and should be hidden.
 
-    if (SidePanel::SystemID() == UniverseObject::INVALID_OBJECT_ID) {
+    if (SidePanel::SystemID() == INVALID_OBJECT_ID) {
         // no selected system.  hide sidepanel.
         m_side_panel->Hide();
 
@@ -2529,7 +2529,7 @@ void MapWnd::SelectPlanet(int planetID)
 }
 
 void MapWnd::SelectFleet(int fleet_id)
-{ SelectFleet(GetObject<Fleet>(fleet_id)); }
+{ SelectFleet(GetFleet(fleet_id)); }
 
 void MapWnd::SelectFleet(Fleet* fleet)
 {
@@ -2570,7 +2570,7 @@ void MapWnd::SelectFleet(Fleet* fleet)
     // if there isn't a FleetWnd for this fleet open, need to open one
     if (!fleet_wnd) {
         //std::cout << "SelectFleet couldn't find fleetwnd for fleet " << std::endl;
-        System* system = GetObject<System>(fleet->SystemID());
+        System* system = GetSystem(fleet->SystemID());
 
         // create fleetwnd to show fleet to be selected (actual selection occurs below).
         if (system) {
@@ -2629,10 +2629,10 @@ void MapWnd::SetFleetMovementLine(const FleetButton* fleet_button)
 
 void MapWnd::SetFleetMovementLine(int fleet_id)
 {
-    if (fleet_id == UniverseObject::INVALID_OBJECT_ID)
+    if (fleet_id == INVALID_OBJECT_ID)
         return;
 
-    const Fleet* fleet = GetObject<Fleet>(fleet_id);
+    const Fleet* fleet = GetFleet(fleet_id);
     if (!fleet) {
         Logger().errorStream() << "MapWnd::SetFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
@@ -2652,11 +2652,11 @@ void MapWnd::SetFleetMovementLine(int fleet_id)
 
 void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& travel_route)
 {
-    if (fleet_id == UniverseObject::INVALID_OBJECT_ID)
+    if (fleet_id == INVALID_OBJECT_ID)
         return;
 
     // ensure passed fleet exists
-    const Fleet* fleet = GetObject<Fleet>(fleet_id);
+    const Fleet* fleet = GetFleet(fleet_id);
     if (!fleet) {
         Logger().errorStream() << "MapWnd::SetProjectedFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
@@ -2726,7 +2726,7 @@ void MapWnd::DoSystemIconsLayout()
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const int SYSTEM_ICON_SIZE = SystemIconSize();
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
-        const System* system = GetEmpireKnownObject<System>(it->first, empire_id);
+        const System* system = GetEmpireKnownSystem(it->first, empire_id);
         if (!system) {
             Logger().errorStream() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << it->first;
             continue;
@@ -2746,7 +2746,7 @@ void MapWnd::DoFleetButtonsLayout()
     // position departing fleet buttons
     for (std::map<int, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
         // calculate system icon position
-        const System* system = objects.Object<System>(it->first);
+        const System* system = GetSystem(it->first);
         if (!system) {
             Logger().errorStream() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << it->first;
             continue;
@@ -2776,7 +2776,7 @@ void MapWnd::DoFleetButtonsLayout()
     // position stationary fleet buttons
     for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
         // calculate system icon position
-        const System* system = objects.Object<System>(it->first);
+        const System* system = GetSystem(it->first);
         if (!system) {
             Logger().errorStream() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << it->first;
             continue;
@@ -2874,7 +2874,7 @@ void MapWnd::RefreshFleetButtons() {
             Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
             continue;
         }
-        const System* system = objects.Object<System>(fleet->SystemID());
+        const System* system = GetSystem(fleet->SystemID());
         if (!system) {
             Logger().errorStream() << "couldn't get system with id " << fleet->SystemID() << " of an departing fleet named " << fleet->Name() << " in RefreshFleetButtons()";
             continue;
@@ -2901,7 +2901,7 @@ void MapWnd::RefreshFleetButtons() {
             Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
             continue;
         }
-        const System* system = objects.Object<System>(fleet->SystemID());
+        const System* system = GetSystem(fleet->SystemID());
         if (!system) {
             Logger().errorStream() << "couldn't get system of an departing fleet in RefreshFleetButtons()";
             continue;
@@ -2928,7 +2928,7 @@ void MapWnd::RefreshFleetButtons() {
             Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
             continue;
         }
-        if (fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID) {
+        if (fleet->SystemID() != INVALID_OBJECT_ID) {
             Logger().errorStream() << "a fleet that was supposed to be moving had a valid system in RefreshFleetButtons()";
             continue;
         }
@@ -3311,7 +3311,7 @@ void MapWnd::SystemLeftClicked(int system_id)
 void MapWnd::SystemRightClicked(int system_id)
 {
     if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd()) {
-        if (system_id == UniverseObject::INVALID_OBJECT_ID)
+        if (system_id == INVALID_OBJECT_ID)
             ClearProjectedFleetMovementLines();
         else
             PlotFleetMovement(system_id, true);
@@ -3327,7 +3327,7 @@ void MapWnd::MouseEnteringSystem(int system_id)
 }
 
 void MapWnd::MouseLeavingSystem(int system_id)
-{ MouseEnteringSystem(UniverseObject::INVALID_OBJECT_ID); }
+{ MouseEnteringSystem(INVALID_OBJECT_ID); }
 
 void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
 {
@@ -3342,7 +3342,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
     for (std::set<int>::iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
         int fleet_id = *it;
 
-        const Fleet* fleet = GetObject<Fleet>(fleet_id);
+        const Fleet* fleet = GetFleet(fleet_id);
         if (!fleet) {
             Logger().errorStream() << "MapWnd::PlotFleetMovementLine couldn't get fleet with id " << *it;
             continue;
@@ -3353,7 +3353,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
             continue;
 
         // plot empty move pathes if destination is not a known system
-        if (system_id == UniverseObject::INVALID_OBJECT_ID) {
+        if (system_id == INVALID_OBJECT_ID) {
             RemoveProjectedFleetMovementLine(fleet_id);
             continue;
         }
@@ -3361,7 +3361,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
         int fleet_sys_id = fleet->SystemID();
 
         int start_system = fleet_sys_id;
-        if (fleet_sys_id == UniverseObject::INVALID_OBJECT_ID)
+        if (fleet_sys_id == INVALID_OBJECT_ID)
             start_system = fleet->NextSystemID();
 
         // get path to destination...
@@ -3370,9 +3370,9 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
         // disallow "offroad" (direct non-starlane non-wormhole) travel
         if (route.size() == 2 && *route.begin() != *route.rbegin()) {
             int begin_id = *route.begin();
-            const System* begin_sys = GetEmpireKnownObject<System>(begin_id, empire_id);
+            const System* begin_sys = GetEmpireKnownSystem(begin_id, empire_id);
             int end_id = *route.rbegin();
-            const System* end_sys = GetEmpireKnownObject<System>(end_id, empire_id);
+            const System* end_sys = GetEmpireKnownSystem(end_id, empire_id);
 
             if (!begin_sys->HasStarlaneTo(end_id) && !begin_sys->HasWormholeTo(end_id) &&
                 !end_sys->HasStarlaneTo(begin_id) && !end_sys->HasWormholeTo(begin_id))
@@ -3405,13 +3405,13 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
         Logger().errorStream() << "Clicked FleetButton contained no fleets!";
         return;
     }
-    const Fleet* first_fleet = GetObject<Fleet>(btn_fleets[0]);
+    const Fleet* first_fleet = GetFleet(btn_fleets[0]);
 
 
     // find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
     // is a single selected fleet in the window, and if so, what fleet that is
     FleetWnd* wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(first_fleet);
-    int already_selected_fleet_id = UniverseObject::INVALID_OBJECT_ID;
+    int already_selected_fleet_id = INVALID_OBJECT_ID;
     if (wnd_for_button) {
         //std::cout << "FleetButtonClicked found open fleetwnd for fleet" << std::endl;
         // there is already FleetWnd for this button open.
@@ -3429,10 +3429,10 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
 
 
     // pick fleet to select from fleets represented by the clicked FleetButton.
-    int fleet_to_select_id = UniverseObject::INVALID_OBJECT_ID;
+    int fleet_to_select_id = INVALID_OBJECT_ID;
 
 
-    if (already_selected_fleet_id == UniverseObject::INVALID_OBJECT_ID || btn_fleets.size() == 1) {
+    if (already_selected_fleet_id == INVALID_OBJECT_ID || btn_fleets.size() == 1) {
         // no (single) fleet is already selected, or there is only one selectable fleet,
         // so select first fleet in button
         fleet_to_select_id = *btn_fleets.begin();
@@ -3469,7 +3469,7 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
 
 
     // select chosen fleet
-    if (fleet_to_select_id != UniverseObject::INVALID_OBJECT_ID)
+    if (fleet_to_select_id != INVALID_OBJECT_ID)
         SelectFleet(fleet_to_select_id);
 }
 
@@ -3508,7 +3508,7 @@ void MapWnd::SelectedShipsChanged()
     // refresh meters of objects in currently selected system, as changing selected fleets
     // may have changed which species a planet should have population estimates shown for
     int sidepanel_system_id = SidePanel::SystemID();
-    if (sidepanel_system_id == UniverseObject::INVALID_OBJECT_ID)
+    if (sidepanel_system_id == INVALID_OBJECT_ID)
         return;
 
     UpdateMeterEstimates(sidepanel_system_id, true);
@@ -3600,7 +3600,7 @@ void MapWnd::Sanitize()
     //std::cout << "MapWnd::Sanitize()" << std::endl;
     Cleanup();
 
-    SelectSystem(UniverseObject::INVALID_OBJECT_ID);
+    SelectSystem(INVALID_OBJECT_ID);
 
     ClearSystemRenderingBuffers();
     ClearStarlaneRenderingBuffers();
@@ -3860,9 +3860,9 @@ void MapWnd::ShowProduction()
 
     // if no system is currently shown in sidepanel, default to this empire's
     // home system (ie. where the capital is)
-    if (SidePanel::SystemID() == UniverseObject::INVALID_OBJECT_ID) {
+    if (SidePanel::SystemID() == INVALID_OBJECT_ID) {
         if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
-            if (const UniverseObject* obj = GetObject(empire->CapitalID()))
+            if (const UniverseObject* obj = GetUniverseObject(empire->CapitalID()))
                 SelectSystem(obj->SystemID());
     } else {
         // if a system is already shown, make sure a planet gets selected by
@@ -3947,7 +3947,7 @@ bool MapWnd::ShowMenu()
 
 bool MapWnd::CloseSystemView()
 {
-    SelectSystem(UniverseObject::INVALID_OBJECT_ID);
+    SelectSystem(INVALID_OBJECT_ID);
     m_side_panel->Hide();   // redundant, but safer to keep in case the behavior of SelectSystem changes
     return true;
 }
@@ -3986,7 +3986,7 @@ void MapWnd::RefreshFoodResourceIndicator()
 
     int stockpile_object_id = pool->StockpileObjectID();
 
-    if (stockpile_object_id == UniverseObject::INVALID_OBJECT_ID) {
+    if (stockpile_object_id == INVALID_OBJECT_ID) {
         // empire has nowhere to stockpile food, so has no stockpile.  Instead of showing stockpile, show production
         m_food->SetValue(pool->TotalAvailable());   // no stockpile means available is equal to production
         m_food->SetValue(0.0, 1);                   // TODO: Make StatisticIcon able to change number of numbers shown, and remove second number here
@@ -4032,7 +4032,7 @@ void MapWnd::RefreshFoodResourceIndicator()
         if (stockpile_group_object_ids.find(object_id) == stockpile_group_object_ids.end())
             continue;
 
-        const UniverseObject* obj = GetObject(*it);
+        const UniverseObject* obj = GetUniverseObject(*it);
         if (!obj) {
             Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get an object with id " << object_id;
             continue;
@@ -4082,7 +4082,7 @@ void MapWnd::RefreshMineralsResourceIndicator()
 
     int stockpile_object_id = pool->StockpileObjectID();
 
-    if (stockpile_object_id == UniverseObject::INVALID_OBJECT_ID) {
+    if (stockpile_object_id == INVALID_OBJECT_ID) {
         // empire has nowhere to stockpile food, so has no stockpile.
         m_mineral->SetValue(0.0);
         m_mineral->SetValue(0.0, 1);        // TODO: Make StatisticIcon able to change number of numbers shown, and remove second number here
@@ -4190,7 +4190,7 @@ void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools()
 { UpdateMetersAndResourcePools(SidePanel::SystemID(), true); }
 
 void MapWnd::UpdateMeterEstimates()
-{ UpdateMeterEstimates(UniverseObject::INVALID_OBJECT_ID, false); }
+{ UpdateMeterEstimates(INVALID_OBJECT_ID, false); }
 
 void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
 {
@@ -4198,7 +4198,7 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
 
     const ObjectMap& objects = GetUniverse().Objects();
 
-    if (object_id == UniverseObject::INVALID_OBJECT_ID) {
+    if (object_id == INVALID_OBJECT_ID) {
         // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
         std::vector<int> object_ids;
         for (ObjectMap::const_iterator obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it)
@@ -4268,7 +4268,7 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec)
     if (ship && ship->CanColonize() &&
         ship->OwnedBy(empire_id) &&
         !ship->SpeciesName().empty() &&
-        ship->SystemID() != UniverseObject::INVALID_OBJECT_ID)
+        ship->SystemID() != INVALID_OBJECT_ID)
     {
         // selected ship: exists, is a colony ship, is owned by this client's player
         //                is in a system, and has a usable species.
@@ -4325,8 +4325,8 @@ bool MapWnd::ZoomToHomeSystem()
 {
     int id = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->CapitalID();
 
-    if (id != UniverseObject::INVALID_OBJECT_ID) {
-        const UniverseObject *object = GetObject(id);
+    if (id != INVALID_OBJECT_ID) {
+        const UniverseObject *object = GetUniverseObject(id);
         if (!object) return false;
         CenterOnObject(object->SystemID());
         SelectSystem(object->SystemID());
@@ -4341,12 +4341,12 @@ bool MapWnd::ZoomToPrevOwnedSystem()
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<System>(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_owned_system);
     if (it == vec.end()) {
-        m_current_owned_system = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.back();
+        m_current_owned_system = vec.empty() ? INVALID_OBJECT_ID : vec.back();
     } else {
         m_current_owned_system = it == vec.begin() ? vec.back() : *--it;
     }
 
-    if (m_current_owned_system != UniverseObject::INVALID_OBJECT_ID) {
+    if (m_current_owned_system != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_owned_system);
         SelectSystem(m_current_owned_system);
     }
@@ -4360,14 +4360,14 @@ bool MapWnd::ZoomToNextOwnedSystem()
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<System>(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_owned_system);
     if (it == vec.end()) {
-        m_current_owned_system = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.front();
+        m_current_owned_system = vec.empty() ? INVALID_OBJECT_ID : vec.front();
     } else {
         std::vector<int>::iterator next_it = it;
         ++next_it;
         m_current_owned_system = next_it == vec.end() ? vec.front() : *next_it;
     }
 
-    if (m_current_owned_system != UniverseObject::INVALID_OBJECT_ID) {
+    if (m_current_owned_system != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_owned_system);
         SelectSystem(m_current_owned_system);
     }
@@ -4380,12 +4380,12 @@ bool MapWnd::ZoomToPrevIdleFleet()
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     if (it == vec.end()) {
-        m_current_fleet_id = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.back();
+        m_current_fleet_id = vec.empty() ? INVALID_OBJECT_ID : vec.back();
     } else {
         m_current_fleet_id = it == vec.begin() ? vec.back() : *--it;
     }
 
-    if (m_current_fleet_id != UniverseObject::INVALID_OBJECT_ID) {
+    if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
         SelectFleet(m_current_fleet_id);
     }
@@ -4398,14 +4398,14 @@ bool MapWnd::ZoomToNextIdleFleet()
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     if (it == vec.end()) {
-        m_current_fleet_id = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.front();
+        m_current_fleet_id = vec.empty() ? INVALID_OBJECT_ID : vec.front();
     } else {
         std::vector<int>::iterator next_it = it;
         ++next_it;
         m_current_fleet_id = next_it == vec.end() ? vec.front() : *next_it;
     }
 
-    if (m_current_fleet_id != UniverseObject::INVALID_OBJECT_ID) {
+    if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
         SelectFleet(m_current_fleet_id);
     }
@@ -4418,12 +4418,12 @@ bool MapWnd::ZoomToPrevFleet()
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     if (it == vec.end()) {
-        m_current_fleet_id = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.back();
+        m_current_fleet_id = vec.empty() ? INVALID_OBJECT_ID : vec.back();
     } else {
         m_current_fleet_id = it == vec.begin() ? vec.back() : *--it;
     }
 
-    if (m_current_fleet_id != UniverseObject::INVALID_OBJECT_ID) {
+    if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
         SelectFleet(m_current_fleet_id);
     }
@@ -4436,7 +4436,7 @@ bool MapWnd::ZoomToNextFleet()
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     if (it == vec.end()) {
-        m_current_fleet_id = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.front();
+        m_current_fleet_id = vec.empty() ? INVALID_OBJECT_ID : vec.front();
     } else {
         std::vector<int>::iterator next_it = it;
         ++next_it;
@@ -4446,7 +4446,7 @@ bool MapWnd::ZoomToNextFleet()
             m_current_fleet_id = *next_it;
     }
 
-    if (m_current_fleet_id != UniverseObject::INVALID_OBJECT_ID) {
+    if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
         SelectFleet(m_current_fleet_id);
     }

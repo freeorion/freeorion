@@ -542,19 +542,9 @@ void ValueRef::Statistic<T>::GetConditionMatches(const ScriptingContext& context
                                                  const Condition::ConditionBase* condition) const
 {
     condition_targets.clear();
-
     if (!condition)
         return;
-
-    const ObjectMap& objects = GetMainObjectMap();
-
-    // evaluate condition on all objects in Universe
-    Condition::ObjectSet condition_non_targets;
-    condition_non_targets.reserve(RESERVE_SET_SIZE);
-    for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
-        condition_non_targets.push_back(it->second);
-    }
-    condition->Eval(context, condition_targets, condition_non_targets);
+    condition->Eval(context, condition_targets);
 }
 
 template <class T>
@@ -563,15 +553,12 @@ void ValueRef::Statistic<T>::GetObjectPropertyValues(const ScriptingContext& con
                                                      std::map<const UniverseObject*, T>& object_property_values) const
 {
     object_property_values.clear();
-
     //Logger().debugStream() << "ValueRef::Statistic<T>::GetObjectPropertyValues source: " << source->Dump()
     //                       << " sampling condition: " << m_sampling_condition->Dump()
     //                       << " property name final: " << this->PropertyName().back();
-
     for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
-        const UniverseObject* obj = *it;
         T property_value = this->Variable<T>::Eval(context);
-        object_property_values[obj] = property_value;
+        object_property_values[*it] = property_value;
     }
 }
 

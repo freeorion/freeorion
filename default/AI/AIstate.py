@@ -220,13 +220,14 @@ class AIstate(object):
 
     def getExplorableSystem(self, systemID):
         "determines system type from ID and returns it"
+        print ("determining explorable system type for system with id " + str(systemID))
 
         for explorableSystemsType in EnumsAI.getAIExplorableSystemTypes():
             systems = self.getExplorableSystems(explorableSystemsType)
             if systemID in systems:
                 return explorableSystemsType
 
-        # print "SystemID " + str(systemID) + " not found."
+        print "SystemID " + str(systemID) + " not found."
         return AIExplorableSystemType.EXPLORABLE_SYSTEM_INVALID
 
     def addExplorableSystem(self, explorableSystemsType, systemID):
@@ -242,6 +243,7 @@ class AIstate(object):
 
     def removeExplorableSystem(self, explorableSystemsType, systemID):
         "removes explorable system ID with type"
+        print ("removing explorable system with id " + str(systemID))
 
         systems = self.__explorableSystemByType[explorableSystemsType]
         if len(systems) == 0:
@@ -251,6 +253,7 @@ class AIstate(object):
 
     def __cleanExplorableSystems(self, startSystemID):
         "cleanup of all explorable systems"
+        print ("Cleaning up explorable systems")
 
         universe = fo.getUniverse()
         systemIDs = universe.systemIDs
@@ -261,23 +264,26 @@ class AIstate(object):
             system = universe.getSystem(systemID)
             if not system: continue
 
-            #print "system with id: " + str(systemID)
+            print ("   system with id: " + str(systemID))
 
+            print ("       is it explored?")
             if (empire.hasExploredSystem(systemID)):
+                print "    has been explored"
                 self.addExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED, systemID)
                 self.removeExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED, systemID)
-                #print "    has been explored"
                 continue
-            if (startSystemID == -1 or not universe.systemsConnected(systemID, startSystemID, empireID)):
+            print ("       is it connected?")
+            if (startSystemID == -1 or not universe.systemsConnected(systemID, startSystemID)):
+                print ("   is not connected to system with id " + str(startSystemID))
                 for explorableSystemsType in EnumsAI.getAIExplorableSystemTypes():
                     self.removeExplorableSystem(explorableSystemsType, systemID)
-                #print "    is not connected to system with id: " + str(startSystemID)
                 continue
+            print("        is it already an exploration target")
             explorableSystemsType = self.getExplorableSystem(systemID)
             if (explorableSystemsType == AIExplorableSystemType.EXPLORABLE_SYSTEM_VISIBLE):
-                #print "    is already explored system target"
+                print "    is already explored system target"
                 continue
-            #print "    is now an unexplored system"
+            print "    is now an unexplored system"
             self.addExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED, systemID)
 
     def getExplorableSystems(self, explorableSystemsType):

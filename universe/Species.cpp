@@ -211,7 +211,7 @@ const std::string& Species::Graphic() const
 { return m_graphic; }
 
 void Species::AddHomeworld(int homeworld_id) {
-    if (!GetMainObjectMap().Object(homeworld_id))
+    if (!GetUniverseObject(homeworld_id))
         Logger().debugStream() << "Species asked to add homeworld id " << homeworld_id << " but there is no such object in the Universe";
     if (m_homeworlds.find(homeworld_id) != m_homeworlds.end())
         return;

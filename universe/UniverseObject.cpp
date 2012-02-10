@@ -13,8 +13,6 @@
 
 // static(s)
 const double    UniverseObject::INVALID_POSITION  = -100000.0;
-const int       UniverseObject::INVALID_OBJECT_ID = -1;
-const int       UniverseObject::MAX_ID            = 2000000000;
 const int       UniverseObject::INVALID_OBJECT_AGE = -(1 << 30) - 1;  // using big negative number to allow for potential negative object ages, which might be useful in the event of time travel.
 const int       UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
 
@@ -158,7 +156,7 @@ const std::string& UniverseObject::TypeName() const
 { return UserString("UNIVERSEOBJECT"); }
 
 std::string UniverseObject::Dump() const {
-    const System* system = GetMainObjectMap().Object<System>(this->SystemID());
+    const System* system = GetSystem(this->SystemID());
 
     std::stringstream os;
 
@@ -185,7 +183,7 @@ bool UniverseObject::Contains(int object_id) const
 { return false; }
 
 bool UniverseObject::ContainedBy(int object_id) const {
-    const UniverseObject* object = GetMainObjectMap().Object(object_id);
+    const UniverseObject* object = GetUniverseObject(object_id);
     if (object)
         return object->Contains(m_id);
     else
@@ -254,7 +252,7 @@ void UniverseObject::Move(double x, double y)
 { MoveTo(m_x + x, m_y + y); }
 
 void UniverseObject::MoveTo(int object_id)
-{ MoveTo(GetMainObjectMap().Object(object_id)); }
+{ MoveTo(GetUniverseObject(object_id)); }
 
 void UniverseObject::MoveTo(UniverseObject* object) {
     if (!object)
@@ -271,8 +269,8 @@ void UniverseObject::MoveTo(double x, double y) {
     m_x = x;
     m_y = y;
 
-    if (System* system = GetObject<System>(this->SystemID()))
-        system->Remove(this);
+    if (System* system = GetSystem(this->SystemID()))
+        system->Remove(this->ID());
     StateChangedSignal();
 }
 

@@ -155,7 +155,7 @@ ObjectMap::const_iterator ObjectMap::const_end() const
 
 UniverseObject* ObjectMap::Insert(int id, UniverseObject* obj) {
     // safety checks...
-    if (!obj || id == UniverseObject::INVALID_OBJECT_ID)
+    if (!obj || id == INVALID_OBJECT_ID)
         return 0;
 
     if (obj->ID() != id) {

@@ -10,7 +10,13 @@
 
 class EmpireManager;
 class Universe;
+class UniverseObject;
 class ObjectMap;
+class Planet;
+class System;
+class Ship;
+class Fleet;
+class Building;
 
 /** Accessor for the App's empire manager */
 EmpireManager& Empires();
@@ -18,14 +24,26 @@ EmpireManager& Empires();
 /** Accessor for the App's universe object */
 Universe& GetUniverse();
 
-/** Gets the "main" ObjectMap for this process.  On the server, this returns
-  * GetUniverse().Objects() and on clients it returns the ObjectMap containing
-  * the latest known objects of the client's (human or AI player) empire.  This
-  * allows an ObjectMap to be gotten from within UniverseObject and classes
-  * derived from it, which will be sure to get the most available information
-  * about the Universe in the current process, without needing to know whether
-  * they are running on the server or on a client. */
-ObjectMap& GetMainObjectMap();
+/** Accessor for all (on server) or all known (on client) objects ObjectMap */
+ObjectMap& Objects();
+
+/** Accessor for individual objects.  These are all implemented as separate
+  * functions to avoid needing template code in header, as the template code
+  * also needs to have implementation-dependent #ifdef code in it which would
+  * make the header code not buildable in a common library used by different
+  * implementations (ie. server vs. clients). */
+UniverseObject* GetUniverseObject(int object_id);
+UniverseObject* GetEmpireKnownObject(int object_id, int empire_id);
+Planet* GetPlanet(int object_id);
+Planet* GetEmpireKnownPlanet(int object_id, int empire_id);
+System* GetSystem(int object_id);
+System* GetEmpireKnownSystem(int object_id, int empire_id);
+Ship* GetShip(int object_id);
+Ship* GetEmpireKnownShip(int object_id, int empire_id);
+Fleet* GetFleet(int object_id);
+Fleet* GetEmpireKnownFleet(int object_id, int empire_id);
+Building* GetBuilding(int object_id);
+Building* GetEmpireKnownBuilding(int object_id, int empire_id);
 
 /** Accessor for the App's logger */
 log4cpp::Category& Logger();

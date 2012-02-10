@@ -223,7 +223,7 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
 {
     SetName("PopulationPanel");
 
-    const UniverseObject* obj = GetObject(m_popcenter_id);
+    const UniverseObject* obj = GetUniverseObject(m_popcenter_id);
     if (!obj)
         obj = GetEmpireKnownObject(m_popcenter_id, HumanClientApp::GetApp()->EmpireID());
     const PopCenter* pop = dynamic_cast<const PopCenter*>(obj);
@@ -413,7 +413,7 @@ void PopulationPanel::Render() {
 
 void PopulationPanel::Update() {
     const PopCenter*        pop = GetPopCenter();
-    const UniverseObject*   obj = GetObject(m_popcenter_id);
+    const UniverseObject*   obj = GetUniverseObject(m_popcenter_id);
         if (!obj)           obj = GetEmpireKnownObject(m_popcenter_id, HumanClientApp::GetApp()->EmpireID());
 
     if (!pop || !obj) {
@@ -450,7 +450,7 @@ void PopulationPanel::Refresh() {
 }
 
 const PopCenter* PopulationPanel::GetPopCenter() const {
-    const UniverseObject* obj = GetObject(m_popcenter_id);
+    const UniverseObject* obj = GetUniverseObject(m_popcenter_id);
     if (!obj)
         obj = GetEmpireKnownObject(m_popcenter_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
@@ -489,7 +489,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 {
     SetName("ResourcePanel");
 
-    const UniverseObject* obj = GetObject(m_rescenter_id);
+    const UniverseObject* obj = GetUniverseObject(m_rescenter_id);
     if (!obj)
         obj = GetEmpireKnownObject(m_rescenter_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj)
@@ -608,7 +608,7 @@ void ResourcePanel::DoExpandCollapseLayout() {
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_rescenter_id]) {
-        const UniverseObject* obj = GetObject(m_rescenter_id);
+        const UniverseObject* obj = GetUniverseObject(m_rescenter_id);
         if (!obj)
             obj = GetEmpireKnownObject(m_rescenter_id, HumanClientApp::GetApp()->EmpireID());
         const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
@@ -719,7 +719,7 @@ void ResourcePanel::Render() {
     // draw details depending on state of ownership and expanded / collapsed status
 
     // determine ownership
-    /*const UniverseObject* obj = GetObject(m_rescenter_id);
+    /*const UniverseObject* obj = GetUniverseObject(m_rescenter_id);
     if (obj->Unowned())
         // uninhabited
     else {
@@ -763,7 +763,7 @@ void ResourcePanel::Update() {
     m_multi_icon_value_indicator->ClearToolTip(METER_CONSTRUCTION);
 
 
-    const UniverseObject* obj = GetObject(m_rescenter_id);
+    const UniverseObject* obj = GetUniverseObject(m_rescenter_id);
     if (!obj)
         obj = GetEmpireKnownObject(m_rescenter_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
@@ -885,7 +885,7 @@ void ResourcePanel::FocusDropListSelectionChanged(GG::DropDownList::iterator sel
         return;
     }
 
-    const UniverseObject* obj = GetObject(m_rescenter_id);
+    const UniverseObject* obj = GetUniverseObject(m_rescenter_id);
     if (!obj)
         obj = GetEmpireKnownObject(m_rescenter_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
@@ -909,7 +909,7 @@ void ResourcePanel::FocusDropListSelectionChanged(GG::DropDownList::iterator sel
 }
 
 void ResourcePanel::EnableOrderIssuing(bool enable/* = true*/) {
-    const UniverseObject* obj = GetObject(m_rescenter_id);
+    const UniverseObject* obj = GetUniverseObject(m_rescenter_id);
     if (!enable || !obj || !obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         m_focus_drop->Disable();
     else
@@ -1077,7 +1077,7 @@ void MilitaryPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void MilitaryPanel::Update() {
-    const UniverseObject* obj = GetObject(m_planet_id);
+    const UniverseObject* obj = GetUniverseObject(m_planet_id);
     if (!obj)
         obj = GetEmpireKnownObject(m_planet_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
@@ -1234,7 +1234,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id, const s
         // special case for population meter for an indicator showing only a
         // single popcenter: icon is species icon, rather than generic pop icon
         if (PRIMARY_METER_TYPE == METER_POPULATION && m_object_ids.size() == 1) {
-            if (const UniverseObject* obj = GetMainObjectMap().Object(*m_object_ids.begin()))
+            if (const UniverseObject* obj = GetUniverseObject(*m_object_ids.begin()))
                 if (const PopCenter* pc = dynamic_cast<const PopCenter*>(obj))
                     texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
@@ -1269,7 +1269,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>
         // special case for population meter for an indicator showing only a
         // single popcenter: icon is species icon, rather than generic pop icon
         if (PRIMARY_METER_TYPE == METER_POPULATION && m_object_ids.size() == 1) {
-            if (const UniverseObject* obj = GetMainObjectMap().Object(*m_object_ids.begin()))
+            if (const UniverseObject* obj = GetUniverseObject(*m_object_ids.begin()))
                 if (const PopCenter* pc = dynamic_cast<const PopCenter*>(obj))
                     texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
@@ -1320,7 +1320,7 @@ void MultiIconValueIndicator::Update() {
         double sum = 0.0;
         for (std::size_t j = 0; j < m_object_ids.size(); ++j) {
             int object_id = m_object_ids[j];
-            const UniverseObject* obj = GetObject(object_id);
+            const UniverseObject* obj = GetUniverseObject(object_id);
             if (!obj)
                 obj = GetEmpireKnownObject(object_id, HumanClientApp::GetApp()->EmpireID());
             if (!obj) {
@@ -1462,7 +1462,7 @@ void MultiMeterStatusBar::Update() {
     m_projected_values.clear(); // projected current value of .first MeterTypes for the start of next turn
     m_target_max_values.clear();// current values of the .second MeterTypes in m_meter_types
 
-    const UniverseObject* obj = GetObject(m_object_id);
+    const UniverseObject* obj = GetUniverseObject(m_object_id);
     if (!obj)
         obj = GetEmpireKnownObject(m_object_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
@@ -1529,7 +1529,7 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     GG::Connect(m_expand_button->ClickedSignal, &BuildingsPanel::ExpandCollapseButtonPressed, this);
 
     // get owner, connect its production queue changed signal to update this panel
-    const UniverseObject* planet = GetObject(m_planet_id);
+    const UniverseObject* planet = GetUniverseObject(m_planet_id);
     if (!planet)
         planet = GetEmpireKnownObject(m_planet_id, HumanClientApp::GetApp()->EmpireID());
     if (planet) {
@@ -1620,9 +1620,9 @@ void BuildingsPanel::Update() {
     }
     m_building_indicators.clear();
 
-    const Planet* plt = GetObject<Planet>(m_planet_id);
+    const Planet* plt = GetPlanet(m_planet_id);
     if (!plt)
-        plt = GetEmpireKnownObject<Planet>(m_planet_id, HumanClientApp::GetApp()->EmpireID());
+        plt = GetEmpireKnownPlanet(m_planet_id, HumanClientApp::GetApp()->EmpireID());
     if (!plt) {
         Logger().errorStream() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;
@@ -1634,9 +1634,9 @@ void BuildingsPanel::Update() {
     // get existing / finished buildings and use them to create building indicators
     for (std::set<int>::const_iterator it = buildings.begin(); it != buildings.end(); ++it) {
         int object_id = *it;
-        const Building* building = GetObject<Building>(object_id);
+        const Building* building = GetBuilding(object_id);
         if (!building)
-            building = GetEmpireKnownObject<Building>(object_id, HumanClientApp::GetApp()->EmpireID());
+            building = GetEmpireKnownBuilding(object_id, HumanClientApp::GetApp()->EmpireID());
         if (!building) {
             Logger().errorStream() << "BuildingsPanel::Update couldn't get building with id: " << object_id << " on planet " << plt->Name();
             continue;
@@ -1786,7 +1786,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
 {
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-    if (const Building* building = GetObject<Building>(m_building_id))
+    if (const Building* building = GetBuilding(m_building_id))
         GG::Connect(building->StateChangedSignal,   &BuildingIndicator::Refresh,     this);
 
     Refresh();
@@ -1797,7 +1797,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type, 
     m_graphic(0),
     m_scrap_indicator(0),
     m_progress_bar(0),
-    m_building_id(UniverseObject::INVALID_OBJECT_ID),
+    m_building_id(INVALID_OBJECT_ID),
     m_order_issuing_enabled(true)
 {
     boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingTexture(building_type);
@@ -1862,7 +1862,7 @@ void BuildingIndicator::Render() {
 void BuildingIndicator::Refresh() {
     ClearBrowseInfoWnd();
 
-    const Building* building = GetObject<Building>(m_building_id);
+    const Building* building = GetBuilding(m_building_id);
     if (!building)
         return;
 
@@ -1921,7 +1921,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     // queued production item, and that the owner of the building is this
     // client's player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    Building* building = GetObject<Building>(m_building_id);
+    Building* building = GetBuilding(m_building_id);
     if (!building || !building->OwnedBy(empire_id) || !m_order_issuing_enabled) {
         return;
     }
@@ -2013,7 +2013,7 @@ void SpecialsPanel::Update() {
 
 
     // get specials to display
-    const UniverseObject* obj = GetObject(m_object_id);
+    const UniverseObject* obj = GetUniverseObject(m_object_id);
     if (!obj)
         obj = GetEmpireKnownObject(m_object_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
@@ -2231,7 +2231,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     }
     m_production_labels_and_amounts.clear();
 
-    const System* system = GetObject<System>(m_system_id);
+    const System* system = GetSystem(m_system_id);
     if (!system || m_resource_type == INVALID_RESOURCE_TYPE)
         return;
 
@@ -2244,7 +2244,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     // add label-value pair for each resource-producing object in system to indicate amount of resource produced
     std::vector<int> obj_vec = system->FindObjectIDs();
     for (std::vector<int>::const_iterator it = obj_vec.begin(); it != obj_vec.end(); ++it) {
-        const UniverseObject* obj = GetObject(*it);
+        const UniverseObject* obj = GetUniverseObject(*it);
 
         // display information only for the requested player
         if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))
@@ -2328,7 +2328,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
     }
     m_allocation_labels_and_amounts.clear();
 
-    const System* system = GetObject<System>(m_system_id);
+    const System* system = GetSystem(m_system_id);
     if (!system || m_resource_type == INVALID_RESOURCE_TYPE)
         return;
 
@@ -2348,7 +2348,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
 
 
     for (std::vector<int>::const_iterator it = obj_vec.begin(); it != obj_vec.end(); ++it) {
-        const UniverseObject* obj = GetObject(*it);
+        const UniverseObject* obj = GetUniverseObject(*it);
 
         // display information only for the requested player
         if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))
@@ -2604,7 +2604,7 @@ void MeterBrowseWnd::Initialize() {
     const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
 
     // get objects and meters to verify that they exist
-    const UniverseObject* obj = GetObject(m_object_id);
+    const UniverseObject* obj = GetUniverseObject(m_object_id);
     if (!obj)
         obj = GetEmpireKnownObject(m_object_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
@@ -2694,7 +2694,7 @@ void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 }
 
 void MeterBrowseWnd::UpdateSummary() {
-    const UniverseObject* obj = GetObject(m_object_id);
+    const UniverseObject* obj = GetUniverseObject(m_object_id);
     if (!obj)
         obj = GetEmpireKnownObject(m_object_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj)
@@ -2753,7 +2753,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
 
     // get object and meter, aborting if not valid
-    const UniverseObject* obj = GetObject(m_object_id);
+    const UniverseObject* obj = GetUniverseObject(m_object_id);
     if (!obj)
         obj = GetEmpireKnownObject(m_object_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
@@ -2797,7 +2797,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     // add label-value pairs for each alteration recorded for this meter
     for (std::vector<Effect::AccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
-        const UniverseObject* source = GetObject(info_it->source_id);
+        const UniverseObject* source = GetUniverseObject(info_it->source_id);
         if (!source)
             source = GetEmpireKnownObject(info_it->source_id, HumanClientApp::GetApp()->EmpireID());
 
@@ -2816,7 +2816,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
         case ECT_BUILDING:
             if (building = universe_object_cast<const Building*>(source))
-                if (planet = GetObject<Planet>(building->PlanetID()))
+                if (planet = GetPlanet(building->PlanetID()))
                     name = planet->Name();
             text += boost::io::str(FlexibleFormat(UserString("TT_BUILDING")) % name % UserString(info_it->specific_cause));
             break;

@@ -161,7 +161,7 @@ namespace {
         if (!empire)
             return source;
 
-        if (source = GetObject(empire->CapitalID()))
+        if (source = GetUniverseObject(empire->CapitalID()))
             return source;
 
         // not a valid source?!  scan through all objects to find one owned by this empire
@@ -184,7 +184,7 @@ namespace {
         if (const BuildingType* building_type = GetBuildingType(building_name))
             location_conditions.push_back(building_type->Location());
         const UniverseObject* source = GetSourceObjectForEmpire(empire_id);
-        return ConditionDescription(location_conditions, GetObject(candidate_object_id), source);
+        return ConditionDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
     }
 
     std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
@@ -203,7 +203,7 @@ namespace {
             }
         }
         const UniverseObject* source = GetSourceObjectForEmpire(empire_id);
-        return ConditionDescription(location_conditions, GetObject(candidate_object_id), source);
+        return ConditionDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
     }
 
     boost::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
@@ -233,7 +233,7 @@ namespace {
     class ProductionItemRow : public GG::ListBox::Row {
     public:
         ProductionItemRow(GG::X w, GG::Y h, const std::string& building_name, int empire_id,
-                          int production_location = UniverseObject::INVALID_OBJECT_ID) :
+                          int production_location = INVALID_OBJECT_ID) :
             GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
             m_item(BT_BUILDING, building_name),
             m_empire_id(empire_id),
@@ -255,7 +255,7 @@ namespace {
         }
 
         ProductionItemRow(GG::X w, GG::Y h, int design_id, int empire_id,
-                          int production_location = UniverseObject::INVALID_OBJECT_ID) :
+                          int production_location = INVALID_OBJECT_ID) :
             GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
             m_item(BT_SHIP, design_id),
             m_empire_id(empire_id),
@@ -458,7 +458,7 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
            GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
     m_buildable_items(new BuildableItemsListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
     m_build_types(GG::ListBox::RowPtrIteratorLess<GG::ListBox>(m_buildable_items)),
-    m_build_location(UniverseObject::INVALID_OBJECT_ID),
+    m_build_location(INVALID_OBJECT_ID),
     m_empire_id(ALL_EMPIRES)
 {
     // create build type toggle buttons (ship, building, all)
@@ -1004,7 +1004,7 @@ void BuildDesignatorWnd::SelectSystem(int system_id) {
         return;
     }
 
-    if (system_id != UniverseObject::INVALID_OBJECT_ID) {
+    if (system_id != INVALID_OBJECT_ID) {
         // set sidepanel's system and autoselect a suitable planet
         SidePanel::SetSystem(system_id);
         SelectDefaultPlanet();
@@ -1014,7 +1014,7 @@ void BuildDesignatorWnd::SelectSystem(int system_id) {
 void BuildDesignatorWnd::SelectPlanet(int planet_id) {
     //std::cout << "BuildDesignatorWnd::SelectPlanet(" << planet_id << ")" << std::endl;
     SidePanel::SelectPlanet(planet_id);
-    if (planet_id != UniverseObject::INVALID_OBJECT_ID)
+    if (planet_id != INVALID_OBJECT_ID)
         m_system_default_planets[SidePanel::SystemID()] = planet_id;
     m_build_selector->SetBuildLocation(this->BuildLocation());
 }
@@ -1033,7 +1033,7 @@ void BuildDesignatorWnd::Update() {
 
 void BuildDesignatorWnd::Reset() {
     //std::cout << "BuildDesignatorWnd::Reset()" << std::endl;
-    SelectSystem(UniverseObject::INVALID_OBJECT_ID);
+    SelectSystem(INVALID_OBJECT_ID);
     ShowAllTypes(false);            // show all types without populating the list
     HideAvailability(false, false); // hide unavailable items without populating the list
     ShowAvailability(true, false);  // show available items without populating the list
@@ -1043,7 +1043,7 @@ void BuildDesignatorWnd::Reset() {
 
 void BuildDesignatorWnd::Clear() {
     //std::cout << "BuildDesignatorWnd::Clear()" << std::endl;
-    SidePanel::SetSystem(UniverseObject::INVALID_OBJECT_ID);
+    SidePanel::SetSystem(INVALID_OBJECT_ID);
     Reset();
     m_system_default_planets.clear();
 }
@@ -1175,8 +1175,8 @@ void BuildDesignatorWnd::BuildQuantityChanged(int queue_idx, int quantity)
 void BuildDesignatorWnd::SelectDefaultPlanet()
 {
     int system_id = SidePanel::SystemID();
-    if (system_id == UniverseObject::INVALID_OBJECT_ID) {
-        this->SelectPlanet(UniverseObject::INVALID_OBJECT_ID);
+    if (system_id == INVALID_OBJECT_ID) {
+        this->SelectPlanet(INVALID_OBJECT_ID);
         return;
     }
 
@@ -1195,7 +1195,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
     // couldn't reselect stored default, so need to find a reasonable other
     // planet to select.  attempt to find one owned by this client's player
 
-    const System* sys = GetObject<System>(system_id);   // only checking visible objects for this clients empire (and not the latest known objects) as an empire shouldn't be able to use a planet or system it can't currently see as a production location
+    const System* sys = GetSystem(system_id);   // only checking visible objects for this clients empire (and not the latest known objects) as an empire shouldn't be able to use a planet or system it can't currently see as a production location
     if (!sys) {
         Logger().errorStream() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
         return;
@@ -1204,17 +1204,17 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
     std::vector<int> planets = sys->FindObjectIDs<Planet>();
 
     if (planets.empty()) {
-        this->SelectPlanet(UniverseObject::INVALID_OBJECT_ID);
+        this->SelectPlanet(INVALID_OBJECT_ID);
         return;
     }
 
 
     bool found_planet = false;                              // was a suitable planet found?
-    int best_planet_id = UniverseObject::INVALID_OBJECT_ID; // id of selected planet
+    int best_planet_id = INVALID_OBJECT_ID; // id of selected planet
     double best_planet_pop = -99999.9;                      // arbitrary negative number, so any planet's pop will be better
 
     for (std::vector<int>::iterator it = planets.begin(); it != planets.end(); ++it) {
-        const Planet* planet = GetObject<Planet>(*it);
+        const Planet* planet = GetPlanet(*it);
         if (!planet) {
             Logger().errorStream() << "BuildDesignatorWnd::SetDefaultPlanet couldn't get planet with id " << *it;
             continue;

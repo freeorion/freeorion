@@ -263,7 +263,9 @@ namespace SystemPathing {
       * is 0.  If there is no path between the two vertices, then the list is
       * empty and the path length is -1 */
     template <class Graph>
-    std::pair<std::list<int>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id, const boost::unordered_map<int, int>& id_to_graph_index, int max_jumps = INT_MAX)
+    std::pair<std::list<int>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id,
+                                                      const boost::unordered_map<int, int>& id_to_graph_index,
+                                                      int max_jumps = INT_MAX)
     {
         typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
 
@@ -344,12 +346,14 @@ namespace SystemPathing {
 using namespace SystemPathing;  // to keep GCC 4.2 on OSX happy
 
 const int ALL_EMPIRES = -1;
+const int INVALID_OBJECT_ID = -1;   //the ID number assigned to a UniverseObject upon construction; it is assigned an ID later when it is placed in the universe
+const int MAX_ID            = 2000000000;
+
 
 /////////////////////////////////////////////
 // struct Universe::GraphImpl
 /////////////////////////////////////////////
-struct Universe::GraphImpl
-{
+struct Universe::GraphImpl {
     typedef boost::property<vertex_system_id_t, int,
                             boost::property<boost::vertex_index_t, int> >   vertex_property_t;  ///< a system graph property map type
     typedef boost::property<boost::edge_weight_t, double>                   edge_property_t;    ///< a system graph property map type
@@ -358,8 +362,7 @@ struct Universe::GraphImpl
     typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
                                   vertex_property_t, edge_property_t> SystemGraph;
 
-    struct EdgeVisibilityFilter
-    {
+    struct EdgeVisibilityFilter     {
         EdgeVisibilityFilter() :
             m_graph(0),
             m_empire_id(ALL_EMPIRES)
@@ -387,7 +390,7 @@ struct Universe::GraphImpl
             int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
             // look up lane between systems
-            const System* system1 = GetEmpireKnownObject<System>(sys_id_1, m_empire_id);
+            const System* system1 = GetEmpireKnownSystem(sys_id_1, m_empire_id);
             if (!system1) {
                 Logger().errorStream() << "EdgeDescriptor::operator() couldn't find system with id " << sys_id_1;
                 return false;
@@ -429,18 +432,16 @@ int         Universe::s_encoding_empire =                   ALL_EMPIRES;
 
 Universe::Universe() :
     m_graph_impl(new GraphImpl),
-    m_last_allocated_object_id(-1), // this is conicidentally equal to UniverseObject::INVALID_OBJECT_ID as of this writing, but the reason for this to be -1 is so that the first object has id 0, and all object ids are non-negative
+    m_last_allocated_object_id(-1), // this is conicidentally equal to INVALID_OBJECT_ID as of this writing, but the reason for this to be -1 is so that the first object has id 0, and all object ids are non-negative
     m_last_allocated_design_id(-1)  // same, but for ShipDesign::INVALID_DESIGN_ID
 {}
 
-Universe::~Universe()
-{
+Universe::~Universe() {
     Clear();
     delete m_graph_impl;
 }
 
-void Universe::Clear()
-{
+void Universe::Clear() {
     // empty object maps
     m_objects.Clear();
     for (EmpireObjectMap::iterator it = m_empire_latest_known_objects.begin(); it != m_empire_latest_known_objects.end(); ++it)
@@ -453,8 +454,7 @@ void Universe::Clear()
     m_ship_designs.clear();
 }
 
-const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const
-{
+const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
     if (empire_id == ALL_EMPIRES)
         return m_objects;
 
@@ -467,8 +467,7 @@ const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const
     return const_empty_map;
 }
 
-ObjectMap& Universe::EmpireKnownObjects(int empire_id)
-{
+ObjectMap& Universe::EmpireKnownObjects(int empire_id) {
     if (empire_id == ALL_EMPIRES)
         return m_objects;
 
@@ -482,8 +481,7 @@ ObjectMap& Universe::EmpireKnownObjects(int empire_id)
     return empty_map;
 }
 
-std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id/* = ALL_EMPIRES*/) const
-{
+std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id/* = ALL_EMPIRES*/) const {
     std::set<int> retval;
 
     // get id(s) of all empires to consider visibility of...
@@ -510,8 +508,7 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id/* = ALL_EMPIRES*/) 
     return retval;
 }
 
-const std::set<int>& Universe::EmpireKnownDestroyedObjectIDs(int empire_id) const
-{
+const std::set<int>& Universe::EmpireKnownDestroyedObjectIDs(int empire_id) const {
     ObjectKnowledgeMap::const_iterator it = m_empire_known_destroyed_object_ids.find(empire_id);
     if (it != m_empire_known_destroyed_object_ids.end())
         return it->second;
@@ -519,16 +516,14 @@ const std::set<int>& Universe::EmpireKnownDestroyedObjectIDs(int empire_id) cons
     return empty_set;
 }
 
-const ShipDesign* Universe::GetShipDesign(int ship_design_id) const
-{
+const ShipDesign* Universe::GetShipDesign(int ship_design_id) const {
     if (ship_design_id == ShipDesign::INVALID_DESIGN_ID)
         return 0;
     ship_design_iterator it = m_ship_designs.find(ship_design_id);
     return (it != m_ship_designs.end() ? it->second : 0);
 }
 
-const ShipDesign* Universe::GetGenericShipDesign(const std::string& name) const
-{
+const ShipDesign* Universe::GetGenericShipDesign(const std::string& name) const {
     if (name.empty())
         return 0;
     for (ship_design_iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
@@ -541,8 +536,7 @@ const ShipDesign* Universe::GetGenericShipDesign(const std::string& name) const
     return 0;
 }
 
-const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const
-{
+const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const {
     std::map<int, std::set<int> >::const_iterator it = m_empire_known_ship_design_ids.find(empire_id);
     if (it != m_empire_known_ship_design_ids.end())
         return it->second;
@@ -550,8 +544,7 @@ const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const
     return empty_set;
 }
 
-Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) const
-{
+Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) const {
     if (empire_id == ALL_EMPIRES || Universe::ALL_OBJECTS_VISIBLE)
         return VIS_FULL_VISIBILITY;
 
@@ -568,8 +561,7 @@ Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) c
     return vis_map_it->second;
 }
 
-const Universe::VisibilityTurnMap& Universe::GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const
-{
+const Universe::VisibilityTurnMap& Universe::GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const {
     static const std::map<Visibility, int> empty_map;
 
     EmpireObjectVisibilityTurnMap::const_iterator empire_it = m_empire_object_visibility_turns.find(empire_id);
@@ -584,8 +576,7 @@ const Universe::VisibilityTurnMap& Universe::GetObjectVisibilityTurnMapByEmpire(
     return object_it->second;
 }
 
-double Universe::LinearDistance(int system1_id, int system2_id) const
-{
+double Universe::LinearDistance(int system1_id, int system2_id) const {
     try {
         int system1_index = m_system_id_to_graph_index.at(system1_id);
         int system2_index = m_system_id_to_graph_index.at(system2_id);
@@ -597,8 +588,7 @@ double Universe::LinearDistance(int system1_id, int system2_id) const
     }
 }
 
-short Universe::JumpDistance(int system1_id, int system2_id) const
-{
+short Universe::JumpDistance(int system1_id, int system2_id) const {
     try {
         int system1_index = m_system_id_to_graph_index.at(system1_id);
         int system2_index = m_system_id_to_graph_index.at(system2_id);
@@ -613,8 +603,7 @@ short Universe::JumpDistance(int system1_id, int system2_id) const
     }
 }
 
-std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const
-{
+std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const {
     if (empire_id == ALL_EMPIRES) {
         // find path on full / complete system graph
         try {
@@ -646,7 +635,8 @@ std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int sys
     }
 }
 
-std::pair<std::list<int>, int> Universe::LeastJumpsPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/, int max_jumps/* = INT_MAX*/) const
+std::pair<std::list<int>, int> Universe::LeastJumpsPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/,
+                                                        int max_jumps/* = INT_MAX*/) const
 {
     if (empire_id == ALL_EMPIRES) {
         // find path on full / complete system graph
@@ -677,22 +667,23 @@ std::pair<std::list<int>, int> Universe::LeastJumpsPath(int system1_id, int syst
     }
 }
 
-bool Universe::SystemsConnected(int system1_id, int system2_id, int empire_id) const
-{
+bool Universe::SystemsConnected(int system1_id, int system2_id, int empire_id) const {
+    //Logger().debugStream() << "SystemsConnected(" << system1_id << ", " << system2_id << ", " << empire_id << ")";
     std::pair<std::list<int>, int> path = LeastJumpsPath(system1_id, system2_id, empire_id);
-    return (!path.first.empty());
+    //Logger().debugStream() << "SystemsConnected returned path of size: " << path.first.size();
+    bool retval = !path.first.empty();
+    //Logger().debugStream() << "SystemsConnected retval: " << retval;
+    return retval;
 }
 
-bool Universe::SystemHasVisibleStarlanes(int system_id, int empire_id) const
-{
-    if (const System* system = GetEmpireKnownObject<System>(system_id, empire_id))
+bool Universe::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
+    if (const System* system = GetEmpireKnownSystem(system_id, empire_id))
         if (!system->StarlanesWormholes().empty())
             return true;
     return false;
 }
 
-std::map<double, int> Universe::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const
-{
+std::map<double, int> Universe::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const {
     if (empire_id == ALL_EMPIRES) {
         return ImmediateNeighborsImpl(m_graph_impl->system_graph, system_id, m_system_id_to_graph_index);
     } else {
@@ -703,12 +694,11 @@ std::map<double, int> Universe::ImmediateNeighbors(int system_id, int empire_id/
     return std::map<double, int>();
 }
 
-int Universe::Insert(UniverseObject* obj)
-{
+int Universe::Insert(UniverseObject* obj) {
     if (!obj)
-        return UniverseObject::INVALID_OBJECT_ID;
+        return INVALID_OBJECT_ID;
 
-    if (m_last_allocated_object_id + 1 < UniverseObject::MAX_ID) {
+    if (m_last_allocated_object_id + 1 < MAX_ID) {
         int id = ++m_last_allocated_object_id;
         obj->SetID(id);
         m_objects.Insert(id, obj);
@@ -717,7 +707,7 @@ int Universe::Insert(UniverseObject* obj)
 
     // we'll probably never execute this branch, considering how many IDs are available
     // find a hole in the assigned IDs in which to place the object
-    int last_id_seen = UniverseObject::INVALID_OBJECT_ID;
+    int last_id_seen = INVALID_OBJECT_ID;
     for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         if (1 < it->first - last_id_seen) {
             int id = last_id_seen + 1;
@@ -727,12 +717,11 @@ int Universe::Insert(UniverseObject* obj)
         }
     }
 
-    return UniverseObject::INVALID_OBJECT_ID;
+    return INVALID_OBJECT_ID;
 }
 
-bool Universe::InsertID(UniverseObject* obj, int id)
-{
-    if (!obj || id == UniverseObject::INVALID_OBJECT_ID || id >= UniverseObject::MAX_ID)
+bool Universe::InsertID(UniverseObject* obj, int id) {
+    if (!obj || id == INVALID_OBJECT_ID || id >= MAX_ID)
         return false;
 
     obj->SetID(id);
@@ -740,11 +729,10 @@ bool Universe::InsertID(UniverseObject* obj, int id)
     return true;
 }
 
-int Universe::InsertShipDesign(ShipDesign* ship_design)
-{
+int Universe::InsertShipDesign(ShipDesign* ship_design) {
     int retval = ShipDesign::INVALID_DESIGN_ID;
     if (ship_design) {
-        if (m_last_allocated_design_id + 1 < UniverseObject::MAX_ID) {
+        if (m_last_allocated_design_id + 1 < MAX_ID) {
             m_ship_designs[++m_last_allocated_design_id] = ship_design;
             retval = m_last_allocated_design_id;
         } else { // we'll probably never execute this branch, considering how many IDs are available
@@ -762,8 +750,7 @@ int Universe::InsertShipDesign(ShipDesign* ship_design)
     return retval;
 }
 
-bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id)
-{
+bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id) {
     bool retval = false;
 
     if (ship_design  &&  id != ShipDesign::INVALID_DESIGN_ID  &&  id < ShipDesign::MAX_ID) {
@@ -774,8 +761,7 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id)
     return retval;
 }
 
-void Universe::ApplyAllEffectsAndUpdateMeters()
-{
+void Universe::ApplyAllEffectsAndUpdateMeters() {
     std::vector<int> object_ids = m_objects.FindObjectIDs();
 
     // cache all activation and scoping condition results before applying
@@ -802,8 +788,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters()
         it->second->ClampMeters();
 }
 
-void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids)
-{
+void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids) {
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
@@ -884,11 +869,10 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
 }
 
 void Universe::UpdateMeterEstimates()
-{ UpdateMeterEstimates(UniverseObject::INVALID_OBJECT_ID, false); }
+{ UpdateMeterEstimates(INVALID_OBJECT_ID, false); }
 
-void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects)
-{
-    if (object_id == UniverseObject::INVALID_OBJECT_ID) {
+void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects) {
+    if (object_id == INVALID_OBJECT_ID) {
         // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
         std::vector<int> object_ids;
         for (ObjectMap::iterator obj_it = m_objects.begin(); obj_it != m_objects.end(); ++obj_it)
@@ -928,8 +912,7 @@ void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects
     UpdateMeterEstimatesImpl(objects_vec);
 }
 
-void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec)
-{
+void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     ScopedTimer timer("Universe::UpdateMeterEstimates");
 
     std::set<int> objects_set;  // ensures no duplicates
@@ -944,8 +927,7 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec)
     UpdateMeterEstimatesImpl(final_objects_vec);
 }
 
-void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec)
-{
+void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
         int obj_id = *obj_it;
         UniverseObject* obj = m_objects.Object(obj_id);
@@ -958,7 +940,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec)
         for (MeterType type = MeterType(0); type != NUM_METER_TYPES; type = MeterType(type + 1)) {
             if (Meter* meter = obj->GetMeter(type)) {
                 Effect::AccountingInfo info;
-                info.source_id = UniverseObject::INVALID_OBJECT_ID;
+                info.source_id = INVALID_OBJECT_ID;
                 info.cause_type = ECT_INHERENT;
                 info.meter_change = meter->Current() - Meter::DEFAULT_VALUE;
                 info.running_meter_total = meter->Current();
@@ -1040,8 +1022,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec)
     }
 }
 
-void Universe::BackPropegateObjectMeters(const std::vector<int>& object_ids)
-{
+void Universe::BackPropegateObjectMeters(const std::vector<int>& object_ids) {
     std::vector<UniverseObject*> objects = m_objects.FindObjects(object_ids);
 
     // copy current meter values to initial values
@@ -1052,16 +1033,14 @@ void Universe::BackPropegateObjectMeters(const std::vector<int>& object_ids)
 void Universe::BackPropegateObjectMeters()
 { BackPropegateObjectMeters(m_objects.FindObjectIDs()); }
 
-void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes)
-{
+void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes) {
     targets_causes.clear();
 
     std::vector<int> all_objects = m_objects.FindObjectIDs();
     GetEffectsAndTargets(targets_causes, all_objects);
 }
 
-void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const std::vector<int>& target_objects)
-{
+void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const std::vector<int>& target_objects) {
     // transfer target objects from input vector to a set
     Effect::TargetSet all_potential_targets;
     all_potential_targets.reserve(RESERVE_SET_SIZE);
@@ -1111,7 +1090,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
         const Empire* empire = it->second;
         int source_id = empire->CapitalID();
         const UniverseObject* source = m_objects.Object(source_id);
-        if (source_id == UniverseObject::INVALID_OBJECT_ID ||
+        if (source_id == INVALID_OBJECT_ID ||
             !source ||
             !source->Unowned() ||
             !source->OwnedBy(empire->EmpireID()))
@@ -1257,7 +1236,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes, bool 
     std::map<std::string, Effect::TargetSet> executed_nonstacking_effects;
 
     for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin(); targets_it != targets_causes.end(); ++targets_it) {
-        const UniverseObject* source = GetObject(targets_it->first.source_object_id);
+        const UniverseObject* source = GetUniverseObject(targets_it->first.source_object_id);
         ScopedTimer update_timer("Universe::ExecuteEffects execute one effects group (source " +
                                  (source ? source->Name() : "No Source!") +
                                  ") on " + boost::lexical_cast<std::string>(targets_it->second.target_set.size()) + " objects");
@@ -1353,7 +1332,7 @@ namespace {
 
         // if object is a ship, empire also gets knowledge of its design
         if (vis >= VIS_PARTIAL_VISIBILITY) {
-            if (const Ship* ship = GetObject<Ship>(object_id)) {
+            if (const Ship* ship = GetShip(object_id)) {
                 int design_id = ship->DesignID();
                 if (design_id == ShipDesign::INVALID_DESIGN_ID) {
                     Logger().errorStream() << "SetEmpireObjectVisibility got invalid design id for ship with id " << object_id;
@@ -1420,7 +1399,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
         if (fleet) {
             int next_id = fleet->NextSystemID();
             int cur_id = fleet->SystemID();
-            if (next_id != UniverseObject::INVALID_OBJECT_ID && next_id != cur_id)
+            if (next_id != INVALID_OBJECT_ID && next_id != cur_id)
                 continue;
         }
 
@@ -1660,7 +1639,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
     std::vector<UniverseObject*> moving_fleet_objects = m_objects.FindObjects(MovingFleetVisitor());
     for (std::vector<UniverseObject*>::iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it) {
         if (const Fleet* fleet = universe_object_cast<const Fleet*>(*it)) {
-            if (fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID || fleet->Unowned())
+            if (fleet->SystemID() != INVALID_OBJECT_ID || fleet->Unowned())
                 continue;
 
             int prev = fleet->PreviousSystemID();
@@ -1689,8 +1668,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
     }
 }
 
-void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
-{
+void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
     //Logger().debugStream() << "Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()";
 
     // assumes m_empire_object_visibility has been updated
@@ -1767,9 +1745,8 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
     }
 }
 
-void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id)
-{
-    if (object_id == UniverseObject::INVALID_OBJECT_ID) {
+void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id) {
+    if (object_id == INVALID_OBJECT_ID) {
         Logger().errorStream() << "SetEmpireKnowledgeOfDestroyedObject called with INVALID_OBJECT_ID";
         return;
     }
@@ -1794,8 +1771,7 @@ void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id)
     m_empire_known_ship_design_ids[empire_id].insert(ship_design_id);
 }
 
-void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = true*/)
-{
+void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = true*/) {
     // remove object from any containing UniverseObject
     UniverseObject* obj = m_objects.Object(object_id);
     if (!obj) {
@@ -1826,8 +1802,7 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
     delete m_objects.Remove(object_id);
 }
 
-void Universe::RecursiveDestroy(int object_id)
-{
+void Universe::RecursiveDestroy(int object_id) {
     UniverseObject* obj = m_objects.Object(object_id);
     if (!obj) {
         Logger().debugStream() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << object_id;
@@ -1836,7 +1811,7 @@ void Universe::RecursiveDestroy(int object_id)
 
     if (Ship* ship = universe_object_cast<Ship*>(obj)) {
         // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
-        Fleet* fleet = GetObject<Fleet>(ship->FleetID());
+        Fleet* fleet = GetFleet(ship->FleetID());
         Destroy(object_id);
         if (fleet && fleet->Empty())
             Destroy(fleet->ID());
@@ -1860,8 +1835,7 @@ void Universe::RecursiveDestroy(int object_id)
     // else ??? object is of some type unknown as of this writing.
 }
 
-bool Universe::Delete(int object_id)
-{
+bool Universe::Delete(int object_id) {
     // find object amongst existing objects and delete directly, without storing any info
     // about the previous object (as is done for destroying an object)
     UniverseObject* obj = m_objects.Object(object_id);
@@ -1888,8 +1862,7 @@ void Universe::EffectDestroy(int object_id)
 void Universe::EffectVictory(int object_id, const std::string& reason_string)
 { m_marked_for_victory.insert(std::pair<int, std::string>(object_id, reason_string)); }
 
-void Universe::HandleEmpireElimination(int empire_id)
-{
+void Universe::HandleEmpireElimination(int empire_id) {
     //for (Effect::AccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
     //    // ever meter has a value at the start of the turn, and a value after updating with known effects
     //    for (std::map<MeterType, std::vector<Effect::AccountingInfo> >::iterator meter_type_it = obj_it->second.begin(); meter_type_it != obj_it->second.end(); ++meter_type_it) {
@@ -1903,18 +1876,16 @@ void Universe::HandleEmpireElimination(int empire_id)
     //}
 }
 
-void Universe::InitializeSystemGraph(int for_empire_id)
-{
+void Universe::InitializeSystemGraph(int for_empire_id) {
     typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
-    const ObjectMap& objects = EmpireKnownObjects(for_empire_id);
 
     for (int i = static_cast<int>(boost::num_vertices(m_graph_impl->system_graph)) - 1; i >= 0; --i) {
         boost::clear_vertex(i, m_graph_impl->system_graph);
         boost::remove_vertex(i, m_graph_impl->system_graph);
     }
 
-    std::vector<int> system_ids = objects.FindObjectIDs<System>();
-    Logger().debugStream() << "InitializeSystemGraph(" << for_empire_id << ") system_ids: (" << system_ids.size() << ")";
+    std::vector<int> system_ids = ::Objects().FindObjectIDs<System>();
+    //Logger().debugStream() << "InitializeSystemGraph(" << for_empire_id << ") system_ids: (" << system_ids.size() << ")";
     //for (std::vector<int>::const_iterator it = system_ids.begin(); it != system_ids.end(); ++it)
     //    Logger().debugStream() << " ... " << *it;
 
@@ -1938,7 +1909,7 @@ void Universe::InitializeSystemGraph(int for_empire_id)
     m_system_distances.resize(system_ids.size(), system_ids.size());
     for (int i = 0; i < static_cast<int>(system_ids.size()); ++i) {
         int system1_id = system_ids[i];
-        const System* system1 = objects.Object<System>(system1_id);
+        const System* system1 = GetEmpireKnownSystem(system1_id, for_empire_id);
 
         m_system_id_to_graph_index[system1_id] = i;
 
@@ -1963,7 +1934,7 @@ void Universe::InitializeSystemGraph(int for_empire_id)
                 if (it->second) {                               // if this is a wormhole
                     edge_weight_map[add_edge_result.first] = 0.1;   // arbitrary small distance
                 } else {                                        // if this is a starlane
-                    const UniverseObject* system2 = objects.Object(it->first);
+                    const UniverseObject* system2 = GetUniverseObject(it->first);
                     double x_dist = system2->X() - system1->X();
                     double y_dist = system2->Y() - system1->Y();
                     edge_weight_map[add_edge_result.first] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
@@ -1975,7 +1946,7 @@ void Universe::InitializeSystemGraph(int for_empire_id)
         // define the straight-line system distances for this system
         for (int j = 0; j < i; ++j) {
             int system2_id = system_ids[j];
-            const UniverseObject* system2 = objects.Object(system2_id);
+            const UniverseObject* system2 = GetUniverseObject(system2_id);
             double x_dist = system2->X() - system1->X();
             double y_dist = system2->Y() - system1->Y();
             m_system_distances[i][j] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
@@ -1990,8 +1961,7 @@ void Universe::InitializeSystemGraph(int for_empire_id)
     RebuildEmpireViewSystemGraphs(for_empire_id);
 }
 
-void Universe::RebuildEmpireViewSystemGraphs(int for_empire_id)
-{
+void Universe::RebuildEmpireViewSystemGraphs(int for_empire_id) {
     m_graph_impl->empire_system_graph_views.clear();
 
     // if building system graph views for all empires, then each empire's graph
@@ -2033,8 +2003,7 @@ const bool& Universe::UniverseObjectSignalsInhibited()
 void Universe::InhibitUniverseObjectSignals(bool inhibit)
 { s_inhibit_universe_object_signals = inhibit; }
 
-void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const
-{
+void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const {
     if (encoding_empire == ALL_EMPIRES) {
         designs_to_serialize = m_ship_designs;
     } else {
@@ -2058,8 +2027,7 @@ void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, in
     }
 }
 
-void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const
-{
+void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const {
     if (&objects == &m_objects)
         return;
 
@@ -2086,8 +2054,7 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
     }
 }
 
-void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects, int encoding_empire) const
-{
+void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects, int encoding_empire) const {
     if (&empire_latest_known_objects == &m_empire_latest_known_objects)
         return;
 
@@ -2131,8 +2098,7 @@ void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_k
     }
 }
 
-void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire) const
-{
+void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire) const {
     if (encoding_empire == ALL_EMPIRES) {
         empire_object_visibility = m_empire_object_visibility;
         return;
@@ -2150,8 +2116,7 @@ void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_ob
     }
 }
 
-void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns, int encoding_empire) const
-{
+void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns, int encoding_empire) const {
     if (encoding_empire == ALL_EMPIRES) {
         empire_object_visibility_turns = m_empire_object_visibility_turns;
         return;
@@ -2164,8 +2129,7 @@ void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& e
         empire_object_visibility_turns[encoding_empire] = it->second;
 }
 
-void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, int encoding_empire) const
-{
+void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, int encoding_empire) const {
     if (&empire_known_destroyed_object_ids == &m_empire_known_destroyed_object_ids)
         return;
 
@@ -2181,12 +2145,3 @@ void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_d
     if (it != m_empire_known_destroyed_object_ids.end())
         empire_known_destroyed_object_ids[encoding_empire] = it->second;
 }
-
-///////////////////////////////////////////////////////////
-// Free Functions                                        //
-///////////////////////////////////////////////////////////
-UniverseObject* GetObject(int object_id)
-{ return GetUniverse().Objects().Object(object_id); }
-
-UniverseObject* GetEmpireKnownObject(int object_id, int empire_id)
-{ return GetUniverse().EmpireKnownObjects(empire_id).Object(object_id); }

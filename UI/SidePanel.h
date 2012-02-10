@@ -43,11 +43,11 @@ public:
     virtual GG::Pt      ClientUpperLeft() const;
 
     /** Returns the id of the system shown in the SidePanels, or
-      * UniverseObject::INVALID_OBJECT_ID if no system is shown */
+      * INVALID_OBJECT_ID if no system is shown */
     static int          SystemID();
 
     /** Returns the id of the currently-selected planet, or
-      * UniverseObject::INVALID_OBJECT_ID if no planet is selected */
+      * INVALID_OBJECT_ID if no planet is selected */
     int                 SelectedPlanetID() const;
 
     /** Returns whether this SidePanel contains an object with the indicated

@@ -519,13 +519,13 @@ bool ClientUI::ZoomToObject(int id) {
 
 bool ClientUI::ZoomToPlanet(int id) {
     // this just zooms to the appropriate system, until we create a planet window of some kind
-    if (const Planet* planet = GetMainObjectMap().Object<Planet>(id))
+    if (const Planet* planet = GetPlanet(id))
         return ZoomToSystem(planet->SystemID());
     return false;
 }
 
 bool ClientUI::ZoomToSystem(int id) {
-    if (const System* system = GetMainObjectMap().Object<System>(id)) {
+    if (const System* system = GetSystem(id)) {
         ZoomToSystem(system);
         return true;
     }
@@ -533,7 +533,7 @@ bool ClientUI::ZoomToSystem(int id) {
 }
 
 bool ClientUI::ZoomToFleet(int id) {
-    if (const Fleet* fleet = GetObject<Fleet>(id)) {
+    if (const Fleet* fleet = GetFleet(id)) {
         ZoomToFleet(fleet);
         return true;
     }
@@ -541,13 +541,13 @@ bool ClientUI::ZoomToFleet(int id) {
 }
 
 bool ClientUI::ZoomToShip(int id) {
-    if (const Ship* ship = GetObject<Ship>(id))
+    if (const Ship* ship = GetShip(id))
         return ZoomToFleet(ship->FleetID());
     return false;
 }
 
 bool ClientUI::ZoomToBuilding(int id) {
-    if (const Building* building = GetMainObjectMap().Object<Building>(id)) {
+    if (const Building* building = GetBuilding(id)) {
         ZoomToBuildingType(building->BuildingTypeName());
         return ZoomToPlanet(building->PlanetID());
     }

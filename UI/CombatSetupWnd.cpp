@@ -273,7 +273,7 @@ namespace {
 
                 std::string arrival_starlane = "Present";
                 if (fleet->ArrivedThisTurn())
-                    arrival_starlane = "From " + GetObject(fleet->ArrivalStarlane())->Name();
+                    arrival_starlane = "From " + GetUniverseObject(fleet->ArrivalStarlane())->Name();
                 push_back(new GG::TextControl(GG::X0, GG::Y0, widths[2], h, arrival_starlane,
                                               ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT));
 

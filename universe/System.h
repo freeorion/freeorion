@@ -151,9 +151,6 @@ public:
       * with this function. */
     int                     Insert(int obj_id, int orbit);
 
-    /** removes object \a obj from this system. */
-    void                    Remove(UniverseObject* obj);
-
     /** removes the object with ID number \a id from this system. */
     void                    Remove(int id);
 
@@ -188,6 +185,9 @@ private:
     /** returns the subset of m_objects that is visible to empire with id
       * \a empire_id */
     ObjectMultimap          VisibleContainedObjects(int empire_id) const;
+
+    /** removes object \a obj from this system. */
+    void                    Remove(UniverseObject* obj);
 
     std::set<int>   m_empires_with_planets_here;    ///< ids of empires that control planets in this system
     StarType        m_star;
@@ -241,10 +241,9 @@ bool PointInStarlaneEllipse(double x, double y, int from_system, int to_system);
 template <class T>
 std::vector<int> System::FindObjectIDs() const
 {
-    const ObjectMap& objects = GetMainObjectMap();
     std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const UniverseObject* obj = objects.Object(it->second))
+        if (const UniverseObject* obj = GetUniverseObject(it->second))
             if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
                 retval.push_back(it->second);
     }
@@ -254,11 +253,10 @@ std::vector<int> System::FindObjectIDs() const
 template <class T>
 std::vector<int> System::FindObjectIDsInOrbit(int orbit) const
 {
-    const ObjectMap& objects = GetMainObjectMap();
     std::vector<int> retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (const UniverseObject* obj = objects.Object(it->second))
+        if (const UniverseObject* obj = GetUniverseObject(it->second))
             if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
                 retval.push_back(it->second);
     }

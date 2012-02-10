@@ -133,7 +133,7 @@ namespace {
         }
 
         for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
-            if (const Planet* planet = GetObject<Planet>(it->second)) {
+            if (const Planet* planet = GetPlanet(it->second)) {
                 double orbit_r = OrbitalRadius(it->first);
                 double rads = planet->OrbitalPositionOnTurn(CurrentTurn());
                 float planet_r = PlanetRadius(planet->Size());
@@ -493,7 +493,7 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
     std::map<int, std::set<int> > empires_by_starlane;
 
     for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
-        m_combat_universe[it->second] = objects.Object(it->second);
+        m_combat_universe[it->second] = GetUniverseObject(it->second);
         if (const Planet* planet =
             universe_object_cast<Planet*>(m_combat_universe[it->second])) {
             double orbit_radius = OrbitalRadius(it->first);
@@ -550,8 +550,8 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
             for (std::set<int>::const_iterator ship_it = it->second[i].m_ships.begin();
                  ship_it != it->second[i].m_ships.end();
                  ++ship_it) {
-                assert(universe_object_cast<Ship*>(objects.Object(*ship_it)));
-                Ship* ship = static_cast<Ship*>(objects.Object(*ship_it));
+                assert(universe_object_cast<Ship*>(GetUniverseObject(*ship_it)));
+                Ship* ship = static_cast<Ship*>(GetUniverseObject(*ship_it));
                 const std::pair<OpenSteer::Vec3, OpenSteer::Vec3>& placement = placements[ship];
                 CombatShipPtr combat_ship(
                     new CombatShip(ship, placement.first, placement.second, m_combat_universe, m_pathing_engine));

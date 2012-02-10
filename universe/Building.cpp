@@ -101,7 +101,7 @@ UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(const_cast<Building* const>(this)); }
 
 void Building::SetPlanetID(int planet_id) {
-    if (Planet* planet = GetObject<Planet>(m_planet_id))
+    if (Planet* planet = GetPlanet(m_planet_id))
         planet->RemoveBuilding(this->ID());
     m_planet_id = planet_id;
 }
@@ -111,7 +111,7 @@ void Building::MoveTo(double x, double y) {
     UniverseObject::MoveTo(x, y);
 
     // if building is being moved away from its planet, remove from the planet.  otherwise, keep building on planet
-    if (Planet* planet = GetObject<Planet>(m_planet_id))
+    if (Planet* planet = GetPlanet(m_planet_id))
         planet->RemoveBuilding(this->ID());
 }
 
@@ -192,9 +192,7 @@ int BuildingType::ProductionTime() const {
 }
 
 bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
-    const ObjectMap& objects = GetMainObjectMap();
-
-    const UniverseObject* location = objects.Object(location_id);
+    const UniverseObject* location = GetUniverseObject(location_id);
     if (!location) return false;
 
     const Empire* empire = Empires().Lookup(empire_id);
@@ -207,12 +205,12 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     // empire id.  this is used in conditions to reference which empire is
     // doing the building.  Ideally this will be the capital, but any object
     // owned by the empire will work.
-    const UniverseObject* source = objects.Object(empire->CapitalID());
+    const UniverseObject* source = GetUniverseObject(empire->CapitalID());
     if (!source && location->OwnedBy(empire_id))
         source = location;
     // still no valid source?!  scan through all objects to find one owned by this empire
     if (!source) {
-        for (ObjectMap::const_iterator obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it) {
+        for (ObjectMap::const_iterator obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
             if (obj_it->second->OwnedBy(empire_id)) {
                 source = obj_it->second;
                 break;

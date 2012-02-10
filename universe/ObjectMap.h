@@ -13,6 +13,7 @@ class UniverseObject;
 struct UniverseObjectVisitor;
 
 extern const int ALL_EMPIRES;
+extern const int INVALID_OBJECT_ID;
 
 /** Contains a set of objects that make up a (known or complete) Universe. */
 class ObjectMap {

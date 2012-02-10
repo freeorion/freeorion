@@ -93,6 +93,7 @@ def extractFleetIDsWithoutMissionTypes(fleetIDs):
 
 def assessFleetRole(fleetID):
     "counts the number of ShipRoles in a fleet and returns a corresponding fleetRole"
+    print ("assessing role of fleet with id " + str(fleetID))
     # TODO: one colony ship in fleet should mean it's a colony fleet
 
     universe = fo.getUniverse()
@@ -169,6 +170,7 @@ def assessShipRole(shipID):
 
 def generateAIFleetOrdersForAIFleetMissions():
     "generates fleet orders from targets"
+    print("Generating fleet orders")
 
     print ""
     print "Exploration Fleets : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION))

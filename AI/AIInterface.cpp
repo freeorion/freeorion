@@ -246,7 +246,7 @@ namespace AIInterface {
         }
 
         int start_id = fleet->SystemID();
-        if (start_id == UniverseObject::INVALID_OBJECT_ID)
+        if (start_id == INVALID_OBJECT_ID)
             start_id = fleet->NextSystemID();
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet_id, start_id, destination_id)));
@@ -346,7 +346,7 @@ namespace AIInterface {
 
         // make sure all ships are at a system, and that all are at the same system
         int system_id = ship->SystemID();
-        if (system_id == UniverseObject::INVALID_OBJECT_ID) {
+        if (system_id == INVALID_OBJECT_ID) {
             Logger().errorStream() << "AIInterface::IssueNewFleetOrder : passed ship_ids of ships at different locations";
             return 0;
         }
@@ -384,7 +384,7 @@ namespace AIInterface {
             return 0;
         }
         int ship_sys_id = ship->SystemID();
-        if (ship_sys_id == UniverseObject::INVALID_OBJECT_ID) {
+        if (ship_sys_id == INVALID_OBJECT_ID) {
             Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : ship is not in a system";
             return 0;
         }
@@ -399,7 +399,7 @@ namespace AIInterface {
             return 0;
         }
         int fleet_sys_id = fleet->SystemID();
-        if (fleet_sys_id == UniverseObject::INVALID_OBJECT_ID) {
+        if (fleet_sys_id == INVALID_OBJECT_ID) {
             Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : new fleet is not in a system";
             return 0;
         }
@@ -471,7 +471,7 @@ namespace AIInterface {
             Logger().errorStream() << "AIInterface::IssueColonizeOrder : fleet and planet are not in the same system";
             return 0;
         }
-        if (ship->SystemID() == UniverseObject::INVALID_OBJECT_ID) {
+        if (ship->SystemID() == INVALID_OBJECT_ID) {
             Logger().errorStream() << "AIInterface::IssueColonizeOrder : ship is not in a system";
             return 0;
         }
@@ -535,7 +535,7 @@ namespace AIInterface {
             Logger().errorStream() << "AIInterface::IssueInvadeOrder : fleet and planet are not in the same system";
             return 0;
         }
-        if (ship->SystemID() == UniverseObject::INVALID_OBJECT_ID) {
+        if (ship->SystemID() == INVALID_OBJECT_ID) {
             Logger().errorStream() << "AIInterface::IssueInvadeOrder : ship is not in a system";
             return 0;
         }

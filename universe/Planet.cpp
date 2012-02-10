@@ -310,14 +310,11 @@ double Planet::AvailableTrade() const
 
 double Planet::BuildingCosts() const {
     double retval = 0.0;
-    const ObjectMap& objects = GetMainObjectMap();
-    for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
-        const Building* building = objects.Object<Building>(*it);
-//        if (building->Operating()) {
-            const BuildingType* bulding_type = GetBuildingType(building->BuildingTypeName());
-            retval += bulding_type->MaintenanceCost();
-//        }
-    }
+    //for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
+    //    const Building* building = GetBuilding(*it);
+    //    const BuildingType* bulding_type = GetBuildingType(building->BuildingTypeName());
+    //    retval += bulding_type->MaintenanceCost();
+    //}
     return retval;
 }
 
@@ -325,11 +322,10 @@ bool Planet::Contains(int object_id) const
 { return m_buildings.find(object_id) != m_buildings.end(); }
 
 std::vector<UniverseObject*> Planet::FindObjects() const {
-    ObjectMap& objects = GetMainObjectMap();
     std::vector<UniverseObject*> retval;
     // add buildings on this planet
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
-        retval.push_back(objects.Object(*it));
+        retval.push_back(GetUniverseObject(*it));
     return retval;
 }
 
@@ -486,8 +482,8 @@ void Planet::AddBuilding(int building_id) {
         return;
     }
     //Logger().debugStream() << "Planet::AddBuilding " << this->Name() << " adding building: " << building_id;
-    if (Building* building = GetObject<Building>(building_id)) {
-        if (System* system = GetObject<System>(this->SystemID())) {
+    if (Building* building = GetBuilding(building_id)) {
+        if (System* system = GetSystem(this->SystemID())) {
             system->Insert(building);
         } else {
             Logger().errorStream() << "... planet is not located in a system?!?!";
@@ -534,7 +530,7 @@ void Planet::Reset() {
 
     // reset buildings
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
-        if (Building* building = GetMainObjectMap().Object<Building>(*it))
+        if (Building* building = GetBuilding(*it))
             building->Reset();
 
     // reset other state
@@ -616,9 +612,8 @@ void Planet::SetLastTurnAttackedByShip(int turn)
 void Planet::SetSystem(int sys) {
     //Logger().debugStream() << "Planet::MoveTo(UniverseObject* object)";
     UniverseObject::SetSystem(sys);
-    ObjectMap& objects = GetMainObjectMap();
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
-        UniverseObject* obj = objects.Object(*it);
+        UniverseObject* obj = GetUniverseObject(*it);
         if (!obj) {
             Logger().errorStream() << "Planet::SetSystem couldn't get building object with id " << *it;
             continue;
@@ -631,10 +626,9 @@ void Planet::MoveTo(double x, double y) {
     //Logger().debugStream() << "Planet::MoveTo(double x, double y)";
     // move planet itself
     UniverseObject::MoveTo(x, y);
-    ObjectMap& objects = GetMainObjectMap();
     // move buildings
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
-        UniverseObject* obj = objects.Object(*it);
+        UniverseObject* obj = GetUniverseObject(*it);
         if (!obj) {
             Logger().errorStream() << "Planet::MoveTo couldn't get building object with id " << *it;
             continue;

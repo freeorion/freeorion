@@ -23,11 +23,10 @@ extern int g_indent;
 
 namespace {
     const Fleet* FleetFromObject(const UniverseObject* obj) {
-        const ObjectMap& objects = GetMainObjectMap();
         const Fleet* retval = universe_object_cast<const Fleet*>(obj);
         if (!retval) {
             if (const Ship* ship = universe_object_cast<const Ship*>(obj))
-                retval = objects.Object<Fleet>(ship->FleetID());
+                retval = GetFleet(ship->FleetID());
         }
         return retval;
     }
@@ -157,11 +156,28 @@ struct Condition::ConditionBase::MatchHelper
 Condition::ConditionBase::~ConditionBase()
 {}
 
-void Condition::ConditionBase::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::ConditionBase::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                    ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 { EvalImpl(matches, non_matches, search_domain, MatchHelper(this, parent_context)); }
 
-void Condition::ConditionBase::Eval(ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::ConditionBase::Eval(ObjectSet& matches, ObjectSet& non_matches,
+                                    SearchDomain search_domain/* = NON_MATCHES*/) const
 { Eval(ScriptingContext(), matches, non_matches, search_domain); }
+
+void Condition::ConditionBase::Eval(const ScriptingContext& parent_context,
+                                    Condition::ObjectSet& matches) const
+{
+    matches.clear();
+    // evaluate condition on all objects in Universe
+    Condition::ObjectSet condition_non_targets;
+    condition_non_targets.reserve(RESERVE_SET_SIZE);
+    for (ObjectMap::const_iterator it = Objects().const_begin(); it != Objects().const_end(); ++it)
+        condition_non_targets.push_back(it->second);
+    Eval(parent_context, matches, condition_non_targets);
+}
+
+void Condition::ConditionBase::Eval(Condition::ObjectSet& matches) const
+{ Eval(ScriptingContext(), matches); }
 
 std::string Condition::ConditionBase::Description(bool negated/* = false*/) const
 { return ""; }
@@ -749,46 +765,45 @@ std::string Condition::All::Dump() const
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
 ///////////////////////////////////////////////////////////
-Condition::EmpireAffiliation::~EmpireAffiliation()
-{
+Condition::EmpireAffiliation::~EmpireAffiliation() {
     if (m_empire_id)
         delete m_empire_id;
 }
 
 namespace {
-    struct EmpireAffiliationSimpleMatch
-    {
+    struct EmpireAffiliationSimpleMatch {
         EmpireAffiliationSimpleMatch(int empire_id, EmpireAffiliationType affiliation) :
             m_empire_id(empire_id),
             m_affiliation(affiliation)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
 
-                switch (m_affiliation) {
-                case AFFIL_SELF:
-                    return m_empire_id != ALL_EMPIRES && candidate->OwnedBy(m_empire_id);
-                    break;
-                case AFFIL_ENEMY:
-                    return m_empire_id != ALL_EMPIRES && !candidate->Unowned() && !candidate->OwnedBy(m_empire_id);
-                    break;
-                case AFFIL_ANY:
-                    return !candidate->Unowned();
-                    break;
-                default:
-                    return false;
-                    break;
-                }
+            switch (m_affiliation) {
+            case AFFIL_SELF:
+                return m_empire_id != ALL_EMPIRES && candidate->OwnedBy(m_empire_id);
+                break;
+            case AFFIL_ENEMY:
+                return m_empire_id != ALL_EMPIRES && !candidate->Unowned() && !candidate->OwnedBy(m_empire_id);
+                break;
+            case AFFIL_ANY:
+                return !candidate->Unowned();
+                break;
+            default:
+                return false;
+                break;
             }
+        }
+
         int m_empire_id;
         EmpireAffiliationType m_affiliation;
     };
 }
 
-void Condition::EmpireAffiliation::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::EmpireAffiliation::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                                        SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = (!m_empire_id || ValueRef::ConstantExpr(m_empire_id)) ||
                             ((!m_empire_id || m_empire_id->LocalCandidateInvariant()) &&
@@ -810,8 +825,7 @@ bool Condition::EmpireAffiliation::RootCandidateInvariant() const
 bool Condition::EmpireAffiliation::TargetInvariant() const
 { return m_empire_id ? m_empire_id->TargetInvariant() : true; }
 
-std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) const
-{
+std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -843,8 +857,7 @@ std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) 
     }
 }
 
-std::string Condition::EmpireAffiliation::Dump() const
-{
+std::string Condition::EmpireAffiliation::Dump() const {
     std::string retval = DumpIndent() + "OwnedBy";
     retval += " affiliation = ";
     switch (m_affiliation) {
@@ -859,8 +872,7 @@ std::string Condition::EmpireAffiliation::Dump() const
     return retval;
 }
 
-bool Condition::EmpireAffiliation::Match(const ScriptingContext& local_context) const
-{
+bool Condition::EmpireAffiliation::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "EmpireAffiliation::Match passed no candidate object";
@@ -875,8 +887,7 @@ bool Condition::EmpireAffiliation::Match(const ScriptingContext& local_context) 
 ///////////////////////////////////////////////////////////
 // Source                                                //
 ///////////////////////////////////////////////////////////
-std::string Condition::Source::Description(bool negated/* = false*/) const
-{
+std::string Condition::Source::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_SOURCE";
     if (negated)
         description_str += "_NOT";
@@ -884,12 +895,9 @@ std::string Condition::Source::Description(bool negated/* = false*/) const
 }
 
 std::string Condition::Source::Dump() const
-{
-    return DumpIndent() + "Source\n";
-}
+{ return DumpIndent() + "Source\n"; }
 
-bool Condition::Source::Match(const ScriptingContext& local_context) const
-{
+bool Condition::Source::Match(const ScriptingContext& local_context) const {
     if (!local_context.source)
         return false;
     return local_context.source == local_context.condition_local_candidate;
@@ -898,8 +906,7 @@ bool Condition::Source::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // RootCandidate                                         //
 ///////////////////////////////////////////////////////////
-std::string Condition::RootCandidate::Description(bool negated/* = false*/) const
-{
+std::string Condition::RootCandidate::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_ROOT_CANDIDATE";
     if (negated)
         description_str += "_NOT";
@@ -909,8 +916,7 @@ std::string Condition::RootCandidate::Description(bool negated/* = false*/) cons
 std::string Condition::RootCandidate::Dump() const
 { return DumpIndent() + "RootCandidate\n"; }
 
-bool Condition::RootCandidate::Match(const ScriptingContext& local_context) const
-{
+bool Condition::RootCandidate::Match(const ScriptingContext& local_context) const {
     if (!local_context.condition_root_candidate)
         return false;
     return local_context.condition_root_candidate == local_context.condition_local_candidate;
@@ -919,8 +925,7 @@ bool Condition::RootCandidate::Match(const ScriptingContext& local_context) cons
 ///////////////////////////////////////////////////////////
 // Target                                                //
 ///////////////////////////////////////////////////////////
-std::string Condition::Target::Description(bool negated/* = false*/) const
-{
+std::string Condition::Target::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_TARGET";
     if (negated)
         description_str += "_NOT";
@@ -930,8 +935,7 @@ std::string Condition::Target::Description(bool negated/* = false*/) const
 std::string Condition::Target::Dump() const
 { return DumpIndent() + "Target\n"; }
 
-bool Condition::Target::Match(const ScriptingContext& local_context) const
-{
+bool Condition::Target::Match(const ScriptingContext& local_context) const {
     if (!local_context.effect_target)
         return false;
     return local_context.effect_target == local_context.condition_local_candidate;
@@ -940,67 +944,63 @@ bool Condition::Target::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Homeworld                                             //
 ///////////////////////////////////////////////////////////
-Condition::Homeworld::~Homeworld()
-{
+Condition::Homeworld::~Homeworld() {
     for (unsigned int i = 0; i < m_names.size(); ++i)
         delete m_names[i];
 }
 
 namespace {
-    struct HomeworldSimpleMatch
-    {
+    struct HomeworldSimpleMatch {
         HomeworldSimpleMatch(const std::vector<std::string>& names) :
             m_names(names)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-
-                const ObjectMap& objects = GetMainObjectMap();
-
-                // is it a planet or a building on a planet?
-                const Planet* planet = universe_object_cast<const Planet*>(candidate);
-                const ::Building* building = 0;
-                if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
-                    planet = objects.Object<Planet>(building->PlanetID());
-                }
-                if (!planet)
-                    return false;
-
-                int planet_id = planet->ID();
-                const SpeciesManager& manager = GetSpeciesManager();
-
-                if (m_names.empty()) {
-                    // match homeworlds for any species
-                    for (SpeciesManager::iterator species_it = manager.begin(); species_it != manager.end(); ++species_it) {
-                        if (const ::Species* species = species_it->second) {
-                            const std::set<int>& homeworld_ids = species->Homeworlds();
-                            if (homeworld_ids.find(planet_id) != homeworld_ids.end())
-                                return true;
-                        }
-                    }
-
-                } else {
-                    // match any of the species specified
-                    for (std::vector<std::string>::const_iterator it = m_names.begin(); it != m_names.end(); ++it) {
-                        if (const ::Species* species = GetSpecies(*it)) {
-                            const std::set<int>& homeworld_ids = species->Homeworlds();
-                            if (homeworld_ids.find(planet_id) != homeworld_ids.end())
-                                return true;
-                        }
-                    }
-                }
-
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
+
+            // is it a planet or a building on a planet?
+            const Planet* planet = universe_object_cast<const Planet*>(candidate);
+            const ::Building* building = 0;
+            if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
+                planet = GetPlanet(building->PlanetID());
             }
+            if (!planet)
+                return false;
+
+            int planet_id = planet->ID();
+            const SpeciesManager& manager = GetSpeciesManager();
+
+            if (m_names.empty()) {
+                // match homeworlds for any species
+                for (SpeciesManager::iterator species_it = manager.begin(); species_it != manager.end(); ++species_it) {
+                    if (const ::Species* species = species_it->second) {
+                        const std::set<int>& homeworld_ids = species->Homeworlds();
+                        if (homeworld_ids.find(planet_id) != homeworld_ids.end())
+                            return true;
+                    }
+                }
+
+            } else {
+                // match any of the species specified
+                for (std::vector<std::string>::const_iterator it = m_names.begin(); it != m_names.end(); ++it) {
+                    if (const ::Species* species = GetSpecies(*it)) {
+                        const std::set<int>& homeworld_ids = species->Homeworlds();
+                        if (homeworld_ids.find(planet_id) != homeworld_ids.end())
+                            return true;
+                    }
+                }
+            }
+
+            return false;
+        }
 
         const std::vector<std::string>& m_names;
     };
 }
 
-void Condition::Homeworld::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::Homeworld::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                                SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -1030,8 +1030,7 @@ void Condition::Homeworld::Eval(const ScriptingContext& parent_context, ObjectSe
     }
 }
 
-bool Condition::Homeworld::RootCandidateInvariant() const
-{
+bool Condition::Homeworld::RootCandidateInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
          it != m_names.end(); ++it)
     {
@@ -1041,8 +1040,7 @@ bool Condition::Homeworld::RootCandidateInvariant() const
     return true;
 }
 
-bool Condition::Homeworld::TargetInvariant() const
-{
+bool Condition::Homeworld::TargetInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
          it != m_names.end(); ++it)
     {
@@ -1052,8 +1050,7 @@ bool Condition::Homeworld::TargetInvariant() const
     return true;
 }
 
-std::string Condition::Homeworld::Description(bool negated/* = false*/) const
-{
+std::string Condition::Homeworld::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_names[i]) ?
@@ -1073,8 +1070,7 @@ std::string Condition::Homeworld::Description(bool negated/* = false*/) const
     return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
-std::string Condition::Homeworld::Dump() const
-{
+std::string Condition::Homeworld::Dump() const {
     std::string retval = DumpIndent() + "HomeWorld";
     if (m_names.size() == 1) {
         retval += " name = " + m_names[0]->Dump();
@@ -1088,10 +1084,7 @@ std::string Condition::Homeworld::Dump() const
     return retval;
 }
 
-bool Condition::Homeworld::Match(const ScriptingContext& local_context) const
-{
-    const ObjectMap& objects = GetMainObjectMap();
-
+bool Condition::Homeworld::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Homeworld::Match passed no candidate object";
@@ -1102,7 +1095,7 @@ bool Condition::Homeworld::Match(const ScriptingContext& local_context) const
     const Planet* planet = universe_object_cast<const Planet*>(candidate);
     const ::Building* building = 0;
     if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
-        planet = objects.Object<Planet>(building->PlanetID());
+        planet = GetPlanet(building->PlanetID());
     }
     if (!planet)
         return false;
@@ -1140,8 +1133,7 @@ bool Condition::Homeworld::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
-std::string Condition::Capital::Description(bool negated/* = false*/) const
-{
+std::string Condition::Capital::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_CAPITAL";
     if (negated)
         description_str += "_NOT";
@@ -1151,8 +1143,7 @@ std::string Condition::Capital::Description(bool negated/* = false*/) const
 std::string Condition::Capital::Dump() const
 { return DumpIndent() + "Capital\n"; }
 
-bool Condition::Capital::Match(const ScriptingContext& local_context) const
-{
+bool Condition::Capital::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Capital::Match passed no candidate object";
@@ -1172,8 +1163,7 @@ bool Condition::Capital::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Monster                                               //
 ///////////////////////////////////////////////////////////
-std::string Condition::Monster::Description(bool negated/* = false*/) const
-{
+std::string Condition::Monster::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_MONSTER";
     if (negated)
         description_str += "_NOT";
@@ -1183,8 +1173,7 @@ std::string Condition::Monster::Description(bool negated/* = false*/) const
 std::string Condition::Monster::Dump() const
 { return DumpIndent() + "Monster\n"; }
 
-bool Condition::Monster::Match(const ScriptingContext& local_context) const
-{
+bool Condition::Monster::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Monster::Match passed no candidate object";
@@ -1201,8 +1190,7 @@ bool Condition::Monster::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Armed                                                 //
 ///////////////////////////////////////////////////////////
-std::string Condition::Armed::Description(bool negated/* = false*/) const
-{
+std::string Condition::Armed::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_ARMED";
     if (negated)
         description_str += "_NOT";
@@ -1212,8 +1200,7 @@ std::string Condition::Armed::Description(bool negated/* = false*/) const
 std::string Condition::Armed::Dump() const
 { return DumpIndent() + "Armed\n"; }
 
-bool Condition::Armed::Match(const ScriptingContext& local_context) const
-{
+bool Condition::Armed::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Armed::Match passed no candidate object";
@@ -1234,50 +1221,49 @@ Condition::Type::~Type()
 { delete m_type; }
 
 namespace {
-    struct TypeSimpleMatch
-    {
+    struct TypeSimpleMatch {
         TypeSimpleMatch(UniverseObjectType type) :
             m_type(type)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-
-                switch (m_type) {
-                case OBJ_BUILDING:
-                    return universe_object_cast<const ::Building*>(candidate);
-                    break;
-                case OBJ_SHIP:
-                    return universe_object_cast<const Ship*>(candidate);
-                    break;
-                case OBJ_FLEET:
-                    return universe_object_cast<const Fleet*>(candidate);
-                    break;
-                case OBJ_PLANET:
-                    return universe_object_cast<const Planet*>(candidate);
-                    break;
-                case OBJ_POP_CENTER:
-                    return dynamic_cast<const PopCenter*>(candidate);
-                    break;
-                case OBJ_PROD_CENTER:
-                    return dynamic_cast<const ResourceCenter*>(candidate);
-                    break;
-                case OBJ_SYSTEM:
-                    return universe_object_cast<const System*>(candidate);
-                    break;
-                default:
-                    break;
-                }
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
+
+            switch (m_type) {
+            case OBJ_BUILDING:
+                return universe_object_cast<const ::Building*>(candidate);
+                break;
+            case OBJ_SHIP:
+                return universe_object_cast<const Ship*>(candidate);
+                break;
+            case OBJ_FLEET:
+                return universe_object_cast<const Fleet*>(candidate);
+                break;
+            case OBJ_PLANET:
+                return universe_object_cast<const Planet*>(candidate);
+                break;
+            case OBJ_POP_CENTER:
+                return dynamic_cast<const PopCenter*>(candidate);
+                break;
+            case OBJ_PROD_CENTER:
+                return dynamic_cast<const ResourceCenter*>(candidate);
+                break;
+            case OBJ_SYSTEM:
+                return universe_object_cast<const System*>(candidate);
+                break;
+            default:
+                break;
             }
+            return false;
+        }
 
         UniverseObjectType m_type;
     };
 }
 
-void Condition::Type::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::Type::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                           SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_type) ||
                             (m_type->LocalCandidateInvariant() &&
@@ -1297,8 +1283,7 @@ bool Condition::Type::RootCandidateInvariant() const
 bool Condition::Type::TargetInvariant() const
 { return m_type->TargetInvariant(); }
 
-std::string Condition::Type::Description(bool negated/* = false*/) const
-{
+std::string Condition::Type::Description(bool negated/* = false*/) const {
     std::string value_str = ValueRef::ConstantExpr(m_type) ?
                                 UserString(boost::lexical_cast<std::string>(m_type->Eval())) :
                                 m_type->Description();
@@ -1308,8 +1293,7 @@ std::string Condition::Type::Description(bool negated/* = false*/) const
     return str(FlexibleFormat(UserString(description_str)) % value_str);
 }
 
-std::string Condition::Type::Dump() const
-{
+std::string Condition::Type::Dump() const {
     std::string retval = DumpIndent();
     if (dynamic_cast<const ValueRef::Constant<UniverseObjectType>*>(m_type)) {
         switch (m_type->Eval()) {
@@ -1328,8 +1312,7 @@ std::string Condition::Type::Dump() const
     return retval;
 }
 
-bool Condition::Type::Match(const ScriptingContext& local_context) const
-{
+bool Condition::Type::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Type::Match passed no candidate object";
@@ -1342,8 +1325,7 @@ bool Condition::Type::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Building                                              //
 ///////////////////////////////////////////////////////////
-Condition::Building::~Building()
-{
+Condition::Building::~Building() {
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         delete m_names[i];
     }
@@ -1354,31 +1336,31 @@ namespace {
     {
         BuildingSimpleMatch(const std::vector<std::string>& names) :
             m_names(names)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
 
-                // is it a building?
-                const ::Building* building = universe_object_cast<const ::Building*>(candidate);
-                if (!building)
-                    return false;
+            // is it a building?
+            const ::Building* building = universe_object_cast<const ::Building*>(candidate);
+            if (!building)
+                return false;
 
-                // if no name supplied, match any building
-                if (m_names.empty())
-                    return true;
+            // if no name supplied, match any building
+            if (m_names.empty())
+                return true;
 
-                // is it one of the specified building types?
-                return std::find(m_names.begin(), m_names.end(), building->BuildingTypeName()) != m_names.end();
-            }
+            // is it one of the specified building types?
+            return std::find(m_names.begin(), m_names.end(), building->BuildingTypeName()) != m_names.end();
+        }
 
         const std::vector<std::string>& m_names;
     };
 }
 
-void Condition::Building::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::Building::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                               SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -1408,8 +1390,7 @@ void Condition::Building::Eval(const ScriptingContext& parent_context, ObjectSet
     }
 }
 
-bool Condition::Building::RootCandidateInvariant() const
-{
+bool Condition::Building::RootCandidateInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
          it != m_names.end(); ++it)
     {
@@ -1419,8 +1400,7 @@ bool Condition::Building::RootCandidateInvariant() const
     return true;
 }
 
-bool Condition::Building::TargetInvariant() const
-{
+bool Condition::Building::TargetInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
          it != m_names.end(); ++it)
     {
@@ -1430,8 +1410,7 @@ bool Condition::Building::TargetInvariant() const
     return true;
 }
 
-std::string Condition::Building::Description(bool negated/* = false*/) const
-{
+std::string Condition::Building::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_names[i]) ?
@@ -1451,8 +1430,7 @@ std::string Condition::Building::Description(bool negated/* = false*/) const
     return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
-std::string Condition::Building::Dump() const
-{
+std::string Condition::Building::Dump() const {
     std::string retval = DumpIndent() + "Building name = ";
     if (m_names.size() == 1) {
         retval += m_names[0]->Dump() + "\n";
@@ -1466,8 +1444,7 @@ std::string Condition::Building::Dump() const
     return retval;
 }
 
-bool Condition::Building::Match(const ScriptingContext& local_context) const
-{
+bool Condition::Building::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Building::Match passed no candidate object";
@@ -1496,37 +1473,34 @@ bool Condition::Building::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // HasSpecial                                            //
 ///////////////////////////////////////////////////////////
-Condition::HasSpecial::~HasSpecial()
-{
+Condition::HasSpecial::~HasSpecial() {
     delete m_since_turn_low;
     delete m_since_turn_high;
 }
 
 namespace {
-    struct HasSpecialSimpleMatch
-    {
+    struct HasSpecialSimpleMatch {
         HasSpecialSimpleMatch(const std::string& name, int low_turn, int high_turn) :
             m_name(name),
             m_low_turn(low_turn),
             m_high_turn(high_turn)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
 
-                if (m_name.empty())
-                    return !candidate->Specials().empty();
+            if (m_name.empty())
+                return !candidate->Specials().empty();
 
-                std::map<std::string, int>::const_iterator it = candidate->Specials().find(m_name);
-                if (it == candidate->Specials().end())
-                    return false;
+            std::map<std::string, int>::const_iterator it = candidate->Specials().find(m_name);
+            if (it == candidate->Specials().end())
+                return false;
 
-                int special_since_turn = it->second;
+            int special_since_turn = it->second;
 
-                return m_low_turn <= special_since_turn && special_since_turn <= m_high_turn;
-            }
+            return m_low_turn <= special_since_turn && special_since_turn <= m_high_turn;
+        }
 
         const std::string& m_name;
         int m_low_turn;
@@ -1534,7 +1508,8 @@ namespace {
     };
 }
 
-void Condition::HasSpecial::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::HasSpecial::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                                 SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ((!m_since_turn_low || m_since_turn_low->LocalCandidateInvariant()) &&
                              (!m_since_turn_high || m_since_turn_high->LocalCandidateInvariant()) &&
@@ -1560,8 +1535,7 @@ bool Condition::HasSpecial::TargetInvariant() const
 { return ((!m_since_turn_low || m_since_turn_low->TargetInvariant()) &&
           (!m_since_turn_high || m_since_turn_high->TargetInvariant())); }
 
-std::string Condition::HasSpecial::Description(bool negated/* = false*/) const
-{
+std::string Condition::HasSpecial::Description(bool negated/* = false*/) const {
     if (!m_since_turn_low && !m_since_turn_high) {
         std::string description_str = "DESC_SPECIAL";
         if (negated)
@@ -1593,8 +1567,7 @@ std::string Condition::HasSpecial::Description(bool negated/* = false*/) const
                % high_str);
 }
 
-std::string Condition::HasSpecial::Dump() const
-{
+std::string Condition::HasSpecial::Dump() const {
     if (!m_since_turn_low && !m_since_turn_high)
         return DumpIndent() + "HasSpecial name = \"" + m_name + "\"\n";
 
@@ -1603,8 +1576,7 @@ std::string Condition::HasSpecial::Dump() const
     return DumpIndent() + "HasSpecialSinceTurn name = \"" + m_name + "\" low = " + low_dump + " high = " + high_dump;
 }
 
-bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const
-{
+bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "HasSpecial::Match passed no candidate object";
@@ -1618,34 +1590,32 @@ bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // CreatedOnTurn                                         //
 ///////////////////////////////////////////////////////////
-Condition::CreatedOnTurn::~CreatedOnTurn()
-{
+Condition::CreatedOnTurn::~CreatedOnTurn() {
     delete m_low;
     delete m_high;
 }
 
 namespace {
-    struct CreatedOnTurnSimpleMatch
-    {
+    struct CreatedOnTurnSimpleMatch {
         CreatedOnTurnSimpleMatch(int low, int high) :
             m_low(low),
             m_high(high)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-                int turn = candidate->CreationTurn();
-                return m_low <= turn && turn <= m_high;
-            }
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
+            int turn = candidate->CreationTurn();
+            return m_low <= turn && turn <= m_high;
+        }
 
         int m_low;
         int m_high;
     };
 }
 
-void Condition::CreatedOnTurn::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::CreatedOnTurn::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                                    SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
                              (!m_high || m_high->LocalCandidateInvariant()) &&
@@ -1668,8 +1638,7 @@ bool Condition::CreatedOnTurn::RootCandidateInvariant() const
 bool Condition::CreatedOnTurn::TargetInvariant() const
 { return ((!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant())); }
 
-std::string Condition::CreatedOnTurn::Description(bool negated/* = false*/) const
-{
+std::string Condition::CreatedOnTurn::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
                                     boost::lexical_cast<std::string>(m_low->Eval()) :
                                     m_low->Description())
@@ -1686,8 +1655,7 @@ std::string Condition::CreatedOnTurn::Description(bool negated/* = false*/) cons
                % high_str);
 }
 
-std::string Condition::CreatedOnTurn::Dump() const
-{
+std::string Condition::CreatedOnTurn::Dump() const {
     std::string retval = DumpIndent() + "CreatedOnTurn";
     if (m_low)
         retval += " low = " + m_low->Dump();
@@ -1697,8 +1665,7 @@ std::string Condition::CreatedOnTurn::Dump() const
     return retval;
 }
 
-bool Condition::CreatedOnTurn::Match(const ScriptingContext& local_context) const
-{
+bool Condition::CreatedOnTurn::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "CreatedOnTurn::Match passed no candidate object";
@@ -1713,37 +1680,34 @@ bool Condition::CreatedOnTurn::Match(const ScriptingContext& local_context) cons
 // Contains                                              //
 ///////////////////////////////////////////////////////////
 Condition::Contains::~Contains()
-{
-    delete m_condition;
-}
+{ delete m_condition; }
 
 namespace {
-    struct ContainsSimpleMatch
-    {
+    struct ContainsSimpleMatch {
         ContainsSimpleMatch(const Condition::ObjectSet& subcondition_matches) :
             m_subcondition_matches(subcondition_matches)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
 
-                bool match = false;
-                for (Condition::ObjectSet::const_iterator it = m_subcondition_matches.begin(); it != m_subcondition_matches.end(); ++it) {
-                    if (candidate->Contains((*it)->ID())) {
-                        match = true;
-                        break;
-                    }
+            bool match = false;
+            for (Condition::ObjectSet::const_iterator it = m_subcondition_matches.begin(); it != m_subcondition_matches.end(); ++it) {
+                if (candidate->Contains((*it)->ID())) {
+                    match = true;
+                    break;
                 }
-                return match;
             }
+            return match;
+        }
 
         const Condition::ObjectSet& m_subcondition_matches;
     };
 }
 
-void Condition::Contains::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::Contains::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                               SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -1776,16 +1740,14 @@ bool Condition::Contains::RootCandidateInvariant() const
 bool Condition::Contains::TargetInvariant() const
 { return m_condition->TargetInvariant(); }
 
-std::string Condition::Contains::Description(bool negated/* = false*/) const
-{
+std::string Condition::Contains::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_CONTAINS";
     if (negated)
         description_str += "_NOT";
     return str(FlexibleFormat(UserString(description_str)) % m_condition->Description());
 }
 
-std::string Condition::Contains::Dump() const
-{
+std::string Condition::Contains::Dump() const {
     std::string retval = DumpIndent() + "Contains condition =\n";
     ++g_indent;
     retval += m_condition->Dump();
@@ -1793,8 +1755,7 @@ std::string Condition::Contains::Dump() const
     return retval;
 }
 
-bool Condition::Contains::Match(const ScriptingContext& local_context) const
-{
+bool Condition::Contains::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Contains::Match passed no candidate object";
@@ -1825,37 +1786,34 @@ bool Condition::Contains::Match(const ScriptingContext& local_context) const
 // ContainedBy                                           //
 ///////////////////////////////////////////////////////////
 Condition::ContainedBy::~ContainedBy()
-{
-    delete m_condition;
-}
+{ delete m_condition; }
 
 namespace {
-    struct ContainedBySimpleMatch
-    {
+    struct ContainedBySimpleMatch {
         ContainedBySimpleMatch(const Condition::ObjectSet& subcondition_matches) :
             m_subcondition_matches(subcondition_matches)
-            {}
+    {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
 
-                bool match = false;
-                for (Condition::ObjectSet::const_iterator it = m_subcondition_matches.begin(); it != m_subcondition_matches.end(); ++it) {
-                    if ((*it)->Contains(candidate->ID())) {
-                        match = true;
-                        break;
-                    }
+            bool match = false;
+            for (Condition::ObjectSet::const_iterator it = m_subcondition_matches.begin(); it != m_subcondition_matches.end(); ++it) {
+                if ((*it)->Contains(candidate->ID())) {
+                    match = true;
+                    break;
                 }
-                return match;
             }
+            return match;
+        }
 
         const Condition::ObjectSet& m_subcondition_matches;
     };
 }
 
-void Condition::ContainedBy::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::ContainedBy::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                                  SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -1888,16 +1846,14 @@ bool Condition::ContainedBy::RootCandidateInvariant() const
 bool Condition::ContainedBy::TargetInvariant() const
 { return m_condition->TargetInvariant(); }
 
-std::string Condition::ContainedBy::Description(bool negated/* = false*/) const
-{
+std::string Condition::ContainedBy::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_CONTAINED_BY";
     if (negated)
         description_str += "_NOT";
     return str(FlexibleFormat(UserString(description_str)) % m_condition->Description());
 }
 
-std::string Condition::ContainedBy::Dump() const
-{
+std::string Condition::ContainedBy::Dump() const {
     std::string retval = DumpIndent() + "ContainedBy condition =\n";
     ++g_indent;
         retval += m_condition->Dump();
@@ -1905,8 +1861,7 @@ std::string Condition::ContainedBy::Dump() const
     return retval;
 }
 
-bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const
-{
+bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "ContainedBy::Match passed no candidate object";
@@ -1940,21 +1895,20 @@ Condition::InSystem::~InSystem()
 { delete m_system_id; }
 
 namespace {
-    struct InSystemSimpleMatch
-    {
+    struct InSystemSimpleMatch {
         InSystemSimpleMatch(int system_id) :
             m_system_id(system_id)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-                if (m_system_id == UniverseObject::INVALID_OBJECT_ID)
-                    return candidate->SystemID() != UniverseObject::INVALID_OBJECT_ID;  // match objects in any system
-                else
-                    return candidate->SystemID() == m_system_id;                        // match objects in specified system
-            }
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
+            if (m_system_id == INVALID_OBJECT_ID)
+                return candidate->SystemID() != INVALID_OBJECT_ID;  // match objects in any system
+            else
+                return candidate->SystemID() == m_system_id;                        // match objects in specified system
+        }
+
         int m_system_id;
     };
 }
@@ -1968,7 +1922,7 @@ void Condition::InSystem::Eval(const ScriptingContext& parent_context, ObjectSet
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
         const UniverseObject* no_object(0);
-        int system_id = (m_system_id ? m_system_id->Eval(ScriptingContext(parent_context, no_object)) : UniverseObject::INVALID_OBJECT_ID);
+        int system_id = (m_system_id ? m_system_id->Eval(ScriptingContext(parent_context, no_object)) : INVALID_OBJECT_ID);
         EvalImpl(matches, non_matches, search_domain, InSystemSimpleMatch(system_id));
     } else {
         // re-evaluate empire id for each candidate object
@@ -1982,15 +1936,12 @@ bool Condition::InSystem::RootCandidateInvariant() const
 bool Condition::InSystem::TargetInvariant() const
 { return !m_system_id || m_system_id->TargetInvariant(); }
 
-std::string Condition::InSystem::Description(bool negated/* = false*/) const
-{
-    const ObjectMap& objects = GetUniverse().Objects();
-
+std::string Condition::InSystem::Description(bool negated/* = false*/) const {
     std::string system_str;
-    int system_id = UniverseObject::INVALID_OBJECT_ID;
+    int system_id = INVALID_OBJECT_ID;
     if (m_system_id && ValueRef::ConstantExpr(m_system_id))
         system_id = m_system_id->Eval();
-    if (const System* system = objects.Object<System>(system_id))
+    if (const System* system = GetSystem(system_id))
         system_str = system->Name();
     else if (m_system_id)
         system_str = m_system_id->Description();
@@ -2003,8 +1954,7 @@ std::string Condition::InSystem::Description(bool negated/* = false*/) const
                % system_str);
 }
 
-std::string Condition::InSystem::Dump() const
-{
+std::string Condition::InSystem::Dump() const {
     std::string retval = DumpIndent() + "InSystem";
     if (m_system_id)
         retval += " id = " + m_system_id->Dump();
@@ -2012,14 +1962,13 @@ std::string Condition::InSystem::Dump() const
     return retval;
 }
 
-bool Condition::InSystem::Match(const ScriptingContext& local_context) const
-{
+bool Condition::InSystem::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "InSystem::Match passed no candidate object";
         return false;
     }
-    int system_id = (m_system_id ? m_system_id->Eval(local_context) : UniverseObject::INVALID_OBJECT_ID);
+    int system_id = (m_system_id ? m_system_id->Eval(local_context) : INVALID_OBJECT_ID);
     return InSystemSimpleMatch(system_id)(candidate);
 }
 
@@ -2030,18 +1979,16 @@ Condition::ObjectID::~ObjectID()
 { delete m_object_id; }
 
 namespace {
-    struct ObjectIDSimpleMatch
-    {
+    struct ObjectIDSimpleMatch {
         ObjectIDSimpleMatch(int object_id) :
             m_object_id(object_id)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                return candidate &&
-                    m_object_id != UniverseObject::INVALID_OBJECT_ID &&
-                    candidate->ID() == m_object_id;
-            }
+        bool operator()(const UniverseObject* candidate) const {
+            return candidate &&
+                m_object_id != INVALID_OBJECT_ID &&
+                candidate->ID() == m_object_id;
+        }
 
         int m_object_id;
     };
@@ -2056,7 +2003,7 @@ void Condition::ObjectID::Eval(const ScriptingContext& parent_context, ObjectSet
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
         const UniverseObject* no_object(0);
-        int object_id = (m_object_id ? m_object_id->Eval(ScriptingContext(parent_context, no_object)) : UniverseObject::INVALID_OBJECT_ID);
+        int object_id = (m_object_id ? m_object_id->Eval(ScriptingContext(parent_context, no_object)) : INVALID_OBJECT_ID);
         EvalImpl(matches, non_matches, search_domain, ObjectIDSimpleMatch(object_id));
     } else {
         // re-evaluate empire id for each candidate object
@@ -2070,15 +2017,12 @@ bool Condition::ObjectID::RootCandidateInvariant() const
 bool Condition::ObjectID::TargetInvariant() const
 { return !m_object_id || m_object_id->TargetInvariant(); }
 
-std::string Condition::ObjectID::Description(bool negated/* = false*/) const
-{
-    const ObjectMap& objects = GetUniverse().Objects();
-
+std::string Condition::ObjectID::Description(bool negated/* = false*/) const {
     std::string object_str;
-    int object_id = UniverseObject::INVALID_OBJECT_ID;
+    int object_id = INVALID_OBJECT_ID;
     if (m_object_id && ValueRef::ConstantExpr(m_object_id))
         object_id = m_object_id->Eval();
-    if (const System* system = objects.Object<System>(object_id))
+    if (const System* system = GetSystem(object_id))
         object_str = system->Name();
     else if (m_object_id)
         object_str = m_object_id->Description();
@@ -2096,8 +2040,7 @@ std::string Condition::ObjectID::Description(bool negated/* = false*/) const
 std::string Condition::ObjectID::Dump() const
 { return DumpIndent() + "Object id = " + m_object_id->Dump(); }
 
-bool Condition::ObjectID::Match(const ScriptingContext& local_context) const
-{
+bool Condition::ObjectID::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "ObjectID::Match passed no candidate object";
@@ -2110,46 +2053,42 @@ bool Condition::ObjectID::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // PlanetType                                            //
 ///////////////////////////////////////////////////////////
-Condition::PlanetType::~PlanetType()
-{
+Condition::PlanetType::~PlanetType() {
     for (unsigned int i = 0; i < m_types.size(); ++i) {
         delete m_types[i];
     }
 }
 
 namespace {
-    struct PlanetTypeSimpleMatch
-    {
+    struct PlanetTypeSimpleMatch {
         PlanetTypeSimpleMatch(const std::vector< ::PlanetType>& types) :
             m_types(types)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-
-                const ObjectMap& objects = GetMainObjectMap();
-
-                // is it a planet or on a planet?
-                const Planet* planet = universe_object_cast<const Planet*>(candidate);
-                const ::Building* building = 0;
-                if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
-                    planet = objects.Object<Planet>(building->PlanetID());
-                }
-                if (planet) {
-                    // is it one of the specified building types?
-                    return std::find(m_types.begin(), m_types.end(), planet->Type()) != m_types.end();
-                }
-
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
+
+            // is it a planet or on a planet?
+            const Planet* planet = universe_object_cast<const Planet*>(candidate);
+            const ::Building* building = 0;
+            if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
+                planet = GetPlanet(building->PlanetID());
             }
+            if (planet) {
+                // is it one of the specified building types?
+                return std::find(m_types.begin(), m_types.end(), planet->Type()) != m_types.end();
+            }
+
+            return false;
+        }
 
         const std::vector< ::PlanetType>& m_types;
     };
 }
 
-void Condition::PlanetType::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::PlanetType::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                                 SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -2179,8 +2118,7 @@ void Condition::PlanetType::Eval(const ScriptingContext& parent_context, ObjectS
     }
 }
 
-bool Condition::PlanetType::RootCandidateInvariant() const
-{
+bool Condition::PlanetType::RootCandidateInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
          it != m_types.end(); ++it)
     {
@@ -2190,8 +2128,7 @@ bool Condition::PlanetType::RootCandidateInvariant() const
     return true;
 }
 
-bool Condition::PlanetType::TargetInvariant() const
-{
+bool Condition::PlanetType::TargetInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
          it != m_types.end(); ++it)
     {
@@ -2201,8 +2138,7 @@ bool Condition::PlanetType::TargetInvariant() const
     return true;
 }
 
-std::string Condition::PlanetType::Description(bool negated/* = false*/) const
-{
+std::string Condition::PlanetType::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_types[i]) ?
@@ -2222,8 +2158,7 @@ std::string Condition::PlanetType::Description(bool negated/* = false*/) const
     return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
-std::string Condition::PlanetType::Dump() const
-{
+std::string Condition::PlanetType::Dump() const {
     std::string retval = DumpIndent() + "Planet type = ";
     if (m_types.size() == 1) {
         retval += m_types[0]->Dump() + "\n";
@@ -2237,10 +2172,7 @@ std::string Condition::PlanetType::Dump() const
     return retval;
 }
 
-bool Condition::PlanetType::Match(const ScriptingContext& local_context) const
-{
-    const ObjectMap& objects = GetMainObjectMap();
-
+bool Condition::PlanetType::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "PlanetType::Match passed no candidate object";
@@ -2250,7 +2182,7 @@ bool Condition::PlanetType::Match(const ScriptingContext& local_context) const
     const Planet* planet = universe_object_cast<const Planet*>(candidate);
     const ::Building* building = 0;
     if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
-        planet = objects.Object<Planet>(building->PlanetID());
+        planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
         for (std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
@@ -2266,51 +2198,47 @@ bool Condition::PlanetType::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // PlanetSize                                            //
 ///////////////////////////////////////////////////////////
-Condition::PlanetSize::~PlanetSize()
-{
+Condition::PlanetSize::~PlanetSize() {
     for (unsigned int i = 0; i < m_sizes.size(); ++i) {
         delete m_sizes[i];
     }
 }
 
 namespace {
-    struct PlanetSizeSimpleMatch
-    {
+    struct PlanetSizeSimpleMatch {
         PlanetSizeSimpleMatch(const std::vector< ::PlanetSize>& sizes) :
             m_sizes(sizes)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-
-                const ObjectMap& objects = GetMainObjectMap();
-
-                // is it a planet or on a planet?
-                const Planet* planet = universe_object_cast<const Planet*>(candidate);
-                const ::Building* building = 0;
-                if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
-                    planet = objects.Object<Planet>(building->PlanetID());
-                }
-                if (planet) {
-                    // is it one of the specified building types?
-                    for (std::vector< ::PlanetSize>::const_iterator it = m_sizes.begin();
-                         it != m_sizes.end(); ++it)
-                    {
-                        if (planet->Size() == *it)
-                            return true;
-                    }
-                }
-
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
+
+            // is it a planet or on a planet?
+            const Planet* planet = universe_object_cast<const Planet*>(candidate);
+            const ::Building* building = 0;
+            if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
+                planet = GetPlanet(building->PlanetID());
             }
+            if (planet) {
+                // is it one of the specified building types?
+                for (std::vector< ::PlanetSize>::const_iterator it = m_sizes.begin();
+                        it != m_sizes.end(); ++it)
+                {
+                    if (planet->Size() == *it)
+                        return true;
+                }
+            }
+
+            return false;
+        }
 
         const std::vector< ::PlanetSize>& m_sizes;
     };
 }
 
-void Condition::PlanetSize::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::PlanetSize::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                                 SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -2340,8 +2268,7 @@ void Condition::PlanetSize::Eval(const ScriptingContext& parent_context, ObjectS
     }
 }
 
-bool Condition::PlanetSize::RootCandidateInvariant() const
-{
+bool Condition::PlanetSize::RootCandidateInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>::const_iterator it = m_sizes.begin();
          it != m_sizes.end(); ++it)
     {
@@ -2351,8 +2278,7 @@ bool Condition::PlanetSize::RootCandidateInvariant() const
     return true;
 }
 
-bool Condition::PlanetSize::TargetInvariant() const
-{
+bool Condition::PlanetSize::TargetInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>::const_iterator it = m_sizes.begin();
          it != m_sizes.end(); ++it)
     {
@@ -2362,8 +2288,7 @@ bool Condition::PlanetSize::TargetInvariant() const
     return true;
 }
 
-std::string Condition::PlanetSize::Description(bool negated/* = false*/) const
-{
+std::string Condition::PlanetSize::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_sizes.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_sizes[i]) ?
@@ -2383,8 +2308,7 @@ std::string Condition::PlanetSize::Description(bool negated/* = false*/) const
     return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
-std::string Condition::PlanetSize::Dump() const
-{
+std::string Condition::PlanetSize::Dump() const {
     std::string retval = DumpIndent() + "Planet size = ";
     if (m_sizes.size() == 1) {
         retval += m_sizes[0]->Dump() + "\n";
@@ -2398,10 +2322,7 @@ std::string Condition::PlanetSize::Dump() const
     return retval;
 }
 
-bool Condition::PlanetSize::Match(const ScriptingContext& local_context) const
-{
-    const ObjectMap& objects = GetMainObjectMap();
-
+bool Condition::PlanetSize::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "PlanetSize::Match passed no candidate object";
@@ -2411,7 +2332,7 @@ bool Condition::PlanetSize::Match(const ScriptingContext& local_context) const
     const Planet* planet = universe_object_cast<const Planet*>(candidate);
     const ::Building* building = 0;
     if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
-        planet = objects.Object<Planet>(building->PlanetID());
+        planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
         for (unsigned int i = 0; i < m_sizes.size(); ++i) {
@@ -2425,51 +2346,47 @@ bool Condition::PlanetSize::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // PlanetEnvironment                                     //
 ///////////////////////////////////////////////////////////
-Condition::PlanetEnvironment::~PlanetEnvironment()
-{
+Condition::PlanetEnvironment::~PlanetEnvironment() {
     for (unsigned int i = 0; i < m_environments.size(); ++i) {
         delete m_environments[i];
     }
 }
 
 namespace {
-    struct PlanetEnvironmentSimpleMatch
-    {
+    struct PlanetEnvironmentSimpleMatch {
         PlanetEnvironmentSimpleMatch(const std::vector< ::PlanetEnvironment>& environments) :
             m_environments(environments)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-
-                const ObjectMap& objects = GetMainObjectMap();
-
-                // is it a planet or on a planet?
-                const Planet* planet = universe_object_cast<const Planet*>(candidate);
-                const ::Building* building = 0;
-                if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
-                    planet = objects.Object<Planet>(building->PlanetID());
-                }
-                if (planet) {
-                    // is it one of the specified building types?
-                    for (std::vector< ::PlanetEnvironment>::const_iterator it = m_environments.begin();
-                         it != m_environments.end(); ++it)
-                    {
-                        if (planet->EnvironmentForSpecies() == *it)
-                            return true;
-                    }
-                }
-
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
+
+            // is it a planet or on a planet?
+            const Planet* planet = universe_object_cast<const Planet*>(candidate);
+            const ::Building* building = 0;
+            if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
+                planet = GetPlanet(building->PlanetID());
             }
+            if (planet) {
+                // is it one of the specified building types?
+                for (std::vector< ::PlanetEnvironment>::const_iterator it = m_environments.begin();
+                        it != m_environments.end(); ++it)
+                {
+                    if (planet->EnvironmentForSpecies() == *it)
+                        return true;
+                }
+            }
+
+            return false;
+        }
 
         const std::vector< ::PlanetEnvironment>& m_environments;
     };
 }
 
-void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                        ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -2499,8 +2416,7 @@ void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context, 
     }
 }
 
-bool Condition::PlanetEnvironment::RootCandidateInvariant() const
-{
+bool Condition::PlanetEnvironment::RootCandidateInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
          it != m_environments.end(); ++it)
     {
@@ -2510,8 +2426,7 @@ bool Condition::PlanetEnvironment::RootCandidateInvariant() const
     return true;
 }
 
-bool Condition::PlanetEnvironment::TargetInvariant() const
-{
+bool Condition::PlanetEnvironment::TargetInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
          it != m_environments.end(); ++it)
     {
@@ -2521,8 +2436,7 @@ bool Condition::PlanetEnvironment::TargetInvariant() const
     return true;
 }
 
-std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) const
-{
+std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_environments.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_environments[i]) ?
@@ -2542,8 +2456,7 @@ std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) 
     return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
-std::string Condition::PlanetEnvironment::Dump() const
-{
+std::string Condition::PlanetEnvironment::Dump() const {
     std::string retval = DumpIndent() + "Planet environment = ";
     if (m_environments.size() == 1) {
         retval += m_environments[0]->Dump() + "\n";
@@ -2557,10 +2470,7 @@ std::string Condition::PlanetEnvironment::Dump() const
     return retval;
 }
 
-bool Condition::PlanetEnvironment::Match(const ScriptingContext& local_context) const
-{
-    const ObjectMap& objects = GetMainObjectMap();
-
+bool Condition::PlanetEnvironment::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "PlanetEnvironment::Match passed no candidate object";
@@ -2570,7 +2480,7 @@ bool Condition::PlanetEnvironment::Match(const ScriptingContext& local_context) 
     const Planet* planet = universe_object_cast<const Planet*>(candidate);
     const ::Building* building = 0;
     if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
-        planet = objects.Object<Planet>(building->PlanetID());
+        planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
         ::PlanetEnvironment env_for_planets_species = planet->EnvironmentForSpecies();
@@ -2585,55 +2495,51 @@ bool Condition::PlanetEnvironment::Match(const ScriptingContext& local_context) 
 ///////////////////////////////////////////////////////////
 // Species                                              //
 ///////////////////////////////////////////////////////////
-Condition::Species::~Species()
-{
+Condition::Species::~Species() {
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         delete m_names[i];
     }
 }
 
 namespace {
-    struct SpeciesSimpleMatch
-    {
+    struct SpeciesSimpleMatch {
         SpeciesSimpleMatch(const std::vector<std::string>& names) :
             m_names(names)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-
-                const ObjectMap& objects = GetMainObjectMap();
-
-                // is it a population centre?
-                if (const ::PopCenter* pop = dynamic_cast<const ::PopCenter*>(candidate)) {
-                    const std::string& species_name = pop->SpeciesName();
-                    // if the popcenter has a species and that species is one of those specified...
-                    return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
-                }
-                // is it a ship?
-                if (const ::Ship* ship = universe_object_cast<const ::Ship*>(candidate)) {
-                    // if the ship has a species and that species is one of those specified...
-                    const std::string& species_name = ship->SpeciesName();
-                    return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
-                }
-                // is it a building on a planet?
-                if (const ::Building* building = universe_object_cast<const ::Building*>(candidate)) {
-                    const ::Planet* planet = objects.Object<Planet>(building->PlanetID());
-                    const std::string& species_name = planet->SpeciesName();
-                    // if the planet (which IS a popcenter) has a species and that species is one of those specified...
-                    return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
-                }
-
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
+
+            // is it a population centre?
+            if (const ::PopCenter* pop = dynamic_cast<const ::PopCenter*>(candidate)) {
+                const std::string& species_name = pop->SpeciesName();
+                // if the popcenter has a species and that species is one of those specified...
+                return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
             }
+            // is it a ship?
+            if (const ::Ship* ship = universe_object_cast<const ::Ship*>(candidate)) {
+                // if the ship has a species and that species is one of those specified...
+                const std::string& species_name = ship->SpeciesName();
+                return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
+            }
+            // is it a building on a planet?
+            if (const ::Building* building = universe_object_cast<const ::Building*>(candidate)) {
+                const ::Planet* planet = GetPlanet(building->PlanetID());
+                const std::string& species_name = planet->SpeciesName();
+                // if the planet (which IS a popcenter) has a species and that species is one of those specified...
+                return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
+            }
+
+            return false;
+        }
 
         const std::vector<std::string>& m_names;
     };
 }
 
-void Condition::Species::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::Species::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                              SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -2663,8 +2569,7 @@ void Condition::Species::Eval(const ScriptingContext& parent_context, ObjectSet&
     }
 }
 
-bool Condition::Species::RootCandidateInvariant() const
-{
+bool Condition::Species::RootCandidateInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
          it != m_names.end(); ++it)
     {
@@ -2674,8 +2579,7 @@ bool Condition::Species::RootCandidateInvariant() const
     return true;
 }
 
-bool Condition::Species::TargetInvariant() const
-{
+bool Condition::Species::TargetInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
          it != m_names.end(); ++it)
     {
@@ -2685,8 +2589,7 @@ bool Condition::Species::TargetInvariant() const
     return true;
 }
 
-std::string Condition::Species::Description(bool negated/* = false*/) const
-{
+std::string Condition::Species::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_names[i]) ?
@@ -2706,8 +2609,7 @@ std::string Condition::Species::Description(bool negated/* = false*/) const
     return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
-std::string Condition::Species::Dump() const
-{
+std::string Condition::Species::Dump() const {
     std::string retval = DumpIndent() + "Species";
     if (m_names.empty()) {
         // do nothing else
@@ -2723,10 +2625,7 @@ std::string Condition::Species::Dump() const
     return retval;
 }
 
-bool Condition::Species::Match(const ScriptingContext& local_context) const
-{
-    const ObjectMap& objects = GetMainObjectMap();
-
+bool Condition::Species::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Species::Match passed no candidate object";
@@ -2737,7 +2636,7 @@ bool Condition::Species::Match(const ScriptingContext& local_context) const
     const Planet* planet = universe_object_cast<const Planet*>(candidate);
     const ::Building* building = 0;
     if (!planet && (building = universe_object_cast<const ::Building*>(candidate))) {
-        planet = objects.Object<Planet>(building->PlanetID());
+        planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
         if (m_names.empty()) {
@@ -2767,47 +2666,43 @@ bool Condition::Species::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
-Condition::FocusType::~FocusType()
-{
+Condition::FocusType::~FocusType() {
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         delete m_names[i];
     }
 }
 
 namespace {
-    struct FocusTypeSimpleMatch
-    {
+    struct FocusTypeSimpleMatch {
         FocusTypeSimpleMatch(const std::vector<std::string>& names) :
             m_names(names)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-
-                const ObjectMap& objects = GetMainObjectMap();
-
-                // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
-                const ResourceCenter* res_center = dynamic_cast<const ResourceCenter*>(candidate);
-                const ::Building* building = 0;
-                if (!res_center && (building = universe_object_cast<const ::Building*>(candidate))) {
-                    if (const Planet* planet = objects.Object<Planet>(building->PlanetID()))
-                        res_center = dynamic_cast<const ResourceCenter*>(planet);
-                }
-                if (res_center) {
-                    return !res_center->Focus().empty() && (std::find(m_names.begin(), m_names.end(), res_center->Focus()) != m_names.end());
-
-                }
-
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
+
+            // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
+            const ResourceCenter* res_center = dynamic_cast<const ResourceCenter*>(candidate);
+            const ::Building* building = 0;
+            if (!res_center && (building = universe_object_cast<const ::Building*>(candidate))) {
+                if (const Planet* planet = GetPlanet(building->PlanetID()))
+                    res_center = dynamic_cast<const ResourceCenter*>(planet);
             }
+            if (res_center) {
+                return !res_center->Focus().empty() && (std::find(m_names.begin(), m_names.end(), res_center->Focus()) != m_names.end());
+
+            }
+
+            return false;
+        }
 
         const std::vector<std::string>& m_names;
     };
 }
 
-void Condition::FocusType::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::FocusType::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                                SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -2837,8 +2732,7 @@ void Condition::FocusType::Eval(const ScriptingContext& parent_context, ObjectSe
     }
 }
 
-bool Condition::FocusType::RootCandidateInvariant() const
-{
+bool Condition::FocusType::RootCandidateInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
          it != m_names.end(); ++it)
     {
@@ -2848,8 +2742,7 @@ bool Condition::FocusType::RootCandidateInvariant() const
     return true;
 }
 
-bool Condition::FocusType::TargetInvariant() const
-{
+bool Condition::FocusType::TargetInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
          it != m_names.end(); ++it)
     {
@@ -2859,8 +2752,7 @@ bool Condition::FocusType::TargetInvariant() const
     return true;
 }
 
-std::string Condition::FocusType::Description(bool negated/* = false*/) const
-{
+std::string Condition::FocusType::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_names[i]) ?
@@ -2880,8 +2772,7 @@ std::string Condition::FocusType::Description(bool negated/* = false*/) const
     return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
-std::string Condition::FocusType::Dump() const
-{
+std::string Condition::FocusType::Dump() const {
     std::string retval = DumpIndent() + "Focus name = ";
     if (m_names.size() == 1) {
         retval += m_names[0]->Dump() + "\n";
@@ -2895,10 +2786,7 @@ std::string Condition::FocusType::Dump() const
     return retval;
 }
 
-bool Condition::FocusType::Match(const ScriptingContext& local_context) const
-{
-    const ObjectMap& objects = GetMainObjectMap();
-
+bool Condition::FocusType::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "FocusType::Match passed no candidate object";
@@ -2909,7 +2797,7 @@ bool Condition::FocusType::Match(const ScriptingContext& local_context) const
     const ResourceCenter* res_center = dynamic_cast<const ResourceCenter*>(candidate);
     const ::Building* building = 0;
     if (!res_center && (building = universe_object_cast<const ::Building*>(candidate))) {
-        if (const Planet* planet = objects.Object<Planet>(building->PlanetID()))
+        if (const Planet* planet = GetPlanet(building->PlanetID()))
             res_center = dynamic_cast<const ResourceCenter*>(planet);
     }
     if (res_center) {
@@ -2924,39 +2812,35 @@ bool Condition::FocusType::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // StarType                                              //
 ///////////////////////////////////////////////////////////
-Condition::StarType::~StarType()
-{
+Condition::StarType::~StarType() {
     for (unsigned int i = 0; i < m_types.size(); ++i) {
         delete m_types[i];
     }
 }
 
 namespace {
-    struct StarTypeSimpleMatch
-    {
+    struct StarTypeSimpleMatch {
         StarTypeSimpleMatch(const std::vector< ::StarType>& types) :
             m_types(types)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-
-                const ObjectMap& objects = GetMainObjectMap();
-
-                const System* system = objects.Object<System>(candidate->SystemID());
-                if (system || (system = universe_object_cast<const System*>(candidate)))
-                    return !m_types.empty() && (std::find(m_types.begin(), m_types.end(), system->GetStarType()) != m_types.end());
-
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
-            }
+
+            const System* system = GetSystem(candidate->SystemID());
+            if (system || (system = universe_object_cast<const System*>(candidate)))
+                return !m_types.empty() && (std::find(m_types.begin(), m_types.end(), system->GetStarType()) != m_types.end());
+
+            return false;
+        }
 
         const std::vector< ::StarType>& m_types;
     };
 }
 
-void Condition::StarType::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::StarType::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                               ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -2986,8 +2870,7 @@ void Condition::StarType::Eval(const ScriptingContext& parent_context, ObjectSet
     }
 }
 
-bool Condition::StarType::RootCandidateInvariant() const
-{
+bool Condition::StarType::RootCandidateInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
          it != m_types.end(); ++it)
     {
@@ -2997,8 +2880,7 @@ bool Condition::StarType::RootCandidateInvariant() const
     return true;
 }
 
-bool Condition::StarType::TargetInvariant() const
-{
+bool Condition::StarType::TargetInvariant() const {
     for (std::vector<const ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
          it != m_types.end(); ++it)
     {
@@ -3008,8 +2890,7 @@ bool Condition::StarType::TargetInvariant() const
     return true;
 }
 
-std::string Condition::StarType::Description(bool negated/* = false*/) const
-{
+std::string Condition::StarType::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_types[i]) ?
@@ -3029,8 +2910,7 @@ std::string Condition::StarType::Description(bool negated/* = false*/) const
     return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
-std::string Condition::StarType::Dump() const
-{
+std::string Condition::StarType::Dump() const {
     std::string retval = DumpIndent() + "Star type = ";
     if (m_types.size() == 1) {
         retval += m_types[0]->Dump() + "\n";
@@ -3044,17 +2924,14 @@ std::string Condition::StarType::Dump() const
     return retval;
 }
 
-bool Condition::StarType::Match(const ScriptingContext& local_context) const
-{
-    const ObjectMap& objects = GetMainObjectMap();
-
+bool Condition::StarType::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "StarType::Match passed no candidate object";
         return false;
     }
 
-    const System* system = objects.Object<System>(candidate->SystemID());
+    const System* system = GetSystem(candidate->SystemID());
     if (system || (system = universe_object_cast<const System*>(candidate))) {
         for (unsigned int i = 0; i < m_types.size(); ++i) {
             if (m_types[i]->Eval(local_context) == system->GetStarType())
@@ -3067,8 +2944,7 @@ bool Condition::StarType::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // DesignHasHull                                         //
 ///////////////////////////////////////////////////////////
-std::string Condition::DesignHasHull::Description(bool negated/* = false*/) const
-{
+std::string Condition::DesignHasHull::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_DESIGN_HAS_HULL";
     if (negated)
         description_str += "_NOT";
@@ -3076,12 +2952,9 @@ std::string Condition::DesignHasHull::Description(bool negated/* = false*/) cons
 }
 
 std::string Condition::DesignHasHull::Dump() const
-{
-    return DumpIndent() + "DesignHasHull name = \"" + m_name + "\"\n";
-}
+{ return DumpIndent() + "DesignHasHull name = \"" + m_name + "\"\n"; }
 
-bool Condition::DesignHasHull::Match(const ScriptingContext& local_context) const
-{
+bool Condition::DesignHasHull::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "DesignHasHull::Match passed no candidate object";
@@ -3097,42 +2970,39 @@ bool Condition::DesignHasHull::Match(const ScriptingContext& local_context) cons
 ///////////////////////////////////////////////////////////
 // DesignHasPart                                         //
 ///////////////////////////////////////////////////////////
-Condition::DesignHasPart::~DesignHasPart()
-{
+Condition::DesignHasPart::~DesignHasPart() {
     delete m_low;
     delete m_high;
 }
 
 namespace {
-    struct DesignHasPartSimpleMatch
-    {
+    struct DesignHasPartSimpleMatch {
         DesignHasPartSimpleMatch(int low, int high, const std::string& name) :
             m_low(low),
             m_high(high),
             m_name(name)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
 
-                // is it a ship?
-                const ::Ship* ship = universe_object_cast<const ::Ship*>(candidate);
-                if (!ship)
-                    return false;
-                // with a valid design?
-                const ShipDesign* design = ship->Design();
-                if (!design)
-                    return false;
+            // is it a ship?
+            const ::Ship* ship = universe_object_cast<const ::Ship*>(candidate);
+            if (!ship)
+                return false;
+            // with a valid design?
+            const ShipDesign* design = ship->Design();
+            if (!design)
+                return false;
 
-                const std::vector<std::string>& parts = design->Parts();
-                int count = 0;
-                for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it)
-                    if (*it == m_name || (m_name.empty() && !(*it).empty()))    // # of copies of specified part, or total number of parts if no part name specified
-                        ++count;
-                return (m_low <= count && count <= m_high);
-            }
+            const std::vector<std::string>& parts = design->Parts();
+            int count = 0;
+            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it)
+                if (*it == m_name || (m_name.empty() && !(*it).empty()))    // # of copies of specified part, or total number of parts if no part name specified
+                    ++count;
+            return (m_low <= count && count <= m_high);
+        }
 
         int m_low;
         int m_high;
@@ -3140,7 +3010,8 @@ namespace {
     };
 }
 
-void Condition::DesignHasPart::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::DesignHasPart::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                    ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = (m_low->LocalCandidateInvariant() && m_high->LocalCandidateInvariant() &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
@@ -3163,8 +3034,7 @@ bool Condition::DesignHasPart::RootCandidateInvariant() const
 bool Condition::DesignHasPart::TargetInvariant() const
 { return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
 
-std::string Condition::DesignHasPart::Description(bool negated/* = false*/) const
-{
+std::string Condition::DesignHasPart::Description(bool negated/* = false*/) const {
     std::string low_str = ValueRef::ConstantExpr(m_low) ?
                             boost::lexical_cast<std::string>(m_low->Eval()) :
                             m_low->Description();
@@ -3180,12 +3050,10 @@ std::string Condition::DesignHasPart::Description(bool negated/* = false*/) cons
                % m_name);
 }
 
-std::string Condition::DesignHasPart::Dump() const{
-    return DumpIndent() + "DesignHasPart low = " + m_low->Dump() + " high = " + m_high->Dump() + " name = " + m_name;
-}
+std::string Condition::DesignHasPart::Dump() const
+{ return DumpIndent() + "DesignHasPart low = " + m_low->Dump() + " high = " + m_high->Dump() + " name = " + m_name; }
 
-bool Condition::DesignHasPart::Match(const ScriptingContext& local_context) const
-{
+bool Condition::DesignHasPart::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "DesignHasPart::Match passed no candidate object";
@@ -3201,46 +3069,43 @@ bool Condition::DesignHasPart::Match(const ScriptingContext& local_context) cons
 ///////////////////////////////////////////////////////////
 // DesignHasPartClass                                    //
 ///////////////////////////////////////////////////////////
-Condition::DesignHasPartClass::~DesignHasPartClass()
-{
+Condition::DesignHasPartClass::~DesignHasPartClass() {
     delete m_low;
     delete m_high;
 }
 
 namespace {
-    struct DesignHasPartClassSimpleMatch
-    {
+    struct DesignHasPartClassSimpleMatch {
         DesignHasPartClassSimpleMatch(int low, int high, ShipPartClass part_class) :
             m_low(low),
             m_high(high),
             m_part_class(part_class)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
 
-                // is it a ship?
-                const ::Ship* ship = universe_object_cast<const ::Ship*>(candidate);
-                if (!ship)
-                    return false;
-                // with a valid design?
-                const ShipDesign* design = ship->Design();
-                if (!design)
-                    return false;
+            // is it a ship?
+            const ::Ship* ship = universe_object_cast<const ::Ship*>(candidate);
+            if (!ship)
+                return false;
+            // with a valid design?
+            const ShipDesign* design = ship->Design();
+            if (!design)
+                return false;
 
 
-                const std::vector<std::string>& parts = design->Parts();
-                int count = 0;
-                for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
-                    if (const PartType* part_type = GetPartType(*it)) {
-                        if (part_type->Class() == m_part_class)
-                            ++count;
-                    }
+            const std::vector<std::string>& parts = design->Parts();
+            int count = 0;
+            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+                if (const PartType* part_type = GetPartType(*it)) {
+                    if (part_type->Class() == m_part_class)
+                        ++count;
                 }
-                return (m_low <= count && count <= m_high);
             }
+            return (m_low <= count && count <= m_high);
+        }
 
         int m_low;
         int m_high;
@@ -3248,7 +3113,8 @@ namespace {
     };
 }
 
-void Condition::DesignHasPartClass::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::DesignHasPartClass::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                         ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = (m_low->LocalCandidateInvariant() && m_high->LocalCandidateInvariant() &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
@@ -3271,8 +3137,7 @@ bool Condition::DesignHasPartClass::RootCandidateInvariant() const
 bool Condition::DesignHasPartClass::TargetInvariant() const
 { return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
 
-std::string Condition::DesignHasPartClass::Description(bool negated/* = false*/) const
-{
+std::string Condition::DesignHasPartClass::Description(bool negated/* = false*/) const {
     std::string low_str = ValueRef::ConstantExpr(m_low) ?
                             boost::lexical_cast<std::string>(m_low->Eval()) :
                             m_low->Description();
@@ -3288,12 +3153,10 @@ std::string Condition::DesignHasPartClass::Description(bool negated/* = false*/)
                % UserString(boost::lexical_cast<std::string>(m_class)));
 }
 
-std::string Condition::DesignHasPartClass::Dump() const{
-    return DumpIndent() + "DesignHasPartClass low = " + m_low->Dump() + " high = " + m_high->Dump() + " class = " + UserString(boost::lexical_cast<std::string>(m_class));
-}
+std::string Condition::DesignHasPartClass::Dump() const
+{ return DumpIndent() + "DesignHasPartClass low = " + m_low->Dump() + " high = " + m_high->Dump() + " class = " + UserString(boost::lexical_cast<std::string>(m_class)); }
 
-bool Condition::DesignHasPartClass::Match(const ScriptingContext& local_context) const
-{
+bool Condition::DesignHasPartClass::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "DesignHasPartClass::Match passed no candidate object";
@@ -3309,8 +3172,7 @@ bool Condition::DesignHasPartClass::Match(const ScriptingContext& local_context)
 ///////////////////////////////////////////////////////////
 // PredefinedShipDesign                                         //
 ///////////////////////////////////////////////////////////
-std::string Condition::PredefinedShipDesign::Description(bool negated/* = false*/) const
-{
+std::string Condition::PredefinedShipDesign::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_PREDEFINED_SHIP_DESIGN";
     if (negated)
         description_str += "_NOT";
@@ -3318,12 +3180,9 @@ std::string Condition::PredefinedShipDesign::Description(bool negated/* = false*
 }
 
 std::string Condition::PredefinedShipDesign::Dump() const
-{
-    return DumpIndent() + "PredefinedShipDesign name = \"" + m_name + "\"\n";
-}
+{ return DumpIndent() + "PredefinedShipDesign name = \"" + m_name + "\"\n"; }
 
-bool Condition::PredefinedShipDesign::Match(const ScriptingContext& local_context) const
-{
+bool Condition::PredefinedShipDesign::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "PredefinedShipDesign::Match passed no candidate object";
@@ -3351,34 +3210,31 @@ bool Condition::PredefinedShipDesign::Match(const ScriptingContext& local_contex
 // NumberedShipDesign                                      //
 ///////////////////////////////////////////////////////////
 Condition::NumberedShipDesign::~NumberedShipDesign()
-{
-    delete m_design_id;
-}
+{ delete m_design_id; }
 
 namespace {
-    struct NumberedShipDesignSimpleMatch
-    {
+    struct NumberedShipDesignSimpleMatch {
         NumberedShipDesignSimpleMatch(int design_id) :
             m_design_id(design_id)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-                if (m_design_id == ShipDesign::INVALID_DESIGN_ID)
-                    return false;
-                if (const Ship* ship = universe_object_cast<const Ship*>(candidate))
-                    if (ship->DesignID() == m_design_id)
-                        return true;
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
-            }
+            if (m_design_id == ShipDesign::INVALID_DESIGN_ID)
+                return false;
+            if (const Ship* ship = universe_object_cast<const Ship*>(candidate))
+                if (ship->DesignID() == m_design_id)
+                    return true;
+            return false;
+        }
 
         int m_design_id;
     };
 }
 
-void Condition::NumberedShipDesign::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::NumberedShipDesign::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                         ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_design_id) ||
                             (m_design_id->LocalCandidateInvariant() &&
@@ -3400,8 +3256,7 @@ bool Condition::NumberedShipDesign::RootCandidateInvariant() const
 bool Condition::NumberedShipDesign::TargetInvariant() const
 { return m_design_id->TargetInvariant(); }
 
-std::string Condition::NumberedShipDesign::Description(bool negated/* = false*/) const
-{
+std::string Condition::NumberedShipDesign::Description(bool negated/* = false*/) const {
     std::string id_str = ValueRef::ConstantExpr(m_design_id) ?
                             boost::lexical_cast<std::string>(m_design_id->Eval()) :
                             m_design_id->Description();
@@ -3415,18 +3270,14 @@ std::string Condition::NumberedShipDesign::Description(bool negated/* = false*/)
 }
 
 std::string Condition::NumberedShipDesign::Dump() const
-{
-    return DumpIndent() + "NumberedShipDesign design_id = " + m_design_id->Dump();
-}
+{ return DumpIndent() + "NumberedShipDesign design_id = " + m_design_id->Dump(); }
 
-bool Condition::NumberedShipDesign::Match(const ScriptingContext& local_context) const
-{
+bool Condition::NumberedShipDesign::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "NumberedShipDesign::Match passed no candidate object";
         return false;
     }
-
     return NumberedShipDesignSimpleMatch(m_design_id->Eval(local_context))(candidate);
 }
 
@@ -3434,34 +3285,31 @@ bool Condition::NumberedShipDesign::Match(const ScriptingContext& local_context)
 // ProducedByEmpire                                      //
 ///////////////////////////////////////////////////////////
 Condition::ProducedByEmpire::~ProducedByEmpire()
-{
-    delete m_empire_id;
-}
+{ delete m_empire_id; }
 
 namespace {
-    struct ProducedByEmpireSimpleMatch
-    {
+    struct ProducedByEmpireSimpleMatch {
         ProducedByEmpireSimpleMatch(int empire_id) :
             m_empire_id(empire_id)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-
-                if (const ::Ship* ship = universe_object_cast<const ::Ship*>(candidate))
-                    return ship->ProducedByEmpireID() == m_empire_id;
-                else if (const ::Building* building = universe_object_cast<const ::Building*>(candidate))
-                    return building->ProducedByEmpireID() == m_empire_id;
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
-            }
+
+            if (const ::Ship* ship = universe_object_cast<const ::Ship*>(candidate))
+                return ship->ProducedByEmpireID() == m_empire_id;
+            else if (const ::Building* building = universe_object_cast<const ::Building*>(candidate))
+                return building->ProducedByEmpireID() == m_empire_id;
+            return false;
+        }
 
         int m_empire_id;
     };
 }
 
-void Condition::ProducedByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::ProducedByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                       ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
                             (m_empire_id->LocalCandidateInvariant() &&
@@ -3483,8 +3331,7 @@ bool Condition::ProducedByEmpire::RootCandidateInvariant() const
 bool Condition::ProducedByEmpire::TargetInvariant() const
 { return m_empire_id->TargetInvariant(); }
 
-std::string Condition::ProducedByEmpire::Description(bool negated/* = false*/) const
-{
+std::string Condition::ProducedByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -3505,12 +3352,9 @@ std::string Condition::ProducedByEmpire::Description(bool negated/* = false*/) c
 }
 
 std::string Condition::ProducedByEmpire::Dump() const
-{
-    return DumpIndent() + "ProducedByEmpire empire_id = " + m_empire_id->Dump();
-}
+{ return DumpIndent() + "ProducedByEmpire empire_id = " + m_empire_id->Dump(); }
 
-bool Condition::ProducedByEmpire::Match(const ScriptingContext& local_context) const
-{
+bool Condition::ProducedByEmpire::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "ProducedByEmpire::Match passed no candidate object";
@@ -3524,25 +3368,23 @@ bool Condition::ProducedByEmpire::Match(const ScriptingContext& local_context) c
 // Chance                                                //
 ///////////////////////////////////////////////////////////
 Condition::Chance::~Chance()
-{
-    delete m_chance;
-}
+{ delete m_chance; }
 
 namespace {
-    struct ChanceSimpleMatch
-    {
+    struct ChanceSimpleMatch {
         ChanceSimpleMatch(double chance) :
             m_chance(chance)
-            {}
+        {}
 
         bool operator()(const UniverseObject* candidate) const
-            { return RandZeroToOne() <= m_chance; }
+        { return RandZeroToOne() <= m_chance; }
 
         double m_chance;
     };
 }
 
-void Condition::Chance::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::Chance::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_chance) ||
                             (m_chance->LocalCandidateInvariant() &&
@@ -3564,8 +3406,7 @@ bool Condition::Chance::RootCandidateInvariant() const
 bool Condition::Chance::TargetInvariant() const
 { return m_chance->TargetInvariant(); }
 
-std::string Condition::Chance::Description(bool negated/* = false*/) const
-{
+std::string Condition::Chance::Description(bool negated/* = false*/) const {
     std::string value_str;
     if (ValueRef::ConstantExpr(m_chance)) {
         std::string description_str = "DESC_CHANCE_PERCENTAGE";
@@ -3582,12 +3423,9 @@ std::string Condition::Chance::Description(bool negated/* = false*/) const
 }
 
 std::string Condition::Chance::Dump() const
-{
-    return DumpIndent() + "Random probability = " + m_chance->Dump() + "\n";
-}
+{ return DumpIndent() + "Random probability = " + m_chance->Dump() + "\n"; }
 
-bool Condition::Chance::Match(const ScriptingContext& local_context) const
-{
+bool Condition::Chance::Match(const ScriptingContext& local_context) const {
     double chance = std::max(0.0, std::min(m_chance->Eval(local_context), 1.0));
     return RandZeroToOne() <= chance;
 }
@@ -3595,33 +3433,30 @@ bool Condition::Chance::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // MeterValue                                            //
 ///////////////////////////////////////////////////////////
-Condition::MeterValue::~MeterValue()
-{
+Condition::MeterValue::~MeterValue() {
     delete m_low;
     delete m_high;
 }
 
 namespace {
-    struct MeterValueSimpleMatch
-    {
+    struct MeterValueSimpleMatch {
         MeterValueSimpleMatch(double low, double high, MeterType meter_type) :
             m_low(low),
             m_high(high),
             m_meter_type(meter_type)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-
-                if (const Meter* meter = candidate->GetMeter(m_meter_type)) {
-                    double value = meter->Initial();    // match Initial rather than Current to make results reproducible in a given turn, until back propegation happens
-                    return m_low <= value && value <= m_high;
-                }
-
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
+
+            if (const Meter* meter = candidate->GetMeter(m_meter_type)) {
+                double value = meter->Initial();    // match Initial rather than Current to make results reproducible in a given turn, until back propegation happens
+                return m_low <= value && value <= m_high;
             }
+
+            return false;
+        }
 
         double m_low;
         double m_high;
@@ -3629,7 +3464,8 @@ namespace {
     };
 }
 
-void Condition::MeterValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::MeterValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                 ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
                              (!m_high || m_high->LocalCandidateInvariant()) &&
@@ -3653,8 +3489,7 @@ bool Condition::MeterValue::RootCandidateInvariant() const
 bool Condition::MeterValue::TargetInvariant() const
 { return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()); }
 
-std::string Condition::MeterValue::Description(bool negated/* = false*/) const
-{
+std::string Condition::MeterValue::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
                                     boost::lexical_cast<std::string>(m_low->Eval()) :
                                     m_low->Description())
@@ -3672,8 +3507,7 @@ std::string Condition::MeterValue::Description(bool negated/* = false*/) const
                % high_str);
 }
 
-std::string Condition::MeterValue::Dump() const
-{
+std::string Condition::MeterValue::Dump() const {
     std::string retval = DumpIndent();
     switch (m_meter) {
     case INVALID_METER_TYPE:        retval += "INVALID_METER_TYPE"; break;
@@ -3726,8 +3560,7 @@ std::string Condition::MeterValue::Dump() const
     return retval;
 }
 
-bool Condition::MeterValue::Match(const ScriptingContext& local_context) const
-{
+bool Condition::MeterValue::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "MeterValue::Match passed no candidate object";
@@ -3741,40 +3574,37 @@ bool Condition::MeterValue::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // EmpireStockpileValue                                  //
 ///////////////////////////////////////////////////////////
-Condition::EmpireStockpileValue::~EmpireStockpileValue()
-{
+Condition::EmpireStockpileValue::~EmpireStockpileValue() {
     delete m_low;
     delete m_high;
 }
 
 namespace {
-    struct EmpireStockpileValueSimpleMatch
-    {
+    struct EmpireStockpileValueSimpleMatch {
         EmpireStockpileValueSimpleMatch(double low, double high, ResourceType stockpile) :
             m_low(low),
             m_high(high),
             m_stockpile(stockpile)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-
-                if (candidate->Unowned())
-                    return false;
-
-                const Empire* empire = Empires().Lookup(candidate->Owner());
-                if (!empire)
-                    return false;
-
-                if (m_stockpile == RE_FOOD || m_stockpile == RE_MINERALS || m_stockpile == RE_TRADE) {
-                    double amount = empire->ResourceStockpile(m_stockpile);
-                    return (m_low <= amount && amount <= m_high);
-                }
-
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
+
+            if (candidate->Unowned())
+                return false;
+
+            const Empire* empire = Empires().Lookup(candidate->Owner());
+            if (!empire)
+                return false;
+
+            if (m_stockpile == RE_FOOD || m_stockpile == RE_MINERALS || m_stockpile == RE_TRADE) {
+                double amount = empire->ResourceStockpile(m_stockpile);
+                return (m_low <= amount && amount <= m_high);
             }
+
+            return false;
+        }
 
         double m_low;
         double m_high;
@@ -3782,7 +3612,8 @@ namespace {
     };
 }
 
-void Condition::EmpireStockpileValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::EmpireStockpileValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                           ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = (m_low->LocalCandidateInvariant() && m_high->LocalCandidateInvariant() &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
@@ -3805,8 +3636,7 @@ bool Condition::EmpireStockpileValue::RootCandidateInvariant() const
 bool Condition::EmpireStockpileValue::TargetInvariant() const
 { return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
 
-std::string Condition::EmpireStockpileValue::Description(bool negated/* = false*/) const
-{
+std::string Condition::EmpireStockpileValue::Description(bool negated/* = false*/) const {
     std::string low_str = ValueRef::ConstantExpr(m_low) ?
                             boost::lexical_cast<std::string>(m_low->Eval()) :
                             m_low->Description();
@@ -3822,8 +3652,7 @@ std::string Condition::EmpireStockpileValue::Description(bool negated/* = false*
                % high_str);
 }
 
-std::string Condition::EmpireStockpileValue::Dump() const
-{
+std::string Condition::EmpireStockpileValue::Dump() const {
     std::string retval = DumpIndent();
     switch (m_stockpile) {
     case RE_FOOD:       retval += "OwnerFoodStockpile";     break;
@@ -3837,8 +3666,7 @@ std::string Condition::EmpireStockpileValue::Dump() const
     return retval;
 }
 
-bool Condition::EmpireStockpileValue::Match(const ScriptingContext& local_context) const
-{
+bool Condition::EmpireStockpileValue::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "MeterValue::Match passed no candidate object";
@@ -3853,8 +3681,7 @@ bool Condition::EmpireStockpileValue::Match(const ScriptingContext& local_contex
 ///////////////////////////////////////////////////////////
 // OwnerHasTech                                          //
 ///////////////////////////////////////////////////////////
-std::string Condition::OwnerHasTech::Description(bool negated/* = false*/) const
-{
+std::string Condition::OwnerHasTech::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_OWNER_HAS_TECH";
     if (negated)
         description_str += "_NOT";
@@ -3862,12 +3689,9 @@ std::string Condition::OwnerHasTech::Description(bool negated/* = false*/) const
 }
 
 std::string Condition::OwnerHasTech::Dump() const
-{
-    return DumpIndent() + "OwnerHasTech name = \"" + m_name + "\"\n";
-}
+{ return DumpIndent() + "OwnerHasTech name = \"" + m_name + "\"\n"; }
 
-bool Condition::OwnerHasTech::Match(const ScriptingContext& local_context) const
-{
+bool Condition::OwnerHasTech::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "OwnerHasTech::Match passed no candidate object";
@@ -3887,30 +3711,27 @@ bool Condition::OwnerHasTech::Match(const ScriptingContext& local_context) const
 // VisibleToEmpire                                       //
 ///////////////////////////////////////////////////////////
 Condition::VisibleToEmpire::~VisibleToEmpire()
-{
-    delete m_empire_id;
-}
+{ delete m_empire_id; }
 
 namespace {
     struct VisibleToEmpireSimpleMatch
     {
         VisibleToEmpireSimpleMatch(int empire_id) :
             m_empire_id(empire_id)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-
-                return candidate->GetVisibility(m_empire_id) != VIS_NO_VISIBILITY;
-            }
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
+            return candidate->GetVisibility(m_empire_id) != VIS_NO_VISIBILITY;
+        }
 
         int m_empire_id;
     };
 }
 
-void Condition::VisibleToEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::VisibleToEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                      ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
                             (m_empire_id->LocalCandidateInvariant() &&
@@ -3932,8 +3753,7 @@ bool Condition::VisibleToEmpire::RootCandidateInvariant() const
 bool Condition::VisibleToEmpire::TargetInvariant() const
 { return m_empire_id->TargetInvariant(); }
 
-std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) const
-{
+std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -3954,12 +3774,9 @@ std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) co
 }
 
 std::string Condition::VisibleToEmpire::Dump() const
-{
-    return DumpIndent() + "VisibleToEmpire empire_id = " + m_empire_id->Dump();
-}
+{ return DumpIndent() + "VisibleToEmpire empire_id = " + m_empire_id->Dump(); }
 
-bool Condition::VisibleToEmpire::Match(const ScriptingContext& local_context) const
-{
+bool Condition::VisibleToEmpire::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "VisibleToEmpire::Match passed no candidate object";
@@ -3972,44 +3789,42 @@ bool Condition::VisibleToEmpire::Match(const ScriptingContext& local_context) co
 ///////////////////////////////////////////////////////////
 // WithinDistance                                        //
 ///////////////////////////////////////////////////////////
-Condition::WithinDistance::~WithinDistance()
-{
+Condition::WithinDistance::~WithinDistance() {
     delete m_distance;
     delete m_condition;
 }
 
 namespace {
-    struct WithinDistanceSimpleMatch
-    {
+    struct WithinDistanceSimpleMatch {
         WithinDistanceSimpleMatch(const Condition::ObjectSet& from_objects, double distance) :
             m_from_objects(from_objects),
             m_distance(distance)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-
-                double distance2 = m_distance*m_distance;
-
-                // is candidate object close enough to any of the passed-in objects?
-                for (Condition::ObjectSet::const_iterator it = m_from_objects.begin(); it != m_from_objects.end(); ++it) {
-                    double delta_x = candidate->X() - (*it)->X();
-                    double delta_y = candidate->Y() - (*it)->Y();
-                    if (delta_x*delta_x + delta_y*delta_y < distance2)
-                        return true;
-                }
-
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
+
+            double distance2 = m_distance*m_distance;
+
+            // is candidate object close enough to any of the passed-in objects?
+            for (Condition::ObjectSet::const_iterator it = m_from_objects.begin(); it != m_from_objects.end(); ++it) {
+                double delta_x = candidate->X() - (*it)->X();
+                double delta_y = candidate->Y() - (*it)->Y();
+                if (delta_x*delta_x + delta_y*delta_y < distance2)
+                    return true;
             }
+
+            return false;
+        }
 
         const Condition::ObjectSet& m_from_objects;
         double m_distance;
     };
 }
 
-void Condition::WithinDistance::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::WithinDistance::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                     ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = m_distance->LocalCandidateInvariant() &&
                             parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -4045,8 +3860,7 @@ bool Condition::WithinDistance::RootCandidateInvariant() const
 bool Condition::WithinDistance::TargetInvariant() const
 { return m_distance->TargetInvariant() && m_condition->TargetInvariant(); }
 
-std::string Condition::WithinDistance::Description(bool negated/* = false*/) const
-{
+std::string Condition::WithinDistance::Description(bool negated/* = false*/) const {
     std::string value_str = ValueRef::ConstantExpr(m_distance) ?
                                 boost::lexical_cast<std::string>(m_distance->Eval()) :
                                 m_distance->Description();
@@ -4058,8 +3872,7 @@ std::string Condition::WithinDistance::Description(bool negated/* = false*/) con
                % m_condition->Description());
 }
 
-std::string Condition::WithinDistance::Dump() const
-{
+std::string Condition::WithinDistance::Dump() const {
     std::string retval = DumpIndent() + "WithinDistance distance = " + m_distance->Dump() + " condition =\n";
     ++g_indent;
     retval += m_condition->Dump();
@@ -4067,8 +3880,7 @@ std::string Condition::WithinDistance::Dump() const
     return retval;
 }
 
-bool Condition::WithinDistance::Match(const ScriptingContext& local_context) const
-{
+bool Condition::WithinDistance::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "WithinDistance::Match passed no candidate object";
@@ -4095,8 +3907,7 @@ bool Condition::WithinDistance::Match(const ScriptingContext& local_context) con
 ///////////////////////////////////////////////////////////
 // WithinStarlaneJumps                                   //
 ///////////////////////////////////////////////////////////
-Condition::WithinStarlaneJumps::~WithinStarlaneJumps()
-{
+Condition::WithinStarlaneJumps::~WithinStarlaneJumps() {
     delete m_jumps;
     delete m_condition;
 }
@@ -4110,8 +3921,8 @@ namespace {
         if (!one || !two)
             return MANY_JUMPS;
 
-        const System* system_one = objects.Object<System>(one->SystemID());
-        const System* system_two = objects.Object<System>(two->SystemID());
+        const System* system_one = GetSystem(one->SystemID());
+        const System* system_two = GetSystem(two->SystemID());
 
         if (system_one && system_two) {
             // both condition-matching object and candidate are / in systems.
@@ -4185,51 +3996,50 @@ namespace {
                 if (jumps != -1)
                     return jumps - 1;
             }
-
         }
         return MANY_JUMPS;
     }
 
-    struct WithinStarlaneJumpsSimpleMatch
-    {
+    struct WithinStarlaneJumpsSimpleMatch {
         WithinStarlaneJumpsSimpleMatch(const Condition::ObjectSet& from_objects, int jump_limit) :
             m_from_objects(from_objects),
             m_jump_limit(jump_limit)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-                if (m_from_objects.empty())
-                    return false;
-                if (m_jump_limit < 0)
-                    return false;
-
-                // is candidate object close enough to any subcondition matches?
-                for (Condition::ObjectSet::const_iterator it = m_from_objects.begin(); it != m_from_objects.end(); ++it) {
-                    if (m_jump_limit == 0) {
-                        // special case, since LeastJumpsPath() doesn't expect the start point to be the end point
-                        double delta_x = (*it)->X() - candidate->X();
-                        double delta_y = (*it)->Y() - candidate->Y();
-                        if (delta_x*delta_x + delta_y*delta_y == 0)
-                            return true;
-                    } else {
-                        int jumps = JumpsBetweenObjects(*it, candidate);
-                        if (jumps <= m_jump_limit)
-                            return true;
-                    }
-                }
-
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
+            if (m_from_objects.empty())
+                return false;
+            if (m_jump_limit < 0)
+                return false;
+
+            // is candidate object close enough to any subcondition matches?
+            for (Condition::ObjectSet::const_iterator it = m_from_objects.begin(); it != m_from_objects.end(); ++it) {
+                if (m_jump_limit == 0) {
+                    // special case, since LeastJumpsPath() doesn't expect the start point to be the end point
+                    double delta_x = (*it)->X() - candidate->X();
+                    double delta_y = (*it)->Y() - candidate->Y();
+                    if (delta_x*delta_x + delta_y*delta_y == 0)
+                        return true;
+                } else {
+                    int jumps = JumpsBetweenObjects(*it, candidate);
+                    if (jumps <= m_jump_limit)
+                        return true;
+                }
             }
+
+            return false;
+        }
 
         const Condition::ObjectSet& m_from_objects;
         int m_jump_limit;
     };
 }
 
-void Condition::WithinStarlaneJumps::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::WithinStarlaneJumps::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                          ObjectSet& non_matches,
+                                          SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = m_jumps->LocalCandidateInvariant() &&
                             parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -4264,8 +4074,7 @@ bool Condition::WithinStarlaneJumps::RootCandidateInvariant() const
 bool Condition::WithinStarlaneJumps::TargetInvariant() const
 { return m_jumps->TargetInvariant() && m_condition->TargetInvariant(); }
 
-std::string Condition::WithinStarlaneJumps::Description(bool negated/* = false*/) const
-{
+std::string Condition::WithinStarlaneJumps::Description(bool negated/* = false*/) const {
     std::string value_str = ValueRef::ConstantExpr(m_jumps) ? boost::lexical_cast<std::string>(m_jumps->Eval()) : m_jumps->Description();
     std::string description_str = "DESC_WITHIN_STARLANE_JUMPS";
     if (negated)
@@ -4275,8 +4084,7 @@ std::string Condition::WithinStarlaneJumps::Description(bool negated/* = false*/
                % m_condition->Description());
 }
 
-std::string Condition::WithinStarlaneJumps::Dump() const
-{
+std::string Condition::WithinStarlaneJumps::Dump() const {
     std::string retval = DumpIndent() + "WithinStarlaneJumps jumps = " + m_jumps->Dump() + " condition =\n";
     ++g_indent;
     retval += m_condition->Dump();
@@ -4284,8 +4092,7 @@ std::string Condition::WithinStarlaneJumps::Dump() const
     return retval;
 }
 
-bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context) const
-{
+bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "WithinStarlaneJumps::Match passed no candidate object";
@@ -4312,49 +4119,47 @@ bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context
 // CanAddStarlaneConnection                              //
 ///////////////////////////////////////////////////////////
 Condition::CanAddStarlaneConnection::~CanAddStarlaneConnection()
-{
-    delete m_condition;
-}
+{ delete m_condition; }
 
 namespace {
-    struct CanAddStarlaneConnectionSimpleMatch
-    {
+    struct CanAddStarlaneConnectionSimpleMatch {
         CanAddStarlaneConnectionSimpleMatch(const Condition::ObjectSet& destination_objects) :
             m_destination_objects(destination_objects)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
 
-                ObjectMap& objects = GetUniverse().Objects();
+            ObjectMap& objects = GetUniverse().Objects();
 
-                // assemble all systems that are or that contain subcondition matches
-                Condition::ObjectSet destination_systems;
-                destination_systems.reserve(RESERVE_SET_SIZE);
-                for (Condition::ObjectSet::const_iterator it = m_destination_objects.begin(); it != m_destination_objects.end(); ++it)
-                    if (const System* system = objects.Object< ::System>((*it)->SystemID()))
-                        destination_systems.push_back(system);
+            // assemble all systems that are or that contain subcondition matches
+            Condition::ObjectSet destination_systems;
+            destination_systems.reserve(RESERVE_SET_SIZE);
+            for (Condition::ObjectSet::const_iterator it = m_destination_objects.begin(); it != m_destination_objects.end(); ++it)
+                if (const System* system = objects.Object< ::System>((*it)->SystemID()))
+                    destination_systems.push_back(system);
 
-                if (destination_systems.empty())
-                    return false;
+            if (destination_systems.empty())
+                return false;
 
-                // TODO: implement this test
+            // TODO: implement this test
 
-                // can the candidate object have starlanes added to all destination systems?
-                for (Condition::ObjectSet::const_iterator it = destination_systems.begin(); it != destination_systems.end(); ++it) {
-                    return false;
-                }
-
-                return true;
+            // can the candidate object have starlanes added to all destination systems?
+            for (Condition::ObjectSet::const_iterator it = destination_systems.begin(); it != destination_systems.end(); ++it) {
+                return false;
             }
+
+            return true;
+        }
 
         const Condition::ObjectSet& m_destination_objects;
     };
 }
 
-void Condition::CanAddStarlaneConnection::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::CanAddStarlaneConnection::Eval(const ScriptingContext& parent_context,
+                                               ObjectSet& matches, ObjectSet& non_matches,
+                                               SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -4387,16 +4192,14 @@ bool Condition::CanAddStarlaneConnection::RootCandidateInvariant() const
 bool Condition::CanAddStarlaneConnection::TargetInvariant() const
 { return m_condition->TargetInvariant(); }
 
-std::string Condition::CanAddStarlaneConnection::Description(bool negated/* = false*/) const
-{
+std::string Condition::CanAddStarlaneConnection::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_CAN_ADD_STARLANE_CONNECTION";
     if (negated)
         description_str += "_NOT";
     return str(FlexibleFormat(UserString(description_str)) % m_condition->Description());
 }
 
-std::string Condition::CanAddStarlaneConnection::Dump() const
-{
+std::string Condition::CanAddStarlaneConnection::Dump() const {
     std::string retval = DumpIndent() + "CanAddStarlaneConnection condition =\n";
     ++g_indent;
         retval += m_condition->Dump();
@@ -4404,8 +4207,7 @@ std::string Condition::CanAddStarlaneConnection::Dump() const
     return retval;
 }
 
-bool Condition::CanAddStarlaneConnection::Match(const ScriptingContext& local_context) const
-{
+bool Condition::CanAddStarlaneConnection::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "CanAddStarlaneConnection::Match passed no candidate object";
@@ -4548,9 +4350,7 @@ namespace {
 }
 
 Condition::CanRemoveStarlaneConnection::~CanRemoveStarlaneConnection()
-{
-    delete m_condition;
-}
+{ delete m_condition; }
 
 bool Condition::CanRemoveStarlaneConnection::RootCandidateInvariant() const
 { return m_condition->RootCandidateInvariant(); }
@@ -4558,16 +4358,14 @@ bool Condition::CanRemoveStarlaneConnection::RootCandidateInvariant() const
 bool Condition::CanRemoveStarlaneConnection::TargetInvariant() const
 { return m_condition->TargetInvariant(); }
 
-std::string Condition::CanRemoveStarlaneConnection::Description(bool negated/* = false*/) const
-{
+std::string Condition::CanRemoveStarlaneConnection::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_CAN_REMOVE_STARLANE_CONNECTION";
     if (negated)
         description_str += "_NOT";
     return str(FlexibleFormat(UserString(description_str)) % m_condition->Description());
 }
 
-std::string Condition::CanRemoveStarlaneConnection::Dump() const
-{
+std::string Condition::CanRemoveStarlaneConnection::Dump() const {
     std::string retval = DumpIndent() + "CanRemoveStarlaneConnection condition =\n";
     ++g_indent;
         retval += m_condition->Dump();
@@ -4575,26 +4373,23 @@ std::string Condition::CanRemoveStarlaneConnection::Dump() const
     return retval;
 }
 
-bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local_context) const
-{
+bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "CanRemoveStarlaneConnection::Match passed no candidate object";
         return false;
     }
 
-    const ObjectMap& objects = GetMainObjectMap();
-
     // get system for candidate object
     int candidate_system_id = candidate->SystemID();
-    const System* candidate_system = objects.Object<System>(candidate_system_id);
+    const System* candidate_system = GetSystem(candidate_system_id);
     if (!candidate_system)
         return false;
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
     subcondition_non_matches.reserve(RESERVE_SET_SIZE);
-    for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it)
+    for (ObjectMap::const_iterator it = Objects().const_begin(); it != Objects().const_end(); ++it)
         subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
     subcondition_matches.reserve(RESERVE_SET_SIZE);
@@ -4607,7 +4402,7 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
     // assemble all systems in or containing objects in subcondition matches
     std::set<const System*> destination_systems;
     for (ObjectSet::const_iterator it = subcondition_matches.begin(); it != subcondition_matches.end(); ++it)
-        if (const System* system = objects.Object<System>((*it)->SystemID()))
+        if (const System* system = GetSystem((*it)->SystemID()))
             destination_systems.insert(system);
 
     if (destination_systems.empty())
@@ -4622,6 +4417,7 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
     // create starlane graph, fill with system info, exclusing lanes to
     // subcondition-matches from candidate
     std::map<int, std::set<int> > system_lanes;
+    const ObjectMap& objects = Objects();
     std::vector<const System*> systems = objects.FindObjects<System>();
 
     //for (std::vector<const System*>::const_iterator system_it = systems.begin(); system_it != systems.end(); ++system_it) {
@@ -4658,33 +4454,30 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
 // ExploredByEmpire                                      //
 ///////////////////////////////////////////////////////////
 Condition::ExploredByEmpire::~ExploredByEmpire()
-{
-    delete m_empire_id;
-}
+{ delete m_empire_id; }
 
 namespace {
-    struct ExploredByEmpireSimpleMatch
-    {
+    struct ExploredByEmpireSimpleMatch {
         ExploredByEmpireSimpleMatch(int empire_id) :
             m_empire_id(empire_id)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
 
-                const Empire* empire = Empires().Lookup(m_empire_id);
-                if (!empire)
-                    return false;
-                return empire->HasExploredSystem(candidate->ID());
-            }
+            const Empire* empire = Empires().Lookup(m_empire_id);
+            if (!empire)
+                return false;
+            return empire->HasExploredSystem(candidate->ID());
+        }
 
         int m_empire_id;
     };
 }
 
-void Condition::ExploredByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::ExploredByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                                       SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
                             (m_empire_id->LocalCandidateInvariant() &&
@@ -4706,8 +4499,7 @@ bool Condition::ExploredByEmpire::RootCandidateInvariant() const
 bool Condition::ExploredByEmpire::TargetInvariant() const
 { return m_empire_id->TargetInvariant(); }
 
-std::string Condition::ExploredByEmpire::Description(bool negated/* = false*/) const
-{
+std::string Condition::ExploredByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -4728,12 +4520,9 @@ std::string Condition::ExploredByEmpire::Description(bool negated/* = false*/) c
 }
 
 std::string Condition::ExploredByEmpire::Dump() const
-{
-    return DumpIndent() + "ExploredByEmpire empire_id = " + m_empire_id->Dump();
-}
+{ return DumpIndent() + "ExploredByEmpire empire_id = " + m_empire_id->Dump(); }
 
-bool Condition::ExploredByEmpire::Match(const ScriptingContext& local_context) const
-{
+bool Condition::ExploredByEmpire::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "ExploredByEmpire::Match passed no candidate object";
@@ -4746,8 +4535,7 @@ bool Condition::ExploredByEmpire::Match(const ScriptingContext& local_context) c
 ///////////////////////////////////////////////////////////
 // Stationary                                      //
 ///////////////////////////////////////////////////////////
-std::string Condition::Stationary::Description(bool negated/* = false*/) const
-{
+std::string Condition::Stationary::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_STATIONARY";
     if (negated)
         description_str += "_NOT";
@@ -4755,26 +4543,22 @@ std::string Condition::Stationary::Description(bool negated/* = false*/) const
 }
 
 std::string Condition::Stationary::Dump() const
-{
-    return DumpIndent() + "Stationary\n";
-}
+{ return DumpIndent() + "Stationary\n"; }
 
-bool Condition::Stationary::Match(const ScriptingContext& local_context) const
-{
+bool Condition::Stationary::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "Stationary::Match passed no candidate object";
         return false;
     }
 
-    const ObjectMap& objects = GetMainObjectMap();
     // the only objects that can move are fleets and the ships in them.  so,
     // attempt to cast the candidate object to a fleet or ship, and if it's a ship
     // get the fleet of that ship
     const Fleet* fleet = universe_object_cast<const Fleet*>(candidate);
     if (!fleet)
         if (const Ship* ship = universe_object_cast<const Ship*>(candidate))
-            fleet = objects.Object<Fleet>(ship->FleetID());
+            fleet = GetFleet(ship->FleetID());
 
     if (fleet) {
         // if a fleet is available, it is "moving", or not stationary, if it's
@@ -4783,7 +4567,7 @@ bool Condition::Stationary::Match(const ScriptingContext& local_context) const
         // be stationary, but fleets departing won't be stationary.
         int next_id = fleet->NextSystemID();
         int cur_id = fleet->SystemID();
-        if (next_id != UniverseObject::INVALID_OBJECT_ID && next_id != cur_id)
+        if (next_id != INVALID_OBJECT_ID && next_id != cur_id)
             return false;
     }
 
@@ -4794,36 +4578,33 @@ bool Condition::Stationary::Match(const ScriptingContext& local_context) const
 // FleetSupplyableByEmpire                               //
 ///////////////////////////////////////////////////////////
 Condition::FleetSupplyableByEmpire::~FleetSupplyableByEmpire()
-{
-    delete m_empire_id;
-}
+{ delete m_empire_id; }
 
 namespace {
-    struct FleetSupplyableSimpleMatch
-    {
+    struct FleetSupplyableSimpleMatch {
         FleetSupplyableSimpleMatch(int empire_id) :
             m_empire_id(empire_id)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
 
-                const EmpireManager& empires = Empires();
-                const Empire* empire = empires.Lookup(m_empire_id);
-                if (!empire)
-                    return false;
+            const EmpireManager& empires = Empires();
+            const Empire* empire = empires.Lookup(m_empire_id);
+            if (!empire)
+                return false;
 
-                const std::set<int>& supplyable_systems = empire->FleetSupplyableSystemIDs();
-                return supplyable_systems.find(candidate->SystemID()) != supplyable_systems.end();
-            }
+            const std::set<int>& supplyable_systems = empire->FleetSupplyableSystemIDs();
+            return supplyable_systems.find(candidate->SystemID()) != supplyable_systems.end();
+        }
 
         int m_empire_id;
     };
 }
 
-void Condition::FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                                              SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
                             (m_empire_id->LocalCandidateInvariant() &&
@@ -4845,8 +4626,7 @@ bool Condition::FleetSupplyableByEmpire::RootCandidateInvariant() const
 bool Condition::FleetSupplyableByEmpire::TargetInvariant() const
 { return m_empire_id->TargetInvariant(); }
 
-std::string Condition::FleetSupplyableByEmpire::Description(bool negated/* = false*/) const
-{
+std::string Condition::FleetSupplyableByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -4869,8 +4649,7 @@ std::string Condition::FleetSupplyableByEmpire::Description(bool negated/* = fal
 std::string Condition::FleetSupplyableByEmpire::Dump() const
 { return DumpIndent() + "ResupplyableBy empire_id = " + m_empire_id->Dump(); }
 
-bool Condition::FleetSupplyableByEmpire::Match(const ScriptingContext& local_context) const
-{
+bool Condition::FleetSupplyableByEmpire::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "FleetSupplyableByEmpire::Match passed no candidate object";
@@ -4885,58 +4664,56 @@ bool Condition::FleetSupplyableByEmpire::Match(const ScriptingContext& local_con
 ///////////////////////////////////////////////////////////
 // ResourceSupplyConnectedByEmpire                       //
 ///////////////////////////////////////////////////////////
-Condition::ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire()
-{
+Condition::ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire() {
     delete m_empire_id;
     delete m_condition;
 }
 
 namespace {
-    struct ResourceSupplySimpleMatch
-    {
+    struct ResourceSupplySimpleMatch {
         ResourceSupplySimpleMatch(int empire_id, const Condition::ObjectSet& from_objects) :
             m_empire_id(empire_id),
             m_from_objects(from_objects)
-            {}
+        {}
 
-        bool operator()(const UniverseObject* candidate) const
-            {
-                if (!candidate)
-                    return false;
-                if (m_from_objects.empty())
-                    return false;
-                const Empire* empire = Empires().Lookup(m_empire_id);
-                if (!empire)
-                    return false;
-                const std::set<std::set<int> >& groups = empire->ResourceSupplyGroups();
-
-                // is candidate object connected to a subcondition matching object by resource supply?
-                for (Condition::ObjectSet::const_iterator it = m_from_objects.begin(); it != m_from_objects.end(); ++it) {
-                    const UniverseObject* from_object(*it);
-
-                    for (std::set<std::set<int> >::const_iterator groups_it = groups.begin(); groups_it != groups.end(); ++groups_it) {
-                        const std::set<int>& group = *groups_it;
-                        if (group.find(from_object->SystemID()) != group.end()) {
-                            // found resource sharing group containing test object.  Does it also contain candidate?
-                            if (group.find(candidate->SystemID()) != group.end())
-                                return true;    // test object and candidate object are in same resourse sharing group
-                            else
-                                return false;   // test object is not in resource sharing group with candidate (each object can be in only one group)
-                        }
-                        // current subcondition-matching object is not in this resource sharing group
-                    }
-                    // current subcondition-matching object is not in any resource sharing group for this empire
-                }
-
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
                 return false;
+            if (m_from_objects.empty())
+                return false;
+            const Empire* empire = Empires().Lookup(m_empire_id);
+            if (!empire)
+                return false;
+            const std::set<std::set<int> >& groups = empire->ResourceSupplyGroups();
+
+            // is candidate object connected to a subcondition matching object by resource supply?
+            for (Condition::ObjectSet::const_iterator it = m_from_objects.begin(); it != m_from_objects.end(); ++it) {
+                const UniverseObject* from_object(*it);
+
+                for (std::set<std::set<int> >::const_iterator groups_it = groups.begin(); groups_it != groups.end(); ++groups_it) {
+                    const std::set<int>& group = *groups_it;
+                    if (group.find(from_object->SystemID()) != group.end()) {
+                        // found resource sharing group containing test object.  Does it also contain candidate?
+                        if (group.find(candidate->SystemID()) != group.end())
+                            return true;    // test object and candidate object are in same resourse sharing group
+                        else
+                            return false;   // test object is not in resource sharing group with candidate (each object can be in only one group)
+                    }
+                    // current subcondition-matching object is not in this resource sharing group
+                }
+                // current subcondition-matching object is not in any resource sharing group for this empire
             }
+
+            return false;
+        }
 
         int m_empire_id;
         const Condition::ObjectSet& m_from_objects;
     };
 }
 
-void Condition::ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                                      ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
                             (m_empire_id->LocalCandidateInvariant() &&
@@ -4972,8 +4749,7 @@ bool Condition::ResourceSupplyConnectedByEmpire::RootCandidateInvariant() const
 bool Condition::ResourceSupplyConnectedByEmpire::TargetInvariant() const
 { return m_empire_id->TargetInvariant() && m_condition->TargetInvariant(); }
 
-bool Condition::ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_context) const
-{
+bool Condition::ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
         Logger().errorStream() << "ResourceSupplyConnectedByEmpire::Match passed no candidate object";
@@ -4996,8 +4772,7 @@ bool Condition::ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& l
     return ResourceSupplySimpleMatch(empire_id, subcondition_matches)(candidate);
 }
 
-std::string Condition::ResourceSupplyConnectedByEmpire::Description(bool negated/* = false*/) const
-{
+std::string Condition::ResourceSupplyConnectedByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -5018,8 +4793,7 @@ std::string Condition::ResourceSupplyConnectedByEmpire::Description(bool negated
                % m_condition->Description());
 }
 
-std::string Condition::ResourceSupplyConnectedByEmpire::Dump() const
-{
+std::string Condition::ResourceSupplyConnectedByEmpire::Dump() const {
     std::string retval = DumpIndent() + "ResourceSupplyConnectedBy empire_id = " + m_empire_id->Dump() +
                                         " condition = \n";
     ++g_indent;
@@ -5031,17 +4805,16 @@ std::string Condition::ResourceSupplyConnectedByEmpire::Dump() const
 ///////////////////////////////////////////////////////////
 // And                                                   //
 ///////////////////////////////////////////////////////////
-Condition::And::~And()
-{
+Condition::And::~And() {
     for (unsigned int i = 0; i < m_operands.size(); ++i)
         delete m_operands[i];
 }
 
-void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                          SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     const UniverseObject* no_object(0);
     ScriptingContext local_context(parent_context, no_object);
-
 
     if (search_domain == NON_MATCHES) {
         ObjectSet partly_checked_non_matches;
@@ -5077,24 +4850,21 @@ void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& mat
     }
 }
 
-bool Condition::And::RootCandidateInvariant() const
-{
+bool Condition::And::RootCandidateInvariant() const {
     for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it)
         if (!(*it)->RootCandidateInvariant())
             return false;
     return true;
 }
 
-bool Condition::And::TargetInvariant() const
-{
+bool Condition::And::TargetInvariant() const {
     for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it)
         if (!(*it)->TargetInvariant())
             return false;
     return true;
 }
 
-std::string Condition::And::Description(bool negated/* = false*/) const
-{
+std::string Condition::And::Description(bool negated/* = false*/) const {
     if (m_operands.size() == 1) {
         return m_operands[0]->Description();
     } else {
@@ -5110,8 +4880,7 @@ std::string Condition::And::Description(bool negated/* = false*/) const
     }
 }
 
-std::string Condition::And::Dump() const
-{
+std::string Condition::And::Dump() const {
     std::string retval = DumpIndent() + "And [\n";
     ++g_indent;
     for (unsigned int i = 0; i < m_operands.size(); ++i) {
@@ -5125,13 +4894,13 @@ std::string Condition::And::Dump() const
 ///////////////////////////////////////////////////////////
 // Or                                                    //
 ///////////////////////////////////////////////////////////
-Condition::Or::~Or()
-{
+Condition::Or::~Or() {
     for (unsigned int i = 0; i < m_operands.size(); ++i)
         delete m_operands[i];
 }
 
-void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                         SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     const UniverseObject* no_object(0);
     ScriptingContext local_context(parent_context, no_object);
@@ -5172,24 +4941,21 @@ void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matc
     }
 }
 
-bool Condition::Or::RootCandidateInvariant() const
-{
+bool Condition::Or::RootCandidateInvariant() const {
     for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it)
         if (!(*it)->RootCandidateInvariant())
             return false;
     return true;
 }
 
-bool Condition::Or::TargetInvariant() const
-{
+bool Condition::Or::TargetInvariant() const {
     for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it)
         if (!(*it)->TargetInvariant())
             return false;
     return true;
 }
 
-std::string Condition::Or::Description(bool negated/* = false*/) const
-{
+std::string Condition::Or::Description(bool negated/* = false*/) const {
     if (m_operands.size() == 1) {
         return m_operands[0]->Description();
     } else {
@@ -5205,8 +4971,7 @@ std::string Condition::Or::Description(bool negated/* = false*/) const
     }
 }
 
-std::string Condition::Or::Dump() const
-{
+std::string Condition::Or::Dump() const {
     std::string retval = DumpIndent() + "Or [\n";
     ++g_indent;
     for (unsigned int i = 0; i < m_operands.size(); ++i) {
@@ -5223,7 +4988,8 @@ std::string Condition::Or::Dump() const
 Condition::Not::~Not()
 { delete m_operand; }
 
-void Condition::Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                          SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     const UniverseObject* no_object(0);
     ScriptingContext local_context(parent_context, no_object);
@@ -5248,8 +5014,7 @@ bool Condition::Not::TargetInvariant() const
 std::string Condition::Not::Description(bool negated/* = false*/) const
 { return m_operand->Description(true); }
 
-std::string Condition::Not::Dump() const
-{
+std::string Condition::Not::Dump() const {
     std::string retval = DumpIndent() + "Not\n";
     ++g_indent;
     retval += m_operand->Dump();

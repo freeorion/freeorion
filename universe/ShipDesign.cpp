@@ -608,7 +608,7 @@ const int       ShipDesign::INVALID_DESIGN_ID = -1;
 const int       ShipDesign::MAX_ID            = 2000000000;
 
 ShipDesign::ShipDesign() :
-    m_id(UniverseObject::INVALID_OBJECT_ID),
+    m_id(INVALID_OBJECT_ID),
     m_name(""),
     m_designed_by_empire_id(ALL_EMPIRES),
     m_designed_on_turn(UniverseObject::INVALID_OBJECT_AGE),
@@ -646,7 +646,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
                        int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
                        const std::string& graphic, const std::string& model,
                        bool name_desc_in_stringtable, bool monster) :
-    m_id(UniverseObject::INVALID_OBJECT_ID),
+    m_id(INVALID_OBJECT_ID),
     m_name(name),
     m_description(description),
     m_designed_by_empire_id(designed_by_empire_id),
@@ -784,9 +784,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     Condition::ObjectSet non_locations;
     non_locations.reserve(RESERVE_SET_SIZE);
 
-    const ObjectMap& objects = GetMainObjectMap();
-
-    const UniverseObject* location = objects.Object(location_id);
+    const UniverseObject* location = GetUniverseObject(location_id);
     if (!location)
         return false;
 
@@ -817,12 +815,12 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     // empire id.  this is used in conditions to reference which empire is
     // doing the producing.  Ideally this will be the capital, but any object
     // owned by the empire will work.
-    const UniverseObject* source = objects.Object(empire->CapitalID());
+    const UniverseObject* source = GetUniverseObject(empire->CapitalID());
     if (!source && location->OwnedBy(empire_id))
         source = location;
     // still no valid source?!  scan through all objects to find one owned by this empire
     if (!source) {
-        for (ObjectMap::const_iterator obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it) {
+        for (ObjectMap::const_iterator obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
             if (obj_it->second->OwnedBy(empire_id)) {
                 source = obj_it->second;
                 break;

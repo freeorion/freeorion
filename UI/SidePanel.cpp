@@ -731,9 +731,9 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 {
     SetName(UserString("PLANET_PANEL"));
 
-    const Planet* planet = GetObject<Planet>(m_planet_id);
+    const Planet* planet = GetPlanet(m_planet_id);
     if (!planet)
-        planet = GetEmpireKnownObject<Planet>(m_planet_id, HumanClientApp::GetApp()->EmpireID());
+        planet = GetEmpireKnownPlanet(m_planet_id, HumanClientApp::GetApp()->EmpireID());
     if (!planet) {
         Logger().errorStream() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
         return;
@@ -779,7 +779,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     // check for shipyard
     const std::set<int>& buildings = planet->Buildings();
     for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-        const Building* building = GetEmpireKnownObject<Building>(*building_it, HumanClientApp::GetApp()->EmpireID());
+        const Building* building = GetEmpireKnownBuilding(*building_it, HumanClientApp::GetApp()->EmpireID());
         if (!building)
             continue;
         // annoying hard-coded building name here... not sure how better to deal with it
@@ -943,7 +943,7 @@ void SidePanel::PlanetPanel::DoLayout()
 }
 
 void SidePanel::PlanetPanel::CheckDisplayPlanets() {
-    const Planet* planet = GetMainObjectMap().Object<Planet>(m_planet_id);
+    const Planet* planet = GetPlanet(m_planet_id);
     if (planet && GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown")) {
         if (planet->Type() == PT_ASTEROIDS) {
             std::vector<boost::shared_ptr<GG::Texture> > textures;
@@ -991,7 +991,7 @@ void SidePanel::PlanetPanel::CheckDisplayPlanets() {
 namespace {
     Ship* ValidSelectedColonyShip(int system_id) {
         // if not looking in a valid system, no valid colony ship can be available
-        if (system_id == UniverseObject::INVALID_OBJECT_ID)
+        if (system_id == INVALID_OBJECT_ID)
             return 0;
 
         // is there a valid selected ship in the active FleetWnd?
@@ -1007,7 +1007,7 @@ namespace {
         std::set<Ship*> retval;
 
         // if not looking in a valid system, no valid colony ship can be available
-        if (system_id == UniverseObject::INVALID_OBJECT_ID)
+        if (system_id == INVALID_OBJECT_ID)
             return retval;
 
         // is there a valid single selected ship in the active FleetWnd?
@@ -1023,7 +1023,7 @@ namespace {
     bool OwnedColonyShipsInSystem(int empire_id, int system_id) {
         const ObjectMap& objects = GetUniverse().Objects();
 
-        if (!objects.Object<System>(system_id))
+        if (!GetSystem(system_id))
             return false;
 
         std::vector<const Ship*> system_ships = objects.FindObjects<Ship>();
@@ -1074,9 +1074,9 @@ void SidePanel::PlanetPanel::Refresh()
 {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    const Planet* planet = GetObject<Planet>(m_planet_id);
+    const Planet* planet = GetPlanet(m_planet_id);
     if (!planet)
-        planet = GetEmpireKnownObject<Planet>(m_planet_id, client_empire_id);
+        planet = GetEmpireKnownPlanet(m_planet_id, client_empire_id);
     if (!planet) {
         Logger().debugStream() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
@@ -1243,7 +1243,7 @@ void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 
 void SidePanel::PlanetPanel::SetFocus(const std::string& focus)
 {
-    const Planet* planet = GetObject<Planet>(m_planet_id);
+    const Planet* planet = GetPlanet(m_planet_id);
     if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         return;
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
@@ -1292,7 +1292,7 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    const Planet* planet = GetObject<Planet>(m_planet_id);
+    const Planet* planet = GetPlanet(m_planet_id);
     if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()) || !m_order_issuing_enabled)
         return;
 
@@ -1435,7 +1435,7 @@ namespace {
         const OrderSet orders = app->Orders();
 
         // is selected ship already ordered to colonize?  If so, recind that order.
-        if (ship->OrderedColonizePlanet() != UniverseObject::INVALID_OBJECT_ID) {
+        if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
             for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
                 if (boost::shared_ptr<ColonizeOrder> order = boost::dynamic_pointer_cast<ColonizeOrder>(it->second)) {
                     if (order->ShipID() == ship->ID()) {
@@ -1447,7 +1447,7 @@ namespace {
         }
 
         // is selected ship ordered to invade?  If so, recind that order
-        if (ship->OrderedInvadePlanet() != UniverseObject::INVALID_OBJECT_ID) {
+        if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
             for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
                if (boost::shared_ptr<InvadeOrder> order = boost::dynamic_pointer_cast<InvadeOrder>(it->second)) {
                     if (order->ShipID() == ship->ID()) {
@@ -1477,7 +1477,7 @@ void SidePanel::PlanetPanel::ClickColonize()
     // order or cancel colonization, depending on whether it has previosuly
     // been ordered
 
-    const Planet* planet = GetObject<Planet>(m_planet_id);
+    const Planet* planet = GetPlanet(m_planet_id);
     if (!planet || !planet->Unowned() || !m_order_issuing_enabled)
         return;
 
@@ -1503,7 +1503,7 @@ void SidePanel::PlanetPanel::ClickColonize()
             Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize selected colony ship not owned by this client's empire.";
             return;
         }
-        const Fleet* fleet = GetObject<Fleet>(ship->FleetID());
+        const Fleet* fleet = GetFleet(ship->FleetID());
         if (!fleet) {
             Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize fleet not found!";
             return;
@@ -1520,7 +1520,7 @@ void SidePanel::PlanetPanel::ClickInvade()
     // order or cancel invasion, depending on whether it has previosuly
     // been ordered
 
-    const Planet* planet = GetObject<Planet>(m_planet_id);
+    const Planet* planet = GetPlanet(m_planet_id);
     if (!planet || planet->CurrentMeterValue(METER_POPULATION) <= 0.0 || !m_order_issuing_enabled)
         return;
 
@@ -1579,7 +1579,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer(GG::X x, GG::Y y, GG::X w,
     Wnd(x, y, w, h, GG::INTERACTIVE),
     m_planet_panels(),
     m_planet_panels_top(GG::Y0),
-    m_selected_planet_id(UniverseObject::INVALID_OBJECT_ID),
+    m_selected_planet_id(INVALID_OBJECT_ID),
     m_vscroll(new CUIScroll(Width() - GG::X(ClientUI::ScrollWidth()),
                             GG::Y0,
                             GG::X(ClientUI::ScrollWidth()),
@@ -1653,7 +1653,7 @@ void SidePanel::PlanetPanelContainer::ScrollTo(int pos)
 void SidePanel::PlanetPanelContainer::Clear()
 {
     m_planet_panels.clear();
-    m_selected_planet_id = UniverseObject::INVALID_OBJECT_ID;
+    m_selected_planet_id = INVALID_OBJECT_ID;
     PlanetSelectedSignal(m_selected_planet_id);
     DetachChild(m_vscroll);
     DeleteChildren();
@@ -1769,7 +1769,7 @@ void SidePanel::PlanetPanelContainer::SelectPlanet(int planet_id)
 
         // if a panel was marked, signal this fact
         if (!planet_id_match_found) {
-            m_selected_planet_id = UniverseObject::INVALID_OBJECT_ID;
+            m_selected_planet_id = INVALID_OBJECT_ID;
             //std::cout << " ... no planet with requested ID found" << std::endl;
         }
     }
@@ -1795,7 +1795,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates()
         for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
             PlanetPanel*    panel =     *it;
             int             planet_id = panel->PlanetID();
-            const Planet*   planet =    GetObject<Planet>(planet_id);
+            const Planet*   planet =    GetPlanet(planet_id);
 
             if (planet && planet->Accept(*m_valid_selection_predicate)) {
                 m_candidate_ids.insert(planet_id);
@@ -1864,7 +1864,7 @@ void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/)
 // SidePanel
 ////////////////////////////////////////////////
 // static(s)
-int                                         SidePanel::s_system_id = UniverseObject::INVALID_OBJECT_ID;
+int                                         SidePanel::s_system_id = INVALID_OBJECT_ID;
 std::set<SidePanel*>                        SidePanel::s_side_panels;
 std::set<boost::signals::connection>        SidePanel::s_system_connections;
 std::map<int, boost::signals::connection>   SidePanel::s_fleet_state_change_signals;
@@ -2063,14 +2063,14 @@ void SidePanel::Refresh()
 
 
     // early exit if no valid system object to get or connect signals to
-    if (s_system_id == UniverseObject::INVALID_OBJECT_ID)
+    if (s_system_id == INVALID_OBJECT_ID)
         return;
 
 
     // connect state changed and insertion signals for planets and fleets in system
-    const System* system = GetObject<System>(s_system_id);
+    const System* system = GetSystem(s_system_id);
     if (!system)
-        system = GetEmpireKnownObject<System>(s_system_id, HumanClientApp::GetApp()->EmpireID());
+        system = GetEmpireKnownSystem(s_system_id, HumanClientApp::GetApp()->EmpireID());
     if (!system) {
         Logger().errorStream() << "SidePanel::Refresh couldn't get system with id " << s_system_id;
         return;
@@ -2078,12 +2078,12 @@ void SidePanel::Refresh()
 
     std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
     for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it)
-        if (Planet* planet = GetObject<Planet>(*it))
+        if (Planet* planet = GetPlanet(*it))
             s_system_connections.insert(GG::Connect(planet->ResourceCenterChangedSignal, SidePanel::ResourceCenterChangedSignal));
 
     std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
     for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it)
-        if (Fleet* fleet = GetObject<Fleet>(*it))
+        if (Fleet* fleet = GetFleet(*it))
             s_fleet_state_change_signals[*it] = GG::Connect(fleet->StateChangedSignal, &SidePanel::FleetStateChanged);
 
     //s_system_connections.insert(GG::Connect(s_system->StateChangedSignal,   &SidePanel::Update));
@@ -2209,7 +2209,7 @@ void SidePanel::RefreshImpl()
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     std::vector<int> owned_planets;
     for (std::vector<int>::const_iterator it = known_system_planet_ids.begin(); it != known_system_planet_ids.end(); ++it) {
-        const Planet* planet = GetObject<Planet>(*it);
+        const Planet* planet = GetPlanet(*it);
         if (planet && planet->OwnedBy(empire_id))
             owned_planets.push_back(*it);
     }
@@ -2299,7 +2299,7 @@ void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 
 void SidePanel::SystemSelectionChanged(GG::DropDownList::iterator it)
 {
-    int system_id = UniverseObject::INVALID_OBJECT_ID;
+    int system_id = INVALID_OBJECT_ID;
     if (it != m_system_name->end())
         system_id = boost::polymorphic_downcast<const SystemRow*>(*it)->SystemID();
     if (SystemID() != system_id)
@@ -2368,7 +2368,7 @@ int SidePanel::SelectedPlanetID() const
     if (m_planet_panel_container)
         return m_planet_panel_container->SelectedPlanetID();
     else
-        return UniverseObject::INVALID_OBJECT_ID;
+        return INVALID_OBJECT_ID;
 }
 
 bool SidePanel::PlanetSelectable(int id) const
@@ -2398,7 +2398,7 @@ void SidePanel::SetSystem(int system_id)
 
     s_system_id = system_id;
 
-    if (GetEmpireKnownObject<System>(s_system_id, HumanClientApp::GetApp()->EmpireID()))
+    if (GetEmpireKnownSystem(s_system_id, HumanClientApp::GetApp()->EmpireID()))
         PlaySidePanelOpenSound();
 
     // refresh sidepanels

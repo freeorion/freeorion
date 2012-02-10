@@ -39,20 +39,19 @@ namespace {
             return 0;
         }
 
-        const ObjectMap& objects = GetMainObjectMap();
         while (first != last) {
             adobe::name_t property_name = *first;
             if (property_name == Planet_name) {
                 if (const Building* b = universe_object_cast<const Building*>(obj))
-                    obj = objects.Object<Planet>(b->PlanetID());
+                    obj = GetPlanet(b->PlanetID());
                 else
                     obj = 0;
             } else if (property_name == System_name) {
                 if (obj)
-                    obj = objects.Object<System>(obj->SystemID());
+                    obj = GetSystem(obj->SystemID());
             } else if (property_name == Fleet_name) {
                 if (const Ship* s = universe_object_cast<const Ship*>(obj))
-                    obj = objects.Object<Fleet>(s->FleetID());
+                    obj = GetFleet(s->FleetID());
                 else
                     obj = 0;
             }
@@ -406,14 +405,21 @@ namespace ValueRef {
 
         IF_CURRENT_VALUE(StarType)
 
+        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+        if (!object) {
+            Logger().errorStream() << "Variable<StarType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
+            return INVALID_STAR_TYPE;
+        }
+
         if (property_name == StarType_name) {
-            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
-            if (!object) {
-                Logger().errorStream() << "Variable<StarType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
-                return INVALID_STAR_TYPE;
-            }
             if (const System* s = universe_object_cast<const System*>(object))
                 return s->GetStarType();
+        } else if (property_name == NextOlderStarType_name) {
+            if (const System* s = universe_object_cast<const System*>(object))
+                return s->NextOlderStarType();
+        } else if (property_name == NextYoungerStarType_name) {
+            if (const System* s = universe_object_cast<const System*>(object))
+                return s->NextYoungerStarType();
         } else {
             throw std::runtime_error("Attempted to read a non-StarType value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type StarType.");
         }
@@ -508,29 +514,29 @@ namespace ValueRef {
             if (const Ship* ship = universe_object_cast<const Ship*>(object))
                 return ship->FleetID();
             else
-                return UniverseObject::INVALID_OBJECT_ID;
+                return INVALID_OBJECT_ID;
         } else if (property_name == PlanetID_name) {
             if (const Building* building = universe_object_cast<const Building*>(object))
                 return building->PlanetID();
             else
-                return UniverseObject::INVALID_OBJECT_ID;
+                return INVALID_OBJECT_ID;
         } else if (property_name == SystemID_name) {
             return object->SystemID();
         } else if (property_name == FinalDestinationID_name) {
             if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
                 return fleet->FinalDestinationID();
             else
-                return UniverseObject::INVALID_OBJECT_ID;
+                return INVALID_OBJECT_ID;
         } else if (property_name == NextSystemID_name) {
             if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
                 return fleet->NextSystemID();
             else
-                return UniverseObject::INVALID_OBJECT_ID;
+                return INVALID_OBJECT_ID;
         } else if (property_name == PreviousSystemID_name) {
             if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
                 return fleet->PreviousSystemID();
             else
-                return UniverseObject::INVALID_OBJECT_ID;
+                return INVALID_OBJECT_ID;
         } else if (property_name == NumShips_name) {
             if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
                 return fleet->NumShips();
