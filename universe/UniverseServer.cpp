@@ -1665,15 +1665,7 @@ void Universe::AddStartingSpecials(GalaxySetupOption specials_freq) {
                 // there is no location condition, assume this special can't
                 // be spawned automatically
                 const Condition::ConditionBase* location_test = special->Location();
-                Condition::ObjectSet obj_set, matches;
-                obj_set.reserve(RESERVE_SET_SIZE);
-                matches.reserve(RESERVE_SET_SIZE);
-                if (location_test) {
-                    obj_set.push_back(obj);
-                    location_test->Eval(matches, obj_set);
-                    //Logger().debugStream() << "Special location condition: " << location_test->Dump();
-                }
-                if (location_test && !matches.empty()) {
+                if (location_test && location_test->Eval(obj)) {
                     // special can be placed here
 
                     // test random chance to place this special
@@ -1845,14 +1837,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq) {
                 // location.  if there is no location condition, assume there
                 // is no restriction on this monster's spawn location.
                 const Condition::ConditionBase* location_test = plan->Location();
-                Condition::ObjectSet sys_set, matches;
-                sys_set.reserve(RESERVE_SET_SIZE);
-                matches.reserve(RESERVE_SET_SIZE);
-                if (location_test) {
-                    sys_set.push_back(system);
-                    location_test->Eval(matches, sys_set);
-                }
-                if (!location_test || !matches.empty()) {
+                if (!location_test || location_test->Eval(system)) {
                     //Logger().debugStream() << "... ... can be placed here";
                     // monster can be placed here.
 

@@ -179,6 +179,15 @@ void Condition::ConditionBase::Eval(const ScriptingContext& parent_context,
 void Condition::ConditionBase::Eval(Condition::ObjectSet& matches) const
 { Eval(ScriptingContext(), matches); }
 
+bool Condition::ConditionBase::Eval(const UniverseObject* candidate) const {
+    if (!candidate)
+        return false;
+    Condition::ObjectSet non_matches, matches;
+    non_matches.push_back(candidate);
+    Eval(ScriptingContext(), matches, non_matches);
+    return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
+}
+
 std::string Condition::ConditionBase::Description(bool negated/* = false*/) const
 { return ""; }
 

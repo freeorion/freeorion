@@ -119,6 +119,9 @@ struct Condition::ConditionBase
     /** Tests all objects in universe as NON_MATCHES with empty ScriptingContext. */
     void                Eval(Condition::ObjectSet& matches) const;
 
+    /** Tests single candidate object, returning true iff it matches condition. */
+    bool                Eval(const UniverseObject* candidate) const;
+
     /** Returns true iff this condition's evaluation does not reference
       * the RootCandidate objects.  This requirement ensures that if this
       * condition is a subcondition to another Condition or a ValueRef, this
