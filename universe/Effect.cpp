@@ -232,7 +232,6 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetS
 }
 
 void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& potential_targets) const {
-    typedef Condition::ObjectSet ObjectSet;
     targets.clear();
 
     UniverseObject* source = GetUniverseObject(source_id);
@@ -240,39 +239,27 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& po
         Logger().errorStream() << "EffectsGroup::GetTargetSet passed invalid source object with id " << source_id;
         return;
     }
-
-    // evaluate the activation condition only on the source object
-    Condition::ObjectSet non_targets;
-    non_targets.reserve(RESERVE_SET_SIZE);
-    Condition::ObjectSet matched_targets;
-    matched_targets.reserve(RESERVE_SET_SIZE);
+    if (!m_scope) {
+        Logger().errorStream() << "EffectsGroup::GetTargetSet didn't find a valid scope condition to use...";
+    }
 
     // if there is an activation condition, evaluate it on the source object,
     // and abort with no targets if the source object doesn't match.
     // if there is no activation condition, continue as if the source object
     // had matched an activation condition.
-    if (m_activation) {
-        non_targets.push_back(source);
-        m_activation->Eval(ScriptingContext(source), matched_targets, non_targets);
+    if (m_activation && !m_activation->Eval(ScriptingContext(source), source))
+        return;
 
-        // if the activation condition did not evaluate to true for the source object, do nothing
-        if (matched_targets.empty())
-            return;
-
-        // remove source object from target set after activation condition check
-        matched_targets.clear();
-    }
-
-    BOOST_MPL_ASSERT((boost::is_same<TargetSet, std::vector<UniverseObject*> >));
-    BOOST_MPL_ASSERT((boost::is_same<ObjectSet, std::vector<const UniverseObject*> >));
+    BOOST_MPL_ASSERT((boost::is_same<TargetSet,             std::vector<UniverseObject*> >));
+    BOOST_MPL_ASSERT((boost::is_same<Condition::ObjectSet,  std::vector<const UniverseObject*> >));
 
     // HACK! We're doing some dirt here for efficiency's sake.  Since we can't
     // const-cast std::set<UniverseObject*> to std::set<const
     // UniverseObject*>, we're telling the compiler that one type is actually
     // the other, rather than doing a copy.
     m_scope->Eval(ScriptingContext(source), 
-                  *static_cast<ObjectSet *>(static_cast<void *>(&targets)), 
-                  *static_cast<ObjectSet *>(static_cast<void *>(&potential_targets)));
+                  *static_cast<Condition::ObjectSet *>(static_cast<void *>(&targets)), 
+                  *static_cast<Condition::ObjectSet *>(static_cast<void *>(&potential_targets)));
 }
 
 void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const {

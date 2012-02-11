@@ -120,6 +120,11 @@ struct Condition::ConditionBase
     void                Eval(Condition::ObjectSet& matches) const;
 
     /** Tests single candidate object, returning true iff it matches condition. */
+    bool                Eval(const ScriptingContext& parent_context,
+                             const UniverseObject* candidate) const;
+
+    /** Tests single candidate object, returning true iff it matches condition
+      * with empty ScriptingContext. */
     bool                Eval(const UniverseObject* candidate) const;
 
     /** Returns true iff this condition's evaluation does not reference

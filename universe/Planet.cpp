@@ -412,13 +412,7 @@ std::vector<std::string> Planet::AvailableFoci() const {
         for (std::vector<FocusType>::const_iterator it = foci.begin(); it != foci.end(); ++it) {
             const FocusType& focus_type = *it;
             if (const Condition::ConditionBase* location = focus_type.Location()) {
-                Condition::ObjectSet potential_targets;
-                potential_targets.reserve(RESERVE_SET_SIZE);
-                potential_targets.push_back(this);
-                Condition::ObjectSet matched_targets;
-                matched_targets.reserve(RESERVE_SET_SIZE);
-                location->Eval(context, matched_targets, potential_targets);
-                if (!matched_targets.empty())
+                if (location->Eval(context, this))
                     retval.push_back(focus_type.Name());
             }
         }

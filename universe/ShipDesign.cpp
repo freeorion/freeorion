@@ -779,11 +779,6 @@ std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
 }
 
 bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
-    Condition::ObjectSet locations;
-    locations.reserve(RESERVE_SET_SIZE);
-    Condition::ObjectSet non_locations;
-    non_locations.reserve(RESERVE_SET_SIZE);
-
     const UniverseObject* location = GetUniverseObject(location_id);
     if (!location)
         return false;
@@ -831,18 +826,13 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     if (!source)
         return false;
 
-    ScriptingContext sc(source);
-
-    locations.push_back(location);
-
     // apply hull location conditions to potential location
     const HullType* hull = GetHull();
     if (!hull) {
         Logger().errorStream() << "ShipDesign::ProductionLocation  ShipDesign couldn't get its own hull with name " << m_hull;
         return false;
     }
-    hull->Location()->Eval(sc, locations, non_locations, Condition::MATCHES);
-    if (locations.empty())
+    if (!hull->Location()->Eval(ScriptingContext(source), location))
         return false;
 
     // apply external and internal parts' location conditions to potential location
@@ -856,8 +846,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
             Logger().errorStream() << "ShipDesign::ProductionLocation  ShipDesign couldn't get part with name " << part_name;
             return false;
         }
-        part->Location()->Eval(sc, locations, non_locations, Condition::MATCHES);
-        if (locations.empty())
+        if (!part->Location()->Eval(ScriptingContext(source), location))
             return false;
     }
     // location matched all hull and part conditions, so is a valid build location

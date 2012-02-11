@@ -72,9 +72,6 @@ namespace {
                                                             const UniverseObject* candidate_object/* = 0*/)
     {
         std::map<std::string, bool> retval;
-        Condition::ObjectSet candidate_set, empty_set;
-        if (candidate_object)
-            candidate_set.push_back(candidate_object);
 
         std::vector<const Condition::ConditionBase*> flattened_conditions;
         if (conditions.empty())
@@ -90,10 +87,7 @@ namespace {
              it != flattened_conditions.end(); ++it)
         {
             const Condition::ConditionBase* condition = *it;
-            Condition::ObjectSet candidate_set_temp = candidate_set;    // preserve original for reuse
-            Condition::ObjectSet matches_set_temp = empty_set;
-            condition->Eval(parent_context, matches_set_temp, candidate_set_temp);
-            retval[condition->Description()] = candidate_set_temp.empty();
+            retval[condition->Description()] = condition->Eval(parent_context, candidate_object);
         }
         return retval;
     }
@@ -178,6 +172,17 @@ void Condition::ConditionBase::Eval(const ScriptingContext& parent_context,
 
 void Condition::ConditionBase::Eval(Condition::ObjectSet& matches) const
 { Eval(ScriptingContext(), matches); }
+
+bool Condition::ConditionBase::Eval(const ScriptingContext& parent_context,
+                                    const UniverseObject* candidate) const
+{
+    if (!candidate)
+        return false;
+    Condition::ObjectSet non_matches, matches;
+    non_matches.push_back(candidate);
+    Eval(parent_context, matches, non_matches);
+    return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
+}
 
 bool Condition::ConditionBase::Eval(const UniverseObject* candidate) const {
     if (!candidate)

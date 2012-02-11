@@ -201,6 +201,9 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
         return false;
     }
 
+    if (!m_location)
+        return true;
+
     // get a source object, which is owned by the empire with the passed-in
     // empire id.  this is used in conditions to reference which empire is
     // doing the building.  Ideally this will be the capital, but any object
@@ -221,16 +224,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     if (!source)
         return false;
 
-    ScriptingContext sc(source);
-
-    Condition::ObjectSet potential_targets;
-    potential_targets.reserve(RESERVE_SET_SIZE);
-    potential_targets.push_back(location);
-    Condition::ObjectSet matched_targets;
-    matched_targets.reserve(RESERVE_SET_SIZE);
-    m_location->Eval(sc, matched_targets, potential_targets);
-
-    return !matched_targets.empty();
+    return m_location->Eval(ScriptingContext(source), location);
 }
 
 /////////////////////////////////////////////////
