@@ -6,7 +6,6 @@ ShipDesign
         "GT_TROOP_POD"
         "SH_DEFENSE_GRID"
     ]
-    icon = "icons/ship_hulls/generic.png"
     model = "fighter"
 
 ShipDesign
@@ -17,7 +16,6 @@ ShipDesign
         "DT_OPTICAL_SCANNER"
         "FU_BASIC_TANK"
         ]
-    icon = "icons/ship_hulls/generic.png"
     model = "fighter"
 
 ShipDesign
@@ -30,7 +28,6 @@ ShipDesign
         ""
         "CO_COLONY_POD"
     ]
-    icon = "icons/ship_hulls/generic.png"
     model = "seed"
 
 ShipDesign
@@ -38,7 +35,6 @@ ShipDesign
     description = "SD_COLONY_BASE_DESC"
     hull = "SH_COLONY_BASE"
     parts = "CO_COLONY_POD"
-    icon = "icons/ship_hulls/generic.png"
     model = "seed"
 
 ShipDesign
@@ -51,7 +47,6 @@ ShipDesign
         ""
         "CO_OUTPOST_MOD"
     ]
-    icon = "icons/ship_hulls/generic.png"
     model = "seed"
 
 ShipDesign
@@ -59,7 +54,6 @@ ShipDesign
     description = "SD_OUTPOST_BASE_DESC"
     hull = "SH_COLONY_BASE"
     parts = "CO_OUTPOST_MOD"
-    icon = "icons/ship_hulls/generic.png"
     model = "seed"
 
 ShipDesign
