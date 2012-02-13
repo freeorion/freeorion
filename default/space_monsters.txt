@@ -7,7 +7,7 @@ ShipDesign
         ""
         ""
     ]
-    graphic = "icons/monsters/krill-1.png"
+    icon = "icons/monsters/krill-1.png"
     model = "seed"
 
 ShipDesign
@@ -19,7 +19,7 @@ ShipDesign
         ""
         ""
     ]
-    graphic = "icons/monsters/krill-2.png"
+    icon = "icons/monsters/krill-2.png"
     model = "seed"
 
 ShipDesign
@@ -31,7 +31,7 @@ ShipDesign
         "SR_WEAPON_3"
         ""
     ]
-    graphic = "icons/monsters/krill-3.png"
+    icon = "icons/monsters/krill-3.png"
     model = "seed"
 
 ShipDesign
@@ -43,7 +43,7 @@ ShipDesign
         "SR_WEAPON_4"
         ""
     ]
-    graphic = "icons/monsters/krill-4.png"
+    icon = "icons/monsters/krill-4.png"
     model = "seed"
 
 ShipDesign
@@ -51,7 +51,7 @@ ShipDesign
     description = "SM_TREE_DESC"
     hull = "SH_IMMOBILE_MONSTER_BODY"
     parts = ""
-    graphic = "icons/monsters/tree.png"
+    icon = "icons/monsters/tree.png"
     model = "seed"
 
 ShipDesign
@@ -63,7 +63,7 @@ ShipDesign
         "SH_DEFLECTOR"
         ""
     ]
-    graphic = "icons/monsters/floater.png"
+    icon = "icons/monsters/floater.png"
     model = "seed"
 
 ShipDesign
@@ -77,7 +77,7 @@ ShipDesign
         "AR_ROCK_PLATE"
         "FU_ZERO_FUEL"
     ]
-    graphic = "icons/monsters/dragon.png"
+    icon = "icons/monsters/dragon.png"
     model = "seed"
 
 ShipDesign
@@ -90,7 +90,7 @@ ShipDesign
         "DT_OPTICAL_SCANNER"
         "AR_ROCK_PLATE"
     ]
-    graphic = "icons/monsters/sentry.png"
+    icon = "icons/monsters/sentry.png"
     model = "seed"
 
 ShipDesign
@@ -103,7 +103,7 @@ ShipDesign
         "DT_OPTICAL_SCANNER"
         "AR_ZORTRIUM_PLATE"
     ]
-    graphic = "icons/monsters/sentinel.png"
+    icon = "icons/monsters/sentinel.png"
     model = "seed"
 
 ShipDesign
@@ -116,7 +116,7 @@ ShipDesign
         "DT_OPTICAL_SCANNER"
         "AR_CRYSTAL_PLATE"
     ]
-    graphic = "icons/monsters/warden.png"
+    icon = "icons/monsters/warden.png"
     model = "seed"
 
 ShipDesign
@@ -127,7 +127,7 @@ ShipDesign
         "AR_ROCK_PLATE"
         "SR_WEAPON_2"
     ]
-    graphic = "icons/ship_parts/colony_pod.png"
+    icon = "icons/ship_parts/colony_pod.png"
     model = "seed"
 
 ShipDesign
@@ -139,7 +139,7 @@ ShipDesign
         "SR_WEAPON_3"
         ""
     ]
-    graphic = "icons/ship_parts/antimatter_tank.png"
+    icon = "icons/ship_parts/antimatter_tank.png"
     model = "seed"
 
 ShipDesign
@@ -151,7 +151,7 @@ ShipDesign
         "SR_WEAPON_3"
         ""
         ]
-    graphic = "icons/monsters/kraken-1.png"
+    icon = "icons/monsters/kraken-1.png"
     model = "seed"
         
 ShipDesign
@@ -163,7 +163,7 @@ ShipDesign
         ""
         ""
         ]
-    graphic = "icons/monsters/kraken-2.png"
+    icon = "icons/monsters/kraken-2.png"
     model = "seed"
 
 ShipDesign
@@ -175,7 +175,7 @@ ShipDesign
         ""
         ""
         ]
-    graphic = "icons/monsters/kraken-3.png"
+    icon = "icons/monsters/kraken-3.png"
     model = "seed"
         
 ShipDesign
@@ -187,7 +187,7 @@ ShipDesign
         "SR_WEAPON_1"
         ""
         ]
-    graphic = "icons/monsters/snowflake-1.png"
+    icon = "icons/monsters/snowflake-1.png"
     model = "seed"
         
 ShipDesign
@@ -199,7 +199,7 @@ ShipDesign
         ""
         ""
         ]
-    graphic = "icons/monsters/snowflake-2.png"
+    icon = "icons/monsters/snowflake-2.png"
     model = "seed"
 
 ShipDesign
@@ -211,7 +211,7 @@ ShipDesign
         "SR_WEAPON_1"
         ""
         ]
-    graphic = "icons/monsters/snowflake-3.png"
+    icon = "icons/monsters/snowflake-3.png"
     model = "seed"
         
 ShipDesign
@@ -223,7 +223,7 @@ ShipDesign
         "SR_WEAPON_1"
         "SH_DEFENSE_GRID"
         ]
-    graphic = "icons/monsters/juggernaut-1.png"
+    icon = "icons/monsters/juggernaut-1.png"
     model = "seed"
         
 ShipDesign
@@ -235,7 +235,7 @@ ShipDesign
         "SR_WEAPON_1"
         "SH_DEFLECTOR"
         ]
-    graphic = "icons/monsters/juggernaut-2.png"
+    icon = "icons/monsters/juggernaut-2.png"
     model = "seed"
 
 ShipDesign
@@ -247,5 +247,5 @@ ShipDesign
         "SR_WEAPON_2"
         "SH_DEFLECTOR"
         ]
-    graphic = "icons/monsters/juggernaut-3.png"
+    icon = "icons/monsters/juggernaut-3.png"
     model = "seed"
