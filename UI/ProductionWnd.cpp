@@ -128,7 +128,7 @@ namespace {
             graphic = ClientUI::BuildingTexture(build.item.name);
             name_text = UserString(build.item.name);
         } else if (build.item.build_type == BT_SHIP) {
-            graphic = ClientUI::ShipIcon(build.item.design_id);
+            graphic = ClientUI::ShipDesignIcon(build.item.design_id);
             name_text = GetShipDesign(build.item.design_id)->Name();
         } else {
             graphic = ClientUI::GetTexture(""); // get "missing texture" texture by supply intentionally bad path

@@ -25,6 +25,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 30
     graphic = "hulls_design/xentronium_hull.png"
+    icon = ""
 
 Hull
     name = "SH_COLONY_BASE"
@@ -47,6 +48,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 30
     graphic = "hulls_design/colony_base_hull.png"
+    icon = ""
     
 Hull
     name = "SH_BASIC_SMALL"
@@ -72,6 +74,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 30
     graphic = "hulls_design/basic-small-hull.png"
+    icon = ""
     
 Hull
     name = "SH_BASIC_MEDIUM"
@@ -98,7 +101,8 @@ Hull
             activation = Source
             effects = SetDetection Value + 30
     graphic = "hulls_design/basic-medium-hull.png"
-    
+    icon = ""
+
 Hull
     name = "SH_STANDARD"
     description = "SH_STANDARD_DESC"
@@ -125,6 +129,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 30
     graphic = ""
+    icon = ""
 
 Hull
     name = "SH_ROBOTIC"
@@ -173,6 +178,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/robotic_hull.png"
+    icon = ""
 
 Hull
     name = "SH_SPATIAL_FLUX"
@@ -218,6 +224,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/spatial_flux_hull.png"
+    icon = ""
 
 Hull
     name = "SH_SELF_GRAVITATING"
@@ -265,6 +272,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 30
     graphic = "hulls_design/self_gravitating_hull.png"
+    icon = ""
 
 Hull
     name = "SH_NANOROBOTIC"
@@ -312,6 +320,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/nano_robotic_hull.png"
+    icon = ""
 
 Hull
     name = "SH_TITANIC"
@@ -365,6 +374,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 30
     graphic = "hulls_design/titanic_hull.png"
+    icon = ""
 
 Hull
     name = "SH_TRANSSPATIAL"
@@ -398,6 +408,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 30
     graphic = "hulls_design/trans_spatial_hull.png"
+    icon = ""
 
 Hull
     name = "SH_LOGISTICS_FACILITATOR"
@@ -467,6 +478,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/lagistics_facilitator_hull.png"
+    icon = ""
 
 Hull
     name = "SH_ASTEROID"
@@ -510,6 +522,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/asteroid_hull.png"
+    icon = ""
 
 Hull
     name = "SH_SMALL_ASTEROID"
@@ -549,6 +562,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/small_asteroid_hull.png"
+    icon = ""
 
 Hull
     name = "SH_HEAVY_ASTEROID"
@@ -595,6 +609,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/heavy_asteroid_hull.png"
+    icon = ""
 
 Hull
     name = "SH_CAMOUFLAGE_ASTEROID"
@@ -636,6 +651,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/camouflage_asteroid_hull.png"
+    icon = ""
 
 Hull
     name = "SH_SMALL_CAMOUFLAGE_ASTEROID"
@@ -675,6 +691,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/small_camouflage_asteroid_hull.png"
+    icon = ""
 
 Hull
     name = "SH_AGREGATE_ASTEROID"
@@ -735,6 +752,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/agregate_asteroid_hull.png"
+    icon = ""
 
 Hull
     name = "SH_MINIASTEROID_SWARM"
@@ -778,6 +796,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/mini_asteroid_swarm.png"
+    icon = ""
 
 Hull
     name = "SH_SCATTERED_ASTEROID"
@@ -851,6 +870,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/scattered_asteroid_hull.png"
+    icon = ""
 
 Hull
     name = "SH_CRYSTALLIZED_ASTEROID"
@@ -898,6 +918,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/crystalized_asteroid_hull.png"
+    icon = ""
 
 Hull
     name = "SH_ORGANIC"
@@ -941,6 +962,7 @@ Hull
             effects = SetDetection Value + 10
     ]
     graphic = "hulls_design/organic_hull.png"
+    icon = ""
 
 Hull
     name = "SH_STATIC_MULTICELLULAR"
@@ -976,6 +998,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 30
     graphic = "hulls_design/static_multicellular.png"
+    icon = ""
 
 Hull
     name = "SH_ENDOMORPHIC"
@@ -1026,6 +1049,7 @@ Hull
             effects = SetDetection Value + 100
     ]
     graphic = "hulls_design/endomorphic_hull.png"
+    icon = ""
 
 Hull
     name = "SH_SYMBIOTIC"
@@ -1072,6 +1096,7 @@ Hull
             effects = SetDetection Value + 100
     ]
     graphic = "hulls_design/symbiotic_hull.png"
+    icon = ""
 
 Hull
     name = "SH_PROTOPLASMIC"
@@ -1121,6 +1146,7 @@ Hull
             effects = SetDetection Value + 100
     ]
     graphic = "hulls_design/protoplasmic_hull.png"
+    icon = ""
 
 Hull
     name = "SH_ENDOSYMBIOTIC"
@@ -1173,6 +1199,7 @@ Hull
             effects = SetDetection Value + 100
     ]
     graphic = "hulls_design/endosymbiotic_hull.png"
+    icon = ""
 
 Hull
     name = "SH_RAVENOUS"
@@ -1219,6 +1246,7 @@ Hull
             effects = SetDetection Value + 150
     ]
     graphic = "hulls_design/ravenous_hull.png"
+    icon = ""
 
 Hull
     name = "SH_BIOADAPTIVE"
@@ -1266,6 +1294,7 @@ Hull
             effects = SetDetection Value + 150
     ]
     graphic = "hulls_design/bio_adaptive_hull.png"
+    icon = ""
 
 Hull
     name = "SH_SENTIENT"
@@ -1338,6 +1367,7 @@ Hull
             effects = SetDetection Value + 100
     ]
     graphic = "hulls_design/sentient_hull.png"
+    icon = ""
 
 Hull
     name = "SH_COMPRESSED_ENERGY"
@@ -1368,6 +1398,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 30
     graphic = "hulls_design/compressed_energy_hull.png"
+    icon = ""
 
 Hull
     name = "SH_FRACTAL_ENERGY"
@@ -1430,6 +1461,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 30
     graphic = "hulls_design/fractal_energy_hull.png"
+    icon = ""
 
 Hull
     name = "SH_QUANTUM_ENERGY"
@@ -1475,6 +1507,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 30
     graphic = "hulls_design/quantum_energy_hull.png"
+    icon = ""
 
 Hull
     name = "SH_SOLAR"
@@ -1568,6 +1601,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = "hulls_design/solar_hull.png"
+    icon = ""
     
 Hull
     name = "SH_WEAK_MONSTER_BODY"
@@ -1615,6 +1649,7 @@ Hull
             effects = CreateShip "SM_TREE"
         ]
     graphic = ""
+    icon = ""
     
 Hull
     name = "SH_IMMOBILE_MONSTER_BODY"
@@ -1649,7 +1684,8 @@ Hull
             stackinggroup = "TREE_GROWTH"
             effects = CreateShip "SM_FLOATER"
     ]
-        graphic = ""    
+        graphic = ""
+    icon = ""    
     
 Hull
     name = "SH_STRONG_MONSTER_BODY"
@@ -1689,6 +1725,7 @@ Hull
                 WithinStarlaneJumps 1 Source
             ]
     graphic = ""
+    icon = ""
 
 Hull
     name = "SH_GUARD_MONSTER_BODY"
@@ -1710,6 +1747,7 @@ Hull
     ]
     location = All
     graphic = ""
+    icon = ""
     
 Hull
     name = "SH_DRONE_BODY"
@@ -1742,6 +1780,7 @@ Hull
                 Not Contains Source
             ]
     graphic = ""
+    icon = ""
 
 
 Hull
@@ -1785,6 +1824,7 @@ Hull
                 ]
     ]
     graphic = ""
+    icon = ""
 
 Hull
     name = "SH_KRILL_1_BODY"
@@ -1883,6 +1923,7 @@ Hull
             ]
     ]
     graphic = ""
+    icon = ""
 
 Hull
     name = "SH_KRILL_2_BODY"
@@ -1989,6 +2030,7 @@ Hull
             ]
     ]
     graphic = ""
+    icon = ""
     
 Hull
     name = "SH_KRILL_3_BODY"
@@ -2095,6 +2137,7 @@ Hull
             ]
     ]
     graphic = ""
+    icon = ""
     
 Hull
     name = "SH_KRILL_4_BODY"
@@ -2148,6 +2191,7 @@ Hull
             ]
     ]
     graphic = ""
+    icon = ""
     
 //   KRAKEN
 
@@ -2212,6 +2256,7 @@ Hull
             effects = SetDetection Value + 40
     ]
     graphic = ""
+    icon = ""
     
 Hull
     name = "SH_KRAKEN_2_BODY"
@@ -2267,6 +2312,7 @@ Hull
             effects = SetDetection Value + 50
     ]
     graphic = ""
+    icon = ""
     
 Hull
     name = "SH_KRAKEN_3_BODY"
@@ -2312,6 +2358,7 @@ Hull
             effects = SetDetection Value + 50
     ]
     graphic = ""
+    icon = ""
     
 //   SNOWFLAKE
 
@@ -2370,6 +2417,7 @@ Hull
             effects = SetDetection Value + 60
         ]
     graphic = ""
+    icon = ""
     
 Hull
     name = "SH_SNOWFLAKE_2_BODY"
@@ -2425,6 +2473,7 @@ Hull
             effects = SetDetection Value + 70
     ]
     graphic = ""
+    icon = ""
     
 Hull
     name = "SH_SNOWFLAKE_3_BODY"
@@ -2470,6 +2519,7 @@ Hull
             effects = SetDetection Value + 80
     ]
     graphic = ""
+    icon = ""
     
 //   JUGGERNAUT
 
@@ -2528,6 +2578,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = ""
+    icon = ""
     
 Hull
     name = "SH_JUGGERNAUT_2_BODY"
@@ -2584,6 +2635,7 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = ""
+    icon = ""
     
 Hull
     name = "SH_JUGGERNAUT_3_BODY"
@@ -2629,5 +2681,6 @@ Hull
             effects = SetDetection Value + 30
     ]
     graphic = ""
+    icon = ""
     
     

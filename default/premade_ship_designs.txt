@@ -5,8 +5,8 @@ ShipDesign
     parts = [
         "GT_TROOP_POD"
         "SH_DEFENSE_GRID"
-        ]
-    graphic = "misc/generic.png"
+    ]
+    icon = "icons/ship_hulls/generic.png"
     model = "fighter"
 
 ShipDesign
@@ -17,7 +17,7 @@ ShipDesign
         "DT_OPTICAL_SCANNER"
         "FU_BASIC_TANK"
         ]
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "fighter"
 
 ShipDesign
@@ -30,7 +30,7 @@ ShipDesign
         ""
         "CO_COLONY_POD"
     ]
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "seed"
 
 ShipDesign
@@ -38,7 +38,7 @@ ShipDesign
     description = "SD_COLONY_BASE_DESC"
     hull = "SH_COLONY_BASE"
     parts = "CO_COLONY_POD"
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "seed"
 
 ShipDesign
@@ -51,7 +51,7 @@ ShipDesign
         ""
         "CO_OUTPOST_MOD"
     ]
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "seed"
 
 ShipDesign
@@ -59,7 +59,7 @@ ShipDesign
     description = "SD_OUTPOST_BASE_DESC"
     hull = "SH_COLONY_BASE"
     parts = "CO_OUTPOST_MOD"
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "seed"
 
 ShipDesign
@@ -71,7 +71,7 @@ ShipDesign
         "SR_WEAPON_1"
         "SH_DEFENSE_GRID"
     ]
-    graphic = "misc/mark1.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
 
 ShipDesign
@@ -83,7 +83,7 @@ ShipDesign
         "SR_WEAPON_2"
         "SH_DEFENSE_GRID"
     ]
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
 
 ShipDesign
@@ -95,7 +95,7 @@ ShipDesign
         "SR_WEAPON_3"
         "SH_DEFENSE_GRID"
     ]
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
     
 ShipDesign
@@ -107,7 +107,7 @@ ShipDesign
         "SR_WEAPON_4"
         "SH_DEFENSE_GRID"
     ]
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
     
 ShipDesign
@@ -119,7 +119,7 @@ ShipDesign
         "SR_WEAPON_5"
         "SH_DEFENSE_GRID"
     ]
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
     
 ShipDesign
@@ -131,7 +131,7 @@ ShipDesign
         "SR_WEAPON_6"
         "SH_DEFENSE_GRID"
     ]
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
     
 ShipDesign
@@ -143,7 +143,7 @@ ShipDesign
         "SR_WEAPON_7"
         "SH_DEFENSE_GRID"
     ]
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
     
 ShipDesign
@@ -155,7 +155,7 @@ ShipDesign
         "SR_WEAPON_8"
         "SH_DEFENSE_GRID"
     ]
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
 
 ShipDesign
@@ -168,7 +168,7 @@ ShipDesign
         "SR_WEAPON_5"
         "SH_DEFLECTOR"
     ]
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
 
 ShipDesign
@@ -183,7 +183,7 @@ ShipDesign
         "SR_WEAPON_9"
         "SH_DEFLECTOR"
     ]
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
 
 ShipDesign
@@ -197,5 +197,5 @@ ShipDesign
         "SR_WEAPON_8"
         "FU_ZERO_FUEL"
     ]
-    graphic = "misc/generic.png"
+    icon = "icons/ship_hulls/generic.png"
     model = "mark1"

@@ -95,100 +95,7 @@ double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().
 
 
 // content texture getters
-boost::shared_ptr<GG::Texture> ClientUI::ShipIcon(int design_id)
-{
-    std::string graphic_name;
-    const ShipDesign* design = GetShipDesign(design_id);
-    if (design) {
-        graphic_name = design->Graphic();
-        if (graphic_name.empty())
-            if (const HullType* hull_type = design->GetHull())
-                return ClientUI::HullTexture(hull_type->Name());
-    } else {
-        return ClientUI::HullTexture("");
-    }
-    return ClientUI::GetTexture(ArtDir() / graphic_name, true);
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::BuildingTexture(const std::string& building_type_name)
-{
-    const BuildingType* building_type = GetBuildingType(building_type_name);
-    std::string graphic_name = "";
-    if (building_type)
-        graphic_name = building_type->Graphic();
-    if (graphic_name.empty())
-        return ClientUI::GetTexture(ArtDir() / "icons" / "building" / "generic_building.png", true);
-    return ClientUI::GetTexture(ArtDir() / graphic_name, true);
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& category_name)
-{
-    std::string icon_filename;
-
-    if (const TechCategory* category = GetTechCategory(category_name))
-        return ClientUI::GetTexture(ArtDir() / "icons" / "tech" / "categories" / category->graphic, true);
-    else
-        return ClientUI::GetTexture(ClientUI::ArtDir() / "", true);
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::TechTexture(const std::string& tech_name)
-{
-    const Tech* tech = GetTechManager().GetTech(tech_name);
-    std::string texture_name;
-    if (tech) {
-        texture_name = tech->Graphic();
-        if (texture_name.empty())
-            return CategoryIcon(tech->Category());
-    }
-    return ClientUI::GetTexture(ArtDir() / texture_name, true);
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::SpecialTexture(const std::string& special_name)
-{
-    const Special* special = GetSpecial(special_name);
-    std::string texture_name = "";
-    if (special)
-        texture_name = special->Graphic();
-    if (texture_name.empty())
-        return ClientUI::GetTexture(ArtDir() / "icons" / "specials_huge" / "generic_special.png", true);
-    return ClientUI::GetTexture(ArtDir() / texture_name, true);
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(const std::string& species_name)
-{
-    const Species* species = GetSpecies(species_name);
-    std::string texture_name = "";
-    if (species)
-        texture_name = species->Graphic();
-    if (texture_name.empty())
-        return ClientUI::GetTexture(ArtDir() / "icons" / "meter" / "pop.png", true);
-    return ClientUI::GetTexture(ArtDir() / texture_name, true);
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::PartTexture(const std::string& part_name)
-{
-    const PartType* part = GetPartType(part_name);
-    std::string texture_name = "";
-    if (part)
-        texture_name = part->Graphic();
-    if (texture_name.empty())
-        return ClientUI::GetTexture(ArtDir() / "icons" / "ship_parts" / "generic_part.png", false);
-    return ClientUI::GetTexture(ArtDir() / texture_name, false);
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name)
-{
-    const HullType* hull = GetHullType(hull_name);
-    std::string texture_name = "";
-    if (hull)
-        texture_name = hull->Graphic();
-    if (texture_name.empty())
-        return ClientUI::GetTexture(ArtDir() / "hulls_design" / "generic_hull.png", true);
-    return ClientUI::GetTexture(ArtDir() / texture_name, true);
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type)
-{
+boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     std::string icon_filename;
     switch (meter_type) {
     case METER_POPULATION:
@@ -244,6 +151,100 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type)
     return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / icon_filename, true);
 }
 
+boost::shared_ptr<GG::Texture> ClientUI::BuildingTexture(const std::string& building_type_name) {
+    const BuildingType* building_type = GetBuildingType(building_type_name);
+    std::string graphic_name;
+    if (building_type)
+        graphic_name = building_type->Graphic();
+    if (graphic_name.empty())
+        return ClientUI::GetTexture(ArtDir() / "icons" / "building" / "generic_building.png", true);
+    return ClientUI::GetTexture(ArtDir() / graphic_name, true);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& category_name) {
+    std::string icon_filename;
+    if (const TechCategory* category = GetTechCategory(category_name))
+        return ClientUI::GetTexture(ArtDir() / "icons" / "tech" / "categories" / category->graphic, true);
+    else
+        return ClientUI::GetTexture(ClientUI::ArtDir() / "", true);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::TechTexture(const std::string& tech_name) {
+    const Tech* tech = GetTechManager().GetTech(tech_name);
+    std::string texture_name;
+    if (tech) {
+        texture_name = tech->Graphic();
+        if (texture_name.empty())
+            return CategoryIcon(tech->Category());
+    }
+    return ClientUI::GetTexture(ArtDir() / texture_name, true);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::SpecialTexture(const std::string& special_name) {
+    const Special* special = GetSpecial(special_name);
+    std::string texture_name;
+    if (special)
+        texture_name = special->Graphic();
+    if (texture_name.empty())
+        return ClientUI::GetTexture(ArtDir() / "icons" / "specials_huge" / "generic_special.png", true);
+    return ClientUI::GetTexture(ArtDir() / texture_name, true);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(const std::string& species_name) {
+    const Species* species = GetSpecies(species_name);
+    std::string texture_name;
+    if (species)
+        texture_name = species->Graphic();
+    if (texture_name.empty())
+        return ClientUI::GetTexture(ArtDir() / "icons" / "meter" / "pop.png", true);
+    return ClientUI::GetTexture(ArtDir() / texture_name, true);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::PartIcon(const std::string& part_name) {
+    const PartType* part = GetPartType(part_name);
+    std::string texture_name;
+    if (part)
+        texture_name = part->Icon();
+    if (texture_name.empty())
+        return ClientUI::GetTexture(ArtDir() / "icons" / "ship_parts" / "generic_part.png", true);
+    return ClientUI::GetTexture(ArtDir() / texture_name, false);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name) {
+    const HullType* hull = GetHullType(hull_name);
+    std::string texture_name;
+    if (hull)
+        texture_name = hull->Graphic();
+    if (texture_name.empty())
+        texture_name = hull->Icon();
+    if (texture_name.empty())
+        return ClientUI::GetTexture(ArtDir() / "hulls_design" / "generic_hull.png", true);
+    return ClientUI::GetTexture(ArtDir() / texture_name, true);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::HullIcon(const std::string& hull_name) {
+    const HullType* hull = GetHullType(hull_name);
+    std::string texture_name;
+    if (hull)
+        texture_name = hull->Icon();
+    if (texture_name.empty())
+        texture_name = hull->Graphic();
+    if (texture_name.empty())
+        return ClientUI::GetTexture(ArtDir() / "icons" / "ship_hulls"/ "generic_hull.png", true);
+    return ClientUI::GetTexture(ArtDir() / texture_name, true);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id) {
+    if (const ShipDesign* design = GetShipDesign(design_id)) {
+        const std::string& icon_name = design->Icon();
+        if (icon_name.empty())
+            return ClientUI::HullIcon(design->Hull());
+        else
+            return ClientUI::GetTexture(ArtDir() / icon_name, true);
+    }
+    return ClientUI::HullTexture("");
+}
+
 
 // tech screen
 GG::Clr     ClientUI::KnownTechFillColor()                   { return GetOptionsDB().Get<StreamableColor>("UI.known-tech").ToClr(); }
@@ -255,16 +256,14 @@ GG::Clr     ClientUI::UnresearchableTechTextAndBorderColor() { return GetOptions
 GG::Clr     ClientUI::TechWndProgressBarBackgroundColor()    { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress-background").ToClr(); }
 GG::Clr     ClientUI::TechWndProgressBarColor()              { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress").ToClr(); }
 
-GG::Clr     ClientUI::CategoryColor(const std::string& category_name)
-{
+GG::Clr     ClientUI::CategoryColor(const std::string& category_name) {
     const TechCategory* category = GetTechCategory(category_name);
     if (category)
         return category->colour;
     return GG::Clr();
 }
 
-std::map<PlanetType, std::string>& ClientUI::PlanetTypeFilePrefixes()
-{
+std::map<PlanetType, std::string>& ClientUI::PlanetTypeFilePrefixes() {
     static std::map<PlanetType, std::string> prefixes;
     if (prefixes.empty()) {
         prefixes[PT_SWAMP] =    "Swamp";
@@ -281,8 +280,7 @@ std::map<PlanetType, std::string>& ClientUI::PlanetTypeFilePrefixes()
     return prefixes;
 }
 
-std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes()
-{
+std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes() {
     static std::map<StarType, std::string> prefixes;
     if (prefixes.empty()) {
         prefixes[INVALID_STAR_TYPE] =   "unknown";
@@ -298,8 +296,7 @@ std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes()
     return prefixes;
 }
 
-std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes()
-{
+std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes() {
     static std::map<StarType, std::string> prefixes;
     if (prefixes.empty()) {
         prefixes[INVALID_STAR_TYPE] =   "halo_unknown";
@@ -318,15 +315,13 @@ std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes()
 // private static members
 ClientUI* ClientUI::s_the_UI = 0;
 
-std::ostream& operator<< (std::ostream& os, const GG::UnicodeCharset& chset)
-{
+std::ostream& operator<< (std::ostream& os, const GG::UnicodeCharset& chset) {
     os << chset.m_script_name << " " << chset.m_first_char << " " << chset.m_last_char << "\n";
     return os;
 }
 
 namespace {
-    const std::vector<GG::UnicodeCharset>& RequiredCharsets()
-    {
+    const std::vector<GG::UnicodeCharset>& RequiredCharsets() {
         static std::vector<GG::UnicodeCharset> retval;
         if (retval.empty()) {
             // Basic Latin, Latin-1 Supplement, and Latin Extended-A
@@ -354,8 +349,7 @@ namespace {
     }
 
     // command-line options
-    void AddOptions(OptionsDB& db)
-    {
+    void AddOptions(OptionsDB& db) {
         db.Add("app-width",             "OPTIONS_DB_APP_WIDTH",             1024,   RangedValidator<int>(800, 2560));
         db.Add("app-height",            "OPTIONS_DB_APP_HEIGHT",            768,    RangedValidator<int>(600, 1600));
         db.Add("app-width-windowed",    "OPTIONS_DB_APP_WIDTH_WINDOWED",    1024,   RangedValidator<int>(800, 2560));
@@ -472,8 +466,7 @@ ClientUI::ClientUI() :
     }
 }
 
-ClientUI::~ClientUI()
-{
+ClientUI::~ClientUI() {
     delete m_map_wnd;
     delete m_message_wnd;
     delete m_player_list_wnd;
@@ -816,18 +809,14 @@ StreamableColor::StreamableColor(const GG::Clr& clr) :
 {}
 
 GG::Clr StreamableColor::ToClr() const
-{
-    return GG::Clr(r, g, b, a);
-}
+{ return GG::Clr(r, g, b, a); }
 
-std::ostream& operator<<(std::ostream& os, const StreamableColor& clr)
-{
+std::ostream& operator<<(std::ostream& os, const StreamableColor& clr) {
     os << "(" << clr.r << "," << clr.g << "," << clr.b << "," << clr.a << ")";
     return os;
 }
 
-std::istream& operator>>(std::istream& is, StreamableColor& clr)
-{
+std::istream& operator>>(std::istream& is, StreamableColor& clr) {
     using namespace boost::spirit::classic;
     rule<> color_p =
         ch_p('(') >> *space_p >>
@@ -854,8 +843,7 @@ const double SMALL_UI_DISPLAY_VALUE = 1.0e-6;
 const double LARGE_UI_DISPLAY_VALUE = 9.99999999e+9;
 const double UNKNOWN_UI_DISPLAY_VALUE = std::numeric_limits<double>::infinity();
 
-int EffectiveSign(double val)
-{
+int EffectiveSign(double val) {
     if (val == UNKNOWN_UI_DISPLAY_VALUE)
         return 0;
 
@@ -869,8 +857,7 @@ int EffectiveSign(double val)
         return 0;
 }
 
-std::string DoubleToString(double val, int digits, bool always_show_sign)
-{
+std::string DoubleToString(double val, int digits, bool always_show_sign) {
     std::string text = "";
 
     // minimum digits is 2.  If digits was 1, then 30 couldn't be displayed,

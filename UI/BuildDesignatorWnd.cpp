@@ -54,7 +54,7 @@ namespace {
                 break;
             }
             case BT_SHIP: {
-                texture = ClientUI::ShipIcon(m_item.design_id);
+                texture = ClientUI::ShipDesignIcon(m_item.design_id);
                 desc_text = UserString("BT_SHIP");
                 name_text = m_item.name;
                 break;
@@ -219,7 +219,7 @@ namespace {
             const ShipDesign* ship_design = GetShipDesign(item.design_id);
             const std::string& name = (ship_design ? ship_design->Name() : UserString("SHIP_DESIGN"));
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                ClientUI::ShipIcon(item.design_id), name,
+                ClientUI::ShipDesignIcon(item.design_id), name,
                 LocationConditionDescription(item.design_id, candidate_object_id, empire_id)));
             return browse_wnd;
         } else {

@@ -131,7 +131,7 @@ PartControl::PartControl(const PartType* part) :
 
         //Logger().debugStream() << "PartControl::PartControl this: " << this << " part: " << part << " named: " << (part ? part->Name() : "no part");
         m_icon = new GG::StaticGraphic(part_left, part_top, PART_CONTROL_WIDTH, PART_CONTROL_HEIGHT,
-                                       ClientUI::PartTexture(m_part->Name()),
+                                       ClientUI::PartIcon(m_part->Name()),
                                        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         m_icon->Show();
         AttachChild(m_icon);
@@ -143,7 +143,7 @@ PartControl::PartControl(const PartType* part) :
         //Logger().debugStream() << "PartControl::PartControl part name: " << m_part->Name();
         SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-            new IconTextBrowseWnd(ClientUI::PartTexture(m_part->Name()),
+            new IconTextBrowseWnd(ClientUI::PartIcon(m_part->Name()),
                                   UserString(m_part->Name()),
                                   UserString(m_part->Description()))
                                  )
@@ -157,9 +157,8 @@ void PartControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     ClickedSignal(m_part);
 }
 
-void PartControl::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    DoubleClickedSignal(m_part);
-}
+void PartControl::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ DoubleClickedSignal(m_part); }
 
 //////////////////////////////////////////////////
 // PartsListBox                                 //
@@ -262,9 +261,7 @@ PartsListBox::PartsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_slot_types_shown(),
     m_availabilities_shown(std::make_pair(false, false)),
     m_previous_num_columns(-1)
-{
-    SetStyle(GG::LIST_NOSEL);
-}
+{ SetStyle(GG::LIST_NOSEL); }
 
 const std::set<ShipPartClass>& PartsListBox::GetClassesShown() const {
     return m_part_classes_shown;
@@ -274,9 +271,8 @@ const std::set<ShipSlotType>& PartsListBox::GetSlotTypesShown() const {
     return m_slot_types_shown;
 }
 
-const std::pair<bool, bool>& PartsListBox::GetAvailabilitiesShown() const {
-    return m_availabilities_shown;
-}
+const std::pair<bool, bool>& PartsListBox::GetAvailabilitiesShown() const
+{ return m_availabilities_shown; }
 
 void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
@@ -662,8 +658,7 @@ void DesignWnd::PartPalette::HideAllClasses(bool refresh_list) {
         it->second->MarkNotSelected();
 }
 
-void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_list)
-{
+void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_list) {
     if (part_class >= ShipPartClass(0) && part_class < NUM_SHIP_PART_CLASSES) {
         const std::set<ShipPartClass>& classes_shown = m_parts_list->GetClassesShown();
         if (classes_shown.find(part_class) == classes_shown.end())
@@ -714,8 +709,7 @@ void DesignWnd::PartPalette::ToggleSlotType(ShipSlotType slot_type, bool refresh
     }
 }
 
-void DesignWnd::PartPalette::ShowAvailability(bool available, bool refresh_list)
-{
+void DesignWnd::PartPalette::ShowAvailability(bool available, bool refresh_list) {
     m_parts_list->ShowAvailability(available, refresh_list);
     if (available)
         m_availability_buttons.first->MarkSelectedGray();
@@ -746,9 +740,8 @@ void DesignWnd::PartPalette::ToggleAvailability(bool available, bool refresh_lis
     }
 }
 
-void DesignWnd::PartPalette::Reset() {
-    m_parts_list->Populate();
-}
+void DesignWnd::PartPalette::Reset()
+{ m_parts_list->Populate(); }
 
 
 //////////////////////////////////////////////////
@@ -870,13 +863,10 @@ BasesListBox::HullAndPartsListBoxRow::HullPanel::HullPanel(GG::X w, GG::Y h, con
     m_name(0),
     m_cost_and_build_time(0)
 {
-    const HullType* hull_type = GetHullType(hull);
-    if (hull_type) {
-        m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
-        AttachChild(m_graphic);
-        m_name = new GG::TextControl(GG::X0, GG::Y0, UserString(hull_type->Name()), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NONE);
-        AttachChild(m_name);
-    }
+    m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullIcon(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+    AttachChild(m_graphic);
+    m_name = new GG::TextControl(GG::X0, GG::Y0, UserString(hull), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NONE);
+    AttachChild(m_name);
 }
 
 void BasesListBox::HullAndPartsListBoxRow::HullPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -890,13 +880,13 @@ void BasesListBox::HullAndPartsListBoxRow::HullPanel::SizeMove(const GG::Pt& ul,
     }
 }
 
-BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::vector<std::string>& parts) :
+BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
+                                                             const std::vector<std::string>& parts) :
     BasesListBoxRow(w, h),
     m_hull(hull),
     m_parts(parts)
 {
-    const HullType* hull_type = GetHullType(m_hull);
-    if (hull_type && m_parts.empty()) {
+    if (m_parts.empty()) {
         // contents are just a hull
         push_back(new HullPanel(w, h, m_hull));
     } else {
@@ -909,9 +899,8 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::
     BasesListBoxRow(w, h),
     m_design_id(design_id)
 {
-    const ShipDesign* ship_design = GetShipDesign(design_id);
-    std::string hull = "";
-    if (ship_design)
+    std::string hull;
+    if (const ShipDesign* ship_design = GetShipDesign(design_id))
         hull = ship_design->Hull();
     push_back(new ShipDesignPanel(w, h, design_id));
 }
@@ -928,9 +917,8 @@ BasesListBox::BasesListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     GG::Connect(RightClickedSignal,     &BasesListBox::BaseRightClicked,    this);
 }
 
-const std::pair<bool, bool>& BasesListBox::GetAvailabilitiesShown() const {
-    return m_availabilities_shown;
-}
+const std::pair<bool, bool>& BasesListBox::GetAvailabilitiesShown() const
+{ return m_availabilities_shown; }
 
 void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
@@ -971,9 +959,8 @@ void BasesListBox::Populate() {
         PopulateWithCompletedDesigns();
 }
 
-GG::Pt BasesListBox::ListRowSize() {
-    return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, BASES_LIST_BOX_ROW_HEIGHT);
-}
+GG::Pt BasesListBox::ListRowSize()
+{ return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, BASES_LIST_BOX_ROW_HEIGHT); }
 
 void BasesListBox::PopulateWithEmptyHulls() {
     ScopedTimer scoped_timer("BasesListBox::PopulateWithEmptyHulls");
@@ -1390,9 +1377,8 @@ void DesignWnd::BaseSelector::DoLayout() {
     m_tabs->SizeMove(GG::Pt(left, top), ClientSize() - GG::Pt(LEFT_PAD, TOP_PAD));
 }
 
-void DesignWnd::BaseSelector::WndSelected(std::size_t index) {
-    Reset();
-}
+void DesignWnd::BaseSelector::WndSelected(std::size_t index)
+{ Reset(); }
 
 //////////////////////////////////////////////////
 // SlotControl                                  //
@@ -1452,9 +1438,7 @@ SlotControl::SlotControl() :
     m_y_position_fraction(0.4),
     m_part_control(0),
     m_background(0)
-{
-    SetDragDropDataType("");
-}
+{ SetDragDropDataType(""); }
 
 SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
     GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE),
@@ -1500,17 +1484,14 @@ void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter
     }
 }
 
-ShipSlotType SlotControl::SlotType() const {
-    return m_slot_type;
-}
+ShipSlotType SlotControl::SlotType() const
+{ return m_slot_type; }
 
-double SlotControl::XPositionFraction() const {
-    return m_x_position_fraction;
-}
+double SlotControl::XPositionFraction() const
+{ return m_x_position_fraction; }
 
-double SlotControl::YPositionFraction() const {
-    return m_y_position_fraction;
-}
+double SlotControl::YPositionFraction() const
+{ return m_y_position_fraction; }
 
 const PartType* SlotControl::GetPart() const {
     if (m_part_control)
@@ -1569,8 +1550,8 @@ void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const G
     SlotContentsAlteredSignal(0);
 }
 
-void SlotControl::DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys) {
-}
+void SlotControl::DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys)
+{}
 
 void SlotControl::DragDropLeave() {
     if (m_part_control)
@@ -1580,13 +1561,11 @@ void SlotControl::DragDropLeave() {
 void SlotControl::Render()
 {}
 
-void SlotControl::Highlight(bool actually) {
-    m_highlighted = actually;
-}
+void SlotControl::Highlight(bool actually)
+{ m_highlighted = actually; }
 
-void SlotControl::SetPart(const std::string& part_name) {
-    SetPart(GetPartType(part_name));
-}
+void SlotControl::SetPart(const std::string& part_name)
+{ SetPart(GetPartType(part_name)); }
 
 void SlotControl::SetPart(const PartType* part_type) {
     // remove existing part control, if any
@@ -1610,13 +1589,12 @@ void SlotControl::SetPart(const PartType* part_type) {
 
         // set part occupying slot's tool tip to say slot type as well
         m_part_control->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-            new IconTextBrowseWnd(ClientUI::PartTexture(part_type->Name()), UserString(part_type->Name()) + " (" + UserString(((m_slot_type == SL_EXTERNAL) ? "SL_EXTERNAL" : "SL_INTERNAL")) + ")" ,UserString(part_type->Description()))));
+            new IconTextBrowseWnd(ClientUI::PartIcon(part_type->Name()), UserString(part_type->Name()) + " (" + UserString(((m_slot_type == SL_EXTERNAL) ? "SL_EXTERNAL" : "SL_INTERNAL")) + ")" ,UserString(part_type->Description()))));
     }
 }
 
-void SlotControl::EmitNullSlotContentsAlteredSignal() {
-    SlotContentsAlteredSignal(0);
-}
+void SlotControl::EmitNullSlotContentsAlteredSignal()
+{ SlotContentsAlteredSignal(0); }
 
 
 //////////////////////////////////////////////////
@@ -1790,19 +1768,15 @@ const std::string& DesignWnd::MainPanel::DesignDescription() const {
         return EMPTY_STRING;
 }
 
-boost::shared_ptr<const ShipDesign> DesignWnd::MainPanel::GetIncompleteDesign() const
-{
+boost::shared_ptr<const ShipDesign> DesignWnd::MainPanel::GetIncompleteDesign() const {
     RefreshIncompleteDesign();
     return m_incomplete_design;
 }
 
 int DesignWnd::MainPanel::GetCompleteDesignID() const
-{
-    return m_complete_design_id;
-}
+{ return m_complete_design_id; }
 
-void DesignWnd::MainPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void DesignWnd::MainPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (m_incomplete_design.get())
         DesignChangedSignal();
     else if (m_complete_design_id != ShipDesign::INVALID_DESIGN_ID)
@@ -1820,9 +1794,8 @@ void DesignWnd::MainPanel::Sanitize() {
     m_design_description->SetText(UserString("DESIGN_DESCRIPTION_DEFAULT"));
 }
 
-void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int slot) {
-    SetPart(GetPartType(part_name), slot);
-}
+void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int slot)
+{ SetPart(GetPartType(part_name), slot); }
 
 void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot) {
     //Logger().debugStream() << "DesignWnd::MainPanel::SetPart(" << (part ? part->Name() : "no part") << ", slot " << slot << ")";
@@ -1848,22 +1821,19 @@ void DesignWnd::MainPanel::AddPart(const PartType* part) {
     }      
 }
 
-bool DesignWnd::MainPanel::CanPartBeAdded(const PartType* part)
-{
+bool DesignWnd::MainPanel::CanPartBeAdded(const PartType* part) {
     std::pair<int, int> swap_result = FindSlotForPartWithSwapping(part);
     return (FindEmptySlotForPart(part) >= 0 || (swap_result.first >= 0 && swap_result.second >= 0));
 }
             
-bool DesignWnd::MainPanel::AddPartEmptySlot(const PartType* part, int slot_number)
-{
+bool DesignWnd::MainPanel::AddPartEmptySlot(const PartType* part, int slot_number) {
     if (!part || slot_number < 0)
         return false;
     SetPart(part, slot_number);
     return true;
 }
 
-bool DesignWnd::MainPanel::AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot)
-{
+bool DesignWnd::MainPanel::AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot) {
     if (!part || swap_and_empty_slot.first < 0 || swap_and_empty_slot.second < 0)
         return false;
     SetPart(m_slots[swap_and_empty_slot.first]->GetPart(), swap_and_empty_slot.second);         // Move the flexible part to the first open spot
@@ -1920,9 +1890,8 @@ void DesignWnd::MainPanel::ClearParts() {
     DesignChangedSignal();
 }
 
-void DesignWnd::MainPanel::SetHull(const std::string& hull_name) {
-    SetHull(GetHullType(hull_name));
-}
+void DesignWnd::MainPanel::SetHull(const std::string& hull_name)
+{ SetHull(GetHullType(hull_name)); }
 
 void DesignWnd::MainPanel::SetHull(const HullType* hull) {
     m_hull = hull;
@@ -1962,9 +1931,8 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     DesignChangedSignal();
 }
 
-void DesignWnd::MainPanel::SetDesign(int design_id) {
-    SetDesign(GetShipDesign(design_id));
-}
+void DesignWnd::MainPanel::SetDesign(int design_id)
+{ SetDesign(GetShipDesign(design_id)); }
 
 void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull, const std::vector<std::string>& parts) {
     SetHull(hull);
@@ -2096,8 +2064,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     RefreshIncompleteDesign();
 }
 
-void DesignWnd::MainPanel::RefreshIncompleteDesign() const
-{
+void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
     if (ShipDesign* design = m_incomplete_design.get()) {
         if (design->Hull() ==           this->Hull() &&
             design->Name() ==           this->DesignName() &&
@@ -2128,16 +2095,17 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const
 
     const std::string& description = this->DesignDescription();
 
-    const std::string& graphic = m_hull ? m_hull->Graphic() : EMPTY_STRING;
+    const std::string& icon = m_hull ? m_hull->Icon() : EMPTY_STRING;
 
     // update stored design
     try {
-        m_incomplete_design.reset(new ShipDesign(name, description, empire_id, CurrentTurn(), hull, parts, graphic, "some model"));
-    } catch (...) {
+        m_incomplete_design.reset(new ShipDesign(name, description, empire_id, CurrentTurn(), hull, parts, icon, ""));
+    } catch (const std::exception& e) {
         // had a weird crash in the above call a few times, but I can't seem to
         // replicate it now.  hopefully catching any exception here will
         // prevent crashes and instead just cause the incomplete design details
         // to not update when expected.
+        Logger().errorStream() << "DesignWnd::MainPanel::RefreshIncompleteDesign caught exception: " << e.what();
     }
 }
 
@@ -2200,9 +2168,8 @@ void DesignWnd::Reset() {
     m_detail_panel->Refresh();
 }
 
-void DesignWnd::Sanitize() {
-    m_main_panel->Sanitize();
-}
+void DesignWnd::Sanitize()
+{ m_main_panel->Sanitize(); }
 
 void DesignWnd::Render() {
     GG::Pt ul = UpperLeft();
@@ -2229,17 +2196,14 @@ void DesignWnd::Render() {
     glEnable(GL_TEXTURE_2D);
 }
 
-void DesignWnd::ShowPartTypeInEncyclopedia(const std::string& part_type) {
-    m_detail_panel->SetPartType(part_type);
-}
+void DesignWnd::ShowPartTypeInEncyclopedia(const std::string& part_type)
+{ m_detail_panel->SetPartType(part_type); }
 
-void DesignWnd::ShowHullTypeInEncyclopedia(const std::string& hull_type) {
-    m_detail_panel->SetHullType(hull_type);
-}
+void DesignWnd::ShowHullTypeInEncyclopedia(const std::string& hull_type)
+{ m_detail_panel->SetHullType(hull_type); }
 
-void DesignWnd::ShowShipDesignInEncyclopedia(int design_id) {
-    m_detail_panel->SetDesign(design_id);
-}
+void DesignWnd::ShowShipDesignInEncyclopedia(int design_id)
+{ m_detail_panel->SetDesign(design_id); }
 
 void DesignWnd::AddDesign() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -2277,5 +2241,4 @@ void DesignWnd::AddDesign() {
 }
 
 void DesignWnd::EnableOrderIssuing(bool enable/* = true*/)
-{
-}
+{}

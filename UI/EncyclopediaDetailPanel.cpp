@@ -528,7 +528,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
         // Ship Parts
         name = UserString(m_items_it->second);
-        texture = ClientUI::PartTexture(m_items_it->second);
+        texture = ClientUI::PartIcon(m_items_it->second);
         turns = part->ProductionTime();
         cost = part->ProductionCost();
         cost_units = UserString("ENC_PP");
@@ -838,7 +838,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
         // Ship Designs
         name = design->Name();
-        texture = ClientUI::ShipIcon(design_id);
+        texture = ClientUI::ShipDesignIcon(design_id);
         turns = design->ProductionTime();
         cost = design->PerTurnCost();
         cost_units = UserString("ENC_PP");
@@ -915,13 +915,9 @@ void EncyclopediaDetailPanel::Refresh() {
             // incomplete design.  not yet in game universe; being created on design screen
             name = incomplete_design->Name();
 
-            texture = ClientUI::GetTexture(ClientUI::ArtDir() / incomplete_design->Graphic(), true);
-            if (!texture) {
-                if (const HullType* hull_type = incomplete_design->GetHull())
-                    texture = ClientUI::HullTexture(hull_type->Name());
-            } else {
-                texture = ClientUI::HullTexture("");
-            }
+            texture = ClientUI::GetTexture(ClientUI::ArtDir() / incomplete_design->Icon(), true);
+            if (!texture)
+                texture = ClientUI::HullIcon(incomplete_design->Hull());
 
             turns = incomplete_design->ProductionTime();
             cost = incomplete_design->ProductionCost();

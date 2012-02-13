@@ -15,6 +15,8 @@ BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
 BOOST_CLASS_EXPORT(Ship)
 BOOST_CLASS_VERSION(Ship, 1)
+BOOST_CLASS_EXPORT(ShipDesign)
+BOOST_CLASS_VERSION(ShipDesign, 1)
 
 template <class Archive>
 void ObjectMap::serialize(Archive& ar, const unsigned int version)
@@ -169,9 +171,35 @@ void Ship::serialize(Archive& ar, const unsigned int version)
     }
 }
 
+template <class Archive>
+void ShipDesign::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_id)
+        & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_description)
+        & BOOST_SERIALIZATION_NVP(m_designed_by_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_designed_on_turn)
+        & BOOST_SERIALIZATION_NVP(m_hull)
+        & BOOST_SERIALIZATION_NVP(m_parts)
+        & BOOST_SERIALIZATION_NVP(m_is_monster);
+    if (version < 1) {
+        std::string m_graphic;
+        BOOST_SERIALIZATION_NVP(m_graphic);
+    }
+    if (version >= 1) {
+        ar  & BOOST_SERIALIZATION_NVP(m_icon);
+    }
+    ar  & BOOST_SERIALIZATION_NVP(m_3D_model)
+        & BOOST_SERIALIZATION_NVP(m_name_desc_in_stringtable);
+    if (Archive::is_loading::value)
+        BuildStatCaches();
+}
+
+// explicit template initialization of System::serialize needed to avoid bug with GCC 4.5.2.
 template
 void System::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE& ar, const unsigned int version);
 
+// explicit template initialization of System::serialize needed to avoid bug with GCC 4.5.2.
 template
 void System::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE& ar, const unsigned int version);
 

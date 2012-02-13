@@ -677,12 +677,11 @@ namespace AIInterface {
     }
 
     int IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
-                                   const std::string& hull,
-                                   const std::vector<std::string>& parts,
-                                   const std::string& graphic, const std::string& model)
+                                   const std::string& hull, const std::vector<std::string>& parts,
+                                   const std::string& icon, const std::string& model)
     {
-        if (name.empty() || description.empty() || hull.empty() || graphic.empty()) {
-            Logger().errorStream() << "AIInterface::IssueCreateShipDesignOrderOrder : passed an empty name, description, hull or graphic.";
+        if (name.empty() || description.empty() || hull.empty()) {
+            Logger().errorStream() << "AIInterface::IssueCreateShipDesignOrderOrder : passed an empty name, description, or hull.";
             return 0;
         }
         if (!ShipDesign::ValidDesign(hull, parts)) {
@@ -695,7 +694,7 @@ namespace AIInterface {
 
         // create design from stuff chosen in UI
         ShipDesign* design = new ShipDesign(name, description, empire_id, current_turn,
-                                            hull, parts, graphic, model);
+                                            hull, parts, icon, model);
 
         if (!design) {
             Logger().errorStream() << "AIInterface::IssueCreateShipDesignOrderOrder failed to create a new ShipDesign object";

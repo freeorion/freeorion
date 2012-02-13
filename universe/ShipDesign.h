@@ -137,7 +137,7 @@ public:
         m_mountable_slot_types(),
         m_location(0),
         m_effects(),
-        m_graphic("")
+        m_icon()
     {}
     PartType(const std::string& name, const std::string& description,
              ShipPartClass part_class, const PartTypeStats& stats, double production_cost,
@@ -145,7 +145,7 @@ public:
              std::vector<ShipSlotType> mountable_slot_types,
              const Condition::ConditionBase* location,
              const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-             const std::string& graphic) :
+             const std::string& icon) :
         m_name(name),
         m_description(description),
         m_class(part_class),
@@ -156,7 +156,7 @@ public:
         m_mountable_slot_types(mountable_slot_types),
         m_location(location),
         m_effects(),
-        m_graphic(graphic)
+        m_icon(icon)
     { Init(effects); }
 
     ~PartType();
@@ -172,7 +172,7 @@ public:
     double                  ProductionCost() const  { return m_production_cost;}///< returns total cost of part
     int                     ProductionTime() const  { return m_production_time;}///< returns turns taken to build this part (the minimum time to build a ship design containing this part)
     bool                    Producible() const      { return m_producible; }    ///< returns whether this part type is producible by players and appears on the design screen
-    const std::string&      Graphic() const         { return m_graphic; }       ///< returns graphic that represents part in UI
+    const std::string&      Icon() const            { return m_icon; }          ///< returns icon graphic that represents part in UI
     const Condition::ConditionBase* Location() const{ return m_location; }      ///< returns the condition that determines the locations where ShipDesign containing part can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const
     { return m_effects; }                                                       ///< returns the EffectsGroups that encapsulate the effects this part has
@@ -194,7 +194,7 @@ private:
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                         m_effects;
 
-    std::string         m_graphic;
+    std::string         m_icon;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -239,18 +239,43 @@ const PartType* GetPartType(const std::string& name);
 /** Hull stats.  Used by parser due to limits on number of sub-items per
   * parsed main item. */
 struct HullTypeStats {
-    HullTypeStats();
+    HullTypeStats() :
+        m_fuel(0.0),
+        m_battle_speed(0.0),
+        m_starlane_speed(0.0),
+        m_stealth(0.0),
+        m_structure(0.0),
+        m_production_cost(1.0),
+        m_production_time(1),
+        m_producible(false)
+    {}
+
     HullTypeStats(double fuel,
                   double battle_speed,
                   double starlane_speed,
                   double stealth,
-                  double structure);
+                  double structure,
+                  double production_cost,
+                  int production_time,
+                  bool producible) :
+        m_fuel(fuel),
+        m_battle_speed(battle_speed),
+        m_starlane_speed(starlane_speed),
+        m_stealth(stealth),
+        m_structure(structure),
+        m_production_cost(production_cost),
+        m_production_time(production_time),
+        m_producible(producible)
+    {}
 
-    double m_fuel;
-    double m_battle_speed;
-    double m_starlane_speed;
-    double m_stealth;
-    double m_structure;
+    double  m_fuel;
+    double  m_battle_speed;
+    double  m_starlane_speed;
+    double  m_stealth;
+    double  m_structure;
+    double  m_production_cost;
+    int     m_production_time;
+    bool    m_producible;
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int) {
@@ -258,7 +283,10 @@ struct HullTypeStats {
             & BOOST_SERIALIZATION_NVP(m_battle_speed)
             & BOOST_SERIALIZATION_NVP(m_starlane_speed)
             & BOOST_SERIALIZATION_NVP(m_stealth)
-            & BOOST_SERIALIZATION_NVP(m_structure);
+            & BOOST_SERIALIZATION_NVP(m_structure)
+            & BOOST_SERIALIZATION_NVP(m_production_cost)
+            & BOOST_SERIALIZATION_NVP(m_production_time)
+            & BOOST_SERIALIZATION_NVP(m_producible);
     }
 };
 
@@ -292,21 +320,55 @@ public:
         m_slots(),
         m_location(0),
         m_effects(),
-        m_graphic("")
+        m_graphic()
     {}
+
     HullType(const std::string& name, const std::string& description,
              double fuel, double battle_speed, double starlane_speed,
              double stealth, double structure,
              double production_cost, int production_time, bool producible,
              const std::vector<Slot>& slots, const Condition::ConditionBase* location,
              const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-             const std::string& graphic);
+             const std::string& graphic, const std::string& icon) :
+        m_name(name),
+        m_description(description),
+        m_battle_speed(battle_speed),
+        m_starlane_speed(starlane_speed),
+        m_fuel(fuel),
+        m_stealth(stealth),
+        m_structure(structure),
+        m_production_cost(production_cost),
+        m_production_time(production_time),
+        m_producible(producible),
+        m_slots(slots),
+        m_location(location),
+        m_effects(),
+        m_graphic(graphic),
+        m_icon(icon)
+    { Init(effects); }
+
     HullType(const std::string& name, const std::string& description,
              const HullTypeStats& stats,
-             double production_cost, int production_time, bool producible,
              const std::vector<Slot>& slots, const Condition::ConditionBase* location,
              const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-             const std::string& graphic);
+             const std::string& graphic, const std::string& icon) :
+        m_name(name),
+        m_description(description),
+        m_battle_speed(stats.m_battle_speed),
+        m_starlane_speed(stats.m_starlane_speed),
+        m_fuel(stats.m_fuel),
+        m_stealth(stats.m_stealth),
+        m_structure(stats.m_structure),
+        m_production_cost(stats.m_production_cost),
+        m_production_time(stats.m_production_time),
+        m_producible(stats.m_producible),
+        m_slots(slots),
+        m_location(location),
+        m_effects(),
+        m_graphic(graphic),
+        m_icon(icon)
+    { Init(effects); }
+
     ~HullType();
     //@}
 
@@ -339,9 +401,12 @@ public:
     { return m_effects; }                                                       ///< returns the EffectsGroups that encapsulate the effects this part hull has
 
     const std::string&  Graphic() const         { return m_graphic; }           ///< returns the image that represents the hull on the design screen
+    const std::string&  Icon() const            { return m_icon; }              ///< returns the small icon to represent hull
     //@}
 
 private:
+    void                Init(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects);
+
     std::string                 m_name;
     std::string                 m_description;
     double                      m_battle_speed;
@@ -360,6 +425,7 @@ private:
                                 m_effects;
 
     std::string                 m_graphic;
+    std::string                 m_icon;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -407,7 +473,7 @@ public:
     ShipDesign();
     ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
                int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
-               const std::string& graphic, const std::string& model,
+               const std::string& icon, const std::string& model,
                bool name_desc_in_stringtable = false, bool monster = false);
     //@}
 
@@ -480,7 +546,7 @@ public:
     const std::vector<std::string>& Parts() const           { return m_parts; }     ///< returns vector of names of all parts in design
     std::vector<std::string>        Parts(ShipSlotType slot_type) const;            ///< returns vector of names of parts in slots of indicated type
 
-    const std::string&              Graphic() const         { return m_graphic; }   ///< returns filename of graphic for design
+    const std::string&              Icon() const            { return m_icon; }      ///< returns filename for small-size icon graphic for design
     const std::string&              Model() const           { return m_3D_model; }  ///< returns filename of 3D model that represents ships of design
 
     std::string                     Dump() const;                                   ///< returns a data file format representation of this object
@@ -519,7 +585,7 @@ private:
     std::vector<std::string>    m_parts;
     bool                        m_is_monster;
 
-    std::string                 m_graphic;
+    std::string                 m_icon;
     std::string                 m_3D_model;
 
     bool                        m_name_desc_in_stringtable;
@@ -664,25 +730,9 @@ void HullType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_slots)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_effects)
-        & BOOST_SERIALIZATION_NVP(m_graphic);
+        & BOOST_SERIALIZATION_NVP(m_graphic)
+        & BOOST_SERIALIZATION_NVP(m_icon);
 }
 
-template <class Archive>
-void ShipDesign::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_id)
-        & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_description)
-        & BOOST_SERIALIZATION_NVP(m_designed_by_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_designed_on_turn)
-        & BOOST_SERIALIZATION_NVP(m_hull)
-        & BOOST_SERIALIZATION_NVP(m_parts)
-        & BOOST_SERIALIZATION_NVP(m_is_monster)
-        & BOOST_SERIALIZATION_NVP(m_graphic)
-        & BOOST_SERIALIZATION_NVP(m_3D_model)
-        & BOOST_SERIALIZATION_NVP(m_name_desc_in_stringtable);
-    if (Archive::is_loading::value)
-        BuildStatCaches();
-}
 
 #endif // _ShipDesign_h_

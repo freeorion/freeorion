@@ -114,6 +114,7 @@
     (Hostile)                                   \
     (Huge)                                      \
     (Hull)                                      \
+    (Icon)                                      \
     (ID)                                        \
     (Industry)                                  \
     (Inferno)                                   \

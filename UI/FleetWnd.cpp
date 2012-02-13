@@ -609,9 +609,9 @@ namespace {
             boost::shared_ptr<GG::Texture> icon;
 
             if (const ShipDesign* design = ship->Design())
-                icon = ClientUI::ShipIcon(design->ID());
+                icon = ClientUI::ShipDesignIcon(design->ID());
             else
-                icon = ClientUI::ShipIcon(INVALID_OBJECT_ID);  // default icon
+                icon = ClientUI::ShipDesignIcon(INVALID_OBJECT_ID);  // default icon
 
             m_ship_icon = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), icon, DataPanelIconStyle());
             AttachChild(m_ship_icon);

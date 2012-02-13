@@ -13,14 +13,12 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_
-    {
+    struct insert_ {
         template <typename Arg1, typename Arg2>
         struct result
         { typedef void type; };
 
-        void operator()(std::map<std::string, ShipDesign*>& designs, ShipDesign* design) const
-        {
+        void operator()(std::map<std::string, ShipDesign*>& designs, ShipDesign* design) const {
             if (!designs.insert(std::make_pair(design->Name(false), design)).second) {
                 std::string error_str = "ERROR: More than one predefined ship design in predefined_ship_designs.txt has the name " + design->Name(false);
                 throw std::runtime_error(error_str.c_str());
@@ -29,10 +27,8 @@ namespace {
     };
     const boost::phoenix::function<insert_> insert;
 
-    struct rules
-    {
-        rules()
-        {
+    struct rules {
+        rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -63,9 +59,9 @@ namespace {
                 >    (
                             '[' > +tok.string [ push_back(_d, _1) ] > ']'
                         |   tok.string [ push_back(_d, _1) ]
-                        )
-                >    parse::label(Graphic_name) > tok.string [ _e = _1 ]
-                >    parse::label(Model_name)   > tok.string [ insert(_r1, new_<ShipDesign>(_a, _b, ALL_EMPIRES, 0, _c, _d, _e, _1)) ]
+                     )
+                >    parse::label(Icon_name)        > tok.string [ _e = _1 ]
+                >    parse::label(Model_name)       > tok.string [insert(_r1, new_<ShipDesign>(_a, _b, ALL_EMPIRES, 0, _c, _d, _e, _1)) ]
                 ;
 
             start

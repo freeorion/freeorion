@@ -138,7 +138,7 @@ namespace {
             one.DesignedOnTurn()    == two.DesignedOnTurn() &&
             one.Hull()              == two.Hull() &&
             one.Parts()             == two.Parts() &&
-            one.Graphic()           == two.Graphic() &&
+            one.Icon()              == two.Icon() &&
             one.Model()             == two.Model()
         );
         // not checking that IDs are the same, since the purpose of this is to
@@ -436,87 +436,9 @@ bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
 
 
 ////////////////////////////////////////////////
-// HullType stats                             //
-////////////////////////////////////////////////
-HullTypeStats::HullTypeStats() :
-    m_fuel(0.0),
-    m_battle_speed(0.0),
-    m_starlane_speed(0.0),
-    m_stealth(0.0),
-    m_structure(0.0)
-{}
-
-HullTypeStats::HullTypeStats(double fuel, double battle_speed, double starlane_speed,
-                             double stealth, double structure) :
-    m_fuel(fuel),
-    m_battle_speed(battle_speed),
-    m_starlane_speed(starlane_speed),
-    m_stealth(stealth),
-    m_structure(structure)
-{}
-
-
-////////////////////////////////////////////////
 // HullType
 ////////////////////////////////////////////////
-HullType::HullType(const std::string& name, const std::string& description,
-                   double fuel, double battle_speed, double starlane_speed,
-                   double stealth, double structure,
-                   double production_cost, int production_time, bool producible,
-                   const std::vector<Slot>& slots, const Condition::ConditionBase* location,
-                   const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-                   const std::string& graphic) :
-    m_name(name),
-    m_description(description),
-    m_battle_speed(battle_speed),
-    m_starlane_speed(starlane_speed),
-    m_fuel(fuel),
-    m_stealth(stealth),
-    m_structure(structure),
-    m_production_cost(production_cost),
-    m_production_time(production_time),
-    m_producible(producible),
-    m_slots(slots),
-    m_location(location),
-    m_effects(),
-    m_graphic(graphic)
-{
-    if (m_fuel != 0)
-        m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
-    if (m_stealth != 0)
-        m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_stealth));
-    if (m_structure != 0)
-        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure));
-    if (m_battle_speed != 0)
-        m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   m_battle_speed));
-    if (m_starlane_speed != 0)
-        m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, m_starlane_speed));
-
-    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
-        m_effects.push_back(*it);
-}
-
-HullType::HullType(const std::string& name, const std::string& description,
-                   const HullTypeStats& stats,
-                   double production_cost, int production_time, bool producible,
-                   const std::vector<Slot>& slots, const Condition::ConditionBase* location,
-                   const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-                   const std::string& graphic) :
-    m_name(name),
-    m_description(description),
-    m_battle_speed(stats.m_battle_speed),
-    m_starlane_speed(stats.m_starlane_speed),
-    m_fuel(stats.m_fuel),
-    m_stealth(stats.m_stealth),
-    m_structure(stats.m_structure),
-    m_production_cost(production_cost),
-    m_production_time(production_time),
-    m_producible(producible),
-    m_slots(slots),
-    m_location(location),
-    m_effects(),
-    m_graphic(graphic)
-{
+void HullType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects) {
     if (m_fuel != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
     if (m_stealth != 0)
@@ -609,14 +531,14 @@ const int       ShipDesign::MAX_ID            = 2000000000;
 
 ShipDesign::ShipDesign() :
     m_id(INVALID_OBJECT_ID),
-    m_name(""),
+    m_name(),
     m_designed_by_empire_id(ALL_EMPIRES),
     m_designed_on_turn(UniverseObject::INVALID_OBJECT_AGE),
-    m_hull(""),
+    m_hull(),
     m_parts(),
     m_is_monster(false),
-    m_graphic(""),
-    m_3D_model(""),
+    m_icon(),
+    m_3D_model(),
     m_name_desc_in_stringtable(false),
     m_is_armed(false),
     m_detection(0.0),
@@ -644,7 +566,7 @@ ShipDesign::ShipDesign() :
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
                        int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
-                       const std::string& graphic, const std::string& model,
+                       const std::string& icon, const std::string& model,
                        bool name_desc_in_stringtable, bool monster) :
     m_id(INVALID_OBJECT_ID),
     m_name(name),
@@ -654,7 +576,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_hull(hull),
     m_parts(parts),
     m_is_monster(monster),
-    m_graphic(graphic),
+    m_icon(icon),
     m_3D_model(model),
     m_name_desc_in_stringtable(name_desc_in_stringtable),
     m_is_armed(false),
@@ -1035,7 +957,7 @@ std::string ShipDesign::Dump() const {
         --g_indent;
         retval += DumpIndent() + "]\n";
     }
-    retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
+    retval += DumpIndent() + "icon = \"" + m_icon + "\"\n";
     retval += DumpIndent() + "model = \"" + m_3D_model + "\"\n";
     --g_indent;
     return retval; 
@@ -1099,7 +1021,7 @@ std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(E
         // make copy of design to add to universe, after modifying created by empire ID
         ShipDesign* copy = new ShipDesign(d->Name(false), d->Description(false), empire_id,
                                           d->DesignedOnTurn(), d->Hull(), d->Parts(),
-                                          d->Graphic(), d->Model(), true);
+                                          d->Icon(), d->Model(), true);
 
         int design_id = empire->AddShipDesign(copy);    // also inserts design into Universe
 
@@ -1123,7 +1045,7 @@ namespace {
 
         ShipDesign* copy = new ShipDesign(design->Name(false), design->Description(false), ALL_EMPIRES,
                                           design->DesignedOnTurn(), design->Hull(), design->Parts(),
-                                          design->Graphic(), design->Model(), true, monster);
+                                          design->Icon(), design->Model(), true, monster);
 
         if (!copy) {
             Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToUniverse() couldn't duplicate the design with name " << design->Name();

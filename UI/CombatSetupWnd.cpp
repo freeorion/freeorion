@@ -185,9 +185,9 @@ namespace {
             boost::shared_ptr<GG::Texture> icon;
             const ShipDesign* design = m_ship->Design();
             if (design)
-                icon = ClientUI::ShipIcon(design->ID());
+                icon = ClientUI::ShipDesignIcon(design->ID());
             else
-                icon = ClientUI::ShipIcon(-1);  // default icon
+                icon = ClientUI::ShipDesignIcon(-1);  // default icon
             m_ship_icon = new GG::StaticGraphic(GG::X(ICON_OFFSET), GG::Y(ICON_OFFSET), GG::X(ICON_SIZE), GG::Y(ICON_SIZE),
                                                 icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_ship_icon);

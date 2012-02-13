@@ -173,15 +173,16 @@ public:
     static double       MediumFleetButtonZoomThreshold();   //!< the minimum zoom level of the map at which to show medium fleet icons
 
     // Content Texture Getters
-    static boost::shared_ptr<GG::Texture>   ShipIcon(int design_id);
+    static boost::shared_ptr<GG::Texture>   MeterIcon(MeterType meter_type);
     static boost::shared_ptr<GG::Texture>   BuildingTexture(const std::string& building_type_name);
     static boost::shared_ptr<GG::Texture>   CategoryIcon(const std::string& category_name);
     static boost::shared_ptr<GG::Texture>   TechTexture(const std::string& tech_name);
     static boost::shared_ptr<GG::Texture>   SpecialTexture(const std::string& special_name);
     static boost::shared_ptr<GG::Texture>   SpeciesIcon(const std::string& species_name);
-    static boost::shared_ptr<GG::Texture>   MeterIcon(MeterType meter_type);
-    static boost::shared_ptr<GG::Texture>   PartTexture(const std::string& part_name);
+    static boost::shared_ptr<GG::Texture>   PartIcon(const std::string& part_name);
     static boost::shared_ptr<GG::Texture>   HullTexture(const std::string& hull_name);
+    static boost::shared_ptr<GG::Texture>   HullIcon(const std::string& hull_name);
+    static boost::shared_ptr<GG::Texture>   ShipDesignIcon(int design_id);
 
     // research screen
     static GG::Clr      KnownTechFillColor();

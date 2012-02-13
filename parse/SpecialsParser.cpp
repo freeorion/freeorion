@@ -16,14 +16,12 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_
-    {
+    struct insert_ {
         template <typename Arg1, typename Arg2>
         struct result
         { typedef void type; };
 
-        void operator()(std::map<std::string, Special*>& specials, Special* special) const
-        {
+        void operator()(std::map<std::string, Special*>& specials, Special* special) const {
             if (!specials.insert(std::make_pair(special->Name(), special)).second) {
                 std::string error_str = "ERROR: More than one special in specials.txt has the name " + special->Name();
                 throw std::runtime_error(error_str.c_str());
@@ -32,10 +30,8 @@ namespace {
     };
     const boost::phoenix::function<insert_> insert;
 
-    struct rules
-    {
-        rules()
-        {
+    struct rules {
+        rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -65,22 +61,22 @@ namespace {
                 =    (
                             parse::label(SpawnRate_name)  >> parse::double_ [ _r1 = _1 ]
                         |   eps [ _r1 = 1.0 ]
-                        )
+                     )
                 >    (
                             parse::label(SpawnLimit_name) >> parse::int_ [ _r2 = _1 ]
                         |   eps [ _r2 = 9999 ]
-                        )
+                     )
                 ;
 
             special
                 =    special_prefix(_a, _b)
                 >    spawn(_c, _d)
                 >   -(
-                            parse::label(Location_name)      >> parse::detail::condition_parser [ _e = _1 ]
-                        )
+                        parse::label(Location_name)      >> parse::detail::condition_parser [ _e = _1 ]
+                     )
                 >   -(
-                            parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _f = _1 ]
-                        )
+                        parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _f = _1 ]
+                     )
                 >    parse::label(Graphic_name) > tok.string [ insert(_r1, new_<Special>(_a, _b, _f, _c, _d, _e, _1)) ]
                 ;
 
@@ -139,7 +135,6 @@ namespace {
         special_rule special;
         start_rule start;
     };
-
 }
 
 namespace parse {
