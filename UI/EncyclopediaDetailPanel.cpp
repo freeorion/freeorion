@@ -915,9 +915,11 @@ void EncyclopediaDetailPanel::Refresh() {
             // incomplete design.  not yet in game universe; being created on design screen
             name = incomplete_design->Name();
 
-            texture = ClientUI::GetTexture(ClientUI::ArtDir() / incomplete_design->Icon(), true);
-            if (!texture)
+            const std::string& design_icon = incomplete_design->Icon();
+            if (design_icon.empty())
                 texture = ClientUI::HullIcon(incomplete_design->Hull());
+            else
+                texture = ClientUI::GetTexture(ClientUI::ArtDir() / design_icon, true);
 
             turns = incomplete_design->ProductionTime();
             cost = incomplete_design->ProductionCost();
