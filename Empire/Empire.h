@@ -18,8 +18,7 @@ class ShipDesign;
 class Empire;
 class Meter;
 
-class Alignment
-{
+class Alignment {
 public:
     Alignment(const std::string& name, const std::string& description, const std::string& graphic) :
         m_name(name),
@@ -40,18 +39,22 @@ private:
     std::string m_graphic;
 };
 
-struct ResearchQueue
-{
+struct ResearchQueue {
     /** The type of a single element in the research queue. */
-    struct Element
-    {
-        Element(); ///< default ctor.
-        Element(const std::string& name_, double spending_, int turns_left_); ///< basic ctor.
-
+    struct Element {
+        Element() :
+            name(),
+            allocated_rp(0.0),
+            turns_left(0)
+        {}
+        Element(const std::string& name_, double spending_, int turns_left_) :
+            name(name_),
+            allocated_rp(spending_),
+            turns_left(turns_left_)
+        {}
         std::string name;
         double      allocated_rp;
         int         turns_left;
-
     private:
         friend class boost::serialization::access;
         template <class Archive>
@@ -70,7 +73,10 @@ struct ResearchQueue
     //@}
 
     /** \name Structors */ //@{
-    ResearchQueue(); ///< Basic ctor.
+    ResearchQueue() :
+        m_projects_in_progress(0),
+        m_total_RPs_spent(0.0)
+    {}
     //@}
 
     /** \name Accessors */ //@{

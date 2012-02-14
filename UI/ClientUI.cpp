@@ -151,7 +151,7 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / icon_filename, true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::BuildingTexture(const std::string& building_type_name) {
+boost::shared_ptr<GG::Texture> ClientUI::BuildingIcon(const std::string& building_type_name) {
     const BuildingType* building_type = GetBuildingType(building_type_name);
     std::string graphic_name;
     if (building_type)
@@ -169,7 +169,7 @@ boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& categor
         return ClientUI::GetTexture(ClientUI::ArtDir() / "", true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::TechTexture(const std::string& tech_name) {
+boost::shared_ptr<GG::Texture> ClientUI::TechIcon(const std::string& tech_name) {
     const Tech* tech = GetTechManager().GetTech(tech_name);
     std::string texture_name;
     if (tech) {
@@ -180,7 +180,7 @@ boost::shared_ptr<GG::Texture> ClientUI::TechTexture(const std::string& tech_nam
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::SpecialTexture(const std::string& special_name) {
+boost::shared_ptr<GG::Texture> ClientUI::SpecialIcon(const std::string& special_name) {
     const Special* special = GetSpecial(special_name);
     std::string texture_name;
     if (special)

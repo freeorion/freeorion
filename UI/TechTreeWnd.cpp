@@ -898,7 +898,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     // tech icon
     const int GRAPHIC_SIZE = static_cast<int>(Value(size.y - PROGRESS_PANEL_BOTTOM_EXTRUSION - 2));
     m_icon = new GG::StaticGraphic(GG::X1, GG::Y1, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE),
-                                   ClientUI::TechTexture(m_tech_name), GG::GRAPHIC_FITGRAPHIC);
+                                   ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC);
     if (tech)
         m_icon->SetColor(ClientUI::CategoryColor(tech->Category()));
 
@@ -1806,7 +1806,7 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     const GG::Y HEIGHT(Value(GRAPHIC_WIDTH));
 
     GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, GRAPHIC_WIDTH, HEIGHT,
-                                                       ClientUI::TechTexture(m_tech),
+                                                       ClientUI::TechIcon(m_tech),
                                                        GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     graphic->SetColor(ClientUI::CategoryColor(this_row_tech->Category()));
     push_back(graphic);

@@ -1800,7 +1800,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type, 
     m_building_id(INVALID_OBJECT_ID),
     m_order_issuing_enabled(true)
 {
-    boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingTexture(building_type);
+    boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(building_type);
 
     const BuildingType* type = GetBuildingType(building_type);
     const std::string& desc = type ? type->Description() : "";
@@ -1879,7 +1879,7 @@ void BuildingIndicator::Refresh() {
     if (!type)
         return;
 
-    boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingTexture(type->Name());
+    boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(type->Name());
     m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, Width(), GG::Y(Value(Width())), texture,
                                       GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
@@ -2029,7 +2029,7 @@ void SpecialsPanel::Update() {
     // get specials and use them to create specials icons
     for (std::map<std::string, int>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
         const Special* special = GetSpecial(it->first);
-        GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT, ClientUI::SpecialTexture(special->Name()),
+        GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT, ClientUI::SpecialIcon(special->Name()),
                                                            GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
         graphic->SetBrowseModeTime(tooltip_time);
 
@@ -2038,7 +2038,7 @@ void SpecialsPanel::Update() {
             desc += boost::io::str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(special->Effects()));
         }
         graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-            new IconTextBrowseWnd(ClientUI::SpecialTexture(special->Name()),
+            new IconTextBrowseWnd(ClientUI::SpecialIcon(special->Name()),
                                   UserString(special->Name()),
                                   desc)));
         m_icons.push_back(graphic);

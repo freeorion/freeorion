@@ -19,10 +19,8 @@ namespace phoenix = boost::phoenix;
 #define DEBUG_PARSERS 0
 
 namespace {
-    struct effect_parser_rules
-    {
-        effect_parser_rules()
-        {
+    struct effect_parser_rules {
+        effect_parser_rules() {
             qi::_1_type _1;
             qi::_2_type _2;
             qi::_3_type _3;
@@ -499,8 +497,7 @@ namespace {
 }
 
 namespace parse {
-    effect_parser_rule& effect_parser()
-    {
+    effect_parser_rule& effect_parser() {
         static effect_parser_rules retval;
         return retval.start;
     }

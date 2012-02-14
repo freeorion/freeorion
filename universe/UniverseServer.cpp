@@ -709,7 +709,6 @@ namespace Delauney {
     } // end function
 }
 
-
 ////////////////////////////////////////
 // FleetPlan                          //
 ////////////////////////////////////////
@@ -720,13 +719,11 @@ const std::string& FleetPlan::Name() const {
         return m_name;
 }
 
-
 ////////////////////////////////////////
 // FleetPlan                          //
 ////////////////////////////////////////
 MonsterFleetPlan::~MonsterFleetPlan()
 { delete m_location; }
-
 
 //////////////////////
 // FleetPlanManager //

@@ -48,7 +48,7 @@ namespace {
             std::vector<const Condition::ConditionBase*>    location_conditions;
             switch (m_item.build_type) {
             case BT_BUILDING: {
-                texture = ClientUI::BuildingTexture(m_item.name);
+                texture = ClientUI::BuildingIcon(m_item.name);
                 desc_text = UserString("BT_BUILDING"); 
                 name_text = UserString(m_item.name);
                 break;
@@ -212,7 +212,7 @@ namespace {
     {
         if (item.build_type == BT_BUILDING) {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                ClientUI::BuildingTexture(item.name), UserString(item.name),
+                ClientUI::BuildingIcon(item.name), UserString(item.name),
                 LocationConditionDescription(item.name, candidate_object_id, empire_id)));
             return browse_wnd;
         } else if (item.build_type == BT_SHIP) {

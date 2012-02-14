@@ -234,31 +234,9 @@ namespace {
     };
 }
 
-
-////////////////////////////////////////
-// ResearchQueue::Element             //
-////////////////////////////////////////
-ResearchQueue::Element::Element() :
-    name(),
-    allocated_rp(0.0),
-    turns_left(0)
-{}
-
-ResearchQueue::Element::Element(const std::string& name_, double spending_, int turns_left_) :
-    name(name_),
-    allocated_rp(spending_),
-    turns_left(turns_left_)
-{}
-
-
 ////////////////////////////////////////
 // ResearchQueue                      //
 ////////////////////////////////////////
-ResearchQueue::ResearchQueue() :
-    m_projects_in_progress(0),
-    m_total_RPs_spent(0.0)
-{}
-
 bool ResearchQueue::InQueue(const std::string& tech_name) const
 { return find(tech_name) != end(); }
 
@@ -280,8 +258,7 @@ ResearchQueue::const_iterator ResearchQueue::begin() const
 ResearchQueue::const_iterator ResearchQueue::end() const
 { return m_queue.end(); }
 
-ResearchQueue::const_iterator ResearchQueue::find(const std::string& tech_name) const
-{
+ResearchQueue::const_iterator ResearchQueue::find(const std::string& tech_name) const {
     for (const_iterator it = begin(); it != end(); ++it) {
         if (it->name == tech_name)
             return it;
@@ -289,14 +266,12 @@ ResearchQueue::const_iterator ResearchQueue::find(const std::string& tech_name) 
     return end();
 }
 
-const ResearchQueue::Element& ResearchQueue::operator[](int i) const
-{
+const ResearchQueue::Element& ResearchQueue::operator[](int i) const {
     assert(0 <= i && i < static_cast<int>(m_queue.size()));
     return m_queue[i];
 }
 
-ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const
-{
+ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const {
     for (const_iterator it = begin(); it != end(); ++it) {
         if (const Tech* tech = GetTech(it->name)) {
             if (it->allocated_rp &&
@@ -311,8 +286,7 @@ ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const
     return end();
 }
 
-void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::string, double>& research_progress)
-{
+void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::string, double>& research_progress) {
     // status of all techs for this empire
     TechManager& tech_manager = GetTechManager();
     std::map<std::string, TechStatus> sim_tech_status_map;
@@ -526,8 +500,7 @@ ProductionQueue::ProductionQueue() :
 int ProductionQueue::ProjectsInProgress() const
 { return m_projects_in_progress; }
 
-double ProductionQueue::TotalPPsSpent() const
-{
+double ProductionQueue::TotalPPsSpent() const {
     // add up allocated PP from all resource sharing object groups
     double retval = 0;
     for (std::map<std::set<int>, double>::const_iterator it = m_object_group_allocated_pp.begin(); it != m_object_group_allocated_pp.end(); ++it)
@@ -535,7 +508,8 @@ double ProductionQueue::TotalPPsSpent() const
     return retval;
 }
 
-std::map<std::set<int>, double> ProductionQueue::AvailablePP(const std::map<ResourceType, boost::shared_ptr<ResourcePool> >& resource_pools) const
+std::map<std::set<int>, double> ProductionQueue::AvailablePP(const std::map<ResourceType,
+                                                             boost::shared_ptr<ResourcePool> >& resource_pools) const
 {
     std::map<std::set<int>, double> available_pp;
 
@@ -597,14 +571,12 @@ ProductionQueue::const_iterator ProductionQueue::end() const
 ProductionQueue::const_iterator ProductionQueue::find(int i) const
 { return (0 <= i && i < static_cast<int>(size())) ? (begin() + i) : end(); }
 
-const ProductionQueue::Element& ProductionQueue::operator[](int i) const
-{
+const ProductionQueue::Element& ProductionQueue::operator[](int i) const {
     assert(0 <= i && i < static_cast<int>(m_queue.size()));
     return m_queue[i];
 }
 
-ProductionQueue::const_iterator ProductionQueue::UnderfundedProject(const Empire* empire) const
-{
+ProductionQueue::const_iterator ProductionQueue::UnderfundedProject(const Empire* empire) const {
     for (const_iterator it = begin(); it != end(); ++it) {
         double item_cost;
         int build_turns;
@@ -834,14 +806,12 @@ void ProductionQueue::push_back(const Element& element)
 void ProductionQueue::insert(iterator it, const Element& element)
 { m_queue.insert(it, element); }
 
-void ProductionQueue::erase(int i)
-{
+void ProductionQueue::erase(int i) {
     assert(i <= static_cast<int>(size()));
     m_queue.erase(begin() + i);
 }
 
-ProductionQueue::iterator ProductionQueue::erase(iterator it)
-{
+ProductionQueue::iterator ProductionQueue::erase(iterator it) {
     assert(it != end());
     return m_queue.erase(it);
 }
@@ -855,14 +825,12 @@ ProductionQueue::iterator ProductionQueue::end()
 ProductionQueue::iterator ProductionQueue::find(int i)
 { return (0 <= i && i < static_cast<int>(size())) ? (begin() + i) : end(); }
 
-ProductionQueue::Element& ProductionQueue::operator[](int i)
-{
+ProductionQueue::Element& ProductionQueue::operator[](int i) {
     assert(0 <= i && i < static_cast<int>(m_queue.size()));
     return m_queue[i];
 }
 
-ProductionQueue::iterator ProductionQueue::UnderfundedProject(const Empire* empire)
-{
+ProductionQueue::iterator ProductionQueue::UnderfundedProject(const Empire* empire) {
     for (iterator it = begin(); it != end(); ++it) {
         double item_cost;
         int build_turns;
@@ -873,8 +841,7 @@ ProductionQueue::iterator ProductionQueue::UnderfundedProject(const Empire* empi
     return end();
 }
 
-void ProductionQueue::clear()
-{
+void ProductionQueue::clear() {
     m_queue.clear();
     m_projects_in_progress = 0;
     m_object_group_allocated_pp.clear();
@@ -1403,10 +1370,10 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
         const Fleet* fleet = *it;
         int system_id = fleet->SystemID();
         if (system_id == INVALID_OBJECT_ID/* || known_systems.find(system_id) == known_systems.end()*/)
-            continue;   // not in a (potential supply unobstructed) system
+            continue;                       // not in a (potential supply unobstructed) system
         else if (fleet->OwnedBy(m_id))
             systems_containing_friendly_fleets.insert(system_id);
-        else            // owned by another empire, or has no owners
+        else if (fleet->HasArmedShips())    // armed ships owned by another empire, or with no owners
             systems_containing_obstructing_objects.insert(system_id);
     }
 

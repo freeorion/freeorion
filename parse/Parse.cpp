@@ -19,10 +19,8 @@ namespace std {
 #endif
 
 namespace {
-    struct effects_group_rules
-    {
-        effects_group_rules()
-        {
+    struct effects_group_rules {
+        effects_group_rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -40,17 +38,17 @@ namespace {
                 =    tok.EffectsGroup_
                 >>   parse::label(Scope_name) > parse::detail::condition_parser [ _a = _1 ]
                 >>  -(
-                            parse::label(Activation_name) >> parse::detail::condition_parser [ _b = _1 ]
-                        )
+                        parse::label(Activation_name) >> parse::detail::condition_parser [ _b = _1 ]
+                     )
                 >>  -(
-                            parse::label(StackingGroup_name) >> tok.string [ _c = _1 ]
-                        )
+                        parse::label(StackingGroup_name) >> tok.string [ _c = _1 ]
+                     )
                 >>   parse::label(Effects_name)
                 >>   (
                             '[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']'
                         |   parse::effect_parser() [ push_back(_d, _1) ]
-                        )
-                        [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _c) ]
+                     )
+                     [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _c) ]
                 ;
 
             start
@@ -83,10 +81,8 @@ namespace {
         parse::detail::effects_group_rule start;
     };
 
-    struct color_parser_rules
-    {
-        color_parser_rules()
-        {
+    struct color_parser_rules {
+        color_parser_rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -136,10 +132,8 @@ namespace {
         parse::detail::color_parser_rule start;
     };
 
-    struct item_spec_parser_rules
-    {
-        item_spec_parser_rules()
-        {
+    struct item_spec_parser_rules {
+        item_spec_parser_rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -165,8 +159,7 @@ namespace {
 }
 
 namespace parse {
-    void init()
-    {
+    void init() {
         const lexer& tok = lexer::instance();
         qi::_1_type _1;
         qi::_val_type _val;
@@ -198,20 +191,17 @@ namespace parse {
     }
 
     namespace detail {
-        effects_group_rule& effects_group_parser()
-        {
+        effects_group_rule& effects_group_parser() {
             static effects_group_rules rules;
             return rules.start;
         }
 
-        color_parser_rule& color_parser()
-        {
+        color_parser_rule& color_parser() {
             static color_parser_rules rules;
             return rules.start;
         }
 
-        item_spec_parser_rule& item_spec_parser()
-        {
+        item_spec_parser_rule& item_spec_parser() {
             static item_spec_parser_rules rules;
             return rules.start;
         }

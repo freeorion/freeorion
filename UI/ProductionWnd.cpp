@@ -125,7 +125,7 @@ namespace {
         boost::shared_ptr<GG::Texture> graphic;
         std::string name_text;
         if (build.item.build_type == BT_BUILDING) {
-            graphic = ClientUI::BuildingTexture(build.item.name);
+            graphic = ClientUI::BuildingIcon(build.item.name);
             name_text = UserString(build.item.name);
         } else if (build.item.build_type == BT_SHIP) {
             graphic = ClientUI::ShipDesignIcon(build.item.design_id);

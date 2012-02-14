@@ -118,7 +118,7 @@ namespace {
 
 
         m_icon = new GG::StaticGraphic(left, top, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE),
-                                       ClientUI::TechTexture(m_tech_name),
+                                       ClientUI::TechIcon(m_tech_name),
                                        GG::GRAPHIC_FITGRAPHIC);
         m_icon->SetColor(tech ? ClientUI::CategoryColor(tech->Category()) : GG::Clr());
 

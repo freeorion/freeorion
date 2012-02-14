@@ -573,7 +573,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
         // Technologies
         name = UserString(m_items_it->second);
-        texture = ClientUI::TechTexture(m_items_it->second);
+        texture = ClientUI::TechIcon(m_items_it->second);
         other_texture = ClientUI::CategoryIcon(tech->Category()); 
         color = ClientUI::CategoryColor(tech->Category());
         turns = tech->ResearchTime();
@@ -626,7 +626,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
         // Building types
         name = UserString(m_items_it->second);
-        texture = ClientUI::BuildingTexture(m_items_it->second);
+        texture = ClientUI::BuildingIcon(m_items_it->second);
         turns = building_type->ProductionTime();
         cost = building_type->ProductionCost();
         cost_units = UserString("ENC_PP");
@@ -648,7 +648,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
         // Specials
         name = UserString(m_items_it->second);
-        texture = ClientUI::SpecialTexture(m_items_it->second);
+        texture = ClientUI::SpecialIcon(m_items_it->second);
         detailed_description = UserString(special->Description());
 
         // objects that have special
