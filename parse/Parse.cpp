@@ -304,12 +304,9 @@ namespace parse {
             return rules.start;
         }
 
-        void parse_file_common(const boost::filesystem::path& path,
-                               const parse::lexer& l,
-                               std::string& filename,
-                               std::string& file_contents,
-                               parse::text_iterator& first,
-                               parse::token_iterator& it)
+        void parse_file_common(const boost::filesystem::path& path, const parse::lexer& l,
+                               std::string& filename, std::string& file_contents,
+                               parse::text_iterator& first, parse::token_iterator& it)
         {
             filename = path.string();
 
@@ -322,6 +319,8 @@ namespace parse {
                     return;
                 }
             }
+
+            macro_substitution(file_contents);
 
             first = parse::text_iterator(file_contents.begin());
             parse::text_iterator last(file_contents.end());

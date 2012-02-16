@@ -20,8 +20,6 @@ class Species;
 namespace parse {
     void init();
 
-    void macro_substitution(std::string& text);
-
     bool buildings(const boost::filesystem::path& path, std::map<std::string, BuildingType*>& building_types);
 
     bool specials(const boost::filesystem::path& path, std::map<std::string, Special*>& specials_);
