@@ -1,3 +1,21 @@
+v0.4 + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+New Features / Improvements:
+ ~ Improved the logic behind the choice of graphic to display for hulls and ship designs.
+
+Balancing:
+
+Content:
+
+Graphics:
+ ~ Added unique graphics for each hull.
+
+GUI:
+ ~ Renamed the 'Construction' meter to 'Infrastructure'.
+
+Bugs:
+
+
 v0.4 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 New Features / Improvements:

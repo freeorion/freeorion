@@ -3041,7 +3041,7 @@ Target Trade
 METER_TARGET_MINING
 Target Mining
 METER_TARGET_CONSTRUCTION
-Target Construction
+Target Infrastructure
 METER_MAX_FUEL
 Max Fuel
 METER_MAX_SHIELD
@@ -3067,7 +3067,7 @@ Trade
 METER_MINING
 Mining
 METER_CONSTRUCTION
-Construction
+Infrastructure
 METER_FUEL
 Fuel
 METER_SHIELD
