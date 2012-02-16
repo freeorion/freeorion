@@ -2155,4 +2155,3 @@ std::string GenerateSitRepMessage::Dump() const
 
     return retval;
 }
-

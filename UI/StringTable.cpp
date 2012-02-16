@@ -84,31 +84,28 @@ void StringTable_::Load() {
     bool well_formed = false;
     try {
         // has caused crashes with "Regex stack space exhausted" exception
-        well_formed = regex_search(it, end, matches, IDENTIFIER,
-                                   regex_constants::match_continuous);
+        well_formed = regex_search(it, end, matches, IDENTIFIER, regex_constants::match_continuous);
         it = end - matches.suffix().length();
         if (well_formed)
             m_language = matches.str(0);
 
         while (well_formed) {
-            well_formed = regex_search(it, end, matches, ENTRY,
-                                       regex_constants::match_continuous);
+            well_formed = regex_search(it, end, matches, ENTRY, regex_constants::match_continuous);
             it = end - matches.suffix().length();
 
             if (well_formed) {
-                std::string key = "";
-                smatch::nested_results_type::const_iterator it =
-                    matches.nested_results().begin();
-                smatch::nested_results_type::const_iterator end =
-                    matches.nested_results().end();
-                for (; it != end; ++it) {
-                    if (it->regex_id() == KEY.regex_id())
-                        key = it->str();
-                    else if (it->regex_id() == SINGLE_LINE_VALUE.regex_id() ||
-                             it->regex_id() == MULTI_LINE_VALUE.regex_id()) {
+                std::string key;
+                for (smatch::nested_results_type::const_iterator match_it = matches.nested_results().begin();
+                     match_it != matches.nested_results().end(); ++match_it)
+                {
+                    if (match_it->regex_id() == KEY.regex_id()) {
+                        key = match_it->str();
+                    } else if (match_it->regex_id() == SINGLE_LINE_VALUE.regex_id() ||
+                               match_it->regex_id() == MULTI_LINE_VALUE.regex_id())
+                    {
                         assert(key != "");
                         if (m_strings.find(key) == m_strings.end()) {
-                            m_strings[key] = it->str();
+                            m_strings[key] = match_it->str();
                             boost::algorithm::replace_all(m_strings[key], "\\n", "\n");
                         } else {
                             Logger().errorStream() << "Duplicate string ID found: '" << key
@@ -121,8 +118,7 @@ void StringTable_::Load() {
             }
         }
 
-        regex_search(it, end, matches, TRAILING_WS,
-                     regex_constants::match_continuous);
+        regex_search(it, end, matches, TRAILING_WS, regex_constants::match_continuous);
         it = end - matches.suffix().length();
 
         well_formed = it == end;
@@ -134,7 +130,8 @@ void StringTable_::Load() {
 
     if (well_formed) {
         // recursively expand keys -- replace [[KEY]] by the text resulting from expanding everything in the definition for KEY
-        for (std::map<std::string, std::string>::iterator map_it = m_strings.begin(); map_it != m_strings.end(); ++map_it)
+        for (std::map<std::string, std::string>::iterator map_it = m_strings.begin();
+             map_it != m_strings.end(); ++map_it)
         {
             std::size_t position = 0; // position in the definition string, past the already processed part
             smatch match;
@@ -161,7 +158,8 @@ void StringTable_::Load() {
         }
 
         // nonrecursively replace references -- convert [[type REF]] to <type REF>string for REF</type>
-        for (std::map<std::string, std::string>::iterator map_it = m_strings.begin(); map_it != m_strings.end(); ++map_it)
+        for (std::map<std::string, std::string>::iterator map_it = m_strings.begin();
+             map_it != m_strings.end(); ++map_it)
         {
             std::size_t position = 0; // position in the definition string, past the already processed part
             smatch match;
