@@ -18,8 +18,9 @@ class Special;
 class Species;
 
 namespace parse {
-
     void init();
+
+    void macro_substitution(std::string& text);
 
     bool buildings(const boost::filesystem::path& path, std::map<std::string, BuildingType*>& building_types);
 
@@ -48,6 +49,7 @@ namespace parse {
                     std::vector<Alignment>& alignments_,
                     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups);
 
+    bool named_effects(const boost::filesystem::path& path, std::map<std::string, Effect::EffectsGroup*>& effects_groups);
 }
 
 #endif
