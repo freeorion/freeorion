@@ -249,16 +249,13 @@ bool SpeciesManager::PlayableSpecies::operator()(
 SpeciesManager::SpeciesManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one SpeciesManager.");
-
     s_instance = this;
-
     parse::species(GetResourceDir() / "species.txt", m_species);
 }
 
 SpeciesManager::~SpeciesManager() {
-    for (std::map<std::string, Species*>::iterator it = m_species.begin(); it != m_species.end(); ++it) {
+    for (std::map<std::string, Species*>::iterator it = m_species.begin(); it != m_species.end(); ++it)
         delete it->second;
-    }
 }
 
 const Species* SpeciesManager::GetSpecies(const std::string& name) const {

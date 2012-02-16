@@ -670,7 +670,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-
 /** Generates a sitrep message for the empire with id \a recipient_empire_id.
   * The message text is the user string specified in \a message_string with
   * string substitutions into the message text as specified in \a message_parameters
@@ -895,7 +894,6 @@ void Effect::GiveEmpireTech::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_tech_name)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
-
 
 template <class Archive>
 void Effect::GenerateSitRepMessage::serialize(Archive& ar, const unsigned int version)

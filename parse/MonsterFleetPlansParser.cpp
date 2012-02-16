@@ -15,8 +15,7 @@ namespace std {
 #endif
 
 namespace {
-    struct new_monster_fleet_plan_
-    {
+    struct new_monster_fleet_plan_ {
         template <typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5>
         struct result
         { typedef MonsterFleetPlan* type; };
@@ -27,10 +26,8 @@ namespace {
     };
     const boost::phoenix::function<new_monster_fleet_plan_> new_monster_fleet_plan;
 
-    struct rules
-    {
-        rules()
-        {
+    struct rules {
+        rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -55,18 +52,18 @@ namespace {
                 >    (
                             '[' > +tok.string [ push_back(phoenix::ref(_b), _1) ] > ']'
                         |   tok.string [ push_back(phoenix::ref(_b), _1) ]
-                        )
+                     )
                 ;
 
             spawns
                 =    (
                             parse::label(SpawnRate_name) >> parse::double_ [ phoenix::ref(_c) = _1 ]
                         |   eps [ phoenix::ref(_c) = 1.0 ]
-                        )
+                     )
                 >    (
                             parse::label(SpawnLimit_name) >> parse::int_ [ phoenix::ref(_d) = _1 ]
                         |   eps [ phoenix::ref(_d) = 9999 ]
-                        )
+                     )
                 ;
 
             monster_fleet_plan
@@ -77,8 +74,8 @@ namespace {
                         >  -(
                                 parse::label(Location_name) >> parse::detail::condition_parser [ phoenix::ref(_e) = _1 ]
                             )
-                        )
-                        [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e)) ]
+                     )
+                     [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e)) ]
                 ;
 
             start

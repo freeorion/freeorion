@@ -16,10 +16,8 @@ namespace std {
 namespace {
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >* g_effects_groups = 0;
 
-    struct rules
-    {
-        rules()
-        {
+    struct rules {
+        rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -47,7 +45,7 @@ namespace {
                                 tok.AlignmentEffects_
                             >   parse::label(EffectsGroups_name) > parse::detail::effects_group_parser() [ phoenix::ref(*g_effects_groups) = _1 ]
                             )
-                        )
+                     )
                 ;
 
             alignment.name("Alignment");
@@ -78,7 +76,6 @@ namespace {
         alignment_rule alignment;
         start_rule start;
     };
-
 }
 
 namespace parse {
