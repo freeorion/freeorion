@@ -22,8 +22,7 @@ namespace Effect {
 class Empire;
 
 /** Part stats for the PC_SHORT_RANGE and PC_POINT_DEFENSE part classes. */
-struct DirectFireStats
-{
+struct DirectFireStats {
     DirectFireStats();
     DirectFireStats(double damage,
                     double ROF,
@@ -46,8 +45,7 @@ struct DirectFireStats
 };
 
 /** Part stats for the PC_MISSILES part class. */
-struct LRStats
-{
+struct LRStats {
     LRStats();
     LRStats(double damage,
             double ROF,
@@ -78,8 +76,7 @@ struct LRStats
 };
 
 /** Part stats for the PC_FIGHTERS part class. */
-struct FighterStats
-{
+struct FighterStats {
     FighterStats();
     FighterStats(CombatFighterType type,
                  double anti_ship_damage,
@@ -712,7 +709,7 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_mountable_slot_types)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_effects)
-        & BOOST_SERIALIZATION_NVP(m_graphic);
+        & BOOST_SERIALIZATION_NVP(m_icon);
 }
 
 template <class Archive>
