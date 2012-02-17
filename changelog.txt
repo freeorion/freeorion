@@ -14,6 +14,8 @@ GUI:
  ~ Renamed the 'Construction' meter to 'Infrastructure'.
 
 Bugs:
+ ~ Fixed many spelling errors in various descriptions.
+ ~ Updated many inaccurate tech descriptions.
 
 
 v0.4 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

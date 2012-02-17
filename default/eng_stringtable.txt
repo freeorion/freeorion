@@ -226,7 +226,7 @@ Advanced cruiser with heavy weaponry and armor to do the dirty work.
 SD_GRAVITATING1
 Gravitating I
 SD_GRAVITATING1_DESC
-Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.
+Massive state-of-art warship armed and protected with the latest technology. Priced accordingly.
 
 SD_COLONY_SHIP
 Colony Ship
@@ -283,7 +283,7 @@ SM_KRILL_3_DESC
 '''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become agressive towards ships. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
 
 SM_KRILL_4
-Plauge of Krill
+Plague of Krill
 SM_KRILL_4_DESC
 '''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill, become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
 
@@ -291,12 +291,12 @@ SM_TREE
 Dyson Forest
 
 SM_TREE_DESC
-'''A Dyson Forest is made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to erradicate.  At intervals they may send out a seed through the star-lanes to colonize other stars.'''
+'''A Dyson Forest is made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate.  At intervals they may send out a seed through the star-lanes to colonize other stars.'''
 SM_SEED
 Dyson Seed
 
 SM_SEED_DESC
-Dyson Forests intermittantly produce a star-lane capable seed, sent away to found a new forest around other stars.
+Dyson Forests intermittently produce a star-lane capable seed, sent away to found a new forest around other stars.
 
 SM_FLOATER
 Floater
@@ -338,47 +338,47 @@ Wardens guard cool major stuff.
 SM_KRAKEN_1
 Larval Kraken
 SM_KRAKEN_1_DESC
-In the larval form, a kraken is a cautious and harmless type of space-boure fauna.  Its natual prey is the krill swarms, which it help to keep in check.  But a well-fed larval kraken may grow into a larger and more dangerous adult form.
+In the larval form, a kraken is a cautious and harmless type of space-bourn fauna.  Its natural prey is the krill swarms, which it help to keep in check.  But a well-fed larval kraken may grow into a larger and more dangerous adult form.
 
 SM_KRAKEN_2
 Kraken
 SM_KRAKEN_2_DESC
-A formidible medium-weight space monster.
+A formidable medium-weight space monster.
 
 SM_KRAKEN_3
 Great Kraken
 SM_KRAKEN_3_DESC
-A formidible medium-weight space monster.
+A formidable medium-weight space monster.
 
 SM_SNOWFLAKE_1
 Small Snowflake
 SM_SNOWFLAKE_1_DESC
-A formidible light-weight space monster.
+A formidable light-weight space monster.
 
 SM_SNOWFLAKE_2
 Snowflake
 SM_SNOWFLAKE_2_DESC
-A formidible light-weight space monster.
+A formidable light-weight space monster.
 
 SM_SNOWFLAKE_3
 Large Snowflake
 SM_SNOWFLAKE_3_DESC
-A formidible light-weight space monster.
+A formidable light-weight space monster.
 
 SM_JUGGERNAUT_1
 Small Juggernaut
 SM_JUGGERNAUT_1_DESC
-A formidible heavy-weight space monster.
+A formidable heavy-weight space monster.
 
 SM_JUGGERNAUT_2
 Juggernaut
 SM_JUGGERNAUT_2_DESC
-A formidible heavy-weight space monster.
+A formidable heavy-weight space monster.
 
 SM_JUGGERNAUT_3
 Large Juggernaut
 SM_JUGGERNAUT_3_DESC
-A formidible heavy-weight space monster.
+A formidable heavy-weight space monster.
 
 ##############################
 # Predefined Starting Fleets #
@@ -510,7 +510,7 @@ OPTIONS_DB_GALAXY_MAP_GAS
 Render gassy substance around systems to give galaxy shape.  May slow rendering on older systems.
 
 OPTIONS_DB_GALAXY_MAP_STARFIELDS
-Render starfields around systems. May slow rendering on older systems.
+Render star fields around systems. May slow rendering on older systems.
 
 OPTIONS_DB_GALAXY_MAP_SCALE_LINE
 Show scale line for universe distance on galaxy map.
@@ -525,13 +525,13 @@ OPTIONS_DB_STARLANE_THICKNESS
 Sets how wide to render starlanes in pixels.
 
 OPTIONS_DB_RESOURCE_STARLANE_COLOURING
-Toggles whether to colour starlanes with empire colours if empires can exchange resources along each starlane.
+Toggles whether to color starlanes with empire colors if empires can exchange resources along each starlane.
 
 OPTIONS_DB_UNOWNED_STARLANE_COLOUR
-Sets default colour to render starlanes.
+Sets default color to render starlanes.
 
 OPTIONS_DB_FLEET_SUPPLY_LINES
-Toggles whether to show fleet supply lines with empire-coloured indicators.
+Toggles whether to show fleet supply lines with empire-colored indicators.
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH
 Sets how wide to render fleet supply lines.
@@ -756,10 +756,10 @@ OPTIONS_DB_UI_SYSTEM_ICON_SIZE
 Sets size of system icons.
 
 OPTIONS_DB_UI_SYSTEM_FOG
-Toggles whether to render fog of war scanline shading over system icons.
+Toggles whether to render fog of war scan-line shading over system icons.
 
 OPTIONS_DB_UI_SYSTEM_FOG_SPACING
-Sets spacing (in pixels) between fog of war scanlines.
+Sets spacing (in pixels) between fog of war scan-lines.
 
 OPTIONS_DB_UI_SYSTEM_CIRCLES
 Toggles whether to draw circles around systems.
@@ -768,7 +768,7 @@ OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE
 Sets size of circles around systems on map, relative to system icon size.
 
 OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
-Sets colour of unowned system names on the galaxy map.
+Sets color of unowned system names on the galaxy map.
 
 OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
 Sets minimum zoom level at which medium fleet icons are shown on the galaxy map.
@@ -804,16 +804,16 @@ OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Close open windows such as fleet windows and the system-view side panel when you right-click on the main map.
 
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
-Sets size of system sidepanel.
+Sets size of system side-panel.
 
 OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER
-Sets size of largest-rendered rotating planets on sidepanel.
+Sets size of largest-rendered rotating planets on side-panel.
 
 OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER
-Sets size of smallest-rendered rotating planets on sidepanel.
+Sets size of smallest-rendered rotating planets on side-panel.
 
 OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
-Sets whether to show rendered planets / asteroids on the sidepanel.
+Sets whether to show rendered planets / asteroids on the side-panel.
 
 OPTIONS_DB_GAMESETUP_STARS
 The number of systems in the galaxy to be generated.
@@ -897,7 +897,7 @@ OPTIONS_DB_COMBAT_FILLED_SELECTION
 Uses a filled-in effect, as opposed to an outline effect, on selected objects.
 
 OPTIONS_DB_QUICKSTART
-Starts a new quickstart game, bypassing the main menu.
+Starts a new quick-start game, bypassing the main menu.
 
 OPTIONS_DB_AUTO_FIRST_TURN
 Hits the "Turn" button automatically on the first turn; useful for debugging, especially when used with --quickstart.
@@ -909,7 +909,7 @@ OPTIONS_DB_RESET_FSSIZE
 Stores whether to reset the stored fullscreen resolution.  If false, the stored values are used, but if true, the values are reset to the max the rendering system supports.
 
 OPTIONS_DB_AUTO_EFFECT_DESC
-Toggles inclusion of autogenerated text in tech, building or ship part descriptions.
+Toggles inclusion of auto-generated text in tech, building or ship part descriptions.
 
 OPTIONS_DB_VERBOSE_LOGGING_DESC
 Toggles verbose logging of universe contents and effect evaluation.
@@ -1082,7 +1082,7 @@ MPLOBBY_HOST_ABORTED_GAME
 The host player has terminated this game setup.
 
 MULTIPLAYER_GAME_START_CONDITIONS
-Unique empire names and colours required
+Unique empire names and colors required
 
 MULTIPLAYER_PLAYER_LIST_TYPES
 Type
@@ -1094,7 +1094,7 @@ MULTIPLAYER_PLAYER_LIST_EMPIRES
 Empire
 
 MULTIPLAYER_PLAYER_LIST_COLOURS
-Empire Colour
+Empire Color
 
 MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES
 Previous Player
@@ -1357,10 +1357,10 @@ OPTIONS_UI_SYSTEM_ICON_SIZE
 System icon size
 
 OPTIONS_UI_SYSTEM_FOG
-System icon fog of war scanlines
+System icon fog of war scan-lines
 
 OPTIONS_UI_SYSTEM_FOG_SPACING
-Fog of war scanline spacing
+Fog of war scan-line spacing
 
 OPTIONS_UI_SYSTEM_CIRCLES
 System enclosing circles
@@ -1378,7 +1378,7 @@ OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Tiny system icon size threshold
 
 OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR
-Unowned system name colour
+Unowned system name color
 
 OPTIONS_FLEET_ICONS
 Fleet Icons
@@ -1402,7 +1402,7 @@ OPTIONS_GALAXY_MAP_GAS
 Galaxy map gas rendering
 
 OPTIONS_GALAXY_MAP_STARFIELDS
-Galaxy map starfields rendering
+Galaxy map star fields rendering
 
 OPTIONS_GALAXY_MAP_SCALE_LINE
 Galaxy distance scale line
@@ -1426,7 +1426,7 @@ OPTIONS_STARLANE_THICKNESS
 Starlane thickness
 
 OPTIONS_RESOURCE_STARLANE_COLOURING
-Resource starlane colouring
+Resource starlane coloring
 
 OPTIONS_FLEET_SUPPLY_LINES
 Fleet supply lines
@@ -1441,7 +1441,7 @@ OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE
 Fleet supply line dot rate
 
 OPTIONS_UNOWNED_STARLANE_COLOUR
-Default starlane colour
+Default starlane color
 
 OPTIONS_MUSIC
 Music
@@ -1558,7 +1558,7 @@ OPTIONS_HIGHLIGHT_COLOR
 Selection highlighting
 
 OPTIONS_DROPLIST_ARROW_COLOR
-Droplist arrow
+Drop-list arrow
 
 OPTIONS_STATE_BUTTON_COLOR
 Toggle button selected
@@ -1660,7 +1660,7 @@ OPTIONS_SOUND_FILE
 Sound files
 
 OPTIONS_AUTO_EFFECT_DESC
-Autogenerated effect descriptions
+Auto-generated effect descriptions
 
 OPTIONS_VERBOSE_LOGGING_DESC
 Verbose logging for debugging
@@ -2055,7 +2055,7 @@ RP
 ####################
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
-Prodicible Items
+Producible Items
 
 PRODUCTION_WND_CATEGORY_BT_BUILDING
 Buildings
@@ -2110,7 +2110,7 @@ PRODUCTION_QUEUE_MULTIPLES
 PRODUCTION_QUEUE_EMPTY
 '''Empire production queue is empty.
 
-Enqueue production projects by selecting a planet on the sidepanel, then double-clicking items in the list.
+Enqueue production projects by selecting a planet on the side-panel, then double-clicking items in the list.
 
 Note that ships can only be built on planets with a shipyard, and that various other objects may have other restrictions on build location.'''
 
@@ -2264,7 +2264,7 @@ ENC_INDEX
 Encyclopedia Index
 
 # type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
-# for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
+# for example:  %1% = "Point Defense" or "Farming" and %2% = "Ship Part" or "Building".
 # %1% may be an empty string for most general types of things that can be shown.
 ENC_DETAIL_TYPE_STR
 <i>%1% %2%</i>
@@ -2283,7 +2283,7 @@ RP
 ENC_COST_AND_TURNS_STR
 %1% %2% and %3% Turns
 
-# autogenerated location condition description
+# auto-generated location condition description
 ENC_LOCATION_CONDITION_STR
 '''
 
@@ -2291,8 +2291,8 @@ ENC_LOCATION_CONDITION_STR
 
 An object%1%'''
 
-# autogenerated effects description.  %1% will be the autogenerated effects text.  This string should
-# provide an appropriate heading to appear before the autogenerated text.
+# auto-generated effects description.  %1% will be the auto-generated effects text.  This string should
+# provide an appropriate heading to appear before the auto-generated text.
 ENC_EFFECTS_STR
 '''
 
@@ -2400,7 +2400,7 @@ TURN_PROGRESS_COLONIZE_AND_SCRAP
 Colonization, Invasion, and Scrapping
 
 TURN_PROGRESS_PHASE_DOWNLOADING
-Downloading and Unpacking New Gamestate
+Downloading and Unpacking New Game-state
 
 TURN_PROGRESS_PHASE_LOADING_GAME
 Loading
@@ -2608,7 +2608,7 @@ Evil amazonian xenophobic agressive worms. Prefer Desert planets.
 SP_SUPER_TEST
 Super Testers
 SP_SUPER_TEST_DESC
-Super Testers are unbalanced and unfair. They are nearly Omniscient. And they trive on all planets.
+Super Testers are unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets.
 
 SP_CYNOS
 Cynos
@@ -2625,7 +2625,7 @@ Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
 SP_GEORGE
 George
 SP_GEORGE_DESC
-A single, childish Telelpathic entity that consists of tons of centipedeoids
+A single, childish Telepathic entity that consists of tons of centipedeoids
 
 SP_PHINNERT
 Phinnert
@@ -2637,7 +2637,7 @@ Cannot produce Research'''
 SP_SSLITH
 Sslith
 SP_SSLITH_DESC
-Flat, aquatic, plyable creatures.
+Flat, aquatic, pliable creatures.
 
 SP_LAENFA
 Laenfa
@@ -2657,7 +2657,7 @@ SP_FIFTYSEVEN_DESC
 Can only produce Food or Research.
 
 Biology:
-Adult Fifty-Seven are between 10 and 20 m long. The main deviation from the tapering serpentine body are the two resonating domes on the forward dorsal side.  Various fins provide fine control.  Entirely blind, they rely on smell, hearing, an exquisitely honed presure sensitivity, and when the need arises bursts of echolocation.  Fifty-Seven are omnivores: eating flocks of small flying creatures with the same relish as the floating phytoplankton.  Since they remain aloft their entire lives and have no manipulator limbs, the Fifty-Seven have no material technology.
+Adult Fifty-Seven are between 10 and 20 m long. The main deviation from the tapering serpentine body are the two resonating domes on the forward dorsal side.  Various fins provide fine control.  Entirely blind, they rely on smell, hearing, an exquisitely honed pressure sensitivity, and when the need arises bursts of echolocation.  Fifty-Seven are omnivores: eating flocks of small flying creatures with the same relish as the floating phytoplankton.  Since they remain aloft their entire lives and have no manipulator limbs, the Fifty-Seven have no material technology.
 
 Personality:
 The Fifty-Seven show little interest in the rest of the galaxy, or indeed in the parts of their planet that they don't use.  The bulk of their attention individually, and culturally is focused on math.  They do seem eager for new mathematical puzzles, so if research problems can be phrased properly...
@@ -2728,7 +2728,7 @@ The Hidden Gardener is a massive distributed fungal intelligence lying just bene
 
 Fungal type life-forms seldom have much use for brains of any type, but the Gardener's unusual, and thoughtful approach to providing itself with food provides enough additional energy to make it work.
 
-Their terran homeworld is an eerily park-like place with plants arrainged with unnatural precision, but no other signs of habitation.
+Their terran homeworld is an eerily park-like place with plants arranged with unnatural precision, but no other signs of habitation.
 
 The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet.  And since the hidden gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.'''
 
@@ -2743,9 +2743,9 @@ SP_ACIREMA_DESC
 '''A race with nearly limitless power, that can't survive in this universe.
 
 Description
-An Acirem is a 10-30 m elipsoidal energy beings with large (30-100m) ''wings''. As they age they tend to accumulate material from around them developing a dusty and eventually rocky appearance (still maintaining the visible energy flows through their body and the gaps). Most Acirema live in a universe where the physical constants are slightly different, and there is only one place where they can get through to our universe, on their "Homeworld" of Portal. However, upon doing that they immediately begin to 'age' differently than in their own universe. Acirema cannot survive more than a few fractions of a galactic cycle in this universe. So an Acirem rarely spends much time before crossing back into their own universe.
+An Acirem is a 10-30 m ellipsoidal energy beings with large (30-100m) ''wings''. As they age they tend to accumulate material from around them developing a dusty and eventually rocky appearance (still maintaining the visible energy flows through their body and the gaps). Most Acirema live in a universe where the physical constants are slightly different, and there is only one place where they can get through to our universe, on their "Homeworld" of Portal. However, upon doing that they immediately begin to 'age' differently than in their own universe. Acirema cannot survive more than a few fractions of a galactic cycle in this universe. So an Acirem rarely spends much time before crossing back into their own universe.
 
-As the Acirema found the anomaly that allowed them to enter into this universe, they also found that harnesing the differences in structure allowed them to generate energy in massive amounts in both universes. They also found that their bodies could release and manipulate massive amounts of energy. They rapidly began gathering material on Portal to study, and use to build structures on Portal itself. However that massive amount of energy meant they rapidly mined Portal out, and soon had very limited minerals that were safe for them to extract.
+As the Acirema found the anomaly that allowed them to enter into this universe, they also found that harnessing the differences in structure allowed them to generate energy in massive amounts in both universes. They also found that their bodies could release and manipulate massive amounts of energy. They rapidly began gathering material on Portal to study, and use to build structures on Portal itself. However that massive amount of energy meant they rapidly mined Portal out, and soon had very limited minerals that were safe for them to extract.
 
 The massive amount of energy they can release as individuals and across the connection from Portal to their home universe, gives them the ability to produce large amounts of Industry, and also allows them to act as weapons. This makes Portal a very dangerous world to approach, as the Acirema are very wary of outsiders, and are sensitive to the vulnerability of their position. Trade with another universe is definitely beneficial, especially since they cannot obtain minerals from other planets. The Acirema on Portal seem to have a government that is similar to a military and/or research outpost (tightly controlled core with a majority loosely controlled) They are very secretive of the nature of their society back home.
 
@@ -2758,7 +2758,7 @@ They can't stay here long enough to actually move to another planet and still su
 SP_TEST
 Testing Guinea Pig
 SP_TEST_DESC
-'''Try all your exparamental scripting on this guy, he'll appear a lot.'''
+'''Try all your experimental scripting on this guy, he'll appear a lot.'''
 
 
 ####################
@@ -2769,85 +2769,89 @@ GAIA_SPECIAL
 Gaia
 
 GAIA_SPECIAL_DESC
-'''This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of it's population.
+'''Doubles the planet's Farming, Health and Population.
 
-Doubles the planet's target farming, target health and target population.'''
+This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of it's population.'''
 
 ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-This planet holds the ruins of an unknown, advanced ancient race. Research is tripled on the planet and increasing research on Research-focused planets throughout the empire by one twentieth (non-stacking).  A valuable discovery has already been made here.
+'''Research is tripled on the planet and increased on all Research-focused planets by one twentieth (non-stacking).
+
+This planet holds the ruins of an unknown, advanced ancient race. A valuable discovery has already been made here.
 
 ANCIENT_RUINS_SPECIAL
 Ancient Ruins
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-This planet holds the ruins of an unknown, advanced ancient race. Research is tripled on the planet and increasing research on Research-focused planets throughout the empire by one twentieth (non-stacking).  The first empire with the tech Xenoarchaeology to possess this planet receives one free advanced tech or uncovers a powerful building or ship.
+'''Research is tripled on the planet and increased on all Research-focused planets by one twentieth (non-stacking).
+
+This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech Xenoarchaeology to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
 
 MINERALS_SPECIAL
 Mineral Rich
 
 MINERALS_SPECIAL_DESCRIPTION
-'''This planet has a rich natural deposit of minerals, boosting mining significantly.
+'''Increases Mining on the planet by 50 when focus is set to Mining, and by twice the planet's Population when focus is set to Heavy Mining.
 
-Increases target mining by 50 when focus is set to Mining, and by twice the planet's population when focus is set to Heavy Mining.'''
+This planet has a rich natural deposit of minerals, boosting mining significantly.'''
 
 TUNNELS_SPECIAL
 Natural Tunnels
 
 TUNNELS_SPECIAL_DESCRIPTION
-'''This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonized.
+'''Increases the Population that can be supported by the planet by 2, 4, 6, 8 or 10 for Tiny, Small, Medium, Large or Huge planets, respectively, and by an additional 1, 2, 3, 4 or 5 if the owner has the tech Subterranean Construction.
 
-Increases the population that can be supported by the planet by 2, 4, 6, 8 or 10 for Tiny, Small, Medium, Large or Huge planets, respectively, and by an additional 1, 2, 3, 4 or 5 if the owner has the tech Subterranean Construction.'''
+This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonized.'''
 
 TECHTONIC_INSTABILITY_SPECIAL
 Tectonically Unstable
 
 TECHTONIC_INSTABILITY_SPECIAL_DESC
-'''This planet is tectonically unstable.  Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.
+'''Construction on the planet is decreased by 20.
 
-Resource supply length from this planet is decreased by 1.'''
+This planet is tectonically unstable.  Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.'''
 
 SOLID_CORE_SPECIAL
 Solid Core
 
 SOLID_CORE_SPECIAL_DESC
-'''This planet's core has solidified, and it has a very weak magnetic field.  The star's solar wind reaches the surface relatively unfiltered, damaging the health of the planet's population.
+'''Health on the planet is reduced by 5.
 
-Health is reduced by 5.'''
+This planet's core has solidified, and it has a very weak magnetic field.  The star's solar wind reaches the surface relatively unfiltered, damaging the health of the planet's population.'''
 
 HIGH_AXIAL_TILT_SPECIAL
 High Axial Tilt
 
 HIGH_AXIAL_TILT_SPECIAL_DESC
-'''This planet's rotational axis is highly tilted relative to its orbital plane.  Seasonal weather variations are particularly extreme and infrastructure development is significantly impeded.
+'''Construction on the planet is decreased by 20.
 
-Resource supply length from this planet is decreased by 1.'''
+This planet's rotational axis is highly tilted relative to its orbital plane.  Seasonal weather variations are particularly extreme and infrastructure development is significantly impeded.'''
 
 SLOW_ROTATION_SPECIAL
 Very Slow Rotation
 
 SLOW_ROTATION_SPECIAL_DESC
-'''This planet rotates about its axis very slowly, causing very long days and nights.  Infrastructure growth and food production are reduced.
+'''Construction on the planet is decreased by 20, and Farming on the planet is decreased by 10, unless the Orbital Farming tech has been researched.
 
-Resource supply length from this planet is decreased by 1, and target farming is decreased by 10, unless the Orbital Farming tech has been researched.'''
+This planet rotates about its axis very slowly, causing very long days and nights.  Infrastructure growth and food production are reduced.'''
 
 TIDAL_LOCK_SPECIAL
 Tidally Locked Rotation
 
 TIDAL_LOCK_SPECIAL_DESC
-'''This planet is tidally locked with the star it orbits.  Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night.  Infrastructure growth is hampered, though once established, industrial capacity benefits from the locally stable surface conditions.
+'''Construction on the planet is decreased by 20, but Industry on the planet is increased by one fifth the planet's Population.
 
-Resource supply length from this planet is decreased by 1, but industry is increased by one fifth the planet's population.'''
+This planet is tidally locked with the star it orbits.  Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night.  Infrastructure growth is hampered, though once established, industrial capacity benefits from the locally stable surface conditions.'''
 
 ECCENTRIC_ORBIT_SPECIAL
 Eccentric Orbit
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''This planet's orbit is very eccentric.  It has a large distance between its closest and farthest approaches to its star.  Total insolation varies significantly throughout the year.  The varied conditions inhibit infrastructure development, but provide a beneficial platform for research.
+'''Construction on the planet is decreased by 20, but research on the planet is increased by 3.
 
-Resource supply length from this planet is decreased by 1, but research is increased by 3.'''
+This planet's orbit is very eccentric.  It has a large distance between its closest and farthest approaches to its star.  Total insolation varies significantly throughout the year.  The varied conditions inhibit infrastructure development, but provide a beneficial platform for research.'''
 
 RESONANT_MOON_SPECIAL
 Resonant Moon
@@ -2858,12 +2862,16 @@ This planet has a natural satellite, the orbital period of which is in 1:1 reson
 COMPUTRONIUM_SPECIAL
 Computronium Moon
 COMPUTRONIUM_SPECIAL_DESC
-'''Left by some vanished civilization, the entire moon --from surface to core-- is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.  All research-focused planets in the system recieve a large population-based bonus.'''
+''' All research-focused planets in the system receive a large population-based bonus.
+
+Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
 
 COMPUTRONIUM_BROKEN_SPECIAL
 Damaged Computronium Moon
 COMPUTRONIUM_BROKEN_SPECIAL_DESC
-'''Left by some vanished civilization, the entire moon --from surface to core-- is a computing device of awesome power. This one however has been blasted by some unknown weapon of war leaving most of the computronium fused and useless.  Still it can complete complicated simulations and equations in impressive time. All research-focused planets in the system recieve a population-based bonus.'''
+'''All research-focused planets in the system receive a population-based bonus.
+
+Left by some vanished civilization, the entire moon --from surface to core-- is a computing device of awesome power. This one however has been blasted by some unknown weapon of war leaving most of the computronium fused and useless.  Still it can complete complicated simulations and equations in impressive time.'''
 
 ABANDONED_COLONY_SPECIAL
 Abandoned Colony
@@ -3231,7 +3239,7 @@ Point Defense
 PC_SHIELD
 Shields
 PC_ARMOUR
-Armour
+Armor
 PC_TROOPS
 Ground Troops
 PC_DETECTION
@@ -3455,7 +3463,7 @@ DESC_VAR_FOCUS
 focus
 
 DESC_VAR_LASTTURNBATTLEHERE
-last turn a battle occured here
+last turn a battle occurred here
 
 DESC_VAR_ALLOCATEDFOOD
 allocated food
@@ -4064,7 +4072,7 @@ Allows discoveries from Ruins
 LRN_XENOARCH_DESC
 '''Allows discoveries from Ancient Ruins.
 
-The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy.  Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space.  Finding and deciphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
+The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy.  Remains, ruins and rumors of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space.  Finding and deciphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
 
 It is often exceedingly difficult and dangerous to decipher the clues left by ancient civilizations in the form of highly advanced technology.  Mistreatment of the technology or accidental activation can cause the technology itself and/or the archaeologists extracting the technology to be lost.  By containing the technology safely within a force field and probing its depths via non-local field manipulation, it is possible to safely recover and unlock the mysteries of ancient technology.'''
 
@@ -4072,7 +4080,7 @@ LRN_GRAVITONICS
 Gravitonics
 
 LRN_GRAVITONICS_DESC
-Analogous to the "colour charge" of quantum chromodynamics, there are several types of graviton.  With the common attractive-force graviton, the colloquial "anti-graviton", "right-graviton" and "left-graviton" may be combined to bend and flex the surface of spacetime arbitrarily.  This manipulation is perceived as control of the force of gravity, permitting structures, craft and investigations previously impossible, even theoretically.
+Analogous to the "color charge" of quantum chromodynamics, there are several types of graviton.  With the common attractive-force graviton, the colloquial "anti-graviton", "right-graviton" and "left-graviton" may be combined to bend and flex the surface of space-time arbitrarily.  This manipulation is perceived as control of the force of gravity, permitting structures, craft and investigations previously impossible, even theoretically.
 
 LRN_EVERYTHING
 Theory of Everything
@@ -4096,7 +4104,7 @@ LRN_TIME_MECH
 Temporal Mechanics
 
 LRN_TIME_MECH_DESC
-What are "now", "future" and "past"?  The twin paradox of special relativity, or the theoretical "wormhole" in its place, suggest early forms of "time travel".  Direct manipulation of spacetime and temporal flux permit these effects to be harnessed and magnified.  Temporal incursions cannot perceptibly alter the past of the universe that we perceive.  They can, however, compress ages or extend moments to arbitrary durations, to uses limited only by the material supplies provided, and our own patience...
+What are "now", "future" and "past"?  The twin paradox of special relativity, or the theoretical "wormhole" in its place, suggest early forms of "time travel".  Direct manipulation of space-time and temporal flux permit these effects to be harnessed and magnified.  Temporal incursions cannot perceptibly alter the past of the universe that we perceive.  They can, however, compress ages or extend moments to arbitrary durations, to uses limited only by the material supplies provided, and our own patience...
 
 LRN_NDIM_SUBSPACE
 N-Dimensional Subspace
@@ -4126,13 +4134,13 @@ LRN_TRANSCEND
 Singularity of Transcendence
 
 LRN_TRANSCEND_DESC
-What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infinitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
+What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infinitely minuscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
 
 GRO_MEDICAL_PATH
 Medical Pathology
 
 GRO_MEDICAL_PATH_DESC
-'''Increases health on all planets by 5.
+'''Increases Health on all planets by 5.
 
 Many diseases and injuries, or manifestations of the same disease or injury, can have very similar causes and symptoms, but very different ideal treatments.  By treating each individual's illness according its specific manifestation rather than its general categorization, a general benefit to health can be obtained.
 Treatment of diseases and injuries requires a thorough understanding of their causes.  By studying the subtleties and intricacies of various ailments, it is possible to develop far more effective treatment methods.'''
@@ -4163,13 +4171,13 @@ GRO_SYMBIOTIC_BIO
 Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Increases the population that can be sustained by Adequate planets to 4, 8, 12, 16 and 20 for Tiny, Small, Medium, Large and Huge planets, respectively.'''
+'''Increases the population that can be sustained by Adequate planets by 3, 6, 9, 12 and 15 for Tiny, Small, Medium, Large and Huge planets, respectively.'''
 
 GRO_GENETIC_MED
 Genetic Medicine
 
 GRO_GENETIC_MED_DESC
-'''Increases health on all planets by 5.
+'''Increases Health on all planets by 5.
 
 Traditional Genetic Engineering alters genetic codes, then grows the modified organism from an embryonic state.  Similar techniques may be applied to already matured individuals.  The goals of these treatments may be cosmetic, functional, corrective, preventative or life-saving medical treatments.  Reducing the delay between alteration and results from generations to months, days or hours has a corresponding increase in the range and power of possible alterations.'''
 
@@ -4199,7 +4207,7 @@ GRO_NANOTECH_MED
 Nanotech Medicine
 
 GRO_NANOTECH_MED_DESC
-'''Increases health on all planets by 10.
+'''Increases Health on all planets by 10.
 
 Pathogens, particularly prokaryotes, are vulnerable to disruption of their genetic material from within - that is, if it is possible to permeate the cell membrane or the protein coating, in the case of viral infections.  By designing nanorobots capable of identifying and penetrating such pathogens, it would be possible to destroy them by completely deconstructing their genetic material.
 
@@ -4317,7 +4325,7 @@ PRO_NDIM_ASSMB_DESC
 
 Once the greatest fear of N-dimensional physicists, now the noblest goal. To deliberately create a hyperspatial rift between our universe and the next, but inside a dimensional bubble, safely separate from known space-time. Once this is accomplished, it would be a relatively simple matter to tap into the enormous flow of energy that would travel across the rift.
 
-The geometry of physical space has always been a major impediment to the assembly of objects within that space.  Objects cannot be collocated, and volumes cannot be simultaneously enclosed and open if their existence is restricted to a mere three dimensions.  Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and continguous lines may be passed around other masses by going "off-axis".  Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.'''
+The geometry of physical space has always been a major impediment to the assembly of objects within that space.  Objects cannot be collocated, and volumes cannot be simultaneously enclosed and open if their existence is restricted to a mere three dimensions.  Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and contiguous lines may be passed around other masses by going "off-axis".  Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.'''
 
 PRO_SINGULAR_GEN
 Singularity Generation
@@ -4325,7 +4333,7 @@ Singularity Generation
 PRO_SINGULAR_GEN_DESC
 '''Harnessing energy from a black hole is significantly more dangerous than harnessing energy from a regular star, but also has potential for significantly greater gains.  By building a generator designed to tap into the energy of particle-antiparticle collisions on the event horizon of a singularity, tremendous benefits to industry may be obtained.
 
-As matter is drawn towards a singularity by the intense spacetime curvature, or gravitational field, the matter forms an accretion disk and is greatly compressed and heated.  High energy radiation emitted from the disk may be captured and harnessed for power generation.  The event horizon of the singularity itself also emits radiation due to the annihilation of virtual particle-antiparticle pairs that form in its vicinity.  This method of power generation is significantly more delicate and unstable than the accretion disk method, but can produce an even greater output.'''
+As matter is drawn towards a singularity by the intense space-time curvature, or gravitational field, the matter forms an accretion disk and is greatly compressed and heated.  High energy radiation emitted from the disk may be captured and harnessed for power generation.  The event horizon of the singularity itself also emits radiation due to the annihilation of virtual particle-antiparticle pairs that form in its vicinity.  This method of power generation is significantly more delicate and unstable than the accretion disk method, but can produce an even greater output.'''
 
 PRO_ENERGY_CONV
 Energy Conversion
@@ -4473,7 +4481,7 @@ SHP_TACT_SUPER
 Tactical Superiority
 
 SHP_TACT_SUPER_DESC
-Many tactical scenarios are a complex form of Rock-Paper-Scissors; a defender may find himself vulnerable to attack because he prepared for a different sort of assault than that with which he was faced.  Likewise, an attacker may have received incorrect or inaccurate information about an opponents defences and find that his method of attack is ineffective.  By developing an ideal fighting force for nearly all scenarios, the risk of loss due to unforeseen circumstances can be greatly reduced.
+Many tactical scenarios are a complex form of Rock-Paper-Scissors; a defender may find himself vulnerable to attack because he prepared for a different sort of assault than that with which he was faced.  Likewise, an attacker may have received incorrect or inaccurate information about an opponents defenses and find that his method of attack is ineffective.  By developing an ideal fighting force for nearly all scenarios, the risk of loss due to unforeseen circumstances can be greatly reduced.
 
 SHP_SURGICAL_DESTRUCT
 Surgical Destruction
@@ -4503,10 +4511,10 @@ SHP_ADV_NAVIGATION
 Advanced Navigation
 
 SHP_ADV_NAVIGATION_DESC
-The dangers of the untampered universe are miniscule compared to the dangers of a universe fraught with other ships, both friend and foe.  By integrated the known effects of other empires on the conditions of starlanes and interplanetary space, more effective navigation methods can be enacted.
+The dangers of the untampered universe are minuscule compared to the dangers of a universe fraught with other ships, both friend and foe.  By integrated the known effects of other empires on the conditions of starlanes and interplanetary space, more effective navigation methods can be enacted.
 
 SHP_NEUTRONIUM_ARM
-Neutronium Armour
+Neutronium Armor
 
 SHP_NEUTRONIUM_ARM_DESC
 Neutronium is one of the densest substances in the universe, naturally occurring or otherwise.  As such, it is extremely difficult even break it into manageable pieces for transport.  Through advanced metallurgical processes however, Neutronium can theoretically be plated on to many military vessels.
@@ -4524,7 +4532,7 @@ SHP_SPACE_FLUX_DRIVE_DESC
 Ordinarily, propulsion in space is limited to either propellant or field propulsion.  On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed.  This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space.  This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects.
 
 SHP_CONTGRAV_MAINT
-Contra-Gravitational Maintenence
+Contra-Gravitational Maintenance
 
 SHP_CONTGRAV_MAINT_DESC
 When the mass of the ship surpasses a certain threshold, it becomes necessary to consider the gravitational stresses on vital architectural points in the ship's structure.  These points will be unable to withstand the gravitational stresses and collapse, destroying the vessel.  This necessitates nearly constant maintenance of these points to avoid total structural failure.
@@ -4571,7 +4579,7 @@ SHP_MONOMOLEC_LATTICE
 Monomolecular Latticing
 
 SHP_MONOMOLEC_LATTICE_DESC
-Asteroid Hulls can be reinforced and armour plated, but the fact remains that the basic substance of which most asteroids are primarily composed is of lesser strength than most modern alloys.  However, if the molecular structure of the rock itself were to be rearranged into a crystal lattice, its strength could be increased tremendously, allowing the production of asteroid hulls of previously impossible strengths.
+Asteroid Hulls can be reinforced and armor plated, but the fact remains that the basic substance of which most asteroids are primarily composed is of lesser strength than most modern alloys.  However, if the molecular structure of the rock itself were to be rearranged into a crystal lattice, its strength could be increased tremendously, allowing the production of asteroid hulls of previously impossible strengths.
 
 SHP_MULTICELL_CAST
 Multi-Cellular Casting
@@ -4601,13 +4609,13 @@ SHP_CONT_SYMB
 Contrived Symbiosis
 
 SHP_CONT_SYMB_DESC
-Any ship's hull is in a symbiotic relationship with its makers in that they bring it into being and sustain it, and it performs its desired functions.  However, this is a purely behavioural type of symbiosis.  Through careful planning and design, an organic ship can be made to have a biological symbiotic relationship with its crew, each providing the other with the essentials of life.
+Any ship's hull is in a symbiotic relationship with its makers in that they bring it into being and sustain it, and it performs its desired functions.  However, this is a purely behavioral type of symbiosis.  Through careful planning and design, an organic ship can be made to have a biological symbiotic relationship with its crew, each providing the other with the essentials of life.
 
 SHP_CONT_BIOADAPT
 Controlled Bioadaption
 
 SHP_CONT_BIOADAPT_DESC
-It is very difficult to predict the actions of a living being to any useful degree of certainty without having an intimate understanding of its behavioural patterns.  By placing a life form under harshly competitive developmental conditions, its behavioural patterns can be manipulated, strengthened and effectively utilized in war.
+It is very difficult to predict the actions of a living being to any useful degree of certainty without having an intimate understanding of its behavioral patterns.  By placing a life form under harshly competitive developmental conditions, its behavioral patterns can be manipulated, strengthened and effectively utilized in war.
 
 SHP_BIONEUR_SPEC
 Bio-Neural Specialization
@@ -4770,7 +4778,7 @@ Force-Energy Camouflage
 CON_FRC_ENRG_CAMO_DESC
 '''Increases the stealth of all buildings by 20.
 
-Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials.  A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one colour to another at will.  While most buildings are easily visible from many uus away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.'''
+Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials.  A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one color to another at will.  While most buildings are easily visible from many uus away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.'''
 
 CON_PLANET_DRIVE
 Planetary Starlane Drive
@@ -4856,7 +4864,7 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Increases the population that can be sustained by Hostile, Poor and Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively.  Health on Hostile and Poor planets is increased by 10, and health on Adequate planets is increased by 5.
+'''Increases the population that can be sustained by Hostile and Poor planets to 5, 10, 15, 20 and 25 and for and Adequate planets by 4, 8, 12, 16 and 20 for Tiny, Small, Medium, Large and Huge planets, respectively. Increases Health on Hostile and Poor planets by 10, and on Adequate planets by 5.
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances.  Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
@@ -4895,7 +4903,7 @@ Stellar Tomography
 LRN_STELLAR_TOMOGRAPHY_DESC
 '''Multiplies target research on planets with the research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively.
 
-A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star.  These otherwise costly-to-produce conditions are ideal for a variety of research endeavours, with larger benefits for more exotic star types.'''
+A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star.  These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 
 LRN_SPATIAL_DISTORT_GEN
 Spatial Distortion Generator
@@ -4952,7 +4960,7 @@ Asteroid Mining
 PRO_ASTEROID_MINE_DESC
 '''Permits use of the Mining focus on asteroid belts.
 
-Mineral resource extraction from subplanetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets.  Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient.  Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities.  As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.'''
+Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets.  Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient.  Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities.  As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.'''
 
 PRO_ORBITAL_MINE
 Orbital Mining
@@ -4966,7 +4974,7 @@ PRO_SOL_ORB_GEN
 Solar Orbital Generation
 
 PRO_SOL_ORB_GEN_DESC
-Traditional solar generation methods rely solely on radiating solar energy.  By placing generators in low orbit around the star itself, the ability to directly harness the energy of supermassive stellar phenomena becomes a possibility, and a sizeable and far-reaching benefit to industry can be obtained.
+Traditional solar generation methods rely solely on radiating solar energy.  By placing generators in low orbit around the star itself, the ability to directly harness the energy of supermassive stellar phenomena becomes a possibility, and a sizable and far-reaching benefit to industry can be obtained.
 
 PRO_INDUSTRY_CENTER_I
 Industrial Centers
@@ -5027,7 +5035,7 @@ DEF_ROOT_DEFENSE
 Self Defense
 
 DEF_ROOT_DEFENSE_DESC
-'''Increases max troops on all planets to 5.
+'''Increases max troops on all planets by 5.
 
 The concept of 'self defense' is at the root of many avenues of technological advance.'''
 
@@ -5035,25 +5043,25 @@ DEF_GARRISON_1
 Planetary Garrison 1
 
 DEF_GARRISON_1_DESC
-Increases max troops on all planets to 10.
+Increases max troops on all planets by 10.
 
 DEF_GARRISON_2
 Planetary Garrison 2
 
 DEF_GARRISON_2_DESC
-Increases max troops on all planets to 20.
+Increases max troops on all planets by 20.
 
 DEF_GARRISON_3
 Planetary Garrison 3
 
 DEF_GARRISON_3_DESC
-Increases max troops on all planets to 40.
+Increases max troops on all planets by 40.
 
 DEF_GARRISON_4
 Planetary Garrison 4
 
 DEF_GARRISON_4_DESC
-Increases max troops on all planets to 80.
+Increases max troops on all planets by 80.
 
 DEF_PLANET_CLOAK
 Planetary Cloaking Device
@@ -5079,7 +5087,7 @@ Reinforced Hull
 SHP_REINFORCED_HULL_DESC
 '''Increases max structure of all ships by 5.
 
-Standard ship hulls are designed and constructed with advanced microgravity architectural techniques and highly resistant materials.  However, the limitations of physical matter impose a severe limitation on the strength of hulls.  By enhancing the hull with structural integrity fields, a sizeable increase in strength can be obtained.'''
+Standard ship hulls are designed and constructed with advanced microgravity architectural techniques and highly resistant materials.  However, the limitations of physical matter impose a severe limitation on the strength of hulls.  By enhancing the hull with structural integrity fields, a sizable increase in strength can be obtained.'''
 
 SHP_BASIC_DAM_CONT
 Basic Damage Control
@@ -5091,7 +5099,7 @@ SHP_ADV_DAM_CONT
 Advanced Damage Control
 
 SHP_ADV_DAM_CONT_DESC
-Fully restores the health of damaged ships between battles.
+Fully restores the Health of damaged ships between battles.
 
 SHP_SYST_DEF_MINE
 System Defense Mines
@@ -5305,13 +5313,13 @@ SHP_EM_DAMPER
 Electromagnetic Damper
 
 SHP_EM_DAMPER_DESC
-Unlocks Electromagnetic Damper ship part. and increases the stealth of all planets, systems and buildings by 5.  This bonus is not cumulative with that of other stealth techs.
+Unlocks the Electromagnetic Damper ship part and increases the Stealth of all planets, systems and buildings by 5.  This bonus is not cumulative with that of other stealth techs.
 
 SHP_ABSORPTION_FIELD
 Absorption Field
 
 SHP_ABSORPTION_FIELD_DESC
-'''Increases the stealth of all planets, systems and buildings by 30.  This bonus is not cumulative with that of other stealth techs.
+'''Increases the Stealth of all planets, systems, and buildings by 30. This bonus is not cumulative with that of other stealth techs.
 
 Simply dampening electromagnetic emissions can make an object completely invisible to passive scans.  Active scanning however, can make such methods of hiding an object nearly useless.  By absorbing, rather than reflecting the radiation emitted by active scanning devices, the stealth of a ship can be greatly increased.'''
 
@@ -5319,7 +5327,7 @@ SHP_DIM_CLOAK
 Dimensional Cloak
 
 SHP_DIM_CLOAK_DESC
-Unlocks the Dimensional Cloak ship part and increases the stealth of all planets, systems and buildings by 55.  This bonus is not cumulative with that of other stealth techs.
+Unlocks the Dimensional Cloak ship part and increases the Stealth of all planets, systems and buildings by 15.  This bonus is not cumulative with that of other stealth techs.
 
 SHP_PHASING_CLOAK
 Phasing Cloak
@@ -5342,22 +5350,22 @@ SHP_ANTIMATTER_TANK_DESC
 Unlocks Antimatter Tank ship part.
 
 SHP_LEAD_PLATE
-Lead Armour Plating
+Lead Armor Plating
 
 SHP_LEAD_PLATE_DESC
-Unlocks Lead Armour Plating ship part.
+Unlocks Lead Armor Plating ship part.
 
 SHP_ZORTRIUM_PLATE
-Zortrium Armour Plating
+Zortrium Armor Plating
 
 SHP_ZORTRIUM_PLATE_DESC
-Unlocks Zortrium Armour Plating ship part.
+Unlocks Zortrium Armor Plating ship part.
 
 SHP_NEUTRONIUM_PLATE
-Neutronium Armour Plating
+Neutronium Armor Plating
 
 SHP_NEUTRONIUM_PLATE_DESC
-Unlocks Neutronium Armour Plating ship part.
+Unlocks Neutronium Armor Plating ship part.
 
 SHP_DIST_MOD
 Distortion Modulator
@@ -5432,16 +5440,16 @@ SHP_CRYSTAL_AST_HULL_DESC
 This sturdy hull is made from a average-sized asteroid, hardened by advanced crystallization techniques.  Like the regular Asteroid Hull, it has four external slots and two internal slots.  Speed is somewhat low, but structure is extremely high.  This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 SHP_ROCK_PLATE
-Rock Armour Plating
+Rock Armor Plating
 
 SHP_ROCK_PLATE_DESC
 A strong, cheap alternative to alloys.  This part can only be built if there is an Asteroid Reformation Facility at an asteroid belt somewhere in the empire or an ally's empire.
 
 SHP_CRYSTAL_PLATE
-Crystal Armour Plating
+Crystal Armor Plating
 
 SHP_CRYSTAL_PLATE_DESC
-An incredibly strong armour produced with advanced crystallization techniques.  This part can only be built if there is a Crystallization Module at an asteroid belt somewhere in the empire or an ally's empire.
+An incredibly strong armor produced with advanced crystallization techniques.  This part can only be built if there is a Crystallization Module at an asteroid belt somewhere in the empire or an ally's empire.
 
 SHP_ORG_HULL
 Organic Hull
@@ -5529,13 +5537,15 @@ PRO_ASTEROID_MINE_II
 Advanced Asteroid Mines
 
 PRO_ASTEROID_MINE_II_DESC
-Experience with operation of initial implementations of asteroid mining techniques allows more refined methods to be devised.  Raises mining on all asteroid belts with the mining focus by 10.
+'''Increases Mining on all asteroid belts with the Mining focus by 10.
+
+Experience with operation of initial implementations of asteroid mining techniques allows more refined methods to be devised.'''
 
 PRO_INDUSTRY_CENTER_II
 Greater Industrial Center
 
 PRO_INDUSTRY_CENTER_II_DESC
-Improved centralized management of dispersed industrial activities increases the size of increased industrial output provided.  The bonus to industry will be double that provided by basic Industrial Centers.
+Improved centralized management of dispersed industrial activities increases the size of increased industrial output provided.  The bonus to Industry will be double that provided by basic Industrial Centers.
 
 PRO_INDUSTRY_CENTER_III
 Supreme Industrial Center
@@ -5575,7 +5585,7 @@ BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases resource supply range by one, and sets the owner's capital.
+'''Increases Resource Supply Range by 3, Construction by 20, Defense by 5, and Troops by 10, as well as sets the owner's Capital for the empire.
 
 Represents imperial power and prestige and functions as a centre of control for the empire's holdings.'''
 
@@ -5586,10 +5596,10 @@ BLD_SHIPYARD_BASE_DESC
 Orbital production facility for assembly of interstellar military-grade spacecraft.  This shipyard must be present for any ships to be made at a planet, and can be upgraded by producing additional buildings in the same system.  No shipyard upgrades can be produced without the presence of this shipyard.
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK
-Orbital Drydock
+Orbital Dry-dock
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-'''This is an upgrade for the Basic Shipyard and is required for all constructed hulls and all further constructed hulls shipyard upgrades to be built.
+'''This is an upgrade for the Basic Shipyard and is required for all constructed hulls and all further constructed hulls shipyard upgrades to be built, this upgrade also provides repair abilities to repair damaged ships in a single turn.
 
 When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly.  Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.'''
 
@@ -5597,25 +5607,25 @@ BLD_SHIPYARD_CON_ROBO
 Robotic Processing Unit
 
 BLD_SHIPYARD_CON_ROBO_DESC
-A robotic manufacturing plant and AI programming facility designed to produce complex, automated ships.  This is an upgrade for the Orbital Drydock and allows construction of Robotic Hulls.
+A robotic manufacturing plant and AI programming facility designed to produce complex, automated ships.  This is an upgrade for the Orbital Dry-dock and allows construction of Robotic Hulls.
 
 BLD_SHIPYARD_CON_ENGINE
 Engineering Bay
 
 BLD_SHIPYARD_CON_ENGINE_DESC
-An advanced engineering facility specializing in the assembly of the Spatial Flux Drive.  This is an upgrade to the Orbital Drydock and allows construction of Spatial Flux Hulls.
+An advanced engineering facility specializing in the assembly of the Spatial Flux Drive.  This is an upgrade to the Orbital Dry-dock and allows construction of Spatial Flux Hulls.
 
 BLD_SHIPYARD_CON_MILIT_MEGAPROC
 Military Megaprocessor
 
 BLD_SHIPYARD_CON_MILIT_MEGAPROC_DESC
-A massive orbital installation capable of supporting the construction of extremely large hulls.  This is an upgrade for the Orbital Drydock and allows production of Self-Gravitating Hulls.
+A massive orbital installation capable of supporting the construction of extremely large hulls.  This is an upgrade for the Orbital Dry-dock and allows production of Self-Gravitating Hulls.
 
 BLD_SHIPYARD_CON_NANOROBO
 Nanorobotic Processing Unit
 
 BLD_SHIPYARD_CON_NANOROBO_DESC
-'''This is an upgrade for the Orbital Drydock and allows production of Nano-Robotic Hulls and Robotic Hulls.
+'''This is an upgrade for the Orbital Dry-dock and allows production of Nano-Robotic Hulls and Robotic Hulls.
 
 The production of millions of maintenance nanorobots and their connection to a single master AI requires more extensive robotics facilities than the production of a basic robotic hull.  This building is able to facilitate the construction of more advanced robotic hulls than the basic Robotic Processing Unit.'''
 
@@ -5623,7 +5633,7 @@ BLD_SHIPYARD_CON_GEOINT
 Geointegration Facility
 
 BLD_SHIPYARD_CON_GEOINT_DESC
-'''This is an upgrade to the Orbital Drydock and allows production of Titanic Hulls and Self-Gravitating Hulls.
+'''This is an upgrade to the Orbital Dry-dock and allows production of Titanic Hulls and Self-Gravitating Hulls.
 
 When the needs of a shipyard become sufficiently great, it is no longer practical for the shipyard and the planet on which it is built to remain separate entities.  Rather, it is more useful to integrate the two into a harmonious unit, with the shipyard extending from below the surface to beyond geosynchronous orbit, making full use of all the geological aspects of the planet.'''
 
@@ -5631,7 +5641,7 @@ BLD_SHIPYARD_CON_ADV_ENGINE
 Advanced Engineering Bay
 
 BLD_SHIPYARD_CON_ADV_ENGINE_DESC
-'''This is an upgrade to the Orbital Drydock and allows construction of Spatial Flux Hulls and Trans-Spatial Hulls.
+'''This is an upgrade to the Orbital Dry-dock and allows construction of Spatial Flux Hulls and Trans-Spatial Hulls.
 
 An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive, but is also capable of producing the Spatial Flux Drive.'''
 
@@ -5641,7 +5651,7 @@ Military Logistics Assembly
 BLD_SHIPYARD_CON_MIL_LOG_ASSMBL_DESC
 '''Allows the production of the Logistics Facilitator flagship hull type.
 
-A shipyard upgrade designed to fully utilize the advancements of hull construction for the production of highly specialized flagships.  This upgrade utilizes the facilities of the Advanced Engineering Bay, the Geointegration Facility and the Nanorobotics Processing Unit, all of which, in addition to the Orbital Drydock, must be present for the construction of this upgrade.'''
+A shipyard upgrade designed to fully utilize the advancements of hull construction for the production of highly specialized flagships.  This upgrade utilizes the facilities of the Advanced Engineering Bay, the Geointegration Facility and the Nanorobotics Processing Unit, all of which, in addition to the Orbital Dry-dock, must be present for the construction of this upgrade.'''
 
 BLD_SHIPYARD_AST
 Asteroid Processor
@@ -5655,7 +5665,7 @@ BLD_SHIPYARD_AST_REF
 Asteroid Reformation Processor
 
 BLD_SHIPYARD_AST_REF_DESC
-'''This is an upgrade to the Asteroid Shipyard and allows production of Nano-Asteroid Swarms, Compound Asteroid Hulls and Scattered Asteroid Hull flagships.  In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Rock Armour Plating ship part.
+'''This is an upgrade to the Asteroid Shipyard and allows production of Nano-Asteroid Swarms, Compound Asteroid Hulls and Scattered Asteroid Hull flagships.  In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Rock Armor Plating ship part.
 
 An extensive facility dedicated to fusing, shattering, deconstructing and rebuilding preexisting asteroids to form ship's parts and hulls.'''
 
@@ -5663,7 +5673,7 @@ BLD_SHIPYARD_AST_CRYSTAL
 Crystallization Module
 
 BLD_SHIPYARD_AST_CRYSTAL_DESC
-'''This is an upgrade to the Asteroid Shipyard and allows production of Crystallized Asteroid Hulls.  In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Crystal Armour Plating ship part.
+'''This is an upgrade to the Asteroid Shipyard and allows production of Crystallized Asteroid Hulls.  In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Crystal Armor Plating ship part.
 
 A complex facility with the special ability to crystallize asteroids and use them for parts and hulls.'''
 
@@ -5743,15 +5753,15 @@ BLD_BIOTERROR_PROJECTOR
 Bioterror Projection Base
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Gives the planet on which it is built the Bioterror focus, which decreases health on enemy planets within 4 starlane jumps at a rate of two per turn, provided the enemy empire does not contain a Genome Bank.
+'''Gives the planet on which it is built the Bioterror focus, which decreases Health on enemy planets within 4 starlane jumps at a rate of two per turn, provided the enemy empire does not contain a Genome Bank.
 
-This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity.  Gradually reduces the health of all enemy planets within four starlane jumps until the planet's population is gone.  Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon.  Ineffective if there is a Genome Bank building in the enemy empire.  This building can also be built at an outpost, provided it has a resonant moon.'''
+This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity.  Gradually reduces the Health of all enemy planets within four starlane jumps until the planet's population is gone.  Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon.  Ineffective if there is a Genome Bank building in the enemy empire.  This building can also be built at an outpost, provided it has a resonant moon.'''
 
 BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
 BLD_LIGHTHOUSE_DESC
-Decreases the stealth of all objects in the same system by 45.  This building can be built at an outpost.
+Decreases the Stealth of all objects in the same system by 45.  This building can be built at an outpost.
 
 BLD_HEAVY_MINE_PROCESSOR
 Heavy Mining Processor
@@ -5763,7 +5773,7 @@ BLD_INDUSTRY_CENTER
 Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to industry on all Industry focused planets in the empire equal to one half the planet's population.
+'''Initially provides a bonus to Industry on all Industry focused planets in the empire equal to one half the planet's Population.
 
 [[tech PRO_INDUSTRY_CENTER_II]] refinement increases the bonus to equal the planet's population.
 
@@ -5773,9 +5783,9 @@ BLD_MEGALITH
 Megalith
 
 BLD_MEGALITH_DESC
-'''The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.
+'''This building sets the owner empire's capital, overriding any existing Imperial Palace.  The planet on which it is built receives a +2 bonus to max resource supply range, and has all resource meters able to reach target in a single turn as well as increased construction by 30 and population by 5.  Furthermore, all colonies belonging the empire receive a +1 bonus to max resource supply range.
 
-This building sets the owner empire's capital, overriding any existing Imperial Palace.  The planet on which it is built receives a +2 bonus to max resource supply range, and has all resource meters able to reach target in a single turn.  Furthermore, all colonies belonging the empire receive a +1 bonus to max resource supply range.'''
+The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
 
 BLD_SPACE_ELEVATOR
 Space Elevator
@@ -5789,27 +5799,25 @@ BLD_GENOME_BANK
 Genome Bank
 
 BLD_GENOME_BANK_DESC
-'''The largest database ever conceived.  The Genome Bank includes maps of the genomes of every organism known to the empire.  This database is invaluable in the treatment of disease.
+'''Increases Farming on Farming focused planets by half of the planet's population, and Health on all planets by 3. This building also provides the empire with immunity from bioterror.
 
-Increases target farming on farming focused planets by one half of the planet's population, and increases health on all planets by 3.  This building also provides the empire with immunity from bioterror.'''
+The largest database ever conceived.  The Genome Bank includes maps of the genomes of every organism known to the empire.  This database is invaluable in the treatment of disease.'''
 
 BLD_GAIA_TRANS
 Gaia Transformation
 
 BLD_GAIA_TRANS_DESC
-'''Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.
+'''Gaian planets have Health, Farming and Population doubled.
 
-Gaian planets have health, farming and population doubled.'''
+Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
 
 BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.
+'''Increases Farming on planets with the Farming focus by half of the planet's population, Industry on planets with the Industry focus by half of the planet's population, Mining on planets with the Mining focus by 20, and research on Planets with the Research focus by one and a half. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
 
-Increases target farming on planets with the Farming focus by half of the planet's population, target industry on planets with the Industry focus by half of the planet's population, target mining on planets with the Mining focus by 20, and target research on planets with the Research focus by half.
-
-Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.'''
+By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 
 BLD_GATEWAY_VOID
 Gateway to the Void
@@ -5849,15 +5857,15 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''A power generator in low solar orbit designed to tap directly into the star's energy.  Since different star types produce different amounts of energy, the system-wide industry bonus is dependant on star type.
+'''Blue and White stars give bonuses equal to the planet's population to Industry on planets with the Industry focus in the same system.
 
-Blue and White stars give bonuses equal to the planet's population to target industry on planets with the Industry focus in the same system.
+Yellow and Orange stars give bonuses equal to half the planet's population to Industry on planets with the Industry focus in the same system.
 
-Yellow and Orange stars give bonuses equal to half the planet's population to target industry on planets with the Industry focus in the same system.
+Red stars give bonuses equal to one quarter the planet's population to Industry on planets with the Industry focus in the same system.
 
-Red stars give bonuses equal to one quarter the planet's population to target industry on planets with the Industry focus in the same system.
+This building can be built at an outpost.
 
-This building can be built at an outpost.'''
+'A power generator in low solar orbit designed to tap directly into the star's energy.  Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type.''
 
 BLD_CLONING_CENTER
 Cloning Center
@@ -5913,7 +5921,7 @@ BLD_INDUSTRY_FARM
 Industrial Farms
 
 BLD_INDUSTRY_FARM_DESC
-'''This building gives a bonus to max farming equal to 1/10 of max industry for all planets in the empire.
+'''Increases Farming equal to 1/10 of Industry for all planets in the empire.
 
 Long-term adaptations to factories, shipping routes and personnel that already exist allows production of food in industrial regions with no extra cost beyond that of initially developing the additional infrastructure.'''
 
@@ -5921,7 +5929,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-This building gives a bonus to max industry of double the planet's population for all planets in the empire with the Industry focus.  This building can be built at an outpost.
+Increases Industry of double the planet's Population for all planets in the empire with the Industry focus.  This building can be built at an outpost.
 
 BLD_REPLICATORS
 Replicators
@@ -6013,7 +6021,9 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''A power generator designed to harvest the energy of a Gas Giant.  This building can only be constructed at a gas giant and gives an industry bonus to planets with the Industry focus in the same system of one quarter the planets' respective populations.'''
+'''This building can only be constructed at a gas giant and gives an Industry bonus to planets with the Industry focus in the same system of one quarter the planets' respective populations.
+
+A power generator designed to harvest the energy of a Gas Giant.'''
 
 BLD_COLONY_BASE
 Colony Base
@@ -6242,13 +6252,13 @@ LR_NEUTRONIUM_PLATE_NUC_MIS
 Neutronium Plated Nuclear Missile
 
 LR_NEUTRONIUM_PLATE_NUC_MIS_DESC
-Heavily armoured nuclear missile
+Heavily armored nuclear missile
 
 LR_NEUTRONIUM_PLATE_SPEC_MIS
 Neutronium Plated Spectral Missile
 
 LR_NEUTRONIUM_PLATE_SPEC_MIS_DESC
-Heavily armoured spectral missile
+Heavily armored spectral missile
 
 LR_ANTIMATTER_TORPEDO
 Antimatter Torpedo
@@ -6334,31 +6344,31 @@ ST_PHASING_CLOAK_DESC
 Modulates the frequency of any matter waves emitted from the ship to match that of the background radiation.
 
 AR_LEAD_PLATE
-Lead Armour Plating
+Lead Armor Plating
 
 AR_LEAD_PLATE_DESC
 Weak defense with large mass
 
 AR_ZORTRIUM_PLATE
-Zortrium Armour Plating
+Zortrium Armor Plating
 
 AR_ZORTRIUM_PLATE_DESC
 Stronger defense than lead plating
 
 AR_ROCK_PLATE
-Rock Armour Plating
+Rock Armor Plating
 
 AR_ROCK_PLATE_DESC
 A strong, cheap alternative to alloys.  This part can only be built if there is an Asteroid Reformation Facility at an asteroid belt somewhere in the empire or an ally's empire.
 
 AR_CRYSTAL_PLATE
-Crystal Armour Plating
+Crystal Armor Plating
 
 AR_CRYSTAL_PLATE_DESC
-An incredibly strong armour produced with advanced crystallization techniques.  This part can only be built if there is a Crystallization Module at an asteroid belt somewhere in the empire or an ally's empire.
+An incredibly strong armor produced with advanced crystallization techniques.  This part can only be built if there is a Crystallization Module at an asteroid belt somewhere in the empire or an ally's empire.
 
 AR_NEUTRONIUM_PLATE
-Neutronium Armour Plating
+Neutronium Armor Plating
 
 AR_NEUTRONIUM_PLATE_DESC
 Admirable defense with moderate mass
@@ -6427,7 +6437,7 @@ Robotic Hull
 SH_ROBOTIC_DESC
 '''This hull is completely automated and functions under the principals of Military Robotic Control.  Like the standard hull, it has four external slots and one internal slot.  It is faster than the standard hull, and will have its structure restored between combats, but has a lower max structure.
 
-In addition to a Basic Shipyard and an orbital Drydock, either a Robotic Processing Unit or a Nanorobotic Processing Unit is required at the planet where it is constructed.'''
+In addition to a Basic Shipyard and an orbital Dry-dock, either a Robotic Processing Unit or a Nanorobotic Processing Unit is required at the planet where it is constructed.'''
 
 SH_SPATIAL_FLUX
 Spatial Flux Hull
@@ -6435,7 +6445,7 @@ Spatial Flux Hull
 SH_SPATIAL_FLUX_DESC
 '''This tiny hull is capable of immense speed due to the power of the Spatial Flux Drive.  It has only two external slots however, and it's max structure is low.  Stealth is fairly high, but it receives a large stealth penalty for movement both in combat and on the galaxy map.
 
-In addition to a Basic Shipyard and an Orbital Drydock, either an Engineering Bay or an Advanced Engineering Bay is required at the planet where it is constructed.'''
+In addition to a Basic Shipyard and an Orbital Dry-dock, either an Engineering Bay or an Advanced Engineering Bay is required at the planet where it is constructed.'''
 
 SH_SELF_GRAVITATING
 Self-Gravitating Hull
@@ -6443,7 +6453,7 @@ Self-Gravitating Hull
 SH_SELF_GRAVITATING_DESC
 '''This hull is immense in both size and power, with eight external slots and two internal slots.  It is fairly sturdy, having a high max structure, but stealth and speed are fairly low.
 
-In addition to a Basic Shipyard and an Orbital Drydock, either a Military Megaprocessor or a Geointegration Facility is required at the planet where it is constructed.'''
+In addition to a Basic Shipyard and an Orbital Dry-dock, either a Military Megaprocessor or a Geointegration Facility is required at the planet where it is constructed.'''
 
 SH_NANOROBOTIC
 Nano-Robotic Hull
@@ -6451,7 +6461,7 @@ Nano-Robotic Hull
 SH_NANOROBOTIC_DESC
 '''This automated hull is large and fast, and repairs damage to itself using millions of nano-robots.  It has six external slots and one internal slot, but it has low stealth and is very fragile, though it regenerates structure during combat and restores structure completely between combats.
 
-Requires a Basic Shipyard, an Orbital Drydock and a Nanorobotic Processing unit at the planet where it is constructed.'''
+Requires a Basic Shipyard, an Orbital Dry-dock and a Nanorobotic Processing unit at the planet where it is constructed.'''
 
 SH_TITANIC
 Titanic Hull
@@ -6459,7 +6469,7 @@ Titanic Hull
 SH_TITANIC_DESC
 '''This extraordinarily large hull requires quite a feat of engineering even to move.  It has sixteen external slots and three internal slots, and its max structure is very high, but at the cost of a great deal of speed and stealth.
 
-Requires a Basic Shipyard, an Orbital Drydock and a Geointegration Facility at the planet where it is constructed.'''
+Requires a Basic Shipyard, an Orbital Dry-dock and a Geointegration Facility at the planet where it is constructed.'''
 
 SH_TRANSSPATIAL
 Trans-Spatial Hull
@@ -6467,7 +6477,7 @@ Trans-Spatial Hull
 SH_TRANSSPATIAL_DESC
 '''This hull is able to travel stealthily and at an incredible speed due to the Trans-Spatial drive.  It has only a single external slot however, and its max structure is extremely low.
 
-Requires a Basic Shipyard, an Orbital Drydock and an Advanced Engineering Bay at the planet where it is constructed.'''
+Requires a Basic Shipyard, an Orbital Dry-dock and an Advanced Engineering Bay at the planet where it is constructed.'''
 
 SH_LOGISTICS_FACILITATOR
 Logistics Facilitator
@@ -6475,7 +6485,7 @@ Logistics Facilitator
 SH_LOGISTICS_FACILITATOR_DESC
 '''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects.  It has seven external slots and two internal slots.  It's speed is low, but max structure is fairly high.  In addition, it's built-in fleet of stealthy freighters allows transfer of personnel and materiel during battle, enabling all friendly ships to recover structure during combat and completely restore structure between combats.
 
-Requires a Basic Shipyard, an Orbital Drydock, a Nanorobotic Processing Unit, a Geointegration Facility, an Advanced Engineering Bay and a Military Logistics Assembly at the planet where it is constructed.'''
+Requires a Basic Shipyard, an Orbital Dry-dock, a Nanorobotic Processing Unit, a Geointegration Facility, an Advanced Engineering Bay and a Military Logistics Assembly at the planet where it is constructed.'''
 
 SH_ASTEROID
 Asteroid Hull
@@ -6518,7 +6528,7 @@ SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
 Requires a Basic Shipyard and an Asteroid Processor at the asteroid belt where it is produced.'''
 
 SH_AGREGATE_ASTEROID
-Agregate Asteroid Hull
+Aggregate Asteroid Hull
 
 SH_AGREGATE_ASTEROID_DESC
 '''This massive hull is formed by combining several large asteroids.  It has fifteen external slots and four internal slots.  Structure is good, but speed is very low.  This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
@@ -6669,7 +6679,7 @@ Standard Hull
 SH_STANDARD_DESC
 '''Basic interstellar hull.
 
-Requires a Basic Shipyard and an Orbital Drydock at the planet where it is Constructed.'''
+Requires a Basic Shipyard and an Orbital Dry-dock at the planet where it is Constructed.'''
 
 SH_XENTRONIUM
 Xentronium Hull
@@ -6699,7 +6709,7 @@ SH_STRONG_MONSTER_BODY
 Strong Body
 
 SH_STRONG_MONSTER_BODY_DESC
-Large strong body with fearsome natural weapons and strong natural armour.
+Large strong body with fearsome natural weapons and strong natural armor.
 
 SH_GUARD_MONSTER_BODY
 Guard Hull
@@ -6739,44 +6749,44 @@ Drone Factory
 SH_KRAKEN_1_BODY
 Larval Kraken Body
 SH_KRAKEN_1_BODY_DESC
-A formidible medium-weight space monster.
+A formidable medium-weight space monster.
 
 SH_KRAKEN_2_BODY
 Kraken Body
 SH_KRAKEN_2_BODY_DESC
-A formidible medium-weight space monster.
+A formidable medium-weight space monster.
 
 SH_KRAKEN_3_BODY
 Great Kraken Body
 SH_KRAKEN_3_BODY_DESC
-A formidible medium-weight space monster.
+A formidable medium-weight space monster.
 
 SH_SNOWFLAKE_1_BODY
 Small Snowflake Body
 SH_SNOWFLAKE_1_BODY_DESC
-A formidible light-weight space monster.
+A formidable light-weight space monster.
 
 SH_SNOWFLAKE_2_BODY
 Snowflake Body
 SH_SNOWFLAKE_2_BODY_DESC
-A formidible light-weight space monster.
+A formidable light-weight space monster.
 
 SH_SNOWFLAKE_3_BODY
 Large Snowflake Body
 SH_SNOWFLAKE_3_BODY_DESC
-A formidible light-weight space monster.
+A formidable light-weight space monster.
 
 SH_JUGGERNAUT_1_BODY
 Small Juggernaut Body
 SH_JUGGERNAUT_1_BODY_DESC
-A formidible heavy-weight space monster.
+A formidable heavy-weight space monster.
 
 SH_JUGGERNAUT_2_BODY
 Juggernaut Body
 SH_JUGGERNAUT_2_BODY_DESC
-A formidible heavy-weight space monster.
+A formidable heavy-weight space monster.
 
 SH_JUGGERNAUT_3_BODY
 Large Juggernaut Body
 SH_JUGGERNAUT_3_BODY_DESC
-A formidible heavy-weight space monster.
+A formidable heavy-weight space monster.
