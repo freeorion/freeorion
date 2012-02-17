@@ -193,6 +193,7 @@ namespace parse {
     }
 
     void macro_substitution(std::string& text) {
+        //Logger().debugStream() << "macro_substitution for text:" << text;
         using namespace boost::xpressive;
 
         const sregex MACRO_KEY = +_w;
@@ -208,15 +209,20 @@ namespace parse {
             while (true) {
                 // find next macro definition
                 smatch match;
-                if (!regex_search(text_it, text.end(), match, MACRO_DEFINITION, regex_constants::match_continuous))
+                if (!regex_search(text_it, text.end(), match, MACRO_DEFINITION, regex_constants::match_default))
                     break;
-                text_it = text.end() - match.suffix().length();
+
+                const std::string& matched_text = match.str();  // [[MACRO_KEY]] '''macro text'''
+                //Logger().debugStream() << "found macro definition:\n" << matched_text;
 
                 // get macro key and macro text from match
-                const std::string& macro_key = match[1].str();
+                const std::string& macro_key = match[1];
                 assert(macro_key != "");
-                const std::string& macro_text = match[2].str();
+                const std::string& macro_text = match[2];
                 assert(macro_text != "");
+
+                Logger().debugStream() << "key: " << macro_key;
+                Logger().debugStream() << "text:\n" << macro_text;
 
                 // store macro
                 if (macros.find(macro_key) == macros.end()) {
@@ -224,6 +230,11 @@ namespace parse {
                 } else {
                     Logger().errorStream() << "Duplicate macro key foud: " << macro_key << ".  Ignoring duplicate.";
                 }
+
+                // remove macro definition from text by replacing with whitespace that is ignored by later parsing
+                text.replace(text_it + match.position(), text_it + match.position() + match.length(), match.length(), ' ');
+                // subsequent scanning starts after macro defininition
+                text_it = text.end() - match.suffix().length();
             }
         } catch (std::exception& e) {
             Logger().errorStream() << "Exception caught regex parsing script file: " << e.what();
@@ -263,12 +274,12 @@ namespace parse {
         // substitute macro keys - replace [[MACRO_KEY]] in the input text with
         // the macro text corresponding to MACRO_KEY
         try {
-            std::size_t position = 0; // position in the definition string, past the already processed part
+            std::size_t position = 0; // position in the text, past the already processed part
             smatch match;
-            while (regex_search(text.begin() + position, text.end(), match, MACRO_INSERTION)) {
+            while (regex_search(text.begin() + position, text.end(), match, MACRO_INSERTION, regex_constants::match_default)) {
                 position += match.position();
                 const std::string& matched_text = match.str();  // [[MACRO_KEY]]
-                const std::string& macro_key = match[1].str();  // just MACRO_KEY
+                const std::string& macro_key = match[1];        // just MACRO_KEY
                 // look up macro key to insert
                 std::map<std::string, std::string>::iterator macro_lookup_it = macros.find(macro_key);
                 if (macro_lookup_it != macros.end()) {
@@ -286,6 +297,9 @@ namespace parse {
             std::cerr << "Exception caught regex parsing script file: " << e.what() << std::endl;
             return;
         }
+
+
+        //Logger().debugStream() << "after macro substitution text: " << text;
     }
 
     namespace detail {
