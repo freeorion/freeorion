@@ -192,18 +192,13 @@ namespace parse {
         condition_parser();
     }
 
-    void macro_substitution(std::string& text) {
-        //Logger().debugStream() << "macro_substitution for text:" << text;
-        using namespace boost::xpressive;
+    using namespace boost::xpressive;
+    const sregex MACRO_KEY = +_w;
+    const sregex MACRO_TEXT = -*_;
+    const sregex MACRO_DEFINITION = (s1 = MACRO_KEY) >> _n >> "'''" >> (s2 = MACRO_TEXT) >> "'''" >> _n;
+    const sregex MACRO_INSERTION = "[[" >> *space >> (s1 = MACRO_KEY) >> *space >> "]]";
 
-        const sregex MACRO_KEY = +_w;
-        const sregex MACRO_TEXT = -*_;
-        const sregex MACRO_DEFINITION = (s1 = MACRO_KEY) >> _n >> "'''" >> (s2 = MACRO_TEXT) >> "'''" >> _n;
-        const sregex MACRO_INSERTION = "[[" >> *space >> (s1 = MACRO_KEY) >> *space >> "]]";
-
-        std::map<std::string, std::string> macros;
-
-        // parse input text
+    void parse_and_erase_macros_from_text(std::string& text, std::map<std::string, std::string>& macros) {
         try {
             std::string::iterator text_it = text.begin();
             while (true) {
@@ -236,43 +231,69 @@ namespace parse {
                 // subsequent scanning starts after macro defininition
                 text_it = text.end() - match.suffix().length();
             }
-        } catch (std::exception& e) {
+        } catch (const std::exception& e) {
             Logger().errorStream() << "Exception caught regex parsing script file: " << e.what();
             std::cerr << "Exception caught regex parsing script file: " << e.what() << std::endl;
             return;
         }
+    }
 
-        // recursively expand macro keys: replace [[MACRO_KEY]] in any macro text
-        // with the macro text corresponding to MACRO_KEY.
-        //for (std::map<std::string, std::string>::iterator macro_it = macros.begin();
-        //     macro_it != macros.end(); ++macro_it)
-        //{
-        //    std::size_t position = 0; // position in the definition string, past the already processed part
-        //    smatch match;
-        //    std::set<std::string> cyclic_reference_check;
-        //    cyclic_reference_check.insert(macro_it->first);
-        //    while (regex_search(map_it->second.begin() + position, macro_it->second.end(), match, MACRO_INSERTION)) {
-        //        position += match.position();
-        //        if (cyclic_reference_check.find(match[1]) == cyclic_reference_check.end()) {
-        //            cyclic_reference_check.insert(match[1]);
-        //            std::map<std::string, std::string>::iterator map_lookup_it = m_strings.find(match[1]);
-        //            if (map_lookup_it != m_strings.end()) {
-        //                const std::string substitution = map_lookup_it->second;
-        //                map_it->second.replace(position, match.length(), substitution);
-        //                // replace recursively -- do not skip past substitution
-        //            } else {
-        //                Logger().errorStream() << "Unresolved key expansion: " << match[1] << ".";
-        //                position += match.length();
-        //            }
-        //        } else {
-        //            Logger().errorStream() << "Cyclic key expansion: " << match[1] << ".";
-        //            position += match.length();
-        //        }
-        //    }
-        //}
+    std::set<std::string> macros_directly_referenced_in_text(const std::string& text) {
+        std::set<std::string> retval;
+        try {
+            std::size_t position = 0; // position in the text, past the already processed part
+            smatch match;
+            while (regex_search(text.begin() + position, text.end(), match, MACRO_INSERTION, regex_constants::match_default)) {
+                position += match.position() + match.length();
+                retval.insert(match[1]);
+            }
+        } catch (const std::exception& e) {
+            Logger().errorStream() << "Exception caught regex parsing script file: " << e.what();
+            std::cerr << "Exception caught regex parsing script file: " << e.what() << std::endl;
+            return retval;
+        }
+    }
 
-        // substitute macro keys - replace [[MACRO_KEY]] in the input text with
-        // the macro text corresponding to MACRO_KEY
+    bool macro_deep_referenced_in_text(const std::string& macro_to_find, const std::string& text,
+                                       const std::map<std::string, std::string>& macros)
+    {
+        // check of text directly references macro_to_find
+        std::set<std::string> macros_directly_referenced_in_input_text = macros_directly_referenced_in_text(text);
+        if (macros_directly_referenced_in_input_text.empty())
+            return false;
+        if (macros_directly_referenced_in_input_text.find(macro_to_find) != macros_directly_referenced_in_input_text.end())
+            return true;
+        // check if macros referenced in text reference macro_to_find
+        for (std::set<std::string>::const_iterator direct_refs_it = macros_directly_referenced_in_input_text.begin();
+             direct_refs_it != macros_directly_referenced_in_input_text.end(); ++direct_refs_it)
+        {
+            // get text of directly referenced macro
+            const std::string& direct_referenced_macro_key = *direct_refs_it;
+            std::map<std::string, std::string>::const_iterator macro_it = macros.find(direct_referenced_macro_key);
+            if (macro_it == macros.end()) {
+                Logger().errorStream() << "macro_deep_referenced_in_text couldn't find referenced macro: " << direct_referenced_macro_key;
+                continue;
+            }
+            const std::string& macro_text = macro_it->second;
+            // check of text of directly referenced macro has any reference to the macro_to_find
+            if (macro_deep_referenced_in_text(macro_to_find, macro_text, macros))
+                return true;
+        }
+        // didn't locate macro_to_find in any of the macros referenced in this text
+        return false;
+    }
+
+    void check_for_cyclic_macro_references(const std::map<std::string, std::string>& macros) {
+        for (std::map<std::string, std::string>::const_iterator macro_it = macros.begin();
+             macro_it != macros.end(); ++macro_it)
+        {
+            if (macro_deep_referenced_in_text(macro_it->first, macro_it->second, macros))
+                Logger().errorStream() << "Cyclic macro found: " << macro_it->first << " references itself (eventually)";
+        }
+        Logger().debugStream() << "No cyclic macro references found in file.";
+    }
+
+    void replace_macro_references(std::string& text, const std::map<std::string, std::string>& macros) {
         try {
             std::size_t position = 0; // position in the text, past the already processed part
             smatch match;
@@ -281,12 +302,13 @@ namespace parse {
                 const std::string& matched_text = match.str();  // [[MACRO_KEY]]
                 const std::string& macro_key = match[1];        // just MACRO_KEY
                 // look up macro key to insert
-                std::map<std::string, std::string>::iterator macro_lookup_it = macros.find(macro_key);
+                std::map<std::string, std::string>::const_iterator macro_lookup_it = macros.find(macro_key);
                 if (macro_lookup_it != macros.end()) {
-                    // insert
-                    const std::string& replacement_text = macro_lookup_it->second;
-                    text.replace(position, matched_text.length(), replacement_text);
-                    position += replacement_text.length();
+                    // insert macro text in place of reference
+                    text.replace(position, matched_text.length(), macro_lookup_it->second);
+                    // recusrive replacement allowed, so don't skip past
+                    // start of replacement text, so that inserted text can
+                    // be matched on the next pass
                 } else {
                     Logger().errorStream() << "Unresolved macro reference: " << macro_key;
                     position += match.length();
@@ -297,9 +319,28 @@ namespace parse {
             std::cerr << "Exception caught regex parsing script file: " << e.what() << std::endl;
             return;
         }
+    }
 
+    void macro_substitution(std::string& text) {
+        Logger().debugStream() << "macro_substitution for text:" << text;
+        std::map<std::string, std::string> macros;
 
-        //Logger().debugStream() << "after macro substitution text: " << text;
+        parse_and_erase_macros_from_text(text, macros);
+        check_for_cyclic_macro_references(macros);
+
+        // recursively expand macro keys: replace [[MACRO_KEY]] in other macro
+        // text with the macro text corresponding to MACRO_KEY.
+        for (std::map<std::string, std::string>::iterator macro_it = macros.begin();
+             macro_it != macros.end(); ++macro_it)
+        {
+            replace_macro_references(macro_it->second, macros);
+        }
+
+        // substitute macro keys - replace [[MACRO_KEY]] in the input text with
+        // the macro text corresponding to MACRO_KEY
+        replace_macro_references(text, macros);
+
+        Logger().debugStream() << "after macro substitution text: " << text;
     }
 
     namespace detail {
