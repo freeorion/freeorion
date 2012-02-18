@@ -252,11 +252,13 @@ namespace parse {
             std::cerr << "Exception caught regex parsing script file: " << e.what() << std::endl;
             return retval;
         }
+        return retval;
     }
 
     bool macro_deep_referenced_in_text(const std::string& macro_to_find, const std::string& text,
                                        const std::map<std::string, std::string>& macros)
     {
+        Logger().debugStream() << "Checking if " << macro_to_find << " deep referenced in text: " << text;
         // check of text directly references macro_to_find
         std::set<std::string> macros_directly_referenced_in_input_text = macros_directly_referenced_in_text(text);
         if (macros_directly_referenced_in_input_text.empty())
@@ -290,7 +292,6 @@ namespace parse {
             if (macro_deep_referenced_in_text(macro_it->first, macro_it->second, macros))
                 Logger().errorStream() << "Cyclic macro found: " << macro_it->first << " references itself (eventually)";
         }
-        Logger().debugStream() << "No cyclic macro references found in file.";
     }
 
     void replace_macro_references(std::string& text, const std::map<std::string, std::string>& macros) {
@@ -304,11 +305,17 @@ namespace parse {
                 // look up macro key to insert
                 std::map<std::string, std::string>::const_iterator macro_lookup_it = macros.find(macro_key);
                 if (macro_lookup_it != macros.end()) {
-                    // insert macro text in place of reference
-                    text.replace(position, matched_text.length(), macro_lookup_it->second);
-                    // recusrive replacement allowed, so don't skip past
-                    // start of replacement text, so that inserted text can
-                    // be matched on the next pass
+                    // verify that macro is safe: check for cyclic reference of macro to itself
+                    if (macro_deep_referenced_in_text(macro_key, macro_lookup_it->second, macros)) {
+                        Logger().errorStream() << "Skipping cyclic macro reference: " << macro_key;
+                        position += match.length();
+                    } else {
+                        // insert macro text in place of reference
+                        text.replace(position, matched_text.length(), macro_lookup_it->second);
+                        // recusrive replacement allowed, so don't skip past
+                        // start of replacement text, so that inserted text can
+                        // be matched on the next pass
+                    }
                 } else {
                     Logger().errorStream() << "Unresolved macro reference: " << macro_key;
                     position += match.length();
@@ -322,11 +329,13 @@ namespace parse {
     }
 
     void macro_substitution(std::string& text) {
-        Logger().debugStream() << "macro_substitution for text:" << text;
+        //Logger().debugStream() << "macro_substitution for text:" << text;
         std::map<std::string, std::string> macros;
 
         parse_and_erase_macros_from_text(text, macros);
         check_for_cyclic_macro_references(macros);
+
+        //Logger().debugStream() << "after macro pasring text:" << text;
 
         // recursively expand macro keys: replace [[MACRO_KEY]] in other macro
         // text with the macro text corresponding to MACRO_KEY.
@@ -340,7 +349,7 @@ namespace parse {
         // the macro text corresponding to MACRO_KEY
         replace_macro_references(text, macros);
 
-        Logger().debugStream() << "after macro substitution text: " << text;
+        //Logger().debugStream() << "after macro substitution text: " << text;
     }
 
     namespace detail {
