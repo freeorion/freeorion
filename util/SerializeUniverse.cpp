@@ -184,9 +184,9 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_is_monster);
     if (version < 1) {
         std::string m_graphic;
-        BOOST_SERIALIZATION_NVP(m_graphic);
-    }
-    if (version >= 1) {
+        ar & BOOST_SERIALIZATION_NVP(m_graphic);
+        m_icon = m_graphic;
+    } else /*if (version >= 1)*/ {
         ar  & BOOST_SERIALIZATION_NVP(m_icon);
     }
     ar  & BOOST_SERIALIZATION_NVP(m_3D_model)
