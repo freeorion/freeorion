@@ -2869,6 +2869,10 @@ void MapWnd::RefreshFleetButtons() {
 
         const Fleet* fleet = universe_object_cast<const Fleet*>(*it);
 
+        // skip fleets outside systems
+        if (fleet->SystemID() == INVALID_OBJECT_ID)
+            continue;
+
         // sanity checks
         if (!fleet) {
             Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
@@ -2896,6 +2900,10 @@ void MapWnd::RefreshFleetButtons() {
 
         const Fleet* fleet = universe_object_cast<const Fleet*>(*it);
 
+        // skip fleets outside systems
+        if (fleet->SystemID() == INVALID_OBJECT_ID)
+            continue;
+
         // sanity checks
         if (!fleet) {
             Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
@@ -2903,7 +2911,7 @@ void MapWnd::RefreshFleetButtons() {
         }
         const System* system = GetSystem(fleet->SystemID());
         if (!system) {
-            Logger().errorStream() << "couldn't get system of an departing fleet in RefreshFleetButtons()";
+            Logger().errorStream() << "couldn't get system of a stationary fleet in RefreshFleetButtons()";
             continue;
         }
 
