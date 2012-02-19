@@ -70,8 +70,9 @@ CombatInfo::CombatInfo(int system_id_) :
             continue;
         }
 
-        // add owner to empires that have assets in this battle
-        empire_ids.insert(planet->Owner());
+        // if planet is populated, add owner to empires that have assets in this battle
+        if (planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+            empire_ids.insert(planet->Owner());
 
         // add copy of ship to full / complete copy of objects in system
         Planet* copy = planet->Clone();
@@ -229,12 +230,8 @@ namespace {
         if (!attacker_design)
             return;
         double damage = attacker_design->Attack();
-
         if (damage <= 0.0)
             return;
-
-        Logger().debugStream() << "AttackShipShip: attacker: " << attacker->Dump() << "\ntarget: " << target->Dump();
-
 
         Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
         Meter* target_structure = target->UniverseObject::GetMeter(METER_STRUCTURE);
@@ -242,6 +239,10 @@ namespace {
             Logger().errorStream() << "couldn't get target structure or shield meter";
             return;
         }
+
+        Logger().debugStream() << "AttackShipShip: attacker: " << attacker->Name() << " damage: " << damage
+                               << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
+                                                                 << " structure: " << target_structure->Current();
 
         // damage shields, limited by shield current value and damage amount.
         // remaining damage, if any, above shield current value goes to structure
@@ -261,8 +262,6 @@ namespace {
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnActiveInCombat(CurrentTurn());
-        
-        Logger().debugStream() << "after AttackShipShip: attacker: " << attacker->Dump() << "\ntarget: " << target->Dump();
     }
 
     void AttackShipPlanet(Ship* attacker, Planet* target) {
@@ -272,11 +271,8 @@ namespace {
         if (!attacker_design)
             return;
         double damage = attacker_design->Attack();
-
         if (damage <= 0.0)
             return;
-
-        Logger().debugStream() << "AttackShipPlanet: ship: " << attacker->Dump() << "\nplanet: " << target->Dump();
 
         Meter* target_shield = target->GetMeter(METER_SHIELD);
         Meter* target_defense = target->UniverseObject::GetMeter(METER_DEFENSE);
@@ -293,6 +289,11 @@ namespace {
             Logger().errorStream() << "couldn't get target construction meter";
             return;
         }
+
+        Logger().debugStream() << "AttackShipPlanet: attacker: " << attacker->Name() << " damage: " << damage
+                               << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
+                                                                 << " defense: " << target_defense->Current()
+                                                                 << " infra: " << target_construction->Current();
 
         // damage shields, limited by shield current value and damage amount.
         // remaining damage, if any, above shield current value goes to defense.
@@ -317,24 +318,19 @@ namespace {
 
         if (construction_damage >= 0) {
             target_construction->AddToCurrent(-construction_damage);
-            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " construction damage to Planet " << target->Name() << " (" << target->ID() << ")";
+            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnAttackedByShip(CurrentTurn());
-
-        Logger().debugStream() << "after AttackShipPlanet: ship: " << attacker->Dump() << "\nplanet: " << target->Dump();
     }
 
     void AttackPlanetShip(Planet* attacker, Ship* target) {
         if (!attacker || ! target) return;
 
         double damage = attacker->UniverseObject::GetMeter(METER_DEFENSE)->Current();   // planet "Defense" meter is actually its attack power
-
         if (damage <= 0.0)
             return;
-
-        Logger().debugStream() << "AttackPlanetShip: planet: " << attacker->Dump() << "\nship: " << target->Dump();
 
         Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
         Meter* target_structure = target->UniverseObject::GetMeter(METER_STRUCTURE);
@@ -342,6 +338,10 @@ namespace {
             Logger().errorStream() << "couldn't get target structure or shield meter";
             return;
         }
+
+        Logger().debugStream() << "AttackPlanetShip: attacker: " << attacker->Name() << " damage: " << damage
+                               << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
+                                                                 << " structure: " << target_structure->Current();
 
         // damage shields, limited by shield current value and damage amount.
         // remaining damage, if any, above shield current value goes to structure
@@ -360,13 +360,43 @@ namespace {
         }
 
         target->SetLastTurnActiveInCombat(CurrentTurn());
-
-        Logger().debugStream() << "after AttackPlanetShip: planet: " << attacker->Dump() << "\nship: " << target->Dump();
     }
 
     void AttackPlanetPlanet(Planet* attacker, Planet* target) {
         Logger().debugStream() << "AttackPlanetPlanet does nothing!";
         // intentionally left empty
+    }
+
+    bool ObjectCanBeAttacked(const UniverseObject* obj) {
+        if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
+            return true;
+        } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
+            if (planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+                return true;
+            else
+                return false;
+        } else {
+            return false;
+        }
+    }
+
+    bool ObjectAttackableByEmpire(const UniverseObject* obj, int empire_id) {
+        if (obj->OwnedBy(empire_id))
+            return false;
+        if (obj->Unowned() && empire_id == ALL_EMPIRES)
+            return false;
+        return ObjectCanBeAttacked(obj);
+    }
+
+    bool ObjectCanAttack(const UniverseObject* obj) {
+        if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
+            return ship->IsArmed();
+        } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
+            return planet->CurrentMeterValue(METER_POPULATION) > 0.0 &&
+                   planet->CurrentMeterValue(METER_DEFENSE) > 0.0;
+        } else {
+            return false;
+        }
     }
 }
 
@@ -383,29 +413,32 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     Logger().debugStream() << "AutoResolveCombat objects before resolution: " << combat_info.objects.Dump();
 
     // reasonably unpredictable but reproducible random seeding
-    const UniverseObject* first_object = combat_info.objects.begin()->second;
-    int seed = first_object->ID() + CurrentTurn();
-    Seed(seed);
+    const int base_seed = combat_info.objects.begin()->first + CurrentTurn();
 
 
     // compile list of valid objects to attack or be attacked in this combat
-    std::vector<int> all_combat_object_IDs;
+    std::set<int> valid_target_object_ids;                          // all objects that can be attacked
+    std::set<int> valid_attacker_object_ids;                        // all objects that can attack
+    std::map<int, std::set<int> > empire_valid_attacker_object_ids; // objects that can attack that each empire owns
+
     for (ObjectMap::iterator it = combat_info.objects.begin(); it != combat_info.objects.end(); ++it) {
         const UniverseObject* obj = it->second;
-        if (universe_object_cast<const System*>(obj))
-            continue;
-        if (universe_object_cast<const Fleet*>(obj))
-            continue;
-        all_combat_object_IDs.push_back(it->first);
+        if (ObjectCanAttack(obj)) {
+            valid_attacker_object_ids.insert(it->first);
+            empire_valid_attacker_object_ids[obj->Owner()].insert(it->first);
+        }
+        if (ObjectCanBeAttacked(obj))
+            valid_target_object_ids.insert(it->first);
     }
 
 
     // map from empire to set of IDs of objects that empire's objects
-    // could target.  presently valid targets are objects not owned by
-    // the empire, that are not systems or fleets
-    std::map<int, std::vector<int> > empire_valid_targets;
-    for (std::vector<int>::const_iterator object_it = all_combat_object_IDs.begin(); object_it != all_combat_object_IDs.end(); ++object_it) {
-        int object_id = *object_it;
+    // could potentially target.
+    std::map<int, std::set<int> > empire_valid_target_object_ids;   // objects that each empire can attack
+    for (std::set<int>::const_iterator target_it = valid_target_object_ids.begin();
+         target_it != valid_target_object_ids.end(); ++target_it)
+    {
+        int object_id = *target_it;
         const UniverseObject* obj = combat_info.objects.Object(object_id);
 
         // which empire owns this object
@@ -416,48 +449,61 @@ void AutoResolveCombat(CombatInfo& combat_info) {
              empire_it != combat_info.empire_ids.end(); ++empire_it)
         {
             int empire_id = *empire_it;
-            if (empire_id != owner) {
-                empire_valid_targets[empire_id].push_back(object_id);
-            }
+            if (ObjectAttackableByEmpire(obj, empire_id))
+                empire_valid_target_object_ids[empire_id].insert(object_id);
         }
     }
+
 
     // Each combat "round" a randomly-selected object in the battle attacks
     // something, if it is able to do so.  The number of rounds scales with the
     // number of objects, so the total actions per object is the same for
     // battles, roughly independent of number of objects in the battle
-    const int NUM_COMBAT_ROUNDS = 10*all_combat_object_IDs.size();
+    const int NUM_COMBAT_ROUNDS = 10*valid_attacker_object_ids.size();
 
     for (int round = 1; round <= NUM_COMBAT_ROUNDS; ++round) {
+        Seed(base_seed + round);    // ensure each combat round produces different results
+
+        // ensure something can attack and something can be attacked
+        if (valid_attacker_object_ids.empty()) {
+            Logger().debugStream() << "Nothing left can attack; combat over";
+            break;
+        }
+        if (empire_valid_target_object_ids.empty()) {
+            Logger().debugStream() << "Nothing left can be attacked; combat over";
+            break;
+        }
+        // empires may have valid targets, but nothing to attack with.  If all
+        // empires have no attackers or no valid targers, combat is over
+        bool someone_can_attack_something = false;
+        for (std::map<int, std::set<int> >::const_iterator attacker_it = empire_valid_attacker_object_ids.begin();
+             attacker_it != empire_valid_attacker_object_ids.end(); ++attacker_it)
+        {
+            if (empire_valid_target_object_ids.find(attacker_it->first) != empire_valid_target_object_ids.end()) {
+                someone_can_attack_something = true;
+                break;
+            }
+        }
+        if (!someone_can_attack_something) {
+            Logger().debugStream() << "No empire has valid targets and something to attack with; combat over.";
+            break;
+        }
+
         Logger().debugStream() << "Combat at " << system->Name() << " (" << combat_info.system_id << ") Round " << round;
 
         // select attacking object in battle
-        SmallIntDistType object_num_dist = SmallIntDist(0, all_combat_object_IDs.size() - 1);  // to pick an object id from the vector
-        int attacker_index = object_num_dist();
-        int attacker_id = all_combat_object_IDs.at(attacker_index);
-
-        // check if object is already destroyed.  if so, skip this round
-        if (combat_info.destroyed_object_ids.find(attacker_id) != combat_info.destroyed_object_ids.end()) {
-            //Logger().debugStream() << "skipping destroyed object as attack object";
-            continue;
-        }
+        SmallIntDistType attacker_id_num_dist = SmallIntDist(0, valid_attacker_object_ids.size() - 1);
+        std::set<int>::const_iterator attacker_it = valid_attacker_object_ids.begin();
+        std::advance(attacker_it, attacker_id_num_dist());
+        assert(attacker_it != valid_attacker_object_ids.end());
+        int attacker_id = *attacker_it;
 
         UniverseObject* attacker = combat_info.objects.Object(attacker_id);
         if (!attacker) {
             Logger().errorStream() << "AutoResolveCombat couldn't get object with id " << attacker_id;
             continue;
         }
-
-        // fleets and the system can't attack
-        if (universe_object_cast<const System*>(attacker)) {
-            //Logger().debugStream() << "skipping system as attack object";
-            continue;
-        }
-        if (universe_object_cast<const Fleet*>(attacker)) {
-            //Logger().debugStream() << "skipping fleet as attack object";
-            continue;
-        }
-        // TODO: skip buildings?
+        Logger().debugStream() << "Attacker: " << attacker->Name();
 
 
         // select object from valid targets for this object's owner.
@@ -465,36 +511,29 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         int attacker_owner_id = attacker->Owner();
 
         // get valid targets set for attacker owner
-        std::map<int, std::vector<int> >::iterator target_vec_it = empire_valid_targets.find(attacker_owner_id);
-        if (target_vec_it == empire_valid_targets.end()) {
-            Logger().debugStream() << "couldn't find target set for owner with id: " << attacker_owner_id;
+        std::map<int, std::set<int> >::iterator target_vec_it = empire_valid_target_object_ids.find(attacker_owner_id);
+        if (target_vec_it == empire_valid_target_object_ids.end()) {
+            Logger().debugStream() << "No targets for attacker with id: " << attacker_owner_id;
             continue;
         }
-        const std::vector<int>& valid_target_ids = target_vec_it->second;
+        const std::set<int>& valid_target_ids = target_vec_it->second;
+        if (valid_target_ids.empty()) continue; // should be redundant with this entry being erased when emptied
 
-
-        Logger().debugStream() << "Attacker: " << attacker->Dump();
-
-        SmallIntDistType target_id_num_dist = SmallIntDist(0, valid_target_ids.size() - 1);  // to pick an object id from the vector
 
         // select target object
-        int target_index = target_id_num_dist();
-        int target_id = valid_target_ids.at(target_index);
-
-        // check if object is already destroyed.  if so, skip this round
-        if (combat_info.destroyed_object_ids.find(target_id) != combat_info.destroyed_object_ids.end()) {
-            Logger().debugStream() << "skipping already destroyed object with id " << target_id;
-            continue;
-        }
-
+        SmallIntDistType target_id_num_dist = SmallIntDist(0, valid_target_ids.size() - 1);
+        std::set<int>::const_iterator target_it = valid_target_ids.begin();
+        std::advance(target_it, target_id_num_dist());
+        assert(target_it != valid_target_ids.end());
+        int target_id = *target_it;
 
         UniverseObject* target = combat_info.objects.Object(target_id);
         if (!target) {
-            Logger().errorStream() << "AutoResolveCombat couldn't get object with id " << target_id;
+            Logger().errorStream() << "AutoResolveCombat couldn't get target object with id " << target_id;
             continue;
         }
+        Logger().debugStream() << "Target: " << target->Name();
 
-        Logger().debugStream() << "Target: " << target->Dump();
 
         // do actual attack
         if (Ship* attack_ship = universe_object_cast<Ship*>(attacker)) {
@@ -515,16 +554,65 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         // check for destruction of ships
         if (universe_object_cast<Ship*>(target)) {
             if (target->CurrentMeterValue(METER_STRUCTURE) <= 0.0) {
+                Logger().debugStream() << "!! Target Ship is destroyed!";
                 // object id destroyed
                 combat_info.destroyed_object_ids.insert(target_id);
                 // all empires in battle know object was destroyed
-                for (std::set<int>::const_iterator it = combat_info.empire_ids.begin(); it != combat_info.empire_ids.end(); ++it) {
+                for (std::set<int>::const_iterator it = combat_info.empire_ids.begin();
+                     it != combat_info.empire_ids.end(); ++it)
+                {
                     int empire_id = *it;
                     if (empire_id != ALL_EMPIRES)
                         combat_info.destroyed_object_knowers[empire_id].insert(target_id);
                 }
+                // remove destroyed ship's ID from lists of valid attackers and targets
+                valid_attacker_object_ids.erase(target_id);
+                valid_target_object_ids.erase(target_id);   // probably not necessary as this set isn't used in this loop
+                for (target_vec_it = empire_valid_target_object_ids.begin();
+                     target_vec_it != empire_valid_target_object_ids.end(); ++target_vec_it)
+                { target_vec_it->second.erase(target_id); }
+                for (target_vec_it = empire_valid_attacker_object_ids.begin();
+                     target_vec_it != empire_valid_attacker_object_ids.end(); ++target_vec_it)
+                { target_vec_it->second.erase(target_id); }
+            }
+        } else if (universe_object_cast<Planet*>(target)) {
+            if (target->CurrentMeterValue(METER_SHIELD) <= 0.0 &&
+                target->CurrentMeterValue(METER_DEFENSE) <= 0.0 &&
+                target->CurrentMeterValue(METER_CONSTRUCTION) <= 0.0)
+            {
+                Logger().debugStream() << "!! Target Planet is knocked out of battle";
+                // remove disabled planet's ID from lists of valid attackers and targets
+                valid_attacker_object_ids.erase(target_id);
+                valid_target_object_ids.erase(target_id);   // probably not necessary as this set isn't used in this loop
+                for (target_vec_it = empire_valid_target_object_ids.begin();
+                     target_vec_it != empire_valid_target_object_ids.end(); ++target_vec_it)
+                { target_vec_it->second.erase(target_id); }
             }
         }
+
+        // check if any empire has no remaining target or attacker objects.
+        // If so, remove that empire's entry
+        std::map<int, std::set<int> > temp = empire_valid_target_object_ids;
+        for (target_vec_it = empire_valid_target_object_ids.begin();
+             target_vec_it != empire_valid_target_object_ids.end(); ++target_vec_it)
+        {
+            if (target_vec_it->second.empty()) {
+                temp.erase(target_vec_it->first);
+                Logger().debugStream() << "No valid targets left for empire with id: " << target_vec_it->first;
+            }
+        }
+        empire_valid_target_object_ids = temp;
+
+        temp = empire_valid_attacker_object_ids;
+        for (target_vec_it = empire_valid_attacker_object_ids.begin();
+             target_vec_it != empire_valid_attacker_object_ids.end(); ++target_vec_it)
+        {
+            if (target_vec_it->second.empty()) {
+                temp.erase(target_vec_it->first);
+                Logger().debugStream() << "No valid attacking objects left for empire with id: " << target_vec_it->first;
+            }
+        }
+        empire_valid_attacker_object_ids = temp;
     }
 
     // ensure every participant knows what happened.  TODO: this should probably
