@@ -1529,9 +1529,14 @@ public:
     void            Refresh() {
         // store selected ship rows
         std::set<int> old_selected_ship_ids;
+        try {
         for (ShipsListBox::SelectionSet::const_iterator it = this->Selections().begin(); it != this->Selections().end(); ++it)
             if (const ShipRow* row = dynamic_cast<const ShipRow*>(**it))
                 old_selected_ship_ids.insert(row->ShipID());
+        } catch (const std::exception& e) {
+            Logger().errorStream() << "caught exception looping over old selections: " << e.what();
+        }
+
 
         //Logger().debugStream() << "ShipsListBox::Refresh initial selected ships:";
         //for (std::set<int>::const_iterator it = old_selected_ship_ids.begin(); it != old_selected_ship_ids.end(); ++it)
@@ -1779,6 +1784,8 @@ void FleetDetailPanel::SetFleet(int fleet_id) {
 }
 
 void FleetDetailPanel::SetSelectedShips(const std::set<int>& ship_ids) {
+    const GG::ListBox::SelectionSet initial_selections = m_ships_lb->Selections();
+
     m_ships_lb->DeselectAll();
 
     // early exit if nothing to select, since everything has already been deselected above.
@@ -1803,6 +1810,9 @@ void FleetDetailPanel::SetSelectedShips(const std::set<int>& ship_ids) {
     }
 
     ShipSelectionChanged(m_ships_lb->Selections());
+
+    if (initial_selections != m_ships_lb->Selections())
+        ShipSelectionChanged(m_ships_lb->Selections());
 }
 
 int FleetDetailPanel::FleetID() const
@@ -1857,8 +1867,13 @@ void FleetDetailPanel::UniverseObjectDeleted(const UniverseObject* obj) {
 
 void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     for (GG::ListBox::iterator it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
-        ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>((**it)[0]);
-        ship_panel->Select(rows.find(it) != rows.end());
+        try {
+            ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>((**it)[0]);
+            ship_panel->Select(rows.find(it) != rows.end());
+        } catch (const std::exception& e) {
+            Logger().errorStream() << "FleetDetailPanel::ShipSelectionChanged caught exception: " << e.what();
+            continue;
+        }
     }
     SelectedShipsChangedSignal(rows);
 }
@@ -2438,8 +2453,14 @@ int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {
     if (it == m_fleets_lb->end())
         return INVALID_OBJECT_ID;
 
-    if (FleetRow* fleet_row = dynamic_cast<FleetRow*>(*it))
-        return fleet_row->FleetID();
+    try {
+        //Logger().debugStream() << "FleetWnd::FleetInRow casting iterator to fleet row";
+        if (FleetRow* fleet_row = dynamic_cast<FleetRow*>(*it)) {
+            return fleet_row->FleetID();
+        }
+    } catch (const std::exception& e) {
+        Logger().errorStream() << "FleetInRow caught exception: " << e.what();
+    }
 
     return INVALID_OBJECT_ID;
 }
@@ -2502,8 +2523,6 @@ void FleetWnd::UniverseObjectDeleted(const UniverseObject *obj) {
 }
 
 void FleetWnd::SystemChangedSlot() {
-    //std::cout << "FleetWnd::SystemChangedSlot" << std::endl;
-
     const System* system = GetSystem(m_system_id);
     if (!system) {
         Logger().errorStream() << "FleetWnd::SystemChangedSlot called but couldn't get System with id " << m_system_id;
