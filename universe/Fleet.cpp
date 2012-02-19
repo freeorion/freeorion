@@ -623,16 +623,16 @@ void Fleet::AddShip(int ship_id) {
 
     //Logger().debugStream() << "Fleet '" << this->Name() << "' adding ship: " << ship_id;
 
+    // remove ship from old fleet
+    if (Fleet* old_fleet = GetFleet(ship->FleetID()))
+        old_fleet->RemoveShip(ship_id);
+
     // ensure ship is in same system as this fleet
     int ship_system_id = ship->SystemID();
     int this_fleet_system_id = this->SystemID();
     if (ship_system_id != this_fleet_system_id)
         if (System* system = GetSystem(this_fleet_system_id))
             system->Insert(ship);   // sets ship's system, remove from old system (if any) and moves ship to system's location (if necessary)
-
-    // remove ship from old fleet
-    if (Fleet* old_fleet = GetFleet(ship->FleetID()))
-        old_fleet->RemoveShip(ship_id);
 
     // add ship to this fleet, and set its internal fleet record
 
