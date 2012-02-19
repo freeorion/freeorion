@@ -2088,7 +2088,7 @@ void FleetWnd::Refresh() {
     if (GetSystem(m_system_id)) {
         // get fleets to show from system, based on required ownership
         m_fleet_ids.clear();
-        const ObjectMap& objects = Objects();
+        const ObjectMap& objects = GetUniverse().Objects();
         std::vector<const Fleet*> all_fleets = objects.FindObjects<Fleet>();
         for (std::vector<const Fleet*>::const_iterator it = all_fleets.begin(); it != all_fleets.end(); ++it) {
             const Fleet* fleet = *it;
