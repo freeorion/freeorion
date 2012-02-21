@@ -446,19 +446,8 @@ Species
             activation = Not OwnedBy AnyEmpire
             effects = SetMaxTroops Value + 5
     ]
-    environments = [
-        type = Swamp        environment = Good
-        type = Toxic        environment = Adequate
-        type = Inferno      environment = Poor
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Hostile
-        type = Terran       environment = Poor
-        type = Ocean        environment = Adequate
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[SWAMP_STANDARD_EP]]
+    
     graphic = "icons/species/cynos.png"
 
 Species
@@ -961,19 +950,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Adequate
-        type = Toxic        environment = Good
-        type = Inferno      environment = Adequate
-        type = Radiated     environment = Poor
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Hostile
-        type = Terran       environment = Hostile
-        type = Ocean        environment = Poor
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[TOXIC_STANDARD_EP]]
+    
     graphic = "icons/species/derthrean.png"
 
 Species
@@ -1476,19 +1454,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Hostile
-        type = Toxic        environment = Hostile
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Poor
-        type = Barren       environment = Adequate
-        type = Tundra       environment = Good
-        type = Desert       environment = Adequate
-        type = Terran       environment = Poor
-        type = Ocean        environment = Hostile
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[TUNDRA_STANDARD_EP]]
+    
     graphic = "icons/species/george.png"
 
 Species
@@ -1991,19 +1958,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Adequate
-        type = Toxic        environment = Poor
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Poor
-        type = Terran       environment = Adequate
-        type = Ocean        environment = Good
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[OCEAN_STANDARD_EP]]
+    
     graphic = "icons/species/laenfa.png"
 
 Species
@@ -2500,19 +2456,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Adequate
-        type = Toxic        environment = Poor
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Poor
-        type = Terran       environment = Adequate
-        type = Ocean        environment = Good
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[OCEAN_STANDARD_EP]]
+    
     graphic = "icons/species/phinnert.png"
 
 Species
@@ -3015,19 +2960,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Hostile
-        type = Toxic        environment = Hostile
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Poor
-        type = Barren       environment = Adequate
-        type = Tundra       environment = Good
-        type = Desert       environment = Adequate
-        type = Terran       environment = Poor
-        type = Ocean        environment = Hostile
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[TUNDRA_STANDARD_EP]]
+    
     graphic = "icons/species/sslith.png"
     
 Species
@@ -3530,19 +3464,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Good
-        type = Toxic        environment = Adequate
-        type = Inferno      environment = Poor
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Hostile
-        type = Terran       environment = Poor
-        type = Ocean        environment = Adequate
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[SWAMP_STANDARD_EP]]
+    
     graphic = "icons/species/t-aeghirus.png"    
     
 Species
@@ -3994,19 +3917,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Good
-        type = Toxic        environment = Adequate
-        type = Inferno      environment = Poor
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Hostile
-        type = Terran       environment = Poor
-        type = Ocean        environment = Adequate
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[SWAMP_STANDARD_EP]]
+    
     graphic = "icons/species/fifty-seven.png"
 
 Species
@@ -4509,19 +4421,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Adequate
-        type = Toxic        environment = Poor
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Poor
-        type = Terran       environment = Adequate
-        type = Ocean        environment = Good
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[OCEAN_STANDARD_EP]]
+    
     graphic = "icons/species/amorphous-02.png"
 
 Species
@@ -4974,19 +4875,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Hostile
-        type = Toxic        environment = Hostile
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Poor
-        type = Tundra       environment = Adequate
-        type = Desert       environment = Good
-        type = Terran       environment = Adequate
-        type = Ocean        environment = Poor
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[DESERT_STANDARD_EP]]
+    
     graphic = "icons/species/intangible-05.png"
     
 Species
@@ -5489,19 +5379,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Hostile
-        type = Toxic        environment = Hostile
-        type = Inferno      environment = Poor
-        type = Radiated     environment = Adequate
-        type = Barren       environment = Good
-        type = Tundra       environment = Adequate
-        type = Desert       environment = Poor
-        type = Terran       environment = Hostile
-        type = Ocean        environment = Hostile
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[BARREN_STANDARD_EP]]
+    
     graphic = "icons/species/robotic-02.png"
 
 Species
@@ -5955,19 +5834,8 @@ Species
             activation = Not OwnedBy AnyEmpire
             effects = SetMaxTroops Value + 5
     ]
-    environments = [
-        type = Swamp        environment = Hostile
-        type = Toxic        environment = Poor
-        type = Inferno      environment = Adequate
-        type = Radiated     environment = Good
-        type = Barren       environment = Adequate
-        type = Tundra       environment = Poor
-        type = Desert       environment = Hostile
-        type = Terran       environment = Hostile
-        type = Ocean        environment = Hostile
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[RADIATED_STANDARD_EP]]
+    
     graphic = "icons/species/beige-goo.png"
 
 Species
@@ -6461,19 +6329,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Poor
-        type = Toxic        environment = Hostile
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Poor
-        type = Desert       environment = Adequate
-        type = Terran       environment = Good
-        type = Ocean        environment = Adequate
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[TERRAN_STANDARD_EP]]
+    
     graphic = "icons/species/robotic-06.png"
 
 Species
@@ -6976,19 +6833,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Hostile
-        type = Toxic        environment = Hostile
-        type = Inferno      environment = Poor
-        type = Radiated     environment = Adequate
-        type = Barren       environment = Good
-        type = Tundra       environment = Adequate
-        type = Desert       environment = Poor
-        type = Terran       environment = Hostile
-        type = Ocean        environment = Hostile
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[BARREN_STANDARD_EP]]
+    
     graphic = "icons/species/intangible-04.png"
 
 Species
@@ -7491,19 +7337,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Hostile
-        type = Toxic        environment = Hostile
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Poor
-        type = Tundra       environment = Adequate
-        type = Desert       environment = Good
-        type = Terran       environment = Adequate
-        type = Ocean        environment = Poor
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[DESERT_STANDARD_EP]]
+    
     graphic = "icons/species/flora-04.png"
     
 Species
@@ -8009,19 +7844,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Poor
-        type = Toxic        environment = Adequate
-        type = Inferno      environment = Good
-        type = Radiated     environment = Adequate
-        type = Barren       environment = Poor
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Hostile
-        type = Terran       environment = Hostile
-        type = Ocean        environment = Hostile
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[INFERNO_STANDARD_EP]]
+    
     graphic = "icons/species/bipedial-05.png"
 
 Species
@@ -8527,19 +8351,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Adequate
-        type = Toxic        environment = Good
-        type = Inferno      environment = Adequate
-        type = Radiated     environment = Poor
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Hostile
-        type = Terran       environment = Hostile
-        type = Ocean        environment = Poor
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[TOXIC_STANDARD_EP]]
+    
     graphic = "icons/species/gis-guf-gthrim.png"
 
 Species
@@ -8989,19 +8802,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Poor
-        type = Toxic        environment = Hostile
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Poor
-        type = Desert       environment = Adequate
-        type = Terran       environment = Good
-        type = Ocean        environment = Adequate
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[TERRAN_STANDARD_EP]]
+    
     graphic = "icons/species/hidden-gardener.png"
 
 Species
@@ -9508,19 +9310,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Poor
-        type = Toxic        environment = Adequate
-        type = Inferno      environment = Good
-        type = Radiated     environment = Adequate
-        type = Barren       environment = Poor
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Hostile
-        type = Terran       environment = Hostile
-        type = Ocean        environment = Hostile
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[INFERNO_STANDARD_EP]]
+    
     graphic = "icons/species/abaddonnian.png"
 
 Species
@@ -10026,19 +9817,8 @@ Species
             effects = SetMaxTroops Value + 5
     ]
     
-    environments = [
-        type = Swamp        environment = Hostile
-        type = Toxic        environment = Poor
-        type = Inferno      environment = Adequate
-        type = Radiated     environment = Good
-        type = Barren       environment = Adequate
-        type = Tundra       environment = Poor
-        type = Desert       environment = Hostile
-        type = Terran       environment = Hostile
-        type = Ocean        environment = Hostile
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[RADIATED_STANDARD_EP]]
+    
     graphic = "icons/species/acirema.png"
 
 Species
@@ -10556,19 +10336,8 @@ Species
                     empire = Target.Owner
             ]
     ]
-    environments = [
-        type = Swamp        environment = Poor
-        type = Toxic        environment = Hostile
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Poor
-        type = Desert       environment = Adequate
-        type = Terran       environment = Good
-        type = Ocean        environment = Adequate
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[TERRAN_STANDARD_EP]]
+    
     graphic = "icons/species/human.png"
 
 Species
@@ -11071,19 +10840,8 @@ Species
             activation = Not OwnedBy AnyEmpire
             effects = SetMaxTroops Value + 5
     ]
-    environments = [
-        type = Swamp        environment = Adequate
-        type = Toxic        environment = Poor
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Poor
-        type = Terran       environment = Adequate
-        type = Ocean        environment = Good
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[OCEAN_STANDARD_EP]]
+    
     graphic = "icons/species/scylior.png"
 
 Species
@@ -11586,19 +11344,8 @@ Species
             activation = Not OwnedBy AnyEmpire
             effects = SetMaxTroops Value + 5
     ]
-    environments = [
-        type = Swamp        environment = Good
-        type = Toxic        environment = Adequate
-        type = Inferno      environment = Poor
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Hostile
-        type = Terran       environment = Poor
-        type = Ocean        environment = Adequate
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[SWAMP_STANDARD_EP]]
+    
     graphic = "icons/species/gyisache.png"
 
 Species
@@ -12101,19 +11848,8 @@ Species
             activation = Not OwnedBy AnyEmpire
             effects = SetMaxTroops Value + 5
     ]
-    environments = [
-        type = Swamp        environment = Adequate
-        type = Toxic        environment = Good
-        type = Inferno      environment = Adequate
-        type = Radiated     environment = Poor
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Hostile
-        type = Terran       environment = Hostile
-        type = Ocean        environment = Poor
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[TOXIC_STANDARD_EP]]
+    
     graphic = "icons/species/chato-matou-gormoshk.png"
 
 Species
@@ -12616,19 +12352,8 @@ Species
             activation = Not OwnedBy AnyEmpire
             effects = SetMaxTroops Value + 5
     ]
-    environments = [
-        type = Swamp        environment = Poor
-        type = Toxic        environment = Adequate
-        type = Inferno      environment = Good
-        type = Radiated     environment = Adequate
-        type = Barren       environment = Poor
-        type = Tundra       environment = Hostile
-        type = Desert       environment = Hostile
-        type = Terran       environment = Hostile
-        type = Ocean        environment = Hostile
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[INFERNO_STANDARD_EP]]
+    
     graphic = "icons/species/egassem.png"
 
 Species
@@ -13131,19 +12856,8 @@ Species
             activation = Not OwnedBy AnyEmpire
             effects = SetMaxTroops Value + 5
     ]
-    environments = [
-        type = Swamp        environment = Hostile
-        type = Toxic        environment = Poor
-        type = Inferno      environment = Adequate
-        type = Radiated     environment = Good
-        type = Barren       environment = Adequate
-        type = Tundra       environment = Poor
-        type = Desert       environment = Hostile
-        type = Terran       environment = Hostile
-        type = Ocean        environment = Hostile
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[RADIATED_STANDARD_EP]]
+    
     graphic = "icons/species/trith.png"
 
 Species
@@ -13646,19 +13360,8 @@ Species
             activation = Not OwnedBy AnyEmpire
             effects = SetMaxTroops Value + 5
     ]
-    environments = [
-        type = Swamp        environment = Hostile
-        type = Toxic        environment = Hostile
-        type = Inferno      environment = Poor
-        type = Radiated     environment = Adequate
-        type = Barren       environment = Good
-        type = Tundra       environment = Adequate
-        type = Desert       environment = Poor
-        type = Terran       environment = Hostile
-        type = Ocean        environment = Hostile
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[BARREN_STANDARD_EP]]
+    
     graphic = "icons/species/cray.png"
 
 Species
@@ -14161,19 +13864,8 @@ Species
             activation = Not OwnedBy AnyEmpire
             effects = SetMaxTroops Value + 5
     ]
-    environments = [
-        type = Swamp        environment = Hostile
-        type = Toxic        environment = Hostile
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Poor
-        type = Barren       environment = Adequate
-        type = Tundra       environment = Good
-        type = Desert       environment = Adequate
-        type = Terran       environment = Poor
-        type = Ocean        environment = Hostile
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[TUNDRA_STANDARD_EP]]
+    
     graphic = "icons/species/hhhoh.png"
 
 Species
@@ -14676,19 +14368,8 @@ Species
             activation = Not OwnedBy AnyEmpire
             effects = SetMaxTroops Value + 5
     ]
-    environments = [
-        type = Swamp        environment = Hostile
-        type = Toxic        environment = Hostile
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Poor
-        type = Tundra       environment = Adequate
-        type = Desert       environment = Good
-        type = Terran       environment = Adequate
-        type = Ocean        environment = Poor
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+    [[DESERT_STANDARD_EP]]
+    
     graphic = "icons/species/eaxaw.png"
 
 /*
@@ -15537,3 +15218,144 @@ Species
     graphic = "icons/species/amorphous-03.png"
 
 */
+
+
+###   M A C R O S   ###
+
+SWAMP_STANDARD_EP
+'''environments = [
+      type = Swamp        environment = Good
+      type = Toxic        environment = Adequate
+      type = Inferno      environment = Poor
+      type = Radiated     environment = Hostile
+      type = Barren       environment = Hostile
+      type = Tundra       environment = Hostile
+      type = Desert       environment = Hostile
+      type = Terran       environment = Poor
+      type = Ocean        environment = Adequate
+      type = Asteroids    environment = Uninhabitable
+      type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+TOXIC_STANDARD_EP
+'''environments = [
+        type = Swamp        environment = Adequate
+        type = Toxic        environment = Good
+        type = Inferno      environment = Adequate
+        type = Radiated     environment = Poor
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Hostile
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Poor
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+INFERNO_STANDARD_EP
+'''environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Adequate
+        type = Inferno      environment = Good
+        type = Radiated     environment = Adequate
+        type = Barren       environment = Poor
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Hostile
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+RADIATED_STANDARD_EP
+'''environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Poor
+        type = Inferno      environment = Adequate
+        type = Radiated     environment = Good
+        type = Barren       environment = Adequate
+        type = Tundra       environment = Poor
+        type = Desert       environment = Hostile
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+BARREN_STANDARD_EP
+'''environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Poor
+        type = Radiated     environment = Adequate
+        type = Barren       environment = Good
+        type = Tundra       environment = Adequate
+        type = Desert       environment = Poor
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+TUNDRA_STANDARD_EP
+'''environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Poor
+        type = Barren       environment = Adequate
+        type = Tundra       environment = Good
+        type = Desert       environment = Adequate
+        type = Terran       environment = Poor
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+    
+DESERT_STANDARD_EP
+'''environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Poor
+        type = Tundra       environment = Adequate
+        type = Desert       environment = Good
+        type = Terran       environment = Adequate
+        type = Ocean        environment = Poor
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+TERRAN_STANDARD_EP
+'''environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Poor
+        type = Desert       environment = Adequate
+        type = Terran       environment = Good
+        type = Ocean        environment = Adequate
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+OCEAN_STANDARD_EP
+'''environments = [
+        type = Swamp        environment = Adequate
+        type = Toxic        environment = Poor
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Poor
+        type = Terran       environment = Adequate
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+
+    
