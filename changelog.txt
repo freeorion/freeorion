@@ -6,7 +6,9 @@ New Features / Improvements:
 Balancing:
 
 Content:
-
+ ~ All species now have different aptitudes at resource production and ground combat.  A few require no food, and a few have special stealth and detection abilities.
+ ~ ~ Sorry, currently not balanced, and not documented.
+ 
 Graphics:
  ~ Added unique graphics for each hull.
 
@@ -37,17 +39,17 @@ Balancing:
 
 Content:
  ~ Added techs for increasing the size of troop garrisons.
- ~ Added new 'Planetary Defense' tech catagory
+ ~ Added new 'Planetary Defense' tech category
  ~ Combined some theory techs with their application to simplify the tech tree.
  ~ Made some techs, ship parts, ship hulls, and building types that had very large costs be officially not researchable or producible.
  ~ New Sitrep messages: 
  ~ ~ when a planet is terraformed by the Terraforming building.
  ~ ~ when a tame space monster is 'born'.
  ~ AI script updates
- ~ New default premade shipdesigns for empires.
+ ~ New default pre-made shipdesigns for empires.
 
 Graphics:
- ~ Made companion stars always visibile in in sidepanel.
+ ~ Made companion stars always visibile in in side-panel.
  ~ Added clearer fleet icons.
  ~ Made AI empires choose more distinctive colors.
  ~ Made structure meter icon distinct from health meter icon.

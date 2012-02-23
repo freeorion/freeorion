@@ -2605,6 +2605,12 @@ Eaxaw
 SP_EAXAW_DESC
 Evil amazonian xenophobic agressive worms. Prefer Desert planets.
 
+SP_MUURSH
+Muursh
+SP_MUURSH_DESC
+Militantly peaceful herbivores.
+
+
 SP_SUPER_TEST
 Super Testers
 SP_SUPER_TEST_DESC
