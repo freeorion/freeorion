@@ -1680,7 +1680,7 @@ Hull
             ]
         EffectsGroup
             scope = Source
-            activation = Random probability = 0.06
+            activation = Random probability = 0.03
             stackinggroup = "TREE_GROWTH"
             effects = CreateShip "SM_FLOATER"
     ]
