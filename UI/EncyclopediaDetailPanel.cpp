@@ -840,7 +840,7 @@ void EncyclopediaDetailPanel::Refresh() {
         name = design->Name();
         texture = ClientUI::ShipDesignIcon(design_id);
         turns = design->ProductionTime();
-        cost = design->PerTurnCost();
+        cost = design->ProductionCost();
         cost_units = UserString("ENC_PP");
         general_type = design->IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
 
