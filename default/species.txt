@@ -2112,35 +2112,39 @@ TERRIBLE_DETECTION
 '''EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value * 0.5
+            effects = SetDetection Value -10
 '''
 
 GREAT_DETECTION
 '''EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value * 1.25
+            effects = SetDetection Value + 25
 '''
 
 ULTIMATE_DETECTION
 '''        EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value * 1.50
+            effects = SetDetection Value + 50
 '''
 
 GREAT_STEALTH
 '''EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStealth Value * 1.5
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = SetStealth Value + 15
 '''
             
 ULTIMATE_STEALTH
 '''EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStealth Value * 2
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = SetStealth Value + 25
 '''
 
 
