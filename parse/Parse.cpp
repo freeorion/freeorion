@@ -383,6 +383,8 @@ namespace parse {
                     return;
                 }
             }
+            // add newline at end to avoid errors when one is left out, but is expected by parsers
+            file_contents += "\n";
 
             macro_substitution(file_contents);
 
