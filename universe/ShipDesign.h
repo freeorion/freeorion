@@ -545,6 +545,7 @@ public:
 
     const std::string&              Icon() const            { return m_icon; }      ///< returns filename for small-size icon graphic for design
     const std::string&              Model() const           { return m_3D_model; }  ///< returns filename of 3D model that represents ships of design
+    bool                            LookupInStringtable() const { return m_name_desc_in_stringtable; }
 
     std::string                     Dump() const;                                   ///< returns a data file format representation of this object
     //@}
