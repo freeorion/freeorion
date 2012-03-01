@@ -810,7 +810,6 @@ void ProductionQueueOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 ShipDesignOrder::ShipDesignOrder() :
     Order(),
-    m_ship_design(),
     m_design_id(INVALID_OBJECT_ID),
     m_delete_design_from_empire(false),
     m_create_new_design(false)
@@ -818,7 +817,6 @@ ShipDesignOrder::ShipDesignOrder() :
 
 ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id_to_remember) :
     Order(empire),
-    m_ship_design(),
     m_design_id(existing_design_id_to_remember),
     m_delete_design_from_empire(false),
     m_create_new_design(false)
@@ -826,7 +824,6 @@ ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id_to_remember)
 
 ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy) :
     Order(empire),
-    m_ship_design(),
     m_design_id(design_id_to_erase),
     m_delete_design_from_empire(true),
     m_create_new_design(false)
@@ -834,10 +831,19 @@ ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy)
 
 ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design) :
     Order(empire),
-    m_ship_design(ship_design),
     m_design_id(new_design_id),
     m_delete_design_from_empire(false),
-    m_create_new_design(true)
+    m_create_new_design(true),
+    m_name(ship_design.Name()),
+    m_description(ship_design.Description()),
+    m_designed_by_empire_id(ship_design.DesignedByEmpire()),
+    m_designed_on_turn(ship_design.DesignedOnTurn()),
+    m_hull(ship_design.Hull()),
+    m_parts(ship_design.Parts()),
+    m_is_monster(ship_design.IsMonster()),
+    m_icon(ship_design.Icon()),
+    m_3D_model(ship_design.Model()),
+    m_name_desc_in_stringtable(ship_design.LookupInStringtable())
 {}
 
 void ShipDesignOrder::ExecuteImpl() const {
@@ -856,7 +862,7 @@ void ShipDesignOrder::ExecuteImpl() const {
 
     } else if (m_create_new_design) {
         // player is creating a new design
-        if (m_ship_design.DesignedByEmpire() != EmpireID()) {
+        if (m_designed_by_empire_id != EmpireID()) {
             Logger().errorStream() << "Tried to create a new ShipDesign designed by another empire";
             return;
         }
@@ -866,7 +872,10 @@ void ShipDesignOrder::ExecuteImpl() const {
             Logger().errorStream() << "Tried to create a new ShipDesign with an id of an already-existing ShipDesign";
             return;
         }
-        ShipDesign* new_ship_design = new ShipDesign(m_ship_design);
+        ShipDesign* new_ship_design = new ShipDesign(m_name, m_description, m_designed_by_empire_id,
+                                                     m_designed_on_turn, m_hull, m_parts,
+                                                     m_icon, m_3D_model, m_name_desc_in_stringtable,
+                                                     m_is_monster);
 
         universe.InsertShipDesignID(new_ship_design, m_design_id);
         universe.SetEmpireKnowledgeOfShipDesign(m_design_id, EmpireID());

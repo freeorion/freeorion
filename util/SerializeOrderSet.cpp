@@ -128,10 +128,19 @@ template <class Archive>
 void ShipDesignOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
-        & BOOST_SERIALIZATION_NVP(m_ship_design)
         & BOOST_SERIALIZATION_NVP(m_design_id)
         & BOOST_SERIALIZATION_NVP(m_delete_design_from_empire)
-        & BOOST_SERIALIZATION_NVP(m_create_new_design);
+        & BOOST_SERIALIZATION_NVP(m_create_new_design)
+        & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_description)
+        & BOOST_SERIALIZATION_NVP(m_designed_by_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_designed_on_turn)
+        & BOOST_SERIALIZATION_NVP(m_hull)
+        & BOOST_SERIALIZATION_NVP(m_parts)
+        & BOOST_SERIALIZATION_NVP(m_is_monster)
+        & BOOST_SERIALIZATION_NVP(m_icon)
+        & BOOST_SERIALIZATION_NVP(m_3D_model)
+        & BOOST_SERIALIZATION_NVP(m_name_desc_in_stringtable);
 }
 
 template <class Archive>

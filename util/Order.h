@@ -477,11 +477,6 @@ public:
     ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design);
     //@}
 
-    /** \name Accessors */ //@{
-    const ShipDesign&         GetShipDesign() const {return m_ship_design;} ///< returns the ship design to be created and/or added or removed to/from the empire's designs
-    int                       DesignID() const      {return m_design_id;}   ///< returns the ship design ID
-    //@}
-
 private:
     /**
      * Preconditions of execute:
@@ -503,10 +498,22 @@ private:
      */
     virtual void ExecuteImpl() const;
 
-    ShipDesign                  m_ship_design;
     int                         m_design_id;
     bool                        m_delete_design_from_empire;
     bool                        m_create_new_design;
+
+    // details of design to create
+    std::string                 m_name;
+    std::string                 m_description;
+    int                         m_designed_by_empire_id;
+    int                         m_designed_on_turn;
+    std::string                 m_hull;
+    std::vector<std::string>    m_parts;
+    bool                        m_is_monster;
+    std::string                 m_icon;
+    std::string                 m_3D_model;
+    bool                        m_name_desc_in_stringtable;
+    // end details of design to create
 
     friend class boost::serialization::access;
     template <class Archive>
