@@ -1048,24 +1048,6 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
         all_potential_targets.push_back(m_objects.Object(*it));
 
     Logger().debugStream() << "Universe::GetEffectsAndTargets";
-    // 0) EffectsGroups from Species
-    Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
-    for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
-        Logger().debugStream() << "... object (" << it->first << "): " << it->second->Name();
-        const PopCenter* pc = dynamic_cast<const PopCenter*>(it->second);
-        if (!pc) continue;
-        const std::string& species_name = pc->SpeciesName();
-        //Logger().debugStream() << "... ... PopCenter species: " << species_name;
-        if (species_name.empty())
-            continue;
-        const Species* species = GetSpecies(species_name);
-        if (!species) {
-            Logger().errorStream() << "GetEffectsAndTargets couldn't get Species " << species_name;
-            continue;
-        }
-        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), it->first, ECT_SPECIES, species_name,
-                                             all_potential_targets, targets_causes);
-    }
 
     // 1) EffectsGroups from Specials
     Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIALS";
@@ -1175,6 +1157,30 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
                                                  all_potential_targets, targets_causes);
         }
     }
+
+    // 5) EffectsGroups from Species
+    Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
+    for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
+        Logger().debugStream() << "... object (" << it->first << "): " << it->second->Name();
+        const PopCenter* pc = dynamic_cast<const PopCenter*>(it->second);
+        const Ship* ship = 0;
+        if (!pc) {
+            ship = dynamic_cast<const Ship*>(it->second);
+            if (!ship) continue;
+        }
+        const std::string& species_name = (pc ? pc->SpeciesName() : ship->SpeciesName());
+        //Logger().debugStream() << "... ... PopCenter species: " << species_name;
+        if (species_name.empty())
+            continue;
+        const Species* species = GetSpecies(species_name);
+        if (!species) {
+            Logger().errorStream() << "GetEffectsAndTargets couldn't get Species " << species_name;
+            continue;
+        }
+        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), it->first, ECT_SPECIES, species_name,
+                                             all_potential_targets, targets_causes);
+    }
+
 }
 
 void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
