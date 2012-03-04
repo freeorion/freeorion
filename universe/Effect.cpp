@@ -1812,7 +1812,7 @@ std::string MoveTo::Dump() const
 
 
 ///////////////////////////////////////////////////////////
-// MoveInOrbit                                            //
+// MoveInOrbit                                           //
 ///////////////////////////////////////////////////////////
 MoveInOrbit::MoveInOrbit(const ValueRef::ValueRefBase<double>* speed,
                          const Condition::ConditionBase* focal_point_condition) :

@@ -1010,7 +1010,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 700   // Near Omniscient Detection
+            effects = SetDetection Value + 1600   // Near Omniscient Detection
         
         [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
