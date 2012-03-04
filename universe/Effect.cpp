@@ -131,9 +131,6 @@ namespace {
             return;
         }
 
-        const Universe& universe = GetUniverse();
-        const ObjectMap& objects = universe.Objects();
-
         const System* next_system = GetSystem(new_next_system);
         if (!next_system) {
             Logger().errorStream() << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
@@ -154,7 +151,7 @@ namespace {
 
         int dest_system = fleet->FinalDestinationID();
 
-        std::pair<std::list<int>, double> route_pair = universe.ShortestPath(start_system, dest_system, fleet->Owner());
+        std::pair<std::list<int>, double> route_pair = GetUniverse().ShortestPath(start_system, dest_system, fleet->Owner());
 
         // if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
         // to the next system that it was just set to move to anyway.
@@ -1708,7 +1705,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
                 UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);  // inserted into dest_system, so next and previous systems are invalid objects
             }
         } else {
-            fleet->UniverseObject::MoveTo(destination);
+            fleet->UniverseObject::MoveTo(destination); // UniverseObject:: scope specification seemingly needed due to mixture of overridded and non-virtual base class MoveTo functions
 
             // fleet has been moved to a location that is not a system.  Presumably this will be located on a starlane between two
             // other systems, which may or may not have been explored.  Regardless, the fleet needs to be given a new next and
@@ -1846,14 +1843,17 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
         Logger().errorStream() << "MoveInOrbit::Execute given no target object";
         return;
     }
+    UniverseObject* target = context.effect_target;
 
     double focus_x = 0.0, focus_y = 0.0, speed = 1.0;
     if (m_focus_x)
-        focus_x = m_focus_x->Eval(context);
+        focus_x = m_focus_x->Eval(ScriptingContext(context, target->X()));
     if (m_focus_y)
-        focus_y = m_focus_y->Eval(context);
+        focus_y = m_focus_y->Eval(ScriptingContext(context, target->Y()));
     if (m_speed)
         speed = m_speed->Eval(context);
+    if (speed == 0.0)
+        return;
     if (m_focal_point_condition) {
         Condition::ObjectSet matches;
         m_focal_point_condition->Eval(context, matches);
@@ -1863,6 +1863,39 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
         focus_x = focus_object->X();
         focus_y = focus_object->Y();
     }
+
+    double focus_to_target_x = target->X() - focus_x;
+    double focus_to_target_y = target->Y() - focus_y;
+    double focus_to_target_radius = std::sqrt(focus_to_target_x * focus_to_target_x +
+                                              focus_to_target_y * focus_to_target_y);
+    if (focus_to_target_radius < 1.0)
+        return;    // don't move objects that are too close to focus
+
+    double angle_radians = atan2(focus_to_target_y, focus_to_target_x);
+    double angle_increment_radians = speed / focus_to_target_radius;
+    double new_angle_radians = angle_radians + angle_increment_radians;
+
+    double new_x = focus_x + focus_to_target_radius * cos(new_angle_radians);
+    double new_y = focus_y + focus_to_target_radius * sin(new_angle_radians);
+
+    if (target->X() == new_x && target->Y() == new_y)
+        return;
+
+    if (System* system = universe_object_cast<System*>(target)) {
+        system->MoveTo(new_x, new_y);
+        return;
+    } else if (Fleet* fleet = universe_object_cast<Fleet*>(target)) {
+        fleet->MoveTo(new_x, new_y);
+        // todo: is fleet now close enough to fall into a system?
+        UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);
+        return;
+    } else if (Ship* ship = universe_object_cast<Ship*>(target)) {
+        Fleet* old_fleet = GetFleet(ship->FleetID());
+        CreateNewFleet(new_x, new_y, ship); // creates new fleet and inserts ship into fleet
+        if (old_fleet && old_fleet->NumShips() < 1)
+            GetUniverse().EffectDestroy(old_fleet->ID());
+    }
+    // don't move planets or buildings, as these can't exist outside of systems
 }
 
 std::string MoveInOrbit::Description() const {
