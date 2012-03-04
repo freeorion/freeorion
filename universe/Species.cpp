@@ -308,6 +308,16 @@ const std::string& SpeciesManager::RandomSpeciesName() const {
     return it->first;
 }
 
+const std::string& SpeciesManager::RandomPlayableSpeciesName() const {
+    if (NumPlayableSpecies() <= 0)
+        return EMPTY_STRING;
+
+    int species_idx = RandSmallInt(0, NumPlayableSpecies() - 1);
+    playable_iterator it = playable_begin();
+    std::advance(it, species_idx);
+    return it->first;
+}
+
 void SpeciesManager::ClearSpeciesHomeworlds() {
     for (std::map<std::string, Species*>::iterator it = m_species.begin(); it != m_species.end(); ++it)
         it->second->SetHomeworlds(std::set<int>());

@@ -161,6 +161,10 @@ public:
       * this manager is empty. */
     const std::string&      RandomSpeciesName() const;
 
+    /** returns the name of a playable species in this manager, or an empty
+      * string if there are no playable species. */
+    const std::string&      RandomPlayableSpeciesName() const;
+
     /** returns the instance of this singleton class; you should use the free
       * function GetSpeciesManager() instead */
     static SpeciesManager&  GetSpeciesManager();

@@ -594,7 +594,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
             if (psd.m_empire_name.empty())
                 psd.m_empire_name = GenerateEmpireName();
             if (psd.m_starting_species_name.empty())
-                psd.m_starting_species_name = GetSpeciesManager().RandomSpeciesName();
+                psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
 
         } else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             if (psd.m_empire_color == GG::Clr(0, 0, 0, 0))
@@ -604,7 +604,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
             if (psd.m_empire_name.empty())
                 psd.m_empire_name = GenerateEmpireName();
             if (psd.m_starting_species_name.empty())
-                psd.m_starting_species_name = GetSpeciesManager().RandomSpeciesName();
+                psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
         }
     }
 
