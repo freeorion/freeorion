@@ -15,14 +15,11 @@ namespace phoenix = boost::phoenix;
 
 
 namespace {
-    struct condition_parser_rules_2
-    {
-        condition_parser_rules_2()
-        {
+    struct condition_parser_rules_2 {
+        condition_parser_rules_2() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =
-                parse::value_ref_parser<int>();
+            const parse::value_ref_parser_rule<int>::type& int_value_ref = parse::value_ref_parser<int>();
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -49,8 +46,8 @@ namespace {
                         >> -(
                                 parse::label(High_name) >> int_value_ref [ _c = _1 ]
                             )
-                        )
-                        [ _val = new_<Condition::HasSpecial>(_a, _b, _c) ]
+                     )
+                     [ _val = new_<Condition::HasSpecial>(_a, _b, _c) ]
                 ;
 
             owner_has_tech

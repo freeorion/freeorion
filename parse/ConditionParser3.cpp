@@ -20,20 +20,13 @@ namespace std {
 #endif
 
 namespace {
-    struct condition_parser_rules_3
-    {
-        condition_parser_rules_3()
-        {
+    struct condition_parser_rules_3 {
+        condition_parser_rules_3() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =
-                parse::value_ref_parser<int>();
-
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =
-                parse::value_ref_parser<double>();
-
-            const parse::value_ref_parser_rule< ::StarType>::type& star_type_value_ref =
-                parse::value_ref_parser< ::StarType>();
+            const parse::value_ref_parser_rule<int>::type& int_value_ref =              parse::value_ref_parser<int>();
+            const parse::value_ref_parser_rule<double>::type& double_value_ref =        parse::value_ref_parser<double>();
+            const parse::value_ref_parser_rule< ::StarType>::type& star_type_value_ref= parse::value_ref_parser< ::StarType>();
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -63,55 +56,55 @@ namespace {
                 =    tok.Number_
                 >>  -(
                             parse::label(Low_name) >> int_value_ref [ _a = _1 ]
-                        )
+                     )
                 >>  -(
                             parse::label(High_name) >> int_value_ref [ _b = _1 ]
-                        )
+                     )
                 >    parse::label(Condition_name) > parse::detail::condition_parser [ _val = new_<Condition::Number>(_a, _b, _1) ]
                 ;
 
             turn
                 =    (
-                            tok.Turn_
+                        tok.Turn_
                         >> -(
                                 parse::label(Low_name) >> int_value_ref [ _a = _1 ]
                             )
                         >> -(
                                 parse::label(High_name) >> int_value_ref [ _b = _1 ]
                             )
-                        )
-                        [ _val = new_<Condition::Turn>(_a, _b) ]
+                     )
+                     [ _val = new_<Condition::Turn>(_a, _b) ]
                 ;
 
             created_on_turn
                 =    (
-                            tok.CreatedOnTurn_
+                        tok.CreatedOnTurn_
                         >> -(
                                 parse::label(Low_name) >> int_value_ref [ _a = _1 ]
                             )
                         >> -(
                                 parse::label(High_name) >> int_value_ref [ _b = _1 ]
                             )
-                        )
-                        [ _val = new_<Condition::CreatedOnTurn>(_a, _b) ]
+                     )
+                     [ _val = new_<Condition::CreatedOnTurn>(_a, _b) ]
                 ;
 
             number_of
                 =    (
-                            tok.NumberOf_
+                        tok.NumberOf_
                         >   parse::label(Number_name)    > int_value_ref [ _a = _1 ]
                         >   parse::label(Condition_name) > parse::detail::condition_parser [ _val = new_<Condition::SortedNumberOf>(_a, _1) ]
                         )
                 |    (
-                            (
+                        (
                                 tok.MaximumNumberOf_ [ _b = Condition::SORT_MAX ]
                             |   tok.MinimumNumberOf_ [ _b = Condition::SORT_MIN ]
                             |   tok.ModeNumberOf_ [ _b = Condition::SORT_MODE ]
-                            )
+                        )
                         >   parse::label(Number_name)    > int_value_ref [ _a = _1 ]
                         >   parse::label(SortKey_name)   > double_value_ref [ _c = _1 ]
                         >   parse::label(Condition_name) > parse::detail::condition_parser [ _val = new_<Condition::SortedNumberOf>(_a, _c, _b, _1) ]
-                        )
+                    )
                 ;
 
             contains
@@ -130,8 +123,8 @@ namespace {
                 >>   (
                             '[' > +star_type_value_ref [ push_back(_a, _1) ] > ']'
                         |   star_type_value_ref [ push_back(_a, _1) ]
-                        )
-                        [ _val = new_<Condition::StarType>(_a) ]
+                     )
+                     [ _val = new_<Condition::StarType>(_a) ]
                 ;
 
             random
@@ -144,7 +137,7 @@ namespace {
                             tok.OwnerFoodStockpile_ [ _a = RE_FOOD ]
                         |   tok.OwnerMineralStockpile_ [ _a = RE_MINERALS ]
                         |   tok.OwnerTradeStockpile_ [ _a = RE_TRADE ]
-                        )
+                     )
                 >    parse::label(Low_name)  > double_value_ref [ _b = _1 ]
                 >    parse::label(High_name) > double_value_ref [ _val = new_<Condition::EmpireStockpileValue>(_a, _b, _1) ]
                 ;
