@@ -154,6 +154,8 @@ public:
     /** removes the object with ID number \a id from this system. */
     void                    Remove(int id);
 
+    virtual void            MoveTo(double x, double y);
+
     void                    SetStarType(StarType type);     ///< sets the type of the star in this Systems to \a StarType
     void                    AddStarlane(int id);            ///< adds a starlane between this system and the system with ID number \a id.  \note Adding a starlane to a system to which there is already a wormhole erases the wormhole; you may want to check for a wormhole before calling this function.
     void                    AddWormhole(int id);            ///< adds a wormhole between this system and the system with ID number \a id  \note Adding a wormhole to a system to which there is already a starlane erases the starlane; you may want to check for a starlane before calling this function.

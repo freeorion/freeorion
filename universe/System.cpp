@@ -19,9 +19,7 @@ System::System() :
     m_star(INVALID_STAR_TYPE),
     m_orbits(0),
     m_last_turn_battle_here(INVALID_GAME_TURN)
-{
-    //Logger().debugStream() << "System::System()";
-}
+{}
 
 System::System(StarType star, int orbits, const std::string& name, double x, double y,
                const std::set<int>& owners/* = std::set<int>()*/) :
@@ -259,7 +257,6 @@ int System::SystemID() const {
 }
 
 std::vector<int> System::FindObjectIDs() const {
-
     std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         if (GetUniverseObject(it->second)) {
@@ -471,6 +468,16 @@ void System::Remove(UniverseObject* obj) {
 
 void System::Remove(int id)
 { Remove(GetUniverseObject(id)); }
+
+void System::MoveTo(double x, double y) {
+    //Logger().debugStream() << "System::MoveTo(double x, double y)";
+    // move system itself
+    UniverseObject::MoveTo(x, y);
+    // move other objects in system to it
+    for (orbit_iterator it = begin(); it != end(); ++it)
+        if (UniverseObject* obj = GetUniverseObject(it->second))
+            obj->MoveTo(this->ID());
+}
 
 void System::SetStarType(StarType type) {
     m_star = type;
@@ -692,8 +699,7 @@ bool PointInStarlaneEllipse(double x, double y, int from_system, int to_system) 
     double rads = StarlaneEntranceOrbitalPosition(from_system, to_system);
     double ellipse_x = StarlaneEntranceOrbitalRadius() * std::cos(rads);
     double ellipse_y = StarlaneEntranceOrbitalRadius() * std::sin(rads);
-    return PointInEllipse(x, y,
-                          ellipse_x, ellipse_y,
+    return PointInEllipse(x, y, ellipse_x, ellipse_y,
                           StarlaneEntranceRadialAxis(), StarlaneEntranceTangentAxis(),
                           rads);
 }
