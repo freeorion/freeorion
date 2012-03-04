@@ -2552,7 +2552,7 @@ CANNNOT_COLONIZE
 Cannot Colonize Planets
 
 CAN_COLONIZE
-Can Produce Colony Ships
+Can Colonize Planets
 
 OCCUPIED_PLANETS
 Occupied Planets:
@@ -3592,6 +3592,12 @@ Changes the star's type to %1%
 
 DESC_MOVE_TO
 Moves the object to the location of an object%1%
+
+DESC_MOVE_IN_ORBIT_OF_OBJECT
+Moves the object in orbit of an object%1% at speed %2%
+
+DESC_MOVE_IN_ORBIT_OF_XY
+Moves the object in orbit of an object located at %1% and %2% at speed %3%
 
 DESC_SET_DESTINATION
 Sets the destination of the object to an object%1%

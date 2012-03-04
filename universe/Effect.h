@@ -44,6 +44,7 @@ namespace Effect {
     class SetEmpireTechProgress;
     class GiveEmpireTech;
     class MoveTo;
+    class MoveInOrbit;
     class Victory;
     class GenerateSitRepMessage;
     class SetDestination;
@@ -564,8 +565,7 @@ private:
   * the condition \a location_condition.  If multiple objects match the
   * condition, then one is chosen.  If no objects match the condition, then
   * nothing is done. */
-class Effect::MoveTo : public Effect::EffectBase
-{
+class Effect::MoveTo : public Effect::EffectBase {
 public:
     MoveTo(const Condition::ConditionBase* location_condition);
     virtual ~MoveTo();
@@ -582,12 +582,39 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Moves an UniverseObject to a location as though it was moving in orbit of
+  * some object or position on the map.  Sign of \a speed indicates CCW / CW
+  * rotation.*/
+class Effect::MoveInOrbit : public Effect::EffectBase {
+public:
+    MoveInOrbit(const ValueRef::ValueRefBase<double>* speed,
+                const Condition::ConditionBase* focal_point_condition);
+    MoveInOrbit(const ValueRef::ValueRefBase<double>* speed,
+                const ValueRef::ValueRefBase<double>* focus_x = 0,
+                const ValueRef::ValueRefBase<double>* focus_y = 0);
+
+    virtual ~MoveInOrbit();
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    const ValueRef::ValueRefBase<double>*   m_speed;
+    const Condition::ConditionBase*         m_focal_point_condition;
+    const ValueRef::ValueRefBase<double>*   m_focus_x;
+    const ValueRef::ValueRefBase<double>*   m_focus_y;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Sets the route of the target fleet to move to an UniverseObject that
   * matches the condition \a location_condition.  If multiple objects match the
   * condition, then one is chosen.  If no objects match the condition, then
   * nothing is done. */
-class Effect::SetDestination : public Effect::EffectBase
-{
+class Effect::SetDestination : public Effect::EffectBase {
 public:
     SetDestination(const Condition::ConditionBase* location_condition);
     virtual ~SetDestination();
@@ -606,8 +633,7 @@ private:
 
 /** Causes the owner empire of the target object to win the game.  If the
   * target object has multiple owners, nothing is done. */
-class Effect::Victory : public Effect::EffectBase
-{
+class Effect::Victory : public Effect::EffectBase {
 public:
     Victory(const std::string& reason_string);
 
@@ -625,8 +651,7 @@ private:
 
 /** Sets whether an empire has researched at tech, and how much research
   * progress towards that tech has been completed. */
-class Effect::SetEmpireTechProgress : public Effect::EffectBase
-{
+class Effect::SetEmpireTechProgress : public Effect::EffectBase {
 public:
     SetEmpireTechProgress(const std::string& tech_name,
                           ValueRef::ValueRefBase<double>* research_progress);
@@ -649,8 +674,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class Effect::GiveEmpireTech : public Effect::EffectBase
-{
+class Effect::GiveEmpireTech : public Effect::EffectBase {
 public:
     GiveEmpireTech(const std::string& tech_name);
     GiveEmpireTech(const std::string& tech_name,
@@ -676,8 +700,7 @@ private:
   * which are substituted as string parameters %1%, %2%, %3%, etc. in the order
   * they are specified.  Extra parameters beyond those needed by \a message_string
   * are ignored, and missing parameters are left as blank text. */
-class Effect::GenerateSitRepMessage : public Effect::EffectBase
-{
+class Effect::GenerateSitRepMessage : public Effect::EffectBase {
 public:
     GenerateSitRepMessage(const std::string& message_string,
                           const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
@@ -862,6 +885,16 @@ void Effect::MoveTo::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_location_condition);
+}
+
+template <class Archive>
+void Effect::MoveInOrbit::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_speed)
+        & BOOST_SERIALIZATION_NVP(m_focal_point_condition)
+        & BOOST_SERIALIZATION_NVP(m_focus_x)
+        & BOOST_SERIALIZATION_NVP(m_focus_y);
 }
 
 template <class Archive>

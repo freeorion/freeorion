@@ -37,25 +37,14 @@ namespace {
             using phoenix::construct;
             using phoenix::push_back;
 
-            const parse::lexer& tok = parse::lexer::instance();
+            const parse::lexer& tok =                                                       parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =
-                parse::value_ref_parser<int>();
-
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =
-                parse::value_ref_parser<double>();
-
-            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =
-                parse::value_ref_parser<std::string>();
-
-            const parse::value_ref_parser_rule<PlanetType>::type& planet_type_value_ref =
-                parse::value_ref_parser<PlanetType>();
-
-            const parse::value_ref_parser_rule<PlanetSize>::type& planet_size_value_ref =
-                parse::value_ref_parser<PlanetSize>();
-
-            const parse::value_ref_parser_rule<StarType>::type& star_type_value_ref =
-                parse::value_ref_parser<StarType>();
+            const parse::value_ref_parser_rule<int>::type& int_value_ref =                  parse::value_ref_parser<int>();
+            const parse::value_ref_parser_rule<double>::type& double_value_ref =            parse::value_ref_parser<double>();
+            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =       parse::value_ref_parser<std::string>();
+            const parse::value_ref_parser_rule<PlanetType>::type& planet_type_value_ref =   parse::value_ref_parser<PlanetType>();
+            const parse::value_ref_parser_rule<PlanetSize>::type& planet_size_value_ref =   parse::value_ref_parser<PlanetSize>();
+            const parse::value_ref_parser_rule<StarType>::type& star_type_value_ref =       parse::value_ref_parser<StarType>();
 
             set_meter
                 =    parse::set_non_ship_part_meter_type_enum() [ _a = _1 ]
@@ -190,6 +179,21 @@ namespace {
                 >    parse::label(Destination_name) > parse::detail::condition_parser [ _val = new_<Effect::MoveTo>(_1) ]
                 ;
 
+            move_in_orbit
+                =    tok.MoveInOrbit_
+                >>  (
+                        (
+                            parse::label(Speed_name) >  double_value_ref[ _a = _1 ]
+                        >   parse::label(Focus_name) >  parse::detail::condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ]
+                        )
+                    |   (
+                            parse::label(Speed_name) >  double_value_ref [ _a = _1 ]
+                        >   parse::label(X_name) >      double_value_ref [ _b = _1 ]
+                        >   parse::label(Y_name) >      double_value_ref [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
+                        )
+                    )
+                ;
+
             set_destination
                 =    tok.SetDestination_
                 >    parse::label(Destination_name) > parse::detail::condition_parser [ _val = new_<Effect::SetDestination>(_1) ]
@@ -302,6 +306,7 @@ namespace {
                 |    create_ship_3
                 |    create_ship_4
                 |    move_to
+                |    move_in_orbit
                 |    set_destination
                 |    destroy
                 |    victory
@@ -332,6 +337,7 @@ namespace {
             create_ship_3.name("CreateShip (string DesignName and empire)");
             create_ship_4.name("CreateShip (string DesignName only)");
             move_to.name("MoveTo");
+            move_in_orbit.name("MoveInOrbit");
             set_destination.name("SetDestination");
             destroy.name("Destroy");
             victory.name("Victory");
@@ -437,6 +443,16 @@ namespace {
             parse::token_iterator,
             Effect::EffectBase* (),
             qi::locals<
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<double>*
+            >,
+            parse::skipper_type
+        > doubles_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            Effect::EffectBase* (),
+            qi::locals<
                 std::string,
                 std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >,
                 EmpireAffiliationType
@@ -479,6 +495,7 @@ namespace {
         string_and_intref_and_intref_rule   create_ship_3;
         string_and_intref_and_intref_rule   create_ship_4;
         parse::effect_parser_rule           move_to;
+        doubles_rule                        move_in_orbit;
         parse::effect_parser_rule           set_destination;
         parse::effect_parser_rule           destroy;
         parse::effect_parser_rule           victory;

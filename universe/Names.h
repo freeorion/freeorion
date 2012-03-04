@@ -152,6 +152,7 @@
     (Monster)                                   \
     (MonsterFleet)                              \
     (MountableSlotTypes)                        \
+    (MoveInOrbit)                               \
     (MoveTo)                                    \
     (Name)                                      \
     (Neutron)                                   \
@@ -349,6 +350,8 @@
     (White)                                     \
     (WithinDistance)                            \
     (WithinStarlaneJumps)                       \
+    (X)                                         \
+    (Y)                                         \
     (Yellow)
 
 #define DECLARE_NAME(r, _, elem) extern adobe::aggregate_name_t BOOST_PP_CAT(elem, _name);

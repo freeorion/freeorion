@@ -1815,6 +1815,95 @@ std::string MoveTo::Dump() const
 
 
 ///////////////////////////////////////////////////////////
+// MoveInOrbit                                            //
+///////////////////////////////////////////////////////////
+MoveInOrbit::MoveInOrbit(const ValueRef::ValueRefBase<double>* speed,
+                         const Condition::ConditionBase* focal_point_condition) :
+    m_speed(speed),
+    m_focal_point_condition(focal_point_condition),
+    m_focus_x(0),
+    m_focus_y(0)
+{}
+
+MoveInOrbit::MoveInOrbit(const ValueRef::ValueRefBase<double>* speed,
+                         const ValueRef::ValueRefBase<double>* focus_x/* = 0*/,
+                         const ValueRef::ValueRefBase<double>* focus_y/* = 0*/) :
+    m_speed(speed),
+    m_focal_point_condition(0),
+    m_focus_x(focus_x),
+    m_focus_y(focus_y)
+{}
+
+MoveInOrbit::~MoveInOrbit() {
+    delete m_speed;
+    delete m_focal_point_condition;
+    delete m_focus_x;
+    delete m_focus_y;
+}
+
+void MoveInOrbit::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target) {
+        Logger().errorStream() << "MoveInOrbit::Execute given no target object";
+        return;
+    }
+
+    double focus_x = 0.0, focus_y = 0.0, speed = 1.0;
+    if (m_focus_x)
+        focus_x = m_focus_x->Eval(context);
+    if (m_focus_y)
+        focus_y = m_focus_y->Eval(context);
+    if (m_speed)
+        speed = m_speed->Eval(context);
+    if (m_focal_point_condition) {
+        Condition::ObjectSet matches;
+        m_focal_point_condition->Eval(context, matches);
+        if (matches.empty())
+            return;
+        const UniverseObject* focus_object = *matches.begin();
+        focus_x = focus_object->X();
+        focus_y = focus_object->Y();
+    }
+}
+
+std::string MoveInOrbit::Description() const {
+    std::string focus_str;
+    if (m_focal_point_condition)
+        focus_str = m_focal_point_condition->Description();
+
+    std::string speed_str;
+    if (m_speed)
+        speed_str = m_speed->Description();
+
+    if (!focus_str.empty())
+        return str(FlexibleFormat(UserString("DESC_MOVE_IN_ORBIT_OF_OBJECT"))
+                   % focus_str
+                   % speed_str);
+
+    std::string x_str = "0.0";
+    if (m_focus_x)
+        x_str = m_focus_x->Description();
+
+    std::string y_str = "0.0";
+    if (m_focus_y)
+        y_str = m_focus_y->Description();
+
+    return str(FlexibleFormat(UserString("DESC_MOVE_IN_ORBIT_OF_XY"))
+               % x_str
+               % y_str
+               % speed_str);
+}
+
+std::string MoveInOrbit::Dump() const {
+    if (m_focal_point_condition)
+        return DumpIndent() + "MoveInOrbit around = " + m_focal_point_condition->Dump() + "\n";
+    else if (m_focus_x && m_focus_y)
+        return DumpIndent() + "MoveInOrbit x = " + m_focus_x->Dump() + " y = " + m_focus_y->Dump() + "\n";
+    else
+        return DumpIndent() + "MoveInOrbit";
+}
+
+
+///////////////////////////////////////////////////////////
 // SetDestination                                        //
 ///////////////////////////////////////////////////////////
 SetDestination::SetDestination(const Condition::ConditionBase* location_condition) :
@@ -1824,8 +1913,7 @@ SetDestination::SetDestination(const Condition::ConditionBase* location_conditio
 SetDestination::~SetDestination()
 { delete m_location_condition; }
 
-void SetDestination::Execute(const ScriptingContext& context) const
-{
+void SetDestination::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         Logger().errorStream() << "SetDestination::Execute given no target object";
         return;
@@ -1891,8 +1979,7 @@ void SetDestination::Execute(const ScriptingContext& context) const
     target_fleet->SetRoute(route_list);
 }
 
-std::string SetDestination::Description() const
-{
+std::string SetDestination::Description() const {
     std::string value_str = m_location_condition->Description();
     return str(FlexibleFormat(UserString("DESC_SET_DESTINATION")) % value_str);
 }
@@ -1908,8 +1995,7 @@ Victory::Victory(const std::string& reason_string) :
     m_reason_string(reason_string)
 {}
 
-void Victory::Execute(const ScriptingContext& context) const
-{
+void Victory::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         Logger().errorStream() << "Victory::Execute given no target object";
         return;
