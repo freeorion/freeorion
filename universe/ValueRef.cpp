@@ -441,7 +441,7 @@ namespace ValueRef {
         }
 
         MeterType meter_type = NameToMeter(property_name);
-        if        (meter_type != INVALID_METER_TYPE) {
+        if (meter_type != INVALID_METER_TYPE) {
             return object->InitialMeterValue(meter_type);
 
         } else if (property_name == TradeStockpile_name) {
@@ -469,6 +469,12 @@ namespace ValueRef {
             double delta_x = object->X() - context.source->X();
             double delta_y = object->Y() - context.source->Y();
             return std::sqrt(delta_x * delta_x + delta_y * delta_y);
+
+        } else if (property_name == X_name) {
+            return object->X();
+
+        } else if (property_name == Y_name) {
+            return object->Y();
 
         } else {
             throw std::runtime_error("Attempted to read a non-double value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type double.");
