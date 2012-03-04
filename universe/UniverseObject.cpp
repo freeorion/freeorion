@@ -258,7 +258,15 @@ void UniverseObject::MoveTo(UniverseObject* object) {
     if (!object)
         throw std::invalid_argument("UniverseObject::MoveTo passed an invalid object or object id");
 
-    MoveTo(object->X(), object->Y());
+    if (object->SystemID() == this->SystemID()) {
+        // don't call MoveTo(double, double) as that would remove from old (current system)
+        m_x = object->X();
+        m_y = object->Y();
+        StateChangedSignal();
+    } else {
+        // move to location in space, removing from old system
+        MoveTo(object->X(), object->Y());
+    }
 }
 
 void UniverseObject::MoveTo(double x, double y) {
@@ -269,8 +277,11 @@ void UniverseObject::MoveTo(double x, double y) {
     m_x = x;
     m_y = y;
 
-    if (System* system = GetSystem(this->SystemID()))
-        system->Remove(this->ID());
+    // remove object from its old system (unless object is a system, as that would attempt to remove it from itself)
+    if (this->ID() != this->SystemID())
+        if (System* system = GetSystem(this->SystemID()))
+            system->Remove(this->ID());
+
     StateChangedSignal();
 }
 
