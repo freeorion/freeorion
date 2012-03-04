@@ -1799,6 +1799,21 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             }
         }
         // else if destination is something else that can be on a planet...
+
+    } else if (System* system = universe_object_cast<System*>(context.effect_target)) {
+        if (destination->SystemID() == INVALID_OBJECT_ID) {
+            // can simply move system to new location, and insert destination object into system
+            system->UniverseObject::MoveTo(destination);
+            // find fleets at this location and insert into system
+            std::vector<Fleet*> fleets = GetUniverse().Objects().FindObjects<Fleet>();
+            for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it)
+                if (Fleet* fleet = *it)
+                    if (fleet->X() == system->X() && fleet->Y() == system->Y())
+                        system->Insert(fleet);
+        } else {
+            //System* destination_system = GetSystem(destination->SystemID());
+            // TODO: merge systems
+        }
     }
 }
 
