@@ -125,15 +125,15 @@ namespace {
         typedef multiplicative_expr_rule<int>::type multiplicative_expression_rule;
         typedef additive_expr_rule<int>::type additive_expression_rule;
 
-        name_token_rule final_token;
-        rule constant;
-        variable_rule variable;
-        statistic_rule statistic;
-        rule negate_expr;
-        multiplicative_expression_rule multiplicative_expr;
-        additive_expression_rule additive_expr;
-        rule expr;
-        rule primary_expr;
+        name_token_rule                 final_token;
+        rule                            constant;
+        variable_rule                   variable;
+        statistic_rule                  statistic;
+        rule                            negate_expr;
+        multiplicative_expression_rule  multiplicative_expr;
+        additive_expression_rule        additive_expr;
+        rule                            expr;
+        rule                            primary_expr;
     };
 
     int_parser_rules& get_int_parser_rules() {

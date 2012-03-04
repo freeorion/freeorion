@@ -22,14 +22,12 @@ namespace {
     std::set<std::string>* g_categories_seen = 0;
     std::map<std::string, TechCategory*>* g_categories = 0;
 
-    struct insert_tech_
-    {
+    struct insert_tech_ {
         template <typename Arg1, typename Arg2>
         struct result
         { typedef void type; };
 
-        void operator()(TechManager::TechContainer& techs, Tech* tech) const
-        {
+        void operator()(TechManager::TechContainer& techs, Tech* tech) const {
             g_categories_seen->insert(tech->Category());
             if (techs.get<TechManager::NameIndex>().find(tech->Name()) != techs.get<TechManager::NameIndex>().end()) {
                 std::string error_str = "ERROR: More than one tech in techs.txt has the name " + tech->Name();
@@ -44,14 +42,12 @@ namespace {
     };
     const boost::phoenix::function<insert_tech_> insert_tech;
 
-    struct insert_category_
-    {
+    struct insert_category_ {
         template <typename Arg1, typename Arg2>
         struct result
         { typedef void type; };
 
-        void operator()(std::map<std::string, TechCategory*>& categories, TechCategory* category) const
-        {
+        void operator()(std::map<std::string, TechCategory*>& categories, TechCategory* category) const {
             if (!categories.insert(std::make_pair(category->name, category)).second) {
                 std::string error_str = "ERROR: More than one tech category in techs.txt name " + category->name;
                 throw std::runtime_error(error_str.c_str());
@@ -60,10 +56,8 @@ namespace {
     };
     const boost::phoenix::function<insert_category_> insert_category;
 
-    struct rules
-    {
-        rules()
-        {
+    struct rules {
+        rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -246,13 +240,13 @@ namespace {
             parse::skipper_type
         > start_rule;
 
-        tech_info_name_desc_rule tech_info_name_desc;
-        tech_info_rule tech_info;
-        prerequisites_rule prerequisites;
-        unlocks_rule unlocks;
-        tech_rule tech;
-        category_rule category;
-        start_rule start;
+        tech_info_name_desc_rule    tech_info_name_desc;
+        tech_info_rule              tech_info;
+        prerequisites_rule          prerequisites;
+        unlocks_rule                unlocks;
+        tech_rule                   tech;
+        category_rule               category;
+        start_rule                  start;
     };
 }
 

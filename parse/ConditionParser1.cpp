@@ -26,10 +26,8 @@ namespace std {
 #endif
 
 namespace {
-    struct condition_parser_rules_1
-    {
-        condition_parser_rules_1()
-        {
+    struct condition_parser_rules_1 {
+        condition_parser_rules_1() {
             const parse::lexer& tok = parse::lexer::instance();
 
             const parse::value_ref_parser_rule<int>::type& int_value_ref =
@@ -108,18 +106,18 @@ namespace {
                 >>  -(
                             parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _a = _1 ]
                         |   eps [ _a = AFFIL_SELF ]
-                        )
+                     )
                 >>   (
                             parse::label(Empire_name) >> int_value_ref [ _val = new_<Condition::EmpireAffiliation>(_1, _a) ]
                         |   eps [ _val = new_<Condition::EmpireAffiliation>(_a) ]
-                        )
+                     )
                 ;
 
             homeworld
                 =    (
                             tok.Homeworld_
                         >>  parse::label(Name_name) >> string_ref_vec [ _val = new_<Condition::Homeworld>(_1) ]
-                        )
+                     )
                 |    tok.Homeworld_ [ _val = new_<Condition::Homeworld>() ]
                 ;
 
@@ -129,8 +127,8 @@ namespace {
                         >> -(
                                 parse::label(Name_name) >> string_ref_vec [ _a = _1 ]
                             )
-                        )
-                        [ _val = new_<Condition::Building>(_a) ]
+                     )
+                     [ _val = new_<Condition::Building>(_a) ]
                 ;
 
             species
@@ -138,7 +136,7 @@ namespace {
                 >>   (
                             parse::label(Name_name) >> string_ref_vec [ _val = new_<Condition::Species>(_1) ]
                         |   eps [ _val = new_<Condition::Species>() ] // TODO: Is this as useless as it looks?
-                        )
+                     )
                 ;
 
             focus_type
@@ -146,7 +144,7 @@ namespace {
                 >>   (
                             parse::label(Type_name) >> string_ref_vec [ _val = new_<Condition::FocusType>(_1) ]
                         |   eps [ _val = new_<Condition::FocusType>(std::vector<const ValueRef::ValueRefBase<std::string>*>()) ]
-                        )
+                     )
                 ;
 
             planet_type
@@ -155,8 +153,8 @@ namespace {
                 >>   (
                             '[' >> +planet_type_value_ref [ push_back(_a, _1) ] > ']'
                         |   planet_type_value_ref [ push_back(_a, _1) ]
-                        )
-                        [ _val = new_<Condition::PlanetType>(_a) ]
+                     )
+                     [ _val = new_<Condition::PlanetType>(_a) ]
                 ;
 
             planet_size
@@ -165,8 +163,8 @@ namespace {
                 >>   (
                             '[' >> +planet_size_value_ref [ push_back(_a, _1) ] > ']'
                         |   planet_size_value_ref [ push_back(_a, _1) ]
-                        )
-                        [ _val = new_<Condition::PlanetSize>(_a) ]
+                     )
+                     [ _val = new_<Condition::PlanetSize>(_a) ]
                 ;
 
             planet_environment
@@ -175,8 +173,8 @@ namespace {
                 >>   (
                             '[' > +planet_environment_value_ref [ push_back(_a, _1) ] > ']'
                         |   planet_environment_value_ref [ push_back(_a, _1) ]
-                        )
-                        [ _val = new_<Condition::PlanetEnvironment>(_a) ]
+                     )
+                     [ _val = new_<Condition::PlanetEnvironment>(_a) ]
                 ;
 
             object_type
@@ -184,7 +182,7 @@ namespace {
                 |    (
                             tok.ObjectType_
                         >   parse::label(Type_name) > universe_object_type_value_ref [ _val = new_<Condition::Type>(_1) ]
-                        )
+                     )
                 ;
 
             meter_value
@@ -196,8 +194,8 @@ namespace {
                         >> -(
                                 parse::label(High_name) >> double_value_ref [ _c = _1 ]
                             )
-                        )
-                        [ _val = new_<Condition::MeterValue>(_a, _b, _c) ]
+                     )
+                     [ _val = new_<Condition::MeterValue>(_a, _b, _c) ]
                 ;
 
             and_

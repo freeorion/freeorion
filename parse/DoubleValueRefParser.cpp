@@ -7,10 +7,8 @@
 
 namespace {
 
-    struct double_parser_rules
-    {
-        double_parser_rules()
-        {
+    struct double_parser_rules {
+        double_parser_rules() {
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_val_type _val;
@@ -75,11 +73,11 @@ namespace {
                         |   int_var_final_token()
                             [ push_back(_a, _1), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_a)) ]
                         )
-                    )
+                  )
                 | (
                         tok.CurrentTurn_ [ push_back(_a, _1), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_a)) ]
                     |  tok.Value_ [ push_back(_a, _1), _val = new_<ValueRef::Variable<double> >(_a) ]
-                    )
+                  )
                 ;
 
             initialize_numeric_statistic_parser<double>(statistic, final_token);
@@ -133,24 +131,22 @@ namespace {
         typedef multiplicative_expr_rule<double>::type multiplicative_expression_rule;
         typedef additive_expr_rule<double>::type additive_expression_rule;
 
-        name_token_rule final_token;
-        rule constant;
-        variable_rule variable;
-        statistic_rule statistic;
-        rule int_statistic;
-        rule negate_expr;
-        multiplicative_expression_rule multiplicative_expr;
-        additive_expression_rule additive_expr;
-        rule expr;
-        rule primary_expr;
+        name_token_rule                 final_token;
+        rule                            constant;
+        variable_rule                   variable;
+        statistic_rule                  statistic;
+        rule                            int_statistic;
+        rule                            negate_expr;
+        multiplicative_expression_rule  multiplicative_expr;
+        additive_expression_rule        additive_expr;
+        rule                            expr;
+        rule                            primary_expr;
     };
 
-    double_parser_rules& get_double_parser_rules()
-    {
+    double_parser_rules& get_double_parser_rules() {
         static double_parser_rules retval;
         return retval;
     }
-
 }
 
 const name_token_rule& double_var_final_token()
@@ -159,10 +155,8 @@ const name_token_rule& double_var_final_token()
 const statistic_rule<double>::type& double_var_statistic()
 { return get_double_parser_rules().statistic; }
 
-namespace parse {
-
+namespace parse { 
     template <>
     value_ref_parser_rule<double>::type& value_ref_parser<double>()
     { return get_double_parser_rules().expr; }
-
 }
