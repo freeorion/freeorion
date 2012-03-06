@@ -2563,104 +2563,237 @@ Environmental Preferences:
 SP_HUMAN
 Human
 SP_HUMAN_DESC
-Mostly Harmless. Prefer Terran planets.
+'''Mostly Harmless.
+Prefer Terran planets.
+
+[[GREAT_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[GREAT_RESEARCH]]
+'''
 
 SP_SCYLIOR
 Scylior
 SP_SCYLIOR_DESC
-Three-tentacled, aquatic Nautiloid. Prefer Ocean planets.
+'''Three-tentacled, aquatic Nautiloid.
+Prefer Ocean planets.
+
+[[AVERAGE_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[GREAT_RESEARCH]]
+'''
 
 SP_GYISACHE
 Gyisache
 SP_GYISACHE_DESC
-Cowardly, freakish sheep-like herbivores. Prefer Swamp planets.
+'''Cowardly, freakish sheep-like herbivores.
+Prefer Swamp planets.
+
+[[AVERAGE_FARMING]]
+[[AVERAGE_MINING]]
+[[GREAT_INDUSTRY]]
+[[GREAT_RESEARCH]]
+'''
 
 SP_CHATO
 Chato
 SP_CHATO_DESC
-Sessile crystalline entities which ride the animal Gormoshk. Prefer Toxic planets.
+'''Sessile crystalline entities which ride the animal Gormoshk.
+Prefer Toxic planets.
 
-SP_EGASSEM
-Egassem
-SP_EGASSEM_DESC
-Super massive, nuclear, lava-dwelling, crystalline amoebas. Prefer Inferno planets.
+[[GREAT_FARMING]]
+[[GREAT_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[TERRIBLE_RESEARCH]]
+'''
+
 
 SP_TRITH
 Trith
 SP_TRITH_DESC
-Bereaved xenophobic telepaths. Prefer Radiated planets.
+'''Bereaved xenophobic telepaths.
+Prefer Radiated planets.
 
-SP_CRAY
-Cray
-SP_CRAY_DESC
-Cheerful enthusiastic robots. Prefer Barren planets.
+[[AVERAGE_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+'''
+
+
 
 SP_HHHOH
 Hhhoh
 SP_HHHOH_DESC
-Huge, slow, multi-trunked Mammoths. Prefer Tundra planets.
+'''Huge, slow, multi-trunked Mammoths.
+Prefer Tundra planets.
+
+[[AVERAGE_FARMING]]
+[[TERRIBLE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+'''
 
 SP_EAXAW
 Eaxaw
 SP_EAXAW_DESC
-Evil amazonian xenophobic agressive worms. Prefer Desert planets.
+'''Evil amazonian xenophobic agressive worms.
+Prefer Desert planets.
 
+[[AVERAGE_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+'''
+
+
+
+SP_DERTHREAN
+Derthrean
+SP_DERTHREAN_DESC
+'''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
+Prefer Toxic planets.
+
+[[ULTIMATE_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+'''
+
+SP_LAENFA
+Laenfa
+SP_LAENFA_DESC
+'''Sneaky, telepathic, sentient vines.
+Prefer Ocean Planets.
+
+[[TERRIBLE_FARMING]]
+[[TERRIBLE_MINING]]
+[[TERRIBLE_INDUSTRY]]
+[[TERRIBLE_RESEARCH]]
+'''
+
+
+SP_TAEGHIRUS
+T'aeghirus
+SP_TAEGHIRUS_DESC
+'''Weak, flightless birds, united in total mutual cooperation.
+Prefer Swamp planets.
+
+[[AVERAGE_FARMING]]
+[[GREAT_MINING]]
+[[GREAT_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+'''
+
+SP_ETTY
+Etty
+SP_ETTY_DESC
+'''Cybernetic plants.
+Prefer Desert planets.
+
+[[AVERAGE_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+'''
+        
 SP_MUURSH
 Muursh
 SP_MUURSH_DESC
-Militantly peaceful herbivores.
+'''Militantly peaceful herbivores.
+Prefer Desert planets.
+
+[[AVERAGE_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+'''
 
 
-SP_SUPER_TEST
-Super Testers
-SP_SUPER_TEST_DESC
-Super Testers are unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets.
+SP_CRAY
+Cray
+SP_CRAY_DESC
+'''Cheerful enthusiastic robots.
+Prefer Barren planets.
+
+[[TERRIBLE_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[GREAT_RESEARCH]]
+'''
+
 
 SP_CYNOS
 Cynos
 SP_CYNOS_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
+Prefer Swamp planets.
 
-Can only produce Food or Research.'''
-
-SP_DERTHREAN
-Derthrean
-SP_DERTHREAN_DESC
-Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
+[[GREAT_FARMING]]
+[[NO_MINING]]
+[[NO_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+'''
 
 SP_GEORGE
 George
 SP_GEORGE_DESC
-A single, childish Telepathic entity that consists of tons of centipedeoids
+'''A single, childish Telepathic entity that consists of tons of centipedeoids
+Prefers Tundra planets.
+
+[[AVERAGE_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[TERRIBLE_RESEARCH]]
+'''
 
 SP_PHINNERT
 Phinnert
 SP_PHINNERT_DESC
 '''Flying Monkeys.
+Prefer Ocean planets.
 
-Cannot produce Research'''
+[[TERRIBLE_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[NO_RESEARCH]]
+'''
+
+SP_EGASSEM
+Egassem
+SP_EGASSEM_DESC
+'''Super massive, nuclear, lava-dwelling, crystalline amoebas.
+Prefer Inferno planets.
+
+[[AVERAGE_FARMING]]
+[[AVERAGE_MINING]]
+[[GREAT_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+'''
 
 SP_SSLITH
 Sslith
 SP_SSLITH_DESC
-Flat, aquatic, pliable creatures.
+'''Flat, aquatic, pliable creatures.
+Prefer Tundra planets.
 
-SP_LAENFA
-Laenfa
-SP_LAENFA_DESC
-Sneaky, telepathic, sentient vines.
-
-SP_TAEGHIRUS
-T'aeghirus
-SP_TAEGHIRUS_DESC
-Weak, flightless birds, united in total mutual cooperation.
+[[AVERAGE_FARMING]]
+[[AVERAGE_MINING]]
+[[TERRIBLE_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+'''
 
 SP_FIFTYSEVEN
 Fifty-seven
 SP_FIFTYSEVEN_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
+Prefer Swamp planets.
 
-Can only produce Food or Research.
+[[TERRIBLE_FARMING]]
+[[NO_MINING]]
+[[NO_INDUSTRY]]
+[[ULTIMATE_RESEARCH]]
 
 Biology:
 Adult Fifty-Seven are between 10 and 20 m long. The main deviation from the tapering serpentine body are the two resonating domes on the forward dorsal side. Various fins provide fine control. Entirely blind, they rely on smell, hearing, an exquisitely honed pressure sensitivity, and when the need arises bursts of echolocation. Fifty-Seven are omnivores: eating flocks of small flying creatures with the same relish as the floating phytoplankton. Since they remain aloft their entire lives and have no manipulator limbs, the Fifty-Seven have no material technology.
@@ -2672,17 +2805,22 @@ Homeworld:
 High g swamp world with a very dense atmosphere.
 
 Reason for Staying:
-The Fifty-Seven are in constant contact with most of the rest of their species, participating in a complex fractal 'song' that may also be a way to test complex mathematical hypotheses and/or some sort of social or artistic expression. Leaving the fractal song is apparently extremely unattractive.'''
+The Fifty-Seven are in constant contact with most of the rest of their species, participating in a complex fractal 'song' that may also be a way to test complex mathematical hypotheses and/or some sort of social or artistic expression. Leaving the fractal song is apparently extremely unattractive.
+'''
 
 SP_SETINON
 Setinon
 SP_SETINON_DESC
-Individualistic sentient microscopic cells
+'''Individualistic sentient microscopic cells
+
+'''
 
 SP_SILEXIAN
 Silexian
 SP_SILEXIAN_DESC
-Gleaming gardener robots, left on their own.
+'''Gleaming gardener robots, left on their own.
+
+'''
 
 SP_NYMNMN
 Nymnmn
@@ -2708,10 +2846,6 @@ Kobuntura
 SP_KOBUNTURA_DESC
 Sentient magnetic dust formations with a fascination for building and construction.
 
-SP_ETTY
-Etty
-SP_ETTY_DESC
-cybernetic plants.
 
 SP_UGMORRS
 Ugmorrs
@@ -2765,6 +2899,12 @@ SP_TEST
 Testing Guinea Pig
 SP_TEST_DESC
 '''Try all your experimental scripting on this guy, he'll appear a lot.'''
+
+
+SP_SUPER_TEST
+Super Testers
+SP_SUPER_TEST_DESC
+'''Super Testers are unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets.'''
 
 
 ####################
@@ -6806,3 +6946,75 @@ SH_JUGGERNAUT_3_BODY
 Large Juggernaut Body
 SH_JUGGERNAUT_3_BODY_DESC
 A formidable heavy-weight space monster.
+
+
+
+
+
+
+NO_FOOD_USE
+'''doesn't need food'''
+
+
+NO_FARMING
+'''No Farming: unable to Farm'''
+
+TERRIBLE_FARMING
+'''Terrible Farming: Food production 50%'''
+
+AVERAGE_FARMING
+'''Average Farming: Food production 100%'''
+
+GREAT_FARMING
+'''Great Farming: Food Production 200%'''
+
+ULTIMATE_FARMING
+'''Ultimate Farming: Food Production 300%'''
+
+NO_MINING
+'''No Mining: unable to Mine'''
+
+TERRIBLE_MINING
+'''Terrible Mining: Mineral production 50%'''
+
+AVERAGE_MINING
+'''Average Mining: Mineral production 100%'''
+
+GREAT_MINING
+'''Great Mining: Mineral production 200%'''
+
+ULTIMATE_MINING
+'''Ultimate Mining: Mineral production 300%'''
+
+NO_INDUSTRY
+'''No Industry: unable to produce Industry'''
+
+TERRIBLE_INDUSTRY
+'''Terrible Industry: Production Point production 50%'''
+
+AVERAGE_INDUSTRY
+'''Average Industry: Production Point production 100%'''
+
+GREAT_INDUSTRY
+'''Great Industry: Production Point production 200%'''
+
+ULTIMATE_INDUSTRY
+'''Ultimate Industry: Production Point production 300%'''
+
+NO_RESEARCH
+'''No Research: unable to Research'''
+
+TERRIBLE_RESEARCH
+'''Terrible Research: Research Point production 50%'''
+
+AVERAGE_RESEARCH
+'''Average Research: Research Point production 100%'''
+
+GREAT_RESEARCH
+'''Great Research: Research Point production 200%'''
+
+ULTIMATE_RESEARCH
+'''Ultimate Research: Research Point production 300%'''
+
+
+
