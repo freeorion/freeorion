@@ -313,7 +313,7 @@ Terrifying giant monster that prowls space for prey.
 SM_DRONE
 Drone
 SM_DRONE_DESC
-'''Tool of a forgotten war, the Drone Fighter still fulfills it's original purpose: mindlessly attacking any ships in range.'''
+'''Tool of a forgotten war, the Drone Fighter still fulfills its original purpose: mindlessly attacking any ships in range.'''
 
 SM_DRONE_FACTORY
 Drone Factory
@@ -524,10 +524,10 @@ Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map. May crash on
 OPTIONS_DB_STARLANE_THICKNESS
 Sets how wide to render starlanes in pixels.
 
-OPTIONS_DB_RESOURCE_STARLANE_colorING
+OPTIONS_DB_RESOURCE_STARLANE_COLOURING
 Toggles whether to color starlanes with empire colors if empires can exchange resources along each starlane.
 
-OPTIONS_DB_UNOWNED_STARLANE_color
+OPTIONS_DB_UNOWNED_STARLANE_COLOUR
 Sets default color to render starlanes.
 
 OPTIONS_DB_FLEET_SUPPLY_LINES
@@ -1093,7 +1093,7 @@ Player
 MULTIPLAYER_PLAYER_LIST_EMPIRES
 Empire
 
-MULTIPLAYER_PLAYER_LIST_colorS
+MULTIPLAYER_PLAYER_LIST_COLOURS
 Empire Color
 
 MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES
@@ -1425,7 +1425,7 @@ Starlanes
 OPTIONS_STARLANE_THICKNESS
 Starlane thickness
 
-OPTIONS_RESOURCE_STARLANE_colorING
+OPTIONS_RESOURCE_STARLANE_COLOURING
 Resource starlane coloring
 
 OPTIONS_FLEET_SUPPLY_LINES
@@ -1440,7 +1440,7 @@ Fleet supply line dot spacing
 OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE
 Fleet supply line dot rate
 
-OPTIONS_UNOWNED_STARLANE_color
+OPTIONS_UNOWNED_STARLANE_COLOUR
 Default starlane color
 
 OPTIONS_MUSIC
@@ -2767,7 +2767,7 @@ Prefer Swamp planets.
 SP_GEORGE
 George
 SP_GEORGE_DESC
-'''A single, childish Telepathic entity that consists of tons of centipedeoids
+'''A single, childish Telepathic entity consisting of tons of centipedeoids.
 Prefers Tundra planets.
 
 [[AVERAGE_FARMING]]
@@ -3006,7 +3006,7 @@ Most of the equatorial region of the Gis Guf G'thrim homeworld is covered with a
 SP_HIDDENGARDENER
 Hidden Gardener
 SP_HIDDENGARDENER_DESC
-'''A sapient fungal network that tends it's plant food from beneath.
+'''A sapient fungal network that tends its plant food from beneath
 Prefers Terran planets
 
 [[GREAT_STEALTH]]
@@ -3018,13 +3018,13 @@ Prefers Terran planets
 
 [[NO_GROUND_TROOPS]]
 
-The Hidden Gardener is a massive distributed fungal intelligence lying just beneath the surface. Each individual covers many square kms. It's actions and thoughts are slow. Various sensory nodes are scattered about by which it can monitor the weather and the growth of its garden. A Hidden Gardener by means of enzymes, the encapsulation and releases of seeds, and the control of water tends it's garden to produce precisely the rotting plant matter it needs to survive.
+The Hidden Gardener is a massive distributed fungal intelligence lying just beneath the surface. Each individual covers many square kilometers. Its actions and thoughts are slow. Various sensory nodes are scattered about by which it can monitor the weather and the growth of its garden. A Hidden Gardener, by means of enzymes, the encapsulation and releases of seeds, and the control of water, tends its garden to produce precisely the rotting plant matter it needs to survive.
 
-Fungal type life-forms seldom have much use for brains of any type, but the Gardener's unusual, and thoughtful approach to providing itself with food provides enough additional energy to make it work.
+Fungal-type life-forms seldom have much use for brains of any type, but the Gardener's unusual, and thoughtful approach to providing itself with food provides enough additional energy to make it work.
 
 Their terran homeworld is an eerily park-like place with plants arranged with unnatural precision, but no other signs of habitation.
 
-The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet. And since the hidden gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.
+The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet, and since the Hidden Gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.'''
 '''
 
 
@@ -3046,7 +3046,7 @@ Prefers Inferno planets.
 SP_ACIREMA
 Acirema
 SP_ACIREMA_DESC
-'''A race with nearly limitless power, that can't survive in this universe.
+'''A race with nearly limitless power, that cannot survive in this universe.
 Prefers Radiated planets.
 
 [[TERRIBLE_FARMING]]
@@ -3577,7 +3577,7 @@ PC_POINT_DEFENSE
 Point Defense
 PC_SHIELD
 Shields
-PC_armor
+PC_ARMOUR
 Armor
 PC_TROOPS
 Ground Troops
@@ -4479,7 +4479,7 @@ LRN_TRANSCEND
 Singularity of Transcendence
 
 LRN_TRANSCEND_DESC
-What is godhood? Is a god concerned with whether it is moral and benevolent or evil and tyrannical? Does a god treat mortals with care and love, hatred and suffering or detached indifference? Does a god even remain aware of the infinitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
+What is godhood? Is a god concerned with whether it is moral and benevolent or evil and tyrannical? Does a god treat mortals with care and love, hatred and suffering or detached indifference? Does a god even remain aware of the infinitely minuscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
 
 GRO_MEDICAL_PATH
 Medical Pathology
@@ -5185,7 +5185,7 @@ GRO_TERRAFORM
 Terraforming
 
 GRO_TERRAFORM_DESC
-Changing the environmental type of a planet is a massive undertaking, the challenge of this process is to a large degree logistical. The precise method depends greatly on the type of planet to be changed and the desired result. However, in all cases much of the surface of the entire planet and it's atmosphere needs to be converted to other types of molecules, vented into space or buried under the crust. As such, this process requires most of the planet to be accessible to the terraformers, and cannot be performed on a world with max population less than one.
+Changing the environmental type of a planet is a massive undertaking, the challenge of this process is to a large degree logistical. The precise method depends greatly on the type of planet to be changed and the desired result. However, in all cases much of the surface of the entire planet and its atmosphere needs to be converted to other types of molecules, vented into space or buried under the crust. As such, this process requires most of the planet to be accessible to the terraformers, and cannot be performed on a world with max population less than one.
 
 GRO_TERRAFORM_SHORT_DESC
 Allows terraforming
@@ -5194,7 +5194,7 @@ GRO_REMOTE_TERRAFORM
 Remote Terraforming
 
 GRO_REMOTE_TERRAFORM_DESC
-Traditional terraforming methods treat the planet as a structure and attempt to alter its environment through physical and chemical means. This necessitates that the majority of the planet be accessible to the terraforming species, which generally limits its usefulness. By treating the planet as an organism and altering it's physiology indirectly, it is possible to make use of less labour intensive, though more time consuming terraforming methods, allowing outposts on poor and hostile worlds to make use of terraforming.
+Traditional terraforming methods treat the planet as a structure and attempt to alter its environment through physical and chemical means. This necessitates that the majority of the planet be accessible to the terraforming species, which generally limits its usefulness. By treating the planet as an organism and altering its physiology indirectly, it is possible to make use of less labour intensive, though more time consuming terraforming methods, allowing outposts on poor and hostile worlds to make use of terraforming.
 
 GRO_BIOTERROR
 Bioterror Facilites
@@ -5297,7 +5297,7 @@ PRO_HEAVY_MINING_I
 Heavy Mining Processors
 
 PRO_HEAVY_MINING_I_DESC
-When increased minerals production is the only concern, no environmental damage considerations exist and the environment itself is conducive, partially automated bulk mining activities can be optimal. Heavy mining processors are expensive however, and are only practical to use on worlds with primary focus mining. As well, these processors severely damage the ecology of a planet, reducing it's maximum population and health somewhat.
+When increased minerals production is the only concern, no environmental damage considerations exist and the environment itself is conducive, partially automated bulk mining activities can be optimal. Heavy mining processors are expensive however, and are only practical to use on worlds with primary focus mining. As well, these processors severely damage the ecology of a planet, reducing its maximum population and health somewhat.
 
 PRO_ASTEROID_MINE
 Asteroid Mining
@@ -5438,13 +5438,13 @@ SHP_BASIC_DAM_CONT
 Basic Damage Control
 
 SHP_BASIC_DAM_CONT_DESC
-Gradually increases the Health of damaged ships. Current structure of all ships is replenished at a rate of 1 per turn.
+Gradually repairs damaged ships. Current structure of all ships is replenished at a rate of 1 per turn.
 
 SHP_ADV_DAM_CONT
 Advanced Damage Control
 
 SHP_ADV_DAM_CONT_DESC
-Fully restores the Health of damaged ships between battles.
+Fully repairs damaged ships between battles.
 
 SHP_SYST_DEF_MINE
 System Defense Mines
@@ -5740,13 +5740,13 @@ SHP_TRANSSPACE_HULL
 Trans-Spatial Hull
 
 SHP_TRANSSPACE_HULL_DESC
-This hull is able to travel stealthily and at an incredible speed due to the Trans-Spatial drive. It has only a single external slot however, and it's max structure is extremely low.
+This hull is able to travel stealthily and at an incredible speed due to the Trans-Spatial drive. It has only a single external slot however, and its max structure is extremely low.
 
 SHP_LOGISTICS_FAC
 Logistics Facilitator
 
 SHP_LOGISTICS_FAC_DESC
-This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots and two internal slots. It's speed is low, but max structure is fairly high. In addition, it's built-in fleet of stealthy freighters allows transfer of personnel and materiel during battle, enabling all friendly ships to recover structure during combat and completely restore structure between combats.
+This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots and two internal slots. Its speed is low, but max structure is fairly high. In addition, its built-in fleet of stealthy freighters allows transfer of personnel and materiel during battle, enabling all friendly ships to recover structure during combat and completely restore structure between combats.
 
 SHP_ANTIMAT_TORP
 Antimatter Torpedo
@@ -5818,7 +5818,7 @@ SHP_SYMB_HULL
 Symbiotic Hull
 
 SHP_SYMB_HULL_DESC
-This living hull exists in a symbiotic relationship with it's crew, increasing its stealth and speed. It has two external slots and one internal slot. Stealth, speed and structure are all good. This hull regenerates structure and fuel between combats.
+This living hull exists in a symbiotic relationship with its crew, increasing its stealth and speed. It has two external slots and one internal slot. Stealth, speed and structure are all good. This hull regenerates structure and fuel between combats.
 
 SHP_PROTOPLASM_HULL
 Protoplasmic Hull
@@ -5836,7 +5836,7 @@ SHP_RAVEN_HULL
 Ravenous Hull
 
 SHP_RAVEN_HULL_DESC
-This living hull has been raised on the blood of it's brethren. It has four external slots and two internal slots. Stealth is low, but speed and structure are high. Unlike most organic hulls, the Ravenous Hull will only regenerate fuel between combats, not structure.
+This living hull has been raised on the blood of its brethren. It has four external slots and two internal slots. Stealth is low, but speed and structure are high. Unlike most organic hulls, the Ravenous Hull will only regenerate fuel between combats, not structure.
 
 SHP_BIOADAPT_HULL
 Bio-Adaptive Hull
@@ -5941,7 +5941,7 @@ BLD_SHIPYARD_BASE_DESC
 Orbital production facility for assembly of interstellar military-grade spacecraft. This shipyard must be present for any ships to be made at a planet, and can be upgraded by producing additional buildings in the same system. No shipyard upgrades can be produced without the presence of this shipyard.
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK
-Orbital Dry-dock
+Orbital Drydock
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
 '''This is an upgrade for the Basic Shipyard and is required for all constructed hulls and all further constructed hulls shipyard upgrades to be built, this upgrade also provides repair abilities to repair damaged ships in a single turn.
@@ -5952,25 +5952,25 @@ BLD_SHIPYARD_CON_ROBO
 Robotic Processing Unit
 
 BLD_SHIPYARD_CON_ROBO_DESC
-A robotic manufacturing plant and AI programming facility designed to produce complex, automated ships. This is an upgrade for the Orbital Dry-dock and allows construction of Robotic Hulls.
+A robotic manufacturing plant and AI programming facility designed to produce complex, automated ships. This is an upgrade for the Orbital Drydock and allows construction of Robotic Hulls.
 
 BLD_SHIPYARD_CON_ENGINE
 Engineering Bay
 
 BLD_SHIPYARD_CON_ENGINE_DESC
-An advanced engineering facility specializing in the assembly of the Spatial Flux Drive. This is an upgrade to the Orbital Dry-dock and allows construction of Spatial Flux Hulls.
+An advanced engineering facility specializing in the assembly of the Spatial Flux Drive. This is an upgrade to the Orbital Drydock and allows construction of Spatial Flux Hulls.
 
 BLD_SHIPYARD_CON_MILIT_MEGAPROC
 Military Megaprocessor
 
 BLD_SHIPYARD_CON_MILIT_MEGAPROC_DESC
-A massive orbital installation capable of supporting the construction of extremely large hulls. This is an upgrade for the Orbital Dry-dock and allows production of Self-Gravitating Hulls.
+A massive orbital installation capable of supporting the construction of extremely large hulls. This is an upgrade for the Orbital Drydock and allows production of Self-Gravitating Hulls.
 
 BLD_SHIPYARD_CON_NANOROBO
 Nanorobotic Processing Unit
 
 BLD_SHIPYARD_CON_NANOROBO_DESC
-'''This is an upgrade for the Orbital Dry-dock and allows production of Nano-Robotic Hulls and Robotic Hulls.
+'''This is an upgrade for the Orbital Drydock and allows production of Nano-Robotic Hulls and Robotic Hulls.
 
 The production of millions of maintenance nanorobots and their connection to a single master AI requires more extensive robotics facilities than the production of a basic robotic hull. This building is able to facilitate the construction of more advanced robotic hulls than the basic Robotic Processing Unit.'''
 
@@ -5978,7 +5978,7 @@ BLD_SHIPYARD_CON_GEOINT
 Geointegration Facility
 
 BLD_SHIPYARD_CON_GEOINT_DESC
-'''This is an upgrade to the Orbital Dry-dock and allows production of Titanic Hulls and Self-Gravitating Hulls.
+'''This is an upgrade to the Orbital Drydock and allows production of Titanic Hulls and Self-Gravitating Hulls.
 
 When the needs of a shipyard become sufficiently great, it is no longer practical for the shipyard and the planet on which it is built to remain separate entities. Rather, it is more useful to integrate the two into a harmonious unit, with the shipyard extending from below the surface to beyond geosynchronous orbit, making full use of all the geological aspects of the planet.'''
 
@@ -5986,7 +5986,7 @@ BLD_SHIPYARD_CON_ADV_ENGINE
 Advanced Engineering Bay
 
 BLD_SHIPYARD_CON_ADV_ENGINE_DESC
-'''This is an upgrade to the Orbital Dry-dock and allows construction of Spatial Flux Hulls and Trans-Spatial Hulls.
+'''This is an upgrade to the Orbital Drydock and allows construction of Spatial Flux Hulls and Trans-Spatial Hulls.
 
 An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive, but is also capable of producing the Spatial Flux Drive.'''
 
@@ -5996,7 +5996,7 @@ Military Logistics Assembly
 BLD_SHIPYARD_CON_MIL_LOG_ASSMBL_DESC
 '''Allows the production of the Logistics Facilitator flagship hull type.
 
-A shipyard upgrade designed to fully utilize the advancements of hull construction for the production of highly specialized flagships. This upgrade utilizes the facilities of the Advanced Engineering Bay, the Geointegration Facility and the Nanorobotics Processing Unit, all of which, in addition to the Orbital Dry-dock, must be present for the construction of this upgrade.'''
+A shipyard upgrade designed to fully utilize the advancements of hull construction for the production of highly specialized flagships. This upgrade utilizes the facilities of the Advanced Engineering Bay, the Geointegration Facility and the Nanorobotics Processing Unit, all of which, in addition to the Orbital Drydock, must be present for the construction of this upgrade.'''
 
 BLD_SHIPYARD_AST
 Asteroid Processor
@@ -6184,7 +6184,7 @@ BLD_ART_BLACK_HOLE
 Artificial Black Hole
 
 BLD_ART_BLACK_HOLE_DESC
-By introducing a tremendous amount of artificial gravity into a star without increasing it's energy, it can be made to collapse in on itself and form a Black Hole. This technique is limited to red stars however, as overcoming the internal pressure of a hotter star would require an absurdly powerful gravity generator. This process can be enacted at an outpost.
+By introducing a tremendous amount of artificial gravity into a star without increasing its energy, it can be made to collapse in on itself and form a Black Hole. This technique is limited to red stars however, as overcoming the internal pressure of a hotter star would require an absurdly powerful gravity generator. This process can be enacted at an outpost.
 
 BLD_HYPER_DAM
 Hyperspatial Dam
@@ -6192,13 +6192,13 @@ Hyperspatial Dam
 BLD_HYPER_DAM_DESC
 '''Increases target Industry on planets with the Industry focus by the planet's Population, but decreases Health on such planets by 5.
 
-A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct it's own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
+A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
 
 BLD_SOL_ACCEL
 Solar Accelerator
 
 BLD_SOL_ACCEL_DESC
-A Solar Accelerator artificially ages a star by speeding up it's natural processes. The star becomes one type older, according to the following order: Blue, White, Yellow, Orange, Red. This process can be enacted at an outpost.
+A Solar Accelerator artificially ages a star by speeding up its natural processes. The star becomes one type older, according to the following order: Blue, White, Yellow, Orange, Red. This process can be enacted at an outpost.
 
 BLD_SOL_ORB_GEN
 Solar Orbital Generator
@@ -6786,15 +6786,15 @@ Robotic Hull
 SH_ROBOTIC_DESC
 '''This hull is completely automated and functions under the principals of Military Robotic Control. Like the standard hull, it has four external slots and one internal slot. It is faster than the standard hull, and will have its structure restored between combats, but has a lower max structure.
 
-In addition to a Basic Shipyard and an orbital Dry-dock, either a Robotic Processing Unit or a Nanorobotic Processing Unit is required at the planet where it is constructed.'''
+In addition to a Basic Shipyard and an orbital Drydock, either a Robotic Processing Unit or a Nanorobotic Processing Unit is required at the planet where it is constructed.'''
 
 SH_SPATIAL_FLUX
 Spatial Flux Hull
 
 SH_SPATIAL_FLUX_DESC
-'''This tiny hull is capable of immense speed due to the power of the Spatial Flux Drive. It has only two external slots however, and it's max structure is low. Stealth is fairly high, but it receives a large stealth penalty for movement both in combat and on the galaxy map.
+'''This tiny hull is capable of immense speed due to the power of the Spatial Flux Drive. It has only two external slots however, and its max structure is low. Stealth is fairly high, but it receives a large stealth penalty for movement both in combat and on the galaxy map.
 
-In addition to a Basic Shipyard and an Orbital Dry-dock, either an Engineering Bay or an Advanced Engineering Bay is required at the planet where it is constructed.'''
+In addition to a Basic Shipyard and an Orbital Drydock, either an Engineering Bay or an Advanced Engineering Bay is required at the planet where it is constructed.'''
 
 SH_SELF_GRAVITATING
 Self-Gravitating Hull
@@ -6802,7 +6802,7 @@ Self-Gravitating Hull
 SH_SELF_GRAVITATING_DESC
 '''This hull is immense in both size and power, with eight external slots and two internal slots. It is fairly sturdy, having a high max structure, but stealth and speed are fairly low.
 
-In addition to a Basic Shipyard and an Orbital Dry-dock, either a Military Megaprocessor or a Geointegration Facility is required at the planet where it is constructed.'''
+In addition to a Basic Shipyard and an Orbital Drydock, either a Military Megaprocessor or a Geointegration Facility is required at the planet where it is constructed.'''
 
 SH_NANOROBOTIC
 Nano-Robotic Hull
@@ -6810,7 +6810,7 @@ Nano-Robotic Hull
 SH_NANOROBOTIC_DESC
 '''This automated hull is large and fast, and repairs damage to itself using millions of nano-robots. It has six external slots and one internal slot, but it has low stealth and is very fragile, though it regenerates structure during combat and restores structure completely between combats.
 
-Requires a Basic Shipyard, an Orbital Dry-dock and a Nanorobotic Processing unit at the planet where it is constructed.'''
+Requires a Basic Shipyard, an Orbital Drydock and a Nanorobotic Processing unit at the planet where it is constructed.'''
 
 SH_TITANIC
 Titanic Hull
@@ -6818,7 +6818,7 @@ Titanic Hull
 SH_TITANIC_DESC
 '''This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots and three internal slots, and its max structure is very high, but at the cost of a great deal of speed and stealth.
 
-Requires a Basic Shipyard, an Orbital Dry-dock and a Geointegration Facility at the planet where it is constructed.'''
+Requires a Basic Shipyard, an Orbital Drydock and a Geointegration Facility at the planet where it is constructed.'''
 
 SH_TRANSSPATIAL
 Trans-Spatial Hull
@@ -6826,15 +6826,15 @@ Trans-Spatial Hull
 SH_TRANSSPATIAL_DESC
 '''This hull is able to travel stealthily and at an incredible speed due to the Trans-Spatial drive. It has only a single external slot however, and its max structure is extremely low.
 
-Requires a Basic Shipyard, an Orbital Dry-dock and an Advanced Engineering Bay at the planet where it is constructed.'''
+Requires a Basic Shipyard, an Orbital Drydock and an Advanced Engineering Bay at the planet where it is constructed.'''
 
 SH_LOGISTICS_FACILITATOR
 Logistics Facilitator
 
 SH_LOGISTICS_FACILITATOR_DESC
-'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots and two internal slots. It's speed is low, but max structure is fairly high. In addition, it's built-in fleet of stealthy freighters allows transfer of personnel and materiel during battle, enabling all friendly ships to recover structure during combat and completely restore structure between combats.
+'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots and two internal slots. Its speed is low, but max structure is fairly high. In addition, its built-in fleet of stealthy freighters allows transfer of personnel and materiel during battle, enabling all friendly ships to recover structure during combat and completely restore structure between combats.
 
-Requires a Basic Shipyard, an Orbital Dry-dock, a Nanorobotic Processing Unit, a Geointegration Facility, an Advanced Engineering Bay and a Military Logistics Assembly at the planet where it is constructed.'''
+Requires a Basic Shipyard, an Orbital Drydock, a Nanorobotic Processing Unit, a Geointegration Facility, an Advanced Engineering Bay and a Military Logistics Assembly at the planet where it is constructed.'''
 
 SH_ASTEROID
 Asteroid Hull
@@ -6872,7 +6872,7 @@ SH_SMALL_CAMOUFLAGE_ASTEROID
 Small Camouflage Asteroid Hull
 
 SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
-'''This camouflage asteroid hull is able to make use of camouflage asteroid parts on it's exterior, although it must be made much smaller to compensate and avoid losing it's stealth bonus. It has a single external slot and a single internal slot. Speed is average, but structure is quite low. This hull gets a tremendous bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This camouflage asteroid hull is able to make use of camouflage asteroid parts on its exterior, although it must be made much smaller to compensate and avoid losing its stealth bonus. It has a single external slot and a single internal slot. Speed is average, but structure is quite low. This hull gets a tremendous bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard and an Asteroid Processor at the asteroid belt where it is produced.'''
 
@@ -6936,7 +6936,7 @@ SH_SYMBIOTIC
 Symbiotic Hull
 
 SH_SYMBIOTIC_DESC
-'''This living hull exists in a symbiotic relationship with it's crew, increasing its stealth and speed. It has two external slots and one internal slot. Stealth, speed and structure are all good. This hull regenerates structure and fuel between combats.
+'''This living hull exists in a symbiotic relationship with its crew, increasing its stealth and speed. It has two external slots and one internal slot. Stealth, speed and structure are all good. This hull regenerates structure and fuel between combats.
 
 Requires a Basic Shipyard, an Orbital Incubator and a Xenocoordination Facility at the planet where it is developed.'''
 
@@ -6960,7 +6960,7 @@ SH_RAVENOUS
 Ravenous Hull
 
 SH_RAVENOUS_DESC
-'''This living hull has been raised on the blood of it's brethren. It has four external slots and two internal slots. Stealth is low, but speed and structure are high. Unlike most organic hulls, the Ravenous Hull will only regenerate fuel between combats, not structure.
+'''This living hull has been raised on the blood of its brethren. It has four external slots and two internal slots. Stealth is low, but speed and structure are high. Unlike most organic hulls, the Ravenous Hull will only regenerate fuel between combats, not structure.
 
 Requires a Basic Shipyard, an Orbital Incubator and a Competitive Maturation Chamber at the planet where it is developed.'''
 
@@ -7028,7 +7028,7 @@ Standard Hull
 SH_STANDARD_DESC
 '''Basic interstellar hull.
 
-Requires a Basic Shipyard and an Orbital Dry-dock at the planet where it is Constructed.'''
+Requires a Basic Shipyard and an Orbital Drydock at the planet where it is Constructed.'''
 
 SH_XENTRONIUM
 Xentronium Hull
