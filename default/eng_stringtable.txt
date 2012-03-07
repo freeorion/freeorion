@@ -3154,7 +3154,7 @@ Ancient Ruins
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
 '''Triples the Research on this planet and increases Research on Research-focused planets by one twentieth (non-stacking).
 
-This planet holds the ruins of an unknown, advanced ancient race. A valuable discovery has already been made here.
+This planet holds the ruins of an unknown, advanced ancient race. A valuable discovery has already been made here.'''
 
 ANCIENT_RUINS_SPECIAL
 Ancient Ruins
