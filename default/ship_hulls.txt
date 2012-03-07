@@ -20,10 +20,7 @@ Hull
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     graphic = "hulls_design/xentronium_hull.png"
     icon = ""
 
@@ -43,10 +40,7 @@ Hull
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     graphic = "hulls_design/colony_base_hull.png"
     icon = ""
     
@@ -69,10 +63,7 @@ Hull
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     graphic = "hulls_design/basic-small-hull.png"
     icon = ""
     
@@ -96,10 +87,7 @@ Hull
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     graphic = "hulls_design/basic-medium-hull.png"
     icon = ""
 
@@ -124,10 +112,7 @@ Hull
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     graphic = ""
     icon = ""
 
@@ -172,10 +157,7 @@ Hull
             activation = Source
             effects = SetStructure Value + 2
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/robotic_hull.png"
     icon = ""
@@ -218,10 +200,7 @@ Hull
             activation = Not Stationary
             effects = SetStealth Value - 30
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/spatial_flux_hull.png"
     icon = ""
@@ -267,10 +246,7 @@ Hull
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     graphic = "hulls_design/self_gravitating_hull.png"
     icon = ""
 
@@ -314,10 +290,7 @@ Hull
             activation = Source
             effects = SetStructure Target.MaxStructure
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/nano_robotic_hull.png"
     icon = ""
@@ -369,10 +342,7 @@ Hull
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     graphic = "hulls_design/titanic_hull.png"
     icon = ""
 
@@ -403,10 +373,7 @@ Hull
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     graphic = "hulls_design/trans_spatial_hull.png"
     icon = ""
 
@@ -472,10 +439,7 @@ Hull
             stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
             effects = SetStructure Target.MaxStructure
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/lagistics_facilitator_hull.png"
     icon = ""
@@ -516,10 +480,7 @@ Hull
             activation = ContainedBy Contains Planet type = Asteroids
             effects = SetStealth Value + 50
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/asteroid_hull.png"
     icon = ""
@@ -556,10 +517,7 @@ Hull
             activation = ContainedBy Contains Planet type = Asteroids
             effects = SetStealth Value + 50
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/small_asteroid_hull.png"
     icon = ""
@@ -603,10 +561,7 @@ Hull
             activation = ContainedBy Contains Planet type = Asteroids
             effects = SetStealth Value + 50
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/heavy_asteroid_hull.png"
     icon = ""
@@ -645,10 +600,7 @@ Hull
             activation = ContainedBy Contains Planet type = Asteroids
             effects = SetStealth Value + 80
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/camouflage_asteroid_hull.png"
     icon = ""
@@ -685,10 +637,7 @@ Hull
             activation = ContainedBy Contains Planet type = Asteroids
             effects = SetStealth Value + 80
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/small_camouflage_asteroid_hull.png"
     icon = ""
@@ -746,10 +695,7 @@ Hull
             activation = ContainedBy Contains Planet type = Asteroids
             effects = SetStealth Value + 50
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/agregate_asteroid_hull.png"
     icon = ""
@@ -790,10 +736,7 @@ Hull
             activation = ContainedBy Contains Planet type = Asteroids
             effects = SetStealth Value + 50
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/mini_asteroid_swarm.png"
     icon = ""
@@ -864,10 +807,7 @@ Hull
             stackinggroup = "FLAGSHIP_EFFECT_SCATTERED_ASTEROID"
             effects = SetMaxShield Value + 5
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/scattered_asteroid_hull.png"
     icon = ""
@@ -912,10 +852,7 @@ Hull
             activation = ContainedBy Contains Planet type = Asteroids
             effects = SetStealth Value + 50
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/crystalized_asteroid_hull.png"
     icon = ""
@@ -993,10 +930,7 @@ Hull
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     graphic = "hulls_design/static_multicellular.png"
     icon = ""
 
@@ -1393,10 +1327,7 @@ Hull
         Star type = [White Blue BlackHole]
     ]
     effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     graphic = "hulls_design/compressed_energy_hull.png"
     icon = ""
 
@@ -1456,10 +1387,7 @@ Hull
         Star type = [Blue BlackHole]
     ]
     effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     graphic = "hulls_design/fractal_energy_hull.png"
     icon = ""
 
@@ -1502,10 +1430,7 @@ Hull
         Star type = [Blue BlackHole]
     ]
     effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     graphic = "hulls_design/quantum_energy_hull.png"
     icon = ""
 
@@ -1595,10 +1520,7 @@ Hull
             stackinggroup = "FLAGSHIP_EFFECT_SOLAR"
             effects = SetStealth Value - 20
 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "hulls_design/solar_hull.png"
     icon = ""
@@ -2572,10 +2494,8 @@ Hull
                 CreateShip "SM_JUGGERNAUT_2" Source.Owner
                 Destroy
             ]
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = ""
     icon = ""
@@ -2629,10 +2549,8 @@ Hull
                 Destroy
             ]
             
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+        
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = ""
     icon = ""
@@ -2675,12 +2593,61 @@ Hull
                 ]
                 WithinStarlaneJumps 1 Source
             ]
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 30
+
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = ""
     icon = ""
+
+Hull
+    name = "SH_NEBULOUS_BODY"
+    description = "SH_NEBULOUS_BODY"
+    speed = 50
+    starlaneSpeed = 100
+    fuel = 1
+    stealth = 650
+    structure = 100
+    buildcost = 1
+    buildtime = 1
+    Unproducible
+    slots = [
+        Slot type = External position = (0.60, 0.45)
+        Slot type = Internal position = (0.40, 0.55)
+    ]
+    location = All
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetFuel Target.MaxFuel
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                Fleet
+            ]
+            activation = And [
+                Stationary
+                Not OwnedBy AnyEmpire
+                Random probability = 0.25
+            ]
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not Contains Source
+                WithinStarlaneJumps 1 Source
+                Not Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+            ]
+        ]
+    graphic = ""
+    icon = ""
     
-    
+REGULAR_HULL_DETECTION
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = SetDetection Value + 25
+'''

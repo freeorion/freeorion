@@ -140,3 +140,49 @@ MonsterFleet
             OwnedBy AnyEmpire
         ]
     ]
+
+MonsterFleet
+    name = "SM_CLOUD_1"
+    ships = [
+        "SM_CLOUD_1"
+    ]
+    spawnrate = 3.0
+    spawnlimit = 2
+    location = And [
+        Not Contains Monster
+        Not WithinStarlaneJumps 4 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+
+MonsterFleet
+    name = "SM_CLOUD_2"
+    ships = [
+        "SM_CLOUD_2"
+    ]
+    spawnrate = 3.0
+    spawnlimit = 2
+    location = And [
+        Not Contains Monster
+        Not WithinStarlaneJumps 4 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+
+MonsterFleet
+    name = "SM_CLOUD_3"
+    ships = [
+        "SM_CLOUD_3"
+    ]
+    spawnrate = 3.0
+    spawnlimit = 2
+    location = And [
+        Not Contains Monster
+        Not WithinStarlaneJumps 4 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+

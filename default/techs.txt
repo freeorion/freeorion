@@ -2300,7 +2300,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Building
             ]
-            effects = SetStealth Value + 5
+            effects = SetStealth Value + 50
 
 Tech
     name = "CON_PLANET_DRIVE"
@@ -3137,7 +3137,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 240
     researchturns = 1
-    prerequisites = "SHP_NAVIGATION"
+    // prerequisites = "SHP_NAVIGATION"
     unlock = Item type = ShipPart name = "DT_ACTIVE_RADAR"
     effectsgroups =
         EffectsGroup
@@ -3149,7 +3149,7 @@ Tech
                 Not OwnerHasTech "SHP_NEUTRON_SCANNER"
                 Not OwnerHasTech "SHP_SENSORS"
             ]
-            effects = SetDetection Value + 100
+            effects = SetDetection Value + 200
 
 Tech
     name = "SHP_DEUTERIUM_TANK"
@@ -3204,7 +3204,7 @@ Tech
                 Not OwnerHasTech "SHP_DIM_CLOAK"
                 Not OwnerHasTech "SHP_PHASING_CLOAK"
             ]
-            effects = SetStealth Value + 5
+            effects = SetStealth Value + 50
 
 
 Tech
@@ -3215,7 +3215,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 360
     researchturns = 2
-    prerequisites = "SHP_INTSTEL_LOG"
+    // prerequisites = "SHP_INTSTEL_LOG"
     unlock = Item type = ShipPart name = "DT_NEUTRON_SCANNER"
     effectsgroups =
         EffectsGroup
@@ -3224,7 +3224,7 @@ Tech
                 Planet
             ]
             activation = Not OwnerHasTech "SHP_SENSORS"
-            effects = SetDetection Value + 200
+            effects = SetDetection Value + 400
 
 Tech
     name = "SHP_BASIC_DAM_CONT"
@@ -3362,7 +3362,7 @@ Tech
                 Not OwnerHasTech "SHP_DIM_CLOAK"
                 Not OwnerHasTech "SHP_PHASING_CLOAK"
             ]
-            effects = SetStealth Value + 10
+            effects = SetStealth Value + 200
 
 Tech
     name = "SHP_DIM_CLOAK"
@@ -3385,7 +3385,7 @@ Tech
                 ]
             ]
             activation = Not OwnerHasTech "SHP_PHASING_CLOAK"
-            effects = SetStealth Value + 15
+            effects = SetStealth Value + 400
 
 Tech
     name = "DEF_HI_ENRG_FOCUS"
@@ -3463,7 +3463,7 @@ Tech
                     Building
                 ]
             ]
-            effects = SetStealth Value + 5
+            effects = SetStealth Value + 650
 
 Tech
     name = "SHP_SENSORS"
@@ -3473,7 +3473,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 750
     researchturns = 3
-    prerequisites = "SHP_ADV_NAVIGATION"
+    // prerequisites = "SHP_ADV_NAVIGATION"
     unlock = Item type = ShipPart name = "DT_SENSORS"
     effectsgroups =
         EffectsGroup
@@ -3481,7 +3481,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            effects = SetDetection Value + 250
+            effects = SetDetection Value + 700
 
 Tech
     name = "DEF_PLANET_CLOAK"
@@ -3722,3 +3722,5 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
     ]
 */
+
+

@@ -502,7 +502,7 @@ BuildingType
         EffectsGroup
             scope = WithinDistance 0 Source
             activation = Source
-            effects = SetStealth Value - 45
+            effects = SetStealth Value - 450
     graphic = "icons/building/lighthouse.png"
 
 BuildingType
@@ -1152,6 +1152,22 @@ BuildingType
     buildcost = 1250
     buildtime = 5
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains Source
+                Fleet
+                OwnedBy TheEmpire Source.Owner
+            ]
+            activation = And [
+                ContainedBy Contains Building "BLD_STARGATE_ACTIVATOR"
+                Focus "FOCUS_STARGATE"
+            ]
+            effects = MoveTo And [
+                Focus "FOCUS_STARGATE"
+                Contains Building "BLD_STARGATE_BEACON"
+                OwnedBy TheEmpire Source.Owner
+            ]
     graphic = ""
 
 BuildingType

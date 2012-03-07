@@ -915,3 +915,619 @@ Special
         ]
         
     graphic = "icons/specials_huge/juggernaut-nest.png"
+
+Special
+    name = "CLOUD_COVER_SPECIAL"
+    description = "CLOUD_COVER_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    location = And [
+        Planet
+        Not Homeworld
+    ]
+    effectsgroups = [
+        [[STEALTH_BOOST_LOW]]
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            activation = Not ContainedBy Contains Or [
+                HasSpecial "CLOUD_COVER_PLUS_SPECIAL"
+                HasSpecial "CLOUD_COVER_PLUS_PLUS_SPECIAL"
+                HasSpecial "VOLCANIC_ASH_SPECIAL"
+                HasSpecial "VOLCANIC_ASH_PLUS_SPECIAL"
+                HasSpecial "VOLCANIC_ASH_PLUS_PLUS_SPECIAL"
+                HasSpecial "DIM_RIFT_SPECIAL"
+                HasSpecial "DIM_RIFT_PLUS_SPECIAL"
+                HasSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
+                HasSpecial "VOID_SPECIAL"
+                HasSpecial "VOID_PLUS_SPECIAL"
+                HasSpecial "VOID_PLUS_PLUS_SPECIAL"
+            ]
+            effects = AddSpecial "CLOUD_COVER_SPECIAL"
+    ]
+    graphic = ""
+
+Special
+    name = "CLOUD_COVER_PLUS_SPECIAL"
+    description = "CLOUD_COVER_PLUS_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    location = And [
+        Planet
+        Not Homeworld
+    ]
+    effectsgroups = [
+        [[STEALTH_BOOST_LOW]]
+        [[STEALTH_BOOST_PLUS]]
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            activation = Not ContainedBy Contains Or [
+                HasSpecial "CLOUD_COVER_PLUS_PLUS_SPECIAL"
+                HasSpecial "VOLCANIC_ASH_SPECIAL"
+                HasSpecial "VOLCANIC_ASH_PLUS_SPECIAL"
+                HasSpecial "VOLCANIC_ASH_PLUS_PLUS_SPECIAL"
+                HasSpecial "DIM_RIFT_SPECIAL"
+                HasSpecial "DIM_RIFT_PLUS_SPECIAL"
+                HasSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
+                HasSpecial "VOID_SPECIAL"
+                HasSpecial "VOID_PLUS_SPECIAL"
+                HasSpecial "VOID_PLUS_PLUS_SPECIAL"
+            ]
+            effects = AddSpecial "CLOUD_COVER_PLUS_SPECIAL"
+
+        [[REMOVE_CLOUD_COVER]]
+    ]
+    graphic = ""
+
+Special
+    name = "CLOUD_COVER_PLUS_PLUS_SPECIAL"
+    description = "CLOUD_COVER_PLUS_PLUS_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    location = And [
+        Planet
+        Not Homeworld
+    ]
+    effectsgroups = [
+        [[STEALTH_BOOST_LOW]]
+        [[STEALTH_BOOST_PLUS]]
+        [[STEALTH_BOOST_PLUS]]
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            activation = Not ContainedBy Contains Or [
+                HasSpecial "VOLCANIC_ASH_SPECIAL"
+                HasSpecial "VOLCANIC_ASH_PLUS_SPECIAL"
+                HasSpecial "VOLCANIC_ASH_PLUS_PLUS_SPECIAL"
+                HasSpecial "DIM_RIFT_SPECIAL"
+                HasSpecial "DIM_RIFT_PLUS_SPECIAL"
+                HasSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
+                HasSpecial "VOID_SPECIAL"
+                HasSpecial "VOID_PLUS_SPECIAL"
+                HasSpecial "VOID_PLUS_PLUS_SPECIAL"
+            ]
+            effects = AddSpecial "CLOUD_COVER_PLUS_PLUS_SPECIAL"
+
+        [[REMOVE_CLOUD_COVER]]
+        [[REMOVE_CLOUD_COVER_PLUS]]
+    ]
+    graphic = ""
+
+Special
+    name = "VOLCANIC_ASH_SPECIAL"
+    description = "VOLCANIC_ASH_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    location = And [
+        Planet
+        Not Homeworld
+    ]
+    effectsgroups = [
+        [[STEALTH_BOOST_MEDIUM]]
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            activation = Not ContainedBy Contains Or [
+                HasSpecial "VOLCANIC_ASH_PLUS_SPECIAL"
+                HasSpecial "VOLCANIC_ASH_PLUS_PLUS_SPECIAL"
+                HasSpecial "DIM_RIFT_SPECIAL"
+                HasSpecial "DIM_RIFT_PLUS_SPECIAL"
+                HasSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
+                HasSpecial "VOID_SPECIAL"
+                HasSpecial "VOID_PLUS_SPECIAL"
+                HasSpecial "VOID_PLUS_PLUS_SPECIAL"
+            ]
+            effects = AddSpecial "VOLCANIC_ASH_SPECIAL"
+
+        [[REMOVE_ALL_CLOUD_COVER]]
+    ]
+    graphic = ""
+
+Special
+    name = "VOLCANIC_ASH_PLUS_SPECIAL"
+    description = "VOLCANIC_ASH_PLUS_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    location = And [
+        Planet
+        Not Homeworld
+    ]
+    effectsgroups = [
+        [[STEALTH_BOOST_MEDIUM]]
+        [[STEALTH_BOOST_PLUS]]
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            activation = Not ContainedBy Contains Or [
+                HasSpecial "VOLCANIC_ASH_PLUS_PLUS_SPECIAL"
+                HasSpecial "DIM_RIFT_SPECIAL"
+                HasSpecial "DIM_RIFT_PLUS_SPECIAL"
+                HasSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
+                HasSpecial "VOID_SPECIAL"
+                HasSpecial "VOID_PLUS_SPECIAL"
+                HasSpecial "VOID_PLUS_PLUS_SPECIAL"
+            ]
+            effects = AddSpecial "VOLCANIC_ASH_PLUS_SPECIAL"
+
+        [[REMOVE_ALL_CLOUD_COVER]]
+        [[REMOVE_ASH]]
+    ]
+    graphic = ""
+
+Special
+    name = "VOLCANIC_ASH_PLUS_PLUS_SPECIAL"
+    description = "VOLCANIC_ASH_PLUS_PLUS_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    location = And [
+        Planet
+        Not Homeworld
+    ]
+    effectsgroups = [
+        [[STEALTH_BOOST_MEDIUM]]
+        [[STEALTH_BOOST_PLUS]]
+        [[STEALTH_BOOST_PLUS]]
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            activation = Not ContainedBy Contains Or [
+                HasSpecial "DIM_RIFT_SPECIAL"
+                HasSpecial "DIM_RIFT_PLUS_SPECIAL"
+                HasSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
+                HasSpecial "VOID_SPECIAL"
+                HasSpecial "VOID_PLUS_SPECIAL"
+                HasSpecial "VOID_PLUS_PLUS_SPECIAL"
+            ]
+            effects = AddSpecial "VOLCANIC_ASH_PLUS_PLUS_SPECIAL"
+
+        [[REMOVE_ALL_CLOUD_COVER]]
+        [[REMOVE_ASH]]
+        [[REMOVE_ASH_PLUS]]
+    ]
+    graphic = ""
+
+Special
+    name = "DIM_RIFT_SPECIAL"
+    description = "DIM_RIFT_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    location = And [
+        Planet
+        Not Homeworld
+    ]
+    effectsgroups = [
+        [[STEALTH_BOOST_HIGH]]
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            activation = Not ContainedBy Contains Or [
+                HasSpecial "DIM_RIFT_PLUS_SPECIAL"
+                HasSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
+                HasSpecial "VOID_SPECIAL"
+                HasSpecial "VOID_PLUS_SPECIAL"
+                HasSpecial "VOID_PLUS_PLUS_SPECIAL"
+            ]
+            effects = AddSpecial "CLOUD_COVER_SPECIAL"
+
+        [[REMOVE_ALL_CLOUD_COVER]]
+        [[REMOVE_ALL_ASH]]
+    ]
+    graphic = ""
+
+Special
+    name = "DIM_RIFT_PLUS_SPECIAL"
+    description = "DIM_RIFT_PLUS_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    location = And [
+        Planet
+        Not Homeworld
+    ]
+    effectsgroups = [
+        [[STEALTH_BOOST_HIGH]]
+        [[STEALTH_BOOST_PLUS]]
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            activation = Not ContainedBy Contains Or [
+                HasSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
+                HasSpecial "VOID_SPECIAL"
+                HasSpecial "VOID_PLUS_SPECIAL"
+                HasSpecial "VOID_PLUS_PLUS_SPECIAL"
+            ]
+            effects = AddSpecial "DIM_RIFT_SPECIAL"
+
+        [[REMOVE_ALL_CLOUD_COVER]]
+        [[REMOVE_ALL_ASH]]
+        [[REMOVE_DIM]]
+    ]
+    graphic = ""
+
+Special
+    name = "DIM_RIFT_PLUS_PLUS_SPECIAL"
+    description = "DIM_RIFT_PLUS_PLUS_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    location = And [
+        Planet
+        Not Homeworld
+    ]
+    effectsgroups = [
+        [[STEALTH_BOOST_HIGH]]
+        [[STEALTH_BOOST_PLUS]]
+        [[STEALTH_BOOST_PLUS]]
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            activation = Not ContainedBy Contains Or [
+                HasSpecial "VOID_SPECIAL"
+                HasSpecial "VOID_PLUS_SPECIAL"
+                HasSpecial "VOID_PLUS_PLUS_SPECIAL"
+            ]
+            effects = AddSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
+
+        [[REMOVE_ALL_CLOUD_COVER]]
+        [[REMOVE_ALL_ASH]]
+        [[REMOVE_DIM]]
+        [[REMOVE_DIM_PLUS]]
+    ]
+    graphic = ""
+
+Special
+    name = "VOID_SPECIAL"
+    description = "VOID_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    location = And [
+        Planet
+        Not Homeworld
+    ]
+    effectsgroups = [
+        [[STEALTH_BOOST_ULTIMATE]]
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            activation = Not ContainedBy Contains Or [
+                HasSpecial "VOID_PLUS_SPECIAL"
+                HasSpecial "VOID_PLUS_PLUS_SPECIAL"
+            ]
+            effects = AddSpecial "VOID_SPECIAL"
+
+        [[REMOVE_ALL_CLOUD_COVER]]
+        [[REMOVE_ALL_ASH]]
+        [[REMOVE_ALL_DIM]]
+    ]
+    graphic = ""
+
+Special
+    name = "VOID_PLUS_SPECIAL"
+    description = "VOID_PLUS_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    location = And [
+        Planet
+        Not Homeworld
+    ]
+    effectsgroups = [
+        [[STEALTH_BOOST_ULTIMATE]]
+        [[STEALTH_BOOST_PLUS]]
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            activation = Not ContainedBy Contains HasSpecial "VOID_PLUS_PLUS_SPECIAL"
+            effects = AddSpecial "VOID_PLUS_SPECIAL"
+
+        [[REMOVE_ALL_CLOUD_COVER]]
+        [[REMOVE_ALL_ASH]]
+        [[REMOVE_ALL_DIM]]
+        [[REMOVE_VOID]]
+    ]
+    graphic = ""
+
+Special
+    name = "VOID_PLUS_PLUS_SPECIAL"
+    description = "VOID_PLUS_PLUS_SPECIAL_DESC"
+    spawnrate = 0.0
+    spawnlimit = 0
+    location = And [
+        Planet
+        Not Homeworld
+    ]
+    effectsgroups = [
+        [[STEALTH_BOOST_ULTIMATE]]
+        [[STEALTH_BOOST_PLUS]]
+        [[STEALTH_BOOST_PLUS]]
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            activation = Source
+            effects = AddSpecial "VOID_PLUS_PLUS_SPECIAL"
+
+        [[REMOVE_ALL_CLOUD_COVER]]
+        [[REMOVE_ALL_ASH]]
+        [[REMOVE_ALL_DIM]]
+        [[REMOVE_VOID]]
+        [[REMOVE_VOID_PLUS]]
+    ]
+    graphic = ""
+
+
+STEALTH_BOOST_LOW
+'''EffectsGroup
+        scope = Source
+        activation = Not OwnedBy AnyEmpire
+        effects = SetStealth Value + 50
+'''
+
+STEALTH_BOOST_MEDIUM
+'''EffectsGroup
+        scope = Source
+        activation = Not OwnedBy AnyEmpire
+        effects = SetStealth Value + 200
+'''
+
+STEALTH_BOOST_HIGH
+'''EffectsGroup
+        scope = Source
+        activation = Not OwnedBy AnyEmpire
+        effects = SetStealth Value + 400
+'''
+
+STEALTH_BOOST_ULTIMATE
+'''EffectsGroup
+        scope = Source
+        activation = Not OwnedBy AnyEmpire
+        effects = SetStealth Value + 650
+'''
+
+STEALTH_BOOST_PLUS
+'''EffectsGroup
+        scope = Source
+        activation = Not OwnedBy AnyEmpire
+        effects = SetStealth Value + 25
+'''
+
+REMOVE_ALL_CLOUD_COVER
+'''[[REMOVE_CLOUD_COVER]]
+[[REMOVE_CLOUD_COVER_PLUS]]
+[[REMOVE_CLOUD_COVER_PLUS_PLUS]]
+'''
+
+REMOVE_CLOUD_COVER
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial "CLOUD_COVER_SPECIAL"
+
+    EffectsGroup
+        scope = And [
+            Contains Source
+            System
+        ]
+        activation = Source
+        effects = RemoveSpecial "CLOUD_COVER_SPECIAL"
+'''
+
+REMOVE_CLOUD_COVER_PLUS
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial "CLOUD_COVER_PLUS_SPECIAL"
+
+    EffectsGroup
+        scope = And [
+            Contains Source
+            System
+        ]
+        activation = Source
+        effects = RemoveSpecial "CLOUD_COVER_PLUS_SPECIAL"
+'''
+
+REMOVE_CLOUD_COVER_PLUS_PLUS
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial "CLOUD_COVER_PLUS_PLUS_SPECIAL"
+
+    EffectsGroup
+        scope = And [
+            Contains Source
+            System
+        ]
+        activation = Source
+        effects = RemoveSpecial "CLOUD_COVER_PLUS_PLUS_SPECIAL"
+'''
+
+
+REMOVE_ALL_ASH
+'''[[REMOVE_ASH]]
+[[REMOVE_ASH_PLUS]]
+[[REMOVE_ASH_PLUS_PLUS]]
+'''
+
+REMOVE_ASH
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial "VOLCANIC_ASH_SPECIAL"
+
+    EffectsGroup
+        scope = And [
+            Contains Source
+            System
+        ]
+        activation = Source
+        effects = RemoveSpecial "VOLCANIC_ASH_SPECIAL"
+'''
+
+REMOVE_ASH_PLUS
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial "VOLCANIC_ASH_PLUS_SPECIAL"
+
+    EffectsGroup
+        scope = And [
+            Contains Source
+            System
+        ]
+        activation = Source
+        effects = RemoveSpecial "VOLCANIC_ASH_PLUS_SPECIAL"
+'''
+
+REMOVE_ASH_PLUS_PLUS
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial "VOLCANIC_ASH_PLUS_PLUS_SPECIAL"
+
+    EffectsGroup
+        scope = And [
+            Contains Source
+            System
+        ]
+        activation = Source
+        effects = RemoveSpecial "VOLCANIC_ASH_PLUS_PLUS_SPECIAL"
+'''
+
+REMOVE_ALL_DIM
+'''[[REMOVE_DIM]]
+[[REMOVE_DIM_PLUS]]
+[[REMOVE_DIM_PLUS_PLUS]]
+'''
+
+REMOVE_DIM
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial "DIM_RIFT_SPECIAL"
+
+    EffectsGroup
+        scope = And [
+            Contains Source
+            System
+        ]
+        activation = Source
+        effects = RemoveSpecial "DIM_RIFT_SPECIAL"
+'''
+
+
+REMOVE_DIM_PLUS
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial "DIM_RIFT_PLUS_SPECIAL"
+
+    EffectsGroup
+        scope = And [
+            Contains Source
+            System
+        ]
+        activation = Source
+        effects = RemoveSpecial "DIM_RIFT_PLUS_SPECIAL"
+'''
+
+
+REMOVE_DIM_PLUS_PLUS
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
+
+    EffectsGroup
+        scope = And [
+            Contains Source
+            System
+        ]
+        activation = Source
+        effects = RemoveSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
+'''
+
+REMOVE_VOID
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial "VOID_SPECIAL"
+
+    EffectsGroup
+        scope = And [
+            Contains Source
+            System
+        ]
+        activation = Source
+        effects = RemoveSpecial "VOID_SPECIAL"
+'''
+
+REMOVE_VOID_PLUS
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial "VOID_PLUS_SPECIAL"
+
+    EffectsGroup
+        scope = And [
+            Contains Source
+            System
+        ]
+        activation = Source
+        effects = RemoveSpecial "VOID_PLUS_SPECIAL"
+'''
+
+

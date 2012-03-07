@@ -1533,7 +1533,7 @@ ADVANCED_FOCUS_EFFECTS
 '''        EffectsGroup
             scope = Source
             activation = Focus "FOCUS_STEALTH"
-            effects = SetStealth Value + 20
+            effects = SetStealth Value + 1000
 
         EffectsGroup
             scope = And [
@@ -2191,7 +2191,7 @@ GREAT_STEALTH
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            effects = SetStealth Value + 15
+            effects = SetStealth Value + 25
 '''
 
 ULTIMATE_STEALTH
@@ -2200,7 +2200,7 @@ ULTIMATE_STEALTH
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            effects = SetStealth Value + 25
+            effects = SetStealth Value + 50
 '''
 
 
