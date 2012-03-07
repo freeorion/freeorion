@@ -2570,6 +2570,8 @@ Prefer Terran planets.
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[GREAT_RESEARCH]]
+
+[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_SCYLIOR
@@ -2582,6 +2584,8 @@ Prefer Ocean planets.
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[GREAT_RESEARCH]]
+
+[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_GYISACHE
@@ -2594,6 +2598,8 @@ Prefer Swamp planets.
 [[AVERAGE_MINING]]
 [[GREAT_INDUSTRY]]
 [[GREAT_RESEARCH]]
+
+[[TERRIBLE_GROUND_TROOPS]]
 '''
 
 SP_CHATO
@@ -2606,8 +2612,9 @@ Prefer Toxic planets.
 [[GREAT_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[TERRIBLE_RESEARCH]]
-'''
 
+[[AVERAGE_GROUND_TROOPS]]
+'''
 
 SP_TRITH
 Trith
@@ -2615,13 +2622,16 @@ SP_TRITH_DESC
 '''Bereaved xenophobic telepaths.
 Prefer Radiated planets.
 
+[[ULTIMATE_DETECTION]]
+[[GREAT_STEALTH]]
+
 [[AVERAGE_FARMING]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
+
+[[AVERAGE_GROUND_TROOPS]]
 '''
-
-
 
 SP_HHHOH
 Hhhoh
@@ -2633,6 +2643,8 @@ Prefer Tundra planets.
 [[TERRIBLE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
+
+[[GREAT_GROUND_TROOPS]]
 '''
 
 SP_EAXAW
@@ -2645,9 +2657,9 @@ Prefer Desert planets.
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
+
+[[AVERAGE_GROUND_TROOPS]]
 '''
-
-
 
 SP_DERTHREAN
 Derthrean
@@ -2659,6 +2671,8 @@ Prefer Toxic planets.
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
+
+[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_LAENFA
@@ -2667,12 +2681,18 @@ SP_LAENFA_DESC
 '''Sneaky, telepathic, sentient vines.
 Prefer Ocean Planets.
 
+[[GREAT_DETECTION]]
+[[ULTIMATE_STEALTH]]
+        
 [[TERRIBLE_FARMING]]
 [[TERRIBLE_MINING]]
 [[TERRIBLE_INDUSTRY]]
 [[TERRIBLE_RESEARCH]]
-'''
 
+[[TERRIBLE_GROUND_TROOPS]]
+        
+[[NO_FOOD_USE]]
+'''
 
 SP_TAEGHIRUS
 T'aeghirus
@@ -2684,6 +2704,8 @@ Prefer Swamp planets.
 [[GREAT_MINING]]
 [[GREAT_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
+
+[[TERRIBLE_GROUND_TROOPS]]
 '''
 
 SP_ETTY
@@ -2707,7 +2729,9 @@ Prefer Desert planets.
 [[AVERAGE_FARMING]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
+[[TERRIBLE_RESEARCH]]
+
+[[GREAT_GROUND_TROOPS]]
 '''
 
 
@@ -2721,6 +2745,8 @@ Prefer Barren planets.
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[GREAT_RESEARCH]]
+
+[[AVERAGE_GROUND_TROOPS]]
 '''
 
 
@@ -2734,6 +2760,8 @@ Prefer Swamp planets.
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
+
+[[GREAT_GROUND_TROOPS]]
 '''
 
 SP_GEORGE
@@ -2744,8 +2772,10 @@ Prefers Tundra planets.
 
 [[AVERAGE_FARMING]]
 [[AVERAGE_MINING]]
-[[AVERAGE_INDUSTRY]]
+[[GREAT_INDUSTRY]]
 [[TERRIBLE_RESEARCH]]
+
+[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_PHINNERT
@@ -2758,6 +2788,8 @@ Prefer Ocean planets.
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[NO_RESEARCH]]
+
+[[TERRIBLE_GROUND_TROOPS]]
 '''
 
 SP_EGASSEM
@@ -2766,10 +2798,12 @@ SP_EGASSEM_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
 Prefer Inferno planets.
 
-[[AVERAGE_FARMING]]
+[[TERRIBLE_FARMING]]
 [[AVERAGE_MINING]]
 [[GREAT_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
+
+[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_SSLITH
@@ -2782,6 +2816,8 @@ Prefer Tundra planets.
 [[AVERAGE_MINING]]
 [[TERRIBLE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
+
+[[TERRIBLE_GROUND_TROOPS]]
 '''
 
 SP_FIFTYSEVEN
@@ -2795,6 +2831,8 @@ Prefer Swamp planets.
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
 
+[[TERRIBLE_GROUND_TROOPS]]
+
 Biology:
 Adult Fifty-Seven are between 10 and 20 m long. The main deviation from the tapering serpentine body are the two resonating domes on the forward dorsal side. Various fins provide fine control. Entirely blind, they rely on smell, hearing, an exquisitely honed pressure sensitivity, and when the need arises bursts of echolocation. Fifty-Seven are omnivores: eating flocks of small flying creatures with the same relish as the floating phytoplankton. Since they remain aloft their entire lives and have no manipulator limbs, the Fifty-Seven have no material technology.
 
@@ -2807,62 +2845,178 @@ High g swamp world with a very dense atmosphere.
 Reason for Staying:
 The Fifty-Seven are in constant contact with most of the rest of their species, participating in a complex fractal 'song' that may also be a way to test complex mathematical hypotheses and/or some sort of social or artistic expression. Leaving the fractal song is apparently extremely unattractive.
 '''
-
 SP_SETINON
 Setinon
 SP_SETINON_DESC
-'''Individualistic sentient microscopic cells
+'''Individualistic sentient microscopic cells.
+Prefer Ocean planets.
 
-'''
-
-SP_SILEXIAN
-Silexian
-SP_SILEXIAN_DESC
-'''Gleaming gardener robots, left on their own.
-
+[[ULTIMATE_STEALTH]]
+        
+[[GREAT_FARMING]]
+[[TERRIBLE_MINING]]
+[[TERRIBLE_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+        
+[[NO_GROUND_TROOPS]]
 '''
 
 SP_NYMNMN
 Nymnmn
 SP_NYMNMN_DESC
 '''Planet-wide sapient magnetic waveforms.
+Prefer Desert planets.
 
-Can only produce Food or Research.'''
+[[GREAT_DETECTION]]
+[[GREAT_STEALTH]]
+
+[[TERRIBLE_FARMING]]
+[[NO_MINING]]
+[[NO_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+
+[[TERRIBLE_GROUND_TROOPS]]
+
+[[NO_FOOD_USE]]
+'''
+
 
 SP_TRENCHERS
 Trenchers
 SP_TRENCHERS_DESC
-Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
+'''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
+Prefers Barren planets.
+
+[[NO_FARMING]]
+[[AVERAGE_MINING]]
+[[NO_INDUSTRY]]
+[[NO_RESEARCH]]
+        
+[[TERRIBLE_GROUND_TROOPS]]
+        
+[[NO_FOOD_USE]]
+'''
+
+
+SP_RAAAGH
+Raaagh
+SP_RAAAGH_DESC
+'''Highly territorial felinoids.
+Prefer Terran planets.
+
+[[AVERAGE_FARMING]]
+[[AVERAGE_MINING]]
+[[TERRIBLE_INDUSTRY]]
+[[NO_RESEARCH]]
+
+[[ULTIMATE_GROUND_TROOPS]]
+
+The Raaagh are 1.5 meter tall stripe-furred bipeds.  The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance.  The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage-- they must survive on their own competing against their siblings for hiding places and stealing food like vermin.  After three years usually only one is left, and the surviving young begin to learn to speak.  This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
+
+Personality:
+Extreme territoriality is the Raaagh's most distinctive trait- woven throughout their daily lives and culture.  Related to that is a preference for the familiar and known. Curiosity is minimal, which probably explains their stone age technology.
+
+Homeworld:
+The Raaagh homeworld is of the Terran type.  Sea and land are more or less evenly spread out, with the largest continent coverly only 4% of planet's surface.  The many small continents and large islands encourage a territorial attitude.
+
+Reason for Staying:
+There's not bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries.  The genetic compulsion of a Raaagh is to guard his territory with his life, and when possible to expand into adjacent land.  Abandoning one's territory is inconcievable, and a Raaagh forcibly removed from his territory goes violently insane.
+'''
+
 
 SP_BEIGEGOO
 Beige Goo
 SP_BEIGEGOO_DESC
 '''Insane, intensely private, planet-engulfing nanite swarm.
+Prefers Radiated planets.
 
-Can only produce Food and Industry.'''
+[[NO_FARMING]]
+[[NO_MINING]]
+[[GREAT_INDUSTRY]]
+[[NO_RESEARCH]]
+        
+[[GREAT_GROUND_TROOPS]]
+        
+[[NO_FOOD_USE]]
+
+The entire planet is covered in a beige haze of Nanites. It is unknown wheather they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials.  However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
+'''
+
+SP_SILEXIAN
+Silexian
+SP_SILEXIAN_DESC
+'''Gleaming gardener robots, left on their own.
+Prefer Terran planets.
+
+[[GREAT_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[TERRIBLE_RESEARCH]]
+        
+[[AVERAGE_GROUND_TROOPS]]
+'''
 
 SP_KOBUNTURA
 Kobuntura
 SP_KOBUNTURA_DESC
-Sentient magnetic dust formations with a fascination for building and construction.
+'''Sentient magnetic dust formations with a fascination for building and construction.
+Prefer Barren planets.
+
+[[TERRIBLE_FARMING]]
+[[GREAT_MINING]]
+[[GREAT_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+        
+[[TERRIBLE_GROUND_TROOPS]]
+        
+[[NO_FOOD_USE]]
+'''
 
 
 SP_UGMORRS
 Ugmorrs
 SP_UGMORRS_DESC
-Lava-dwelling yeast piles, which form temporary golems.
+'''Lava-dwelling yeast piles, which form temporary golems.
+Prefer Inferno planets.
+
+[[TERRIBLE_FARMING]]
+[[AVERAGE_MINING]]
+[[GREAT_INDUSTRY]]
+[[TERRIBLE_RESEARCH]]
+        
+[[GREAT_GROUND_TROOPS]]
+'''
 
 SP_GISGUFGTHRIM
 '''Gis Guf G'thrim'''
 SP_GISGUFGTHRIM_DESC
-Shelled herbivores that live off a singular planets-sized colonial gel.
+'''Shelled herbivores that live off a singular planets-sized colonial gel.
+Prefer Toxic planets.
+
+[[GREAT_FARMING]]
+[[AVERAGE_MINING]]
+[[TERRIBLE_INDUSTRY]]
+[[GREAT_RESEARCH]]
+
+[[TERRIBLE_GROUND_TROOPS]]
+
+Most of the equatorial region of the Gis Guf G'thrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis lifecycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
+'''
 
 SP_HIDDENGARDENER
 Hidden Gardener
 SP_HIDDENGARDENER_DESC
 '''A sapient fungal network that tends it's plant food from beneath.
+Prefers Terran planets
 
-Can only produce food.
+[[GREAT_STEALTH]]
+
+[[ULTIMATE_FARMING]]
+[[NO_MINING]]
+[[NO_INDUSTRY]]
+[[NO_RESEARCH]]
+
+[[NO_GROUND_TROOPS]]
 
 The Hidden Gardener is a massive distributed fungal intelligence lying just beneath the surface. Each individual covers many square kms. It's actions and thoughts are slow. Various sensory nodes are scattered about by which it can monitor the weather and the growth of its garden. A Hidden Gardener by means of enzymes, the encapsulation and releases of seeds, and the control of water tends it's garden to produce precisely the rotting plant matter it needs to survive.
 
@@ -2870,7 +3024,9 @@ Fungal type life-forms seldom have much use for brains of any type, but the Gard
 
 Their terran homeworld is an eerily park-like place with plants arranged with unnatural precision, but no other signs of habitation.
 
-The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet. And since the hidden gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.'''
+The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet. And since the hidden gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.
+'''
+
 
 SP_ABADDONNIANS
 Abaddonnians
@@ -6953,7 +7109,7 @@ A formidable heavy-weight space monster.
 
 
 NO_FOOD_USE
-'''doesn't need food'''
+'''Doesn't need Food'''
 
 
 NO_FARMING
@@ -7015,6 +7171,44 @@ GREAT_RESEARCH
 
 ULTIMATE_RESEARCH
 '''Ultimate Research: Research Point production 300%'''
+
+
+NO_GROUND_TROOPS
+'''No Ground Troops'''
+
+TERRIBLE_GROUND_TROOPS
+'''Terrible Ground Troops: 1 unit.'''
+
+AVERAGE_GROUND_TROOPS
+'''Average Ground Troops: 5 units.'''
+
+GREAT_GROUND_TROOPS
+'''Great Ground Troops: 20 units.'''
+
+ULTIMATE_GROUND_TROOPS
+'''Ultimate Ground Troops: 50 units.'''
+
+TERRIBLE_DETECTION
+'''Ultimate Detection: -10 malus.'''
+
+GREAT_DETECTION
+'''Great Detection: +25 bonus.'''
+
+ULTIMATE_DETECTION
+'''Ultimate Detection: +50 bonus.'''
+
+GREAT_STEALTH
+'''Great Stealth: +15 bonus.'''
+
+ULTIMATE_STEALTH
+'''Ultimate Stealth: +25 bonus.'''
+
+
+
+
+
+
+
 
 
 
