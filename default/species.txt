@@ -960,7 +960,6 @@ Species
     name = "SP_ABADDONNIANS"
     description = "SP_ABADDONNIANS_DESC"
     CanProduceShips
-    CanColonize
     
     foci = [
         [[HAS_FARMING_FOCUS]]
@@ -976,11 +975,11 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[TERRIBLE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -1008,11 +1007,11 @@ Species
         [[GREAT_INDUSTRY]]
         [[GREAT_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[AVERAGE_GROUND_TROOPS]]
         
         [[NO_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -1043,16 +1042,16 @@ Species
             activation = Source
             effects = SetDetection Value + 1600   // Near Omniscient Detection
         
-        [[AVERAGE_FARMING]]
-        [[AVERAGE_MINING]]
-        [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
+        [[GREAT_FARMING]]
+        [[GREAT_MINING]]
+        [[GREAT_INDUSTRY]]
+        [[GREAT_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
+        [[GREAT_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     environments = [
@@ -1090,11 +1089,11 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[AVERAGE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     environments = [

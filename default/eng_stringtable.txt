@@ -3031,12 +3031,32 @@ The wide ranging, delicate fungi-nets are too large and integrated into the soil
 SP_ABADDONNIANS
 Abaddonnians
 SP_ABADDONNIANS_DESC
-A race of cave dwelling genrally decent folk living in permanent slavery to an overprotective computer they created. 
+'''A race of cave dwelling genrally decent folk living in permanent slavery to an overprotective computer they created. 
+Prefers Inferno planets.
+
+[[GREAT_FARMING]]
+[[GREAT_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[TERRIBLE_RESEARCH]]
+
+[[TERRIBLE_GROUND_TROOPS]]
+'''
+
 
 SP_ACIREMA
 Acirema
 SP_ACIREMA_DESC
 '''A race with nearly limitless power, that can't survive in this universe.
+Prefers Radiated planets.
+
+[[TERRIBLE_FARMING]]
+[[AVERAGE_MINING]]
+[[GREAT_INDUSTRY]]
+[[GREAT_RESEARCH]]
+
+[[AVERAGE_GROUND_TROOPS]]
+
+[[NO_FOOD_USE]]
 
 Description
 An Acirem is a 10-30 m ellipsoidal energy beings with large (30-100m) ''wings''. As they age they tend to accumulate material from around them developing a dusty and eventually rocky appearance (still maintaining the visible energy flows through their body and the gaps). Most Acirema live in a universe where the physical constants are slightly different, and there is only one place where they can get through to our universe, on their "Homeworld" of Portal. However, upon doing that they immediately begin to 'age' differently than in their own universe. Acirema cannot survive more than a few fractions of a galactic cycle in this universe. So an Acirem rarely spends much time before crossing back into their own universe.
@@ -3051,16 +3071,33 @@ Portal is a Radiated world close to an unusually bright Blue Giant Star, with a 
 Reason for staying
 They can't stay here long enough to actually move to another planet and still survive.'''
 
-SP_TEST
-Testing Guinea Pig
-SP_TEST_DESC
-'''Try all your experimental scripting on this guy, he'll appear a lot.'''
-
 
 SP_SUPER_TEST
 Super Testers
 SP_SUPER_TEST_DESC
-'''Super Testers are unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets.'''
+'''Super Testers are unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets.
+
+[[GREAT_FARMING]]
+[[GREAT_MINING]]
+[[GREAT_INDUSTRY]]
+[[GREAT_RESEARCH]]
+        
+[[GREAT_GROUND_TROOPS]]
+'''
+
+SP_TEST
+Testing Guinea Pig
+SP_TEST_DESC
+'''Try all your experimental scripting on this guy, he'll appear a lot.
+
+[[AVERAGE_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+
+[[AVERAGE_GROUND_TROOPS]]
+'''
+
 
 
 ####################
