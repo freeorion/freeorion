@@ -251,134 +251,45 @@ ShipDesign
     model = "seed"
 
 ShipDesign
-    name = "SM_CLOUD_1"
-    description = "SM_CLOUD_1_DESC"
+    name = "SM_CLOUD"
+    description = "SM_CLOUD_DESC"
     hull = "SH_NEBULOUS_BODY"
     parts = [
         "SR_WEAPON_13"
-        "SP_CLOUD_1"
+        "SP_CLOUD"
     ]
     icon = ""
     model = "seed"
 
 ShipDesign
-    name = "SM_CLOUD_2"
-    description = "SM_CLOUD_2_DESC"
+    name = "SM_ASH"
+    description = "SM_ASH_DESC"
     hull = "SH_NEBULOUS_BODY"
     parts = [
         "SR_WEAPON_13"
-        "SP_CLOUD_2"
+        "SP_ASH"
     ]
     icon = ""
     model = "seed"
 
 ShipDesign
-    name = "SM_CLOUD_3"
-    description = "SM_CLOUD_3_DESC"
+    name = "SM_DIM"
+    description = "SM_DIM_DESC"
     hull = "SH_NEBULOUS_BODY"
     parts = [
         "SR_WEAPON_13"
-        "SP_CLOUD_3"
+        "SP_DIM"
     ]
     icon = ""
     model = "seed"
 
 ShipDesign
-    name = "SM_ASH_1"
-    description = "SM_ASH_1_DESC"
+    name = "SM_VOID"
+    description = "SM_VOID_DESC"
     hull = "SH_NEBULOUS_BODY"
     parts = [
         "SR_WEAPON_13"
-        "SP_ASH_1"
+        "SP_VOID"
     ]
     icon = ""
     model = "seed"
-
-ShipDesign
-    name = "SM_ASH_2"
-    description = "SM_ASH_2_DESC"
-    hull = "SH_NEBULOUS_BODY"
-    parts = [
-        "SR_WEAPON_13"
-        "SP_ASH_2"
-    ]
-    icon = ""
-    model = "seed"
-
-ShipDesign
-    name = "SM_ASH_3"
-    description = "SM_ASH_3_DESC"
-    hull = "SH_NEBULOUS_BODY"
-    parts = [
-        "SR_WEAPON_13"
-        "SP_ASH_3"
-    ]
-    icon = ""
-    model = "seed"
-
-ShipDesign
-    name = "SM_DIM_1"
-    description = "SM_DIM_1_DESC"
-    hull = "SH_NEBULOUS_BODY"
-    parts = [
-        "SR_WEAPON_13"
-        "SP_DIM_1"
-    ]
-    icon = ""
-    model = "seed"
-
-ShipDesign
-    name = "SM_DIM_2"
-    description = "SM_DIM_2_DESC"
-    hull = "SH_NEBULOUS_BODY"
-    parts = [
-        "SR_WEAPON_13"
-        "SP_DIM_2"
-    ]
-    icon = ""
-    model = "seed"
-
-ShipDesign
-    name = "SM_DIM_3"
-    description = "SM_DIM_3_DESC"
-    hull = "SH_NEBULOUS_BODY"
-    parts = [
-        "SR_WEAPON_13"
-        "SP_DIM_3"
-    ]
-    icon = ""
-    model = "seed"
-
-ShipDesign
-    name = "SM_VOID_1"
-    description = "SM_VOID_1_DESC"
-    hull = "SH_NEBULOUS_BODY"
-    parts = [
-        "SR_WEAPON_13"
-        "SP_VOID_1"
-    ]
-    icon = ""
-    model = "seed"
-
-ShipDesign
-    name = "SM_VOID_2"
-    description = "SM_VOID_2_DESC"
-    hull = "SH_NEBULOUS_BODY"
-    parts = [
-        "SR_WEAPON_13"
-        "SP_VOID_2"
-    ]
-    icon = ""
-    model = "seed"
-
-ShipDesign
-    name = "SM_VOID_3"
-    description = "SM_VOID_3_DESC"
-    hull = "SH_NEBULOUS_BODY"
-    parts = [
-        "SR_WEAPON_13"
-        "SP_VOID_3"
-    ]
-    icon = ""
-    model = "seed"
-

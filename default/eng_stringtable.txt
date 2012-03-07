@@ -380,41 +380,25 @@ Large Juggernaut
 SM_JUGGERNAUT_3_DESC
 A formidable heavy-weight space monster.
 
-SM_CLOUD_1
+SM_CLOUD
 Space Cloud
+SM_CLOUD_DESC
+A nebulous creature that adds stealth to random planets.
 
-SM_CLOUD_2
-Space Cloud
-
-SM_CLOUD_3
-Space Cloud
-
-SM_ASH_1
+SM_ASH
 Space Volcano
+SM_ASH_DESC
+A nebulous creature that adds stealth to random planets.
 
-SM_ASH_2
-Space Volcano
-
-SM_ASH_3
-Space Volcano
-
-SM_DIM_1
+SM_DIM
 Dimensional Drifter
+SM_DIM_DESC
+A nebulous creature that adds stealth to random planets.
 
-SM_DIM_2
-Dimensional Drifter
-
-SM_DIM_3
-Dimensional Drifter
-
-SM_VOID_1
+SM_VOID
 Behemoth of the Void
-
-SM_VOID_2
-Behemoth of the Void
-
-SM_VOID_3
-Behemoth of the Void
+SM_VOID_DESC
+A nebulous creature that adds stealth to random planets.
 
 ##############################
 # Predefined Starting Fleets #
@@ -3060,8 +3044,7 @@ Fungal-type life-forms seldom have much use for brains of any type, but the Gard
 
 Their terran homeworld is an eerily park-like place with plants arranged with unnatural precision, but no other signs of habitation.
 
-The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet, and since the Hidden Gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.
-'''
+The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet, and since the Hidden Gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.'''
 
 
 SP_ABADDONNIANS
@@ -3236,7 +3219,6 @@ This planet has a natural satellite, the orbital period of which is in 1:1 reson
 
 COMPUTRONIUM_SPECIAL
 Computronium Moon
-
 COMPUTRONIUM_SPECIAL_DESC
 ''' All research-focused planets in the system receive a large population-based bonus.
 
@@ -3244,7 +3226,6 @@ Left by some vanished civilization, the entire moon - from surface to core - is 
 
 COMPUTRONIUM_BROKEN_SPECIAL
 Damaged Computronium Moon
-
 COMPUTRONIUM_BROKEN_SPECIAL_DESC
 '''All research-focused planets in the system receive a population-based bonus.
 
@@ -3252,98 +3233,42 @@ Left by some vanished civilization, the entire moon - from surface to core - is 
 
 ABANDONED_COLONY_SPECIAL
 Abandoned Colony
-
 ABANDONED_COLONY_SPECIAL_DESC
 An old abandoned colony. Some of the infrastructure should still be useful.
 
 KRAKEN_NEST_SPECIAL
 Kraken Nest
-
 KRAKEN_NEST_SPECIAL_DESC
 At some point young kraken will rise from this place. With the proper tech, these mega-fauna could be domesticated.
 
 SNOWFLAKE_NEST_SPECIAL
 Snowflake Nest
-
 SNOWFLAKE_NEST_SPECIAL_DESC
 At some point young snowflakes will rise from this place. With the proper tech, these mega-fauna could be domesticated.
 
 JUGGERNAUT_NEST_SPECIAL
 Juggernaut Nest
-
 JUGGERNAUT_NEST_SPECIAL_DESC
 At some point young juggernauts will rise from this place. With the proper tech, these mega-fauna could be domesticated.
 
 CLOUD_COVER_SPECIAL
 High Cloud Cover
-
 CLOUD_COVER_SPECIAL_DESC
-This planet has unusually dense cloud cover, increasing its stealth by 50.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
-
-CLOUD_COVER_PLUS_SPECIAL
-High Cloud Cover
-
-CLOUD_COVER_PLUS_SPECIAL_DESC
-This planet has unusually dense cloud cover, increasing its stealth by 75.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
-
-CLOUD_COVER_PLUS_PLUS_SPECIAL
-High Cloud Cover
-
-CLOUD_COVER_PLUS_PLUS_SPECIAL_DESC
 This planet has unusually dense cloud cover, increasing its stealth by 100.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
 
 VOLCANIC_ASH_SPECIAL
 Volcanic Ash
-
 VOLCANIC_ASH_SPECIAL_DESC
-This planet is surrounded by volcanic ash, increasing its stealth by 200.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
-
-VOLCANIC_ASH_PLUS_SPECIAL
-Volcanic Ash
-
-VOLCANIC_ASH_PLUS_SPECIAL_DESC
-This planet is surrounded by volcanic ash, increasing its stealth by 225.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
-
-VOLCANIC_ASH_PLUS_PLUS_SPECIAL
-Volcanic Ash
-
-VOLCANIC_ASH_PLUS_PLUS_SPECIAL_DESC
 This planet is surrounded by volcanic ash, increasing its stealth by 250.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
 
 DIM_RIFT_SPECIAL
 Dimensional Rift
-
 DIM_RIFT_SPECIAL_DESC
-This planet is partially concealed by a dimentional rift, increasing its stealth by 400.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
-
-DIM_RIFT_PLUS_SPECIAL
-Dimensional Rift
-
-DIM_RIFT_PLUS_SPECIAL_DESC
-This planet is partially concealed by a dimentional rift, increasing its stealth by 425.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
-
-DIM_RIFT_PLUS_PLUS_SPECIAL
-Dimensional Rift
-
-DIM_RIFT_PLUS_PLUS_SPECIAL_DESC
 This planet is partially concealed by a dimentional rift, increasing its stealth by 450.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
 
 VOID_SPECIAL
 Void Metamorphisis
-
 VOID_SPECIAL_DESC
-This planet exists partially in this universe and partially in the void, increasing its stealth by 650.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
-
-VOID_PLUS_SPECIAL
-Void Metamorphisis
-
-VOID_PLUS_SPECIAL_DESC
-This planet exists partially in this universe and partially in the void, increasing its stealth by 675.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
-
-VOID_PLUS_PLUS_SPECIAL
-Void Metamorphisis
-
-VOID_PLUS_PLUS_SPECIAL_DESC
 This planet exists partially in this universe and partially in the void, increasing its stealth by 700.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
 
 #######################
@@ -6890,40 +6815,16 @@ Distortion Modulator
 SP_DISTORTION_MODULATOR_DESC
 Distinguishes natural geometric irregularities from enemy ships by manipulating space-time distortions caused by all objects in the vicinity. All objects within 0 uus have max stealth reduced by 20. The effect is non-stacking.
 
-SP_CLOUD_1
+SP_CLOUD
 Cloud Generator
 
-SP_CLOUD_2
-Cloud Generator
-
-SP_CLOUD_3
-Cloud Generator
-
-SP_ASH_1
+SP_ASH
 Ash Generator
 
-SP_ASH_2
-Ash Generator
-
-SP_ASH_3
-Ash Generator
-
-SP_DIM_1
+SP_DIM
 Dimensional Cleaver
 
-SP_DIM_2
-Dimensional Cleaver
-
-SP_DIM_3
-Dimensional Cleaver
-
-SP_VOID_1
-Void Eruptor
-
-SP_VOID_2
-Void Eruptor
-
-SP_VOID_3
+SP_VOID
 Void Eruptor
 
 ##############
@@ -7292,10 +7193,11 @@ A formidable heavy-weight space monster.
 
 SH_NEBULOUS_BODY
 Nebulous Body
-SH_NEBULOUS_BODY_DESC
-A Nebulous Body
 
 
+#################
+# Species Picks #
+#################
 
 NO_FOOD_USE
 '''Doesn't need Food'''
@@ -7387,10 +7289,10 @@ ULTIMATE_DETECTION
 '''Ultimate Detection: +50 bonus.'''
 
 GREAT_STEALTH
-'''Great Stealth: +25 bonus.'''
+'''Great Stealth: +15 bonus.'''
 
 ULTIMATE_STEALTH
-'''Ultimate Stealth: +50 bonus.'''
+'''Ultimate Stealth: +25 bonus.'''
 
 
 

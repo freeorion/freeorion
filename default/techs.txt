@@ -3137,7 +3137,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 240
     researchturns = 1
-    // prerequisites = "SHP_NAVIGATION"
+    prerequisites = "SHP_NAVIGATION"
     unlock = Item type = ShipPart name = "DT_ACTIVE_RADAR"
     effectsgroups =
         EffectsGroup
@@ -3215,7 +3215,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 360
     researchturns = 2
-    // prerequisites = "SHP_INTSTEL_LOG"
+    prerequisites = "SHP_INTSTEL_LOG"
     unlock = Item type = ShipPart name = "DT_NEUTRON_SCANNER"
     effectsgroups =
         EffectsGroup
@@ -3473,7 +3473,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 750
     researchturns = 3
-    // prerequisites = "SHP_ADV_NAVIGATION"
+    prerequisites = "SHP_ADV_NAVIGATION"
     unlock = Item type = ShipPart name = "DT_SENSORS"
     effectsgroups =
         EffectsGroup

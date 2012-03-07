@@ -600,8 +600,8 @@ Part
     graphic = ""
 
 Part
-    name = "SP_CLOUD_1"
-    description = "SP_CLOUD_1"
+    name = "SP_CLOUD"
+    description = "SP_CLOUD"
     class = Fuel
     capacity = 0
     buildcost = 1
@@ -619,79 +619,19 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Turn low = 75
-            effects = CreateShip "SM_ASH_1" Source.Owner
+            activation = Number low = 1 OwnerHasTech "SHP_ABSORPTION_FIELD"
+            effects = CreateShip "SM_ASH" Source.Owner
 
         EffectsGroup
             scope = Source
-            activation = Turn low = 75
+            activation = Number low = 1 OwnerHasTech "SHP_ABSORPTION_FIELD"
             effects = Destroy
     ]
     graphic = ""
 
 Part
-    name = "SP_CLOUD_2"
-    description = "SP_CLOUD_2"
-    class = Fuel
-    capacity = 0
-    buildcost = 1
-    buildtime = 1
-    mountableSlotTypes = Internal
-    location = All
-    effectsgroups = [
-        EffectsGroup
-            scope = NumberOf 1 And [
-                Planet
-                ContainedBy Contains Source
-            ]
-            activation = Random 0.15
-            effects = AddSpecial "CLOUD_COVER_PLUS_SPECIAL"
-
-        EffectsGroup
-            scope = Source
-            activation = Turn low = 75
-            effects = CreateShip "SM_ASH_2" Source.Owner
-
-        EffectsGroup
-            scope = Source
-            activation = Turn low = 75
-            effects = Destroy
-    ]
-    graphic = ""
-
-Part
-    name = "SP_CLOUD_3"
-    description = "SP_CLOUD_3"
-    class = Fuel
-    capacity = 0
-    buildcost = 1
-    buildtime = 1
-    mountableSlotTypes = Internal
-    location = All
-    effectsgroups = [
-        EffectsGroup
-            scope = NumberOf 1 And [
-                Planet
-                ContainedBy Contains Source
-            ]
-            activation = Random 0.15
-            effects = AddSpecial "CLOUD_COVER_PLUS_PLUS_SPECIAL"
-
-        EffectsGroup
-            scope = Source
-            activation = Turn low = 75
-            effects = CreateShip "SM_ASH_3" Source.Owner
-
-        EffectsGroup
-            scope = Source
-            activation = Turn low = 75
-            effects = Destroy
-    ]
-    graphic = ""
-
-Part
-    name = "SP_ASH_1"
-    description = "SP_ASH_1"
+    name = "SP_ASH"
+    description = "SP_ASH"
     class = Fuel
     capacity = 0
     buildcost = 1
@@ -709,20 +649,17 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Turn low = 175
-            effects = CreateShip "SM_DIM_1" Source.Owner
+            activation = Number low = 1 OwnerHasTech "SHP_DIM_CLOAK"
+            effects = CreateShip "SM_DIM" Source.Owner
 
         EffectsGroup
             scope = Source
-            activation = Turn low = 175
+            activation = Number low = 1 OwnerHasTech "SHP_DIM_CLOAK"
             effects = Destroy
 
         EffectsGroup
             scope = HasSpecial "CLOUD_COVER_SPECIAL"
-            activation = And [
-                Turn low = 75 high = 126
-                Random -(CurrentTurn - 125)/50.0
-            ]
+            activation = Source
             effects = [
                 RemoveSpecial "CLOUD_COVER_SPECIAL"
                 AddSpecial "VOLCANIC_ASH_SPECIAL"
@@ -731,90 +668,8 @@ Part
     graphic = ""
 
 Part
-    name = "SP_ASH_2"
-    description = "SP_ASH_2"
-    class = Fuel
-    capacity = 0
-    buildcost = 1
-    buildtime = 1
-    mountableSlotTypes = Internal
-    location = All
-    effectsgroups = [
-        EffectsGroup
-            scope = NumberOf 1 And [
-                Planet
-                ContainedBy Contains Source
-            ]
-            activation = Random 0.15
-            effects = AddSpecial "VOLCANIC_ASH_PLUS_SPECIAL"
-
-        EffectsGroup
-            scope = Source
-            activation = Turn low = 175
-            effects = CreateShip "SM_DIM_2" Source.Owner
-
-        EffectsGroup
-            scope = Source
-            activation = Turn low = 175
-            effects = Destroy
-
-        EffectsGroup
-            scope = HasSpecial "CLOUD_COVER_PLUS_SPECIAL"
-            activation = And [
-                Turn low = 75 high = 126
-                Random -(CurrentTurn - 125)/50.0
-            ]
-            effects = [
-                RemoveSpecial "CLOUD_COVER_PLUS_SPECIAL"
-                AddSpecial "VOLCANIC_ASH_PLUS_SPECIAL"
-            ]
-    ]
-    graphic = ""
-
-Part
-    name = "SP_ASH_3"
-    description = "SP_ASH_3"
-    class = Fuel
-    capacity = 0
-    buildcost = 1
-    buildtime = 1
-    mountableSlotTypes = Internal
-    location = All
-    effectsgroups = [
-        EffectsGroup
-            scope = NumberOf 1 And [
-                Planet
-                ContainedBy Contains Source
-            ]
-            activation = Random 0.15
-            effects = AddSpecial "VOLCANIC_ASH_PLUS_PLUS_SPECIAL"
-
-        EffectsGroup
-            scope = Source
-            activation = Turn low = 175
-            effects = CreateShip "SM_DIM_3" Source.Owner
-
-        EffectsGroup
-            scope = Source
-            activation = Turn low = 175
-            effects = Destroy
-
-        EffectsGroup
-            scope = HasSpecial "CLOUD_COVER_PLUS_PLUS_SPECIAL"
-            activation = And [
-                Turn low = 75 high = 126
-                Random -(CurrentTurn - 125)/50.0
-            ]
-            effects = [
-                RemoveSpecial "CLOUD_COVER_PLUS_PLUS_SPECIAL"
-                AddSpecial "VOLCANIC_ASH_PLUS_PLUS_SPECIAL"
-            ]
-    ]
-    graphic = ""
-
-Part
-    name = "SP_DIM_1"
-    description = "SP_DIM_1"
+    name = "SP_DIM"
+    description = "SP_DIM"
     class = Fuel
     capacity = 0
     buildcost = 1
@@ -832,112 +687,35 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Turn low = 275
-            effects = CreateShip "SM_VOID_1" Source.Owner
+            activation = Number low = 1 OwnerHasTech "SHP_PHASING_CLOAK"
+            effects = CreateShip "SM_VOID" Source.Owner
 
         EffectsGroup
             scope = Source
-            activation = Turn low = 275
+            activation = Number low = 1 OwnerHasTech "SHP_PHASING_CLOAK"
             effects = Destroy
 
         EffectsGroup
             scope = HasSpecial "VOLCANIC_ASH_SPECIAL"
-            activation = And [
-                Turn low = 175 high = 226
-                Random -(CurrentTurn - 225)/50.0
-            ]
+            activation = Source
             effects = [
                 RemoveSpecial "VOLCANIC_ASH_SPECIAL"
+                AddSpecial "DIM_RIFT_SPECIAL"
+            ]
+
+        EffectsGroup
+            scope = HasSpecial "CLOUD_COVER_SPECIAL"
+            activation = Source
+            effects = [
+                RemoveSpecial "CLOUD_COVER_SPECIAL"
                 AddSpecial "DIM_RIFT_SPECIAL"
             ]
     ]
     graphic = ""
 
 Part
-    name = "SP_DIM_2"
-    description = "SP_DIM_2"
-    class = Fuel
-    capacity = 0
-    buildcost = 1
-    buildtime = 1
-    mountableSlotTypes = Internal
-    location = All
-    effectsgroups = [
-        EffectsGroup
-            scope = NumberOf 1 And [
-                Planet
-                ContainedBy Contains Source
-            ]
-            activation = Random 0.15
-            effects = AddSpecial "DIM_RIFT_PLUS_SPECIAL"
-
-        EffectsGroup
-            scope = Source
-            activation = Turn low = 275
-            effects = CreateShip "SM_VOID_2" Source.Owner
-
-        EffectsGroup
-            scope = Source
-            activation = Turn low = 275
-            effects = Destroy
-
-        EffectsGroup
-            scope = HasSpecial "VOLCANIC_ASH_PLUS_SPECIAL"
-            activation = And [
-                Turn low = 175 high = 226
-                Random -(CurrentTurn - 225)/50.0
-            ]
-            effects = [
-                RemoveSpecial "VOLCANIC_ASH_PLUS_SPECIAL"
-                AddSpecial "DIM_RIFT_PLUS_SPECIAL"
-            ]
-    ]
-    graphic = ""
-
-Part
-    name = "SP_DIM_3"
-    description = "SP_DIM_3"
-    class = Fuel
-    capacity = 0
-    buildcost = 1
-    buildtime = 1
-    mountableSlotTypes = Internal
-    location = All
-    effectsgroups = [
-        EffectsGroup
-            scope = NumberOf 1 And [
-                Planet
-                ContainedBy Contains Source
-            ]
-            activation = Random 0.15
-            effects = AddSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
-
-        EffectsGroup
-            scope = Source
-            activation = Turn low = 275
-            effects = CreateShip "SM_VOID_3" Source.Owner
-
-        EffectsGroup
-            scope = Source
-            activation = Turn low = 275
-            effects = Destroy
-
-        EffectsGroup
-            scope = HasSpecial "VOLCANIC_ASH_PLUS_PLUS_SPECIAL"
-            activation = And [
-                Turn low = 175 high = 226
-                Random -(CurrentTurn - 225)/50.0
-            ]
-            effects = [
-                RemoveSpecial "VOLCANIC_ASH_PLUS_PLUS_SPECIAL"
-                AddSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
-            ]
-    ]
-    graphic = ""
-
-Part
-    name = "SP_VOID_1"
-    description = "SP_VOID_1"
+    name = "SP_VOID"
+    description = "SP_VOID"
     class = Fuel
     capacity = 0
     buildcost = 1
@@ -955,75 +733,26 @@ Part
 
         EffectsGroup
             scope = HasSpecial "DIM_RIFT_SPECIAL"
-            activation = And [
-                Turn low = 275 high = 326
-                Random -(CurrentTurn - 325)/50.0
-            ]
+            activation = Source
             effects = [
                 RemoveSpecial "DIM_RIFT_SPECIAL"
                 AddSpecial "VOID_SPECIAL"
             ]
-    ]
-    graphic = ""
-
-Part
-    name = "SP_VOID_2"
-    description = "SP_VOID_2"
-    class = Fuel
-    capacity = 0
-    buildcost = 1
-    buildtime = 1
-    mountableSlotTypes = Internal
-    location = All
-    effectsgroups = [
-        EffectsGroup
-            scope = NumberOf 1 And [
-                Planet
-                ContainedBy Contains Source
-            ]
-            activation = Random 0.15
-            effects = AddSpecial "VOID_PLUS_SPECIAL"
 
         EffectsGroup
-            scope = HasSpecial "DIM_RIFT_PLUS_SPECIAL"
-            activation = And [
-                Turn low = 275 high = 326
-                Random -(CurrentTurn - 325)/50.0
-            ]
+            scope = HasSpecial "VOLCANIC_ASH_SPECIAL"
+            activation = Source
             effects = [
-                RemoveSpecial "DIM_RIFT_PLUS_SPECIAL"
-                AddSpecial "VOID_PLUS_SPECIAL"
+                RemoveSpecial "VOLCANIC_ASH_SPECIAL"
+                AddSpecial "VOID_SPECIAL"
             ]
-    ]
-    graphic = ""
-
-Part
-    name = "SP_VOID_3"
-    description = "SP_VOID_3"
-    class = Fuel
-    capacity = 0
-    buildcost = 1
-    buildtime = 1
-    mountableSlotTypes = Internal
-    location = All
-    effectsgroups = [
-        EffectsGroup
-            scope = NumberOf 1 And [
-                Planet
-                ContainedBy Contains Source
-            ]
-            activation = Random 0.15
-            effects = AddSpecial "VOID_PLUS_PLUS_SPECIAL"
 
         EffectsGroup
-            scope = HasSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
-            activation = And [
-                Turn low = 275 high = 326
-                Random -(CurrentTurn - 325)/50.0
-            ]
+            scope = HasSpecial "CLOUD_COVER_SPECIAL"
+            activation = Source
             effects = [
-                RemoveSpecial "DIM_RIFT_PLUS_PLUS_SPECIAL"
-                AddSpecial "VOID_PLUS_PLUS_SPECIAL"
+                RemoveSpecial "CLOUD_COVER_SPECIAL"
+                AddSpecial "VOID_SPECIAL"
             ]
     ]
     graphic = ""
@@ -1387,4 +1116,3 @@ Part
     ]
     graphic = ""
 */
-
