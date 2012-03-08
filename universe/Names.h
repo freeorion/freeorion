@@ -85,7 +85,9 @@
     (Environment)                               \
     (Environments)                              \
     (ExploredByEmpire)                          \
-    (External)                                  \
+    (External)
+
+#define NAMES_SEQ_2                             \
     (Farming)                                   \
     (Fighters)                                  \
     (FighterType)                               \
@@ -153,7 +155,9 @@
     (MonsterFleet)                              \
     (MountableSlotTypes)                        \
     (MoveInOrbit)                               \
-    (MoveTo)                                    \
+    (MoveTo)
+
+#define NAMES_SEQ_3                             \
     (Name)                                      \
     (Neutron)                                   \
     (NextBetterPlanetType)                      \
@@ -182,9 +186,7 @@
     (OwnerTradeStockpile)                       \
     (Parameters)                                \
     (Part)                                      \
-    (PartClass)
-
-#define NAMES_SEQ_2                             \
+    (PartClass)                                 \
     (PartName)                                  \
     (Parts)                                     \
     (Planet)                                    \
@@ -226,7 +228,9 @@
     (Retain)                                    \
     (RMS)                                       \
     (ROF)                                       \
-    (RootCandidate)                             \
+    (RootCandidate)
+
+#define NAMES_SEQ_4                             \
     (Scope)                                     \
     (SetAntiFighterDamage)                      \
     (SetAntiShipDamage)                         \
@@ -256,6 +260,7 @@
     (SetMaxStructure)                           \
     (SetMaxTroops)                              \
     (SetMining)                                 \
+    (SetOverlayTexture)                         \
     (SetOwner)                                  \
     (SetPlanetSize)                             \
     (SetPlanetType)                             \
@@ -279,6 +284,7 @@
     (SetTargetPopulation)                       \
     (SetTargetResearch)                         \
     (SetTargetTrade)                            \
+    (SetTexture)                                \
     (SetTrade)                                  \
     (SetTroops)                                 \
     (Shield)                                    \
@@ -357,6 +363,8 @@
 #define DECLARE_NAME(r, _, elem) extern adobe::aggregate_name_t BOOST_PP_CAT(elem, _name);
 BOOST_PP_SEQ_FOR_EACH(DECLARE_NAME, _, NAMES_SEQ_1)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_NAME, _, NAMES_SEQ_2)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_NAME, _, NAMES_SEQ_3)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_NAME, _, NAMES_SEQ_4)
 #undef DECLARE_NAME
 
 #endif

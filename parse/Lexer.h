@@ -56,6 +56,8 @@ struct lexer :
 #define NAME_TOKEN(r, _, name) boost::spirit::lex::token_def<adobe::name_t> BOOST_PP_CAT(name, _);
     BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_1)
     BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_2)
+    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_3)
+    BOOST_PP_SEQ_FOR_EACH(NAME_TOKEN, _, NAMES_SEQ_4)
 #undef NAME_TOKEN
     //@}
 
