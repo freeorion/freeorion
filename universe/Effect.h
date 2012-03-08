@@ -48,6 +48,7 @@ namespace Effect {
     class Victory;
     class GenerateSitRepMessage;
     class SetDestination;
+    class SetOverlayTexture;
 }
 namespace ValueRef {
     template <class T>
@@ -65,11 +66,9 @@ namespace ValueRef {
   * this by considering the "universe" containing only the source object. If
   * the source object meets the activation condition, the EffectsGroup will be
   * active in the current turn. */
-class Effect::EffectsGroup
-{
+class Effect::EffectsGroup {
 public:
-    struct Description
-    {
+    struct Description {
         std::string scope_description;
         std::string activation_description;
         std::vector<std::string> effect_descriptions;
@@ -131,8 +130,7 @@ std::string EffectsDescription(const std::vector<boost::shared_ptr<const Effect:
   * attached) and the target object are both required.  Note that this means
   * that ValueRefs contained within Effects can refer to values in either the
   * source or target objects. */
-class Effect::EffectBase
-{
+class Effect::EffectBase {
 public:
     virtual ~EffectBase();
 
@@ -150,8 +148,7 @@ private:
   * is set if \a max == true; otherwise the current value of the meter is set.
   * If the target of the Effect does not have the requested meter, nothing is
   * done. */
-class Effect::SetMeter : public Effect::EffectBase
-{
+class Effect::SetMeter : public Effect::EffectBase {
 public:
     SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value);
     virtual ~SetMeter();
@@ -176,8 +173,7 @@ private:
   * affected (this is not the same at the slot type in which the part is
   * actually located, as a part might be mountable in both types, and
   * located in a different type than specified, and would be matched). */
-class Effect::SetShipPartMeter : public Effect::EffectBase
-{
+class Effect::SetShipPartMeter : public Effect::EffectBase {
 public:
     /** Affects the \a meter_type meters that belong to all parts of class \a
         part_class.  \a part_class must specify a class of parts for which
@@ -223,11 +219,11 @@ private:
 /** Sets the indicated meter on the empire with the indicated id to the
   * indicated value.  If \a meter is not a valid meter for empires,
   * does nothing. */
-class Effect::SetEmpireMeter : public Effect::EffectBase
-{
+class Effect::SetEmpireMeter : public Effect::EffectBase {
 public:
     SetEmpireMeter(const std::string& meter, const ValueRef::ValueRefBase<double>* value);
-    SetEmpireMeter(const ValueRef::ValueRefBase<int>* empire_id, const std::string& meter, const ValueRef::ValueRefBase<double>* value);
+    SetEmpireMeter(const ValueRef::ValueRefBase<int>* empire_id, const std::string& meter,
+                   const ValueRef::ValueRefBase<double>* value);
     virtual ~SetEmpireMeter();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -246,11 +242,13 @@ private:
 
 /** Sets the empire stockpile of the target's owning empire to \a value.  If
   * the target does not have exactly one owner, nothing is done. */
-class Effect::SetEmpireStockpile : public Effect::EffectBase
-{
+class Effect::SetEmpireStockpile : public Effect::EffectBase {
 public:
-    SetEmpireStockpile(ResourceType stockpile, const ValueRef::ValueRefBase<double>* value);
-    SetEmpireStockpile(const ValueRef::ValueRefBase<int>* empire_id, ResourceType stockpile, const ValueRef::ValueRefBase<double>* value);
+    SetEmpireStockpile(ResourceType stockpile,
+                       const ValueRef::ValueRefBase<double>* value);
+    SetEmpireStockpile(const ValueRef::ValueRefBase<int>* empire_id,
+                       ResourceType stockpile,
+                       const ValueRef::ValueRefBase<double>* value);
     virtual ~SetEmpireStockpile();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -270,8 +268,7 @@ private:
 /** Makes the target planet the capital of its owner's empire.  If the target
   * object is not a planet, does not have an owner, or has more than one owner
   * the effect does nothing. */
-class Effect::SetEmpireCapital : public Effect::EffectBase
-{
+class Effect::SetEmpireCapital : public Effect::EffectBase {
 public:
     SetEmpireCapital();
     SetEmpireCapital(const ValueRef::ValueRefBase<int>* empire_id);
@@ -293,8 +290,7 @@ private:
     type of a PT_ASTEROID or PT_GASGIANT planet will also change its size to SZ_TINY or SZ_HUGE, respectively.
     Similarly, changing type to PT_ASTEROID or PT_GASGIANT will also cause the size to change to SZ_ASTEROID or
     SZ_GASGIANT, respectively. */
-class Effect::SetPlanetType : public Effect::EffectBase
-{
+class Effect::SetPlanetType : public Effect::EffectBase {
 public:
     SetPlanetType(const ValueRef::ValueRefBase<PlanetType>* type);
     virtual ~SetPlanetType();
@@ -316,8 +312,7 @@ private:
   * planet will also change its type to PT_BARREN.  Similarly, changing size to
   * SZ_ASTEROID or SZ_GASGIANT will also cause the type to change to PT_ASTEROID
   * or PT_GASGIANT, respectively. */
-class Effect::SetPlanetSize : public Effect::EffectBase
-{
+class Effect::SetPlanetSize : public Effect::EffectBase {
 public:
     SetPlanetSize(const ValueRef::ValueRefBase<PlanetSize>* size);
     virtual ~SetPlanetSize();
@@ -336,8 +331,7 @@ private:
 
 /** Sets the species on the target to \a species_name.  This works on planets
   * and ships, but has no effect on other objects. */
-class Effect::SetSpecies : public Effect::EffectBase
-{
+class Effect::SetSpecies : public Effect::EffectBase {
 public:
     SetSpecies(const ValueRef::ValueRefBase<std::string>* species);
     virtual ~SetSpecies();
@@ -356,8 +350,7 @@ private:
 
 /** Sets empire \a empire_id as the owner of the target.  This has no effect if
   * \a empire_id was already the owner of the target object. */
-class Effect::SetOwner : public Effect::EffectBase
-{
+class Effect::SetOwner : public Effect::EffectBase {
 public:
     SetOwner(const ValueRef::ValueRefBase<int>* empire_id);
     virtual ~SetOwner();
@@ -376,8 +369,7 @@ private:
 
 /** Creates a new Planet with specified \a type and \a size at the system with
   * specified \a location_id */
-class Effect::CreatePlanet : public Effect::EffectBase
-{
+class Effect::CreatePlanet : public Effect::EffectBase {
 public:
     CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type,
                  const ValueRef::ValueRefBase<PlanetSize>* size);
@@ -396,8 +388,7 @@ private:
 };
 
 /** Creates a new Building with specified \a type on the \a target Planet. */
-class Effect::CreateBuilding : public Effect::EffectBase
-{
+class Effect::CreateBuilding : public Effect::EffectBase {
 public:
     CreateBuilding(const ValueRef::ValueRefBase<std::string>* building_type_name);
     virtual ~CreateBuilding();
@@ -416,8 +407,7 @@ private:
 /** Creates a new Ship with specified \a predefined_ship_design_name design
   * from those in the list of PredefinedShipDesignManager, and owned by the
   * empire with the specified \a empire_id */
-class Effect::CreateShip : public Effect::EffectBase
-{
+class Effect::CreateShip : public Effect::EffectBase {
 public:
     CreateShip(const std::string& predefined_ship_design_name,
                const ValueRef::ValueRefBase<int>* empire_id,
@@ -449,8 +439,7 @@ private:
   * as well.  Destroy effects delay the desctruction of their targets until
   * after other all effects have executed, to ensure the source or target of
   * other effects are present when they execute. */
-class Effect::Destroy : public Effect::EffectBase
-{
+class Effect::Destroy : public Effect::EffectBase {
 public:
     Destroy();
 
@@ -465,8 +454,7 @@ private:
 };
 
 /** Adds the Special with the name \a name to the target object. */
-class Effect::AddSpecial : public Effect::EffectBase
-{
+class Effect::AddSpecial : public Effect::EffectBase {
 public:
     AddSpecial(const std::string& name);
 
@@ -484,8 +472,7 @@ private:
 
 /** Removes the Special with the name \a name to the target object.  This has
   * no effect if no such Special was already attached to the target object. */
-class Effect::RemoveSpecial : public Effect::EffectBase
-{
+class Effect::RemoveSpecial : public Effect::EffectBase {
 public:
     RemoveSpecial(const std::string& name);
 
@@ -503,8 +490,7 @@ private:
 
 /** Creates starlane(s) between the target system and systems that match
   * \a other_lane_endpoint_condition */
-class Effect::AddStarlanes : public Effect::EffectBase
-{
+class Effect::AddStarlanes : public Effect::EffectBase {
 public:
     AddStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition);
     virtual ~AddStarlanes();
@@ -523,8 +509,7 @@ private:
 
 /** Removes starlane(s) between the target system and systems that match
   * \a other_lane_endpoint_condition */
-class Effect::RemoveStarlanes : public Effect::EffectBase
-{
+class Effect::RemoveStarlanes : public Effect::EffectBase {
 public:
     RemoveStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition);
     virtual ~RemoveStarlanes();
@@ -543,8 +528,7 @@ private:
 
 /** Sets the star type of the target to \a type.  This has no effect on
   * non-System targets. */
-class Effect::SetStarType : public Effect::EffectBase
-{
+class Effect::SetStarType : public Effect::EffectBase {
 public:
     SetStarType(const ValueRef::ValueRefBase<StarType>* type);
     virtual ~SetStarType();
@@ -721,6 +705,26 @@ private:
     const ValueRef::ValueRefBase<std::string>*> >   m_message_parameters;
     const ValueRef::ValueRefBase<int>*              m_recipient_empire_id;
     EmpireAffiliationType                           m_affiliation;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Applies an overlay texture to Systems. */
+class Effect::SetOverlayTexture : public Effect::EffectBase {
+public:
+    SetOverlayTexture(const std::string& texture,
+                      const ValueRef::ValueRefBase<double>* size = 0);
+    virtual ~SetOverlayTexture();
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    std::string                                     m_texture;
+    const ValueRef::ValueRefBase<double>*           m_size;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -937,5 +941,14 @@ void Effect::GenerateSitRepMessage::serialize(Archive& ar, const unsigned int ve
         & BOOST_SERIALIZATION_NVP(m_recipient_empire_id)
         & BOOST_SERIALIZATION_NVP(m_affiliation);
 }
+
+template <class Archive>
+void Effect::SetOverlayTexture::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_texture)
+        & BOOST_SERIALIZATION_NVP(m_size);
+}
+
 
 #endif // _Effect_h_

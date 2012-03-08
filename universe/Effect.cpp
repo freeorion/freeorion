@@ -2289,3 +2289,25 @@ std::string GenerateSitRepMessage::Dump() const
 
     return retval;
 }
+
+///////////////////////////////////////////////////////////
+// SetOverlayTexture                                 //
+///////////////////////////////////////////////////////////
+SetOverlayTexture::SetOverlayTexture(const std::string& texture,
+                                     const ValueRef::ValueRefBase<double>* size/* = 0*/) :
+    m_texture(texture),
+    m_size(size)
+{}
+
+SetOverlayTexture::~SetOverlayTexture()
+{ delete m_size; }
+
+void SetOverlayTexture::Execute(const ScriptingContext& context) const {
+}
+
+std::string SetOverlayTexture::Description() const
+{ return ""; }
+
+std::string SetOverlayTexture::Dump() const
+{ return ""; }
+
