@@ -38,18 +38,18 @@ void StringTable_::Load() {
     std::ifstream ifs(m_filename.c_str());
     std::string file_contents;
 
-    //skip byte order mark (BOM)
-    static const int UTF8_BOM[3] = {0x00EF, 0x00BB, 0x00BF};
-    for (int i = 0; i < 3; i++) {
-        if( UTF8_BOM[i] != ifs.get() ) {
-            //no header set stream back to zero
-            ifs.seekg(0, std::ios::beg);
-            //and continue
-            break;
-        }
-    }
-
     if (ifs) {
+        // skip byte order mark (BOM)
+        static const int UTF8_BOM[3] = {0x00EF, 0x00BB, 0x00BF};
+        for (int i = 0; i < 3; i++) {
+            if(UTF8_BOM[i] != ifs.get()) {
+                // no header set stream back to start of file
+                ifs.seekg(0, std::ios::beg);
+                // and continue
+                break;
+            }
+        }
+
         int c;
         while ((c = ifs.get()) != std::ifstream::traits_type::eof())
             file_contents += c;
@@ -68,7 +68,7 @@ void StringTable_::Load() {
     const sregex ENTRY =
         *(space | COMMENT) >>
         KEY >> _n >>
-        (("'''" >> MULTI_LINE_VALUE >> "'''" >> _n) | SINGLE_LINE_VALUE >> _n);
+        (("'''" >> MULTI_LINE_VALUE >> "'''" >> *space >> _n) | SINGLE_LINE_VALUE >> _n);
     const sregex TRAILING_WS =
         *(space | COMMENT);
     const sregex REFERENCE =

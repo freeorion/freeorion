@@ -8,13 +8,10 @@
 
 
 namespace Effect {
-
     class EffectBase;
-
 }
 
 namespace parse {
-
     typedef boost::spirit::qi::rule<
         parse::token_iterator,
         Effect::EffectBase* (), // TODO: Change this type to Effect::Base in the FO code.
@@ -23,7 +20,6 @@ namespace parse {
 
     /** Returns a const reference to the Effect parser. */
     effect_parser_rule& effect_parser();
-
 }
 
 #endif
