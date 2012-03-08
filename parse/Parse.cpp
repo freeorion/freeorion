@@ -258,7 +258,7 @@ namespace parse {
     bool macro_deep_referenced_in_text(const std::string& macro_to_find, const std::string& text,
                                        const std::map<std::string, std::string>& macros)
     {
-        Logger().debugStream() << "Checking if " << macro_to_find << " deep referenced in text: " << text;
+        //Logger().debugStream() << "Checking if " << macro_to_find << " deep referenced in text: " << text;
         // check of text directly references macro_to_find
         std::set<std::string> macros_directly_referenced_in_input_text = macros_directly_referenced_in_text(text);
         if (macros_directly_referenced_in_input_text.empty())
@@ -377,12 +377,24 @@ namespace parse {
             {
                 boost::filesystem::ifstream ifs(path);
                 if (ifs) {
+                    // skip byte order mark (BOM)
+                    static const int UTF8_BOM[3] = {0x00EF, 0x00BB, 0x00BF};
+                    for (int i = 0; i < 3; i++) {
+                        if (UTF8_BOM[i] != ifs.get()) {
+                            // no header set stream back to start of file
+                            ifs.seekg(0, std::ios::beg);
+                            // and continue
+                            break;
+                        }
+                    }
+
                     std::getline(ifs, file_contents, '\0');
                 } else {
                     Logger().errorStream() << "Unable to open data file " << filename;
                     return;
                 }
             }
+
             // add newline at end to avoid errors when one is left out, but is expected by parsers
             file_contents += "\n";
 
