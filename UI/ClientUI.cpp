@@ -213,10 +213,11 @@ boost::shared_ptr<GG::Texture> ClientUI::PartIcon(const std::string& part_name) 
 boost::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name) {
     const HullType* hull = GetHullType(hull_name);
     std::string texture_name;
-    if (hull)
+    if (hull) {
         texture_name = hull->Graphic();
-    if (texture_name.empty())
-        texture_name = hull->Icon();
+        if (texture_name.empty())
+            texture_name = hull->Icon();
+    }
     if (texture_name.empty())
         return ClientUI::GetTexture(ArtDir() / "hulls_design" / "generic_hull.png", true);
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
@@ -225,10 +226,11 @@ boost::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_nam
 boost::shared_ptr<GG::Texture> ClientUI::HullIcon(const std::string& hull_name) {
     const HullType* hull = GetHullType(hull_name);
     std::string texture_name;
-    if (hull)
+    if (hull) {
         texture_name = hull->Icon();
-    if (texture_name.empty())
-        texture_name = hull->Graphic();
+        if (texture_name.empty())
+            texture_name = hull->Graphic();
+    }
     if (texture_name.empty())
         return ClientUI::GetTexture(ArtDir() / "icons" / "ship_hulls"/ "generic_hull.png", true);
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
