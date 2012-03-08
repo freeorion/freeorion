@@ -2093,10 +2093,14 @@ void Empire::ConquerBuildsAtLocation(int location_id) {
 }
 
 void Empire::AddTech(const std::string& name) {
-    const Tech* tech = GetTech(name);
-    if (!tech)
-        Logger().errorStream() << "Empire::AddTech given and invalid tech: " << name;;
     m_techs.insert(name);
+
+    const Tech* tech = GetTech(name);
+    if (!tech) {
+        Logger().errorStream() << "Empire::AddTech given and invalid tech: " << name;
+        return;
+    }
+
     const std::vector<ItemSpec>& unlocked_items = tech->UnlockedItems();
     for (unsigned int i = 0; i < unlocked_items.size(); ++i)
         UnlockItem(unlocked_items[i]);  // potential infinite if a tech (in)directly unlocks itself?
