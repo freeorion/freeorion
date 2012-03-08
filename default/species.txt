@@ -2134,6 +2134,11 @@ GREAT_STEALTH
             scope = Source
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value + 25
+            
+    EffectsGroup
+            scope = Source
+            GiveEmpireTech name = "CON_FRC_ENRG_CAMO"
+            
 '''
             
 ULTIMATE_STEALTH
@@ -2141,4 +2146,9 @@ ULTIMATE_STEALTH
             scope = Source
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value + 50
+            
+        EffectsGroup
+            scope = Source
+            GiveEmpireTech name = "CON_FRC_ENRG_CAMO"
 '''
+

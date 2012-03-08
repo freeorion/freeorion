@@ -225,7 +225,7 @@ ShipDesign
         ]
     icon = "icons/monsters/juggernaut-1.png"
     model = "seed"
-        
+
 ShipDesign
     name = "SM_JUGGERNAUT_2"
     description = "SM_JUGGERNAUT_2_DESC"

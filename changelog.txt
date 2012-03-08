@@ -4,11 +4,13 @@ New Features / Improvements:
  ~ Improved the logic behind the choice of graphic to display for hulls and ship designs.
 
 Balancing:
+~ Ballanced stealth & detection levels.
 
 Content:
  ~ All species now have different aptitudes at resource production and ground combat.  A few require no food, and a few have special stealth and detection abilities.
- ~ ~ Sorry, currently not balanced, and only partially documented.
+ ~ ~ Sorry, currently not balanced.
  ~ ~ All normal species now have the same provisional starvation mechanic.
+ ~ Added new stealthy planet specials, and stealth-making monsters.
  ~ Made monsters nests last on average twice as long.
  ~ Halved the generation of floaters from forests.
  
