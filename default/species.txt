@@ -24,12 +24,12 @@ Species
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[GREAT_RESEARCH]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
+
         [[AVERAGE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+                
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -59,11 +59,11 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[GREAT_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[AVERAGE_GROUND_TROOPS]]
             
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -92,12 +92,12 @@ Species
         [[AVERAGE_MINING]]
         [[GREAT_INDUSTRY]]
         [[GREAT_RESEARCH]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
+
         [[TERRIBLE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -127,11 +127,11 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[AVERAGE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -198,11 +198,12 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
+        [[GREAT_WEAPONS]]
         [[GREAT_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+                
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -232,11 +233,12 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
+        [[ULTIMATE_WEAPONS]]
         [[AVERAGE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+                
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -266,11 +268,11 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[AVERAGE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -302,12 +304,12 @@ Species
         [[TERRIBLE_MINING]]
         [[TERRIBLE_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
+
         [[TERRIBLE_GROUND_TROOPS]]
         
         [[NO_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -337,11 +339,11 @@ Species
         [[GREAT_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[TERRIBLE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+                
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -371,11 +373,11 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[AVERAGE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+                
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -403,13 +405,14 @@ Species
         [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
+        [[TERRIBLE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
+        [[GREAT_WEAPONS]]
+        [[GREAT_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+                
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -440,16 +443,16 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[TERRIBLE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[GREAT_RESEARCH]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
-        [[GREAT_GROUND_TROOPS]]
+
+        [[AVERAGE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     [[BARREN_STANDARD_EP]]
@@ -470,15 +473,15 @@ Species
     
     effectsgroups = [
         [[GREAT_FARMING]]
-        [[AVERAGE_MINING]]
-        [[TERRIBLE_INDUSTRY]]
+        [[NO_MINING]]
+        [[NO_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
+
         [[GREAT_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     [[SWAMP_STANDARD_EP]]
@@ -502,14 +505,14 @@ Species
     effectsgroups = [
         [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
-        [[AVERAGE_INDUSTRY]]
+        [[GREAT_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
         
         [[AVERAGE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -535,13 +538,13 @@ Species
         [[TERRIBLE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
+        [[NO_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -565,16 +568,16 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[TERRIBLE_FARMING]]
         [[AVERAGE_MINING]]
         [[GREAT_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[AVERAGE_GROUND_TROOPS]]
             
         [[STANDARD_FOOD_USE]]
+
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
         
     ]
@@ -604,11 +607,12 @@ Species
         [[TERRIBLE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
+        [[GREAT_WEAPONS]]
         [[TERRIBLE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -629,15 +633,15 @@ Species
     
     effectsgroups = [
         [[TERRIBLE_FARMING]]
-        [[AVERAGE_MINING]]
-        [[AVERAGE_INDUSTRY]]
+        [[NO_MINING]]
+        [[NO_INDUSTRY]]
         [[ULTIMATE_RESEARCH]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
         
         [[TERRIBLE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
+        [[STANDARD_FOOD_USE]]    
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -661,16 +665,18 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
-        [[AVERAGE_MINING]]
-        [[AVERAGE_INDUSTRY]]
+        [[ULTIMATE_STEALTH]]
+        
+        [[GREAT_FARMING]]
+        [[TERRIBLE_MINING]]
+        [[TERRIBLE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
+        [[NO_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -693,15 +699,15 @@ Species
         [[GREAT_STEALTH]]
         
         [[TERRIBLE_FARMING]]
-        [[AVERAGE_MINING]]
-        [[AVERAGE_INDUSTRY]]
+        [[NO_MINING]]
+        [[NO_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
         
         [[TERRIBLE_GROUND_TROOPS]]
         
         [[NO_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -715,6 +721,33 @@ Species
     description = "SP_TRENCHERS_DESC"
     
     foci = [
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[NO_FARMING]]
+        [[AVERAGE_MINING]]
+        [[NO_INDUSTRY]]
+        [[NO_RESEARCH]]
+        
+        [[TERRIBLE_GROUND_TROOPS]]
+        
+        [[NO_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_HEALTH_AND_POPULATION]]
+    ]
+    
+    [[BARREN_STANDARD_EP]]
+    
+    graphic = "icons/species/robotic-02.png"
+
+Species
+    name = "SP_RAAAGH"
+    description = "SP_RAAAGH_DESC"
+    
+    foci = [
         [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
@@ -725,21 +758,21 @@ Species
     effectsgroups = [
         [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
-        [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
+        [[TERRIBLE_INDUSTRY]]
+        [[NO_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
+        [[ULTIMATE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
-    [[BARREN_STANDARD_EP]]
+    [[TERRAN_STANDARD_EP]]
     
-    graphic = "icons/species/robotic-02.png"
-
+    graphic = "icons/species/bipedial-11.png"
+    
 
 Species
     name = "SP_BEIGEGOO"
@@ -751,16 +784,16 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
-        [[AVERAGE_MINING]]
+        [[NO_FARMING]]
+        [[NO_MINING]]
         [[GREAT_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
+        [[NO_RESEARCH]]
         
         [[GREAT_GROUND_TROOPS]]
         
         [[NO_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -786,13 +819,13 @@ Species
         [[GREAT_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
+        [[TERRIBLE_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -814,16 +847,16 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
-        [[AVERAGE_MINING]]
+        [[TERRIBLE_FARMING]]
+        [[GREAT_MINING]]
         [[GREAT_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
+        [[TERRIBLE_GROUND_TROOPS]]
         
         [[NO_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -852,11 +885,11 @@ Species
         [[GREAT_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[GREAT_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -884,11 +917,11 @@ Species
         [[TERRIBLE_INDUSTRY]]
         [[GREAT_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[TERRIBLE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -907,16 +940,18 @@ Species
     ]
     
     effectsgroups = [
+        [[GREAT_STEALTH]]
+        
         [[ULTIMATE_FARMING]]
-        [[AVERAGE_MINING]]
-        [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
+        [[NO_MINING]]
+        [[NO_INDUSTRY]]
+        [[NO_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
-        [[TERRIBLE_GROUND_TROOPS]]
+        [[NO_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
         
@@ -929,7 +964,6 @@ Species
     name = "SP_ABADDONNIANS"
     description = "SP_ABADDONNIANS_DESC"
     CanProduceShips
-    CanColonize
     
     foci = [
         [[HAS_FARMING_FOCUS]]
@@ -945,11 +979,11 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[TERRIBLE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -977,11 +1011,11 @@ Species
         [[GREAT_INDUSTRY]]
         [[GREAT_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[AVERAGE_GROUND_TROOPS]]
         
         [[NO_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
@@ -990,7 +1024,7 @@ Species
     graphic = "icons/species/acirema.png"
 
 
-
+/*
 Species
     name = "SP_SUPER_TEST"
     description = "SP_SUPER_TEST_DESC"
@@ -1012,16 +1046,16 @@ Species
             activation = Source
             effects = SetDetection Value + 1600   // Near Omniscient Detection
         
-        [[AVERAGE_FARMING]]
-        [[AVERAGE_MINING]]
-        [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
+        [[GREAT_FARMING]]
+        [[GREAT_MINING]]
+        [[GREAT_INDUSTRY]]
+        [[GREAT_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
+        [[GREAT_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     environments = [
@@ -1059,11 +1093,11 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        
         [[AVERAGE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     environments = [
@@ -1081,7 +1115,7 @@ Species
     ]
     graphic = "icons/species/amorphous-03.png"
 
-
+*/
 
 
 //#######################################################\\
@@ -1616,6 +1650,10 @@ STANDARD_FOOD_USE
             ]
 '''
 
+NO_FARMING
+'''
+'''
+
 TERRIBLE_FARMING
 '''EffectsGroup
             scope = Source
@@ -1750,6 +1788,11 @@ ULTIMATE_FARMING
                 Planet environment = Hostile
             ]
             effects = SetTargetFarming Value + Target.Population * 1.5
+'''
+
+
+NO_MINING
+'''
 '''
 
 TERRIBLE_MINING
@@ -1983,6 +2026,9 @@ GREAT_MINING
             ]
 '''
 
+NO_INDUSTRY
+'''
+'''
 
 TERRIBLE_INDUSTRY
 '''EffectsGroup
@@ -2059,6 +2105,10 @@ GREAT_INDUSTRY
             ]
 '''
 
+NO_RESEARCH
+'''
+'''
+
 TERRIBLE_RESEARCH
 '''EffectsGroup
             scope = Source
@@ -2087,6 +2137,9 @@ ULTIMATE_RESEARCH
             effects = SetTargetResearch Value + Target.Population * 6
 '''
 
+NO_GROUND_TROOPS
+''' '''
+
 TERRIBLE_GROUND_TROOPS
 '''EffectsGroup
             scope = Source
@@ -2106,6 +2159,13 @@ GREAT_GROUND_TROOPS
             scope = Source
             activation = Not OwnedBy AnyEmpire
             effects = SetMaxTroops Value + 20
+'''
+
+ULTIMATE_GROUND_TROOPS
+'''EffectsGroup
+            scope = Source
+            activation = Not OwnedBy AnyEmpire
+            effects = SetMaxTroops Value + 50
 '''
 
 TERRIBLE_DETECTION
@@ -2134,11 +2194,6 @@ GREAT_STEALTH
             scope = Source
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value + 25
-            
-    EffectsGroup
-            scope = Source
-            GiveEmpireTech name = "CON_FRC_ENRG_CAMO"
-            
 '''
             
 ULTIMATE_STEALTH
@@ -2146,9 +2201,18 @@ ULTIMATE_STEALTH
             scope = Source
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value + 50
-            
-        EffectsGroup
-            scope = Source
-            GiveEmpireTech name = "CON_FRC_ENRG_CAMO"
 '''
 
+GREAT_WEAPONS
+'''EffectsGroup
+        scope = Source
+        activation = Turn high = 1
+        GiveEmpireTech name = "SHP_WEAPON_3"
+'''
+
+ULTIMATE_WEAPONS
+'''EffectsGroup
+        scope = Source
+        activation = Turn high = 1
+        GiveEmpireTech name = "SHP_WEAPON_4"
+'''

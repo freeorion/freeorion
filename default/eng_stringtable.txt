@@ -2664,6 +2664,7 @@ Prefer Tundra planets.
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
+[[GREAT_WEAPONS]]
 [[GREAT_GROUND_TROOPS]]
 '''
 
@@ -2678,6 +2679,7 @@ Prefer Desert planets.
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
+[[ULTIMATE_WEAPONS]]
 [[AVERAGE_GROUND_TROOPS]]
 '''
 
@@ -2751,6 +2753,7 @@ Prefer Desert planets.
 [[AVERAGE_INDUSTRY]]
 [[TERRIBLE_RESEARCH]]
 
+[[GREAT_WEAPONS]]
 [[GREAT_GROUND_TROOPS]]
 '''
 
@@ -2837,6 +2840,7 @@ Prefer Tundra planets.
 [[TERRIBLE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
+[[GREAT_WEAPONS]]
 [[TERRIBLE_GROUND_TROOPS]]
 '''
 
@@ -7295,8 +7299,11 @@ GREAT_STEALTH
 ULTIMATE_STEALTH
 '''Ultimate Stealth: +25 bonus.'''
 
+GREAT_WEAPONS
+'''Starts with Mass Driver 3.'''
 
-
+ULTIMATE_WEAPONS
+'''Starts with Mass Driver 4.'''
 
 
 
