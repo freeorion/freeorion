@@ -3196,7 +3196,6 @@ Tech
                 Or [
                     Planet
                     System
-                    Building
                 ]
             ]
             activation = And [
@@ -3204,7 +3203,7 @@ Tech
                 Not OwnerHasTech "SHP_DIM_CLOAK"
                 Not OwnerHasTech "SHP_PHASING_CLOAK"
             ]
-            effects = SetStealth Value + 50
+            effects = AddSpecial "CLOUD_COVER_SLAVE_SPECIAL"
 
 
 Tech
@@ -3355,14 +3354,16 @@ Tech
                 Or [
                     Planet
                     System
-                    Building
                 ]
             ]
             activation = And [
                 Not OwnerHasTech "SHP_DIM_CLOAK"
                 Not OwnerHasTech "SHP_PHASING_CLOAK"
             ]
-            effects = SetStealth Value + 200
+            effects = [
+                AddSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
+                RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
+            ]
 
 Tech
     name = "SHP_DIM_CLOAK"
@@ -3381,11 +3382,14 @@ Tech
                 Or [
                     Planet
                     System
-                    Building
                 ]
             ]
             activation = Not OwnerHasTech "SHP_PHASING_CLOAK"
-            effects = SetStealth Value + 400
+            effects = [
+                AddSpecial "DIM_RIFT_SLAVE_SPECIAL"
+                RemoveSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
+                RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
+            ]
 
 Tech
     name = "DEF_HI_ENRG_FOCUS"
@@ -3460,10 +3464,14 @@ Tech
                 Or [
                     Planet
                     System
-                    Building
                 ]
             ]
-            effects = SetStealth Value + 650
+            effects = [
+                AddSpecial "VOID_SLAVE_SPECIAL"
+                RemoveSpecial "DIM_RIFT_SLAVE_SPECIAL"
+                RemoveSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
+                RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
+            ]
 
 Tech
     name = "SHP_SENSORS"

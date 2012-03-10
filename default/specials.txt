@@ -917,44 +917,32 @@ Special
     graphic = "icons/specials_huge/juggernaut-nest.png"
 
 Special
-    name = "CLOUD_COVER_SPECIAL"
-    description = "CLOUD_COVER_SPECIAL_DESC"
-    spawnrate = 0.0
-    spawnlimit = 0
-    location = And [
-        Planet
-        Not Homeworld
-    ]
+    name = "CLOUD_COVER_MASTER_SPECIAL"
+    description = "CLOUD_COVER_MASTER_SPECIAL_DESC"
     effectsgroups = [
-        [[STEALTH_BOOST_LOW]]
         [[STEALTH_BOOST_PLUS_PLUS]]
+        [[SYSTEM_STEALTH_PLUS_PLUS]]
 
         EffectsGroup
-            scope = And [
-                Contains Source
-                System
-            ]
-            activation = Not ContainedBy Contains Or [
-                HasSpecial "VOLCANIC_ASH_SPECIAL"
-                HasSpecial "DIM_RIFT_SPECIAL"
-                HasSpecial "VOID_SPECIAL"
-            ]
-            effects = AddSpecial "CLOUD_COVER_SPECIAL"
+            scope = Source
+            stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
+            effects = AddSpecial "CLOUD_COVER_SLAVE_SPECIAL"
     ]
-    graphic = ""
+    graphic = "icons/specials_huge/cloud_cover.png"
 
 Special
-    name = "VOLCANIC_ASH_SPECIAL"
-    description = "VOLCANIC_ASH_SPECIAL_DESC"
-    spawnrate = 0.0
-    spawnlimit = 0
-    location = And [
-        Planet
-        Not Homeworld
-    ]
+    name = "CLOUD_COVER_SLAVE_SPECIAL"
+    description = "CLOUD_COVER_SLAVE_SPECIAL_DESC"
     effectsgroups = [
-        [[STEALTH_BOOST_MEDIUM]]
-        [[STEALTH_BOOST_PLUS_PLUS]]
+        [[STEALTH_BOOST_LOW]]
+
+        EffectsGroup
+            scope = Source
+            activation = Not Or [
+                HasSpecial "CLOUD_COVER_MASTER_SPECIAL"
+                OwnerHasTech "SHP_EM_DAMPER"
+            ]
+            effects = RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
 
         EffectsGroup
             scope = And [
@@ -962,161 +950,252 @@ Special
                 System
             ]
             activation = Not ContainedBy Contains Or [
-                HasSpecial "DIM_RIFT_SPECIAL"
-                HasSpecial "VOID_SPECIAL"
+                HasSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
+                HasSpecial "DIM_RIFT_SLAVE_SPECIAL"
+                HasSpecial "VOID_SLAVE_SPECIAL"
             ]
-            effects = AddSpecial "VOLCANIC_ASH_SPECIAL"
+            stackinggroup = "TECH_STEALTH_STACK"
+            effects = SetStealth Value + [[LOW_STEALTH]]
+    ]
+    graphic = "icons/specials_huge/cloud_cover.png"
+
+Special
+    name = "VOLCANIC_ASH_MASTER_SPECIAL"
+    description = "VOLCANIC_ASH_MASTER_SPECIAL_DESC"
+    effectsgroups = [
+        [[STEALTH_BOOST_PLUS_PLUS]]
+        [[SYSTEM_STEALTH_PLUS_PLUS]]
+
+        EffectsGroup
+            scope = Source
+            stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
+            effects = AddSpecial "VOLCANIC_ACTIVITY_SPECIAL"
 
         [[REMOVE_CLOUD_COVER]]
     ]
-    graphic = ""
+    graphic = "icons/specials_huge/volcanic_ash.png"
 
 Special
-    name = "DIM_RIFT_SPECIAL"
-    description = "DIM_RIFT_SPECIAL_DESC"
-    spawnrate = 0.0
-    spawnlimit = 0
-    location = And [
-        Planet
-        Not Homeworld
-    ]
+    name = "VOLCANIC_ACTIVITY_SPECIAL"
+    description = "VOLCANIC_ACTIVITY_SPECIAL"
     effectsgroups = [
-        [[STEALTH_BOOST_HIGH]]
-        [[STEALTH_BOOST_PLUS_PLUS]]
+        EffectsGroup
+            scope = Source
+            effects = [
+                AddSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
+                SetTargetHealth Value - 5
+                SetTargetFarming Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Not HasSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
+            effects = RemoveSpecial "VOLCANIC_ACTIVITY_SPECIAL"
+    ]
+    graphic = "icons/specials_huge/volcanic_ash.png"
+
+Special
+    name = "VOLCANIC_ASH_SLAVE_SPECIAL"
+    description = "VOLCANIC_ASH_SLAVE_SPECIAL_DESC"
+    effectsgroups = [
+        [[STEALTH_BOOST_MEDIUM]]
+
+        EffectsGroup
+            scope = Source
+            activation = Not Or [
+                HasSpecial "VOLCANIC_ACTIVITY_SPECIAL"
+                OwnerHasTech "SHP_ABSORPTION_FIELD"
+            ]
+            effects = RemoveSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
 
         EffectsGroup
             scope = And [
                 Contains Source
                 System
             ]
-            activation = Not ContainedBy Contains HasSpecial "VOID_SPECIAL"
-            effects = AddSpecial "DIM_RIFT_SPECIAL"
+            activation = Not ContainedBy Contains Or [
+                HasSpecial "DIM_RIFT_SLAVE_SPECIAL"
+                HasSpecial "VOID_SLAVE_SPECIAL"
+            ]
+            stackinggroup = "TECH_STEALTH_STACK"
+            effects = SetStealth Value + [[MEDIUM_STEALTH]]
+    ]
+    graphic = "icons/specials_huge/volcanic_ash.png"
+
+Special
+    name = "DIM_RIFT_MASTER_SPECIAL"
+    description = "DIM_RIFT_MASTER_SPECIAL_DESC"
+    effectsgroups = [
+        [[STEALTH_BOOST_PLUS_PLUS]]
+        [[SYSTEM_STEALTH_PLUS_PLUS]]
+
+        EffectsGroup
+            scope = Source
+            stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
+            effects = [
+                AddSpecial "DIM_RIFT_SLAVE_SPECIAL"
+                SetTargetHealth Value - 20
+            ]
 
         [[REMOVE_CLOUD_COVER]]
         [[REMOVE_ASH]]
     ]
-    graphic = ""
+    graphic = "icons/specials_huge/dim_rift.png"
 
 Special
-    name = "VOID_SPECIAL"
-    description = "VOID_SPECIAL_DESC"
-    spawnrate = 0.0
-    spawnlimit = 0
-    location = And [
-        Planet
-        Not Homeworld
-    ]
+    name = "DIM_RIFT_SLAVE_SPECIAL"
+    description = "DIM_RIFT_SLAVE_SPECIAL_DESC"
     effectsgroups = [
-        [[STEALTH_BOOST_ULTIMATE]]
-        [[STEALTH_BOOST_PLUS_PLUS]]
+        [[STEALTH_BOOST_HIGH]]
+
+        EffectsGroup
+            scope = Source
+            activation = Not Or [
+                HasSpecial "DIM_RIFT_MASTER_SPECIAL"
+                OwnerHasTech "SHP_DIM_CLOAK"
+            ]
+            effects = RemoveSpecial "DIM_RIFT_SLAVE_SPECIAL"
 
         EffectsGroup
             scope = And [
                 Contains Source
                 System
             ]
-            activation = Source
-            effects = AddSpecial "VOID_SPECIAL"
+            activation = Not ContainedBy Contains HasSpecial "VOID_SLAVE_SPECIAL"
+            effects = SetStealth Value + [[HIGH_STEALTH]]
+    ]
+    graphic = "icons/specials_huge/dim_rift.png"
+
+Special
+    name = "VOID_MASTER_SPECIAL"
+    description = "VOID_MASTER_SPECIAL_DESC"
+    effectsgroups = [
+        [[STEALTH_BOOST_PLUS_PLUS]]
+        [[SYSTEM_STEALTH_PLUS_PLUS]]
+
+        EffectsGroup
+            scope = Source
+            stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
+            effects = AddSpecial "VOID_SLAVE_SPECIAL"
 
         [[REMOVE_CLOUD_COVER]]
         [[REMOVE_ASH]]
         [[REMOVE_DIM]]
     ]
-    graphic = ""
+    graphic = "icons/specials_huge/void.png"
+
+Special
+    name = "VOID_SLAVE_SPECIAL"
+    description = "VOID_SLAVE_SPECIAL_DESC"
+    effectsgroups = [
+        [[STEALTH_BOOST_ULTIMATE]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Not HasSpecial "VOID_MASTER_SPECIAL"
+                Not OwnerHasTech "SHP_PHASING_CLOAK"
+            ]
+            effects = RemoveSpecial "VOID_SLAVE_SPECIAL"
+
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            stackinggroup = "TECH_STEALTH_STACK"
+            effects = SetStealth Value + [[ULTIMATE_STEALTH]]
+    ]
+    graphic = "icons/specials_huge/void.png"
 
 
 STEALTH_BOOST_LOW
 '''EffectsGroup
         scope = Source
-        activation = Not OwnedBy AnyEmpire
-        effects = SetStealth Value + 50
+        stackinggroup = "TECH_STEALTH_STACK"
+        effects = SetStealth Value + [[LOW_STEALTH]]
 '''
 
 STEALTH_BOOST_MEDIUM
 '''EffectsGroup
         scope = Source
-        activation = Not OwnedBy AnyEmpire
-        effects = SetStealth Value + 200
+        stackinggroup = "TECH_STEALTH_STACK"
+        effects = SetStealth Value + [[MEDIUM_STEALTH]]
 '''
 
 STEALTH_BOOST_HIGH
 '''EffectsGroup
         scope = Source
-        activation = Not OwnedBy AnyEmpire
-        effects = SetStealth Value + 400
+        stackinggroup = "TECH_STEALTH_STACK"
+        effects = SetStealth Value + [[HIGH_STEALTH]]
 '''
 
 STEALTH_BOOST_ULTIMATE
 '''EffectsGroup
         scope = Source
-        activation = Not OwnedBy AnyEmpire
-        effects = SetStealth Value + 650
+        stackinggroup = "TECH_STEALTH_STACK"
+        effects = SetStealth Value + [[ULTIMATE_STEALTH]]
 '''
 
 STEALTH_BOOST_PLUS_PLUS
 '''EffectsGroup
         scope = Source
-        activation = Not OwnedBy AnyEmpire
         stackinggroup = "SPECIES_STEALTH_STACK"
-        effects = SetStealth Value + 50
+        effects = SetStealth Value + [[PLUS_PLUS_STEALTH]]
 '''
+
+SYSTEM_STEALTH_PLUS_PLUS
+'''EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            stackinggroup = "SPECIES_STEALTH_STACK"
+            effects = SetStealth Value + [[PLUS_PLUS_STEALTH]]
+'''
+
+LOW_STEALTH
+'''50'''
+
+MEDIUM_STEALTH
+'''200'''
+
+HIGH_STEALTH
+'''400'''
+
+ULTIMATE_STEALTH
+'''650'''
+
+PLUS_STEALTH
+'''25'''
+
+PLUS_PLUS_STEALTH
+'''[[PLUS_STEALTH]] + [[PLUS_STEALTH]]'''
 
 REMOVE_CLOUD_COVER
 '''EffectsGroup
         scope = Source
         activation = Source
-        effects = RemoveSpecial "CLOUD_COVER_SPECIAL"
-
-    EffectsGroup
-        scope = And [
-            Contains Source
-            System
-        ]
-        activation = Source
-        effects = RemoveSpecial "CLOUD_COVER_SPECIAL"
+        effects = RemoveSpecial "CLOUD_COVER_MASTER_SPECIAL"
 '''
 
 REMOVE_ASH
 '''EffectsGroup
         scope = Source
         activation = Source
-        effects = RemoveSpecial "VOLCANIC_ASH_SPECIAL"
-
-    EffectsGroup
-        scope = And [
-            Contains Source
-            System
-        ]
-        activation = Source
-        effects = RemoveSpecial "VOLCANIC_ASH_SPECIAL"
+        effects = RemoveSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
 '''
 
 REMOVE_DIM
 '''EffectsGroup
         scope = Source
         activation = Source
-        effects = RemoveSpecial "DIM_RIFT_SPECIAL"
-
-    EffectsGroup
-        scope = And [
-            Contains Source
-            System
-        ]
-        activation = Source
-        effects = RemoveSpecial "DIM_RIFT_SPECIAL"
+        effects = RemoveSpecial "DIM_RIFT_MASTER_SPECIAL"
 '''
 
 REMOVE_VOID
 '''EffectsGroup
         scope = Source
         activation = Source
-        effects = RemoveSpecial "VOID_SPECIAL"
-
-    EffectsGroup
-        scope = And [
-            Contains Source
-            System
-        ]
-        activation = Source
-        effects = RemoveSpecial "VOID_SPECIAL"
+        effects = RemoveSpecial "VOID_MASTER_SPECIAL"
 '''

@@ -615,17 +615,31 @@ Part
                 ContainedBy Contains Source
             ]
             activation = Random 0.15
-            effects = AddSpecial "CLOUD_COVER_SPECIAL"
+            effects = AddSpecial "CLOUD_COVER_MASTER_SPECIAL"
 
         EffectsGroup
             scope = Source
             activation = Number low = 1 OwnerHasTech "SHP_ABSORPTION_FIELD"
-            effects = CreateShip "SM_ASH" Source.Owner
+            effects = [
+                CreateShip "SM_ASH" Source.Owner
+                Destroy
+            ]
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SHP_ABSORPTION_FIELD"
-            effects = Destroy
+            activation = Number low = 1 OwnerHasTech "SHP_DIM_CLOAK"
+            effects = [
+                CreateShip "SM_DIM" Source.Owner
+                Destroy
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Number low = 1 OwnerHasTech "SHP_PHASING_CLOAK"
+            effects = [
+                CreateShip "SM_VOID" Source.Owner
+                Destroy
+            ]
     ]
     graphic = ""
 
@@ -645,24 +659,30 @@ Part
                 ContainedBy Contains Source
             ]
             activation = Random 0.15
-            effects = AddSpecial "VOLCANIC_ASH_PLUS_SPECIAL"
+            effects = AddSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
 
         EffectsGroup
             scope = Source
             activation = Number low = 1 OwnerHasTech "SHP_DIM_CLOAK"
-            effects = CreateShip "SM_DIM" Source.Owner
+            effects = [
+                CreateShip "SM_DIM" Source.Owner
+                Destroy
+            ]
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SHP_DIM_CLOAK"
-            effects = Destroy
+            activation = Number low = 1 OwnerHasTech "SHP_PHASING_CLOAK"
+            effects = [
+                CreateShip "SM_VOID" Source.Owner
+                Destroy
+            ]
 
         EffectsGroup
-            scope = HasSpecial "CLOUD_COVER_SPECIAL"
+            scope = HasSpecial "CLOUD_COVER_MASTER_SPECIAL"
             activation = Source
             effects = [
-                RemoveSpecial "CLOUD_COVER_SPECIAL"
-                AddSpecial "VOLCANIC_ASH_SPECIAL"
+                RemoveSpecial "CLOUD_COVER_MASTER_SPECIAL"
+                AddSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
             ]
     ]
     graphic = ""
@@ -683,32 +703,30 @@ Part
                 ContainedBy Contains Source
             ]
             activation = Random 0.15
-            effects = AddSpecial "DIM_RIFT_SPECIAL"
+            effects = AddSpecial "DIM_RIFT_MASTER_SPECIAL"
 
         EffectsGroup
             scope = Source
             activation = Number low = 1 OwnerHasTech "SHP_PHASING_CLOAK"
-            effects = CreateShip "SM_VOID" Source.Owner
-
-        EffectsGroup
-            scope = Source
-            activation = Number low = 1 OwnerHasTech "SHP_PHASING_CLOAK"
-            effects = Destroy
-
-        EffectsGroup
-            scope = HasSpecial "VOLCANIC_ASH_SPECIAL"
-            activation = Source
             effects = [
-                RemoveSpecial "VOLCANIC_ASH_SPECIAL"
-                AddSpecial "DIM_RIFT_SPECIAL"
+                CreateShip "SM_VOID" Source.Owner
+                Destroy
             ]
 
         EffectsGroup
-            scope = HasSpecial "CLOUD_COVER_SPECIAL"
+            scope = HasSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
             activation = Source
             effects = [
-                RemoveSpecial "CLOUD_COVER_SPECIAL"
-                AddSpecial "DIM_RIFT_SPECIAL"
+                RemoveSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
+                AddSpecial "DIM_RIFT_MASTER_SPECIAL"
+            ]
+
+        EffectsGroup
+            scope = HasSpecial "CLOUD_COVER_MASTER_SPECIAL"
+            activation = Source
+            effects = [
+                RemoveSpecial "CLOUD_COVER_MASTER_SPECIAL"
+                AddSpecial "DIM_RIFT_MASTER_SPECIAL"
             ]
     ]
     graphic = ""
@@ -729,30 +747,30 @@ Part
                 ContainedBy Contains Source
             ]
             activation = Random 0.15
-            effects = AddSpecial "VOID_SPECIAL"
+            effects = AddSpecial "VOID_MASTER_SPECIAL"
 
         EffectsGroup
-            scope = HasSpecial "DIM_RIFT_SPECIAL"
+            scope = HasSpecial "DIM_RIFT_MASTER_SPECIAL"
             activation = Source
             effects = [
-                RemoveSpecial "DIM_RIFT_SPECIAL"
-                AddSpecial "VOID_SPECIAL"
+                RemoveSpecial "DIM_RIFT_MASTER_SPECIAL"
+                AddSpecial "VOID_MASTER_SPECIAL"
             ]
 
         EffectsGroup
-            scope = HasSpecial "VOLCANIC_ASH_SPECIAL"
+            scope = HasSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
             activation = Source
             effects = [
-                RemoveSpecial "VOLCANIC_ASH_SPECIAL"
-                AddSpecial "VOID_SPECIAL"
+                RemoveSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
+                AddSpecial "VOID_MASTER_SPECIAL"
             ]
 
         EffectsGroup
-            scope = HasSpecial "CLOUD_COVER_SPECIAL"
+            scope = HasSpecial "CLOUD_COVER_MASTER_SPECIAL"
             activation = Source
             effects = [
-                RemoveSpecial "CLOUD_COVER_SPECIAL"
-                AddSpecial "VOID_SPECIAL"
+                RemoveSpecial "CLOUD_COVER_MASTER_SPECIAL"
+                AddSpecial "VOID_MASTER_SPECIAL"
             ]
     ]
     graphic = ""

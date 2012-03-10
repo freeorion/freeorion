@@ -3255,24 +3255,49 @@ Juggernaut Nest
 JUGGERNAUT_NEST_SPECIAL_DESC
 At some point young juggernauts will rise from this place. With the proper tech, these mega-fauna could be domesticated.
 
-CLOUD_COVER_SPECIAL
+CLOUD_COVER_MASTER_SPECIAL
+Cloud Spawns
+CLOUD_COVER_MASTER_SPECIAL_DESC
+This planet is populated with aerial creatures that emit humidity, causing high cloud cover.  Later in their lifecycle, they will burrow into the ground, causing high amounts of volcanic activity.
+
+CLOUD_COVER_SLAVE_SPECIAL
 High Cloud Cover
-CLOUD_COVER_SPECIAL_DESC
-This planet has unusually dense cloud cover, increasing its stealth by 100.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
+CLOUD_COVER_SLAVE_SPECIAL_DESC
+This planet has unusually dense cloud cover, increasing its stealth.
 
-VOLCANIC_ASH_SPECIAL
+VOLCANIC_ASH_MASTER_SPECIAL
+Hidden Burrowers
+VOLCANIC_ASH_MASTER_SPECIAL_DESC
+This planet has monsters burrowing around in its core causing high volcanic activity.  These burrowers are undergoing metamorphasis and will transform into creatures capable of tearing a dimensional rift in the fabric of space later in their lifecycle.
+
+VOLCANIC_ACTIVITY_SPECIAL
+High Volcanic Activity
+VOLCANIC_ACTIVITY_SPECIAL_DESC
+This planet has high levels of volcanic activity, adding volcanic ash, reducing target health by 5, and cutting farming in half.
+
+VOLCANIC_ASH_SLAVE_SPECIAL
 Volcanic Ash
-VOLCANIC_ASH_SPECIAL_DESC
-This planet is surrounded by volcanic ash, increasing its stealth by 250.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
+VOLCANIC_ASH_SLAVE_SPECIAL_DESC
+This planet is surrounded by volcanic ash, increasing its stealth.
 
-DIM_RIFT_SPECIAL
+DIM_RIFT_MASTER_SPECIAL
+Dimensional Burrowers
+DIM_RIFT_MASTER_SPECIAL_DESC
+This planet has monsters burrowing around in its core causing dimensional tears in and around the planet and reducing target health by 20.  Later on, these monsters will mature and bigin dragging the planet into the void.
+
+DIM_RIFT_SLAVE_SPECIAL
 Dimensional Rift
-DIM_RIFT_SPECIAL_DESC
-This planet is partially concealed by a dimentional rift, increasing its stealth by 450.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
+DIM_RIFT_SLAVE_SPECIAL_DESC
+This planet is partially concealed by a dimensional rift, increasing its stealth.
 
-VOID_SPECIAL
+VOID_MASTER_SPECIAL
+Void Monsters
+VOID_MASTER_SPECIAL_DESC
+Monsters inside the core of this planet are dragging it into the void.  There should perhaps be some impending doom associated with this special.
+
+VOID_SLAVE_SPECIAL
 Void Metamorphisis
-VOID_SPECIAL_DESC
+VOID_SLAVE_SPECIAL_DESC
 This planet exists partially in this universe and partially in the void, increasing its stealth by 700.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
 
 
@@ -7294,10 +7319,10 @@ ULTIMATE_DETECTION
 '''Ultimate Detection: +50 bonus.'''
 
 GREAT_STEALTH
-'''Great Stealth: +15 bonus.'''
+'''Great Stealth: +25 bonus.'''
 
 ULTIMATE_STEALTH
-'''Ultimate Stealth: +25 bonus.'''
+'''Ultimate Stealth: +50 bonus.'''
 
 GREAT_WEAPONS
 '''Starts with Mass Driver 3.'''
