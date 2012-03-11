@@ -172,7 +172,7 @@ Species
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
     
-    [[TUNDRA_STANDARD_EP]]
+    [[DESERT_STANDARD_EP]]
     
     graphic = "icons/species/trith.png"
 
@@ -352,41 +352,7 @@ Species
     graphic = "icons/species/t-aeghirus.png"    
 
 
-Species
-    name = "SP_ETTY"
-    description = "SP_ETTY_DESC"
-    Playable
-    CanProduceShips
-    CanColonize
-    
-    foci = [
-        [[HAS_FARMING_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[AVERAGE_FARMING]]
-        [[AVERAGE_MINING]]
-        [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
-        
-        [[STANDARD_FOOD_USE]]
-                
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
-    ]
-    
-    [[DESERT_STANDARD_EP]]
-    
-    graphic = "icons/species/flora-04.png"
-
-
-Species
+pecies
     name = "SP_MUURSH"
     description = "SP_MUURSH_DESC"
     Playable
@@ -421,6 +387,40 @@ Species
     graphic = "icons/species/quadruped-02.png"
 
 
+Species
+    name = "SP_GEORGE"
+    description = "SP_GEORGE_DESC"
+    Playable
+    CanColonize
+    CanProduceShips
+    
+    foci = [
+        [[HAS_FARMING_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_FARMING]]
+        [[AVERAGE_MINING]]
+        [[ULTIMATE_INDUSTRY]]
+        [[TERRIBLE_RESEARCH]]
+        
+        [[AVERAGE_GROUND_TROOPS]]
+        
+        [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_HEALTH_AND_POPULATION]]
+    ]
+    
+    [[TUNDRA_STANDARD_EP]]
+    
+    graphic = "icons/species/george.png"
+
+
 //#######################################################\\
 //####                                               ####\\
 //####          M I N O R   S P E C I E S            ####\\
@@ -445,12 +445,12 @@ Species
     effectsgroups = [
         [[TERRIBLE_FARMING]]
         [[AVERAGE_MINING]]
-        [[AVERAGE_INDUSTRY]]
+        [[TERRIBLE_INDUSTRY]]
         [[GREAT_RESEARCH]]
 
         [[AVERAGE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
+        [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
@@ -461,6 +461,40 @@ Species
 
 
 Species
+    name = "SP_ETTY"
+    description = "SP_ETTY_DESC"
+    CanProduceShips
+    CanColonize
+    
+    foci = [
+        [[HAS_FARMING_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_FARMING]]
+        [[TERRIBLE_MINING]]
+        [[AVERAGE_INDUSTRY]]
+        [[NO_RESEARCH]]
+        
+        [[AVERAGE_GROUND_TROOPS]]
+        
+        [[TERRIBLE_DETECTION]]
+        
+        [[STANDARD_FOOD_USE]]
+                
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_HEALTH_AND_POPULATION]]
+    ]
+    
+    [[DESERT_STANDARD_EP]]
+    
+    graphic = "icons/species/flora-04.png"
+
+
+SSpecies
     name = "SP_CYNOS"
     description = "SP_CYNOS_DESC"
     CanProduceShips
@@ -487,38 +521,6 @@ Species
     [[SWAMP_STANDARD_EP]]
     
     graphic = "icons/species/cynos.png"
-
-
-Species
-    name = "SP_GEORGE"
-    description = "SP_GEORGE_DESC"
-    CanProduceShips
-    
-    foci = [
-        [[HAS_FARMING_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[AVERAGE_FARMING]]
-        [[AVERAGE_MINING]]
-        [[GREAT_INDUSTRY]]
-        [[TERRIBLE_RESEARCH]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
-        
-        [[STANDARD_FOOD_USE]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
-    ]
-    
-    [[TUNDRA_STANDARD_EP]]
-    
-    graphic = "icons/species/george.png"
 
 
 Species
@@ -571,7 +573,7 @@ Species
         [[TERRIBLE_FARMING]]
         [[AVERAGE_MINING]]
         [[GREAT_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
+        [[TERRIBLE_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
             
@@ -607,7 +609,6 @@ Species
         [[TERRIBLE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[GREAT_WEAPONS]]
         [[TERRIBLE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
@@ -818,7 +819,7 @@ Species
     effectsgroups = [
         [[GREAT_FARMING]]
         [[AVERAGE_MINING]]
-        [[AVERAGE_INDUSTRY]]
+        [[NO_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
@@ -887,7 +888,7 @@ Species
         
         [[GREAT_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
+        [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
@@ -963,6 +964,7 @@ Species
 Species
     name = "SP_ABADDONNIANS"
     description = "SP_ABADDONNIANS_DESC"
+    CanColonize
     CanProduceShips
     
     foci = [
@@ -974,7 +976,7 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_FARMING]]
+        [[AVERAGE_FARMING]]
         [[GREAT_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]

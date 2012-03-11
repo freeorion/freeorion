@@ -2640,7 +2640,7 @@ SP_TRITH
 Trith
 SP_TRITH_DESC
 '''Bereaved xenophobic telepaths.
-Prefer Radiated planets.
+Prefer Desert planets.
 
 [[ULTIMATE_DETECTION]]
 [[GREAT_STEALTH]]
@@ -2730,18 +2730,7 @@ Prefer Swamp planets.
 [[TERRIBLE_GROUND_TROOPS]]
 '''
 
-SP_ETTY
-Etty
-SP_ETTY_DESC
-'''Cybernetic plants.
-Prefer Desert planets.
 
-[[AVERAGE_FARMING]]
-[[AVERAGE_MINING]]
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-'''
-        
 SP_MUURSH
 Muursh
 SP_MUURSH_DESC
@@ -2758,6 +2747,21 @@ Prefer Desert planets.
 '''
 
 
+SP_GEORGE
+George
+SP_GEORGE_DESC
+'''A single, childish Telepathic entity consisting of tons of centipedeoids.
+Prefers Tundra planets.
+
+[[AVERAGE_FARMING]]
+[[AVERAGE_MINING]]
+[[ULTIMATE_INDUSTRY]]
+[[TERRIBLE_RESEARCH]]
+        
+[[AVERAGE_GROUND_TROOPS]]
+'''
+
+
 SP_CRAY
 Cray
 SP_CRAY_DESC
@@ -2766,10 +2770,29 @@ Prefer Barren planets.
 
 [[TERRIBLE_FARMING]]
 [[AVERAGE_MINING]]
-[[AVERAGE_INDUSTRY]]
+[[TERRIBLE_INDUSTRY]]
 [[GREAT_RESEARCH]]
 
 [[AVERAGE_GROUND_TROOPS]]
+        
+[[NO_FOOD_USE]]
+'''
+
+
+SP_ETTY
+Etty
+SP_ETTY_DESC
+'''Cybernetic plants.
+Prefer Desert planets.
+
+[[AVERAGE_FARMING]]
+[[TERRIBLE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[NO_RESEARCH]]
+
+[[AVERAGE_GROUND_TROOPS]]
+
+[[TERRIBLE_DETECTION]]
 '''
 
 
@@ -2785,20 +2808,6 @@ Prefer Swamp planets.
 [[AVERAGE_RESEARCH]]
 
 [[GREAT_GROUND_TROOPS]]
-'''
-
-SP_GEORGE
-George
-SP_GEORGE_DESC
-'''A single, childish Telepathic entity consisting of tons of centipedeoids.
-Prefers Tundra planets.
-
-[[AVERAGE_FARMING]]
-[[AVERAGE_MINING]]
-[[GREAT_INDUSTRY]]
-[[TERRIBLE_RESEARCH]]
-
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_PHINNERT
@@ -2824,7 +2833,7 @@ Prefer Inferno planets.
 [[TERRIBLE_FARMING]]
 [[AVERAGE_MINING]]
 [[GREAT_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
+[[TERRIBLE_RESEARCH]]
 
 [[AVERAGE_GROUND_TROOPS]]
 '''
@@ -2840,7 +2849,6 @@ Prefer Tundra planets.
 [[TERRIBLE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
-[[GREAT_WEAPONS]]
 [[TERRIBLE_GROUND_TROOPS]]
 '''
 
@@ -2974,7 +2982,7 @@ Prefer Terran planets.
 
 [[GREAT_FARMING]]
 [[AVERAGE_MINING]]
-[[AVERAGE_INDUSTRY]]
+[[NO_INDUSTRY]]
 [[TERRIBLE_RESEARCH]]
         
 [[AVERAGE_GROUND_TROOPS]]
@@ -3009,6 +3017,8 @@ Prefer Inferno planets.
 [[TERRIBLE_RESEARCH]]
         
 [[GREAT_GROUND_TROOPS]]
+
+[[NO_FOOD_USE]]
 '''
 
 SP_GISGUFGTHRIM
@@ -3057,7 +3067,7 @@ SP_ABADDONNIANS_DESC
 '''A race of cave dwelling genrally decent folk living in permanent slavery to an overprotective computer they created. 
 Prefers Inferno planets.
 
-[[GREAT_FARMING]]
+[[AVERAGE_FARMING]]
 [[GREAT_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[TERRIBLE_RESEARCH]]
@@ -4069,6 +4079,9 @@ A tamed %predefinedshipdesign% is ready for service at %planet%.
 
 EFFECT_GATEWAY_VOID_DESTROY
 The %buildingtype% at %planet% destroyed the %fleet% fleet.
+
+EFFECT_SCAVENGE_MINERALS
+Twenty minerals were scavenged from an abandoned hulk at %system%.
 
 # Conditions
 
