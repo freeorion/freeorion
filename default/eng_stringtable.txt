@@ -289,24 +289,21 @@ SM_KRILL_4_DESC
 
 SM_TREE
 Dyson Forest
-
 SM_TREE_DESC
 '''A Dyson Forest is made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. At intervals they may send out a seed through the star-lanes to colonize other stars.'''
+
 SM_SEED
 Dyson Seed
-
 SM_SEED_DESC
 Dyson Forests intermittently produce a star-lane capable seed, sent away to found a new forest around other stars.
 
 SM_FLOATER
 Floater
-
 SM_FLOATER_DESC
 Gas-filled bulbous sac drifting through space.
 
 SM_DRAGON
 Vacuum Dragon
-
 SM_DRAGON_DESC
 Terrifying giant monster that prowls space for prey.
 
@@ -6485,8 +6482,7 @@ PART_DESC_STRENGTH
 Strength: %1%
 
 PART_DESC_DIRECT_FIRE_STATS
-'''Attack Damage: %1%
-'''
+'''Attack Damage: %1%'''
 
 ## TEMPORARILY HIDDEN
 # Rate of Fire: %2% shots/turn
