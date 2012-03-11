@@ -281,10 +281,12 @@ namespace {
             set_overlay_texture
                 =    tok.SetOverlayTexture_
                 >    parse::label(Name_name)    > tok.string [ _a = _1 ]
-                >>  (
-                        parse::label(Size_name) >> double_value_ref [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
-                    |   eps [ _val = new_<Effect::SetOverlayTexture>(_a) ]
-                    )
+                >    parse::label(Size_name)    > double_value_ref [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
+                ;
+
+            set_texture
+                =    tok.SetTexture_
+                >    parse::label(Name_name)    > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
                 ;
 
             string_and_string_ref // TODO: Try to make this simpler.
@@ -328,6 +330,7 @@ namespace {
                 |    set_empire_tech_progress
                 |    generate_sitrep_message
                 |    set_overlay_texture
+                |    set_texture
                 ;
 
             set_meter.name("SetMeter");
@@ -360,6 +363,7 @@ namespace {
             set_empire_tech_progress.name("SetEmpireTechProgress");
             generate_sitrep_message.name("GenerateSitrepMessage");
             set_overlay_texture.name("SetOverlayTexture");
+            set_texture.name("SetTexture");
 
 #if DEBUG_PARSER
             debug(set_meter);
@@ -519,6 +523,7 @@ namespace {
         string_and_doubleref_rule           set_empire_tech_progress;
         generate_sitrep_message_rule        generate_sitrep_message;
         string_and_doubleref_rule           set_overlay_texture;
+        parse::effect_parser_rule           set_texture;
         string_and_string_ref_rule          string_and_string_ref;
         string_and_string_ref_vector_rule   string_and_string_ref_vector;
         parse::effect_parser_rule           start;

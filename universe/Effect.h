@@ -49,6 +49,7 @@ namespace Effect {
     class GenerateSitRepMessage;
     class SetDestination;
     class SetOverlayTexture;
+    class SetTexture;
 }
 namespace ValueRef {
     template <class T>
@@ -96,12 +97,14 @@ public:
     void    Execute(int source_id, const TargetSet& targets) const;
     void    Execute(int source_id, const TargetsAndCause& targets_and_cause,
                     AccountingMap& accounting_map) const;
-    /** execute all SetMeter effects  in group.  This is useful for doing meter
+    /** execute all SetMeter effects in group.  This is useful for doing meter
       * estimate updates and effect accounting, for which executing non-meter
       * effects is neither needed nor useful. */
     void    ExecuteSetMeter(int source_id, const TargetSet& targets) const;
     void    ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause,
                             AccountingMap& accounting_map) const;
+    /** execute all appearance modifying effects in group. */
+    void    ExecuteAppearanceModifications(int source_id, const TargetSet& targets) const;
 
     const std::string&              StackingGroup() const;
     const std::vector<EffectBase*>& EffectsList() const;
@@ -714,8 +717,7 @@ private:
 /** Applies an overlay texture to Systems. */
 class Effect::SetOverlayTexture : public Effect::EffectBase {
 public:
-    SetOverlayTexture(const std::string& texture,
-                      const ValueRef::ValueRefBase<double>* size = 0);
+    SetOverlayTexture(const std::string& texture, const ValueRef::ValueRefBase<double>* size);
     virtual ~SetOverlayTexture();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -723,14 +725,31 @@ public:
     virtual std::string Dump() const;
 
 private:
-    std::string                                     m_texture;
-    const ValueRef::ValueRefBase<double>*           m_size;
+    std::string                             m_texture;
+    const ValueRef::ValueRefBase<double>*   m_size;
 
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Applies a texture to Planets. */
+class Effect::SetTexture : public Effect::EffectBase {
+public:
+    SetTexture(const std::string& texture);
+    virtual ~SetTexture();
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    std::string m_texture;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
 
 // template implementations
 template <class Archive>
@@ -948,6 +967,13 @@ void Effect::SetOverlayTexture::serialize(Archive& ar, const unsigned int versio
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_texture)
         & BOOST_SERIALIZATION_NVP(m_size);
+}
+
+template <class Archive>
+void Effect::SetTexture::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_texture);
 }
 
 

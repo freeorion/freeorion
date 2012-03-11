@@ -357,7 +357,9 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetSet& targets) cons
     }
 }
 
-void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const {
+void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause,
+                                   AccountingMap& accounting_map) const
+{
     const UniverseObject* source = GetUniverseObject(source_id);
 
     // execute effects on targets
@@ -366,7 +368,6 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets
     {
         UniverseObject* target = *target_it;
 
-        //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
         for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
              effect_it != m_effects.end(); ++effect_it)
         {
@@ -400,6 +401,24 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets
     }
 }
 
+void EffectsGroup::ExecuteAppearanceModifications(int source_id, const TargetSet& targets) const {
+    const UniverseObject* source = GetUniverseObject(source_id);
+
+    // execute effects on targets
+    for (TargetSet::const_iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+        UniverseObject* target = *target_it;
+
+        for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
+             effect_it != m_effects.end(); ++effect_it)
+        {
+            const EffectBase* effect = *effect_it;
+            if (!dynamic_cast<const SetTexture*>(effect) && !dynamic_cast<const SetOverlayTexture*>(effect))
+                continue;
+            effect->Execute(ScriptingContext(source, target));
+        }
+    }
+
+}
 const std::string& EffectsGroup::StackingGroup() const
 { return m_stacking_group; }
 
@@ -2099,8 +2118,8 @@ void SetEmpireTechProgress::Execute(const ScriptingContext& context) const {
 
 std::string SetEmpireTechProgress::Description() const {
     std::string progress_str = ValueRef::ConstantExpr(m_research_progress) ?
-                                lexical_cast<std::string>(m_research_progress->Eval()) :
-                                m_research_progress->Description();
+                               lexical_cast<std::string>(m_research_progress->Eval()) :
+                               m_research_progress->Description();
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
@@ -2111,9 +2130,9 @@ std::string SetEmpireTechProgress::Description() const {
         }
     }
     return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_TECH_PROGRESS"))
-                % UserString(m_tech_name)
-                % progress_str
-                % empire_str);
+               % UserString(m_tech_name)
+               % progress_str
+               % empire_str);
 }
 
 std::string SetEmpireTechProgress::Dump() const {
@@ -2175,7 +2194,8 @@ std::string GiveEmpireTech::Description() const {
 std::string GiveEmpireTech::Dump() const {
     std::string retval = "GiveEmpireTech name = \"" + m_tech_name + "\"";
     if (m_empire_id)
-        retval += " empire = " + m_empire_id->Dump() + "\n";
+        retval += " empire = " + m_empire_id->Dump();
+    retval += "\n";
     return retval;
 }
 
@@ -2202,8 +2222,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
     m_affiliation(affiliation)
 {}
 
-GenerateSitRepMessage::~GenerateSitRepMessage()
-{
+GenerateSitRepMessage::~GenerateSitRepMessage() {
     for (std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >::iterator it =
          m_message_parameters.begin(); it != m_message_parameters.end(); ++it)
     {
@@ -2212,8 +2231,7 @@ GenerateSitRepMessage::~GenerateSitRepMessage()
     delete m_recipient_empire_id;
 }
 
-void GenerateSitRepMessage::Execute(const ScriptingContext& context) const
-{
+void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
     Empire* empire = 0;
     if (m_recipient_empire_id)
         empire = Empires().Lookup(m_recipient_empire_id->Eval(context));
@@ -2240,8 +2258,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const
     }
 }
 
-std::string GenerateSitRepMessage::Description() const
-{
+std::string GenerateSitRepMessage::Description() const {
     std::string empire_str;
     if (m_recipient_empire_id) {
         int empire_id = ALL_EMPIRES;
@@ -2255,8 +2272,7 @@ std::string GenerateSitRepMessage::Description() const
     return str(FlexibleFormat(UserString("DESC_GENERATE_SITREP")) % empire_str);
 }
 
-std::string GenerateSitRepMessage::Dump() const
-{
+std::string GenerateSitRepMessage::Dump() const {
     std::string retval = DumpIndent();
     retval += "GenerateSitRepMessage\n";
     ++g_indent;
@@ -2291,10 +2307,9 @@ std::string GenerateSitRepMessage::Dump() const
 }
 
 ///////////////////////////////////////////////////////////
-// SetOverlayTexture                                 //
+// SetOverlayTexture                                     //
 ///////////////////////////////////////////////////////////
-SetOverlayTexture::SetOverlayTexture(const std::string& texture,
-                                     const ValueRef::ValueRefBase<double>* size/* = 0*/) :
+SetOverlayTexture::SetOverlayTexture(const std::string& texture, const ValueRef::ValueRefBase<double>* size) :
     m_texture(texture),
     m_size(size)
 {}
@@ -2303,11 +2318,46 @@ SetOverlayTexture::~SetOverlayTexture()
 { delete m_size; }
 
 void SetOverlayTexture::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target)
+        return;
+    double size = 1.0;
+    if (m_size)
+        size = m_size->Eval(context);
+
+    if (System* system = universe_object_cast<System*>(context.effect_target))
+        system->SetOverlayTexture(m_texture, size);
 }
 
 std::string SetOverlayTexture::Description() const
-{ return ""; }
+{ return UserString("DESC_SET_OVERLAY_TEXTURE"); }
 
-std::string SetOverlayTexture::Dump() const
-{ return ""; }
+std::string SetOverlayTexture::Dump() const {
+    std::string retval = DumpIndent() + "SetOverlayTexture texture = " + m_texture;
+    if (m_size)
+        retval += " size = " + m_size->Dump();
+    retval += "\n";
+    return retval;
+}
 
+///////////////////////////////////////////////////////////
+// SetTexture                                 //
+///////////////////////////////////////////////////////////
+SetTexture::SetTexture(const std::string& texture) :
+    m_texture(texture)
+{}
+
+SetTexture::~SetTexture()
+{}
+
+void SetTexture::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target)
+        return;
+    if (Planet* planet = universe_object_cast<Planet*>(context.effect_target))
+        planet->SetSurfaceTexture(m_texture);
+}
+
+std::string SetTexture::Description() const
+{ return UserString("DESC_SET_TEXTURE"); }
+
+std::string SetTexture::Dump() const
+{ return DumpIndent() + "SetTexture texture = " + m_texture + "\n"; }
