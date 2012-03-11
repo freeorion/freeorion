@@ -23,6 +23,7 @@ GUI:
 Bugs:
  ~ Fixed many spelling errors in various descriptions.
  ~ Updated many inaccurate tech descriptions.
+ ~ Re-added missing space monster graphics.
 
 
 v0.4 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
