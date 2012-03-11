@@ -349,7 +349,7 @@ Species
     
     [[SWAMP_STANDARD_EP]]
     
-    graphic = "icons/species/t-aeghirus.png"    
+    graphic = "icons/species/t-aeghirus.png"
 
 
 Species
@@ -377,7 +377,7 @@ Species
         [[GREAT_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
-                
+        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_HEALTH_AND_POPULATION]]
     ]
@@ -404,7 +404,7 @@ Species
     effectsgroups = [
         [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
-        [[GREAT_INDUSTRY]]
+        [[ULTIMATE_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
@@ -509,7 +509,7 @@ Species
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
-
+        
         [[GREAT_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
@@ -1024,6 +1024,7 @@ Species
     [[RADIATED_STANDARD_EP]]
     
     graphic = "icons/species/acirema.png"
+
 
 Species
     name = "SP_SUPER_TEST"
@@ -2086,6 +2087,31 @@ GREAT_INDUSTRY
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
             effects = SetTargetIndustry Value + Target.Population * 4
+
+        EffectsGroup
+            scope = OwnedBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_FARMING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetFarming Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = OwnedBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_MINING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetMining Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+'''
+
+ULTIMATE_INDUSTRY
+'''EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_INDUSTRY"
+            effects = SetTargetIndustry Value + Target.Population * 6
 
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
