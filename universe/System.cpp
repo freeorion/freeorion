@@ -663,6 +663,12 @@ System::ObjectMultimap System::VisibleContainedObjects(int empire_id) const {
     return retval;
 }
 
+void System::SetOverlayTexture(const std::string& texture, double size) {
+    m_overlay_texture = texture;
+    m_overlay_size = size;
+    StateChangedSignal();
+}
+
 // free functions
 
 double SystemRadius()

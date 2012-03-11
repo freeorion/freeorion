@@ -125,6 +125,9 @@ public:
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
+    const std::string&      OverlayTexture() const      { return m_overlay_texture; }
+    double                  OverlaySize() const         { return m_overlay_size; }      ///< size in universe
+
     mutable boost::signal<void (Fleet& fleet)> FleetInsertedSignal;     ///< fleet is inserted into system
     mutable boost::signal<void (Fleet& fleet)> FleetRemovedSignal;      ///< fleet is removed from system
     //@}
@@ -178,6 +181,8 @@ public:
 
     lane_iterator           begin_lanes();                  ///< begin iterator for all starlanes and wormholes terminating in this system
     lane_iterator           end_lanes();                    ///< end iterator for all starlanes and wormholes terminating in this system
+
+    void                    SetOverlayTexture(const std::string& texture, double size);
     //@}
 
 protected:
@@ -197,6 +202,9 @@ private:
     ObjectMultimap  m_objects;                      ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
     StarlaneMap     m_starlanes_wormholes;          ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
     int             m_last_turn_battle_here;        ///< the turn on which there was last a battle in this sytem
+
+    std::string     m_overlay_texture;              // intentionally not serialized; set by local effects
+    double          m_overlay_size;
 
     friend class boost::serialization::access;
     template <class Archive>
