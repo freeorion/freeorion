@@ -18,8 +18,7 @@ namespace GG {
 /** A TextControl-like GG::Control that displays the name of a system in the color(s) of the owning empire(s). 
     This class is derived from GG::Control because GG::ListBox::Row accepts GG::Control but not GG::Wnd being
     added to them.  OwnerColoredSystemName are added to the list of systems on the SidePanel. */
-class OwnerColoredSystemName : public GG::Control
-{
+class OwnerColoredSystemName : public GG::Control {
 public:
     OwnerColoredSystemName(int system_id, int font_size, bool blank_unexplored_and_none);
     virtual void Render();
@@ -28,14 +27,13 @@ public:
 /** a GUI control that allows interaction with a star system.  This class allows user interaction with star systems on
     the galaxy map.  It contains the graphic to display the system, along with the object ID of the UniverseObject
     associated with it. */
-class SystemIcon : public GG::Control
-{
+class SystemIcon : public GG::Control {
 public:
     //! \name Signal Types //!@{
-    typedef boost::signal<void (int)>   MouseEnteringSignalType;    //!< emitted when the user moves the cursor over the icon; returns the object id
-    typedef boost::signal<void (int)>   MouseLeavingSignalType;     //!< emitted when the user moves the cursor off of the icon; returns the object id
-    typedef boost::signal<void (int)>   LeftClickedSignalType;      //!< emitted when the user left clicks the icon; returns the objectID
-    typedef boost::signal<void (int)>   RightClickedSignalType;     //!< emitted when the user right clicks the icon; returns the objectID
+    typedef boost::signal<void (int)>   MouseEnteringSignalType;        //!< emitted when the user moves the cursor over the icon; returns the object id
+    typedef boost::signal<void (int)>   MouseLeavingSignalType;         //!< emitted when the user moves the cursor off of the icon; returns the object id
+    typedef boost::signal<void (int)>   LeftClickedSignalType;          //!< emitted when the user left clicks the icon; returns the objectID
+    typedef boost::signal<void (int)>   RightClickedSignalType;         //!< emitted when the user right clicks the icon; returns the objectID
     typedef boost::signal<void (int)>   LeftDoubleClickedSignalType;    //!< emitted when the user left double-clicks the icon; returns the object id
     typedef boost::signal<void (int)>   RightDoubleClickedSignalType;   //!< emitted when the user left double-clicks the icon; returns the object id
     typedef boost::signal<void (FleetButton&, bool)>  FleetButtonClickedSignalType;   //!< emitted when one of the fleet buttons on this icon is clicked
@@ -47,11 +45,11 @@ public:
     //!@}
 
     //! \name Accessors //!@{
-    int                 SystemID() const;                       //!< returns ID of system this icon represents
+    int                 SystemID() const;                           //!< returns ID of system this icon represents
 
-    const boost::shared_ptr<GG::Texture>& DiscTexture() const;  //!< returns the solid star disc texture
-    const boost::shared_ptr<GG::Texture>& HaloTexture() const;  //!< returns the transparent star halo texture
-    const boost::shared_ptr<GG::Texture>& TinyTexture() const;  //!< returns the alternate texture shown when icon very small
+    const boost::shared_ptr<GG::Texture>& DiscTexture() const;      //!< returns the solid star disc texture
+    const boost::shared_ptr<GG::Texture>& HaloTexture() const;      //!< returns the transparent star halo texture
+    const boost::shared_ptr<GG::Texture>& TinyTexture() const;      //!< returns the alternate texture shown when icon very small
 
     virtual bool        InWindow(const GG::Pt& pt) const;       //!< Overrides GG::Wnd::InWindow. Checks to see if point lies inside in-system fleet buttons before checking main InWindow method.
     GG::Pt              NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const; //!< returns upper left point of moving or stationary fleetbutton number \a button_number
@@ -63,7 +61,9 @@ public:
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     virtual void    Render();
-    void            ManualRender(double halo_scale_factor);     //!< Draw disc and halo textures
+    void            RenderDisc();
+    void            RenderHalo(double scale_factor);
+    void            RenderOverlay(double zoom_factor);
 
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
@@ -95,6 +95,8 @@ private:
     boost::shared_ptr<GG::Texture>  m_disc_texture;             //!< solid star disc texture
     boost::shared_ptr<GG::Texture>  m_halo_texture;             //!< transparent star halo texture
     boost::shared_ptr<GG::Texture>  m_tiny_texture;             //!< alternate texture shown when icon very small
+    boost::shared_ptr<GG::Texture>  m_overlay_texture;          //!< extra texture drawn over / behind system
+    double                          m_overlay_size;             //!< size of extra texture in universe units
     GG::StaticGraphic*              m_tiny_graphic;             //!< non-scaled texture shown when zoomed far enough out
     GG::DynamicGraphic*             m_selection_indicator;      //!< shown to indicate system is selected in sidepanel
     GG::DynamicGraphic*             m_tiny_selection_indicator; //!< non-scaled indicator shown when showing tiny graphic

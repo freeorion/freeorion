@@ -880,8 +880,7 @@ MapWnd::MapWnd() :
     DoLayout();
 }
 
-MapWnd::~MapWnd()
-{
+MapWnd::~MapWnd() {
     delete m_toolbar;
     delete m_scale_line;
     delete m_zoom_slider;
@@ -903,24 +902,21 @@ GG::Pt MapWnd::ClientUpperLeft() const
 double MapWnd::ZoomFactor() const
 { return ZoomScaleFactor(m_zoom_steps_in); }
 
-GG::Pt MapWnd::ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const
-{
+GG::Pt MapWnd::ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const {
     GG::Pt cl_ul = ClientUpperLeft();
     GG::X x((universe_x * ZoomFactor()) + cl_ul.x);
     GG::Y y((universe_y * ZoomFactor()) + cl_ul.y);
     return GG::Pt(x, y);
 }
 
-std::pair<double, double> MapWnd::UniversePositionFromScreenCoords(GG::Pt screen_coords) const
-{
+std::pair<double, double> MapWnd::UniversePositionFromScreenCoords(GG::Pt screen_coords) const {
     GG::Pt cl_ul = ClientUpperLeft();
     double x = Value((screen_coords - cl_ul).x / ZoomFactor());
     double y = Value((screen_coords - cl_ul).y / ZoomFactor());
     return std::pair<double, double>(x, y);
 }
 
-void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
-{
+void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const {
     data.map_left = Value(UpperLeft().x);
     data.map_top = Value(UpperLeft().y);
     data.map_zoom_steps_in = m_zoom_steps_in;
@@ -956,6 +952,7 @@ void MapWnd::Render() {
     RenderGalaxyGas();
     RenderNebulae();
     RenderVisibilityRadii();
+    RenderSystemOverlays();
     RenderStarlanes();
     RenderSystems();
     RenderFleetMovementLines();
@@ -964,8 +961,7 @@ void MapWnd::Render() {
     glPopClientAttrib();
 }
 
-void MapWnd::RenderStarfields()
-{
+void MapWnd::RenderStarfields() {
     if (!GetOptionsDB().Get<bool>("UI.galaxy-starfields"))
         return;
 
@@ -1001,8 +997,7 @@ void MapWnd::RenderStarfields()
     glMatrixMode(GL_MODELVIEW);
 }
 
-void MapWnd::RenderNebulae()
-{
+void MapWnd::RenderNebulae() {
     // nebula rendering disabled until we add nebulae worth rendering, which likely
     // means for them to have some gameplay purpose and artist-approved way to
     // specify what colours or specific nebula images to use
@@ -1031,8 +1026,7 @@ void MapWnd::RenderNebulae()
     //glPopClientAttrib();
 }
 
-void MapWnd::RenderGalaxyGas()
-{
+void MapWnd::RenderGalaxyGas() {
     if (!GetOptionsDB().Get<bool>("UI.galaxy-gas-background"))
         return;
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1041,7 +1035,8 @@ void MapWnd::RenderGalaxyGas()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
+    for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it =
+            m_galaxy_gas_quad_vertices.begin();
          it != m_galaxy_gas_quad_vertices.end();
          ++it)
     {
@@ -1055,15 +1050,26 @@ void MapWnd::RenderGalaxyGas()
     glPopClientAttrib();
 }
 
-void MapWnd::RenderSystems()
-{
+void MapWnd::RenderSystemOverlays() {
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glPushMatrix();
+    glLoadIdentity();
+    for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
+         it != m_system_icons.end(); ++it)
+    { it->second->RenderOverlay(ZoomFactor()); }
+    glPopMatrix();
+    glPopClientAttrib();
+}
+
+void MapWnd::RenderSystems() {
     const float HALO_SCALE_FACTOR = static_cast<float>(SystemHaloScaleFactor());
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
 
     if (GetOptionsDB().Get<bool>("UI.optimized-system-rendering")) {
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1109,8 +1115,12 @@ void MapWnd::RenderSystems()
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         glPushMatrix();
         glLoadIdentity();
-        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
-            it->second->ManualRender(HALO_SCALE_FACTOR);
+        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
+             it != m_system_icons.end(); ++it)
+        { it->second->RenderHalo(HALO_SCALE_FACTOR); }
+        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
+             it != m_system_icons.end(); ++it)
+        { it->second->RenderDisc(); }
         glPopMatrix();
     }
 
@@ -1134,7 +1144,9 @@ void MapWnd::RenderSystems()
         glLineWidth(1.5f);
         glColor(GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr());
 
-        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
+             it != m_system_icons.end(); ++it)
+        {
             const SystemIcon* icon = it->second;
 
             const int ARC_SIZE = icon->EnclosingCircleDiameter();
@@ -1679,13 +1691,12 @@ void MapWnd::InitTurn() {
     UpdateMeterEstimates();
 
 
+    GetUniverse().ApplyAppearanceEffects();
+
+
     boost::timer timer;
 
     const std::set<int>& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-
-    //std::map<int, std::set<int> > this_client_known_starlanes;
-    //if (this_client_empire)
-        //std::map<int, std::set<int> > this_client_known_starlanes = this_client_empire->KnownStarlanes();
 
     // get ids of not-destroyed systems known to this empire.
     std::set<int> this_client_known_systems;
@@ -1828,8 +1839,7 @@ void MapWnd::MidTurnUpdate() {
     Logger().debugStream() << "MapWnd::MidTurnUpdate time: " << (turn_init_timer.elapsed() * 1000.0);
 }
 
-void MapWnd::InitTurnRendering()
-{
+void MapWnd::InitTurnRendering() {
     Logger().debugStream() << "MapWnd::InitTurnRendering";
     boost::timer timer;
 
@@ -1854,6 +1864,8 @@ void MapWnd::InitTurnRendering()
     // that come from the SystemIcons
     m_fleet_lines.clear();
     ClearProjectedFleetMovementLines();
+
+
 
 
     // remove old system icons
@@ -1904,8 +1916,7 @@ void MapWnd::InitTurnRendering()
     Logger().debugStream() << "MapWnd::InitTurnRendering time: " << (timer.elapsed() * 1000.0);
 }
 
-void MapWnd::InitSystemRenderingBuffers()
-{
+void MapWnd::InitSystemRenderingBuffers() {
     Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers";
 
     boost::timer timer;
@@ -2047,19 +2058,14 @@ void MapWnd::InitSystemRenderingBuffers()
     Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers time: " << (timer.elapsed() * 1000.0);
 }
 
-void MapWnd::ClearSystemRenderingBuffers()
-{
+void MapWnd::ClearSystemRenderingBuffers() {
     m_star_core_quad_vertices.clear();
-
     m_star_halo_quad_vertices.clear();
-
     m_galaxy_gas_quad_vertices.clear();
-
     m_star_texture_coords.clear();
 }
 
-void MapWnd::InitStarlaneRenderingBuffers()
-{
+void MapWnd::InitStarlaneRenderingBuffers() {
     Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers";
     boost::timer timer;
 
@@ -2261,8 +2267,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
     Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers time: " << (timer.elapsed() * 1000.0);
 }
 
-void MapWnd::ClearStarlaneRenderingBuffers()
-{
+void MapWnd::ClearStarlaneRenderingBuffers() {
     m_starlane_vertices.clear();
     m_starlane_colors.clear();
 
@@ -2270,8 +2275,7 @@ void MapWnd::ClearStarlaneRenderingBuffers()
     m_starlane_fleet_supply_colors.clear();
 }
 
-LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2)
-{
+LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2) {
     LaneEndpoints retval;
 
     // get unit vector
@@ -2300,8 +2304,7 @@ LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1,
     return retval;
 }
 
-void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
-{
+void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
     m_zoom_steps_in = data.map_zoom_steps_in;
 
     GG::Pt ul = UpperLeft();
@@ -2317,22 +2320,19 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
 }
 
-void MapWnd::ShowSystemNames()
-{
+void MapWnd::ShowSystemNames() {
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         it->second->ShowName();
     }
 }
 
-void MapWnd::HideSystemNames()
-{
+void MapWnd::HideSystemNames() {
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         it->second->HideName();
     }
 }
 
-void MapWnd::CenterOnMapCoord(double x, double y)
-{
+void MapWnd::CenterOnMapCoord(double x, double y) {
     GG::Pt ul = ClientUpperLeft();
     GG::X_d current_x = (AppWidth() / 2 - ul.x) / ZoomFactor();
     GG::Y_d current_y = (AppHeight() / 2 - ul.y) / ZoomFactor();
@@ -2347,89 +2347,76 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
 }
 
-void MapWnd::ShowTech(const std::string& tech_name)
-{
+void MapWnd::ShowTech(const std::string& tech_name) {
     if (!m_research_wnd->Visible())
         ToggleResearch();
     m_research_wnd->ShowTech(tech_name);
 }
 
-void MapWnd::ShowBuildingType(const std::string& building_type_name)
-{
+void MapWnd::ShowBuildingType(const std::string& building_type_name) {
     if (!m_production_wnd->Visible())
         ToggleProduction();
     m_production_wnd->ShowBuildingTypeInEncyclopedia(building_type_name);
 }
 
-void MapWnd::ShowPartType(const std::string& part_type_name)
-{
+void MapWnd::ShowPartType(const std::string& part_type_name) {
     if (!m_design_wnd->Visible())
         ToggleDesign();
     m_design_wnd->ShowPartTypeInEncyclopedia(part_type_name);
 }
 
-void MapWnd::ShowHullType(const std::string& hull_type_name)
-{
+void MapWnd::ShowHullType(const std::string& hull_type_name) {
     if (!m_design_wnd->Visible())
         ToggleDesign();
     m_design_wnd->ShowHullTypeInEncyclopedia(hull_type_name);
 }
 
-void MapWnd::ShowShipDesign(int design_id)
-{
+void MapWnd::ShowShipDesign(int design_id) {
     if (!m_production_wnd->Visible())
         ToggleProduction();
     m_production_wnd->ShowShipDesignInEncyclopedia(design_id);
 }
 
-void MapWnd::ShowSpecial(const std::string& special_name)
-{
+void MapWnd::ShowSpecial(const std::string& special_name) {
     if (!m_pedia_panel->Visible())
         TogglePedia();
     m_pedia_panel->SetSpecial(special_name);
 }
 
-void MapWnd::ShowSpecies(const std::string& species_name)
-{
+void MapWnd::ShowSpecies(const std::string& species_name) {
     if (!m_pedia_panel->Visible())
         TogglePedia();
     m_pedia_panel->SetSpecies(species_name);
 }
 
-void MapWnd::ShowEmpire(int empire_id)
-{
+void MapWnd::ShowEmpire(int empire_id) {
     if (!m_pedia_panel->Visible())
         TogglePedia();
     m_pedia_panel->SetEmpire(empire_id);
 }
 
-void MapWnd::ShowEncyclopediaEntry(const std::string& str)
-{
+void MapWnd::ShowEncyclopediaEntry(const std::string& str) {
     if (!m_pedia_panel->Visible())
         TogglePedia();
     m_pedia_panel->SetText(str);
 }
 
-void MapWnd::CenterOnObject(int id)
-{
+void MapWnd::CenterOnObject(int id) {
     if (UniverseObject* obj = GetUniverseObject(id))
         CenterOnMapCoord(obj->X(), obj->Y());
 }
 
-void MapWnd::CenterOnObject(const UniverseObject* obj)
-{
+void MapWnd::CenterOnObject(const UniverseObject* obj) {
     if (!obj) return;
     CenterOnMapCoord(obj->X(), obj->Y());
 }
 
-void MapWnd::ReselectLastSystem()
-{
+void MapWnd::ReselectLastSystem() {
     if (SidePanel::SystemID() != INVALID_OBJECT_ID)
         SelectSystem(SidePanel::SystemID());
 }
 
-void MapWnd::SelectSystem(int system_id)
-{
+void MapWnd::SelectSystem(int system_id) {
     //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
     const System* system = GetSystem(system_id);
     if (!system)
@@ -2490,8 +2477,7 @@ void MapWnd::SelectSystem(int system_id)
     }
 }
 
-void MapWnd::ReselectLastFleet()
-{
+void MapWnd::ReselectLastFleet() {
     //// DEBUG
     //std::cout << "MapWnd::ReselectLastFleet m_selected_fleet_ids: " << std::endl;
     //for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
@@ -2523,16 +2509,12 @@ void MapWnd::ReselectLastFleet()
 }
 
 void MapWnd::SelectPlanet(int planetID)
-{
-    //std::cout << "MapWnd::SelectPlanet(" << planetID << ")" << std::endl;
-    m_production_wnd->SelectPlanet(planetID);   // calls SidePanel::SelectPlanet()
-}
+{ m_production_wnd->SelectPlanet(planetID); }   // calls SidePanel::SelectPlanet()
 
 void MapWnd::SelectFleet(int fleet_id)
 { SelectFleet(GetFleet(fleet_id)); }
 
-void MapWnd::SelectFleet(Fleet* fleet)
-{
+void MapWnd::SelectFleet(Fleet* fleet) {
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
 
     if (!fleet) {
@@ -2619,16 +2601,14 @@ void MapWnd::SelectFleet(Fleet* fleet)
     fleet_wnd->SelectFleet(fleet->ID());
 }
 
-void MapWnd::SetFleetMovementLine(const FleetButton* fleet_button)
-{
+void MapWnd::SetFleetMovementLine(const FleetButton* fleet_button) {
     assert(fleet_button);
     // each fleet represented by button could have different move path
     for (std::vector<int>::const_iterator it = fleet_button->Fleets().begin(); it != fleet_button->Fleets().end(); ++it)
         SetFleetMovementLine(*it);
 }
 
-void MapWnd::SetFleetMovementLine(int fleet_id)
-{
+void MapWnd::SetFleetMovementLine(int fleet_id) {
     if (fleet_id == INVALID_OBJECT_ID)
         return;
 
@@ -2650,8 +2630,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id)
     m_fleet_lines[fleet_id] = MovementLineData(fleet->MovePath(), m_starlane_endpoints, line_colour);
 }
 
-void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& travel_route)
-{
+void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& travel_route) {
     if (fleet_id == INVALID_OBJECT_ID)
         return;
 
@@ -2685,26 +2664,23 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
     m_projected_fleet_lines[fleet_id] = MovementLineData(path, m_starlane_endpoints, line_colour);
 }
 
-void MapWnd::SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids, const std::list<int>& travel_route)
+void MapWnd::SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids,
+                                            const std::list<int>& travel_route)
 {
     for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it)
         SetProjectedFleetMovementLine(*it, travel_route);
 }
 
-void MapWnd::RemoveProjectedFleetMovementLine(int fleet_id)
-{
+void MapWnd::RemoveProjectedFleetMovementLine(int fleet_id) {
     std::map<int, MovementLineData>::iterator it = m_projected_fleet_lines.find(fleet_id);
     if (it != m_projected_fleet_lines.end())
         m_projected_fleet_lines.erase(it);
 }
 
 void MapWnd::ClearProjectedFleetMovementLines()
-{
-    m_projected_fleet_lines.clear();
-}
+{ m_projected_fleet_lines.clear(); }
 
-bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
-{
+bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     if (event.Type() == GG::WndEvent::RClick && FleetUIManager::GetFleetUIManager().empty()) {
         // Attempt to close the SidePanel (if open); if this fails, just let Wnd w handle it.  
         // Note that this enforces a one-close-per-click policy.
@@ -2720,8 +2696,7 @@ bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
     return false;
 }
 
-void MapWnd::DoSystemIconsLayout()
-{
+void MapWnd::DoSystemIconsLayout() {
     // position and resize system icons and gaseous substance
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const int SYSTEM_ICON_SIZE = SystemIconSize();
@@ -2738,8 +2713,7 @@ void MapWnd::DoSystemIconsLayout()
     }
 }
 
-void MapWnd::DoFleetButtonsLayout()
-{
+void MapWnd::DoFleetButtonsLayout() {
     const ObjectMap& objects = GetUniverse().Objects();
     const int SYSTEM_ICON_SIZE = SystemIconSize();
 
@@ -2828,8 +2802,7 @@ void MapWnd::DoFleetButtonsLayout()
     }
 }
 
-std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(const Fleet* fleet) const
-{
+std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(const Fleet* fleet) const {
     if (!fleet) {
         return std::make_pair<double, double>(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
     }
@@ -3086,14 +3059,12 @@ void MapWnd::RefreshFleetButtons() {
         SetFleetMovementLine(it->second);
 }
 
-void MapWnd::FleetAddedOrRemoved(Fleet& fleet)
-{
+void MapWnd::FleetAddedOrRemoved(Fleet& fleet) {
     RefreshFleetButtons();
     RefreshFleetSignals();
 }
 
-void MapWnd::RefreshFleetSignals()
-{
+void MapWnd::RefreshFleetSignals() {
     const ObjectMap& objects = GetUniverse().Objects();
 
     // disconnect old fleet statechangedsignal connections
@@ -3111,8 +3082,7 @@ void MapWnd::RefreshFleetSignals()
     }
 }
 
-void MapWnd::RefreshSliders()
-{
+void MapWnd::RefreshSliders() {
     if (m_zoom_slider) {
         if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider"))
             m_zoom_slider->Show();
@@ -3128,12 +3098,9 @@ void MapWnd::RefreshSliders()
 }
 
 int MapWnd::SystemIconSize() const
-{
-    return static_cast<int>(ClientUI::SystemIconSize() * ZoomFactor());
-}
+{ return static_cast<int>(ClientUI::SystemIconSize() * ZoomFactor()); }
 
-int MapWnd::SystemNamePts() const
-{
+int MapWnd::SystemNamePts() const {
     const int       SYSTEM_NAME_MINIMUM_PTS = 6;    // limit to absolute minimum point size
     const double    MAX_NAME_ZOOM_FACTOR = 1.5;     // limit to relative max above standard UI font size
     const double    NAME_ZOOM_FACTOR = std::min(MAX_NAME_ZOOM_FACTOR, ZoomFactor());
@@ -3142,12 +3109,9 @@ int MapWnd::SystemNamePts() const
 }
 
 double MapWnd::SystemHaloScaleFactor() const
-{
-    return 1.0 + log10(ZoomFactor());
-}
+{ return 1.0 + log10(ZoomFactor()); }
 
-FleetButton::SizeType MapWnd::FleetButtonSizeType() const
-{
+FleetButton::SizeType MapWnd::FleetButtonSizeType() const {
     // no FLEET_BUTTON_LARGE as these icons are too big for the map.  (they can be used in the FleetWnd, however)
     if      (ZoomFactor() > ClientUI::MediumFleetButtonZoomThreshold())
         return FleetButton::FLEET_BUTTON_MEDIUM;
@@ -3162,14 +3126,12 @@ FleetButton::SizeType MapWnd::FleetButtonSizeType() const
         return FleetButton::FLEET_BUTTON_NONE;
 }
 
-void MapWnd::Zoom(int delta)
-{
+void MapWnd::Zoom(int delta) {
     GG::Pt center = GG::Pt(AppWidth() / 2.0, AppHeight() / 2.0);
     Zoom(delta, center);
 }
 
-void MapWnd::Zoom(int delta, const GG::Pt& position)
-{
+void MapWnd::Zoom(int delta, const GG::Pt& position) {
     if (delta == 0)
         return;
 
@@ -3178,14 +3140,12 @@ void MapWnd::Zoom(int delta, const GG::Pt& position)
     SetZoom(new_zoom_steps_in, true, position);
 }
 
-void MapWnd::SetZoom(double steps_in, bool update_slide)
-{
+void MapWnd::SetZoom(double steps_in, bool update_slide) {
     GG::Pt center = GG::Pt(AppWidth() / 2.0, AppHeight() / 2.0);
     SetZoom(steps_in, update_slide, center);
 }
 
-void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position)
-{
+void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position) {
     // impose range limits on zoom steps
     double new_steps_in = std::max(std::min(steps_in, ZOOM_IN_MAX_STEPS), ZOOM_IN_MIN_STEPS);
 
@@ -3266,8 +3226,7 @@ void MapWnd::ZoomSlid(double pos, double low, double high)
 void MapWnd::StealthSlid(double pos, double low, double high)
 { GetOptionsDB().Set("UI.detection-range-stealth-threshold", pos); }
 
-void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
-{
+void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt) {
     GG::X contents_width(static_cast<int>(ZoomFactor() * Universe::UniverseWidth()));
     GG::X app_width =  AppWidth();
     GG::Y app_height = AppHeight();
@@ -3300,8 +3259,7 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
     }
 }
 
-void MapWnd::SystemDoubleClicked(int system_id)
-{
+void MapWnd::SystemDoubleClicked(int system_id) {
     if (!m_in_production_view_mode) {
         if (!m_production_wnd->Visible())
             ToggleProduction();
@@ -3310,14 +3268,12 @@ void MapWnd::SystemDoubleClicked(int system_id)
     }
 }
 
-void MapWnd::SystemLeftClicked(int system_id)
-{
+void MapWnd::SystemLeftClicked(int system_id) {
     SelectSystem(system_id);
     SystemLeftClickedSignal(system_id);
 }
 
-void MapWnd::SystemRightClicked(int system_id)
-{
+void MapWnd::SystemRightClicked(int system_id) {
     if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd()) {
         if (system_id == INVALID_OBJECT_ID)
             ClearProjectedFleetMovementLines();
@@ -3327,8 +3283,7 @@ void MapWnd::SystemRightClicked(int system_id)
     SystemRightClickedSignal(system_id);
 }
 
-void MapWnd::MouseEnteringSystem(int system_id)
-{
+void MapWnd::MouseEnteringSystem(int system_id) {
     if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
         PlotFleetMovement(system_id, false);
     SystemBrowsedSignal(system_id);
@@ -3337,8 +3292,7 @@ void MapWnd::MouseEnteringSystem(int system_id)
 void MapWnd::MouseLeavingSystem(int system_id)
 { MouseEnteringSystem(INVALID_OBJECT_ID); }
 
-void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
-{
+void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
     if (!FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
         return;
 
@@ -3398,8 +3352,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
     }
 }
 
-void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
-{
+void MapWnd::FleetButtonClicked(FleetButton& fleet_btn) {
     //std::cout << "MapWnd::FleetButtonClicked" << std::endl;
 
     // ignore clicks when in production mode
@@ -3481,8 +3434,7 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
         SelectFleet(fleet_to_select_id);
 }
 
-void MapWnd::SelectedFleetsChanged()
-{
+void MapWnd::SelectedFleetsChanged() {
     // get selected fleets
     std::set<int> selected_fleet_ids;
     if (const FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
@@ -3499,8 +3451,7 @@ void MapWnd::SelectedFleetsChanged()
     RefreshFleetButtonSelectionIndicators();
 }
 
-void MapWnd::SelectedShipsChanged()
-{
+void MapWnd::SelectedShipsChanged() {
     // get selected ships
     std::set<int> selected_ship_ids;
     if (const FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
@@ -3523,8 +3474,7 @@ void MapWnd::SelectedShipsChanged()
     SidePanel::Update();
 }
 
-void MapWnd::RefreshFleetButtonSelectionIndicators()
-{
+void MapWnd::RefreshFleetButtonSelectionIndicators() {
     //std::cout << "MapWnd::RefreshFleetButtonSelectionIndicators()" << std::endl;
 
     // clear old selection indicators
@@ -3557,8 +3507,7 @@ void MapWnd::RefreshFleetButtonSelectionIndicators()
 void MapWnd::HandleEmpireElimination(int empire_id)
 {}
 
-void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
-{
+void MapWnd::UniverseObjectDeleted(const UniverseObject *obj) {
     Logger().debugStream() << "MapWnd::UniverseObjectDeleted";
     if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
         std::map<int, MovementLineData>::iterator it1 = m_fleet_lines.find(fleet->ID());
@@ -3571,14 +3520,12 @@ void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
     }
 }
 
-void MapWnd::RegisterPopup(MapWndPopup* popup)
-{
+void MapWnd::RegisterPopup(MapWndPopup* popup) {
     if (popup)
         m_popups.push_back(popup);
 }
 
-void MapWnd::RemovePopup(MapWndPopup* popup)
-{
+void MapWnd::RemovePopup(MapWndPopup* popup) {
     if (popup) {
         std::list<MapWndPopup*>::iterator it = std::find(m_popups.begin(), m_popups.end(), popup);
         if (it != m_popups.end())
@@ -3586,8 +3533,7 @@ void MapWnd::RemovePopup(MapWndPopup* popup)
     }
 }
 
-void MapWnd::Cleanup()
-{
+void MapWnd::Cleanup() {
     CloseAllPopups();
     RemoveAccelerators();
     HideResearch();
@@ -3603,8 +3549,7 @@ void MapWnd::Cleanup()
     m_stealth_threshold_slider->Hide();
 }
 
-void MapWnd::Sanitize()
-{
+void MapWnd::Sanitize() {
     //std::cout << "MapWnd::Sanitize()" << std::endl;
     Cleanup();
 
@@ -3691,8 +3636,7 @@ void MapWnd::Sanitize()
     m_scanline_shader.reset();
 }
 
-bool MapWnd::ReturnToMap()
-{
+bool MapWnd::ReturnToMap() {
     if (m_sitrep_panel->Visible())
         ToggleSitRep();
 
@@ -3708,8 +3652,7 @@ bool MapWnd::ReturnToMap()
     return true;
 }
 
-bool MapWnd::OpenChatWindow()
-{
+bool MapWnd::OpenChatWindow() {
     if (ClientUI* cui = ClientUI::GetClientUI()) {
         if (MessageWnd* msg_wnd = cui->GetMessageWnd()) {
             if (GG::GUI* gui = GG::GUI::GetGUI()) {
@@ -3722,15 +3665,13 @@ bool MapWnd::OpenChatWindow()
     return false;
 }
 
-bool MapWnd::EndTurn()
-{
+bool MapWnd::EndTurn() {
     Logger().debugStream() << "MapWnd::EndTurn";
     HumanClientApp::GetApp()->StartTurn();
     return true;
 }
 
-void MapWnd::ShowSitRep()
-{
+void MapWnd::ShowSitRep() {
     ClearProjectedFleetMovementLines();
 
     // hide other "competing" windows
@@ -3748,14 +3689,12 @@ void MapWnd::ShowSitRep()
     m_btn_siterep->MarkSelectedGray();
 }
 
-void MapWnd::HideSitRep()
-{
+void MapWnd::HideSitRep() {
     m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
     m_btn_siterep->MarkNotSelected();
 }
 
-bool MapWnd::ToggleSitRep()
-{
+bool MapWnd::ToggleSitRep() {
     if (m_sitrep_panel->Visible())
         HideSitRep();
     else
@@ -3763,8 +3702,7 @@ bool MapWnd::ToggleSitRep()
     return true;
 }
 
-void MapWnd::ShowPedia()
-{
+void MapWnd::ShowPedia() {
     ClearProjectedFleetMovementLines();
 
     // hide other "competing" windows
@@ -3782,14 +3720,12 @@ void MapWnd::ShowPedia()
     m_btn_pedia->MarkSelectedGray();
 }
 
-void MapWnd::HidePedia()
-{
+void MapWnd::HidePedia() {
     m_pedia_panel->Hide();
     m_btn_pedia->MarkNotSelected();
 }
 
-bool MapWnd::TogglePedia()
-{
+bool MapWnd::TogglePedia() {
     if (m_pedia_panel->Visible())
         HidePedia();
     else
@@ -3797,20 +3733,17 @@ bool MapWnd::TogglePedia()
     return true;
 }
 
-void MapWnd::HideSidePanel()
-{
+void MapWnd::HideSidePanel() {
     m_sidepanel_open_before_showing_other = m_side_panel->Visible();   // a kludge, so the sidepanel will reappear after opening and closing a full screen wnd
     m_side_panel->Hide();
 }
 
-void MapWnd::RestoreSidePanel()
-{
+void MapWnd::RestoreSidePanel() {
     if (m_sidepanel_open_before_showing_other)
         ReselectLastSystem();
 }
 
-void MapWnd::ShowResearch()
-{
+void MapWnd::ShowResearch() {
     ClearProjectedFleetMovementLines();
 
     // hide other "competing" windows
@@ -3829,16 +3762,14 @@ void MapWnd::ShowResearch()
     m_pedia_panel->SetText("ENC_TECH", false);
 }
 
-void MapWnd::HideResearch()
-{
+void MapWnd::HideResearch() {
     m_research_wnd->Hide();
     m_btn_research->MarkNotSelected();
     ShowAllPopups();
     RestoreSidePanel();
 }
 
-bool MapWnd::ToggleResearch()
-{
+bool MapWnd::ToggleResearch() {
     if (m_research_wnd->Visible())
         HideResearch();
     else
@@ -3846,8 +3777,7 @@ bool MapWnd::ToggleResearch()
     return true;
 }
 
-void MapWnd::ShowProduction()
-{
+void MapWnd::ShowProduction() {
     ClearProjectedFleetMovementLines();
 
     // hide other "competing" windows
@@ -3879,8 +3809,7 @@ void MapWnd::ShowProduction()
     }
 }
 
-void MapWnd::HideProduction()
-{
+void MapWnd::HideProduction() {
     m_production_wnd->Hide();
     m_in_production_view_mode = false;
     m_btn_production->MarkNotSelected();
@@ -3888,8 +3817,7 @@ void MapWnd::HideProduction()
     RestoreSidePanel();
 }
 
-bool MapWnd::ToggleProduction()
-{
+bool MapWnd::ToggleProduction() {
     if (m_in_production_view_mode)
         HideProduction();
     else
@@ -3901,8 +3829,7 @@ bool MapWnd::ToggleProduction()
     return true;
 }
 
-void MapWnd::ShowDesign()
-{
+void MapWnd::ShowDesign() {
     ClearProjectedFleetMovementLines();
 
     // hide other "competing" windows
@@ -3922,16 +3849,14 @@ void MapWnd::ShowDesign()
     m_btn_design->MarkSelectedGray();
 }
 
-void MapWnd::HideDesign()
-{
+void MapWnd::HideDesign() {
     m_design_wnd->Hide();
     m_btn_design->MarkNotSelected();
     EnableAlphaNumAccels();
     RestoreSidePanel();
 }
 
-bool MapWnd::ToggleDesign()
-{
+bool MapWnd::ToggleDesign() {
     if (m_design_wnd->Visible())
         HideDesign();
     else
@@ -3939,8 +3864,7 @@ bool MapWnd::ToggleDesign()
     return true;
 }
 
-bool MapWnd::ShowMenu()
-{
+bool MapWnd::ShowMenu() {
     if (!m_menu_showing) {
         ClearProjectedFleetMovementLines();
         m_menu_showing = true;
@@ -3953,27 +3877,23 @@ bool MapWnd::ShowMenu()
     return true;
 }
 
-bool MapWnd::CloseSystemView()
-{
+bool MapWnd::CloseSystemView() {
     SelectSystem(INVALID_OBJECT_ID);
     m_side_panel->Hide();   // redundant, but safer to keep in case the behavior of SelectSystem changes
     return true;
 }
 
-bool MapWnd::KeyboardZoomIn()
-{
+bool MapWnd::KeyboardZoomIn() {
     Zoom(1);
     return true;
 }
 
-bool MapWnd::KeyboardZoomOut()
-{
+bool MapWnd::KeyboardZoomOut() {
     Zoom(-1);
     return true;
 }
 
-void MapWnd::RefreshFoodResourceIndicator()
-{
+void MapWnd::RefreshFoodResourceIndicator() {
     Empire* empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     if (!empire) {
         Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get an empire";
@@ -4070,8 +3990,7 @@ void MapWnd::RefreshFoodResourceIndicator()
     m_food->SetValue(stockpile_change, 1);
 }
 
-void MapWnd::RefreshMineralsResourceIndicator()
-{
+void MapWnd::RefreshMineralsResourceIndicator() {
     Empire* empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     if (!empire) {
         Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get an empire";
@@ -4144,8 +4063,7 @@ void MapWnd::RefreshMineralsResourceIndicator()
     m_mineral->SetValue(stockpile_change, 1);
 }
 
-void MapWnd::RefreshTradeResourceIndicator()
-{
+void MapWnd::RefreshTradeResourceIndicator() {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
 
     m_trade->SetValue(empire->ResourceStockpile(RE_TRADE));
@@ -4156,39 +4074,33 @@ void MapWnd::RefreshTradeResourceIndicator()
     m_trade->SetValue(production - spent, 1);
 }
 
-void MapWnd::RefreshResearchResourceIndicator()
-{
+void MapWnd::RefreshResearchResourceIndicator() {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     m_research->SetValue(empire->ResourceProduction(RE_RESEARCH));
 }
 
-void MapWnd::RefreshIndustryResourceIndicator()
-{
+void MapWnd::RefreshIndustryResourceIndicator() {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     m_industry->SetValue(empire->ResourceProduction(RE_INDUSTRY));
 }
 
-void MapWnd::RefreshPopulationIndicator()
-{
+void MapWnd::RefreshPopulationIndicator() {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     m_population->SetValue(empire->GetPopulationPool().Population());
     m_population->SetValue(empire->GetPopulationPool().Growth(), 1);
 }
 
-void MapWnd::UpdateMetersAndResourcePools()
-{
+void MapWnd::UpdateMetersAndResourcePools() {
     UpdateMeterEstimates();
     UpdateEmpireResourcePools();
 }
 
-void MapWnd::UpdateMetersAndResourcePools(const std::vector<int>& objects_vec)
-{
+void MapWnd::UpdateMetersAndResourcePools(const std::vector<int>& objects_vec) {
     UpdateMeterEstimates(objects_vec);
     UpdateEmpireResourcePools();
 }
 
-void MapWnd::UpdateMetersAndResourcePools(int object_id, bool update_contained_objects)
-{
+void MapWnd::UpdateMetersAndResourcePools(int object_id, bool update_contained_objects) {
     //std::cout << "MapWnd::UpdateMetersAndResourcePools(" << object_id << ", " << update_contained_objects << ")" << std::endl;
     UpdateMeterEstimates(object_id, update_contained_objects);
     UpdateEmpireResourcePools();
@@ -4200,8 +4112,7 @@ void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools()
 void MapWnd::UpdateMeterEstimates()
 { UpdateMeterEstimates(INVALID_OBJECT_ID, false); }
 
-void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
-{
+void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects) {
     //Logger().debugStream() << "MapWnd::UpdateMeterEstimates";
 
     const ObjectMap& objects = GetUniverse().Objects();
@@ -4246,8 +4157,7 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
     UpdateMeterEstimates(objects_vec);
 }
 
-void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec)
-{
+void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     // add this player ownership to all planets in the objects_vec that aren't
     // currently colonized.  this way, any effects the player knows about that
     // would act on those planets if the player colonized them include those
@@ -4316,8 +4226,7 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec)
     Universe::InhibitUniverseObjectSignals(false);
 }
 
-void MapWnd::UpdateEmpireResourcePools()
-{
+void MapWnd::UpdateEmpireResourcePools() {
     //std::cout << "MapWnd::UpdateEmpireResourcePools" << std::endl;
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     /* Recalculate stockpile, available, production, predicted change of resources.  When resourcepools
@@ -4329,8 +4238,7 @@ void MapWnd::UpdateEmpireResourcePools()
     SidePanel::Update();
 }
 
-bool MapWnd::ZoomToHomeSystem()
-{
+bool MapWnd::ZoomToHomeSystem() {
     int id = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->CapitalID();
 
     if (id != INVALID_OBJECT_ID) {
@@ -4343,8 +4251,7 @@ bool MapWnd::ZoomToHomeSystem()
     return true;
 }
 
-bool MapWnd::ZoomToPrevOwnedSystem()
-{
+bool MapWnd::ZoomToPrevOwnedSystem() {
     // TODO: go through these in some sorted order (the sort method used in the SidePanel system name drop-list)
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<System>(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_owned_system);
@@ -4362,8 +4269,7 @@ bool MapWnd::ZoomToPrevOwnedSystem()
     return true;
 }
 
-bool MapWnd::ZoomToNextOwnedSystem()
-{
+bool MapWnd::ZoomToNextOwnedSystem() {
     // TODO: go through these in some sorted order (the sort method used in the SidePanel system name drop-list)
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<System>(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_owned_system);
@@ -4383,8 +4289,7 @@ bool MapWnd::ZoomToNextOwnedSystem()
     return true;
 }
 
-bool MapWnd::ZoomToPrevIdleFleet()
-{
+bool MapWnd::ZoomToPrevIdleFleet() {
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     if (it == vec.end()) {
@@ -4401,8 +4306,7 @@ bool MapWnd::ZoomToPrevIdleFleet()
     return true;
 }
 
-bool MapWnd::ZoomToNextIdleFleet()
-{
+bool MapWnd::ZoomToNextIdleFleet() {
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     if (it == vec.end()) {
@@ -4421,8 +4325,7 @@ bool MapWnd::ZoomToNextIdleFleet()
     return true;
 }
 
-bool MapWnd::ZoomToPrevFleet()
-{
+bool MapWnd::ZoomToPrevFleet() {
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     if (it == vec.end()) {
@@ -4439,8 +4342,7 @@ bool MapWnd::ZoomToPrevFleet()
     return true;
 }
 
-bool MapWnd::ZoomToNextFleet()
-{
+bool MapWnd::ZoomToNextFleet() {
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     if (it == vec.end()) {
@@ -4462,8 +4364,7 @@ bool MapWnd::ZoomToNextFleet()
     return true;
 }
 
-void MapWnd::ConnectKeyboardAcceleratorSignals()
-{
+void MapWnd::ConnectKeyboardAcceleratorSignals() {
     m_keyboard_accelerator_signals.insert(
         GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE),
                     &MapWnd::ReturnToMap, this));
@@ -4549,8 +4450,7 @@ void MapWnd::ConnectKeyboardAcceleratorSignals()
 #endif
 }
 
-void MapWnd::SetAccelerators()
-{
+void MapWnd::SetAccelerators() {
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_ESCAPE);
 
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN);
@@ -4590,8 +4490,7 @@ void MapWnd::SetAccelerators()
     ConnectKeyboardAcceleratorSignals();
 }
 
-void MapWnd::RemoveAccelerators()
-{
+void MapWnd::RemoveAccelerators() {
     GG::GUI::accel_iterator i = GG::GUI::GetGUI()->accel_begin();
     while (i != GG::GUI::GetGUI()->accel_end()) {
         GG::GUI::GetGUI()->RemoveAccelerator(i);
@@ -4608,8 +4507,7 @@ void MapWnd::RemoveAccelerators()
     m_keyboard_accelerator_signals.clear();
 }
 
-void MapWnd::DisableAlphaNumAccels()
-{
+void MapWnd::DisableAlphaNumAccels() {
     for (GG::GUI::const_accel_iterator i = GG::GUI::GetGUI()->accel_begin();
          i != GG::GUI::GetGUI()->accel_end(); ++i) {
         if (i->second != 0) // we only want to disable mod_keys without modifiers
@@ -4628,8 +4526,7 @@ void MapWnd::DisableAlphaNumAccels()
     }
 }
 
-void MapWnd::EnableAlphaNumAccels()
-{
+void MapWnd::EnableAlphaNumAccels() {
     for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
          i != m_disabled_accels_list.end(); ++i) {
         GG::GUI::GetGUI()->SetAccelerator(*i);
@@ -4640,8 +4537,7 @@ void MapWnd::EnableAlphaNumAccels()
 void MapWnd::ChatMessageSentSlot()
 {}
 
-void MapWnd::CloseAllPopups()
-{
+void MapWnd::CloseAllPopups() {
     for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ) {
         // get popup and increment iterator first since closing the popup will change this list by removing the popup
         MapWndPopup* popup = *it++;
@@ -4651,15 +4547,13 @@ void MapWnd::CloseAllPopups()
     m_popups.clear();
 }
 
-void MapWnd::HideAllPopups()
-{
+void MapWnd::HideAllPopups() {
     for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ++it) {
         (*it)->Hide();
     }
 }
 
-void MapWnd::ShowAllPopups()
-{
+void MapWnd::ShowAllPopups() {
     for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ++it) {
         (*it)->Show();
     }

@@ -4016,6 +4016,12 @@ Sets the research progress of tech %1% to %2% for empire %3%
 DESC_GIVE_EMPIRE_TECH
 Gives tech %1% to empire %2%
 
+DESC_SET_OVERLAY_TEXTURE
+Modifies the appearance of the object
+
+DESC_SET_TEXTURE
+Modifies the appearance of the object
+
 
 # Object Creation
 

@@ -50,8 +50,7 @@ struct LaneEndpoints {
 
 
 /** This class is a window that graphically displays everything in the universe */
-class MapWnd : public GG::Wnd
-{
+class MapWnd : public GG::Wnd {
 public:
     //! \name Signal Types //!@{
     typedef boost::signal<void (int)>       SystemLeftClickedSignalType;        //!< emitted when the user left-clicks a star system
@@ -237,6 +236,7 @@ private:
     void            RenderStarfields();                         //!< renders the background starfiends
     void            RenderNebulae();                            //!< renders nebulae
     void            RenderGalaxyGas();                          //!< renders gassy substance to make shape of galaxy
+    void            RenderSystemOverlays();                     //!< renders textures "overlayed" on systems by effects
     void            RenderSystems();                            //!< renders stars and halos
     void            RenderStarlanes();                          //!< renders the starlanes between the systems
 

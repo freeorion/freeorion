@@ -25,8 +25,8 @@
 #include <boost/lexical_cast.hpp>
 
 namespace {
-    bool PlaySounds() {return GetOptionsDB().Get<bool>("UI.sound.enabled");}
-    void PlaySystemIconRolloverSound() {if (PlaySounds()) Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.system-icon-rollover"));}
+    bool PlaySounds()                   { return GetOptionsDB().Get<bool>("UI.sound.enabled"); }
+    void PlaySystemIconRolloverSound()  { if (PlaySounds()) Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.system-icon-rollover")); }
 
     const std::vector<boost::shared_ptr<GG::Texture> >& GetSelectionIndicatorTextures() {
         static std::vector<boost::shared_ptr<GG::Texture> > normal_textures =
@@ -244,8 +244,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     Refresh();
 }
 
-SystemIcon::~SystemIcon()
-{
+SystemIcon::~SystemIcon() {
     delete m_tiny_graphic;
     delete m_selection_indicator;
     delete m_tiny_selection_indicator;
@@ -266,8 +265,7 @@ const boost::shared_ptr<GG::Texture>& SystemIcon::HaloTexture() const
 const boost::shared_ptr<GG::Texture>& SystemIcon::TinyTexture() const
 { return m_tiny_texture; }
 
-GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const
-{
+GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const {
     if (button_number < 1) {
         Logger().errorStream() << "SystemIcon::NthFleetButtonUpperLeft passed button number less than 1... treating as if = 1";
         button_number = 1;
@@ -372,8 +370,7 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool movi
 int SystemIcon::EnclosingCircleDiameter() const
 { return static_cast<const int>(Value(Width()) * GetOptionsDB().Get<double>("UI.system-circle-size")) + 1; }
 
-void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
+void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     Wnd::SizeMove(ul, lr);
 
     const bool USE_TINY_GRAPHICS = Value(Width()) < GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold");
@@ -447,8 +444,7 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 void SystemIcon::Render()
 {}
 
-void SystemIcon::ManualRender(double halo_scale_factor)
-{
+void SystemIcon::RenderHalo(double halo_scale_factor) {
     if (!Visible())
         return;
     GG::Pt ul = UpperLeft(), lr = LowerRight();
@@ -463,8 +459,28 @@ void SystemIcon::ManualRender(double halo_scale_factor)
         GG::Pt halo_lr = halo_ul + halo_size;
         m_halo_texture->OrthoBlit(halo_ul, halo_lr);
     }
+}
+
+void SystemIcon::RenderDisc() {
     if (m_disc_texture)
-        m_disc_texture->OrthoBlit(ul, lr);
+        m_disc_texture->OrthoBlit(UpperLeft(), LowerRight());
+}
+
+void SystemIcon::RenderOverlay(double zoom_factor) {
+    if (!Visible() || !m_overlay_texture)
+        return;
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Pt size = lr - ul;
+    GG::Pt half_size = GG::Pt(size.x / 2, size.y / 2);
+    GG::Pt middle = ul + half_size;
+    GG::Pt overlay_size = GG::Pt(GG::X(static_cast<int>(m_overlay_size * zoom_factor)),
+                                 GG::Y(static_cast<int>(m_overlay_size * zoom_factor *
+                                                        Value(m_overlay_texture->DefaultHeight()) /
+                                                        std::max<double>(1.0, Value(m_overlay_texture->DefaultWidth())))));
+    GG::Pt overlay_half_size = GG::Pt(overlay_size.x / 2, overlay_size.y / 2);
+    GG::Pt overlay_ul = middle - overlay_half_size;
+    GG::Pt overlay_lr = overlay_ul + overlay_size;
+    m_overlay_texture->OrthoBlit(overlay_ul, overlay_lr);
 }
 
 void SystemIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -479,8 +495,7 @@ void SystemIcon::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void SystemIcon::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { if (!Disabled()) RightDoubleClickedSignal(m_system_id); }
 
-void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     const bool USE_TINY_MOUSEOVER_INDICATOR = Value(Width()) < m_tiny_mouseover_indicator->Width();
     // indicate mouseover
     if (m_mouseover_indicator && !USE_TINY_MOUSEOVER_INDICATOR) {
@@ -505,8 +520,7 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     MouseEnteringSignal(m_system_id);
 }
 
-void SystemIcon::MouseLeave()
-{
+void SystemIcon::MouseLeave() {
     // un-indicate mouseover
     if (m_mouseover_indicator)
         DetachChild(m_mouseover_indicator);
@@ -523,14 +537,12 @@ void SystemIcon::MouseLeave()
 void SystemIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void SystemIcon::SetSelected(bool selected)
-{
+void SystemIcon::SetSelected(bool selected) {
     m_selected = selected;
     Resize(Size());
 }
 
-void SystemIcon::Refresh()
-{
+void SystemIcon::Refresh() {
     std::string name;
     m_system_connection.disconnect();
 
@@ -564,10 +576,15 @@ void SystemIcon::Refresh()
         if (m_showing_name)
             AttachChild(m_colored_name);
     }
+
+    if (!system->OverlayTexture().empty())
+        m_overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / system->OverlayTexture());
+    else
+        m_overlay_texture.reset();
+    m_overlay_size = system->OverlaySize();
 }
 
-void SystemIcon::ShowName()
-{
+void SystemIcon::ShowName() {
     m_showing_name = true;
     if (!m_colored_name)
         Refresh();
@@ -575,14 +592,12 @@ void SystemIcon::ShowName()
         AttachChild(m_colored_name);
 }
 
-void SystemIcon::HideName()
-{
+void SystemIcon::HideName() {
     m_showing_name = false;
     DetachChild(m_colored_name);
 }
 
-void SystemIcon::PositionSystemName()
-{
+void SystemIcon::PositionSystemName() {
     if (m_colored_name) {
         GG::X name_left = ( Width()  - m_colored_name->Width()          )/2;
         GG::Y name_top =  ( Height() + GG::Y(EnclosingCircleDiameter()) )/2;
@@ -590,8 +605,7 @@ void SystemIcon::PositionSystemName()
     }
 }
 
-bool SystemIcon::InWindow(const GG::Pt& pt) const
-{
+bool SystemIcon::InWindow(const GG::Pt& pt) const {
     // find if cursor is within required distance of centre of icon
     const int RADIUS = EnclosingCircleDiameter() / 2;
     const int RADIUS2 = RADIUS*RADIUS;
