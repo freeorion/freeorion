@@ -9,8 +9,7 @@
 
 /** A type that is implicitly convertible to and from double, but which is not
     implicitly convertible among other numeric types. */
-class TypesafeDouble
-{
+class TypesafeDouble {
 public:
     TypesafeDouble() : m_value(0.0) {}
     TypesafeDouble(double d) : m_value(d) {}
@@ -18,7 +17,7 @@ public:
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
-        { ar & BOOST_SERIALIZATION_NVP(m_value); }
+    { ar & BOOST_SERIALIZATION_NVP(m_value); }
 
 private:
     double m_value;
@@ -28,8 +27,7 @@ class Day;
 
 /** A value type representing a "year".  A "year" is arbitrarily defined to be 4
     turns. */
-class Year : public TypesafeDouble
-{
+class Year : public TypesafeDouble {
 public:
     Year() : TypesafeDouble() {}
     Year(double d) : TypesafeDouble(d) {}
@@ -37,13 +35,12 @@ public:
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
-        { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
+    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
 };
 
 /** A value type representing a "day".  A "day" is arbitrarily defined to be
     1/360 of a "year", and 1/90 of a turn. */
-class Day : public TypesafeDouble
-{
+class Day : public TypesafeDouble {
 public:
     Day() : TypesafeDouble() {}
     Day(double d) : TypesafeDouble(d) {}
@@ -51,31 +48,29 @@ public:
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
-        { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
+    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
 };
 
 /** A value type used to represent an angle in radians. */
-class Radian : public TypesafeDouble
-{
+class Radian : public TypesafeDouble {
 public:
     Radian() : TypesafeDouble() {}
     Radian(double d) : TypesafeDouble(d) {}
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
-        { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
+    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
 };
 
 /** A value type used to represent an angle in degrees. */
-class Degree : public TypesafeDouble
-{
+class Degree : public TypesafeDouble {
 public:
     Degree() : TypesafeDouble() {}
     Degree(double d) : TypesafeDouble(d) {}
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
-        { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
+    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
 };
 
 /** a class representing a FreeOrion planet. */
@@ -124,15 +119,17 @@ public:
     virtual std::vector<std::string>    AvailableFoci() const;
     virtual const std::string&          FocusIcon(const std::string& focus_name) const;
 
-    bool                        IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
-    bool                        IsAboutToBeInvaded() const {return m_is_about_to_be_invaded;}
-    int                         LastTurnAttackedByShip() const {return m_last_turn_attacked_by_ship;}
+    bool                        IsAboutToBeColonized() const    { return m_is_about_to_be_colonized; }
+    bool                        IsAboutToBeInvaded() const      { return m_is_about_to_be_invaded; }
+    int                         LastTurnAttackedByShip() const  { return m_last_turn_attacked_by_ship; }
 
     virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
 
     virtual double              InitialMeterValue(MeterType type) const;
     virtual double              CurrentMeterValue(MeterType type) const;
     virtual double              NextTurnCurrentMeterValue(MeterType type) const;
+
+    const std::string&          SurfaceTexture() const          { return m_surface_texture; }
     //@}
 
     /** \name Mutators */ //@{
@@ -166,6 +163,8 @@ public:
     void            SetIsAboutToBeInvaded(bool b);      ///< Marks planet as being invaded or not, depending on whether \a b is true or false
     void            ResetIsAboutToBeInvaded();          ///< Marks planet as not being invaded
     void            SetLastTurnAttackedByShip(int turn);///< Sets the last turn this planet was attacked by a ship
+
+    void            SetSurfaceTexture(const std::string& texture);
     //@}
 
 protected:
@@ -195,10 +194,11 @@ private:
     double          m_available_trade;
 
     bool            m_just_conquered;
-
     bool            m_is_about_to_be_colonized;
     bool            m_is_about_to_be_invaded;
     int             m_last_turn_attacked_by_ship;
+
+    std::string     m_surface_texture;  // intentionally not serialized; set by local effects
 
     friend class boost::serialization::access;
     template <class Archive>

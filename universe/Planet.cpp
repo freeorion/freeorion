@@ -603,6 +603,9 @@ void Planet::ResetIsAboutToBeInvaded()
 void Planet::SetLastTurnAttackedByShip(int turn)
 { m_last_turn_attacked_by_ship = turn; }
 
+void Planet::SetSurfaceTexture(const std::string& texture)
+{ m_surface_texture = texture; }
+
 void Planet::SetSystem(int sys) {
     //Logger().debugStream() << "Planet::MoveTo(UniverseObject* object)";
     UniverseObject::SetSystem(sys);
