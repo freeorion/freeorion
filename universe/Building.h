@@ -46,7 +46,7 @@ public:
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
-    bool                    OrderedScrapped() const {return m_ordered_scrapped;}
+    bool                    OrderedScrapped() const     { return m_ordered_scrapped; }
     //@}
 
     /** \name Mutators */ //@{
