@@ -816,6 +816,17 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
 void Universe::ApplyMeterEffectsAndUpdateMeters()
 { ApplyMeterEffectsAndUpdateMeters(m_objects.FindObjectIDs()); }
 
+void Universe::ApplyAppearanceEffects(const std::vector<int>& object_ids) {
+    // cache all activation and scoping condition results before applying Effects, since the application of
+    // these Effects may affect the activation and scoping evaluations
+    Effect::TargetsCauses targets_causes;
+    GetEffectsAndTargets(targets_causes, object_ids);
+    ExecuteEffects(targets_causes, false, false, true);
+}
+
+void Universe::ApplyAppearanceEffects()
+{ ApplyAppearanceEffects(m_objects.FindObjectIDs()); }
+
 void Universe::InitMeterEstimatesAndDiscrepancies() {
     ScopedTimer timer("Universe::InitMeterEstimatesAndDiscrepancies");
 
@@ -1235,7 +1246,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
 }
 
 void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes, bool update_effect_accounting,
-                              bool only_meter_effects/* = false*/)
+                              bool only_meter_effects/* = false*/, bool only_appearance_effects/* = false*/)
 {
     m_marked_destroyed.clear();
     m_marked_for_victory.clear();
@@ -1280,7 +1291,9 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes, bool 
         }
 
         // execute Effects in the EffectsGroup
-        if (update_effect_accounting && only_meter_effects)
+        if (only_appearance_effects)
+            effects_group->ExecuteAppearanceModifications(sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
+        else if (update_effect_accounting && only_meter_effects)
             effects_group->ExecuteSetMeter(sourced_effects_group.source_object_id, filtered_targets_and_cause, m_effect_accounting_map);
         else if (only_meter_effects)
             effects_group->ExecuteSetMeter(sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);

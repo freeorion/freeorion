@@ -51,8 +51,7 @@ extern const std::size_t RESERVE_SET_SIZE;
   * it, information about the objects, and information about the objects'
   * relationships to each other.  As well, there are functions that generate
   * and populate new Universe gamestates when new games are started. */
-class Universe
-{
+class Universe {
 private:
     typedef std::map<int, ObjectMap>                EmpireObjectMap;                ///< Known information each empire had about objects in the Universe; keyed by empire id
 
@@ -248,7 +247,7 @@ public:
       * meters with associated max meters are limited by their max. */
     void            ApplyAllEffectsAndUpdateMeters();
 
-    /** Determines all effectsgroups' target sets, then eesets meters and
+    /** Determines all effectsgroups' target sets, then resets meters and
       * executes only SetMeter effects on all objects whose ids are listed in
       * \a object_ids.  Then clamps meter values so target and max meters are
       * within a reasonable range and any current meters with associated max
@@ -258,6 +257,11 @@ public:
     /** Calls above ApplyMeterEffectsAndUpdateMeters() function on all objects.*/
     void            ApplyMeterEffectsAndUpdateMeters();
 
+    /** Executes effects that modify objects' appearance in the human client. */
+    void            ApplyAppearanceEffects(const std::vector<int>& object_ids);
+
+    /** Executes effects that modify objects' apperance for all objects. */
+    void            ApplyAppearanceEffects();
 
     /** For all objects and meters, determines discrepancies between actual meter
       * maxes and what the known universe should produce, and and stores in
@@ -444,7 +448,8 @@ private:
       * values after the rest of effects (including non-meter effects) have
       * been executed. */
     void    ExecuteEffects(const Effect::TargetsCauses& targets_causes,
-                           bool update_effect_accounting, bool only_meter_effects = false);
+                           bool update_effect_accounting, bool only_meter_effects = false,
+                           bool only_appearance_effects = false);
 
     /** Does actual updating of meter estimates after the public function have
       * processed objects_vec or whatever they were passed and cleared the
@@ -549,8 +554,7 @@ private:
   * ShipDesign names refer to designs listed in premade_ship_designs.txt.
   * Useful for saving or specifying prearranged combinations of prearranged
   * ShipDesigns to automatically put together, such as during universe creation.*/
-class FleetPlan
-{
+class FleetPlan {
 public:
     FleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
               bool lookup_name_userstring = false) :
@@ -574,8 +578,7 @@ protected:
 
 /** The combination of a FleetPlan and spawning instructions for start of game
   * monsters. */
-class MonsterFleetPlan : public FleetPlan
-{
+class MonsterFleetPlan : public FleetPlan {
 public:
     MonsterFleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
                      double spawn_rate = 1.0, int spawn_limit = 9999, const Condition::ConditionBase* location = 0,
