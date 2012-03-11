@@ -4,6 +4,7 @@
 #include "Condition.h"
 #include "../parse/Parse.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/Random.h"
 
@@ -251,6 +252,13 @@ SpeciesManager::SpeciesManager() {
         throw std::runtime_error("Attempted to create more than one SpeciesManager.");
     s_instance = this;
     parse::species(GetResourceDir() / "species.txt", m_species);
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "Species:";
+        for (iterator it = begin(); it != end(); ++it) {
+            const Species* s = it->second;
+            Logger().debugStream() << " ... " << s->Name();
+        }
+    }
 }
 
 SpeciesManager::~SpeciesManager() {

@@ -216,8 +216,8 @@ namespace parse {
                 const std::string& macro_text = match[2];
                 assert(macro_text != "");
 
-                Logger().debugStream() << "key: " << macro_key;
-                Logger().debugStream() << "text:\n" << macro_text;
+                //Logger().debugStream() << "key: " << macro_key;
+                //Logger().debugStream() << "text:\n" << macro_text;
 
                 // store macro
                 if (macros.find(macro_key) == macros.end()) {
