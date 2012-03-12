@@ -229,9 +229,9 @@ namespace {
         //}
 
         GLfloat ambient_v[] = {ambient.r / 255.0f, ambient.g / 255.0f, ambient.b / 255.0f, ambient.a / 255.0f};
-        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_v);
+        glMaterialfv(GL_FRONT, GL_AMBIENT, ambient_v);
         GLfloat diffuse_v[] = {diffuse.r / 255.0f, diffuse.g / 255.0f, diffuse.b / 255.0f, diffuse.a / 255.0f};
-        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_v);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_v);
 
         gluQuadricTexture(quad,     texture ? GL_TRUE : GL_FALSE);
         gluQuadricNormals(quad,     GLU_SMOOTH);
@@ -298,6 +298,7 @@ namespace {
     }
 
     void        RenderPlanet(const GG::Pt& center, int diameter, boost::shared_ptr<GG::Texture> texture,
+                             boost::shared_ptr<GG::Texture> overlay_texture,
                              double initial_rotation, double RPM, double axial_tilt, double shininess,
                              StarType star_type)
     {
@@ -338,6 +339,15 @@ namespace {
         GG::Clr diffuse = GG::FloatClr(intensity, intensity, intensity, 1.0f);
 
         RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture);
+        if (overlay_texture) {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glCullFace(GL_FRONT);
+            glEnable(GL_CULL_FACE);
+            RenderSphere(diameter / 2 + 0.1, ambient, diffuse, GG::CLR_WHITE, 0.0, overlay_texture);
+            glDisable(GL_CULL_FACE);
+            glDisable(GL_BLEND);
+        }
 
         glPopAttrib();
 
@@ -580,7 +590,7 @@ public:
     virtual void Render() {
         GG::Pt ul = UpperLeft(), lr = LowerRight();
         // render rotating base planet texture
-        RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Value(Width()), m_surface_texture,
+        RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Value(Width()), m_surface_texture, m_overlay_texture,
                      m_initial_rotation, m_rpm, m_axial_tilt, m_shininess, m_star_type);
 
         // overlay atmosphere texture (non-animated)
@@ -640,6 +650,9 @@ public:
             }
         }
 
+        if (!planet->SurfaceTexture().empty())
+            m_overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / planet->SurfaceTexture(), true);
+
         Resize(GG::Pt(GG::X(PlanetDiameter(planet->Size())), GG::Y(PlanetDiameter(planet->Size()))));
     }
 
@@ -651,7 +664,7 @@ private:
     Visibility                      m_visibility;
     boost::shared_ptr<GG::Texture>  m_surface_texture;
     double                          m_shininess;
-    // TODO: Extra texture?
+    boost::shared_ptr<GG::Texture>  m_overlay_texture;
     boost::shared_ptr<GG::Texture>  m_atmosphere_texture;
     int                             m_atmosphere_alpha;
     GG::Rect                        m_atmosphere_planet_rect;
