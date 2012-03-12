@@ -156,7 +156,7 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
-    graphic = "icons/building/shipyard.png"
+    graphic = "icons/building/shipyard-1.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_ROBO"
@@ -174,7 +174,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard.png"
+    graphic = "icons/building/shipyard-2.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_ENGINE"
@@ -192,7 +192,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard.png"
+    graphic = "icons/building/shipyard-3.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_MILIT_MEGAPROC"
@@ -210,7 +210,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard.png"
+    graphic = "icons/building/shipyard-4.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_NANOROBO"
@@ -228,7 +228,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard.png"
+    graphic = "icons/building/shipyard-5.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_GEOINT"
@@ -246,7 +246,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard.png"
+    graphic = "icons/building/shipyard-6.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_ADV_ENGINE"
@@ -264,7 +264,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard.png"
+    graphic = "icons/building/shipyard-7.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_MIL_LOG_ASSMBL"
@@ -294,7 +294,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard.png"
+    graphic = "icons/building/shipyard-8.png"
 
 BuildingType
     name = "BLD_SHIPYARD_AST"

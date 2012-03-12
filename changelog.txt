@@ -16,6 +16,7 @@ Content:
  
 Graphics:
  ~ Added unique graphics for each hull.
+ ~ Unique graphics for more shipyards.
 
 GUI:
  ~ Renamed the 'Construction' meter to 'Infrastructure'.
