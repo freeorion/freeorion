@@ -5,7 +5,7 @@ BuildingType
     buildcost = 2000
     buildtime = 200
     location = Not All
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Planet
@@ -19,6 +19,28 @@ BuildingType
                 SetTargetIndustry Value + Target.Population * 1.0
                 SetMaxTroops Value + 5
             ]
+        EffectsGroup
+            scope = And [
+                System
+                Contains Source
+            ]
+            effects = SetOverlayTexture name = "stars/nova-boom3.png" size = 100
+        EffectsGroup
+            scope = And [
+                Planet
+                ContainedBy Contains Source
+            ]
+            effects = SetTexture name = "planets/purple_lines.png"
+        EffectsGroup
+            scope = And [
+                Planet
+                ContainedBy Contains And [
+                    Planet
+                    Planet type = Asteroids
+                ]
+            ]
+            effects = SetTexture name = "planets/damage/impact.png"
+    ]
     graphic = "icons/building/archive.png"
 
 BuildingType
