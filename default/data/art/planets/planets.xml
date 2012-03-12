@@ -86,8 +86,8 @@
       <z>8.0</z>
     </light_pos>
 
-    <ambient_intensity>0.3</ambient_intensity>
-    <diffuse_intensity>0.7</diffuse_intensity>
+    <ambient_intensity>0.8</ambient_intensity>
+    <diffuse_intensity>1.0</diffuse_intensity>
 
 
     <RotatingPlanetData>
