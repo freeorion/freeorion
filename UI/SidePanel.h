@@ -28,8 +28,7 @@ namespace GG {
     class TextControl;
 }
 
-class SidePanel : public CUIWnd
-{
+class SidePanel : public CUIWnd {
 public:
     class PlanetPanel;
 

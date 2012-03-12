@@ -207,32 +207,40 @@ namespace {
         return retval;
     }
 
-    void        RenderSphere(double r, const GG::Clr& ambient, const GG::Clr& diffuse, const GG::Clr& spec, double shine,
+    void        RenderSphere(double r, const GG::Clr& ambient, const GG::Clr& diffuse,
+                             const GG::Clr& spec, double shine,
                              boost::shared_ptr<GG::Texture> texture)
     {
         static GLUquadric* quad = gluNewQuadric();
+        if (!quad)
+            return;
 
-        if (quad) {
-            if (texture) {
-                glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
-            }
-
-            if (shine) {
-                glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, static_cast<float>(shine));
-                GLfloat spec_v[] = {spec.r / 255.0f, spec.g / 255.0f, spec.b / 255.0f, spec.a / 255.0f};
-                glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec_v);
-            }
-            GLfloat ambient_v[] = {ambient.r / 255.0f, ambient.g / 255.0f, ambient.b / 255.0f, ambient.a / 255.0f};
-            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_v);
-            GLfloat diffuse_v[] = {diffuse.r / 255.0f, diffuse.g / 255.0f, diffuse.b / 255.0f, diffuse.a / 255.0f};
-            glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_v);
-            gluQuadricTexture(quad, texture ? GL_TRUE : GL_FALSE);
-            gluQuadricNormals(quad, GLU_SMOOTH);
-            gluQuadricOrientation(quad, GLU_OUTSIDE);
-
-            glColor(GG::CLR_WHITE);
-            gluSphere(quad, r, 30, 30);
+        if (texture) {
+            glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
         }
+
+        // commented out shininess rendering because it wasn't working properly.
+        // it just appeared as a white blob, seemingly at the poles of the planet (but possibly not?)
+        // regardless, IMO it didn't look good. -Geoff
+        //if (shine) {
+        //    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, static_cast<float>(shine));
+        //    GLfloat spec_v[] = {spec.r / 255.0f, spec.g / 255.0f, spec.b / 255.0f, spec.a / 255.0f};
+        //    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec_v);
+        //}
+
+        GLfloat ambient_v[] = {ambient.r / 255.0f, ambient.g / 255.0f, ambient.b / 255.0f, ambient.a / 255.0f};
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_v);
+        GLfloat diffuse_v[] = {diffuse.r / 255.0f, diffuse.g / 255.0f, diffuse.b / 255.0f, diffuse.a / 255.0f};
+        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_v);
+
+        gluQuadricTexture(quad,     texture ? GL_TRUE : GL_FALSE);
+        gluQuadricNormals(quad,     GLU_SMOOTH);
+        gluQuadricOrientation(quad, GLU_OUTSIDE);
+        gluQuadricDrawStyle(quad,   GLU_FILL);
+
+        glColor(GG::CLR_WHITE);
+
+        gluSphere(quad, r, 30, 30);
     }
 
     GLfloat*    GetLightPosition() {
@@ -303,7 +311,9 @@ namespace {
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0.0, Value(HumanClientApp::GetApp()->AppWidth()), Value(HumanClientApp::GetApp()->AppHeight()), 0.0, 0.0, Value(HumanClientApp::GetApp()->AppWidth()));
+        glOrtho(0.0, Value(HumanClientApp::GetApp()->AppWidth()),
+                Value(HumanClientApp::GetApp()->AppHeight()), 0.0,
+                0.0, Value(HumanClientApp::GetApp()->AppWidth()));
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
@@ -424,8 +434,7 @@ namespace {
 
 /** A single planet's info and controls; several of these may appear at any
   * one time in a SidePanel */
-class SidePanel::PlanetPanel : public GG::Control
-{
+class SidePanel::PlanetPanel : public GG::Control {
 public:
     /** \name Structors */ //@{
     PlanetPanel(GG::X w, int planet_id, StarType star_type); ///< basic ctor
@@ -434,7 +443,7 @@ public:
 
     /** \name Accessors */ //@{
     virtual bool            InWindow(const GG::Pt& pt) const;
-    int                     PlanetID() const {return m_planet_id;}
+    int                     PlanetID() const { return m_planet_id; }
     //@}
 
     /** \name Mutators */ //@{
@@ -480,6 +489,8 @@ private:
     BuildingsPanel*         m_buildings_panel;          ///< contains icons representing buildings
     SpecialsPanel*          m_specials_panel;           ///< contains icons representing specials
     StarType                m_star_type;
+
+    boost::signals::connection  m_planet_connection;
 };
 
 /** Container class that holds PlanetPanels.  Creates and destroys PlanetPanel
@@ -546,30 +557,18 @@ private:
 
 class RotatingPlanetControl : public GG::Control {
 public:
-    RotatingPlanetControl(GG::X x, GG::Y y, const Planet& planet, StarType star_type, const RotatingPlanetData& planet_data) :
-        GG::Control(x, y, GG::X(PlanetDiameter(planet.Size())), GG::Y(PlanetDiameter(planet.Size())), GG::Flags<GG::WndFlag>()),
-        m_planet_data(planet_data),
-        m_planet(planet),
-        m_surface_texture(ClientUI::GetTexture(ClientUI::ArtDir() / m_planet_data.filename, true)),
-        m_atmosphere_texture(),
-        m_initial_rotation(RandZeroToOne()),
+    RotatingPlanetControl(GG::X x, GG::Y y, int planet_id, StarType star_type) :
+        GG::Control(x, y, GG::X1, GG::Y1, GG::Flags<GG::WndFlag>()),
+        m_planet_id(planet_id),
+        m_initial_rotation(fmod(planet_id / 7.352535, 1.0)),    // arbitrary scale number applied to id to give consistent by varied angles
         m_star_type(star_type)
     {
         if (!s_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
             s_scanline_shader = boost::shared_ptr<ShaderProgram>(ShaderProgram::shaderProgramFactory("",
                 ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").string())));
         }
-
         s_instances_counter++;
-
-        const std::map<std::string, PlanetAtmosphereData>& atmosphere_data = GetPlanetAtmosphereData();
-        std::map<std::string, PlanetAtmosphereData>::const_iterator it = atmosphere_data.find(m_planet_data.filename);
-        if (it != atmosphere_data.end()) {
-            const PlanetAtmosphereData::Atmosphere& atmosphere = it->second.atmospheres[RandSmallInt(0, it->second.atmospheres.size() - 1)];
-            m_atmosphere_texture = ClientUI::GetTexture(ClientUI::ArtDir() / atmosphere.filename, true);
-            m_atmosphere_alpha = atmosphere.alpha;
-            m_atmosphere_planet_rect = GG::Rect(GG::X1, GG::Y1, m_atmosphere_texture->DefaultWidth() - 4, m_atmosphere_texture->DefaultHeight() - 4);
-        }
+        Refresh();
     }
 
     ~RotatingPlanetControl() {
@@ -580,16 +579,16 @@ public:
 
     virtual void Render() {
         GG::Pt ul = UpperLeft(), lr = LowerRight();
-        // these values ensure that wierd GLUT-sphere artifacts do not show themselves
-        double axial_tilt = std::max(-30.0, std::min(static_cast<double>(m_planet.AxialTilt()), 60.0));
-        RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Value(Width()), m_surface_texture, m_initial_rotation,
-                     1.0 / m_planet.RotationalPeriod(), axial_tilt, m_planet_data.shininess, m_star_type);
+        // render rotating base planet texture
+        RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Value(Width()), m_surface_texture,
+                     m_initial_rotation, m_rpm, m_axial_tilt, m_shininess, m_star_type);
 
+        // overlay atmosphere texture (non-animated)
         if (m_atmosphere_texture) {
-            int texture_w = Value(m_atmosphere_texture->DefaultWidth());
-            int texture_h = Value(m_atmosphere_texture->DefaultHeight());
-            double x_scale = PlanetDiameter(m_planet.Size()) / static_cast<double>(texture_w);
-            double y_scale = PlanetDiameter(m_planet.Size()) / static_cast<double>(texture_h);
+            double texture_w = Value(m_atmosphere_texture->DefaultWidth());
+            double texture_h = Value(m_atmosphere_texture->DefaultHeight());
+            double x_scale = m_diameter / texture_w;
+            double y_scale = m_diameter / texture_h;
             glColor4ub(255, 255, 255, m_atmosphere_alpha);
             m_atmosphere_texture->OrthoBlit(GG::Pt(static_cast<GG::X>(ul.x - m_atmosphere_planet_rect.ul.x * x_scale),
                                                    static_cast<GG::Y>(ul.y - m_atmosphere_planet_rect.ul.y * y_scale)),
@@ -599,7 +598,7 @@ public:
 
         // render fog of war over planet if it's not visible to this client's player
         if (s_scanline_shader &&
-            GetUniverse().GetObjectVisibilityByEmpire(m_planet.ID(), HumanClientApp::GetApp()->EmpireID()) <= VIS_BASIC_VISIBILITY &&
+            m_visibility <= VIS_BASIC_VISIBILITY &&
             GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
         {
             float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
@@ -610,15 +609,49 @@ public:
         }
     }
 
-    void SetRotatingPlanetData(const RotatingPlanetData& planet_data) {
-        m_planet_data = planet_data;
-        m_surface_texture = ClientUI::GetTexture(ClientUI::ArtDir() / m_planet_data.filename, true);
+    void Refresh() {
+        const Planet* planet = GetPlanet(m_planet_id);
+        if (!planet) return;
+
+        // these values ensure that wierd GLUT-sphere artifacts do not show themselves
+        m_rpm = 1.0 / std::max(0.001, static_cast<double>(planet->RotationalPeriod())); // gives about one rpm for a 1 "Day" rotational period
+        m_diameter = PlanetDiameter(planet->Size());
+        m_axial_tilt = std::max(-30.0, std::min(static_cast<double>(planet->AxialTilt()), 60.0));
+        m_visibility = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, HumanClientApp::GetApp()->EmpireID());
+
+        const std::string texture_filename;
+        const std::map<PlanetType, std::vector<RotatingPlanetData> >& planet_data = GetRotatingPlanetData();
+
+        std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet->Type());
+        int num_planets_of_type;
+        if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet->Type())->second.size())) {
+            unsigned int hash_value = static_cast<int>(m_planet_id);
+            const RotatingPlanetData& rpd = it->second[hash_value % num_planets_of_type];
+            m_surface_texture = ClientUI::GetTexture(ClientUI::ArtDir() / rpd.filename, true);
+            m_shininess = rpd.shininess;
+
+            const std::map<std::string, PlanetAtmosphereData>& atmosphere_data = GetPlanetAtmosphereData();
+            std::map<std::string, PlanetAtmosphereData>::const_iterator it = atmosphere_data.find(rpd.filename);
+            if (it != atmosphere_data.end()) {
+                const PlanetAtmosphereData::Atmosphere& atmosphere = it->second.atmospheres[RandSmallInt(0, it->second.atmospheres.size() - 1)];
+                m_atmosphere_texture = ClientUI::GetTexture(ClientUI::ArtDir() / atmosphere.filename, true);
+                m_atmosphere_alpha = atmosphere.alpha;
+                m_atmosphere_planet_rect = GG::Rect(GG::X1, GG::Y1, m_atmosphere_texture->DefaultWidth() - 4, m_atmosphere_texture->DefaultHeight() - 4);
+            }
+        }
+
+        Resize(GG::Pt(GG::X(PlanetDiameter(planet->Size())), GG::Y(PlanetDiameter(planet->Size()))));
     }
 
 private:
-    RotatingPlanetData              m_planet_data;
-    const Planet&                   m_planet;
+    int                             m_planet_id;
+    double                          m_rpm;
+    int                             m_diameter;
+    double                          m_axial_tilt;
+    Visibility                      m_visibility;
     boost::shared_ptr<GG::Texture>  m_surface_texture;
+    double                          m_shininess;
+    // TODO: Extra texture?
     boost::shared_ptr<GG::Texture>  m_atmosphere_texture;
     int                             m_atmosphere_alpha;
     GG::Rect                        m_atmosphere_planet_rect;
@@ -737,9 +770,6 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
         return;
     }
 
-    CheckDisplayPlanets();
-
-
     // create planet name text
 
     // apply formatting tags around planet name to indicate:
@@ -848,24 +878,15 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
                                                  UserString("PL_SELECT_COLONY_SHIP_INSTRUCTION"),
                                                  ClientUI::GetFont(), ClientUI::TextColor());
 
-
     if (m_planet_graphic)
         MoveChildDown(m_planet_graphic);
 
-
     SetChildClippingMode(ClipToWindow);
 
-
-    // connecting system's StateChangedSignal to this->Refresh() should be redundant, as
-    // the sidepanel's Refresh will be called when that signal is emitted, which will refresh
-    // all the PlanetPanel in the SidePanel
-    //if (System* system = plt->SystemID())
-    //    GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
-    GG::Connect(planet->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
+    Refresh();
 }
 
-SidePanel::PlanetPanel::~PlanetPanel()
-{
+SidePanel::PlanetPanel::~PlanetPanel() {
     delete m_colonize_button;
     delete m_invade_button;
     delete m_colonize_instruction;
@@ -877,8 +898,7 @@ SidePanel::PlanetPanel::~PlanetPanel()
     delete m_specials_panel;
 }
 
-void SidePanel::PlanetPanel::DoLayout()
-{
+void SidePanel::PlanetPanel::DoLayout() {
     GG::X left = GG::X0 + MaxPlanetDiameter() + EDGE_PAD;
     GG::X right = left + Width() - MaxPlanetDiameter() - 2*EDGE_PAD;
     GG::Y y = GG::Y0;
@@ -934,6 +954,9 @@ void SidePanel::PlanetPanel::DoLayout()
     CheckDisplayPlanets();
     if (m_planet_graphic)
         min_height = m_planet_graphic->Height();
+    // TODO: get following to resize panel properly...
+    //else if (m_rotating_planet_graphic)
+    //    min_height = m_rotating_planet_graphic->Height();
 
     Resize(GG::Pt(Width(), std::max(y, min_height)));
 
@@ -942,52 +965,36 @@ void SidePanel::PlanetPanel::DoLayout()
 
 void SidePanel::PlanetPanel::CheckDisplayPlanets() {
     const Planet* planet = GetPlanet(m_planet_id);
-    if (planet && GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown")) {
-            delete m_planet_graphic;
-            m_planet_graphic = 0;
-            delete m_rotating_planet_graphic;
-            m_rotating_planet_graphic = 0;
+    if (!planet || !GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown"))
+        return;
 
-        if (planet->Type() == PT_ASTEROIDS) {
-            std::vector<boost::shared_ptr<GG::Texture> > textures;
-            GetAsteroidTextures(m_planet_id, textures);
-            GG::X texture_width = textures[0]->DefaultWidth();
-            GG::Y texture_height = textures[0]->DefaultHeight();
-            GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - texture_width / 2 + 3), GG::Y0);
+    delete m_planet_graphic;
+    m_planet_graphic = 0;
+    delete m_rotating_planet_graphic;
+    m_rotating_planet_graphic = 0;
 
-            m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x, planet_image_pos.y,
-                                                        texture_width, texture_height, true,
-                                                        texture_width, texture_height, 0, textures,
-                                                        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-            m_planet_graphic->SetFPS(GetAsteroidsFPS());
-            m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
-            AttachChild(m_planet_graphic);
-            m_planet_graphic->Play();
-        } else if (planet->Type() < NUM_PLANET_TYPES) {
-            int planet_image_sz = PlanetDiameter(planet->Size());
-            GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - planet_image_sz / 2 + 3),
+    if (planet->Type() == PT_ASTEROIDS) {
+        std::vector<boost::shared_ptr<GG::Texture> > textures;
+        GetAsteroidTextures(m_planet_id, textures);
+        GG::X texture_width = textures[0]->DefaultWidth();
+        GG::Y texture_height = textures[0]->DefaultHeight();
+        GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - texture_width / 2 + 3), GG::Y0);
+
+        m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x, planet_image_pos.y,
+                                                    texture_width, texture_height, true,
+                                                    texture_width, texture_height, 0, textures,
+                                                    GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_planet_graphic->SetFPS(GetAsteroidsFPS());
+        m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
+        AttachChild(m_planet_graphic);
+        m_planet_graphic->Play();
+    } else if (planet->Type() < NUM_PLANET_TYPES) {
+        int planet_image_sz = PlanetDiameter(planet->Size());
+        GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - planet_image_sz / 2 + 3),
                                 GG::Y(MaxPlanetDiameter() / 2 - planet_image_sz / 2));
-
-            const std::map<PlanetType, std::vector<RotatingPlanetData> >& planet_data = GetRotatingPlanetData();
-            std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet->Type());
-            int num_planets_of_type;
-            if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet->Type())->second.size())) {
-                // using algorithm from Thomas Wang's 32 bit Mix Function; assumes that
-                // only the lower 16 bits of the system and planet ID's are significant
-                unsigned int hash_value =
-                    (static_cast<unsigned int>(m_planet_id) & 0xFFFF) + (static_cast<unsigned int>(m_planet_id) & 0xFFFF);
-                hash_value += ~(hash_value << 15);
-                hash_value ^= hash_value >> 10;
-                hash_value += hash_value << 3;
-                hash_value ^= hash_value >> 6;
-                hash_value += ~(hash_value << 11);
-                hash_value ^= hash_value >> 16;
-                m_rotating_planet_graphic =
-                    new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y, *planet, m_star_type,
-                                            it->second[hash_value % num_planets_of_type]);
-                AttachChild(m_rotating_planet_graphic);
-            }
-        }
+        m_rotating_planet_graphic = new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y,
+                                                              m_planet_id, m_star_type);
+        AttachChild(m_rotating_planet_graphic);
     }
 }
 
@@ -1075,6 +1082,7 @@ namespace {
 
 void SidePanel::PlanetPanel::Refresh() {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    m_planet_connection.disconnect();
 
     const Planet* planet = GetPlanet(m_planet_id);
     if (!planet) {
@@ -1113,6 +1121,7 @@ void SidePanel::PlanetPanel::Refresh() {
         DoLayout();
         return;
     }
+
 
 
     // colour planet name with owner's empire colour
@@ -1172,7 +1181,7 @@ void SidePanel::PlanetPanel::Refresh() {
     if (Disabled() || !(can_colonize || could_colonize || being_colonized || invadable || being_invaded)) {
         // hide everything
 
-    } else if(can_colonize) {
+    } else if (can_colonize) {
         // show colonize button
         AttachChild(m_colonize_button);
         std::string initial_pop = DoubleToString(ColonyShipCapacity(colony_ship), 2, false);
@@ -1186,13 +1195,13 @@ void SidePanel::PlanetPanel::Refresh() {
                                        % GetPlanetTypeName(*planet)
                                        % GetPlanetEnvironmentName(*planet, colony_ship->SpeciesName()));
 
-    } else if(being_colonized) {
+    } else if (being_colonized) {
         // shown colonize cancel button
         AttachChild(m_colonize_button);
         if (m_colonize_button)
             m_colonize_button->SetText(UserString("PL_CANCEL_COLONIZE"));
 
-    } else if(invadable) {
+    } else if (invadable) {
         // show invade button
         AttachChild(m_invade_button);
         double invasion_troops = 0.0;
@@ -1208,13 +1217,13 @@ void SidePanel::PlanetPanel::Refresh() {
         if (m_invade_button)
             m_invade_button->SetText(invasion_text);
 
-    } else if(being_invaded) {
+    } else if (being_invaded) {
         // show invade cancel button
         AttachChild(m_invade_button);
         if (m_invade_button)
             m_invade_button->SetText(UserString("PL_CANCEL_INVADE"));
 
-    } else if(could_colonize) {
+    } else if (could_colonize) {
         // show colonization instruction text
         AttachChild(m_colonize_instruction);
     }
@@ -1229,6 +1238,8 @@ void SidePanel::PlanetPanel::Refresh() {
 
     // BuildingsPanel::Refresh (and other panels) emit ExpandCollapseSignal,
     // which should be connected to SidePanel::PlanetPanel::DoLayout
+
+    m_planet_connection = GG::Connect(planet->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this, boost::signals::at_front);
 }
 
 void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
