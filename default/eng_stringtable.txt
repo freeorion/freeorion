@@ -3307,6 +3307,12 @@ Void Metamorphisis
 VOID_SLAVE_SPECIAL_DESC
 This planet exists partially in this universe and partially in the void, increasing its stealth by 700.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
 
+SCAVENGE_MINERALS_SPECIAL
+Scavenge Minerals
+SCAVENGE_MINERALS_SPECIAL_DESC
+Abanonded, blasted ships from an ancient war are now useless, but resources can be scavanged to boost the mineral stockpile.
+
+
 
 #######################
 # Enumeration  values #

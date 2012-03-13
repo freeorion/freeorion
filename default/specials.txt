@@ -1109,6 +1109,40 @@ Special
     graphic = "icons/specials_huge/void.png"
 
 
+Special
+    name = "SCAVENGE_MINERALS_SPECIAL"
+    description = "SCAVENGE_MINERALS_SPECIAL_DESC"
+    spawnrate = 5.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not ContainedBy Contains Homeworld
+    ]
+    EffectsGroup
+        scope = And [
+            Planet
+            Ship
+        ]
+        activation = ContainedBy And [
+            System
+            Contains And [
+                Ship
+                OwnedBy AnyEmpire
+            ]
+        ]
+        effects = [
+            SetEmpireMineralStockpile value = Value + 20
+            RemoveSpecial "SCAVENGE_MINERALS_SPECIAL"
+            GenerateSitRepMessage
+                message = "EFFECT_SCAVENGE_MINERALS"
+                parameters = [
+                    tag = "system" data = Source.ID
+                ]
+        ]
+    graphic = "icons/specials_huge/abandoned-colony.png"
+
+    
+    
 STEALTH_BOOST_LOW
 '''EffectsGroup
         scope = Source
