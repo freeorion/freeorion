@@ -3307,10 +3307,10 @@ Void Metamorphisis
 VOID_SLAVE_SPECIAL_DESC
 This planet exists partially in this universe and partially in the void, increasing its stealth by 700.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
 
-SCAVENGE_MINERALS_SPECIAL
-Scavenge Minerals
-SCAVENGE_MINERALS_SPECIAL_DESC
-Abanonded, blasted ships from an ancient war are now useless, but resources can be scavanged to boost the mineral stockpile.
+DERELICT_SPECIAL
+Derelict
+DERELICT_SPECIAL_DESC
+An anchient, derelict ship from an unknown species. Who knows what it could reveal...
 
 
 
@@ -4083,7 +4083,7 @@ A tamed %predefinedshipdesign% is ready for service at %planet%.
 EFFECT_GATEWAY_VOID_DESTROY
 The %buildingtype% at %planet% destroyed the %fleet% fleet.
 
-EFFECT_SCAVENGE_MINERALS
+EFFECT_DERELICT_MINERALS
 Twenty minerals were scavenged from an abandoned hulk at %system%.
 
 # Conditions
