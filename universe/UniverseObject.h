@@ -34,8 +34,7 @@ struct UniverseObjectVisitor;
   * Signal.  This means that all mutators on UniverseObject and its subclasses
   * need to emit this signal.  This is how the UI becomes aware that an object
   * that is being displayed has changed.*/
-class UniverseObject
-{
+class UniverseObject {
 public:
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()>                          StateChangedSignalBaseType;
@@ -180,6 +179,7 @@ protected:
 
 private:
     std::map<MeterType, Meter>  CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
+    std::map<std::string, int>  CensoredSpecials(Visibility vis) const; ///< returns set of specials of this object that are censored based on the specified Visiblity \a vis
 
     int                         m_id;
     std::string                 m_name;

@@ -15,8 +15,8 @@ BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
 BOOST_CLASS_EXPORT(Ship)
 BOOST_CLASS_VERSION(Ship, 1)
-BOOST_CLASS_EXPORT(ShipDesign)
-BOOST_CLASS_VERSION(ShipDesign, 1)
+//BOOST_CLASS_EXPORT(ShipDesign)
+//BOOST_CLASS_VERSION(ShipDesign, 1)
 
 template <class Archive>
 void ObjectMap::serialize(Archive& ar, const unsigned int version)
@@ -67,8 +67,9 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     if (Archive::is_saving::value) {
         // clean up temporary objects in temporary ObjectMaps
         objects.Clear();
-        for (EmpireObjectMap::iterator it = empire_latest_known_objects.begin(); it != empire_latest_known_objects.end(); ++it)
-            it->second.Clear();
+        for (EmpireObjectMap::iterator it = empire_latest_known_objects.begin();
+             it != empire_latest_known_objects.end(); ++it)
+        { it->second.Clear(); }
     }
 
     if (Archive::is_loading::value) {
@@ -181,17 +182,9 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_designed_on_turn)
         & BOOST_SERIALIZATION_NVP(m_hull)
         & BOOST_SERIALIZATION_NVP(m_parts)
-        & BOOST_SERIALIZATION_NVP(m_is_monster);
-    //if (version < 1) {
-    //    std::string m_graphic;
-    //    ar & BOOST_SERIALIZATION_NVP(m_graphic);
-    //    m_icon = m_graphic;
-    //} else /*if (version >= 1)*/ {
-    //    ar  & BOOST_SERIALIZATION_NVP(m_icon);
-    //}
-    ar  & BOOST_SERIALIZATION_NVP(m_icon);
-
-    ar  & BOOST_SERIALIZATION_NVP(m_3D_model)
+        & BOOST_SERIALIZATION_NVP(m_is_monster)
+        & BOOST_SERIALIZATION_NVP(m_icon)
+        & BOOST_SERIALIZATION_NVP(m_3D_model)
         & BOOST_SERIALIZATION_NVP(m_name_desc_in_stringtable);
     if (Archive::is_loading::value)
         BuildStatCaches();

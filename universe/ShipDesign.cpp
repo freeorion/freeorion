@@ -494,7 +494,7 @@ HullTypeManager::HullTypeManager() {
         Logger().debugStream() << "Hull Types:";
         for (iterator it = begin(); it != end(); ++it) {
             const HullType* h = it->second;
-            Logger().debugStream() << " ... " << h->Name() << " stats: " << h->StatDescription();
+            Logger().debugStream() << " ... " << h->Name();// << " stats: " << h->StatDescription();
         }
     }
 }

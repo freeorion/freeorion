@@ -329,6 +329,13 @@ std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const 
     return retval;
 }
 
+std::map<std::string, int> UniverseObject::CensoredSpecials(Visibility vis) const {
+    std::map<std::string, int> retval;
+    if (vis >= VIS_PARTIAL_VISIBILITY)
+        retval = m_specials;
+    return retval;
+}
+
 void UniverseObject::ResetTargetMaxUnpairedMeters()
 { GetMeter(METER_STEALTH)->ResetCurrent(); }
 

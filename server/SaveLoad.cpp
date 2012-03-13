@@ -88,6 +88,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         Logger().errorStream() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadGame exception: " << ": " << e.what();
         throw e;
     }
+    Logger().debugStream() << "Done loading save file";
 }
 
 void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveGameData>& player_save_game_data)

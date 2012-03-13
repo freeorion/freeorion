@@ -244,8 +244,7 @@ BuildingTypeManager::BuildingTypeManager() {
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "Building Types:";
         for (iterator it = begin(); it != end(); ++it) {
-            const BuildingType* b = it->second;
-            Logger().debugStream() << " ... " << b->Dump();
+            Logger().debugStream() << " ... " << it->first;
         }
     }
 }

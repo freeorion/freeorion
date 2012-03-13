@@ -18,6 +18,12 @@ namespace {
     public:
         SpecialManager() {
             parse::specials(GetResourceDir() / "specials.txt", m_specials);
+            if (GetOptionsDB().Get<bool>("verbose-logging")) {
+                Logger().debugStream() << "Specials:";
+                for (std::map<std::string, Special*>::iterator it = m_specials.begin();
+                    it != m_specials.end(); ++it)
+                { Logger().debugStream() << " ... " << it->first; }
+            }
         }
         ~SpecialManager() {
             for (std::map<std::string, Special*>::iterator it = m_specials.begin();
@@ -50,8 +56,7 @@ namespace {
 Special::~Special()
 { delete m_location; }
 
-std::string Special::Dump() const
-{
+std::string Special::Dump() const {
     std::string retval = DumpIndent() + "Special\n";
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";

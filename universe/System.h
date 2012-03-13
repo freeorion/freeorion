@@ -23,8 +23,7 @@ struct UniverseObjectVisitor;
    functions.  Iteration is available over all starlanes and wormholes
    (together), all system objects, all free system objects (those not in an
    orbit), and all objects in a paricular orbit.*/
-class System : public UniverseObject
-{
+class System : public UniverseObject {
 private:
     typedef std::multimap<int, int>             ObjectMultimap;         ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
 

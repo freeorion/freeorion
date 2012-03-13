@@ -21,8 +21,7 @@ namespace Condition {
   * not limited to the object to which it is attached.  Each kind of Special
   * must have a \a unique name string, by which it can be looked up using
   * GetSpecial(). */
-class Special
-{
+class Special {
 public:
     /** \name Structors */ //@{
     /** basic ctor */
