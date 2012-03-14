@@ -1246,25 +1246,25 @@ namespace {
 
             switch (m_type) {
             case OBJ_BUILDING:
-                return universe_object_cast<const ::Building*>(candidate);
+                return universe_object_cast<const ::Building*>(candidate) != 0;
                 break;
             case OBJ_SHIP:
-                return universe_object_cast<const Ship*>(candidate);
+                return universe_object_cast<const Ship*>(candidate) != 0;
                 break;
             case OBJ_FLEET:
-                return universe_object_cast<const Fleet*>(candidate);
+                return universe_object_cast<const Fleet*>(candidate) != 0;
                 break;
             case OBJ_PLANET:
-                return universe_object_cast<const Planet*>(candidate);
+                return universe_object_cast<const Planet*>(candidate) != 0;
                 break;
             case OBJ_POP_CENTER:
-                return dynamic_cast<const PopCenter*>(candidate);
+                return dynamic_cast<const PopCenter*>(candidate) != 0;
                 break;
             case OBJ_PROD_CENTER:
-                return dynamic_cast<const ResourceCenter*>(candidate);
+                return dynamic_cast<const ResourceCenter*>(candidate) != 0;
                 break;
             case OBJ_SYSTEM:
-                return universe_object_cast<const System*>(candidate);
+                return universe_object_cast<const System*>(candidate) != 0;
                 break;
             default:
                 break;

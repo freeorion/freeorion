@@ -20,7 +20,7 @@ public:
     /** \name Structors */ //@{
     Building() :
         UniverseObject(),
-        m_building_type(""),
+        m_building_type(),
         m_planet_id(INVALID_OBJECT_ID),
         m_ordered_scrapped(false),
         m_produced_by_empire_id(ALL_EMPIRES)

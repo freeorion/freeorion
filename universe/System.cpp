@@ -18,7 +18,9 @@ System::System() :
     UniverseObject(),
     m_star(INVALID_STAR_TYPE),
     m_orbits(0),
-    m_last_turn_battle_here(INVALID_GAME_TURN)
+    m_last_turn_battle_here(INVALID_GAME_TURN),
+    m_overlay_texture(),
+    m_overlay_size(1.0)
 {}
 
 System::System(StarType star, int orbits, const std::string& name, double x, double y,
@@ -26,7 +28,9 @@ System::System(StarType star, int orbits, const std::string& name, double x, dou
     UniverseObject(name, x, y, owners),
     m_star(star),
     m_orbits(orbits),
-    m_last_turn_battle_here(INVALID_GAME_TURN)
+    m_last_turn_battle_here(INVALID_GAME_TURN),
+    m_overlay_texture(),
+    m_overlay_size(1.0)
 {
     //Logger().debugStream() << "System::System(" << star << ", " << orbits << ", " << name << ", " << x << ", " << y << ")";
     if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
@@ -43,7 +47,9 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
     m_star(star),
     m_orbits(orbits),
     m_starlanes_wormholes(lanes_and_holes),
-    m_last_turn_battle_here(INVALID_GAME_TURN)
+    m_last_turn_battle_here(INVALID_GAME_TURN),
+    m_overlay_texture(),
+    m_overlay_size(1.0)
 {
     //Logger().debugStream() << "System::System(" << star << ", " << orbits << ", (StarlaneMap), " << name << ", " << x << ", " << y << ")";
     if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)

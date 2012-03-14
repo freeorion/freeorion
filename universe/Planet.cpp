@@ -64,7 +64,8 @@ Planet::Planet() :
     m_just_conquered(false),
     m_is_about_to_be_colonized(false),
     m_is_about_to_be_invaded(false),
-    m_last_turn_attacked_by_ship(-1)
+    m_last_turn_attacked_by_ship(-1),
+    m_surface_texture()
 {
     //Logger().debugStream() << "Planet::Planet()";
     // assumes PopCenter and ResourceCenter don't need to be initialized, due to having been re-created
@@ -85,7 +86,8 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_just_conquered(false),
     m_is_about_to_be_colonized(false),
     m_is_about_to_be_invaded(false),
-    m_last_turn_attacked_by_ship(-1)
+    m_last_turn_attacked_by_ship(-1),
+    m_surface_texture()
 {
     //Logger().debugStream() << "Planet::Planet(" << type << ", " << size <<")";
     UniverseObject::Init();
