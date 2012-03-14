@@ -1112,20 +1112,20 @@ Special
 Special
     name = "DERELICT_SPECIAL"
     description = "DERELICT_SPECIAL_DESC"
-    spawnrate = 5.0
-    spawnlimit = 9999
+    spawnrate = 1.5
+    spawnlimit = 100
     location = And [
-        Planet
-        Not ContainedBy Contains Homeworld
+        System
+        Not Contains Homeworld
     ]
     effectsgroups = [
         EffectsGroup
             scope = NumberOf 1 And [
                 Ship
-                ContainedBy Contains Source
+                ContainedBy Source
                 OwnedBy AnyEmpire
             ]
-            activation = ContainedBy And [
+            activation = And [
                 System
                 Contains And [
                     Ship
@@ -1143,7 +1143,7 @@ Special
 		
         EffectsGroup
             scope = Source
-            activation = ContainedBy And [
+            activation = And [
                 System
                 Contains And [
                     Ship
@@ -1152,7 +1152,7 @@ Special
             ]
             effects = RemoveSpecial "DERELICT_SPECIAL"
     ]
-    graphic = "icons/specials_huge/abandoned-colony.png"
+    graphic = "icons/specials_huge/derelict.png"
 
 
 STEALTH_BOOST_LOW
