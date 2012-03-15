@@ -7251,105 +7251,105 @@ Nebulous Body
 #################
 
 NO_FOOD_USE
-'''Doesn't need Food'''
+'''+ + + Doesn't need Food'''
 
 
 NO_FARMING
-'''No Farming: unable to Farm'''
+'''- - - No Farming'''
 
 TERRIBLE_FARMING
-'''Terrible Farming: Food production 50%'''
+'''  - - Terrible Farming: 50%'''
 
 AVERAGE_FARMING
-'''Average Farming: Food production 100%'''
+'''      Average Farming: 100%'''
 
 GREAT_FARMING
-'''Great Farming: Food Production 200%'''
+'''  + + Great Farming: 200%'''
 
 ULTIMATE_FARMING
-'''Ultimate Farming: Food Production 300%'''
+'''+ + + Ultimate Farming: 300%'''
 
 NO_MINING
-'''No Mining: unable to Mine'''
+'''- - - No Mining'''
 
 TERRIBLE_MINING
-'''Terrible Mining: Mineral production 50%'''
+'''  - - Terrible Mining: 50%'''
 
 AVERAGE_MINING
-'''Average Mining: Mineral production 100%'''
+'''      Average Mining: 100%'''
 
 GREAT_MINING
-'''Great Mining: Mineral production 200%'''
+'''  + + Great Mining: 200%'''
 
 ULTIMATE_MINING
-'''Ultimate Mining: Mineral production 300%'''
+'''+ + + Ultimate Mining: 300%'''
 
 NO_INDUSTRY
-'''No Industry: unable to produce Industry'''
+'''- - - No Industry'''
 
 TERRIBLE_INDUSTRY
-'''Terrible Industry: Production Point production 50%'''
+'''  - - Terrible Industry: 50%'''
 
 AVERAGE_INDUSTRY
-'''Average Industry: Production Point production 100%'''
+'''      Average Industry: 100%'''
 
 GREAT_INDUSTRY
-'''Great Industry: Production Point production 200%'''
+'''  + + Great Industry: 200%'''
 
 ULTIMATE_INDUSTRY
-'''Ultimate Industry: Production Point production 300%'''
+'''+ + + Ultimate Industry: 300%'''
 
 NO_RESEARCH
-'''No Research: unable to Research'''
+'''- - - No Research'''
 
 TERRIBLE_RESEARCH
-'''Terrible Research: Research Point production 50%'''
+'''  - - Terrible Research: 50%'''
 
 AVERAGE_RESEARCH
-'''Average Research: Research Point production 100%'''
+'''      Average Research: 100%'''
 
 GREAT_RESEARCH
-'''Great Research: Research Point production 200%'''
+'''  + + Great Research: 200%'''
 
 ULTIMATE_RESEARCH
-'''Ultimate Research: Research Point production 300%'''
+'''+ + + Ultimate Research: 300%'''
 
 
 NO_GROUND_TROOPS
-'''No Ground Troops'''
+'''- - - No Ground Troops'''
 
 TERRIBLE_GROUND_TROOPS
-'''Terrible Ground Troops: 1 unit.'''
+'''  - - Terrible Ground Troops: 1 unit.'''
 
 AVERAGE_GROUND_TROOPS
-'''Average Ground Troops: 5 units.'''
+'''      Average Ground Troops: 5 units.'''
 
 GREAT_GROUND_TROOPS
-'''Great Ground Troops: 20 units.'''
+'''  + + Great Ground Troops: 20 units.'''
 
 ULTIMATE_GROUND_TROOPS
-'''Ultimate Ground Troops: 50 units.'''
+'''+ + + Ultimate Ground Troops: 50 units.'''
 
 TERRIBLE_DETECTION
-'''Ultimate Detection: -10 malus.'''
+'''  - - Ultimate Detection: -10 malus.'''
 
 GREAT_DETECTION
-'''Great Detection: +25 bonus.'''
+'''  + + Great Detection: +25 bonus.'''
 
 ULTIMATE_DETECTION
-'''Ultimate Detection: +50 bonus.'''
+'''+ + + Ultimate Detection: +50 bonus.'''
 
 GREAT_STEALTH
-'''Great Stealth: +25 bonus.'''
+'''  + + Great Stealth: +25 bonus.'''
 
 ULTIMATE_STEALTH
-'''Ultimate Stealth: +50 bonus.'''
+'''+ + + Ultimate Stealth: +50 bonus.'''
 
 GREAT_WEAPONS
-'''Starts with Mass Driver 3.'''
+'''  + + Starts with Mass Driver 3.'''
 
 ULTIMATE_WEAPONS
-'''Starts with Mass Driver 4.'''
+'''+ + + Starts with Mass Driver 4.'''
 
 
 
