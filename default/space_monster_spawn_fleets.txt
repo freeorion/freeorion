@@ -155,3 +155,19 @@ MonsterFleet
             OwnedBy AnyEmpire
         ]
     ]
+
+MonsterFleet
+    name = "SM_SNAIL"
+    ships = [
+        "SM_SNAIL"
+    ]
+    spawnrate = 2.0
+    spawnlimit = 20
+    location = And [
+        Not Contains Monster
+        Contains Planet type = Asteroids
+        Not WithinStarlaneJumps 2 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]

@@ -397,6 +397,12 @@ Behemoth of the Void
 SM_VOID_DESC
 A nebulous creature that adds stealth to random planets.
 
+SM_SNAIL
+Asteroid Snail
+SM_SNAIL_DESC
+Feeding upon minerals, the shell of a space snail strongly resembles a normal asteroid making them very hard to detect.
+
+
 ##############################
 # Predefined Starting Fleets #
 ##############################

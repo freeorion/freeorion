@@ -13,6 +13,8 @@ Content:
  ~ Added new stealthy planet specials, and stealth-making monsters.
  ~ Made monsters nests last on average twice as long.
  ~ Halved the generation of floaters from forests.
+ ~ New Asteroid Snail space monster
+ ~ Abandoned Colony special now works.
  
 Graphics:
  ~ Added unique graphics for each hull.

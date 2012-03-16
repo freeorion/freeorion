@@ -666,7 +666,7 @@ Special
         effects = SetTargetResearch Value * 1.5
     
     graphic = "icons/specials_huge/computronium-broken.png"
-/*
+
 Special
     name = "ABANDONED_COLONY_SPECIAL"
     description = "ABANDONED_COLONY_SPECIAL_DESC"
@@ -683,7 +683,7 @@ Special
             activation = AND [
                 Planet
                 OwnedBy AnyEmpire
-                Construction Value = 10
+                Construction low = 10
             ] 
             stackinggroup = "ABANDONED_STACK"
             effects = RemoveSpecial "ABANDONED_COLONY_SPECIAL"
@@ -695,11 +695,9 @@ Special
                 OwnedBy AnyEmpire
             ]
             stackinggroup = "ABANDONED_STACK"
-            effects = SetConstruction value + 10
-            
+            effects = SetConstruction Value + 10
         ]
     graphic = "icons/specials_huge/abandoned-colony.png"
-*/
 
 Special
     name = "GAIA_SPECIAL"
