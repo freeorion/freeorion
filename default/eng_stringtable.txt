@@ -4090,7 +4090,14 @@ EFFECT_GATEWAY_VOID_DESTROY
 The %buildingtype% at %planet% destroyed the %fleet% fleet.
 
 EFFECT_DERELICT_MINERALS
-Twenty minerals were scavenged from an abandoned hulk at %system%.
+Twenty minerals were scavenged from an abandoned derelict at %system%.
+
+EFFECT_DERELICT_MAP
+Information on the area was obtained from an abandoned derelict at %system%.
+
+EFFECT_DERELICT_FUEL
+Ships were refuled from the residual supply found in an abandoned derelict at %system%.
+
 
 # Conditions
 

@@ -1117,6 +1117,54 @@ Special
         Not Contains Homeworld
     ]
     effectsgroups = [
+    	EffectsGroup
+            scope = NumberOf 1 And [
+                Ship
+                ContainedBy Source
+                OwnedBy AnyEmpire
+            ]
+            activation = And [
+                Random probability = .33
+                System
+                Contains And [
+                    Ship
+                    OwnedBy AnyEmpire
+                ]
+            ]
+            stackinggroup = "DERELICT"
+            effects = [
+                SetEmpireMineralStockpile value = Value + 20
+                GenerateSitRepMessage
+                    message = "EFFECT_DERELICT_MINERALS"
+                    parameters = [
+                        tag = "system" data = Source.ID
+                    ]
+            ]
+            
+        EffectsGroup
+            scope = NumberOf 1 And [
+                Ship
+                ContainedBy Source
+                OwnedBy AnyEmpire
+            ]
+            activation = And [
+                Random probability = .5
+                System
+                Contains And [
+                    Ship
+                    OwnedBy AnyEmpire
+                ]
+            ]
+            stackinggroup = "DERELICT"
+            effects = [
+                SetDetection value + 1000
+                GenerateSitRepMessage
+                    message = "EFFECT_DERELICT_MAP"
+                    parameters = [
+                        tag = "system" data = Source.ID
+                    ]
+            ]
+            
         EffectsGroup
             scope = NumberOf 1 And [
                 Ship
@@ -1130,10 +1178,11 @@ Special
                     OwnedBy AnyEmpire
                 ]
             ]
+            stackinggroup = "DERELICT"
             effects = [
-                SetEmpireMineralStockpile value = Value + 20
+                SetFuel value + 99
                 GenerateSitRepMessage
-                    message = "EFFECT_DERELICT_MINERALS"
+                    message = "EFFECT_DERELICT_FUEL"
                     parameters = [
                         tag = "system" data = Source.ID
                     ]
