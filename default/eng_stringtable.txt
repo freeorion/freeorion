@@ -3108,6 +3108,24 @@ Reason for staying
 They can't stay here long enough to actually move to another planet and still survive.'''
 
 
+SP_EXOBOT
+Exobot
+SP_EXOBOT_DESC
+'''Semi-autonomous robots, designed for mining and industry on Radiated planets.
+
+[[TERRIBLE_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[TERRIBLE_RESEARCH]]
+        
+[[TERRIBLE_GROUND_TROOPS]]
+        
+[[NO_FOOD_USE]]
+
+While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
+'''
+
+
 SP_SUPER_TEST
 Super Testers
 SP_SUPER_TEST_DESC
@@ -4726,6 +4744,11 @@ Exobots, as they become commonly known, are a marvel of form meets function. The
 
 Although high level initial design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks. Robots work continuously, without perpetual demands for greater economic compensation. Robots have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site. Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.'''
 
+PRO_EXOBOTS
+Semi-autonomous Exobots
+PRO_EXOBOTS_DESC
+Allows the contruction of Exobots optimsied for mining and industry on hostile planets.
+
 PRO_FUSION_GEN
 Fusion Generation
 
@@ -5192,6 +5215,9 @@ Makes the Game Work
 
 TAME_MONSTER_SHORT_DESC
 Tames Space Monsters
+
+EXOBOT_SHORT_DESC
+Builds Exobot Citizens
 
 CON_ORBITAL_CON
 Orbital Construction
@@ -6227,6 +6253,11 @@ BLD_INDUSTRY_CENTER_DESC
 [[tech PRO_INDUSTRY_CENTER_II]] refinement increases the bonus to equal the planet's population.
 
 [[tech PRO_INDUSTRY_CENTER_III]] refinement further increases bonus to 1.5 times the planet's population.'''
+
+BLD_EXOBOT_SHIP
+Exobot Colony Origin
+BLD_EXOBOT_SHIP_DESC
+'''Constructing the first group of exobots is a major production.  However, once establisthed on their own planet, they will be able to build themselves.'''
 
 BLD_MEGALITH
 Megalith

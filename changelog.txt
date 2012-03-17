@@ -15,6 +15,8 @@ Content:
  ~ Halved the generation of floaters from forests.
  ~ New Asteroid Snail space monster
  ~ Abandoned Colony special now works.
+ ~ Added Derelict system special
+ ~ Added Exobots, a constructable robot species.
  
 Graphics:
  ~ Added unique graphics for each hull.

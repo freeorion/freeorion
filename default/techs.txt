@@ -1583,6 +1583,19 @@ Tech
             effects = SetTargetMining Value + 10
         ]
     graphic = "icons/tech/robotic_production.png"
+    
+Tech
+    name = "PRO_EXOBOTS"
+    description = "PRO_EXOBOTS_DESC"
+    short_description = "EXOBOT_SHORT_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 200
+    researchturns = 4
+    prerequisites = "PRO_ROBOTIC_PROD"
+    unlock = Item type = Building name = "BLD_EXOBOT_SHIP"
+    
+    graphic = "icons/species/robotic-01.png"
 
 Tech
     name = "PRO_FUSION_GEN"

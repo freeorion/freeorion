@@ -584,6 +584,37 @@ BuildingType
     graphic = ""
 
 BuildingType
+    name = "BLD_EXOBOT_SHIP"
+    description = "BLD_EXOBOT_SHIP_DESC"
+    buildcost = 500
+    buildtime = 5
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        TargetPopulation low = 1
+        ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Contains Source
+                Planet
+            ]
+            effects = [
+                CreateShip "SD_COLONY_SHIP" Source.Owner "SP_EXOBOT"
+                /*
+                GenerateSitRepMessage
+                    message = "EFFECT_TERRAFORM"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
+                    */
+            ]
+
+        EffectsGroup
+            scope = Source
+            effects = Destroy
+    ]
+    graphic = ""
+
+BuildingType
     name = "BLD_MEGALITH"
     description = "BLD_MEGALITH_DESC"
     buildcost = 2500
