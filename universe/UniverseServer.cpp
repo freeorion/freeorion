@@ -1733,7 +1733,19 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
     Condition::ObjectSet native_safe_planet_set;
     native_safe_planet_set.reserve(RESERVE_SET_SIZE);
     homeworld_jumps_filter.Eval(native_safe_planet_set, planet_set);
-    Logger().debugStream() << " ... native safe planets: " << native_safe_planet_set.size();
+    Logger().debugStream() << "Number of planets far enough from players for natives to be allowed: " << native_safe_planet_set.size();
+    if (native_safe_planet_set.empty())
+        return;
+
+    Logger().debugStream() << "Species that can be added as natives:";
+    for (SpeciesManager::iterator species_it = species_manager.begin();
+        species_it != species_manager.end(); ++species_it)
+    {
+        Logger().debugStream() << "... " << species_it->first << " : " <<
+            (species_it->second->Playable() ? "Playable" : "") << " / " <<
+            (species_it->second->CanProduceShips() ? "CanProuduceShips" : "") << " / " <<
+            (species_it->second->CanColonize() ? "CanColonize" : "");
+    }
 
     std::vector<Planet*> native_safe_planets;
     for (Condition::ObjectSet::iterator it = native_safe_planet_set.begin(); it != native_safe_planet_set.end(); ++it)
@@ -1754,15 +1766,13 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
         for (SpeciesManager::iterator species_it = species_manager.begin();
              species_it != species_manager.end(); ++species_it)
         {
-            const Species* species = species_it->second;
-            if ((!species->CanColonize() || !species->CanProduceShips()) &&
-                species->GetPlanetEnvironment(planet_type) == PE_GOOD)
-            {
+            if (species_it->second->GetPlanetEnvironment(planet_type) == PE_GOOD)
                 suitable_species.push_back(species_it->first);
-            }
         }
-        if (suitable_species.empty())
+        if (suitable_species.empty()) {
+            Logger().debugStream() << "... no suitable species found (with good environment on this planet)";
             continue;
+        }
         Logger().debugStream() << " ... " << suitable_species.size() << " species are appropriate for this planet";
 
         // pick a species and assign to the planet
@@ -1775,7 +1785,7 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
         if (!available_foci.empty())
             planet->SetFocus(*available_foci.begin());
 
-        Logger().debugStream() << "Added native " << UserString(species_name) << " to planet " << planet->Name();
+        Logger().debugStream() << "Added native " << species_name << " to planet " << planet->Name();
     }
 }
 
