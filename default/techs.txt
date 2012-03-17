@@ -3272,16 +3272,6 @@ Tech
             ]
             effects = SetStructure Target.MaxStructure
 
-Tech
-    name = "SHP_RECON_FIGHT"
-    description = "SHP_RECON_FIGHT_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 360
-    researchturns = 2
-    prerequisites = "SHP_INTSTEL_LOG"
-    unlock = Item type = ShipPart name = "FI_RECON"
 
 Tech
     name = "SHP_ZORTRIUM_PLATE"
@@ -3742,6 +3732,18 @@ Tech
        // Item type = ShipPart name = "LR_PLASMA_TORPEDO"
         Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
     ]
+
+Tech
+    name = "SHP_RECON_FIGHT"
+    description = "SHP_RECON_FIGHT_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 360
+    researchturns = 2
+    prerequisites = "SHP_INTSTEL_LOG"
+    unlock = Item type = ShipPart name = "FI_RECON"
+    
 */
 
 
