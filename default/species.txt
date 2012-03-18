@@ -30,7 +30,9 @@ Species
         [[STANDARD_FOOD_USE]]
                 
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[TERRAN_STANDARD_EP]]
@@ -64,7 +66,9 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[OCEAN_STANDARD_EP]]
@@ -98,7 +102,9 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -132,7 +138,9 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[TOXIC_STANDARD_EP]]
@@ -169,7 +177,9 @@ Species
         [[AVERAGE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -204,7 +214,9 @@ Species
         [[STANDARD_FOOD_USE]]
                 
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[TUNDRA_STANDARD_EP]]
@@ -239,7 +251,9 @@ Species
         [[STANDARD_FOOD_USE]]
                 
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[TERRAN_STANDARD_EP]]
@@ -273,7 +287,9 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[TOXIC_STANDARD_EP]]
@@ -310,7 +326,9 @@ Species
         [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[OCEAN_STANDARD_EP]]
@@ -344,7 +362,9 @@ Species
         [[STANDARD_FOOD_USE]]
                 
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -379,7 +399,9 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -412,7 +434,9 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[TUNDRA_STANDARD_EP]]
@@ -452,9 +476,12 @@ Species
         [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[TERRIBLE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
-    [[BARREN_STANDARD_EP]]
+
+    [[BARREN_BROAD_EP]]
     
     graphic = "icons/species/cray.png"
 
@@ -485,7 +512,9 @@ Species
         [[STANDARD_FOOD_USE]]
                 
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -515,10 +544,12 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[GREAT_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
-    [[SWAMP_STANDARD_EP]]
+    [[SWAMP_BROAD_EP]]
     
     graphic = "icons/species/cynos.png"
 
@@ -547,10 +578,12 @@ Species
         [[STANDARD_FOOD_USE]]
 
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[GREAT_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
-    [[OCEAN_STANDARD_EP]]
+    [[SWAMP_STANDARD_EP]]
     
     graphic = "icons/species/phinnert.png"
 
@@ -580,11 +613,12 @@ Species
         [[STANDARD_FOOD_USE]]
 
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
-        
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]  
     ]
     
-    [[INFERNO_STANDARD_EP]]
+    [[INFERNO_NARROW_EP]]
     
     graphic = "icons/species/egassem.png"
 
@@ -614,10 +648,12 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
-    [[TUNDRA_STANDARD_EP]]
+    [[TUNDRA_NARROW_EP]]
     
     graphic = "icons/species/sslith.png"
 
@@ -643,7 +679,9 @@ Species
         [[STANDARD_FOOD_USE]]    
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -678,10 +716,12 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
-    [[OCEAN_STANDARD_EP]]
+    [[SWAMP_STANDARD_EP]]
     
     graphic = "icons/species/amorphous-02.png"
 
@@ -709,7 +749,9 @@ Species
         [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -737,7 +779,9 @@ Species
         [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[BARREN_STANDARD_EP]]
@@ -767,7 +811,9 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[GOOD_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[TERRAN_STANDARD_EP]]
@@ -795,7 +841,9 @@ Species
         [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[RADIATED_STANDARD_EP]]
@@ -827,7 +875,9 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[TERRAN_STANDARD_EP]]
@@ -858,7 +908,9 @@ Species
         [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[BARREN_STANDARD_EP]]
@@ -891,10 +943,12 @@ Species
         [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
-    [[INFERNO_STANDARD_EP]]
+    [[INFERNO_NARROW_EP]]
     
     graphic = "icons/species/bipedial-05.png"
 
@@ -923,7 +977,9 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[TOXIC_STANDARD_EP]]
@@ -953,7 +1009,9 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[TERRIBLE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
         
     [[TERRAN_STANDARD_EP]]
@@ -986,7 +1044,9 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[INFERNO_STANDARD_EP]]
@@ -1018,7 +1078,9 @@ Species
         [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     [[RADIATED_STANDARD_EP]]
@@ -1050,7 +1112,9 @@ Species
         [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     
     environments = [
@@ -1063,8 +1127,8 @@ Species
         type = Desert       environment = Hostile
         type = Terran       environment = Hostile
         type = Ocean        environment = Hostile
-        type = Asteroids    environment = Poor
-        type = Gasgiant     environment = Hostile
+        type = Asteroids    environment = Hostile
+        type = Gasgiant     environment = Uninhabitable
     ]
     
     graphic = "icons/species/robotic-01.png"
@@ -1100,7 +1164,9 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[ULTIMATE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     environments = [
         type = Swamp        environment = Good
@@ -1143,7 +1209,9 @@ Species
         [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_HEALTH_AND_POPULATION]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        [[STANDARD_POPULATION]]
     ]
     environments = [
         type = Swamp        environment = Good
@@ -1305,6 +1373,276 @@ OCEAN_STANDARD_EP
         type = Gasgiant     environment = Uninhabitable
     ]'''
 
+SWAMP_NARROW_EP
+'''environments = [
+      type = Swamp        environment = Good
+      type = Toxic        environment = Poor
+      type = Inferno      environment = Hostile
+      type = Radiated     environment = Hostile
+      type = Barren       environment = Hostile
+      type = Tundra       environment = Hostile
+      type = Desert       environment = Hostile
+      type = Terran       environment = Hostile
+      type = Ocean        environment = Poor
+      type = Asteroids    environment = Uninhabitable
+      type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+TOXIC_NARROW_EP
+'''environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Good
+        type = Inferno      environment = Poor
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Hostile
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+INFERNO_NARROW_EP
+'''environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Poor
+        type = Inferno      environment = Good
+        type = Radiated     environment = Poor
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Hostile
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+RADIATED_NARROW_EP
+'''environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Poor
+        type = Radiated     environment = Good
+        type = Barren       environment = Poor
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Hostile
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+BARREN_NARROW_EP
+'''environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Poor
+        type = Barren       environment = Good
+        type = Tundra       environment = Poor
+        type = Desert       environment = Hostile
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+TUNDRA_NARROW_EP
+'''environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Poor
+        type = Tundra       environment = Good
+        type = Desert       environment = Poor
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+    
+DESERT_NARROW_EP
+'''environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Poor
+        type = Desert       environment = Good
+        type = Terran       environment = Poor
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+TERRAN_NARROW_EP
+'''environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Poor
+        type = Terran       environment = Good
+        type = Ocean        environment = Poor
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+OCEAN_NARROW_EP
+'''environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Hostile
+        type = Terran       environment = Poor
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+SWAMP_BROAD_EP
+'''environments = [
+      type = Swamp        environment = Good
+      type = Toxic        environment = Adequate
+      type = Inferno      environment = Poor
+      type = Radiated     environment = Poor
+      type = Barren       environment = Hostile
+      type = Tundra       environment = Hostile
+      type = Desert       environment = Poor
+      type = Terran       environment = Poor
+      type = Ocean        environment = Adequate
+      type = Asteroids    environment = Uninhabitable
+      type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+TOXIC_BROAD_EP
+'''environments = [
+        type = Swamp        environment = Adequate
+        type = Toxic        environment = Good
+        type = Inferno      environment = Adequate
+        type = Radiated     environment = Poor
+        type = Barren       environment = Poor
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Hostile
+        type = Terran       environment = Poor
+        type = Ocean        environment = Poor
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+INFERNO_BROAD_EP
+'''environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Adequate
+        type = Inferno      environment = Good
+        type = Radiated     environment = Adequate
+        type = Barren       environment = Poor
+        type = Tundra       environment = Poor
+        type = Desert       environment = Hostile
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Poor
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+RADIATED_BROAD_EP
+'''environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Poor
+        type = Inferno      environment = Adequate
+        type = Radiated     environment = Good
+        type = Barren       environment = Adequate
+        type = Tundra       environment = Poor
+        type = Desert       environment = Poor
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+BARREN_BROAD_EP
+'''environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Poor
+        type = Inferno      environment = Poor
+        type = Radiated     environment = Adequate
+        type = Barren       environment = Good
+        type = Tundra       environment = Adequate
+        type = Desert       environment = Poor
+        type = Terran       environment = Poor
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+TUNDRA_BROAD_EP
+'''environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Poor
+        type = Radiated     environment = Poor
+        type = Barren       environment = Adequate
+        type = Tundra       environment = Good
+        type = Desert       environment = Adequate
+        type = Terran       environment = Poor
+        type = Ocean        environment = Poor
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+    
+DESERT_BROAD_EP
+'''environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Poor
+        type = Barren       environment = Poor
+        type = Tundra       environment = Adequate
+        type = Desert       environment = Good
+        type = Terran       environment = Adequate
+        type = Ocean        environment = Poor
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+TERRAN_BROAD_EP
+'''environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Poor
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Poor
+        type = Tundra       environment = Poor
+        type = Desert       environment = Adequate
+        type = Terran       environment = Good
+        type = Ocean        environment = Adequate
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+OCEAN_BROAD_EP
+'''environments = [
+        type = Swamp        environment = Adequate
+        type = Toxic        environment = Poor
+        type = Inferno      environment = Poor
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Poor
+        type = Desert       environment = Poor
+        type = Terran       environment = Adequate
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
 HAS_FARMING_FOCUS
 '''        Focus
             name = "FOCUS_FARMING"
@@ -1456,126 +1794,195 @@ HAS_ADVANCED_FOCI
             graphic = "icons/focus/distortion.png"
 '''
 
-STANDARD_HEALTH_AND_POPULATION
-'''EffectsGroup
+STANDARD_CONSTRUCTION
+'''        EffectsGroup
             scope = Source
             activation = Source
             effects = SetTargetConstruction Value + 20
-            
-        EffectsGroup
+'''
+
+TERRIBLE_HEALTH
+'''        EffectsGroup
             scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = [Huge GasGiant]
-            ]
-            effects = [
-                SetTargetPopulation Value + 25
-                SetTargetHealth Value + 30
-            ]
+            activation = Planet environment = Good
+            effects = SetTargetHealth Value + 25
 
         EffectsGroup
             scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = [Large Asteroids]
-            ]
-            effects = [
-                SetTargetPopulation Value + 20
-                SetTargetHealth Value + 30
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = Medium
-            ]
-            effects = [
-                SetTargetPopulation Value + 15
-                SetTargetHealth Value + 30
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = Small
-            ]
-            effects = [
-                SetTargetPopulation Value + 10
-                SetTargetHealth Value + 30
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = Tiny
-            ]
-            effects = [
-                SetTargetPopulation Value + 5
-                SetTargetHealth Value + 30
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = [Huge GasGiant]
-            ]
-            effects = [
-                SetTargetPopulation Value + 5
-                SetTargetHealth Value + 25
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = [Large Asteroids]
-            ]
-            effects = [
-                SetTargetPopulation Value + 4
-                SetTargetHealth Value + 25
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = Medium
-            ]
-            effects = [
-                SetTargetPopulation Value + 3
-                SetTargetHealth Value + 25
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = Small
-            ]
-            effects = [
-                SetTargetPopulation Value + 2
-                SetTargetHealth Value + 25
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = Tiny
-            ]
-            effects = [
-                SetTargetPopulation Value + 1
-                SetTargetHealth Value + 25
-            ]
+            activation = Planet environment = Adequate
+            effects = SetTargetHealth Value + 22
 
         EffectsGroup
             scope = Source
             activation = Planet environment = [Uninhabitable Hostile Poor]
             effects = SetTargetHealth Value + 20
+'''
+
+POOR_HEALTH
+'''        EffectsGroup
+            scope = Source
+            activation = Planet environment = Good
+            effects = SetTargetHealth Value + 28
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = Adequate
+            effects = SetTargetHealth Value + 24
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = [Uninhabitable Hostile Poor]
+            effects = SetTargetHealth Value + 20
+'''
+
+AVERAGE_HEALTH
+'''        EffectsGroup
+            scope = Source
+            activation = Planet environment = Good
+            effects = SetTargetHealth Value + 30
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = Adequate
+            effects = SetTargetHealth Value + 25
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = [Uninhabitable Hostile Poor]
+            effects = SetTargetHealth Value + 20
+'''
+
+GOOD_HEALTH
+'''        EffectsGroup
+            scope = Source
+            activation = Planet environment = Good
+            effects = SetTargetHealth Value + 35
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = Adequate
+            effects = SetTargetHealth Value + 28
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = [Uninhabitable Hostile Poor]
+            effects = SetTargetHealth Value + 20
+'''
+
+GREAT_HEALTH
+'''        EffectsGroup
+            scope = Source
+            activation = Planet environment = Good
+            effects = SetTargetHealth Value + 40
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = Adequate
+            effects = SetTargetHealth Value + 30
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = [Uninhabitable Hostile Poor]
+            effects = SetTargetHealth Value + 20
+'''
+
+ULTIMATE_HEALTH
+'''        EffectsGroup
+            scope = Source
+            activation = Planet environment = Good
+            effects = SetTargetHealth Value + 50
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = Adequate
+            effects = SetTargetHealth Value + 35
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = [Uninhabitable Hostile Poor]
+            effects = SetTargetHealth Value + 20
+'''
+
+STANDARD_POPULATION
+'''        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = [Huge GasGiant]
+            ]
+            effects = SetTargetPopulation Value + 25
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = [Large Asteroids]
+            ]
+            effects = SetTargetPopulation Value + 20
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Medium
+            ]
+            effects = SetTargetPopulation Value + 15
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Small
+            ]
+            effects = SetTargetPopulation Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Tiny
+            ]
+            effects = SetTargetPopulation Value + 5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = [Huge GasGiant]
+            ]
+            effects = SetTargetPopulation Value + 5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = [Large Asteroids]
+            ]
+            effects = SetTargetPopulation Value + 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Medium
+            ]
+            effects = SetTargetPopulation Value + 3
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Small
+            ]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Tiny
+            ]
+            effects = SetTargetPopulation Value + 1
 '''
 
 ADVANCED_FOCUS_EFFECTS

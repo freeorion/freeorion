@@ -2779,6 +2779,7 @@ Prefer Barren planets.
 [[AVERAGE_GROUND_TROOPS]]
         
 [[NO_FOOD_USE]]
+[[TERRIBLE_HEALTH]]
 '''
 
 
@@ -2811,6 +2812,7 @@ Prefer Swamp planets.
 [[AVERAGE_RESEARCH]]
 
 [[GREAT_GROUND_TROOPS]]
+[[GREAT_HEALTH]]
 '''
 
 SP_PHINNERT
@@ -2825,6 +2827,7 @@ Prefer Ocean planets.
 [[NO_RESEARCH]]
 
 [[TERRIBLE_GROUND_TROOPS]]
+[[GREAT_HEALTH]]
 '''
 
 SP_EGASSEM
@@ -2880,6 +2883,8 @@ High g swamp world with a very dense atmosphere.
 Reason for Staying:
 The Fifty-Seven are in constant contact with most of the rest of their species, participating in a complex fractal 'song' that may also be a way to test complex mathematical hypotheses and/or some sort of social or artistic expression. Leaving the fractal song is apparently extremely unattractive.
 '''
+
+
 SP_SETINON
 Setinon
 SP_SETINON_DESC
@@ -2895,6 +2900,7 @@ Prefer Ocean planets.
         
 [[NO_GROUND_TROOPS]]
 '''
+
 
 SP_NYMNMN
 Nymnmn
@@ -2945,6 +2951,7 @@ Prefer Terran planets.
 [[NO_RESEARCH]]
 
 [[ULTIMATE_GROUND_TROOPS]]
+[[GOOD_HEALTH]]
 
 The Raaagh are 1.5 meter tall stripe-furred bipeds.  The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance.  The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage-- they must survive on their own competing against their siblings for hiding places and stealing food like vermin.  After three years usually only one is left, and the surviving young begin to learn to speak.  This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
 
@@ -7297,6 +7304,20 @@ Nebulous Body
 NO_FOOD_USE
 '''+ + + Doesn't need Food'''
 
+TERRIBLE_HEALTH
+'''Very slow population growth.'''
+
+POOR_HEALTH
+'''Slow population growth.'''
+
+GOOD_HEALTH
+'''Good population growth.'''
+
+GREAT_HEALTH
+'''Great population growth.'''
+
+ULTIMATE_HEALTH
+'''Ultimate population growth.'''
 
 NO_FARMING
 '''- - - No Farming'''
