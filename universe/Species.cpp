@@ -69,6 +69,10 @@ std::string Species::Dump() const {
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    if (m_playable)
+        retval += DumpIndent() + "Playable\n";
+    if (m_native)
+        retval += DumpIndent() + "Native\n";
     if (m_can_produce_ships)
         retval += DumpIndent() + "CanProduceShips\n";
     if (m_can_colonize)
@@ -199,18 +203,6 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const
         return RingPreviousPlanetType(initial_planet_type);
 }
 
-bool Species::Playable() const
-{ return m_playable; }
-
-bool Species::CanColonize() const
-{ return m_can_colonize; }
-
-bool Species::CanProduceShips() const
-{ return m_can_produce_ships; }
-
-const std::string& Species::Graphic() const
-{ return m_graphic; }
-
 void Species::AddHomeworld(int homeworld_id) {
     if (!GetUniverseObject(homeworld_id))
         Logger().debugStream() << "Species asked to add homeworld id " << homeworld_id << " but there is no such object in the Universe";
@@ -246,6 +238,10 @@ SpeciesManager* SpeciesManager::s_instance = 0;
 bool SpeciesManager::PlayableSpecies::operator()(
     const std::map<std::string, Species*>::value_type& species_map_iterator) const
 { return species_map_iterator.second->Playable(); }
+
+bool SpeciesManager::NativeSpecies::operator()(
+    const std::map<std::string, Species*>::value_type& species_map_iterator) const
+{ return species_map_iterator.second->Native(); }
 
 SpeciesManager::SpeciesManager() {
     if (s_instance)
@@ -293,6 +289,12 @@ SpeciesManager::playable_iterator SpeciesManager::playable_begin() const
 SpeciesManager::playable_iterator SpeciesManager::playable_end() const
 { return playable_iterator(PlayableSpecies(), m_species.end(), m_species.end()); }
 
+SpeciesManager::native_iterator SpeciesManager::native_begin() const
+{ return native_iterator(NativeSpecies(), m_species.begin(), m_species.end()); }
+
+SpeciesManager::native_iterator SpeciesManager::native_end() const
+{ return native_iterator(NativeSpecies(), m_species.end(), m_species.end()); }
+
 bool SpeciesManager::empty() const
 { return m_species.empty(); }
 
@@ -301,6 +303,9 @@ int SpeciesManager::NumSpecies() const
 
 int SpeciesManager::NumPlayableSpecies() const
 { return std::distance(playable_begin(), playable_end()); }
+
+int SpeciesManager::NumNativeSpecies() const
+{ return std::distance(native_begin(), native_end()); }
 
 namespace {
     const std::string EMPTY_STRING;

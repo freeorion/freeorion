@@ -159,6 +159,7 @@
 
 #define NAMES_SEQ_3                             \
     (Name)                                      \
+    (Native)                                    \
     (Neutron)                                   \
     (NextBetterPlanetType)                      \
     (ClockwiseNextPlanetType)                   \

@@ -48,6 +48,7 @@ namespace {
             qi::_f_type _f;
             qi::_g_type _g;
             qi::_h_type _h;
+            qi::_i_type _i;
             qi::_r1_type _r1;
             qi::_val_type _val;
             using phoenix::construct;
@@ -95,12 +96,14 @@ namespace {
                 >    parse::label(Name_name)        > tok.string [ _a = _1 ]
                 >    parse::label(Description_name) > tok.string [ _b = _1 ]
                 >   -tok.Playable_ [ _c = true ]
-                >   -tok.CanProduceShips_ [ _d = true ]
-                >   -tok.CanColonize_ [ _e = true ]
-                >   -foci(_f)
-                >   -effects(_g)
-                >   -environments(_h)
-                >    parse::label(Graphic_name) > tok.string [ insert_species(_r1, new_<Species>(_a, _b, _f, _h, _g, _c, _e, _d, _1)) ]
+                >   -tok.Native_ [ _d = true ]
+                >   -tok.CanProduceShips_ [ _e = true ]
+                >   -tok.CanColonize_ [ _f = true ]
+                >   -foci(_g)
+                >   -effects(_h)
+                >   -environments(_i)
+                >    parse::label(Graphic_name) > tok.string
+                     [ insert_species(_r1, new_<Species>(_a, _b, _g, _i, _h, _c, _d, _f, _e, _1)) ]
                 ;
 
             start
@@ -178,6 +181,7 @@ namespace {
             qi::locals<
                 std::string,
                 std::string,
+                bool,
                 bool,
                 bool,
                 bool,

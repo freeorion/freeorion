@@ -25,8 +25,7 @@ namespace Effect {
   * target has a particular focus.  By this method, techs or buildings or
   * species can act on planets or other ResourceCenters depending what their
   * focus setting is. */
-class FocusType
-{
+class FocusType {
 public:
     /** \name Structors */ //@{
     /** default ctor */
@@ -66,8 +65,7 @@ private:
   * properties that affect how the object on which they reside functions.
   * Each kind of Species must have a \a unique name string, by which it can be
   * looked up using GetSpecies(). */
-class Species
-{
+class Species {
 public:
     /** \name Structors */ //@{
     /** basic ctor */
@@ -75,7 +73,7 @@ public:
             const std::vector<FocusType>& foci,
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-            bool playable, bool can_colonize, bool can_produce_ships,
+            bool playable, bool native, bool can_colonize, bool can_produce_ships,
             const std::string& graphic) :
         m_name(name),
         m_description(description),
@@ -83,6 +81,7 @@ public:
         m_planet_environments(planet_environments),
         m_effects(effects),
         m_playable(playable),
+        m_native(native),
         m_can_colonize(can_colonize),
         m_can_produce_ships(can_produce_ships),
         m_graphic(graphic)
@@ -98,11 +97,12 @@ public:
     const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
     PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;         ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
     PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const; ///< returns the next better PlanetType for this species from the \a initial_planet_type specified
-    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const { return m_effects; }    ///< returns the EffectsGroups that encapsulate the effects that species of this type have
-    bool                            Playable() const;       ///< returns whether this species is a suitable starting species for players
-    bool                            CanColonize() const;    ///< returns whether this species can colonize planets
-    bool                            CanProduceShips() const;///< returns whether this species can produce ships
-    const std::string&              Graphic() const;        ///< returns the name of the grapic file for this species
+    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const { return m_effects; }///< returns the EffectsGroups that encapsulate the effects that species of this type have
+    bool                            Playable() const        { return m_playable; }          ///< returns whether this species is a suitable starting species for players
+    bool                            Native() const          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
+    bool                            CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
+    bool                            CanProduceShips() const { return m_can_produce_ships; } ///< returns whether this species can produce ships
+    const std::string&              Graphic() const         { return m_graphic; }           ///< returns the name of the grapic file for this species
     //@}
 
     /** \name Mutators */ //@{
@@ -120,6 +120,7 @@ private:
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                                             m_effects;
     bool                                    m_playable;
+    bool                                    m_native;
     bool                                    m_can_colonize;
     bool                                    m_can_produce_ships;
     std::string                             m_graphic;
@@ -127,14 +128,16 @@ private:
 
 
 /** Holds all FreeOrion species.  Types may be looked up by name. */
-class SpeciesManager
-{
+class SpeciesManager {
 private:
     struct PlayableSpecies
+    { bool operator()(const std::map<std::string, Species*>::value_type& species_map_iterator) const; };
+    struct NativeSpecies
     { bool operator()(const std::map<std::string, Species*>::value_type& species_map_iterator) const; };
 public:
     typedef std::map<std::string, Species*>::const_iterator     iterator;
     typedef boost::filter_iterator<PlayableSpecies, iterator>   playable_iterator;
+    typedef boost::filter_iterator<NativeSpecies, iterator>     native_iterator;
 
     /** \name Accessors */ //@{
     /** returns the building type with the name \a name; you should use the
@@ -150,12 +153,17 @@ public:
     playable_iterator       playable_begin() const;
     playable_iterator       playable_end() const;
 
+    /** iterators for native species. */
+    native_iterator         native_begin() const;
+    native_iterator         native_end() const;
+
     /** returns true iff this SpeciesManager is empty. */
     bool                    empty() const;
 
     /** returns the number of species stored in this manager. */
     int                     NumSpecies() const;
     int                     NumPlayableSpecies() const;
+    int                     NumNativeSpecies() const;
 
     /** returns the name of a species in this manager, or an empty string if
       * this manager is empty. */
