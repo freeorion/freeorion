@@ -3340,6 +3340,12 @@ This planet exists partially in this universe and partially in the void, increas
 
 DERELICT_SPECIAL
 Derelict
+DERELICT_SPECIAL2
+Derelict
+DERELICT_SPECIAL3
+Derelict
+DERELICT_SPECIAL_REMOVE
+Derelict
 DERELICT_SPECIAL_DESC
 An anchient, derelict ship from an unknown species. Who knows what it could reveal...
 
