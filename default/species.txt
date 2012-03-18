@@ -406,7 +406,7 @@ Species
     
     [[DESERT_STANDARD_EP]]
     
-    graphic = "icons/species/quadruped-02.png"
+    graphic = "icons/species/muursh.png"
 
 Species
     name = "SP_GEORGE"
@@ -519,7 +519,7 @@ Species
     
     [[DESERT_STANDARD_EP]]
     
-    graphic = "icons/species/flora-04.png"
+    graphic = "icons/species/etty.png"
 
 
 Species
