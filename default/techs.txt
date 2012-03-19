@@ -1629,9 +1629,12 @@ Tech
     short_description = "EXOBOT_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 200
+    researchcost = 250
     researchturns = 4
-    prerequisites = "PRO_ROBOTIC_PROD"
+    prerequisites = [
+    	"PRO_ROBOTIC_PROD"
+    	"LRN_ARTIF_MINDS"
+    ]
     unlock = Item type = Building name = "BLD_EXOBOT_SHIP"
     
     graphic = "icons/species/robotic-01.png"
