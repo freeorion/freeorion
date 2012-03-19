@@ -2779,6 +2779,7 @@ Prefer Barren planets.
 [[AVERAGE_GROUND_TROOPS]]
         
 [[NO_FOOD_USE]]
+[[NON_ORGANIC]]
 [[TERRIBLE_HEALTH]]
 '''
 
@@ -2842,6 +2843,8 @@ Prefer Inferno planets.
 [[TERRIBLE_RESEARCH]]
 
 [[AVERAGE_GROUND_TROOPS]]
+
+[[NON_ORGANIC]]
 '''
 
 SP_SSLITH
@@ -2919,6 +2922,7 @@ Prefer Desert planets.
 [[TERRIBLE_GROUND_TROOPS]]
 
 [[NO_FOOD_USE]]
+[[NON_ORGANIC]]
 '''
 
 
@@ -2936,6 +2940,7 @@ Prefers Barren planets.
 [[TERRIBLE_GROUND_TROOPS]]
         
 [[NO_FOOD_USE]]
+[[NON_ORGANIC]]
 '''
 
 
@@ -2980,6 +2985,7 @@ Prefers Radiated planets.
 [[GREAT_GROUND_TROOPS]]
         
 [[NO_FOOD_USE]]
+[[NON_ORGANIC]]
 
 The entire planet is covered in a beige haze of Nanites. It is unknown wheather they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials.  However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
 '''
@@ -2996,6 +3002,8 @@ Prefer Terran planets.
 [[TERRIBLE_RESEARCH]]
         
 [[AVERAGE_GROUND_TROOPS]]
+
+[[NON_ORGANIC]]
 '''
 
 SP_KOBUNTURA
@@ -3100,6 +3108,7 @@ Prefers Radiated planets.
 [[AVERAGE_GROUND_TROOPS]]
 
 [[NO_FOOD_USE]]
+[[NON_ORGANIC]]
 
 Description
 An Acirem is a 10-30 m ellipsoidal energy beings with large (30-100m) ''wings''. As they age they tend to accumulate material from around them developing a dusty and eventually rocky appearance (still maintaining the visible energy flows through their body and the gaps). Most Acirema live in a universe where the physical constants are slightly different, and there is only one place where they can get through to our universe, on their "Homeworld" of Portal. However, upon doing that they immediately begin to 'age' differently than in their own universe. Acirema cannot survive more than a few fractions of a galactic cycle in this universe. So an Acirem rarely spends much time before crossing back into their own universe.
@@ -3128,6 +3137,7 @@ SP_EXOBOT_DESC
 [[TERRIBLE_GROUND_TROOPS]]
         
 [[NO_FOOD_USE]]
+[[NON_ORGANIC]]
 
 While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
 '''
@@ -4620,7 +4630,7 @@ GRO_MEDICAL_PATH
 Medical Pathology
 
 GRO_MEDICAL_PATH_DESC
-'''Increases Health on all planets by 5.
+'''Increases Health on all planets by 5. [[NO_NON_ORGANIC]]
 
 Many diseases and injuries, or manifestations of the same disease or injury, can have very similar causes and symptoms, but very different ideal treatments. By treating each individual's illness according its specific manifestation rather than its general categorization, a general benefit to health can be obtained.
 Treatment of diseases and injuries requires a thorough understanding of their causes. By studying the subtleties and intricacies of various ailments, it is possible to develop far more effective treatment methods.'''
@@ -4651,13 +4661,13 @@ GRO_SYMBIOTIC_BIO
 Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Increases the population that can be sustained by Adequate planets by 3, 6, 9, 12 and 15 for Tiny, Small, Medium, Large and Huge planets, respectively.'''
+'''Increases the population that can be sustained by Adequate planets by 3, 6, 9, 12 and 15 for Tiny, Small, Medium, Large and Huge planets, respectively. [[NO_NON_ORGANIC]]'''
 
 GRO_GENETIC_MED
 Genetic Medicine
 
 GRO_GENETIC_MED_DESC
-'''Increases Health on all planets by 5.
+'''Increases Health on all planets by 5. [[NO_NON_ORGANIC]]
 
 Traditional Genetic Engineering alters genetic codes, then grows the modified organism from an embryonic state. Similar techniques may be applied to already matured individuals. The goals of these treatments may be cosmetic, functional, corrective, preventative or life-saving medical treatments. Reducing the delay between alteration and results from generations to months, days or hours has a corresponding increase in the range and power of possible alterations.'''
 
@@ -4677,7 +4687,7 @@ GRO_XENO_GENETICS
 Xenological Genetics
 
 GRO_XENO_GENETICS_DESC
-'''Increases the population that can be sustained by Poor planets to 1, 2, 3, 4 and 5, and the population that can be sustained by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively. Health on Poor and Adequate planets is increased by 5.
+'''Increases the population that can be sustained by Poor planets to 1, 2, 3, 4 and 5, and the population that can be sustained by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively. Health on Poor and Adequate planets is increased by 5. [[NO_NON_ORGANIC]]
 
 The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
 
@@ -4687,7 +4697,7 @@ GRO_NANOTECH_MED
 Nanotech Medicine
 
 GRO_NANOTECH_MED_DESC
-'''Increases Health on all planets by 10.
+'''Increases Health on all planets by 10. [[NO_NON_ORGANIC]]
 
 Pathogens, particularly prokaryotes, are vulnerable to disruption of their genetic material from within - that is, if it is possible to permeate the cell membrane or the protein coating, in the case of viral infections. By designing nanorobots capable of identifying and penetrating such pathogens, it would be possible to destroy them by completely deconstructing their genetic material.
 
@@ -4703,7 +4713,7 @@ GRO_XENO_HYBRIDS
 Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
-'''Increases the population that can be sustained by Hostile planets to 1, 2, 3, 4 and 5, by Poor planets to 4, 8, 12, 16 and 20, and by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively. Health on Hostile, Poor and Adequate planets is increased by 5.
+'''Increases the population that can be sustained by Hostile planets to 1, 2, 3, 4 and 5, by Poor planets to 4, 8, 12, 16 and 20, and by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively. Health on Hostile, Poor and Adequate planets is increased by 5. [[NO_NON_ORGANIC]]
 
 Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
 
@@ -5352,7 +5362,7 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Increases the population that can be sustained by Hostile and Poor planets to 5, 10, 15, 20 and 25 and for and Adequate planets by 4, 8, 12, 16 and 20 for Tiny, Small, Medium, Large and Huge planets, respectively. Increases Health on Hostile and Poor planets by 10, and on Adequate planets by 5.
+'''Increases the population that can be sustained by Hostile and Poor planets to 5, 10, 15, 20 and 25 and for and Adequate planets by 4, 8, 12, 16 and 20 for Tiny, Small, Medium, Large and Huge planets, respectively. Increases Health on Hostile and Poor planets by 10, and on Adequate planets by 5. [[NO_NON_ORGANIC]]
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
@@ -7422,8 +7432,11 @@ GREAT_WEAPONS
 ULTIMATE_WEAPONS
 '''+ + + Starts with Mass Driver 4.'''
 
+NO_NON_ORGANIC
+'''Does not apply to Non-Organic species.'''
 
-
+NON_ORGANIC
+'''Non-Organic: Does not benefit from some biologically-based techs.'''
 
 
 

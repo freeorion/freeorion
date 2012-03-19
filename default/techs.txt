@@ -1,4 +1,5 @@
-Category 
+
+Category
     name = "LEARNING_CATEGORY"
     graphic = "learning.png"
     colour = (54, 202, 229)
@@ -716,6 +717,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
+                Not [[NON_ORGANIC]]
             ]
             effects = SetTargetHealth Value + 5
     graphic = "icons/tech/medical_pathology.png"
@@ -791,6 +793,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Tiny
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_GENETICS"
@@ -804,6 +807,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Small
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_GENETICS"
@@ -817,6 +821,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Medium
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_GENETICS"
@@ -830,6 +835,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Large
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_GENETICS"
@@ -843,6 +849,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Huge
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_GENETICS"
@@ -867,6 +874,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
+                Not [[NON_ORGANIC]]
             ]
             effects = SetTargetHealth Value + 5
     graphic = "icons/tech/genetic_medicine.png"
@@ -910,6 +918,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Tiny
                 Planet environment = Poor
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_HYBRIDS"
@@ -925,6 +934,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Small
                 Planet environment = Poor
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_HYBRIDS"
@@ -940,6 +950,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Medium
                 Planet environment = Poor
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_HYBRIDS"
@@ -955,6 +966,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Large
                 Planet environment = Poor
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_HYBRIDS"
@@ -970,6 +982,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Huge
                 Planet environment = Poor
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_HYBRIDS"
@@ -985,6 +998,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Tiny
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_HYBRIDS"
@@ -1000,6 +1014,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Small
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_HYBRIDS"
@@ -1015,6 +1030,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Medium
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_HYBRIDS"
@@ -1030,6 +1046,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Large
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_HYBRIDS"
@@ -1045,6 +1062,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Huge
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             activation = And [
                 Not OwnerHasTech "GRO_XENO_HYBRIDS"
@@ -1074,6 +1092,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
+                Not [[NON_ORGANIC]]
             ]
         effects = SetTargetHealth Value + 10
     graphic = "icons/tech/nanotech_medicine.png"
@@ -1103,6 +1122,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Tiny
                 Planet environment = Hostile
+                Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
             effects = [
@@ -1115,6 +1135,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Small
                 Planet environment = Hostile
+                Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
             effects = [
@@ -1127,6 +1148,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Medium
                 Planet environment = Hostile
+                Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
             effects = [
@@ -1139,6 +1161,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Large
                 Planet environment = Hostile
+                Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
             effects = [
@@ -1151,6 +1174,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Huge
                 Planet environment = Hostile
+                Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
             effects = [
@@ -1163,6 +1187,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Tiny
                 Planet environment = [Poor Adequate]
+                Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
             effects = [
@@ -1175,6 +1200,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Small
                 Planet environment = [Poor Adequate]
+                Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
             effects = [
@@ -1187,6 +1213,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Medium
                 Planet environment = [Poor Adequate]
+                Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
             effects = [
@@ -1199,6 +1226,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Large
                 Planet environment = [Poor Adequate]
+                Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
             effects = [
@@ -1211,6 +1239,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Huge
                 Planet environment = [Poor Adequate]
+                Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
             effects = [
@@ -1425,6 +1454,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Tiny
                 Planet environment = [Poor Hostile]
+                Not [[NON_ORGANIC]]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -1436,6 +1466,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Small
                 Planet environment = [Poor Hostile]
+                Not [[NON_ORGANIC]]
             ]
             effects = [
                 SetTargetPopulation Value + 10
@@ -1447,6 +1478,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Medium
                 Planet environment = [Poor Hostile]
+                Not [[NON_ORGANIC]]
             ]
             effects = [
                 SetTargetPopulation Value + 15
@@ -1458,6 +1490,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Large
                 Planet environment = [Poor Hostile]
+                Not [[NON_ORGANIC]]
             ]
             effects = [
                 SetTargetPopulation Value + 20
@@ -1469,6 +1502,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Huge
                 Planet environment = [Poor Hostile]
+                Not [[NON_ORGANIC]]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -1480,6 +1514,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Tiny
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             effects = [
                 SetTargetPopulation Value + 4
@@ -1491,6 +1526,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Small
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             effects = [
                 SetTargetPopulation Value + 8
@@ -1502,6 +1538,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Medium
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             effects = [
                 SetTargetPopulation Value + 12
@@ -1513,6 +1550,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Large
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             effects = [
                 SetTargetPopulation Value + 16
@@ -1524,6 +1562,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Huge
                 Planet environment = Adequate
+                Not [[NON_ORGANIC]]
             ]
             effects = [
                 SetTargetPopulation Value + 20
@@ -3272,7 +3311,6 @@ Tech
             ]
             effects = SetStructure Target.MaxStructure
 
-
 Tech
     name = "SHP_ZORTRIUM_PLATE"
     description = "SHP_ZORTRIUM_PLATE_DESC"
@@ -3746,4 +3784,20 @@ Tech
     
 */
 
+/* --- Species-dependent conditions */
+
+/* Should keep track of all non-organic species */
+NON_ORGANIC
+'''Or [
+        Species "SP_CRAY"
+        Species "SP_NYMNMN"
+        Species "SP_TRENCHERS"
+        Species "SP_BEIGEGOO"
+        Species "SP_KOBUNTURA"
+        Species "SP_ACIMERA"
+        Species "SP_EXOBOT"
+        Species "SP_SILEXIAN"
+        Species "SP_EGASSEM"
+    ]
+'''
 

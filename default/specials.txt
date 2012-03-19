@@ -1358,3 +1358,4 @@ REMOVE_VOID
         activation = Source
         effects = RemoveSpecial "VOID_MASTER_SPECIAL"
 '''
+

@@ -2693,3 +2693,4 @@ ULTIMATE_WEAPONS
         activation = Turn high = 1
         GiveEmpireTech name = "SHP_WEAPON_4"
 '''
+
