@@ -70,6 +70,10 @@ namespace {
 
             special
                 =    special_prefix(_a, _b)
+                >>   (
+                        parse::label(Stealth_name)          >> parse::double_ [ _g = _1 ]
+                     |  eps [ _g = 0.001 ]
+                     )
                 >    spawn(_c, _d)
                 >   -(
                         parse::label(Location_name)      >> parse::detail::condition_parser [ _e = _1 ]
@@ -77,7 +81,7 @@ namespace {
                 >   -(
                         parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _f = _1 ]
                      )
-                >    parse::label(Graphic_name) > tok.string [ insert(_r1, new_<Special>(_a, _b, _f, _c, _d, _e, _1)) ]
+                >    parse::label(Graphic_name) > tok.string [ insert(_r1, new_<Special>(_a, _b, _g, _f, _c, _d, _e, _1)) ]
                 ;
 
             start
@@ -118,7 +122,8 @@ namespace {
                 double,
                 int,
                 Condition::ConditionBase*,
-                std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
+                std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
+                double
             >,
             parse::skipper_type
         > special_rule;

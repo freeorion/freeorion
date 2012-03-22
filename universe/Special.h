@@ -26,12 +26,14 @@ public:
     /** \name Structors */ //@{
     /** basic ctor */
     Special(const std::string& name, const std::string& description,
+            double stealth,
             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects,
             double spawn_rate = 1.0, int spawn_limit = 99999,
             const Condition::ConditionBase* location = 0,
             const std::string& graphic = "") :
         m_name(name),
         m_description(description),
+        m_stealth(stealth),
         m_effects(effects),
         m_spawn_rate(spawn_rate),
         m_spawn_limit(spawn_limit),
@@ -46,6 +48,7 @@ public:
     const std::string&              Name() const        { return m_name; }          ///< returns the unique name for this type of special
     const std::string&              Description() const { return m_description; }   ///< returns a text description of this type of special
     std::string                     Dump() const;       ///< returns a data file format representation of this object
+    double                          Stealth() const;    ///< returns the stealth of the special, which determines how easily it is seen by empires
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const
     { return m_effects; }                               ///< returns the EffectsGroups that encapsulate the effects that specials of this type have
     double                          SpawnRate() const   { return m_spawn_rate; }
@@ -57,6 +60,7 @@ public:
 private:
     std::string                     m_name;
     std::string                     m_description;
+    double                          m_stealth;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                                     m_effects;
     double                          m_spawn_rate;
@@ -82,6 +86,7 @@ void Special::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_description)
+        & BOOST_SERIALIZATION_NVP(m_stealth)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_spawn_rate)
         & BOOST_SERIALIZATION_NVP(m_spawn_limit)

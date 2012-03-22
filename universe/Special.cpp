@@ -61,6 +61,7 @@ std::string Special::Dump() const {
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    retval += DumpIndent() + "stealth = " + boost::lexical_cast<std::string>(m_stealth) + "\n";
     retval += DumpIndent() + "spawnrate = " + boost::lexical_cast<std::string>(m_spawn_rate) + "\n"
            +  DumpIndent() + "spawnlimit = " + boost::lexical_cast<std::string>(m_spawn_limit) + "\n";
     retval += DumpIndent() + "location = \n";

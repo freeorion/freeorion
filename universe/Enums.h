@@ -545,8 +545,9 @@ MeterType AssociatedMeterType(MeterType meter_type);
 extern const int ALL_EMPIRES;
 
 
-/** degrees of visibility an Empire or UniverseObject can have for an UniverseObject.  determines how much information the empire
-    gets about the (non)visible object. */
+/** degrees of visibility an Empire or UniverseObject can have for an
+  * UniverseObject.  determines how much information the empire
+  * gets about the (non)visible object. */
 enum Visibility {
     INVALID_VISIBILITY = -1,
     VIS_NO_VISIBILITY,
@@ -569,9 +570,10 @@ GG_ENUM_STREAM_IN(Visibility)
 GG_ENUM_STREAM_OUT(Visibility)
 
 
-/** Possible results of an UniverseObject being captured by other empires, or an object's containing
-    UniverseObject being captured, or the location of a Production Queue Build Item being conquered, 
-    or the result of other future events, such as spy activity... */
+/** Possible results of an UniverseObject being captured by other empires, or an
+  * object's containing UniverseObject being captured, or the location of a
+  * Production Queue Build Item being conquered, or the result of other future
+  * events, such as spy activity... */
 enum CaptureResult {
     INVALID_CAPTURE_RESULT = -1,
     CR_CAPTURE,    // object has ownership by original empire(s) removed, and conquering empire added
