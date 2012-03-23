@@ -631,7 +631,6 @@ BuildingType
             effects = [
                 SetTargetConstruction Value + 30
                 SetEmpireCapital
-                SetTargetPopulation Value + 5
                 SetFarming Target.TargetFarming
                 SetMining Target.TargetMining
                 SetIndustry Target.TargetIndustry

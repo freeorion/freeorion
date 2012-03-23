@@ -252,7 +252,7 @@ Special
                 Planet size = Tiny
                 Planet environment = [Good Adequate]
             ]
-            effects = SetTargetPopulation Value + 2
+            effects = SetTargetPopulation Value + 0
 
         EffectsGroup
             scope = Source
@@ -265,7 +265,7 @@ Special
                 Planet size = Tiny
                 Planet environment = Poor
             ]
-            effects = SetTargetPopulation Value + 2
+            effects = SetTargetPopulation Value + 0
 
         EffectsGroup
             scope = Source
@@ -277,7 +277,7 @@ Special
                 Planet size = Tiny
                 Planet environment = Hostile
             ]
-            effects = SetTargetPopulation Value + 2
+            effects = SetTargetPopulation Value + 0
 
         EffectsGroup
             scope = Source
@@ -285,7 +285,7 @@ Special
                 Planet size = Small
                 Planet environment = [Good Adequate]
             ]
-            effects = SetTargetPopulation Value + 4
+            effects = SetTargetPopulation Value + 0.5
 
         EffectsGroup
             scope = Source
@@ -298,7 +298,7 @@ Special
                 Planet size = Small
                 Planet environment = Poor
             ]
-            effects = SetTargetPopulation Value + 4
+            effects = SetTargetPopulation Value + 0.5
 
         EffectsGroup
             scope = Source
@@ -310,113 +310,13 @@ Special
                 Planet size = Small
                 Planet environment = Hostile
             ]
-            effects = SetTargetPopulation Value + 4
+            effects = SetTargetPopulation Value + 0.5
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet size = Medium
                 Planet environment = [Good Adequate]
-            ]
-            effects = SetTargetPopulation Value + 6
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Medium
-                Planet environment = Poor
-            ]
-            effects = SetTargetPopulation Value + 6
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Medium
-                Planet environment = Hostile
-            ]
-            effects = SetTargetPopulation Value + 6
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet size = Large
-                Planet environment = [Good Adequate]
-            ]
-            effects = SetTargetPopulation Value + 8
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Large
-                Planet environment = Poor
-            ]
-            effects = SetTargetPopulation Value + 8
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Large
-                Planet environment = Hostile
-            ]
-            effects = SetTargetPopulation Value + 8
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet size = Huge
-                Planet environment = [Good Adequate]
-            ]
-            effects = SetTargetPopulation Value + 10
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Huge
-                Planet environment = Poor
-            ]
-            effects = SetTargetPopulation Value + 10
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Huge
-                Planet environment = Hostile
-            ]
-            effects = SetTargetPopulation Value + 10
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet size = Tiny
-                Planet environment = [Good Adequate]
-                OwnerHasTech "CON_SUBTER_CONST"
             ]
             effects = SetTargetPopulation Value + 1
 
@@ -428,9 +328,8 @@ Special
                     OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
-                Planet size = Tiny
+                Planet size = Medium
                 Planet environment = Poor
-                OwnerHasTech "CON_SUBTER_CONST"
             ]
             effects = SetTargetPopulation Value + 1
 
@@ -441,92 +340,18 @@ Special
                     OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
-                Planet size = Tiny
+                Planet size = Medium
                 Planet environment = Hostile
-                OwnerHasTech "CON_SUBTER_CONST"
             ]
             effects = SetTargetPopulation Value + 1
 
         EffectsGroup
             scope = Source
             activation = And [
-                Planet size = Small
-                Planet environment = [Good Adequate]
-                OwnerHasTech "CON_SUBTER_CONST"
-            ]
-            effects = SetTargetPopulation Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Small
-                Planet environment = Poor
-                OwnerHasTech "CON_SUBTER_CONST"
-            ]
-            effects = SetTargetPopulation Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Small
-                Planet environment = Hostile
-                OwnerHasTech "CON_SUBTER_CONST"
-            ]
-            effects = SetTargetPopulation Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet size = Medium
-                Planet environment = [Good Adequate]
-                OwnerHasTech "CON_SUBTER_CONST"
-            ]
-            effects = SetTargetPopulation Value + 3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Medium
-                Planet environment = Poor
-                OwnerHasTech "CON_SUBTER_CONST"
-            ]
-            effects = SetTargetPopulation Value + 3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Medium
-                Planet environment = Hostile
-                OwnerHasTech "CON_SUBTER_CONST"
-            ]
-            effects = SetTargetPopulation Value + 3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
                 Planet size = Large
                 Planet environment = [Good Adequate]
-                OwnerHasTech "CON_SUBTER_CONST"
             ]
-            effects = SetTargetPopulation Value + 4
+            effects = SetTargetPopulation Value + 1.5
 
         EffectsGroup
             scope = Source
@@ -538,9 +363,8 @@ Special
                 ]
                 Planet size = Large
                 Planet environment = Poor
-                OwnerHasTech "CON_SUBTER_CONST"
             ]
-            effects = SetTargetPopulation Value + 4
+            effects = SetTargetPopulation Value + 1.5
 
         EffectsGroup
             scope = Source
@@ -551,18 +375,16 @@ Special
                 ]
                 Planet size = Large
                 Planet environment = Hostile
-                OwnerHasTech "CON_SUBTER_CONST"
             ]
-            effects = SetTargetPopulation Value + 4
+            effects = SetTargetPopulation Value + 1.5
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet size = Huge
                 Planet environment = [Good Adequate]
-                OwnerHasTech "CON_SUBTER_CONST"
             ]
-            effects = SetTargetPopulation Value + 5
+            effects = SetTargetPopulation Value + 2
 
         EffectsGroup
             scope = Source
@@ -574,9 +396,8 @@ Special
                 ]
                 Planet size = Huge
                 Planet environment = Poor
-                OwnerHasTech "CON_SUBTER_CONST"
             ]
-            effects = SetTargetPopulation Value + 5
+            effects = SetTargetPopulation Value + 2
 
         EffectsGroup
             scope = Source
@@ -587,9 +408,9 @@ Special
                 ]
                 Planet size = Huge
                 Planet environment = Hostile
-                OwnerHasTech "CON_SUBTER_CONST"
             ]
-            effects = SetTargetPopulation Value + 5
+            effects = SetTargetPopulation Value + 2
+
     ]
     graphic = "icons/specials_huge/tunnels.png"
 
@@ -670,7 +491,7 @@ Special
 Special
     name = "ABANDONED_COLONY_SPECIAL"
     description = "ABANDONED_COLONY_SPECIAL_DESC"
-    spawnrate = 1.0
+    spawnrate = 0.4
     spawnlimit = 9999
     location = And [
         Planet
@@ -732,10 +553,50 @@ Special
             scope = Source
             activation = Source
             effects = [
-                SetTargetPopulation Value * 2
                 SetTargetHealth Value * 2
                 SetTargetFarming Value * 2
             ]
+            
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = [Huge GasGiant]
+            ]
+            effects = SetTargetPopulation Value + 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = [Large Asteroids]
+            ]
+            effects = SetTargetPopulation Value + 3
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Medium
+            ]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Small
+            ]
+            effects = SetTargetPopulation Value + 1
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Tiny
+            ]
+            effects = SetTargetPopulation Value + 0
+            
         EffectsGroup     
             scope = Source     
             activation = AND [

@@ -10,6 +10,8 @@ Content:
  ~ All species now have different aptitudes at resource production and ground combat.  A few require no food, and a few have special stealth and detection abilities.
  ~ ~ Sorry, currently not balanced.
  ~ ~ All normal species now have the same provisional starvation mechanic.
+ ~ Dramatically rescaled population numbers to a lower base and max
+ ~ ~ Sorry, tech & research costs not yet rescaled.
  ~ Added new stealthy planet specials, and stealth-making monsters.
  ~ Made monsters nests last on average twice as long.
  ~ Halved the generation of floaters from forests.

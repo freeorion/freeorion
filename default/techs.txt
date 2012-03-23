@@ -792,15 +792,57 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Tiny
+                Planet environment = Good
+                Not [[NON_ORGANIC]]
+            ]
+            effects = SetTargetPopulation Value + 0
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Small
+                Planet environment = Good
+                Not [[NON_ORGANIC]]
+            ]
+            effects = SetTargetPopulation Value + 0.5
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Medium
+                Planet environment = Good 
+                Not [[NON_ORGANIC]]
+            ]
+            effects = SetTargetPopulation Value + 1
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Large
+                Planet environment = Good
+                Not [[NON_ORGANIC]]
+            ]
+            effects = SetTargetPopulation Value + 1.5
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Huge
+                Planet environment = Good
+                Not [[NON_ORGANIC]]
+            ]
+
+            effects = SetTargetPopulation Value + 2
+    
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Tiny
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_GENETICS"
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = SetTargetPopulation Value + 3
+            activation = Not OwnerHasTech "GRO_XENO_GENETICS"
+            effects = SetTargetPopulation Value + 0
 
         EffectsGroup
             scope = And [
@@ -809,12 +851,8 @@ Tech
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_GENETICS"
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = SetTargetPopulation Value + 6
+            activation = Not OwnerHasTech "GRO_XENO_GENETICS"
+            effects = SetTargetPopulation Value + 0.5
 
         EffectsGroup
             scope = And [
@@ -823,12 +861,8 @@ Tech
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_GENETICS"
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = SetTargetPopulation Value + 9
+            activation = Not OwnerHasTech "GRO_XENO_GENETICS"
+            effects = SetTargetPopulation Value + 1
 
         EffectsGroup
             scope = And [
@@ -837,12 +871,8 @@ Tech
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_GENETICS"
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = SetTargetPopulation Value + 12
+            activation = Not OwnerHasTech "GRO_XENO_GENETICS"
+            effects = SetTargetPopulation Value + 1.5
 
         EffectsGroup
             scope = And [
@@ -851,12 +881,8 @@ Tech
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_GENETICS"
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = SetTargetPopulation Value + 15
+            activation = Not OwnerHasTech "GRO_XENO_GENETICS"
+            effects = SetTargetPopulation Value + 2
     ]
     graphic = "icons/tech/symbiosis_biology.png"
 
@@ -1126,7 +1152,7 @@ Tech
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
             effects = [
-                SetTargetPopulation Value + 1
+                SetTargetPopulation Value + 0
                 SetTargetHealth Value + 5
             ]
 
@@ -1134,6 +1160,45 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Small
+                Planet environment = Hostile
+                Not [[NON_ORGANIC]]
+            ]
+            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + .5
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Medium
+                Planet environment = Hostile
+                Not [[NON_ORGANIC]]
+            ]
+            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + 1
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Large
+                Planet environment = Hostile
+                Not [[NON_ORGANIC]]
+            ]
+            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + 1.5
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Huge
                 Planet environment = Hostile
                 Not [[NON_ORGANIC]]
             ]
@@ -1146,11 +1211,34 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                Planet size = Medium
-                Planet environment = Hostile
+                Planet size = Tiny
+                Planet environment = Poor
                 Not [[NON_ORGANIC]]
             ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + 0
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Small
+                Planet environment = Poor
+                Not [[NON_ORGANIC]]
+            ]
+            effects = [
+                SetTargetPopulation Value + 1.5
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Medium
+                Planet environment = Poor
+                Not [[NON_ORGANIC]]
+            ]
             effects = [
                 SetTargetPopulation Value + 3
                 SetTargetHealth Value + 5
@@ -1160,12 +1248,11 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Large
-                Planet environment = Hostile
+                Planet environment = Poor
                 Not [[NON_ORGANIC]]
             ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
             effects = [
-                SetTargetPopulation Value + 4
+                SetTargetPopulation Value + 4.5
                 SetTargetHealth Value + 5
             ]
 
@@ -1173,77 +1260,11 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Huge
-                Planet environment = Hostile
+                Planet environment = Poor
                 Not [[NON_ORGANIC]]
             ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
             effects = [
-                SetTargetPopulation Value + 5
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Tiny
-                Planet environment = [Poor Adequate]
-                Not [[NON_ORGANIC]]
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 4
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Small
-                Planet environment = [Poor Adequate]
-                Not [[NON_ORGANIC]]
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 8
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Medium
-                Planet environment = [Poor Adequate]
-                Not [[NON_ORGANIC]]
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 12
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Large
-                Planet environment = [Poor Adequate]
-                Not [[NON_ORGANIC]]
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 16
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Huge
-                Planet environment = [Poor Adequate]
-                Not [[NON_ORGANIC]]
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 20
+                SetTargetPopulation Value + 6
                 SetTargetHealth Value + 5
             ]
     ]
@@ -1453,11 +1474,11 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Tiny
-                Planet environment = [Poor Hostile]
+                Planet environment = Hostile
                 Not [[NON_ORGANIC]]
             ]
             effects = [
-                SetTargetPopulation Value + 5
+                SetTargetPopulation Value + 0
                 SetTargetHealth Value + 10
             ]
 
@@ -1465,11 +1486,11 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Small
-                Planet environment = [Poor Hostile]
+                Planet environment = Hostile
                 Not [[NON_ORGANIC]]
             ]
             effects = [
-                SetTargetPopulation Value + 10
+                SetTargetPopulation Value + 1
                 SetTargetHealth Value + 10
             ]
 
@@ -1477,11 +1498,11 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Medium
-                Planet environment = [Poor Hostile]
+                Planet environment = Hostile
                 Not [[NON_ORGANIC]]
             ]
             effects = [
-                SetTargetPopulation Value + 15
+                SetTargetPopulation Value + 2
                 SetTargetHealth Value + 10
             ]
 
@@ -1489,11 +1510,11 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Large
-                Planet environment = [Poor Hostile]
+                Planet environment = Hostile
                 Not [[NON_ORGANIC]]
             ]
             effects = [
-                SetTargetPopulation Value + 20
+                SetTargetPopulation Value + 3
                 SetTargetHealth Value + 10
             ]
 
@@ -1501,73 +1522,14 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet size = Huge
-                Planet environment = [Poor Hostile]
-                Not [[NON_ORGANIC]]
-            ]
-            effects = [
-                SetTargetPopulation Value + 25
-                SetTargetHealth Value + 10
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Tiny
-                Planet environment = Adequate
+                Planet environment = Hostile
                 Not [[NON_ORGANIC]]
             ]
             effects = [
                 SetTargetPopulation Value + 4
-                SetTargetHealth Value + 5
+                SetTargetHealth Value + 10
             ]
 
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Small
-                Planet environment = Adequate
-                Not [[NON_ORGANIC]]
-            ]
-            effects = [
-                SetTargetPopulation Value + 8
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Medium
-                Planet environment = Adequate
-                Not [[NON_ORGANIC]]
-            ]
-            effects = [
-                SetTargetPopulation Value + 12
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Large
-                Planet environment = Adequate
-                Not [[NON_ORGANIC]]
-            ]
-            effects = [
-                SetTargetPopulation Value + 16
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Huge
-                Planet environment = Adequate
-                Not [[NON_ORGANIC]]
-            ]
-            effects = [
-                SetTargetPopulation Value + 20
-                SetTargetHealth Value + 5
-            ]
     ]
 
 Tech
@@ -2125,6 +2087,49 @@ Tech
     graphic = "icons/tech/force_energy_structures.png"
 
 Tech
+    name = "CON_ORBITAL_HAB"
+    description = "CON_ORBITAL_HAB_DESC"
+    short_description = "POPULATION_SHORT_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 1000
+    researchturns = 1
+    prerequisites = "PRO_MICROGRAV_MAN"
+
+    effectsgroups = [
+        EffectsGroup
+            scope = OwnedBy TheEmpire Source.Owner
+            activation = Planet environment = [Good Adequate]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet environment = Poor
+                OwnedBy TheEmpire Source.Owner
+            ]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet environment = Hostile
+                OwnedBy TheEmpire Source.Owner
+            ]
+            effects = SetTargetPopulation Value + 2
+    ]
+    graphic = "icons/tech/environmental_encapsulation.png"
+
+Tech
     name = "CON_NDIM_STRC"
     description = "CON_NDIM_STRC_DESC"
     short_description = "POPULATION_SHORT_DESC"
@@ -2138,41 +2143,31 @@ Tech
     ]
     effectsgroups = [
         EffectsGroup
-            scope = And [
-                Planet environment = Good
-                Planet size = Huge
-                OwnedBy TheEmpire Source.Owner
-            ]
-            effects = SetTargetPopulation Value + 15
+            scope = OwnedBy TheEmpire Source.Owner
+            activation = Planet environment = [Good Adequate]
+            effects = SetTargetPopulation Value + 3
 
         EffectsGroup
-            scope = And [
-                Planet environment = Good
-                Planet size = Large
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet environment = Poor
                 OwnedBy TheEmpire Source.Owner
             ]
-            effects = SetTargetPopulation Value + 12
+            effects = SetTargetPopulation Value + 3
 
         EffectsGroup
-            scope = And [
-                Planet environment = Good
-                Planet size = Medium
-                OwnedBy TheEmpire Source.Owner
-            ]
-            effects = SetTargetPopulation Value + 9
-
-        EffectsGroup
-            scope = And [
-                Planet environment = Good
-                Planet size = Small
-                OwnedBy TheEmpire Source.Owner
-            ]
-            effects = SetTargetPopulation Value + 6
-
-        EffectsGroup
-            scope = And [
-                Planet environment = Good
-                Planet size = Tiny
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet environment = Hostile
                 OwnedBy TheEmpire Source.Owner
             ]
             effects = SetTargetPopulation Value + 3
@@ -2277,43 +2272,11 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                Planet environment = Good
-                Planet size = Tiny
-            ]
-            effects = SetTargetPopulation Value + 1
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet environment = Good
-                Planet size = Small
+                NOT HasSpecial name = "TUNNELS_SPECIAL"
+                NOT HasSpecial name = "TECHTONIC_INSTABILITY_SPECIAL"
             ]
             effects = SetTargetPopulation Value + 2
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet environment = Good
-                Planet size = Medium
-            ]
-            effects = SetTargetPopulation Value + 3
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet environment = Good
-                Planet size = Large
-            ]
-            effects = SetTargetPopulation Value + 4
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet environment = Good
-                Planet size = Huge
-            ]
-            effects = SetTargetPopulation Value + 5
-    ]
+        ]
     graphic = "icons/tech/subterranean_construction.png"
 
 Tech

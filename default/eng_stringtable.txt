@@ -2609,6 +2609,8 @@ Prefer Ocean planets.
 [[GREAT_RESEARCH]]
 
 [[AVERAGE_GROUND_TROOPS]]
+
+[[GOOD_POPULATION]]
 '''
 
 SP_GYISACHE
@@ -2874,6 +2876,8 @@ Prefer Swamp planets.
 
 [[TERRIBLE_GROUND_TROOPS]]
 
+[[BAD_POPULATION]]
+
 Biology:
 Adult Fifty-Seven are between 10 and 20 m long. The main deviation from the tapering serpentine body are the two resonating domes on the forward dorsal side. Various fins provide fine control. Entirely blind, they rely on smell, hearing, an exquisitely honed pressure sensitivity, and when the need arises bursts of echolocation. Fifty-Seven are omnivores: eating flocks of small flying creatures with the same relish as the floating phytoplankton. Since they remain aloft their entire lives and have no manipulator limbs, the Fifty-Seven have no material technology.
 
@@ -2902,6 +2906,7 @@ Prefer Ocean planets.
 [[AVERAGE_RESEARCH]]
         
 [[NO_GROUND_TROOPS]]
+[[GOOD_POPULATION]]
 '''
 
 
@@ -2983,7 +2988,8 @@ Prefers Radiated planets.
 [[NO_RESEARCH]]
         
 [[GREAT_GROUND_TROOPS]]
-        
+
+[[GOOD_POPULATION]]
 [[NO_FOOD_USE]]
 [[NON_ORGANIC]]
 
@@ -3154,6 +3160,7 @@ SP_SUPER_TEST_DESC
 [[GREAT_RESEARCH]]
         
 [[GREAT_GROUND_TROOPS]]
+[[GOOD_POPULATION]]
 '''
 
 SP_TEST
@@ -3211,7 +3218,7 @@ TUNNELS_SPECIAL
 Natural Tunnels
 
 TUNNELS_SPECIAL_DESCRIPTION
-'''Increases the Population that can be supported by this planet by 2, 4, 6, 8 or 10 for Tiny, Small, Medium, Large or Huge planets, respectively, and by an additional 1, 2, 3, 4 or 5 if the owner has the tech Subterranean Construction.
+'''If this planet is inhabitable, increases the Population capacity by 0.5, 1, 1.5, and 2 for Small, Medium, Large and Huge planets, respectively
 
 This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonized.'''
 
@@ -3219,7 +3226,7 @@ TECHTONIC_INSTABILITY_SPECIAL
 Tectonically Unstable
 
 TECHTONIC_INSTABILITY_SPECIAL_DESC
-'''Construction on this planet is decreased by 20.
+'''Construction on this planet is decreased by 20. Prevents Subterrainian Construction from increasing population capacity.
 
 This planet is tectonically unstable. Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.'''
 
@@ -4661,7 +4668,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Increases the population that can be sustained by Adequate planets by 3, 6, 9, 12 and 15 for Tiny, Small, Medium, Large and Huge planets, respectively. [[NO_NON_ORGANIC]]'''
+'''Increases the population capacity of Good and Adequate planets by 0.5, 1, 1.5, and 2 for Small, Medium, Large and Huge planets, respectively. [[NO_NON_ORGANIC]]'''
 
 GRO_GENETIC_MED
 Genetic Medicine
@@ -4687,7 +4694,7 @@ GRO_XENO_GENETICS
 Xenological Genetics
 
 GRO_XENO_GENETICS_DESC
-'''Increases the population that can be sustained by Poor planets to 1, 2, 3, 4 and 5, and the population that can be sustained by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively. Health on Poor and Adequate planets is increased by 5. [[NO_NON_ORGANIC]]
+'''Increases the population capacity of Poor planets to 1, 2, 3, and 4, and the population capacity of Adequate planets by 0.5, 1, 1.5, and 2 for Small, Medium, Large and Huge planets, respectively. Health on Poor and Adequate planets is increased by 5. [[NO_NON_ORGANIC]]
 
 The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
 
@@ -4713,7 +4720,7 @@ GRO_XENO_HYBRIDS
 Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
-'''Increases the population that can be sustained by Hostile planets to 1, 2, 3, 4 and 5, by Poor planets to 4, 8, 12, 16 and 20, and by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively. Health on Hostile, Poor and Adequate planets is increased by 5. [[NO_NON_ORGANIC]]
+'''Increases the population capacity of Hostile and Poor planets by 0.5, 1, 1.5, and 2, for Small, Medium, Large and Huge planets, respectively. Health on Hostile and Poor planets is increased by 5. [[NO_NON_ORGANIC]]
 
 Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
 
@@ -4932,11 +4939,17 @@ CON_TRANS_ARCH_DESC
 
 The epitome of design unifies optimal functionality with elegance of form. A transcendent structure expands and inspires the minds of its occupants or observers with its shape, placement, substance and integration, whether through awe-inspiring scale, perfect emphasis of a single idea, perception or lack thereof, or utter simplicity and fitness for purpose.'''
 
+CON_ORBITAL_HAB
+Orbital Habitation
+
+CON_ORBITAL_HAB_DESC
+'''If this planet is inhabitable, increases the Population capacity of this planet by 2.'''
+
 CON_NDIM_STRC
 N-Dimensional Structures
 
 CON_NDIM_STRC_DESC
-'''Increases the population that can be sustained by Good worlds by 3, 6, 9, 12 and 15 for Tiny, Small, Medium, Large and Huge planets, respectively.
+'''If this planet is inhabitable, increases the Population capacity of this planet by 3.
 
 The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
 
@@ -5254,7 +5267,7 @@ CON_SUBTER_CONST
 Subterranean Construction
 
 CON_SUBTER_CONST_DESC
-'''Increases the population that can be sustained by Good planets by 1, 2, 3, 4 and 5 on Tiny, Small, Medium, Large and Huge planets, respectively.
+'''If this planet is inhabitable, increases the Population capacity of this planet by 2.  Cannot improve a planet with the Tunnels or Techtonic Instability special.
 
 When space is at a premium, the ability to build downwards as well as up is an invaluable asset. Entire underground cities and facilities can be constructed and maintained, and trans-planetary subterranean transportation routes can be established.'''
 
@@ -5362,7 +5375,7 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Increases the population that can be sustained by Hostile and Poor planets to 5, 10, 15, 20 and 25 and for and Adequate planets by 4, 8, 12, 16 and 20 for Tiny, Small, Medium, Large and Huge planets, respectively. Increases Health on Hostile and Poor planets by 10, and on Adequate planets by 5. [[NO_NON_ORGANIC]]
+'''Increases the population capacity of Hostile planets to 0.5, 1, 1.5, and 2 for Small, Medium, Large and Huge planets, respectively. Increases Health on Hostile by 10. [[NO_NON_ORGANIC]]
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
@@ -6286,7 +6299,7 @@ BLD_MEGALITH
 Megalith
 
 BLD_MEGALITH_DESC
-'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to resource supply range, 30 to construction and 5 to Population. Addintally all resource meters are able to reach target in a single turn. Furthermore, all colonies belonging the empire receive an increase of 1 to max resource supply range.
+'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to resource supply range, and 30 to construction. Additionally all resource meters are able to reach target in a single turn. Furthermore, all colonies belonging the empire receive an increase of 1 to max resource supply range.
 
 The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
 
@@ -6310,7 +6323,7 @@ BLD_GAIA_TRANS
 Gaia Transformation
 
 BLD_GAIA_TRANS_DESC
-'''Doubles Health, Farming and Population on the planet on which it is built.
+'''Doubles Farming and Population, and increases population capacity by 1, 2, 3, and 4 on Small, Medium, Large and Huge planets, respectively.
 
 Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
 
@@ -6903,7 +6916,7 @@ Colony Pod
 CO_COLONY_POD_DESC
 '''Basic facilities for colonists to survive journey to a new planet.  Allows ship to colonize new worlds.
 
-All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
+All Colony class ship parts require the planet at which they are built to have a population of at least one.'''
 
 CO_SUSPEND_ANIM_POD
 Cryonic Colony Pod
@@ -6911,7 +6924,7 @@ Cryonic Colony Pod
 CO_SUSPEND_ANIM_POD_DESC
 '''Colonists are kept in suspended animation during colonization journey, eliminating need to provide sustenance, and greatly increasing the number of colonists that can be carried on one ship.
 
-All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
+All Colony class ship parts require the planet at which they are built to have a population of at least one.'''
 
 CO_OUTPOST_MOD
 Outpost Module
@@ -7438,6 +7451,13 @@ NO_NON_ORGANIC
 NON_ORGANIC
 '''Non-Organic: Does not benefit from some biologically-based techs.'''
 
+BAD_POPULATION
+'''Bad Population'''
 
+AVERAGE_POPULATION
+'''Average Population'''
+
+GOOD_POPULATION
+'''Good Population'''
 
 

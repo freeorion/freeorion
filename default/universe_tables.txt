@@ -10,34 +10,34 @@
 
 <4x8>
 DensityModToPlanetSizeDist      NoWorld     Planetoid   Small   Medium  Large   Massive AsteroidField   GasGiant
-NoneUnused                      9999        0           0       0       0       0       0               0
-LowDensity                      90          0           0       0       0       0       0               0
-AverageDensity                  70          0           0       0       0       0       0               0
-HighDensity                     50          0           0       0       0       0       0               0
+NoneUnused                      9999        -200        0       0       -5       -10   0               0
+LowDensity                      90          -200        0       0       -5       -10   0               0
+AverageDensity                  70          -200        0       0       -5       -10   0               0
+HighDensity                     50          -200        0       0       -5       -10   0               0
 
 <8x8>
 StarColorModToPlanetSizeDist    NoWorld     Planetoid   Small   Medium  Large   Massive AsteroidField   GasGiant
-Blue                            0           0           0       0       0       0       0               0
-White                           0           0           0       0       0       0       0               0
-Yellow                          0           0           0       0       0       0       0               0
-Orange                          0           0           0       0       0       0       0               0
-Red                             0           0           0       0       0       0       0               0
-Neutron                         5           5           0       0       0       0       20              0
-Blackhole                       30          0           0       -5      -5      -5      10              -5
-NoStar                          80          0           0       0       0       0       0               10
+Blue                            0           -200        0       0       -5      -10     0               0
+White                           0           -200        0       0       -5      -10     0               0
+Yellow                          0           -200        0       0       -5      -10     0               0
+Orange                          0           -200        0       0       -5      -10     0               0
+Red                             0           -200        0       0       -5      -10     0               0
+Neutron                         5           -200        0       0       -5      -10     20              0
+Blackhole                       30          -200        0       -5      -10     -15     10              -5
+NoStar                          80          -200        0       0       -10     -15     0               10
 
 <10x8>
 SlotModToPlanetSizeDist         NoWorld     Planetoid   Small   Medium  Large   Massive  AsteroidField  GasGiant
-Slot1                           10          15          20      10      0       0        0              -80
-Slot2                           5           10          15      20      5       0        0              -70
-Slot3                           0           5           10      30      10      5        0              -60
-Slot4                           0           5           10      30      10      5        10             -30
-Slot5                           0           5           10      20      15      10       25             0
-Slot6                           0           5           5       5       20      15       10             30
-Slot7                           0           5           5       5       15      10       5              30
-Slot8                           0           10          10      5       10      5        5              30
-Slot9                           5           15          10      5       5       5        5              30
-Slot10                          10          20          10      0       0       0        5              10
+Slot1                           10          -200        20      10      0       0        0              -80
+Slot2                           5           -200        15      20      5       0        0              -70
+Slot3                           0           -200        10      30      10      5        0              -60
+Slot4                           0           -200        10      30      10      5        10             -30
+Slot5                           0           -200        10      20      15      10       25             0
+Slot6                           0           -200        5       5       20      15       10             30
+Slot7                           0           -200        5       5       15      10       5              30
+Slot8                           0           -200        10      5       10      5        5              30
+Slot9                           5           -200        10      5       5       5        5              30
+Slot10                          10          -200        10      0       0       0        5              10
 
 <8x11>
 PlanetSizeModToPlanetTypeDist   Swamp    Toxic  Inferno Radiated    Barren  Tundra  Desert  Terran  Ocean   AsteroidField   GasGiant

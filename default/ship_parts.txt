@@ -544,13 +544,13 @@ Part
     name = "CO_COLONY_POD"
     description = "CO_COLONY_POD_DESC"
     class = Colony
-    capacity = 1
+    capacity = .25
     buildcost = 200
     buildtime = 10
     mountableSlotTypes = Internal
     location = And [
         OwnedBy TheEmpire Source.Owner
-        Population low = 3 high = 999
+        Population low = 1 high = 999
     ]
     graphic = "icons/ship_parts/colony_pod.png"
 
@@ -558,13 +558,13 @@ Part
     name = "CO_SUSPEND_ANIM_POD"
     description = "CO_SUSPEND_ANIM_POD_DESC"
     class = Colony
-    capacity = 2
+    capacity = .5
     buildcost = 500
     buildtime = 10
     mountableSlotTypes = Internal
     location = And [
         OwnedBy TheEmpire Source.Owner
-        Population low = 3 high = 999
+        Population low = 1 high = 999
     ]
     graphic = "icons/ship_parts/cryonic_colony_pod.png"
 

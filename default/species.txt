@@ -32,7 +32,8 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
+        [[LARGE_PLANET]]
     ]
     
     [[TERRAN_STANDARD_EP]]
@@ -68,7 +69,8 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[GOOD_POPULATION]]
+        [[LARGE_PLANET]]
     ]
     
     [[OCEAN_STANDARD_EP]]
@@ -104,7 +106,8 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
+        [[LARGE_PLANET]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -140,7 +143,8 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
+        [[LARGE_PLANET]]
     ]
     
     [[TOXIC_STANDARD_EP]]
@@ -171,15 +175,17 @@ Species
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
+
         
         [[AVERAGE_GROUND_TROOPS]]
         
+                
+        [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_FOOD_USE]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
+        [[LARGE_PLANET]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -216,7 +222,8 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
+        [[LARGE_PLANET]]
     ]
     
     [[TUNDRA_STANDARD_EP]]
@@ -253,7 +260,8 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
+        [[LARGE_PLANET]]
     ]
     
     [[TERRAN_STANDARD_EP]]
@@ -289,7 +297,8 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
+        [[LARGE_PLANET]]
     ]
     
     [[TOXIC_STANDARD_EP]]
@@ -328,7 +337,8 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
+        [[LARGE_PLANET]]
     ]
     
     [[OCEAN_STANDARD_EP]]
@@ -364,7 +374,8 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
+        [[LARGE_PLANET]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -401,7 +412,8 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
+        [[LARGE_PLANET]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -436,7 +448,8 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
+        [[LARGE_PLANET]]
     ]
     
     [[TUNDRA_STANDARD_EP]]
@@ -478,7 +491,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[TERRIBLE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
 
     [[BARREN_BROAD_EP]]
@@ -514,7 +527,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -546,7 +559,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[GREAT_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     
     [[SWAMP_BROAD_EP]]
@@ -580,7 +593,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[GREAT_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -615,7 +628,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]  
+        [[AVERAGE_POPULATION]]  
     ]
     
     [[INFERNO_NARROW_EP]]
@@ -650,7 +663,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     
     [[TUNDRA_NARROW_EP]]
@@ -681,7 +694,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[BAD_POPULATION]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -718,7 +731,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[GOOD_POPULATION]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -751,7 +764,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[BAD_POPULATION]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -781,7 +794,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     
     [[BARREN_STANDARD_EP]]
@@ -813,7 +826,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[GOOD_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     
     [[TERRAN_STANDARD_EP]]
@@ -843,7 +856,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[GOOD_POPULATION]]
     ]
     
     [[RADIATED_STANDARD_EP]]
@@ -877,7 +890,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     
     [[TERRAN_STANDARD_EP]]
@@ -910,7 +923,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     
     [[BARREN_STANDARD_EP]]
@@ -945,7 +958,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     
     [[INFERNO_NARROW_EP]]
@@ -975,11 +988,12 @@ Species
         [[TERRIBLE_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        [[AVERAGE_HEALTH]]
+        [[AVERAGE_POPULATION]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+
     ]
     
     [[TOXIC_STANDARD_EP]]
@@ -1007,11 +1021,12 @@ Species
         [[NO_GROUND_TROOPS]]
         
         [[STANDARD_FOOD_USE]]
+        [[TERRIBLE_HEALTH]]
+        [[AVERAGE_POPULATION]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[TERRIBLE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        
     ]
         
     [[TERRAN_STANDARD_EP]]
@@ -1046,7 +1061,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     
     [[INFERNO_STANDARD_EP]]
@@ -1080,7 +1095,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     
     [[RADIATED_STANDARD_EP]]
@@ -1114,7 +1129,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     
     environments = [
@@ -1166,7 +1181,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[ULTIMATE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[GOOD_POPULATION]]
     ]
     environments = [
         type = Swamp        environment = Good
@@ -1211,7 +1226,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
-        [[STANDARD_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     environments = [
         type = Swamp        environment = Good
@@ -1903,14 +1918,14 @@ ULTIMATE_HEALTH
             effects = SetTargetHealth Value + 20
 '''
 
-STANDARD_POPULATION
+BAD_POPULATION
 '''        EffectsGroup
             scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant]
             ]
-            effects = SetTargetPopulation Value + 25
+            effects = SetTargetPopulation Value + 4
 
         EffectsGroup
             scope = Source
@@ -1918,7 +1933,7 @@ STANDARD_POPULATION
                 Planet environment = Good
                 Planet size = [Large Asteroids]
             ]
-            effects = SetTargetPopulation Value + 20
+            effects = SetTargetPopulation Value + 3
 
         EffectsGroup
             scope = Source
@@ -1926,7 +1941,7 @@ STANDARD_POPULATION
                 Planet environment = Good
                 Planet size = Medium
             ]
-            effects = SetTargetPopulation Value + 15
+            effects = SetTargetPopulation Value + 2
 
         EffectsGroup
             scope = Source
@@ -1934,7 +1949,7 @@ STANDARD_POPULATION
                 Planet environment = Good
                 Planet size = Small
             ]
-            effects = SetTargetPopulation Value + 10
+            effects = SetTargetPopulation Value + 1
 
         EffectsGroup
             scope = Source
@@ -1942,7 +1957,7 @@ STANDARD_POPULATION
                 Planet environment = Good
                 Planet size = Tiny
             ]
-            effects = SetTargetPopulation Value + 5
+            effects = SetTargetPopulation Value + 0
 
         EffectsGroup
             scope = Source
@@ -1950,7 +1965,7 @@ STANDARD_POPULATION
                 Planet environment = Adequate
                 Planet size = [Huge GasGiant]
             ]
-            effects = SetTargetPopulation Value + 5
+            effects = SetTargetPopulation Value + 2
 
         EffectsGroup
             scope = Source
@@ -1958,7 +1973,297 @@ STANDARD_POPULATION
                 Planet environment = Adequate
                 Planet size = [Large Asteroids]
             ]
+            effects = SetTargetPopulation Value + 1.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Medium
+            ]
+            effects = SetTargetPopulation Value + 1
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Small
+            ]
+            effects = SetTargetPopulation Value + 0.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Tiny
+            ]
+            effects = SetTargetPopulation Value + 0
+            
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = [Huge GasGiant]
+                Or [
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value - 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = [Large Asteroids]
+                Or [
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value - 1.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = Medium
+                Or [
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = Small
+                Or [
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value - 0.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = Tiny
+                Or [
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value + 0
+            
+            
+                EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Planet size = [Huge GasGiant]
+                Or [
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value - 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Planet size = [Large Asteroids]
+                Or [
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value - 1.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Planet size = Medium
+                Or [
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Planet size = Small
+                Or [OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value - 0.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Planet size = Tiny
+                Or [
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value + 0   
+'''
+
+AVERAGE_POPULATION
+'''        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = [Huge GasGiant]
+            ]
+            effects = SetTargetPopulation Value + 8
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = [Large Asteroids]
+            ]
+            effects = SetTargetPopulation Value + 6
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Medium
+            ]
             effects = SetTargetPopulation Value + 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Small
+            ]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Tiny
+            ]
+            effects = SetTargetPopulation Value + 0
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = [Huge GasGiant]
+            ]
+            effects = SetTargetPopulation Value + 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = [Large Asteroids]
+            ]
+            effects = SetTargetPopulation Value + 3
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Medium
+            ]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Small
+            ]
+            effects = SetTargetPopulation Value + 1
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Tiny
+            ]
+            effects = SetTargetPopulation Value + 0
+'''
+
+GOOD_POPULATION
+'''        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = [Huge GasGiant]
+            ]
+            effects = SetTargetPopulation Value + 12
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = [Large Asteroids]
+            ]
+            effects = SetTargetPopulation Value + 9
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Medium
+            ]
+            effects = SetTargetPopulation Value + 6
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Small
+            ]
+            effects = SetTargetPopulation Value + 3
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Tiny
+            ]
+            effects = SetTargetPopulation Value + 0
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = [Huge GasGiant]
+            ]
+            effects = SetTargetPopulation Value + 6
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = [Large Asteroids]
+            ]
+            effects = SetTargetPopulation Value + 4.5
 
         EffectsGroup
             scope = Source
@@ -1974,7 +2279,7 @@ STANDARD_POPULATION
                 Planet environment = Adequate
                 Planet size = Small
             ]
-            effects = SetTargetPopulation Value + 2
+            effects = SetTargetPopulation Value + 1.5
 
         EffectsGroup
             scope = Source
@@ -1982,8 +2287,135 @@ STANDARD_POPULATION
                 Planet environment = Adequate
                 Planet size = Tiny
             ]
+            effects = SetTargetPopulation Value + 0
+            
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = [Huge GasGiant]
+                Or [
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = [Large Asteroids]
+                Or [
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value + 1.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = Medium
+                Or [
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
             effects = SetTargetPopulation Value + 1
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = Small
+                Or [
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value + 0.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = Tiny
+                Or [
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value + 0
+            
+            
+                EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Planet size = [Huge GasGiant]
+                Or [
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Planet size = [Large Asteroids]
+                Or [
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value + 1.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Planet size = Medium
+                Or [
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value + 1
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Planet size = Small
+                Or [OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value + 0.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Planet size = Tiny
+                Or [
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            effects = SetTargetPopulation Value + 0   
 '''
+
 
 ADVANCED_FOCUS_EFFECTS
 '''        EffectsGroup
@@ -2692,5 +3124,33 @@ ULTIMATE_WEAPONS
         scope = Source
         activation = Turn high = 1
         GiveEmpireTech name = "SHP_WEAPON_4"
+'''
+
+HUGE_PLANET
+'''EffectsGroup     
+        scope = Source     
+        activation = Turn high = 1
+        effects = SetPlanetSize Huge
+'''
+
+LARGE_PLANET
+'''EffectsGroup     
+        scope = Source     
+        activation = Turn high = 1
+        effects = SetPlanetSize Large
+'''
+
+MEDIUM_PLANET
+'''EffectsGroup     
+        scope = Source     
+        activation = Turn high = 1
+        effects = SetPlanetSize Medium
+'''
+
+SMALL_PLANET
+'''EffectsGroup     
+        scope = Source     
+        activation = Turn high = 1
+        effects = SetPlanetSize Small
 '''
 
