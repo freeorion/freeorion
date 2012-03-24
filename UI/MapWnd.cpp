@@ -1443,16 +1443,20 @@ void MapWnd::RenderVisibilityRadii() {
 
     const double STEALTH_THRESHOLD = GetOptionsDB().Get<double>("UI.detection-range-stealth-threshold");    // how much to deduct from detection to compensate for potential target stealth, and also the minimum detection to consider showing
 
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    const std::set<int>& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
-    const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(client_empire_id);
+    int                     client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const std::set<int>&    known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const ObjectMap&        objects = GetUniverse().Objects();
+    const std::set<int>     visible_object_ids = GetUniverse().EmpireVisibleObjectIDs();
 
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<double, double> >, double> empire_position_max_detection_ranges;
-    for (ObjectMap::const_iterator it = known_objects.const_begin(); it != known_objects.const_end(); ++it) {
-        // skip destroyed objects
+    for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
         int object_id = it->first;
+        // skip destroyed objects
         if (known_destroyed_object_ids.find(object_id) != known_destroyed_object_ids.end())
+            continue;
+        // skip objects not visible this turn
+        if (visible_object_ids.find(object_id) == visible_object_ids.end())
             continue;
 
         const UniverseObject* obj = it->second;
@@ -1465,7 +1469,7 @@ void MapWnd::RenderVisibilityRadii() {
         const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
         if (!fleet)
             if (const Ship* ship = universe_object_cast<const Ship*>(obj))
-                fleet = known_objects.Object<Fleet>(ship->FleetID());
+                fleet = objects.Object<Fleet>(ship->FleetID());
         if (fleet) {
             int next_id = fleet->NextSystemID();
             int cur_id = fleet->SystemID();

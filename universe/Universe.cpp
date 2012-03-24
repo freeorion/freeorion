@@ -1371,8 +1371,11 @@ void Universe::UpdateEmpireObjectVisibilities() {
         const Empire* empire = empire_it->second;
         int empire_id = empire_it->first;
         const std::set<int>& empire_known_ship_designs = empire->ShipDesigns();
-        for (std::set<int>::const_iterator design_it = empire_known_ship_designs.begin(); design_it != empire_known_ship_designs.end(); ++design_it)
+        for (std::set<int>::const_iterator design_it = empire_known_ship_designs.begin();
+             design_it != empire_known_ship_designs.end(); ++design_it)
+        {
             m_empire_known_ship_design_ids[empire_id].insert(*design_it);
+        }
     }
 
 
@@ -1401,8 +1404,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
         // unowned detectors can't contribute to empires' visibility
         if (detector->Unowned())
             continue;
-
-        int detector_id = detector->ID();
+        int detector_id = detector_it->first;
 
 
         // owner of an object gets full visibility of it
@@ -1468,11 +1470,8 @@ void Universe::UpdateEmpireObjectVisibilities() {
             Visibility target_visibility_to_detector = VIS_NO_VISIBILITY;
 
             // zero-stealth objects are always at least basic-level visible
-            if (stealth <= 0 &&
-                target_visibility_to_detector < VIS_BASIC_VISIBILITY)
-            {
+            if (stealth <= 0 && target_visibility_to_detector < VIS_BASIC_VISIBILITY)
                 target_visibility_to_detector = VIS_BASIC_VISIBILITY;
-            }
 
             // compare stealth, detection ability and distance between
             // detector and target to find visibility level
@@ -1485,11 +1484,9 @@ void Universe::UpdateEmpireObjectVisibilities() {
             double dist2 = (xt-xd)*(xt-xd) + (yt-yd)*(yt-yd);
 
             // planets can always be seen if they are at the same location
-            if (dist2 == 0.0 &&
-                target_visibility_to_detector < VIS_BASIC_VISIBILITY)
-            {
+            if (dist2 == 0.0 && target_visibility_to_detector < VIS_BASIC_VISIBILITY)
                 target_visibility_to_detector = VIS_BASIC_VISIBILITY;
-            }
+
 
             // To determine if a detector can detect a target, the target's
             // stealth is subtracted from the detector's range, and the result

@@ -32,8 +32,7 @@ PopCenter::PopCenter() :
 PopCenter::~PopCenter()
 {}
 
-void PopCenter::Copy(const PopCenter* copied_object, Visibility vis)
-{
+void PopCenter::Copy(const PopCenter* copied_object, Visibility vis) {
     if (copied_object == this)
         return;
     if (!copied_object) {
@@ -47,8 +46,7 @@ void PopCenter::Copy(const PopCenter* copied_object, Visibility vis)
     }
 }
 
-void PopCenter::Init()
-{
+void PopCenter::Init() {
     //Logger().debugStream() << "PopCenter::Init";
     AddMeter(METER_POPULATION);
     AddMeter(METER_TARGET_POPULATION);
@@ -57,15 +55,13 @@ void PopCenter::Init()
     AddMeter(METER_FOOD_CONSUMPTION);
 }
 
-std::string PopCenter::Dump() const
-{
+std::string PopCenter::Dump() const {
     std::stringstream os;
     os << " species: " << m_species_name << " allocated food: " << m_allocated_food << "  ";
     return os.str();
 }
 
-double PopCenter::CurrentMeterValue(MeterType type) const
-{
+double PopCenter::CurrentMeterValue(MeterType type) const {
     const Meter* meter = GetMeter(type);
     if (!meter) {
         throw std::invalid_argument("PopCenter::CurrentMeterValue was passed a MeterType that this PopCenter does not have");
@@ -73,8 +69,7 @@ double PopCenter::CurrentMeterValue(MeterType type) const
     return meter->Current();
 }
 
-double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const
-{
+double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const {
     const Meter* meter = GetMeter(meter_type);
     if (!meter) {
         throw std::invalid_argument("PopCenter::PopCenterNextTurnMeterValue passed meter type that the PopCenter does not have.");
@@ -120,8 +115,7 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const
 double PopCenter::FoodAllocationForMaxGrowth() const
 { return PopCenterNextTurnMeterValue(METER_FOOD_CONSUMPTION); }
 
-double PopCenter::NextTurnPopGrowth() const
-{
+double PopCenter::NextTurnPopGrowth() const {
     double target_pop = std::max(GetMeter(METER_TARGET_POPULATION)->Current(), 1.0);    // clamping target pop to at least 1 prevents divide by zero cases
     double cur_pop = GetMeter(METER_POPULATION)->Current();
     double cur_health = std::min(GetMeter(METER_HEALTH)->Current(), 120.0);             // clamping current health to at most 120 prevents weird results with overpopulation decay health-dependence
@@ -171,8 +165,7 @@ double PopCenter::NextTurnPopGrowth() const
     return std::max(max_loss, pop_loss_potential);
 }
 
-double PopCenter::NextTurnHealthGrowth() const
-{
+double PopCenter::NextTurnHealthGrowth() const {
     double health = CurrentMeterValue(METER_HEALTH);
     double target_health = CurrentMeterValue(METER_TARGET_HEALTH);
 
@@ -190,16 +183,14 @@ double PopCenter::NextTurnHealthGrowth() const
     }
 }
 
-void PopCenter::PopCenterResetTargetMaxUnpairedMeters()
-{
+void PopCenter::PopCenterResetTargetMaxUnpairedMeters() {
     GetMeter(METER_TARGET_POPULATION)->ResetCurrent();
     GetMeter(METER_TARGET_HEALTH)->ResetCurrent();
 
     GetMeter(METER_FOOD_CONSUMPTION)->ResetCurrent();
 }
 
-void PopCenter::PopCenterPopGrowthProductionResearchPhase()
-{
+void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
     double cur_pop = CurrentMeterValue(METER_POPULATION);
     double pop_growth = NextTurnPopGrowth();                        // may be negative
     double new_pop = cur_pop + pop_growth;
@@ -226,8 +217,7 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase()
     }
 }
 
-void PopCenter::PopCenterClampMeters()
-{
+void PopCenter::PopCenterClampMeters() {
     GetMeter(METER_TARGET_POPULATION)->ClampCurrentToRange();
     GetMeter(METER_TARGET_HEALTH)->ClampCurrentToRange();
 
@@ -237,8 +227,7 @@ void PopCenter::PopCenterClampMeters()
     GetMeter(METER_FOOD_CONSUMPTION)->ClampCurrentToRange();
 }
 
-void PopCenter::Reset()
-{
+void PopCenter::Reset() {
     GetMeter(METER_POPULATION)->Reset();
     GetMeter(METER_TARGET_POPULATION)->Reset();
     GetMeter(METER_HEALTH)->Reset();
@@ -248,8 +237,7 @@ void PopCenter::Reset()
     m_allocated_food = 0.0;
 }
 
-void PopCenter::SetSpecies(const std::string& species_name)
-{
+void PopCenter::SetSpecies(const std::string& species_name) {
     const Species* species = GetSpecies(species_name);
     if (!species && !species_name.empty()) {
         Logger().errorStream() << "PopCenter::SetSpecies couldn't get species with name " << species_name;
