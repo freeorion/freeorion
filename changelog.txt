@@ -11,7 +11,7 @@ Content:
  ~ ~ Sorry, currently not balanced.
  ~ ~ All normal species now have the same provisional starvation mechanic.
  ~ Dramatically rescaled population numbers to a lower base and max
- ~ ~ Sorry, tech & research costs not yet rescaled.
+ ~ ~ Building, Ship & Research costs rescaled to 10%
  ~ Added new stealthy planet specials, and stealth-making monsters.
  ~ Made monsters nests last on average twice as long.
  ~ Halved the generation of floaters from forests.

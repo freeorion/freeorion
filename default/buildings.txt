@@ -2,7 +2,7 @@
 BuildingType
     name = "BLD_CULTURE_ARCHIVES"
     description = "BLD_CULTURE_ARCHIVES_DESC"
-    buildcost = 2000
+    buildcost = 200
     buildtime = 200
     location = Not All
     effectsgroups = [
@@ -46,7 +46,7 @@ BuildingType
 BuildingType
     name = "BLD_IMPERIAL_PALACE"
     description = "BLD_IMPERIAL_PALACE_DESC"
-    buildcost = 25
+    buildcost = 2.5
     buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -101,7 +101,7 @@ BuildingType
 BuildingType
     name = "BLD_OBSERVATORY"
     description = "BLD_OBSERVATORY_DESC"
-    buildcost = 600
+    buildcost = 60
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -113,7 +113,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_BASE"
     description = "BLD_SHIPYARD_BASE_DESC"
-    buildcost = 50
+    buildcost = 5
     buildtime = 1
     location = And [
         Not Contains And [
@@ -127,7 +127,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
     description = "BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC"
-    buildcost = 75
+    buildcost = 7.5
     buildtime = 1
     location = And [
         Contains And [
@@ -161,7 +161,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_CON_ROBO"
     description = "BLD_SHIPYARD_CON_ROBO_DESC"
-    buildcost = 200
+    buildcost = 20
     buildtime = 1
     location = And [
         Contains And [
@@ -179,7 +179,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_CON_ENGINE"
     description = "BLD_SHIPYARD_CON_ENGINE_DESC"
-    buildcost = 450
+    buildcost = 45
     buildtime = 1
     location = And [
         Contains And [
@@ -197,7 +197,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_CON_MILIT_MEGAPROC"
     description = "BLD_SHIPYARD_CON_MILIT_MEGAPROC_DESC"
-    buildcost = 1000
+    buildcost = 100
     buildtime = 1
     location = And [
         Contains And [
@@ -215,7 +215,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_CON_NANOROBO"
     description = "BLD_SHIPYARD_CON_NANOROBO_DESC"
-    buildcost = 2250
+    buildcost = 225
     buildtime = 1
     location = And [
         Contains And [
@@ -233,7 +233,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_CON_GEOINT"
     description = "BLD_SHIPYARD_CON_GEOINT_DESC"
-    buildcost = 5000
+    buildcost = 500
     buildtime = 1
     location = And [
         Contains And [
@@ -251,7 +251,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_CON_ADV_ENGINE"
     description = "BLD_SHIPYARD_CON_ADV_ENGINE_DESC"
-    buildcost = 12000
+    buildcost = 1200
     buildtime = 1
     location = And [
         Contains And [
@@ -269,7 +269,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_CON_MIL_LOG_ASSMBL"
     description = "BLD_SHIPYARD_CON_MIL_LOG_ASSMBL_DESC"
-    buildcost = 25000
+    buildcost = 2500
     buildtime = 1
     location = And [
         Contains And [
@@ -299,7 +299,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_AST"
     description = "BLD_SHIPYARD_AST_DESC"
-    buildcost = 500
+    buildcost = 50
     buildtime = 1
     location = And [
         Contains And [
@@ -314,7 +314,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_AST_REF"
     description = "BLD_SHIPYARD_AST_REF_DESC"
-    buildcost = 2500
+    buildcost = 250
     buildtime = 2
     location = And [
         Contains And [
@@ -333,7 +333,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_AST_CRYSTAL"
     description = "BLD_SHIPYARD_AST_CRYSTAL_DESC"
-    buildcost = 12500
+    buildcost = 1250
     buildtime = 4
     location = And [
         Contains And [
@@ -352,7 +352,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ORG_ORB_INC"
     description = "BLD_SHIPYARD_ORG_ORB_INC_DESC"
-    buildcost = 5
+    buildcost = 0.5
     buildtime = 10
     location = And [
         Contains And [
@@ -366,7 +366,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ORG_IND_ORG_ASSMBL"
     description = "BLD_SHIPYARD_ORG_IND_ORG_ASSMBL_DESC"
-    buildcost = 150
+    buildcost = 15
     buildtime = 1
     location = And [
         Contains And [
@@ -380,7 +380,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
     description = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC"
-    buildcost = 30
+    buildcost = 3
     buildtime = 10
     location = And [
         Contains And [
@@ -398,7 +398,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ORG_XENO_FAC"
     description = "BLD_SHIPYARD_ORG_XENO_FAC_DESC"
-    buildcost = 30
+    buildcost = 3
     buildtime = 10
     location = And [
         Contains And [
@@ -416,7 +416,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB"
     description = "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB_DESC"
-    buildcost = 250
+    buildcost = 25
     buildtime = 10
     location = And [
         Contains And [
@@ -434,7 +434,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ORG_BIONEUR_MOD"
     description = "BLD_SHIPYARD_ORG_BIONEUR_MOD_DESC"
-    buildcost = 250
+    buildcost = 25
     buildtime = 10
     location = And [
         Contains And [
@@ -452,7 +452,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ENRG_COMP"
     description = "BLD_SHIPYARD_ENRG_COMP_DESC"
-    buildcost = 450
+    buildcost = 45
     buildtime = 3
     location = And [
         Contains And [
@@ -466,7 +466,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ENRG_FOCUS"
     description = "BLD_SHIPYARD_ENRG_FOCUS_DESC"
-    buildcost = 5000
+    buildcost = 500
     buildtime = 4
     location = And [
         Contains And [
@@ -484,7 +484,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ENRG_SOLAR"
     description = "BLD_SHIPYARD_ENRG_SOLAR_DESC"
-    buildcost = 7500
+    buildcost = 750
     buildtime = 5
     location = And [
         Contains And [
@@ -502,7 +502,7 @@ BuildingType
 BuildingType
     name = "BLD_BIOTERROR_PROJECTOR"
     description = "BLD_BIOTERROR_PROJECTOR_DESC"
-    buildcost = 750
+    buildcost = 75
     buildtime = 15
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -517,7 +517,7 @@ BuildingType
 BuildingType
     name = "BLD_LIGHTHOUSE"
     description = "BLD_LIGHTHOUSE_DESC"
-    buildcost = 250
+    buildcost = 25
     buildtime = 10
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -530,7 +530,7 @@ BuildingType
 BuildingType
     name = "BLD_HEAVY_MINE_PROCESSOR"
     description = "BLD_HEAVY_MINE_PROCESSOR_DESC"
-    buildcost = 750
+    buildcost = 75
     buildtime = 1
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -541,7 +541,7 @@ BuildingType
 BuildingType
     name = "BLD_INDUSTRY_CENTER"
     description = "BLD_INDUSTRY_CENTER_DESC"
-    buildcost = 750
+    buildcost = 75
     buildtime = 1
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -586,7 +586,7 @@ BuildingType
 BuildingType
     name = "BLD_EXOBOT_SHIP"
     description = "BLD_EXOBOT_SHIP_DESC"
-    buildcost = 500
+    buildcost = 50
     buildtime = 5
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -617,7 +617,7 @@ BuildingType
 BuildingType
     name = "BLD_MEGALITH"
     description = "BLD_MEGALITH_DESC"
-    buildcost = 2500
+    buildcost = 250
     buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -652,7 +652,7 @@ BuildingType
 BuildingType
     name = "BLD_COLLECTIVE_NET"
     description = "BLD_COLLECTIVE_NET_DESC"
-    buildcost = 2500
+    buildcost = 250
     buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -716,7 +716,7 @@ BuildingType
 BuildingType
     name = "BLD_GENOME_BANK"
     description = "BLD_GENOME_BANK_DESC"
-    buildcost = 150
+    buildcost = 15
     buildtime = 30
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -745,7 +745,7 @@ BuildingType
 BuildingType
     name = "BLD_SPACE_ELEVATOR"
     description = "BLD_SPACE_ELEVATOR_DESC"
-    buildcost = 1500
+    buildcost = 150
     buildtime = 5
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -761,7 +761,7 @@ BuildingType
 BuildingType
     name = "BLD_GAIA_TRANS"
     description = "BLD_GAIA_TRANS_DESC"
-    buildcost = 480
+    buildcost = 48
     buildtime = 4
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -786,7 +786,7 @@ BuildingType
 BuildingType
     name = "BLD_ART_BLACK_HOLE"
     description = "BLD_ART_BLACK_HOLE_DESC"
-    buildcost = 400
+    buildcost = 40
     buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -808,7 +808,7 @@ BuildingType
 BuildingType
     name = "BLD_HYPER_DAM"
     description = "BLD_HYPER_DAM_DESC"
-    buildcost = 2500
+    buildcost = 250
     buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -839,7 +839,7 @@ BuildingType
 BuildingType
     name = "BLD_SOL_ORB_GEN"
     description = "BLD_SOL_ORB_GEN_DESC"
-    buildcost = 750
+    buildcost = 75
     buildtime = 5
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
@@ -878,7 +878,7 @@ BuildingType
 BuildingType
     name = "BLD_CLONING_CENTER"
     description = "BLD_CLONING_CENTER_DESC"
-    buildcost = 1000
+    buildcost = 100
     buildtime = 5
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -902,7 +902,7 @@ BuildingType
 BuildingType
     name = "BLD_TERRAFORM"
     description = "BLD_TERRAFORM_DESC"
-    buildcost = 720
+    buildcost = 72
     buildtime = 1
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -932,7 +932,7 @@ BuildingType
 BuildingType
     name = "BLD_REMOTE_TERRAFORM"
     description = "BLD_REMOTE_TERRAFORM_DESC"
-    buildcost = 60
+    buildcost = 6
     buildtime = 16
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -955,7 +955,7 @@ BuildingType
 BuildingType
     name = "BLD_NEUTRONIUM_EXTRACTOR"
     description = "BLD_NEUTRONIUM_EXTRACTOR_DESC"
-    buildcost = 250
+    buildcost = 25
     buildtime = 8
     location = Star type = Neutron
     graphic = "icons/building/neutronium-forge.png"
@@ -963,7 +963,7 @@ BuildingType
 BuildingType
     name = "BLD_NEUTRONIUM_FORGE"
     description = "BLD_NEUTRONIUM_FORGE_DESC"
-    buildcost = 1000
+    buildcost = 100
     buildtime = 1
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -974,7 +974,7 @@ BuildingType
 BuildingType
     name = "BLD_NEUTRONIUM_SYNTH"
     description = "BLD_NEUTRONIUM_SYNTH_DESC"
-    buildcost = 12000
+    buildcost = 1200
     buildtime = 10
     location = OwnedBy TheEmpire Source.Owner
     graphic = "icons/building/neutronium-forge.png"
@@ -982,7 +982,7 @@ BuildingType
 BuildingType
     name = "BLD_CONC_CAMP"
     description = "BLD_CONC_CAMP_DESC"
-    buildcost = 50
+    buildcost = 5
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
@@ -1008,7 +1008,7 @@ BuildingType
 BuildingType
     name = "BLD_INDUSTRY_FARM"
     description = "BLD_INDUSTRY_FARM_DESC"
-    buildcost = 40
+    buildcost = 4
     buildtime = 25
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -1028,7 +1028,7 @@ BuildingType
 BuildingType
     name = "BLD_BLACK_HOLE_POW_GEN"
     description = "BLD_BLACK_HOLE_POW_GEN_DESC"
-    buildcost = 2500
+    buildcost = 250
     buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -1048,7 +1048,7 @@ BuildingType
 BuildingType
     name = "BLD_REPLICATORS"
     description = "BLD_REPLICATORS_DESC"
-    buildcost = 1250
+    buildcost = 125
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     graphic = ""
@@ -1056,7 +1056,7 @@ BuildingType
 BuildingType
     name = "BLD_PLANET_DRIVE"
     description = "BLD_PLANET_DRIVE_DESC"
-    buildcost = 1250
+    buildcost = 125
     buildtime = 5
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -1067,7 +1067,7 @@ BuildingType
 BuildingType
     name = "BLD_PLANET_BEACON"
     description = "BLD_PLANET_BEACON_DESC"
-    buildcost = 1
+    buildcost = 0.1
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -1080,7 +1080,7 @@ BuildingType
 BuildingType
     name = "BLD_ART_PLANET"
     description = "BLD_ART_PLANET_DESC"
-    buildcost = 25000
+    buildcost = 2500
     buildtime = 1
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -1102,7 +1102,7 @@ BuildingType
 BuildingType
     name = "BLD_ART_MOON"
     description = "BLD_ART_MOON_DESC"
-    buildcost = 2500
+    buildcost = 250
     buildtime = 1
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -1121,7 +1121,7 @@ BuildingType
 BuildingType
     name = "BLD_TRANSFORMER"
     description = "BLD_TRANSFORMER_DESC"
-    buildcost = 1000
+    buildcost = 100
     buildtime = 15
     location = OwnedBy TheEmpire Source.Owner
     graphic = ""
@@ -1129,7 +1129,7 @@ BuildingType
 BuildingType
     name = "BLD_GATEWAY_VOID"
     description = "BLD_GATEWAY_VOID_DESC"
-    buildcost = 450
+    buildcost = 45
     buildtime = 10
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
@@ -1168,7 +1168,7 @@ BuildingType
 BuildingType
     name = "BLD_ENCLAVE_VOID"
     description = "BLD_ENCLAVE_VOID_DESC"
-    buildcost = 1000
+    buildcost = 100
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -1185,7 +1185,7 @@ BuildingType
 BuildingType
     name = "BLD_PLANET_CLOAK"
     description = "BLD_PLANET_CLOAK_DESC"
-    buildcost = 1500
+    buildcost = 150
     buildtime = 8
     location = OwnedBy TheEmpire Source.Owner
     graphic = ""
@@ -1193,7 +1193,7 @@ BuildingType
 BuildingType
     name = "BLD_SPATIAL_DISTORT_GEN"
     description = "BLD_SPATIAL_DISTORT_GEN_DESC"
-    buildcost = 300
+    buildcost = 30
     buildtime = 10
     location = OwnedBy TheEmpire Source.Owner
     graphic = ""
@@ -1201,7 +1201,7 @@ BuildingType
 BuildingType
     name = "BLD_STARGATE"
     description = "BLD_STARGATE_DESC"
-    buildcost = 1250
+    buildcost = 125
     buildtime = 5
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -1225,7 +1225,7 @@ BuildingType
 BuildingType
     name = "BLD_STARGATE_ACTIVATOR"
     description = "BLD_STARGATE_ACTIVATOR_DESC"
-    buildcost = 1
+    buildcost = .1
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -1238,7 +1238,7 @@ BuildingType
 BuildingType
     name = "BLD_STARGATE_BEACON"
     description = "BLD_STARGATE_BEACON_DESC"
-    buildcost = 1
+    buildcost = .1
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -1251,7 +1251,7 @@ BuildingType
 BuildingType
     name = "BLD_GAS_GIANT_GEN"
     description = "BLD_GAS_GIANT_GEN_DESC"
-    buildcost = 250
+    buildcost = 25
     buildtime = 3
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -1270,7 +1270,7 @@ BuildingType
 BuildingType
     name = "BLD_COLONY_BASE"
     description = "BLD_COLONY_BASE_DESC"
-    buildcost = 450
+    buildcost = 45
     buildtime = 1
     location = And [
         Population low = 3

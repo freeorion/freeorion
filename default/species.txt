@@ -2545,7 +2545,7 @@ TERRIBLE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Good
             ]
-            effects = SetTargetFarming Value + Target.Population * 1.0
+            effects = SetTargetFarming Value + Target.Population * .25
 
         EffectsGroup
             scope = Source
@@ -2553,7 +2553,7 @@ TERRIBLE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Adequate
             ]
-            effects = SetTargetFarming Value + Target.Population * 0.75
+            effects = SetTargetFarming Value + Target.Population * 0.1875
 
         EffectsGroup
             scope = Source
@@ -2561,7 +2561,7 @@ TERRIBLE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Poor
             ]
-            effects = SetTargetFarming Value + Target.Population * 0.5
+            effects = SetTargetFarming Value + Target.Population * 0.125
 
         EffectsGroup
             scope = Source
@@ -2569,7 +2569,7 @@ TERRIBLE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Hostile
             ]
-            effects = SetTargetFarming Value + Target.Population * 0.25
+            effects = SetTargetFarming Value + Target.Population * 0.0625
 '''
 
 AVERAGE_FARMING
@@ -2579,7 +2579,7 @@ AVERAGE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Good
             ]
-            effects = SetTargetFarming Value + Target.Population * 2.0
+            effects = SetTargetFarming Value + Target.Population * .5
 
         EffectsGroup
             scope = Source
@@ -2587,7 +2587,7 @@ AVERAGE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Adequate
             ]
-            effects = SetTargetFarming Value + Target.Population * 1.5
+            effects = SetTargetFarming Value + Target.Population * .375
 
         EffectsGroup
             scope = Source
@@ -2595,7 +2595,7 @@ AVERAGE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Poor
             ]
-            effects = SetTargetFarming Value + Target.Population
+            effects = SetTargetFarming Value + Target.Population * .25
 
         EffectsGroup
             scope = Source
@@ -2603,7 +2603,7 @@ AVERAGE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Hostile
             ]
-            effects = SetTargetFarming Value + Target.Population * 0.5
+            effects = SetTargetFarming Value + Target.Population * 0.125
 '''
 
 GREAT_FARMING
@@ -2613,7 +2613,7 @@ GREAT_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Good
             ]
-            effects = SetTargetFarming Value + Target.Population * 4.0
+            effects = SetTargetFarming Value + Target.Population * 1.0
 
         EffectsGroup
             scope = Source
@@ -2621,7 +2621,7 @@ GREAT_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Adequate
             ]
-            effects = SetTargetFarming Value + Target.Population * 3
+            effects = SetTargetFarming Value + Target.Population * .75
 
         EffectsGroup
             scope = Source
@@ -2629,7 +2629,7 @@ GREAT_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Poor
             ]
-            effects = SetTargetFarming Value + Target.Population *2
+            effects = SetTargetFarming Value + Target.Population * .5
 
         EffectsGroup
             scope = Source
@@ -2637,7 +2637,7 @@ GREAT_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Hostile
             ]
-            effects = SetTargetFarming Value + Target.Population * 1
+            effects = SetTargetFarming Value + Target.Population * .25
 '''
 
 ULTIMATE_FARMING
@@ -2647,7 +2647,7 @@ ULTIMATE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Good
             ]
-            effects = SetTargetFarming Value + Target.Population * 6.0
+            effects = SetTargetFarming Value + Target.Population * 1.5
 
         EffectsGroup
             scope = Source
@@ -2655,7 +2655,7 @@ ULTIMATE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Adequate
             ]
-            effects = SetTargetFarming Value + Target.Population * 4.5
+            effects = SetTargetFarming Value + Target.Population * 1.125
 
         EffectsGroup
             scope = Source
@@ -2663,7 +2663,7 @@ ULTIMATE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Poor
             ]
-            effects = SetTargetFarming Value + Target.Population * 3
+            effects = SetTargetFarming Value + Target.Population * .75
 
         EffectsGroup
             scope = Source
@@ -2671,7 +2671,7 @@ ULTIMATE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Hostile
             ]
-            effects = SetTargetFarming Value + Target.Population * 1.5
+            effects = SetTargetFarming Value + Target.Population * .375
 '''
 
 
@@ -2686,7 +2686,7 @@ TERRIBLE_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Tiny
             ]
-            effects = SetTargetMining Value + 20 + Target.Population * 0.1
+            effects = SetTargetMining Value + 2.0 + Target.Population * 0.1
 
         EffectsGroup
             scope = Source
@@ -2694,7 +2694,7 @@ TERRIBLE_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Small
             ]
-            effects = SetTargetMining Value + 15 + Target.Population * 0.1
+            effects = SetTargetMining Value + 1.5 + Target.Population * 0.1
 
         EffectsGroup
             scope = Source
@@ -2702,7 +2702,7 @@ TERRIBLE_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Medium
             ]
-            effects = SetTargetMining Value + 10 + Target.Population * 0.1
+            effects = SetTargetMining Value + 1.0 + Target.Population * 0.1
 
         EffectsGroup
             scope = Source
@@ -2710,7 +2710,7 @@ TERRIBLE_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Large
             ]
-            effects = SetTargetMining Value + 5 + Target.Population * 0.1
+            effects = SetTargetMining Value + .5 + Target.Population * 0.1
 
         EffectsGroup
             scope = Source
@@ -2718,7 +2718,7 @@ TERRIBLE_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = [Huge GasGiant Asteroids]
             ]
-            effects = SetTargetMining Value -5 + Target.Population * 0.1
+            effects = SetTargetMining Value -.5 + Target.Population * 0.1
 
         EffectsGroup
             scope = Source
@@ -2726,7 +2726,7 @@ TERRIBLE_MINING
                 Focus "FOCUS_MINING"
                 Planet type = Asteroids
             ]
-            effects = SetTargetMining Value + 15
+            effects = SetTargetMining Value + 1.5
 
         EffectsGroup
             scope = Source
@@ -2763,7 +2763,7 @@ AVERAGE_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Tiny
             ]
-            effects = SetTargetMining Value + 40 + Target.Population * 0.2
+            effects = SetTargetMining Value + 4.0 + Target.Population * 0.2
 
         EffectsGroup
             scope = Source
@@ -2771,7 +2771,7 @@ AVERAGE_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Small
             ]
-            effects = SetTargetMining Value + 30 + Target.Population * 0.2
+            effects = SetTargetMining Value + 3.0 + Target.Population * 0.2
 
         EffectsGroup
             scope = Source
@@ -2779,7 +2779,7 @@ AVERAGE_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Medium
             ]
-            effects = SetTargetMining Value + 20 + Target.Population * 0.2
+            effects = SetTargetMining Value + 2.0 + Target.Population * 0.2
 
         EffectsGroup
             scope = Source
@@ -2787,7 +2787,7 @@ AVERAGE_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Large
             ]
-            effects = SetTargetMining Value + 10 + Target.Population * 0.2
+            effects = SetTargetMining Value + 1.0 + Target.Population * 0.2
 
         EffectsGroup
             scope = Source
@@ -2803,7 +2803,7 @@ AVERAGE_MINING
                 Focus "FOCUS_MINING"
                 Planet type = Asteroids
             ]
-            effects = SetTargetMining Value + 30
+            effects = SetTargetMining Value + 3.0
 
         EffectsGroup
             scope = Source
@@ -2840,7 +2840,7 @@ GREAT_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Tiny
             ]
-            effects = SetTargetMining Value + 80 + Target.Population * 0.4
+            effects = SetTargetMining Value + 8.0 + Target.Population * 0.4
 
         EffectsGroup
             scope = Source
@@ -2848,7 +2848,7 @@ GREAT_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Small
             ]
-            effects = SetTargetMining Value + 60 + Target.Population * 0.4
+            effects = SetTargetMining Value + 6.0 + Target.Population * 0.4
 
         EffectsGroup
             scope = Source
@@ -2856,7 +2856,7 @@ GREAT_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Medium
             ]
-            effects = SetTargetMining Value + 40 + Target.Population * 0.4
+            effects = SetTargetMining Value + 4.0 + Target.Population * 0.4
 
         EffectsGroup
             scope = Source
@@ -2864,7 +2864,7 @@ GREAT_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Large
             ]
-            effects = SetTargetMining Value + 20 + Target.Population * 0.4
+            effects = SetTargetMining Value + 2.0 + Target.Population * 0.4
 
         EffectsGroup
             scope = Source
@@ -2872,7 +2872,7 @@ GREAT_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = [Huge GasGiant Asteroids]
             ]
-            effects = SetTargetMining Value + 10 + Target.Population * 0.4
+            effects = SetTargetMining Value + 1.0 + Target.Population * 0.4
 
         EffectsGroup
             scope = Source
@@ -2880,7 +2880,7 @@ GREAT_MINING
                 Focus "FOCUS_MINING"
                 Planet type = Asteroids
             ]
-            effects = SetTargetMining Value + 60
+            effects = SetTargetMining Value + 6.0
 
         EffectsGroup
             scope = Source
@@ -2918,7 +2918,7 @@ TERRIBLE_INDUSTRY
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
-            effects = SetTargetIndustry Value + Target.Population * 1
+            effects = SetTargetIndustry Value + Target.Population * .25
 
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
@@ -2943,7 +2943,7 @@ AVERAGE_INDUSTRY
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
-            effects = SetTargetIndustry Value + Target.Population * 2
+            effects = SetTargetIndustry Value + Target.Population * .5
 
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
@@ -2968,7 +2968,7 @@ GREAT_INDUSTRY
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
-            effects = SetTargetIndustry Value + Target.Population * 4
+            effects = SetTargetIndustry Value + Target.Population * 1
 
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
@@ -2993,7 +2993,7 @@ ULTIMATE_INDUSTRY
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
-            effects = SetTargetIndustry Value + Target.Population * 6
+            effects = SetTargetIndustry Value + Target.Population * 1.5
 
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
@@ -3022,28 +3022,28 @@ TERRIBLE_RESEARCH
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + Target.Population * 1
+            effects = SetTargetResearch Value + Target.Population * .25
 '''
 
 AVERAGE_RESEARCH
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + Target.Population * 2
+            effects = SetTargetResearch Value + Target.Population * .5
 '''
 
 GREAT_RESEARCH
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + Target.Population * 4
+            effects = SetTargetResearch Value + Target.Population * 1
 '''
 
 ULTIMATE_RESEARCH
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + Target.Population * 6
+            effects = SetTargetResearch Value + Target.Population * 1.5
 '''
 
 NO_GROUND_TROOPS

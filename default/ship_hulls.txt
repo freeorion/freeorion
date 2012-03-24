@@ -6,7 +6,7 @@ Hull
     fuel = 3
     stealth = 10
     structure = 100
-    buildCost = 1000
+    buildCost = 100
     buildTime = 10
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -32,7 +32,7 @@ Hull
     fuel = 0
     stealth = 10
     structure = 5
-    buildCost = 1
+    buildCost = .1
     buildTime = 1
     slots = Slot type = Internal position = (0.50, 0.50)
     location = Contains And [
@@ -52,7 +52,7 @@ Hull
     fuel = 3
     stealth = 2
     structure = 8
-    buildCost = 20
+    buildCost = 2.0
     buildTime = 2
     slots = [
         Slot type = External position = (0.60, 0.45)
@@ -75,7 +75,7 @@ Hull
     fuel = 3
     stealth = 2
     structure = 15
-    buildCost = 50
+    buildCost = 5.0
     buildTime = 2
     slots = [
         Slot type = External position = (0.35, 0.40)
@@ -99,7 +99,7 @@ Hull
     fuel = 3
     stealth = 15
     structure = 20
-    buildCost = 100
+    buildCost = 10.0
     buildTime = 2
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -124,7 +124,7 @@ Hull
     fuel = 3
     stealth = 2
     structure = 15
-    buildCost = 75
+    buildCost = 7.5
     buildTime = 2
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -170,7 +170,7 @@ Hull
     fuel = 3
     stealth = 10
     structure = 5
-    buildCost = 50
+    buildCost = 5.0
     buildTime = 2
     slots = [
         Slot type = External position = (0.40, 0.50)
@@ -213,7 +213,7 @@ Hull
     fuel = 3
     stealth = -5
     structure = 50
-    buildCost = 400
+    buildCost = 40
     buildTime = 2
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -258,7 +258,7 @@ Hull
     fuel = 3
     stealth = 10
     structure = 10
-    buildCost = 125
+    buildCost = 12.5
     buildTime = 2
     slots = [
         Slot type = External position = (0.15, 0.15)
@@ -303,7 +303,7 @@ Hull
     fuel = 3
     stealth = -30
     structure = 80
-    buildCost = 400
+    buildCost = 40.0
     buildTime = 5
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -354,7 +354,7 @@ Hull
     fuel = 3
     stealth = 30
     structure = 1
-    buildCost = 50
+    buildCost = 5.0
     buildTime = 3
     slots = Slot type = External position = (0.50, 0.50)
     location = And [
@@ -385,7 +385,7 @@ Hull
     fuel = 3
     stealth = 10
     structure = 60
-    buildCost = 750
+    buildCost = 75.0
     buildTime = 15
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -452,7 +452,7 @@ Hull
     fuel = 4
     stealth = 3
     structure = 15
-    buildCost = 50
+    buildCost = 5.0
     buildTime = 2
     slots = [
         Slot type = External position = (0.50, 0.15)
@@ -493,7 +493,7 @@ Hull
     fuel = 4
     stealth = 5
     structure = 5
-    buildCost = 20
+    buildCost = 2.0
     buildTime = 2
     slots = [
         Slot type = External position = (0.50, 0.15)
@@ -530,7 +530,7 @@ Hull
     fuel = 4
     stealth = 10
     structure = 40
-    buildCost = 100
+    buildCost = 10.0
     buildTime = 2
     slots = [
         Slot type = External position = (0.12, 0.15)
@@ -574,7 +574,7 @@ Hull
     fuel = 4
     stealth = 5
     structure = 20
-    buildCost = 80
+    buildCost = 8.0
     buildTime = 2
     slots = [
         Slot type = Internal position = (0.15, 0.40)
@@ -613,7 +613,7 @@ Hull
     fuel = 4
     stealth = 100
     structure = 5
-    buildCost = 30
+    buildCost = 3.0
     buildTime = 2
     slots = [
         Slot type = External position = (0.50, 0.15)
@@ -650,7 +650,7 @@ Hull
     fuel = 4
     stealth = -20
     structure = 20
-    buildCost = 600
+    buildCost = 60.0
     buildTime = 3
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -708,7 +708,7 @@ Hull
     fuel = 4
     stealth = 100
     structure = 3
-    buildCost = 50
+    buildCost = 5.0
     buildTime = 3
     slots = [
         Slot type = External position = (0.20, 0.40)
@@ -749,7 +749,7 @@ Hull
     fuel = 4
     stealth = -20
     structure = 20
-    buildCost = 500
+    buildCost = 50.0
     buildTime = 15
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -820,7 +820,7 @@ Hull
     fuel = 4
     stealth = 5
     structure = 100
-    buildCost = 100
+    buildCost = 10.0
     buildTime = 3
     slots = [
         Slot type = External position = (0.50, 0.15)
@@ -865,7 +865,7 @@ Hull
     fuel = 2
     stealth = 20
     structure = 15
-    buildCost = 10
+    buildCost = 1.0
     buildTime = 5
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -909,7 +909,7 @@ Hull
     fuel = 2
     stealth = 10
     structure = 5
-    buildCost = 50
+    buildCost = 5.0
     buildTime = 3
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -942,7 +942,7 @@ Hull
     fuel = 2
     stealth = 20
     structure = 15
-    buildCost = 30
+    buildCost = 3.0
     buildTime = 6
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -993,7 +993,7 @@ Hull
     fuel = 2
     stealth = 20
     structure = 30
-    buildCost = 20
+    buildCost = 2.0
     buildTime = 5
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1040,7 +1040,7 @@ Hull
     fuel = 2
     stealth = 20
     structure = 5
-    buildCost = 20
+    buildCost = 2.0
     buildTime = 7
     slots = [
         Slot type = External position = (0.15, 0.15)
@@ -1090,7 +1090,7 @@ Hull
     fuel = 2
     stealth = 20
     structure = 20
-    buildCost = 25
+    buildCost = 2.5
     buildTime = 8
     slots = [
         Slot type = External position = (0.15, 0.15)
@@ -1143,7 +1143,7 @@ Hull
     fuel = 2
     stealth = 0
     structure = 60
-    buildCost = 30
+    buildCost = 3.0
     buildTime = 10
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1190,7 +1190,7 @@ Hull
     fuel = 2
     stealth = 30
     structure = 50
-    buildCost = 75
+    buildCost = 7.5
     buildTime = 15
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1238,7 +1238,7 @@ Hull
     fuel = 2
     stealth = 20
     structure = 40
-    buildCost = 50
+    buildCost = 5.0
     buildTime = 30
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -1311,7 +1311,7 @@ Hull
     fuel = 5
     stealth = 75
     structure = 3
-    buildCost = 25
+    buildCost = 2.5
     buildTime = 2
     slots = Slot type = External position = (0.15, 0.40)
     location = And [
@@ -1339,7 +1339,7 @@ Hull
     fuel = 5
     stealth = 0
     structure = 20
-    buildCost = 200
+    buildCost = 20.0
     buildTime = 5
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -1399,7 +1399,7 @@ Hull
     fuel = 5
     stealth = -15
     structure = 80
-    buildCost = 75
+    buildCost = 7.5
     buildTime = 10
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -1442,7 +1442,7 @@ Hull
     fuel = 5
     stealth = -250
     structure = 100
-    buildCost = 300
+    buildCost = 30.0
     buildTime = 20
     slots = [
         Slot type = External position = (0.10, 0.15)

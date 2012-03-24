@@ -4,7 +4,7 @@ Part
     description = "GT_TROOP_POD_DESC"
     class = Troops
     capacity = 5
-    buildcost = 8
+    buildcost = .8
     buildtime = 1
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
@@ -17,7 +17,7 @@ Part
     damage = 1
     ROF = 1
     range = 50
-    buildcost = 5
+    buildcost = .5
     buildtime = 1
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -30,7 +30,7 @@ Part
     damage = 2
     ROF = 1
     range = 50
-    buildcost = 5
+    buildcost = .5
     buildtime = 1
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -43,7 +43,7 @@ Part
     damage = 4
     ROF = 1
     range = 50
-    buildcost = 5
+    buildcost = .5
     buildtime = 1
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -56,7 +56,7 @@ Part
     damage = 7
     ROF = 1
     range = 50
-    buildcost = 5
+    buildcost = .5
     buildtime = 1
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -69,7 +69,7 @@ Part
     damage = 10
     ROF = 1
     range = 50
-    buildcost = 25
+    buildcost = 2.5
     buildtime = 2
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -82,7 +82,7 @@ Part
     damage = 15
     ROF = 1
     range = 50
-    buildcost = 25
+    buildcost = 2.5
     buildtime = 2
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -95,7 +95,7 @@ Part
     damage = 20
     ROF = 1
     range = 50
-    buildcost = 25
+    buildcost = 2.5
     buildtime = 2
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -108,7 +108,7 @@ Part
     damage = 25
     ROF = 1
     range = 50
-    buildcost = 25
+    buildcost = 2.5
     buildtime = 2
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -121,7 +121,7 @@ Part
     damage = 30
     ROF = 1
     range = 50
-    buildcost = 100
+    buildcost = 10
     buildtime = 3
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -134,7 +134,7 @@ Part
     damage = 38
     ROF = 1
     range = 50
-    buildcost = 100
+    buildcost = 10
     buildtime = 3
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -147,7 +147,7 @@ Part
     damage = 46
     ROF = 1
     range = 50
-    buildcost = 100
+    buildcost = 10
     buildtime = 3
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -160,7 +160,7 @@ Part
     damage = 53
     ROF = 1
     range = 50
-    buildcost = 100
+    buildcost = 10
     buildtime = 3
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -173,7 +173,7 @@ Part
     damage = 60
     ROF = 1
     range = 50
-    buildcost = 500
+    buildcost = 50
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -186,7 +186,7 @@ Part
     damage = 70
     ROF = 1
     range = 50
-    buildcost = 500
+    buildcost = 50
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -199,7 +199,7 @@ Part
     damage = 80
     ROF = 1
     range = 50
-    buildcost = 500
+    buildcost = 50
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -212,7 +212,7 @@ Part
     damage = 90
     ROF = 1
     range = 50
-    buildcost = 500
+    buildcost = 50
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -225,7 +225,7 @@ Part
     damage = 100
     ROF = 1
     range = 50
-    buildcost = 500
+    buildcost = 50
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -236,7 +236,7 @@ Part
     description = "AR_LEAD_PLATE_DESC"
     class = Armour
     capacity = 1
-    buildcost = 6
+    buildcost = .6
     buildtime = 1
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -247,7 +247,7 @@ Part
     description = "AR_ZORTRIUM_PLATE_DESC"
     class = Armour
     capacity = 5
-    buildcost = 15
+    buildcost = 1.5
     buildtime = 3
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -258,7 +258,7 @@ Part
     description = "AR_ROCK_PLATE_DESC"
     class = Armour
     capacity = 4
-    buildcost = 10
+    buildcost = 1.0
     buildtime = 1
     mountableSlotTypes = External
     location = And [
@@ -279,7 +279,7 @@ Part
     description = "AR_CRYSTAL_PLATE_DESC"
     class = Armour
     capacity = 20
-    buildcost = 20
+    buildcost = 2
     buildtime = 3
     mountableSlotTypes = External
     location = And [
@@ -300,7 +300,7 @@ Part
     description = "AR_NEUTRONIUM_PLATE_DESC"
     class = Armour
     capacity = 25
-    buildcost = 25
+    buildcost = 2.5
     buildtime = 4
     mountableSlotTypes = External
     location = And [
@@ -321,7 +321,7 @@ Part
     description = "SH_DEFENSE_GRID_DESC"
     class = Shield
     capacity = 1
-    buildcost = 4
+    buildcost = .4
     buildtime = 0
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
@@ -332,7 +332,7 @@ Part
     description = "SH_DEFLECTOR_DESC"
     class = Shield
     capacity = 3
-    buildcost = 12
+    buildcost = 1.2
     buildtime = 2
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
@@ -343,7 +343,7 @@ Part
     description = "SH_MULTISPEC_DESC"
     class = Shield
     capacity = 10
-    buildcost = 100
+    buildcost = 10
     buildtime = 5
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
@@ -360,7 +360,7 @@ Part
     description = "DT_SENSORS_DESC"
     class = Detection
     capacity = 0
-    buildcost = 60
+    buildcost = 6
     buildtime = 5
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -377,7 +377,7 @@ Part
     description = "DT_NEUTRON_SCANNER_DESC"
     class = Detection
     capacity = 0
-    buildcost = 45
+    buildcost = 4.5
     buildtime = 5
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -394,7 +394,7 @@ Part
     description = "DT_ACTIVE_RADAR_DESC"
     class = Detection
     capacity = 0
-    buildcost = 25
+    buildcost = 2.5
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -411,7 +411,7 @@ Part
     description = "DT_OPTICAL_SCANNER_DESC"
     class = Detection
     capacity = 0
-    buildcost = 15
+    buildcost = 1.5
     buildtime = 2
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -427,7 +427,7 @@ Part
     name = "FU_BASIC_TANK"
     description = "FU_BASIC_TANK_DESC"
     class = Fuel
-    capacity = 1
+    capacity = .1
     buildcost = 5
     buildtime = 1
     mountableSlotTypes = Internal
@@ -439,7 +439,7 @@ Part
     description = "FU_DEUTERIUM_TANK_DESC"
     class = Fuel
     capacity = 2
-    buildcost = 8
+    buildcost = .8
     buildtime = 1
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
@@ -450,7 +450,7 @@ Part
     description = "FU_ANTIMATTER_TANK_DESC"
     class = Fuel
     capacity = 5
-    buildcost = 20
+    buildcost = 2.0
     buildtime = 6
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
@@ -461,7 +461,7 @@ Part
     description = "FU_ZERO_FUEL_DESC"
     class = Fuel
     capacity = 0
-    buildcost = 400
+    buildcost = 40
     buildtime = 5
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
@@ -477,7 +477,7 @@ Part
     description = "ST_PHASING_CLOAK_DESC"
     class = Stealth
     capacity = 0
-    buildcost = 400
+    buildcost = 40
     buildtime = 10
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
@@ -494,7 +494,7 @@ Part
     description = "ST_DIM_CLOAK_DESC"
     class = Stealth
     capacity = 0
-    buildcost = 150
+    buildcost = 15
     buildtime = 7
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
@@ -511,7 +511,7 @@ Part
     description = "ST_ABSORPTION_FIELD_DESC"
     class = Stealth
     capacity = 0
-    buildcost = 50
+    buildcost = 5
     buildtime = 5
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
@@ -528,7 +528,7 @@ Part
     description = "ST_EM_DAMPER_DESC"
     class = Stealth
     capacity = 0
-    buildcost = 20
+    buildcost = 2
     buildtime = 3
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
@@ -545,7 +545,7 @@ Part
     description = "CO_COLONY_POD_DESC"
     class = Colony
     capacity = .25
-    buildcost = 200
+    buildcost = 20
     buildtime = 10
     mountableSlotTypes = Internal
     location = And [
@@ -559,7 +559,7 @@ Part
     description = "CO_SUSPEND_ANIM_POD_DESC"
     class = Colony
     capacity = .5
-    buildcost = 500
+    buildcost = 50
     buildtime = 10
     mountableSlotTypes = Internal
     location = And [
@@ -573,7 +573,7 @@ Part
     description = "CO_OUTPOST_MOD_DESC"
     class = Colony
     capacity = 0.1
-    buildcost = 100
+    buildcost = 10
     buildtime = 4
     mountableSlotTypes = Internal
     location = And [
@@ -587,7 +587,7 @@ Part
     description = "SP_DISTORTION_MODULATOR_DESC"
     class = Fuel
     capacity = 0
-    buildcost = 150
+    buildcost = 15
     buildtime = 10
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
@@ -604,7 +604,7 @@ Part
     description = "SP_CLOUD"
     class = Fuel
     capacity = 0
-    buildcost = 1
+    buildcost = .1
     buildtime = 1
     mountableSlotTypes = Internal
     location = All
@@ -648,7 +648,7 @@ Part
     description = "SP_ASH"
     class = Fuel
     capacity = 0
-    buildcost = 1
+    buildcost = .1
     buildtime = 1
     mountableSlotTypes = Internal
     location = All
@@ -692,7 +692,7 @@ Part
     description = "SP_DIM"
     class = Fuel
     capacity = 0
-    buildcost = 1
+    buildcost = .1
     buildtime = 1
     mountableSlotTypes = Internal
     location = All
@@ -736,7 +736,7 @@ Part
     description = "SP_VOID"
     class = Fuel
     capacity = 0
-    buildcost = 1
+    buildcost = .1
     buildtime = 1
     mountableSlotTypes = Internal
     location = All
