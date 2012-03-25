@@ -9,11 +9,8 @@
 
 
 namespace parse {
-
     namespace detail {
-
-        struct info_visitor
-        {
+        struct info_visitor {
             typedef void result_type;
             typedef boost::spirit::utf8_string string;
 
@@ -39,15 +36,13 @@ namespace parse {
 
         void default_send_error_string(const std::string& str);
 
-        extern const char* s_filename;
-        extern text_iterator* s_text_it;
-        extern text_iterator s_begin;
-        extern text_iterator s_end;
-
+        extern const char*      s_filename;
+        extern text_iterator*   s_text_it;
+        extern text_iterator    s_begin;
+        extern text_iterator    s_end;
     }
 
-    struct report_error_
-    {
+    struct report_error_ {
         template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>
         struct result
         { typedef void type; };
@@ -65,6 +60,8 @@ namespace parse {
     private:
         std::pair<text_iterator, unsigned int> line_start_and_line_number(text_iterator error_position) const;
         std::string get_line(text_iterator line_start) const;
+        std::string get_lines_before(text_iterator line_start) const;
+        std::string get_lines_after(text_iterator line_start) const;
         void generate_error_string(const token_iterator& first,
                                    const token_iterator& it,
                                    const boost::spirit::info& rule_name,
@@ -72,7 +69,6 @@ namespace parse {
     };
 
     extern const boost::phoenix::function<report_error_> report_error;
-
 }
 
 #endif
