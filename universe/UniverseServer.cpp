@@ -1738,8 +1738,8 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
         return;
 
     Logger().debugStream() << "Species that can be added as natives:";
-    for (SpeciesManager::iterator species_it = species_manager.begin();
-        species_it != species_manager.end(); ++species_it)
+    for (SpeciesManager::native_iterator species_it = species_manager.native_begin();
+        species_it != species_manager.native_end(); ++species_it)
     {
         Logger().debugStream() << "... " << species_it->first << " : " <<
             (species_it->second->Playable() ? "Playable" : "") << " / " <<
@@ -1763,17 +1763,17 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
 
         // find species that like this planet type
         std::vector<std::string> suitable_species;
-        for (SpeciesManager::iterator species_it = species_manager.begin();
-             species_it != species_manager.end(); ++species_it)
+        for (SpeciesManager::native_iterator species_it = species_manager.native_begin();
+             species_it != species_manager.native_end(); ++species_it)
         {
             if (species_it->second->GetPlanetEnvironment(planet_type) == PE_GOOD)
                 suitable_species.push_back(species_it->first);
         }
         if (suitable_species.empty()) {
-            Logger().debugStream() << "... no suitable species found (with good environment on this planet)";
+            Logger().debugStream() << "... no suitable native species found (with good environment on this planet)";
             continue;
         }
-        Logger().debugStream() << " ... " << suitable_species.size() << " species are appropriate for this planet";
+        Logger().debugStream() << " ... " << suitable_species.size() << " native species are appropriate for this planet";
 
         // pick a species and assign to the planet
         int species_idx = RandSmallInt(0, suitable_species.size() - 1);
