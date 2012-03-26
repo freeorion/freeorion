@@ -467,6 +467,7 @@ Species
 Species
     name = "SP_CRAY"
     description = "SP_CRAY_DESC"
+    Native
     CanProduceShips
     CanColonize
     
@@ -502,6 +503,7 @@ Species
 Species
     name = "SP_ETTY"
     description = "SP_ETTY_DESC"
+    Native
     CanProduceShips
     CanColonize
     
@@ -538,6 +540,7 @@ Species
 Species
     name = "SP_CYNOS"
     description = "SP_CYNOS_DESC"
+    Native
     CanProduceShips
     
     foci = [
@@ -570,7 +573,7 @@ Species
 Species
     name = "SP_PHINNERT"
     description = "SP_PHINNERT_DESC"
-    
+    Native
     CanColonize
     
     foci = [
@@ -604,6 +607,7 @@ Species
 Species
     name = "SP_EGASSEM"
     description = "SP_EGASSEM_DESC"
+    Native
     CanProduceShips
     CanColonize
     
@@ -639,6 +643,7 @@ Species
 Species
     name = "SP_SSLITH"
     description = "SP_SSLITH_DESC"
+    Native
     CanProduceShips
     CanColonize
     
@@ -674,6 +679,7 @@ Species
 Species
     name = "SP_FIFTYSEVEN"
     description = "SP_FIFTYSEVEN_DESC"
+    Native
     
     foci = [
         [[HAS_FARMING_FOCUS]]
@@ -707,6 +713,7 @@ Species
     description = "SP_SETINON_DESC"
     CanProduceShips
     CanColonize
+    
     
     foci = [
         [[HAS_FARMING_FOCUS]]
@@ -775,6 +782,7 @@ Species
 Species
     name = "SP_TRENCHERS"
     description = "SP_TRENCHERS_DESC"
+    Native
     
     foci = [
         [[HAS_MINING_FOCUS]]
@@ -804,6 +812,7 @@ Species
 Species
     name = "SP_RAAAGH"
     description = "SP_RAAAGH_DESC"
+    Native
     
     foci = [
         [[HAS_FARMING_FOCUS]]
@@ -837,6 +846,7 @@ Species
 Species
     name = "SP_BEIGEGOO"
     description = "SP_BEIGEGOO_DESC"
+    Native
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -867,6 +877,7 @@ Species
 Species
     name = "SP_SILEXIAN"
     description = "SP_SILEXIAN_DESC"
+    Native
     
     CanColonize
     
@@ -901,6 +912,7 @@ Species
 Species
     name = "SP_KOBUNTURA"
     description = "SP_KOBUNTURA_DESC"
+    Native
     
     foci = [
         [[HAS_FARMING_FOCUS]]
@@ -934,6 +946,7 @@ Species
 Species
     name = "SP_UGMORRS"
     description = "SP_UGMORRS_DESC"
+    Native
     CanProduceShips
     CanColonize
     
@@ -969,6 +982,7 @@ Species
 Species
     name = "SP_GISGUFGTHRIM"
     description = "SP_GISGUFGTHRIM_DESC"
+    Native
     CanProduceShips
     
     foci = [
@@ -1004,6 +1018,7 @@ Species
 Species
     name = "SP_HIDDENGARDENER"
     description = "SP_HIDDENGARDENER_DESC"
+    Native
     
     foci = [
         [[HAS_FARMING_FOCUS]]
@@ -1037,6 +1052,7 @@ Species
 Species
     name = "SP_ABADDONNIANS"
     description = "SP_ABADDONNIANS_DESC"
+    Native
     CanProduceShips
     CanColonize
     
@@ -1072,6 +1088,7 @@ Species
 Species
     name = "SP_ACIREMA"
     description = "SP_ACIREMA_DESC"
+    Native
     CanProduceShips
     
     foci = [
@@ -1202,6 +1219,7 @@ Species
 Species
     name = "SP_TEST"
     description = "SP_TEST_DESC"
+    Native
     CanProduceShips
     CanColonize
     
