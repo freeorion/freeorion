@@ -1113,6 +1113,30 @@ Species
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
         [[AVERAGE_POPULATION]]
+
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                OR [
+                    Turn low = 10 high = 10
+                    Turn low = 80 high = 80
+                    Turn low = 150 high = 150
+                    Turn low = 220 high = 220
+                    Turn low = 290 high = 290
+                ]
+                Not WithinStarlaneJumps 1 Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+            ]
+            effects = CreateShip "SM_ACIREMA_GUARD"
+
+        EffectsGroup     
+            scope = Source     
+            effects = [
+                SetMaxShield Value + 5
+                SetMaxDefense Value + 5
+            ]
     ]
     
     [[RADIATED_STANDARD_EP]]

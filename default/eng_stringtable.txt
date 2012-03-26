@@ -402,6 +402,11 @@ Asteroid Snail
 SM_SNAIL_DESC
 Feeding upon minerals, the shell of a space snail strongly resembles a normal asteroid making them very hard to detect.
 
+SM_ACIREMA_GUARD
+Acirema Guard Ship
+SM_ACIREMA_GUARD_DESC
+An unmanned armed ship build by the Acirema guards the system.
+
 
 ##############################
 # Predefined Starting Fleets #
