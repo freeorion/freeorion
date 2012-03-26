@@ -711,6 +711,7 @@ Species
 Species
     name = "SP_SETINON"
     description = "SP_SETINON_DESC"
+    Native
     CanProduceShips
     CanColonize
     
@@ -749,6 +750,7 @@ Species
 Species
     name = "SP_NYMNMN"
     description = "SP_NYMNMN_DESC"
+    Native
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
