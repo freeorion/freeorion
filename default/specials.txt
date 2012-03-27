@@ -12,7 +12,7 @@ Special
         scope = Source
         activation = Source
         effects = [
-            SetTargetResearch Value + 3
+            SetTargetResearch Value + .3
             SetTargetConstruction Value - 20
         ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
@@ -50,7 +50,7 @@ Special
         EffectsGroup
             scope = Source
             activation = Not OwnerHasTech "GRO_ORBIT_FARMING"
-            effects = SetTargetFarming Value - 10
+            effects = SetTargetFarming Value - 1.0
         EffectsGroup
             scope = Source
             activation = Source
@@ -226,7 +226,7 @@ Special
         EffectsGroup
             scope = Source
             activation = Focus "FOCUS_MINING"
-            effects = SetTargetMining Value + 50
+            effects = SetTargetMining Value + 5.0
 
         EffectsGroup
             scope = Source
@@ -992,7 +992,7 @@ Special
                 ]
             ]
             effects = [
-                SetEmpireMineralStockpile value = Value + 20
+                SetEmpireMineralStockpile value = Value + 2.0
                 GenerateSitRepMessage
                     message = "EFFECT_DERELICT_MINERALS"
                     parameters = [

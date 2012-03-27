@@ -2560,7 +2560,7 @@ STANDARD_FOOD_USE
 '''EffectsGroup
             scope = Source
             activation = Source
-            effects = SetFoodConsumption Value + Target.Population * 1
+            effects = SetFoodConsumption Value + Target.Population * .25
 
         EffectsGroup
             scope = Source

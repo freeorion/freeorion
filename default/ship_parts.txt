@@ -427,8 +427,8 @@ Part
     name = "FU_BASIC_TANK"
     description = "FU_BASIC_TANK_DESC"
     class = Fuel
-    capacity = .1
-    buildcost = 5
+    capacity = 1
+    buildcost = .5
     buildtime = 1
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner

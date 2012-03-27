@@ -358,7 +358,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
             ]
-            effects = SetTargetResearch Value + 5
+            effects = SetTargetResearch Value + .5
     graphic = "icons/tech/basic_autolabs.png"
 
 Tech
@@ -1339,7 +1339,7 @@ Tech
                 PopulationCenter
                 Focus "FOCUS_MINING"
             ]
-            effects = SetTargetMining Value + 10
+            effects = SetTargetMining Value + 1.0
 
         EffectsGroup
             scope = And [
@@ -1421,7 +1421,7 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
-            effects = SetTargetFarming Value + 2
+            effects = SetTargetFarming Value + .2
     graphic = "icons/tech/orbital_farming.png"
 
 Tech
@@ -1581,7 +1581,7 @@ Tech
                 ProductionCenter
                 Focus "FOCUS_MINING"
             ]
-            effects = SetTargetMining Value + 10
+            effects = SetTargetMining Value + 1.0
         ]
     graphic = "icons/tech/robotic_production.png"
     
@@ -1660,7 +1660,7 @@ Tech
                 PopulationCenter
                 OwnedBy TheEmpire Source.Owner
             ]
-            effects = SetTargetIndustry Value +5
+            effects = SetTargetIndustry Value + .5
     graphic = "icons/tech/basic_autofactories.png"
 
 Tech
@@ -1785,7 +1785,7 @@ Tech
                 Focus "FOCUS_MINING"
             ]
             activation = OwnerHasTech "PRO_ASTEROID_MINE"
-            effects = SetTargetMining Value + 10
+            effects = SetTargetMining Value + 1.0
     graphic = "icons/tech/asteroid_mining_ii.png"
 
 Tech
@@ -1804,7 +1804,7 @@ Tech
                 Planet size = Tiny
                 Focus "FOCUS_MINING"
             ]
-            effects = SetTargetMining Value + 20
+            effects = SetTargetMining Value + 2.0
 
         EffectsGroup
             scope = And [
@@ -1813,7 +1813,7 @@ Tech
                 Planet size = Small
                 Focus "FOCUS_MINING"
             ]
-            effects = SetTargetMining Value + 15
+            effects = SetTargetMining Value + 1.5
 
         EffectsGroup
             scope = And [
@@ -1822,7 +1822,7 @@ Tech
                 Planet size = Medium
                 Focus "FOCUS_MINING"
             ]
-            effects = SetTargetMining Value + 10
+            effects = SetTargetMining Value + 1.0
 
         EffectsGroup
             scope = And [
@@ -1831,7 +1831,7 @@ Tech
                 Planet size = Large
                 Focus "FOCUS_MINING"
             ]
-            effects = SetTargetMining Value + 5
+            effects = SetTargetMining Value + .5
     ]
     graphic = "icons/tech/deep_core_mining.png"
 

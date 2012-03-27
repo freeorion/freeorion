@@ -13,7 +13,7 @@ BuildingType
                 Contains Source
             ]
             effects = [
-                SetTargetResearch Value + 5
+                SetTargetResearch Value + .5
                 SetTargetFarming Value + Target.Population * 1.0
                 SetTargetMining Value + Target.Population * 0.5
                 SetTargetIndustry Value + Target.Population * 1.0
@@ -709,7 +709,7 @@ BuildingType
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_MINING_EFFECT"
-            effects = SetTargetMining Value + 20
+            effects = SetTargetMining Value + 2.0
     ]
     graphic = ""
 
