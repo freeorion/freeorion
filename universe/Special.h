@@ -48,7 +48,7 @@ public:
     const std::string&              Name() const        { return m_name; }          ///< returns the unique name for this type of special
     const std::string&              Description() const { return m_description; }   ///< returns a text description of this type of special
     std::string                     Dump() const;       ///< returns a data file format representation of this object
-    double                          Stealth() const;    ///< returns the stealth of the special, which determines how easily it is seen by empires
+    double                          Stealth() const     { return m_stealth; }       ///< returns the stealth of the special, which determines how easily it is seen by empires
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const
     { return m_effects; }                               ///< returns the EffectsGroups that encapsulate the effects that specials of this type have
     double                          SpawnRate() const   { return m_spawn_rate; }
