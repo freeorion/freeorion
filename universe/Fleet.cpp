@@ -62,8 +62,9 @@ void Fleet::Copy(const UniverseObject* copied_object, int empire_id) {
 
     int copied_object_id = copied_object->ID();
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+    std::set<std::string> visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
-    UniverseObject::Copy(copied_object, vis);
+    UniverseObject::Copy(copied_object, vis, visible_specials);
 
     if (vis >= VIS_BASIC_VISIBILITY) {
         this->m_ships =         copied_fleet->VisibleContainedObjects(empire_id);

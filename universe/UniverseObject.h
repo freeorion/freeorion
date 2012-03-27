@@ -175,7 +175,8 @@ protected:
     void                    AddMeter(MeterType meter_type); ///< inserts a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
     void                    Init();                         ///< adds stealth meter
 
-    void                    Copy(const UniverseObject* copied_object, Visibility vis);  ///< used by public UniverseObject::Copy and derived classes' ::Copy methods
+    void                    Copy(const UniverseObject* copied_object, Visibility vis,
+                                 const std::set<std::string>& visible_specials);///< used by public UniverseObject::Copy and derived classes' ::Copy methods
 
 private:
     std::map<MeterType, Meter>  CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis

@@ -98,10 +98,11 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     SetSize(size);
 
     const double SPIN_STD_DEV = 0.1;
-    const double REVERSE_SPIN_CHANCE = 0.01;
+    const double REVERSE_SPIN_CHANCE = 0.06;
     m_rotational_period = RandGaussian(1.0, SPIN_STD_DEV) / SizeRotationFactor(m_size);
     if (RandZeroToOne() < REVERSE_SPIN_CHANCE)
         m_rotational_period = -m_rotational_period;
+    Logger().debugStream() << "Planet::Planet rotational period: " << m_rotational_period;
 }
 
 Planet* Planet::Clone(int empire_id) const {
@@ -126,8 +127,9 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id) {
 
     int copied_object_id = copied_object->ID();
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+    std::set<std::string> visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
-    UniverseObject::Copy(copied_object, vis);
+    UniverseObject::Copy(copied_object, vis, visible_specials);
     PopCenter::Copy(copied_planet, vis);
     ResourceCenter::Copy(copied_planet, vis);
 

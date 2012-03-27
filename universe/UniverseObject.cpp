@@ -65,7 +65,9 @@ UniverseObject::UniverseObject(const UniverseObject& rhs) :
 UniverseObject::~UniverseObject()
 {}
 
-void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis) {
+void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis,
+                          const std::set<std::string>& visible_specials)
+{
     if (copied_object == this)
         return;
     if (!copied_object) {
@@ -94,10 +96,21 @@ void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis) {
         this->m_y =                     copied_object->m_y;
         this->m_system_id =             copied_object->m_system_id;
 
+        this->m_specials.clear();
+        for (std::map<std::string, int>::const_iterator copied_special_it = copied_object->m_specials.begin();
+             copied_special_it != copied_object->m_specials.end(); ++copied_special_it)
+        {
+            Logger().debugStream() << "UniverseObject::Copy " << copied_object->Name() << " has special " << copied_special_it->first;
+            if (visible_specials.find(copied_special_it->first) != visible_specials.end()) {
+                this->m_specials[copied_special_it->first] = copied_special_it->second;
+                Logger().debugStream() << " ... which is copied.";
+            }
+        }
+
+
         if (vis >= VIS_PARTIAL_VISIBILITY) {
 
             this->m_owner_empire_id =   copied_object->m_owner_empire_id;
-            this->m_specials =          copied_object->m_specials;
             this->m_created_on_turn =   copied_object->m_created_on_turn;
 
             if (vis >= VIS_FULL_VISIBILITY) {
