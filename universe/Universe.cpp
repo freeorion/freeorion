@@ -576,6 +576,32 @@ const Universe::VisibilityTurnMap& Universe::GetObjectVisibilityTurnMapByEmpire(
     return object_it->second;
 }
 
+std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const {
+    if (empire_id != ALL_EMPIRES) {
+        EmpireObjectSpecialsMap::const_iterator empire_it = m_empire_object_visible_specials.find(empire_id);
+        if (empire_it == m_empire_object_visible_specials.end())
+            return std::set<std::string>();
+        const ObjectSpecialsMap& object_specials_map = empire_it->second;
+        ObjectSpecialsMap::const_iterator object_it = object_specials_map.find(object_id);
+        if (object_it == object_specials_map.end())
+            return std::set<std::string>();
+        return object_it->second;
+    } else {
+        const UniverseObject* obj = m_objects.Object(object_id);
+        if (!obj)
+            return std::set<std::string>();
+        // all specials visible
+        std::set<std::string> retval;
+        const std::map<std::string, int>& specials = obj->Specials();
+        for (std::map<std::string, int>::const_iterator it = specials.begin();
+             it != specials.end(); ++it)
+        {
+            retval.insert(it->first);
+        }
+        return retval;
+    }
+}
+
 double Universe::LinearDistance(int system1_id, int system2_id) const {
     try {
         int system1_index = m_system_id_to_graph_index.at(system1_id);
@@ -1327,12 +1353,15 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes, bool 
 }
 
 namespace {
-    /** Sets visibilities for indicated \a empire of object with \a object_id
+    /** Sets visibilities for indicated \a empire_id of object with \a object_id
       * in the passed-in \a empire_vis_map to \a vis */
     void SetEmpireObjectVisibility(Universe::EmpireObjectVisibilityMap& empire_vis_map,
                                    std::map<int, std::set<int> >& empire_known_design_ids,
                                    int empire_id, int object_id, Visibility vis)
     {
+        if (empire_id == ALL_EMPIRES)
+            return;
+
         // get visibility map for empire and find object in it
         Universe::ObjectVisibilityMap& vis_map = empire_vis_map[empire_id];
         Universe::ObjectVisibilityMap::iterator vis_map_it = vis_map.find(object_id);
@@ -1361,6 +1390,8 @@ namespace {
             }
         }
     }
+
+    /** Records visible specials of \a object_id for indicated \a empire_id */
 }
 
 void Universe::UpdateEmpireObjectVisibilities() {
@@ -1380,6 +1411,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
 
 
     m_empire_object_visibility.clear();
+    m_empire_object_visible_specials.clear();
 
 
     if (ALL_OBJECTS_VISIBLE) {
@@ -1388,9 +1420,19 @@ void Universe::UpdateEmpireObjectVisibilities() {
         for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
             all_empire_ids.insert(empire_it->first);
 
-        for (ObjectMap::const_iterator obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it)
-            for (std::set<int>::const_iterator empire_it = all_empire_ids.begin(); empire_it != all_empire_ids.end(); ++empire_it)
+        for (ObjectMap::const_iterator obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it) {
+            for (std::set<int>::const_iterator empire_it = all_empire_ids.begin(); empire_it != all_empire_ids.end(); ++empire_it) {
+                // objects
                 SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, *empire_it, obj_it->first, VIS_FULL_VISIBILITY);
+                // specials on objects
+                const std::map<std::string, int>& specials = obj_it->second->Specials();
+                for (std::map<std::string, int>::const_iterator special_it = specials.begin();
+                     special_it != specials.end(); ++special_it)
+                {
+                    m_empire_object_visible_specials[*empire_it][obj_it->first].insert(special_it->first);
+                }
+            }
+        }
 
         return;
     }
@@ -1679,6 +1721,116 @@ void Universe::UpdateEmpireObjectVisibilities() {
             } else {
                 if (system_vis_it->second < VIS_BASIC_VISIBILITY)
                     system_vis_it->second = VIS_BASIC_VISIBILITY;
+            }
+        }
+    }
+
+
+    // after setting object visibility, similarly set visibility of objects'
+    // specials for each empire
+    // for each detecting object
+    for (ObjectMap::const_iterator detector_it = m_objects.const_begin(); detector_it != m_objects.const_end(); ++detector_it) {
+        // get detector object
+        const UniverseObject* detector = detector_it->second;
+        if (!detector) continue;
+        // unowned detectors can't contribute to empires' visibility
+        if (detector->Unowned())
+            continue;
+        int detector_id = detector_it->first;
+
+        // don't allow moving fleets or ships to provide detection
+        const Fleet* fleet = universe_object_cast<const Fleet*>(detector);
+        if (!fleet)
+            if (const Ship* ship = universe_object_cast<const Ship*>(detector))
+                fleet = m_objects.Object<Fleet>(ship->FleetID());
+        if (fleet) {
+            int next_id = fleet->NextSystemID();
+            int cur_id = fleet->SystemID();
+            if (next_id != INVALID_OBJECT_ID && next_id != cur_id)
+                continue;
+        }
+
+
+        // get detection ability
+        const Meter* detection_meter = detector->GetMeter(METER_DETECTION);
+        if (!detection_meter) continue;
+        double detection = detection_meter->Current();
+
+        EmpireObjectVisibilityMap::const_iterator empire_obj_vis_map_it =
+            m_empire_object_visibility.find(detector->Owner());
+        if (empire_obj_vis_map_it == m_empire_object_visibility.end())
+            continue;
+        const ObjectVisibilityMap& obj_vis_map = empire_obj_vis_map_it->second;
+
+
+        //Logger().debugStream() << "Detector object: " << detector->Name() << " (" << detector->ID() << ") detection: " << detection;
+
+        // position of detector
+        double xd = detector->X();
+        double yd = detector->Y();
+
+
+        // for each detectable object
+        for (ObjectMap::const_iterator target_it = m_objects.const_begin(); target_it != m_objects.const_end(); ++target_it) {
+            // is detectable object at least basically visible to detector's owner?
+            // if not, skip it, as no specials on it can be seen on objects that
+            // can't be seen by an empire
+            ObjectVisibilityMap::const_iterator obj_vis_map_it = obj_vis_map.find(target_it->first);
+            if (obj_vis_map_it == obj_vis_map.end())
+                continue;
+            if (obj_vis_map_it->second < VIS_BASIC_VISIBILITY)
+                continue;
+
+            // this object is visibile to this empire
+
+            // get stealthy object's specials
+            const UniverseObject* target = target_it->second;
+            if (!target) continue;
+
+
+            const std::map<std::string, int>& specials = target->Specials();
+            for (std::map<std::string, int>::const_iterator special_it = specials.begin();
+                 special_it != specials.end(); ++special_it)
+            {
+                // get special's stealth
+                const std::string& special_name = special_it->first;
+
+                // is special already visible for detector's owner?  If so, skip it
+                ObjectSpecialsMap& obj_specials_map = m_empire_object_visible_specials[detector->Owner()];
+                std::set<std::string>& visible_specials = obj_specials_map[target_it->first];
+                if (visible_specials.find(special_name) != visible_specials.end())
+                    continue;
+
+                const Special* special = GetSpecial(special_name);
+                if (!special)
+                    continue;
+                double stealth = special->Stealth();
+
+                // zero-or-less stealth specials are always visible if their object is visible
+                if (stealth <= 0) {
+                    visible_specials.insert(special_name);
+                    continue;
+                }
+
+                // test if detection strength and range are adequate to see special
+
+                // position of target
+                double xt = target->X();
+                double yt = target->Y();
+
+                // distance squared
+                double dist2 = (xt-xd)*(xt-xd) + (yt-yd)*(yt-yd);
+
+                // To determine if a detector can detect a special on a target,
+                // the special's stealth is subtracted from the detector's range,
+                // and the result is compared to the distance between them. If the
+                // distance is less than (detector_detection - special_stealth),
+                // then the special is seen by the detector
+                double detect_range = detection - stealth;
+                if (detect_range >= 0.0 && dist2 <= detect_range*detect_range) {
+                    visible_specials.insert(special_name);
+                    Logger().debugStream() << "Special " << special_name << " on " << target->Name() << " is visible to empire " << detector->Owner();
+                }
             }
         }
     }

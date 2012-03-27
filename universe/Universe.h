@@ -70,6 +70,9 @@ public:
     typedef std::map<int, Visibility>               ObjectVisibilityMap;            ///< map from object id to Visibility level for a particular empire
     typedef std::map<int, ObjectVisibilityMap>      EmpireObjectVisibilityMap;      ///< map from empire id to ObjectVisibilityMap for that empire
 
+    typedef std::map<int, std::set<std::string> >   ObjectSpecialsMap;              ///< map from object id to names of specials on an object
+    typedef std::map<int, ObjectSpecialsMap>        EmpireObjectSpecialsMap;        ///< map from empire id to ObjectSpecialsMap of known specials for objects for that empire
+
     typedef std::map<int, ShipDesign*>              ShipDesignMap;                  ///< ShipDesigns in universe; keyed by design id
     typedef ShipDesignMap::const_iterator           ship_design_iterator;           ///< const iterator over ship designs created by players that are known by this client
 
@@ -127,7 +130,12 @@ public:
       * UniverseObject with id \a object_id .  The returned map may be empty or
       * not have entries for all visibility levels, if the empire has not seen
       * the object at that visibility level yet. */
-    const VisibilityTurnMap&GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const;
+    const VisibilityTurnMap&
+                            GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const;
+
+    /** Returns the set of specials attached to the object with id \a object_id
+      * that the empire with id \a empire_id can see this turn. */
+    std::set<std::string>   GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const;
 
     /** Returns the straight-line distance between the systems with the given
       * IDs. \throw std::out_of_range This function will throw if either system
@@ -497,6 +505,8 @@ private:
 
     EmpireObjectVisibilityMap       m_empire_object_visibility;         ///< map from empire id to (map from object id to visibility of that object for that empire)
     EmpireObjectVisibilityTurnMap   m_empire_object_visibility_turns;   ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
+
+    EmpireObjectSpecialsMap         m_empire_object_visible_specials;   ///< map from empire id to (map from object id to (set of names of specials that empire can see are on that object) )
 
     ObjectKnowledgeMap              m_empire_known_destroyed_object_ids;///< map from empire id to (set of object ids that the empire knows have been destroyed)
 
