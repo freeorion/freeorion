@@ -1671,6 +1671,7 @@ void Universe::AddStartingSpecials(GalaxySetupOption specials_freq) {
                         // spawn special
                         specials_added[special_name]++;
                         obj->AddSpecial(special_name);
+                        Logger().debugStream() << "Special " << special_name << " added to " << obj->Name();
 
                         // kludges for planet appearance changes for particular specials
                         if (special_name == "TIDAL_LOCK_SPECIAL") {
