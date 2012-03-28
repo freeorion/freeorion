@@ -20,6 +20,7 @@ Content:
  ~ Added three Derelict system specials.
  ~ Added Exobots, a constructable robot species.
  ~ Exempted Non-Organic species from certain biologically based tech benefits.
+ ~ Acirema native colonies now occasionally produce ships, and have better defenses
  
 Graphics:
  ~ Added unique graphics for each hull.

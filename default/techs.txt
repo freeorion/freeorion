@@ -1031,7 +1031,7 @@ Tech
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
-                SetTargetPopulation Value + 4
+                SetTargetPopulation Value + 0
                 SetTargetHealth Value + 5
             ]
 
@@ -1047,7 +1047,7 @@ Tech
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
-                SetTargetPopulation Value + 8
+                SetTargetPopulation Value + .5
                 SetTargetHealth Value + 5
             ]
 
@@ -1063,7 +1063,7 @@ Tech
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
-                SetTargetPopulation Value + 12
+                SetTargetPopulation Value + 1
                 SetTargetHealth Value + 5
             ]
 
@@ -1079,7 +1079,7 @@ Tech
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
-                SetTargetPopulation Value + 16
+                SetTargetPopulation Value + 1.5
                 SetTargetHealth Value + 5
             ]
 
@@ -1095,7 +1095,7 @@ Tech
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
-                SetTargetPopulation Value + 20
+                SetTargetPopulation Value + 2
                 SetTargetHealth Value + 5
             ]
     ]
