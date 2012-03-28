@@ -624,7 +624,10 @@ public:
         if (!planet) return;
 
         // these values ensure that wierd GLUT-sphere artifacts do not show themselves
-        m_rpm = 1.0 / std::max(0.001, static_cast<double>(planet->RotationalPeriod())); // gives about one rpm for a 1 "Day" rotational period
+        double period = static_cast<double>(planet->RotationalPeriod());// gives about one rpm for a 1 "Day" rotational period
+        if (std::abs(period) <  0.1)    // prevent divide by zero or extremely fast rotations
+            period = 0.1;
+        m_rpm = 1.0 / period;
         m_diameter = PlanetDiameter(planet->Size());
         m_axial_tilt = std::max(-30.0, std::min(static_cast<double>(planet->AxialTilt()), 60.0));
         m_visibility = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, HumanClientApp::GetApp()->EmpireID());
@@ -2138,9 +2141,9 @@ void SidePanel::RefreshImpl() {
     std::vector<boost::shared_ptr<GG::Texture> > textures;
     textures.push_back(graphic);
 
-    int star_dim = Value(Width()*4/5);
-    m_star_graphic = new GG::DynamicGraphic(Width() - (star_dim*2)/3, GG::Y(-(star_dim*1)/3),
-                                            GG::X(star_dim), GG::Y(star_dim), true,
+    int graphic_width = Value(Width()) - MaxPlanetDiameter();
+    m_star_graphic = new GG::DynamicGraphic(GG::X(MaxPlanetDiameter()), GG::Y0,
+                                            GG::X(graphic_width), GG::Y(graphic_width), true,
                                             textures[0]->DefaultWidth(), textures[0]->DefaultHeight(),
                                             0, textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 

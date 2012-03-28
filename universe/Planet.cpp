@@ -102,7 +102,6 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_rotational_period = RandGaussian(1.0, SPIN_STD_DEV) / SizeRotationFactor(m_size);
     if (RandZeroToOne() < REVERSE_SPIN_CHANCE)
         m_rotational_period = -m_rotational_period;
-    Logger().debugStream() << "Planet::Planet rotational period: " << m_rotational_period;
 }
 
 Planet* Planet::Clone(int empire_id) const {
@@ -171,6 +170,8 @@ std::string Planet::Dump() const {
     os << ResourceCenter::Dump();
     os << " planet type: " << UserString(GG::GetEnumMap<PlanetType>().FromEnum(m_type))
        << " size: " << UserString(GG::GetEnumMap<PlanetSize>().FromEnum(m_size))
+       << " rot period: " << m_rotational_period
+       << " axis tilt: " << m_axial_tilt
        << " buildings: ";
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end();) {
         int building_id = *it;
