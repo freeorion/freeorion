@@ -61,6 +61,7 @@ namespace Condition {
     struct ProducedByEmpire;
     struct Chance;
     struct MeterValue;
+    struct EmpireMeterValue;
     struct EmpireStockpileValue;
     struct OwnerHasTech;
     struct VisibleToEmpire;
@@ -98,8 +99,7 @@ std::string ConditionDescription(const std::vector<const Condition::ConditionBas
                                  const UniverseObject* source_object = 0);
 
 /** The base class for all Conditions. */
-struct Condition::ConditionBase
-{
+struct Condition::ConditionBase {
     ConditionBase() {};
     virtual ~ConditionBase();
     virtual void        Eval(const ScriptingContext& parent_context,
@@ -161,8 +161,7 @@ private:
 /** Matches all objects if the number of objects that match Condition
   * \a condition is is >= \a low and < \a high.  Matched objects may
   * or may not themselves match the condition. */
-struct Condition::Number : public Condition::ConditionBase
-{
+struct Condition::Number : public Condition::ConditionBase {
     Number(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high,
            const ConditionBase* condition) :
         m_low(low),
@@ -190,8 +189,7 @@ private:
 };
 
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
-struct Condition::Turn : public Condition::ConditionBase
-{
+struct Condition::Turn : public Condition::ConditionBase {
     Turn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high) :
         m_low(low),
         m_high(high)
@@ -225,8 +223,7 @@ private:
   * the specified \a sorting_type of those property values.  For example,
   * objects with the largest, smallest or most common property value may be
   * selected preferentially. */
-struct Condition::SortedNumberOf : public Condition::ConditionBase
-{
+struct Condition::SortedNumberOf : public Condition::ConditionBase {
     /** Sorts randomly, without considering a sort key. */
     SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
                    const ConditionBase* condition) :
@@ -265,8 +262,7 @@ private:
 };
 
 /** Matches all objects. */
-struct Condition::All : public Condition::ConditionBase
-{
+struct Condition::All : public Condition::ConditionBase {
     All() {}
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -285,8 +281,7 @@ struct Condition::All : public Condition::ConditionBase
 /** Matches all objects that are owned (if \a exclusive == false) or only owned
   * (if \a exclusive == true) by an empire that has affilitation type
   * \a affilitation with Empire \a empire_id. */
-struct Condition::EmpireAffiliation : public Condition::ConditionBase
-{
+struct Condition::EmpireAffiliation : public Condition::ConditionBase {
     EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation) :
         m_empire_id(empire_id),
         m_affiliation(affiliation)
@@ -318,8 +313,7 @@ private:
 };
 
 /** Matches the source object only. */
-struct Condition::Source : public Condition::ConditionBase
-{
+struct Condition::Source : public Condition::ConditionBase {
     Source() {};
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
@@ -338,8 +332,7 @@ private:
   * within a subcondition to match the object actually being matched by the
   * whole compound condition, rather than an object just being matched in a
   * subcondition in order to evaluate the outer condition. */
-struct Condition::RootCandidate : public Condition::ConditionBase
-{
+struct Condition::RootCandidate : public Condition::ConditionBase {
     RootCandidate() {};
     virtual bool        RootCandidateInvariant() const { return false; }
     virtual bool        TargetInvariant() const { return true; }
@@ -358,8 +351,7 @@ private:
   * use the All condition. */
 
 /** Matches the target of an effect being executed. */
-struct Condition::Target : public Condition::ConditionBase
-{
+struct Condition::Target : public Condition::ConditionBase {
     Target() {};
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return false; }
@@ -377,8 +369,7 @@ private:
 /** Matches planets that are a homeworld for any of the species specified in
   * \a names.  If \a names is empty, matches any planet that is a homeworld for
   * any species in the current game Universe. */
-struct Condition::Homeworld : public Condition::ConditionBase
-{
+struct Condition::Homeworld : public Condition::ConditionBase {
     Homeworld() :
         m_names()
     {}
@@ -406,8 +397,7 @@ private:
 };
 
 /** Matches planets that are an empire's capital. */
-struct Condition::Capital : public Condition::ConditionBase
-{
+struct Condition::Capital : public Condition::ConditionBase {
     Capital() {};
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
@@ -423,8 +413,7 @@ private:
 };
 
 /** Matches space monsters. */
-struct Condition::Monster : public Condition::ConditionBase
-{
+struct Condition::Monster : public Condition::ConditionBase {
     Monster() {};
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
@@ -440,8 +429,7 @@ private:
 };
 
 /** Matches armed ships and monsters. */
-struct Condition::Armed : public Condition::ConditionBase
-{
+struct Condition::Armed : public Condition::ConditionBase {
     Armed() {};
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
@@ -457,8 +445,7 @@ private:
 };
 
 /** Matches all objects that are of UniverseObjectType \a type. */
-struct Condition::Type : public Condition::ConditionBase
-{
+struct Condition::Type : public Condition::ConditionBase {
     Type(const ValueRef::ValueRefBase<UniverseObjectType>* type) :
         m_type(type)
     {}
@@ -484,8 +471,7 @@ private:
 
 /** Matches all Building objects that are one of the building types specified
   * in \a names. */
-struct Condition::Building : public Condition::ConditionBase
-{
+struct Condition::Building : public Condition::ConditionBase {
     Building(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
         m_names(names)
     {}
@@ -510,8 +496,7 @@ private:
 };
 
 /** Matches all objects that have an attached Special named \a name. */
-struct Condition::HasSpecial : public Condition::ConditionBase
-{
+struct Condition::HasSpecial : public Condition::ConditionBase {
     HasSpecial(const std::string& name) :
         m_name(name),
         m_since_turn_low(0),
@@ -546,8 +531,7 @@ private:
 };
 
 /** Matches all objects that were created on turns within the specified range. */
-struct Condition::CreatedOnTurn : public Condition::ConditionBase
-{
+struct Condition::CreatedOnTurn : public Condition::ConditionBase {
     CreatedOnTurn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high) :
         m_low(low),
         m_high(high)
@@ -576,8 +560,7 @@ private:
 /** Matches all objects that contain an object that matches Condition
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
-struct Condition::Contains : public Condition::ConditionBase
-{
+struct Condition::Contains : public Condition::ConditionBase {
     Contains(const ConditionBase* condition) :
         m_condition(condition)
     {}
@@ -604,8 +587,7 @@ private:
 /** Matches all objects that are contained by an object that matches Condition
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
-struct Condition::ContainedBy : public Condition::ConditionBase
-{
+struct Condition::ContainedBy : public Condition::ConditionBase {
     ContainedBy(const ConditionBase* condition) :
         m_condition(condition)
     {}
@@ -630,8 +612,7 @@ private:
 };
 
 /** Matches all objects that are in the system with the indicated \a system_id */
-struct Condition::InSystem : public Condition::ConditionBase
-{
+struct Condition::InSystem : public Condition::ConditionBase {
     InSystem(const ValueRef::ValueRefBase<int>* system_id) :
         m_system_id(system_id)
     {}
@@ -656,8 +637,7 @@ private:
 };
 
 /** Matches the object with the id \a object_id */
-struct Condition::ObjectID : public Condition::ConditionBase
-{
+struct Condition::ObjectID : public Condition::ConditionBase {
     ObjectID(const ValueRef::ValueRefBase<int>* object_id) :
         m_object_id(object_id)
     {}
@@ -684,8 +664,7 @@ private:
 /** Matches all Planet objects that have one of the PlanetTypes in \a types.
   * Note that all Building objects which are on matching planets are also
   * matched. */
-struct Condition::PlanetType : public Condition::ConditionBase
-{
+struct Condition::PlanetType : public Condition::ConditionBase {
     PlanetType(const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>& types) :
         m_types(types)
     {}
@@ -712,8 +691,7 @@ private:
 /** Matches all Planet objects that have one of the PlanetSizes in \a sizes.
   * Note that all Building objects which are on matching planets are also
   * matched. */
-struct Condition::PlanetSize : public Condition::ConditionBase
-{
+struct Condition::PlanetSize : public Condition::ConditionBase {
     PlanetSize(const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
         m_sizes(sizes)
     {}
@@ -739,8 +717,7 @@ private:
 
 /** Matches all Planet objects that have one of the PlanetEnvironments in \a environments.  Note that all
     Building objects which are on matching planets are also matched. */
-struct Condition::PlanetEnvironment : public Condition::ConditionBase
-{
+struct Condition::PlanetEnvironment : public Condition::ConditionBase {
     PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments) :
         m_environments(environments)
     {}
@@ -767,8 +744,7 @@ private:
 /** Matches all planets or ships that have one of the species in \a species.
   * Note that all Building object which are on matching planets are also
   * matched. */
-struct Condition::Species : public Condition::ConditionBase
-{
+struct Condition::Species : public Condition::ConditionBase {
     Species(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
         m_names(names)
     {}
@@ -796,8 +772,7 @@ private:
 };
 
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
-struct Condition::FocusType : public Condition::ConditionBase
-{
+struct Condition::FocusType : public Condition::ConditionBase {
     FocusType(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
         m_names(names)
     {}
@@ -823,8 +798,7 @@ private:
 
 /** Matches all System objects that have one of the StarTypes in \a types.  Note that all objects
     in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.). */
-struct Condition::StarType : public Condition::ConditionBase
-{
+struct Condition::StarType : public Condition::ConditionBase {
     StarType(const std::vector<const ValueRef::ValueRefBase< ::StarType>*>& types) :
         m_types(types)
     {}
@@ -849,8 +823,7 @@ private:
 };
 
 /** Matches all ships whose ShipDesign has the hull specified by \a name. */
-struct Condition::DesignHasHull : public Condition::ConditionBase
-{
+struct Condition::DesignHasHull : public Condition::ConditionBase {
     DesignHasHull(const std::string& name) :
         m_name(name)
     {}
@@ -871,8 +844,7 @@ private:
 
 /** Matches all ships whose ShipDesign has >= \a low and < \a high of the ship
   * part specified by \a name. */
-struct Condition::DesignHasPart : public Condition::ConditionBase
-{
+struct Condition::DesignHasPart : public Condition::ConditionBase {
     DesignHasPart(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high,
                   const std::string& name) :
         m_low(low),
@@ -903,8 +875,7 @@ private:
 
 /** Matches ships whose ShipDesign has >= \a low and < \a high of ship parts of
   * the specified \a part_class */
-struct Condition::DesignHasPartClass : public Condition::ConditionBase
-{
+struct Condition::DesignHasPartClass : public Condition::ConditionBase {
     DesignHasPartClass(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high,
                        ShipPartClass part_class) :
         m_low(low),
@@ -935,8 +906,7 @@ private:
 
 /** Matches ships who ShipDesign is a predefined shipdesign with the name
   * \a name */
-struct Condition::PredefinedShipDesign : public Condition::ConditionBase
-{
+struct Condition::PredefinedShipDesign : public Condition::ConditionBase {
     PredefinedShipDesign(const std::string& name) :
         m_name(name)
     {}
@@ -956,8 +926,7 @@ private:
 };
 
 /** Matches ships whose design id \a id. */
-struct Condition::NumberedShipDesign : public Condition::ConditionBase
-{
+struct Condition::NumberedShipDesign : public Condition::ConditionBase {
     NumberedShipDesign(const ValueRef::ValueRefBase<int>* design_id) :
         m_design_id(design_id)
     {}
@@ -982,8 +951,7 @@ private:
 };
 
 /** Matches ships or buildings produced by the empire with id \a empire_id.*/
-struct Condition::ProducedByEmpire : public Condition::ConditionBase
-{
+struct Condition::ProducedByEmpire : public Condition::ConditionBase {
     ProducedByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
         m_empire_id(empire_id)
     {}
@@ -1008,8 +976,7 @@ private:
 };
 
 /** Matches a given object with a linearly distributed probability of \a chance. */
-struct Condition::Chance : public Condition::ConditionBase
-{
+struct Condition::Chance : public Condition::ConditionBase {
     Chance(const ValueRef::ValueRefBase<double>* chance) :
         m_chance(chance)
     {}
@@ -1035,8 +1002,7 @@ private:
 
 /** Matches all objects that have a meter of type \a meter, and whose current
   * value is >= \a low and < \a high. */
-struct Condition::MeterValue : public Condition::ConditionBase
-{
+struct Condition::MeterValue : public Condition::ConditionBase {
     MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high) :
         m_meter(meter),
         m_low(low),
@@ -1064,10 +1030,48 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects with exactly one owner, whose owner's stockpile of
-  * \a stockpile is between \a low and \a high, inclusive. */
-struct Condition::EmpireStockpileValue : public Condition::ConditionBase
-{
+/** Matches all objects if the empire with id \a empire_id has an empire meter
+  * \a meter whose current value is >= \a low and < \a high. */
+struct Condition::EmpireMeterValue : public Condition::ConditionBase {
+    EmpireMeterValue(const std::string& meter,
+                     const ValueRef::ValueRefBase<double>* low,
+                     const ValueRef::ValueRefBase<double>* high) :
+        m_empire_id(0),
+        m_meter(meter),
+        m_low(low),
+        m_high(high)
+    {}
+    EmpireMeterValue(const ValueRef::ValueRefBase<int>* empire_id,
+                     const std::string& meter,
+                     const ValueRef::ValueRefBase<double>* low,
+                     const ValueRef::ValueRefBase<double>* high) :
+        m_empire_id(empire_id),
+        m_meter(meter),
+        m_low(low),
+        m_high(high)
+    {}
+    virtual ~EmpireMeterValue();
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    const ValueRef::ValueRefBase<int>*      m_empire_id;
+    const std::string                       m_meter;
+    const ValueRef::ValueRefBase<double>*   m_low;
+    const ValueRef::ValueRefBase<double>*   m_high;
+};
+
+/** Matches all objects whose owner's stockpile of \a stockpile is between
+  * \a low and \a high, inclusive. */
+struct Condition::EmpireStockpileValue : public Condition::ConditionBase {
     EmpireStockpileValue(ResourceType stockpile, const ValueRef::ValueRefBase<double>* low,
                          const ValueRef::ValueRefBase<double>* high) :
         m_stockpile(stockpile),
@@ -1097,8 +1101,7 @@ private:
 };
 
 /** Matches all objects that have a single owner who has tech \a tech_name. */
-struct Condition::OwnerHasTech : public Condition::ConditionBase
-{
+struct Condition::OwnerHasTech : public Condition::ConditionBase {
     OwnerHasTech(const std::string& name) :
         m_name(name)
     {}
@@ -1118,8 +1121,7 @@ private:
 };
 
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */
-struct Condition::VisibleToEmpire : public Condition::ConditionBase
-{
+struct Condition::VisibleToEmpire : public Condition::ConditionBase {
     VisibleToEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
         m_empire_id(empire_id)
     {}
@@ -1147,8 +1149,7 @@ private:
   * object that meets \a condition.  Warning: this Condition can slow things
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
-struct Condition::WithinDistance : public Condition::ConditionBase
-{
+struct Condition::WithinDistance : public Condition::ConditionBase {
     WithinDistance(const ValueRef::ValueRefBase<double>* distance, const ConditionBase* condition) :
         m_distance(distance),
         m_condition(condition)
@@ -1178,8 +1179,7 @@ private:
   * object that meets \a condition.  Warning: this Condition can slow things
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
-struct Condition::WithinStarlaneJumps : public Condition::ConditionBase
-{
+struct Condition::WithinStarlaneJumps : public Condition::ConditionBase {
     WithinStarlaneJumps(const ValueRef::ValueRefBase<int>* jumps, const ConditionBase* condition) :
         m_jumps(jumps),
         m_condition(condition)
@@ -1211,8 +1211,7 @@ private:
   * that a lane would be geometrically acceptable, meaning it wouldn't cross
   * any other lanes, pass too close to another system, or be too close in angle
   * to an existing lane. */
-struct Condition::CanAddStarlaneConnection :  Condition::ConditionBase
-{
+struct Condition::CanAddStarlaneConnection :  Condition::ConditionBase {
     CanAddStarlaneConnection(const ConditionBase* condition) :
         m_condition(condition)
     {}
@@ -1242,8 +1241,7 @@ private:
   * means there is a lane between those systems, and that removing that lane
   * will not break starlane-network connectivity between the systems on either
   * end of the lane. */
-struct Condition::CanRemoveStarlaneConnection :  Condition::ConditionBase
-{
+struct Condition::CanRemoveStarlaneConnection :  Condition::ConditionBase {
     CanRemoveStarlaneConnection(const ConditionBase* condition) :
         m_condition(condition)
     {}
@@ -1265,8 +1263,7 @@ private:
 
 /** Matches systems that have been explored by at least one Empire
   * in \a empire_ids. */
-struct Condition::ExploredByEmpire : public Condition::ConditionBase
-{
+struct Condition::ExploredByEmpire : public Condition::ConditionBase {
     ExploredByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
         m_empire_id(empire_id)
     {}
@@ -1292,8 +1289,7 @@ private:
 
 /** Matches objects that are moving. ... What does that mean?  Departing this
   * turn, or were located somewhere else last turn...? */
-struct Condition::Stationary : public Condition::ConditionBase
-{
+struct Condition::Stationary : public Condition::ConditionBase {
     Stationary() {};
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
@@ -1310,8 +1306,7 @@ private:
 
 /** Matches objects that are in systems that can be fleet supplied by the
   * empire with id \a empire_id */
-struct Condition::FleetSupplyableByEmpire : public Condition::ConditionBase
-{
+struct Condition::FleetSupplyableByEmpire : public Condition::ConditionBase {
     FleetSupplyableByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
         m_empire_id(empire_id)
     {}
@@ -1338,8 +1333,7 @@ private:
 /** Matches objects that are in systems that are connected by resource-sharing
   * to at least one object that meets \a condition using the resource-sharing
   * network of the empire with id \a empire_id */
-struct Condition::ResourceSupplyConnectedByEmpire : public Condition::ConditionBase
-{
+struct Condition::ResourceSupplyConnectedByEmpire : public Condition::ConditionBase {
     ResourceSupplyConnectedByEmpire(const ValueRef::ValueRefBase<int>* empire_id, const ConditionBase* condition) :
         m_empire_id(empire_id),
         m_condition(condition)
@@ -1366,8 +1360,7 @@ private:
 };
 
 /** Matches all objects that match every Condition in \a operands. */
-struct Condition::And : public Condition::ConditionBase
-{
+struct Condition::And : public Condition::ConditionBase {
     And(const std::vector<const ConditionBase*>& operands) :
         m_operands(operands)
     {}
@@ -1392,8 +1385,7 @@ private:
 };
 
 /** Matches all objects that match at least one Condition in \a operands. */
-struct Condition::Or : public Condition::ConditionBase
-{
+struct Condition::Or : public Condition::ConditionBase {
     Or(const std::vector<const ConditionBase*>& operands) :
         m_operands(operands)
     {}
@@ -1418,8 +1410,7 @@ private:
 };
 
 /** Matches all objects that do not match the Condition \a operand. */
-struct Condition::Not : public Condition::ConditionBase
-{
+struct Condition::Not : public Condition::ConditionBase {
     Not(const ConditionBase* operand) :
         m_operand(operand)
     {}
