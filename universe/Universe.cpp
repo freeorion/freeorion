@@ -1390,8 +1390,6 @@ namespace {
             }
         }
     }
-
-    /** Records visible specials of \a object_id for indicated \a empire_id */
 }
 
 void Universe::UpdateEmpireObjectVisibilities() {
@@ -1437,128 +1435,106 @@ void Universe::UpdateEmpireObjectVisibilities() {
         return;
     }
 
+    // for each empire
+    for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
+        const Empire* empire = empire_it->second;
+        int empire_id = empire_it->first;
+        const Meter* detection_meter = empire->GetMeter("METER_DETECTION");
+        double detection_strength = detection_meter ? detection_meter->Current() : 0.0;
+        ObjectVisibilityMap& obj_vis_map = m_empire_object_visibility[empire_id];
 
-    // for each detecting object
-    for (ObjectMap::const_iterator detector_it = m_objects.const_begin(); detector_it != m_objects.const_end(); ++detector_it) {
-        // get detector object
-        const UniverseObject* detector = detector_it->second;
-        if (!detector) continue;
-        // unowned detectors can't contribute to empires' visibility
-        if (detector->Unowned())
-            continue;
-        int detector_id = detector_it->first;
+        std::multimap<double, const UniverseObject*>    empire_detectors;   // objects empire owns and their detection ranges if above 0
+        std::vector<const UniverseObject*>              detectable_objects; // objects with low enough stealth that empire could see them if in range
 
+        for (ObjectMap::const_iterator object_it = m_objects.const_begin();
+             object_it != m_objects.const_end(); ++object_it)
+        {
+            const UniverseObject* obj = object_it->second;
+            int object_id = object_it->first;
 
-        // owner of an object gets full visibility of it
-        SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
-                                  detector->Owner(), detector_id, VIS_FULL_VISIBILITY);
+            if (obj->OwnedBy(empire_id)) {
+                // objects empire owns -> full visibility
+                SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
+                                          empire_id, object_id, VIS_FULL_VISIBILITY);
+                // is object a detector?
+                if (const Meter* detection_meter = obj->GetMeter(METER_DETECTION)) {
+                    if (detection_meter->Current() > 0.0) {
 
+                        // don't allow moving fleets or ships to provide detection
+                        const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
+                        if (!fleet)
+                            if (const Ship* ship = universe_object_cast<const Ship*>(obj))
+                                fleet = m_objects.Object<Fleet>(ship->FleetID());
+                        if (fleet) {
+                            int next_id = fleet->NextSystemID();
+                            int cur_id = fleet->SystemID();
+                            if (next_id != INVALID_OBJECT_ID && next_id != cur_id)
+                                continue;
+                        }
 
-        // don't allow moving fleets or ships to provide detection
-        const Fleet* fleet = universe_object_cast<const Fleet*>(detector);
-        if (!fleet)
-            if (const Ship* ship = universe_object_cast<const Ship*>(detector))
-                fleet = m_objects.Object<Fleet>(ship->FleetID());
-        if (fleet) {
-            int next_id = fleet->NextSystemID();
-            int cur_id = fleet->SystemID();
-            if (next_id != INVALID_OBJECT_ID && next_id != cur_id)
-                continue;
+                        // object can act as a detector for this empire
+                        empire_detectors.insert(std::make_pair(detection_meter->Current(), obj));
+                    }
+                }
+            } else {
+                if (const Meter* stealth_meter = obj->GetMeter(METER_STEALTH)) {
+                    // is object potentially detectable by empire? (low enough stealth compared with empire's detection strength)
+                    if (stealth_meter->Current() <= detection_strength)
+                        detectable_objects.push_back(obj);
+                    // even without a detector, is object detectable due to having zero stealth?
+                    if (stealth_meter->Current() <= 0) {
+                        SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
+                                                  empire_id, object_id, VIS_BASIC_VISIBILITY);
+                    }
+                }
+
+            }
         }
 
 
-        // get detection ability
-        const Meter* detection_meter = detector->GetMeter(METER_DETECTION);
-        if (!detection_meter) continue;
-        double detection = detection_meter->Current();
+        // check if each potentially detectable object is within range of any of the detectors
+        for (std::vector<const UniverseObject*>::const_iterator detectable_it = detectable_objects.begin();
+             detectable_it != detectable_objects.end(); ++detectable_it)
+        {
+            const UniverseObject* detectable_obj = *detectable_it;
+            ObjectVisibilityMap::iterator obj_vis_map_it = obj_vis_map.find(detectable_obj->ID());
+            Visibility obj_vis = VIS_NO_VISIBILITY;
+            if (obj_vis_map_it != obj_vis_map.end())
+                obj_vis = obj_vis_map_it->second;
 
+            if (obj_vis >= VIS_PARTIAL_VISIBILITY)
+                continue;   // Visibility can't be improved beyond partial by non-ownership detection
 
-        //Logger().debugStream() << "Detector object: " << detector->Name() << " (" << detector->ID() << ") detection: " << detection;
-
-        // position of detector
-        double xd = detector->X();
-        double yd = detector->Y();
-
-
-        // for each detectable object
-        for (ObjectMap::const_iterator target_it = m_objects.const_begin(); target_it != m_objects.const_end(); ++target_it) {
-            // special case for pairs
-
-            if (target_it == detector_it)
-                continue;   // can't detect any better than done above
-
-            // get stealthy object
-            const UniverseObject* target = target_it->second;
-            if (!target) continue;
-
-
-            //Logger().debugStream() << " ... considering stealthy object " << target->Name() << " (" << target->ID() << ")";
-
-            //// check if stealthy object is a fleet.  if so, don't bother
-            //// setting its visibility now, but later get visibility by
-            //// propegating from ships in fleet
-            //if (universe_object_cast<const Fleet*>(target))
-            //    continue;
-
-
-            // get stealth
-            double stealth = 0.0;
-            const Meter* stealth_meter = target->GetMeter(METER_STEALTH);
-            if (stealth_meter)
-                stealth = stealth_meter->Current();
-
-            //Logger().debugStream() << " ... ... target stealth: " << stealth;
-
-            Visibility target_visibility_to_detector = VIS_NO_VISIBILITY;
-
-            // zero-stealth objects are always at least basic-level visible
-            if (stealth <= 0 && target_visibility_to_detector < VIS_BASIC_VISIBILITY)
-                target_visibility_to_detector = VIS_BASIC_VISIBILITY;
-
-            // compare stealth, detection ability and distance between
-            // detector and target to find visibility level
-
-            // position of target
-            double xt = target->X();
-            double yt = target->Y();
-
-            // distance squared
-            double dist2 = (xt-xd)*(xt-xd) + (yt-yd)*(yt-yd);
-
-            // planets can always be seen if they are at the same location
-            if (dist2 == 0.0 && target_visibility_to_detector < VIS_BASIC_VISIBILITY)
-                target_visibility_to_detector = VIS_BASIC_VISIBILITY;
-
-
-            // To determine if a detector can detect a target, the target's
-            // stealth is subtracted from the detector's range, and the result
-            // is compared to the distance between them. If the distance is
-            // less than (detector_detection - target_stealth), then the
-            // target is seen by the detector with partial visibility.
-            double detect_range = detection - stealth;
-            //Logger().debugStream() << "dist2: " << dist2 << " detect range: " << detect_range;
-            if (target_visibility_to_detector < VIS_PARTIAL_VISIBILITY &&
-                (
-                 (detect_range >= 0.0 && dist2 <= detect_range*detect_range) ||
-                 (dist2 == 0.0 && universe_object_cast<const System*>(target))
-                )
-               )
+            for (std::multimap<double, const UniverseObject*>::reverse_iterator detector_it = empire_detectors.rbegin();
+                 detector_it != empire_detectors.rend(); ++detector_it)
             {
-                target_visibility_to_detector = VIS_PARTIAL_VISIBILITY;
+                const UniverseObject* detector_obj = detector_it->second;
+                if (detector_obj->ID() == detectable_obj->ID())
+                    continue;
+
+                double range_limit = detector_it->first;
+                double x_dist = detectable_obj->X() - detector_obj->X();
+                double y_dist = detectable_obj->Y() - detector_obj->Y();
+                double dist2 = x_dist*x_dist + y_dist*y_dist;
+                if (range_limit*range_limit >= dist2) {
+                    SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
+                                              empire_id, detectable_obj->ID(), VIS_PARTIAL_VISIBILITY);
+                    break;
+                } else if (dist2 == 0.0 && obj_vis <= VIS_NO_VISIBILITY) {
+                    // planets always basically visible if at same location as a detector
+                    if (universe_object_cast<const Planet*>(detectable_obj))
+                        SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
+                                                  empire_id, detectable_obj->ID(), VIS_BASIC_VISIBILITY);
+                }
             }
-
-            if (target_visibility_to_detector <= VIS_NO_VISIBILITY)
-                continue;
-
-            // if target visible to detector, update visibility of target for detector's owner empire
-            SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
-                                      detector->Owner(), target->ID(), target_visibility_to_detector);
         }
     }
 
 
     // propegate visibility from contained to container objects
-    for (ObjectMap::const_iterator container_object_it = m_objects.const_begin(); container_object_it != m_objects.const_end(); ++container_object_it) {
+    for (ObjectMap::const_iterator container_object_it = m_objects.const_begin();
+         container_object_it != m_objects.const_end(); ++container_object_it)
+    {
         int container_obj_id = container_object_it->first;
 
         // get container object
@@ -1728,8 +1704,9 @@ void Universe::UpdateEmpireObjectVisibilities() {
 
     // after setting object visibility, similarly set visibility of objects'
     // specials for each empire
-    // for each detecting object
-    for (ObjectMap::const_iterator detector_it = m_objects.const_begin(); detector_it != m_objects.const_end(); ++detector_it) {
+    for (ObjectMap::const_iterator detector_it = m_objects.const_begin();
+         detector_it != m_objects.const_end(); ++detector_it)
+    {
         // get detector object
         const UniverseObject* detector = detector_it->second;
         if (!detector) continue;

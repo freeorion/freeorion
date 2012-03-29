@@ -38,11 +38,15 @@ Tech
     researchcost = 1.0
     researchturns = 1
     unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             activation = NOT OwnerHasTech "DEF_GARRISON_1"
             effects = SetMaxTroops Value + 5
+        EffectsGroup
+            scope = Source
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION" 12
+    ]
     graphic = ""
 
 Tech
