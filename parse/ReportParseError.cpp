@@ -187,10 +187,10 @@ std::string parse::report_error_::get_lines_before(text_iterator line_start) con
     unsigned int retval_first_line = 1;
     unsigned int retval_last_line = target_line - 1;
     if (retval_last_line > NUM_LINES)
-        retval_first_line = retval_last_line - NUM_LINES;
+        retval_first_line = retval_last_line - NUM_LINES + 1;
 
     //Logger().debugStream() << "get_lines_before showing lines " << retval_first_line << " to " << retval_last_line;
-    return std::string(all_line_starts[retval_first_line-1], all_line_starts[retval_last_line-1]);
+    return std::string(all_line_starts[retval_first_line-1], all_line_starts[retval_last_line]);    // start of first line to start of line after first line
 }
 
 std::string parse::report_error_::get_lines_after(text_iterator line_start) const {
@@ -214,10 +214,14 @@ std::string parse::report_error_::get_lines_after(text_iterator line_start) cons
     unsigned int retval_first_line = target_line + 1;
     unsigned int retval_last_line = all_line_starts.size();
     if (retval_first_line + NUM_LINES < all_line_starts.size())
-        retval_last_line = retval_first_line + NUM_LINES;
+        retval_last_line = retval_first_line + NUM_LINES - 1;
+
+    text_iterator last_it = detail::s_end;
+    if (retval_last_line < all_line_starts.size())
+        last_it = all_line_starts[retval_last_line];
 
     //Logger().debugStream() << "get_lines_after showing lines " << retval_first_line << " to " << retval_last_line;
-    return std::string(all_line_starts[retval_first_line-1], all_line_starts[retval_last_line-1]);
+    return std::string(all_line_starts[retval_first_line-1], last_it);
 }
 
 void parse::report_error_::generate_error_string(const token_iterator& first,
