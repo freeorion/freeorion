@@ -1668,8 +1668,7 @@ void BuildingsPanel::Update() {
         double progress = std::max(0.0, empire->ProductionStatus(queue_index));
         double turns_completed = std::min<double>(total_turns, progress / total_cost);
 
-        BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), elem.item.name,
-                                                       total_cost, turns_completed);
+        BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), elem.item.name, turns_completed);
         m_building_indicators.push_back(ind);
     }
 }
@@ -1792,7 +1791,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     Refresh();
 }
 
-BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type, int turns, double turns_completed) :
+BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type, double turns_completed) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_graphic(0),
     m_scrap_indicator(0),
@@ -1813,7 +1812,8 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type, 
                                       GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
 
-    m_progress_bar = new MultiTurnProgressBar(w, GG::Y(Value(w/5)), turns, turns_completed,
+    int total_turns = type ? type->ProductionTime() : 1;
+    m_progress_bar = new MultiTurnProgressBar(w, GG::Y(Value(w/5)), total_turns, turns_completed,
                                               GG::CLR_GRAY, GG::CLR_BLACK, GG::CLR_WHITE);
     m_progress_bar->MoveTo(GG::Pt(GG::X0, Height() - m_progress_bar->Height()));
     AttachChild(m_progress_bar);
