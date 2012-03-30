@@ -332,7 +332,7 @@ Part
     description = "SH_DEFLECTOR_DESC"
     class = Shield
     capacity = 3
-    buildcost = 11
+    buildcost = 2
     buildtime = 2
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
@@ -450,7 +450,7 @@ Part
     description = "FU_ANTIMATTER_TANK_DESC"
     class = Fuel
     capacity = 5
-    buildcost = 2.0
+    buildcost = 3
     buildtime = 6
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
@@ -775,6 +775,110 @@ Part
     ]
     graphic = ""
 
+Part
+    name = "SP_DEATH_SPORE"
+    description = "SP_DEATH_SPORE_DESC"
+    class = Fuel
+    capacity = 0
+    buildcost = 5
+    buildtime = 3
+    mountableSlotTypes = External
+    location = All
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains Source
+                Or [
+                    OwnedBy EnemyOf Source.Owner
+                    Not OwnedBy AnyEmpire
+                ]
+                VisibleToEmpire Source.Owner
+            ]
+            activation = OwnedBy AnyEmpire
+            effects = SetHealth Value - 2
+
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains Source
+                OwnedBy AnyEmpire
+                Stealth high = Source.Detection
+            ]
+            activation = Not OwnedBy AnyEmpire
+            effects = SetHealth Value - 2
+    ]
+    graphic = ""
+
+Part
+    name = "SP_BIOTERM"
+    description = "SP_BIOTERM_DESC"
+    class = Fuel
+    capacity = 0
+    buildcost = 5
+    buildtime = 3
+    mountableSlotTypes = External
+    location = All
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains Source
+                Or [
+                    OwnedBy EnemyOf Source.Owner
+                    Not OwnedBy AnyEmpire
+                ]
+                VisibleToEmpire Source.Owner
+            ]
+            activation = OwnedBy AnyEmpire
+            effects = SetHealth Value - 6
+
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains Source
+                OwnedBy AnyEmpire
+                Stealth high = Source.Detection
+            ]
+            activation = Not OwnedBy AnyEmpire
+            effects = SetHealth Value - 6
+    ]
+    graphic = ""
+
+Part
+    name = "SP_NOVA_BOMB"
+    description = "SP_NOVA_BOMB_DESC"
+    class = Fuel
+    capacity = 0
+    buildcost = 5000
+    buildtime = 12
+    mountableSlotTypes = External
+    location = All
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            activation = Number 1 And [
+                Building "BLD_NOVA_BOMB_ACTIVATOR"
+                OwnedBy TheEmpire Source.Owner
+                WithinStarlaneJumps 1 Source
+            ]
+            effects = [
+                SetStarType NoStar
+                AddSpecial "SUPERNOVA_SPECIAL"
+            ]
+
+        EffectsGroup
+            scope = ContainedBy Contains Source
+            activation = Or [
+                Number 1 And [
+                    Building "BLD_NOVA_BOMB_ACTIVATOR"
+                    OwnedBy TheEmpire Source.Owner
+                    WithinStarlaneJumps 1 Source
+                ]
+                ContainedBy Contains HasSpecial "NOVA_BOMB_ACTIVATOR_SPECIAL"
+            ]
+            effects = Destroy
+    ]
+    graphic = ""
 
 
 /*

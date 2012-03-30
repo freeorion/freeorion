@@ -1192,6 +1192,33 @@ Species
     graphic = "icons/species/robotic-01.png"
 
 Species
+    name = "SP_EXPERIMENTOR"
+    description = "SP_EXPERIMENTOR_DESC"
+    
+    foci = [
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    effectsgroups = [
+        [[ULTIMATE_RESEARCH]]
+
+        [[ULTIMATE_GROUND_TROOPS]]
+
+        [[NO_FOOD_USE]]
+
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_CONSTRUCTION]]
+        [[ULTIMATE_HEALTH]]
+        [[GOOD_POPULATION]]
+    ]
+
+    [[VERY_TOLERANT_EP]]
+
+    graphic = "icons/species/two-headed-03.png"
+        
+
+Species
     name = "SP_SUPER_TEST"
     description = "SP_SUPER_TEST_DESC"
     Playable
@@ -1209,8 +1236,11 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Source
-            effects = SetDetection Value + 1600   // Near Omniscient Detection
+            effects = SetDetection Value + 10000
+
+        EffectsGroup
+            scope = Source
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION" 10000  // Omniscient Detection
         
         [[GREAT_FARMING]]
         [[GREAT_MINING]]
@@ -1226,19 +1256,9 @@ Species
         [[ULTIMATE_HEALTH]]
         [[GOOD_POPULATION]]
     ]
-    environments = [
-        type = Swamp        environment = Good
-        type = Toxic        environment = Good
-        type = Inferno      environment = Good
-        type = Radiated     environment = Good
-        type = Barren       environment = Good
-        type = Tundra       environment = Good
-        type = Desert       environment = Good
-        type = Terran       environment = Good
-        type = Ocean        environment = Good
-        type = Asteroids    environment = Adequate
-        type = Gasgiant     environment = Adequate
-    ]
+
+    [[VERY_TOLERANT_EP]]
+
     graphic = "icons/species/other-04.png"
 
 /*
@@ -1272,19 +1292,9 @@ Species
         [[AVERAGE_HEALTH]]
         [[AVERAGE_POPULATION]]
     ]
-    environments = [
-        type = Swamp        environment = Good
-        type = Toxic        environment = Good
-        type = Inferno      environment = Good
-        type = Radiated     environment = Good
-        type = Barren       environment = Good
-        type = Tundra       environment = Good
-        type = Desert       environment = Good
-        type = Terran       environment = Good
-        type = Ocean        environment = Good
-        type = Asteroids    environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
-    ]
+
+    [[TOLERANT_EP]]
+
     graphic = "icons/species/amorphous-03.png"
 
 */
@@ -1700,6 +1710,36 @@ OCEAN_BROAD_EP
         type = Ocean        environment = Good
         type = Asteroids    environment = Uninhabitable
         type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+TOLERANT_EP
+'''environments = [
+        type = Swamp        environment = Good
+        type = Toxic        environment = Good
+        type = Inferno      environment = Good
+        type = Radiated     environment = Good
+        type = Barren       environment = Good
+        type = Tundra       environment = Good
+        type = Desert       environment = Good
+        type = Terran       environment = Good
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]'''
+
+VERY_TOLERANT_EP
+'''environments = [
+        type = Swamp        environment = Good
+        type = Toxic        environment = Good
+        type = Inferno      environment = Good
+        type = Radiated     environment = Good
+        type = Barren       environment = Good
+        type = Tundra       environment = Good
+        type = Desert       environment = Good
+        type = Terran       environment = Good
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Adequate
+        type = Gasgiant     environment = Adequate
     ]'''
 
 HAS_FARMING_FOCUS

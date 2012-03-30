@@ -18,7 +18,7 @@ MonsterFleet
     ships = [
         "SM_TREE"
     ]
-    spawnrate = 1.5
+    spawnrate = 0.5
     spawnlimit = 9999
     location = And [
         Star type = [Blue White Yellow Orange Red]
@@ -90,7 +90,7 @@ MonsterFleet
     spawnlimit = 50
     location = And [
         Not Contains Monster
-        Not WithinStarlaneJumps 5 Contains And [
+        Not WithinStarlaneJumps 4 Contains And [
             Planet
             OwnedBy AnyEmpire
         ]
@@ -105,6 +105,7 @@ MonsterFleet
     spawnlimit = 100
     location = And [
         Not Contains Monster
+        Contains Planet type = GasGiant
         Not WithinStarlaneJumps 3 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -120,6 +121,7 @@ MonsterFleet
     spawnlimit = 100
     location = And [
         Not Contains Monster
+        Contains Planet size = Tiny
         Not WithinStarlaneJumps 3 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -131,10 +133,11 @@ MonsterFleet
     ships = [
         "SM_JUGGERNAUT_1"
     ]
-    spawnrate = 0.5
+    spawnrate = 1.0
     spawnlimit = 100
     location = And [
         Not Contains Monster
+        Contains Planet type = Asteroids
         Not WithinStarlaneJumps 4 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -167,6 +170,24 @@ MonsterFleet
         Not Contains Monster
         Contains Planet type = Asteroids
         Not WithinStarlaneJumps 2 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+
+MonsterFleet
+    name = "SM_EXP_OUTPOST"
+    ships = [
+        "SM_EXP_OUTPOST"
+    ]
+    spawnrate = 1000.0
+    spawnlimit = 1
+    location = And [
+        Contains And [
+            Planet
+            Not OwnedBy AnyEmpire
+        ]
+        Not WithinStarlaneJumps 6 And [
             Planet
             OwnedBy AnyEmpire
         ]

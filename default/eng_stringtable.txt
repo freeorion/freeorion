@@ -347,6 +347,11 @@ Great Kraken
 SM_KRAKEN_3_DESC
 A formidable medium-weight space monster.
 
+SM_BLACK_KRAKEN
+Black Kraken
+SM_BLACK_KRAKEN_DESC
+A powerful, unnatural-seeming space monster.
+
 SM_SNOWFLAKE_1
 Small Snowflake
 SM_SNOWFLAKE_1_DESC
@@ -362,6 +367,11 @@ Large Snowflake
 SM_SNOWFLAKE_3_DESC
 A formidable light-weight space monster.
 
+SM_PSIONIC_SNOWFLAKE
+Psionic Snowflake
+SM_PSIONIC_SNOWFLAKE_DESC
+A monster with the power to neutralize the minds of organic beings.
+
 SM_JUGGERNAUT_1
 Small Juggernaut
 SM_JUGGERNAUT_1_DESC
@@ -376,6 +386,11 @@ SM_JUGGERNAUT_3
 Large Juggernaut
 SM_JUGGERNAUT_3_DESC
 A formidable heavy-weight space monster.
+
+SM_BLOATED_JUGGERNAUT
+Bloated Juggernaut
+SM_BLOATED_JUGGERNAUT_DESC
+A massive, sickly-looking space monster.
 
 SM_CLOUD
 Space Cloud
@@ -405,7 +420,17 @@ Feeding upon minerals, the shell of a space snail strongly resembles a normal as
 SM_ACIREMA_GUARD
 Acirema Guard Ship
 SM_ACIREMA_GUARD_DESC
-An unmanned armed ship build by the Acirema guards the system.
+An unmanned armed ship built by the Acirema guards the system.
+
+SM_EXP_OUTPOST
+Experimentor Outpost Ship
+SM_EXP_OUTPOST_DESC
+An outpost ship constructed by the Experimentors to transport experimental equipment between galaxies.
+
+SM_COSMIC_DRAGON
+Cosmic Dragon
+SM_COSMIC_DRAGON_DESC
+A fearsome space monster with the power to destroy entire star systems.
 
 
 ##############################
@@ -1437,6 +1462,12 @@ Galaxy distance scale line
 
 OPTIONS_GALAXY_MAP_ZOOM_SLIDER
 Galaxy map zoom slider
+
+OPTIONS_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
+Galaxy map detection range displayed stealth threshold
+
+OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
+Galaxy map stealth threshold slider
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Detection range circles
@@ -2539,6 +2570,15 @@ SITREP_EMPIRE_ELIMINATED
 SITREP_VICTORY
 %empire% %text%
 
+SITREP_VICTORY_DESTRUCTION
+At last, the mysterious violent threat plagueing the galaxy has been eliminated.  The source of the galaxy's peril has been vanquished, and its origins will forever remain a mystery.
+
+SITREP_VICTORY_CAPTURE
+The mystery of the fearsome threat plagueing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have fallen uder your control.
+
+SITREP_VICTORY_BIO
+The mystery of the fearsome threat plagueing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have met their just fate at the hands of your mighty warfleet.
+
 
 ####################
 # Victory / Defeat #
@@ -3147,6 +3187,23 @@ SP_EXOBOT_DESC
 While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
 '''
 
+SP_EXPERIMENTOR
+Experimentor
+SP_EXPERIMENTOR_DESC
+'''[[NO_FARMING]]
+[[NO_MINING]]
+[[NO_INDUSTRY]]
+[[ULTIMATE_RESEARCH]]
+
+[[ULTIMATE_STEALTH]]
+[[ULTIMATE_DETECTION]]
+
+[[NO_FOOD_USE]]
+[[ULTIMATE_GROUND_TROOPS]]
+[[GOOD_POPULATION]]
+
+The Experimentors are an ancient precursor race, whose existence is devoted to the pursuit of knowledge.  Their desire to learn is unmatched, and they unashamed to treat even entire galaxies as mere laboratories for their experiments.'''
+
 
 SP_SUPER_TEST
 Super Testers
@@ -3363,7 +3420,22 @@ Derelict
 DERELICT_SPECIAL_REMOVE
 Derelict
 DERELICT_SPECIAL_DESC
-An anchient, derelict ship from an unknown species. Who knows what it could reveal...
+An ancient, derelict ship from an unknown species. Who knows what it could reveal...
+
+SUPERNOVA_SPECIAL
+Supernova
+SUPERNOVA_SPECIAL
+A supernova occurred in this system in the relatively recent past, leaving only scattered debris where another majestic star system once lay.
+
+NOVA_BOMB_ACTIVATOR_SPECIAL
+Nova Bomb Activator
+NOVA_BOMB_ACTIVATOR_SPECIAL_DESC
+This dimensional integrity of this region of space is highly unstable, causing any Nova Bombs in the vicinity to detonate.
+
+EXPERIMENTOR_OUTPOST_SPECIAL
+Experimentor Outpost
+EXPERIMENTOR_OUTPOST_SPECIAL_DESC
+En Experimentor outpost exists in this system, and defeating them is necessary to ensure the safety of the galaxy.
 
 
 
@@ -4683,10 +4755,10 @@ Lifecycle Manipulation
 GRO_LIFECYCLE_MAN_DESC
 Most complex organisms progress through various physiological stages during a lifetime, whether distinctly separated by metamorphoses, or blurred by continuous slow aging. In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others. By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.
 
-GRO_EDV_ECOMAN
+GRO_ADV_ECOMAN
 Advanced Ecomanipulation
 
-GRO_EDV_ECOMAN_DESC
+GRO_ADV_ECOMAN_DESC
 Even in an artificial environment, weather patterns and natural ecological cycles can get out of control, causing large amounts of damage. By introducing stabilizing factors, incidents of destructive ecological forces in artificial environments can be reduced, allowing large-scale environmental modifications.
 
 GRO_XENO_GENETICS
@@ -4777,6 +4849,12 @@ PRO_EXOBOTS
 Semi-autonomous Exobots
 PRO_EXOBOTS_DESC
 Allows the contruction of Exobots optimsied for mining and industry on hostile planets.
+
+PRO_RAPID_EXO_PROD
+Rapid Exobot Production
+
+PRO_RAPID_EXO_PROD_DESC
+Increases the target health on all Exobot-populated planets by 5.
 
 PRO_FUSION_GEN
 Fusion Generation
@@ -6027,6 +6105,24 @@ Biobombers
 SHP_BIOBOMBER_DESC
 Living bombers designed to target ships and planets. Far more effective than regular bombers. This part can only be built if there is a Competitive Maturation Chamber and a Bioneural Modification Unit somewhere in the empire or an ally's empire.
 
+SHP_NOVA_BOMB
+Nova Bomb
+
+SHP_NOVA_BOMB_DESC
+The most powerful weapon ever devised, capable of destroying an entire star system.
+
+SHP_DEATH_SPORE
+Death Spores
+
+SHP_DEATH_SPORE_DESC
+Unlocks the Death Spores ship part, which allows ships to somewhat reduce the health of planets.
+
+SHP_BIOTERM
+Bio-Terminators
+
+SHP_BIOTERM_DESC
+Unlocks the Bio-Terminators ship part, which allows ships to greatly reduce the health of planets.
+
 SHP_PLANET_STEALTH_MOD
 Planet Stealth Modifier
 
@@ -6550,6 +6646,16 @@ Colony Base
 BLD_COLONY_BASE_DESC
 Creates a Colony Base ship which can be used to colonize another planet in the same system. Can only be built on a colony with a Population of 3 or more.
 
+BLD_EXPERIMENTOR_OUTPOST
+Experimentor Outpost
+BLD_EXPERIMENTOR_OUTPOST_DESC
+The outpost of the Experimentors, used for carrying out highly advanced experiments.  This structure also acts as a cloak to prevent anyone from interfering with their work.
+
+BLD_NOVA_BOMB_ACTIVATOR
+Nova Bomb Activator
+BLD_NOVA_BOMB_ACTIVATOR_DESC
+Activates all Nova Bombs within one starlane jump.
+
 ###################################
 # Hull/Part Description Templates #
 ###################################
@@ -6957,6 +7063,24 @@ Dimensional Cleaver
 SP_VOID
 Void Eruptor
 
+SP_DEATH_SPORE
+Death Spores
+
+SP_DEATH_SPORE_DESC
+A biological weapon which gradually reduces the health of a planet.
+
+SP_BIOTERM
+Bio-Terminators
+
+SP_BIOTERM_DESC
+A powerful biological weapon which quickly reduces the health of a planet.
+
+SP_NOVA_BOMB
+Nova Bomb
+
+SP_NOVA_BOMB_DESC
+A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it recieves the signal from a Nova Bomb Activator not more than one starlane jump away.
+
 ##############
 # Ship Hulls #
 ##############
@@ -7291,6 +7415,11 @@ Great Kraken Body
 SH_KRAKEN_3_BODY_DESC
 A formidable medium-weight space monster.
 
+SH_BLACK_KRAKEN_BODY
+Black Kraken Body
+SH_BLACK_KRAKEN_BODY_DESC
+A monstrous black Kraken with an unnatural aura about it.
+
 SH_SNOWFLAKE_1_BODY
 Small Snowflake Body
 SH_SNOWFLAKE_1_BODY_DESC
@@ -7305,6 +7434,11 @@ SH_SNOWFLAKE_3_BODY
 Large Snowflake Body
 SH_SNOWFLAKE_3_BODY_DESC
 A formidable light-weight space monster.
+
+SH_PSIONIC_SNOWFLAKE_BODY
+Psionic Snowflake Body
+SH_PSIONIC_SNOWFLAKE_BODY_DESC
+A mentally powerful space monster.
 
 SH_JUGGERNAUT_1_BODY
 Small Juggernaut Body
@@ -7321,8 +7455,23 @@ Large Juggernaut Body
 SH_JUGGERNAUT_3_BODY_DESC
 A formidable heavy-weight space monster.
 
+SH_BLOATED_JUGGERNAUT_BODY
+Bloated Juggernaut Body
+SH_BLOATED_JUGGERNAUT_BODY_DESC
+An unnaturally large space monster.
+
 SH_NEBULOUS_BODY
 Nebulous Body
+
+SH_EXP_OUTPOST_HULL
+Experimentor Outpost Hull
+SH_EXP_OUTPOST_HULL_DESC
+A hull used by the Experimentors use to transport experimental equipment to other galaxies.
+
+SH_COSMIC_DRAGON_BODY
+Cosmic Dragon Body
+SH_COSMIC_DRAGON_BODY_DESC
+A fearsom space dragon the size of a small planet.
 
 
 #################

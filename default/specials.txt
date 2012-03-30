@@ -1,7 +1,6 @@
 Special
     name = "ECCENTRIC_ORBIT_SPECIAL"
     description = "ECCENTRIC_ORBIT_SPECIAL_DESC"
-    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -21,7 +20,6 @@ Special
 Special
     name = "TIDAL_LOCK_SPECIAL"
     description = "TIDAL_LOCK_SPECIAL_DESC"
-    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -41,7 +39,6 @@ Special
 Special
     name = "SLOW_ROTATION_SPECIAL"
     description = "SLOW_ROTATION_SPECIAL_DESC"
-    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -64,7 +61,6 @@ Special
 Special
     name = "HIGH_AXIAL_TILT_SPECIAL"
     description = "HIGH_AXIAL_TILT_SPECIAL_DESC"
-    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -81,7 +77,6 @@ Special
 Special
     name = "SOLID_CORE_SPECIAL"
     description = "SOLID_CORE_SPECIAL_DESC"
-    stealth = 20
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -98,7 +93,6 @@ Special
 Special
     name = "TECHTONIC_INSTABILITY_SPECIAL"
     description = "TECHTONIC_INSTABILITY_SPECIAL_DESC"
-    stealth = 20
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -115,7 +109,6 @@ Special
 Special
     name = "ANCIENT_RUINS_SPECIAL"
     description = "ANCIENT_RUINS_SPECIAL_DESCRIPTION"
-    stealth = 20
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -222,7 +215,6 @@ Special
 Special
     name = "MINERALS_SPECIAL"
     description = "MINERALS_SPECIAL_DESCRIPTION"
-    stealth = 20
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -246,7 +238,6 @@ Special
 Special
     name = "TUNNELS_SPECIAL"
     description = "TUNNELS_SPECIAL_DESCRIPTION"
-    stealth = 30
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -426,7 +417,6 @@ Special
 Special
     name = "RESONANT_MOON_SPECIAL"
     description = "RESONANT_MOON_SPECIAL_DESC"
-    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -439,12 +429,12 @@ Special
 Special
     name = "COMPUTRONIUM_SPECIAL"
     description = "COMPUTRONIUM_SPECIAL_DESC"
-    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
         Planet
         Not Planet type = Asteroids
+        Not Planet type = GasGiant
         Not ContainedBy Contains Homeworld
     ]
     effectsgroups = [       
@@ -481,12 +471,12 @@ Special
 Special
     name = "COMPUTRONIUM_BROKEN_SPECIAL"
     description = "COMPUTRONIUM_BROKEN_SPECIAL_DESC"
-    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
         Planet
         Not Planet type = Asteroids
+        Not Planet type = GasGiant
         Not ContainedBy Contains Homeworld
     ]
     effectsgroups = EffectsGroup
@@ -503,7 +493,6 @@ Special
 Special
     name = "ABANDONED_COLONY_SPECIAL"
     description = "ABANDONED_COLONY_SPECIAL_DESC"
-    stealth = 20
     spawnrate = 0.4
     spawnlimit = 9999
     location = And [
@@ -536,7 +525,6 @@ Special
 Special
     name = "GAIA_SPECIAL"
     description = "GAIA_SPECIAL_DESC"
-    stealth = 5
     spawnrate = 1.0
     spawnlimit = 12
     location = And [
@@ -634,7 +622,6 @@ Special
 Special
     name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
     description = "ANCIENT_RUINS_DEPLETED_SPECIAL_DESC"
-    stealth = 20
     effectsgroups =
         EffectsGroup
             scope = Source
@@ -670,24 +657,10 @@ Special
             activation = AND [
                 Planet
                 Not OwnedBy AnyEmpire
-                Random probability = 0.012
+                Random probability = 0.12
             ]
             stackinggroup = "KRAKEN_NEST_STACK"
             effects = CreateShip "SM_KRAKEN_1"
-
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                Not OwnedBy AnyEmpire
-                Random probability = 0.012
-            ]
-            stackinggroup = "KRAKEN_NEST_STACK"
-            effects = [
-                CreateShip "SM_KRAKEN_1"
-                CreateShip "SM_KRAKEN_1"
-                RemoveSpecial "KRAKEN_NEST_SPECIAL"
-            ]
         ]
     graphic = "icons/specials_huge/kraken-nest.png"
     
@@ -719,24 +692,10 @@ Special
             activation = AND [
                 Planet
                 Not OwnedBy AnyEmpire
-                Random probability = 0.02
+                Random probability = 0.12
             ]
             stackinggroup = "SNOWFLAKE_NEST_STACK"
             effects = CreateShip "SM_SNOWFLAKE_1"
-            
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                Not OwnedBy AnyEmpire
-                Random probability = 0.02
-            ]
-            stackinggroup = "SNOWFLAKE_NEST_STACK"
-            effects = [
-                CreateShip "SM_SNOWFLAKE_1"
-                CreateShip "SM_SNOWFLAKE_1"
-                RemoveSpecial "SNOWFLAKE_NEST_SPECIAL"
-            ]
         ]
     graphic = "icons/specials_huge/snowflake-nest.png"
     
@@ -768,24 +727,10 @@ Special
             activation = AND [
                 Planet
                 Not OwnedBy AnyEmpire
-                Random probability = 0.015
+                Random probability = 0.12
             ]
             stackinggroup = "JUGGERNAUT_NEST_STACK"
             effects = CreateShip "SM_JUGGERNAUT_1"
-
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                Not OwnedBy AnyEmpire
-                Random probability = 0.015
-            ]
-            stackinggroup = "JUGGERNAUT_NEST_STACK"
-            effects = [
-                CreateShip "SM_JUGGERNAUT_1"
-                CreateShip "SM_JUGGERNAUT_1"
-                RemoveSpecial "JUGGERNAUT_NEST_SPECIAL"
-            ]
         ]
         
     graphic = "icons/specials_huge/juggernaut-nest.png"
@@ -993,7 +938,7 @@ Special
         Not Contains Homeworld
     ]
     effectsgroups = [
-        EffectsGroup
+    	EffectsGroup
             scope = NumberOf 1 And [
                 Ship
                 ContainedBy Source
@@ -1143,6 +1088,71 @@ Special
             ]
     ]
     graphic = "icons/specials_huge/derelict.png"
+
+Special
+    name = "SUPERNOVA_SPECIAL"
+    description = "SUPERNOVA_SPECIAL_DESC"
+    spawnrate = 0
+    spawnlimit = 0
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetOverlayTexture name = "stars/nova-boom3.png" size = 100
+                RemoveSpecial "NOVA_BOMB_ACTIVATOR_SPECIAL"
+            ]
+    graphic = ""
+
+Special
+    name = "NOVA_BOMB_ACTIVATOR_SPECIAL"
+    description = "NOVA_BOMB_ACTIVATOR_SPECIAL_DESC"
+    spawnrate = 0
+    spawnlimit = 0
+    graphic = ""
+
+Special
+    name = "EXPERIMENTOR_OUTPOST_SPECIAL"
+    description = "EXPERIMENTOR_OUTPOST_SPECIAL_DESC"
+    spawnrate = 0
+    spawnlimit = 0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy Contains And [
+                OwnedBy AnyEmpire
+                Species "SP_EXPERIMENTOR"
+            ]
+            stackinggroup = "VICTORY_SITREP"
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_VICTORY_CAPTURE"
+                    empire = AnyEmpire
+                RemoveSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Not ContainedBy Contains Building "BLD_EXPERIMENTOR_OUTPOST"
+            stackinggroup = "VICTORY_SITREP"
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_VICTORY_DESTRUCTION"
+                    empire = AnyEmpire
+                RemoveSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Not ContainedBy Contains Species "SP_EXPERIMENTOR"
+            stackinggroup = "VICTORY_SITREP"
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_VICTORY_BIO"
+                    empire = AnyEmpire
+                RemoveSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
+            ]
+    ]
+    graphic = ""
 
 STEALTH_BOOST_LOW
 '''EffectsGroup

@@ -1289,4 +1289,157 @@ BuildingType
     ]
     graphic = ""
 
+BuildingType
+    name = "BLD_EXPERIMENTOR_OUTPOST"
+    description = "BLD_EXPERIMENTOR_OUTPOST_DESC"
+    buildcost = 1
+    buildtime = 1
+    location = All
+    captureresult = destroy
+    effectsgroups = [
+        EffectsGroup
+            scope = Or [
+                Source
+                And [
+                    Contains Source
+                    Planet
+                ]
+            ]
+            effects = SetStealth Value + 1500
+
+        EffectsGroup
+            scope = Or [
+                And [
+                    Contains Source
+                    System
+                ]
+                And [
+                    ContainedBy Contains Source
+                    Not Source
+                    Planet
+                ]
+            ]
+            effects = SetStealth Value + 600
+
+        EffectsGroup
+            scope = And [
+                System
+                Contains Source
+            ]
+            effects = AddSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
+
+        EffectsGroup
+            scope = Source
+            activation = Not ContainedBy Contains Monster
+            effects = RemoveStarlanes WithinStarlaneJumps 1 Source
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = 90 high = 125
+                Random 0.2
+            ]
+            effects = [
+                CreateShip "SM_BLACK_KRAKEN" Source.Owner
+                CreateShip "SM_BLACK_KRAKEN" Source.Owner
+                CreateShip "SM_BLACK_KRAKEN" Source.Owner
+                CreateShip "SM_BLACK_KRAKEN" Source.Owner
+                CreateShip "SM_BLACK_KRAKEN" Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = 125
+                Random 0.1
+            ]
+            effects = [
+                CreateShip "SM_BLACK_KRAKEN" Source.Owner
+                CreateShip "SM_BLACK_KRAKEN" Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = 120 high = 160
+                Random 0.2
+            ]
+            effects = [
+                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
+                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
+                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
+                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
+                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = 160
+                Random 0.1
+            ]
+            effects = [
+                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
+                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = 155 high = 180
+                Random 0.2
+            ]
+            effects = [
+                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
+                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
+                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
+                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
+                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = 220
+                Random 0.1
+            ]
+            effects = [
+                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
+                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = 140
+                Random 0.2
+            ]
+            effects = [
+                CreateShip "SM_COSMIC_DRAGON" Source.Owner
+                CreateShip "SM_COSMIC_DRAGON" Source.Owner
+                CreateShip "SM_COSMIC_DRAGON" Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy Contains Monster
+            effects = AddStarlanes NumberOf 1 And [
+                WithinDistance 100 Source
+                System
+            ]
+    ]                
+    graphic = ""
+
+BuildingType
+    name = "BLD_NOVA_BOMB_ACTIVATOR"
+    description = "BLD_NOVA_BOMB_ACTIVATOR_DESC"
+    buildcost = 1
+    buildtime = 1
+    location = All
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            effects = Destroy
+    graphic = ""
+
 

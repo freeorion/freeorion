@@ -62,8 +62,7 @@ Hull
         Building "BLD_SHIPYARD_BASE"
         OwnedBy TheEmpire Source.Owner
     ]
-    effectsgroups =
-        [[REGULAR_HULL_DETECTION]]
+    effectsgroups = [[REGULAR_HULL_DETECTION]]
     graphic = "hulls_design/basic-small-hull.png"
     icon = ""
     
@@ -478,7 +477,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 50
+            effects = SetStealth Value + 200
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -515,7 +514,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 50
+            effects = SetStealth Value + 200
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -559,7 +558,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 50
+            effects = SetStealth Value + 200
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -598,7 +597,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 80
+            effects = SetStealth Value + 400
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -635,7 +634,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 80
+            effects = SetStealth Value + 400
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -693,7 +692,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 50
+            effects = SetStealth Value + 200
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -734,7 +733,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 50
+            effects = SetStealth Value + 200
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -792,7 +791,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 50
+            effects = SetStealth Value + 200
 
         EffectsGroup
             scope = And [
@@ -1518,7 +1517,7 @@ Hull
             ]
             activation = Source
             stackinggroup = "FLAGSHIP_EFFECT_SOLAR"
-            effects = SetStealth Value - 20
+            effects = SetStealth Value - 100
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -1532,7 +1531,7 @@ Hull
     starlaneSpeed = 20
     fuel = 3
     stealth = 15
-    structure = 10
+    structure = 40
     buildCost = 1
     buildTime = 2
     Unproducible
@@ -1543,19 +1542,9 @@ Hull
     ]
     location = All
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = Random probability = 0.5
-            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
-            effects = SetDestination destination = And [
-                System
-                WithinStarlaneJumps 1 Source
-                Not Contains Source
-            ]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
         EffectsGroup
             scope = And [
                 System
@@ -1597,8 +1586,8 @@ Hull
         EffectsGroup
             scope = Source
             effects = [
-                SetMaxStructure Value + Source.Age*0.2
-                SetStructure Value + 0.3
+                SetMaxStructure Value + Source.Age*3
+                SetStructure Value + 7
             ]
         EffectsGroup
             scope = Source
@@ -1616,7 +1605,7 @@ Hull
     starlaneSpeed = 30
     fuel = 5
     stealth = 10
-    structure = 40
+    structure = 160
     buildCost = 1
     buildTime = 2
     Unproducible
@@ -1628,24 +1617,13 @@ Hull
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = Random probability = 0.3
-            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
-            effects = SetDestination destination = And [
-                System
-                Not Contains Source
-                Not Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                ]
-                WithinStarlaneJumps 1 Source
-            ]
+    effectsgroups = [
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+        [[REGULAR_HULL_DETECTION]]
+        [[REGULAR_HULL_DETECTION]]
+        [[REGULAR_HULL_DETECTION]]
+    ]
     graphic = "icons/monsters/dragon.png"
     icon = ""
 
@@ -1656,7 +1634,7 @@ Hull
     starlaneSpeed = 0
     fuel = 0
     stealth = 10
-    structure = 40
+    structure = 5000
     buildCost = 1
     buildTime = 2
     Unproducible
@@ -1678,29 +1656,20 @@ Hull
     starlaneSpeed = 30
     fuel = 3
     stealth = 15
-    structure = 5
+    structure = 20
     buildCost = 1
     buildTime = 2
     Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.80, 0.15)
     ]
     location = All
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = Random probability = 0.05
-            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
-            effects = SetDestination destination = And [
-                System
-                WithinStarlaneJumps 1 Source
-                Not Contains Source
-            ]
+    effectsgroups = [
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+    ]
     graphic = "icons/monsters/drone.png"
     icon = ""
 
@@ -1712,7 +1681,7 @@ Hull
     starlaneSpeed = 0
     fuel = 0
     stealth = 10
-    structure = 50
+    structure = 5000
     buildCost = 1
     buildTime = 1
     Unproducible
@@ -1755,7 +1724,7 @@ Hull
     starlaneSpeed = 30
     fuel = 5
     stealth = 15
-    structure = 5
+    structure = 40
     buildCost = 1
     buildTime = 1
     Unproducible
@@ -1815,20 +1784,8 @@ Hull
                 */
             ]
 
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-                ContainedBy Contains Planet type = Asteroids
-            ]
-            activation = Random probability = 0.12
-            stackinggroup = "KRILL_1_ACTION_STACK"
-            effects = SetDestination destination = And [
-                System
-                WithinStarlaneJumps 1 Source
-                Not Contains Source
-            ]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
 
         EffectsGroup
             scope = And [
@@ -1854,7 +1811,7 @@ Hull
     starlaneSpeed = 30
     fuel = 6
     stealth = 10
-    structure = 10
+    structure = 80
     buildCost = 1
     buildTime = 1
     Unproducible
@@ -1922,20 +1879,8 @@ Hull
                     */
             ]
             
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-                ContainedBy Contains Planet type = Asteroids
-            ]
-            activation = Random probability = 0.2
-            stackinggroup = "KRILL_2_ACTION_STACK"
-            effects = SetDestination destination = And [
-                System
-                WithinStarlaneJumps 1 Source
-                Not Contains Source
-            ]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
 
         EffectsGroup
             scope = And [
@@ -1961,13 +1906,14 @@ Hull
     starlaneSpeed = 25
     fuel = 5
     stealth = 10
-    structure = 25
+    structure = 500
     buildCost = 1
     buildTime = 1
     Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.70, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
     location = All
@@ -2029,20 +1975,8 @@ Hull
                     */
             ]
             
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-                ContainedBy Contains Planet type = Asteroids
-            ]
-            activation = Random probability = 0.25
-            stackinggroup = "KRILL_3_ACTION_STACK"
-            effects = SetDestination destination = And [
-                System
-                WithinStarlaneJumps 1 Source
-                Not Contains Source
-            ]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
             
         EffectsGroup
             scope = And [
@@ -2068,13 +2002,14 @@ Hull
     starlaneSpeed = 20
     fuel = 4
     stealth = 10
-    structure = 50
+    structure = 2000
     buildCost = 1
     buildTime = 1
     Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.70, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
     location = All
@@ -2098,19 +2033,8 @@ Hull
                     */
             ]
 
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = Random probability = 0.50
-            stackinggroup = "KRILL_4_ACTION_STACK"
-            effects = SetDestination destination = And [
-                System
-                WithinStarlaneJumps 1 Source
-                Not Contains Source
-            ]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
     ]
     graphic = "icons/monsters/krill-4.png"
     icon = ""
@@ -2124,13 +2048,14 @@ Hull
     starlaneSpeed = 40
     fuel = 4
     stealth = 10
-    structure = 18
+    structure = 40
     buildCost = 1
     buildTime = 1
     Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
@@ -2143,25 +2068,9 @@ Hull
             activation = Turn high = 2
             effects = AddSpecial name = "KRAKEN_NEST_SPECIAL"
             
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = AND [
-                Random probability = 0.4
-                NOT OwnedBy AnyEmpire
-            ]
-            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
-            effects = SetDestination destination = And [
-                System
-                Not Contains Or [
-                    Source
-                    Capital
-                ]
-                WithinStarlaneJumps 1 Source
-            ]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
         EffectsGroup
             scope = And [
                 Source
@@ -2172,10 +2081,8 @@ Hull
                 CreateShip "SM_KRAKEN_2" Source.Owner
                 Destroy
             ]
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 40
+        [[REGULAR_HULL_DETECTION]]
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "icons/monsters/kraken-1.png"
     icon = ""
@@ -2187,37 +2094,21 @@ Hull
     starlaneSpeed = 45
     fuel = 4
     stealth = 10
-    structure = 35
+    structure = 200
     buildCost = 1
     buildTime = 1
     Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = AND [
-                Random probability = 0.4
-                NOT OwnedBy AnyEmpire
-            ]
-            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
-            effects = SetDestination destination = And [
-                System
-                Not Contains Source
-                Not Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                ]
-                WithinStarlaneJumps 1 Source
-            ]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
         EffectsGroup
             scope = And [
                 Source
@@ -2228,10 +2119,8 @@ Hull
                 CreateShip "SM_KRAKEN_3" Source.Owner
                 Destroy
             ]
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 50
+        [[REGULAR_HULL_DETECTION]]
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "icons/monsters/kraken-2.png"
     icon = ""
@@ -2243,41 +2132,23 @@ Hull
     starlaneSpeed = 50
     fuel = 4
     stealth = 10
-    structure = 50
+    structure = 2000
     buildCost = 1
     buildTime = 1
     Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = AND [
-                Random probability = 0.4
-                Not OwnedBy AnyEmpire
-            ]
-            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
-            effects = SetDestination destination = And [
-                System
-                Not Contains Source
-                Not Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                ]
-                WithinStarlaneJumps 1 Source
-            ]
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 50
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
+        [[REGULAR_HULL_DETECTION]]
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "icons/monsters/kraken-3.png"
     icon = ""
@@ -2291,13 +2162,14 @@ Hull
     starlaneSpeed = 55
     fuel = 5
     stealth = 15
-    structure = 12
+    structure = 50
     buildCost = 1
     buildTime = 1
     Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
@@ -2307,22 +2179,9 @@ Hull
             activation = Not Turn low = 1
             effects = AddSpecial name = "SNOWFLAKE_NEST_SPECIAL"
             
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = AND [
-                Random probability = 0.6
-                NOT OwnedBy AnyEmpire
-            ]
-            stackinggroup = "SNOWFLAKE_STACK"
-            effects = SetDestination destination = And [
-                System
-                Not Contains Source
-                WithinStarlaneJumps 1 Source
-            ]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
         EffectsGroup
             scope = And [
                 Source
@@ -2333,10 +2192,9 @@ Hull
                 CreateShip "SM_SNOWFLAKE_2" Source.Owner
                 Destroy
             ]
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 60
+        [[REGULAR_HULL_DETECTION]]
+        [[REGULAR_HULL_DETECTION]]
+        [[REGULAR_HULL_DETECTION]]
         ]
     graphic = "icons/monsters/snowflake-1.png"
     icon = ""
@@ -2348,37 +2206,21 @@ Hull
     starlaneSpeed = 60
     fuel = 5
     stealth = 10
-    structure = 25
+    structure = 120
     buildCost = 1
     buildTime = 1
     Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = AND [
-                Random probability = 0.3
-                NOT OwnedBy AnyEmpire
-            ]
-            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
-            effects = SetDestination destination = And [
-                System
-                Not Contains Source
-                Not Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                ]
-                WithinStarlaneJumps 1 Source
-            ]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
         EffectsGroup
             scope = And [
                 Source
@@ -2389,10 +2231,9 @@ Hull
                 CreateShip "SM_SNOWFLAKE_3" Source.Owner
                 Destroy
             ]
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 70
+        [[REGULAR_HULL_DETECTION]]
+        [[REGULAR_HULL_DETECTION]]
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "icons/monsters/snowflake-2.png"
     icon = ""
@@ -2404,41 +2245,24 @@ Hull
     starlaneSpeed = 65
     fuel = 5
     stealth = 10
-    structure = 40
+    structure = 240
     buildCost = 1
     buildTime = 1
     Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = AND [
-                Random probability = 0.3
-                NOT OwnedBy AnyEmpire
-            ]
-            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
-            effects = SetDestination destination = And [
-                System
-                Not Contains Source
-                Not Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                ]
-                WithinStarlaneJumps 1 Source
-            ]
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetDetection Value + 80
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
+        [[REGULAR_HULL_DETECTION]]
+        [[REGULAR_HULL_DETECTION]]
+        [[REGULAR_HULL_DETECTION]]
     ]
     graphic = "icons/monsters/snowflake-3.png"
     icon = ""
@@ -2452,13 +2276,14 @@ Hull
     starlaneSpeed = 30
     fuel = 3
     stealth = 10
-    structure = 25
+    structure = 60
     buildCost = 1
     buildTime = 1
     Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
@@ -2468,22 +2293,9 @@ Hull
             activation = Not Turn low = 1
             effects = AddSpecial name = "JUGGERNAUT_NEST_SPECIAL"
             
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = AND [
-                Random probability = 0.3
-                Not OwnedBy AnyEmpire
-            ]
-            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
-            effects = SetDestination destination = And [
-                System
-                Not Contains Source
-                WithinStarlaneJumps 1 Source
-            ]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
         EffectsGroup
             scope = And [
                 Source
@@ -2494,8 +2306,8 @@ Hull
                 CreateShip "SM_JUGGERNAUT_2" Source.Owner
                 Destroy
             ]
-        
         [[REGULAR_HULL_DETECTION]]
+        
     ]
     graphic = "icons/monsters/juggernaut-1.png"
     icon = ""
@@ -2507,37 +2319,21 @@ Hull
     starlaneSpeed = 25
     fuel = 2
     stealth = 10
-    structure = 40
+    structure = 400
     buildCost = 1
     buildTime = 1
     Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = AND [
-                Random probability = 0.3
-                NOT OwnedBy AnyEmpire
-            ]
-            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
-            effects = SetDestination destination = And [
-                System
-                Not Contains Source
-                Not Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                ]
-                WithinStarlaneJumps 1 Source
-            ]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
         EffectsGroup
             scope = And [
                 Source
@@ -2549,8 +2345,8 @@ Hull
                 Destroy
             ]
             
-        
         [[REGULAR_HULL_DETECTION]]
+        
     ]
     graphic = "icons/monsters/juggernaut-2.png"
     icon = ""
@@ -2562,39 +2358,22 @@ Hull
     starlaneSpeed = 25
     fuel = 5
     stealth = 10
-    structure = 60
+    structure = 2000
     buildCost = 1
     buildTime = 1
     Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = AND [
-                Random probability = 0.25
-                NOT OwnedBy AnyEmpire
-            ]
-            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
-            effects = SetDestination destination = And [
-                System
-                Not Contains Source
-                Not Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                ]
-                WithinStarlaneJumps 1 Source
-            ]
-
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
         [[REGULAR_HULL_DETECTION]]
+
     ]
     graphic = "icons/monsters/juggernaut-3.png"
     icon = ""
@@ -2606,7 +2385,7 @@ Hull
     starlaneSpeed = 100
     fuel = 1
     stealth = 650
-    structure = 100
+    structure = 10000
     buildcost = 1
     buildtime = 1
     Unproducible
@@ -2616,12 +2395,189 @@ Hull
     ]
     location = All
     effectsgroups = [
+        [[INFINITE_FUEL]]
+
+        [[MONSTER_MOVE_PRE]]1[[MONSTER_MOVE_POST]]
+        ]
+    graphic = ""
+    icon = ""
+
+Hull
+    name = "SH_EXP_OUTPOST_HULL"
+    description = "SH_EXP_OUTPOST_HULL_DESC"
+    speed = 0
+    starlaneSpeed = 0
+    fuel = 1
+    stealth = 650
+    structure = 1
+    buildcost = 1
+    buildtime = 1
+    Unproducible
+    slots = [
+        Slot type = External position = (0.60, 0.45)
+    ]
+    location = All
+    effectsgroups = [
         EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetFuel Target.MaxFuel
+            scope = NumberOf 1 And [
+                Planet
+                ContainedBy Contains Source
+            ]
+            effects = [
+                SetSpecies "SP_EXPERIMENTOR"
+                SetPopulation Target.TargetPopulation
+                CreateBuilding "BLD_EXPERIMENTOR_OUTPOST"
+            ]
 
         EffectsGroup
+            scope = Source
+            effects = Destroy
+    ]
+    graphic = ""
+    icon = ""
+
+Hull
+    name = "SH_BLACK_KRAKEN_BODY"
+    description = "SH_BLACK_KRAKEN_BODY_DESC"
+    speed = 120
+    starlaneSpeed = 200
+    fuel = 100
+    stealth = 10
+    structure = 8000
+    buildcost = 1
+    buildtime = 1
+    Unproducible
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.80, 0.15)
+        Slot type = Internal position = (0.40, 0.75)
+    ]
+    location = All
+    effectsgroups = [
+        [[HUNT_BUILDINGS]]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+    ]
+    graphic = ""
+    icon = ""
+
+Hull
+    name = "SH_BLOATED_JUGGERNAUT_BODY"
+    description = "SH_BLOATED_JUGGERNAUT_BODY_DESC"
+    speed = 20
+    starlaneSpeed = 160
+    fuel = 100
+    stealth = 10
+    structure = 14000
+    buildcost = 1
+    buildtime = 1
+    Unproducible
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.80, 0.15)
+        Slot type = External position = (0.80, 0.75)
+        Slot type = External position = (0.20, 0.75)
+        Slot type = Internal position = (0.40, 0.75)
+    ]
+    location = All
+    effectsgroups = [
+        [[HUNT_BUILDINGS]]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[REGULAR_HULL_DETECTION]]
+        [[INFINITE_FUEL]]
+    ]
+    graphic = ""
+    icon = ""
+
+Hull
+    name = "SH_PSIONIC_SNOWFLAKE_BODY"
+    description = "SH_PSIONIC_SNOWFLAKE_BODY_DESC"
+    speed = 300
+    starlaneSpeed = 300
+    fuel = 100
+    stealth = 10
+    structure = 3600
+    buildCost = 1
+    buildTime = 1
+    Unproducible
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    location = All
+    effectsgroups = [
+        [[HUNT_SHIPS]]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
+        EffectsGroup
+            scope = NumberOf 12 And [
+                WithinStarlaneJumps 0
+                Ship
+                Not [[NON_ORGANIC]]
+            ]
+            activation = Random 0.8
+            effects = SetOwner Source.Owner
+    ]
+    graphic = ""
+    icon = ""
+
+Hull
+    name = "SH_COSMIC_DRAGON_BODY"
+    description = "SH_COSMIC_DRAGON_BODY_DESC"
+    speed = 140
+    starlaneSpeed = 30
+    fuel = 100
+    stealth = 10
+    structure = 100000
+    buildcost = 1
+    buildtime = 1
+    Unproducible
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    location = All
+    effectsgroups = [
+        [[HUNT_PLANETS]]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
+        EffectsGroup
+            scope = NumberOf 1 And [
+                ContainedBy Contains Source
+                Planet
+                OwnedBy AnyEmpire
+                Stealth high = Source.Detection
+            ]
+            effects = [
+                AddSpecial "NOVA_BOMB_ACTIVATOR_SPECIAL"
+                RemoveSpecial "SUPERNOVA_SPECIAL"
+            ]
+
+        [[REGULAR_HULL_DETECTION]]
+    ]
+    graphic = ""
+    icon = ""
+                
+    
+REGULAR_HULL_DETECTION
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = SetDetection Value + 25
+'''
+
+MONSTER_MOVE_ALWAYS
+'''EffectsGroup
             scope = And [
                 Contains Source
                 Fleet
@@ -2629,8 +2585,35 @@ Hull
             activation = And [
                 Stationary
                 Not OwnedBy AnyEmpire
-                Random probability = 0.25
+                Not ContainedBy Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                    Stealth high = Source.Detection
+                ]
             ]
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not Contains Source
+                WithinStarlaneJumps 1 Source
+            ]
+'''
+
+MONSTER_MOVE_PRE
+'''EffectsGroup
+            scope = And [
+                Contains Source
+                Fleet
+            ]
+            activation = And [
+                Stationary
+                Not OwnedBy AnyEmpire
+                Random probability = 
+'''
+
+MONSTER_MOVE_POST_NOT_OWNED
+'''
+]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
@@ -2641,13 +2624,109 @@ Hull
                     OwnedBy AnyEmpire
                 ]
             ]
-        ]
-    graphic = ""
-    icon = ""
-    
-REGULAR_HULL_DETECTION
+'''
+
+MONSTER_MOVE_POST
+'''
+]
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not Contains Source
+                WithinStarlaneJumps 1 Source
+            ]
+'''
+
+INFINITE_FUEL
 '''EffectsGroup
-        scope = Source
-        activation = Source
-        effects = SetDetection Value + 25
+            scope = Source
+            effects = SetFuel Value + 1
+'''
+
+HUNT_BUILDINGS
+'''EffectsGroup
+            scope = And [
+                Contains Source
+                Fleet
+                Number low = 1 high = 999 And [
+                    Building
+                    OwnedBy AnyEmpire
+                    WithinDistance Source.Detection - LocalCandidate.Stealth Source
+                ]
+            ]
+            activation = Not OwnedBy AnyEmpire
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Contains And [
+                    Building
+                    OwnedBy AnyEmpire
+                    WithinDistance Source.Detection - LocalCandidate.Stealth Source
+                ]
+            ]
+'''
+
+HUNT_SHIPS
+'''EffectsGroup
+            scope = And [
+                Contains Source
+                Fleet
+            ]
+            activation = And [
+                Not OwnedBy AnyEmpire
+                Number low = 1 And [
+                    Ship
+                    OwnedBy AnyEmpire
+                    WithinDistance Source.Detection - LocalCandidate.Stealth Source
+                ]
+            ]
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Contains And [
+                    Ship
+                    OwnedBy AnyEmpire
+                    WithinDistance Source.Detection - LocalCandidate.Stealth Source
+                ]
+            ]
+'''
+
+HUNT_PLANETS
+'''EffectsGroup
+            scope = And [
+                Contains Source
+                Fleet
+            ]
+            activation = And [
+                Not OwnedBy AnyEmpire
+                Number low = 1 And [
+                    Planet
+                    OwnedBy AnyEmpire
+                    WithinDistance Source.Detection - LocalCandidate.Stealth Source
+                ]
+            ]
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                    WithinDistance Source.Detection - LocalCandidate.Stealth Source
+                ]
+            ]
+'''
+
+/* Should keep track of all non-organic species */
+NON_ORGANIC
+'''Or [
+        Species "SP_CRAY"
+        Species "SP_NYMNMN"
+        Species "SP_TRENCHERS"
+        Species "SP_BEIGEGOO"
+        Species "SP_KOBUNTURA"
+        Species "SP_ACIMERA"
+        Species "SP_EXOBOT"
+        Species "SP_SILEXIAN"
+        Species "SP_EGASSEM"
+    ]
 '''

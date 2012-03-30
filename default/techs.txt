@@ -38,15 +38,11 @@ Tech
     researchcost = 1
     researchturns = 1
     unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
-    effectsgroups = [
+    effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             activation = NOT OwnerHasTech "DEF_GARRISON_1"
             effects = SetMaxTroops Value + 5
-        EffectsGroup
-            scope = Source
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION" 12
-    ]
     graphic = ""
 
 Tech
@@ -657,6 +653,8 @@ Tech
                 ]
                 VisibleToEmpire Source.Owner
                 Ship
+                Not Monster
+                Not [[NON_ORGANIC]]
                 Not OwnerHasTech "LRN_PSY_DOM"
             ]
             effects = SetOwner Source.Owner
@@ -891,6 +889,16 @@ Tech
     graphic = "icons/tech/symbiosis_biology.png"
 
 Tech
+    name = "GRO_ADV_ECOMAN"
+    description = "GRO_ADV_ECOMAN_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 6
+    researchturns = 12
+    prerequisites = "GRO_PLANET_ECOL"
+
+Tech
     name = "GRO_XENO_GENETICS"
     description = "GRO_XENO_GENETICS_DESC"
     short_description = "POPULATION_SHORT_DESC"
@@ -1029,6 +1037,38 @@ Tech
             ]
     ]
     graphic = "icons/tech/xenological_genetics.png"
+
+Tech
+    name = "GRO_NANOTECH_MED"
+    description = "GRO_NANOTECH_MED_DESC"
+    short_description = "HEALTH_SHORT_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 40
+    researchturns = 9
+    prerequisites = [
+        "GRO_GENETIC_MED"
+        "PRO_NANOTECH_PROD"
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                PopulationCenter
+                Not [[NON_ORGANIC]]
+            ]
+        effects = SetTargetHealth Value + 10
+    graphic = "icons/tech/nanotech_medicine.png"
+
+Tech
+    name = "GRO_ECO_METAMORPH"
+    description = "GRO_ECO_METAMORPH_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 24
+    researchturns = 15
+    prerequisites = "GRO_ADV_ECOMAN"
 
 Tech
     name = "GRO_XENO_HYBRIDS"
@@ -1270,48 +1310,6 @@ Tech
     graphic = "icons/tech/lifecycle_manipulation.png"
 
 Tech
-    name = "GRO_EDV_ECOMAN"
-    description = "GRO_EDV_ECOMAN_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 6
-    researchturns = 12
-    prerequisites = "GRO_PLANET_ECOL"
-
-Tech
-    name = "GRO_NANOTECH_MED"
-    description = "GRO_NANOTECH_MED_DESC"
-    short_description = "HEALTH_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 40
-    researchturns = 9
-    prerequisites = [
-        "GRO_GENETIC_MED"
-        "PRO_NANOTECH_PROD"
-    ]
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-                Not [[NON_ORGANIC]]
-            ]
-        effects = SetTargetHealth Value + 10
-    graphic = "icons/tech/nanotech_medicine.png"
-
-Tech
-    name = "GRO_ECO_METAMORPH"
-    description = "GRO_ECO_METAMORPH_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 24
-    researchturns = 15
-    prerequisites = "GRO_EDV_ECOMAN"
-
-Tech
     name = "GRO_NANO_CYBERNET"
     description = "GRO_NANO_CYBERNET_DESC"
     short_description = "THEORY_SHORT_DESC"
@@ -1456,7 +1454,7 @@ Tech
     researchcost = 8
     researchturns = 3
     prerequisites = [
-        "GRO_EDV_ECOMAN"
+        "GRO_ADV_ECOMAN"
         "CON_ORBITAL_CON"
     ]
     effectsgroups =
@@ -1473,7 +1471,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 8
     researchturns = 3
-    prerequisites = "GRO_EDV_ECOMAN"
+    prerequisites = "GRO_ADV_ECOMAN"
     unlock = Item type = Building name = "BLD_TERRAFORM"
     graphic = "icons/tech/terraform.png"
 
@@ -1569,6 +1567,24 @@ Tech
     unlock = Item type = Building name = "BLD_EXOBOT_SHIP"
     
     graphic = "icons/species/robotic-01.png"
+
+Tech
+    name = "PRO_RAPID_EXO_PROD"
+    description = "PRO_RAPID_EXO_PROD"
+    short_description = "HEALTH_SHORT_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 20
+    researchturns = 3
+    prerequisites = "PRO_EXOBOTS"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Species "SP_EXOBOT"
+                Planet
+            ]
+            effects = SetTargetHealth Value + 15
+    graphic = ""
 
 Tech
     name = "PRO_FUSION_GEN"
@@ -2727,7 +2743,7 @@ Tech
     researchcost = 1
     researchturns = 1
     Unresearchable
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
@@ -2739,6 +2755,16 @@ Tech
                 Not OwnerHasTech "SHP_SENSORS"
             ]
             effects = SetDetection Value + 50
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Not OwnerHasTech "SHP_RADAR"
+                Not OwnerHasTech "SHP_NEUTRON_SCANNER"
+                Not OwnerHasTech "SHP_SENSORS"
+            ]
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION" 50
+    ]
 
 Tech
     name = "SHP_SELFGRAV_HULL"
@@ -2932,7 +2958,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 8
+    researchcost = 7.5
     researchturns = 3
     prerequisites = [
         "SHP_MULTICELL_CAST"
@@ -3126,7 +3152,7 @@ Tech
     researchturns = 1
     prerequisites = "SHP_NAVIGATION"
     unlock = Item type = ShipPart name = "DT_ACTIVE_RADAR"
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
@@ -3136,7 +3162,16 @@ Tech
                 Not OwnerHasTech "SHP_NEUTRON_SCANNER"
                 Not OwnerHasTech "SHP_SENSORS"
             ]
-            effects = SetDetection Value + 200
+            effects = SetDetection Value + 100
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Not OwnerHasTech "SHP_NEUTRON_SCANNER"
+                Not OwnerHasTech "SHP_SENSORS"
+            ]
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION" 200
+    ]
 
 Tech
     name = "SHP_DEUTERIUM_TANK"
@@ -3203,14 +3238,19 @@ Tech
     researchturns = 2
     prerequisites = "SHP_INTSTEL_LOG"
     unlock = Item type = ShipPart name = "DT_NEUTRON_SCANNER"
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
             activation = Not OwnerHasTech "SHP_SENSORS"
-            effects = SetDetection Value + 400
+            effects = SetDetection Value + 200
+
+        EffectsGroup
+            scope = Source
+            activation = Not OwnerHasTech "SHP_SENSORS"
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION" 400
 
 Tech
     name = "SHP_BASIC_DAM_CONT"
@@ -3459,13 +3499,64 @@ Tech
     researchturns = 3
     prerequisites = "SHP_ADV_NAVIGATION"
     unlock = Item type = ShipPart name = "DT_SENSORS"
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            effects = SetDetection Value + 700
+            effects = SetDetection Value + 400
+
+        EffectsGroups
+            scope = Source
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION" 700
+    ]
+
+Tech
+    name = "SHP_NOVA_BOMB"
+    description = "SHP_NOVA_BOMB_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 400
+    researchturns = 12
+    prerequisites = [
+        "SHP_SURGICAL_DESTRUCT"
+        "LRN_TIME_MECH"
+        "PRO_ZERO_GEN"
+    ]
+    unlock = [
+        Item type = ShipPart name = "SP_NOVA_BOMB"
+        Item type = Building name = "BLD_NOVA_BOMB_ACTIVATOR"
+    ]
+
+Tech
+    name = "SHP_DEATH_SPORE"
+    description = "SHP_DEATH_SPORE_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 45
+    researchturns = 3
+    prerequisites = [
+        "SHP_SPACE_WEAPON"
+        "GRO_ADV_ECOMAN"
+    ]
+    unlock = Item type = ShipPart name = "SP_DEATH_SPORE"
+
+Tech
+    name = "SHP_BIOTERM"
+    description = "SHP_BIOTERM_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 75
+    researchturns = 5
+    prerequisites = [
+        "SHP_SURGICAL_DESTRUCT"
+        "GRO_BIOTERROR"
+    ]
+    unlock = Item type = ShipPart name = "SP_BIOTERM"
 
 Tech
     name = "DEF_PLANET_CLOAK"
