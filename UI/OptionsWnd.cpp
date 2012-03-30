@@ -44,15 +44,13 @@ namespace {
     const std::string SOUND_FILE_SUFFIX = ".wav";
     const std::string FONT_FILE_SUFFIX = ".ttf";
 
-    class PlaceholderWnd : public GG::Wnd
-    {
+    class PlaceholderWnd : public GG::Wnd {
     public:
         PlaceholderWnd(GG::X w, GG::Y h) : Wnd(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()) {}
         virtual void Render() {}
     };
 
-    class RowContentsWnd : public GG::Control
-    {
+    class RowContentsWnd : public GG::Control {
     public:
         RowContentsWnd(GG::X w, GG::Y h, Wnd* contents, int indentation_level) :
             Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE)
@@ -74,14 +72,12 @@ namespace {
         virtual void Render() {}
     };
 
-    struct BrowseForPathButtonFunctor
-    {
+    struct BrowseForPathButtonFunctor {
         BrowseForPathButtonFunctor(const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters,
                                    CUIEdit* edit, bool directory, bool return_relative_path) :
             m_path(path), m_filters(filters), m_edit(edit), m_directory(directory), m_return_relative_path(return_relative_path) {}
 
-        void operator()()
-        {
+        void operator()() {
             try {
                 FileDlg dlg(m_path.string(), m_edit->Text(), false, false, m_filters);
                 if (m_directory)
@@ -110,8 +106,7 @@ namespace {
         bool                                                m_return_relative_path;
     };
 
-    bool ValidStringtableFile(const std::string& file)
-    {
+    bool ValidStringtableFile(const std::string& file) {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
@@ -122,8 +117,7 @@ namespace {
         return false;
     }
 
-    bool ValidFontFile(const std::string& file)
-    {
+    bool ValidFontFile(const std::string& file) {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
@@ -134,8 +128,7 @@ namespace {
         return false;
     }
 
-    bool ValidMusicFile(const std::string& file)
-    {
+    bool ValidMusicFile(const std::string& file) {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
@@ -146,8 +139,7 @@ namespace {
         return false;
     }
 
-    bool ValidSoundFile(const std::string& file)
-    {
+    bool ValidSoundFile(const std::string& file) {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
@@ -158,8 +150,7 @@ namespace {
         return false;
     }
 
-    bool ValidDirectory(const std::string& file)
-    {
+    bool ValidDirectory(const std::string& file) {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
@@ -208,12 +199,10 @@ namespace {
         OptionsWnd::StringValidator m_string_validator;
     };
 
-    struct DropListIndexSetOptionFunctor
-    {
+    struct DropListIndexSetOptionFunctor {
         DropListIndexSetOptionFunctor(const std::string& option_name, CUIDropDownList* drop_list) :
             m_option_name(option_name), m_drop_list(drop_list) {}
-        void operator()(GG::DropDownList::iterator it)
-        {
+        void operator()(GG::DropDownList::iterator it) {
             assert(it != m_drop_list->end());
             GetOptionsDB().Set<std::string>(m_option_name, (*it)->Name());
         }
@@ -221,14 +210,12 @@ namespace {
         CUIDropDownList* m_drop_list;
     };
 
-    struct ResolutionDropListIndexSetOptionFunctor
-    {
+    struct ResolutionDropListIndexSetOptionFunctor {
         ResolutionDropListIndexSetOptionFunctor(CUIDropDownList* drop_list) :
             m_drop_list(drop_list)
         {}
 
-        void operator()(GG::ListBox::iterator it)
-        {
+        void operator()(GG::ListBox::iterator it) {
             const GG::ListBox::Row* row = *it;
             if (!row) {
                 Logger().errorStream() << "ResolutionDropListIndexSetOptionFunctor couldn't get row from passed ListBox iterator";
@@ -246,13 +233,11 @@ namespace {
         CUIDropDownList* m_drop_list;
     };
 
-    struct LimitFPSSetOptionFunctor
-    {
+    struct LimitFPSSetOptionFunctor {
         LimitFPSSetOptionFunctor(CUISpin<double>* max_fps_spin) :
             m_max_fps_spin(max_fps_spin)
         {}
-        void operator()(bool b)
-        {
+        void operator()(bool b) {
             Logger().debugStream() << "LimitFPSSetOptionFunction: bool: " << b;
             m_max_fps_spin->Disable(!b);
         }
@@ -278,8 +263,7 @@ OptionsWnd::OptionsWnd():
     Init();
 }
 
-void OptionsWnd::BeginPage(const std::string& name)
-{
+void OptionsWnd::BeginPage(const std::string& name) {
     m_current_option_list = new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1);
     m_current_option_list->SetColor(GG::CLR_ZERO);
     m_current_option_list->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
@@ -287,15 +271,13 @@ void OptionsWnd::BeginPage(const std::string& name)
     m_tabs->SetCurrentWnd(m_num_wnds++);
 }
 
-void OptionsWnd::EndPage()
-{
+void OptionsWnd::EndPage() {
     assert(m_current_option_list);
     m_current_option_list = 0;
     m_tabs->SetCurrentWnd(0);
 }
 
-void OptionsWnd::BeginSection(const std::string& name)
-{
+void OptionsWnd::BeginSection(const std::string& name) {
     assert(m_current_option_list);
     assert(0 <= m_indentation_level);
     GG::ListBox::Row* row = new GG::ListBox::Row();
@@ -306,15 +288,13 @@ void OptionsWnd::BeginSection(const std::string& name)
     ++m_indentation_level;
 }
 
-void OptionsWnd::EndSection()
-{
+void OptionsWnd::EndSection() {
     assert(m_current_option_list);
     assert(0 < m_indentation_level);
     --m_indentation_level;
 }
 
-CUIStateButton* OptionsWnd::BoolOption(const std::string& option_name, const std::string& text)
-{
+CUIStateButton* OptionsWnd::BoolOption(const std::string& option_name, const std::string& text) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, text, GG::FORMAT_LEFT);
     button->Resize(button->MinUsableSize());
@@ -328,8 +308,7 @@ CUIStateButton* OptionsWnd::BoolOption(const std::string& option_name, const std
     return button;
 }
 
-CUISpin<int>* OptionsWnd::IntOption(const std::string& option_name, const std::string& text)
-{
+CUISpin<int>* OptionsWnd::IntOption(const std::string& option_name, const std::string& text) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
     boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
@@ -361,8 +340,7 @@ CUISpin<int>* OptionsWnd::IntOption(const std::string& option_name, const std::s
     return spin;
 }
 
-CUISpin<double>* OptionsWnd::DoubleOption(const std::string& option_name, const std::string& text)
-{
+CUISpin<double>* OptionsWnd::DoubleOption(const std::string& option_name, const std::string& text) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
     boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
@@ -394,8 +372,7 @@ CUISpin<double>* OptionsWnd::DoubleOption(const std::string& option_name, const 
     return spin;
 }
 
-void OptionsWnd::MusicVolumeOption()
-{
+void OptionsWnd::MusicVolumeOption() {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT);
     button->Resize(button->MinUsableSize());
@@ -477,35 +454,29 @@ void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::strin
 
 void OptionsWnd::FileOption(const std::string& option_name, const std::string& text, const fs::path& path,
                             StringValidator string_validator/* = 0*/)
-{
-    FileOption(option_name, text, path, std::vector<std::pair<std::string, std::string> >(), string_validator);
-}
+{ FileOption(option_name, text, path, std::vector<std::pair<std::string, std::string> >(), string_validator); }
 
 void OptionsWnd::FileOption(const std::string& option_name, const std::string& text, const fs::path& path,
                             const std::pair<std::string, std::string>& filter, StringValidator string_validator/* = 0*/)
-{
-    FileOption(option_name, text, path, std::vector<std::pair<std::string, std::string> >(1, filter), string_validator);
-}
+{ FileOption(option_name, text, path, std::vector<std::pair<std::string, std::string> >(1, filter), string_validator); }
 
 void OptionsWnd::FileOption(const std::string& option_name, const std::string& text, const fs::path& path,
                             const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator/* = 0*/)
-{
-    FileOptionImpl(option_name, text, path, filters, string_validator, false, false);
-}
+{ FileOptionImpl(option_name, text, path, filters, string_validator, false, false); }
 
-void OptionsWnd::SoundFileOption(const std::string& option_name, const std::string& text)
-{
+void OptionsWnd::SoundFileOption(const std::string& option_name, const std::string& text) {
     FileOption(option_name, text, ClientUI::SoundDir(), std::make_pair(UserString("OPTIONS_SOUND_FILE"),
                "*" + SOUND_FILE_SUFFIX), ValidSoundFile);
 }
 
-void OptionsWnd::DirectoryOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path)
+void OptionsWnd::DirectoryOption(const std::string& option_name, const std::string& text,
+                                 const boost::filesystem::path& path)
 {
-    FileOptionImpl(option_name, text, path, std::vector<std::pair<std::string, std::string> >(), ValidDirectory, true, false);
+    FileOptionImpl(option_name, text, path, std::vector<std::pair<std::string, std::string> >(),
+                   ValidDirectory, true, false);
 }
 
-void OptionsWnd::ColorOption(const std::string& option_name, const std::string& text)
-{
+void OptionsWnd::ColorOption(const std::string& option_name, const std::string& text) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
     ColorSelector* color_selector = new ColorSelector(GG::X0, GG::Y0, GG::X1, GG::Y(ClientUI::Pts() + 4),
@@ -527,15 +498,13 @@ void OptionsWnd::ColorOption(const std::string& option_name, const std::string& 
     GG::Connect(color_selector->ColorChangedSignal, SetOptionFunctor<GG::Clr>(option_name));
 }
 
-void OptionsWnd::FontOption(const std::string& option_name, const std::string& text)
-{
+void OptionsWnd::FontOption(const std::string& option_name, const std::string& text) {
     FileOption(option_name, text, GetRootDataDir() / "default",
                std::make_pair<std::string, std::string>(option_name, "*" + FONT_FILE_SUFFIX),
                &ValidFontFile);
 }
 
-void OptionsWnd::ResolutionOption()
-{
+void OptionsWnd::ResolutionOption() {
     boost::shared_ptr<const RangedValidator<int> > width_validator =
         boost::dynamic_pointer_cast<const RangedValidator<int> >(
             GetOptionsDB().GetValidator("app-width"));
@@ -673,8 +642,7 @@ void OptionsWnd::ResolutionOption()
     GG::Connect(drop_list->SelChangedSignal, ResolutionDropListIndexSetOptionFunctor(drop_list));
 }
 
-void OptionsWnd::Init()
-{
+void OptionsWnd::Init() {
     bool UI_sound_enabled = GetOptionsDB().Get<bool>("UI.sound.enabled");
 
     Sound::TempUISoundDisabler sound_disabler;
@@ -801,7 +769,6 @@ void OptionsWnd::Init()
     BoolOption("UI.show-galaxy-map-scale",              UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
     BoolOption("UI.show-galaxy-map-zoom-slider",        UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
     BoolOption("UI.show-detection-range",               UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"));
-    BoolOption("UI.show-stealth-threshold-slider",      UserString("OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER"));
     EndSection();
     EndPage();
 

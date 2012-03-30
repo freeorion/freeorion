@@ -104,10 +104,6 @@ namespace {
         db.Add("UI.unowned-starlane-colour",        "OPTIONS_DB_UNOWNED_STARLANE_COLOUR",           StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
 
         db.Add("UI.show-detection-range",           "OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE",        false,      Validator<bool>());
-        db.Add("UI.detection-range-stealth-threshold",
-               "OPTIONS_DB_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD",                                 0.0,        RangedStepValidator<double>(1.0, 0.0, 100.0));
-        db.Add("UI.show-stealth-threshold-slider",
-               "OPTIONS_DB_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER",                                    false,      Validator<bool>());
 
         db.Add("UI.system-fog-of-war",              "OPTIONS_DB_UI_SYSTEM_FOG",                     true,       Validator<bool>());
         db.Add("UI.system-fog-of-war-spacing",      "OPTIONS_DB_UI_SYSTEM_FOG_SPACING",             4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
@@ -560,8 +556,7 @@ MapWnd::MapWnd() :
     m_btn_menu(0),
     m_FPS(0),
     m_scale_line(0),
-    m_zoom_slider(0),
-    m_stealth_threshold_slider(0)
+    m_zoom_slider(0)
 {
     SetName("MapWnd");
 
@@ -667,20 +662,8 @@ MapWnd::MapWnd() :
     m_zoom_slider->Hide();
 
 
-    // stealth threshold slider
-    m_stealth_threshold_slider = new CUISlider<double>(m_zoom_slider->UpperLeft().x + GG::X(ClientUI::ScrollWidth()*3),
-                                                       m_zoom_slider->UpperLeft().y, GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
-                                                       0, 100, GG::VERTICAL, GG::INTERACTIVE | GG::ONTOP);
-    m_stealth_threshold_slider->SetPageSize(1);
-    m_stealth_threshold_slider->SlideTo(GetOptionsDB().Get<double>("UI.detection-range-stealth-threshold"));
-    GG::GUI::GetGUI()->Register(m_stealth_threshold_slider);
-    m_stealth_threshold_slider->Hide();
-
-
     GG::Connect(m_zoom_slider->SlidSignal,              &MapWnd::ZoomSlid,      this);
-    GG::Connect(m_stealth_threshold_slider->SlidSignal, &MapWnd::StealthSlid,   this);
     GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider"),   &MapWnd::RefreshSliders, this);
-    GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-stealth-threshold-slider"), &MapWnd::RefreshSliders, this);
 
 
     // Subscreen / Menu buttons (placed right to left)
@@ -884,7 +867,6 @@ MapWnd::~MapWnd() {
     delete m_toolbar;
     delete m_scale_line;
     delete m_zoom_slider;
-    delete m_stealth_threshold_slider;
     delete m_sitrep_panel;
     delete m_pedia_panel;
     delete m_research_wnd;
@@ -1441,8 +1423,6 @@ void MapWnd::RenderVisibilityRadii() {
     if (!GetOptionsDB().Get<bool>("UI.show-detection-range"))
         return;
 
-    const double STEALTH_THRESHOLD = GetOptionsDB().Get<double>("UI.detection-range-stealth-threshold");    // how much to deduct from detection to compensate for potential target stealth, and also the minimum detection to consider showing
-
     int                     client_empire_id = HumanClientApp::GetApp()->EmpireID();
     const std::set<int>&    known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     const ObjectMap&        objects = GetUniverse().Objects();
@@ -1484,8 +1464,8 @@ void MapWnd::RenderVisibilityRadii() {
         // if this object has the largest yet checked visibility range at this location, update the location's range
         double X = obj->X();
         double Y = obj->Y();
-        double D = detection_meter->Current() - STEALTH_THRESHOLD;
-        // skip objects that don't contribute detection (at the current stealth threshold)
+        double D = detection_meter->Current();
+        // skip objects that don't contribute detection
         if (D <= 0.0)
             continue;
 
@@ -3095,12 +3075,6 @@ void MapWnd::RefreshSliders() {
         else
             m_zoom_slider->Hide();
     }
-    if (m_stealth_threshold_slider) {
-        if (GetOptionsDB().Get<bool>("UI.show-stealth-threshold-slider"))
-            m_stealth_threshold_slider->Show();
-        else
-            m_stealth_threshold_slider->Hide();
-    }
 }
 
 int MapWnd::SystemIconSize() const
@@ -3228,9 +3202,6 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position)
 
 void MapWnd::ZoomSlid(double pos, double low, double high)
 { SetZoom(pos, false); }
-
-void MapWnd::StealthSlid(double pos, double low, double high)
-{ GetOptionsDB().Set("UI.detection-range-stealth-threshold", pos); }
 
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt) {
     GG::X contents_width(static_cast<int>(ZoomFactor() * Universe::UniverseWidth()));
@@ -3552,7 +3523,6 @@ void MapWnd::Cleanup() {
     m_FPS->Hide();
     m_scale_line->Hide();
     m_zoom_slider->Hide();
-    m_stealth_threshold_slider->Hide();
 }
 
 void MapWnd::Sanitize() {

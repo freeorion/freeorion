@@ -208,8 +208,6 @@ private:
     void            SetZoom(double steps_in, bool update_slide);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true
     void            SetZoom(double steps_in, bool update_slide, const GG::Pt& position);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true. Keeps the screen position \a position in the same place after zooming
 
-    void            StealthSlid(double pos, double low, double high);
-
     void            RefreshFleetButtons();                      //!< removes old / existing and creates new fleet buttons
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
     void            FleetAddedOrRemoved(Fleet& fleet);
@@ -400,8 +398,6 @@ private:
 
     MapScaleLine*               m_scale_line;       //!< indicates the on-screen distance that reprensents an in-universe distance
     GG::Slider<double>*         m_zoom_slider;      //!< allows user to set zoom level
-
-    GG::Slider<double>*         m_stealth_threshold_slider; //!< allows user to set threshold of stealth detectable at distance for detection range displays
 
     friend class PlayingTurn;
 };

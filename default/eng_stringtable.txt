@@ -1438,12 +1438,6 @@ Galaxy distance scale line
 OPTIONS_GALAXY_MAP_ZOOM_SLIDER
 Galaxy map zoom slider
 
-OPTIONS_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
-Galaxy map detection range displayed stealth threshold
-
-OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
-Galaxy map stealth threshold slider
-
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Detection range circles
 
