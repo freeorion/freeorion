@@ -2958,7 +2958,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 7.5
+    researchcost = 8
     researchturns = 3
     prerequisites = [
         "SHP_MULTICELL_CAST"

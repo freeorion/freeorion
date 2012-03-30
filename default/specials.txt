@@ -1,6 +1,7 @@
 Special
     name = "ECCENTRIC_ORBIT_SPECIAL"
     description = "ECCENTRIC_ORBIT_SPECIAL_DESC"
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -20,6 +21,7 @@ Special
 Special
     name = "TIDAL_LOCK_SPECIAL"
     description = "TIDAL_LOCK_SPECIAL_DESC"
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -39,6 +41,7 @@ Special
 Special
     name = "SLOW_ROTATION_SPECIAL"
     description = "SLOW_ROTATION_SPECIAL_DESC"
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -61,6 +64,7 @@ Special
 Special
     name = "HIGH_AXIAL_TILT_SPECIAL"
     description = "HIGH_AXIAL_TILT_SPECIAL_DESC"
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -77,6 +81,7 @@ Special
 Special
     name = "SOLID_CORE_SPECIAL"
     description = "SOLID_CORE_SPECIAL_DESC"
+    stealth = 20
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -93,6 +98,7 @@ Special
 Special
     name = "TECHTONIC_INSTABILITY_SPECIAL"
     description = "TECHTONIC_INSTABILITY_SPECIAL_DESC"
+    stealth = 20
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -109,6 +115,7 @@ Special
 Special
     name = "ANCIENT_RUINS_SPECIAL"
     description = "ANCIENT_RUINS_SPECIAL_DESCRIPTION"
+    stealth = 20
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -215,6 +222,7 @@ Special
 Special
     name = "MINERALS_SPECIAL"
     description = "MINERALS_SPECIAL_DESCRIPTION"
+    stealth = 20
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -238,6 +246,7 @@ Special
 Special
     name = "TUNNELS_SPECIAL"
     description = "TUNNELS_SPECIAL_DESCRIPTION"
+    stealth = 30
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -417,6 +426,7 @@ Special
 Special
     name = "RESONANT_MOON_SPECIAL"
     description = "RESONANT_MOON_SPECIAL_DESC"
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -429,6 +439,7 @@ Special
 Special
     name = "COMPUTRONIUM_SPECIAL"
     description = "COMPUTRONIUM_SPECIAL_DESC"
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -471,6 +482,7 @@ Special
 Special
     name = "COMPUTRONIUM_BROKEN_SPECIAL"
     description = "COMPUTRONIUM_BROKEN_SPECIAL_DESC"
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -493,6 +505,7 @@ Special
 Special
     name = "ABANDONED_COLONY_SPECIAL"
     description = "ABANDONED_COLONY_SPECIAL_DESC"
+    stealth = 20
     spawnrate = 0.4
     spawnlimit = 9999
     location = And [
@@ -525,6 +538,7 @@ Special
 Special
     name = "GAIA_SPECIAL"
     description = "GAIA_SPECIAL_DESC"
+    stealth = 5
     spawnrate = 1.0
     spawnlimit = 12
     location = And [
@@ -622,6 +636,7 @@ Special
 Special
     name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
     description = "ANCIENT_RUINS_DEPLETED_SPECIAL_DESC"
+    stealth = 20
     effectsgroups =
         EffectsGroup
             scope = Source
