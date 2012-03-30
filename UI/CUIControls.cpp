@@ -1366,15 +1366,14 @@ MultiTurnProgressBar::MultiTurnProgressBar(GG::X w, GG::Y h, int total_turns, do
                                            const GG::Clr& bar_color, const GG::Clr& background,
                                            const GG::Clr& outline_color) :
     Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
-    m_total_turns(total_turns),
-    m_turns_completed(turns_completed),
+    m_total_turns(std::max(1, total_turns)),
+    m_turns_completed(std::max(0.0, std::min<double>(turns_completed, m_total_turns))),
     m_bar_color(bar_color),
     m_background(background),
     m_outline_color(outline_color)
 {}
 
-void MultiTurnProgressBar::Render()
-{
+void MultiTurnProgressBar::Render() {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     bool segmented = true;
     if (Width() / m_total_turns < 3)

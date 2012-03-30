@@ -27,8 +27,7 @@
 //! GG controls.
 
 /** a FreeOrion Button control */
-class CUIButton : public GG::Button
-{
+class CUIButton : public GG::Button {
 public:
     /** \name Structors */ //@{
     CUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
@@ -66,13 +65,14 @@ private:
     int     m_border_thick;
 };
 
-class SettableInWindowCUIButton : public CUIButton
-{
+class SettableInWindowCUIButton : public CUIButton {
 public:
     /** \name Structors */ //@{
-    SettableInWindowCUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
-                              GG::Clr color = ClientUI::CtrlColor(), GG::Clr border = ClientUI::CtrlBorderColor(), int thick = 1, 
-                              GG::Clr text_color = ClientUI::TextColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
+    SettableInWindowCUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str,
+                              const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
+                              GG::Clr color = ClientUI::CtrlColor(), GG::Clr border = ClientUI::CtrlBorderColor(),
+                              int thick = 1,  GG::Clr text_color = ClientUI::TextColor(),
+                              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -88,34 +88,33 @@ private:
 };
 
 /** a FreeOrion next-turn button control */
-class CUITurnButton : public CUIButton
-{
+class CUITurnButton : public CUIButton {
 public:
     /** \name Structors */ //@{
-    CUITurnButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
-                  GG::Clr color = ClientUI::CtrlColor(), GG::Clr border = ClientUI::CtrlBorderColor(), int thick = 1, 
-                  GG::Clr text_color = ClientUI::TextColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
+    CUITurnButton(GG::X x, GG::Y y, GG::X w, const std::string& str,
+                  const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
+                  GG::Clr color = ClientUI::CtrlColor(), GG::Clr border = ClientUI::CtrlBorderColor(),
+                  int thick = 1,  GG::Clr text_color = ClientUI::TextColor(),
+                  GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
 };
 
 /** a FreeOrion triangular arrow button */
-class CUIArrowButton : public GG::Button
-{
+class CUIArrowButton : public GG::Button {
 public:
     /** \name Structors */ //@{
-    CUIArrowButton(GG::X x, GG::Y y, GG::X w, GG::Y h, ShapeOrientation orientation, GG::Clr color, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
+    CUIArrowButton(GG::X x, GG::Y y, GG::X w, GG::Y h, ShapeOrientation orientation,
+                   GG::Clr color, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{
-    virtual bool InWindow(const GG::Pt& pt) const;
-
-    bool FillBackgroundWithWndColor() const;
+    virtual bool    InWindow(const GG::Pt& pt) const;
+    bool            FillBackgroundWithWndColor() const;
     //@}
 
     /** \name Mutators */ //@{
-    virtual void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-
-    void FillBackgroundWithWndColor(bool fill);
+    virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void            FillBackgroundWithWndColor(bool fill);
     //@}
 
 protected:
@@ -131,8 +130,7 @@ private:
 };
 
 /** a FreeOrion StateButton control */
-class CUIStateButton : public GG::StateButton
-{
+class CUIStateButton : public GG::StateButton {
 public:
     /** \name Structors */ //@{
     CUIStateButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style = GG::SBSTYLE_3D_CHECKBOX,
@@ -159,13 +157,12 @@ private:
 };
 
 /** Tab bar with buttons for selecting tabbed windows. */
-class CUITabBar : public GG::TabBar
-{
+class CUITabBar : public GG::TabBar {
 public:
     /** \name Structors */ ///@{
     /** Basic ctor. */
-    CUITabBar(GG::X x, GG::Y y, GG::X w, const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color,
-              GG::TabBarStyle style, GG::Flags<GG::WndFlag> flags);
+    CUITabBar(GG::X x, GG::Y y, GG::X w, const boost::shared_ptr<GG::Font>& font, GG::Clr color,
+              GG::Clr text_color, GG::TabBarStyle style, GG::Flags<GG::WndFlag> flags);
     //@}
 
 private:
@@ -173,12 +170,10 @@ private:
 };
 
 /** a FreeOrion Scroll control */
-class CUIScroll : public GG::Scroll
-{
+class CUIScroll : public GG::Scroll {
 public:
     /** represents the tab button for a CUIScroll */
-    class ScrollTab : public GG::Button
-    {
+    class ScrollTab : public GG::Button {
     public:
         ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color, GG::Clr border_color); ///< basic ctor
         virtual void SetColor(GG::Clr c);
@@ -211,8 +206,7 @@ protected:
 };
 
 /** a FreeOrion ListBox control */
-class CUIListBox : public GG::ListBox
-{
+class CUIListBox : public GG::ListBox {
 public:
     /** \name Structors */ //@{
     CUIListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr border_color = ClientUI::CtrlBorderColor(), GG::Clr interior_color = ClientUI::CtrlColor(),
@@ -225,8 +219,7 @@ public:
 };
 
 /** a ListBox with user-sortable columns */
-class CUISortListBox : public GG::ListBox
-{
+class CUISortListBox : public GG::ListBox {
 public:
     /** \name Structors */ //@{
     CUISortListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color = ClientUI::CtrlBorderColor(), GG::Clr interior = GG::CLR_ZERO,
@@ -247,8 +240,7 @@ private:
 };
 
 /** a FreeOrion DropDownList control */
-class CUIDropDownList : public GG::DropDownList
-{
+class CUIDropDownList : public GG::DropDownList {
 public:
     /** \name Structors */ //@{
     CUIDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr border_color = ClientUI::CtrlBorderColor(),
@@ -271,8 +263,7 @@ private:
 };
 
 /** a FreeOrion Edit control */
-class CUIEdit : public GG::Edit
-{
+class CUIEdit : public GG::Edit {
 public:
     /** \name Structors */ //@{
     CUIEdit(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
@@ -286,8 +277,7 @@ public:
 };
 
 /** a FreeOrion MultiEdit control */
-class CUIMultiEdit : public GG::MultiEdit
-{
+class CUIMultiEdit : public GG::MultiEdit {
 public:
     /** \name Structors */ //@{
     CUIMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP,
@@ -302,8 +292,7 @@ public:
 };
 
 /** a FreeOrion MultiEdit control that parses its text and makes links within clickable */
-class CUILinkTextMultiEdit : public CUIMultiEdit, public TextLinker
-{
+class CUILinkTextMultiEdit : public CUIMultiEdit, public TextLinker {
 public:
     /** \name Structors */ //@{
     CUILinkTextMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP,
@@ -343,18 +332,18 @@ private:
 };
 
 /** A simple GG::ListBox::Row subclass designed for use in text-only drop-down lists, such as the ones used in the game setup dialogs. */
-struct CUISimpleDropDownListRow : public GG::ListBox::Row
-{
+struct CUISimpleDropDownListRow : public GG::ListBox::Row {
     CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height = DEFAULT_ROW_HEIGHT);
     static const GG::Y DEFAULT_ROW_HEIGHT;
 };
 
-/** Encapsulates an icon and text that goes with it in a single control.  For example, "[food icon] +1" or
-  * "[population icon] 66 (+5)", where [... icon] is an icon image, not text.
-  * The icon may have one or two numerical values.  If one, just that number is displayed.  If two, the first
-  * number is displayed followed by the second in brackets "()" */
-class StatisticIcon : public GG::Control
-{
+/** Encapsulates an icon and text that goes with it in a single control.  For
+  * example, "[food icon] +1" or "[population icon] 66 (+5)", where [... icon]
+  * is an icon image, not text.
+  * The icon may have one or two numerical values.  If one, just that number is
+  * displayed.  If two, the first number is displayed followed by the second in
+  * brackets "()" */
+class StatisticIcon : public GG::Control {
 public:
     /** \name Structors */ //@{
     StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
@@ -391,8 +380,7 @@ private:
     GG::TextControl*    m_text;
 };
 
-class CUIToolBar : public GG::Control
-{
+class CUIToolBar : public GG::Control {
 public:
     /** \name Structors */ //@{
     CUIToolBar(GG::X x, GG::Y y, GG::X w, GG::Y h);
@@ -411,8 +399,7 @@ private:
 };
 
 /** A control used to pick from at list of species names. */
-class SpeciesSelector : public CUIDropDownList
-{
+class SpeciesSelector : public CUIDropDownList {
 public:
     /** \name Structors */ //@{
     SpeciesSelector(GG::X w, GG::Y h);                                                  ///< populates with all species in SpeciesManager
@@ -436,8 +423,7 @@ private:
 };
 
 /** A control used to pick from the empire colors returned by EmpireColors(). */
-class EmpireColorSelector : public CUIDropDownList
-{
+class EmpireColorSelector : public CUIDropDownList {
 public:
     /** \name Structors */ //@{
     explicit EmpireColorSelector(GG::Y h);
@@ -458,8 +444,7 @@ private:
 };
 
 /** A control used to pick arbitrary colors using GG::ColorDlg. */
-class ColorSelector : public GG::Control
-{
+class ColorSelector : public GG::Control {
 public:
     /** \name Structors */ //@{
     ColorSelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, GG::Clr default_color);
@@ -478,8 +463,7 @@ private:
 };
 
 /** A GG file dialog in the FreeOrion style. */
-class FileDlg : public GG::FileDlg
-{
+class FileDlg : public GG::FileDlg {
 public:
     /** \name Structors */ //@{
     FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
@@ -488,8 +472,7 @@ public:
 };
 
 /** Despite the name, this is actually used to display info in both the Research and Production screens. */
-class ProductionInfoPanel : public GG::Wnd
-{
+class ProductionInfoPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
     ProductionInfoPanel(GG::X w, GG::Y h, const std::string& title, const std::string& points_str,
@@ -530,8 +513,7 @@ private:
 };
 
 /** Displays progress that is divided over mulitple turns, as in the Research and Production screens. */
-class MultiTurnProgressBar : public GG::Control
-{
+class MultiTurnProgressBar : public GG::Control {
 public:
     /** \name Structors */ //@{
     /** ctor */
@@ -552,8 +534,7 @@ private:
 };
 
 /** Displays current rendering frames per second. */
-class FPSIndicator : public GG::TextControl
-{
+class FPSIndicator : public GG::TextControl {
 public:
     FPSIndicator(GG::X x, GG::Y y);
     virtual void Render();
@@ -564,8 +545,7 @@ private:
 
 /** Acts like a normal TextControl, but renders extra black copy / copies of text behind to create a
   * drop-shadow effect, impriving text readability. */
-class ShadowedTextControl : public GG::TextControl
-{
+class ShadowedTextControl : public GG::TextControl {
 public:
     ShadowedTextControl(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, const boost::shared_ptr<GG::Font>& font,
                         GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
@@ -580,8 +560,7 @@ public:
 
 /** Functions like a StaticGraphic, except can have multiple textures that are rendered bottom to top
   * in the order, rather than a single texture. */
-class MultiTextureStaticGraphic : public GG::Control
-{
+class MultiTextureStaticGraphic : public GG::Control {
 public:
     /** \name Structors */ ///@{
 
