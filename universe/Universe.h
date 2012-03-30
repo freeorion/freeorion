@@ -306,9 +306,16 @@ public:
       * visibility that the empire has this turn. */
     void            UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
-    /** Reconstructs the per-empire system graph views needed to calculate
-      * routes based on visibility. */
-    void            RebuildEmpireViewSystemGraphs(int for_empire_id = ALL_EMPIRES);
+    /** Resizes the system graph to the appropriate size and populates
+      * m_system_distances.  Uses the Universe latest known set of objects for
+      * the empire with id \a for_empire_id or uses the main / true / visible
+      * objects if \a for_empire_id is ALL_EMPIRES*/
+    void            InitializeSystemGraph(int for_empire_id = ALL_EMPIRES);
+
+    /** Regenerates per-empire system view graphs by filtering the complete
+      * system graph based on empire visibility.  Does not regenerate the base
+      * graph to account for actual system-starlane connectivity changes. */
+    void            UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id = ALL_EMPIRES);
 
     /** Adds the object ID \a object_id to the set of object ids for the empire
       * with id \a empire_id that the empire knows have been destroyed. */
@@ -479,12 +486,6 @@ private:
 
     /** Creates starlanes and adds them systems already generated. */
     void    GenerateStarlanes(GalaxySetupOption freq, const AdjacencyGrid& adjacency_grid);
-
-    /** Resizes the system graph to the appropriate size and populates
-      * m_system_distances.  Uses the Universe latest known set of objects for
-      * the empire with id \a for_empire_id or uses the main / true / visible
-      * objects if \a for_empire_id is ALL_EMPIRES*/
-    void    InitializeSystemGraph(int for_empire_id = ALL_EMPIRES);
 
     /** Picks systems to host homeworlds, generates planets for them, stores
       * the ID's of the homeworld planets into the homeworld vector. */

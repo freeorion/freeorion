@@ -77,8 +77,7 @@ IntroMenu::IntroMenu(my_context ctx) :
     }
 }
 
-IntroMenu::~IntroMenu()
-{
+IntroMenu::~IntroMenu() {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~IntroMenu";
     if (GetOptionsDB().Get<bool>("tech-demo"))
         Client().Remove(Client().m_ui->GetCombatWnd());
@@ -86,21 +85,18 @@ IntroMenu::~IntroMenu()
     Client().Remove(Client().m_ui->GetIntroScreen());
 }
 
-boost::statechart::result IntroMenu::react(const HostSPGameRequested& a)
-{
+boost::statechart::result IntroMenu::react(const HostSPGameRequested& a) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu.HostSPGameRequested";
     context<HumanClientFSM>().m_next_waiting_for_data_mode = a.m_waiting_for_data_mode;
     return transit<WaitingForSPHostAck>();
 }
 
-boost::statechart::result IntroMenu::react(const HostMPGameRequested& a)
-{
+boost::statechart::result IntroMenu::react(const HostMPGameRequested& a) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu.HostMPGameRequested";
     return transit<WaitingForMPHostAck>();
 }
 
-boost::statechart::result IntroMenu::react(const JoinMPGameRequested& a)
-{
+boost::statechart::result IntroMenu::react(const JoinMPGameRequested& a) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu.JoinMPGameRequested";
     return transit<WaitingForMPJoinAck>();
 }
@@ -116,8 +112,7 @@ WaitingForSPHostAck::WaitingForSPHostAck() :
 WaitingForSPHostAck::~WaitingForSPHostAck()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~WaitingForSPHostAck"; }
 
-boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg)
-{
+boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForSPHostAck.HostSPGame";
 
     Client().m_networking.SetPlayerID(msg.m_message.ReceivingPlayer());
@@ -129,8 +124,7 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg)
     return transit<PlayingGame>();
 }
 
-boost::statechart::result WaitingForSPHostAck::react(const Error& msg)
-{
+boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForSPHostAck.Error";
     std::string problem;
     bool fatal;
@@ -158,8 +152,7 @@ WaitingForMPHostAck::WaitingForMPHostAck() :
 WaitingForMPHostAck::~WaitingForMPHostAck()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~WaitingForMPHostAck"; }
 
-boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg)
-{
+boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForMPHostAck.HostMPGame";
 
     Client().m_networking.SetPlayerID(msg.m_message.ReceivingPlayer());
@@ -168,8 +161,7 @@ boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg)
     return transit<MPLobby>();
 }
 
-boost::statechart::result WaitingForMPHostAck::react(const Error& msg)
-{
+boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForMPHostAck.Error";
     std::string problem;
     bool fatal;
@@ -197,8 +189,7 @@ WaitingForMPJoinAck::WaitingForMPJoinAck() :
 WaitingForMPJoinAck::~WaitingForMPJoinAck()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~WaitingForMPJoinAck"; }
 
-boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg)
-{
+boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForMPJoinAck.JoinGame";
 
     Client().m_networking.SetPlayerID(msg.m_message.ReceivingPlayer());
@@ -206,8 +197,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg)
     return transit<MPLobby>();
 }
 
-boost::statechart::result WaitingForMPJoinAck::react(const Error& msg)
-{
+boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForMPJoinAck.Error";
     std::string problem;
     bool fatal;
@@ -236,22 +226,19 @@ MPLobby::MPLobby(my_context ctx) :
     Client().Register(Client().m_ui->GetMultiPlayerLobbyWnd());
 }
 
-MPLobby::~MPLobby()
-{
+MPLobby::~MPLobby() {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~MPLobby";
 
     Client().Remove(Client().m_ui->GetMultiPlayerLobbyWnd());
 }
 
-boost::statechart::result MPLobby::react(const Disconnection& d)
-{
+boost::statechart::result MPLobby::react(const Disconnection& d) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.Disconnection";
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
     return transit<IntroMenu>();
 }
 
-boost::statechart::result MPLobby::react(const HostID& msg)
-{
+boost::statechart::result MPLobby::react(const HostID& msg) {
     const std::string& text = msg.m_message.Text();
     int host_id = Networking::INVALID_PLAYER_ID;
     if (text.empty()) {
@@ -270,8 +257,7 @@ boost::statechart::result MPLobby::react(const HostID& msg)
     return discard_event();
 }
 
-boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
-{
+boost::statechart::result MPLobby::react(const LobbyUpdate& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.LobbyUpdate";
     MultiplayerLobbyData lobby_data;
     ExtractMessageData(msg.m_message, lobby_data);
@@ -279,8 +265,7 @@ boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
     return discard_event();
 }
 
-boost::statechart::result MPLobby::react(const LobbyChat& msg)
-{
+boost::statechart::result MPLobby::react(const LobbyChat& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.LobbyChat";
     Client().m_ui->GetMultiPlayerLobbyWnd()->ChatMessage(msg.m_message.SendingPlayer(), msg.m_message.Text());
     return discard_event();
@@ -293,8 +278,7 @@ boost::statechart::result MPLobby::react(const CancelMPGameClicked& a)
     return transit<IntroMenu>();
 }
 
-boost::statechart::result MPLobby::react(const StartMPGameClicked& a)
-{
+boost::statechart::result MPLobby::react(const StartMPGameClicked& a) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.StartMPGameClicked";
 
     if (Client().Networking().PlayerIsHost(Client().Networking().PlayerID()))
@@ -305,8 +289,7 @@ boost::statechart::result MPLobby::react(const StartMPGameClicked& a)
     return discard_event(); // wait for server response GameStart message to leave this state...
 }
 
-boost::statechart::result MPLobby::react(const GameStart& msg)
-{
+boost::statechart::result MPLobby::react(const GameStart& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.GameStart";
 
     // need to re-post the game start message to be re-handled after
@@ -325,8 +308,7 @@ boost::statechart::result MPLobby::react(const GameStart& msg)
     return transit<PlayingGame>();
 }
 
-boost::statechart::result MPLobby::react(const Error& msg)
-{
+boost::statechart::result MPLobby::react(const Error& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.Error";
     std::string problem;
     bool fatal;
@@ -351,16 +333,14 @@ PlayingGame::PlayingGame() :
     Base()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame"; }
 
-PlayingGame::~PlayingGame()
-{
+PlayingGame::~PlayingGame() {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~PlayingGame";
     Client().Remove(Client().m_ui->GetMapWnd());
     Client().Networking().SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     Client().Networking().SetPlayerID(Networking::INVALID_PLAYER_ID);
 }
 
-boost::statechart::result PlayingGame::react(const HostID& msg)
-{
+boost::statechart::result PlayingGame::react(const HostID& msg) {
     const int initial_host_id = Client().m_networking.HostPlayerID();
     const std::string& text = msg.m_message.Text();
     int host_id = Networking::INVALID_PLAYER_ID;
@@ -381,8 +361,7 @@ boost::statechart::result PlayingGame::react(const HostID& msg)
     return discard_event();
 }
 
-boost::statechart::result PlayingGame::react(const PlayerChat& msg)
-{
+boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.PlayerChat";
     const std::string& text = msg.m_message.Text();
     int sending_player_id = msg.m_message.SendingPlayer();
@@ -401,8 +380,7 @@ boost::statechart::result PlayingGame::react(const Disconnection& d)
     return transit<IntroMenu>();
 }
 
-boost::statechart::result PlayingGame::react(const PlayerStatus& msg)
-{
+boost::statechart::result PlayingGame::react(const PlayerStatus& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.PlayerStatus";
     int about_player_id;
     Message::PlayerStatus status;
@@ -415,8 +393,7 @@ boost::statechart::result PlayingGame::react(const PlayerStatus& msg)
     return discard_event();
 }
 
-boost::statechart::result PlayingGame::react(const VictoryDefeat& msg)
-{
+boost::statechart::result PlayingGame::react(const VictoryDefeat& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.VictoryDefeat";
     Message::VictoryOrDefeat victory_or_defeat;
     std::string reason_string;
@@ -432,8 +409,7 @@ boost::statechart::result PlayingGame::react(const VictoryDefeat& msg)
     return discard_event();
 }
 
-boost::statechart::result PlayingGame::react(const PlayerEliminated& msg)
-{
+boost::statechart::result PlayingGame::react(const PlayerEliminated& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.PlayerEliminated";
     int empire_id;
     std::string empire_name;
@@ -444,8 +420,7 @@ boost::statechart::result PlayingGame::react(const PlayerEliminated& msg)
     return discard_event();
 }
 
-boost::statechart::result PlayingGame::react(const EndGame& msg)
-{
+boost::statechart::result PlayingGame::react(const EndGame& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.EndGame";
     Message::EndGameReason reason;
     std::string reason_player_name;
@@ -471,8 +446,7 @@ boost::statechart::result PlayingGame::react(const EndGame& msg)
     return transit<IntroMenu>();
 }
 
-boost::statechart::result PlayingGame::react(const ResetToIntroMenu& msg)
-{
+boost::statechart::result PlayingGame::react(const ResetToIntroMenu& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.ResetToIntroMenu";
 
     Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
@@ -480,8 +454,7 @@ boost::statechart::result PlayingGame::react(const ResetToIntroMenu& msg)
     return transit<IntroMenu>();
 }
 
-boost::statechart::result PlayingGame::react(const Error& msg)
-{
+boost::statechart::result PlayingGame::react(const Error& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.Error";
     std::string problem;
     bool fatal;
@@ -514,14 +487,12 @@ WaitingForTurnData::WaitingForTurnData(my_context ctx) :
         Client().m_ui->GetMapWnd()->EnableOrderIssuing(false);
 }
 
-WaitingForTurnData::~WaitingForTurnData()
-{
+WaitingForTurnData::~WaitingForTurnData() {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~WaitingForTurnData";
     context<HumanClientFSM>().m_next_waiting_for_data_mode = WAITING_FOR_NEW_TURN;
 }
 
-boost::statechart::result WaitingForTurnData::react(const TurnProgress& msg)
-{
+boost::statechart::result WaitingForTurnData::react(const TurnProgress& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.TurnProgress";
 
     Message::TurnProgressPhase phase_id;
@@ -531,8 +502,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnProgress& msg)
     return discard_event();
 }
 
-boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg)
-{
+boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.TurnUpdate";
 
     ExtractMessageData(msg.m_message,   Client().EmpireID(),    Client().CurrentTurnRef(),
@@ -547,8 +517,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg)
     return transit<PlayingTurn>();
 }
 
-boost::statechart::result WaitingForTurnData::react(const TurnPartialUpdate& msg)
-{
+boost::statechart::result WaitingForTurnData::react(const TurnPartialUpdate& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.TurnPartialUpdate";
 
     ExtractMessageData(msg.m_message,   Client().EmpireID(),    GetUniverse());
@@ -558,8 +527,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnPartialUpdate& msg
     return discard_event();
 }
 
-boost::statechart::result WaitingForTurnData::react(const CombatStart& msg)
-{
+boost::statechart::result WaitingForTurnData::react(const CombatStart& msg) {
     // HACK! I get some long and inscrutable error message if
     // WaitingForTurnData doesn't have a CombatStart handler, even though
     // WaitingForTurnDataImpl actually handles this message.
@@ -567,8 +535,7 @@ boost::statechart::result WaitingForTurnData::react(const CombatStart& msg)
     return discard_event();
 }
 
-boost::statechart::result WaitingForTurnData::react(const GameStart& msg)
-{
+boost::statechart::result WaitingForTurnData::react(const GameStart& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.GameStart";
     bool loaded_game_data;
     bool ui_data_available;
@@ -595,8 +562,7 @@ boost::statechart::result WaitingForTurnData::react(const GameStart& msg)
     return transit<PlayingTurn>();
 }
 
-boost::statechart::result WaitingForTurnData::react(const SaveGame& msg)
-{
+boost::statechart::result WaitingForTurnData::react(const SaveGame& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.SaveGame";
     Client().HandleSaveGameDataRequest();
     return discard_event();
@@ -613,14 +579,12 @@ WaitingForTurnDataIdle::WaitingForTurnDataIdle(my_context ctx) :
         Logger().debugStream() << "(HumanClientFSM) WaitingForTurnDataIdle";
 }
 
-WaitingForTurnDataIdle::~WaitingForTurnDataIdle()
-{
+WaitingForTurnDataIdle::~WaitingForTurnDataIdle() {
     if (TRACE_EXECUTION)
         Logger().debugStream() << "(HumanClientFSM) ~WaitingForTurnDataIdle";
 }
 
-boost::statechart::result WaitingForTurnDataIdle::react(const CombatStart& msg)
-{
+boost::statechart::result WaitingForTurnDataIdle::react(const CombatStart& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnDataIdle.CombatStart";
     post_event(msg); // Re-post this event, so that it is the first thing the ResolvingCombat state sees.
     return transit<ResolvingCombat>();
@@ -663,21 +627,18 @@ PlayingTurn::PlayingTurn(my_context ctx) :
 PlayingTurn::~PlayingTurn()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~PlayingTurn"; }
 
-boost::statechart::result PlayingTurn::react(const SaveGame& msg)
-{
+boost::statechart::result PlayingTurn::react(const SaveGame& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn.SaveGame";
     Client().HandleSaveGameDataRequest();
     return discard_event();
 }
 
-boost::statechart::result PlayingTurn::react(const TurnEnded& msg)
-{
+boost::statechart::result PlayingTurn::react(const TurnEnded& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn.TurnEnded";
     return transit<WaitingForTurnData>();
 }
 
-boost::statechart::result PlayingTurn::react(const AutoAdvanceFirstTurn& d)
-{
+boost::statechart::result PlayingTurn::react(const AutoAdvanceFirstTurn& d) {
     Client().m_ui->GetMapWnd()->m_turn_update->ClickedSignal();
     return discard_event();
 }
@@ -697,16 +658,14 @@ ResolvingCombat::ResolvingCombat(my_context ctx) :
     Client().m_ui->GetMapWnd()->Hide();
 }
 
-ResolvingCombat::~ResolvingCombat()
-{
+ResolvingCombat::~ResolvingCombat() {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~ResolvingCombat";
     Client().m_ui->GetMapWnd()->Show();
     FreeCombatData(m_previous_combat_data.get());
     FreeCombatData(m_combat_data.get());
 }
 
-boost::statechart::result ResolvingCombat::react(const CombatStart& msg)
-{
+boost::statechart::result ResolvingCombat::react(const CombatStart& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatStart";
     std::vector<CombatSetupGroup> setup_groups;
     Universe::ShipDesignMap foreign_designs;
@@ -720,8 +679,7 @@ boost::statechart::result ResolvingCombat::react(const CombatStart& msg)
     return discard_event();
 }
 
-boost::statechart::result ResolvingCombat::react(const CombatRoundUpdate& msg)
-{
+boost::statechart::result ResolvingCombat::react(const CombatRoundUpdate& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatRoundUpdate";
     if (m_previous_combat_data.get()) {
         FreeCombatData(m_previous_combat_data.get());
@@ -734,8 +692,7 @@ boost::statechart::result ResolvingCombat::react(const CombatRoundUpdate& msg)
     return discard_event();
 }
 
-boost::statechart::result ResolvingCombat::react(const CombatEnd& msg)
-{
+boost::statechart::result ResolvingCombat::react(const CombatEnd& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatEnd";
     return transit<WaitingForTurnDataIdle>();
 }

@@ -55,8 +55,7 @@
 # include <fcntl.h>
 # include <unistd.h>
 
-void SigHandler(int sig)
-{
+void SigHandler(int sig) {
     void* backtrace_buffer[100];
     int num;
     int fd;
@@ -87,8 +86,7 @@ namespace {
     const bool          INSTRUMENT_MESSAGE_HANDLING = false;
 
     // command-line options
-    void AddOptions(OptionsDB& db)
-    {
+    void AddOptions(OptionsDB& db) {
         db.Add("autosave.single-player",    "OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER",    true,   Validator<bool>());
         db.Add("autosave.multiplayer",      "OPTIONS_DB_AUTOSAVE_MULTIPLAYER",      false,  Validator<bool>());
         db.Add("autosave.turns",            "OPTIONS_DB_AUTOSAVE_TURNS",            1,      RangedValidator<int>(1, 50));

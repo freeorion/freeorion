@@ -53,24 +53,21 @@ const CombatOrderSet& ClientApp::CombatOrders() const
 const ClientNetworking& ClientApp::Networking() const
 { return m_networking; }
 
-const Empire* ClientApp::GetPlayerEmpire(int player_id) const
-{
+const Empire* ClientApp::GetPlayerEmpire(int player_id) const {
     std::map<int, PlayerInfo>::const_iterator it = m_player_info.find(player_id);
     if (it != m_player_info.end())
         return m_empires.Lookup(it->second.empire_id);
     return 0;
 }
 
-Empire* ClientApp::GetPlayerEmpire(int player_id)
-{
+Empire* ClientApp::GetPlayerEmpire(int player_id) {
     std::map<int, PlayerInfo>::const_iterator it = m_player_info.find(player_id);
     if (it != m_player_info.end())
         return m_empires.Lookup(it->second.empire_id);
     return 0;
 }
 
-int ClientApp::GetEmpirePlayerID(int empire_id) const
-{
+int ClientApp::GetEmpirePlayerID(int empire_id) const {
     for (std::map<int, PlayerInfo>::const_iterator it = m_player_info.begin(); it != m_player_info.end(); ++it)
         if (it->second.empire_id == empire_id)
             return it->first;
@@ -78,24 +75,19 @@ int ClientApp::GetEmpirePlayerID(int empire_id) const
 }
 
 const std::map<int, PlayerInfo>& ClientApp::Players() const
-{
-    return m_player_info;
-}
+{ return m_player_info; }
 
-void ClientApp::StartTurn()
-{
+void ClientApp::StartTurn() {
     m_networking.SendMessage(TurnOrdersMessage(m_networking.PlayerID(), m_orders));
     m_orders.Reset();
 }
 
-void ClientApp::SendCombatSetup()
-{
+void ClientApp::SendCombatSetup() {
     m_networking.SendMessage(CombatTurnOrdersMessage(m_networking.PlayerID(), m_combat_orders));
     m_combat_orders.clear();
 }
 
-void ClientApp::StartCombatTurn()
-{
+void ClientApp::StartCombatTurn() {
     m_networking.SendMessage(CombatTurnOrdersMessage(m_networking.PlayerID(), m_combat_orders));
     m_combat_orders.clear();
 }
@@ -115,8 +107,7 @@ CombatOrderSet& ClientApp::CombatOrders()
 ClientNetworking& ClientApp::Networking()
 { return m_networking; }
 
-int ClientApp::GetNewObjectID()
-{
+int ClientApp::GetNewObjectID() {
     Message msg;
     m_networking.SendSynchronousMessage(RequestNewObjectIDMessage(m_networking.PlayerID()), msg);
     std::string text = msg.Text();
@@ -126,8 +117,7 @@ int ClientApp::GetNewObjectID()
     return boost::lexical_cast<int>(text);
 }
 
-int ClientApp::GetNewDesignID()
-{
+int ClientApp::GetNewDesignID() {
     Message msg;
     m_networking.SendSynchronousMessage(RequestNewDesignIDMessage(m_networking.PlayerID()), msg);
     std::string text = msg.Text();

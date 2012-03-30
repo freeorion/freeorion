@@ -1446,6 +1446,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
         std::multimap<double, const UniverseObject*>    empire_detectors;   // objects empire owns and their detection ranges if above 0
         std::vector<const UniverseObject*>              detectable_objects; // objects with low enough stealth that empire could see them if in range
 
+        // filter objects as detectors for this empire or detectable objects
         for (ObjectMap::const_iterator object_it = m_objects.const_begin();
              object_it != m_objects.const_end(); ++object_it)
         {
@@ -1505,12 +1506,14 @@ void Universe::UpdateEmpireObjectVisibilities() {
             if (obj_vis >= VIS_PARTIAL_VISIBILITY)
                 continue;   // Visibility can't be improved beyond partial by non-ownership detection
 
+            // start with highest-range detectors and halt when one is found
+            // that can see the current detectable object
             for (std::multimap<double, const UniverseObject*>::reverse_iterator detector_it = empire_detectors.rbegin();
                  detector_it != empire_detectors.rend(); ++detector_it)
             {
                 const UniverseObject* detector_obj = detector_it->second;
                 if (detector_obj->ID() == detectable_obj->ID())
-                    continue;
+                    continue;   // objects already give their owner full visibility of themselves
 
                 double range_limit = detector_it->first;
                 double x_dist = detectable_obj->X() - detector_obj->X();
@@ -1522,9 +1525,14 @@ void Universe::UpdateEmpireObjectVisibilities() {
                     break;
                 } else if (dist2 == 0.0 && obj_vis <= VIS_NO_VISIBILITY) {
                     // planets always basically visible if at same location as a detector
-                    if (universe_object_cast<const Planet*>(detectable_obj))
+                    if (universe_object_cast<const Planet*>(detectable_obj)) {
                         SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
                                                   empire_id, detectable_obj->ID(), VIS_BASIC_VISIBILITY);
+                        // no break here.  may be partially visible due to
+                        // another detector object (although that may not be
+                        // true if looping over detectors in order from highest
+                        // to lowest detection range...
+                    }
                 }
             }
         }
@@ -2103,10 +2111,10 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
     constant_property<EdgeDescriptor, short> jump_weight = { 1 };
     boost::johnson_all_pairs_shortest_paths(m_graph_impl->system_graph, m_system_jumps, boost::weight_map(jump_weight));
 
-    RebuildEmpireViewSystemGraphs(for_empire_id);
+    UpdateEmpireVisibilityFilteredSystemGraphs(for_empire_id);
 }
 
-void Universe::RebuildEmpireViewSystemGraphs(int for_empire_id) {
+void Universe::UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id) {
     m_graph_impl->empire_system_graph_views.clear();
 
     // if building system graph views for all empires, then each empire's graph
@@ -2123,14 +2131,16 @@ void Universe::RebuildEmpireViewSystemGraphs(int for_empire_id) {
         for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
             int empire_id = it->first;
             GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, empire_id);
-            boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(new GraphImpl::EmpireViewSystemGraph(m_graph_impl->system_graph, filter));
+            boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(
+                new GraphImpl::EmpireViewSystemGraph(m_graph_impl->system_graph, filter));
             m_graph_impl->empire_system_graph_views[empire_id] = filtered_graph_ptr;
         }
 
     } else {
         // all empires share a single filtered graph, filtered by the for_empire_id
         GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, for_empire_id);
-        boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(new GraphImpl::EmpireViewSystemGraph(m_graph_impl->system_graph, filter));
+        boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(
+            new GraphImpl::EmpireViewSystemGraph(m_graph_impl->system_graph, filter));
 
         for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
             int empire_id = it->first;

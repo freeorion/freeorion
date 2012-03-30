@@ -1654,6 +1654,8 @@ void MapWnd::InitTurn() {
     Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
 
+    universe.InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
+
 
     //// DEBUG
     //std::cout << "MapWnd::InitTurn() m_selected_fleet_ids: " << std::endl;

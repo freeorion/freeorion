@@ -773,7 +773,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
     // the Universe's system graphs for each empire aren't stored when saving
     // so need to be reinitialized when loading based on the gamestate
-    m_universe.RebuildEmpireViewSystemGraphs();
+    m_universe.InitializeSystemGraph();
 
 
     // Determine supply distribution and exchanging and resource pools for empires
@@ -1591,7 +1591,7 @@ void ServerApp::PreCombatProcessTurns() {
     ObjectMap& objects = m_universe.Objects();
 
 
-    m_universe.RebuildEmpireViewSystemGraphs();
+    m_universe.UpdateEmpireVisibilityFilteredSystemGraphs();
 
 
     Logger().debugStream() << "ServerApp::ProcessTurns executing orders";
@@ -1889,11 +1889,14 @@ void ServerApp::PostCombatProcessTurns() {
     // they are created.
     m_universe.ApplyMeterEffectsAndUpdateMeters();
 
-
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER UPDATING METERS OF ALL OBJECTS";
         Logger().debugStream() << objects.Dump();
     }
+
+    // regenerate system connectivity graph after executing effects, which may
+    // have added or removed starlanes.
+    m_universe.InitializeSystemGraph();
 
 
     // Population growth or loss, health meter growth, resource current meter
@@ -1933,16 +1936,11 @@ void ServerApp::PostCombatProcessTurns() {
     // turn when the empire did have detection ability for the object
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
-
-
     // post-production and meter-effects visibility update
     m_universe.UpdateEmpireObjectVisibilities();
 
-
-    // regenerate empire system graphs based on latest visibility information.
-    // this is used by CalculateRoute and other system connectivity tests
-    m_universe.RebuildEmpireViewSystemGraphs();
-
+    // update empire-visibility filtered graphs after visiblity update
+    m_universe.UpdateEmpireVisibilityFilteredSystemGraphs();
 
 
     // update fleet routes after combat, production, growth, effects, etc.

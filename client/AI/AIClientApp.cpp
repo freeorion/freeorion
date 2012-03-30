@@ -61,8 +61,7 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
     Logger().debug(PlayerName() + " logger initialized.");
 }
 
-AIClientApp::~AIClientApp()
-{
+AIClientApp::~AIClientApp() {
     delete m_AI;
     Logger().debug("Shutting down " + PlayerName() + " logger...");
 }
@@ -70,8 +69,7 @@ AIClientApp::~AIClientApp()
 void AIClientApp::operator()()
 { Run(); }
 
-void AIClientApp::Exit(int code)
-{
+void AIClientApp::Exit(int code) {
     Logger().fatalStream() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
     exit(code);
 }
@@ -82,8 +80,7 @@ AIClientApp* AIClientApp::GetApp()
 const AIBase* AIClientApp::GetAI()
 { return m_AI; }
 
-void AIClientApp::Run()
-{
+void AIClientApp::Run() {
     m_AI = new PythonAI();
 
     // connect
@@ -123,8 +120,7 @@ void AIClientApp::Run()
     }
 }
 
-void AIClientApp::HandleMessage(const Message& msg)
-{
+void AIClientApp::HandleMessage(const Message& msg) {
     //Logger().debugStream() << "AIClientApp::HandleMessage " << msg.Type();
     switch (msg.Type()) {
     case Message::ERROR : {
@@ -208,6 +204,7 @@ void AIClientApp::HandleMessage(const Message& msg)
                                GetSpeciesManager(),
                                m_player_info);
             //Logger().debugStream() << "AIClientApp::HandleMessage : generating orders";
+            GetUniverse().InitializeSystemGraph(m_empire_id);
             m_AI->GenerateOrders();
             //Logger().debugStream() << "AIClientApp::HandleMessage : done handling turn update message";
         }
