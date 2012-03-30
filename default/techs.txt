@@ -35,7 +35,7 @@ Tech
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 1.0
+    researchcost = 1
     researchturns = 1
     unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
     effectsgroups = [
@@ -55,7 +55,7 @@ Tech
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 2.0
+    researchcost = 2
     researchturns = 2
     prerequisites = "DEF_ROOT_DEFENSE"
     effectsgroups =
@@ -71,7 +71,7 @@ Tech
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 5.0
+    researchcost = 5
     researchturns = 5
     prerequisites = "DEF_GARRISON_1"
     effectsgroups =
@@ -87,7 +87,7 @@ Tech
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 15.0
+    researchcost = 15
     researchturns = 8
     prerequisites = "DEF_GARRISON_2"
     effectsgroups =
@@ -103,7 +103,7 @@ Tech
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 40.0
+    researchcost = 40
     researchturns = 15
     prerequisites = "DEF_GARRISON_3"
     effectsgroups =
@@ -118,7 +118,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 1.0
+    researchcost = 1
     researchturns = 1
     unlock = [
         Item type = ShipPart name = "SR_WEAPON_1"
@@ -132,7 +132,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 2.0
+    researchcost = 2
     researchturns = 5
     prerequisites = "SHP_ROOT_AGGRESSION"
     unlock = Item type = ShipPart name = "SR_WEAPON_2"
@@ -143,7 +143,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 4.0
+    researchcost = 4
     researchturns = 3
     prerequisites = "SHP_WEAPON_2"
     unlock = Item type = ShipPart name = "SR_WEAPON_3"
@@ -154,7 +154,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 5.0
+    researchcost = 5
     researchturns = 4
     prerequisites = "SHP_WEAPON_3"
     unlock = Item type = ShipPart name = "SR_WEAPON_4"
@@ -165,7 +165,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 20.0
+    researchcost = 20
     researchturns = 10
     prerequisites = "SHP_ROOT_AGGRESSION"
     unlock = Item type = ShipPart name = "SR_WEAPON_5"
@@ -176,7 +176,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 10.0
+    researchcost = 10
     researchturns = 5
     prerequisites = "SHP_WEAPON_5"
     unlock = Item type = ShipPart name = "SR_WEAPON_6"
@@ -187,7 +187,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 20.0
+    researchcost = 20
     researchturns = 6
     prerequisites = "SHP_WEAPON_6"
     unlock = Item type = ShipPart name = "SR_WEAPON_7"
@@ -198,7 +198,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 40.0
+    researchcost = 40
     researchturns = 7
     prerequisites = "SHP_WEAPON_7"
     unlock = Item type = ShipPart name = "SR_WEAPON_8"
@@ -209,7 +209,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 100.0
+    researchcost = 100
     researchturns = 15
     prerequisites = "SHP_WEAPON_5"
     unlock = Item type = ShipPart name = "SR_WEAPON_9"
@@ -220,7 +220,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 50.0
+    researchcost = 50
     researchturns = 8
     prerequisites = "SHP_WEAPON_9"
     unlock = Item type = ShipPart name = "SR_WEAPON_10"
@@ -231,7 +231,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 100.0
+    researchcost = 100
     researchturns = 9
     prerequisites = "SHP_WEAPON_10"
     unlock = Item type = ShipPart name = "SR_WEAPON_11"
@@ -242,7 +242,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 200.0
+    researchcost = 200
     researchturns = 10
     prerequisites = "SHP_WEAPON_11"
     unlock = Item type = ShipPart name = "SR_WEAPON_12"
@@ -253,7 +253,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 500.0
+    researchcost = 500
     researchturns = 20
     prerequisites = "SHP_WEAPON_9"
     unlock = Item type = ShipPart name = "SR_WEAPON_13"
@@ -264,7 +264,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 250.0
+    researchcost = 250
     researchturns = 11
     prerequisites = "SHP_WEAPON_13"
     unlock = Item type = ShipPart name = "SR_WEAPON_14"
@@ -275,7 +275,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 500.0
+    researchcost = 500
     researchturns = 12
     prerequisites = "SHP_WEAPON_14"
     unlock = Item type = ShipPart name = "SR_WEAPON_15"
@@ -286,7 +286,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 1000.0
+    researchcost = 1000
     researchturns = 13
     prerequisites = "SHP_WEAPON_15"
     unlock = Item type = ShipPart name = "SR_WEAPON_16"
@@ -297,7 +297,7 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 2000.0
+    researchcost = 2000
     researchturns = 14
     prerequisites = "SHP_WEAPON_16"
     unlock = Item type = ShipPart name = "SR_WEAPON_17"
@@ -308,7 +308,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 12.0
+    researchcost = 12
     researchturns = 2
     graphic = "icons/tech/the_physical_brain.png"
 
@@ -318,7 +318,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 6.0
+    researchcost = 6
     researchturns = 4
     graphic = "icons/tech/algorithmic_elegance.png"
 
@@ -328,7 +328,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 16.0
+    researchcost = 16
     researchturns = 8
     prerequisites = [
         "LRN_PHYS_BRAIN"
@@ -342,7 +342,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 24.0
+    researchcost = 24
     researchturns = 3
     prerequisites = "LRN_PHYS_BRAIN"
     graphic = "icons/tech/psionics.png"
@@ -353,7 +353,7 @@ Tech
     short_description = "RESEARCH_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 25.0
+    researchcost = 25
     researchturns = 6
     prerequisites = "LRN_ALGO_ELEGANCE"
     effectsgroups =
@@ -371,7 +371,7 @@ Tech
     short_description = "XENOARCH_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 36.0
+    researchcost = 36
     researchturns = 10
     prerequisites = [
         "SHP_GAL_EXPLO"
@@ -385,7 +385,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 24.0
+    researchcost = 24
     researchturns = 8
     prerequisites = "LRN_ARTIF_MINDS"
     graphic = "icons/tech/gravitonics.png"
@@ -396,7 +396,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 48.0
+    researchcost = 48
     researchturns = 4
     prerequisites = "LRN_PSIONICS"
     graphic = "icons/tech/force-field_harmonics.png"
@@ -407,7 +407,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 40.0
+    researchcost = 40
     researchturns = 10
     prerequisites = "LRN_GRAVITONICS"
     graphic = "icons/tech/the_theory_of_everything.png"
@@ -418,7 +418,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 50.0
+    researchcost = 50
     researchturns = 12
     prerequisites = "LRN_XENOARCH"
     graphic = "icons/tech/mind_of_the_void.png"
@@ -429,7 +429,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 80.0
+    researchcost = 80
     researchturns = 5
     prerequisites = "LRN_FORCE_FIELD"
     graphic = "icons/tech/n-dimensional_subspace.png"
@@ -440,7 +440,7 @@ Tech
     short_description = "RESEARCH_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 200.0
+    researchcost = 200
     researchturns = 6
     prerequisites = "LRN_NDIM_SUBSPACE"
     effectsgroups =
@@ -457,7 +457,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 75.0
+    researchcost = 75
     researchturns = 12
     prerequisites = "LRN_EVERYTHING"
     graphic = "icons/tech/temporal_mechanics.png"
@@ -468,7 +468,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 100.0
+    researchcost = 100
     researchturns = 15
     prerequisites = [
         "LRN_MIND_VOID"
@@ -483,7 +483,7 @@ Tech
     short_description = "VICTORY_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 250.0
+    researchcost = 250
     researchturns = 25
     prerequisites = [
         "CON_TRANS_ARCH"
@@ -504,7 +504,7 @@ Tech
     short_description = "RESEARCH_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 30.0
+    researchcost = 30
     researchturns = 1
     prerequisites = [
         "LRN_TRANSLING_THT"
@@ -525,7 +525,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 75.0
+    researchcost = 75
     researchturns = 1
     prerequisites = "LRN_FORCE_FIELD"
     unlock = Item type = Building name = "BLD_OBSERVATORY"
@@ -552,7 +552,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 125.0
+    researchcost = 125
     researchturns = 1
     prerequisites = "LRN_NDIM_SUBSPACE"
     unlock = Item type = Building name = "BLD_SPATIAL_DISTORT_GEN"
@@ -563,7 +563,7 @@ Tech
     short_description = "RESEARCH_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 125.0
+    researchcost = 125
     researchturns = 1
     prerequisites = "LRN_EVERYTHING"
     effectsgroups = [
@@ -611,7 +611,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 150.0
+    researchcost = 150
     researchturns = 1
     prerequisites = [
         "LRN_MIND_VOID"
@@ -625,7 +625,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 150.0
+    researchcost = 150
     researchturns = 1
     prerequisites = [
         "LRN_MIND_VOID"
@@ -640,7 +640,7 @@ Tech
     short_description = "MIND_CONTROL_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 300.0
+    researchcost = 300
     researchturns = 1
     prerequisites = [
         "LRN_UNIF_CONC"
@@ -667,7 +667,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 250.0
+    researchcost = 250
     researchturns = 1
     prerequisites = "LRN_TIME_MECH"
     unlock = Item type = Building name = "BLD_ART_BLACK_HOLE"
@@ -714,7 +714,7 @@ Tech
     short_description = "HEALTH_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 4.0
+    researchcost = 4
     researchturns = 4
     effectsgroups =
         EffectsGroup
@@ -732,7 +732,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
-    researchcost = 2.0
+    researchcost = 2
     researchturns = 5
     graphic = "icons/tech/planetary_ecology.png"
 
@@ -742,7 +742,7 @@ Tech
     short_description = "FARMING_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 4.0
+    researchcost = 4
     researchturns = 5
     effectsgroups = [
         EffectsGroup
@@ -770,7 +770,7 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 1.0
+    researchcost = 1
     researchturns = 10
     unlock = Item type = ShipPart name = "CO_OUTPOST_MOD"
     effectsgroups =
@@ -789,7 +789,7 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 4.0
+    researchcost = 4
     researchturns = 10
     effectsgroups = [
         EffectsGroup
@@ -896,7 +896,7 @@ Tech
     short_description = "HEALTH_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 12.0
+    researchcost = 12
     researchturns = 6
     prerequisites = "GRO_GENETIC_ENG"
     effectsgroups =
@@ -915,7 +915,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
-    researchcost = 12.0
+    researchcost = 12
     researchturns = 6
     prerequisites = "GRO_MEDICAL_PATH"
     graphic = "icons/tech/lifecycle_manipulation.png"
@@ -926,7 +926,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
-    researchcost = 6.0
+    researchcost = 6
     researchturns = 12
     prerequisites = "GRO_PLANET_ECOL"
 
@@ -936,7 +936,7 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 8.0
+    researchcost = 8
     researchturns = 12
     prerequisites = [
         "GRO_SYMBIOTIC_BIO"
@@ -1111,7 +1111,7 @@ Tech
     short_description = "HEALTH_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 40.0
+    researchcost = 40
     researchturns = 9
     prerequisites = [
         "GRO_GENETIC_MED"
@@ -1133,7 +1133,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
-    researchcost = 24.0
+    researchcost = 24
     researchturns = 15
     prerequisites = "GRO_EDV_ECOMAN"
 
@@ -1143,7 +1143,7 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 24.0
+    researchcost = 24
     researchturns = 15
     prerequisites = "GRO_XENO_GENETICS"
     effectsgroups = [
@@ -1280,7 +1280,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
-    researchcost = 50.0
+    researchcost = 50
     researchturns = 16
     prerequisites = "GRO_NANOTECH_MED"
     graphic = "icons/tech/nanotech_cybernetics.png"
@@ -1291,7 +1291,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
-    researchcost = 50.0
+    researchcost = 50
     researchturns = 16
     prerequisites = [
         "GRO_ECO_METAMORPH"
@@ -1304,7 +1304,7 @@ Tech
     short_description = "VARIOUS_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 100.0
+    researchcost = 100
     researchturns = 20
     prerequisites = [
         "GRO_NANO_CYBERNET"
@@ -1369,7 +1369,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 4.0
+    researchcost = 4
     researchturns = 1
     prerequisites = "GRO_PLANET_ECOL"
     unlock = Item type = Building name = "BLD_INDUSTRY_FARM"
@@ -1381,7 +1381,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 8.0
+    researchcost = 8
     researchturns = 3
     prerequisites = "GRO_GENETIC_MED"
     unlock = Item type = Building name = "BLD_GENOME_BANK"
@@ -1393,7 +1393,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 8.0
+    researchcost = 8
     researchturns = 3
     prerequisites = "GRO_LIFECYCLE_MAN"
     unlock = Item type = Building name = "BLD_CLONING_CENTER"
@@ -1405,7 +1405,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 8.0
+    researchcost = 8
     researchturns = 3
     prerequisites = "GRO_LIFECYCLE_MAN"
     unlock = Item type = ShipPart name = "CO_SUSPEND_ANIM_POD"
@@ -1416,7 +1416,7 @@ Tech
     short_description = "FARMING_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 8.0
+    researchcost = 8
     researchturns = 3
     prerequisites = [
         "GRO_EDV_ECOMAN"
@@ -1434,7 +1434,7 @@ Tech
     short_description = "GRO_TERRAFORM_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 8.0
+    researchcost = 8
     researchturns = 3
     prerequisites = "GRO_EDV_ECOMAN"
     unlock = Item type = Building name = "BLD_TERRAFORM"
@@ -1446,7 +1446,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 16.0
+    researchcost = 16
     researchturns = 5
     prerequisites = "GRO_NANOTECH_MED"
     unlock = Item type = Building name = "BLD_BIOTERROR_PROJECTOR"
@@ -1458,7 +1458,7 @@ Tech
     short_description = "GRO_REMOTE_TERRAFORM_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 16.0
+    researchcost = 16
     researchturns = 5
     prerequisites = "GRO_ECO_METAMORPH"
     unlock = Item type = Building name = "BLD_REMOTE_TERRAFORM"
@@ -1470,7 +1470,7 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 32.0
+    researchcost = 32
     researchturns = 7
     prerequisites = "GRO_NANO_CYBERNET"
     effectsgroups = [
@@ -1542,7 +1542,7 @@ Tech
     short_description = "GRO_GAIA_TRANS_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 32.0
+    researchcost = 32
     researchturns = 7
     prerequisites = "GRO_TRANSORG_SENT"
     unlock = Item type = Building name = "BLD_GAIA_TRANS"
@@ -1554,7 +1554,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
-    researchcost = 40.0
+    researchcost = 40
     researchturns = 1
     prerequisites = [
         "CON_ORBITAL_CON"
@@ -1568,7 +1568,7 @@ Tech
     short_description = "PRODUCTION_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 12.0
+    researchcost = 12
     researchturns = 2
     effectsgroups = [
         EffectsGroup
@@ -1595,7 +1595,7 @@ Tech
     short_description = "EXOBOT_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 25.0
+    researchcost = 25
     researchturns = 4
     prerequisites = [
     	"PRO_ROBOTIC_PROD"
@@ -1611,7 +1611,7 @@ Tech
     short_description = "INDUSTRY_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 18.0
+    researchcost = 18
     researchturns = 1
     effectsgroups =
         EffectsGroup
@@ -1629,7 +1629,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
-    researchcost = 45.0
+    researchcost = 45
     researchturns = 2
     prerequisites = "PRO_ROBOTIC_PROD"
     graphic = "icons/tech/nanotech_production.png"
@@ -1640,7 +1640,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 60.0
+    researchcost = 60
     researchturns = 2
     prerequisites = "PRO_FUSION_GEN"
     unlock = Item type = Building name = "BLD_GAS_GIANT_GEN"
@@ -1652,7 +1652,7 @@ Tech
     short_description = "INDUSTRY_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 125.0
+    researchcost = 125
     researchturns = 2
     prerequisites = [
         "LRN_ARTIF_MINDS"
@@ -1673,7 +1673,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 200.0
+    researchcost = 200
     researchturns = 3
     prerequisites = "LRN_EVERYTHING"
     unlock = Item type = Building name = "BLD_REPLICATORS"
@@ -1685,7 +1685,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
-    researchcost = 200.0
+    researchcost = 200
     researchturns = 3
     prerequisites = "LRN_NDIM_SUBSPACE"
     graphic = "icons/tech/n-dimensional_assembly.png"
@@ -1696,7 +1696,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 150.0
+    researchcost = 150
     researchturns = 3
     prerequisites = [
         "LRN_GRAVITONICS"
@@ -1711,7 +1711,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 250.0
+    researchcost = 250
     researchturns = 7
     prerequisites = [
         "PRO_NDIM_ASSMB"
@@ -1727,7 +1727,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 8.0
+    researchcost = 8
     researchturns = 1
     prerequisites = [
         "PRO_CORE_MINE"
@@ -1742,7 +1742,7 @@ Tech
     short_description = "BUILDING_REFINE_SHORT_DESC"
     techtype = Refinement
     category = "PRODUCTION_CATEGORY"
-    researchcost = 4.0
+    researchcost = 4
     researchturns = 1
     prerequisites = [
         "PRO_HEAVY_MINING_I"
@@ -1756,7 +1756,7 @@ Tech
     short_description = "MINING_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 6.0
+    researchcost = 6
     researchturns = 1
     prerequisites = "PRO_MICROGRAV_MAN"
     graphic = "icons/tech/orbital_mining.png"
@@ -1767,7 +1767,7 @@ Tech
     short_description = "MINING_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 4.0
+    researchcost = 4
     researchturns = 1
     prerequisites = "PRO_MICROGRAV_MAN"
     graphic = "icons/tech/asteroid_mining_i.png"
@@ -1778,7 +1778,7 @@ Tech
     short_description = "BUILDING_REFINE_SHORT_DESC"
     techtype = Refinement
     category = "PRODUCTION_CATEGORY"
-    researchcost = 2.0
+    researchcost = 2
     researchturns = 1
     prerequisites = "PRO_ASTEROID_MINE"
     effectsgroups =
@@ -1798,7 +1798,7 @@ Tech
     short_description = "MINING_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 30.0
+    researchcost = 30
     researchturns = 1
     effectsgroups = [
         EffectsGroup
@@ -1845,7 +1845,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 8.0
+    researchcost = 8
     researchturns = 1
     prerequisites = "PRO_ROBOTIC_PROD"
     unlock = Item type = Building name = "BLD_INDUSTRY_CENTER"
@@ -1857,7 +1857,7 @@ Tech
     short_description = "BUILDING_REFINE_SHORT_DESC"
     techtype = Refinement
     category = "PRODUCTION_CATEGORY"
-    researchcost = 40.0
+    researchcost = 40
     researchturns = 1
     prerequisites = "PRO_INDUSTRY_CENTER_I"
     graphic = "icons/tech/industrial_centre_ii.png"
@@ -1868,7 +1868,7 @@ Tech
     short_description = "BUILDING_REFINE_SHORT_DESC"
     techtype = Refinement
     category = "PRODUCTION_CATEGORY"
-    researchcost = 200.0
+    researchcost = 200
     researchturns = 1
     prerequisites = "PRO_INDUSTRY_CENTER_II"
     graphic = "icons/tech/industrial_centre_iii.png"
@@ -1879,7 +1879,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 24.0
+    researchcost = 24
     researchturns = 1
     prerequisites = "PRO_ORBITAL_GEN"
     unlock = Item type = Building name = "BLD_SOL_ORB_GEN"
@@ -1890,7 +1890,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 24.0
+    researchcost = 24
     researchturns = 2
     prerequisites = [
         "PRO_CORE_MINE"
@@ -1907,7 +1907,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 30.0
+    researchcost = 30
     researchturns = 1
     graphic = "icons/tech/metroplex_infrastructure.png"
 
@@ -1917,7 +1917,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 250.0
+    researchcost = 250
     researchturns = 1
     prerequisites = "CON_METRO_INFRA"
     graphic = "icons/tech/architecture_psychology.png"
@@ -1928,7 +1928,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 250.0
+    researchcost = 250
     researchturns = 1
     prerequisites = "CON_METRO_INFRA"
     graphic = "icons/tech/architectural_monofilaments.png"
@@ -1939,7 +1939,7 @@ Tech
     short_description = "CONSTRUCTION_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 750.0
+    researchcost = 750
     researchturns = 1
     prerequisites = "CON_ARCH_MONOFILS"
     effectsgroups =
@@ -1956,7 +1956,7 @@ Tech
     short_description = "METER_GROWTH_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 200.0
+    researchcost = 200
     researchturns = 1
     prerequisites = "LRN_FORCE_FIELD"
     effectsgroups = [
@@ -2096,7 +2096,7 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 100.0
+    researchcost = 100
     researchturns = 1
     prerequisites = "PRO_MICROGRAV_MAN"
 
@@ -2139,7 +2139,7 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 450.0
+    researchcost = 450
     researchturns = 1
     prerequisites = [
         "CON_FRC_ENRG_STRC"
@@ -2184,7 +2184,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 2000.0
+    researchcost = 2000
     researchturns = 1
     prerequisites = [
         "CON_GAL_INFRA"
@@ -2199,7 +2199,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 50.0
+    researchcost = 50
     researchturns = 9
     prerequisites = "GRO_ECO_METAMORPH"
     graphic = "icons/tech/infrastructure_ecology.png"
@@ -2210,7 +2210,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 75.0
+    researchcost = 75
     researchturns = 12
     prerequisites = "CON_INFRA_ECOL"
     unlock = Item type = Building name = "BLD_TRANSFORMER"
@@ -2222,7 +2222,7 @@ Tech
     short_description = "CONSTRUCTION_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 50.0
+    researchcost = 50
     researchturns = 4
     prerequisites = "LRN_GRAVITONICS"
     effectsgroups =
@@ -2240,7 +2240,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 75.0
+    researchcost = 75
     researchturns = 6
     prerequisites = "CON_CONTGRAV_ARCH"
     unlock = Item type = Building name = "BLD_ART_MOON"
@@ -2252,7 +2252,7 @@ Tech
     short_description = "CONSTRUCTION_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 4.0
+    researchcost = 4
     researchturns = 1
     effectsgroups =
         EffectsGroup
@@ -2269,7 +2269,7 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 4.0
+    researchcost = 4
     researchturns = 1
     prerequisites = "CON_METRO_INFRA"
     effectsgroups = [
@@ -2289,7 +2289,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 36.0
+    researchcost = 36
     researchturns = 1
     prerequisites = "CON_ARCH_MONOFILS"
     unlock = Item type = Building name = "BLD_SPACE_ELEVATOR"
@@ -2301,7 +2301,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 36.0
+    researchcost = 36
     researchturns = 1
     prerequisites = "CON_ARCH_PSYCH"
     unlock = Item type = Building name = "BLD_CONC_CAMP"
@@ -2313,7 +2313,7 @@ Tech
     short_description = "STEALTH_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 32.0
+    researchcost = 32
     researchturns = 1
     prerequisites = "CON_FRC_ENRG_STRC"
     effectsgroups =
@@ -2330,7 +2330,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 80.0
+    researchcost = 80
     researchturns = 1
     prerequisites = "CON_GAL_INFRA"
     unlock = [
@@ -2344,7 +2344,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 80.0
+    researchcost = 80
     researchturns = 1
     prerequisites = "CON_GAL_INFRA"
     unlock = [
@@ -2359,7 +2359,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 45.0
+    researchcost = 45
     researchturns = 2
     prerequisites = [
         "CON_ART_HEAVENLY"
@@ -2373,7 +2373,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 4.0
+    researchcost = 4
     researchturns = 1
     graphic = "icons/tech/galactic_exploration.png"
 
@@ -2383,7 +2383,7 @@ Tech
     short_description = "TAME_MONSTER_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 4.0
+    researchcost = 4
     researchturns = 1
 
 Tech
@@ -2392,7 +2392,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 16.0
+    researchcost = 16
     researchturns = 2
     prerequisites = "SHP_GAL_EXPLO"
 
@@ -2402,7 +2402,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 32.0
+    researchcost = 32
     researchturns = 2
     prerequisites = "SHP_GAL_EXPLO"
     graphic = "icons/tech/stellar_navigation.png"
@@ -2413,7 +2413,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 75.0
+    researchcost = 75
     researchturns = 3
     prerequisites = "SHP_NAVIGATION"
 
@@ -2423,7 +2423,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 62.0
+    researchcost = 62
     researchturns = 2
     prerequisites = "SHP_SPACE_TACTICS"
 
@@ -2433,7 +2433,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 120.0
+    researchcost = 120
     researchturns = 5
     prerequisites = "SHP_INTSTEL_LOG"
 
@@ -2443,7 +2443,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 62.0
+    researchcost = 62
     researchturns = 2
     prerequisites = "SHP_SPACE_TACTICS"
 
@@ -2453,7 +2453,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 125.0
+    researchcost = 125
     researchturns = 3
     prerequisites = "SHP_TACT_COUNTER"
 
@@ -2463,7 +2463,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 125.0
+    researchcost = 125
     researchturns = 3
     prerequisites = "SHP_SPACE_WEAPON"
 
@@ -2473,7 +2473,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 150.0
+    researchcost = 150
     researchturns = 4
     prerequisites = [
         "SHP_TACT_SUPER"
@@ -2486,7 +2486,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 200.0
+    researchcost = 200
     researchturns = 5
     prerequisites = "SHP_SURGICAL_DESTRUCT"
 
@@ -2496,7 +2496,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 12.0
+    researchcost = 12
     researchturns = 1
     prerequisites = "PRO_ROBOTIC_PROD"
     unlock = [
@@ -2510,7 +2510,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 75.0
+    researchcost = 75
     researchturns = 1
     prerequisites = "SHP_MIL_ROBO_CONT"
     unlock = [
@@ -2524,7 +2524,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 250.0
+    researchcost = 250
     researchturns = 1
     prerequisites = [
         "SHP_SPACE_FLUX_DRIVE"
@@ -2537,7 +2537,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 500.0
+    researchcost = 500
     researchturns = 1
     prerequisites = [
         "SHP_CONTGRAV_MAINT"
@@ -2550,7 +2550,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 800.0
+    researchcost = 800
     researchturns = 1
     prerequisites = "SHP_NANOROBO_MAINT"
 
@@ -2560,7 +2560,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 600.0
+    researchcost = 600
     researchturns = 2
     prerequisites = "SHP_MASSPROP_SPEC"
 
@@ -2570,7 +2570,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 800.0
+    researchcost = 800
     researchturns = 2
     prerequisites = [
         "SHP_TRANSSPACE_DRIVE"
@@ -2583,7 +2583,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 25.0
+    researchcost = 25
     researchturns = 3
     prerequisites = "PRO_MICROGRAV_MAN"
     unlock = [
@@ -2599,7 +2599,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 450.0
+    researchcost = 450
     researchturns = 3
     prerequisites = "SHP_ASTEROID_HULLS"
     unlock = [
@@ -2613,7 +2613,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 900.0
+    researchcost = 900
     researchturns = 5
     prerequisites = "SHP_ASTEROID_REFORM"
 
@@ -2623,7 +2623,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 2.0
+    researchcost = 2
     researchturns = 5
     prerequisites = "GRO_GENETIC_ENG"
 
@@ -2633,7 +2633,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 6.0
+    researchcost = 6
     researchturns = 5
     prerequisites = [
         "GRO_SYMBIOTIC_BIO"
@@ -2646,7 +2646,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 45.0
+    researchcost = 45
     researchturns = 8
     prerequisites = [
         "SHP_MULTICELL_CAST"
@@ -2659,7 +2659,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 45.0
+    researchcost = 45
     researchturns = 8
     prerequisites = [
         "SHP_HAB_MEGAFAUN"
@@ -2672,7 +2672,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 125.0
+    researchcost = 125
     researchturns = 12
     prerequisites = "SHP_CONT_SYMB"
 
@@ -2682,7 +2682,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "SHIPS_CATEGORY"
-    researchcost = 125.0
+    researchcost = 125
     researchturns = 12
     prerequisites = [
         "SHP_MONOCELL_EXP"
@@ -2695,7 +2695,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 160.0
+    researchcost = 160
     researchturns = 3
     prerequisites = [
         "LRN_FORCE_FIELD"
@@ -2712,7 +2712,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 420.0
+    researchcost = 420
     researchturns = 5
     prerequisites = "SHP_FRC_ENRG_COMP"
     unlock = [
@@ -2726,7 +2726,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 420.0
+    researchcost = 420
     researchturns = 5
     prerequisites = "SHP_FRC_ENRG_COMP"
     unlock = [
@@ -2740,7 +2740,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 950.0
+    researchcost = 950
     researchturns = 7
     prerequisites = [
         "SHP_QUANT_ENRG_MAG"
@@ -2781,7 +2781,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 85.0
+    researchcost = 85
     researchturns = 1
     prerequisites = "SHP_CONTGRAV_MAINT"
     unlock = [
@@ -2795,7 +2795,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 120.0
+    researchcost = 120
     researchturns = 1
     prerequisites = "SHP_NANOROBO_MAINT"
     unlock = [
@@ -2809,7 +2809,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 180.0
+    researchcost = 180
     researchturns = 1
     prerequisites = "SHP_MASSPROP_SPEC"
     unlock = [
@@ -2823,7 +2823,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 250.0
+    researchcost = 250
     researchturns = 1
     prerequisites = "SHP_TRANSSPACE_DRIVE"
     unlock = [
@@ -2837,7 +2837,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 500.0
+    researchcost = 500
     researchturns = 1
     prerequisites = "SHP_MIDCOMB_LOG"
     unlock = [
@@ -2854,7 +2854,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 26.0
+    researchcost = 26
     researchturns = 2
     prerequisites = "SHP_ASTEROID_HULLS"
     unlock = [
@@ -2869,7 +2869,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 80.0
+    researchcost = 80
     researchturns = 2
     prerequisites = "SHP_ASTEROID_REFORM"
     unlock = [
@@ -2883,7 +2883,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 145.0
+    researchcost = 145
     researchturns = 2
     prerequisites = "SHP_MINIAST_SWARM"
     unlock = [
@@ -2897,7 +2897,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 160.0
+    researchcost = 160
     researchturns = 2
     prerequisites = "SHP_MONOMOLEC_LATTICE"
     unlock = [
@@ -2911,7 +2911,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 80.0
+    researchcost = 80
     researchturns = 2
     prerequisites = "SHP_ASTEROID_REFORM"
     unlock = [
@@ -2925,7 +2925,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 160.0
+    researchcost = 160
     researchturns = 2
     prerequisites = "SHP_MONOMOLEC_LATTICE"
     unlock = [
@@ -2939,7 +2939,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 4.0
+    researchcost = 4
     researchturns = 2
     prerequisites = "SHP_HAB_MEGAFAUN"
     unlock = [
@@ -2953,7 +2953,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 4.0
+    researchcost = 4
     researchturns = 2
     prerequisites = "SHP_MULTICELL_CAST"
     unlock = [
@@ -2967,7 +2967,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 7.5
+    researchcost = 8
     researchturns = 3
     prerequisites = [
         "SHP_MULTICELL_CAST"
@@ -2985,7 +2985,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 54.0
+    researchcost = 54
     researchturns = 3
     prerequisites = "SHP_CONT_SYMB"
     unlock = [
@@ -2999,7 +2999,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 54.0
+    researchcost = 54
     researchturns = 3
     prerequisites = "SHP_MONOCELL_EXP"
     unlock = [
@@ -3013,7 +3013,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 72.0
+    researchcost = 72
     researchturns = 4
     prerequisites = [
         "SHP_MONOCELL_EXP"
@@ -3031,7 +3031,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 156.0
+    researchcost = 156
     researchturns = 4
     prerequisites = "SHP_CONT_BIOADAPT"
     unlock = [
@@ -3045,7 +3045,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 156.0
+    researchcost = 156
     researchturns = 4
     prerequisites = "SHP_BIONEUR_SPEC"
     unlock = [
@@ -3059,7 +3059,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 200.0
+    researchcost = 200
     researchturns = 5
     prerequisites = [
         "SHP_CONT_BIOADAPT"
@@ -3077,7 +3077,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 24.0
+    researchcost = 24
     researchturns = 1
     prerequisites = "SHP_NAVIGATION"
     unlock = Item type = ShipPart name = "AR_LEAD_PLATE"
@@ -3088,7 +3088,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 125.0
+    researchcost = 125
     researchturns = 4
     prerequisites = [
         "SHP_STRAT_DEFENSE"
@@ -3102,7 +3102,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 75.0
+    researchcost = 75
     researchturns = 3
     prerequisites = "SHP_ADV_NAVIGATION"
     unlock = Item type = Building name = "BLD_LIGHTHOUSE"
@@ -3114,7 +3114,7 @@ Tech
     short_description = "FLEET_RANGE_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 36.0
+    researchcost = 36
     researchturns = 2
     prerequisites = "SHP_INTSTEL_LOG"
 
@@ -3124,7 +3124,7 @@ Tech
     short_description = "SHIP_REPAIR_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 40.0
+    researchcost = 40
     researchturns = 10
     prerequisites = "SHP_FLEET_LOGISTICS"
     effectsgroups =
@@ -3146,7 +3146,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 8.0
+    researchcost = 8
     researchturns = 1
     prerequisites = "SHP_SPACE_TACTICS"
     unlock = Item type = ShipPart name = "SH_DEFLECTOR"
@@ -3157,7 +3157,7 @@ Tech
     short_description = "DETECTION_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 24.0
+    researchcost = 24
     researchturns = 1
     prerequisites = "SHP_NAVIGATION"
     unlock = Item type = ShipPart name = "DT_ACTIVE_RADAR"
@@ -3179,7 +3179,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 24.0
+    researchcost = 24
     researchturns = 1
     prerequisites = "SHP_NAVIGATION"
     unlock = Item type = ShipPart name = "FU_DEUTERIUM_TANK"
@@ -3190,7 +3190,7 @@ Tech
     short_description = "STRUCTURE_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 36.0
+    researchcost = 36
     researchturns = 2
     prerequisites = "SHP_INTSTEL_LOG"
     effectsgroups =
@@ -3207,7 +3207,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 8.0
+    researchcost = 8
     researchturns = 1
     prerequisites = "SHP_SPACE_TACTICS"
     unlock = Item type = ShipPart name = "ST_EM_DAMPER"
@@ -3234,7 +3234,7 @@ Tech
     short_description = "DETECTION_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 36.0
+    researchcost = 36
     researchturns = 2
     prerequisites = "SHP_INTSTEL_LOG"
     unlock = Item type = ShipPart name = "DT_NEUTRON_SCANNER"
@@ -3253,7 +3253,7 @@ Tech
     short_description = "STRUCTURE_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 24.0
+    researchcost = 24
     researchturns = 1
     prerequisites = "SHP_NAVIGATION"
     effectsgroups =
@@ -3270,7 +3270,7 @@ Tech
     short_description = "STRUCTURE_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 75.0
+    researchcost = 75
     researchturns = 3
     prerequisites = "SHP_ADV_NAVIGATION"
     effectsgroups =
@@ -3287,7 +3287,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 75.0
+    researchcost = 75
     researchturns = 3
     prerequisites = "SHP_ADV_NAVIGATION"
     unlock = Item type = ShipPart name = "AR_ZORTRIUM_PLATE"
@@ -3298,7 +3298,7 @@ Tech
     short_description = "DEFENSE_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 8.0
+    researchcost = 8
     researchturns = 1
     prerequisites = "SHP_SPACE_TACTICS"
     effectsgroups =
@@ -3315,7 +3315,7 @@ Tech
     short_description = "SHIELD_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 45.0
+    researchcost = 45
     researchturns = 1
     prerequisites = "SHP_TACT_COUNTER"
     effectsgroups =
@@ -3333,7 +3333,7 @@ Tech
     short_description = "PLANET_PROTECT_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 45.0
+    researchcost = 45
     researchturns = 1
     prerequisites = "SHP_SPACE_WEAPON"
     effectsgroups =
@@ -3354,7 +3354,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 45.0
+    researchcost = 45
     researchturns = 1
     prerequisites = "SHP_TACT_COUNTER"
     unlock = Item type = ShipPart name = "ST_ABSORPTION_FIELD"
@@ -3382,7 +3382,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 52.0
+    researchcost = 52
     researchturns = 2
     prerequisites = "SHP_TACT_SUPER"
     unlock = Item type = ShipPart name = "ST_PHASING_CLOAK"
@@ -3408,7 +3408,7 @@ Tech
     short_description = "DEFENSE_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 52.0
+    researchcost = 52
     researchturns = 2
     prerequisites = "SHP_MAX_DISRUPT"
     effectsgroups =
@@ -3425,7 +3425,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 75.0
+    researchcost = 75
     researchturns = 3
     prerequisites = "SHP_ADV_NAVIGATION"
     unlock = Item type = ShipPart name = "FU_ANTIMATTER_TANK"
@@ -3436,7 +3436,7 @@ Tech
     short_description = "SHIELD_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 125.0
+    researchcost = 125
     researchturns = 4
     prerequisites = "SHP_STRAT_DEFENSE"
     effectsgroups =
@@ -3453,7 +3453,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 75.0
+    researchcost = 75
     researchturns = 3
     prerequisites = "SHP_SURGICAL_DESTRUCT"
     unlock = Item type = ShipPart name = "SP_DISTORTION_MODULATOR"
@@ -3464,7 +3464,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 125.0
+    researchcost = 125
     researchturns = 4
     prerequisites = "SHP_STRAT_DEFENSE"
     unlock = Item type = ShipPart name = "ST_PHASING_CLOAK"
@@ -3490,7 +3490,7 @@ Tech
     short_description = "DETECTION_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 75.0
+    researchcost = 75
     researchturns = 3
     prerequisites = "SHP_ADV_NAVIGATION"
     unlock = Item type = ShipPart name = "DT_SENSORS"

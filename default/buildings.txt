@@ -46,7 +46,7 @@ BuildingType
 BuildingType
     name = "BLD_IMPERIAL_PALACE"
     description = "BLD_IMPERIAL_PALACE_DESC"
-    buildcost = 2.5
+    buildcost = 3
     buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -127,7 +127,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
     description = "BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC"
-    buildcost = 7.5
+    buildcost = 8
     buildtime = 1
     location = And [
         Contains And [
@@ -352,7 +352,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ORG_ORB_INC"
     description = "BLD_SHIPYARD_ORG_ORB_INC_DESC"
-    buildcost = 0.5
+    buildcost = 10
     buildtime = 10
     location = And [
         Contains And [
@@ -380,7 +380,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
     description = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC"
-    buildcost = 3
+    buildcost = 20
     buildtime = 10
     location = And [
         Contains And [
@@ -398,7 +398,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ORG_XENO_FAC"
     description = "BLD_SHIPYARD_ORG_XENO_FAC_DESC"
-    buildcost = 3
+    buildcost = 20
     buildtime = 10
     location = And [
         Contains And [
@@ -1067,7 +1067,7 @@ BuildingType
 BuildingType
     name = "BLD_PLANET_BEACON"
     description = "BLD_PLANET_BEACON_DESC"
-    buildcost = 0.1
+    buildcost = 1
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -1225,7 +1225,7 @@ BuildingType
 BuildingType
     name = "BLD_STARGATE_ACTIVATOR"
     description = "BLD_STARGATE_ACTIVATOR_DESC"
-    buildcost = .1
+    buildcost = 1
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -1238,7 +1238,7 @@ BuildingType
 BuildingType
     name = "BLD_STARGATE_BEACON"
     description = "BLD_STARGATE_BEACON_DESC"
-    buildcost = .1
+    buildcost = 1
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
