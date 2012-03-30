@@ -891,46 +891,6 @@ Tech
     graphic = "icons/tech/symbiosis_biology.png"
 
 Tech
-    name = "GRO_GENETIC_MED"
-    description = "GRO_GENETIC_MED_DESC"
-    short_description = "HEALTH_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 12
-    researchturns = 6
-    prerequisites = "GRO_GENETIC_ENG"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-                Not [[NON_ORGANIC]]
-            ]
-            effects = SetTargetHealth Value + 5
-    graphic = "icons/tech/genetic_medicine.png"
-
-Tech
-    name = "GRO_LIFECYCLE_MAN"
-    description = "GRO_LIFECYCLE_MAN_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 12
-    researchturns = 6
-    prerequisites = "GRO_MEDICAL_PATH"
-    graphic = "icons/tech/lifecycle_manipulation.png"
-
-Tech
-    name = "GRO_EDV_ECOMAN"
-    description = "GRO_EDV_ECOMAN_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 6
-    researchturns = 12
-    prerequisites = "GRO_PLANET_ECOL"
-
-Tech
     name = "GRO_XENO_GENETICS"
     description = "GRO_XENO_GENETICS_DESC"
     short_description = "POPULATION_SHORT_DESC"
@@ -950,10 +910,7 @@ Tech
                 Planet environment = Poor
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
+            activation = Not OwnerHasTech "GRO_XENO_HYBRIDS"
             effects = [
                 SetTargetPopulation Value + 1
                 SetTargetHealth Value + 5
@@ -966,10 +923,7 @@ Tech
                 Planet environment = Poor
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
+            activation = Not OwnerHasTech "GRO_XENO_HYBRIDS"
             effects = [
                 SetTargetPopulation Value + 2
                 SetTargetHealth Value + 5
@@ -982,10 +936,7 @@ Tech
                 Planet environment = Poor
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
+            activation = Not OwnerHasTech "GRO_XENO_HYBRIDS"
             effects = [
                 SetTargetPopulation Value + 3
                 SetTargetHealth Value + 5
@@ -998,10 +949,7 @@ Tech
                 Planet environment = Poor
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
+            activation = Not OwnerHasTech "GRO_XENO_HYBRIDS"
             effects = [
                 SetTargetPopulation Value + 4
                 SetTargetHealth Value + 5
@@ -1014,10 +962,7 @@ Tech
                 Planet environment = Poor
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
+            activation = Not OwnerHasTech "GRO_XENO_HYBRIDS"
             effects = [
                 SetTargetPopulation Value + 5
                 SetTargetHealth Value + 5
@@ -1029,10 +974,6 @@ Tech
                 Planet size = Tiny
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
-            ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
                 SetTargetPopulation Value + 0
@@ -1046,12 +987,8 @@ Tech
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
             effects = [
-                SetTargetPopulation Value + .5
+                SetTargetPopulation Value + 1
                 SetTargetHealth Value + 5
             ]
 
@@ -1062,12 +999,8 @@ Tech
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
             effects = [
-                SetTargetPopulation Value + 1
+                SetTargetPopulation Value + 2
                 SetTargetHealth Value + 5
             ]
 
@@ -1078,12 +1011,8 @@ Tech
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
             effects = [
-                SetTargetPopulation Value + 1.5
+                SetTargetPopulation Value + 3
                 SetTargetHealth Value + 5
             ]
 
@@ -1094,48 +1023,12 @@ Tech
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
             effects = [
-                SetTargetPopulation Value + 2
+                SetTargetPopulation Value + 4
                 SetTargetHealth Value + 5
             ]
     ]
     graphic = "icons/tech/xenological_genetics.png"
-
-Tech
-    name = "GRO_NANOTECH_MED"
-    description = "GRO_NANOTECH_MED_DESC"
-    short_description = "HEALTH_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 40
-    researchturns = 9
-    prerequisites = [
-        "GRO_GENETIC_MED"
-        "PRO_NANOTECH_PROD"
-    ]
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-                Not [[NON_ORGANIC]]
-            ]
-        effects = SetTargetHealth Value + 10
-    graphic = "icons/tech/nanotech_medicine.png"
-
-Tech
-    name = "GRO_ECO_METAMORPH"
-    description = "GRO_ECO_METAMORPH_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 24
-    researchturns = 15
-    prerequisites = "GRO_EDV_ECOMAN"
 
 Tech
     name = "GRO_XENO_HYBRIDS"
@@ -1273,6 +1166,150 @@ Tech
             ]
     ]
     graphic = "icons/tech/xenological_hybridization.png"
+    
+Tech
+    name = "GRO_CYBORG"
+    description = "GRO_CYBORG_DESC"
+    short_description = "POPULATION_SHORT_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 32
+    researchturns = 7
+    prerequisites = "GRO_NANO_CYBERNET"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Tiny
+                Planet environment = Hostile
+                Not [[NON_ORGANIC]]
+            ]
+            effects = [
+                SetTargetPopulation Value + 0
+                SetTargetHealth Value + 10
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Small
+                Planet environment = Hostile
+                Not [[NON_ORGANIC]]
+            ]
+            effects = [
+                SetTargetPopulation Value + 1
+                SetTargetHealth Value + 10
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Medium
+                Planet environment = Hostile
+                Not [[NON_ORGANIC]]
+            ]
+            effects = [
+                SetTargetPopulation Value + 2
+                SetTargetHealth Value + 10
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Large
+                Planet environment = Hostile
+                Not [[NON_ORGANIC]]
+            ]
+            effects = [
+                SetTargetPopulation Value + 3
+                SetTargetHealth Value + 10
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Huge
+                Planet environment = Hostile
+                Not [[NON_ORGANIC]]
+            ]
+            effects = [
+                SetTargetPopulation Value + 4
+                SetTargetHealth Value + 10
+            ]
+
+    ]
+
+Tech
+    name = "GRO_GENETIC_MED"
+    description = "GRO_GENETIC_MED_DESC"
+    short_description = "HEALTH_SHORT_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 12
+    researchturns = 6
+    prerequisites = "GRO_GENETIC_ENG"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                PopulationCenter
+                Not [[NON_ORGANIC]]
+            ]
+            effects = SetTargetHealth Value + 5
+    graphic = "icons/tech/genetic_medicine.png"
+
+Tech
+    name = "GRO_LIFECYCLE_MAN"
+    description = "GRO_LIFECYCLE_MAN_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 12
+    researchturns = 6
+    prerequisites = "GRO_MEDICAL_PATH"
+    graphic = "icons/tech/lifecycle_manipulation.png"
+
+Tech
+    name = "GRO_EDV_ECOMAN"
+    description = "GRO_EDV_ECOMAN_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 6
+    researchturns = 12
+    prerequisites = "GRO_PLANET_ECOL"
+
+Tech
+    name = "GRO_NANOTECH_MED"
+    description = "GRO_NANOTECH_MED_DESC"
+    short_description = "HEALTH_SHORT_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 40
+    researchturns = 9
+    prerequisites = [
+        "GRO_GENETIC_MED"
+        "PRO_NANOTECH_PROD"
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                PopulationCenter
+                Not [[NON_ORGANIC]]
+            ]
+        effects = SetTargetHealth Value + 10
+    graphic = "icons/tech/nanotech_medicine.png"
+
+Tech
+    name = "GRO_ECO_METAMORPH"
+    description = "GRO_ECO_METAMORPH_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 24
+    researchturns = 15
+    prerequisites = "GRO_EDV_ECOMAN"
 
 Tech
     name = "GRO_NANO_CYBERNET"
@@ -1463,78 +1500,6 @@ Tech
     prerequisites = "GRO_ECO_METAMORPH"
     unlock = Item type = Building name = "BLD_REMOTE_TERRAFORM"
     graphic = "icons/tech/terraform_rapid.png"
-
-Tech
-    name = "GRO_CYBORG"
-    description = "GRO_CYBORG_DESC"
-    short_description = "POPULATION_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 32
-    researchturns = 7
-    prerequisites = "GRO_NANO_CYBERNET"
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Tiny
-                Planet environment = Hostile
-                Not [[NON_ORGANIC]]
-            ]
-            effects = [
-                SetTargetPopulation Value + 0
-                SetTargetHealth Value + 10
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Small
-                Planet environment = Hostile
-                Not [[NON_ORGANIC]]
-            ]
-            effects = [
-                SetTargetPopulation Value + 1
-                SetTargetHealth Value + 10
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Medium
-                Planet environment = Hostile
-                Not [[NON_ORGANIC]]
-            ]
-            effects = [
-                SetTargetPopulation Value + 2
-                SetTargetHealth Value + 10
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Large
-                Planet environment = Hostile
-                Not [[NON_ORGANIC]]
-            ]
-            effects = [
-                SetTargetPopulation Value + 3
-                SetTargetHealth Value + 10
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Huge
-                Planet environment = Hostile
-                Not [[NON_ORGANIC]]
-            ]
-            effects = [
-                SetTargetPopulation Value + 4
-                SetTargetHealth Value + 10
-            ]
-
-    ]
 
 Tech
     name = "GRO_GAIA_TRANS"
