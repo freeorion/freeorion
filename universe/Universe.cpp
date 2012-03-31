@@ -1258,6 +1258,11 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
 
         // combine cause type and specific cause into effect cause
         Effect::EffectCause effect_cause(effect_cause_type, specific_cause_name);
+        if (!effects_group->AccountingLabel().empty()) {
+            // override default accounting label with custom-written one from content script
+            effect_cause.cause_type = ECT_UNKNOWN_CAUSE;
+            effect_cause.specific_cause = effects_group->AccountingLabel();
+        }
 
         // combine target set and effect cause
         Effect::TargetsAndCause target_and_cause(target_set, effect_cause);
@@ -1318,15 +1323,15 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes, bool 
 
         // execute Effects in the EffectsGroup
         if (only_appearance_effects)
-            effects_group->ExecuteAppearanceModifications(sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
+            effects_group->ExecuteAppearanceModifications(  sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
         else if (update_effect_accounting && only_meter_effects)
-            effects_group->ExecuteSetMeter(sourced_effects_group.source_object_id, filtered_targets_and_cause, m_effect_accounting_map);
+            effects_group->ExecuteSetMeter(                 sourced_effects_group.source_object_id, filtered_targets_and_cause,     m_effect_accounting_map);
         else if (only_meter_effects)
-            effects_group->ExecuteSetMeter(sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
+            effects_group->ExecuteSetMeter(                 sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
         else if (update_effect_accounting)
-            effects_group->Execute(sourced_effects_group.source_object_id, filtered_targets_and_cause, m_effect_accounting_map);
+            effects_group->Execute(                         sourced_effects_group.source_object_id, filtered_targets_and_cause,     m_effect_accounting_map);
         else
-            effects_group->Execute(sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
+            effects_group->Execute(                         sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
 
         if (GetOptionsDB().Get<bool>("verbose-logging")) {
             Logger().debugStream() << "ExecuteEffects Targets after: ";

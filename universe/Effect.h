@@ -76,12 +76,14 @@ public:
     };
 
     EffectsGroup(const Condition::ConditionBase* scope, const Condition::ConditionBase* activation,
-                 const std::vector<EffectBase*>& effects, const std::string& stacking_group = "") :
+                 const std::vector<EffectBase*>& effects, const std::string& accounting_label = "",
+                 const std::string& stacking_group = "") :
         m_scope(scope),
         m_activation(activation),
         m_stacking_group(stacking_group),
         m_explicit_description(""), // TODO: Get this from stringtable when available
-        m_effects(effects)
+        m_effects(effects),
+        m_accounting_label(accounting_label)
     {}
     virtual ~EffectsGroup();
 
@@ -106,10 +108,11 @@ public:
     /** execute all appearance modifying effects in group. */
     void    ExecuteAppearanceModifications(int source_id, const TargetSet& targets) const;
 
-    const std::string&              StackingGroup() const;
-    const std::vector<EffectBase*>& EffectsList() const;
+    const std::string&              StackingGroup() const       { return m_stacking_group; }
+    const std::vector<EffectBase*>& EffectsList() const         { return m_effects; }
     Description                     GetDescription() const;
     std::string                     DescriptionString() const;
+    std::string                     AccountingLabel() const     { return m_accounting_label; }
     std::string                     Dump() const;
 
 protected:
@@ -118,6 +121,7 @@ protected:
     std::string                     m_stacking_group;
     std::string                     m_explicit_description;
     std::vector<EffectBase*>        m_effects;
+    std::string                     m_accounting_label;
 
 private:
     friend class boost::serialization::access;

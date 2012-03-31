@@ -419,11 +419,6 @@ void EffectsGroup::ExecuteAppearanceModifications(int source_id, const TargetSet
     }
 
 }
-const std::string& EffectsGroup::StackingGroup() const
-{ return m_stacking_group; }
-
-const std::vector<EffectBase*>& EffectsGroup::EffectsList() const
-{ return m_effects; }
 
 EffectsGroup::Description EffectsGroup::GetDescription() const {
     Description retval;

@@ -78,7 +78,7 @@ namespace {
             );
         return EffectsGroupPtr(
             new Effect::EffectsGroup(
-                scope, activation, Effects(1, new Effect::SetShipPartMeter(meter_type, part_name, vr)), part_name));
+                scope, activation, Effects(1, new Effect::SetShipPartMeter(meter_type, part_name, vr)), "", part_name));
     }
 
     struct DescriptionVisitor : public boost::static_visitor<>

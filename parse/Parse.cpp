@@ -30,6 +30,7 @@ namespace {
             qi::_b_type _b;
             qi::_c_type _c;
             qi::_d_type _d;
+            qi::_e_type _e;
             qi::_val_type _val;
             qi::lit_type lit;
             using phoenix::construct;
@@ -45,12 +46,15 @@ namespace {
                 >>  -(
                         parse::label(StackingGroup_name) >> tok.string [ _c = _1 ]
                      )
+                >>  -(
+                        parse::label(AccountingLabel_name) >> tok.string [ _e = _1 ]
+                     )
                 >>   parse::label(Effects_name)
                 >>   (
                             '[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']'
                         |   parse::effect_parser() [ push_back(_d, _1) ]
                      )
-                     [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _c) ]
+                     [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c) ]
                 ;
 
             start
@@ -74,7 +78,8 @@ namespace {
                 Condition::ConditionBase*,
                 Condition::ConditionBase*,
                 std::string,
-                std::vector<Effect::EffectBase*>
+                std::vector<Effect::EffectBase*>,
+                std::string
             >,
             parse::skipper_type
         > effects_group_rule;
