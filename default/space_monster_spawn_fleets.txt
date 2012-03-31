@@ -3,7 +3,7 @@ MonsterFleet
     ships = [
         "SM_KRILL_1"
     ]
-    spawnrate = 1.5
+    spawnrate = 0.5
     spawnlimit = 9999
     location = And [
         Not Contains Monster

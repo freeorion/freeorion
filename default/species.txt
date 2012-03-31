@@ -898,7 +898,7 @@ Species
         
         [[AVERAGE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
+        [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]

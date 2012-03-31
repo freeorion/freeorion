@@ -3039,7 +3039,9 @@ Prefer Terran planets.
 [[AVERAGE_MINING]]
 [[NO_INDUSTRY]]
 [[TERRIBLE_RESEARCH]]
-        
+
+[[NO_FOOD_USE]]
+
 [[AVERAGE_GROUND_TROOPS]]
 
 [[NON_ORGANIC]]
@@ -3418,7 +3420,7 @@ An ancient, derelict ship from an unknown species. Who knows what it could revea
 
 SUPERNOVA_SPECIAL
 Supernova
-SUPERNOVA_SPECIAL
+SUPERNOVA_SPECIAL_DESC
 A supernova occurred in this system in the relatively recent past, leaving only scattered debris where another majestic star system once lay.
 
 NOVA_BOMB_ACTIVATOR_SPECIAL

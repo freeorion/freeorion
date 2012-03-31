@@ -2671,15 +2671,13 @@ HUNT_SHIPS
             scope = And [
                 Contains Source
                 Fleet
-            ]
-            activation = And [
-                Not OwnedBy AnyEmpire
                 Number low = 1 And [
                     Ship
                     OwnedBy AnyEmpire
                     WithinDistance Source.Detection - LocalCandidate.Stealth Source
                 ]
             ]
+            activation = Not OwnedBy AnyEmpire
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
@@ -2696,15 +2694,13 @@ HUNT_PLANETS
             scope = And [
                 Contains Source
                 Fleet
-            ]
-            activation = And [
-                Not OwnedBy AnyEmpire
                 Number low = 1 And [
                     Planet
                     OwnedBy AnyEmpire
                     WithinDistance Source.Detection - LocalCandidate.Stealth Source
                 ]
             ]
+            activation = Not OwnedBy AnyEmpire
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System

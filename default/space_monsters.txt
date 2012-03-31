@@ -324,11 +324,12 @@ ShipDesign
 ShipDesign
     name = "SM_ACIREMA_GUARD"
     description = "SM_ACIREMA_GUARD_DESC"
-    hull = "GUARD_MONSTER_BODY"
+    hull = "SH_GUARD_MONSTER_BODY"
     parts = [
         "SR_WEAPON_5"
         "SH_DEFLECTOR"
         "DT_NEUTRON_SCANNER"
+        ""
         ""
     ]
     icon = "icons/monsters/sentinel.png"

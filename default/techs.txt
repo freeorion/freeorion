@@ -1977,6 +1977,14 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
+                Construction high = RootCandidate.TargetConstruction - 3
+            ]
+            effects = SetConstruction Value + 2
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
                 Farming low = RootCandidate.TargetFarming - 3 high = RootCandidate.TargetFarming
             ]
             effects = SetFarming Target.TargetFarming
@@ -2004,6 +2012,14 @@ Tech
                 Research low = RootCandidate.TargetResearch - 3 high = RootCandidate.TargetResearch
             ]
             effects = SetResearch Target.TargetResearch
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Construction low = RootCandidate.TargetConstruction - 3 high = RootCandidate.TargetConstruction
+            ]
+            effects = SetConstruction Target.TargetConstruction
 
         EffectsGroup
             scope = And [
@@ -2041,6 +2057,14 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
+                Construction low = RootCandidate.TargetConstruction + 5
+            ]
+            effects = SetConstruction Value - 3
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
                 Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 5
             ]
             effects = SetFarming Target.TargetFarming
@@ -2068,6 +2092,14 @@ Tech
                 Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 5
             ]
             effects = SetResearch Target.TargetResearch
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Construction low = RootCandidate.TargetConstruction high = RootCandidate.TargetConstruction + 5
+            ]
+            effects = SetConstruction Target.TargetConstruction
     ]
     graphic = "icons/tech/force_energy_structures.png"
 
@@ -3251,6 +3283,7 @@ Tech
             scope = Source
             activation = Not OwnerHasTech "SHP_SENSORS"
             effects = SetEmpireMeter Source.Owner "METER_DETECTION" 400
+    ]
 
 Tech
     name = "SHP_BASIC_DAM_CONT"
@@ -3507,7 +3540,7 @@ Tech
             ]
             effects = SetDetection Value + 400
 
-        EffectsGroups
+        EffectsGroup
             scope = Source
             effects = SetEmpireMeter Source.Owner "METER_DETECTION" 700
     ]
