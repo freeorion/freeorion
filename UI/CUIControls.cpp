@@ -3,6 +3,7 @@
 #include "ClientUI.h"
 #include "CUIDrawUtil.h"
 #include "CUISpin.h"
+#include "InfoPanels.h"
 #include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
@@ -1017,12 +1018,22 @@ namespace {
             if (!species)
                 return;
             GG::Wnd::SetName(species->Name());
-            push_back(new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h) - 6), h - 6, ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC));
-            push_back(new GG::TextControl(GG::X0, GG::Y0, Width() - GG::X(Value(h)), h, UserString(species->Name()),
-                                          ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
+            push_back(new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h) - 6), h - 6,
+                                            ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC));
+            push_back(new GG::TextControl(GG::X0, GG::Y0, Width() - GG::X(Value(h)), h,
+                                          UserString(species->Name()),
+                                          ClientUI::GetFont(), ClientUI::TextColor(),
+                                          GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
             GG::X first_col_width(Value(h) - 10);
             SetColWidth(0, first_col_width);
             SetColWidth(1, w - first_col_width);
+            SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+                new IconTextBrowseWnd(ClientUI::SpeciesIcon(species->Name()),
+                                      UserString(species->Name()),
+                                      UserString(species->Description()))
+                                     )
+                            );
         }
     };
 }
@@ -1045,8 +1056,7 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h, const std::vector<std::string
     GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
 }
 
-const std::string& SpeciesSelector::CurrentSpeciesName() const
-{
+const std::string& SpeciesSelector::CurrentSpeciesName() const {
     CUIDropDownList::iterator row_it = this->CurrentItem();
     if (row_it == this->end())
         return EMPTY_STRING;
@@ -1058,8 +1068,7 @@ const std::string& SpeciesSelector::CurrentSpeciesName() const
     return row->Name();
 }
 
-std::vector<std::string> SpeciesSelector::AvailableSpeciesNames() const
-{
+std::vector<std::string> SpeciesSelector::AvailableSpeciesNames() const {
     std::vector<std::string> retval;
     for (CUIDropDownList::const_iterator row_it = this->begin(); row_it != this->end(); ++row_it)
         if (const SpeciesRow* species_row = dynamic_cast<const SpeciesRow*>(*row_it))
@@ -1067,8 +1076,7 @@ std::vector<std::string> SpeciesSelector::AvailableSpeciesNames() const
     return retval;
 }
 
-void SpeciesSelector::SelectSpecies(const std::string& species_name)
-{
+void SpeciesSelector::SelectSpecies(const std::string& species_name) {
     for (CUIDropDownList::iterator row_it = this->begin(); row_it != this->end(); ++row_it) {
         CUIDropDownList::Row* row = *row_it;
         if (const SpeciesRow* species_row = dynamic_cast<const SpeciesRow*>(row)) {
@@ -1081,8 +1089,7 @@ void SpeciesSelector::SelectSpecies(const std::string& species_name)
     Logger().errorStream() << "SpeciesSelector::SelectSpecies was unable to find a species in the list with name " << species_name;
 }
 
-void SpeciesSelector::SetSpecies(const std::vector<std::string>& species_names)
-{
+void SpeciesSelector::SetSpecies(const std::vector<std::string>& species_names) {
     const std::string& previous_selection = CurrentSpeciesName();
     bool selection_changed = (previous_selection == "");
 
@@ -1104,8 +1111,7 @@ void SpeciesSelector::SetSpecies(const std::vector<std::string>& species_names)
         SelectionChanged(this->CurrentItem());
 }
 
-void SpeciesSelector::SelectionChanged(GG::DropDownList::iterator it)
-{
+void SpeciesSelector::SelectionChanged(GG::DropDownList::iterator it) {
     const GG::ListBox::Row* row = 0;
     if (it != this->end())
         row = *it;
