@@ -4399,18 +4399,18 @@ DESC_PRODUCED_BY_EMPIRE
 
 DESC_PRODUCED_BY_EMPIRE_NOT
  that was not produced by the %1% empire
- 
-DESC_METER_VALUE_MAX
- that has a max %1% between %2% and %3%
-
-DESC_METER_VALUE_MAX_NOT
- that does not have a max %1% between %2% and %3%
 
 DESC_METER_VALUE_CURRENT
  that has a %1% between %2% and %3%
 
 DESC_METER_VALUE_CURRENT_NOT
  that doesn't have a %1% between %2% and %3%
+
+DESC_EMPIRE_METER_VALUE_CURRENT
+ if empire %4% has a %1% between %2% and %3%
+
+DESC_EMPIRE_METER_VALUE_CURRENT_NOT
+ if empire %4% doesn't have a %1% between %2% and %3%
 
 DESC_EMPIRE_STOCKPILE_VALUE
  that belongs to an empire with a %1% stockpile between %2% and %3%

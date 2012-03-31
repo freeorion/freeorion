@@ -3586,6 +3586,133 @@ bool Condition::MeterValue::Match(const ScriptingContext& local_context) const {
 }
 
 ///////////////////////////////////////////////////////////
+// EmpireMeterValue                                            //
+///////////////////////////////////////////////////////////
+Condition::EmpireMeterValue::~EmpireMeterValue() {
+    delete m_empire_id;
+    delete m_low;
+    delete m_high;
+}
+
+namespace {
+    struct EmpireMeterValueSimpleMatch {
+        EmpireMeterValueSimpleMatch(int empire_id, double low, double high, const std::string& meter) :
+            m_empire_id(empire_id),
+            m_low(low),
+            m_high(high),
+            m_meter(meter)
+        {}
+
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
+            const Empire* empire = Empires().Lookup(m_empire_id);
+            if (!empire)
+                return false;
+            const Meter* meter = empire->GetMeter(m_meter);
+            if (!meter)
+                return false;
+            double meter_current = meter->Current();
+            return (m_low <= meter_current && meter_current <= m_high);
+        }
+
+        int         m_empire_id;
+        double      m_low;
+        double      m_high;
+        std::string m_meter;
+    };
+}
+
+void Condition::EmpireMeterValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                 ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
+                             (!m_low || m_low->LocalCandidateInvariant()) &&
+                             (!m_high || m_high->LocalCandidateInvariant()) &&
+                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    if (simple_eval_safe) {
+        // evaluate number limits once, use to match all candidates
+        const UniverseObject* no_object(0);
+        ScriptingContext local_context(parent_context, no_object);
+        int empire_id = m_empire_id->Eval(local_context);   // if m_empire_id not set, default to local candidate's owner, which is not target invariant
+        double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+        double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+        EvalImpl(matches, non_matches, search_domain, EmpireMeterValueSimpleMatch(empire_id, low, high, m_meter));
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::EmpireMeterValue::RootCandidateInvariant() const {
+    return (!m_empire_id || m_empire_id->RootCandidateInvariant()) &&
+           (!m_low || m_low->RootCandidateInvariant()) &&
+           (!m_high || m_high->RootCandidateInvariant());
+}
+
+bool Condition::EmpireMeterValue::TargetInvariant() const {
+    return (!m_empire_id || m_empire_id->TargetInvariant()) &&
+           (!m_low || m_low->TargetInvariant()) &&
+           (!m_high || m_high->TargetInvariant());
+}
+
+std::string Condition::EmpireMeterValue::Description(bool negated/* = false*/) const {
+    std::string empire_str;
+    if (m_empire_id) {
+        int empire_id = ALL_EMPIRES;
+        if (ValueRef::ConstantExpr(m_empire_id))
+            empire_id = m_empire_id->Eval();
+        if (const Empire* empire = Empires().Lookup(empire_id))
+            empire_str = empire->Name();
+        else
+            empire_str = m_empire_id->Description();
+    }
+    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
+                                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                                    m_low->Description())
+                                 : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
+    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
+                                      boost::lexical_cast<std::string>(m_high->Eval()) :
+                                      m_high->Description())
+                                   : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
+    std::string description_str = "DESC_EMPIRE_METER_VALUE_CURRENT";
+    if (negated)
+        description_str += "_NOT";
+    return str(FlexibleFormat(UserString(description_str))
+               % UserString(m_meter)
+               % low_str
+               % high_str
+               % empire_str);
+}
+
+std::string Condition::EmpireMeterValue::Dump() const {
+    std::string retval = DumpIndent() + "EmpireMeterValue";
+    if (m_empire_id)
+        retval += " empire = " + m_empire_id->Dump();
+    retval += " meter = " + m_meter;
+    if (m_low)
+        retval += " low = " + m_low->Dump();
+    if (m_high)
+        retval += " high = " + m_high->Dump();
+    retval += "\n";
+    return retval;
+}
+
+bool Condition::EmpireMeterValue::Match(const ScriptingContext& local_context) const {
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "EmpireMeterValue::Match passed no candidate object";
+        return false;
+    }
+    int empire_id = (m_empire_id ? m_empire_id->Eval(local_context) : candidate->Owner());
+    if (empire_id == ALL_EMPIRES)
+        return false;
+    double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+    double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+    return EmpireMeterValueSimpleMatch(empire_id, low, high, m_meter)(candidate);
+}
+
+///////////////////////////////////////////////////////////
 // EmpireStockpileValue                                  //
 ///////////////////////////////////////////////////////////
 Condition::EmpireStockpileValue::~EmpireStockpileValue() {
@@ -3683,7 +3810,7 @@ std::string Condition::EmpireStockpileValue::Dump() const {
 bool Condition::EmpireStockpileValue::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "MeterValue::Match passed no candidate object";
+        Logger().errorStream() << "EmpireStockpileValue::Match passed no candidate object";
         return false;
     }
 
