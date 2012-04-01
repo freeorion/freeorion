@@ -341,8 +341,8 @@ public:
     const std::set<std::pair<int, int> >&   FleetSupplyStarlaneTraversals() const;          ///< returns set of directed starlane traversals along which supply can flow.  results are pairs of system ids of start and end system of traversal
     const std::map<int, int>&               FleetSupplyRanges() const;                      ///< returns map from system id to number of starlane jumps away the system can deliver fleet supply
 
-    const std::set<std::set<int> >&         ResourceSupplyGroups() const;                   ///< returns set of sets of systems that can share food, industry and minerals (systems in separate groups are blockaded or otherwise separated)
-    const std::set<std::pair<int, int> >&   ResourceSupplyStarlaneTraversals() const;       ///< returns set of directed starlane traversals along which system resource exchange (food, industry, minerals) can flow.  results are pairs of system ids of start and end of traversal
+    const std::set<std::set<int> >&         ResourceSupplyGroups() const;                   ///< returns set of sets of systems that can share industry and minerals (systems in separate groups are blockaded or otherwise separated)
+    const std::set<std::pair<int, int> >&   ResourceSupplyStarlaneTraversals() const;       ///< returns set of directed starlane traversals along which system resource exchange (industry, minerals) can flow.  results are pairs of system ids of start and end of traversal
     const std::set<std::pair<int, int> >&   ResourceSupplyOstructedStarlaneTraversals() const;      ///< returns set of directed starlane traversals along which system resources could flow for this empire, but which can't due to some obstruction in the destination system
     const std::map<int, int>&               ResourceSupplyRanges() const;                   ///< returns map from system id to number of starlane jumps away the system can exchange resources
 
@@ -493,8 +493,6 @@ public:
       * Currently: Deducts cost of maintenance of buildings from empire's trade stockpile */
     void                    CheckTradeSocialProgress();
 
-    /** Updates food stockpile.  Growth actually occurs in PopGrowthProductionResearchPhase() of objects */
-    void                    CheckGrowthFoodProgress();
 
     void                    SetColor(const GG::Clr& color);                 ///< Mutator for empire color
     void                    SetName(const std::string& name);               ///< Mutator for empire name
@@ -510,7 +508,7 @@ public:
 
     /** Resets production of resources and calculates allocated resources (on each item in
       * queues and overall) for each resource by calling UpdateResearchQueue, UpdateProductionQueue,
-      * UpdateTradeSpending, and UpdateFoodDistribution.  Does not actually "spend" resources,
+      * UpdateTradeSpending.  Does not actually "spend" resources,
       * but just determines how much and on what to spend.  Actual consumption of resources, removal
       * of items from queue, processing of finished items and population growth happens in various
       * Check(Whatever)Progress functions. */
@@ -530,14 +528,8 @@ public:
       * Currently: Sums maintenance costs of all buildings owned by empire, sets m_maintenance_total_cost */
     void                    UpdateTradeSpending();
 
-    /** Allocates available food to PopCenters.  Doesn't actually distribute food; just calculates how
-      * how much food each PopCenter gets.  Does not automatically update population growth estimates,
-      * so UpdatePopulationGrowth() may need to be called after calling this function. */
-    void                    UpdateFoodDistribution();
-
-    /** Has m_population_pool recalculate all PopCenters' and empire's total expected population growth
-      * Assumes UpdateFoodDistribution() has been called to determine food allocations to each planet (which
-      * are a factor in the growth prediction calculation). */
+    /** Has m_population_pool recalculate all PopCenters' and empire's total
+      * expected population growth */
     void                    UpdatePopulationGrowth();
     //@}
 

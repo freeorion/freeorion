@@ -15,8 +15,7 @@ class UniverseObject;
   * Planet is the most obvious class to inherit PopCenter, but other classes
   * could be made from it as well (e.g., a ship that is large enough to support
   * population and still travel between systems). */
-class PopCenter
-{
+class PopCenter {
 public:
     /** \name Structors */ //@{
     PopCenter();                                        ///< default ctor
@@ -26,32 +25,24 @@ public:
 
     /** \name Accessors */ //@{
     const std::string&  SpeciesName() const {return m_species_name;}        ///< returns the name of the species that populates this planet
-    double              AllocatedFood() const {return m_allocated_food;}    ///< returns the amount of food which is currently available
 
     std::string         Dump() const;
 
-    double              NextTurnPopGrowth() const;                          ///< predicted pop growth next turn, accounting for limits due to allocated food
+    double              NextTurnPopGrowth() const;                          ///< predicted pop growth next turn
 
     virtual double      InitialMeterValue(MeterType type) const = 0;        ///< implementation should return the initial value of the specified meter \a type
     virtual double      CurrentMeterValue(MeterType type) const = 0;        ///< implementation should current value of the specified meter \a type
     virtual double      NextTurnCurrentMeterValue(MeterType type) const = 0;///< implementation should return an estimate of the next turn's current value of the specified meter \a type
-
-    double              FoodAllocationForMaxGrowth() const;                 ///< returns the amount of food that should be allocated to this PopCenter to ensure the maximum possible growth rate
     //@}
 
     /** \name Mutators */ //@{
     void    Copy(const PopCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
-
     void    SetSpecies(const std::string& species_name);///< sets the species of the population to \a species_name
-    void    SetAllocatedFood(double allocated_food);    ///< sets the amount of food which is currently available
-
-    void    Reset();                                    ///< Sets all meters to 0, clears race name, and sets allocated food to 0.
+    void    Reset();                                    ///< Sets all meters to 0, clears race name
     //@}
 
 protected:
     void    Init();                                     ///< initialization that needs to be called by derived class after derived class is constructed
-
-    double  NextTurnHealthGrowth() const;               ///< returns change in actual health for next turn.
 
     double  PopCenterNextTurnMeterValue(MeterType meter_type) const;///< returns estimate of the next turn's current values of meters relevant to this PopCenter
     void    PopCenterResetTargetMaxUnpairedMeters();
@@ -65,7 +56,6 @@ private:
     virtual void            AddMeter(MeterType meter_type) = 0; ///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions
 
     std::string m_species_name;                                 ///< the name of the species that occupies this planet
-    double      m_allocated_food;                               ///< amount of food allocated to this PopCenter by Empire food distribution
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -76,8 +66,7 @@ private:
 template <class Archive>
 void PopCenter::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_species_name)
-        & BOOST_SERIALIZATION_NVP(m_allocated_food);
+    ar  & BOOST_SERIALIZATION_NVP(m_species_name);
 }
 
 #endif // _PopCenter_h_

@@ -14,7 +14,6 @@ BuildingType
             ]
             effects = [
                 SetTargetResearch Value + .5
-                SetTargetFarming Value + Target.Population * 1.0
                 SetTargetMining Value + Target.Population * 0.5
                 SetTargetIndustry Value + Target.Population * 1.0
                 SetMaxTroops Value + 5
@@ -631,7 +630,6 @@ BuildingType
             effects = [
                 SetTargetConstruction Value + 30
                 SetEmpireCapital
-                SetFarming Target.TargetFarming
                 SetMining Target.TargetMining
                 SetIndustry Target.TargetIndustry
                 SetTrade Target.TargetTrade
@@ -659,19 +657,6 @@ BuildingType
         TargetPopulation low = 1
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_FARMING"
-            ]
-            activation = Not WithinDistance 500 And [
-                Ship
-                Not Stationary
-            ]
-            stackinggroup = "BLD_COLLECTIVE_NET_FARMING_EFFECT"
-            effects = SetTargetFarming Value + Target.Population * 0.5
-
         EffectsGroup
             scope = And [
                 PopulationCenter
@@ -730,7 +715,7 @@ BuildingType
                 Focus "FOCUS_FARMING"
             ]
             activation = Source
-            effects = SetTargetFarming Value + Target.Population * 0.5
+            effects = SetTargetPopulation Value + 3
 
         EffectsGroup
             scope = And [
@@ -738,7 +723,7 @@ BuildingType
                 PopulationCenter
             ]
             activation = Source
-            effects = SetTargetHealth Value + 3
+            effects = SetTargetPopulation Value + 3
     ]
     graphic = "icons/building/genome_bank.png"
 
@@ -832,7 +817,7 @@ BuildingType
                 Focus "FOCUS_INDUSTRY"
             ]
             activation = Source
-            effects = SetTargetHealth Value - 5
+            effects = SetTargetPopulation Value - 5
     ]
     graphic = "icons/building/blackhole.png"
 
@@ -896,7 +881,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "CLONING_CENTER_EFFECT"
-            effects = SetTargetHealth Value + 30
+            effects = SetTargetPopulation Value + 10
     graphic = ""
 
 BuildingType
@@ -1022,7 +1007,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BLD_INDUSTRY_FARM_EFFECT"
-            effects = SetTargetFarming Value + Target.TargetIndustry / 10
+            effects = SetTargetPopulation Value + 1
     graphic = ""
 
 BuildingType

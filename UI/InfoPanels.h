@@ -31,7 +31,7 @@ namespace GG {
     class StaticGraphic;
 }
 
-/** Shows population and health with meter bars */
+/** Shows population with meter bars */
 class PopulationPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
@@ -69,10 +69,8 @@ private:
     int                         m_popcenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
     StatisticIcon*              m_pop_stat;             ///< icon and number of population
-    StatisticIcon*              m_health_stat;          ///< icon and number of health
-    StatisticIcon*              m_food_consumption_stat;///< icon and number of food consumption
 
-    MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates population and health
+    MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates population
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
 
     GG::Button*                 m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
@@ -117,7 +115,6 @@ private:
 
     int                         m_rescenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
-    StatisticIcon*              m_farming_stat;         ///< icon and number of food production
     StatisticIcon*              m_mining_stat;          ///< icon and number of minerals production
     StatisticIcon*              m_industry_stat;        ///< icon and number of industry production
     StatisticIcon*              m_research_stat;        ///< icon and number of research production
@@ -167,12 +164,12 @@ private:
 
     int                         m_planet_id;                ///< object id for the UniverseObject that this panel display info about
 
-    StatisticIcon*              m_fleet_supply_stat;        ///< icon and number of food production
-    StatisticIcon*              m_shield_stat;              ///< icon and number of minerals production
-    StatisticIcon*              m_defense_stat;             ///< icon and number of industry production
-    StatisticIcon*              m_troops_stat;              ///< icon and number of ground troops
-    StatisticIcon*              m_detection_stat;           ///< icon and number of research production
-    StatisticIcon*              m_stealth_stat;             ///< icon and number of trade production
+    StatisticIcon*              m_fleet_supply_stat;
+    StatisticIcon*              m_shield_stat;
+    StatisticIcon*              m_defense_stat;
+    StatisticIcon*              m_troops_stat;
+    StatisticIcon*              m_detection_stat;
+    StatisticIcon*              m_stealth_stat;
 
     MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates resource production and construction meter
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values

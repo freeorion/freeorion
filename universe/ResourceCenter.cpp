@@ -28,8 +28,7 @@ ResourceCenter::ResourceCenter(const ResourceCenter& rhs) :
     m_focus(rhs.m_focus)
 {}
 
-void ResourceCenter::Copy(const ResourceCenter* copied_object, Visibility vis)
-{
+void ResourceCenter::Copy(const ResourceCenter* copied_object, Visibility vis) {
     if (copied_object == this)
         return;
     if (!copied_object) {
@@ -42,16 +41,13 @@ void ResourceCenter::Copy(const ResourceCenter* copied_object, Visibility vis)
     }
 }
 
-void ResourceCenter::Init()
-{
+void ResourceCenter::Init() {
     //Logger().debugStream() << "ResourceCenter::Init";
-    AddMeter(METER_FARMING);
     AddMeter(METER_MINING);
     AddMeter(METER_INDUSTRY);
     AddMeter(METER_RESEARCH);
     AddMeter(METER_TRADE);
     AddMeter(METER_CONSTRUCTION);
-    AddMeter(METER_TARGET_FARMING);
     AddMeter(METER_TARGET_MINING);
     AddMeter(METER_TARGET_INDUSTRY);
     AddMeter(METER_TARGET_RESEARCH);
@@ -69,15 +65,13 @@ std::vector<std::string> ResourceCenter::AvailableFoci() const
 const std::string& ResourceCenter::FocusIcon(const std::string& focus_name) const
 { return EMPTY_STRING; }
 
-std::string ResourceCenter::Dump() const
-{
+std::string ResourceCenter::Dump() const {
     std::stringstream os;
     os << "ResourceCenter focus: " << m_focus;
     return os.str();
 }
 
-double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const
-{
+double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
     const Meter* meter = GetMeter(type);
     if (!meter) {
         throw std::invalid_argument("ResourceCenter::ResourceCenterNextTurnMeterValue passed meter type that the ResourceCenter does not have.");
@@ -86,7 +80,6 @@ double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const
 
     MeterType target_meter_type = INVALID_METER_TYPE;
     switch (type) {
-    case METER_TARGET_FARMING:
     case METER_TARGET_MINING:
     case METER_TARGET_INDUSTRY:
     case METER_TARGET_RESEARCH:
@@ -94,7 +87,6 @@ double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const
     case METER_TARGET_CONSTRUCTION:
         return current_meter_value;
         break;
-    case METER_FARMING:     target_meter_type = METER_TARGET_FARMING;       break;
     case METER_MINING:      target_meter_type = METER_TARGET_MINING;        break;
     case METER_INDUSTRY:    target_meter_type = METER_TARGET_INDUSTRY;      break;
     case METER_RESEARCH:    target_meter_type = METER_TARGET_RESEARCH;      break;
@@ -120,16 +112,13 @@ double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const
         return current_meter_value;
 }
 
-void ResourceCenter::SetFocus(const std::string& focus)
-{
+void ResourceCenter::SetFocus(const std::string& focus) {
     // TODO: verify validitly of focus?
     m_focus = focus;
     ResourceCenterChangedSignal();
 }
 
-void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters()
-{
-    GetMeter(METER_TARGET_FARMING)->ResetCurrent();
+void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters() {
     GetMeter(METER_TARGET_INDUSTRY)->ResetCurrent();
     GetMeter(METER_TARGET_MINING)->ResetCurrent();
     GetMeter(METER_TARGET_RESEARCH)->ResetCurrent();
@@ -137,9 +126,7 @@ void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters()
     GetMeter(METER_TARGET_CONSTRUCTION)->ResetCurrent();
 }
 
-void ResourceCenter::ResourceCenterPopGrowthProductionResearchPhase()
-{
-    GetMeter(METER_FARMING)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_FARMING));
+void ResourceCenter::ResourceCenterPopGrowthProductionResearchPhase() {
     GetMeter(METER_INDUSTRY)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_INDUSTRY));
     GetMeter(METER_MINING)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_MINING));
     GetMeter(METER_RESEARCH)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_RESEARCH));
@@ -147,16 +134,13 @@ void ResourceCenter::ResourceCenterPopGrowthProductionResearchPhase()
     GetMeter(METER_CONSTRUCTION)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_CONSTRUCTION));
 }
 
-void ResourceCenter::ResourceCenterClampMeters()
-{
-    GetMeter(METER_TARGET_FARMING)->ClampCurrentToRange();
+void ResourceCenter::ResourceCenterClampMeters() {
     GetMeter(METER_TARGET_INDUSTRY)->ClampCurrentToRange();
     GetMeter(METER_TARGET_MINING)->ClampCurrentToRange();
     GetMeter(METER_TARGET_RESEARCH)->ClampCurrentToRange();
     GetMeter(METER_TARGET_TRADE)->ClampCurrentToRange();
     GetMeter(METER_TARGET_CONSTRUCTION)->ClampCurrentToRange();
 
-    GetMeter(METER_FARMING)->ClampCurrentToRange();
     GetMeter(METER_INDUSTRY)->ClampCurrentToRange();
     GetMeter(METER_MINING)->ClampCurrentToRange();
     GetMeter(METER_RESEARCH)->ClampCurrentToRange();
@@ -164,18 +148,15 @@ void ResourceCenter::ResourceCenterClampMeters()
     GetMeter(METER_CONSTRUCTION)->ClampCurrentToRange();
 }
 
-void ResourceCenter::Reset()
-{
+void ResourceCenter::Reset() {
     m_focus.clear();
 
-    GetMeter(METER_FARMING)->Reset();
     GetMeter(METER_INDUSTRY)->Reset();
     GetMeter(METER_MINING)->Reset();
     GetMeter(METER_RESEARCH)->Reset();
     GetMeter(METER_TRADE)->Reset();
     GetMeter(METER_CONSTRUCTION)->Reset();
 
-    GetMeter(METER_TARGET_FARMING)->Reset();
     GetMeter(METER_TARGET_INDUSTRY)->Reset();
     GetMeter(METER_TARGET_MINING)->Reset();
     GetMeter(METER_TARGET_RESEARCH)->Reset();

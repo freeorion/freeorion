@@ -581,13 +581,6 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
 
-    // self-allocate resources on unowned planets, so natives don't starve
-    std::vector<Planet*> planets = m_universe.Objects().FindObjects<Planet>();
-    for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it)
-        if ((*it)->Unowned() && (*it)->CurrentMeterValue(METER_POPULATION) > 0.0)
-            (*it)->SetAllocatedFood(std::min((*it)->CurrentMeterValue(METER_FARMING), (*it)->CurrentMeterValue(METER_POPULATION)));
-
-
     // send new game start messages
     Logger().debugStream() << "ServerApp::NewGameInit: Sending GameStartMessages to players";
     for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
@@ -790,13 +783,6 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
-
-    // self-allocate resources on unowned planets, so natives don't starve
-    std::vector<Planet*> planets = m_universe.Objects().FindObjects<Planet>();
-    for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it)
-        if ((*it)->Unowned() && (*it)->CurrentMeterValue(METER_POPULATION) > 0.0)
-            (*it)->SetAllocatedFood(std::min((*it)->CurrentMeterValue(METER_FARMING), (*it)->CurrentMeterValue(METER_POPULATION)));
-
 
     // compile information about players to send out to other players at start of game.
     Logger().debugStream() << "ServerApp::CommonGameInit: Compiling PlayerInfo for each player";
@@ -1283,13 +1269,7 @@ namespace {
 
         planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);
         planet->GetMeter(METER_TARGET_POPULATION)->SetCurrent(colonist_capacity);
-        planet->GetMeter(METER_FARMING)->SetCurrent(colonist_capacity);
-        planet->GetMeter(METER_TARGET_FARMING)->SetCurrent(colonist_capacity);
-        planet->GetMeter(METER_HEALTH)->SetCurrent(20.0);
-        planet->GetMeter(METER_TARGET_HEALTH)->SetCurrent(20.0);
         planet->BackPropegateMeters();
-
-        planet->SetAllocatedFood(Meter::LARGE_VALUE);
 
         planet->SetOwner(empire_id);
 
@@ -1446,9 +1426,6 @@ namespace {
                 }
             }
         }
-
-        // update food allocation meters for newly colonized planets, so they don't starve themselves later this turn
-
         // TODO elsewhere: clear colonization planet of ships when that planet
         //      has been destroyed or become invisible, or if the ship leaves
         //      the system?
@@ -1849,13 +1826,6 @@ void ServerApp::PostCombatProcessTurns() {
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
 
-    // self-allocate resources on unowned planets, so natives don't starve
-    std::vector<Planet*> planets = m_universe.Objects().FindObjects<Planet>();
-    for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it)
-        if ((*it)->Unowned() && (*it)->CurrentMeterValue(METER_POPULATION) > 0.0)
-            (*it)->SetAllocatedFood(std::min((*it)->CurrentMeterValue(METER_FARMING), (*it)->CurrentMeterValue(METER_POPULATION)));
-
-
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
         Logger().debugStream() << objects.Dump();
@@ -1874,7 +1844,6 @@ void ServerApp::PostCombatProcessTurns() {
         empire->CheckResearchProgress();
         empire->CheckProductionProgress();
         empire->CheckTradeSocialProgress();
-        empire->CheckGrowthFoodProgress();
     }
 
 
@@ -1899,7 +1868,7 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.InitializeSystemGraph();
 
 
-    // Population growth or loss, health meter growth, resource current meter
+    // Population growth or loss, resource current meter
     // growth, etc.
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();

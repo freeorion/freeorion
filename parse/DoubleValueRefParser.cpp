@@ -19,9 +19,7 @@ namespace {
             const parse::lexer& tok = parse::lexer::instance();
 
             final_token
-                %=   tok.Farming_
-                |    tok.TargetFarming_
-                |    tok.Industry_
+                %=   tok.Industry_
                 |    tok.TargetIndustry_
                 |    tok.Research_
                 |    tok.TargetResearch_
@@ -33,8 +31,6 @@ namespace {
                 |    tok.TargetConstruction_
                 |    tok.Population_
                 |    tok.TargetPopulation_
-                |    tok.Health_
-                |    tok.TargetHealth_
                 |    tok.MaxFuel_
                 |    tok.Fuel_
                 |    tok.MaxShield_
@@ -48,15 +44,11 @@ namespace {
                 |    tok.Supply_
                 |    tok.Stealth_
                 |    tok.Detection_
-                |    tok.FoodConsumption_
                 |    tok.BattleSpeed_
                 |    tok.StarlaneSpeed_
                 |    tok.TradeStockpile_
                 |    tok.MineralStockpile_
-                |    tok.FoodStockpile_
                 |    tok.DistanceToSource_
-                |    tok.AllocatedFood_
-                |    tok.FoodAllocationForMaxGrowth_
                 ;
 
             constant

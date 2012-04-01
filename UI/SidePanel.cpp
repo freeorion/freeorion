@@ -1929,8 +1929,7 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     s_side_panels.insert(this);
 }
 
-SidePanel::~SidePanel()
-{
+SidePanel::~SidePanel() {
     // disconnect any existing stored signals
     while (!s_system_connections.empty()) {
         s_system_connections.begin()->disconnect();
@@ -1946,20 +1945,16 @@ SidePanel::~SidePanel()
     delete m_system_resource_summary;
 }
 
-bool SidePanel::InWindow(const GG::Pt& pt) const
-{
+bool SidePanel::InWindow(const GG::Pt& pt) const {
     return (UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0) <= pt && pt < LowerRight())
            || (m_planet_panel_container && m_planet_panel_container->InWindow(pt))
            || (m_system_resource_summary && m_system_resource_summary->InWindow(pt));
 }
 
 GG::Pt SidePanel::ClientUpperLeft() const
-{
-    return GG::Wnd::UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_BOTTOM);
-}
+{ return GG::Wnd::UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_BOTTOM); }
 
-void SidePanel::Render()
-{
+void SidePanel::Render() {
     GG::Pt ul = UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), GG::Y0);
     GG::Pt lr = LowerRight();
 
@@ -2203,7 +2198,6 @@ void SidePanel::RefreshImpl() {
 
     // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.
     std::vector<std::pair<MeterType, MeterType> > meter_types;
-    meter_types.push_back(std::make_pair(METER_FARMING,     METER_TARGET_FARMING));
     meter_types.push_back(std::make_pair(METER_MINING,      METER_TARGET_MINING));
     meter_types.push_back(std::make_pair(METER_INDUSTRY,    METER_TARGET_INDUSTRY));
     meter_types.push_back(std::make_pair(METER_RESEARCH,    METER_TARGET_RESEARCH));

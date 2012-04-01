@@ -60,7 +60,6 @@ namespace FreeOrionPython {
             .value("ship",              BT_SHIP)
         ;
         enum_<ResourceType>("resourceType")
-            .value("food",          RE_FOOD)
             .value("minerals",      RE_MINERALS)
             .value("industry",      RE_INDUSTRY)
             .value("trade",         RE_TRADE)
@@ -68,8 +67,6 @@ namespace FreeOrionPython {
         ;
         enum_<MeterType>("meterType")
             .value("targetPopulation",  METER_TARGET_POPULATION)
-            .value("targetHealth",      METER_TARGET_HEALTH)
-            .value("targetFarming",     METER_TARGET_FARMING)
             .value("targetIndustry",    METER_TARGET_INDUSTRY)
             .value("targetResearch",    METER_TARGET_RESEARCH)
             .value("targetTrade",       METER_TARGET_TRADE)
@@ -82,8 +79,6 @@ namespace FreeOrionPython {
             .value("maxDefense",        METER_MAX_DEFENSE)
 
             .value("population",        METER_POPULATION)
-            .value("health",            METER_HEALTH)
-            .value("farming",           METER_FARMING)
             .value("industry",          METER_INDUSTRY)
             .value("research",          METER_RESEARCH)
             .value("trade",             METER_TRADE)

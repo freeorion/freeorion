@@ -542,7 +542,6 @@ MapWnd::MapWnd() :
     m_in_production_view_mode(false),
     m_sidepanel_open_before_showing_other(false),
     m_toolbar(0),
-    m_food(0),
     m_mineral(0),
     m_trade(0),
     m_population(0),
@@ -760,10 +759,6 @@ MapWnd::MapWnd() :
                                   ClientUI::MeterIcon(METER_MINING),
                                   0, 0, 3, 3, false, true);
 
-    m_food = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
-                               ClientUI::MeterIcon(METER_FARMING),
-                               0, 0, 3, 3, false, true);
-
     m_menu_showing = false;
 
     int layout_column(0);
@@ -776,10 +771,6 @@ MapWnd::MapWnd() :
     layout->SetMinimumColumnWidth(layout_column, GG::X(ClientUI::Pts()*4));
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_FPS,              0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_food,             0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetColumnStretch(layout_column, 1.0);
@@ -1742,7 +1733,6 @@ void MapWnd::InitTurn() {
     // empire is recreated each turn based on turn update from server, so connections of signals emitted from
     // the empire must be remade each turn (unlike connections to signals from the sidepanel)
     if (this_client_empire) {
-        GG::Connect(this_client_empire->GetResourcePool(RE_FOOD)->ChangedSignal,            &MapWnd::RefreshFoodResourceIndicator,      this, 0);
         GG::Connect(this_client_empire->GetResourcePool(RE_MINERALS)->ChangedSignal,        &MapWnd::RefreshMineralsResourceIndicator,  this, 0);
         GG::Connect(this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this, 0);
         GG::Connect(this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this, 0);
@@ -1760,12 +1750,6 @@ void MapWnd::InitTurn() {
     timer.restart();
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
         it->second->UpdateResourcePools();
-
-    // self-allocate resources on unowned planets, so natives don't starve
-    std::vector<Planet*> planets = GetUniverse().Objects().FindObjects<Planet>();
-    for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it)
-        if ((*it)->Unowned() && (*it)->CurrentMeterValue(METER_POPULATION) > 0.0)
-            (*it)->SetAllocatedFood(std::min((*it)->CurrentMeterValue(METER_FARMING), (*it)->CurrentMeterValue(METER_POPULATION)));
 
 
     Logger().debugStream() << "MapWnd::InitTurn getting known starlanes and visible systems time: " << (timer.elapsed() * 1000.0);
@@ -3869,107 +3853,10 @@ bool MapWnd::KeyboardZoomOut() {
     return true;
 }
 
-void MapWnd::RefreshFoodResourceIndicator() {
-    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    if (!empire) {
-        Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get an empire";
-        m_mineral->SetValue(0.0);
-        m_mineral->SetValue(0.0, 1);
-        return;
-    }
-
-    const ResourcePool* pool = empire->GetResourcePool(RE_FOOD);
-    if (!pool) {
-        Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get a food resourepool";
-        m_food->SetValue(0.0);
-        m_food->SetValue(0.0, 1);
-        return;
-    }
-
-    const PopulationPool& pop_pool = empire->GetPopulationPool();
-
-    int stockpile_object_id = pool->StockpileObjectID();
-
-    if (stockpile_object_id == INVALID_OBJECT_ID) {
-        // empire has nowhere to stockpile food, so has no stockpile.  Instead of showing stockpile, show production
-        m_food->SetValue(pool->TotalAvailable());   // no stockpile means available is equal to production
-        m_food->SetValue(0.0, 1);                   // TODO: Make StatisticIcon able to change number of numbers shown, and remove second number here
-        return;
-    }
-
-    // empire has a stockpile. Show stockpiled amount for first number
-
-    m_food->SetValue(pool->Stockpile()); // set first value to stockpiled food
-
-    // for second number, show predicted change in stockpile for next turn compared to this turn.
-
-
-    // find total food allocated to group that has access to stockpile
-    std::map<std::set<int>, double> food_sharing_groups = pool->Available();
-    std::set<int> stockpile_group_object_ids;
-    Logger().debugStream() << "trying to find stockpile object group...  stockpile object has id: " << stockpile_object_id;
-    for (std::map<std::set<int>, double>::const_iterator it = food_sharing_groups.begin();
-         it != food_sharing_groups.end(); ++it)
-    {
-        const std::set<int>& group = it->first;                     // get group
-        Logger().debugStream() << "potential group:";
-        for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
-            Logger().debugStream() << "...." << *qit;
-
-        if (group.find(stockpile_object_id) != group.end()) {       // check for stockpile object
-            stockpile_group_object_ids = group;
-            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator found group of objects for stockpile object.  size: " << stockpile_group_object_ids.size();
-            break;
-        }
-
-        Logger().debugStream() << "didn't find in group... trying next.";
-    }
-
-    const std::vector<int>& pop_centers = pop_pool.PopCenterIDs();
-
-    double stockpile_group_food_allocation = 0.0;
-
-    // go through population pool, adding up food allocation of popcenters
-    // that are in the group of objects that can access the stockpile
-    for (std::vector<int>::const_iterator it = pop_centers.begin(); it != pop_centers.end(); ++it) {
-        int object_id = *it;
-        if (stockpile_group_object_ids.find(object_id) == stockpile_group_object_ids.end())
-            continue;
-
-        const UniverseObject* obj = GetUniverseObject(*it);
-        if (!obj) {
-            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get an object with id " << object_id;
-            continue;
-        }
-        const PopCenter* pop = dynamic_cast<const PopCenter*>(obj);
-        if (!pop) {
-            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator couldn't cast a UniverseObject* to an PopCenter*";
-            continue;
-        }
-
-        stockpile_group_food_allocation += pop->AllocatedFood();    // finally add allocation for this PopCenter
-        Logger().debugStream() << "object " << obj->Name() << " is in stockpile object group that has " << pop->AllocatedFood() << " food allocated to it";
-    }
-
-    double stockpile_object_group_available = pool->GroupAvailable(stockpile_object_id);
-    Logger().debugStream() << "food available in stockpile group is:  " << stockpile_object_group_available;
-    Logger().debugStream() << "food allocation in stockpile group is: " << stockpile_group_food_allocation;
-
-    Logger().debugStream() << "Old stockpile is " << pool->Stockpile();
-
-    double new_stockpile = stockpile_object_group_available - stockpile_group_food_allocation;
-    Logger().debugStream() << "Predicted stockpile is: " << new_stockpile;
-
-    double stockpile_change = new_stockpile - pool->Stockpile();
-    Logger().debugStream() << "Stockpile change is: " << stockpile_change;
-
-    m_food->SetValue(stockpile_change, 1);
-}
-
 void MapWnd::RefreshMineralsResourceIndicator() {
     Empire* empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     if (!empire) {
-        Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get an empire";
+        Logger().errorStream() << "MapWnd::RefreshMineralsResourceIndicator couldn't get an empire";
         m_mineral->SetValue(0.0);
         m_mineral->SetValue(0.0, 1);
         return;
@@ -3977,7 +3864,7 @@ void MapWnd::RefreshMineralsResourceIndicator() {
 
     const ResourcePool* pool = empire->GetResourcePool(RE_MINERALS);
     if (!pool) {
-        Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get a minerals resourepool";
+        Logger().errorStream() << "MapWnd::RefreshMineralsResourceIndicator couldn't get a minerals resourepool";
         m_mineral->SetValue(0.0);
         m_mineral->SetValue(0.0, 1);
         return;
@@ -3986,7 +3873,7 @@ void MapWnd::RefreshMineralsResourceIndicator() {
     int stockpile_object_id = pool->StockpileObjectID();
 
     if (stockpile_object_id == INVALID_OBJECT_ID) {
-        // empire has nowhere to stockpile food, so has no stockpile.
+        // empire has nowhere to stockpile minerals, so has no stockpile.
         m_mineral->SetValue(0.0);
         m_mineral->SetValue(0.0, 1);        // TODO: Make StatisticIcon able to change number of numbers shown, and remove second number here
         return;
@@ -3994,7 +3881,7 @@ void MapWnd::RefreshMineralsResourceIndicator() {
 
     // empire has a stockpile. Show stockpiled amount for first number
 
-    m_mineral->SetValue(pool->Stockpile()); // set first value to stockpiled food
+    m_mineral->SetValue(pool->Stockpile()); // set first value to stockpiled minerals
 
 
     // find minerals (PP) allocated to production elements located in systems in the group of
@@ -4206,7 +4093,7 @@ void MapWnd::UpdateEmpireResourcePools() {
     //std::cout << "MapWnd::UpdateEmpireResourcePools" << std::endl;
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     /* Recalculate stockpile, available, production, predicted change of resources.  When resourcepools
-       update, they emit ChangeSignal, which is connected to MapWnd::RefreshFoodResourceIndicator, which
+       update, they emit ChangeSignal, which is connected to MapWnd::Refresh???ResourceIndicator, which
        updates the empire resource pool indicators of the MapWnd. */
     empire->UpdateResourcePools();
 

@@ -721,7 +721,7 @@ Tech
                 PopulationCenter
                 Not [[NON_ORGANIC]]
             ]
-            effects = SetTargetHealth Value + 5
+            effects = SetTargetPopulation Value + 3
     graphic = "icons/tech/medical_pathology.png"
     
 Tech
@@ -749,7 +749,7 @@ Tech
                     Focus "FOCUS_FARMING"
                     Planet environment = Good
             ]
-            effects = SetTargetFarming Value + Target.Population
+            effects = SetTargetPopulation Value + 4
 
         EffectsGroup
             scope = And [
@@ -757,7 +757,7 @@ Tech
                 Focus "FOCUS_FARMING"
                 Planet environment = Adequate
             ]
-            effects = SetTargetFarming Value + Target.Population * 0.5
+            effects = SetTargetPopulation Value + 2
     ]
 
     graphic = "icons/tech/genetic_engineering.png"
@@ -919,10 +919,7 @@ Tech
                 Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_XENO_HYBRIDS"
-            effects = [
-                SetTargetPopulation Value + 1
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 1
 
         EffectsGroup
             scope = And [
@@ -932,10 +929,7 @@ Tech
                 Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_XENO_HYBRIDS"
-            effects = [
-                SetTargetPopulation Value + 2
-                SetTargetHealth Value + 5
-            ]
+            effects =SetTargetPopulation Value + 2
 
         EffectsGroup
             scope = And [
@@ -945,10 +939,7 @@ Tech
                 Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_XENO_HYBRIDS"
-            effects = [
-                SetTargetPopulation Value + 3
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 3
 
         EffectsGroup
             scope = And [
@@ -958,10 +949,7 @@ Tech
                 Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_XENO_HYBRIDS"
-            effects = [
-                SetTargetPopulation Value + 4
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 4
 
         EffectsGroup
             scope = And [
@@ -971,10 +959,7 @@ Tech
                 Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_XENO_HYBRIDS"
-            effects = [
-                SetTargetPopulation Value + 5
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 5
 
         EffectsGroup
             scope = And [
@@ -983,10 +968,7 @@ Tech
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 0
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 0
 
         EffectsGroup
             scope = And [
@@ -995,10 +977,7 @@ Tech
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 1
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 1
 
         EffectsGroup
             scope = And [
@@ -1007,10 +986,7 @@ Tech
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 2
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 2
 
         EffectsGroup
             scope = And [
@@ -1019,10 +995,7 @@ Tech
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 3
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 3
 
         EffectsGroup
             scope = And [
@@ -1031,10 +1004,7 @@ Tech
                 Planet environment = Adequate
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 4
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 4
     ]
     graphic = "icons/tech/xenological_genetics.png"
 
@@ -1057,7 +1027,7 @@ Tech
                 PopulationCenter
                 Not [[NON_ORGANIC]]
             ]
-        effects = SetTargetHealth Value + 10
+        effects = SetTargetPopulation Value + 3
     graphic = "icons/tech/nanotech_medicine.png"
 
 Tech
@@ -1088,10 +1058,7 @@ Tech
                 Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 0
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 0
 
         EffectsGroup
             scope = And [
@@ -1101,10 +1068,7 @@ Tech
                 Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + .5
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + .5
 
         EffectsGroup
             scope = And [
@@ -1114,10 +1078,7 @@ Tech
                 Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 1
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 1
 
         EffectsGroup
             scope = And [
@@ -1127,10 +1088,7 @@ Tech
                 Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 1.5
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 1.5
 
         EffectsGroup
             scope = And [
@@ -1140,10 +1098,7 @@ Tech
                 Not [[NON_ORGANIC]]
             ]
             activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 2
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 2
 
         EffectsGroup
             scope = And [
@@ -1152,10 +1107,7 @@ Tech
                 Planet environment = Poor
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 0
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 0
 
         EffectsGroup
             scope = And [
@@ -1164,10 +1116,7 @@ Tech
                 Planet environment = Poor
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 1.5
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 1.5
 
         EffectsGroup
             scope = And [
@@ -1176,10 +1125,7 @@ Tech
                 Planet environment = Poor
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 3
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 3
 
         EffectsGroup
             scope = And [
@@ -1188,10 +1134,7 @@ Tech
                 Planet environment = Poor
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 4.5
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 4.5
 
         EffectsGroup
             scope = And [
@@ -1200,10 +1143,7 @@ Tech
                 Planet environment = Poor
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 6
-                SetTargetHealth Value + 5
-            ]
+            effects = SetTargetPopulation Value + 6
     ]
     graphic = "icons/tech/xenological_hybridization.png"
     
@@ -1224,10 +1164,7 @@ Tech
                 Planet environment = Hostile
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 0
-                SetTargetHealth Value + 10
-            ]
+            effects = SetTargetPopulation Value + 0
 
         EffectsGroup
             scope = And [
@@ -1236,10 +1173,7 @@ Tech
                 Planet environment = Hostile
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 1
-                SetTargetHealth Value + 10
-            ]
+            effects = SetTargetPopulation Value + 1
 
         EffectsGroup
             scope = And [
@@ -1248,10 +1182,7 @@ Tech
                 Planet environment = Hostile
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 2
-                SetTargetHealth Value + 10
-            ]
+            effects = SetTargetPopulation Value + 2
 
         EffectsGroup
             scope = And [
@@ -1260,10 +1191,7 @@ Tech
                 Planet environment = Hostile
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 3
-                SetTargetHealth Value + 10
-            ]
+            effects = SetTargetPopulation Value + 3
 
         EffectsGroup
             scope = And [
@@ -1272,11 +1200,7 @@ Tech
                 Planet environment = Hostile
                 Not [[NON_ORGANIC]]
             ]
-            effects = [
-                SetTargetPopulation Value + 4
-                SetTargetHealth Value + 10
-            ]
-
+            effects = SetTargetPopulation Value + 4
     ]
 
 Tech
@@ -1295,7 +1219,7 @@ Tech
                 PopulationCenter
                 Not [[NON_ORGANIC]]
             ]
-            effects = SetTargetHealth Value + 5
+            effects = SetTargetPopulation Value + 2
     graphic = "icons/tech/genetic_medicine.png"
 
 Tech
@@ -1370,7 +1294,7 @@ Tech
                 PopulationCenter
                 Focus "FOCUS_FARMING"
             ]
-            effects = SetTargetFarming Value + Target.Population * 0.25
+            effects = SetTargetPopulation Value + 1
 
         EffectsGroup
             scope = And [
@@ -1460,7 +1384,7 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
-            effects = SetTargetFarming Value + .2
+            effects = SetTargetPopulation Value + 1
     graphic = "icons/tech/orbital_farming.png"
 
 Tech
@@ -1583,7 +1507,7 @@ Tech
                 Species "SP_EXOBOT"
                 Planet
             ]
-            effects = SetTargetHealth Value + 15
+            effects = SetTargetPopulation Value + 5
     graphic = ""
 
 Tech
@@ -1945,14 +1869,6 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Farming high = RootCandidate.TargetFarming - 3
-            ]
-            effects = SetFarming Value + 2
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
                 Mining high = RootCandidate.TargetMining - 3
             ]
             effects = SetMining Value + 2
@@ -1980,14 +1896,6 @@ Tech
                 Construction high = RootCandidate.TargetConstruction - 3
             ]
             effects = SetConstruction Value + 2
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Farming low = RootCandidate.TargetFarming - 3 high = RootCandidate.TargetFarming
-            ]
-            effects = SetFarming Target.TargetFarming
 
         EffectsGroup
             scope = And [
@@ -2025,14 +1933,6 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Farming low = RootCandidate.TargetFarming + 5
-            ]
-            effects = SetFarming Value - 3
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
                 Mining low = RootCandidate.TargetMining + 5
             ]
             effects = SetMining Value - 3
@@ -2060,14 +1960,6 @@ Tech
                 Construction low = RootCandidate.TargetConstruction + 5
             ]
             effects = SetConstruction Value - 3
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 5
-            ]
-            effects = SetFarming Target.TargetFarming
 
         EffectsGroup
             scope = And [

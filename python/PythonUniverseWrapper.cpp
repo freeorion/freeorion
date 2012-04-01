@@ -381,7 +381,6 @@ namespace FreeOrionPython {
         //   PopCenter   //
         ///////////////////
         class_<PopCenter, noncopyable>("popCenter", no_init)
-            .add_property("allocatedFood",      &PopCenter::AllocatedFood)
             .add_property("speciesName",        make_function(&PopCenter::SpeciesName,      return_value_policy<copy_const_reference>()))
         ;
 

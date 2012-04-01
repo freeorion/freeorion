@@ -9,19 +9,16 @@
 
 
 namespace {
-
-    struct strip_quotes_
-    {
+    struct strip_quotes_ {
         template <typename Arg1, typename Arg2>
         struct result
         { typedef std::string type; };
 
-        std::string operator()(const parse::text_iterator& start, const parse::text_iterator& end) const
-            {
-                std::string::const_iterator start_ = start;
-                std::string::const_iterator end_ = end;
-                return std::string(++start_, --end_);
-            }
+        std::string operator()(const parse::text_iterator& start, const parse::text_iterator& end) const {
+            std::string::const_iterator start_ = start;
+            std::string::const_iterator end_ = end;
+            return std::string(++start_, --end_);
+        }
     };
     const boost::phoenix::function<strip_quotes_> strip_quotes;
 }
@@ -107,14 +104,12 @@ lexer::lexer() :
         ;
 }
 
-const lexer& lexer::instance()
-{
+const lexer& lexer::instance() {
     static const lexer retval;
     return retval;
 }
 
-const boost::spirit::lex::token_def<adobe::name_t>& lexer::name_token(adobe::name_t name) const
-{
+const boost::spirit::lex::token_def<adobe::name_t>& lexer::name_token(adobe::name_t name) const {
     std::map<adobe::name_t, boost::spirit::lex::token_def<adobe::name_t>*>::const_iterator it = m_name_tokens.find(name);
     assert(it != m_name_tokens.end());
     return *it->second;
@@ -125,8 +120,7 @@ namespace boost { namespace spirit { namespace traits {
     // This template specialization is required by Spirit.Lex to automatically
     // convert an iterator pair to an adobe::name_t in the lexer.
     void assign_to_attribute_from_iterators<adobe::name_t, parse::text_iterator, void>::
-    call(const parse::text_iterator& first, const parse::text_iterator& last, adobe::name_t& attr)
-    {
+    call(const parse::text_iterator& first, const parse::text_iterator& last, adobe::name_t& attr) {
         std::string str(first, last);
         boost::algorithm::to_lower(str);
         attr = adobe::name_t(str.c_str());

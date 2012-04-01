@@ -1426,8 +1426,6 @@ namespace {
     void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
         std::map<MeterType, MeterType> meters;
         meters[METER_POPULATION] =  METER_TARGET_POPULATION;
-        meters[METER_HEALTH] =      METER_TARGET_HEALTH;
-        meters[METER_FARMING] =     METER_TARGET_FARMING;
         meters[METER_INDUSTRY] =    METER_TARGET_INDUSTRY;
         meters[METER_RESEARCH] =    METER_TARGET_RESEARCH;
         meters[METER_TRADE] =       METER_TARGET_TRADE;
@@ -2162,7 +2160,6 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_plane
         Planet* planet = new Planet(PT_TERRAN, SZ_MEDIUM);
         planet_id = Insert(planet);
         planet->Rename(planet_name);
-        planet->SetAllocatedFood(Meter::LARGE_VALUE);
         system->Insert(planet, home_orbit);
 
         homeworld_planet_ids.push_back(planet_id);

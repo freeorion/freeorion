@@ -78,18 +78,13 @@ namespace {
         mutable UniverseObjectType m_type;
     };
 
-    MeterType NameToMeter(adobe::name_t name)
-    {
+    MeterType NameToMeter(adobe::name_t name) {
         typedef adobe::closed_hash_map<adobe::name_t, MeterType> NameToMeterMap;
         static NameToMeterMap map;
         static bool once = true;
         if (once) {
             map[Population_name] = METER_POPULATION;
             map[TargetPopulation_name] = METER_TARGET_POPULATION;
-            map[Health_name] = METER_HEALTH;
-            map[TargetHealth_name] = METER_TARGET_HEALTH;
-            map[Farming_name] = METER_FARMING;
-            map[TargetFarming_name] = METER_TARGET_FARMING;
             map[Industry_name] = METER_INDUSTRY;
             map[TargetIndustry_name] = METER_TARGET_INDUSTRY;
             map[Research_name] = METER_RESEARCH;
@@ -110,7 +105,6 @@ namespace {
             map[Defense_name] = METER_DEFENSE;
             map[MaxTroops_name] = METER_MAX_TROOPS;
             map[Troops_name] = METER_TROOPS;
-            map[FoodConsumption_name] = METER_FOOD_CONSUMPTION;
             map[Supply_name] = METER_SUPPLY;
             map[Stealth_name] = METER_STEALTH;
             map[Detection_name] = METER_DETECTION;
@@ -450,16 +444,6 @@ namespace ValueRef {
         } else if (property_name == MineralStockpile_name) {
             if (const Empire* empire = Empires().Lookup(object->Owner()))
                 return empire->ResourceStockpile(RE_MINERALS);
-        } else if (property_name == FoodStockpile_name) {
-            if (const Empire* empire = Empires().Lookup(object->Owner()))
-                return empire->ResourceStockpile(RE_FOOD);
-
-        } else if (property_name == AllocatedFood_name) {
-            if (const PopCenter* pop = dynamic_cast<const PopCenter*>(object))
-                return pop->AllocatedFood();
-        } else if (property_name == FoodAllocationForMaxGrowth_name) {
-            if (const PopCenter* pop = dynamic_cast<const PopCenter*>(object))
-                return pop->FoodAllocationForMaxGrowth();
 
         } else if (property_name == DistanceToSource_name) {
             if (!context.source) {

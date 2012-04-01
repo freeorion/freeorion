@@ -16,9 +16,8 @@ class UniverseObject;
 class Empire;
 
 /** The ResourcePool class keeps track of an empire's stockpile and production
-  * of a particular resource (food, minerals, trade, research or industry). */
-class ResourcePool
-{
+  * of a particular resource (minerals, trade, research or industry). */
+class ResourcePool {
 public:
     /** \name Structors */ //@{
     ResourcePool(ResourceType type);

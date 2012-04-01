@@ -54,7 +54,7 @@ Special
         EffectsGroup
             scope = Source
             activation = Not OwnerHasTech "GRO_ORBIT_FARMING"
-            effects = SetTargetFarming Value - 1.0
+            effects = SetTargetPopulation Value - 3.0
         EffectsGroup
             scope = Source
             activation = Source
@@ -93,7 +93,7 @@ Special
     effectsgroups = EffectsGroup
         scope = Source
         activation = Source
-        effects = SetTargetHealth Value - 5
+        effects = SetTargetPopulation Value - 3
     graphic = "icons/specials_huge/solid_core.png"
 
 Special
@@ -565,15 +565,7 @@ Special
                     ]
                     empire = Source.Owner
             ]
-    
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = [
-                SetTargetHealth Value * 2
-                SetTargetFarming Value * 2
-            ]
-            
+
         EffectsGroup
             scope = Source
             activation = And [
@@ -813,20 +805,11 @@ Special
 Special
     name = "VOLCANIC_ACTIVITY_SPECIAL"
     description = "VOLCANIC_ACTIVITY_SPECIAL"
-    effectsgroups = [
-        EffectsGroup
-            scope = Source
-            effects = [
-                AddSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
-                SetTargetHealth Value - 5
-                SetTargetFarming Value / 2
-            ]
-
+    effectsgroups =
         EffectsGroup
             scope = Source
             activation = Not HasSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
             effects = RemoveSpecial "VOLCANIC_ACTIVITY_SPECIAL"
-    ]
     graphic = "icons/specials_huge/volcanic_ash.png"
 
 Special
@@ -869,7 +852,7 @@ Special
             stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
             effects = [
                 AddSpecial "DIM_RIFT_SLAVE_SPECIAL"
-                SetTargetHealth Value - 20
+                SetTargetPopulation Value - 4
             ]
 
         [[REMOVE_CLOUD_COVER]]
@@ -954,7 +937,7 @@ Special
         Not Contains Homeworld
     ]
     effectsgroups = [
-    	EffectsGroup
+        EffectsGroup
             scope = NumberOf 1 And [
                 Ship
                 ContainedBy Source
@@ -1012,9 +995,8 @@ Special
                     OwnedBy AnyEmpire
                 ]
             ]
-            effects = [
+            effects =
                 SetDetection value = Value + 100
-            ]
 
         EffectsGroup
             scope = Source
@@ -1143,8 +1125,6 @@ Special
                 RemoveSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
                 GenerateSitRepMessage
                     message = "SITREP_VICTORY_CAPTURE"
-                    parameters = []
-                    empire = AnyEmpire
             ]
 
         EffectsGroup
@@ -1155,8 +1135,6 @@ Special
                 RemoveSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
                 GenerateSitRepMessage
                     message = "SITREP_VICTORY_DESTRUCTION"
-                    parameters = []
-                    empire = AnyEmpire
             ]
 
         EffectsGroup
@@ -1167,8 +1145,6 @@ Special
                 RemoveSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
                 GenerateSitRepMessage
                     message = "SITREP_VICTORY_BIO"
-                    parameters = []
-                    empire = AnyEmpire
             ]
     ]
     graphic = ""

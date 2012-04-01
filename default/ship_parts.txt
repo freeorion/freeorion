@@ -795,16 +795,15 @@ Part
                 VisibleToEmpire Source.Owner
             ]
             activation = OwnedBy AnyEmpire
-            effects = SetHealth Value - 2
+            effects = SetPopulation Value - 2
 
         EffectsGroup
             scope = And [
                 ContainedBy Contains Source
                 OwnedBy AnyEmpire
-                Stealth high = Source.Detection
             ]
             activation = Not OwnedBy AnyEmpire
-            effects = SetHealth Value - 2
+            effects = SetPopulation Value - 2
     ]
     graphic = ""
 
@@ -828,7 +827,7 @@ Part
                 VisibleToEmpire Source.Owner
             ]
             activation = OwnedBy AnyEmpire
-            effects = SetHealth Value - 6
+            effects = SetPopulation Value - 3
 
         EffectsGroup
             scope = And [
@@ -837,7 +836,7 @@ Part
                 Stealth high = Source.Detection
             ]
             activation = Not OwnedBy AnyEmpire
-            effects = SetHealth Value - 6
+            effects = SetPopulation Value - 3
     ]
     graphic = ""
 

@@ -312,13 +312,10 @@ namespace parse {
         return retval;
     }
 
-    enum_parser_rule<MeterType>::type& non_ship_part_meter_type_enum()
-    {
+    enum_parser_rule<MeterType>::type& non_ship_part_meter_type_enum() {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<MeterType>::type retval
             =    tok.TargetConstruction_ [ _val = METER_TARGET_CONSTRUCTION ]
-            |    tok.TargetFarming_ [ _val = METER_TARGET_FARMING ]
-            |    tok.TargetHealth_ [ _val = METER_TARGET_HEALTH ]
             |    tok.TargetIndustry_ [ _val = METER_TARGET_INDUSTRY ]
             |    tok.TargetMining_ [ _val = METER_TARGET_MINING ]
             |    tok.TargetPopulation_ [ _val = METER_TARGET_POPULATION ]
@@ -332,8 +329,6 @@ namespace parse {
             |    tok.MaxTroops_ [ _val = METER_MAX_TROOPS ]
 
             |    tok.Construction_ [ _val = METER_CONSTRUCTION ]
-            |    tok.Farming_ [ _val = METER_FARMING ]
-            |    tok.Health_ [ _val = METER_HEALTH ]
             |    tok.Industry_ [ _val = METER_INDUSTRY ]
             |    tok.Mining_ [ _val = METER_MINING ]
             |    tok.Population_ [ _val = METER_POPULATION ]
@@ -346,7 +341,6 @@ namespace parse {
             |    tok.Structure_ [ _val = METER_STRUCTURE ]
             |    tok.Troops_ [ _val = METER_TROOPS ]
 
-            |    tok.FoodConsumption_ [ _val = METER_FOOD_CONSUMPTION ]
             |    tok.Supply_ [ _val = METER_SUPPLY ]
             |    tok.Stealth_ [ _val = METER_STEALTH ]
             |    tok.Detection_ [ _val = METER_DETECTION ]
@@ -364,13 +358,10 @@ namespace parse {
         return retval;
     }
 
-    enum_parser_rule<MeterType>::type& set_non_ship_part_meter_type_enum()
-    {
+    enum_parser_rule<MeterType>::type& set_non_ship_part_meter_type_enum() {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<MeterType>::type retval
             =    tok.SetTargetConstruction_ [ _val = METER_TARGET_CONSTRUCTION ]
-            |    tok.SetTargetFarming_ [ _val = METER_TARGET_FARMING ]
-            |    tok.SetTargetHealth_ [ _val = METER_TARGET_HEALTH ]
             |    tok.SetTargetIndustry_ [ _val = METER_TARGET_INDUSTRY ]
             |    tok.SetTargetMining_ [ _val = METER_TARGET_MINING ]
             |    tok.SetTargetPopulation_ [ _val = METER_TARGET_POPULATION ]
@@ -384,8 +375,6 @@ namespace parse {
             |    tok.SetMaxTroops_ [ _val = METER_MAX_TROOPS ]
 
             |    tok.SetConstruction_ [ _val = METER_CONSTRUCTION ]
-            |    tok.SetFarming_ [ _val = METER_FARMING ]
-            |    tok.SetHealth_ [ _val = METER_HEALTH ]
             |    tok.SetIndustry_ [ _val = METER_INDUSTRY ]
             |    tok.SetMining_ [ _val = METER_MINING ]
             |    tok.SetPopulation_ [ _val = METER_POPULATION ]
@@ -398,7 +387,6 @@ namespace parse {
             |    tok.SetStructure_ [ _val = METER_STRUCTURE ]
             |    tok.SetTroops_ [ _val = METER_TROOPS ]
 
-            |    tok.SetFoodConsumption_ [ _val = METER_FOOD_CONSUMPTION ]
             |    tok.SetSupply_ [ _val = METER_SUPPLY ]
             |    tok.SetStealth_ [ _val = METER_STEALTH ]
             |    tok.SetDetection_ [ _val = METER_DETECTION ]

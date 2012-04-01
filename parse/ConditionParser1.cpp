@@ -200,19 +200,19 @@ namespace {
 
             and_
                 =    tok.And_
-                >    '[' > parse::detail::condition_parser [ push_back(_a, _1) ] > +parse::detail::condition_parser [ push_back(_a, _1) ] > lit(']')
+                >>   '[' >> parse::detail::condition_parser [ push_back(_a, _1) ] >> +parse::detail::condition_parser [ push_back(_a, _1) ] >> lit(']')
                         [ _val = new_<Condition::And>(_a) ]
                 ;
 
             or_
                 =    tok.Or_
-                >    '[' > parse::detail::condition_parser [ push_back(_a, _1) ] > +parse::detail::condition_parser [ push_back(_a, _1) ] > lit(']')
+                >>   '[' >> parse::detail::condition_parser [ push_back(_a, _1) ] >> +parse::detail::condition_parser [ push_back(_a, _1) ] >> lit(']')
                         [ _val = new_<Condition::Or>(_a) ]
                 ;
 
             not_
                 =    tok.Not_
-                >    parse::detail::condition_parser [ _val = new_<Condition::Not>(_1) ]
+                >>   parse::detail::condition_parser [ _val = new_<Condition::Not>(_1) ]
                 ;
 
             start

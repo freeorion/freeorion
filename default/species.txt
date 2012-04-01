@@ -12,7 +12,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -20,18 +19,15 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
 
         [[AVERAGE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
-                
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -49,7 +45,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -57,18 +52,16 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[GREAT_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
             
-        [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[GOOD_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -86,7 +79,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -94,18 +86,16 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[GREAT_INDUSTRY]]
         [[GREAT_RESEARCH]]
 
         [[TERRIBLE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -123,7 +113,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -131,18 +120,16 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_FARMING]]
         [[GREAT_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -160,7 +147,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -171,7 +157,7 @@ Species
         [[ULTIMATE_DETECTION]]
         [[GREAT_STEALTH]]
         
-        [[AVERAGE_FARMING]]
+
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -181,9 +167,8 @@ Species
         
                 
         [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_FOOD_USE]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -201,7 +186,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -209,7 +193,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[TERRIBLE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -217,11 +200,10 @@ Species
         [[GREAT_WEAPONS]]
         [[GREAT_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
                 
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -239,7 +221,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -247,7 +228,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -255,11 +235,10 @@ Species
         [[ULTIMATE_WEAPONS]]
         [[AVERAGE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
                 
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -277,7 +256,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -285,18 +263,16 @@ Species
     ]
     
     effectsgroups = [
-        [[ULTIMATE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -314,7 +290,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -325,18 +300,15 @@ Species
         [[GREAT_DETECTION]]
         [[ULTIMATE_STEALTH]]
         
-        [[TERRIBLE_FARMING]]
         [[TERRIBLE_MINING]]
         [[TERRIBLE_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
 
         [[TERRIBLE_GROUND_TROOPS]]
         
-        [[NO_FOOD_USE]]
-        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -354,7 +326,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -362,18 +333,16 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[GREAT_MINING]]
         [[GREAT_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
         [[TERRIBLE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
                 
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -391,7 +360,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -399,7 +367,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
@@ -407,11 +374,10 @@ Species
         [[GREAT_WEAPONS]]
         [[GREAT_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -428,7 +394,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -436,18 +401,16 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[ULTIMATE_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -472,7 +435,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -480,18 +442,15 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
         [[AVERAGE_MINING]]
         [[TERRIBLE_INDUSTRY]]
         [[GREAT_RESEARCH]]
 
         [[AVERAGE_GROUND_TROOPS]]
         
-        [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[TERRIBLE_HEALTH]]
         [[AVERAGE_POPULATION]]
     ]
 
@@ -508,14 +467,12 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[TERRIBLE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -524,11 +481,10 @@ Species
         
         [[TERRIBLE_DETECTION]]
         
-        [[STANDARD_FOOD_USE]]
                 
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
     ]
     
@@ -544,24 +500,19 @@ Species
     CanProduceShips
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[GREAT_FARMING]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
         [[GREAT_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
-        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[GREAT_HEALTH]]
         [[AVERAGE_POPULATION]]
     ]
     
@@ -577,25 +528,20 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[NO_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
-        
-        [[STANDARD_FOOD_USE]]
 
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[GREAT_HEALTH]]
         [[AVERAGE_POPULATION]]
     ]
     
@@ -612,7 +558,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -620,18 +565,16 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
         [[AVERAGE_MINING]]
         [[GREAT_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
             
-        [[STANDARD_FOOD_USE]]
 
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]  
     ]
     
@@ -648,7 +591,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -656,18 +598,15 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[TERRIBLE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
         [[TERRIBLE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
-        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
     ]
     
@@ -682,24 +621,20 @@ Species
     Native
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[ULTIMATE_RESEARCH]]
         
         [[TERRIBLE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]    
-        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[BAD_POPULATION]]
     ]
     
@@ -717,7 +652,6 @@ Species
     
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -727,18 +661,16 @@ Species
     effectsgroups = [
         [[ULTIMATE_STEALTH]]
         
-        [[GREAT_FARMING]]
         [[TERRIBLE_MINING]]
         [[TERRIBLE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
         [[NO_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[GOOD_POPULATION]]
     ]
     
@@ -761,18 +693,16 @@ Species
         [[GREAT_DETECTION]]
         [[GREAT_STEALTH]]
         
-        [[TERRIBLE_FARMING]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
         [[TERRIBLE_GROUND_TROOPS]]
         
-        [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[BAD_POPULATION]]
     ]
     
@@ -792,18 +722,16 @@ Species
     ]
     
     effectsgroups = [
-        [[NO_FARMING]]
         [[AVERAGE_MINING]]
         [[NO_INDUSTRY]]
         [[NO_RESEARCH]]
         
         [[TERRIBLE_GROUND_TROOPS]]
         
-        [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
     ]
     
@@ -817,7 +745,6 @@ Species
     Native
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -825,18 +752,14 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[TERRIBLE_INDUSTRY]]
         [[NO_RESEARCH]]
         
         [[ULTIMATE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
-        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[GOOD_HEALTH]]
         [[AVERAGE_POPULATION]]
     ]
     
@@ -856,18 +779,16 @@ Species
     ]
     
     effectsgroups = [
-        [[NO_FARMING]]
         [[NO_MINING]]
         [[GREAT_INDUSTRY]]
         [[NO_RESEARCH]]
         
         [[GREAT_GROUND_TROOPS]]
         
-        [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[GOOD_POPULATION]]
     ]
     
@@ -884,25 +805,22 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[GREAT_FARMING]]
         [[AVERAGE_MINING]]
         [[NO_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
         
-        [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
     ]
     
@@ -917,7 +835,6 @@ Species
     Native
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -925,18 +842,16 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
         [[GREAT_MINING]]
         [[GREAT_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
         [[TERRIBLE_GROUND_TROOPS]]
         
-        [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
     ]
     
@@ -953,7 +868,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -961,18 +875,16 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
         [[AVERAGE_MINING]]
         [[GREAT_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
         
         [[GREAT_GROUND_TROOPS]]
         
-        [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
     ]
     
@@ -988,7 +900,6 @@ Species
     CanProduceShips
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -996,15 +907,13 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_FARMING]]
         [[AVERAGE_MINING]]
         [[TERRIBLE_INDUSTRY]]
         [[GREAT_RESEARCH]]
         
         [[TERRIBLE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
@@ -1023,27 +932,22 @@ Species
     Native
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
         [[GREAT_STEALTH]]
         
-        [[ULTIMATE_FARMING]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[NO_RESEARCH]]
         
         [[NO_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
-        [[TERRIBLE_HEALTH]]
         [[AVERAGE_POPULATION]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        
     ]
         
     [[TERRAN_STANDARD_EP]]
@@ -1059,7 +963,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -1067,18 +970,16 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[GREAT_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
         
         [[TERRIBLE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
         
         [[TUNNELS_SPECIAL]]
@@ -1096,7 +997,6 @@ Species
     CanProduceShips
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -1104,18 +1004,16 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
         [[AVERAGE_MINING]]
         [[GREAT_INDUSTRY]]
         [[GREAT_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
         
-        [[NO_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
 
         EffectsGroup     
@@ -1161,16 +1059,12 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[TERRIBLE_MINING]]
         [[TERRIBLE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
         [[GREAT_DETECTION]]
-        [[GOOD_HEALTH]]
-        
-        [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
@@ -1196,19 +1090,15 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[TERRIBLE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
         [[GOOD_POPULATION]]
-        
-        [[STANDARD_FOOD_USE]]
-        
+         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
         
         [[TUNNELS_SPECIAL]]
         [[HUGE_PLANET]]
@@ -1225,7 +1115,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -1233,18 +1122,15 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[TERRIBLE_RESEARCH]]
         
         [[TERRIBLE_GROUND_TROOPS]]
         
-        [[NO_FOOD_USE]]
-        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
     ]
     
@@ -1278,11 +1164,8 @@ Species
 
         [[ULTIMATE_GROUND_TROOPS]]
 
-        [[NO_FOOD_USE]]
-
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[ULTIMATE_HEALTH]]
         [[GOOD_POPULATION]]
     ]
 
@@ -1299,7 +1182,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -1315,18 +1197,15 @@ Species
             scope = Source
             effects = SetEmpireMeter Source.Owner "METER_DETECTION" 10000  // Omniscient Detection
         
-        [[GREAT_FARMING]]
         [[GREAT_MINING]]
         [[GREAT_INDUSTRY]]
         [[GREAT_RESEARCH]]
         
         [[GREAT_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[ULTIMATE_HEALTH]]
         [[GOOD_POPULATION]]
     ]
 
@@ -1343,7 +1222,6 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -1351,18 +1229,16 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
         
-        [[STANDARD_FOOD_USE]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_HEALTH]]
+
         [[AVERAGE_POPULATION]]
     ]
 
@@ -1973,108 +1849,6 @@ STANDARD_CONSTRUCTION
             effects = SetTargetConstruction Value + 20
 '''
 
-TERRIBLE_HEALTH
-'''        EffectsGroup
-            scope = Source
-            activation = Planet environment = Good
-            effects = SetTargetHealth Value + 25
-
-        EffectsGroup
-            scope = Source
-            activation = Planet environment = Adequate
-            effects = SetTargetHealth Value + 22
-
-        EffectsGroup
-            scope = Source
-            activation = Planet environment = [Uninhabitable Hostile Poor]
-            effects = SetTargetHealth Value + 20
-'''
-
-POOR_HEALTH
-'''        EffectsGroup
-            scope = Source
-            activation = Planet environment = Good
-            effects = SetTargetHealth Value + 28
-
-        EffectsGroup
-            scope = Source
-            activation = Planet environment = Adequate
-            effects = SetTargetHealth Value + 24
-
-        EffectsGroup
-            scope = Source
-            activation = Planet environment = [Uninhabitable Hostile Poor]
-            effects = SetTargetHealth Value + 20
-'''
-
-AVERAGE_HEALTH
-'''        EffectsGroup
-            scope = Source
-            activation = Planet environment = Good
-            effects = SetTargetHealth Value + 30
-
-        EffectsGroup
-            scope = Source
-            activation = Planet environment = Adequate
-            effects = SetTargetHealth Value + 25
-
-        EffectsGroup
-            scope = Source
-            activation = Planet environment = [Uninhabitable Hostile Poor]
-            effects = SetTargetHealth Value + 20
-'''
-
-GOOD_HEALTH
-'''        EffectsGroup
-            scope = Source
-            activation = Planet environment = Good
-            effects = SetTargetHealth Value + 35
-
-        EffectsGroup
-            scope = Source
-            activation = Planet environment = Adequate
-            effects = SetTargetHealth Value + 28
-
-        EffectsGroup
-            scope = Source
-            activation = Planet environment = [Uninhabitable Hostile Poor]
-            effects = SetTargetHealth Value + 20
-'''
-
-GREAT_HEALTH
-'''        EffectsGroup
-            scope = Source
-            activation = Planet environment = Good
-            effects = SetTargetHealth Value + 40
-
-        EffectsGroup
-            scope = Source
-            activation = Planet environment = Adequate
-            effects = SetTargetHealth Value + 30
-
-        EffectsGroup
-            scope = Source
-            activation = Planet environment = [Uninhabitable Hostile Poor]
-            effects = SetTargetHealth Value + 20
-'''
-
-ULTIMATE_HEALTH
-'''        EffectsGroup
-            scope = Source
-            activation = Planet environment = Good
-            effects = SetTargetHealth Value + 50
-
-        EffectsGroup
-            scope = Source
-            activation = Planet environment = Adequate
-            effects = SetTargetHealth Value + 35
-
-        EffectsGroup
-            scope = Source
-            activation = Planet environment = [Uninhabitable Hostile Poor]
-            effects = SetTargetHealth Value + 20
-'''
-
 BAD_POPULATION
 '''        EffectsGroup
             scope = Source
@@ -2591,7 +2365,7 @@ ADVANCED_FOCUS_EFFECTS
                 ]
             ]
             activation = Focus "FOCUS_BIOTERROR"
-            effects = SetHealth Value - 4
+            effects = SetTargetPopulation Value - 4
 
         EffectsGroup
             scope = And [
@@ -2662,176 +2436,6 @@ ADVANCED_FOCUS_EFFECTS
             effects = SetSupply Value + Target.Population * 0.5
 '''
 
-NO_FOOD_USE
-'''EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetFoodConsumption Value = 0
-'''
-
-STANDARD_FOOD_USE
-'''EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetFoodConsumption Value + Target.Population * .25
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                FoodConsumption low = LocalCandidate.AllocatedFood + 0.001
-            ]
-            effects = [
-                SetMaxDefense Value + 10
-                SetHealth Value - (Target.FoodConsumption - Target.AllocatedFood)   // each turn, subtract from health the difference between need and actual allocation
-                GenerateSitRepMessage
-                    message = "EFFECT_STARVATION"
-                    parameters = tag = "planet" data = Source.ID
-                    empire = Target.Owner
-            ]
-'''
-
-NO_FARMING
-'''
-'''
-
-TERRIBLE_FARMING
-'''EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Good
-            ]
-            effects = SetTargetFarming Value + Target.Population * .25
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Adequate
-            ]
-            effects = SetTargetFarming Value + Target.Population * 0.1875
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Poor
-            ]
-            effects = SetTargetFarming Value + Target.Population * 0.125
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Hostile
-            ]
-            effects = SetTargetFarming Value + Target.Population * 0.0625
-'''
-
-AVERAGE_FARMING
-'''EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Good
-            ]
-            effects = SetTargetFarming Value + Target.Population * .5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Adequate
-            ]
-            effects = SetTargetFarming Value + Target.Population * .375
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Poor
-            ]
-            effects = SetTargetFarming Value + Target.Population * .25
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Hostile
-            ]
-            effects = SetTargetFarming Value + Target.Population * 0.125
-'''
-
-GREAT_FARMING
-'''EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Good
-            ]
-            effects = SetTargetFarming Value + Target.Population * 1.0
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Adequate
-            ]
-            effects = SetTargetFarming Value + Target.Population * .75
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Poor
-            ]
-            effects = SetTargetFarming Value + Target.Population * .5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Hostile
-            ]
-            effects = SetTargetFarming Value + Target.Population * .25
-'''
-
-ULTIMATE_FARMING
-'''EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Good
-            ]
-            effects = SetTargetFarming Value + Target.Population * 1.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Adequate
-            ]
-            effects = SetTargetFarming Value + Target.Population * 1.125
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Poor
-            ]
-            effects = SetTargetFarming Value + Target.Population * .75
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Hostile
-            ]
-            effects = SetTargetFarming Value + Target.Population * .375
-'''
-
-
 NO_MINING
 '''
 '''
@@ -2897,7 +2501,7 @@ TERRIBLE_MINING
                 Not OwnerHasTech "PRO_ENVIRO_MINING"
             ]
             effects = [
-                SetTargetHealth Value - 10
+                SetTargetPopulation Value - 5
                 SetTargetPopulation Value * 0.5
             ]
 
@@ -2908,7 +2512,7 @@ TERRIBLE_MINING
                 OwnerHasTech "PRO_ENVIRO_MINING"
             ]
             effects = [
-                SetTargetHealth Value - 5
+                SetTargetPopulation Value - 5
                 SetTargetPopulation Value * 0.75
             ]
 '''
@@ -2974,7 +2578,7 @@ AVERAGE_MINING
                 Not OwnerHasTech "PRO_ENVIRO_MINING"
             ]
             effects = [
-                SetTargetHealth Value - 10
+                SetTargetPopulation Value - 10
                 SetTargetPopulation Value * 0.5
             ]
 
@@ -2985,7 +2589,7 @@ AVERAGE_MINING
                 OwnerHasTech "PRO_ENVIRO_MINING"
             ]
             effects = [
-                SetTargetHealth Value - 5
+                SetTargetPopulation Value - 5
                 SetTargetPopulation Value * 0.75
             ]
 '''
@@ -3051,7 +2655,7 @@ GREAT_MINING
                 Not OwnerHasTech "PRO_ENVIRO_MINING"
             ]
             effects = [
-                SetTargetHealth Value - 10
+                SetTargetPopulation Value - 10
                 SetTargetPopulation Value * 0.5
             ]
 
@@ -3062,7 +2666,7 @@ GREAT_MINING
                 OwnerHasTech "PRO_ENVIRO_MINING"
             ]
             effects = [
-                SetTargetHealth Value - 5
+                SetTargetPopulation Value - 5
                 SetTargetPopulation Value * 0.75
             ]
 '''
@@ -3082,7 +2686,7 @@ TERRIBLE_INDUSTRY
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
-                SetTargetFarming Value + Target.TargetIndustry / 4
+                SetTargetPopulation Value + Target.TargetIndustry / 4
                 SetTargetIndustry Value / 2
             ]
 
@@ -3107,7 +2711,7 @@ AVERAGE_INDUSTRY
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
-                SetTargetFarming Value + Target.TargetIndustry / 4
+                SetTargetPopulation Value + Target.TargetIndustry / 4
                 SetTargetIndustry Value / 2
             ]
 
@@ -3132,7 +2736,7 @@ GREAT_INDUSTRY
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
-                SetTargetFarming Value + Target.TargetIndustry / 4
+                SetTargetPopulation Value + Target.TargetIndustry / 4
                 SetTargetIndustry Value / 2
             ]
 
@@ -3157,7 +2761,7 @@ ULTIMATE_INDUSTRY
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
-                SetTargetFarming Value + Target.TargetIndustry / 4
+                SetTargetPopulation Value + Target.TargetIndustry / 4
                 SetTargetIndustry Value / 2
             ]
 

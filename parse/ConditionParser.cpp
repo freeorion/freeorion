@@ -6,8 +6,7 @@ namespace parse {
         condition_parser_rule condition_parser;
     }
 
-    condition_parser_rule& condition_parser()
-    {
+    condition_parser_rule& condition_parser() {
         static bool once = true;
         if (once) {
             detail::condition_parser

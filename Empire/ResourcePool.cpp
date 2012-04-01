@@ -185,7 +185,7 @@ void ResourcePool::Update() {
         // if object's system is not in a system group, add it as its
         // own entry in m_connected_object_groups_resource_production
         // this will allow the object to use its own locally produced
-        // resource when, for instance, distributing food
+        // resource when, for instance, distributing pp
         if (object_system_group.empty()) {
             object_system_group.insert(object_id);  // just use this already-available set to store the object id, even though it is not likely actually a system
             double obj_output = obj->GetMeter(meter_type) ? obj->CurrentMeterValue(meter_type) : 0.0;

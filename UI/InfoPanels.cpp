@@ -47,14 +47,8 @@ namespace {
       * (such as meter bars) for the indicated \a meter_type */
     GG::Clr MeterColor(MeterType meter_type) {
         switch (meter_type) {
-        case METER_FARMING:
-        case METER_TARGET_FARMING:
-            return GG::CLR_YELLOW;
-            break;
         case METER_MINING:
         case METER_TARGET_MINING:
-        case METER_HEALTH:
-        case METER_TARGET_HEALTH:
             return GG::CLR_RED;
             break;
         case METER_INDUSTRY:
@@ -124,13 +118,6 @@ namespace {
         const Building* building = 0;
 
         switch (resource_type) {
-        case RE_FOOD:
-            // food allocated to obj if obj is a PopCenter
-            if (pc = dynamic_cast<const PopCenter*>(obj))
-                return pc->AllocatedFood();
-            return 0.0; // can't consume food if not a PopCenter
-            break;
-
         case RE_MINERALS:
         case RE_INDUSTRY:
             // PP (equal to mineral and industry) cost of objects on production queue at this object's location
@@ -217,7 +204,7 @@ std::map<int, bool> PopulationPanel::s_expanded_map = std::map<int, bool>();
 PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*2), GG::INTERACTIVE),
     m_popcenter_id(object_id),
-    m_pop_stat(0), m_health_stat(0),
+    m_pop_stat(0),
     m_multi_icon_value_indicator(0), m_multi_meter_status_bar(0),
     m_expand_button(0)
 {
@@ -242,25 +229,14 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
                                    0, 3, false);
     AttachChild(m_pop_stat);
 
-    m_health_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_HEALTH),
-                                      0, 3, false);
-    AttachChild(m_health_stat);
-
-    m_food_consumption_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_FOOD_CONSUMPTION),
-                                                0, 3, false);
-    AttachChild(m_food_consumption_stat);
 
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
     m_pop_stat->SetBrowseModeTime(tooltip_delay);
-    m_health_stat->SetBrowseModeTime(tooltip_delay);
-    m_food_consumption_stat->SetBrowseModeTime(tooltip_delay);
 
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
     meters.push_back(std::make_pair(METER_POPULATION, METER_TARGET_POPULATION));
-    meters.push_back(std::make_pair(METER_HEALTH, METER_TARGET_HEALTH));
-    meters.push_back(std::make_pair(METER_FOOD_CONSUMPTION, INVALID_METER_TYPE));
 
     // attach and show meter bars and large resource indicators
     m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_popcenter_id, meters);
@@ -277,8 +253,6 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
 PopulationPanel::~PopulationPanel() {
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
     delete m_pop_stat;
-    delete m_health_stat;
-    delete m_food_consumption_stat;
     delete m_multi_icon_value_indicator;
     delete m_multi_meter_status_bar;
 
@@ -309,7 +283,7 @@ void PopulationPanel::ExpandCollapse(bool expanded) {
 
 void PopulationPanel::DoExpandCollapseLayout() {
     // initially detach most things.  Some will be reattached later.
-    DetachChild(m_pop_stat);    DetachChild(m_health_stat); DetachChild(m_food_consumption_stat);
+    DetachChild(m_pop_stat);
 
     // detach / hide meter bars and large resource indicators
     DetachChild(m_multi_meter_status_bar);
@@ -321,8 +295,6 @@ void PopulationPanel::DoExpandCollapseLayout() {
 
         std::vector<StatisticIcon*> icons;
         icons.push_back(m_pop_stat);
-        icons.push_back(m_health_stat);
-        icons.push_back(m_food_consumption_stat);
 
         // position and reattach icons to be shown
         for (int n = 0; n < static_cast<int>(icons.size()); ++n) {
@@ -426,22 +398,12 @@ void PopulationPanel::Update() {
     m_multi_icon_value_indicator->Update();
 
     m_pop_stat->SetValue(pop->InitialMeterValue(METER_POPULATION));
-    m_health_stat->SetValue(pop->InitialMeterValue(METER_HEALTH));
-    m_food_consumption_stat->SetValue(pop->InitialMeterValue(METER_FOOD_CONSUMPTION));
 
 
     // tooltips
     boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(m_popcenter_id, METER_POPULATION, METER_TARGET_POPULATION));
     m_pop_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_POPULATION, browse_wnd);
-
-    browse_wnd.reset(new MeterBrowseWnd(m_popcenter_id, METER_HEALTH, METER_TARGET_HEALTH));
-    m_health_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_HEALTH, browse_wnd);
-
-    browse_wnd.reset(new MeterBrowseWnd(m_popcenter_id, METER_FOOD_CONSUMPTION, METER_FOOD_CONSUMPTION));
-    m_food_consumption_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_FOOD_CONSUMPTION, browse_wnd);
 }
 
 void PopulationPanel::Refresh() {
@@ -477,7 +439,6 @@ std::map<int, bool> ResourcePanel::s_expanded_map;
 ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::INTERACTIVE),
     m_rescenter_id(object_id),
-    m_farming_stat(0),
     m_mining_stat(0),
     m_industry_stat(0),
     m_research_stat(0),
@@ -520,10 +481,6 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
 
     // small resource indicators - for use when panel is collapsed
-    m_farming_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_FARMING),
-                                       0, 3, false);
-    AttachChild(m_farming_stat);
-
     m_mining_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_MINING),
                                       0, 3, false);
     AttachChild(m_mining_stat);
@@ -541,7 +498,6 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     AttachChild(m_trade_stat);
 
 
-    m_farming_stat->SetBrowseModeTime(tooltip_delay);
     m_mining_stat->SetBrowseModeTime(tooltip_delay);
     m_industry_stat->SetBrowseModeTime(tooltip_delay);
     m_research_stat->SetBrowseModeTime(tooltip_delay);
@@ -550,7 +506,6 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
-    meters.push_back(std::make_pair(METER_FARMING,      METER_TARGET_FARMING));
     meters.push_back(std::make_pair(METER_MINING,       METER_TARGET_MINING));
     meters.push_back(std::make_pair(METER_INDUSTRY,     METER_TARGET_INDUSTRY));
     meters.push_back(std::make_pair(METER_RESEARCH,     METER_TARGET_RESEARCH));
@@ -573,7 +528,6 @@ ResourcePanel::~ResourcePanel() {
     delete m_multi_icon_value_indicator;
     delete m_multi_meter_status_bar;
 
-    delete m_farming_stat;
     delete m_mining_stat;
     delete m_industry_stat;
     delete m_research_stat;
@@ -597,7 +551,7 @@ void ResourcePanel::ExpandCollapse(bool expanded) {
 
 void ResourcePanel::DoExpandCollapseLayout() {
     // initially detach everything (most things?).  Some will be reattached later.
-    DetachChild(m_farming_stat);    DetachChild(m_mining_stat); DetachChild(m_industry_stat);
+    DetachChild(m_mining_stat);     DetachChild(m_industry_stat);
     DetachChild(m_research_stat);   DetachChild(m_trade_stat);
 
     DetachChild(m_focus_drop);
@@ -617,7 +571,6 @@ void ResourcePanel::DoExpandCollapseLayout() {
             // determine which two resource icons to display while collapsed: the two with the highest production.
             // sort by insereting into multimap keyed by production amount, then taking the first two icons therein.
             std::multimap<double, StatisticIcon*> res_prod_icon_map;
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->NextTurnCurrentMeterValue(METER_FARMING),   m_farming_stat));
             res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->NextTurnCurrentMeterValue(METER_MINING),    m_mining_stat));
             res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->NextTurnCurrentMeterValue(METER_INDUSTRY),  m_industry_stat));
             res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->NextTurnCurrentMeterValue(METER_RESEARCH),  m_research_stat));
@@ -745,9 +698,6 @@ void ResourcePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void ResourcePanel::Update() {
     // remove any old browse wnds
-    m_farming_stat->ClearBrowseInfoWnd();
-    m_multi_icon_value_indicator->ClearToolTip(METER_FARMING);
-
     m_mining_stat->ClearBrowseInfoWnd();
     m_multi_icon_value_indicator->ClearToolTip(METER_MINING);
 
@@ -805,7 +755,6 @@ void ResourcePanel::Update() {
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
-    m_farming_stat->SetValue(res->InitialMeterValue(METER_FARMING));
     m_mining_stat->SetValue(res->InitialMeterValue(METER_MINING));
     m_industry_stat->SetValue(res->InitialMeterValue(METER_INDUSTRY));
     m_research_stat->SetValue(res->InitialMeterValue(METER_RESEARCH));
@@ -815,9 +764,7 @@ void ResourcePanel::Update() {
     // create an attach browse info wnds for each meter type on the icon + number stats used when collapsed and
     // for all meter types shown in the multi icon value indicator.  this replaces any previous-present
     // browse wnd on these indicators
-    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_FARMING, METER_TARGET_FARMING));
-    m_farming_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_FARMING, browse_wnd);
+    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
 
     browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_MINING, METER_TARGET_MINING));
     m_mining_stat->SetBrowseInfoWnd(browse_wnd);
@@ -2298,8 +2245,6 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     // set production label
     std::string resource_text = "";
     switch (m_resource_type) {
-    case RE_FOOD:
-        resource_text = UserString("FOOD_PRODUCTION");      break;
     case RE_MINERALS:
         resource_text = UserString("MINERALS_PRODUCTION");  break;
     case RE_INDUSTRY:
@@ -2424,8 +2369,6 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
     // set consumption / allocation label
     std::string resource_text = "";
     switch (m_resource_type) {
-    case RE_FOOD:
-        resource_text = UserString("FOOD_CONSUMPTION");     break;
     case RE_MINERALS:
         resource_text = UserString("MINERALS_CONSUMPTION"); break;
     case RE_INDUSTRY:
@@ -2477,7 +2420,6 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
         double difference = m_production - m_allocation;
 
         switch (m_resource_type) {
-        case RE_FOOD:
         case RE_MINERALS:
         case RE_TRADE:
         case RE_INDUSTRY:

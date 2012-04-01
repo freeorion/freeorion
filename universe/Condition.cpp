@@ -3526,8 +3526,6 @@ std::string Condition::MeterValue::Dump() const {
     switch (m_meter) {
     case INVALID_METER_TYPE:        retval += "INVALID_METER_TYPE"; break;
     case METER_TARGET_POPULATION:   retval += "TargetPopulation";   break;
-    case METER_TARGET_HEALTH:       retval += "TargetHealth";       break;
-    case METER_TARGET_FARMING:      retval += "TargetFarming";      break;
     case METER_TARGET_INDUSTRY:     retval += "TargetIndustry";     break;
     case METER_TARGET_RESEARCH:     retval += "TargetResearch";     break;
     case METER_TARGET_TRADE:        retval += "TargetTrade";        break;
@@ -3538,8 +3536,6 @@ std::string Condition::MeterValue::Dump() const {
     case METER_MAX_STRUCTURE:       retval += "MaxStructure";       break;
     case METER_MAX_DEFENSE:         retval += "MaxDefense";         break;
     case METER_POPULATION:          retval += "Population";         break;
-    case METER_HEALTH:              retval += "Health";             break;
-    case METER_FARMING:             retval += "Farming";            break;
     case METER_INDUSTRY:            retval += "Industry";           break;
     case METER_RESEARCH:            retval += "Research";           break;
     case METER_TRADE:               retval += "Trade";              break;
@@ -3549,7 +3545,6 @@ std::string Condition::MeterValue::Dump() const {
     case METER_SHIELD:              retval += "Shield";             break;
     case METER_STRUCTURE:           retval += "Structure";          break;
     case METER_DEFENSE:             retval += "Defense";            break;
-    case METER_FOOD_CONSUMPTION:    retval += "FoodConsumption";    break;
     case METER_SUPPLY:              retval += "Supply";             break;
     case METER_STEALTH:             retval += "Stealth";            break;
     case METER_DETECTION:           retval += "Detection";          break;
@@ -3739,7 +3734,7 @@ namespace {
             if (!empire)
                 return false;
 
-            if (m_stockpile == RE_FOOD || m_stockpile == RE_MINERALS || m_stockpile == RE_TRADE) {
+            if (m_stockpile == RE_MINERALS || m_stockpile == RE_TRADE) {
                 double amount = empire->ResourceStockpile(m_stockpile);
                 return (m_low <= amount && amount <= m_high);
             }
@@ -3796,7 +3791,6 @@ std::string Condition::EmpireStockpileValue::Description(bool negated/* = false*
 std::string Condition::EmpireStockpileValue::Dump() const {
     std::string retval = DumpIndent();
     switch (m_stockpile) {
-    case RE_FOOD:       retval += "OwnerFoodStockpile";     break;
     case RE_MINERALS:   retval += "OwnerMineralStockpile";  break;
     case RE_TRADE:      retval += "OwnerTradeStockpile";    break;
     case RE_RESEARCH:   retval += "OwnerResearchStockpile"; break;

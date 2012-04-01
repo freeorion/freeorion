@@ -169,7 +169,6 @@ protected:
     virtual bool    EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
 private:
-    void            RefreshFoodResourceIndicator();                 ///< gets stockpile and expected change and updates resource indicator
     void            RefreshMineralsResourceIndicator();
     void            RefreshTradeResourceIndicator();
     void            RefreshResearchResourceIndicator();
@@ -392,7 +391,7 @@ private:
     bool                        m_sidepanel_open_before_showing_other;  //!< was the sidepanel open before switching to production, research or design screens?  If so, it should be restored when leaving them.
 
     CUIToolBar*                 m_toolbar;
-    StatisticIcon               *m_food, *m_mineral, *m_trade, *m_population, *m_research, *m_industry;
+    StatisticIcon               *m_mineral, *m_trade, *m_population, *m_research, *m_industry;
     SettableInWindowCUIButton   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_pedia, *m_btn_menu;
     FPSIndicator*               m_FPS;
 

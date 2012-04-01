@@ -134,8 +134,7 @@ namespace {
 
             owner_stockpile
                 =    (
-                            tok.OwnerFoodStockpile_ [ _a = RE_FOOD ]
-                        |   tok.OwnerMineralStockpile_ [ _a = RE_MINERALS ]
+                            tok.OwnerMineralStockpile_ [ _a = RE_MINERALS ]
                         |   tok.OwnerTradeStockpile_ [ _a = RE_TRADE ]
                      )
                 >    parse::label(Low_name)  > double_value_ref [ _b = _1 ]

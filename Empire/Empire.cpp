@@ -952,7 +952,6 @@ Empire::Empire(const std::string& name, const std::string& player_name, int empi
 
 void Empire::Init() {
     m_resource_pools[RE_MINERALS] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_MINERALS));
-    m_resource_pools[RE_FOOD] =     boost::shared_ptr<ResourcePool>(new ResourcePool(RE_FOOD));
     m_resource_pools[RE_RESEARCH] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_RESEARCH));
     m_resource_pools[RE_INDUSTRY] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
     m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
@@ -988,7 +987,6 @@ int Empire::CapitalID() const
 int Empire::StockpileID(ResourceType res) const {
     switch (res) {
     case RE_MINERALS:
-    case RE_FOOD:
     case RE_TRADE:
         return m_capital_id;
         break;
@@ -2509,7 +2507,7 @@ void Empire::CheckProductionProgress() {
 
 
     if (stockpile_object_id == INVALID_OBJECT_ID) {
-        // empire has nowhere to stockpile food, so has no stockpile.
+        // empire has nowhere to stockpile production, so has no stockpile.
         pool->SetStockpile(0.0);
         //Logger().debugStream() << "no mineral stockpile location.  stockpile is set to 0.0";
 
@@ -2555,82 +2553,6 @@ void Empire::CheckProductionProgress() {
 void Empire::CheckTradeSocialProgress()
 { m_resource_pools[RE_TRADE]->SetStockpile(m_resource_pools[RE_TRADE]->TotalAvailable() - m_maintenance_total_cost); }
 
-void Empire::CheckGrowthFoodProgress() {
-    Logger().debugStream() << "========Empire::CheckGrowthFoodProgress=======";
-
-    boost::shared_ptr<ResourcePool> pool = m_resource_pools[RE_FOOD];
-    const PopulationPool& pop_pool = m_population_pool;                 // adding a reference to a member variable of this object for consistency with other implementation of this code in MapWnd
-
-    int stockpile_object_id = pool->StockpileObjectID();
-
-    //Logger().debugStream() << "food stockpile object id: " << stockpile_object_id;
-
-    if (stockpile_object_id == INVALID_OBJECT_ID) {
-        // empire has nowhere to stockpile food, so has no stockpile.
-        pool->SetStockpile(0.0);
-
-    } else {
-        // find total food allocated to group that has access to stockpile...
-
-        // first find the set of objects that contains the stockpile object
-        std::map<std::set<int>, double> food_sharing_groups = pool->Available();    // don't actually need the available PP; just using the map as a set of sets of systems
-        std::set<int> stockpile_group_object_ids;
-        //Logger().debugStream() << "trying to find stockpile object group...  stockpile object has id: " << stockpile_object_id;
-        for (std::map<std::set<int>, double>::const_iterator it = food_sharing_groups.begin();
-             it != food_sharing_groups.end(); ++it)
-        {
-            const std::set<int>& group = it->first;                     // get group
-            //Logger().debugStream() << "potential group:";
-            //for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
-                //Logger().debugStream() << "...." << *qit;
-
-            if (group.find(stockpile_object_id) != group.end()) {       // check for stockpile object
-                stockpile_group_object_ids = group;
-                //Logger().debugStream() << "Empire::CheckGrowthFoodProgress found group of objects for stockpile object.  size: " << stockpile_group_object_ids.size();
-                break;
-            }
-
-            //Logger().debugStream() << "didn't find in group... trying next.";
-        }
-
-        const std::vector<int>& pop_centers = pop_pool.PopCenterIDs();
-
-        double stockpile_group_food_allocation = 0.0;
-
-        // go through population pool, adding up food allocation of popcenters
-        // that are in the group of objects that can access the stockpile
-        for (std::vector<int>::const_iterator it = pop_centers.begin(); it != pop_centers.end(); ++it) {
-            int object_id = *it;
-            if (stockpile_group_object_ids.find(object_id) == stockpile_group_object_ids.end())
-                continue;
-
-            const UniverseObject* obj = GetUniverseObject(*it);
-            if (!obj) {
-                Logger().debugStream() << "Empire::CheckGrowthFoodProgress couldn't get an object with id " << object_id;
-                continue;
-            }
-            const PopCenter* pop = dynamic_cast<const PopCenter*>(obj);
-            if (!pop) {
-                Logger().debugStream() << "Empire::CheckGrowthFoodProgress couldn't cast a UniverseObject* to an PopCenter*";
-                continue;
-            }
-
-            stockpile_group_food_allocation += pop->AllocatedFood();    // finally add allocation for this PopCenter
-            //Logger().debugStream() << "object " << obj->Name() << " is in stockpile object group that has " << pop->AllocatedFood() << " food allocated to it";
-        }
-
-        double stockpile_object_group_available = pool->GroupAvailable(stockpile_object_id);
-        //Logger().debugStream() << "food available in stockpile group is:  " << stockpile_object_group_available;
-        //Logger().debugStream() << "food allocation in stockpile group is: " << stockpile_group_food_allocation;
-
-        //Logger().debugStream() << "Old stockpile was " << pool->Stockpile();
-
-        double new_stockpile = stockpile_object_group_available - stockpile_group_food_allocation;
-        pool->SetStockpile(new_stockpile);
-        //Logger().debugStream() << "New stockpile is: " << new_stockpile;
-    }
-}
-
 void Empire::SetColor(const GG::Clr& color)
 { m_color = color; }
 
@@ -2655,7 +2577,6 @@ void Empire::InitResourcePools() {
     }
     m_population_pool.SetPopCenters(popcenter_ids_vec);
     m_resource_pools[RE_MINERALS]->SetObjects(object_ids_vec);
-    m_resource_pools[RE_FOOD]->SetObjects(object_ids_vec);
     m_resource_pools[RE_RESEARCH]->SetObjects(object_ids_vec);
     m_resource_pools[RE_INDUSTRY]->SetObjects(object_ids_vec);
     m_resource_pools[RE_TRADE]->SetObjects(object_ids_vec);
@@ -2663,7 +2584,6 @@ void Empire::InitResourcePools() {
 
     // inform the blockadeable resource pools about systems that can share
     m_resource_pools[RE_MINERALS]->SetConnectedSupplyGroups(m_resource_supply_groups);
-    m_resource_pools[RE_FOOD]->SetConnectedSupplyGroups(m_resource_supply_groups);
     m_resource_pools[RE_INDUSTRY]->SetConnectedSupplyGroups(m_resource_supply_groups);
 
 
@@ -2680,7 +2600,6 @@ void Empire::InitResourcePools() {
 
     // set stockpile object locations for each resource, ensuring those systems exist
     std::vector<ResourceType> res_type_vec;
-    res_type_vec.push_back(RE_FOOD);
     res_type_vec.push_back(RE_MINERALS);
     res_type_vec.push_back(RE_INDUSTRY);
     res_type_vec.push_back(RE_TRADE);
@@ -2702,7 +2621,6 @@ void Empire::UpdateResourcePools() {
     UpdateResearchQueue();
     UpdateProductionQueue();
     UpdateTradeSpending();
-    UpdateFoodDistribution();
     UpdatePopulationGrowth();
 }
 
@@ -2742,115 +2660,6 @@ void Empire::UpdateTradeSpending() {
         m_maintenance_total_cost += building_type->MaintenanceCost();
     }
     m_resource_pools[RE_TRADE]->ChangedSignal();
-}
-
-void Empire::UpdateFoodDistribution() {
-    Logger().debugStream() << "======= Food distribution for empire: " << EmpireID() << " =======";
-
-    m_resource_pools[RE_FOOD]->Update();  // recalculate total food production
-
-    // get sets of resource-sharing objects and amount of resource available in
-    // each, and distribute food within each group independently
-    std::map<std::set<int>, double> groups_food_available = m_resource_pools[RE_FOOD]->Available();
-    for (std::map<std::set<int>, double>::iterator groups_it = groups_food_available.begin();
-         groups_it != groups_food_available.end(); ++groups_it)
-    {
-        const std::set<int>& group_object_ids = groups_it->first;
-
-        // get subset of group objects that are PopCenters
-        std::vector<std::pair<UniverseObject*, PopCenter*> > pop_in_group;
-        for (std::set<int>::const_iterator obj_it = group_object_ids.begin(); obj_it != group_object_ids.end(); ++obj_it)
-            if (UniverseObject* obj = GetUniverseObject(*obj_it))
-                if (PopCenter* pop = dynamic_cast<PopCenter*>(obj))
-                    pop_in_group.push_back(std::make_pair(obj, pop));
-
-
-        //Logger().debugStream() << " !!  Zeroth Pass Food Distribution";
-        // clear food allocations to all PopCenters to start, so that if no
-        // further allocations occur due to insufficient food being
-        // available, previous turns or iterations' allocations won't be left
-        for (std::vector<std::pair<UniverseObject*, PopCenter*> >::const_iterator pop_it = pop_in_group.begin();
-             pop_it != pop_in_group.end(); ++pop_it)
-        {
-            pop_it->second->SetAllocatedFood(0.0);
-            //Logger().debugStream() << "allocating 0.0 food to " << pop_center_objects[*pop_it]->Name() << " to initialize";
-        }
-
-
-        double food_available = groups_it->second;
-        //Logger().debugStream() << "group has " << food_available << " food available for allocation";
-
-
-        //Logger().debugStream() << " !!  First Pass Food Distribution";
-
-        // first pass: give food to PopCenters that produce food, limited by their food need and their food production
-        for (std::vector<std::pair<UniverseObject*, PopCenter*> >::const_iterator pop_it = pop_in_group.begin();
-             pop_it != pop_in_group.end(); ++pop_it)
-        {
-            if (food_available <= 0.0)
-                break;
-
-            double need = pop_it->second->CurrentMeterValue(METER_FOOD_CONSUMPTION);
-            double prod = 0.0;
-            if (pop_it->first->GetMeter(METER_FARMING))
-                prod = pop_it->first->CurrentMeterValue(METER_FARMING); // preferential allocation for food producers
-
-            // allocate food to this PopCenter, deduct from pool, add to total food distribution tally
-            double allocation = std::min(std::min(need, prod), food_available);
-
-            //Logger().debugStream() << "allocating " << allocation << " food to " << pop_center_objects[pc]->Name() << " limited by need and by production";
-
-            pop_it->second->SetAllocatedFood(allocation);
-            food_available -= allocation;
-        }
-
-        //Logger().debugStream() << " !!  Second Pass Food Distribution";
-
-        // second pass: give as much food as needed to PopCenters to maintain current population
-        for (std::vector<std::pair<UniverseObject*, PopCenter*> >::const_iterator pop_it = pop_in_group.begin();
-             pop_it != pop_in_group.end(); ++pop_it)
-        {
-            if (food_available <= 0.0)
-                break;
-
-            double need = pop_it->second->CurrentMeterValue(METER_FOOD_CONSUMPTION);
-            double has = pop_it->second->AllocatedFood();
-            double addition = std::min(std::max(need - has, 0.0), food_available);
-            double new_allocation = has + addition;
-
-            //Logger().debugStream() << "allocating " << new_allocation << " food to " << pop_center_objects[pc]->Name() << " limited by need (to maintain population)";
-
-            pop_it->second->SetAllocatedFood(new_allocation);
-            food_available -= addition;
-        }
-
-        //Logger().debugStream() << " !!  Third Pass Food Distribution";
-
-        // third pass: give as much food as needed to PopCenters to allow max possible growth
-        for (std::vector<std::pair<UniverseObject*, PopCenter*> >::const_iterator pop_it = pop_in_group.begin();
-             pop_it != pop_in_group.end(); ++pop_it)
-        {
-            if (food_available <= 0.0)
-                break;
-
-            double most_needed_to_grow = pop_it->second->FoodAllocationForMaxGrowth();
-            double has = pop_it->second->AllocatedFood();
-            double extra_needed_for_max_growth = most_needed_to_grow - has;
-            double addition = std::min(std::max(extra_needed_for_max_growth, 0.0), food_available);
-            double new_allocation = has + addition;
-
-            //Logger().debugStream() << "allocating " << new_allocation << " food to " << pop_center_objects[pc]->Name() << " to allow max possible growth";
-
-            pop_it->second->SetAllocatedFood(new_allocation);
-            food_available -= addition;
-        }
-    }
-
-
-    // after changing food distribution, population growth predictions may need to be redone
-    // by calling UpdatePopulationGrowth()
-
-    m_resource_pools[RE_FOOD]->ChangedSignal();
 }
 
 void Empire::UpdatePopulationGrowth()

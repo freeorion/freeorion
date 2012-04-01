@@ -123,7 +123,7 @@ public:
     void                ProcessCombats();
 
     /** Determines resource and supply distribution pathes and connections,
-      * updates research, production, trade spending and food distribution,
+      * updates research, production, trade spending,
       * does population growth, updates current turn number, checks for
       * eliminated or victorious empires / players, sends new turn updates. */
     void                PostCombatProcessTurns();

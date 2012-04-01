@@ -562,8 +562,6 @@ std::string SetMeter::Dump() const {
     std::string retval = DumpIndent() + "Set";
     switch (m_meter) {
     case METER_TARGET_POPULATION:   retval += "TargetPopulation"; break;
-    case METER_TARGET_HEALTH:       retval += "TargetHealth"; break;
-    case METER_TARGET_FARMING:      retval += "TargetFarming"; break;
     case METER_TARGET_INDUSTRY:     retval += "TargetIndustry"; break;
     case METER_TARGET_RESEARCH:     retval += "TargetResearch"; break;
     case METER_TARGET_TRADE:        retval += "TargetTrade"; break;
@@ -577,8 +575,6 @@ std::string SetMeter::Dump() const {
     case METER_MAX_TROOPS:          retval += "MaxTroops"; break;
 
     case METER_POPULATION:          retval += "Population"; break;
-    case METER_HEALTH:              retval += "Health"; break;
-    case METER_FARMING:             retval += "Farming"; break;
     case METER_INDUSTRY:            retval += "Industry"; break;
     case METER_RESEARCH:            retval += "Research"; break;
     case METER_TRADE:               retval += "Trade"; break;
@@ -591,7 +587,6 @@ std::string SetMeter::Dump() const {
     case METER_DEFENSE:             retval += "Defense"; break;
     case METER_TROOPS:              retval += "Troops"; break;
 
-    case METER_FOOD_CONSUMPTION:    retval += "FoodConsumption"; break;
     case METER_SUPPLY:              retval += "Supply"; break;
     case METER_STEALTH:             retval += "Stealth"; break;
     case METER_DETECTION:           retval += "Detection"; break;
@@ -887,7 +882,6 @@ std::string SetEmpireStockpile::Description() const {
 std::string SetEmpireStockpile::Dump() const {
     std::string retval = DumpIndent();
     switch (m_stockpile) {
-    case RE_FOOD:       retval += "SetEmpireFoodStockpile"; break;
     case RE_MINERALS:   retval += "SetEmpireMineralStockpile"; break;
     case RE_TRADE:      retval += "SetEmpireTradeStockpile"; break;
     default:            retval += "?"; break;

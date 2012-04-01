@@ -21,7 +21,6 @@
     (Alignment)                                 \
     (AlignmentEffects)                          \
     (All)                                       \
-    (AllocatedFood)                             \
     (AllyOf)                                    \
     (And)                                       \
     (AntiFighterDamage)                         \
@@ -89,7 +88,6 @@
     (External)
 
 #define NAMES_SEQ_2                             \
-    (Farming)                                   \
     (Fighters)                                  \
     (FighterType)                               \
     (FighterWeaponRange)                        \
@@ -100,9 +98,6 @@
     (Foci)                                      \
     (Focus)                                     \
     (FocusType)                                 \
-    (FoodAllocationForMaxGrowth)                \
-    (FoodConsumption)                           \
-    (FoodStockpile)                             \
     (Fuel)                                      \
     (GasGiant)                                  \
     (GenerateSitrepMessage)                     \
@@ -111,7 +106,6 @@
     (Graphic)                                   \
     (HasSpecial)                                \
     (HasSpecialSinceTurn)                       \
-    (Health)                                    \
     (High)                                      \
     (Homeworld)                                 \
     (Hostile)                                   \
@@ -182,7 +176,6 @@
     (Orange)                                    \
     (OwnedBy)                                   \
     (Owner)                                     \
-    (OwnerFoodStockpile)                        \
     (OwnerHasTech)                              \
     (OwnerMineralStockpile)                     \
     (OwnerTradeStockpile)                       \
@@ -244,16 +237,12 @@
     (SetDestination)                            \
     (SetDetection)                              \
     (SetEmpireCapital)                          \
-    (SetEmpireFoodStockpile)                    \
     (SetEmpireMeter)                            \
     (SetEmpireMineralStockpile)                 \
     (SetEmpireTechProgress)                     \
     (SetEmpireTradeStockpile)                   \
-    (SetFarming)                                \
     (SetFighterWeaponRange)                     \
-    (SetFoodConsumption)                        \
     (SetFuel)                                   \
-    (SetHealth)                                 \
     (SetIndustry)                               \
     (SetLaunchRate)                             \
     (SetMaxDefense)                             \
@@ -279,8 +268,6 @@
     (SetStructure)                              \
     (SetSupply)                                 \
     (SetTargetConstruction)                     \
-    (SetTargetFarming)                          \
-    (SetTargetHealth)                           \
     (SetTargetIndustry)                         \
     (SetTargetMining)                           \
     (SetTargetPopulation)                       \
@@ -328,8 +315,6 @@
     (Tag)                                       \
     (Target)                                    \
     (TargetConstruction)                        \
-    (TargetFarming)                             \
-    (TargetHealth)                              \
     (TargetIndustry)                            \
     (TargetMining)                              \
     (TargetPopulation)                          \

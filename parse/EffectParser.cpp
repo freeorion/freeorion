@@ -93,8 +93,7 @@ namespace {
 
             set_empire_stockpile
                 =   (
-                            tok.SetEmpireFoodStockpile_ [ _a = RE_FOOD ]
-                        |   tok.SetEmpireMineralStockpile_ [ _a = RE_MINERALS ]
+                            tok.SetEmpireMineralStockpile_ [ _a = RE_MINERALS ]
                         |   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
                     )
                 >>  (
@@ -291,11 +290,11 @@ namespace {
 
             string_and_string_ref // TODO: Try to make this simpler.
                 =    parse::label(Tag_name)  >> tok.string [ _a = _1 ]
-                >>   parse::label(Data_name) >  string_value_ref [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
+                >>   parse::label(Data_name) >> string_value_ref [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
                 ;
 
             string_and_string_ref_vector
-                =    '[' > +string_and_string_ref [ push_back(_val, _1) ] > ']'
+                =    '[' >> *string_and_string_ref [ push_back(_val, _1) ] >> ']'
                 |    string_and_string_ref [ push_back(_val, _1) ]
                 ;
 
@@ -364,6 +363,9 @@ namespace {
             generate_sitrep_message.name("GenerateSitrepMessage");
             set_overlay_texture.name("SetOverlayTexture");
             set_texture.name("SetTexture");
+            string_and_string_ref.name("Tag and Data (string reference)");
+            string_and_string_ref_vector.name("List of Tags and Data");
+
 
 #if DEBUG_PARSER
             debug(set_meter);
