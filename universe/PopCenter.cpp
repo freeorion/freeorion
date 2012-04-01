@@ -18,16 +18,11 @@ const Species* GetSpecies(const std::string& name);
 
 PopCenter::PopCenter(const std::string& species_name) :
     m_species_name(species_name)
-{
-    //Logger().debugStream() << "PopCenter::PopCenter(" << species_name << ")";
-    // TODO: if race isn't a valid race, throw a fit
-}
+{}
 
 PopCenter::PopCenter() :
     m_species_name("")
-{
-    //Logger().debugStream() << "PopCenter::PopCenter()";
-}
+{}
 
 PopCenter::~PopCenter()
 {}
@@ -84,9 +79,9 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const {
 }
 
 double PopCenter::NextTurnPopGrowth() const {
-    double target_pop = std::max(GetMeter(METER_TARGET_POPULATION)->Current(), 1.0);    // clamping target pop to at least 1 prevents divide by zero cases
+    double target_pop = std::max(GetMeter(METER_TARGET_POPULATION)->Current(), 0.01);   // clamping target pop to at least 1 prevents divide by zero cases
     double cur_pop = GetMeter(METER_POPULATION)->Current();
-
+    Logger().debugStream() << "pop: " << cur_pop << " / " << target_pop;
     double population_fraction = (target_pop - cur_pop) / target_pop;
     Logger().debugStream() << "pop frac: " << population_fraction;
     double change_potential = cur_pop * population_fraction * 0.05;
@@ -107,9 +102,10 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
     double pop_growth = NextTurnPopGrowth();                        // may be negative
     double new_pop = cur_pop + pop_growth;
 
-    //Logger().debugStream() << "Planet Pop: " << cur_pop << " growth: " << pop_growth;
+    Logger().debugStream() << "Planet Pop: " << cur_pop << " growth: " << pop_growth;
 
     if (new_pop >= MINIMUM_POP_CENTER_POPULATION) {
+        GetMeter(METER_POPULATION)->SetCurrent(new_pop);
     } else {
         // if population falls below threshold, kill off the remainder
         Reset();
