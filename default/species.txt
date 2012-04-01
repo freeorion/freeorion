@@ -61,12 +61,11 @@ Species
         [[GREAT_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
+        [[GOOD_POPULATION]]
             
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-
-        [[GOOD_POPULATION]]
         [[LARGE_PLANET]]
     ]
     
@@ -94,9 +93,9 @@ Species
         [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[GREAT_INDUSTRY]]
-        [[GREAT_RESEARCH]]
+        [[GOOD_RESEARCH]]
 
-        [[TERRIBLE_GROUND_TROOPS]]
+        [[BAD_GROUND_TROOPS]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
@@ -127,17 +126,16 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_FARMING]]
+        [[AVERAGE_FARMING]]
         [[GREAT_MINING]]
         [[AVERAGE_INDUSTRY]]
-        [[TERRIBLE_RESEARCH]]
+        [[GREAT_RESEARCH]]
         
-        [[AVERAGE_GROUND_TROOPS]]
+        [[BAD_GROUND_TROOPS]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-
         [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -163,15 +161,14 @@ Species
     ]
     
     effectsgroups = [
-        [[ULTIMATE_DETECTION]]
-        [[GREAT_STEALTH]]
+        [[GREAT_DETECTION]]
+        [[GOOD_STEALTH]]
         
         [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
 
-        
         [[AVERAGE_GROUND_TROOPS]]
         
                 
@@ -204,11 +201,11 @@ Species
     
     effectsgroups = [
         [[AVERAGE_FARMING]]
-        [[TERRIBLE_MINING]]
+        [[BAD_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[GREAT_WEAPONS]]
+        [[GOOD_WEAPONS]]
         [[GREAT_GROUND_TROOPS]]
         
                 
@@ -245,7 +242,7 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[ULTIMATE_WEAPONS]]
+        [[GREAT_WEAPONS]]
         [[AVERAGE_GROUND_TROOPS]]
         
                 
@@ -277,7 +274,7 @@ Species
     ]
     
     effectsgroups = [
-        [[ULTIMATE_FARMING]]
+        [[GREAT_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -313,15 +310,15 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_DETECTION]]
-        [[ULTIMATE_STEALTH]]
+        [[GOOD_DETECTION]]
+        [[GREAT_STEALTH]]
         
-        [[TERRIBLE_FARMING]]
-        [[TERRIBLE_MINING]]
-        [[TERRIBLE_INDUSTRY]]
-        [[TERRIBLE_RESEARCH]]
+        [[AVERAGE_FARMING]]
+        [[BAD_MINING]]
+        [[BAD_INDUSTRY]]
+        [[BAD_RESEARCH]]
 
-        [[TERRIBLE_GROUND_TROOPS]]
+        [[BAD_GROUND_TROOPS]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
@@ -352,11 +349,12 @@ Species
     
     effectsgroups = [
         [[AVERAGE_FARMING]]
-        [[GREAT_MINING]]
-        [[GREAT_INDUSTRY]]
+        [[GOOD_MINING]]
+        [[GOOD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[TERRIBLE_GROUND_TROOPS]]
+        [[BAD_GROUND_TROOPS]]
+        [[GOOD_POPULATION]]
         
                 
         [[ADVANCED_FOCUS_EFFECTS]]
@@ -390,7 +388,7 @@ Species
         [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
-        [[TERRIBLE_RESEARCH]]
+        [[BAD_RESEARCH]]
         
         [[GREAT_WEAPONS]]
         [[GREAT_GROUND_TROOPS]]
@@ -423,10 +421,10 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
-        [[AVERAGE_MINING]]
-        [[ULTIMATE_INDUSTRY]]
-        [[TERRIBLE_RESEARCH]]
+        [[GOOD_FARMING]]
+        [[GOOD_MINING]]
+        [[GOOD_INDUSTRY]]
+        [[BAD_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
         
@@ -466,10 +464,10 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
+        [[BAD_FARMING]]
         [[AVERAGE_MINING]]
-        [[TERRIBLE_INDUSTRY]]
-        [[GREAT_RESEARCH]]
+        [[BAD_INDUSTRY]]
+        [[GOOD_RESEARCH]]
 
         [[AVERAGE_GROUND_TROOPS]]
         
@@ -495,18 +493,19 @@ Species
         [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
-        [[TERRIBLE_MINING]]
-        [[AVERAGE_INDUSTRY]]
-        [[NO_RESEARCH]]
+        [[BAD_FARMING]]
+        [[AVERAGE_MINING]]
+        [[BAD_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
         
-        [[AVERAGE_GROUND_TROOPS]]
+        [[GOOD_GROUND_TROOPS]]
         
-        [[TERRIBLE_DETECTION]]
+        [[BAD_DETECTION]]
         
                 
         [[ADVANCED_FOCUS_EFFECTS]]
@@ -533,12 +532,12 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_FARMING]]
+        [[GOOD_FARMING]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[GREAT_GROUND_TROOPS]]
+        [[GOOD_GROUND_TROOPS]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
@@ -564,7 +563,7 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
+        [[BAD_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -597,10 +596,10 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
+        [[BAD_FARMING]]
         [[AVERAGE_MINING]]
-        [[GREAT_INDUSTRY]]
-        [[TERRIBLE_RESEARCH]]
+        [[GOOD_INDUSTRY]]
+        [[BAD_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
             
@@ -634,10 +633,10 @@ Species
     effectsgroups = [
         [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
-        [[TERRIBLE_INDUSTRY]]
+        [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[TERRIBLE_GROUND_TROOPS]]
+        [[BAD_GROUND_TROOPS]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
@@ -662,12 +661,12 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
+        [[BAD_FARMING]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[ULTIMATE_RESEARCH]]
         
-        [[TERRIBLE_GROUND_TROOPS]]
+        [[BAD_GROUND_TROOPS]]  
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
@@ -697,20 +696,20 @@ Species
     ]
     
     effectsgroups = [
-        [[ULTIMATE_STEALTH]]
+        [[GREAT_STEALTH]]
         
-        [[GREAT_FARMING]]
-        [[TERRIBLE_MINING]]
-        [[TERRIBLE_INDUSTRY]]
+        [[GOOD_FARMING]]
+        [[BAD_MINING]]
+        [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
         [[NO_GROUND_TROOPS]]
+        [[GOOD_POPULATION]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
-        [[GOOD_POPULATION]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -730,20 +729,20 @@ Species
     
     effectsgroups = [
         [[GREAT_DETECTION]]
-        [[GREAT_STEALTH]]
+        [[GOOD_STEALTH]]
         
-        [[TERRIBLE_FARMING]]
+        [[BAD_FARMING]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[TERRIBLE_GROUND_TROOPS]]
+        [[BAD_GROUND_TROOPS]]
+        [[BAD_POPULATION]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
-        [[BAD_POPULATION]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -767,7 +766,7 @@ Species
         [[NO_INDUSTRY]]
         [[NO_RESEARCH]]
         
-        [[TERRIBLE_GROUND_TROOPS]]
+        [[BAD_GROUND_TROOPS]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
@@ -796,7 +795,7 @@ Species
     effectsgroups = [
         [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
-        [[TERRIBLE_INDUSTRY]]
+        [[BAD_INDUSTRY]]
         [[NO_RESEARCH]]
         
         [[ULTIMATE_GROUND_TROOPS]]
@@ -828,12 +827,12 @@ Species
         [[NO_RESEARCH]]
         
         [[GREAT_GROUND_TROOPS]]
+        [[GOOD_POPULATION]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
-        [[GOOD_POPULATION]]
     ]
     
     [[RADIATED_STANDARD_EP]]
@@ -856,10 +855,10 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_FARMING]]
+        [[GOOD_FARMING]]
         [[AVERAGE_MINING]]
         [[NO_INDUSTRY]]
-        [[TERRIBLE_RESEARCH]]
+        [[BAD_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
         
@@ -889,12 +888,12 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
-        [[GREAT_MINING]]
+        [[BAD_FARMING]]
+        [[GOOD_MINING]]
         [[GREAT_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[TERRIBLE_GROUND_TROOPS]]
+        [[BAD_GROUND_TROOPS]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
@@ -924,12 +923,12 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
+        [[BAD_FARMING]]
         [[AVERAGE_MINING]]
-        [[GREAT_INDUSTRY]]
-        [[TERRIBLE_RESEARCH]]
+        [[GOOD_INDUSTRY]]
+        [[BAD_RESEARCH]]
         
-        [[GREAT_GROUND_TROOPS]]
+        [[GOOD_GROUND_TROOPS]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
@@ -960,10 +959,10 @@ Species
     effectsgroups = [
         [[GREAT_FARMING]]
         [[AVERAGE_MINING]]
-        [[TERRIBLE_INDUSTRY]]
-        [[GREAT_RESEARCH]]
+        [[BAD_INDUSTRY]]
+        [[GOOD_RESEARCH]]
         
-        [[TERRIBLE_GROUND_TROOPS]]
+        [[BAD_GROUND_TROOPS]]
         
 
         [[AVERAGE_POPULATION]]
@@ -989,7 +988,7 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_STEALTH]]
+        [[GOOD_STEALTH]]
         
         [[ULTIMATE_FARMING]]
         [[NO_MINING]]
@@ -1002,6 +1001,8 @@ Species
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
+        
+        [[NOT_HUGE_PLANET]]
     ]
         
     [[TERRAN_STANDARD_EP]]
@@ -1028,9 +1029,9 @@ Species
         [[AVERAGE_FARMING]]
         [[GREAT_MINING]]
         [[AVERAGE_INDUSTRY]]
-        [[TERRIBLE_RESEARCH]]
+        [[BAD_RESEARCH]]
         
-        [[TERRIBLE_GROUND_TROOPS]]
+        [[BAD_GROUND_TROOPS]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
@@ -1061,10 +1062,10 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
+        [[BAD_FARMING]]
         [[AVERAGE_MINING]]
         [[GREAT_INDUSTRY]]
-        [[GREAT_RESEARCH]]
+        [[GOOD_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
         
@@ -1117,17 +1118,17 @@ Species
     ]
     
     effectsgroups = [
+        [[ULTIMATE_DETECTION]]
+        
         [[AVERAGE_FARMING]]
-        [[TERRIBLE_MINING]]
-        [[TERRIBLE_INDUSTRY]]
+        [[BAD_MINING]]
+        [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
         [[AVERAGE_GROUND_TROOPS]]
-        [[GREAT_DETECTION]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-
         [[AVERAGE_POPULATION]]
     ]
     
@@ -1150,7 +1151,7 @@ Species
     
     effectsgroups = [
         [[AVERAGE_FARMING]]
-        [[TERRIBLE_MINING]]
+        [[BAD_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
@@ -1183,12 +1184,12 @@ Species
     ]
     
     effectsgroups = [
-        [[TERRIBLE_FARMING]]
+        [[BAD_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
-        [[TERRIBLE_RESEARCH]]
+        [[BAD_RESEARCH]]
         
-        [[TERRIBLE_GROUND_TROOPS]]
+        [[BAD_GROUND_TROOPS]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
@@ -1222,13 +1223,17 @@ Species
     ]
 
     effectsgroups = [
+        [[NO_FARMING]]
+        [[NO_MINING]]
+        [[NO_INDUSTRY]]
         [[ULTIMATE_RESEARCH]]
 
         [[ULTIMATE_GROUND_TROOPS]]
 
+        [[GOOD_POPULATION]]
+
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[GOOD_POPULATION]]
     ]
 
     [[VERY_TOLERANT_EP]]
@@ -1266,11 +1271,12 @@ Species
         [[GREAT_RESEARCH]]
         
         [[GREAT_GROUND_TROOPS]]
+        [[GOOD_POPULATION]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[GOOD_POPULATION]]
+
     ]
 
     [[VERY_TOLERANT_EP]]
@@ -2515,7 +2521,7 @@ FARMING_SCOPE
                 Not Source
             ]'''
 
-TERRIBLE_FARMING
+BAD_FARMING
 '''EffectsGroup
             [[FARMING_SCOPE]]
             activation = And [
@@ -2581,6 +2587,40 @@ AVERAGE_FARMING
                 Planet environment = Hostile
             ]
             effects = SetTargetPopulation Value + Source.Population * 0.05
+'''
+
+AVERAGE_FARMING
+'''EffectsGroup
+            [[FARMING_SCOPE]]
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Good
+            ]
+            effects = SetTargetPopulation Value + Source.Population * .25
+
+        EffectsGroup
+            [[FARMING_SCOPE]]
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Adequate
+            ]
+            effects = SetTargetPopulation Value + Source.Population * .18
+
+        EffectsGroup
+            [[FARMING_SCOPE]]
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Poor
+            ]
+            effects = SetTargetPopulation Value + Source.Population * .12
+
+        EffectsGroup
+            [[FARMING_SCOPE]]
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Hostile
+            ]
+            effects = SetTargetPopulation Value + Source.Population * 0.06
 '''
 
 GREAT_FARMING
@@ -2651,11 +2691,13 @@ ULTIMATE_FARMING
             effects = SetTargetPopulation Value + Source.Population * 0.1
 '''
 
+//#####      M I N I N G    #####//
+
 NO_MINING
 '''
 '''
 
-TERRIBLE_MINING
+BAD_MINING
 '''EffectsGroup
             scope = Source
             activation = And [
@@ -2804,7 +2846,84 @@ AVERAGE_MINING
                 OwnerHasTech "PRO_ENVIRO_MINING"
             ]
             effects = [
-                SetTargetPopulation Value - 5
+                SetTargetHealth Value - 5
+                SetTargetPopulation Value * 0.75
+            ]
+'''
+
+GOOD_MINING
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Tiny
+            ]
+            effects = SetTargetMining Value + 6.0 + Target.Population * 0.3
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Small
+            ]
+            effects = SetTargetMining Value + 4.5 + Target.Population * 0.3
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Medium
+            ]
+            effects = SetTargetMining Value + 3.0 + Target.Population * 0.3
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Large
+            ]
+            effects = SetTargetMining Value + 1.5 + Target.Population * 0.3
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = [Huge GasGiant Asteroids]
+            ]
+            effects = SetTargetMining Value + .5 + Target.Population * 0.3
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_MINING"
+                Planet type = Asteroids
+            ]
+            effects = SetTargetMining Value + 6.0
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_HEAVY_MINING"
+            effects = SetTargetMining Value + Target.Population * 3
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                Not OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetPopulation Value  - 10
+                SetTargetPopulation Value * 0.5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetPopulation Value  - 5
                 SetTargetPopulation Value * 0.75
             ]
 '''
@@ -2886,11 +3005,90 @@ GREAT_MINING
             ]
 '''
 
+ULTIMATE_MINING
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Tiny
+            ]
+            effects = SetTargetMining Value + 16.0 + Target.Population * 0.8
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Small
+            ]
+            effects = SetTargetMining Value + 12.0 + Target.Population * 0.8
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Medium
+            ]
+            effects = SetTargetMining Value + 8.0 + Target.Population * 0.8
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Large
+            ]
+            effects = SetTargetMining Value + 4.0 + Target.Population * 0.8
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = [Huge GasGiant Asteroids]
+            ]
+            effects = SetTargetMining Value + 2.0 + Target.Population * 0.8
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_MINING"
+                Planet type = Asteroids
+            ]
+            effects = SetTargetMining Value + 8.0
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_HEAVY_MINING"
+            effects = SetTargetMining Value + Target.Population * 8
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                Not OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 10
+                SetTargetPopulation Value * 0.5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 5
+                SetTargetPopulation Value * 0.75
+            ]
+'''
+
+//#####      I N D U S T R Y    #####//
+
 NO_INDUSTRY
 '''
 '''
 
-TERRIBLE_INDUSTRY
+BAD_INDUSTRY
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
@@ -2940,6 +3138,31 @@ AVERAGE_INDUSTRY
             ]
 '''
 
+GOOD_INDUSTRY
+'''EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_INDUSTRY"
+            effects = SetTargetIndustry Value + Target.Population * .75
+
+        EffectsGroup
+            scope = OwnedBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_FARMING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetPopulation Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = OwnedBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_MINING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetMining Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+'''
+
 GREAT_INDUSTRY
 '''EffectsGroup
             scope = Source
@@ -2951,7 +3174,7 @@ GREAT_INDUSTRY
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
-                SetTargetPopulation Value + Target.TargetIndustry / 4
+                SetTargetFarming Value + Target.TargetIndustry / 4
                 SetTargetIndustry Value / 2
             ]
 
@@ -2969,14 +3192,14 @@ ULTIMATE_INDUSTRY
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
-            effects = SetTargetIndustry Value + Target.Population * 1.5
+            effects = SetTargetIndustry Value + Target.Population * 2
 
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
-                SetTargetPopulation Value + Target.TargetIndustry / 4
+                SetTargetFarming Value + Target.TargetIndustry / 4
                 SetTargetIndustry Value / 2
             ]
 
@@ -2990,11 +3213,13 @@ ULTIMATE_INDUSTRY
             ]
 '''
 
+//#####      R E S E A R C H    #####//
+
 NO_RESEARCH
 '''
 '''
 
-TERRIBLE_RESEARCH
+BAD_RESEARCH
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
@@ -3008,6 +3233,13 @@ AVERAGE_RESEARCH
             effects = SetTargetResearch Value + Target.Population * .5
 '''
 
+GOOD_RESEARCH
+'''EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_RESEARCH"
+            effects = SetTargetResearch Value + Target.Population * .75
+'''
+
 GREAT_RESEARCH
 '''EffectsGroup
             scope = Source
@@ -3019,13 +3251,15 @@ ULTIMATE_RESEARCH
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + Target.Population * 1.5
+            effects = SetTargetResearch Value + Target.Population * 2
 '''
+
+//#####      T R O O P S     #####//
 
 NO_GROUND_TROOPS
 ''' '''
 
-TERRIBLE_GROUND_TROOPS
+BAD_GROUND_TROOPS
 '''EffectsGroup
             scope = Source
             activation = Not OwnedBy AnyEmpire
@@ -3039,11 +3273,18 @@ AVERAGE_GROUND_TROOPS
             effects = SetMaxTroops Value + 5
 '''
 
+GOOD_GROUND_TROOPS
+'''EffectsGroup
+            scope = Source
+            activation = Not OwnedBy AnyEmpire
+            effects = SetMaxTroops Value + 15
+'''
+
 GREAT_GROUND_TROOPS
 '''EffectsGroup
             scope = Source
             activation = Not OwnedBy AnyEmpire
-            effects = SetMaxTroops Value + 20
+            effects = SetMaxTroops Value + 25
 '''
 
 ULTIMATE_GROUND_TROOPS
@@ -3053,54 +3294,91 @@ ULTIMATE_GROUND_TROOPS
             effects = SetMaxTroops Value + 50
 '''
 
-TERRIBLE_DETECTION
+//#####      D E T E C T I O N     #####//
+
+BAD_DETECTION
 '''EffectsGroup
             scope = Source
             activation = Source
             effects = SetDetection Value -10
 '''
 
-GREAT_DETECTION
+GOOD_DETECTION
 '''EffectsGroup
             scope = Source
             activation = Source
             effects = SetDetection Value + 25
 '''
 
-ULTIMATE_DETECTION
+GREAT_DETECTION
 '''        EffectsGroup
             scope = Source
             activation = Source
             effects = SetDetection Value + 50
 '''
 
-GREAT_STEALTH
+ULTIMATE_DETECTION
+'''        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 100
+'''
+
+
+//#####      S T E A L T H     #####//
+
+BAD_STEALTH
+'''EffectsGroup
+            scope = Source
+            stackinggroup = "SPECIES_STEALTH_STACK"
+            effects = SetStealth Value - 20
+'''
+
+GOOD_STEALTH
 '''EffectsGroup
             scope = Source
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value + 25
 '''
             
-ULTIMATE_STEALTH
+GREAT_STEALTH
 '''EffectsGroup
             scope = Source
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value + 50
 '''
 
-GREAT_WEAPONS
+ULTIMATE_STEALTH
+'''EffectsGroup
+            scope = Source
+            stackinggroup = "SPECIES_STEALTH_STACK"
+            effects = SetStealth Value + 100
+'''
+
+//#####      W E A P O N S     #####//
+
+GOOD_WEAPONS
 '''EffectsGroup
         scope = Source
         activation = Turn high = 1
         GiveEmpireTech name = "SHP_WEAPON_3"
 '''
 
-ULTIMATE_WEAPONS
+GREAT_WEAPONS
 '''EffectsGroup
         scope = Source
         activation = Turn high = 1
         GiveEmpireTech name = "SHP_WEAPON_4"
 '''
+
+ULTIMATE_WEAPONS
+'''EffectsGroup
+        scope = Source
+        activation = Turn high = 1
+        GiveEmpireTech name = "SHP_WEAPON_5"
+'''
+
+//#####      P L A N E T   S I Z E     #####//
 
 HUGE_PLANET
 '''EffectsGroup     
@@ -3129,6 +3407,18 @@ SMALL_PLANET
         activation = Turn high = 1
         effects = SetPlanetSize Small
 '''
+
+NOT_HUGE_PLANET
+'''EffectsGroup     
+        scope = Source     
+        activation = AND [
+            Turn high = 1
+            Planet Size = Huge
+        ]
+        effects = SetPlanetSize Large
+'''
+
+//#####      S P E C I A L S     #####//
 
 TUNNELS_SPECIAL
 '''EffectsGroup     

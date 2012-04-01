@@ -2655,9 +2655,9 @@ Prefer Swamp planets.
 [[AVERAGE_FARMING]]
 [[AVERAGE_MINING]]
 [[GREAT_INDUSTRY]]
-[[GREAT_RESEARCH]]
+[[GOOD_RESEARCH]]
 
-[[TERRIBLE_GROUND_TROOPS]]
+[[BAD_GROUND_TROOPS]]
 '''
 
 SP_CHATO
@@ -2666,12 +2666,12 @@ SP_CHATO_DESC
 '''Sessile crystalline entities which ride the animal Gormoshk.
 Prefer Toxic planets.
 
-[[GREAT_FARMING]]
+[[AVERAGE_FARMING]]
 [[GREAT_MINING]]
 [[AVERAGE_INDUSTRY]]
-[[TERRIBLE_RESEARCH]]
-
-[[AVERAGE_GROUND_TROOPS]]
+[[GREAT_RESEARCH]]
+        
+[[BAD_GROUND_TROOPS]]
 '''
 
 SP_TRITH
@@ -2680,9 +2680,9 @@ SP_TRITH_DESC
 '''Bereaved xenophobic telepaths.
 Prefer Desert planets.
 
-[[ULTIMATE_DETECTION]]
-[[GREAT_STEALTH]]
-
+[[GREAT_DETECTION]]
+[[GOOD_STEALTH]]
+        
 [[AVERAGE_FARMING]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
@@ -2698,11 +2698,11 @@ SP_HHHOH_DESC
 Prefer Tundra planets.
 
 [[AVERAGE_FARMING]]
-[[TERRIBLE_MINING]]
+[[BAD_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
-[[GREAT_WEAPONS]]
+[[GOOD_WEAPONS]]
 [[GREAT_GROUND_TROOPS]]
 '''
 
@@ -2717,7 +2717,7 @@ Prefer Desert planets.
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
-[[ULTIMATE_WEAPONS]]
+[[GREAT_WEAPONS]]
 [[AVERAGE_GROUND_TROOPS]]
 '''
 
@@ -2727,7 +2727,7 @@ SP_DERTHREAN_DESC
 '''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
 Prefer Toxic planets.
 
-[[ULTIMATE_FARMING]]
+[[GREAT_FARMING]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2741,16 +2741,16 @@ SP_LAENFA_DESC
 '''Sneaky, telepathic, sentient vines.
 Prefer Ocean Planets.
 
-[[GREAT_DETECTION]]
-[[ULTIMATE_STEALTH]]
+[[GOOD_DETECTION]]
+[[GREAT_STEALTH]]
         
-[[TERRIBLE_FARMING]]
-[[TERRIBLE_MINING]]
-[[TERRIBLE_INDUSTRY]]
-[[TERRIBLE_RESEARCH]]
+[[AVERAGE_FARMING]]
+[[BAD_MINING]]
+[[BAD_INDUSTRY]]
+[[BAD_RESEARCH]]
 
-[[TERRIBLE_GROUND_TROOPS]]
-        
+[[BAD_GROUND_TROOPS]]
+
 [[NO_FOOD_USE]]
 '''
 
@@ -2761,11 +2761,12 @@ SP_TAEGHIRUS_DESC
 Prefer Swamp planets.
 
 [[AVERAGE_FARMING]]
-[[GREAT_MINING]]
-[[GREAT_INDUSTRY]]
+[[GOOD_MINING]]
+[[GOOD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
-
-[[TERRIBLE_GROUND_TROOPS]]
+        
+[[BAD_GROUND_TROOPS]]
+[[GOOD_POPULATION]]
 '''
 
 
@@ -2778,7 +2779,7 @@ Prefer Desert planets.
 [[AVERAGE_FARMING]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
-[[TERRIBLE_RESEARCH]]
+[[BAD_RESEARCH]]
 
 [[GREAT_WEAPONS]]
 [[GREAT_GROUND_TROOPS]]
@@ -2791,10 +2792,10 @@ SP_GEORGE_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
 Prefers Tundra planets.
 
-[[AVERAGE_FARMING]]
-[[AVERAGE_MINING]]
-[[ULTIMATE_INDUSTRY]]
-[[TERRIBLE_RESEARCH]]
+[[GOOD_FARMING]]
+[[GOOD_MINING]]
+[[GOOD_INDUSTRY]]
+[[BAD_RESEARCH]]
         
 [[AVERAGE_GROUND_TROOPS]]
 '''
@@ -2806,10 +2807,10 @@ SP_CRAY_DESC
 '''Cheerful enthusiastic robots.
 Prefer Barren planets.
 
-[[TERRIBLE_FARMING]]
+[[BAD_FARMING]]
 [[AVERAGE_MINING]]
-[[TERRIBLE_INDUSTRY]]
-[[GREAT_RESEARCH]]
+[[BAD_INDUSTRY]]
+[[GOOD_RESEARCH]]
 
 [[AVERAGE_GROUND_TROOPS]]
         
@@ -2825,14 +2826,14 @@ SP_ETTY_DESC
 '''Cybernetic plants.
 Prefer Desert planets.
 
-[[AVERAGE_FARMING]]
-[[TERRIBLE_MINING]]
-[[AVERAGE_INDUSTRY]]
-[[NO_RESEARCH]]
-
-[[AVERAGE_GROUND_TROOPS]]
-
-[[TERRIBLE_DETECTION]]
+[[BAD_FARMING]]
+[[AVERAGE_MINING]]
+[[BAD_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+        
+[[GOOD_GROUND_TROOPS]]
+        
+[[BAD_DETECTION]]
 '''
 
 
@@ -2842,13 +2843,13 @@ SP_CYNOS_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
 Prefer Swamp planets.
 
-[[GREAT_FARMING]]
+[[GOOD_FARMING]]
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
-
-[[GREAT_GROUND_TROOPS]]
-[[GREAT_HEALTH]]
+        
+[[GOOD_GROUND_TROOPS]]
+[[GOOD_HEALTH]]
 '''
 
 SP_PHINNERT
@@ -2857,13 +2858,12 @@ SP_PHINNERT_DESC
 '''Flying Monkeys.
 Prefer Ocean planets.
 
-[[TERRIBLE_FARMING]]
+[[BAD_FARMING]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[NO_RESEARCH]]
-
-[[TERRIBLE_GROUND_TROOPS]]
-[[GREAT_HEALTH]]
+        
+[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_EGASSEM
@@ -2872,11 +2872,11 @@ SP_EGASSEM_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
 Prefer Inferno planets.
 
-[[TERRIBLE_FARMING]]
+[[BAD_FARMING]]
 [[AVERAGE_MINING]]
-[[GREAT_INDUSTRY]]
-[[TERRIBLE_RESEARCH]]
-
+[[GOOD_INDUSTRY]]
+[[BAD_RESEARCH]]
+        
 [[AVERAGE_GROUND_TROOPS]]
 
 [[NON_ORGANIC]]
@@ -2890,10 +2890,10 @@ Prefer Tundra planets.
 
 [[AVERAGE_FARMING]]
 [[AVERAGE_MINING]]
-[[TERRIBLE_INDUSTRY]]
+[[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
-
-[[TERRIBLE_GROUND_TROOPS]]
+        
+[[BAD_GROUND_TROOPS]]
 '''
 
 SP_FIFTYSEVEN
@@ -2902,13 +2902,12 @@ SP_FIFTYSEVEN_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
 Prefer Swamp planets.
 
-[[TERRIBLE_FARMING]]
+[[BAD_FARMING]]
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
 
-[[TERRIBLE_GROUND_TROOPS]]
-
+[[BAD_GROUND_TROOPS]]
 [[BAD_POPULATION]]
 
 Biology:
@@ -2931,11 +2930,11 @@ SP_SETINON_DESC
 '''Individualistic sentient microscopic cells.
 Prefer Ocean planets.
 
-[[ULTIMATE_STEALTH]]
+[[GREAT_STEALTH]]
         
-[[GREAT_FARMING]]
-[[TERRIBLE_MINING]]
-[[TERRIBLE_INDUSTRY]]
+[[GOOD_FARMING]]
+[[BAD_MINING]]
+[[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
 [[NO_GROUND_TROOPS]]
@@ -2950,15 +2949,16 @@ SP_NYMNMN_DESC
 Prefer Desert planets.
 
 [[GREAT_DETECTION]]
-[[GREAT_STEALTH]]
-
-[[TERRIBLE_FARMING]]
+[[GOOD_STEALTH]]
+        
+[[BAD_FARMING]]
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
-
-[[TERRIBLE_GROUND_TROOPS]]
-
+        
+[[BAD_GROUND_TROOPS]]
+[[BAD_POPULATION]]
+        
 [[NO_FOOD_USE]]
 [[NON_ORGANIC]]
 '''
@@ -2975,7 +2975,7 @@ Prefers Barren planets.
 [[NO_INDUSTRY]]
 [[NO_RESEARCH]]
         
-[[TERRIBLE_GROUND_TROOPS]]
+[[BAD_GROUND_TROOPS]]
         
 [[NO_FOOD_USE]]
 [[NON_ORGANIC]]
@@ -2990,7 +2990,7 @@ Prefer Terran planets.
 
 [[AVERAGE_FARMING]]
 [[AVERAGE_MINING]]
-[[TERRIBLE_INDUSTRY]]
+[[BAD_INDUSTRY]]
 [[NO_RESEARCH]]
 
 [[ULTIMATE_GROUND_TROOPS]]
@@ -3021,7 +3021,6 @@ Prefers Radiated planets.
 [[NO_RESEARCH]]
         
 [[GREAT_GROUND_TROOPS]]
-
 [[GOOD_POPULATION]]
 [[NO_FOOD_USE]]
 [[NON_ORGANIC]]
@@ -3035,13 +3034,11 @@ SP_SILEXIAN_DESC
 '''Gleaming gardener robots, left on their own.
 Prefer Terran planets.
 
-[[GREAT_FARMING]]
+[[GOOD_FARMING]]
 [[AVERAGE_MINING]]
 [[NO_INDUSTRY]]
-[[TERRIBLE_RESEARCH]]
-
-[[NO_FOOD_USE]]
-
+[[BAD_RESEARCH]]
+        
 [[AVERAGE_GROUND_TROOPS]]
 
 [[NON_ORGANIC]]
@@ -3053,14 +3050,15 @@ SP_KOBUNTURA_DESC
 '''Sentient magnetic dust formations with a fascination for building and construction.
 Prefer Barren planets.
 
-[[TERRIBLE_FARMING]]
-[[GREAT_MINING]]
+[[BAD_FARMING]]
+[[GOOD_MINING]]
 [[GREAT_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
-[[TERRIBLE_GROUND_TROOPS]]
+[[BAD_GROUND_TROOPS]]
         
 [[NO_FOOD_USE]]
+[[NON_ORGANIC]]
 '''
 
 
@@ -3070,14 +3068,17 @@ SP_UGMORRS_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Prefer Inferno planets.
 
-[[TERRIBLE_FARMING]]
+[[BAD_FARMING]]
 [[AVERAGE_MINING]]
-[[GREAT_INDUSTRY]]
-[[TERRIBLE_RESEARCH]]
+[[GOOD_INDUSTRY]]
+[[BAD_RESEARCH]]
+        
+[[GOOD_GROUND_TROOPS]]
         
 [[GREAT_GROUND_TROOPS]]
 
 [[NO_FOOD_USE]]
+[[NON_ORGANIC]]
 '''
 
 SP_GISGUFGTHRIM
@@ -3088,10 +3089,10 @@ Prefer Toxic planets.
 
 [[GREAT_FARMING]]
 [[AVERAGE_MINING]]
-[[TERRIBLE_INDUSTRY]]
-[[GREAT_RESEARCH]]
-
-[[TERRIBLE_GROUND_TROOPS]]
+[[BAD_INDUSTRY]]
+[[GOOD_RESEARCH]]
+        
+[[BAD_GROUND_TROOPS]]
 
 Most of the equatorial region of the Gis Guf G'thrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis lifecycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
 '''
@@ -3102,8 +3103,8 @@ SP_HIDDENGARDENER_DESC
 '''A sapient fungal network that tends its plant food from beneath
 Prefers Terran planets
 
-[[GREAT_STEALTH]]
-
+[[GOOD_STEALTH]]
+        
 [[ULTIMATE_FARMING]]
 [[NO_MINING]]
 [[NO_INDUSTRY]]
@@ -3129,9 +3130,9 @@ Prefers Inferno planets.
 [[AVERAGE_FARMING]]
 [[GREAT_MINING]]
 [[AVERAGE_INDUSTRY]]
-[[TERRIBLE_RESEARCH]]
-
-[[TERRIBLE_GROUND_TROOPS]]
+[[BAD_RESEARCH]]
+        
+[[BAD_GROUND_TROOPS]]
 '''
 
 
@@ -3141,10 +3142,10 @@ SP_ACIREMA_DESC
 '''A race with nearly limitless power, that cannot survive in this universe.
 Prefers Radiated planets.
 
-[[TERRIBLE_FARMING]]
+[[BAD_FARMING]]
 [[AVERAGE_MINING]]
 [[GREAT_INDUSTRY]]
-[[GREAT_RESEARCH]]
+[[GOOD_RESEARCH]]
 
 [[AVERAGE_GROUND_TROOPS]]
 
@@ -3165,37 +3166,21 @@ Reason for staying
 They can't stay here long enough to actually move to another planet and still survive.'''
 
 
-SP_EXOBOT
-Exobot
-SP_EXOBOT_DESC
-'''Semi-autonomous robots, designed for mining and industry on Radiated planets.
-
-[[TERRIBLE_FARMING]]
-[[AVERAGE_MINING]]
-[[AVERAGE_INDUSTRY]]
-[[TERRIBLE_RESEARCH]]
-        
-[[TERRIBLE_GROUND_TROOPS]]
-        
-[[NO_FOOD_USE]]
-[[NON_ORGANIC]]
-
-While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
-'''
-
 SP_OURBOOLS
 Ourbools
 SP_OURBOOLS_DESC
 '''Giant blind swimmers who "see" gravitation.
 Prefer Ocean planets.
 
+[[ULTIMATE_DETECTION]]
+        
 [[AVERAGE_FARMING]]
-[[TERRIBLE_MINING]]
-[[TERRIBLE_INDUSTRY]]
+[[BAD_MINING]]
+[[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
 [[AVERAGE_GROUND_TROOPS]]
-[[GREAT_DETECTION]]
+
 [[GOOD_HEALTH]]
 
 Biology:
@@ -3219,7 +3204,7 @@ SP_VOLP_DESC
 Prefer Barren planets.
 
 [[AVERAGE_FARMING]]
-[[TERRIBLE_MINING]]
+[[BAD_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
@@ -3238,10 +3223,32 @@ Reason for Staying:
 Volp-Puglush-Vuu are now to integrated and ingrown. They now totally lack the independance and innovation needed to leave Hive and start a new colony.
 '''
 
+
+SP_EXOBOT
+Exobot
+SP_EXOBOT_DESC
+'''Semi-autonomous robots, designed for mining and industry on Radiated planets.
+
+[[BAD_FARMING]]
+[[AVERAGE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[BAD_RESEARCH]]
+        
+[[BAD_GROUND_TROOPS]]
+        
+[[NO_FOOD_USE]]
+[[NON_ORGANIC]]
+
+While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
+'''
+
+
 SP_EXPERIMENTOR
 Experimentor
 SP_EXPERIMENTOR_DESC
-'''[[NO_FARMING]]
+'''Percursor mad scientists
+
+[[NO_FARMING]]
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
@@ -7535,11 +7542,11 @@ STANDARD_CONSTRUCTION
 NO_FOOD_USE
 '''+ + + Doesn't need Food'''
 
-TERRIBLE_HEALTH
-'''Very slow population growth.'''
-
-POOR_HEALTH
+BAD_HEALTH
 '''Slow population growth.'''
+
+AVERAGE_HEALTH
+'''Average population growth.'''
 
 GOOD_HEALTH
 '''Good population growth.'''
@@ -7553,99 +7560,129 @@ ULTIMATE_HEALTH
 NO_FARMING
 '''- - - No Farming'''
 
-TERRIBLE_FARMING
-'''  - - Terrible Farming: 50%'''
+BAD_FARMING
+'''    - Bad Farming: 50%'''
 
 AVERAGE_FARMING
 '''      Average Farming: 100%'''
 
+GOOD_FARMING
+'''    + Good Farming: 150%'''
+
 GREAT_FARMING
-'''  + + Great Farming: 200%'''
+'''  + + Great Farming: 250%'''
 
 ULTIMATE_FARMING
-'''+ + + Ultimate Farming: 300%'''
+'''+ + + Ultimate Farming: 400%'''
 
 NO_MINING
 '''- - - No Mining'''
 
-TERRIBLE_MINING
-'''  - - Terrible Mining: 50%'''
+BAD_MINING
+'''    - Bad Mining: 50%'''
 
 AVERAGE_MINING
 '''      Average Mining: 100%'''
 
+GOOD_MINING
+'''    + Good Mining: 150%'''
+
 GREAT_MINING
-'''  + + Great Mining: 200%'''
+'''  + + Great Mining: 250%'''
 
 ULTIMATE_MINING
-'''+ + + Ultimate Mining: 300%'''
+'''+ + + Ultimate Mining: 400%'''
 
 NO_INDUSTRY
 '''- - - No Industry'''
 
-TERRIBLE_INDUSTRY
-'''  - - Terrible Industry: 50%'''
+BAD_INDUSTRY
+'''    - Bad Industry: 50%'''
 
 AVERAGE_INDUSTRY
 '''      Average Industry: 100%'''
 
+GOOD_INDUSTRY
+'''    + Good Industry: 150%'''
+
 GREAT_INDUSTRY
-'''  + + Great Industry: 200%'''
+'''  + + Great Industry: 250%'''
 
 ULTIMATE_INDUSTRY
-'''+ + + Ultimate Industry: 300%'''
+'''+ + + Ultimate Industry: 400%'''
 
 NO_RESEARCH
 '''- - - No Research'''
 
-TERRIBLE_RESEARCH
-'''  - - Terrible Research: 50%'''
+BAD_RESEARCH
+'''    - Bad Research: 50%'''
 
 AVERAGE_RESEARCH
 '''      Average Research: 100%'''
 
+GOOD_RESEARCH
+'''    + Good Research: 150%'''
+
 GREAT_RESEARCH
-'''  + + Great Research: 200%'''
+'''  + + Great Research: 250%'''
 
 ULTIMATE_RESEARCH
-'''+ + + Ultimate Research: 300%'''
+'''+ + + Ultimate Research: 400%'''
 
 
 NO_GROUND_TROOPS
 '''- - - No Ground Troops'''
 
-TERRIBLE_GROUND_TROOPS
-'''  - - Terrible Ground Troops: 1 unit.'''
+BAD_GROUND_TROOPS
+'''    - Bad Ground Troops: 1 unit.'''
 
 AVERAGE_GROUND_TROOPS
 '''      Average Ground Troops: 5 units.'''
 
+GOOD_GROUND_TROOPS
+'''    + Good Ground Troops: 15 units.'''
+
 GREAT_GROUND_TROOPS
-'''  + + Great Ground Troops: 20 units.'''
+'''  + + Great Ground Troops: 25 units.'''
 
 ULTIMATE_GROUND_TROOPS
 '''+ + + Ultimate Ground Troops: 50 units.'''
 
-TERRIBLE_DETECTION
-'''  - - Ultimate Detection: -10 malus.'''
+BAD_DETECTION
+'''    - Ultimate Detection: -10 malus.'''
+
+GOOD_DETECTION
+'''    + Good Detection: +25 bonus.'''
 
 GREAT_DETECTION
-'''  + + Great Detection: +25 bonus.'''
+'''  + + Great Detection: +50 bonus.'''
 
 ULTIMATE_DETECTION
-'''+ + + Ultimate Detection: +50 bonus.'''
+'''+ + + Ultimate Detection: +100 bonus.'''
+
+BAD_STEALTH
+'''    - Bad Stealth: -25 malus.'''
+
+AVERAGE_STEALTH
+'''      Average Stealth.'''
+
+GOOD_STEALTH
+'''    + Good Stealth: +25 bonus.'''
 
 GREAT_STEALTH
-'''  + + Great Stealth: +25 bonus.'''
+'''  + + Great Stealth: +50 bonus.'''
 
 ULTIMATE_STEALTH
-'''+ + + Ultimate Stealth: +50 bonus.'''
+'''+ + + Ultimate Stealth: +100 bonus.'''
+
+GOOD_WEAPONS
+'''    + Starts with Mass Driver 3.'''
 
 GREAT_WEAPONS
-'''  + + Starts with Mass Driver 3.'''
+'''  + + Starts with Mass Driver 4.'''
 
 ULTIMATE_WEAPONS
-'''+ + + Starts with Mass Driver 4.'''
+'''+ + + Starts with Laser 1.'''
 
 NO_NON_ORGANIC
 '''Does not apply to Non-Organic species.'''
