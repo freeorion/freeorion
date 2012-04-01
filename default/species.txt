@@ -12,6 +12,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -45,6 +46,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -79,6 +81,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -113,6 +116,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -147,6 +151,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -186,6 +191,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -221,6 +227,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -256,6 +263,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -290,6 +298,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -326,6 +335,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -360,6 +370,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -394,6 +405,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -435,6 +447,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -473,6 +486,7 @@ Species
     ]
     
     effectsgroups = [
+        [[HAS_FARMING_FOCUS]]
         [[TERRIBLE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -500,6 +514,7 @@ Species
     CanProduceShips
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
@@ -528,6 +543,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
@@ -558,6 +574,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -591,6 +608,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -621,6 +639,7 @@ Species
     Native
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
@@ -652,6 +671,7 @@ Species
     
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -745,6 +765,7 @@ Species
     Native
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -805,6 +826,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
@@ -835,6 +857,7 @@ Species
     Native
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -868,6 +891,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -900,6 +924,7 @@ Species
     CanProduceShips
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -932,6 +957,7 @@ Species
     Native
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -963,6 +989,7 @@ Species
     CanColonize
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -997,6 +1024,7 @@ Species
     CanProduceShips
     
     foci = [
+        [[HAS_FARMING_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]

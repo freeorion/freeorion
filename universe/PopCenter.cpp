@@ -88,9 +88,12 @@ double PopCenter::NextTurnPopGrowth() const {
     Logger().debugStream() << "change potential: " << change_potential;
     double max_growth = target_pop - cur_pop;
     double max_loss = -cur_pop;
-    double change = std::min(max_growth, std::max(max_loss, change_potential));
+    double change = 0.0;
+    if (change_potential > 0)
+        change = std::min(max_growth, change_potential);
+    else if (change_potential < 0)
+        change = std::max(max_loss, change_potential);
     Logger().debugStream() << "pop change: " << change;
-
     return change;
 }
 
