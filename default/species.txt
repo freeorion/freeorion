@@ -20,10 +20,10 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_FARMING]]
+        [[AVERAGE_FARMING]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
-        [[GREAT_RESEARCH]]
+        [[AVERAGE_RESEARCH]]
 
         [[AVERAGE_GROUND_TROOPS]]
         
@@ -1080,6 +1080,8 @@ Species
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_HEALTH]]
         [[AVERAGE_POPULATION]]
+        
+        [[TUNNELS_SPECIAL]]
     ]
     
     [[INFERNO_STANDARD_EP]]
@@ -1144,6 +1146,77 @@ Species
     [[RADIATED_STANDARD_EP]]
     
     graphic = "icons/species/acirema.png"
+
+Species
+    name = "SP_OURBOOLS"
+    description = "SP_OURBOOLS_DESC"
+    Native
+    
+    foci = [
+        [[HAS_FARMING_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_FARMING]]
+        [[TERRIBLE_MINING]]
+        [[TERRIBLE_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[AVERAGE_GROUND_TROOPS]]
+        [[GREAT_DETECTION]]
+        [[GOOD_HEALTH]]
+        
+        [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_CONSTRUCTION]]
+
+        [[AVERAGE_POPULATION]]
+    ]
+    
+    [[OCEAN_STANDARD_EP]]
+    
+    graphic = "icons/species/ourbools.png"
+
+Species
+    name = "SP_VOLP"
+    description = "SP_VOLP_DESC"
+    Native
+    
+    foci = [
+        [[HAS_FARMING_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_FARMING]]
+        [[TERRIBLE_MINING]]
+        [[AVERAGE_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[AVERAGE_GROUND_TROOPS]]
+        [[GOOD_POPULATION]]
+        
+        [[STANDARD_FOOD_USE]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_HEALTH]]
+        
+        [[TUNNELS_SPECIAL]]
+        [[HUGE_PLANET]]
+    ]
+    
+    [[BARREN_STANDARD_EP]]
+    
+    graphic = "icons/species/volp.png"
 
 Species
     name = "SP_EXOBOT"
@@ -3238,3 +3311,9 @@ SMALL_PLANET
         effects = SetPlanetSize Small
 '''
 
+TUNNELS_SPECIAL
+'''EffectsGroup     
+        scope = Source     
+        activation = Turn high = 1
+        effects = AddSpecial name = "TUNNELS_SPECIAL"
+'''

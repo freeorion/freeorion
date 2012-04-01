@@ -2619,13 +2619,13 @@ Environmental Preferences:
 SP_HUMAN
 Human
 SP_HUMAN_DESC
-'''Mostly Harmless.
+'''Mostly Harmless. All average stats for testing purposes.
 Prefer Terran planets.
 
-[[GREAT_FARMING]]
+[[AVERAGE_FARMING]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
-[[GREAT_RESEARCH]]
+[[AVERAGE_RESEARCH]]
 
 [[AVERAGE_GROUND_TROOPS]]
 '''
@@ -3181,6 +3181,61 @@ SP_EXOBOT_DESC
 [[NON_ORGANIC]]
 
 While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
+'''
+
+SP_OURBOOLS
+Ourbools
+SP_OURBOOLS_DESC
+'''Giant blind swimmers who "see" gravitation.
+Prefer Ocean planets.
+
+[[AVERAGE_FARMING]]
+[[TERRIBLE_MINING]]
+[[TERRIBLE_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+        
+[[AVERAGE_GROUND_TROOPS]]
+[[GREAT_DETECTION]]
+[[GOOD_HEALTH]]
+
+Biology:
+A giant serpentine swimmer, an Ourbools most distinctive feature is the massive bow curving away on either side of their head.  This houses the gravi-sensory organs.  Three tentacles hanging in front of the mouth allow Ourbools to manipulate their environment.  Ourbools mate only once in their life, and devote the next 35 years to caring for the school of 5 to 7 young -- generally assisted by relatives.  Ourbools live long so
+
+Personality:
+Ourbools are inclined to a nomadic life, hunting or herding their prey ichtioids.  Society focuses to a large degree on the proper and graceful interaction between two wandering groups that meet by chance.
+A significant minority drop out of society and adopt sedentary lives bound by the practical requirements of their craft
+
+Homeworld:
+The homeworld, Oolur is orbited by 23 moons.
+
+Reason for Staying:
+The Ourbools find their sense of position via the regular movements of the 23 moons.  Everything is perceived against that gravitational background.  To be removed from that context is extremely disorienting to the point of "blinding" the unlucky traveler.  He no longer has the familiar to calibrate against so all he can perceive is meaningless graviton noise.
+'''
+
+SP_VOLP
+Volp-Puglush-Vuu
+SP_VOLP_DESC
+'''Highly bureacratic, overcrowded burrowers.
+Prefer Barren planets.
+
+[[AVERAGE_FARMING]]
+[[TERRIBLE_MINING]]
+[[AVERAGE_INDUSTRY]]
+[[AVERAGE_RESEARCH]]
+        
+[[AVERAGE_GROUND_TROOPS]]
+[[GOOD_POPULATION]]
+
+Description:
+The Volp-Puglush-Vuu are an asexual species approximately 300 meters in length that live in tunnels on their homeworld. They subsist on silicates and have a vast number of short arm/mouth parts on the front of their thick cylindrical bodies that they use for manipulation/tunnelling/eating and for sending messages through their tunnel network. In early historical times there were several different strains of Volp-Puglush-Vuu but they were in constant conflict. Groups that successfully organized themselves were the best competers for resources, and as they moved from industrial to information age, one strain became dominant, and the remainder died out. The remaining strain began to optimize their homeworld for most efficient use of resources. They became incredibly adept at recognizing resouce needs, as well as how societal structures affected individual behavior.
+The Volp-Puglush-Vuu society almost acts as a single organism, because society has been adapted to run so smoothly. However, this has led to a critical loss of independent function. While Volp-Puglush-Vuu society is incredibly efficient, it would take individual Volp-Puglush-Vuus hundreds, if not thousands of years to be able to successfully develop a new independent society.
+They are very effective at directing merchant fleets, and make excellent bureaucrats for creating changes in societies. While they have an incredibly efficient war machine, and are capable of indivudually taking on various large battle engines, the chaos of combat is not their most effective environment.
+
+Home World:
+Hive is a large Barren world that is ~2 times bigger than its mass and material would suggest as all of it but a small metal core has been converted through tunneling and building into the Vast tunnel network of the Volp-Puglush-Vuu bureaucracy.
+
+Reason for Staying:
+Volp-Puglush-Vuu are now to integrated and ingrown. They now totally lack the independance and innovation needed to leave Hive and start a new colony.
 '''
 
 SP_EXPERIMENTOR
@@ -7473,6 +7528,9 @@ A fearsom space dragon the size of a small planet.
 #################
 # Species Picks #
 #################
+
+STANDARD_CONSTRUCTION
+'''Average Infrastructure'''
 
 NO_FOOD_USE
 '''+ + + Doesn't need Food'''

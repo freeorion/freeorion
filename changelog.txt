@@ -26,6 +26,7 @@ Content:
  ~ ~ These monsters may be overpowered for the time being.
  ~ ~ Destroying/capturing this outpost is a victory condition.
  ~ Added Nova Bomb and biological weaponry
+ ~ Additional minor species.
  
 Graphics:
  ~ Added unique graphics for each hull.
