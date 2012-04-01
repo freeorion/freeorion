@@ -2589,7 +2589,7 @@ AVERAGE_FARMING
             effects = SetTargetPopulation Value + Source.Population * 0.05
 '''
 
-AVERAGE_FARMING
+GOOD_FARMING
 '''EffectsGroup
             [[FARMING_SCOPE]]
             activation = And [
@@ -2845,10 +2845,7 @@ AVERAGE_MINING
                 Focus "FOCUS_HEAVY_MINING"
                 OwnerHasTech "PRO_ENVIRO_MINING"
             ]
-            effects = [
-                SetTargetHealth Value - 5
-                SetTargetPopulation Value * 0.75
-            ]
+            effects = SetTargetPopulation Value * 0.75
 '''
 
 GOOD_MINING
@@ -3065,10 +3062,7 @@ ULTIMATE_MINING
                 Focus "FOCUS_HEAVY_MINING"
                 Not OwnerHasTech "PRO_ENVIRO_MINING"
             ]
-            effects = [
-                SetTargetHealth Value - 10
-                SetTargetPopulation Value * 0.5
-            ]
+            effects =  SetTargetPopulation Value * 0.5
 
         EffectsGroup
             scope = Source
@@ -3076,10 +3070,7 @@ ULTIMATE_MINING
                 Focus "FOCUS_HEAVY_MINING"
                 OwnerHasTech "PRO_ENVIRO_MINING"
             ]
-            effects = [
-                SetTargetHealth Value - 5
-                SetTargetPopulation Value * 0.75
-            ]
+            effects = SetTargetPopulation Value * 0.75
 '''
 
 //#####      I N D U S T R Y    #####//
@@ -3173,10 +3164,7 @@ GREAT_INDUSTRY
             scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
-            effects = [
-                SetTargetFarming Value + Target.TargetIndustry / 4
-                SetTargetIndustry Value / 2
-            ]
+            effects = SetTargetIndustry Value / 2
 
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
@@ -3198,10 +3186,7 @@ ULTIMATE_INDUSTRY
             scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
-            effects = [
-                SetTargetFarming Value + Target.TargetIndustry / 4
-                SetTargetIndustry Value / 2
-            ]
+            effects = SetTargetIndustry Value / 2
 
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
