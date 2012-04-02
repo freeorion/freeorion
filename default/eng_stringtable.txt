@@ -2626,8 +2626,6 @@ Prefer Terran planets.
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
-
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_SCYLIOR
@@ -2640,8 +2638,6 @@ Prefer Ocean planets.
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[GREAT_RESEARCH]]
-
-[[AVERAGE_GROUND_TROOPS]]
 
 [[GOOD_POPULATION]]
 '''
@@ -2687,8 +2683,6 @@ Prefer Desert planets.
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
-
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_HHHOH
@@ -2718,7 +2712,6 @@ Prefer Desert planets.
 [[AVERAGE_RESEARCH]]
 
 [[GREAT_WEAPONS]]
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_DERTHREAN
@@ -2731,8 +2724,6 @@ Prefer Toxic planets.
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
-
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_LAENFA
@@ -2796,8 +2787,6 @@ Prefers Tundra planets.
 [[GOOD_MINING]]
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
-        
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 
@@ -2812,11 +2801,8 @@ Prefer Barren planets.
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
 
-[[AVERAGE_GROUND_TROOPS]]
-        
 [[NO_FOOD_USE]]
 [[NON_ORGANIC]]
-[[TERRIBLE_HEALTH]]
 '''
 
 
@@ -2849,7 +2835,6 @@ Prefer Swamp planets.
 [[AVERAGE_RESEARCH]]
         
 [[GOOD_GROUND_TROOPS]]
-[[GOOD_HEALTH]]
 '''
 
 SP_PHINNERT
@@ -2862,8 +2847,6 @@ Prefer Ocean planets.
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[NO_RESEARCH]]
-        
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_EGASSEM
@@ -2876,8 +2859,6 @@ Prefer Inferno planets.
 [[AVERAGE_MINING]]
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
-        
-[[AVERAGE_GROUND_TROOPS]]
 
 [[NON_ORGANIC]]
 '''
@@ -2994,7 +2975,6 @@ Prefer Terran planets.
 [[NO_RESEARCH]]
 
 [[ULTIMATE_GROUND_TROOPS]]
-[[GOOD_HEALTH]]
 
 The Raaagh are 1.5 meter tall stripe-furred bipeds.  The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance.  The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage-- they must survive on their own competing against their siblings for hiding places and stealing food like vermin.  After three years usually only one is left, and the surviving young begin to learn to speak.  This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
 
@@ -3038,8 +3018,6 @@ Prefer Terran planets.
 [[AVERAGE_MINING]]
 [[NO_INDUSTRY]]
 [[BAD_RESEARCH]]
-        
-[[AVERAGE_GROUND_TROOPS]]
 
 [[NON_ORGANIC]]
 '''
@@ -3074,8 +3052,6 @@ Prefer Inferno planets.
 [[BAD_RESEARCH]]
         
 [[GOOD_GROUND_TROOPS]]
-        
-[[GREAT_GROUND_TROOPS]]
 
 [[NO_FOOD_USE]]
 [[NON_ORGANIC]]
@@ -3147,8 +3123,6 @@ Prefers Radiated planets.
 [[GREAT_INDUSTRY]]
 [[GOOD_RESEARCH]]
 
-[[AVERAGE_GROUND_TROOPS]]
-
 [[NO_FOOD_USE]]
 [[NON_ORGANIC]]
 
@@ -3178,10 +3152,7 @@ Prefer Ocean planets.
 [[BAD_MINING]]
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_GROUND_TROOPS]]
 
-[[GOOD_HEALTH]]
 
 Biology:
 A giant serpentine swimmer, an Ourbools most distinctive feature is the massive bow curving away on either side of their head.  This houses the gravi-sensory organs.  Three tentacles hanging in front of the mouth allow Ourbools to manipulate their environment.  Ourbools mate only once in their life, and devote the next 35 years to caring for the school of 5 to 7 young -- generally assisted by relatives.  Ourbools live long so
@@ -3207,8 +3178,7 @@ Prefer Barren planets.
 [[BAD_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_GROUND_TROOPS]]
+
 [[GOOD_POPULATION]]
 
 Description:
@@ -3286,8 +3256,6 @@ SP_TEST_DESC
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
-
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 

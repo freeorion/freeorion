@@ -360,7 +360,6 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
-        [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
     
