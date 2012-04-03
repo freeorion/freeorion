@@ -34,6 +34,7 @@ Graphics:
 
 GUI:
  ~ Renamed the 'Construction' meter to 'Infrastructure'.
+ ~ Many tooltips now mention which species picks contributed to the number.
 
 Bugs:
  ~ Fixed many spelling errors in various descriptions.
