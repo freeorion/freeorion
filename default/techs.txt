@@ -445,7 +445,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value * 2
+            effects = SetTargetResearch Value + Target.Population * 0.5
 
 Tech
     name = "LRN_TIME_MECH"
@@ -513,7 +513,7 @@ Tech
                 PopulationCenter
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value * 1.25
+            effects = SetTargetResearch Value + Target.Population * 0.25
 
 Tech
     name = "LRN_OBSERVATORY_I"
@@ -570,7 +570,7 @@ Tech
                 Star type = BlackHole
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value * 2
+            effects = SetTargetResearch Value + Target.Population * 1.0
 
         EffectsGroup
             scope = And [
@@ -579,7 +579,7 @@ Tech
                 Star type = Neutron
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value * 1.75
+            effects = SetTargetResearch Value + Target.Population * 0.75
 
         EffectsGroup
             scope = And [
@@ -588,7 +588,7 @@ Tech
                 Star type = [Blue White]
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value * 1.5
+            effects = SetTargetResearch Value + Target.Population * 0.5
 
         EffectsGroup
             scope = And [
@@ -597,7 +597,7 @@ Tech
                 Star type = [Red Orange Yellow]
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value * 1.25
+            effects = SetTargetResearch Value + Target.Population * 0.25
     ]
     graphic = "icons/tech/stellar_tomography.png"
 

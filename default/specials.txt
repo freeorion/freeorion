@@ -1116,7 +1116,7 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = ContainedBy Contains And [
+            activation = Contains And [
                 OwnedBy AnyEmpire
                 Species "SP_EXPERIMENTOR"
             ]
@@ -1129,7 +1129,7 @@ Special
 
         EffectsGroup
             scope = Source
-            activation = Not ContainedBy Contains Building "BLD_EXPERIMENTOR_OUTPOST"
+            activation = Not Contains Building "BLD_EXPERIMENTOR_OUTPOST"
             stackinggroup = "VICTORY_SITREP"
             effects = [
                 RemoveSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
@@ -1139,7 +1139,7 @@ Special
 
         EffectsGroup
             scope = Source
-            activation = Not ContainedBy Contains Species "SP_EXPERIMENTOR"
+            activation = Not Contains Species "SP_EXPERIMENTOR"
             stackinggroup = "VICTORY_SITREP"
             effects = [
                 RemoveSpecial "EXPERIMENTOR_OUTPOST_SPECIAL"
