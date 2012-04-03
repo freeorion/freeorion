@@ -1164,7 +1164,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BLD_ENCLAVE_VOID_STACK"
-            effects = SetTargetResearch Value * 1.5
+            effects = SetTargetResearch Value + Target.Population * 0.5
     graphic = ""
 
 BuildingType
