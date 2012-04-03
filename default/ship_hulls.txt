@@ -2651,7 +2651,8 @@ HUNT_BUILDINGS
                 Number low = 1 high = 999 And [
                     Building
                     OwnedBy AnyEmpire
-                    WithinDistance Source.Detection - LocalCandidate.Stealth Source
+                    Stealth high = Source.Detection
+                    WithinDistance Source.Detection Source
                 ]
             ]
             activation = Not OwnedBy AnyEmpire
@@ -2661,7 +2662,8 @@ HUNT_BUILDINGS
                 Contains And [
                     Building
                     OwnedBy AnyEmpire
-                    WithinDistance Source.Detection - LocalCandidate.Stealth Source
+                    Stealth high = Source.Detection
+                    WithinDistance Source.Detection Source
                 ]
             ]
 '''
@@ -2674,7 +2676,8 @@ HUNT_SHIPS
                 Number low = 1 And [
                     Ship
                     OwnedBy AnyEmpire
-                    WithinDistance Source.Detection - LocalCandidate.Stealth Source
+                    Stealth high = Source.Detection
+                    WithinDistance Source.Detection Source
                 ]
             ]
             activation = Not OwnedBy AnyEmpire
@@ -2684,7 +2687,8 @@ HUNT_SHIPS
                 Contains And [
                     Ship
                     OwnedBy AnyEmpire
-                    WithinDistance Source.Detection - LocalCandidate.Stealth Source
+                    Stealth high = Source.Detection
+                    WithinDistance Source.Detection Source
                 ]
             ]
 '''
@@ -2697,7 +2701,8 @@ HUNT_PLANETS
                 Number low = 1 And [
                     Planet
                     OwnedBy AnyEmpire
-                    WithinDistance Source.Detection - LocalCandidate.Stealth Source
+                    Stealth high = Source.Detection
+                    WithinDistance Source.Detection Source
                 ]
             ]
             activation = Not OwnedBy AnyEmpire
@@ -2707,7 +2712,8 @@ HUNT_PLANETS
                 Contains And [
                     Planet
                     OwnedBy AnyEmpire
-                    WithinDistance Source.Detection - LocalCandidate.Stealth Source
+                    Stealth high = Source.Detection
+                    WithinDistance Source.Detection Source
                 ]
             ]
 '''
