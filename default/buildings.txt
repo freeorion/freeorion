@@ -1396,7 +1396,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 140
+                Turn low = 200
                 Random 0.2
             ]
             effects = [

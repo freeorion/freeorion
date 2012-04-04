@@ -352,7 +352,7 @@ Part
             scope = Source
             activation = Star type = [Red Orange Yellow White Blue]
             stackinggroup = "SH_MULTISPEC_STEALTH_STACK"
-            effects = SetStealth Value + 50
+            effects = SetStealth Value + 500
     graphic = ""
 
 Part
