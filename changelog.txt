@@ -27,6 +27,7 @@ Content:
  ~ ~ Destroying/capturing this outpost is a victory condition.
  ~ Added Nova Bomb and biological weaponry
  ~ Additional minor species.
+ ~ Flattened the distribution curve of star and planet types.
  
 Graphics:
  ~ Added unique graphics for each hull.

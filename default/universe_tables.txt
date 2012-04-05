@@ -42,37 +42,37 @@ Slot10                          10          -200        10      0       0       
 <8x11>
 PlanetSizeModToPlanetTypeDist   Swamp    Toxic  Inferno Radiated    Barren  Tundra  Desert  Terran  Ocean   AsteroidField   GasGiant
 NoWorld                         0        0      0       0           0       0       0       0       0       0               0
-Planetoid                       0        0      0       10          20      0       0       0       0       0               0
-Small                           0        0      0       10          10      0       0       0       0       0               0
-Medium                          5        0      0       0           0       5       5       10      10      0               0
-Large                           0        10     10      0           0       0       0       0       0       0               0
-Massive                         0        10     10      0           0       0       0       0       0       0               0
+Planetoid                       0        0      0       0           0       0       0       0       0       0               0
+Small                           0        0      0       0           0       0       0       0       0       0               0
+Medium                          0        0      0       0           0       0       0       0       0       0               0
+Large                           0        0      0       0           0       0       0       0       0       0               0
+Massive                         0        0      0       0           0       0       0       0       0       0               0
 Asteroid                        0        0      0       0           0       0       0       0       0       0               0
 GasGiant                        0        0      0       0           0       0       0       0       0       0               0
 
 <10x11>
 SlotModToPlanetTypeDist         Swamp   Toxic   Inferno Radiated    Barren  Tundra  Desert  Terran  Ocean   AsteroidField   GasGiant
-Slot1                           0       5       20      30          15      -20     15      -5      -5      0               0
-Slot2                           20      15      20      10          10      -10     20      10      10      0               0
-Slot3                           10      0       5       0           0       0       15      30      25      0               0
-Slot4                           0       0       0       0           0       5       10      25      25      0               0
-Slot5                           5       5       0       0           0       5       0       10      10      0               0
-Slot6                           5       10      0       0           5       10      0       5       10      0               0
-Slot7                           0       0       0       0           10      10      0       0       0       0               0
-Slot8                           -5      0       -5      0           15      10      -5      -5      -5      0               0
-Slot9                           -10     -5      -10     -10         20      10      -10     -10     -10     0               0
-Slot10                          -20     -10     -20     -20         25      5       -20     -20     -20     0               0
+Slot1                           0       0       0       0           0       0       0       0       0         0               0
+Slot2                           0       0       0       0           0       0       0       0       0         0               0
+Slot3                           0       0       0       0           0       0       0       0       0         0               0
+Slot4                           0       0       0       0           0       0       0       0       0         0               0
+Slot5                           0       0       0       0           0       0       0       0       0         0               0
+Slot6                           0       0       0       0           0       0       0       0       0         0               0
+Slot7                           0       0       0       0           0       0       0       0       0         0               0
+Slot8                           0       0       0       0           0       0       0       0       0         0               0
+Slot9                           0       0       0       0           0       0       0       0       0         0               0
+Slot10                          0       0       0       0           0       0       0       0       0         0               0
 
 <8x11>
 StarColorModToPlanetTypeDist    Swamp  Toxic   Inferno Radiated     Barren   Tundra  Desert  Terran  Ocean  AsteroidField   GasGiant
-Blue                            0      10      15      20           15      0       5       0       0       0               0
-White                           5      5       10      5            10      0       15      0       0       0               0
-Yellow                          20     0       0       0            0       5       20      30      25      0               0
-Orange                          5      5       0       0            10      10      0       0       5       0               0
-Red                             0      10      0       0            20      10      0       0       0       0               0
-Neutron                         -10    5       5       30           20      0       5       -30     -30     0               0
-Blackhole                       -10    -10     -10     15           30      0       -30     -30     -30     0               0
-NoStar                          -60    -60     -60     -60          -50     -60     -60     -60     -60     0               0
+Blue                            0      5       8       10           8       0       2       0       0       0               0
+White                           2      2       5       2            5       0       8       0       0       0               0
+Yellow                          10     0       0       0            0       2       10      15      12      0               0
+Orange                          2      2       0       0            5       5       0       0       2       0               0
+Red                             0      5       0       0            10      5       0       0       0       0               0
+Neutron                         -5     2       2       15           10      0       2       -15     -15     0               0
+Blackhole                       -5     -5      -5      8            15      0       -15     -15     -15     0               0
+NoStar                          -30    -30     -30     -30          -30     -30     -30     -30     -30     0               0
 
 <4x8>
 UniverseAgeModToStarTypeDist    Blue    White   Yellow  Orange  Red     Neutron Blackhole   NoStar
@@ -83,7 +83,7 @@ Ancient                         -20      -10    0       10      20      20      
 
 <1x8>
 BaseStarTypeDist                Blue    White   Yellow  Orange  Red     Neutron Blackhole   NoStar
-Base                            30      40      50      40      30      0       0           40
+Base                            15      20      25      20      15      0       -5          10
 
 # This one is a bit misleading.  With the exception of "None", larger values mean more starlanes, which is why High has the lowest value.
 <1x4>
