@@ -1523,8 +1523,8 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
     GenerateStarlanes(starlane_freq, adjacency_grid);
     InitializeSystemGraph();
     GenerateHomeworlds(total_players, homeworld_planet_ids);
-    NamePlanets();
     GenerateEmpires(homeworld_planet_ids, player_setup_data);
+    NamePlanets();
     GenerateNatives(native_freq);
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
     GenerateSpaceMonsters(monster_freq);
@@ -2180,10 +2180,13 @@ void Universe::NamePlanets() {
                     Logger().errorStream() << "Universe::NamePlanet couldn't get planet with id " << *planet_ids.begin();
                     continue;
                 }
-                if (planet->Type() == PT_ASTEROIDS)
-                    planet->Rename(UserString("PL_ASTEROID_BELT"));
-                else
+                if (planet->Type() == PT_ASTEROIDS) {
+                    std::string name = boost::io::str(FlexibleFormat(UserString("PL_ASTEROID_BELT_OF_SYSTEM")) %
+                                                      system->Name());
+                    planet->Rename(name);
+                } else {
                     planet->Rename(system->Name() + " " + RomanNumber(++num_planets_in_system));
+                }
             }
         }
     }

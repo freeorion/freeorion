@@ -1809,7 +1809,9 @@ No Import or Export
 PLANET_PANEL
 Planet Panel
 PL_ASTEROID_BELT
-Asteroid belt
+Asteroids
+PL_ASTEROID_BELT_OF_SYSTEM
+%1% Asteroids
 PL_UNINHABITED
 Uninhabited
 PL_SIZE
