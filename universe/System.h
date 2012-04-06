@@ -106,6 +106,7 @@ public:
     std::pair<const_orbit_iterator, const_orbit_iterator>
                             non_orbit_range() const;                    ///< returns begin and end iterators for all system objects not in an orbit
 
+    int                     OrbitOfObjectID(int object_id) const;       ///< returns the orbit ID in which the object with \a object_id is located, or -1 if in no orbit or not an object present in an orbit
     bool                    OrbitOccupied(int orbit) const;             ///< returns true if there is an object in \a orbit
     std::set<int>           FreeOrbits() const;                         ///< returns the set of orbit numbers that are unoccupied
 

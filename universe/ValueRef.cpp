@@ -474,9 +474,11 @@ namespace ValueRef {
 
         IF_CURRENT_VALUE(int)
 
-        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(),
+                                                       m_ref_type, context);
         if (!object) {
-            Logger().errorStream() << "Variable<int>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
+            Logger().errorStream() << "Variable<int>::Eval unable to follow reference: "
+                                   << ReconstructName(m_property_name, m_ref_type);
             return 0;
         }
 
@@ -537,6 +539,10 @@ namespace ValueRef {
                 return system->LastTurnBattleHere();
             else
                 return INVALID_GAME_TURN;
+        } else if (property_name == Orbit_name) {
+            if (const System* system = GetSystem(object->SystemID()))
+                return system->OrbitOfObjectID(object->ID());
+            return -1;
         } else if (property_name == CurrentTurn_name) {
             return CurrentTurn();
         } else {

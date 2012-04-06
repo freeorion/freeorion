@@ -506,8 +506,7 @@ private:
 /** Container class that holds PlanetPanels.  Creates and destroys PlanetPanel
   * as necessary, and does layout of them after creation and in response to
   * scrolling through them by the user. */
-class SidePanel::PlanetPanelContainer : public GG::Wnd
-{
+class SidePanel::PlanetPanelContainer : public GG::Wnd {
 public:
     /** \name Structors */ //@{
     PlanetPanelContainer(GG::X x, GG::Y y, GG::X w, GG::Y h);
@@ -1678,9 +1677,28 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
     // remove old panels
     Clear();
 
+    std::multimap<int, int> orbits_planets;
+    for (std::vector<int>::const_iterator planet_it = planet_ids.begin();
+         planet_it != planet_ids.end(); ++planet_it)
+    {
+        int planet_id = *planet_it;
+        const Planet* planet = GetPlanet(planet_id);
+        if (!planet) {
+            Logger().errorStream() << "PlanetPanelContainer::SetPlanets couldn't find planet with id " << planet_id;
+            continue;
+        }
+        int system_id = planet->SystemID();
+        const System* system = GetSystem(system_id);
+        if (!system) {
+            Logger().errorStream() << "PlanetPanelContainer::SetPlanets couldn't find system of planet" << planet->Name();
+            continue;
+        }
+        orbits_planets.insert(std::make_pair(system->OrbitOfObjectID(planet_id), planet_id));
+    }
+
     // create new panels and connect their signals
-    for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
-        PlanetPanel* planet_panel = new PlanetPanel(Width() - m_vscroll->Width(), *it, star_type);
+    for (std::multimap<int, int>::const_iterator it = orbits_planets.begin(); it != orbits_planets.end(); ++it) {
+        PlanetPanel* planet_panel = new PlanetPanel(Width() - m_vscroll->Width(), it->second, star_type);
         AttachChild(planet_panel);
         m_planet_panels.push_back(planet_panel);
         GG::Connect(m_planet_panels.back()->LClickedSignal, &SidePanel::PlanetPanelContainer::PlanetPanelClicked,   this);

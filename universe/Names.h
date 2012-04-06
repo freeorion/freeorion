@@ -174,6 +174,7 @@
     (Ocean)                                     \
     (Or)                                        \
     (Orange)                                    \
+    (Orbit)                                     \
     (OwnedBy)                                   \
     (Owner)                                     \
     (OwnerHasTech)                              \

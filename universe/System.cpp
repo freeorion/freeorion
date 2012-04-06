@@ -558,6 +558,14 @@ std::pair<System::orbit_iterator, System::orbit_iterator> System::non_orbit_rang
 bool System::OrbitOccupied(int orbit) const 
 { return (m_objects.find(orbit) != m_objects.end()); }
 
+int System::OrbitOfObjectID(int object_id) const {
+    // find which orbit contains object
+    for (System::const_orbit_iterator orb_it = begin(); orb_it != end(); ++orb_it)
+        if (orb_it->second == object_id)
+            return orb_it->first;
+    return -1;
+}
+
 std::set<int> System::FreeOrbits() const {
     std::set<int> occupied;
     for (const_orbit_iterator it = begin(); it != end(); ++it)
