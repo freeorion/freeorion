@@ -125,6 +125,13 @@ Special
         Not ContainedBy Contains Homeworld
     ]
     effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                ContainedBy Contains Source
+            ]
+            effects = SetTexture name = "planets/ruins-overlay.png" 
+            
         EffectsGroup     
             scope = Source     
             activation = AND [
@@ -632,9 +639,11 @@ Special
     stealth = 20
     effectsgroups =
         EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetTargetConstruction Value + 0
+            scope = And [
+                Planet
+                ContainedBy Contains Source
+            ]
+            effects = SetTexture name =  "planets/ruins-overlay.png" 
     graphic = "icons/specials_huge/ancient_ruins.png"
     
 Special
