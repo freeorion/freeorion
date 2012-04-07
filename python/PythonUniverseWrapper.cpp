@@ -15,9 +15,8 @@
 #include <boost/python.hpp>
 
 namespace {
-    void                    DumpObjects(const Universe& universe) {
-        universe.Objects().Dump();
-    }
+    void                    DumpObjects(const Universe& universe)
+    { universe.Objects().Dump(); }
     const UniverseObject*   GetUniverseObjectP(const Universe& universe, int id) {
         //Logger().debugStream() << "GetUniverseObjectP(universe, " << id << ")";
         const UniverseObject* retval = universe.Objects().Object(id);
@@ -61,24 +60,18 @@ namespace {
         return retval;
     }
 
-    std::vector<int>        ObjectIDs(const Universe& universe) {
-        return universe.Objects().FindObjectIDs();
-    }
-    std::vector<int>        FleetIDs(const Universe& universe) {
-        return universe.Objects().FindObjectIDs<Fleet>();
-    }
-    std::vector<int>        SystemIDs(const Universe& universe) {
-        return Objects().FindObjectIDs<System>();
-    }
-    std::vector<int>        PlanetIDs(const Universe& universe) {
-        return Objects().FindObjectIDs<Planet>();
-    }
-    std::vector<int>        ShipIDs(const Universe& universe) {
-        return universe.Objects().FindObjectIDs<Ship>();
-    }
-    std::vector<int>        BuildingIDs(const Universe& universe) {
-        return Objects().FindObjectIDs<Building>();
-    }
+    std::vector<int>        ObjectIDs(const Universe& universe)
+    { return universe.Objects().FindObjectIDs(); }
+    std::vector<int>        FleetIDs(const Universe& universe)
+    { return universe.Objects().FindObjectIDs<Fleet>(); }
+    std::vector<int>        SystemIDs(const Universe& universe)
+    { return Objects().FindObjectIDs<System>(); }
+    std::vector<int>        PlanetIDs(const Universe& universe)
+    { return Objects().FindObjectIDs<Planet>(); }
+    std::vector<int>        ShipIDs(const Universe& universe)
+    { return universe.Objects().FindObjectIDs<Ship>(); }
+    std::vector<int>        BuildingIDs(const Universe& universe)
+    { return Objects().FindObjectIDs<Building>(); }
 
     void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                   &Universe::UpdateMeterEstimates;
 
@@ -136,6 +129,14 @@ namespace {
     boost::function<bool(const Universe&, int, int)> SystemsConnectedFunc =                     &SystemsConnectedP;
 
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
+
+    std::vector<std::string>    ObjectSpecials(const UniverseObject& object) {
+        std::vector<std::string> retval;
+        for (std::map<std::string, int>::const_iterator it = object.Specials().begin();
+             it != object.Specials().end(); ++it)
+        { retval.push_back(it->first); }
+        return retval;
+    }
 
     boost::function<double(const UniverseObject*, MeterType)> InitialCurrentMeterValueFromObject =
         boost::bind(&Meter::Initial, boost::bind(ObjectGetMeter, _1, _2));
@@ -251,7 +252,7 @@ namespace FreeOrionPython {
             .def("ownedBy",                     &UniverseObject::OwnedBy)
             .add_property("creationTurn",       &UniverseObject::CreationTurn)
             .add_property("ageInTurns",         &UniverseObject::AgeInTurns)
-            //.add_property("specials",           make_function(&UniverseObject::Specials,    return_internal_reference<>()))
+            .add_property("specials",           make_function(ObjectSpecials,               return_value_policy<return_by_value>()))
             .def("hasSpecial",                  &UniverseObject::HasSpecial)
             .def("specialAddedOnTurn",          &UniverseObject::SpecialAddedOnTurn)
             .def("contains",                    &UniverseObject::Contains)
