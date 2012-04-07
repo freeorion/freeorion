@@ -130,7 +130,7 @@ Special
                 Planet
                 ContainedBy Contains Source
             ]
-            effects = SetTexture name = "planets/ruins-overlay.png" 
+            effects = SetTexture name = "planets/overlays/ruins.png" 
             
         EffectsGroup     
             scope = Source     
@@ -643,7 +643,7 @@ Special
                 Planet
                 ContainedBy Contains Source
             ]
-            effects = SetTexture name =  "planets/ruins-overlay.png" 
+            effects = SetTexture name =  "planets/overlays/ruins.png" 
     graphic = "icons/specials_huge/ancient_ruins.png"
     
 Special
