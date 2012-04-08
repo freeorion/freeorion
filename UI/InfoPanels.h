@@ -4,6 +4,7 @@
 
 #include "../universe/Enums.h"
 #include "../universe/Universe.h"
+#include "CUIControls.h"
 
 #include <GG/Button.h>
 #include <GG/DropDownList.h>
@@ -115,6 +116,7 @@ private:
 
     int                         m_rescenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
+    StatisticIcon*              m_pop_mod_stat;         ///< indicator of modifiers to other objects' population
     StatisticIcon*              m_mining_stat;          ///< icon and number of minerals production
     StatisticIcon*              m_industry_stat;        ///< icon and number of industry production
     StatisticIcon*              m_research_stat;        ///< icon and number of research production
@@ -314,6 +316,7 @@ public:
     MultiIconValueIndicator(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType> >& meter_types);
     MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids, const std::vector<std::pair<MeterType, MeterType> >& meter_types);
     MultiIconValueIndicator(GG::X w); ///< initializes with no icons shown
+    virtual ~MultiIconValueIndicator();
 
     bool            Empty();
 
@@ -326,6 +329,8 @@ public:
     void            ClearToolTip(MeterType meter_type);
 
 private:
+    void            Init();
+
     std::vector<StatisticIcon*>                         m_icons;
     const std::vector<std::pair<MeterType, MeterType> > m_meter_types;
     std::vector<int>                                    m_object_ids;
@@ -353,6 +358,23 @@ private:
     int                                             m_object_id;
 
     std::vector<GG::Clr>                            m_bar_colours;
+};
+
+/** Shows a summary of meter modifications associated with a particular source
+  * object. */
+class MeterModifiersIndicator : public StatisticIcon {
+public:
+    MeterModifiersIndicator(GG::X x, GG::Y y, GG::X w, GG::Y h, int source_object_id, MeterType meter_type);
+    MeterModifiersIndicator(GG::X x, GG::Y y, GG::X w, GG::Y h, int source_object_id, const std::string& empire_meter_type);
+
+    /** \name Mutators */ //@{
+    void            Update();
+    //@}
+
+private:
+    int             m_source_object_id;
+    MeterType       m_meter_type;
+    std::string     m_empire_meter_type;
 };
 
 /** A popup tooltop for display when mousing over in-game icons.  Has an icon and title and some detail text.*/

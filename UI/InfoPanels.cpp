@@ -230,10 +230,6 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     AttachChild(m_pop_stat);
 
 
-    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-    m_pop_stat->SetBrowseModeTime(tooltip_delay);
-
-
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
     meters.push_back(std::make_pair(METER_POPULATION, METER_TARGET_POPULATION));
@@ -439,6 +435,7 @@ std::map<int, bool> ResourcePanel::s_expanded_map;
 ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::INTERACTIVE),
     m_rescenter_id(object_id),
+    m_pop_mod_stat(0),
     m_mining_stat(0),
     m_industry_stat(0),
     m_research_stat(0),
@@ -470,38 +467,33 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     GG::Connect(m_expand_button->ClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
 
 
-    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-
-
     // focus-selection droplist
     m_focus_drop = new CUIDropDownList(GG::X0, GG::Y0, MeterIconSize().x*4, MeterIconSize().y*3/2, MeterIconSize().y*7/2);
     AttachChild(m_focus_drop);
     GG::Connect(m_focus_drop->SelChangedSignal, &ResourcePanel::FocusDropListSelectionChanged,  this);
-    m_focus_drop->SetBrowseModeTime(tooltip_delay);
+    m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
 
     // small resource indicators - for use when panel is collapsed
-    m_mining_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_MINING),
-                                      0, 3, false);
+    m_mining_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
+                                      ClientUI::MeterIcon(METER_MINING), 0, 3, false);
     AttachChild(m_mining_stat);
 
-    m_industry_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_INDUSTRY),
-                                        0, 3, false);
+    m_industry_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
+                                        ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false);
     AttachChild(m_industry_stat);
 
-    m_research_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_RESEARCH),
-                                        0, 3, false);
+    m_research_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
+                                        ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false);
     AttachChild(m_research_stat);
 
-    m_trade_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_TRADE),
-                                     0, 3, false);
+    m_trade_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
+                                     ClientUI::MeterIcon(METER_TRADE), 0, 3, false);
     AttachChild(m_trade_stat);
 
-
-    m_mining_stat->SetBrowseModeTime(tooltip_delay);
-    m_industry_stat->SetBrowseModeTime(tooltip_delay);
-    m_research_stat->SetBrowseModeTime(tooltip_delay);
-    m_trade_stat->SetBrowseModeTime(tooltip_delay);
+    m_pop_mod_stat = new MeterModifiersIndicator(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
+                                                 m_rescenter_id, METER_POPULATION);
+    AttachChild(m_pop_mod_stat);
 
 
     // meter and production indicators
@@ -528,6 +520,7 @@ ResourcePanel::~ResourcePanel() {
     delete m_multi_icon_value_indicator;
     delete m_multi_meter_status_bar;
 
+    delete m_pop_mod_stat;
     delete m_mining_stat;
     delete m_industry_stat;
     delete m_research_stat;
@@ -553,6 +546,7 @@ void ResourcePanel::DoExpandCollapseLayout() {
     // initially detach everything (most things?).  Some will be reattached later.
     DetachChild(m_mining_stat);     DetachChild(m_industry_stat);
     DetachChild(m_research_stat);   DetachChild(m_trade_stat);
+    DetachChild(m_pop_mod_stat);
 
     DetachChild(m_focus_drop);
 
@@ -571,10 +565,11 @@ void ResourcePanel::DoExpandCollapseLayout() {
             // determine which two resource icons to display while collapsed: the two with the highest production.
             // sort by insereting into multimap keyed by production amount, then taking the first two icons therein.
             std::multimap<double, StatisticIcon*> res_prod_icon_map;
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->NextTurnCurrentMeterValue(METER_MINING),    m_mining_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->NextTurnCurrentMeterValue(METER_INDUSTRY),  m_industry_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->NextTurnCurrentMeterValue(METER_RESEARCH),  m_research_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->NextTurnCurrentMeterValue(METER_TRADE),     m_trade_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_mining_stat->GetValue(),   m_mining_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_industry_stat->GetValue(), m_industry_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_research_stat->GetValue(), m_research_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_trade_stat->GetValue(),    m_trade_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_pop_mod_stat->GetValue(),  m_pop_mod_stat));
 
             // position and reattach icons to be shown
             int n = 0;
@@ -918,15 +913,6 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     AttachChild(m_stealth_stat);
 
 
-    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-    m_fleet_supply_stat->SetBrowseModeTime(tooltip_delay);
-    m_shield_stat->SetBrowseModeTime(tooltip_delay);
-    m_defense_stat->SetBrowseModeTime(tooltip_delay);
-    m_troops_stat->SetBrowseModeTime(tooltip_delay);
-    m_detection_stat->SetBrowseModeTime(tooltip_delay);
-    m_stealth_stat->SetBrowseModeTime(tooltip_delay);
-
-
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
     meters.push_back(std::make_pair(METER_SUPPLY, INVALID_METER_TYPE));
@@ -1162,84 +1148,61 @@ void MilitaryPanel::EnableOrderIssuing(bool enable/* = true*/)
 /////////////////////////////////////
 //    MultiIconValueIndicator      //
 /////////////////////////////////////
-MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType> >& meter_types) :
+MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id,
+                                                 const std::vector<std::pair<MeterType, MeterType> >& meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_icons(),
     m_meter_types(meter_types),
     m_object_ids()
 {
     m_object_ids.push_back(object_id);
-
-    SetName("MultiIconValueIndicator");
-
-    GG::X x(EDGE_PAD);
-    for (std::vector<std::pair<MeterType, MeterType> >::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
-        const MeterType PRIMARY_METER_TYPE = it->first;
-        // get icon texture.
-        boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(PRIMARY_METER_TYPE);
-
-        // special case for population meter for an indicator showing only a
-        // single popcenter: icon is species icon, rather than generic pop icon
-        if (PRIMARY_METER_TYPE == METER_POPULATION && m_object_ids.size() == 1) {
-            if (const UniverseObject* obj = GetUniverseObject(*m_object_ids.begin()))
-                if (const PopCenter* pc = dynamic_cast<const PopCenter*>(obj))
-                    texture = ClientUI::SpeciesIcon(pc->SpeciesName());
-        }
-
-        m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH,
-                                            MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2,
-                                            texture, 0.0, 3, false));
-        AttachChild(m_icons.back());
-        m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        x += MULTI_INDICATOR_ICON_WIDTH + MULTI_INDICATOR_ICON_SPACING;
-    }
-    if (!m_icons.empty())
-        Resize(GG::Pt(w, EDGE_PAD + MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2));
-    Update();
+    Init();
 }
 
-MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids, const std::vector<std::pair<MeterType, MeterType> >& meter_types) :
+MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids,
+                                                 const std::vector<std::pair<MeterType, MeterType> >& meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_icons(),
     m_meter_types(meter_types),
     m_object_ids(object_ids)
-{
-    SetName("MultiIconValueIndicator");
-
-    GG::X x(EDGE_PAD);
-    for (std::vector<std::pair<MeterType, MeterType> >::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
-        const MeterType PRIMARY_METER_TYPE = it->first;
-
-        // get icon texture.
-        boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(PRIMARY_METER_TYPE);
-
-        // special case for population meter for an indicator showing only a
-        // single popcenter: icon is species icon, rather than generic pop icon
-        if (PRIMARY_METER_TYPE == METER_POPULATION && m_object_ids.size() == 1) {
-            if (const UniverseObject* obj = GetUniverseObject(*m_object_ids.begin()))
-                if (const PopCenter* pc = dynamic_cast<const PopCenter*>(obj))
-                    texture = ClientUI::SpeciesIcon(pc->SpeciesName());
-        }
-
-        m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH,
-                                            MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2,
-                                            texture, 0.0, 3, false));
-        AttachChild(m_icons.back());
-        m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        x += MULTI_INDICATOR_ICON_WIDTH + MULTI_INDICATOR_ICON_SPACING;
-    }
-    if (!m_icons.empty())
-        Resize(GG::Pt(w, EDGE_PAD + MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2));
-    Update();
-}
+{ Init(); }
 
 MultiIconValueIndicator::MultiIconValueIndicator(GG::X w) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_icons(),
     m_meter_types(),
     m_object_ids()
-{
+{ Init(); }
+
+MultiIconValueIndicator::~MultiIconValueIndicator()
+{}  // nothing needs deleting, as all contained indicators are childs and auto deleted
+
+void MultiIconValueIndicator::Init() {
     SetName("MultiIconValueIndicator");
+
+    GG::X x(EDGE_PAD);
+    for (std::vector<std::pair<MeterType, MeterType> >::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
+        const MeterType PRIMARY_METER_TYPE = it->first;
+        // get icon texture.
+        boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(PRIMARY_METER_TYPE);
+
+        // special case for population meter for an indicator showing only a
+        // single popcenter: icon is species icon, rather than generic pop icon
+        if (PRIMARY_METER_TYPE == METER_POPULATION && m_object_ids.size() == 1) {
+            if (const UniverseObject* obj = GetUniverseObject(*m_object_ids.begin()))
+                if (const PopCenter* pc = dynamic_cast<const PopCenter*>(obj))
+                    texture = ClientUI::SpeciesIcon(pc->SpeciesName());
+        }
+
+        m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH,
+                                            MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2,
+                                            texture, 0.0, 3, false));
+        AttachChild(m_icons.back());
+        x += MULTI_INDICATOR_ICON_WIDTH + MULTI_INDICATOR_ICON_SPACING;
+    }
+    if (!m_icons.empty())
+        Resize(GG::Pt(Width(), EDGE_PAD + MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2));
+    Update();
 }
 
 bool MultiIconValueIndicator::Empty()
@@ -1448,6 +1411,75 @@ void MultiMeterStatusBar::Update() {
     // calculate height from number of bars to be shown
     const GG::Y HEIGHT = num_bars*BAR_HEIGHT + (num_bars - 1)*BAR_PAD + 2*EDGE_PAD - 2;
     Resize(GG::Pt(Width(), HEIGHT));
+}
+
+
+/////////////////////////////////////
+//     MeterModifiersIndicator     //
+/////////////////////////////////////
+MeterModifiersIndicator::MeterModifiersIndicator(GG::X x, GG::Y y, GG::X w, GG::Y h,
+                                                 int source_object_id, MeterType meter_type) :
+    StatisticIcon(x, y, w, h, ClientUI::MeterIcon(meter_type), 0.0, 3, false),
+    m_source_object_id(source_object_id),
+    m_meter_type(meter_type),
+    m_empire_meter_type("")
+{}
+
+MeterModifiersIndicator::MeterModifiersIndicator(GG::X x, GG::Y y, GG::X w, GG::Y h,
+                                                 int source_object_id, const std::string& empire_meter_type) :
+    StatisticIcon(x, y, w, h, ClientUI::GetTexture(""), 0.0, 3, false),
+    m_source_object_id(source_object_id),
+    m_meter_type(INVALID_METER_TYPE),
+    m_empire_meter_type(empire_meter_type)
+{}
+
+void MeterModifiersIndicator::Update() {
+    double modifications_sum = 0.0;
+
+    if (m_source_object_id == INVALID_OBJECT_ID) {
+        this->SetValue(0.0);
+        return;
+    }
+
+    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = universe.Objects();
+    const Effect::AccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
+
+    // for every object that has the appropriate meter type, get its affect accounting info
+    for (ObjectMap::const_iterator obj_it = objects.const_begin();
+         obj_it != objects.const_begin(); ++obj_it)
+    {
+        int target_object_id = obj_it->first;
+        const UniverseObject* obj = obj_it->second;
+        // does object have relevant meter?
+        const Meter* meter = obj->GetMeter(m_meter_type);
+        if (!meter)
+            continue;
+
+        // is any effect accounting available for target object?
+        Effect::AccountingMap::const_iterator map_it = effect_accounting_map.find(target_object_id);
+        if (map_it == effect_accounting_map.end())
+            continue;
+        const std::map<MeterType, std::vector<Effect::AccountingInfo> >& meter_map = map_it->second;
+
+        // is any effect accounting available for this indicator's meter type?
+        std::map<MeterType, std::vector<Effect::AccountingInfo> >::const_iterator meter_it =
+            meter_map.find(m_meter_type);
+        if (meter_it == meter_map.end())
+            continue;
+        const std::vector<Effect::AccountingInfo>& accounts = meter_it->second;
+
+        // does the target object's effect accounting have any modifications
+        // by this indicator's source object?  (may be more than one)
+        for (std::vector<Effect::AccountingInfo>::const_iterator account_it = accounts.begin();
+             account_it != accounts.end(); ++account_it)
+        {
+            if (account_it->source_id != m_source_object_id)
+                continue;
+            modifications_sum += account_it->meter_change;
+        }
+    }
+    this->SetValue(modifications_sum);
 }
 
 
@@ -1970,15 +2002,12 @@ void SpecialsPanel::Update() {
     const std::map<std::string, int>& specials = obj->Specials();
 
 
-    int tooltip_time = GetOptionsDB().Get<int>("UI.tooltip-delay");
-
-
     // get specials and use them to create specials icons
     for (std::map<std::string, int>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
         const Special* special = GetSpecial(it->first);
         GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT, ClientUI::SpecialIcon(special->Name()),
                                                            GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
-        graphic->SetBrowseModeTime(tooltip_time);
+        graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
         std::string desc = UserString(special->Description());
         if (GetOptionsDB().Get<bool>("UI.autogenerated-effects-descriptions") && !special->Effects().empty()) {
@@ -2696,8 +2725,6 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     // get object and meter, aborting if not valid
     const UniverseObject* obj = GetUniverseObject(m_object_id);
-    if (!obj)
-        obj = GetEmpireKnownObject(m_object_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
         Logger().errorStream() << "MeterBrowseWnd::UpdateEffectLabelsAndValues couldn't get object with id " << m_object_id;
         return;
