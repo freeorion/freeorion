@@ -848,6 +848,8 @@ StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::sh
         m_text = new GG::TextControl(GG::X0, GG::Y(icon_height + STAT_ICON_PAD), w, GG::Y(font_space), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_TOP);
     }
 
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+
     AttachChild(m_icon);
     AttachChild(m_text);
     Refresh();
@@ -878,9 +880,19 @@ StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::sh
     m_digits[1] = digits1;
     m_show_signs[0] = showsign0;
     m_show_signs[1] = showsign1;
+
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+
     AttachChild(m_icon);
     AttachChild(m_text);
     Refresh();
+}
+
+double StatisticIcon::GetValue(int index) const {
+    if (index < 0) throw std::invalid_argument("negative index passed to StatisticIcon::Value");
+    if (index > 1) throw std::invalid_argument("index greater than 1 passed to StatisticIcon::Value.  Only 1 or 2 values, with indices 0 or 1, supported.");
+    if (index >= m_num_values) throw std::invalid_argument("index greater than largest index available passed to StatisticIcon::Value");
+    return m_values[index];
 }
 
 void StatisticIcon::SetValue(double value, int index) {
@@ -888,7 +900,7 @@ void StatisticIcon::SetValue(double value, int index) {
     if (index > 1) throw std::invalid_argument("index greater than 1 passed to StatisticIcon::SetValue.  Only 1 or 2 values, with indices 0 or 1, supported.");
     if (index + 1 > m_num_values) {
         m_num_values = index + 1;
-        m_values.resize(m_num_values, 0.0);        
+        m_values.resize(m_num_values, 0.0);
         m_show_signs.resize(m_num_values, m_show_signs[0]);
         m_digits.resize(m_num_values, m_digits[0]);
     }

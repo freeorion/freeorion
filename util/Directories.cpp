@@ -42,8 +42,7 @@ namespace {
 
 void InitBinDir(const std::string& argv0);
 
-void InitDirs(const std::string& argv0)
-{
+void InitDirs(const std::string& argv0) {
     if (g_initialized)
         return;
 
@@ -98,29 +97,25 @@ void InitDirs(const std::string& argv0)
     g_initialized = true;
 }
 
-const fs::path GetUserDir()
-{
+const fs::path GetUserDir() {
     if (!g_initialized)
         InitDirs("");
     return s_user_dir;
 }
 
-const fs::path GetRootDataDir()
-{
+const fs::path GetRootDataDir() {
     if (!g_initialized)
         InitDirs("");
     return s_root_data_dir;
 }
 
-const fs::path GetBinDir()
-{
+const fs::path GetBinDir() {
     if (!g_initialized)
         InitDirs("");
     return s_bin_dir;
 }
 
-const fs::path GetPythonHome()
-{
+const fs::path GetPythonHome() {
     if (!g_initialized)
         InitDirs("");
     return s_python_home;

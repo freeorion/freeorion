@@ -44,8 +44,7 @@ namespace log4cpp {
 //!This is the main class of the ClientUI module.
 //!it contains objects of many other classes and controls the
 //!display of all information onscreen.
-class ClientUI
-{
+class ClientUI {
 public:
     //! \name Structors //!@{
     ClientUI();

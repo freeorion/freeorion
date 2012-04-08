@@ -356,6 +356,10 @@ public:
                   GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);  ///< initializes with two values
     //@}
 
+    /** \name Accessors */ //@{
+    double          GetValue(int index = 0) const;
+    //@}
+
     /** \name Mutators */ //@{
     virtual void    Render() {}
 
