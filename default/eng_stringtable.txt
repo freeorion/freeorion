@@ -2706,7 +2706,7 @@ SP_EAXAW
 Eaxaw
 SP_EAXAW_DESC
 '''Evil amazonian xenophobic agressive worms.
-Prefer Desert planets.
+Prefer Terran planets.
 
 [[AVERAGE_FARMING]]
 [[AVERAGE_MINING]]
