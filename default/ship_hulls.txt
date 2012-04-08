@@ -2518,7 +2518,7 @@ Hull
 
         EffectsGroup
             scope = NumberOf 12 And [
-                WithinStarlaneJumps 0 Source
+                WithinStarlaneJumps 1 Source
                 Ship
                 Not [[NON_ORGANIC]]
             ]

@@ -792,6 +792,10 @@ Special
             ]
             stackinggroup = "TECH_STEALTH_STACK"
             effects = SetStealth Value + [[LOW_STEALTH]]
+
+        EffectsGroup
+            scope = Source
+            effects = SetTexture name = "planets/overlays/clouds.png" 
     ]
     graphic = "icons/specials_huge/cloud_cover.png"
 
@@ -846,6 +850,10 @@ Special
             ]
             stackinggroup = "TECH_STEALTH_STACK"
             effects = SetStealth Value + [[MEDIUM_STEALTH]]
+
+        EffectsGroup
+            scope = Source
+            effects = SetTexture name = "planets/overlays/ash.png" 
     ]
     graphic = "icons/specials_huge/volcanic_ash.png"
 
@@ -890,6 +898,10 @@ Special
             ]
             activation = Not ContainedBy Contains HasSpecial "VOID_SLAVE_SPECIAL"
             effects = SetStealth Value + [[HIGH_STEALTH]]
+
+        EffectsGroup
+            scope = Source
+            effects = SetTexture name = "planets/overlays/rift.png" 
     ]
     graphic = "icons/specials_huge/dim_rift.png"
 
