@@ -17,6 +17,7 @@ class BuildingIndicator;
 class SpecialsPanel;
 class MultiTurnProgressBar;
 class MultiMeterStatusBar;
+class MeterModifiersIndicator;
 class MultiIconValueIndicator;
 class Meter;
 class ShipDesign;
@@ -116,7 +117,7 @@ private:
 
     int                         m_rescenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
-    StatisticIcon*              m_pop_mod_stat;         ///< indicator of modifiers to other objects' population
+    MeterModifiersIndicator*    m_pop_mod_stat;         ///< indicator of modifiers to other objects' population
     StatisticIcon*              m_mining_stat;          ///< icon and number of minerals production
     StatisticIcon*              m_industry_stat;        ///< icon and number of industry production
     StatisticIcon*              m_research_stat;        ///< icon and number of research production

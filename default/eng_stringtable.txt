@@ -1868,6 +1868,9 @@ Change
 TT_BREAKDOWN_SUMMARY
 %1%: %2% 
 
+TT_TARGETS_BREAKDOWN_SUMMARY
+%1% Modifications: %2%
+
 TT_INHERENT
 Inherent
 

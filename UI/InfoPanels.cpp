@@ -194,6 +194,33 @@ namespace {
         }
         return retval;
     }
+
+    class MeterModifiersIndicatorBrowseWnd : public GG::BrowseInfoWnd {
+    public:
+        MeterModifiersIndicatorBrowseWnd(int object_id, MeterType meter_type);
+        virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
+        virtual void    Render();
+
+    private:
+        void            Initialize();
+        virtual void    UpdateImpl(std::size_t mode, const Wnd* target);
+
+        MeterType               m_meter_type;
+        int                     m_source_object_id;
+
+        GG::TextControl*        m_summary_title;
+
+        GG::TextControl*        m_sum_label;
+        GG::TextControl*        m_sum_value;
+
+        std::vector<std::pair<GG::TextControl*, GG::TextControl*> >
+                                m_effect_labels_and_values;
+
+        GG::Y                   m_row_height;
+        bool                    m_initialized;
+    };
+
+
 }
 
 /////////////////////////////////////
@@ -212,7 +239,7 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
 
     const UniverseObject* obj = GetUniverseObject(m_popcenter_id);
     if (!obj)
-        obj = GetEmpireKnownObject(m_popcenter_id, HumanClientApp::GetApp()->EmpireID());
+        throw std::invalid_argument("Attempted to construct a PopulationPanel with an invalid object id");
     const PopCenter* pop = dynamic_cast<const PopCenter*>(obj);
     if (!pop)
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an object id is not a PopCenter");
@@ -382,7 +409,6 @@ void PopulationPanel::Render() {
 void PopulationPanel::Update() {
     const PopCenter*        pop = GetPopCenter();
     const UniverseObject*   obj = GetUniverseObject(m_popcenter_id);
-        if (!obj)           obj = GetEmpireKnownObject(m_popcenter_id, HumanClientApp::GetApp()->EmpireID());
 
     if (!pop || !obj) {
         Logger().errorStream() << "PopulationPanel::Update couldn't get PopCenter or couldn't get UniverseObject";
@@ -409,8 +435,6 @@ void PopulationPanel::Refresh() {
 
 const PopCenter* PopulationPanel::GetPopCenter() const {
     const UniverseObject* obj = GetUniverseObject(m_popcenter_id);
-    if (!obj)
-        obj = GetEmpireKnownObject(m_popcenter_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
         Logger().errorStream() << "PopulationPanel tried to get an object with an invalid m_popcenter_id";
         return 0;
@@ -449,8 +473,6 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
     const UniverseObject* obj = GetUniverseObject(m_rescenter_id);
     if (!obj)
-        obj = GetEmpireKnownObject(m_rescenter_id, HumanClientApp::GetApp()->EmpireID());
-    if (!obj)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an object_id that is not an UniverseObject");
     const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
     if (!res)
@@ -458,7 +480,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
     SetChildClippingMode(ClipToClient);
 
-    // expand / collapse button at top right    
+    // expand / collapse button at top right
     m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
@@ -492,7 +514,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     AttachChild(m_trade_stat);
 
     m_pop_mod_stat = new MeterModifiersIndicator(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
-                                                 m_rescenter_id, METER_POPULATION);
+                                                 m_rescenter_id, METER_TARGET_POPULATION);
     AttachChild(m_pop_mod_stat);
 
 
@@ -557,8 +579,6 @@ void ResourcePanel::DoExpandCollapseLayout() {
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_rescenter_id]) {
         const UniverseObject* obj = GetUniverseObject(m_rescenter_id);
-        if (!obj)
-            obj = GetEmpireKnownObject(m_rescenter_id, HumanClientApp::GetApp()->EmpireID());
         const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
 
         if (res) {
@@ -705,6 +725,8 @@ void ResourcePanel::Update() {
     m_trade_stat->ClearBrowseInfoWnd();
     m_multi_icon_value_indicator->ClearToolTip(METER_TRADE);
 
+    m_pop_mod_stat->ClearBrowseInfoWnd();
+
     m_multi_icon_value_indicator->ClearToolTip(METER_CONSTRUCTION);
 
 
@@ -754,6 +776,7 @@ void ResourcePanel::Update() {
     m_industry_stat->SetValue(res->InitialMeterValue(METER_INDUSTRY));
     m_research_stat->SetValue(res->InitialMeterValue(METER_RESEARCH));
     m_trade_stat->SetValue(res->InitialMeterValue(METER_TRADE));
+    m_pop_mod_stat->Update();
 
 
     // create an attach browse info wnds for each meter type on the icon + number stats used when collapsed and
@@ -780,6 +803,8 @@ void ResourcePanel::Update() {
     browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_CONSTRUCTION, METER_TARGET_CONSTRUCTION));
     m_multi_icon_value_indicator->SetToolTip(METER_CONSTRUCTION, browse_wnd);
 
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterModifiersIndicatorBrowseWnd(m_rescenter_id, METER_TARGET_POPULATION));
+    m_pop_mod_stat->SetBrowseInfoWnd(browse_wnd);
 
     // focus droplist
     const std::vector<std::string>& available_foci = res->AvailableFoci();
@@ -1447,7 +1472,7 @@ void MeterModifiersIndicator::Update() {
 
     // for every object that has the appropriate meter type, get its affect accounting info
     for (ObjectMap::const_iterator obj_it = objects.const_begin();
-         obj_it != objects.const_begin(); ++obj_it)
+         obj_it != objects.const_end(); ++obj_it)
     {
         int target_object_id = obj_it->first;
         const UniverseObject* obj = obj_it->second;
@@ -2576,8 +2601,6 @@ void MeterBrowseWnd::Initialize() {
 
     // get objects and meters to verify that they exist
     const UniverseObject* obj = GetUniverseObject(m_object_id);
-    if (!obj)
-        obj = GetEmpireKnownObject(m_object_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
         Logger().errorStream() << "MeterBrowseWnd couldn't get object with id " << m_object_id;
         return;
@@ -2666,8 +2689,6 @@ void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 
 void MeterBrowseWnd::UpdateSummary() {
     const UniverseObject* obj = GetUniverseObject(m_object_id);
-    if (!obj)
-        obj = GetEmpireKnownObject(m_object_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj)
         return;
 
@@ -2768,7 +2789,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     for (std::vector<Effect::AccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
         const UniverseObject* source = GetUniverseObject(info_it->source_id);
         if (!source)
-            source = GetEmpireKnownObject(info_it->source_id, HumanClientApp::GetApp()->EmpireID());
+            continue;
 
         const Empire*   empire = 0;
         const Building* building = 0;
@@ -2836,3 +2857,133 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         top += m_row_height;
     }
 }
+
+namespace {
+    //////////////////////////////////////
+    // MeterModifiersIndicatorBrowseWnd //
+    //////////////////////////////////////
+    MeterModifiersIndicatorBrowseWnd::MeterModifiersIndicatorBrowseWnd(int object_id, MeterType meter_type) :
+        GG::BrowseInfoWnd(GG::X0, GG::Y0, METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, GG::Y1),
+        m_meter_type(meter_type),
+        m_source_object_id(object_id),
+        m_summary_title(0),
+        m_sum_label(0),
+        m_sum_value(0),
+        m_row_height(1),
+        m_initialized(false)
+    {}
+
+    bool MeterModifiersIndicatorBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
+        assert(mode <= wnd->BrowseModes().size());
+        return true;
+    }
+
+    void MeterModifiersIndicatorBrowseWnd::Render() {
+        GG::Pt ul = UpperLeft();
+        GG::Pt lr = LowerRight();
+        // main background
+        GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);
+
+        // top title filled background
+        if (m_summary_title)
+            GG::FlatRectangle(m_summary_title->UpperLeft(), m_summary_title->LowerRight() + GG::Pt(GG::X(EDGE_PAD), GG::Y0), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
+    }
+
+    void MeterModifiersIndicatorBrowseWnd::Initialize() {
+        m_row_height = GG::Y(ClientUI::Pts()*3/2);
+        GG::Y top = GG::Y0;
+
+        const GG::X TOTAL_WIDTH = METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH;
+
+        const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
+        const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
+
+        m_summary_title = new GG::TextControl(GG::X0, top, TOTAL_WIDTH - EDGE_PAD, m_row_height, "",
+                                                font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        AttachChild(m_summary_title);
+        top += m_row_height;
+
+        // clear existing labels
+        for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
+            DeleteChild(m_effect_labels_and_values[i].first);
+            DeleteChild(m_effect_labels_and_values[i].second);
+        }
+        m_effect_labels_and_values.clear();
+
+        // set summary label
+        const UniverseObject* obj = GetUniverseObject(m_source_object_id);
+        if (!obj) {
+            Logger().errorStream() << "MeterModifiersIndicatorBrowseWnd couldn't get object with id " << m_source_object_id;
+            m_summary_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_TARGETS_BREAKDOWN_SUMMARY")) %
+                                                    MeterToUserString(m_meter_type) %
+                                                    DoubleToString(0.0, 3, false)));
+            return;
+        }
+
+        const Universe& universe = GetUniverse();
+        const ObjectMap& objects = universe.Objects();
+        const Effect::AccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
+
+        double modifications_sum = 0.0;
+
+        // for every object that has the appropriate meter type, get its affect accounting info
+        for (ObjectMap::const_iterator obj_it = objects.const_begin();
+                obj_it != objects.const_end(); ++obj_it)
+        {
+            int target_object_id = obj_it->first;
+            const UniverseObject* target_obj = obj_it->second;
+            // does object have relevant meter?
+            const Meter* meter = target_obj->GetMeter(m_meter_type);
+            if (!meter)
+                continue;
+
+            // is any effect accounting available for target object?
+            Effect::AccountingMap::const_iterator map_it = effect_accounting_map.find(target_object_id);
+            if (map_it == effect_accounting_map.end())
+                continue;
+            const std::map<MeterType, std::vector<Effect::AccountingInfo> >& meter_map = map_it->second;
+
+            // is any effect accounting available for this indicator's meter type?
+            std::map<MeterType, std::vector<Effect::AccountingInfo> >::const_iterator meter_it =
+                meter_map.find(m_meter_type);
+            if (meter_it == meter_map.end())
+                continue;
+            const std::vector<Effect::AccountingInfo>& accounts = meter_it->second;
+
+            // does the target object's effect accounting have any modifications
+            // by this indicator's source object?  (may be more than one)
+            for (std::vector<Effect::AccountingInfo>::const_iterator account_it = accounts.begin();
+                    account_it != accounts.end(); ++account_it)
+            {
+                if (account_it->source_id != m_source_object_id)
+                    continue;
+                modifications_sum += account_it->meter_change;
+
+                const std::string& text = target_obj->Name();
+                GG::TextControl* label = new GG::TextControl(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height,
+                                                                text, font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+                AttachChild(label);
+                GG::TextControl* value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height,
+                                                                ColouredNumber(account_it->meter_change),
+                                                                font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+                AttachChild(value);
+                m_effect_labels_and_values.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+
+                top += m_row_height;
+            }
+        }
+
+        Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, top));
+
+        m_summary_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_TARGETS_BREAKDOWN_SUMMARY")) %
+                                                MeterToUserString(m_meter_type) %
+                                                DoubleToString(modifications_sum, 3, false)));
+        m_initialized = true;
+    }
+
+    void MeterModifiersIndicatorBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
+        if (!m_initialized)
+            Initialize();
+    }
+}
+
