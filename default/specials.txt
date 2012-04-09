@@ -126,11 +126,8 @@ Special
     ]
     effectsgroups = [
         EffectsGroup
-            scope = And [
-                Planet
-                ContainedBy Contains Source
-            ]
-            effects = SetTexture name = "planets/overlays/ruins.png" 
+            scope = Source
+            effects = SetTexture name = "planets/overlays/ruins.png"
             
         EffectsGroup     
             scope = Source     
@@ -639,11 +636,9 @@ Special
     stealth = 20
     effectsgroups =
         EffectsGroup
-            scope = And [
-                Planet
-                ContainedBy Contains Source
-            ]
-            effects = SetTexture name =  "planets/overlays/ruins.png" 
+            scope = Source
+            effects = SetTexture name = "planets/overlays/ruins.png"
+
     graphic = "icons/specials_huge/ancient_ruins.png"
     
 Special
