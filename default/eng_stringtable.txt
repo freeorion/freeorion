@@ -7662,127 +7662,127 @@ NON_ORGANIC
 '''Non-Organic: Does not benefit from some biologically-based techs.'''
 
 BAD_POPULATION
-'''Bad Population'''
+'''%1% Bad Population'''
 
 AVERAGE_POPULATION
-'''Average Population'''
+'''%1% Average Population'''
 
 GOOD_POPULATION
-'''Good Population'''
+'''%1% Good Population'''
 
 
 STANDARD_CONSTRUCTION_LABLE
-'''Average Infrastructure'''
+'''%1% Average Infrastructure'''
 
 BAD_POPULATION_FOR_GOOD_LABLE
-'''Bad Population with Good EP'''
+'''%1% Bad Population with Good EP'''
 
 BAD_POPULATION_FOR_ADEQUATE_LABLE
-'''Bad Population with ADEQUATE EP'''
+'''%1% Bad Population with ADEQUATE EP'''
 
 BAD_POPULATION_FOR_POOR_LABLE
-'''Bad Population with Poor EP'''
+'''%1% Bad Population with Poor EP'''
 
 BAD_POPULATION_FOR_HOSTILE_LABLE
-'''Bad Population with Hostile EP'''
+'''%1% Bad Population with Hostile EP'''
 
 AVERAGE_POPULATION_FOR_GOOD_LABLE
-'''Average Population with Good EP'''
+'''%1% Average Population with Good EP'''
 
 AVERAGE_POPULATION_FOR_ADEQUATE_LABLE
-'''Average Population with Adequate EP'''
+'''%1% Average Population with Adequate EP'''
 
 AVERAGE_POPULATION_FOR_POOR_LABLE
-'''Average Population with Poor EP'''
+'''%1% Average Population with Poor EP'''
 
 AVERAGE_POPULATION_FOR_HOSTILE_LABLE
-'''Average Population with Hostile EP'''
+'''%1% Average Population with Hostile EP'''
 
 GOOD_POPULATION_FOR_GOOD_LABLE
-'''Good Population with Good EP'''
+'''%1% Good Population with Good EP'''
 
 GOOD_POPULATION_FOR_ADEQUATE_LABLE
-'''Good Population with ADEQUATE EP'''
+'''%1% Good Population with Adequate EP'''
 
 GOOD_POPULATION_FOR_POOR_LABLE
-'''Good Population with Poor EP'''
+'''%1% Good Population with Poor EP'''
 
 GOOD_POPULATION_FOR_HOSTILE_LABLE
-'''Good Population with Hostile EP'''
+'''%1% Good Population with Hostile EP'''
 
 BAD_FARMING_LABLE
-'''Bad Farming'''
+'''%1% Bad Farming'''
 
 AVERAGE_FARMING_LABLE
-'''Average Farming'''
+'''%1% Average Farming'''
 
 GOOD_FARMING_LABLE
-'''Good Farming'''
+'''%1% Good Farming'''
 
 GREAT_FARMING_LABLE
-'''Great Farming'''
+'''%1% Great Farming'''
 
 ULTIMATE_FARMING_LABLE
-'''Ultimate Farming'''
+'''%1% Ultimate Farming'''
 
 BAD_MINING_LABLE
-'''Bad Mining'''
+'''%1% Bad Mining'''
 
 AVERAGE_MINING_LABLE
-'''Average Mining'''
+'''%1% Average Mining'''
 
 GOOD_MINING_LABLE
 '''Good Mining'''
 
 GREAT_MINING_LABLE
-'''Great Mining'''
+'''%1% Great Mining'''
 
 ULTIMATE_MINING_LABLE
-'''Ultimate Mining'''
+'''%1% Ultimate Mining'''
 
 BAD_INDUSTRY_LABLE
-'''Bad Industry'''
+'''%1% Bad Industry'''
 
 AVERAGE_INDUSTRY_LABLE
-'''Average Industry'''
+'''%1% Average Industry'''
 
 GOOD_INDUSTRY_LABLE
-'''Good Industry'''
+'''%1% Good Industry'''
 
 GREAT_INDUSTRY_LABLE
-'''Great Industry'''
+'''%1% Great Industry'''
 
 ULTIMATE_INDUSTRY_LABLE
-'''Ultimate Industry'''
+'''%1% Ultimate Industry'''
 
 BAD_RESEARCH_LABLE
-'''Bad Research'''
+'''%1% Bad Research'''
 
 AVERAGE_RESEARCH_LABLE
-'''Average Research'''
+'''%1% Average Research'''
 
 GOOD_RESEARCH_LABLE
-'''Good Research'''
+'''%1% Good Research'''
 
 GREAT_RESEARCH_LABLE
-'''Great Research'''
+'''%1% Great Research'''
 
 ULTIMATE_RESEARCH_LABLE
-'''Ultimate Research'''
+'''%1% Ultimate Research'''
 
 BAD_TROOPS_LABLE
-'''Bad Ground Troops'''
+'''%1% Bad Ground Troops'''
 
 AVERAGE_TROOPS_LABLE
-'''Average Ground Troops'''
+'''%1% Average Ground Troops'''
 
 GOOD_TROOPS_LABLE
-'''Good Ground Troops'''
+'''%1% Good Ground Troops'''
 
 GREAT_TROOPS_LABLE
-'''Great Ground Troops'''
+'''%1% Great Ground Troops'''
 
 ULTIMATE_TROOPS_LABLE
-'''Ultimate Ground Troops'''
+'''%1% Ultimate Ground Troops'''
 
 

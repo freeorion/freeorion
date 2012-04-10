@@ -2839,10 +2839,11 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
         case ECT_UNKNOWN_CAUSE:
         default:
-            if (!info_it->specific_cause.empty())
-                text += UserString(info_it->specific_cause);
-            else
+            if (!info_it->specific_cause.empty()) {
+                text += boost::io::str(FlexibleFormat(UserString(info_it->specific_cause)) % source->Name());
+            } else {
                 text += UserString("TT_UNKNOWN");
+            }
         }
 
         GG::TextControl* label = new GG::TextControl(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, text, font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
