@@ -20,6 +20,28 @@ SitRepEntry::SitRepEntry(const std::string& template_string) :
     VarText(template_string, true)
 {}
 
+int SitRepEntry::GetDataIDNumber(const std::string& tag) const {
+    if (!m_variables.ContainsChild(tag))
+        return -1;
+    const XMLElement& token_elem = m_variables.Child(tag);
+    try {
+        const std::string& text = token_elem.Attribute("value");
+        return boost::lexical_cast<int>(text);
+    } catch (...) {
+        return -1;
+    }
+    return -1;
+}
+
+const std::string& SitRepEntry::GetDataString(const std::string& tag) const {
+    static const std::string EMPTY_STRING;
+    if (!m_variables.ContainsChild(tag))
+        return EMPTY_STRING;
+    const XMLElement& token_elem = m_variables.Child(tag);
+    return token_elem.Attribute("value");
+    return EMPTY_STRING;
+}
+
 SitRepEntry* CreateTechResearchedSitRep(const std::string& tech_name) {
     SitRepEntry* sitrep = new SitRepEntry("SITREP_TECH_RESEARCHED");
     sitrep->AddVariable(VarText::TECH_TAG,          tech_name);

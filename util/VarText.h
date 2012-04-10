@@ -25,8 +25,7 @@
   * An example of VarText implementation are SitReps. They are created by the
   * server which knows nothing about what the final string will look like.
   * ClientUI.cpp ultimately generates a string from the variables. */
-class VarText
-{
+class VarText {
 public:
     /** \name Structors */ //@{
     VarText();

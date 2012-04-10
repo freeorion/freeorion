@@ -11,12 +11,17 @@
 #include <boost/lexical_cast.hpp>
 
 /** Situation report entry, to be displayed in the SitRep screen. */
-class SitRepEntry : public VarText
-{
+class SitRepEntry : public VarText {
 public:
     /** \name Structors */ //@{
     SitRepEntry();  ///< default ctor
     SitRepEntry(const std::string& template_string);
+    //@}
+
+    /** Accessors */ //@{
+    const std::string&  GetTemplateString() const   { return m_template_string; }
+    int                 GetDataIDNumber(const std::string& tag) const;
+    const std::string&  GetDataString(const std::string& tag) const;
     //@}
 
 private:
@@ -32,6 +37,7 @@ SitRepEntry* CreateBuildingBuiltSitRep(int building_id, int planet_id);
 SitRepEntry* CreateCombatSitRep(int system_id);
 SitRepEntry* CreateGroundCombatSitRep(int planet_id);
 SitRepEntry* CreatePlanetCapturedSitRep(int planet_id, int empire_id);
+SitRepEntry* CreateCombatDamagedObjectSitRep(int object_id, int empire_id, double hnnn);
 SitRepEntry* CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_id, int empire_id);
 SitRepEntry* CreatePlanetStarvedToDeathSitRep(int planet_id);
 SitRepEntry* CreatePlanetColonizedSitRep(int planet_id);

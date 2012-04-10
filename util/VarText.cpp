@@ -62,7 +62,7 @@ namespace {
 
             // plain text substitution token
             if (token == VarText::TEXT_TAG) {
-                std::string text = token_elem.Attribute("value");
+                const std::string& text = token_elem.Attribute("value");
                 m_str += UserString(text);
                 return;
             }
