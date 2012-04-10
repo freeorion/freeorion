@@ -2,33 +2,41 @@ v0.4 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 New Features / Improvements:
  ~ Improved the logic behind the choice of graphic to display for hulls and ship designs.
+ ~ Macro support in script files.
 
 Balancing:
-~ Balanced stealth & detection levels.
-
-Content:
- ~ All species now have different aptitudes at resource production and ground combat.  A few require no food, and a few have special stealth and detection abilities.
- ~ ~ Sorry, currently not balanced.
- ~ ~ All normal species now have the same provisional starvation mechanic.
+ ~ Balanced stealth & detection levels.
  ~ Dramatically rescaled population numbers to a lower base and max
  ~ ~ Building, Ship & Research costs rescaled to 10%
- ~ Added new stealthy planet specials, and stealth-making monsters.
- ~ Made monsters nests last on average twice as long.
- ~ Halved the generation of floaters from forests.
- ~ New Asteroid Snail space monster
- ~ Abandoned Colony special now works.
- ~ Added three Derelict system specials.
- ~ Added Exobots, a constructable robot species.
- ~ Exempted Non-Organic species from certain biologically based tech benefits.
- ~ Acirema native colonies now occasionally produce ships, and have better defenses
- ~ Greatly increased the strength of monsters.
- ~ Added Experimentor outpost which produces dangerous monsters later in the game.
- ~ ~ These monsters may be overpowered for the time being.
- ~ ~ Destroying/capturing this outpost is a victory condition.
- ~ Added Nova Bomb and biological weaponry
- ~ Additional minor species.
  ~ Flattened the distribution curve of star and planet types.
  ~ Increased cost of troop pods to make conquest less casual.
+ ~ Made monsters nests last on average twice as long.
+ ~ Halved the generation of floaters from forests.
+
+Content:
+ ~ Species:
+ ~ ~ All species now have different aptitudes at resource production, ground combat & so on.  A few require no food, and a few have special stealth and detection abilities.
+ ~ ~ ~ Sorry, currently not balanced.
+ ~ ~ All normal species now have the same provisional starvation mechanic.
+ ~ ~ Added Exobots, a constructable robot species.
+ ~ ~ Exempted Non-Organic species from certain biologically based tech benefits.
+ ~ ~ Acirema native colonies now occasionally produce ships, and have better defenses
+ ~ ~ Additional minor species.
+ 
+ ~ Monsters:
+ ~ ~ Greatly increased the strength of monsters.
+ ~ ~ Added Experimentor outpost which produces dangerous monsters later in the game.
+ ~ ~ ~ These monsters may be overpowered for the time being.
+ ~ ~ ~ Destroying/capturing this outpost is a victory condition.
+
+ ~ ~ New Asteroid Snail space monster
+ ~ ~ Added Nova Bomb and biological weaponry
+ 
+ ~ Specials:
+ ~ ~ Abandoned Colony special now works.
+ ~ ~ Added three Derelict system specials.
+ ~ ~ Added new stealthy planet specials, and stealth-making monsters.
+
  
 Graphics:
  ~ Added unique graphics for each hull.
