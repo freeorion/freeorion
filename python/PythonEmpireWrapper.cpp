@@ -8,9 +8,7 @@ namespace {
     // Research queue tests whether it contains a Tech by name, but Python needs
     // a __contains__ function that takes a *Queue::Element.  This helper
     // functions take an Element and returns the associated Tech name string.
-    const std::string&  TechFromResearchQueueElement(const ResearchQueue::Element& element) {
-        return element.name;
-    }
+    const std::string&  TechFromResearchQueueElement(const ResearchQueue::Element& element)             { return element.name; }
 
     std::vector<std::string> (TechManager::*TechNamesVoid)(void) const =                                    &TechManager::TechNames;
     boost::function<std::vector<std::string>(const TechManager*)> TechNamesMemberFunc =                     TechNamesVoid;
@@ -38,6 +36,15 @@ namespace {
 
     const ProductionQueue::Element&
                             (ProductionQueue::*ProductionQueueOperatorSquareBrackets)(int) const =      &ProductionQueue::operator[];
+
+    const SitRepEntry*  GetSitRep(const Empire& empire, int index) {
+        if (index < 0 || index >= empire.NumSitRepEntries())
+            return 0;
+        Empire::SitRepItr it = empire.SitRepBegin();
+        std::advance(it, index);
+        return *it;
+    }
+    boost::function<const SitRepEntry*(const Empire&, int)> GetEmpireSitRepFunc =                       GetSitRep;
 }
 
 namespace FreeOrionPython {
@@ -107,6 +114,13 @@ namespace FreeOrionPython {
 
             .add_property("fleetSupplyableSystemIDs",   make_function(&Empire::FleetSupplyableSystemIDs,    return_internal_reference<>()))
             .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,   return_internal_reference<>()))
+
+            .add_property("numSitReps",             &Empire::NumSitRepEntries)
+            .def("getSitRep",                       make_function(
+                                                        GetEmpireSitRepFunc,
+                                                        return_internal_reference<>(),
+                                                        boost::mpl::vector<const SitRepEntry*, const Empire&, int>()
+                                                    ))
         ;
 
 
@@ -192,5 +206,14 @@ namespace FreeOrionPython {
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<std::vector<std::string>, const std::string&>()
                                                 ));
+
+        ///////////////////
+        //  SitRepEntry  //
+        ///////////////////
+        class_<SitRepEntry, noncopyable>("sitrep", no_init)
+            .add_property("typeString",         make_function(&SitRepEntry::GetTemplateString,  return_value_policy<copy_const_reference>()))
+            .def("getDataString",               make_function(&SitRepEntry::GetDataString,      return_value_policy<copy_const_reference>()))
+            .def("getDataIDNumber",             &SitRepEntry::GetDataIDNumber)
+        ;
     }
 }
