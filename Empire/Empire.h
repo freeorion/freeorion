@@ -262,8 +262,7 @@ private:
   * server, Empires are managed by a subclass of EmpireManager, and can be
   * accessed from other modules by using the EmpireManager::Lookup() method to
   * obtain a pointer. */
-class Empire
-{
+class Empire {
 public:
     // EmpireManagers must be friends so that they can have access to the constructor and keep it hidden from others
     friend class EmpireManager;

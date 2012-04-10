@@ -26,17 +26,14 @@
 AIBase::~AIBase()
 {}
 
-void AIBase::GenerateOrders() {
-    AIInterface::DoneTurn();
-}
+void AIBase::GenerateOrders()
+{ AIInterface::DoneTurn(); }
 
-void AIBase::GenerateCombatSetupOrders(const CombatData& combat_data) {
-    AIInterface::CombatSetup();
-}
+void AIBase::GenerateCombatSetupOrders(const CombatData& combat_data)
+{ AIInterface::CombatSetup(); }
 
-void AIBase::GenerateCombatOrders(const CombatData& combat_data) {
-    AIInterface::DoneCombatTurn();
-}
+void AIBase::GenerateCombatOrders(const CombatData& combat_data)
+{ AIInterface::DoneCombatTurn(); }
 
 void AIBase::HandleChatMessage(int sender_id, const std::string& msg)
 {}
@@ -85,9 +82,8 @@ namespace {
 }
 
 namespace AIInterface {
-    const std::string& PlayerName() {
-        return AIClientApp::GetApp()->PlayerName();
-    }
+    const std::string& PlayerName()
+    { return AIClientApp::GetApp()->PlayerName(); }
 
     const std::string& PlayerName(int player_id) {
         const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
@@ -100,13 +96,11 @@ namespace AIInterface {
         }
     }
 
-    int PlayerID() {
-        return AIClientApp::GetApp()->PlayerID();
-    }
+    int PlayerID()
+    { return AIClientApp::GetApp()->PlayerID(); }
 
-    int EmpireID() {
-        return AIClientApp::GetApp()->EmpireID();
-    }
+    int EmpireID()
+    { return AIClientApp::GetApp()->EmpireID(); }
 
     int PlayerEmpireID(int player_id) {
         const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
@@ -125,13 +119,11 @@ namespace AIInterface {
         return empire_ids;
     }
 
-    const Empire* GetEmpire() {
-        return AIClientApp::GetApp()->Empires().Lookup(AIClientApp::GetApp()->EmpireID());
-    }
+    const Empire* GetEmpire()
+    { return AIClientApp::GetApp()->Empires().Lookup(AIClientApp::GetApp()->EmpireID()); }
 
-    const Empire* GetEmpire(int empire_id) {
-        return AIClientApp::GetApp()->Empires().Lookup(empire_id);
-    }
+    const Empire* GetEmpire(int empire_id)
+    { return AIClientApp::GetApp()->Empires().Lookup(empire_id); }
 
     int EmpirePlayerID(int empire_id) {
         int player_id = AIClientApp::GetApp()->GetEmpirePlayerID(empire_id);
@@ -156,17 +148,14 @@ namespace AIInterface {
         return false;   // TODO: implement this
     }
 
-    const Universe& GetUniverse() {
-        return AIClientApp::GetApp()->GetUniverse();
-    }
+    const Universe& GetUniverse()
+    { return AIClientApp::GetApp()->GetUniverse(); }
 
-    const Tech* GetTech(const std::string& tech_name) {
-        return TechManager::GetTechManager().GetTech(tech_name);
-    }
+    const Tech* GetTech(const std::string& tech_name)
+    { return TechManager::GetTechManager().GetTech(tech_name); }
 
-    int CurrentTurn() {
-        return AIClientApp::GetApp()->CurrentTurn();
-    }
+    int CurrentTurn()
+    { return AIClientApp::GetApp()->CurrentTurn(); }
 
     void InitTurn() {
         boost::timer turn_init_timer;
