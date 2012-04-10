@@ -50,13 +50,11 @@ namespace {
     // static s_save_state_string, getter and setter to be exposed to Python
     static std::string s_save_state_string("");
 
-    static const std::string& GetStaticSaveStateString() {
-        return s_save_state_string;
-    }
+    static const std::string& GetStaticSaveStateString()
+    { return s_save_state_string; }
 
-    static void SetStaticSaveStateString(const std::string& new_state_string) {
-        s_save_state_string = new_state_string;
-    }
+    static void SetStaticSaveStateString(const std::string& new_state_string)
+    { s_save_state_string = new_state_string; }
 }
 
 

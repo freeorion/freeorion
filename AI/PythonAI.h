@@ -4,8 +4,7 @@
 
 #include <string>
 
-class PythonAI : public AIBase
-{
+class PythonAI : public AIBase {
 public:
     /** \name structors */ //@{
     PythonAI();

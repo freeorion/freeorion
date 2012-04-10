@@ -16,7 +16,7 @@
 
 namespace {
     void                    DumpObjects(const Universe& universe)
-    { universe.Objects().Dump(); }
+    { Logger().debugStream() << universe.Objects().Dump(); }
     const UniverseObject*   GetUniverseObjectP(const Universe& universe, int id) {
         //Logger().debugStream() << "GetUniverseObjectP(universe, " << id << ")";
         const UniverseObject* retval = universe.Objects().Object(id);
@@ -210,7 +210,7 @@ namespace FreeOrionPython {
                                                     boost::mpl::vector<double, const Universe&, int, int>()
                                                 ))
 
-            .def("jumpDistance",              make_function(
+            .def("jumpDistance",                make_function(
                                                     JumpDistanceFunc,
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<int, const Universe&, int, int>()
