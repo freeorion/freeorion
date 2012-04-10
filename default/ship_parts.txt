@@ -4,7 +4,7 @@ Part
     description = "GT_TROOP_POD_DESC"
     class = Troops
     capacity = 5
-    buildcost = 1
+    buildcost = 5
     buildtime = 1
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner

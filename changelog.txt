@@ -28,6 +28,7 @@ Content:
  ~ Added Nova Bomb and biological weaponry
  ~ Additional minor species.
  ~ Flattened the distribution curve of star and planet types.
+ ~ Increased cost of troop pods to make conquest less casual.
  
 Graphics:
  ~ Added unique graphics for each hull.
