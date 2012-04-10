@@ -19,9 +19,8 @@ public:
     //@}
 
     /** Accessors */ //@{
-    const std::string&  GetTemplateString() const   { return m_template_string; }
-    int                 GetDataIDNumber(const std::string& tag) const;
-    const std::string&  GetDataString(const std::string& tag) const;
+    int                         GetDataIDNumber(const std::string& tag) const;
+    const std::string&          GetDataString(const std::string& tag) const;
     //@}
 
 private:

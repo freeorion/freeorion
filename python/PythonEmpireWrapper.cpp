@@ -214,6 +214,7 @@ namespace FreeOrionPython {
             .add_property("typeString",         make_function(&SitRepEntry::GetTemplateString,  return_value_policy<copy_const_reference>()))
             .def("getDataString",               make_function(&SitRepEntry::GetDataString,      return_value_policy<copy_const_reference>()))
             .def("getDataIDNumber",             &SitRepEntry::GetDataIDNumber)
+            .add_property("getTags",            make_function(&SitRepEntry::GetVariableTags,    return_value_policy<return_by_value>()))
         ;
     }
 }

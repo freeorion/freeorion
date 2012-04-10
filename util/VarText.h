@@ -33,13 +33,15 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&  GetText() const;    //!< Returns text generated after substituting all variables.
-    bool                Validate() const;   //!< Does text generation succeed without any errors occurring?
+    const std::string&          GetText() const;        //!< Returns text generated after substituting all variables.
+    bool                        Validate() const;       //!< Does text generation succeed without any errors occurring?
+    const std::string&          GetTemplateString() const   { return m_template_string; }
+    std::vector<std::string>    GetVariableTags() const;//!< returns a list of tags for the variables this vartext has
     //@}
 
     /** \name Mutators */ //@{
-    void                SetTemplateString(const std::string& text, bool stringtable_lookup_template = true);
-    void                AddVariable(const std::string& tag, const std::string& data);
+    void                        SetTemplateString(const std::string& text, bool stringtable_lookup_template = true);
+    void                        AddVariable(const std::string& tag, const std::string& data);
     //@}
 
     /** Tag strings that are recognized and replaced in VarText. */

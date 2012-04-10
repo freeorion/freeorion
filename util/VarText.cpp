@@ -289,6 +289,13 @@ void VarText::SetTemplateString(const std::string& text, bool stringtable_lookup
     m_stringtable_lookup_flag = stringtable_lookup_template;
 }
 
+std::vector<std::string> VarText::GetVariableTags() const {
+    std::vector<std::string> retval;
+    for (XMLElement::const_child_iterator it = m_variables.child_begin(); it != m_variables.child_end(); ++it)
+        retval.push_back(it->Tag());
+    return retval;
+}
+
 void VarText::AddVariable(const std::string& tag, const std::string& data) {
     XMLElement elem(tag);
     elem.SetAttribute("value", data);
