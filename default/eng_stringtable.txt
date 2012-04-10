@@ -4248,6 +4248,9 @@ Information on the area was obtained from an abandoned derelict at %system%.
 EFFECT_DERELICT_FUEL
 Ships were refuled from the residual supply found in an abandoned derelict at %system%.
 
+EFFECT_BIOWEAPON
+%system% has lost population due to a biological attack!
+
 
 # Conditions
 

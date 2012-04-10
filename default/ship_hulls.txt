@@ -2517,10 +2517,20 @@ Hull
         [[INFINITE_FUEL]]
 
         EffectsGroup
+            scope = NumberOf 4 And [
+                WithinStarlaneJumps 1 Source
+                Ship
+                Not [[NON_ORGANIC]]
+            ]
+            activation = Random 0.2
+            effects = SetOwner Source.Owner
+
+        EffectsGroup
             scope = NumberOf 12 And [
                 WithinStarlaneJumps 1 Source
                 Ship
                 Not [[NON_ORGANIC]]
+                Not OwnerHasTech "LRN_PSY_DOM"
             ]
             activation = Random 0.8
             effects = SetOwner Source.Owner

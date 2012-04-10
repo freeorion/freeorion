@@ -788,6 +788,7 @@ Part
         EffectsGroup
             scope = And [
                 ContainedBy Contains Source
+                Planet
                 Or [
                     OwnedBy EnemyOf Source.Owner
                     Not OwnedBy AnyEmpire
@@ -795,15 +796,32 @@ Part
                 VisibleToEmpire Source.Owner
             ]
             activation = OwnedBy AnyEmpire
-            effects = SetPopulation Value - 2
+            effects = [
+                SetPopulation Value - 0.5
+                GenerateSitRepMessage
+                    message = "EFFECT_BIOWEAPON"
+                    parameters = [
+                        tag = "system" data = Source.System.ID
+                    ]
+                    empire = Target.Owner
+            ]
 
         EffectsGroup
             scope = And [
                 ContainedBy Contains Source
+                Planet
                 OwnedBy AnyEmpire
             ]
             activation = Not OwnedBy AnyEmpire
-            effects = SetPopulation Value - 2
+            effects = [
+                SetPopulation Value - 0.5
+                GenerateSitRepMessage
+                    message = "EFFECT_BIOWEAPON"
+                    parameters = [
+                        tag = "system" data = Source.System.ID
+                    ]
+                    empire = Target.Owner
+            ]
     ]
     graphic = ""
 
@@ -820,6 +838,7 @@ Part
         EffectsGroup
             scope = And [
                 ContainedBy Contains Source
+                Planet
                 Or [
                     OwnedBy EnemyOf Source.Owner
                     Not OwnedBy AnyEmpire
@@ -827,16 +846,33 @@ Part
                 VisibleToEmpire Source.Owner
             ]
             activation = OwnedBy AnyEmpire
-            effects = SetPopulation Value - 3
+            effects = [
+                SetPopulation Value - 1
+                GenerateSitRepMessage
+                    message = "EFFECT_BIOWEAPON"
+                    parameters = [
+                        tag = "system" data = Source.System.ID
+                    ]
+                    empire = Target.Owner
+            ]
 
         EffectsGroup
             scope = And [
                 ContainedBy Contains Source
+                Planet
                 OwnedBy AnyEmpire
                 Stealth high = Source.Detection
             ]
             activation = Not OwnedBy AnyEmpire
-            effects = SetPopulation Value - 3
+            effects = [
+                SetPopulation Value - 1
+                GenerateSitRepMessage
+                    message = "EFFECT_BIOWEAPON"
+                    parameters = [
+                        tag = "system" data = Source.System.ID
+                    ]
+                    empire = Target.Owner
+            ]
     ]
     graphic = ""
 
