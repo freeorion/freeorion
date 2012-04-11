@@ -1656,17 +1656,6 @@ Tech
     graphic = "icons/tech/environmentally_conscious_mining.png"
 
 Tech
-    name = "PRO_ORBITAL_MINE"
-    description = "PRO_ORBITAL_MINE_DESC"
-    short_description = "MINING_SHORT_DESC"
-    techtype = Application
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 6
-    researchturns = 1
-    prerequisites = "PRO_MICROGRAV_MAN"
-    graphic = "icons/tech/orbital_mining.png"
-
-Tech
     name = "PRO_ASTEROID_MINE"
     description = "PRO_ASTEROID_MINE_DESC"
     short_description = "MINING_SHORT_DESC"
@@ -1797,10 +1786,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 24
     researchturns = 2
-    prerequisites = [
-        "PRO_CORE_MINE"
-        "PRO_ORBITAL_MINE"
-    ]
+    prerequisites = "PRO_CORE_MINE"
     unlock = [
         Item type = Building name = "BLD_NEUTRONIUM_EXTRACTOR"
         Item type = Building name = "BLD_NEUTRONIUM_FORGE"

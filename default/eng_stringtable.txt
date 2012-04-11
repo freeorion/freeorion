@@ -5584,14 +5584,6 @@ PRO_ASTEROID_MINE_DESC
 
 Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.'''
 
-PRO_ORBITAL_MINE
-Orbital Mining
-
-PRO_ORBITAL_MINE_DESC
-'''Permits use of the Mining focus on planetary outposts.
-
-On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient. For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minerals with space-based facilities is far more practical. A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available. As well, specialized resources on uninhabitable planets become accessible for the first time.'''
-
 PRO_SOL_ORB_GEN
 Solar Orbital Generation
 

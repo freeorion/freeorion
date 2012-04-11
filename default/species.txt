@@ -1778,13 +1778,7 @@ HAS_MINING_FOCUS
             name = "FOCUS_MINING"
             description = "FOCUS_MINING_DESC"
             location = Or [
-                And [
-                    Or [
-                        TargetPopulation low = 1
-                        OwnerHasTech "PRO_ORBITAL_MINE"
-                    ]
-                    Not Planet type = [Asteroids GasGiant]
-                ]
+                Not Planet type = [Asteroids GasGiant]
                 And [
                     OwnerHasTech "PRO_ASTEROID_MINE"
                     Planet type = Asteroids
@@ -1796,12 +1790,11 @@ HAS_MINING_FOCUS
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
+                    Not Planet type = [Asteroids GasGiant]
                 ]
-                TargetPopulation low = 1
-            ]
+
             graphic = "icons/building/heavy_mining_processor.png"
 '''
 
@@ -1810,7 +1803,7 @@ HAS_INDUSTRY_FOCUS
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1
+                Not Planet type = [Asteroids GasGiant]
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"

@@ -37,6 +37,8 @@ Content:
  ~ ~ Abandoned Colony special now works.
  ~ ~ Added three Derelict system specials.
  ~ ~ Added new stealthy planet specials, and stealth-making monsters.
+ 
+ ~ Removed "Orbital Mining" Tech which only effects planetary outposts.
 
  
 Graphics:
