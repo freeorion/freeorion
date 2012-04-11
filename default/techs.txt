@@ -3315,7 +3315,7 @@ Tech
     researchcost = 52
     researchturns = 2
     prerequisites = "SHP_TACT_SUPER"
-    unlock = Item type = ShipPart name = "ST_PHASING_CLOAK"
+    unlock = Item type = ShipPart name = "ST_DIM_CLOAK"
     effectsgroups =
         EffectsGroup
             scope = And [
