@@ -22,6 +22,7 @@ Content:
  ~ ~ Exempted Non-Organic species from certain biologically based tech benefits.
  ~ ~ Acirema native colonies now occasionally produce ships, and have better defenses
  ~ ~ Additional minor species.
+ ~ ~ Default focus for new colonies is now something the species is good at.
  
  ~ Monsters:
  ~ ~ Greatly increased the strength of monsters.
