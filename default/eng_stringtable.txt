@@ -2555,7 +2555,7 @@ SITREP_PLANET_CAPTURED
 %planet% was captured by %empire%.
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
-The population of %planet% was lost to famine.
+The colony on %planet% is destroyed.
 
 SITREP_PLANET_COLONIZED
 %planet% has been colonized.

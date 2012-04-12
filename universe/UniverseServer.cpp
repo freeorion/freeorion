@@ -1781,8 +1781,12 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
 
         // find a focus to give planets by default.  use first defined available focus.
         std::vector<std::string> available_foci = planet->AvailableFoci();
-        if (!available_foci.empty())
+        if (!available_foci.empty()) {
             planet->SetFocus(*available_foci.begin());
+            Logger().debugStream() << "Set focus to " << *available_foci.begin();
+        } else {
+            Logger().debugStream() << "No foci available for this planet!";
+        }
 
         Logger().debugStream() << "Added native " << species_name << " to planet " << planet->Name();
     }
