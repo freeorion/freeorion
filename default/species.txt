@@ -2650,7 +2650,7 @@ GOOD_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Good
             ]
-            accountinglabel = "AVERAGE_FARMING_LABLE"
+            accountinglabel = "GOOD_FARMING_LABLE"
             effects = SetTargetPopulation Value + Source.Population * .25
 
         EffectsGroup
@@ -2659,7 +2659,7 @@ GOOD_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Adequate
             ]
-            accountinglabel = "AVERAGE_FARMING_LABLE"
+            accountinglabel = "GOOD_FARMING_LABLE"
             effects = SetTargetPopulation Value + Source.Population * .18
 
         EffectsGroup
@@ -2668,7 +2668,7 @@ GOOD_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Poor
             ]
-            accountinglabel = "AVERAGE_FARMING_LABLE"
+            accountinglabel = "GOOD_FARMING_LABLE"
             effects = SetTargetPopulation Value + Source.Population * .12
 
         EffectsGroup
@@ -2677,7 +2677,7 @@ GOOD_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Hostile
             ]
-            accountinglabel = "AVERAGE_FARMING_LABLE"
+            accountinglabel = "GOOD_FARMING_LABLE"
             effects = SetTargetPopulation Value + Source.Population * 0.06
 '''
 

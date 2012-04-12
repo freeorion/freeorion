@@ -794,6 +794,7 @@ Part
                     Not OwnedBy AnyEmpire
                 ]
                 VisibleToEmpire Source.Owner
+                Not [[NON_ORGANIC]]
             ]
             activation = OwnedBy AnyEmpire
             effects = [
@@ -811,6 +812,8 @@ Part
                 ContainedBy Contains Source
                 Planet
                 OwnedBy AnyEmpire
+                Stealth high = Source.Detection
+                Not [[NON_ORGANIC]]
             ]
             activation = Not OwnedBy AnyEmpire
             effects = [
@@ -844,6 +847,7 @@ Part
                     Not OwnedBy AnyEmpire
                 ]
                 VisibleToEmpire Source.Owner
+                Not [[NON_ORGANIC]]
             ]
             activation = OwnedBy AnyEmpire
             effects = [
@@ -862,6 +866,7 @@ Part
                 Planet
                 OwnedBy AnyEmpire
                 Stealth high = Source.Detection
+                Not [[NON_ORGANIC]]
             ]
             activation = Not OwnedBy AnyEmpire
             effects = [
