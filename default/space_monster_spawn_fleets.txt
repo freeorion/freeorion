@@ -121,7 +121,7 @@ MonsterFleet
     spawnlimit = 100
     location = And [
         Not Contains Monster
-        Contains Planet size = Tiny
+        Contains Planet size = Small
         Not WithinStarlaneJumps 3 Contains And [
             Planet
             OwnedBy AnyEmpire

@@ -2175,7 +2175,7 @@ Hull
     location = All
     effectsgroups = [
         EffectsGroup     
-            scope = NumberOf number = 2 condition = Planet size = Tiny
+            scope = NumberOf number = 2 condition = Planet size = Small
             activation = Not Turn low = 1
             effects = AddSpecial name = "SNOWFLAKE_NEST_SPECIAL"
             
@@ -2185,7 +2185,7 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy Contains Planet size = Tiny
+                ContainedBy Contains Planet size = Small
             ]
             activation = Random probability = 0.03
             effects = [
@@ -2224,7 +2224,7 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-                ContainedBy Contains Planet size = Tiny
+                ContainedBy Contains Planet size = Small
             ]
             activation = Random probability = 0.03
             effects = [
