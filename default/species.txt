@@ -1914,7 +1914,7 @@ STANDARD_CONSTRUCTION
 '''        EffectsGroup
             scope = Source
             activation = Source
-            accountinglabel = "STANDARD_CONSTRUCTION_LABLE"
+            accountinglabel = "STANDARD_CONSTRUCTION_LABEL"
             effects = SetTargetConstruction Value + 20
 '''
 
@@ -1925,7 +1925,7 @@ BAD_POPULATION
                 Planet environment = Good
                 Planet size = [Huge GasGiant]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 4
 
         EffectsGroup
@@ -1934,7 +1934,7 @@ BAD_POPULATION
                 Planet environment = Good
                 Planet size = [Large Asteroids]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 3
 
         EffectsGroup
@@ -1943,7 +1943,7 @@ BAD_POPULATION
                 Planet environment = Good
                 Planet size = Medium
             ]
-            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 2
 
         EffectsGroup
@@ -1952,7 +1952,7 @@ BAD_POPULATION
                 Planet environment = Good
                 Planet size = Small
             ]
-            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 1
 
         EffectsGroup
@@ -1961,7 +1961,7 @@ BAD_POPULATION
                 Planet environment = Good
                 Planet size = Tiny
             ]
-            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 0
 
         EffectsGroup
@@ -1970,7 +1970,7 @@ BAD_POPULATION
                 Planet environment = Adequate
                 Planet size = [Huge GasGiant]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 2
 
         EffectsGroup
@@ -1979,7 +1979,7 @@ BAD_POPULATION
                 Planet environment = Adequate
                 Planet size = [Large Asteroids]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 1.5
 
         EffectsGroup
@@ -1988,7 +1988,7 @@ BAD_POPULATION
                 Planet environment = Adequate
                 Planet size = Medium
             ]
-            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 1
 
         EffectsGroup
@@ -1997,7 +1997,7 @@ BAD_POPULATION
                 Planet environment = Adequate
                 Planet size = Small
             ]
-            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 0.5
 
         EffectsGroup
@@ -2006,7 +2006,7 @@ BAD_POPULATION
                 Planet environment = Adequate
                 Planet size = Tiny
             ]
-            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 0
             
 
@@ -2021,7 +2021,7 @@ BAD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_POOR_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_POOR_LABEL"
             effects = SetTargetPopulation Value - 2
 
         EffectsGroup
@@ -2035,7 +2035,7 @@ BAD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_POOR_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_POOR_LABEL"
             effects = SetTargetPopulation Value - 1.5
 
         EffectsGroup
@@ -2049,7 +2049,7 @@ BAD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_POOR_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_POOR_LABEL"
             effects = SetTargetPopulation Value - 1
 
         EffectsGroup
@@ -2063,7 +2063,7 @@ BAD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_POOR_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_POOR_LABEL"
             effects = SetTargetPopulation Value - 0.5
 
         EffectsGroup
@@ -2077,7 +2077,7 @@ BAD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_POOR_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_POOR_LABEL"
             effects = SetTargetPopulation Value + 0
             
             
@@ -2091,7 +2091,7 @@ BAD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABEL"
             effects = SetTargetPopulation Value - 2
 
         EffectsGroup
@@ -2104,7 +2104,7 @@ BAD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABEL"
             effects = SetTargetPopulation Value - 1.5
 
         EffectsGroup
@@ -2117,7 +2117,7 @@ BAD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABEL"
             effects = SetTargetPopulation Value - 1
 
         EffectsGroup
@@ -2129,7 +2129,7 @@ BAD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABEL"
             effects = SetTargetPopulation Value - 0.5
 
         EffectsGroup
@@ -2142,7 +2142,7 @@ BAD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABLE"
+            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABEL"
             effects = SetTargetPopulation Value + 0   
 '''
 
@@ -2153,7 +2153,7 @@ AVERAGE_POPULATION
                 Planet environment = Good
                 Planet size = [Huge GasGiant]
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 8
 
         EffectsGroup
@@ -2162,7 +2162,7 @@ AVERAGE_POPULATION
                 Planet environment = Good
                 Planet size = [Large Asteroids]
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 6
 
         EffectsGroup
@@ -2171,7 +2171,7 @@ AVERAGE_POPULATION
                 Planet environment = Good
                 Planet size = Medium
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 4
 
         EffectsGroup
@@ -2180,7 +2180,7 @@ AVERAGE_POPULATION
                 Planet environment = Good
                 Planet size = Small
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 2
 
         EffectsGroup
@@ -2189,7 +2189,7 @@ AVERAGE_POPULATION
                 Planet environment = Good
                 Planet size = Tiny
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 0
 
         EffectsGroup
@@ -2198,7 +2198,7 @@ AVERAGE_POPULATION
                 Planet environment = Adequate
                 Planet size = [Huge GasGiant]
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 4
 
         EffectsGroup
@@ -2207,7 +2207,7 @@ AVERAGE_POPULATION
                 Planet environment = Adequate
                 Planet size = [Large Asteroids]
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 3
 
         EffectsGroup
@@ -2216,7 +2216,7 @@ AVERAGE_POPULATION
                 Planet environment = Adequate
                 Planet size = Medium
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 2
 
         EffectsGroup
@@ -2225,7 +2225,7 @@ AVERAGE_POPULATION
                 Planet environment = Adequate
                 Planet size = Small
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 1
 
         EffectsGroup
@@ -2234,7 +2234,7 @@ AVERAGE_POPULATION
                 Planet environment = Adequate
                 Planet size = Tiny
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 0
 '''
 
@@ -2245,7 +2245,7 @@ GOOD_POPULATION
                 Planet environment = Good
                 Planet size = [Huge GasGiant]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 12
 
         EffectsGroup
@@ -2254,7 +2254,7 @@ GOOD_POPULATION
                 Planet environment = Good
                 Planet size = [Large Asteroids]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 9
 
         EffectsGroup
@@ -2263,7 +2263,7 @@ GOOD_POPULATION
                 Planet environment = Good
                 Planet size = Medium
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 6
 
         EffectsGroup
@@ -2272,7 +2272,7 @@ GOOD_POPULATION
                 Planet environment = Good
                 Planet size = Small
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 3
 
         EffectsGroup
@@ -2281,7 +2281,7 @@ GOOD_POPULATION
                 Planet environment = Good
                 Planet size = Tiny
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABEL"
             effects = SetTargetPopulation Value + 0
 
         EffectsGroup
@@ -2290,7 +2290,7 @@ GOOD_POPULATION
                 Planet environment = Adequate
                 Planet size = [Huge GasGiant]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 6
 
         EffectsGroup
@@ -2299,7 +2299,7 @@ GOOD_POPULATION
                 Planet environment = Adequate
                 Planet size = [Large Asteroids]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 4.5
 
         EffectsGroup
@@ -2308,7 +2308,7 @@ GOOD_POPULATION
                 Planet environment = Adequate
                 Planet size = Medium
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 3
 
         EffectsGroup
@@ -2317,7 +2317,7 @@ GOOD_POPULATION
                 Planet environment = Adequate
                 Planet size = Small
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 1.5
 
         EffectsGroup
@@ -2326,7 +2326,7 @@ GOOD_POPULATION
                 Planet environment = Adequate
                 Planet size = Tiny
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABEL"
             effects = SetTargetPopulation Value + 0
             
 
@@ -2341,7 +2341,7 @@ GOOD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABEL"
             effects = SetTargetPopulation Value + 2
 
         EffectsGroup
@@ -2355,7 +2355,7 @@ GOOD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABEL"
             effects = SetTargetPopulation Value + 1.5
 
         EffectsGroup
@@ -2369,7 +2369,7 @@ GOOD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABEL"
             effects = SetTargetPopulation Value + 1
 
         EffectsGroup
@@ -2383,7 +2383,7 @@ GOOD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABEL"
             effects = SetTargetPopulation Value + 0.5
 
         EffectsGroup
@@ -2397,7 +2397,7 @@ GOOD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABEL"
             effects = SetTargetPopulation Value + 0
             
             
@@ -2411,7 +2411,7 @@ GOOD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABEL"
             effects = SetTargetPopulation Value + 2
 
         EffectsGroup
@@ -2424,7 +2424,7 @@ GOOD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABEL"
             effects = SetTargetPopulation Value + 1.5
 
         EffectsGroup
@@ -2437,7 +2437,7 @@ GOOD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABEL"
             effects = SetTargetPopulation Value + 1
 
         EffectsGroup
@@ -2449,7 +2449,7 @@ GOOD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABEL"
             effects = SetTargetPopulation Value + 0.5
 
         EffectsGroup
@@ -2462,7 +2462,7 @@ GOOD_POPULATION
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABLE"
+            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABEL"
             effects = SetTargetPopulation Value + 0   
 '''
 
@@ -2575,7 +2575,7 @@ BAD_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Good
             ]
-            accountinglabel = "BAD_FARMING_LABLE"
+            accountinglabel = "BAD_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * 0.1
 
         EffectsGroup
@@ -2584,7 +2584,7 @@ BAD_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Adequate
             ]
-            accountinglabel = "BAD_FARMING_LABLE"
+            accountinglabel = "BAD_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * 0.075
 
         EffectsGroup
@@ -2593,7 +2593,7 @@ BAD_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Poor
             ]
-            accountinglabel = "BAD_FARMING_LABLE"
+            accountinglabel = "BAD_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * 0.05
 
         EffectsGroup
@@ -2602,7 +2602,7 @@ BAD_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Hostile
             ]
-            accountinglabel = "BAD_FARMING_LABLE"
+            accountinglabel = "BAD_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * 0.025
 '''
 
@@ -2613,7 +2613,7 @@ AVERAGE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Good
             ]
-            accountinglabel = "AVERAGE_FARMING_LABLE"
+            accountinglabel = "AVERAGE_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * .2
 
         EffectsGroup
@@ -2622,7 +2622,7 @@ AVERAGE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Adequate
             ]
-            accountinglabel = "AVERAGE_FARMING_LABLE"
+            accountinglabel = "AVERAGE_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * .15
 
         EffectsGroup
@@ -2631,7 +2631,7 @@ AVERAGE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Poor
             ]
-            accountinglabel = "AVERAGE_FARMING_LABLE"
+            accountinglabel = "AVERAGE_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * .1
 
         EffectsGroup
@@ -2640,7 +2640,7 @@ AVERAGE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Hostile
             ]
-            accountinglabel = "AVERAGE_FARMING_LABLE"
+            accountinglabel = "AVERAGE_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * 0.05
 '''
 
@@ -2651,7 +2651,7 @@ GOOD_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Good
             ]
-            accountinglabel = "GOOD_FARMING_LABLE"
+            accountinglabel = "GOOD_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * .25
 
         EffectsGroup
@@ -2660,7 +2660,7 @@ GOOD_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Adequate
             ]
-            accountinglabel = "GOOD_FARMING_LABLE"
+            accountinglabel = "GOOD_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * .18
 
         EffectsGroup
@@ -2669,7 +2669,7 @@ GOOD_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Poor
             ]
-            accountinglabel = "GOOD_FARMING_LABLE"
+            accountinglabel = "GOOD_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * .12
 
         EffectsGroup
@@ -2678,7 +2678,7 @@ GOOD_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Hostile
             ]
-            accountinglabel = "GOOD_FARMING_LABLE"
+            accountinglabel = "GOOD_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * 0.06
 '''
 
@@ -2689,7 +2689,7 @@ GREAT_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Good
             ]
-            accountinglabel = "GREAT_FARMING_LABLE"
+            accountinglabel = "GREAT_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * 0.3
 
         EffectsGroup
@@ -2698,7 +2698,7 @@ GREAT_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Adequate
             ]
-            accountinglabel = "GREAT_FARMING_LABLE"
+            accountinglabel = "GREAT_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * 0.225
 
         EffectsGroup
@@ -2707,7 +2707,7 @@ GREAT_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Poor
             ]
-            accountinglabel = "GREAT_FARMING_LABLE"
+            accountinglabel = "GREAT_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * 0.15
 
         EffectsGroup
@@ -2716,7 +2716,7 @@ GREAT_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Hostile
             ]
-            accountinglabel = "GREAT_FARMING_LABLE"
+            accountinglabel = "GREAT_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * .075
 '''
 
@@ -2727,7 +2727,7 @@ ULTIMATE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Good
             ]
-            accountinglabel = "ULTIMATE_FARMING_LABLE"
+            accountinglabel = "ULTIMATE_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * 0.4
 
         EffectsGroup
@@ -2736,7 +2736,7 @@ ULTIMATE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Adequate
             ]
-            accountinglabel = "ULTIMATE_FARMING_LABLE"
+            accountinglabel = "ULTIMATE_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * 0.3
 
         EffectsGroup
@@ -2745,7 +2745,7 @@ ULTIMATE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Poor
             ]
-            accountinglabel = "ULTIMATE_FARMING_LABLE"
+            accountinglabel = "ULTIMATE_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * 0.2
 
         EffectsGroup
@@ -2754,7 +2754,7 @@ ULTIMATE_FARMING
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Hostile
             ]
-            accountinglabel = "ULTIMATE_FARMING_LABLE"
+            accountinglabel = "ULTIMATE_FARMING_LABEL"
             effects = SetTargetPopulation Value + Source.Population * 0.1
 '''
 
@@ -2765,89 +2765,12 @@ NO_MINING
 '''
 
 BAD_MINING
-'''EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Tiny
-            ]
-            accountinglabel = "BAD_MINING_LABLE"
-            effects = SetTargetMining Value + 2.0 + Target.Population * 0.1
+'''[[AVERAGE_MINING]]
 
         EffectsGroup
             scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Small
-            ]
-            accountinglabel = "BAD_MINING_LABLE"
-            effects = SetTargetMining Value + 1.5 + Target.Population * 0.1
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Medium
-            ]
-            accountinglabel = "BAD_MINING_LABLE"
-            effects = SetTargetMining Value + 1.0 + Target.Population * 0.1
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Large
-            ]
-            accountinglabel = "BAD_MINING_LABLE"
-            effects = SetTargetMining Value + .5 + Target.Population * 0.1
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = [Huge GasGiant Asteroids]
-            ]
-            accountinglabel = "BAD_MINING_LABLE"
-            effects = SetTargetMining Value -.5 + Target.Population * 0.1
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_MINING"
-                Planet type = Asteroids
-            ]
-            accountinglabel = "BAD_MINING_LABLE"
-            effects = SetTargetMining Value + 1.5
-
-        EffectsGroup
-            scope = Source
-            activation = Focus "FOCUS_HEAVY_MINING"
-            accountinglabel = "BAD_MINING_LABLE"
-            effects = SetTargetMining Value + Target.Population * 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_HEAVY_MINING"
-                Not OwnerHasTech "PRO_ENVIRO_MINING"
-            ]
-            accountinglabel = "BAD_MINING_LABLE"
-            effects = [
-                SetTargetPopulation Value - 5
-                SetTargetPopulation Value * 0.5
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_HEAVY_MINING"
-                OwnerHasTech "PRO_ENVIRO_MINING"
-            ]
-            accountinglabel = "BAD_MINING_LABLE"
-            effects = [
-                SetTargetPopulation Value - 5
-                SetTargetPopulation Value * 0.75
-            ]
+            accountinglabel = "BAD_MINING_LABEL"
+            effects = SetTargetMining Value*[[BAD_MULTIPLIER]]
 '''
 
 AVERAGE_MINING
@@ -2857,7 +2780,7 @@ AVERAGE_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Tiny
             ]
-            accountinglabel = "AVERAGE_MINING_LABLE"
+            accountinglabel = "FOCUS_MINING_LABEL"
             effects = SetTargetMining Value + 4.0 + Target.Population * 0.2
 
         EffectsGroup
@@ -2866,7 +2789,7 @@ AVERAGE_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Small
             ]
-            accountinglabel = "AVERAGE_MINING_LABLE"
+            accountinglabel = "FOCUS_MINING_LABEL"
             effects = SetTargetMining Value + 3.0 + Target.Population * 0.2
 
         EffectsGroup
@@ -2875,7 +2798,7 @@ AVERAGE_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Medium
             ]
-            accountinglabel = "AVERAGE_MINING_LABLE"
+            accountinglabel = "FOCUS_MINING_LABEL"
             effects = SetTargetMining Value + 2.0 + Target.Population * 0.2
 
         EffectsGroup
@@ -2884,16 +2807,16 @@ AVERAGE_MINING
                 Focus type = "FOCUS_MINING"
                 Planet size = Large
             ]
-            accountinglabel = "AVERAGE_MINING_LABLE"
+            accountinglabel = "FOCUS_MINING_LABEL"
             effects = SetTargetMining Value + 1.0 + Target.Population * 0.2
 
         EffectsGroup
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = [Huge GasGiant Asteroids]
+                Planet size = [Huge GasGiant]
             ]
-            accountinglabel = "AVERAGE_MINING_LABLE"
+            accountinglabel = "FOCUS_MINING_LABEL"
             effects = SetTargetMining Value + Target.Population * 0.2
 
         EffectsGroup
@@ -2902,13 +2825,13 @@ AVERAGE_MINING
                 Focus "FOCUS_MINING"
                 Planet type = Asteroids
             ]
-            accountinglabel = "AVERAGE_MINING_LABLE"
-            effects = SetTargetMining Value + 3.0
+            accountinglabel = "ASTEROID_MINING_LABEL"
+            effects = SetTargetMining Value + 3
 
         EffectsGroup
             scope = Source
             activation = Focus "FOCUS_HEAVY_MINING"
-            accountinglabel = "AVERAGE_MINING_LABLE"
+            accountinglabel = "FOCUS_HEAVY_MINING_LABEL"
             effects = SetTargetMining Value + Target.Population * 4
 
         EffectsGroup
@@ -2917,9 +2840,9 @@ AVERAGE_MINING
                 Focus "FOCUS_HEAVY_MINING"
                 Not OwnerHasTech "PRO_ENVIRO_MINING"
             ]
-            accountinglabel = "AVERAGE_MINING_LABLE"
+            accountinglabel = "FOCUS_HEAVY_MINING_LABEL"
             effects = [
-                SetTargetPopulation Value - 10
+                SetTargetPopulation Value - 5
                 SetTargetPopulation Value * 0.5
             ]
 
@@ -2929,260 +2852,38 @@ AVERAGE_MINING
                 Focus "FOCUS_HEAVY_MINING"
                 OwnerHasTech "PRO_ENVIRO_MINING"
             ]
-            accountinglabel = "AVERAGE_MINING_LABLE"
-            effects = SetTargetPopulation Value * 0.75
-'''
-
-GOOD_MINING
-'''EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Tiny
-            ]
-            accountinglabel = "GOOD_MINING_LABLE"
-            effects = SetTargetMining Value + 6.0 + Target.Population * 0.3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Small
-            ]
-            accountinglabel = "GOOD_MINING_LABLE"
-            effects = SetTargetMining Value + 4.5 + Target.Population * 0.3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Medium
-            ]
-            accountinglabel = "GOOD_MINING_LABLE"
-            effects = SetTargetMining Value + 3.0 + Target.Population * 0.3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Large
-            ]
-            accountinglabel = "GOOD_MINING_LABLE"
-            effects = SetTargetMining Value + 1.5 + Target.Population * 0.3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = [Huge GasGiant Asteroids]
-            ]
-            accountinglabel = "GOOD_MINING_LABLE"
-            effects = SetTargetMining Value + .5 + Target.Population * 0.3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_MINING"
-                Planet type = Asteroids
-            ]
-            accountinglabel = "GOOD_MINING_LABLE"
-            effects = SetTargetMining Value + 6.0
-
-        EffectsGroup
-            scope = Source
-            activation = Focus "FOCUS_HEAVY_MINING"
-            accountinglabel = "GOOD_MINING_LABLE"
-            effects = SetTargetMining Value + Target.Population * 3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_HEAVY_MINING"
-                Not OwnerHasTech "PRO_ENVIRO_MINING"
-            ]
-            accountinglabel = "GOOD_MINING_LABLE"
-            effects = [
-                SetTargetPopulation Value  - 10
-                SetTargetPopulation Value * 0.5
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_HEAVY_MINING"
-                OwnerHasTech "PRO_ENVIRO_MINING"
-            ]
-            accountinglabel = "GOOD_MINING_LABLE"
-            effects = [
-                SetTargetPopulation Value  - 5
-                SetTargetPopulation Value * 0.75
-            ]
-'''
-
-GREAT_MINING
-'''EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Tiny
-            ]
-            accountinglabel = "GREAT_MINING_LABLE"
-            effects = SetTargetMining Value + 8.0 + Target.Population * 0.4
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Small
-            ]
-            accountinglabel = "GREAT_MINING_LABLE"
-            effects = SetTargetMining Value + 6.0 + Target.Population * 0.4
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Medium
-            ]
-            accountinglabel = "GREAT_MINING_LABLE"
-            effects = SetTargetMining Value + 4.0 + Target.Population * 0.4
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Large
-            ]
-            accountinglabel = "GREAT_MINING_LABLE"
-            effects = SetTargetMining Value + 2.0 + Target.Population * 0.4
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = [Huge GasGiant Asteroids]
-            ]
-            accountinglabel = "GREAT_MINING_LABLE"
-            effects = SetTargetMining Value + 1.0 + Target.Population * 0.4
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_MINING"
-                Planet type = Asteroids
-            ]
-            accountinglabel = "GREAT_MINING_LABLE"
-            effects = SetTargetMining Value + 6.0
-
-        EffectsGroup
-            scope = Source
-            activation = Focus "FOCUS_HEAVY_MINING"
-            accountinglabel = "GREAT_MINING_LABLE"
-            effects = SetTargetMining Value + Target.Population * 6
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_HEAVY_MINING"
-                Not OwnerHasTech "PRO_ENVIRO_MINING"
-            ]
-            accountinglabel = "GREAT_MINING_LABLE"
-            effects = [
-                SetTargetPopulation Value - 10
-                SetTargetPopulation Value * 0.5
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_HEAVY_MINING"
-                OwnerHasTech "PRO_ENVIRO_MINING"
-            ]
-            accountinglabel = "GREAT_MINING_LABLE"
+            accountinglabel = "FOCUS_HEAVY_MINING_LABEL"
             effects = [
                 SetTargetPopulation Value - 5
                 SetTargetPopulation Value * 0.75
             ]
 '''
 
+GOOD_MINING
+'''[[AVERAGE_MINING]]
+
+        EffectsGroup
+            scope = Source
+            accountinglabel = "GOOD_MINING_LABEL"
+            effects = SetTargetMining Value*[[GOOD_MULTIPLIER]]
+'''
+
+GREAT_MINING
+'''[[AVERAGE_MINING]]
+
+        EffectsGroup
+            scope = Source
+            accountinglabel = "GREAT_MINING_LABEL"
+            effects = SetTargetMining Value*[[GREAT_MULTIPLIER]]
+'''
+
 ULTIMATE_MINING
-'''EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Tiny
-            ]
-            accountinglabel = "ULTIMATE_MINING_LABLE"
-            effects = SetTargetMining Value + 16.0 + Target.Population * 0.8
+'''[[AVERAGE_MINING]]
 
         EffectsGroup
             scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Small
-            ]
-            accountinglabel = "ULTIMATE_MINING_LABLE"
-            effects = SetTargetMining Value + 12.0 + Target.Population * 0.8
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Medium
-            ]
-            accountinglabel = "ULTIMATE_MINING_LABLE"
-            effects = SetTargetMining Value + 8.0 + Target.Population * 0.8
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = Large
-            ]
-            accountinglabel = "ULTIMATE_MINING_LABLE"
-            effects = SetTargetMining Value + 4.0 + Target.Population * 0.8
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus type = "FOCUS_MINING"
-                Planet size = [Huge GasGiant Asteroids]
-            ]
-            accountinglabel = "ULTIMATE_MINING_LABLE"
-            effects = SetTargetMining Value + 2.0 + Target.Population * 0.8
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_MINING"
-                Planet type = Asteroids
-            ]
-            accountinglabel = "ULTIMATE_MINING_LABLE"
-            effects = SetTargetMining Value + 8.0
-
-        EffectsGroup
-            scope = Source
-            activation = Focus "FOCUS_HEAVY_MINING"
-            accountinglabel = "ULTIMATE_MINING_LABLE"
-            effects = SetTargetMining Value + Target.Population * 8
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_HEAVY_MINING"
-                Not OwnerHasTech "PRO_ENVIRO_MINING"
-            ]
-            accountinglabel = "ULTIMATE_MINING_LABLE"
-            effects =  SetTargetPopulation Value * 0.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_HEAVY_MINING"
-                OwnerHasTech "PRO_ENVIRO_MINING"
-            ]
-            accountinglabel = "ULTIMATE_MINING_LABLE"
-            effects = SetTargetPopulation Value * 0.75
+            accountinglabel = "BAD_MINING_LABEL"
+            effects = SetTargetMining Value*[[ULTIMATE_MULTIPLIER]]
 '''
 
 //#####      I N D U S T R Y    #####//
@@ -3192,45 +2893,26 @@ NO_INDUSTRY
 '''
 
 BAD_INDUSTRY
-'''EffectsGroup
+'''[[AVERAGE_INDUSTRY]]
+
+        EffectsGroup
             scope = Source
-            activation = Focus type = "FOCUS_INDUSTRY"
-            accountinglabel = "BAD_INDUSTRY_LABLE"
-            effects = SetTargetIndustry Value + Target.Population * .25
-
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = Focus "FOCUS_REPLIC_FARMING"
-            stackinggroup = "REPLICATION_STACK"
-            accountinglabel = "BAD_INDUSTRY_LABLE"
-            effects = [
-                SetTargetPopulation Value + Target.TargetIndustry / 4
-                SetTargetIndustry Value / 2
-            ]
-
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = Focus "FOCUS_REPLIC_MINING"
-            stackinggroup = "REPLICATION_STACK"
-            accountinglabel = "BAD_INDUSTRY_LABLE"
-            effects = [
-                SetTargetMining Value + Target.TargetIndustry / 4
-                SetTargetIndustry Value / 2
-            ]
+            accountinglabel = "BAD_INDUSTRY_LABEL"
+            effects = SetTargetIndustry Value*[[BAD_MULTIPLIER]]
 '''
 
 AVERAGE_INDUSTRY
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
-            accountinglabel = "AVERAGE_INDUSTRY_LABLE"
+            accountinglabel = "FOCUS_INDUSTRY_LABEL"
             effects = SetTargetIndustry Value + Target.Population * .5
 
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
-            accountinglabel = "AVERAGE_INDUSTRY_LABLE"
+            accountinglabel = "FOOD_REPLICATORS_LABEL"
             effects = [
                 SetTargetPopulation Value + Target.TargetIndustry / 4
                 SetTargetIndustry Value / 2
@@ -3240,7 +2922,7 @@ AVERAGE_INDUSTRY
             scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_MINING"
             stackinggroup = "REPLICATION_STACK"
-            accountinglabel = "AVERAGE_INDUSTRY_LABLE"
+            accountinglabel = "MINERAL_REPLICATORS_LABEL"
             effects = [
                 SetTargetMining Value + Target.TargetIndustry / 4
                 SetTargetIndustry Value / 2
@@ -3248,81 +2930,30 @@ AVERAGE_INDUSTRY
 '''
 
 GOOD_INDUSTRY
-'''EffectsGroup
+'''[[AVERAGE_INDUSTRY]]
+
+        EffectsGroup
             scope = Source
-            activation = Focus type = "FOCUS_INDUSTRY"
-            accountinglabel = "GOOD_INDUSTRY_LABLE"
-            effects = SetTargetIndustry Value + Target.Population * .75
-
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = Focus "FOCUS_REPLIC_FARMING"
-            stackinggroup = "REPLICATION_STACK"
-            accountinglabel = "GOOD_INDUSTRY_LABLE"
-            effects = [
-                SetTargetPopulation Value + Target.TargetIndustry / 4
-                SetTargetIndustry Value / 2
-            ]
-
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = Focus "FOCUS_REPLIC_MINING"
-            stackinggroup = "REPLICATION_STACK"
-            accountinglabel = "GOOD_INDUSTRY_LABLE"
-            effects = [
-                SetTargetMining Value + Target.TargetIndustry / 4
-                SetTargetIndustry Value / 2
-            ]
+            accountinglabel = "GOOD_INDUSTRY_LABEL"
+            effects = SetTargetIndustry Value*[[GOOD_MULTIPLIER]]
 '''
 
 GREAT_INDUSTRY
-'''EffectsGroup
+'''[[AVERAGE_INDUSTRY]]
+
+        EffectsGroup
             scope = Source
-            activation = Focus type = "FOCUS_INDUSTRY"
-            accountinglabel = "GREAT_INDUSTRY_LABLE"
-            effects = SetTargetIndustry Value + Target.Population * 1
-
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = Focus "FOCUS_REPLIC_FARMING"
-            stackinggroup = "REPLICATION_STACK"
-            accountinglabel = "GREAT_INDUSTRY_LABLE"
-            effects = SetTargetIndustry Value / 2
-
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = Focus "FOCUS_REPLIC_MINING"
-            stackinggroup = "REPLICATION_STACK"
-            accountinglabel = "GREAT_INDUSTRY_LABLE"
-            effects = [
-                SetTargetMining Value + Target.TargetIndustry / 4
-                SetTargetIndustry Value / 2
-            ]
+            accountinglabel = "GREAT_INDUSTRY_LABEL"
+            effects = SetTargetIndustry Value*[[GREAT_MULTIPLIER]]
 '''
 
 ULTIMATE_INDUSTRY
-'''EffectsGroup
+'''[[AVERAGE_INDUSTRY]]
+
+        EffectsGroup
             scope = Source
-            activation = Focus type = "FOCUS_INDUSTRY"
-            accountinglabel = "ULTIMATE_INDUSTRY_LABLE"
-            effects = SetTargetIndustry Value + Target.Population * 2
-
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = Focus "FOCUS_REPLIC_FARMING"
-            stackinggroup = "REPLICATION_STACK"
-            accountinglabel = "ULTIMATE_INDUSTRY_LABLE"
-            effects = SetTargetIndustry Value / 2
-
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = Focus "FOCUS_REPLIC_MINING"
-            stackinggroup = "REPLICATION_STACK"
-            accountinglabel = "ULTIMATE_INDUSTRY_LABLE"
-            effects = [
-                SetTargetMining Value + Target.TargetIndustry / 4
-                SetTargetIndustry Value / 2
-            ]
+            accountinglabel = "GREAT_INDUSTRY_LABEL"
+            effects = SetTargetIndustry Value*[[GREAT_MULTIPLIER]]
 '''
 
 //#####      R E S E A R C H    #####//
@@ -3332,43 +2963,47 @@ NO_RESEARCH
 '''
 
 BAD_RESEARCH
-'''EffectsGroup
+'''[[AVERAGE_RESEARCH]]
+
+        EffectsGroup
             scope = Source
-            activation = Focus type = "FOCUS_RESEARCH"
-            accountinglabel = "BAD_RESEARCH_LABLE"
-            effects = SetTargetResearch Value + Target.Population * .25
+            accountinglabel = "BAD_RESEARCH_LABEL"
+            effects = SetTargetResearch Value*[[BAD_MULTIPLIER]]
 '''
 
 AVERAGE_RESEARCH
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            accountinglabel = "AVERAGE_RESEARCH_LABLE"
+            accountinglabel = "FOCUS_RESEARCH_LABEL"
             effects = SetTargetResearch Value + Target.Population * .5
 '''
 
 GOOD_RESEARCH
-'''EffectsGroup
+'''[[AVERAGE_RESEARCH]]
+
+        EffectsGroup
             scope = Source
-            activation = Focus type = "FOCUS_RESEARCH"
-            accountinglabel = "GOOD_RESEARCH_LABLE"
-            effects = SetTargetResearch Value + Target.Population * .75
+            accountinglabel = "GOOD_RESEARCH_LABEL"
+            effects = SetTargetResearch Value*[[GOOD_MULTIPLIER]]
 '''
 
 GREAT_RESEARCH
-'''EffectsGroup
+'''[[AVERAGE_RESEARCH]]
+
+        EffectsGroup
             scope = Source
-            activation = Focus type = "FOCUS_RESEARCH"
-            accountinglabel = "GREAT_RESEARCH_LABLE"
-            effects = SetTargetResearch Value + Target.Population * 1
+            accountinglabel = "GREAT_RESEARCH_LABEL"
+            effects = SetTargetResearch Value*[[GREAT_MULTIPLIER]]
 '''
 
 ULTIMATE_RESEARCH
-'''EffectsGroup
+'''[[AVERAGE_RESEARCH]]
+
+        EffectsGroup
             scope = Source
-            activation = Focus type = "FOCUS_RESEARCH"
-            accountinglabel = "ULTIMATE_RESEARCH_LABLE"
-            effects = SetTargetResearch Value + Target.Population * 2
+            accountinglabel = "ULTIMATE_RESEARCH_LABEL"
+            effects = SetTargetResearch Value*[[ULTIMATE_MULTIPLIER]]
 '''
 
 //#####      T R O O P S     #####//
@@ -3380,7 +3015,7 @@ BAD_GROUND_TROOPS
 '''EffectsGroup
             scope = Source
             activation = Not OwnedBy AnyEmpire
-            accountinglabel = "BAD_TROOPS_LABLE"
+            accountinglabel = "BAD_TROOPS_LABEL"
             effects = SetMaxTroops Value + 1
 '''
 
@@ -3388,7 +3023,7 @@ AVERAGE_GROUND_TROOPS
 '''EffectsGroup
             scope = Source
             activation = Not OwnedBy AnyEmpire
-            accountinglabel = "AVERAGE_TROOPS_LABLE"
+            accountinglabel = "AVERAGE_TROOPS_LABEL"
             effects = SetMaxTroops Value + 5
 '''
 
@@ -3396,7 +3031,7 @@ GOOD_GROUND_TROOPS
 '''EffectsGroup
             scope = Source
             activation = Not OwnedBy AnyEmpire
-            accountinglabel = "GOOD_TROOPS_LABLE"
+            accountinglabel = "GOOD_TROOPS_LABEL"
             effects = SetMaxTroops Value + 15
 '''
 
@@ -3404,7 +3039,7 @@ GREAT_GROUND_TROOPS
 '''EffectsGroup
             scope = Source
             activation = Not OwnedBy AnyEmpire
-            accountinglabel = "GREAT_TROOPS_LABLE"
+            accountinglabel = "GREAT_TROOPS_LABEL"
             effects = SetMaxTroops Value + 25
 '''
 
@@ -3412,7 +3047,7 @@ ULTIMATE_GROUND_TROOPS
 '''EffectsGroup
             scope = Source
             activation = Not OwnedBy AnyEmpire
-            accountinglabel = "ULTIMATE_TROOPS_LABLE"
+            accountinglabel = "ULTIMATE_TROOPS_LABEL"
             effects = SetMaxTroops Value + 50
 '''
 
@@ -3548,3 +3183,20 @@ TUNNELS_SPECIAL
         activation = Turn high = 1
         effects = AddSpecial name = "TUNNELS_SPECIAL"
 '''
+
+//#####      M U L T I P L I E R S     #####//
+
+BAD_MULTIPLIER
+'''0.5'''
+
+AVERAGE_MULTIPLIER
+'''1'''
+
+GOOD_MULTIPLIER
+'''1.5'''
+
+GREAT_MULTIPLIER
+'''2'''
+
+ULTIMATE_MULTIPLIER
+'''4'''
