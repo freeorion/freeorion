@@ -1496,7 +1496,7 @@ Hull
 
         EffectsGroup
             scope = And [
-                WithinDistance 0 Source
+                ContainedBy Contains Source
                 Ship
                 Or [
                     OwnedBy TheEmpire Source.Owner
@@ -1504,7 +1504,7 @@ Hull
                 ]
             ]
             activation = Source
-            effects = SetFuel Value + 100
+            effects = SetFuel Target.MaxFuel
 
         EffectsGroup
             scope = And [
@@ -2606,6 +2606,7 @@ MONSTER_MOVE_ALWAYS
                 System
                 Not Contains Source
                 WithinStarlaneJumps 1 Source
+                Not Contains Building "BLD_EXPERIMENTOR_OUTPOST"
             ]
 '''
 

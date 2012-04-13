@@ -1167,28 +1167,40 @@ Special
 
 STEALTH_BOOST_LOW
 '''EffectsGroup
-        scope = Source
+        scope = Or [
+            Source
+            ContainedBy Source
+        ]
         stackinggroup = "TECH_STEALTH_STACK"
         effects = SetStealth Value + [[LOW_STEALTH]]
 '''
 
 STEALTH_BOOST_MEDIUM
 '''EffectsGroup
-        scope = Source
+        scope = Or [
+            Source
+            ContainedBy Source
+        ]
         stackinggroup = "TECH_STEALTH_STACK"
         effects = SetStealth Value + [[MEDIUM_STEALTH]]
 '''
 
 STEALTH_BOOST_HIGH
 '''EffectsGroup
-        scope = Source
+        scope = Or [
+            Source
+            ContainedBy Source
+        ]
         stackinggroup = "TECH_STEALTH_STACK"
         effects = SetStealth Value + [[HIGH_STEALTH]]
 '''
 
 STEALTH_BOOST_ULTIMATE
 '''EffectsGroup
-        scope = Source
+        scope = Or [
+            Source
+            ContainedBy Source
+        ]
         stackinggroup = "TECH_STEALTH_STACK"
         effects = SetStealth Value + [[ULTIMATE_STEALTH]]
 '''

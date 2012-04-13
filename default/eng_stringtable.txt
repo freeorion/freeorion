@@ -6568,7 +6568,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-Increases Industry of double the planet's Population to planets in the empire with the Industry focus. This building can be built at an outpost.
+Increases Industry on all planets in the empire with the Industry focus by double the planet's population. This building can be built at an outpost.
 
 BLD_REPLICATORS
 Replicators
