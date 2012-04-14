@@ -1,3 +1,5 @@
+include "shared_macros.txt"
+
 Special
     name = "ECCENTRIC_ORBIT_SPECIAL"
     description = "ECCENTRIC_ORBIT_SPECIAL_DESC"
@@ -18,6 +20,8 @@ Special
             SetTargetConstruction Value - 20
         ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
+
+[[TEST_SHARED_MACRO]]
 
 Special
     name = "TIDAL_LOCK_SPECIAL"

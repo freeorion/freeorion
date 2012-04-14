@@ -9,6 +9,7 @@
 
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/filesystem/operations.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -198,8 +199,8 @@ namespace parse {
     }
 
     using namespace boost::xpressive;
-    const sregex MACRO_KEY = +_w;
-    const sregex MACRO_TEXT = -*_;
+    const sregex MACRO_KEY = +_w;   // word character (alnum | _), one or more times, greedy
+    const sregex MACRO_TEXT = -*_;  // any character, zero or more times, not greedy
     const sregex MACRO_DEFINITION = (s1 = MACRO_KEY) >> _n >> "'''" >> (s2 = MACRO_TEXT) >> "'''" >> _n;
     const sregex MACRO_INSERTION = "[[" >> *space >> (s1 = MACRO_KEY) >> *space >> "]]";
 
@@ -357,6 +358,66 @@ namespace parse {
         //Logger().debugStream() << "after macro substitution text: " << text;
     }
 
+    bool read_file(const boost::filesystem::path& path, std::string& file_contents) {
+        boost::filesystem::ifstream ifs(path);
+        if (!ifs)
+            return false;
+
+        // skip byte order mark (BOM)
+        static const int UTF8_BOM[3] = {0x00EF, 0x00BB, 0x00BF};
+        for (int i = 0; i < 3; i++) {
+            if (UTF8_BOM[i] != ifs.get()) {
+                // no header set stream back to start of file
+                ifs.seekg(0, std::ios::beg);
+                // and continue
+                break;
+            }
+        }
+
+        std::getline(ifs, file_contents, '\0');
+
+        // no problems?
+        return true;
+    }
+
+    const sregex FILENAME_TEXT = -+_;   // any character, one or more times, not greedy
+    const sregex FILENAME_INSERTION = "include" >> *space >> "\"" >> (s1 = FILENAME_TEXT) >> "\"" >> *space >> _n;
+
+    void file_substitution(std::string& text, boost::filesystem::path& file_search_path) {
+        if (!boost::filesystem::is_directory(file_search_path)) {
+            Logger().errorStream() << "File parsing include substitution given search path that is not a director: " << file_search_path.string();
+            return;
+        }
+        try {
+            std::size_t position = 0; // position in the text, past the already processed part
+            smatch match;
+            while (regex_search(text.begin() + position, text.end(), match, FILENAME_INSERTION, regex_constants::match_default)) {
+                position += match.position();
+                const std::string& matched_text = match.str();  // [[FILENAME_TEXT]]
+                const std::string& filename = match[1];        // just FILENAME_TEXT
+                // read file to insert
+                boost::filesystem::path insert_file_path = file_search_path / filename;
+                std::string insert_file_contents;
+                bool read_success = read_file(insert_file_path, insert_file_contents);
+                if (!read_success) {
+                    Logger().errorStream() << "File parsing include substitution failed to read file at path: " << insert_file_path.string();
+                    continue;
+                }
+
+                // TODO: check for cyclic file insertion
+                // insert file text in place of inclusion line
+                text.replace(position, matched_text.length(), insert_file_contents);
+                // recusrive replacement allowed, so don't skip past
+                // start of replacement text, so that inserted text can
+                // be matched on the next pass
+            }
+        } catch (const std::exception& e) {
+            Logger().errorStream() << "Exception caught regex parsing script file: " << e.what();
+            std::cerr << "Exception caught regex parsing script file: " << e.what() << std::endl;
+            return;
+        }
+    }
+
     namespace detail {
         effects_group_rule& effects_group_parser() {
             static effects_group_rules rules;
@@ -379,30 +440,16 @@ namespace parse {
         {
             filename = path.string();
 
-            {
-                boost::filesystem::ifstream ifs(path);
-                if (ifs) {
-                    // skip byte order mark (BOM)
-                    static const int UTF8_BOM[3] = {0x00EF, 0x00BB, 0x00BF};
-                    for (int i = 0; i < 3; i++) {
-                        if (UTF8_BOM[i] != ifs.get()) {
-                            // no header set stream back to start of file
-                            ifs.seekg(0, std::ios::beg);
-                            // and continue
-                            break;
-                        }
-                    }
-
-                    std::getline(ifs, file_contents, '\0');
-                } else {
-                    Logger().errorStream() << "Unable to open data file " << filename;
-                    return;
-                }
+            bool read_success = read_file(path, file_contents);
+            if (!read_success) {
+                Logger().errorStream() << "Unable to open data file " << filename;
+                return;
             }
 
             // add newline at end to avoid errors when one is left out, but is expected by parsers
             file_contents += "\n";
 
+            file_substitution(file_contents, path.parent_path());
             macro_substitution(file_contents);
 
             first = parse::text_iterator(file_contents.begin());

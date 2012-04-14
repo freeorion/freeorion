@@ -1,0 +1,2 @@
+TEST_SHARED_MACRO
+'''// just a comment '''
