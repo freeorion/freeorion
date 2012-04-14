@@ -4,13 +4,18 @@
 
 Effect::EffectCause::EffectCause() :
     cause_type(INVALID_EFFECTS_GROUP_CAUSE_TYPE),
-    specific_cause()
+    specific_cause(),
+    custom_label()
 {}
 
-Effect::EffectCause::EffectCause(EffectsCauseType cause_type_, const std::string& specific_cause_) :
+Effect::EffectCause::EffectCause(EffectsCauseType cause_type_, const std::string& specific_cause_,
+                                 const std::string& custom_label_) :
     cause_type(cause_type_),
-    specific_cause(specific_cause_)
-{}
+    specific_cause(specific_cause_),
+    custom_label(custom_label_)
+{
+    //Logger().debugStream() << "EffectCause(" << cause_type << ", " << specific_cause << ", " << custom_label << ")";
+}
 
 Effect::AccountingInfo::AccountingInfo() :
     EffectCause(),
@@ -38,8 +43,7 @@ Effect::SourcedEffectsGroup::SourcedEffectsGroup(int source_object_id_, const bo
     effects_group(effects_group_)
 {}
 
-bool Effect::SourcedEffectsGroup::operator<(const SourcedEffectsGroup& right) const
-{
+bool Effect::SourcedEffectsGroup::operator<(const SourcedEffectsGroup& right) const {
     return (this->source_object_id < right.source_object_id ||
         (this->source_object_id == right.source_object_id) && this->effects_group < right.effects_group);
 }

@@ -112,7 +112,7 @@ public:
     const std::vector<EffectBase*>& EffectsList() const         { return m_effects; }
     Description                     GetDescription() const;
     std::string                     DescriptionString() const;
-    std::string                     AccountingLabel() const     { return m_accounting_label; }
+    const std::string&              AccountingLabel() const     { return m_accounting_label; }
     std::string                     Dump() const;
 
 protected:

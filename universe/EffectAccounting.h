@@ -21,9 +21,11 @@ namespace Effect {
       * specific cause.  eg. Building and a particular BuildingType. */
     struct EffectCause {
         EffectCause();
-        EffectCause(EffectsCauseType cause_type_, const std::string& specific_cause_);
+        EffectCause(EffectsCauseType cause_type_, const std::string& specific_cause_,
+                    const std::string& custom_label_ = "");
         EffectsCauseType    cause_type;     ///< general type of effect cause, eg. tech, building, special...
         std::string         specific_cause; ///< name of specific cause, eg. "Wonder Farm", "Antenna Mk. VI"
+        std::string         custom_label;   ///< script-specified accounting label for this effect cause
     };
 
     /** Accounting information about what the causes are and changes produced

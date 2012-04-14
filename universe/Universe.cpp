@@ -1257,12 +1257,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         Effect::SourcedEffectsGroup sourced_effects_group(source_object_id, effects_group);
 
         // combine cause type and specific cause into effect cause
-        Effect::EffectCause effect_cause(effect_cause_type, specific_cause_name);
-        if (!effects_group->AccountingLabel().empty()) {
-            // override default accounting label with custom-written one from content script
-            effect_cause.cause_type = ECT_UNKNOWN_CAUSE;
-            effect_cause.specific_cause = effects_group->AccountingLabel();
-        }
+        Effect::EffectCause effect_cause(effect_cause_type, specific_cause_name, effects_group->AccountingLabel());
 
         // combine target set and effect cause
         Effect::TargetsAndCause target_and_cause(target_set, effect_cause);

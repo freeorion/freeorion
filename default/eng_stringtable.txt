@@ -1887,10 +1887,10 @@ TT_SHIP_PART
 Ship <i>%1%</i> Part <i>%2%</i>
 
 TT_SPECIAL
-Special <i>%1%</i>
+Special <i>%2%</i>
 
 TT_SPECIES
-Species <i>%1%</i>
+Species <i>%2%</i>
 
 TT_UNKNOWN
 Unknown

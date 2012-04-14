@@ -310,6 +310,7 @@ void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cau
                 Effect::AccountingInfo info;
                 info.cause_type =           targets_and_cause.effect_cause.cause_type;
                 info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
+                info.custom_label =         targets_and_cause.effect_cause.custom_label;
                 info.source_id =            source_id;
                 info.running_meter_total =  meter->Current();
 
@@ -385,6 +386,7 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets
             Effect::AccountingInfo info;
             info.cause_type =           targets_and_cause.effect_cause.cause_type;
             info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
+            info.custom_label =         targets_and_cause.effect_cause.custom_label;
             info.source_id =            source_id;
             info.running_meter_total =  meter->Current();
 
