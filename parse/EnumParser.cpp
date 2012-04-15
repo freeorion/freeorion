@@ -329,7 +329,7 @@ namespace parse {
             |    tok.MaxTroops_ [ _val = METER_MAX_TROOPS ]
 
             |    tok.Construction_ [ _val = METER_CONSTRUCTION ]
-            |    tok.Farming_ [ _val = METER_FARMING ]
+            |    tok.Growth_ [ _val = METER_GROWTH ]
             |    tok.Industry_ [ _val = METER_INDUSTRY ]
             |    tok.Mining_ [ _val = METER_MINING ]
             |    tok.Population_ [ _val = METER_POPULATION ]
@@ -376,19 +376,19 @@ namespace parse {
             |    tok.SetMaxTroops_ [ _val = METER_MAX_TROOPS ]
 
             |    tok.SetConstruction_ [ _val = METER_CONSTRUCTION ]
-            |    tok.SetFarming_ [ _val = METER_FARMING ]
             |    tok.SetIndustry_ [ _val = METER_INDUSTRY ]
             |    tok.SetMining_ [ _val = METER_MINING ]
             |    tok.SetPopulation_ [ _val = METER_POPULATION ]
             |    tok.SetResearch_ [ _val = METER_RESEARCH ]
             |    tok.SetTrade_ [ _val = METER_TRADE ]
-
+            
             |    tok.SetDefense_ [ _val = METER_DEFENSE ]
             |    tok.SetFuel_ [ _val = METER_FUEL ]
             |    tok.SetShield_ [ _val = METER_SHIELD ]
             |    tok.SetStructure_ [ _val = METER_STRUCTURE ]
             |    tok.SetTroops_ [ _val = METER_TROOPS ]
-
+            
+            |    tok.SetGrowth_ [ _val = METER_GROWTH ]
             |    tok.SetSupply_ [ _val = METER_SUPPLY ]
             |    tok.SetStealth_ [ _val = METER_STEALTH ]
             |    tok.SetDetection_ [ _val = METER_DETECTION ]

@@ -638,7 +638,7 @@ BuildingType
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Focus "FOCUS_FARMING"
+                Focus "FOCUS_GROWTH"
             ]
             activation = Source
             effects = SetTargetPopulation Value + 3
@@ -804,6 +804,7 @@ BuildingType
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = Source
             stackinggroup = "CLONING_CENTER_EFFECT"

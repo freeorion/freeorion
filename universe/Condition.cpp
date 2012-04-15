@@ -3536,7 +3536,7 @@ std::string Condition::MeterValue::Dump() const {
     case METER_MAX_STRUCTURE:       retval += "MaxStructure";       break;
     case METER_MAX_DEFENSE:         retval += "MaxDefense";         break;
     case METER_POPULATION:          retval += "Population";         break;
-    case METER_FARMING:             retval += "Farming";            break;
+    case METER_GROWTH:              retval += "Growth";             break;
     case METER_INDUSTRY:            retval += "Industry";           break;
     case METER_RESEARCH:            retval += "Research";           break;
     case METER_TRADE:               retval += "Trade";              break;

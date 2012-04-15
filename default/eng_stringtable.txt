@@ -2316,7 +2316,7 @@ ENC_INDEX
 Encyclopedia Index
 
 # type of thing being shown. %1% is a bit of detail, and %2% is the general type.
-# for example: %1% = "Point Defense" or "Farming" and %2% = "Ship Part" or "Building".
+# for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
 # %1% may be an empty string for most general types of things that can be shown.
 ENC_DETAIL_TYPE_STR
 <i>%1% %2%</i>
@@ -2627,7 +2627,7 @@ SP_HUMAN_DESC
 '''Mostly Harmless. All average stats for testing purposes.
 Prefer Terran planets.
 
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2639,7 +2639,7 @@ SP_SCYLIOR_DESC
 '''Three-tentacled, aquatic Nautiloid.
 Prefer Ocean planets.
 
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[GREAT_RESEARCH]]
@@ -2653,7 +2653,7 @@ SP_GYISACHE_DESC
 '''Cowardly, freakish sheep-like herbivores.
 Prefer Swamp planets.
 
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[GREAT_INDUSTRY]]
 [[GOOD_RESEARCH]]
@@ -2667,7 +2667,7 @@ SP_CHATO_DESC
 '''Sessile crystalline entities which ride the animal Gormoshk.
 Prefer Toxic planets.
 
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[GREAT_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[GREAT_RESEARCH]]
@@ -2684,7 +2684,7 @@ Prefer Desert planets.
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
         
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2696,7 +2696,7 @@ SP_HHHOH_DESC
 '''Huge, slow, multi-trunked Mammoths.
 Prefer Tundra planets.
 
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[BAD_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2711,7 +2711,7 @@ SP_EAXAW_DESC
 '''Evil amazonian xenophobic agressive worms.
 Prefer Terran planets.
 
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2725,7 +2725,7 @@ SP_DERTHREAN_DESC
 '''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
 Prefer Toxic planets.
 
-[[GREAT_FARMING]]
+[[GREAT_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2740,7 +2740,7 @@ Prefer Ocean Planets.
 [[GOOD_DETECTION]]
 [[GREAT_STEALTH]]
         
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[BAD_MINING]]
 [[BAD_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -2756,7 +2756,7 @@ SP_TAEGHIRUS_DESC
 '''Weak, flightless birds, united in total mutual cooperation.
 Prefer Swamp planets.
 
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[GOOD_MINING]]
 [[GOOD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2772,7 +2772,7 @@ SP_MUURSH_DESC
 '''Militantly peaceful herbivores.
 Prefer Desert planets.
 
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -2788,7 +2788,7 @@ SP_GEORGE_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
 Prefers Tundra planets.
 
-[[GOOD_FARMING]]
+[[GOOD_GROWTH]]
 [[GOOD_MINING]]
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -2801,7 +2801,7 @@ SP_CRAY_DESC
 '''Cheerful enthusiastic robots.
 Prefer Barren planets.
 
-[[BAD_FARMING]]
+[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
@@ -2817,7 +2817,7 @@ SP_ETTY_DESC
 '''Cybernetic plants.
 Prefer Desert planets.
 
-[[BAD_FARMING]]
+[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2834,7 +2834,7 @@ SP_CYNOS_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
 Prefer Swamp planets.
 
-[[GOOD_FARMING]]
+[[GOOD_GROWTH]]
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2848,7 +2848,7 @@ SP_PHINNERT_DESC
 '''Flying Monkeys.
 Prefer Ocean planets.
 
-[[BAD_FARMING]]
+[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -2860,7 +2860,7 @@ SP_EGASSEM_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
 Prefer Inferno planets.
 
-[[BAD_FARMING]]
+[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -2874,7 +2874,7 @@ SP_SSLITH_DESC
 '''Flat, aquatic, pliable creatures.
 Prefer Tundra planets.
 
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2888,7 +2888,7 @@ SP_FIFTYSEVEN_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
 Prefer Swamp planets.
 
-[[BAD_FARMING]]
+[[BAD_GROWTH]]
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
@@ -2918,7 +2918,7 @@ Prefer Ocean planets.
 
 [[GREAT_STEALTH]]
         
-[[GOOD_FARMING]]
+[[GOOD_GROWTH]]
 [[BAD_MINING]]
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2937,7 +2937,7 @@ Prefer Desert planets.
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
         
-[[BAD_FARMING]]
+[[BAD_GROWTH]]
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2956,7 +2956,7 @@ SP_TRENCHERS_DESC
 '''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
 Prefers Barren planets.
 
-[[NO_FARMING]]
+[[NO_GROWTH]]
 [[AVERAGE_MINING]]
 [[NO_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -2974,7 +2974,7 @@ SP_RAAAGH_DESC
 '''Highly territorial felinoids.
 Prefer Terran planets.
 
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -3000,7 +3000,7 @@ SP_BEIGEGOO_DESC
 '''Insane, intensely private, planet-engulfing nanite swarm.
 Prefers Radiated planets.
 
-[[NO_FARMING]]
+[[NO_GROWTH]]
 [[NO_MINING]]
 [[GREAT_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -3019,7 +3019,7 @@ SP_SILEXIAN_DESC
 '''Gleaming gardener robots, left on their own.
 Prefer Terran planets.
 
-[[GOOD_FARMING]]
+[[GOOD_GROWTH]]
 [[AVERAGE_MINING]]
 [[NO_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3033,7 +3033,7 @@ SP_KOBUNTURA_DESC
 '''Sentient magnetic dust formations with a fascination for building and construction.
 Prefer Barren planets.
 
-[[BAD_FARMING]]
+[[BAD_GROWTH]]
 [[GOOD_MINING]]
 [[GREAT_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3051,7 +3051,7 @@ SP_UGMORRS_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Prefer Inferno planets.
 
-[[BAD_FARMING]]
+[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3068,7 +3068,7 @@ SP_GISGUFGTHRIM_DESC
 '''Shelled herbivores that live off a singular planets-sized colonial gel.
 Prefer Toxic planets.
 
-[[GREAT_FARMING]]
+[[GREAT_GROWTH]]
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
@@ -3086,7 +3086,7 @@ Prefers Terran planets
 
 [[GOOD_STEALTH]]
         
-[[ULTIMATE_FARMING]]
+[[ULTIMATE_GROWTH]]
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -3105,10 +3105,10 @@ The wide ranging, delicate fungi-nets are too large and integrated into the soil
 SP_ABADDONNIANS
 Abaddonnians
 SP_ABADDONNIANS_DESC
-'''A race of cave dwelling genrally decent folk living in permanent slavery to an overprotective computer they created. 
+'''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
 Prefers Inferno planets.
 
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[GREAT_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3123,7 +3123,7 @@ SP_ACIREMA_DESC
 '''A race with nearly limitless power, that cannot survive in this universe.
 Prefers Radiated planets.
 
-[[BAD_FARMING]]
+[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[GREAT_INDUSTRY]]
 [[GOOD_RESEARCH]]
@@ -3153,7 +3153,7 @@ Prefer Ocean planets.
 
 [[ULTIMATE_DETECTION]]
         
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[BAD_MINING]]
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3179,7 +3179,7 @@ SP_VOLP_DESC
 '''Highly bureacratic, overcrowded burrowers.
 Prefer Barren planets.
 
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[BAD_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3204,7 +3204,7 @@ Exobot
 SP_EXOBOT_DESC
 '''Semi-autonomous robots, designed for mining and industry on Radiated planets.
 
-[[BAD_FARMING]]
+[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3223,7 +3223,7 @@ Experimentor
 SP_EXPERIMENTOR_DESC
 '''Percursor mad scientists
 
-[[NO_FARMING]]
+[[NO_GROWTH]]
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
@@ -3243,7 +3243,7 @@ Super Testers
 SP_SUPER_TEST_DESC
 '''Super Testers are unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets.
 
-[[GREAT_FARMING]]
+[[GREAT_GROWTH]]
 [[GREAT_MINING]]
 [[GREAT_INDUSTRY]]
 [[GREAT_RESEARCH]]
@@ -3257,7 +3257,7 @@ Testing Guinea Pig
 SP_TEST_DESC
 '''Try all your experimental scripting on this guy, he'll appear a lot.
 
-[[AVERAGE_FARMING]]
+[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3578,7 +3578,7 @@ good
 
 INVALID_FOCUS_TYPE
 invalid focus type
-FOCUS_FARMING
+FOCUS_GROWTH
 farming
 FOCUS_INDUSTRY
 industry
@@ -3592,10 +3592,6 @@ FOCUS_TRADE
 trade
 FOCUS_LOGISTICS
 Logistics
-FOCUS_REPLIC_FARMING
-Food Replication
-FOCUS_REPLIC_MINING
-Mineral Replication
 FOCUS_STEALTH
 Stealth
 FOCUS_BIOTERROR
@@ -3642,7 +3638,7 @@ METER_POPULATION
 Population
 METER_HEALTH
 Health
-METER_FARMING
+METER_GROWTH
 Farming
 METER_INDUSTRY
 Industry
@@ -3915,8 +3911,8 @@ DESC_VAR_POPULATION
 [[METER_POPULATION]]
 DESC_VAR_HEALTH
 [[METER_HEALTH]]
-DESC_VAR_FARMING
-[[METER_FARMING]]
+DESC_VAR_GROWTH
+[[METER_GROWTH]]
 DESC_VAR_INDUSTRY
 [[METER_INDUSTRY]]
 DESC_VAR_RESEARCH
@@ -5298,7 +5294,7 @@ Unlocks Building
 RESEARCH_SHORT_DESC
 Improves Research
 
-FARMING_SHORT_DESC
+GROWTH_SHORT_DESC
 Improves Farming
 
 MINING_SHORT_DESC
@@ -7494,22 +7490,22 @@ GREAT_HEALTH
 ULTIMATE_HEALTH
 '''Ultimate population growth.'''
 
-NO_FARMING
+NO_GROWTH
 '''- - - No Farming'''
 
-BAD_FARMING
+BAD_GROWTH
 '''    - Bad Farming: 50%'''
 
-AVERAGE_FARMING
+AVERAGE_GROWTH
 '''      Average Farming: 100%'''
 
-GOOD_FARMING
+GOOD_GROWTH
 '''    + Good Farming: 150%'''
 
-GREAT_FARMING
+GREAT_GROWTH
 '''  + + Great Farming: 250%'''
 
-ULTIMATE_FARMING
+ULTIMATE_GROWTH
 '''+ + + Ultimate Farming: 400%'''
 
 NO_MINING
@@ -7658,79 +7654,79 @@ BAD_POPULATION_LABEL
 GOOD_POPULATION_LABEL
 '''%1% Good Population'''
 
-LEVEL_1_FARMING_LABEL
+LEVEL_1_GROWTH_LABEL
 '''Level 1 Farming'''
 
-LEVEL_2_FARMING_LABEL
+LEVEL_2_GROWTH_LABEL
 '''Level 2 Farming'''
 
-LEVEL_3_FARMING_LABEL
+LEVEL_3_GROWTH_LABEL
 '''Level 3 Farming'''
 
-LEVEL_4_FARMING_LABEL
+LEVEL_4_GROWTH_LABEL
 '''Level 4 Farming'''
 
-LEVEL_5_FARMING_LABEL
+LEVEL_5_GROWTH_LABEL
 '''Level 5 Farming'''
 
-LEVEL_6_FARMING_LABEL
+LEVEL_6_GROWTH_LABEL
 '''Level 6 Farming'''
 
-LEVEL_7_FARMING_LABEL
+LEVEL_7_GROWTH_LABEL
 '''Level 7 Farming'''
 
-LEVEL_8_FARMING_LABEL
+LEVEL_8_GROWTH_LABEL
 '''Level 8 Farming'''
 
-LEVEL_9_FARMING_LABEL
+LEVEL_9_GROWTH_LABEL
 '''Level 9 Farming'''
 
-LEVEL_10_FARMING_LABEL
+LEVEL_10_GROWTH_LABEL
 '''Level 10 Farming'''
 
-LEVEL_11_FARMING_LABEL
+LEVEL_11_GROWTH_LABEL
 '''Level 11 Farming'''
 
-LEVEL_12_FARMING_LABEL
+LEVEL_12_GROWTH_LABEL
 '''Level 12 Farming'''
 
-LEVEL_13_FARMING_LABEL
+LEVEL_13_GROWTH_LABEL
 '''Level 13 Farming'''
 
-LEVEL_14_FARMING_LABEL
+LEVEL_14_GROWTH_LABEL
 '''Level 14 Farming'''
 
-LEVEL_15_FARMING_LABEL
+LEVEL_15_GROWTH_LABEL
 '''Level 15 Farming'''
 
-LEVEL_16_FARMING_LABEL
+LEVEL_16_GROWTH_LABEL
 '''Level 16 Farming'''
 
-LEVEL_17_FARMING_LABEL
+LEVEL_17_GROWTH_LABEL
 '''Level 17 Farming'''
 
-LEVEL_18_FARMING_LABEL
+LEVEL_18_GROWTH_LABEL
 '''Level 18 Farming'''
 
-LEVEL_19_FARMING_LABEL
+LEVEL_19_GROWTH_LABEL
 '''Level 19 Farming'''
 
-LEVEL_20_FARMING_LABEL
+LEVEL_20_GROWTH_LABEL
 '''Level 20 Farming'''
 
-FOCUS_FARMING_LABEL
+FOCUS_GROWTH_LABEL
 '''%1% Farming Focus'''
 
-BAD_FARMING_LABEL
+BAD_GROWTH_LABEL
 '''%1% Bad Farming'''
 
-GOOD_FARMING_LABEL
+GOOD_GROWTH_LABEL
 '''%1% Good Farming'''
 
-GREAT_FARMING_LABEL
+GREAT_GROWTH_LABEL
 '''%1% Great Farming'''
 
-ULTIMATE_FARMING_LABEL
+ULTIMATE_GROWTH_LABEL
 '''%1% Ultimate Farming'''
 
 FOCUS_MINING_LABEL

@@ -88,7 +88,6 @@
     (External)
 
 #define NAMES_SEQ_2                             \
-    (Farming)                                   \
     (Fighters)                                  \
     (FighterType)                               \
     (FighterWeaponRange)                        \
@@ -105,6 +104,7 @@
     (GiveEmpireTech)                            \
     (Good)                                      \
     (Graphic)                                   \
+    (Growth)                                    \
     (HasSpecial)                                \
     (HasSpecialSinceTurn)                       \
     (High)                                      \
@@ -243,9 +243,9 @@
     (SetEmpireMineralStockpile)                 \
     (SetEmpireTechProgress)                     \
     (SetEmpireTradeStockpile)                   \
-    (SetFarming)                                \
     (SetFighterWeaponRange)                     \
     (SetFuel)                                   \
+    (SetGrowth)                                 \
     (SetIndustry)                               \
     (SetLaunchRate)                             \
     (SetMaxDefense)                             \

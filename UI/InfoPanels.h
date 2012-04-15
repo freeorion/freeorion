@@ -118,7 +118,7 @@ private:
     int                         m_rescenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
     MeterModifiersIndicator*    m_pop_mod_stat;         ///< indicator of modifiers to other objects' population
-    StatisticIcon*              m_farming_stat;         ///< icon and level of farming
+    StatisticIcon*              m_growth_stat;          ///< icon and level of growth
     StatisticIcon*              m_mining_stat;          ///< icon and number of minerals production
     StatisticIcon*              m_industry_stat;        ///< icon and number of industry production
     StatisticIcon*              m_research_stat;        ///< icon and number of research production

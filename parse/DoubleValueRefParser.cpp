@@ -19,7 +19,7 @@ namespace {
             const parse::lexer& tok = parse::lexer::instance();
 
             final_token
-                %=   tok.Farming_
+                %=   tok.Growth_
                 |    tok.Industry_
                 |    tok.TargetIndustry_
                 |    tok.Research_
@@ -93,7 +93,7 @@ namespace {
                 |    statistic
                 ;
 
-            final_token.name("real number variable name (e.g., Farming)");
+            final_token.name("real number variable name (e.g., Growth)");
             constant.name("real number");
             variable.name("real number variable");
             statistic.name("real number statistic");

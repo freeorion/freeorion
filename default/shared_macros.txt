@@ -1,3 +1,5 @@
+/*   S P E C I E S   */
+
 /* Should keep track of all non-organic species */
 NON_ORGANIC
 '''Or [
@@ -12,3 +14,81 @@ NON_ORGANIC
         Species "SP_EGASSEM"
     ]
 '''
+
+/*   S T E A L T H   */
+
+STEALTH_BOOST_LOW
+'''EffectsGroup
+        scope = Or [
+            Source
+            ContainedBy Source
+        ]
+        stackinggroup = "TECH_STEALTH_STACK"
+        effects = SetStealth Value + [[LOW_STEALTH]]
+'''
+
+STEALTH_BOOST_MEDIUM
+'''EffectsGroup
+        scope = Or [
+            Source
+            ContainedBy Source
+        ]
+        stackinggroup = "TECH_STEALTH_STACK"
+        effects = SetStealth Value + [[MEDIUM_STEALTH]]
+'''
+
+STEALTH_BOOST_HIGH
+'''EffectsGroup
+        scope = Or [
+            Source
+            ContainedBy Source
+        ]
+        stackinggroup = "TECH_STEALTH_STACK"
+        effects = SetStealth Value + [[HIGH_STEALTH]]
+'''
+
+STEALTH_BOOST_ULTIMATE
+'''EffectsGroup
+        scope = Or [
+            Source
+            ContainedBy Source
+        ]
+        stackinggroup = "TECH_STEALTH_STACK"
+        effects = SetStealth Value + [[ULTIMATE_STEALTH]]
+'''
+
+STEALTH_BOOST_PLUS_PLUS
+'''EffectsGroup
+        scope = Source
+        stackinggroup = "SPECIES_STEALTH_STACK"
+        effects = SetStealth Value + [[PLUS_PLUS_STEALTH]]
+'''
+
+SYSTEM_STEALTH_PLUS_PLUS
+'''EffectsGroup
+            scope = And [
+                Contains Source
+                System
+            ]
+            stackinggroup = "SPECIES_STEALTH_STACK"
+            effects = SetStealth Value + [[PLUS_PLUS_STEALTH]]
+'''
+
+LOW_STEALTH
+'''50'''
+
+MEDIUM_STEALTH
+'''200'''
+
+HIGH_STEALTH
+'''400'''
+
+ULTIMATE_STEALTH
+'''650'''
+
+PLUS_STEALTH
+'''25'''
+
+PLUS_PLUS_STEALTH
+'''[[PLUS_STEALTH]] + [[PLUS_STEALTH]]'''
+

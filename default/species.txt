@@ -13,14 +13,14 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -48,14 +48,14 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[GREAT_RESEARCH]]
@@ -83,14 +83,14 @@ Species
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[GREAT_INDUSTRY]]
         [[GOOD_RESEARCH]]
@@ -119,14 +119,14 @@ Species
     
     foci = [
         [[HAS_MINING_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[GREAT_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[GREAT_RESEARCH]]
@@ -154,7 +154,7 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
@@ -164,7 +164,7 @@ Species
         [[GREAT_DETECTION]]
         [[GOOD_STEALTH]]
         
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -193,14 +193,14 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[BAD_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -230,14 +230,14 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -266,7 +266,7 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -274,7 +274,7 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_FARMING]]
+        [[GREAT_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -303,7 +303,7 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
@@ -313,7 +313,7 @@ Species
         [[GOOD_DETECTION]]
         [[GREAT_STEALTH]]
         
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[BAD_MINING]]
         [[BAD_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -341,14 +341,14 @@ Species
     
     foci = [
         [[HAS_MINING_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[GOOD_MINING]]
         [[GOOD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -377,14 +377,14 @@ Species
     
     foci = [
         [[HAS_MINING_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -413,14 +413,14 @@ Species
     
     foci = [
         [[HAS_MINING_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[GOOD_FARMING]]
+        [[GOOD_GROWTH]]
         [[GOOD_MINING]]
         [[GOOD_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -456,14 +456,14 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[BAD_FARMING]]
+        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[BAD_INDUSTRY]]
         [[GOOD_RESEARCH]]
@@ -490,14 +490,14 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[BAD_FARMING]]
+        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -525,13 +525,13 @@ Species
     CanProduceShips
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[GOOD_FARMING]]
+        [[GOOD_GROWTH]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -556,13 +556,13 @@ Species
     
     foci = [
         [[HAS_MINING_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[BAD_FARMING]]
+        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -588,14 +588,14 @@ Species
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[BAD_FARMING]]
+        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[GOOD_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -623,14 +623,14 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -655,12 +655,12 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[BAD_FARMING]]
+        [[BAD_GROWTH]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[ULTIMATE_RESEARCH]]
@@ -687,7 +687,7 @@ Species
     
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -697,7 +697,7 @@ Species
     effectsgroups = [
         [[GREAT_STEALTH]]
         
-        [[GOOD_FARMING]]
+        [[GOOD_GROWTH]]
         [[BAD_MINING]]
         [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -730,7 +730,7 @@ Species
         [[GREAT_DETECTION]]
         [[GOOD_STEALTH]]
         
-        [[BAD_FARMING]]
+        [[BAD_GROWTH]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -760,7 +760,7 @@ Species
     ]
     
     effectsgroups = [
-        [[NO_FARMING]]
+        [[NO_GROWTH]]
         [[AVERAGE_MINING]]
         [[NO_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -785,14 +785,14 @@ Species
     
     foci = [
         [[HAS_MINING_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[BAD_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -820,7 +820,7 @@ Species
     ]
     
     effectsgroups = [
-        [[NO_FARMING]]
+        [[NO_GROWTH]]
         [[NO_MINING]]
         [[GREAT_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -847,14 +847,14 @@ Species
     CanColonize
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[GOOD_FARMING]]
+        [[GOOD_GROWTH]]
         [[AVERAGE_MINING]]
         [[NO_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -882,14 +882,14 @@ Species
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[BAD_FARMING]]
+        [[BAD_GROWTH]]
         [[GOOD_MINING]]
         [[GREAT_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -917,14 +917,14 @@ Species
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[BAD_FARMING]]
+        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[GOOD_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -950,7 +950,7 @@ Species
     CanProduceShips
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
@@ -958,7 +958,7 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_FARMING]]
+        [[GREAT_GROWTH]]
         [[AVERAGE_MINING]]
         [[BAD_INDUSTRY]]
         [[GOOD_RESEARCH]]
@@ -984,14 +984,14 @@ Species
     Native
     
     foci = [
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
         [[GOOD_STEALTH]]
         
-        [[ULTIMATE_FARMING]]
+        [[ULTIMATE_GROWTH]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -1020,14 +1020,14 @@ Species
     
     foci = [
         [[HAS_MINING_FOCUS]]
-        [[HAS_FARMING_FOCUS]] 
+        [[HAS_GROWTH_FOCUS]] 
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[GREAT_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -1056,14 +1056,14 @@ Species
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[BAD_FARMING]]
+        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[GREAT_INDUSTRY]]
         [[GOOD_RESEARCH]]
@@ -1112,7 +1112,7 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
@@ -1121,7 +1121,7 @@ Species
     effectsgroups = [
         [[ULTIMATE_DETECTION]]
         
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[BAD_MINING]]
         [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -1144,7 +1144,7 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         
@@ -1152,7 +1152,7 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[BAD_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -1179,14 +1179,14 @@ Species
     
     foci = [
         [[HAS_MINING_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[BAD_FARMING]]
+        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -1225,7 +1225,7 @@ Species
     ]
 
     effectsgroups = [
-        [[NO_FARMING]]
+        [[NO_GROWTH]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[ULTIMATE_RESEARCH]]
@@ -1252,7 +1252,7 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
@@ -1267,7 +1267,7 @@ Species
             scope = Source
             effects = SetEmpireMeter Source.Owner "METER_DETECTION" 10000  // Omniscient Detection
         
-        [[GREAT_FARMING]]
+        [[GREAT_GROWTH]]
         [[GREAT_MINING]]
         [[GREAT_INDUSTRY]]
         [[GREAT_RESEARCH]]
@@ -1295,14 +1295,14 @@ Species
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
-        [[HAS_FARMING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_FARMING]]
+        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -1765,10 +1765,10 @@ VERY_TOLERANT_EP
         type = Gasgiant     environment = Adequate
     ]'''
 
-HAS_FARMING_FOCUS
+HAS_GROWTH_FOCUS
 '''        Focus
-            name = "FOCUS_FARMING"
-            description = "FOCUS_FARMING_DESC"
+            name = "FOCUS_GROWTH"
+            description = "FOCUS_GROWTH_DESC"
             location = Planet
             graphic = "icons/focus/farming.png"
 '''
@@ -1809,30 +1809,6 @@ HAS_INDUSTRY_FOCUS
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
-            
-        Focus
-            name = "FOCUS_REPLIC_FARMING"
-            description = "FOCUS_REPLIC_FARMING_DESC"
-            location = Or [
-                Contains Building "BLD_REPLICATORS"
-                And [
-                   Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_ENERGY_CONV"
-                ]
-            ]
-            graphic = "icons/focus/replic_farming.png"
-
-        Focus
-            name = "FOCUS_REPLIC_MINING"
-            description = "FOCUS_REPLIC_MINING_DESC"
-            location = Or [
-                Contains Building "BLD_REPLICATORS"
-                And [
-                   Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_ENERGY_CONV"
-                ]
-            ]
-            graphic = "icons/focus/replic_mining.png"
 '''
 
 HAS_RESEARCH_FOCUS
@@ -1968,221 +1944,221 @@ BASIC_POPULATION
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 20
+                Focus "FOCUS_GROWTH"
+                Growth low = 20
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_20_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_20_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 20
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 19
+                Focus "FOCUS_GROWTH"
+                Growth low = 19
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_19_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_19_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 19
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 18
+                Focus "FOCUS_GROWTH"
+                Growth low = 18
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_18_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_18_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 18
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 17
+                Focus "FOCUS_GROWTH"
+                Growth low = 17
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_17_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_17_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 17
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 16
+                Focus "FOCUS_GROWTH"
+                Growth low = 16
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_16_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_16_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 16
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 15
+                Focus "FOCUS_GROWTH"
+                Growth low = 15
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_15_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_15_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 15
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 14
+                Focus "FOCUS_GROWTH"
+                Growth low = 14
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_14_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_14_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 14
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 13
+                Focus "FOCUS_GROWTH"
+                Growth low = 13
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_13_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_13_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 13
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 12
+                Focus "FOCUS_GROWTH"
+                Growth low = 12
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_12_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_12_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 12
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 11
+                Focus "FOCUS_GROWTH"
+                Growth low = 11
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_11_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_11_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 11
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 10
+                Focus "FOCUS_GROWTH"
+                Growth low = 10
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_10_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_10_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 10
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 9
+                Focus "FOCUS_GROWTH"
+                Growth low = 9
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_9_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_9_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 9
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 8
+                Focus "FOCUS_GROWTH"
+                Growth low = 8
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_8_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_8_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 8
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 7
+                Focus "FOCUS_GROWTH"
+                Growth low = 7
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_7_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_7_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 7
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 6
+                Focus "FOCUS_GROWTH"
+                Growth low = 6
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_6_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_6_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 6
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 5
+                Focus "FOCUS_GROWTH"
+                Growth low = 5
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_5_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_5_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 5
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 4
+                Focus "FOCUS_GROWTH"
+                Growth low = 4
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_4_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_4_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 4
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 3
+                Focus "FOCUS_GROWTH"
+                Growth low = 3
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_3_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_3_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 3
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 2
+                Focus "FOCUS_GROWTH"
+                Growth low = 2
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_2_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_2_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 2
 
         EffectsGroup
             scope = Source
             activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_FARMING"
-                Farming low = 1
+                Focus "FOCUS_GROWTH"
+                Growth low = 1
                 Planet environment = Good
             ]
-            stackinggroup = "FARMING_STACK"
-            accountinglabel = "LEVEL_1_FARMING_LABEL"
+            stackinggroup = "GROWTH_STACK"
+            accountinglabel = "LEVEL_1_GROWTH_LABEL"
             effects = SetTargetPopulation Value + 1
 '''
 
@@ -2368,55 +2344,55 @@ ADVANCED_FOCUS_EFFECTS
             effects = SetSupply Value + Target.Population * 0.5
 '''
 
-BASIC_FARMING
+BASIC_GROWTH
 '''1'''
 
-NO_FARMING
+NO_GROWTH
 '''
 '''
 
-BAD_FARMING
-'''[[AVERAGE_FARMING]]
+BAD_GROWTH
+'''[[AVERAGE_GROWTH]]
 
         EffectsGroup
             scope = Source
-            accountinglabel = "BAD_FARMING_LABEL"
-            effects = SetFarming Value*[[BAD_MULTIPLIER]]
+            accountinglabel = "BAD_GROWTH_LABEL"
+            effects = SetGrowth Value*[[BAD_MULTIPLIER]]
 '''
 
-AVERAGE_FARMING
+AVERAGE_GROWTH
 '''EffectsGroup
         scope = Source
-        activation = Focus "FOCUS_FARMING"
-        accountinglabel = "FOCUS_FARMING_LABEL"
-        effects = SetFarming Value + [[BASIC_FARMING]]
+        activation = Focus "FOCUS_GROWTH"
+        accountinglabel = "FOCUS_GROWTH_LABEL"
+        effects = SetGrowth Value + [[BASIC_GROWTH]]
 '''
 
-GOOD_FARMING
-'''[[AVERAGE_FARMING]]
+GOOD_GROWTH
+'''[[AVERAGE_GROWTH]]
 
         EffectsGroup
             scope = Source
-            accountinglabel = "GOOD_FARMING_LABEL"
-            effects = SetFarming Value*[[GOOD_MULTIPLIER]]
+            accountinglabel = "GOOD_GROWTH_LABEL"
+            effects = SetGrowth Value*[[GOOD_MULTIPLIER]]
 '''
 
-GREAT_FARMING
-'''[[AVERAGE_FARMING]]
+GREAT_GROWTH
+'''[[AVERAGE_GROWTH]]
 
         EffectsGroup
             scope = Source
-            accountinglabel = "GREAT_FARMING_LABEL"
-            effects = SetFarming Value*[[GREAT_MULTIPLIER]]
+            accountinglabel = "GREAT_GROWTH_LABEL"
+            effects = SetGrowth Value*[[GREAT_MULTIPLIER]]
 '''
 
-ULTIMATE_FARMING
-'''[[AVERAGE_FARMING]]
+ULTIMATE_GROWTH
+'''[[AVERAGE_GROWTH]]
 
         EffectsGroup
             scope = Source
-            accountinglabel = "ULTIMATE_FARMING_LABEL"
-            effects = SetFarming Value*[[ULTIMATE_MULTIPLIER]]
+            accountinglabel = "ULTIMATE_GROWTH_LABEL"
+            effects = SetGrowth Value*[[ULTIMATE_MULTIPLIER]]
 '''
 
 //#####      M I N I N G    #####//
@@ -2568,26 +2544,6 @@ AVERAGE_INDUSTRY
             activation = Focus type = "FOCUS_INDUSTRY"
             accountinglabel = "FOCUS_INDUSTRY_LABEL"
             effects = SetTargetIndustry Value + Target.Population * .5
-
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = Focus "FOCUS_REPLIC_FARMING"
-            stackinggroup = "REPLICATION_STACK"
-            accountinglabel = "FOOD_REPLICATORS_LABEL"
-            effects = [
-                SetTargetPopulation Value + Target.TargetIndustry / 4
-                SetTargetIndustry Value / 2
-            ]
-
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = Focus "FOCUS_REPLIC_MINING"
-            stackinggroup = "REPLICATION_STACK"
-            accountinglabel = "MINERAL_REPLICATORS_LABEL"
-            effects = [
-                SetTargetMining Value + Target.TargetIndustry / 4
-                SetTargetIndustry Value / 2
-            ]
 '''
 
 GOOD_INDUSTRY

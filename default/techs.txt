@@ -738,7 +738,7 @@ Tech
 Tech
     name = "GRO_GENETIC_ENG"
     description = "GRO_GENETIC_ENG_DESC"
-    short_description = "FARMING_SHORT_DESC"
+    short_description = "GROWTH_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 4
@@ -747,7 +747,7 @@ Tech
         EffectsGroup
             scope = And [
                     OwnedBy TheEmpire Source.Owner
-                    Focus "FOCUS_FARMING"
+                    Focus "FOCUS_GROWTH"
                     Planet environment = Good
             ]
             effects = SetTargetPopulation Value + 4
@@ -755,7 +755,7 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_FARMING"
+                Focus "FOCUS_GROWTH"
                 Planet environment = Adequate
             ]
             effects = SetTargetPopulation Value + 2
@@ -770,7 +770,8 @@ Tech
     techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 1
-    researchturns = 10
+    researchturns = 1
+    Unresearchable
     unlock = Item type = ShipPart name = "CO_OUTPOST_MOD"
     effectsgroups =
         EffectsGroup
@@ -958,7 +959,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
-                Focus "FOCUS_FARMING"
+                Focus "FOCUS_GROWTH"
             ]
             effects = SetTargetPopulation Value + 1
 
@@ -1038,7 +1039,7 @@ Tech
 Tech
     name = "GRO_ORBIT_FARMING"
     description = "GRO_ORBIT_FARMING_DESC"
-    short_description = "FARMING_SHORT_DESC"
+    short_description = "GROWTH_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 8
@@ -1238,16 +1239,16 @@ Tech
             effects = SetTargetIndustry Value + .5
     graphic = "icons/tech/basic_autofactories.png"
 
+/* Find some other use for this concept: */
 Tech
     name = "PRO_ENERGY_CONV"
     description = "PRO_ENERGY_CONV_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Application
+    techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 200
     researchturns = 3
     prerequisites = "LRN_EVERYTHING"
-    unlock = Item type = Building name = "BLD_REPLICATORS"
     graphic = "icons/tech/matter-energy_replication.png"
 
 Tech
