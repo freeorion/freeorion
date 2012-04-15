@@ -284,7 +284,7 @@ Part
     mountableSlotTypes = External
     location = And [
         Number low = 1 high = 999 And [
-            Building "BLD_SHIPYARD_AST_CRYSTAL"
+            Building "BLD_SHIPYARD_AST_REF"
             Or [
                 OwnedBy TheEmpire Source.Owner
                 OwnedBy AllyOf Source.Owner

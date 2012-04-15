@@ -2056,10 +2056,7 @@ Tech
     researchcost = 12
     researchturns = 1
     prerequisites = "PRO_ROBOTIC_PROD"
-    unlock = [
-        Item type = ShipHull name = "SH_ROBOTIC"
-        Item type = Building name = "BLD_SHIPYARD_CON_ROBO"
-    ]
+    unlock = Item type = ShipHull name = "SH_ROBOTIC"
 
 Tech
     name = "SHP_SPACE_FLUX_DRIVE"
@@ -2272,10 +2269,7 @@ Tech
     researchcost = 420
     researchturns = 5
     prerequisites = "SHP_FRC_ENRG_COMP"
-    unlock = [
-        Item type = ShipHull name = "SH_QUANTUM_ENERGY"
-        Item type = Building name = "BLD_SHIPYARD_ENRG_FOCUS"
-    ]
+    unlock = Item type = ShipHull name = "SH_QUANTUM_ENERGY"
 
 Tech
     name = "SHP_ENRG_BOUND_MAN"
@@ -2286,10 +2280,7 @@ Tech
     researchcost = 420
     researchturns = 5
     prerequisites = "SHP_FRC_ENRG_COMP"
-    unlock = [
-        Item type = ShipHull name = "SH_FRACTAL_ENERGY"
-        Item type = Building name = "BLD_SHIPYARD_ENRG_FOCUS"
-    ]
+    unlock = Item type = ShipHull name = "SH_FRACTAL_ENERGY"
 
 Tech
     name = "SHP_SOLAR_CONT"
@@ -2467,10 +2458,7 @@ Tech
     researchcost = 160
     researchturns = 2
     prerequisites = "SHP_MONOMOLEC_LATTICE"
-    unlock = [
-        Item type = ShipHull name = "SH_CRYSTALLIZED_ASTEROID"
-        Item type = Building name = "BLD_SHIPYARD_AST_CRYSTAL"
-    ]
+    unlock = Item type = ShipHull name = "SH_CRYSTALLIZED_ASTEROID"
 
 Tech
     name = "SHP_ROCK_PLATE"
@@ -2495,10 +2483,7 @@ Tech
     researchcost = 160
     researchturns = 2
     prerequisites = "SHP_MONOMOLEC_LATTICE"
-    unlock = [
-        Item type = ShipPart name = "AR_CRYSTAL_PLATE"
-        Item type = Building name = "BLD_SHIPYARD_AST_CRYSTAL"
-    ]
+    unlock = Item type = ShipPart name = "AR_CRYSTAL_PLATE"
 
 Tech
     name = "SHP_ORG_HULL"
@@ -2523,10 +2508,7 @@ Tech
     researchcost = 4
     researchturns = 2
     prerequisites = "SHP_MULTICELL_CAST"
-    unlock = [
-        Item type = ShipHull name = "SH_STATIC_MULTICELLULAR"
-        Item type = Building name = "BLD_SHIPYARD_ORG_IND_ORG_ASSMBL"
-    ]
+    unlock = Item type = ShipHull name = "SH_STATIC_MULTICELLULAR"
 
 Tech
     name = "SHP_ENDOMORPH_HULL"
@@ -2543,7 +2525,6 @@ Tech
     unlock = [
         Item type = ShipHull name = "SH_ENDOMORPHIC"
         Item type = Building name = "BLD_SHIPYARD_ORG_ORB_INC"
-        Item type = Building name = "BLD_SHIPYARD_ORG_IND_ORG_ASSMBL"
     ]
 
 Tech

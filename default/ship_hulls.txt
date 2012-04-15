@@ -134,13 +134,6 @@ Hull
     ]
     location = And [
         Contains And [
-            Or [
-                Building "BLD_SHIPYARD_CON_ROBO"
-                Building "BLD_SHIPYARD_CON_NANOROBO"
-            ]
-            OwnedBy TheEmpire Source.Owner
-        ]
-        Contains And [
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
@@ -831,10 +824,6 @@ Hull
     ]
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_AST_CRYSTAL"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        Contains And [
             Building "BLD_SHIPYARD_AST"
             OwnedBy TheEmpire Source.Owner
         ]
@@ -919,7 +908,7 @@ Hull
     ]
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ORG_IND_ORG_ASSMBL"
+            Building "BLD_SHIPYARD_ORG_ORB_INC"
             OwnedBy TheEmpire Source.Owner
         ]
         Contains And [
@@ -955,10 +944,6 @@ Hull
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        Contains And [
-            Building "BLD_SHIPYARD_ORG_IND_ORG_ASSMBL"
             OwnedBy TheEmpire Source.Owner
         ]
         Contains And [
@@ -1375,10 +1360,6 @@ Hull
             OwnedBy TheEmpire Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ENRG_FOCUS"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        Contains And [
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
@@ -1415,10 +1396,6 @@ Hull
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ENRG_COMP"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        Contains And [
-            Building "BLD_SHIPYARD_ENRG_FOCUS"
             OwnedBy TheEmpire Source.Owner
         ]
         Contains And [

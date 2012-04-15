@@ -3273,7 +3273,8 @@ GAIA_SPECIAL
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Doubles the planet's Farming, Health and Population.
+'''Doubles the planet's Farming, Health and increases Population capacity by 1, 2, 3, and 4 for Small, Medium, Large and Huge planets, respectively.
+Disables the Heavy Mining focus.
 
 This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of it's population.'''
 
@@ -6063,7 +6064,7 @@ SHP_CRYSTAL_PLATE
 Crystal Armor Plating
 
 SHP_CRYSTAL_PLATE_DESC
-An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is a Crystallization Module at an asteroid belt somewhere in the empire or an ally's empire.
+An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is a Asteroid Reformation Processor at an asteroid belt somewhere in the empire or an ally's empire.
 
 SHP_ORG_HULL
 Organic Hull
@@ -6235,12 +6236,6 @@ BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
 
 When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly. Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.'''
 
-BLD_SHIPYARD_CON_ROBO
-Robotic Processing Unit
-
-BLD_SHIPYARD_CON_ROBO_DESC
-A robotic manufacturing plant and AI programming facility designed to produce complex, automated ships. This is an upgrade for the Orbital Drydock and allows construction of Robotic Hulls.
-
 BLD_SHIPYARD_CON_ENGINE
 Engineering Bay
 
@@ -6259,7 +6254,7 @@ Nanorobotic Processing Unit
 BLD_SHIPYARD_CON_NANOROBO_DESC
 '''This is an upgrade for the Orbital Drydock and allows production of Nano-Robotic Hulls and Robotic Hulls.
 
-The production of millions of maintenance nanorobots and their connection to a single master AI requires more extensive robotics facilities than the production of a basic robotic hull. This building is able to facilitate the construction of more advanced robotic hulls than the basic Robotic Processing Unit.'''
+The production of millions of maintenance nanorobots and their connection to a single master AI requires more extensive robotics facilities than the production of a basic robotic hull. This building is able to facilitate the construction of more advanced robotic hulls.'''
 
 BLD_SHIPYARD_CON_GEOINT
 Geointegration Facility
@@ -6297,17 +6292,9 @@ BLD_SHIPYARD_AST_REF
 Asteroid Reformation Processor
 
 BLD_SHIPYARD_AST_REF_DESC
-'''This is an upgrade to the Asteroid Shipyard and allows production of Nano-Asteroid Swarms, Compound Asteroid Hulls and Scattered Asteroid Hull flagships. In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Rock Armor Plating ship part.
+'''This is an upgrade to the Asteroid Shipyard and allows production of Nano-Asteroid Swarms, Compound Asteroid Hulls, Scattered Asteroid Hull flagships, and Crystallized Asteroid Hulls. In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Rock Armor Plating ship part.
 
 An extensive facility dedicated to fusing, shattering, deconstructing and rebuilding preexisting asteroids to form ship's parts and hulls.'''
-
-BLD_SHIPYARD_AST_CRYSTAL
-Crystallization Module
-
-BLD_SHIPYARD_AST_CRYSTAL_DESC
-'''This is an upgrade to the Asteroid Shipyard and allows production of Crystallized Asteroid Hulls. In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Crystal Armor Plating ship part.
-
-A complex facility with the special ability to crystallize asteroids and use them for parts and hulls.'''
 
 BLD_SHIPYARD_ORG_ORB_INC
 Orbital Incubator
@@ -6317,19 +6304,11 @@ BLD_SHIPYARD_ORG_ORB_INC_DESC
 
 A shipyard designed to meet the needs of maturing space-creatures. Conditions within the shipyard must meet exacting specifications in order for the ships within to continue living and developing. As such, any unfinished living ships within are liable to be destroyed if the shipyard is sufficiently damaged.'''
 
-BLD_SHIPYARD_ORG_IND_ORG_ASSMBL
-Industrialized Organic Assembly
-
-BLD_SHIPYARD_ORG_IND_ORG_ASSMBL_DESC
-'''This is an upgrade to the Basic Shipyard and allows the development of Static Multicellular Hulls.
-
-A shipyard upgrade capable of applying multicellular casting techniques to a hull.'''
-
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB
 Cellular Growth Chamber
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC
-'''This is an upgrade to the Organic Shipyard and allows development of Protoplasmic Hulls. The presence of this upgrade and the Xenocoordination Facility upgrade on the same planet allows development of the Endosymbiotic Hull. The presence of these two upgrades anywhere in the empire or an ally's empire allows the production of ships with the Bio-Interceptor ship part.
+'''This is an upgrade to the Organic Shipyard and allows development of Protoplasmic Hulls. The presence of this upgrade and the Xenocoordination Facility upgrade on the same planet allows development of the Endosymbiotic Hull.
 
 A specialized shipyard upgrade able to increase the size of monocellular organisms to truly massive proportions.'''
 
@@ -6364,14 +6343,6 @@ BLD_SHIPYARD_ENRG_COMP_DESC
 '''This is an upgrade to the Basic Shipyard and is required for the formation of all energy hulls and all further energy hull shipyard upgrades.
 
 A highly specialized shipyard designed to create and mount parts on large bundles of densely compressed energy. This is a fragile process, and this shipyard will explode mightily if it takes more than a very small amount of damage.'''
-
-BLD_SHIPYARD_ENRG_FOCUS
-Controlled Energy Focusing Array
-
-BLD_SHIPYARD_ENRG_FOCUS_DESC
-'''This is an upgrade to the Energy Compressor and allows formation of Fractal Energy Hulls and Quantum Energy Hulls.
-
-A shipyard capable of controlling the shape of energy to exacting specifications, as well as conducting and magnifying tiny fluctuations in energy.'''
 
 BLD_SHIPYARD_ENRG_SOLAR
 Solar Containment Unit
@@ -7015,7 +6986,7 @@ AR_CRYSTAL_PLATE
 Crystal Armor Plating
 
 AR_CRYSTAL_PLATE_DESC
-An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is a Crystallization Module at an asteroid belt somewhere in the empire or an ally's empire.
+An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is a Asteroid Reformation Processor at an asteroid belt somewhere in the empire or an ally's empire.
 
 AR_NEUTRONIUM_PLATE
 Neutronium Armor Plating
@@ -7117,7 +7088,7 @@ Robotic Hull
 SH_ROBOTIC_DESC
 '''This hull is completely automated and functions under the principals of Military Robotic Control. Like the standard hull, it has four external slots and one internal slot. It is faster than the standard hull, and will have its structure restored between combats, but has a lower max structure.
 
-In addition to a Basic Shipyard and an orbital Drydock, either a Robotic Processing Unit or a Nanorobotic Processing Unit is required at the planet where it is constructed.'''
+In addition to a Basic Shipyard and an orbital Drydock is required at the planet where it is constructed.'''
 
 SH_SPATIAL_FLUX
 Spatial Flux Hull
@@ -7237,7 +7208,7 @@ Crystallized Asteroid Hull
 SH_CRYSTALLIZED_ASTEROID_DESC
 '''This sturdy hull is made from a average-sized asteroid, hardened by advanced crystallization techniques. Like the regular Asteroid Hull, it has four external slots and two internal slots. Speed is somewhat low, but structure is extremely high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard, an Asteroid Processor and a Crystallization Module at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard, an Asteroid Processor and a Asteroid Reformation Processor at the asteroid belt where it is produced.'''
 
 SH_ORGANIC
 Organic Hull
@@ -7253,7 +7224,7 @@ Static Multicellular Hull
 SH_STATIC_MULTICELLULAR_DESC
 '''Despite being organic, this hull is non-living, being produced via multi-cellular casting. The versatility of the interior and the lack of necessity for internal organs increases its capacity, but without living systems to maintain its structure it is very weak. It has three external slots and two internal slots. Stealth is average and speed is good, but structure is very low. Unlike most organic hulls, this hull regenerates neither structure nor fuel between combats.
 
-Requires a Basic Shipyard and an Industrial Organic Assembly at the planet where it is constructed.'''
+Requires a Basic Shipyard and an Orbital Incubator at the planet where it is constructed.'''
 
 SH_ENDOMORPHIC
 Endomorphic Hull
@@ -7261,7 +7232,7 @@ Endomorphic Hull
 SH_ENDOMORPHIC_DESC
 '''This living hull contains non-living multicellular components for greater internal modularity. This hull has four external slots and three internal slots. Stealth is good and speed is average, but structure is low. This hull regenerates structure and fuel between combats.
 
-Requires a Basic Shipyard, an Orbital Incubator and an Industrial Organic Assembly at the planet where it is developed.'''
+Requires a Basic Shipyard, an Orbital Incubator at the planet where it is developed.'''
 
 SH_SYMBIOTIC
 Symbiotic Hull
@@ -7325,7 +7296,7 @@ Fractal Energy Hull
 SH_FRACTAL_ENERGY_DESC
 '''This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has twenty-seven external slots, but no internal slots. Stealth is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
 
-Requires a Basic Shipyard, an Energy Compressor and a Controlled Energy Focusing Array at the planet where it is formed.'''
+Requires a Basic Shipyard, and an Energy Compressor at the planet where it is formed.'''
 
 SH_QUANTUM_ENERGY
 Quantum Energy Hull
@@ -7333,7 +7304,7 @@ Quantum Energy Hull
 SH_QUANTUM_ENERGY_DESC
 '''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. Speed and structure are very high, but stealth is very low. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
 
-Requires a Basic Shipyard, an Energy Compressor and a Controlled Energy Focusing Array at the planet where it is formed.'''
+Requires a Basic Shipyard, and an Energy Compressor at the planet where it is formed.'''
 
 SH_SOLAR
 Solar Hull

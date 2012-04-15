@@ -1790,11 +1790,12 @@ HAS_MINING_FOCUS
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
+                Not Planet type = [Asteroids GasGiant]
+                Not HasSpecial "GAIA_SPECIAL"
                 Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                Not Planet type = [Asteroids GasGiant]
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 '''
