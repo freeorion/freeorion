@@ -2257,7 +2257,13 @@ ENVIRONMENT_MODIFIER
 
         EffectsGroup
             scope = Source
-            activation = Planet environment = Hostile
+            activation = And [
+                Planet environment = Hostile
+                Not Or [
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
+                    OwnerHasTech "GRO_CYBORGS"
+                ]
+            ]
             accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
             effects = SetTargetPopulation Value*[[HOSTILE_MULTIPLIER]]
 
@@ -2268,7 +2274,7 @@ ENVIRONMENT_MODIFIER
                 OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
-            accountinglabel = "HOSTILE_ENVIRONMNET_LABEL"
+            accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
             effects = SetTargetPopulation Value*([[HOSTILE_MULTIPLIER]] + (1 - [[HOSTILE_MULTIPLIER]])/2)
 '''
 
