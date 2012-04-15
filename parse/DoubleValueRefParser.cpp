@@ -19,7 +19,8 @@ namespace {
             const parse::lexer& tok = parse::lexer::instance();
 
             final_token
-                %=   tok.Industry_
+                %=   tok.Farming_
+                |    tok.Industry_
                 |    tok.TargetIndustry_
                 |    tok.Research_
                 |    tok.TargetResearch_

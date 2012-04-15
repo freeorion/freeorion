@@ -368,6 +368,7 @@ double Planet::NextTurnCurrentMeterValue(MeterType type) const {
     case METER_TARGET_TRADE:
     case METER_TARGET_MINING:
     case METER_TARGET_CONSTRUCTION:
+    case METER_FARMING:
     case METER_INDUSTRY:
     case METER_RESEARCH:
     case METER_TRADE:

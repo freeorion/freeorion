@@ -329,6 +329,7 @@ namespace parse {
             |    tok.MaxTroops_ [ _val = METER_MAX_TROOPS ]
 
             |    tok.Construction_ [ _val = METER_CONSTRUCTION ]
+            |    tok.Farming_ [ _val = METER_FARMING ]
             |    tok.Industry_ [ _val = METER_INDUSTRY ]
             |    tok.Mining_ [ _val = METER_MINING ]
             |    tok.Population_ [ _val = METER_POPULATION ]
@@ -375,6 +376,7 @@ namespace parse {
             |    tok.SetMaxTroops_ [ _val = METER_MAX_TROOPS ]
 
             |    tok.SetConstruction_ [ _val = METER_CONSTRUCTION ]
+            |    tok.SetFarming_ [ _val = METER_FARMING ]
             |    tok.SetIndustry_ [ _val = METER_INDUSTRY ]
             |    tok.SetMining_ [ _val = METER_MINING ]
             |    tok.SetPopulation_ [ _val = METER_POPULATION ]

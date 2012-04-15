@@ -47,6 +47,9 @@ namespace {
       * (such as meter bars) for the indicated \a meter_type */
     GG::Clr MeterColor(MeterType meter_type) {
         switch (meter_type) {
+        case METER_FARMING:
+            return GG::CLR_YELLOW;
+            break;
         case METER_MINING:
         case METER_TARGET_MINING:
             return GG::CLR_RED;
@@ -460,6 +463,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::INTERACTIVE),
     m_rescenter_id(object_id),
     m_pop_mod_stat(0),
+    m_farming_stat(0),
     m_mining_stat(0),
     m_industry_stat(0),
     m_research_stat(0),
@@ -497,6 +501,9 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
 
     // small resource indicators - for use when panel is collapsed
+    m_farming_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
+                                        ClientUI::MeterIcon(METER_FARMING), 0, 3, false);
+
     m_mining_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
                                       ClientUI::MeterIcon(METER_MINING), 0, 3, false);
     AttachChild(m_mining_stat);
@@ -520,6 +527,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
+    meters.push_back(std::make_pair(METER_FARMING,      INVALID_METER_TYPE));
     meters.push_back(std::make_pair(METER_MINING,       METER_TARGET_MINING));
     meters.push_back(std::make_pair(METER_INDUSTRY,     METER_TARGET_INDUSTRY));
     meters.push_back(std::make_pair(METER_RESEARCH,     METER_TARGET_RESEARCH));
@@ -543,6 +551,7 @@ ResourcePanel::~ResourcePanel() {
     delete m_multi_meter_status_bar;
 
     delete m_pop_mod_stat;
+    delete m_farming_stat;
     delete m_mining_stat;
     delete m_industry_stat;
     delete m_research_stat;
@@ -568,7 +577,7 @@ void ResourcePanel::DoExpandCollapseLayout() {
     // initially detach everything (most things?).  Some will be reattached later.
     DetachChild(m_mining_stat);     DetachChild(m_industry_stat);
     DetachChild(m_research_stat);   DetachChild(m_trade_stat);
-    DetachChild(m_pop_mod_stat);
+    DetachChild(m_pop_mod_stat);    DetachChild(m_farming_stat);
 
     DetachChild(m_focus_drop);
 
@@ -585,6 +594,7 @@ void ResourcePanel::DoExpandCollapseLayout() {
             // determine which two resource icons to display while collapsed: the two with the highest production.
             // sort by insereting into multimap keyed by production amount, then taking the first two icons therein.
             std::multimap<double, StatisticIcon*> res_prod_icon_map;
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_farming_stat->GetValue(),  m_farming_stat));
             res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_mining_stat->GetValue(),   m_mining_stat));
             res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_industry_stat->GetValue(), m_industry_stat));
             res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_research_stat->GetValue(), m_research_stat));
@@ -713,6 +723,9 @@ void ResourcePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void ResourcePanel::Update() {
     // remove any old browse wnds
+    m_farming_stat->ClearBrowseInfoWnd();
+    m_multi_icon_value_indicator->ClearToolTip(METER_FARMING);
+
     m_mining_stat->ClearBrowseInfoWnd();
     m_multi_icon_value_indicator->ClearToolTip(METER_MINING);
 
@@ -772,6 +785,7 @@ void ResourcePanel::Update() {
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
+    m_farming_stat->SetValue(res->InitialMeterValue(METER_FARMING));
     m_mining_stat->SetValue(res->InitialMeterValue(METER_MINING));
     m_industry_stat->SetValue(res->InitialMeterValue(METER_INDUSTRY));
     m_research_stat->SetValue(res->InitialMeterValue(METER_RESEARCH));
@@ -782,7 +796,9 @@ void ResourcePanel::Update() {
     // create an attach browse info wnds for each meter type on the icon + number stats used when collapsed and
     // for all meter types shown in the multi icon value indicator.  this replaces any previous-present
     // browse wnd on these indicators
-    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
+    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_FARMING));
+    m_farming_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_FARMING, browse_wnd);
 
     browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_MINING, METER_TARGET_MINING));
     m_mining_stat->SetBrowseInfoWnd(browse_wnd);

@@ -1286,7 +1286,7 @@ NON_ORGANIC
         Species "SP_TRENCHERS"
         Species "SP_BEIGEGOO"
         Species "SP_KOBUNTURA"
-        Species "SP_ACIMERA"
+        Species "SP_ACIREMA"
         Species "SP_EXOBOT"
         Species "SP_SILEXIAN"
         Species "SP_EGASSEM"

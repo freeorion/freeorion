@@ -88,6 +88,7 @@
     (External)
 
 #define NAMES_SEQ_2                             \
+    (Farming)                                   \
     (Fighters)                                  \
     (FighterType)                               \
     (FighterWeaponRange)                        \
@@ -242,6 +243,7 @@
     (SetEmpireMineralStockpile)                 \
     (SetEmpireTechProgress)                     \
     (SetEmpireTradeStockpile)                   \
+    (SetFarming)                                \
     (SetFighterWeaponRange)                     \
     (SetFuel)                                   \
     (SetIndustry)                               \

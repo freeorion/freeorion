@@ -156,7 +156,10 @@ namespace GG {
 GG_ENUM_STREAM_IN(PlanetEnvironment)
 GG_ENUM_STREAM_OUT(PlanetEnvironment)
 
-/** types for Meters */
+/** Types for Meters 
+* Only active paired meters should lie between METER_POPULATION and METER_TROOPS
+* (See: UniverseObject::ResetPairedActiveMeters())
+*/
 enum MeterType {
     INVALID_METER_TYPE = -1,
     METER_TARGET_POPULATION,
@@ -165,6 +168,7 @@ enum MeterType {
     METER_TARGET_TRADE,
     METER_TARGET_MINING,
     METER_TARGET_CONSTRUCTION,
+    METER_FARMING,
 
     METER_MAX_FUEL,
     METER_MAX_SHIELD,
@@ -223,6 +227,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(METER_MAX_TROOPS)
 
     GG_ENUM_MAP_INSERT(METER_POPULATION)
+    GG_ENUM_MAP_INSERT(METER_FARMING)
     GG_ENUM_MAP_INSERT(METER_INDUSTRY)
     GG_ENUM_MAP_INSERT(METER_RESEARCH)
     GG_ENUM_MAP_INSERT(METER_TRADE)

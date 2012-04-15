@@ -79,6 +79,7 @@ namespace FreeOrionPython {
             .value("maxDefense",        METER_MAX_DEFENSE)
 
             .value("population",        METER_POPULATION)
+            .value("farming",           METER_FARMING)
             .value("industry",          METER_INDUSTRY)
             .value("research",          METER_RESEARCH)
             .value("trade",             METER_TRADE)

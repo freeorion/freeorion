@@ -2216,6 +2216,7 @@ void SidePanel::RefreshImpl() {
 
     // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.
     std::vector<std::pair<MeterType, MeterType> > meter_types;
+    meter_types.push_back(std::make_pair(METER_FARMING,     INVALID_METER_TYPE));
     meter_types.push_back(std::make_pair(METER_MINING,      METER_TARGET_MINING));
     meter_types.push_back(std::make_pair(METER_INDUSTRY,    METER_TARGET_INDUSTRY));
     meter_types.push_back(std::make_pair(METER_RESEARCH,    METER_TARGET_RESEARCH));

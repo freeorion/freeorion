@@ -101,6 +101,8 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     case METER_POPULATION:
     case METER_TARGET_POPULATION:
         icon_filename = "pop.png";          break;
+    case METER_FARMING:
+        icon_filename = "farming.png";      break;
     case METER_INDUSTRY:
     case METER_TARGET_INDUSTRY:
         icon_filename = "industry.png";     break;

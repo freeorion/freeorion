@@ -577,6 +577,7 @@ std::string SetMeter::Dump() const {
     case METER_MAX_TROOPS:          retval += "MaxTroops"; break;
 
     case METER_POPULATION:          retval += "Population"; break;
+    case METER_FARMING:             retval += "Farming"; break;
     case METER_INDUSTRY:            retval += "Industry"; break;
     case METER_RESEARCH:            retval += "Research"; break;
     case METER_TRADE:               retval += "Trade"; break;

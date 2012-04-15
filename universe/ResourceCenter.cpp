@@ -43,6 +43,7 @@ void ResourceCenter::Copy(const ResourceCenter* copied_object, Visibility vis) {
 
 void ResourceCenter::Init() {
     //Logger().debugStream() << "ResourceCenter::Init";
+    AddMeter(METER_FARMING);
     AddMeter(METER_MINING);
     AddMeter(METER_INDUSTRY);
     AddMeter(METER_RESEARCH);
@@ -85,6 +86,7 @@ double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
     case METER_TARGET_RESEARCH:
     case METER_TARGET_TRADE:
     case METER_TARGET_CONSTRUCTION:
+    case METER_FARMING:
         return current_meter_value;
         break;
     case METER_MINING:      target_meter_type = METER_TARGET_MINING;        break;
@@ -113,7 +115,7 @@ double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
 }
 
 void ResourceCenter::SetFocus(const std::string& focus) {
-    // TODO: verify validitly of focus?
+    // TODO: verify validity of focus?
     m_focus = focus;
     ResourceCenterChangedSignal();
 }
@@ -124,6 +126,7 @@ void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters() {
     GetMeter(METER_TARGET_RESEARCH)->ResetCurrent();
     GetMeter(METER_TARGET_TRADE)->ResetCurrent();
     GetMeter(METER_TARGET_CONSTRUCTION)->ResetCurrent();
+    GetMeter(METER_FARMING)->ResetCurrent();
 }
 
 void ResourceCenter::ResourceCenterPopGrowthProductionResearchPhase() {
@@ -141,6 +144,7 @@ void ResourceCenter::ResourceCenterClampMeters() {
     GetMeter(METER_TARGET_TRADE)->ClampCurrentToRange();
     GetMeter(METER_TARGET_CONSTRUCTION)->ClampCurrentToRange();
 
+    GetMeter(METER_FARMING)->ClampCurrentToRange();
     GetMeter(METER_INDUSTRY)->ClampCurrentToRange();
     GetMeter(METER_MINING)->ClampCurrentToRange();
     GetMeter(METER_RESEARCH)->ClampCurrentToRange();
@@ -151,6 +155,7 @@ void ResourceCenter::ResourceCenterClampMeters() {
 void ResourceCenter::Reset() {
     m_focus.clear();
 
+    GetMeter(METER_FARMING)->Reset();
     GetMeter(METER_INDUSTRY)->Reset();
     GetMeter(METER_MINING)->Reset();
     GetMeter(METER_RESEARCH)->Reset();

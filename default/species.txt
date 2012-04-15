@@ -1918,242 +1918,14 @@ STANDARD_CONSTRUCTION
             effects = SetTargetConstruction Value + 20
 '''
 
-BAD_POPULATION
+BASIC_POPULATION
 '''        EffectsGroup
             scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant]
             ]
-            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABEL"
-            effects = SetTargetPopulation Value + 4
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = [Large Asteroids]
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABEL"
-            effects = SetTargetPopulation Value + 3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = Medium
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABEL"
-            effects = SetTargetPopulation Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = Small
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABEL"
-            effects = SetTargetPopulation Value + 1
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = Tiny
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_GOOD_LABEL"
-            effects = SetTargetPopulation Value + 0
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = [Huge GasGiant]
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = [Large Asteroids]
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 1.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = Medium
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 1
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = Small
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 0.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = Tiny
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 0
-            
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Poor
-                Planet size = [Huge GasGiant]
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_POOR_LABEL"
-            effects = SetTargetPopulation Value - 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Poor
-                Planet size = [Large Asteroids]
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_POOR_LABEL"
-            effects = SetTargetPopulation Value - 1.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Poor
-                Planet size = Medium
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_POOR_LABEL"
-            effects = SetTargetPopulation Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Poor
-                Planet size = Small
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_POOR_LABEL"
-            effects = SetTargetPopulation Value - 0.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Poor
-                Planet size = Tiny
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_POOR_LABEL"
-            effects = SetTargetPopulation Value + 0
-            
-            
-                EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Planet size = [Huge GasGiant]
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABEL"
-            effects = SetTargetPopulation Value - 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Planet size = [Large Asteroids]
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABEL"
-            effects = SetTargetPopulation Value - 1.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Planet size = Medium
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABEL"
-            effects = SetTargetPopulation Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Planet size = Small
-                Or [OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABEL"
-            effects = SetTargetPopulation Value - 0.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Planet size = Tiny
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "BAD_POPULATION_FOR_HOSTILE_LABEL"
-            effects = SetTargetPopulation Value + 0   
-'''
-
-AVERAGE_POPULATION
-'''        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = [Huge GasGiant]
-            ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABEL"
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
             effects = SetTargetPopulation Value + 8
 
         EffectsGroup
@@ -2162,7 +1934,7 @@ AVERAGE_POPULATION
                 Planet environment = Good
                 Planet size = [Large Asteroids]
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABEL"
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
             effects = SetTargetPopulation Value + 6
 
         EffectsGroup
@@ -2171,7 +1943,7 @@ AVERAGE_POPULATION
                 Planet environment = Good
                 Planet size = Medium
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABEL"
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
             effects = SetTargetPopulation Value + 4
 
         EffectsGroup
@@ -2180,7 +1952,7 @@ AVERAGE_POPULATION
                 Planet environment = Good
                 Planet size = Small
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABEL"
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
             effects = SetTargetPopulation Value + 2
 
         EffectsGroup
@@ -2189,281 +1961,315 @@ AVERAGE_POPULATION
                 Planet environment = Good
                 Planet size = Tiny
             ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_GOOD_LABEL"
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
             effects = SetTargetPopulation Value + 0
 
         EffectsGroup
             scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = [Huge GasGiant]
-            ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 4
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = [Large Asteroids]
-            ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = Medium
-            ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = Small
-            ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 1
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = Tiny
-            ]
-            accountinglabel = "AVERAGE_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 0
-'''
-
-GOOD_POPULATION
-'''        EffectsGroup
-            scope = Source
-            activation = And [
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 20
                 Planet environment = Good
-                Planet size = [Huge GasGiant]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABEL"
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_20_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 20
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 19
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_19_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 19
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 18
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_18_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 18
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 17
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_17_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 17
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 16
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_16_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 16
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 15
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_15_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 15
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 14
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_14_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 14
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 13
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_13_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 13
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 12
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_12_FARMING_LABEL"
             effects = SetTargetPopulation Value + 12
 
         EffectsGroup
             scope = Source
-            activation = And [
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 11
                 Planet environment = Good
-                Planet size = [Large Asteroids]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABEL"
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_11_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 11
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 10
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_10_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 9
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_9_FARMING_LABEL"
             effects = SetTargetPopulation Value + 9
 
         EffectsGroup
             scope = Source
-            activation = And [
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 8
                 Planet environment = Good
-                Planet size = Medium
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABEL"
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_8_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 8
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 7
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_7_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 7
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 6
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_6_FARMING_LABEL"
             effects = SetTargetPopulation Value + 6
 
         EffectsGroup
             scope = Source
-            activation = And [
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 5
                 Planet environment = Good
-                Planet size = Small
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABEL"
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_5_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 5
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 4
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_4_FARMING_LABEL"
+            effects = SetTargetPopulation Value + 4
+
+        EffectsGroup
+            scope = Source
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 3
+                Planet environment = Good
+            ]
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_3_FARMING_LABEL"
             effects = SetTargetPopulation Value + 3
 
         EffectsGroup
             scope = Source
-            activation = And [
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 2
                 Planet environment = Good
-                Planet size = Tiny
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_GOOD_LABEL"
-            effects = SetTargetPopulation Value + 0
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = [Huge GasGiant]
-            ]
-            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 6
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = [Large Asteroids]
-            ]
-            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 4.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = Medium
-            ]
-            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = Small
-            ]
-            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 1.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Planet size = Tiny
-            ]
-            accountinglabel = "GOOD_POPULATION_FOR_ADEQUATE_LABEL"
-            effects = SetTargetPopulation Value + 0
-            
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Poor
-                Planet size = [Huge GasGiant]
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABEL"
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_2_FARMING_LABEL"
             effects = SetTargetPopulation Value + 2
 
         EffectsGroup
             scope = Source
-            activation = And [
-                Planet environment = Poor
-                Planet size = [Large Asteroids]
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
+            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
+                Focus "FOCUS_FARMING"
+                Farming low = 1
+                Planet environment = Good
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABEL"
-            effects = SetTargetPopulation Value + 1.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Poor
-                Planet size = Medium
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABEL"
+            stackinggroup = "FARMING_STACK"
+            accountinglabel = "LEVEL_1_FARMING_LABEL"
             effects = SetTargetPopulation Value + 1
+'''
+
+BAD_POPULATION
+'''[[BASIC_POPULATION]]
+
+        EffectsGroup
+            scope = Source
+            accountinglabel = "BAD_POPULATION_LABEL"
+            effects = SetTargetPopulation Value*[[BAD_MULTIPLIER]]
+
+        [[ENVIRONMENT_MODIFIER]]
+'''
+
+AVERAGE_POPULATION
+'''[[BASIC_POPULATION]]
+        [[ENVIRONMENT_MODIFIER]]
+'''
+
+GOOD_POPULATION
+'''[[BASIC_POPULATION]]
+
+        EffectsGroup
+            scope = Source
+            accountinglabel = "GOOD_POPULATION_LABEL"
+            effects = SetTargetPopulation Value*[[GOOD_MULTIPLIER]]
+
+        [[ENVIRONMENT_MODIFIER]]
+'''
+
+/*
+* Implements environmental modifiers from Growth techs.
+* Changes to the growth tree should take this into account.
+*/
+ENVIRONMENT_MODIFIER
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Not Or [
+                    OwnerHasTech "GRO_SYMBIOTIC_BIO"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+            ]
+            accountinglabel = "ADEQUATE_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value*[[ADEQUATE_MULTIPLIER]]
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet environment = Poor
-                Planet size = Small
-                Or [
+                Not Or [
                     OwnerHasTech "GRO_XENO_GENETICS"
                     OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABEL"
-            effects = SetTargetPopulation Value + 0.5
+            accountinglabel = "POOR_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value*[[POOR_MULTIPLIER]]
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet environment = Poor
-                Planet size = Tiny
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
+                OwnerHasTech "GRO_XENO_GENETICS"
+                Not Or [
                     OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
+                    OwnerHasTech "GRO_CYBORGS"
                 ]
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_POOR_LABEL"
-            effects = SetTargetPopulation Value + 0
-            
-            
-                EffectsGroup
+            accountinglabel = "POOR_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value*([[POOR_MULTIPLIER]] + (1 - [[POOR_MULTIPLIER]])/2)
+
+        EffectsGroup
             scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Planet size = [Huge GasGiant]
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABEL"
-            effects = SetTargetPopulation Value + 2
+            activation = Planet environment = Hostile
+            accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value*[[HOSTILE_MULTIPLIER]]
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet environment = Hostile
-                Planet size = [Large Asteroids]
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
+                OwnerHasTech "GRO_XENO_HYBRIDS"
+                Not OwnerHasTech "GRO_CYBORG"
             ]
-            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABEL"
-            effects = SetTargetPopulation Value + 1.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Planet size = Medium
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABEL"
-            effects = SetTargetPopulation Value + 1
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Planet size = Small
-                Or [OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABEL"
-            effects = SetTargetPopulation Value + 0.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Planet size = Tiny
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "GOOD_POPULATION_FOR_HOSTILE_LABEL"
-            effects = SetTargetPopulation Value + 0   
+            accountinglabel = "HOSTILE_ENVIRONMNET_LABEL"
+            effects = SetTargetPopulation Value*([[HOSTILE_MULTIPLIER]] + (1 - [[HOSTILE_MULTIPLIER]])/2)
 '''
 
 
@@ -2555,207 +2361,55 @@ ADVANCED_FOCUS_EFFECTS
             effects = SetSupply Value + Target.Population * 0.5
 '''
 
+BASIC_FARMING
+'''1'''
+
 NO_FARMING
 '''
 '''
 
-FARMING_SCOPE
-'''            scope = And [
-                Planet
-                OwnedBy Source.Owner
-                Population low = 0.11
-                WithinStarlaneJumps 1 Source
-                Not Source
-            ]'''
-
 BAD_FARMING
-'''EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Good
-            ]
-            accountinglabel = "BAD_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * 0.1
+'''[[AVERAGE_FARMING]]
 
         EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Adequate
-            ]
+            scope = Source
             accountinglabel = "BAD_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * 0.075
-
-        EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Poor
-            ]
-            accountinglabel = "BAD_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * 0.05
-
-        EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Hostile
-            ]
-            accountinglabel = "BAD_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * 0.025
+            effects = SetFarming Value*[[BAD_MULTIPLIER]]
 '''
 
 AVERAGE_FARMING
 '''EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Good
-            ]
-            accountinglabel = "AVERAGE_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * .2
-
-        EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Adequate
-            ]
-            accountinglabel = "AVERAGE_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * .15
-
-        EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Poor
-            ]
-            accountinglabel = "AVERAGE_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * .1
-
-        EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Hostile
-            ]
-            accountinglabel = "AVERAGE_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * 0.05
+        scope = Source
+        activation = Focus "FOCUS_FARMING"
+        accountinglabel = "FOCUS_FARMING_LABEL"
+        effects = SetFarming Value + [[BASIC_FARMING]]
 '''
 
 GOOD_FARMING
-'''EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Good
-            ]
-            accountinglabel = "GOOD_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * .25
+'''[[AVERAGE_FARMING]]
 
         EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Adequate
-            ]
+            scope = Source
             accountinglabel = "GOOD_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * .18
-
-        EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Poor
-            ]
-            accountinglabel = "GOOD_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * .12
-
-        EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Hostile
-            ]
-            accountinglabel = "GOOD_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * 0.06
+            effects = SetFarming Value*[[GOOD_MULTIPLIER]]
 '''
 
 GREAT_FARMING
-'''EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Good
-            ]
-            accountinglabel = "GREAT_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * 0.3
+'''[[AVERAGE_FARMING]]
 
         EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Adequate
-            ]
+            scope = Source
             accountinglabel = "GREAT_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * 0.225
-
-        EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Poor
-            ]
-            accountinglabel = "GREAT_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * 0.15
-
-        EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Hostile
-            ]
-            accountinglabel = "GREAT_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * .075
+            effects = SetFarming Value*[[GREAT_MULTIPLIER]]
 '''
 
 ULTIMATE_FARMING
-'''EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Good
-            ]
-            accountinglabel = "ULTIMATE_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * 0.4
+'''[[AVERAGE_FARMING]]
 
         EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Adequate
-            ]
+            scope = Source
             accountinglabel = "ULTIMATE_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * 0.3
-
-        EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Poor
-            ]
-            accountinglabel = "ULTIMATE_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * 0.2
-
-        EffectsGroup
-            [[FARMING_SCOPE]]
-            activation = And [
-                Focus type = "FOCUS_FARMING"
-                Planet environment = Hostile
-            ]
-            accountinglabel = "ULTIMATE_FARMING_LABEL"
-            effects = SetTargetPopulation Value + Source.Population * 0.1
+            effects = SetFarming Value*[[ULTIMATE_MULTIPLIER]]
 '''
 
 //#####      M I N I N G    #####//
@@ -3190,13 +2844,22 @@ BAD_MULTIPLIER
 '''0.5'''
 
 AVERAGE_MULTIPLIER
-'''1'''
+'''1.0'''
 
 GOOD_MULTIPLIER
 '''1.5'''
 
 GREAT_MULTIPLIER
-'''2'''
+'''2.0'''
 
 ULTIMATE_MULTIPLIER
-'''4'''
+'''4.0'''
+
+ADEQUATE_MULTIPLIER
+'''0.75'''
+
+POOR_MULTIPLIER
+'''0.5'''
+
+HOSTILE_MULTIPLIER
+'''0.25'''

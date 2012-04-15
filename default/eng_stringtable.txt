@@ -7669,47 +7669,89 @@ GOOD_POPULATION
 STANDARD_CONSTRUCTION_LABEL
 '''%1% Average Infrastructure'''
 
-BAD_POPULATION_FOR_GOOD_LABEL
-'''%1% Bad Population with Good EP'''
+GOOD_ENVIRONMENT_LABEL
+'''%1% Good Environment'''
 
-BAD_POPULATION_FOR_ADEQUATE_LABEL
-'''%1% Bad Population with ADEQUATE EP'''
+ADEQUATE_ENVIRONMENT_LABEL
+'''%1% Adequate Environment'''
 
-BAD_POPULATION_FOR_POOR_LABEL
-'''%1% Bad Population with Poor EP'''
+POOR_ENVIRONMENT_LABEL
+'''%1% Poor Environment'''
 
-BAD_POPULATION_FOR_HOSTILE_LABEL
-'''%1% Bad Population with Hostile EP'''
+HOSTILE_ENVIRONMENT_LABEL
+'''%1% Hostile Environment'''
 
-AVERAGE_POPULATION_FOR_GOOD_LABEL
-'''%1% Average Population with Good EP'''
+BAD_POPULATION_LABEL
+'''%1% Bad Population'''
 
-AVERAGE_POPULATION_FOR_ADEQUATE_LABEL
-'''%1% Average Population with Adequate EP'''
+GOOD_POPULATION_LABEL
+'''%1% Good Population'''
 
-AVERAGE_POPULATION_FOR_POOR_LABEL
-'''%1% Average Population with Poor EP'''
+LEVEL_1_FARMING_LABEL
+'''Level 1 Farming'''
 
-AVERAGE_POPULATION_FOR_HOSTILE_LABEL
-'''%1% Average Population with Hostile EP'''
+LEVEL_2_FARMING_LABEL
+'''Level 2 Farming'''
 
-GOOD_POPULATION_FOR_GOOD_LABEL
-'''%1% Good Population with Good EP'''
+LEVEL_3_FARMING_LABEL
+'''Level 3 Farming'''
 
-GOOD_POPULATION_FOR_ADEQUATE_LABEL
-'''%1% Good Population with Adequate EP'''
+LEVEL_4_FARMING_LABEL
+'''Level 4 Farming'''
 
-GOOD_POPULATION_FOR_POOR_LABEL
-'''%1% Good Population with Poor EP'''
+LEVEL_5_FARMING_LABEL
+'''Level 5 Farming'''
 
-GOOD_POPULATION_FOR_HOSTILE_LABEL
-'''%1% Good Population with Hostile EP'''
+LEVEL_6_FARMING_LABEL
+'''Level 6 Farming'''
+
+LEVEL_7_FARMING_LABEL
+'''Level 7 Farming'''
+
+LEVEL_8_FARMING_LABEL
+'''Level 8 Farming'''
+
+LEVEL_9_FARMING_LABEL
+'''Level 9 Farming'''
+
+LEVEL_10_FARMING_LABEL
+'''Level 10 Farming'''
+
+LEVEL_11_FARMING_LABEL
+'''Level 11 Farming'''
+
+LEVEL_12_FARMING_LABEL
+'''Level 12 Farming'''
+
+LEVEL_13_FARMING_LABEL
+'''Level 13 Farming'''
+
+LEVEL_14_FARMING_LABEL
+'''Level 14 Farming'''
+
+LEVEL_15_FARMING_LABEL
+'''Level 15 Farming'''
+
+LEVEL_16_FARMING_LABEL
+'''Level 16 Farming'''
+
+LEVEL_17_FARMING_LABEL
+'''Level 17 Farming'''
+
+LEVEL_18_FARMING_LABEL
+'''Level 18 Farming'''
+
+LEVEL_19_FARMING_LABEL
+'''Level 19 Farming'''
+
+LEVEL_20_FARMING_LABEL
+'''Level 20 Farming'''
+
+FOCUS_FARMING_LABEL
+'''%1% Farming Focus'''
 
 BAD_FARMING_LABEL
 '''%1% Bad Farming'''
-
-AVERAGE_FARMING_LABEL
-'''%1% Average Farming'''
 
 GOOD_FARMING_LABEL
 '''%1% Good Farming'''
