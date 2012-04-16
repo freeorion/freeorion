@@ -6126,7 +6126,7 @@ SHP_BIOBOMBER
 Biobombers
 
 SHP_BIOBOMBER_DESC
-Living bombers designed to target ships and planets. Far more effective than regular bombers. This part can only be built if there is a Competitive Maturation Chamber and a Bioneural Modification Unit somewhere in the empire or an ally's empire.
+Living bombers designed to target ships and planets. Far more effective than regular bombers. This part can only be built if there is a Bioneural Modification Unit somewhere in the empire or an ally's empire.
 
 SHP_NOVA_BOMB
 Nova Bomb
@@ -6232,18 +6232,6 @@ BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
 
 When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly. Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.'''
 
-BLD_SHIPYARD_CON_ENGINE
-Engineering Bay
-
-BLD_SHIPYARD_CON_ENGINE_DESC
-An advanced engineering facility specializing in the assembly of the Spatial Flux Drive. This is an upgrade to the Orbital Drydock and allows construction of Spatial Flux Hulls.
-
-BLD_SHIPYARD_CON_MILIT_MEGAPROC
-Military Megaprocessor
-
-BLD_SHIPYARD_CON_MILIT_MEGAPROC_DESC
-A massive orbital installation capable of supporting the construction of extremely large hulls. This is an upgrade for the Orbital Drydock and allows production of Self-Gravitating Hulls.
-
 BLD_SHIPYARD_CON_NANOROBO
 Nanorobotic Processing Unit
 
@@ -6267,14 +6255,6 @@ BLD_SHIPYARD_CON_ADV_ENGINE_DESC
 '''This is an upgrade to the Orbital Drydock and allows construction of Spatial Flux Hulls and Trans-Spatial Hulls.
 
 An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive, but is also capable of producing the Spatial Flux Drive.'''
-
-BLD_SHIPYARD_CON_MIL_LOG_ASSMBL
-Military Logistics Assembly
-
-BLD_SHIPYARD_CON_MIL_LOG_ASSMBL_DESC
-'''Allows the production of the Logistics Facilitator flagship hull type.
-
-A shipyard upgrade designed to fully utilize the advancements of hull construction for the production of highly specialized flagships. This upgrade utilizes the facilities of the Advanced Engineering Bay, the Geointegration Facility and the Nanorobotics Processing Unit, all of which, in addition to the Orbital Drydock, must be present for the construction of this upgrade.'''
 
 BLD_SHIPYARD_AST
 Asteroid Processor
@@ -6314,23 +6294,7 @@ Xenocoordination Facility
 BLD_SHIPYARD_ORG_XENO_FAC_DESC
 '''The presence of this upgrade and the Cellular Growth Chamber upgrade on the same planet allows development of the Endosymbiotic Hull. The presence of these two upgrades anywhere in the empire or an ally's empire allows the production of ships with the Bio-Interceptor ship part.
 
-A facility dedicated to creating a fully symbiotic relationship between a ship and its crew. This is an upgrade to the Organic Shipyard and allows development of Symbiotic Hulls.'''
-
-BLD_SHIPYARD_ORG_COMP_MAT_CHAMB
-Competitive Maturation Chamber
-
-BLD_SHIPYARD_ORG_COMP_MAT_CHAMB_DESC
-'''This is an upgrade to the Organic Shipyard and allows development of Ravenous Hulls. The presence of this upgrade and the Bioneural Modification Unit upgrade on the same planet allows development of the Sentient Hull.
-
-A breeding ground in which developing organic hulls must fight savagely and ruthlessly for survival.'''
-
-BLD_SHIPYARD_ORG_BIONEUR_MOD
-Bioneural Modification Unit
-
-BLD_SHIPYARD_ORG_BIONEUR_MOD_DESC
-'''This is an upgrade to the Organic Shipyard and allows the development of Bio-Adaptive Hulls. The presence of this upgrade and the Competitive Maturation Chamber upgrade on the same planet allows development of the Sentient Hull.
-
-Facilities for the direct and precise neurological adaption of a developing organic hull's mind to its body.'''
+A facility dedicated to creating a fully symbiotic relationship between a ship and its crew. This is an upgrade to the Organic Incubator and allows development of Symbiotic Hulls.'''
 
 BLD_SHIPYARD_ENRG_COMP
 Energy Compressor
@@ -6851,7 +6815,7 @@ FI_BIOBOMBER
 Bio-Bomber
 
 FI_BIOBOMBER_DESC
-Eighteen living bombers designed to target ships and planets. Far more effective than regular bombers.  This part can only be built if there is a Competitive Maturation Chamber and a Bioneural Modification Unit somewhere in the empire or an ally's empire.
+Eighteen living bombers designed to target ships and planets. Far more effective than regular bombers.  This part can only be built if there is a Bioneural Modification Unit somewhere in the empire or an ally's empire.
 
 LR_NUCLEAR_MISSILE
 Nuclear Missile
@@ -6881,7 +6845,7 @@ LR_ANTIMATTER_TORPEDO
 Antimatter Torpedo
 
 LR_ANTIMATTER_TORPEDO_DESC
-A fast, long-range missile powered by the Spatial Flux Drive and armed with a powerful anti-matter warhead. This part can only be built if there is an Engineering Bay or an Advanced Engineering Bay somewhere in the empire or an ally's empire.
+A fast, long-range missile powered by the Spatial Flux Drive and armed with a powerful anti-matter warhead. This part can only be built if there is an Advanced Engineering Bay somewhere in the empire or an ally's empire.
 
 LR_PLASMA_TORPEDO
 Plasma Torpedo
@@ -7092,7 +7056,7 @@ Spatial Flux Hull
 SH_SPATIAL_FLUX_DESC
 '''This tiny hull is capable of immense speed due to the power of the Spatial Flux Drive. It has only two external slots however, and its max structure is low. Stealth is fairly high, but it receives a large stealth penalty for movement both in combat and on the galaxy map.
 
-In addition to a Basic Shipyard and an Orbital Drydock, either an Engineering Bay or an Advanced Engineering Bay is required at the planet where it is constructed.'''
+In addition to a Basic Shipyard and an Orbital Drydock, and an Advanced Engineering Bay is required at the planet where it is constructed.'''
 
 SH_SELF_GRAVITATING
 Self-Gravitating Hull
@@ -7100,7 +7064,7 @@ Self-Gravitating Hull
 SH_SELF_GRAVITATING_DESC
 '''This hull is immense in both size and power, with eight external slots and two internal slots. It is fairly sturdy, having a high max structure, but stealth and speed are fairly low.
 
-In addition to a Basic Shipyard and an Orbital Drydock, either a Military Megaprocessor or a Geointegration Facility is required at the planet where it is constructed.'''
+In addition to a Basic Shipyard and an Orbital Drydock, and a Geointegration Facility is required at the planet where it is constructed.'''
 
 SH_NANOROBOTIC
 Nano-Robotic Hull
@@ -7132,7 +7096,7 @@ Logistics Facilitator
 SH_LOGISTICS_FACILITATOR_DESC
 '''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots and two internal slots. Its speed is low, but max structure is fairly high. In addition, its built-in fleet of stealthy freighters allows transfer of personnel and materiel during battle, enabling all friendly ships to recover structure during combat and completely restore structure between combats.
 
-Requires a Basic Shipyard, an Orbital Drydock, a Nanorobotic Processing Unit, a Geointegration Facility, an Advanced Engineering Bay and a Military Logistics Assembly at the planet where it is constructed.'''
+Requires a Basic Shipyard, an Orbital Drydock, a Nanorobotic Processing Unit, a Geointegration Facility, and an Advanced Engineering Bay at the planet where it is constructed.'''
 
 SH_ASTEROID
 Asteroid Hull
@@ -7260,7 +7224,7 @@ Ravenous Hull
 SH_RAVENOUS_DESC
 '''This living hull has been raised on the blood of its brethren. It has four external slots and two internal slots. Stealth is low, but speed and structure are high. Unlike most organic hulls, the Ravenous Hull will only regenerate fuel between combats, not structure.
 
-Requires a Basic Shipyard, an Orbital Incubator and a Competitive Maturation Chamber at the planet where it is developed.'''
+Requires a Basic Shipyard, an Orbital Incubator at the planet where it is developed.'''
 
 SH_BIOADAPTIVE
 Bio-Adaptive Hull
@@ -7268,7 +7232,7 @@ Bio-Adaptive Hull
 SH_BIOADAPTIVE_DESC
 '''This living hull has mind and body working in perfect unison, allowing it to react and adapt to its surroundings with unparalleled efficiency. It has only two of each internal and external slots, but stealth, speed and structure are all very high. This hull regenerates fuel and completely recovers structure between combats.
 
-Requires a Basic Shipyard, an Orbital Incubator and a Bioneural Modification Unit at the planet where it is developed.'''
+Requires a Basic Shipyard, an Orbital Incubator and a Xenocoordination Facility at the planet where it is developed.'''
 
 SH_SENTIENT
 Sentient Hull
@@ -7276,7 +7240,7 @@ Sentient Hull
 SH_SENTIENT_DESC
 '''This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a stealth and detection bonus to all accompanying friendly ships. It has six external slots and three internal slots. It has low speed, but stealth and structure are good. This hull regenerates structure and fuel between combats.
 
-Requires a Basic Shipyard, an Orbital Incubator, a Competitive Maturation Chamber and a Bioneural Modification Unit at the planet where it is developed.'''
+Requires a Basic Shipyard, an Orbital Incubator, and a Xenocoordination Facility at the planet where it is developed.'''
 
 SH_COMPRESSED_ENERGY
 Compressed Energy Hull

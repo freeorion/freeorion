@@ -121,7 +121,7 @@ BuildingType
 BuildingType
     name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
     description = "BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC"
-    buildcost = 15
+    buildcost = 20
     buildtime = 5
     location = And [
         Contains And [
@@ -153,9 +153,9 @@ BuildingType
     graphic = "icons/building/shipyard-1.png"
 
 BuildingType
-    name = "BLD_SHIPYARD_CON_ENGINE"
-    description = "BLD_SHIPYARD_CON_ENGINE_DESC"
-    buildcost = 45
+    name = "BLD_SHIPYARD_CON_NANOROBO"
+    description = "BLD_SHIPYARD_CON_NANOROBO_DESC"
+    buildcost = 250
     buildtime = 5
     location = And [
         Contains And [
@@ -171,9 +171,9 @@ BuildingType
     graphic = "icons/building/shipyard-2.png"
 
 BuildingType
-    name = "BLD_SHIPYARD_CON_MILIT_MEGAPROC"
-    description = "BLD_SHIPYARD_CON_MILIT_MEGAPROC_DESC"
-    buildcost = 100
+    name = "BLD_SHIPYARD_CON_GEOINT"
+    description = "BLD_SHIPYARD_CON_GEOINT_DESC"
+    buildcost = 750
     buildtime = 5
     location = And [
         Contains And [
@@ -189,9 +189,9 @@ BuildingType
     graphic = "icons/building/shipyard-3.png"
 
 BuildingType
-    name = "BLD_SHIPYARD_CON_NANOROBO"
-    description = "BLD_SHIPYARD_CON_NANOROBO_DESC"
-    buildcost = 225
+    name = "BLD_SHIPYARD_CON_ADV_ENGINE"
+    description = "BLD_SHIPYARD_CON_ADV_ENGINE_DESC"
+    buildcost = 2000
     buildtime = 5
     location = And [
         Contains And [
@@ -207,72 +207,6 @@ BuildingType
     graphic = "icons/building/shipyard-4.png"
 
 BuildingType
-    name = "BLD_SHIPYARD_CON_GEOINT"
-    description = "BLD_SHIPYARD_CON_GEOINT_DESC"
-    buildcost = 500
-    buildtime = 5
-    location = And [
-        Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        Contains And [
-            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        OwnedBy TheEmpire Source.Owner
-    ]
-    graphic = "icons/building/shipyard-5.png"
-
-BuildingType
-    name = "BLD_SHIPYARD_CON_ADV_ENGINE"
-    description = "BLD_SHIPYARD_CON_ADV_ENGINE_DESC"
-    buildcost = 1200
-    buildtime = 5
-    location = And [
-        Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        Contains And [
-            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        OwnedBy TheEmpire Source.Owner
-    ]
-    graphic = "icons/building/shipyard-6.png"
-
-BuildingType
-    name = "BLD_SHIPYARD_CON_MIL_LOG_ASSMBL"
-    description = "BLD_SHIPYARD_CON_MIL_LOG_ASSMBL_DESC"
-    buildcost = 2500
-    buildtime = 5
-    location = And [
-        Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        Contains And [
-            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        Contains And [
-            Building "BLD_SHIPYARD_CON_NANOROBO"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        Contains And [
-            Building "BLD_SHIPYARD_CON_GEOINT"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        Contains And [
-            Building "BLD_SHIPYARD_CON_ADV_ENGINE"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        OwnedBy TheEmpire Source.Owner
-    ]
-    graphic = "icons/building/shipyard-7.png"
-
-BuildingType
     name = "BLD_SHIPYARD_AST"
     description = "BLD_SHIPYARD_AST_DESC"
     buildcost = 75
@@ -285,7 +219,7 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         Planet type = Asteroids
     ]
-    graphic = "icons/building/shipyard.png"
+    graphic = "icons/building/shipyard-5.png"
 
 BuildingType
     name = "BLD_SHIPYARD_AST_REF"
@@ -304,7 +238,7 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         Planet type = Asteroids
     ]
-    graphic = "icons/building/shipyard-8.png"
+    graphic = "icons/building/shipyard-6.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_ORB_INC"
@@ -318,7 +252,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard.png"
+    graphic = "icons/building/shipyard-7.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -336,48 +270,12 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard.png"
+    graphic = "icons/building/shipyard-8.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_XENO_FAC"
     description = "BLD_SHIPYARD_ORG_XENO_FAC_DESC"
-    buildcost = 50
-    buildtime = 10
-    location = And [
-        Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        Contains And [
-            Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        OwnedBy TheEmpire Source.Owner
-    ]
-    graphic = "icons/building/shipyard.png"
-
-BuildingType
-    name = "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB"
-    description = "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB_DESC"
-    buildcost = 75
-    buildtime = 10
-    location = And [
-        Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        Contains And [
-            Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        OwnedBy TheEmpire Source.Owner
-    ]
-    graphic = "icons/building/shipyard.png"
-
-BuildingType
-    name = "BLD_SHIPYARD_ORG_BIONEUR_MOD"
-    description = "BLD_SHIPYARD_ORG_BIONEUR_MOD_DESC"
-    buildcost = 75
+    buildcost = 100
     buildtime = 10
     location = And [
         Contains And [

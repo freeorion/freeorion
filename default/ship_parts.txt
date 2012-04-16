@@ -1123,11 +1123,7 @@ Part
     buildtime = 2
     mountableSlotTypes = External
     location = And [
-        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB" Or [
-            OwnedBy TheEmpire Source.Owner
-            OwnedBy AllyOf Source.Owner
-        ]
-        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_BIONEUR_MOD" Or [
+        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_XENO_FAC" Or [
             OwnedBy TheEmpire Source.Owner
             OwnedBy AllyOf Source.Owner
         ]

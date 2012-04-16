@@ -2068,10 +2068,7 @@ Tech
     researchcost = 75
     researchturns = 1
     prerequisites = "SHP_MIL_ROBO_CONT"
-    unlock = [
-        Item type = ShipHull name = "SH_SPATIAL_FLUX"
-        Item type = Building name = "BLD_SHIPYARD_CON_ENGINE"
-    ]
+    unlock = Item type = ShipHull name = "SH_SPATIAL_FLUX"
 
 Tech
     name = "SHP_CONTGRAV_MAINT"
@@ -2345,7 +2342,7 @@ Tech
     prerequisites = "SHP_CONTGRAV_MAINT"
     unlock = [
         Item type = ShipHull name = "SH_SELF_GRAVITATING"
-        Item type = Building name = "BLD_SHIPYARD_CON_MILIT_MEGAPROC"
+        Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
     ]
 
 Tech
@@ -2401,7 +2398,6 @@ Tech
     prerequisites = "SHP_MIDCOMB_LOG"
     unlock = [
         Item type = ShipHull name = "SH_LOGISTICS_FACILITATOR"
-        Item type = Building name = "BLD_SHIPYARD_CON_MIL_LOG_ASSMBL"
         Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
         Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
         Item type = Building name = "BLD_SHIPYARD_CON_NANOROBO"
@@ -2583,10 +2579,7 @@ Tech
     researchcost = 156
     researchturns = 4
     prerequisites = "SHP_CONT_BIOADAPT"
-    unlock = [
-        Item type = ShipHull name = "SH_RAVENOUS"
-        Item type = Building name = "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB"
-    ]
+    unlock = Item type = ShipHull name = "SH_RAVENOUS"
 
 Tech
     name = "SHP_BIOADAPT_HULL"
@@ -2599,7 +2592,7 @@ Tech
     prerequisites = "SHP_BIONEUR_SPEC"
     unlock = [
         Item type = ShipHull name = "SH_BIOADAPTIVE"
-        Item type = Building name = "BLD_SHIPYARD_ORG_BIONEUR_MOD"
+        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
 
 Tech
@@ -2616,8 +2609,7 @@ Tech
     ]
     unlock = [
         Item type = ShipHull name = "SH_SENTIENT"
-        Item type = Building name = "BLD_SHIPYARD_ORG_BIONEUR_MOD"
-        Item type = Building name = "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB"
+        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
 
 Tech
