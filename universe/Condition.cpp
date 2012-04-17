@@ -1602,6 +1602,30 @@ bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const {
 }
 
 ///////////////////////////////////////////////////////////
+// HasTag                                                //
+///////////////////////////////////////////////////////////
+std::string Condition::HasTag::Description(bool negated/* = false*/) const {
+    std::string description_str = "DESC_HAS_TAG";
+    if (negated)
+        description_str += "_NOT";
+    return str(FlexibleFormat(UserString(description_str)) % UserString(m_name));
+}
+
+std::string Condition::HasTag::Dump() const
+{ return DumpIndent() + "HasTag name = \"" + m_name + "\"\n"; }
+
+bool Condition::HasTag::Match(const ScriptingContext& local_context) const {
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "HasTag::Match passed no candidate object";
+        return false;
+    }
+
+    return candidate->HasTag(m_name);
+}
+
+
+///////////////////////////////////////////////////////////
 // CreatedOnTurn                                         //
 ///////////////////////////////////////////////////////////
 Condition::CreatedOnTurn::~CreatedOnTurn() {

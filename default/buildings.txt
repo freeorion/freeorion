@@ -35,18 +35,18 @@ BuildingType
             ]
             effects = SetTexture name = "planets/damage/impact.png"
     ]
-    graphic = "icons/building/archive.png"
+    icon = "icons/building/archive.png"
 
 BuildingType
     name = "BLD_IMPERIAL_PALACE"
     description = "BLD_IMPERIAL_PALACE_DESC"
     buildcost = 3
     buildtime = 10
+    captureresult = destroy
     location = And [
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
-    captureresult = destroy
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -90,7 +90,7 @@ BuildingType
             ]
             effects = SetMaxTroops Value + 10
         ]
-    graphic = "icons/building/palace.png"
+    icon = "icons/building/palace.png"
 
 BuildingType
     name = "BLD_OBSERVATORY"
@@ -102,7 +102,7 @@ BuildingType
         EffectsGroup
             scope = NumberOf 1 System
             effects = SetStealth Value - 1
-    graphic = "icons/building/lighthouse.png"
+    icon = "icons/building/lighthouse.png"
 
 BuildingType
     name = "BLD_SHIPYARD_BASE"
@@ -116,7 +116,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard.png"
+    icon = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
@@ -150,7 +150,7 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
-    graphic = "icons/building/shipyard-1.png"
+    icon = "icons/building/shipyard-1.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_NANOROBO"
@@ -168,7 +168,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard-2.png"
+    icon = "icons/building/shipyard-2.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_GEOINT"
@@ -186,7 +186,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard-3.png"
+    icon = "icons/building/shipyard-3.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_ADV_ENGINE"
@@ -204,7 +204,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard-4.png"
+    icon = "icons/building/shipyard-4.png"
 
 BuildingType
     name = "BLD_SHIPYARD_AST"
@@ -219,7 +219,7 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         Planet type = Asteroids
     ]
-    graphic = "icons/building/shipyard-5.png"
+    icon = "icons/building/shipyard-5.png"
 
 BuildingType
     name = "BLD_SHIPYARD_AST_REF"
@@ -238,7 +238,7 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         Planet type = Asteroids
     ]
-    graphic = "icons/building/shipyard-6.png"
+    icon = "icons/building/shipyard-6.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_ORB_INC"
@@ -252,7 +252,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard-7.png"
+    icon = "icons/building/shipyard-7.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -270,7 +270,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard-8.png"
+    icon = "icons/building/shipyard-8.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -288,7 +288,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard.png"
+    icon = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ENRG_COMP"
@@ -302,7 +302,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard.png"
+    icon = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ENRG_SOLAR"
@@ -320,7 +320,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = "icons/building/shipyard.png"
+    icon = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_BIOTERROR_PROJECTOR"
@@ -335,7 +335,7 @@ BuildingType
             Building "BLD_BIOTERROR_PROJECTOR"
         ]
     ]
-    graphic = "icons/building/bioterror_projector.png"
+    icon = "icons/building/bioterror_projector.png"
 
 BuildingType
     name = "BLD_LIGHTHOUSE"
@@ -348,7 +348,7 @@ BuildingType
             scope = WithinDistance 0 Source
             activation = Source
             effects = SetStealth Value - 450
-    graphic = "icons/building/lighthouse.png"
+    icon = "icons/building/lighthouse.png"
 
 BuildingType
     name = "BLD_HEAVY_MINE_PROCESSOR"
@@ -359,7 +359,7 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
-    graphic = "icons/building/heavy_mining_processor.png"
+    icon = "icons/building/heavy_mining_processor.png"
 
 BuildingType
     name = "BLD_INDUSTRY_CENTER"
@@ -404,7 +404,7 @@ BuildingType
             stackinggroup = "INDUSTRY_CENTER_STACK"
             effects = SetTargetIndustry Value + Target.Population * 1.5
     ]
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_EXOBOT_SHIP"
@@ -435,7 +435,7 @@ BuildingType
             scope = Source
             effects = Destroy
     ]
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_MEGALITH"
@@ -469,7 +469,7 @@ BuildingType
             stackinggroup = "BLD_MEGALITH_EFFECT"
             effects = SetTargetConstruction Value + 10
     ]
-    graphic = "icons/building/megalith.png"
+    icon = "icons/building/megalith.png"
 
 BuildingType
     name = "BLD_COLLECTIVE_NET"
@@ -520,7 +520,7 @@ BuildingType
             stackinggroup = "BLD_COLLECTIVE_NET_MINING_EFFECT"
             effects = SetTargetMining Value + 2.0
     ]
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_GENOME_BANK"
@@ -540,7 +540,7 @@ BuildingType
             ]
             stackinggroup = "GENOME_BANK_EFFECT"
             effects = SetGrowth Value + 1
-    graphic = "icons/building/genome_bank.png"
+    icon = "icons/building/genome_bank.png"
 
 BuildingType
     name = "BLD_SPACE_ELEVATOR"
@@ -556,7 +556,7 @@ BuildingType
             scope = Contains Source
             activation = Source
             effects = SetSupply Value * 3
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_GAIA_TRANS"
@@ -581,7 +581,7 @@ BuildingType
             activation = Source
             effects = Destroy
     ]
-    graphic = ""
+    icon = ""
     
 BuildingType
     name = "BLD_ART_BLACK_HOLE"
@@ -603,7 +603,7 @@ BuildingType
             activation = Source
             effects = Destroy
     ]
-    graphic = "icons/building/blackhole.png"
+    icon = "icons/building/blackhole.png"
 
 BuildingType
     name = "BLD_HYPER_DAM"
@@ -634,7 +634,7 @@ BuildingType
             activation = Source
             effects = SetTargetPopulation Value - 5
     ]
-    graphic = "icons/building/blackhole.png"
+    icon = "icons/building/blackhole.png"
 
 BuildingType
     name = "BLD_SOL_ORB_GEN"
@@ -673,7 +673,7 @@ BuildingType
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
             effects = SetTargetIndustry Value + Target.Population * 0.25
     ]
-    graphic = "icons/building/miniature_sun.png"
+    icon = "icons/building/miniature_sun.png"
 
 BuildingType
     name = "BLD_CLONING_CENTER"
@@ -694,7 +694,7 @@ BuildingType
             activation = Source
             stackinggroup = "CLONING_CENTER_EFFECT"
             effects = SetGrowth Value + 1
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_TERRAFORM"
@@ -724,7 +724,7 @@ BuildingType
             scope = Source
             effects = Destroy
     ]
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_REMOTE_TERRAFORM"
@@ -747,7 +747,7 @@ BuildingType
             scope = Source
             effects = Destroy
     ]
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_NEUTRONIUM_EXTRACTOR"
@@ -755,7 +755,7 @@ BuildingType
     buildcost = 25
     buildtime = 8
     location = Star type = Neutron
-    graphic = "icons/building/neutronium-forge.png"
+    icon = "icons/building/neutronium-forge.png"
 
 BuildingType
     name = "BLD_NEUTRONIUM_FORGE"
@@ -766,7 +766,7 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
-    graphic = "icons/building/neutronium-forge.png"
+    icon = "icons/building/neutronium-forge.png"
 
 BuildingType
     name = "BLD_NEUTRONIUM_SYNTH"
@@ -774,7 +774,7 @@ BuildingType
     buildcost = 1200
     buildtime = 10
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/building/neutronium-forge.png"
+    icon = "icons/building/neutronium-forge.png"
 
 BuildingType
     name = "BLD_CONC_CAMP"
@@ -800,7 +800,7 @@ BuildingType
             activation = Not OwnedBy TheEmpire Source.Owner
             effects = Destroy
     ]
-    graphic = "icons/building/concentration-camp.png"
+    icon = "icons/building/concentration-camp.png"
 
 BuildingType
     name = "BLD_INDUSTRY_FARM"
@@ -820,7 +820,7 @@ BuildingType
             activation = Source
             stackinggroup = "BLD_INDUSTRY_FARM_EFFECT"
             effects = SetTargetPopulation Value + 1
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_BLACK_HOLE_POW_GEN"
@@ -840,7 +840,7 @@ BuildingType
             activation = Star type = BlackHole
             stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
             effects = SetTargetIndustry Value + Target.Population * 2
-    graphic = "icons/building/blackhole.png"
+    icon = "icons/building/blackhole.png"
 
 BuildingType
     name = "BLD_REPLICATORS"
@@ -848,7 +848,7 @@ BuildingType
     buildcost = 125
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_PLANET_DRIVE"
@@ -859,7 +859,7 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         Not Planet type = Asteroids
     ]
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_PLANET_BEACON"
@@ -872,7 +872,7 @@ BuildingType
             scope = Source
             activation = WithinStarlaneJumps 1 Building name = "BLD_PLANET_DRIVE"
             effects = Destroy
-    graphic = "icons/building/beacon.png"
+    icon = "icons/building/beacon.png"
 
 BuildingType
     name = "BLD_ART_PLANET"
@@ -894,7 +894,7 @@ BuildingType
             activation = Source
             effects = Destroy
     ]
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_ART_MOON"
@@ -913,7 +913,7 @@ BuildingType
             ]
             activation = Source
             effects = AddSpecial "RESONANT_MOON_SPECIAL"
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_TRANSFORMER"
@@ -921,7 +921,7 @@ BuildingType
     buildcost = 100
     buildtime = 15
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_GATEWAY_VOID"
@@ -960,7 +960,7 @@ BuildingType
             activation = Source
             effects = SetStealth 100
     ]
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_ENCLAVE_VOID"
@@ -977,7 +977,7 @@ BuildingType
             activation = Source
             stackinggroup = "BLD_ENCLAVE_VOID_STACK"
             effects = SetTargetResearch Value + Target.Population * 0.5
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_PLANET_CLOAK"
@@ -985,7 +985,7 @@ BuildingType
     buildcost = 150
     buildtime = 8
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_SPATIAL_DISTORT_GEN"
@@ -993,7 +993,7 @@ BuildingType
     buildcost = 30
     buildtime = 10
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_STARGATE"
@@ -1017,7 +1017,7 @@ BuildingType
                 Contains Building "BLD_STARGATE_BEACON"
                 OwnedBy TheEmpire Source.Owner
             ]
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_STARGATE_ACTIVATOR"
@@ -1030,7 +1030,7 @@ BuildingType
             scope = Source
             activation = Source
             effects = Destroy
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_STARGATE_BEACON"
@@ -1043,7 +1043,7 @@ BuildingType
             scope = Source
             activation = Source
             effects = Destroy
-    graphic = "icons/building/beacon.png"
+    icon = "icons/building/beacon.png"
 
 BuildingType
     name = "BLD_GAS_GIANT_GEN"
@@ -1062,7 +1062,7 @@ BuildingType
             ]
             activation = Focus "FOCUS_INDUSTRY"
             effects = SetTargetIndustry Value + Target.Population * 0.25
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_COLONY_BASE"
@@ -1084,15 +1084,15 @@ BuildingType
             activation = Source
             effects = Destroy
     ]
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_EXPERIMENTOR_OUTPOST"
     description = "BLD_EXPERIMENTOR_OUTPOST_DESC"
     buildcost = 1
     buildtime = 1
-    location = All
     captureresult = destroy
+    location = All
     effectsgroups = [
         EffectsGroup
             scope = Or [
@@ -1225,7 +1225,7 @@ BuildingType
                 System
             ]
     ]                
-    graphic = ""
+    icon = ""
 
 BuildingType
     name = "BLD_NOVA_BOMB_ACTIVATOR"
@@ -1237,6 +1237,6 @@ BuildingType
         EffectsGroup
             scope = Source
             effects = Destroy
-    graphic = ""
+    icon = ""
 
 

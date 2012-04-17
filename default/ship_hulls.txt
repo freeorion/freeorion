@@ -6,8 +6,6 @@ Hull
     fuel = 3
     stealth = 10
     structure = 100
-    buildCost = 100
-    buildTime = 10
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -15,14 +13,16 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
+    buildCost = 100
+    buildTime = 10
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    graphic = "hulls_design/xentronium_hull.png"
     icon = ""
+    graphic = "hulls_design/xentronium_hull.png"
 
 Hull
     name = "SH_COLONY_BASE"
@@ -32,17 +32,17 @@ Hull
     fuel = 0
     stealth = 10
     structure = 5
+    slots = Slot type = Internal position = (0.50, 0.50)
     buildCost = .1
     buildTime = 1
-    slots = Slot type = Internal position = (0.50, 0.50)
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    graphic = "hulls_design/colony_base_hull.png"
     icon = ""
+    graphic = "hulls_design/colony_base_hull.png"
     
 Hull
     name = "SH_BASIC_SMALL"
@@ -52,19 +52,19 @@ Hull
     fuel = 3
     stealth = 2
     structure = 8
-    buildCost = 2.0
-    buildTime = 2
     slots = [
         Slot type = External position = (0.60, 0.45)
         Slot type = Internal position = (0.40, 0.55)
     ]
+    buildCost = 2.0
+    buildTime = 2
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups = [[REGULAR_HULL_DETECTION]]
-    graphic = "hulls_design/basic-small-hull.png"
     icon = ""
+    graphic = "hulls_design/basic-small-hull.png"
     
 Hull
     name = "SH_BASIC_MEDIUM"
@@ -74,21 +74,21 @@ Hull
     fuel = 3
     stealth = 2
     structure = 15
-    buildCost = 5.0
-    buildTime = 2
     slots = [
         Slot type = External position = (0.35, 0.40)
         Slot type = External position = (0.65, 0.40)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildCost = 5.0
+    buildTime = 2
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    graphic = "hulls_design/basic-medium-hull.png"
     icon = ""
+    graphic = "hulls_design/basic-medium-hull.png"
 
 Hull
     name = "SH_STANDARD"
@@ -98,22 +98,22 @@ Hull
     fuel = 3
     stealth = 15
     structure = 20
-    buildCost = 10.0
-    buildTime = 2
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
+    buildCost = 10.0
+    buildTime = 2
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    graphic = ""
     icon = ""
+    graphic = ""
 
 Hull
     name = "SH_ROBOTIC"
@@ -123,8 +123,6 @@ Hull
     fuel = 3
     stealth = 2
     structure = 15
-    buildCost = 7.5
-    buildTime = 2
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -132,6 +130,8 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
+    buildCost = 7.5
+    buildTime = 2
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_BASE"
@@ -151,8 +151,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/robotic_hull.png"
     icon = ""
+    graphic = "hulls_design/robotic_hull.png"
 
 Hull
     name = "SH_SPATIAL_FLUX"
@@ -162,12 +162,12 @@ Hull
     fuel = 3
     stealth = 10
     structure = 5
-    buildCost = 5.0
-    buildTime = 2
     slots = [
         Slot type = External position = (0.40, 0.50)
         Slot type = External position = (0.60, 0.50)
     ]
+    buildCost = 5.0
+    buildTime = 2
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_BASE"
@@ -187,8 +187,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/spatial_flux_hull.png"
     icon = ""
+    graphic = "hulls_design/spatial_flux_hull.png"
 
 Hull
     name = "SH_SELF_GRAVITATING"
@@ -198,8 +198,6 @@ Hull
     fuel = 3
     stealth = -5
     structure = 50
-    buildCost = 40
-    buildTime = 2
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -212,6 +210,8 @@ Hull
         Slot type = Internal position = (0.20, 0.85)
         Slot type = Internal position = (0.40, 0.85)
     ]
+    buildCost = 40
+    buildTime = 2
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_CON_GEOINT"
@@ -229,8 +229,8 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    graphic = "hulls_design/self_gravitating_hull.png"
     icon = ""
+    graphic = "hulls_design/self_gravitating_hull.png"
 
 Hull
     name = "SH_NANOROBOTIC"
@@ -240,8 +240,6 @@ Hull
     fuel = 3
     stealth = 10
     structure = 10
-    buildCost = 12.5
-    buildTime = 2
     slots = [
         Slot type = External position = (0.15, 0.15)
         Slot type = External position = (0.30, 0.15)
@@ -251,6 +249,8 @@ Hull
         Slot type = External position = (0.90, 0.15)
         Slot type = Internal position = (0.30, 0.75)
     ]
+    buildCost = 12.5
+    buildTime = 2
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_CON_NANOROBO"
@@ -274,8 +274,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/nano_robotic_hull.png"
     icon = ""
+    graphic = "hulls_design/nano_robotic_hull.png"
 
 Hull
     name = "SH_TITANIC"
@@ -285,8 +285,6 @@ Hull
     fuel = 3
     stealth = -30
     structure = 80
-    buildCost = 40.0
-    buildTime = 5
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.20, 0.15)
@@ -308,6 +306,8 @@ Hull
         Slot type = Internal position = (0.20, 0.85)
         Slot type = Internal position = (0.30, 0.85)
     ]
+    buildCost = 40.0
+    buildTime = 5
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_CON_GEOINT"
@@ -325,8 +325,8 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    graphic = "hulls_design/titanic_hull.png"
     icon = ""
+    graphic = "hulls_design/titanic_hull.png"
 
 Hull
     name = "SH_TRANSSPATIAL"
@@ -336,9 +336,9 @@ Hull
     fuel = 3
     stealth = 30
     structure = 1
+    slots = Slot type = External position = (0.50, 0.50)
     buildCost = 5.0
     buildTime = 3
-    slots = Slot type = External position = (0.50, 0.50)
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_CON_ADV_ENGINE"
@@ -356,8 +356,8 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    graphic = "hulls_design/trans_spatial_hull.png"
     icon = ""
+    graphic = "hulls_design/trans_spatial_hull.png"
 
 Hull
     name = "SH_LOGISTICS_FACILITATOR"
@@ -367,8 +367,6 @@ Hull
     fuel = 3
     stealth = 10
     structure = 60
-    buildCost = 75.0
-    buildTime = 15
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.22, 0.15)
@@ -380,6 +378,8 @@ Hull
         Slot type = Internal position = (0.22, 0.75)
         Slot type = Internal position = (0.34, 0.75)
     ]
+    buildCost = 75.0
+    buildTime = 15
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_CON_ADV_ENGINE"
@@ -419,8 +419,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/lagistics_facilitator_hull.png"
     icon = ""
+    graphic = "hulls_design/lagistics_facilitator_hull.png"
 
 Hull
     name = "SH_ASTEROID"
@@ -430,8 +430,6 @@ Hull
     fuel = 4
     stealth = 3
     structure = 15
-    buildCost = 5.0
-    buildTime = 2
     slots = [
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.20, 0.50)
@@ -440,6 +438,8 @@ Hull
         Slot type = Internal position = (0.40, 0.50)
         Slot type = Internal position = (0.60, 0.50)
     ]
+    buildCost = 5.0
+    buildTime = 2
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_AST"
@@ -460,8 +460,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/asteroid_hull.png"
     icon = ""
+    graphic = "hulls_design/asteroid_hull.png"
 
 Hull
     name = "SH_SMALL_ASTEROID"
@@ -471,12 +471,12 @@ Hull
     fuel = 4
     stealth = 5
     structure = 5
-    buildCost = 2.0
-    buildTime = 2
     slots = [
         Slot type = External position = (0.50, 0.15)
         Slot type = Internal position = (0.50, 0.75)
     ]
+    buildCost = 2.0
+    buildTime = 2
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_AST"
@@ -497,8 +497,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/small_asteroid_hull.png"
     icon = ""
+    graphic = "hulls_design/small_asteroid_hull.png"
 
 Hull
     name = "SH_HEAVY_ASTEROID"
@@ -508,8 +508,6 @@ Hull
     fuel = 4
     stealth = 10
     structure = 40
-    buildCost = 10.0
-    buildTime = 2
     slots = [
         Slot type = External position = (0.12, 0.15)
         Slot type = External position = (0.24, 0.15)
@@ -521,6 +519,8 @@ Hull
         Slot type = Internal position = (0.24, 0.75)
         Slot type = Internal position = (0.36, 0.75)
     ]
+    buildCost = 10.0
+    buildTime = 2
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_AST"
@@ -541,8 +541,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/heavy_asteroid_hull.png"
     icon = ""
+    graphic = "hulls_design/heavy_asteroid_hull.png"
 
 Hull
     name = "SH_CAMOUFLAGE_ASTEROID"
@@ -552,14 +552,14 @@ Hull
     fuel = 4
     stealth = 5
     structure = 20
-    buildCost = 8.0
-    buildTime = 2
     slots = [
         Slot type = Internal position = (0.15, 0.40)
         Slot type = Internal position = (0.30, 0.40)
         Slot type = Internal position = (0.45, 0.40)
         Slot type = Internal position = (0.60, 0.40)
     ]
+    buildCost = 8.0
+    buildTime = 2
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_AST"
@@ -580,8 +580,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/camouflage_asteroid_hull.png"
     icon = ""
+    graphic = "hulls_design/camouflage_asteroid_hull.png"
 
 Hull
     name = "SH_SMALL_CAMOUFLAGE_ASTEROID"
@@ -591,12 +591,12 @@ Hull
     fuel = 4
     stealth = 100
     structure = 5
-    buildCost = 3.0
-    buildTime = 2
     slots = [
         Slot type = External position = (0.50, 0.15)
         Slot type = Internal position = (0.50, 0.75)
     ]
+    buildCost = 3.0
+    buildTime = 2
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_AST"
@@ -617,8 +617,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/small_camouflage_asteroid_hull.png"
     icon = ""
+    graphic = "hulls_design/small_camouflage_asteroid_hull.png"
 
 Hull
     name = "SH_AGREGATE_ASTEROID"
@@ -628,8 +628,6 @@ Hull
     fuel = 4
     stealth = -20
     structure = 20
-    buildCost = 60.0
-    buildTime = 3
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.20, 0.15)
@@ -651,6 +649,8 @@ Hull
         Slot type = Internal position = (0.90, 0.50)
         Slot type = Internal position = (0.10, 0.85)
     ]
+    buildCost = 60.0
+    buildTime = 3
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_AST_REF"
@@ -675,8 +675,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/agregate_asteroid_hull.png"
     icon = ""
+    graphic = "hulls_design/agregate_asteroid_hull.png"
 
 Hull
     name = "SH_MINIASTEROID_SWARM"
@@ -686,12 +686,12 @@ Hull
     fuel = 4
     stealth = 100
     structure = 3
-    buildCost = 5.0
-    buildTime = 3
     slots = [
         Slot type = External position = (0.20, 0.40)
         Slot type = External position = (0.40, 0.40)
     ]
+    buildCost = 5.0
+    buildTime = 3
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_AST_REF"
@@ -716,8 +716,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/mini_asteroid_swarm.png"
     icon = ""
+    graphic = "hulls_design/mini_asteroid_swarm.png"
 
 Hull
     name = "SH_SCATTERED_ASTEROID"
@@ -727,8 +727,6 @@ Hull
     fuel = 4
     stealth = -20
     structure = 20
-    buildCost = 50.0
-    buildTime = 15
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.20, 0.15)
@@ -750,6 +748,8 @@ Hull
         Slot type = Internal position = (0.90, 0.50)
         Slot type = Internal position = (0.10, 0.85)
     ]
+    buildCost = 50.0
+    buildTime = 15
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_AST_REF"
@@ -787,8 +787,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/scattered_asteroid_hull.png"
     icon = ""
+    graphic = "hulls_design/scattered_asteroid_hull.png"
 
 Hull
     name = "SH_CRYSTALLIZED_ASTEROID"
@@ -798,8 +798,6 @@ Hull
     fuel = 4
     stealth = 5
     structure = 100
-    buildCost = 10.0
-    buildTime = 3
     slots = [
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.20, 0.50)
@@ -808,6 +806,8 @@ Hull
         Slot type = Internal position = (0.40, 0.50)
         Slot type = Internal position = (0.60, 0.50)
     ]
+    buildCost = 10.0
+    buildTime = 3
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_AST"
@@ -828,8 +828,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/crystalized_asteroid_hull.png"
     icon = ""
+    graphic = "hulls_design/crystalized_asteroid_hull.png"
 
 Hull
     name = "SH_ORGANIC"
@@ -839,14 +839,14 @@ Hull
     fuel = 2
     stealth = 20
     structure = 15
-    buildCost = 1.0
-    buildTime = 5
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.20, 0.75)
     ]
+    buildCost = 1.0
+    buildTime = 5
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_ORB_INC"
@@ -872,8 +872,8 @@ Hull
             activation = Source
             effects = SetDetection Value + 10
     ]
-    graphic = "hulls_design/organic_hull.png"
     icon = ""
+    graphic = "hulls_design/organic_hull.png"
 
 Hull
     name = "SH_STATIC_MULTICELLULAR"
@@ -883,8 +883,6 @@ Hull
     fuel = 2
     stealth = 10
     structure = 5
-    buildCost = 5.0
-    buildTime = 3
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -892,6 +890,8 @@ Hull
         Slot type = Internal position = (0.40, 0.75)
         Slot type = Internal position = (0.60, 0.75)
     ]
+    buildCost = 5.0
+    buildTime = 3
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_ORB_INC"
@@ -905,8 +905,8 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    graphic = "hulls_design/static_multicellular.png"
     icon = ""
+    graphic = "hulls_design/static_multicellular.png"
 
 Hull
     name = "SH_ENDOMORPHIC"
@@ -916,8 +916,6 @@ Hull
     fuel = 2
     stealth = 20
     structure = 15
-    buildCost = 3.0
-    buildTime = 6
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -927,6 +925,8 @@ Hull
         Slot type = Internal position = (0.60, 0.75)
         Slot type = Internal position = (0.80, 0.75)
     ]
+    buildCost = 3.0
+    buildTime = 6
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_ORB_INC"
@@ -945,15 +945,15 @@ Hull
             effects = [
                 SetStructure Value + 2
                 SetFuel Value + 0.2
-    ]
+            ]
 
         EffectsGroup
             scope = Source
             activation = Source
             effects = SetDetection Value + 100
     ]
-    graphic = "hulls_design/endomorphic_hull.png"
     icon = ""
+    graphic = "hulls_design/endomorphic_hull.png"
 
 Hull
     name = "SH_SYMBIOTIC"
@@ -963,13 +963,13 @@ Hull
     fuel = 2
     stealth = 20
     structure = 30
-    buildCost = 2.0
-    buildTime = 5
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = Internal position = (0.20, 0.75)
     ]
+    buildCost = 2.0
+    buildTime = 5
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -992,15 +992,15 @@ Hull
             effects = [
                 SetStructure Value + 2
                 SetFuel Value + 0.2
-    ]
+            ]
 
         EffectsGroup
             scope = Source
             activation = Source
             effects = SetDetection Value + 100
     ]
-    graphic = "hulls_design/symbiotic_hull.png"
     icon = ""
+    graphic = "hulls_design/symbiotic_hull.png"
 
 Hull
     name = "SH_PROTOPLASMIC"
@@ -1010,8 +1010,6 @@ Hull
     fuel = 2
     stealth = 20
     structure = 5
-    buildCost = 2.0
-    buildTime = 7
     slots = [
         Slot type = External position = (0.15, 0.15)
         Slot type = External position = (0.30, 0.15)
@@ -1020,6 +1018,8 @@ Hull
         Slot type = Internal position = (0.60, 0.75)
         Slot type = Internal position = (0.75, 0.75)
     ]
+    buildCost = 2.0
+    buildTime = 7
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -1042,15 +1042,15 @@ Hull
             effects = [
                 SetStructure Value + 2
                 SetFuel Value + 0.2
-    ]
+            ]
 
         EffectsGroup
             scope = Source
             activation = Source
             effects = SetDetection Value + 100
     ]
-    graphic = "hulls_design/protoplasmic_hull.png"
     icon = ""
+    graphic = "hulls_design/protoplasmic_hull.png"
 
 Hull
     name = "SH_ENDOSYMBIOTIC"
@@ -1060,8 +1060,6 @@ Hull
     fuel = 2
     stealth = 20
     structure = 20
-    buildCost = 2.5
-    buildTime = 8
     slots = [
         Slot type = External position = (0.15, 0.15)
         Slot type = External position = (0.30, 0.15)
@@ -1069,6 +1067,8 @@ Hull
         Slot type = Internal position = (0.60, 0.75)
         Slot type = Internal position = (0.75, 0.75)
     ]
+    buildCost = 2.5
+    buildTime = 8
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -1095,15 +1095,15 @@ Hull
             effects = [
                 SetStructure Value + 2
                 SetFuel Value + 0.2
-    ]
+            ]
 
         EffectsGroup
             scope = Source
             activation = Source
             effects = SetDetection Value + 100
     ]
-    graphic = "hulls_design/endosymbiotic_hull.png"
     icon = ""
+    graphic = "hulls_design/endosymbiotic_hull.png"
 
 Hull
     name = "SH_RAVENOUS"
@@ -1113,8 +1113,6 @@ Hull
     fuel = 2
     stealth = 0
     structure = 60
-    buildCost = 3.0
-    buildTime = 10
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -1123,6 +1121,8 @@ Hull
         Slot type = Internal position = (0.20, 0.75)
         Slot type = Internal position = (0.40, 0.75)
     ]
+    buildCost = 3.0
+    buildTime = 10
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_ORB_INC"
@@ -1145,8 +1145,8 @@ Hull
             activation = Source
             effects = SetDetection Value + 150
     ]
-    graphic = "hulls_design/ravenous_hull.png"
     icon = ""
+    graphic = "hulls_design/ravenous_hull.png"
 
 Hull
     name = "SH_BIOADAPTIVE"
@@ -1156,14 +1156,14 @@ Hull
     fuel = 2
     stealth = 30
     structure = 50
-    buildCost = 7.5
-    buildTime = 15
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = Internal position = (0.20, 0.75)
         Slot type = Internal position = (0.40, 0.75)
     ]
+    buildCost = 7.5
+    buildTime = 15
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -1186,15 +1186,15 @@ Hull
             effects = [
                 SetStructure Target.MaxStructure
                 SetFuel Value + 0.2
-    ]
+            ]
 
         EffectsGroup
             scope = Source
             activation = Source
             effects = SetDetection Value + 150
     ]
-    graphic = "hulls_design/bio_adaptive_hull.png"
     icon = ""
+    graphic = "hulls_design/bio_adaptive_hull.png"
 
 Hull
     name = "SH_SENTIENT"
@@ -1204,8 +1204,6 @@ Hull
     fuel = 2
     stealth = 20
     structure = 40
-    buildCost = 5.0
-    buildTime = 30
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.25, 0.15)
@@ -1217,6 +1215,8 @@ Hull
         Slot type = Internal position = (0.25, 0.75)
         Slot type = Internal position = (0.40, 0.75)
     ]
+    buildCost = 5.0
+    buildTime = 30
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -1239,8 +1239,8 @@ Hull
             effects = [
                 SetStructure Value + 2
                 SetFuel Value + 0.2
-    ]
-
+            ]
+    
         EffectsGroup
             scope = And [
                 WithinDistance 0 Source
@@ -1262,8 +1262,8 @@ Hull
             activation = Source
             effects = SetDetection Value + 100
     ]
-    graphic = "hulls_design/sentient_hull.png"
     icon = ""
+    graphic = "hulls_design/sentient_hull.png"
 
 Hull
     name = "SH_COMPRESSED_ENERGY"
@@ -1273,9 +1273,9 @@ Hull
     fuel = 5
     stealth = 75
     structure = 3
+    slots = Slot type = External position = (0.15, 0.40)
     buildCost = 2.5
     buildTime = 2
-    slots = Slot type = External position = (0.15, 0.40)
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ENRG_COMP"
@@ -1290,8 +1290,8 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    graphic = "hulls_design/compressed_energy_hull.png"
     icon = ""
+    graphic = "hulls_design/compressed_energy_hull.png"
 
 Hull
     name = "SH_FRACTAL_ENERGY"
@@ -1301,8 +1301,6 @@ Hull
     fuel = 5
     stealth = 0
     structure = 20
-    buildCost = 20.0
-    buildTime = 5
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.20, 0.15)
@@ -1332,6 +1330,8 @@ Hull
         Slot type = External position = (0.80, 0.85)
         Slot type = External position = (0.90, 0.85)
     ]
+    buildCost = 20.0
+    buildTime = 5
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ENRG_COMP"
@@ -1346,8 +1346,8 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    graphic = "hulls_design/fractal_energy_hull.png"
     icon = ""
+    graphic = "hulls_design/fractal_energy_hull.png"
 
 Hull
     name = "SH_QUANTUM_ENERGY"
@@ -1357,8 +1357,6 @@ Hull
     fuel = 5
     stealth = -15
     structure = 80
-    buildCost = 7.5
-    buildTime = 10
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.22, 0.15)
@@ -1371,6 +1369,8 @@ Hull
         Slot type = Internal position = (0.22, 0.75)
         Slot type = Internal position = (0.34, 0.75)
     ]
+    buildCost = 7.5
+    buildTime = 10
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ENRG_COMP"
@@ -1385,8 +1385,8 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    graphic = "hulls_design/quantum_energy_hull.png"
     icon = ""
+    graphic = "hulls_design/quantum_energy_hull.png"
 
 Hull
     name = "SH_SOLAR"
@@ -1396,8 +1396,6 @@ Hull
     fuel = 5
     stealth = -250
     structure = 100
-    buildCost = 30.0
-    buildTime = 20
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.20, 0.15)
@@ -1427,6 +1425,8 @@ Hull
         Slot type = Internal position = (0.80, 0.85)
         Slot type = Internal position = (0.90, 0.85)
     ]
+    buildCost = 30.0
+    buildTime = 20
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ENRG_COMP"
@@ -1476,8 +1476,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "hulls_design/solar_hull.png"
     icon = ""
+    graphic = "hulls_design/solar_hull.png"
     
 Hull
     name = "SH_WEAK_MONSTER_BODY"
@@ -1487,14 +1487,14 @@ Hull
     fuel = 3
     stealth = 15
     structure = 40
-    buildCost = 1
-    buildTime = 2
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
+    buildCost = 1
+    buildTime = 2
+    Unproducible
     location = All
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
@@ -1514,8 +1514,8 @@ Hull
             stackinggroup = "TREE_GROWTH"
             effects = CreateShip "SM_TREE"
         ]
-    graphic = "icons/monsters/floater.png"
     icon = ""
+    graphic = "icons/monsters/floater.png"
     
 Hull
     name = "SH_IMMOBILE_MONSTER_BODY"
@@ -1525,10 +1525,10 @@ Hull
     fuel = 0
     stealth = 10
     structure = 10
+    slots = Slot type = External position = (0.30, 0.15)
     buildCost = 1
     buildTime = 2
     Unproducible
-    slots = Slot type = External position = (0.30, 0.15)
     location = All
     effectsgroups = [
         EffectsGroup     
@@ -1550,9 +1550,9 @@ Hull
             stackinggroup = "TREE_GROWTH"
             effects = CreateShip "SM_FLOATER"
     ]
-        graphic = "icons/monsters/tree.png"
-    icon = ""    
-    
+    icon = ""
+    graphic = "icons/monsters/tree.png"
+
 Hull
     name = "SH_STRONG_MONSTER_BODY"
     description = "SH_STRONG_MONSTER_BODY_DESC"
@@ -1561,9 +1561,6 @@ Hull
     fuel = 5
     stealth = 10
     structure = 160
-    buildCost = 1
-    buildTime = 2
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -1571,6 +1568,10 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildCost = 1
+    buildTime = 2
+    Unproducible
+
     location = All
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
@@ -1579,8 +1580,8 @@ Hull
         [[REGULAR_HULL_DETECTION]]
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "icons/monsters/dragon.png"
     icon = ""
+    graphic = "icons/monsters/dragon.png"
 
 Hull
     name = "SH_GUARD_MONSTER_BODY"
@@ -1590,9 +1591,6 @@ Hull
     fuel = 0
     stealth = 10
     structure = 5000
-    buildCost = 1
-    buildTime = 2
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -1600,9 +1598,12 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildCost = 1
+    buildTime = 2
+    Unproducible
     location = All
-    graphic = "icons/monsters/sentinel.png"
     icon = ""
+    graphic = "icons/monsters/sentinel.png"
     
 Hull
     name = "SH_DRONE_BODY"
@@ -1612,22 +1613,21 @@ Hull
     fuel = 3
     stealth = 15
     structure = 20
-    buildCost = 1
-    buildTime = 2
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
+    buildCost = 1
+    buildTime = 2
+    Unproducible
     location = All
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
     ]
-    graphic = "icons/monsters/drone.png"
     icon = ""
-
+    graphic = "icons/monsters/drone.png"
 
 Hull
     name = "SH_IMMOBILE_FACTORY"
@@ -1637,14 +1637,14 @@ Hull
     fuel = 0
     stealth = 10
     structure = 5000
-    buildCost = 1
-    buildTime = 1
-    Unproducible
-        slots = [
+    slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         EffectsGroup     
@@ -1653,7 +1653,8 @@ Hull
             effects = [   
                 CreateShip "SM_DRONE"
                 CreateShip "SM_DRONE"
-                ]
+            ]
+
         EffectsGroup
             scope = And [
                 System
@@ -1665,12 +1666,10 @@ Hull
                 ]
             ]
             activation = Random probability = .1
-            effects = [
-                CreateShip "SM_DRONE"
-                ]
+            effects = CreateShip "SM_DRONE"
     ]
-    graphic = "icons/monsters/factory.png"
     icon = ""
+    graphic = "icons/monsters/factory.png"
 
 Hull
     name = "SH_KRILL_1_BODY"
@@ -1680,14 +1679,14 @@ Hull
     fuel = 5
     stealth = 15
     structure = 40
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         EffectsGroup
@@ -1756,8 +1755,8 @@ Hull
                 Not Contains Source
             ]
     ]
-    graphic = "icons/monsters/krill-1.png"
     icon = ""
+    graphic = "icons/monsters/krill-1.png"
 
 Hull
     name = "SH_KRILL_2_BODY"
@@ -1767,14 +1766,14 @@ Hull
     fuel = 6
     stealth = 10
     structure = 80
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         EffectsGroup
@@ -1851,8 +1850,8 @@ Hull
                 Not Contains Source
             ]
     ]
-    graphic = "icons/monsters/krill-2.png"
     icon = ""
+    graphic = "icons/monsters/krill-2.png"
     
 Hull
     name = "SH_KRILL_3_BODY"
@@ -1862,15 +1861,15 @@ Hull
     fuel = 5
     stealth = 10
     structure = 500
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.70, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         EffectsGroup
@@ -1947,8 +1946,8 @@ Hull
                 Not Contains Source
             ]
     ]
-    graphic = "icons/monsters/krill-3.png"
     icon = ""
+    graphic = "icons/monsters/krill-3.png"
     
 Hull
     name = "SH_KRILL_4_BODY"
@@ -1958,15 +1957,15 @@ Hull
     fuel = 4
     stealth = 10
     structure = 2000
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.70, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         EffectsGroup
@@ -1991,9 +1990,9 @@ Hull
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
     ]
-    graphic = "icons/monsters/krill-4.png"
     icon = ""
-    
+    graphic = "icons/monsters/krill-4.png"
+
 //   KRAKEN
 
 Hull
@@ -2004,15 +2003,15 @@ Hull
     fuel = 4
     stealth = 10
     structure = 40
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         EffectsGroup     
@@ -2039,8 +2038,8 @@ Hull
         [[REGULAR_HULL_DETECTION]]
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "icons/monsters/kraken-1.png"
     icon = ""
+    graphic = "icons/monsters/kraken-1.png"
     
 Hull
     name = "SH_KRAKEN_2_BODY"
@@ -2050,15 +2049,15 @@ Hull
     fuel = 4
     stealth = 10
     structure = 200
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
@@ -2077,8 +2076,8 @@ Hull
         [[REGULAR_HULL_DETECTION]]
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "icons/monsters/kraken-2.png"
     icon = ""
+    graphic = "icons/monsters/kraken-2.png"
     
 Hull
     name = "SH_KRAKEN_3_BODY"
@@ -2088,15 +2087,15 @@ Hull
     fuel = 4
     stealth = 10
     structure = 2000
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
@@ -2105,8 +2104,8 @@ Hull
         [[REGULAR_HULL_DETECTION]]
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "icons/monsters/kraken-3.png"
     icon = ""
+    graphic = "icons/monsters/kraken-3.png"
     
 //   SNOWFLAKE
 
@@ -2118,18 +2117,18 @@ Hull
     fuel = 5
     stealth = 15
     structure = 50
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
-        EffectsGroup     
+        EffectsGroup
             scope = NumberOf number = 2 condition = Planet size = Small
             activation = Not Turn low = 1
             effects = AddSpecial name = "SNOWFLAKE_NEST_SPECIAL"
@@ -2150,9 +2149,9 @@ Hull
         [[REGULAR_HULL_DETECTION]]
         [[REGULAR_HULL_DETECTION]]
         [[REGULAR_HULL_DETECTION]]
-        ]
-    graphic = "icons/monsters/snowflake-1.png"
+    ]
     icon = ""
+    graphic = "icons/monsters/snowflake-1.png"
     
 Hull
     name = "SH_SNOWFLAKE_2_BODY"
@@ -2162,15 +2161,15 @@ Hull
     fuel = 5
     stealth = 10
     structure = 120
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
@@ -2190,8 +2189,8 @@ Hull
         [[REGULAR_HULL_DETECTION]]
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "icons/monsters/snowflake-2.png"
     icon = ""
+    graphic = "icons/monsters/snowflake-2.png"
     
 Hull
     name = "SH_SNOWFLAKE_3_BODY"
@@ -2201,15 +2200,15 @@ Hull
     fuel = 5
     stealth = 10
     structure = 240
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
@@ -2219,8 +2218,8 @@ Hull
         [[REGULAR_HULL_DETECTION]]
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = "icons/monsters/snowflake-3.png"
     icon = ""
+    graphic = "icons/monsters/snowflake-3.png"
     
 //   JUGGERNAUT
 
@@ -2232,15 +2231,15 @@ Hull
     fuel = 3
     stealth = 10
     structure = 60
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         EffectsGroup     
@@ -2264,8 +2263,8 @@ Hull
         [[REGULAR_HULL_DETECTION]]
         
     ]
-    graphic = "icons/monsters/juggernaut-1.png"
     icon = ""
+    graphic = "icons/monsters/juggernaut-1.png"
     
 Hull
     name = "SH_JUGGERNAUT_2_BODY"
@@ -2275,15 +2274,15 @@ Hull
     fuel = 2
     stealth = 10
     structure = 400
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
@@ -2303,8 +2302,8 @@ Hull
         [[REGULAR_HULL_DETECTION]]
         
     ]
-    graphic = "icons/monsters/juggernaut-2.png"
     icon = ""
+    graphic = "icons/monsters/juggernaut-2.png"
     
 Hull
     name = "SH_JUGGERNAUT_3_BODY"
@@ -2314,15 +2313,15 @@ Hull
     fuel = 5
     stealth = 10
     structure = 2000
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
@@ -2330,8 +2329,8 @@ Hull
         [[REGULAR_HULL_DETECTION]]
 
     ]
-    graphic = "icons/monsters/juggernaut-3.png"
     icon = ""
+    graphic = "icons/monsters/juggernaut-3.png"
 
 Hull
     name = "SH_NEBULOUS_BODY"
@@ -2341,21 +2340,21 @@ Hull
     fuel = 1
     stealth = 650
     structure = 10000
-    buildcost = 1
-    buildtime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.60, 0.45)
         Slot type = Internal position = (0.40, 0.55)
     ]
+    buildcost = 1
+    buildtime = 1
+    Unproducible
     location = All
     effectsgroups = [
         [[INFINITE_FUEL]]
 
         [[MONSTER_MOVE_PRE]]1[[MONSTER_MOVE_POST]]
-        ]
-    graphic = ""
+    ]
     icon = ""
+    graphic = ""
 
 Hull
     name = "SH_EXP_OUTPOST_HULL"
@@ -2365,12 +2364,12 @@ Hull
     fuel = 1
     stealth = 650
     structure = 1
-    buildcost = 1
-    buildtime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.60, 0.45)
     ]
+    buildcost = 1
+    buildtime = 1
+    Unproducible
     location = All
     effectsgroups = [
         EffectsGroup
@@ -2388,8 +2387,8 @@ Hull
             scope = Source
             effects = Destroy
     ]
-    graphic = ""
     icon = ""
+    graphic = ""
 
 Hull
     name = "SH_BLACK_KRAKEN_BODY"
@@ -2399,9 +2398,6 @@ Hull
     fuel = 100
     stealth = 10
     structure = 8000
-    buildcost = 1
-    buildtime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -2409,14 +2405,17 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
+    buildcost = 1
+    buildtime = 1
+    Unproducible
     location = All
     effectsgroups = [
         [[HUNT_BUILDINGS]]
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
     ]
-    graphic = ""
     icon = ""
+    graphic = ""
 
 Hull
     name = "SH_BLOATED_JUGGERNAUT_BODY"
@@ -2426,9 +2425,6 @@ Hull
     fuel = 100
     stealth = 10
     structure = 14000
-    buildcost = 1
-    buildtime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -2438,6 +2434,9 @@ Hull
         Slot type = External position = (0.20, 0.75)
         Slot type = Internal position = (0.40, 0.75)
     ]
+    buildcost = 1
+    buildtime = 1
+    Unproducible
     location = All
     effectsgroups = [
         [[HUNT_BUILDINGS]]
@@ -2445,8 +2444,8 @@ Hull
         [[REGULAR_HULL_DETECTION]]
         [[INFINITE_FUEL]]
     ]
-    graphic = ""
     icon = ""
+    graphic = ""
 
 Hull
     name = "SH_PSIONIC_SNOWFLAKE_BODY"
@@ -2456,15 +2455,15 @@ Hull
     fuel = 100
     stealth = 10
     structure = 3600
-    buildCost = 1
-    buildTime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
     location = All
     effectsgroups = [
         [[HUNT_SHIPS]]
@@ -2490,8 +2489,8 @@ Hull
             activation = Random 0.8
             effects = SetOwner Source.Owner
     ]
-    graphic = ""
     icon = ""
+    graphic = ""
 
 Hull
     name = "SH_COSMIC_DRAGON_BODY"
@@ -2501,15 +2500,15 @@ Hull
     fuel = 100
     stealth = 10
     structure = 100000
-    buildcost = 1
-    buildtime = 1
-    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    buildcost = 1
+    buildtime = 1
+    Unproducible
     location = All
     effectsgroups = [
         [[HUNT_PLANETS]]
@@ -2530,10 +2529,10 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    graphic = ""
     icon = ""
-                
-    
+    graphic = ""
+
+
 REGULAR_HULL_DETECTION
 '''EffectsGroup
         scope = Source

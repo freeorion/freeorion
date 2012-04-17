@@ -107,6 +107,7 @@
     (Growth)                                    \
     (HasSpecial)                                \
     (HasSpecialSinceTurn)                       \
+    (HasTag)                                    \
     (High)                                      \
     (Homeworld)                                 \
     (Hostile)                                   \
@@ -316,6 +317,7 @@
     (System)                                    \
     (SystemID)                                  \
     (Tag)                                       \
+    (Tags)                                       \
     (Target)                                    \
     (TargetConstruction)                        \
     (TargetIndustry)                            \

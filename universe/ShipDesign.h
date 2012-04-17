@@ -116,9 +116,46 @@ struct FighterStats {
 };
 
 /** A variant type containing all ShipPartClass-specific stats for a PartType.
-    Note that most parts need only a single value to represent their
-    capabilities.  This is represented by the double variant. */
+  * Note that most parts need only a single value to represent their
+  * capabilities.  This is represented by the double variant. */
 typedef boost::variant<double, DirectFireStats, LRStats, FighterStats> PartTypeStats;
+
+/** Common parameters for PartType and HullType constructors.  Used as temporary
+  * storage for parsing to reduce number of sub-items parsed per item. */
+struct PartHullCommonParams {
+    PartHullCommonParams() :
+        production_cost(0.0),
+        production_time(1),
+        producible(false),
+        tags(),
+        location(0),
+        effects(),
+        icon()
+    {}
+    PartHullCommonParams(double production_cost_,
+                         int production_time_,
+                         bool producible_,
+                         const std::vector<std::string>& tags_,
+                         const Condition::ConditionBase* location_,
+                         const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_,
+                         const std::string& icon_) :
+        production_cost(production_cost_),
+        production_time(production_time_),
+        producible(producible_),
+        tags(tags_),
+        location(location_),
+        effects(effects_),
+        icon(icon_)
+    {}
+    double                          production_cost;  // in PP
+    int                             production_time;  // in turns
+    bool                            producible;
+    std::vector<std::string>        tags;
+    const Condition::ConditionBase* location;
+    std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
+                                    effects;
+    std::string                     icon;
+};
 
 /** A type of ship part */
 class PartType {
@@ -132,29 +169,28 @@ public:
         m_production_cost(1.0),
         m_production_time(1),
         m_mountable_slot_types(),
+        m_tags(),
         m_location(0),
         m_effects(),
         m_icon()
     {}
     PartType(const std::string& name, const std::string& description,
-             ShipPartClass part_class, const PartTypeStats& stats, double production_cost,
-             int production_time, bool producible,
-             std::vector<ShipSlotType> mountable_slot_types,
-             const Condition::ConditionBase* location,
-             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-             const std::string& icon) :
+             ShipPartClass part_class, const PartTypeStats& stats,
+             const PartHullCommonParams& common_params,
+             std::vector<ShipSlotType> mountable_slot_types) :
         m_name(name),
         m_description(description),
         m_class(part_class),
         m_stats(stats),
-        m_production_cost(production_cost),
-        m_production_time(production_time),
-        m_producible(producible),
+        m_production_cost(common_params.production_cost),
+        m_production_time(common_params.production_time),
+        m_producible(common_params.producible),
         m_mountable_slot_types(mountable_slot_types),
-        m_location(location),
+        m_tags(common_params.tags),
+        m_location(common_params.location),
         m_effects(),
-        m_icon(icon)
-    { Init(effects); }
+        m_icon(common_params.icon)
+    { Init(common_params.effects); }
 
     ~PartType();
     //@}
@@ -169,10 +205,11 @@ public:
     double                  ProductionCost() const  { return m_production_cost;}///< returns total cost of part
     int                     ProductionTime() const  { return m_production_time;}///< returns turns taken to build this part (the minimum time to build a ship design containing this part)
     bool                    Producible() const      { return m_producible; }    ///< returns whether this part type is producible by players and appears on the design screen
-    const std::string&      Icon() const            { return m_icon; }          ///< returns icon graphic that represents part in UI
+    const std::vector<std::string>& Tags() const    { return m_tags; }
     const Condition::ConditionBase* Location() const{ return m_location; }      ///< returns the condition that determines the locations where ShipDesign containing part can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const
     { return m_effects; }                                                       ///< returns the EffectsGroups that encapsulate the effects this part has
+    const std::string&      Icon() const            { return m_icon; }          ///< returns icon graphic that represents part in UI
     //@}
 
 private:
@@ -186,6 +223,7 @@ private:
     int                 m_production_time;  // in turns
     bool                m_producible;
     std::vector<ShipSlotType>       m_mountable_slot_types;
+    std::vector<std::string>        m_tags;
     const Condition::ConditionBase* m_location;
 
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
@@ -237,53 +275,38 @@ const PartType* GetPartType(const std::string& name);
   * parsed main item. */
 struct HullTypeStats {
     HullTypeStats() :
-        m_fuel(0.0),
-        m_battle_speed(0.0),
-        m_starlane_speed(0.0),
-        m_stealth(0.0),
-        m_structure(0.0),
-        m_production_cost(1.0),
-        m_production_time(1),
-        m_producible(false)
+        fuel(0.0),
+        battle_speed(0.0),
+        starlane_speed(0.0),
+        stealth(0.0),
+        structure(0.0)
     {}
 
-    HullTypeStats(double fuel,
-                  double battle_speed,
-                  double starlane_speed,
-                  double stealth,
-                  double structure,
-                  double production_cost,
-                  int production_time,
-                  bool producible) :
-        m_fuel(fuel),
-        m_battle_speed(battle_speed),
-        m_starlane_speed(starlane_speed),
-        m_stealth(stealth),
-        m_structure(structure),
-        m_production_cost(production_cost),
-        m_production_time(production_time),
-        m_producible(producible)
+    HullTypeStats(double fuel_,
+                  double battle_speed_,
+                  double starlane_speed_,
+                  double stealth_,
+                  double structure_) :
+        fuel(fuel_),
+        battle_speed(battle_speed_),
+        starlane_speed(starlane_speed_),
+        stealth(stealth_),
+        structure(structure_)
     {}
 
-    double  m_fuel;
-    double  m_battle_speed;
-    double  m_starlane_speed;
-    double  m_stealth;
-    double  m_structure;
-    double  m_production_cost;
-    int     m_production_time;
-    bool    m_producible;
+    double  fuel;
+    double  battle_speed;
+    double  starlane_speed;
+    double  stealth;
+    double  structure;
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int) {
-        ar  & BOOST_SERIALIZATION_NVP(m_fuel)
-            & BOOST_SERIALIZATION_NVP(m_battle_speed)
-            & BOOST_SERIALIZATION_NVP(m_starlane_speed)
-            & BOOST_SERIALIZATION_NVP(m_stealth)
-            & BOOST_SERIALIZATION_NVP(m_structure)
-            & BOOST_SERIALIZATION_NVP(m_production_cost)
-            & BOOST_SERIALIZATION_NVP(m_production_time)
-            & BOOST_SERIALIZATION_NVP(m_producible);
+        ar  & BOOST_SERIALIZATION_NVP(fuel)
+            & BOOST_SERIALIZATION_NVP(battle_speed)
+            & BOOST_SERIALIZATION_NVP(starlane_speed)
+            & BOOST_SERIALIZATION_NVP(stealth)
+            & BOOST_SERIALIZATION_NVP(structure);
     }
 };
 
@@ -314,19 +337,21 @@ public:
         m_structure(0.0),
         m_production_cost(1.0),
         m_production_time(1),
+        m_producible(false),
         m_slots(),
+        m_tags(),
         m_location(0),
         m_effects(),
-        m_graphic()
+        m_graphic(),
+        m_icon()
     {}
 
     HullType(const std::string& name, const std::string& description,
              double fuel, double battle_speed, double starlane_speed,
              double stealth, double structure,
-             double production_cost, int production_time, bool producible,
-             const std::vector<Slot>& slots, const Condition::ConditionBase* location,
-             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-             const std::string& graphic, const std::string& icon) :
+             const PartHullCommonParams& common_params,
+             const std::vector<Slot>& slots,
+             const std::string& graphic) :
         m_name(name),
         m_description(description),
         m_battle_speed(battle_speed),
@@ -334,37 +359,39 @@ public:
         m_fuel(fuel),
         m_stealth(stealth),
         m_structure(structure),
-        m_production_cost(production_cost),
-        m_production_time(production_time),
-        m_producible(producible),
+        m_production_cost(common_params.production_cost),
+        m_production_time(common_params.production_time),
+        m_producible(common_params.producible),
         m_slots(slots),
-        m_location(location),
+        m_tags(common_params.tags),
+        m_location(common_params.location),
         m_effects(),
         m_graphic(graphic),
-        m_icon(icon)
-    { Init(effects); }
+        m_icon(common_params.icon)
+    { Init(common_params.effects); }
 
     HullType(const std::string& name, const std::string& description,
              const HullTypeStats& stats,
-             const std::vector<Slot>& slots, const Condition::ConditionBase* location,
-             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-             const std::string& graphic, const std::string& icon) :
+             const PartHullCommonParams& common_params,
+             const std::vector<Slot>& slots,
+             const std::string& graphic) :
         m_name(name),
         m_description(description),
-        m_battle_speed(stats.m_battle_speed),
-        m_starlane_speed(stats.m_starlane_speed),
-        m_fuel(stats.m_fuel),
-        m_stealth(stats.m_stealth),
-        m_structure(stats.m_structure),
-        m_production_cost(stats.m_production_cost),
-        m_production_time(stats.m_production_time),
-        m_producible(stats.m_producible),
+        m_battle_speed(stats.battle_speed),
+        m_starlane_speed(stats.starlane_speed),
+        m_fuel(stats.fuel),
+        m_stealth(stats.stealth),
+        m_structure(stats.structure),
+        m_production_cost(common_params.production_cost),
+        m_production_time(common_params.production_time),
+        m_producible(common_params.producible),
         m_slots(slots),
-        m_location(location),
+        m_tags(common_params.tags),
+        m_location(common_params.location),
         m_effects(),
         m_graphic(graphic),
-        m_icon(icon)
-    { Init(effects); }
+        m_icon(common_params.icon)
+    { Init(common_params.effects); }
 
     ~HullType();
     //@}
@@ -390,7 +417,9 @@ public:
 
     unsigned int        NumSlots() const        { return m_slots.size(); }      ///< returns total number of of slots in hull
     unsigned int        NumSlots(ShipSlotType slot_type) const;                 ///< returns number of of slots of indicated type in hull
-    const std::vector<Slot>& Slots() const      { return m_slots; }             ///< returns vector of slots in hull
+    const std::vector<Slot>&    Slots() const   { return m_slots; }             ///< returns vector of slots in hull
+
+    const std::vector<std::string>& Tags() const{ return m_tags; }
 
     const Condition::ConditionBase* Location() const
     { return m_location; }                                                      ///< returns the condition that determines the locations where ShipDesign containing hull can be produced
@@ -415,6 +444,8 @@ private:
     int                         m_production_time;  // in turns
     bool                        m_producible;
     std::vector<Slot>           m_slots;
+
+    std::vector<std::string>    m_tags;
 
     const Condition::ConditionBase*
                                 m_location;
@@ -542,6 +573,8 @@ public:
 
     const std::vector<std::string>& Parts() const           { return m_parts; }     ///< returns vector of names of all parts in design
     std::vector<std::string>        Parts(ShipSlotType slot_type) const;            ///< returns vector of names of parts in slots of indicated type
+
+    std::vector<std::string>        Tags() const;
 
     const std::string&              Icon() const            { return m_icon; }      ///< returns filename for small-size icon graphic for design
     const std::string&              Model() const           { return m_3D_model; }  ///< returns filename of 3D model that represents ships of design
@@ -708,6 +741,7 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_production_cost)
         & BOOST_SERIALIZATION_NVP(m_production_time)
         & BOOST_SERIALIZATION_NVP(m_mountable_slot_types)
+        & BOOST_SERIALIZATION_NVP(m_tags)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_icon);
@@ -726,11 +760,11 @@ void HullType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_production_cost)
         & BOOST_SERIALIZATION_NVP(m_production_time)
         & BOOST_SERIALIZATION_NVP(m_slots)
+        & BOOST_SERIALIZATION_NVP(m_tags)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_graphic)
         & BOOST_SERIALIZATION_NVP(m_icon);
 }
-
 
 #endif // _ShipDesign_h_

@@ -170,7 +170,7 @@ std::string BuildingType::Dump() const {
         --g_indent;
         retval += DumpIndent() + "]\n";
     }
-    retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
+    retval += DumpIndent() + "icon = \"" + m_icon + "\"\n";
     --g_indent;
     return retval;
 }

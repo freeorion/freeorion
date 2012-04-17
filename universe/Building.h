@@ -14,8 +14,7 @@ namespace Condition {
 }
 
 /** A Building UniverseObject type. */
-class Building : public UniverseObject
-{
+class Building : public UniverseObject {
 public:
     /** \name Structors */ //@{
     Building() :
@@ -76,8 +75,7 @@ private:
 /** A specification for a building of a certain type.  Each building type must
   * have a \a unique name string, by which it can be looked up using
   * GetBuildingType(). */
-class BuildingType
-{
+class BuildingType {
 public:
     /** \name Structors */ //@{
     /** default ctor */
@@ -87,26 +85,30 @@ public:
         m_production_cost(0.0),
         m_production_time(0),
         m_capture_result(CR_DESTROY),
+        m_tags(),
         m_location(0),
         m_effects(0),
-        m_graphic("")
+        m_icon("")
     {};
 
     /** basic ctor */
     BuildingType(const std::string& name, const std::string& description,
                  double production_cost, int production_time, bool producible,
-                 CaptureResult capture_result, const Condition::ConditionBase* location,
+                 CaptureResult capture_result,
+                 const std::vector<std::string>& tags,
+                 const Condition::ConditionBase* location,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-                 const std::string& graphic) :
+                 const std::string& icon) :
         m_name(name),
         m_description(description),
         m_production_cost(production_cost),
         m_production_time(production_time),
         m_producible(producible),
         m_capture_result(capture_result),
+        m_tags(tags),
         m_location(location),
         m_effects(effects),
-        m_graphic(graphic)
+        m_icon(icon)
     {}
 
     ~BuildingType(); ///< dtor
@@ -121,10 +123,11 @@ public:
     int                             ProductionTime() const;         ///< returns the number of turns required to build this building
     bool                            Producible() const      { return m_producible; }    ///< returns whether this building type is producible by players and appears on the production screen
     double                          MaintenanceCost() const { return 0.0; }             ///< returns the number of monetary points required per turn to operate this building
+    const std::vector<std::string>& Tags() const            { return m_tags; }
     const Condition::ConditionBase* Location() const        { return m_location; }      ///< returns the condition that determines the locations where this building can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                     Effects() const         { return m_effects; }       ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
-    const std::string&              Graphic() const         { return m_graphic; }       ///< returns the name of the grapic file for this building type
+    const std::string&              Icon() const            { return m_icon; }       ///< returns the name of the grapic file for this building type
     bool ProductionLocation(int empire_id, int location_id) const;  ///< returns true iff the empire with ID empire_id can produce this building at the location with location_id
 
     /** returns CaptureResult for empire with ID \a to_empire_id capturing from
@@ -144,14 +147,14 @@ private:
     int                                                         m_production_time;
     bool                                                        m_producible;
     CaptureResult                                               m_capture_result;
+    std::vector<std::string>                                    m_tags;
     const Condition::ConditionBase*                             m_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
-    std::string                                                 m_graphic;
+    std::string                                                 m_icon;
 };
 
 /** Holds all FreeOrion building types.  Types may be looked up by name. */
-class BuildingTypeManager
-{
+class BuildingTypeManager {
 public:
     typedef std::map<std::string, BuildingType*>::const_iterator iterator;
 

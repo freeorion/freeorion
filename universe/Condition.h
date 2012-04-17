@@ -46,6 +46,7 @@ namespace Condition {
     struct Type;
     struct Building;
     struct HasSpecial;
+    struct HasTag;
     struct Contains;
     struct PlanetSize;
     struct PlanetType;
@@ -524,6 +525,26 @@ private:
     std::string                         m_name;
     const ValueRef::ValueRefBase<int>*  m_since_turn_low;
     const ValueRef::ValueRefBase<int>*  m_since_turn_high;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches all objects that have the tag \a tag. */
+struct Condition::HasTag : public Condition::ConditionBase {
+    HasTag(const std::string& name) :
+        m_name(name)
+    {}
+    virtual bool        RootCandidateInvariant() const { return true; }
+    virtual bool        TargetInvariant() const { return true; }
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    std::string                         m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1529,6 +1550,13 @@ void Condition::HasSpecial::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_since_turn_low)
         & BOOST_SERIALIZATION_NVP(m_since_turn_high);
+}
+
+template <class Archive>
+void Condition::HasTag::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>

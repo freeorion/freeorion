@@ -6,6 +6,7 @@
 #include "Int.h"
 #include "Label.h"
 #include "ParseImpl.h"
+#include "../universe/Condition.h"
 
 
 #define DEBUG_PARSERS 0
@@ -21,14 +22,12 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_
-    {
+    struct insert_ {
         template <typename Arg1, typename Arg2>
         struct result
         { typedef void type; };
 
-        void operator()(std::map<std::string, PartType*>& part_types, PartType* part_type) const
-        {
+        void operator()(std::map<std::string, PartType*>& part_types, PartType* part_type) const {
             if (!part_types.insert(std::make_pair(part_type->Name(), part_type)).second) {
                 std::string error_str = "ERROR: More than one ship part in ship_parts.txt has the name " + part_type->Name();
                 throw std::runtime_error(error_str.c_str());
@@ -37,10 +36,8 @@ namespace {
     };
     const boost::phoenix::function<insert_> insert;
 
-    struct rules
-    {
-        rules()
-        {
+    struct rules {
+        rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -56,7 +53,6 @@ namespace {
             qi::_g_type _g;
             qi::_h_type _h;
             qi::_i_type _i;
-            qi::_j_type _j;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_r3_type _r3;
@@ -127,25 +123,49 @@ namespace {
                 ;
 
             slots
-                =    parse::label(MountableSlotTypes_name)
-                >>   (
+                =  -(
+                        parse::label(MountableSlotTypes_name)
+                    >>  (
                             '[' > +parse::enum_parser<ShipSlotType>() [ push_back(_r1, _1) ] > ']'
                         |   parse::enum_parser<ShipSlotType>() [ push_back(_r1, _1) ]
                         )
+                     )
                 ;
+
+            location
+                =    parse::label(Location_name) >> parse::detail::condition_parser [ _r1 = _1 ]
+                |    eps [ _r1 = new_<Condition::All>() ]
+                ;
+
+            tags
+                =  -(
+                        parse::label(Tags_name)
+                    >>  (
+                            '[' > +tok.string [ push_back(_r1, _1) ] > ']'
+                            |   tok.string [ push_back(_r1, _1) ]
+                        )
+                    )
+                ;
+
+            common_params
+                =   parse::label(BuildCost_name)     > parse::double_ [ _a = _1 ]
+                >   parse::label(BuildTime_name)     > parse::int_    [ _b = _1 ]
+                >   producible                                        [ _c = _1 ]
+                >   tags(_d)
+                >   location(_e)
+                >   -(
+                        parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _f = _1 ]
+                     )
+                >    parse::label(Icon_name) > tok.string
+                    [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1) ]
+            ;
 
             part_type
                 =    part_type_prefix(_a, _b, _c)
                 >>   part_stats [ _d = _1 ]
-                >    cost(_e, _f)
-                >>   producible [ _g = _1 ]
-                >    slots(_h)
-                >    parse::label(Location_name) > parse::detail::condition_parser [ _i = _1 ]
-                >>  -(
-                            parse::label(EffectsGroups_name)
-                        >>  parse::detail::effects_group_parser() [ _j = _1 ]
-                        )
-                >    parse::label(Graphic_name) > tok.string [ insert(_r1, new_<PartType>(_a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _1)) ]
+                >>   slots(_f)
+                >>   common_params [ _e = _1 ]
+                    [ insert(_r1, new_<PartType>(_a, _b, _c, _d, _e, _f)) ]
                 ;
 
             start
@@ -161,6 +181,9 @@ namespace {
             cost.name("cost");
             producible.name("Producible or Unproducible");
             slots.name("mountable slot types");
+            location.name("Location");
+            tags.name("Tags");
+            common_params.name("Part Hull Common Params");
             part_type.name("Part");
 
 #if DEBUG_PARSERS
@@ -173,6 +196,9 @@ namespace {
             debug(cost);
             debug(producible);
             debug(slots);
+            debug(location);
+            debug(tags);
+            debug(common_params);
             debug(part_type);
 #endif
 
@@ -234,18 +260,40 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
+            void (Condition::ConditionBase*&),
+            parse::skipper_type
+        > location_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (std::vector<std::string>&),
+            parse::skipper_type
+        > tags_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            PartHullCommonParams (),
+            qi::locals<
+                double,
+                int,
+                bool,
+                std::vector<std::string>,
+                Condition::ConditionBase*,
+                std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
+            >,
+            parse::skipper_type
+        > part_hull_common_params_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
             void (std::map<std::string, PartType*>&),
             qi::locals<
                 std::string,
                 std::string,
                 ShipPartClass,
                 PartTypeStats,
-                double,
-                int,
-                bool,
-                std::vector<ShipSlotType>,
-                Condition::ConditionBase*,
-                std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
+                PartHullCommonParams,
+                std::vector<ShipSlotType>
             >,
             parse::skipper_type
         > part_type_rule;
@@ -256,17 +304,20 @@ namespace {
             parse::skipper_type
         > start_rule;
 
-        fighter_stats_prefix_rule fighter_stats_prefix;
-        part_stats_rule fighter_stats;
-        lr_df_stats_prefix_rule lr_df_stats_prefix;
-        part_stats_rule lr_df_stats;
-        part_stats_rule part_stats;
-        part_type_prefix_rule part_type_prefix;
-        cost_rule cost;
-        producible_rule producible;
-        slots_rule slots;
-        part_type_rule part_type;
-        start_rule start;
+        fighter_stats_prefix_rule       fighter_stats_prefix;
+        part_stats_rule                 fighter_stats;
+        lr_df_stats_prefix_rule         lr_df_stats_prefix;
+        part_stats_rule                 lr_df_stats;
+        part_stats_rule                 part_stats;
+        part_type_prefix_rule           part_type_prefix;
+        cost_rule                       cost;
+        producible_rule                 producible;
+        location_rule                   location;
+        tags_rule                       tags;
+        part_hull_common_params_rule    common_params;
+        slots_rule                      slots;
+        part_type_rule                  part_type;
+        start_rule                      start;
     };
 
 }

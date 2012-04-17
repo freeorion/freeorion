@@ -47,8 +47,6 @@ namespace {
             qi::_e_type _e;
             qi::_f_type _f;
             qi::_g_type _g;
-            qi::_h_type _h;
-            qi::_i_type _i;
             qi::_r1_type _r1;
             qi::_val_type _val;
             using phoenix::construct;
@@ -91,19 +89,35 @@ namespace {
                 =    parse::label(Environments_name) >> environment_map [ _r1 = _1 ]
                 ;
 
+            tags
+                =  -(
+                        parse::label(Tags_name)
+                    >>  (
+                            '[' > +tok.string [ push_back(_r1, _1) ] > ']'
+                            |   tok.string [ push_back(_r1, _1) ]
+                        )
+                    )
+                ;
+
+            species_params
+                =   -tok.Playable_ [ _a = true ]
+                >   -tok.Native_ [ _b = true ]
+                >   -tok.CanProduceShips_ [ _c = true ]
+                >   -tok.CanColonize_ [ _d = true ]
+                    [ _val = construct<SpeciesParams>(_a, _b, _c, _d) ]
+                ;
+
             species
                 =    tok.Species_
                 >    parse::label(Name_name)        > tok.string [ _a = _1 ]
                 >    parse::label(Description_name) > tok.string [ _b = _1 ]
-                >   -tok.Playable_ [ _c = true ]
-                >   -tok.Native_ [ _d = true ]
-                >   -tok.CanProduceShips_ [ _e = true ]
-                >   -tok.CanColonize_ [ _f = true ]
-                >   -foci(_g)
-                >   -effects(_h)
-                >   -environments(_i)
+                >    species_params [ _c = _1]
+                >    tags(_d)
+                >   -foci(_e)
+                >   -effects(_f)
+                >   -environments(_g)
                 >    parse::label(Graphic_name) > tok.string
-                     [ insert_species(_r1, new_<Species>(_a, _b, _g, _i, _h, _c, _d, _f, _e, _1)) ]
+                     [ insert_species(_r1, new_<Species>(_a, _b, _e, _g, _f, _c, _d, _1)) ]
                 ;
 
             start
@@ -116,6 +130,8 @@ namespace {
             environment_map_element.name("Type = <type> Environment = <env>");
             environment_map.name("Environments");
             environments.name("Environments");
+            tags.name("Tags");
+            species_params.name("Species Flags");
             species.name("Species");
             start.name("start");
 
@@ -126,6 +142,8 @@ namespace {
             debug(environment_map_element);
             debug(environment_map);
             debug(environments);
+            debug(tags);
+            debug(species_params);
             debug(species);
             debug(start);
 #endif
@@ -177,14 +195,30 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
+            void (std::vector<std::string>&),
+            parse::skipper_type
+        > tags_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            SpeciesParams (),
+            qi::locals<
+                bool,
+                bool,
+                bool,
+                bool
+            >,
+            parse::skipper_type
+        > species_params_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
             void (std::map<std::string, Species*>&),
             qi::locals<
                 std::string,
                 std::string,
-                bool,
-                bool,
-                bool,
-                bool,
+                SpeciesParams,
+                std::vector<std::string>,
                 std::vector<FocusType>,
                 std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                 std::map<PlanetType, PlanetEnvironment>
@@ -198,14 +232,16 @@ namespace {
             parse::skipper_type
         > start_rule;
 
-        foci_rule foci;
-        focus_type_rule focus_type;
-        effects_rule effects;
-        environment_map_element_rule environment_map_element;
-        environment_map_rule environment_map;
-        environments_rule environments;
-        species_rule species;
-        start_rule start;
+        foci_rule                       foci;
+        focus_type_rule                 focus_type;
+        effects_rule                    effects;
+        environment_map_element_rule    environment_map_element;
+        environment_map_rule            environment_map;
+        environments_rule               environments;
+        tags_rule                       tags;
+        species_params_rule             species_params;
+        species_rule                    species;
+        start_rule                      start;
     };
 }
 

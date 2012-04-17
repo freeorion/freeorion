@@ -149,7 +149,7 @@ boost::shared_ptr<GG::Texture> ClientUI::BuildingIcon(const std::string& buildin
     const BuildingType* building_type = GetBuildingType(building_type_name);
     std::string graphic_name;
     if (building_type)
-        graphic_name = building_type->Graphic();
+        graphic_name = building_type->Icon();
     if (graphic_name.empty())
         return ClientUI::GetTexture(ArtDir() / "icons" / "building" / "generic_building.png", true);
     return ClientUI::GetTexture(ArtDir() / graphic_name, true);

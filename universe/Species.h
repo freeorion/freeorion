@@ -60,6 +60,26 @@ private:
     std::string                                         m_graphic;
 };
 
+/** Used by parser due to limits on number of sub-items per parsed main item. */
+struct SpeciesParams {
+    SpeciesParams() :
+        playable(false),
+        native(false),
+        can_colonize(false),
+        can_produce_ships(false)
+    {}
+    SpeciesParams(bool playable_, bool native_, bool can_colonize_, bool can_produce_ships_) :
+        playable(playable_),
+        native(native_),
+        can_colonize(can_colonize_),
+        can_produce_ships(can_produce_ships_)
+    {}
+    bool    playable;
+    bool    native;
+    bool    can_colonize;
+    bool    can_produce_ships;
+};
+
 /** A predefined type of population that can exist on a PopulationCenter.
   * Species have associated sets of EffectsGroups, and various other 
   * properties that affect how the object on which they reside functions.
@@ -73,17 +93,19 @@ public:
             const std::vector<FocusType>& foci,
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-            bool playable, bool native, bool can_colonize, bool can_produce_ships,
+            const SpeciesParams& params,
+            const std::vector<std::string>& tags,
             const std::string& graphic) :
         m_name(name),
         m_description(description),
         m_foci(foci),
         m_planet_environments(planet_environments),
         m_effects(effects),
-        m_playable(playable),
-        m_native(native),
-        m_can_colonize(can_colonize),
-        m_can_produce_ships(can_produce_ships),
+        m_playable(params.playable),
+        m_native(params.native),
+        m_can_colonize(params.can_colonize),
+        m_can_produce_ships(params.can_produce_ships),
+        m_tags(tags),
         m_graphic(graphic)
     {}
     //@}
@@ -102,6 +124,7 @@ public:
     bool                            Native() const          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
     bool                            CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
     bool                            CanProduceShips() const { return m_can_produce_ships; } ///< returns whether this species can produce ships
+    const std::vector<std::string>& Tags() const            { return m_tags; }
     const std::string&              Graphic() const         { return m_graphic; }           ///< returns the name of the grapic file for this species
     //@}
 
@@ -123,6 +146,7 @@ private:
     bool                                    m_native;
     bool                                    m_can_colonize;
     bool                                    m_can_produce_ships;
+    std::vector<std::string>                m_tags;
     std::string                             m_graphic;
 };
 

@@ -51,7 +51,6 @@ namespace {
             qi::_d_type _d;
             qi::_e_type _e;
             qi::_f_type _f;
-            qi::_g_type _g;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_val_type _val;
@@ -72,10 +71,7 @@ namespace {
                 >    parse::label(StarlaneSpeed_name) > parse::double_ [ _b = _1 ]
                 >    parse::label(Fuel_name)          > parse::double_ [ _c = _1 ]
                 >    parse::label(Stealth_name)       > parse::double_ [ _d = _1 ]
-                >    parse::label(Structure_name)     > parse::double_ [ _e = _1 ]
-                >    parse::label(BuildCost_name)     > parse::double_ [ _f = _1 ]
-                >    parse::label(BuildTime_name)     > parse::int_    [ _g = _1 ]
-                >    producible [ _val = construct<HullTypeStats>(_c, _a, _b, _d, _e, _f, _g, _1) ]
+                >    parse::label(Structure_name)     > parse::double_ [ _val = construct<HullTypeStats>(_c, _a, _b, _d, _1) ]
                 ;
 
             producible
@@ -93,10 +89,12 @@ namespace {
                 ;
 
             slots
-                =    parse::label(Slots_name)
-                >>   (
-                        '[' > +slot [ push_back(_r1, _1) ] > ']'
-                        |   slot [ push_back(_r1, _1) ]
+                =  -(
+                        parse::label(Slots_name)
+                    >>  (
+                            '[' > +slot [ push_back(_r1, _1) ] > ']'
+                            |   slot [ push_back(_r1, _1) ]
+                        )
                      )
                 ;
 
@@ -105,16 +103,36 @@ namespace {
                 |    eps [ _r1 = new_<Condition::All>() ]
                 ;
 
-            hull
-                =    hull_prefix(_a, _b)
-                >    hull_stats [ _c = _1 ]
-                >   -slots(_d)
-                >    location(_e)
+            tags
+                =  -(
+                        parse::label(Tags_name)
+                    >>  (
+                            '[' > +tok.string [ push_back(_r1, _1) ] > ']'
+                            |   tok.string [ push_back(_r1, _1) ]
+                        )
+                    )
+                ;
+
+            common_params
+                =   parse::label(BuildCost_name)     > parse::double_ [ _a = _1 ]
+                >   parse::label(BuildTime_name)     > parse::int_    [ _b = _1 ]
+                >   producible                                        [ _c = _1 ]
+                >   tags(_d)
+                >   location(_e)
                 >   -(
                         parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _f = _1 ]
                      )
-                >    parse::label(Graphic_name) > tok.string [ _g = _1 ]
-                >    parse::label(Icon_name) > tok.string [ insert(_r1, new_<HullType>(_a, _b, _c, _d, _e, _f, _g, _1)) ]
+                >    parse::label(Icon_name) > tok.string
+                    [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1) ]
+            ;
+
+            hull
+                =   hull_prefix(_a, _b)
+                >>  hull_stats [ _c = _1 ]
+                >>  -slots(_e)
+                >>  common_params [ _d = _1 ]
+                >>  parse::label(Graphic_name) > tok.string
+                    [ insert(_r1, new_<HullType>(_a, _b, _c, _d, _e, _1)) ]
                 ;
 
             start
@@ -127,6 +145,8 @@ namespace {
             slot.name("Slot");
             slots.name("Slots");
             location.name("Location");
+            tags.name("Tags");
+            common_params.name("Part Hull Common Params");
             hull.name("Hull");
 
 #if DEBUG_PARSERS
@@ -137,6 +157,8 @@ namespace {
             debug(slot);
             debug(slots);
             debug(location);
+            debug(tags);
+            debug(common_params);
             debug(hull);
 #endif
 
@@ -168,10 +190,7 @@ namespace {
                 double,
                 double,
                 double,
-                double,
-                double,
-                int,
-                bool
+                double
             >,
             parse::skipper_type
         > hull_stats_rule;
@@ -207,15 +226,33 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
+            void (std::vector<std::string>&),
+            parse::skipper_type
+        > tags_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            PartHullCommonParams (),
+            qi::locals<
+                double,
+                int,
+                bool,
+                std::vector<std::string>,
+                Condition::ConditionBase*,
+                std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
+            >,
+            parse::skipper_type
+        > part_hull_common_params_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
             void (std::map<std::string, HullType*>&),
             qi::locals<
                 std::string,
                 std::string,
                 HullTypeStats,
-                std::vector<HullType::Slot>,
-                Condition::ConditionBase*,
-                std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
-                std::string
+                PartHullCommonParams,
+                std::vector<HullType::Slot>
             >,
             parse::skipper_type
         > hull_rule;
@@ -226,15 +263,17 @@ namespace {
             parse::skipper_type
         > start_rule;
 
-        hull_prefix_rule    hull_prefix;
-        hull_stats_rule     hull_stats;
-        producible_rule     producible;
-        slot_rule           slot;
-        slots_rule          slots;
-        location_rule       location;
-        hull_rule           hull;
-        art_rule            art;
-        start_rule          start;
+        hull_prefix_rule                hull_prefix;
+        hull_stats_rule                 hull_stats;
+        producible_rule                 producible;
+        slot_rule                       slot;
+        slots_rule                      slots;
+        location_rule                   location;
+        tags_rule                       tags;
+        part_hull_common_params_rule    common_params;
+        hull_rule                       hull;
+        art_rule                        art;
+        start_rule                      start;
     };
 }
 

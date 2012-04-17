@@ -50,6 +50,11 @@ namespace {
                      [ _val = new_<Condition::HasSpecial>(_a, _b, _c) ]
                 ;
 
+            has_tag
+                =    tok.HasTag_
+                >    parse::label(Name_name) > tok.string [ _val = new_<Condition::HasTag>(_1) ]
+                ;
+
             owner_has_tech
                 =    tok.OwnerHasTech_
                 >    parse::label(Name_name) > tok.string [ _val = new_<Condition::OwnerHasTech>(_1) ]
@@ -105,13 +110,13 @@ namespace {
                 ;
 
             in_system
-                =    (
-                            tok.InSystem_
-                        >> -(
-                                parse::label(ID_name) >> int_value_ref [ _a = _1 ]
-                            )
+                =   (
+                        tok.InSystem_
+                    >> -(
+                            parse::label(ID_name) >> int_value_ref [ _a = _1 ]
                         )
-                        [ _val = new_<Condition::InSystem>(_a) ]
+                    )
+                    [ _val = new_<Condition::InSystem>(_a) ]
                 ;
 
             object_id
@@ -122,6 +127,7 @@ namespace {
             start
                 %=   has_special
                 |    has_special_since_turn
+                |    has_tag
                 |    owner_has_tech
                 |    design_has_hull
                 |    design_has_part
@@ -138,6 +144,7 @@ namespace {
 
             has_special.name("HasSpecial");
             has_special_since_turn.name("HasSpecialSinceTurn");
+            has_tag.name("HasTag");
             owner_has_tech.name("OwnerHasTech");
             design_has_hull.name("DesignHasHull");
             design_has_part.name("DesignHasPart");
@@ -154,6 +161,7 @@ namespace {
 #if DEBUG_CONDITION_PARSERS
             debug(has_special);
             debug(has_special_since_turn);
+            debug(has_tag);
             debug(owner_has_tech);
             debug(design_has_hull);
             debug(design_has_part);
@@ -201,6 +209,7 @@ namespace {
 
         parse::condition_parser_rule has_special;
         has_special_since_turn_rule has_special_since_turn;
+        parse::condition_parser_rule has_tag;
         parse::condition_parser_rule owner_has_tech;
         parse::condition_parser_rule design_has_hull;
         value_ref_ints_rule design_has_part;

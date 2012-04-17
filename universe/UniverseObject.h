@@ -75,6 +75,9 @@ public:
                                 Specials() const;                   ///< returns the names of Specials and the turn on which each was attached to this object
     bool                        HasSpecial(const std::string& name) const;          ///< returns true iff this object has a special with the indicated \a name
     int                         SpecialAddedOnTurn(const std::string& name) const;  ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
+    virtual std::vector<std::string>
+                                Tags() const;                                       ///< returns all tags this object has
+    virtual bool                HasTag(const std::string& name) const;              ///< returns true iff this object has the tag with the indicated \a name
 
     virtual const std::string&  TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
     virtual std::string         Dump() const;                       ///< outputs textual description of object to logger
@@ -98,10 +101,10 @@ public:
     virtual const std::string&  PublicName(int empire_id) const;    ///< returns the name of this objectas it appears to empire \a empire_id
 
     /** accepts a visitor object \see UniverseObjectVisitor */
-    virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
+    virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
 
-    int                     CreationTurn() const;               ///< returns game turn on which object was created
-    int                     AgeInTurns() const;                 ///< returns elapsed number of turns between turn object was created and current game turn
+    int                         CreationTurn() const;               ///< returns game turn on which object was created
+    int                         AgeInTurns() const;                 ///< returns elapsed number of turns between turn object was created and current game turn
 
     mutable StateChangedSignalType StateChangedSignal;          ///< emitted when the UniverseObject is altered in any way
     //@}

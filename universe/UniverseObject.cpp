@@ -165,6 +165,14 @@ int UniverseObject::SpecialAddedOnTurn(const std::string& name) const {
     return it->second;
 }
 
+std::vector<std::string> UniverseObject::Tags() const {
+    static std::vector<std::string> EMPTY_STRING_VEC;
+    return EMPTY_STRING_VEC;
+}
+
+bool UniverseObject::HasTag(const std::string& name) const
+{ return false; }
+
 const std::string& UniverseObject::TypeName() const
 { return UserString("UNIVERSEOBJECT"); }
 

@@ -10,8 +10,7 @@ class Fleet;
 class ShipDesign;
 
 /** a class representing a single FreeOrion ship*/
-class Ship : public UniverseObject
-{
+class Ship : public UniverseObject {
 public:
     // map from part type name to (number of parts in the design of that type,
     // number of fighters (or missiles) available of that type) pairs

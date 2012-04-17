@@ -16,14 +16,12 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_
-    {
+    struct insert_ {
         template <typename Arg1, typename Arg2>
         struct result
         { typedef void type; };
 
-        void operator()(std::map<std::string, BuildingType*>& building_types, BuildingType* building_type) const
-        {
+        void operator()(std::map<std::string, BuildingType*>& building_types, BuildingType* building_type) const {
             if (!building_types.insert(std::make_pair(building_type->Name(), building_type)).second) {
                 std::string error_str = "ERROR: More than one building type in buildings.txt has the name " + building_type->Name();
                 throw std::runtime_error(error_str.c_str());
@@ -32,10 +30,8 @@ namespace {
     };
     const boost::phoenix::function<insert_> insert;
 
-    struct rules
-    {
-        rules()
-        {
+    struct rules {
+        rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
@@ -50,11 +46,13 @@ namespace {
             qi::_f_type _f;
             qi::_g_type _g;
             qi::_h_type _h;
+            qi::_i_type _i;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
+            using phoenix::push_back;
 
             building_prefix
                 =    tok.BuildingType_
@@ -73,17 +71,29 @@ namespace {
                 |    eps [ _val = true ]
                 ;
 
+            tags
+                =  -(
+                        parse::label(Tags_name)
+                    >>  (
+                            '[' > +tok.string [ push_back(_r1, _1) ] > ']'
+                            |   tok.string [ push_back(_r1, _1) ]
+                        )
+                    )
+                ;
+
             building_type
                 =    building_prefix(_a, _b)
                 >    cost(_c, _d)
                 >    producible [ _e = _1 ]
-                >    parse::label(Location_name) > parse::detail::condition_parser [ _f = _1 ]
                 >    (
-                            parse::label(CaptureResult_name) >> parse::enum_parser<CaptureResult>() [ _g = _1 ]
-                        |   eps [ _g = CR_CAPTURE ]
-                        )
-                >    parse::label(EffectsGroups_name) > -parse::detail::effects_group_parser() [ _h = _1 ]
-                >    parse::label(Graphic_name)       >  tok.string [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _e, _g, _f, _h, _1)) ]
+                            parse::label(CaptureResult_name)    >> parse::enum_parser<CaptureResult>() [ _f = _1 ]
+                        |   eps [ _f = CR_CAPTURE ]
+                     )
+                >    tags(_g)
+                >    parse::label(Location_name)                > parse::detail::condition_parser [ _h = _1 ]
+                >    parse::label(EffectsGroups_name)           > -parse::detail::effects_group_parser() [ _i = _1 ]
+                >    parse::label(Icon_name)                    >  tok.string
+                    [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _e, _f, _g, _h, _i, _1)) ]
                 ;
 
             start
@@ -93,12 +103,14 @@ namespace {
             building_prefix.name("BuildingType");
             cost.name("cost");
             producible.name("Producible or Unproducible");
+            tags.name("Tags");
             building_type.name("BuildingType");
 
 #if DEBUG_PARSERS
             debug(building_prefix);
             debug(cost);
             debug(producible);
+            debug(tags);
             debug(building_type);
 #endif
 
@@ -125,6 +137,12 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
+            void (std::vector<std::string>&),
+            parse::skipper_type
+        > tags_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
             void (std::map<std::string, BuildingType*>&),
             qi::locals<
                 std::string,
@@ -132,8 +150,9 @@ namespace {
                 double,
                 int,
                 bool,
-                Condition::ConditionBase*,
                 CaptureResult,
+                std::vector<std::string>,
+                Condition::ConditionBase*,
                 std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
             >,
             parse::skipper_type
@@ -145,11 +164,12 @@ namespace {
             parse::skipper_type
         > start_rule;
 
-        building_prefix_rule building_prefix;
-        cost_rule cost;
-        producible_rule producible;
-        building_type_rule building_type;
-        start_rule start;
+        building_prefix_rule    building_prefix;
+        cost_rule               cost;
+        producible_rule         producible;
+        tags_rule               tags;
+        building_type_rule      building_type;
+        start_rule              start;
     };
 }
 
