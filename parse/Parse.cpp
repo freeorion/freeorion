@@ -383,7 +383,7 @@ namespace parse {
     const sregex FILENAME_TEXT = -+_;   // any character, one or more times, not greedy
     const sregex FILENAME_INSERTION = "include" >> *space >> "\"" >> (s1 = FILENAME_TEXT) >> "\"" >> *space >> _n;
 
-    void file_substitution(std::string& text, boost::filesystem::path& file_search_path) {
+    void file_substitution(std::string& text, const boost::filesystem::path& file_search_path) {
         if (!boost::filesystem::is_directory(file_search_path)) {
             Logger().errorStream() << "File parsing include substitution given search path that is not a director: " << file_search_path.string();
             return;
