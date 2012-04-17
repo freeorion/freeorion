@@ -260,6 +260,8 @@ namespace FreeOrionPython {
             .def("currentMeterValue",           &UniverseObject::CurrentMeterValue)
             .def("initialMeterValue",           &UniverseObject::InitialMeterValue)
             .def("nextTurnCurrentMeterValue",   &UniverseObject::NextTurnCurrentMeterValue)
+            .add_property("tags",               make_function(&UniverseObject::Tags,        return_value_policy<return_by_value>()))
+            .def("hasTag",                      &UniverseObject::HasTag)
         ;
 
         ///////////////////

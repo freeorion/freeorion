@@ -84,6 +84,14 @@ void Building::Copy(const UniverseObject* copied_object, int empire_id) {
     }
 }
 
+std::vector<std::string> Building::Tags() const {
+    static std::vector<std::string> EMPTY_STRING_VEC;
+    return EMPTY_STRING_VEC;
+}
+
+bool Building::HasTag(const std::string& name) const
+{ return false; }
+
 const std::string& Building::TypeName() const
 { return UserString("BUILDING"); }
 

@@ -160,6 +160,14 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id) {
     }
 }
 
+std::vector<std::string> Planet::Tags() const {
+    static std::vector<std::string> EMPTY_STRING_VEC;
+    return EMPTY_STRING_VEC;
+}
+
+bool Planet::HasTag(const std::string& name) const
+{ return false; }
+
 const std::string& Planet::TypeName() const
 { return UserString("PLANET"); }
 
