@@ -175,12 +175,63 @@ void Ship::Copy(const UniverseObject* copied_object, int empire_id) {
 }
 
 std::vector<std::string> Ship::Tags() const {
-    static std::vector<std::string> EMPTY_STRING_VEC;
-    return EMPTY_STRING_VEC;
+    std::set<std::string> compiled_tags;
+    std::vector<std::string> retval;
+    const ShipDesign* design = GetShipDesign(m_design_id);
+    if (!design)
+        return retval;
+
+    const HullType* hull = ::GetHullType(design->Hull());
+    if (!hull)
+        return retval;
+    const std::vector<std::string>& hull_tags = hull->Tags();
+    for (std::vector<std::string>::const_iterator it = hull_tags.begin(); it != hull_tags.end(); ++it)
+        compiled_tags.insert(*it);
+
+    const std::vector<std::string>& parts = design->Parts();
+    if (parts.empty())
+        return retval;
+
+    for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
+        if (const PartType* part = GetPartType(*part_it)) {
+            const std::vector<std::string>& part_tags = part->Tags();
+            for (std::vector<std::string>::const_iterator it = part_tags.begin(); it != part_tags.end(); ++it)
+                compiled_tags.insert(*it);
+        }
+    }
+
+    std::copy(compiled_tags.begin(), compiled_tags.end(), std::back_inserter(retval));
+
+    return retval;
 }
 
-bool Ship::HasTag(const std::string& name) const
-{ return false; }
+bool Ship::HasTag(const std::string& name) const {
+    const ShipDesign* design = GetShipDesign(m_design_id);
+    if (!design)
+        return false;
+
+    const HullType* hull = ::GetHullType(design->Hull());
+    if (!hull)
+        return false;
+    const std::vector<std::string>& hull_tags = hull->Tags();
+    for (std::vector<std::string>::const_iterator it = hull_tags.begin(); it != hull_tags.end(); ++it)
+        if (*it == name)
+            return true;
+
+    const std::vector<std::string>& parts = design->Parts();
+    if (parts.empty())
+        return false;
+
+    for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
+        if (const PartType* part = GetPartType(*part_it)) {
+            const std::vector<std::string>& part_tags = part->Tags();
+            for (std::vector<std::string>::const_iterator it = part_tags.begin(); it != part_tags.end(); ++it)
+                if (*it == name)
+                    return true;
+        }
+    }
+    return false;
+}
 
 const std::string& Ship::TypeName() const
 { return UserString("SHIP"); }

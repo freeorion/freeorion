@@ -37,7 +37,7 @@ Building::Building(int empire_id, const std::string& building_type,
     m_produced_by_empire_id(produced_by_empire_id)
 {
     SetOwner(empire_id);
-    const BuildingType* type = GetBuildingType();
+    const BuildingType* type = GetBuildingType(m_building_type);
     if (type)
         Rename(UserString(type->Name()));
     else
@@ -85,12 +85,22 @@ void Building::Copy(const UniverseObject* copied_object, int empire_id) {
 }
 
 std::vector<std::string> Building::Tags() const {
-    static std::vector<std::string> EMPTY_STRING_VEC;
-    return EMPTY_STRING_VEC;
+    const BuildingType* type = ::GetBuildingType(m_building_type);
+    if (!type)
+        return std::vector<std::string>();
+    return type->Tags();
 }
 
-bool Building::HasTag(const std::string& name) const
-{ return false; }
+bool Building::HasTag(const std::string& name) const {
+    const BuildingType* type = GetBuildingType(m_building_type);
+    if (!type)
+        return false;
+    const std::vector<std::string>& tags = type->Tags();
+    for (std::vector<std::string>::const_iterator it = tags.begin(); it != tags.end(); ++it)
+        if (*it == name)
+            return true;
+    return false;
+}
 
 const std::string& Building::TypeName() const
 { return UserString("BUILDING"); }
@@ -102,9 +112,6 @@ std::string Building::Dump() const {
        << " produced by empire id: " << m_produced_by_empire_id;
     return os.str();
 }
-
-const BuildingType* Building::GetBuildingType() const
-{ return ::GetBuildingType(m_building_type); }
 
 UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(const_cast<Building* const>(this)); }

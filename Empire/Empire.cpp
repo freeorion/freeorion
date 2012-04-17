@@ -2652,7 +2652,7 @@ void Empire::UpdateTradeSpending() {
         if (!building)
             continue;
 
-        const BuildingType* building_type = building->GetBuildingType();
+        const BuildingType* building_type = GetBuildingType(building->BuildingTypeName());
         if (!building_type)
             continue;
 

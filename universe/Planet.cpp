@@ -161,12 +161,22 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id) {
 }
 
 std::vector<std::string> Planet::Tags() const {
-    static std::vector<std::string> EMPTY_STRING_VEC;
-    return EMPTY_STRING_VEC;
+    const Species* species = GetSpecies(SpeciesName());
+    if (!species)
+        return std::vector<std::string>();
+    return species->Tags();
 }
 
-bool Planet::HasTag(const std::string& name) const
-{ return false; }
+bool Planet::HasTag(const std::string& name) const {
+    const Species* species = GetSpecies(SpeciesName());
+    if (!species)
+        return false;
+    const std::vector<std::string>& tags = species->Tags();
+    for (std::vector<std::string>::const_iterator it = tags.begin(); it != tags.end(); ++it)
+        if (*it == name)
+            return true;
+    return false;
+}
 
 const std::string& Planet::TypeName() const
 { return UserString("PLANET"); }
@@ -564,7 +574,7 @@ void Planet::Conquer(int conquerer) {
 
         // Buildings:
         if (Building* building = universe_object_cast<Building*>(obj)) {
-            const BuildingType* type = building->GetBuildingType();
+            const BuildingType* type = GetBuildingType(building->BuildingTypeName());
 
             // determine what to do with building of this type...
             const CaptureResult cap_result = type->GetCaptureResult(obj->Owner(), conquerer, this->ID(), false);

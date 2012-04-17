@@ -147,7 +147,8 @@ namespace {
         case RE_TRADE:
             // maintenance cost of this object
             if (building = dynamic_cast<const Building*>(obj))
-                return building->GetBuildingType()->MaintenanceCost();
+                if (const BuildingType* type = GetBuildingType(building->BuildingTypeName()))
+                    return type->MaintenanceCost();
             return 0.0; // if not a building, doesn't presently consume trade
             break;
 
@@ -1895,7 +1896,7 @@ void BuildingIndicator::Refresh() {
         m_scrap_indicator = 0;
     }
 
-    const BuildingType* type = building->GetBuildingType();
+    const BuildingType* type = GetBuildingType(building->BuildingTypeName());
     if (!type)
         return;
 

@@ -38,11 +38,6 @@ public:
     virtual const std::string&  TypeName() const;   ///< returns user-readable string indicating the type of UniverseObject this is
     virtual std::string         Dump() const;
 
-    /** returns the BuildingType object for this building, specific to the
-      * owning empire (or the default version if there is other than exactly
-      * one owner) */
-    const BuildingType*     GetBuildingType() const;
-
     const std::string&      BuildingTypeName() const    { return m_building_type; };        ///< returns the name of the BuildingType object for this building
     int                     PlanetID() const            { return m_planet_id; }             ///< returns the ID number of the planet this building is on
     int                     ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this building
@@ -78,7 +73,7 @@ private:
 
 /** A specification for a building of a certain type.  Each building type must
   * have a \a unique name string, by which it can be looked up using
-  * GetBuildingType(). */
+  * GetBuildingType(...). */
 class BuildingType {
 public:
     /** \name Structors */ //@{
@@ -164,7 +159,7 @@ public:
 
     /** \name Accessors */ //@{
     /** returns the building type with the name \a name; you should use the
-      * free function GetBuildingType() instead, mainly to save some typing. */
+      * free function GetBuildingType(...) instead, mainly to save some typing. */
     const BuildingType*         GetBuildingType(const std::string& name) const;
 
     /** iterator to the first building type */

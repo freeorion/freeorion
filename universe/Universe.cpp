@@ -1170,7 +1170,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
             Logger().errorStream() << "GetEffectsAndTargets couldn't get Building";
             continue;
         }
-        const BuildingType* building_type = building->GetBuildingType();
+        const BuildingType* building_type = GetBuildingType(building->BuildingTypeName());
         if (!building_type) {
             Logger().errorStream() << "GetEffectsAndTargets couldn't get BuildingType " << building->BuildingTypeName();
             continue;
