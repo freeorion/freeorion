@@ -1769,7 +1769,13 @@ HAS_GROWTH_FOCUS
 '''        Focus
             name = "FOCUS_GROWTH"
             description = "FOCUS_GROWTH_DESC"
-            location = Planet
+            location = Or [
+                Planet environment = Good
+                And [
+                    OwnerHasTech "GRO_ORBIT_FARMING"
+                    Planet
+                ]
+            ]
             graphic = "icons/focus/farming.png"
 '''
 
@@ -2226,7 +2232,7 @@ ENVIRONMENT_MODIFIER
                 OwnerHasTech "GRO_XENO_GENETICS"
                 Not Or [
                     OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORGS"
+                    OwnerHasTech "GRO_CYBORG"
                 ]
             ]
             accountinglabel = "POOR_ENVIRONMENT_LABEL"
@@ -2238,7 +2244,7 @@ ENVIRONMENT_MODIFIER
                 Planet environment = Hostile
                 Not Or [
                     OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORGS"
+                    OwnerHasTech "GRO_CYBORG"
                 ]
             ]
             accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
@@ -2253,6 +2259,16 @@ ENVIRONMENT_MODIFIER
             ]
             accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
             effects = SetTargetPopulation Value*([[HOSTILE_MULTIPLIER]] + (1 - [[HOSTILE_MULTIPLIER]])/2)
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                OwnerHasTech "GRO_ENV_ENCAPSUL"
+                Planet
+                Not TargetPopulation low = 1
+            ]
+            accountinglabel = "ENV_ENCAPSUL_LABEL"
+            effects = SetTargetPopulation Value + 0.1
 '''
 
 
@@ -2825,4 +2841,4 @@ POOR_MULTIPLIER
 '''0.5'''
 
 HOSTILE_MULTIPLIER
-'''0.25'''
+'''0.0'''

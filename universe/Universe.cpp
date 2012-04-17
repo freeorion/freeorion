@@ -1086,7 +1086,30 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
 
     Logger().debugStream() << "Universe::GetEffectsAndTargets";
 
-    // 1) EffectsGroups from Specials
+    // 1) EffectsGroups from Species
+    Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
+    for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
+        Logger().debugStream() << "... object (" << it->first << "): " << it->second->Name();
+        const PopCenter* pc = dynamic_cast<const PopCenter*>(it->second);
+        const Ship* ship = 0;
+        if (!pc) {
+            ship = dynamic_cast<const Ship*>(it->second);
+            if (!ship) continue;
+        }
+        const std::string& species_name = (pc ? pc->SpeciesName() : ship->SpeciesName());
+        //Logger().debugStream() << "... ... PopCenter species: " << species_name;
+        if (species_name.empty())
+            continue;
+        const Species* species = GetSpecies(species_name);
+        if (!species) {
+            Logger().errorStream() << "GetEffectsAndTargets couldn't get Species " << species_name;
+            continue;
+        }
+        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), it->first, ECT_SPECIES, species_name,
+                                             all_potential_targets, targets_causes);
+    }
+
+    // 2) EffectsGroups from Specials
     Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIALS";
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int source_object_id = it->first;
@@ -1103,7 +1126,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
         }
     }
 
-    // 2) EffectsGroups from Techs
+    // 3) EffectsGroups from Techs
     Logger().debugStream() << "Universe::GetEffectsAndTargets for TECHS";
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         const Empire* empire = it->second;
@@ -1138,7 +1161,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
         }
     }
 
-    // 3) EffectsGroups from Buildings
+    // 4) EffectsGroups from Buildings
     Logger().debugStream() << "Universe::GetEffectsAndTargets for BUILDINGS";
     std::vector<Building*> buildings = m_objects.FindObjects<Building>();
     for (std::vector<Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
@@ -1157,7 +1180,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
                                              all_potential_targets, targets_causes);
     }
 
-    // 4) EffectsGroups from Ship Hull and Ship Parts
+    // 5) EffectsGroups from Ship Hull and Ship Parts
     Logger().debugStream() << "Universe::GetEffectsAndTargets for SHIPS";
     std::vector<Ship*> ships = m_objects.FindObjects<Ship>();
     for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
@@ -1193,29 +1216,6 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
             StoreTargetsAndCausesOfEffectsGroups(part_type->Effects(), ship->ID(), ECT_SHIP_PART, part_type->Name(),
                                                  all_potential_targets, targets_causes);
         }
-    }
-
-    // 5) EffectsGroups from Species
-    Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
-    for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
-        Logger().debugStream() << "... object (" << it->first << "): " << it->second->Name();
-        const PopCenter* pc = dynamic_cast<const PopCenter*>(it->second);
-        const Ship* ship = 0;
-        if (!pc) {
-            ship = dynamic_cast<const Ship*>(it->second);
-            if (!ship) continue;
-        }
-        const std::string& species_name = (pc ? pc->SpeciesName() : ship->SpeciesName());
-        //Logger().debugStream() << "... ... PopCenter species: " << species_name;
-        if (species_name.empty())
-            continue;
-        const Species* species = GetSpecies(species_name);
-        if (!species) {
-            Logger().errorStream() << "GetEffectsAndTargets couldn't get Species " << species_name;
-            continue;
-        }
-        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), it->first, ECT_SPECIES, species_name,
-                                             all_potential_targets, targets_causes);
     }
 
 }

@@ -531,24 +531,15 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
-    effectsgroups = [
+    effectsgroups =
         EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
+            scope = Source
+            activation = And [
                 Focus "FOCUS_GROWTH"
+                Planet environment = Good
             ]
-            activation = Source
-            effects = SetTargetPopulation Value + 3
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-            ]
-            activation = Source
-            effects = SetTargetPopulation Value + 3
-    ]
+            stackinggroup = "GENOME_BANK_EFFECT"
+            effects = SetGrowth Value + 1
     graphic = "icons/building/genome_bank.png"
 
 BuildingType
@@ -699,14 +690,10 @@ BuildingType
     ]
     effectsgroups =
         EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-                ResourceSupplyConnected empire = Source.Owner condition = Source
-            ]
+            scope = Source
             activation = Source
             stackinggroup = "CLONING_CENTER_EFFECT"
-            effects = SetTargetPopulation Value + 10
+            effects = SetGrowth Value + 1
     graphic = ""
 
 BuildingType

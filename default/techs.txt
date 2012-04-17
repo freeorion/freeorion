@@ -721,6 +721,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
                 Not [[NON_ORGANIC]]
+                Population low = 1
             ]
             effects = SetTargetPopulation Value + 3
     graphic = "icons/tech/medical_pathology.png"
@@ -743,23 +744,14 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 4
     researchturns = 5
-    effectsgroups = [
+    effectsgroups =
         EffectsGroup
             scope = And [
                     OwnedBy TheEmpire Source.Owner
                     Focus "FOCUS_GROWTH"
                     Planet environment = Good
             ]
-            effects = SetTargetPopulation Value + 4
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_GROWTH"
-                Planet environment = Adequate
-            ]
-            effects = SetTargetPopulation Value + 2
-    ]
+            effects = SetGrowth Value + 1
 
     graphic = "icons/tech/genetic_engineering.png"
 
@@ -773,14 +765,6 @@ Tech
     researchturns = 1
     Unresearchable
     unlock = Item type = ShipPart name = "CO_OUTPOST_MOD"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet
-                Not TargetPopulation low = 1
-            ]
-            effects = SetTargetPopulation Value + 0.1
     graphic = "icons/tech/habitation_domes.png"
 
 Tech
@@ -835,6 +819,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
                 Not [[NON_ORGANIC]]
+                Population low = 1
             ]
         effects = SetTargetPopulation Value + 3
     graphic = "icons/tech/nanotech_medicine.png"
@@ -885,6 +870,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
                 Not [[NON_ORGANIC]]
+                Population low = 1
             ]
             effects = SetTargetPopulation Value + 2
     graphic = "icons/tech/genetic_medicine.png"
@@ -1050,8 +1036,11 @@ Tech
     ]
     effectsgroups =
         EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            effects = SetTargetPopulation Value + 1
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Focus "FOCUS_GROWTH"
+            ]
+            effects = SetGrowth Value + 1
     graphic = "icons/tech/orbital_farming.png"
 
 Tech

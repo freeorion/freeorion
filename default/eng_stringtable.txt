@@ -7612,6 +7612,9 @@ POOR_ENVIRONMENT_LABEL
 HOSTILE_ENVIRONMENT_LABEL
 '''%1% Hostile Environment'''
 
+ENV_ENCAPSUL_LABEL
+'''%1% Environmental Encapsulation'''
+
 BAD_POPULATION_LABEL
 '''%1% Bad Population'''
 
