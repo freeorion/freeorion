@@ -795,7 +795,7 @@ Part
                     Not OwnedBy AnyEmpire
                 ]
                 VisibleToEmpire Source.Owner
-                Not [[NON_ORGANIC]]
+                HasTag "ORGANIC"
             ]
             activation = OwnedBy AnyEmpire
             effects = [
@@ -814,7 +814,7 @@ Part
                 Planet
                 OwnedBy AnyEmpire
                 Stealth high = Source.Detection
-                Not [[NON_ORGANIC]]
+                HasTag "ORGANIC"
             ]
             activation = Not OwnedBy AnyEmpire
             effects = [
@@ -848,7 +848,7 @@ Part
                     Not OwnedBy AnyEmpire
                 ]
                 VisibleToEmpire Source.Owner
-                Not [[NON_ORGANIC]]
+                HasTag "ORGANIC"
             ]
             activation = OwnedBy AnyEmpire
             effects = [
@@ -867,7 +867,7 @@ Part
                 Planet
                 OwnedBy AnyEmpire
                 Stealth high = Source.Detection
-                Not [[NON_ORGANIC]]
+                HasTag "ORGANIC"
             ]
             activation = Not OwnedBy AnyEmpire
             effects = [
@@ -1275,17 +1275,3 @@ Part
     ]
     icon = ""
 */
-/* Should keep track of all non-organic species */
-NON_ORGANIC
-'''Or [
-        Species "SP_CRAY"
-        Species "SP_NYMNMN"
-        Species "SP_TRENCHERS"
-        Species "SP_BEIGEGOO"
-        Species "SP_KOBUNTURA"
-        Species "SP_ACIREMA"
-        Species "SP_EXOBOT"
-        Species "SP_SILEXIAN"
-        Species "SP_EGASSEM"
-    ]
-'''

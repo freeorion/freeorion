@@ -114,6 +114,7 @@ BuildingType
     description = "BLD_SHIPYARD_BASE_DESC"
     buildcost = 10
     buildtime = 5
+    tags = "ORBITAL"
     location = And [
         Not Contains And [
             Building "BLD_SHIPYARD_BASE"
@@ -128,6 +129,7 @@ BuildingType
     description = "BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC"
     buildcost = 20
     buildtime = 5
+    tags = "ORBITAL"
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -162,6 +164,7 @@ BuildingType
     description = "BLD_SHIPYARD_CON_NANOROBO_DESC"
     buildcost = 250
     buildtime = 5
+    tags = "ORBITAL"
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_BASE"
@@ -180,6 +183,7 @@ BuildingType
     description = "BLD_SHIPYARD_CON_GEOINT_DESC"
     buildcost = 750
     buildtime = 5
+    tags = "ORBITAL"
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_BASE"
@@ -198,6 +202,7 @@ BuildingType
     description = "BLD_SHIPYARD_CON_ADV_ENGINE_DESC"
     buildcost = 2000
     buildtime = 5
+    tags = "ORBITAL"
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_BASE"
@@ -250,6 +255,7 @@ BuildingType
     description = "BLD_SHIPYARD_ORG_ORB_INC_DESC"
     buildcost = 30
     buildtime = 10
+    tags = "ORBITAL"
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_BASE"
@@ -264,6 +270,7 @@ BuildingType
     description = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC"
     buildcost = 50
     buildtime = 10
+    tags = "ORBITAL"
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_BASE"
@@ -282,6 +289,7 @@ BuildingType
     description = "BLD_SHIPYARD_ORG_XENO_FAC_DESC"
     buildcost = 100
     buildtime = 10
+    tags = "ORBITAL"
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_BASE"
@@ -300,6 +308,7 @@ BuildingType
     description = "BLD_SHIPYARD_ENRG_COMP_DESC"
     buildcost = 200
     buildtime = 5
+    tags = "ORBITAL"
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_BASE"
@@ -314,6 +323,7 @@ BuildingType
     description = "BLD_SHIPYARD_ENRG_SOLAR_DESC"
     buildcost = 1200
     buildtime = 5
+    tags = "ORBITAL"
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ENRG_COMP"
@@ -615,6 +625,7 @@ BuildingType
     description = "BLD_HYPER_DAM_DESC"
     buildcost = 250
     buildtime = 10
+    tags = "ORBITAL"
     location = And [
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
@@ -646,6 +657,7 @@ BuildingType
     description = "BLD_SOL_ORB_GEN_DESC"
     buildcost = 75
     buildtime = 5
+    tags = "ORBITAL"
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
         EffectsGroup
@@ -759,6 +771,7 @@ BuildingType
     description = "BLD_NEUTRONIUM_EXTRACTOR_DESC"
     buildcost = 25
     buildtime = 8
+    tags = "ORBITAL"
     location = Star type = Neutron
     icon = "icons/building/neutronium-forge.png"
 
@@ -767,6 +780,7 @@ BuildingType
     description = "BLD_NEUTRONIUM_FORGE_DESC"
     buildcost = 100
     buildtime = 1
+    tags = "ORBITAL"
     location = And [
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
@@ -832,6 +846,7 @@ BuildingType
     description = "BLD_BLACK_HOLE_POW_GEN_DESC"
     buildcost = 250
     buildtime = 10
+    tags = "ORBITAL"
     location = And [
         OwnedBy TheEmpire Source.Owner
         Star type = BlackHole
@@ -1005,6 +1020,7 @@ BuildingType
     description = "BLD_STARGATE_DESC"
     buildcost = 125
     buildtime = 5
+    tags = "ORBITAL"
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
@@ -1055,6 +1071,7 @@ BuildingType
     description = "BLD_GAS_GIANT_GEN_DESC"
     buildcost = 25
     buildtime = 3
+    tags = "ORBITAL"
     location = And [
         OwnedBy TheEmpire Source.Owner
         Planet type = GasGiant

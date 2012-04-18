@@ -47,6 +47,8 @@ Species
     Playable
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -82,6 +84,8 @@ Species
     Playable
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -118,6 +122,8 @@ Species
     Playable
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_MINING_FOCUS]]
@@ -153,6 +159,8 @@ Species
     Playable
     CanProduceShips
     CanColonize
+
+    tags = [ "ORGANIC" "TELEPATHIC" ]
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -192,6 +200,8 @@ Species
     Playable
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -229,6 +239,8 @@ Species
     Playable
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -266,6 +278,8 @@ Species
     Playable
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_GROWTH_FOCUS]]
@@ -302,6 +316,8 @@ Species
     Playable
     CanProduceShips
     CanColonize
+
+    tags = [ "ORGANIC" "TELEPATHIC" ]
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -340,6 +356,8 @@ Species
     Playable
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_MINING_FOCUS]]
@@ -376,6 +394,8 @@ Species
     Playable
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_MINING_FOCUS]]
@@ -412,6 +432,8 @@ Species
     Playable
     CanProduceShips
     CanColonize
+
+    tags = [ "ORGANIC" "TELEPATHIC" ]
     
     foci = [
         [[HAS_MINING_FOCUS]]
@@ -489,6 +511,8 @@ Species
     Native
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -525,6 +549,8 @@ Species
     description = "SP_CYNOS_DESC"
     Native
     CanProduceShips
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_GROWTH_FOCUS]]
@@ -555,6 +581,8 @@ Species
     description = "SP_PHINNERT_DESC"
     Native
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_MINING_FOCUS]]
@@ -622,6 +650,8 @@ Species
     Native
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -654,6 +684,8 @@ Species
     name = "SP_FIFTYSEVEN"
     description = "SP_FIFTYSEVEN_DESC"
     Native
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -686,6 +718,8 @@ Species
     Native
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     
     foci = [
@@ -784,6 +818,8 @@ Species
     name = "SP_RAAAGH"
     description = "SP_RAAAGH_DESC"
     Native
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_MINING_FOCUS]]
@@ -916,6 +952,8 @@ Species
     Native
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -950,6 +988,8 @@ Species
     description = "SP_GISGUFGTHRIM_DESC"
     Native
     CanProduceShips
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_GROWTH_FOCUS]]
@@ -984,6 +1024,8 @@ Species
     name = "SP_HIDDENGARDENER"
     description = "SP_HIDDENGARDENER_DESC"
     Native
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_GROWTH_FOCUS]]
@@ -1019,6 +1061,8 @@ Species
     Native
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_MINING_FOCUS]]
@@ -1111,6 +1155,8 @@ Species
     name = "SP_OURBOOLS"
     description = "SP_OURBOOLS_DESC"
     Native
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -1143,6 +1189,8 @@ Species
     name = "SP_VOLP"
     description = "SP_VOLP_DESC"
     Native
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -1220,6 +1268,8 @@ Species
 Species
     name = "SP_EXPERIMENTOR"
     description = "SP_EXPERIMENTOR_DESC"
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -1251,6 +1301,8 @@ Species
     Playable
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -1294,6 +1346,8 @@ Species
     Native
     CanProduceShips
     CanColonize
+
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]

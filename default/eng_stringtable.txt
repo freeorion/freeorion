@@ -4599,6 +4599,12 @@ DESC_NUMBER
 DESC_NUMBER_NOT
  if there are not between %1% and %2% objects%3%
 
+DESC_HAS_TAG
+ that is %1%
+
+DESC_HAS_TAG_NOT
+ that is not %1%
+
 
 
 ###################
@@ -7597,6 +7603,11 @@ GOOD_POPULATION
 '''%1% Good Population'''
 
 
+#####################
+# Accounting Labels #
+#####################
+
+
 STANDARD_CONSTRUCTION_LABEL
 '''%1% Average Infrastructure'''
 
@@ -7759,4 +7770,15 @@ GREAT_TROOPS_LABEL
 ULTIMATE_TROOPS_LABEL
 '''%1% Ultimate Ground Troops'''
 
+########
+# Tags #
+########
 
+ORGANIC
+Organic
+
+TELEPATHIC
+Telepathic
+
+ORBITAL
+Orbital

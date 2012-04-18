@@ -2475,7 +2475,7 @@ Hull
             scope = NumberOf 4 And [
                 WithinStarlaneJumps 1 Source
                 Ship
-                Not [[NON_ORGANIC]]
+                HasTag "ORGANIC"
             ]
             activation = Random 0.2
             effects = SetOwner Source.Owner
@@ -2484,7 +2484,8 @@ Hull
             scope = NumberOf 12 And [
                 WithinStarlaneJumps 1 Source
                 Ship
-                Not [[NON_ORGANIC]]
+                HasTag "ORGANIC"
+                Not HasTag "TELEPATHIC"
                 Not OwnerHasTech "LRN_PSY_DOM"
             ]
             activation = Random 0.8

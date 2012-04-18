@@ -655,7 +655,8 @@ Tech
                 VisibleToEmpire Source.Owner
                 Ship
                 Not Monster
-                Not [[NON_ORGANIC]]
+                HasTag "ORGANIC"
+                Not HasTag "TELEPATHIC"
                 Not OwnerHasTech "LRN_PSY_DOM"
             ]
             effects = SetOwner Source.Owner
@@ -720,7 +721,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
-                Not [[NON_ORGANIC]]
+                HasTag "ORGANIC"
                 Population low = 1
             ]
             effects = SetTargetPopulation Value + 3
@@ -818,7 +819,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
-                Not [[NON_ORGANIC]]
+                HasTag "ORGANIC"
                 Population low = 1
             ]
         effects = SetTargetPopulation Value + 3
@@ -869,7 +870,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
-                Not [[NON_ORGANIC]]
+                HasTag "ORGANIC"
                 Population low = 1
             ]
             effects = SetTargetPopulation Value + 2
