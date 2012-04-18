@@ -8,6 +8,10 @@ BuildingType
     location = Not All
     effectsgroups = [
         EffectsGroup
+            scope = HasTag name = "STYLISH"
+            effects = SetTargetTrade Value + 5
+    
+        EffectsGroup
             scope = And [
                 Planet
                 OwnedBy TheEmpire Source.Owner
