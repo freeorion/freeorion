@@ -15,6 +15,7 @@ Hull
     ]
     buildCost = 100
     buildTime = 10
+    tags = [ "SHINY" "EXOTIC" ]
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
         OwnedBy TheEmpire Source.Owner

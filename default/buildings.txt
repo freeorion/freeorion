@@ -4,6 +4,7 @@ BuildingType
     description = "BLD_CULTURE_ARCHIVES_DESC"
     buildcost = 200
     buildtime = 200
+    tags = "ANTIQUATED"
     location = Not All
     effectsgroups = [
         EffectsGroup

@@ -11,6 +11,8 @@ Species
     CanProduceShips
     CanColonize
     
+    tags = [ "ORGANIC" "STYLISH" ]
+    
     foci = [
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]

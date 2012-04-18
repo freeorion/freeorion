@@ -7,6 +7,7 @@ Part
     mountableSlotTypes = [External Internal]
     buildcost = 5
     buildtime = 1
+    tags = "COMFORTABLE"
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/troops.png"
 
