@@ -57,10 +57,7 @@ STEALTH_BOOST_PLUS_PLUS
 '''EffectsGroup
         scope = Or [
             Source
-            And [
-                ContainedBy Source
-                Not HasTag "ORBITAL"
-            ]
+            ContainedBy Source
         ]
         stackinggroup = "SPECIES_STEALTH_STACK"
         effects = SetStealth Value + [[PLUS_PLUS_STEALTH]]
@@ -70,10 +67,7 @@ SYSTEM_STEALTH_PLUS_PLUS
 '''EffectsGroup
             scope = Or [
                 Source
-                And [
-                    ContainedBy Source
-                    Not HasTag "ORBITAL"
-                ]
+                ContainedBy Source
             ]
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value + [[PLUS_PLUS_STEALTH]]

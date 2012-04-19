@@ -1155,7 +1155,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 90 high = 125
+                Turn low = 200 high = 235
                 Random 0.2
             ]
             effects = [
@@ -1169,7 +1169,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 125
+                Turn low = 235
                 Random 0.1
             ]
             effects = [
@@ -1180,7 +1180,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 120 high = 160
+                Turn low = 230 high = 270
                 Random 0.2
             ]
             effects = [
@@ -1194,7 +1194,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 160
+                Turn low = 270
                 Random 0.1
             ]
             effects = [
@@ -1205,7 +1205,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 155 high = 180
+                Turn low = 265 high = 290
                 Random 0.2
             ]
             effects = [
@@ -1219,7 +1219,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 220
+                Turn low = 330
                 Random 0.1
             ]
             effects = [
@@ -1230,7 +1230,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 200
+                Turn low = 310
                 Random 0.2
             ]
             effects = [
