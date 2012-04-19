@@ -1447,6 +1447,23 @@ namespace {
                         meter->SetCurrent(targetmax_meter->Current());
         }
     }
+
+    /** Set the population of unowned planets to a random fraction of 
+     * their target values. */
+    void SetNativePopulationValues(ObjectMap& object_map) {
+
+        for (ObjectMap::iterator it = object_map.begin(); it != object_map.end(); ++it) {
+            UniverseObject* obj = it->second;
+            Meter* meter = obj->GetMeter(METER_POPULATION);
+            Meter* targetmax_meter = obj->GetMeter(METER_TARGET_POPULATION);
+            // only applies to unowned planets
+            if (meter && targetmax_meter && obj->Unowned()) {
+                double r = RandZeroToOne();
+                double factor = (0.1<r)?r:0.1;
+                meter->SetCurrent(targetmax_meter->Current() * factor);
+            }
+        }
+    }
 }
 
 void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, GalaxySetupOption starlane_freq,
@@ -1546,6 +1563,8 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
     ApplyMeterEffectsAndUpdateMeters();
     // Re-set active meters to targets after re-application of effects
     SetActiveMetersToTargetMaxCurrentValues(m_objects);
+    // Set the population of unowned planets to a random fraction of their target values.
+    SetNativePopulationValues(m_objects);
 
     BackPropegateObjectMeters();
 
