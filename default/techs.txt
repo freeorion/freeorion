@@ -712,19 +712,10 @@ Tech
     name = "GRO_MEDICAL_PATH"
     description = "GRO_MEDICAL_PATH_DESC"
     short_description = "HEALTH_SHORT_DESC"
-    techtype = Application
+    techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 4
     researchturns = 4
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-                HasTag "ORGANIC"
-                Population low = 1
-            ]
-            effects = SetTargetPopulation Value + 3
     graphic = "icons/tech/medical_pathology.png"
     
 Tech
@@ -741,19 +732,10 @@ Tech
     name = "GRO_GENETIC_ENG"
     description = "GRO_GENETIC_ENG_DESC"
     short_description = "GROWTH_SHORT_DESC"
-    techtype = Application
+    techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 4
     researchturns = 5
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                    OwnedBy TheEmpire Source.Owner
-                    Focus "FOCUS_GROWTH"
-                    Planet environment = Good
-            ]
-            effects = SetGrowth Value + 1
-
     graphic = "icons/tech/genetic_engineering.png"
 
 Tech
@@ -806,7 +788,7 @@ Tech
     name = "GRO_NANOTECH_MED"
     description = "GRO_NANOTECH_MED_DESC"
     short_description = "HEALTH_SHORT_DESC"
-    techtype = Application
+    techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 40
     researchturns = 9
@@ -814,15 +796,6 @@ Tech
         "GRO_GENETIC_MED"
         "PRO_NANOTECH_PROD"
     ]
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-                HasTag "ORGANIC"
-                Population low = 1
-            ]
-        effects = SetTargetPopulation Value + 3
     graphic = "icons/tech/nanotech_medicine.png"
 
 Tech
@@ -860,20 +833,11 @@ Tech
     name = "GRO_GENETIC_MED"
     description = "GRO_GENETIC_MED_DESC"
     short_description = "HEALTH_SHORT_DESC"
-    techtype = Application
+    techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 12
     researchturns = 6
     prerequisites = "GRO_GENETIC_ENG"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-                HasTag "ORGANIC"
-                Population low = 1
-            ]
-            effects = SetTargetPopulation Value + 2
     graphic = "icons/tech/genetic_medicine.png"
 
 Tech
@@ -941,14 +905,6 @@ Tech
                 SetMaxDefense Value + 5
                 SetMaxShield Value + 10
             ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-                Focus "FOCUS_GROWTH"
-            ]
-            effects = SetTargetPopulation Value + 1
 
         EffectsGroup
             scope = And [
@@ -1035,13 +991,7 @@ Tech
         "GRO_ADV_ECOMAN"
         "CON_ORBITAL_CON"
     ]
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_GROWTH"
-            ]
-            effects = SetGrowth Value + 1
+    unlock = Item type = Building name = "BLD_ORBITAL_FARM"
     graphic = "icons/tech/orbital_farming.png"
 
 Tech
@@ -1496,7 +1446,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 TargetPopulation low = 1
             ]
-            effects = SetTargetConstruction Value + 20
+            effects = SetTargetConstruction Value + 10
 
 Tech
     name = "CON_FRC_ENRG_STRC"
@@ -1639,49 +1589,6 @@ Tech
     graphic = "icons/tech/force_energy_structures.png"
 
 Tech
-    name = "CON_ORBITAL_HAB"
-    description = "CON_ORBITAL_HAB_DESC"
-    short_description = "POPULATION_SHORT_DESC"
-    techtype = Application
-    category = "CONSTRUCTION_CATEGORY"
-    researchcost = 100
-    researchturns = 1
-    prerequisites = "PRO_MICROGRAV_MAN"
-
-    effectsgroups = [
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = Planet environment = [Good Adequate]
-            effects = SetTargetPopulation Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet environment = Poor
-                OwnedBy TheEmpire Source.Owner
-            ]
-            effects = SetTargetPopulation Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet environment = Hostile
-                OwnedBy TheEmpire Source.Owner
-            ]
-            effects = SetTargetPopulation Value + 2
-    ]
-    graphic = "icons/tech/environmental_encapsulation.png"
-
-Tech
     name = "CON_NDIM_STRC"
     description = "CON_NDIM_STRC_DESC"
     short_description = "POPULATION_SHORT_DESC"
@@ -1693,37 +1600,10 @@ Tech
         "CON_FRC_ENRG_STRC"
         "LRN_NDIM_SUBSPACE"
     ]
-    effectsgroups = [
+    effectsgroups = 
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
-            activation = Planet environment = [Good Adequate]
-            effects = SetTargetPopulation Value + 3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet environment = Poor
-                OwnedBy TheEmpire Source.Owner
-            ]
-            effects = SetTargetPopulation Value + 3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet environment = Hostile
-                OwnedBy TheEmpire Source.Owner
-            ]
-            effects = SetTargetPopulation Value + 3
-    ]
+            effects = SetTargetConstruction Value + 10
     graphic = "icons/tech/n-dimensional_structures.png"
 
 Tech
@@ -1779,7 +1659,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 TargetPopulation low = 1
             ]
-            effects = SetTargetConstruction Value + 20
+            effects = SetTargetConstruction Value + 10
     graphic = "icons/tech/controlled_gravity_architecture.png"
 
 Tech
@@ -1808,7 +1688,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 TargetPopulation low = 1
             ]
-            effects = SetTargetConstruction Value + 20
+            effects = SetTargetConstruction Value + 10
     graphic = "icons/tech/orbital_construction.png"
 
 Tech
@@ -1820,15 +1700,6 @@ Tech
     researchcost = 4
     researchturns = 1
     prerequisites = "CON_METRO_INFRA"
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                NOT HasSpecial name = "TUNNELS_SPECIAL"
-                NOT HasSpecial name = "TECHTONIC_INSTABILITY_SPECIAL"
-            ]
-            effects = SetTargetPopulation Value + 2
-        ]
     graphic = "icons/tech/subterranean_construction.png"
 
 Tech

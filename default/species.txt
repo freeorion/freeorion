@@ -2002,145 +2002,18 @@ BASIC_POPULATION
             ]
             accountinglabel = "GOOD_ENVIRONMENT_LABEL"
             effects = SetTargetPopulation Value + 0
+'''
 
-        EffectsGroup
+ORGANIC_FOOD_USE
+'''EffectsGroup
             scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 20
-                Planet environment = Good
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_20_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 20
-
-        EffectsGroup
-            scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 19
-                Planet environment = Good
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_19_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 19
-
-        EffectsGroup
-            scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 18
-                Planet environment = Good
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_18_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 18
-
-        EffectsGroup
-            scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 17
-                Planet environment = Good
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_17_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 17
-
-        EffectsGroup
-            scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 16
-                Planet environment = Good
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_16_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 16
-
-        EffectsGroup
-            scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 15
-                Planet environment = Good
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_15_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 15
-
-        EffectsGroup
-            scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 14
-                Planet environment = Good
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_14_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 14
-
-        EffectsGroup
-            scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 13
-                Planet environment = Good
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_13_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 13
-
-        EffectsGroup
-            scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 12
-                Planet environment = Good
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_12_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 12
-
-        EffectsGroup
-            scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 11
-                Planet environment = Good
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_11_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 11
-
-        EffectsGroup
-            scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 10
-                Planet environment = Good
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_10_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 10
-
-        EffectsGroup
-            scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 9
-                Planet environment = Good
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_9_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 9
-
-        EffectsGroup
-            scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 8
-                Planet environment = Good
+            activation = And [
+                HasTag "ORGANIC"
+                ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Focus "FOCUS_GROWTH"
+                    Growth low = 8
+                    Planet environment = Good
+                ]
             ]
             stackinggroup = "GROWTH_STACK"
             accountinglabel = "LEVEL_8_GROWTH_LABEL"
@@ -2148,10 +2021,13 @@ BASIC_POPULATION
 
         EffectsGroup
             scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 7
-                Planet environment = Good
+            activation = And [
+                HasTag "ORGANIC"
+                ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Focus "FOCUS_GROWTH"
+                    Growth low = 7
+                    Planet environment = Good
+                ]
             ]
             stackinggroup = "GROWTH_STACK"
             accountinglabel = "LEVEL_7_GROWTH_LABEL"
@@ -2159,10 +2035,13 @@ BASIC_POPULATION
 
         EffectsGroup
             scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 6
-                Planet environment = Good
+            activation = And [
+                HasTag "ORGANIC"
+                ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Focus "FOCUS_GROWTH"
+                    Growth low = 6
+                    Planet environment = Good
+                ]
             ]
             stackinggroup = "GROWTH_STACK"
             accountinglabel = "LEVEL_6_GROWTH_LABEL"
@@ -2170,10 +2049,13 @@ BASIC_POPULATION
 
         EffectsGroup
             scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 5
-                Planet environment = Good
+            activation = And [
+                HasTag "ORGANIC"
+                ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Focus "FOCUS_GROWTH"
+                    Growth low = 5
+                    Planet environment = Good
+                ]
             ]
             stackinggroup = "GROWTH_STACK"
             accountinglabel = "LEVEL_5_GROWTH_LABEL"
@@ -2181,10 +2063,13 @@ BASIC_POPULATION
 
         EffectsGroup
             scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 4
-                Planet environment = Good
+            activation = And [
+                HasTag "ORGANIC"
+                ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Focus "FOCUS_GROWTH"
+                    Growth low = 4
+                    Planet environment = Good
+                ]
             ]
             stackinggroup = "GROWTH_STACK"
             accountinglabel = "LEVEL_4_GROWTH_LABEL"
@@ -2192,10 +2077,13 @@ BASIC_POPULATION
 
         EffectsGroup
             scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 3
-                Planet environment = Good
+            activation = And [
+                HasTag "ORGANIC"
+                ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Focus "FOCUS_GROWTH"
+                    Growth low = 3
+                    Planet environment = Good
+                ]
             ]
             stackinggroup = "GROWTH_STACK"
             accountinglabel = "LEVEL_3_GROWTH_LABEL"
@@ -2203,10 +2091,13 @@ BASIC_POPULATION
 
         EffectsGroup
             scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 2
-                Planet environment = Good
+            activation = And [
+                HasTag "ORGANIC"
+                ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Focus "FOCUS_GROWTH"
+                    Growth low = 2
+                    Planet environment = Good
+                ]
             ]
             stackinggroup = "GROWTH_STACK"
             accountinglabel = "LEVEL_2_GROWTH_LABEL"
@@ -2214,10 +2105,13 @@ BASIC_POPULATION
 
         EffectsGroup
             scope = Source
-            activation = ResourceSupplyConnected empire = Source.Owner condition = And [
-                Focus "FOCUS_GROWTH"
-                Growth low = 1
-                Planet environment = Good
+            activation = And [
+                HasTag "ORGANIC"
+                ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Focus "FOCUS_GROWTH"
+                    Growth low = 1
+                    Planet environment = Good
+                ]
             ]
             stackinggroup = "GROWTH_STACK"
             accountinglabel = "LEVEL_1_GROWTH_LABEL"
@@ -2232,11 +2126,15 @@ BAD_POPULATION
             accountinglabel = "BAD_POPULATION_LABEL"
             effects = SetTargetPopulation Value*[[BAD_MULTIPLIER]]
 
+        [[TUNNELS_MODIFIER]]
+        [[ORGANIC_FOOD_USE]]
         [[ENVIRONMENT_MODIFIER]]
 '''
 
 AVERAGE_POPULATION
 '''[[BASIC_POPULATION]]
+        [[TUNNELS_MODIFIER]]
+        [[ORGANIC_FOOD_USE]]
         [[ENVIRONMENT_MODIFIER]]
 '''
 
@@ -2248,7 +2146,22 @@ GOOD_POPULATION
             accountinglabel = "GOOD_POPULATION_LABEL"
             effects = SetTargetPopulation Value*[[GOOD_MULTIPLIER]]
 
+        [[TUNNELS_MODIFIER]]
+        [[ORGANIC_FOOD_USE]]
         [[ENVIRONMENT_MODIFIER]]
+'''
+
+TUNNELS_MODIFIER
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    HasSpecial "TUNNELS_SPECIAL"
+                    OwnerHasTech "CON_SUBTER_CONST"
+                ]
+                Not HasSpecial "TECTONIC_INSTABILITY_SPECIAL"
+            ]
+            effects = SetTargetPopulation Value + 2
 '''
 
 /*

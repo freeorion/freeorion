@@ -21,8 +21,6 @@ Special
         ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
 
-[[TEST_SHARED_MACRO]]
-
 Special
     name = "TIDAL_LOCK_SPECIAL"
     description = "TIDAL_LOCK_SPECIAL_DESC"
@@ -101,8 +99,8 @@ Special
     graphic = "icons/specials_huge/solid_core.png"
 
 Special
-    name = "TECHTONIC_INSTABILITY_SPECIAL"
-    description = "TECHTONIC_INSTABILITY_SPECIAL_DESC"
+    name = "TECTONIC_INSTABILITY_SPECIAL"
+    description = "TECTONIC_INSTABILITY_SPECIAL_DESC"
     stealth = 20
     spawnrate = 1.0
     spawnlimit = 9999
@@ -115,7 +113,7 @@ Special
         scope = Source
         activation = Source
         effects = SetTargetConstruction Value - 20
-    graphic = "icons/specials_huge/techtonic_instability.png"
+    graphic = "icons/specials_huge/tectonic_instability.png"
 
 Special
     name = "ANCIENT_RUINS_SPECIAL"
@@ -262,173 +260,6 @@ Special
         Planet
         Not Homeworld
         Not Planet type = [Asteroids GasGiant]
-    ]
-    effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet size = Tiny
-                Planet environment = [Good Adequate]
-            ]
-            effects = SetTargetPopulation Value + 0
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Tiny
-                Planet environment = Poor
-            ]
-            effects = SetTargetPopulation Value + 0
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Tiny
-                Planet environment = Hostile
-            ]
-            effects = SetTargetPopulation Value + 0
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet size = Small
-                Planet environment = [Good Adequate]
-            ]
-            effects = SetTargetPopulation Value + 0.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Small
-                Planet environment = Poor
-            ]
-            effects = SetTargetPopulation Value + 0.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Small
-                Planet environment = Hostile
-            ]
-            effects = SetTargetPopulation Value + 0.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet size = Medium
-                Planet environment = [Good Adequate]
-            ]
-            effects = SetTargetPopulation Value + 1
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Medium
-                Planet environment = Poor
-            ]
-            effects = SetTargetPopulation Value + 1
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Medium
-                Planet environment = Hostile
-            ]
-            effects = SetTargetPopulation Value + 1
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet size = Large
-                Planet environment = [Good Adequate]
-            ]
-            effects = SetTargetPopulation Value + 1.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Large
-                Planet environment = Poor
-            ]
-            effects = SetTargetPopulation Value + 1.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Large
-                Planet environment = Hostile
-            ]
-            effects = SetTargetPopulation Value + 1.5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet size = Huge
-                Planet environment = [Good Adequate]
-            ]
-            effects = SetTargetPopulation Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Huge
-                Planet environment = Poor
-            ]
-            effects = SetTargetPopulation Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-                Planet size = Huge
-                Planet environment = Hostile
-            ]
-            effects = SetTargetPopulation Value + 2
-
     ]
     graphic = "icons/specials_huge/tunnels.png"
 
@@ -580,7 +411,7 @@ Special
                 Planet environment = Good
                 Planet size = [Huge GasGiant]
             ]
-            effects = SetTargetPopulation Value + 4
+            effects = SetTargetPopulation Value + 3
 
         EffectsGroup
             scope = Source
@@ -588,7 +419,7 @@ Special
                 Planet environment = Good
                 Planet size = [Large Asteroids]
             ]
-            effects = SetTargetPopulation Value + 3
+            effects = SetTargetPopulation Value + 2
 
         EffectsGroup
             scope = Source
@@ -596,7 +427,7 @@ Special
                 Planet environment = Good
                 Planet size = Medium
             ]
-            effects = SetTargetPopulation Value + 2
+            effects = SetTargetPopulation Value + 1
 
         EffectsGroup
             scope = Source
@@ -769,7 +600,7 @@ Special
     name = "CLOUD_COVER_SLAVE_SPECIAL"
     description = "CLOUD_COVER_SLAVE_SPECIAL_DESC"
     effectsgroups = [
-        [[STEALTH_BOOST_LOW]]
+        [[STEALTH_BOOST_LOW_NO_ORBITAL]]
 
         EffectsGroup
             scope = Source
@@ -828,7 +659,7 @@ Special
     name = "VOLCANIC_ASH_SLAVE_SPECIAL"
     description = "VOLCANIC_ASH_SLAVE_SPECIAL_DESC"
     effectsgroups = [
-        [[STEALTH_BOOST_MEDIUM]]
+        [[STEALTH_BOOST_MEDIUM_NO_ORBITAL]]
 
         EffectsGroup
             scope = Source
@@ -880,7 +711,7 @@ Special
     name = "DIM_RIFT_SLAVE_SPECIAL"
     description = "DIM_RIFT_SLAVE_SPECIAL_DESC"
     effectsgroups = [
-        [[STEALTH_BOOST_HIGH]]
+        [[STEALTH_BOOST_HIGH_NO_ORBITAL]]
 
         EffectsGroup
             scope = Source
@@ -926,7 +757,7 @@ Special
     name = "VOID_SLAVE_SPECIAL"
     description = "VOID_SLAVE_SPECIAL_DESC"
     effectsgroups = [
-        [[STEALTH_BOOST_ULTIMATE]]
+        [[STEALTH_BOOST_ULTIMATE_NO_ORBITAL]]
 
         EffectsGroup
             scope = Source

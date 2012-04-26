@@ -3579,7 +3579,7 @@ good
 INVALID_FOCUS_TYPE
 invalid focus type
 FOCUS_GROWTH
-farming
+Growth
 FOCUS_INDUSTRY
 industry
 FOCUS_MINING
@@ -3612,8 +3612,6 @@ METER_TARGET_POPULATION
 Target Population
 METER_TARGET_HEALTH
 Target Health
-METER_TARGET_FARMING
-Target Farming
 METER_TARGET_INDUSTRY
 Target Industry
 METER_TARGET_RESEARCH
@@ -3639,7 +3637,7 @@ Population
 METER_HEALTH
 Health
 METER_GROWTH
-Farming
+Growth
 METER_INDUSTRY
 Industry
 METER_RESEARCH
@@ -6618,6 +6616,12 @@ BLD_NOVA_BOMB_ACTIVATOR
 Nova Bomb Activator
 BLD_NOVA_BOMB_ACTIVATOR_DESC
 Activates all Nova Bombs within one starlane jump.
+
+BLD_ORBITAL_FARM
+Orbital Farm
+
+BLD_ORBITAL_FARM_DESC
+Increases the Growth on the planet on which it is built by 1, if that planet is set to the Growth focus.
 
 ###################################
 # Hull/Part Description Templates #

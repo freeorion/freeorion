@@ -835,10 +835,10 @@ BuildingType
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
+                Focus "FOCUS_GROWTH"
             ]
-            activation = Source
             stackinggroup = "BLD_INDUSTRY_FARM_EFFECT"
-            effects = SetTargetPopulation Value + 1
+            effects = SetGrowth Value + 1
     icon = ""
 
 BuildingType
@@ -1259,6 +1259,28 @@ BuildingType
         EffectsGroup
             scope = Source
             effects = Destroy
+    icon = ""
+
+BuildingType
+    name = "BLD_ORBITAL_FARM"
+    description = "BLD_ORBITAL_FARM_DESC"
+    buildcost = 60
+    buildtime = 20
+    tags = "ORBITAL"
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Planet
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Contains Source
+                OwnedBy TheEmpire Source.Owner
+                Planet
+                Focus "FOCUS_GROWTH"
+            ]
+            stackinggroup = "BLD_ORBITAL_FARM_EFFECT"
+            effects = SetGrowth Value + 1
     icon = ""
 
 
