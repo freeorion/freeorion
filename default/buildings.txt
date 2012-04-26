@@ -548,10 +548,9 @@ BuildingType
     ]
     effectsgroups =
         EffectsGroup
-            scope = Source
-            activation = And [
+            scope = And [
+                Contains Source
                 Focus "FOCUS_GROWTH"
-                Planet environment = Good
             ]
             stackinggroup = "GENOME_BANK_EFFECT"
             effects = SetGrowth Value + 1
@@ -707,8 +706,7 @@ BuildingType
     ]
     effectsgroups =
         EffectsGroup
-            scope = Source
-            activation = Source
+            scope = Contains Source
             stackinggroup = "CLONING_CENTER_EFFECT"
             effects = SetGrowth Value + 1
     icon = ""

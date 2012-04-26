@@ -7630,6 +7630,9 @@ HOSTILE_ENVIRONMENT_LABEL
 ENV_ENCAPSUL_LABEL
 '''%1% Environmental Encapsulation'''
 
+TUNNELS_LABEL
+'''Subterranean Bonus'''
+
 BAD_POPULATION_LABEL
 '''%1% Bad Population'''
 
@@ -7637,79 +7640,43 @@ GOOD_POPULATION_LABEL
 '''%1% Good Population'''
 
 LEVEL_1_GROWTH_LABEL
-'''Level 1 Farming'''
+'''Level 1 Growth'''
 
 LEVEL_2_GROWTH_LABEL
-'''Level 2 Farming'''
+'''Level 2 Growth'''
 
 LEVEL_3_GROWTH_LABEL
-'''Level 3 Farming'''
+'''Level 3 Growth'''
 
 LEVEL_4_GROWTH_LABEL
-'''Level 4 Farming'''
+'''Level 4 Growth'''
 
 LEVEL_5_GROWTH_LABEL
-'''Level 5 Farming'''
+'''Level 5 Growth'''
 
 LEVEL_6_GROWTH_LABEL
-'''Level 6 Farming'''
+'''Level 6 Growth'''
 
 LEVEL_7_GROWTH_LABEL
-'''Level 7 Farming'''
+'''Level 7 Growth'''
 
 LEVEL_8_GROWTH_LABEL
-'''Level 8 Farming'''
-
-LEVEL_9_GROWTH_LABEL
-'''Level 9 Farming'''
-
-LEVEL_10_GROWTH_LABEL
-'''Level 10 Farming'''
-
-LEVEL_11_GROWTH_LABEL
-'''Level 11 Farming'''
-
-LEVEL_12_GROWTH_LABEL
-'''Level 12 Farming'''
-
-LEVEL_13_GROWTH_LABEL
-'''Level 13 Farming'''
-
-LEVEL_14_GROWTH_LABEL
-'''Level 14 Farming'''
-
-LEVEL_15_GROWTH_LABEL
-'''Level 15 Farming'''
-
-LEVEL_16_GROWTH_LABEL
-'''Level 16 Farming'''
-
-LEVEL_17_GROWTH_LABEL
-'''Level 17 Farming'''
-
-LEVEL_18_GROWTH_LABEL
-'''Level 18 Farming'''
-
-LEVEL_19_GROWTH_LABEL
-'''Level 19 Farming'''
-
-LEVEL_20_GROWTH_LABEL
-'''Level 20 Farming'''
+'''Level 8 Growth'''
 
 FOCUS_GROWTH_LABEL
-'''%1% Farming Focus'''
+'''%1% Growth Focus'''
 
 BAD_GROWTH_LABEL
-'''%1% Bad Farming'''
+'''%1% Bad Growth'''
 
 GOOD_GROWTH_LABEL
-'''%1% Good Farming'''
+'''%1% Good Growth'''
 
 GREAT_GROWTH_LABEL
-'''%1% Great Farming'''
+'''%1% Great Growth'''
 
 ULTIMATE_GROWTH_LABEL
-'''%1% Ultimate Farming'''
+'''%1% Ultimate Growth'''
 
 FOCUS_MINING_LABEL
 '''%1% Mining Focus'''

@@ -2161,6 +2161,7 @@ TUNNELS_MODIFIER
                 ]
                 Not HasSpecial "TECTONIC_INSTABILITY_SPECIAL"
             ]
+            accountinglabel = "TUNNELS_LABEL"
             effects = SetTargetPopulation Value + 2
 '''
 
@@ -2342,7 +2343,7 @@ BAD_GROWTH
         EffectsGroup
             scope = Source
             accountinglabel = "BAD_GROWTH_LABEL"
-            effects = SetGrowth Value*[[BAD_MULTIPLIER]]
+            effects = SetGrowth Value*[[BAD_MULTIPLIER_WHOLE]]
 '''
 
 AVERAGE_GROWTH
@@ -2359,7 +2360,7 @@ GOOD_GROWTH
         EffectsGroup
             scope = Source
             accountinglabel = "GOOD_GROWTH_LABEL"
-            effects = SetGrowth Value*[[GOOD_MULTIPLIER]]
+            effects = SetGrowth Value*[[GOOD_MULTIPLIER_WHOLE]]
 '''
 
 GREAT_GROWTH
@@ -2368,7 +2369,7 @@ GREAT_GROWTH
         EffectsGroup
             scope = Source
             accountinglabel = "GREAT_GROWTH_LABEL"
-            effects = SetGrowth Value*[[GREAT_MULTIPLIER]]
+            effects = SetGrowth Value*[[GREAT_MULTIPLIER_WHOLE]]
 '''
 
 ULTIMATE_GROWTH
@@ -2377,7 +2378,7 @@ ULTIMATE_GROWTH
         EffectsGroup
             scope = Source
             accountinglabel = "ULTIMATE_GROWTH_LABEL"
-            effects = SetGrowth Value*[[ULTIMATE_MULTIPLIER]]
+            effects = SetGrowth Value*[[ULTIMATE_MULTIPLIER_WHOLE]]
 '''
 
 //#####      M I N I N G    #####//
@@ -2802,6 +2803,21 @@ GREAT_MULTIPLIER
 
 ULTIMATE_MULTIPLIER
 '''4.0'''
+
+BAD_MULTIPLIER_WHOLE
+'''0'''
+
+AVERAGE_MULTIPLIER_WHOLE
+'''1'''
+
+GOOD_MULTIPLIER_WHOLE
+'''2'''
+
+GREAT_MULTIPLIER_WHOLE
+'''3'''
+
+ULTIMATE_MULTIPLIER_WHOLE
+'''4'''
 
 ADEQUATE_MULTIPLIER
 '''0.75'''
