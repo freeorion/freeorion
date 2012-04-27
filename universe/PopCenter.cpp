@@ -84,15 +84,14 @@ double PopCenter::NextTurnPopGrowth() const {
     Logger().debugStream() << "pop: " << cur_pop << " / " << target_pop;
     double population_fraction = (target_pop - cur_pop) / target_pop;
     Logger().debugStream() << "pop frac: " << population_fraction;
-    double change_potential = cur_pop * population_fraction * 0.1;
+    double change_potential = cur_pop * population_fraction * 0.1 + (target_pop > cur_pop ? 1 : -1) * 0.05;
     Logger().debugStream() << "change potential: " << change_potential;
     double max_growth = target_pop - cur_pop;
-    double max_loss = -cur_pop;
     double change = 0.0;
     if (change_potential > 0)
         change = std::min(max_growth, change_potential);
     else if (change_potential < 0)
-        change = std::max(max_loss, change_potential);
+        change = std::max(max_growth, change_potential);
     Logger().debugStream() << "pop change: " << change;
     return change;
 }
