@@ -37,6 +37,7 @@ Content:
  ~ ~ Abandoned Colony special now works.
  ~ ~ Added three Derelict system specials.
  ~ ~ Added new stealthy planet specials, and stealth-making monsters.
+ ~ ~ Computronium Moons now have empire-wide benefit
  
  ~ Removed "Orbital Mining" Tech which only effects planetary outposts.
  ~ Reduced the number of different types of shipyards while increasing the cost

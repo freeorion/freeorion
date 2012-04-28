@@ -3367,7 +3367,7 @@ This planet has a natural satellite, the orbital period of which is in 1:1 reson
 COMPUTRONIUM_SPECIAL
 Computronium Moon
 COMPUTRONIUM_SPECIAL_DESC
-''' All research-focused planets in the system receive a large population-based bonus.
+'''When a planet with a Computronium Moon is focused on research, all research focused planets in the empire gain .5 RPs per Population.
 
 Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
 

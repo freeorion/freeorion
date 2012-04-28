@@ -14,7 +14,6 @@ Special
     effectsgroups = EffectsGroup
         scope = Source
         activation = Source
-        accountinglabel = "CHAT_WHISPER"
         effects = [
             SetTargetResearch Value + .3
             SetTargetConstruction Value - 20
@@ -284,41 +283,34 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not Planet type = Asteroids
-        Not Planet type = GasGiant
+        Not Planet type = [Asteroids GasGiant]
         Not ContainedBy Contains Homeworld
+        Not WithinStarlaneJumps 2 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
     ]
     effectsgroups = [       
         EffectsGroup
             scope = And [
                 Planet
-                ContainedBy Contains Source
+                Focus "FOCUS_RESEARCH"
                 OwnedBy TheEmpire Source.Owner
             ]
             activation = Focus "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value * 2
+            stackinggroup = "COMPUTRONIUM_STACK"
+            effects = SetTargetResearch Value + Target.Population * 0.5
             
         EffectsGroup     
             scope = Source     
             activation = AND [
                 Turn high = 0
                 Random probability = 0.7
-                Not WithinStarlaneJumps 2 Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                ]
             ]
-            stackinggroup = "COMPUTRONIUM_STACK"
             effects = CreateShip "SM_GUARD_1"
-
-        EffectsGroup     
-            scope = Source
-            activation = Turn high = 0
-            stackinggroup = "COMPUTRONIUM_STACK"
-            effects = Destroy
     ]
     graphic = "icons/specials_huge/computronium.png"
-
+/*
 Special
     name = "COMPUTRONIUM_BROKEN_SPECIAL"
     description = "COMPUTRONIUM_BROKEN_SPECIAL_DESC"
@@ -334,14 +326,15 @@ Special
     effectsgroups = EffectsGroup
         scope = And [
             Planet
-            ContainedBy Contains Source
+            Focus "FOCUS_RESEARCH"
             OwnedBy TheEmpire Source.Owner
         ]
         activation = Focus "FOCUS_RESEARCH"
-        effects = SetTargetResearch Value * 1.5
+        stackinggroup = "COMPUTRONIUM_STACK"
+        effects = SetTargetResearch Value + Target.Population * 0.25
     
     graphic = "icons/specials_huge/computronium-broken.png"
-
+*/
 Special
     name = "ABANDONED_COLONY_SPECIAL"
     description = "ABANDONED_COLONY_SPECIAL_DESC"
