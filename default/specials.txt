@@ -310,31 +310,7 @@ Special
             effects = CreateShip "SM_GUARD_1"
     ]
     graphic = "icons/specials_huge/computronium.png"
-/*
-Special
-    name = "COMPUTRONIUM_BROKEN_SPECIAL"
-    description = "COMPUTRONIUM_BROKEN_SPECIAL_DESC"
-    stealth = 0
-    spawnrate = 1.0
-    spawnlimit = 9999
-    location = And [
-        Planet
-        Not Planet type = Asteroids
-        Not Planet type = GasGiant
-        Not ContainedBy Contains Homeworld
-    ]
-    effectsgroups = EffectsGroup
-        scope = And [
-            Planet
-            Focus "FOCUS_RESEARCH"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        activation = Focus "FOCUS_RESEARCH"
-        stackinggroup = "COMPUTRONIUM_STACK"
-        effects = SetTargetResearch Value + Target.Population * 0.25
-    
-    graphic = "icons/specials_huge/computronium-broken.png"
-*/
+
 Special
     name = "ABANDONED_COLONY_SPECIAL"
     description = "ABANDONED_COLONY_SPECIAL_DESC"
@@ -992,6 +968,118 @@ Special
             ]
     ]
     graphic = ""
+    
+Special
+    name = "PROBIOTIC_SPECIAL"
+    description = "PROBIOTIC_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 9.0
+    spawnlimit = 8
+    location = And [
+        Planet
+        Planet type = [Ocean Swamp Toxic]
+        Not ContainedBy Contains Homeworld
+        Not WithinStarlaneJumps 1 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+    effectsgroups = [       
+        EffectsGroup
+            scope = And [
+                Planet
+                Focus "FOCUS_GROWTH"
+                OwnedBy TheEmpire Source.Owner
+            ]
+            activation = ResourceSupplyConnected empire = Source.Owner condition = HasTag "ORGANIC"
+            stackinggroup = "PROBIOTIC_STACK"
+            effects = SetTargetPopulation Value + 3
+/*            
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Turn high = 0
+                Random probability = 0.7
+            ]
+            effects = CreateShip "SM_GUARD_1"
+            */
+    ]
+    graphic = "icons/specials_huge/probiotic.png"
+    
+Special
+    name = "FRUIT_SPECIAL"
+    description = "FRUIT_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 9.0
+    spawnlimit = 8
+    location = And [
+        Planet
+        Planet type = [Desert Terran Ocean Swamp]
+        Not ContainedBy Contains Homeworld
+        Not WithinStarlaneJumps 1 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+    effectsgroups = [       
+        EffectsGroup
+            scope = And [
+                Planet
+                Focus "FOCUS_GROWTH"
+                OwnedBy TheEmpire Source.Owner
+            ]
+            activation = ResourceSupplyConnected empire = Source.Owner condition = HasTag "ORGANIC"
+            stackinggroup = "FRUIT_STACK"
+            effects = SetTargetPopulation Value + 3
+/*            
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Turn high = 0
+                Random probability = 0.7
+            ]
+            effects = CreateShip "SM_GUARD_1"
+            */
+    ]
+    graphic = "icons/specials_huge/fruit.png"
+
+Special
+    name = "SPICE_SPECIAL"
+    description = "SPICE_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 9.0
+    spawnlimit = 8
+    location = And [
+        Planet
+        Planet type = [Tundra Desert Terran]
+        Not ContainedBy Contains Homeworld
+        Not WithinStarlaneJumps 1 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+    effectsgroups = [       
+        EffectsGroup
+            scope = And [
+                Planet
+                Focus "FOCUS_GROWTH"
+                OwnedBy TheEmpire Source.Owner
+            ]
+            activation = ResourceSupplyConnected empire = Source.Owner condition = HasTag "ORGANIC"
+            stackinggroup = "SPICE_STACK"
+            effects = SetTargetPopulation Value + 3
+/*            
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Turn high = 0
+                Random probability = 0.7
+            ]
+            effects = CreateShip "SM_GUARD_1"
+            */
+    ]
+    graphic = "icons/specials_huge/spice.png"
+    
 
 REMOVE_CLOUD_COVER
 '''EffectsGroup

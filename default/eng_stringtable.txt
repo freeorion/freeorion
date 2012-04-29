@@ -3371,13 +3371,6 @@ COMPUTRONIUM_SPECIAL_DESC
 
 Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
 
-COMPUTRONIUM_BROKEN_SPECIAL
-Damaged Computronium Moon
-COMPUTRONIUM_BROKEN_SPECIAL_DESC
-'''All research-focused planets in the system receive a population-based bonus.
-
-Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. This one however has been blasted by some unknown weapon of war leaving most of the computronium fused and useless. Still it can complete complicated simulations and equations in impressive time.'''
-
 ABANDONED_COLONY_SPECIAL
 Abandoned Colony
 ABANDONED_COLONY_SPECIAL_DESC
@@ -3469,7 +3462,20 @@ Experimentor Outpost
 EXPERIMENTOR_OUTPOST_SPECIAL_DESC
 En Experimentor outpost exists in this system, and defeating them is necessary to ensure the safety of the galaxy.
 
+PROBIOTIC_SPECIAL
+Probiotic Soup
+PROBIOTIC_SPECIAL_DESC
+The great diversity of unique single-celled organisms have applications to the health and maintenance of all types of organic life.
 
+FRUIT_SPECIAL
+Caretaker's Fruit
+FRUIT_SPECIAL_DESC
+What appears to be a forest is actually part of a continent-spanning symbiotic organism. The fruit of these trees contains marvelously complex organic chemicals beneficial to all sorts of organic life.
+
+SPICE_SPECIAL
+Ki Spice
+SPICE_SPECIAL_DESC
+A unique substance produced by this planet's ecology, Ki Spice has the capacity to lengthen the lives, clarify the thoughts, or sharpen the senses of organic beings. 
 
 #######################
 # Enumeration  values #
