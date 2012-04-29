@@ -8,8 +8,11 @@ BuildingType
     location = Not All
     effectsgroups = [
         EffectsGroup
-            scope = HasTag name = "STYLISH"
-            effects = SetTargetTrade Value + 5
+            scope = And [
+                Planet
+                Contains Source
+            ]
+            effects = SetTargetPopulation value + Sum Population Planet
     
         EffectsGroup
             scope = And [

@@ -96,33 +96,32 @@ struct additive_expr_rule
     > type;
 };
 
-struct make_expression_
-{
+struct make_expression_ {
     template <typename Arg>
     struct result
     { typedef ValueRef::ValueRefBase<typename expression_value_type<Arg>::type>* type; };
 
     template <typename Arg>
     typename result<Arg>::type operator()(const Arg& arg) const
-        {
-            typedef typename expression_value_type<Arg>::type value_type;
-            std::vector<ValueRef::ValueRefBase<value_type>*> operand_stack;
-            operand_stack.reserve(arg.size());
-            const typename Arg::const_iterator end_it = arg.end();
-            for (typename Arg::const_iterator it = arg.begin(); it != end_it; ++it) {
-                if (const ValueRef::OpType* op = boost::get<ValueRef::OpType>(&*it)) { // operator
-                    ValueRef::ValueRefBase<value_type>* right = operand_stack.back();
-                    operand_stack.pop_back();
-                    ValueRef::ValueRefBase<value_type>* left = operand_stack.back();
-                    operand_stack.pop_back();
-                    // TODO: Constant folding.
-                    operand_stack.push_back(new ValueRef::Operation<value_type>(*op, left, right));
-                } else {
-                    operand_stack.push_back(boost::get<ValueRef::ValueRefBase<value_type>*>(*it));
-                }
+    {
+        typedef typename expression_value_type<Arg>::type value_type;
+        std::vector<ValueRef::ValueRefBase<value_type>*> operand_stack;
+        operand_stack.reserve(arg.size());
+        const typename Arg::const_iterator end_it = arg.end();
+        for (typename Arg::const_iterator it = arg.begin(); it != end_it; ++it) {
+            if (const ValueRef::OpType* op = boost::get<ValueRef::OpType>(&*it)) { // operator
+                ValueRef::ValueRefBase<value_type>* right = operand_stack.back();
+                operand_stack.pop_back();
+                ValueRef::ValueRefBase<value_type>* left = operand_stack.back();
+                operand_stack.pop_back();
+                // TODO: Constant folding.
+                operand_stack.push_back(new ValueRef::Operation<value_type>(*op, left, right));
+            } else {
+                operand_stack.push_back(boost::get<ValueRef::ValueRefBase<value_type>*>(*it));
             }
-            return operand_stack[0];
         }
+        return operand_stack[0];
+    }
 };
 const boost::phoenix::function<make_expression_> make_expression;
 
@@ -179,18 +178,17 @@ void initialize_expression_parsers(
         ;
 }
 
-extern name_token_rule first_token;
-extern name_token_rule container_token;
-const name_token_rule& int_var_final_token();
-const statistic_rule<int>::type& int_var_statistic();
-const name_token_rule& double_var_final_token();
+extern name_token_rule              first_token;
+extern name_token_rule              container_token;
+const name_token_rule&              int_var_final_token();
+const statistic_rule<int>::type&    int_var_statistic();
+const name_token_rule&              double_var_final_token();
 const statistic_rule<double>::type& double_var_statistic();
 
 template <typename T>
 void initialize_numeric_statistic_parser(
     typename statistic_rule<T>::type& statistic,
-    const name_token_rule& final_token
-)
+    const name_token_rule& final_token)
 {
     const parse::lexer& tok = parse::lexer::instance();
 
@@ -199,19 +197,24 @@ void initialize_numeric_statistic_parser(
     qi::_b_type _b;
     qi::_c_type _c;
     qi::_val_type _val;
+    qi::eps_type eps;
     using phoenix::new_;
     using phoenix::push_back;
+    using phoenix::val;
 
     statistic
         =    (
                   (
                        tok.Number_ [ _b = ValueRef::COUNT ]
-                   >   parse::label(Condition_name) > parse::detail::condition_parser [ _c = _1 ]
+                   >>  parse::label(Condition_name) >> parse::detail::condition_parser [ _c = _1 ]
                   )
               |   (
                        parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
-                   >>  parse::label(Property_name)  >> -(container_token [ push_back(_a, _1) ] >> '.') >> final_token [ push_back(_a, _1) ]
-                   >   parse::label(Condition_name) >    parse::detail::condition_parser [ _c = _1 ]
+                   >>  parse::label(Property_name)
+                   >>       eps [ push_back(_a, val(LocalCandidate_name)) ]
+                   >>       -(container_token [ push_back(_a, _1) ] >> '.')
+                   >>       final_token [ push_back(_a, _1) ]
+                   >>  parse::label(Condition_name) >>   parse::detail::condition_parser [ _c = _1 ]
                   )
              )
              [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _c) ]
@@ -221,8 +224,7 @@ void initialize_numeric_statistic_parser(
 template <typename T>
 void initialize_nonnumeric_statistic_parser(
     typename statistic_rule<T>::type& statistic,
-    const name_token_rule& final_token
-)
+    const name_token_rule& final_token)
 {
     const parse::lexer& tok = parse::lexer::instance();
 
@@ -231,13 +233,18 @@ void initialize_nonnumeric_statistic_parser(
     qi::_b_type _b;
     qi::_c_type _c;
     qi::_val_type _val;
+    qi::eps_type eps;
     using phoenix::new_;
     using phoenix::push_back;
+    using phoenix::val;
 
     statistic
         =    (
                   tok.Mode_ [ _b = ValueRef::MODE ]
-              >   parse::label(Property_name)  > -(container_token [ push_back(_a, _1) ] > '.') > final_token [ push_back(_a, _1) ]
+              >>  parse::label(Property_name)
+              >>        eps [ push_back(_a, val(LocalCandidate_name)) ]
+              >>        -(container_token [ push_back(_a, _1) ] > '.')
+              >>        final_token [ push_back(_a, _1) ]
               >   parse::label(Condition_name) >  parse::detail::condition_parser [ _c = _1 ]
              )
              [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _c) ]

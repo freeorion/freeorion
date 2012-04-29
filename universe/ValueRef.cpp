@@ -33,10 +33,10 @@ namespace {
         switch(ref_type) {
         case ValueRef::SOURCE_REFERENCE:                        obj = context.source;                       break;
         case ValueRef::EFFECT_TARGET_REFERENCE:                 obj = context.effect_target;                break;
-        case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE:     obj = context.condition_local_candidate;    break;
         case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:      obj = context.condition_root_candidate;     break;
-        default:
-            return 0;
+        case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE:
+        case ValueRef::NON_OBJECT_REFERENCE:
+        default:                                                obj = context.condition_local_candidate;    break;
         }
 
         while (first != last) {
@@ -60,8 +60,7 @@ namespace {
         return obj;
     }
 
-    struct ObjectTypeVisitor : UniverseObjectVisitor
-    {
+    struct ObjectTypeVisitor : UniverseObjectVisitor {
         ObjectTypeVisitor() : m_type(INVALID_UNIVERSE_OBJECT_TYPE) {}
 
         virtual UniverseObject* Visit(Building* obj) const

@@ -6,7 +6,6 @@
 
 
 namespace {
-
     struct double_parser_rules {
         double_parser_rules() {
             qi::_1_type _1;
@@ -76,10 +75,10 @@ namespace {
             initialize_numeric_statistic_parser<double>(statistic, final_token);
 
             initialize_expression_parsers<double>(negate_expr,
-                                                    multiplicative_expr,
-                                                    additive_expr,
-                                                    expr,
-                                                    primary_expr);
+                                                  multiplicative_expr,
+                                                  additive_expr,
+                                                  expr,
+                                                  primary_expr);
 
             int_statistic
                 =    int_var_statistic() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
@@ -118,11 +117,11 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_parser_rule<double>::type rule;
-        typedef variable_rule<double>::type variable_rule;
-        typedef statistic_rule<double>::type statistic_rule;
-        typedef multiplicative_expr_rule<double>::type multiplicative_expression_rule;
-        typedef additive_expr_rule<double>::type additive_expression_rule;
+        typedef parse::value_ref_parser_rule<double>::type  rule;
+        typedef variable_rule<double>::type                 variable_rule;
+        typedef statistic_rule<double>::type                statistic_rule;
+        typedef multiplicative_expr_rule<double>::type      multiplicative_expression_rule;
+        typedef additive_expr_rule<double>::type            additive_expression_rule;
 
         name_token_rule                 final_token;
         rule                            constant;
@@ -148,7 +147,7 @@ const name_token_rule& double_var_final_token()
 const statistic_rule<double>::type& double_var_statistic()
 { return get_double_parser_rules().statistic; }
 
-namespace parse { 
+namespace parse {
     template <>
     value_ref_parser_rule<double>::type& value_ref_parser<double>()
     { return get_double_parser_rules().expr; }

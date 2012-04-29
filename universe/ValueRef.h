@@ -557,7 +557,7 @@ void ValueRef::Statistic<T>::GetObjectPropertyValues(const ScriptingContext& con
     //                       << " sampling condition: " << m_sampling_condition->Dump()
     //                       << " property name final: " << this->PropertyName().back();
     for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
-        T property_value = this->Variable<T>::Eval(context);
+        T property_value = this->Variable<T>::Eval(ScriptingContext(context, *it));
         object_property_values[*it] = property_value;
     }
 }
