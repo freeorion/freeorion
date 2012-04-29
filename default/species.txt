@@ -478,6 +478,8 @@ Species
     CanProduceShips
     CanColonize
     
+    tags = "ROBOTIC"
+    
     foci = [
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
@@ -616,6 +618,8 @@ Species
     CanProduceShips
     CanColonize
     
+    tags = "LITHIC"
+    
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
@@ -721,7 +725,6 @@ Species
 
     tags = "ORGANIC"
     
-    
     foci = [
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
@@ -757,6 +760,8 @@ Species
     description = "SP_NYMNMN_DESC"
     Native
     
+    tags = "SELF_SUFFICIENT"
+    
     foci = [
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
@@ -789,6 +794,8 @@ Species
     name = "SP_TRENCHERS"
     description = "SP_TRENCHERS_DESC"
     Native
+    
+    Tags = "ROBOTIC"
     
     foci = [
         [[HAS_MINING_FOCUS]]
@@ -852,6 +859,8 @@ Species
     description = "SP_BEIGEGOO_DESC"
     Native
     
+    Tags = "ROBOTIC"
+    
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
@@ -883,6 +892,8 @@ Species
     Native
     
     CanColonize
+    
+    Tags = "ROBOTIC"
     
     foci = [
         [[HAS_GROWTH_FOCUS]]
@@ -917,6 +928,8 @@ Species
     Native
     CanProduceShips
     CanColonize
+    
+    tags = "SELF_SUFFICIENT"
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -953,7 +966,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = "ORGANIC"
+    tags = "LITHIC"
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -1100,6 +1113,8 @@ Species
     Native
     CanProduceShips
     
+    tags = "SELF_SUFFICIENT"
+    
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
@@ -1190,7 +1205,7 @@ Species
     description = "SP_VOLP_DESC"
     Native
 
-    tags = "ORGANIC"
+    tags = "LITHIC"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -1226,6 +1241,8 @@ Species
     description = "SP_EXOBOT_DESC"
     CanProduceShips
     CanColonize
+    
+    Tags = "ROBOTIC"
     
     foci = [
         [[HAS_MINING_FOCUS]]
@@ -1302,7 +1319,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = "ORGANIC"
+    tags = [ "ORGANIC" "ROBOTIC" "LITHIC" ]
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
