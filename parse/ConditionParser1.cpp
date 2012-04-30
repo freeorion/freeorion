@@ -6,7 +6,7 @@
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
 
-#include <GG/ReportParseError.h>
+//#include <GG/ReportParseError.h>
 
 #include <boost/spirit/home/phoenix.hpp>
 
@@ -58,6 +58,7 @@ namespace {
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_c_type _c;
+            qi::_d_type _d;
             qi::_val_type _val;
             qi::eps_type eps;
             qi::lit_type lit;
@@ -151,7 +152,7 @@ namespace {
                 =    tok.Planet_
                 >>   parse::label(Type_name)
                 >>   (
-                            '[' >> +planet_type_value_ref [ push_back(_a, _1) ] > ']'
+                            '[' >> +planet_type_value_ref [ push_back(_a, _1) ] >> ']'
                         |   planet_type_value_ref [ push_back(_a, _1) ]
                      )
                      [ _val = new_<Condition::PlanetType>(_a) ]
@@ -161,7 +162,7 @@ namespace {
                 =    tok.Planet_
                 >>   parse::label(Size_name)
                 >>   (
-                            '[' >> +planet_size_value_ref [ push_back(_a, _1) ] > ']'
+                            '[' >> +planet_size_value_ref [ push_back(_a, _1) ] >> ']'
                         |   planet_size_value_ref [ push_back(_a, _1) ]
                      )
                      [ _val = new_<Condition::PlanetSize>(_a) ]
@@ -171,7 +172,7 @@ namespace {
                 =    tok.Planet_
                 >>   parse::label(Environment_name)
                 >>   (
-                            '[' > +planet_environment_value_ref [ push_back(_a, _1) ] > ']'
+                            '[' >> +planet_environment_value_ref [ push_back(_a, _1) ] >> ']'
                         |   planet_environment_value_ref [ push_back(_a, _1) ]
                      )
                      [ _val = new_<Condition::PlanetEnvironment>(_a) ]
@@ -181,7 +182,7 @@ namespace {
                 =    parse::enum_parser<UniverseObjectType>() [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType> >(_1)) ]
                 |    (
                             tok.ObjectType_
-                        >   parse::label(Type_name) > universe_object_type_value_ref [ _val = new_<Condition::Type>(_1) ]
+                        >>  parse::label(Type_name) >> universe_object_type_value_ref [ _val = new_<Condition::Type>(_1) ]
                      )
                 ;
 
@@ -196,6 +197,31 @@ namespace {
                             )
                      )
                      [ _val = new_<Condition::MeterValue>(_a, _b, _c) ]
+                ;
+
+            empire_meter_value
+                =   tok.EmpireMeter_
+                >>  (
+                        parse::label(Empire_name)   >>  int_value_ref [ _b = _1 ]
+                    >>  parse::label(Meter_name)    >>  tok.string [ _a = _1 ]
+                    >> -(
+                            parse::label(Low_name) >> double_value_ref [ _c = _1 ]
+                        )
+                    >> -(
+                            parse::label(High_name) >> double_value_ref [ _d = _1 ]
+                        )
+                        [ _val = new_<Condition::EmpireMeterValue>(_b, _a, _c, _d) ]
+                    )
+                |   (
+                        parse::label(Meter_name)    >>   tok.string [ _a = _1 ]
+                    >> -(
+                            parse::label(Low_name) >> double_value_ref [ _c = _1 ]
+                        )
+                    >> -(
+                            parse::label(High_name) >> double_value_ref [ _d = _1 ]
+                        )
+                        [ _val = new_<Condition::EmpireMeterValue>(_a, _c, _d) ]
+                    )
                 ;
 
             and_
@@ -234,6 +260,7 @@ namespace {
                 |    planet_environment
                 |    object_type
                 |    meter_value
+                |    empire_meter_value
                 |    and_
                 |    or_
                 |    not_
@@ -258,6 +285,7 @@ namespace {
             planet_environment.name("PlanetEnvironment");
             object_type.name("ObjectType");
             meter_value.name("MeterValue");
+            empire_meter_value.name("EmpireMeterValue");
             and_.name("And");
             or_.name("Or");
             not_.name("Not");
@@ -282,6 +310,7 @@ namespace {
             debug(planet_environment);
             debug(object_type);
             debug(meter_value);
+            debug(empire_meter_value);
             debug(and_);
             debug(or_);
             debug(not_);
@@ -311,6 +340,18 @@ namespace {
             >,
             parse::skipper_type
         > meter_value_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            Condition::ConditionBase* (),
+            qi::locals<
+                std::string,
+                ValueRef::ValueRefBase<int>*,
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<double>*
+            >,
+            parse::skipper_type
+        > empire_meter_value_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -348,34 +389,34 @@ namespace {
         > and_or_rule;
 
         string_ref_vec_rule string_ref_vec;
-        parse::condition_parser_rule all;
-        parse::condition_parser_rule source;
-        parse::condition_parser_rule root_candidate;
-        parse::condition_parser_rule target;
-        parse::condition_parser_rule stationary;
-        parse::condition_parser_rule capital;
-        parse::condition_parser_rule monster;
-        parse::condition_parser_rule armed;
-        owned_by_rule owned_by;
-        parse::condition_parser_rule homeworld;
-        building_rule building;
-        parse::condition_parser_rule species;
-        parse::condition_parser_rule focus_type;
-        planet_type_rule planet_type;
-        planet_size_rule planet_size;
-        planet_environment_rule planet_environment;
-        parse::condition_parser_rule object_type;
-        meter_value_rule meter_value;
-        and_or_rule and_;
-        and_or_rule or_;
-        parse::condition_parser_rule not_;
-        parse::condition_parser_rule start;
+        parse::condition_parser_rule    all;
+        parse::condition_parser_rule    source;
+        parse::condition_parser_rule    root_candidate;
+        parse::condition_parser_rule    target;
+        parse::condition_parser_rule    stationary;
+        parse::condition_parser_rule    capital;
+        parse::condition_parser_rule    monster;
+        parse::condition_parser_rule    armed;
+        owned_by_rule                   owned_by;
+        parse::condition_parser_rule    homeworld;
+        building_rule                   building;
+        parse::condition_parser_rule    species;
+        parse::condition_parser_rule    focus_type;
+        planet_type_rule                planet_type;
+        planet_size_rule                planet_size;
+        planet_environment_rule         planet_environment;
+        parse::condition_parser_rule    object_type;
+        meter_value_rule                meter_value;
+        empire_meter_value_rule         empire_meter_value;
+        and_or_rule                     and_;
+        and_or_rule                     or_;
+        parse::condition_parser_rule    not_;
+        parse::condition_parser_rule    start;
     };
 }
 
 namespace parse { namespace detail {
-    const condition_parser_rule& condition_parser_1()
-    {
+    const condition_parser_rule& condition_parser_1() {
         static condition_parser_rules_1 retval;
         return retval.start;
     }

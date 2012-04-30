@@ -5,7 +5,7 @@
 #include "ValueRefParser.h"
 #include "../universe/Condition.h"
 
-#include <GG/ReportParseError.h>
+//#include <GG/ReportParseError.h>
 
 #include <boost/spirit/home/phoenix.hpp>
 
@@ -227,8 +227,7 @@ namespace {
 }
 
 namespace parse { namespace detail {
-    const condition_parser_rule& condition_parser_2()
-    {
+    const condition_parser_rule& condition_parser_2() {
         static condition_parser_rules_2 retval;
         return retval.start;
     }

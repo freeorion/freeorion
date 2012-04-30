@@ -11,7 +11,6 @@ namespace Condition {
 }
 
 namespace parse {
-
     typedef boost::spirit::qi::rule<
         parse::token_iterator,
         Condition::ConditionBase* (),
@@ -20,7 +19,6 @@ namespace parse {
 
     /** Returns a const reference to the Condition parser. */
     condition_parser_rule& condition_parser();
-
 }
 
 #endif

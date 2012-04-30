@@ -80,6 +80,7 @@
     (EffectsGroup)                              \
     (EffectsGroups)                             \
     (Empire)                                    \
+    (EmpireMeter)                               \
     (Endpoint)                                  \
     (EnemyOf)                                   \
     (Environment)                               \

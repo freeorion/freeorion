@@ -13,6 +13,10 @@ BuildingType
                 Contains Source
             ]
             effects = SetTargetPopulation Value + Sum Defense Planet
+            
+        EffectsGroup
+            scope = EmpireMeter empire = LocalCandidate.Owner meter = "METER_DETECTION" low = 5 high = 99999
+            effects = SetStealth Value + 100
     
         EffectsGroup
             scope = And [

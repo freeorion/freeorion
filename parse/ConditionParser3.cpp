@@ -4,7 +4,7 @@
 #include "Label.h"
 #include "../universe/Condition.h"
 
-#include <GG/ReportParseError.h>
+//#include <GG/ReportParseError.h>
 
 #include <boost/spirit/home/phoenix.hpp>
 
@@ -260,8 +260,7 @@ namespace {
 }
 
 namespace parse { namespace detail {
-    const condition_parser_rule& condition_parser_3()
-    {
+    const condition_parser_rule& condition_parser_3() {
         static condition_parser_rules_3 retval;
         return retval.start;
     }
