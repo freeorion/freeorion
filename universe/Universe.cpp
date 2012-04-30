@@ -806,6 +806,10 @@ void Universe::ApplyAllEffectsAndUpdateMeters() {
         it->second->ResetPairedActiveMeters();
     }
 
+    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        it->second->ResetMeters();
+    }
+
     ExecuteEffects(targets_causes, true);
 
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]

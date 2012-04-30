@@ -104,7 +104,6 @@
     (GiveEmpireTech)                            \
     (Good)                                      \
     (Graphic)                                   \
-    (Growth)                                    \
     (HasSpecial)                                \
     (HasSpecialSinceTurn)                       \
     (HasTag)                                    \
@@ -246,7 +245,6 @@
     (SetEmpireTradeStockpile)                   \
     (SetFighterWeaponRange)                     \
     (SetFuel)                                   \
-    (SetGrowth)                                 \
     (SetIndustry)                               \
     (SetLaunchRate)                             \
     (SetMaxDefense)                             \

@@ -532,6 +532,9 @@ public:
     void                    UpdatePopulationGrowth();
     //@}
 
+    /** Resets empire meters. */
+    void                    ResetMeters();
+
     mutable boost::signal<void ()>  ShipDesignsChangedSignal;
 
 private:

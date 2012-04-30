@@ -2664,3 +2664,9 @@ void Empire::UpdateTradeSpending() {
 
 void Empire::UpdatePopulationGrowth()
 { m_population_pool.Update(); }
+
+void Empire::ResetMeters() {
+    for (std::map<std::string, Meter>::iterator it = m_meters.begin(); it != m_meters.end(); ++it) {
+        it->second.ResetCurrent();
+    }
+}

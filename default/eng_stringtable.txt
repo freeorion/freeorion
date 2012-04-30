@@ -2627,7 +2627,6 @@ SP_HUMAN_DESC
 '''Mostly Harmless. All average stats for testing purposes.
 Prefer Terran planets.
 
-[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2639,7 +2638,6 @@ SP_SCYLIOR_DESC
 '''Three-tentacled, aquatic Nautiloid.
 Prefer Ocean planets.
 
-[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[GREAT_RESEARCH]]
@@ -2653,7 +2651,6 @@ SP_GYISACHE_DESC
 '''Cowardly, freakish sheep-like herbivores.
 Prefer Swamp planets.
 
-[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[GREAT_INDUSTRY]]
 [[GOOD_RESEARCH]]
@@ -2667,7 +2664,6 @@ SP_CHATO_DESC
 '''Sessile crystalline entities which ride the animal Gormoshk.
 Prefer Toxic planets.
 
-[[AVERAGE_GROWTH]]
 [[GREAT_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[GREAT_RESEARCH]]
@@ -2683,8 +2679,7 @@ Prefer Desert planets.
 
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
-        
-[[AVERAGE_GROWTH]]
+
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2696,7 +2691,6 @@ SP_HHHOH_DESC
 '''Huge, slow, multi-trunked Mammoths.
 Prefer Tundra planets.
 
-[[AVERAGE_GROWTH]]
 [[BAD_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2711,7 +2705,6 @@ SP_EAXAW_DESC
 '''Evil amazonian xenophobic agressive worms.
 Prefer Terran planets.
 
-[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2725,7 +2718,6 @@ SP_DERTHREAN_DESC
 '''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
 Prefer Toxic planets.
 
-[[GREAT_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2739,15 +2731,12 @@ Prefer Ocean Planets.
 
 [[GOOD_DETECTION]]
 [[GREAT_STEALTH]]
-        
-[[AVERAGE_GROWTH]]
+
 [[BAD_MINING]]
 [[BAD_INDUSTRY]]
 [[BAD_RESEARCH]]
 
 [[BAD_GROUND_TROOPS]]
-
-[[NO_FOOD_USE]]
 '''
 
 SP_TAEGHIRUS
@@ -2756,7 +2745,6 @@ SP_TAEGHIRUS_DESC
 '''Weak, flightless birds, united in total mutual cooperation.
 Prefer Swamp planets.
 
-[[AVERAGE_GROWTH]]
 [[GOOD_MINING]]
 [[GOOD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2772,7 +2760,6 @@ SP_MUURSH_DESC
 '''Militantly peaceful herbivores.
 Prefer Desert planets.
 
-[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -2788,7 +2775,6 @@ SP_GEORGE_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
 Prefers Tundra planets.
 
-[[GOOD_GROWTH]]
 [[GOOD_MINING]]
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -2801,12 +2787,10 @@ SP_CRAY_DESC
 '''Cheerful enthusiastic robots.
 Prefer Barren planets.
 
-[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
 
-[[NO_FOOD_USE]]
 [[NON_ORGANIC]]
 '''
 
@@ -2817,7 +2801,6 @@ SP_ETTY_DESC
 '''Cybernetic plants.
 Prefer Desert planets.
 
-[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2834,7 +2817,6 @@ SP_CYNOS_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
 Prefer Swamp planets.
 
-[[GOOD_GROWTH]]
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2848,7 +2830,6 @@ SP_PHINNERT_DESC
 '''Flying Monkeys.
 Prefer Ocean planets.
 
-[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -2860,7 +2841,6 @@ SP_EGASSEM_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
 Prefer Inferno planets.
 
-[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -2874,7 +2854,6 @@ SP_SSLITH_DESC
 '''Flat, aquatic, pliable creatures.
 Prefer Tundra planets.
 
-[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2888,7 +2867,6 @@ SP_FIFTYSEVEN_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
 Prefer Swamp planets.
 
-[[BAD_GROWTH]]
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
@@ -2917,8 +2895,7 @@ SP_SETINON_DESC
 Prefer Ocean planets.
 
 [[GREAT_STEALTH]]
-        
-[[GOOD_GROWTH]]
+
 [[BAD_MINING]]
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -2936,16 +2913,14 @@ Prefer Desert planets.
 
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
-        
-[[BAD_GROWTH]]
+
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
 [[BAD_GROUND_TROOPS]]
 [[BAD_POPULATION]]
-        
-[[NO_FOOD_USE]]
+
 [[NON_ORGANIC]]
 '''
 
@@ -2956,14 +2931,12 @@ SP_TRENCHERS_DESC
 '''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
 Prefers Barren planets.
 
-[[NO_GROWTH]]
 [[AVERAGE_MINING]]
 [[NO_INDUSTRY]]
 [[NO_RESEARCH]]
         
 [[BAD_GROUND_TROOPS]]
-        
-[[NO_FOOD_USE]]
+
 [[NON_ORGANIC]]
 '''
 
@@ -2974,7 +2947,6 @@ SP_RAAAGH_DESC
 '''Highly territorial felinoids.
 Prefer Terran planets.
 
-[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -3000,14 +2972,12 @@ SP_BEIGEGOO_DESC
 '''Insane, intensely private, planet-engulfing nanite swarm.
 Prefers Radiated planets.
 
-[[NO_GROWTH]]
 [[NO_MINING]]
 [[GREAT_INDUSTRY]]
 [[NO_RESEARCH]]
         
 [[GREAT_GROUND_TROOPS]]
 [[GOOD_POPULATION]]
-[[NO_FOOD_USE]]
 [[NON_ORGANIC]]
 
 The entire planet is covered in a beige haze of Nanites. It is unknown wheather they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials.  However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
@@ -3019,7 +2989,6 @@ SP_SILEXIAN_DESC
 '''Gleaming gardener robots, left on their own.
 Prefer Terran planets.
 
-[[GOOD_GROWTH]]
 [[AVERAGE_MINING]]
 [[NO_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3033,14 +3002,12 @@ SP_KOBUNTURA_DESC
 '''Sentient magnetic dust formations with a fascination for building and construction.
 Prefer Barren planets.
 
-[[BAD_GROWTH]]
 [[GOOD_MINING]]
 [[GREAT_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
 [[BAD_GROUND_TROOPS]]
-        
-[[NO_FOOD_USE]]
+
 [[NON_ORGANIC]]
 '''
 
@@ -3051,14 +3018,12 @@ SP_UGMORRS_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Prefer Inferno planets.
 
-[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
         
 [[GOOD_GROUND_TROOPS]]
 
-[[NO_FOOD_USE]]
 [[NON_ORGANIC]]
 '''
 
@@ -3068,7 +3033,6 @@ SP_GISGUFGTHRIM_DESC
 '''Shelled herbivores that live off a singular planets-sized colonial gel.
 Prefer Toxic planets.
 
-[[GREAT_GROWTH]]
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
@@ -3085,8 +3049,7 @@ SP_HIDDENGARDENER_DESC
 Prefers Terran planets
 
 [[GOOD_STEALTH]]
-        
-[[ULTIMATE_GROWTH]]
+
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -3108,7 +3071,6 @@ SP_ABADDONNIANS_DESC
 '''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
 Prefers Inferno planets.
 
-[[AVERAGE_GROWTH]]
 [[GREAT_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3123,12 +3085,10 @@ SP_ACIREMA_DESC
 '''A race with nearly limitless power, that cannot survive in this universe.
 Prefers Radiated planets.
 
-[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[GREAT_INDUSTRY]]
 [[GOOD_RESEARCH]]
 
-[[NO_FOOD_USE]]
 [[NON_ORGANIC]]
 
 Description
@@ -3152,8 +3112,7 @@ SP_OURBOOLS_DESC
 Prefer Ocean planets.
 
 [[ULTIMATE_DETECTION]]
-        
-[[AVERAGE_GROWTH]]
+
 [[BAD_MINING]]
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3179,7 +3138,6 @@ SP_VOLP_DESC
 '''Highly bureacratic, overcrowded burrowers.
 Prefer Barren planets.
 
-[[AVERAGE_GROWTH]]
 [[BAD_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3204,14 +3162,12 @@ Exobot
 SP_EXOBOT_DESC
 '''Semi-autonomous robots, designed for mining and industry on Radiated planets.
 
-[[BAD_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
         
 [[BAD_GROUND_TROOPS]]
-        
-[[NO_FOOD_USE]]
+
 [[NON_ORGANIC]]
 
 While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
@@ -3223,7 +3179,6 @@ Experimentor
 SP_EXPERIMENTOR_DESC
 '''Percursor mad scientists
 
-[[NO_GROWTH]]
 [[NO_MINING]]
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
@@ -3231,7 +3186,6 @@ SP_EXPERIMENTOR_DESC
 [[ULTIMATE_STEALTH]]
 [[ULTIMATE_DETECTION]]
 
-[[NO_FOOD_USE]]
 [[ULTIMATE_GROUND_TROOPS]]
 [[GOOD_POPULATION]]
 
@@ -3243,7 +3197,6 @@ Super Testers
 SP_SUPER_TEST_DESC
 '''Super Testers are unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets.
 
-[[GREAT_GROWTH]]
 [[GREAT_MINING]]
 [[GREAT_INDUSTRY]]
 [[GREAT_RESEARCH]]
@@ -3257,7 +3210,6 @@ Testing Guinea Pig
 SP_TEST_DESC
 '''Try all your experimental scripting on this guy, he'll appear a lot.
 
-[[AVERAGE_GROWTH]]
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3465,42 +3417,42 @@ En Experimentor outpost exists in this system, and defeating them is necessary t
 PROBIOTIC_SPECIAL
 Probiotic Soup
 PROBIOTIC_SPECIAL_DESC
-'''When a planet with Probiotic Soup is focused on Growth, all connected planets with Organic species increase their Maxiumm Population.
+'''When a planet with Probiotic Soup is focused on Growth, all connected planets with Organic species increase their Target Population.
 
 The great diversity of unique single-celled organisms have applications to the health and maintenance of all types of organic life.'''
 
 FRUIT_SPECIAL
 Caretaker's Fruit
 FRUIT_SPECIAL_DESC
-'''When a planet with Caretaker's Fruit is focused on Growth, all connected planets with Organic species increase their Maxiumm Population.
+'''When a planet with Caretaker's Fruit is focused on Growth, all connected planets with Organic species increase their Target Population.
 
 What appears to be a forest is actually part of a continent-spanning symbiotic organism. The fruit of these trees contains marvelously complex organic chemicals beneficial to all sorts of organic life.'''
 
 SPICE_SPECIAL
 Ki Spice
 SPICE_SPECIAL_DESC
-'''When a planet with Ki Spice is focused on Growth, all connected planets with Organic species increase their Maxiumm Population.
+'''When a planet with Ki Spice is focused on Growth, all connected planets with Organic species increase their Target Population.
 
 A unique substance produced by this planet's ecology, Ki Spice has the capacity to lengthen the lives, clarify the thoughts, or sharpen the senses of organic beings.'''
 
 MONOPOLE_SPECIAL
 Monopole Magnets
 MONOPOLE_SPECIAL_DESC
-'''When a planet with Monopole Magnets is focused on Growth, all connected planets with Robotic species increase their Maxiumm Population.
+'''When a planet with Monopole Magnets is focused on Growth, all connected planets with Robotic species increase their Target Population.
 
 Monopole Magnets make better robots!'''
 
 SUPERCONDUCTOR_SPECIAL
 Monopole Magnets
 SUPERCONDUCTOR_SPECIAL_DESC
-'''When a planet with Ambient Superconductors is focused on Growth, all connected planets with Robotic species increase their Maxiumm Population.
+'''When a planet with Ambient Superconductors is focused on Growth, all connected planets with Robotic species increase their Target Population.
 
 Ambient Superconductors make better robots!'''
 
 POSITRONIUM_SPECIAL
 Positronium Ash
 POSITRONIUM_SPECIAL_DESC
-'''When a planet with Positronium Ash is focused on Growth, all connected planets with Robotic species increase their Maxiumm Population.
+'''When a planet with Positronium Ash is focused on Growth, all connected planets with Robotic species increase their Target Population.
 
 Positronium Ash make better robots brains!'''
 
@@ -3916,8 +3868,6 @@ DESC_VAR_TARGETPOPULATION
 [[METER_TARGET_POPULATION]]
 DESC_VAR_TARGETHEALTH
 [[METER_TARGET_HEALTH]]
-DESC_VAR_TARGETFARMING
-[[METER_TARGET_FARMING]]
 DESC_VAR_TARGETINDUSTRY
 [[METER_TARGET_INDUSTRY]]
 DESC_VAR_TARGETRESEARCH
@@ -3942,8 +3892,6 @@ DESC_VAR_POPULATION
 [[METER_POPULATION]]
 DESC_VAR_HEALTH
 [[METER_HEALTH]]
-DESC_VAR_GROWTH
-[[METER_GROWTH]]
 DESC_VAR_INDUSTRY
 [[METER_INDUSTRY]]
 DESC_VAR_RESEARCH
@@ -7479,8 +7427,6 @@ A fearsom space dragon the size of a small planet.
 #################
 
 
-NO_FOOD_USE
-'''+ + + Doesn't need Food'''
 
 BAD_HEALTH
 '''Slow population growth.'''
@@ -7496,24 +7442,6 @@ GREAT_HEALTH
 
 ULTIMATE_HEALTH
 '''Ultimate population growth.'''
-
-NO_GROWTH
-'''- - - No Farming'''
-
-BAD_GROWTH
-'''    - Bad Farming: 50%'''
-
-AVERAGE_GROWTH
-'''      Average Farming: 100%'''
-
-GOOD_GROWTH
-'''    + Good Farming: 150%'''
-
-GREAT_GROWTH
-'''  + + Great Farming: 250%'''
-
-ULTIMATE_GROWTH
-'''+ + + Ultimate Farming: 400%'''
 
 NO_MINING
 '''- - - No Mining'''
@@ -7672,45 +7600,6 @@ BAD_POPULATION_LABEL
 GOOD_POPULATION_LABEL
 '''%1% Good Population'''
 
-LEVEL_1_GROWTH_LABEL
-'''Level 1 Growth'''
-
-LEVEL_2_GROWTH_LABEL
-'''Level 2 Growth'''
-
-LEVEL_3_GROWTH_LABEL
-'''Level 3 Growth'''
-
-LEVEL_4_GROWTH_LABEL
-'''Level 4 Growth'''
-
-LEVEL_5_GROWTH_LABEL
-'''Level 5 Growth'''
-
-LEVEL_6_GROWTH_LABEL
-'''Level 6 Growth'''
-
-LEVEL_7_GROWTH_LABEL
-'''Level 7 Growth'''
-
-LEVEL_8_GROWTH_LABEL
-'''Level 8 Growth'''
-
-FOCUS_GROWTH_LABEL
-'''%1% Growth Focus'''
-
-BAD_GROWTH_LABEL
-'''%1% Bad Growth'''
-
-GOOD_GROWTH_LABEL
-'''%1% Good Growth'''
-
-GREAT_GROWTH_LABEL
-'''%1% Great Growth'''
-
-ULTIMATE_GROWTH_LABEL
-'''%1% Ultimate Growth'''
-
 FOCUS_MINING_LABEL
 '''%1% Mining Focus'''
 
@@ -7780,6 +7669,12 @@ ULTIMATE_TROOPS_LABEL
 
 ORGANIC
 Organic
+
+ROBOTIC
+Robotic
+
+LITHIC
+Lithic
 
 TELEPATHIC
 Telepathic

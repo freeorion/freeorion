@@ -22,7 +22,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -59,7 +58,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[GREAT_RESEARCH]]
@@ -96,7 +94,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[GREAT_INDUSTRY]]
         [[GOOD_RESEARCH]]
@@ -134,7 +131,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_GROWTH]]
         [[GREAT_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[GREAT_RESEARCH]]
@@ -174,7 +170,6 @@ Species
         [[GREAT_DETECTION]]
         [[GOOD_STEALTH]]
         
-        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -212,7 +207,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_GROWTH]]
         [[BAD_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -251,7 +245,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -290,7 +283,6 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -331,7 +323,6 @@ Species
         [[GOOD_DETECTION]]
         [[GREAT_STEALTH]]
         
-        [[AVERAGE_GROWTH]]
         [[BAD_MINING]]
         [[BAD_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -368,7 +359,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_GROWTH]]
         [[GOOD_MINING]]
         [[GOOD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -406,7 +396,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -444,7 +433,6 @@ Species
     ]
     
     effectsgroups = [
-        [[GOOD_GROWTH]]
         [[GOOD_MINING]]
         [[GOOD_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -489,7 +477,6 @@ Species
     ]
     
     effectsgroups = [
-        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[BAD_INDUSTRY]]
         [[GOOD_RESEARCH]]
@@ -525,7 +512,6 @@ Species
     ]
     
     effectsgroups = [
-        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -561,7 +547,6 @@ Species
     ]
     
     effectsgroups = [
-        [[GOOD_GROWTH]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -594,7 +579,6 @@ Species
     ]
     
     effectsgroups = [
-        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -629,7 +613,6 @@ Species
     ]
     
     effectsgroups = [
-        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[GOOD_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -666,7 +649,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -698,7 +680,6 @@ Species
     ]
     
     effectsgroups = [
-        [[BAD_GROWTH]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[ULTIMATE_RESEARCH]]
@@ -736,7 +717,6 @@ Species
     effectsgroups = [
         [[GREAT_STEALTH]]
         
-        [[GOOD_GROWTH]]
         [[BAD_MINING]]
         [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -771,7 +751,6 @@ Species
         [[GREAT_DETECTION]]
         [[GOOD_STEALTH]]
         
-        [[BAD_GROWTH]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -803,7 +782,6 @@ Species
     ]
     
     effectsgroups = [
-        [[NO_GROWTH]]
         [[AVERAGE_MINING]]
         [[NO_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -837,7 +815,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[BAD_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -867,7 +844,6 @@ Species
     ]
     
     effectsgroups = [
-        [[NO_GROWTH]]
         [[NO_MINING]]
         [[GREAT_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -903,7 +879,6 @@ Species
     ]
     
     effectsgroups = [
-        [[GOOD_GROWTH]]
         [[AVERAGE_MINING]]
         [[NO_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -940,7 +915,6 @@ Species
     ]
     
     effectsgroups = [
-        [[BAD_GROWTH]]
         [[GOOD_MINING]]
         [[GREAT_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -977,7 +951,6 @@ Species
     ]
     
     effectsgroups = [
-        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[GOOD_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -1013,7 +986,6 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_GROWTH]]
         [[AVERAGE_MINING]]
         [[BAD_INDUSTRY]]
         [[GOOD_RESEARCH]]
@@ -1048,7 +1020,6 @@ Species
     effectsgroups = [
         [[GOOD_STEALTH]]
         
-        [[ULTIMATE_GROWTH]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -1086,7 +1057,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_GROWTH]]
         [[GREAT_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -1124,7 +1094,6 @@ Species
     ]
     
     effectsgroups = [
-        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[GREAT_INDUSTRY]]
         [[GOOD_RESEARCH]]
@@ -1184,7 +1153,6 @@ Species
     effectsgroups = [
         [[ULTIMATE_DETECTION]]
         
-        [[AVERAGE_GROWTH]]
         [[BAD_MINING]]
         [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -1217,7 +1185,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_GROWTH]]
         [[BAD_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -1253,7 +1220,6 @@ Species
     ]
     
     effectsgroups = [
-        [[BAD_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -1294,7 +1260,6 @@ Species
     ]
 
     effectsgroups = [
-        [[NO_GROWTH]]
         [[NO_MINING]]
         [[NO_INDUSTRY]]
         [[ULTIMATE_RESEARCH]]
@@ -1338,7 +1303,6 @@ Species
             scope = Source
             effects = SetEmpireMeter Source.Owner "METER_DETECTION" 10000  // Omniscient Detection
         
-        [[GREAT_GROWTH]]
         [[GREAT_MINING]]
         [[GREAT_INDUSTRY]]
         [[GREAT_RESEARCH]]
@@ -1375,7 +1339,6 @@ Species
     ]
     
     effectsgroups = [
-        [[AVERAGE_GROWTH]]
         [[AVERAGE_MINING]]
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -2021,120 +1984,6 @@ BASIC_POPULATION
             effects = SetTargetPopulation Value + 0
 '''
 
-ORGANIC_FOOD_USE
-'''EffectsGroup
-            scope = Source
-            activation = And [
-                HasTag "ORGANIC"
-                ResourceSupplyConnected empire = Source.Owner condition = And [
-                    Focus "FOCUS_GROWTH"
-                    Growth low = 8
-                    Planet environment = Good
-                ]
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_8_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 8
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                HasTag "ORGANIC"
-                ResourceSupplyConnected empire = Source.Owner condition = And [
-                    Focus "FOCUS_GROWTH"
-                    Growth low = 7
-                    Planet environment = Good
-                ]
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_7_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 7
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                HasTag "ORGANIC"
-                ResourceSupplyConnected empire = Source.Owner condition = And [
-                    Focus "FOCUS_GROWTH"
-                    Growth low = 6
-                    Planet environment = Good
-                ]
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_6_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 6
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                HasTag "ORGANIC"
-                ResourceSupplyConnected empire = Source.Owner condition = And [
-                    Focus "FOCUS_GROWTH"
-                    Growth low = 5
-                    Planet environment = Good
-                ]
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_5_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 5
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                HasTag "ORGANIC"
-                ResourceSupplyConnected empire = Source.Owner condition = And [
-                    Focus "FOCUS_GROWTH"
-                    Growth low = 4
-                    Planet environment = Good
-                ]
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_4_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 4
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                HasTag "ORGANIC"
-                ResourceSupplyConnected empire = Source.Owner condition = And [
-                    Focus "FOCUS_GROWTH"
-                    Growth low = 3
-                    Planet environment = Good
-                ]
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_3_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 3
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                HasTag "ORGANIC"
-                ResourceSupplyConnected empire = Source.Owner condition = And [
-                    Focus "FOCUS_GROWTH"
-                    Growth low = 2
-                    Planet environment = Good
-                ]
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_2_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                HasTag "ORGANIC"
-                ResourceSupplyConnected empire = Source.Owner condition = And [
-                    Focus "FOCUS_GROWTH"
-                    Growth low = 1
-                    Planet environment = Good
-                ]
-            ]
-            stackinggroup = "GROWTH_STACK"
-            accountinglabel = "LEVEL_1_GROWTH_LABEL"
-            effects = SetTargetPopulation Value + 1
-'''
-
 BAD_POPULATION
 '''[[BASIC_POPULATION]]
 
@@ -2144,14 +1993,12 @@ BAD_POPULATION
             effects = SetTargetPopulation Value*[[BAD_MULTIPLIER]]
 
         [[TUNNELS_MODIFIER]]
-        [[ORGANIC_FOOD_USE]]
         [[ENVIRONMENT_MODIFIER]]
 '''
 
 AVERAGE_POPULATION
 '''[[BASIC_POPULATION]]
         [[TUNNELS_MODIFIER]]
-        [[ORGANIC_FOOD_USE]]
         [[ENVIRONMENT_MODIFIER]]
 '''
 
@@ -2164,7 +2011,6 @@ GOOD_POPULATION
             effects = SetTargetPopulation Value*[[GOOD_MULTIPLIER]]
 
         [[TUNNELS_MODIFIER]]
-        [[ORGANIC_FOOD_USE]]
         [[ENVIRONMENT_MODIFIER]]
 '''
 
@@ -2345,57 +2191,6 @@ ADVANCED_FOCUS_EFFECTS
             scope = Source
             activation = Focus "FOCUS_LOGISTICS"
             effects = SetSupply Value + Target.Population * 0.5
-'''
-
-BASIC_GROWTH
-'''1'''
-
-NO_GROWTH
-'''
-'''
-
-BAD_GROWTH
-'''[[AVERAGE_GROWTH]]
-
-        EffectsGroup
-            scope = Source
-            accountinglabel = "BAD_GROWTH_LABEL"
-            effects = SetGrowth Value*[[BAD_MULTIPLIER_WHOLE]]
-'''
-
-AVERAGE_GROWTH
-'''EffectsGroup
-        scope = Source
-        activation = Focus "FOCUS_GROWTH"
-        accountinglabel = "FOCUS_GROWTH_LABEL"
-        effects = SetGrowth Value + [[BASIC_GROWTH]]
-'''
-
-GOOD_GROWTH
-'''[[AVERAGE_GROWTH]]
-
-        EffectsGroup
-            scope = Source
-            accountinglabel = "GOOD_GROWTH_LABEL"
-            effects = SetGrowth Value*[[GOOD_MULTIPLIER_WHOLE]]
-'''
-
-GREAT_GROWTH
-'''[[AVERAGE_GROWTH]]
-
-        EffectsGroup
-            scope = Source
-            accountinglabel = "GREAT_GROWTH_LABEL"
-            effects = SetGrowth Value*[[GREAT_MULTIPLIER_WHOLE]]
-'''
-
-ULTIMATE_GROWTH
-'''[[AVERAGE_GROWTH]]
-
-        EffectsGroup
-            scope = Source
-            accountinglabel = "ULTIMATE_GROWTH_LABEL"
-            effects = SetGrowth Value*[[ULTIMATE_MULTIPLIER_WHOLE]]
 '''
 
 //#####      M I N I N G    #####//

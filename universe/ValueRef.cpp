@@ -84,7 +84,6 @@ namespace {
         if (once) {
             map[Population_name] = METER_POPULATION;
             map[TargetPopulation_name] = METER_TARGET_POPULATION;
-            map[Growth_name] = METER_GROWTH;
             map[Industry_name] = METER_INDUSTRY;
             map[TargetIndustry_name] = METER_TARGET_INDUSTRY;
             map[Research_name] = METER_RESEARCH;

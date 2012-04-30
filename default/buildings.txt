@@ -12,7 +12,7 @@ BuildingType
                 Planet
                 Contains Source
             ]
-            effects = SetTargetPopulation value + Sum Population Planet
+            effects = SetTargetPopulation Value + Sum Defense Planet
     
         EffectsGroup
             scope = And [
@@ -549,14 +549,6 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                Contains Source
-                Focus "FOCUS_GROWTH"
-            ]
-            stackinggroup = "GENOME_BANK_EFFECT"
-            effects = SetGrowth Value + 1
     icon = "icons/building/genome_bank.png"
 
 BuildingType
@@ -707,11 +699,6 @@ BuildingType
             Building "BLD_BIOTERROR_PROJECTOR"
         ]
     ]
-    effectsgroups =
-        EffectsGroup
-            scope = Contains Source
-            stackinggroup = "CLONING_CENTER_EFFECT"
-            effects = SetGrowth Value + 1
     icon = ""
 
 BuildingType
@@ -831,15 +818,6 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Focus "FOCUS_GROWTH"
-            ]
-            stackinggroup = "BLD_INDUSTRY_FARM_EFFECT"
-            effects = SetGrowth Value + 1
     icon = ""
 
 BuildingType
@@ -1272,16 +1250,6 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         Planet
     ]
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                Contains Source
-                OwnedBy TheEmpire Source.Owner
-                Planet
-                Focus "FOCUS_GROWTH"
-            ]
-            stackinggroup = "BLD_ORBITAL_FARM_EFFECT"
-            effects = SetGrowth Value + 1
     icon = ""
 
 
