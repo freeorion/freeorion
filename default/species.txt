@@ -120,7 +120,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = "ORGANIC"
+    tags = "PHOTOTROPHIC"
     
     foci = [
         [[HAS_MINING_FOCUS]]
@@ -309,7 +309,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "TELEPATHIC" ]
+    tags = [ "PHOTOTROPHIC" "TELEPATHIC" ]
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -501,7 +501,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = "ORGANIC"
+    tags = "PHOTOTROPHIC"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -538,7 +538,7 @@ Species
     Native
     CanProduceShips
 
-    tags = "ORGANIC"
+    tags = "PHOTOTROPHIC"
     
     foci = [
         [[HAS_GROWTH_FOCUS]]
@@ -1284,7 +1284,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "ROBOTIC" "LITHIC" ]
+    tags = [ "ORGANIC" "ROBOTIC" "LITHIC" "PHOTOTROPHIC"]
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]

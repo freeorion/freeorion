@@ -2223,9 +2223,10 @@ DESIGN_DELETE
 Delete Design
 
 
-####################
-#   Encyclopedia   #
-####################
+#############################################################
+####               E N C Y C L O P E D I A               ####
+#############################################################
+
 
 # types of things that can be shown in encyclopedia
 ENC_SHIP_PART
@@ -2492,22 +2493,20 @@ Combat
 WAITING
 Waiting
 
-########################
-# SitRep Panel         #
-########################
+
+#############################################################
+####                    S I T   R E P                    ####
+#############################################################
+
 
 #Window title####
 
 SITREP_PANEL_TITLE
 Situation Report
 
-
-####################
-# Sit Rep Entries  #
-####################
-
 SITREP_ERROR
 An unknown event occurred.
+
 
 SITREP_SHIP_BUILT
 The %shipdesign% '%ship%' has been produced at %system%.
@@ -2579,9 +2578,10 @@ SITREP_VICTORY_BIO
 The mystery of the fearsome threat plagueing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have met their just fate at the hands of your mighty warfleet.
 
 
-####################
-# Victory / Defeat #
-####################
+#############################################################
+####           V I C T O R Y   /   D E F E A T           ####
+#############################################################
+
 
 TECH_VICTORY
 has achieved a technological victory.
@@ -2590,9 +2590,10 @@ ALL_ENEMIES_ELIMINATED_VICTORY
 has achieved a sole-survivor victory.
 
 
-####################
-# Species          #
-####################
+#############################################################
+####                    S P E C I E S                    ####
+#############################################################
+
 
 HOMEWORLD
 Homeworld:
@@ -3217,9 +3218,9 @@ SP_TEST_DESC
 
 
 
-####################
-# Specials         #
-####################
+#############################################################
+####                   S P E C I A L S                   ####
+#############################################################
 
 GAIA_SPECIAL
 Gaia
@@ -3456,9 +3457,11 @@ POSITRONIUM_SPECIAL_DESC
 
 Positronium Ash make better robots brains!'''
 
-#######################
-# Enumeration  values #
-#######################
+
+#############################################################
+####        E N U M E R A T I O N   V A L U E S          ####
+#############################################################
+
 
 # UniverseObjectTypes
 
@@ -3813,9 +3816,10 @@ PC_STARLANE_SPEED
 Starlane Speed
 
 
-################################################
-# ValueRef, Effect, and Condition Descriptions #
-################################################
+#############################################################
+####      ValueRef, Effect, & Condition Descriptions     ####
+#############################################################
+
 
 # ValueRef
 
@@ -4586,9 +4590,9 @@ DESC_HAS_TAG_NOT
 
 
 
-###################
-# Tech Categories #
-###################
+#############################################################
+####            T E C H   C A T A G O R I E S            ####
+#############################################################
 
 LEARNING_CATEGORY
 Learning
@@ -4606,9 +4610,9 @@ DEFENSE_CATEGORY
 Defense
 
 
-####################################
-# Theory Tech Names & Descriptions #
-####################################
+#############################################################
+####               T E C H   T H E O R I E S             ####
+#############################################################
 
 THEORY_SHORT_DESC
 Theoretical Prerequisite
@@ -5254,9 +5258,10 @@ SHP_SOLAR_CONT_DESC
 This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to stealth. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and stealth are very low. However, this ship has the ability to enter a star and hide, giving it perfect stealth on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.'''
 
 
-#########################################
-# Tech Application Names & Descriptions #
-#########################################
+#############################################################
+####          T E C H   A P P L I C A T I O N S          ####
+#############################################################
+
 
 VICTORY_SHORT_DESC
 Brings Victory!
@@ -6137,9 +6142,11 @@ Planet Stealth Modifier
 SHP_PLANET_STEALTH_MOD_DESC
 '''Increases the natural stealth of planets to 4.99, so that systems will be made visible to empires before their planets.'''
 
-########################################
-# Tech Refinement Names & Descriptions #
-########################################
+
+#############################################################
+####            T E C H   R E F I N E M E N T            ####
+#############################################################
+
 
 BUILDING_REFINE_SHORT_DESC
 Refines Building
@@ -6175,9 +6182,11 @@ PRO_ENVIRO_MINING_DESC
 
 Halves the population and health penalties on planets with the Heavy Mining focus.'''
 
-#################################
-# Building Names & Descriptions #
-#################################
+
+#############################################################
+####                  B U I L D I N G S                  ####
+#############################################################
+
 
 BLD_OBSERVATORY
 Observatory
@@ -6604,9 +6613,9 @@ Orbital Farm
 BLD_ORBITAL_FARM_DESC
 Increases the Growth on the planet on which it is built by 1, if that planet is set to the Growth focus.
 
-###################################
-# Hull/Part Description Templates #
-###################################
+#############################################################
+####           Hull/Part Description Templates           ####
+#############################################################
 
 HULL_DESC
 '''Starlane Speed: %1%
@@ -6647,9 +6656,11 @@ Fighter Stealth: %7%
 Fighter Detection: %8%
 Capacity: %9% fighters'''
 
-##############
-# Ship Parts #
-##############
+
+#############################################################
+####                 S H I P   P A R T S                 ####
+#############################################################
+
 
 SR_WEAPON_1
 Mass Driver 1
@@ -7029,9 +7040,11 @@ Nova Bomb
 SP_NOVA_BOMB_DESC
 A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it recieves the signal from a Nova Bomb Activator not more than one starlane jump away.
 
-##############
-# Ship Hulls #
-##############
+
+#############################################################
+####                 S H I P   H U L L S                 ####
+#############################################################
+
 
 SH_ROBOTIC
 Robotic Hull
@@ -7422,10 +7435,9 @@ SH_COSMIC_DRAGON_BODY_DESC
 A fearsom space dragon the size of a small planet.
 
 
-#################
-# Species Picks #
-#################
-
+#############################################################
+####              S P E C I E S   P I C K S              ####
+#############################################################
 
 
 BAD_HEALTH
@@ -7568,9 +7580,9 @@ GOOD_POPULATION
 '''%1% Good Population'''
 
 
-#####################
-# Accounting Labels #
-#####################
+#############################################################
+####          A C C O U N T I N G    L A B E L S         ####
+#############################################################
 
 
 STANDARD_CONSTRUCTION_LABEL
@@ -7663,9 +7675,11 @@ GREAT_TROOPS_LABEL
 ULTIMATE_TROOPS_LABEL
 '''%1% Ultimate Ground Troops'''
 
-########
-# Tags #
-########
+
+#############################################################
+####                       T A G S                       ####
+#############################################################
+
 
 ORGANIC
 Organic
@@ -7675,6 +7689,12 @@ Robotic
 
 LITHIC
 Lithic
+
+PHOTOTROPHIC
+Phototrophic
+
+SELF_SUFFICIENT
+Self-Sufficient
 
 TELEPATHIC
 Telepathic
