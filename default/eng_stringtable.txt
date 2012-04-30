@@ -3444,7 +3444,7 @@ MONOPOLE_SPECIAL_DESC
 Monopole Magnets make better robots!'''
 
 SUPERCONDUCTOR_SPECIAL
-Monopole Magnets
+Ambient Superconductors
 SUPERCONDUCTOR_SPECIAL_DESC
 '''When a planet with Ambient Superconductors is focused on Growth, all connected planets with Robotic species increase their Target Population.
 
