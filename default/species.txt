@@ -1982,6 +1982,53 @@ BASIC_POPULATION
             ]
             accountinglabel = "GOOD_ENVIRONMENT_LABEL"
             effects = SetTargetPopulation Value + 0
+            
+//##### P H O T O T R O P H I C   S T U F F #####            
+            
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                HasTag "PHOTOTROPHIC"
+                Star type = [Blue]
+            ]
+            accountinglabel = "BLUE_STAR"
+            effects = SetTargetPopulation Value + 10
+            
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                HasTag "PHOTOTROPHIC"
+                Star type = [White]
+            ]
+            accountinglabel = "WHITE_STAR"
+            effects = SetTargetPopulation Value + 8
+            
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                HasTag "PHOTOTROPHIC"
+                Star type = [Yellow]
+            ]
+            accountinglabel = "YELLOW_STAR"
+            effects = SetTargetPopulation Value + 6
+            
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                HasTag "PHOTOTROPHIC"
+                Star type = [Orange]
+            ]
+            accountinglabel = "ORANGE_STAR"
+            effects = SetTargetPopulation Value + 4
+            
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                HasTag "PHOTOTROPHIC"
+                Star type = [Red]
+            ]
+            accountinglabel = "RED_STAR"
+            effects = SetTargetPopulation Value + 2
 '''
 
 BAD_POPULATION

@@ -7675,6 +7675,21 @@ GREAT_TROOPS_LABEL
 ULTIMATE_TROOPS_LABEL
 '''%1% Ultimate Ground Troops'''
 
+BLUE_STAR
+'''Blue star'''
+
+WHITE_STAR
+'''White star'''
+
+YELLOW_STAR
+'''Yellow star'''
+
+ORANGE_STAR
+'''Orange star'''
+
+RED_STAR
+'''Red star'''
+
 
 #############################################################
 ####                       T A G S                       ####

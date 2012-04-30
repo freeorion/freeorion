@@ -17,7 +17,7 @@ Content:
  ~ Species:
  ~ ~ All species now have different aptitudes at resource production, ground combat & so on.  A few require no food, and a few have special stealth and detection abilities.
  ~ ~ ~ Sorry, currently not balanced.
- ~ ~ All normal species now have the same provisional starvation mechanic.
+ ~ ~ Added Phototrophic species pick, which increases population with brighter suns.
  ~ ~ Added Exobots, a constructable robot species.
  ~ ~ Exempted Non-Organic species from certain biologically based tech benefits.
  ~ ~ Acirema native colonies now occasionally produce ships, and have better defenses
