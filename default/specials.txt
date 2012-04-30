@@ -988,10 +988,11 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                Focus "FOCUS_GROWTH"
                 OwnedBy TheEmpire Source.Owner
+                HasTag "ORGANIC"
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
-            activation = ResourceSupplyConnected empire = Source.Owner condition = HasTag "ORGANIC"
+            activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "PROBIOTIC_STACK"
             effects = SetTargetPopulation Value + 3
 /*            
@@ -1025,10 +1026,11 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                Focus "FOCUS_GROWTH"
                 OwnedBy TheEmpire Source.Owner
+                HasTag "ORGANIC"
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
-            activation = ResourceSupplyConnected empire = Source.Owner condition = HasTag "ORGANIC"
+            activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "FRUIT_STACK"
             effects = SetTargetPopulation Value + 3
 /*            
@@ -1062,10 +1064,11 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                Focus "FOCUS_GROWTH"
                 OwnedBy TheEmpire Source.Owner
+                HasTag "ORGANIC"
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
-            activation = ResourceSupplyConnected empire = Source.Owner condition = HasTag "ORGANIC"
+            activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "SPICE_STACK"
             effects = SetTargetPopulation Value + 3
 /*            
@@ -1079,7 +1082,120 @@ Special
             */
     ]
     graphic = "icons/specials_huge/spice.png"
-    
+
+Special
+    name = "MONOPOLE_SPECIAL"
+    description = "MONOPOLE_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 9.0
+    spawnlimit = 8
+    location = And [
+        Planet
+        Planet type = [Radiated Barren Inferno]
+        Not ContainedBy Contains Homeworld
+        Not WithinStarlaneJumps 1 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+    effectsgroups = [       
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                HasTag "ROBOTIC"
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+            ]
+            activation =  Focus "FOCUS_GROWTH"
+            stackinggroup = "MONOPOLE_STACK"
+            effects = SetTargetPopulation Value + 3
+/*            
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Turn high = 0
+                Random probability = 0.7
+            ]
+            effects = CreateShip "SM_GUARD_1"
+            */
+    ]
+    graphic = "icons/specials_huge/monopole.png"
+
+Special
+    name = "SUPERCONDUCTOR_SPECIAL"
+    description = "SUPERCONDUCTOR_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 9.0
+    spawnlimit = 8
+    location = And [
+        Planet
+        Planet type = [Radiated Barren Inferno]
+        Not ContainedBy Contains Homeworld
+        Not WithinStarlaneJumps 1 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+    effectsgroups = [       
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                HasTag "ROBOTIC"
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+            ]
+            activation =  Focus "FOCUS_GROWTH"
+            stackinggroup = "SUPERCONDUCTOR_STACK"
+            effects = SetTargetPopulation Value + 3
+/*            
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Turn high = 0
+                Random probability = 0.7
+            ]
+            effects = CreateShip "SM_GUARD_1"
+            */
+    ]
+    graphic = "icons/specials_huge/superconductor.png"
+
+Special
+    name = "POSITRONIUM_SPECIAL"
+    description = "POSITRONIUM_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 9.0
+    spawnlimit = 8
+    location = And [
+        Planet
+        Planet type = [Radiated Barren Inferno]
+        Not ContainedBy Contains Homeworld
+        Not WithinStarlaneJumps 1 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+    effectsgroups = [       
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                HasTag "ROBOTIC"
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+            ]
+            activation =  Focus "FOCUS_GROWTH"
+            stackinggroup = "POSITRONIUM_STACK"
+            effects = SetTargetPopulation Value + 3
+/*            
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Turn high = 0
+                Random probability = 0.7
+            ]
+            effects = CreateShip "SM_GUARD_1"
+            */
+    ]
+    graphic = "icons/specials_huge/positronium.png"
 
 REMOVE_CLOUD_COVER
 '''EffectsGroup

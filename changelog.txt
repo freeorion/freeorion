@@ -34,7 +34,7 @@ Content:
  ~ ~ Added Nova Bomb and biological weaponry
  
  ~ Specials:
- ~ ~ Adding 3 new growth Special Resources for Organic species.
+ ~ ~ Adding 3 new growth Special Resources each for Organic & Robotic species.
  ~ ~ Abandoned Colony special now works.
  ~ ~ Added three Derelict system specials.
  ~ ~ Added new stealthy planet specials, and stealth-making monsters.
