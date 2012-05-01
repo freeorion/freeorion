@@ -1587,19 +1587,22 @@ void Universe::PopulateSystems(GalaxySetupOption density) {
     const std::vector<std::vector<int> >& density_mod_to_planet_size_dist = UniverseDataTables()["DensityModToPlanetSizeDist"];
     const std::vector<std::vector<int> >& star_color_mod_to_planet_size_dist = UniverseDataTables()["StarColorModToPlanetSizeDist"];
     const std::vector<std::vector<int> >& slot_mod_to_planet_size_dist = UniverseDataTables()["SlotModToPlanetSizeDist"];
-    const std::vector<std::vector<int> >& planet_size_mod_to_planet_type_dist = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
-    const std::vector<std::vector<int> >& slot_mod_to_planet_type_dist = UniverseDataTables()["SlotModToPlanetTypeDist"];
-    const std::vector<std::vector<int> >& star_color_mod_to_planet_type_dist = UniverseDataTables()["StarColorModToPlanetTypeDist"];
+    //const std::vector<std::vector<int> >& planet_size_mod_to_planet_type_dist = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
+    //const std::vector<std::vector<int> >& slot_mod_to_planet_type_dist = UniverseDataTables()["SlotModToPlanetTypeDist"];
+    //const std::vector<std::vector<int> >& star_color_mod_to_planet_type_dist = UniverseDataTables()["StarColorModToPlanetTypeDist"];
 
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         System* system = *it;
 
         for (int orbit = 0; orbit < system->Orbits(); orbit++) {
+            // randomly generate size and type
             // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
             int idx = 0;
             int max_roll = 0;
             for (unsigned int i = 0; i < NUM_PLANET_SIZES; ++i) {
-                int roll = g_hundred_dist() + star_color_mod_to_planet_size_dist[system->GetStarType()][i] + slot_mod_to_planet_size_dist[orbit][i]
+                int roll = g_hundred_dist()
+                    + star_color_mod_to_planet_size_dist[system->GetStarType()][i]
+                    + slot_mod_to_planet_size_dist[orbit][i]
                     + density_mod_to_planet_size_dist[density][i];
                 if (max_roll < roll) {
                     max_roll = roll;
@@ -1607,31 +1610,18 @@ void Universe::PopulateSystems(GalaxySetupOption density) {
                 }
             }
             PlanetSize planet_size = PlanetSize(idx);
-
+            // TEMP: pick planet type randomly, unless it is required by size
             if (planet_size == SZ_NOWORLD)
                 continue;
-
-            if (planet_size == SZ_ASTEROIDS) {
-                idx = PT_ASTEROIDS;
-            } else if (planet_size == SZ_GASGIANT) {
-                idx = PT_GASGIANT;
-            } else {
-                // make another series of modified rolls for planet type
-                for (unsigned int i = 0; i < NUM_PLANET_TYPES; ++i) {
-                    int roll = g_hundred_dist() + planet_size_mod_to_planet_type_dist[planet_size][i] + slot_mod_to_planet_type_dist[orbit][i] + 
-                        star_color_mod_to_planet_type_dist[system->GetStarType()][i];
-                    if (max_roll < roll) {
-                        max_roll = roll;
-                        idx = i;
-                    }
-                }
+            PlanetType planet_type = INVALID_PLANET_TYPE;
+            if (planet_size == SZ_GASGIANT)
+                planet_type = PT_GASGIANT;
+            else if (planet_size == SZ_ASTEROIDS)
+                planet_type = PT_ASTEROIDS;
+            else {
+                int type_idx = RandInt(0, NUM_PLANET_TYPES - 3);    // last two are asteroids and gas giant
+                planet_type = PlanetType(type_idx);
             }
-            PlanetType planet_type = PlanetType(idx);
-
-            if (planet_type == PT_ASTEROIDS)
-                planet_size = SZ_ASTEROIDS;
-            if (planet_type == PT_GASGIANT)
-                planet_size = SZ_GASGIANT;
 
             Planet* planet = new Planet(planet_type, planet_size);
             Insert(planet);                 // add planet to universe map
