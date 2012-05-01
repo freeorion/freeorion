@@ -2789,15 +2789,15 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     // add label-value pairs for each alteration recorded for this meter
     for (std::vector<Effect::AccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
         const UniverseObject* source = GetUniverseObject(info_it->source_id);
-        if (!source)
-            continue;
 
         const Empire*   empire = 0;
         const Building* building = 0;
         const Planet*   planet = 0;
         const Ship*     ship = 0;
         std::string     text;
-        std::string     name = source->Name();
+        std::string     name;
+        if (source)
+            name = source->Name();
 
         switch (info_it->cause_type) {
         case ECT_TECH: {

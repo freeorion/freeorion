@@ -1314,7 +1314,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes, bool 
         Effect::TargetsAndCause filtered_targets_and_cause(targets, targets_and_cause.effect_cause);
 
         if (GetOptionsDB().Get<bool>("verbose-logging")) {
-            Logger().debugStream() << "ExecuteEffects effectsgroup: " << effects_group->Dump();
+            Logger().debugStream() << "ExecuteEffects effectsgroup: \n" << effects_group->Dump();
             Logger().debugStream() << "ExecuteEffects Targets before: ";
             for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
                 Logger().debugStream() << " ... " << (*t_it)->Dump();
@@ -1336,7 +1336,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes, bool 
             Logger().debugStream() << "ExecuteEffects Targets after: ";
             for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
                 Logger().debugStream() << " ... " << (*t_it)->Dump();
-            Logger().debugStream() << "";
+            Logger().debugStream() << "         * * * * * *";
         }
 
         // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
