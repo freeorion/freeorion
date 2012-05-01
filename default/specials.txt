@@ -301,13 +301,9 @@ Special
             stackinggroup = "COMPUTRONIUM_STACK"
             effects = SetTargetResearch Value + Target.Population * 0.5
             
-        EffectsGroup     
-            scope = Source     
-            activation = AND [
-                Turn high = 0
-                Random probability = 0.7
-            ]
-            effects = CreateShip "SM_GUARD_1"
+            
+        [[CHANCE_OF_GUARD_1]]
+        
     ]
     graphic = "icons/specials_huge/computronium.png"
 
@@ -995,15 +991,9 @@ Special
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "PROBIOTIC_STACK"
             effects = SetTargetPopulation Value + 3
-/*            
-        EffectsGroup     
-            scope = Source     
-            activation = AND [
-                Turn high = 0
-                Random probability = 0.7
-            ]
-            effects = CreateShip "SM_GUARD_1"
-            */
+            
+/*         [[CHANCE_OF_GUARD_1]]   */
+
     ]
     graphic = "icons/specials_huge/probiotic.png"
     
@@ -1033,15 +1023,8 @@ Special
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "FRUIT_STACK"
             effects = SetTargetPopulation Value + 3
-/*            
-        EffectsGroup     
-            scope = Source     
-            activation = AND [
-                Turn high = 0
-                Random probability = 0.7
-            ]
-            effects = CreateShip "SM_GUARD_1"
-            */
+            
+/*         [[CHANCE_OF_GUARD_1]]   */
     ]
     graphic = "icons/specials_huge/fruit.png"
 
@@ -1071,15 +1054,8 @@ Special
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "SPICE_STACK"
             effects = SetTargetPopulation Value + 3
-/*            
-        EffectsGroup     
-            scope = Source     
-            activation = AND [
-                Turn high = 0
-                Random probability = 0.7
-            ]
-            effects = CreateShip "SM_GUARD_1"
-            */
+            
+/*         [[CHANCE_OF_GUARD_1]]   */
     ]
     graphic = "icons/specials_huge/spice.png"
 
@@ -1109,15 +1085,8 @@ Special
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "MONOPOLE_STACK"
             effects = SetTargetPopulation Value + 3
-/*            
-        EffectsGroup     
-            scope = Source     
-            activation = AND [
-                Turn high = 0
-                Random probability = 0.7
-            ]
-            effects = CreateShip "SM_GUARD_1"
-            */
+            
+/*         [[CHANCE_OF_GUARD_1]]   */
     ]
     graphic = "icons/specials_huge/monopole.png"
 
@@ -1147,15 +1116,9 @@ Special
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "SUPERCONDUCTOR_STACK"
             effects = SetTargetPopulation Value + 3
-/*            
-        EffectsGroup     
-            scope = Source     
-            activation = AND [
-                Turn high = 0
-                Random probability = 0.7
-            ]
-            effects = CreateShip "SM_GUARD_1"
-            */
+            
+/*         [[CHANCE_OF_GUARD_1]]   */
+
     ]
     graphic = "icons/specials_huge/superconductor.png"
 
@@ -1185,15 +1148,9 @@ Special
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "POSITRONIUM_STACK"
             effects = SetTargetPopulation Value + 3
-/*            
-        EffectsGroup     
-            scope = Source     
-            activation = AND [
-                Turn high = 0
-                Random probability = 0.7
-            ]
-            effects = CreateShip "SM_GUARD_1"
-            */
+            
+/*         [[CHANCE_OF_GUARD_1]]   */
+
     ]
     graphic = "icons/specials_huge/positronium.png"
 
@@ -1223,4 +1180,14 @@ REMOVE_VOID
         scope = Source
         activation = Source
         effects = RemoveSpecial "VOID_MASTER_SPECIAL"
+'''
+
+CHANCE_OF_GUARD_1
+'''        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Turn high = 0
+                Random probability = 0.7
+            ]
+            effects = CreateShip "SM_GUARD_1"
 '''

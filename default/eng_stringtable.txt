@@ -3299,10 +3299,10 @@ TUNNELS_SPECIAL_DESCRIPTION
 
 This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonized.'''
 
-TECHTONIC_INSTABILITY_SPECIAL
+TECTONIC_INSTABILITY_SPECIAL
 Tectonically Unstable
 
-TECHTONIC_INSTABILITY_SPECIAL_DESC
+TECTONIC_INSTABILITY_SPECIAL_DESC
 '''Construction on this planet is decreased by 20. Prevents Subterrainian Construction from increasing population capacity.
 
 This planet is tectonically unstable. Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.'''

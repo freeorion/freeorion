@@ -1817,11 +1817,13 @@ HAS_GROWTH_FOCUS
             name = "FOCUS_GROWTH"
             description = "FOCUS_GROWTH_DESC"
             location = Or [
-                Planet environment = Good
-                And [
-                    OwnerHasTech "GRO_ORBIT_FARMING"
-                    Planet
-                ]
+                Contains Building name = "BLD_CULTURE_ARCHIVES"
+                HasSpecial name = "POSITRONIUM_SPECIAL"
+                HasSpecial name = "SUPERCONDUCTOR_SPECIAL"
+                HasSpecial name = "MONOPOLE_SPECIAL"
+                HasSpecial name = "SPICE_SPECIAL"
+                HasSpecial name = "FRUIT_SPECIAL"
+                HasSpecial name = "PROBIOTIC_SPECIAL"
             ]
             graphic = "icons/focus/farming.png"
 '''
@@ -2590,21 +2592,21 @@ ULTIMATE_STEALTH
 GOOD_WEAPONS
 '''EffectsGroup
         scope = Source
-        activation = Turn high = 1
+        activation = Turn high = 0
         GiveEmpireTech name = "SHP_WEAPON_3"
 '''
 
 GREAT_WEAPONS
 '''EffectsGroup
         scope = Source
-        activation = Turn high = 1
+        activation = Turn high = 0
         GiveEmpireTech name = "SHP_WEAPON_4"
 '''
 
 ULTIMATE_WEAPONS
 '''EffectsGroup
         scope = Source
-        activation = Turn high = 1
+        activation = Turn high = 0
         GiveEmpireTech name = "SHP_WEAPON_5"
 '''
 
@@ -2613,28 +2615,28 @@ ULTIMATE_WEAPONS
 HUGE_PLANET
 '''EffectsGroup     
         scope = Source     
-        activation = Turn high = 1
+        activation = Turn high = 0
         effects = SetPlanetSize Huge
 '''
 
 LARGE_PLANET
 '''EffectsGroup     
         scope = Source     
-        activation = Turn high = 1
+        activation = Turn high = 0
         effects = SetPlanetSize Large
 '''
 
 MEDIUM_PLANET
 '''EffectsGroup     
         scope = Source     
-        activation = Turn high = 1
+        activation = Turn high = 0
         effects = SetPlanetSize Medium
 '''
 
 SMALL_PLANET
 '''EffectsGroup     
         scope = Source     
-        activation = Turn high = 1
+        activation = Turn high = 0
         effects = SetPlanetSize Small
 '''
 
@@ -2642,7 +2644,7 @@ NOT_HUGE_PLANET
 '''EffectsGroup     
         scope = Source     
         activation = AND [
-            Turn high = 1
+            Turn high = 0
             Planet Size = Huge
         ]
         effects = SetPlanetSize Large
@@ -2653,14 +2655,14 @@ NOT_HUGE_PLANET
 TUNNELS_SPECIAL
 '''EffectsGroup     
         scope = Source     
-        activation = Turn high = 1
+        activation = Turn high = 0
         effects = AddSpecial name = "TUNNELS_SPECIAL"
 '''
 
 CULTURAL_ARCHIVES
 '''EffectsGroup     
         scope = Source     
-        activation = Turn high = 1
+        activation = Turn high = 0
         effects = CreateBuilding name = "BLD_CULTURE_ARCHIVES"
 '''
 

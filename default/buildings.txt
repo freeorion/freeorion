@@ -30,12 +30,16 @@ BuildingType
                 SetTargetIndustry Value + Target.Population * 1.0
                 SetMaxTroops Value + 5
             ]
+//   This is supposed to effect only planets of the same species as the one that has the cultural archive.  does not work.
         EffectsGroup
             scope = And [
-                System
-                Contains Source
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
-            effects = SetOverlayTexture name = "stars/nova-boom3.png" size = 100
+            activation =  Focus "FOCUS_GROWTH"
+            stackinggroup = "HOMEWORLD_STACK"
+            effects = SetTargetPopulation Value + 3
 
         EffectsGroup
             scope = And [
@@ -101,6 +105,13 @@ BuildingType
                 OwnerHasTech "DEF_ROOT_DEFENSE"
             ]
             effects = SetMaxTroops Value + 10
+            
+        EffectsGroup
+            scope = And [
+                System
+                Contains Source
+            ]
+            effects = SetOverlayTexture name = "stars/nova-boom3.png" size = 100
         ]
     icon = "icons/building/palace.png"
 
