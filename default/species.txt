@@ -266,43 +266,6 @@ Species
 
 
 Species
-    name = "SP_DERTHREAN"
-    description = "SP_DERTHREAN_DESC"
-    Playable
-    CanProduceShips
-    CanColonize
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[AVERAGE_MINING]]
-        [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
-        
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-        [[LARGE_PLANET]]
-    ]
-    
-    [[TOXIC_STANDARD_EP]]
-    
-    graphic = "icons/species/derthrean.png"
-
-
-Species
     name = "SP_LAENFA"
     description = "SP_LAENFA_DESC"
     Playable
@@ -332,7 +295,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
-        [[AVERAGE_POPULATION]]
+        [[GOOD_POPULATION]]
         [[LARGE_PLANET]]
     ]
     
@@ -340,80 +303,6 @@ Species
     
     graphic = "icons/species/laenfa.png"
 
-
-Species
-    name = "SP_TAEGHIRUS"
-    description = "SP_TAEGHIRUS_DESC"
-    Playable
-    CanProduceShips
-    CanColonize
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_MINING_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[GOOD_MINING]]
-        [[GOOD_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[BAD_GROUND_TROOPS]]
-        [[GOOD_POPULATION]]
-        
-                
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[LARGE_PLANET]]
-    ]
-    
-    [[SWAMP_STANDARD_EP]]
-    
-    graphic = "icons/species/t-aeghirus.png"
-
-
-Species
-    name = "SP_MUURSH"
-    description = "SP_MUURSH_DESC"
-    Playable
-    CanProduceShips
-    CanColonize
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_MINING_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[AVERAGE_MINING]]
-        [[AVERAGE_INDUSTRY]]
-        [[BAD_RESEARCH]]
-        
-        [[GREAT_WEAPONS]]
-        [[GREAT_GROUND_TROOPS]]
-        
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-        [[LARGE_PLANET]]
-    ]
-    
-    [[DESERT_STANDARD_EP]]
-    
-    graphic = "icons/species/muursh.png"
 
 Species
     name = "SP_GEORGE"
@@ -452,17 +341,10 @@ Species
     graphic = "icons/species/george.png"
 
 
-//#######################################################\\
-//####                                               ####\\
-//####          M I N O R   S P E C I E S            ####\\
-//####                                               ####\\
-//#######################################################\\
-
-
 Species
     name = "SP_CRAY"
     description = "SP_CRAY_DESC"
-    Native
+    Playable
     CanProduceShips
     CanColonize
     
@@ -481,17 +363,174 @@ Species
         [[BAD_INDUSTRY]]
         [[GOOD_RESEARCH]]
 
-        [[AVERAGE_GROUND_TROOPS]]
+        [[GOOD_GROUND_TROOPS]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_POPULATION]]
+        [[LARGE_PLANET]]
     ]
 
     [[BARREN_BROAD_EP]]
     
     graphic = "icons/species/cray.png"
+
+
+Species
+    name = "SP_EGASSEM"
+    description = "SP_EGASSEM_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
+    
+    tags = "LITHIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_MINING]]
+        [[GREAT_INDUSTRY]]
+        [[BAD_RESEARCH]]
+        
+        [[GREAT_GROUND_TROOPS]]
+            
+
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_CONSTRUCTION]]
+
+        [[BAD_POPULATION]]
+        [[LARGE_PLANET]]
+    ]
+    
+    [[INFERNO_NARROW_EP]]
+    
+    graphic = "icons/species/egassem.png"
+
+
+//#######################################################\\
+//####                                               ####\\
+//####          M I N O R   S P E C I E S            ####\\
+//####                                               ####\\
+//#######################################################\\
+
+
+Species
+    name = "SP_DERTHREAN"
+    description = "SP_DERTHREAN_DESC"
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_MINING]]
+        [[AVERAGE_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[AVERAGE_GROUND_TROOPS]]
+        
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_CONSTRUCTION]]
+
+        [[AVERAGE_POPULATION]]
+        [[CULTURAL_ARCHIVES]]
+    ]
+    
+    [[TOXIC_STANDARD_EP]]
+    
+    graphic = "icons/species/derthrean.png"
+
+
+Species
+    name = "SP_TAEGHIRUS"
+    description = "SP_TAEGHIRUS_DESC"
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_MINING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[GOOD_MINING]]
+        [[GOOD_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[BAD_GROUND_TROOPS]]
+        [[GOOD_POPULATION]]
+        
+                
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_CONSTRUCTION]]
+
+        [[CULTURAL_ARCHIVES]]
+    ]
+    
+    [[SWAMP_STANDARD_EP]]
+    
+    graphic = "icons/species/t-aeghirus.png"
+
+
+Species
+    name = "SP_MUURSH"
+    description = "SP_MUURSH_DESC"
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_MINING_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_MINING]]
+        [[AVERAGE_INDUSTRY]]
+        [[BAD_RESEARCH]]
+        
+        [[GREAT_WEAPONS]]
+        [[GREAT_GROUND_TROOPS]]
+        
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_CONSTRUCTION]]
+
+        [[AVERAGE_POPULATION]]
+        [[CULTURAL_ARCHIVES]]
+    ]
+    
+    [[DESERT_STANDARD_EP]]
+    
+    graphic = "icons/species/muursh.png"
 
 
 Species
@@ -525,6 +564,7 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[AVERAGE_POPULATION]]
+        [[CULTURAL_ARCHIVES]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -588,47 +628,12 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_POPULATION]]
+        [[CULTURAL_ARCHIVES]]
     ]
     
     [[SWAMP_STANDARD_EP]]
     
     graphic = "icons/species/phinnert.png"
-
-
-Species
-    name = "SP_EGASSEM"
-    description = "SP_EGASSEM_DESC"
-    Native
-    CanProduceShips
-    CanColonize
-    
-    tags = "LITHIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[AVERAGE_MINING]]
-        [[GOOD_INDUSTRY]]
-        [[BAD_RESEARCH]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
-            
-
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]  
-    ]
-    
-    [[INFERNO_NARROW_EP]]
-    
-    graphic = "icons/species/egassem.png"
 
 
 Species
@@ -659,6 +664,7 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[AVERAGE_POPULATION]]
+        [[CULTURAL_ARCHIVES]]
     ]
     
     [[TUNDRA_NARROW_EP]]
@@ -690,6 +696,7 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[BAD_POPULATION]]
+        
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -727,6 +734,7 @@ Species
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
+        [[CULTURAL_ARCHIVES]]
 
     ]
     
@@ -890,6 +898,7 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[AVERAGE_POPULATION]]
+        
     ]
     
     [[TERRAN_STANDARD_EP]]
@@ -962,6 +971,7 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[AVERAGE_POPULATION]]
+        [[CULTURAL_ARCHIVES]]
     ]
     
     [[INFERNO_NARROW_EP]]
@@ -1046,7 +1056,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = "ORGANIC"
+    tags = "LITHIC"
     
     foci = [
         [[HAS_MINING_FOCUS]]
@@ -1070,6 +1080,7 @@ Species
         [[AVERAGE_POPULATION]]
         
         [[TUNNELS_SPECIAL]]
+        [[CULTURAL_ARCHIVES]]
     ]
     
     [[INFERNO_STANDARD_EP]]
@@ -2644,6 +2655,13 @@ TUNNELS_SPECIAL
         scope = Source     
         activation = Turn high = 1
         effects = AddSpecial name = "TUNNELS_SPECIAL"
+'''
+
+CULTURAL_ARCHIVES
+'''EffectsGroup     
+        scope = Source     
+        activation = Turn high = 1
+        effects = CreateBuilding name = "BLD_CULTURE_ARCHIVES"
 '''
 
 //#####      M U L T I P L I E R S     #####//

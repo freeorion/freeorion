@@ -2627,6 +2627,7 @@ Human
 SP_HUMAN_DESC
 '''Mostly Harmless. All average stats for testing purposes.
 Prefer Terran planets.
+Organic
 
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
@@ -2638,6 +2639,7 @@ Scylior
 SP_SCYLIOR_DESC
 '''Three-tentacled, aquatic Nautiloid.
 Prefer Ocean planets.
+Organic
 
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
@@ -2651,6 +2653,7 @@ Gyisache
 SP_GYISACHE_DESC
 '''Cowardly, freakish sheep-like herbivores.
 Prefer Swamp planets.
+Organic
 
 [[AVERAGE_MINING]]
 [[GREAT_INDUSTRY]]
@@ -2660,10 +2663,11 @@ Prefer Swamp planets.
 '''
 
 SP_CHATO
-Chato
+Chato'm'Goshk
 SP_CHATO_DESC
-'''Sessile crystalline entities which ride the animal Gormoshk.
+'''Sessile crystalline entities which ride the animal Goshk.
 Prefer Toxic planets.
+Phototrophic
 
 [[GREAT_MINING]]
 [[AVERAGE_INDUSTRY]]
@@ -2677,6 +2681,7 @@ Trith
 SP_TRITH_DESC
 '''Bereaved xenophobic telepaths.
 Prefer Desert planets.
+Organic
 
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
@@ -2691,6 +2696,7 @@ Hhhoh
 SP_HHHOH_DESC
 '''Huge, slow, multi-trunked Mammoths.
 Prefer Tundra planets.
+Organic
 
 [[BAD_MINING]]
 [[AVERAGE_INDUSTRY]]
@@ -2705,6 +2711,7 @@ Eaxaw
 SP_EAXAW_DESC
 '''Evil amazonian xenophobic agressive worms.
 Prefer Terran planets.
+Organic
 
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
@@ -2718,6 +2725,7 @@ Derthrean
 SP_DERTHREAN_DESC
 '''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
 Prefer Toxic planets.
+Organic
 
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
@@ -2729,6 +2737,7 @@ Laenfa
 SP_LAENFA_DESC
 '''Sneaky, telepathic, sentient vines.
 Prefer Ocean Planets.
+Phototrophic
 
 [[GOOD_DETECTION]]
 [[GREAT_STEALTH]]
@@ -2738,6 +2747,7 @@ Prefer Ocean Planets.
 [[BAD_RESEARCH]]
 
 [[BAD_GROUND_TROOPS]]
+[[GOOD_POPULATION]]
 '''
 
 SP_TAEGHIRUS
@@ -2745,6 +2755,7 @@ T'aeghirus
 SP_TAEGHIRUS_DESC
 '''Weak, flightless birds, united in total mutual cooperation.
 Prefer Swamp planets.
+Organic
 
 [[GOOD_MINING]]
 [[GOOD_INDUSTRY]]
@@ -2760,6 +2771,7 @@ Muursh
 SP_MUURSH_DESC
 '''Militantly peaceful herbivores.
 Prefer Desert planets.
+Organic
 
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
@@ -2775,6 +2787,7 @@ George
 SP_GEORGE_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
 Prefers Tundra planets.
+Organic
 
 [[GOOD_MINING]]
 [[GOOD_INDUSTRY]]
@@ -2786,11 +2799,14 @@ SP_CRAY
 Cray
 SP_CRAY_DESC
 '''Cheerful enthusiastic robots.
-Prefer Barren planets.
+Prefer Barren planets, but adapts well to other types.
+Robotic
 
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
+
+[[GOOD_GROUND_TROOPS]]
 
 [[NON_ORGANIC]]
 '''
@@ -2801,6 +2817,7 @@ Etty
 SP_ETTY_DESC
 '''Cybernetic plants.
 Prefer Desert planets.
+Phototrophic
 
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
@@ -2817,6 +2834,7 @@ Cynos
 SP_CYNOS_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
 Prefer Swamp planets.
+Phototrophic
 
 [[NO_MINING]]
 [[NO_INDUSTRY]]
@@ -2830,6 +2848,7 @@ Phinnert
 SP_PHINNERT_DESC
 '''Flying Monkeys.
 Prefer Ocean planets.
+Organic
 
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
@@ -2841,6 +2860,7 @@ Egassem
 SP_EGASSEM_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
 Prefer Inferno planets.
+Lithic
 
 [[AVERAGE_MINING]]
 [[GOOD_INDUSTRY]]
@@ -2854,6 +2874,7 @@ Sslith
 SP_SSLITH_DESC
 '''Flat, aquatic, pliable creatures.
 Prefer Tundra planets.
+Organic
 
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
@@ -2867,6 +2888,7 @@ Fifty-seven
 SP_FIFTYSEVEN_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
 Prefer Swamp planets.
+Organic
 
 [[NO_MINING]]
 [[NO_INDUSTRY]]
@@ -2894,6 +2916,7 @@ Setinon
 SP_SETINON_DESC
 '''Individualistic sentient microscopic cells.
 Prefer Ocean planets.
+Organic
 
 [[GREAT_STEALTH]]
 
@@ -2911,6 +2934,7 @@ Nymnmn
 SP_NYMNMN_DESC
 '''Planet-wide sapient magnetic waveforms.
 Prefer Desert planets.
+Self-Sufficient
 
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
@@ -2931,6 +2955,7 @@ Trenchers
 SP_TRENCHERS_DESC
 '''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
 Prefers Barren planets.
+Robotic
 
 [[AVERAGE_MINING]]
 [[NO_INDUSTRY]]
@@ -2947,6 +2972,7 @@ Raaagh
 SP_RAAAGH_DESC
 '''Highly territorial felinoids.
 Prefer Terran planets.
+Organic
 
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
@@ -2972,6 +2998,7 @@ Beige Goo
 SP_BEIGEGOO_DESC
 '''Insane, intensely private, planet-engulfing nanite swarm.
 Prefers Radiated planets.
+Robotic
 
 [[NO_MINING]]
 [[GREAT_INDUSTRY]]
@@ -2989,6 +3016,7 @@ Silexian
 SP_SILEXIAN_DESC
 '''Gleaming gardener robots, left on their own.
 Prefer Terran planets.
+Robotic
 
 [[AVERAGE_MINING]]
 [[NO_INDUSTRY]]
@@ -3002,6 +3030,7 @@ Kobuntura
 SP_KOBUNTURA_DESC
 '''Sentient magnetic dust formations with a fascination for building and construction.
 Prefer Barren planets.
+Self-Sufficient
 
 [[GOOD_MINING]]
 [[GREAT_INDUSTRY]]
@@ -3018,6 +3047,7 @@ Ugmorrs
 SP_UGMORRS_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Prefer Inferno planets.
+Lithic
 
 [[AVERAGE_MINING]]
 [[GOOD_INDUSTRY]]
@@ -3029,10 +3059,11 @@ Prefer Inferno planets.
 '''
 
 SP_GISGUFGTHRIM
-'''Gis Guf G'thrim'''
+'''Gis Guf Gthrim'''
 SP_GISGUFGTHRIM_DESC
 '''Shelled herbivores that live off a singular planets-sized colonial gel.
 Prefer Toxic planets.
+Organic
 
 [[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
@@ -3048,6 +3079,7 @@ Hidden Gardener
 SP_HIDDENGARDENER_DESC
 '''A sapient fungal network that tends its plant food from beneath
 Prefers Terran planets
+Organic
 
 [[GOOD_STEALTH]]
 
@@ -3067,10 +3099,11 @@ The wide ranging, delicate fungi-nets are too large and integrated into the soil
 
 
 SP_ABADDONNIANS
-Abaddonnians
+Abaddonni
 SP_ABADDONNIANS_DESC
 '''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
 Prefers Inferno planets.
+Lithic
 
 [[GREAT_MINING]]
 [[AVERAGE_INDUSTRY]]
@@ -3085,6 +3118,7 @@ Acirema
 SP_ACIREMA_DESC
 '''A race with nearly limitless power, that cannot survive in this universe.
 Prefers Radiated planets.
+Self-Sufficient
 
 [[AVERAGE_MINING]]
 [[GREAT_INDUSTRY]]
@@ -3111,6 +3145,7 @@ Ourbools
 SP_OURBOOLS_DESC
 '''Giant blind swimmers who "see" gravitation.
 Prefer Ocean planets.
+Organic
 
 [[ULTIMATE_DETECTION]]
 
@@ -3134,10 +3169,11 @@ The Ourbools find their sense of position via the regular movements of the 23 mo
 '''
 
 SP_VOLP
-Volp-Puglush-Vuu
+Volp-Uglush
 SP_VOLP_DESC
 '''Highly bureacratic, overcrowded burrowers.
 Prefer Barren planets.
+Lithic
 
 [[BAD_MINING]]
 [[AVERAGE_INDUSTRY]]
@@ -3146,22 +3182,22 @@ Prefer Barren planets.
 [[GOOD_POPULATION]]
 
 Description:
-The Volp-Puglush-Vuu are an asexual species approximately 300 meters in length that live in tunnels on their homeworld. They subsist on silicates and have a vast number of short arm/mouth parts on the front of their thick cylindrical bodies that they use for manipulation/tunnelling/eating and for sending messages through their tunnel network. In early historical times there were several different strains of Volp-Puglush-Vuu but they were in constant conflict. Groups that successfully organized themselves were the best competers for resources, and as they moved from industrial to information age, one strain became dominant, and the remainder died out. The remaining strain began to optimize their homeworld for most efficient use of resources. They became incredibly adept at recognizing resouce needs, as well as how societal structures affected individual behavior.
-The Volp-Puglush-Vuu society almost acts as a single organism, because society has been adapted to run so smoothly. However, this has led to a critical loss of independent function. While Volp-Puglush-Vuu society is incredibly efficient, it would take individual Volp-Puglush-Vuus hundreds, if not thousands of years to be able to successfully develop a new independent society.
+The Volp-Uglush are an asexual species approximately 300 meters in length that live in tunnels on their homeworld. They subsist on silicates and have a vast number of short arm/mouth parts on the front of their thick cylindrical bodies that they use for manipulation/tunnelling/eating and for sending messages through their tunnel network. In early historical times there were several different strains of Volp-Uglush but they were in constant conflict. Groups that successfully organized themselves were the best competers for resources, and as they moved from industrial to information age, one strain became dominant, and the remainder died out. The remaining strain began to optimize their homeworld for most efficient use of resources. They became incredibly adept at recognizing resouce needs, as well as how societal structures affected individual behavior.
+The Volp-Uglush society almost acts as a single organism, because society has been adapted to run so smoothly. However, this has led to a critical loss of independent function. While Volp-Uglush society is incredibly efficient, it would take individual Volp-Uglushs hundreds, if not thousands of years to be able to successfully develop a new independent society.
 They are very effective at directing merchant fleets, and make excellent bureaucrats for creating changes in societies. While they have an incredibly efficient war machine, and are capable of indivudually taking on various large battle engines, the chaos of combat is not their most effective environment.
 
 Home World:
-Hive is a large Barren world that is ~2 times bigger than its mass and material would suggest as all of it but a small metal core has been converted through tunneling and building into the Vast tunnel network of the Volp-Puglush-Vuu bureaucracy.
+Hive is a large Barren world that is ~2 times bigger than its mass and material would suggest as all of it but a small metal core has been converted through tunneling and building into the Vast tunnel network of the Volp-Uglush bureaucracy.
 
 Reason for Staying:
-Volp-Puglush-Vuu are now to integrated and ingrown. They now totally lack the independance and innovation needed to leave Hive and start a new colony.
+Volp-Uglush are now to integrated and ingrown. They now totally lack the independance and innovation needed to leave Hive and start a new colony.
 '''
 
 
 SP_EXOBOT
 Exobot
 SP_EXOBOT_DESC
-'''Semi-autonomous robots, designed for mining and industry on Radiated planets.
+'''Semi-autonomous robots, designed for mining and industry on Barren, Radiated, & Inferno planets.
 
 [[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
