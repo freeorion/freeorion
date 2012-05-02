@@ -8,8 +8,8 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not Homeworld
-        Not Planet type = Asteroids
+        Not Capital
+        Not Planet type = [Asteroids GasGiant]
     ]
     effectsgroups = EffectsGroup
         scope = Source
@@ -28,8 +28,8 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not Homeworld
-        Not Planet type = Asteroids
+        Not Capital
+        Not Planet type = [Asteroids GasGiant]
     ]
     effectsgroups = EffectsGroup
         scope = Source
@@ -48,8 +48,8 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not Homeworld
-        Not Planet type = Asteroids
+        Not Capital
+        Not Planet type = [Asteroids GasGiant]
     ]
     effectsgroups = [
         EffectsGroup
@@ -71,8 +71,8 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not Homeworld
-        Not Planet type = Asteroids
+        Not Capital
+        Not Planet type = [Asteroids GasGiant]
     ]
     effectsgroups = EffectsGroup
         scope = Source
@@ -88,7 +88,7 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not Homeworld
+        Not Capital
         Not Planet type = [Asteroids GasGiant]
     ]
     effectsgroups = EffectsGroup
@@ -105,7 +105,7 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not Homeworld
+        Not Capital
         Not Planet type = [Asteroids GasGiant]
     ]
     effectsgroups = EffectsGroup
@@ -123,7 +123,7 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-        Not ContainedBy Contains Homeworld
+        Not ContainedBy Contains Capital
     ]
     effectsgroups = [
         EffectsGroup
@@ -233,7 +233,7 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not Homeworld
+        Not Capital
         Not Planet type = [Asteroids GasGiant]
     ]
     effectsgroups = [
@@ -257,7 +257,7 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not Homeworld
+        Not Capital
         Not Planet type = [Asteroids GasGiant]
     ]
     graphic = "icons/specials_huge/tunnels.png"
@@ -270,8 +270,8 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not Homeworld
-        Not Planet type = Asteroids
+        Not Capital
+        Not Planet type = [Asteroids GasGiant]
     ]
     graphic = "icons/specials_huge/resonant_moon.png"
 
@@ -284,7 +284,7 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-        Not ContainedBy Contains Homeworld
+        Not ContainedBy Contains Capital
         Not WithinStarlaneJumps 2 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -349,7 +349,7 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-        Not ContainedBy Contains Homeworld
+        Not ContainedBy Contains Capital
     ]
     effectsgroups = [
         EffectsGroup
@@ -750,7 +750,7 @@ Special
     spawnlimit = 100
     location = And [
         System
-        Not Contains Homeworld
+        Not Contains Capital
     ]
     effectsgroups = [
         EffectsGroup
@@ -795,7 +795,7 @@ Special
     spawnlimit = 100
     location = And [
         System
-        Not Contains Homeworld
+        Not Contains Capital
     ]
     effectsgroups = [
         EffectsGroup
@@ -842,7 +842,7 @@ Special
     spawnlimit = 100
     location = And [
         System
-        Not Contains Homeworld
+        Not Contains Capital
     ]
     effectsgroups = [
         EffectsGroup
@@ -890,7 +890,7 @@ Special
     spawnlimit = 100
     location = And [
         System
-        Not Contains Homeworld
+        Not Contains Capital
     ]
     effectsgroups = [
         EffectsGroup
@@ -974,7 +974,7 @@ Special
     location = And [
         Planet
         Planet type = [Ocean Swamp Toxic]
-        Not ContainedBy Contains Homeworld
+        Not ContainedBy Contains Capital
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -1006,7 +1006,7 @@ Special
     location = And [
         Planet
         Planet type = [Desert Terran Ocean Swamp]
-        Not ContainedBy Contains Homeworld
+        Not ContainedBy Contains Capital
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -1037,7 +1037,7 @@ Special
     location = And [
         Planet
         Planet type = [Tundra Desert Terran]
-        Not ContainedBy Contains Homeworld
+        Not ContainedBy Contains Capital
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -1068,7 +1068,7 @@ Special
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
-        Not ContainedBy Contains Homeworld
+        Not ContainedBy Contains Capital
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -1099,7 +1099,7 @@ Special
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
-        Not ContainedBy Contains Homeworld
+        Not ContainedBy Contains Capital
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
@@ -1131,7 +1131,7 @@ Special
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
-        Not ContainedBy Contains Homeworld
+        Not ContainedBy Contains Capital
         Not WithinStarlaneJumps 1 Contains And [
             Planet
             OwnedBy AnyEmpire
