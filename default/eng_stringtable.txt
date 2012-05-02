@@ -6250,7 +6250,7 @@ Represents imperial power and prestige and functions as a centre of control for 
 
 BLD_SUPER_TESTERS
 Super-Tester Takeover
-BLD_SUPER_TESTERS
+BLD_SUPER_TESTERS_DESC
 '''Switches the species of the planet to Super-Testers.  For Official Testing Purposes, or for cheating.'''
 
 BLD_SHIPYARD_BASE
