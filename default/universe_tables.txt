@@ -103,7 +103,7 @@ Freq                            0       1000    3000    8000
 MonsterFrequency                None    Low     Medium  High
 Freq                            0       9       5       3
 
-# per how many stars should natives appear
+# per how many planets should natives appear
 <1x4>
 NativeFrequency                 None    Low     Medium  High
 Freq                            0       12      6       4
