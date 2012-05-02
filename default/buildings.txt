@@ -17,6 +17,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 Planet
+                Homeworld name = Source.Planet.Species
                 OwnedBy TheEmpire Source.Owner
                 Contains Source
             ]
@@ -1268,4 +1269,18 @@ BuildingType
     ]
     icon = ""
 
+BuildingType
+    name = "BLD_SUPER_TESTERS"
+    description = "BLD_SUPER_TESTERS"
+    buildcost = 1
+    buildtime = 200
+    location = Planet
+    effectsgroups = Effectsgroup
+        scope = And [
+            Planet
+            Contains Source
+        ]
+        effects = Replace Source.Planet.Species with "SP_SUPER_TEST"
+            
+    icon = "icons/species/other-04.png"
 
