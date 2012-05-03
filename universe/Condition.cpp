@@ -245,7 +245,8 @@ std::string Condition::Number::Dump() const
     return retval;
 }
 
-void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // Number does not have a single valid local candidate to be matched, as it
     // will match anything if the proper number of objects match the
@@ -255,10 +256,22 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
     ScriptingContext local_context(parent_context, no_object);
 
     bool in_range = false;
-    if (!((!m_low || m_low->LocalCandidateInvariant()) && (!m_high  || m_high->LocalCandidateInvariant()))) {
+    if (!(
+                (!m_low || m_low->LocalCandidateInvariant())
+             && (!m_high || m_high->LocalCandidateInvariant())
+       ))
+    {
         Logger().errorStream() << "Condition::Number::Eval has local candidate-dependent ValueRefs, but no valid local candidate!";
-    } else if (!local_context.condition_root_candidate && !((!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant()))) {
-        Logger().errorStream() << "Condition::Number::Eval has root candidate-dependent ValueRefs, but expects local candidate to be the root candidate, and has no valid local candidate!";
+    } else if (
+                !local_context.condition_root_candidate
+                && !(
+                        (!m_low || m_low->RootCandidateInvariant())
+                     && (!m_high || m_high->RootCandidateInvariant())
+                     && (m_condition->RootCandidateInvariant())
+                    )
+              )
+    {
+        Logger().errorStream() << "Condition::Number::Eval has root candidate-dependent ValueRefs or sub-condition, but expects local candidate to be the root candidate, and has no valid local candidate!";
     } else {
         // get set of all UniverseObjects that satisfy m_condition
         ObjectSet condition_matches;
@@ -266,9 +279,8 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
         ObjectSet condition_non_matches;
         condition_non_matches.reserve(RESERVE_SET_SIZE);
         ObjectMap& objects = GetUniverse().Objects();
-        for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit) {
+        for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit)
             condition_non_matches.push_back(uit->second);
-        }
         m_condition->Eval(local_context, condition_matches, condition_non_matches, NON_MATCHES);
 
         // compare number of objects that satisfy m_condition to the acceptable range of such objects
@@ -290,8 +302,11 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
     }
 }
 
-bool Condition::Number::RootCandidateInvariant() const
-{ return (!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant()) && m_condition->RootCandidateInvariant(); }
+bool Condition::Number::RootCandidateInvariant() const {
+    return (!m_low || m_low->RootCandidateInvariant()) &&
+           (!m_high || m_high->RootCandidateInvariant()) &&
+           m_condition->RootCandidateInvariant();
+}
 
 bool Condition::Number::TargetInvariant() const
 { return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()) && m_condition->TargetInvariant(); }
