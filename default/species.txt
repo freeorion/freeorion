@@ -1824,8 +1824,11 @@ HAS_GROWTH_FOCUS
                 HasSpecial name = "SPICE_SPECIAL"
                 HasSpecial name = "FRUIT_SPECIAL"
                 HasSpecial name = "PROBIOTIC_SPECIAL"
+                HasSpecial name = "METALOIDS_SPECIAL"
+                HasSpecial name = "CRYSTALS_SPECIAL"
+                HasSpecial name = "MINERALS_SPECIAL"
             ]
-            graphic = "icons/focus/farming.png"
+            graphic = "icons/focus/growth.png"
 '''
 
 HAS_MINING_FOCUS

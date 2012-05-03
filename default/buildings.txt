@@ -6,14 +6,7 @@ BuildingType
     buildtime = 200
     tags = "ANTIQUATED"
     location = Not All
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Planet
-                Contains Source
-            ]
-            effects = SetTargetPopulation Value + Sum Defense Planet
-    
+    effectsgroups = [  
         EffectsGroup
             scope = And [
                 Planet
@@ -27,13 +20,17 @@ BuildingType
                 SetTargetIndustry Value + Target.Population * 1.0
                 SetMaxTroops Value + 5
             ]
-//   This is supposed to effect only planets of the same species as the one that has the cultural archive.  does not work.
+//   The following is supposed to effect only planets of the same species as the one that has the cultural archive.  Currently does not work.
         EffectsGroup
             scope = And [
                 Planet
-                Species name = Source.Planet.Species
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+                Number low = 1 condition = And [
+                    Contains Source
+                    Planet        
+                    Homeworld name = RootCandidate.Species
+                ]   
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "HOMEWORLD_STACK"
@@ -62,7 +59,13 @@ BuildingType
         TargetPopulation low = 1
     ]
     effectsgroups = [
-                    
+        EffectsGroup
+            scope = And [
+                Planet
+                Contains Source
+            ]
+            effects = SetTargetPopulation Value + Sum Defense Planet
+            
         EffectsGroup
             scope = EmpireMeter empire = LocalCandidate.Owner meter = "METER_DETECTION" low = 5 high = 99999
             effects = SetStealth Value + 10
@@ -471,7 +474,7 @@ BuildingType
             scope = Source
             effects = Destroy
     ]
-    icon = ""
+    icon = "icons/species/robotic-01.png"
 
 BuildingType
     name = "BLD_MEGALITH"

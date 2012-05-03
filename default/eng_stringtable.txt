@@ -3283,14 +3283,6 @@ ANCIENT_RUINS_SPECIAL_DESCRIPTION
 
 This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech Xenoarchaeology to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
 
-MINERALS_SPECIAL
-Mineral Rich
-
-MINERALS_SPECIAL_DESCRIPTION
-'''Increases Mining by 50 on this planet when focus is set to Mining, and by twice the planet's Population when focus is set to Heavy Mining.
-
-This planet has a rich natural deposit of minerals, boosting mining significantly.'''
-
 TUNNELS_SPECIAL
 Natural Tunnels
 
@@ -3492,6 +3484,30 @@ POSITRONIUM_SPECIAL_DESC
 '''When a planet with Positronium Ash is focused on Growth, all connected planets with Robotic species increase their Target Population.
 
 Positronium Ash make better robots brains!'''
+
+MINERALS_SPECIAL
+Rich Minerals
+MINERALS_SPECIAL_DESC
+'''When a planet with Rich Minerals is focused on Growth, all connected planets with Lithic species increase their Target Population.
+Increases Mining by 50 on this planet when focus is set to Mining, and by twice the planet's Population when focus is set to Heavy Mining.
+
+This planet has a rich natural deposit of minerals, boosting mining or Lithic growth significantly.'''
+
+CRYSTALS_SPECIAL
+Silmaline Crystals
+CRYSTALS_SPECIAL_DESC
+'''When a planet with Silmaline Crystals is focused on Growth, all connected planets with Lithic species increase their Target Population.
+Increases Mining by 50 on this planet when focus is set to Mining, and by twice the planet's Population when focus is set to Heavy Mining.
+
+This planet has rare Silmaline Crystals, boosting mining or Lithic growth significantly.'''
+
+METALOIDS_SPECIAL
+High-Energy Metaloids
+METALOIDS_SPECIAL_DESC
+'''When a planet with High-Energy Metaloids is focused on Growth, all connected planets with Lithic species increase their Target Population.
+Increases Mining by 50 on this planet when focus is set to Mining, and by twice the planet's Population when focus is set to Heavy Mining.
+
+This planet has a rare deposits of Metaloids, boosting mining or Lithic growth significantly.'''
 
 
 #############################################################
