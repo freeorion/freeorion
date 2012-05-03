@@ -596,6 +596,7 @@ BuildingType
     location = And [
         OwnedBy TheEmpire Source.Owner
         Planet environment = Good
+        Not Planet type = [Asteroids GasGiant]
     ]
     effectsgroups = [
         EffectsGroup
@@ -730,6 +731,7 @@ BuildingType
     location = And [
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
+        Not Planet type = [Asteroids GasGiant]
         Not Planet environment = [Uninhabitable Good]
         ]
     effectsgroups = [
@@ -760,6 +762,7 @@ BuildingType
     location = And [
         OwnedBy TheEmpire Source.Owner
         Not Planet environment = [Uninhabitable Good]
+        Not Planet type = [Asteroids GasGiant]
     ]
     effectsgroups = [
         EffectsGroup
