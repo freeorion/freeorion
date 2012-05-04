@@ -1731,7 +1731,7 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
     else
         return;
 
-    const SpeciesManager& species_manager = GetSpeciesManager();
+    SpeciesManager& species_manager = GetSpeciesManager();
 
     std::vector<Planet*> planet_vec = Objects().FindObjects<Planet>();
     Condition::ObjectSet planet_set(planet_vec.size());
@@ -1787,6 +1787,10 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
         int species_idx = RandSmallInt(0, suitable_species.size() - 1);
         const std::string& species_name = suitable_species.at(species_idx);
         planet->SetSpecies(species_name);
+
+        // set planet as a homeworld for that species
+        if (Species* species = species_manager.GetSpecies(species_name))
+            species->AddHomeworld(planet->ID());
 
         // find a focus to give planets by default.  use first defined available focus.
         std::vector<std::string> available_foci = planet->AvailableFoci();
