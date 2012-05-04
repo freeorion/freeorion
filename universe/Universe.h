@@ -463,8 +463,10 @@ private:
       * values after the rest of effects (including non-meter effects) have
       * been executed. */
     void    ExecuteEffects(const Effect::TargetsCauses& targets_causes,
-                           bool update_effect_accounting, bool only_meter_effects = false,
-                           bool only_appearance_effects = false);
+                           bool update_effect_accounting,
+                           bool only_meter_effects = false,
+                           bool only_appearance_effects = false,
+                           bool include_empire_meter_effects = false);
 
     /** Does actual updating of meter estimates after the public function have
       * processed objects_vec or whatever they were passed and cleared the

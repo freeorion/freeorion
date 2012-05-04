@@ -805,12 +805,10 @@ void Universe::ApplyAllEffectsAndUpdateMeters() {
         it->second->ResetTargetMaxUnpairedMeters();
         it->second->ResetPairedActiveMeters();
     }
-
-    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
+    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->ResetMeters();
-    }
 
-    ExecuteEffects(targets_causes, true);
+    ExecuteEffects(targets_causes, true, false, false, true);
 
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
@@ -835,12 +833,14 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
         (*it)->ResetTargetMaxUnpairedMeters();
         (*it)->ResetPairedActiveMeters();
     }
+    // could also reset empire meters here, but unless all objects have meters
+    // recalculated, some targets that lead to empire meters being modified may
+    // be missed, and estimated empire meters would be inaccurate
 
     ExecuteEffects(targets_causes, true, true);
 
-    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
+    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it)
         (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
-    }
 }
 
 void Universe::ApplyMeterEffectsAndUpdateMeters()
@@ -1003,7 +1003,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     GetEffectsAndTargets(targets_causes, objects_vec);
 
     // Apply and record effect meter adjustments
-    ExecuteEffects(targets_causes, true, true);
+    ExecuteEffects(targets_causes, true, true, false, false);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "UpdateMeterEstimatesImpl after executing effects";
@@ -1275,8 +1275,11 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
     }
 }
 
-void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes, bool update_effect_accounting,
-                              bool only_meter_effects/* = false*/, bool only_appearance_effects/* = false*/)
+void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
+                              bool update_effect_accounting,
+                              bool only_meter_effects/* = false*/,
+                              bool only_appearance_effects/* = false*/,
+                              bool include_empire_meter_effects/* = false*/)
 {
     m_marked_destroyed.clear();
     m_marked_for_victory.clear();
