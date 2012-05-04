@@ -843,12 +843,27 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
         (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
 }
 
-void Universe::ApplyMeterEffectsAndUpdateMeters()
-{ ApplyMeterEffectsAndUpdateMeters(m_objects.FindObjectIDs()); }
+void Universe::ApplyMeterEffectsAndUpdateMeters() {
+    std::vector<int> object_ids = m_objects.FindObjectIDs();
+    Effect::TargetsCauses targets_causes;
+    GetEffectsAndTargets(targets_causes, object_ids);
+
+    std::vector<UniverseObject*> objects = m_objects.FindObjects(object_ids);
+
+    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
+        (*it)->ResetTargetMaxUnpairedMeters();
+        (*it)->ResetPairedActiveMeters();
+    }
+    ExecuteEffects(targets_causes, true, true, false, true);
+
+    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it)
+        (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
+}
 
 void Universe::ApplyAppearanceEffects(const std::vector<int>& object_ids) {
-    // cache all activation and scoping condition results before applying Effects, since the application of
-    // these Effects may affect the activation and scoping evaluations
+    // cache all activation and scoping condition results before applying
+    // Effects, since the application of these Effects may affect the
+    // activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes, object_ids);
     ExecuteEffects(targets_causes, false, false, true);
