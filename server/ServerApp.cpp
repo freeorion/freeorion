@@ -1896,6 +1896,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     // store initial values of meters for this turn.
     m_universe.BackPropegateObjectMeters();
+    empires.BackPropegateMeters();
 
 
     // store any changes in objects from various progress functions, such as

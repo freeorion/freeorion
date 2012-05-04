@@ -48,6 +48,11 @@ EmpireManager::iterator EmpireManager::begin()
 EmpireManager::iterator EmpireManager::end()
 { return m_empire_map.end(); }
 
+void EmpireManager::BackPropegateMeters() {
+    for (iterator it = m_empire_map.begin(); it != m_empire_map.end(); ++it)
+        it->second->BackPropegateMeters();
+}
+
 void EmpireManager::EliminateEmpire(int id) {
     if (Empire* emp = Lookup(id)) {
         emp->EliminationCleanup();

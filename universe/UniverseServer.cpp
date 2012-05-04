@@ -1555,6 +1555,7 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
     SetActiveMetersToTargetMaxCurrentValues(m_objects);
 
     BackPropegateObjectMeters();
+    Empires().BackPropegateMeters();
 
     Logger().debugStream() << "Re-applying first turn meter effects and updating meters";
 
@@ -1567,6 +1568,7 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
     SetNativePopulationValues(m_objects);
 
     BackPropegateObjectMeters();
+    Empires().BackPropegateMeters();
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";

@@ -1028,6 +1028,11 @@ const Meter* Empire::GetMeter(const std::string& name) const {
         return 0;
 }
 
+void Empire::BackPropegateMeters() {
+    for (std::map<std::string, Meter>::iterator it = m_meters.begin(); it != m_meters.end(); ++it)
+        it->second.BackPropegate();
+}
+
 bool Empire::ResearchableTech(const std::string& name) const {
     const Tech* tech = GetTech(name);
     if (!tech)

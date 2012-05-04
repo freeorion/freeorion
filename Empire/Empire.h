@@ -400,6 +400,8 @@ public:
       * no such alignment meter exists. */
     Meter*                  GetMeter(const std::string& name);
 
+    void                    BackPropegateMeters();
+
     /** Adds \a tech to the research queue, placing it before position \a pos.
       * If \a tech is already in the queue, it is moved to \a pos, then removed
       * from its former position.  If \a pos < 0 or queue.size() <= pos, \a tech

@@ -51,6 +51,8 @@ public:
     iterator        begin();
     iterator        end();
 
+    void            BackPropegateMeters();
+
     /** Marks the empire with ID \a id as eliminated, and cleans up that empire
       * if it exists (or does nothing if that empire doesn't exist).  Cleanup
       * involves clearing queues, resetting the capital, and cleaning up other
