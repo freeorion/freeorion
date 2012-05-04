@@ -105,6 +105,7 @@ public:
     void    ExecuteSetMeter(int source_id, const TargetSet& targets) const;
     void    ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause,
                             AccountingMap& accounting_map) const;
+    void    ExecuteSetEmpireMeter(int source_id, const TargetSet& targets) const;
     /** execute all appearance modifying effects in group. */
     void    ExecuteAppearanceModifications(int source_id, const TargetSet& targets) const;
 

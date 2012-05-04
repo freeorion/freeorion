@@ -358,6 +358,27 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetSet& targets) cons
     }
 }
 
+void EffectsGroup::ExecuteSetEmpireMeter(int source_id, const TargetSet& targets) const {
+    const UniverseObject* source = GetUniverseObject(source_id);
+
+    // execute effects on targets
+    for (TargetSet::const_iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+        UniverseObject* target = *target_it;
+
+        //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
+        for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
+             effect_it != m_effects.end(); ++effect_it)
+        {
+            const EffectBase* effect = *effect_it;
+            const SetEmpireMeter* meter_effect = dynamic_cast<const SetEmpireMeter*>(effect);
+            if (!meter_effect)
+                continue;
+            effect->Execute(ScriptingContext(source, target));
+        }
+    }
+}
+
+
 void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause,
                                    AccountingMap& accounting_map) const
 {

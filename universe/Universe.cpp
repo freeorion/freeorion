@@ -1324,16 +1324,21 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
         }
 
         // execute Effects in the EffectsGroup
-        if (only_appearance_effects)
+        if (only_appearance_effects) {
             effects_group->ExecuteAppearanceModifications(  sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
-        else if (update_effect_accounting && only_meter_effects)
+        } else if (update_effect_accounting && only_meter_effects) {
             effects_group->ExecuteSetMeter(                 sourced_effects_group.source_object_id, filtered_targets_and_cause,     m_effect_accounting_map);
-        else if (only_meter_effects)
+            if (include_empire_meter_effects)
+                effects_group->ExecuteSetEmpireMeter(       sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
+        } else if (only_meter_effects) {
             effects_group->ExecuteSetMeter(                 sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
-        else if (update_effect_accounting)
+            if (include_empire_meter_effects)
+                effects_group->ExecuteSetEmpireMeter(       sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
+        } else if (update_effect_accounting) {
             effects_group->Execute(                         sourced_effects_group.source_object_id, filtered_targets_and_cause,     m_effect_accounting_map);
-        else
+        } else {
             effects_group->Execute(                         sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
+        }
 
         if (GetOptionsDB().Get<bool>("verbose-logging")) {
             Logger().debugStream() << "ExecuteEffects Targets after: ";
