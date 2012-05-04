@@ -7747,6 +7747,12 @@ DIM_STAR
 NO_STAR
 '''No star'''
 
+HOMEWORLD_SUPPLY
+'''Homeworld Supply'''
+
+HOMEWORLD_BONUS
+'''Homeworld'''
+
 
 #############################################################
 ####                       T A G S                       ####
