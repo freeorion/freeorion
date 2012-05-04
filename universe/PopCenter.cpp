@@ -79,21 +79,16 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const {
 }
 
 double PopCenter::NextTurnPopGrowth() const {
-    double target_pop = std::max(GetMeter(METER_TARGET_POPULATION)->Current(), 0.01);   // clamping target pop to at least 1 prevents divide by zero cases
+    double target_pop = GetMeter(METER_TARGET_POPULATION)->Current();
     double cur_pop = GetMeter(METER_POPULATION)->Current();
-    Logger().debugStream() << "pop: " << cur_pop << " / " << target_pop;
-    double population_fraction = (target_pop - cur_pop) / target_pop;
-    Logger().debugStream() << "pop frac: " << population_fraction;
-    double change_potential = cur_pop * population_fraction * 0.1 + (target_pop > cur_pop ? 1 : -1) * 0.05;
-    Logger().debugStream() << "change potential: " << change_potential;
-    double max_growth = target_pop - cur_pop;
-    double change = 0.0;
-    if (change_potential > 0)
-        change = std::min(max_growth, change_potential);
-    else if (change_potential < 0)
-        change = std::max(max_growth, change_potential);
-    Logger().debugStream() << "pop change: " << change;
-    return change;
+    double pop_change = 0.0;
+
+    if (target_pop > cur_pop)
+        pop_change = cur_pop * (target_pop - cur_pop) / 100;
+    else
+        pop_change = -(cur_pop - target_pop) / 10;
+
+    return pop_change;
 }
 
 void PopCenter::PopCenterResetTargetMaxUnpairedMeters()
