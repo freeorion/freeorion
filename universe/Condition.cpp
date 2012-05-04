@@ -135,14 +135,13 @@ std::string ConditionDescription(const std::vector<const Condition::ConditionBas
 ///////////////////////////////////////////////////////////
 // Condition::ConditionBase                              //
 ///////////////////////////////////////////////////////////
-struct Condition::ConditionBase::MatchHelper
-{
+struct Condition::ConditionBase::MatchHelper {
     MatchHelper(const Condition::ConditionBase* this_, const ScriptingContext& parent_context) :
         m_this(this_),
         m_parent_context(parent_context)
-        {}
+    {}
     bool operator()(const UniverseObject* candidate) const
-        { return m_this->Match(ScriptingContext(m_parent_context, candidate)); }
+    { return m_this->Match(ScriptingContext(m_parent_context, candidate)); }
     const Condition::ConditionBase* m_this;
     const ScriptingContext& m_parent_context;
 };
@@ -255,7 +254,6 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
     const UniverseObject* no_object(0);
     ScriptingContext local_context(parent_context, no_object);
 
-    bool in_range = false;
     if (!(
                 (!m_low || m_low->LocalCandidateInvariant())
              && (!m_high || m_high->LocalCandidateInvariant())
@@ -267,12 +265,24 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
                 && !(
                         (!m_low || m_low->RootCandidateInvariant())
                      && (!m_high || m_high->RootCandidateInvariant())
-                     && (m_condition->RootCandidateInvariant())
                     )
               )
     {
-        Logger().errorStream() << "Condition::Number::Eval has root candidate-dependent ValueRefs or sub-condition, but expects local candidate to be the root candidate, and has no valid local candidate!";
+        Logger().errorStream() << "Condition::Number::Eval has root candidate-dependent ValueRefs, but expects local candidate to be the root candidate, and has no valid local candidate!";
+    }
+
+    if (!local_context.condition_root_candidate && !this->RootCandidateInvariant()) {
+        // no externally-defined root candidate, so each object matched must
+        // separately act as a root candidate, and sub-condition must be re-
+        // evaluated for each tested object and the number of objects matched
+        // checked for each object being tested
+        Condition::ConditionBase::Eval(local_context, matches, non_matches, search_domain);
+
     } else {
+        // parameters for number of subcondition objects that needs to be matched
+        int low = (m_low ? m_low->Eval(local_context) : 0);
+        int high = (m_high ? m_high->Eval(local_context) : INT_MAX);
+
         // get set of all UniverseObjects that satisfy m_condition
         ObjectSet condition_matches;
         condition_matches.reserve(RESERVE_SET_SIZE);
@@ -281,24 +291,22 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
         ObjectMap& objects = GetUniverse().Objects();
         for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit)
             condition_non_matches.push_back(uit->second);
+        // can evaluate subcondition once for all objects being tested by this condition
         m_condition->Eval(local_context, condition_matches, condition_non_matches, NON_MATCHES);
-
         // compare number of objects that satisfy m_condition to the acceptable range of such objects
         int matched = condition_matches.size();
-        int low = (m_low ? m_low->Eval(local_context) : 0);
-        int high = (m_high ? m_high->Eval(local_context) : INT_MAX);
-        in_range = (low <= matched && matched <= high);
-    }
+        bool in_range = (low <= matched && matched <= high);
 
-    // transfer objects to or from candidate set, according to whether number of matches was within
-    // the requested range.
-    if (search_domain == MATCHES && !in_range) {
-        non_matches.insert(non_matches.end(), matches.begin(), matches.end());
-        matches.clear();
-    }
-    if (search_domain == NON_MATCHES && in_range) {
-        matches.insert(matches.end(), non_matches.begin(), non_matches.end());
-        non_matches.clear();
+        // transfer objects to or from candidate set, according to whether number of matches was within
+        // the requested range.
+        if (search_domain == MATCHES && !in_range) {
+            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+            matches.clear();
+        }
+        if (search_domain == NON_MATCHES && in_range) {
+            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
+            non_matches.clear();
+        }
     }
 }
 
@@ -310,6 +318,28 @@ bool Condition::Number::RootCandidateInvariant() const {
 
 bool Condition::Number::TargetInvariant() const
 { return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()) && m_condition->TargetInvariant(); }
+
+bool Condition::Number::Match(const ScriptingContext& local_context) const {
+    // get acceptable range of subcondition matches for candidate
+    double low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
+    double high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
+
+    // get set of all UniverseObjects that satisfy m_condition
+    ObjectSet condition_matches;
+    condition_matches.reserve(RESERVE_SET_SIZE);
+    ObjectSet condition_non_matches;
+    condition_non_matches.reserve(RESERVE_SET_SIZE);
+    ObjectMap& objects = GetUniverse().Objects();
+    for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit)
+        condition_non_matches.push_back(uit->second);
+    m_condition->Eval(local_context, condition_matches, condition_non_matches, NON_MATCHES);
+
+    // compare number of objects that satisfy m_condition to the acceptable range of such objects
+    int matched = condition_matches.size();
+    bool in_range = (low <= matched && matched <= high);
+    return in_range;
+}
+
 
 ///////////////////////////////////////////////////////////
 // Turn                                                  //

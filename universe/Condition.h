@@ -180,6 +180,8 @@ struct Condition::Number : public Condition::ConditionBase {
     virtual std::string Dump() const;
 
 private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
     const ValueRef::ValueRefBase<int>* m_low;
     const ValueRef::ValueRefBase<int>* m_high;
     const ConditionBase*               m_condition;
