@@ -1817,7 +1817,7 @@ HAS_GROWTH_FOCUS
             name = "FOCUS_GROWTH"
             description = "FOCUS_GROWTH_DESC"
             location = Or [
-                Contains Building name = "BLD_CULTURE_ARCHIVES"
+                Homeworld
                 HasSpecial name = "POSITRONIUM_SPECIAL"
                 HasSpecial name = "SUPERCONDUCTOR_SPECIAL"
                 HasSpecial name = "MONOPOLE_SPECIAL"
