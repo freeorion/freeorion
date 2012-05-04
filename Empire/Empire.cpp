@@ -998,6 +998,17 @@ int Empire::StockpileID(ResourceType res) const {
     }
 }
 
+std::string Empire::Dump() const {
+    std::string retval = "Empire meters:\n";
+    for (std::map<std::string, Meter>::const_iterator meter_it = meter_begin();
+            meter_it != meter_end(); ++meter_it)
+    {
+        retval += UserString(meter_it->first) + ": " +
+                  boost::lexical_cast<std::string>(meter_it->second.Initial()) + "\n";
+    }
+    return retval;
+}
+
 void Empire::SetCapitalID(int id)
 { m_capital_id = id; }
 

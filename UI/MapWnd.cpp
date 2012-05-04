@@ -1627,6 +1627,7 @@ void MapWnd::InitTurn() {
 
     universe.InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
 
+    Logger().debugStream() << Empires().Dump();
 
     //// DEBUG
     //std::cout << "MapWnd::InitTurn() m_selected_fleet_ids: " << std::endl;

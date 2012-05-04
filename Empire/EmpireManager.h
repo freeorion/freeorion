@@ -17,8 +17,7 @@
 class Empire;
 
 /** Maintains all of the Empire objects that exist in the application. */
-class EmpireManager
-{
+class EmpireManager {
 public:
     /// Iterator over Empires
     typedef std::map<int, Empire*>::iterator iterator; 
@@ -41,6 +40,8 @@ public:
     /** Returns whether the empire with ID \a id has been eliminated, or false
       * if no such empire exists. */
     bool            Eliminated(int id) const;
+
+    std::string     Dump() const;
     //@}
 
     /** \name Mutators */ //@{

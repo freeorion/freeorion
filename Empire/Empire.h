@@ -291,6 +291,8 @@ public:
     int                     CapitalID() const;                                      ///< Returns the numeric ID of the empire's capital
     int                     StockpileID(ResourceType res = INVALID_RESOURCE_TYPE) const;    ///< Returns the numeric ID of the empire's stockpile location for the resource of type \a res
 
+    std::string             Dump() const;
+
     const std::set<std::string>&    AvailableTechs() const;                         ///< Returns the set of all available techs.
     const std::set<std::string>&    AvailableBuildingTypes() const;                 ///< Returns the set of all available building types.
     std::set<int>                   AvailableShipDesigns() const;                   ///< Returns the set of ship design ids of this empire that the empire can actually build
