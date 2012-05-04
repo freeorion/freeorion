@@ -18,7 +18,6 @@ BuildingType
                 SetTargetResearch Value + .5
                 SetTargetMining Value + Target.Population * 0.5
                 SetTargetIndustry Value + Target.Population * 1.0
-                SetMaxTroops Value + 5
             ]
 //   The following is supposed to effect only planets of the same species as the one that has the cultural archive.  Currently does not work.
         EffectsGroup

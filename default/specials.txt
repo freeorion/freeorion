@@ -226,30 +226,6 @@ Special
     graphic = "icons/specials_huge/ancient_ruins.png"
 
 Special
-    name = "MINERALS_SPECIAL"
-    description = "MINERALS_SPECIAL_DESCRIPTION"
-    stealth = 20
-    spawnrate = 1.0
-    spawnlimit = 9999
-    location = And [
-        Planet
-        Not Capital
-        Not Planet type = [Asteroids GasGiant]
-    ]
-    effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = Focus "FOCUS_MINING"
-            effects = SetTargetMining Value + 5.0
-
-        EffectsGroup
-            scope = Source
-            activation = Focus "FOCUS_HEAVY_MINING"
-            effects = SetTargetMining Value + Target.Population * 2
-    ]
-    graphic = "icons/specials_huge/minerals.png"
-
-Special
     name = "TUNNELS_SPECIAL"
     description = "TUNNELS_SPECIAL_DESCRIPTION"
     stealth = 30
@@ -992,6 +968,14 @@ Special
             stackinggroup = "PROBIOTIC_STACK"
             effects = SetTargetPopulation Value + 3
             
+        EffectsGroup
+            scope = And [
+                Source
+                HasTag "ORGANIC"
+            ]
+            stackinggroup = "PROBIOTIC_STACK"
+            effects = SetTargetPopulation Value + 3  // Provides the bonus locally, no matter the focus
+            
 /*         [[CHANCE_OF_GUARD_1]]   */
 
     ]
@@ -1024,6 +1008,14 @@ Special
             stackinggroup = "FRUIT_STACK"
             effects = SetTargetPopulation Value + 3
             
+        EffectsGroup
+            scope = And [
+                Source
+                HasTag "ORGANIC"
+            ]
+            stackinggroup = "FRUIT_STACK"
+            effects = SetTargetPopulation Value + 3  // Provides the bonus locally, no matter the focus
+            
 /*         [[CHANCE_OF_GUARD_1]]   */
     ]
     graphic = "icons/specials_huge/fruit.png"
@@ -1055,6 +1047,14 @@ Special
             stackinggroup = "SPICE_STACK"
             effects = SetTargetPopulation Value + 3
             
+        EffectsGroup
+            scope = And [
+                Source
+                HasTag "ORGANIC"
+            ]
+            stackinggroup = "SPICE_STACK"
+            effects = SetTargetPopulation Value + 3  // Provides the bonus locally, no matter the focus
+            
 /*         [[CHANCE_OF_GUARD_1]]   */
     ]
     graphic = "icons/specials_huge/spice.png"
@@ -1074,7 +1074,9 @@ Special
             OwnedBy AnyEmpire
         ]
     ]
-    effectsgroups = [       
+    effectsgroups = [
+        [[STANDARD_INDUSTRY_BOOST]]
+        
         EffectsGroup
             scope = And [
                 Planet
@@ -1085,6 +1087,14 @@ Special
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "MONOPOLE_STACK"
             effects = SetTargetPopulation Value + 3
+            
+        EffectsGroup
+            scope = And [
+                Source
+                HasTag "ROBOTIC"
+            ]
+            stackinggroup = "MONOPOLE_STACK"
+            effects = SetTargetPopulation Value + 3  // Provides the bonus locally, no matter the focus
             
 /*         [[CHANCE_OF_GUARD_1]]   */
     ]
@@ -1105,7 +1115,9 @@ Special
             OwnedBy AnyEmpire
         ]
     ]
-    effectsgroups = [       
+    effectsgroups = [
+        [[STANDARD_INDUSTRY_BOOST]]
+        
         EffectsGroup
             scope = And [
                 Planet
@@ -1116,6 +1128,14 @@ Special
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "SUPERCONDUCTOR_STACK"
             effects = SetTargetPopulation Value + 3
+            
+        EffectsGroup
+            scope = And [
+                Source
+                HasTag "ROBOTIC"
+            ]
+            stackinggroup = "SUPERCONDUCTOR_STACK"
+            effects = SetTargetPopulation Value + 3  // Provides the bonus locally, no matter the focus
             
 /*         [[CHANCE_OF_GUARD_1]]   */
 
@@ -1137,7 +1157,9 @@ Special
             OwnedBy AnyEmpire
         ]
     ]
-    effectsgroups = [       
+    effectsgroups = [
+        [[STANDARD_INDUSTRY_BOOST]]
+        
         EffectsGroup
             scope = And [
                 Planet
@@ -1149,10 +1171,170 @@ Special
             stackinggroup = "POSITRONIUM_STACK"
             effects = SetTargetPopulation Value + 3
             
+        EffectsGroup
+            scope = And [
+                Source
+                HasTag "ROBOTIC"
+            ]
+            stackinggroup = "POSITRONIUM_STACK"
+            effects = SetTargetPopulation Value + 3  // Provides the bonus locally, no matter the focus
+            
 /*         [[CHANCE_OF_GUARD_1]]   */
 
     ]
     graphic = "icons/specials_huge/positronium.png"
+
+Special
+    name = "MINERALS_SPECIAL"
+    description = "MINERALS_SPECIAL_DESC"
+    stealth = 20
+    spawnrate = 1.0
+    spawnlimit = 8
+    location = And [
+        Planet
+        Not Planet type = [Asteroids GasGiant]
+        Not ContainedBy Contains Capital
+        Not WithinStarlaneJumps 1 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+    effectsgroups = [
+        [[STANDARD_MINERAL_BOOST]]
+        
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                HasTag "LITHIC"
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+            ]
+            activation =  Focus "FOCUS_GROWTH"
+            stackinggroup = "MINERALS_STACK"
+            effects = SetTargetPopulation Value + 3
+            
+        EffectsGroup
+            scope = And [
+                Source
+                HasTag "LITHIC"
+            ]
+            stackinggroup = "MINERALS_STACK"
+            effects = SetTargetPopulation Value + 3  // Provides the bonus locally, no matter the focus
+            
+/*         [[CHANCE_OF_GUARD_1]]   */
+    ]
+    graphic = "icons/specials_huge/minerals.png"
+
+Special
+    name = "CRYSTALS_SPECIAL"
+    description = "CRYSTALS_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 1.0
+    spawnlimit = 8
+    location = And [
+        Planet
+        Not Planet type = [GasGiant]
+        Not ContainedBy Contains Capital
+        Not WithinStarlaneJumps 1 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+    effectsgroups = [
+        [[STANDARD_MINERAL_BOOST]]
+            
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                HasTag "LITHIC"
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+            ]
+            activation =  Focus "FOCUS_GROWTH"
+            stackinggroup = "CRYSTALS_STACK"
+            effects = SetTargetPopulation Value + 3
+            
+        EffectsGroup
+            scope = And [
+                Source
+                HasTag "LITHIC"
+            ]
+            stackinggroup = "CRYSTALS_STACK"
+            effects = SetTargetPopulation Value + 3  // Provides the bonus locally, no matter the focus
+            
+/*         [[CHANCE_OF_GUARD_1]]   */
+
+    ]
+    graphic = "icons/specials_huge/crystals.png"
+
+Special
+    name = "METALOIDS_SPECIAL"
+    description = "METALOIDS_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 1.0
+    spawnlimit = 8
+    location = And [
+        Planet
+        Not Planet type = [Asteroids GasGiant]
+        Not ContainedBy Contains Capital
+        Not WithinStarlaneJumps 1 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+    effectsgroups = [
+        [[STANDARD_MINERAL_BOOST]]
+            
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                HasTag "LITHIC"
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+            ]
+            activation =  Focus "FOCUS_GROWTH"
+            stackinggroup = "METALOIDS_STACK"
+            effects = SetTargetPopulation Value + 3
+            
+        EffectsGroup
+            scope = And [
+                Source
+                HasTag "LITHIC"
+            ]
+            stackinggroup = "METALOIDS_STACK"
+            effects = SetTargetPopulation Value + 3  // Provides the bonus locally, no matter the focus
+            
+/*         [[CHANCE_OF_GUARD_1]]   */
+
+    ]
+    graphic = "icons/specials_huge/metaloids.png"
+
+
+//##########################################################
+//###                     M A C R O S                    ###
+//##########################################################
+
+
+STANDARD_MINERAL_BOOST
+'''        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_MINING"
+            effects = SetTargetMining Value + 5.0
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_HEAVY_MINING"
+            effects = SetTargetMining Value + Target.Population * 2
+'''
+
+STANDARD_INDUSTRY_BOOST
+'''        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_INDUSTRY"
+            effects = SetTargetIndustry Value + Target.Population * .5
+
+'''
+
 
 REMOVE_CLOUD_COVER
 '''EffectsGroup

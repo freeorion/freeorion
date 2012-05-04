@@ -2007,8 +2007,8 @@ BASIC_POPULATION
                 HasTag "PHOTOTROPHIC"
                 Star type = [Blue]
             ]
-            accountinglabel = "BLUE_STAR"
-            effects = SetTargetPopulation Value + 10
+            accountinglabel = "VERY_BRIGHT_STAR"
+            effects = SetTargetPopulation Value + 6
             
         EffectsGroup
             scope = Source
@@ -2016,35 +2016,26 @@ BASIC_POPULATION
                 HasTag "PHOTOTROPHIC"
                 Star type = [White]
             ]
-            accountinglabel = "WHITE_STAR"
-            effects = SetTargetPopulation Value + 8
+            accountinglabel = "BRIGHT_STAR"
+            effects = SetTargetPopulation Value + 3
             
         EffectsGroup
             scope = Source
             activation = AND [
                 HasTag "PHOTOTROPHIC"
-                Star type = [Yellow]
+                Star type = [Red Neutron]
             ]
-            accountinglabel = "YELLOW_STAR"
-            effects = SetTargetPopulation Value + 6
+            accountinglabel = "DIM_STAR"
+            effects = SetTargetPopulation Value + -3
             
         EffectsGroup
             scope = Source
             activation = AND [
                 HasTag "PHOTOTROPHIC"
-                Star type = [Orange]
+                Star type = [BlackHole NoStar]
             ]
-            accountinglabel = "ORANGE_STAR"
-            effects = SetTargetPopulation Value + 4
-            
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                HasTag "PHOTOTROPHIC"
-                Star type = [Red]
-            ]
-            accountinglabel = "RED_STAR"
-            effects = SetTargetPopulation Value + 2
+            accountinglabel = "NO_STAR"
+            effects = SetTargetPopulation Value + -6
 '''
 
 BAD_POPULATION

@@ -7732,20 +7732,17 @@ GREAT_TROOPS_LABEL
 ULTIMATE_TROOPS_LABEL
 '''%1% Ultimate Ground Troops'''
 
-BLUE_STAR
-'''Blue star'''
+VERY_BRIGHT_STAR
+'''Very bright star'''
 
-WHITE_STAR
-'''White star'''
+BRIGHT_STAR
+'''Bright star'''
 
-YELLOW_STAR
-'''Yellow star'''
+DIM_STAR
+'''Dim star'''
 
-ORANGE_STAR
-'''Orange star'''
-
-RED_STAR
-'''Red star'''
+NO_STAR
+'''No star'''
 
 
 #############################################################
