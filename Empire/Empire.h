@@ -299,6 +299,10 @@ public:
     const std::set<std::string>&    AvailableShipHulls() const;                     ///< Returns the set of ship hull names that that the empire can currently build
 
     const Meter*            GetMeter(const std::string& name) const;                ///< Returns the alignment meter with the indicated name, if any, or 0 if no such alignment meter exists
+    std::map<std::string, Meter>::const_iterator
+                            meter_begin() const { return m_meters.begin(); }
+    std::map<std::string, Meter>::const_iterator
+                            meter_end() const   { return m_meters.end(); }
 
     bool                    ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
     const                   ResearchQueue& GetResearchQueue() const;                ///< Returns the queue of techs being or queued to be researched.
