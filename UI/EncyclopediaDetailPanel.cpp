@@ -716,6 +716,14 @@ void EncyclopediaDetailPanel::Refresh() {
         else
             detailed_description += UserString("NO_CAPITAL");
 
+        // Empire meters
+        detailed_description += "\n\n" + UserString("EMPIRE_METERS") + "\n";
+        for (std::map<std::string, Meter>::const_iterator meter_it = empire->meter_begin();
+             meter_it != empire->meter_end(); ++meter_it)
+        {
+            detailed_description += UserString(meter_it->first) + ": " + DoubleToString(meter_it->second.Initial(), 3, false) + "\n";
+        }
+
         // Planets
         std::vector<const UniverseObject*> empire_planets = objects.FindObjects(OwnedVisitor<Planet>(empire_id));
         if (!empire_planets.empty()) {

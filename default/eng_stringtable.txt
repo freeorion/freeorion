@@ -2271,6 +2271,9 @@ Capital:
 NO_CAPITAL
 No Known Capital
 
+EMPIRE_METERS
+Meters:
+
 OWNED_PLANETS
 Owned Planets: 
 
