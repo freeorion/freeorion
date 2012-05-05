@@ -579,7 +579,7 @@ Part
     buildtime = 4
     location = And [
         OwnedBy TheEmpire Source.Owner
-        Population low = 3 high = 999
+        Population low = 1 high = 999
     ]
     icon = ""
 
