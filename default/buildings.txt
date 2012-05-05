@@ -18,33 +18,6 @@ BuildingType
                 SetTargetMining Value + Target.Population * 0.5
                 SetTargetIndustry Value + Target.Population * 1.0
             ]
-            
-        EffectsGroup          // This is for homeworlds. The right species gets the population bonus on the homeworld no matter the focus
-            scope = And [
-                Planet
-                Homeworld name = Source.Planet.Species
-                OwnedBy TheEmpire Source.Owner
-                Contains Source   
-            ]
-            stackinggroup = "HOMEWORLD_STACK"
-            accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 3
-            
-        EffectsGroup          //   This is for homeworlds. These bonuses given to connected planets whose homeworld this is If the focus is growth
-            scope = And [
-                Planet
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected empire = Source.Owner condition = Source
-                Number low = 1 condition = And [
-                    Contains Source
-                    Planet        
-                    Homeworld name = RootCandidate.Species
-                ]   
-            ]
-            activation =  Focus "FOCUS_GROWTH"
-            stackinggroup = "HOMEWORLD_STACK"
-            accountinglabel = "HOMEWORLD_SUPPLY"
-            effects = SetTargetPopulation Value + 3
 
         EffectsGroup
             scope = And [

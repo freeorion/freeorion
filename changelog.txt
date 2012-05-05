@@ -17,6 +17,7 @@ Content:
  ~ Species:
  ~ ~ All species now have different aptitudes at resource production, ground combat & so on.  A few require no food, and a few have special stealth and detection abilities.
  ~ ~ ~ Sorry, currently not balanced.
+ ~ ~ All Homeworlds now provide a population bonus, and can be set to 'Growth' to provide population bonuses for colonies of the same species
  ~ ~ Added Phototrophic species pick, which increases population with brighter suns.
  ~ ~ Added Exobots, a constructable robot species.
  ~ ~ Exempted Non-Organic species from certain biologically based tech benefits.

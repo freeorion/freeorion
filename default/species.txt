@@ -450,7 +450,6 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[AVERAGE_POPULATION]]
-        [[CULTURAL_ARCHIVES]]
     ]
     
     [[TOXIC_STANDARD_EP]]
@@ -486,8 +485,6 @@ Species
                 
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-
-        [[CULTURAL_ARCHIVES]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -525,7 +522,6 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[AVERAGE_POPULATION]]
-        [[CULTURAL_ARCHIVES]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -564,7 +560,6 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[AVERAGE_POPULATION]]
-        [[CULTURAL_ARCHIVES]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -628,7 +623,6 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_POPULATION]]
-        [[CULTURAL_ARCHIVES]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -664,7 +658,6 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[AVERAGE_POPULATION]]
-        [[CULTURAL_ARCHIVES]]
     ]
     
     [[TUNDRA_NARROW_EP]]
@@ -734,7 +727,6 @@ Species
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-        [[CULTURAL_ARCHIVES]]
 
     ]
     
@@ -971,7 +963,6 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[AVERAGE_POPULATION]]
-        [[CULTURAL_ARCHIVES]]
     ]
     
     [[INFERNO_NARROW_EP]]
@@ -1080,7 +1071,6 @@ Species
         [[AVERAGE_POPULATION]]
         
         [[TUNNELS_SPECIAL]]
-        [[CULTURAL_ARCHIVES]]
     ]
     
     [[INFERNO_STANDARD_EP]]
@@ -1817,7 +1807,10 @@ HAS_GROWTH_FOCUS
             name = "FOCUS_GROWTH"
             description = "FOCUS_GROWTH_DESC"
             location = Or [
-                Homeworld
+                AND [
+                    Homeworld
+                    Not HasTag "SELF_SUFFICIENT"
+                ]
                 HasSpecial name = "POSITRONIUM_SPECIAL"
                 HasSpecial name = "SUPERCONDUCTOR_SPECIAL"
                 HasSpecial name = "MONOPOLE_SPECIAL"
@@ -1954,7 +1947,33 @@ STANDARD_CONSTRUCTION
 '''
 
 BASIC_POPULATION
-'''        EffectsGroup
+'''     EffectsGroup          //  The right species gets the population bonus on the homeworld no matter the focus
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetPopulation Value + 3
+            
+        EffectsGroup          //  NOWORK These bonuses given to connected planets whose homeworld this is If the focus is growth
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Number low = 1 condition = And [
+                    Source
+                    Planet
+                    Homeworld name = RootCandidate.Species
+                ]   
+            ]
+            activation =  Focus "FOCUS_GROWTH"
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_SUPPLY"
+            effects = SetTargetPopulation Value + 3    
+
+
+        EffectsGroup
             scope = Source
             activation = And [
                 Planet environment = Good
@@ -2653,12 +2672,6 @@ TUNNELS_SPECIAL
         effects = AddSpecial name = "TUNNELS_SPECIAL"
 '''
 
-CULTURAL_ARCHIVES
-'''EffectsGroup     
-        scope = Source     
-        activation = Turn high = 0
-        effects = CreateBuilding name = "BLD_CULTURE_ARCHIVES"
-'''
 
 //#####      M U L T I P L I E R S     #####//
 
