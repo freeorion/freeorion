@@ -1,3 +1,5 @@
+include "shared_macros.txt"
+
 //#######################################################\\
 //####                                               ####\\
 //####       P L A Y A B L E   S P E C I E S         ####\\
@@ -2289,7 +2291,7 @@ AVERAGE_MINING
                 Planet size = Tiny
             ]
             accountinglabel = "FOCUS_MINING_LABEL"
-            effects = SetTargetMining Value + 4.0 + Target.Population * 0.2
+            effects = SetTargetMining Value + 4.0 * [[BASIC_PRODUCTION]] + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = Source
@@ -2298,7 +2300,7 @@ AVERAGE_MINING
                 Planet size = Small
             ]
             accountinglabel = "FOCUS_MINING_LABEL"
-            effects = SetTargetMining Value + 3.0 + Target.Population * 0.2
+            effects = SetTargetMining Value + 3.0 * [[BASIC_PRODUCTION]] + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = Source
@@ -2307,7 +2309,7 @@ AVERAGE_MINING
                 Planet size = Medium
             ]
             accountinglabel = "FOCUS_MINING_LABEL"
-            effects = SetTargetMining Value + 2.0 + Target.Population * 0.2
+            effects = SetTargetMining Value + 2.0 * [[BASIC_PRODUCTION]] + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = Source
@@ -2316,7 +2318,7 @@ AVERAGE_MINING
                 Planet size = Large
             ]
             accountinglabel = "FOCUS_MINING_LABEL"
-            effects = SetTargetMining Value + 1.0 + Target.Population * 0.2
+            effects = SetTargetMining Value + 1.0 * [[BASIC_PRODUCTION]] + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = Source
@@ -2325,7 +2327,7 @@ AVERAGE_MINING
                 Planet size = [Huge GasGiant]
             ]
             accountinglabel = "FOCUS_MINING_LABEL"
-            effects = SetTargetMining Value + Target.Population * 0.2
+            effects = SetTargetMining Value + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = Source
@@ -2334,13 +2336,13 @@ AVERAGE_MINING
                 Planet type = Asteroids
             ]
             accountinglabel = "ASTEROID_MINING_LABEL"
-            effects = SetTargetMining Value + 3
+            effects = SetTargetMining Value + 3 * [[BASIC_PRODUCTION]]
 
         EffectsGroup
             scope = Source
             activation = Focus "FOCUS_HEAVY_MINING"
             accountinglabel = "FOCUS_HEAVY_MINING_LABEL"
-            effects = SetTargetMining Value + Target.Population * 4
+            effects = SetTargetMining Value + Target.Population * 8 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = Source
@@ -2414,7 +2416,7 @@ AVERAGE_INDUSTRY
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
             accountinglabel = "FOCUS_INDUSTRY_LABEL"
-            effects = SetTargetIndustry Value + Target.Population * .5
+            effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
 '''
 
 GOOD_INDUSTRY
@@ -2464,7 +2466,7 @@ AVERAGE_RESEARCH
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
             accountinglabel = "FOCUS_RESEARCH_LABEL"
-            effects = SetTargetResearch Value + Target.Population * .5
+            effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
 '''
 
 GOOD_RESEARCH

@@ -1,3 +1,4 @@
+include "shared_macros.txt"
 
 BuildingType
     name = "BLD_CULTURE_ARCHIVES"
@@ -14,9 +15,9 @@ BuildingType
                 Contains Source
             ]
             effects = [
-                SetTargetResearch Value + .5
-                SetTargetMining Value + Target.Population * 0.5
-                SetTargetIndustry Value + Target.Population * 1.0
+                SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
+                SetTargetMining Value + Target.Population * [[PRODUCTION_PER_POP]]
+                SetTargetIndustry Value + Target.Population * 2 * [[PRODUCTION_PER_POP]]
             ]
 
         EffectsGroup
@@ -42,9 +43,9 @@ BuildingType
         TargetPopulation low = 1
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Planet
+         EffectsGroup
+             scope = And [
+                 Planet
                 Contains Source
             ]
             effects = SetTargetPopulation Value + Sum Defense Planet
@@ -52,7 +53,7 @@ BuildingType
         EffectsGroup
             scope = EmpireMeter empire = LocalCandidate.Owner meter = "METER_DETECTION" low = 5 high = 99999
             effects = SetStealth Value + 10
-            
+
         EffectsGroup
             scope = And [
                 Planet
@@ -403,7 +404,7 @@ BuildingType
                 Not OwnerHasTech "PRO_INDUSTRY_CENTER_II"
             ]
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry Value + Target.Population * 0.5
+            effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -415,7 +416,7 @@ BuildingType
                 Not OwnerHasTech "PRO_INDUSTRY_CENTER_III"
             ]
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry Value + Target.Population
+            effects = SetTargetIndustry Value + Target.Population * 2 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -424,7 +425,7 @@ BuildingType
             ]
             activation = OwnerHasTech "PRO_INDUSTRY_CENTER_III"
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry Value + Target.Population * 1.5
+            effects = SetTargetIndustry Value + Target.Population * 3 * [[PRODUCTION_PER_POP]]
     ]
     icon = ""
 
@@ -514,7 +515,7 @@ BuildingType
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_INDUSTRY_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * 0.5
+            effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -527,7 +528,7 @@ BuildingType
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_RESEARCH_EFFECT"
-            effects = SetTargetResearch Value * 1.5
+            effects = SetTargetResearch Value * 3 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -540,7 +541,7 @@ BuildingType
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_MINING_EFFECT"
-            effects = SetTargetMining Value + 2.0
+            effects = SetTargetMining Value + 2.0 * [[BASIC_PRODUCTION]]
     ]
     icon = ""
 
@@ -637,7 +638,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BLD_HYPER_DAM_BONUS"
-            effects = SetTargetIndustry Value + Target.Population
+            effects = SetTargetIndustry Value + Target.Population * 2 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -667,7 +668,7 @@ BuildingType
             ]
             activation = Star type = [Blue White]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population
+            effects = SetTargetIndustry Value + Target.Population * 2 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -677,7 +678,7 @@ BuildingType
             ]
             activation = Star type = [Yellow Orange]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * 0.5
+            effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -687,7 +688,7 @@ BuildingType
             ]
             activation = Star type = Red
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * 0.25
+            effects = SetTargetIndustry Value + Target.Population * 0.5 * [[PRODUCTION_PER_POP]]
     ]
     icon = "icons/building/miniature_sun.png"
 
@@ -805,7 +806,7 @@ BuildingType
             ]
             effects = [
                 SetPopulation Target.Population - 3
-                SetTargetIndustry Value + Target.Population * 5
+                SetTargetIndustry Value + Target.Population * 10 * [[PRODUCTION_PER_POP]]
                 SetIndustry Target.TargetIndustry
             ]
 
@@ -845,7 +846,7 @@ BuildingType
             ]
             activation = Star type = BlackHole
             stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * 2
+            effects = SetTargetIndustry Value + Target.Population * 4 * [[PRODUCTION_PER_POP]]
     icon = "icons/building/blackhole.png"
 
 BuildingType
@@ -959,7 +960,7 @@ BuildingType
                 PopulationCenter
             ]
             activation = Source
-            effects = SetTargetPopulation 0.1 + Target.TargetPopulation - Target.TargetPopulation
+            effects = SetTargetPopulation 0.1
 
         EffectsGroup
             scope = ContainedBy Contains Source
@@ -982,7 +983,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BLD_ENCLAVE_VOID_STACK"
-            effects = SetTargetResearch Value + Target.Population * 0.5
+            effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
     icon = ""
 
 BuildingType
@@ -1069,7 +1070,7 @@ BuildingType
                 Focus "FOCUS_INDUSTRY"
             ]
             activation = Focus "FOCUS_INDUSTRY"
-            effects = SetTargetIndustry Value + Target.Population * 0.25
+            effects = SetTargetIndustry Value + Target.Population * 0.5 * [[PRODUCTION_PER_POP]]
     icon = ""
 
 BuildingType

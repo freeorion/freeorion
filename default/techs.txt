@@ -359,7 +359,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
             ]
-            effects = SetTargetResearch Value + .5
+            effects = SetTargetResearch Value + .5 * [[BASIC_PRODUCTION]]
     graphic = "icons/tech/basic_autolabs.png"
 
 Tech
@@ -446,7 +446,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 0.5
+            effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
 
 Tech
     name = "LRN_TIME_MECH"
@@ -514,7 +514,7 @@ Tech
                 PopulationCenter
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 0.25
+            effects = SetTargetResearch Value + Target.Population * 0.5 * [[PRODUCTION_PER_POP]]
 
 Tech
     name = "LRN_OBSERVATORY_I"
@@ -571,7 +571,7 @@ Tech
                 Star type = BlackHole
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 1.0
+            effects = SetTargetResearch Value + Target.Population * 2 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -580,7 +580,7 @@ Tech
                 Star type = Neutron
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 0.75
+            effects = SetTargetResearch Value + Target.Population * 1.5 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -589,7 +589,7 @@ Tech
                 Star type = [Blue White]
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 0.5
+            effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -598,7 +598,7 @@ Tech
                 Star type = [Red Orange Yellow]
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 0.25
+            effects = SetTargetResearch Value + Target.Population * 0.5 * [[PRODUCTION_PER_POP]]
     ]
     graphic = "icons/tech/stellar_tomography.png"
 
@@ -912,7 +912,7 @@ Tech
                 PopulationCenter
                 Focus "FOCUS_MINING"
             ]
-            effects = SetTargetMining Value + 1.0
+            effects = SetTargetMining Value + 1.0 * [[BASIC_PRODUCTION]]
 
         EffectsGroup
             scope = And [
@@ -920,7 +920,7 @@ Tech
                 PopulationCenter
                 Focus "FOCUS_INDUSTRY"
             ]
-            effects = SetTargetIndustry Value + Target.Population * 0.25
+            effects = SetTargetIndustry Value + Target.Population * 0.5 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -1071,7 +1071,7 @@ Tech
                 ProductionCenter
                 Focus "FOCUS_INDUSTRY"
                 ]
-            effects = SetTargetIndustry Value + Target.Population * 0.2
+            effects = SetTargetIndustry Value + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -1079,7 +1079,7 @@ Tech
                 ProductionCenter
                 Focus "FOCUS_MINING"
             ]
-            effects = SetTargetMining Value + 1.0
+            effects = SetTargetMining Value + 1.0 * [[BASIC_PRODUCTION]]
         ]
     graphic = "icons/tech/robotic_production.png"
     
@@ -1132,7 +1132,7 @@ Tech
                 PopulationCenter
                 Focus "FOCUS_INDUSTRY"
             ]
-            effects = SetTargetIndustry Value + Target.Population * 0.5
+            effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
     graphic = "icons/tech/fusion_generation.png"
 
 Tech
@@ -1176,7 +1176,7 @@ Tech
                 PopulationCenter
                 OwnedBy TheEmpire Source.Owner
             ]
-            effects = SetTargetIndustry Value + .5
+            effects = SetTargetIndustry Value + .5 * [[BASIC_PRODUCTION]]
     graphic = "icons/tech/basic_autofactories.png"
 
 /* Find some other use for this concept: */
@@ -1290,7 +1290,7 @@ Tech
                 Focus "FOCUS_MINING"
             ]
             activation = OwnerHasTech "PRO_ASTEROID_MINE"
-            effects = SetTargetMining Value + 1.0
+            effects = SetTargetMining Value + 1.0 * [[BASIC_PRODUCTION]]
     graphic = "icons/tech/asteroid_mining_ii.png"
 
 Tech
@@ -1309,7 +1309,7 @@ Tech
                 Planet size = Tiny
                 Focus "FOCUS_MINING"
             ]
-            effects = SetTargetMining Value + 2.0
+            effects = SetTargetMining Value + 2.0 * [[BASIC_PRODUCTION]]
 
         EffectsGroup
             scope = And [
@@ -1318,7 +1318,7 @@ Tech
                 Planet size = Small
                 Focus "FOCUS_MINING"
             ]
-            effects = SetTargetMining Value + 1.5
+            effects = SetTargetMining Value + 1.5 * [[BASIC_PRODUCTION]]
 
         EffectsGroup
             scope = And [
@@ -1327,7 +1327,7 @@ Tech
                 Planet size = Medium
                 Focus "FOCUS_MINING"
             ]
-            effects = SetTargetMining Value + 1.0
+            effects = SetTargetMining Value + 1.0 * [[BASIC_PRODUCTION]]
 
         EffectsGroup
             scope = And [
@@ -1336,7 +1336,7 @@ Tech
                 Planet size = Large
                 Focus "FOCUS_MINING"
             ]
-            effects = SetTargetMining Value + .5
+            effects = SetTargetMining Value + .5 * [[BASIC_PRODUCTION]]
     ]
     graphic = "icons/tech/deep_core_mining.png"
 

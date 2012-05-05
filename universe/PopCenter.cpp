@@ -83,10 +83,14 @@ double PopCenter::NextTurnPopGrowth() const {
     double cur_pop = GetMeter(METER_POPULATION)->Current();
     double pop_change = 0.0;
 
-    if (target_pop > cur_pop)
-        pop_change = cur_pop * (target_pop - cur_pop) / 100;
-    else
-        pop_change = -(cur_pop - target_pop) / 10;
+    if (target_pop > cur_pop) {
+        pop_change = cur_pop * (target_pop - cur_pop) / 100 + 0.05; // Adding a constant avoids slow asymptotic growth towards target.
+        pop_change = std::min(pop_change, target_pop - cur_pop);
+    }
+    else {
+        pop_change = -(cur_pop - target_pop) / 10 - 0.05;
+        pop_change = std::max(pop_change, target_pop - cur_pop);
+    }
 
     return pop_change;
 }

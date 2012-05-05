@@ -15,7 +15,7 @@ Special
         scope = Source
         activation = Source
         effects = [
-            SetTargetResearch Value + .3
+            SetTargetResearch Value + .3 * [[BASIC_PRODUCTION]]
             SetTargetConstruction Value - 20
         ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
@@ -36,7 +36,7 @@ Special
         activation = Source
         effects = [
             SetTargetConstruction Value - 20
-            SetTargetIndustry Value + Target.Population * 0.2
+            SetTargetIndustry Value + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
         ]
     graphic = "icons/specials_huge/tidal_lock.png"
 
@@ -275,7 +275,7 @@ Special
             ]
             activation = Focus "FOCUS_RESEARCH"
             stackinggroup = "COMPUTRONIUM_STACK"
-            effects = SetTargetResearch Value + Target.Population * 0.5
+            effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
             
             
         [[CHANCE_OF_GUARD_1]]
@@ -743,7 +743,7 @@ Special
                 ]
             ]
             effects = [
-                SetEmpireMineralStockpile value = Value + 2.0
+                SetEmpireMineralStockpile value = Value + 2.0 * [[BASIC_PRODUCTION]]
                 GenerateSitRepMessage
                     message = "EFFECT_DERELICT_MINERALS"
                     parameters = [
@@ -1319,19 +1319,19 @@ STANDARD_MINERAL_BOOST
 '''        EffectsGroup
             scope = Source
             activation = Focus "FOCUS_MINING"
-            effects = SetTargetMining Value + 5.0
+            effects = SetTargetMining Value + 5.0 * [[BASIC_PRODUCTION]]
 
         EffectsGroup
             scope = Source
             activation = Focus "FOCUS_HEAVY_MINING"
-            effects = SetTargetMining Value + Target.Population * 2
+            effects = SetTargetMining Value + Target.Population * 4 * [[PRODUCTION_PER_POP]]
 '''
 
 STANDARD_INDUSTRY_BOOST
 '''        EffectsGroup
             scope = Source
             activation = Focus "FOCUS_INDUSTRY"
-            effects = SetTargetIndustry Value + Target.Population * .5
+            effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
 
 '''
 

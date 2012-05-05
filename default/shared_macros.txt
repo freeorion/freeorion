@@ -1,3 +1,11 @@
+/*   R E S O U R C E    P R O D U C T I O N    */
+
+PRODUCTION_PER_POP
+'''0.5 * [[BASIC_PRODUCTION]]'''
+
+BASIC_PRODUCTION
+'''1.0'''
+
 
 /*   S T E A L T H   */
 
