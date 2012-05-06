@@ -12,6 +12,7 @@ Balancing:
  ~ Increased cost of troop pods to make conquest less casual.
  ~ Made monsters nests last on average twice as long.
  ~ Halved the generation of floaters from forests.
+ ~ Colony and Outpost bases (for in-system use only) can be built without shipyards.
 
 Content:
  ~ Species:
