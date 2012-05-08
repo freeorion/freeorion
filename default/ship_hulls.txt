@@ -36,10 +36,7 @@ Hull
     slots = Slot type = Internal position = (0.50, 0.50)
     buildCost = .1
     buildTime = 1
-    location = Contains And [
-        Building "BLD_SHIPYARD_BASE"
-        OwnedBy TheEmpire Source.Owner
-    ]
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
     icon = ""
@@ -49,7 +46,7 @@ Hull
     name = "SH_BASIC_SMALL"
     description = "SH_BASIC_SMALL_DESC"
     speed = 50
-    starlaneSpeed = 90
+    starlaneSpeed = 75
     fuel = 3
     stealth = 2
     structure = 8
@@ -71,7 +68,7 @@ Hull
     name = "SH_BASIC_MEDIUM"
     description = "SH_BASIC_MEDIUM_DESC"
     speed = 50
-    starlaneSpeed = 80
+    starlaneSpeed = 60
     fuel = 3
     stealth = 2
     structure = 15
@@ -95,7 +92,7 @@ Hull
     name = "SH_STANDARD"
     description = "SH_STANDARD_DESC"
     speed = 50
-    starlaneSpeed = 65
+    starlaneSpeed = 40
     fuel = 3
     stealth = 15
     structure = 20
