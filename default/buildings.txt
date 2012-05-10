@@ -691,7 +691,7 @@ BuildingType
             effects = SetTargetIndustry Value + Target.Population * 0.5 * [[PRODUCTION_PER_POP]]
     ]
     icon = "icons/building/miniature_sun.png"
-
+/*
 BuildingType
     name = "BLD_CLONING_CENTER"
     description = "BLD_CLONING_CENTER_DESC"
@@ -706,7 +706,7 @@ BuildingType
         ]
     ]
     icon = ""
-
+*/
 BuildingType
     name = "BLD_TERRAFORM"
     description = "BLD_TERRAFORM_DESC"
@@ -816,7 +816,7 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/building/concentration-camp.png"
-
+/*
 BuildingType
     name = "BLD_INDUSTRY_FARM"
     description = "BLD_INDUSTRY_FARM_DESC"
@@ -827,7 +827,7 @@ BuildingType
         TargetPopulation low = 1
     ]
     icon = ""
-
+*/
 BuildingType
     name = "BLD_BLACK_HOLE_POW_GEN"
     description = "BLD_BLACK_HOLE_POW_GEN_DESC"
@@ -1247,7 +1247,7 @@ BuildingType
             scope = Source
             effects = Destroy
     icon = ""
-
+/*
 BuildingType
     name = "BLD_ORBITAL_FARM"
     description = "BLD_ORBITAL_FARM_DESC"
@@ -1259,7 +1259,7 @@ BuildingType
         Planet
     ]
     icon = ""
-
+/*
 BuildingType
     name = "BLD_SUPER_TESTERS"
     description = "BLD_SUPER_TESTERS_DESC"

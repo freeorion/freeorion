@@ -3265,7 +3265,7 @@ GAIA_SPECIAL
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Doubles the planet's Farming, Health and increases Population capacity by 1, 2, 3, and 4 for Small, Medium, Large and Huge planets, respectively.
+'''Increases Population capacity by 1, 2, 3, and 4 for Small, Medium, Large and Huge planets, respectively.
 Disables the Heavy Mining focus.
 
 This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of it's population.'''
@@ -3322,7 +3322,7 @@ SLOW_ROTATION_SPECIAL
 Very Slow Rotation
 
 SLOW_ROTATION_SPECIAL_DESC
-'''Construction on this planet is decreased by 20, and Farming by 10, unless the Orbital Farming tech has been researched.
+'''Construction on this planet is decreased by 20.
 
 This planet rotates about its axis very slowly, causing very long days and nights. Infrastructure growth and food production are reduced.'''
 
@@ -3393,7 +3393,7 @@ This planet has monsters burrowing around in its core causing high volcanic acti
 VOLCANIC_ACTIVITY_SPECIAL
 High Volcanic Activity
 VOLCANIC_ACTIVITY_SPECIAL_DESC
-This planet has high levels of volcanic activity, adding volcanic ash, reducing target health by 5, and cutting farming in half.
+'''This planet has high levels of volcanic activity, possibly obscuring the planet's surface.'''
 
 VOLCANIC_ASH_SLAVE_SPECIAL
 Volcanic Ash
@@ -4783,9 +4783,7 @@ GRO_MEDICAL_PATH
 Medical Pathology
 
 GRO_MEDICAL_PATH_DESC
-'''Increases Health on all planets by 5. [[NO_NON_ORGANIC]]
-
-Many diseases and injuries, or manifestations of the same disease or injury, can have very similar causes and symptoms, but very different ideal treatments. By treating each individual's illness according its specific manifestation rather than its general categorization, a general benefit to health can be obtained.
+'''Many diseases and injuries, or manifestations of the same disease or injury, can have very similar causes and symptoms, but very different ideal treatments. By treating each individual's illness according its specific manifestation rather than its general categorization, a general benefit to health can be obtained.
 Treatment of diseases and injuries requires a thorough understanding of their causes. By studying the subtleties and intricacies of various ailments, it is possible to develop far more effective treatment methods.'''
 
 GRO_PLANET_ECOL
@@ -4798,9 +4796,7 @@ GRO_GENETIC_ENG
 Genetic Engineering
 
 GRO_GENETIC_ENG_DESC
-'''Increases target Farming on Good planets with the Farming focus by the planet's Population, and on Adequate planets with the Farming focus by one half of the planet's Population.
-
-High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification. Self-rotating crops may be grown continually, without the traditional need to alternate to soil rejuvenating - but less productive - plants every few growing seasons.
+'''High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification. Self-rotating crops may be grown continually, without the traditional need to alternate to soil rejuvenating - but less productive - plants every few growing seasons.
 
 The palette of genetics is as varied as the forms of life from which it borrows. Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existent or possible in nature. As well, genes may be altered prior to reinsertion, by altering the base codes directly, allowing entirely new genes to be created. Techniques are limited, however, to small modifications of existing genes that are available for study.'''
 
@@ -4820,9 +4816,7 @@ GRO_GENETIC_MED
 Genetic Medicine
 
 GRO_GENETIC_MED_DESC
-'''Increases Health on all planets by 5. [[NO_NON_ORGANIC]]
-
-Traditional Genetic Engineering alters genetic codes, then grows the modified organism from an embryonic state. Similar techniques may be applied to already matured individuals. The goals of these treatments may be cosmetic, functional, corrective, preventative or life-saving medical treatments. Reducing the delay between alteration and results from generations to months, days or hours has a corresponding increase in the range and power of possible alterations.'''
+'''Traditional Genetic Engineering alters genetic codes, then grows the modified organism from an embryonic state. Similar techniques may be applied to already matured individuals. The goals of these treatments may be cosmetic, functional, corrective, preventative or life-saving medical treatments. Reducing the delay between alteration and results from generations to months, days or hours has a corresponding increase in the range and power of possible alterations.'''
 
 GRO_LIFECYCLE_MAN
 Lifecycle Manipulation
@@ -4850,9 +4844,7 @@ GRO_NANOTECH_MED
 Nanotech Medicine
 
 GRO_NANOTECH_MED_DESC
-'''Increases Health on all planets by 10. [[NO_NON_ORGANIC]]
-
-Pathogens, particularly prokaryotes, are vulnerable to disruption of their genetic material from within - that is, if it is possible to permeate the cell membrane or the protein coating, in the case of viral infections. By designing nanorobots capable of identifying and penetrating such pathogens, it would be possible to destroy them by completely deconstructing their genetic material.
+'''Pathogens, particularly prokaryotes, are vulnerable to disruption of their genetic material from within - that is, if it is possible to permeate the cell membrane or the protein coating, in the case of viral infections. By designing nanorobots capable of identifying and penetrating such pathogens, it would be possible to destroy them by completely deconstructing their genetic material.
 
 While genetic alteration can repair or undo the effects of harmful or undesired mutations or correct biochemical imbalances, treating major physical trauma and non-genetic congenital defects requires actual physical corrective measures. Nanotechnology may be used to accomplish these tasks, with two important advantages: Correction may be done without invasive surgeries and associated secondary damage and risks, and treatment reaction time is greatly reduced, as the tools to do the job are always in place and ready to function.'''
 
@@ -4888,7 +4880,7 @@ GRO_ENERGY_META
 Pure-Energy Metabolism
 
 GRO_ENERGY_META_DESC
-'''Increases max Fuel on all ships by 2, max Defense on all planets by 5, max Shield on all planets by 5, target Farming on all planets with the Farming focus by one quarter of the planet's Population, target Mining on all planets with the Mining focus by 10, target Industry on all planets with the Industry focus by one quarter of the planet's population, and target Research on all planets with the Research focus by one fifth.
+'''Increases max Fuel on all ships by 2, max Defense on all planets by 5, max Shield on all planets by 5, target Mining on all planets with the Mining focus by 10, target Industry on all planets with the Industry focus by one quarter of the planet's population, and target Research on all planets with the Research focus by one fifth.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -5183,7 +5175,7 @@ SHP_MIL_ROBO_CONT
 Military Robotic Control
 
 SHP_MIL_ROBO_CONT_DESC
-Robotic control can be used effectively for tasks such as farming, mining and industry; the natural extension of this concept is to develop military robotic equipment capable of independently operating a starship. This would allow greater versatility in design, as the necessity for bulky life-support systems would be removed. Hulls produced with such technology could also perform dangerous repairs without thought for the safety and biological limitations of living engineers.
+Robotic control can be used effectively for tasks such as mining and industry; the natural extension of this concept is to develop military robotic equipment capable of independently operating a starship. This would allow greater versatility in design, as the necessity for bulky life-support systems would be removed. Hulls produced with such technology could also perform dangerous repairs without thought for the safety and biological limitations of living engineers.
 
 SHP_SPACE_FLUX_DRIVE
 Spatial Flux Drive
@@ -5340,7 +5332,7 @@ RESEARCH_SHORT_DESC
 Improves Research
 
 GROWTH_SHORT_DESC
-Improves Farming
+Improves Population
 
 MINING_SHORT_DESC
 Improves Mining
@@ -6255,7 +6247,7 @@ BLD_CULTURE_ARCHIVES
 Cultural Archives
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Increases target Research by 5, target Farming by the planet's Population, target Industry by the planet's Population, and target Mining by half of the planet's Population.
+'''Increases target Research by 5, target Industry by the planet's Population, and target Mining by half of the planet's Population.
 
 Stores the sum accumulated knowledge from thousands of years of life on this planet, giving bonuses to many aspects of planetary productivity.'''
 
@@ -6421,7 +6413,7 @@ BLD_GENOME_BANK
 Genome Bank
 
 BLD_GENOME_BANK_DESC
-'''Increases Farming on Farming focused planets by half of the planet's population, and Health on all planets by 3. This building also provides the empire with immunity from bioterror.
+'''Provides the empire with immunity from bioterror.
 
 The largest database ever conceived. The Genome Bank includes maps of the genomes of every organism known to the empire. This database is invaluable in the treatment of disease.'''
 
@@ -6429,7 +6421,7 @@ BLD_GAIA_TRANS
 Gaia Transformation
 
 BLD_GAIA_TRANS_DESC
-'''Doubles Farming and Population, and increases population capacity by 1, 2, 3, and 4 on Small, Medium, Large and Huge planets, respectively.
+'''Increases population capacity by 1, 2, 3, and 4 on Small, Medium, Large and Huge planets, respectively.
 
 Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
 
@@ -6437,7 +6429,7 @@ BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases Farming on planets with the Farming focus by half of the planet's population, Industry on planets with the Industry focus by half of the planet's population, Mining on planets with the Mining focus by 20, and research on Planets with the Research focus by one and a half. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases Industry on planets with the Industry focus by half of the planet's population, Mining on planets with the Mining focus by 20, and research on Planets with the Research focus by one and a half. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 

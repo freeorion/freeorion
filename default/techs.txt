@@ -931,7 +931,7 @@ Tech
             effects = SetTargetResearch Value * 1.2
     ]
     graphic = "icons/tech/pure-energy_metabolism.png"
-
+/*
 Tech
     name = "GRO_INDUSTRY_FARM"
     description = "GRO_INDUSTRY_FARM_DESC"
@@ -943,7 +943,7 @@ Tech
     prerequisites = "GRO_PLANET_ECOL"
     unlock = Item type = Building name = "BLD_INDUSTRY_FARM"
     graphic = "icons/tech/industrial_farming.png"
-
+*/
 Tech
     name = "GRO_GENOME_BANK"
     description = "GRO_GENOME_BANK_DESC"
@@ -955,7 +955,7 @@ Tech
     prerequisites = "GRO_GENETIC_MED"
     unlock = Item type = Building name = "BLD_GENOME_BANK"
     graphic = "icons/tech/genome_bank.png"
-
+/*
 Tech
     name = "GRO_INDUSTRY_CLONE"
     description = "GRO_INDUSTRY_CLONE_DESC"
@@ -967,7 +967,7 @@ Tech
     prerequisites = "GRO_LIFECYCLE_MAN"
     unlock = Item type = Building name = "BLD_CLONING_CENTER"
     graphic = "icons/tech/industrial_cloning.png"
-
+*/
 Tech
     name = "GRO_SUSPENDED_ANIMATION"
     description = "GRO_SUSPENDED_ANIMATION_DESC"
@@ -978,7 +978,7 @@ Tech
     researchturns = 3
     prerequisites = "GRO_LIFECYCLE_MAN"
     unlock = Item type = ShipPart name = "CO_SUSPEND_ANIM_POD"
-
+/*
 Tech
     name = "GRO_ORBIT_FARMING"
     description = "GRO_ORBIT_FARMING_DESC"
@@ -993,7 +993,7 @@ Tech
     ]
     unlock = Item type = Building name = "BLD_ORBITAL_FARM"
     graphic = "icons/tech/orbital_farming.png"
-
+*/
 Tech
     name = "GRO_TERRAFORM"
     description = "GRO_TERRAFORM_DESC"
