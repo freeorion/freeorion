@@ -1,10 +1,74 @@
 /*   R E S O U R C E    P R O D U C T I O N    */
 
+// If the following two are changed, POP_PER_PRODUCTION and INFRA_PER_PRODUCTION should be changed in eng_stringtable.txt.
 PRODUCTION_PER_POP
 '''0.5 * [[BASIC_PRODUCTION]]'''
 
+PRODUCTION_PER_INFRA
+'''0.125 * [[BASIC_PRODUCTION]]'''
+
+// The amount of production per population for effects that favour population over infrastructure
+POP_PRODUCTION_PER_POP
+'''2.0 * [[PRODUCTION_PER_POP]]'''
+
+// The amount of production per infrastructure for effects that favour population over infrastructure
+POP_PRODUCTION_PER_INFRA
+'''1.0 * [[PRODUCTION_PER_INFRA]]'''
+
+// The amount of production per population for effects that favour infrastructure over population
+INFRA_PRODUCTION_PER_POP
+'''1.0 * [[PRODUCTION_PER_POP]]'''
+
+// The amount of production per infrastructure for effects that favour infrastructure over population
+INFRA_PRODUCTION_PER_INFRA
+'''2.0 * [[PRODUCTION_PER_INFRA]]'''
+
 BASIC_PRODUCTION
 '''1.0'''
+
+/*
+ * The following macros define the conditions under which either the population bonus or the
+ * infrastructure bonus will be used for a particular tech.  This is always the greater of the two bonuses.
+ * For example, if you want a tech to favour population, you should use the following:
+ *
+ * EffectsGroup
+ *     scope = And [
+ *         ...
+ *         [[POP_CONDITION_INFRA]]
+ *         ...
+ *     ]
+ *     activation = ...
+ *     effects = SetTargetWhatever Value + Target.Construction * X * [[POP_PRODUCTION_PER_INFRA]]
+ *
+ * EffectsGroup
+ *     scope = And [
+ *         ...
+ *         [[POP_CONDITION_POP]]
+ *         ...
+ *     ]
+ *     activation = ...
+ *     effects = SetTargetWhatever Value + Target.Population * X * [[POP_PRODUCTION_PER_POP]]
+ *
+ * where "..." is whatever else you want to add to make the effect work as intended,
+ * and X is some number which should be the same in both effects groups (or omitted in both).
+ */
+STANDARD_CONDITION_POP
+'''Construction high = RootCandidate.Population * [[PRODUCTION_PER_POP]] / ([[PRODUCTION_PER_INFRA]])'''
+
+STANDARD_CONDITION_INFRA
+'''Construction low = RootCandidate.Population * [[PRODUCTION_PER_POP]] / ([[PRODUCTION_PER_INFRA]])'''
+
+POP_CONDITION_POP
+'''Construction high = RootCandidate.Population * [[POP_PRODUCTION_PER_POP]] / ([[POP_PRODUCTION_PER_INFRA]])'''
+
+POP_CONDITION_INFRA
+'''Construction low = RootCandidate.Population * [[POP_PRODUCTION_PER_POP]] / ([[POP_PRODUCTION_PER_INFRA]])'''
+
+INFRA_CONDITION_POP
+'''Construction high = RootCandidate.Population * [[INFRA_PRODUCTION_PER_POP]] / ([[INFRA_PRODUCTION_PER_INFRA]])'''
+
+INFRA_CONDITION_INFRA
+'''Construction low = RootCandidate.Population * [[INFRA_PRODUCTION_PER_POP]] / ([[INFRA_PRODUCTION_PER_INFRA]])'''
 
 
 /*   S T E A L T H   */

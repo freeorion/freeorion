@@ -345,24 +345,6 @@ Tech
     graphic = "icons/tech/psionics.png"
 
 Tech
-    name = "LRN_ARTIF_MINDS"
-    description = "LRN_ARTIF_MINDS_DESC"
-    short_description = "RESEARCH_SHORT_DESC"
-    techtype = Application
-    category = "LEARNING_CATEGORY"
-    researchcost = 25
-    researchturns = 6
-    prerequisites = "LRN_ALGO_ELEGANCE"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-            ]
-            effects = SetTargetResearch Value + .5 * [[BASIC_PRODUCTION]]
-    graphic = "icons/tech/basic_autolabs.png"
-
-Tech
     name = "LRN_XENOARCH"
     description = "LRN_XENOARCH_DESC"
     short_description = "XENOARCH_SHORT_DESC"
@@ -432,23 +414,6 @@ Tech
     graphic = "icons/tech/n-dimensional_subspace.png"
 
 Tech
-    name = "LRN_QUANT_NET"
-    description = "LRN_QUANT_NET_DESC"
-    short_description = "RESEARCH_SHORT_DESC"
-    techtype = Application
-    category = "LEARNING_CATEGORY"
-    researchcost = 200
-    researchturns = 6
-    prerequisites = "LRN_NDIM_SUBSPACE"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_RESEARCH"
-            ]
-            effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
-
-Tech
     name = "LRN_TIME_MECH"
     description = "LRN_TIME_MECH_DESC"
     short_description = "THEORY_SHORT_DESC"
@@ -460,40 +425,32 @@ Tech
     graphic = "icons/tech/temporal_mechanics.png"
 
 Tech
-    name = "LRN_UNIF_CONC"
-    description = "LRN_UNIF_CONC_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    name = "LRN_ARTIF_MINDS"
+    description = "LRN_ARTIF_MINDS_DESC"
+    short_description = "RESEARCH_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 100
-    researchturns = 15
-    prerequisites = [
-        "LRN_MIND_VOID"
-        "LRN_QUANT_NET"
-    ]
-    unlock = Item type = Building name = "BLD_COLLECTIVE_NET"
-    graphic = "icons/tech/unified_conscious.png"
-
-Tech
-    name = "LRN_TRANSCEND"
-    description = "LRN_TRANSCEND_DESC"
-    short_description = "VICTORY_SHORT_DESC"
-    techtype = Application
-    category = "LEARNING_CATEGORY"
-    researchcost = 250
-    researchturns = 25
-    prerequisites = [
-        "CON_TRANS_ARCH"
-        "LRN_TIME_MECH"
-        "LRN_UNIF_CONC"
-        "PRO_ZERO_GEN"
-        "GRO_ENERGY_META"
-    ]
-    effectsgroups =
+    researchcost = 25
+    researchturns = 6
+    prerequisites = "LRN_ALGO_ELEGANCE"
+    effectsgroups = [
         EffectsGroup
-            scope = Source
-            effects = Victory "TECH_VICTORY"
-    graphic = "icons/tech/singularity_of_transcendence.png"
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                [[INFRA_CONDITION_INFRA]]
+            ]
+            effects = SetTargetResearch Value + Target.Construction * 0.5 * [[INFRA_PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                [[INFRA_CONDITION_POP]]
+            ]
+            effects = SetTargetResearch Value + Target.Population * 0.5 * [[INFRA_PRODUCTION_PER_POP]]
+    ]
+    graphic = "icons/tech/basic_autolabs.png"
 
 Tech
     name = "LRN_DISTRIB_THOUGHT"
@@ -507,14 +464,25 @@ Tech
         "LRN_TRANSLING_THT"
         "LRN_PSIONICS"
     ]
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                PopulationCenter
+                ProductionCenter
                 Focus "FOCUS_RESEARCH"
+                [[POP_CONDITION_INFRA]]
             ]
-            effects = SetTargetResearch Value + Target.Population * 0.5 * [[PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value + Target.Construction * 0.5 * [[POP_PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Focus "FOCUS_RESEARCH"
+                [[POP_CONDITION_POP]]
+            ]
+            effects = SetTargetResearch Value + Target.Population * 0.5 * [[POP_PRODUCTION_PER_POP]]
+    ]
 
 Tech
     name = "LRN_OBSERVATORY_I"
@@ -555,6 +523,36 @@ Tech
     unlock = Item type = Building name = "BLD_SPATIAL_DISTORT_GEN"
 
 Tech
+    name = "LRN_QUANT_NET"
+    description = "LRN_QUANT_NET_DESC"
+    short_description = "RESEARCH_SHORT_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 200
+    researchturns = 6
+    prerequisites = "LRN_NDIM_SUBSPACE"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Focus "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            effects = SetTargetResearch Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
+                
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Focus "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_POP]]
+            ]
+            effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
+    ]
+
+Tech
     name = "LRN_STELLAR_TOMOGRAPHY"
     description = "LRN_STELLAR_TOMOGRAPHY_DESC"
     short_description = "RESEARCH_SHORT_DESC"
@@ -567,36 +565,80 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                Planet
+                ProductionCenter
                 Star type = BlackHole
                 Focus "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            effects = SetTargetResearch Value + Target.Construction * 2 * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Star type = BlackHole
+                Focus "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_POP]]
             ]
             effects = SetTargetResearch Value + Target.Population * 2 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                Planet
+                ProductionCenter
                 Star type = Neutron
                 Focus "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            effects = SetTargetResearch Value + Target.Construction * 1.5 * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Star type = Neutron
+                Focus "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_POP]]
             ]
             effects = SetTargetResearch Value + Target.Population * 1.5 * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                Planet
+                ProductionCenter
                 Star type = [Blue White]
                 Focus "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            effects = SetTargetResearch Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Star type = [Blue White]
+                Focus "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_POP]]
             ]
             effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                Planet
+                ProductionCenter
                 Star type = [Red Orange Yellow]
                 Focus "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            effects = SetTargetResearch Value + Target.Construction * 0.5 * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Star type = [Red Orange Yellow]
+                Focus "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_POP]]
             ]
             effects = SetTargetResearch Value + Target.Population * 0.5 * [[PRODUCTION_PER_POP]]
     ]
@@ -673,6 +715,42 @@ Tech
     unlock = Item type = Building name = "BLD_ART_BLACK_HOLE"
 
 Tech
+    name = "LRN_UNIF_CONC"
+    description = "LRN_UNIF_CONC_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 100
+    researchturns = 15
+    prerequisites = [
+        "LRN_MIND_VOID"
+        "LRN_QUANT_NET"
+    ]
+    unlock = Item type = Building name = "BLD_COLLECTIVE_NET"
+    graphic = "icons/tech/unified_conscious.png"
+
+Tech
+    name = "LRN_TRANSCEND"
+    description = "LRN_TRANSCEND_DESC"
+    short_description = "VICTORY_SHORT_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 250
+    researchturns = 25
+    prerequisites = [
+        "CON_TRANS_ARCH"
+        "LRN_TIME_MECH"
+        "LRN_UNIF_CONC"
+        "PRO_ZERO_GEN"
+        "GRO_ENERGY_META"
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            effects = Victory "TECH_VICTORY"
+    graphic = "icons/tech/singularity_of_transcendence.png"
+
+Tech
     name = "LRN_RUINS_MOD"
     description = "LRN_RUINS_MOD_DESC"
     short_description = "GAME_MAKE_WORK_SHORT_DESC"
@@ -690,8 +768,23 @@ Tech
                     HasSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
                 ]
                 Focus "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_INFRA]]
             ]
-            effects = SetTargetResearch Value * 3
+            stackinggroup = "ANCIENT_RUINS_RESEARCH_EFFECT"
+            effects = SetTargetResearch Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Or [
+                    HasSpecial "ANCIENT_RUINS_SPECIAL"
+                    HasSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
+                ]
+                Focus "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_POP]]
+            ]
+            stackinggroup = "ANCIENT_RUINS_RESEARCH_EFFECT"
+            effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -704,8 +797,26 @@ Tech
                     HasSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
                 ]
                 OwnedBy TheEmpire Source.Owner
+                [[STANDARD_CONDITION_INFRA]]
             ]
-            effects = SetTargetResearch Value * 1.05
+            stackinggroup = "ANCIENT_RUINS_RESEARCH_EFFECT"
+            effects = SetTargetResearch Value + Target.Construction * 0.25 * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Focus "FOCUS_RESEARCH"
+            ]
+            activation = Number low = 1 And [
+                Or [
+                    HasSpecial "ANCIENT_RUINS_SPECIAL"
+                    HasSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
+                ]
+                OwnedBy TheEmpire Source.Owner
+                [[STANDARD_CONDITION_POP]]
+            ]
+            stackinggroup = "ANCIENT_RUINS_RESEARCH_EFFECT"
+            effects = SetTargetResearch Value + Target.Population * 0.25 * [[PRODUCTION_PER_POP]]
     ]
 
 Tech
@@ -909,7 +1020,7 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                PopulationCenter
+                ProductionCenter
                 Focus "FOCUS_MINING"
             ]
             effects = SetTargetMining Value + 1.0 * [[BASIC_PRODUCTION]]
@@ -917,20 +1028,50 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                PopulationCenter
+                ProductionCenter
                 Focus "FOCUS_INDUSTRY"
+                [[POP_CONDITION_INFRA]]
             ]
-            effects = SetTargetIndustry Value + Target.Population * 0.5 * [[PRODUCTION_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Construction * 0.5 * [[POP_PRODUCTION_PER_INFRA]]
 
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-                Focus "FOCUS_RESEARCH"
+                ProductionCenter
+                Focus "FOCUS_INDUSTRY"
+                [[POP_CONDITION_POP]]
             ]
-            effects = SetTargetResearch Value * 1.2
+            effects = SetTargetIndustry Value + Target.Population * 0.5 * [[POP_PRODUCTION_PER_POP]]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Focus "FOCUS_RESEARCH"
+                [[POP_CONDITION_INFRA]]
+            ]
+            effects = SetTargetResearch Value  + Target.Construction * 0.25 * [[POP_PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Focus "FOCUS_RESEARCH"
+                [[POP_CONDITION_POP]]
+            ]
+            effects = SetTargetResearch Value  + Target.Population * 0.25 * [[POP_PRODUCTION_PER_POP]]
     ]
     graphic = "icons/tech/pure-energy_metabolism.png"
+
+Tech
+    name = "GRO_SUBTER_HAB"
+    description = "GRO_SUBTER_HAB_DESC"
+    short_description = "POPULATION_SHORT_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 4
+    researchturns = 1
+    graphic = "icons/tech/subterranean_construction.png"
 /*
 Tech
     name = "GRO_INDUSTRY_FARM"
@@ -1070,8 +1211,18 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
                 Focus "FOCUS_INDUSTRY"
-                ]
-            effects = SetTargetIndustry Value + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
+                [[INFRA_CONDITION_INFRA]]
+            ]
+            effects = SetTargetIndustry Value + Target.Construction * 0.4 * [[INFRA_PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Focus "FOCUS_INDUSTRY"
+                [[INFRA_CONDITION_POP]]
+            ]
+            effects = SetTargetIndustry Value + Target.Population * 0.4 * [[INFRA_PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -1100,24 +1251,6 @@ Tech
     graphic = "icons/species/robotic-01.png"
 
 Tech
-    name = "PRO_RAPID_EXO_PROD"
-    description = "PRO_RAPID_EXO_PROD"
-    short_description = "HEALTH_SHORT_DESC"
-    techtype = Application
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 20
-    researchturns = 3
-    prerequisites = "PRO_EXOBOTS"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                Species "SP_EXOBOT"
-                Planet
-            ]
-            effects = SetTargetPopulation Value + 5
-    graphic = ""
-
-Tech
     name = "PRO_FUSION_GEN"
     description = "PRO_FUSION_GEN_DESC"
     short_description = "INDUSTRY_SHORT_DESC"
@@ -1125,14 +1258,25 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 18
     researchturns = 1
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                PopulationCenter
+                ProductionCenter
                 Focus "FOCUS_INDUSTRY"
+                [[INFRA_CONDITION_INFRA]]
             ]
-            effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Construction * [[INFRA_PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Focus "FOCUS_INDUSTRY"
+                [[INFRA_CONDITION_POP]]
+            ]
+            effects = SetTargetIndustry Value + Target.Population * [[INFRA_PRODUCTION_PER_POP]]
+    ]
     graphic = "icons/tech/fusion_generation.png"
 
 Tech
@@ -1170,13 +1314,23 @@ Tech
         "LRN_ARTIF_MINDS"
         "PRO_NANOTECH_PROD"
     ]
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
-                PopulationCenter
+                ProductionCenter
                 OwnedBy TheEmpire Source.Owner
+                [[INFRA_CONDITION_INFRA]]
             ]
-            effects = SetTargetIndustry Value + .5 * [[BASIC_PRODUCTION]]
+            effects = SetTargetIndustry Value + 0.25 * [[INFRA_PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy TheEmpire Source.Owner
+                [[INFRA_CONDITION_POP]]
+            ]
+            effects = SetTargetIndustry Value + 0.25 * [[INFRA_PRODUCTION_PER_POP]]
+    ]
     graphic = "icons/tech/basic_autofactories.png"
 
 /* Find some other use for this concept: */
@@ -1700,6 +1854,18 @@ Tech
     researchcost = 4
     researchturns = 1
     prerequisites = "CON_METRO_INFRA"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Not Or [
+                    HasSpecial "TUNNELS_SPECIAL"
+                    HasSpecial "TECTONIC_INSTABILITY_SPECIAL"
+                ]
+            ]
+            accountinglabel = "TUNNELS_LABEL"
+            effects = SetTargetConstruction Value + 10
     graphic = "icons/tech/subterranean_construction.png"
 
 Tech

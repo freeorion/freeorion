@@ -5412,7 +5412,7 @@ CON_SUBTER_CONST
 Subterranean Construction
 
 CON_SUBTER_CONST_DESC
-'''If this planet is inhabitable, increases the Population capacity of this planet by 2.  Cannot improve a planet with the Tunnels or Techtonic Instability special.
+'''Increases Infrastructure by 10.  Cannot improve a planet with the Tunnels or Techtonic Instability special.
 
 When space is at a premium, the ability to build downwards as well as up is an invaluable asset. Entire underground cities and facilities can be constructed and maintained, and trans-planetary subterranean transportation routes can be established.'''
 
@@ -5459,6 +5459,12 @@ Palace Excluder
 
 CON_PALACE_EXCLUDE_DESC
 Ensures that only one imperial palace will be present in an empire at a time. Make sure you scrap your old imperial palace before your new one is built.
+
+GRO_SUBTER_HAB
+Subterranean Habitation
+
+GRO_SUBTER_HAB_DESC
+Increases the max population on all planets by 2.  Cannot improve a planet with the Tunnels or Tectonic Instability special.
 
 GRO_INDUSTRY_FARM
 Industrial Farming
@@ -7744,6 +7750,13 @@ HOMEWORLD_SUPPLY
 
 HOMEWORLD_BONUS
 '''Homeworld'''
+
+// The following two are used in tech descriptions, and should be updated if PRODUCTION_PER_POP or PRODUCTION_PER_INFRA are changed in shared_macros.txt.
+POP_PER_PRODUCTION
+'''2'''
+
+INFRA_PER_PRODUCTION
+'''8'''
 
 
 #############################################################

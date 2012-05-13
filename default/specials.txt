@@ -11,13 +11,14 @@ Special
         Not Capital
         Not Planet type = [Asteroids GasGiant]
     ]
-    effectsgroups = EffectsGroup
-        scope = Source
-        activation = Source
-        effects = [
-            SetTargetResearch Value + .3 * [[BASIC_PRODUCTION]]
-            SetTargetConstruction Value - 20
-        ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetResearch Value + .3 * [[BASIC_PRODUCTION]]
+                SetTargetConstruction Value - 20
+            ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
 
 Special
@@ -31,13 +32,23 @@ Special
         Not Capital
         Not Planet type = [Asteroids GasGiant]
     ]
-    effectsgroups = EffectsGroup
-        scope = Source
-        activation = Source
-        effects = [
-            SetTargetConstruction Value - 20
-            SetTargetIndustry Value + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
-        ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = [[STANDARD_CONDITION_INFRA]]
+            effects = [
+                SetTargetConstruction Value - 20
+                SetTargetIndustry Value + Target.Construction * 0.4 * [[PRODUCTION_PER_INFRA]]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = [[STANDARD_CONDITION_POP]]
+            effects = [
+                SetTargetConstruction Value - 20
+                SetTargetIndustry Value + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
+            ]
+    ]
     graphic = "icons/specials_huge/tidal_lock.png"
 
 Special
@@ -236,6 +247,10 @@ Special
         Not Capital
         Not Planet type = [Asteroids GasGiant]
     ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            effects = SetTargetConstruction Value + 10
     graphic = "icons/specials_huge/tunnels.png"
 
 Special
@@ -266,12 +281,24 @@ Special
             OwnedBy AnyEmpire
         ]
     ]
-    effectsgroups = [       
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Planet
                 Focus "FOCUS_RESEARCH"
                 OwnedBy TheEmpire Source.Owner
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            activation = Focus "FOCUS_RESEARCH"
+            stackinggroup = "COMPUTRONIUM_STACK"
+            effects = SetTargetResearch Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = And [
+                Planet
+                Focus "FOCUS_RESEARCH"
+                OwnedBy TheEmpire Source.Owner
+                [[STANDARD_CONDITION_POP]]
             ]
             activation = Focus "FOCUS_RESEARCH"
             stackinggroup = "COMPUTRONIUM_STACK"
@@ -1316,21 +1343,43 @@ Special
 
 
 STANDARD_MINERAL_BOOST
-'''        EffectsGroup
+'''EffectsGroup
             scope = Source
             activation = Focus "FOCUS_MINING"
             effects = SetTargetMining Value + 5.0 * [[BASIC_PRODUCTION]]
 
         EffectsGroup
             scope = Source
-            activation = Focus "FOCUS_HEAVY_MINING"
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            effects = SetTargetMining Value + Target.Construction * 4 * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                [[STANDARD_CONDITION_POP]]
+            ]
             effects = SetTargetMining Value + Target.Population * 4 * [[PRODUCTION_PER_POP]]
 '''
 
 STANDARD_INDUSTRY_BOOST
-'''        EffectsGroup
+'''EffectsGroup
             scope = Source
-            activation = Focus "FOCUS_INDUSTRY"
+            activation = And [
+                Focus "FOCUS_INDUSTRY"
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            effects = SetTargetIndustry Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_INDUSTRY"
+                [[STANDARD_CONDITION_POP]]
+            ]
             effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
 
 '''

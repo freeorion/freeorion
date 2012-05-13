@@ -2095,7 +2095,7 @@ TUNNELS_MODIFIER
             activation = And [
                 Or [
                     HasSpecial "TUNNELS_SPECIAL"
-                    OwnerHasTech "CON_SUBTER_CONST"
+                    OwnerHasTech "GRO_SUBTER_HAB"
                 ]
                 Not HasSpecial "TECTONIC_INSTABILITY_SPECIAL"
             ]
@@ -2289,6 +2289,17 @@ AVERAGE_MINING
             activation = And [
                 Focus type = "FOCUS_MINING"
                 Planet size = Tiny
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            accountinglabel = "FOCUS_MINING_LABEL"
+            effects = SetTargetMining Value + 4.0 * [[BASIC_PRODUCTION]] + Target.Construction * 0.4 * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Tiny
+                [[STANDARD_CONDITION_POP]]
             ]
             accountinglabel = "FOCUS_MINING_LABEL"
             effects = SetTargetMining Value + 4.0 * [[BASIC_PRODUCTION]] + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
@@ -2298,6 +2309,17 @@ AVERAGE_MINING
             activation = And [
                 Focus type = "FOCUS_MINING"
                 Planet size = Small
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            accountinglabel = "FOCUS_MINING_LABEL"
+            effects = SetTargetMining Value + 3.0 * [[BASIC_PRODUCTION]] + Target.Construction * 0.4 * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Small
+                [[STANDARD_CONDITION_POP]]
             ]
             accountinglabel = "FOCUS_MINING_LABEL"
             effects = SetTargetMining Value + 3.0 * [[BASIC_PRODUCTION]] + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
@@ -2307,6 +2329,17 @@ AVERAGE_MINING
             activation = And [
                 Focus type = "FOCUS_MINING"
                 Planet size = Medium
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            accountinglabel = "FOCUS_MINING_LABEL"
+            effects = SetTargetMining Value + 2.0 * [[BASIC_PRODUCTION]] + Target.Construction * 0.4 * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Medium
+                [[STANDARD_CONDITION_POP]]
             ]
             accountinglabel = "FOCUS_MINING_LABEL"
             effects = SetTargetMining Value + 2.0 * [[BASIC_PRODUCTION]] + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
@@ -2316,6 +2349,17 @@ AVERAGE_MINING
             activation = And [
                 Focus type = "FOCUS_MINING"
                 Planet size = Large
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            accountinglabel = "FOCUS_MINING_LABEL"
+            effects = SetTargetMining Value + 1.0 * [[BASIC_PRODUCTION]] + Target.Construction * 0.4 * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Large
+                [[STANDARD_CONDITION_POP]]
             ]
             accountinglabel = "FOCUS_MINING_LABEL"
             effects = SetTargetMining Value + 1.0 * [[BASIC_PRODUCTION]] + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
@@ -2325,6 +2369,17 @@ AVERAGE_MINING
             activation = And [
                 Focus type = "FOCUS_MINING"
                 Planet size = [Huge GasGiant]
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            accountinglabel = "FOCUS_MINING_LABEL"
+            effects = SetTargetMining Value + Target.Construction * 0.4 * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = [Huge GasGiant]
+                [[STANDARD_CONDITION_POP]]
             ]
             accountinglabel = "FOCUS_MINING_LABEL"
             effects = SetTargetMining Value + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
@@ -2340,7 +2395,19 @@ AVERAGE_MINING
 
         EffectsGroup
             scope = Source
-            activation = Focus "FOCUS_HEAVY_MINING"
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            accountinglabel = "FOCUS_HEAVY_MINING_LABEL"
+            effects = SetTargetMining Value + Target.Construction * 8 * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                [[STANDARD_CONDITION_POP]]
+            ]
             accountinglabel = "FOCUS_HEAVY_MINING_LABEL"
             effects = SetTargetMining Value + Target.Population * 8 * [[PRODUCTION_PER_POP]]
 
@@ -2414,7 +2481,19 @@ BAD_INDUSTRY
 AVERAGE_INDUSTRY
 '''EffectsGroup
             scope = Source
-            activation = Focus type = "FOCUS_INDUSTRY"
+            activation = And [
+                Focus type = "FOCUS_INDUSTRY"
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            accountinglabel = "FOCUS_INDUSTRY_LABEL"
+            effects = SetTargetIndustry Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_INDUSTRY"
+                [[STANDARD_CONDITION_POP]]
+            ]
             accountinglabel = "FOCUS_INDUSTRY_LABEL"
             effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
 '''
@@ -2464,7 +2543,19 @@ BAD_RESEARCH
 AVERAGE_RESEARCH
 '''EffectsGroup
             scope = Source
-            activation = Focus type = "FOCUS_RESEARCH"
+            activation = And [
+                Focus type = "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            accountinglabel = "FOCUS_RESEARCH_LABEL"
+            effects = SetTargetResearch Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_RESEARCH"
+                [[STANDARD_CONDITION_POP]]
+            ]
             accountinglabel = "FOCUS_RESEARCH_LABEL"
             effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
 '''
