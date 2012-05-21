@@ -1068,7 +1068,7 @@ Tech
     description = "GRO_SUBTER_HAB_DESC"
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
-    category = "CONSTRUCTION_CATEGORY"
+    category = "GROWTH_CATEGORY"
     researchcost = 4
     researchturns = 1
     graphic = "icons/tech/subterranean_construction.png"
