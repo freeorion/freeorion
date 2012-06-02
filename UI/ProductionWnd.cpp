@@ -369,11 +369,6 @@ void ProductionWnd::UpdateInfoPanel()
     ProductionQueue::const_iterator underfunded_it = queue.UnderfundedProject(empire);
     double PPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->allocated_pp;
     m_production_info_panel->Reset(PPs, total_queue_cost, queue.ProjectsInProgress(), PPs_to_underfunded_projects, queue.size());
-    /* Altering production queue may have freed up or required more PP, which may require extra
-       or free up excess minerals.  Signalling that the MineralResPool has changed causes the
-       MapWnd to be signalled that that pool has changed, which causes the resource indicator
-       to be updated (which polls the ProductionQueue to determine how many PPs are being spent) */
-    empire->GetResourcePool(RE_MINERALS)->ChangedSignal();
 }
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location)

@@ -17,7 +17,6 @@ BuildingType
             ]
             effects = [
                 SetTargetResearch Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
-                SetTargetMining Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
                 SetTargetIndustry Value + Target.Construction * 2 * [[PRODUCTION_PER_INFRA]]
             ]
 
@@ -30,7 +29,6 @@ BuildingType
             ]
             effects = [
                 SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
-                SetTargetMining Value + Target.Population * [[PRODUCTION_PER_POP]]
                 SetTargetIndustry Value + Target.Population * 2 * [[PRODUCTION_PER_POP]]
             ]
     ]
@@ -502,7 +500,6 @@ BuildingType
             effects = [
                 SetTargetConstruction Value + 30
                 SetEmpireCapital
-                SetMining Target.TargetMining
                 SetIndustry Target.TargetIndustry
                 SetTrade Target.TargetTrade
                 SetResearch Target.TargetResearch
@@ -584,19 +581,6 @@ BuildingType
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_RESEARCH_EFFECT"
             effects = SetTargetResearch Value + Target.Population * 3.0 * [[POP_PRODUCTION_PER_POP]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_MINING"
-            ]
-            activation = Not WithinDistance 500 And [
-                Ship
-                Not Stationary
-            ]
-            stackinggroup = "BLD_COLLECTIVE_NET_MINING_EFFECT"
-            effects = SetTargetMining Value + 2.0 * [[BASIC_PRODUCTION]]
     ]
     icon = ""
 
@@ -1113,7 +1097,7 @@ BuildingType
         EffectsGroup
             scope = ContainedBy Contains Source
             activation = Source
-            effects = SetStealth 100
+            effects = SetStealth 1500
     ]
     icon = ""
 

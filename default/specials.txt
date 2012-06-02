@@ -745,52 +745,6 @@ Special
     ]
     graphic = "icons/specials_huge/void.png"
 
-
-Special
-    name = "DERELICT_SPECIAL"               //  MINERALS
-    description = "DERELICT_SPECIAL_DESC"
-    spawnrate = 0.5
-    spawnlimit = 100
-    location = And [
-        System
-        Not Contains Capital
-    ]
-    effectsgroups = [
-        EffectsGroup
-            scope = NumberOf 1 And [
-                Ship
-                ContainedBy Source
-                OwnedBy AnyEmpire
-            ]
-            activation = And [
-                System
-                Contains And [
-                    Ship
-                    OwnedBy AnyEmpire
-                ]
-            ]
-            effects = [
-                SetEmpireMineralStockpile value = Value + 2.0 * [[BASIC_PRODUCTION]]
-                GenerateSitRepMessage
-                    message = "EFFECT_DERELICT_MINERALS"
-                    parameters = [
-                        tag = "system" data = Source.ID
-                    ]
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                System
-                Contains And [
-                    Ship
-                    OwnedBy AnyEmpire
-                ]
-            ]
-            effects = RemoveSpecial "DERELICT_SPECIAL"
-    ]
-    graphic = "icons/specials_huge/derelict.png"
-
 Special
     name = "DERELICT_SPECIAL2"               //  MAP / DETECTION
     description = "DERELICT_SPECIAL_DESC"
@@ -1228,7 +1182,7 @@ Special
     ]
     effectsgroups = [
         [[STANDARD_MINERAL_BOOST]]
-        
+
         EffectsGroup
             scope = And [
                 Planet
@@ -1269,7 +1223,7 @@ Special
     ]
     effectsgroups = [
         [[STANDARD_MINERAL_BOOST]]
-            
+
         EffectsGroup
             scope = And [
                 Planet
@@ -1311,7 +1265,7 @@ Special
     ]
     effectsgroups = [
         [[STANDARD_MINERAL_BOOST]]
-            
+
         EffectsGroup
             scope = And [
                 Planet
@@ -1345,8 +1299,19 @@ Special
 STANDARD_MINERAL_BOOST
 '''EffectsGroup
             scope = Source
-            activation = Focus "FOCUS_MINING"
-            effects = SetTargetMining Value + 5.0 * [[BASIC_PRODUCTION]]
+            activation = And [
+                Focus "FOCUS_MINING"
+                [[STANDARD_CONDITION_INFRA]]
+            ]
+            effects = SetTargetIndustry Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_MINING"
+                [[STANDARD_CONDITION_POP]]
+            ]
+            effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
 
         EffectsGroup
             scope = Source
@@ -1354,7 +1319,7 @@ STANDARD_MINERAL_BOOST
                 Focus "FOCUS_HEAVY_MINING"
                 [[STANDARD_CONDITION_INFRA]]
             ]
-            effects = SetTargetMining Value + Target.Construction * 4 * [[PRODUCTION_PER_INFRA]]
+            effects = SetTargetIndustry Value + Target.Construction * 4 * [[PRODUCTION_PER_INFRA]]
 
         EffectsGroup
             scope = Source
@@ -1362,7 +1327,7 @@ STANDARD_MINERAL_BOOST
                 Focus "FOCUS_HEAVY_MINING"
                 [[STANDARD_CONDITION_POP]]
             ]
-            effects = SetTargetMining Value + Target.Population * 4 * [[PRODUCTION_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * 4 * [[PRODUCTION_PER_POP]]
 '''
 
 STANDARD_INDUSTRY_BOOST

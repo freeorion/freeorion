@@ -93,8 +93,7 @@ namespace {
 
             set_empire_stockpile
                 =   (
-                            tok.SetEmpireMineralStockpile_ [ _a = RE_MINERALS ]
-                        |   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
+                            tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
                     )
                 >>  (
                         (

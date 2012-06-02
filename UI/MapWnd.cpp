@@ -755,10 +755,6 @@ MapWnd::MapWnd() :
                                 ClientUI::MeterIcon(METER_TRADE),
                                 0, 0, 3, 3, false, true);
 
-    m_mineral = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
-                                  ClientUI::MeterIcon(METER_MINING),
-                                  0, 0, 3, 3, false, true);
-
     m_menu_showing = false;
 
     int layout_column(0);
@@ -1734,7 +1730,6 @@ void MapWnd::InitTurn() {
     // empire is recreated each turn based on turn update from server, so connections of signals emitted from
     // the empire must be remade each turn (unlike connections to signals from the sidepanel)
     if (this_client_empire) {
-        GG::Connect(this_client_empire->GetResourcePool(RE_MINERALS)->ChangedSignal,        &MapWnd::RefreshMineralsResourceIndicator,  this, 0);
         GG::Connect(this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this, 0);
         GG::Connect(this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this, 0);
         GG::Connect(this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this, 0);
@@ -3852,79 +3847,6 @@ bool MapWnd::KeyboardZoomIn() {
 bool MapWnd::KeyboardZoomOut() {
     Zoom(-1);
     return true;
-}
-
-void MapWnd::RefreshMineralsResourceIndicator() {
-    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    if (!empire) {
-        Logger().errorStream() << "MapWnd::RefreshMineralsResourceIndicator couldn't get an empire";
-        m_mineral->SetValue(0.0);
-        m_mineral->SetValue(0.0, 1);
-        return;
-    }
-
-    const ResourcePool* pool = empire->GetResourcePool(RE_MINERALS);
-    if (!pool) {
-        Logger().errorStream() << "MapWnd::RefreshMineralsResourceIndicator couldn't get a minerals resourepool";
-        m_mineral->SetValue(0.0);
-        m_mineral->SetValue(0.0, 1);
-        return;
-    }
-
-    int stockpile_object_id = pool->StockpileObjectID();
-
-    if (stockpile_object_id == INVALID_OBJECT_ID) {
-        // empire has nowhere to stockpile minerals, so has no stockpile.
-        m_mineral->SetValue(0.0);
-        m_mineral->SetValue(0.0, 1);        // TODO: Make StatisticIcon able to change number of numbers shown, and remove second number here
-        return;
-    }
-
-    // empire has a stockpile. Show stockpiled amount for first number
-
-    m_mineral->SetValue(pool->Stockpile()); // set first value to stockpiled minerals
-
-
-    // find minerals (PP) allocated to production elements located in systems in the group of
-    // resource-sharing systems that has access to stockpile
-    double stockpile_group_pp_allocation = 0.0;
-
-    // find the set of systems that contains the stopile system, from the map of PP allocated within each group
-    const ProductionQueue& queue = empire->GetProductionQueue();
-    std::map<std::set<int>, double> allocated_pp = queue.AllocatedPP();
-
-    Logger().debugStream() << "trying to find stockpile object group...  stockpile object has id: " << stockpile_object_id;
-    for (std::map<std::set<int>, double>::const_iterator it = allocated_pp.begin(); it != allocated_pp.end(); ++it) {
-        const std::set<int>& group = it->first;                     // get group
-        Logger().debugStream() << "potential group:";
-        for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
-            Logger().debugStream() << "...." << *qit;
-
-        if (group.find(stockpile_object_id) != group.end()) {       // check for stockpile object
-            stockpile_group_pp_allocation = it->second;        // record allocation for this group
-            Logger().debugStream() << "MapWnd::RefreshMineralsResourceIndicator found group of systems for stockpile object.  size: " << it->first.size();
-            break;
-        }
-
-        Logger().debugStream() << "didn't find in group... trying next.";
-    }
-    // if the stockpile object is not found in any group of systems with allocated pp, assuming this is fine and that the
-    // stockpile object's group of systems didn't have any allocated pp...
-
-
-    double stockpile_object_group_available = pool->GroupAvailable(stockpile_object_id);
-    Logger().debugStream() << "minerals available in stockpile group is:  " << stockpile_object_group_available;
-    Logger().debugStream() << "minerals allocation in stockpile group is: " << stockpile_group_pp_allocation;       // as of this writing, PP consume one mineral and one industry point, so PP allocation is equal to minerals allocation
-
-    double new_stockpile = stockpile_object_group_available - stockpile_group_pp_allocation;
-    Logger().debugStream() << "Predicted stockpile is: " << new_stockpile;
-
-    Logger().debugStream() << "Old stockpile is " << pool->Stockpile();
-
-    double stockpile_change = new_stockpile - pool->Stockpile();
-    Logger().debugStream() << "Stockpile change is: " << stockpile_change;
-
-    m_mineral->SetValue(stockpile_change, 1);
 }
 
 void MapWnd::RefreshTradeResourceIndicator() {

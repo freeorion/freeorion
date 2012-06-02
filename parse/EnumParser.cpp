@@ -317,7 +317,6 @@ namespace parse {
         static enum_parser_rule<MeterType>::type retval
             =    tok.TargetConstruction_ [ _val = METER_TARGET_CONSTRUCTION ]
             |    tok.TargetIndustry_ [ _val = METER_TARGET_INDUSTRY ]
-            |    tok.TargetMining_ [ _val = METER_TARGET_MINING ]
             |    tok.TargetPopulation_ [ _val = METER_TARGET_POPULATION ]
             |    tok.TargetResearch_ [ _val = METER_TARGET_RESEARCH ]
             |    tok.TargetTrade_ [ _val = METER_TARGET_TRADE ]
@@ -330,7 +329,6 @@ namespace parse {
 
             |    tok.Construction_ [ _val = METER_CONSTRUCTION ]
             |    tok.Industry_ [ _val = METER_INDUSTRY ]
-            |    tok.Mining_ [ _val = METER_MINING ]
             |    tok.Population_ [ _val = METER_POPULATION ]
             |    tok.Research_ [ _val = METER_RESEARCH ]
             |    tok.Trade_ [ _val = METER_TRADE ]
@@ -363,7 +361,6 @@ namespace parse {
         static enum_parser_rule<MeterType>::type retval
             =    tok.SetTargetConstruction_ [ _val = METER_TARGET_CONSTRUCTION ]
             |    tok.SetTargetIndustry_ [ _val = METER_TARGET_INDUSTRY ]
-            |    tok.SetTargetMining_ [ _val = METER_TARGET_MINING ]
             |    tok.SetTargetPopulation_ [ _val = METER_TARGET_POPULATION ]
             |    tok.SetTargetResearch_ [ _val = METER_TARGET_RESEARCH ]
             |    tok.SetTargetTrade_ [ _val = METER_TARGET_TRADE ]
@@ -376,7 +373,6 @@ namespace parse {
 
             |    tok.SetConstruction_ [ _val = METER_CONSTRUCTION ]
             |    tok.SetIndustry_ [ _val = METER_INDUSTRY ]
-            |    tok.SetMining_ [ _val = METER_MINING ]
             |    tok.SetPopulation_ [ _val = METER_POPULATION ]
             |    tok.SetResearch_ [ _val = METER_RESEARCH ]
             |    tok.SetTrade_ [ _val = METER_TRADE ]

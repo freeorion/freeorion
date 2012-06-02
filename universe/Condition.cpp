@@ -3598,7 +3598,6 @@ std::string Condition::MeterValue::Dump() const {
     case METER_TARGET_INDUSTRY:     retval += "TargetIndustry";     break;
     case METER_TARGET_RESEARCH:     retval += "TargetResearch";     break;
     case METER_TARGET_TRADE:        retval += "TargetTrade";        break;
-    case METER_TARGET_MINING:       retval += "TargetMining";       break;
     case METER_TARGET_CONSTRUCTION: retval += "TargetConstruction"; break;
     case METER_MAX_FUEL:            retval += "MaxFuel";            break;
     case METER_MAX_SHIELD:          retval += "MaxShield";          break;
@@ -3608,7 +3607,6 @@ std::string Condition::MeterValue::Dump() const {
     case METER_INDUSTRY:            retval += "Industry";           break;
     case METER_RESEARCH:            retval += "Research";           break;
     case METER_TRADE:               retval += "Trade";              break;
-    case METER_MINING:              retval += "Mining";             break;
     case METER_CONSTRUCTION:        retval += "Construction";       break;
     case METER_FUEL:                retval += "Fuel";               break;
     case METER_SHIELD:              retval += "Shield";             break;
@@ -3803,7 +3801,7 @@ namespace {
             if (!empire)
                 return false;
 
-            if (m_stockpile == RE_MINERALS || m_stockpile == RE_TRADE) {
+            if (m_stockpile == RE_TRADE) {
                 double amount = empire->ResourceStockpile(m_stockpile);
                 return (m_low <= amount && amount <= m_high);
             }
@@ -3860,7 +3858,6 @@ std::string Condition::EmpireStockpileValue::Description(bool negated/* = false*
 std::string Condition::EmpireStockpileValue::Dump() const {
     std::string retval = DumpIndent();
     switch (m_stockpile) {
-    case RE_MINERALS:   retval += "OwnerMineralStockpile";  break;
     case RE_TRADE:      retval += "OwnerTradeStockpile";    break;
     case RE_RESEARCH:   retval += "OwnerResearchStockpile"; break;
     case RE_INDUSTRY:   retval += "OwnerIndustryStockpile"; break;

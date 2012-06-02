@@ -514,7 +514,7 @@ std::map<std::set<int>, double> ProductionQueue::AvailablePP(const std::map<Reso
     std::map<std::set<int>, double> available_pp;
 
     // get resource pools used for production...
-    boost::shared_ptr<ResourcePool> industry_pool, minerals_pool;
+    boost::shared_ptr<ResourcePool> industry_pool;
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator pool_it = resource_pools.find(RE_INDUSTRY);
     if (pool_it != resource_pools.end()) {
         industry_pool = pool_it->second;
@@ -522,32 +522,18 @@ std::map<std::set<int>, double> ProductionQueue::AvailablePP(const std::map<Reso
         Logger().errorStream() << "ProductionQueue::AvailablePP couldn't get an industry resource pool from passed resource pools";
         return available_pp;
     }
-    pool_it = resource_pools.find(RE_MINERALS);
-    if (pool_it != resource_pools.end()) {
-        minerals_pool = pool_it->second;
-    } else {
-        Logger().errorStream() << "ProductionQueue::AvailablePP couldn't get a minerals resource pool from passed resource pools";
-        return available_pp;
-    }
 
 
-    // determine available PP in each resource sharing group of systems for this empire.  PP are minimum of available minerals
-    // and industry in each resource-sharing group of systems
+    // determine available PP in each resource sharing group of systems for this empire.  PP are available
+    // industry in each resource-sharing group of systems
     std::map<std::set<int>, double> available_industry = industry_pool->Available();
-    std::map<std::set<int>, double> available_minerals = minerals_pool->Available();
 
 
     for (std::map<std::set<int>, double>::const_iterator ind_it = available_industry.begin(); ind_it != available_industry.end(); ++ind_it) {
         // get group of systems in industry pool
         const std::set<int>& group = ind_it->first;
 
-        // find same group in minerals pool
-        std::map<std::set<int>, double>::const_iterator min_it = available_minerals.find(group);
-
-        if (min_it == available_minerals.end())
-            continue;       // this group doesn't appear in both pools, so has no PP production
-
-        available_pp[group] = std::min(ind_it->second, min_it->second); // available pp needs minerals and industry.  whichever is less is the available pp
+        available_pp[group] = ind_it->second;
     }
 
     return available_pp;
@@ -951,7 +937,6 @@ Empire::Empire(const std::string& name, const std::string& player_name, int empi
 }
 
 void Empire::Init() {
-    m_resource_pools[RE_MINERALS] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_MINERALS));
     m_resource_pools[RE_RESEARCH] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_RESEARCH));
     m_resource_pools[RE_INDUSTRY] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
     m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
@@ -986,7 +971,6 @@ int Empire::CapitalID() const
 
 int Empire::StockpileID(ResourceType res) const {
     switch (res) {
-    case RE_MINERALS:
     case RE_TRADE:
         return m_capital_id;
         break;
@@ -1872,7 +1856,7 @@ Empire::SitRepItr Empire::SitRepEnd() const
 { return m_sitrep_entries.end(); }
 
 double Empire::ProductionPoints() const
-{ return std::min(GetResourcePool(RE_INDUSTRY)->TotalAvailable(), GetResourcePool(RE_MINERALS)->TotalAvailable()); }
+{ return GetResourcePool(RE_INDUSTRY)->TotalAvailable(); }
 
 const ResourcePool* Empire::GetResourcePool(ResourceType resource_type) const {
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(resource_type);
@@ -2513,57 +2497,6 @@ void Empire::CheckProductionProgress() {
         m_production_progress.erase(m_production_progress.begin() + *it);
         m_production_queue.erase(*it);
     }
-
-
-    // update minerals stockpile
-
-    // get minerals resource pool and stockpile location
-    boost::shared_ptr<ResourcePool> pool = m_resource_pools[RE_MINERALS];
-    int stockpile_object_id = pool->StockpileObjectID();
-
-
-    if (stockpile_object_id == INVALID_OBJECT_ID) {
-        // empire has nowhere to stockpile production, so has no stockpile.
-        pool->SetStockpile(0.0);
-        //Logger().debugStream() << "no mineral stockpile location.  stockpile is set to 0.0";
-
-    } else {
-        // find minerals (PP) allocated to production elements located in systems in the group of
-        // resource-sharing objects that has access to stockpile
-        double stockpile_group_pp_allocation = 0.0;
-
-        // find the set of objects that contains the stopile object, from the map of PP allocated within each group
-        std::map<std::set<int>, double> allocated_pp = m_production_queue.AllocatedPP();
-
-        //Logger().debugStream() << "trying to find stockpile object group...  stockpile object has id: " << stockpile_object_id;
-        for (std::map<std::set<int>, double>::const_iterator it = allocated_pp.begin(); it != allocated_pp.end(); ++it) {
-            const std::set<int>& group = it->first;                     // get group
-            //Logger().debugStream() << "potential group:";
-            for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
-                Logger().debugStream() << "...." << *qit;
-
-            if (group.find(stockpile_object_id) != group.end()) {       // check for stockpile object
-                stockpile_group_pp_allocation = it->second;        // record allocation for this group
-                //Logger().debugStream() << "Empire::CheckProductionProgress found group of objects for stockpile object.  size: " << it->first.size();
-                break;
-            }
-
-            //Logger().debugStream() << "didn't find in group... trying next.";
-        }
-        // if the stockpile object is not found in any group of systems with allocated pp, assuming this is fine and that the
-        // stockpile object's group of systems didn't have any allocated pp...
-
-
-        double stockpile_object_group_available = pool->GroupAvailable(stockpile_object_id);
-        //Logger().debugStream() << "minerals available in stockpile group is:  " << stockpile_object_group_available;
-        //Logger().debugStream() << "minerals allocation in stockpile group is: " << stockpile_group_pp_allocation;       // as of this writing, PP consume one mineral and one industry point, so PP allocation is equal to minerals allocation
-
-        //Logger().debugStream() << "Old stockpile was " << pool->Stockpile();
-
-        double new_stockpile = stockpile_object_group_available - stockpile_group_pp_allocation;
-        pool->SetStockpile(new_stockpile);
-        //Logger().debugStream() << "New stockpile is: " << new_stockpile;
-    }
 }
 
 void Empire::CheckTradeSocialProgress()
@@ -2592,14 +2525,12 @@ void Empire::InitResourcePools() {
             popcenter_ids_vec.push_back(obj->ID());
     }
     m_population_pool.SetPopCenters(popcenter_ids_vec);
-    m_resource_pools[RE_MINERALS]->SetObjects(object_ids_vec);
     m_resource_pools[RE_RESEARCH]->SetObjects(object_ids_vec);
     m_resource_pools[RE_INDUSTRY]->SetObjects(object_ids_vec);
     m_resource_pools[RE_TRADE]->SetObjects(object_ids_vec);
 
 
     // inform the blockadeable resource pools about systems that can share
-    m_resource_pools[RE_MINERALS]->SetConnectedSupplyGroups(m_resource_supply_groups);
     m_resource_pools[RE_INDUSTRY]->SetConnectedSupplyGroups(m_resource_supply_groups);
 
 
@@ -2616,7 +2547,6 @@ void Empire::InitResourcePools() {
 
     // set stockpile object locations for each resource, ensuring those systems exist
     std::vector<ResourceType> res_type_vec;
-    res_type_vec.push_back(RE_MINERALS);
     res_type_vec.push_back(RE_INDUSTRY);
     res_type_vec.push_back(RE_TRADE);
     res_type_vec.push_back(RE_RESEARCH);
@@ -2649,10 +2579,8 @@ void Empire::UpdateResearchQueue() {
 void Empire::UpdateProductionQueue() {
     Logger().debugStream() << "========= Production Update for empire: " << EmpireID() << " ========";
 
-    m_resource_pools[RE_MINERALS]->Update();
     m_resource_pools[RE_INDUSTRY]->Update();
     m_production_queue.Update(this, m_resource_pools, m_production_progress);
-    m_resource_pools[RE_MINERALS]->ChangedSignal();
     m_resource_pools[RE_INDUSTRY]->ChangedSignal();
 }
 

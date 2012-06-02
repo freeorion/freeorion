@@ -134,8 +134,7 @@ namespace {
 
             owner_stockpile
                 =    (
-                            tok.OwnerMineralStockpile_ [ _a = RE_MINERALS ]
-                        |   tok.OwnerTradeStockpile_ [ _a = RE_TRADE ]
+                            tok.OwnerTradeStockpile_ [ _a = RE_TRADE ]
                      )
                 >    parse::label(Low_name)  > double_value_ref [ _b = _1 ]
                 >    parse::label(High_name) > double_value_ref [ _val = new_<Condition::EmpireStockpileValue>(_a, _b, _1) ]

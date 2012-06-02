@@ -24,8 +24,6 @@ namespace {
                 |    tok.TargetResearch_
                 |    tok.Trade_
                 |    tok.TargetTrade_
-                |    tok.Mining_
-                |    tok.TargetMining_
                 |    tok.Construction_
                 |    tok.TargetConstruction_
                 |    tok.Population_
@@ -46,7 +44,6 @@ namespace {
                 |    tok.BattleSpeed_
                 |    tok.StarlaneSpeed_
                 |    tok.TradeStockpile_
-                |    tok.MineralStockpile_
                 |    tok.DistanceToSource_
                 ;
 

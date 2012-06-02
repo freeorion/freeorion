@@ -169,7 +169,6 @@ protected:
     virtual bool    EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
 private:
-    void            RefreshMineralsResourceIndicator();
     void            RefreshTradeResourceIndicator();
     void            RefreshResearchResourceIndicator();
     void            RefreshIndustryResourceIndicator();

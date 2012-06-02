@@ -220,7 +220,7 @@ struct ProductionQueue
 
     /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
-      * determines the number of projects in progress, and the minerals and industry consumed by projects
+      * determines the number of projects in progress, and the industry consumed by projects
       * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
       * empire->CheckProductionProgress() will actually spend PP, remove items from queue and create them
       * in the universe. */
@@ -346,8 +346,8 @@ public:
     const std::set<std::pair<int, int> >&   FleetSupplyStarlaneTraversals() const;          ///< returns set of directed starlane traversals along which supply can flow.  results are pairs of system ids of start and end system of traversal
     const std::map<int, int>&               FleetSupplyRanges() const;                      ///< returns map from system id to number of starlane jumps away the system can deliver fleet supply
 
-    const std::set<std::set<int> >&         ResourceSupplyGroups() const;                   ///< returns set of sets of systems that can share industry and minerals (systems in separate groups are blockaded or otherwise separated)
-    const std::set<std::pair<int, int> >&   ResourceSupplyStarlaneTraversals() const;       ///< returns set of directed starlane traversals along which system resource exchange (industry, minerals) can flow.  results are pairs of system ids of start and end of traversal
+    const std::set<std::set<int> >&         ResourceSupplyGroups() const;                   ///< returns set of sets of systems that can share industry (systems in separate groups are blockaded or otherwise separated)
+    const std::set<std::pair<int, int> >&   ResourceSupplyStarlaneTraversals() const;       ///< returns set of directed starlane traversals along which system resource exchange (industry) can flow.  results are pairs of system ids of start and end of traversal
     const std::set<std::pair<int, int> >&   ResourceSupplyOstructedStarlaneTraversals() const;      ///< returns set of directed starlane traversals along which system resources could flow for this empire, but which can't due to some obstruction in the destination system
     const std::map<int, int>&               ResourceSupplyRanges() const;                   ///< returns map from system id to number of starlane jumps away the system can exchange resources
 
@@ -374,7 +374,7 @@ public:
     SitRepItr               SitRepBegin() const;                ///< starting iterator for sitrep entries for this empire
     SitRepItr               SitRepEnd() const;                  ///< end iterator for sitreps
 
-    double                  ProductionPoints() const;           ///< Returns the number of production points available to the empire (this is the minimum of available industry and available minerals)
+    double                  ProductionPoints() const;           ///< Returns the number of production points available to the empire (this is available industry)
 
     /** Returns amount of trade empire will spend this turn.  Assumes
       * Empire::UpdateTradeSpending() has previously been called to determine
@@ -485,9 +485,7 @@ public:
       * production sites.  Which projects have been completed is determined by the results of
       * previously-called Update() on the production queue (which determines how much PP each project
       * receives, but does not actually spend them).  This function spends the PP, removes complete
-      * items from the queue and creates the results in the universe.  Also updates the empire's
-      * minerals stockpile to account for any excess not used or any shortfall that was made up by
-      * taking from the stockpile. */
+      * items from the queue and creates the results in the universe. */
     void                    CheckProductionProgress();
 
     /** Checks for tech projects that have been completed, and adds them to the known techs list. */

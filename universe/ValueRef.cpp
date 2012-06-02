@@ -90,8 +90,6 @@ namespace {
             map[TargetResearch_name] = METER_TARGET_RESEARCH;
             map[Trade_name] = METER_TRADE;
             map[TargetTrade_name] = METER_TARGET_TRADE;
-            map[Mining_name] = METER_MINING;
-            map[TargetMining_name] = METER_TARGET_MINING;
             map[Construction_name] = METER_CONSTRUCTION;
             map[TargetConstruction_name] = METER_TARGET_CONSTRUCTION;
             map[MaxFuel_name] = METER_MAX_FUEL;
@@ -440,9 +438,6 @@ namespace ValueRef {
         } else if (property_name == TradeStockpile_name) {
             if (const Empire* empire = Empires().Lookup(object->Owner()))
                 return empire->ResourceStockpile(RE_TRADE);
-        } else if (property_name == MineralStockpile_name) {
-            if (const Empire* empire = Empires().Lookup(object->Owner()))
-                return empire->ResourceStockpile(RE_MINERALS);
 
         } else if (property_name == DistanceToSource_name) {
             if (!context.source) {

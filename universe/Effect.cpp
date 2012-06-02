@@ -588,7 +588,6 @@ std::string SetMeter::Dump() const {
     case METER_TARGET_INDUSTRY:     retval += "TargetIndustry"; break;
     case METER_TARGET_RESEARCH:     retval += "TargetResearch"; break;
     case METER_TARGET_TRADE:        retval += "TargetTrade"; break;
-    case METER_TARGET_MINING:       retval += "TargetMining"; break;
     case METER_TARGET_CONSTRUCTION: retval += "TargetConstruction"; break;
 
     case METER_MAX_FUEL:            retval += "MaxFuel"; break;
@@ -601,7 +600,6 @@ std::string SetMeter::Dump() const {
     case METER_INDUSTRY:            retval += "Industry"; break;
     case METER_RESEARCH:            retval += "Research"; break;
     case METER_TRADE:               retval += "Trade"; break;
-    case METER_MINING:              retval += "Mining"; break;
     case METER_CONSTRUCTION:        retval += "Construction"; break;
 
     case METER_FUEL:                retval += "Fuel"; break;
@@ -905,7 +903,6 @@ std::string SetEmpireStockpile::Description() const {
 std::string SetEmpireStockpile::Dump() const {
     std::string retval = DumpIndent();
     switch (m_stockpile) {
-    case RE_MINERALS:   retval += "SetEmpireMineralStockpile"; break;
     case RE_TRADE:      retval += "SetEmpireTradeStockpile"; break;
     default:            retval += "?"; break;
     }

@@ -1021,14 +1021,6 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Focus "FOCUS_MINING"
-            ]
-            effects = SetTargetMining Value + 1.0 * [[BASIC_PRODUCTION]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
                 Focus "FOCUS_INDUSTRY"
                 [[POP_CONDITION_INFRA]]
             ]
@@ -1223,14 +1215,6 @@ Tech
                 [[INFRA_CONDITION_POP]]
             ]
             effects = SetTargetIndustry Value + Target.Population * 0.4 * [[INFRA_PRODUCTION_PER_POP]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Focus "FOCUS_MINING"
-            ]
-            effects = SetTargetMining Value + 1.0 * [[BASIC_PRODUCTION]]
         ]
     graphic = "icons/tech/robotic_production.png"
     
@@ -1428,70 +1412,13 @@ Tech
     graphic = "icons/tech/asteroid_mining_i.png"
 
 Tech
-    name = "PRO_ASTEROID_MINE_II"
-    description = "PRO_ASTEROID_MINE_II_DESC"
-    short_description = "BUILDING_REFINE_SHORT_DESC"
-    techtype = Refinement
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 2
-    researchturns = 1
-    prerequisites = "PRO_ASTEROID_MINE"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet type = Asteroids
-                Focus "FOCUS_MINING"
-            ]
-            activation = OwnerHasTech "PRO_ASTEROID_MINE"
-            effects = SetTargetMining Value + 1.0 * [[BASIC_PRODUCTION]]
-    graphic = "icons/tech/asteroid_mining_ii.png"
-
-Tech
     name = "PRO_CORE_MINE"
     description = "PRO_CORE_MINE_DESC"
-    short_description = "MINING_SHORT_DESC"
+    short_description = "DOES_NOTHING_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 30
     researchturns = 1
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Planet size = Tiny
-                Focus "FOCUS_MINING"
-            ]
-            effects = SetTargetMining Value + 2.0 * [[BASIC_PRODUCTION]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Planet size = Small
-                Focus "FOCUS_MINING"
-            ]
-            effects = SetTargetMining Value + 1.5 * [[BASIC_PRODUCTION]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Planet size = Medium
-                Focus "FOCUS_MINING"
-            ]
-            effects = SetTargetMining Value + 1.0 * [[BASIC_PRODUCTION]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Planet size = Large
-                Focus "FOCUS_MINING"
-            ]
-            effects = SetTargetMining Value + .5 * [[BASIC_PRODUCTION]]
-    ]
     graphic = "icons/tech/deep_core_mining.png"
 
 Tech
@@ -1616,14 +1543,6 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Mining high = RootCandidate.TargetMining - 3
-            ]
-            effects = SetMining Value + 2
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
                 Industry high = RootCandidate.TargetIndustry - 3
             ]
             effects = SetIndustry Value + 2
@@ -1643,14 +1562,6 @@ Tech
                 Construction high = RootCandidate.TargetConstruction - 3
             ]
             effects = SetConstruction Value + 2
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Mining low = RootCandidate.TargetMining - 3 high = RootCandidate.TargetMining
-            ]
-            effects = SetMining Target.TargetMining
 
         EffectsGroup
             scope = And [
@@ -1680,14 +1591,6 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Mining low = RootCandidate.TargetMining + 5
-            ]
-            effects = SetMining Value - 3
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
                 Industry low = RootCandidate.TargetIndustry + 5
             ]
             effects = SetIndustry Value - 3
@@ -1707,14 +1610,6 @@ Tech
                 Construction low = RootCandidate.TargetConstruction + 5
             ]
             effects = SetConstruction Value - 3
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 5
-            ]
-            effects = SetMining Target.TargetMining
 
         EffectsGroup
             scope = And [

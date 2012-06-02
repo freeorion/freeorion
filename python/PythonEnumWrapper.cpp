@@ -60,7 +60,6 @@ namespace FreeOrionPython {
             .value("ship",              BT_SHIP)
         ;
         enum_<ResourceType>("resourceType")
-            .value("minerals",      RE_MINERALS)
             .value("industry",      RE_INDUSTRY)
             .value("trade",         RE_TRADE)
             .value("research",      RE_RESEARCH)
@@ -70,7 +69,6 @@ namespace FreeOrionPython {
             .value("targetIndustry",    METER_TARGET_INDUSTRY)
             .value("targetResearch",    METER_TARGET_RESEARCH)
             .value("targetTrade",       METER_TARGET_TRADE)
-            .value("targetMining",      METER_TARGET_MINING)
             .value("targetConstruction",METER_TARGET_CONSTRUCTION)
 
             .value("maxFuel",           METER_MAX_FUEL)
@@ -82,7 +80,6 @@ namespace FreeOrionPython {
             .value("industry",          METER_INDUSTRY)
             .value("research",          METER_RESEARCH)
             .value("trade",             METER_TRADE)
-            .value("mining",            METER_MINING)
             .value("construction",      METER_CONSTRUCTION)
 
             .value("fuel",              METER_FUEL)

@@ -47,10 +47,6 @@ namespace {
       * (such as meter bars) for the indicated \a meter_type */
     GG::Clr MeterColor(MeterType meter_type) {
         switch (meter_type) {
-        case METER_MINING:
-        case METER_TARGET_MINING:
-            return GG::CLR_RED;
-            break;
         case METER_INDUSTRY:
         case METER_TARGET_INDUSTRY:
             return GG::Clr(0, 100, 255, 255);   // a bit greener / brighter than blue, at pd's suggestion on forums (sort of)
@@ -118,7 +114,6 @@ namespace {
         const Building* building = 0;
 
         switch (resource_type) {
-        case RE_MINERALS:
         case RE_INDUSTRY:
             // PP (equal to mineral and industry) cost of objects on production queue at this object's location
             if (empire) {
@@ -461,7 +456,6 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::INTERACTIVE),
     m_rescenter_id(object_id),
     m_pop_mod_stat(0),
-    m_mining_stat(0),
     m_industry_stat(0),
     m_research_stat(0),
     m_trade_stat(0),
@@ -498,10 +492,6 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
 
     // small resource indicators - for use when panel is collapsed
-    m_mining_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
-                                      ClientUI::MeterIcon(METER_MINING), 0, 3, false);
-    AttachChild(m_mining_stat);
-
     m_industry_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
                                         ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false);
     AttachChild(m_industry_stat);
@@ -521,7 +511,6 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
-    meters.push_back(std::make_pair(METER_MINING,       METER_TARGET_MINING));
     meters.push_back(std::make_pair(METER_INDUSTRY,     METER_TARGET_INDUSTRY));
     meters.push_back(std::make_pair(METER_RESEARCH,     METER_TARGET_RESEARCH));
     meters.push_back(std::make_pair(METER_TRADE,        METER_TARGET_TRADE));
@@ -544,7 +533,6 @@ ResourcePanel::~ResourcePanel() {
     delete m_multi_meter_status_bar;
 
     delete m_pop_mod_stat;
-    delete m_mining_stat;
     delete m_industry_stat;
     delete m_research_stat;
     delete m_trade_stat;
@@ -567,9 +555,8 @@ void ResourcePanel::ExpandCollapse(bool expanded) {
 
 void ResourcePanel::DoExpandCollapseLayout() {
     // initially detach everything (most things?).  Some will be reattached later.
-    DetachChild(m_mining_stat);     DetachChild(m_industry_stat);
-    DetachChild(m_research_stat);   DetachChild(m_trade_stat);
-    DetachChild(m_pop_mod_stat);
+    DetachChild(m_industry_stat);   DetachChild(m_research_stat);
+    DetachChild(m_trade_stat);      DetachChild(m_pop_mod_stat);
 
     DetachChild(m_focus_drop);
 
@@ -586,7 +573,6 @@ void ResourcePanel::DoExpandCollapseLayout() {
             // determine which two resource icons to display while collapsed: the two with the highest production.
             // sort by insereting into multimap keyed by production amount, then taking the first two icons therein.
             std::multimap<double, StatisticIcon*> res_prod_icon_map;
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_mining_stat->GetValue(),   m_mining_stat));
             res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_industry_stat->GetValue(), m_industry_stat));
             res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_research_stat->GetValue(), m_research_stat));
             res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_trade_stat->GetValue(),    m_trade_stat));
@@ -714,9 +700,6 @@ void ResourcePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void ResourcePanel::Update() {
     // remove any old browse wnds
-    m_mining_stat->ClearBrowseInfoWnd();
-    m_multi_icon_value_indicator->ClearToolTip(METER_MINING);
-
     m_industry_stat->ClearBrowseInfoWnd();
     m_multi_icon_value_indicator->ClearToolTip(METER_INDUSTRY);
 
@@ -773,7 +756,6 @@ void ResourcePanel::Update() {
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
-    m_mining_stat->SetValue(res->InitialMeterValue(METER_MINING));
     m_industry_stat->SetValue(res->InitialMeterValue(METER_INDUSTRY));
     m_research_stat->SetValue(res->InitialMeterValue(METER_RESEARCH));
     m_trade_stat->SetValue(res->InitialMeterValue(METER_TRADE));
@@ -784,10 +766,6 @@ void ResourcePanel::Update() {
     // for all meter types shown in the multi icon value indicator.  this replaces any previous-present
     // browse wnd on these indicators
     boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
-
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_MINING, METER_TARGET_MINING));
-    m_mining_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_MINING, browse_wnd);
 
     browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_INDUSTRY, METER_TARGET_INDUSTRY));
     m_industry_stat->SetBrowseInfoWnd(browse_wnd);
@@ -2300,8 +2278,6 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     // set production label
     std::string resource_text = "";
     switch (m_resource_type) {
-    case RE_MINERALS:
-        resource_text = UserString("MINERALS_PRODUCTION");  break;
     case RE_INDUSTRY:
         resource_text = UserString("INDUSTRY_PRODUCTION");  break;
     case RE_RESEARCH:
@@ -2383,7 +2359,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         //     amount_text = ColourWrappedtext(amount_text, text_colour);
         // }
 
-        // TODO: for minerals and industry, consider something similar as colouring text for food above.
+        // TODO: for industry, consider something similar as colouring text for food above.
 
 
         GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
@@ -2424,8 +2400,6 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
     // set consumption / allocation label
     std::string resource_text = "";
     switch (m_resource_type) {
-    case RE_MINERALS:
-        resource_text = UserString("MINERALS_CONSUMPTION"); break;
     case RE_INDUSTRY:
         resource_text = UserString("INDUSTRY_CONSUMPTION"); break;
     case RE_RESEARCH:
@@ -2475,7 +2449,6 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
         double difference = m_production - m_allocation;
 
         switch (m_resource_type) {
-        case RE_MINERALS:
         case RE_TRADE:
         case RE_INDUSTRY:
             if (difference > 0.0) {

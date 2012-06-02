@@ -141,9 +141,7 @@
     (Message)                                   \
     (Meter)                                     \
     (Min)                                       \
-    (MineralStockpile)                          \
     (MinimumNumberOf)                           \
-    (Mining)                                    \
     (Missiles)                                  \
     (Mode)                                      \
     (Model)                                     \
@@ -180,7 +178,6 @@
     (OwnedBy)                                   \
     (Owner)                                     \
     (OwnerHasTech)                              \
-    (OwnerMineralStockpile)                     \
     (OwnerTradeStockpile)                       \
     (Parameters)                                \
     (Part)                                      \
@@ -241,7 +238,6 @@
     (SetDetection)                              \
     (SetEmpireCapital)                          \
     (SetEmpireMeter)                            \
-    (SetEmpireMineralStockpile)                 \
     (SetEmpireTechProgress)                     \
     (SetEmpireTradeStockpile)                   \
     (SetFighterWeaponRange)                     \
@@ -253,7 +249,6 @@
     (SetMaxShield)                              \
     (SetMaxStructure)                           \
     (SetMaxTroops)                              \
-    (SetMining)                                 \
     (SetOverlayTexture)                         \
     (SetOwner)                                  \
     (SetPlanetSize)                             \
@@ -272,7 +267,6 @@
     (SetSupply)                                 \
     (SetTargetConstruction)                     \
     (SetTargetIndustry)                         \
-    (SetTargetMining)                           \
     (SetTargetPopulation)                       \
     (SetTargetResearch)                         \
     (SetTargetTrade)                            \
@@ -320,7 +314,6 @@
     (Target)                                    \
     (TargetConstruction)                        \
     (TargetIndustry)                            \
-    (TargetMining)                              \
     (TargetPopulation)                          \
     (TargetResearch)                            \
     (TargetTrade)                               \

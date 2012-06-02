@@ -110,9 +110,6 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     case METER_TRADE:
     case METER_TARGET_TRADE:
         icon_filename = "trade.png";        break;
-    case METER_MINING:
-    case METER_TARGET_MINING:
-        icon_filename = "mining.png";       break;
     case METER_CONSTRUCTION:
     case METER_TARGET_CONSTRUCTION:
         icon_filename = "construction.png"; break;
