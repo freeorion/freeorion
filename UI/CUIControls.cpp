@@ -29,8 +29,7 @@ namespace {
 
     struct PlayButtonCheckSound {
         PlayButtonCheckSound(bool play_only_when_checked) : m_play_only_when_checked(play_only_when_checked) {}
-        void operator()(bool checked) const
-        {
+        void operator()(bool checked) const {
             if (!m_play_only_when_checked || checked)
                 Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
         }

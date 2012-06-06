@@ -203,8 +203,15 @@ namespace {
     void ClusterGalaxyCalcPositions(std::vector<std::pair<double, double> >& positions, unsigned int clusters,
                                     unsigned int stars, double width, double height)
     {
-        assert(clusters);
-        assert(stars);
+        if (stars < 1) {
+            Logger().errorStream() << "ClusterGalaxyCalcPositions requested for 0 stars";
+            return;
+        }
+        if (clusters < 1) {
+            Logger().errorStream() << "ClusterGalaxyCalcPositions requested for 0 clusters. defaulting to 1";
+            clusters = 1;
+        }
+
 
         // probability of systems which don't belong to a cluster
         const double system_noise = 0.15;
