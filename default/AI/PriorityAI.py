@@ -16,8 +16,8 @@ def calculatePriorities():
     InvasionAI.getInvasionFleets() # sets AIstate.invasionFleetIDs, AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
     MilitaryAI.getMilitaryFleets() # sets AIstate.militaryFleetIDs and AIstate.militaryTargetedSystemIDs
 
-    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_FOOD, calculateFoodPriority())
-    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_MINERALS, calculateMineralsPriority())
+    #foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_FOOD, calculateFoodPriority())
+    #foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_MINERALS, calculateMineralsPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION, calculateIndustryPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH, calculateResearchPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_TRADE, 0)
