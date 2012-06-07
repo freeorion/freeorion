@@ -433,7 +433,8 @@ namespace ValueRef {
 
         MeterType meter_type = NameToMeter(property_name);
         if (meter_type != INVALID_METER_TYPE) {
-            return object->InitialMeterValue(meter_type);
+            if (object->GetMeter(meter_type))
+                return object->InitialMeterValue(meter_type);
 
         } else if (property_name == TradeStockpile_name) {
             if (const Empire* empire = Empires().Lookup(object->Owner()))
