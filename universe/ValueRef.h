@@ -296,21 +296,21 @@ struct ValueRef::Operation : public ValueRef::ValueRefBase<T>
     Operation(OpType op_type, const ValueRefBase<T>* operand); ///< unary operation ctor
     ~Operation(); ///< dtor
 
-    OpType GetOpType() const;
-    const ValueRefBase<T>* LHS() const;
-    const ValueRefBase<T>* RHS() const;
+    OpType                  GetOpType() const;
+    const ValueRefBase<T>*  LHS() const;
+    const ValueRefBase<T>*  RHS() const;
 
-    virtual T Eval(const ScriptingContext& context) const;
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        LocalCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual std::string Description() const;
-    virtual std::string Dump() const;
+    virtual T               Eval(const ScriptingContext& context) const;
+    virtual bool            RootCandidateInvariant() const;
+    virtual bool            LocalCandidateInvariant() const;
+    virtual bool            TargetInvariant() const;
+    virtual std::string     Description() const;
+    virtual std::string     Dump() const;
 
 private:
-    OpType                 m_op_type;
-    const ValueRefBase<T>* m_operand1;
-    const ValueRefBase<T>* m_operand2;
+    OpType                  m_op_type;
+    const ValueRefBase<T>*  m_operand1;
+    const ValueRefBase<T>*  m_operand2;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -968,9 +968,14 @@ T ValueRef::Operation<T>::Eval(const ScriptingContext& context) const
                      m_operand2->Eval(context));
             break;
         case DIVIDES:
+        {
+            T op2 = m_operand2->Eval(context);
+            if (op2 == T(0))
+                return T(0);
             return T(m_operand1->Eval(context) /
-                     m_operand2->Eval(context));
+                     op2);
             break;
+        }
         case NEGATE:
             return T(-m_operand1->Eval(context));
             break;
