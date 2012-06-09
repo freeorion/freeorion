@@ -3545,6 +3545,45 @@ namespace {
         double m_high;
         MeterType m_meter_type;
     };
+
+    const std::string& MeterTypeDumpString(MeterType meter) {
+        switch (meter) {
+        case INVALID_METER_TYPE:        return "INVALID_METER_TYPE"; break;
+        case METER_TARGET_POPULATION:   return "TargetPopulation";   break;
+        case METER_TARGET_INDUSTRY:     return "TargetIndustry";     break;
+        case METER_TARGET_RESEARCH:     return "TargetResearch";     break;
+        case METER_TARGET_TRADE:        return "TargetTrade";        break;
+        case METER_TARGET_CONSTRUCTION: return "TargetConstruction"; break;
+        case METER_MAX_FUEL:            return "MaxFuel";            break;
+        case METER_MAX_SHIELD:          return "MaxShield";          break;
+        case METER_MAX_STRUCTURE:       return "MaxStructure";       break;
+        case METER_MAX_DEFENSE:         return "MaxDefense";         break;
+        case METER_POPULATION:          return "Population";         break;
+        case METER_INDUSTRY:            return "Industry";           break;
+        case METER_RESEARCH:            return "Research";           break;
+        case METER_TRADE:               return "Trade";              break;
+        case METER_CONSTRUCTION:        return "Construction";       break;
+        case METER_FUEL:                return "Fuel";               break;
+        case METER_SHIELD:              return "Shield";             break;
+        case METER_STRUCTURE:           return "Structure";          break;
+        case METER_DEFENSE:             return "Defense";            break;
+        case METER_SUPPLY:              return "Supply";             break;
+        case METER_STEALTH:             return "Stealth";            break;
+        case METER_DETECTION:           return "Detection";          break;
+        case METER_BATTLE_SPEED:        return "BattleSpeed";        break;
+        case METER_STARLANE_SPEED:      return "StarlaneSpeed";      break;
+        case METER_DAMAGE:              return "Damage";             break;
+        case METER_ROF:                 return "ROF";                break;
+        case METER_RANGE:               return "Range";              break;
+        case METER_SPEED:               return "Speed";              break;
+        case METER_CAPACITY:            return "Capacity";           break;
+        case METER_ANTI_SHIP_DAMAGE:    return "AntiShipDamage";     break;
+        case METER_ANTI_FIGHTER_DAMAGE: return "AntiFighterDamage";  break;
+        case METER_LAUNCH_RATE:         return "LaunchRate";         break;
+        case METER_FIGHTER_WEAPON_RANGE:return "FighterWeaponRange"; break;
+        default:                        return "?Meter?"; break;
+        }
+    }
 }
 
 void Condition::MeterValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -3592,42 +3631,7 @@ std::string Condition::MeterValue::Description(bool negated/* = false*/) const {
 
 std::string Condition::MeterValue::Dump() const {
     std::string retval = DumpIndent();
-    switch (m_meter) {
-    case INVALID_METER_TYPE:        retval += "INVALID_METER_TYPE"; break;
-    case METER_TARGET_POPULATION:   retval += "TargetPopulation";   break;
-    case METER_TARGET_INDUSTRY:     retval += "TargetIndustry";     break;
-    case METER_TARGET_RESEARCH:     retval += "TargetResearch";     break;
-    case METER_TARGET_TRADE:        retval += "TargetTrade";        break;
-    case METER_TARGET_CONSTRUCTION: retval += "TargetConstruction"; break;
-    case METER_MAX_FUEL:            retval += "MaxFuel";            break;
-    case METER_MAX_SHIELD:          retval += "MaxShield";          break;
-    case METER_MAX_STRUCTURE:       retval += "MaxStructure";       break;
-    case METER_MAX_DEFENSE:         retval += "MaxDefense";         break;
-    case METER_POPULATION:          retval += "Population";         break;
-    case METER_INDUSTRY:            retval += "Industry";           break;
-    case METER_RESEARCH:            retval += "Research";           break;
-    case METER_TRADE:               retval += "Trade";              break;
-    case METER_CONSTRUCTION:        retval += "Construction";       break;
-    case METER_FUEL:                retval += "Fuel";               break;
-    case METER_SHIELD:              retval += "Shield";             break;
-    case METER_STRUCTURE:           retval += "Structure";          break;
-    case METER_DEFENSE:             retval += "Defense";            break;
-    case METER_SUPPLY:              retval += "Supply";             break;
-    case METER_STEALTH:             retval += "Stealth";            break;
-    case METER_DETECTION:           retval += "Detection";          break;
-    case METER_BATTLE_SPEED:        retval += "BattleSpeed";        break;
-    case METER_STARLANE_SPEED:      retval += "StarlaneSpeed";      break;
-    case METER_DAMAGE:              retval += "Damage";             break;
-    case METER_ROF:                 retval += "ROF";                break;
-    case METER_RANGE:               retval += "Range";              break;
-    case METER_SPEED:               retval += "Speed";              break;
-    case METER_CAPACITY:            retval += "Capacity";           break;
-    case METER_ANTI_SHIP_DAMAGE:    retval += "AntiShipDamage";     break;
-    case METER_ANTI_FIGHTER_DAMAGE: retval += "AntiFighterDamage";  break;
-    case METER_LAUNCH_RATE:         retval += "LaunchRate";         break;
-    case METER_FIGHTER_WEAPON_RANGE:retval += "FighterWeaponRange"; break;
-    default: retval += "?Meter?"; break;
-    }
+    retval += MeterTypeDumpString(m_meter);
     if (m_low)
         retval += " low = " + m_low->Dump();
     if (m_high)
@@ -3715,45 +3719,33 @@ bool Condition::ShipPartMeterValue::TargetInvariant() const {
 }
 
 std::string Condition::ShipPartMeterValue::Description(bool negated/* = false*/) const {
-//    std::string empire_str;
-//    if (m_empire_id) {
-//        int empire_id = ALL_EMPIRES;
-//        if (ValueRef::ConstantExpr(m_empire_id))
-//            empire_id = m_empire_id->Eval();
-//        if (const Empire* empire = Empires().Lookup(empire_id))
-//            empire_str = empire->Name();
-//        else
-//            empire_str = m_empire_id->Description();
-//    }
-//    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
-//                                    boost::lexical_cast<std::string>(m_low->Eval()) :
-//                                    m_low->Description())
-//                                 : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
-//    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
-//                                      boost::lexical_cast<std::string>(m_high->Eval()) :
-//                                      m_high->Description())
-//                                   : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
-//    std::string description_str = "DESC_EMPIRE_METER_VALUE_CURRENT";
-//    if (negated)
-//        description_str += "_NOT";
-//    return str(FlexibleFormat(UserString(description_str))
-//               % UserString(m_meter)
-//               % low_str
-//               % high_str
-//               % empire_str);
-    return "";
+    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
+                                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                                    m_low->Description())
+                                 : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
+    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
+                                      boost::lexical_cast<std::string>(m_high->Eval()) :
+                                      m_high->Description())
+                                   : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
+    std::string description_str = "DESC_SHIP_PART_METER_VALUE_CURRENT";
+    if (negated)
+        description_str += "_NOT";
+    return str(FlexibleFormat(UserString(description_str))
+               % UserString(boost::lexical_cast<std::string>(m_meter))
+               % UserString(m_part_name)
+               % low_str
+               % high_str);
 }
 
 std::string Condition::ShipPartMeterValue::Dump() const {
-    std::string retval = DumpIndent() + "ShipPartMeterValue";
-    //if (m_empire_id)
-    //    retval += " empire = " + m_empire_id->Dump();
-    //retval += " meter = " + m_meter;
-    //if (m_low)
-    //    retval += " low = " + m_low->Dump();
-    //if (m_high)
-    //    retval += " high = " + m_high->Dump();
-    //retval += "\n";
+    std::string retval = DumpIndent();
+    retval += MeterTypeDumpString(m_meter);
+    retval += " partname = " + m_part_name;
+    if (m_low)
+        retval += " low = " + m_low->Dump();
+    if (m_high)
+        retval += " high = " + m_high->Dump();
+    retval += "\n";
     return retval;
 }
 

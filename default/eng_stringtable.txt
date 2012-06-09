@@ -4481,6 +4481,12 @@ DESC_METER_VALUE_CURRENT
 DESC_METER_VALUE_CURRENT_NOT
  that doesn't have a %1% between %2% and %3%
 
+DESC_METER_VALUE_CURRENT
+ that has a %2% %1% between %3% and %4%
+
+DESC_METER_VALUE_CURRENT_NOT
+ that doesn't have a %2% %1% between %3% and %4%
+
 DESC_EMPIRE_METER_VALUE_CURRENT
  if empire %4% has a %1% between %2% and %3%
 
