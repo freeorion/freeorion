@@ -199,26 +199,40 @@ namespace {
                      [ _val = new_<Condition::MeterValue>(_a, _b, _c) ]
                 ;
 
+            ship_part_meter_value
+                =    (      tok.ShipPartMeter_
+                        >>  parse::label(Part_name)      >>  tok.string [ _d = _1 ]
+                        >>  parse::ship_part_meter_type_enum() [ _a = _1 ]
+                        >> -(
+                                parse::label(Low_name)  >>  double_value_ref [ _b = _1 ]
+                            )
+                        >> -(
+                                parse::label(High_name) >>  double_value_ref [ _c = _1 ]
+                            )
+                     )
+                     [ _val = new_<Condition::ShipPartMeterValue>(_d, _a, _b, _c) ]
+                ;
+
             empire_meter_value
                 =   tok.EmpireMeter_
                 >>  (
                         parse::label(Empire_name)   >>  int_value_ref [ _b = _1 ]
                     >>  parse::label(Meter_name)    >>  tok.string [ _a = _1 ]
                     >> -(
-                            parse::label(Low_name) >> double_value_ref [ _c = _1 ]
+                            parse::label(Low_name)  >>  double_value_ref [ _c = _1 ]
                         )
                     >> -(
-                            parse::label(High_name) >> double_value_ref [ _d = _1 ]
+                            parse::label(High_name) >>  double_value_ref [ _d = _1 ]
                         )
                         [ _val = new_<Condition::EmpireMeterValue>(_b, _a, _c, _d) ]
                     )
                 |   (
-                        parse::label(Meter_name)    >>   tok.string [ _a = _1 ]
+                        parse::label(Meter_name)    >>  tok.string [ _a = _1 ]
                     >> -(
-                            parse::label(Low_name) >> double_value_ref [ _c = _1 ]
+                            parse::label(Low_name)  >>  double_value_ref [ _c = _1 ]
                         )
                     >> -(
-                            parse::label(High_name) >> double_value_ref [ _d = _1 ]
+                            parse::label(High_name) >>  double_value_ref [ _d = _1 ]
                         )
                         [ _val = new_<Condition::EmpireMeterValue>(_a, _c, _d) ]
                     )
@@ -260,6 +274,7 @@ namespace {
                 |    planet_environment
                 |    object_type
                 |    meter_value
+                |    ship_part_meter_value
                 |    empire_meter_value
                 |    and_
                 |    or_
@@ -285,6 +300,7 @@ namespace {
             planet_environment.name("PlanetEnvironment");
             object_type.name("ObjectType");
             meter_value.name("MeterValue");
+            ship_part_meter_value.name("ShipPartMeterValue");
             empire_meter_value.name("EmpireMeterValue");
             and_.name("And");
             or_.name("Or");
@@ -310,6 +326,7 @@ namespace {
             debug(planet_environment);
             debug(object_type);
             debug(meter_value);
+            debug(ship_part_meter_value);
             debug(empire_meter_value);
             debug(and_);
             debug(or_);
@@ -336,7 +353,8 @@ namespace {
             qi::locals<
                 MeterType,
                 ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*
+                ValueRef::ValueRefBase<double>*,
+                std::string
             >,
             parse::skipper_type
         > meter_value_rule;
@@ -407,6 +425,7 @@ namespace {
         planet_environment_rule         planet_environment;
         parse::condition_parser_rule    object_type;
         meter_value_rule                meter_value;
+        meter_value_rule                ship_part_meter_value;
         empire_meter_value_rule         empire_meter_value;
         and_or_rule                     and_;
         and_or_rule                     or_;

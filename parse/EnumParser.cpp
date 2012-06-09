@@ -356,6 +356,33 @@ namespace parse {
         return retval;
     }
 
+    enum_parser_rule<MeterType>::type& ship_part_meter_type_enum() {
+        const parse::lexer& tok = parse::lexer::instance();
+        static enum_parser_rule<MeterType>::type retval
+            =    tok.Damage_ [ _val = METER_DAMAGE ]
+            |    tok.ROF_ [ _val = METER_ROF ]
+            |    tok.Range_ [ _val = METER_RANGE ]
+            |    tok.Speed_ [ _val = METER_SPEED ]
+            |    tok.Capacity_ [ _val = METER_CAPACITY ]
+            |    tok.AntiShipDamage_ [ _val = METER_ANTI_SHIP_DAMAGE ]
+            |    tok.AntiFighterDamage_ [ _val = METER_ANTI_FIGHTER_DAMAGE ]
+            |    tok.LaunchRate_ [ _val = METER_LAUNCH_RATE ]
+            |    tok.FighterWeaponRange_ [ _val = METER_FIGHTER_WEAPON_RANGE ]
+            |    tok.Stealth_ [ _val = METER_STEALTH ]
+            |    tok.Detection_ [ _val = METER_DETECTION ]
+            |    tok.Structure_ [ _val = METER_STRUCTURE ]
+            ;
+        static bool once = true;
+        if (once) {
+            retval.name("ship-part MeterType");
+#if DEBUG_PARSERS
+            debug(retval);
+#endif
+            once = false;
+        }
+        return retval;
+    }
+
     enum_parser_rule<MeterType>::type& set_non_ship_part_meter_type_enum() {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<MeterType>::type retval

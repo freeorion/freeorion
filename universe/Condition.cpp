@@ -3546,7 +3546,7 @@ namespace {
         MeterType m_meter_type;
     };
 
-    const std::string& MeterTypeDumpString(MeterType meter) {
+    std::string MeterTypeDumpString(MeterType meter) {
         switch (meter) {
         case INVALID_METER_TYPE:        return "INVALID_METER_TYPE"; break;
         case METER_TARGET_POPULATION:   return "TargetPopulation";   break;
@@ -3581,7 +3581,7 @@ namespace {
         case METER_ANTI_FIGHTER_DAMAGE: return "AntiFighterDamage";  break;
         case METER_LAUNCH_RATE:         return "LaunchRate";         break;
         case METER_FIGHTER_WEAPON_RANGE:return "FighterWeaponRange"; break;
-        default:                        return "?Meter?"; break;
+        default:                        return "?Meter?";            break;
         }
     }
 }
@@ -3652,7 +3652,7 @@ bool Condition::MeterValue::Match(const ScriptingContext& local_context) const {
 }
 
 ///////////////////////////////////////////////////////////
-// EmpireMeterValueSimpleMatch                                      //
+// ShipPartMeterValue                                    //
 ///////////////////////////////////////////////////////////
 Condition::ShipPartMeterValue::~ShipPartMeterValue() {
     delete m_low;

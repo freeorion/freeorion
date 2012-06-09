@@ -64,6 +64,8 @@ namespace parse {
 
     enum_parser_rule<MeterType>::type& non_ship_part_meter_type_enum();
 
+    enum_parser_rule<MeterType>::type& ship_part_meter_type_enum();
+
     enum_parser_rule<MeterType>::type& set_non_ship_part_meter_type_enum();
 
     enum_parser_rule<MeterType>::type& set_ship_part_meter_type_enum();

@@ -278,6 +278,7 @@
     (Ship)                                      \
     (ShipHull)                                  \
     (ShipPart)                                  \
+    (ShipPartMeter)                             \
     (Ships)                                     \
     (Short_Description)                         \
     (ShortRange)                                \
