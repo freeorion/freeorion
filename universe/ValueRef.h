@@ -451,7 +451,7 @@ bool ValueRef::Variable<T>::TargetInvariant() const
 template <class T>
 std::string ValueRef::Variable<T>::Description() const
 {
-    boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" + boost::lexical_cast<std::string>(m_property_name.size())));
+    boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" + boost::lexical_cast<std::string>(m_property_name.size() - 1)));
     switch (m_ref_type) {
     case SOURCE_REFERENCE:                      formatter % UserString("DESC_VAR_SOURCE");          break;
     case EFFECT_TARGET_REFERENCE:               formatter % UserString("DESC_VAR_TARGET");          break;
@@ -460,8 +460,12 @@ std::string ValueRef::Variable<T>::Description() const
     case NON_OBJECT_REFERENCE:                  formatter % "";                                     break;
     default:                                    formatter % "???";                                  break;
     }
-    for (unsigned int i = 1; i < m_property_name.size(); ++i)
-        formatter % UserString("DESC_VAR_" + boost::to_upper_copy(std::string(m_property_name[i].c_str())));
+    if (m_property_name.size() == 1 && m_property_name[0] == Value_name) {
+        formatter % UserString("DESC_VAR_VALUE");
+    } else {
+        for (unsigned int i = 1; i < m_property_name.size(); ++i)
+            formatter % UserString("DESC_VAR_" + boost::to_upper_copy(std::string(m_property_name[i].c_str())));
+    }
     return boost::io::str(formatter);
 }
 
