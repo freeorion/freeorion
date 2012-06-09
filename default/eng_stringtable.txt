@@ -3893,10 +3893,10 @@ source
 DESC_VAR_TARGET
 target
 
-DESC_VAR_LOCAL_CANDIDATE
+DESC_VAR_LOCALCANDIDATE
 local condition candidate
 
-DESC_VAR_ROOT_CANDIDATE
+DESC_VAR_ROOTCANDIDATE
 root condition candidate
 
 DESC_STATISTIC
@@ -4481,10 +4481,10 @@ DESC_METER_VALUE_CURRENT
 DESC_METER_VALUE_CURRENT_NOT
  that doesn't have a %1% between %2% and %3%
 
-DESC_METER_VALUE_CURRENT
+DESC_SHIP_PART_METER_VALUE_CURRENT
  that has a %2% %1% between %3% and %4%
 
-DESC_METER_VALUE_CURRENT_NOT
+DESC_SHIP_PART_METER_VALUE_CURRENT_NOT
  that doesn't have a %2% %1% between %3% and %4%
 
 DESC_EMPIRE_METER_VALUE_CURRENT
@@ -7757,7 +7757,7 @@ HOMEWORLD_SUPPLY
 HOMEWORLD_BONUS
 '''Homeworld'''
 
-// The following two are used in tech descriptions, and should be updated if PRODUCTION_PER_POP or PRODUCTION_PER_INFRA are changed in shared_macros.txt.
+# The following two are used in tech descriptions, and should be updated if PRODUCTION_PER_POP or PRODUCTION_PER_INFRA are changed in shared_macros.txt.
 POP_PER_PRODUCTION
 '''2'''
 
