@@ -62,6 +62,7 @@ namespace Condition {
     struct ProducedByEmpire;
     struct Chance;
     struct MeterValue;
+    struct ShipPartMeterValue;
     struct EmpireMeterValue;
     struct EmpireStockpileValue;
     struct OwnerHasTech;
@@ -1024,7 +1025,7 @@ private:
 };
 
 /** Matches all objects that have a meter of type \a meter, and whose current
-  * value is >= \a low and < \a high. */
+  * value is >= \a low and <= \a high. */
 struct Condition::MeterValue : public Condition::ConditionBase {
     MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high) :
         m_meter(meter),
@@ -1053,8 +1054,39 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Matches ships that have a ship part meter of type \a meter for part \a part
+  * whose current value is >= low and <= high. */
+struct Condition::ShipPartMeterValue : public Condition::ConditionBase {
+    ShipPartMeterValue(const std::string& ship_part_name,
+                       MeterType meter,
+                       const ValueRef::ValueRefBase<double>* low,
+                       const ValueRef::ValueRefBase<double>* high) :
+        m_part_name(ship_part_name),
+        m_meter(meter),
+        m_low(low),
+        m_high(high)
+    {}
+    virtual ~ShipPartMeterValue();
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    std::string                             m_part_name;
+    MeterType                               m_meter;
+    const ValueRef::ValueRefBase<double>*   m_low;
+    const ValueRef::ValueRefBase<double>*   m_high;
+};
+
 /** Matches all objects if the empire with id \a empire_id has an empire meter
-  * \a meter whose current value is >= \a low and < \a high. */
+  * \a meter whose current value is >= \a low and <= \a high. */
 struct Condition::EmpireMeterValue : public Condition::ConditionBase {
     EmpireMeterValue(const std::string& meter,
                      const ValueRef::ValueRefBase<double>* low,

@@ -3648,7 +3648,129 @@ bool Condition::MeterValue::Match(const ScriptingContext& local_context) const {
 }
 
 ///////////////////////////////////////////////////////////
-// EmpireMeterValue                                            //
+// EmpireMeterValueSimpleMatch                                      //
+///////////////////////////////////////////////////////////
+Condition::ShipPartMeterValue::~ShipPartMeterValue() {
+    delete m_low;
+    delete m_high;
+}
+
+namespace {
+    struct ShipPartMeterValueSimpleMatch {
+        ShipPartMeterValueSimpleMatch(const std::string& ship_part_name,
+                                      MeterType meter, double low, double high) :
+            m_part_name(ship_part_name),
+            m_low(low),
+            m_high(high),
+            m_meter(meter)
+        {}
+
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
+            const Ship* ship = universe_object_cast<const Ship*>(candidate);
+            if (!ship)
+                return false;
+            const Meter* meter = ship->GetMeter(m_meter, m_part_name);
+            if (!meter)
+                return false;
+            double meter_current = meter->Current();
+            return (m_low <= meter_current && meter_current <= m_high);
+        }
+
+        std::string m_part_name;
+        double      m_low;
+        double      m_high;
+        MeterType   m_meter;
+    };
+}
+
+void Condition::ShipPartMeterValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                                 ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
+                             (!m_high || m_high->LocalCandidateInvariant()) &&
+                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    if (simple_eval_safe) {
+        // evaluate number limits once, use to match all candidates
+        const UniverseObject* no_object(0);
+        ScriptingContext local_context(parent_context, no_object);
+        double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+        double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+        EvalImpl(matches, non_matches, search_domain, ShipPartMeterValueSimpleMatch(m_part_name, m_meter, low, high));
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::ShipPartMeterValue::RootCandidateInvariant() const {
+    return ((!m_low || m_low->RootCandidateInvariant()) &&
+            (!m_high || m_high->RootCandidateInvariant()));
+}
+
+bool Condition::ShipPartMeterValue::TargetInvariant() const {
+    return ((!m_low || m_low->TargetInvariant()) &&
+            (!m_high || m_high->TargetInvariant()));
+}
+
+std::string Condition::ShipPartMeterValue::Description(bool negated/* = false*/) const {
+//    std::string empire_str;
+//    if (m_empire_id) {
+//        int empire_id = ALL_EMPIRES;
+//        if (ValueRef::ConstantExpr(m_empire_id))
+//            empire_id = m_empire_id->Eval();
+//        if (const Empire* empire = Empires().Lookup(empire_id))
+//            empire_str = empire->Name();
+//        else
+//            empire_str = m_empire_id->Description();
+//    }
+//    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
+//                                    boost::lexical_cast<std::string>(m_low->Eval()) :
+//                                    m_low->Description())
+//                                 : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
+//    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
+//                                      boost::lexical_cast<std::string>(m_high->Eval()) :
+//                                      m_high->Description())
+//                                   : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
+//    std::string description_str = "DESC_EMPIRE_METER_VALUE_CURRENT";
+//    if (negated)
+//        description_str += "_NOT";
+//    return str(FlexibleFormat(UserString(description_str))
+//               % UserString(m_meter)
+//               % low_str
+//               % high_str
+//               % empire_str);
+    return "";
+}
+
+std::string Condition::ShipPartMeterValue::Dump() const {
+    std::string retval = DumpIndent() + "ShipPartMeterValue";
+    //if (m_empire_id)
+    //    retval += " empire = " + m_empire_id->Dump();
+    //retval += " meter = " + m_meter;
+    //if (m_low)
+    //    retval += " low = " + m_low->Dump();
+    //if (m_high)
+    //    retval += " high = " + m_high->Dump();
+    //retval += "\n";
+    return retval;
+}
+
+bool Condition::ShipPartMeterValue::Match(const ScriptingContext& local_context) const {
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "ShipPartMeterValue::Match passed no candidate object";
+        return false;
+    }
+    double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+    double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+    return ShipPartMeterValueSimpleMatch(m_part_name, m_meter, low, high)(candidate);
+}
+
+
+///////////////////////////////////////////////////////////
+// EmpireMeterValue                                      //
 ///////////////////////////////////////////////////////////
 Condition::EmpireMeterValue::~EmpireMeterValue() {
     delete m_empire_id;
