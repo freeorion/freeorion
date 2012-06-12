@@ -577,11 +577,12 @@ void SystemIcon::Refresh() {
             AttachChild(m_colored_name);
     }
 
-    if (!system->OverlayTexture().empty())
+    if (system && !system->OverlayTexture().empty())
         m_overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / system->OverlayTexture());
     else
         m_overlay_texture.reset();
-    m_overlay_size = system->OverlaySize();
+    if (system)
+        m_overlay_size = system->OverlaySize();
 }
 
 void SystemIcon::ShowName() {
