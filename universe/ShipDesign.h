@@ -538,7 +538,7 @@ public:
     double                          TroopCapacity() const   { return m_troop_capacity; }        ///< returns the troop capacity of this design
     double                          Stealth() const         { return m_stealth; }               ///< returns the stealth of this design
 
-    bool                            CanColonize() const     { return (m_colony_capacity > 0.0); }
+    bool                            CanColonize() const;
     bool                            HasTroops() const       { return (m_troop_capacity > 0.0); }
     bool                            IsArmed() const         { return m_is_armed; }
     bool                            IsMonster() const       { return m_is_monster; }

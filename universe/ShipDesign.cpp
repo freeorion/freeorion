@@ -646,6 +646,20 @@ int ShipDesign::ProductionTime() const {
         return 1;
 }
 
+bool ShipDesign::CanColonize() const {
+    if (m_colony_capacity > 0.0)
+        return true;
+    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
+        const std::string& part_name = *it;
+        if (part_name.empty())
+            continue;
+        if (const PartType* part = GetPartType(part_name))
+            if (part->Class() == PC_COLONY)
+                return true;
+    }
+    return false;
+}
+
 
 //// TEMPORARY
 double ShipDesign::Defense() const {
