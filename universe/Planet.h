@@ -182,8 +182,8 @@ private:
     virtual void            PopGrowthProductionResearchPhase();
     virtual void            ClampMeters();
 
-    virtual Visibility      GetVisibility(int empire_id) const  {return UniverseObject::GetVisibility(empire_id);}
-    virtual void            AddMeter(MeterType meter_type)      {UniverseObject::AddMeter(meter_type);}
+    virtual Visibility      GetVisibility(int empire_id) const  { return UniverseObject::GetVisibility(empire_id); }
+    virtual void            AddMeter(MeterType meter_type)      { UniverseObject::AddMeter(meter_type); }
 
     std::set<int>           VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_buildings that is visible to empire with id \a empire_id
 
