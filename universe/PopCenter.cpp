@@ -10,7 +10,7 @@
 #include <stdexcept>
 
 namespace {
-    const double MINIMUM_POP_CENTER_POPULATION = 0.05001;  // rounds up to 0.1 when showing 2 digits, down to 0.05 or 50.0 when showing 3
+    const double MINIMUM_POP_CENTER_POPULATION = 0.01001;  // rounds up to 0.1 when showing 2 digits, down to 0.05 or 50.0 when showing 3
 }
 
 class Species;

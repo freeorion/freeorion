@@ -663,22 +663,21 @@ void Planet::PopGrowthProductionResearchPhase() {
 
     PopCenterPopGrowthProductionResearchPhase();
 
-    // check for planets with zero population.  If they have any owners
-    // then the planet has likely just starved.  Regardless, resetting the
-    // planet keeps things consistent.
-    if (GetMeter(METER_POPULATION)->Current() == 0.0 && !Unowned()) {
+    // check for planets with zero population.  If they have a species set, then
+    // they probably just starved
+    if (!SpeciesName().empty() && GetMeter(METER_POPULATION)->Current() == 0.0) {
         // generate starvation sitrep for empire that owns this depopulated planet
         if (Empire* empire = Empires().Lookup(this->Owner()))
             empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep(this->ID()));
 
-        // reset planet to empty and unowned
-        Reset();
+        // remove species
+        SetSpecies("");
 
-    } else {
-        GetMeter(METER_SHIELD)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SHIELD));
-        GetMeter(METER_DEFENSE)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_DEFENSE));
-        GetMeter(METER_TROOPS)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_TROOPS));
     }
+
+    GetMeter(METER_SHIELD)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SHIELD));
+    GetMeter(METER_DEFENSE)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_DEFENSE));
+    GetMeter(METER_TROOPS)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_TROOPS));
 
     StateChangedSignal();
 }

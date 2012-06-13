@@ -1151,12 +1151,42 @@ void SidePanel::PlanetPanel::Refresh() {
     }
 
 
-    if (planet->CurrentMeterValue(METER_POPULATION) > 0 || SHOW_ALL_PLANET_PANELS) {
+    const Ship* colony_ship =           ValidSelectedColonyShip(SidePanel::SystemID());
+    std::set<Ship*> invasion_ships =    ValidSelectedInvasionShips(SidePanel::SystemID());
+    std::string colony_ship_species_name;
+    if (colony_ship)
+        colony_ship_species_name = colony_ship->SpeciesName();
+    const Species* colony_ship_species = GetSpecies(colony_ship_species_name);
+    PlanetEnvironment planet_env_for_colony_species = PE_UNINHABITABLE;
+    if (colony_ship_species)
+        planet_env_for_colony_species = colony_ship_species->GetPlanetEnvironment(planet->Type());
+
+    // calculate truth tables for planet colonization and invasion
+    bool has_owner =        !planet->Unowned();
+    bool mine =             planet->OwnedBy(client_empire_id);
+    bool populated =        planet->CurrentMeterValue(METER_POPULATION) > 0.;
+    bool habitable =        planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
+    bool visible =          GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY;
+    bool vulnerable =       planet->CurrentMeterValue(METER_SHIELD) <= 0.;
+    bool being_colonized =  planet->IsAboutToBeColonized();
+    bool colonizable =      !populated && habitable && visible && !being_colonized;
+    bool can_colonize =     colonizable && colony_ship;
+//    bool could_colonize =   colonizable && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
+    bool could_colonize =   (!populated || (has_owner && !mine)) && visible && !being_colonized && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
+    bool being_invaded =    planet->IsAboutToBeInvaded();
+    bool invadable =        !mine && (populated || has_owner) && vulnerable && visible && !being_invaded && !invasion_ships.empty();
+
+    if (populated || SHOW_ALL_PLANET_PANELS) {
         // show population, resource and military panels, but hide environement
         // size indicator that's used only for uncolonized planets
         AttachChild(m_population_panel);
         if (m_population_panel)
             m_population_panel->Refresh();
+    } else {
+        DetachChild(m_population_panel);
+    }
+
+    if (populated || has_owner) {
         AttachChild(m_resource_panel);
         if (m_resource_panel)
             m_resource_panel->Refresh();
@@ -1164,26 +1194,9 @@ void SidePanel::PlanetPanel::Refresh() {
         if (m_military_panel)
             m_military_panel->Refresh();
     } else {
-        DetachChild(m_population_panel);
         DetachChild(m_resource_panel);
         DetachChild(m_military_panel);
     }
-
-    // calculate our truth tables using simpler words
-    const Ship* colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
-    std::set<Ship*> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
-    bool mine = planet->OwnedBy(client_empire_id);
-    bool populated = planet->CurrentMeterValue(METER_POPULATION) > 0.;
-    bool habitable = planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0.;
-    bool visible = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY;
-    bool vulnerable = planet->CurrentMeterValue(METER_SHIELD) <= 0.;
-    bool being_colonized = planet->IsAboutToBeColonized();
-    bool colonizable = !populated && habitable && visible && !being_colonized;
-    bool can_colonize = colonizable && colony_ship;
-//    bool could_colonize = colonizable && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
-    bool could_colonize = !populated && visible && !being_colonized && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
-    bool being_invaded = planet->IsAboutToBeInvaded();
-    bool invadable = !mine && vulnerable && populated && visible && !being_invaded && !invasion_ships.empty();
 
 
     DetachChild(m_invade_button);
@@ -1496,7 +1509,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
     // been ordered
 
     const Planet* planet = GetPlanet(m_planet_id);
-    if (!planet || !planet->Unowned() || !m_order_issuing_enabled)
+    if (!planet || !planet->CurrentMeterValue(METER_POPULATION) == 0.0 || !m_order_issuing_enabled)
         return;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();

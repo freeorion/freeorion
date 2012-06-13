@@ -1312,7 +1312,9 @@ namespace {
             if (!planet)
                 continue;
             planet->ResetIsAboutToBeColonized();
-            if (!planet->Unowned())
+            if (planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+                continue;
+            if (!planet->Unowned() && !planet->OwnedBy(ship->Owner()))
                 continue;
 
             if (ship->SystemID() != planet->SystemID() || ship->SystemID() == INVALID_OBJECT_ID)
@@ -1337,10 +1339,6 @@ namespace {
             Planet* planet = objects.Object<Planet>(planet_id);
             if (!planet) {
                 Logger().errorStream() << "HandleColonization couldn't get planet with id " << planet_id;
-                continue;
-            }
-            if (!planet->Unowned()) {
-                Logger().errorStream() << "HandleColonization trying to colonize an already-occupied planet!";
                 continue;
             }
 
