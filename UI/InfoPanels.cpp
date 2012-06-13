@@ -455,7 +455,7 @@ std::map<int, bool> ResourcePanel::s_expanded_map;
 ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::INTERACTIVE),
     m_rescenter_id(object_id),
-    m_pop_mod_stat(0),
+    //m_pop_mod_stat(0),
     m_industry_stat(0),
     m_research_stat(0),
     m_trade_stat(0),
@@ -504,9 +504,9 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
                                      ClientUI::MeterIcon(METER_TRADE), 0, 3, false);
     AttachChild(m_trade_stat);
 
-    m_pop_mod_stat = new MeterModifiersIndicator(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
-                                                 m_rescenter_id, METER_TARGET_POPULATION);
-    AttachChild(m_pop_mod_stat);
+    //m_pop_mod_stat = new MeterModifiersIndicator(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
+    //                                             m_rescenter_id, METER_TARGET_POPULATION);
+    //AttachChild(m_pop_mod_stat);
 
 
     // meter and production indicators
@@ -532,7 +532,7 @@ ResourcePanel::~ResourcePanel() {
     delete m_multi_icon_value_indicator;
     delete m_multi_meter_status_bar;
 
-    delete m_pop_mod_stat;
+    //delete m_pop_mod_stat;
     delete m_industry_stat;
     delete m_research_stat;
     delete m_trade_stat;
@@ -556,7 +556,7 @@ void ResourcePanel::ExpandCollapse(bool expanded) {
 void ResourcePanel::DoExpandCollapseLayout() {
     // initially detach everything (most things?).  Some will be reattached later.
     DetachChild(m_industry_stat);   DetachChild(m_research_stat);
-    DetachChild(m_trade_stat);      DetachChild(m_pop_mod_stat);
+    DetachChild(m_trade_stat);      /*DetachChild(m_pop_mod_stat);*/
 
     DetachChild(m_focus_drop);
 
@@ -576,7 +576,7 @@ void ResourcePanel::DoExpandCollapseLayout() {
             res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_industry_stat->GetValue(), m_industry_stat));
             res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_research_stat->GetValue(), m_research_stat));
             res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_trade_stat->GetValue(),    m_trade_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_pop_mod_stat->GetValue(),  m_pop_mod_stat));
+            //res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_pop_mod_stat->GetValue(),  m_pop_mod_stat));
 
             // position and reattach icons to be shown
             int n = 0;
@@ -709,7 +709,7 @@ void ResourcePanel::Update() {
     m_trade_stat->ClearBrowseInfoWnd();
     m_multi_icon_value_indicator->ClearToolTip(METER_TRADE);
 
-    m_pop_mod_stat->ClearBrowseInfoWnd();
+    //m_pop_mod_stat->ClearBrowseInfoWnd();
 
     m_multi_icon_value_indicator->ClearToolTip(METER_CONSTRUCTION);
 
@@ -759,7 +759,7 @@ void ResourcePanel::Update() {
     m_industry_stat->SetValue(res->InitialMeterValue(METER_INDUSTRY));
     m_research_stat->SetValue(res->InitialMeterValue(METER_RESEARCH));
     m_trade_stat->SetValue(res->InitialMeterValue(METER_TRADE));
-    m_pop_mod_stat->Update();
+    //m_pop_mod_stat->Update();
 
 
     // create an attach browse info wnds for each meter type on the icon + number stats used when collapsed and
@@ -782,8 +782,8 @@ void ResourcePanel::Update() {
     browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_CONSTRUCTION, METER_TARGET_CONSTRUCTION));
     m_multi_icon_value_indicator->SetToolTip(METER_CONSTRUCTION, browse_wnd);
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterModifiersIndicatorBrowseWnd(m_rescenter_id, METER_TARGET_POPULATION));
-    m_pop_mod_stat->SetBrowseInfoWnd(browse_wnd);
+    //browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterModifiersIndicatorBrowseWnd(m_rescenter_id, METER_TARGET_POPULATION));
+    //m_pop_mod_stat->SetBrowseInfoWnd(browse_wnd);
 
     // focus droplist
     const std::vector<std::string>& available_foci = res->AvailableFoci();
@@ -2348,18 +2348,6 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         m_allocation += allocation;
 
         std::string amount_text = DoubleToString(allocation, 3, false);
-
-        // TODO: for food only, colour allocation text depending on need of PopCenter:
-        // - if allocation < need to avoid starvation: colour stat decr colour (red)
-        // - if allocation > need to avoid starvation  and  allocation < need for max growth: colour generic text colour (white)
-        // - if allocation = need for max growth: colour stat incr colour (green)
-        // if (m_resource_type == RE_FOOD) {
-        //     // get various needs, determine appropriate colour for food text
-        //     GG::Clr text_colour = // something?
-        //     amount_text = ColourWrappedtext(amount_text, text_colour);
-        // }
-
-        // TODO: for industry, consider something similar as colouring text for food above.
 
 
         GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
