@@ -741,7 +741,7 @@ MapWnd::MapWnd() :
     const GG::X ICON_WIDTH(ICON_DUAL_WIDTH - 30);
     m_population = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
                                      ClientUI::MeterIcon(METER_POPULATION),
-                                     0, 0, 3, 3, false, true);
+                                     0, 3, false);
 
     m_industry = new StatisticIcon(GG::X0, GG::Y0, ICON_WIDTH, m_turn_update->Height(),
                                    ClientUI::MeterIcon(METER_INDUSTRY),
@@ -753,7 +753,7 @@ MapWnd::MapWnd() :
 
     m_trade = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
                                 ClientUI::MeterIcon(METER_TRADE),
-                                0, 0, 3, 3, false, true);
+                                0, 3, false);
 
     m_menu_showing = false;
 
@@ -3853,11 +3853,6 @@ void MapWnd::RefreshTradeResourceIndicator() {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
 
     m_trade->SetValue(empire->ResourceStockpile(RE_TRADE));
-
-    double production = empire->ResourceProduction(RE_TRADE);
-    double spent = empire->TotalTradeSpending();
-
-    m_trade->SetValue(production - spent, 1);
 }
 
 void MapWnd::RefreshResearchResourceIndicator() {
@@ -3873,7 +3868,6 @@ void MapWnd::RefreshIndustryResourceIndicator() {
 void MapWnd::RefreshPopulationIndicator() {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     m_population->SetValue(empire->GetPopulationPool().Population());
-    m_population->SetValue(empire->GetPopulationPool().Growth(), 1);
 }
 
 void MapWnd::UpdateMetersAndResourcePools() {
