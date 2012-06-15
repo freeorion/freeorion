@@ -32,7 +32,6 @@ public:
     Fleet() :
         UniverseObject(),
         m_moving_to(INVALID_OBJECT_ID),
-        m_speed(0.0),
         m_prev_system(INVALID_OBJECT_ID),
         m_next_system(INVALID_OBJECT_ID),
         m_travel_distance(0.0),
@@ -72,7 +71,7 @@ public:
     int                                 FinalDestinationID() const          { return m_moving_to; }     ///< Returns ID of system that this fleet is moving to.
     int                                 PreviousSystemID() const            { return m_prev_system; }   ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
     int                                 NextSystemID() const                { return m_next_system; }   ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
-    double                              Speed() const                       { return m_speed; }         ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
+    double                              Speed() const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
     bool                                CanChangeDirectionEnRoute() const   { return false; }           ///< Returns true iff this fleet can change its direction while in interstellar space.
     bool                                HasMonsters() const;                ///< returns true iff this fleet contains monster ships.
     bool                                HasArmedShips() const;              ///< Returns true if there is at least one armed ship in the fleet.
@@ -117,8 +116,6 @@ public:
     virtual void            SetSystem(int sys);
     virtual void            MoveTo(double x, double y);
     void                    SetNextAndPreviousSystems(int next, int prev);  ///< sets the previous and next systems for this fleet.  Useful after moving a moving fleet to a different location, so that it moves along its new local starlanes
-
-    void                    RecalculateFleetSpeed();                        ///< recalculates the speed of the fleet by finding the lowest speed of the ships in the fleet.
     //@}
 
     /* returns a name for a fleet based on the specified \a ship_ids */
@@ -138,8 +135,6 @@ private:
 
     ShipIDSet                   m_ships;
     int                         m_moving_to;
-
-    double                      m_speed;                                    ///< updated whenever ship is added or removed from fleet.  equal to speed of slowest ship in fleet.
 
     // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
     int                         m_prev_system;                              ///< the next system in the route, if any

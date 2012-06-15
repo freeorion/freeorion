@@ -315,13 +315,8 @@ bool Ship::HasTroops() const {
     return design && design->HasTroops();
 }
 
-double Ship::Speed() const {
-    const ShipDesign* design = Design();
-    if (design)
-        return design->StarlaneSpeed();
-    else
-        return false;
-}
+double Ship::Speed() const
+{ return CurrentMeterValue(METER_STARLANE_SPEED); }
 
 const std::string& Ship::PublicName(int empire_id) const {
     // Disclose real ship name only to fleet owners. Rationale: a player who
@@ -439,20 +434,16 @@ void Ship::SetOrderedScrapped(bool b) {
     if (b == m_ordered_scrapped) return;
     m_ordered_scrapped = b;
     StateChangedSignal();
-    if (Fleet* fleet = GetFleet(this->FleetID())) {
-        fleet->RecalculateFleetSpeed();
+    if (Fleet* fleet = GetFleet(this->FleetID()))
         fleet->StateChangedSignal();
-    }
 }
 
 void Ship::SetColonizePlanet(int planet_id) {
     if (planet_id == m_ordered_colonize_planet_id) return;
     m_ordered_colonize_planet_id = planet_id;
     StateChangedSignal();
-    if (Fleet* fleet = GetFleet(this->FleetID())) {
-        fleet->RecalculateFleetSpeed();
+    if (Fleet* fleet = GetFleet(this->FleetID()))
         fleet->StateChangedSignal();
-    }
 }
 
 void Ship::ClearColonizePlanet() {
@@ -463,10 +454,8 @@ void Ship::SetInvadePlanet(int planet_id) {
     if (planet_id == m_ordered_invade_planet_id) return;
     m_ordered_invade_planet_id = planet_id;
     StateChangedSignal();
-    if (Fleet* fleet = GetFleet(this->FleetID())) {
-        fleet->RecalculateFleetSpeed();
+    if (Fleet* fleet = GetFleet(this->FleetID()))
         fleet->StateChangedSignal();
-    }
 }
 
 void Ship::ClearInvadePlanet() {

@@ -29,7 +29,6 @@ const int Fleet::ETA_NEVER = (1 << 30) - 2;
 Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     UniverseObject(name, x, y),
     m_moving_to(INVALID_OBJECT_ID),
-    m_speed(0.0),
     m_prev_system(INVALID_OBJECT_ID),
     m_next_system(INVALID_OBJECT_ID),
     m_travel_distance(0.0),
@@ -72,7 +71,6 @@ void Fleet::Copy(const UniverseObject* copied_object, int empire_id) {
         this->m_prev_system =   copied_fleet->m_prev_system;
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
-            this->m_speed =                 copied_fleet->m_speed;
 
             if (vis >= VIS_FULL_VISIBILITY) {
                 this->m_moving_to =             copied_fleet->m_moving_to;
@@ -228,9 +226,9 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const {
     retval.push_back(initial_pos);
 
 
-    const int       TOO_LONG =              100;        // limit on turns to simulate.  99 turns max keeps ETA to two digits, making UI work better
+    const int       TOO_LONG =              100;            // limit on turns to simulate.  99 turns max keeps ETA to two digits, making UI work better
     int             turns_taken =           1;
-    double          turn_dist_remaining =   m_speed;    // additional distance that can be travelled in current turn of fleet movement being simulated
+    double          turn_dist_remaining =   this->Speed();  // additional distance that can be travelled in current turn of fleet movement being simulated
     double          cur_x =                 this->X();
     double          cur_y =                 this->Y();
     double          next_x =                next_system->X();
@@ -373,7 +371,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const {
         if (end_turn_at_cur_position) {
             //Logger().debugStream() << " ... end of simulated turn " << turns_taken;
             ++turns_taken;
-            turn_dist_remaining = m_speed;
+            turn_dist_remaining = this->Speed();
         }
     }
 
@@ -640,7 +638,6 @@ void Fleet::AddShip(int ship_id) {
     ship->SetFleetID(ID());
     m_ships.insert(ship_id);
 
-    RecalculateFleetSpeed();
     StateChangedSignal();
 }
 
@@ -649,7 +646,6 @@ bool Fleet::RemoveShip(int ship) {
     iterator it = m_ships.find(ship);
     if (it != m_ships.end()) {
         m_ships.erase(it);
-        RecalculateFleetSpeed();
         StateChangedSignal();
         return true;;
     }
@@ -987,26 +983,26 @@ void Fleet::CalculateRoute() const {
     }
 }
 
-void Fleet::RecalculateFleetSpeed() {
-    if ((m_ships.empty())) {
-        m_speed = 0.0;
-        return;
-    }
+double Fleet::Speed() const {
+    if (m_ships.empty())
+        return 0.0;
 
     bool isFleetScrapped = true;
-    m_speed = MAX_SHIP_SPEED;  // max speed no ship can go faster than
+    double retval = MAX_SHIP_SPEED;  // max speed no ship can go faster than
     for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
         if (const Ship* ship = GetShip(*it)) {
             if (!ship->OrderedScrapped()) {
-                if (ship->Speed() < m_speed)
-                    m_speed = ship->Speed();
+                if (ship->Speed() < retval)
+                    retval = ship->Speed();
                 isFleetScrapped = false;
             }
         }
     }
 
     if (isFleetScrapped)
-        m_speed = 0.0;
+        retval = 0.0;
+
+    return retval;
 }
 
 void Fleet::ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system) {
