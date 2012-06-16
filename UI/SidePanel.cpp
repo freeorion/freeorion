@@ -1169,7 +1169,7 @@ void SidePanel::PlanetPanel::Refresh() {
     bool visible =          GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY;
     bool vulnerable =       planet->CurrentMeterValue(METER_SHIELD) <= 0.;
     bool being_colonized =  planet->IsAboutToBeColonized();
-    bool colonizable =      !populated && habitable && visible && !being_colonized;
+    bool colonizable =      !populated && /*habitable &&*/ visible && !being_colonized;
     bool can_colonize =     colonizable && colony_ship;
 //    bool could_colonize =   colonizable && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
     bool could_colonize =   (!populated || (has_owner && !mine)) && visible && !being_colonized && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
