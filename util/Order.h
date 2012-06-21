@@ -17,15 +17,16 @@
 /////////////////////////////////////////////////////
 // Order
 /////////////////////////////////////////////////////
-/** the abstract base class for serializable player actions.  Orders are generally executed on the
-    client side as soon as they are issued.  Those that define UndoImpl() may also be undone on the client
-    side.  Subclass-defined UndoImpl() \a must return true, indicating that the call had some effect; the
-    default implementation does nothing and returns false. Note that only some Order subclasses define
-    UndoImpl(), specifically those that need to be undone before another order of a similar type can be
-    issued. For example, ColonizeOrder needs to be undoable; otherwise, once the user clicks the
-    colonize button, she is locked in to this decision. */
-class Order
-{
+/** The abstract base class for serializable player actions.  Orders are
+  * generally executed on the client side as soon as they are issued.  Those
+  * that define UndoImpl() may also be undone on the client side.  Subclass-
+  * defined UndoImpl() \a must return true, indicating that the call had some
+  * effect; the default implementation does nothing and returns false. Note that
+  * only some Order subclasses define UndoImpl(), specifically those that need
+  * to be undone before another order of a similar type can be issued. For
+  * example, ColonizeOrder needs to be undoable; otherwise, once the user clicks
+  * the colonize button, she is locked in to this decision. */
+class Order {
 public:
     /** \name Structors */ //@{
     Order(); ///< default ctor
@@ -73,8 +74,7 @@ private:
 // RenameOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents the renaming of a UniverseObject. */
-class RenameOrder : public Order
-{
+class RenameOrder : public Order {
 public:
     /** \name Structors */ //@{
     RenameOrder();
@@ -111,8 +111,7 @@ private:
 /////////////////////////////////////////////////////
 /** the Order subclass that represents forming a new fleet. 
     Only one of system or position will be used to place the new fleet.*/
-class NewFleetOrder : public Order
-{
+class NewFleetOrder : public Order {
 public:
     /** \name Structors */ //@{
     NewFleetOrder();
@@ -153,8 +152,7 @@ private:
 /////////////////////////////////////////////////////
 /** the Order subclass that represents fleet movement
     These orders change the current destination of a fleet */
-class FleetMoveOrder : public Order
-{
+class FleetMoveOrder : public Order {
 public:
     /** \name Structors */ //@{
     FleetMoveOrder();
@@ -196,11 +194,10 @@ private:
 /////////////////////////////////////////////////////
 // FleetTransferOrder
 /////////////////////////////////////////////////////
-/** the Order subclass that represents transfer of ships between existing fleets
-    A FleetTransferOrder is used to transfer ships from one existing fleet to another
- */
-class FleetTransferOrder : public Order
-{
+/** The Order subclass that represents transfer of ships between existing fleets
+  * A FleetTransferOrder is used to transfer ships from one existing fleet to
+  * another. */
+class FleetTransferOrder : public Order {
 public:
     /** \name Structors */ //@{
     FleetTransferOrder();
@@ -240,8 +237,7 @@ private:
 // ColonizeOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents a planet colonization action*/
-class ColonizeOrder : public Order
-{
+class ColonizeOrder : public Order {
 public:
     /** \name Structors */ //@{
     ColonizeOrder();
@@ -281,8 +277,7 @@ private:
 // InvadeOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents a planet invasion action*/
-class InvadeOrder : public Order
-{
+class InvadeOrder : public Order {
 public:
     /** \name Structors */ //@{
     InvadeOrder();
@@ -321,10 +316,10 @@ private:
 /////////////////////////////////////////////////////
 // DeleteFleetOrder
 /////////////////////////////////////////////////////
-/** the Order subclass that represents removing an existing fleet that contains
-  * no ships */
-class DeleteFleetOrder : public Order
-{
+/** The Order subclass that represents removing an existing fleet that contains
+  * no ships. This is mainly a utility order that is issued automatically by the
+  * game when the user removes all ships from a fleet. */
+class DeleteFleetOrder : public Order {
 public:
     /** \name Structors */ //@{
     DeleteFleetOrder();
@@ -359,8 +354,7 @@ private:
 // ChangeFocusOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents changing a planet focus*/
-class ChangeFocusOrder : public Order
-{
+class ChangeFocusOrder : public Order {
 public:
     /** \name Structors */ //@{
     ChangeFocusOrder();
@@ -393,11 +387,10 @@ private:
 /////////////////////////////////////////////////////
 // ResearchQueueOrder
 /////////////////////////////////////////////////////
-/** The Order subclass that represents changing an empire's research queue.  The 2-arg ctor removes the named
-    tech from \a empire's queue, whereas the 3-arg ctor places \a tech_name at position \a position in
-    \a empire's research queue. */
-class ResearchQueueOrder : public Order
-{
+/** The Order subclass that represents changing an empire's research queue.  The
+  * 2-arg ctor removes the named tech from \a empire's queue, whereas the 3-arg
+  * ctor places \a tech_name at position \a position in \a empire's research queue. */
+class ResearchQueueOrder : public Order {
 public:
     /** \name Structors */ //@{
     ResearchQueueOrder();
@@ -421,11 +414,12 @@ private:
 /////////////////////////////////////////////////////
 // ProductionQueueOrder
 /////////////////////////////////////////////////////
-/** The Order subclass that represents changing an empire's production queue.  The 5-arg ctor adds the build to the end
-    of \a empire's queue, the 3-arg ctor moves an existing build from its current location at \a index to a new one at
-    \a new_index, and the 2-arg ctor removes the build at \a index from \a empire's queue. */
-class ProductionQueueOrder : public Order
-{
+/** The Order subclass that represents changing an empire's production queue.
+  * The 5-arg ctor adds the build to the end of \a empire's queue, the 3-arg
+  * ctor moves an existing build from its current location at \a index to a new
+  * one at \a new_index, and the 2-arg ctor removes the build at \a index from
+  * \a empire's queue. */
+class ProductionQueueOrder : public Order {
 public:
     /** \name Structors */ //@{
     ProductionQueueOrder();
@@ -461,14 +455,16 @@ private:
 // ShipDesignOrder
 /////////////////////////////////////////////////////
 /** The Order subclass that represents manipulating an empire's ship designs.
-    The 2-arg ctor adds the existing ship design to the \a empire's set of designs - remembering, or "keeping" the
-    design and enabling the \a empire to produce ships of that design (if all design prerequisites are met)
-    The 3-arg ctor taking a bool removes the indicated design from the empire's set of remembered designs
-    The 3-arg ctor taking a ShipDesign argument creates a new shipdesign in the universe's catalog of shipdesigns
-    with the passed new design id, and adds this design to the \a empire's set of remembered designs.  The new design must
-    be marked as designed by this \a empire.*/
-class ShipDesignOrder : public Order
-{
+  * The 2-arg ctor adds the existing ship design to the \a empire's set of
+  * designs - remembering, or "keeping" the design and enabling the \a empire to
+  * produce ships of that design (if all design prerequisites are met)
+  * The 3-arg ctor taking a bool removes the indicated design from the empire's
+  * set of remembered designs.
+  * The 3-arg ctor taking a ShipDesign argument creates a new shipdesign in the
+  * universe's catalog of shipdesigns with the passed new design id, and adds
+  * this design to the \a empire's set of remembered designs.  The new design
+  * must be marked as designed by this \a empire.*/
+class ShipDesignOrder : public Order {
 public:
     /** \name Structors */ //@{
     ShipDesignOrder();
@@ -526,8 +522,7 @@ private:
 /////////////////////////////////////////////////////
 /** the Order subclass that represents the scrapping / recycling / destroying
   * a building or ship owned by an empire. */
-class ScrapOrder : public Order
-{
+class ScrapOrder : public Order {
 public:
     /** \name Structors */ //@{
     ScrapOrder();
@@ -535,7 +530,7 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    int             ObjectID() const {return m_object_id;}  ///< returns ID of object selected in this order
+    int             ObjectID() const { return m_object_id; }///< returns ID of object selected in this order
     //@}
 
 private:
@@ -551,6 +546,43 @@ private:
     virtual bool    UndoImpl() const;
 
     int m_object_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+
+/////////////////////////////////////////////////////
+// AggressiveOrder
+/////////////////////////////////////////////////////
+/** the Order subclass that represents setting the aggression state of objects
+  * controlled by an empire. */
+class AggressiveOrder : public Order {
+public:
+    /** \name Structors */ //@{
+    AggressiveOrder();
+    AggressiveOrder(int empire, int object_id, bool aggression = true);
+    //@}
+
+    /** \name Accessors */ //@{
+    int             ObjectID() const    { return m_object_id; } ///< returns ID of object selected in this order
+    bool            Aggression() const  { return m_aggression; }///< returns aggression state to set object to
+    //@}
+
+private:
+    /**
+     *  Preconditions:
+     *     - m_object_id must be the ID of an object owned by issuing empire
+     *     - the object must have an aggression status: fleets
+     *
+     *  Postconditions:
+     *     - the object is set to the new aggression state
+     */
+    virtual void    ExecuteImpl() const;
+
+    int     m_object_id;
+    bool    m_aggression;
 
     friend class boost::serialization::access;
     template <class Archive>

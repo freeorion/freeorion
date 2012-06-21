@@ -954,3 +954,27 @@ bool ScrapOrder::UndoImpl() const {
     }
     return true;
 }
+
+////////////////////////////////////////////////
+// AggressiveOrder
+////////////////////////////////////////////////
+AggressiveOrder::AggressiveOrder() :
+    Order(),
+    m_object_id(INVALID_OBJECT_ID),
+    m_aggression(false)
+{}
+
+AggressiveOrder::AggressiveOrder(int empire, int object_id, bool aggression/* = true*/) :
+    Order(empire),
+    m_object_id(object_id),
+    m_aggression(aggression)
+{}
+
+void AggressiveOrder::ExecuteImpl() const {
+    ValidateEmpireID();
+    int empire_id = EmpireID();
+    if (Fleet* fleet = GetFleet(m_object_id)) {
+        if (fleet->OwnedBy(empire_id))
+            fleet->SetAggressive(m_aggression);
+    }
+}

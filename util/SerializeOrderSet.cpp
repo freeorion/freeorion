@@ -25,6 +25,7 @@ BOOST_CLASS_EXPORT(ResearchQueueOrder)
 BOOST_CLASS_EXPORT(ProductionQueueOrder)
 BOOST_CLASS_EXPORT(ShipDesignOrder)
 BOOST_CLASS_EXPORT(ScrapOrder)
+BOOST_CLASS_EXPORT(AggressiveOrder)
 
 template <class Archive>
 void Order::serialize(Archive& ar, const unsigned int version)
@@ -148,6 +149,14 @@ void ScrapOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
         & BOOST_SERIALIZATION_NVP(m_object_id);
+}
+
+template <class Archive>
+void AggressiveOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_object_id)
+        & BOOST_SERIALIZATION_NVP(m_aggression);
 }
 
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const OrderSet& order_set)
