@@ -7,7 +7,8 @@
 ////////////////////////////////////////////////
 // MovePathNode
 ////////////////////////////////////////////////
-/** Contains info about a single notable point on the move path of a fleet or other UniverseObject. */
+/** Contains info about a single notable point on the move path of a fleet or
+  * other UniverseObject. */
 struct MovePathNode {
     MovePathNode(double x_, double y_, bool turn_end_, int eta_, int id_, int lane_start_id_, int lane_end_id_) :
         x(x_), y(y_), turn_end(turn_end_), eta(eta_), object_id(id_), lane_start_id(lane_start_id_), lane_end_id(lane_end_id_)
@@ -20,9 +21,9 @@ struct MovePathNode {
     int     lane_end_id;    ///< id of object (most likely a system) at the end of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
 };
 
-/** encapsulates data for a FreeOrion fleet.  Fleets are basically a group of ships that travel together. */
-class Fleet : public UniverseObject
-{
+/** Encapsulates data for a FreeOrion fleet.  Fleets are basically a group of
+  * ships that travel together. */
+class Fleet : public UniverseObject {
 public:
     typedef std::set<int>               ShipIDSet;
     typedef ShipIDSet::iterator         iterator;                       ///< an iterator to the ships in the fleet
@@ -34,6 +35,7 @@ public:
         m_moving_to(INVALID_OBJECT_ID),
         m_prev_system(INVALID_OBJECT_ID),
         m_next_system(INVALID_OBJECT_ID),
+        m_aggressive(true),
         m_travel_distance(0.0),
         m_arrived_this_turn(false),
         m_arrival_starlane(INVALID_OBJECT_ID)
@@ -58,6 +60,8 @@ public:
       * to its destination (may be empty).  If this fleet is currently at a
       * system, that system will be the first one in the list. */
     const std::list<int>&               TravelRoute() const;
+
+    bool                                Aggressive() const  { return m_aggressive; }
 
     /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the 
         specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
@@ -105,6 +109,8 @@ public:
     void                    SetRoute(const std::list<int>& route);          ///< sets this fleet to move through the series of systems in the list, in order
     void                    CalculateRoute() const;                         ///< sets this fleet to move through the series of systems that makes the shortest path from its current location to its current destination system
 
+    void                    SetAggressive(bool aggressive = true);          ///< sets this fleet to be agressive (true) or passive (false)
+
     virtual void            MovementPhase();
 
     void                    AddShip(int ship_id);                           ///< adds the ship to the fleet
@@ -129,16 +135,20 @@ protected:
     virtual void            ResetTargetMaxUnpairedMeters();
 
 private:
-    void                    ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system);   ///< removes any systems on the route after the specified system
+    ///< removes any systems on the route after the specified system
+    void                    ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system);
 
-    ShipIDSet               VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_ships that is visible to empire with id \a empire_id
+    ///< returns the subset of m_ships that is visible to empire with id \a empire_id
+    ShipIDSet               VisibleContainedObjects(int empire_id) const;
 
     ShipIDSet                   m_ships;
     int                         m_moving_to;
 
     // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
-    int                         m_prev_system;                              ///< the next system in the route, if any
-    int                         m_next_system;                              ///< the previous system in the route, if any 
+    int                         m_prev_system;  ///< the next system in the route, if any
+    int                         m_next_system;  ///< the previous system in the route, if any 
+
+    bool                        m_aggressive;    ///< should this fleet attack enemies in the same system?
 
     /** list of systems on travel route of fleet from current position to
       * destination.  If the fleet is currently in a system, that will be the

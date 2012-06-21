@@ -608,6 +608,13 @@ void Fleet::SetRoute(const std::list<int>& route) {
     StateChangedSignal();
 }
 
+void Fleet::SetAggressive(bool aggressive/* = true*/) {
+    if (aggressive == m_aggressive)
+        return;
+    m_aggressive = aggressive;
+    StateChangedSignal();
+}
+
 void Fleet::AddShip(int ship_id) {
     if (this->Contains(ship_id)) {
         Logger().debugStream() << "Fleet::AddShip this fleet '" << this->Name() << "' already contained ship '" << ship_id << "'";
