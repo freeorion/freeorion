@@ -84,11 +84,10 @@ double PopCenter::NextTurnPopGrowth() const {
     double pop_change = 0.0;
 
     if (target_pop > cur_pop) {
-        pop_change = cur_pop * (target_pop - cur_pop) / 100 + 0.05; // Adding a constant avoids slow asymptotic growth towards target.
+        pop_change = cur_pop * (target_pop + 1 - cur_pop) / 100; // Using target population slightly above actual population avoids excessively slow asymptotic growth towards target.
         pop_change = std::min(pop_change, target_pop - cur_pop);
-    }
-    else {
-        pop_change = -(cur_pop - target_pop) / 10 - 0.05;
+    } else {
+        pop_change = -(cur_pop - target_pop) / 10;
         pop_change = std::max(pop_change, target_pop - cur_pop);
     }
 
