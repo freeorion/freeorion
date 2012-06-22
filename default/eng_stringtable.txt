@@ -1929,6 +1929,18 @@ Unknown
 FW_FLEET_ETA_OUT_OF_RANGE
 Out of Range
 
+FW_AGGRESSIVE
+Aggressive
+
+FW_AGGRESSIVE_DESC
+Fleet initiates battle with any target in its system.
+
+FW_PASSIVE
+Passive / Hidden
+
+FW_PASSIVE_DESC
+Fleet will not initiate battle and will attempt to stay hidden.
+
 FW_SHIP_CLASS
 Ship Class 
 
@@ -2666,7 +2678,7 @@ Organic
 '''
 
 SP_CHATO
-Chato'm'Goshk
+Chato
 SP_CHATO_DESC
 '''Sessile crystalline entities which ride the animal Goshk.
 Prefer Toxic planets.
