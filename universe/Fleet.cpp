@@ -73,6 +73,7 @@ void Fleet::Copy(const UniverseObject* copied_object, int empire_id) {
         if (vis >= VIS_PARTIAL_VISIBILITY) {
 
             if (vis >= VIS_FULL_VISIBILITY) {
+                this->m_aggressive =            copied_fleet->m_aggressive;
                 this->m_moving_to =             copied_fleet->m_moving_to;
                 this->m_travel_route =          copied_fleet->m_travel_route;
                 this->m_travel_distance =       copied_fleet->m_travel_distance;
@@ -114,7 +115,8 @@ const std::string& Fleet::TypeName() const
 std::string Fleet::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
-    os << " moving to: " << m_moving_to
+    os << ( m_aggressive ? " agressive" : " passive")
+       << " moving to: " << m_moving_to
        << " prev system: " << m_prev_system
        << " next system: " << m_next_system
        << " ships: ";

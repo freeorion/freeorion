@@ -828,6 +828,8 @@ public:
     mutable boost::signal<void (const std::vector<int>&)> NewFleetFromShipsSignal;
 
 private:
+    void                AggressionToggleButtonPressed();
+
     void                Refresh();
     double              StatValue(const std::string& stat_name) const;
     std::string         StatTooltip(const std::string& stat_name) const;
@@ -842,6 +844,7 @@ private:
     GG::Control*        m_fleet_icon;
     GG::TextControl*    m_fleet_name_text;
     GG::TextControl*    m_fleet_destination_text;
+    GG::Button*         m_aggression_toggle;
 
     std::vector<std::pair<std::string, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
 
@@ -856,6 +859,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     m_fleet_icon(0),
     m_fleet_name_text(0),
     m_fleet_destination_text(0),
+    m_aggression_toggle(0),
     m_stat_icons(),
     m_selected(false)
 {
@@ -887,6 +891,13 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         AttachChild(icon);
 
         m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDataPanel::Refresh, this);
+
+        if (fleet->GetVisibility(HumanClientApp::GetApp()->EmpireID()) >= VIS_FULL_VISIBILITY) {
+            m_aggression_toggle = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(),
+                                                 GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
+            AttachChild(m_aggression_toggle);
+            GG::Connect(m_aggression_toggle->ClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
+        }
     }
 
     Refresh();
@@ -900,6 +911,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_fleet_icon(0),
     m_fleet_name_text(0),
     m_fleet_destination_text(0),
+    m_aggression_toggle(0),
     m_stat_icons(),
     m_selected(false)
 {
@@ -910,6 +922,9 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_fleet_destination_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", ClientUI::GetFont(),
                                                    ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_fleet_destination_text);
+    //m_aggression_toggle = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(),
+    //                                     GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
+    //AttachChild(m_aggression_toggle);
 
     Refresh();
 }
@@ -1051,6 +1066,23 @@ void FleetDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         DoLayout();
 }
 
+void FleetDataPanel::AggressionToggleButtonPressed() {
+    if (!m_aggression_toggle)
+        return;
+    const Fleet* fleet = GetFleet(m_fleet_id);
+    if (!fleet)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (client_empire_id == ALL_EMPIRES)
+        return;
+
+    bool new_aggression_State = !fleet->Aggressive();
+
+    // toggle fleet aggression status
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        OrderPtr(new AggressiveOrder(client_empire_id, m_fleet_id, new_aggression_State)));
+}
+
 void FleetDataPanel::Refresh() {
     DeleteChild(m_fleet_icon);
     m_fleet_icon = 0;
@@ -1090,6 +1122,31 @@ void FleetDataPanel::Refresh() {
         {
             it->second->SetValue(StatValue(it->first));
         }
+
+        // war / peace indicator status
+        if (m_aggression_toggle) {
+            if (fleet->Aggressive()) {
+                m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(
+                    ClientUI::ArtDir() / "icons" / "war.png"),
+                    GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+                m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(
+                    ClientUI::ArtDir() / "icons" / "peace.png"),
+                    GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+                m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(
+                    ClientUI::ArtDir() / "icons" / "war_mouseover.png"),
+                    GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+            } else {
+                m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(
+                    ClientUI::ArtDir() / "icons" / "peace.png"),
+                    GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+                m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(
+                    ClientUI::ArtDir() / "icons" / "war.png"),
+                    GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+                m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(
+                    ClientUI::ArtDir() / "icons" / "peace_mouseover.png"),
+                    GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+            }
+        }
     }
 
     DoLayout();
@@ -1125,7 +1182,7 @@ void FleetDataPanel::DoLayout() {
 
     // position fleet name and destination texts
     const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE.x + DATA_PANEL_TEXT_PAD, GG::Y0);
-    const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD,           LabelHeight());
+    const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD - GG::X(Value(LabelHeight())),    LabelHeight());
     m_fleet_name_text->SizeMove(name_ul, name_lr);
     m_fleet_destination_text->SizeMove(name_ul, name_lr);
 
@@ -1134,6 +1191,13 @@ void FleetDataPanel::DoLayout() {
     for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
         it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
+    }
+
+    // position aggression toggle / indicator
+    if (m_aggression_toggle) {
+        GG::Pt toggle_size(GG::X(Value(LabelHeight())), LabelHeight());
+        GG::Pt toggle_ul = GG::Pt(ClientWidth() - toggle_size.x, GG::Y0);
+        m_aggression_toggle->SizeMove(toggle_ul, toggle_ul + toggle_size);
     }
 }
 

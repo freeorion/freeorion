@@ -16,8 +16,7 @@ class System;
 class UniverseObject;
 
 /** Manages the lifetimes of FleetWnds. */
-class FleetUIManager
-{
+class FleetUIManager {
 public:
     typedef std::set<FleetWnd*>::const_iterator iterator;
 
@@ -70,8 +69,7 @@ private:
 /** This is the top level Fleet UI element.  It shows a list of fleets, a
     new-fleet drop target, and a detail view of the currently selectd fleet (a
     FleetDetailPanel). */
-class FleetWnd : public MapWndPopup
-{
+class FleetWnd : public MapWndPopup {
 public:
     /** \name Structors */ //@{
     ~FleetWnd(); ///< dtor
