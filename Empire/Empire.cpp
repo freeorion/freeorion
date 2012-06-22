@@ -983,7 +983,10 @@ int Empire::StockpileID(ResourceType res) const {
 }
 
 std::string Empire::Dump() const {
-    std::string retval = "Empire meters:\n";
+    std::string retval = "Empire name: " + m_name +
+                         " ID: "+ boost::lexical_cast<std::string>(m_id) +
+                         " Capital ID: " + boost::lexical_cast<std::string>(m_capital_id);
+    retval += " meters:\n";
     for (std::map<std::string, Meter>::const_iterator meter_it = meter_begin();
             meter_it != meter_end(); ++meter_it)
     {

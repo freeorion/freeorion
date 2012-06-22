@@ -31,7 +31,7 @@ bool EmpireManager::Eliminated(int id) const
 { return m_eliminated_empires.find(id) != m_eliminated_empires.end(); }
 
 std::string EmpireManager::Dump() const {
-    std::string retval = "Empires:";
+    std::string retval = "Empires:\n";
     for (const_iterator it = begin(); it != end(); ++it)
         retval += it->second->Dump();
     return retval;
