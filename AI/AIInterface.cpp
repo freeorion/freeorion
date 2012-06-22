@@ -531,6 +531,27 @@ namespace AIInterface {
         return 0;
     }
 
+    int IssueAggressionOrder(int object_id, bool aggressive) {
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
+        const ObjectMap& objects = universe.Objects();
+
+        const Fleet* fleet = objects.Object<Fleet>(object_id);
+        if (!fleet) {
+            Logger().errorStream() << "AIInterface::IssueAggressionOrder : no fleet with passed id";
+            return 0;
+        }
+        if (!fleet->OwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueAggressionOrder : passed object_id of object not owned by player";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+            new AggressiveOrder(empire_id, object_id, aggressive)));
+
+        return 1;
+    }
+
     int IssueChangeFocusOrder(int planet_id, const std::string& focus) {
         const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         const ObjectMap& objects = universe.Objects();

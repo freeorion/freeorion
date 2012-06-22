@@ -75,6 +75,7 @@ namespace AIInterface
     int                 IssueColonizeOrder(int ship_id, int planet_id);
     int                 IssueInvadeOrder(int ship_id, int planet_id);
     int                 IssueDeleteFleetOrder();
+    int                 IssueAggressionOrder(int object_id, bool aggressive);
 
     int                 IssueChangeFocusOrder(int planet_id, const std::string& focus);
 

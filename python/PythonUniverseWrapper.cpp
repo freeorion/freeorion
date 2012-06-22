@@ -273,6 +273,7 @@ namespace FreeOrionPython {
             .add_property("finalDestinationID",         &Fleet::FinalDestinationID)
             .add_property("previousSystemID",           &Fleet::PreviousSystemID)
             .add_property("nextSystemID",               &Fleet::NextSystemID)
+            .add_property("aggressive",                 &Fleet::Aggressive)
             .add_property("speed",                      &Fleet::Speed)
             .add_property("canChangeDirectionEnRoute",  &Fleet::CanChangeDirectionEnRoute)
             .add_property("hasMonsters",                &Fleet::HasMonsters)

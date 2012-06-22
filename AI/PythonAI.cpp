@@ -111,6 +111,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("issueFleetTransferOrder",              AIInterface::IssueFleetTransferOrder);
     def("issueColonizeOrder",                   AIInterface::IssueColonizeOrder);
     def("issueInvadeOrder",                     AIInterface::IssueInvadeOrder);
+    def("issueAggressionOrder",                 AIInterface::IssueAggressionOrder);
     def("issueChangeFocusOrder",                AIInterface::IssueChangeFocusOrder);
     def("issueEnqueueTechOrder",                AIInterface::IssueEnqueueTechOrder);
     def("issueDequeueTechOrder",                AIInterface::IssueDequeueTechOrder);
