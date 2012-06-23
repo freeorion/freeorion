@@ -118,7 +118,8 @@ void EmpireManager::serialize(Archive& ar, const unsigned int version)
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_empire_map)
-        & BOOST_SERIALIZATION_NVP(m_eliminated_empires);
+        & BOOST_SERIALIZATION_NVP(m_eliminated_empires)
+        & BOOST_SERIALIZATION_NVP(m_empire_diplomatic_statuses);
 }
 
 template void EmpireManager::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);

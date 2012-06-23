@@ -34,6 +34,22 @@ std::string EmpireManager::Dump() const {
     std::string retval = "Empires:\n";
     for (const_iterator it = begin(); it != end(); ++it)
         retval += it->second->Dump();
+    retval += "Diplomatic Statuses:\n";
+    for (std::map<std::pair<int, int>, DiplomaticStatus>::const_iterator it = m_empire_diplomatic_statuses.begin();
+         it != m_empire_diplomatic_statuses.end(); ++it)
+    {
+        const Empire* empire1 = Lookup(it->first.first);
+        const Empire* empire2 = Lookup(it->first.second);
+        if (!empire1 || !empire2)
+            continue;
+        retval += " * " + empire1->Name() + " / " + empire2->Name() + " : ";
+        switch (it->second) {
+        case DIPLO_WAR:     retval += "War";    break;
+        case DIPLO_PEACE:   retval += "Peace";  break;
+        default:            retval += "?";      break;
+        }
+        retval += "\n";
+    }
     return retval;
 }
 
@@ -93,4 +109,24 @@ void EmpireManager::Clear() {
     }
     m_empire_map.clear();
     m_eliminated_empires.clear();
+    m_empire_diplomatic_statuses.clear();
+}
+
+DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) const {
+    if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES) {
+        Logger().errorStream() << "EmpireManager::GetDiplomaticStatus passed invalid empire id";
+        return INVALID_DIPLOMATIC_STATUS;
+    }
+    std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
+
+    std::map<std::pair<int, int>, DiplomaticStatus>::const_iterator it =
+        m_empire_diplomatic_statuses.find(key);
+    if (it == m_empire_diplomatic_statuses.end())
+        return INVALID_DIPLOMATIC_STATUS;
+    return it->second;
+}
+
+void EmpireManager::SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status) {
+    std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
+    m_empire_diplomatic_statuses[key] = status;
 }

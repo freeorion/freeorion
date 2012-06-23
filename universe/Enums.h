@@ -326,6 +326,24 @@ namespace GG {
 GG_ENUM_STREAM_IN(EmpireAffiliationType)
 GG_ENUM_STREAM_OUT(EmpireAffiliationType)
 
+/** diplomatic statuses */
+enum DiplomaticStatus {
+    INVALID_DIPLOMATIC_STATUS = -1,
+    DIPLO_WAR,
+    DIPLO_PEACE,
+    NUM_DIPLO_STATUSES
+};
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(DiplomaticStatus)
+    GG_ENUM_MAP_INSERT(INVALID_DIPLOMATIC_STATUS)
+    GG_ENUM_MAP_INSERT(DIPLO_WAR)
+    GG_ENUM_MAP_INSERT(DIPLO_PEACE)
+    GG_ENUM_MAP_END
+}
+GG_ENUM_STREAM_IN(DiplomaticStatus)
+GG_ENUM_STREAM_OUT(DiplomaticStatus)
+
 /** types of items that can be unlocked for empires */
 enum UnlockableItemType {
     INVALID_UNLOCKABLE_ITEM_TYPE = -1,
