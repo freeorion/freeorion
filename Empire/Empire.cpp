@@ -1375,7 +1375,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
             continue;                       // not in a (potential supply unobstructed) system
         else if (fleet->OwnedBy(m_id))
             systems_containing_friendly_fleets.insert(system_id);
-        else if (fleet->HasArmedShips())    // armed ships owned by another empire, or with no owners
+        else if (fleet->HasArmedShips() && fleet->Aggressive()) // aggressive armed ships owned by another empire, or with no owners
             systems_containing_obstructing_objects.insert(system_id);
     }
 

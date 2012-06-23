@@ -1933,13 +1933,13 @@ FW_AGGRESSIVE
 Aggressive
 
 FW_AGGRESSIVE_DESC
-Fleet initiates battle with any target in its system.
+Fleet blockades enemy empires and initiates battles with any targets in its system.
 
 FW_PASSIVE
 Passive / Hidden
 
 FW_PASSIVE_DESC
-Fleet will not initiate battle and will attempt to stay hidden.
+Fleet will not blockade or initiate battle and will attempt to stay hidden.
 
 FW_SHIP_CLASS
 Ship Class 
