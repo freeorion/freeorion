@@ -1529,8 +1529,8 @@ Hull
     Unproducible
     location = All
     effectsgroups = [
-        EffectsGroup     
-            scope = Source     
+        EffectsGroup
+            scope = Source
             activation = Turn high = 2
             effects = [
                 CreateShip "SM_TREE"
@@ -1547,6 +1547,9 @@ Hull
             activation = Random probability = 0.03
             stackinggroup = "TREE_GROWTH"
             effects = CreateShip "SM_FLOATER"
+        EffectsGroup
+            scope = And [ Fleet Contains Source ]
+            effects = SetPassive
     ]
     icon = ""
     graphic = "icons/monsters/tree.png"
