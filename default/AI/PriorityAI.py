@@ -16,8 +16,6 @@ def calculatePriorities():
     InvasionAI.getInvasionFleets() # sets AIstate.invasionFleetIDs, AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
     MilitaryAI.getMilitaryFleets() # sets AIstate.militaryFleetIDs and AIstate.militaryTargetedSystemIDs
 
-    #foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_FOOD, calculateFoodPriority())
-    #foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_MINERALS, calculateMineralsPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION, calculateIndustryPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH, calculateResearchPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_TRADE, 0)
@@ -66,48 +64,18 @@ def calculateFoodPriority():
 
     return foodPriority
 
-def calculateMineralsPriority():
-    "calculates the demand for minerals by industry"
-
-    empire = fo.getEmpire()
-
-    # get current minerals and industry production
-    mineralsProduction = empire.resourceProduction(fo.resourceType.minerals)
-    mineralsStockpile = empire.resourceStockpile(fo.resourceType.minerals)
-    mineralsTurns = mineralsStockpile / (mineralsProduction + 0.001)
-    industryProduction = empire.resourceProduction(fo.resourceType.industry)
-    mineralsTarget = 10 * industryProduction
-
-    mineralsPriority = (mineralsTarget - mineralsStockpile) / mineralsTarget * 99
-
-    print ""
-    print "Minerals Production:        " + str(mineralsProduction)
-    print "Size of Minerals Stockpile: " + str(mineralsStockpile)
-    print "Target Minerals Stockpile:  " + str(mineralsTarget)
-    # print "Minerals Production Turns:  " + str(mineralsTurns)
-    # print "industry production  : " + str(industryProduction)
-    print "Priority for Minerals:      " + str(mineralsPriority)
-
-    return mineralsPriority
-
 def calculateIndustryPriority():
     "calculates the demand for industry"
 
     empire = fo.getEmpire()
 
-    # get current minerals and industry production
-    mineralsProduction = empire.resourceProduction(fo.resourceType.minerals)
-    mineralsStockpile = empire.resourceStockpile(fo.resourceType.minerals)
-    mineralsTurns = mineralsStockpile / (mineralsProduction + 0.001)
+    # get current industry production
     industryProduction = empire.resourceProduction(fo.resourceType.industry)
 
-    # increase demand for industry if mineralsProduction is higher
-    industryPriority = 38 * (mineralsProduction - mineralsTurns) / (industryProduction + 0.001)
+    # increase demand for industry industry production is low
+    industryPriority = 380 / (industryProduction + 0.001)
 
     print ""
-    # print "minerals production  : " + str(mineralsProduction)
-    # print "minerals stockpile   : " + str(mineralsStockpile)
-    # print "minerals turns       : " + str(mineralsTurns)
     print "Industry Production  : " + str(industryProduction)
     print "Priority for Industry: " + str(industryPriority)
 
