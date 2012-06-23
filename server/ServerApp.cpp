@@ -972,7 +972,7 @@ namespace {
 
             ids_of_empires_with_fleets_here.insert(fleet->Owner()); // may be ALL_EMPIRES
 
-            if (fleet->HasArmedShips())
+            if (fleet->HasArmedShips() && fleet->Aggressive())
                 ids_of_empires_with_combat_fleets_here.insert(fleet->Owner());
         }
     }
