@@ -48,6 +48,7 @@ namespace Effect {
     class Victory;
     class GenerateSitRepMessage;
     class SetDestination;
+    class SetAggression;
     class SetOverlayTexture;
     class SetTexture;
 }
@@ -500,7 +501,7 @@ private:
   * \a other_lane_endpoint_condition */
 class Effect::AddStarlanes : public Effect::EffectBase {
 public:
-    AddStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition);
+    explicit AddStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition);
     virtual ~AddStarlanes();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -519,7 +520,7 @@ private:
   * \a other_lane_endpoint_condition */
 class Effect::RemoveStarlanes : public Effect::EffectBase {
 public:
-    RemoveStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition);
+    explicit RemoveStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition);
     virtual ~RemoveStarlanes();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -538,7 +539,7 @@ private:
   * non-System targets. */
 class Effect::SetStarType : public Effect::EffectBase {
 public:
-    SetStarType(const ValueRef::ValueRefBase<StarType>* type);
+    explicit SetStarType(const ValueRef::ValueRefBase<StarType>* type);
     virtual ~SetStarType();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -559,7 +560,7 @@ private:
   * nothing is done. */
 class Effect::MoveTo : public Effect::EffectBase {
 public:
-    MoveTo(const Condition::ConditionBase* location_condition);
+    explicit MoveTo(const Condition::ConditionBase* location_condition);
     virtual ~MoveTo();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -608,7 +609,7 @@ private:
   * nothing is done. */
 class Effect::SetDestination : public Effect::EffectBase {
 public:
-    SetDestination(const Condition::ConditionBase* location_condition);
+    explicit SetDestination(const Condition::ConditionBase* location_condition);
     virtual ~SetDestination();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -623,11 +624,28 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Sets aggression level of the target object. */
+class Effect::SetAggression : public Effect::EffectBase {
+public:
+    explicit SetAggression(bool aggressive);
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    bool m_aggressive;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Causes the owner empire of the target object to win the game.  If the
   * target object has multiple owners, nothing is done. */
 class Effect::Victory : public Effect::EffectBase {
 public:
-    Victory(const std::string& reason_string);
+    explicit Victory(const std::string& reason_string);
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
@@ -668,7 +686,7 @@ private:
 
 class Effect::GiveEmpireTech : public Effect::EffectBase {
 public:
-    GiveEmpireTech(const std::string& tech_name);
+    explicit GiveEmpireTech(const std::string& tech_name);
     GiveEmpireTech(const std::string& tech_name,
                    const ValueRef::ValueRefBase<int>* empire_id);
     virtual ~GiveEmpireTech();
@@ -741,8 +759,7 @@ private:
 /** Applies a texture to Planets. */
 class Effect::SetTexture : public Effect::EffectBase {
 public:
-    SetTexture(const std::string& texture);
-    virtual ~SetTexture();
+    explicit SetTexture(const std::string& texture);
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
@@ -930,6 +947,13 @@ void Effect::SetDestination::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_location_condition);
+}
+
+template <class Archive>
+void Effect::SetAggression::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_aggressive);
 }
 
 template <class Archive>

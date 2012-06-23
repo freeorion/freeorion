@@ -197,6 +197,11 @@ namespace {
                 >    parse::label(Destination_name) > parse::detail::condition_parser [ _val = new_<Effect::SetDestination>(_1) ]
                 ;
 
+            set_aggression
+                =   tok.SetAggressive_  [ _val = new_<Effect::SetAggression>(true) ]
+                |   tok.SetPassive_     [ _val = new_<Effect::SetAggression>(false) ]
+                ;
+
             destroy
                 =    tok.Destroy_ [ _val = new_<Effect::Destroy>() ]
                 ;
@@ -317,6 +322,7 @@ namespace {
                 |    move_to
                 |    move_in_orbit
                 |    set_destination
+                |    set_aggression
                 |    destroy
                 |    victory
                 |    add_special
@@ -350,6 +356,7 @@ namespace {
             move_to.name("MoveTo");
             move_in_orbit.name("MoveInOrbit");
             set_destination.name("SetDestination");
+            set_aggression.name("SetAggression");
             destroy.name("Destroy");
             victory.name("Victory");
             add_special.name("AddSpecial");
@@ -385,6 +392,7 @@ namespace {
             debug(create_ship_4);
             debug(move_to);
             debug(set_destination);
+            debug(set_aggression);
             debug(destroy);
             debug(victory);
             debug(add_special);
@@ -513,6 +521,7 @@ namespace {
         parse::effect_parser_rule           move_to;
         doubles_rule                        move_in_orbit;
         parse::effect_parser_rule           set_destination;
+        parse::effect_parser_rule           set_aggression;
         parse::effect_parser_rule           destroy;
         parse::effect_parser_rule           victory;
         parse::effect_parser_rule           add_special;

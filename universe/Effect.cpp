@@ -2063,6 +2063,34 @@ std::string SetDestination::Description() const {
 std::string SetDestination::Dump() const
 { return DumpIndent() + "SetDestination destination = " + m_location_condition->Dump() + "\n"; }
 
+///////////////////////////////////////////////////////////
+// SetAggression                                         //
+///////////////////////////////////////////////////////////
+SetAggression::SetAggression(bool aggressive) :
+    m_aggressive(aggressive)
+{}
+
+void SetAggression::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target) {
+        Logger().errorStream() << "SetAggression::Execute given no target object";
+        return;
+    }
+
+    Fleet* target_fleet = universe_object_cast<Fleet*>(context.effect_target);
+    if (!target_fleet) {
+        Logger().errorStream() << "SetAggression::Execute acting on non-fleet target:";
+        context.effect_target->Dump();
+        return;
+    }
+
+    target_fleet->SetAggressive(m_aggressive);
+}
+
+std::string SetAggression::Description() const
+{ return (m_aggressive ? UserString("DESC_SET_AGGRESSIVE") : UserString("DESC_SET_PASSIVE")); }
+
+std::string SetAggression::Dump() const
+{ return DumpIndent() + (m_aggressive ? "SetAggressive" : "SetPassive") + "\n"; }
 
 ///////////////////////////////////////////////////////////
 // Victory                                               //
@@ -2353,9 +2381,6 @@ std::string SetOverlayTexture::Dump() const {
 ///////////////////////////////////////////////////////////
 SetTexture::SetTexture(const std::string& texture) :
     m_texture(texture)
-{}
-
-SetTexture::~SetTexture()
 {}
 
 void SetTexture::Execute(const ScriptingContext& context) const {

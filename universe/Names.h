@@ -227,6 +227,7 @@
 
 #define NAMES_SEQ_4                             \
     (Scope)                                     \
+    (SetAggressive)                             \
     (SetAntiFighterDamage)                      \
     (SetAntiShipDamage)                         \
     (SetBattleSpeed)                            \
@@ -251,6 +252,7 @@
     (SetMaxTroops)                              \
     (SetOverlayTexture)                         \
     (SetOwner)                                  \
+    (SetPassive)                                \
     (SetPlanetSize)                             \
     (SetPlanetType)                             \
     (SetPopulation)                             \
