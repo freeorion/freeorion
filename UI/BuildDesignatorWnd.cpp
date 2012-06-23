@@ -341,12 +341,6 @@ namespace {
         const BuildType m_build_type;
     };
 
-    struct ToggleAllBuildTypesFunctor {
-        ToggleAllBuildTypesFunctor(BuildDesignatorWnd* designator_wnd) : m_designator_wnd(designator_wnd) {}
-        void operator()() {m_designator_wnd->ToggleAllTypes();}
-        BuildDesignatorWnd* const m_designator_wnd;
-    };
-
     struct ToggleAvailabilityFunctor {
         ToggleAvailabilityFunctor(BuildDesignatorWnd* designator_wnd, bool available) : m_designator_wnd(designator_wnd), m_available(available) {}
         void operator()() {m_designator_wnd->ToggleAvailabilitly(m_available);}
@@ -358,8 +352,7 @@ namespace {
 //////////////////////////////////////////////////
 // BuildDesignatorWnd::BuildSelector
 //////////////////////////////////////////////////
-class BuildDesignatorWnd::BuildSelector : public CUIWnd
-{
+class BuildDesignatorWnd::BuildSelector : public CUIWnd {
 public:
     /** \name Structors */ //@{
     BuildSelector(GG::X w, GG::Y h);
@@ -443,7 +436,7 @@ private:
     RowToBuildTypeMap                       m_build_types;
     GG::Pt                                  m_original_ul;
 
-    int                                     m_build_location;
+    int                                     m_production_location;
     int                                     m_empire_id;
 
     mutable boost::signals::connection      m_empire_ship_designs_changed_signal;
@@ -458,7 +451,7 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
            GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
     m_buildable_items(new BuildableItemsListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
     m_build_types(GG::ListBox::RowPtrIteratorLess<GG::ListBox>(m_buildable_items)),
-    m_build_location(INVALID_OBJECT_ID),
+    m_production_location(INVALID_OBJECT_ID),
     m_empire_id(ALL_EMPIRES)
 {
     // create build type toggle buttons (ship, building, all)
@@ -466,8 +459,6 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
     AttachChild(m_build_type_buttons[BT_BUILDING]);
     m_build_type_buttons[BT_SHIP] = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"));
     AttachChild(m_build_type_buttons[BT_SHIP]);
-    m_build_type_buttons[NUM_BUILD_TYPES] = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("ALL"));
-    AttachChild(m_build_type_buttons[NUM_BUILD_TYPES]);
 
     // create availability toggle buttons (available, not available)
     m_availability_buttons.push_back(new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE")));
@@ -513,18 +504,22 @@ const std::pair<bool, bool>& BuildDesignatorWnd::BuildSelector::GetAvailabilitie
 { return m_availabilities_shown; }
 
 void BuildDesignatorWnd::BuildSelector::DoLayout() {
-    int num_buttons = std::max(1, static_cast<int>(m_build_type_buttons.size() + m_availability_buttons.size()));
+    int num_buttons = 4;
     GG::X x(0);
     GG::X button_width = ClientWidth() / num_buttons;
-    GG::Y button_height(20);
-    for (unsigned int i = 0; i < m_build_type_buttons.size() - 1; ++i) {
-        m_build_type_buttons[BuildType(BT_BUILDING + i)]->SizeMove(GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
-        x += button_width;
-    }
-    m_build_type_buttons[NUM_BUILD_TYPES]->SizeMove(GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height)); x += button_width;
+    GG::Y button_height(ClientUI::Pts()*4/3);
 
-    m_availability_buttons[0]->SizeMove(GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height)); x += button_width;
-    m_availability_buttons[1]->SizeMove(GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
+    m_build_type_buttons[BT_BUILDING]->SizeMove(GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
+    x += button_width;
+
+    m_build_type_buttons[BT_SHIP]->SizeMove(    GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
+    x += button_width;
+
+    m_availability_buttons[0]->SizeMove(        GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
+    x += button_width;
+
+    m_availability_buttons[1]->SizeMove(        GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
+    x += button_width;
 
     m_buildable_items->SizeMove(GG::Pt(GG::X0, button_height),
                                 ClientSize() - GG::Pt(GG::X0, GG::Y(INNER_BORDER_ANGLE_OFFSET)));
@@ -608,8 +603,8 @@ void BuildDesignatorWnd::BuildSelector::MinimizeClicked() {
 
 void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool refresh_list) {
     //std::cout << "BuildDesignatorWnd::BuildSelector::SetBuildLocation(" << location_id << ")" << std::endl;
-    if (m_build_location != location_id) {
-        m_build_location = location_id;
+    if (m_production_location != location_id) {
+        m_production_location = location_id;
         if (refresh_list)
             Refresh();
     }
@@ -722,11 +717,9 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!empire)
         return true;
 
-    bool available = false;
-    if (build_type == BT_BUILDING)
-        available = empire->BuildingTypeAvailable(name);
+    bool producible_here = empire->BuildableItem(BT_BUILDING, name, m_production_location);
 
-    if (available)
+    if (producible_here)
         return m_availabilities_shown.first;
     else
         return m_availabilities_shown.second;
@@ -747,11 +740,9 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!empire)
         return true;
 
-    bool available = false;
-    if (build_type == BT_SHIP)
-        available = empire->ShipDesignAvailable(design_id);
+    bool producible_here = empire->BuildableItem(BT_SHIP, design_id, m_production_location);
 
-    if (available)
+    if (producible_here)
         return m_availabilities_shown.first;
     else
         return m_availabilities_shown.second;
@@ -781,7 +772,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 
 
     // populate list with building types
-    Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding Buildings ";
+    //Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding Buildings ";
     if (m_build_types_shown.find(BT_BUILDING) != m_build_types_shown.end()) {
         BuildingTypeManager& manager = GetBuildingTypeManager();
 
@@ -791,7 +782,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             if (!BuildableItemVisible(BT_BUILDING, name)) continue;
 
             ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y, name,
-                                                                m_empire_id, m_build_location);
+                                                                m_empire_id, m_production_location);
 
             GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);
             m_build_types[row_it] = BT_BUILDING;
@@ -802,7 +793,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         }
     }
     // populate with ship designs
-    Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding ship designs";
+    //Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding ship designs";
     if (m_build_types_shown.find(BT_SHIP) != m_build_types_shown.end()) {
         // get ids of designs to show... for specific empire, or for all empires
         std::vector<int> design_ids;
@@ -824,7 +815,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             // add build item panel
 
             ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y, ship_design_id,
-                                                                m_empire_id, m_build_location);
+                                                                m_empire_id, m_production_location);
 
             GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);
             m_build_types[row_it] = BT_SHIP;
@@ -835,12 +826,12 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         }
     }
 
-    Logger().debugStream() << "Selecting Row";
+    //Logger().debugStream() << "Selecting Row";
     if (row_to_select != m_buildable_items->end()) {
         m_buildable_items->SelectRow(row_to_select);
         BuildItemSelected(m_buildable_items->Selections());
     }
-    Logger().debugStream() << "Done";
+    //Logger().debugStream() << "Done";
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const GG::ListBox::SelectionSet& selections) {
@@ -919,7 +910,6 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     // connect build type button clicks to update display
     GG::Connect(m_build_selector->m_build_type_buttons[BT_BUILDING]->ClickedSignal,     ToggleBuildTypeFunctor(this, BT_BUILDING));
     GG::Connect(m_build_selector->m_build_type_buttons[BT_SHIP]->ClickedSignal,         ToggleBuildTypeFunctor(this, BT_SHIP));
-    GG::Connect(m_build_selector->m_build_type_buttons[NUM_BUILD_TYPES]->ClickedSignal, ToggleAllBuildTypesFunctor( this));    // last button should be "All" button
 
     // connect availability button clicks to update display
     GG::Connect(m_build_selector->m_availability_buttons.at(0)->ClickedSignal, ToggleAvailabilityFunctor(this, true));    // available items
