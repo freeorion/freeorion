@@ -62,6 +62,7 @@ public:
     void            EliminateEmpire(int id);
 
     void            SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status);
+    void            ResetDiplomacy();
 
     /** Creates and inserts an empire with the specified properties and returns
       * a pointer to it.  This will only set up the data in Empire.  It is the

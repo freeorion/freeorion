@@ -130,3 +130,15 @@ void EmpireManager::SetDiplomaticStatus(int empire1, int empire2, DiplomaticStat
     std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
     m_empire_diplomatic_statuses[key] = status;
 }
+
+void EmpireManager::ResetDiplomacy() {
+    m_empire_diplomatic_statuses.clear();
+    for (std::map<int, Empire*>::const_iterator emp1_it = m_empire_map.begin(); emp1_it != m_empire_map.end(); ++emp1_it) {
+        std::map<int, Empire*>::const_iterator emp2_it = emp1_it;
+        emp2_it++;
+        for (; emp2_it != m_empire_map.end(); ++emp2_it) {
+            std::pair<int, int> key(std::max(emp1_it->first, emp2_it->first), std::min(emp1_it->first, emp2_it->first));
+            m_empire_diplomatic_statuses[key] = DIPLO_WAR;
+        }
+    }
+}

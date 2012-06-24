@@ -2456,4 +2456,6 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
             }
         }
     }
+
+    Empires().ResetDiplomacy();
 }
