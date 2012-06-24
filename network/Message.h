@@ -48,8 +48,7 @@ void HeaderToBuffer(const Message& message, int* header_buf);
 /** Encapsulates a variable-length char buffer containing a message to be passed among the server and one or more
     clients.  Note that std::string is often thread unsafe on many platforms, so a dynamically allocated char array is
     used instead.  (It was feared that using another STL container of char might misbehave as well.) */
-class Message
-{
+class Message {
 public:
     /** Represents the type of the message */
     enum MessageType {
@@ -168,12 +167,6 @@ void swap(Message& lhs, Message& rhs); ///< Swaps the contents of \a lhs and \a 
 
 /** Returns a string representation of \a type. */
 std::string MessageTypeStr(Message::MessageType type);
-
-/** Returns a string representation of \a phase. */
-std::string TurnProgressPhaseStr(Message::TurnProgressPhase phase);
-
-/** Returns a string representation of \a status. */
-std::string PlayerStatusStr(Message::PlayerStatus status);
 
 /** Writes \a msg to \a os.  The format of the output is designed for debugging purposes. */
 std::ostream& operator<<(std::ostream& os, const Message& msg);

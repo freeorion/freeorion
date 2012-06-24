@@ -37,8 +37,7 @@ namespace {
     const std::string MESSAGE_SCOPE_PREFIX = "Message::";
     const std::string DUMMY_EMPTY_MESSAGE = "Lathanda";
     const std::string ACKNOWLEDGEMENT = "ACK";
-    std::string StripMessageScoping(const std::string& str)
-    {
+    std::string StripMessageScoping(const std::string& str) {
         return boost::algorithm::starts_with(str, MESSAGE_SCOPE_PREFIX) ?
             boost::algorithm::erase_first_copy(str, MESSAGE_SCOPE_PREFIX) :
             str;
@@ -85,9 +84,7 @@ namespace GG {
 }
 
 std::string MessageTypeStr(Message::MessageType type)
-{
-    return StripMessageScoping(GG::GetEnumMap<Message::MessageType>().FromEnum(type));
-}
+{ return StripMessageScoping(GG::GetEnumMap<Message::MessageType>().FromEnum(type)); }
 
 namespace GG {
     GG_ENUM_MAP_BEGIN(Message::TurnProgressPhase)
@@ -104,11 +101,6 @@ namespace GG {
     GG_ENUM_MAP_END
 }
 
-std::string TurnProgressPhaseStr(Message::TurnProgressPhase phase)
-{
-    return StripMessageScoping(GG::GetEnumMap<Message::TurnProgressPhase>().FromEnum(phase));
-}
-
 namespace GG {
     GG_ENUM_MAP_BEGIN(Message::PlayerStatus)
     GG_ENUM_MAP_INSERT(Message::PLAYING_TURN)
@@ -118,12 +110,9 @@ namespace GG {
 }
 
 std::string PlayerStatusStr(Message::PlayerStatus status)
-{
-    return StripMessageScoping(GG::GetEnumMap<Message::PlayerStatus>().FromEnum(status));
-}
+{ return StripMessageScoping(GG::GetEnumMap<Message::PlayerStatus>().FromEnum(status)); }
 
-std::ostream& operator<<(std::ostream& os, const Message& msg)
-{
+std::ostream& operator<<(std::ostream& os, const Message& msg) {
     os << "Message: "
        << MessageTypeStr(msg.Type()) << " "
        << msg.SendingPlayer();
@@ -197,8 +186,7 @@ const char* Message::Data() const
 std::string Message::Text() const
 { return std::string(m_message_text.get(), m_message_size); }
 
-void Message::Resize(std::size_t size)
-{
+void Message::Resize(std::size_t size) {
     m_message_size = size;
     m_message_text.reset(new char[m_message_size]);
 }
@@ -206,8 +194,7 @@ void Message::Resize(std::size_t size)
 char* Message::Data()
 { return m_message_text.get(); }
 
-void Message::Swap(Message& rhs)
-{
+void Message::Swap(Message& rhs) {
     std::swap(m_type, rhs.m_type);
     std::swap(m_sending_player, rhs.m_sending_player);
     std::swap(m_receiving_player, rhs.m_receiving_player);
@@ -216,8 +203,7 @@ void Message::Swap(Message& rhs)
     std::swap(m_message_text, rhs.m_message_text);
 }
 
-bool operator==(const Message& lhs, const Message& rhs)
-{
+bool operator==(const Message& lhs, const Message& rhs) {
     return
         lhs.Type() == rhs.Type() &&
         lhs.SendingPlayer() == rhs.SendingPlayer() &&
@@ -231,8 +217,7 @@ bool operator!=(const Message& lhs, const Message& rhs)
 void swap(Message& lhs, Message& rhs)
 { lhs.Swap(rhs); }
 
-void BufferToHeader(const int* header_buf, Message& message)
-{
+void BufferToHeader(const int* header_buf, Message& message) {
     message.m_type = static_cast<Message::MessageType>(header_buf[0]);
     message.m_sending_player = header_buf[1];
     message.m_receiving_player = header_buf[2];
@@ -240,8 +225,7 @@ void BufferToHeader(const int* header_buf, Message& message)
     message.m_message_size = header_buf[4];
 }
 
-void HeaderToBuffer(const Message& message, int* header_buf)
-{
+void HeaderToBuffer(const Message& message, int* header_buf) {
     header_buf[0] = message.Type();
     header_buf[1] = message.SendingPlayer();
     header_buf[2] = message.ReceivingPlayer();
@@ -252,8 +236,7 @@ void HeaderToBuffer(const Message& message, int* header_buf)
 ////////////////////////////////////////////////
 // Message named ctors
 ////////////////////////////////////////////////
-Message ErrorMessage(const std::string& problem, bool fatal/* = true*/)
-{
+Message ErrorMessage(const std::string& problem, bool fatal/* = true*/) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -263,8 +246,7 @@ Message ErrorMessage(const std::string& problem, bool fatal/* = true*/)
     return Message(Message::ERROR, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
 }
 
-Message ErrorMessage(int player_id, const std::string& problem, bool fatal/* = true*/)
-{
+Message ErrorMessage(int player_id, const std::string& problem, bool fatal/* = true*/) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -274,8 +256,7 @@ Message ErrorMessage(int player_id, const std::string& problem, bool fatal/* = t
     return Message(Message::ERROR, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
-Message HostSPGameMessage(const SinglePlayerSetupData& setup_data)
-{
+Message HostSPGameMessage(const SinglePlayerSetupData& setup_data) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -285,12 +266,9 @@ Message HostSPGameMessage(const SinglePlayerSetupData& setup_data)
 }
 
 Message HostMPGameMessage(const std::string& host_player_name)
-{
-    return Message(Message::HOST_MP_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, host_player_name);
-}
+{ return Message(Message::HOST_MP_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, host_player_name); }
 
-Message JoinGameMessage(const std::string& player_name, Networking::ClientType client_type)
-{
+Message JoinGameMessage(const std::string& player_name, Networking::ClientType client_type) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -300,8 +278,7 @@ Message JoinGameMessage(const std::string& player_name, Networking::ClientType c
     return Message(Message::JOIN_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
 }
 
-Message HostIDMessage(int host_player_id)
-{
+Message HostIDMessage(int host_player_id) {
     return Message(Message::HOST_ID, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID,
                    boost::lexical_cast<std::string>(host_player_id));
 }
@@ -389,22 +366,15 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
 }
 
 Message HostSPAckMessage(int player_id)
-{
-    return Message(Message::HOST_SP_GAME, Networking::INVALID_PLAYER_ID, player_id, ACKNOWLEDGEMENT);
-}
+{ return Message(Message::HOST_SP_GAME, Networking::INVALID_PLAYER_ID, player_id, ACKNOWLEDGEMENT); }
 
 Message HostMPAckMessage(int player_id)
-{
-    return Message(Message::HOST_MP_GAME, Networking::INVALID_PLAYER_ID, player_id, ACKNOWLEDGEMENT);
-}
+{ return Message(Message::HOST_MP_GAME, Networking::INVALID_PLAYER_ID, player_id, ACKNOWLEDGEMENT); }
 
 Message JoinAckMessage(int player_id)
-{
-    return Message(Message::JOIN_GAME, Networking::INVALID_PLAYER_ID, player_id, ACKNOWLEDGEMENT);
-}
+{ return Message(Message::JOIN_GAME, Networking::INVALID_PLAYER_ID, player_id, ACKNOWLEDGEMENT); }
 
-Message TurnOrdersMessage(int sender, const OrderSet& orders)
-{
+Message TurnOrdersMessage(int sender, const OrderSet& orders) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -413,8 +383,7 @@ Message TurnOrdersMessage(int sender, const OrderSet& orders)
     return Message(Message::TURN_ORDERS, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
-Message TurnProgressMessage(Message::TurnProgressPhase phase_id, int player_id)
-{
+Message TurnProgressMessage(Message::TurnProgressPhase phase_id, int player_id) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -423,8 +392,7 @@ Message TurnProgressMessage(Message::TurnProgressPhase phase_id, int player_id)
     return Message(Message::TURN_PROGRESS, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
-Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerStatus player_status)
-{
+Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerStatus player_status) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -451,8 +419,7 @@ Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
     return Message(Message::TURN_UPDATE, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
-Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe)
-{
+Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -462,8 +429,7 @@ Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& u
     return Message(Message::TURN_PARTIAL_UPDATE, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
-Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data)
-{
+Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -477,8 +443,7 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGame
     return Message(Message::CLIENT_SAVE_DATA, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
-Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::string& save_state_string)
-{
+Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::string& save_state_string) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -492,8 +457,7 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::str
     return Message(Message::CLIENT_SAVE_DATA, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
-Message ClientSaveDataMessage(int sender, const OrderSet& orders)
-{
+Message ClientSaveDataMessage(int sender, const OrderSet& orders) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -507,46 +471,32 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders)
 }
 
 Message RequestNewObjectIDMessage(int sender)
-{
-    return Message(Message::REQUEST_NEW_OBJECT_ID, sender, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE);
-}
+{ return Message(Message::REQUEST_NEW_OBJECT_ID, sender, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE); }
 
-Message DispatchObjectIDMessage(int player_id, int new_id)
-{
+Message DispatchObjectIDMessage(int player_id, int new_id) {
     return Message(Message::DISPATCH_NEW_OBJECT_ID, Networking::INVALID_PLAYER_ID, player_id,
                    boost::lexical_cast<std::string>(new_id), true);
 }
 
 Message RequestNewDesignIDMessage(int sender)
-{
-    return Message(Message::REQUEST_NEW_DESIGN_ID, sender, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE, true);
-}
+{ return Message(Message::REQUEST_NEW_DESIGN_ID, sender, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE, true); }
 
-Message DispatchDesignIDMessage(int player_id, int new_id)
-{
+Message DispatchDesignIDMessage(int player_id, int new_id) {
     return Message(Message::DISPATCH_NEW_DESIGN_ID, Networking::INVALID_PLAYER_ID, player_id,
                    boost::lexical_cast<std::string>(new_id), true);
 }
 
 Message HostSaveGameMessage(int sender, const std::string& filename)
-{
-    return Message(Message::SAVE_GAME, sender, Networking::INVALID_PLAYER_ID, filename);
-}
+{ return Message(Message::SAVE_GAME, sender, Networking::INVALID_PLAYER_ID, filename); }
 
 Message ServerSaveGameMessage(int receiver, bool synchronous_response)
-{
-    return Message(Message::SAVE_GAME, Networking::INVALID_PLAYER_ID, receiver, DUMMY_EMPTY_MESSAGE, synchronous_response);
-}
+{ return Message(Message::SAVE_GAME, Networking::INVALID_PLAYER_ID, receiver, DUMMY_EMPTY_MESSAGE, synchronous_response); }
 
 Message GlobalChatMessage(int sender, const std::string& msg)
-{
-    return Message(Message::PLAYER_CHAT, sender, Networking::INVALID_PLAYER_ID, msg);
-}
+{ return Message(Message::PLAYER_CHAT, sender, Networking::INVALID_PLAYER_ID, msg); }
 
 Message SingleRecipientChatMessage(int sender, int receiver, const std::string& msg)
-{
-    return Message(Message::PLAYER_CHAT, sender, receiver, msg);
-}
+{ return Message(Message::PLAYER_CHAT, sender, receiver, msg); }
 
 Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_defeat,
                              const std::string& reason_string, int empire_id)
@@ -561,8 +511,7 @@ Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_d
     return Message(Message::VICTORY_DEFEAT, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
 
-Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name)
-{
+Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -587,8 +536,7 @@ Message EndGameMessage(int receiver, Message::EndGameReason reason,
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
 ////////////////////////////////////////////////
-Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data)
-{
+Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -597,8 +545,7 @@ Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data)
     return Message(Message::LOBBY_UPDATE, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
-Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby_data)
-{
+Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby_data) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -608,19 +555,13 @@ Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby
 }
 
 Message LobbyChatMessage(int sender, int receiver, const std::string& data)
-{
-    return Message(Message::LOBBY_CHAT, sender, receiver, data);
-}
+{ return Message(Message::LOBBY_CHAT, sender, receiver, data); }
 
 Message ServerLobbyChatMessage(int sender, int receiver, const std::string& data)
-{
-    return Message(Message::LOBBY_CHAT, sender, receiver, data);
-}
+{ return Message(Message::LOBBY_CHAT, sender, receiver, data); }
 
 Message StartMPGameMessage(int player_id)
-{
-    return Message(Message::START_MP_GAME, player_id, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE);
-}
+{ return Message(Message::START_MP_GAME, player_id, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE); }
 
 Message ServerCombatStartMessage(int receiver, int empire_id,
                                  const CombatData& combat_data,
@@ -638,8 +579,7 @@ Message ServerCombatStartMessage(int receiver, int empire_id,
     return Message(Message::COMBAT_START, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
 
-Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData& combat_data)
-{
+Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData& combat_data) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -652,8 +592,7 @@ Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData&
 Message ServerCombatEndMessage(int receiver)
 { return Message(Message::COMBAT_END, Networking::INVALID_PLAYER_ID, receiver, DUMMY_EMPTY_MESSAGE); }
 
-Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders)
-{
+Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders) {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -665,8 +604,7 @@ Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders)
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////
-void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal)
-{
+void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
@@ -681,8 +619,7 @@ void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal)
     }
 }
 
-void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data)
-{
+void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data) {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
@@ -749,8 +686,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
     }
 }
 
-void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type)
-{
+void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type) {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
@@ -765,8 +701,7 @@ void ExtractMessageData(const Message& msg, std::string& player_name, Networking
     }
 }
 
-void ExtractMessageData(const Message& msg, OrderSet& orders)
-{
+void ExtractMessageData(const Message& msg, OrderSet& orders) {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
@@ -803,8 +738,7 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
     }
 }
 
-void ExtractMessageData(const Message& msg, int empire_id, Universe& universe)
-{
+void ExtractMessageData(const Message& msg, int empire_id, Universe& universe) {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
@@ -844,8 +778,7 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
     }
 }
 
-void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id)
-{
+void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id) {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
@@ -859,8 +792,7 @@ void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id
     }
 }
 
-void ExtractMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status)
-{
+void ExtractMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status) {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
@@ -875,8 +807,7 @@ void ExtractMessageData(const Message& msg, int& about_player_id, Message::Playe
     }
 }
 
-void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data)
-{
+void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data) {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
@@ -907,8 +838,7 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason,
     }
 }
 
-void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name)
-{
+void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name) {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
@@ -962,8 +892,7 @@ void ExtractMessageData(const Message& msg, CombatData& combat_data,
     }
 }
 
-void ExtractMessageData(const Message& msg, CombatOrderSet& order_set)
-{
+void ExtractMessageData(const Message& msg, CombatOrderSet& order_set) {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
@@ -977,8 +906,7 @@ void ExtractMessageData(const Message& msg, CombatOrderSet& order_set)
     }
 }
 
-void ExtractMessageData(const Message& msg, CombatData& combat_data)
-{
+void ExtractMessageData(const Message& msg, CombatData& combat_data) {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);

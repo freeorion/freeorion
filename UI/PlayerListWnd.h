@@ -8,8 +8,7 @@
 
 class PlayerListBox;
 
-class PlayerListWnd : public CUIWnd
-{
+class PlayerListWnd : public CUIWnd {
 public:
     //! \name Structors //@{
     PlayerListWnd(GG::X x, GG::Y y, GG::X w, GG::Y h);

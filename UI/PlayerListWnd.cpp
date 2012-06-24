@@ -15,6 +15,17 @@
 namespace {
     const int           DATA_PANEL_BORDER = 1;
 
+    boost::shared_ptr<GG::Texture> AIIcon()         { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ai.png"); }
+    boost::shared_ptr<GG::Texture> HumanIcon()      { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "human.png"); }
+    boost::shared_ptr<GG::Texture> ObserverIcon()   { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "observer.png"); }
+    boost::shared_ptr<GG::Texture> HostIcon()       { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "host.png"); }
+    boost::shared_ptr<GG::Texture> PlayingIcon()    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "playing.png"); }
+    boost::shared_ptr<GG::Texture> WaitingIcon()    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "waiting.png"); }
+    boost::shared_ptr<GG::Texture> CombatIcon()     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "combat.png"); }
+    boost::shared_ptr<GG::Texture> WarIcon()        { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "war.png"); }
+    boost::shared_ptr<GG::Texture> PeaceIcon()      { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "peace.png"); }
+    boost::shared_ptr<GG::Texture> UnknownIcon()    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "unknown.png"); }
+
     ////////////////////////////////////////////////
     // PlayerDataPanel
     ////////////////////////////////////////////////
@@ -27,9 +38,10 @@ namespace {
             m_player_id(player_id),
             m_player_name_text(0),
             m_empire_name_text(0),
-            m_status_text(0),
-            m_player_type_text(0),
-            m_host_text(0),
+            m_diplo_status(INVALID_DIPLOMATIC_STATUS),
+            m_player_status(Message::WAITING),
+            m_player_type(Networking::INVALID_CLIENT_TYPE),
+            m_host(false),
             m_selected(false)
         {
             SetChildClippingMode(ClipToClient);
@@ -44,34 +56,17 @@ namespace {
                                                      GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             AttachChild(m_empire_name_text);
 
-            m_status_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
-                                                ClientUI::GetFont(), ClientUI::TextColor(),
-                                                GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-            AttachChild(m_status_text);
-
-            m_player_type_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
-                                                     ClientUI::GetFont(), ClientUI::TextColor(),
-                                                     GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-            AttachChild(m_player_type_text);
-
-            m_host_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, h, "",
-                                              ClientUI::GetFont(), ClientUI::TextColor(),
-                                              GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-            AttachChild(m_host_text);
-
             DoLayout();
             Update();
         }
 
         /** Excludes border from the client area. */
-        virtual GG::Pt  ClientUpperLeft() const {
-            return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER));
-        }
+        virtual GG::Pt  ClientUpperLeft() const
+        { return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); }
 
         /** Excludes border from the client area. */
-        virtual GG::Pt  ClientLowerRight() const {
-            return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); 
-        }
+        virtual GG::Pt  ClientLowerRight() const
+        { return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); }
 
         /** Renders panel background, border with color depending on the current state. */
         virtual void    Render() {
@@ -83,6 +78,44 @@ namespace {
                 border_colour = DisabledColor(border_colour);
 
             GG::FlatRectangle(UpperLeft(), LowerRight(), background_colour,  border_colour, DATA_PANEL_BORDER);
+
+            glColor(GG::CLR_WHITE);
+
+            GG::Pt ICON_SIZE = GG::Pt(GG::X(IconSize()), GG::Y(IconSize()));
+
+            const ClientApp* app = ClientApp::GetApp();
+            if (!app) {
+                Logger().errorStream() << "PlayerDataPanel::Render couldn't get client app!";
+                return;
+            }
+            if (m_player_id != app->PlayerID()) {
+                // render diplomacy icon
+                switch (m_diplo_status) {
+                case DIPLO_WAR:                 WarIcon()->OrthoBlit(    UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
+                case DIPLO_PEACE:               PeaceIcon()->OrthoBlit(  UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
+                case INVALID_DIPLOMATIC_STATUS: UnknownIcon()->OrthoBlit(UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
+                default:    break;
+                }
+            }
+
+            // render player status icon
+            switch (m_player_status) {
+            case Message::PLAYING_TURN:     PlayingIcon()->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
+            case Message::RESOLVING_COMBAT: CombatIcon()->OrthoBlit( UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
+            case Message::WAITING:          WaitingIcon()->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
+            default:    break;
+            }
+
+            // render player type icon
+            switch (m_player_type) {
+            case Networking::CLIENT_TYPE_HUMAN_PLAYER:  HumanIcon()->OrthoBlit(   UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::CLIENT_TYPE_AI_PLAYER:     AIIcon()->OrthoBlit(      UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::CLIENT_TYPE_HUMAN_OBSERVER:ObserverIcon()->OrthoBlit(UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            default:    break;
+            }
+ 
+            if (m_host)
+                HostIcon()->OrthoBlit(UpperLeft() + m_host_icon_ul, UpperLeft() + m_host_icon_ul + ICON_SIZE);
         }
 
         void            Select(bool b) {
@@ -122,6 +155,7 @@ namespace {
             if (empire) {
                 empire_color = empire->Color();
                 empire_name = empire->Name();
+                m_diplo_status = Empires().GetDiplomaticStatus(player_info.empire_id, app->EmpireID());
             }
 
             m_player_name_text->SetTextColor(empire_color);
@@ -130,39 +164,27 @@ namespace {
             m_empire_name_text->SetTextColor(empire_color);
             m_empire_name_text->SetText(empire_name);
 
-            // status not stored locally, so m_status_text unchanged
-
-            std::string player_type_str;
-            switch (player_info.client_type) {
-            case Networking::CLIENT_TYPE_HUMAN_PLAYER:      player_type_str = UserString("HUMAN_PLAYER");   break;
-            case Networking::CLIENT_TYPE_AI_PLAYER:         player_type_str = UserString("AI_PLAYER");      break;
-            case Networking::CLIENT_TYPE_HUMAN_OBSERVER:    player_type_str = UserString("OBSERVER");       break;
-            default:    // leave empty
-                Logger().errorStream() << "PlayerDataPanel::Update got unknown player type";
-            }
-            m_player_type_text->SetText(player_type_str);
-
-            std::string host_str;
-            if (player_info.host)
-                host_str = UserString("HOST");
-            m_host_text->SetText(host_str);
+            m_player_type = player_info.client_type;
+            m_host = player_info.host;
         }
 
-        void            SetStatus(Message::PlayerStatus player_status) {
-            m_status_text->SetText(UserString(PlayerStatusStr(player_status)));
-        }
+        void            SetStatus(Message::PlayerStatus player_status)
+        { m_player_status = player_status; }
 
     private:
+        int             IconSize() const   { return Value(Height()) - 2; }
+
         void            DoLayout() {
             const GG::X PLAYER_NAME_WIDTH(ClientUI::Pts() * 17/2);
             const GG::X EMPIRE_NAME_WIDTH(ClientUI::Pts() * 18/2);
-            const GG::X STATUS_WIDTH(ClientUI::Pts() * 5);
-            const GG::X PLAYER_TYPE_WIDTH(ClientUI::Pts() * 5);
-            const GG::X HOST_WIDTH(ClientUI::Pts() * 4);
 
             GG::X left(DATA_PANEL_BORDER);
             GG::Y top(DATA_PANEL_BORDER);
             GG::Y bottom(ClientHeight());
+            GG::X PAD(3);
+
+            m_diplo_status_icon_ul = GG::Pt(left, top);
+            left += GG::X(IconSize()) + PAD;
 
             m_player_name_text->SizeMove(GG::Pt(left, top), GG::Pt(left + PLAYER_NAME_WIDTH, bottom));
             left += PLAYER_NAME_WIDTH;
@@ -170,23 +192,31 @@ namespace {
             m_empire_name_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_NAME_WIDTH, bottom));
             left += EMPIRE_NAME_WIDTH;
 
-            m_status_text->SizeMove(GG::Pt(left, top), GG::Pt(left + STATUS_WIDTH, bottom));
-            left += STATUS_WIDTH;
+            m_player_status_icon_ul = GG::Pt(left, top);
+            left += GG::X(IconSize()) + PAD;
 
-            m_player_type_text->SizeMove(GG::Pt(left, top), GG::Pt(left + PLAYER_TYPE_WIDTH, bottom));
-            left += PLAYER_TYPE_WIDTH;
+            m_player_type_icon_ul = GG::Pt(left, top);
+            left += GG::X(IconSize()) + PAD;
 
-            m_host_text->SizeMove(GG::Pt(left, top), GG::Pt(left + HOST_WIDTH, bottom));
-            left += HOST_WIDTH;
+            m_host_icon_ul = GG::Pt(left, top);
+            left += GG::X(IconSize()) + PAD;
         }
 
-        int                 m_player_id;
-        GG::TextControl*    m_player_name_text;
-        GG::TextControl*    m_empire_name_text;
-        GG::TextControl*    m_status_text;
-        GG::TextControl*    m_player_type_text;
-        GG::TextControl*    m_host_text;
-        bool                m_selected;
+        int                     m_player_id;
+        GG::TextControl*        m_player_name_text;
+        GG::TextControl*        m_empire_name_text;
+
+        GG::Pt                  m_diplo_status_icon_ul;
+        GG::Pt                  m_player_status_icon_ul;
+        GG::Pt                  m_player_type_icon_ul;
+        GG::Pt                  m_host_icon_ul;
+
+        DiplomaticStatus        m_diplo_status;
+        Message::PlayerStatus   m_player_status;
+        Networking::ClientType  m_player_type;
+        bool                    m_host;
+
+        bool                    m_selected;
     };
 
 
