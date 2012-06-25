@@ -151,6 +151,7 @@ set(THIS_LIB_SOURCES
     Empire/Empire.cpp
     Empire/EmpireManager.cpp
     Empire/ResourcePool.cpp
+    Empire/Diplomacy.cpp
     network/Message.cpp
     network/MessageQueue.cpp
     network/Networking.cpp

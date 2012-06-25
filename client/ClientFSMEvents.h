@@ -40,6 +40,7 @@ struct MessageEventBase
     (CombatRoundUpdate)                        \
     (CombatEnd)                                \
     (PlayerChat)                               \
+    (Diplomacy)                                \
     (VictoryDefeat)                            \
     (PlayerEliminated)                         \
     (EndGame)

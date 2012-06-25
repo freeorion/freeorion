@@ -38,8 +38,7 @@ struct StartMPGameClicked : boost::statechart::event<StartMPGameClicked> {};
 struct CancelMPGameClicked : boost::statechart::event<CancelMPGameClicked> {};
 
 // Indicates that an SP-host request was sent to the server.
-struct HostSPGameRequested : boost::statechart::event<HostSPGameRequested>
-{
+struct HostSPGameRequested : boost::statechart::event<HostSPGameRequested> {
     HostSPGameRequested(WaitingForDataMode waiting_for_data_mode) : m_waiting_for_data_mode(waiting_for_data_mode) {}
     WaitingForDataMode m_waiting_for_data_mode;
 };
@@ -113,8 +112,7 @@ class MultiPlayerLobbyWnd;
 
 
 /** The finite state machine that represents the human client's operation. */
-struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMenu>
-{
+struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMenu> {
     typedef boost::statechart::state_machine<HumanClientFSM, IntroMenu> Base;
 
     HumanClientFSM(HumanClientApp &human_client);
@@ -129,8 +127,7 @@ struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMe
 
 
 /** The human client's initial state. */
-struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM, IntroMenuIdle>
-{
+struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM, IntroMenuIdle> {
     typedef boost::statechart::state<IntroMenu, HumanClientFSM, IntroMenuIdle> Base;
 
     typedef boost::mpl::list<
@@ -156,8 +153,7 @@ EMPTY_IDLE_STATE(IntroMenu);
 
 /** The human client state in which the player has requested to host a single
   * player game and is waiting for the server to acknowledge the request. */
-struct WaitingForSPHostAck : boost::statechart::simple_state<WaitingForSPHostAck, HumanClientFSM>
-{
+struct WaitingForSPHostAck : boost::statechart::simple_state<WaitingForSPHostAck, HumanClientFSM> {
     typedef boost::statechart::simple_state<WaitingForSPHostAck, HumanClientFSM> Base;
 
     typedef boost::mpl::list<
@@ -177,8 +173,7 @@ struct WaitingForSPHostAck : boost::statechart::simple_state<WaitingForSPHostAck
 
 /** The human client state in which the player has requested to host a
   * multiplayer game and is waiting for the server to acknowledge the request. */
-struct WaitingForMPHostAck : boost::statechart::simple_state<WaitingForMPHostAck, HumanClientFSM>
-{
+struct WaitingForMPHostAck : boost::statechart::simple_state<WaitingForMPHostAck, HumanClientFSM> {
     typedef boost::statechart::simple_state<WaitingForMPHostAck, HumanClientFSM> Base;
 
     typedef boost::mpl::list<
@@ -199,8 +194,7 @@ struct WaitingForMPHostAck : boost::statechart::simple_state<WaitingForMPHostAck
 /** The human client state in which the player has requested to join a
   * single-player game and is waiting for the server to acknowledge the
   * player's join. */
-struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck, HumanClientFSM>
-{
+struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck, HumanClientFSM> {
     typedef boost::statechart::simple_state<WaitingForMPJoinAck, HumanClientFSM> Base;
 
     typedef boost::mpl::list<
@@ -219,8 +213,7 @@ struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck
 
 
 /** The human client state in which the multiplayer lobby is active. */
-struct MPLobby : boost::statechart::state<MPLobby, IntroMenu>
-{
+struct MPLobby : boost::statechart::state<MPLobby, IntroMenu> {
     typedef boost::statechart::state<MPLobby, IntroMenu> Base;
 
     typedef boost::mpl::list<
@@ -252,8 +245,7 @@ struct MPLobby : boost::statechart::state<MPLobby, IntroMenu>
 
 /** The human client state in which a game has been started, and a turn is being
   * played. */
-struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM, WaitingForTurnData>
-{
+struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM, WaitingForTurnData> {
     typedef boost::statechart::simple_state<PlayingGame, HumanClientFSM, WaitingForTurnData> Base;
 
     typedef boost::mpl::list<
@@ -287,8 +279,7 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
 
 /** The substate of PlayingGame in which a game is about to start, or the player is waiting for turn resolution and a
     new turn. */
-struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, PlayingGame, WaitingForTurnDataIdle>
-{
+struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, PlayingGame, WaitingForTurnDataIdle> {
     typedef boost::statechart::state<WaitingForTurnData, PlayingGame, WaitingForTurnDataIdle> Base;
 
     typedef boost::mpl::list<
@@ -317,8 +308,7 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
 
 
 /** The initial substate of WaitingForTurnData. */
-struct WaitingForTurnDataIdle : boost::statechart::state<WaitingForTurnDataIdle, WaitingForTurnData>
-{
+struct WaitingForTurnDataIdle : boost::statechart::state<WaitingForTurnDataIdle, WaitingForTurnData> {
     typedef boost::statechart::state<WaitingForTurnDataIdle, WaitingForTurnData> Base;
 
     typedef boost::mpl::list<
@@ -335,14 +325,14 @@ struct WaitingForTurnDataIdle : boost::statechart::state<WaitingForTurnDataIdle,
 
 
 /** The substate of PlayingGame in which the player is actively playing a turn. */
-struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame>
-{
+struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame> {
     typedef boost::statechart::state<PlayingTurn, PlayingGame> Base;
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<SaveGame>,
         boost::statechart::custom_reaction<TurnEnded>,
-        boost::statechart::custom_reaction<AutoAdvanceFirstTurn>
+        boost::statechart::custom_reaction<AutoAdvanceFirstTurn>,
+        boost::statechart::custom_reaction<Diplomacy>
     > reactions;
 
     PlayingTurn(my_context ctx);
@@ -351,14 +341,14 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame>
     boost::statechart::result react(const SaveGame& d);
     boost::statechart::result react(const TurnEnded& d);
     boost::statechart::result react(const AutoAdvanceFirstTurn& d);
+    boost::statechart::result react(const Diplomacy& d);
 
     CLIENT_ACCESSOR
 };
 
 
 /** The substate of WaitingForTurnData in which the player is resolving a combat. */
-struct ResolvingCombat : boost::statechart::state<ResolvingCombat, WaitingForTurnData>
-{
+struct ResolvingCombat : boost::statechart::state<ResolvingCombat, WaitingForTurnData> {
     typedef boost::statechart::state<ResolvingCombat, WaitingForTurnData> Base;
 
     typedef boost::mpl::list<

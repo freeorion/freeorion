@@ -2,8 +2,14 @@
 
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../Empire/Diplomacy.h"
+#include "../universe/Universe.h"
 
 #include "Serialize.ipp"
+
+BOOST_CLASS_EXPORT(WarDeclarationDiplomaticMessage)
+BOOST_CLASS_EXPORT(PeaceProposalDiplomaticMessage)
+BOOST_CLASS_EXPORT(PeaceAcceptanceDiplomaticMessage)
 
 
 template <class Archive>
@@ -117,13 +123,60 @@ void EmpireManager::serialize(Archive& ar, const unsigned int version)
         Clear();    // clean up any existing dynamically allocated contents before replacing containers with deserialized data
     }
 
+    std::map<std::pair<int, int>, DiplomaticMessage> messages;
+    if (Archive::is_saving::value)
+        GetDiplomaticMessagesToSerialize(messages, Universe::s_encoding_empire);
+
     ar  & BOOST_SERIALIZATION_NVP(m_empire_map)
         & BOOST_SERIALIZATION_NVP(m_eliminated_empires)
-        & BOOST_SERIALIZATION_NVP(m_empire_diplomatic_statuses);
+        & BOOST_SERIALIZATION_NVP(m_empire_diplomatic_statuses)
+        & BOOST_SERIALIZATION_NVP(messages);
+
+    if (Archive::is_loading::value)
+        m_unresponded_diplomatic_messages = messages;
 }
 
 template void EmpireManager::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
 template void EmpireManager::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+
+template <class Archive>
+void DiplomaticMessage::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_sender_empire)
+        & BOOST_SERIALIZATION_NVP(m_recipient_empire)
+        & BOOST_SERIALIZATION_NVP(m_type);
+}
+
+template void DiplomaticMessage::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
+template void DiplomaticMessage::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+
+template <class Archive>
+void WarDeclarationDiplomaticMessage::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(DiplomaticMessage);
+}
+
+template void WarDeclarationDiplomaticMessage::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
+template void WarDeclarationDiplomaticMessage::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+
+template <class Archive>
+void PeaceProposalDiplomaticMessage::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(DiplomaticMessage);
+}
+
+template void PeaceProposalDiplomaticMessage::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
+template void PeaceProposalDiplomaticMessage::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+
+template <class Archive>
+void PeaceAcceptanceDiplomaticMessage::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(DiplomaticMessage);
+}
+
+template void PeaceAcceptanceDiplomaticMessage::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
+template void PeaceAcceptanceDiplomaticMessage::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+
 
 #if 0
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Empire& empire)

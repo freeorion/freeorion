@@ -732,6 +732,7 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::COMBAT_TURN_UPDATE:   m_fsm->process_event(CombatRoundUpdate(msg));   break;
     case Message::COMBAT_END:           m_fsm->process_event(CombatEnd(msg));           break;
     case Message::PLAYER_CHAT:          m_fsm->process_event(PlayerChat(msg));          break;
+    case Message::DIPLOMACY:            m_fsm->process_event(Diplomacy(msg));           break;
     case Message::VICTORY_DEFEAT :      m_fsm->process_event(VictoryDefeat(msg));       break;
     case Message::PLAYER_ELIMINATED:    m_fsm->process_event(PlayerEliminated(msg));    break;
     case Message::END_GAME:             m_fsm->process_event(::EndGame(msg));           break;

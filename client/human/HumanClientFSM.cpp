@@ -643,6 +643,9 @@ boost::statechart::result PlayingTurn::react(const AutoAdvanceFirstTurn& d) {
     return discard_event();
 }
 
+boost::statechart::result PlayingTurn::react(const Diplomacy& d) {
+    return discard_event();
+}
 
 ////////////////////////////////////////////////////////////
 // ResolvingCombat

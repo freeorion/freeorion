@@ -105,6 +105,7 @@
     <ClInclude Include="..\..\combat\OpenSteer\Utilities.h" />
     <ClInclude Include="..\..\combat\OpenSteer\Vec3.h" />
     <ClInclude Include="..\..\combat\OpenSteer\Vec3Utilities.h" />
+    <ClInclude Include="..\..\Empire\Diplomacy.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\EmpireManager.h" />
     <ClInclude Include="..\..\Empire\ResourcePool.h" />
@@ -168,6 +169,7 @@
     <ClCompile Include="..\..\combat\OpenSteer\SimpleVehicle.cpp" />
     <ClCompile Include="..\..\combat\OpenSteer\Vec3.cpp" />
     <ClCompile Include="..\..\combat\OpenSteer\Vec3Utilities.cpp" />
+    <ClCompile Include="..\..\Empire\Diplomacy.cpp" />
     <ClCompile Include="..\..\Empire\Empire.cpp" />
     <ClCompile Include="..\..\Empire\EmpireManager.cpp" />
     <ClCompile Include="..\..\Empire\ResourcePool.cpp" />

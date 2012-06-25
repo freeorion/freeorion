@@ -35,6 +35,7 @@ class ShipDesign;
 class System;
 class Universe;
 class UniverseObject;
+class DiplomaticMessage;
 
 typedef std::vector<CombatOrder> CombatOrderSet;
 typedef std::map<int, ShipDesign*> ShipDesignMap;
@@ -77,6 +78,7 @@ public:
         COMBAT_TURN_ORDERS,     ///< sent to the server by a client that has combat orders to be processed at the end of a combat turn
         COMBAT_END,             ///< sent to clients when a combat is concluded
         PLAYER_CHAT,            ///< sent when one player sends a chat message to another in multiplayer
+        DIPLOMACY,              ///< sent by players to server or server to players to make or convey diplomatic proposals or declarations, or to accept / reject proposals from other players
         REQUEST_NEW_OBJECT_ID,  ///< sent by client to server requesting a new object ID.
         DISPATCH_NEW_OBJECT_ID, ///< sent by server to client with the new object ID.
         REQUEST_NEW_DESIGN_ID,  ///< sent by client to server requesting a new design ID.
@@ -268,24 +270,33 @@ Message HostSaveGameMessage(int sender, const std::string& filename);
     sent by the server to get game data from a client.*/
 Message ServerSaveGameMessage(int receiver, bool synchronous_response);
 
-/** creates a CHAT_MSG, which is sent to the server, and then from the server to all players, including the 
-    originating player.*/
+/** creates a PLAYER_CHAT, which is sent to the server, and then from the server
+  * to all players, including the originating player.*/
 Message GlobalChatMessage(int sender, const std::string& msg);
 
-/** creates a CHAT_MSG, which is sent to the server, and then from the server to a single recipient player */
+/** creates a PLAYER_CHAT message, which is sent to the server, and then from
+  * the server to a single recipient player */
 Message SingleRecipientChatMessage(int sender, int receiver, const std::string& msg);
 
-/** creates a VICTORY_DEFEAT message indicating that the recipient has won the game by meeting a victory condition.
-    The \a reason_string should be a stringtable entry name, not a human-readable string, so that each
-    player's client can look up and display a victory message in the player's selected language.  The
-    \a winner_empire_ids and \a winner_empire_names should contain the names and ids of all empires that have
-    won; this will contain only a single empire if it has won alone, but could contain multiple empires if
-    an allied victory has occured.  This message should only be sent by the server.*/
-Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_defeat, const std::string& reason_string,
-                             int empire_id);
+/** creates a DIPLOMACY message, which is sent between players via the server to
+  * declare, proposed, or accept / reject diplomatic arrangements or agreements. */
+Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& diplo_message);
 
-/** creates a PLAYER_ELIMINATED message, which is sent to all clients when a client is eliminated from play.
-    This message should only be sent by the server.*/
+/** creates a VICTORY_DEFEAT message indicating that the recipient has won the
+  * game by meeting a victory condition.
+  * The \a reason_string should be a stringtable entry name, not a human-
+  * readable string, so that each player's client can look up and display a
+  * victory message in the player's selected language.  The \a winner_empire_ids
+  * and \a winner_empire_names should contain the names and ids of all empires
+  * that have won; this will contain only a single empire if it has won alone,
+  * but could contain multiple empires if an allied victory has occured.  This
+  * message should only be sent by the server.*/
+Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_defeat,
+                             const std::string& reason_string, int empire_id);
+
+/** creates a PLAYER_ELIMINATED message, which is sent to all clients when a
+  * client is eliminated from play. This message should only be sent by the
+  * server.*/
 Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name);
 
 /** creates an END_GAME message used to terminate an active game. */
@@ -369,6 +380,8 @@ void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data);
 void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name);
 
 void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name);
+
+void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message);
 
 void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat,
                         std::string& reason_string, int& empire_id);

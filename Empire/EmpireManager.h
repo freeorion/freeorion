@@ -3,6 +3,7 @@
 #define _EmpireManager_h_
 
 #include "../universe/Enums.h"
+#include "Diplomacy.h"
 
 #ifndef _GG_Clr_h_
 #include <GG/Clr.h>
@@ -48,41 +49,44 @@ public:
 
     /** \name Mutators */ //@{
     /** Returns the empire whose ID is \a id, or 0 if none exists. */
-    Empire*         Lookup(int id);
+    Empire*     Lookup(int id);
 
-    iterator        begin();
-    iterator        end();
+    iterator    begin();
+    iterator    end();
 
-    void            BackPropegateMeters();
+    void        BackPropegateMeters();
 
     /** Marks the empire with ID \a id as eliminated, and cleans up that empire
       * if it exists (or does nothing if that empire doesn't exist).  Cleanup
       * involves clearing queues, resetting the capital, and cleaning up other
       * state info not relevant to an eliminated empire. */
-    void            EliminateEmpire(int id);
+    void        EliminateEmpire(int id);
 
-    void            SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status);
-    void            ResetDiplomacy();
+    void        SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status);
+    void        ResetDiplomacy();
 
     /** Creates and inserts an empire with the specified properties and returns
       * a pointer to it.  This will only set up the data in Empire.  It is the
       * caller's responsibility to make sure that universe updates planet
       * ownership. */
-    Empire*         CreateEmpire(int empire_id, const std::string& name, const std::string& player_name,
+    Empire*     CreateEmpire(int empire_id, const std::string& name, const std::string& player_name,
                                  const GG::Clr& color);
 
     /** Removes and deletes all empires from the manager. */
-    void            Clear();
+    void        Clear();
     //@}
 
 
 private:
     /** Adds the given empire to the manager. */
-    void            InsertEmpire(Empire* empire);
+    void        InsertEmpire(Empire* empire);
+    void        GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int>, DiplomaticMessage>& messages,
+                                                 int encoding_empire) const;
 
     std::map<int, Empire*>                          m_empire_map;
     std::set<int>                                   m_eliminated_empires;
     std::map<std::pair<int, int>, DiplomaticStatus> m_empire_diplomatic_statuses;
+    std::map<std::pair<int, int>, DiplomaticMessage>m_unresponded_diplomatic_messages;
 
     friend class boost::serialization::access;
     template <class Archive>

@@ -3,6 +3,7 @@
 #include "../combat/CombatOrder.h"
 #include "../combat/OpenSteer/CombatObject.h"
 #include "../Empire/EmpireManager.h"
+#include "../Empire/Diplomacy.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Meter.h"
@@ -73,6 +74,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::COMBAT_TURN_ORDERS)
     GG_ENUM_MAP_INSERT(Message::COMBAT_END)
     GG_ENUM_MAP_INSERT(Message::PLAYER_CHAT)
+    GG_ENUM_MAP_INSERT(Message::DIPLOMACY)
     GG_ENUM_MAP_INSERT(Message::PLAYER_ELIMINATED)
     GG_ENUM_MAP_INSERT(Message::REQUEST_NEW_OBJECT_ID)
     GG_ENUM_MAP_INSERT(Message::DISPATCH_NEW_OBJECT_ID)
@@ -498,6 +500,15 @@ Message GlobalChatMessage(int sender, const std::string& msg)
 Message SingleRecipientChatMessage(int sender, int receiver, const std::string& msg)
 { return Message(Message::PLAYER_CHAT, sender, receiver, msg); }
 
+Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& diplo_message) {
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << diplo_message;
+    }
+    return Message(Message::DIPLOMACY, sender, receiver, os.str());
+}
+
 Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_defeat,
                              const std::string& reason_string, int empire_id)
 {
@@ -847,6 +858,20 @@ void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, int empire_id, std::string& "
                                << "empire_name) failed!  Message:\n"
+                               << msg.Text() << "\n"
+                               << "Error: " << err.what();
+        throw err;
+    }
+}
+
+void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message) {
+    try {
+        std::istringstream is(msg.Text());
+        FREEORION_IARCHIVE_TYPE ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(diplo_message);
+    } catch (const std::exception& err) {
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, DiplomaticMessage& "
+                               << "diplo_message) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
         throw err;

@@ -142,3 +142,24 @@ void EmpireManager::ResetDiplomacy() {
         }
     }
 }
+
+void EmpireManager::GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int>, DiplomaticMessage>& messages,
+                                                     int encoding_empire) const
+{
+    messages.clear();
+
+    // return all messages for general case
+    if (encoding_empire == ALL_EMPIRES) {
+        messages = m_unresponded_diplomatic_messages;
+        return;
+    }
+
+    // find all messages involving encoding empire
+    std::map<std::pair<int, int>, DiplomaticMessage>::const_iterator it;
+    for (it = m_unresponded_diplomatic_messages.begin();
+         it != m_unresponded_diplomatic_messages.end(); ++it)
+    {
+        if (it->first.first == encoding_empire || it->first.second == encoding_empire)
+            messages.insert(*it);
+    }
+}
