@@ -47,9 +47,13 @@ public:
 
    /** \name Accessors */ //@{
    bool Empty() const {return m_empty;} ///< returns true if this is a default-constructed object with no associated process
+   bool HasLowPriority() {return m_low_priority;} ///< true if process is set to low priority
    //@}
 
    /** \name Mutators */ //@{
+   /** sets process priority */
+   void SetLowPriority(bool low); 
+
    /** kills the controlled process immediately. */   
    void Kill();
 
@@ -67,6 +71,7 @@ private:
       ProcessImpl(const std::string& cmd, const std::vector<std::string>& argv);
       ~ProcessImpl();
 
+      void SetLowPriority(bool low); 
       void Kill();
       void Free();
       
@@ -82,7 +87,7 @@ private:
 
    boost::shared_ptr<ProcessImpl>   m_impl;
    bool                             m_empty; ///< true iff this is a default-constructed Process (no associated process exists)
+   bool                             m_low_priority; ///< true if this process is set to low priority
 };
 
 #endif // _Process_h_
-

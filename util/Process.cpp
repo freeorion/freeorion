@@ -5,13 +5,22 @@
 #include <stdexcept>
 
 Process::Process() :
-    m_empty(true)
+    m_empty(true),
+    m_low_priority(false)
 {}
 
 Process::Process(const std::string& cmd, const std::vector<std::string>& argv) :
     m_impl(new ProcessImpl(cmd, argv)), 
-    m_empty(false)
+    m_empty(false),
+    m_low_priority(false)
 {}
+
+void Process::SetLowPriority(bool low) {
+    if ((!m_empty) && (m_low_priority != low)) {
+        m_low_priority = low;
+        m_impl->SetLowPriority(low);
+    }
+}
 
 void Process::Kill()
 { if (m_impl) m_impl->Kill(); }
@@ -59,6 +68,13 @@ Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std:
 Process::ProcessImpl::~ProcessImpl()
 { if (!m_free) Kill(); }
 
+void Process::ProcessImpl::SetLowPriority(bool low) {
+    if (low)
+        SetPriorityClass(m_process_info.hProcess, BELOW_NORMAL_PRIORITY_CLASS);
+    else
+        SetPriorityClass(m_process_info.hProcess, NORMAL_PRIORITY_CLASS);
+}
+
 void Process::ProcessImpl::Kill() {
     if (!TerminateProcess(m_process_info.hProcess, 0)) {
         std::string err_str;
@@ -77,6 +93,8 @@ void Process::ProcessImpl::Kill() {
 #elif defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
 
 #include <sys/types.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include <unistd.h>
 #include <signal.h>
 #include <cstdio>
@@ -111,6 +129,13 @@ Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std:
 
 Process::ProcessImpl::~ProcessImpl()
 { if (!m_free) Kill(); }
+
+void Process::ProcessImpl::SetLowPriority(bool low) {
+    if (low)
+        setpriority(PRIO_PROCESS, m_process_id, 10);
+    else
+        setpriority(PRIO_PROCESS, m_process_id, 0);
+}
 
 void Process::ProcessImpl::Kill()
 { kill(m_process_id, SIGHUP); }
