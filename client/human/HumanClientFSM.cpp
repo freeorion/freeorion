@@ -603,7 +603,9 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     // TODO: reselect last fleet if stored in save game ui data?
     Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % CurrentTurn()) + "\n");
+    Client().m_ui->GetMessageWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
     Client().m_ui->GetPlayerListWnd()->Refresh();
+    Client().m_ui->GetPlayerListWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
     Client().m_ui->GetMapWnd()->EnableOrderIssuing(Client().EmpireID() != ALL_EMPIRES);
 
     // if not controlling an empire, the player (observer) can't do anything
