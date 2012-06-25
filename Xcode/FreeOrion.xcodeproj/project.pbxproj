@@ -360,6 +360,7 @@
 		82592EF5147E387100B840A5 /* Names.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF1147E387100B840A5 /* Names.cpp */; };
 		82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF3147E387100B840A5 /* ObjectMap.cpp */; };
 		82B4313414A74E07003EEE42 /* UniverseServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B4313314A74E07003EEE42 /* UniverseServer.cpp */; };
+		82BEB659159853B300B024CB /* Diplomacy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82BEB657159853B300B024CB /* Diplomacy.cpp */; };
 		82C07470149DE72D00E76876 /* Parse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936F1147E3B1B00B840A5 /* Parse.cpp */; };
 		82C07479149DE7CE00E76876 /* libParse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* libParse.a */; };
 		82C0747C149DE80300E76876 /* libParse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* libParse.a */; };
@@ -2268,6 +2269,8 @@
 		8259376B147E3B1C00B840A5 /* ValueRefParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefParser.h; sourceTree = "<group>"; };
 		8259376C147E3B1C00B840A5 /* ValueRefParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefParserImpl.h; sourceTree = "<group>"; };
 		82B4313314A74E07003EEE42 /* UniverseServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseServer.cpp; sourceTree = "<group>"; };
+		82BEB657159853B300B024CB /* Diplomacy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Diplomacy.cpp; sourceTree = "<group>"; };
+		82BEB658159853B300B024CB /* Diplomacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Diplomacy.h; sourceTree = "<group>"; };
 		82C07438149DE46200E76876 /* libParse.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libParse.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DD76F6C0486A84900D96B5E /* FreeOrion */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FreeOrion; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EEEEA7113ACB3800085B1A0 /* OISInput.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; name = OISInput.cfg; path = ../GG/src/Ogre/Plugins/OISInput.cfg; sourceTree = "<group>"; };
@@ -3685,6 +3688,8 @@
 		471D5C6F0A98A3F900DA9C21 /* Empire */ = {
 			isa = PBXGroup;
 			children = (
+				82BEB657159853B300B024CB /* Diplomacy.cpp */,
+				82BEB658159853B300B024CB /* Diplomacy.h */,
 				471D5C720A98A3F900DA9C21 /* doc */,
 				471D5C750A98A3F900DA9C21 /* Empire.cpp */,
 				471D5C760A98A3F900DA9C21 /* Empire.h */,
@@ -4992,6 +4997,7 @@
 				82592EF0147E381B00B840A5 /* EffectAccounting.cpp in Sources */,
 				82592EF5147E387100B840A5 /* Names.cpp in Sources */,
 				82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */,
+				82BEB659159853B300B024CB /* Diplomacy.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
