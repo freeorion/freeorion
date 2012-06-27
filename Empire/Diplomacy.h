@@ -2,6 +2,7 @@
 #ifndef _Diplomacy_h_
 #define _Diplomacy_h_
 
+#include <string>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
@@ -21,6 +22,7 @@ public:
     DiplomaticMessageType   GetType() const { return m_type; }
     int                     SenderEmpireID() const { return m_sender_empire; }
     int                     RecipientEmpireID() const { return m_recipient_empire; }
+    std::string             Dump() const;
 
 private:
     int                     m_sender_empire;
