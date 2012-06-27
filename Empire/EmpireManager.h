@@ -42,7 +42,9 @@ public:
       * if no such empire exists. */
     bool                Eliminated(int id) const;
 
-    DiplomaticStatus    GetDiplomaticStatus(int empire1, int empire2) const;
+    DiplomaticStatus            GetDiplomaticStatus(int empire1, int empire2) const;
+    bool                        DipmaticMessageAvailable(int empire1, int empire2) const;
+    const DiplomaticMessage&    GetDiplomaticMessage(int empire1, int empire2) const;
 
     std::string         Dump() const;
     //@}
@@ -63,6 +65,9 @@ public:
     void        EliminateEmpire(int id);
 
     void        SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status);
+    void        SetDiplomaticMessage(int empire1, int empire2, const DiplomaticMessage& message);
+    void        RemoveDiplomaticMessage(int empire1, int empire2);
+
     void        ResetDiplomacy();
 
     /** Creates and inserts an empire with the specified properties and returns
@@ -86,7 +91,7 @@ private:
     std::map<int, Empire*>                          m_empire_map;
     std::set<int>                                   m_eliminated_empires;
     std::map<std::pair<int, int>, DiplomaticStatus> m_empire_diplomatic_statuses;
-    std::map<std::pair<int, int>, DiplomaticMessage>m_unresponded_diplomatic_messages;
+    std::map<std::pair<int, int>, DiplomaticMessage>m_diplomatic_messages;
 
     friend class boost::serialization::access;
     template <class Archive>

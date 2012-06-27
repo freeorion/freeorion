@@ -7,10 +7,6 @@
 
 #include "Serialize.ipp"
 
-BOOST_CLASS_EXPORT(WarDeclarationDiplomaticMessage)
-BOOST_CLASS_EXPORT(PeaceProposalDiplomaticMessage)
-BOOST_CLASS_EXPORT(PeaceAcceptanceDiplomaticMessage)
-
 
 template <class Archive>
 void ResearchQueue::Element::serialize(Archive& ar, const unsigned int version)
@@ -133,7 +129,7 @@ void EmpireManager::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(messages);
 
     if (Archive::is_loading::value)
-        m_unresponded_diplomatic_messages = messages;
+        m_diplomatic_messages = messages;
 }
 
 template void EmpireManager::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
@@ -149,33 +145,6 @@ void DiplomaticMessage::serialize(Archive& ar, const unsigned int version)
 
 template void DiplomaticMessage::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
 template void DiplomaticMessage::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
-
-template <class Archive>
-void WarDeclarationDiplomaticMessage::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(DiplomaticMessage);
-}
-
-template void WarDeclarationDiplomaticMessage::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void WarDeclarationDiplomaticMessage::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
-
-template <class Archive>
-void PeaceProposalDiplomaticMessage::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(DiplomaticMessage);
-}
-
-template void PeaceProposalDiplomaticMessage::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void PeaceProposalDiplomaticMessage::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
-
-template <class Archive>
-void PeaceAcceptanceDiplomaticMessage::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(DiplomaticMessage);
-}
-
-template void PeaceAcceptanceDiplomaticMessage::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
-template void PeaceAcceptanceDiplomaticMessage::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
 
 
 #if 0

@@ -126,12 +126,44 @@ DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) co
     return it->second;
 }
 
+namespace {
+    static const DiplomaticMessage DEFAULT_DIPLOMATIC_MESSAGE;
+}
+
+bool EmpireManager::DipmaticMessageAvailable(int empire1, int empire2) const {
+    std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
+    std::map<std::pair<int, int>, DiplomaticMessage>::const_iterator it = m_diplomatic_messages.find(key);
+    return it != m_diplomatic_messages.end();
+}
+
+const DiplomaticMessage& EmpireManager::GetDiplomaticMessage(int empire1, int empire2) const {
+    std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
+    std::map<std::pair<int, int>, DiplomaticMessage>::const_iterator it = m_diplomatic_messages.find(key);
+    if (it != m_diplomatic_messages.end())
+        return it->second;
+    return DEFAULT_DIPLOMATIC_MESSAGE;
+}
+
 void EmpireManager::SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status) {
     std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
     m_empire_diplomatic_statuses[key] = status;
 }
 
+void EmpireManager::SetDiplomaticMessage(int empire1, int empire2, const DiplomaticMessage& message) {
+    std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
+    m_diplomatic_messages[key] = message;
+}
+
+void EmpireManager::RemoveDiplomaticMessage(int empire1, int empire2) {
+    std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
+    std::map<std::pair<int, int>, DiplomaticMessage>::iterator it = m_diplomatic_messages.find(key);
+    if (it != m_diplomatic_messages.end())
+        m_diplomatic_messages.erase(key);
+}
+
 void EmpireManager::ResetDiplomacy() {
+    m_diplomatic_messages.clear();
+
     m_empire_diplomatic_statuses.clear();
     for (std::map<int, Empire*>::const_iterator emp1_it = m_empire_map.begin(); emp1_it != m_empire_map.end(); ++emp1_it) {
         std::map<int, Empire*>::const_iterator emp2_it = emp1_it;
@@ -150,14 +182,14 @@ void EmpireManager::GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int
 
     // return all messages for general case
     if (encoding_empire == ALL_EMPIRES) {
-        messages = m_unresponded_diplomatic_messages;
+        messages = m_diplomatic_messages;
         return;
     }
 
     // find all messages involving encoding empire
     std::map<std::pair<int, int>, DiplomaticMessage>::const_iterator it;
-    for (it = m_unresponded_diplomatic_messages.begin();
-         it != m_unresponded_diplomatic_messages.end(); ++it)
+    for (it = m_diplomatic_messages.begin();
+         it != m_diplomatic_messages.end(); ++it)
     {
         if (it->first.first == encoding_empire || it->first.second == encoding_empire)
             messages.insert(*it);
