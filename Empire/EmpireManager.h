@@ -65,9 +65,7 @@ public:
     void        EliminateEmpire(int id);
 
     void        SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status);
-    void        SetDiplomaticMessage(int empire1, int empire2, const DiplomaticMessage& message);
-    void        RemoveDiplomaticMessage(int empire1, int empire2);
-
+    void        HandleDiplomaticMessage(const DiplomaticMessage& message);
     void        ResetDiplomacy();
 
     /** Creates and inserts an empire with the specified properties and returns
@@ -85,6 +83,8 @@ public:
 private:
     /** Adds the given empire to the manager. */
     void        InsertEmpire(Empire* empire);
+    void        SetDiplomaticMessage(int empire1, int empire2, const DiplomaticMessage& message);
+    void        RemoveDiplomaticMessage(int empire1, int empire2);
     void        GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int>, DiplomaticMessage>& messages,
                                                  int encoding_empire) const;
 

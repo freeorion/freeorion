@@ -161,6 +161,30 @@ void EmpireManager::RemoveDiplomaticMessage(int empire1, int empire2) {
         m_diplomatic_messages.erase(key);
 }
 
+void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
+    int sender = message.SenderEmpireID();
+    int recipient = message.RecipientEmpireID();
+    switch (message.GetType()) {
+    case DiplomaticMessage::WAR_DECLARATION: {
+        break;
+    }
+    case DiplomaticMessage::PEACE_PROPOSAL: {
+        break;
+    }
+    case DiplomaticMessage::ACCEPT_PROPOSAL: {
+        break;
+    }
+    case DiplomaticMessage::CANCEL_PROPOSAL: {
+        break;
+    }
+    default: {
+        Logger().errorStream() << "EmpireManager::HandleDiplomaticMessage got invalid message: " << message.Dump();
+        return;
+        break;
+    }
+    }
+}
+
 void EmpireManager::ResetDiplomacy() {
     m_diplomatic_messages.clear();
 

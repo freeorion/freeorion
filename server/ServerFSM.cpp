@@ -1061,7 +1061,12 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
 
 sc::result PlayingGame::react(const Diplomacy& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame.Diplomacy";
-    ServerApp& server = Server();
+    const Message& message = msg.m_message;
+
+    DiplomaticMessage diplo_message;
+    ExtractMessageData(message, diplo_message);
+    Empires().HandleDiplomaticMessage(diplo_message);
+
     return discard_event();
 }
 
