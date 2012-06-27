@@ -519,19 +519,29 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             menu_contents.next_level.push_back(GG::MenuItem(UserString("WAR_DECLARATION"),          1, false, false));
     }
 
+    ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
     if (popup.Run()) {
         switch (popup.MenuID()) {
-        case 1: {
+        case 1: {   // WAR_DECLARATION
+            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id, 
+                                             WarDeclarationDiplomaticMessage(client_empire_id, clicked_empire_id)));
             break;
         }
-        case 2: {
+        case 2: {   // PEACE_PROPOSAL
+            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id, 
+                                             PeaceProposalDiplomaticMessage(client_empire_id, clicked_empire_id)));
             break;
         }
-        case 3: {
+        case 3: {   // PEACE_ACCEPT
+            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id, 
+                                             AcceptDiplomaticMessage(client_empire_id, clicked_empire_id)));
             break;
         }
-        case 4: {
+        case 4: {   // PEACE_PROPOSAL_CANEL
+            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id, 
+                                             CancelDiplomaticMessage(client_empire_id, clicked_empire_id)));
             break;
         }
         default:

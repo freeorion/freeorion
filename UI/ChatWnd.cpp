@@ -449,10 +449,10 @@ namespace {
 
 void MessageWnd::MessageEntered() {
     std::string trimmed_text = boost::trim_copy(m_edit->Text());
-
-    m_display_show_time = GG::GUI::GetGUI()->Ticks();
     if (trimmed_text.empty())
         return;
+
+    m_display_show_time = GG::GUI::GetGUI()->Ticks();
 
     // update history
     if (m_history.size() == 1 || m_history[1] != trimmed_text) {
