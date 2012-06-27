@@ -14,26 +14,15 @@ DiplomaticMessage::DiplomaticMessage(int sender_empire_id, int recipient_empire_
     m_type(type)
 {}
 
-WarDeclarationDiplomaticMessage::WarDeclarationDiplomaticMessage() :
-    DiplomaticMessage(ALL_EMPIRES, ALL_EMPIRES, WAR_DECLARATION)
-{}
+DiplomaticMessage WarDeclarationDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::WAR_DECLARATION); }
 
-WarDeclarationDiplomaticMessage::WarDeclarationDiplomaticMessage(int sender_empire_id, int recipient_empire_id) :
-    DiplomaticMessage(sender_empire_id, recipient_empire_id, WAR_DECLARATION)
-{}
+DiplomaticMessage PeaceProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::PEACE_PROPOSAL); }
 
-PeaceProposalDiplomaticMessage::PeaceProposalDiplomaticMessage() :
-    DiplomaticMessage(ALL_EMPIRES, ALL_EMPIRES, PEACE_PROPOSAL)
-{}
+DiplomaticMessage AcceptDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::ACCEPT_PROPOSAL); }
 
-PeaceProposalDiplomaticMessage::PeaceProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id) :
-    DiplomaticMessage(sender_empire_id, recipient_empire_id, PEACE_PROPOSAL)
-{}
+DiplomaticMessage CancelDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::CANCEL_PROPOSAL); }
 
-PeaceAcceptanceDiplomaticMessage::PeaceAcceptanceDiplomaticMessage() :
-    DiplomaticMessage(ALL_EMPIRES, ALL_EMPIRES, PEACE_ACCEPT)
-{}
-
-PeaceAcceptanceDiplomaticMessage::PeaceAcceptanceDiplomaticMessage(int sender_empire_id, int recipient_empire_id) :
-    DiplomaticMessage(sender_empire_id, recipient_empire_id, PEACE_ACCEPT)
-{}

@@ -11,11 +11,16 @@ public:
         INVALID_DIPLOMATIC_MESSAGE_TYPE = -1,
         WAR_DECLARATION,
         PEACE_PROPOSAL,
-        PEACE_ACCEPT
+        ACCEPT_PROPOSAL,
+        CANCEL_PROPOSAL,
     };
 
     DiplomaticMessage();
     DiplomaticMessage(int sender_empire_id, int recipient_empire_id, DiplomaticMessageType type);
+
+    DiplomaticMessageType   GetType() const { return m_type; }
+    int                     SenderEmpireID() const { return m_sender_empire; }
+    int                     RecipientEmpireID() const { return m_recipient_empire; }
 
 private:
     int                     m_sender_empire;
@@ -27,34 +32,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class WarDeclarationDiplomaticMessage : public DiplomaticMessage {
-public:
-    WarDeclarationDiplomaticMessage();
-    WarDeclarationDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-private:
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-class PeaceProposalDiplomaticMessage : public DiplomaticMessage {
-public:
-    PeaceProposalDiplomaticMessage();
-    PeaceProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-private:
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-class PeaceAcceptanceDiplomaticMessage : public DiplomaticMessage {
-public:
-    PeaceAcceptanceDiplomaticMessage();
-    PeaceAcceptanceDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-private:
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
+DiplomaticMessage WarDeclarationDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
+DiplomaticMessage PeaceProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
+DiplomaticMessage AcceptDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
+DiplomaticMessage CancelDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
 
 #endif // _Diplomacy_h_
