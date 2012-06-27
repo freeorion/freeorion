@@ -314,16 +314,14 @@ PlayerListWnd::PlayerListWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_player_list = new PlayerListBox(GG::X0, GG::Y0, ClientWidth(), ClientHeight());
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
     m_player_list->SetStyle(GG::LIST_QUICKSEL | GG::LIST_NOSORT);
-    GG::Connect(m_player_list->SelChangedSignal,    &PlayerListWnd::PlayerSelectionChanged,  this);
-    GG::Connect(m_player_list->DoubleClickedSignal, &PlayerListWnd::PlayerDoubleClicked,     this);
+    GG::Connect(m_player_list->SelChangedSignal,    &PlayerListWnd::PlayerSelectionChanged, this);
+    GG::Connect(m_player_list->DoubleClickedSignal, &PlayerListWnd::PlayerDoubleClicked,    this);
+    GG::Connect(m_player_list->RightClickedSignal,  &PlayerListWnd::PlayerRightClicked,     this);
     AttachChild(m_player_list);
 
     DoLayout();
 
     Refresh();
-
-    // TODO: connect selection signals of list
-    //    mutable boost::signal<void ()>  SelectedPlayersChangedSignal;
 }
 
 std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
@@ -472,6 +470,74 @@ void PlayerListWnd::PlayerDoubleClicked(GG::ListBox::iterator it) {
     int player_id = PlayerInRow(it);
     if (player_id != Networking::INVALID_PLAYER_ID)
         PlayerDoubleClickedSignal(player_id);
+}
+
+void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+    int clicked_player_id = PlayerInRow(it);
+    if (clicked_player_id == Networking::INVALID_PLAYER_ID)
+        return;
+    const ClientApp* app = ClientApp::GetApp();
+    if (!app) {
+        Logger().errorStream() << "PlayerListWnd::PlayerRightClicked couldn't get client app!";
+        return;
+    }
+    int client_player_id = app->PlayerID();
+    if (client_player_id == Networking::INVALID_PLAYER_ID)
+        return;
+    int client_empire_id = app->EmpireID();
+    if (client_empire_id == ALL_EMPIRES)
+        return;
+
+    if (clicked_player_id == client_player_id)
+        return;
+    const Empire* clicked_empire = app->GetPlayerEmpire(clicked_player_id);
+    if (!clicked_empire)
+        return;
+    int clicked_empire_id = clicked_empire->EmpireID();
+
+    DiplomaticStatus diplo_status = Empires().GetDiplomaticStatus(clicked_empire_id, client_empire_id);
+    if (diplo_status == INVALID_DIPLOMATIC_STATUS)
+        return;
+    DiplomaticMessage existing_message = Empires().GetDiplomaticMessage(clicked_empire_id, client_empire_id);
+
+    // create popup menu with diplomacy options in it
+    GG::MenuItem menu_contents;
+    if (diplo_status == DIPLO_WAR) {
+        if (existing_message.GetType() == DiplomaticMessage::PEACE_PROPOSAL) {
+            // who sent message?
+            if (existing_message.SenderEmpireID() == client_empire_id)
+                menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL_CANEL"), 4, false, false));
+            else if (existing_message.SenderEmpireID() == clicked_empire_id)
+                menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_ACCEPT"),         3, false, false));
+
+        } else if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE) {
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL"),           2, false, false));
+        }
+
+    } else if (diplo_status == DIPLO_PEACE) {
+        if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("WAR_DECLARATION"),          1, false, false));
+    }
+
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+        case 1: {
+            break;
+        }
+        case 2: {
+            break;
+        }
+        case 3: {
+            break;
+        }
+        case 4: {
+            break;
+        }
+        default:
+            break;
+        }
+    }
 }
 
 int PlayerListWnd::PlayerInRow(GG::ListBox::iterator it) const {

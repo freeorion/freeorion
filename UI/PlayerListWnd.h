@@ -38,7 +38,7 @@ private:
 
     void            PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void            PlayerDoubleClicked(GG::ListBox::iterator it);
-
+    void            PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
     int             PlayerInRow(GG::ListBox::iterator it) const;
 
     PlayerListBox*  m_player_list;
