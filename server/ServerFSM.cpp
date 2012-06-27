@@ -123,8 +123,7 @@ ServerFSM::ServerFSM(ServerApp &server) :
     m_server(server)
 {}
 
-void ServerFSM::unconsumed_event(const sc::event_base &event)
-{
+void ServerFSM::unconsumed_event(const sc::event_base &event) {
     std::string most_derived_message_type_str = "[ERROR: Unknown Event]";
     const sc::event_base* event_ptr = &event;
     if (dynamic_cast<const Disconnection*>(event_ptr))
@@ -141,8 +140,7 @@ void ServerFSM::unconsumed_event(const sc::event_base &event)
 ServerApp& ServerFSM::Server()
 { return m_server; }
 
-void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
-{
+void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     PlayerConnectionPtr& player_connection = d.m_player_connection;
     int id = player_connection->PlayerID();
 
@@ -188,8 +186,7 @@ Idle::Idle(my_context c) :
 Idle::~Idle()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~Idle"; }
 
-sc::result Idle::react(const HostMPGame& msg)
-{
+sc::result Idle::react(const HostMPGame& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle.HostMPGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
@@ -218,8 +215,7 @@ sc::result Idle::react(const HostMPGame& msg)
     return transit<MPLobby>();
 }
 
-sc::result Idle::react(const HostSPGame& msg)
-{
+sc::result Idle::react(const HostSPGame& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle.HostSPGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
@@ -292,8 +288,7 @@ MPLobby::MPLobby(my_context c) :
 MPLobby::~MPLobby()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~MPLobby"; }
 
-sc::result MPLobby::react(const Disconnection& d)
-{
+sc::result MPLobby::react(const Disconnection& d) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.Disconnection";
     ServerApp& server = Server();
     PlayerConnectionPtr& player_connection = d.m_player_connection;
@@ -376,8 +371,7 @@ namespace {
     }
 }
 
-sc::result MPLobby::react(const JoinGame& msg)
-{
+sc::result MPLobby::react(const JoinGame& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.JoinGame";
     ServerApp& server = Server();
     const SpeciesManager& sm = GetSpeciesManager();
@@ -465,8 +459,7 @@ namespace {
     }
 }
 
-sc::result MPLobby::react(const LobbyUpdate& msg)
-{
+sc::result MPLobby::react(const LobbyUpdate& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyUpdate";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
@@ -661,8 +654,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
     return discard_event();
 }
 
-sc::result MPLobby::react(const LobbyChat& msg)
-{
+sc::result MPLobby::react(const LobbyChat& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyChat";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
@@ -679,8 +671,7 @@ sc::result MPLobby::react(const LobbyChat& msg)
     return discard_event();
 }
 
-sc::result MPLobby::react(const StartMPGame& msg)
-{
+sc::result MPLobby::react(const StartMPGame& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.StartMPGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
@@ -741,16 +732,14 @@ sc::result MPLobby::react(const StartMPGame& msg)
     return transit<WaitingForMPGameJoiners>();
 }
 
-sc::result MPLobby::react(const HostMPGame& msg)
-{
+sc::result MPLobby::react(const HostMPGame& msg) {
     Logger().errorStream() << "MPLobby::react(const HostMPGame& msg) recived HostMPGame message but is already in the MP Lobby.  Aborting connection";
     msg.m_player_connection->SendMessage(ErrorMessage("SERVER_ALREADY_HOSTING_GAME", true));
     Server().m_networking.Disconnect(msg.m_player_connection);
     return discard_event();
 }
 
-sc::result MPLobby::react(const HostSPGame& msg)
-{
+sc::result MPLobby::react(const HostSPGame& msg) {
     Logger().errorStream() << "MPLobby::react(const HostSPGame& msg) recived HostSPGame message but is already in the MP Lobby.  Aborting connection";
     msg.m_player_connection->SendMessage(ErrorMessage("SERVER_ALREADY_HOSTING_GAME", true));
     Server().m_networking.Disconnect(msg.m_player_connection);
@@ -851,8 +840,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 WaitingForSPGameJoiners::~WaitingForSPGameJoiners()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForSPGameJoiners"; }
 
-sc::result WaitingForSPGameJoiners::react(const JoinGame& msg)
-{
+sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.JoinGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
@@ -903,8 +891,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg)
     return discard_event();
 }
 
-sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u)
-{
+sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.CheckStartConditions";
     ServerApp& server = Server();
 
@@ -934,8 +921,7 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u)
     return discard_event();
 }
 
-sc::result WaitingForSPGameJoiners::react(const LoadSaveFileFailed& u)
-{
+sc::result WaitingForSPGameJoiners::react(const LoadSaveFileFailed& u) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.LoadSaveFileFailed";
     return transit<Idle>();
 }
@@ -981,8 +967,7 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
 WaitingForMPGameJoiners::~WaitingForMPGameJoiners()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForMPGameJoiners"; }
 
-sc::result WaitingForMPGameJoiners::react(const JoinGame& msg)
-{
+sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners.JoinGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
@@ -1036,8 +1021,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg)
     return discard_event();
 }
 
-sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u)
-{
+sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners.CheckStartConditions";
     ServerApp& server = Server();
 
@@ -1065,8 +1049,7 @@ PlayingGame::PlayingGame(my_context c) :
 PlayingGame::~PlayingGame()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~PlayingGame"; }
 
-sc::result PlayingGame::react(const PlayerChat& msg)
-{
+sc::result PlayingGame::react(const PlayerChat& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame.PlayerChat";
     ServerApp& server = Server();
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
@@ -1076,6 +1059,11 @@ sc::result PlayingGame::react(const PlayerChat& msg)
     return discard_event();
 }
 
+sc::result PlayingGame::react(const Diplomacy& msg) {
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame.Diplomacy";
+    ServerApp& server = Server();
+    return discard_event();
+}
 
 ////////////////////////////////////////////////////////////
 // WaitingForTurnEnd
@@ -1087,12 +1075,9 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
 }
 
 WaitingForTurnEnd::~WaitingForTurnEnd()
-{
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEnd";
-}
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEnd"; }
 
-sc::result WaitingForTurnEnd::react(const TurnOrders& msg)
-{
+sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.TurnOrders";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
@@ -1148,22 +1133,19 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg)
     return discard_event();
 }
 
-sc::result WaitingForTurnEnd::react(const RequestObjectID& msg)
-{
+sc::result WaitingForTurnEnd::react(const RequestObjectID& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.RequestObjectID";
     Server().m_networking.SendMessage(DispatchObjectIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateObjectID()));
     return discard_event();
 }
 
-sc::result WaitingForTurnEnd::react(const RequestDesignID& msg)
-{
+sc::result WaitingForTurnEnd::react(const RequestDesignID& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.RequestDesignID";
     Server().m_networking.SendMessage(DispatchDesignIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateDesignID()));
     return discard_event();
 }
 
-sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c)
-{
+sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
     ServerApp& server = Server();
     if ((server.AllOrdersReceived() /* && minium_time_passed */)
         /* || maximum_time_passed*/)
@@ -1190,8 +1172,7 @@ WaitingForTurnEndIdle::WaitingForTurnEndIdle(my_context c) :
 WaitingForTurnEndIdle::~WaitingForTurnEndIdle()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEndIdle"; }
 
-sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
-{
+sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle.SaveGameRequest";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
@@ -1235,8 +1216,7 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
 WaitingForSaveData::~WaitingForSaveData()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForSaveData"; }
 
-sc::result WaitingForSaveData::react(const ClientSaveData& msg)
-{
+sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSaveData.ClientSaveData";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
@@ -1334,8 +1314,7 @@ ProcessingTurn::ProcessingTurn(my_context c) :
 ProcessingTurn::~ProcessingTurn()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~ProcessingTurn"; }
 
-sc::result ProcessingTurn::react(const ProcessTurn& u)
-{
+sc::result ProcessingTurn::react(const ProcessTurn& u) {
     ServerApp& server = Server();
     server.PreCombatProcessTurns();
     server.ProcessCombats();
@@ -1377,8 +1356,7 @@ ProcessingTurnIdle::ProcessingTurnIdle(my_context c) :
 ProcessingTurnIdle::~ProcessingTurnIdle()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~ProcessingTurnIdle"; }
 
-sc::result ProcessingTurnIdle::react(const ResolveCombat& u)
-{
+sc::result ProcessingTurnIdle::react(const ResolveCombat& u) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ProcessingTurnIdle.ResolveCombat";
 
     context<ProcessingTurn>().m_combat_system = u.m_system;
@@ -1453,15 +1431,13 @@ ResolvingCombat::ResolvingCombat(my_context c) :
     std::cerr << "\n";
 }
 
-ResolvingCombat::~ResolvingCombat()
-{
+ResolvingCombat::~ResolvingCombat() {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~ResolvingCombat";
 
     context<ProcessingTurn>().m_combat_empire_ids.clear();
 }
 
-sc::result ResolvingCombat::react(const CombatTurnOrders& msg)
-{
+sc::result ResolvingCombat::react(const CombatTurnOrders& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ResolvingCombat.CombatTurnOrders";
 
     ServerApp& server = Server();
@@ -1545,8 +1521,7 @@ sc::result ResolvingCombat::react(const CombatTurnOrders& msg)
     return discard_event();
 }
 
-sc::result ResolvingCombat::react(const CombatComplete& cc)
-{
+sc::result ResolvingCombat::react(const CombatComplete& cc) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ResolvingCombat.CombatComplete";
     ServerApp& server = Server();
     delete server.m_current_combat;

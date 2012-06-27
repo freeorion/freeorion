@@ -32,8 +32,7 @@ typedef boost::shared_ptr<PlayerConnection> PlayerConnectionPtr;
 namespace sc = boost::statechart;
 
 // Non-Message events
-struct Disconnection : sc::event<Disconnection>
-{
+struct Disconnection : sc::event<Disconnection> {
     Disconnection(PlayerConnectionPtr& player_connection);
     PlayerConnectionPtr& m_player_connection;
 };
@@ -43,8 +42,7 @@ struct CheckStartConditions : sc::event<CheckStartConditions>           {};
 struct CheckTurnEndConditions : sc::event<CheckTurnEndConditions>       {};
 struct ProcessTurn : sc::event<ProcessTurn>                             {};
 
-struct ResolveCombat : sc::event<ResolveCombat>
-{
+struct ResolveCombat : sc::event<ResolveCombat> {
     ResolveCombat(System* system, std::set<int>& empire_ids);
 
     System* const m_system;
@@ -56,8 +54,7 @@ struct CombatComplete : sc::event<CombatComplete>                       {};
 
 //  Message events
 /** The base class for all state machine events that are based on Messages. */
-struct MessageEventBase
-{
+struct MessageEventBase {
     MessageEventBase(Message& message, PlayerConnectionPtr& player_connection); ///< Basic ctor.
 
     Message              m_message;
@@ -78,7 +75,8 @@ struct MessageEventBase
         (ClientSaveData)                        \
         (RequestObjectID)                       \
         (RequestDesignID)                       \
-        (PlayerChat)
+        (PlayerChat)                            \
+        (Diplomacy)
 
 
 #define DECLARE_MESSAGE_EVENT(r, data, name)                                \
@@ -119,8 +117,7 @@ struct ResolvingCombat;
 #define SERVER_ACCESSOR private: ServerApp& Server() { return context<ServerFSM>().Server(); }
 
 /** The finite state machine that represents the server's operation. */
-struct ServerFSM : sc::state_machine<ServerFSM, Idle>
-{
+struct ServerFSM : sc::state_machine<ServerFSM, Idle> {
     ServerFSM(ServerApp &server);
 
     void unconsumed_event(const sc::event_base &event);
@@ -138,8 +135,7 @@ private:
 
 
 /** The server's initial state. */
-struct Idle : sc::state<Idle, ServerFSM>
-{
+struct Idle : sc::state<Idle, ServerFSM> {
     typedef boost::mpl::list<
         sc::custom_reaction<HostMPGame>,
         sc::custom_reaction<HostSPGame>
@@ -156,8 +152,7 @@ struct Idle : sc::state<Idle, ServerFSM>
 
 
 /** The server state in which the multiplayer lobby is active. */
-struct MPLobby : sc::state<MPLobby, ServerFSM>
-{
+struct MPLobby : sc::state<MPLobby, ServerFSM> {
     typedef boost::mpl::list<
         sc::custom_reaction<Disconnection>,
         sc::custom_reaction<JoinGame>,
@@ -189,8 +184,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM>
 
 /** The server state in which a new single-player game has been initiated, and
   * the server is waiting for all players to join. */
-struct WaitingForSPGameJoiners : sc::state<WaitingForSPGameJoiners, ServerFSM>
-{
+struct WaitingForSPGameJoiners : sc::state<WaitingForSPGameJoiners, ServerFSM> {
     typedef boost::mpl::list<
         sc::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
         sc::custom_reaction<JoinGame>,
@@ -219,8 +213,7 @@ struct WaitingForSPGameJoiners : sc::state<WaitingForSPGameJoiners, ServerFSM>
 
 /** The server state in which a multiplayer game has been initiated, and the
   * server is waiting for all players to join. */
-struct WaitingForMPGameJoiners : sc::state<WaitingForMPGameJoiners, ServerFSM>
-{
+struct WaitingForMPGameJoiners : sc::state<WaitingForMPGameJoiners, ServerFSM> {
     typedef boost::mpl::list<
         sc::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
         sc::custom_reaction<JoinGame>,
@@ -248,17 +241,18 @@ struct WaitingForMPGameJoiners : sc::state<WaitingForMPGameJoiners, ServerFSM>
 
 /** The server state in which a game has been started, and is actually being
   * played. */
-struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd>
-{
+struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     typedef boost::mpl::list<
         sc::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
-        sc::custom_reaction<PlayerChat>
+        sc::custom_reaction<PlayerChat>,
+        sc::custom_reaction<Diplomacy>
     > reactions;
 
     PlayingGame(my_context c);
     ~PlayingGame();
 
     sc::result react(const PlayerChat& msg);
+    sc::result react(const Diplomacy& msg);
 
     SERVER_ACCESSOR
 };
@@ -267,8 +261,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd>
 /** The substate of PlayingGame in which players are playing their turns and
   * the server is waiting for all players to finish their moves, after which
   * the server will process the turn. */
-struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForTurnEndIdle>
-{
+struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForTurnEndIdle> {
     typedef boost::mpl::list<
         sc::custom_reaction<TurnOrders>,
         sc::custom_reaction<RequestObjectID>,
@@ -291,8 +284,7 @@ struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForT
 
 
 /** The default substate of WaitingForTurnEnd. */
-struct WaitingForTurnEndIdle : sc::state<WaitingForTurnEndIdle, WaitingForTurnEnd>
-{
+struct WaitingForTurnEndIdle : sc::state<WaitingForTurnEndIdle, WaitingForTurnEnd> {
     typedef boost::mpl::list<
         sc::custom_reaction<SaveGameRequest>
     > reactions;
@@ -309,13 +301,13 @@ struct WaitingForTurnEndIdle : sc::state<WaitingForTurnEndIdle, WaitingForTurnEn
 /** The substate of WaitingForTurnEnd in which a player has initiated a save
   * and the server is waiting for all players to send their save data, after
   * which the server will actually preform the save. */
-struct WaitingForSaveData : sc::state<WaitingForSaveData, WaitingForTurnEnd>
-{
+struct WaitingForSaveData : sc::state<WaitingForSaveData, WaitingForTurnEnd> {
     typedef boost::mpl::list<
         sc::custom_reaction<ClientSaveData>,
         sc::deferral<SaveGameRequest>,
         sc::deferral<TurnOrders>,
-        sc::deferral<PlayerChat>
+        sc::deferral<PlayerChat>,
+        sc::deferral<Diplomacy>
     > reactions;
 
     WaitingForSaveData(my_context c);
@@ -336,12 +328,12 @@ struct WaitingForSaveData : sc::state<WaitingForSaveData, WaitingForTurnEnd>
   * executing orders, resolving combat, various steps in determining what
   * happens before and after combats occur, and updating players on changes in
   * the Universe. */
-struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame, ProcessingTurnIdle>
-{
+struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame, ProcessingTurnIdle> {
     typedef boost::mpl::list<
         sc::custom_reaction<ProcessTurn>,
         sc::deferral<SaveGameRequest>,
-        sc::deferral<TurnOrders>
+        sc::deferral<TurnOrders>,
+        sc::deferral<Diplomacy>
     > reactions;
 
     ProcessingTurn(my_context c);
@@ -357,8 +349,7 @@ struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame, ProcessingTurnIdl
 
 
 /** The default substate of ProcessingTurn. */
-struct ProcessingTurnIdle : sc::state<ProcessingTurnIdle, ProcessingTurn>
-{
+struct ProcessingTurnIdle : sc::state<ProcessingTurnIdle, ProcessingTurn> {
     typedef boost::mpl::list<
         sc::custom_reaction<ResolveCombat>
     > reactions;
@@ -373,8 +364,7 @@ struct ProcessingTurnIdle : sc::state<ProcessingTurnIdle, ProcessingTurn>
 
 
 /** The substate of ProcessingTurn in which a single combat is resolved. */
-struct ResolvingCombat : sc::state<ResolvingCombat, ProcessingTurn>
-{
+struct ResolvingCombat : sc::state<ResolvingCombat, ProcessingTurn> {
     typedef boost::mpl::list<
         sc::custom_reaction<CombatComplete>,
         sc::custom_reaction<CombatTurnOrders>
