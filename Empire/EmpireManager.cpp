@@ -230,7 +230,7 @@ void EmpireManager::ResetDiplomacy() {
         std::map<int, Empire*>::const_iterator emp2_it = emp1_it;
         emp2_it++;
         for (; emp2_it != m_empire_map.end(); ++emp2_it) {
-            m_empire_diplomatic_statuses[DiploKey(emp1_it->first, emp2_it->first)] = DIPLO_WAR;
+            m_empire_diplomatic_statuses[DiploKey(emp1_it->first, emp2_it->first)] = DIPLO_PEACE;
         }
     }
 }

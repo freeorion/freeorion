@@ -297,6 +297,9 @@ void PythonAI::HandleChatMessage(int sender_id, const std::string& msg) {
     }
 }
 
+void PythonAI::HandleDiplomaticMessage(const DiplomaticMessage& msg)
+{}
+
 void PythonAI::StartNewGame() {
     s_save_state_string = "";
     try {

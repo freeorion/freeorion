@@ -38,6 +38,9 @@ void AIBase::GenerateCombatOrders(const CombatData& combat_data)
 void AIBase::HandleChatMessage(int sender_id, const std::string& msg)
 {}
 
+void AIBase::HandleDiplomaticMessage(const DiplomaticMessage& msg)
+{}
+
 void AIBase::StartNewGame()
 {}
 
