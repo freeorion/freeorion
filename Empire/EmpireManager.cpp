@@ -5,6 +5,13 @@
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 
+namespace {
+    static const DiplomaticMessage DEFAULT_DIPLOMATIC_MESSAGE;
+
+    std::pair<int, int> DiploKey(int id1, int ind2)
+    { return std::make_pair(std::max(id1, ind2), std::min(id1, ind2)); }
+}
+
 
 EmpireManager::~EmpireManager()
 { Clear(); }
@@ -117,64 +124,94 @@ DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) co
         Logger().errorStream() << "EmpireManager::GetDiplomaticStatus passed invalid empire id";
         return INVALID_DIPLOMATIC_STATUS;
     }
-    std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
 
     std::map<std::pair<int, int>, DiplomaticStatus>::const_iterator it =
-        m_empire_diplomatic_statuses.find(key);
+        m_empire_diplomatic_statuses.find(DiploKey(empire1, empire2));
     if (it == m_empire_diplomatic_statuses.end())
         return INVALID_DIPLOMATIC_STATUS;
     return it->second;
 }
 
-namespace {
-    static const DiplomaticMessage DEFAULT_DIPLOMATIC_MESSAGE;
-}
-
 bool EmpireManager::DipmaticMessageAvailable(int empire1, int empire2) const {
-    std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
-    std::map<std::pair<int, int>, DiplomaticMessage>::const_iterator it = m_diplomatic_messages.find(key);
+    std::map<std::pair<int, int>, DiplomaticMessage>::const_iterator it =
+        m_diplomatic_messages.find(DiploKey(empire1, empire2));
     return it != m_diplomatic_messages.end();
 }
 
 const DiplomaticMessage& EmpireManager::GetDiplomaticMessage(int empire1, int empire2) const {
-    std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
-    std::map<std::pair<int, int>, DiplomaticMessage>::const_iterator it = m_diplomatic_messages.find(key);
+    std::map<std::pair<int, int>, DiplomaticMessage>::const_iterator it =
+        m_diplomatic_messages.find(DiploKey(empire1, empire2));
     if (it != m_diplomatic_messages.end())
         return it->second;
     return DEFAULT_DIPLOMATIC_MESSAGE;
 }
 
-void EmpireManager::SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status) {
-    std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
-    m_empire_diplomatic_statuses[key] = status;
-}
+void EmpireManager::SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status)
+{ m_empire_diplomatic_statuses[DiploKey(empire1, empire2)] = status; }
 
-void EmpireManager::SetDiplomaticMessage(int empire1, int empire2, const DiplomaticMessage& message) {
-    std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
-    m_diplomatic_messages[key] = message;
-}
+void EmpireManager::SetDiplomaticMessage(int empire1, int empire2, const DiplomaticMessage& message)
+{ m_diplomatic_messages[DiploKey(empire1, empire2)] = message; }
 
 void EmpireManager::RemoveDiplomaticMessage(int empire1, int empire2) {
-    std::pair<int, int> key(std::max(empire1, empire2), std::min(empire1, empire2));
+    std::pair<int, int> key = DiploKey(empire1, empire2);
     std::map<std::pair<int, int>, DiplomaticMessage>::iterator it = m_diplomatic_messages.find(key);
     if (it != m_diplomatic_messages.end())
-        m_diplomatic_messages.erase(key);
+        m_diplomatic_messages.erase(it);
 }
 
 void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
-    int sender = message.SenderEmpireID();
-    int recipient = message.RecipientEmpireID();
+    int sender_empire_id = message.SenderEmpireID();
+    int recipient_empire_id = message.RecipientEmpireID();
+    std::pair<int, int> key = DiploKey(sender_empire_id, recipient_empire_id);
+    DiplomaticStatus diplo_status = GetDiplomaticStatus(sender_empire_id, recipient_empire_id);
+    bool message_already_available = DipmaticMessageAvailable(sender_empire_id, recipient_empire_id);
+    const DiplomaticMessage& existing_message = GetDiplomaticMessage(sender_empire_id, recipient_empire_id);
+
     switch (message.GetType()) {
     case DiplomaticMessage::WAR_DECLARATION: {
+        if (diplo_status == DIPLO_PEACE) {
+            RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id); // todo leave some kinds of messages?
+            DiplomaticMessageChanged(sender_empire_id, recipient_empire_id);
+            SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_WAR);
+            DiplomaticStatusChanged(sender_empire_id, recipient_empire_id);
+        }
         break;
     }
     case DiplomaticMessage::PEACE_PROPOSAL: {
+        if (diplo_status == DIPLO_WAR && !message_already_available) {
+            SetDiplomaticMessage(sender_empire_id, recipient_empire_id, message);
+            DiplomaticMessageChanged(sender_empire_id, recipient_empire_id);
+        } else if (diplo_status == DIPLO_WAR &&
+                   message_already_available &&
+                   existing_message.SenderEmpireID() == message.RecipientEmpireID())
+        {
+            if (existing_message.GetType() == DiplomaticMessage::PEACE_PROPOSAL) {
+                RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
+                DiplomaticMessageChanged(sender_empire_id, recipient_empire_id);
+                SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_PEACE);
+                DiplomaticStatusChanged(sender_empire_id, recipient_empire_id);
+            }
+        }
         break;
     }
     case DiplomaticMessage::ACCEPT_PROPOSAL: {
+        if (message_already_available &&
+            existing_message.SenderEmpireID() == message.RecipientEmpireID())
+        {
+            if (existing_message.GetType() == DiplomaticMessage::PEACE_PROPOSAL) {
+                RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
+                DiplomaticMessageChanged(sender_empire_id, recipient_empire_id);
+                SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_PEACE);
+                DiplomaticStatusChanged(sender_empire_id, recipient_empire_id);
+            }
+        }
         break;
     }
     case DiplomaticMessage::CANCEL_PROPOSAL: {
+        if (message_already_available) {
+            RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
+            DiplomaticMessageChanged(sender_empire_id, recipient_empire_id);
+        }
         break;
     }
     default: {
@@ -193,8 +230,7 @@ void EmpireManager::ResetDiplomacy() {
         std::map<int, Empire*>::const_iterator emp2_it = emp1_it;
         emp2_it++;
         for (; emp2_it != m_empire_map.end(); ++emp2_it) {
-            std::pair<int, int> key(std::max(emp1_it->first, emp2_it->first), std::min(emp1_it->first, emp2_it->first));
-            m_empire_diplomatic_statuses[key] = DIPLO_WAR;
+            m_empire_diplomatic_statuses[DiploKey(emp1_it->first, emp2_it->first)] = DIPLO_WAR;
         }
     }
 }

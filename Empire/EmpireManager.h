@@ -5,11 +5,10 @@
 #include "../universe/Enums.h"
 #include "Diplomacy.h"
 
-#ifndef _GG_Clr_h_
 #include <GG/Clr.h>
-#endif
 
 #include <boost/serialization/access.hpp>
+#include <boost/signal.hpp>
 
 #include <map>
 #include <set>
@@ -79,6 +78,8 @@ public:
     void        Clear();
     //@}
 
+    mutable boost::signal<void (int, int)>  DiplomaticStatusChanged;
+    mutable boost::signal<void (int, int)>  DiplomaticMessageChanged;
 
 private:
     /** Adds the given empire to the manager. */
