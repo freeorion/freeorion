@@ -18,8 +18,7 @@ namespace {
 
 /** A simple server that listens for FreeOrion-server-discovery UDP datagrams
     on the local network and sends out responses to them. */
-class DiscoveryServer
-{
+class DiscoveryServer {
 public:
     DiscoveryServer(boost::asio::io_service& io_service);
 
@@ -33,8 +32,7 @@ private:
 };
 
 namespace {
-    void WriteMessage(boost::asio::ip::tcp::socket& socket, const Message& message)
-    {
+    void WriteMessage(boost::asio::ip::tcp::socket& socket, const Message& message) {
         int header_buf[5];
         HeaderToBuffer(message, header_buf);
         std::vector<boost::asio::const_buffer> buffers;
@@ -43,8 +41,7 @@ namespace {
         boost::asio::write(socket, buffers);
     }
 
-    struct PlayerID
-    {
+    struct PlayerID {
         PlayerID(int id) : m_id(id) {}
         bool operator()(const PlayerConnectionPtr& player_connection)
             { return player_connection->PlayerID() == m_id; }
@@ -90,7 +87,8 @@ void PlayerConnection::Start()
 void PlayerConnection::SendMessage(const Message& message)
 { WriteMessage(m_socket, message); }
 
-void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type)
+void PlayerConnection::EstablishPlayer(int id, const std::string& player_name,
+                                       Networking::ClientType client_type)
 {
     if (TRACE_EXECUTION)
         Logger().debugStream() << "PlayerConnection(@ " << this << ")::EstablishPlayer("
@@ -120,8 +118,7 @@ void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, N
     m_client_type = client_type;
 }
 
-void PlayerConnection::SetClientType(Networking::ClientType client_type)
-{
+void PlayerConnection::SetClientType(Networking::ClientType client_type) {
     m_client_type = client_type;
     if (m_client_type == Networking::INVALID_CLIENT_TYPE)
         Logger().errorStream() << "PlayerConnection client type set to INVALID_CLIENT_TYPE...?";
@@ -210,8 +207,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
     }
 }
 
-void PlayerConnection::AsyncReadMessage()
-{
+void PlayerConnection::AsyncReadMessage() {
     boost::asio::async_read(m_socket, boost::asio::buffer(m_incoming_header_buffer),
                             boost::bind(&PlayerConnection::HandleMessageHeaderRead, this,
                                         boost::asio::placeholders::error,
@@ -225,16 +221,14 @@ DiscoveryServer::DiscoveryServer(boost::asio::io_service& io_service) :
     m_socket(io_service, udp::endpoint(udp::v4(), DISCOVERY_PORT))
 { Listen(); }
 
-void DiscoveryServer::Listen()
-{
+void DiscoveryServer::Listen() {
     m_socket.async_receive_from(
         boost::asio::buffer(m_recv_buffer), m_remote_endpoint,
         boost::bind(&DiscoveryServer::HandleReceive, this,
                     boost::asio::placeholders::error));
 }
 
-void DiscoveryServer::HandleReceive(const boost::system::error_code& error)
-{
+void DiscoveryServer::HandleReceive(const boost::system::error_code& error) {
     if (!error &&
         std::string(m_recv_buffer.begin(), m_recv_buffer.end()) == DISCOVERY_QUESTION) {
         m_socket.send_to(
@@ -284,22 +278,19 @@ std::size_t ServerNetworking::NumEstablishedPlayers() const
 ServerNetworking::const_established_iterator ServerNetworking::GetPlayer(int id) const
 { return std::find_if(established_begin(), established_end(), PlayerID(id)); }
 
-ServerNetworking::const_established_iterator ServerNetworking::established_begin() const
-{
+ServerNetworking::const_established_iterator ServerNetworking::established_begin() const {
     return const_established_iterator(EstablishedPlayer(),
                                       m_player_connections.begin(),
                                       m_player_connections.end());
 }
 
-ServerNetworking::const_established_iterator ServerNetworking::established_end() const
-{
+ServerNetworking::const_established_iterator ServerNetworking::established_end() const {
     return const_established_iterator(EstablishedPlayer(),
                                       m_player_connections.end(),
                                       m_player_connections.end());
 }
 
-int ServerNetworking::NewPlayerID() const
-{
+int ServerNetworking::NewPlayerID() const {
     int biggest_current_player_id(0);
     for (PlayerConnections::const_iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
         int player_id = (*it)->PlayerID();
@@ -310,12 +301,9 @@ int ServerNetworking::NewPlayerID() const
 }
 
 int ServerNetworking::HostPlayerID() const
-{
-    return m_host_player_id;
-}
+{ return m_host_player_id; }
 
-bool ServerNetworking::PlayerIsHost(int player_id) const
-{
+bool ServerNetworking::PlayerIsHost(int player_id) const {
     if (player_id == Networking::INVALID_PLAYER_ID)
         return false;
     return player_id == m_host_player_id;
@@ -330,8 +318,7 @@ void ServerNetworking::SendMessage(const Message& message,
     player_connection->SendMessage(message);
 }
 
-void ServerNetworking::SendMessage(const Message& message)
-{
+void ServerNetworking::SendMessage(const Message& message) {
     if (message.ReceivingPlayer() == Networking::INVALID_PLAYER_ID) {
         // if recipient is INVALID_PLAYER_ID send message to all players
         for (ServerNetworking::const_established_iterator player_it = established_begin();
@@ -355,8 +342,7 @@ void ServerNetworking::SendMessage(const Message& message)
     }
 }
 
-void ServerNetworking::Disconnect(int id)
-{
+void ServerNetworking::Disconnect(int id) {
     established_iterator it = GetPlayer(id);
     if (it == established_end()) {
         Logger().errorStream() << "ServerNetworking::Disconnect couldn't find player with id " << id << " to disconnect.  aborting";
@@ -373,8 +359,7 @@ void ServerNetworking::Disconnect(int id)
 void ServerNetworking::Disconnect(PlayerConnectionPtr player_connection)
 { DisconnectImpl(player_connection); }
 
-void ServerNetworking::DisconnectAll()
-{
+void ServerNetworking::DisconnectAll() {
     for (const_iterator it = m_player_connections.begin();
          it != m_player_connections.end(); ) {
         PlayerConnectionPtr player_connection = *it++;
@@ -391,22 +376,19 @@ ServerNetworking::iterator ServerNetworking::end()
 ServerNetworking::established_iterator ServerNetworking::GetPlayer(int id)
 { return std::find_if(established_begin(), established_end(), PlayerID(id)); }
 
-ServerNetworking::established_iterator ServerNetworking::established_begin()
-{
+ServerNetworking::established_iterator ServerNetworking::established_begin() {
     return established_iterator(EstablishedPlayer(),
                                 m_player_connections.begin(),
                                 m_player_connections.end());
 }
 
-ServerNetworking::established_iterator ServerNetworking::established_end()
-{
+ServerNetworking::established_iterator ServerNetworking::established_end() {
     return established_iterator(EstablishedPlayer(),
                                 m_player_connections.end(),
                                 m_player_connections.end());
 }
 
-void ServerNetworking::HandleNextEvent()
-{
+void ServerNetworking::HandleNextEvent() {
     if (!m_event_queue.empty()) {
         boost::function<void ()> f = m_event_queue.front();
         m_event_queue.pop();
@@ -415,12 +397,9 @@ void ServerNetworking::HandleNextEvent()
 }
 
 void ServerNetworking::SetHostPlayerID(int host_player_id)
-{
-    m_host_player_id = host_player_id;
-}
+{ m_host_player_id = host_player_id; }
 
-void ServerNetworking::Init()
-{
+void ServerNetworking::Init() {
     tcp::endpoint endpoint(tcp::v4(), MESSAGE_PORT);
     m_player_connection_acceptor.open(endpoint.protocol());
     m_player_connection_acceptor.set_option(
@@ -432,8 +411,7 @@ void ServerNetworking::Init()
     AcceptNextConnection();
 }
 
-void ServerNetworking::AcceptNextConnection()
-{
+void ServerNetworking::AcceptNextConnection() {
     PlayerConnectionPtr next_connection =
         PlayerConnection::NewConnection(
             m_player_connection_acceptor.get_io_service(),
@@ -464,8 +442,7 @@ void ServerNetworking::AcceptConnection(PlayerConnectionPtr player_connection,
     }
 }
 
-void ServerNetworking::DisconnectImpl(PlayerConnectionPtr player_connection)
-{
+void ServerNetworking::DisconnectImpl(PlayerConnectionPtr player_connection) {
     if (TRACE_EXECUTION)
         Logger().debugStream() << "ServerNetworking::DisconnectImpl : disconnecting player "
                                << player_connection->PlayerID();
