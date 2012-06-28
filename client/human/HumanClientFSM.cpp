@@ -393,6 +393,16 @@ boost::statechart::result PlayingGame::react(const PlayerStatus& msg) {
     return discard_event();
 }
 
+boost::statechart::result PlayingGame::react(const Diplomacy& d) {
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.Diplomacy";
+
+    DiplomaticMessage diplo_message;
+    ExtractMessageData(d.m_message, diplo_message);
+    Empires().HandleDiplomaticMessage(diplo_message);
+
+    return discard_event();
+}
+
 boost::statechart::result PlayingGame::react(const VictoryDefeat& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.VictoryDefeat";
     Message::VictoryOrDefeat victory_or_defeat;
@@ -645,9 +655,6 @@ boost::statechart::result PlayingTurn::react(const AutoAdvanceFirstTurn& d) {
     return discard_event();
 }
 
-boost::statechart::result PlayingTurn::react(const Diplomacy& d) {
-    return discard_event();
-}
 
 ////////////////////////////////////////////////////////////
 // ResolvingCombat

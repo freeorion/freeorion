@@ -253,6 +253,7 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
         boost::statechart::custom_reaction<PlayerChat>,
         boost::statechart::custom_reaction<Disconnection>,
         boost::statechart::custom_reaction<PlayerStatus>,
+        boost::statechart::custom_reaction<Diplomacy>,
         boost::statechart::custom_reaction<VictoryDefeat>,
         boost::statechart::custom_reaction<PlayerEliminated>,
         boost::statechart::custom_reaction<EndGame>,
@@ -267,6 +268,7 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
     boost::statechart::result react(const PlayerChat& msg);
     boost::statechart::result react(const Disconnection& d);
     boost::statechart::result react(const PlayerStatus& msg);
+    boost::statechart::result react(const Diplomacy& d);
     boost::statechart::result react(const VictoryDefeat& msg);
     boost::statechart::result react(const PlayerEliminated& msg);
     boost::statechart::result react(const EndGame& msg);
@@ -331,8 +333,7 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame> {
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<SaveGame>,
         boost::statechart::custom_reaction<TurnEnded>,
-        boost::statechart::custom_reaction<AutoAdvanceFirstTurn>,
-        boost::statechart::custom_reaction<Diplomacy>
+        boost::statechart::custom_reaction<AutoAdvanceFirstTurn>
     > reactions;
 
     PlayingTurn(my_context ctx);
@@ -341,7 +342,6 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame> {
     boost::statechart::result react(const SaveGame& d);
     boost::statechart::result react(const TurnEnded& d);
     boost::statechart::result react(const AutoAdvanceFirstTurn& d);
-    boost::statechart::result react(const Diplomacy& d);
 
     CLIENT_ACCESSOR
 };
@@ -354,7 +354,8 @@ struct ResolvingCombat : boost::statechart::state<ResolvingCombat, WaitingForTur
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<CombatStart>,
         boost::statechart::custom_reaction<CombatRoundUpdate>,
-        boost::statechart::custom_reaction<CombatEnd>
+        boost::statechart::custom_reaction<CombatEnd>,
+        boost::statechart::deferral<Diplomacy>
     > reactions;
 
     ResolvingCombat(my_context ctx);

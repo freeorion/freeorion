@@ -255,6 +255,13 @@ void AIClientApp::HandleMessage(const Message& msg) {
         m_AI->HandleChatMessage(msg.SendingPlayer(), msg.Text());
         break;
 
+    case Message::DIPLOMACY: {
+        DiplomaticMessage diplo_message;
+        ExtractMessageData(msg, diplo_message);
+        m_AI->HandleDiplomaticMessage(diplo_message);
+        break;
+    }
+
     default: {
         Logger().errorStream() << "AIClientApp::HandleMessage : Received unknown Message type code " << msg.Type();
         break;
