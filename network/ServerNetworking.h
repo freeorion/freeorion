@@ -27,8 +27,7 @@ typedef boost::function<void ()> NullaryFn;
     for incoming UDP LAN server-discovery requests and TCP player connections.
     The server also sends and receives messages over the TCP player
     connections. */
-class ServerNetworking
-{
+class ServerNetworking {
 private:
     typedef std::set<PlayerConnectionPtr> PlayerConnections;
     struct EstablishedPlayer

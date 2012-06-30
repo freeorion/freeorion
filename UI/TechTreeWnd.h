@@ -10,8 +10,7 @@ class EncyclopediaDetailPanel;
 
 /** Contains the tech graph layout, some controls to control what is visible in
   * the tech layout, the tech navigator, and the tech detail window. */
-class TechTreeWnd : public GG::Wnd
-{
+class TechTreeWnd : public GG::Wnd {
 public:
     /** \name Signal Types */ //@{
     typedef boost::signal<void (const std::string&)>                TechBrowsedSignalType;              ///< emitted when a technology is single-clicked
