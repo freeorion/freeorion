@@ -16,6 +16,14 @@
 
 class Empire;
 
+struct DiplomaticStatusUpdateInfo {
+    DiplomaticStatusUpdateInfo();
+    DiplomaticStatusUpdateInfo(int empire1_id_, int empire2_id_, DiplomaticStatus status);
+    int                 empire1_id;
+    int                 empire2_id;
+    DiplomaticStatus    diplo_status;
+};
+
 /** Maintains all of the Empire objects that exist in the application. */
 class EmpireManager {
 public:
@@ -42,7 +50,7 @@ public:
     bool                Eliminated(int id) const;
 
     DiplomaticStatus            GetDiplomaticStatus(int empire1, int empire2) const;
-    bool                        DipmaticMessageAvailable(int empire1, int empire2) const;
+    bool                        DiplomaticMessageAvailable(int empire1, int empire2) const;
     const DiplomaticMessage&    GetDiplomaticMessage(int empire1, int empire2) const;
 
     std::string         Dump() const;
@@ -65,6 +73,9 @@ public:
 
     void        SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status);
     void        HandleDiplomaticMessage(const DiplomaticMessage& message);
+    void        SetDiplomaticMessage(const DiplomaticMessage& message);
+    void        RemoveDiplomaticMessage(int empire1, int empire2);
+
     void        ResetDiplomacy();
 
     /** Creates and inserts an empire with the specified properties and returns
@@ -78,14 +89,14 @@ public:
     void        Clear();
     //@}
 
-    mutable boost::signal<void (int, int)>  DiplomaticStatusChanged;
-    mutable boost::signal<void (int, int)>  DiplomaticMessageChanged;
+    typedef boost::signal<void (int, int)>  DiploSignalType;
+
+    mutable DiploSignalType DiplomaticStatusChangedSignal;
+    mutable DiploSignalType DiplomaticMessageChangedSignal;
 
 private:
     /** Adds the given empire to the manager. */
     void        InsertEmpire(Empire* empire);
-    void        SetDiplomaticMessage(int empire1, int empire2, const DiplomaticMessage& message);
-    void        RemoveDiplomaticMessage(int empire1, int empire2);
     void        GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int>, DiplomaticMessage>& messages,
                                                  int encoding_empire) const;
 

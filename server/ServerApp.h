@@ -206,6 +206,14 @@ private:
     /** Called when the host player has disconnected.  Select a new host player*/
     void    SelectNewHost();
 
+    /** Called when this server's EmpireManager changes the diplomatic status
+      * between two empires. Updates those empires of the change. */
+    void    HandleDiplomaticStatusChange(int empire1_id, int empire2_id);
+
+    /** Called when this sever's EmpireManager changes the diplmatic message
+      * between two empires. Updates those empires of the change. */
+    void    HandleDiplomaticMessageChange(int empire1_id, int empire2_id);
+
     boost::asio::io_service m_io_service;
 
     Universe                m_universe;

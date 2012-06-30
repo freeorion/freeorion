@@ -36,6 +36,7 @@ class System;
 class Universe;
 class UniverseObject;
 class DiplomaticMessage;
+struct DiplomaticStatusUpdateInfo;
 
 typedef std::vector<CombatOrder> CombatOrderSet;
 typedef std::map<int, ShipDesign*> ShipDesignMap;
@@ -46,9 +47,11 @@ void BufferToHeader(const int* header_buf, Message& message);
 /** Fills \a header_buf from the relevant portions of \a message. */
 void HeaderToBuffer(const Message& message, int* header_buf);
 
-/** Encapsulates a variable-length char buffer containing a message to be passed among the server and one or more
-    clients.  Note that std::string is often thread unsafe on many platforms, so a dynamically allocated char array is
-    used instead.  (It was feared that using another STL container of char might misbehave as well.) */
+/** Encapsulates a variable-length char buffer containing a message to be passed
+  * among the server and one or more clients.  Note that std::string is often
+  * thread unsafe on many platforms, so a dynamically allocated char array is
+  * used instead.  (It was feared that using another STL container of char might
+  * misbehave as well.) */
 class Message {
 public:
     /** Represents the type of the message */
@@ -79,6 +82,7 @@ public:
         COMBAT_END,             ///< sent to clients when a combat is concluded
         PLAYER_CHAT,            ///< sent when one player sends a chat message to another in multiplayer
         DIPLOMACY,              ///< sent by players to server or server to players to make or convey diplomatic proposals or declarations, or to accept / reject proposals from other players
+        DIPLOMATIC_STATUS,      ///< sent by server to players to inform of mid-turn diplomatic status changes
         REQUEST_NEW_OBJECT_ID,  ///< sent by client to server requesting a new object ID.
         DISPATCH_NEW_OBJECT_ID, ///< sent by server to client with the new object ID.
         REQUEST_NEW_DESIGN_ID,  ///< sent by client to server requesting a new design ID.
@@ -199,28 +203,28 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id, 
                          const EmpireManager& empires, const Universe& universe, const SpeciesManager& species,
                          const std::map<int, PlayerInfo>& players);
 
-/** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.  Also includes data
-    loaded from a saved game. */
+/** creates a GAME_START message.  Contains the initial game state visible to
+  * player \a player_id.  Also includes data loaded from a saved game. */
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
                          const EmpireManager& empires, const Universe& universe, const SpeciesManager& species,
                          const std::map<int, PlayerInfo>& players, const OrderSet& orders, const SaveGameUIData* ui_data);
 
-/** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.  Also includes
-    state string loaded from a saved game. */
+/** creates a GAME_START message.  Contains the initial game state visible to
+  * player \a player_id.  Also includes state string loaded from a saved game. */
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
                          const EmpireManager& empires, const Universe& universe, const SpeciesManager& species,
                          const std::map<int, PlayerInfo>& players, const OrderSet& orders, const std::string* save_state_string);
 
-/** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
-   should only be sent by the server.*/
+/** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID
+  * of the receiving player.  This message should only be sent by the server.*/
 Message HostSPAckMessage(int player_id);
 
-/** creates a HOST_MP_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
-   should only be sent by the server.*/
+/** creates a HOST_MP_GAME acknowledgement message.  The \a player_id is the ID
+  * of the receiving player.  This message should only be sent by the server.*/
 Message HostMPAckMessage(int player_id);
 
-/** creates a JOIN_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
-   should only be sent by the server.*/
+/** creates a JOIN_GAME acknowledgement message.  The \a player_id is the ID of
+  * the receiving player.  This message should only be sent by the server.*/
 Message JoinAckMessage(int player_id);
 
 /** creates a TURN_ORDERS message. */
@@ -253,17 +257,20 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders);
     message, when sent it will wait for a reply form the server */
 Message RequestNewObjectIDMessage(int sender);
 
-/** creates an DISPATCH_NEW_OBJECT_ID  message.  This message is sent to a client who is waiting for a new object ID */
+/** creates an DISPATCH_NEW_OBJECT_ID  message.  This message is sent to a
+  * client who is waiting for a new object ID */
 Message DispatchObjectIDMessage(int player_id, int new_id);
 
 /** creates an REQUEST_NEW_DESIGN_ID message. This message is a synchronous
     message, when sent it will wait for a reply form the server */
 Message RequestNewDesignIDMessage(int sender);
 
-/** creates an DISPATCH_NEW_DESIGN_ID  message.  This message is sent to a client who is waiting for a new design ID */
+/** creates an DISPATCH_NEW_DESIGN_ID  message.  This message is sent to a
+  * client who is waiting for a new design ID */
 Message DispatchDesignIDMessage(int player_id, int new_id);
 
-/** creates a SAVE_GAME request message.  This message should only be sent by the host player.*/
+/** creates a SAVE_GAME request message.  This message should only be sent by
+  * the host player.*/
 Message HostSaveGameMessage(int sender, const std::string& filename);
 
 /** creates a SAVE_GAME data request message.  This message should only be
@@ -281,6 +288,10 @@ Message SingleRecipientChatMessage(int sender, int receiver, const std::string& 
 /** creates a DIPLOMACY message, which is sent between players via the server to
   * declare, proposed, or accept / reject diplomatic arrangements or agreements. */
 Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& diplo_message);
+
+/** creates a DIPLOMATIC_STATUS message, which is sent to players by the server to
+  * update them on diplomatic status changes between players. */
+Message DiplomaticStatusMessage(int receiver, const DiplomaticStatusUpdateInfo& diplo_update);
 
 /** creates a VICTORY_DEFEAT message indicating that the recipient has won the
   * game by meeting a victory condition.
@@ -382,6 +393,8 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std:
 void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name);
 
 void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message);
+
+void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_update);
 
 void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat,
                         std::string& reason_string, int& empire_id);

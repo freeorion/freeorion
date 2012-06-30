@@ -19,6 +19,8 @@
 #include "../util/OrderSet.h"
 #include "../util/SitRepEntry.h"
 
+#include <GG/SignalsAndSlots.h>
+
 #include <boost/filesystem/exception.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -109,6 +111,9 @@ ServerApp::ServerApp() :
     Logger().setPriority(log4cpp::Priority::DEBUG);
 
     m_fsm->initiate();
+
+    GG::Connect(Empires().DiplomaticStatusChangedSignal,  &ServerApp::HandleDiplomaticStatusChange, this);
+    GG::Connect(Empires().DiplomaticMessageChangedSignal, &ServerApp::HandleDiplomaticMessageChange,this);
 }
 
 ServerApp::~ServerApp() {
@@ -2210,4 +2215,33 @@ void ServerApp::ProcessCombatTurn() {
 bool ServerApp::CombatTerminated() {
     // TODO
     return false;
+}
+
+void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
+    DiplomaticStatus status = Empires().GetDiplomaticStatus(empire1_id, empire2_id);
+    DiplomaticStatusUpdateInfo update(empire1_id, empire2_id, status);
+
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
+         player_it != m_networking.established_end(); ++player_it)
+    {
+        PlayerConnectionPtr player = *player_it;
+        int player_id = player->PlayerID();
+        player->SendMessage(DiplomaticStatusMessage(player_id, update));
+    }
+}
+
+void ServerApp::HandleDiplomaticMessageChange(int empire1_id, int empire2_id) {
+    const DiplomaticMessage& message = Empires().GetDiplomaticMessage(empire1_id, empire2_id);
+    // get players corresponding to empires in message
+    int player1_id = EmpirePlayerID(empire1_id);
+    int player2_id = EmpirePlayerID(empire2_id);
+    if (player2_id == Networking::INVALID_PLAYER_ID || player2_id == Networking::INVALID_PLAYER_ID)
+        return;
+
+    ServerNetworking::established_iterator player1_it = m_networking.GetPlayer(player1_id);
+    if (player1_it != m_networking.established_end())
+        (*player1_it)->SendMessage(DiplomacyMessage(Networking::INVALID_PLAYER_ID, player1_id, message));
+    ServerNetworking::established_iterator player2_it = m_networking.GetPlayer(player2_id);
+    if (player2_it != m_networking.established_end())
+        (*player2_it)->SendMessage(DiplomacyMessage(Networking::INVALID_PLAYER_ID, player2_id, message));
 }

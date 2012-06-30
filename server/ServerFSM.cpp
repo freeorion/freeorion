@@ -1067,8 +1067,6 @@ sc::result PlayingGame::react(const Diplomacy& msg) {
     ExtractMessageData(message, diplo_message);
     Empires().HandleDiplomaticMessage(diplo_message);
 
-    Server().m_networking.SendMessage(msg.m_message);
-
     return discard_event();
 }
 

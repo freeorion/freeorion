@@ -262,6 +262,13 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
+    case Message::DIPLOMATIC_STATUS: {
+        DiplomaticStatusUpdateInfo diplo_update;
+        ExtractMessageData(msg, diplo_update);
+        // TODO: inform AI state of change
+        break;
+    }
+
     default: {
         Logger().errorStream() << "AIClientApp::HandleMessage : Received unknown Message type code " << msg.Type();
         break;

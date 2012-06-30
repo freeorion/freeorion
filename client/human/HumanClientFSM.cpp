@@ -372,8 +372,7 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
     return discard_event();
 }
 
-boost::statechart::result PlayingGame::react(const Disconnection& d)
-{
+boost::statechart::result PlayingGame::react(const Disconnection& d) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.Disconnection";
     Client().EndGame(true);
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
@@ -398,7 +397,17 @@ boost::statechart::result PlayingGame::react(const Diplomacy& d) {
 
     DiplomaticMessage diplo_message;
     ExtractMessageData(d.m_message, diplo_message);
-    Empires().HandleDiplomaticMessage(diplo_message);
+    Empires().SetDiplomaticMessage(diplo_message);
+
+    return discard_event();
+}
+
+boost::statechart::result PlayingGame::react(const DiplomaticStatusUpdate& u) {
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.DiplomaticStatusUpdate";
+
+    DiplomaticStatusUpdateInfo diplo_update;
+    ExtractMessageData(u.m_message, diplo_update);
+    Empires().SetDiplomaticStatus(diplo_update.empire1_id, diplo_update.empire2_id, diplo_update.diplo_status);
 
     return discard_event();
 }

@@ -75,6 +75,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::COMBAT_END)
     GG_ENUM_MAP_INSERT(Message::PLAYER_CHAT)
     GG_ENUM_MAP_INSERT(Message::DIPLOMACY)
+    GG_ENUM_MAP_INSERT(Message::DIPLOMATIC_STATUS)
     GG_ENUM_MAP_INSERT(Message::PLAYER_ELIMINATED)
     GG_ENUM_MAP_INSERT(Message::REQUEST_NEW_OBJECT_ID)
     GG_ENUM_MAP_INSERT(Message::DISPATCH_NEW_OBJECT_ID)
@@ -111,9 +112,6 @@ namespace GG {
     GG_ENUM_MAP_END
 }
 
-std::string PlayerStatusStr(Message::PlayerStatus status)
-{ return StripMessageScoping(GG::GetEnumMap<Message::PlayerStatus>().FromEnum(status)); }
-
 std::ostream& operator<<(std::ostream& os, const Message& msg) {
     os << "Message: "
        << MessageTypeStr(msg.Type()) << " "
@@ -141,6 +139,7 @@ std::ostream& operator<<(std::ostream& os, const Message& msg) {
 
     return os;
 }
+
 
 ////////////////////////////////////////////////
 // Message
@@ -509,6 +508,17 @@ Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& dipl
     return Message(Message::DIPLOMACY, sender, receiver, os.str());
 }
 
+Message DiplomaticStatusMessage(int receiver, const DiplomaticStatusUpdateInfo& diplo_update) {
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(diplo_update.empire1_id)
+           << BOOST_SERIALIZATION_NVP(diplo_update.empire2_id)
+           << BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
+    }
+    return Message(Message::DIPLOMATIC_STATUS, Networking::INVALID_PLAYER_ID, receiver, os.str());
+}
+
 Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_defeat,
                              const std::string& reason_string, int empire_id)
 {
@@ -872,6 +882,22 @@ void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message) {
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, DiplomaticMessage& "
                                << "diplo_message) failed!  Message:\n"
+                               << msg.Text() << "\n"
+                               << "Error: " << err.what();
+        throw err;
+    }
+}
+
+void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_update) {
+    try {
+        std::istringstream is(msg.Text());
+        FREEORION_IARCHIVE_TYPE ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(diplo_update.empire1_id)
+           >> BOOST_SERIALIZATION_NVP(diplo_update.empire2_id)
+           >> BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
+    } catch (const std::exception& err) {
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, DiplomaticStatusUpdate& "
+                               << "diplo_update) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
         throw err;

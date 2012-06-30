@@ -41,6 +41,9 @@ void AIBase::HandleChatMessage(int sender_id, const std::string& msg)
 void AIBase::HandleDiplomaticMessage(const DiplomaticMessage& msg)
 {}
 
+void AIBase::HandleDiplomaticStatusUpdate(const DiplomaticStatusUpdateInfo& msg)
+{}
+
 void AIBase::StartNewGame()
 {}
 

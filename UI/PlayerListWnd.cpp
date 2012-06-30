@@ -314,11 +314,14 @@ PlayerListWnd::PlayerListWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_player_list = new PlayerListBox(GG::X0, GG::Y0, ClientWidth(), ClientHeight());
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
     m_player_list->SetStyle(GG::LIST_QUICKSEL | GG::LIST_NOSORT);
-    GG::Connect(m_player_list->SelChangedSignal,    &PlayerListWnd::PlayerSelectionChanged, this);
-    GG::Connect(m_player_list->DoubleClickedSignal, &PlayerListWnd::PlayerDoubleClicked,    this);
-    GG::Connect(m_player_list->RightClickedSignal,  &PlayerListWnd::PlayerRightClicked,     this);
+    GG::Connect(m_player_list->SelChangedSignal,            &PlayerListWnd::PlayerSelectionChanged, this);
+    GG::Connect(m_player_list->DoubleClickedSignal,         &PlayerListWnd::PlayerDoubleClicked,    this);
+    GG::Connect(m_player_list->RightClickedSignal,          &PlayerListWnd::PlayerRightClicked,     this);
     AttachChild(m_player_list);
 
+    boost::function<void(int, int)> update_this = boost::bind(&PlayerListWnd::Update, this);
+    GG::Connect(Empires().DiplomaticStatusChangedSignal,    update_this);
+    GG::Connect(Empires().DiplomaticMessageChangedSignal,   update_this);
     DoLayout();
 
     Refresh();

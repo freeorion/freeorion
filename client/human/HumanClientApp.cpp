@@ -715,27 +715,28 @@ void HumanClientApp::HandleMessage(Message& msg) {
         std::cerr << "HumanClientApp::HandleMessage(" << MessageTypeStr(msg.Type()) << ")\n";
 
     switch (msg.Type()) {
-    case Message::ERROR:                m_fsm->process_event(Error(msg));               break;
-    case Message::HOST_MP_GAME:         m_fsm->process_event(HostMPGame(msg));          break;
-    case Message::HOST_SP_GAME:         m_fsm->process_event(HostSPGame(msg));          break;
-    case Message::JOIN_GAME:            m_fsm->process_event(JoinGame(msg));            break;
-    case Message::HOST_ID:              m_fsm->process_event(HostID(msg));              break;
-    case Message::LOBBY_UPDATE:         m_fsm->process_event(LobbyUpdate(msg));         break;
-    case Message::LOBBY_CHAT:           m_fsm->process_event(LobbyChat(msg));           break;
-    case Message::SAVE_GAME:            m_fsm->process_event(::SaveGame(msg));          break;
-    case Message::GAME_START:           m_fsm->process_event(GameStart(msg));           break;
-    case Message::TURN_UPDATE:          m_fsm->process_event(TurnUpdate(msg));          break;
-    case Message::TURN_PARTIAL_UPDATE:  m_fsm->process_event(TurnPartialUpdate(msg));   break;
-    case Message::TURN_PROGRESS:        m_fsm->process_event(TurnProgress(msg));        break;
-    case Message::PLAYER_STATUS:        m_fsm->process_event(PlayerStatus(msg));        break;
-    case Message::COMBAT_START:         m_fsm->process_event(CombatStart(msg));         break;
-    case Message::COMBAT_TURN_UPDATE:   m_fsm->process_event(CombatRoundUpdate(msg));   break;
-    case Message::COMBAT_END:           m_fsm->process_event(CombatEnd(msg));           break;
-    case Message::PLAYER_CHAT:          m_fsm->process_event(PlayerChat(msg));          break;
-    case Message::DIPLOMACY:            m_fsm->process_event(Diplomacy(msg));           break;
-    case Message::VICTORY_DEFEAT :      m_fsm->process_event(VictoryDefeat(msg));       break;
-    case Message::PLAYER_ELIMINATED:    m_fsm->process_event(PlayerEliminated(msg));    break;
-    case Message::END_GAME:             m_fsm->process_event(::EndGame(msg));           break;
+    case Message::ERROR:                m_fsm->process_event(Error(msg));                   break;
+    case Message::HOST_MP_GAME:         m_fsm->process_event(HostMPGame(msg));              break;
+    case Message::HOST_SP_GAME:         m_fsm->process_event(HostSPGame(msg));              break;
+    case Message::JOIN_GAME:            m_fsm->process_event(JoinGame(msg));                break;
+    case Message::HOST_ID:              m_fsm->process_event(HostID(msg));                  break;
+    case Message::LOBBY_UPDATE:         m_fsm->process_event(LobbyUpdate(msg));             break;
+    case Message::LOBBY_CHAT:           m_fsm->process_event(LobbyChat(msg));               break;
+    case Message::SAVE_GAME:            m_fsm->process_event(::SaveGame(msg));              break;
+    case Message::GAME_START:           m_fsm->process_event(GameStart(msg));               break;
+    case Message::TURN_UPDATE:          m_fsm->process_event(TurnUpdate(msg));              break;
+    case Message::TURN_PARTIAL_UPDATE:  m_fsm->process_event(TurnPartialUpdate(msg));       break;
+    case Message::TURN_PROGRESS:        m_fsm->process_event(TurnProgress(msg));            break;
+    case Message::PLAYER_STATUS:        m_fsm->process_event(PlayerStatus(msg));            break;
+    case Message::COMBAT_START:         m_fsm->process_event(CombatStart(msg));             break;
+    case Message::COMBAT_TURN_UPDATE:   m_fsm->process_event(CombatRoundUpdate(msg));       break;
+    case Message::COMBAT_END:           m_fsm->process_event(CombatEnd(msg));               break;
+    case Message::PLAYER_CHAT:          m_fsm->process_event(PlayerChat(msg));              break;
+    case Message::DIPLOMACY:            m_fsm->process_event(Diplomacy(msg));               break;
+    case Message::DIPLOMATIC_STATUS:    m_fsm->process_event(DiplomaticStatusUpdate(msg));  break;
+    case Message::VICTORY_DEFEAT :      m_fsm->process_event(VictoryDefeat(msg));           break;
+    case Message::PLAYER_ELIMINATED:    m_fsm->process_event(PlayerEliminated(msg));        break;
+    case Message::END_GAME:             m_fsm->process_event(::EndGame(msg));               break;
     default:
         Logger().errorStream() << "HumanClientApp::HandleMessage : Received an unknown message type \""
                                << msg.Type() << "\".";
