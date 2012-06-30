@@ -34,6 +34,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+bool operator==(const DiplomaticMessage& lhs, const DiplomaticMessage& rhs);
+bool operator!=(const DiplomaticMessage& lhs, const DiplomaticMessage& rhs);
+
 DiplomaticMessage WarDeclarationDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
 DiplomaticMessage PeaceProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
 DiplomaticMessage AcceptDiplomaticMessage(int sender_empire_id, int recipient_empire_id);

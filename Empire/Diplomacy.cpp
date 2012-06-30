@@ -16,6 +16,15 @@ DiplomaticMessage::DiplomaticMessage(int sender_empire_id, int recipient_empire_
     m_type(type)
 {}
 
+bool operator==(const DiplomaticMessage& lhs, const DiplomaticMessage& rhs) {
+    return lhs.RecipientEmpireID() == rhs.RecipientEmpireID() &&
+           lhs.SenderEmpireID() == rhs.SenderEmpireID() &&
+           lhs.GetType() == rhs.GetType();
+}
+
+bool operator!=(const DiplomaticMessage& lhs, const DiplomaticMessage& rhs)
+{ return !(lhs == rhs); }
+
 std::string DiplomaticMessage::Dump() const {
     std::string retval;
     retval += "Dimplomatic message from : " + boost::lexical_cast<std::string>(m_sender_empire) +
