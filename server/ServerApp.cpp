@@ -329,6 +329,11 @@ void ServerApp::SelectNewHost() {
     }
 }
 
+bool ServerApp::IsLocalHumanPlayer(PlayerConnectionPtr player_connection) {
+    return ((player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) &&
+             player_connection->IsLocalConnection());
+}
+
 void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_data) {
     // associate player IDs with player setup data.  the player connection with
     // id == m_networking.HostPlayerID() should be the human player in

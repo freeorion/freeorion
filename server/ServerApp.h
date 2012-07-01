@@ -205,7 +205,11 @@ private:
 
     /** Called when the host player has disconnected.  Select a new host player*/
     void    SelectNewHost();
-
+    
+    /** Checks if player associated with \a player_connection is a human player
+        who's client runs on the same machine as the server */
+    bool    IsLocalHumanPlayer(PlayerConnectionPtr player_connection);
+    
     /** Called when this server's EmpireManager changes the diplomatic status
       * between two empires. Updates those empires of the change. */
     void    HandleDiplomaticStatusChange(int empire1_id, int empire2_id);
