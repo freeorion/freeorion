@@ -183,7 +183,7 @@ public:
     
     /** Checks if client associated with this connection runs on the same
         physical machine as the server */
-    bool IsLocalConnection();
+    bool IsLocalConnection() const;
     //@}
 
     /** \name Mutators */ //@{

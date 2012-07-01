@@ -81,7 +81,7 @@ const std::string& PlayerConnection::PlayerName() const
 Networking::ClientType PlayerConnection::GetClientType() const
 { return m_client_type; }
 
-bool PlayerConnection::IsLocalConnection()
+bool PlayerConnection::IsLocalConnection() const
 { return (m_socket.remote_endpoint().address().is_loopback()); }
 
 void PlayerConnection::Start()
