@@ -1131,6 +1131,12 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     // this only needs to be send to the submitting player and not all others as
     // well ...
     server.m_networking.SendMessage(TurnProgressMessage(Message::WAITING_FOR_PLAYERS, message.SendingPlayer()));
+    
+    // if player who just submitted is the local human player, raise AI process priority
+    if (server.IsLocalHumanPlayer(player_id)) {
+        if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : Orders received from local human player, raising AI process priority";
+        server.SetAIsProcessPriorityToLow(false);
+    }
 
     // check conditions for ending this turn
     post_event(CheckTurnEndConditions());
@@ -1321,6 +1327,10 @@ ProcessingTurn::~ProcessingTurn()
 
 sc::result ProcessingTurn::react(const ProcessTurn& u) {
     ServerApp& server = Server();
+    
+    // make sure all AI client processes are running with low priority
+    server.SetAIsProcessPriorityToLow(true);
+    
     server.PreCombatProcessTurns();
     server.ProcessCombats();
     server.PostCombatProcessTurns();

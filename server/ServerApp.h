@@ -81,6 +81,10 @@ public:
 
     /** Returns the player ID for the player controlling the empire with id \a empire_id */
     int     EmpirePlayerID(int empire_id) const;
+
+    /** Checks if player with ID \a player_id is a human player
+        who's client runs on the same machine as the server */
+    bool    IsLocalHumanPlayer(int player_id);
     //@}
 
     /** \name Mutators */ //@{
@@ -191,6 +195,9 @@ private:
                          boost::shared_ptr<ServerSaveGameData> server_save_game_data);
 
     void    CleanupAIs();   ///< cleans up AI processes: kills the process and empties the container of AI processes
+    
+    /** Sets the priority for all AI processes */
+    void    SetAIsProcessPriorityToLow(bool set_to_low);
 
     /** Handles an incoming message from the server with the appropriate action
       * or response */
@@ -205,10 +212,6 @@ private:
 
     /** Called when the host player has disconnected.  Select a new host player*/
     void    SelectNewHost();
-    
-    /** Checks if player associated with \a player_connection is a human player
-        who's client runs on the same machine as the server */
-    bool    IsLocalHumanPlayer(PlayerConnectionPtr player_connection);
     
     /** Called when this server's EmpireManager changes the diplomatic status
       * between two empires. Updates those empires of the change. */

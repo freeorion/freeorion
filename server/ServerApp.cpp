@@ -205,6 +205,9 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 
         Logger().debugStream() << "done starting " << AI_CLIENT_EXE;
     }
+    
+    // set initial AI process priority to low
+    SetAIsProcessPriorityToLow(true);
 }
 
 ServerApp* ServerApp::GetApp()
@@ -238,6 +241,13 @@ void ServerApp::CleanupAIs() {
     for (std::vector<Process>::iterator it = m_ai_client_processes.begin(); it != m_ai_client_processes.end(); ++it)
         it->Kill();
     m_ai_client_processes.clear();
+}
+
+void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
+    for (std::vector<Process>::iterator it = m_ai_client_processes.begin(); it != m_ai_client_processes.end(); ++it) {
+        if(!(it->SetLowPriority(set_to_low)))
+            Logger().errorStream() << "ServerApp::SetAIsProcessPriorityToLow : failed to change priority for AI process";
+    }
 }
 
 void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection) {
@@ -327,11 +337,6 @@ void ServerApp::SelectNewHost() {
         if ((*it)->PlayerID() != old_host_id)
             (*it)->SendMessage(HostIDMessage(new_host_id));
     }
-}
-
-bool ServerApp::IsLocalHumanPlayer(PlayerConnectionPtr player_connection) {
-    return ((player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) &&
-             player_connection->IsLocalConnection());
 }
 
 void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_data) {
@@ -895,6 +900,18 @@ int ServerApp::EmpirePlayerID(int empire_id) const {
         if (it->second == empire_id)
             return it->first;
     return Networking::INVALID_PLAYER_ID;
+}
+
+bool ServerApp::IsLocalHumanPlayer(int player_id) {
+    ServerNetworking::const_established_iterator it = m_networking.GetPlayer(player_id);
+    if (it == m_networking.established_end()) {
+        Logger().errorStream() << "ServerApp::IsLocalHumanPlayer : could not get player connection for player id " << player_id;
+        return false;
+    }
+
+    PlayerConnectionPtr player_connection = *it;
+    return ((player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) &&
+            player_connection->IsLocalConnection());
 }
 
 void ServerApp::AddEmpireTurn(int empire_id)
