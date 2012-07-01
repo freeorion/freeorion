@@ -1466,7 +1466,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
     std::map<int, std::vector<const UniverseObject*> >          detectable_objects; // indexed by empire ID: objects with low enough stealth that empire could see them if in range
 
 
-    // for each empire
+    // for each empire find detector objects and potentially detectable objects
     for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
         const Empire* empire = empire_it->second;
         int empire_id = empire_it->first;
@@ -1518,13 +1518,13 @@ void Universe::UpdateEmpireObjectVisibilities() {
                 // even without a detector, is object detectable due to having zero stealth?
                 if (stealth_meter->Current() <= 0) {
                     SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
-                                                empire_id, object_id, VIS_BASIC_VISIBILITY);
+                                              empire_id, object_id, VIS_BASIC_VISIBILITY);
                 }
             }
         }
     }
 
-    // for each empire
+    // for each empire test which objects are detected
     for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
         int empire_id = empire_it->first;
         ObjectVisibilityMap& obj_vis_map = m_empire_object_visibility[empire_id];
@@ -1559,17 +1559,20 @@ void Universe::UpdateEmpireObjectVisibilities() {
                     SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
                                               empire_id, detectable_obj->ID(), VIS_PARTIAL_VISIBILITY);
                     break;
-                } else if (dist2 == 0.0 && obj_vis <= VIS_NO_VISIBILITY) {
-                    // planets always basically visible if at same location as a detector
-                    if (universe_object_cast<const Planet*>(detectable_obj)) {
-                        SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
-                                                  empire_id, detectable_obj->ID(), VIS_BASIC_VISIBILITY);
-                        // no break here.  may be partially visible due to
-                        // another detector object (although that may not be
-                        // true if looping over detectors in order from highest
-                        // to lowest detection range...
-                    }
                 }
+                // I suspect the following is unnecessary after changes to how visibility works..
+                // No detector objects with 0 range should be included, so anything at the same
+                // location should already have been detected by being within range.
+                //
+                //else if (dist2 == 0.0 && obj_vis <= VIS_NO_VISIBILITY) {
+                //    // planets always basically visible if at same location as a detector
+                //    if (universe_object_cast<const Planet*>(detectable_obj)) {
+                //        SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
+                //                                  empire_id, detectable_obj->ID(), VIS_BASIC_VISIBILITY);
+                //        // no break here.  may be partially visible due to
+                //        // another detector object
+                //    }
+                //}
             }
         }
     }
