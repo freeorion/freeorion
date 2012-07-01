@@ -16,13 +16,16 @@ Process::Process(const std::string& cmd, const std::vector<std::string>& argv) :
 {}
 
 bool Process::SetLowPriority(bool low) {
-    if ((!m_empty) && (m_low_priority != low)) {
+    if (m_empty)
+        return false;
+    if (m_low_priority != low) {
         if (m_impl->SetLowPriority(low)) {
             m_low_priority = low;
             return true;
-        }
-        else return false;
-    }
+        } else
+            return false;
+    } else
+        return true;
 }
 
 void Process::Kill()
