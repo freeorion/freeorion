@@ -979,92 +979,226 @@ namespace {
         return retval;
     }
 
-    void GetEmpireIDsWithFleetsAndCombatFleetsAtSystem(std::set<int>& ids_of_empires_with_fleets_here,
-                                                       std::set<int>& ids_of_empires_with_combat_fleets_here,
-                                                       int system_id)
-    {
-        ids_of_empires_with_fleets_here.clear();
-        ids_of_empires_with_combat_fleets_here.clear();
-
+    void GetEmpireFleetsAtSystem(std::map<int, std::set<int> >& empire_fleets, int system_id) {
+        empire_fleets.clear();
         const System* system = GetSystem(system_id);
         if (!system)
             return;
+        std::vector<int> system_fleets = system->FindObjectIDs<Fleet>();
+        for (std::vector<int>::const_iterator it = system_fleets.begin(); it != system_fleets.end(); ++it) {
+            if (const Fleet* fleet = GetFleet(*it))
+                empire_fleets[fleet->Owner()].insert(*it);
+        }
+    }
 
+    void GetEmpirePlanetsAtSystem(std::map<int, std::set<int> >& empire_planets, int system_id) {
+        empire_planets.clear();
+        const System* system = GetSystem(system_id);
+        if (!system)
+            return;
+        std::vector<int> system_planets = system->FindObjectIDs<Planet>();
+        for (std::vector<int>::const_iterator it = system_planets.begin(); it != system_planets.end(); ++it) {
+            if (const Planet* planet = GetPlanet(*it)) {
+                if (!planet->Unowned())
+                    empire_planets[planet->Owner()].insert(*it);
+                else if (planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+                    empire_planets[ALL_EMPIRES].insert(*it);
+            }
+        }
+    }
+
+    void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets, int empire_id, int system_id) {
+        visible_fleets.clear();
+        const System* system = GetSystem(system_id);
+        if (!system)
+            return; // no such system
         std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
-        for (std::vector<int>::const_iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); ++fleet_it) {
-            const Fleet* fleet = GetFleet(*fleet_it);
-            if (!fleet) {
-                Logger().errorStream() << "GetEmpireIDsWithFleetsAndCombatFleetsAtSystem couldn't get Fleet with id " << *fleet_it;
-                continue;
+        if (fleet_ids.empty())
+            return; // no fleets to be seen
+        if (empire_id != ALL_EMPIRES && !Empires().Lookup(empire_id))
+            return; // no such empire
+
+        // for visible fleets by an empire, check visibility of fleets by that empire
+        if (empire_id != ALL_EMPIRES) {
+            for (std::vector<int>::const_iterator fleet_it = fleet_ids.begin();
+                 fleet_it != fleet_ids.end(); ++fleet_it)
+            {
+                Visibility fleet_vis = GetUniverse().GetObjectVisibilityByEmpire(*fleet_it, empire_id);
+                if (fleet_vis >= VIS_PARTIAL_VISIBILITY)
+                    visible_fleets.insert(*fleet_it);
             }
-
-            ids_of_empires_with_fleets_here.insert(fleet->Owner()); // may be ALL_EMPIRES
-
-            if (fleet->HasArmedShips() && fleet->Aggressive())
-                ids_of_empires_with_combat_fleets_here.insert(fleet->Owner());
-        }
-    }
-
-    void GetEmpireIDsWithPlanetsAtSystem(std::set<int>& ids_of_empires_with_planets_here, int system_id) {
-        ids_of_empires_with_planets_here.clear();
-
-        const System* system = GetSystem(system_id);
-        if (!system)
             return;
+        }
 
-        std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
-        for (std::vector<int>::const_iterator planet_it = planet_ids.begin(); planet_it != planet_ids.end(); ++planet_it) {
-            const Planet* planet = GetPlanet(*planet_it);
-            if (!planet) {
-                Logger().errorStream() << "GetEmpireIDsWithPlanetsAtSystem couldn't get Planet with id " << *planet_it;
+
+        // now considering only fleets visible to monsters
+
+
+        // get best monster detection strength here.  Use monster detection meters for this...
+        double monster_detection_strength_here = 0.0;
+        std::vector<int> all_system_ship_ids = system->FindObjectIDs<Ship>();
+        for (std::vector<int>::const_iterator ship_it = all_system_ship_ids.begin();
+             ship_it != all_system_ship_ids.end(); ++ship_it)
+        {
+            const Ship* ship = GetShip(*ship_it);
+            if (!ship || !ship->Unowned())  // only want unowned / monster ships
+                continue;
+            if (ship->CurrentMeterValue(METER_DETECTION) > monster_detection_strength_here)
+                monster_detection_strength_here = ship->CurrentMeterValue(METER_DETECTION);
+        }
+
+        // test each ship in each fleet for visibility by best monster detection here
+        for (std::vector<int>::const_iterator fleet_it = fleet_ids.begin();
+             fleet_it != fleet_ids.end(); ++fleet_it)
+        {
+            const Fleet* fleet = GetFleet(*fleet_it);
+            if (!fleet)
+                continue;
+            if (fleet->Unowned()) {
+                visible_fleets.insert(*fleet_it);   // fleet is monster, so can be sen by monsters
                 continue;
             }
-            if (planet->CurrentMeterValue(METER_POPULATION) > 0.0)
-                ids_of_empires_with_planets_here.insert(planet->Owner());
+
+            const std::set<int>& fleet_ship_ids = fleet->ShipIDs();
+            for (std::set<int>::const_iterator ship_it = fleet_ship_ids.begin();
+                 ship_it != fleet_ship_ids.end(); ++ship_it)
+            {
+                const Ship* ship = GetShip(*ship_it);
+                if (!ship)
+                    continue;
+                // if a ship is low enough stealth, its fleet can be seen by monsters
+                if (monster_detection_strength_here >= ship->CurrentMeterValue(METER_STEALTH)) {
+                    visible_fleets.insert(*fleet_it);
+                    break;  // fleet is seen, so don't need to check any more ships in it
+                }
+            }
         }
     }
-
 
     /** Returns true iff there is an appropriate combination of objects in the
       * system with id \a system_id for a combat to occur. */
     bool CombatConditionsInSystem(int system_id) {
-        std::set<int> ids_of_empires_with_combat_fleets_here;
-        std::set<int> ids_of_empires_with_fleets_here;
-        GetEmpireIDsWithFleetsAndCombatFleetsAtSystem(ids_of_empires_with_fleets_here, ids_of_empires_with_combat_fleets_here, system_id);
+        // combats occur if:
+        // 1) empires A and B are at war, and
+        // 2) a) empires A and B both have fleets in a system, or
+        // 2) b) empire A has a fleet and empire B has a planet in a system
+        // 3) empire A's can see the fleet or planet of empire B
+        // 4) empire A's fleet is set to aggressive
+        // 5) empire A's fleet has at least one armed ship
+        //
+        // note: monsters are treated as an empire always at war with all other empires
 
-        // combat can occur if more than one empire has a combat fleet in system
-        if (ids_of_empires_with_combat_fleets_here.size() > 1)
-            return true;
+        // what empires have fleets here?
+        std::map<int, std::set<int> > empire_fleets_here;
+        GetEmpireFleetsAtSystem(empire_fleets_here, system_id);
+        if (empire_fleets_here.empty())
+            return false;
 
-        // combat can occur if one empire has a combat fleet and another empire
-        // has any fleet
-        if (!ids_of_empires_with_combat_fleets_here.empty() && ids_of_empires_with_fleets_here.size() > 1)
-            return true;
-
-
-        std::set<int> ids_of_empires_with_planets_here;
-        GetEmpireIDsWithPlanetsAtSystem(ids_of_empires_with_planets_here, system_id);
-
-
-        // combat can also occur if there is at least one fleet and one
-        // other empire's planetary defenses that can harm the fleets
-        if (!ids_of_empires_with_combat_fleets_here.empty() && !ids_of_empires_with_planets_here.empty()) {
-
-            for (std::set<int>::const_iterator planet_owner_it = ids_of_empires_with_planets_here.begin();
-                 planet_owner_it != ids_of_empires_with_planets_here.end();
-                 ++planet_owner_it)
+        // which empires have aggressive ships here?
+        std::set<int> empires_with_aggressive_fleets_here;
+        for (std::map<int, std::set<int> >::const_iterator empire_it = empire_fleets_here.begin();
+             empire_it != empire_fleets_here.end(); ++empire_it)
+        {
+            int empire_id = empire_it->first;
+            const std::set<int>& empire_fleets = empire_it->second;
+            for (std::set<int>::const_iterator fleet_it = empire_fleets.begin();
+                 fleet_it != empire_fleets.end(); ++fleet_it)
             {
-                int planet_owner_id = *planet_owner_it;
-
-                // find a combat fleet owned by a different empire
-                for (std::set<int>::const_iterator combat_fleet_owner_it = ids_of_empires_with_combat_fleets_here.begin();
-                     combat_fleet_owner_it != ids_of_empires_with_combat_fleets_here.end();
-                     ++combat_fleet_owner_it)
-                {
-                    int combat_fleet_owner_id = *combat_fleet_owner_it;
-                    if (combat_fleet_owner_id != planet_owner_id)
-                        return true;
+                const Fleet* fleet = GetFleet(*fleet_it);
+                if (!fleet)
+                    continue;
+                if (fleet->Aggressive()) {
+                    empires_with_aggressive_fleets_here.insert(empire_id);
+                    break;
                 }
+            }
+        }
+        if (empires_with_aggressive_fleets_here.empty())
+            return false;
+
+        // what empires have planets here?
+        std::map<int, std::set<int> > empire_planets_here;
+        GetEmpirePlanetsAtSystem(empire_planets_here, system_id);
+        if (empire_planets_here.empty() && empire_fleets_here.size() <= 1)
+            return false;
+
+        // all empires with something here
+        std::set<int> empires_here;
+        for (std::map<int, std::set<int> >::const_iterator it = empire_fleets_here.begin();
+             it != empire_fleets_here.end(); ++it)
+        { empires_here.insert(it->first); }
+        for (std::map<int, std::set<int> >::const_iterator it = empire_planets_here.begin();
+             it != empire_planets_here.end(); ++it)
+        { empires_here.insert(it->first); }
+
+        // what combinations of present empires are at war?
+        std::map<int, std::set<int> > empires_here_at_war;  // for each empire, what other empires here is it at war with?
+        for (std::set<int>::const_iterator emp1_it = empires_here.begin();
+             emp1_it != empires_here.end(); ++emp1_it)
+        {
+            std::set<int>::const_iterator emp2_it = emp1_it;
+            ++emp2_it;
+            for (; emp2_it != empires_here.end(); ++emp2_it) {
+                if (*emp1_it == ALL_EMPIRES || *emp2_it == ALL_EMPIRES ||
+                    Empires().GetDiplomaticStatus(*emp1_it, *emp2_it) == DIPLO_WAR)
+                {
+                    empires_here_at_war[*emp1_it].insert(*emp2_it);
+                    empires_here_at_war[*emp2_it].insert(*emp1_it);
+                }
+            }
+        }
+        if (empires_here_at_war.empty())
+            return false;
+
+        // is an empire with an aggressive fleet here at war with an empire that
+        // has a planet here?
+        for (std::set<int>::const_iterator empire1_it = empires_with_aggressive_fleets_here.begin();
+             empire1_it != empires_with_aggressive_fleets_here.end(); ++empire1_it)
+        {
+            int aggressive_empire_id = *empire1_it;
+
+            // what empires is the aggressive empire at war with?
+            const std::set<int>& at_war_with_empire_ids = empires_here_at_war[aggressive_empire_id];
+
+            // do any of the empires at war with the aggressive empire have a planet here?
+            for (std::set<int>::const_iterator at_war_empire_it = at_war_with_empire_ids.begin();
+                 at_war_empire_it != at_war_with_empire_ids.end(); ++at_war_empire_it)
+            {
+                int at_war_empire_id = *at_war_empire_it;
+                if (empire_planets_here.find(at_war_empire_id) != empire_planets_here.end())
+                    return true;
+            }
+        }
+
+        // is an empire with an aggressive fleet here able to see a fleet of an
+        // empire it is at war with here?
+        for (std::set<int>::const_iterator empire1_it = empires_with_aggressive_fleets_here.begin();
+             empire1_it != empires_with_aggressive_fleets_here.end(); ++empire1_it)
+        {
+            int aggressive_empire_id = *empire1_it;
+
+            // what empires is the aggressive empire at war with?
+            const std::set<int>& at_war_with_empire_ids = empires_here_at_war[aggressive_empire_id];
+            if (at_war_with_empire_ids.empty())
+                continue;
+
+            // what fleets can the aggressive empire see?
+            std::set<int> aggressive_empire_visible_fleets;
+            GetFleetsVisibleToEmpireAtSystem(aggressive_empire_visible_fleets, aggressive_empire_id, system_id);
+
+            // is any fleet owned by an empire at war with aggressive empire?
+            for (std::set<int>::const_iterator fleet_it = aggressive_empire_visible_fleets.begin();
+                 fleet_it != aggressive_empire_visible_fleets.end(); ++fleet_it)
+            {
+                int fleet_id = *fleet_it;
+                const Fleet* fleet = GetFleet(*fleet_it);
+                if (!fleet)
+                    continue;
+                int visible_fleet_empire_id = fleet->Owner();
+
+                if (aggressive_empire_id != visible_fleet_empire_id &&
+                    at_war_with_empire_ids.find(visible_fleet_empire_id) != at_war_with_empire_ids.end())
+                { return true; }    // an aggressive empire can see a fleet onwned by an empire it is at war with
             }
         }
 
@@ -1098,11 +1232,13 @@ namespace {
       * meter values from combat aren't lost when resetting meters during meter
       * updating after combat. */
     void BackProjectSystemCombatInfoObjectMeters(std::map<int, CombatInfo>& system_combat_info) {
-        for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin(); it != system_combat_info.end(); ++it) {
+        for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin();
+             it != system_combat_info.end(); ++it)
+        {
             ObjectMap& objects = it->second.objects;
             for (ObjectMap::iterator obj_it = objects.begin(); obj_it != objects.end(); ++obj_it)
                 obj_it->second->BackPropegateMeters();
-            }
+        }
     }
 
     /** Takes contents of CombatInfo struct and puts it into the universe.
