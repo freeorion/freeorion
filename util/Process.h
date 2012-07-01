@@ -52,7 +52,7 @@ public:
 
    /** \name Mutators */ //@{
    /** sets process priority */
-   void SetLowPriority(bool low); 
+   bool SetLowPriority(bool low); 
 
    /** kills the controlled process immediately. */   
    void Kill();
@@ -71,7 +71,7 @@ private:
       ProcessImpl(const std::string& cmd, const std::vector<std::string>& argv);
       ~ProcessImpl();
 
-      void SetLowPriority(bool low); 
+      bool SetLowPriority(bool low); 
       void Kill();
       void Free();
       

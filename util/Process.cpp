@@ -15,10 +15,13 @@ Process::Process(const std::string& cmd, const std::vector<std::string>& argv) :
     m_low_priority(false)
 {}
 
-void Process::SetLowPriority(bool low) {
+bool Process::SetLowPriority(bool low) {
     if ((!m_empty) && (m_low_priority != low)) {
-        m_low_priority = low;
-        m_impl->SetLowPriority(low);
+        if (m_impl->SetLowPriority(low)) {
+            m_low_priority = low;
+            return true;
+        }
+        else return false;
     }
 }
 
@@ -68,11 +71,11 @@ Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std:
 Process::ProcessImpl::~ProcessImpl()
 { if (!m_free) Kill(); }
 
-void Process::ProcessImpl::SetLowPriority(bool low) {
+bool Process::ProcessImpl::SetLowPriority(bool low) {
     if (low)
-        SetPriorityClass(m_process_info.hProcess, BELOW_NORMAL_PRIORITY_CLASS);
+        return (SetPriorityClass(m_process_info.hProcess, BELOW_NORMAL_PRIORITY_CLASS) != 0);
     else
-        SetPriorityClass(m_process_info.hProcess, NORMAL_PRIORITY_CLASS);
+        return (SetPriorityClass(m_process_info.hProcess, NORMAL_PRIORITY_CLASS) != 0);
 }
 
 void Process::ProcessImpl::Kill() {
@@ -130,11 +133,11 @@ Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std:
 Process::ProcessImpl::~ProcessImpl()
 { if (!m_free) Kill(); }
 
-void Process::ProcessImpl::SetLowPriority(bool low) {
+bool Process::ProcessImpl::SetLowPriority(bool low) {
     if (low)
-        setpriority(PRIO_PROCESS, m_process_id, 10);
+        return (setpriority(PRIO_PROCESS, m_process_id, 10) == 0);
     else
-        setpriority(PRIO_PROCESS, m_process_id, 0);
+        return (setpriority(PRIO_PROCESS, m_process_id, 0) == 0);
 }
 
 void Process::ProcessImpl::Kill()
