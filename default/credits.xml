@@ -94,6 +94,7 @@
       <PERSON name="Mikko Maununen"           nick="MikkoM"           task="Finnish Translation"/>
       <PERSON name="Vladimir Safronenkov"     nick="pohlman"          task="Russian Translation"/>
       <PERSON name="Alexandr Kopitkov"        nick="Cjckem"           task="Russian Translation"/>
+      <PERSON name=""                         nick="alchemy"          task="French Translation"/>
       </GROUP>
   </CREDITS>
 </XMLDoc>
