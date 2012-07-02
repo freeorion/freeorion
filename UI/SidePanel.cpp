@@ -1137,8 +1137,6 @@ void SidePanel::PlanetPanel::Refresh() {
         return;
     }
 
-
-
     // colour planet name with owner's empire colour
     m_empire_colour = GG::CLR_ZERO;
     if (!planet->Unowned() && m_planet_name) {
@@ -1149,7 +1147,6 @@ void SidePanel::PlanetPanel::Refresh() {
             m_planet_name->SetTextColor(ClientUI::TextColor());
         }
     }
-
 
     const Ship* colony_ship =           ValidSelectedColonyShip(SidePanel::SystemID());
     std::set<Ship*> invasion_ships =    ValidSelectedInvasionShips(SidePanel::SystemID());
@@ -1174,7 +1171,8 @@ void SidePanel::PlanetPanel::Refresh() {
 //    bool could_colonize =   colonizable && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
     bool could_colonize =   (!populated || (has_owner && !mine)) && visible && !being_colonized && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
     bool being_invaded =    planet->IsAboutToBeInvaded();
-    bool invadable =        !mine && (populated || has_owner) && vulnerable && visible && !being_invaded && !invasion_ships.empty();
+    bool at_war_with_me =   !mine && (!has_owner || (Empires().GetDiplomaticStatus(client_empire_id, planet->Owner()) == DIPLO_WAR));
+    bool invadable =        at_war_with_me && (populated || has_owner) && vulnerable && visible && !being_invaded && !invasion_ships.empty();
 
     if (populated || SHOW_ALL_PLANET_PANELS) {
         // show population, resource and military panels, but hide environement

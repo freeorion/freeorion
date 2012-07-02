@@ -537,7 +537,7 @@ void InvadeOrder::ExecuteImpl() const {
         Logger().errorStream() << "InvadeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
     }
-    if (planet->CurrentMeterValue(METER_POPULATION) == 0.0) {
+    if (planet->Unowned() && planet->CurrentMeterValue(METER_POPULATION) == 0.0) {
         Logger().errorStream() << "InvadeOrder::ExecuteImpl given unpopulated planet";
         return;
     }
@@ -547,6 +547,10 @@ void InvadeOrder::ExecuteImpl() const {
     }
     if (planet->OwnedBy(empire_id)) {
         Logger().errorStream() << "InvadeOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
+        return;
+    }
+    if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
+        Logger().errorStream() << "InvadeOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
         return;
     }
     if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_PARTIAL_VISIBILITY) {
