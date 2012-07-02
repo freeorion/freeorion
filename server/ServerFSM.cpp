@@ -1133,10 +1133,14 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     server.m_networking.SendMessage(TurnProgressMessage(Message::WAITING_FOR_PLAYERS, message.SendingPlayer()));
     
     // if player who just submitted is the local human player, raise AI process priority
+    // as raising process priority requires superuser privileges on OSX and Linux AFAIK,
+    // this piece of code only makes sense on Windows systems
+#ifdef FREEORION_WIN32
     if (server.IsLocalHumanPlayer(player_id)) {
         if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : Orders received from local human player, raising AI process priority";
         server.SetAIsProcessPriorityToLow(false);
     }
+#endif
 
     // check conditions for ending this turn
     post_event(CheckTurnEndConditions());

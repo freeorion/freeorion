@@ -245,8 +245,16 @@ void ServerApp::CleanupAIs() {
 
 void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
     for (std::vector<Process>::iterator it = m_ai_client_processes.begin(); it != m_ai_client_processes.end(); ++it) {
-        if(!(it->SetLowPriority(set_to_low)))
-            Logger().errorStream() << "ServerApp::SetAIsProcessPriorityToLow : failed to change priority for AI process";
+        if(!(it->SetLowPriority(set_to_low))) {
+            if (set_to_low)
+                Logger().errorStream() << "ServerApp::SetAIsProcessPriorityToLow : failed to lower priority for AI process";
+            else
+#ifdef FREEORION_WIN32
+                Logger().errorStream() << "ServerApp::SetAIsProcessPriorityToLow : failed to raise priority for AI process";
+#else
+                Logger().errorStream() << "ServerApp::SetAIsProcessPriorityToLow : cannot raise priority for AI process, requires superuser privileges on this system";
+#endif
+        }
     }
 }
 
