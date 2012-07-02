@@ -768,26 +768,41 @@ Special
                     OwnedBy AnyEmpire
                 ]
             ]
-            effects =
-                SetDetection value = Value + 100
+            effects = [
+                AddSpecial "DERELICT_SPECIAL2"
+                GenerateSitRepMessage
+                    message = "EFFECT_DERELICT_MAP"
+                    parameters = [
+                        tag = "system" data = Source.ID
+                    ]
+                    affiliation = TheEmpire
+                    empire = Target.Owner
+            ]
 
         EffectsGroup
-            scope = Source
+            scope = And [
+                Source
+                System
+            ]
             activation = And [
                 System
                 Contains And [
                     Ship
                     OwnedBy AnyEmpire
                 ]
-                NOT HasSpecial name = "DERELICT_SPECIAL_REMOVE"
             ]
             effects = [
-                GenerateSitRepMessage
-                    message = "EFFECT_DERELICT_MAP"
-                    parameters = [
-                        tag = "system" data = Source.ID
-                    ]
-                AddSpecial "DERELICT_SPECIAL_REMOVE"
+                RemoveSpecial "DERELICT_SPECIAL2"
+            ]
+
+        EffectsGroup
+            scope = And [
+                Source
+                Ship
+            ]
+            effects = [
+                SetDetection Value + 100
+                RemoveSpecial "DERELICT_SPECIAL2"
             ]
     ]
     graphic = "icons/specials_huge/derelict.png"
@@ -816,45 +831,39 @@ Special
                 ]
             ]
             effects = [
-                SetFuel value + 99
+                AddSpecial "DERELICT_SPECIAL3"
+                GenerateSitRepMessage
+                    message = "EFFECT_DERELICT_FUEL"
+                    parameters = [
+                        tag = "system" data = Source.ID
+                    ]
+                    affiliation = TheEmpire
+                    empire = Target.Owner
             ]
 
         EffectsGroup
-            scope = Source
+            scope = And [
+                Source
+                System
+            ]
             activation = And [
                 System
                 Contains And [
                     Ship
                     OwnedBy AnyEmpire
                 ]
-                NOT HasSpecial name = "DERELICT_SPECIAL_REMOVE"
             ]
             effects = [
-                GenerateSitRepMessage
-                    message = "EFFECT_DERELICT_FUEL"
-                    parameters = [
-                        tag = "system" data = Source.ID
-                    ]
-                AddSpecial "DERELICT_SPECIAL_REMOVE"
+                RemoveSpecial "DERELICT_SPECIAL3"
             ]
-    ]
-    graphic = "icons/specials_huge/derelict.png"
 
-Special
-    name = "DERELICT_SPECIAL_REMOVE"
-    description = "DERELICT_SPECIAL_DESC"
-    spawnrate = 0
-    spawnlimit = 100
-    location = And [
-        System
-        Not Contains Capital
-    ]
-    effectsgroups = [
         EffectsGroup
-            scope = Source
+            scope = And [
+                Source
+                Ship
+            ]
             effects = [
-                RemoveSpecial "DERELICT_SPECIAL_REMOVE"
-                RemoveSpecial "DERELICT_SPECIAL2"
+                SetFuel Value + 100
                 RemoveSpecial "DERELICT_SPECIAL3"
             ]
     ]
