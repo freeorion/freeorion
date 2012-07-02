@@ -143,6 +143,7 @@ void CombatInfo::Clear() {
     objects.Clear();
     for (std::map<int, ObjectMap>::iterator it = empire_known_objects.begin(); it != empire_known_objects.end(); ++it)
         it->second.Clear();
+    damaged_object_ids.clear();
     destroyed_object_ids.clear();
     destroyed_object_knowers.clear();
 }
@@ -198,6 +199,15 @@ void CombatInfo::GetEmpireKnownObjectsToSerialize(std::map<int, ObjectMap>& filt
     }
 }
 
+void CombatInfo::GetDamagedObjectsToSerialize(std::set<int>& filtered_damaged_objects, int encoding_empire) const {
+    if (encoding_empire == ALL_EMPIRES) {
+        filtered_damaged_objects = this->damaged_object_ids;
+        return;
+    }
+    // TODO: decide if some filtering is needed for damaged objects... it may not be.
+    filtered_damaged_objects = this->damaged_object_ids;
+}
+
 void CombatInfo::GetDestroyedObjectsToSerialize(std::set<int>& filtered_destroyed_objects, int encoding_empire) const {
     if (encoding_empire == ALL_EMPIRES) {
         filtered_destroyed_objects = this->destroyed_object_ids;
@@ -223,7 +233,7 @@ void CombatInfo::GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int
 // AutoResolveCombat
 ////////////////////////////////////////////////
 namespace {
-    void AttackShipShip(Ship* attacker, Ship* target) {
+    void AttackShipShip(Ship* attacker, Ship* target, std::set<int>& damaged_object_ids) {
         if (!attacker || ! target) return;
 
         const ShipDesign* attacker_design = attacker->Design();
@@ -251,6 +261,9 @@ namespace {
         if (shield_damage >= target_shield->Current())
             structure_damage = std::min(target_structure->Current(), damage - shield_damage);
 
+        if (shield_damage > 0 || structure_damage > 0)
+            damaged_object_ids.insert(target->ID());
+
         if (shield_damage > 0) {
             target_shield->AddToCurrent(-shield_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Ship " << target->Name() << " (" << target->ID() << ")";
@@ -264,7 +277,7 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackShipPlanet(Ship* attacker, Planet* target) {
+    void AttackShipPlanet(Ship* attacker, Planet* target, std::set<int>& damaged_object_ids) {
         if (!attacker || ! target) return;
 
         const ShipDesign* attacker_design = attacker->Design();
@@ -304,6 +317,9 @@ namespace {
         if (shield_damage >= target_shield->Current())
             defense_damage = std::min(target_defense->Current(), damage - shield_damage);
 
+        if (shield_damage > 0 || defense_damage > 0 || construction_damage > 0)
+            damaged_object_ids.insert(target->ID());
+
         if (defense_damage >= target_defense->Current())
             construction_damage = std::min(target_construction->Current(), damage - shield_damage - defense_damage);
 
@@ -315,7 +331,6 @@ namespace {
             target_defense->AddToCurrent(-defense_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << defense_damage << " defense damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
-
         if (construction_damage >= 0) {
             target_construction->AddToCurrent(-construction_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
@@ -325,7 +340,7 @@ namespace {
         target->SetLastTurnAttackedByShip(CurrentTurn());
     }
 
-    void AttackPlanetShip(Planet* attacker, Ship* target) {
+    void AttackPlanetShip(Planet* attacker, Ship* target, std::set<int>& damaged_object_ids) {
         if (!attacker || ! target) return;
 
         double damage = attacker->UniverseObject::GetMeter(METER_DEFENSE)->Current();   // planet "Defense" meter is actually its attack power
@@ -350,6 +365,9 @@ namespace {
         if (shield_damage >= target_shield->Current())
             structure_damage = std::min(target_structure->Current(), damage - shield_damage);
 
+        if (shield_damage > 0 || structure_damage > 0)
+            damaged_object_ids.insert(target->ID());
+
         if (shield_damage >= 0) {
             target_shield->AddToCurrent(-shield_damage);
             Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Ship " << target->Name() << " (" << target->ID() << ")";
@@ -362,7 +380,7 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackPlanetPlanet(Planet* attacker, Planet* target) {
+    void AttackPlanetPlanet(Planet* attacker, Planet* target, std::set<int>& damaged_object_ids) {
         Logger().debugStream() << "AttackPlanetPlanet does nothing!";
         // intentionally left empty
     }
@@ -538,15 +556,15 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         // do actual attack
         if (Ship* attack_ship = universe_object_cast<Ship*>(attacker)) {
             if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
-                AttackShipShip(attack_ship, target_ship);
+                AttackShipShip(attack_ship, target_ship, combat_info.damaged_object_ids);
             } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
-                AttackShipPlanet(attack_ship, target_planet);
+                AttackShipPlanet(attack_ship, target_planet, combat_info.damaged_object_ids);
             }
         } else if (Planet* attack_planet = universe_object_cast<Planet*>(attacker)) {
             if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
-                AttackPlanetShip(attack_planet, target_ship);
+                AttackPlanetShip(attack_planet, target_ship, combat_info.damaged_object_ids);
             } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
-                AttackPlanetPlanet(attack_planet, target_planet);
+                AttackPlanetPlanet(attack_planet, target_planet, combat_info.damaged_object_ids);
             }
         }
 
