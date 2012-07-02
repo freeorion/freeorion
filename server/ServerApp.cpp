@@ -1816,20 +1816,28 @@ void ServerApp::PreCombatProcessTurns() {
         // TODO: Do movement incrementally, and if the moving fleet encounters
         // stationary combat fleets or planetary defenses that can hurt it, it
         // must be resolved as a combat.
-
-        // SitRep for fleets having arrived at destinations, to all owners of those fleets
-        if (fleet->ArrivedThisTurn() && !fleet->Unowned()) {
-            Empire* empire = empires.Lookup(fleet->Owner());
-            if (!empire)
-                continue;
-            empire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
-        }
     }
 
 
     // post-movement visibility update
     m_universe.UpdateEmpireObjectVisibilities();
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
+
+
+    // SitRep for fleets having arrived at destinations
+    for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        // save for possible SitRep generation after moving...
+        const Fleet* fleet = *it;
+        if (!fleet || !fleet->ArrivedThisTurn())
+            continue;
+        // sitreps for all empires that can see fleet at new location
+        for (EmpireManager::const_iterator empire_it = Empires().begin();
+             empire_it != Empires().end(); ++empire_it)
+        {
+            if (fleet->GetVisibility(empire_it->first) >= VIS_BASIC_VISIBILITY)
+                empire_it->second->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
+        }
+    }
 
 
     // update fleet routes after movement
