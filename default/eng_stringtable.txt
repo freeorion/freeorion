@@ -2549,7 +2549,7 @@ SITREP_SHIP_DESTROYED_AT_SYSTEM
 The %empire% %shipdesign% '%ship%' was destroyed at %system%.
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
-An unaligned %shipdesign% was destroyed at %system%.
+A %shipdesign% was destroyed at %system%.
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM
 The %empire% fleet %fleet% was destroyed at %system%.
@@ -2568,6 +2568,23 @@ The %empire% building %building% on planet %planet% was destroyed at %system%.
 
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
 The building %building% on planet %planet% was destroyed at %system%.
+
+
+SITREP_OBJECT_DAMAGED_AT_SYSTEM
+An object was damaged at %system%.
+
+SITREP_SHIP_DAMAGED_AT_SYSTEM
+The %empire% %shipdesign% '%ship%' was damaged at %system%.
+
+SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
+A %shipdesign% was damaged at %system%.
+
+SITREP_PLANET_BOMBARDED_AT_SYSTEM
+The %empire% planet %planet% was bombarded at %system%.
+
+SITREP_PLANET_BOMBARDED_AT_SYSTEM
+The planet %planet% was bombarded at %system%.
+
 
 SITREP_GROUND_BATTLE
 A ground battle occurred on %planet%.

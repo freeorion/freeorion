@@ -83,11 +83,49 @@ SitRepEntry* CreatePlanetCapturedSitRep(int planet_id, int empire_id) {
 }
 
 namespace {
+    SitRepEntry* GenericCombatDamagedObjectSitrep(int combat_system_id) {
+        SitRepEntry* sitrep = new SitRepEntry("SITREP_OBJECT_DAMAGED_AT_SYSTEM");
+        sitrep->AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(combat_system_id));
+        return sitrep;
+    }
+
     SitRepEntry* GenericCombatDestroyedObjectSitrep(int combat_system_id) {
         SitRepEntry* sitrep = new SitRepEntry("SITREP_OBJECT_DESTROYED_AT_SYSTEM");
         sitrep->AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(combat_system_id));
         return sitrep;
     }
+}
+
+SitRepEntry* CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id, int empire_id) {
+    const UniverseObject* obj = GetUniverse().EmpireKnownObjects(empire_id).Object(object_id);
+    if (!obj)
+        return GenericCombatDamagedObjectSitrep(combat_system_id);
+
+    SitRepEntry* sitrep(0);
+
+    if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
+        if (ship->Unowned())
+            sitrep = new SitRepEntry("SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM");
+        else
+            sitrep = new SitRepEntry("SITREP_SHIP_DAMAGED_AT_SYSTEM");
+        sitrep->AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(object_id));
+        sitrep->AddVariable(VarText::DESIGN_ID_TAG,     boost::lexical_cast<std::string>(ship->DesignID()));
+
+    } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
+        if (planet->Unowned())
+            sitrep = new SitRepEntry("SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM");
+        else
+            sitrep = new SitRepEntry("SITREP_PLANET_BOMBARDED_AT_SYSTEM");
+        sitrep->AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(object_id));
+
+    } else {
+        sitrep = GenericCombatDestroyedObjectSitrep(combat_system_id);
+    }
+
+    sitrep->AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(obj->Owner()));
+    sitrep->AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(combat_system_id));
+
+    return sitrep;
 }
 
 SitRepEntry* CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_id, int empire_id) {
