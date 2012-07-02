@@ -155,7 +155,10 @@ namespace {
             if (empire) {
                 empire_color = empire->Color();
                 empire_name = empire->Name();
-                m_diplo_status = Empires().GetDiplomaticStatus(player_info.empire_id, app->EmpireID());
+                if (player_info.empire_id == ALL_EMPIRES || player_info.empire_id == app->EmpireID())
+                    m_diplo_status = INVALID_DIPLOMATIC_STATUS;
+                else
+                    m_diplo_status = Empires().GetDiplomaticStatus(player_info.empire_id, app->EmpireID());
             }
 
             m_player_name_text->SetTextColor(empire_color);
