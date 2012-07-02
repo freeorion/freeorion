@@ -424,20 +424,7 @@ void ColonizeOrder::ExecuteImpl() const {
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
         return;
     }
-    const std::string& species_name = ship->SpeciesName();
-    if (species_name.empty()) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl got ship with no species";
-        return;
-    }
-    const Species* species = GetSpecies(species_name);
-    if (!species) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't get species with name " << species_name;
-        return;
-    }
-    if (!species->CanColonize()) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl species " << species_name << " can't colonize!";
-        return;
-    }
+
     Planet* planet = GetPlanet(m_planet);
     if (!planet) {
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't get planet with id " << m_planet;

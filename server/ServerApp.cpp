@@ -33,7 +33,6 @@
 
 #include <ctime>
 
-
 namespace fs = boost::filesystem;
 
 
@@ -1374,6 +1373,8 @@ namespace {
                     empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(*dest_obj_it, combat_info.system_id, empire_id));
                 }
             }
+
+            // sitreps about damaged objects
         }
     }
 }
@@ -1411,10 +1412,6 @@ namespace {
         }
         double colonist_capacity = design->ColonyCapacity();
 
-        if (colonist_capacity <= 0.0) {
-            Logger().debugStream() << "ColonizePlanet colonize order executed by ship with zero colonist capacity!";
-            return false;
-        }
 
         // get empire to give ownership of planet to
         if (ship->Unowned()) {
@@ -1427,7 +1424,8 @@ namespace {
 
 
         planet->Reset();
-        planet->SetSpecies(species_name);   // do this BEFORE destroying the ship, since species_name is a const reference to Ship::m_species_name
+        if (colonist_capacity > 0.0)
+            planet->SetSpecies(species_name);   // do this BEFORE destroying the ship, since species_name is a const reference to Ship::m_species_name
 
         GetUniverse().Destroy(ship->ID());
 

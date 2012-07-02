@@ -647,8 +647,8 @@ int ShipDesign::ProductionTime() const {
 }
 
 bool ShipDesign::CanColonize() const {
-    if (m_colony_capacity > 0.0)
-        return true;
+    //if (m_colony_capacity > 0.0)
+    //    return true;
     for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
         const std::string& part_name = *it;
         if (part_name.empty())

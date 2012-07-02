@@ -1162,21 +1162,19 @@ void SidePanel::PlanetPanel::Refresh() {
     bool has_owner =        !planet->Unowned();
     bool mine =             planet->OwnedBy(client_empire_id);
     bool populated =        planet->CurrentMeterValue(METER_POPULATION) > 0.;
-    bool habitable =        planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
+    //bool habitable =        planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
     bool visible =          GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY;
     bool vulnerable =       planet->CurrentMeterValue(METER_SHIELD) <= 0.;
     bool being_colonized =  planet->IsAboutToBeColonized();
     bool colonizable =      !populated && /*habitable &&*/ visible && !being_colonized;
     bool can_colonize =     colonizable && colony_ship;
-//    bool could_colonize =   colonizable && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
+    //bool could_colonize =   colonizable && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
     bool could_colonize =   (!populated || (has_owner && !mine)) && visible && !being_colonized && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
     bool being_invaded =    planet->IsAboutToBeInvaded();
     bool at_war_with_me =   !mine && (!has_owner || (Empires().GetDiplomaticStatus(client_empire_id, planet->Owner()) == DIPLO_WAR));
     bool invadable =        at_war_with_me && (populated || has_owner) && vulnerable && visible && !being_invaded && !invasion_ships.empty();
 
     if (populated || SHOW_ALL_PLANET_PANELS) {
-        // show population, resource and military panels, but hide environement
-        // size indicator that's used only for uncolonized planets
         AttachChild(m_population_panel);
         if (m_population_panel)
             m_population_panel->Refresh();
