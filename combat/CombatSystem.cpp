@@ -101,12 +101,22 @@ CombatInfo::CombatInfo(int system_id_) :
             Logger().errorStream() << "CombatInfo::CombatInfo couldn't get ship with id " << ship_id << " in system " << system->Name() << " (" << system_id << ")";
             continue;
         }
+        const Fleet* fleet = GetFleet(ship->FleetID());
+        if (!fleet) {
+            Logger().errorStream() << "CombatInfo::CombatInfo couldn't get fleet with id " << ship->FleetID() << " in system " << system->Name() << " (" << system_id << ")";
+            continue;
+        }
 
         for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
             int empire_id = *empire_it;
             if (empire_id == ALL_EMPIRES)
                 continue;
-            if (universe.GetObjectVisibilityByEmpire(ship_id, empire_id) >= VIS_BASIC_VISIBILITY) {
+            if (universe.GetObjectVisibilityByEmpire(ship_id, empire_id) >= VIS_BASIC_VISIBILITY ||
+                   (fleet->Aggressive() &&
+                       (empire_id == ALL_EMPIRES ||
+                        fleet->Unowned() ||
+                        Empires().GetDiplomaticStatus(empire_id, fleet->Owner()) == DIPLO_WAR)))
+            {
                 Ship* visibility_limited_copy = ship->Clone(empire_id);
                 empire_known_objects[empire_id].Insert(ship_id, visibility_limited_copy);
             }
@@ -389,7 +399,7 @@ namespace {
         if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
             return true;
         } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
-            if (planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+            if (planet->CurrentMeterValue(METER_POPULATION) > 0.0 || !planet->Unowned())
                 return true;
             else
                 return false;
@@ -398,11 +408,19 @@ namespace {
         }
     }
 
-    bool ObjectAttackableByEmpire(const UniverseObject* obj, int empire_id) {
+    bool ObjectAttackableByEmpire(const UniverseObject* obj, int empire_id, const ObjectMap& empire_known_objects) {
         if (obj->OwnedBy(empire_id))
             return false;
         if (obj->Unowned() && empire_id == ALL_EMPIRES)
             return false;
+
+        if (empire_id != ALL_EMPIRES && !obj->Unowned() &&
+            Empires().GetDiplomaticStatus(empire_id, obj->Owner()) != DIPLO_WAR)
+        { return false; }
+
+        if (!empire_known_objects.Object(obj->ID()))
+            return false;
+
         return ObjectCanBeAttacked(obj);
     }
 
@@ -467,8 +485,10 @@ void AutoResolveCombat(CombatInfo& combat_info) {
              empire_it != combat_info.empire_ids.end(); ++empire_it)
         {
             int empire_id = *empire_it;
-            if (ObjectAttackableByEmpire(obj, empire_id))
-                empire_valid_target_object_ids[empire_id].insert(object_id);
+            std::map<int, ObjectMap>::const_iterator known_objects_it = combat_info.empire_known_objects.find(empire_id);
+            if (known_objects_it != combat_info.empire_known_objects.end())
+                if (ObjectAttackableByEmpire(obj, empire_id, known_objects_it->second))
+                    empire_valid_target_object_ids[empire_id].insert(object_id);
         }
     }
 
