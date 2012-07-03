@@ -2002,6 +2002,7 @@ BASIC_POPULATION
             activation = AND [
                 HasTag "PHOTOTROPHIC"
                 Star type = [Blue]
+                Not Planet environment = Uninhabitable
             ]
             accountinglabel = "VERY_BRIGHT_STAR"
             effects = SetTargetPopulation Value + 6
@@ -2011,6 +2012,7 @@ BASIC_POPULATION
             activation = AND [
                 HasTag "PHOTOTROPHIC"
                 Star type = [White]
+                Not Planet environment = Uninhabitable
             ]
             accountinglabel = "BRIGHT_STAR"
             effects = SetTargetPopulation Value + 3
@@ -2020,6 +2022,7 @@ BASIC_POPULATION
             activation = AND [
                 HasTag "PHOTOTROPHIC"
                 Star type = [Red Neutron]
+                Not Planet environment = Uninhabitable
             ]
             accountinglabel = "DIM_STAR"
             effects = SetTargetPopulation Value + -3
@@ -2029,6 +2032,7 @@ BASIC_POPULATION
             activation = AND [
                 HasTag "PHOTOTROPHIC"
                 Star type = [BlackHole NoStar]
+                Not Planet environment = Uninhabitable
             ]
             accountinglabel = "NO_STAR"
             effects = SetTargetPopulation Value + -6
@@ -2276,6 +2280,11 @@ AVERAGE_INDUSTRY
             ]
             accountinglabel = "FOCUS_INDUSTRY_LABEL"
             effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
+            
+        EffectsGroup                    // removes residual production from a dead planet
+            scope = Source
+            activation = TargetPopulation low = 0 high =0
+            effects = SetIndustry Value = 0
 '''
 
 GOOD_INDUSTRY
@@ -2338,6 +2347,11 @@ AVERAGE_RESEARCH
             ]
             accountinglabel = "FOCUS_RESEARCH_LABEL"
             effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
+            
+        EffectsGroup      // removes residual production from a dead planet
+            scope = Source
+            activation = TargetPopulation low = 0 high =0
+            effects = SetResearch Value = 0
 '''
 
 GOOD_RESEARCH
