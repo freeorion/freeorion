@@ -133,7 +133,7 @@ namespace {
         return retval;
     }
 
-    void CreateNewFleetFromShips(const std::vector<int>& ship_ids) {
+    void CreateNewFleetFromShips(const std::vector<int>& ship_ids, bool aggressive = false) {
         if (ship_ids.empty())
             return;
 
@@ -201,6 +201,11 @@ namespace {
         HumanClientApp::GetApp()->Orders().IssueOrder(
             OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
 
+        // set aggression of new fleet, if not already what was requested
+        if (const Fleet* new_fleet = GetFleet(new_fleet_id))
+            if (new_fleet->Aggressive() != aggressive)
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new AggressiveOrder(empire_id, new_fleet_id, aggressive)));
 
         // delete empty fleets from which ships may have been taken
         for (std::set<int>::const_iterator it = original_fleet_ids.begin(); it != original_fleet_ids.end(); ++it) {
@@ -817,6 +822,7 @@ public:
     virtual void        DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const;
 
     bool                Selected() const;
+    bool                NewFleetAggression() const;
 
     virtual void        Render();
     virtual void        DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys);
@@ -831,6 +837,7 @@ private:
     void                AggressionToggleButtonPressed();
 
     void                Refresh();
+    void                UpdateAggressionToggle();
     double              StatValue(const std::string& stat_name) const;
     std::string         StatTooltip(const std::string& stat_name) const;
     void                DoLayout();
@@ -838,6 +845,7 @@ private:
     const int           m_fleet_id;
     const int           m_system_id;
     const bool          m_new_fleet_drop_target;
+    bool                m_new_fleet_aggression;
 
     boost::signals::connection  m_fleet_connection;
 
@@ -856,6 +864,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     m_fleet_id(fleet_id),
     m_system_id(INVALID_OBJECT_ID),
     m_new_fleet_drop_target(false),
+    m_new_fleet_aggression(false),
     m_fleet_icon(0),
     m_fleet_name_text(0),
     m_fleet_destination_text(0),
@@ -909,6 +918,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_fleet_id(INVALID_OBJECT_ID),
     m_system_id(system_id),
     m_new_fleet_drop_target(new_fleet_drop_target), // should be true?
+    m_new_fleet_aggression(false),
     m_fleet_icon(0),
     m_fleet_name_text(0),
     m_fleet_destination_text(0),
@@ -923,9 +933,10 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_fleet_destination_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", ClientUI::GetFont(),
                                                    ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_fleet_destination_text);
-    //m_aggression_toggle = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(),
-    //                                     GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
-    //AttachChild(m_aggression_toggle);
+    m_aggression_toggle = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(),
+                                         GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
+    AttachChild(m_aggression_toggle);
+    GG::Connect(m_aggression_toggle->ClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
 
     Refresh();
 }
@@ -938,6 +949,9 @@ GG::Pt FleetDataPanel::ClientLowerRight() const
 
 bool FleetDataPanel::Selected() const
 { return m_selected; }
+
+bool FleetDataPanel::NewFleetAggression() const
+{ return m_new_fleet_aggression; }
 
 void FleetDataPanel::Render() {
     // main background position and colour
@@ -1071,17 +1085,21 @@ void FleetDataPanel::AggressionToggleButtonPressed() {
     if (!m_aggression_toggle)
         return;
     const Fleet* fleet = GetFleet(m_fleet_id);
-    if (!fleet)
-        return;
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (client_empire_id == ALL_EMPIRES)
-        return;
+    if (fleet) {
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        if (client_empire_id == ALL_EMPIRES)
+            return;
 
-    bool new_aggression_State = !fleet->Aggressive();
+        bool new_aggression_State = !fleet->Aggressive();
 
-    // toggle fleet aggression status
-    HumanClientApp::GetApp()->Orders().IssueOrder(
-        OrderPtr(new AggressiveOrder(client_empire_id, m_fleet_id, new_aggression_State)));
+        // toggle fleet aggression status
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            OrderPtr(new AggressiveOrder(client_empire_id, m_fleet_id, new_aggression_State)));
+    } else if (m_new_fleet_drop_target) {
+        // toggle new fleet aggression
+        m_new_fleet_aggression = !m_new_fleet_aggression;
+        UpdateAggressionToggle();
+    }
 }
 
 namespace {
@@ -1131,33 +1149,45 @@ void FleetDataPanel::Refresh() {
         // set stat icon values
         for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin();
              it != m_stat_icons.end(); ++it)
-        {
-            it->second->SetValue(StatValue(it->first));
-        }
-
-        // war / peace indicator status
-        if (m_aggression_toggle) {
-            int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-            m_aggression_toggle->SetBrowseModeTime(tooltip_delay);
-            if (fleet->Aggressive()) {
-                m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(WarIcon(),              GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-                m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(PeaceIcon(),            GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-                m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(WarMouseoverIcon(),     GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-                boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                    WarIcon(), UserString("FW_AGGRESSIVE"), UserString("FW_AGGRESSIVE_DESC")));
-                m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
-            } else {
-                m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(PeaceIcon(),            GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-                m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(WarIcon(),              GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-                m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(PeaceMouseoverIcon(),   GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-                boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                    PeaceIcon(), UserString("FW_PASSIVE"), UserString("FW_PASSIVE_DESC")));
-                m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
-            }
-        }
+        { it->second->SetValue(StatValue(it->first)); }
     }
 
+    UpdateAggressionToggle();
     DoLayout();
+}
+
+void FleetDataPanel::UpdateAggressionToggle() {
+    if (!m_aggression_toggle)
+        return;
+    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+    m_aggression_toggle->SetBrowseModeTime(tooltip_delay);
+
+    bool aggressive = false;
+
+    if (m_new_fleet_drop_target) {
+        aggressive = m_new_fleet_aggression;
+    } else if (const Fleet* fleet = GetFleet(m_fleet_id)) {
+        aggressive = fleet->Aggressive();
+    } else {
+        DetachChild(m_aggression_toggle);
+        return;
+    }
+
+    if (aggressive) {
+        m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(WarIcon(),              GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(PeaceIcon(),            GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(WarMouseoverIcon(),     GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+            WarIcon(), UserString("FW_AGGRESSIVE"), UserString("FW_AGGRESSIVE_DESC")));
+        m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
+    } else {
+        m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(PeaceIcon(),            GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(WarIcon(),              GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(PeaceMouseoverIcon(),   GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+            PeaceIcon(), UserString("FW_PASSIVE"), UserString("FW_PASSIVE_DESC")));
+        m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
+    }
 }
 
 double FleetDataPanel::StatValue(const std::string& stat_name) const {
@@ -2503,7 +2533,10 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
                 for (it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
                     std::vector<int> ship_ids_vec;
                     ship_ids_vec.push_back(*it);
-                    CreateNewFleetFromShips(ship_ids_vec);
+                    bool aggressive = false;
+                    if (m_new_fleet_drop_target)
+                        aggressive = m_new_fleet_drop_target->NewFleetAggression();
+                    CreateNewFleetFromShips(ship_ids_vec, aggressive);
                 }
             }
             break;
@@ -2566,8 +2599,12 @@ std::string FleetWnd::TitleText() const {
     }
 }
 
-void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids)
-{ CreateNewFleetFromShips(ship_ids); }
+void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids) {
+    bool aggressive = false;
+    if (m_new_fleet_drop_target)
+        aggressive = m_new_fleet_drop_target->NewFleetAggression();
+    CreateNewFleetFromShips(ship_ids, aggressive);
+}
 
 void FleetWnd::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows)
 { SelectedShipsChangedSignal(); }
