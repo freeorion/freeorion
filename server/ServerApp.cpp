@@ -1214,8 +1214,9 @@ namespace {
 
     /** Cleans up CombatInfo within \a system_combat_info. */
     void CleanupSystemCombatInfo(std::map<int, CombatInfo>& system_combat_info) {
-        for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin(); it != system_combat_info.end(); ++it)
-            it->second.Clear();
+        for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin();
+             it != system_combat_info.end(); ++it)
+        { it->second.Clear(); }
         system_combat_info.clear();
     }
 
@@ -1256,8 +1257,7 @@ namespace {
         // loop through resolved combat infos, updating actual main universe
         // with changes from combat
         for (std::map<int, CombatInfo>::const_iterator system_it = system_combat_info.begin();
-             system_it != system_combat_info.end();
-             ++system_it)
+             system_it != system_combat_info.end(); ++system_it)
         {
             const CombatInfo& combat_info = system_it->second;
 
@@ -1278,8 +1278,7 @@ namespace {
 
             // copy empires' latest known state of objects in combat after it was resolved
             for (std::map<int, ObjectMap>::const_iterator eko_it = combat_info.empire_known_objects.begin();
-                 eko_it != combat_info.empire_known_objects.end();
-                 ++eko_it)
+                 eko_it != combat_info.empire_known_objects.end(); ++eko_it)
             {
                 const ObjectMap& combat_known_objects = eko_it->second;
                 int empire_id = eko_it->first;
@@ -1295,8 +1294,7 @@ namespace {
             // and any associated objects that should now logically also be
             // destroyed
             for (std::set<int>::const_iterator do_it = combat_info.destroyed_object_ids.begin();
-                 do_it != combat_info.destroyed_object_ids.end();
-                 ++do_it)
+                 do_it != combat_info.destroyed_object_ids.end(); ++do_it)
             {
                 int destroyed_object_id = *do_it;
                 universe.RecursiveDestroy(destroyed_object_id);
@@ -1310,8 +1308,7 @@ namespace {
             // as determined for galaxy map purposes, but which do know it has
             // been destroyed from having observed it during the battle.
             for (std::map<int, std::set<int> >::const_iterator dok_it = combat_info.destroyed_object_knowers.begin();
-                 dok_it != combat_info.destroyed_object_knowers.end();
-                 ++dok_it)
+                 dok_it != combat_info.destroyed_object_knowers.end(); ++dok_it)
             {
                 int empire_id = dok_it->first;
                 const std::set<int>& object_ids = dok_it->second;
@@ -1343,8 +1340,7 @@ namespace {
     /** Creates sitreps for all empires involved in a combat. */
     void CreateCombatSitReps(const std::map<int, CombatInfo>& system_combat_info) {
         for (std::map<int, CombatInfo>::const_iterator it = system_combat_info.begin();
-             it != system_combat_info.end();
-             ++it)
+             it != system_combat_info.end(); ++it)
         {
             // basic "combat occured" sitreps
             const CombatInfo& combat_info = it->second;
@@ -1370,11 +1366,37 @@ namespace {
                 for (std::set<int>::const_iterator dest_obj_it = destroyed_object_ids.begin();
                      dest_obj_it != destroyed_object_ids.end(); ++dest_obj_it)
                 {
-                    empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(*dest_obj_it, combat_info.system_id, empire_id));
+                    empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(*dest_obj_it, combat_info.system_id,
+                                                                             empire_id));
                 }
             }
 
             // sitreps about damaged objects
+            //std::map<int, ObjectMap> combat_info.empire_known_objects;
+            for (std::set<int>::const_iterator object_it = combat_info.damaged_object_ids.begin();
+                 object_it != combat_info.damaged_object_ids.end(); ++object_it)
+            {
+                int damaged_object_id = *object_it;
+                // is object destroyed? If so, don't need a damage sitrep
+                if (combat_info.destroyed_object_ids.find(damaged_object_id) != combat_info.destroyed_object_ids.end())
+                    continue;
+                // which empires know about this object?
+                for (std::map<int, ObjectMap>::const_iterator empire_it = combat_info.empire_known_objects.begin();
+                     empire_it != combat_info.empire_known_objects.end(); ++empire_it)
+                {
+                    // does this empire know about this object?
+                    const ObjectMap& objects = empire_it->second;
+                    if (!objects.Object(damaged_object_id))
+                        continue;
+                    // empire knows about object, so generate a sitrep about it
+                    int empire_id = empire_it->first;
+                    Empire* empire = Empires().Lookup(empire_id);
+                    if (!empire)
+                        continue;
+                    empire->AddSitRepEntry(CreateCombatDamagedObjectSitRep(damaged_object_id, combat_info.system_id,
+                                                                           empire_id));
+                }
+            }
         }
     }
 }

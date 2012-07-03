@@ -637,9 +637,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     // be more discriminating about what info is or isn't copied.
     for (std::map<int, ObjectMap>::iterator it = combat_info.empire_known_objects.begin();
          it != combat_info.empire_known_objects.end(); ++it)
-    {
-        it->second.Copy(combat_info.objects);
-    }
+    { it->second.Copy(combat_info.objects); }
 
     Logger().debugStream() << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
 }
