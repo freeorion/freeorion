@@ -179,6 +179,7 @@ void NewFleetOrder::ExecuteImpl() const {
     // an ID is provided to ensure consistancy between server and client universes
     universe.InsertID(fleet, m_new_id);
     system->Insert(fleet);
+    fleet->SetAggressive(false);    // TODO: Copy from old fleet of ships?
 
 
     // add ship(s) to fleet
