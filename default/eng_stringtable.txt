@@ -2582,7 +2582,7 @@ A %shipdesign% was damaged at %system%.
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
 The %empire% planet %planet% was bombarded at %system%.
 
-SITREP_PLANET_BOMBARDED_AT_SYSTEM
+SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
 The planet %planet% was bombarded at %system%.
 
 
