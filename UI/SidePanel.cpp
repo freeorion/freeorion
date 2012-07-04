@@ -1064,35 +1064,6 @@ namespace {
         }
         return false;
     }
-
-    double ColonyShipCapacity(const Ship* ship) {
-        if (!ship)
-            return 0.0;
-
-        const ShipDesign* design = ship->Design();
-        if (!design) {
-            Logger().errorStream() << "ColonyShipCapacity couldn't find ship's design!";
-            return 0.0;
-        }
-
-        double colonist_capacity = 0.0;
-
-        const std::vector<std::string>& parts = design->Parts();
-        for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
-            const std::string& part_name = *it;
-            if (part_name.empty())
-                continue;
-            const PartType* part_type = GetPartType(part_name);
-            if (!part_type) {
-                Logger().errorStream() << "ColonyShipCapacity couldn't find ship part type: " << part_name;
-                continue;
-            }
-            if (part_type->Class() == PC_COLONY) {
-                colonist_capacity += boost::get<double>(part_type->Stats());
-            }
-        }
-        return colonist_capacity;
-    }
 }
 
 void SidePanel::PlanetPanel::Refresh() {
@@ -1153,17 +1124,19 @@ void SidePanel::PlanetPanel::Refresh() {
 
     std::string colony_ship_species_name;
     const ShipDesign* design = 0;
-    double colonist_capacity = 0.0;
+    double colony_ship_capacity = 0.0;
     if (selected_colony_ship) {
         colony_ship_species_name = selected_colony_ship->SpeciesName();
         design = selected_colony_ship->Design();
         if (design)
-            colonist_capacity = design->ColonyCapacity();
+            colony_ship_capacity = design->ColonyCapacity();
     }
     const Species* colony_ship_species = GetSpecies(colony_ship_species_name);
     PlanetEnvironment planet_env_for_colony_species = PE_UNINHABITABLE;
     if (colony_ship_species)
         planet_env_for_colony_species = colony_ship_species->GetPlanetEnvironment(planet->Type());
+    double planet_capacity = planet->CurrentMeterValue(METER_TARGET_POPULATION);
+
 
     // calculate truth tables for planet colonization and invasion
     bool has_owner =        !planet->Unowned();
@@ -1175,7 +1148,8 @@ void SidePanel::PlanetPanel::Refresh() {
     bool being_colonized =  planet->IsAboutToBeColonized();
     bool outpostable =                   !populated && (  !has_owner && !shielded         ) && visible && !being_colonized;
     bool colonizable =      habitable && !populated && ( (!has_owner && !shielded) || mine) && visible && !being_colonized;
-    bool can_colonize =     selected_colony_ship && (colonizable || (outpostable && colonist_capacity == 0.0));
+    bool colony_stable =    colonizable && planet_capacity > 0.0;
+    bool can_colonize =     selected_colony_ship && (colonizable || (outpostable && colony_ship_capacity == 0.0));
 
     bool could_colonize =   OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID()) &&
                                          !populated && (!has_owner || mine) && visible && !being_colonized && !shielded;
@@ -1208,9 +1182,17 @@ void SidePanel::PlanetPanel::Refresh() {
     DetachChild(m_invade_button);
     DetachChild(m_colonize_button);
     DetachChild(m_colonize_instruction);
-    std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
-                                               % GetPlanetSizeName(*planet)
-                                               % GetPlanetTypeName(*planet));
+    std::string env_size_text;
+    if (colony_ship_species_name.empty())
+        env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
+                                       % GetPlanetSizeName(*planet)
+                                       % GetPlanetTypeName(*planet));
+    else
+        env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
+                                       % GetPlanetSizeName(*planet)
+                                       % GetPlanetTypeName(*planet)
+                                       % GetPlanetEnvironmentName(*planet, colony_ship_species_name));
+
 
     if (Disabled() || !(can_colonize || could_colonize || being_colonized || invadable || being_invaded)) {
         // hide everything
@@ -1218,16 +1200,16 @@ void SidePanel::PlanetPanel::Refresh() {
     } else if (can_colonize) {
         // show colonize button
         AttachChild(m_colonize_button);
-        std::string initial_pop = DoubleToString(ColonyShipCapacity(selected_colony_ship), 2, false);
-        std::string target_pop = DoubleToString(planet->CurrentMeterValue(METER_TARGET_POPULATION), 2, false);
-        std::string colonize_text = boost::io::str(FlexibleFormat(UserString("PL_COLONIZE")) % initial_pop % target_pop);
+        std::string colonize_text;
+        if (colony_ship_capacity > 0.0) {
+            std::string initial_pop = DoubleToString(colony_ship_capacity, 2, false);
+            std::string target_pop = DoubleToString(planet_capacity, 2, false);
+            colonize_text = boost::io::str(FlexibleFormat(UserString("PL_COLONIZE")) % initial_pop % target_pop);
+        } else {
+            colonize_text = UserString("PL_OUTPOST");
+        }
         if (m_colonize_button)
             m_colonize_button->SetText(colonize_text);
-
-        env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
-                                       % GetPlanetSizeName(*planet)
-                                       % GetPlanetTypeName(*planet)
-                                       % GetPlanetEnvironmentName(*planet, colony_ship_species_name));
 
     } else if (being_colonized) {
         // shown colonize cancel button
@@ -1257,7 +1239,7 @@ void SidePanel::PlanetPanel::Refresh() {
         if (m_invade_button)
             m_invade_button->SetText(UserString("PL_CANCEL_INVADE"));
 
-    } else if (could_colonize) {
+    } else if (!selected_colony_ship && could_colonize) {
         // show colonization instruction text
         AttachChild(m_colonize_instruction);
     }

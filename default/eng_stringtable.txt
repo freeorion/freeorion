@@ -1812,6 +1812,10 @@ PL_COLONIZE
 Colonize (%1% / %2%)
 PL_CANCEL_COLONIZE
 Cancel Colonization
+PL_OUTPOST
+Place Outpost
+PL_CANCEL_OUTPOST
+Cancel Outpost
 PL_INVADE
 Invade (+%1%)
 PL_CANCEL_INVADE
