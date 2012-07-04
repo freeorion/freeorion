@@ -1434,6 +1434,10 @@ namespace {
         }
         double colonist_capacity = design->ColonyCapacity();
 
+        if (colonist_capacity > 0.0 && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
+            Logger().errorStream() << "ColonizePlanet nonzero colonist capacity and planet that ship's species can't colonize";
+            return false;
+        }
 
         // get empire to give ownership of planet to
         if (ship->Unowned()) {
@@ -1503,14 +1507,11 @@ namespace {
             Planet* planet = objects.Object<Planet>(colonize_planet_id);
             if (!planet)
                 continue;
-            planet->ResetIsAboutToBeColonized();
-            if (planet->CurrentMeterValue(METER_POPULATION) > 0.0)
-                continue;
-            if (!planet->Unowned() && !planet->OwnedBy(ship->Owner()))
-                continue;
 
             if (ship->SystemID() != planet->SystemID() || ship->SystemID() == INVALID_OBJECT_ID)
                 continue;
+
+            planet->ResetIsAboutToBeColonized();
 
             planet_empire_colonization_ship_ids[colonize_planet_id][owner_empire_id].insert(ship_id);
         }

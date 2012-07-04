@@ -417,7 +417,7 @@ void ColonizeOrder::ExecuteImpl() const {
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
     }
-    if (!ship->CanColonize()) {
+    if (!ship->CanColonize()) { // verifies that species exists and can colonize and that ship design can colonize
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl got ship that can't colonize";
         return;
     }
@@ -425,6 +425,12 @@ void ColonizeOrder::ExecuteImpl() const {
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
         return;
     }
+    const ShipDesign* design = ship->Design();
+    if (!design) {
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't find ship's design!";
+        return;
+    }
+    double colonist_capacity = design->ColonyCapacity();
 
     Planet* planet = GetPlanet(m_planet);
     if (!planet) {
@@ -435,8 +441,24 @@ void ColonizeOrder::ExecuteImpl() const {
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that already has population";
         return;
     }
+    if (planet->CurrentMeterValue(METER_SHIELD) > 0.0) {
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that is shielded";
+        return;
+    }
+    if (!planet->Unowned() && planet->Owner() != empire_id) {
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that owned by another empire";
+        return;
+    }
+    if (planet->OwnedBy(empire_id) && colonist_capacity == 0.0) {
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that is already owned by empire and colony ship with zero capcity";
+        return;
+    }
     if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_PARTIAL_VISIBILITY) {
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that empire has insufficient visibility of";
+        return;
+    }
+    if (colonist_capacity > 0.0 && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl nonzero colonist capacity and planet that ship's species can't colonize";
         return;
     }
 

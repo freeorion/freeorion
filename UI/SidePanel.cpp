@@ -1148,11 +1148,18 @@ void SidePanel::PlanetPanel::Refresh() {
         }
     }
 
-    const Ship* colony_ship =           ValidSelectedColonyShip(SidePanel::SystemID());
+    const Ship* selected_colony_ship =  ValidSelectedColonyShip(SidePanel::SystemID());
     std::set<Ship*> invasion_ships =    ValidSelectedInvasionShips(SidePanel::SystemID());
+
     std::string colony_ship_species_name;
-    if (colony_ship)
-        colony_ship_species_name = colony_ship->SpeciesName();
+    const ShipDesign* design = 0;
+    double colonist_capacity = 0.0;
+    if (selected_colony_ship) {
+        colony_ship_species_name = selected_colony_ship->SpeciesName();
+        design = selected_colony_ship->Design();
+        if (design)
+            colonist_capacity = design->ColonyCapacity();
+    }
     const Species* colony_ship_species = GetSpecies(colony_ship_species_name);
     PlanetEnvironment planet_env_for_colony_species = PE_UNINHABITABLE;
     if (colony_ship_species)
@@ -1161,18 +1168,21 @@ void SidePanel::PlanetPanel::Refresh() {
     // calculate truth tables for planet colonization and invasion
     bool has_owner =        !planet->Unowned();
     bool mine =             planet->OwnedBy(client_empire_id);
-    bool populated =        planet->CurrentMeterValue(METER_POPULATION) > 0.;
-    //bool habitable =        planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
+    bool populated =        planet->CurrentMeterValue(METER_POPULATION) > 0.0;
+    bool habitable =        planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
     bool visible =          GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY;
-    bool vulnerable =       planet->CurrentMeterValue(METER_SHIELD) <= 0.;
+    bool shielded =         planet->CurrentMeterValue(METER_SHIELD) > 0.0;
     bool being_colonized =  planet->IsAboutToBeColonized();
-    bool colonizable =      !populated && /*habitable &&*/ visible && !being_colonized;
-    bool can_colonize =     colonizable && colony_ship;
-    //bool could_colonize =   colonizable && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
-    bool could_colonize =   (!populated || (has_owner && !mine)) && visible && !being_colonized && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
+    bool outpostable =                   !populated && (  !has_owner && !shielded         ) && visible && !being_colonized;
+    bool colonizable =      habitable && !populated && ( (!has_owner && !shielded) || mine) && visible && !being_colonized;
+    bool can_colonize =     selected_colony_ship && (colonizable || (outpostable && colonist_capacity == 0.0));
+
+    bool could_colonize =   OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID()) &&
+                                         !populated && (!has_owner || mine) && visible && !being_colonized && !shielded;
+
     bool being_invaded =    planet->IsAboutToBeInvaded();
-    bool at_war_with_me =   !mine && (!has_owner || (Empires().GetDiplomaticStatus(client_empire_id, planet->Owner()) == DIPLO_WAR));
-    bool invadable =        at_war_with_me && (populated || has_owner) && vulnerable && visible && !being_invaded && !invasion_ships.empty();
+    bool at_war_with_me =   !mine && (populated || (has_owner && Empires().GetDiplomaticStatus(client_empire_id, planet->Owner()) == DIPLO_WAR));
+    bool invadable =        at_war_with_me && !shielded && visible && !being_invaded && !invasion_ships.empty();
 
     if (populated || SHOW_ALL_PLANET_PANELS) {
         AttachChild(m_population_panel);
@@ -1182,7 +1192,7 @@ void SidePanel::PlanetPanel::Refresh() {
         DetachChild(m_population_panel);
     }
 
-    if (populated || has_owner) {
+    if (populated || has_owner || SHOW_ALL_PLANET_PANELS) {
         AttachChild(m_resource_panel);
         if (m_resource_panel)
             m_resource_panel->Refresh();
@@ -1208,7 +1218,7 @@ void SidePanel::PlanetPanel::Refresh() {
     } else if (can_colonize) {
         // show colonize button
         AttachChild(m_colonize_button);
-        std::string initial_pop = DoubleToString(ColonyShipCapacity(colony_ship), 2, false);
+        std::string initial_pop = DoubleToString(ColonyShipCapacity(selected_colony_ship), 2, false);
         std::string target_pop = DoubleToString(planet->CurrentMeterValue(METER_TARGET_POPULATION), 2, false);
         std::string colonize_text = boost::io::str(FlexibleFormat(UserString("PL_COLONIZE")) % initial_pop % target_pop);
         if (m_colonize_button)
@@ -1217,7 +1227,7 @@ void SidePanel::PlanetPanel::Refresh() {
         env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
                                        % GetPlanetSizeName(*planet)
                                        % GetPlanetTypeName(*planet)
-                                       % GetPlanetEnvironmentName(*planet, colony_ship->SpeciesName()));
+                                       % GetPlanetEnvironmentName(*planet, colony_ship_species_name));
 
     } else if (being_colonized) {
         // shown colonize cancel button
