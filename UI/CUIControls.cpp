@@ -948,7 +948,7 @@ GG::Clr StatisticIcon::ValueColor(int index) const {
 // class CUIToolBar
 ///////////////////////////////////////
 CUIToolBar::CUIToolBar(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-    GG::Control(x, y, w, h, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE)
+    GG::Control(x, y, w, h, GG::ONTOP | GG::INTERACTIVE)
 {}
 
 bool CUIToolBar::InWindow(const GG::Pt& pt) const {
