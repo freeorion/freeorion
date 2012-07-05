@@ -2672,7 +2672,6 @@ SP_HUMAN_DESC
 Prefer Terran planets.
 Organic
 
-[[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 '''
@@ -2684,7 +2683,6 @@ SP_SCYLIOR_DESC
 Prefer Ocean planets.
 Organic
 
-[[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[GREAT_RESEARCH]]
 
@@ -2698,7 +2696,6 @@ SP_GYISACHE_DESC
 Prefer Swamp planets.
 Organic
 
-[[AVERAGE_MINING]]
 [[GREAT_INDUSTRY]]
 [[GOOD_RESEARCH]]
 
@@ -2712,7 +2709,6 @@ SP_CHATO_DESC
 Prefer Toxic planets.
 Phototrophic
 
-[[GREAT_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[GREAT_RESEARCH]]
         
@@ -2729,7 +2725,6 @@ Organic
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
 
-[[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 '''
@@ -2741,7 +2736,6 @@ SP_HHHOH_DESC
 Prefer Tundra planets.
 Organic
 
-[[BAD_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
@@ -2756,7 +2750,6 @@ SP_EAXAW_DESC
 Prefer Terran planets.
 Organic
 
-[[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
@@ -2770,7 +2763,6 @@ SP_DERTHREAN_DESC
 Prefer Toxic planets.
 Organic
 
-[[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 '''
@@ -2785,7 +2777,6 @@ Phototrophic
 [[GOOD_DETECTION]]
 [[GREAT_STEALTH]]
 
-[[BAD_MINING]]
 [[BAD_INDUSTRY]]
 [[BAD_RESEARCH]]
 
@@ -2800,7 +2791,6 @@ SP_TAEGHIRUS_DESC
 Prefer Swamp planets.
 Organic
 
-[[GOOD_MINING]]
 [[GOOD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
@@ -2816,7 +2806,6 @@ SP_MUURSH_DESC
 Prefer Desert planets.
 Organic
 
-[[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
 
@@ -2832,7 +2821,6 @@ SP_GEORGE_DESC
 Prefers Tundra planets.
 Organic
 
-[[GOOD_MINING]]
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
 '''
@@ -2845,13 +2833,10 @@ SP_CRAY_DESC
 Prefer Barren planets, but adapts well to other types.
 Robotic
 
-[[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
 
 [[GOOD_GROUND_TROOPS]]
-
-[[NON_ORGANIC]]
 '''
 
 
@@ -2862,7 +2847,6 @@ SP_ETTY_DESC
 Prefer Desert planets.
 Phototrophic
 
-[[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
@@ -2879,7 +2863,6 @@ SP_CYNOS_DESC
 Prefer Swamp planets.
 Phototrophic
 
-[[NO_MINING]]
 [[NO_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
@@ -2893,7 +2876,6 @@ SP_PHINNERT_DESC
 Prefer Ocean planets.
 Organic
 
-[[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[NO_RESEARCH]]
 '''
@@ -2905,11 +2887,8 @@ SP_EGASSEM_DESC
 Prefer Inferno planets.
 Lithic
 
-[[AVERAGE_MINING]]
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
-
-[[NON_ORGANIC]]
 '''
 
 SP_SSLITH
@@ -2919,7 +2898,6 @@ SP_SSLITH_DESC
 Prefer Tundra planets.
 Organic
 
-[[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
@@ -2933,7 +2911,6 @@ SP_FIFTYSEVEN_DESC
 Prefer Swamp planets.
 Organic
 
-[[NO_MINING]]
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
 
@@ -2963,7 +2940,6 @@ Organic
 
 [[GREAT_STEALTH]]
 
-[[BAD_MINING]]
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
@@ -2977,19 +2953,16 @@ Nymnmn
 SP_NYMNMN_DESC
 '''Planet-wide sapient magnetic waveforms.
 Prefer Desert planets.
-Self-Sufficient
+Self-Sustaining
 
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
 
-[[NO_MINING]]
 [[NO_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
 [[BAD_GROUND_TROOPS]]
 [[BAD_POPULATION]]
-
-[[NON_ORGANIC]]
 '''
 
 
@@ -3000,13 +2973,10 @@ SP_TRENCHERS_DESC
 Prefers Barren planets.
 Robotic
 
-[[AVERAGE_MINING]]
 [[NO_INDUSTRY]]
 [[NO_RESEARCH]]
         
 [[BAD_GROUND_TROOPS]]
-
-[[NON_ORGANIC]]
 '''
 
 
@@ -3017,7 +2987,6 @@ SP_RAAAGH_DESC
 Prefer Terran planets.
 Organic
 
-[[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[NO_RESEARCH]]
 
@@ -3043,13 +3012,11 @@ SP_BEIGEGOO_DESC
 Prefers Radiated planets.
 Robotic
 
-[[NO_MINING]]
 [[GREAT_INDUSTRY]]
 [[NO_RESEARCH]]
         
 [[GREAT_GROUND_TROOPS]]
 [[GOOD_POPULATION]]
-[[NON_ORGANIC]]
 
 The entire planet is covered in a beige haze of Nanites. It is unknown wheather they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials.  However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
 '''
@@ -3061,11 +3028,8 @@ SP_SILEXIAN_DESC
 Prefer Terran planets.
 Robotic
 
-[[AVERAGE_MINING]]
 [[NO_INDUSTRY]]
 [[BAD_RESEARCH]]
-
-[[NON_ORGANIC]]
 '''
 
 SP_KOBUNTURA
@@ -3073,15 +3037,12 @@ Kobuntura
 SP_KOBUNTURA_DESC
 '''Sentient magnetic dust formations with a fascination for building and construction.
 Prefer Barren planets.
-Self-Sufficient
+Self-Sustaining
 
-[[GOOD_MINING]]
 [[GREAT_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
 [[BAD_GROUND_TROOPS]]
-
-[[NON_ORGANIC]]
 '''
 
 
@@ -3092,13 +3053,10 @@ SP_UGMORRS_DESC
 Prefer Inferno planets.
 Lithic
 
-[[AVERAGE_MINING]]
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
         
 [[GOOD_GROUND_TROOPS]]
-
-[[NON_ORGANIC]]
 '''
 
 SP_GISGUFGTHRIM
@@ -3108,7 +3066,6 @@ SP_GISGUFGTHRIM_DESC
 Prefer Toxic planets.
 Organic
 
-[[AVERAGE_MINING]]
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
         
@@ -3126,7 +3083,6 @@ Organic
 
 [[GOOD_STEALTH]]
 
-[[NO_MINING]]
 [[NO_INDUSTRY]]
 [[NO_RESEARCH]]
 
@@ -3148,7 +3104,6 @@ SP_ABADDONNIANS_DESC
 Prefers Inferno planets.
 Lithic
 
-[[GREAT_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
         
@@ -3161,13 +3116,10 @@ Acirema
 SP_ACIREMA_DESC
 '''A race with nearly limitless power, that cannot survive in this universe.
 Prefers Radiated planets.
-Self-Sufficient
+Self-Sustaining
 
-[[AVERAGE_MINING]]
 [[GREAT_INDUSTRY]]
 [[GOOD_RESEARCH]]
-
-[[NON_ORGANIC]]
 
 Description
 An Acirem is a 10-30 m ellipsoidal energy beings with large (30-100m) ''wings''. As they age they tend to accumulate material from around them developing a dusty and eventually rocky appearance (still maintaining the visible energy flows through their body and the gaps). Most Acirema live in a universe where the physical constants are slightly different, and there is only one place where they can get through to our universe, on their "Homeworld" of Portal. However, upon doing that they immediately begin to 'age' differently than in their own universe. Acirema cannot survive more than a few fractions of a galactic cycle in this universe. So an Acirem rarely spends much time before crossing back into their own universe.
@@ -3192,7 +3144,6 @@ Organic
 
 [[ULTIMATE_DETECTION]]
 
-[[BAD_MINING]]
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
@@ -3218,7 +3169,6 @@ SP_VOLP_DESC
 Prefer Barren planets.
 Lithic
 
-[[BAD_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
@@ -3242,7 +3192,6 @@ Exobot
 SP_EXOBOT_DESC
 '''Semi-autonomous robots, designed for mining and industry on Barren, Radiated, & Inferno planets.
 
-[[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
         
@@ -3259,7 +3208,6 @@ Experimentor
 SP_EXPERIMENTOR_DESC
 '''Percursor mad scientists
 
-[[NO_MINING]]
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
 
@@ -3277,7 +3225,6 @@ Super Testers
 SP_SUPER_TEST_DESC
 '''Super Testers are unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets.
 
-[[GREAT_MINING]]
 [[GREAT_INDUSTRY]]
 [[GREAT_RESEARCH]]
         
@@ -3290,7 +3237,6 @@ Testing Guinea Pig
 SP_TEST_DESC
 '''Try all your experimental scripting on this guy, he'll appear a lot.
 
-[[AVERAGE_MINING]]
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 '''
@@ -3346,7 +3292,7 @@ SOLID_CORE_SPECIAL
 Solid Core
 
 SOLID_CORE_SPECIAL_DESC
-'''Health on this planet is reduced by 5.
+'''Population on this planet is reduced by 3.
 
 This planet's core has solidified, and it has a very weak magnetic field. The star's solar wind reaches the surface relatively unfiltered, damaging the health of the planet's population.'''
 
@@ -3443,7 +3389,7 @@ This planet is surrounded by volcanic ash, increasing its stealth.
 DIM_RIFT_MASTER_SPECIAL
 Dimensional Burrowers
 DIM_RIFT_MASTER_SPECIAL_DESC
-This planet has monsters burrowing around in its core causing dimensional tears in and around the planet and reducing target health by 20.  Later on, these monsters will mature and bigin dragging the planet into the void.
+This planet has monsters burrowing around in its core causing dimensional tears in and around the planet.  Later on, these monsters will mature and begin dragging the planet into the void.
 
 DIM_RIFT_SLAVE_SPECIAL
 Dimensional Rift
@@ -4880,7 +4826,7 @@ GRO_XENO_GENETICS
 Xenological Genetics
 
 GRO_XENO_GENETICS_DESC
-'''Increases the population capacity of Poor planets to 1, 2, 3, and 4, and the population capacity of Adequate planets by 0.5, 1, 1.5, and 2 for Small, Medium, Large and Huge planets, respectively. Health on Poor and Adequate planets is increased by 5. [[NO_NON_ORGANIC]]
+'''Increases the population capacity of Poor planets to 1, 2, 3, and 4, and the population capacity of Adequate planets by 0.5, 1, 1.5, and 2 for Small, Medium, Large and Huge planets, respectively. [[NO_NON_ORGANIC]]
 
 The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
 
@@ -4904,7 +4850,7 @@ GRO_XENO_HYBRIDS
 Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
-'''Increases the population capacity of Hostile and Poor planets by 0.5, 1, 1.5, and 2, for Small, Medium, Large and Huge planets, respectively. Health on Hostile and Poor planets is increased by 5. [[NO_NON_ORGANIC]]
+'''Increases the population capacity of Hostile and Poor planets by 0.5, 1, 1.5, and 2, for Small, Medium, Large and Huge planets, respectively. [[NO_NON_ORGANIC]]
 
 Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
 
@@ -5572,7 +5518,7 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Increases the population capacity of Hostile planets to 0.5, 1, 1.5, and 2 for Small, Medium, Large and Huge planets, respectively. Increases Health on Hostile by 10. [[NO_NON_ORGANIC]]
+'''Increases the population capacity of Hostile planets to 0.5, 1, 1.5, and 2 for Small, Medium, Large and Huge planets, respectively. [[NO_NON_ORGANIC]]
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
@@ -5660,7 +5606,7 @@ PRO_HEAVY_MINING_I
 Heavy Mining Processors
 
 PRO_HEAVY_MINING_I_DESC
-When increased minerals production is the only concern, no environmental damage considerations exist and the environment itself is conducive, partially automated bulk mining activities can be optimal. Heavy mining processors are expensive however, and are only practical to use on worlds with primary focus mining. As well, these processors severely damage the ecology of a planet, reducing its maximum population and health somewhat.
+When increased minerals production is the only concern, no environmental damage considerations exist and the environment itself is conducive, partially automated bulk mining activities can be optimal. Heavy mining processors are expensive however, and are only practical to use on worlds with primary focus mining. As well, these processors severely damage the ecology of a planet, reducing its maximum population somewhat.
 
 PRO_ASTEROID_MINE
 Asteroid Mining
@@ -6227,13 +6173,13 @@ SHP_DEATH_SPORE
 Death Spores
 
 SHP_DEATH_SPORE_DESC
-Unlocks the Death Spores ship part, which allows ships to somewhat reduce the health of planets.
+Unlocks the Death Spores ship part, which allows ships to somewhat reduce the population of planets.
 
 SHP_BIOTERM
 Bio-Terminators
 
 SHP_BIOTERM_DESC
-Unlocks the Bio-Terminators ship part, which allows ships to greatly reduce the health of planets.
+Unlocks the Bio-Terminators ship part, which allows ships to greatly reduce the population of planets.
 
 SHP_PLANET_STEALTH_MOD
 Planet Stealth Modifier
@@ -6279,7 +6225,7 @@ Environmentally Conscious Mining
 PRO_ENVIRO_MINING_DESC
 '''Many mining methods are incompatible with highly populous planets, due to environmental damage. Careful consideration of Planetary Ecology is required to permit limited mining techniques to be employed without such downsides.
 
-Halves the population and health penalties on planets with the Heavy Mining focus.'''
+Halves the population penalties on planets with the Heavy Mining focus.'''
 
 
 #############################################################
@@ -6414,9 +6360,9 @@ BLD_BIOTERROR_PROJECTOR
 Bioterror Projection Base
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Gives the planet on which it is built the Bioterror focus, which decreases Health on enemy planets within 4 starlane jumps at a rate of 2 Health per turn, provided the enemy empire does not contain a Genome Bank.
+'''Gives the planet on which it is built the Bioterror focus, which decreases Population on enemy planets within 4 starlane jumps at a rate of 2 per turn, provided the enemy empire does not contain a Genome Bank.
 
-This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Gradually reduces the Health of all enemy planets within four starlane jumps until the planet's population is gone. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a Genome Bank building in the enemy empire. This building can also be built at an outpost, provided it has a resonant moon.'''
+This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Gradually reduces the Population of all enemy planets within four starlane jumps until the planet's population is gone. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a Genome Bank building in the enemy empire. This building can also be built at an outpost, provided it has a resonant moon.'''
 
 BLD_LIGHTHOUSE
 Interstellar Lighthouse
@@ -6511,7 +6457,7 @@ BLD_HYPER_DAM
 Hyperspatial Dam
 
 BLD_HYPER_DAM_DESC
-'''Increases target Industry on planets with the Industry focus by the planet's Population, but decreases Health on such planets by 5.
+'''Increases target Industry on planets with the Industry focus by the planet's Population, but decreases Population on such planets by 5.
 
 A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
 
@@ -7130,13 +7076,13 @@ SP_DEATH_SPORE
 Death Spores
 
 SP_DEATH_SPORE_DESC
-A biological weapon which gradually reduces the health of a planet.
+A biological weapon which gradually reduces the population of a planet.
 
 SP_BIOTERM
 Bio-Terminators
 
 SP_BIOTERM_DESC
-A powerful biological weapon which quickly reduces the health of a planet.
+A powerful biological weapon which quickly reduces the population of a planet.
 
 SP_NOVA_BOMB
 Nova Bomb
@@ -7543,39 +7489,6 @@ A fearsom space dragon the size of a small planet.
 ####              S P E C I E S   P I C K S              ####
 #############################################################
 
-
-BAD_HEALTH
-'''Slow population growth.'''
-
-AVERAGE_HEALTH
-'''Average population growth.'''
-
-GOOD_HEALTH
-'''Good population growth.'''
-
-GREAT_HEALTH
-'''Great population growth.'''
-
-ULTIMATE_HEALTH
-'''Ultimate population growth.'''
-
-NO_MINING
-'''- - - No Mining'''
-
-BAD_MINING
-'''    - Bad Mining: 50%'''
-
-AVERAGE_MINING
-'''      Average Mining: 100%'''
-
-GOOD_MINING
-'''    + Good Mining: 150%'''
-
-GREAT_MINING
-'''  + + Great Mining: 250%'''
-
-ULTIMATE_MINING
-'''+ + + Ultimate Mining: 400%'''
 
 NO_INDUSTRY
 '''- - - No Industry'''

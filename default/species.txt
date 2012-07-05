@@ -979,7 +979,7 @@ Species
     
     graphic = "icons/species/gis-guf-gthrim.png"
 
-
+/*
 Species
     name = "SP_HIDDENGARDENER"
     description = "SP_HIDDENGARDENER_DESC"
@@ -1011,6 +1011,7 @@ Species
     [[TERRAN_STANDARD_EP]]
     
     graphic = "icons/species/hidden-gardener.png"
+*/
 
 
 Species
