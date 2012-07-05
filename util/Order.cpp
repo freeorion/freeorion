@@ -441,10 +441,6 @@ void ColonizeOrder::ExecuteImpl() const {
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that already has population";
         return;
     }
-    if (planet->CurrentMeterValue(METER_SHIELD) > 0.0) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that is shielded";
-        return;
-    }
     if (!planet->Unowned() && planet->Owner() != empire_id) {
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that owned by another empire";
         return;

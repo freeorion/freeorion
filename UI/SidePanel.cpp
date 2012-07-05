@@ -1146,13 +1146,13 @@ void SidePanel::PlanetPanel::Refresh() {
     bool visible =          GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY;
     bool shielded =         planet->CurrentMeterValue(METER_SHIELD) > 0.0;
     bool being_colonized =  planet->IsAboutToBeColonized();
-    bool outpostable =                   !populated && (  !has_owner && !shielded         ) && visible && !being_colonized;
-    bool colonizable =      habitable && !populated && ( (!has_owner && !shielded) || mine) && visible && !being_colonized;
+    bool outpostable =                   !populated && (  !has_owner /*&& !shielded*/         ) && visible && !being_colonized;
+    bool colonizable =      habitable && !populated && ( (!has_owner /*&& !shielded*/) || mine) && visible && !being_colonized;
     bool colony_stable =    colonizable && planet_capacity > 0.0;
     bool can_colonize =     selected_colony_ship && (colonizable || (outpostable && colony_ship_capacity == 0.0));
 
     bool could_colonize =   OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID()) &&
-                                         !populated && (!has_owner || mine) && visible && !being_colonized && !shielded;
+                                         !populated && (!has_owner || mine) && visible && !being_colonized /*&& !shielded*/;
 
     bool being_invaded =    planet->IsAboutToBeInvaded();
     bool at_war_with_me =   !mine && (populated || (has_owner && Empires().GetDiplomaticStatus(client_empire_id, planet->Owner()) == DIPLO_WAR));
