@@ -154,7 +154,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "TELEPATHIC" ]
+    tags = [ "SELF_SUSTAINING" "TELEPATHIC" ]
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -177,7 +177,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
-        [[AVERAGE_POPULATION]]
+        [[AVERAGE_SELF_SUSTAINING_POPULATION]]
         [[LARGE_PLANET]]
     ]
     
@@ -722,7 +722,7 @@ Species
     description = "SP_NYMNMN_DESC"
     Native
     
-    tags = "SELF_SUFFICIENT"
+    tags = "SELF_SUSTAINING"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -737,7 +737,7 @@ Species
         [[AVERAGE_RESEARCH]]
         
         [[BAD_GROUND_TROOPS]]
-        [[BAD_POPULATION]]
+        [[BAD_SELF_SUSTAINING_POPULATION]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
@@ -882,7 +882,7 @@ Species
     CanProduceShips
     CanColonize
     
-    tags = "SELF_SUFFICIENT"
+    tags = "SELF_SUSTAINING"
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -902,7 +902,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
-        [[AVERAGE_POPULATION]]
+        [[AVERAGE_SELF_SUSTAINING_POPULATION]]
     ]
     
     [[BARREN_STANDARD_EP]]
@@ -1056,7 +1056,7 @@ Species
     Native
     CanProduceShips
     
-    tags = "SELF_SUFFICIENT"
+    tags = "SELF_SUSTAINING"
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -1076,7 +1076,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
-        [[AVERAGE_POPULATION]]
+        [[AVERAGE_SELF_SUSTAINING_POPULATION]]
 
         EffectsGroup     
             scope = Source     
@@ -1221,7 +1221,7 @@ Species
     name = "SP_EXPERIMENTOR"
     description = "SP_EXPERIMENTOR_DESC"
 
-    tags = "ORGANIC"
+    tags = "SELF_SUSTAINING"
     
     foci = [
         [[HAS_RESEARCH_FOCUS]]
@@ -1234,7 +1234,7 @@ Species
 
         [[ULTIMATE_GROUND_TROOPS]]
 
-        [[GOOD_POPULATION]]
+        [[GOOD_SELF_SUSTAINING_POPULATION]]
 
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
@@ -1774,7 +1774,7 @@ HAS_GROWTH_FOCUS
             location = Or [
                 AND [
                     Homeworld
-                    Not HasTag "SELF_SUFFICIENT"
+                    Not HasTag "SELF_SUSTAINING"
                 ]
                 HasSpecial name = "POSITRONIUM_SPECIAL"
                 HasSpecial name = "SUPERCONDUCTOR_SPECIAL"
@@ -1924,16 +1924,61 @@ STANDARD_CONSTRUCTION
 '''
 
 BASIC_POPULATION
-'''     EffectsGroup          //  The right species gets the population bonus on the homeworld no matter the focus
+'''     //#####     H O M E W O R L D   P O P U L A T I O N   B O O S T     #####  
+
+        EffectsGroup
             scope = AND [
                 Source
                 Homeworld name = Source.Species
             ]
+            activation = Planet size = [Huge GasGiant]
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetPopulation Value + 5
+            
+        EffectsGroup
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = Planet size = Large
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetPopulation Value + 4
+            
+        EffectsGroup
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = Planet size = [ Medium Asteroids ]            
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_BONUS"
             effects = SetTargetPopulation Value + 3
             
-        EffectsGroup          //  NOWORK These bonuses given to connected planets whose homeworld this is If the focus is growth
+        EffectsGroup
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = Planet size = Small
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetPopulation Value + 2
+            
+        EffectsGroup 
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = Planet size = Tiny
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetPopulation Value + 1
+            
+//#####     H O M E W O R L D   G R O W T H   F O C U S  B O O S T     #####  
+
+        EffectsGroup 
             scope = And [
                 Planet
                 OwnedBy TheEmpire Source.Owner
@@ -1950,6 +1995,8 @@ BASIC_POPULATION
             effects = SetTargetPopulation Value + 3    
 
 
+//#####     B A S E   P O P U L A T I O N     #####
+
         EffectsGroup
             scope = Source
             activation = And [
@@ -1957,25 +2004,25 @@ BASIC_POPULATION
                 Planet size = [Huge GasGiant]
             ]
             accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 8
+            effects = SetTargetPopulation Value + 15
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = [Large Asteroids]
+                Planet size = Large
             ]
             accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 6
+            effects = SetTargetPopulation Value + 12
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Medium
+                Planet size = [ Medium Asteroids ]
             ]
             accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 4
+            effects = SetTargetPopulation Value + 9
 
         EffectsGroup
             scope = Source
@@ -1984,7 +2031,7 @@ BASIC_POPULATION
                 Planet size = Small
             ]
             accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 2
+            effects = SetTargetPopulation Value + 6
 
         EffectsGroup
             scope = Source
@@ -1993,49 +2040,47 @@ BASIC_POPULATION
                 Planet size = Tiny
             ]
             accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 0
-            
-//##### P H O T O T R O P H I C   S T U F F #####            
+            effects = SetTargetPopulation Value + 3
+
+
+
+//#####     P H O T O T R O P H I C   S T U F F     #####            
             
         EffectsGroup
             scope = Source
             activation = AND [
                 HasTag "PHOTOTROPHIC"
                 Star type = [Blue]
-                Not Planet environment = Uninhabitable
             ]
             accountinglabel = "VERY_BRIGHT_STAR"
-            effects = SetTargetPopulation Value + 6
+            effects = SetTargetPopulation Value + 15
             
         EffectsGroup
             scope = Source
             activation = AND [
                 HasTag "PHOTOTROPHIC"
                 Star type = [White]
-                Not Planet environment = Uninhabitable
             ]
             accountinglabel = "BRIGHT_STAR"
-            effects = SetTargetPopulation Value + 3
+            effects = SetTargetPopulation Value + 7
             
         EffectsGroup
             scope = Source
             activation = AND [
                 HasTag "PHOTOTROPHIC"
                 Star type = [Red Neutron]
-                Not Planet environment = Uninhabitable
             ]
             accountinglabel = "DIM_STAR"
-            effects = SetTargetPopulation Value + -3
+            effects = SetTargetPopulation Value + -5
             
         EffectsGroup
             scope = Source
             activation = AND [
                 HasTag "PHOTOTROPHIC"
                 Star type = [BlackHole NoStar]
-                Not Planet environment = Uninhabitable
             ]
             accountinglabel = "NO_STAR"
-            effects = SetTargetPopulation Value + -6
+            effects = SetTargetPopulation Value + -10
 '''
 
 BAD_POPULATION
@@ -2044,7 +2089,7 @@ BAD_POPULATION
         EffectsGroup
             scope = Source
             accountinglabel = "BAD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value*[[BAD_MULTIPLIER]]
+            effects = SetTargetPopulation Value*.75
 
         [[TUNNELS_MODIFIER]]
         [[ENVIRONMENT_MODIFIER]]
@@ -2062,9 +2107,139 @@ GOOD_POPULATION
         EffectsGroup
             scope = Source
             accountinglabel = "GOOD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value*[[GOOD_MULTIPLIER]]
+            effects = SetTargetPopulation Value*1.25
 
         [[TUNNELS_MODIFIER]]
+        [[ENVIRONMENT_MODIFIER]]
+'''
+
+BASIC_SELF_SUSTAINING_POPULATION
+'''     //#####     H O M E W O R L D   P O P U L A T I O N   B O O S T     #####  
+
+        EffectsGroup
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = Planet size = [Huge GasGiant]
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetPopulation Value + 10
+            
+        EffectsGroup
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = Planet size = Large
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetPopulation Value + 8
+            
+        EffectsGroup
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = Planet size = [ Medium Asteroids ]            
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetPopulation Value + 6
+            
+        EffectsGroup
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = Planet size = Small
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetPopulation Value + 4
+            
+        EffectsGroup 
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = Planet size = Tiny
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetPopulation Value + 2 
+
+
+//#####     B A S E   P O P U L A T I O N     #####
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = [Huge GasGiant]
+            ]
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value + 30
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Large
+            ]
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value + 25
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = [ Medium Asteroids ]
+            ]
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value + 20
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Small
+            ]
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value + 15
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Tiny
+            ]
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value + 10
+
+'''
+
+BAD_SELF_SUSTAINING_POPULATION
+'''[[BASIC_SELF_SUSTAINING_POPULATION]]
+
+        EffectsGroup
+            scope = Source
+            accountinglabel = "BAD_POPULATION_LABEL"
+            effects = SetTargetPopulation Value*.75
+
+        [[ENVIRONMENT_MODIFIER]]
+'''
+
+AVERAGE_SELF_SUSTAINING_POPULATION
+'''[[BASIC_SELF_SUSTAINING_POPULATION]]
+        [[ENVIRONMENT_MODIFIER]]
+'''
+
+GOOD_SELF_SUSTAINING_POPULATION
+'''[[BASIC_SELF_SUSTAINING_POPULATION]]
+
+        EffectsGroup
+            scope = Source
+            accountinglabel = "GOOD_POPULATION_LABEL"
+            effects = SetTargetPopulation Value*1.25
+
         [[ENVIRONMENT_MODIFIER]]
 '''
 

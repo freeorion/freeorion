@@ -7710,6 +7710,9 @@ ENV_ENCAPSUL_LABEL
 TUNNELS_LABEL
 '''Subterranean Bonus'''
 
+HOMEWORLD_LABEL
+'''Homeworld'''
+
 BAD_POPULATION_LABEL
 '''%1% Bad Population'''
 
@@ -7822,8 +7825,8 @@ Lithic
 PHOTOTROPHIC
 Phototrophic
 
-SELF_SUFFICIENT
-Self-Sufficient
+SELF_SUSTAINING
+Self-Sustaining
 
 TELEPATHIC
 Telepathic
