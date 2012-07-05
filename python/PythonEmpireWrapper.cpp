@@ -1,4 +1,6 @@
 #include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
+#include "../Empire/Diplomacy.h"
 
 #include <boost/function.hpp>
 #include <boost/mpl/vector.hpp>
@@ -215,6 +217,24 @@ namespace FreeOrionPython {
             .def("getDataString",               make_function(&SitRepEntry::GetDataString,      return_value_policy<copy_const_reference>()))
             .def("getDataIDNumber",             &SitRepEntry::GetDataIDNumber)
             .add_property("getTags",            make_function(&SitRepEntry::GetVariableTags,    return_value_policy<return_by_value>()))
+        ;
+
+        ///////////////////////
+        // DiplomaticMessage //
+        ///////////////////////
+        class_<DiplomaticMessage>("diplomaticMessage")
+            .add_property("type",               &DiplomaticMessage::GetType)
+            .add_property("recipient",          &DiplomaticMessage::RecipientEmpireID)
+            .add_property("sender",             &DiplomaticMessage::SenderEmpireID)
+        ;
+
+        ////////////////////////////
+        // DiplomaticStatusUpdate //
+        ////////////////////////////
+        class_<DiplomaticStatusUpdateInfo>("diplomaticStatusUpdate")
+            .add_property("status",             &DiplomaticStatusUpdateInfo::diplo_status)
+            .add_property("empire1ID",          &DiplomaticStatusUpdateInfo::empire1_id)
+            .add_property("empire2ID",          &DiplomaticStatusUpdateInfo::empire2_id)
         ;
     }
 }

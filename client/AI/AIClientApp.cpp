@@ -18,6 +18,7 @@
 #include "../../util/OrderSet.h"
 #include "../../util/Order.h"
 #include "../../Empire/Empire.h"
+#include "../../Empire/Diplomacy.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -265,7 +266,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
     case Message::DIPLOMATIC_STATUS: {
         DiplomaticStatusUpdateInfo diplo_update;
         ExtractMessageData(msg, diplo_update);
-        // TODO: inform AI state of change
+        m_AI->HandleDiplomaticStatusUpdate(diplo_update);
         break;
     }
 

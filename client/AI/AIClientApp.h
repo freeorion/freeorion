@@ -9,8 +9,7 @@ class AIBase;
 namespace log4cpp {class Category;}
 
 /** the application framework for an AI player FreeOrion client.*/
-class AIClientApp : public ClientApp
-{
+class AIClientApp : public ClientApp {
 public:
    /** \name Structors */ //@{
    AIClientApp(int argc, char* argv[]);
@@ -33,13 +32,10 @@ public:
 
 private:
    void                 Run();          ///< initializes app state, then executes main event handler/render loop (PollAndRender())
-
    void                 HandleMessage(const Message& msg);
 
    AIBase*              m_AI;           ///< implementation of AI logic
-
    std::string          m_player_name;
-
    static AIClientApp*  s_app;
 };
 

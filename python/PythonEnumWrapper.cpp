@@ -1,4 +1,5 @@
 #include "../universe/Enums.h"
+#include "../Empire/Diplomacy.h"
 
 #include <boost/python.hpp>
 
@@ -102,6 +103,17 @@ namespace FreeOrionPython {
             .value("antiFighterDamage", METER_ANTI_FIGHTER_DAMAGE)
             .value("launchRate",        METER_LAUNCH_RATE)
             .value("fighterWeaponRange",METER_FIGHTER_WEAPON_RANGE)
+        ;
+        enum_<DiplomaticStatus>("diplomaticStatus")
+            .value("war",               DIPLO_WAR)
+            .value("peace",             DIPLO_PEACE)
+        ;
+        enum_<DiplomaticMessage::DiplomaticMessageType>("diplomaticMessageType")
+            .value("noMessage",         DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
+            .value("warDeclaration",    DiplomaticMessage::WAR_DECLARATION)
+            .value("peaceProposal",     DiplomaticMessage::PEACE_PROPOSAL)
+            .value("acceptProposal",    DiplomaticMessage::ACCEPT_PROPOSAL)
+            .value("cancelProposal",    DiplomaticMessage::CANCEL_PROPOSAL)
         ;
         enum_<CaptureResult>("captureResult")
             .value("capture",       CR_CAPTURE)

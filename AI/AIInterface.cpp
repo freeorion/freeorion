@@ -41,7 +41,7 @@ void AIBase::HandleChatMessage(int sender_id, const std::string& msg)
 void AIBase::HandleDiplomaticMessage(const DiplomaticMessage& msg)
 {}
 
-void AIBase::HandleDiplomaticStatusUpdate(const DiplomaticStatusUpdateInfo& msg)
+void AIBase::HandleDiplomaticStatusUpdate(const DiplomaticStatusUpdateInfo& u)
 {}
 
 void AIBase::StartNewGame()
@@ -721,6 +721,9 @@ namespace AIInterface {
             AIClientApp::GetApp()->Networking().SendMessage(GlobalChatMessage(PlayerID(), message_text));
         else
             AIClientApp::GetApp()->Networking().SendMessage(SingleRecipientChatMessage(PlayerID(), recipient_player_id, message_text));
+    }
+
+    void SendDiplomaticMessage(const DiplomaticMessage& diplo_message) {
     }
 
     void DoneTurn() {

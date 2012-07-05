@@ -100,6 +100,16 @@ def prepareForSave():
 def handleChatMessage(senderID, messageText):
     print "Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it"
 
+# called when this player recives a diplomatic message update from the server, such as if another player
+# declares war, accepts peace, or cancels a proposed peace treaty.
+def handleDiplomaticMessage(message):
+    print "Received diplomatic " + str(message.type) + " message from empire " + str(message.sender) + " to empire " + str(message.recipient)
+
+# called when this player receives and update about the diplomatic status between players, which may
+# or may not include this player.
+def handleDiplomaticStatusUpdate(statusUpdate):
+    print "Received diplomatic status update to " + str (statusUpdate.status) + " about empire " + str(statusUpdate.empire1ID) + " and empire " + str(statusUpdate.empire2ID)
+
 # called once per turn to tell the Python AI to generate and issue orders to control its empire.
 # at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
 # and can be sent to the server for processing.

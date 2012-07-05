@@ -4,6 +4,7 @@
 #include "../util/AppInterface.h"
 #include "../util/Directories.h"
 #include "../Empire/Empire.h"
+#include "../Empire/Diplomacy.h"
 #include "../python/PythonWrappers.h"
 
 #include <boost/python.hpp>
@@ -229,8 +230,6 @@ PythonAI::PythonAI() {
         return;
     }
 
-
-
     try {
         // tell Python the path in which to locate AI script file
         std::string AI_path = (GetResourceDir() / "AI").string();
@@ -279,13 +278,11 @@ void PythonAI::GenerateOrders() {
     Logger().debugStream() << "PythonAI::GenerateOrders order generating time: " << (order_timer.elapsed() * 1000.0);
 }
 
-void PythonAI::GenerateCombatSetupOrders(const CombatData& combat_data) {
-    AIBase::GenerateCombatSetupOrders(combat_data);
-}
+void PythonAI::GenerateCombatSetupOrders(const CombatData& combat_data)
+{ AIBase::GenerateCombatSetupOrders(combat_data); }
 
-void PythonAI::GenerateCombatOrders(const CombatData& combat_data) {
-    AIBase::GenerateCombatOrders(combat_data);
-}
+void PythonAI::GenerateCombatOrders(const CombatData& combat_data)
+{ AIBase::GenerateCombatOrders(combat_data); }
 
 void PythonAI::HandleChatMessage(int sender_id, const std::string& msg) {
     try {
@@ -297,8 +294,25 @@ void PythonAI::HandleChatMessage(int sender_id, const std::string& msg) {
     }
 }
 
-void PythonAI::HandleDiplomaticMessage(const DiplomaticMessage& msg)
-{}
+void PythonAI::HandleDiplomaticMessage(const DiplomaticMessage& msg) {
+    try {
+        // call Python function to inform of diplomatic message change
+        object handleDiplomaticMessagePythonFunction = s_ai_module.attr("handleDiplomaticMessage");
+        handleDiplomaticMessagePythonFunction(msg);
+    } catch (error_already_set err) {
+        PyErr_Print();
+    }
+}
+
+void PythonAI::HandleDiplomaticStatusUpdate(const DiplomaticStatusUpdateInfo& u) {
+    try {
+        // call Python function to inform of diplomatic status update
+        object handleDiplomaticStatusUpdatePythonFunction = s_ai_module.attr("handleDiplomaticStatusUpdate");
+        handleDiplomaticStatusUpdatePythonFunction(u);
+    } catch (error_already_set err) {
+        PyErr_Print();
+    }
+}
 
 void PythonAI::StartNewGame() {
     s_save_state_string = "";

@@ -24,7 +24,7 @@ public:
     virtual void                GenerateCombatOrders(const CombatData& combat_data);        ///< Called when the server has sent a new combat turn update.  AI should review the new combat state and send orders for this combat turn.
     virtual void                HandleChatMessage(int sender_id, const std::string& msg);   ///< Called when another player sends a chat message to this player.  AI can respond or ignore.
     virtual void                HandleDiplomaticMessage(const DiplomaticMessage& msg);      ///< Called when another player sends a diplomatic message that affects this player. AI can respond or ignore.
-    virtual void                HandleDiplomaticStatusUpdate(const DiplomaticStatusUpdateInfo& msg);    ///< Called when empires' diplomatic status changes
+    virtual void                HandleDiplomaticStatusUpdate(const DiplomaticStatusUpdateInfo& u);  ///< Called when empires' diplomatic status changes
     virtual void                StartNewGame();                                             ///< Called when a new game (not loaded) is started.  AI should clear its state and prepare to start a new game
     virtual void                ResumeLoadedGame(const std::string& save_state_string);     ///< Called when a game is loaded from save.  AI should extract any state information stored in \a save_state_string so as to be able to continue generating orders when asked to do so
     virtual const std::string&  GetSaveStateString();                                       ///< Called when the server is saving the game.  AI should store any state information it will need to resume at a later time, and return this information in the save_state_string
@@ -95,6 +95,7 @@ namespace AIInterface {
                                                    const std::string& graphic, const std::string& model);
 
     void                SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);
+    void                SendDiplomaticMessage(const DiplomaticMessage& diplo_message);
 
     void                DoneTurn();        ///< AI player is done submitting orders for this turn
     void                CombatSetup();     ///< AI player is done submitting initial setup orders for this combat
