@@ -237,6 +237,9 @@ namespace AIInterface {
         if (start_id == INVALID_OBJECT_ID)
             start_id = fleet->NextSystemID();
 
+        if (destination_id != INVALID_OBJECT_ID && destination_id == start_id)
+            Logger().debugStream() << "AIInterface::IssueFleetMoveOrder : pass destination system id (" << destination_id << ") that fleet is already in";
+
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet_id, start_id, destination_id)));
 
         return 1;
