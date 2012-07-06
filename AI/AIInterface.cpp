@@ -724,6 +724,14 @@ namespace AIInterface {
     }
 
     void SendDiplomaticMessage(const DiplomaticMessage& diplo_message) {
+        AIClientApp* app = AIClientApp::GetApp();
+        if (!app) return;
+        int sender_player_id = app->PlayerID();
+        if (sender_player_id == Networking::INVALID_PLAYER_ID) return;
+        int recipient_empire_id = diplo_message.RecipientEmpireID();
+        int recipient_player_id = app->GetEmpirePlayerID(recipient_empire_id);
+        if (recipient_player_id == Networking::INVALID_PLAYER_ID) return;
+        app->Networking().SendMessage(DiplomacyMessage(sender_player_id, recipient_player_id, diplo_message));
     }
 
     void DoneTurn() {

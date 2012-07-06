@@ -104,10 +104,12 @@ def handleChatMessage(senderID, messageText):
 # declares war, accepts peace, or cancels a proposed peace treaty.
 def handleDiplomaticMessage(message):
     print "Received diplomatic " + str(message.type) + " message from empire " + str(message.sender) + " to empire " + str(message.recipient)
-    if (message.type == diplomaticMessageType.peaceProposal and message.recipient == fo.empireID):
+    print "my empire id: " + str(fo.empireID())
+    if (message.type == fo.diplomaticMessageType.peaceProposal and message.recipient == fo.empireID()):
         replySender = message.recipient
         replyRecipient = message.sender
-        reply = DiplomaticMessage(replySender, replyRecipient, diplomaticMessageType.acceptProposal)
+        reply = fo.diplomaticMessage(replySender, replyRecipient, fo.diplomaticMessageType.acceptProposal)
+        print "Sending diplomatic message to empire " + str(replyRecipient) + " of type " + str(reply.type)
         fo.sendDiplomaticMessage(reply)
 
 # called when this player receives and update about the diplomatic status between players, which may
