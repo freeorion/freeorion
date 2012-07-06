@@ -741,7 +741,7 @@ Special
                 System
             ]
             stackinggroup = "TECH_STEALTH_STACK"
-            effects = SetStealth Value + [[ULTIMATE_STEALTH]]
+            effects = SetStealth Value + [[VERY_HIGH_STEALTH]]
     ]
     graphic = "icons/specials_huge/void.png"
 

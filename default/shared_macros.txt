@@ -110,7 +110,7 @@ STEALTH_BOOST_ULTIMATE
             ContainedBy Source
         ]
         stackinggroup = "TECH_STEALTH_STACK"
-        effects = SetStealth Value + [[ULTIMATE_STEALTH]]
+        effects = SetStealth Value + [[VERY_HIGH_STEALTH]]
 '''
 
 STEALTH_BOOST_LOW_NO_ORBITAL
@@ -162,7 +162,7 @@ STEALTH_BOOST_ULTIMATE_NO_ORBITAL
             ]
         ]
         stackinggroup = "TECH_STEALTH_STACK"
-        effects = SetStealth Value + [[ULTIMATE_STEALTH]]
+        effects = SetStealth Value + [[VERY_HIGH_STEALTH]]
 '''
 
 STEALTH_BOOST_PLUS_PLUS
@@ -194,7 +194,7 @@ MEDIUM_STEALTH
 HIGH_STEALTH
 '''400'''
 
-ULTIMATE_STEALTH
+VERY_HIGH_STEALTH
 '''650'''
 
 PLUS_STEALTH

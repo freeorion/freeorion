@@ -1402,19 +1402,7 @@ BuildingType
             scope = Source
             effects = Destroy
     icon = ""
-/*
-BuildingType
-    name = "BLD_ORBITAL_FARM"
-    description = "BLD_ORBITAL_FARM_DESC"
-    buildcost = 60
-    buildtime = 20
-    tags = "ORBITAL"
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        Planet
-    ]
-    icon = ""
-/*
+    
 BuildingType
     name = "BLD_SUPER_TESTERS"
     description = "BLD_SUPER_TESTERS_DESC"
@@ -1429,4 +1417,19 @@ BuildingType
         effects = SetSpecies name = "SP_SUPER_TEST"
             
     icon = "icons/species/other-04.png"
+
+/*
+BuildingType
+    name = "BLD_ORBITAL_FARM"
+    description = "BLD_ORBITAL_FARM_DESC"
+    buildcost = 60
+    buildtime = 20
+    tags = "ORBITAL"
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Planet
+    ]
+    icon = ""
+*/
+
 
