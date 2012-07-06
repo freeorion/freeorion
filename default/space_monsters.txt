@@ -4,7 +4,7 @@ ShipDesign
     hull = "SH_KRILL_1_BODY"
     parts = [
         "SP_DEATH_SPORE"
-        "DT_OPTICAL_SCANNER"
+        ""
         ""
     ]
     icon = "icons/monsters/krill-1.png"
@@ -16,7 +16,7 @@ ShipDesign
     hull = "SH_KRILL_2_BODY"
     parts = [
         "SP_DEATH_SPORE"
-        "DT_ACTIVE_RADAR"
+        ""
         ""
     ]
     icon = "icons/monsters/krill-2.png"
@@ -29,7 +29,7 @@ ShipDesign
     parts = [
         "SP_DEATH_SPORE"
         "SR_WEAPON_8"
-        "DT_NEUTRON_SCANNER"
+        ""
         ""
     ]
     icon = "icons/monsters/krill-3.png"
@@ -42,7 +42,7 @@ ShipDesign
     parts = [
         "SP_DEATH_SPORE"
         "SR_WEAPON_9"
-        "DT_SENSORS"
+        ""
         ""
     ]
     icon = "icons/monsters/krill-4.png"
@@ -52,7 +52,7 @@ ShipDesign
     name = "SM_TREE"
     description = "SM_TREE_DESC"
     hull = "SH_IMMOBILE_MONSTER_BODY"
-    parts = "DT_OPTICAL_SCANNER"
+    parts = "SR_WEAPON_2"
     icon = "icons/monsters/tree.png"
     model = "seed"
 
@@ -63,7 +63,7 @@ ShipDesign
     parts = [
         "SP_DEATH_SPORE"
         "SH_DEFLECTOR"
-        "DT_OPTICAL_SCANNER"
+        ""
     ]
     icon = "icons/monsters/floater.png"
     model = "seed"
@@ -75,7 +75,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_10"
         "SP_DEATH_SPORE"
-        "DT_SENSORS"
+        ""
         "AR_ROCK_PLATE"
         "FU_ZERO_FUEL"
     ]
@@ -89,7 +89,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_9"
         ""
-        "DT_OPTICAL_SCANNER"
+        ""
         "AR_ROCK_PLATE"
     ]
     icon = "icons/monsters/sentry.png"
@@ -102,7 +102,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_12"
         ""
-        "DT_OPTICAL_SCANNER"
+        ""
         "AR_ZORTRIUM_PLATE"
     ]
     icon = "icons/monsters/sentinel.png"
@@ -115,7 +115,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_17"
         "SR_WEAPON_17"
-        "DT_OPTICAL_SCANNER"
+        ""
         "AR_CRYSTAL_PLATE"
     ]
     icon = "icons/monsters/warden.png"
@@ -128,7 +128,7 @@ ShipDesign
     parts = [
         "AR_ROCK_PLATE"
         "SR_WEAPON_2"
-        "DT_ACTIVE_RADAR"
+        ""
     ]
     icon = "icons/ship_parts/colony_pod.png"
     model = "seed"
@@ -152,7 +152,7 @@ ShipDesign
     parts = [
         "SP_DEATH_SPORE"
         "SR_WEAPON_3"
-        "DT_OPTICAL_SCANNER"
+        ""
         ""
         ]
     icon = "icons/monsters/kraken-1.png"
@@ -165,7 +165,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_8"
         "SP_DEATH_SPORE"
-        "DT_ACTIVE_RADAR"
+        ""
         ""
         ]
     icon = "icons/monsters/kraken-2.png"
@@ -178,7 +178,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_13"
         "SP_DEATH_SPORE"
-        "DT_NEUTRON_SCANNER"
+        ""
         ""
         ]
     icon = "icons/monsters/kraken-3.png"
@@ -191,7 +191,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_1"
         "SR_WEAPON_1"
-        "DT_OPTICAL_SCANNER"
+        ""
         ""
         ]
     icon = "icons/monsters/snowflake-1.png"
@@ -204,7 +204,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_8"
         "SP_DEATH_SPORE"
-        "DT_ACTIVE_RADAR"
+        ""
         ""
         ]
     icon = "icons/monsters/snowflake-2.png"
@@ -217,7 +217,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_15"
         "SP_DEATH_SPORE"
-        "DT_NEUTRON_SCANNER"
+        ""
         ""
         ]
     icon = "icons/monsters/snowflake-3.png"
@@ -230,7 +230,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_3"
         "SP_DEATH_SPORE"
-        "DT_OPTICAL_SCANNER"
+        ""
         "SH_DEFENSE_GRID"
         ]
     icon = "icons/monsters/juggernaut-1.png"
@@ -243,7 +243,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_10"
         "SP_DEATH_SPORE"
-        "DT_ACTIVE_RADAR"
+        ""
         "SH_DEFLECTOR"
         ]
     icon = "icons/monsters/juggernaut-2.png"
@@ -256,7 +256,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_17"
         "SP_DEATH_SPORE"
-        "DT_NEUTRON_SCANNER"
+        ""
         "SH_DEFLECTOR"
         ]
     icon = "icons/monsters/juggernaut-3.png"
@@ -350,7 +350,7 @@ ShipDesign
     description = "SM_BLACK_KRAKEN_DESC"
     hull = "SH_BLACK_KRAKEN_BODY"
     parts = [
-        "DT_NEUTRON_SCANNER"
+        ""
         "SP_BIOTERM"
         "SR_WEAPON_17"
         "SR_WEAPON_17"
@@ -364,7 +364,7 @@ ShipDesign
     description = "SM_BLOATED_JUGGERNAUT_DESC"
     hull = "SH_BLOATED_JUGGERNAUT_BODY"
     parts = [
-        "DT_NEUTRON_SCANNER"
+        ""
         "SP_BIOTERM"
         "SR_WEAPON_17"
         "SR_WEAPON_17"
@@ -382,7 +382,7 @@ ShipDesign
     parts = [
         "SP_BIOTERM"
         "SR_WEAPON_17"
-        "DT_SENSORS"
+        ""
         "ST_DIM_CLOAK"
     ]
     icon = ""
@@ -395,7 +395,7 @@ ShipDesign
     parts = [
         "SP_NOVA_BOMB"
         "SR_WEAPON_17"
-        "DT_SENSORS"
+        ""
         "ST_PHASING_CLOAK"
     ]
     icon = ""

@@ -1497,6 +1497,7 @@ Hull
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[MODERATE_VISION]]
 
         EffectsGroup
             scope = And [
@@ -1529,6 +1530,7 @@ Hull
     Unproducible
     location = All
     effectsgroups = [
+        [[EXCELLENT_VISION]]
         EffectsGroup
             scope = Source
             activation = Turn high = 2
@@ -1549,7 +1551,7 @@ Hull
             effects = CreateShip "SM_FLOATER"
         EffectsGroup
             scope = And [ Fleet Contains Source ]
-            effects = SetPassive
+            effects = SetAggressive
     ]
     icon = ""
     graphic = "icons/monsters/tree.png"
@@ -1577,9 +1579,7 @@ Hull
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
-        [[REGULAR_HULL_DETECTION]]
-        [[REGULAR_HULL_DETECTION]]
-        [[REGULAR_HULL_DETECTION]]
+        [[EXCELLENT_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/dragon.png"
@@ -1603,6 +1603,9 @@ Hull
     buildTime = 2
     Unproducible
     location = All
+    effectsgroups = [
+        [[GOOD_VISION]]
+    ]
     icon = ""
     graphic = "icons/monsters/sentinel.png"
     
@@ -1626,6 +1629,7 @@ Hull
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[MODERATE_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/drone.png"
@@ -1648,6 +1652,7 @@ Hull
     Unproducible
     location = All
     effectsgroups = [
+        [[EXCELLENT_VISION]]
         EffectsGroup     
             scope = Source     
             activation = Not Turn low = 1  
@@ -1741,6 +1746,7 @@ Hull
 
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[WEAK_VISION]]
 
         EffectsGroup
             scope = And [
@@ -1836,6 +1842,7 @@ Hull
             
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[MODERATE_VISION]]
 
         EffectsGroup
             scope = And [
@@ -1932,6 +1939,7 @@ Hull
             
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[GOOD_VISION]]
             
         EffectsGroup
             scope = And [
@@ -1990,6 +1998,7 @@ Hull
 
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[GOOD_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/krill-4.png"
@@ -2036,8 +2045,7 @@ Hull
                 CreateShip "SM_KRAKEN_2" Source.Owner
                 Destroy
             ]
-        [[REGULAR_HULL_DETECTION]]
-        [[REGULAR_HULL_DETECTION]]
+        [[WEAK_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/kraken-1.png"
@@ -2074,8 +2082,7 @@ Hull
                 CreateShip "SM_KRAKEN_3" Source.Owner
                 Destroy
             ]
-        [[REGULAR_HULL_DETECTION]]
-        [[REGULAR_HULL_DETECTION]]
+        [[GOOD_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/kraken-2.png"
@@ -2102,8 +2109,7 @@ Hull
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
 
-        [[REGULAR_HULL_DETECTION]]
-        [[REGULAR_HULL_DETECTION]]
+        [[GOOD_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/kraken-3.png"
@@ -2147,9 +2153,7 @@ Hull
                 CreateShip "SM_SNOWFLAKE_2" Source.Owner
                 Destroy
             ]
-        [[REGULAR_HULL_DETECTION]]
-        [[REGULAR_HULL_DETECTION]]
-        [[REGULAR_HULL_DETECTION]]
+        [[EXCELLENT_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/snowflake-1.png"
@@ -2186,9 +2190,7 @@ Hull
                 CreateShip "SM_SNOWFLAKE_3" Source.Owner
                 Destroy
             ]
-        [[REGULAR_HULL_DETECTION]]
-        [[REGULAR_HULL_DETECTION]]
-        [[REGULAR_HULL_DETECTION]]
+        [[EXCELLENT_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/snowflake-2.png"
@@ -2214,10 +2216,7 @@ Hull
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
-
-        [[REGULAR_HULL_DETECTION]]
-        [[REGULAR_HULL_DETECTION]]
-        [[REGULAR_HULL_DETECTION]]
+        [[EXCELLENT_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/snowflake-3.png"
@@ -2261,7 +2260,7 @@ Hull
                 CreateShip "SM_JUGGERNAUT_2" Source.Owner
                 Destroy
             ]
-        [[REGULAR_HULL_DETECTION]]
+        [[GOOD_VISION]]
         
     ]
     icon = ""
@@ -2300,7 +2299,7 @@ Hull
                 Destroy
             ]
             
-        [[REGULAR_HULL_DETECTION]]
+        [[GOOD_VISION]]
         
     ]
     icon = ""
@@ -2327,7 +2326,7 @@ Hull
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
-        [[REGULAR_HULL_DETECTION]]
+        [[EXCELLENT_VISION]]
 
     ]
     icon = ""
@@ -2413,6 +2412,7 @@ Hull
     effectsgroups = [
         [[HUNT_BUILDINGS]]
         [[MONSTER_MOVE_ALWAYS]]
+        [[EXCELLENT_VISION]]
         [[INFINITE_FUEL]]
     ]
     icon = ""
@@ -2442,7 +2442,7 @@ Hull
     effectsgroups = [
         [[HUNT_BUILDINGS]]
         [[MONSTER_MOVE_ALWAYS]]
-        [[REGULAR_HULL_DETECTION]]
+        [[EXCELLENT_VISION]]
         [[INFINITE_FUEL]]
     ]
     icon = ""
@@ -2470,6 +2470,7 @@ Hull
         [[HUNT_SHIPS]]
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        [[EXCELLENT_VISION]]
 
         EffectsGroup
             scope = NumberOf 4 And [
@@ -2529,7 +2530,7 @@ Hull
                 RemoveSpecial "SUPERNOVA_SPECIAL"
             ]
 
-        [[REGULAR_HULL_DETECTION]]
+        [[GOOD_VISION]]
     ]
     icon = ""
     graphic = ""
@@ -2541,6 +2542,41 @@ REGULAR_HULL_DETECTION
         activation = Source
         effects = SetDetection Value + 25
 '''
+
+WEAK_VISION
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        accountinglabel = "WEAK_VISION_LABEL"
+        effects = SetDetection Value + 15
+'''
+
+MODERATE_VISION
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        accountinglabel = "MODERATE_VISION_LABEL"
+        effects = SetDetection Value + 25
+'''
+
+GOOD_VISION
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        accountinglabel = "GOOD_VISION_LABEL"
+        effects = SetDetection Value + 45
+'''
+
+EXCELLENT_VISION
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        accountinglabel = "EXCELLENT_VISION_LABEL"
+        effects = SetDetection Value + 70
+'''
+
+
+
 
 MONSTER_MOVE_ALWAYS
 '''EffectsGroup

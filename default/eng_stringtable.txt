@@ -7713,6 +7713,19 @@ HOMEWORLD_SUPPLY
 HOMEWORLD_BONUS
 '''Homeworld'''
 
+WEAK_VISION_LABEL
+'''Weak Vision'''
+
+MODERATE_VISION_LABEL
+'''Moderate Vision'''
+
+GOOD_VISION_LABEL
+'''Good Vision'''
+
+EXCELLENT_VISION_LABEL
+'''Excellent Vision'''
+
+
 # The following two are used in tech descriptions, and should be updated if PRODUCTION_PER_POP or PRODUCTION_PER_INFRA are changed in shared_macros.txt.
 POP_PER_PRODUCTION
 '''2'''
