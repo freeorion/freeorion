@@ -35,15 +35,8 @@ def setCapitalIDResourceFocus():
     capitalID = empire.capitalID
     topPriority = topResourcePriority()
 
-    if topPriority == AIPriorityType.PRIORITY_RESOURCE_FOOD:
-        newFocus = AIFocusType.FOCUS_FARMING
-        for planetID in ownedPlanetIDs:
-            planet = universe.getPlanet(planetID)
-            focus = newFocus
-            if planetID == capitalID and focus in planet.availableFoci:
-                fo.issueChangeFocusOrder(planetID, focus)
-    elif topPriority == AIPriorityType.PRIORITY_RESOURCE_MINERALS:
-        newFocus = AIFocusType.FOCUS_MINING
+    if topPriority == AIPriorityType.PRIORITY_RESOURCE_GROWTH:
+        newFocus = AIFocusType.FOCUS_GROWTH
         for planetID in ownedPlanetIDs:
             planet = universe.getPlanet(planetID)
             focus = newFocus
@@ -79,19 +72,12 @@ def setGeneralPlanetResourceFocus():
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
     fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
 
-    if topPriority == AIPriorityType.PRIORITY_RESOURCE_FOOD:
-        newFocus = AIFocusType.FOCUS_FARMING
+    if topPriority == AIPriorityType.PRIORITY_RESOURCE_GROWTH:
+        newFocus = AIFocusType.FOCUS_GROWTH
         for planetID in generalPlanetIDs:
             planet = universe.getPlanet(planetID)
             focus = newFocus
             if focus in planet.availableFoci:
-                fo.issueChangeFocusOrder(planetID, focus)
-    elif topPriority == AIPriorityType.PRIORITY_RESOURCE_MINERALS:
-        newFocus = AIFocusType.FOCUS_MINING
-        for planetID in generalPlanetIDs:
-            planet = universe.getPlanet(planetID)
-            focus = newFocus
-            if planetID in fleetSupplyablePlanetIDs and focus in planet.availableFoci:
                 fo.issueChangeFocusOrder(planetID, focus)
     elif topPriority == AIPriorityType.PRIORITY_RESOURCE_PRODUCTION:
         newFocus = AIFocusType.FOCUS_INDUSTRY
@@ -119,7 +105,7 @@ def setAsteroidsResourceFocus():
     empire = fo.getEmpire()
     empireID = empire.empireID
     ownedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
-    newFocus = AIFocusType.FOCUS_MINING
+    newFocus = AIFocusType.FOCUS_INDUSTRY
     for planetID in ownedPlanetIDs:
         planet = universe.getPlanet(planetID)
         focus = newFocus
