@@ -173,6 +173,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
                                loaded_game_data,        ui_data_available,      ui_data,
                                state_string_available,  save_state_string);
 
+            GetUniverse().InitializeSystemGraph(EmpireIDRef());
+
             Logger().debugStream() << "Message::GAME_START loaded_game_data: " << loaded_game_data;
             if (loaded_game_data) {
                 Logger().debugStream() << "Message::GAME_START save_state_string: " << save_state_string;
