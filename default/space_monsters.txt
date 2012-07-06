@@ -52,7 +52,7 @@ ShipDesign
     name = "SM_TREE"
     description = "SM_TREE_DESC"
     hull = "SH_IMMOBILE_MONSTER_BODY"
-    parts = ""
+    parts = "DT_OPTICAL_SCANNER"
     icon = "icons/monsters/tree.png"
     model = "seed"
 
@@ -63,7 +63,7 @@ ShipDesign
     parts = [
         "SP_DEATH_SPORE"
         "SH_DEFLECTOR"
-        ""
+        "DT_OPTICAL_SCANNER"
     ]
     icon = "icons/monsters/floater.png"
     model = "seed"
