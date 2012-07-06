@@ -123,6 +123,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("issueCreateShipDesignOrder",           AIInterface::IssueCreateShipDesignOrder);
 
     def("sendChatMessage",          AIInterface::SendPlayerChatMessage);
+    def("sendDiplomaticMessage",    AIInterface::SendDiplomaticMessage);
 
     def("setSaveStateString",       SetStaticSaveStateString);
     def("getSaveStateString",       GetStaticSaveStateString,       return_value_policy<copy_const_reference>());

@@ -104,11 +104,16 @@ def handleChatMessage(senderID, messageText):
 # declares war, accepts peace, or cancels a proposed peace treaty.
 def handleDiplomaticMessage(message):
     print "Received diplomatic " + str(message.type) + " message from empire " + str(message.sender) + " to empire " + str(message.recipient)
+    if (message.type == diplomaticMessageType.peaceProposal and message.recipient == fo.empireID):
+        replySender = message.recipient
+        replyRecipient = message.sender
+        reply = DiplomaticMessage(replySender, replyRecipient, diplomaticMessageType.acceptProposal)
+        fo.sendDiplomaticMessage(reply)
 
 # called when this player receives and update about the diplomatic status between players, which may
 # or may not include this player.
 def handleDiplomaticStatusUpdate(statusUpdate):
-    print "Received diplomatic status update to " + str (statusUpdate.status) + " about empire " + str(statusUpdate.empire1ID) + " and empire " + str(statusUpdate.empire2ID)
+    print "Received diplomatic status update to " + str (statusUpdate.status) + " about empire " + str(statusUpdate.empire1) + " and empire " + str(statusUpdate.empire2)
 
 # called once per turn to tell the Python AI to generate and issue orders to control its empire.
 # at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished

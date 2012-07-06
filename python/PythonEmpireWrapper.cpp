@@ -52,6 +52,7 @@ namespace {
 namespace FreeOrionPython {
     using boost::python::class_;
     using boost::python::iterator;
+    using boost::python::init;
     using boost::python::no_init;
     using boost::noncopyable;
     using boost::python::return_value_policy;
@@ -223,6 +224,7 @@ namespace FreeOrionPython {
         // DiplomaticMessage //
         ///////////////////////
         class_<DiplomaticMessage>("diplomaticMessage")
+            .def(init<int, int, DiplomaticMessage::DiplomaticMessageType>())
             .add_property("type",               &DiplomaticMessage::GetType)
             .add_property("recipient",          &DiplomaticMessage::RecipientEmpireID)
             .add_property("sender",             &DiplomaticMessage::SenderEmpireID)
@@ -232,9 +234,10 @@ namespace FreeOrionPython {
         // DiplomaticStatusUpdate //
         ////////////////////////////
         class_<DiplomaticStatusUpdateInfo>("diplomaticStatusUpdate")
+            .def(init<int, int, DiplomaticStatus>())
             .add_property("status",             &DiplomaticStatusUpdateInfo::diplo_status)
-            .add_property("empire1ID",          &DiplomaticStatusUpdateInfo::empire1_id)
-            .add_property("empire2ID",          &DiplomaticStatusUpdateInfo::empire2_id)
+            .add_property("empire1",            &DiplomaticStatusUpdateInfo::empire1_id)
+            .add_property("empire2",            &DiplomaticStatusUpdateInfo::empire2_id)
         ;
     }
 }
