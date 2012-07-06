@@ -4,6 +4,7 @@
 #include "../util/AppInterface.h"
 #include "../util/Directories.h"
 #include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"
 #include "../python/PythonWrappers.h"
 
