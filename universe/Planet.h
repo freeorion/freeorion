@@ -95,8 +95,9 @@ public:
     virtual const std::string&  TypeName() const;                       ///< returns user-readable string indicating the type of UniverseObject this is
     virtual std::string         Dump() const;
 
-    PlanetType                  Type() const {return m_type;}
-    PlanetSize                  Size() const {return m_size;}
+    PlanetType                  Type() const { return m_type; }
+    PlanetSize                  Size() const { return m_size; }
+    int                         SizeAsInt() const;
 
     PlanetEnvironment           EnvironmentForSpecies(const std::string& species_name = "") const;
     PlanetType                  NextBetterPlanetTypeForSpecies(const std::string& species_name = "") const;

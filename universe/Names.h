@@ -285,6 +285,7 @@
     (Short_Description)                         \
     (ShortRange)                                \
     (Size)                                      \
+    (SizeAsDouble)                              \
     (Slot)                                      \
     (Slots)                                     \
     (SlotType)                                  \

@@ -455,6 +455,10 @@ namespace ValueRef {
         } else if (property_name == Y_name) {
             return object->Y();
 
+        } else if (property_name == SizeAsDouble_name) {
+            if (const Planet* planet = universe_object_cast<const Planet*>(object))
+                return planet->SizeAsInt();
+
         } else {
             throw std::runtime_error("Attempted to read a non-double value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type double.");
         }

@@ -207,6 +207,18 @@ std::string Planet::Dump() const {
     return os.str();
 }
 
+int Planet::SizeAsInt() const {
+    switch (m_size) {
+    case SZ_GASGIANT:   return 6;   break;
+    case SZ_HUGE:       return 5;   break;
+    case SZ_LARGE:      return 4;   break;
+    case SZ_MEDIUM:     return 3;   break;
+    case SZ_SMALL:      return 2;   break;
+    case SZ_TINY:       return 1;   break;
+    default:            return 0;   break;
+    }
+}
+
 void Planet::Init() {
     AddMeter(METER_SUPPLY);
     AddMeter(METER_SHIELD);

@@ -45,6 +45,7 @@ namespace {
                 |    tok.StarlaneSpeed_
                 |    tok.TradeStockpile_
                 |    tok.DistanceToSource_
+                |    tok.SizeAsDouble_
                 ;
 
             constant
