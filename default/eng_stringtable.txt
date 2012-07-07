@@ -3276,7 +3276,8 @@ TUNNELS_SPECIAL
 Natural Tunnels
 
 TUNNELS_SPECIAL_DESCRIPTION
-'''If this planet is inhabitable, increases the Population capacity by 0.5, 1, 1.5, and 2 for Small, Medium, Large and Huge planets, respectively
+'''If this planet is inhabitable, increases the Population capacity by 1 per planet size level.
+[[PLANET_SIZE_LEVEL]]
 
 This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonized.'''
 
@@ -5476,7 +5477,8 @@ GRO_SUBTER_HAB
 Subterranean Habitation
 
 GRO_SUBTER_HAB_DESC
-Increases the max population on all planets by 2.  Cannot improve a planet with the Tunnels or Tectonic Instability special.
+'''Increases the max population on all planets by 1 per planet size level.  Cannot improve a planet with the Tunnels or Tectonic Instability special.
+[[PLANET_SIZE_LEVEL]]'''
 
 GRO_INDUSTRY_FARM
 Industrial Farming

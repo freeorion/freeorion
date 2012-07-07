@@ -66,7 +66,7 @@ Special
         EffectsGroup
             scope = Source
             activation = Not OwnerHasTech "GRO_ORBIT_FARMING"
-            effects = SetTargetPopulation Value - 1 * SizeAsDouble
+            effects = SetTargetPopulation Value - 1 * Target.SizeAsDouble
         EffectsGroup
             scope = Source
             activation = Source
@@ -105,7 +105,7 @@ Special
     effectsgroups = EffectsGroup
         scope = Source
         activation = Source
-        effects = SetTargetPopulation Value - 1 * SizeAsDouble
+        effects = SetTargetPopulation Value - 1 * Target.SizeAsDouble
     graphic = "icons/specials_huge/solid_core.png"
 
 Special
@@ -376,7 +376,7 @@ Special
         EffectsGroup
             scope = Source
             activation = Planet environment = Good
-            effects = SetTargetPopulation Value + 3 * SizeAsDouble
+            effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble
 
         EffectsGroup     
             scope = Source     
@@ -921,7 +921,7 @@ Special
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "PROBIOTIC_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
@@ -929,7 +929,7 @@ Special
                 HasTag "ORGANIC"
             ]
             stackinggroup = "PROBIOTIC_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
 
@@ -961,7 +961,7 @@ Special
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "FRUIT_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
@@ -969,7 +969,7 @@ Special
                 HasTag "ORGANIC"
             ]
             stackinggroup = "FRUIT_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
     ]
@@ -1000,7 +1000,7 @@ Special
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "SPICE_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
@@ -1008,7 +1008,7 @@ Special
                 HasTag "ORGANIC"
             ]
             stackinggroup = "SPICE_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
     ]
@@ -1041,7 +1041,7 @@ Special
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "MONOPOLE_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
@@ -1049,7 +1049,7 @@ Special
                 HasTag "ROBOTIC"
             ]
             stackinggroup = "MONOPOLE_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
     ]
@@ -1082,7 +1082,7 @@ Special
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "SUPERCONDUCTOR_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
@@ -1090,7 +1090,7 @@ Special
                 HasTag "ROBOTIC"
             ]
             stackinggroup = "SUPERCONDUCTOR_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
 
@@ -1124,7 +1124,7 @@ Special
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "POSITRONIUM_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
@@ -1132,7 +1132,7 @@ Special
                 HasTag "ROBOTIC"
             ]
             stackinggroup = "POSITRONIUM_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
 
@@ -1166,7 +1166,7 @@ Special
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "MINERALS_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
@@ -1174,7 +1174,7 @@ Special
                 HasTag "LITHIC"
             ]
             stackinggroup = "MINERALS_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
     ]
@@ -1207,7 +1207,7 @@ Special
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "CRYSTALS_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
@@ -1215,7 +1215,7 @@ Special
                 HasTag "LITHIC"
             ]
             stackinggroup = "CRYSTALS_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
 
@@ -1249,7 +1249,7 @@ Special
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "METALOIDS_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
@@ -1257,7 +1257,7 @@ Special
                 HasTag "LITHIC"
             ]
             stackinggroup = "METALOIDS_STACK"
-            effects = SetTargetPopulation Value + 1 * SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
 

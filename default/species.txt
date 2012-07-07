@@ -2255,7 +2255,7 @@ TUNNELS_MODIFIER
                 Not HasSpecial "TECTONIC_INSTABILITY_SPECIAL"
             ]
             accountinglabel = "TUNNELS_LABEL"
-            effects = SetTargetPopulation Value + 2
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
 '''
 
 /*
