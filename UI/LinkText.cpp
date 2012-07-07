@@ -13,13 +13,11 @@ namespace {
     // closing format tag
     static const std::string LINK_FORMAT_CLOSE = "</rgba>";
 
-    std::string LinkDefaultFormatTag() {
-        return GG::RgbaTag(ClientUI::DefaultLinkColor());
-    }
+    std::string LinkDefaultFormatTag()
+    { return GG::RgbaTag(ClientUI::DefaultLinkColor()); }
 
-    std::string LinkRolloverFormatTag() {
-        return GG::RgbaTag(ClientUI::RolloverLinkColor());
-    }
+    std::string LinkRolloverFormatTag()
+    { return GG::RgbaTag(ClientUI::RolloverLinkColor()); }
 
 
     static bool link_tags_registered = false;
@@ -74,14 +72,12 @@ LinkText::LinkText(GG::X x, GG::Y y, const std::string& str, const boost::shared
     MarkLinks();
 }
 
-void LinkText::Render()
-{
+void LinkText::Render() {
     GG::TextControl::Render();
     TextLinker::Render_();
 }
 
-void LinkText::SetText(const std::string& str)
-{
+void LinkText::SetText(const std::string& str) {
     m_raw_text = str;
     GG::TextControl::SetText(m_raw_text);   // so that line data is updated for use in FindLinks
     FindLinks();
@@ -89,66 +85,43 @@ void LinkText::SetText(const std::string& str)
 }
 
 void LinkText::SetLinkedText(const std::string& str)
-{
-    GG::TextControl::SetText(str);
-}
+{ GG::TextControl::SetText(str); }
 
 GG::Pt LinkText::TextUpperLeft() const
-{
-    return GG::TextControl::TextUpperLeft();
-}
+{ return GG::TextControl::TextUpperLeft(); }
 
 GG::Pt LinkText::TextLowerRight() const
-{
-    return GG::TextControl::TextLowerRight();
-}
+{ return GG::TextControl::TextLowerRight(); }
 
 const std::vector<GG::Font::LineData>& LinkText::GetLineData() const
-{
-    return GG::TextControl::GetLineData();
-}
+{ return GG::TextControl::GetLineData(); }
 
 const boost::shared_ptr<GG::Font>& LinkText::GetFont() const
-{
-    return GG::TextControl::GetFont();
-}
+{ return GG::TextControl::GetFont(); }
 
 const std::string& LinkText::RawText() const
-{
-    return m_raw_text;
-}
+{ return m_raw_text; }
 
 void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    TextLinker::LClick_(pt, mod_keys);
-}
+{ TextLinker::LClick_(pt, mod_keys); }
 
 void LinkText::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    TextLinker::LDoubleClick_(pt, mod_keys);
-}
+{ TextLinker::LDoubleClick_(pt, mod_keys); }
 
 void LinkText::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    TextLinker::RClick_(pt, mod_keys);
-}
+{ TextLinker::RClick_(pt, mod_keys); }
 
 void LinkText::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    TextLinker::MouseHere_(pt, mod_keys);
-}
+{ TextLinker::MouseHere_(pt, mod_keys); }
 
 void LinkText::MouseLeave()
-{
-    TextLinker::MouseLeave_();
-}
+{ TextLinker::MouseLeave_(); }
 
 
 ///////////////////////////////////////
 // TextLinker::Link
 ///////////////////////////////////////
-struct TextLinker::Link
-{
+struct TextLinker::Link {
     std::string             type;           ///< contents of type field of link tag (eg "planet" in <planet 3>)
     std::string             data;           ///< contents of data field of link tag (eg "3" in <planet 3>)
     std::vector<GG::Rect>   rects;          ///< the rectangles in which this link falls, in window coordinates (some links may span more than one line)
@@ -171,8 +144,7 @@ TextLinker::TextLinker() :
 TextLinker::~TextLinker()
 {}
 
-void TextLinker::Render_()
-{
+void TextLinker::Render_() {
     if (!RENDER_DEBUGGING_LINK_RECTS)
         return;
 
@@ -189,8 +161,7 @@ void TextLinker::Render_()
     }
 }
 
-void TextLinker::LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void TextLinker::LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     int sel_link = GetLinkUnderPt(pt);
     if (sel_link == -1)
         return;
@@ -205,8 +176,7 @@ void TextLinker::LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     LinkClickedSignal(LINK_TYPE, DATA);
 }
 
-void TextLinker::RClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void TextLinker::RClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     int sel_link = GetLinkUnderPt(pt);
     if (sel_link == -1)
         return;
@@ -221,8 +191,7 @@ void TextLinker::RClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     LinkRightClickedSignal(LINK_TYPE, DATA);
 }
 
-void TextLinker::LDoubleClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void TextLinker::LDoubleClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     int sel_link = GetLinkUnderPt(pt);
     if (sel_link == -1)
         return;
@@ -237,8 +206,7 @@ void TextLinker::LDoubleClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     LinkDoubleClickedSignal(LINK_TYPE, DATA);
 }
 
-void TextLinker::MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void TextLinker::MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     int rollover_link = GetLinkUnderPt(pt);
     if (rollover_link != m_rollover_link) {
         m_rollover_link = rollover_link;
@@ -246,14 +214,12 @@ void TextLinker::MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     }
 }
 
-void TextLinker::MouseLeave_()
-{
+void TextLinker::MouseLeave_() {
     m_rollover_link = -1;
     MarkLinks();
 }
 
-void TextLinker::FindLinks()
-{
+void TextLinker::FindLinks() {
     m_links.clear();
 
     const std::vector<GG::Font::LineData>& line_data = GetLineData();
@@ -319,8 +285,7 @@ void TextLinker::FindLinks()
     }
 }
 
-int TextLinker::GetLinkUnderPt(const GG::Pt& pt)
-{
+int TextLinker::GetLinkUnderPt(const GG::Pt& pt) {
     for (unsigned int i = 0; i < m_links.size(); ++i) {
         for (unsigned int j = 0; j < m_links[i].rects.size(); ++j) {
             GG::Rect r = TextUpperLeft() + m_links[i].rects[j];
@@ -331,8 +296,7 @@ int TextLinker::GetLinkUnderPt(const GG::Pt& pt)
     return -1;  // no link found
 }
 
-void TextLinker::MarkLinks()
-{
+void TextLinker::MarkLinks() {
     const std::string& raw_text = RawText();
 
     if (m_links.empty()) {
