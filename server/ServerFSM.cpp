@@ -1131,7 +1131,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     // this only needs to be send to the submitting player and not all others as
     // well ...
     server.m_networking.SendMessage(TurnProgressMessage(Message::WAITING_FOR_PLAYERS, message.SendingPlayer()));
-    
+
     // if player who just submitted is the local human player, raise AI process priority
     // as raising process priority requires superuser privileges on OSX and Linux AFAIK,
     // this piece of code only makes sense on Windows systems
@@ -1161,6 +1161,7 @@ sc::result WaitingForTurnEnd::react(const RequestDesignID& msg) {
 }
 
 sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.CheckTurnEndConditions";
     ServerApp& server = Server();
     if ((server.AllOrdersReceived() /* && minium_time_passed */)
         /* || maximum_time_passed*/)
@@ -1217,8 +1218,7 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
 
     ServerApp& server = Server();
     for (ServerNetworking::const_established_iterator player_it = server.m_networking.established_begin();
-         player_it != server.m_networking.established_end();
-         ++player_it)
+         player_it != server.m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
@@ -1330,11 +1330,13 @@ ProcessingTurn::~ProcessingTurn()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~ProcessingTurn"; }
 
 sc::result ProcessingTurn::react(const ProcessTurn& u) {
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ProcessingTurn.ProcessTurn";
+
     ServerApp& server = Server();
-    
+
     // make sure all AI client processes are running with low priority
     server.SetAIsProcessPriorityToLow(true);
-    
+
     server.PreCombatProcessTurns();
     server.ProcessCombats();
     server.PostCombatProcessTurns();
@@ -1362,6 +1364,11 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
     }
 
     return transit<WaitingForTurnEnd>();
+}
+
+sc::result ProcessingTurn::react(const CheckTurnEndConditions& c) {
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ProcessingTurn.CheckTurnEndConditions";
+    return discard_event();
 }
 
 

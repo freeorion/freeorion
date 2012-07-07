@@ -333,13 +333,15 @@ struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame, ProcessingTurnIdl
         sc::custom_reaction<ProcessTurn>,
         sc::deferral<SaveGameRequest>,
         sc::deferral<TurnOrders>,
-        sc::deferral<Diplomacy>
+        sc::deferral<Diplomacy>,
+        sc::custom_reaction<CheckTurnEndConditions>
     > reactions;
 
     ProcessingTurn(my_context c);
     ~ProcessingTurn();
 
     sc::result react(const ProcessTurn& u);
+    sc::result react(const CheckTurnEndConditions& c);
 
     System* m_combat_system;
     std::set<int> m_combat_empire_ids;
