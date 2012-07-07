@@ -3251,8 +3251,8 @@ GAIA_SPECIAL
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Increases Population capacity by 1, 2, 3, and 4 for Small, Medium, Large and Huge planets, respectively.
-Disables the Heavy Mining focus.
+'''Increases Population capacity by 3 per planet size level.
+[[PLANET_SIZE_LEVEL]]
 
 This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of it's population.'''
 
@@ -3292,7 +3292,8 @@ SOLID_CORE_SPECIAL
 Solid Core
 
 SOLID_CORE_SPECIAL_DESC
-'''Population on this planet is reduced by 3.
+'''Population capacity on this planet is reduced by 1 per planet's size level.
+[[PLANET_SIZE_LEVEL]]
 
 This planet's core has solidified, and it has a very weak magnetic field. The star's solar wind reaches the surface relatively unfiltered, damaging the health of the planet's population.'''
 
@@ -3308,7 +3309,8 @@ SLOW_ROTATION_SPECIAL
 Very Slow Rotation
 
 SLOW_ROTATION_SPECIAL_DESC
-'''Construction on this planet is decreased by 20.
+'''Construction on this planet is decreased by 20. Population capacity is decreased by 1 per planet size level.
+[[PLANET_SIZE_LEVEL]]
 
 This planet rotates about its axis very slowly, causing very long days and nights. Infrastructure growth and food production are reduced.'''
 
@@ -3435,49 +3437,63 @@ En Experimentor outpost exists in this system, and defeating them is necessary t
 PROBIOTIC_SPECIAL
 Probiotic Soup
 PROBIOTIC_SPECIAL_DESC
-'''When a planet with Probiotic Soup is focused on Growth, all connected planets with Organic species increase their Target Population.
+'''Increases the Population capacity if inhabited by Organic species by 1 per planet size level.
+When a planet with Probiotic Soup is focused on Growth, all connected planets with Organic species increase their Population Capacity by 1 per planet size level.
+[[PLANET_SIZE_LEVEL]]
 
 The great diversity of unique single-celled organisms have applications to the health and maintenance of all types of organic life.'''
 
 FRUIT_SPECIAL
 Caretaker's Fruit
 FRUIT_SPECIAL_DESC
-'''When a planet with Caretaker's Fruit is focused on Growth, all connected planets with Organic species increase their Target Population.
+'''Increases the Population capacity if inhabited by Organic species by 1 per planet size level.
+When a planet with Caretaker's Fruit is focused on Growth, all connected planets with Organic species increase their Population Capacity by 1 per planet size level.
+[[PLANET_SIZE_LEVEL]]
 
 What appears to be a forest is actually part of a continent-spanning symbiotic organism. The fruit of these trees contains marvelously complex organic chemicals beneficial to all sorts of organic life.'''
 
 SPICE_SPECIAL
 Ki Spice
 SPICE_SPECIAL_DESC
-'''When a planet with Ki Spice is focused on Growth, all connected planets with Organic species increase their Target Population.
+'''Increases the Population capacity if inhabited by Organic species by 1 per planet size level.
+When a planet with Ki Spice is focused on Growth, all connected planets with Organic species increase their Population Capacity by 1 per planet size level.
+[[PLANET_SIZE_LEVEL]]
 
 A unique substance produced by this planet's ecology, Ki Spice has the capacity to lengthen the lives, clarify the thoughts, or sharpen the senses of organic beings.'''
 
 MONOPOLE_SPECIAL
 Monopole Magnets
 MONOPOLE_SPECIAL_DESC
-'''When a planet with Monopole Magnets is focused on Growth, all connected planets with Robotic species increase their Target Population.
+'''Increases the Population capacity if inhabited by Robotic species by 1 per planet size level.
+When a planet with Monopole Magnets is focused on Growth, all connected planets with Robotic species increase their Population Capacity by 1 per planet size level.
+[[PLANET_SIZE_LEVEL]]
 
 Monopole Magnets make better robots!'''
 
 SUPERCONDUCTOR_SPECIAL
 Ambient Superconductors
 SUPERCONDUCTOR_SPECIAL_DESC
-'''When a planet with Ambient Superconductors is focused on Growth, all connected planets with Robotic species increase their Target Population.
+'''Increases the Population capacity if inhabited by Robotic species by 1 per planet size level.
+When a planet with Ambient Superconductors is focused on Growth, all connected planets with Robotic species increase their Population Capacity by 1 per planet size level.
+[[PLANET_SIZE_LEVEL]]
 
 Ambient Superconductors make better robots!'''
 
 POSITRONIUM_SPECIAL
 Positronium Ash
 POSITRONIUM_SPECIAL_DESC
-'''When a planet with Positronium Ash is focused on Growth, all connected planets with Robotic species increase their Target Population.
+'''Increases the Population capacity if inhabited by Robotic species by 1 per planet size level.
+When a planet with Positronium Ash is focused on Growth, all connected planets with Robotic species increase their Population Capacity by 1 per planet size level.
+[[PLANET_SIZE_LEVEL]]
 
 Positronium Ash make better robots brains!'''
 
 MINERALS_SPECIAL
 Rich Minerals
 MINERALS_SPECIAL_DESC
-'''When a planet with Rich Minerals is focused on Growth, all connected planets with Lithic species increase their Target Population.
+'''Increases the Population capacity if inhabited by Lithic species by 1 per planet size level.
+When a planet with Rich Minerals is focused on Growth, all connected planets with Lithic species increase their Population Capacity by 1 per planet size level.
+[[PLANET_SIZE_LEVEL]]
 Increases Mining by 50 on this planet when focus is set to Mining, and by twice the planet's Population when focus is set to Heavy Mining.
 
 This planet has a rich natural deposit of minerals, boosting mining or Lithic growth significantly.'''
@@ -3485,7 +3501,9 @@ This planet has a rich natural deposit of minerals, boosting mining or Lithic gr
 CRYSTALS_SPECIAL
 Silmaline Crystals
 CRYSTALS_SPECIAL_DESC
-'''When a planet with Silmaline Crystals is focused on Growth, all connected planets with Lithic species increase their Target Population.
+'''Increases the Population capacity if inhabited by Lithic species by 1 per planet size level.
+When a planet with Silmaline Crystals is focused on Growth, all connected planets with Lithic species increase their Population Capacity by 1 per planet size level.
+[[PLANET_SIZE_LEVEL]]
 Increases Mining by 50 on this planet when focus is set to Mining, and by twice the planet's Population when focus is set to Heavy Mining.
 
 This planet has rare Silmaline Crystals, boosting mining or Lithic growth significantly.'''
@@ -3493,7 +3511,9 @@ This planet has rare Silmaline Crystals, boosting mining or Lithic growth signif
 METALOIDS_SPECIAL
 High-Energy Metaloids
 METALOIDS_SPECIAL_DESC
-'''When a planet with High-Energy Metaloids is focused on Growth, all connected planets with Lithic species increase their Target Population.
+'''Increases the Population capacity if inhabited by Lithic species by 1 per planet size level.
+When a planet with High-Energy Metaloids is focused on Growth, all connected planets with Lithic species increase their Population Capacity by 1 per planet size level.
+[[PLANET_SIZE_LEVEL]].
 Increases Mining by 50 on this planet when focus is set to Mining, and by twice the planet's Population when focus is set to Heavy Mining.
 
 This planet has a rare deposits of Metaloids, boosting mining or Lithic growth significantly.'''
@@ -7724,6 +7744,9 @@ GOOD_VISION_LABEL
 
 EXCELLENT_VISION_LABEL
 '''Excellent Vision'''
+
+PLANET_SIZE_LEVEL
+'''(Planet Size Level starts with Tiny at 1, moves up through Small: 2, Medium: 3, Large: 4, Huge: 5.)'''
 
 
 # The following two are used in tech descriptions, and should be updated if PRODUCTION_PER_POP or PRODUCTION_PER_INFRA are changed in shared_macros.txt.
