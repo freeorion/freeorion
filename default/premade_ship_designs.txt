@@ -45,7 +45,7 @@ ShipDesign
         ""
         ""
         ""
-        "CO_OUTPOST_MOD"
+        "CO_OUTPOST_POD"
     ]
     model = "seed"
 

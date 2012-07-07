@@ -4816,7 +4816,7 @@ GRO_ENV_ENCAPSUL
 Environmental Encapsulation
 
 GRO_ENV_ENCAPSUL_DESC
-'''Allows one tenth of a population unit to settle on any previously uninhabitable planet type, including Asteroids and Gas Giants. Many building types cannot be constructed on these outposts.'''
+'''Allows unmanned stations on uninhabitable planet types, including Asteroids and Gas Giants. Many building types cannot be constructed on these outposts. Outposts are cheaper, and while they don't provide production, might be chosen as a faster way to claim territory.'''
 
 GRO_SYMBIOTIC_BIO
 Symbiotic Biology
@@ -7050,7 +7050,7 @@ Colony Pod
 CO_COLONY_POD_DESC
 '''Basic facilities for colonists to survive journey to a new planet.  Allows ship to colonize new worlds.
 
-All Colony class ship parts require the planet at which they are built to have a population of at least one.'''
+All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
 
 CO_SUSPEND_ANIM_POD
 Cryonic Colony Pod
@@ -7058,15 +7058,13 @@ Cryonic Colony Pod
 CO_SUSPEND_ANIM_POD_DESC
 '''Colonists are kept in suspended animation during colonization journey, eliminating need to provide sustenance, and greatly increasing the number of colonists that can be carried on one ship.
 
-All Colony class ship parts require the planet at which they are built to have a population of at least one.'''
+All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
 
-CO_OUTPOST_MOD
+CO_OUTPOST_POD
 Outpost Module
 
-CO_OUTPOST_MOD_DESC
-'''Low capacity colony pod which allows ships to create an outpost-like colony with low starting population.
-
-All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
+CO_OUTPOST_POD_DESC
+'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets.  Outposts do not supply production.'''
 
 GT_TROOP_POD
 Ground Troop Pod

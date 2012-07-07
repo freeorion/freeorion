@@ -857,8 +857,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 1
     researchturns = 1
-    Unresearchable
-    unlock = Item type = ShipPart name = "CO_OUTPOST_MOD"
+    unlock = Item type = ShipPart name = "CO_OUTPOST_POD"
     graphic = "icons/tech/habitation_domes.png"
 
 Tech

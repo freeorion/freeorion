@@ -545,13 +545,13 @@ Part
     name = "CO_COLONY_POD"
     description = "CO_COLONY_POD_DESC"
     class = Colony
-    capacity = .25
+    capacity = 1
     mountableSlotTypes = Internal
     buildcost = 20
-    buildtime = 10
+    buildtime = 8
     location = And [
         OwnedBy TheEmpire Source.Owner
-        Population low = 1 high = 999
+        Population low = 3 high = 999
     ]
     icon = "icons/ship_parts/colony_pod.png"
 
@@ -559,30 +559,27 @@ Part
     name = "CO_SUSPEND_ANIM_POD"
     description = "CO_SUSPEND_ANIM_POD_DESC"
     class = Colony
-    capacity = .5
+    capacity = 3
     mountableSlotTypes = Internal
     buildcost = 50
-    buildtime = 10
+    buildtime = 12
     location = And [
         OwnedBy TheEmpire Source.Owner
-        Population low = 1 high = 999
+        Population low = 3 high = 999
     ]
     icon = "icons/ship_parts/cryonic_colony_pod.png"
 
 Part
-    name = "CO_OUTPOST_MOD"
-    description = "CO_OUTPOST_MOD_DESC"
+    name = "CO_OUTPOST_POD"
+    description = "CO_OUTPOST_POD_DESC"
     class = Colony
-    capacity = 0.1
+    capacity = 0
     mountableSlotTypes = Internal
     buildcost = 10
     buildtime = 4
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        Population low = 1 high = 999
-    ]
-    icon = ""
-
+    location = OwnedBy TheEmpire Source.Owner
+    icon = "icons/tech/habitation_domes.png"
+    
 Part
     name = "SP_DISTORTION_MODULATOR"
     description = "SP_DISTORTION_MODULATOR_DESC"

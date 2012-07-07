@@ -3,10 +3,11 @@ v0.4 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 New Features / Improvements:
  ~ Improved the logic behind the choice of graphic to display for hulls and ship designs.
  ~ Macro support in script files.
+ ~ Zero population 'Outposts' now possible.
 
 Balancing:
  ~ Balanced stealth & detection levels.
- ~ Dramatically rescaled population numbers to a lower base and max
+ ~ Working to return population numbers to a 100 point scale
  ~ ~ Building, Ship & Research costs rescaled to 10%
  ~ Flattened the distribution curve of star and planet types.
  ~ Increased cost of troop pods to make conquest less casual.
@@ -17,7 +18,7 @@ Balancing:
 Content:
  ~ Species:
  ~ ~ All species now have different aptitudes at resource production, ground combat & so on.  A few require no food, and a few have special stealth and detection abilities.
- ~ ~ ~ Sorry, currently not balanced.
+ ~ ~ ~ Sorry, currently very un-balanced.
  ~ ~ All Homeworlds now provide a population bonus, and can be set to 'Growth' to provide population bonuses for colonies of the same species
  ~ ~ Added Phototrophic species pick, which increases population with brighter suns.
  ~ ~ Added Exobots, a constructable robot species.
