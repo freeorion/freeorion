@@ -1525,8 +1525,7 @@ namespace {
         // 2) multiple empires try to colonize the same planet, but only one empire has armed ships in the system
         // otherwise, no colonization happens in the system
         for (std::map<int, std::map<int, std::set<int> > >::iterator planet_it = planet_empire_colonization_ship_ids.begin();
-             planet_it != planet_empire_colonization_ship_ids.end();
-             ++planet_it)
+             planet_it != planet_empire_colonization_ship_ids.end(); ++planet_it)
         {
             int planet_id = planet_it->first;
             Planet* planet = objects.Object<Planet>(planet_id);
@@ -1547,7 +1546,7 @@ namespace {
             std::vector<int> system_fleet_ids = system->FindObjectIDs<Fleet>();
             for (std::vector<int>::const_iterator fleet_it = system_fleet_ids.begin(); fleet_it != system_fleet_ids.end(); ++fleet_it) {
                 const Fleet* fleet = objects.Object<Fleet>(*fleet_it);
-                if (fleet->HasArmedShips())
+                if (fleet->Aggressive() && fleet->HasArmedShips())
                     empires_with_armed_ships_in_system.insert(fleet->Owner());  // may include ALL_EMPIRES, which is fine; this makes monsters prevent colonization
             }
 
@@ -1560,8 +1559,7 @@ namespace {
             // check if any of the ships that want to colonize belong to the empire with armed ships
             std::map<int, std::set<int> >& empire_colonization_ship_map = planet_it->second;
             for (std::map<int, std::set<int> >::iterator empire_it = empire_colonization_ship_map.begin();
-                 empire_it != empire_colonization_ship_map.end();
-                 ++empire_it)
+                 empire_it != empire_colonization_ship_map.end(); ++empire_it)
             {
                 int empire_id = empire_it->first;
                 if (!empires_with_armed_ships_in_system.empty() &&
@@ -1607,8 +1605,7 @@ namespace {
             // ships that wanted to colonize this planet
             if (planet_colonized) {
                 for (std::map<int, std::set<int> >::iterator empire_it = empire_colonization_ship_map.begin();
-                     empire_it != empire_colonization_ship_map.end();
-                     ++empire_it)
+                     empire_it != empire_colonization_ship_map.end(); ++empire_it)
                 {
                     std::set<int>& colonizing_ships = empire_it->second;
                     for (std::set<int>::const_iterator ship_it = colonizing_ships.begin(); ship_it != colonizing_ships.end(); ++ship_it)
@@ -1873,8 +1870,7 @@ void ServerApp::PreCombatProcessTurns() {
 
     // send partial turn updates to all players after orders and movement
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
-         player_it != m_networking.established_end();
-         ++player_it)
+         player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
