@@ -18,7 +18,6 @@ namespace std {
 #endif
 
 namespace {
-
     std::set<std::string>* g_categories_seen = 0;
     std::map<std::string, TechCategory*>* g_categories = 0;
 

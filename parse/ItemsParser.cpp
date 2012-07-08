@@ -12,7 +12,6 @@ namespace std {
 #endif
 
 namespace {
-
     struct rules {
         rules() {
             qi::_1_type _1;

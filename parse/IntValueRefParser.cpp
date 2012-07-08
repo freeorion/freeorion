@@ -7,7 +7,6 @@ name_token_rule first_token;
 name_token_rule container_token;
 
 namespace {
-
     struct int_parser_rules {
         int_parser_rules() {
             qi::_1_type _1;

@@ -77,7 +77,6 @@ namespace parse { namespace detail {
 
         return success && (!distance || distance == 1 && *first == '\n');
     }
-
 } }
 
 #endif

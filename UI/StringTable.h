@@ -48,8 +48,7 @@
 //! <br>
 //! TESTFOUR<br>
 //! test four<br>
-class StringTable_
-{
+class StringTable_ {
 public:
     //! \names Structors
     //!@{
@@ -95,7 +94,6 @@ private:
     std::string m_language;    //!< A string containing the name of the language used
     std::map<std::string, std::string> m_strings;  //!< The strings in the table
     //!@}
-    
 };
 
 #endif // StringTable__h_

@@ -110,7 +110,6 @@ namespace {
         design_rule design;
         start_rule start;
     };
-
 }
 
 namespace parse {

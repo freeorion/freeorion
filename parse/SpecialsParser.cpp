@@ -136,9 +136,9 @@ namespace {
 
 
         special_prefix_rule special_prefix;
-        spawn_rule spawn;
-        special_rule special;
-        start_rule start;
+        spawn_rule          spawn;
+        special_rule        special;
+        start_rule          start;
     };
 }
 

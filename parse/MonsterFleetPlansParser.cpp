@@ -97,17 +97,7 @@ namespace {
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
             parse::skipper_type
-        > monster_fleet_plan_prefix_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            parse::skipper_type
-        > ships_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            parse::skipper_type
-        > spawns_rule;
+        > generic_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -121,18 +111,18 @@ namespace {
             parse::skipper_type
         > start_rule;
 
-        monster_fleet_plan_prefix_rule monster_fleet_plan_prefix;
-        ships_rule ships;
-        spawns_rule spawns;
+        generic_rule            monster_fleet_plan_prefix;
+        generic_rule            ships;
+        generic_rule            spawns;
         monster_fleet_plan_rule monster_fleet_plan;
-        start_rule start;
+        start_rule              start;
 
         // locals
-        std::string _a;
-        std::vector<std::string> _b;
-        double _c;
-        int _d;
-        Condition::ConditionBase* _e;
+        std::string                 _a;
+        std::vector<std::string>    _b;
+        double                      _c;
+        int                         _d;
+        Condition::ConditionBase*   _e;
     };
 
 }

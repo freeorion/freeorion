@@ -6,9 +6,7 @@
 
 #include <boost/spirit/home/qi.hpp>
 
-
 namespace parse {
-
     typedef boost::spirit::qi::rule<
         token_iterator,
         void (),
@@ -16,7 +14,6 @@ namespace parse {
     > label_rule;
 
     label_rule& label(adobe::name_t name);
-
 }
 
 #endif
