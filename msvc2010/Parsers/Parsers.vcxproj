@@ -108,6 +108,7 @@
     <ClCompile Include="..\..\parse\Double.cpp" />
     <ClCompile Include="..\..\parse\DoubleValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\EffectParser.cpp" />
+    <ClCompile Include="..\..\parse\EncyclopediaParser.cpp" />
     <ClCompile Include="..\..\parse\EnumParser.cpp" />
     <ClCompile Include="..\..\parse\FleetPlansParser.cpp" />
     <ClCompile Include="..\..\parse\Int.cpp" />

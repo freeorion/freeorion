@@ -1,0 +1,17 @@
+Category name = "CATEGORY_GAME_CONCEPTS"
+
+Category name = "CATEGORY_TEST"
+
+Article
+    name = "TEST_ARTICLE"
+    category = "CATEGORY_TEST"
+    short_description = "TEST_ARTICLE_SHORT_DESC"
+    description = "TEST_ARTICLE_TEXT"
+    icon = "icons/ai.png"
+
+Article
+    name = "PEACE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "DIPLOMACY"
+    description = "PEACE_ARTICLE_TEXT"
+    icon = "icons/peace.png"

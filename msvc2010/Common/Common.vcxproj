@@ -112,6 +112,7 @@
     <ClInclude Include="..\..\network\Message.h" />
     <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
+    <ClInclude Include="..\..\UI\StringTable.h" />
     <ClInclude Include="..\..\universe\Building.h" />
     <ClInclude Include="..\..\universe\Condition.h" />
     <ClInclude Include="..\..\universe\Effect.h" />

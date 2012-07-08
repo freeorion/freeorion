@@ -28,6 +28,7 @@
     (AnyEmpire)                                 \
     (Armed)                                     \
     (Armour)                                    \
+    (Article)                                   \
     (Application)                               \
     (Asteroids)                                 \
     (Barren)                                    \

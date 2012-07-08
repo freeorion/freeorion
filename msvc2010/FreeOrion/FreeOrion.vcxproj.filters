@@ -465,6 +465,9 @@
     <ClInclude Include="..\..\universe\Names.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\Encyclopedia.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\FreeOrion.ico">

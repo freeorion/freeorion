@@ -2014,9 +2014,20 @@ Scrap Ship
 ORDER_CANCEL_SHIP_SCRAP
 Cancel Scrapping Ship
 
+
 ###############
 #  Diplomacy  #
 ###############
+
+DIPLOMACY
+Diplomacy
+
+PEACE
+Peace
+
+WAR
+War
+
 WAR_DECLARATION
 Declare War
 
@@ -2028,6 +2039,7 @@ Cancel Peace Proposal
 
 PEACE_ACCEPT
 Accept Peace Proposal
+
 
 ###############
 # TechTreeWnd #
