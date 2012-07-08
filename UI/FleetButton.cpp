@@ -324,9 +324,7 @@ void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 }
 
 void FleetButton::SetSelected(bool selected)
-{
-    m_selected = selected;
-}
+{ m_selected = selected; }
 
 void FleetButton::RenderUnpressed() {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
@@ -386,13 +384,11 @@ void FleetButton::RenderRollover() {
     RenderUnpressed();
 }
 
-void FleetButton::PlayFleetButtonRolloverSound() {
-    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"), true);
-}
+void FleetButton::PlayFleetButtonRolloverSound()
+{ Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"), true); }
 
-void FleetButton::PlayFleetButtonOpenSound() {
-    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"), true);
-}
+void FleetButton::PlayFleetButtonOpenSound()
+{ Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"), true); }
 
 /////////////////////
 // Free Functions
@@ -410,6 +406,8 @@ boost::shared_ptr<GG::Texture> FleetHeadIcon(const Fleet* fleet, FleetButton::Si
     std::string main_filename = "head-scout.png";
     if (fleet && fleet->HasColonyShips())
         main_filename = "head-colony.png";
+    else if (fleet && fleet->HasOutpostShips())
+        main_filename = "head-outpost.png";
     else if (fleet && fleet->HasTroopShips())
         main_filename = "head-lander.png";
     else if (fleet && fleet->HasMonsters() && fleet->HasArmedShips())

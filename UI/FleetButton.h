@@ -9,8 +9,7 @@ class FleetWnd;
 class UniverseObject;
 
 /** represents one or more fleets of an empire at a location on the map. */
-class FleetButton : public GG::Button
-{
+class FleetButton : public GG::Button {
 public:
     enum SizeType {
         FLEET_BUTTON_NONE,
@@ -27,9 +26,7 @@ public:
 
     /** \name Accessors */ //@{
     virtual bool                InWindow(const GG::Pt& pt) const;       ///< returns true if \a pt is within or over the button
-
     const std::vector<int>&     Fleets() const {return m_fleets;}       ///< returns the fleets represented by this control
-
     bool                        Selected() const {return m_selected;}   ///< returns whether this button has been marked selected
     //@}
 

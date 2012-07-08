@@ -501,7 +501,19 @@ bool Fleet::HasColonyShips() const {
     for (Fleet::const_iterator it = begin(); it != end(); it++)
         if (const Ship* ship = GetShip(*it))
             if (ship->CanColonize())
-                return true;
+                if (const ShipDesign* design = ship->Design())
+                    if (design->ColonyCapacity() > 0.0)
+                        return true;
+    return false;
+}
+
+bool Fleet::HasOutpostShips() const {
+    for (Fleet::const_iterator it = begin(); it != end(); it++)
+        if (const Ship* ship = GetShip(*it))
+            if (ship->CanColonize())
+                if (const ShipDesign* design = ship->Design())
+                    if (design->ColonyCapacity() == 0.0)
+                        return true;
     return false;
 }
 
