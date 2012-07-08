@@ -1,5 +1,24 @@
 Fleet
+    name = "FN_SCOUT_FLEET"
+    ships = [
+        "SD_SCOUT"
+    ]
+    
+Fleet
+    name = "FN_SCOUT_FLEET"
+    ships = [
+        "SD_SCOUT"
+    ]
+
+Fleet
+    name = "FN_BATTLE_FLEET"
+    ships = [
+        "SD_MARK1"
+    ]
+    
+Fleet
     name = "FN_COLONY_FLEET"
     ships = [
         "SD_COLONY_SHIP"
     ]
+
