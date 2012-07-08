@@ -90,7 +90,7 @@ ShipDesign
         "SR_WEAPON_9"
         ""
         ""
-        "AR_ROCK_PLATE"
+        ""
     ]
     icon = "icons/monsters/sentry.png"
     model = "seed"
@@ -102,8 +102,9 @@ ShipDesign
     parts = [
         "SR_WEAPON_12"
         ""
-        ""
-        "AR_ZORTRIUM_PLATE"
+        "AR_PRECURSOR_PLATE"
+        "AR_PRECURSOR_PLATE"
+
     ]
     icon = "icons/monsters/sentinel.png"
     model = "seed"
@@ -115,8 +116,11 @@ ShipDesign
     parts = [
         "SR_WEAPON_17"
         "SR_WEAPON_17"
-        ""
-        "AR_CRYSTAL_PLATE"
+        "AR_PRECURSOR_PLATE"
+        "AR_PRECURSOR_PLATE"
+        "AR_PRECURSOR_PLATE"
+        "AR_PRECURSOR_PLATE"
+        "AR_PRECURSOR_PLATE"
     ]
     icon = "icons/monsters/warden.png"
     model = "seed"

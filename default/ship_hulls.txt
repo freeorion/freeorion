@@ -1591,13 +1591,15 @@ Hull
     starlaneSpeed = 0
     fuel = 0
     stealth = 10
-    structure = 5000
+    structure = 75
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = External position = (0.80, 0.15)
-        Slot type = Internal position = (0.50, 0.65)
+        Slot type = External position = (0.20, 0.65)
+        Slot type = External position = (0.40, 0.65)
+        Slot type = External position = (0.60, 0.65)
     ]
     buildCost = 1
     buildTime = 2

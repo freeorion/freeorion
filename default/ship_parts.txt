@@ -316,6 +316,17 @@ Part
         ]
     ]
     icon = ""
+    
+Part
+    name = "AR_PRECURSOR_PLATE"
+    description = "AR_PRECURSOR_PLATE_DESC"
+    class = Armour
+    capacity = 1000
+    mountableSlotTypes = External
+    buildcost = 1
+    buildtime = 1
+    location = All
+    icon = ""
 
 Part
     name = "SH_DEFENSE_GRID"

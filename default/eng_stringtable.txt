@@ -7028,6 +7028,12 @@ Neutronium Armor Plating
 AR_NEUTRONIUM_PLATE_DESC
 Admirable defense with moderate mass
 
+AR_PRECURSOR_PLATE
+Precursor Armor Plating
+
+AR_PRECURSOR_PLATE_DESC
+Marvelously effective armor of unknown composition
+
 SH_DEFENSE_GRID
 Defense Grid
 
