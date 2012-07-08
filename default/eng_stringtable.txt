@@ -5100,13 +5100,13 @@ CON_ORBITAL_HAB
 Orbital Habitation
 
 CON_ORBITAL_HAB_DESC
-'''If this planet is inhabitable, increases the Population capacity of this planet by 2.'''
+'''If this planet is inhabitable, increases the Population capacity of this planet by 5.'''
 
 CON_NDIM_STRC
 N-Dimensional Structures
 
 CON_NDIM_STRC_DESC
-'''If this planet is inhabitable, increases the Population capacity of this planet by 3.
+'''If this planet is inhabitable, increases the Population capacity of this planet by 15.
 
 The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
 
@@ -7647,10 +7647,10 @@ HOMEWORLD_LABEL
 '''Homeworld'''
 
 BAD_POPULATION_LABEL
-'''%1% Bad Population'''
+'''%2% Bad Population 75%'''
 
 GOOD_POPULATION_LABEL
-'''%1% Good Population'''
+'''%2% Good Population 125%'''
 
 FOCUS_MINING_LABEL
 '''%1% Mining Focus'''
@@ -7732,6 +7732,12 @@ HOMEWORLD_SUPPLY
 
 HOMEWORLD_BONUS
 '''Homeworld'''
+
+ORBITAL_HAB_LABEL
+'''Orbital Habitation'''
+
+NDIM_STRC_LABEL
+'''N-Dimensional Structures'''
 
 WEAK_VISION_LABEL
 '''Weak Vision'''

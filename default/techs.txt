@@ -1637,13 +1637,24 @@ Tech
     graphic = "icons/tech/force_energy_structures.png"
 
 Tech
+    name = "CON_ORBITAL_HAB"
+    description = "CON_ORBITAL_HAB_DESC"
+    short_description = "POPULATION_SHORT_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 250
+    researchturns = 1
+    prerequisites = "PRO_MICROGRAV_MAN"
+    graphic = "icons/tech/orbital_gardens.png"
+
+Tech
     name = "CON_NDIM_STRC"
     description = "CON_NDIM_STRC_DESC"
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 450
-    researchturns = 1
+    researchturns = 5
     prerequisites = [
         "CON_FRC_ENRG_STRC"
         "LRN_NDIM_SUBSPACE"

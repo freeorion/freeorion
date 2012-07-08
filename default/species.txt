@@ -177,7 +177,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
-        [[AVERAGE_SELF_SUSTAINING_POPULATION]]
+        [[AVERAGE_POPULATION]]
         [[LARGE_PLANET]]
     ]
     
@@ -737,7 +737,7 @@ Species
         [[AVERAGE_RESEARCH]]
         
         [[BAD_GROUND_TROOPS]]
-        [[BAD_SELF_SUSTAINING_POPULATION]]
+        [[BAD_POPULATION]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
@@ -902,7 +902,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
-        [[AVERAGE_SELF_SUSTAINING_POPULATION]]
+        [[AVERAGE_POPULATION]]
     ]
     
     [[BARREN_STANDARD_EP]]
@@ -1077,7 +1077,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
-        [[AVERAGE_SELF_SUSTAINING_POPULATION]]
+        [[AVERAGE_POPULATION]]
 
         EffectsGroup     
             scope = Source     
@@ -1235,7 +1235,7 @@ Species
 
         [[ULTIMATE_GROUND_TROOPS]]
 
-        [[GOOD_SELF_SUSTAINING_POPULATION]]
+        [[GOOD_POPULATION]]
 
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
@@ -1925,57 +1925,28 @@ STANDARD_CONSTRUCTION
 '''
 
 BASIC_POPULATION
-'''     //#####     H O M E W O R L D   P O P U L A T I O N   B O O S T     #####  
+'''     //#####     H O M E W O R L D   P O P U L A T I O N   B O O S T S    #####  
 
         EffectsGroup
             scope = AND [
                 Source
                 Homeworld name = Source.Species
             ]
-            activation = Planet size = [Huge GasGiant]
+            activation = NOT HasTag "SELF_SUSTAINING"
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 5
-            
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+
         EffectsGroup
             scope = AND [
                 Source
                 Homeworld name = Source.Species
             ]
-            activation = Planet size = Large
+            activation = HasTag "SELF_SUSTAINING"
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 4
-            
-        EffectsGroup
-            scope = AND [
-                Source
-                Homeworld name = Source.Species
-            ]
-            activation = Planet size = [ Medium Asteroids ]            
-            stackinggroup = "HOMEWORLD_STACK"
-            accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 3
-            
-        EffectsGroup
-            scope = AND [
-                Source
-                Homeworld name = Source.Species
-            ]
-            activation = Planet size = Small
-            stackinggroup = "HOMEWORLD_STACK"
-            accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 2
-            
-        EffectsGroup 
-            scope = AND [
-                Source
-                Homeworld name = Source.Species
-            ]
-            activation = Planet size = Tiny
-            stackinggroup = "HOMEWORLD_STACK"
-            accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 1
+            effects = SetTargetPopulation Value + 2 * Source.SizeAsDouble  // Get double the homeworld bonus
+      
             
 //#####     H O M E W O R L D   G R O W T H   F O C U S  B O O S T     #####  
 
@@ -1993,56 +1964,29 @@ BASIC_POPULATION
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_SUPPLY"
-            effects = SetTargetPopulation Value + 3    
+            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble   
 
 
 //#####     B A S E   P O P U L A T I O N     #####
 
         EffectsGroup
             scope = Source
-            activation = And [
+            activation = AND [
                 Planet environment = Good
-                Planet size = [Huge GasGiant]
+                NOT HasTag "SELF_SUSTAINING"
             ]
             accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 15
+            effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble
+
 
         EffectsGroup
             scope = Source
-            activation = And [
+            activation = AND [
                 Planet environment = Good
-                Planet size = Large
+                HasTag "SELF_SUSTAINING"
             ]
             accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 12
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = [ Medium Asteroids ]
-            ]
-            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 9
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = Small
-            ]
-            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 6
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = Tiny
-            ]
-            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 3
-
+            effects = SetTargetPopulation Value + 6 * Target.SizeAsDouble    // Gets double the base population
 
 
 //#####     P H O T O T R O P H I C   S T U F F     #####            
@@ -2054,7 +1998,7 @@ BASIC_POPULATION
                 Star type = [Blue]
             ]
             accountinglabel = "VERY_BRIGHT_STAR"
-            effects = SetTargetPopulation Value + 15
+            effects = SetTargetPopulation Value + 3 * Source.SizeAsDouble
             
         EffectsGroup
             scope = Source
@@ -2063,7 +2007,7 @@ BASIC_POPULATION
                 Star type = [White]
             ]
             accountinglabel = "BRIGHT_STAR"
-            effects = SetTargetPopulation Value + 7
+            effects = SetTargetPopulation Value + 1.5 * Source.SizeAsDouble
             
         EffectsGroup
             scope = Source
@@ -2072,7 +2016,7 @@ BASIC_POPULATION
                 Star type = [Red Neutron]
             ]
             accountinglabel = "DIM_STAR"
-            effects = SetTargetPopulation Value + -5
+            effects = SetTargetPopulation Value - 1 * Source.SizeAsDouble
             
         EffectsGroup
             scope = Source
@@ -2081,7 +2025,7 @@ BASIC_POPULATION
                 Star type = [BlackHole NoStar]
             ]
             accountinglabel = "NO_STAR"
-            effects = SetTargetPopulation Value + -10
+            effects = SetTargetPopulation Value - 10 * Source.SizeAsDouble
 '''
 
 BAD_POPULATION
@@ -2090,15 +2034,17 @@ BAD_POPULATION
         EffectsGroup
             scope = Source
             accountinglabel = "BAD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value*.75
+            effects = SetTargetPopulation Value*.75   // doesn't matter if these modifiers don't match ther other 'bad' modifiers.
 
         [[TUNNELS_MODIFIER]]
+        [[POPULATION_TECHS]]
         [[ENVIRONMENT_MODIFIER]]
 '''
 
 AVERAGE_POPULATION
 '''[[BASIC_POPULATION]]
         [[TUNNELS_MODIFIER]]
+        [[POPULATION_TECHS]]
         [[ENVIRONMENT_MODIFIER]]
 '''
 
@@ -2108,141 +2054,13 @@ GOOD_POPULATION
         EffectsGroup
             scope = Source
             accountinglabel = "GOOD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value*1.25
+            effects = SetTargetPopulation Value*1.25  // doesn't matter if these modifiers don't match ther other 'good' modifiers.
 
         [[TUNNELS_MODIFIER]]
+        [[POPULATION_TECHS]]
         [[ENVIRONMENT_MODIFIER]]
 '''
 
-BASIC_SELF_SUSTAINING_POPULATION
-'''     //#####     H O M E W O R L D   P O P U L A T I O N   B O O S T     #####  
-
-        EffectsGroup
-            scope = AND [
-                Source
-                Homeworld name = Source.Species
-            ]
-            activation = Planet size = [Huge GasGiant]
-            stackinggroup = "HOMEWORLD_STACK"
-            accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 10
-            
-        EffectsGroup
-            scope = AND [
-                Source
-                Homeworld name = Source.Species
-            ]
-            activation = Planet size = Large
-            stackinggroup = "HOMEWORLD_STACK"
-            accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 8
-            
-        EffectsGroup
-            scope = AND [
-                Source
-                Homeworld name = Source.Species
-            ]
-            activation = Planet size = [ Medium Asteroids ]            
-            stackinggroup = "HOMEWORLD_STACK"
-            accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 6
-            
-        EffectsGroup
-            scope = AND [
-                Source
-                Homeworld name = Source.Species
-            ]
-            activation = Planet size = Small
-            stackinggroup = "HOMEWORLD_STACK"
-            accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 4
-            
-        EffectsGroup 
-            scope = AND [
-                Source
-                Homeworld name = Source.Species
-            ]
-            activation = Planet size = Tiny
-            stackinggroup = "HOMEWORLD_STACK"
-            accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 2 
-
-
-//#####     B A S E   P O P U L A T I O N     #####
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = [Huge GasGiant]
-            ]
-            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 30
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = Large
-            ]
-            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 25
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = [ Medium Asteroids ]
-            ]
-            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 20
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = Small
-            ]
-            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 15
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Good
-                Planet size = Tiny
-            ]
-            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 10
-
-'''
-
-BAD_SELF_SUSTAINING_POPULATION
-'''[[BASIC_SELF_SUSTAINING_POPULATION]]
-
-        EffectsGroup
-            scope = Source
-            accountinglabel = "BAD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value*.75
-
-        [[ENVIRONMENT_MODIFIER]]
-'''
-
-AVERAGE_SELF_SUSTAINING_POPULATION
-'''[[BASIC_SELF_SUSTAINING_POPULATION]]
-        [[ENVIRONMENT_MODIFIER]]
-'''
-
-GOOD_SELF_SUSTAINING_POPULATION
-'''[[BASIC_SELF_SUSTAINING_POPULATION]]
-
-        EffectsGroup
-            scope = Source
-            accountinglabel = "GOOD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value*1.25
-
-        [[ENVIRONMENT_MODIFIER]]
-'''
 
 TUNNELS_MODIFIER
 '''EffectsGroup
@@ -2257,6 +2075,28 @@ TUNNELS_MODIFIER
             accountinglabel = "TUNNELS_LABEL"
             effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
 '''
+
+POPULATION_TECHS
+'''EffectsGroup
+            scope = Source
+            activation = AND [
+                OwnerHasTech "CON_NDIM_STRC"
+                TargetPopulation low = 0 high = 9999
+            ]
+            accountinglabel = "NDIM_STRC_LABEL"
+            effects = SetTargetPopulation Value + 15
+            
+            EffectsGroup
+            scope = Source
+            activation = AND [
+                OwnerHasTech "CON_ORBITAL_HAB"
+                TargetPopulation low = 0 high = 9999
+            ]
+            accountinglabel = "ORBITAL_HAB_LABEL"
+            effects = SetTargetPopulation Value + 5
+            
+'''
+
 
 /*
 * Implements environmental modifiers from Growth techs.
@@ -2323,15 +2163,6 @@ ENVIRONMENT_MODIFIER
             accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
             effects = SetTargetPopulation Value*([[HOSTILE_MULTIPLIER]] + (1 - [[HOSTILE_MULTIPLIER]])/2)
 
-        EffectsGroup
-            scope = Source
-            activation = And [
-                OwnerHasTech "GRO_ENV_ENCAPSUL"
-                Planet
-                Not TargetPopulation low = 1
-            ]
-            accountinglabel = "ENV_ENCAPSUL_LABEL"
-            effects = SetTargetPopulation Value + 0.1
 '''
 
 
