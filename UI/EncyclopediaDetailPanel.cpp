@@ -16,8 +16,11 @@
 #include "../Empire/EmpireManager.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../util/Directories.h"
 #include "../client/human/HumanClientApp.h"
-#include "../UI/DesignWnd.h"
+#include "DesignWnd.h"
+#include "Encyclopedia.h"
+#include "../parse/Parse.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -483,6 +486,8 @@ void EncyclopediaDetailPanel::Refresh() {
     m_summary_text->Clear();
     m_cost_text->Clear();
     m_description_box->Clear();
+
+    static Encyclopedia encyclopedia;
 
     // get details of item as applicable in order to set summary, cost, description TextControls
     std::string name = "";
@@ -1299,5 +1304,23 @@ void EncyclopediaDetailPanel::CheckUpButton() {
     } else {
         if (m_up_button->Disabled())
             m_up_button->Disable(false);
+    }
+}
+
+Encyclopedia::Encyclopedia() :
+    articles()
+{
+    parse::encyclopedia_articles(GetResourceDir() / "encyclopedia.txt", *this);
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "(Category) Encyclopedia Articles:";
+        for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
+             category_it = articles.begin(); category_it != articles.end(); ++category_it)
+        {
+            const std::string& category = category_it->first;
+            const std::vector<EncyclopediaArticle>& article_vec = category_it->second;
+            for (std::vector<EncyclopediaArticle>::const_iterator article_it = article_vec.begin();
+                 article_it != article_vec.end(); ++article_it)
+            { Logger().debugStream() << "(" << UserString(category) << ") : " << UserString(article_it->name); }
+        }
     }
 }

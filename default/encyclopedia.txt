@@ -1,7 +1,3 @@
-Category name = "CATEGORY_GAME_CONCEPTS"
-
-Category name = "CATEGORY_TEST"
-
 Article
     name = "TEST_ARTICLE"
     category = "CATEGORY_TEST"

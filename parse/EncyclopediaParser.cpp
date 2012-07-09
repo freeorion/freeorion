@@ -33,8 +33,8 @@ namespace {
             qi::_4_type _4;
             qi::_a_type _a;
             qi::_b_type _b;
-            qi::_a_type _c;
-            qi::_b_type _d;
+            qi::_c_type _c;
+            qi::_d_type _d;
             qi::_r1_type _r1;
             using phoenix::construct;
 

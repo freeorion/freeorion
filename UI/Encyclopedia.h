@@ -24,6 +24,7 @@ struct EncyclopediaArticle {
 };
 
 struct Encyclopedia {
+    Encyclopedia();
     std::map<std::string, std::vector<EncyclopediaArticle> >   articles;
 };
 

@@ -16,6 +16,7 @@ class PartType;
 class ShipDesign;
 class Special;
 class Species;
+struct Encyclopedia;
 
 namespace parse {
     void init();
@@ -47,7 +48,7 @@ namespace parse {
                     std::vector<Alignment>& alignments_,
                     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups);
 
-    bool named_effects(const boost::filesystem::path& path, std::map<std::string, Effect::EffectsGroup*>& effects_groups);
+    bool encyclopedia_articles(const boost::filesystem::path& path, Encyclopedia& enc);
 }
 
 #endif
