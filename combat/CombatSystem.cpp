@@ -424,6 +424,25 @@ namespace {
         return ObjectCanBeAttacked(obj);
     }
 
+    // monsters / natives can attack any planet, but can only attack
+    // visible ships or ships that are in aggressive fleets
+    bool ObjectAttackableByMonsters(const UniverseObject* obj, const ObjectMap& objects) {
+        if (obj->Unowned())
+            return false;
+        if (const Planet* planet = universe_object_cast<const Planet*>(obj))
+            return true;
+        if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
+            // TODO: something about visiblity...
+            const Fleet* fleet = objects.Object<Fleet>(ship->FleetID());
+            if (!fleet)
+                return true;
+            if (fleet->Aggressive())
+                return true;
+            return true;    // TODO: check monster detection?
+        }
+        return false;
+    }
+
     bool ObjectCanAttack(const UniverseObject* obj) {
         if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
             return ship->IsArmed();
@@ -477,18 +496,25 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         int object_id = *target_it;
         const UniverseObject* obj = combat_info.objects.Object(object_id);
 
-        // which empire owns this object
-        int owner = obj->Owner();
-
         // for all empires, can they attack this object?
         for (std::set<int>::const_iterator empire_it = combat_info.empire_ids.begin();
              empire_it != combat_info.empire_ids.end(); ++empire_it)
         {
-            int empire_id = *empire_it;
-            std::map<int, ObjectMap>::const_iterator known_objects_it = combat_info.empire_known_objects.find(empire_id);
-            if (known_objects_it != combat_info.empire_known_objects.end())
-                if (ObjectAttackableByEmpire(obj, empire_id, known_objects_it->second))
-                    empire_valid_target_object_ids[empire_id].insert(object_id);
+            int attacking_empire_id = *empire_it;
+            if (attacking_empire_id == ALL_EMPIRES) {
+                if (ObjectAttackableByMonsters(obj, combat_info.objects))
+                    empire_valid_target_object_ids[ALL_EMPIRES].insert(object_id);
+
+            } else {
+                // call function to find if empires can attack objects...
+                std::map<int, ObjectMap>::const_iterator known_objects_it =
+                    combat_info.empire_known_objects.find(attacking_empire_id);
+                if (known_objects_it == combat_info.empire_known_objects.end())
+                    continue;   // no known stuff for that empire?
+
+                if (ObjectAttackableByEmpire(obj, attacking_empire_id, known_objects_it->second))
+                    empire_valid_target_object_ids[attacking_empire_id].insert(object_id);
+            }
         }
     }
 
