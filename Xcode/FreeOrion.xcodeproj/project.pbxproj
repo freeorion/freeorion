@@ -360,6 +360,10 @@
 		82592EF5147E387100B840A5 /* Names.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF1147E387100B840A5 /* Names.cpp */; };
 		82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF3147E387100B840A5 /* ObjectMap.cpp */; };
 		82B4313414A74E07003EEE42 /* UniverseServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B4313314A74E07003EEE42 /* UniverseServer.cpp */; };
+		82BB838E15AAD46E006F635F /* EncyclopediaParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82BB838215AAD20A006F635F /* EncyclopediaParser.cpp */; };
+		82BB839115AAD5DE006F635F /* libEncyclopediaParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82BB838C15AAD2AB006F635F /* libEncyclopediaParser.a */; };
+		82BB839415AAD60B006F635F /* libEncyclopediaParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82BB838C15AAD2AB006F635F /* libEncyclopediaParser.a */; };
+		82BB839715AAD630006F635F /* libEncyclopediaParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82BB838C15AAD2AB006F635F /* libEncyclopediaParser.a */; };
 		82BEB659159853B300B024CB /* Diplomacy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82BEB657159853B300B024CB /* Diplomacy.cpp */; };
 		82C07470149DE72D00E76876 /* Parse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936F1147E3B1B00B840A5 /* Parse.cpp */; };
 		82C07479149DE7CE00E76876 /* libParse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* libParse.a */; };
@@ -998,6 +1002,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8230803814A87FFB00C1BC15;
 			remoteInfo = ConditionParser;
+		};
+		82BB838F15AAD598006F635F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 82BB838315AAD2AB006F635F /* EncyclopediaParser */;
+			remoteInfo = EncyclopediaParser;
+		};
+		82BB839215AAD606006F635F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 82BB838315AAD2AB006F635F /* EncyclopediaParser */;
+			remoteInfo = EncyclopediaParser;
+		};
+		82BB839515AAD626006F635F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 82BB838315AAD2AB006F635F /* EncyclopediaParser */;
+			remoteInfo = EncyclopediaParser;
 		};
 		82C07477149DE7AC00E76876 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2269,6 +2294,9 @@
 		8259376B147E3B1C00B840A5 /* ValueRefParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefParser.h; sourceTree = "<group>"; };
 		8259376C147E3B1C00B840A5 /* ValueRefParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefParserImpl.h; sourceTree = "<group>"; };
 		82B4313314A74E07003EEE42 /* UniverseServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseServer.cpp; sourceTree = "<group>"; };
+		82BB838115AAD16C006F635F /* Encyclopedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encyclopedia.h; sourceTree = "<group>"; };
+		82BB838215AAD20A006F635F /* EncyclopediaParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncyclopediaParser.cpp; sourceTree = "<group>"; };
+		82BB838C15AAD2AB006F635F /* libEncyclopediaParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libEncyclopediaParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		82BEB657159853B300B024CB /* Diplomacy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Diplomacy.cpp; sourceTree = "<group>"; };
 		82BEB658159853B300B024CB /* Diplomacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Diplomacy.h; sourceTree = "<group>"; };
 		82C07438149DE46200E76876 /* libParse.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libParse.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2325,6 +2353,7 @@
 				82186B7F14AA760D009441B8 /* libStringValueRefParser.a in Frameworks */,
 				82186B8014AA760D009441B8 /* libTechsParser.a in Frameworks */,
 				82186B8114AA760D009441B8 /* libUniverseObjectTypeValueRefParser.a in Frameworks */,
+				82BB839115AAD5DE006F635F /* libEncyclopediaParser.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2371,6 +2400,7 @@
 				82186C0914AA7722009441B8 /* libStringValueRefParser.a in Frameworks */,
 				82186C0A14AA7723009441B8 /* libTechsParser.a in Frameworks */,
 				82186C0B14AA7723009441B8 /* libUniverseObjectTypeValueRefParser.a in Frameworks */,
+				82BB839715AAD630006F635F /* libEncyclopediaParser.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2434,6 +2464,7 @@
 				82186BC414AA76C2009441B8 /* libStringValueRefParser.a in Frameworks */,
 				82186BC514AA76C2009441B8 /* libTechsParser.a in Frameworks */,
 				82186BC614AA76C2009441B8 /* libUniverseObjectTypeValueRefParser.a in Frameworks */,
+				82BB839415AAD60B006F635F /* libEncyclopediaParser.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2499,6 +2530,7 @@
 				82186AFC14AA7388009441B8 /* libStringValueRefParser.a */,
 				82186B1B14AA73AF009441B8 /* libTechsParser.a */,
 				82186B3A14AA73E1009441B8 /* libUniverseObjectTypeValueRefParser.a */,
+				82BB838C15AAD2AB006F635F /* libEncyclopediaParser.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3786,6 +3818,7 @@
 				34972BE70F49CBE80015C864 /* ChatWnd.h */,
 				34972BE80F49CBE80015C864 /* CollisionMeshConverter.cpp */,
 				34972BE90F49CBE80015C864 /* CollisionMeshConverter.h */,
+				82BB838115AAD16C006F635F /* Encyclopedia.h */,
 				343EC65D0F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp */,
 				343EC65E0F3F5C7C00782AD3 /* EncyclopediaDetailPanel.h */,
 				343EC65F0F3F5C7C00782AD3 /* MarkupBox.cpp */,
@@ -4084,6 +4117,7 @@
 		825936D5147E3B1B00B840A5 /* parse */ = {
 			isa = PBXGroup;
 			children = (
+				82BB838215AAD20A006F635F /* EncyclopediaParser.cpp */,
 				825936D6147E3B1B00B840A5 /* AlignmentsParser.cpp */,
 				825936D7147E3B1B00B840A5 /* BuildingsParser.cpp */,
 				825936D9147E3B1B00B840A5 /* ConditionParser.cpp */,
@@ -4337,6 +4371,7 @@
 				82186B6614AA75D8009441B8 /* PBXTargetDependency */,
 				82186B6814AA75D8009441B8 /* PBXTargetDependency */,
 				82186B6A14AA75D8009441B8 /* PBXTargetDependency */,
+				82BB839015AAD598006F635F /* PBXTargetDependency */,
 				478417670CF057BF00BE4710 /* PBXTargetDependency */,
 				474A956E0A9A6101007F8CD7 /* PBXTargetDependency */,
 			);
@@ -4381,6 +4416,7 @@
 				82186BF014AA76ED009441B8 /* PBXTargetDependency */,
 				82186BF214AA76ED009441B8 /* PBXTargetDependency */,
 				82186BF414AA76ED009441B8 /* PBXTargetDependency */,
+				82BB839615AAD626006F635F /* PBXTargetDependency */,
 				478418EA0CF05A2800BE4710 /* PBXTargetDependency */,
 				478417690CF057C300BE4710 /* PBXTargetDependency */,
 				471FEF880A9A629800C36AA3 /* PBXTargetDependency */,
@@ -4795,6 +4831,21 @@
 			productReference = 8230803F14A87FFB00C1BC15 /* libConditionParser.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		82BB838315AAD2AB006F635F /* EncyclopediaParser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 82BB838615AAD2AB006F635F /* Build configuration list for PBXNativeTarget "EncyclopediaParser" */;
+			buildPhases = (
+				82BB838415AAD2AB006F635F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = EncyclopediaParser;
+			productName = Common;
+			productReference = 82BB838C15AAD2AB006F635F /* libEncyclopediaParser.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		82C073D8149DE46200E76876 /* Parse */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 82C07434149DE46200E76876 /* Build configuration list for PBXNativeTarget "Parse" */;
@@ -4846,6 +4897,7 @@
 				82186BAB14AA766B009441B8 /* PBXTargetDependency */,
 				82186BAD14AA766B009441B8 /* PBXTargetDependency */,
 				82186BAF14AA766B009441B8 /* PBXTargetDependency */,
+				82BB839315AAD606006F635F /* PBXTargetDependency */,
 				478418EC0CF05A2E00BE4710 /* PBXTargetDependency */,
 				478417650CF057B800BE4710 /* PBXTargetDependency */,
 				471D65490A98B73C00DA9C21 /* PBXTargetDependency */,
@@ -4889,6 +4941,7 @@
 				8230803814A87FFB00C1BC15 /* ConditionParser */,
 				821868CC14AA707E009441B8 /* DoubleValueRefParser */,
 				8206387E14A87AF200A83D5A /* EffectParser */,
+				82BB838315AAD2AB006F635F /* EncyclopediaParser */,
 				821868EE14AA70C4009441B8 /* EnumParser */,
 				8218690D14AA70E9009441B8 /* FleetPlansParser */,
 				8218692C14AA712B009441B8 /* IntValueRefParser */,
@@ -5312,6 +5365,14 @@
 				8230805E14A8803F00C1BC15 /* ConditionParser1.cpp in Sources */,
 				8230805F14A8803F00C1BC15 /* ConditionParser2.cpp in Sources */,
 				8230806114A8803F00C1BC15 /* ConditionParser3.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82BB838415AAD2AB006F635F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				82BB838E15AAD46E006F635F /* EncyclopediaParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5828,6 +5889,21 @@
 			isa = PBXTargetDependency;
 			target = 8230803814A87FFB00C1BC15 /* ConditionParser */;
 			targetProxy = 8230806814A880D500C1BC15 /* PBXContainerItemProxy */;
+		};
+		82BB839015AAD598006F635F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 82BB838315AAD2AB006F635F /* EncyclopediaParser */;
+			targetProxy = 82BB838F15AAD598006F635F /* PBXContainerItemProxy */;
+		};
+		82BB839315AAD606006F635F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 82BB838315AAD2AB006F635F /* EncyclopediaParser */;
+			targetProxy = 82BB839215AAD606006F635F /* PBXContainerItemProxy */;
+		};
+		82BB839615AAD626006F635F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 82BB838315AAD2AB006F635F /* EncyclopediaParser */;
+			targetProxy = 82BB839515AAD626006F635F /* PBXContainerItemProxy */;
 		};
 		82C07478149DE7AC00E76876 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -7979,6 +8055,57 @@
 			};
 			name = "ReleaseUniversal-OLD";
 		};
+		82BB838715AAD2AB006F635F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = EncyclopediaParser;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		82BB838815AAD2AB006F635F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = EncyclopediaParser;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		82BB838915AAD2AB006F635F /* Release_LLVM */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = EncyclopediaParser;
+				ZERO_LINK = NO;
+			};
+			name = Release_LLVM;
+		};
+		82BB838A15AAD2AB006F635F /* Release_10_5 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = EncyclopediaParser;
+				ZERO_LINK = NO;
+			};
+			name = Release_10_5;
+		};
+		82BB838B15AAD2AB006F635F /* ReleaseUniversal-OLD */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INSTALL_PATH = /usr/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = EncyclopediaParser;
+				SDKROOT = macosx10.6;
+				USER_HEADER_SEARCH_PATHS = "$(inherited)";
+				ZERO_LINK = NO;
+			};
+			name = "ReleaseUniversal-OLD";
+		};
 		82C07435149DE46200E76876 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8413,6 +8540,18 @@
 				8219A98514AAFFC300EEE387 /* Release_LLVM */,
 				8218683C14AA28BE009441B8 /* Release_10_5 */,
 				8230803E14A87FFB00C1BC15 /* ReleaseUniversal-OLD */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		82BB838615AAD2AB006F635F /* Build configuration list for PBXNativeTarget "EncyclopediaParser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				82BB838715AAD2AB006F635F /* Debug */,
+				82BB838815AAD2AB006F635F /* Release */,
+				82BB838915AAD2AB006F635F /* Release_LLVM */,
+				82BB838A15AAD2AB006F635F /* Release_10_5 */,
+				82BB838B15AAD2AB006F635F /* ReleaseUniversal-OLD */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
