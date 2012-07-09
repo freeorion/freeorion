@@ -39,6 +39,11 @@ namespace {
 }
 
 namespace {
+    const Encyclopedia& GetEncyclopedia() {
+        static Encyclopedia encyclopedia;
+        return encyclopedia;
+    }
+
     std::string LinkTaggedText(const std::string& tag, const std::string& stringtable_entry)
     { return "<" + tag + " " + stringtable_entry + ">" + UserString(stringtable_entry) + "</" + tag + ">"; }
 
@@ -47,6 +52,7 @@ namespace {
 
     std::string PediaDirText(const std::string& dir_name) {
         std::string retval;
+        const Encyclopedia& encyclopedia = GetEncyclopedia();
         const Universe& universe = GetUniverse();
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         const ObjectMap& objects = (client_empire_id != ALL_EMPIRES) ?
@@ -68,6 +74,10 @@ namespace {
             retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_PLANET") + "\n";
             retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING") + "\n";
             retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SYSTEM") + "\n";
+
+            for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator it = encyclopedia.articles.begin();
+                 it != encyclopedia.articles.end(); ++it)
+            { retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, it->first) + "\n"; }
 
         } else if (dir_name == "ENC_SHIP_PART") {
             const PartTypeManager& part_type_manager = GetPartTypeManager();
@@ -160,6 +170,16 @@ namespace {
                 const System* system = *system_it;
                 std::string sys_name = system->ApparentName(client_empire_id);
                 retval += LinkTaggedIDText(VarText::SYSTEM_ID_TAG, (*system_it)->ID(), sys_name) + "  ";
+            }
+
+        } else {
+            std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator category_it =
+                encyclopedia.articles.find(dir_name);
+            if (category_it != encyclopedia.articles.end()) {
+                const std::vector<EncyclopediaArticle>& articles = category_it->second;
+                for (std::vector<EncyclopediaArticle>::const_iterator article_it = articles.begin();
+                     article_it != articles.end(); ++article_it)
+                { retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, article_it->name) + "\n"; }
             }
         }
         return retval;
@@ -487,10 +507,10 @@ void EncyclopediaDetailPanel::Refresh() {
     m_cost_text->Clear();
     m_description_box->Clear();
 
-    static Encyclopedia encyclopedia;
+    const Encyclopedia& encyclopedia = GetEncyclopedia();
 
     // get details of item as applicable in order to set summary, cost, description TextControls
-    std::string name = "";
+    std::string name;
     boost::shared_ptr<GG::Texture> texture;
     boost::shared_ptr<GG::Texture> other_texture;
     int turns = -1;
@@ -512,13 +532,30 @@ void EncyclopediaDetailPanel::Refresh() {
         universe.Objects();
 
     if (m_items_it->first == TextLinker::ENCYCLOPEDIA_TAG) {
-        // Encyclopedia texts (including directories)
+        // attempt to treat as a directory
         detailed_description = PediaDirText(m_items_it->second);
-        if (detailed_description.empty()) {
-            detailed_description = UserString(m_items_it->second);
-            name = EMPTY_STRING;
-        } else {
+        if (!detailed_description.empty()) {
             name = UserString(m_items_it->second);
+
+        } else {
+            // couldn't find a directory; look up in custom encyclopedia entries
+            for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator category_it = encyclopedia.articles.begin();
+                 category_it != encyclopedia.articles.end(); ++category_it)
+            {
+                const std::vector<EncyclopediaArticle>& articles = category_it->second;
+                for (std::vector<EncyclopediaArticle>::const_iterator article_it = articles.begin();
+                     article_it != articles.end(); ++article_it)
+                {
+                    if (article_it->name != m_items_it->second)
+                        continue;
+                    name = UserString(article_it->name);
+                    detailed_description = UserString(article_it->description);
+                    general_type = UserString(article_it->category);
+                    specific_type = UserString(article_it->short_description);
+                    texture = ClientUI::GetTexture(ClientUI::ArtDir() / article_it->icon, true);
+                    break;
+                }
+            }
         }
 
     } else if (m_items_it->first == "ENC_SHIP_PART") {
@@ -1022,6 +1059,7 @@ void EncyclopediaDetailPanel::Refresh() {
             }
         }
     }
+
     // Create Icons
     if (texture) {
         m_icon =        new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(10), GG::Y(10), texture,        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);

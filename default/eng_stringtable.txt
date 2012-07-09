@@ -2430,6 +2430,24 @@ ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 ENC_TECH_DETAIL_TYPE_STR
 %1% %2% - %3%
 
+TEST_ARTICLE
+Test Article
+
+CATEGORY_TEST
+Testing
+
+TEST_ARTICLE_SHORT_DESC
+For Testing Purposes
+
+TEST_ARTICLE_TEXT
+This is a test article for the encyclopedia.  This is the main body text of the article, and should be shown in the main scrollable part of the encyclopedia panel.
+
+CATEGORY_GAME_CONCEPTS
+Game Concept
+
+PEACE_ARTICLE_TEXT
+Peace is the diplomatic state between empires in which they mutually agree not to attack eachother's ships or planets, not to obstruct eachother's fleet resupply or resource exchange, and not to impede colonization.
+
 ####################
 # Combat Messages  #
 ####################
