@@ -7400,7 +7400,7 @@ Standard Hull
 SH_STANDARD_DESC
 '''Basic interstellar hull.
 
-Requires a Basic Shipyard and an Orbital Drydock at the planet where it is Constructed.'''
+Requires a Basic Shipyard at the planet where it is Constructed.'''
 
 SH_XENTRONIUM
 Xentronium Hull
