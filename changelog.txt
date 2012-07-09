@@ -52,6 +52,9 @@ Graphics:
  ~ Added unique graphics for each hull.
  ~ Unique graphics for more shipyards.
  ~ Added overlay for Ancient Ruins.
+ ~ Added new fleet icon for outposts.
+ ~ Fixed broken pre-made ship fleet window icons.
+ ~ Assigned hull thumbnails to show in the sidebar of the design screen.
 
 GUI:
  ~ Renamed the 'Construction' meter to 'Infrastructure'.

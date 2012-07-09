@@ -22,7 +22,7 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    icon = ""
+    icon = "icons/ship_hulls/xentronium_hull_small.png"
     graphic = "hulls_design/xentronium_hull.png"
 
 Hull
@@ -39,7 +39,7 @@ Hull
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    icon = ""
+    icon = "icons/ship_hulls/colony_base_hull_small.png"
     graphic = "hulls_design/colony_base_hull.png"
     
 Hull
@@ -110,8 +110,8 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    icon = ""
-    graphic = ""
+    icon = "icons/ship_hulls/generic_hull.png"
+    graphic = "hulls_design/generic_hull.png"
 
 Hull
     name = "SH_ROBOTIC"
@@ -149,7 +149,7 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
+    icon = "icons/ship_hulls/robotic_hull_small.png"
     graphic = "hulls_design/robotic_hull.png"
 
 Hull
@@ -185,7 +185,7 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
+    icon = "icons/ship_hulls/spatial_flux_hull_small.png"
     graphic = "hulls_design/spatial_flux_hull.png"
 
 Hull
@@ -227,7 +227,7 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    icon = ""
+    icon = "icons/ship_hulls/self_gravitating_hull_small.png"
     graphic = "hulls_design/self_gravitating_hull.png"
 
 Hull
@@ -272,7 +272,7 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
+    icon = "icons/ship_hulls/nano_robotic_hull_small.png"
     graphic = "hulls_design/nano_robotic_hull.png"
 
 Hull
@@ -323,7 +323,7 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    icon = ""
+    icon = "icons/ship_hulls/titanic_hull_small.png"
     graphic = "hulls_design/titanic_hull.png"
 
 Hull
@@ -354,7 +354,7 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    icon = ""
+    icon = "icons/ship_hulls/trans_spatial_hull_small.png"
     graphic = "hulls_design/trans_spatial_hull.png"
 
 Hull
@@ -417,8 +417,8 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
-    graphic = "hulls_design/lagistics_facilitator_hull.png"
+    icon = "icons/ship_hulls/logistics_facilitator_hull_small.png"
+    graphic = "hulls_design/logistics_facilitator_hull.png"
 
 Hull
     name = "SH_ASTEROID"
@@ -458,7 +458,7 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
+    icon = "icons/ship_hulls/asteroid_hull_small.png"
     graphic = "hulls_design/asteroid_hull.png"
 
 Hull
@@ -495,7 +495,7 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
+    icon = "icons/ship_hulls/small_asteroid_hull_small.png"
     graphic = "hulls_design/small_asteroid_hull.png"
 
 Hull
@@ -539,7 +539,7 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
+    icon = "icons/ship_hulls/heavy_asteroid_hull_small.png"
     graphic = "hulls_design/heavy_asteroid_hull.png"
 
 Hull
@@ -578,7 +578,7 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
+    icon = "icons/ship_hulls/camouflage_asteroid_hull_small.png"
     graphic = "hulls_design/camouflage_asteroid_hull.png"
 
 Hull
@@ -615,7 +615,7 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
+    icon = "icons/ship_hulls/small_camouflage_asteroid_hull_small.png"
     graphic = "hulls_design/small_camouflage_asteroid_hull.png"
 
 Hull
@@ -673,7 +673,7 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
+    icon = "icons/ship_hulls/agregate_asteroid_hull_small.png"
     graphic = "hulls_design/agregate_asteroid_hull.png"
 
 Hull
@@ -714,7 +714,7 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
+    icon = "icons/ship_hulls/mini_asteroid_swarm_small.png"
     graphic = "hulls_design/mini_asteroid_swarm.png"
 
 Hull
@@ -785,7 +785,7 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
+    icon = "icons/ship_hulls/scattered_asteroid_hull_small.png"
     graphic = "hulls_design/scattered_asteroid_hull.png"
 
 Hull
@@ -826,7 +826,7 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
+    icon = "icons/ship_hulls/crystalized_asteroid_hull_small.png"
     graphic = "hulls_design/crystalized_asteroid_hull.png"
 
 Hull
@@ -870,7 +870,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 10
     ]
-    icon = ""
+    icon = "icons/ship_hulls/organic_hull_small.png"
     graphic = "hulls_design/organic_hull.png"
 
 Hull
@@ -903,7 +903,7 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    icon = ""
+    icon = "icons/ship_hulls/static_multicellular_small.png"
     graphic = "hulls_design/static_multicellular.png"
 
 Hull
@@ -950,7 +950,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 100
     ]
-    icon = ""
+    icon = "icons/ship_hulls/endomorphic_hull_small.png"
     graphic = "hulls_design/endomorphic_hull.png"
 
 Hull
@@ -997,7 +997,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 100
     ]
-    icon = ""
+    icon = "icons/ship_hulls/endosymbiotic_hull_small.png"
     graphic = "hulls_design/symbiotic_hull.png"
 
 Hull
@@ -1047,7 +1047,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 100
     ]
-    icon = ""
+    icon = "icons/ship_hulls/protoplasmic_hull_small.png"
     graphic = "hulls_design/protoplasmic_hull.png"
 
 Hull
@@ -1100,7 +1100,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 100
     ]
-    icon = ""
+    icon = "icons/ship_hulls/endosymbiotic_hull_small.png"
     graphic = "hulls_design/endosymbiotic_hull.png"
 
 Hull
@@ -1143,7 +1143,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 150
     ]
-    icon = ""
+    icon = "icons/ship_hulls/ravenous_hull_small.png"
     graphic = "hulls_design/ravenous_hull.png"
 
 Hull
@@ -1191,7 +1191,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 150
     ]
-    icon = ""
+    icon = "icons/ship_hulls/bio_adaptive_hull_small.png"
     graphic = "hulls_design/bio_adaptive_hull.png"
 
 Hull
@@ -1260,7 +1260,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 100
     ]
-    icon = ""
+    icon = "icons/ship_hulls/sentient_hull_small.png"
     graphic = "hulls_design/sentient_hull.png"
 
 Hull
@@ -1288,7 +1288,7 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    icon = ""
+    icon = "icons/ship_hulls/compressed_energy_hull_small.png"
     graphic = "hulls_design/compressed_energy_hull.png"
 
 Hull
@@ -1344,7 +1344,7 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    icon = ""
+    icon = "icons/ship_hulls/fractal_energy_hull_small.png"
     graphic = "hulls_design/fractal_energy_hull.png"
 
 Hull
@@ -1383,7 +1383,7 @@ Hull
     ]
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
-    icon = ""
+    icon = "icons/ship_hulls/quantum_energy_hull_small.png"
     graphic = "hulls_design/quantum_energy_hull.png"
 
 Hull
@@ -1474,7 +1474,7 @@ Hull
 
         [[REGULAR_HULL_DETECTION]]
     ]
-    icon = ""
+    icon = "icons/ship_hulls/solar_hull_small.png"
     graphic = "hulls_design/solar_hull.png"
     
 Hull

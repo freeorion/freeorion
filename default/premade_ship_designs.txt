@@ -35,6 +35,7 @@ ShipDesign
     description = "SD_COLONY_BASE_DESC"
     hull = "SH_COLONY_BASE"
     parts = "CO_COLONY_POD"
+    icon = "icons/ship_hulls/colony_base_hull_small.png"  // These designs may specific a ship icon, but if not the hull's icon is used.
     model = "seed"
 
 ShipDesign
@@ -53,7 +54,7 @@ ShipDesign
     name = "SD_OUTPOST_BASE"
     description = "SD_OUTPOST_BASE_DESC"
     hull = "SH_COLONY_BASE"
-    parts = "CO_OUTPOST_MOD"
+    parts = "CO_OUTPOST_POD"
     model = "seed"
 
 ShipDesign
@@ -65,7 +66,7 @@ ShipDesign
         "SR_WEAPON_1"
         "SH_DEFENSE_GRID"
     ]
-    icon = "icons/ship_hulls/generic.png"
+    icon = ""
     model = "mark1"
 
 ShipDesign
@@ -77,7 +78,6 @@ ShipDesign
         "SR_WEAPON_2"
         "SH_DEFENSE_GRID"
     ]
-    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
 
 ShipDesign
@@ -89,7 +89,6 @@ ShipDesign
         "SR_WEAPON_3"
         "SH_DEFENSE_GRID"
     ]
-    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
     
 ShipDesign
@@ -101,7 +100,6 @@ ShipDesign
         "SR_WEAPON_4"
         "SH_DEFENSE_GRID"
     ]
-    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
     
 ShipDesign
@@ -113,7 +111,6 @@ ShipDesign
         "SR_WEAPON_5"
         "SH_DEFENSE_GRID"
     ]
-    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
     
 ShipDesign
@@ -125,7 +122,6 @@ ShipDesign
         "SR_WEAPON_6"
         "SH_DEFENSE_GRID"
     ]
-    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
     
 ShipDesign
@@ -137,7 +133,6 @@ ShipDesign
         "SR_WEAPON_7"
         "SH_DEFENSE_GRID"
     ]
-    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
     
 ShipDesign
@@ -149,7 +144,6 @@ ShipDesign
         "SR_WEAPON_8"
         "SH_DEFENSE_GRID"
     ]
-    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
 
 ShipDesign
@@ -162,7 +156,6 @@ ShipDesign
         "SR_WEAPON_5"
         "SH_DEFLECTOR"
     ]
-    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
 
 ShipDesign
@@ -177,7 +170,6 @@ ShipDesign
         "SR_WEAPON_9"
         "SH_DEFLECTOR"
     ]
-    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
 
 ShipDesign
@@ -191,5 +183,4 @@ ShipDesign
         "SR_WEAPON_8"
         "FU_ZERO_FUEL"
     ]
-    icon = "icons/ship_hulls/generic.png"
     model = "mark1"
