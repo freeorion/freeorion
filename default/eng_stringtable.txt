@@ -3281,7 +3281,7 @@ GAIA_SPECIAL
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Increases max Population according to planet size-- Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
+'''Increases max Population by planet size— Tiny: +3, Small: +6, Medium: +9, Large: +12, Huge: +15.
 
 This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of it's population.'''
 
@@ -3305,7 +3305,7 @@ TUNNELS_SPECIAL
 Natural Tunnels
 
 TUNNELS_SPECIAL_DESCRIPTION
-'''Increases max Population according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.
+'''Increases max Population by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
 This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonized.'''
 
@@ -3321,7 +3321,7 @@ SOLID_CORE_SPECIAL
 Solid Core
 
 SOLID_CORE_SPECIAL_DESC
-'''Reduces max Population according to planet size-- Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
+'''Reduces max Population by planet size— Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
 
 This planet's core has solidified, and it has a very weak magnetic field. The star's solar wind reaches the surface relatively unfiltered, damaging the health of the planet's population.'''
 
@@ -3337,7 +3337,7 @@ SLOW_ROTATION_SPECIAL
 Very Slow Rotation
 
 SLOW_ROTATION_SPECIAL_DESC
-'''Construction on this planet is decreased by 20. max Decreaases Population according to planet size-- Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
+'''Construction on this planet is decreased by 20. Decreaases max Population by planet size— Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
 
 This planet rotates about its axis very slowly, causing very long days and nights. Infrastructure growth and food production are reduced.'''
 
@@ -3464,7 +3464,7 @@ En Experimentor outpost exists in this system, and defeating them is necessary t
 PROBIOTIC_SPECIAL
 Probiotic Soup
 PROBIOTIC_SPECIAL_DESC
-'''Increases max Population if inhabited by Organic species according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.
+'''Increases max Population if inhabited by Organic species by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with Probiotic Soup is focused on Growth, all connected planets with Organic species receive the same bonus.
 
 The great diversity of unique single-celled organisms have applications to the health and maintenance of all types of organic life.'''
@@ -3472,7 +3472,7 @@ The great diversity of unique single-celled organisms have applications to the h
 FRUIT_SPECIAL
 Caretaker's Fruit
 FRUIT_SPECIAL_DESC
-'''Increases max Population if inhabited by Organic species according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.
+'''Increases max Population if inhabited by Organic species by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with Caretaker's Fruit is focused on Growth, all connected planets with Organic species receive the same bonus.
 
 What appears to be a forest is actually part of a continent-spanning symbiotic organism. The fruit of these trees contains marvelously complex organic chemicals beneficial to all sorts of organic life.'''
@@ -3480,7 +3480,7 @@ What appears to be a forest is actually part of a continent-spanning symbiotic o
 SPICE_SPECIAL
 Ki Spice
 SPICE_SPECIAL_DESC
-'''Increases max Population if inhabited by Organic species according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.
+'''Increases max Population if inhabited by Organic species by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with Ki Spice is focused on Growth, all connected planets with Organic species receive the same bonus.
 
 A unique substance produced by this planet's ecology, Ki Spice has the capacity to lengthen the lives, clarify the thoughts, or sharpen the senses of organic beings.'''
@@ -3488,7 +3488,7 @@ A unique substance produced by this planet's ecology, Ki Spice has the capacity 
 MONOPOLE_SPECIAL
 Monopole Magnets
 MONOPOLE_SPECIAL_DESC
-'''Increases max Population if inhabited by Robotic species according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.
+'''Increases max Population if inhabited by Robotic species by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with Monopole Magnets is focused on Growth, all connected planets with Robotic species receive the same bonus.
 
 Monopole Magnets make better robots!'''
@@ -3496,7 +3496,7 @@ Monopole Magnets make better robots!'''
 SUPERCONDUCTOR_SPECIAL
 Ambient Superconductors
 SUPERCONDUCTOR_SPECIAL_DESC
-'''Increases max Population if inhabited by Robotic species according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.
+'''Increases max Population if inhabited by Robotic species by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with Ambient Superconductors is focused on Growth, all connected planets with Robotic species receive the same bonus.
 
 Ambient Superconductors make better robots!'''
@@ -3504,7 +3504,7 @@ Ambient Superconductors make better robots!'''
 POSITRONIUM_SPECIAL
 Positronium Ash
 POSITRONIUM_SPECIAL_DESC
-'''Increases max Population if inhabited by Robotic species according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.
+'''Increases max Population if inhabited by Robotic species by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with Positronium Ash is focused on Growth, all connected planets with Robotic species receive the same bonus.
 
 Positronium Ash make better robots brains!'''
@@ -3512,7 +3512,7 @@ Positronium Ash make better robots brains!'''
 MINERALS_SPECIAL
 Rich Minerals
 MINERALS_SPECIAL_DESC
-'''Increases max Population if inhabited by Lithic species according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.
+'''Increases max Population if inhabited by Lithic species by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with Rich Minerals is focused on Growth, all connected planets with Lithic species receive the same bonus.
 
 Increases Mining by 50 on this planet when focus is set to Mining, and by twice the planet's Population when focus is set to Heavy Mining.
@@ -3522,7 +3522,7 @@ This planet has a rich natural deposit of minerals, boosting mining or Lithic gr
 CRYSTALS_SPECIAL
 Silmaline Crystals
 CRYSTALS_SPECIAL_DESC
-'''Increases max Population if inhabited by Lithic species according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.
+'''Increases max Population if inhabited by Lithic species by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with Silmaline Crystals is focused on Growth, all connected planets with Lithic species receive the same bonus.
 
 Increases Mining by 50 on this planet when focus is set to Mining, and by twice the planet's Population when focus is set to Heavy Mining.
@@ -3532,7 +3532,7 @@ This planet has rare Silmaline Crystals, boosting mining or Lithic growth signif
 METALOIDS_SPECIAL
 High-Energy Metaloids
 METALOIDS_SPECIAL_DESC
-'''Increases max Population if inhabited by Lithic species according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.
+'''Increases max Population if inhabited by Lithic species by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with High-Energy Metaloids is focused on Growth, all connected planets with Lithic species receive the same bonus.
 
 Increases Mining by 50 on this planet when focus is set to Mining, and by twice the planet's Population when focus is set to Heavy Mining.
@@ -4843,7 +4843,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Increases the max population of Adequate, Poor, & Hostile planets according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.'''
+'''Increases the max population of Adequate, Poor, & Hostile planets by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
 
 GRO_GENETIC_MED
 Genetic Medicine
@@ -4867,7 +4867,7 @@ GRO_XENO_GENETICS
 Xenological Genetics
 
 GRO_XENO_GENETICS_DESC
-'''Increases the max population of Good, Adequate, Poor, & Hostile planets according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.
+'''Increases the max population of Good, Adequate, Poor, & Hostile planets by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
 The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
 
@@ -4891,7 +4891,7 @@ GRO_XENO_HYBRIDS
 Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
-'''Increases the max population of Adequate, Poor, & Hostile planets according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.
+'''Increases the max population of Adequate, Poor, & Hostile planets by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
 Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
 
@@ -5497,7 +5497,7 @@ GRO_SUBTER_HAB
 Subterranean Habitation
 
 GRO_SUBTER_HAB_DESC
-'''Increases the max population on all planets according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.  Cannot improve a planet with the Tunnels or Tectonic Instability special.'''
+'''Increases the max population on all planets by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.  Cannot improve a planet with the Tunnels or Tectonic Instability special.'''
 
 GRO_INDUSTRY_FARM
 Industrial Farming
@@ -5559,7 +5559,7 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Increases the max population on hostile planets according to planet size-- Tiny: 1, Small: 2, Medium: 3, Large: 4, Huge: 5.
+'''Increases the max population on hostile planets by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
