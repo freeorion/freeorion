@@ -1964,7 +1964,7 @@ BASIC_POPULATION
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_SUPPLY"
-            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble   
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble   
 
 
 //#####     B A S E   P O P U L A T I O N     #####
@@ -2037,15 +2037,15 @@ BAD_POPULATION
             effects = SetTargetPopulation Value*.75   // doesn't matter if these modifiers don't match ther other 'bad' modifiers.
 
         [[TUNNELS_MODIFIER]]
-        [[POPULATION_TECHS]]
         [[ENVIRONMENT_MODIFIER]]
+        [[POPULATION_TECHS]]
 '''
 
 AVERAGE_POPULATION
 '''[[BASIC_POPULATION]]
         [[TUNNELS_MODIFIER]]
-        [[POPULATION_TECHS]]
         [[ENVIRONMENT_MODIFIER]]
+        [[POPULATION_TECHS]]
 '''
 
 GOOD_POPULATION
@@ -2057,8 +2057,8 @@ GOOD_POPULATION
             effects = SetTargetPopulation Value*1.25  // doesn't matter if these modifiers don't match ther other 'good' modifiers.
 
         [[TUNNELS_MODIFIER]]
-        [[POPULATION_TECHS]]
         [[ENVIRONMENT_MODIFIER]]
+        [[POPULATION_TECHS]]
 '''
 
 
@@ -2103,66 +2103,62 @@ POPULATION_TECHS
 * Changes to the growth tree should take this into account.
 */
 ENVIRONMENT_MODIFIER
-'''EffectsGroup
+'''     EffectsGroup
             scope = Source
-            activation = And [
-                Planet environment = Adequate
-                Not Or [
-                    OwnerHasTech "GRO_SYMBIOTIC_BIO"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
+            activation = Planet environment = Hostile
+            accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value - 3 * Source.SizeAsDouble
+            
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = Poor
+            accountinglabel = "POOR_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value - 1 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = Adequate
             accountinglabel = "ADEQUATE_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value*[[ADEQUATE_MULTIPLIER]]
+            effects = SetTargetPopulation Value + 0 * Source.SizeAsDouble
+
+
 
         EffectsGroup
             scope = Source
             activation = And [
-                Planet environment = Poor
-                Not Or [
-                    OwnerHasTech "GRO_XENO_GENETICS"
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
+                Planet environment = [ Adequate Poor Hostile ]
+                OwnerHasTech "GRO_SYMBIOTIC_BIO"
             ]
-            accountinglabel = "POOR_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value*[[POOR_MULTIPLIER]]
+            accountinglabel = "GRO_SYMBIOTIC_BIO"
+            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
 
         EffectsGroup
             scope = Source
             activation = And [
-                Planet environment = Poor
+                Planet environment = [ Good Adequate Poor Hostile ]
                 OwnerHasTech "GRO_XENO_GENETICS"
-                Not Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
             ]
-            accountinglabel = "POOR_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value*([[POOR_MULTIPLIER]] + (1 - [[POOR_MULTIPLIER]])/2)
+            accountinglabel = "GRO_XENO_GENETICS"
+            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
 
         EffectsGroup
             scope = Source
             activation = And [
-                Planet environment = Hostile
-                Not Or [
-                    OwnerHasTech "GRO_XENO_HYBRIDS"
-                    OwnerHasTech "GRO_CYBORG"
-                ]
-            ]
-            accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value*[[HOSTILE_MULTIPLIER]]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
+                Planet environment = [ Adequate Poor Hostile ]
                 OwnerHasTech "GRO_XENO_HYBRIDS"
-                Not OwnerHasTech "GRO_CYBORG"
             ]
-            accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value*([[HOSTILE_MULTIPLIER]] + (1 - [[HOSTILE_MULTIPLIER]])/2)
+            accountinglabel = "GRO_XENO_HYBRIDS"
+            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
 
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = [ Adequate Poor Hostile ]
+                OwnerHasTech "GRO_CYBORG"
+            ]
+            accountinglabel = "GRO_CYBORG"
+            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
+            
 '''
 
 

@@ -2,26 +2,26 @@
 
 // If the following two are changed, POP_PER_PRODUCTION and INFRA_PER_PRODUCTION should be changed in eng_stringtable.txt.
 PRODUCTION_PER_POP
-'''0.5 * [[BASIC_PRODUCTION]]'''
+'''0.2 * [[BASIC_PRODUCTION]]'''
 
 PRODUCTION_PER_INFRA
 '''0.125 * [[BASIC_PRODUCTION]]'''
 
 // The amount of production per population for effects that favour population over infrastructure
 POP_PRODUCTION_PER_POP
-'''2.0 * [[PRODUCTION_PER_POP]]'''
+'''1.0 * [[PRODUCTION_PER_POP]]'''
 
 // The amount of production per infrastructure for effects that favour population over infrastructure
 POP_PRODUCTION_PER_INFRA
-'''1.0 * [[PRODUCTION_PER_INFRA]]'''
+'''0.5 * [[PRODUCTION_PER_INFRA]]'''
 
 // The amount of production per population for effects that favour infrastructure over population
 INFRA_PRODUCTION_PER_POP
-'''1.0 * [[PRODUCTION_PER_POP]]'''
+'''0.5 * [[PRODUCTION_PER_POP]]'''
 
 // The amount of production per infrastructure for effects that favour infrastructure over population
 INFRA_PRODUCTION_PER_INFRA
-'''2.0 * [[PRODUCTION_PER_INFRA]]'''
+'''1.0 * [[PRODUCTION_PER_INFRA]]'''
 
 BASIC_PRODUCTION
 '''1.0'''
