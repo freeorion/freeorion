@@ -1212,19 +1212,8 @@ BuildingType
             scope = And [
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
-                [[INFRA_CONDITION_INFRA]]
             ]
-            activation = Focus "FOCUS_INDUSTRY"
-            effects = SetTargetIndustry Value + Target.Construction * 0.5 * [[INFRA_PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                ContainedBy Contains Source
-                Focus "FOCUS_INDUSTRY"
-                [[INFRA_CONDITION_POP]]
-            ]
-            activation = Focus "FOCUS_INDUSTRY"
-            effects = SetTargetIndustry Value + Target.Population * 0.5 * [[INFRA_PRODUCTION_PER_POP]]
+            effects = SetTargetIndustry Value + 5
     ]
     icon = ""
 

@@ -1369,7 +1369,7 @@ Tech
     ]
     unlock = Item type = Building name = "BLD_HYPER_DAM"
     graphic = "icons/tech/zero_point_energy.png"
-
+/*
 Tech
     name = "PRO_HEAVY_MINING_I"
     description = "PRO_HEAVY_MINING_I_DESC"
@@ -1398,7 +1398,7 @@ Tech
         "GRO_PLANET_ECOL"
     ]
     graphic = "icons/tech/environmentally_conscious_mining.png"
-
+*/
 Tech
     name = "PRO_ASTEROID_MINE"
     description = "PRO_ASTEROID_MINE_DESC"

@@ -1809,7 +1809,7 @@ HAS_MINING_FOCUS
                 ]
             ]
             graphic = "icons/focus/mining.png"
-
+/*
         Focus
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
@@ -1827,6 +1827,7 @@ HAS_MINING_FOCUS
                 ]
             ]
             graphic = "icons/building/heavy_mining_processor.png"
+*/
 '''
 
 HAS_INDUSTRY_FOCUS
