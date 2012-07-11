@@ -27,8 +27,7 @@ void QueueListBox::DropsAcceptable(DropsAcceptableIter first,
     }
 }
 
-void QueueListBox::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt)
-{
+void QueueListBox::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
     assert(wnds.size() == 1);
     assert(AllowedDropTypes().find((*wnds.begin())->DragDropDataType()) != AllowedDropTypes().end());
     GG::ListBox::Row* row = boost::polymorphic_downcast<GG::ListBox::Row*>(*wnds.begin());
@@ -37,8 +36,7 @@ void QueueListBox::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& 
     QueueItemMoved(row, std::distance(begin(), it));
 }
 
-void QueueListBox::Render()
-{
+void QueueListBox::Render() {
     ListBox::Render();
     // render drop point line
     if (m_show_drop_point && m_enabled) {
@@ -76,8 +74,7 @@ void QueueListBox::DragDropHere(const GG::Pt& pt, const std::map<GG::Wnd*, GG::P
     }
 }
 
-void QueueListBox::DragDropLeave()
-{
+void QueueListBox::DragDropLeave() {
     m_drop_point = end();
     m_show_drop_point = false;
 }
@@ -85,8 +82,7 @@ void QueueListBox::DragDropLeave()
 void QueueListBox::EnableOrderIssuing(bool enable/* = true*/)
 { m_enabled = enable; }
 
-void QueueListBox::Clear()
-{
+void QueueListBox::Clear() {
     CUIListBox::Clear();
     DragDropLeave();
 }

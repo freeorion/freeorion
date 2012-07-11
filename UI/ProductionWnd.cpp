@@ -26,8 +26,7 @@ namespace {
     //////////////////////////////////////////////////
     // QueueRow
     //////////////////////////////////////////////////
-    struct QueueRow : GG::ListBox::Row
-    {
+    struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ProductionQueue::Element& build, int queue_index_);
         const int queue_index;
     };
@@ -35,8 +34,7 @@ namespace {
     //////////////////////////////////////////////////
     // QueueBuildPanel
     //////////////////////////////////////////////////
-    class QueueBuildPanel : public GG::Control
-    {
+    class QueueBuildPanel : public GG::Control {
     public:
         QueueBuildPanel(GG::X w, const ProductionQueue::Element& build, double turn_cost, int turns, int number, int turns_completed, double partially_complete_turn);
         virtual void Render();
@@ -194,8 +192,7 @@ namespace {
         AttachChild(m_progress_bar);
     }
 
-    void QueueBuildPanel::Render()
-    {
+    void QueueBuildPanel::Render() {
         GG::Clr fill = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor();
         GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
 
@@ -210,8 +207,7 @@ namespace {
         glEnable(GL_TEXTURE_2D);
     }
 
-    void QueueBuildPanel::Draw(GG::Clr clr, bool fill)
-    {
+    void QueueBuildPanel::Draw(GG::Clr clr, bool fill) {
         const int CORNER_RADIUS = 7;
         GG::Pt ul = UpperLeft(), lr = LowerRight();
         glColor(clr);
@@ -268,8 +264,7 @@ bool ProductionWnd::InClient(const GG::Pt& pt) const
 void ProductionWnd::Render()
 {}
 
-void ProductionWnd::Refresh()
-{
+void ProductionWnd::Refresh() {
     // useful at start of turn or when loading empire from save.
     // since empire object is recreated based on turn update from server, 
     // connections of signals emitted from the empire must be remade
@@ -285,8 +280,7 @@ void ProductionWnd::Refresh()
     m_build_designator_wnd->Refresh();
 }
 
-void ProductionWnd::Reset()
-{
+void ProductionWnd::Reset() {
     //std::cout << "ProductionWnd::Reset()" << std::endl;
     UpdateInfoPanel();
     UpdateQueue();
@@ -294,8 +288,7 @@ void ProductionWnd::Reset()
     m_build_designator_wnd->Reset();
 }
 
-void ProductionWnd::Update()
-{
+void ProductionWnd::Update() {
     //std::cout << "ProductionWnd::Update()" << this << std::endl;
     UpdateInfoPanel();
     UpdateQueue();
@@ -321,8 +314,7 @@ void ProductionWnd::SelectDefaultPlanet()
 void ProductionWnd::SelectSystem(int system_id)
 { m_build_designator_wnd->SelectSystem(system_id); }
 
-void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position)
-{
+void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
     HumanClientApp::GetApp()->Orders().IssueOrder(
         OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(),
                                           boost::polymorphic_downcast<QueueRow*>(row)->queue_index,
@@ -332,17 +324,17 @@ void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position)
 void ProductionWnd::Sanitize()
 { m_build_designator_wnd->Clear(); }
 
-void ProductionWnd::ProductionQueueChangedSlot()
-{
+void ProductionWnd::ProductionQueueChangedSlot() {
     UpdateInfoPanel();
     UpdateQueue();
+    m_build_designator_wnd->Update();
 }
 
-void ProductionWnd::UpdateQueue()
-{
+void ProductionWnd::UpdateQueue() {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
+
     const ProductionQueue& queue = empire->GetProductionQueue();
     std::size_t first_visible_queue_row = std::distance(m_queue_lb->begin(), m_queue_lb->FirstRowShown());
     m_queue_lb->Clear();
@@ -358,8 +350,7 @@ void ProductionWnd::UpdateQueue()
         m_queue_lb->BringRowIntoView(boost::next(m_queue_lb->begin(), first_visible_queue_row));
 }
 
-void ProductionWnd::UpdateInfoPanel()
-{
+void ProductionWnd::UpdateInfoPanel() {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
@@ -371,14 +362,12 @@ void ProductionWnd::UpdateInfoPanel()
     m_production_info_panel->Reset(PPs, total_queue_cost, queue.ProjectsInProgress(), PPs_to_underfunded_projects, queue.size());
 }
 
-void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location)
-{
+void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location) {
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, name, number, location)));
     m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
 }
 
-void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location)
-{
+void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location) {
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, design_id, number, location)));
     m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
 }
@@ -386,8 +375,7 @@ void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int
 void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity)
 { HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, true))); }
 
-void ProductionWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
-{
+void ProductionWnd::QueueItemDeletedSlot(GG::ListBox::iterator it) {
     //std::cout << "ProductionWnd::QueueItemDeletedSlot" << std::endl;
     HumanClientApp::GetApp()->Orders().IssueOrder(
         OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(),
@@ -400,9 +388,7 @@ void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt&
 void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it)
 { m_queue_lb->ErasedSignal(it); }
 
-void ProductionWnd::EnableOrderIssuing(bool enable/* = true*/)
-{
+void ProductionWnd::EnableOrderIssuing(bool enable/* = true*/) {
     m_enabled = enable;
     m_queue_lb->EnableOrderIssuing(m_enabled);
 }
-

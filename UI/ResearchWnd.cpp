@@ -24,8 +24,7 @@ namespace {
     //////////////////////////////////////////////////
     // QueueRow
     //////////////////////////////////////////////////
-    struct QueueRow : GG::ListBox::Row
-    {
+    struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ResearchQueue::Element& queue_element);
         std::string tech_name;
     };
@@ -160,8 +159,7 @@ namespace {
         AttachChild(m_progress_bar);
     }
 
-    void QueueTechPanel::Render()
-    {
+    void QueueTechPanel::Render() {
         GG::Clr fill = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor();
         GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
 
@@ -176,8 +174,7 @@ namespace {
         glEnable(GL_TEXTURE_2D);
     }
 
-    void QueueTechPanel::Draw(GG::Clr clr, bool fill)
-    {
+    void QueueTechPanel::Draw(GG::Clr clr, bool fill) {
         const int CORNER_RADIUS = 7;
         GG::Pt ul = UpperLeft(), lr = LowerRight();
         glColor(clr);
@@ -225,8 +222,7 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
 ResearchWnd::~ResearchWnd()
 { m_empire_connection.disconnect(); }
 
-void ResearchWnd::Refresh()
-{
+void ResearchWnd::Refresh() {
     // useful at start of turn or when loading empire from save.
     // since empire object is recreated based on turn update from server, 
     // connections of signals emitted from the empire must be remade
@@ -238,16 +234,14 @@ void ResearchWnd::Refresh()
     Update();
 }
 
-void ResearchWnd::Reset()
-{
+void ResearchWnd::Reset() {
     m_tech_tree_wnd->Reset();
     UpdateQueue();
     UpdateInfoPanel();
     m_queue_lb->BringRowIntoView(m_queue_lb->begin());
 }
 
-void ResearchWnd::Update()
-{
+void ResearchWnd::Update() {
     m_tech_tree_wnd->Update();
     UpdateQueue();
     UpdateInfoPanel();
@@ -256,15 +250,13 @@ void ResearchWnd::Update()
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
 { m_tech_tree_wnd->CenterOnTech(tech_name); }
 
-void ResearchWnd::ShowTech(const std::string& tech_name)
-{
+void ResearchWnd::ShowTech(const std::string& tech_name) {
     m_tech_tree_wnd->CenterOnTech(tech_name);
     m_tech_tree_wnd->SetEncyclopediaTech(tech_name);
     m_tech_tree_wnd->SelectTech(tech_name);
 }
 
-void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position)
-{
+void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
     if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(row))
         HumanClientApp::GetApp()->Orders().IssueOrder(
             OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(),
@@ -277,15 +269,13 @@ void ResearchWnd::Sanitize()
 void ResearchWnd::Render()
 {}
 
-void ResearchWnd::ResearchQueueChangedSlot()
-{
+void ResearchWnd::ResearchQueueChangedSlot() {
     UpdateQueue();
     UpdateInfoPanel();
     m_tech_tree_wnd->Update();
 }
 
-void ResearchWnd::UpdateQueue()
-{
+void ResearchWnd::UpdateQueue() {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
@@ -304,8 +294,7 @@ void ResearchWnd::UpdateQueue()
         m_queue_lb->BringRowIntoView(boost::next(m_queue_lb->begin(), first_visible_queue_row));
 }
 
-void ResearchWnd::UpdateInfoPanel()
-{
+void ResearchWnd::UpdateInfoPanel() {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
@@ -323,8 +312,7 @@ void ResearchWnd::UpdateInfoPanel()
     //empire->GetResearchResPool().ChangedSignal();
 }
 
-void ResearchWnd::AddTechToQueueSlot(const std::string& tech_name)
-{
+void ResearchWnd::AddTechToQueueSlot(const std::string& tech_name) {
     if (!m_enabled)
         return;
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -337,8 +325,7 @@ void ResearchWnd::AddTechToQueueSlot(const std::string& tech_name)
         orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name, -1)));
 }
 
-void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<std::string>& tech_vec)
-{
+void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<std::string>& tech_vec) {
     if (!m_enabled)
         return;
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -354,8 +341,7 @@ void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<std::string>& te
     }
 }
 
-void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
-{
+void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it) {
     if (!m_enabled)
         return;
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -364,8 +350,7 @@ void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
         orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, queue_row->tech_name)));
 }
 
-void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt)
-{
+void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt) {
     QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
     if (!queue_row)
         return;
@@ -373,14 +358,12 @@ void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& p
     m_tech_tree_wnd->SetEncyclopediaTech(queue_row->tech_name);
 }
 
-void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it)
-{
+void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it) {
     if (m_enabled)
         m_queue_lb->ErasedSignal(it);
 }
 
-void ResearchWnd::EnableOrderIssuing(bool enable/* = true*/)
-{
+void ResearchWnd::EnableOrderIssuing(bool enable/* = true*/) {
     m_enabled = enable;
     m_queue_lb->EnableOrderIssuing(m_enabled);
 }

@@ -297,7 +297,11 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
 
     SetTechQueueElementSpending(RPs, research_progress, sim_tech_status_map, m_queue, m_total_RPs_spent, m_projects_in_progress);
 
-    if (m_queue.empty()) return;    // nothing more to do...
+    if (m_queue.empty()) {
+        ResearchQueueChangedSignal();
+        return;    // nothing more to do...
+    }
+
     const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
 
     if (EPSILON < RPs) {
