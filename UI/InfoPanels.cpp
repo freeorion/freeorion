@@ -563,10 +563,10 @@ void ResourcePanel::DoExpandCollapseLayout() {
     DetachChild(m_multi_meter_status_bar);
     DetachChild(m_multi_icon_value_indicator);
 
+    const UniverseObject* obj = GetUniverseObject(m_rescenter_id);
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_rescenter_id]) {
-        const UniverseObject* obj = GetUniverseObject(m_rescenter_id);
         const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
 
         if (res) {
@@ -598,22 +598,30 @@ void ResourcePanel::DoExpandCollapseLayout() {
 
         Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
     } else {
-        // attach / show focus selector drop
-        m_focus_drop->Show();
-        AttachChild(m_focus_drop);
+        GG::Y top = GG::Y0;
+
+        // attach / show focus selector drop for planets, as these are the only
+        // things that can presently have focus set
+        if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
+            if (!planet->SpeciesName().empty()) {
+                m_focus_drop->Show();
+                AttachChild(m_focus_drop);
+                top = m_focus_drop->Height() + EDGE_PAD;
+            }
+        }
 
         // attach and show meter bars and large resource indicators
-        GG::Y top = UpperLeft().y;
-
         AttachChild(m_multi_icon_value_indicator);
-        m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), m_focus_drop->LowerRight().y + EDGE_PAD - top));
+        m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
         m_multi_icon_value_indicator->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_icon_value_indicator->Height()));
+        top += m_multi_icon_value_indicator->Height() + EDGE_PAD;
 
         AttachChild(m_multi_meter_status_bar);
-        m_multi_meter_status_bar->MoveTo(GG::Pt(GG::X(EDGE_PAD), m_multi_icon_value_indicator->LowerRight().y + EDGE_PAD - top));
+        m_multi_meter_status_bar->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
         m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
+        top += m_multi_icon_value_indicator->Height() + EDGE_PAD;
 
-        Resize(GG::Pt(Width(), m_multi_meter_status_bar->LowerRight().y + EDGE_PAD - top));
+        Resize(GG::Pt(Width(), top));
     }
 
     m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
