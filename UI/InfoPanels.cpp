@@ -927,12 +927,12 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
-    meters.push_back(std::make_pair(METER_SUPPLY, INVALID_METER_TYPE));
     meters.push_back(std::make_pair(METER_SHIELD, METER_MAX_SHIELD));
     meters.push_back(std::make_pair(METER_DEFENSE, METER_MAX_DEFENSE));
     meters.push_back(std::make_pair(METER_TROOPS, METER_MAX_TROOPS));
     meters.push_back(std::make_pair(METER_DETECTION, INVALID_METER_TYPE));
     meters.push_back(std::make_pair(METER_STEALTH, INVALID_METER_TYPE));
+    meters.push_back(std::make_pair(METER_SUPPLY, INVALID_METER_TYPE));
 
 
     m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_planet_id, meters);
@@ -1089,12 +1089,12 @@ void MilitaryPanel::DoExpandCollapseLayout() {
 
         // sort by insereting into multimap keyed by production amount, then taking the first two icons therein
         std::vector<StatisticIcon*> meter_icons;
-        meter_icons.push_back(m_fleet_supply_stat);
         meter_icons.push_back(m_shield_stat);
         meter_icons.push_back(m_defense_stat);
         meter_icons.push_back(m_troops_stat);
         meter_icons.push_back(m_detection_stat);
         meter_icons.push_back(m_stealth_stat);
+        meter_icons.push_back(m_fleet_supply_stat);
 
         // initially detach all...
         for (std::vector<StatisticIcon*>::iterator it = meter_icons.begin(); it != meter_icons.end(); ++it)
@@ -1118,8 +1118,8 @@ void MilitaryPanel::DoExpandCollapseLayout() {
         Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
     } else {
         // detach statistic icons
-        DetachChild(m_fleet_supply_stat);   DetachChild(m_shield_stat);     DetachChild(m_defense_stat);
-        DetachChild(m_troops_stat);         DetachChild(m_detection_stat);  DetachChild(m_stealth_stat);
+        DetachChild(m_shield_stat);     DetachChild(m_defense_stat);    DetachChild(m_troops_stat);
+        DetachChild(m_detection_stat);  DetachChild(m_stealth_stat);    DetachChild(m_fleet_supply_stat);
 
         // attach and show meter bars and large resource indicators
         GG::Y top = UpperLeft().y;
