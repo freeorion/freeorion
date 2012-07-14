@@ -2642,9 +2642,7 @@ void Condition::Species::Eval(const ScriptingContext& parent_context, ObjectSet&
         // get all names from valuerefs
         for (std::vector<const ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
              it != m_names.end(); ++it)
-        {
-            names.push_back((*it)->Eval(parent_context));
-        }
+        { names.push_back((*it)->Eval(parent_context)); }
         EvalImpl(matches, non_matches, search_domain, SpeciesSimpleMatch(names));
     } else {
         // re-evaluate allowed building types range for each candidate object
@@ -2743,6 +2741,142 @@ bool Condition::Species::Match(const ScriptingContext& local_context) const {
                     return true;
         }
     }
+    return false;
+}
+
+///////////////////////////////////////////////////////////
+// Enqueued                                              //
+///////////////////////////////////////////////////////////
+Condition::Enqueued::~Enqueued() {
+    delete m_design_id;
+    delete m_low;
+    delete m_high;
+}
+
+namespace {
+    struct EnqueuedSimpleMatch {
+        EnqueuedSimpleMatch(BuildType build_type, const std::string& name, int design_id,
+                            int empire_id, int low, int high) :
+            m_build_type(build_type),
+            m_name(name),
+            m_design_id(design_id),
+            m_empire_id(empire_id),
+            m_low(low),
+            m_high(high)
+        {}
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
+            return false;
+        }
+
+        BuildType   m_build_type;
+        std::string m_name;
+        int         m_design_id;
+        int         m_empire_id;
+        int         m_low;
+        int         m_high;
+    };
+}
+
+void Condition::Enqueued::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                               SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
+    if (simple_eval_safe) {
+        // check each valueref for invariance to local candidate
+        if ((m_design_id && !m_design_id->LocalCandidateInvariant()) ||
+            (m_empire_id && !m_empire_id->LocalCandidateInvariant()) ||
+            (m_low &&       !m_low->LocalCandidateInvariant()) ||
+            (m_high &&      !m_high->LocalCandidateInvariant()))
+        { simple_eval_safe = false; }
+    }
+    if (simple_eval_safe) {
+        // evaluate valuerefs once, and use to check all candidate objects
+        int design_id = (m_design_id ?  m_design_id->Eval(parent_context) : ShipDesign::INVALID_DESIGN_ID);
+        int empire_id = (m_empire_id ?  m_empire_id->Eval(parent_context) : ALL_EMPIRES);
+        int low =       (m_low ?        m_low->Eval(parent_context) :       0);
+        int high =      (m_high ?       m_high->Eval(parent_context) :      INT_MAX);
+
+        EvalImpl(matches, non_matches, search_domain, EnqueuedSimpleMatch(m_build_type, m_name, design_id, 
+                                                                          empire_id, low, high));
+    } else {
+        // re-evaluate allowed building types range for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::Enqueued::RootCandidateInvariant() const {
+    if ((m_design_id && !m_design_id->RootCandidateInvariant()) ||
+        (m_empire_id && !m_empire_id->RootCandidateInvariant()) ||
+        (m_low &&       !m_low->RootCandidateInvariant()) ||
+        (m_high &&      !m_high->RootCandidateInvariant()))
+    { return false; }
+    return true;
+}
+
+bool Condition::Enqueued::TargetInvariant() const {
+    if ((m_design_id && !m_design_id->TargetInvariant()) ||
+        (m_empire_id && !m_empire_id->TargetInvariant()) ||
+        (m_low &&       !m_low->TargetInvariant()) ||
+        (m_high &&      !m_high->TargetInvariant()))
+    { return false; }
+    return true;    return true;
+}
+
+std::string Condition::Enqueued::Description(bool negated/* = false*/) const {
+    std::string empire_str;
+    if (m_empire_id) {
+        int empire_id = ALL_EMPIRES;
+        if (ValueRef::ConstantExpr(m_empire_id))
+            empire_id = m_empire_id->Eval();
+        if (const Empire* empire = Empires().Lookup(empire_id))
+            empire_str = empire->Name();
+        else
+            empire_str = m_empire_id->Description();
+    }
+    std::string low_str = "0";
+    if (m_low) {
+        low_str = ValueRef::ConstantExpr(m_low) ?
+                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                    m_low->Description();
+    }
+    std::string high_str = boost::lexical_cast<std::string>(INT_MAX);
+    if (m_high) {
+        high_str = ValueRef::ConstantExpr(m_high) ?
+                    boost::lexical_cast<std::string>(m_high->Eval()) :
+                    m_high->Description();
+    }
+    std::string description_str = (!m_name.empty() ? "DESC_ENQUEUED_BUILDING" : "DESC_ENQUEUED_DESIGN");
+    if (negated)
+        description_str += "_NOT";
+    return str(FlexibleFormat(UserString(description_str))
+               % empire_str
+               % low_str
+               % high_str
+               % m_name);
+}
+
+std::string Condition::Enqueued::Dump() const {
+    std::string retval = DumpIndent() + "Enqueued";
+    return retval;
+}
+
+bool Condition::Enqueued::Match(const ScriptingContext& local_context) const {
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "Enqueued::Match passed no candidate object";
+        return false;
+    }
+
+    // is it a planet or a building on a planet?
+    const Planet* planet = universe_object_cast<const Planet*>(candidate);
+
+    int design_id = (m_design_id ?  m_design_id->Eval(local_context) :  ShipDesign::INVALID_DESIGN_ID);
+    int empire_id = (m_empire_id ?  m_empire_id->Eval(local_context) :  ALL_EMPIRES);
+    int low =       (m_low ?        m_low->Eval(local_context) :        0);
+    int high =      (m_high ?       m_high->Eval(local_context) :       INT_MAX);
+
     return false;
 }
 
@@ -2943,9 +3077,7 @@ void Condition::StarType::Eval(const ScriptingContext& parent_context, ObjectSet
         // get all types from valuerefs
         for (std::vector<const ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
              it != m_types.end(); ++it)
-        {
-            types.push_back((*it)->Eval(parent_context));
-        }
+        { types.push_back((*it)->Eval(parent_context)); }
         EvalImpl(matches, non_matches, search_domain, StarTypeSimpleMatch(types));
     } else {
         // re-evaluate contained objects for each candidate object
@@ -3103,7 +3235,7 @@ void Condition::DesignHasPart::Eval(const ScriptingContext& parent_context, Obje
         const UniverseObject* no_object(0);
         ScriptingContext local_context(parent_context, no_object);
         int low =  std::max(0, m_low->Eval(local_context));
-        int high = std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN);
+        int high = std::min(m_high->Eval(local_context), INT_MAX);
         EvalImpl(matches, non_matches, search_domain, DesignHasPartSimpleMatch(low, high, m_name));
     } else {
         // re-evaluate allowed turn range for each candidate object
@@ -3118,12 +3250,18 @@ bool Condition::DesignHasPart::TargetInvariant() const
 { return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
 
 std::string Condition::DesignHasPart::Description(bool negated/* = false*/) const {
-    std::string low_str = ValueRef::ConstantExpr(m_low) ?
-                            boost::lexical_cast<std::string>(m_low->Eval()) :
-                            m_low->Description();
-    std::string high_str = ValueRef::ConstantExpr(m_high) ?
-                            boost::lexical_cast<std::string>(m_high->Eval()) :
-                            m_high->Description();
+    std::string low_str = "0";
+    if (m_low) {
+        low_str = ValueRef::ConstantExpr(m_low) ?
+                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                    m_low->Description();
+    }
+    std::string high_str = boost::lexical_cast<std::string>(INT_MAX);
+    if (m_high) {
+        high_str = ValueRef::ConstantExpr(m_high) ?
+                    boost::lexical_cast<std::string>(m_high->Eval()) :
+                    m_high->Description();
+    };
     std::string description_str = "DESC_DESIGN_HAS_PART";
     if (negated)
         description_str += "_NOT";
@@ -3221,12 +3359,18 @@ bool Condition::DesignHasPartClass::TargetInvariant() const
 { return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
 
 std::string Condition::DesignHasPartClass::Description(bool negated/* = false*/) const {
-    std::string low_str = ValueRef::ConstantExpr(m_low) ?
-                            boost::lexical_cast<std::string>(m_low->Eval()) :
-                            m_low->Description();
-    std::string high_str = ValueRef::ConstantExpr(m_high) ?
-                            boost::lexical_cast<std::string>(m_high->Eval()) :
-                            m_high->Description();
+    std::string low_str = "0";
+    if (m_low) {
+        low_str = ValueRef::ConstantExpr(m_low) ?
+                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                    m_low->Description();
+    }
+    std::string high_str = boost::lexical_cast<std::string>(INT_MAX);
+    if (m_high) {
+        high_str = ValueRef::ConstantExpr(m_high) ?
+                    boost::lexical_cast<std::string>(m_high->Eval()) :
+                    m_high->Description();
+    }
     std::string description_str = "DESC_DESIGN_HAS_PART_CLASS";
     if (negated)
         description_str += "_NOT";
@@ -3246,8 +3390,8 @@ bool Condition::DesignHasPartClass::Match(const ScriptingContext& local_context)
         return false;
     }
 
-    int low =  std::max(0, m_low->Eval(local_context));
-    int high = std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN);
+    int low =  (m_low ? m_low->Eval(local_context) : 0);
+    int high = (m_high ? m_high->Eval(local_context) : INT_MAX);
 
     return DesignHasPartClassSimpleMatch(low, high, m_class)(candidate);
 }

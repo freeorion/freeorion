@@ -52,6 +52,7 @@ namespace Condition {
     struct PlanetType;
     struct PlanetEnvironment;
     struct Species;
+    struct Enqueued;
     struct FocusType;
     struct StarType;
     struct DesignHasHull;
@@ -506,7 +507,8 @@ struct Condition::HasSpecial : public Condition::ConditionBase {
         m_since_turn_low(0),
         m_since_turn_high(0)
     {}
-    HasSpecial(const std::string& name, const ValueRef::ValueRefBase<int>* since_turn_low,
+    HasSpecial(const std::string& name,
+               const ValueRef::ValueRefBase<int>* since_turn_low,
                const ValueRef::ValueRefBase<int>* since_turn_high) :
         m_name(name),
         m_since_turn_low(since_turn_low),
@@ -789,6 +791,63 @@ private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
     std::vector<const ValueRef::ValueRefBase<std::string>*> m_names;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches planets where the indicated number of the indicated building type
+  * or ship design are enqueued on the production queue. */
+struct Condition::Enqueued : public Condition::ConditionBase {
+    Enqueued(BuildType build_type,
+             const std::string& name = "",
+             const ValueRef::ValueRefBase<int>* empire_id = 0,
+             const ValueRef::ValueRefBase<int>* low = 0,
+             const ValueRef::ValueRefBase<int>* high = 0) :
+        m_build_type(build_type),
+        m_name(name),
+        m_design_id(0),
+        m_low(low),
+        m_high(high)
+    {}
+    Enqueued(const ValueRef::ValueRefBase<int>* design_id,
+             const ValueRef::ValueRefBase<int>* empire_id = 0,
+             const ValueRef::ValueRefBase<int>* low = 0,
+             const ValueRef::ValueRefBase<int>* high = 0) :
+        m_build_type(BT_SHIP),
+        m_name(),
+        m_design_id(design_id),
+        m_low(low),
+        m_high(high)
+    {}
+    Enqueued() :
+        m_build_type(BT_NOT_BUILDING),
+        m_name(),
+        m_design_id(0),
+        m_empire_id(0),
+        m_low(0),
+        m_high(0)
+    {}
+    virtual ~Enqueued();
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    BuildType                           m_build_type;
+    std::string                         m_name;
+    const ValueRef::ValueRefBase<int>*  m_design_id;
+    const ValueRef::ValueRefBase<int>*  m_empire_id;
+    const ValueRef::ValueRefBase<int>*  m_low;
+    const ValueRef::ValueRefBase<int>*  m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1655,6 +1714,18 @@ void Condition::Species::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_names);
+}
+
+template <class Archive>
+void Condition::Enqueued::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_build_type)
+        & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_design_id)
+        & BOOST_SERIALIZATION_NVP(m_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_low)
+        & BOOST_SERIALIZATION_NVP(m_high);
 }
 
 template <class Archive>

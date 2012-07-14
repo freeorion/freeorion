@@ -25,10 +25,13 @@ namespace {
             qi::_2_type _2;
             qi::_3_type _3;
             qi::_4_type _4;
-            qi::_a_type _a;
-            qi::_b_type _b;
-            qi::_c_type _c;
+            qi::_a_type _a; // intref
+            qi::_b_type _b; // intref
+            qi::_c_type _c; // intref
+            qi::_d_type _d; // intref
+            qi::_e_type _e; // string
             qi::_val_type _val;
+            qi::eps_type eps;
             using phoenix::new_;
 
             has_special
@@ -39,15 +42,49 @@ namespace {
             has_special_since_turn
                 =    (
                             tok.HasSpecialSinceTurn_
-                        >   parse::label(Name_name) > tok.string [ _a = _1 ]
-                        >> -(
-                                parse::label(Low_name) >> int_value_ref [ _b = _1 ]
-                            )
-                        >> -(
-                                parse::label(High_name) >> int_value_ref [ _c = _1 ]
-                            )
+                        >   parse::label(Name_name) >> tok.string [ _e = _1 ]
+                        >>-(parse::label(Low_name) >> int_value_ref [ _a = _1 ] )
+                        >>-(parse::label(High_name) >> int_value_ref [ _b = _1 ] )
                      )
-                     [ _val = new_<Condition::HasSpecial>(_a, _b, _c) ]
+                     [ _val = new_<Condition::HasSpecial>(_e, _a, _b) ]
+                ;
+
+            enqueued
+                =  tok.Enqueued_
+                >  (((
+                        parse::label(Type_name) >> tok.Building_
+                        >> (
+                               parse::label(Name_name) >>       tok.string [ _e = _1 ]
+                            |                                   eps [ _e = "" ]
+                           )
+                        >> -(   parse::label(Empire_name) >>    int_value_ref [ _a = _1 ] )
+                        >> -(   parse::label(Low_name) >>       int_value_ref [ _b = _1 ] )
+                        >> -(   parse::label(High_name) >>      int_value_ref [ _c = _1 ] )
+                     ) [ _val = new_<Condition::Enqueued>(BT_BUILDING, _e, _a, _b, _c) ]
+                    )
+                   |((
+                        parse::label(Type_name) >> tok.Ship_
+                        >> -(   parse::label(Design_name) >>    int_value_ref [ _d = _1 ] )
+                        >> -(   parse::label(Empire_name) >>    int_value_ref [ _a = _1 ] )
+                        >> -(   parse::label(Low_name) >>       int_value_ref [ _b = _1 ] )
+                        >> -(   parse::label(High_name) >>      int_value_ref [ _c = _1 ] )
+                     ) [ _val = new_<Condition::Enqueued>(_d, _a, _b, _c) ]
+                    )
+                   |((
+                        parse::label(Type_name) >> tok.Ship_
+                        >>      parse::label(Design_name) >>    tok.string [ _e = _1 ]
+                        >> -(   parse::label(Empire_name) >>    int_value_ref [ _a = _1 ] )
+                        >> -(   parse::label(Low_name) >>       int_value_ref [ _b = _1 ] )
+                        >> -(   parse::label(High_name) >>      int_value_ref [ _c = _1 ] )
+                     ) [ _val = new_<Condition::Enqueued>(BT_SHIP, _e, _a, _b, _c) ]
+                    )
+                   |((
+                           -(   parse::label(Empire_name) >>    int_value_ref [ _a = _1 ] )
+                        >> -(   parse::label(Low_name) >>       int_value_ref [ _b = _1 ] )
+                        >> -(   parse::label(High_name) >>      int_value_ref [ _c = _1 ] )
+                     ) [ _val = new_<Condition::Enqueued>(INVALID_BUILD_TYPE, "", _a, _b, _c) ]
+                    )
+                   )
                 ;
 
             has_tag
@@ -127,6 +164,7 @@ namespace {
             start
                 %=   has_special
                 |    has_special_since_turn
+                |    enqueued
                 |    has_tag
                 |    owner_has_tech
                 |    design_has_hull
@@ -144,6 +182,7 @@ namespace {
 
             has_special.name("HasSpecial");
             has_special_since_turn.name("HasSpecialSinceTurn");
+            enqueued.name("Enqueued");
             has_tag.name("HasTag");
             owner_has_tech.name("OwnerHasTech");
             design_has_hull.name("DesignHasHull");
@@ -161,6 +200,7 @@ namespace {
 #if DEBUG_CONDITION_PARSERS
             debug(has_special);
             debug(has_special_since_turn);
+            debug(enqueued);
             debug(has_tag);
             debug(owner_has_tech);
             debug(design_has_hull);
@@ -181,48 +221,32 @@ namespace {
             parse::token_iterator,
             Condition::ConditionBase* (),
             qi::locals<
-                ValueRef::ValueRefBase<int>*
-            >,
-            parse::skipper_type
-        > value_ref_int_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            Condition::ConditionBase* (),
-            qi::locals<
                 ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<int>*
-            >,
-            parse::skipper_type
-        > value_ref_ints_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            Condition::ConditionBase* (),
-            qi::locals<
-                std::string,
                 ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<int>*
+                ValueRef::ValueRefBase<int>*,
+                ValueRef::ValueRefBase<int>*,
+                std::string
             >,
             parse::skipper_type
-        > has_special_since_turn_rule;
+        > common_rule;
 
-        parse::condition_parser_rule has_special;
-        has_special_since_turn_rule has_special_since_turn;
-        parse::condition_parser_rule has_tag;
-        parse::condition_parser_rule owner_has_tech;
-        parse::condition_parser_rule design_has_hull;
-        value_ref_ints_rule design_has_part;
-        value_ref_ints_rule design_has_part_class;
-        parse::condition_parser_rule predefined_design;
-        parse::condition_parser_rule design_number;
-        parse::condition_parser_rule produced_by_empire;
-        parse::condition_parser_rule visible_to_empire;
-        parse::condition_parser_rule explored_by_empire;
-        parse::condition_parser_rule resupplyable_by;
-        value_ref_int_rule in_system;
-        parse::condition_parser_rule object_id;
-        parse::condition_parser_rule start;
+        parse::condition_parser_rule    has_special;
+        common_rule                     has_special_since_turn;
+        common_rule                     enqueued;
+        parse::condition_parser_rule    has_tag;
+        parse::condition_parser_rule    owner_has_tech;
+        parse::condition_parser_rule    design_has_hull;
+        common_rule                     design_has_part;
+        common_rule                     design_has_part_class;
+        parse::condition_parser_rule    predefined_design;
+        parse::condition_parser_rule    design_number;
+        parse::condition_parser_rule    produced_by_empire;
+        parse::condition_parser_rule    visible_to_empire;
+        parse::condition_parser_rule    explored_by_empire;
+        parse::condition_parser_rule    resupplyable_by;
+        common_rule                     in_system;
+        parse::condition_parser_rule    object_id;
+        parse::condition_parser_rule    start;
     };
 }
 

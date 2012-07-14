@@ -84,6 +84,7 @@
     (EmpireMeter)                               \
     (Endpoint)                                  \
     (EnemyOf)                                   \
+    (Enqueued)                                  \
     (Environment)                               \
     (Environments)                              \
     (ExploredByEmpire)                          \
