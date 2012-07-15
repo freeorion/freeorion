@@ -430,8 +430,10 @@ void EntityRenderer::FreeTexture(const std::string& name)
 
 EntityRenderer& EntityRenderer::Instance() {
     assert(Impl::s_instances == 1u);
-    if (!Impl::s_instances == 1u) {
+    if (Impl::s_instances < 1u) {
         Logger().errorStream() << "EntityRenderer::Instance() no instance avaialble!";
+    } else if (Impl::s_instances > 1u) {
+        Logger().errorStream() << "EntityRenderer::Instance() found multiple instances?!?";
     }
     return *s_instance;
 }
