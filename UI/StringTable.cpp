@@ -83,12 +83,13 @@ void StringTable_::Load() {
     smatch matches;
     bool well_formed = false;
     try {
-        // has caused crashes with "Regex stack space exhausted" exception
-        well_formed = regex_search(it, end, matches, IDENTIFIER, regex_constants::match_continuous);
+        // grab first line of file, which should be the name of this language
+        well_formed = regex_search(it, end, matches, SINGLE_LINE_VALUE, regex_constants::match_continuous);
         it = end - matches.suffix().length();
         if (well_formed)
             m_language = matches.str(0);
 
+        // match series of key-value entries to store as stringtable
         while (well_formed) {
             well_formed = regex_search(it, end, matches, ENTRY, regex_constants::match_continuous);
             it = end - matches.suffix().length();
