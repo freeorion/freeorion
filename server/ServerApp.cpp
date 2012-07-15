@@ -2327,21 +2327,21 @@ void ServerApp::ProcessCombatTurn() {
 
     // apply combat orders
     for (std::map<int, CombatOrderSet*>::iterator it = m_combat_turn_sequence.begin();
-         it != m_combat_turn_sequence.end();
-         ++it) {
+         it != m_combat_turn_sequence.end(); ++it)
+    {
         for (std::size_t i = 0; i < it->second->size(); ++i) {
             const CombatOrder& order = (*it->second)[i];
             switch (order.Type()) {
             case CombatOrder::SHIP_ORDER: {
                 CombatShipPtr combat_ship = pathing_engine.FindShip(order.ID());
-                if (order.Append())
+                if (!order.Append())
                     combat_ship->ClearMissions();
                 combat_ship->AppendMission(order.GetShipMission());
                 break;
             }
             case CombatOrder::FIGHTER_ORDER: {
                 CombatFighterPtr combat_fighter = pathing_engine.FindLeader(order.ID());
-                if (order.Append())
+                if (!order.Append())
                     combat_fighter->ClearMissions();
                 combat_fighter->AppendMission(order.GetFighterMission());
                 break;

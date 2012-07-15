@@ -16,6 +16,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "../UI/ClientUI.h"
 #include "../util/Directories.h"
+#include "../util/AppInterface.h"
 
 #include <OgreCamera.h>
 #include <OgreEntity.h>
@@ -31,28 +32,24 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include <GG/Texture.h>
 
-
 namespace {
     enum ImpostorBlendMode {
-	ALPHA_REJECT_IMPOSTOR,
-	ALPHA_BLEND_IMPOSTOR
+        ALPHA_REJECT_IMPOSTOR,
+        ALPHA_BLEND_IMPOSTOR
     };
 
     const ImpostorBlendMode blendMode = ALPHA_BLEND_IMPOSTOR;
     const Ogre::uint32 textureSize = 128;
 
-    std::string generateEntityKey(Ogre::Entity *entity)
-    {
-	Ogre::StringUtil::StrStreamType entityKey;
-	entityKey << entity->getMesh()->getName();
-	for (Ogre::uint32 i = 0; i < entity->getNumSubEntities(); ++i){
-            entityKey << "-" << entity->getSubEntity(i)->getMaterialName();
-	}
-	return entityKey.str();
+    std::string generateEntityKey(Ogre::Entity *entity) {
+        Ogre::StringUtil::StrStreamType entityKey;
+        entityKey << entity->getMesh()->getName();
+        for (Ogre::uint32 i = 0; i < entity->getNumSubEntities(); ++i)
+                entityKey << "-" << entity->getSubEntity(i)->getMaterialName();
+        return entityKey.str();
     }
 
-    std::string removeInvalidCharacters(std::string s)
-    {
+    std::string removeInvalidCharacters(std::string s) {
         Ogre::StringUtil::StrStreamType s2;
 
         for (std::size_t i = 0; i < s.size(); ++i) {
@@ -72,22 +69,21 @@ namespace {
 ////////////////////////////////////////////////////////////
 // RenderedTexture
 ////////////////////////////////////////////////////////////
-class RenderedTexture
-{
+class RenderedTexture {
 public:
     ~RenderedTexture();
 
     boost::shared_ptr<GG::Texture> GGTexture() const;
 
     /** Returns a pointer to an RenderedTexture for the specified entity. If
-	one does not already exist, one will automatically be created.
+    one does not already exist, one will automatically be created.
     */
     static RenderedTexture*
     getTexture(Ogre::Entity* entity, Ogre::SceneManager* sceneMgr, Ogre::uint8 renderQueueGroup);
 
     /** Remove created texture, note that all of the ImposterTextures must be
-	deleted at once, because there is no track if a texture is still being
-	used by something else
+    deleted at once, because there is no track if a texture is still being
+    used by something else
     */
     static void removeTexture(RenderedTexture* Texture);
 
@@ -172,8 +168,7 @@ RenderedTexture::RenderedTexture(Ogre::Entity* entity,
     }
 }
 
-RenderedTexture::~RenderedTexture()
-{
+RenderedTexture::~RenderedTexture() {
     //Delete texture
     assert(!texture.isNull());
     std::string texName(texture->getName());
@@ -197,8 +192,7 @@ RenderedTexture::~RenderedTexture()
 boost::shared_ptr<GG::Texture> RenderedTexture::GGTexture() const
 { return ggTexture; }
 
-void RenderedTexture::renderTextures()
-{
+void RenderedTexture::renderTextures() {
     //Set up RTT texture
     Ogre::TexturePtr renderTexture;
     if (renderTexture.isNull()) {
@@ -290,10 +284,10 @@ void RenderedTexture::renderTextures()
         "Rendered." + std::string(key, sizeof(key)) + '.' +
         Ogre::StringConverter::toString(textureSize) + ".png";
 
-    //Attempt to load the pre-render file if allowed
+    // Attempt to load the pre-render file if allowed
     bool needsRegen = false;
     if (!needsRegen) {
-        try{
+        try {
             texture = Ogre::TextureManager::getSingleton().load(
                 fileNamePNG, "BinFolder", Ogre::TEX_TYPE_2D, 0);
         } catch (...) {
@@ -308,7 +302,7 @@ void RenderedTexture::renderTextures()
         camNode->setPosition(0, 0, 0);
         // TODO camNode->setOrientation(Quaternion(yaw, Vector3::UNIT_Y) * Quaternion(-pitch, Vector3::UNIT_X));
         camNode->translate(Ogre::Vector3(0, 0, objDist), Ogre::Node::TS_LOCAL);
-						
+
         renderTarget->update();
 
         //Save RTT to file
@@ -351,12 +345,11 @@ void RenderedTexture::renderTextures()
         Ogre::TextureManager::getSingleton().remove(texName2);
 }
 
-void RenderedTexture::removeTexture(RenderedTexture* texture)
-{
+void RenderedTexture::removeTexture(RenderedTexture* texture) {
     //Search for an existing impostor texture, in case it was already deleted
     for (std::map<std::string, RenderedTexture*>::iterator it = selfList.begin();
-         it != selfList.end();
-         ++it) {
+         it != selfList.end(); ++it) 
+    {
         if (it->second == texture) {
             delete texture;
             break;
@@ -383,29 +376,24 @@ RenderedTexture* RenderedTexture::getTexture(Ogre::Entity* entity_,
 ////////////////////////////////////////////////////////////
 // EntityRenderer::Impl
 ////////////////////////////////////////////////////////////
-struct EntityRenderer::Impl
-{
+struct EntityRenderer::Impl  {
     Impl(Ogre::SceneManager* scene_manager) :
         m_scene_manager(scene_manager)
-        {
-            m_scene_manager->getRootSceneNode()->createChildSceneNode("EntityRenderer::renderNode");
-            m_scene_manager->getRootSceneNode()->createChildSceneNode("EntityRenderer::cameraNode");
-            Ogre::ResourceGroupManager::getSingleton().createResourceGroup("EntityRenderer");
+    {
+        m_scene_manager->getRootSceneNode()->createChildSceneNode("EntityRenderer::renderNode");
+        m_scene_manager->getRootSceneNode()->createChildSceneNode("EntityRenderer::cameraNode");
+        Ogre::ResourceGroupManager::getSingleton().createResourceGroup("EntityRenderer");
+        ++s_instances;
+    }
 
-            ++s_instances;
-        }
-
-    ~Impl()
-        {
-            m_scene_manager->destroySceneNode("EntityRenderer::renderNode");
-            m_scene_manager->destroySceneNode("EntityRenderer::cameraNode");
-            Ogre::ResourceGroupManager::getSingleton().destroyResourceGroup("EntityRenderer");
-
-            --s_instances;
-        }
+    ~Impl() {
+        m_scene_manager->destroySceneNode("EntityRenderer::renderNode");
+        m_scene_manager->destroySceneNode("EntityRenderer::cameraNode");
+        Ogre::ResourceGroupManager::getSingleton().destroyResourceGroup("EntityRenderer");
+        --s_instances;
+    }
 
     Ogre::SceneManager* m_scene_manager;
-
     static unsigned int s_instances;
 };
 unsigned int EntityRenderer::Impl::s_instances = 0;
@@ -423,20 +411,27 @@ EntityRenderer::EntityRenderer(Ogre::SceneManager* scene_manager) :
 EntityRenderer::~EntityRenderer()
 { delete m_impl; }
 
-boost::shared_ptr<GG::Texture> EntityRenderer::GetTexture(Ogre::Entity* entity, Ogre::uint8 render_queue_group)
-{
+boost::shared_ptr<GG::Texture> EntityRenderer::GetTexture(Ogre::Entity* entity, Ogre::uint8 render_queue_group) {
+    if (!entity) {
+        Logger().errorStream() << "EntityRenderer::GetTexture passed null entity";
+        return boost::shared_ptr<GG::Texture>();
+    }
     RenderedTexture* rt = RenderedTexture::getTexture(entity, m_impl->m_scene_manager, render_queue_group);
     assert(rt);
+    if (!rt) {
+        Logger().errorStream() << "EntityRenderer::GetTexture unable to get texture for entity " << entity->getName();
+        return boost::shared_ptr<GG::Texture>();
+    }
     return rt->GGTexture();
 }
 
 void EntityRenderer::FreeTexture(const std::string& name)
-{
-    // TODO
-}
+{} // TODO
 
-EntityRenderer& EntityRenderer::Instance()
-{
+EntityRenderer& EntityRenderer::Instance() {
     assert(Impl::s_instances == 1u);
+    if (!Impl::s_instances == 1u) {
+        Logger().errorStream() << "EntityRenderer::Instance() no instance avaialble!";
+    }
     return *s_instance;
 }
