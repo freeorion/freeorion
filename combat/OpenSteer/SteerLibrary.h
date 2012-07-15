@@ -53,13 +53,9 @@
 
 
 namespace OpenSteer {
-
     // ----------------------------------------------------------------------------
-
-
     template <class Super>
-    class SteerLibraryMixin : public Super
-    {
+    class SteerLibraryMixin : public Super {
     public:
         using Super::velocity;
         using Super::maxSpeed;
@@ -75,15 +71,13 @@ namespace OpenSteer {
     public:
 
         // Constructor: initializes state
-        SteerLibraryMixin ()
-        {
+        SteerLibraryMixin () {
             // set inital state
             reset ();
         }
 
         // reset state
-        void reset (void)
-        {
+        void reset (void) {
             // initial state of wander behavior
             WanderSide = 0;
             WanderUp = 0;
@@ -250,19 +244,16 @@ namespace OpenSteer {
         bool isAside (const Vec3& target) const {return isAside (target, 0.707f);};
         bool isBehind (const Vec3& target) const {return isBehind (target, -0.707f);};
 
-        bool isAhead (const Vec3& target, float cosThreshold) const
-        {
+        bool isAhead (const Vec3& target, float cosThreshold) const {
             const Vec3 targetDirection = (target - position ()).normalize ();
             return forward().dot(targetDirection) > cosThreshold;
         };
-        bool isAside (const Vec3& target, float cosThreshold) const
-        {
+        bool isAside (const Vec3& target, float cosThreshold) const {
             const Vec3 targetDirection = (target - position ()).normalize ();
             const float dp = forward().dot(targetDirection);
             return (dp < cosThreshold) && (dp > -cosThreshold);
         };
-        bool isBehind (const Vec3& target, float cosThreshold) const
-        {
+        bool isBehind (const Vec3& target, float cosThreshold) const {
             const Vec3 targetDirection = (target - position()).normalize ();
             return forward().dot(targetDirection) < cosThreshold;
         };
@@ -275,8 +266,7 @@ namespace OpenSteer {
         // called when steerToAvoidObstacles decides steering is required
         // (default action is to do nothing, layered classes can overload it)
         virtual void annotateAvoidObstacle (const float /*minDistanceToCollision*/)
-        {
-        }
+        {}
 
         // called when steerToFollowPath decides steering is required
         // (default action is to do nothing, layered classes can overload it)
@@ -284,15 +274,13 @@ namespace OpenSteer {
                                             const Vec3& /*onPath*/,
                                             const Vec3& /*target*/,
                                             const float /*outside*/)
-        {
-        }
+        {}
 
         // called when steerToAvoidCloseNeighbors decides steering is required
         // (default action is to do nothing, layered classes can overload it)
         virtual void annotateAvoidCloseNeighbor (const AbstractVehicle& /*other*/,
                                                  const float /*additionalDistance*/)
-        {
-        }
+        {}
 
         // called when steerToAvoidNeighbors decides steering is required
         // (default action is to do nothing, layered classes can overload it)
@@ -300,20 +288,17 @@ namespace OpenSteer {
                                             const float /*steer*/,
                                             const Vec3& /*ourFuture*/,
                                             const Vec3& /*threatFuture*/)
-        {
-        }
+        {}
 
         friend class boost::serialization::access;
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
-            {
-                ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Super)
-                    & BOOST_SERIALIZATION_NVP(WanderSide)
-                    & BOOST_SERIALIZATION_NVP(WanderUp);
-            }
+        {
+            ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Super)
+                & BOOST_SERIALIZATION_NVP(WanderSide)
+                & BOOST_SERIALIZATION_NVP(WanderUp);
+        }
     };
-
-    
 } // namespace OpenSteer
 
 // ----------------------------------------------------------------------------
@@ -498,11 +483,9 @@ steerToAvoidNeighbors (const float minTimeToCollision,
 
     // for each of the other vehicles, determine which (if any)
     // pose the most immediate threat of collision.
-    for (AVIterator i = others.begin(); i != others.end(); ++i)
-    {
+    for (AVIterator i = others.begin(); i != others.end(); ++i) {
         AbstractVehicle& other = **i;
-        if (&other != this)
-        {	
+        if (&other != this) {
             // avoid when future positions are this close (or less)
             const float collisionDangerThreshold = radius() * 2;
 
@@ -511,8 +494,7 @@ steerToAvoidNeighbors (const float minTimeToCollision,
 
             // If the time is in the future, sooner than any other
             // threatened collision...
-            if ((time >= 0) && (time < minTime))
-            {
+            if ((time >= 0) && (time < minTime)) {
                 // if the two will be close enough to collide,
                 // make a note of it
                 if (computeNearestApproachPositions (other, time)
@@ -530,8 +512,7 @@ steerToAvoidNeighbors (const float minTimeToCollision,
     }
 
     // if a potential collision was found, compute steering to avoid
-    if (threat != NULL)
-    {
+    if (threat != NULL) {
         // parallel: +1, perpendicular: 0, anti-parallel: -1
         float parallelness = forward().dot(threat->forward());
         float angle = 0.707f;

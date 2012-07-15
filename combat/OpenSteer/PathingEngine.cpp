@@ -16,8 +16,7 @@ const unsigned int MISSILE_FLAG = 1 << 3;
 const unsigned int FIGHTER_FLAGS = INTERCEPTOR_FLAG | BOMBER_FLAG;
 const unsigned int NONFIGHTER_FLAGS = ~(INTERCEPTOR_FLAG | BOMBER_FLAG);
 
-unsigned int EnemyOfEmpireFlags(int empire_id)
-{
+unsigned int EnemyOfEmpireFlags(int empire_id) {
     // TODO: Use diplomatic status here, instead of just returning all empires
     // that are not us.
     return ~(1 << static_cast<unsigned int>(empire_id));
@@ -38,8 +37,7 @@ PathingEngine::PathingEngine() :
     m_proximity_database(new ProximityDB(OpenSteer::Vec3(), 2.0 * SystemRadius(), 100))
 {}
 
-PathingEngine::~PathingEngine()
-{
+PathingEngine::~PathingEngine() {
     m_objects.clear();
     m_fighter_formations.clear();
     m_attackees.clear();
@@ -136,8 +134,7 @@ PathingEngine::const_iterator PathingEngine::begin () const
 PathingEngine::const_iterator PathingEngine::end () const
 { return m_objects.end(); }
 
-CombatShipPtr PathingEngine::FindShip(int id) const
-{
+CombatShipPtr PathingEngine::FindShip(int id) const {
     CombatShipPtr retval;
     std::map<int, CombatShipPtr>::const_iterator it = m_ships_by_id.find(id);
     if (it != m_ships_by_id.end())
@@ -145,8 +142,7 @@ CombatShipPtr PathingEngine::FindShip(int id) const
     return retval;
 }
 
-CombatFighterPtr PathingEngine::FindLeader(int id) const
-{
+CombatFighterPtr PathingEngine::FindLeader(int id) const {
     CombatFighterPtr retval;
     std::map<int, CombatFighterPtr>::const_iterator it = m_leaders_by_id.find(id);
     if (it != m_leaders_by_id.end())
@@ -154,8 +150,7 @@ CombatFighterPtr PathingEngine::FindLeader(int id) const
     return retval;
 }
 
-CombatFighterPtr PathingEngine::FindFighter(int id) const
-{
+CombatFighterPtr PathingEngine::FindFighter(int id) const {
     CombatFighterPtr retval;
     std::map<int, CombatFighterPtr>::const_iterator it = m_fighters_by_id.find(id);
     if (it != m_fighters_by_id.end())
@@ -163,8 +158,7 @@ CombatFighterPtr PathingEngine::FindFighter(int id) const
     return retval;
 }
 
-void PathingEngine::TurnStarted(unsigned int number)
-{
+void PathingEngine::TurnStarted(unsigned int number) {
     for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
          it != m_objects.end(); ) {
         if (!(*it)->StructureAndShield()) {
@@ -187,8 +181,7 @@ void PathingEngine::TurnStarted(unsigned int number)
     }
 }
 
-void PathingEngine::Update(const float elapsed_time, bool force)
-{
+void PathingEngine::Update(const float elapsed_time, bool force) {
     // We use a temporary pointer, because an object may remove itself from the
     // engine during its update.
     for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
@@ -199,8 +192,7 @@ void PathingEngine::Update(const float elapsed_time, bool force)
     ++m_update_number;
 }
 
-void PathingEngine::AddObject(const CombatObjectPtr& obj)
-{
+void PathingEngine::AddObject(const CombatObjectPtr& obj) {
     m_objects.insert(obj);
     if (obj->IsFighter()) {
         CombatFighterPtr combat_fighter = boost::static_pointer_cast<CombatFighter>(obj);
@@ -216,8 +208,7 @@ void PathingEngine::AddObject(const CombatObjectPtr& obj)
     }
 }
 
-void PathingEngine::RemoveObject(const CombatObjectPtr& obj)
-{
+void PathingEngine::RemoveObject(const CombatObjectPtr& obj) {
     m_attackees.erase(obj);
     m_objects.erase(obj);
     if (obj->IsFighter()) {
@@ -253,8 +244,7 @@ void PathingEngine::EndAttack(const CombatObjectPtr& attacker,
     }
 }
 
-void PathingEngine::AddFighterFormation(const CombatFighterFormationPtr& formation)
-{
+void PathingEngine::AddFighterFormation(const CombatFighterFormationPtr& formation) {
     formation->Leader().EnterSpace();
     m_leaders_by_id[formation->Leader().ID()] = formation->Leader().shared_from_this();
     for (CombatFighterFormation::iterator it = formation->begin(); it != formation->end(); ++it) {
@@ -265,8 +255,7 @@ void PathingEngine::AddFighterFormation(const CombatFighterFormationPtr& formati
     m_fighter_formations.insert(formation);
 }
 
-void PathingEngine::RemoveFighter(const CombatObjectPtr& f)
-{
+void PathingEngine::RemoveFighter(const CombatObjectPtr& f) {
     assert(boost::dynamic_pointer_cast<CombatFighter>(f));
     CombatFighterPtr fighter = boost::static_pointer_cast<CombatFighter>(f);
     CombatFighterFormationPtr formation = fighter->Formation();
@@ -276,8 +265,7 @@ void PathingEngine::RemoveFighter(const CombatObjectPtr& f)
     RemoveFighter(fighter, formation_it);
 }
 
-void PathingEngine::RemoveFighterFormation(const CombatFighterFormationPtr& formation)
-{
+void PathingEngine::RemoveFighterFormation(const CombatFighterFormationPtr& formation) {
     std::set<CombatFighterFormationPtr>::iterator formation_it =
         m_fighter_formations.find(formation);
     while (!formation->empty()) {

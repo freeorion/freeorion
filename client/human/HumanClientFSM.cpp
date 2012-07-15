@@ -692,10 +692,8 @@ boost::statechart::result ResolvingCombat::react(const CombatStart& msg) {
     Universe::ShipDesignMap foreign_designs;
     ExtractMessageData(msg.m_message, *m_combat_data, setup_groups, foreign_designs);
     for (Universe::ShipDesignMap::const_iterator it = foreign_designs.begin();
-         it != foreign_designs.end();
-         ++it) {
-        GetUniverse().InsertShipDesignID(it->second, it->first);
-    }
+         it != foreign_designs.end(); ++it)
+    { GetUniverse().InsertShipDesignID(it->second, it->first); }
     m_combat_wnd->InitCombat(*m_combat_data, setup_groups);
     return discard_event();
 }

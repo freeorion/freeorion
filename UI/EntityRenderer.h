@@ -30,8 +30,7 @@ namespace GG {
     class Texture;
 }
 
-class EntityRenderer
-{
+class EntityRenderer {
 public:
     EntityRenderer(Ogre::SceneManager* scene_manager);
     ~EntityRenderer();
