@@ -72,7 +72,7 @@ namespace {
                     )
                    |((
                         parse::label(Type_name) >> tok.Ship_
-                        >>      parse::label(Design_name) >>    tok.string [ _e = _1 ]
+                        >>      parse::label(Name_name) >>    tok.string [ _e = _1 ]
                         >> -(   parse::label(Empire_name) >>    int_value_ref [ _a = _1 ] )
                         >> -(   parse::label(Low_name) >>       int_value_ref [ _b = _1 ] )
                         >> -(   parse::label(High_name) >>      int_value_ref [ _c = _1 ] )
