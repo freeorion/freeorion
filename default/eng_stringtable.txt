@@ -4442,6 +4442,15 @@ DESC_SPECIES
 DESC_SPECIES_NOT
  that does not contain species %1%
 
+DESC_ENQUEUED
+ where empire %1% has between %2% and %3% things on the production queue
+ 
+DESC_ENQUEUED_BUILDING
+ where empire %1% has between %2% and %3% %4% buildings on the production queue
+ 
+DESC_ENQUEUED_DESIGN
+ where empire %1% has between %2% and %3% %4% ships on the production queue
+
 DESC_FOCUS_TYPE
  that has focus %1%
 

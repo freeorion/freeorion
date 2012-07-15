@@ -134,11 +134,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-struct ProductionQueue
-{
+struct ProductionQueue {
     /** The type that specifies a single production item (BuildType and name string). */
-    struct ProductionItem
-    {
+    struct ProductionItem {
         ProductionItem(); ///< default ctor.
         ProductionItem(BuildType build_type_, std::string name_);   ///< basic ctor for BuildTypes that use std::string to identify specific items (BuildingTypes)
         ProductionItem(BuildType build_type_, int design_id_);      ///< basic ctor for BuildTypes that use int to indentify the design of the item (ShipDesigns)
@@ -156,8 +154,7 @@ struct ProductionQueue
     };
 
     /** The type of a single element in the production queue. */
-    struct Element
-    {
+    struct Element {
         Element(); ///< default ctor.
         Element(ProductionItem item_, int ordered_, int remaining_, int location_); ///< basic ctor.
         Element(BuildType build_type, std::string name, int ordered_, int remaining_, int location_); ///< basic ctor.

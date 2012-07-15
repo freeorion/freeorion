@@ -272,9 +272,8 @@ std::string Ship::Dump() const {
     return os.str();
 }
 
-const ShipDesign* Ship::Design() const {
-    return GetShipDesign(m_design_id);
-}
+const ShipDesign* Ship::Design() const
+{ return GetShipDesign(m_design_id); }
 
 bool Ship::IsMonster() const {
     const ShipDesign* design = Design();

@@ -2754,6 +2754,38 @@ Condition::Enqueued::~Enqueued() {
 }
 
 namespace {
+    int NumberOnQueue(const ProductionQueue& queue, BuildType build_type, int location_id,
+                      const std::string& name = "", int design_id = ShipDesign::INVALID_DESIGN_ID)
+    {
+        int retval = 0;
+        for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
+            if (!(build_type == INVALID_BUILD_TYPE || build_type == it->item.build_type))
+                continue;
+            if (!(location_id == it->location))
+                continue;
+            if (build_type == BT_BUILDING) {
+                // if looking for buildings, accept specifically named building
+                // or any building if no name specified
+                if (!name.empty() && it->item.name != name)
+                    continue;
+            } else if (build_type == BT_SHIP) {
+                if (design_id != ShipDesign::INVALID_DESIGN_ID) {
+                    // if looking for ships, accept design by id number...
+                    if (design_id != it->item.design_id)
+                        continue;
+                } else if (!name.empty()) {
+                    // ... or accept design by predefined name
+                    const ShipDesign* design = GetShipDesign(it->item.design_id);
+                    if (!design || name != design->Name(false))
+                        continue;
+                }
+            } // else: looking for any production item
+
+            retval += 1;
+        }
+        return retval;
+    }
+
     struct EnqueuedSimpleMatch {
         EnqueuedSimpleMatch(BuildType build_type, const std::string& name, int design_id,
                             int empire_id, int low, int high) :
@@ -2767,7 +2799,26 @@ namespace {
         bool operator()(const UniverseObject* candidate) const {
             if (!candidate)
                 return false;
-            return false;
+
+            int count = 0;
+
+            if (m_empire_id == ALL_EMPIRES) {
+                for (EmpireManager::const_iterator empire_it = Empires().begin();
+                     empire_it != Empires().end(); ++empire_it)
+                {
+                    const Empire* empire = empire_it->second;
+                    count += NumberOnQueue(empire->GetProductionQueue(), m_build_type,
+                                           candidate->ID(), m_name, m_design_id);
+                }
+
+            } else {
+                const Empire* empire = Empires().Lookup(m_empire_id);
+                if (!empire) return false;
+                count = NumberOnQueue(empire->GetProductionQueue(), m_build_type,
+                                      candidate->ID(), m_name, m_design_id);
+            }
+
+            return (m_low <= count && count <= m_high);
         }
 
         BuildType   m_build_type;
@@ -2847,18 +2898,50 @@ std::string Condition::Enqueued::Description(bool negated/* = false*/) const {
                     boost::lexical_cast<std::string>(m_high->Eval()) :
                     m_high->Description();
     }
-    std::string description_str = (!m_name.empty() ? "DESC_ENQUEUED_BUILDING" : "DESC_ENQUEUED_DESIGN");
+    std::string what_str;
+    if (!m_name.empty()) {
+        what_str = UserString(m_name);
+    } else if (m_design_id) {
+        what_str = ValueRef::ConstantExpr(m_design_id) ?
+                    boost::lexical_cast<std::string>(m_design_id->Eval()) :
+                    m_design_id->Description();
+    }
+    std::string description_str;
+    switch (m_build_type) {
+    case BT_BUILDING:   description_str = "DESC_ENQUEUED_BUILDING"; break;
+    case BT_SHIP:       description_str = "DESC_ENQUEUED_DESIGN";   break;
+    default:            description_str = "DESC_ENQUEUED";          break;
+    }
     if (negated)
         description_str += "_NOT";
     return str(FlexibleFormat(UserString(description_str))
                % empire_str
                % low_str
                % high_str
-               % m_name);
+               % what_str);
 }
 
 std::string Condition::Enqueued::Dump() const {
     std::string retval = DumpIndent() + "Enqueued";
+
+    if (m_build_type == BT_BUILDING) {
+        retval += " type = Building";
+        if (!m_name.empty())
+            retval += " name = " + m_name;
+    } else if (m_build_type == BT_SHIP) {
+        retval += " type = Ship";
+        if (!m_name.empty())
+            retval += " design = " + m_name;
+        else if (m_design_id)
+            retval += " design = " + m_design_id->Dump();
+    }
+    if (m_empire_id)
+        retval += " empire = " + m_empire_id->Dump();
+    if (m_low)
+        retval += " low = " + m_low->Dump();
+    if (m_high)
+        retval += " high = " + m_high->Dump();
+    retval += "\n";
     return retval;
 }
 
@@ -2868,16 +2951,11 @@ bool Condition::Enqueued::Match(const ScriptingContext& local_context) const {
         Logger().errorStream() << "Enqueued::Match passed no candidate object";
         return false;
     }
-
-    // is it a planet or a building on a planet?
-    const Planet* planet = universe_object_cast<const Planet*>(candidate);
-
-    int design_id = (m_design_id ?  m_design_id->Eval(local_context) :  ShipDesign::INVALID_DESIGN_ID);
     int empire_id = (m_empire_id ?  m_empire_id->Eval(local_context) :  ALL_EMPIRES);
+    int design_id = (m_design_id ?  m_design_id->Eval(local_context) :  ShipDesign::INVALID_DESIGN_ID);
     int low =       (m_low ?        m_low->Eval(local_context) :        0);
     int high =      (m_high ?       m_high->Eval(local_context) :       INT_MAX);
-
-    return false;
+    return EnqueuedSimpleMatch(m_build_type, m_name, design_id, empire_id, low, high)(candidate);
 }
 
 ///////////////////////////////////////////////////////////
