@@ -30,6 +30,7 @@ namespace GG {
 }
 
 class CombatCamera;
+class EntityRenderer;
 class CombatData;
 struct CombatSetupGroup;
 class CombatSetupWnd;
@@ -103,8 +104,7 @@ public:
     virtual void MissileRemoved(const MissilePtr &missile);
 
 private:
-    struct SelectedObject
-    {
+    struct SelectedObject {
         struct SelectedObjectImpl;
 
         SelectedObject();
@@ -117,71 +117,77 @@ private:
     class StencilOpQueueListener;
 
     std::pair<bool, Ogre::Vector3> IntersectMouseWithEcliptic(const GG::Pt& pt) const;
-    const std::string& StarBaseName() const;
+    const std::string&  StarBaseName() const;
 
-    void ApplyUpdateFromServer();
-    void ResolveTurn();
+    void            ApplyUpdateFromServer();
+    void            ResolveTurn();
 
-    virtual bool frameStarted(const Ogre::FrameEvent& event);
-    virtual bool frameEnded(const Ogre::FrameEvent& event);
+    virtual bool    frameStarted(const Ogre::FrameEvent& event);
+    virtual bool    frameEnded(const Ogre::FrameEvent& event);
 
-    void RenderLensFlare();
-    void UpdateStarFromCameraPosition();
-    void UpdateSkyBox();
-    void EndSelectionDrag();
-    void SelectObjectsInVolume(bool toggle_selected_items);
-    Ogre::MovableObject* GetObjectUnderPt(const GG::Pt& pt);
-    void DeselectAll();
-    const Ogre::MaterialPtr& GetShipMaterial(const Ship& ship);
-    void AddShipNode(int ship_id, Ogre::SceneNode* node, Ogre::Entity* entity,
-                     const Ogre::MaterialPtr& material);
-    void RepositionShipNode(int ship_id,
-                            const Ogre::Vector3& position,
-                            const Ogre::Quaternion& orientation);
-    void UpdateObjectPosition(const CombatObjectPtr& combat_object);
-    void RemoveShip(int ship_id);
-    void AddCombatShip(const CombatShipPtr& combat_ship);
-    void RemoveCombatShip(const CombatShipPtr& combat_ship);
+    void            RenderLensFlare();
+    void            UpdateStarFromCameraPosition();
+    void            UpdateSkyBox();
+    void            EndSelectionDrag();
+    void            SelectObjectsInVolume(bool toggle_selected_items);
+
+    Ogre::MovableObject*        GetObjectUnderPt(const GG::Pt& pt);
+    void                        DeselectAll();
+    const Ogre::MaterialPtr&    GetShipMaterial(const Ship& ship);
+    void                        AddShipNode(int ship_id, Ogre::SceneNode* node, Ogre::Entity* entity,
+                                            const Ogre::MaterialPtr& material);
+    void                        RepositionShipNode(int ship_id,
+                                                   const Ogre::Vector3& position,
+                                                   const Ogre::Quaternion& orientation);
+
+    void    UpdateObjectPosition(const CombatObjectPtr& combat_object);
+    void    RemoveShip(int ship_id);
+    void    AddCombatShip(const CombatShipPtr& combat_ship);
+    void    RemoveCombatShip(const CombatShipPtr& combat_ship);
 
     // Keyboard accelerator handlers, etc.  See MapWnd for implementation
     // notes.
-    bool OpenChatWindow();
-    bool EndTurn();
-    bool ShowMenu();
-    bool KeyboardZoomIn();
-    bool KeyboardZoomOut();
-    bool ZoomToPrevIdleUnit();
-    bool ZoomToNextIdleUnit();
-    bool ZoomToPrevUnit();
-    bool ZoomToNextUnit();
-    void ConnectKeyboardAcceleratorSignals();
-    void SetAccelerators();
-    void RemoveAccelerators();
-    void DisableAlphaNumAccels();
-    void EnableAlphaNumAccels();
-    void ChatMessageSentSlot();
+    bool    OpenChatWindow();
+    bool    EndTurn();
+    bool    ShowMenu();
+    bool    KeyboardZoomIn();
+    bool    KeyboardZoomOut();
+    bool    ZoomToPrevIdleUnit();
+    bool    ZoomToNextIdleUnit();
+    bool    ZoomToPrevUnit();
+    bool    ZoomToNextUnit();
+    void    ConnectKeyboardAcceleratorSignals();
+    void    SetAccelerators();
+    void    RemoveAccelerators();
+    void    DisableAlphaNumAccels();
+    void    EnableAlphaNumAccels();
+    void    ChatMessageSentSlot();
 
     Ogre::SceneManager* m_scene_manager;
-    Ogre::Viewport* m_viewport;
+    Ogre::Viewport*     m_viewport;
     Ogre::PlaneBoundedVolumeListSceneQuery* m_volume_scene_query;
+    EntityRenderer*     m_entity_renderer;
 
-    CombatCamera* m_camera;
-    Ogre::Camera* m_ogre_camera;
+    CombatCamera*       m_camera;
+    Ogre::Camera*       m_ogre_camera;
 
-    CombatData* m_combat_data;
-    CombatData* m_new_combat_data;
+    CombatData*         m_combat_data;
+    CombatData*         m_new_combat_data;
 
-    GG::Pt m_last_pos;
-    GG::Pt m_last_click_pos;
-    GG::Pt m_selection_drag_start;
-    GG::Pt m_selection_drag_stop;
-    bool m_mouse_dragged;
-    GG::Rect m_selection_rect;
-    std::map<Ogre::MovableObject*, SelectedObject> m_current_selections;
-    Ogre::Billboard* m_star_back_billboard;
-    Ogre::Real m_star_brightness_factor;
-    boost::shared_ptr<GG::Texture> m_big_flare;
-    boost::shared_ptr<GG::Texture> m_small_flare;
+    GG::Pt              m_last_pos;
+    GG::Pt              m_last_click_pos;
+    GG::Pt              m_selection_drag_start;
+    GG::Pt              m_selection_drag_stop;
+    bool                m_mouse_dragged;
+    GG::Rect            m_selection_rect;
+
+    std::map<Ogre::MovableObject*, SelectedObject>  m_current_selections;
+
+    Ogre::Billboard*    m_star_back_billboard;
+    Ogre::Real          m_star_brightness_factor;
+
+    boost::shared_ptr<GG::Texture>  m_big_flare;
+    boost::shared_ptr<GG::Texture>  m_small_flare;
 
     // The scene nodes representing planets in the system and the materials
     // created to show them, indexed by orbit number.
@@ -195,8 +201,7 @@ private:
 
     // The scene nodes representing ships in the system and their associated
     // collision meshes, indexed by ship object id.
-    struct ShipData
-    {
+    struct ShipData {
         ShipData();
         ShipData(Ogre::SceneNode* node,
                  Ogre::MaterialPtr material,
@@ -210,40 +215,40 @@ private:
         btBvhTriangleMeshShape* m_bt_shape;
         btCollisionObject* m_bt_object;
     };
-    std::map<int, ShipData> m_ship_assets;
-    std::map<std::string, Ogre::MaterialPtr> m_ship_materials;
+    std::map<int, ShipData>                     m_ship_assets;
+    std::map<std::string, Ogre::MaterialPtr>    m_ship_materials;
 
     // The collision detection system
-    btDefaultCollisionConfiguration* m_collision_configuration;
-    btCollisionDispatcher* m_collision_dispatcher;
-    bt32BitAxisSweep3* m_collision_broadphase;
-    btCollisionWorld* m_collision_world;
-    std::set<btCollisionShape*> m_collision_shapes;
-    std::set<btCollisionObject*> m_collision_objects;
+    btDefaultCollisionConfiguration*    m_collision_configuration;
+    btCollisionDispatcher*              m_collision_dispatcher;
+    bt32BitAxisSweep3*                  m_collision_broadphase;
+    btCollisionWorld*                   m_collision_world;
+    std::set<btCollisionShape*>         m_collision_shapes;
+    std::set<btCollisionObject*>        m_collision_objects;
 
     Forests::PagedGeometry* m_paged_geometry;
-    Forests::TreeLoader3D* m_paged_geometry_loader;
+    Forests::TreeLoader3D*  m_paged_geometry_loader;
 
-    Ogre::Real m_initial_left_horizontal_flare_scroll;
-    Ogre::Real m_initial_right_horizontal_flare_scroll;
-    Ogre::Real m_left_horizontal_flare_scroll_offset;
-    Ogre::Real m_right_horizontal_flare_scroll_offset;
+    Ogre::Real              m_initial_left_horizontal_flare_scroll;
+    Ogre::Real              m_initial_right_horizontal_flare_scroll;
+    Ogre::Real              m_left_horizontal_flare_scroll_offset;
+    Ogre::Real              m_right_horizontal_flare_scroll_offset;
 
     StencilOpQueueListener* m_stencil_op_frame_listener;
 
-    FPSIndicator* m_fps_text;
+    FPSIndicator*           m_fps_text;
 
-    CombatSetupWnd* m_combat_setup_wnd;
+    CombatSetupWnd*         m_combat_setup_wnd;
 
-    bool m_menu_showing;
-    std::set<boost::signals::connection> m_keyboard_accelerator_signals;
-    std::set<GG::Key> m_disabled_accels_list;
+    bool                    m_menu_showing;
+    std::set<boost::signals::connection>    m_keyboard_accelerator_signals;
+    std::set<GG::Key>       m_disabled_accels_list;
 
-    CombatOrderSet m_combat_order_set;
-    CUIButton* m_end_turn_button;
-    double m_time_since_last_turn_update;
+    CombatOrderSet          m_combat_order_set;
+    CUIButton*              m_end_turn_button;
+    double                  m_time_since_last_turn_update;
 
-    bool m_exit; // TODO: Remove this; it is only here for prototyping.
+    bool                    m_exit; // TODO: Remove this; it is only here for prototyping.
 };
 
 #endif

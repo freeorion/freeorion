@@ -109,8 +109,7 @@ namespace {
     // onscreen is actually what we use for the star radius below.
     const Ogre::Real STAR_RADIUS_ADJUSTMENT_FACTOR = 0.45f;
 
-    std::string PlanetNodeMaterial(PlanetType type)
-    {
+    std::string PlanetNodeMaterial(PlanetType type) {
         assert(INVALID_PLANET_TYPE < type && type < NUM_PLANET_TYPES);
         if (type == PT_GASGIANT)
             return "gas_giant";
@@ -122,8 +121,7 @@ namespace {
             return "planet";
     }
 
-    std::string AtmosphereMaterialName(const std::string& base_name)
-    {
+    std::string AtmosphereMaterialName(const std::string& base_name) {
         std::string retval =
             base_name.substr(0, base_name.size() - 2) +
             "_atmosphere_" +
@@ -132,8 +130,7 @@ namespace {
         return retval;
     }
 
-    std::string PlanetMaterialName(const std::string& base_name)
-    {
+    std::string PlanetMaterialName(const std::string& base_name) {
         std::string retval =
             base_name.substr(0, base_name.size() - 2) +
             "_planet_" +
@@ -157,24 +154,21 @@ namespace {
     OpenSteer::Vec3 ToOpenSteer(const btVector3& vec)
     { return OpenSteer::Vec3(vec.x(), vec.y(), vec.z()); }
 
-    void SetNodePositionAndOrientation(Ogre::SceneNode* node, const CombatObjectPtr& combat_object)
-    {
+    void SetNodePositionAndOrientation(Ogre::SceneNode* node, const CombatObjectPtr& combat_object) {
         node->setPosition(::ToOgre(combat_object->position()));
         node->setOrientation(Ogre::Quaternion(::ToOgre(combat_object->side()),
                                               ::ToOgre(combat_object->forward()),
                                               ::ToOgre(combat_object->up())));
     }
 
-    struct RayIntersectionHit
-    {
+    struct RayIntersectionHit {
         RayIntersectionHit() : m_object(0) {}
         Ogre::MovableObject* m_object;
         Ogre::Vector3 m_point;
         Ogre::Vector3 m_normal;
     };
 
-    RayIntersectionHit RayIntersection(btCollisionWorld& world, const Ogre::Ray& ray)
-    {
+    RayIntersectionHit RayIntersection(btCollisionWorld& world, const Ogre::Ray& ray) {
         RayIntersectionHit retval;
         btCollisionWorld::ClosestRayResultCallback
             collision_results(ToCollision(ray.getOrigin()),
@@ -191,8 +185,7 @@ namespace {
         return retval;
     }
 
-    std::pair<std::string, int> PlanetLightsChannel(const std::string& base_name, const Planet& planet)
-    {
+    std::pair<std::string, int> PlanetLightsChannel(const std::string& base_name, const Planet& planet) {
         std::pair<std::string, int> retval;
 
         double pop = planet.CurrentMeterValue(METER_POPULATION);
@@ -225,8 +218,7 @@ namespace {
     }
 
     // TODO: For prototyping only.
-    void EndCombatButtonClicked()
-    {
+    void EndCombatButtonClicked() {
         HumanClientApp::GetApp()->Networking().SendMessage(
             Message(Message::COMBAT_END,
                     HumanClientApp::GetApp()->PlayerID(),
@@ -237,16 +229,14 @@ namespace {
     const std::map<StarType, std::set<std::string> >& StarTextures()
     {
         static std::map<StarType, std::set<std::string> > star_textures;
-        if (star_textures.empty())
-        {
+        if (star_textures.empty()) {
             namespace fs = boost::filesystem;
             fs::path dir = ClientUI::ArtDir() / "combat" / "backgrounds";
             assert(fs::is_directory(dir));
             fs::directory_iterator end_it;
             for (std::map<StarType, std::string>::const_iterator type_it =
                      ClientUI::StarTypeFilePrefixes().begin();
-                 type_it != ClientUI::StarTypeFilePrefixes().end();
-                 ++type_it)
+                 type_it != ClientUI::StarTypeFilePrefixes().end(); ++type_it)
             {
                 std::set<std::string>& current_textures = star_textures[type_it->first];
                 for (fs::directory_iterator it(dir); it != end_it; ++it) {
@@ -272,11 +262,9 @@ namespace {
         return star_textures;
     }
 
-    const std::map<PlanetType, std::set<std::string> >& PlanetTextures()
-    {
+    const std::map<PlanetType, std::set<std::string> >& PlanetTextures() {
         static std::map<PlanetType, std::set<std::string> > planet_textures;
-        if (planet_textures.empty())
-        {
+        if (planet_textures.empty()) {
             namespace fs = boost::filesystem;
             fs::path dir = ClientUI::ArtDir() / "combat" / "meshes" / "planets";
             assert(fs::is_directory(dir));
@@ -309,11 +297,9 @@ namespace {
         return planet_textures;
     }
 
-    const std::set<std::string>& AsteroidSets()
-    {
+    const std::set<std::string>& AsteroidSets() {
         static std::set<std::string> asteroid_sets;
-        if (asteroid_sets.empty())
-        {
+        if (asteroid_sets.empty()) {
             const std::string ASTEROID_BASE_NAME = "Asteroid";
             namespace fs = boost::filesystem;
             fs::path dir = ClientUI::ArtDir() / "combat" / "meshes" / "planets";
@@ -396,15 +382,13 @@ namespace {
     std::string ShipMeshName(const Ship& ship)
     { return ship.Design()->Model() + ".mesh"; }
 
-    bool CloseTo(const GG::Pt& p1, const GG::Pt& p2)
-    {
+    bool CloseTo(const GG::Pt& p1, const GG::Pt& p2) {
         const int EPSILON = 5;
         int delta = std::abs(Value(p1.x - p2.x)) + std::abs(Value(p1.y - p2.y));
         return delta < EPSILON;
     }
 
-    const Ogre::Vector3& GetSystemColor(const std::string& star_or_skybox_base_name)
-    {
+    const Ogre::Vector3& GetSystemColor(const std::string& star_or_skybox_base_name) {
         static std::map<std::string, Ogre::Vector3> colors;
         if (colors.empty()) {
             boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "combat" / "backgrounds" / "system_colors.txt");
@@ -422,8 +406,7 @@ namespace {
         return colors[star_or_skybox_base_name];
     }
 
-    void AddOptions(OptionsDB& db)
-    {
+    void AddOptions(OptionsDB& db) {
         db.AddFlag("tech-demo",             "OPTIONS_DB_TECH_DEMO",                 false);
         db.Add("combat.enable-glow",        "OPTIONS_DB_COMBAT_ENABLE_GLOW",        true, Validator<bool>());
         db.Add("combat.enable-skybox",      "OPTIONS_DB_COMBAT_ENABLE_SKYBOX",      true, Validator<bool>());
@@ -437,9 +420,7 @@ namespace {
 // SelectedObject
 ////////////////////////////////////////////////////////////
 // SelectedObjectImpl
-struct CombatWnd::SelectedObject::SelectedObjectImpl
-{
-
+struct CombatWnd::SelectedObject::SelectedObjectImpl {
     SelectedObjectImpl() :
         m_object(0),
         m_core_entity(0),
@@ -447,7 +428,8 @@ struct CombatWnd::SelectedObject::SelectedObjectImpl
         m_fill_entity(0),
         m_scene_node(0),
         m_scene_manager(0)
-        {}
+    {}
+
     explicit SelectedObjectImpl(Ogre::MovableObject* object) :
         m_object(object),
         m_core_entity(0),
@@ -455,49 +437,49 @@ struct CombatWnd::SelectedObject::SelectedObjectImpl
         m_fill_entity(0),
         m_scene_node(0),
         m_scene_manager(0)
-        {
-            m_scene_node = object->getParentSceneNode();
-            assert(m_scene_node);
-            m_scene_manager = m_scene_node->getCreator();
-            assert(m_scene_manager);
-            m_core_entity = boost::polymorphic_downcast<Ogre::Entity*>(m_object);
+    {
+        m_scene_node = object->getParentSceneNode();
+        assert(m_scene_node);
+        m_scene_manager = m_scene_node->getCreator();
+        assert(m_scene_manager);
+        m_core_entity = boost::polymorphic_downcast<Ogre::Entity*>(m_object);
 
-            m_core_entity->setRenderQueueGroup(SELECTION_HILITING_OBJECT_RENDER_QUEUE);
+        m_core_entity->setRenderQueueGroup(SELECTION_HILITING_OBJECT_RENDER_QUEUE);
 
-            const bool FILLED = GetOptionsDB().Get<bool>("combat.filled-selection");
+        const bool FILLED = GetOptionsDB().Get<bool>("combat.filled-selection");
 
-            m_outline_entity = m_core_entity->clone(m_core_entity->getName() + " hiliting outline");
-            m_outline_entity->setRenderQueueGroup(FILLED ?
-                                                  SELECTION_HILITING_FILLED_1_RENDER_QUEUE :
-                                                  SELECTION_HILITING_OUTLINED_RENDER_QUEUE);
-            m_outline_entity->setMaterialName(FILLED ?
-                                              "effects/selection/filled_hiliting_1" :
-                                              "effects/selection/outline_hiliting");
-            m_outline_entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-            m_outline_entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
-            m_scene_node->attachObject(m_outline_entity);
+        m_outline_entity = m_core_entity->clone(m_core_entity->getName() + " hiliting outline");
+        m_outline_entity->setRenderQueueGroup(FILLED ?
+                                                SELECTION_HILITING_FILLED_1_RENDER_QUEUE :
+                                                SELECTION_HILITING_OUTLINED_RENDER_QUEUE);
+        m_outline_entity->setMaterialName(FILLED ?
+                                            "effects/selection/filled_hiliting_1" :
+                                            "effects/selection/outline_hiliting");
+        m_outline_entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+        m_outline_entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
+        m_scene_node->attachObject(m_outline_entity);
 
-            if (FILLED) {
-                m_fill_entity = m_core_entity->clone(m_core_entity->getName() + " hiliting fill");
-                m_fill_entity->setRenderQueueGroup(SELECTION_HILITING_FILLED_2_RENDER_QUEUE);
-                m_fill_entity->setMaterialName("effects/selection/filled_hiliting_2");
-                m_fill_entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-                m_fill_entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
-                m_scene_node->attachObject(m_fill_entity);
+        if (FILLED) {
+            m_fill_entity = m_core_entity->clone(m_core_entity->getName() + " hiliting fill");
+            m_fill_entity->setRenderQueueGroup(SELECTION_HILITING_FILLED_2_RENDER_QUEUE);
+            m_fill_entity->setMaterialName("effects/selection/filled_hiliting_2");
+            m_fill_entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+            m_fill_entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
+            m_scene_node->attachObject(m_fill_entity);
+        }
+    }
+
+    ~SelectedObjectImpl() {
+        if (m_object) {
+            m_core_entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN);
+            m_scene_node->detachObject(m_outline_entity);
+            m_scene_manager->destroyEntity(m_outline_entity);
+            if (GetOptionsDB().Get<bool>("combat.filled-selection")) {
+                m_scene_node->detachObject(m_fill_entity);
+                m_scene_manager->destroyEntity(m_fill_entity);
             }
         }
-    ~SelectedObjectImpl()
-        {
-            if (m_object) {
-                m_core_entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN);
-                m_scene_node->detachObject(m_outline_entity);
-                m_scene_manager->destroyEntity(m_outline_entity);
-                if (GetOptionsDB().Get<bool>("combat.filled-selection")) {
-                    m_scene_node->detachObject(m_fill_entity);
-                    m_scene_manager->destroyEntity(m_fill_entity);
-                }
-            }
-        }
+    }
 
     Ogre::MovableObject* m_object;
     Ogre::Entity* m_core_entity;
@@ -618,6 +600,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_scene_manager(scene_manager),
     m_viewport(viewport),
     m_volume_scene_query(m_scene_manager->createPlaneBoundedVolumeQuery(Ogre::PlaneBoundedVolumeList())),
+    m_entity_renderer(new EntityRenderer(m_scene_manager)), // TODO: Remove; for testing only.
     m_camera(0),
     m_ogre_camera(camera),
     m_combat_data(0),
@@ -870,11 +853,11 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     }
 }
 
-CombatWnd::~CombatWnd()
-{
+CombatWnd::~CombatWnd() {
     delete m_paged_geometry;
 
     delete m_camera;
+    delete m_entity_renderer;
 
     Ogre::Root::getSingleton().removeFrameListener(this);
     m_scene_manager->removeRenderQueueListener(m_stencil_op_frame_listener);
@@ -900,8 +883,7 @@ CombatWnd::~CombatWnd()
     RemoveAccelerators();
 }
 
-void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetupGroup>& setup_groups)
-{
+void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetupGroup>& setup_groups) {
     m_combat_data = &combat_data;
     m_new_combat_data = 0;
 
@@ -1130,8 +1112,7 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
     AttachChild(m_combat_setup_wnd);
 }
 
-void CombatWnd::CombatTurnUpdate(CombatData& combat_data)
-{
+void CombatWnd::CombatTurnUpdate(CombatData& combat_data) {
     m_new_combat_data = &combat_data;
 
     if (m_combat_setup_wnd) {
@@ -1141,8 +1122,7 @@ void CombatWnd::CombatTurnUpdate(CombatData& combat_data)
     }
 }
 
-void CombatWnd::Render()
-{
+void CombatWnd::Render() {
     RenderLensFlare();
 
     if (m_selection_rect.ul != m_selection_rect.lr) {
@@ -1158,8 +1138,7 @@ void CombatWnd::Render()
     }
 }
 
-void CombatWnd::RenderLensFlare()
-{
+void CombatWnd::RenderLensFlare() {
     if (!GetOptionsDB().Get<bool>("combat.enable-lens-flare"))
         return;
 
@@ -1203,14 +1182,12 @@ void CombatWnd::RenderLensFlare()
     }
 }
 
-void CombatWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void CombatWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     m_last_pos = pt;
     m_mouse_dragged = false;
 }
 
-void CombatWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
-{
+void CombatWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
     GG::Pt delta_pos = pt - m_last_pos;
     if (m_mouse_dragged ||
         GG::GUI::GetGUI()->MinDragDistance() * GG::GUI::GetGUI()->MinDragDistance() <
@@ -1226,14 +1203,12 @@ void CombatWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey
     }
 }
 
-void CombatWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void CombatWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (m_selection_drag_start != INVALID_SELECTION_DRAG_POS)
         EndSelectionDrag();
 }
 
-void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (m_selection_drag_start != INVALID_SELECTION_DRAG_POS) {
         SelectObjectsInVolume(mod_keys & GG::MOD_KEY_CTRL);
         EndSelectionDrag();
@@ -1257,8 +1232,7 @@ void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     m_last_click_pos = pt;
 }
 
-void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (CloseTo(pt, m_last_click_pos)) {
         if (!m_mouse_dragged && !m_camera->Moving()) {
             if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
@@ -1277,14 +1251,12 @@ void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     m_last_click_pos = GG::Pt();
 }
 
-void CombatWnd::MButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void CombatWnd::MButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     m_last_pos = pt;
     m_mouse_dragged = false;
 }
 
-void CombatWnd::MDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
-{
+void CombatWnd::MDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
     GG::Pt delta_pos = pt - m_last_pos;
     if (m_mouse_dragged ||
         GG::GUI::GetGUI()->MinDragDistance() * GG::GUI::GetGUI()->MinDragDistance() <
@@ -1296,31 +1268,24 @@ void CombatWnd::MDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey
 }
 
 void CombatWnd::MButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-}
+{}
 
 void CombatWnd::MClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-}
+{}
 
 void CombatWnd::MDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-}
+{}
 
 void CombatWnd::RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-}
+{}
 
 void CombatWnd::RDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
-{
-}
+{}
 
 void CombatWnd::RButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-}
+{}
 
-void CombatWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void CombatWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_current_selections.empty()) {
         bool append = mod_keys & GG::MOD_KEY_SHIFT;
 
@@ -1423,8 +1388,7 @@ void CombatWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     }
 }
 
-void CombatWnd::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void CombatWnd::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     // TODO: for all below, shift-double-click means append to queue, other
     // double-clicks mean replace queue
 
@@ -1435,8 +1399,7 @@ void CombatWnd::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { m_camera->MouseWheel(pt, move, mod_keys); }
 
-void CombatWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
-{
+void CombatWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     // TODO: This quick-quit is for prototyping only.
     if (key == GG::GGK_q && mod_keys & GG::MOD_KEY_CTRL)
         m_exit = true;
@@ -1453,8 +1416,7 @@ void CombatWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<
 
 #define INSTRUMENT_COMBAT_LISTENER_INTERFACE 1
 
-void CombatWnd::ShipPlaced(const CombatShipPtr &ship)
-{
+void CombatWnd::ShipPlaced(const CombatShipPtr &ship) {
 #if INSTRUMENT_COMBAT_LISTENER_INTERFACE
     std::cerr << "CombatWnd::ShipPlaced()\n";
 #endif
@@ -1471,24 +1433,21 @@ void CombatWnd::ShipFired(const CombatShipPtr &ship,
     // TODO
 }
 
-void CombatWnd::ShipDestroyed(const CombatShipPtr &ship)
-{
+void CombatWnd::ShipDestroyed(const CombatShipPtr &ship) {
 #if INSTRUMENT_COMBAT_LISTENER_INTERFACE
     std::cerr << "CombatWnd::ShipDestroyed()\n";
 #endif
     RemoveCombatShip(ship);
 }
 
-void CombatWnd::ShipEnteredStarlane(const CombatShipPtr &ship)
-{
+void CombatWnd::ShipEnteredStarlane(const CombatShipPtr &ship) {
 #if INSTRUMENT_COMBAT_LISTENER_INTERFACE
     std::cerr << "CombatWnd::ShipEnteredStarlane()\n";
 #endif
     // TODO
 }
 
-void CombatWnd::FighterLaunched(const CombatFighterPtr &fighter)
-{
+void CombatWnd::FighterLaunched(const CombatFighterPtr &fighter) {
 #if INSTRUMENT_COMBAT_LISTENER_INTERFACE
     std::cerr << "CombatWnd::FighterLaunched()\n";
 #endif
@@ -1504,40 +1463,35 @@ void CombatWnd::FighterFired(const CombatFighterPtr &fighter,
     // TODO
 }
 
-void CombatWnd::FighterDestroyed(const CombatFighterPtr &fighter)
-{
+void CombatWnd::FighterDestroyed(const CombatFighterPtr &fighter) {
 #if INSTRUMENT_COMBAT_LISTENER_INTERFACE
     std::cerr << "CombatWnd::FighterDestroyed()\n";
 #endif
     // TODO
 }
 
-void CombatWnd::FighterDocked(const CombatFighterPtr &fighter)
-{
+void CombatWnd::FighterDocked(const CombatFighterPtr &fighter) {
 #if INSTRUMENT_COMBAT_LISTENER_INTERFACE
     std::cerr << "CombatWnd::FighterDocked()\n";
 #endif
     // TODO
 }
 
-void CombatWnd::MissileLaunched(const MissilePtr &missile)
-{
+void CombatWnd::MissileLaunched(const MissilePtr &missile) {
 #if INSTRUMENT_COMBAT_LISTENER_INTERFACE
     std::cerr << "CombatWnd::MissileLaunched()\n";
 #endif
     // TODO
 }
 
-void CombatWnd::MissileExploded(const MissilePtr &missile)
-{
+void CombatWnd::MissileExploded(const MissilePtr &missile) {
 #if INSTRUMENT_COMBAT_LISTENER_INTERFACE
     std::cerr << "CombatWnd::MissileExploded()\n";
 #endif
     // TODO
 }
 
-void CombatWnd::MissileRemoved(const MissilePtr &missile)
-{
+void CombatWnd::MissileRemoved(const MissilePtr &missile) {
 #if INSTRUMENT_COMBAT_LISTENER_INTERFACE
     std::cerr << "CombatWnd::MissileRemoved()\n";
 #endif
@@ -1546,16 +1500,14 @@ void CombatWnd::MissileRemoved(const MissilePtr &missile)
 
 #undef INSTRUMENT_COMBAT_LISTENER_INTERFACE
 
-const std::string& CombatWnd::StarBaseName() const
-{
+const std::string& CombatWnd::StarBaseName() const {
     assert(StarTextures().find(m_combat_data->m_system->GetStarType()) != StarTextures().end());
     const std::set<std::string>& star_textures =
         StarTextures().find(m_combat_data->m_system->GetStarType())->second;
     return *boost::next(star_textures.begin(), m_combat_data->m_system->ID() % star_textures.size());
 }
 
-void CombatWnd::ApplyUpdateFromServer()
-{
+void CombatWnd::ApplyUpdateFromServer() {
     m_combat_data = m_new_combat_data;
     m_new_combat_data = 0;
 
@@ -1588,8 +1540,7 @@ void CombatWnd::ApplyUpdateFromServer()
 void CombatWnd::ResolveTurn()
 { m_time_since_last_turn_update = 0.0; }
 
-bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
-{
+bool CombatWnd::frameStarted(const Ogre::FrameEvent& event) {
     Ogre::RenderTarget::FrameStats stats =
         Ogre::Root::getSingleton().getRenderTarget("FreeOrion " + FreeOrionVersionString())->getStatistics();
     m_fps_text->SetText(boost::lexical_cast<std::string>(stats.lastFPS) + " FPS");
@@ -1635,8 +1586,7 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
 bool CombatWnd::frameEnded(const Ogre::FrameEvent& event)
 { return !m_exit; }
 
-void CombatWnd::UpdateStarFromCameraPosition()
-{
+void CombatWnd::UpdateStarFromCameraPosition() {
     // Determine occlusion of the horizontal midline across the star by objects
     // in the scene.  This is only enabled if glow is in play, since the effect
     // doesn't look right when glow is not used.
@@ -1780,8 +1730,7 @@ void CombatWnd::UpdateStarFromCameraPosition()
         m_initial_right_horizontal_flare_scroll + m_right_horizontal_flare_scroll_offset);
 }
 
-void CombatWnd::UpdateSkyBox()
-{
+void CombatWnd::UpdateSkyBox() {
     // TODO: Select an appropriate skybox, once we have more than one.
     Ogre::String skybox_material_name = "backgrounds/sky_box_1";
     Ogre::Real skybox_distance = 50.0;
@@ -1792,14 +1741,12 @@ void CombatWnd::UpdateSkyBox()
     }
 }
 
-void CombatWnd::EndSelectionDrag()
-{
+void CombatWnd::EndSelectionDrag() {
     m_selection_drag_start = INVALID_SELECTION_DRAG_POS;
     m_selection_rect = GG::Rect();
 }
 
-void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
-{
+void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items) {
     const GG::X APP_WIDTH = GG::GUI::GetGUI()->AppWidth();
     const GG::Y APP_HEIGHT = GG::GUI::GetGUI()->AppHeight();
 
@@ -1850,8 +1797,7 @@ void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
     }
 }
 
-Ogre::MovableObject* CombatWnd::GetObjectUnderPt(const GG::Pt& pt)
-{
+Ogre::MovableObject* CombatWnd::GetObjectUnderPt(const GG::Pt& pt) {
     Ogre::Ray ray;
     m_camera->ViewportRay(Value(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth()),
                           Value(pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight()),
@@ -1863,8 +1809,7 @@ Ogre::MovableObject* CombatWnd::GetObjectUnderPt(const GG::Pt& pt)
 void CombatWnd::DeselectAll()
 { m_current_selections.clear(); }
 
-const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const Ship& ship)
-{
+const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const Ship& ship) {
     assert(ship.Design());
     const ShipDesign& ship_design = *ship.Design();
 
@@ -1934,8 +1879,7 @@ void CombatWnd::RepositionShipNode(int ship_id,
     m_collision_world->addCollisionObject(ship_data.m_bt_object);
 }
 
-void CombatWnd::UpdateObjectPosition(const CombatObjectPtr& combat_object)
-{
+void CombatWnd::UpdateObjectPosition(const CombatObjectPtr& combat_object) {
     if (combat_object->IsShip()) {
         assert(boost::dynamic_pointer_cast<CombatShip>(combat_object));
         CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(combat_object);
@@ -1965,15 +1909,13 @@ void CombatWnd::UpdateObjectPosition(const CombatObjectPtr& combat_object)
     }
 }
 
-void CombatWnd::RemoveShip(int ship_id)
-{
+void CombatWnd::RemoveShip(int ship_id) {
     ShipData& ship_data = m_ship_assets[ship_id];
     m_collision_world->removeCollisionObject(ship_data.m_bt_object);
     ship_data.m_node->setVisible(false);
 }
 
-void CombatWnd::AddCombatShip(const CombatShipPtr& combat_ship)
-{
+void CombatWnd::AddCombatShip(const CombatShipPtr& combat_ship) {
     const Ship& ship = combat_ship->GetShip();
 
     const Ogre::MaterialPtr& material = GetShipMaterial(ship);
@@ -1987,8 +1929,7 @@ void CombatWnd::AddCombatShip(const CombatShipPtr& combat_ship)
     AddShipNode(ship.ID(), node, entity, material);
 }
 
-void CombatWnd::RemoveCombatShip(const CombatShipPtr& combat_ship)
-{
+void CombatWnd::RemoveCombatShip(const CombatShipPtr& combat_ship) {
     ShipData& ship_data = m_ship_assets[combat_ship->GetShip().ID()];
     m_scene_manager->destroySceneNode(ship_data.m_node);
     m_collision_world->getCollisionObjectArray().remove(ship_data.m_bt_object);
@@ -2000,14 +1941,12 @@ void CombatWnd::RemoveCombatShip(const CombatShipPtr& combat_ship)
     m_ship_assets.erase(combat_ship->GetShip().ID());
 }
 
-bool CombatWnd::OpenChatWindow()
-{
+bool CombatWnd::OpenChatWindow() {
     ClientUI::GetClientUI()->GetMessageWnd()->OpenForInput();
     return true;
 }
 
-bool CombatWnd::EndTurn()
-{
+bool CombatWnd::EndTurn() {
     HumanClientApp::GetApp()->Networking().SendMessage(
         CombatTurnOrdersMessage(
             HumanClientApp::GetApp()->PlayerID(),
@@ -2017,8 +1956,7 @@ bool CombatWnd::EndTurn()
     return true;
 }
 
-bool CombatWnd::ShowMenu()
-{
+bool CombatWnd::ShowMenu() {
     if (!m_menu_showing) {
         m_menu_showing = true;
 #if 0 // TODO: Use the full in-game menu when the code is a bit more developed.
@@ -2033,44 +1971,37 @@ bool CombatWnd::ShowMenu()
     return true;
 }
 
-bool CombatWnd::KeyboardZoomIn()
-{
+bool CombatWnd::KeyboardZoomIn() {
     m_camera->Zoom(1, GG::Flags<GG::ModKey>());
     return true;
 }
 
-bool CombatWnd::KeyboardZoomOut()
-{
+bool CombatWnd::KeyboardZoomOut() {
     m_camera->Zoom(-1, GG::Flags<GG::ModKey>());
     return true;
 }
 
-bool CombatWnd::ZoomToPrevIdleUnit()
-{
+bool CombatWnd::ZoomToPrevIdleUnit() {
     // TODO
     return true;
 }
 
-bool CombatWnd::ZoomToNextIdleUnit()
-{
+bool CombatWnd::ZoomToNextIdleUnit() {
     // TODO
     return true;
 }
 
-bool CombatWnd::ZoomToPrevUnit()
-{
+bool CombatWnd::ZoomToPrevUnit() {
     // TODO
     return true;
 }
 
-bool CombatWnd::ZoomToNextUnit()
-{
+bool CombatWnd::ZoomToNextUnit() {
     // TODO
     return true;
 }
 
-void CombatWnd::ConnectKeyboardAcceleratorSignals()
-{
+void CombatWnd::ConnectKeyboardAcceleratorSignals() {
     m_keyboard_accelerator_signals.insert(
         GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN),
                     &CombatWnd::OpenChatWindow, this));
@@ -2118,8 +2049,7 @@ void CombatWnd::ConnectKeyboardAcceleratorSignals()
                     &CombatWnd::ZoomToNextUnit, this));
 }
 
-void CombatWnd::SetAccelerators()
-{
+void CombatWnd::SetAccelerators() {
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER);
 
@@ -2143,8 +2073,7 @@ void CombatWnd::SetAccelerators()
     ConnectKeyboardAcceleratorSignals();
 }
 
-void CombatWnd::RemoveAccelerators()
-{
+void CombatWnd::RemoveAccelerators() {
     GG::GUI::accel_iterator i = GG::GUI::GetGUI()->accel_begin();
     while (i != GG::GUI::GetGUI()->accel_end()) {
         GG::GUI::GetGUI()->RemoveAccelerator(i);
@@ -2161,8 +2090,7 @@ void CombatWnd::RemoveAccelerators()
     m_keyboard_accelerator_signals.clear();
 }
 
-void CombatWnd::DisableAlphaNumAccels()
-{
+void CombatWnd::DisableAlphaNumAccels() {
     for (GG::GUI::const_accel_iterator i = GG::GUI::GetGUI()->accel_begin();
          i != GG::GUI::GetGUI()->accel_end(); ++i) {
         if (i->second != 0) // we only want to disable mod_keys without modifiers
@@ -2179,8 +2107,7 @@ void CombatWnd::DisableAlphaNumAccels()
     }
 }
 
-void CombatWnd::EnableAlphaNumAccels()
-{
+void CombatWnd::EnableAlphaNumAccels() {
     for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
          i != m_disabled_accels_list.end(); ++i) {
         GG::GUI::GetGUI()->SetAccelerator(*i);
@@ -2188,8 +2115,7 @@ void CombatWnd::EnableAlphaNumAccels()
     m_disabled_accels_list.clear();
 }
 
-void CombatWnd::ChatMessageSentSlot()
-{
+void CombatWnd::ChatMessageSentSlot() {
     if (!m_disabled_accels_list.empty()) {
         EnableAlphaNumAccels();
         GG::GUI::GetGUI()->SetFocusWnd(this);
@@ -2199,8 +2125,7 @@ void CombatWnd::ChatMessageSentSlot()
 ////////////////////////////////////////
 // Free function(s)
 ////////////////////////////////////////
-bool IsVisible(const Ogre::SceneNode& node)
-{
+bool IsVisible(const Ogre::SceneNode& node) {
     bool retval = true;
     Ogre::SceneNode::ConstObjectIterator iterator = node.getAttachedObjectIterator();
     while (retval && iterator.hasMoreElements()) {
@@ -2209,8 +2134,7 @@ bool IsVisible(const Ogre::SceneNode& node)
     return retval;
 }
 
-Ogre::SceneNode* CreateShipSceneNode(Ogre::SceneManager* scene_manager, const Ship& ship)
-{
+Ogre::SceneNode* CreateShipSceneNode(Ogre::SceneManager* scene_manager, const Ship& ship) {
     return scene_manager->getRootSceneNode()->createChildSceneNode(
         ShipIDString(ship) + ShipMeshName(ship) + "_node");
 }
@@ -2236,8 +2160,7 @@ OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec)
 std::string ShipMaterialName(const ShipDesign& ship_design, int empire_id)
 { return "ship material " + ship_design.Model() + " empire " + boost::lexical_cast<std::string>(empire_id); }
 
-Ogre::Quaternion StarwardOrientationForPosition(const Ogre::Vector3& position)
-{
+Ogre::Quaternion StarwardOrientationForPosition(const Ogre::Vector3& position) {
     return Ogre::Quaternion(Ogre::Radian(std::atan2(-position.y, -position.x) -
                                          Ogre::Math::HALF_PI),
                             Ogre::Vector3(0.0, 0.0, 1.0));
