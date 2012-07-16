@@ -226,8 +226,7 @@ namespace {
                     ""));
     }
 
-    const std::map<StarType, std::set<std::string> >& StarTextures()
-    {
+    const std::map<StarType, std::set<std::string> >& StarTextures() {
         static std::map<StarType, std::set<std::string> > star_textures;
         if (star_textures.empty()) {
             namespace fs = boost::filesystem;
@@ -511,55 +510,53 @@ class CombatWnd::StencilOpQueueListener :
 public:
     StencilOpQueueListener() : m_stencil_dirty(false) {}
 
-    virtual void renderQueueStarted(Ogre::uint8 queue_group_id, const Ogre::String&, bool&)
-        {
-            Ogre::RenderSystem* render_system = Ogre::Root::getSingleton().getRenderSystem();
+    virtual void renderQueueStarted(Ogre::uint8 queue_group_id, const Ogre::String&, bool&) {
+        Ogre::RenderSystem* render_system = Ogre::Root::getSingleton().getRenderSystem();
 
-            // Note that this assumes that all the selection hiliting-related queues will come after
-            // Ogre::RENDER_QUEUE_MAIN.
-            if (queue_group_id == Ogre::RENDER_QUEUE_MAIN)
-                m_stencil_dirty = true;
+        // Note that this assumes that all the selection hiliting-related queues will come after
+        // Ogre::RENDER_QUEUE_MAIN.
+        if (queue_group_id == Ogre::RENDER_QUEUE_MAIN)
+            m_stencil_dirty = true;
 
-            if (STENCIL_OP_RENDER_QUEUES.find(queue_group_id) != STENCIL_OP_RENDER_QUEUES.end()) {
-                if (m_stencil_dirty) {
-                    render_system->clearFrameBuffer(Ogre::FBT_STENCIL);
-                    m_stencil_dirty = false;
-                }
-                render_system->setStencilCheckEnabled(true);
+        if (STENCIL_OP_RENDER_QUEUES.find(queue_group_id) != STENCIL_OP_RENDER_QUEUES.end()) {
+            if (m_stencil_dirty) {
+                render_system->clearFrameBuffer(Ogre::FBT_STENCIL);
+                m_stencil_dirty = false;
             }
-
-            if (queue_group_id == SELECTION_HILITING_OBJECT_RENDER_QUEUE) { // outlined object
-                render_system->setStencilBufferParams(
-                    Ogre::CMPF_ALWAYS_PASS,
-                    OUTLINE_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
-                    Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
-            } else if (queue_group_id == SELECTION_HILITING_OUTLINED_RENDER_QUEUE) { // outline object's selection hiliting
-                render_system->setStencilBufferParams(
-                    Ogre::CMPF_NOT_EQUAL,
-                    OUTLINE_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
-                    Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
-            } else if (queue_group_id == SELECTION_HILITING_FILLED_1_RENDER_QUEUE) { // fully-hilited object's stencil-writing pass
-                render_system->setStencilBufferParams(
-                    Ogre::CMPF_ALWAYS_PASS,
-                    FULL_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
-                    Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
-            } else if (queue_group_id == SELECTION_HILITING_FILLED_2_RENDER_QUEUE) { // fully-hilited object's rendering pass
-                render_system->setStencilBufferParams(
-                    Ogre::CMPF_EQUAL,
-                    FULL_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
-                    Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_ZERO, false);
-            }
+            render_system->setStencilCheckEnabled(true);
         }
 
-    virtual void renderQueueEnded(Ogre::uint8 queue_group_id, const Ogre::String&, bool&)
-        {
-            Ogre::RenderSystem* render_system = Ogre::Root::getSingleton().getRenderSystem();
-            if (STENCIL_OP_RENDER_QUEUES.find(queue_group_id) != STENCIL_OP_RENDER_QUEUES.end())
-                render_system->setStencilCheckEnabled(false);
-
-            if (*STENCIL_OP_RENDER_QUEUES.rbegin() <= queue_group_id)
-                render_system->setStencilBufferParams();
+        if (queue_group_id == SELECTION_HILITING_OBJECT_RENDER_QUEUE) { // outlined object
+            render_system->setStencilBufferParams(
+                Ogre::CMPF_ALWAYS_PASS,
+                OUTLINE_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
+                Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
+        } else if (queue_group_id == SELECTION_HILITING_OUTLINED_RENDER_QUEUE) { // outline object's selection hiliting
+            render_system->setStencilBufferParams(
+                Ogre::CMPF_NOT_EQUAL,
+                OUTLINE_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
+                Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
+        } else if (queue_group_id == SELECTION_HILITING_FILLED_1_RENDER_QUEUE) { // fully-hilited object's stencil-writing pass
+            render_system->setStencilBufferParams(
+                Ogre::CMPF_ALWAYS_PASS,
+                FULL_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
+                Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
+        } else if (queue_group_id == SELECTION_HILITING_FILLED_2_RENDER_QUEUE) { // fully-hilited object's rendering pass
+            render_system->setStencilBufferParams(
+                Ogre::CMPF_EQUAL,
+                FULL_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
+                Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_ZERO, false);
         }
+    }
+
+    virtual void renderQueueEnded(Ogre::uint8 queue_group_id, const Ogre::String&, bool&) {
+        Ogre::RenderSystem* render_system = Ogre::Root::getSingleton().getRenderSystem();
+        if (STENCIL_OP_RENDER_QUEUES.find(queue_group_id) != STENCIL_OP_RENDER_QUEUES.end())
+            render_system->setStencilCheckEnabled(false);
+
+        if (*STENCIL_OP_RENDER_QUEUES.rbegin() <= queue_group_id)
+            render_system->setStencilBufferParams();
+    }
 
 private:
     bool m_stencil_dirty;
@@ -921,164 +918,164 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
 
     // create planets
     for (System::const_orbit_iterator it = m_combat_data->m_system->begin();
-         it != m_combat_data->m_system->end();
-         ++it) {
+         it != m_combat_data->m_system->end(); ++it)
+    {
         const Planet* planet = 0;
         planet = universe_object_cast<Planet*>(m_combat_data->m_combat_universe[it->second]);
-        if (planet) {
-            std::string material_name = PlanetNodeMaterial(planet->Type());
-            if (material_name != "asteroid") {
-                std::string planet_name =
-                    "orbit " + boost::lexical_cast<std::string>(it->first) + " planet";
+        if (!planet) continue;
 
-                Ogre::SceneNode* node =
-                    m_scene_manager->getRootSceneNode()->createChildSceneNode(
-                        planet_name + " node");
-                Ogre::Real planet_radius = PlanetRadius(planet->Size());
-                node->setScale(planet_radius, planet_radius, planet_radius);
-                node->yaw(Ogre::Degree(planet->AxialTilt()));
-                double orbit_radius = OrbitalRadius(it->first);
-                double rads =
-                    planet->OrbitalPositionOnTurn(ClientApp::GetApp()->CurrentTurn());
-                Ogre::Vector3 position(orbit_radius * std::cos(rads),
-                                       orbit_radius * std::sin(rads),
-                                       0.0);
-                node->setPosition(position);
+        std::string material_name = PlanetNodeMaterial(planet->Type());
+        if (material_name != "asteroid") {
+            std::string planet_name =
+                "orbit " + boost::lexical_cast<std::string>(it->first) + " planet";
 
-                assert(PlanetTextures().find(planet->Type()) != PlanetTextures().end());
-                const std::set<std::string>& planet_textures =
-                    PlanetTextures().find(planet->Type())->second;
-                std::string base_name =
-                    *boost::next(planet_textures.begin(), planet->ID() % planet_textures.size());
+            Ogre::SceneNode* node =
+                m_scene_manager->getRootSceneNode()->createChildSceneNode(
+                    planet_name + " node");
+            Ogre::Real planet_radius = PlanetRadius(planet->Size());
+            node->setScale(planet_radius, planet_radius, planet_radius);
+            node->yaw(Ogre::Degree(planet->AxialTilt()));
+            double orbit_radius = OrbitalRadius(it->first);
+            double rads =
+                planet->OrbitalPositionOnTurn(ClientApp::GetApp()->CurrentTurn());
+            Ogre::Vector3 position(orbit_radius * std::cos(rads),
+                                    orbit_radius * std::sin(rads),
+                                    0.0);
+            node->setPosition(position);
 
-                // set up a sphere in the collision detection system
-                btSphereShape* collision_shape = new btSphereShape(planet_radius);
-                btCollisionObject* collision_object = new btCollisionObject;
-                m_collision_shapes.insert(collision_shape);
-                m_collision_objects.insert(collision_object);
-                btMatrix3x3 identity;
-                identity.setIdentity();
-                collision_object->getWorldTransform().setBasis(identity);
-                collision_object->getWorldTransform().setOrigin(
-                    ToCollision(position));
-                collision_object->setCollisionShape(collision_shape);
-                m_collision_world->addCollisionObject(collision_object);
+            assert(PlanetTextures().find(planet->Type()) != PlanetTextures().end());
+            const std::set<std::string>& planet_textures =
+                PlanetTextures().find(planet->Type())->second;
+            std::string base_name =
+                *boost::next(planet_textures.begin(), planet->ID() % planet_textures.size());
 
-                if (material_name == "gas_giant") {
-                    Ogre::Entity* entity =
-                        m_scene_manager->createEntity(planet_name, "sphere.mesh");
-                    entity->setMaterialName("gas_giant_core");
-                    assert(entity->getNumSubEntities() == 1u);
-                    entity->setCastShadows(true);
-                    entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-                    node->attachObject(entity);
+            // set up a sphere in the collision detection system
+            btSphereShape* collision_shape = new btSphereShape(planet_radius);
+            btCollisionObject* collision_object = new btCollisionObject;
+            m_collision_shapes.insert(collision_shape);
+            m_collision_objects.insert(collision_object);
+            btMatrix3x3 identity;
+            identity.setIdentity();
+            collision_object->getWorldTransform().setBasis(identity);
+            collision_object->getWorldTransform().setOrigin(
+                ToCollision(position));
+            collision_object->setCollisionShape(collision_shape);
+            m_collision_world->addCollisionObject(collision_object);
 
-                    collision_object->setUserPointer(
-                        static_cast<Ogre::MovableObject*>(entity));
+            if (material_name == "gas_giant") {
+                Ogre::Entity* entity =
+                    m_scene_manager->createEntity(planet_name, "sphere.mesh");
+                entity->setMaterialName("gas_giant_core");
+                assert(entity->getNumSubEntities() == 1u);
+                entity->setCastShadows(true);
+                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+                node->attachObject(entity);
 
+                collision_object->setUserPointer(
+                    static_cast<Ogre::MovableObject*>(entity));
+
+                entity = m_scene_manager->createEntity(
+                    planet_name + " atmosphere", "sphere.mesh");
+                entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
+                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+                entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
+                std::string new_material_name =
+                    material_name + "_" + boost::lexical_cast<std::string>(it->first);
+                Ogre::MaterialPtr material =
+                    Ogre::MaterialManager::getSingleton().getByName(material_name);
+                material = material->clone(new_material_name);
+                m_planet_assets[it->first].second.push_back(material);
+                material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
+                    setTextureName(base_name + ".png");
+                entity->setMaterialName(new_material_name);
+                node->attachObject(entity);
+            } else {
+                Ogre::Entity* entity =
+                    m_scene_manager->createEntity(planet_name, "sphere.mesh");
+                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+                std::string new_material_name =
+                    material_name + "_" + boost::lexical_cast<std::string>(it->first);
+                Ogre::MaterialPtr material =
+                    Ogre::MaterialManager::getSingleton().getByName(
+                        material_name == "planet" ?
+                        PlanetMaterialName(base_name) :
+                        material_name);
+                material = material->clone(new_material_name);
+                m_planet_assets[it->first].second.push_back(material);
+                assert(entity->getNumSubEntities() == 1u);
+                material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
+                    setTextureName(base_name + "Day.png");
+                material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->
+                    setTextureName(base_name + "Night.png");
+                entity->setMaterialName(new_material_name);
+                entity->setCastShadows(true);
+                node->attachObject(entity);
+
+                collision_object->setUserPointer(
+                    static_cast<Ogre::MovableObject*>(entity));
+
+                if (material_name == "planet") {
+                    material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->
+                        setTextureName(base_name + "CloudGloss.png");
                     entity = m_scene_manager->createEntity(
                         planet_name + " atmosphere", "sphere.mesh");
                     entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
                     entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                     entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
-                    std::string new_material_name =
-                        material_name + "_" + boost::lexical_cast<std::string>(it->first);
-                    Ogre::MaterialPtr material =
-                        Ogre::MaterialManager::getSingleton().getByName(material_name);
-                    material = material->clone(new_material_name);
-                    m_planet_assets[it->first].second.push_back(material);
-                    material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
-                        setTextureName(base_name + ".png");
-                    entity->setMaterialName(new_material_name);
-                    node->attachObject(entity);
-                } else {
-                    Ogre::Entity* entity =
-                        m_scene_manager->createEntity(planet_name, "sphere.mesh");
-                    entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-                    std::string new_material_name =
-                        material_name + "_" + boost::lexical_cast<std::string>(it->first);
                     Ogre::MaterialPtr material =
                         Ogre::MaterialManager::getSingleton().getByName(
-                            material_name == "planet" ?
-                            PlanetMaterialName(base_name) :
-                            material_name);
-                    material = material->clone(new_material_name);
+                            AtmosphereMaterialName(base_name));
+                    entity->setMaterialName(material->getName());
                     m_planet_assets[it->first].second.push_back(material);
-                    assert(entity->getNumSubEntities() == 1u);
-                    material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
-                        setTextureName(base_name + "Day.png");
-                    material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->
-                        setTextureName(base_name + "Night.png");
-                    entity->setMaterialName(new_material_name);
-                    entity->setCastShadows(true);
                     node->attachObject(entity);
-
-                    collision_object->setUserPointer(
-                        static_cast<Ogre::MovableObject*>(entity));
-
-                    if (material_name == "planet") {
-                        material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->
-                            setTextureName(base_name + "CloudGloss.png");
-                        entity = m_scene_manager->createEntity(
-                            planet_name + " atmosphere", "sphere.mesh");
-                        entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
-                        entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-                        entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
-                        Ogre::MaterialPtr material =
-                            Ogre::MaterialManager::getSingleton().getByName(
-                                AtmosphereMaterialName(base_name));
-                        entity->setMaterialName(material->getName());
-                        m_planet_assets[it->first].second.push_back(material);
-                        node->attachObject(entity);
-                    } else {
-                        assert(material_name == "atmosphereless_planet");
-                        material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->
-                            setTextureName(base_name + "Normal.png");
-                        std::pair<std::string, int> lights_channel = PlanetLightsChannel(base_name, *planet);
-                        material->getTechnique(0)->getPass(0)->getTextureUnitState(3)->
-                            setTextureName(lights_channel.first);
-                        material->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->
-                            setNamedConstant("lights_channel", lights_channel.second);
-                    }
+                } else {
+                    assert(material_name == "atmosphereless_planet");
+                    material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->
+                        setTextureName(base_name + "Normal.png");
+                    std::pair<std::string, int> lights_channel = PlanetLightsChannel(base_name, *planet);
+                    material->getTechnique(0)->getPass(0)->getTextureUnitState(3)->
+                        setTextureName(lights_channel.first);
+                    material->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->
+                        setNamedConstant("lights_channel", lights_channel.second);
                 }
+            }
 
-                m_planet_assets[it->first].first = node;
-            } else {
-                SetupPagedGeometry(m_paged_geometry, m_paged_geometry_loader, m_ogre_camera);
+            m_planet_assets[it->first].first = node;
+        } else {
+            SetupPagedGeometry(m_paged_geometry, m_paged_geometry_loader, m_ogre_camera);
 
-                const int ASTEROIDS_IN_BELT_AT_FOURTH_ORBIT = 1000;
-                const int ORBITAL_RADIUS = OrbitalRadius(it->first);
-                const int ASTEROIDS =
-                    ORBITAL_RADIUS / OrbitalRadius(3) * ASTEROIDS_IN_BELT_AT_FOURTH_ORBIT;
+            const int ASTEROIDS_IN_BELT_AT_FOURTH_ORBIT = 1000;
+            const int ORBITAL_RADIUS = OrbitalRadius(it->first);
+            const int ASTEROIDS =
+                ORBITAL_RADIUS / OrbitalRadius(3) * ASTEROIDS_IN_BELT_AT_FOURTH_ORBIT;
 
-                std::string planet_name =
-                    "orbit " + boost::lexical_cast<std::string>(it->first) + " planet";
+            std::string planet_name =
+                "orbit " + boost::lexical_cast<std::string>(it->first) + " planet";
 
-                const Ogre::Real DELTA_THETA = Ogre::Math::TWO_PI / ASTEROIDS;
-                Ogre::Real theta = 0.0;
-                for (int i = 0; i < ASTEROIDS; ++i, theta += DELTA_THETA) {
-                    const Ogre::Real THICKNESS = AsteroidBeltRadius() * 2.0;
-                    Ogre::Radian yaw(Ogre::Math::TWO_PI * RandZeroToOne());
-                    Ogre::Vector3 position;
-                    position.z = THICKNESS * (RandZeroToOne() - 0.5);
-                    position.y =
-                        (ORBITAL_RADIUS + THICKNESS * (RandZeroToOne() - 0.5)) * std::sin(theta);
-                    position.x =
-                        (ORBITAL_RADIUS + THICKNESS * (RandZeroToOne() - 0.5)) * std::cos(theta);
-                    Ogre::Real scale = Ogre::Math::RangeRandom(0.05f, 0.25f);
-                    m_paged_geometry_loader->addTree(
-                        asteroid_entities[i % asteroid_entities.size()],
-                        position, yaw, scale
-                    );
-                }
+            const Ogre::Real DELTA_THETA = Ogre::Math::TWO_PI / ASTEROIDS;
+            Ogre::Real theta = 0.0;
+            for (int i = 0; i < ASTEROIDS; ++i, theta += DELTA_THETA) {
+                const Ogre::Real THICKNESS = AsteroidBeltRadius() * 2.0;
+                Ogre::Radian yaw(Ogre::Math::TWO_PI * RandZeroToOne());
+                Ogre::Vector3 position;
+                position.z = THICKNESS * (RandZeroToOne() - 0.5);
+                position.y =
+                    (ORBITAL_RADIUS + THICKNESS * (RandZeroToOne() - 0.5)) * std::sin(theta);
+                position.x =
+                    (ORBITAL_RADIUS + THICKNESS * (RandZeroToOne() - 0.5)) * std::cos(theta);
+                Ogre::Real scale = Ogre::Math::RangeRandom(0.05f, 0.25f);
+                m_paged_geometry_loader->addTree(
+                    asteroid_entities[i % asteroid_entities.size()],
+                    position, yaw, scale
+                );
             }
         }
     }
 
     // create starlane entrance points
     for (System::const_lane_iterator it = m_combat_data->m_system->begin_lanes();
-         it != m_combat_data->m_system->end_lanes();
-         ++it) {
+         it != m_combat_data->m_system->end_lanes(); ++it)
+    {
         // this will break if/when we add support for wormholes, so we'll know to fix this code
         assert(!it->second);
 
@@ -1145,41 +1142,41 @@ void CombatWnd::RenderLensFlare() {
     // render two small lens flares that oppose the star's position relative to
     // the center of the viewport
     GG::Pt star_pt = m_camera->ProjectToPixel(Ogre::Vector3(0.0, 0.0, 0.0));
-    if (InClient(star_pt)) {
-        Ogre::Ray ray(m_camera->GetRealPosition(), -m_camera->GetRealPosition());
-        RayIntersectionHit hit = RayIntersection(*m_collision_world, ray);
-        if (!hit.m_object) {
-            GG::Pt center(Width() / 2, Height() / 2);
-            GG::Pt star_to_center = center - star_pt;
+    if (!InClient(star_pt)) return;
 
-            const Ogre::Real QUADRATIC_ATTENUATION_FACTOR = 0.000006f;  // rewrote 5.0e-6 as float -Geoff
-            Ogre::Real attenuation =
-                QUADRATIC_ATTENUATION_FACTOR * m_camera->GetRealPosition().squaredLength();
+    Ogre::Ray ray(m_camera->GetRealPosition(), -m_camera->GetRealPosition());
+    RayIntersectionHit hit = RayIntersection(*m_collision_world, ray);
+    if (hit.m_object) return;
 
-            int big_flare_width =
-                static_cast<int>(180 * m_star_brightness_factor / (1 + attenuation));
-            int small_flare_width =
-                static_cast<int>(120 * m_star_brightness_factor / (1 + attenuation));
+    GG::Pt center(Width() / 2, Height() / 2);
+    GG::Pt star_to_center = center - star_pt;
 
-            GG::Pt big_flare_ul =
-                center + GG::Pt(star_to_center.x / 2, star_to_center.y / 2) -
-                GG::Pt(GG::X(big_flare_width / 2), GG::Y(big_flare_width / 2));
-            GG::Pt small_flare_ul =
-                center + GG::Pt(3 * star_to_center.x / 4, 3 * star_to_center.y / 4) -
-                GG::Pt(GG::X(small_flare_width / 2), GG::Y(small_flare_width / 2));
-            GG::Pt big_flare_lr =
-                big_flare_ul + GG::Pt(GG::X(big_flare_width), GG::Y(big_flare_width));
-            GG::Pt small_flare_lr =
-                small_flare_ul + GG::Pt(GG::X(small_flare_width), GG::Y(small_flare_width));
+    const Ogre::Real QUADRATIC_ATTENUATION_FACTOR = 0.000006f;  // rewrote 5.0e-6 as float -Geoff
+    Ogre::Real attenuation =
+        QUADRATIC_ATTENUATION_FACTOR * m_camera->GetRealPosition().squaredLength();
 
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            m_big_flare->OrthoBlit(big_flare_ul, big_flare_lr,
-                                   m_big_flare->DefaultTexCoords());
-            m_small_flare->OrthoBlit(small_flare_ul, small_flare_lr,
-                                     m_small_flare->DefaultTexCoords());
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
-    }
+    int big_flare_width =
+        static_cast<int>(180 * m_star_brightness_factor / (1 + attenuation));
+    int small_flare_width =
+        static_cast<int>(120 * m_star_brightness_factor / (1 + attenuation));
+
+    GG::Pt big_flare_ul =
+        center + GG::Pt(star_to_center.x / 2, star_to_center.y / 2) -
+        GG::Pt(GG::X(big_flare_width / 2), GG::Y(big_flare_width / 2));
+    GG::Pt small_flare_ul =
+        center + GG::Pt(3 * star_to_center.x / 4, 3 * star_to_center.y / 4) -
+        GG::Pt(GG::X(small_flare_width / 2), GG::Y(small_flare_width / 2));
+    GG::Pt big_flare_lr =
+        big_flare_ul + GG::Pt(GG::X(big_flare_width), GG::Y(big_flare_width));
+    GG::Pt small_flare_lr =
+        small_flare_ul + GG::Pt(GG::X(small_flare_width), GG::Y(small_flare_width));
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    m_big_flare->OrthoBlit(big_flare_ul, big_flare_lr,
+                            m_big_flare->DefaultTexCoords());
+    m_small_flare->OrthoBlit(small_flare_ul, small_flare_lr,
+                                m_small_flare->DefaultTexCoords());
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void CombatWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -1512,8 +1509,8 @@ void CombatWnd::ApplyUpdateFromServer() {
     m_new_combat_data = 0;
 
     for (PathingEngine::const_iterator it = m_combat_data->m_pathing_engine.begin();
-         it != m_combat_data->m_pathing_engine.end();
-         ++it) {
+         it != m_combat_data->m_pathing_engine.end(); ++it)
+    {
         if ((*it)->IsShip()) {
             assert(boost::dynamic_pointer_cast<CombatShip>(*it));
             CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(*it);
@@ -1886,7 +1883,7 @@ void CombatWnd::UpdateObjectPosition(const CombatObjectPtr& combat_object) {
         Ship& ship = combat_ship->GetShip();
         std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship.ID());
         assert(ship_data_it != m_ship_assets.end());
-                
+
         ShipData& ship_data = ship_data_it->second;
 
         SetNodePositionAndOrientation(ship_data.m_node, combat_ship);
@@ -1900,10 +1897,12 @@ void CombatWnd::UpdateObjectPosition(const CombatObjectPtr& combat_object) {
         ship_data.m_bt_object->getWorldTransform().setOrigin(ToCollision(position));
         ship_data.m_bt_object->getWorldTransform().setRotation(ToCollision(orientation));
         m_collision_world->addCollisionObject(ship_data.m_bt_object);
+
     } else if (combat_object->IsFighter()) {
         assert(boost::dynamic_pointer_cast<CombatFighter>(combat_object));
         CombatFighterPtr combat_fighter = boost::static_pointer_cast<CombatFighter>(combat_object);
         // TODO
+
     } else if (MissilePtr missile = boost::dynamic_pointer_cast<Missile>(combat_object)) {
         // TODO
     }
