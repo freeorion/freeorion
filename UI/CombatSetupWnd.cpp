@@ -2,6 +2,7 @@
 
 #include "CombatWnd.h"
 #include "InfoPanels.h"
+#include "FleetWnd.h"
 #include "../client/human/HumanClientApp.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
@@ -23,276 +24,67 @@
 
 
 namespace {
+    const GG::Y     SETUP_WND_HEIGHT(300);
+    const int       ICON_SIZE = 38;
+    const int       PAD = 4;
+    const GG::Pt    INVALID_PRESS_POS(-GG::X1, -GG::Y1);
 
-    const GG::Y SETUP_WND_HEIGHT(300);
+    GG::Y LabelHeight()
+    { return GG::Y(ClientUI::Pts()*3/2); }
+
+    GG::Pt StatIconSize() {
+        const int font_size = std::max(ClientUI::Pts(), 12);
+        return GG::Pt(GG::X(font_size*10/3), GG::Y(font_size*4/3));
+    }
+
+    GG::Y ListRowHeight()
+    { return GG::Y(std::max(ICON_SIZE, Value(LabelHeight() + StatIconSize().y) + PAD)); }
 
     // HACK! This must be kept in synch with CombatWnd.cpp.
     const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
-
     const std::string UNPLACEABLE_MATERIAL_PREFIX = "unplaceable ";
 
-    // HACK! These functions and classes were cut-and-pasted from FleetWnd.
-    // If they continue to be used without modification, move them into a
-    // common location.
-
-    const GG::Pt        INVALID_PRESS_POS(-GG::X1, -GG::Y1);
-
-    const int           ICON_SIZE = 38;
-    const int           PAD = 4;
-
-    GG::Y LabelHeight() {
-        return GG::Y(ClientUI::Pts() * 3/2);
-    }
-
-    GG::Y StatIconHeight() {
-        return GG::Y(ClientUI::Pts()*4/3);
-    }
-
-    GG::X StatIconWidth() {
-        return GG::X(Value(StatIconHeight()) * 5/2);
-    }
-
-    GG::X StatIconSpacingWidth() {
-        return StatIconWidth();
-    }
-
-    GG::Y ListRowHeight() {
-        return GG::Y(std::max(ICON_SIZE, Value(LabelHeight() + StatIconHeight()) + PAD));
-    }
-
-    class ShipDataPanel : public GG::Control {
-    public:
-        ShipDataPanel(GG::X w, GG::Y h, const Ship* ship) :
-            Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
-            m_ship(ship),
-            m_ship_icon(0),
-            m_ship_name_text(0),
-            m_design_name_text(0),
-            m_stat_icons(),
-            m_selected(false)
-        {
-            if (!m_ship)
-                throw std::invalid_argument("ShipDataPanel::ShipDataPanel() : Attempted to construct a ShipDataPanel from a null ship pointer.");
-
-            SetChildClippingMode(ClipToClient);
-
-            m_ship_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
-                                                   m_ship->Name(), ClientUI::GetFont(),
-                                                   ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-            AttachChild(m_ship_name_text);
-
-            if (const ShipDesign* design = m_ship->Design()) {
-                m_design_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
-                                                         design->Name(), ClientUI::GetFont(),
-                                                         ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-                AttachChild(m_design_name_text);
-            }
-
-            // types of meters to show stat values of
-            std::vector<MeterType> meters;
-            meters.push_back(METER_STRUCTURE);  meters.push_back(METER_FUEL);   meters.push_back(METER_DETECTION);
-            meters.push_back(METER_STEALTH);    meters.push_back(METER_SHIELD);
-
-            // types of meters to pair with shown stat values when generating tooltips (for max or target meter values)
-            std::vector<MeterType> associated_meters;
-            meters.push_back(METER_MAX_STRUCTURE);  meters.push_back(METER_MAX_FUEL);   meters.push_back(INVALID_METER_TYPE);
-            meters.push_back(INVALID_METER_TYPE);   meters.push_back(METER_MAX_SHIELD);
-
-
-            // tooltip info
-            int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-
-            const Effect::AccountingMap& effect_accounting_map = GetUniverse().GetEffectAccountingMap();
-            const std::map<MeterType, std::vector<Effect::AccountingInfo> >* meter_map = 0;
-            Effect::AccountingMap::const_iterator map_it = effect_accounting_map.find(m_ship->ID());
-            if (map_it != effect_accounting_map.end())
-                meter_map = &(map_it->second);
-
-            for (size_t i = 0; i < meters.size(); ++i) {
-                const MeterType METER_TYPE = meters[i];
-                const MeterType ASSOCIATED_METER_TYPE = associated_meters[i];
-
-                StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
-                                                        ClientUI::MeterIcon(METER_TYPE), 0, 0, false);
-                m_stat_icons.push_back(std::make_pair(METER_TYPE, icon));
-                AttachChild(icon);
-
-                // create tooltip explaining effects on meter if such info is available
-                icon->SetBrowseModeTime(tooltip_delay);
-                boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(m_ship->ID(), METER_TYPE, ASSOCIATED_METER_TYPE));
-                icon->SetBrowseInfoWnd(browse_wnd);
-            }
-
-            m_ship_connection = GG::Connect(m_ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
-            Refresh();
-        }
-
-        ~ShipDataPanel() {
-            delete m_ship_icon;
-            m_ship_connection.disconnect();
-        }
-
-        virtual void    Render() {
-            // main background position and colour
-            const GG::Clr& background_colour = ClientUI::WndColor();
-            GG::Pt ul = UpperLeft(), lr = LowerRight();
-
-            // title background colour and position
-            const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
-            const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
-            GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
-            if (Disabled())
-                border_colour = DisabledColor(border_colour);
-            GG::Pt text_ul = ul + GG::Pt(GG::X(ICON_SIZE),   GG::Y0);
-            GG::Pt text_lr = ul + GG::Pt(Width(),            LabelHeight());
-
-            // render
-            GG::FlatRectangle(ul,       lr,         background_colour,  border_colour, 1);  // background and border
-            GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO, 0);   // title background box
-        }
-
-        void            Select(bool b) {
-            if (m_selected != b) {
-                m_selected = b;
-
-                const GG::Clr& unselected_text_color = ClientUI::TextColor();
-                const GG::Clr& selected_text_color = GG::CLR_BLACK;
-
-                GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
-
-                if (Disabled())
-                    text_color_to_use = DisabledColor(text_color_to_use);
-
-                m_ship_name_text->SetTextColor(text_color_to_use);
-                if (m_design_name_text)
-                    m_design_name_text->SetTextColor(text_color_to_use);
-            }
-        }
-
-        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-            const GG::Pt old_size = Size();
-            GG::Control::SizeMove(ul, lr);
-            //std::cout << "ShipDataPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
-            if (old_size != Size())
-                DoLayout();
-        }
-
-    private:
-        void            SetShipIcon() {
-            delete m_ship_icon;
-            m_ship_icon = 0;
-            const int ICON_OFFSET = Value((Size().y - ICON_SIZE) / 2);
-            boost::shared_ptr<GG::Texture> icon;
-            const ShipDesign* design = m_ship->Design();
-            if (design)
-                icon = ClientUI::ShipDesignIcon(design->ID());
-            else
-                icon = ClientUI::ShipDesignIcon(-1);  // default icon
-            m_ship_icon = new GG::StaticGraphic(GG::X(ICON_OFFSET), GG::Y(ICON_OFFSET), GG::X(ICON_SIZE), GG::Y(ICON_SIZE),
-                                                icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-            AttachChild(m_ship_icon);
-        }
-
-        void            Refresh() {
-            SetShipIcon();
-
-            m_ship_name_text->SetText(m_ship->Name());
-
-            if (const ShipDesign* design = m_ship->Design()) {
-                if (m_design_name_text)
-                    m_design_name_text->SetText(design->Name());
-            }
-
-            // set stat icon values
-            GG::Pt icon_ul(GG::X(ICON_SIZE) + GG::X(PAD), LabelHeight());
-            for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
-                it->second->SetValue(m_ship->CurrentMeterValue(it->first));
-            }
-
-            DoLayout();
-        }
-
-        void            DoLayout() {
-            if (m_ship_icon) {
-                // position icon in centre of available space
-                int ICON_OFFSET = std::max(0, (Value(Height()) - ICON_SIZE) / 2);
-                GG::Pt icon_ul = GG::Pt(GG::X(ICON_OFFSET), GG::Y(ICON_OFFSET));
-                GG::Pt icon_lr = icon_ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
-
-                m_ship_icon->SizeMove(icon_ul, icon_lr);
-            }
-
-
-            GG::Pt name_ul = GG::Pt(GG::X(ICON_SIZE + PAD), GG::Y0);
-            GG::Pt name_lr = GG::Pt(Width() - GG::X(PAD),   LabelHeight());
-            m_ship_name_text->SizeMove(name_ul, name_lr);
-
-            if (m_design_name_text)
-                m_design_name_text->SizeMove(name_ul, name_lr);
-
-            // set stat icon positions
-            GG::Pt icon_ul(GG::X(ICON_SIZE) + GG::X(PAD), LabelHeight());
-            for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
-                GG::Pt icon_lr = icon_ul + GG::Pt(StatIconWidth(), StatIconHeight());
-                it->second->SizeMove(icon_ul, icon_lr);
-                icon_ul += GG::Pt(StatIconSpacingWidth(), GG::Y0);
-            }
-        }
-
-        const Ship* const                                   m_ship;
-        GG::StaticGraphic*                                  m_ship_icon;
-        GG::TextControl*                                    m_ship_name_text;
-        GG::TextControl*                                    m_design_name_text;
-        std::vector<std::pair<MeterType, StatisticIcon*> >  m_stat_icons;   // statistic icons and associated meter types
-        bool                                                m_selected;
-        boost::signals::connection                          m_ship_connection;
-    };
-
-    // End of cut-and-pasted stuff
-
-    class ShipRow : public GG::ListBox::Row
-    {
+    class ShipRow : public GG::ListBox::Row {
     public:
         ShipRow(Ship* ship, Fleet* fleet, GG::X w, GG::Y h) :
             GG::ListBox::Row(w, h, ""),
             m_ship(ship)
-            {
-                SetName("ShipRow");
-                SetChildClippingMode(ClipToClient);
+        {
+            SetName("ShipRow");
+            SetChildClippingMode(ClipToClient);
 
-                std::vector<GG::X> widths(3);
-                widths[0] = GG::X(275);
-                widths[1] = (w - widths[0]) / 2;
-                widths[2] = w - widths[0] - widths[1];
+            std::vector<GG::X> widths(3);
+            widths[0] = GG::X(275);
+            widths[1] = (w - widths[0]) / 2;
+            widths[2] = w - widths[0] - widths[1];
 
-                push_back(new ShipDataPanel(widths[0], h, m_ship));
+            push_back(new ShipDataPanel(widths[0], h, m_ship->ID()));
 
-                const std::string& fleet_name = fleet->Name();
-                push_back(new GG::TextControl(GG::X0, GG::Y0, widths[1], h, fleet_name,
-                                              ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT));
+            const std::string& fleet_name = fleet->Name();
+            push_back(new GG::TextControl(GG::X0, GG::Y0, widths[1], h, fleet_name,
+                                            ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT));
 
-                std::string arrival_starlane = "Present";
-                if (fleet->ArrivedThisTurn())
-                    arrival_starlane = "From " + GetUniverseObject(fleet->ArrivalStarlane())->Name();
-                push_back(new GG::TextControl(GG::X0, GG::Y0, widths[2], h, arrival_starlane,
-                                              ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT));
+            std::string arrival_starlane = "Present";
+            if (fleet->ArrivedThisTurn())
+                arrival_starlane = "From " + GetUniverseObject(fleet->ArrivalStarlane())->Name();
+            push_back(new GG::TextControl(GG::X0, GG::Y0, widths[2], h, arrival_starlane,
+                                            ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT));
 
-                assert(widths[0] != ColWidth(0));
-                assert(widths[1] != ColWidth(1));
-                assert(widths[2] != ColWidth(2));
-                SetColWidths(widths);
-            }
+            assert(widths[0] != ColWidth(0));
+            assert(widths[1] != ColWidth(1));
+            assert(widths[2] != ColWidth(2));
+            SetColWidths(widths);
+        }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-            {
-                const GG::Pt old_size = Size();
-                GG::ListBox::Row::SizeMove(ul, lr);
-                if (!empty() && old_size != Size())
-                    at(0)->Resize(Size());
-            }
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            const GG::Pt old_size = Size();
+            GG::ListBox::Row::SizeMove(ul, lr);
+            if (!empty() && old_size != Size())
+                at(0)->Resize(Size());
+        }
 
         int ShipID() const
-            { return m_ship->ID(); }
+        { return m_ship->ID(); }
 
         Ship* const m_ship;
     };
@@ -419,15 +211,13 @@ namespace {
         return retval;
     }
 
-    void SetRegionNodesVisibility(const std::vector<Ogre::SceneNode*>& nodes, bool visible)
-    {
+    void SetRegionNodesVisibility(const std::vector<Ogre::SceneNode*>& nodes, bool visible) {
         for (std::size_t i = 0; i < nodes.size(); ++i) {
             nodes[i]->setVisible(visible);
         }
     }
 
-    std::size_t GroupIndexOfShip(const std::vector<CombatSetupGroup>& setup_groups, const Ship* ship)
-    {
+    std::size_t GroupIndexOfShip(const std::vector<CombatSetupGroup>& setup_groups, const Ship* ship) {
         std::size_t retval = setup_groups.size();
         for (std::size_t i = 0; i < setup_groups.size(); ++i) {
             if (setup_groups[i].m_ships.find(ship->ID()) != setup_groups[i].m_ships.end()) {
@@ -544,8 +334,7 @@ CombatSetupWnd::CombatSetupWnd(
     combat_wnd->InstallEventFilter(this);
 }
 
-CombatSetupWnd::~CombatSetupWnd()
-{
+CombatSetupWnd::~CombatSetupWnd() {
     for (std::map<std::size_t, std::vector<Ogre::SceneNode*> >::iterator it =
              m_region_nodes_by_setup_group.begin();
          it != m_region_nodes_by_setup_group.end();

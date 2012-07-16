@@ -448,331 +448,6 @@ namespace {
     }
 
     ////////////////////////////////////////////////
-    // ShipDataPanel
-    ////////////////////////////////////////////////
-    /** Represents a single ship.  This class is used as the sole Control in
-      * each ShipRow. */
-    class ShipDataPanel : public GG::Control {
-    public:
-        ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
-            Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
-            m_ship_id(ship_id),
-            m_ship_icon(0),
-            m_scrap_indicator(0),
-            m_colonize_indicator(0),
-            m_invade_indicator(0),
-            m_ship_name_text(0),
-            m_design_name_text(0),
-            m_stat_icons(),
-            m_selected(false)
-        {
-            const Ship* ship = GetShip(m_ship_id);
-
-            SetChildClippingMode(ClipToClient);
-
-            // ship name text.  blank if no ship.  TODO: if no ship show "No Ship" or somesuch?
-            std::string ship_name = "";
-            if (ship)
-                ship_name = ship->Name();
-
-            m_ship_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
-                                                   ship_name, ClientUI::GetFont(),
-                                                   ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-            AttachChild(m_ship_name_text);
-
-
-            // design name and statistic icons
-            if (!ship)
-                return;
-
-            if (const ShipDesign* design = ship->Design()) {
-                m_design_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
-                                                         design->Name(), ClientUI::GetFont(),
-                                                         ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-                AttachChild(m_design_name_text);
-            }
-
-
-            int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-
-
-            // damage stat icon
-            StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                                    DamageIcon(), 0, 0, false);
-            m_stat_icons.push_back(std::make_pair(DAMAGE_STAT_STRING, icon));
-            AttachChild(icon);
-            icon->SetBrowseModeTime(tooltip_delay);
-
-            // meter stat icons
-            std::vector<MeterType> meters;
-            meters.push_back(METER_STRUCTURE);  meters.push_back(METER_SHIELD); meters.push_back(METER_FUEL);
-            meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);
-            for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
-                StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                                        ClientUI::MeterIcon(*it), 0, 0, false);
-                m_stat_icons.push_back(std::make_pair(MeterStatString(*it), icon));
-                AttachChild(icon);
-                icon->SetBrowseModeTime(tooltip_delay);
-            }
-
-            // speed stat icon
-            icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                     SpeedIcon(), 0, 0, false);
-            m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
-            AttachChild(icon);
-            icon->SetBrowseModeTime(tooltip_delay);
-
-
-            // bookkeeping
-            m_ship_connection = GG::Connect(ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
-
-            if (Fleet* fleet = GetFleet(ship->FleetID()))
-                m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &ShipDataPanel::Refresh, this);
-
-            Refresh();
-        }
-
-        ~ShipDataPanel() {
-            m_ship_connection.disconnect();
-            m_fleet_connection.disconnect();
-        }
-
-        /** Excludes border from the client area. */
-        virtual GG::Pt  ClientUpperLeft() const {
-            return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER));
-        }
-
-        /** Excludes border from the client area. */
-        virtual GG::Pt  ClientLowerRight() const {
-            return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); 
-        }
-
-        /** Renders black panel background, border with color depending on the current state and a background for the ship's name text. */
-        virtual void    Render() {
-            // main background position and colour
-            const GG::Clr& background_colour = ClientUI::WndColor();
-            const GG::Pt ul = UpperLeft(), lr = LowerRight(), cul = ClientUpperLeft();
-
-            // title background colour and position
-            const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
-            const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
-            GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
-            if (Disabled())
-                border_colour = DisabledColor(border_colour);
-            const GG::Pt text_ul = cul + GG::Pt(DATA_PANEL_ICON_SPACE.x, GG::Y0);
-            const GG::Pt text_lr = cul + GG::Pt(ClientWidth(),           LabelHeight());
-
-            // render
-            GG::FlatRectangle(ul,       lr,         background_colour,  border_colour, DATA_PANEL_BORDER);  // background and border
-            GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO,  0);                  // title background box
-        }
-
-        void            Select(bool b) {
-            if (m_selected != b) {
-                m_selected = b;
-
-                const GG::Clr& unselected_text_color = ClientUI::TextColor();
-                const GG::Clr& selected_text_color = GG::CLR_BLACK;
-
-                GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
-
-                if (Disabled())
-                    text_color_to_use = DisabledColor(text_color_to_use);
-
-                m_ship_name_text->SetTextColor(text_color_to_use);
-                if (m_design_name_text)
-                    m_design_name_text->SetTextColor(text_color_to_use);
-            }
-        }
-
-        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-            const GG::Pt old_size = Size();
-            GG::Control::SizeMove(ul, lr);
-            //std::cout << "ShipDataPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
-            if (old_size != Size())
-                DoLayout();
-        }
-
-    private:
-        void            SetShipIcon() {
-            delete m_ship_icon;
-            m_ship_icon = 0;
-
-            delete m_scrap_indicator;
-            m_scrap_indicator = 0;
-
-            delete m_colonize_indicator;
-            m_colonize_indicator = 0;
-
-            delete m_invade_indicator;
-            m_invade_indicator = 0;
-
-            const Ship* ship = GetShip(m_ship_id);
-            if (!ship)
-                return;
-
-            boost::shared_ptr<GG::Texture> icon;
-
-            if (const ShipDesign* design = ship->Design())
-                icon = ClientUI::ShipDesignIcon(design->ID());
-            else
-                icon = ClientUI::ShipDesignIcon(INVALID_OBJECT_ID);  // default icon
-
-            m_ship_icon = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), icon, DataPanelIconStyle());
-            AttachChild(m_ship_icon);
-
-            if (ship->OrderedScrapped()) {
-                boost::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
-                m_scrap_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), scrap_texture, DataPanelIconStyle());
-                AttachChild(m_scrap_indicator);
-            }
-            if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
-                boost::shared_ptr<GG::Texture> colonize_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "colonizing.png", true);
-                m_colonize_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), colonize_texture, DataPanelIconStyle());
-                AttachChild(m_colonize_indicator);
-            }
-            if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
-                boost::shared_ptr<GG::Texture> invade_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
-                m_invade_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), invade_texture, DataPanelIconStyle());
-                AttachChild(m_invade_indicator);
-            }
-        }
-
-        void            Refresh() {
-            SetShipIcon();
-
-            const Ship* ship = GetShip(m_ship_id);
-            if (!ship) {
-                // blank text and delete icons
-                m_ship_name_text->SetText("");
-                if (m_design_name_text) {
-                    delete m_design_name_text;
-                    m_design_name_text = 0;
-                }
-                for (std::vector<std::pair<std::string, StatisticIcon*> >::iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it)
-                    delete it->second;
-                m_stat_icons.clear();
-                return;
-            }
-
-
-            int empire_id = HumanClientApp::GetApp()->EmpireID();
-
-
-            // name and design name update
-            std::string ship_name = ship->PublicName(empire_id);
-            m_ship_name_text->SetText(ship_name);
-
-            if (m_design_name_text) {
-                std::string design_name = UserString("FW_UNKNOWN_DESIGN_NAME");
-                if (const ShipDesign* design = ship->Design())
-                    design_name = design->Name();
-                const std::string& species_name = ship->SpeciesName();
-                if (!species_name.empty()) {
-                    m_design_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_SPECIES_SHIP_DESIGN_LABEL")) %
-                                                               design_name %
-                                                               UserString(species_name)));
-                } else {
-                    m_design_name_text->SetText(design_name);
-                }
-            }
-
-
-            // update stat icon values and browse wnds
-            for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
-                //std::cout << "setting ship stat " << it->first << " to value: " << StatValue(it->first) << std::endl;
-                it->second->SetValue(StatValue(it->first));
-
-                it->second->ClearBrowseInfoWnd();
-                if (it->first == DAMAGE_STAT_STRING) {
-                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                        DamageIcon(), UserString("SHIP_DAMAGE_STAT_TITLE"),
-                        UserString("SHIP_DAMAGE_STAT_MAIN")));
-                    it->second->SetBrowseInfoWnd(browse_wnd);
-                } else if (it->first == SPEED_STAT_STRING) {
-                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                        SpeedIcon(), UserString("SHIP_SPEED_STAT_TITLE"),
-                        UserString("SHIP_SPEED_STAT_MAIN")));
-                    it->second->SetBrowseInfoWnd(browse_wnd);
-                } else {
-                    MeterType meter_type = MeterTypeFromStatString(it->first);
-                    MeterType associated_meter_type = AssociatedMeterType(meter_type);
-                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(
-                        m_ship_id, meter_type, associated_meter_type));
-                    it->second->SetBrowseInfoWnd(browse_wnd);
-                }
-            }
-
-
-            DoLayout();
-        }
-
-        double StatValue(const std::string& stat_name) const {
-            if (const Ship* ship = GetShip(m_ship_id)) {
-                if (stat_name == DAMAGE_STAT_STRING) {
-                    if (const ShipDesign* design = ship->Design())
-                        return design->Attack();
-                    else
-                        return 0.0;
-                } else if (stat_name == SPEED_STAT_STRING) {
-                    return ship->Speed();
-                }
-
-                MeterType meter_type = MeterTypeFromStatString(stat_name);
-                //std::cout << "got meter type " << boost::lexical_cast<std::string>(meter_type) << " from stat_name " << stat_name << std::endl;
-                if (ship->UniverseObject::GetMeter(meter_type)) {
-                    //std::cout << " ... ship has meter! returning meter points value " << ship->CurrentMeterValue(meter_type) << std::endl;
-                    return ship->CurrentMeterValue(meter_type);
-                }
-                Logger().errorStream() << "ShipDataPanel::StatValue couldn't get stat of name: " << stat_name;
-            }
-            return 0.0;
-        }
-
-        void            DoLayout() {
-            // resize ship and scrap indicator icons, they can fit and position themselves in the space provided
-            // client height should never be less than the height of the space resereved for the icon
-            if (m_ship_icon)
-                m_ship_icon->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
-            if (m_scrap_indicator)
-                m_scrap_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
-            if (m_colonize_indicator)
-                m_colonize_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
-            if (m_invade_indicator)
-                m_invade_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
-
-            // position ship name text at the top to the right of icons
-            const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE.x + DATA_PANEL_TEXT_PAD, GG::Y0);
-            const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD,           LabelHeight());
-            m_ship_name_text->SizeMove(name_ul, name_lr);
-
-            if (m_design_name_text)
-                m_design_name_text->SizeMove(name_ul, name_lr);
-
-            // position ship statistic icons one after another horizontally and centered vertically
-            GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
-            for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
-                it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
-                icon_ul.x += StatIconSize().x;
-            }
-        }
-
-        int                         m_ship_id;
-        GG::StaticGraphic*          m_ship_icon;
-        GG::StaticGraphic*          m_scrap_indicator;
-        GG::StaticGraphic*          m_colonize_indicator;
-        GG::StaticGraphic*          m_invade_indicator;
-        GG::TextControl*            m_ship_name_text;
-        GG::TextControl*            m_design_name_text;
-
-        std::vector<std::pair<std::string, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
-
-        bool                        m_selected;
-        boost::signals::connection  m_ship_connection;
-        boost::signals::connection  m_fleet_connection;
-    };
-
-    ////////////////////////////////////////////////
     // ShipRow
     ////////////////////////////////////////////////
     /** A ListBox::Row subclass used to represent ships in ShipListBoxes. */
@@ -804,6 +479,306 @@ namespace {
         int             m_ship_id;
         ShipDataPanel*  m_panel;
     };
+}
+
+////////////////////////////////////////////////
+// ShipDataPanel
+////////////////////////////////////////////////
+ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
+    Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+    m_ship_id(ship_id),
+    m_ship_icon(0),
+    m_scrap_indicator(0),
+    m_colonize_indicator(0),
+    m_invade_indicator(0),
+    m_ship_name_text(0),
+    m_design_name_text(0),
+    m_stat_icons(),
+    m_selected(false)
+{
+    const Ship* ship = GetShip(m_ship_id);
+
+    SetChildClippingMode(ClipToClient);
+
+    // ship name text.  blank if no ship.  TODO: if no ship show "No Ship" or somesuch?
+    std::string ship_name = "";
+    if (ship)
+        ship_name = ship->Name();
+
+    m_ship_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
+                                            ship_name, ClientUI::GetFont(),
+                                            ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    AttachChild(m_ship_name_text);
+
+
+    // design name and statistic icons
+    if (!ship)
+        return;
+
+    if (const ShipDesign* design = ship->Design()) {
+        m_design_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
+                                                    design->Name(), ClientUI::GetFont(),
+                                                    ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        AttachChild(m_design_name_text);
+    }
+
+
+    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+
+
+    // damage stat icon
+    StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                            DamageIcon(), 0, 0, false);
+    m_stat_icons.push_back(std::make_pair(DAMAGE_STAT_STRING, icon));
+    AttachChild(icon);
+    icon->SetBrowseModeTime(tooltip_delay);
+
+    // meter stat icons
+    std::vector<MeterType> meters;
+    meters.push_back(METER_STRUCTURE);  meters.push_back(METER_SHIELD); meters.push_back(METER_FUEL);
+    meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);
+    for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
+        StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                                ClientUI::MeterIcon(*it), 0, 0, false);
+        m_stat_icons.push_back(std::make_pair(MeterStatString(*it), icon));
+        AttachChild(icon);
+        icon->SetBrowseModeTime(tooltip_delay);
+    }
+
+    // speed stat icon
+    icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                SpeedIcon(), 0, 0, false);
+    m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
+    AttachChild(icon);
+    icon->SetBrowseModeTime(tooltip_delay);
+
+
+    // bookkeeping
+    m_ship_connection = GG::Connect(ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
+
+    if (Fleet* fleet = GetFleet(ship->FleetID()))
+        m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &ShipDataPanel::Refresh, this);
+
+    Refresh();
+}
+
+ShipDataPanel::~ShipDataPanel() {
+    m_ship_connection.disconnect();
+    m_fleet_connection.disconnect();
+}
+
+GG::Pt ShipDataPanel::ClientUpperLeft() const
+{ return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); }
+
+GG::Pt ShipDataPanel::ClientLowerRight() const
+{ return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER));  }
+
+void ShipDataPanel::Render() {
+    // main background position and colour
+    const GG::Clr& background_colour = ClientUI::WndColor();
+    const GG::Pt ul = UpperLeft(), lr = LowerRight(), cul = ClientUpperLeft();
+
+    // title background colour and position
+    const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
+    const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
+    GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
+    if (Disabled())
+        border_colour = DisabledColor(border_colour);
+    const GG::Pt text_ul = cul + GG::Pt(DATA_PANEL_ICON_SPACE.x, GG::Y0);
+    const GG::Pt text_lr = cul + GG::Pt(ClientWidth(),           LabelHeight());
+
+    // render
+    GG::FlatRectangle(ul,       lr,         background_colour,  border_colour, DATA_PANEL_BORDER);  // background and border
+    GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO,  0);                  // title background box
+}
+
+void ShipDataPanel::Select(bool b) {
+    if (m_selected != b) {
+        m_selected = b;
+
+        const GG::Clr& unselected_text_color = ClientUI::TextColor();
+        const GG::Clr& selected_text_color = GG::CLR_BLACK;
+
+        GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
+
+        if (Disabled())
+            text_color_to_use = DisabledColor(text_color_to_use);
+
+        m_ship_name_text->SetTextColor(text_color_to_use);
+        if (m_design_name_text)
+            m_design_name_text->SetTextColor(text_color_to_use);
+    }
+}
+
+void ShipDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    const GG::Pt old_size = Size();
+    GG::Control::SizeMove(ul, lr);
+    //std::cout << "ShipDataPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
+    if (old_size != Size())
+        DoLayout();
+}
+
+void ShipDataPanel::SetShipIcon() {
+    delete m_ship_icon;
+    m_ship_icon = 0;
+
+    delete m_scrap_indicator;
+    m_scrap_indicator = 0;
+
+    delete m_colonize_indicator;
+    m_colonize_indicator = 0;
+
+    delete m_invade_indicator;
+    m_invade_indicator = 0;
+
+    const Ship* ship = GetShip(m_ship_id);
+    if (!ship)
+        return;
+
+    boost::shared_ptr<GG::Texture> icon;
+
+    if (const ShipDesign* design = ship->Design())
+        icon = ClientUI::ShipDesignIcon(design->ID());
+    else
+        icon = ClientUI::ShipDesignIcon(INVALID_OBJECT_ID);  // default icon
+
+    m_ship_icon = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), icon, DataPanelIconStyle());
+    AttachChild(m_ship_icon);
+
+    if (ship->OrderedScrapped()) {
+        boost::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
+        m_scrap_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), scrap_texture, DataPanelIconStyle());
+        AttachChild(m_scrap_indicator);
+    }
+    if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
+        boost::shared_ptr<GG::Texture> colonize_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "colonizing.png", true);
+        m_colonize_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), colonize_texture, DataPanelIconStyle());
+        AttachChild(m_colonize_indicator);
+    }
+    if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
+        boost::shared_ptr<GG::Texture> invade_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
+        m_invade_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), invade_texture, DataPanelIconStyle());
+        AttachChild(m_invade_indicator);
+    }
+}
+
+void ShipDataPanel::Refresh() {
+    SetShipIcon();
+
+    const Ship* ship = GetShip(m_ship_id);
+    if (!ship) {
+        // blank text and delete icons
+        m_ship_name_text->SetText("");
+        if (m_design_name_text) {
+            delete m_design_name_text;
+            m_design_name_text = 0;
+        }
+        for (std::vector<std::pair<std::string, StatisticIcon*> >::iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it)
+            delete it->second;
+        m_stat_icons.clear();
+        return;
+    }
+
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+
+
+    // name and design name update
+    std::string ship_name = ship->PublicName(empire_id);
+    m_ship_name_text->SetText(ship_name);
+
+    if (m_design_name_text) {
+        std::string design_name = UserString("FW_UNKNOWN_DESIGN_NAME");
+        if (const ShipDesign* design = ship->Design())
+            design_name = design->Name();
+        const std::string& species_name = ship->SpeciesName();
+        if (!species_name.empty()) {
+            m_design_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_SPECIES_SHIP_DESIGN_LABEL")) %
+                                                        design_name %
+                                                        UserString(species_name)));
+        } else {
+            m_design_name_text->SetText(design_name);
+        }
+    }
+
+
+    // update stat icon values and browse wnds
+    for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
+        //std::cout << "setting ship stat " << it->first << " to value: " << StatValue(it->first) << std::endl;
+        it->second->SetValue(StatValue(it->first));
+
+        it->second->ClearBrowseInfoWnd();
+        if (it->first == DAMAGE_STAT_STRING) {
+            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+                DamageIcon(), UserString("SHIP_DAMAGE_STAT_TITLE"),
+                UserString("SHIP_DAMAGE_STAT_MAIN")));
+            it->second->SetBrowseInfoWnd(browse_wnd);
+        } else if (it->first == SPEED_STAT_STRING) {
+            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+                SpeedIcon(), UserString("SHIP_SPEED_STAT_TITLE"),
+                UserString("SHIP_SPEED_STAT_MAIN")));
+            it->second->SetBrowseInfoWnd(browse_wnd);
+        } else {
+            MeterType meter_type = MeterTypeFromStatString(it->first);
+            MeterType associated_meter_type = AssociatedMeterType(meter_type);
+            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(
+                m_ship_id, meter_type, associated_meter_type));
+            it->second->SetBrowseInfoWnd(browse_wnd);
+        }
+    }
+
+
+    DoLayout();
+}
+
+double ShipDataPanel::StatValue(const std::string& stat_name) const {
+    if (const Ship* ship = GetShip(m_ship_id)) {
+        if (stat_name == DAMAGE_STAT_STRING) {
+            if (const ShipDesign* design = ship->Design())
+                return design->Attack();
+            else
+                return 0.0;
+        } else if (stat_name == SPEED_STAT_STRING) {
+            return ship->Speed();
+        }
+
+        MeterType meter_type = MeterTypeFromStatString(stat_name);
+        //std::cout << "got meter type " << boost::lexical_cast<std::string>(meter_type) << " from stat_name " << stat_name << std::endl;
+        if (ship->UniverseObject::GetMeter(meter_type)) {
+            //std::cout << " ... ship has meter! returning meter points value " << ship->CurrentMeterValue(meter_type) << std::endl;
+            return ship->CurrentMeterValue(meter_type);
+        }
+        Logger().errorStream() << "ShipDataPanel::StatValue couldn't get stat of name: " << stat_name;
+    }
+    return 0.0;
+}
+
+void ShipDataPanel::DoLayout() {
+    // resize ship and scrap indicator icons, they can fit and position themselves in the space provided
+    // client height should never be less than the height of the space resereved for the icon
+    if (m_ship_icon)
+        m_ship_icon->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+    if (m_scrap_indicator)
+        m_scrap_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+    if (m_colonize_indicator)
+        m_colonize_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+    if (m_invade_indicator)
+        m_invade_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+
+    // position ship name text at the top to the right of icons
+    const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE.x + DATA_PANEL_TEXT_PAD, GG::Y0);
+    const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD,           LabelHeight());
+    m_ship_name_text->SizeMove(name_ul, name_lr);
+
+    if (m_design_name_text)
+        m_design_name_text->SizeMove(name_ul, name_lr);
+
+    // position ship statistic icons one after another horizontally and centered vertically
+    GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
+    for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
+        it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
+        icon_ul.x += StatIconSize().x;
+    }
 }
 
 ////////////////////////////////////////////////
@@ -1238,7 +1213,6 @@ void FleetDataPanel::DoLayout() {
         m_aggression_toggle->SizeMove(toggle_ul, toggle_ul + toggle_size);
     }
 }
-
 
 namespace {
     ////////////////////////////////////////////////

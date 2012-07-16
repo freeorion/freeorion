@@ -14,6 +14,10 @@ class FleetsListBox;
 class Ship;
 class System;
 class UniverseObject;
+class StatisticIcon;
+namespace GG {
+    class StaticGraphic;
+}
 
 /** Manages the lifetimes of FleetWnds. */
 class FleetUIManager {
@@ -159,6 +163,49 @@ private:
     static GG::Pt       s_last_size;        ///< the latest size to which any FleetWnd has been resized.  This is used to keep the size of the fleet window in single-fleetwindow mode.
 
     friend class FleetUIManager;
+};
+
+class ShipDataPanel : public GG::Control {
+public:
+    /** \name Structors */ //@{
+    ShipDataPanel(GG::X w, GG::Y h, int ship_id);
+    ~ShipDataPanel();
+    //@}
+
+    //! \name Accessors //@{
+    /** Excludes border from the client area. */
+    virtual GG::Pt  ClientUpperLeft() const;
+    /** Excludes border from the client area. */
+    virtual GG::Pt  ClientLowerRight() const;
+    //@}
+
+    //! \name Mutators //@{
+    /** Renders black panel background, border with color depending on the
+      *current state and a background for the ship's name text. */
+    virtual void    Render();
+    void            Select(bool b);
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+
+private:
+    double          StatValue(const std::string& stat_name) const;
+
+    void            SetShipIcon();
+    void            Refresh();
+    void            DoLayout();
+
+    int                         m_ship_id;
+    GG::StaticGraphic*          m_ship_icon;
+    GG::StaticGraphic*          m_scrap_indicator;
+    GG::StaticGraphic*          m_colonize_indicator;
+    GG::StaticGraphic*          m_invade_indicator;
+    GG::TextControl*            m_ship_name_text;
+    GG::TextControl*            m_design_name_text;
+
+    std::vector<std::pair<std::string, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
+
+    bool                        m_selected;
+    boost::signals::connection  m_ship_connection;
+    boost::signals::connection  m_fleet_connection;
 };
 
 #endif // _FleetWnd_h_
