@@ -737,10 +737,8 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, con
     m_new_quantity(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
 {
-    if (build_type == BT_SHIP) {
+    if (m_build_type == BT_SHIP) {
         Logger().errorStream() << "Attempted to construct a ProductionQueueOrder for a BT_SHIP with a name, not a design id";
-        build_type = INVALID_BUILD_TYPE;
-        return;
     }
 }
 
@@ -755,9 +753,8 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, int
     m_new_quantity(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
 {
-    if (build_type == BT_BUILDING) {
+    if (m_build_type == BT_BUILDING) {
         Logger().errorStream() << "Attempted to construct a ProductionQueueOrder for a BT_BUILDING with a design id, not a name";
-        build_type = INVALID_BUILD_TYPE;
     }
 }
 

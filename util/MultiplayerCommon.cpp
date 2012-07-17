@@ -43,9 +43,8 @@ namespace {
 
     const double TWO_PI = 8.0 * std::atan(1.0);
 
-    std::string GetDefaultStringTableFileName() {
-        return (GetResourceDir() / "eng_stringtable.txt").string();
-    }
+    std::string GetDefaultStringTableFileName()
+    { return (GetResourceDir() / "eng_stringtable.txt").string(); }
 
     std::string GetStringTableFileName() {
         std::string option_filename = GetOptionsDB().Get<std::string>("stringtable-filename");
@@ -160,14 +159,15 @@ namespace {
                     const std::map<int, UniverseObject*>& combat_universe,
                     std::map<Ship*, std::pair<OpenSteer::Vec3, OpenSteer::Vec3> >& placements)
     {
+        Logger().debugStream() << "Placing combat ships in " << system->Name();
         // TODO: Do something other than just random placement.  Take into
         // account more of the tactical situation (enemy fleets, etc.).
         for (std::set<int>::const_iterator it = setup_group.m_ships.begin();
-             it != setup_group.m_ships.end();
-             ++it) {
+             it != setup_group.m_ships.end(); ++it)
+        {
             assert(combat_universe.find(*it) != combat_universe.end());
             Ship* ship = static_cast<Ship*>(combat_universe.find(*it)->second);
-#define LIMIT_ITERATIONS 0
+#define LIMIT_ITERATIONS 1
 #if LIMIT_ITERATIONS
             const unsigned int MAX_PLACEMENT_ITERATIONS = 50;
 #endif
@@ -242,8 +242,8 @@ namespace {
                     std::map<Ship*, std::pair<OpenSteer::Vec3, OpenSteer::Vec3> >& placements)
     {
         for (std::map<int, std::vector<CombatSetupGroup> >::const_iterator it = setup_groups.begin();
-             it != setup_groups.end();
-             ++it) {
+             it != setup_groups.end(); ++it)
+        {
             for (std::size_t i = 0; i < it->second.size(); ++i) {
                 PlaceShips(system, it->second[i], combat_universe, placements);
             }

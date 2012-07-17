@@ -1511,18 +1511,18 @@ void CombatWnd::ApplyUpdateFromServer() {
     for (PathingEngine::const_iterator it = m_combat_data->m_pathing_engine.begin();
          it != m_combat_data->m_pathing_engine.end(); ++it)
     {
-        if ((*it)->IsShip()) {
-            assert(boost::dynamic_pointer_cast<CombatShip>(*it));
-            CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(*it);
-            combat_ship->SetListener(*this);
-            Ship& ship = combat_ship->GetShip();
-            std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship.ID());
-            if (ship_data_it == m_ship_assets.end()) {
-                AddCombatShip(combat_ship);
-            } else {
-                ship_data_it->second.m_node->setUserAny(Ogre::Any(*it));
-                UpdateObjectPosition(*it);
-            }
+        if (!(*it)->IsShip()) continue;
+
+        assert(boost::dynamic_pointer_cast<CombatShip>(*it));
+        CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(*it);
+        combat_ship->SetListener(*this);
+        Ship& ship = combat_ship->GetShip();
+        std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship.ID());
+        if (ship_data_it == m_ship_assets.end()) {
+            AddCombatShip(combat_ship);
+        } else {
+            ship_data_it->second.m_node->setUserAny(Ogre::Any(*it));
+            UpdateObjectPosition(*it);
         }
     }
 
@@ -1891,12 +1891,7 @@ void CombatWnd::UpdateObjectPosition(const CombatObjectPtr& combat_object) {
         Ogre::Vector3 position = ship_data.m_node->getPosition();
         Ogre::Quaternion orientation = ship_data.m_node->getOrientation();
 
-        ship_data.m_node->setPosition(position);
-        ship_data.m_node->setOrientation(orientation);
-        m_collision_world->removeCollisionObject(ship_data.m_bt_object);
-        ship_data.m_bt_object->getWorldTransform().setOrigin(ToCollision(position));
-        ship_data.m_bt_object->getWorldTransform().setRotation(ToCollision(orientation));
-        m_collision_world->addCollisionObject(ship_data.m_bt_object);
+        RepositionShipNode(ship_data_it->first, position, orientation);
 
     } else if (combat_object->IsFighter()) {
         assert(boost::dynamic_pointer_cast<CombatFighter>(combat_object));
