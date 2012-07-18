@@ -16,10 +16,10 @@ Species
     tags = [ "ORGANIC" "STYLISH" ]
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -52,10 +52,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -88,9 +88,9 @@ Species
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -123,10 +123,10 @@ Species
     tags = "PHOTOTROPHIC"
     
     foci = [
-        [[HAS_MINING_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -158,10 +158,10 @@ Species
     tags = [ "SELF_SUSTAINING" "TELEPATHIC" ]
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -198,10 +198,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -235,10 +235,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -272,10 +272,10 @@ Species
     tags = [ "PHOTOTROPHIC" "TELEPATHIC" ]
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -310,10 +310,10 @@ Species
     tags = [ "LITHIC" "TELEPATHIC" ]
     
     foci = [
-        [[HAS_MINING_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -346,10 +346,10 @@ Species
     tags = "ROBOTIC"
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -382,9 +382,9 @@ Species
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -424,10 +424,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -459,10 +459,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
-        [[HAS_MINING_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -493,10 +493,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
-        [[HAS_MINING_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -530,10 +530,10 @@ Species
     tags = "ROBOTIC"
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -568,8 +568,10 @@ Species
     tags = "PHOTOTROPHIC"
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        /*[[HAS_RESEARCH_FOCUS]]*/
         [[HAS_GROWTH_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
+        /*[[HAS_MINING_FOCUS]]*/
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -598,9 +600,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
-        [[HAS_MINING_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
+        /*[[HAS_RESEARCH_FOCUS]]*/
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -630,10 +633,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -662,8 +665,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
+        /*[[HAS_INDUSTRY_FOCUS]]*/
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
+        /*[[HAS_MINING_FOCUS]]*/
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -695,10 +700,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -730,7 +735,10 @@ Species
     tags = "SELF_SUSTAINING"
     
     foci = [
+        /*[[HAS_INDUSTRY_FOCUS]]*/
         [[HAS_RESEARCH_FOCUS]]
+        /*[[HAS_GROWTH_FOCUS]]*/
+        /*[[HAS_MINING_FOCUS]]*/
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -764,6 +772,9 @@ Species
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
+        /*[[HAS_RESEARCH_FOCUS]]*/
+        /*[[HAS_GROWTH_FOCUS]]*/
+        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -792,10 +803,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
-        [[HAS_MINING_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -824,6 +835,9 @@ Species
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
+        /*[[HAS_RESEARCH_FOCUS]]*/
+        /*[[HAS_GROWTH_FOCUS]]*/
+        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -855,9 +869,10 @@ Species
     Tags = "ROBOTIC"
     
     foci = [
+        /*[[HAS_INDUSTRY_FOCUS]]*/
+        [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -891,9 +906,9 @@ Species
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -926,9 +941,9 @@ Species
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -959,10 +974,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -1029,10 +1044,10 @@ Species
     tags = "LITHIC"
     
     foci = [
-        [[HAS_MINING_FOCUS]]
-        [[HAS_GROWTH_FOCUS]] 
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -1066,9 +1081,9 @@ Species
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -1121,10 +1136,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -1153,11 +1168,10 @@ Species
     tags = "LITHIC"
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
-        
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -1188,10 +1202,10 @@ Species
     Tags = "ROBOTIC"
     
     foci = [
-        [[HAS_MINING_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -1230,7 +1244,10 @@ Species
     tags = "SELF_SUSTAINING"
     
     foci = [
+        /*[[HAS_INDUSTRY_FOCUS]]*/
         [[HAS_RESEARCH_FOCUS]]
+        /*[[HAS_GROWTH_FOCUS]]*/
+        /*[[HAS_MINING_FOCUS]]*/
         [[HAS_ADVANCED_FOCI]]
     ]
 
@@ -1261,10 +1278,10 @@ Species
     tags = [ "ORGANIC" "ROBOTIC" "LITHIC" "PHOTOTROPHIC"]
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -1304,10 +1321,10 @@ Species
     tags = "ORGANIC"
     
     foci = [
+        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         [[HAS_MINING_FOCUS]]
-        [[HAS_INDUSTRY_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
@@ -1773,6 +1790,26 @@ VERY_TOLERANT_EP
         type = Gasgiant     environment = Adequate
     ]'''
 
+
+HAS_INDUSTRY_FOCUS
+'''        Focus
+            name = "FOCUS_INDUSTRY"
+            description = "FOCUS_INDUSTRY_DESC"
+            location = Or [
+                Not Planet type = [Asteroids GasGiant]
+                Contains Building "BLD_GAS_GIANT_GEN"
+            ]
+            graphic = "icons/focus/industry.png"
+'''
+
+HAS_RESEARCH_FOCUS
+'''        Focus
+            name = "FOCUS_RESEARCH"
+            description = "FOCUS_RESEARCH_DESC"
+            location = Planet
+            graphic = "icons/focus/research.png"
+'''
+
 HAS_GROWTH_FOCUS
 '''        Focus
             name = "FOCUS_GROWTH"
@@ -1814,44 +1851,7 @@ HAS_MINING_FOCUS
                 ]
             ]
             graphic = "icons/focus/mining.png"
-/*
-        Focus
-            name = "FOCUS_HEAVY_MINING"
-            description = "FOCUS_HEAVY_MINING_DESC"
-            location = And [
-                Not Planet type = [Asteroids GasGiant]
-                Not HasSpecial "GAIA_SPECIAL"
-                Number low = 1 And [
-                    Building "BLD_HEAVY_MINE_PROCESSOR"
-                    OwnedBy TheEmpire Source.Owner
-                ]
-                Or [
-                    HasSpecial "MINERALS_SPECIAL"
-                    HasSpecial "CRYSTALS_SPECIAL"
-                    HasSpecial "METALOIDS_SPECIAL"
-                ]
-            ]
-            graphic = "icons/building/heavy_mining_processor.png"
-*/
-'''
 
-HAS_INDUSTRY_FOCUS
-'''        Focus
-            name = "FOCUS_INDUSTRY"
-            description = "FOCUS_INDUSTRY_DESC"
-            location = Or [
-                Not Planet type = [Asteroids GasGiant]
-                Contains Building "BLD_GAS_GIANT_GEN"
-            ]
-            graphic = "icons/focus/industry.png"
-'''
-
-HAS_RESEARCH_FOCUS
-'''        Focus
-            name = "FOCUS_RESEARCH"
-            description = "FOCUS_RESEARCH_DESC"
-            location = Planet
-            graphic = "icons/focus/research.png"
 '''
 
 HAS_ADVANCED_FOCI
