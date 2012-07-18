@@ -2726,10 +2726,11 @@ SP_GYISACHE_DESC
 Prefer Swamp planets.
 Organic
 
-[[GREAT_INDUSTRY]]
+[[GOOD_INDUSTRY]]
 [[GOOD_RESEARCH]]
 
 [[BAD_GROUND_TROOPS]]
+[[GOOD_POPULATION]]
 '''
 
 SP_CHATO
@@ -2743,6 +2744,7 @@ Phototrophic
 [[GREAT_RESEARCH]]
         
 [[BAD_GROUND_TROOPS]]
+[[BROAD_EP]]
 '''
 
 SP_TRITH
@@ -2750,7 +2752,7 @@ Trith
 SP_TRITH_DESC
 '''Bereaved xenophobic telepaths.
 Prefer Desert planets.
-Organic
+Self-Sufficient
 
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
@@ -2804,7 +2806,7 @@ SP_LAENFA_DESC
 Prefer Ocean Planets.
 Phototrophic
 
-[[GOOD_DETECTION]]
+[[GREAT_DETECTION]]
 [[GREAT_STEALTH]]
 
 [[BAD_INDUSTRY]]
@@ -2849,10 +2851,12 @@ George
 SP_GEORGE_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
 Prefers Tundra planets.
-Organic
+Lithic
 
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
+
+[[BROAD_EP]]
 '''
 
 
@@ -2860,13 +2864,14 @@ SP_CRAY
 Cray
 SP_CRAY_DESC
 '''Cheerful enthusiastic robots.
-Prefer Barren planets, but adapts well to other types.
+Prefer Barren planets.
 Robotic
 
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
 
 [[GOOD_GROUND_TROOPS]]
+[[BROAD_EP]]
 '''
 
 
@@ -2877,12 +2882,14 @@ SP_ETTY_DESC
 Prefer Desert planets.
 Phototrophic
 
+[[BAD_DETECTION]]
+[[GOOD_STEALTH]]
+    
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
+[[GREAT_WEAPONS]]
 [[GOOD_GROUND_TROOPS]]
-        
-[[BAD_DETECTION]]
 '''
 
 
@@ -2921,6 +2928,7 @@ Lithic
 [[BAD_RESEARCH]]
 
 [[BAD_POPULATION]]
+[[NARROW_EP]]
 '''
 
 SP_SSLITH
@@ -7644,13 +7652,19 @@ NON_ORGANIC
 '''Non-Organic: Does not benefit from some biologically-based techs.'''
 
 BAD_POPULATION
-'''%1% Bad Population'''
+'''    - %1% Bad Population'''
 
 AVERAGE_POPULATION
 '''%1% Average Population'''
 
 GOOD_POPULATION
-'''%1% Good Population'''
+'''    + %1% Good Population'''
+
+BROAD_EP
+'''  + + Broad Planet Tolerance: Has an easire time colonizing other planet types.'''
+
+NARROW_EP
+'''    - Narrow Planet Tolerance: Has a harder time colonizing other planet types.'''
 
 
 #############################################################
