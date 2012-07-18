@@ -5649,7 +5649,7 @@ LRN_PSY_DOM
 Psychogenic Domination
 
 LRN_PSY_DOM_DESC
-'''Has a 10%% chance of taking control of any enemy ship within one starlane jump of a colony owned by the empire, provided that the ship is not owned by an empire who also has this tech.
+'''Has a 10% chance of taking control of any enemy ship within one starlane jump of a colony owned by the empire, provided that the ship is not owned by an empire who also has this tech.
 
 It is difficult to force a conscious individual to submit to the total mental control of another entity against its will. By manipulating the timeframes involved however, the mental force exerted by a population over a period of hours may be brought to bear on a single individual in the span of a few seconds, creating an almost irresistible compulsion to join the unified mind.'''
 
@@ -6617,7 +6617,7 @@ BLD_PLANET_DRIVE
 Planetary Starlane Drive
 
 BLD_PLANET_DRIVE_DESC
-'''Allows a planet to move between star systems. An interstellar lighthouse is required within 200 uus of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50%% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an outpost, but not on an asteroid belt.
+'''Allows a planet to move between star systems. An interstellar lighthouse is required within 200 uus of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an outpost, but not on an asteroid belt.
 
 Due to a lack of UI targeting, a second building is currently required on the other end of the starlane. This building will destroy itself immediately, so that the planet can move to a different target system later.
 
@@ -7558,37 +7558,37 @@ NO_INDUSTRY
 '''- - - No Industry'''
 
 BAD_INDUSTRY
-'''    - Bad Industry: 50%%'''
+'''    - Bad Industry: 50%'''
 
 AVERAGE_INDUSTRY
-'''      Average Industry: 100%%'''
+'''      Average Industry: 100%'''
 
 GOOD_INDUSTRY
-'''    + Good Industry: 150%%'''
+'''    + Good Industry: 150%'''
 
 GREAT_INDUSTRY
-'''  + + Great Industry: 250%%'''
+'''  + + Great Industry: 250%'''
 
 ULTIMATE_INDUSTRY
-'''+ + + Ultimate Industry: 400%%'''
+'''+ + + Ultimate Industry: 400%'''
 
 NO_RESEARCH
 '''- - - No Research'''
 
 BAD_RESEARCH
-'''    - Bad Research: 50%%'''
+'''    - Bad Research: 50%'''
 
 AVERAGE_RESEARCH
-'''      Average Research: 100%%'''
+'''      Average Research: 100%'''
 
 GOOD_RESEARCH
-'''    + Good Research: 150%%'''
+'''    + Good Research: 150%'''
 
 GREAT_RESEARCH
-'''  + + Great Research: 250%%'''
+'''  + + Great Research: 250%'''
 
 ULTIMATE_RESEARCH
-'''+ + + Ultimate Research: 400%%'''
+'''+ + + Ultimate Research: 400%'''
 
 
 NO_GROUND_TROOPS
@@ -7652,19 +7652,19 @@ NON_ORGANIC
 '''Non-Organic: Does not benefit from some biologically-based techs.'''
 
 BAD_POPULATION
-'''    - %1% Bad Population'''
+'''    - Bad Population'''
 
 AVERAGE_POPULATION
-'''%1% Average Population'''
+'''Average Population'''
 
 GOOD_POPULATION
-'''    + %1% Good Population'''
+'''    + Good Population'''
 
 BROAD_EP
-'''  + + Broad Planet Tolerance: Has an easire time colonizing other planet types.'''
+'''  + + Broad Planet Tolerance: flourishes on more types.'''
 
 NARROW_EP
-'''    - Narrow Planet Tolerance: Has a harder time colonizing other planet types.'''
+'''    - Narrow Planet Tolerance: flourishes on fewer types.'''
 
 
 #############################################################
