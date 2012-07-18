@@ -515,32 +515,32 @@ DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
                     boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
     }
 
-    // slot type buttons
-    for (ShipSlotType slot_type = ShipSlotType(0); slot_type != NUM_SHIP_SLOT_TYPES; slot_type = ShipSlotType(slot_type + 1)) {
-        m_slot_type_buttons[slot_type] = (new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString(boost::lexical_cast<std::string>(slot_type))));
-        AttachChild(m_slot_type_buttons[slot_type]);
-        GG::Connect(m_slot_type_buttons[slot_type]->ClickedSignal,
-                    boost::bind(&DesignWnd::PartPalette::ToggleSlotType, this, slot_type, true));
-    }
+    //// slot type buttons
+    //for (ShipSlotType slot_type = ShipSlotType(0); slot_type != NUM_SHIP_SLOT_TYPES; slot_type = ShipSlotType(slot_type + 1)) {
+    //    m_slot_type_buttons[slot_type] = (new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString(boost::lexical_cast<std::string>(slot_type))));
+    //    AttachChild(m_slot_type_buttons[slot_type]);
+    //    GG::Connect(m_slot_type_buttons[slot_type]->ClickedSignal,
+    //                boost::bind(&DesignWnd::PartPalette::ToggleSlotType, this, slot_type, true));
+    //}
 
-    // availability buttons
-    CUIButton* button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
-    m_availability_buttons.first = button;
-    AttachChild(button);
-    GG::Connect(button->ClickedSignal,
-                boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
-    button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
-    m_availability_buttons.second = button;
-    AttachChild(button);
-    GG::Connect(button->ClickedSignal, 
-                boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
+    //// availability buttons
+    //CUIButton* button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
+    //m_availability_buttons.first = button;
+    //AttachChild(button);
+    //GG::Connect(button->ClickedSignal,
+    //            boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
+    //button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
+    //m_availability_buttons.second = button;
+    //AttachChild(button);
+    //GG::Connect(button->ClickedSignal, 
+    //            boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
 
     // default to showing nothing
     ShowAllClasses(false);
     ShowAvailability(true, false);
     for (ShipSlotType slot_type = ShipSlotType(0); slot_type != NUM_SHIP_SLOT_TYPES; slot_type = ShipSlotType(slot_type + 1)) {
         m_parts_list->ShowSlotType(slot_type, false);
-        m_slot_type_buttons[slot_type]->MarkSelectedGray();
+        //m_slot_type_buttons[slot_type]->MarkSelectedGray();
     }
     DoLayout();
 }
@@ -564,14 +564,14 @@ void DesignWnd::PartPalette::DoLayout() {
     const int MAX_BUTTONS_PER_ROW = std::max(Value(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION)), 1);
 
     const int NUM_CLASS_BUTTONS = std::max(1, static_cast<int>(m_class_buttons.size()));
-    const int NUM_SLOT_TYPE_BUTTONS = std::max(1, static_cast<int>(m_slot_type_buttons.size()));
-    const int NUM_AVAILABILITY_BUTTONS = 2;
+    const int NUM_SLOT_TYPE_BUTTONS = 0;//std::max(1, static_cast<int>(m_slot_type_buttons.size()));
+    const int NUM_AVAILABILITY_BUTTONS = 0;//2;
     const int NUM_NON_CLASS_BUTTONS = NUM_SLOT_TYPE_BUTTONS + NUM_AVAILABILITY_BUTTONS;
 
     // determine whether to put non-class buttons (availability and slot type) in one column or two.
     // -> if class buttons fill up fewer rows than (the non-class buttons in one column), split the
     //    non-class buttons into two columns
-    int num_non_class_buttons_per_row = 1;
+    int num_non_class_buttons_per_row = 0;//1;
     if (NUM_CLASS_BUTTONS < NUM_NON_CLASS_BUTTONS*(MAX_BUTTONS_PER_ROW - num_non_class_buttons_per_row))
         num_non_class_buttons_per_row = 2;
 
@@ -604,28 +604,28 @@ void DesignWnd::PartPalette::DoLayout() {
     //                          be the case given how num_non_class_buttons_per_row is determined
     m_parts_list->SizeMove(GG::Pt(GG::X0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)), ClientSize() - GG::Pt(GG::X(BUTTON_SEPARATION), GG::Y(BUTTON_SEPARATION)));
 
-    // place slot type buttons
-    col = NUM_CLASS_BUTTONS_PER_ROW;
-    row = 0;
-    for (std::map<ShipSlotType, CUIButton*>::iterator it = m_slot_type_buttons.begin(); it != m_slot_type_buttons.end(); ++it) {
-        GG::Pt ul(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-        GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-        it->second->SizeMove(ul, lr);
-        ++row;
-    }
+    //// place slot type buttons
+    //col = NUM_CLASS_BUTTONS_PER_ROW;
+    //row = 0;
+    //for (std::map<ShipSlotType, CUIButton*>::iterator it = m_slot_type_buttons.begin(); it != m_slot_type_buttons.end(); ++it) {
+    //    GG::Pt ul(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    //    GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    //    it->second->SizeMove(ul, lr);
+    //    ++row;
+    //}
 
-    // place availability buttons
-    if (num_non_class_buttons_per_row > 1) {
-        ++col;
-        row = 0;
-    }
-    GG::Pt ul(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_availability_buttons.first->SizeMove(ul, lr);
-    ++row;
-    ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
-    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_availability_buttons.second->SizeMove(ul, lr);
+    //// place availability buttons
+    //if (num_non_class_buttons_per_row > 1) {
+    //    ++col;
+    //    row = 0;
+    //}
+    //GG::Pt ul(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    //GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    //m_availability_buttons.first->SizeMove(ul, lr);
+    //++row;
+    //ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    //lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    //m_availability_buttons.second->SizeMove(ul, lr);
 }
 
 void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_list) {
@@ -682,7 +682,7 @@ void DesignWnd::PartPalette::ToggleAllClasses(bool refresh_list)
 void DesignWnd::PartPalette::ShowSlotType(ShipSlotType slot_type, bool refresh_list) {
     if (slot_type >= ShipSlotType(0) && slot_type < NUM_SHIP_SLOT_TYPES) {
         m_parts_list->ShowSlotType(slot_type, refresh_list);
-        m_slot_type_buttons[slot_type]->MarkSelectedGray();
+        //m_slot_type_buttons[slot_type]->MarkSelectedGray();
     } else {
         throw std::invalid_argument("PartPalette::ShowSlotType was passed an invalid ShipSlotType");
     }
@@ -691,7 +691,7 @@ void DesignWnd::PartPalette::ShowSlotType(ShipSlotType slot_type, bool refresh_l
 void DesignWnd::PartPalette::HideSlotType(ShipSlotType slot_type, bool refresh_list) {
     if (slot_type >= ShipSlotType(0) && slot_type < NUM_SHIP_SLOT_TYPES) {
         m_parts_list->HideSlotType(slot_type, refresh_list);
-        m_slot_type_buttons[slot_type]->MarkNotSelected();
+        //m_slot_type_buttons[slot_type]->MarkNotSelected();
     } else {
         throw std::invalid_argument("PartPalette::HideSlotType was passed an invalid ShipSlotType");
     }
@@ -711,18 +711,18 @@ void DesignWnd::PartPalette::ToggleSlotType(ShipSlotType slot_type, bool refresh
 
 void DesignWnd::PartPalette::ShowAvailability(bool available, bool refresh_list) {
     m_parts_list->ShowAvailability(available, refresh_list);
-    if (available)
-        m_availability_buttons.first->MarkSelectedGray();
-    else
-        m_availability_buttons.second->MarkSelectedGray();
+    //if (available)
+    //    m_availability_buttons.first->MarkSelectedGray();
+    //else
+    //    m_availability_buttons.second->MarkSelectedGray();
 }
 
 void DesignWnd::PartPalette::HideAvailability(bool available, bool refresh_list) {
     m_parts_list->HideAvailability(available, refresh_list);
-    if (available)
-        m_availability_buttons.first->MarkNotSelected();
-    else
-        m_availability_buttons.second->MarkNotSelected();
+    //if (available)
+    //    m_availability_buttons.first->MarkNotSelected();
+    //else
+    //    m_availability_buttons.second->MarkNotSelected();
 }
 
 void DesignWnd::PartPalette::ToggleAvailability(bool available, bool refresh_list) {
