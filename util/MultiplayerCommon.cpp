@@ -361,8 +361,15 @@ const std::string& UserString(const std::string& str) {
 }
 
 boost::format FlexibleFormat(const std::string &string_to_format) {
-    boost::format retval(string_to_format);
-    retval.exceptions(boost::io::all_error_bits ^ (boost::io::too_many_args_bit | boost::io::too_few_args_bit));
+    try {
+        boost::format retval(string_to_format);
+        retval.exceptions(boost::io::no_error_bits);
+        return retval;
+    } catch (const std::exception& e) {
+        Logger().errorStream() << "FlexibleFormat caught exception when formatting: " << e.what();
+    }
+    boost::format retval(UserString("ERROR"));
+    retval.exceptions(boost::io::no_error_bits);
     return retval;
 }
 
