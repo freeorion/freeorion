@@ -2430,23 +2430,72 @@ ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 ENC_TECH_DETAIL_TYPE_STR
 %1% %2% - %3%
 
-TEST_ARTICLE
-Test Article
 
-CATEGORY_TEST
-Testing
-
-TEST_ARTICLE_SHORT_DESC
-For Testing Purposes
-
-TEST_ARTICLE_TEXT
-This is a test article for the encyclopedia.  This is the main body text of the article, and should be shown in the main scrollable part of the encyclopedia panel.
+###########################################
+# ARTICLE CATAGORIES & SHORT DESCRIPTIONS #
+###########################################
 
 CATEGORY_GAME_CONCEPTS
-Game Concept
+Game Concepts
 
-PEACE_ARTICLE_TEXT
-Peace is the diplomatic state between empires in which they mutually agree not to attack eachother's ships or planets, not to obstruct eachother's fleet resupply or resource exchange, and not to impede colonization.
+GROWTH_SHORT_DESC
+Growth
+
+PRODUCTION_SHORT_DESC
+Production
+
+DIPLOMACY_SHORT_DESC
+Diplomacy
+
+SPECIES_SHORT_DESC
+Species
+
+
+###########################################
+# ARTICLES #
+###########################################
+
+PEACE_TITLE
+Peace
+PEACE_TEXT
+Peace is the diplomatic state between empires in which they mutually agree not to attack each other's ships or planets, not to obstruct eachother's fleet resupply or resource exchange, and not to impede colonization.
+
+GROWTH_FOCUS_TITLE
+Growth Focus
+GROWTH_FOCUS_TEXT
+'''The Growth Focus represents a focus on exporting rare materials and substances that aid the population growth of a certain species. Is only available in certain situations: on some homeworlds, and on planets with growth specials.  A planet focused on Growth increases the max Population only of other planets connected to it by supply lines.  A Homeworld focused on Growth only helps other planets of the same species.  Growth Special planets focused on growth, only help a single classification of species, for instance some only help Organic Species.'''
+
+MINING_FOCUS_TITLE
+Mining Focus
+MINING_FOCUS_TEXT
+'''The Mining Focus is only available on planets with certain rare specials.  Focusing on Mining provides a significant production bonus.'''
+
+ORGANIC_SPECIES_TITLE
+Organic Species
+ORGANIC_SPECIES_TEXT
+'''Organic species are more or less, 'life as we know it'.  These species max population can be increased when their connected homeworld focuses on Growth, or when when an Organic Growth Special is colonized, and focused on Growth.  Organic Growth specials are marked with a little green 'O' in the corner.'''
+
+LITHIC_SPECIES_TITLE
+Lithic Species
+LITHIC_SPECIES_TEXT
+'''Lithic species are silicon or mineral-based.  These species max population can be increased when their connected homeworld focuses on Growth, or when when a Lithic Growth Special is colonized, and focused on Growth.  Lithic Growth specials are marked with a little grey 'L' in the corner.'''
+
+ROBOTIC_SPECIES_TITLE
+Robotic Species
+ROBOTIC_SPECIES_TEXT
+'''Robotic species are sapient machines.  These species max population can be increased when their connected homeworld focuses on Growth, or when when an Robotic Growth Special is colonized, and focused on Growth.  Robotic Growth specials are marked with a little red 'R' in the corner.'''
+
+
+PHOTOTROPHIC_SPECIES_TITLE
+Phototrophic Species
+PHOTOTROPHIC_SPECIES_TEXT
+'''Phototrophic species are live mainly or entirely on sunlight. These species max population is greatly influenced by the size of the local star -- the bigger the better.  Growth specials do not benefit them.'''
+
+SELF_SUSTAINING_SPECIES_TITLE
+Self-Sustaining Species
+SELF_SUSTAINING_SPECIES_TEXT
+'''Self-Sustaining species may be energy or crystaline beings or something else.  Their commonality is that they need no sustainace. So their basic population growth is very high.'''
+
 
 ####################
 # Combat Messages  #

@@ -5,6 +5,7 @@ New Features / Improvements:
  ~ Macro support in script files.
  ~ Finally real zero population 'Outposts'.
  ~ 5 classes of species: Organic, Lithic, Robotic, Phototrophic, and Self-Sustaining. Population in each flourishes for different reasons. More differences planned.
+ ~ New 'Game Concepts' section of the 'Pedia to help exlain the game.
 
 Balancing:
  ~ Balanced stealth & detection levels.

@@ -1,13 +1,55 @@
 Article
-    name = "TEST_ARTICLE"
-    category = "CATEGORY_TEST"
-    short_description = "TEST_ARTICLE_SHORT_DESC"
-    description = "TEST_ARTICLE_TEXT"
-    icon = "icons/ai.png"
+    name = "PEACE_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "DIPLOMACY_SHORT_DESC"
+    description = "PEACE_TEXT"
+    icon = "icons/peace.png"
 
 Article
-    name = "PEACE"
+    name = "GROWTH_FOCUS_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
-    short_description = "DIPLOMACY"
-    description = "PEACE_ARTICLE_TEXT"
-    icon = "icons/peace.png"
+    short_description = "GROWTH_SHORT_DESC"
+    description = "GROWTH_FOCUS_TEXT"
+    icon = "icons/focus/growth.png"
+    
+Article
+    name = "MINING_FOCUS_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "PRODUCTION_SHORT_DESC"
+    description = "MINING_FOCUS_TEXT"
+    icon = "icons/focus/mining.png"
+    
+Article
+    name = "ORGANIC_SPECIES_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "SPECIES_SHORT_DESC"
+    description = "ORGANIC_SPECIES_TEXT"
+    icon = "icons/species/human.png"
+    
+Article
+    name = "LITHIC_SPECIES_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "SPECIES_SHORT_DESC"
+    description = "LITHIC_SPECIES_TEXT"
+    icon = "icons/species/egassem.png"
+    
+Article
+    name = "ROBOTIC_SPECIES_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "SPECIES_SHORT_DESC"
+    description = "ROBOTIC_SPECIES_TEXT"
+    icon = "icons/species/robotic-01.png"
+    
+Article
+    name = "PHOTOTROPHIC_SPECIES_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "SPECIES_SHORT_DESC"
+    description = "PHOTOTROPHIC_SPECIES_TEXT"
+    icon = "icons/species/flora-07.png"
+    
+Article
+    name = "SELF_SUSTAINING_SPECIES_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "SPECIES_SHORT_DESC"
+    description = "SELF_SUSTAINING_SPECIES_TEXT"
+    icon = "icons/species/acirema.png"
