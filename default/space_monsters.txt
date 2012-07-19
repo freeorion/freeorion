@@ -134,7 +134,7 @@ ShipDesign
         "SR_WEAPON_2"
         ""
     ]
-    icon = "icons/ship_parts/colony_pod.png"
+    icon = "icons/monsters/drone.png"
     model = "seed"
 
 ShipDesign
@@ -146,7 +146,7 @@ ShipDesign
         "SR_WEAPON_3"
         ""
     ]
-    icon = "icons/ship_parts/antimatter_tank.png"
+    icon = "icons/monsters/factory.png"
     model = "seed"
 
 ShipDesign
@@ -274,7 +274,7 @@ ShipDesign
         ""
         "SP_CLOUD"
     ]
-    icon = ""
+    icon = "icons/monsters/cloud.png"
     model = "seed"
 
 ShipDesign
@@ -285,7 +285,7 @@ ShipDesign
         ""
         "SP_ASH"
     ]
-    icon = ""
+    icon = "icons/monsters/volcanic_ash.png"
     model = "seed"
 
 ShipDesign
@@ -296,7 +296,7 @@ ShipDesign
         ""
         "SP_DIM"
     ]
-    icon = ""
+    icon = "icons/monsters/dim_rift.png"
     model = "seed"
 
 ShipDesign
@@ -307,7 +307,7 @@ ShipDesign
         ""
         "SP_VOID"
     ]
-    icon = ""
+    icon = "icons/monsters/void.png"
     model = "seed"
     
 ShipDesign
@@ -360,7 +360,7 @@ ShipDesign
         "SR_WEAPON_17"
         "ST_ABSORPTION_FIELD"
     ]
-    icon = ""
+    icon = "icons/monsters/kraken-4.png"
     model = "seed"
 
 ShipDesign
@@ -376,7 +376,7 @@ ShipDesign
         "SR_WEAPON_17"
         "ST_DIM_CLOAK"
     ]
-    icon  = ""
+    icon  = "icons/monsters/juggernaut-4.png"
     model = "seed"
 
 ShipDesign
@@ -389,7 +389,7 @@ ShipDesign
         ""
         "ST_DIM_CLOAK"
     ]
-    icon = ""
+    icon = "icons/monsters/snowflake-4.png"
     model = "seed"
 
 ShipDesign
@@ -402,6 +402,6 @@ ShipDesign
         ""
         "ST_PHASING_CLOAK"
     ]
-    icon = ""
+    icon = "icons/monsters/dragon-2.png"
     model = "seed"
 

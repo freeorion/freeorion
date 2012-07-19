@@ -1,28 +1,28 @@
 Article
     name = "PEACE_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
-    short_description = "DIPLOMACY_SHORT_DESC"
+    short_description = "DIPLOMACY_ARTICLE_SHORT_DESC"
     description = "PEACE_TEXT"
     icon = "icons/peace.png"
 
 Article
     name = "GROWTH_FOCUS_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
-    short_description = "GROWTH_SHORT_DESC"
+    short_description = "GROWTH_ARTICLE_SHORT_DESC"
     description = "GROWTH_FOCUS_TEXT"
     icon = "icons/focus/growth.png"
     
 Article
     name = "MINING_FOCUS_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
-    short_description = "PRODUCTION_SHORT_DESC"
+    short_description = "PRODUCTION_ARTICLE_SHORT_DESC"
     description = "MINING_FOCUS_TEXT"
     icon = "icons/focus/mining.png"
     
 Article
     name = "ORGANIC_SPECIES_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
-    short_description = "SPECIES_SHORT_DESC"
+    short_description = "SPECIES_ARTICLE_SHORT_DESC"
     description = "ORGANIC_SPECIES_TEXT"
     icon = "icons/species/human.png"
     
