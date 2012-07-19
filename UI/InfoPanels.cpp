@@ -621,6 +621,8 @@ void ResourcePanel::DoExpandCollapseLayout() {
         m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
         top += m_multi_icon_value_indicator->Height() + EDGE_PAD;
 
+        MoveChildUp(m_expand_button);
+
         Resize(GG::Pt(Width(), top));
     }
 
