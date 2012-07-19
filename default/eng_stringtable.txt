@@ -2441,6 +2441,9 @@ Game Concepts
 GROWTH_ARTICLE_SHORT_DESC
 Growth
 
+OUTPOSTS_ARTICLE_SHORT_DESC
+Outposts
+
 PRODUCTION_ARTICLE_SHORT_DESC
 Production
 
@@ -2460,6 +2463,11 @@ Peace
 PEACE_TEXT
 Peace is the diplomatic state between empires in which they mutually agree not to attack each other's ships or planets, not to obstruct eachother's fleet resupply or resource exchange, and not to impede colonization.
 
+OUTPOSTS_TITLE
+Outposts
+OUTPOSTS_TEXT
+'''Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they can create supply lines and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an outpost pod on a ship.'''
+
 GROWTH_FOCUS_TITLE
 Growth Focus
 GROWTH_FOCUS_TEXT
@@ -2469,6 +2477,11 @@ MINING_FOCUS_TITLE
 Mining Focus
 MINING_FOCUS_TEXT
 '''The Mining Focus is only available on planets with certain rare specials.  Focusing on Mining provides a significant production bonus.'''
+
+TRADE_FOCUS_TITLE
+Trade Focus
+TRADE_FOCUS_TEXT
+'''Trade doesn't do anything, yet.  It is just a placeholder to show that more resources are planned.'''
 
 ORGANIC_SPECIES_TITLE
 Organic Species

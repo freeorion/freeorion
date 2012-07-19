@@ -858,6 +858,13 @@ Tech
     researchcost = 1
     researchturns = 1
     unlock = Item type = ShipPart name = "CO_OUTPOST_POD"
+    EffectsGroup
+        scope = And [
+            OwnedBy TheEmpire Source.Owner
+            Planet Population high = 0
+            ] 
+        accountinglabel = "STANDARD_CONSTRUCTION_LABEL"
+        effects = SetTargetConstruction Value + 20
     graphic = "icons/tech/habitation_domes.png"
 
 Tech
