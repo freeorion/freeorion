@@ -1795,10 +1795,7 @@ HAS_INDUSTRY_FOCUS
 '''        Focus
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
-            location = Or [
-                Not Planet type = [Asteroids GasGiant]
-                Contains Building "BLD_GAS_GIANT_GEN"
-            ]
+            location = Planet
             graphic = "icons/focus/industry.png"
 '''
 
