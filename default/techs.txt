@@ -1363,7 +1363,7 @@ Tech
             effects = SetTargetIndustry Value + 5
     ]
     graphic = "icons/tech/asteroid_mining_i.png"
-/*
+
 Tech
     name = "PRO_CORE_MINE"
     description = "PRO_CORE_MINE_DESC"
@@ -1373,7 +1373,7 @@ Tech
     researchcost = 30
     researchturns = 1
     graphic = "icons/tech/deep_core_mining.png"
-*/
+
 Tech
     name = "PRO_INDUSTRY_CENTER_I"
     description = "PRO_INDUSTRY_CENTER_I_DESC"
