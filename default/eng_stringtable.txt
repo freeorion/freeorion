@@ -2438,16 +2438,16 @@ ENC_TECH_DETAIL_TYPE_STR
 CATEGORY_GAME_CONCEPTS
 Game Concepts
 
-GROWTH_SHORT_DESC
+GROWTH_ARTICLE_SHORT_DESC
 Growth
 
-PRODUCTION_SHORT_DESC
+PRODUCTION_ARTICLE_SHORT_DESC
 Production
 
-DIPLOMACY_SHORT_DESC
+DIPLOMACY_ARTICLE_SHORT_DESC
 Diplomacy
 
-SPECIES_SHORT_DESC
+SPECIES_ARTICLE_SHORT_DESC
 Species
 
 
@@ -2473,17 +2473,17 @@ MINING_FOCUS_TEXT
 ORGANIC_SPECIES_TITLE
 Organic Species
 ORGANIC_SPECIES_TEXT
-'''Organic species are more or less, 'life as we know it'.  These species max population can be increased when their connected homeworld focuses on Growth, or when when an Organic Growth Special is colonized, and focused on Growth.  Organic Growth specials are marked with a little green 'O' in the corner.'''
+'''Organic species are more or less, 'life as we know it'.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when when an Organic Growth Special is colonized, and focused on Growth.  Organic Growth specials are marked with a little green 'O' in the corner.'''
 
 LITHIC_SPECIES_TITLE
 Lithic Species
 LITHIC_SPECIES_TEXT
-'''Lithic species are silicon or mineral-based.  These species max population can be increased when their connected homeworld focuses on Growth, or when when a Lithic Growth Special is colonized, and focused on Growth.  Lithic Growth specials are marked with a little grey 'L' in the corner.'''
+'''Lithic species are silicon or mineral-based.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when when a Lithic Growth Special is colonized, and focused on Growth.  Lithic Growth specials are marked with a little grey 'L' in the corner.'''
 
 ROBOTIC_SPECIES_TITLE
 Robotic Species
 ROBOTIC_SPECIES_TEXT
-'''Robotic species are sapient machines.  These species max population can be increased when their connected homeworld focuses on Growth, or when when an Robotic Growth Special is colonized, and focused on Growth.  Robotic Growth specials are marked with a little red 'R' in the corner.'''
+'''Robotic species are sapient machines.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when when an Robotic Growth Special is colonized, and focused on Growth.  Robotic Growth specials are marked with a little red 'R' in the corner.'''
 
 
 PHOTOTROPHIC_SPECIES_TITLE

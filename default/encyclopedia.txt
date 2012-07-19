@@ -29,27 +29,27 @@ Article
 Article
     name = "LITHIC_SPECIES_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
-    short_description = "SPECIES_SHORT_DESC"
+    short_description = "SPECIES_ARTICLE_SHORT_DESC"
     description = "LITHIC_SPECIES_TEXT"
     icon = "icons/species/egassem.png"
     
 Article
     name = "ROBOTIC_SPECIES_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
-    short_description = "SPECIES_SHORT_DESC"
+    short_description = "SPECIES_ARTICLE_SHORT_DESC"
     description = "ROBOTIC_SPECIES_TEXT"
     icon = "icons/species/robotic-01.png"
     
 Article
     name = "PHOTOTROPHIC_SPECIES_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
-    short_description = "SPECIES_SHORT_DESC"
+    short_description = "SPECIES_ARTICLE_SHORT_DESC"
     description = "PHOTOTROPHIC_SPECIES_TEXT"
     icon = "icons/species/flora-07.png"
     
 Article
     name = "SELF_SUSTAINING_SPECIES_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
-    short_description = "SPECIES_SHORT_DESC"
+    short_description = "SPECIES_ARTICLE_SHORT_DESC"
     description = "SELF_SUSTAINING_SPECIES_TEXT"
     icon = "icons/species/acirema.png"
