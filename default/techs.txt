@@ -1063,19 +1063,7 @@ Tech
     researchcost = 4
     researchturns = 1
     graphic = "icons/tech/subterranean_construction.png"
-/*
-Tech
-    name = "GRO_INDUSTRY_FARM"
-    description = "GRO_INDUSTRY_FARM_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 4
-    researchturns = 1
-    prerequisites = "GRO_PLANET_ECOL"
-    unlock = Item type = Building name = "BLD_INDUSTRY_FARM"
-    graphic = "icons/tech/industrial_farming.png"
-*/
+
 Tech
     name = "GRO_GENOME_BANK"
     description = "GRO_GENOME_BANK_DESC"
@@ -1110,22 +1098,7 @@ Tech
     researchturns = 3
     prerequisites = "GRO_LIFECYCLE_MAN"
     unlock = Item type = ShipPart name = "CO_SUSPEND_ANIM_POD"
-/*
-Tech
-    name = "GRO_ORBIT_FARMING"
-    description = "GRO_ORBIT_FARMING_DESC"
-    short_description = "GROWTH_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 8
-    researchturns = 3
-    prerequisites = [
-        "GRO_ADV_ECOMAN"
-        "CON_ORBITAL_CON"
-    ]
-    unlock = Item type = Building name = "BLD_ORBITAL_FARM"
-    graphic = "icons/tech/orbital_farming.png"
-*/
+
 Tech
     name = "GRO_TERRAFORM"
     description = "GRO_TERRAFORM_DESC"
@@ -1369,36 +1342,7 @@ Tech
     ]
     unlock = Item type = Building name = "BLD_HYPER_DAM"
     graphic = "icons/tech/zero_point_energy.png"
-/*
-Tech
-    name = "PRO_HEAVY_MINING_I"
-    description = "PRO_HEAVY_MINING_I_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 8
-    researchturns = 1
-    prerequisites = [
-        "PRO_CORE_MINE"
-        "PRO_ROBOTIC_PROD"
-    ]
-    unlock = Item type = Building name = "BLD_HEAVY_MINE_PROCESSOR"
-    graphic = "icons/tech/heavy_mining_processors.png"
 
-Tech
-    name = "PRO_ENVIRO_MINING"
-    description = "PRO_ENVIRO_MINING_DESC"
-    short_description = "BUILDING_REFINE_SHORT_DESC"
-    techtype = Refinement
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 4
-    researchturns = 1
-    prerequisites = [
-        "PRO_HEAVY_MINING_I"
-        "GRO_PLANET_ECOL"
-    ]
-    graphic = "icons/tech/environmentally_conscious_mining.png"
-*/
 Tech
     name = "PRO_ASTEROID_MINE"
     description = "PRO_ASTEROID_MINE_DESC"
@@ -1408,8 +1352,18 @@ Tech
     researchcost = 4
     researchturns = 1
     prerequisites = "PRO_MICROGRAV_MAN"
-    graphic = "icons/tech/asteroid_mining_i.png"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet Type = Asteroids
+                OwnedBy TheEmpire Source.Owner
+                Planet Population high = 0
+                ]   
 
+            effects = SetTargetIndustry Value + 5
+    ]
+    graphic = "icons/tech/asteroid_mining_i.png"
+/*
 Tech
     name = "PRO_CORE_MINE"
     description = "PRO_CORE_MINE_DESC"
@@ -1419,7 +1373,7 @@ Tech
     researchcost = 30
     researchturns = 1
     graphic = "icons/tech/deep_core_mining.png"
-
+*/
 Tech
     name = "PRO_INDUSTRY_CENTER_I"
     description = "PRO_INDUSTRY_CENTER_I_DESC"

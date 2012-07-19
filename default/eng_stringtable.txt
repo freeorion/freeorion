@@ -5672,7 +5672,7 @@ PRO_ASTEROID_MINE
 Asteroid Mining
 
 PRO_ASTEROID_MINE_DESC
-'''Permits use of the Mining focus on asteroid belts.
+'''Increases Industry by +5 on Asteroid belt outposts.
 
 Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.'''
 
@@ -6259,14 +6259,6 @@ Refines Building
 TECH_REFINE_SHORT_DESC
 Refines Tech
 
-PRO_ASTEROID_MINE_II
-Advanced Asteroid Mines
-
-PRO_ASTEROID_MINE_II_DESC
-'''Increases Mining on all asteroid belts with the Mining focus by 10.
-
-Experience with operation of initial implementations of asteroid mining techniques allows more refined methods to be devised.'''
-
 PRO_INDUSTRY_CENTER_II
 Greater Industrial Center
 
@@ -6543,7 +6535,7 @@ BLD_CLONING_CENTER
 Cloning Center
 
 BLD_CLONING_CENTER_DESC
-'''Increases target Health on all planets by 30.
+'''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
 Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving planet health. However, due to political considerations, such activities must be kept a secret from those who might have ethical concerns. As a result, this building must be hidden from the population on the dark side of a resonant moon. This building can be built at an outpost, provided it has a resonant moon.'''
 
@@ -6697,7 +6689,7 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a gas giant and gives a +5 Industry bonus to planets with the Industry focus in the same system.
+'''This building can only be constructed at a gas giant and gives a +10 Industry bonus to planets with the Industry focus in the same system.
 
 A power generator designed to harvest the energy of a Gas Giant.'''
 

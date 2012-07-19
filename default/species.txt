@@ -1833,19 +1833,10 @@ HAS_MINING_FOCUS
 '''Focus
             name = "FOCUS_MINING"
             description = "FOCUS_MINING_DESC"
-            location = And [
-                Or [
-                    HasSpecial "MINERALS_SPECIAL"
-                    HasSpecial "CRYSTALS_SPECIAL"
-                    HasSpecial "METALOIDS_SPECIAL"
-                ]
-                Or [
-                    Not Planet type = [Asteroids GasGiant]
-                    And [
-                        OwnerHasTech "PRO_ASTEROID_MINE"
-                        Planet type = Asteroids
-                    ]
-                ]
+            location = Or [
+                HasSpecial "MINERALS_SPECIAL"
+                HasSpecial "CRYSTALS_SPECIAL"
+                HasSpecial "METALOIDS_SPECIAL"
             ]
             graphic = "icons/focus/mining.png"
 

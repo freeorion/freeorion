@@ -819,7 +819,6 @@ BuildingType
     buildtime = 5
     location = And [
         OwnedBy TheEmpire Source.Owner
-        HasSpecial name = "RESONANT_MOON_SPECIAL"
         Not Contains Or [
             Building "BLD_CLONING_CENTER"
             Building "BLD_BIOTERROR_PROJECTOR"
@@ -1213,7 +1212,7 @@ BuildingType
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
             ]
-            effects = SetTargetIndustry Value + 5
+            effects = SetTargetIndustry Value + 10
     ]
     icon = ""
 
