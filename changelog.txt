@@ -3,7 +3,7 @@ v0.4.1 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 New Features / Improvements:
  ~ Players can control zero population planets or 'outposts'
  ~ Reworked stealth and visibility system. Empires now have a detection rating, and ships/planets have a detection range. Within range, detection strength is determined by the empire's detection ability. Outside range, there is no detection.
- ~ Specials now have stealth ratings, and may not be visible to empires with insufficient detection ability.
+ ~ ~ Specials now have stealth ratings, and may not be visible to empires with insufficient detection ability.
  ~ Removed minerals. Planets now just generate industry that is used for production.
  ~ Added an aggression setting for fleets, which can be toggled between passive and agressive. Passive fleets try to hide and don't attack enemies. Aggressive fleets attack any enemy they can, and can block supply propegation.
  ~ Added very basic diplomatic system. Empires start at peace, and can declare war, propose, or accept peace with other empires. Battles between empires happen only when at war. Diplomacy is controlled through right-click menu on the players list.
@@ -11,11 +11,13 @@ New Features / Improvements:
  ~ New 'Game Concepts' section of the 'Pedia to help exlain the game.
  ~ Macro support in script files.
  ~ Experimental AI process priority management on Windows builds, which will hopefully improve GUI performance at the start of turns in games with multiple AI players.
+ ~ Many new sitrep messages
+ ~ Many Tooltips are now more informative.
  
 Balancing:
  ~ Reworked how poplation growth works. Food and health no long exist. Instead, planets can be set to "growth" focus to boost population directly. There is no longer any food distribution or starvation.
  ~ Rebalanced stealth & detection levels.
- ~ Rebalanced planet populations to a 100 point scale.
+ ~ Balanced bonuses to population to max at 100
  ~ Flattened the distribution curve of star and planet types.
  ~ Increased cost of troop pods to make conquest less casual.
  ~ Made monsters nests last on average twice as long.
@@ -24,24 +26,27 @@ Balancing:
  ~ Greatly weakend the Sentry and Sentinel
 
 Content:
+ ~ Fixed many spelling errors in various descriptions.
+ ~ Updated many inaccurate descriptions.
+ ~ Tweaked ShipDesign encyclopedia entries to show total cost instead of per-turn cost, to be consistent with buildings.
+ ~ Translation updates, particularly Russian and French.
+ 
  ~ Species:
- ~ ~ 5 classes of species: Organic, Lithic, Robotic, Phototrophic, and Self-Sustaining. Population in each flourishes for different reasons. More differences planned.
- ~ ~ All species now have different aptitudes at resource production, ground combat & so on.  A few require no food, and a few have special stealth and detection abilities.
+ ~ ~ All species now have different aptitudes at resource production, ground combat & so on.  A few have special stealth and detection abilities.
  ~ ~ ~ Sorry, currently very un-balanced.
- ~ ~ All Homeworlds now provide a population bonus, and can be set to 'Growth' to provide population bonuses for colonies of the same species
+ ~ ~ 5 classes of species: Organic, Lithic, Robotic, Phototrophic, and Self-Sustaining. Population in each flourishes for different reasons. More differences planned.
+ ~ ~ All Homeworlds now provide a population bonus, and for some species, can be set to 'Growth' to provide population bonuses for colonies of the same species
  ~ ~ Added Phototrophic species pick, which increases population with brighter suns.
  ~ ~ Added Exobots, a constructable robot species.
- ~ ~ Exempted Non-Organic species from certain biologically based tech benefits.
- ~ ~ Acirema native colonies now occasionally produce ships, and have better defenses
+ ~ ~ Changed roster of playable species.
+ ~ ~ Acirema native colonies now occasionally produce ships, and have better defenses.
  ~ ~ Additional minor species.
- ~ ~ Default focus for new colonies is now something the species is good at.
  
  ~ Monsters:
  ~ ~ Greatly increased the strength of monsters.
  ~ ~ Added Experimentor outpost which produces dangerous monsters later in the game.
  ~ ~ ~ These monsters may be overpowered for the time being.
  ~ ~ ~ Destroying/capturing this outpost is a victory condition.
-
  ~ ~ New Asteroid Snail space monster
  ~ ~ Added Nova Bomb and biological weaponry
  
@@ -52,22 +57,18 @@ Content:
  ~ ~ Added new stealthy planet specials, and stealth-making monsters.
  ~ ~ Computronium Moons now have empire-wide benefit
  
- ~ Removed "Orbital Mining" Tech which only effects planetary outposts.
- ~ Reduced the number of different types of shipyards while increasing the cost
- ~ Fixed many spelling errors in various descriptions.
- ~ Updated many inaccurate tech descriptions.
- ~ Tweaked ShipDesign encyclopedia entries to show total cost instead of per-turn cost, to be consistent with buildings.
- ~ Translation updates, particularly Russian and French.
+ ~ Techs:
+ ~ ~ Removed Farming and Mining oriented Techs.
+ ~ ~ Reduced the number of different types of shipyards while increasing the cost.
  
 Graphics:
+ ~ All monster types now have unique icons.
  ~ Added unique graphics for each hull.
  ~ Unique graphics for more shipyards.
  ~ Added overlay for Ancient Ruins.
- ~ Added new fleet icon for outposts.
- ~ Fixed broken pre-made ship fleet window icons.
+ ~ Added new fleet icon for outpost ships.
  ~ Assigned hull thumbnails to show in the sidebar of the design screen.
  ~ Improved the logic behind the choice of graphic to display for hulls and ship designs.
- ~ Re-added missing space monster graphics.
  ~ Disabled 'shininess' in sidepanel planet rendering, which wasn't working properly.
  ~ Hid map detection range circles for objects not visible to the player.
  ~ Made all resource indicators just show the available / produced amount, rather than also having a change prediction for some of them.
@@ -75,7 +76,6 @@ Graphics:
 GUI:
  ~ Removed slot type and availability toggles on the design screen part palette. Now only available parts of all slot types are shown.
  ~ Renamed the 'Construction' meter to 'Infrastructure'.
- ~ Many tooltips now mention which species picks contributed to the number.
  ~ Added some diplomatic status, and player type and status information icons to the players list.
  ~ Generate fleet arrival sitreps for all visible fleets, not just the player's own fleets.
  ~ Added basic combat damage sitreps.
@@ -92,6 +92,7 @@ Bugs:
  ~ Fixed crash generating cluster galaxies with few stars.
  ~ Fixed some crashes with test / temporary code in 3D combat testing.
  ~ Fixed issue where last tech on the queue wouldn't disappear when removed by the player.
+ ~ Fixed broken pre-made ship fleet window icons.
 
 v0.4 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
