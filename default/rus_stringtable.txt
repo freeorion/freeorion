@@ -1,9 +1,9 @@
 Russian
 
-#This is the Russian String Table file for FreeOrion 0.4 SVN5021
+#This is the Russian String Table file for FreeOrion 0.4 SVN5046
 #Translater cjckem at gmail.com
 #support by black_owl at mail.ru
-#Этот языковой файл для FreeOrion 0.4 SVN5021
+#Этот языковой файл для FreeOrion 0.4 SVN5046
 #кодовая страница UTF8
 #Переводит cjckem at gmail.com
 #при поддержке black_owl at mail.ru
@@ -2431,23 +2431,83 @@ ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 ENC_TECH_DETAIL_TYPE_STR
 %1% %2% - %3%
 
-TEST_ARTICLE
-Test Article
-
-CATEGORY_TEST
-Testing
-
-TEST_ARTICLE_SHORT_DESC
-For Testing Purposes
-
-TEST_ARTICLE_TEXT
-This is a test article for the encyclopedia.  This is the main body text of the article, and should be shown in the main scrollable part of the encyclopedia panel.
+###########################################
+# ARTICLE CATAGORIES & SHORT DESCRIPTIONS #
+###########################################
 
 CATEGORY_GAME_CONCEPTS
-Game Concept
+Понятия игры
 
-PEACE_ARTICLE_TEXT
-Peace is the diplomatic state between empires in which they mutually agree not to attack eachother's ships or planets, not to obstruct eachother's fleet resupply or resource exchange, and not to impede colonization.
+GROWTH_ARTICLE_SHORT_DESC
+Рост
+
+OUTPOSTS_ARTICLE_SHORT_DESC
+Аванпосты
+
+PRODUCTION_ARTICLE_SHORT_DESC
+Производство
+
+DIPLOMACY_ARTICLE_SHORT_DESC
+Дипломатия
+
+SPECIES_ARTICLE_SHORT_DESC
+Виды
+
+
+###########################################
+# ARTICLES #
+###########################################
+
+PEACE_TITLE
+Мир
+PEACE_TEXT
+Мир - дипломатическое состояние между империями, в котором они взаимно обязуются не нападать на корабли друг на друга, не блокировать флотилии поддержки или обмена ресурсами, а также не препятствовать колонизации.
+
+OUTPOSTS_TITLE
+Аванпосты
+OUTPOSTS_TEXT
+'''Аванпосты -это автоматические станции, которые могут размещаться в местах слишком враждебных для выживания колонии. На них отсутствует население, и, как правило не производят ресурсы. Но через них может проходить маршрут снабжения, а так же они обеспечивают обзор той области, где расположены. На планетах, где уже есть Аванспост могут быть основаны колонии. Чтобы построить Аванспост необходим корабль с модулем аванспота на борту.'''
+
+GROWTH_FOCUS_TITLE
+Приоритет Роста
+GROWTH_FOCUS_TEXT
+'''Приоритет Роста представляет из себя акцентирование на экспорт редких материалов и веществ, которые помогают росту населения определенных видов. Доступны только в определенных ситуациях: на некоторых родных планетах, и на планетах с особенностями предполагающими рост. Планеты на которых в приоритете рост увеличивают максимальное население только на других планетах, соединённых с ними маршрутами снабжения. Родные планеты, на которых в приоритете рост, помогает только другим планетам того же вида. Планета с особенностями увеличивающими рост и сфокусированные на нём, поможет только одной классификации видов, например, некоторые помогают только органическим видам.'''
+
+MINING_FOCUS_TITLE
+Приоритет Добычи
+MINING_FOCUS_TEXT
+''''Приоритет Добычи доступен только на планетах, с некоторыми редкими особенностями. Установка приоритета добычи обеспечивает значительный прирост производства.'''
+
+TRADE_FOCUS_TITLE
+Приоритет Торговли
+TRADE_FOCUS_TEXT
+'''Торговля пока ничего не делает. Это прототип для того, чтобы показать, что к реализации запланировано больше ресурсов.'''
+
+ORGANIC_SPECIES_TITLE
+Органические Виды
+ORGANIC_SPECIES_TEXT
+'''Organic species are more or less, 'life as we know it'.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when when an Organic Growth Special is colonized, and focused on Growth.  Organic Growth specials are marked with a little green 'O' in the corner.'''
+
+LITHIC_SPECIES_TITLE
+Lithic Species
+LITHIC_SPECIES_TEXT
+'''Lithic species are silicon or mineral-based.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when when a Lithic Growth Special is colonized, and focused on Growth.  Lithic Growth specials are marked with a little grey 'L' in the corner.'''
+
+ROBOTIC_SPECIES_TITLE
+Robotic Species
+ROBOTIC_SPECIES_TEXT
+'''Robotic species are sapient machines.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when when an Robotic Growth Special is colonized, and focused on Growth.  Robotic Growth specials are marked with a little red 'R' in the corner.'''
+
+
+PHOTOTROPHIC_SPECIES_TITLE
+Phototrophic Species
+PHOTOTROPHIC_SPECIES_TEXT
+'''Phototrophic species are live mainly or entirely on sunlight. These species max population is greatly influenced by the size of the local star -- the bigger the better.  Growth specials do not benefit them.'''
+
+SELF_SUSTAINING_SPECIES_TITLE
+Self-Sustaining Species
+SELF_SUSTAINING_SPECIES_TEXT
+'''Self-Sustaining species may be energy or crystaline beings or something else.  Their commonality is that they need no sustainace. So their basic population growth is very high.'''
 
 
 ####################
@@ -2727,8 +2787,9 @@ SP_GYISACHE_DESC
 Предпочитают болотные планеты.
 Органические.
 
-[[GREAT_INDUSTRY]]
+[[GOOD_INDUSTRY]]
 [[GOOD_RESEARCH]]
+[[GOOD_POPULATION]]
 
 [[BAD_GROUND_TROOPS]]
 '''
@@ -2744,14 +2805,15 @@ SP_CHATO_DESC
 [[GREAT_RESEARCH]]
         
 [[BAD_GROUND_TROOPS]]
+[[BROAD_EP]]
 '''
 
 SP_TRITH
 Трифы
 SP_TRITH_DESC
 '''Лишённые ксенофобий телепаты. 
-Предпочитают радиационные планеты.
-Органические
+Предпочитают пустынные планеты.
+Самодостаточные
 
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
@@ -2805,7 +2867,7 @@ SP_LAENFA_DESC
 Предпочитают океанические планеты
 Фототрофные
 
-[[GOOD_DETECTION]]
+[[GREAT_DETECTION]]
 [[GREAT_STEALTH]]
 
 [[BAD_INDUSTRY]]
@@ -2850,17 +2912,19 @@ SP_GEORGE
 SP_GEORGE_DESC
 '''Инфантильный единый организм, состоящий из множества многоножек.
 Предпочитает планеты-тундры.
-Органический
+Педобионт
 
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
+
+[[BROAD_EP]]
 '''
 
 SP_CRAY
 Крэи
 SP_CRAY_DESC
 '''Весёлые, полные энергии роботы. 
-Предпочитают пустынные планеты.
+Предпочитают бесплодные планеты.
 Роботы
 
 [[BAD_INDUSTRY]]
@@ -2876,12 +2940,13 @@ SP_ETTY_DESC
 Предпочитают пустынные планеты.
 Фототрофные
 
+[[BAD_DETECTION]]
+[[GOOD_STEALTH]]
+
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
 [[GOOD_GROUND_TROOPS]]
-        
-[[BAD_DETECTION]]
 '''
 
 
@@ -2918,6 +2983,9 @@ SP_EGASSEM_DESC
 
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
+
+[[BAD_POPULATION]]
+[[NARROW_EP]]
 '''
 
 SP_SSLITH
@@ -2946,11 +3014,11 @@ SP_FIFTYSEVEN_DESC
 [[BAD_GROUND_TROOPS]]
 [[BAD_POPULATION]]
 
-Biology:
-Adult Fifty-Seven are between 10 and 20 m long. The main deviation from the tapering serpentine body are the two resonating domes on the forward dorsal side. Various fins provide fine control. Entirely blind, they rely on smell, hearing, an exquisitely honed pressure sensitivity, and when the need arises bursts of echolocation. Fifty-Seven are omnivores: eating flocks of small flying creatures with the same relish as the floating phytoplankton. Since they remain aloft their entire lives and have no manipulator limbs, the Fifty-Seven have no material technology.
+Биология:
+Взрослые Пятьдесят-Семь  достигают 10-20 метров в длину. Основное отличие от классического змеиного тела - это два резонирующих купола в верхней части спины.  Различные плавники дают полный контроль над телом.  Полностью слепые, они полагаются на запах, слух, точное предчувствие, и, при необходимости, эхолокацию.  Пятьдесят-седьмые всеядные существа: питаются скоплениями маленьких летающих существ, наподобие китов, питающихся планктоном.  Так как они всю жизнь проводят в небе, и не имеют каких-либо конечностей, Пятьдесят-седьмые не владеют материальными технологиями.
 
-Personality:
-The Fifty-Seven show little interest in the rest of the galaxy, or indeed in the parts of their planet that they don't use. The bulk of their attention individually, and culturally is focused on math. They do seem eager for new mathematical puzzles, so if research problems can be phrased properly...
+Индивидуальность:
+Пятьдесят-седьмые не проявляют интереса к остальной галактике и к тем частям собственных планет, которые не используют. Большая часть их интересов индивидуальна, и культурно сосредоточена на математике.  They do seem eager for new mathematical puzzles, so if research problems can be phrased properly... 
 
 Homeworld:
 High g swamp world with a very dense atmosphere.
@@ -3218,7 +3286,7 @@ Volp-Uglush are now to integrated and ingrown. They now totally lack the indepen
 SP_EXOBOT
 Exobot
 SP_EXOBOT_DESC
-'''Semi-autonomous robots, designed for mining and industry on Barren, Radiated, & Inferno planets.
+'''Semi-autonomous robots, designed for industry on Barren, Radiated, & Inferno planets.
 
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3278,7 +3346,7 @@ GAIA_SPECIAL
 Гайа
 
 GAIA_SPECIAL_DESC
-'''Увеличивает максимальное значение населения планеты: крошечная +3, малая +6, средняя +9, большая +12, огромная +15.
+'''Увеличивает максимальное значение населения планеты; крошечная +3, малая +6, средняя +9, большая +12, огромная +15.
 
 Эта планета превратилась в живой организм, который может изменяться и адаптироваться в соответствии с нуждами населяющей его цивилизации.'''
 
@@ -3302,7 +3370,7 @@ TUNNELS_SPECIAL
 Естественные туннели
 
 TUNNELS_SPECIAL_DESCRIPTION
-'''Если планета непригодна для жизни, увеличивает максимальное население: крошечная +1, малая +2, средняя +3, большая +4, огромная +5.
+'''Если планета непригодна для жизни, увеличивает максимальное население; крошечная +1, малая +2, средняя +3, большая +4, огромная +5.
 
 На этой планете имеется сеть естественных туннелей, что позволяет заселить гораздо большую ее часть.'''
 
@@ -3318,7 +3386,7 @@ SOLID_CORE_SPECIAL
 Твердое ядро
 
 SOLID_CORE_SPECIAL_DESC
-'''Максимальное число населения этой планеты снижено: крошечная -1, малая -2, средняя -3, большая -4, огромная -5.
+'''Максимальное число населения этой планеты снижено; крошечная -1, малая -2, средняя -3, большая -4, огромная -5.
 
 У этой планеты твердое ядро и очень слабое магнитное поле. Звездный ветер достигает поверхности практически без преград, что пагубно влияет на здоровье населения.'''
 
@@ -3334,7 +3402,7 @@ SLOW_ROTATION_SPECIAL
 Очень медленное вращение
 
 SLOW_ROTATION_SPECIAL_DESC
-'''Строительство на этой планете снижено на 20. Максимальное число населения этой планеты снижено: крошечная -1, малая -2, средняя -3, большая -4, огромная -5.
+'''Строительство на этой планете снижено на 20. Максимальное число населения этой планеты снижено; крошечная -1, малая -2, средняя -3, большая -4, огромная -5.
 
 У этой планеты очень медленное вращение вокруг своей оси, что делает очень долгими дни и ночи. Рост инфраструктуры замедлен.'''
 
@@ -3461,7 +3529,7 @@ EXPERIMENTOR_OUTPOST_SPECIAL_DESC
 PROBIOTIC_SPECIAL
 Биологический суп
 PROBIOTIC_SPECIAL_DESC
-'''Увеличивает максимальное население на планете, если планета населена органическими существами: крошечная +1, малая +2, средняя +3, большая +4, огромная +5.
+'''Увеличивает максимальное население на планете, если планета населена органическими существами; крошечная +1, малая +2, средняя +3, большая +4, огромная +5.
 Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты с органическими существами получают то же преимущество.
 
 Множество уникальных одноклеточных, благотворно влияющих на здоровье и жизнедеятельность любой органической формы жизни.'''
@@ -3469,7 +3537,7 @@ PROBIOTIC_SPECIAL_DESC
 FRUIT_SPECIAL
 Фрукт сторожа
 FRUIT_SPECIAL_DESC
-'''Увеличивает максимальное население планеты с органическими существами: крошечная +1, малая +2, средняя +3, большая +4, огромная +5
+'''Увеличивает максимальное население планеты с органическими существами; крошечная +1, малая +2, средняя +3, большая +4, огромная +5
 Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты с органическими существами получают то же преимущество.
 
 То, что выглядит как лес, на самом деле является частью огромного организма, простирающегося на целые континенты. Плоды такого леса содержат комплекс органических веществ, благотворно влияющий на все формы огранической жизни.'''
@@ -3477,7 +3545,7 @@ FRUIT_SPECIAL_DESC
 SPICE_SPECIAL
 Специя "Ки"
 SPICE_SPECIAL_DESC
-'''Увеличивает максимальное население планеты с органическими существами:  крошечная +1, малая +2, средняя +3, большая +4, огромная +5
+'''Увеличивает максимальное население планеты с органическими существами;  крошечная +1, малая +2, средняя +3, большая +4, огромная +5
 Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты с органическими существами получают то же преимущество.
 
 Уникальная субстанция, являющаяся продуктом экологии этой планеты, Специя "Ки", способна продлевать жизнь, прочищать мозги и отрезвлять разум органических существ.'''
@@ -3485,7 +3553,7 @@ SPICE_SPECIAL_DESC
 MONOPOLE_SPECIAL
 Однополярные магниты
 MONOPOLE_SPECIAL_DESC
-'''Увеличивает максимальное население на планете населённой роботами:  крошечная +1, малая +2, средняя +3, большая +4, огромная +5
+'''Увеличивает максимальное население на планете населённой роботами;  крошечная +1, малая +2, средняя +3, большая +4, огромная +5
 Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты с существами-роботами получают то же преимущество.
 
 Однополярные магниты способствуют росту роботов!'''
@@ -3493,7 +3561,7 @@ MONOPOLE_SPECIAL_DESC
 SUPERCONDUCTOR_SPECIAL
 Сверхпроводимость
 SUPERCONDUCTOR_SPECIAL_DESC
-'''Увеличивает максимальное население на планете населённой роботами:  крошечная +1, малая +2, средняя +3, большая +4, огромная +5
+'''Увеличивает максимальное население на планете населённой роботами;  крошечная +1, малая +2, средняя +3, большая +4, огромная +5
 Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты с существами-роботами получают то же преимущество.
 
 Сверхпроводимость способствует росту роботов!'''
@@ -3501,7 +3569,7 @@ SUPERCONDUCTOR_SPECIAL_DESC
 POSITRONIUM_SPECIAL
 Позитронная пыть
 POSITRONIUM_SPECIAL_DESC
-'''Увеличивает максимальное население на планете населённой роботами:  крошечная +1, малая +2, средняя +3, большая +4, огромная +5
+'''Увеличивает максимальное население на планете населённой роботами;  крошечная +1, малая +2, средняя +3, большая +4, огромная +5
 Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты с существами-роботами получают то же преимущество.
 
 Позитронная пыль способствует росту роботов!'''
@@ -3509,31 +3577,31 @@ POSITRONIUM_SPECIAL_DESC
 MINERALS_SPECIAL
 Богата минералами
 MINERALS_SPECIAL_DESC
-'''Увеличивает максимальное население планеты населённой педобионтами: крошечная +1, малая +2, средняя +3, большая +4, огромная +5
+'''Увеличивает максимальное население планеты населённой педобионтами; крошечная +1, малая +2, средняя +3, большая +4, огромная +5
 Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты населённые педобионтами получают то же преимущество.
-Увеличивает максимальную добычу на 50, если планета ориентирована на Добычу, и на 2*население, если планета ориентирована на тяжелую горную промышленность.
+Увеличивает производство на 50, если планета ориентирована на Добычу.
 
-Эта планета богата залежами минералов, добыча которых в разы эффективнее. Также здесь намного быстрее происходит размножение педобионтов.'''
+Эта планета богата залежами минералов, что стимулирует производство. Также здесь намного быстрее происходит размножение педобионтов.'''
 
 CRYSTALS_SPECIAL
 Круглые кристаллы
 CRYSTALS_SPECIAL_DESC
-'''Увеличивает максимальное население планеты населённой педобионтами: крошечная +1, малая +2, средняя +3, большая +4, огромная +5
+'''Увеличивает максимальное население планеты населённой педобионтами; крошечная +1, малая +2, средняя +3, большая +4, огромная +5
 Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты населённые педобионтами получают то же преимущество.
 
-Увеличивает максимальную добычу на 50, если планета ориентирована на Добычу, и на 2*население, если планета ориентирована на тяжелую горную промышленность.
+Увеличивает производство на 50, если планета ориентирована на Добычу.
 
-На этой планете есть редкие круглые кристаллы, что увеличивает добычу или рост педобионтов.'''
+Эта планета богата залежами минералов, что стимулирует производство. Также здесь намного быстрее происходит размножение педобионтов.'''
 
 METALOIDS_SPECIAL
 Заряженные металлоиды
 METALOIDS_SPECIAL_DESC
-'''Увеличивает максимальное население планеты населённой педобионтами: крошечная +1, малая +2, средняя +3, большая +4, огромная +5
+'''Увеличивает максимальное население планеты населённой педобионтами; крошечная +1, малая +2, средняя +3, большая +4, огромная +5
 Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты населённые педобионтами получают то же преимущество.
 
-Увеличивает максимальную добычу на 50, если планета ориентирована на Добычу, и на 2*население, если планета ориентирована на тяжёлую горную промышленность.
+Увеличивает производство на 50, если планета ориентирована на Добычу.
 
-На этой планете есть редкие заряженные металлоиды, что увеличивает добычу или рост педобионтов.'''
+Эта планета богата залежами минералов, что стимулирует производство. Также здесь намного быстрее происходит размножение педобионтов.'''
 
 
 #############################################################
@@ -4856,7 +4924,7 @@ GRO_SYMBIOTIC_BIO
 Симбиозная Биология
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Increases the max population of Adequate, Poor, & Hostile planets by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
+'''Increases the max population of Adequate, Poor, & Hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
 
 GRO_GENETIC_MED
 Генная Медицина
@@ -4880,7 +4948,7 @@ GRO_XENO_GENETICS
 Ксено-Генетика
 
 GRO_XENO_GENETICS_DESC
-'''Increases the max population of Good, Adequate, Poor, & Hostile planets by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Increases the max population of Good, Adequate, Poor, & Hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
 The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
 
@@ -4926,7 +4994,7 @@ GRO_ENERGY_META
 Метаболизм Чистой Энергии
 
 GRO_ENERGY_META_DESC
-'''Increases max Fuel on all ships by 2, max Defense on all planets by 5, max Shield on all planets by 5, target Mining on all planets with the Mining focus by 10, target Industry on all planets with the Industry focus by one quarter of the planet's population, and target Research on all planets with the Research focus by one fifth.
+'''Increases max Fuel on all ships by 2, max Defense on all planets by 5, max Shield on all planets by 5, target Industry on all planets with the Industry focus by one quarter of the planet's population, and target Research on all planets with the Research focus by one fifth.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -4958,7 +5026,7 @@ PRO_ROBOTIC_PROD
 Роботизированное Производство
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases target Industry on all planets with the Industry focus by one fifth of the planet's Population, and target Mining on all planets with the Mining focus by 10.
+'''Increases target Industry on all planets with the Industry focus by one fifth of the planet's Population.
 
 Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
 
@@ -4967,7 +5035,7 @@ Exobots, as they become commonly known, are a marvel of form meets function. The
 PRO_EXOBOTS
 Полуавтономные Экзоботы
 PRO_EXOBOTS_DESC
-Allows the contruction of Exobots optimsied for mining and industry on hostile planets.
+Allows the contruction of Exobots optimsied for industry on hostile planets.
 
 PRO_RAPID_EXO_PROD
 Rapid Exobot Production
@@ -5515,7 +5583,7 @@ GRO_SUBTER_HAB
 Subterranean Habitation
 
 GRO_SUBTER_HAB_DESC
-'''Increases the max population on all planets by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.  Cannot improve a planet with the Tunnels or Tectonic Instability special.'''
+'''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.  Cannot improve a planet with the Tunnels or Tectonic Instability special.'''
 
 GRO_INDUSTRY_FARM
 Industrial Farming
@@ -5577,7 +5645,7 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Increases the max population on hostile planets by planet size— Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Increases the max population on hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
@@ -5671,7 +5739,7 @@ PRO_ASTEROID_MINE
 Астероидные Рудники
 
 PRO_ASTEROID_MINE_DESC
-'''Permits use of the Mining focus on asteroid belts.
+'''Increases Industry by +5 on Asteroid belt outposts.
 
 Извлечение минеральных ресурсов из тел суб-планетных размеров приводит к проблеме, и дает возможность обособиться от полностью развившихся планет.  Нехватка достаточной массы для само-сжижения и дифференциации ядра предоставляет астероидами более легкий доступ к некоторым тяжелым элементам, а незначительная гравитация позволяет сделать извлечение ресурсов более эффективным.  При этом ограниченные размеры каждого астероида требуют полностью передвижных, самодостаточных добывающих заводов.  Так же, должны быть преодолены проблемы с микрогравитационной средой, требующей пересмотра множества традиционных методов.'''
 
@@ -6257,14 +6325,6 @@ Refines Building
 TECH_REFINE_SHORT_DESC
 Refines Tech
 
-PRO_ASTEROID_MINE_II
-Advanced Asteroid Mines
-
-PRO_ASTEROID_MINE_II_DESC
-'''Increases Mining on all asteroid belts with the Mining focus by 10.
-
-Experience with operation of initial implementations of asteroid mining techniques allows more refined methods to be devised.'''
-
 PRO_INDUSTRY_CENTER_II
 Greater Industrial Center
 
@@ -6303,7 +6363,7 @@ BLD_CULTURE_ARCHIVES
 Cultural Archives
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Increases target Research by 5, target Industry by the planet's Population, and target Mining by half of the planet's Population.
+'''Increases target Research by 5, target Industry by the planet's Population.
 
 Stores the sum accumulated knowledge from thousands of years of life on this planet, giving bonuses to many aspects of planetary productivity.'''
 
@@ -6485,7 +6545,7 @@ BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases Industry on planets with the Industry focus by half of the planet's population, Mining on planets with the Mining focus by 20, and research on Planets with the Research focus by one and a half. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases Industry on planets with the Industry focus by half of the planet's population, and research on Planets with the Research focus by one and a half. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 
@@ -6541,7 +6601,7 @@ BLD_CLONING_CENTER
 Cloning Center
 
 BLD_CLONING_CENTER_DESC
-'''Increases target Health on all planets by 30.
+'''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
 Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving planet health. However, due to political considerations, such activities must be kept a secret from those who might have ethical concerns. As a result, this building must be hidden from the population on the dark side of a resonant moon. This building can be built at an outpost, provided it has a resonant moon.'''
 
@@ -6695,7 +6755,7 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a gas giant and gives an Industry bonus to planets with the Industry focus in the same system +5.
+'''This building can only be constructed at a gas giant and gives a +10 Industry bonus to planets with the Industry focus in the same system.
 
 A power generator designed to harvest the energy of a Gas Giant.'''
 
@@ -7650,13 +7710,21 @@ NON_ORGANIC
 '''Non-Organic: Does not benefit from some biologically-based techs.'''
 
 BAD_POPULATION
-'''%1% Bad Population'''
+'''   - Bad Population'''
 
 AVERAGE_POPULATION
-'''%1% Average Population'''
+'''Average Population'''
 
 GOOD_POPULATION
-'''%1% Good Population'''
+'''   + Good Population'''
+
+BROAD_EP
+'''  + + Broad Planet Tolerance: flourishes on more types.'''
+
+	
+NARROW_EP
+'''    - Narrow Planet Tolerance: flourishes on fewer types.'''
+
 
 
 #############################################################
@@ -7689,10 +7757,10 @@ HOMEWORLD_LABEL
 '''Homeworld'''
 
 BAD_POPULATION_LABEL
-'''%2% Bad Population 75%'''
+'''%2% Bad Population 75%%'''
 
 GOOD_POPULATION_LABEL
-'''%2% Good Population 125%'''
+'''%2% Good Population 125%%'''
 
 FOCUS_MINING_LABEL
 '''%1% Mining Focus'''
@@ -7827,4 +7895,3 @@ TELEPATHIC
 
 ORBITAL
 Орбитальные
-

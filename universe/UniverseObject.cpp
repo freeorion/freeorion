@@ -355,8 +355,10 @@ std::map<std::string, int> UniverseObject::CensoredSpecials(Visibility vis) cons
     return retval;
 }
 
-void UniverseObject::ResetTargetMaxUnpairedMeters()
-{ GetMeter(METER_STEALTH)->ResetCurrent(); }
+void UniverseObject::ResetTargetMaxUnpairedMeters() {
+    if (Meter* meter = GetMeter(METER_STEALTH))
+        meter->ResetCurrent();
+}
 
 void UniverseObject::ResetPairedActiveMeters() {
     // iterate over paired active meters (those that have an associated max or
