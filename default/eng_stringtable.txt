@@ -3299,8 +3299,6 @@ SP_EXOBOT_DESC
         
 [[BAD_GROUND_TROOPS]]
 
-[[NON_ORGANIC]]
-
 While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
 '''
 
@@ -7698,12 +7696,6 @@ GREAT_WEAPONS
 
 ULTIMATE_WEAPONS
 '''+ + + Starts with Laser 1.'''
-
-NO_NON_ORGANIC
-'''Does not apply to Non-Organic species.'''
-
-NON_ORGANIC
-'''Non-Organic: Does not benefit from some biologically-based techs.'''
 
 BAD_POPULATION
 '''    - Bad Population'''
