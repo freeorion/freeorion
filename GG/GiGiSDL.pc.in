@@ -1,0 +1,10 @@
+prefix=%(prefix)s
+includedir=%(incdir)s
+version=%(version)s
+
+Name: GiGiSDL
+Description: An SDL-based input driver and application framework for use with libGiGi.
+Requires: GiGi = ${version} sdl
+Version: ${version}
+Libs: -lGiGiSDL %(driver_libs)s
+Cflags: 

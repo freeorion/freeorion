@@ -1,0 +1,64 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+*/
+
+layout grow
+{
+    view dialog(name: "Hello World", grow: true, placement: place_column, spacing: 10, vertical: align_fill)
+    {
+        row(horizontal: align_fill)
+        {
+            static_text(horizontal: align_fill, name:
+            "NOTICE: All information contained herein is, and remains the property of "
+            "Adobe Systems Incorporated and its suppliers, if any. The intellectual and "
+            "technical concepts contained herein are proprietary to Adobe Systems Incorporated "
+            "and its suppliers and may be covered by U.S. and Foreign Patents, patents "
+            "in process, and are protected by trade secret or copyright law. Dissemination "
+            "of this information or reproduction of this material is strictly forbidden "
+            "unless prior written permission is obtained from Adobe Systems Incorporated."
+            , characters: 25);
+            button(name: "OK", bind: @done);
+        }
+        button(name: "Center", horizontal: align_center);
+        
+        row(horizontal: align_fill, child_horizontal: align_proportional)
+        {
+        button(name: "Button");
+        button(name: "Button");
+        button(name: "Button");
+        checkbox(name: "Button");
+        }
+        
+        
+        row(horizontal: align_fill)
+        {
+        button(name: "Name", horizontal: align_fill);
+        button(name: "Name", horizontal: align_fill);
+        }
+        
+        
+        row(horizontal: align_fill)
+        {
+        button(name: "Name", horizontal: align_left);
+        button(name: "Name", horizontal: align_center);
+        button(name: "Name", horizontal: align_right);
+        }
+        
+        
+        row(horizontal: align_fill)
+        {
+        button(name: "Name", horizontal: align_center);
+        button(name: "Name", horizontal: align_center);
+        button(name: "Name", horizontal: align_center);
+        }
+        
+        
+        row(horizontal: align_fill, vertical: align_fill)
+        {
+        button(name: "Name", horizontal: align_left);
+        button(name: "Name", horizontal: align_fill, vertical: align_bottom);
+        }
+    }
+}

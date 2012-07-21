@@ -1,0 +1,23 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+*/
+
+layout alert_dialog
+{
+    view dialog(name: "Alert", placement: place_row)
+    {
+        image(image: "stop.png");     
+
+        column(vertical: align_fill)
+        {
+            static_text(name: "Unfortunately, something drastic has happened. If you would like we can try to continue with the operation, but there is a chance you will blow up your computer. Would you like to try?", characters: 25);
+            row(vertical: align_bottom, horizontal: align_right)
+            {
+                button(name: "Cancel", action: @cancel, cancel: true);
+                button(name: "OK", bind: @result, action: @ok, default: true);
+            }
+        }
+    }
+}

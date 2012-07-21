@@ -1,0 +1,26 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+*/
+
+layout edit_text_suite
+{
+    view dialog(name: localize("<xstr id='edit_text_suite_dialog_title'>Edit Text Suite</xstr>"))
+    {
+        row(child_horizontal: align_fill)
+        {
+            group(placement: place_column, name: localize("<xstr id='edit_text_suite_dialog_title'>Edit Text Suite</xstr>"), child_horizontal: align_fill)
+            {
+                edit_text(bind: @edit_text_value, characters: 10, name: localize("<xstr id='et_suite_label'>Label Name:</xstr>"));
+                edit_text(bind: @edit_text_value, scrollable: true, characters: 10, lines: 10, name: localize("<xstr id='et_suite_label'>Label Name:</xstr>"));
+                checkbox(bind: @disabled, name: localize("<xstr id='et_suite_disabled'>Disabled</xstr>"));
+            }
+            column(child_horizontal: align_fill)
+            {
+                button(name: localize("<xstr id='ok'>OK</xstr>"), default: true);
+                button(name: localize("Cancel"), action: @cancel);
+            }
+        }
+    }
+}

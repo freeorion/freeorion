@@ -1,0 +1,20 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+*/
+
+layout grouped_options
+{
+    view dialog(name: "Grouped Options")
+    {
+		column()
+		{
+			checkbox(name: "all", bind: @all);
+			checkbox(name: "a", bind: @a, indent: 10);
+			checkbox(name: "b", bind: @b, indent: 10);
+			checkbox(name: "c", bind: @c, indent: 10);
+		}
+		button(name: "OK", bind: @result, action: @ok, default: true);
+    }
+}

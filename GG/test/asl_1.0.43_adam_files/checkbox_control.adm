@@ -1,0 +1,21 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+*/
+
+sheet control_example
+{
+interface:
+    control         : true;
+    enable_me           : false <== control == true ? true : enable_me;
+    enable_me_too       : false <== control == true ? enable_me_too : false;
+    unlink remember_me  : false <== control == true ? true : remember_me;
+output:
+    result <==  {
+                    control: control,
+                    enable_me : enable_me,
+                    enable_me_too : enable_me_too,
+                    remember_me : remember_me
+                };
+}

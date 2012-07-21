@@ -1,0 +1,35 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+*/
+
+layout alignment_test
+{
+    view dialog(name: "Alignment Test", grow: true)
+    {
+		row(horizontal: align_fill, vertical: align_fill)
+		{
+		group(horizontal: align_fill, vertical: align_fill)
+			{
+        			edit_number(name: "Right Align Test:", horizontal: align_right, digits: 16);
+        			edit_number(name: "This is left:", digits: 4);
+				edit_number(name: "Also left:", digits: 2);
+        			edit_number(name: "Also right:", horizontal: align_right, digits: 8);
+        			edit_number(name: "This is left fill:", digits: 4, horizontal: align_fill);
+			}
+			group(placement: place_row, vertical: align_fill)
+			{
+				button(name: "top");
+				checkbox(name: "top");
+				button(name: "bottom", vertical:align_bottom);
+				checkbox(name: "bottom", vertical:align_bottom);
+			}
+		}
+        column(child_horizontal: align_fill)
+        {
+            button(name: "OK", default: true);
+            button(name: "Cancel", action: @cancel);
+        }
+    }
+}

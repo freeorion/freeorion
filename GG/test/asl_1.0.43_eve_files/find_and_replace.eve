@@ -1,0 +1,129 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+    
+    ANOMALIES WRT ORIGINAL DIALOG: (OD stands for Original Dialog)
+    - OD has popup button of width 0 to display MRU search/replace/patterns strings
+    - OD has "section" double-S in a button next to MRU popups
+    - OD "section" button is only wide enough as need be (not minimum button width of 80)
+    - When document open, default button in OD toggles between "Find" and "Find All" depending
+        on state of "Multi-File Search" button
+    - When no document open, default button in OD toggles between "Find All" and "Don't find"
+        depending on state of "Multi-File Search" button
+    - OD has a drawer containing MRU directories searched for multi-file search. This can be
+        toggled with an icon button to the left of the multi-file search target field.
+    - Need to be able to specify icon push buttons
+    - OD "Other..." button links to a OS-level directory selection dialog
+    - Need to be able to specify menu items with a cell in the Adam sheet (for MRU popups)
+    - "Use Grep" checkbox is aligned with second column of checkboxes below search field,
+        an alignment currently not possible
+    - Clicking in the multi-file search display field in OD shows a tool tip with the
+        directory in it
+    - Need to be able to specify just horizontal or vertical scroller for an edit_text
+    - Holding down the Command key in OD reveals command-key shortcuts for dialog widgets
+
+    DESIRED BEHAVIORS:
+    - Want to diable "Options..." button, "Other..." button, "Saved Search Sources" string,
+        "Saved Search Sources" popup, and Drawer icon based on value of Multi-file search
+        checkbox.
+*/
+
+layout find_and_replace
+{
+    view dialog(name: "Find & Replace", placement: place_row)
+    {
+        column()
+        {
+            row(guide_mask: [ ])
+            {
+                popup(  name: 'Search For:', popup_bind: @recent_search_strings, popup_placement: @down,
+                        items: [
+                            { name: '(recent search strings)', value: empty },
+                            { name: '-', value: @pattern_separator }
+                        ]);
+                static_text(name: localize("<xstr id='section_symbol'>&#xa7;</xstr>"));
+                checkbox(name: 'Use Grep');
+            }
+            popup(  name: 'Patterns:', popup_bind: @patterns, popup_placement: @down,
+                    items: [
+                        { name: 'Add...', value: @pattern_add },
+                        { name: '-', value: @pattern_separator },
+                        { name: 'Pascal Comment to C Comment', value: @pattern_p_to_c },
+                        { name: 'C++ Comment to C Comment', value: @pattern_cpp_to_c },
+                        { name: 'Run of Spaces to One Tab', value: @pattern_spaces_to_tab },
+                        { name: 'C Function Header', value: @pattern_c_header },
+                        { name: 'C Comment to Pascal Comment', value: @pattern_pascal_to_c },
+                        { name: 'Shift Variables Right', value: @pattern_var_right },
+                        { name: 'Lower Case SRC values in IMG tags', value: @pattern_img_tag_process },
+                        { name: 'Lower Case HREF values in A tags', value: @pattern_a_tag_process },
+                        { name: 'Column #2', value: @pattern_column_2 }
+                    ]);
+            edit_text(size: @size_small, characters: 60, lines: 3, scrollable: false, monospaced: true, vertical: align_fill);
+            row(horizontal: align_fill)
+            {
+                column()
+                {
+                    checkbox(name: 'Start at Top', bind: @start_at_top, value: true);
+                    checkbox(name: 'Wrap Around', bind: @wrap_around, value: true);
+                    checkbox(name: 'Search Backwards', bind: @search_backwards, value: true);
+                    checkbox(name: 'Case Sensitive', bind: @case_sensitive, value: true);
+                }
+                column(horizontal: align_center, vertical: align_fill)
+                {
+                    checkbox(name: 'Search Selection Only', bind: @search_selection_only, value: true);
+                    checkbox(name: 'Extend Selection', bind: @extend_selection, value: true);
+                    checkbox(name: 'Match Entire Words', bind: @match_entire_words, value: true, vertical: align_bottom);
+                }
+            }
+            row(guide_mask: [ ])
+            {
+                popup(  name: 'Replace With:', popup_bind: @recent_search_strings, popup_placement: @down,
+                        items: [
+                            { name: '(recent replace strings)', value: empty },
+                            { name: '-', value: @pattern_separator }
+                        ]);
+                static_text(name: localize("<xstr id='section_symbol'>&#xa7;</xstr>"));
+            }
+            edit_text(size: @size_small, characters: 60, lines: 3, scrollable: false, monospaced: true, vertical: align_fill);
+            separator();
+            checkbox(name: 'Multi-File Search', bind: @multi_file_search, value: true);
+            popup(  name: 'Saved Search Sources:', popup_bind: @saved_search_sources, popup_placement: @down,
+                    items: [
+                        { name: 'Remember This Set...', value: empty },
+                        { name: '-', value: @pattern_separator }
+                    ], guide_mask: [ ]);
+            row(horizontal: align_fill)
+            {
+                button(name: 'Icon', width: 32, height: 32);
+                edit_text(bind: @multi_file_search_folder, size: @size_small, characters: 30, lines: 3, monospaced: true, horizontal: align_fill, vertical: align_fill);
+            }
+        }
+        column(child_horizontal: align_fill, vertical: align_fill, spacing: 20)
+        {
+            column(child_horizontal: align_fill)
+            {
+                button(name: 'Find', default: true);
+                button(name: 'Find All');
+            }
+            column(child_horizontal: align_fill)
+            {
+                button(name: 'Replace');
+                button(name: 'Replace All');
+            }
+            column(child_horizontal: align_fill)
+            {
+                button(name: "Don't Find");
+            }
+            column(child_horizontal: align_fill)
+            {
+                button(name: 'Cancel', cancel: true, action: @cancel);
+            }
+            column(child_horizontal: align_fill, vertical: align_bottom, spacing: 20)
+            {
+                button(name: 'Other...');
+                button(name: 'Options...', action: @dialog, value: "find_and_replace_options.eve");
+            }
+        }
+    }
+}

@@ -1,0 +1,38 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+*/
+
+layout slider_suite
+{
+    view dialog(name: "Slider Suite", grow: true, horizontal: align_fill)
+    {
+        row(child_horizontal: align_fill, horizontal: align_fill)
+        {
+            column()
+            { 
+                edit_number(name: "Value:", bind: @slider_value_1, digits: 3, format: "#");
+                group(placement: place_row, name: "Vertical Sliders", child_horizontal: align_fill)
+                {
+                    slider(bind: @slider_value_1, slider_point: @left, orientation: @vertical, format: {first: 0, last: 100, interval: 1});
+                    slider(bind: @slider_value_2, slider_point: @right, orientation: @vertical, format: {first: 0, last: 100, interval: 1});
+                    slider(bind: @slider_value_1, orientation: @vertical, format: {first: 0, last: 100, interval: 1});
+                    slider(bind: @slider_value_2, slider_point: @right, slider_ticks: 11, orientation: @vertical, format: {first: 0, last: 100, interval: 1});
+                }
+                group(placement: place_column, name: "Horizontal Sliders", horizontal: align_fill, child_horizontal: align_fill)
+                {
+                    slider(bind: @slider_value_2, slider_point: @up, format: {first: 0, last: 100, interval: 1});
+                    slider(bind: @slider_value_1, slider_point: @down, format: {first: 0, last: 100, interval: 1});
+                    slider(bind: @slider_value_2, format: {first: 0, last: 100, interval: 1});
+                    slider(bind: @slider_value_1, slider_point: @down, slider_ticks: 11, format: {first: 0, last: 100, interval: 1});
+                }
+            }
+            column(child_horizontal: align_fill, horizontal: align_right)
+            {
+                button(name: "OK", default: true, bind: @slider_value_1);
+                button(name: "Cancel", action: @cancel);
+            }
+        }
+    }
+}

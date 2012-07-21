@@ -1,0 +1,62 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+*/
+
+layout alignment_test
+{
+    view dialog(name: "Alignment Test", spacing: 6)
+    {
+        group(placement: place_column, name: "Colon Alignment 1")
+        {
+            edit_text(bind: @alignment, characters: 10, name: "Apple:");
+            edit_text(bind: @alignment, characters: 10, name: "Orange:");
+            edit_text(bind: @alignment, characters: 10, name: "Orangutan:");
+            popup(name: "Foo:", items: [{name: "Item One", value: @one}, {name: "Item Two", value: @two}]);
+            popup(name: "Alignment:", items: [{name: "Item One", value: @one}, {name: "Item Two", value: @two}]);
+        }
+        column()
+        {
+            group(placement: place_column, name: "Colon Alignment 2")
+            {
+                edit_text(bind: @alignment, characters: 10, name: "Alignment:");
+    
+                row(spacing: 4)
+                {
+                    static_text(name: "Alignment:");
+                    edit_text(bind: @alignment, characters: 10);
+                }
+    
+                popup(name: "Alignment:", items: [{name: "Item One", value: @one}, {name: "Item Two", value: @two}]);
+    
+                row(spacing: 4)
+                {
+                    static_text(name: "Alignment:");
+                    popup(items: [{name: "Item One", value: @one}, {name: "Item Two", value: @two}]);
+                }
+            }
+        }
+        column()
+        {
+            group(placement: place_column, name: "No lables")
+            {
+                edit_text(bind: @alignment, characters: 10);
+                popup(items: [{name: "Item One", value: @one}, {name: "Item Two", value: @two}]);
+            }
+            group(placement: place_column, name: "Other Texts")
+            {
+                row()
+                {
+                    static_text(name: "A great yellow | OL");
+                    button(name: "Alignment");
+                }
+            }
+        }
+        column(child_horizontal: align_fill)
+        {
+            button(name: "OK", default: true);
+            button(name: "Cancel", action: @cancel);
+        }
+    }
+}

@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${prefix}/lib@LIB_SUFFIX@
+includedir=${prefix}/include
+version=@GIGI_VERSION@
+
+Name: GiGi
+Description: An OpenGL GUI library.
+Version: ${version}
+Libs: -L${libdir} -lGiGi @pkg_config_libs@
+Cflags: -I@Boost_INCLUDE_DIRS@ -I${includedir}

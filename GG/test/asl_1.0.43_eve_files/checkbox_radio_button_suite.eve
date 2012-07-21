@@ -1,0 +1,54 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+*/
+
+layout checkbox_radio_button_suite
+{
+    view dialog(name: "Checkbox & Radio Button Suite")
+    {
+        row(child_horizontal: align_fill)
+        {
+            column()
+            {
+                group(placement: place_row, name: "Horizontal Checkboxes", child_horizontal: align_fill)
+                {
+                    checkbox(name: "Checkbox A", bind: @checkbox_1);
+                    checkbox(name: "Checkbox B", bind: @checkbox_2);
+                    checkbox(name: "Checkbox C", bind: @checkbox_3);
+                    checkbox(bind: @checkbox_empty);
+                }
+                group(placement: place_row, name: "Vertical Checkboxes & Radio Buttons", horizontal: align_fill, child_horizontal: align_fill)
+                {
+                    column(vertical: align_top, guide_mask: [])
+                    {
+                        checkbox(name: "Checkbox A", bind: @checkbox_1);
+                        checkbox(name: "Checkbox B", bind: @checkbox_2);
+                        checkbox(name: "Checkbox C", bind: @checkbox_3);
+                        checkbox(bind: @checkbox_empty);
+                    }
+                    column(vertical: align_top, guide_mask: [])
+                    {
+                        radio_button(name: "Radio Button A", bind: @radio_button_1, value: @a);
+                        radio_button(name: "Radio Button B", bind: @radio_button_1, value: @b);
+                        radio_button(name: "Radio Button C", bind: @radio_button_1, value: @c);
+                        radio_button(bind: @radio_button_1, value: @none);
+                    }
+                }
+                group(placement: place_row, name: "Horizontal Radio Buttons", child_horizontal: align_fill)
+                {
+                        radio_button(name: "Radio Button A", bind: @radio_button_1, value: @a);
+                        radio_button(name: "Radio Button B", bind: @radio_button_1, value: @b);
+                        radio_button(name: "Radio Button C", bind: @radio_button_1, value: @c);
+                        radio_button(bind: @radio_button_1, value: @none);
+                }
+            }
+            column(child_horizontal: align_fill)
+            {
+                button(name: "OK", default: true);
+                button(name: "Cancel", action: @cancel);
+            }
+        }
+    }
+}
