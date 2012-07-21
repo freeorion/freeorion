@@ -8,7 +8,7 @@ set(CMAKE_VERBOSE_MAKEFILE false)
 ########################################
 project(FreeOrion)
 
-set(FREEORION_VERSION 0.3.17)
+set(FREEORION_VERSION 0.4.1)
 set(FREEORION_RELEASE false)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
@@ -121,7 +121,6 @@ set(LC_ALL $ENV{tmpLC_ALL})
 # Build common code library            #
 ########################################
 include_directories(${CMAKE_SOURCE_DIR} log4cpp)
-include_directories(${CMAKE_SOURCE_DIR} UI/ogdf)
 
 add_definitions(-DADOBE_STD_SERIALIZATION)
 
