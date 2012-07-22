@@ -16,6 +16,7 @@
 #include <GG/Layout.h>
 #include <GG/TabWnd.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
+#include <GG/utf8/checked.h>
 
 #include <boost/cast.hpp>
 #include <boost/format.hpp>
@@ -154,7 +155,15 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
+#if defined(_WIN32)
+            // On Win32, paths are UTF-16, so need to convert passed-in UTF-8
+            // path string to UTF-16 to create the path object.
+            boost::filesystem::path::string_type file_name_native;
+            utf8::utf8to16(file.begin(), file.end(), std::back_inserter(file_name_native));
+            fs::path path = fs::path(file_name_native);
+#else
             fs::path path = fs::path(file);
+#endif
             return fs::exists(path) && fs::is_directory(path);
         } catch (std::exception ex) {
         }

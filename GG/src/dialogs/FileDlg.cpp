@@ -32,6 +32,7 @@
 #include <GG/StyleFactory.h>
 #include <GG/TextControl.h>
 #include <GG/WndEvent.h>
+#include <GG/utf8/checked.h>
 
 #include <GG/dialogs/ThreeButtonDlg.h>
 
@@ -473,13 +474,16 @@ void FileDlg::OkHandler(bool double_click)
                 !boost::algorithm::ends_with(save_file, m_file_filters[0].second.substr(1))) {
                 save_file += m_file_filters[0].second.substr(1);
             }
-            if (!fs::native(save_file)) {
-                boost::shared_ptr<ThreeButtonDlg> dlg(
-                    style->NewThreeButtonDlg(X(150), Y(75), m_malformed_filename_str, m_font, m_color, m_border_color, m_color,
-                                             m_text_color, 1, m_three_button_dlg_ok_str));
-                dlg->Run();
-                return;
-            }
+            //if (!fs::native(save_file)) {
+            //    boost::shared_ptr<ThreeButtonDlg> dlg(
+            //        style->NewThreeButtonDlg(X(150), Y(75), m_malformed_filename_str, m_font, m_color, m_border_color, m_color,
+            //                                 m_text_color, 1, m_three_button_dlg_ok_str));
+            //    dlg->Run();
+            //    return;
+            //}
+
+            // TODO: handle UTF-8 -> UTF-16 for Win32
+
             fs::path p = s_working_dir / fs::path(save_file);
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
             m_result.insert(p.string());
@@ -501,16 +505,16 @@ void FileDlg::OkHandler(bool double_click)
             OpenDirectory();
         } else { // ensure the file(s) are valid before returning them
             for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it) {
-                if (!fs::native(*it)) {
-                    std::string msg_str = boost::str(boost::format(m_invalid_filename_str) % (*it));
-                    boost::shared_ptr<ThreeButtonDlg> dlg(
-                        style->NewThreeButtonDlg(X(300), Y(125), msg_str, m_font, m_color, m_border_color, m_color,
-                                                 m_text_color, 1, m_three_button_dlg_ok_str));
-                    dlg->Run();
-                    results_valid = false;
-                    break;
-                }
+#if defined(_WIN32)
+                // On Win32, paths are UTF-16, so need to convert GUI's UTF-8
+                // back to UTF-16 before attempting to use.
+                const std::string& file_name = *it;
+                boost::filesystem::path::string_type file_name_native;
+                utf8::utf8to16(file_name.begin(), file_name.end(), std::back_inserter(file_name_native));
+                fs::path p = s_working_dir / fs::path(file_name_native);
+#else
                 fs::path p = s_working_dir / fs::path(*it);
+#endif
                 if (fs::exists(p)) {
                     bool p_is_directory = fs::is_directory(p);
                     if (!m_select_directories && p_is_directory) {
@@ -523,7 +527,16 @@ void FileDlg::OkHandler(bool double_click)
                         break;
                     }
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+    #if defined(_WIN32)
+                    // On Win32, paths are UTF-16, so need to convert full path
+                    // back to UTF-8 to put into results
+                    std::string temp;
+                    boost::filesystem::path::string_type file_name_native = p.native();
+                    utf8::utf16to8(file_name_native.begin(), file_name_native.end(), std::back_inserter(temp));
+                    m_result.insert(temp);
+    #else
                     m_result.insert(p.string());
+    #endif
 #else
                     m_result.insert(p_is_directory ? p.native_directory_string() : p.native_file_string());
 #endif
@@ -663,7 +676,8 @@ void FileDlg::UpdateList()
     if (!m_in_win32_drive_selection) {
         if ((s_working_dir.string() != s_working_dir.root_path().string() &&
              s_working_dir.branch_path().string() != "") ||
-            Win32Paths()) {
+            Win32Paths())
+        {
             ListBox::Row* row = new ListBox::Row();
             row->push_back("[..]", m_font, m_text_color);
             m_files_list->Insert(row);
@@ -685,8 +699,19 @@ void FileDlg::UpdateList()
                 if (fs::exists(*it) && fs::is_directory(*it) && it->filename()[0] != '.') {
 #endif
                     ListBox::Row* row = new ListBox::Row();
+
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+    #if defined(_WIN32)
+                    // On Win32, paths are returned as UTF-16, which if passed
+                    // to TextControl may cause crashes if non-Latin characters
+                    // are present. So, here we convert to UTF-8.
+                    boost::filesystem::path::string_type file_name_native = it->path().filename().native();
+                    std::string temp;
+                    utf8::utf16to8(file_name_native.begin(), file_name_native.end(), std::back_inserter(temp));
+                    std::string row_text = "[" + temp + "]";
+    #else
                     std::string row_text = "[" + it->path().filename().string() + "]";
+    #endif
 #else
                     std::string row_text = "[" + it->filename() + "]";
 #endif
@@ -757,7 +782,16 @@ void FileDlg::UpdateList()
 void FileDlg::UpdateDirectoryText()
 {
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+    #if defined(_WIN32)
+    // On Win32, paths are returned as UTF-16, which if passed
+    // to TextControl may cause crashes if non-Latin characters
+    // are present. So, here we convert to UTF-8.
+    boost::filesystem::path::string_type working_dir_native = s_working_dir.native();
+    std::string str;
+    utf8::utf16to8(working_dir_native.begin(), working_dir_native.end(), std::back_inserter(str));
+    #else
     std::string str = s_working_dir.string();
+    #endif
 #else
     std::string str = s_working_dir.native_directory_string();
 #endif
@@ -803,7 +837,16 @@ void FileDlg::OpenDirectory()
             }
         } else {
             if (!m_in_win32_drive_selection) {
+
+#if defined(_WIN32)
+                // On Win32, paths are UTF-16, so need to convert GUI's UTF-8
+                // back to UTF-16 before attempting to use.
+                boost::filesystem::path::string_type win32_directory;
+                utf8::utf8to16(directory.begin(), directory.end(), std::back_inserter(win32_directory));
+                SetWorkingDirectory(s_working_dir / fs::path(win32_directory));
+#else
                 SetWorkingDirectory(s_working_dir / fs::path(directory));
+#endif
             } else {
                 m_in_win32_drive_selection = false;
                 try {
