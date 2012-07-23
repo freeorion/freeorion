@@ -286,11 +286,11 @@ void OptionsDB::Remove(const std::string& name) {
     OptionRemovedSignal(name);
 }
 
-void OptionsDB::SetFromCommandLine(int argc, char* argv[]) {
+void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
     bool option_changed = false;
 
-    for (int i = 1; i < argc; ++i) {
-        std::string current_token(argv[i]);
+    for (unsigned int i = 1; i < args.size(); ++i) {
+        std::string current_token(args[i]);
         if (current_token.find("--") == 0) {
             std::string option_name = current_token.substr(2);
 
@@ -306,11 +306,11 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[]) {
             if (option.validator) { // non-flag
                 try {
                     // ensure a parameter exists...
-                    if (i + 1 >= argc)
+                    if (i + 1 >= static_cast<int>(args.size()))
                         throw std::runtime_error("the option \"" + option.name + 
                                                  "\" was specified, at the end of the list, with no parameter value.");
                     // get parameter value
-                    std::string value_str(argv[++i]);
+                    std::string value_str(args[++i]);
                     StripQuotation(value_str);
                     // ensure parameter is actually a parameter, and not the next option name (which would indicate
                     // that the option was specified without a parameter value, as if it was a flag)
@@ -356,7 +356,7 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[]) {
                         if (j < single_char_options.size() - 1)
                             throw std::runtime_error(std::string("Option \"-") + single_char_options[j] + "\" was given with no parameter.");
                         else
-                            option.SetFromString(argv[++i]);
+                            option.SetFromString(args[++i]);
                     } else { // flag
                         option.value = true;
                     }

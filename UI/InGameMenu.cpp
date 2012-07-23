@@ -12,10 +12,9 @@
 #include <GG/Button.h>
 #include <GG/Clr.h>
 #include <GG/DrawUtil.h>
+#include <GG/utf8/checked.h>
 
 #include <boost/filesystem/operations.hpp>
-
-#include <fstream>
 
 namespace {
     const GG::X IN_GAME_OPTIONS_WIDTH(150);
@@ -68,21 +67,29 @@ GG::X InGameMenu::MinimizedWidth() const
 void InGameMenu::Render()
 { CUIWnd::Render(); }
 
-void InGameMenu::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (key == GG::GGK_RETURN || key == GG::GGK_ESCAPE || key == GG::GGK_F10) // Same behaviour as if "done" was pressed
+void InGameMenu::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+    // Same behaviour as if "done" was pressed
+    if (key == GG::GGK_RETURN || key == GG::GGK_ESCAPE || key == GG::GGK_F10)
         Done();
 }
 
-void InGameMenu::Save()
-{
-    const std::string SAVE_GAME_EXTENSION = HumanClientApp::GetApp()->SinglePlayerGame() ? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
+void InGameMenu::Save() {
+    const std::string SAVE_GAME_EXTENSION =
+        HumanClientApp::GetApp()->SinglePlayerGame() ?
+        SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
 
     std::vector<std::pair<std::string, std::string> > save_file_types;
-    save_file_types.push_back(std::pair<std::string, std::string>(UserString("GAME_MENU_SAVE_FILES"), "*" + SAVE_GAME_EXTENSION));
+    save_file_types.push_back(std::make_pair(UserString("GAME_MENU_SAVE_FILES"), "*" + SAVE_GAME_EXTENSION));
 
     try {
-        FileDlg dlg(GetSaveDir().string(), "", true, false, save_file_types);
+#ifndef FREEORION_WIN32
+        std::string path_String = GetSaveDir().string();
+#else
+        boost::filesystem::path::string_type native_path_string = GetSaveDir().native();
+        std::string path_string;
+        utf8::utf16to8(native_path_string.begin(), native_path_string.end(), std::back_inserter(path_string));
+#endif
+        FileDlg dlg(path_string, "", true, false, save_file_types);
         dlg.Run();
         if (!dlg.Result().empty()) {
             HumanClientApp::GetApp()->SaveGame(*dlg.Result().begin());
@@ -93,21 +100,18 @@ void InGameMenu::Save()
     }
 }
 
-void InGameMenu::Load()
-{
+void InGameMenu::Load() {
     Hide();
     HumanClientApp::GetApp()->LoadSinglePlayerGame();
     CloseClicked();
 }
 
-void InGameMenu::Options()
-{
+void InGameMenu::Options() {
     OptionsWnd options_wnd;
     options_wnd.Run();
 }
 
-void InGameMenu::Exit()
-{
+void InGameMenu::Exit() {
     HumanClientApp::GetApp()->EndGame();
     CloseClicked();
 }

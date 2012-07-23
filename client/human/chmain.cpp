@@ -24,6 +24,8 @@
 #include <OgreSceneManager.h>
 #include <OgreViewport.h>
 
+#include <GG/utf8/checked.h>
+
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -54,14 +56,36 @@ const bool  STORE_FULLSCREEN_FLAG = true;
 #endif
 
 
-#ifndef FREEORION_MACOSX
-int main(int argc, char* argv[])
-{
+#ifdef FREEORION_LINUX
+int main(int argc, char* argv[]) {
+    // copy command line arguments to vector
+    std::vector<std::string> args;
+    for (int i = 0; i < argc; ++i)
+        args.push_back(argv[i]);
+
     // set options from command line or config.xml, or generate config.xml
-    if (mainConfigOptionsSetup(argc, argv) != 0) {
+    if (mainConfigOptionsSetup(args) != 0) {
         std::cerr << "main() failed config." << std::endl;
         return 1;
     }
+#endif
+#ifdef FREEORION_WIN32
+int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
+    // copy UTF-16 command line arguments to UTF-8 vector
+    std::vector<std::string> args;
+    for (int i = 0; i < argc; ++i) {
+        std::wstring argi16(argv[i]);
+        std::string argi8;
+        utf8::utf16to8(argi16.begin(), argi16.end(), std::back_inserter(argi8));
+        args.push_back(argi8);
+    }
+
+    // set options from command line or config.xml, or generate config.xml
+    if (mainConfigOptionsSetup(args) != 0) {
+        std::cerr << "main() failed config." << std::endl;
+        return 1;
+    }
+#endif
 
     // did the player request help output?
     if (GetOptionsDB().Get<bool>("help")) {
@@ -76,11 +100,10 @@ int main(int argc, char* argv[])
     }
     return 0;
 }
-#endif // ifndef FREEORION_MACOSX
 
 
-int mainConfigOptionsSetup(int argc, char* argv[]) {
-    InitDirs(argv[0]);
+int mainConfigOptionsSetup(const std::vector<std::string>& args) {
+    InitDirs((args.empty() ? "" : *args.begin()));
 
     // read and process command-line arguments, if any
     try {
@@ -119,7 +142,7 @@ int mainConfigOptionsSetup(int argc, char* argv[]) {
 
 
         // override previously-saved and default options with command line parameters and flags
-        GetOptionsDB().SetFromCommandLine(argc, argv);
+        GetOptionsDB().SetFromCommandLine(args);
 
 
         // Handle the case where the resource-dir does not exist anymore
@@ -138,7 +161,14 @@ int mainConfigOptionsSetup(int argc, char* argv[]) {
                     GetOptionsDB().GetXML().WriteDoc(ofs);
                 } else {
                     std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
+#if defined(FREEORION_WIN32)
+                    boost::filesystem::path::string_type path_string_native = GetConfigPath().native();
+                    std::string path_string;
+                    utf8::utf16to8(path_string_native.begin(), path_string_native.end(), std::back_inserter(path_string));
+                    std::cerr << path_string << std::endl;
+#else
                     std::cerr << GetConfigPath().string() << std::endl;
+#endif
                 }
             } catch (const std::exception&) {
                 std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
@@ -166,8 +196,7 @@ int mainConfigOptionsSetup(int argc, char* argv[]) {
 }
 
 
-int mainSetupAndRunOgre()
-{
+int mainSetupAndRunOgre() {
     Ogre::LogManager*       log_manager = 0;
     Ogre::Root*             root = 0;
 #ifdef FREEORION_MACOSX
@@ -181,16 +210,26 @@ int mainSetupAndRunOgre()
 
     try {
         using namespace Ogre;
-
         log_manager = new LogManager();
+
+#ifndef FREEORION_WIN32
         log_manager->createLog((GetUserDir() / "ogre.log").string(), true, false);
-
         root = new Root((GetRootDataDir() / "ogre_plugins.cfg").string());
-
         // this line is needed on some Linux systems which otherwise will crash with
         // errors about GLX_icon.png being missing.
         Ogre::ResourceGroupManager::getSingleton().addResourceLocation((ClientUI::ArtDir() / ".").string(),
                                                                        "FileSystem", "General");
+#else
+        boost::filesystem::path::string_type file_native = (GetUserDir() / "ogre.log").native();
+        std::string ogre_log_file;
+        utf8::utf16to8(file_native.begin(), file_native.end(), std::back_inserter(ogre_log_file));
+        log_manager->createLog(ogre_log_file, true, false);
+
+        file_native = (GetRootDataDir() / "ogre_plugins.cfg").native();
+        std::string plugins_cfg_file;
+        utf8::utf16to8(file_native.begin(), file_native.end(), std::back_inserter(plugins_cfg_file));
+        root = new Root(plugins_cfg_file);
+#endif
 
 #if defined(OGRE_STATIC_LIB)
         octree_plugin = new Ogre::OctreePlugin;
@@ -247,8 +286,14 @@ int mainSetupAndRunOgre()
         //EntityRenderer entity_renderer(scene_manager);
 
         parse::init();
-
-        HumanClientApp app(root, window, scene_manager, camera, viewport, (GetRootDataDir() / "OISInput.cfg").string());
+#ifndef FREEORION_WIN32
+        std::string ois_file_string = (GetRootDataDir() / "OISInput.cfg").string();
+#else
+        boost::filesystem::path::string_type ois_file_native = (GetRootDataDir() / "OISInput.cfg").native();
+        std::string ois_file_string;
+        utf8::utf16to8(ois_file_native.begin(), ois_file_native.end(), std::back_inserter(ois_file_string));
+#endif
+        HumanClientApp app(root, window, scene_manager, camera, viewport, ois_file_string);
 
 #ifdef FREEORION_MACOSX
         ois_input_plugin = new OISInput;
@@ -269,7 +314,7 @@ int mainSetupAndRunOgre()
         }
 
         std::string load_filename = GetOptionsDB().Get<std::string>("load");
-        if (load_filename != "") {
+        if (!load_filename.empty()) {
             // immediately start the server, establish network connections, and
             // go into a single player game, loading the indicated file
             // (without requiring the user to click the load button).

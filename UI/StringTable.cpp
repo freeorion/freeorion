@@ -4,6 +4,8 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/Directories.h"
 
+#include <GG/utf8/checked.h>
+
 #include <boost/filesystem/fstream.hpp>
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string/replace.hpp>
@@ -35,14 +37,21 @@ const std::string& StringTable_::operator[] (const std::string& index) const {
 }
 
 void StringTable_::Load() {
+#ifndef FREEORION_WIN32
     std::ifstream ifs(m_filename.c_str());
+#else
+    boost::filesystem::path::string_type native_filename;
+    utf8::utf8to16(m_filename.begin(), m_filename.end(), std::back_inserter(native_filename));
+    boost::filesystem::path path(native_filename);
+    boost::filesystem::ifstream ifs(path);
+#endif
     std::string file_contents;
 
     if (ifs) {
         // skip byte order mark (BOM)
         static const int UTF8_BOM[3] = {0x00EF, 0x00BB, 0x00BF};
         for (int i = 0; i < 3; i++) {
-            if(UTF8_BOM[i] != ifs.get()) {
+            if (UTF8_BOM[i] != ifs.get()) {
                 // no header set stream back to start of file
                 ifs.seekg(0, std::ios::beg);
                 // and continue

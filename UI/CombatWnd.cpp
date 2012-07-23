@@ -763,7 +763,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
             for (std::map<PlanetType, std::string>::const_iterator type_it =
                      ClientUI::PlanetTypeFilePrefixes().begin();
                  type_it != ClientUI::PlanetTypeFilePrefixes().end();
-                 ++type_it) {
+                 ++type_it)
+            {
                 std::set<std::string> current_textures;
                 for (fs::directory_iterator it(dir); it != end_it; ++it) {
                     try {
@@ -789,7 +790,12 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         }
         std::size_t planet_id_interval = 100 * max_textures_available;
 
-        std::ifstream ifs("demo_planet_params.txt");
+#ifdef FREEORION_WIN32
+        boost::filesystem::ifstream ifs(boost::filesystem::path(L"demo_planet_params.txt"));
+#else
+        boost::filesystem::ifstream ifs(boost::filesystem::path("demo_planet_params.txt"));
+#endif
+
         if (ifs) {
             ifs >> system_id >> star_type;
             std::cout << system_id << " " << star_type << "\n";

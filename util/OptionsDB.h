@@ -189,7 +189,8 @@ public:
     /** adds a flag Option, which is treated as a boolean value with a default
       * of false.  Using the flag on the command line at all indicates that its
       * value it set to true. */
-    void        AddFlag(const std::string& name, const std::string& description, bool storable = true)
+    void        AddFlag(const std::string& name, const std::string& description,
+                        bool storable = true)
     {
         if (m_options.find(name) != m_options.end())
             throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was specified twice.");
@@ -201,7 +202,8 @@ public:
     /** adds an Option with an alternative one-character shortened name, which
       * is treated as a boolean value with a default of false.  Using the flag
       * on the command line at all indicates that its value it set to true. */
-    void        AddFlag(char short_name, const std::string& name, const std::string& description, bool storable = true)
+    void        AddFlag(char short_name, const std::string& name,
+                        const std::string& description, bool storable = true)
     {
         if (m_options.find(name) != m_options.end())
             throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was specified twice.");
@@ -228,15 +230,14 @@ public:
 
     /** fills some or all of the options of the DB from values passed in from
       * the command line */
-    void        SetFromCommandLine(int argc, char* argv[]);
+    void        SetFromCommandLine(const std::vector<std::string>& args);
 
     /** fills some or all of the options of the DB from values stored in
       * XMLDoc \a doc */
     void        SetFromXML(const XMLDoc& doc);
 
 private:
-    struct Option
-    {
+    struct Option {
         Option();
         Option(char short_name_, const std::string& name_, const boost::any& value_,
                const boost::any& default_value_, const std::string& description_,
@@ -265,7 +266,6 @@ private:
     void        SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name);
 
     std::map<std::string, Option>   m_options;
-
     static OptionsDB*               s_options_db;
 
     friend OptionsDB& GetOptionsDB();
