@@ -862,13 +862,19 @@ void HumanClientApp::Autosave() {
     else
         extension = MP_SAVE_FILE_EXTENSION;
 
-
-    // TODO: Handle Win32 paths properly?
     std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d%s") % player_name % empire_name % CurrentTurn() % extension);
     boost::filesystem::path save_path(GetSaveDir() / save_filename);
-    Logger().debugStream() << "Autosaving to: " << save_path.string();
+#ifndef FREEORION_WIN32
+    std::string path_string = save_path.string();
+#else
+    boost::filesystem::path::string_type native_save_path = save_path.native();
+    std::string path_string;
+    utf8::utf16to8(native_save_path.begin(), native_save_path.end(), std::back_inserter(path_string));
+#endif
+
+    Logger().debugStream() << "Autosaving to: " << path_string;
     try {
-        SaveGame(save_path.string());
+        SaveGame(path_string);
     } catch (const std::exception& e) {
         Logger().errorStream() << "Autosave failed: " << e.what();
         std::cerr << "Autosave failed: " << e.what() << std::endl;
