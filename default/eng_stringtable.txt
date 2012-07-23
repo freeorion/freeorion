@@ -5005,12 +5005,10 @@ PRO_MICROGRAV_MAN_DESC
 The microgravity of low planetary orbit offers great potential for novel manufacturing facility designs, equipment and techniques not possible on planet surfaces. Solids may be held in place with minimal support. Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated. Factory equipment may be arranged optimally in three dimensions. These conditions permit great increases in efficiency and productivity, if properly exploited.
 
 PRO_CORE_MINE
-Deep Core Mining
+Tectonic Minerology
 
 PRO_CORE_MINE_DESC
-'''Increases target Mining on planets with the Mining focus by 5, 10, 15 and 20 for Large, Medium, Small and Tiny planets, respectively.
-
-The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to vulcanism. The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations. Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
+'''The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to vulcanism. The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations. Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
 
 Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis. After creation, processes such as plate tectonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources. Understanding these processes and their effects, causes and signs is essential for large scale efficient mining operations.'''
 
@@ -5033,7 +5031,7 @@ PRO_RAPID_EXO_PROD
 Rapid Exobot Production
 
 PRO_RAPID_EXO_PROD_DESC
-Increases the target health on all Exobot-populated planets by 5.
+Allows more exobots.
 
 PRO_FUSION_GEN
 Fusion Generation
@@ -5443,17 +5441,11 @@ Unlocks Building
 RESEARCH_SHORT_DESC
 Improves Research
 
-GROWTH_SHORT_DESC
-Improves Population
-
 MINING_SHORT_DESC
 Improves Mining
 
 INDUSTRY_SHORT_DESC
 Improves Industry
-
-PRODUCTION_SHORT_DESC
-Improves Production
 
 TRADE_SHORT_DESC
 Improves Trade
@@ -5471,7 +5463,7 @@ METER_GROWTH_SHORT_DESC
 Improves Meter Growth
 
 POPULATION_SHORT_DESC
-Increases Target Population
+Increases Maximum Population
 
 HEALTH_SHORT_DESC
 Improves Health
@@ -6597,7 +6589,7 @@ Cloning Center
 BLD_CLONING_CENTER_DESC
 '''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
-Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving planet health. However, due to political considerations, such activities must be kept a secret from those who might have ethical concerns. As a result, this building must be hidden from the population on the dark side of a resonant moon. This building can be built at an outpost, provided it has a resonant moon.'''
+Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving population.'''
 
 BLD_TERRAFORM
 Terraforming

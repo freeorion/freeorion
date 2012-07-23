@@ -822,7 +822,7 @@ Tech
 Tech
     name = "GRO_MEDICAL_PATH"
     description = "GRO_MEDICAL_PATH_DESC"
-    short_description = "HEALTH_SHORT_DESC"
+    short_description = "POPULATION_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 4
@@ -842,7 +842,7 @@ Tech
 Tech
     name = "GRO_GENETIC_ENG"
     description = "GRO_GENETIC_ENG_DESC"
-    short_description = "GROWTH_SHORT_DESC"
+    short_description = "POPULATION_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 4
@@ -904,7 +904,7 @@ Tech
 Tech
     name = "GRO_NANOTECH_MED"
     description = "GRO_NANOTECH_MED_DESC"
-    short_description = "HEALTH_SHORT_DESC"
+    short_description = "POPULATION_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 40
@@ -949,7 +949,7 @@ Tech
 Tech
     name = "GRO_GENETIC_MED"
     description = "GRO_GENETIC_MED_DESC"
-    short_description = "HEALTH_SHORT_DESC"
+    short_description = "POPULATION_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 12
@@ -1171,7 +1171,7 @@ Tech
 Tech
     name = "PRO_ROBOTIC_PROD"
     description = "PRO_ROBOTIC_PROD_DESC"
-    short_description = "PRODUCTION_SHORT_DESC"
+    short_description = "INDUSTRY_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 12
@@ -1353,7 +1353,7 @@ Tech
 Tech
     name = "PRO_ASTEROID_MINE"
     description = "PRO_ASTEROID_MINE_DESC"
-    short_description = "MINING_SHORT_DESC"
+    short_description = "INDUSTRY_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 4
@@ -1374,10 +1374,10 @@ Tech
 Tech
     name = "PRO_CORE_MINE"
     description = "PRO_CORE_MINE_DESC"
-    short_description = "DOES_NOTHING_SHORT_DESC"
-    techtype = Application
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
     category = "PRODUCTION_CATEGORY"
-    researchcost = 30
+    researchcost = 70
     researchturns = 1
     graphic = "icons/tech/deep_core_mining.png"
 
