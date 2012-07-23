@@ -416,7 +416,14 @@ void FileDlg::Init(const std::string& directory)
 
     if (directory != "") {
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+    #if defined(_WIN32)
+        // convert UTF-8 file name to UTF-16
+        boost::filesystem::path::string_type directory_native;
+        utf8::utf8to16(directory.begin(), directory.end(), std::back_inserter(directory_native));
+        fs::path dir_path = fs::system_complete(fs::path(directory_native));
+    #else
         fs::path dir_path = fs::system_complete(fs::path(directory));
+    #endif
 #else
         fs::path dir_path = fs::complete(fs::path(directory));
 #endif
@@ -471,22 +478,29 @@ void FileDlg::OkHandler(bool double_click)
                 m_file_filters.size() == 1 &&
                 std::count(m_file_filters[0].second.begin(), m_file_filters[0].second.end(), '*') == 1 &&
                 m_file_filters[0].second[0] == '*' &&
-                !boost::algorithm::ends_with(save_file, m_file_filters[0].second.substr(1))) {
+                !boost::algorithm::ends_with(save_file, m_file_filters[0].second.substr(1)))
+            {
                 save_file += m_file_filters[0].second.substr(1);
             }
-            //if (!fs::native(save_file)) {
-            //    boost::shared_ptr<ThreeButtonDlg> dlg(
-            //        style->NewThreeButtonDlg(X(150), Y(75), m_malformed_filename_str, m_font, m_color, m_border_color, m_color,
-            //                                 m_text_color, 1, m_three_button_dlg_ok_str));
-            //    dlg->Run();
-            //    return;
-            //}
-
-            // TODO: handle UTF-8 -> UTF-16 for Win32
-
+#if defined(_WIN32)
+            // convert UTF-8 file name to UTF-16
+            boost::filesystem::path::string_type file_name_native;
+            utf8::utf8to16(save_file.begin(), save_file.end(), std::back_inserter(file_name_native));
+            fs::path p = s_working_dir / fs::path(file_name_native);
+#else
             fs::path p = s_working_dir / fs::path(save_file);
+#endif
+
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+    #if defined (_WIN32)
+            // convert UTF-16 path back to UTF-8 for storage
+            boost::filesystem::path::string_type path_native = p.native();
+            std::string path_string;
+            utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(path_string));
+            m_result.insert(path_string);
+    #else
             m_result.insert(p.string());
+    #endif
 #else
             m_result.insert(m_select_directories ? p.native_directory_string() : p.native_file_string());
 #endif
@@ -506,8 +520,7 @@ void FileDlg::OkHandler(bool double_click)
         } else { // ensure the file(s) are valid before returning them
             for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it) {
 #if defined(_WIN32)
-                // On Win32, paths are UTF-16, so need to convert GUI's UTF-8
-                // back to UTF-16 before attempting to use.
+                // convert UTF-8 file name to UTF-16
                 const std::string& file_name = *it;
                 boost::filesystem::path::string_type file_name_native;
                 utf8::utf8to16(file_name.begin(), file_name.end(), std::back_inserter(file_name_native));
@@ -528,8 +541,7 @@ void FileDlg::OkHandler(bool double_click)
                     }
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
     #if defined(_WIN32)
-                    // On Win32, paths are UTF-16, so need to convert full path
-                    // back to UTF-8 to put into results
+                    // convert UTF-16 path string to UTF-8
                     std::string temp;
                     boost::filesystem::path::string_type file_name_native = p.native();
                     utf8::utf16to8(file_name_native.begin(), file_name_native.end(), std::back_inserter(temp));
@@ -702,9 +714,7 @@ void FileDlg::UpdateList()
 
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
     #if defined(_WIN32)
-                    // On Win32, paths are returned as UTF-16, which if passed
-                    // to TextControl may cause crashes if non-Latin characters
-                    // are present. So, here we convert to UTF-8.
+                    // convert UTF-16 path to UTF-8 for display
                     boost::filesystem::path::string_type file_name_native = it->path().filename().native();
                     std::string temp;
                     utf8::utf16to8(file_name_native.begin(), file_name_native.end(), std::back_inserter(temp));
@@ -783,9 +793,7 @@ void FileDlg::UpdateDirectoryText()
 {
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
     #if defined(_WIN32)
-    // On Win32, paths are returned as UTF-16, which if passed
-    // to TextControl may cause crashes if non-Latin characters
-    // are present. So, here we convert to UTF-8.
+    // convert UTF-16 path to UTF-8 for display
     boost::filesystem::path::string_type working_dir_native = s_working_dir.native();
     std::string str;
     utf8::utf16to8(working_dir_native.begin(), working_dir_native.end(), std::back_inserter(str));
@@ -839,11 +847,10 @@ void FileDlg::OpenDirectory()
             if (!m_in_win32_drive_selection) {
 
 #if defined(_WIN32)
-                // On Win32, paths are UTF-16, so need to convert GUI's UTF-8
-                // back to UTF-16 before attempting to use.
-                boost::filesystem::path::string_type win32_directory;
-                utf8::utf8to16(directory.begin(), directory.end(), std::back_inserter(win32_directory));
-                SetWorkingDirectory(s_working_dir / fs::path(win32_directory));
+                // convert UTF-8 file name to UTF-16
+                boost::filesystem::path::string_type directory_native;
+                utf8::utf8to16(directory.begin(), directory.end(), std::back_inserter(directory_native));
+                SetWorkingDirectory(s_working_dir / fs::path(directory_native));
 #else
                 SetWorkingDirectory(s_working_dir / fs::path(directory));
 #endif

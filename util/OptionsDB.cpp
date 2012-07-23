@@ -13,14 +13,12 @@
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace {
-    std::vector<OptionsDBFn>& OptionsRegistry()
-    {
+    std::vector<OptionsDBFn>& OptionsRegistry() {
         static std::vector<OptionsDBFn> options_db_registry;
         return options_db_registry;
     }
 
-    std::string PreviousSectionName(const std::vector<XMLElement*>& elem_stack)
-    {
+    std::string PreviousSectionName(const std::vector<XMLElement*>& elem_stack) {
         std::string retval;
         for (unsigned int i = 1; i < elem_stack.size(); ++i) {
             retval += elem_stack[i]->Tag();
@@ -30,18 +28,15 @@ namespace {
         return retval;
     }
 
-    struct PushBack
-    {
+    struct PushBack {
         PushBack(std::vector<std::string>& string_vec) : m_string_vec(string_vec) {}
         void operator()(const char* first, const char* last) const {m_string_vec.push_back(std::string(first, last));}
         std::vector<std::string>& m_string_vec;
     };
 
-    void StripQuotation(std::string& str)
-    {
+    void StripQuotation(std::string& str) {
         using namespace boost::algorithm;
-        if (starts_with(str, "\"") && ends_with(str, "\""))
-        {
+        if (starts_with(str, "\"") && ends_with(str, "\"")) {
             erase_first(str, "\"");
             erase_last(str, "\"");
         }
@@ -51,14 +46,12 @@ namespace {
 /////////////////////////////////////////////
 // Free Functions
 /////////////////////////////////////////////
-bool RegisterOptions(OptionsDBFn function)
-{
+bool RegisterOptions(OptionsDBFn function) {
     OptionsRegistry().push_back(function);
     return true;
 }
 
-OptionsDB& GetOptionsDB()
-{
+OptionsDB& GetOptionsDB() {
     static OptionsDB options_db;
     if (unsigned int registry_size = OptionsRegistry().size()) {
         for (unsigned int i = 0; i < registry_size; ++i)
@@ -94,8 +87,7 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
         short_names[short_name_] = name;
 }
 
-void OptionsDB::Option::SetFromString(const std::string& str)
-{
+void OptionsDB::Option::SetFromString(const std::string& str) {
     if (validator) { // non-flag
         value = validator->Validate(str);
     } else { // flag
@@ -103,8 +95,7 @@ void OptionsDB::Option::SetFromString(const std::string& str)
     }
 }
 
-std::string OptionsDB::Option::ValueToString() const
-{
+std::string OptionsDB::Option::ValueToString() const {
     if (validator) { // non-flag
         return validator->String(value);
     } else { // flag
@@ -112,8 +103,7 @@ std::string OptionsDB::Option::ValueToString() const
     }
 }
 
-std::string OptionsDB::Option::DefaultValueToString() const
-{
+std::string OptionsDB::Option::DefaultValueToString() const {
     if (validator) { // non-flag
         return validator->String(default_value);
     } else { // flag
@@ -128,16 +118,14 @@ std::string OptionsDB::Option::DefaultValueToString() const
 // static(s)
 OptionsDB* OptionsDB::s_options_db = 0;
 
-OptionsDB::OptionsDB()
-{
+OptionsDB::OptionsDB() {
     if (s_options_db)
         throw std::runtime_error("Attempted to create a duplicate instance of singleton class OptionsDB.");
 
     s_options_db = this;
 }
 
-void OptionsDB::Validate(const std::string& name, const std::string& value) const
-{
+void OptionsDB::Validate(const std::string& name, const std::string& value) const {
     std::map<std::string, Option>::const_iterator it = m_options.find(name);
     if (it == m_options.end())
         throw std::runtime_error("Attempted to validate unknown option \"" + name + "\".");
@@ -149,40 +137,35 @@ void OptionsDB::Validate(const std::string& name, const std::string& value) cons
     }
 }
 
-std::string OptionsDB::GetValueString(const std::string& option_name) const
-{
+std::string OptionsDB::GetValueString(const std::string& option_name) const {
     std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
     if (it == m_options.end())
         throw std::runtime_error(("OptionsDB::GetValueString(): No option called \"" + option_name + "\" could be found.").c_str());
     return it->second.ValueToString();
 }
 
-std::string OptionsDB::GetDefaultValueString(const std::string& option_name) const
-{
+std::string OptionsDB::GetDefaultValueString(const std::string& option_name) const {
     std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
     if (it == m_options.end())
         throw std::runtime_error(("OptionsDB::GetDefaultValueString(): No option called \"" + option_name + "\" could be found.").c_str());
     return it->second.DefaultValueToString();
 }
 
-const std::string& OptionsDB::GetDescription(const std::string& option_name) const
-{
+const std::string& OptionsDB::GetDescription(const std::string& option_name) const {
     std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
     if (it == m_options.end())
         throw std::runtime_error(("OptionsDB::GetDescription(): No option called \"" + option_name + "\" could be found.").c_str());
     return it->second.description;
 }
 
-boost::shared_ptr<const ValidatorBase> OptionsDB::GetValidator(const std::string& option_name) const
-{
+boost::shared_ptr<const ValidatorBase> OptionsDB::GetValidator(const std::string& option_name) const {
     std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
     if (it == m_options.end())
         throw std::runtime_error(("OptionsDB::GetValidator(): No option called \"" + option_name + "\" could be found.").c_str());
     return it->second.validator;
 }
 
-void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = ""*/) const
-{
+void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = ""*/) const {
     os << UserString("COMMAND_LINE_USAGE") << command_line << "\n";
 
     int longest_param_name = 0;
@@ -236,8 +219,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
     }
 }
 
-XMLDoc OptionsDB::GetXML() const
-{
+XMLDoc OptionsDB::GetXML() const {
     XMLDoc doc;
 
     std::vector<XMLElement*> elem_stack;
@@ -288,16 +270,14 @@ XMLDoc OptionsDB::GetXML() const
     return doc;
 }
 
-OptionsDB::OptionChangedSignalType& OptionsDB::OptionChangedSignal(const std::string& option)
-{
+OptionsDB::OptionChangedSignalType& OptionsDB::OptionChangedSignal(const std::string& option) {
     std::map<std::string, Option>::const_iterator it = m_options.find(option);
     if (it == m_options.end())
         throw std::runtime_error("OptionsDB::OptionChangedSignal() : Attempted to get signal for nonexistent option \"" + option + "\".");
     return *it->second.option_changed_sig_ptr;
 }
 
-void OptionsDB::Remove(const std::string& name)
-{
+void OptionsDB::Remove(const std::string& name) {
     std::map<std::string, Option>::iterator it = m_options.find(name);
     if (it != m_options.end()) {
         Option::short_names.erase(it->second.short_name);
@@ -306,8 +286,7 @@ void OptionsDB::Remove(const std::string& name)
     OptionRemovedSignal(name);
 }
 
-void OptionsDB::SetFromCommandLine(int argc, char* argv[])
-{
+void OptionsDB::SetFromCommandLine(int argc, char* argv[]) {
     bool option_changed = false;
 
     for (int i = 1; i < argc; ++i) {
@@ -389,15 +368,13 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[])
     }
 }
 
-void OptionsDB::SetFromXML(const XMLDoc& doc)
-{
+void OptionsDB::SetFromXML(const XMLDoc& doc) {
     for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
         SetFromXMLRecursive(doc.root_node.Child(i), "");
     }
 }
 
-void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name)
-{
+void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name) {
     std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
 
     // flags have no text or children; their presence at all indicates a value of true
@@ -425,7 +402,6 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
         }
     }
 
-    for (int i = 0; i < elem.NumChildren(); ++i) {
+    for (int i = 0; i < elem.NumChildren(); ++i)
         SetFromXMLRecursive(elem.Child(i), option_name);
-    }
 }

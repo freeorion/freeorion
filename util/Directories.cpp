@@ -2,6 +2,8 @@
 
 #include "OptionsDB.h"
 
+#include <GG/utf8/checked.h>
+
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
 
@@ -261,13 +263,12 @@ void InitDirs(const std::string& argv0) {
 }
 
 const fs::path GetUserDir() {
-    static fs::path p = fs::path(std::string(getenv("APPDATA"))) / "FreeOrion";
+    static fs::path p = fs::path(std::wstring(_wgetenv(L"APPDATA"))) / "FreeOrion";
     return p;
 }
 
-const fs::path GetRootDataDir() {
-    return fs::initial_path();
-}
+const fs::path GetRootDataDir()
+{ return fs::initial_path(); }
 
 const fs::path GetBinDir() {
     if (!g_initialized) InitDirs("");
@@ -276,8 +277,16 @@ const fs::path GetBinDir() {
 
 void InitBinDir(const std::string& argv0) {
     try {
+#if defined(FREEORION_WIN32)
+        // convert UTF-8 to UTF-16
+        boost::filesystem::path::string_type binary_native;
+        utf8::utf8to16(argv0.begin(), argv0.end(), std::back_inserter(binary_native));
+        fs::path binary_file = fs::system_complete(fs::path(binary_native));
+#else
         fs::path binary_file = fs::system_complete(fs::path(argv0));
+#endif
         bin_dir = binary_file.branch_path();
+
     } catch (fs::filesystem_error err) {
         bin_dir = fs::initial_path();
     }
@@ -291,10 +300,20 @@ const fs::path GetResourceDir() {
     // if resource dir option has been set, use specified location.  otherwise,
     // use default location
     std::string options_resource_dir = GetOptionsDB().Get<std::string>("resource-dir");
-    if (!options_resource_dir.empty() && fs::is_directory(fs::path(options_resource_dir)) && fs::exists(fs::path(options_resource_dir)))
-        return fs::path(options_resource_dir);
-
+#if defined(FREEORION_WIN32)
+    // convert UTF-8 directory string to UTF-16
+    boost::filesystem::path::string_type directory_native;
+    utf8::utf8to16(options_resource_dir.begin(), options_resource_dir.end(), std::back_inserter(directory_native));
+    // verify directory validity.  if not, try again with default
+    if (fs::is_directory(fs::path(directory_native)) && fs::exists(fs::path(directory_native)))
+        return fs::path(directory_native);
+    options_resource_dir = GetOptionsDB().GetDefault<std::string>("resource-dir");
+    utf8::utf8to16(options_resource_dir.begin(), options_resource_dir.end(), std::back_inserter(directory_native));
+    return fs::path(directory_native);
+#else
+    if (options_resource_dir.empty() || !fs::is_directory(fs::path(options_resource_dir)) || !fs::exists(fs::path(options_resource_dir)))
     return fs::path(GetOptionsDB().GetDefault<std::string>("resource-dir"));
+#endif
 }
 
 const fs::path GetConfigPath() {
@@ -306,10 +325,16 @@ const fs::path GetSaveDir() {
     // if save dir option has been set, use specified location.  otherwise,
     // use default location
     std::string options_save_dir = GetOptionsDB().Get<std::string>("save-dir");
-    if (!options_save_dir.empty())
-        return fs::path(options_save_dir);
-
-    return fs::path(GetOptionsDB().GetDefault<std::string>("save-dir"));
+    if (options_save_dir.empty())
+        options_save_dir = GetOptionsDB().GetDefault<std::string>("save-dir");
+#if defined(FREEORION_WIN32)
+    // convert UTF-8 directory string to UTF-16
+    boost::filesystem::path::string_type directory_native;
+    utf8::utf8to16(options_save_dir.begin(), options_save_dir.end(), std::back_inserter(directory_native));
+    return fs::path(directory_native);
+#else
+    return fs::path(options_save_dir);
+#endif
 }
 
 fs::path RelativePath(const fs::path& from, const fs::path& to) {

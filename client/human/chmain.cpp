@@ -79,8 +79,7 @@ int main(int argc, char* argv[])
 #endif // ifndef FREEORION_MACOSX
 
 
-int mainConfigOptionsSetup(int argc, char* argv[])
-{
+int mainConfigOptionsSetup(int argc, char* argv[]) {
     InitDirs(argv[0]);
 
     // read and process command-line arguments, if any

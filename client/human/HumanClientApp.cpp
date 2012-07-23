@@ -30,6 +30,7 @@
 
 #include <GG/BrowseInfoWnd.h>
 #include <GG/Cursor.h>
+#include <GG/utf8/checked.h>
 
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
@@ -174,14 +175,20 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 #endif
     m_fsm = new HumanClientFSM(*this);
 
-    const std::string LOG_FILENAME((GetUserDir() / "freeorion.log").string());
+    boost::filesystem::path log_path = GetUserDir() / "freeorion.log";
 
-    // a platform-independent way to erase the old log We cannot use
-    // boost::filesystem::ofstream here, as stupid b::f won't allow us
-    // to have a dot in the directory name, which is where local data
-    // is kept under unix.
-    std::ofstream temp(LOG_FILENAME.c_str());
+    // erase old log
+    boost::filesystem::ofstream temp(log_path);
     temp.close();
+
+#if defined(FREEORION_WIN32)
+    // convert to UTF-8 for passing to logger
+    boost::filesystem::path::string_type log_path_native(log_path.native());
+    std::string LOG_FILENAME;
+    utf8::utf16to8(log_path_native.begin(), log_path_native.end(), std::back_inserter(LOG_FILENAME));
+#else
+    std::string LOG_FILENAME(log_path.string());
+#endif
 
     log4cpp::Appender* appender = new log4cpp::FileAppender("FileAppender", LOG_FILENAME);
     log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
@@ -257,9 +264,12 @@ bool HumanClientApp::SinglePlayerGame() const
 
 void HumanClientApp::StartServer() {
 #ifdef FREEORION_WIN32
-    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond.exe").string();
+    // convert save user from UTF-16 to UTF-8
+    boost::filesystem::path::string_type path_native = (GetBinDir() / "freeoriond.exe").native();
+    std::string SERVER_CLIENT_EXE;
+    utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(SERVER_CLIENT_EXE));
 #else
-    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond").string();
+    std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond").string();
 #endif
     std::vector<std::string> args;
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
@@ -471,10 +481,17 @@ void HumanClientApp::EndGame()
 { EndGame(false); }
 
 void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
-    if (filename != "") {
-        if (!exists(boost::filesystem::path(filename))) {
-            std::string msg =
-                "HumanClientApp::LoadSinglePlayerGame() given a nonexistent file \"" + filename + "\" to load; aborting.";
+    if (!filename.empty()) {
+#if defined(FREEORION_WIN32)
+        boost::filesystem::path::string_type file_name_native;
+        utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(file_name_native));
+        boost::filesystem::path file_path(file_name_native);
+#else
+        boost::filesystem::path file_path(filename);
+#endif
+        if (!exists(file_path)) {
+            std::string msg = "HumanClientApp::LoadSinglePlayerGame() given a nonexistent file \""
+                            + filename + "\" to load; aborting.";
             Logger().fatalStream() << msg;
             std::cerr << msg << '\n';
             abort();
@@ -483,8 +500,15 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         try {
             std::vector<std::pair<std::string, std::string> > save_file_types;
             save_file_types.push_back(std::pair<std::string, std::string>(UserString("GAME_MENU_SAVE_FILES"), "*.sav"));
-
-            FileDlg dlg(GetSaveDir().string(), "", false, false, save_file_types);
+#if defined(FREEORION_WIN32)
+            // convert save directory from UTF-16 to UTF-8 for passing to dialog
+            boost::filesystem::path::string_type path_native = GetSaveDir().native();
+            std::string path_string;
+            utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(path_string));
+#else
+            std::sting path_string = GetSaveDir().string();
+#endif
+            FileDlg dlg(path_string, "", false, false, save_file_types);
             dlg.Run();
             if (!dlg.Result().empty())
                 filename = *dlg.Result().begin();
@@ -838,15 +862,13 @@ void HumanClientApp::Autosave() {
     else
         extension = MP_SAVE_FILE_EXTENSION;
 
+
+    // TODO: Handle Win32 paths properly?
     std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d%s") % player_name % empire_name % CurrentTurn() % extension);
-
-    namespace fs = boost::filesystem;
-    fs::path save_dir(GetSaveDir());
-
-    Logger().debugStream() << "Autosaving to: " << (save_dir / save_filename).string();
-
+    boost::filesystem::path save_path(GetSaveDir() / save_filename);
+    Logger().debugStream() << "Autosaving to: " << save_path.string();
     try {
-        SaveGame((save_dir / save_filename).string());
+        SaveGame(save_path.string());
     } catch (const std::exception& e) {
         Logger().errorStream() << "Autosave failed: " << e.what();
         std::cerr << "Autosave failed: " << e.what() << std::endl;

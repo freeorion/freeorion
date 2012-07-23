@@ -111,8 +111,16 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-        return boost::algorithm::ends_with(file, STRINGTABLE_FILE_SUFFIX) &&
-            fs::exists(file) && !fs::is_directory(file);
+#if defined(_WIN32)
+            // convert UTF-8 file name to UTF-16
+            fs::path::string_type file_name_native;
+            utf8::utf8to16(file.begin(), file.end(), std::back_inserter(file_name_native));
+            fs::path path = fs::path(file_name_native);
+#else
+            fs::path path = fs::path(file);
+#endif
+            return boost::algorithm::ends_with(file, STRINGTABLE_FILE_SUFFIX) &&
+                fs::exists(path) && !fs::is_directory(path);
         } catch (std::exception ex) {
         }
         return false;
@@ -122,8 +130,16 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-        return boost::algorithm::ends_with(file, FONT_FILE_SUFFIX) &&
-            fs::exists(file) && !fs::is_directory(file);
+#if defined(_WIN32)
+            // convert UTF-8 file name to UTF-16
+            fs::path::string_type file_name_native;
+            utf8::utf8to16(file.begin(), file.end(), std::back_inserter(file_name_native));
+            fs::path path = fs::path(file_name_native);
+#else
+            fs::path path = fs::path(file);
+#endif
+            return boost::algorithm::ends_with(file, FONT_FILE_SUFFIX) &&
+                fs::exists(path) && !fs::is_directory(path);
         } catch (std::exception ex) {
         }
         return false;
@@ -133,8 +149,16 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-        return boost::algorithm::ends_with(file, MUSIC_FILE_SUFFIX) &&
-            fs::exists(file) && !fs::is_directory(file);
+#if defined(_WIN32)
+            // convert UTF-8 file name to UTF-16
+            fs::path::string_type file_name_native;
+            utf8::utf8to16(file.begin(), file.end(), std::back_inserter(file_name_native));
+            fs::path path = fs::path(file_name_native);
+#else
+            fs::path path = fs::path(file);
+#endif
+            return boost::algorithm::ends_with(file, MUSIC_FILE_SUFFIX) &&
+                fs::exists(path) && !fs::is_directory(path);
         } catch (std::exception ex) {
         }
         return false;
@@ -144,8 +168,16 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-        return boost::algorithm::ends_with(file, SOUND_FILE_SUFFIX) &&
-            fs::exists(file) && !fs::is_directory(file);
+#if defined(_WIN32)
+            // convert UTF-8 file name to UTF-16
+            fs::path::string_type file_name_native;
+            utf8::utf8to16(file.begin(), file.end(), std::back_inserter(file_name_native));
+            fs::path path = fs::path(file_name_native);
+#else
+            fs::path path = fs::path(file);
+#endif
+            return boost::algorithm::ends_with(file, SOUND_FILE_SUFFIX) &&
+                fs::exists(path) && !fs::is_directory(path);
         } catch (std::exception ex) {
         }
         return false;
@@ -156,9 +188,8 @@ namespace {
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
 #if defined(_WIN32)
-            // On Win32, paths are UTF-16, so need to convert passed-in UTF-8
-            // path string to UTF-16 to create the path object.
-            boost::filesystem::path::string_type file_name_native;
+            // convert UTF-8 file name to UTF-16
+            fs::path::string_type file_name_native;
             utf8::utf8to16(file.begin(), file.end(), std::back_inserter(file_name_native));
             fs::path path = fs::path(file_name_native);
 #else
@@ -479,7 +510,7 @@ void OptionsWnd::SoundFileOption(const std::string& option_name, const std::stri
 }
 
 void OptionsWnd::DirectoryOption(const std::string& option_name, const std::string& text,
-                                 const boost::filesystem::path& path)
+                                 const fs::path& path)
 {
     FileOptionImpl(option_name, text, path, std::vector<std::pair<std::string, std::string> >(),
                    ValidDirectory, true, false);
@@ -860,7 +891,7 @@ void OptionsWnd::DoneClicked()
 {
     // Save the changes:
     {
-        boost::filesystem::ofstream ofs(GetConfigPath());
+        fs::ofstream ofs(GetConfigPath());
         if (ofs) {
             GetOptionsDB().GetXML().WriteDoc(ofs);
         } else {
