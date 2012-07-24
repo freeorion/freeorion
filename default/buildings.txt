@@ -469,12 +469,11 @@ BuildingType
             ]
             effects = [
                 CreateShip "SD_COLONY_SHIP" Source.Owner "SP_EXOBOT"
-                /*
                 GenerateSitRepMessage
-                    message = "EFFECT_TERRAFORM"
+                    message = "EFFECT_EXOBOT"
                     parameters = tag = "planet" data = Target.ID
                     empire = Source.Owner
-                    */
+                    
             ]
 
         EffectsGroup

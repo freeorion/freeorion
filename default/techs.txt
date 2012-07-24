@@ -1280,19 +1280,10 @@ Tech
     effectsgroups = [
         EffectsGroup
             scope = And [
-                ProductionCenter
                 OwnedBy TheEmpire Source.Owner
-                [[INFRA_CONDITION_INFRA]]
-            ]
-            effects = SetTargetIndustry Value + 0.25 * [[INFRA_PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy TheEmpire Source.Owner
-                [[INFRA_CONDITION_POP]]
-            ]
-            effects = SetTargetIndustry Value + 0.25 * [[INFRA_PRODUCTION_PER_POP]]
+                NOT TargetPopulation low = 0 high = 0
+             ]
+             effects = SetTargetIndustry Value + 5
     ]
     graphic = "icons/tech/basic_autofactories.png"
 

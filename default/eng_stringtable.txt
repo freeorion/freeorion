@@ -4383,6 +4383,8 @@ Ships were refuled from the residual supply found in an abandoned derelict at %s
 EFFECT_BIOWEAPON
 %system% has lost population due to a biological attack!
 
+EFFECT_EXOBOT
+An Exobot colony ship has been built at %planet%.
 
 # Conditions
 
