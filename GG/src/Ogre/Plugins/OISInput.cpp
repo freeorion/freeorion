@@ -38,6 +38,10 @@
 
 #include <cctype>
 
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 
 using namespace GG;
 
@@ -49,6 +53,16 @@ namespace {
     Flags<ModKey> GetModKeys(OIS::Keyboard* keyboard)
     {
         Flags<ModKey> retval;
+#ifdef __APPLE__
+        UInt32 mod_keys = GetCurrentKeyModifiers();
+        if ((mod_keys & shiftKey) > 0)             retval |= MOD_KEY_LSHIFT;
+        if ((mod_keys & rightShiftKey) > 0)        retval |= MOD_KEY_RSHIFT;
+        if ((mod_keys & controlKey) > 0)           retval |= MOD_KEY_LCTRL;
+        if ((mod_keys & rightControlKey) > 0)      retval |= MOD_KEY_RCTRL;
+        if ((mod_keys & optionKey) > 0)            retval |= MOD_KEY_LALT;
+        if ((mod_keys & rightOptionKey) > 0)       retval |= MOD_KEY_RALT;
+        if ((mod_keys & cmdKey) > 0)               retval |= MOD_KEY_LMETA;
+#else
         if (keyboard->isKeyDown(OIS::KC_LSHIFT))   retval |= MOD_KEY_LSHIFT;
         if (keyboard->isKeyDown(OIS::KC_RSHIFT))   retval |= MOD_KEY_RSHIFT;
         if (keyboard->isKeyDown(OIS::KC_LCONTROL)) retval |= MOD_KEY_LCTRL;
@@ -57,8 +71,18 @@ namespace {
         if (keyboard->isKeyDown(OIS::KC_RMENU))    retval |= MOD_KEY_RALT;
         if (keyboard->isKeyDown(OIS::KC_LWIN))     retval |= MOD_KEY_LMETA;
         if (keyboard->isKeyDown(OIS::KC_RWIN))     retval |= MOD_KEY_RMETA;
+#endif
+#ifdef WIN32
+        bool capslock = static_cast<unsigned short>(GetKeyState(0x14)) & 0x0001;
+        bool numlock = static_cast<unsigned short>(GetKeyState(0x90)) & 0x0001;
+        bool scrolllock = static_cast<unsigned short>(GetKeyState(0x91)) & 0x0001;
+        if (capslock)   retval |= MOD_KEY_CAPS;
+        if (numlock)    retval |= MOD_KEY_NUM;
+        //if (scrolllock) retval |= MOD_KEY_SCROLL;
+#else
         if (keyboard->isKeyDown(OIS::KC_NUMLOCK))  retval |= MOD_KEY_NUM;
         if (keyboard->isKeyDown(OIS::KC_CAPITAL))  retval |= MOD_KEY_CAPS;
+#endif
         return retval;
     }
 
