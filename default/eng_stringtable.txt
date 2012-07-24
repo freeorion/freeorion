@@ -7439,18 +7439,22 @@ Requires a Basic Shipyard, an Energy Compressor and a Solar Containment Unit at 
 SH_BASIC_SMALL
 Basic Small Hull
 SH_BASIC_SMALL_DESC
-Basic Small Hull
+'''A small, basic interstellar hull.
+
+Requires a Basic Shipyard at the planet where it is Constructed.'''
 
 SH_BASIC_MEDIUM
 Basic Medium Hull
 SH_BASIC_MEDIUM_DESC
-Basic Medium Hull
+'''A medium-sized, basic interstellar hull.
+
+Requires a Basic Shipyard at the planet where it is Constructed.'''
 
 SH_STANDARD
-Standard Hull
+Basic Large Hull
 
 SH_STANDARD_DESC
-'''Basic interstellar hull.
+'''A large, basic interstellar hull.
 
 Requires a Basic Shipyard at the planet where it is Constructed.'''
 
