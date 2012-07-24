@@ -4814,7 +4814,7 @@ LRN_ARTIF_MINDS
 Artificial Minds
 
 LRN_ARTIF_MINDS_DESC
-'''Increases target research on all planets by 5.
+'''Increases Target Research on all planets by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 By automatically inputting all data discovered by active researchers into a single automatic data processing network, data can be analyzed and new data obtained by an entirely automated research facility. Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.
 
@@ -4881,7 +4881,7 @@ LRN_QUANT_NET
 Quantum Networking
 
 LRN_QUANT_NET_DESC
-'''Multiplies target research on all planets with the Research focus by 2.
+'''Increases target Research on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population or 1 per [[INFRA_PER_PRODUCTION]] units of infrastructure.
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes. This advancement greatly facilitates research throughout the empire.
 
@@ -5661,7 +5661,7 @@ LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Multiplies target Research on all planets with the Research focus by 1.25.
+'''Increases target Research on all planets with the Research focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
 
@@ -5669,7 +5669,7 @@ LRN_STELLAR_TOMOGRAPHY
 Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Multiplies target Research on planets with the Research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively.
+'''Increases target Research on planets with the Research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 
@@ -6533,7 +6533,7 @@ BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases Industry on planets with the Industry focus by half of the planet's population, and research on Planets with the Research focus by one and a half. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases Industry on planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 0.5 per [[INFRA_PER_PRODUCTION]] units of Infrastructure, and research on Planets with the Research focus by the greater of 3 per [[POP_PER_PRODUCTION]] units of Population or 1.5 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 
@@ -6549,7 +6549,7 @@ BLD_ENCLAVE_VOID
 Enclave of the Void
 
 BLD_ENCLAVE_VOID_DESC
-'''Multiplies target Research on all planets with the Research focus by 1.5.
+'''Increases target Research on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population, or 0.5 per [[INFRA_PER_PRODUCTION]] units of infrastructure.
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
 
