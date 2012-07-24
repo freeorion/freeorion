@@ -1,9 +1,9 @@
 Russian
 
-#This is the Russian String Table file for FreeOrion 0.4 SVN5046
+#This is the Russian String Table file for FreeOrion 0.4 SVN5050
 #Translater cjckem at gmail.com
 #support by black_owl at mail.ru
-#Этот языковой файл для FreeOrion 0.4 SVN5046
+#Этот языковой файл для FreeOrion 0.4 SVN5062
 #кодовая страница UTF8
 #Переводит cjckem at gmail.com
 #при поддержке black_owl at mail.ru
@@ -161,13 +161,13 @@ BUILDING
 Здание
 
 PASSED
-<rgba 0 255 0 255>(ЕСТЬ)</rgba>
+<rgba 0 255 0 255>(Выполнено)</rgba>
 
 FAILED
-<rgba 255 0 0 255>(НЕТ)</rgba>
+<rgba 255 0 0 255>(Не выполнено)</rgba>
 
 ALL_OF
-Все из:
+Условия:
 
 ANY_OF
 Любой из:
@@ -1883,7 +1883,7 @@ TT_BUILDING
 %1% Строение <i>%2%</i>
 
 TT_SHIP_HULL
-Корабль <i>%1%</i> оболочка <i>%2%</i>
+Корабль <i>%1%</i> корпус <i>%2%</i>
 
 TT_SHIP_PART
 Корабль <i>%1%</i> часть <i>%2%</i>
@@ -2486,28 +2486,28 @@ TRADE_FOCUS_TEXT
 ORGANIC_SPECIES_TITLE
 Органические Виды
 ORGANIC_SPECIES_TEXT
-'''Organic species are more or less, 'life as we know it'.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when when an Organic Growth Special is colonized, and focused on Growth.  Organic Growth specials are marked with a little green 'O' in the corner.'''
+'''Органические виды - это, по большому счёту, та жизнь, которую мы знаем.  Максимальная популяция этих видов на планете может быть увеличена, если планета соединена с родной планетой на которой установлен [[encyclopedia GROWTH_FOCUS_TITLE]], или если колонизирована планета с особенностью способствующей росту популяции органических существ, и на этой планете установлен приоритет роста.  Особенности планет способствующие росту органических видов помечены зелёной 'О' в углу'''
 
 LITHIC_SPECIES_TITLE
-Lithic Species
+Минеральные
 LITHIC_SPECIES_TEXT
-'''Lithic species are silicon or mineral-based.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when when a Lithic Growth Special is colonized, and focused on Growth.  Lithic Growth specials are marked with a little grey 'L' in the corner.'''
+'''Минеральные формы жизни основаны на кремнии или минералах.  Максимальная популяция этих видов на планете может быть увеличена, если планета соединена с родной планетой на которой установлен [[encyclopedia GROWTH_FOCUS_TITLE]], или если колонизирована планета с особенностью способствующей росту популяции минеральных существ, и на этой планете установлен приоритет роста. Особенности планет способствующие росту минеральных видов помечены серой 'L' в углу'''
 
 ROBOTIC_SPECIES_TITLE
-Robotic Species
+Роботы
 ROBOTIC_SPECIES_TEXT
-'''Robotic species are sapient machines.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when when an Robotic Growth Special is colonized, and focused on Growth.  Robotic Growth specials are marked with a little red 'R' in the corner.'''
+'''Роботы - это разумные машины.  Максимальная популяция этих видов на планете может быть увеличена, если планета соединена с родной планетой на которой установлен [[encyclopedia GROWTH_FOCUS_TITLE]], или если колонизирована планета с особенностью способствующей росту популяции руботов, и на этой планете установлен приоритет роста. Особенности планет способствующие росту роботов помечены красной 'R' в углу'''
 
 
 PHOTOTROPHIC_SPECIES_TITLE
-Phototrophic Species
+Фототрофы
 PHOTOTROPHIC_SPECIES_TEXT
-'''Phototrophic species are live mainly or entirely on sunlight. These species max population is greatly influenced by the size of the local star -- the bigger the better.  Growth specials do not benefit them.'''
+'''Фототрофные виды существуют в основном или исключительно за счёт солнечного света. Максимальная популяция таких видов сильно зависит от размера звезды в системе, чем она больше - тем лучше. На рост фототрофов не влияют какие-либо особенности планет.'''
 
 SELF_SUSTAINING_SPECIES_TITLE
-Self-Sustaining Species
+Самодостаточные
 SELF_SUSTAINING_SPECIES_TEXT
-'''Self-Sustaining species may be energy or crystaline beings or something else.  Their commonality is that they need no sustainace. So their basic population growth is very high.'''
+'''Самодостаточные существа могут иметь кристаллическую, энергетическую или какую-то другую природу происхождения. Их объединяет то, что они не нуждаются в какой-либо пище. Именно поэтому прирост населения таких видов очень высок.'''
 
 
 ####################
@@ -2912,7 +2912,7 @@ SP_GEORGE
 SP_GEORGE_DESC
 '''Инфантильный единый организм, состоящий из множества многоножек.
 Предпочитает планеты-тундры.
-Педобионт
+Минеральный
 
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -2979,7 +2979,7 @@ SP_EGASSEM
 SP_EGASSEM_DESC
 '''Супер массивные, радиационные, живущие в лаве, прозрачные амебы. 
 Предпочтитают планеты типа Ад.
-Каменные
+Минеральные
 
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3033,7 +3033,7 @@ Setinon
 SP_SETINON_DESC
 '''Individualistic sentient microscopic cells.
 Prefer Ocean planets.
-Organic
+Органические
 
 [[GREAT_STEALTH]]
 
@@ -3050,7 +3050,7 @@ Nymnmn
 SP_NYMNMN_DESC
 '''Planet-wide sapient magnetic waveforms.
 Prefer Desert planets.
-Self-Sustaining
+Самодостаточные
 
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
@@ -3067,7 +3067,7 @@ Trenchers
 SP_TRENCHERS_DESC
 '''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
 Prefers Barren planets.
-Robotic
+Роботы
 
 [[NO_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -3081,7 +3081,7 @@ Raaagh
 SP_RAAAGH_DESC
 '''Highly territorial felinoids.
 Prefer Terran planets.
-Organic
+Органические
 
 [[BAD_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -3106,7 +3106,7 @@ Beige Goo
 SP_BEIGEGOO_DESC
 '''Insane, intensely private, planet-engulfing nanite swarm.
 Prefers Radiated planets.
-Robotic
+Роботы
 
 [[GREAT_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -3122,7 +3122,7 @@ Silexian
 SP_SILEXIAN_DESC
 '''Gleaming gardener robots, left on their own.
 Prefer Terran planets.
-Robotic
+Роботы
 
 [[NO_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3133,7 +3133,7 @@ Kobuntura
 SP_KOBUNTURA_DESC
 '''Sentient magnetic dust formations with a fascination for building and construction.
 Prefer Barren planets.
-Self-Sustaining
+Самодостаточные
 
 [[GREAT_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3147,7 +3147,7 @@ Ugmorrs
 SP_UGMORRS_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Prefer Inferno planets.
-Lithic
+Минеральные
 
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3160,7 +3160,7 @@ SP_GISGUFGTHRIM
 SP_GISGUFGTHRIM_DESC
 '''Shelled herbivores that live off a singular planets-sized colonial gel.
 Prefer Toxic planets.
-Organic
+Органические
 
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
@@ -3175,7 +3175,7 @@ Hidden Gardener
 SP_HIDDENGARDENER_DESC
 '''A sapient fungal network that tends its plant food from beneath
 Prefers Terran planets
-Organic
+Органические
 
 [[GOOD_STEALTH]]
 
@@ -3198,7 +3198,7 @@ Abaddonni
 SP_ABADDONNIANS_DESC
 '''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
 Prefers Inferno planets.
-Lithic
+Минеральные
 
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3212,7 +3212,7 @@ Acirema
 SP_ACIREMA_DESC
 '''A race with nearly limitless power, that cannot survive in this universe.
 Prefers Radiated planets.
-Self-Sustaining
+Самодостаточные
 
 [[GREAT_INDUSTRY]]
 [[GOOD_RESEARCH]]
@@ -3236,7 +3236,7 @@ Ourbools
 SP_OURBOOLS_DESC
 '''Giant blind swimmers who "see" gravitation.
 Prefer Ocean planets.
-Organic
+Органические
 
 [[ULTIMATE_DETECTION]]
 
@@ -3263,7 +3263,7 @@ Volp-Uglush
 SP_VOLP_DESC
 '''Highly bureacratic, overcrowded burrowers.
 Prefer Barren planets.
-Lithic
+Минеральные
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3292,8 +3292,6 @@ SP_EXOBOT_DESC
 [[BAD_RESEARCH]]
         
 [[BAD_GROUND_TROOPS]]
-
-[[NON_ORGANIC]]
 
 While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
 '''
@@ -3577,31 +3575,31 @@ POSITRONIUM_SPECIAL_DESC
 MINERALS_SPECIAL
 Богата минералами
 MINERALS_SPECIAL_DESC
-'''Увеличивает максимальное население планеты населённой педобионтами; крошечная +1, малая +2, средняя +3, большая +4, огромная +5
-Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты населённые педобионтами получают то же преимущество.
+'''Увеличивает максимальное население планеты населённой минеральными видами; крошечная +1, малая +2, средняя +3, большая +4, огромная +5
+Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты населённые минеральными видами получают то же преимущество.
 Увеличивает производство на 50, если планета ориентирована на Добычу.
 
-Эта планета богата залежами минералов, что стимулирует производство. Также здесь намного быстрее происходит размножение педобионтов.'''
+Эта планета богата залежами минералов, что стимулирует производство. Также здесь намного быстрее происходит размножение минеральных видов.'''
 
 CRYSTALS_SPECIAL
 Круглые кристаллы
 CRYSTALS_SPECIAL_DESC
-'''Увеличивает максимальное население планеты населённой педобионтами; крошечная +1, малая +2, средняя +3, большая +4, огромная +5
-Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты населённые педобионтами получают то же преимущество.
+'''Увеличивает максимальное население планеты населённой минеральными видами; крошечная +1, малая +2, средняя +3, большая +4, огромная +5
+Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты населённые минеральными видами получают то же преимущество.
 
 Увеличивает производство на 50, если планета ориентирована на Добычу.
 
-Эта планета богата залежами минералов, что стимулирует производство. Также здесь намного быстрее происходит размножение педобионтов.'''
+Эта планета богата залежами минералов, что стимулирует производство. Также здесь намного быстрее происходит размножение минеральных видов.'''
 
 METALOIDS_SPECIAL
 Заряженные металлоиды
 METALOIDS_SPECIAL_DESC
-'''Увеличивает максимальное население планеты населённой педобионтами; крошечная +1, малая +2, средняя +3, большая +4, огромная +5
-Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты населённые педобионтами получают то же преимущество.
+'''Увеличивает максимальное население планеты населённой минеральными видами; крошечная +1, малая +2, средняя +3, большая +4, огромная +5
+Если на такой планете в приоритете демографический рост, то все соединенные с ней планеты населённые минеральными видами получают то же преимущество.
 
 Увеличивает производство на 50, если планета ориентирована на Добычу.
 
-Эта планета богата залежами минералов, что стимулирует производство. Также здесь намного быстрее происходит размножение педобионтов.'''
+Эта планета богата залежами минералов, что стимулирует производство. Также здесь намного быстрее происходит размножение минеральными видами.'''
 
 
 #############################################################
@@ -3980,16 +3978,16 @@ DESC_VAR_FLEET
 флот
 
 DESC_VAR_SOURCE
-источник
+владельцу
 
 DESC_VAR_TARGET
 цель
 
 DESC_VAR_LOCAL_CANDIDATE
-local condition candidate
+кандидат на локальных условиях
 
 DESC_VAR_ROOT_CANDIDATE
-root condition candidate
+кандидат на основных условиях
 
 DESC_STATISTIC
 статистика
@@ -4113,7 +4111,7 @@ DESC_VAR_RESEARCHOUTPUT
 результаты исследовательской работы
 
 DESC_VAR_OWNER
-собственник
+источника
 
 DESC_VAR_ID
 ID
@@ -4181,33 +4179,33 @@ DESC_VALUE_REF_MULTIPART_VARIABLE0
 %1%
 
 DESC_VALUE_REF_MULTIPART_VARIABLE1
-%1%'s %2%
+%1% %2%
 
 DESC_VALUE_REF_MULTIPART_VARIABLE2
-%1%'s %2%'s %3%
+%1% %2%'s %3%
 
 DESC_VALUE_REF_MULTIPART_VARIABLE3
-%1%'s %2%'s %3%'s %4%
+%1% %2%'s %3%'s %4%
 
 DESC_VALUE_REF_MULTIPART_VARIABLE4
-%1%'s %2%'s %3%'s %4%'s %5%
+%1% %2% %3% %4% %5%
 
 DESC_VALUE_REF_MULTIPART_VARIABLE5
-%1%'s %2%'s %3%'s %4%'s %5%'s %6%
+%1% %2% %3% %4% %5% %6%
 
 # six is probably more than will be needed, but just in case ...
 DESC_VALUE_REF_MULTIPART_VARIABLE6
-%1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%
+%1% %2% %3% %4% %5% %6% %7%
 
 
 
 # Effects
 
 DESC_EFFECTS_GROUP_SCOPE
-Объекты подвержены: Любой объект%1%
+Повреждает объект: Любой объект %1%
 
 DESC_EFFECTS_GROUP_SELF_SCOPE
-Объекты подвержены: Только наземные объекты
+Повреждает объект: Только наземные объекты
 
 DESC_EFFECTS_GROUP_ACTIVATION
 Эффект является активным, если источник - объект%1%
@@ -4296,28 +4294,28 @@ DESC_MOVE_IN_ORBIT_OF_OBJECT
 Перемещает объект на орбиту объекта%1% на скорости %2%
 
 DESC_MOVE_IN_ORBIT_OF_XY
-Moves the object in orbit of an object located at %1% and %2% at speed %3%
+Перемещение объекта на орбите объекта, находящегося на %1% и %2% на скорости %3%
 
 DESC_SET_DESTINATION
-Sets the destination of the object to an object%1%
+Устанавливает назвначение объекта на объект%1%
 
 DESC_VICTORY
 Вызывает победу в игре владельца объекта
 
 DESC_GENERATE_SITREP
-Generates a SitRep message for empire %1%
+Создаёт отчёт о событиях для империи %1%
 
 DESC_SET_EMPIRE_TECH_PROGRESS
-Sets the research progress of tech %1% to %2% for empire %3%
+Устанавливает прогресс исследований технологии %1% к %2% для империи %3%
 
 DESC_GIVE_EMPIRE_TECH
-Gives tech %1% to empire %2%
+Даёт технологию %1% империи %2%
 
 DESC_SET_OVERLAY_TEXTURE
-Modifies the appearance of the object
+Изменяет внешний вид объекта
 
 DESC_SET_TEXTURE
-Modifies the appearance of the object
+Изменяет внешний вид объекта
 
 
 # Object Creation
@@ -4369,16 +4367,16 @@ EFFECT_GATEWAY_VOID_DESTROY
 %buildingtype% на %planet% уничтожен флотом %fleet%.
 
 EFFECT_DERELICT_MINERALS
-Twenty minerals were scavenged from an abandoned derelict at %system%.
+20 минералов было найдено в заброшенном кем-то оборудовании в %system%.
 
 EFFECT_DERELICT_MAP
-Information on the area was obtained from an abandoned derelict at %system%.
+Информация об регионе была найдена в заброшенном кем-то оборудовании в %system%.
 
 EFFECT_DERELICT_FUEL
-Ships were refuled from the residual supply found in an abandoned derelict at %system%.
+Корабли были заправлены от найденого источника энергии в заброшенном кем-то оборудовании в %system%.
 
 EFFECT_BIOWEAPON
-%system% has lost population due to a biological attack!
+Биологическая атака произошла в %system% население потеряно!
 
 
 # Conditions
@@ -4414,10 +4412,10 @@ DESC_SOURCE_NOT
  который не является источником
 
 DESC_ROOT_CANDIDATE
- that is the root candidate object
+ это главное условие объекта
 
 DESC_ROOT_CANDIDATE_NOT
- that is not the root candidate object
+ это не главное условие объекта
 
 DESC_TARGET
  целевой объект
@@ -4456,10 +4454,10 @@ DESC_TYPE_NOT
  это не %1%
 
 DESC_BUILDING
- содержит %1% здание
+ содержит здание %1% 
 
 DESC_BUILDING_NOT
- не содержит %1% здание
+ не содержит здание %1% 
 
 DESC_SPECIAL
  есть особенность %1%
@@ -4474,40 +4472,40 @@ DESC_SPECIAL_TURN_RANGE_NOT
  that has not had a %1% special since between turns %2% and %3%
 
 DESC_CREATED_ON_TURN
- that was created between turns %1% and %2%
+ было создано в промежуток между ходами %1% и %2%
 
 DESC_CREATED_ON_TURN_NOT
- that was not created between turns %1% and %2%
+ не было создано в промежуток между ходами %1% и %2%
 
 DESC_CONTAINS
- that contains an object%1%
+ включает объект%1%
 
 DESC_CONTAINS_NOT
- that doesn't contain an object%1%
+ не вклчает объект%1%
 
 DESC_PLANET_TYPE
- that is a %1% planet
+ это %1% планета
 
 DESC_PLANET_TYPE_NOT
- that is not a %1% planet
+ это не %1% планета
 
 DESC_PLANET_SIZE
- that is a %1% planet
+ это %1% планета
 
 DESC_PLANET_SIZE_NOT
- that is not a %1% planet
+ это не %1% планета
 
 DESC_PLANET_ENVIRONMENT
- that is a %1% planet
+ это %1% планета
 
 DESC_PLANET_ENVIRONMENT_NOT
- that is not a %1% planet
+ это не %1% планета
 
 DESC_SPECIES
- that has species %1%
+ имеется вид %1%
 
 DESC_SPECIES_NOT
- that does not contain species %1%
+ нет вида %1%
 
 DESC_ENQUEUED
  where empire %1% has between %2% and %3% things on the production queue
@@ -4519,10 +4517,10 @@ DESC_ENQUEUED_DESIGN
  where empire %1% has between %2% and %3% %4% ships on the production queue
 
 DESC_FOCUS_TYPE
- that has focus %1%
+ приоритет на %1%
 
 DESC_FOCUS_TYPE_NOT
- that does not have focus %1%
+ нет приоритета на %1%
 
 DESC_STAR_TYPE
  that is a system with a %1% star
@@ -4531,40 +4529,40 @@ DESC_STAR_TYPE_NOT
  that is not a system with a %1% star
 
 DESC_DESIGN_HAS_HULL
- that contains the hull %1%
+ содержит корпус %1%
 
 DESC_DESIGN_HAS_HULL_NOT
- that does not contain the hull %1%
+ не содержит корпус %1%
 
 DESC_DESIGN_HAS_PART
- that contains between %1% and %2% of the %3% part
+ содержит от %1% до %2% из %3% часть
 
 DESC_DESIGN_HAS_PART_NOT
- that does not contain between %1% and %2% of the %3% part
+ не содержит от %1% до %2% из %3% часть
 
 DESC_DESIGN_HAS_PART_CLASS
- that has a part of class %1%
+ содержит деталь класса %1%
 
 DESC_DESIGN_HAS_PART_CLASS_NOT
- that does not have a part of class %1%
+ не содержит деталь класса %1%
 
 DESC_PREDEFINED_SHIP_DESIGN
- that is of the design %1%
+ по проекту %1%
 
 DESC_PREDEFINED_SHIP_DESIGN_NOT
- that is not of the design %1%
+ не по проекту %1%
 
 DESC_NUMBERED_SHIP_DESIGN
- that is of the design %1%
+ по проекту %1%
 
 DESC_NUMBERED_SHIP_DESIGN_NOT
- that is not of the design %1%
+ не по проекту %1%
 
 DESC_CHANCE_PERCENTAGE
- on a %1%%% chance
+ вероятность %1%%%
 
 DESC_CHANCE_PERCENTAGE_NOT
- on a (100 - %1%)%% chance
+ вероятность (100 - %1%)%%
 
 DESC_CHANCE
  with a probability of %1%
@@ -5007,10 +5005,12 @@ PRO_MICROGRAV_MAN_DESC
 Микрогравитация низкой планетарной орбиты предоставляет огромный потенциал для новейших производственных сооружений, оборудования и техники, невозможной на поверхности планеты.  Твердые тела можно удерживать с минимальным усилием.  Жидкости и газы текут свободно, формируемые только поверхностным натяжением, если не воздействовать на них как-то иначе.  Заводское оборудование может быть оптимально расставлено в трех измерениях.  Эти условия, при правильной эксплуатации, дают серьезный прирост эффективности и продуктивности.
 
 PRO_CORE_MINE
-Рудники глубокой добычи
+Тектоническая Минералогия
 
 PRO_CORE_MINE_DESC
-Огоромные давление и температура в мантиях планет и ядрах создают много кристаллических и минеральных формирований, которые в верхних планетарных слоях появляются только благодаря вулканической активности. Более глубокие слои планеты содержат еще больше экзотические материалов, в больших концентрациях. Доступ к этим областям является чрезвычайно трудным и опасным, но результаты на порядок превосходят традиционную горную промышленность.
+'''Огоромные давление и температура в мантиях планет и ядрах создают много кристаллических и минеральных формирований, которые в верхних планетарных слоях появляются только благодаря вулканической активности. Более глубокие слои планеты содержат еще больше экзотические материалов, в больших концентрациях. Доступ к этим областям является чрезвычайно трудным и опасным, но результаты на порядок превосходят традиционную горную промышленность.
+
+Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis. After creation, processes such as plate tectonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources. Understanding these processes and their effects, causes and signs is essential for large scale efficient mining operations.'''
 
 PRO_PLANET_GEOL
 Планетарная Геология
@@ -5035,13 +5035,13 @@ Exobots, as they become commonly known, are a marvel of form meets function. The
 PRO_EXOBOTS
 Полуавтономные Экзоботы
 PRO_EXOBOTS_DESC
-Allows the contruction of Exobots optimsied for industry on hostile planets.
+Позволяет создавать экзоботов оптимизированных под промышленность на враждебных планетах.
 
 PRO_RAPID_EXO_PROD
-Rapid Exobot Production
+Быстрое Производство Экзоботов
 
 PRO_RAPID_EXO_PROD_DESC
-Increases the target health on all Exobot-populated planets by 5.
+Разрешает больше экзоботов.
 
 PRO_FUSION_GEN
 Ядерный Синтез
@@ -5450,17 +5450,11 @@ BUILDING_UNLOCK_SHORT_DESC
 RESEARCH_SHORT_DESC
 Улучшает Исследования
 
-GROWTH_SHORT_DESC
-Увеличивает Население
-
 MINING_SHORT_DESC
 Улучшает Добычу
 
 INDUSTRY_SHORT_DESC
 Улучшает Промышленность
-
-PRODUCTION_SHORT_DESC
-Увеличивает Производительность
 
 TRADE_SHORT_DESC
 Улучшает Торговлю
@@ -6111,55 +6105,55 @@ SHP_PHASING_CLOAK_DESC
 Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
 
 SHP_DEUTERIUM_TANK
-Deuterium Tank
+Бак Дейтерия 
 
 SHP_DEUTERIUM_TANK_DESC
-Unlocks Deuterium Tank ship part.
+Разблокирует часть корабля - Бак Дейтерия.
 
 SHP_ANTIMATTER_TANK
-Antimatter Tank
+Бак Антиматерии
 
 SHP_ANTIMATTER_TANK_DESC
-Unlocks Antimatter Tank ship part.
+Разблокирует часть корабля - Бак Антиматерии.
 
 SHP_LEAD_PLATE
-Lead Armor Plating
+Свинцовая Броня Обшивки
 
 SHP_LEAD_PLATE_DESC
-Unlocks Lead Armor Plating ship part.
+Разблокирует часть корабля - Свинцовая Броня Обшивки.
 
 SHP_ZORTRIUM_PLATE
-Zortrium Armor Plating
+Броня Обшивки из Зортия
 
 SHP_ZORTRIUM_PLATE_DESC
-Unlocks Zortrium Armor Plating ship part.
+Разблокирует часть корабля - Броня Обшивки из Зортия.
 
 SHP_NEUTRONIUM_PLATE
-Neutronium Armor Plating
+Нейтронная Броня Обшивки
 
 SHP_NEUTRONIUM_PLATE_DESC
-Unlocks Neutronium Armor Plating ship part.
+Разблокирует часть корабля - Нейтронная Броня Обшивки.
 
 SHP_DIST_MOD
-Distortion Modulator
+Модулятор Искажений
 
 SHP_DIST_MOD_DESC
-All objects with mass cause a curvature in space-time due to gravitational effects. Other forces such as the electromagnetic force have similar geometric effects. By indiscriminately amplifying these effects in a localized area, space-time distortion caused by ships can easily be distinguished from background electromagnetic and gravitational radiation.
+Все объекты имеющие массу искривляют пространство-время за счёт гравитационного воздействия. Другие факторы, такие, как электромагнитные силы дают похожие геометрические эффекты. Безразборное локализованное усиление искажений пространства-времени, вызываемое космическими кораблями, можно легко отличить от фонового электромагнитного и гравитационного излучения. 
 
 SHP_SELFGRAV_HULL
-Self-Gravitating Hull
+Само-Гравитационный Корпус
 
 SHP_SELFGRAV_HULL_DESC
-This hull is immense in both size and power, with eight external slots and two internal slots. It is fairly sturdy, having a high max structure, but stealth and speed are fairly low.
+Огромный по размерам и мощности корпус, с восемью внешними и двумя внутренними слотами. Корпус довольно крепкий, с максимально развитой структурой, но его уровень скрытности и скорость довольно низкие.
 
 SHP_NANOROBO_HULL
-Nano-Robotic Hull
+Корпус из Нанороботов
 
 SHP_NANOROBO_HULL_DESC
-This automated hull is large and fast, and repairs damage to itself using millions of nano-robots. It has six external slots and one internal slot, but it has low stealth and is very fragile, though it regenerates structure during combat and restores structure completely between combats.
+Этот автоматизированный корпус большой и быстрый, и к тому же ремонтирует собственные повреждения используя миллионы нанороботов. В корпусе есть шесть внешних и один внутренний слот, но сам он хрупкий и обладает низким уровнем скрытности, правда имеет возможность частично восстанавливать свою структуру во время боя и полностью восстанавливаться в промежутках между боями.
 
 SHP_TITAN_HULL
-Titanic Hull
+Титановый Корпус
 
 SHP_TITAN_HULL_DESC
 This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots and three internal slots, and its max structure is very high, but at the cost of a great deal of speed and stealth.
@@ -6566,18 +6560,18 @@ BLD_ENCLAVE_VOID_DESC
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
 
 BLD_ART_BLACK_HOLE
-Artificial Black Hole
+Искусственная Чёрная Дыра
 
 BLD_ART_BLACK_HOLE_DESC
-By introducing a tremendous amount of artificial gravity into a star without increasing its energy, it can be made to collapse in on itself and form a Black Hole. This technique is limited to red stars however, as overcoming the internal pressure of a hotter star would require an absurdly powerful gravity generator. This process can be enacted at an outpost.
+Путём введения огромной искусственной гравитации в звезду без увеличения энергии, можно подвергнуть звезду коллапсу, что приведёт к образованию чёрной дыры. Однако этот метод может быть применён только к красным звездам, а для преодоления внутреннего давления горячей звезды потребуется абсурдно мощный гравитационный генератор. Этот процесс может запущен с аванпоста.
 
 BLD_HYPER_DAM
-Hyperspatial Dam
+Гиперпространственная плотина
 
 BLD_HYPER_DAM_DESC
-'''Increases target Industry on planets with the Industry focus by the planet's Population, but decreases Population on such planets by 5.
+'''Увеличивает промышленность на планетах с промышленно ориентированным населением, но уменьшает население на таких планетах на 5.
 
-A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
+Разрыв в ткани вселенной, безопасно управляемый и используемый. Каждая планета может построить собственную гиперпространственную плотину, но необходим единый центр управления, чтобы пространственно-временной континуум не был разорван созданными давлением. Кроме того, на всех планетах, которые используют гиперпространственные плотины, население испытывает проблемы со здоровьем, если планеты вращаются вокруг черной дыры.'''
 
 BLD_SOL_ACCEL
 Solar Accelerator
@@ -6603,7 +6597,7 @@ Cloning Center
 BLD_CLONING_CENTER_DESC
 '''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
-Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving planet health. However, due to political considerations, such activities must be kept a secret from those who might have ethical concerns. As a result, this building must be hidden from the population on the dark side of a resonant moon. This building can be built at an outpost, provided it has a resonant moon.'''
+Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving population.'''
 
 BLD_TERRAFORM
 Terraforming
@@ -7703,12 +7697,6 @@ GREAT_WEAPONS
 ULTIMATE_WEAPONS
 '''+ + + Starts with Laser 1.'''
 
-NO_NON_ORGANIC
-'''Does not apply to Non-Organic species.'''
-
-NON_ORGANIC
-'''Non-Organic: Does not benefit from some biologically-based techs.'''
-
 BAD_POPULATION
 '''   - Bad Population'''
 
@@ -7882,7 +7870,7 @@ ROBOTIC
 Роботы
 
 LITHIC
-Педобионты
+Минеральные
 
 PHOTOTROPHIC
 Фототрофы
