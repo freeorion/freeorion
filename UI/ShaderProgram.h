@@ -16,14 +16,14 @@
 # include <GL/glu.h>
 #endif
 
+#include <boost/filesystem/operations.hpp>
+
 #include <string>
 #include <vector>
 
+bool ReadFile(const boost::filesystem::path& path, std::string& file_contents);
 
-std::string     ReadFile(const std::string& filename);
-
-class ShaderProgram
-{
+class ShaderProgram {
 private:
     ShaderProgram();    // default ctor forbidden, makes no sense
 

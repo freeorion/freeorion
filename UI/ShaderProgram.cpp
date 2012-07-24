@@ -52,20 +52,26 @@ namespace {
     }
 }
 
-std::string ReadFile(const std::string& filename) {
-    std::string retval;
-#ifdef FREEORION_WIN32
-    boost::filesystem::path::string_type filename_native;
-    utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(filename_native));
-    boost::filesystem::path path(filename_native);
-#else
-    boost::filesystem::path path(filename);
-#endif
+bool ReadFile(const boost::filesystem::path& path, std::string& file_contents) {
     boost::filesystem::ifstream ifs(path);
-    int c;
-    while ((c = ifs.get()) != boost::filesystem::ifstream::traits_type::eof());
-        retval += c;
-    return retval;
+    if (!ifs)
+        return false;
+
+    // skip byte order mark (BOM)
+    static const int UTF8_BOM[3] = {0x00EF, 0x00BB, 0x00BF};
+    for (int i = 0; i < 3; i++) {
+        if (UTF8_BOM[i] != ifs.get()) {
+            // no header set stream back to start of file
+            ifs.seekg(0, std::ios::beg);
+            // and continue
+            break;
+        }
+    }
+
+    std::getline(ifs, file_contents, '\0');
+
+    // no problems?
+    return true;
 }
 
 ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string& fragment_shader) :

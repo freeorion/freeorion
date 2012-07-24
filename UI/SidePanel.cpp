@@ -573,8 +573,11 @@ public:
         m_star_type(star_type)
     {
         if (!s_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
-            s_scanline_shader = boost::shared_ptr<ShaderProgram>(ShaderProgram::shaderProgramFactory("",
-                ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").string())));
+            boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
+            std::string shader_text;
+            ReadFile(shader_path, shader_text);
+            s_scanline_shader = boost::shared_ptr<ShaderProgram>(
+                ShaderProgram::shaderProgramFactory("", shader_text));
         }
         s_instances_counter++;
         Refresh();

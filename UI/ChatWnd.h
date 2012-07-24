@@ -13,8 +13,7 @@
 namespace GG { class MultiEdit; }
 class MessageWndEdit;
 
-class MessageWnd : public CUIWnd
-{
+class MessageWnd : public CUIWnd {
 public:
     //! \name Structors //@{
     MessageWnd(GG::X x, GG::Y y, GG::X w, GG::Y h);
