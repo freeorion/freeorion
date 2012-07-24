@@ -41,6 +41,8 @@
 #include <GL/glx.h>
 #endif
 
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
 
 using namespace GG;
 
@@ -76,7 +78,7 @@ namespace {
 #endif
 }
 
-OgreGUI::OgreGUI(Ogre::RenderWindow* window, const std::string& config_filename/* = ""*/) :
+OgreGUI::OgreGUI(Ogre::RenderWindow* window, const boost::filesystem::path& config_file_path) :
     GUI(""),
     m_window(window),
     m_timer(),
@@ -86,12 +88,12 @@ OgreGUI::OgreGUI(Ogre::RenderWindow* window, const std::string& config_filename/
     Ogre::WindowEventUtilities::addWindowEventListener(m_window, this);
     EnableMouseButtonDownRepeat(250, 15);
 
-    // would use a boost::filesystem::ifstream, but I can't find a way to
-    // convert one into the std::ifstream that FileStreamDataStream expects
-    std::ifstream ifs(config_filename.c_str());
-    if (ifs) {
-        Ogre::FileStreamDataStream file_stream(&ifs, false);
-        m_config_file_data.bind(new Ogre::MemoryDataStream(file_stream));
+    if (boost::filesystem::exists(config_file_path)) {
+        boost::filesystem::ifstream ifs(config_file_path);
+        if (ifs) {
+            Ogre::FileStreamDataStream file_stream(&ifs, false);
+            m_config_file_data.bind(new Ogre::MemoryDataStream(file_stream));
+        }
     }
 }
 

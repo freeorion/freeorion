@@ -52,6 +52,7 @@
 
 #include <GG/GUI.h>
 
+#include <boost/filesystem/path.hpp>
 
 #ifdef _MSC_VER
 # ifdef GiGiOgre_EXPORTS
@@ -129,7 +130,8 @@ public:
     /** Basic ctor.  A nonzero \a window is required, and an optional
         configuration filename, \a config_filename.  If \a config_filename is
         supplied, it will be available via ConfigFileStream(). */
-    explicit OgreGUI(Ogre::RenderWindow* window, const std::string& config_filename = "");
+    explicit OgreGUI(Ogre::RenderWindow* window,
+                     const boost::filesystem::path& config_file_path = boost::filesystem::path());
 
     /** Dtor. */
     virtual ~OgreGUI();

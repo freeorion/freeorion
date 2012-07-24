@@ -286,14 +286,7 @@ int mainSetupAndRunOgre() {
         //EntityRenderer entity_renderer(scene_manager);
 
         parse::init();
-#ifndef FREEORION_WIN32
-        std::string ois_file_string = (GetRootDataDir() / "OISInput.cfg").string();
-#else
-        boost::filesystem::path::string_type ois_file_native = (GetRootDataDir() / "OISInput.cfg").native();
-        std::string ois_file_string;
-        utf8::utf16to8(ois_file_native.begin(), ois_file_native.end(), std::back_inserter(ois_file_string));
-#endif
-        HumanClientApp app(root, window, scene_manager, camera, viewport, ois_file_string);
+        HumanClientApp app(root, window, scene_manager, camera, viewport, GetRootDataDir() / "OISInput.cfg");
 
 #ifdef FREEORION_MACOSX
         ois_input_plugin = new OISInput;

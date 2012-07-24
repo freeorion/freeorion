@@ -157,9 +157,9 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
                                Ogre::SceneManager* scene_manager,
                                Ogre::Camera* camera,
                                Ogre::Viewport* viewport,
-                               const std::string& ois_input_cfg_file_name) :
+                               const boost::filesystem::path& ois_input_cfg_file_path) :
     ClientApp(),
-    OgreGUI(window, ois_input_cfg_file_name),
+    OgreGUI(window, ois_input_cfg_file_path),
     m_fsm(0),
     m_single_player_game(true),
     m_game_started(false),
