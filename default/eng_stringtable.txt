@@ -5018,7 +5018,7 @@ PRO_ROBOTIC_PROD
 Robotic Production
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases target Industry on all planets with the Industry focus by one fifth of the planet's Population.
+'''Increases target Industry on all planets with the Industry focus by the greater of 0.2 per [[POP_PER_PRODUCTION]] units of Population or 0.4 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
 
@@ -5039,7 +5039,7 @@ PRO_FUSION_GEN
 Fusion Generation
 
 PRO_FUSION_GEN_DESC
-'''Increases target Industry on planets with the Industry focus by one half of the planet's population.
+'''Increases target Industry on planets with the Industry focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -6486,7 +6486,7 @@ BLD_INDUSTRY_CENTER
 Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to Industry on all Industry focused planets in the empire equal to one half the planet's Population.
+'''Initially provides a bonus to Industry on all resource-supply connected planets with Industry focus equal to othe greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 [[tech PRO_INDUSTRY_CENTER_II]] refinement increases the bonus to equal the planet's population.
 
@@ -6495,7 +6495,7 @@ BLD_INDUSTRY_CENTER_DESC
 BLD_EXOBOT_SHIP
 Exobot Colony Origin
 BLD_EXOBOT_SHIP_DESC
-'''Constructing the first group of exobots is a major production.  However, once establisthed on their own planet, they will be able to build themselves.'''
+'''Constructing the first group of exobots is a major production.  However, once established on their own planet, they will be able to build themselves.'''
 
 BLD_MEGALITH
 Megalith
@@ -6563,7 +6563,7 @@ BLD_HYPER_DAM
 Hyperspatial Dam
 
 BLD_HYPER_DAM_DESC
-'''Increases target Industry on planets with the Industry focus by the planet's Population, but decreases Population on such planets by 5.
+'''Increases target Industry on resource-supply connected planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 2 per [[INFRA_PER_PRODUCTION]] units of Infrastructure, but decreases Population on such planets by 5.
 
 A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
 
@@ -6577,11 +6577,7 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Blue and White stars give bonuses equal to the planet's population to Industry on planets with the Industry focus in the same system.
-
-Yellow and Orange stars give bonuses equal to half the planet's population to Industry on planets with the Industry focus in the same system.
-
-Red stars give bonuses equal to one quarter the planet's population to Industry on planets with the Industry focus in the same system.
+'''Increases target industry on resource-supply connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependant on star type. This building can be built at an outpost.'''
 
@@ -6649,7 +6645,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-Increases Industry on all planets in the empire with the Industry focus by double the planet's population. This building can be built at an outpost.
+Increases Industry on all resource-supply connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. This building can be built at an outpost.
 
 BLD_REPLICATORS
 Replicators

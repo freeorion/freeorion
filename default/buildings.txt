@@ -381,6 +381,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
                 [[INFRA_CONDITION_INFRA]]
             ]
@@ -394,6 +395,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
                 [[INFRA_CONDITION_POP]]
             ]
@@ -407,6 +409,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
                 [[INFRA_CONDITION_INFRA]]
             ]
@@ -420,6 +423,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
                 [[INFRA_CONDITION_POP]]
             ]
@@ -433,6 +437,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
                 [[INFRA_CONDITION_INFRA]]
             ]
@@ -443,6 +448,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
                 [[INFRA_CONDITION_POP]]
             ]
@@ -673,6 +679,7 @@ BuildingType
             scope = And [
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected Source.Owner Source
                 [[INFRA_CONDITION_INFRA]]
             ]
             activation = Source
@@ -683,6 +690,7 @@ BuildingType
             scope = And [
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected Source.Owner Source
                 [[INFRA_CONDITION_POP]]
             ]
             activation = Source
@@ -692,6 +700,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected Source.Owner Source
                 PopulationCenter
                 Not Star type = BlackHole
                 Focus "FOCUS_INDUSTRY"
@@ -961,6 +970,7 @@ BuildingType
             scope = And [
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected Source.Owner Source
                 [[STANDARD_CONDITION_INFRA]]
             ]
             activation = Star type = BlackHole
@@ -971,6 +981,7 @@ BuildingType
             scope = And [
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected Source.Owner Source
                 [[STANDARD_CONDITION_POP]]
             ]
             activation = Star type = BlackHole
