@@ -170,6 +170,11 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 static dict         s_main_namespace = dict();
 static object       s_ai_module = object();
 static PythonAI*    s_ai = 0;
+#ifdef FREEORION_MACOSX
+#include <sys/param.h>
+static char         s_python_home[MAXPATHLEN];
+static char         s_python_program_name[MAXPATHLEN];
+#endif
 PythonAI::PythonAI() {
     Logger().debugStream() << "PythonAI::PythonAI()";
     // in order to expose a getter for it to Python, s_save_state_string must be static, and not a member
@@ -182,10 +187,13 @@ PythonAI::PythonAI() {
 
     try {
 #ifdef FREEORION_MACOSX
-#include <sys/param.h>
-        char python_home[MAXPATHLEN];
-        strcpy(python_home, GetPythonHome().string().c_str());
-        Py_SetPythonHome(python_home);
+        strcpy(s_python_home, GetPythonHome().string().c_str());
+        Py_SetPythonHome(s_python_home);
+        Logger().debugStream() << "Python home set to " << Py_GetPythonHome();
+
+        strcpy(s_python_program_name, (GetPythonHome() / "Python").string().c_str());
+        Py_SetProgramName(s_python_program_name);
+        Logger().debugStream() << "Python program name set to " << Py_GetProgramFullPath();
 #endif
         Py_Initialize();                // initializes Python interpreter, allowing Python functions to be called from C++
         Logger().debugStream() << "Python initialized";

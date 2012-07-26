@@ -4383,6 +4383,8 @@ Ships were refuled from the residual supply found in an abandoned derelict at %s
 EFFECT_BIOWEAPON
 %system% has lost population due to a biological attack!
 
+EFFECT_EXOBOT
+An Exobot colony ship has been built at %planet%.
 
 # Conditions
 
@@ -4812,7 +4814,7 @@ LRN_ARTIF_MINDS
 Artificial Minds
 
 LRN_ARTIF_MINDS_DESC
-'''Increases target research on all planets by 5.
+'''Increases Target Research on all planets by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 By automatically inputting all data discovered by active researchers into a single automatic data processing network, data can be analyzed and new data obtained by an entirely automated research facility. Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.
 
@@ -4879,7 +4881,7 @@ LRN_QUANT_NET
 Quantum Networking
 
 LRN_QUANT_NET_DESC
-'''Multiplies target research on all planets with the Research focus by 2.
+'''Increases target Research on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population or 1 per [[INFRA_PER_PRODUCTION]] units of infrastructure.
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes. This advancement greatly facilitates research throughout the empire.
 
@@ -5005,12 +5007,10 @@ PRO_MICROGRAV_MAN_DESC
 The microgravity of low planetary orbit offers great potential for novel manufacturing facility designs, equipment and techniques not possible on planet surfaces. Solids may be held in place with minimal support. Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated. Factory equipment may be arranged optimally in three dimensions. These conditions permit great increases in efficiency and productivity, if properly exploited.
 
 PRO_CORE_MINE
-Deep Core Mining
+Tectonic Minerology
 
 PRO_CORE_MINE_DESC
-'''Increases target Mining on planets with the Mining focus by 5, 10, 15 and 20 for Large, Medium, Small and Tiny planets, respectively.
-
-The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to vulcanism. The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations. Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
+'''The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to vulcanism. The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations. Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
 
 Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis. After creation, processes such as plate tectonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources. Understanding these processes and their effects, causes and signs is essential for large scale efficient mining operations.'''
 
@@ -5018,7 +5018,7 @@ PRO_ROBOTIC_PROD
 Robotic Production
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases target Industry on all planets with the Industry focus by one fifth of the planet's Population.
+'''Increases target Industry on all planets with the Industry focus by the greater of 0.2 per [[POP_PER_PRODUCTION]] units of Population or 0.4 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
 
@@ -5033,13 +5033,13 @@ PRO_RAPID_EXO_PROD
 Rapid Exobot Production
 
 PRO_RAPID_EXO_PROD_DESC
-Increases the target health on all Exobot-populated planets by 5.
+Allows more exobots.
 
 PRO_FUSION_GEN
 Fusion Generation
 
 PRO_FUSION_GEN_DESC
-'''Increases target Industry on planets with the Industry focus by one half of the planet's population.
+'''Increases target Industry on planets with the Industry focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -5443,17 +5443,11 @@ Unlocks Building
 RESEARCH_SHORT_DESC
 Improves Research
 
-GROWTH_SHORT_DESC
-Improves Population
-
 MINING_SHORT_DESC
 Improves Mining
 
 INDUSTRY_SHORT_DESC
 Improves Industry
-
-PRODUCTION_SHORT_DESC
-Improves Production
 
 TRADE_SHORT_DESC
 Improves Trade
@@ -5471,7 +5465,7 @@ METER_GROWTH_SHORT_DESC
 Improves Meter Growth
 
 POPULATION_SHORT_DESC
-Increases Target Population
+Increases Maximum Population
 
 HEALTH_SHORT_DESC
 Improves Health
@@ -5667,7 +5661,7 @@ LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Multiplies target Research on all planets with the Research focus by 1.25.
+'''Increases target Research on all planets with the Research focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
 
@@ -5675,7 +5669,7 @@ LRN_STELLAR_TOMOGRAPHY
 Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Multiplies target Research on planets with the Research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively.
+'''Increases target Research on planets with the Research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 
@@ -6492,7 +6486,7 @@ BLD_INDUSTRY_CENTER
 Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to Industry on all Industry focused planets in the empire equal to one half the planet's Population.
+'''Initially provides a bonus to Industry on all resource-supply connected planets with Industry focus equal to othe greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 [[tech PRO_INDUSTRY_CENTER_II]] refinement increases the bonus to equal the planet's population.
 
@@ -6501,7 +6495,7 @@ BLD_INDUSTRY_CENTER_DESC
 BLD_EXOBOT_SHIP
 Exobot Colony Origin
 BLD_EXOBOT_SHIP_DESC
-'''Constructing the first group of exobots is a major production.  However, once establisthed on their own planet, they will be able to build themselves.'''
+'''Constructing the first group of exobots is a major production.  However, once established on their own planet, they will be able to build themselves.'''
 
 BLD_MEGALITH
 Megalith
@@ -6539,7 +6533,7 @@ BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases Industry on planets with the Industry focus by half of the planet's population, and research on Planets with the Research focus by one and a half. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases Industry on planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 0.5 per [[INFRA_PER_PRODUCTION]] units of Infrastructure, and research on Planets with the Research focus by the greater of 3 per [[POP_PER_PRODUCTION]] units of Population or 1.5 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 
@@ -6555,7 +6549,7 @@ BLD_ENCLAVE_VOID
 Enclave of the Void
 
 BLD_ENCLAVE_VOID_DESC
-'''Multiplies target Research on all planets with the Research focus by 1.5.
+'''Increases target Research on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population, or 0.5 per [[INFRA_PER_PRODUCTION]] units of infrastructure.
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
 
@@ -6569,7 +6563,7 @@ BLD_HYPER_DAM
 Hyperspatial Dam
 
 BLD_HYPER_DAM_DESC
-'''Increases target Industry on planets with the Industry focus by the planet's Population, but decreases Population on such planets by 5.
+'''Increases target Industry on resource-supply connected planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 2 per [[INFRA_PER_PRODUCTION]] units of Infrastructure, but decreases Population on such planets by 5.
 
 A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
 
@@ -6583,11 +6577,7 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Blue and White stars give bonuses equal to the planet's population to Industry on planets with the Industry focus in the same system.
-
-Yellow and Orange stars give bonuses equal to half the planet's population to Industry on planets with the Industry focus in the same system.
-
-Red stars give bonuses equal to one quarter the planet's population to Industry on planets with the Industry focus in the same system.
+'''Increases target industry on resource-supply connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependant on star type. This building can be built at an outpost.'''
 
@@ -6597,7 +6587,7 @@ Cloning Center
 BLD_CLONING_CENTER_DESC
 '''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
-Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving planet health. However, due to political considerations, such activities must be kept a secret from those who might have ethical concerns. As a result, this building must be hidden from the population on the dark side of a resonant moon. This building can be built at an outpost, provided it has a resonant moon.'''
+Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving population.'''
 
 BLD_TERRAFORM
 Terraforming
@@ -6655,7 +6645,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-Increases Industry on all planets in the empire with the Industry focus by double the planet's population. This building can be built at an outpost.
+Increases Industry on all resource-supply connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. This building can be built at an outpost.
 
 BLD_REPLICATORS
 Replicators
@@ -7447,18 +7437,22 @@ Requires a Basic Shipyard, an Energy Compressor and a Solar Containment Unit at 
 SH_BASIC_SMALL
 Basic Small Hull
 SH_BASIC_SMALL_DESC
-Basic Small Hull
+'''A small, basic interstellar hull.
+
+Requires a Basic Shipyard at the planet where it is Constructed.'''
 
 SH_BASIC_MEDIUM
 Basic Medium Hull
 SH_BASIC_MEDIUM_DESC
-Basic Medium Hull
+'''A medium-sized, basic interstellar hull.
+
+Requires a Basic Shipyard at the planet where it is Constructed.'''
 
 SH_STANDARD
-Standard Hull
+Basic Large Hull
 
 SH_STANDARD_DESC
-'''Basic interstellar hull.
+'''A large, basic interstellar hull.
 
 Requires a Basic Shipyard at the planet where it is Constructed.'''
 

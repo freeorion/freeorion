@@ -44,7 +44,7 @@ SetCompressor bzip2
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "..\..\FreeOrion-v0.4.1-RC1-5047-Test-Win32-Setup.exe"
+OutFile "..\..\FreeOrion-v0.4.1-Win32-Setup.exe"
 InstallDir "$PROGRAMFILES\FreeOrion"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
