@@ -48,6 +48,8 @@
 
 #include <sstream>
 
+namespace fs = boost::filesystem;
+
 #ifdef ENABLE_CRASH_BACKTRACE
 # include <signal.h>
 # include <execinfo.h>
@@ -150,6 +152,17 @@ namespace {
             GetOptionsDB().Set<bool>("UI.system-fog-of-war",            false);
         }
     }
+
+    std::string PathString(const fs::path& path) {
+#ifndef FREEORION_WIN32
+        return path.string();
+#else
+        fs::path::string_type native_string = path.native();
+        std::string retval;
+        utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
+        return retval;
+#endif
+    }
 }
 
 HumanClientApp::HumanClientApp(Ogre::Root* root,
@@ -181,14 +194,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     boost::filesystem::ofstream temp(log_path);
     temp.close();
 
-#if defined(FREEORION_WIN32)
-    // convert to UTF-8 for passing to logger
-    boost::filesystem::path::string_type log_path_native(log_path.native());
-    std::string LOG_FILENAME;
-    utf8::utf16to8(log_path_native.begin(), log_path_native.end(), std::back_inserter(LOG_FILENAME));
-#else
-    std::string LOG_FILENAME(log_path.string());
-#endif
+    std::string LOG_FILENAME = PathString(log_path);
 
     log4cpp::Appender* appender = new log4cpp::FileAppender("FileAppender", LOG_FILENAME);
     log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
@@ -263,14 +269,7 @@ bool HumanClientApp::SinglePlayerGame() const
 { return m_single_player_game; }
 
 void HumanClientApp::StartServer() {
-#ifdef FREEORION_WIN32
-    // convert save user from UTF-16 to UTF-8
-    boost::filesystem::path::string_type path_native = (GetBinDir() / "freeoriond.exe").native();
-    std::string SERVER_CLIENT_EXE;
-    utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(SERVER_CLIENT_EXE));
-#else
-    std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond").string();
-#endif
+    std::string SERVER_CLIENT_EXE = PathString(GetBinDir() / "freeoriond.exe");
     std::vector<std::string> args;
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
     args.push_back("--resource-dir");
@@ -500,14 +499,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         try {
             std::vector<std::pair<std::string, std::string> > save_file_types;
             save_file_types.push_back(std::pair<std::string, std::string>(UserString("GAME_MENU_SAVE_FILES"), "*.sav"));
-#if defined(FREEORION_WIN32)
-            // convert save directory from UTF-16 to UTF-8 for passing to dialog
-            boost::filesystem::path::string_type path_native = GetSaveDir().native();
-            std::string path_string;
-            utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(path_string));
-#else
-            std::sting path_string = GetSaveDir().string();
-#endif
+            std::string path_string = PathString(GetSaveDir());
             FileDlg dlg(path_string, "", false, false, save_file_types);
             dlg.Run();
             if (!dlg.Result().empty())
@@ -800,9 +792,9 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
                 GetOptionsDB().GetXML().WriteDoc(ofs);
             } else {
                 std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
-                std::cerr << GetConfigPath().string() << std::endl;
+                std::cerr << PathString(GetConfigPath()) << std::endl;
                 Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
-                Logger().errorStream() << GetConfigPath().string();
+                Logger().errorStream() << PathString(GetConfigPath());
             }
         }
     }
@@ -864,13 +856,7 @@ void HumanClientApp::Autosave() {
 
     std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d%s") % player_name % empire_name % CurrentTurn() % extension);
     boost::filesystem::path save_path(GetSaveDir() / save_filename);
-#ifndef FREEORION_WIN32
-    std::string path_string = save_path.string();
-#else
-    boost::filesystem::path::string_type native_save_path = save_path.native();
-    std::string path_string;
-    utf8::utf16to8(native_save_path.begin(), native_save_path.end(), std::back_inserter(path_string));
-#endif
+    std::string path_string = PathString(save_path);
 
     Logger().debugStream() << "Autosaving to: " << path_string;
     try {

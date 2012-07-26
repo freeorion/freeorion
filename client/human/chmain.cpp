@@ -225,9 +225,8 @@ int mainSetupAndRunOgre() {
         utf8::utf16to8(file_native.begin(), file_native.end(), std::back_inserter(ogre_log_file));
         log_manager->createLog(ogre_log_file, true, false);
 
-        file_native = (GetRootDataDir() / "ogre_plugins.cfg").native();
-        std::string plugins_cfg_file;
-        utf8::utf16to8(file_native.begin(), file_native.end(), std::back_inserter(plugins_cfg_file));
+        // for some reason, for this file, the built-in path conversion seems to work properly
+        std::string plugins_cfg_file = (GetRootDataDir() / "ogre_plugins.cfg").string();
         root = new Root(plugins_cfg_file);
 #endif
 
