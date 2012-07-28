@@ -837,7 +837,7 @@ namespace {
         {}
 
         bool operator()(const UniverseObject* candidate) const {
-            if (!candidate)
+            if (!candidate || candidate->Unowned())
                 return false;
 
             switch (m_affiliation) {
@@ -847,8 +847,15 @@ namespace {
             case AFFIL_ENEMY:
                 return m_empire_id != ALL_EMPIRES && !candidate->Unowned() && !candidate->OwnedBy(m_empire_id);
                 break;
+            case AFFIL_ALLY: {
+                if (m_empire_id == ALL_EMPIRES)
+                    return false;
+                DiplomaticStatus status = Empires().GetDiplomaticStatus(m_empire_id, candidate->Owner());
+                return (status == DIPLO_PEACE);
+            }
             case AFFIL_ANY:
-                return !candidate->Unowned();
+                return true;
+                //return !candidate->Unowned();
                 break;
             default:
                 return false;
