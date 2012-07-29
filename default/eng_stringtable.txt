@@ -7656,7 +7656,7 @@ ULTIMATE_GROUND_TROOPS
 '''+ + + Ultimate Ground Troops: 50 units.'''
 
 BAD_DETECTION
-'''    - Ultimate Detection: -10 malus.'''
+'''    - Bad Detection: -10 malus.'''
 
 GOOD_DETECTION
 '''    + Good Detection: +25 bonus.'''
