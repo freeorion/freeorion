@@ -3805,7 +3805,7 @@ Supply
 METER_STEALTH
 Stealth
 METER_DETECTION
-Detection
+Detection Range
 METER_BATTLE_SPEED
 Battle Speed
 METER_STARLANE_SPEED
