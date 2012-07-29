@@ -236,7 +236,7 @@ Part
     name = "AR_LEAD_PLATE"
     description = "AR_LEAD_PLATE_DESC"
     class = Armour
-    capacity = 1
+    capacity = 5
     mountableSlotTypes = External
     buildcost = 1
     buildtime = 1
@@ -247,7 +247,7 @@ Part
     name = "AR_ZORTRIUM_PLATE"
     description = "AR_ZORTRIUM_PLATE_DESC"
     class = Armour
-    capacity = 5
+    capacity = 15
     mountableSlotTypes = External
     buildcost = 2
     buildtime = 3
@@ -258,7 +258,7 @@ Part
     name = "AR_ROCK_PLATE"
     description = "AR_ROCK_PLATE_DESC"
     class = Armour
-    capacity = 4
+    capacity = 8
     mountableSlotTypes = External
     buildcost = 1.0
     buildtime = 1
@@ -279,7 +279,7 @@ Part
     name = "AR_CRYSTAL_PLATE"
     description = "AR_CRYSTAL_PLATE_DESC"
     class = Armour
-    capacity = 20
+    capacity = 40
     mountableSlotTypes = External
     buildcost = 2
     buildtime = 3
@@ -300,7 +300,7 @@ Part
     name = "AR_NEUTRONIUM_PLATE"
     description = "AR_NEUTRONIUM_PLATE_DESC"
     class = Armour
-    capacity = 25
+    capacity = 50
     mountableSlotTypes = External
     buildcost = 3
     buildtime = 4
@@ -332,7 +332,7 @@ Part
     name = "SH_DEFENSE_GRID"
     description = "SH_DEFENSE_GRID_DESC"
     class = Shield
-    capacity = 1
+    capacity = 3
     mountableSlotTypes = [External Internal]
     buildcost = 1
     buildtime = 0
@@ -343,7 +343,7 @@ Part
     name = "SH_DEFLECTOR"
     description = "SH_DEFLECTOR_DESC"
     class = Shield
-    capacity = 3
+    capacity = 8
     mountableSlotTypes = [External Internal]
     buildcost = 2
     buildtime = 2
@@ -354,7 +354,7 @@ Part
     name = "SH_MULTISPEC"
     description = "SH_MULTISPEC_DESC"
     class = Shield
-    capacity = 10
+    capacity = 20
     mountableSlotTypes = [External Internal]
     buildcost = 10
     buildtime = 5
@@ -558,7 +558,7 @@ Part
     class = Colony
     capacity = 1
     mountableSlotTypes = Internal
-    buildcost = 20
+    buildcost = 25
     buildtime = 8
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -586,8 +586,8 @@ Part
     class = Colony
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 10
-    buildtime = 4
+    buildcost = 15
+    buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/tech/habitation_domes.png"
     

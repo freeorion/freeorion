@@ -4,7 +4,6 @@ ShipDesign
     hull = "SH_BASIC_SMALL"
     parts = [
         "GT_TROOP_POD"
-        "SH_DEFENSE_GRID"
     ]
     model = "fighter"
 
@@ -14,16 +13,14 @@ ShipDesign
     hull = "SH_BASIC_SMALL"
     parts = [
         "DT_OPTICAL_SCANNER"
-        "FU_BASIC_TANK"
         ]
     model = "fighter"
 
 ShipDesign
     name = "SD_COLONY_SHIP"
     description = "SD_COLONY_SHIP_DESC"
-    hull = "SH_STANDARD"
+    hull = "SH_BASIC_MEDIUM"
     parts = [
-        ""
         ""
         ""
         "CO_COLONY_POD"
@@ -41,9 +38,8 @@ ShipDesign
 ShipDesign
     name = "SD_OUTPOST_SHIP"
     description = "SD_OUTPOST_SHIP_DESC"
-    hull = "SH_STANDARD"
+    hull = "SH_BASIC_MEDIUM"
     parts = [
-        ""
         ""
         ""
         "CO_OUTPOST_POD"

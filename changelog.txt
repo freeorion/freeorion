@@ -24,6 +24,9 @@ Balancing:
  ~ Halved the generation of floaters from forests.
  ~ Colony and Outpost bases (for in-system use only) can be built without shipyards.
  ~ Greatly weakend the Sentry and Sentinel
+ ~ Increased the effectiveness of shields and armor by ~ 2x
+ ~ Removed internal slot from basic small hull, but increased fuel capacity
+ ~ Switched the premade colony and outpost ships to a medium hull, but increased the cost of the colony and outpost parts to compensate.
 
 Content:
  ~ Fixed many spelling errors in various descriptions.

@@ -34,7 +34,7 @@ Hull
     stealth = 10
     structure = 5
     slots = Slot type = Internal position = (0.50, 0.50)
-    buildCost = .1
+    buildCost = 1
     buildTime = 1
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -47,12 +47,11 @@ Hull
     description = "SH_BASIC_SMALL_DESC"
     speed = 50
     starlaneSpeed = 75
-    fuel = 3
+    fuel = 4
     stealth = 2
     structure = 8
     slots = [
-        Slot type = External position = (0.60, 0.45)
-        Slot type = Internal position = (0.40, 0.55)
+        Slot type = External position = (0.50, 0.45)
     ]
     buildCost = 2.0
     buildTime = 2
@@ -95,7 +94,7 @@ Hull
     starlaneSpeed = 40
     fuel = 3
     stealth = 15
-    structure = 20
+    structure = 25
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
