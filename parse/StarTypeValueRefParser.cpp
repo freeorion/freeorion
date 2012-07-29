@@ -19,6 +19,8 @@ namespace {
 
             final_token
                 %=   tok.StarType_
+                |    tok.NextOlderStarType_
+                |    tok.NextYoungerStarType_
                 ;
 
             constant

@@ -20,6 +20,8 @@ namespace {
             final_token
                 %=   tok.PlanetType_
                 |    tok.NextBetterPlanetType_
+                |    tok.ClockwiseNextPlanetType_
+                |    tok.CounterClockwiseNextPlanetType_
                 ;
 
             constant

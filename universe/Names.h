@@ -48,6 +48,7 @@
     (CaptureResult)                             \
     (Category)                                  \
     (Class)                                     \
+    (ClockwiseNextPlanetType)                   \
     (Colony)                                    \
     (Colour)                                    \
     (Condition)                                 \
@@ -55,6 +56,7 @@
     (ContainedBy)                               \
     (Contains)                                  \
     (Count)                                     \
+    (CounterClockwiseNextPlanetType)            \
     (CreateBuilding)                            \
     (CreatedOnTurn)                             \
     (CreatePlanet)                              \
@@ -159,8 +161,6 @@
     (Native)                                    \
     (Neutron)                                   \
     (NextBetterPlanetType)                      \
-    (ClockwiseNextPlanetType)                   \
-    (CounterClockwiseNextPlanetType)            \
     (NextLargerPlanetSize)                      \
     (NextSmallerPlanetSize)                     \
     (NextOlderStarType)                         \
