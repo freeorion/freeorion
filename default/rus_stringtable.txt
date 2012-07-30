@@ -1,9 +1,9 @@
 Russian
 
-#This is the Russian String Table file for FreeOrion 0.4 SVN5050
+#This is the Russian String Table file for FreeOrion 0.4 SVN5084
 #Translater cjckem at gmail.com
 #support by black_owl at mail.ru
-#Этот языковой файл для FreeOrion 0.4 SVN5062
+#Этот языковой файл для FreeOrion 0.4 SVN5084
 #кодовая страница UTF8
 #Переводит cjckem at gmail.com
 #при поддержке black_owl at mail.ru
@@ -3018,21 +3018,21 @@ SP_FIFTYSEVEN_DESC
 Взрослые Пятьдесят-Семь  достигают 10-20 метров в длину. Основное отличие от классического змеиного тела - это два резонирующих купола в верхней части спины.  Различные плавники дают полный контроль над телом.  Полностью слепые, они полагаются на запах, слух, точное предчувствие, и, при необходимости, эхолокацию.  Пятьдесят-седьмые всеядные существа: питаются скоплениями маленьких летающих существ, наподобие китов, питающихся планктоном.  Так как они всю жизнь проводят в небе, и не имеют каких-либо конечностей, Пятьдесят-седьмые не владеют материальными технологиями.
 
 Индивидуальность:
-Пятьдесят-седьмые не проявляют интереса к остальной галактике и к тем частям собственных планет, которые не используют. Большая часть их интересов индивидуальна, и культурно сосредоточена на математике.  They do seem eager for new mathematical puzzles, so if research problems can be phrased properly... 
+Пятьдесят-седьмые не проявляют интереса к остальной галактике и к тем частям собственных планет, которые не используют. Большая часть их интересов индивидуальна, и культурно сосредоточена на математике.  Они, похоже, просто рвутся решать новые математические головоломки, если исследовательские проблемы могут быть правильно сформулированы.
 
-Homeworld:
-High g swamp world with a very dense atmosphere.
+Родной мир:
+Высокогравитационный мир с очень плотной атмосферой.
 
-Reason for Staying:
-The Fifty-Seven are in constant contact with most of the rest of their species, participating in a complex fractal 'song' that may also be a way to test complex mathematical hypotheses and/or some sort of social or artistic expression. Leaving the fractal song is apparently extremely unattractive.
+Причины оставаться:
+Пятьдесят-седьмые находятся в постоянном контакте с большинством остальных особей своего вида, участвуя в комплексной фрактальной 'песне', которая может так же быть способом проверки сложных математических гипотез и/или видом социального или художественного выражения. Отделяться от такой фрактальной песни, по видимому, крайне не хочется.
 '''
 
 
 SP_SETINON
-Setinon
+Сетиноны
 SP_SETINON_DESC
-'''Individualistic sentient microscopic cells.
-Prefer Ocean planets.
+'''Индивидуалистические разумные микроскопические клетки.
+Предпочитают океанические планеты.
 Органические
 
 [[GREAT_STEALTH]]
@@ -3046,10 +3046,10 @@ Prefer Ocean planets.
 
 
 SP_NYMNMN
-Nymnmn
+Ниямнмн
 SP_NYMNMN_DESC
-'''Planet-wide sapient magnetic waveforms.
-Prefer Desert planets.
+'''Магнитные волны планетарного масштаба.
+Предпочитают пустынные планеты.
 Самодостаточные
 
 [[GREAT_DETECTION]]
@@ -3063,10 +3063,10 @@ Prefer Desert planets.
 '''
 
 SP_TRENCHERS
-Trenchers
+Траншеекопатели
 SP_TRENCHERS_DESC
-'''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
-Prefers Barren planets.
+'''Загадочные колесообразные роботы, преданные своему делу - нарезке на поверхности планет кривых и спиралей очень сложных форм.
+Предпочитают бесплодные планеты.
 Роботы
 
 [[NO_INDUSTRY]]
@@ -3077,10 +3077,10 @@ Prefers Barren planets.
 
 
 SP_RAAAGH
-Raaagh
+Рррэг
 SP_RAAAGH_DESC
-'''Highly territorial felinoids.
-Prefer Terran planets.
+'''Чрезмерно территориальный вид, с внешними чертами семейства кошачих.
+Предпочитают планеты земного типа.
 Органические
 
 [[BAD_INDUSTRY]]
@@ -3088,24 +3088,24 @@ Prefer Terran planets.
 
 [[ULTIMATE_GROUND_TROOPS]]
 
-The Raaagh are 1.5 meter tall stripe-furred bipeds.  The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance.  The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage-- they must survive on their own competing against their siblings for hiding places and stealing food like vermin.  After three years usually only one is left, and the surviving young begin to learn to speak.  This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
+Рррэги - полутораметровые двуногие с полосатым мехом.  Наклоняют тело при ходьбе на 45 градусов, что оставляет свободными клыкастые челюсти и когтями для драки, строительства или захвата добычи . Треугольные уши и зрачки в виде щели делают их очень похожими на кошачих.  Молодой выводок появляется из яиц, которых Рррр откладывают десяток за раз. Молодым уделяется мало заботы и внимания на данном этапе -- они должны выживать самостоятельно, конкурировать со своими братьями и сестрами за укрытие и ворованную еду, как паразиты.  По достижению трёх лет, как правило из выводка остаётся одна особь, и в этом возрасте молодые Рррэги начинают учиться говорить. Тогда же происходит внезапная активация родительских инстинктов, и выживший тщательно воспитывается как новый член прайда.
 
-Personality:
-Extreme territoriality is the Raaagh's most distinctive trait- woven throughout their daily lives and culture.  Related to that is a preference for the familiar and known. Curiosity is minimal, which probably explains their stone age technology.
+Индивидуальность:
+Чрезвычайная территориальность - это самая яркая отличительная черта Рррэгов, влияющая на всю их повседневную жизнь и культуру. Cвязанные с этим предпочтения знакомы и известны.  Любопытство не их достоинство, вероятно это объясняет развитие технологий на уровне каменного века.
 
-Homeworld:
-The Raaagh homeworld is of the Terran type.  Sea and land are more or less evenly spread out, with the largest continent coverly only 4% of planet's surface.  The many small continents and large islands encourage a territorial attitude.
+Родная планета:
+Родная планета Рррэгов принадлежит к типу земных. Моря и суша распределены по планете более-менее равномерно, самый большой континент составляет лишь 4% от поверхности планеты. Множество малых континентов и больших островов лишь поощряют распространённость территориальных отношений.
 
-Reason for Staying:
-There's not bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries.  The genetic compulsion of a Raaagh is to guard his territory with his life, and when possible to expand into adjacent land.  Abandoning one's territory is inconcievable, and a Raaagh forcibly removed from his territory goes violently insane.
+Причины оставаться: 
+Нет куска земли, достаточно большого для отдельных Рррэгов, чтобы жить на нём, и не бороться много столетий. Генетические позывы Рррэгов является защита своей территории ценой жизни, и при возможности расширение на прилегающие территории.  Отказ от своей территории немыслим, и насильственно изгоняемые со своей территории Рррэги становятся яростными безумцами.
 '''
 
 
 SP_BEIGEGOO
-Beige Goo
+Бежевая Слизь
 SP_BEIGEGOO_DESC
-'''Insane, intensely private, planet-engulfing nanite swarm.
-Prefers Radiated planets.
+'''Безумный, очень обособленный, поглощающий планеты рой нанитов.
+Предпочитает радиационные планеты.
 Роботы
 
 [[GREAT_INDUSTRY]]
@@ -3114,14 +3114,14 @@ Prefers Radiated planets.
 [[GREAT_GROUND_TROOPS]]
 [[GOOD_POPULATION]]
 
-The entire planet is covered in a beige haze of Nanites. It is unknown wheather they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials.  However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
+Вся планета покрыта бежевой дымкой нанитов. Пока неизвестно, были ли они сброшены в качестве оружия, или это был вышедший из-под контроля эксперимент, или средство извлечения ресурсов, но они были доскональными. Ничего не осталось кроме радиоактивного ядра планеты. Эти наниты очень эффективные сборщики, и стремятся оставаться такими, если есть достаточно сырья. Однако наниты, усиленно защищают тайну их конструкции - они самоуничтожатся, в случае их захвата и удаления с планеты.
 '''
 
 SP_SILEXIAN
-Silexian
+Силексианцы
 SP_SILEXIAN_DESC
-'''Gleaming gardener robots, left on their own.
-Prefer Terran planets.
+'''Блестящие роботы-садовники. Предоставлены сами себе.
+Предпочитают планеты земного типа.
 Роботы
 
 [[NO_INDUSTRY]]
@@ -3129,10 +3129,10 @@ Prefer Terran planets.
 '''
 
 SP_KOBUNTURA
-Kobuntura
+Кобунтура
 SP_KOBUNTURA_DESC
-'''Sentient magnetic dust formations with a fascination for building and construction.
-Prefer Barren planets.
+'''Живые образования магнитной пыли увлечённые строительством и конструированием.
+Предпочитают пустынные планеты.
 Самодостаточные
 
 [[GREAT_INDUSTRY]]
@@ -3143,10 +3143,10 @@ Prefer Barren planets.
 
 
 SP_UGMORRS
-Ugmorrs
+Угморы
 SP_UGMORRS_DESC
-'''Lava-dwelling yeast piles, which form temporary golems.
-Prefer Inferno planets.
+'''Живущие в лаве груды дрожжей, временно образующие големов.
+Предпочитают планеты типа ад.
 Минеральные
 
 [[GOOD_INDUSTRY]]
@@ -3156,10 +3156,10 @@ Prefer Inferno planets.
 '''
 
 SP_GISGUFGTHRIM
-'''Gis Guf Gthrim'''
+'''Гис Гуф Гхим'''
 SP_GISGUFGTHRIM_DESC
-'''Shelled herbivores that live off a singular planets-sized colonial gel.
-Prefer Toxic planets.
+'''Покрытые оболочкой травоядные животные, живущие за счёт единого колониального геля планетарных размеров.
+Предпочитают токсичные планеты.
 Органические
 
 [[BAD_INDUSTRY]]
@@ -3167,14 +3167,14 @@ Prefer Toxic planets.
         
 [[BAD_GROUND_TROOPS]]
 
-Most of the equatorial region of the Gis Guf G'thrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis lifecycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
+Большая часть экваториальной части родной планеты Гис Гуф Гхим покрыта единым желатиновым организмом, известным как Янтарные Просторы, который заменяет все другие растения. Гисы (и многих других существ) живут и питаются только на янтарных просторах. Жизненного цикл Гисов также тесно связан с янтарным пространством. Просторы эти, кажется, бессмертны, и не размножается. Попытки клонировать их часть ни к чему не привели, поэтому Гисы не смогут покинуть свою родную планету. 
 '''
 
 SP_HIDDENGARDENER
-Hidden Gardener
+Скрытый садовник
 SP_HIDDENGARDENER_DESC
-'''A sapient fungal network that tends its plant food from beneath
-Prefers Terran planets
+'''Мудрая грибковая сеть, ухаживающая за корнями своей пищи растительного происхождения 
+Предпочитает планеты земного типа
 Органические
 
 [[GOOD_STEALTH]]
@@ -3184,20 +3184,20 @@ Prefers Terran planets
 
 [[NO_GROUND_TROOPS]]
 
-The Hidden Gardener is a massive distributed fungal intelligence lying just beneath the surface. Each individual covers many square kilometers. Its actions and thoughts are slow. Various sensory nodes are scattered about by which it can monitor the weather and the growth of its garden. A Hidden Gardener, by means of enzymes, the encapsulation and releases of seeds, and the control of water, tends its garden to produce precisely the rotting plant matter it needs to survive.
+Скрытый Садовник, это огромная распределенная сеть грибов, спрятанных прямо под поверхностью земли. Каждая отдельная личность занимает много квадратных километров. Действуют и мыслят медленно. С помощью различных сенсорныв узлов, разбросанных по его ответвлениям, Садовник может следить за погодой и ростом его сада. C помощью ферментов, инкапсуляции и выбросов семян, а так же контроля воды, Скрытый Садовник ухаживает за своим садом, чтобы производить больше гниющих растительных веществ, которые необходимы ему для выживания.
 
-Fungal-type life-forms seldom have much use for brains of any type, but the Gardener's unusual, and thoughtful approach to providing itself with food provides enough additional energy to make it work.
+Грибковые формы жизни редко могут использовать мозг любого типа, но необычность Садовника и вдумчивый подход к обеспечению себя продовольствием даёт достаточную дополнительную энергию, чтобы заставить мозг работать.
 
-Their terran homeworld is an eerily park-like place with plants arranged with unnatural precision, but no other signs of habitation.
+От их домашней планеты, покрытой растительностью, расположенной с неестественной точностью, наподобие парковых насаждений, становится жутко, так как других признаков разумной жизни на планете не видно.
 
-The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet, and since the Hidden Gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.'''
+Широко раскинувшиеся тонкие сети грибницы слишком большие и интегрированные в почву, для перемещений на другие планеты. Когда Скрытый Садовник становится слишком большим превышая приемлемый интервал задержки обмена мыслями, он размножается "расщеплением" сознания на две части, поэтому не существует молодых маленьких особей, способных покинуть планету.'''
 
 
 SP_ABADDONNIANS
-Abaddonni
+Абаддонианцы
 SP_ABADDONNIANS_DESC
-'''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
-Prefers Inferno planets.
+'''Раса живущих в пещерах, в целом приличный народ, живущий в чрезмерной опеке компьютера, который они создали.
+Предпочитают планеты типа ад.
 Минеральные
 
 [[AVERAGE_INDUSTRY]]
@@ -3208,34 +3208,30 @@ Prefers Inferno planets.
 
 
 SP_ACIREMA
-Acirema
+Акиремцы
 SP_ACIREMA_DESC
-'''A race with nearly limitless power, that cannot survive in this universe.
-Prefers Radiated planets.
+'''Расса с почти безграничной властью, которая не может выжить в этой вселенной.
+Предпочитают радиационные планеты
 Самодостаточные
 
 [[GREAT_INDUSTRY]]
 [[GOOD_RESEARCH]]
 
-Description
-An Acirem is a 10-30 m ellipsoidal energy beings with large (30-100m) ''wings''. As they age they tend to accumulate material from around them developing a dusty and eventually rocky appearance (still maintaining the visible energy flows through their body and the gaps). Most Acirema live in a universe where the physical constants are slightly different, and there is only one place where they can get through to our universe, on their "Homeworld" of Portal. However, upon doing that they immediately begin to 'age' differently than in their own universe. Acirema cannot survive more than a few fractions of a galactic cycle in this universe. So an Acirem rarely spends much time before crossing back into their own universe.
+Описание
+Акиремцы являются 10-30 метровыми эллипсоидальной энергитическими существами с большими (30-100м) "Крыльями". Старея, они притягивают окружающие материалы, накапливая их вокруг себя, что приводит к появлению сначала пыльной, а в итоге скалистой внешности (сохраняющую видимость потоков энергии струящихся через тело и щели). Большинство Акиремцев живут в мире, где физические константы немного отличаются от наших, и есть только одно место, где они могут пройти в нашу Вселенную, через портал их "Родной планеты".
 
-As the Acirema found the anomaly that allowed them to enter into this universe, they also found that harnessing the differences in structure allowed them to generate energy in massive amounts in both universes. They also found that their bodies could release and manipulate massive amounts of energy. They rapidly began gathering material on Portal to study, and use to build structures on Portal itself. However that massive amount of energy meant they rapidly mined Portal out, and soon had very limited minerals that were safe for them to extract.
+"Родная планета"
+Портал - это радиационная планета, расположенная близко к необычно яркой голубой звезде-гиганту, со связью с другой Вселенной. Считается, что эксперименты Предшественников могли открыть соединение, и вызвать изменения в звезде. Есть подозрение, что на Портале была интеллектуальная жизнь, но она была уничтожена Акиремцами, когда появилась связь (или ради исследований или с использованием продвинутого оружия)
 
-The massive amount of energy they can release as individuals and across the connection from Portal to their home universe, gives them the ability to produce large amounts of Industry, and also allows them to act as weapons. This makes Portal a very dangerous world to approach, as the Acirema are very wary of outsiders, and are sensitive to the vulnerability of their position. Trade with another universe is definitely beneficial, especially since they cannot obtain minerals from other planets. The Acirema on Portal seem to have a government that is similar to a military and/or research outpost (tightly controlled core with a majority loosely controlled) They are very secretive of the nature of their society back home.
-
-"Homeworld"
-Portal is a Radiated world close to an unusually bright Blue Giant Star, with a connection to another universe. It is thought that Precursor testing may have opened the connection, and caused the star to change. There is suspicion that there may have been intelligent life on Portal, and they were destroyed by the Acirema when the connection opened (either due to research or advanced weapons use).
-
-Reason for staying
-They can't stay here long enough to actually move to another planet and still survive.'''
+Причины оставаться
+Они не могут оставаться в нашей вселенной настолько долго, чтобы добраться до другой планеты и не погибнуть.'''
 
 
 SP_OURBOOLS
-Ourbools
+Аурбулсы
 SP_OURBOOLS_DESC
-'''Giant blind swimmers who "see" gravitation.
-Prefer Ocean planets.
+'''Гигантские слепые пловцы, способные "видеть" гравитацию.
+Предпочитают океанические планеты.
 Органические
 
 [[ULTIMATE_DETECTION]]
@@ -3244,7 +3240,7 @@ Prefer Ocean planets.
 [[AVERAGE_RESEARCH]]
 
 
-Biology:
+Биология:
 A giant serpentine swimmer, an Ourbools most distinctive feature is the massive bow curving away on either side of their head.  This houses the gravi-sensory organs.  Three tentacles hanging in front of the mouth allow Ourbools to manipulate their environment.  Ourbools mate only once in their life, and devote the next 35 years to caring for the school of 5 to 7 young -- generally assisted by relatives.  Ourbools live long so
 
 Personality:
@@ -4378,6 +4374,8 @@ EFFECT_DERELICT_FUEL
 EFFECT_BIOWEAPON
 Биологическая атака произошла в %system% население потеряно!
 
+EFFECT_EXOBOT
+Корабль-колония экзоботов был построен на %planet%.
 
 # Conditions
 
@@ -4454,10 +4452,10 @@ DESC_TYPE_NOT
  это не %1%
 
 DESC_BUILDING
- содержит здание %1% 
+ содержащего здание %1% 
 
 DESC_BUILDING_NOT
- не содержит здание %1% 
+ не содержащего здание %1% 
 
 DESC_SPECIAL
  есть особенность %1%
@@ -4478,10 +4476,10 @@ DESC_CREATED_ON_TURN_NOT
  не было создано в промежуток между ходами %1% и %2%
 
 DESC_CONTAINS
- включает объект%1%
+ наличие объекта%1%
 
 DESC_CONTAINS_NOT
- не вклчает объект%1%
+ отсутствие объекта%1%
 
 DESC_PLANET_TYPE
  это %1% планета
@@ -4523,10 +4521,10 @@ DESC_FOCUS_TYPE_NOT
  нет приоритета на %1%
 
 DESC_STAR_TYPE
- that is a system with a %1% star
+ это система с %1% звездой
 
 DESC_STAR_TYPE_NOT
- that is not a system with a %1% star
+ это не система с %1% звездой
 
 DESC_DESIGN_HAS_HULL
  содержит корпус %1%
@@ -4807,7 +4805,7 @@ LRN_ARTIF_MINDS
 Искусственный Интеллект
 
 LRN_ARTIF_MINDS_DESC
-'''Повышает уровень исследований на всех планетах на 5 пунктов.
+'''Увеличивает исследования на всех планетах на 0.5 за [[POP_PER_PRODUCTION]] населения, или 0.25 за [[INFRA_PER_PRODUCTION]] инфраструктуры.
 
 С помощью автоматического ввода в единую автоматизированную сеть для обработки данных, все сведения, открытые активными исследователями, могут быть проанализированы на полностью автоматизированной экспериментальной установке, которая сможет сама выдавать новые результаты. Каждая планета может содержать такие структуры независимо от занятий населения, давая бонус исследованиям на всех планетах.
 
@@ -4874,7 +4872,7 @@ LRN_QUANT_NET
 Квантовая Сеть
 
 LRN_QUANT_NET_DESC
-'''Увеличивает в 2 раза возможности исследований на всех планетах, где установлен приоритет на исследования.
+'''Увеличивает исследования на всех планетах с приоритетом исследований на 1 за [[POP_PER_PRODUCTION]] населения, или 1 за [[INFRA_PER_PRODUCTION]] инфраструктуры.
 
 Огромная общеимперская сеть передачи данных в состоянии напрямую мгновенно передать любую информацию между любыми двумя местами, не используя длинные окольные звёздные пути.
 
@@ -5026,7 +5024,7 @@ PRO_ROBOTIC_PROD
 Роботизированное Производство
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases target Industry on all planets with the Industry focus by one fifth of the planet's Population.
+'''Производство на всех планетах с приоритетом индустрии на 0.2 за [[POP_PER_PRODUCTION]] населения или 0.4 за [[INFRA_PER_PRODUCTION]] инфраструктуры.
 
 Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
 
@@ -5047,11 +5045,11 @@ PRO_FUSION_GEN
 Ядерный Синтез
 
 PRO_FUSION_GEN_DESC
-'''Increases target Industry on planets with the Industry focus by one half of the planet's population.
+'''Повышает производство на всех планетах с приоритетом производства на 0.5 за [[POP_PER_PRODUCTION]] населения или 1 за [[INFRA_PER_PRODUCTION]] инфраструктуры.
 
-Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
+Синтезные электростанции, пока ещё дорогие в строительстве и обслуживании, быстро окупятся в промышленно развитых мирах с постоянно растущим энергопотреблением. Зависимость от старых атомных электростанций постепенно уходит в прошлое.
 
-Взрывные, или неконтролируемые термоядерные реакции сравнительно просты для вызова в масштабах, начиная с маленьких тактических боеголовок до супергигантских звездных печей.  Контролируемая, стабильная и практическая генерация энергия из реакций - это нечто более сложное.  Эти процессы остаются очень привлекательными соответствующими, почти безграничными, запасами топлива и потенциалом для без-эмиссионых операций.'''
+Взрывные или неконтролируемые термоядерные реакции относительно просто вызвать в различных масштабах, начиная с маленьких тактических боеголовок до супергигантских звездных печей.  Стабильная и практичная генерация энергии при управляемой реакций - это нечто более сложное.  Однако этот процесс остается привлекательным, в связи с почти безграничным запасом топлива и потенциальным отсутсвием выбросов во время работы.'''
 
 PRO_NANOTECH_PROD
 Продукция нанотехнологий
@@ -5517,7 +5515,7 @@ CON_ORBITAL_CON
 Орбитальное конструирование
 
 CON_ORBITAL_CON_DESC
-'''Increases the max resource supply range of all colonies by 1.
+'''Увеличивает на 1 диапазон маршрутов поддержки всех колоний.
 
 На планете всегда есть неизменная ссылка на направление: "вверх", микрогравитация же изотропна (направления ничем качественно не отличаются). У этой единственного отличия есть множество последствий для типов конструкций, которые могут быть построены, и для их форм, которые оптимально используют пространство, материалы и энергию в каждой среде. Внутренняя конфигурация пространств на орбите должна быть заново продумана. Хоть это и приводит к попытке полной переделки парадигмы конструирования, полностью независимой от типов, используемых на поверхностях планеты, практическое применение этих пространств будет начато прежде всего теми, кто привык и приспособлен к поверхности планеты. Поэтому более эффективным может быть не полный разрыв с уже наработанными типами конструкций, а постепенный переход.'''
 
@@ -5525,7 +5523,7 @@ CON_SUBTER_CONST
 Подземное строительство
 
 CON_SUBTER_CONST_DESC
-'''Increases Infrastructure by 10.  Cannot improve a planet with the Tunnels or Techtonic Instability special.
+'''Улучшает инфраструктуру на 10. Не может улучшить планету с туннелями или Тектонической нестабильностью.
 
 Когда пространство на вес золота, священным Граалем строительства является возможность строить вниз так же легко, как и вверх. Современные технологии, наконец, сделают подземное строительство доступным.'''
 
@@ -5536,10 +5534,10 @@ CON_SPACE_ELEVATOR_DESC
 Нано-производство позволяет создавать растяжимый трос достаточно крепкий, чтобы выйти за пределы геостационарной орбиты. Челнок поднимаемый по такому тросу при помощи магнитов превосходит дорогие, неэффективные и очень опасные ракетные запуски.
 
 CON_CONC_CAMP
-Concentration Camps
+Концлагеря
 
 CON_CONC_CAMP_DESC
-Typically, when forced to work to death, citizens will put up some resistance and have the sympathy and support of outside observers. However, by carefully creating buildings designed to quench the fire of justice within outsiders, and to promote feelings of worthlessness and subservience in those on the inside, concentration camps can be effectively utilized without fear of revolt.
+Обычно круг граждан, которых заставляют работать до смерти, начинают создавать сопротивление и находят симпатию и поддержку со стороны других жителей. Однако, тщательно спроектированные строения, предназначенные для подавления огня правосудия у посторонних, и вызова чувства бесполезности и подобострастия в тех, кто в концентрационных лагерях, могут быть эффективно использованы без страха перед восстанием.
 
 CON_FRC_ENRG_CAMO
 Force-Energy Camouflage
@@ -5668,7 +5666,7 @@ LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Multiplies target Research on all planets with the Research focus by 1.25.
+'''Повышает исследования на всех планетах с приоритетом исследований на 0.5 за [[POP_PER_PRODUCTION]] населения, или 0.25 за [[INFRA_PER_PRODUCTION]] инфраструктуры.
 
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
 
@@ -5676,7 +5674,7 @@ LRN_STELLAR_TOMOGRAPHY
 Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Multiplies target Research on planets with the Research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively.
+'''Increases target Research on planets with the Research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 
@@ -6052,13 +6050,13 @@ SHP_OPTICAL_SCANNER
 Optical Scanner
 
 SHP_OPTICAL_SCANNER_DESC
-All colonies start the game with a detection level of 20, and the ship part Optical Scanner permits ships to reach the same level of detection.
+All colonies start the game with a detection level of 50, and the ship part Optical Scanner permits ships to reach the same level of detection.
 
 SHP_RADAR
 Active Radar
 
 SHP_RADAR_DESC
-'''Increases the detection of all planets to 40.
+'''Unlocks the Neutron Scanner ship part, increases the detection range of all planets to 200, and increases the imperial detection level to 400.
 
 Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened. By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
 
@@ -6066,7 +6064,7 @@ SHP_NEUTRON_SCANNER
 Neutron Scanner
 
 SHP_NEUTRON_SCANNER_DESC
-'''Increases the detection of all planets to 60.
+'''Unlocks the Neutron Scanner ship part, increases the detection range of all planets to 200, and increases the imperial detection level to 400.
 
 Electromagnetic radiation has no rest mass and is easily manipulable. Simply by bending waves of light around an object, it is possible to render radar devices virtually useless. By firing waves of neutrons instead of electromagnetic radiation, more effective active scanning can be utilized.'''
 
@@ -6074,7 +6072,7 @@ SHP_SENSORS
 Sensors
 
 SHP_SENSORS_DESC
-Unlocks Sensors ship part and increases the detection of all planets to 80.
+Unlocks the Sensors ship part, increases the detection range of all planets to 400, and increases the imperial detection level to 700.
 
 SHP_EM_DAMPER
 Electromagnetic Damper
@@ -6492,7 +6490,7 @@ BLD_INDUSTRY_CENTER
 Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to Industry on all Industry focused planets in the empire equal to one half the planet's Population.
+'''Initially provides a bonus to Industry on all resource-supply connected planets with Industry focus equal to othe greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 [[tech PRO_INDUSTRY_CENTER_II]] refinement increases the bonus to equal the planet's population.
 
@@ -6501,45 +6499,45 @@ BLD_INDUSTRY_CENTER_DESC
 BLD_EXOBOT_SHIP
 Exobot Colony Origin
 BLD_EXOBOT_SHIP_DESC
-'''Constructing the first group of exobots is a major production.  However, once establisthed on their own planet, they will be able to build themselves.'''
+'''Constructing the first group of exobots is a major production.  However, once established on their own planet, they will be able to build themselves.'''
 
 BLD_MEGALITH
-Megalith
+Мегалит
 
 BLD_MEGALITH_DESC
-'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to resource supply range, and 30 to construction. Additionally all resource meters are able to reach target in a single turn. Furthermore, all colonies belonging the empire receive an increase of 1 to max resource supply range.
+'''Устанавливает столицу империи, аннулируя все существующие Императорские дворцы. Планета, на которой он построен получает увеличение на 2 диапазона поддержки, и на 30 строительства. Кроме того, все ресурсы способны достичь максимума за один ход, а так же, все колонии, принадлежащие империи получают увеличение на 1 максимального диапазона поставки ресурсов.
 
-The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
+Мегалит является аномально массивных, он многокилометровый в диаметре, и является источником вдохновения для архитекторов всей империи.'''
 
 BLD_SPACE_ELEVATOR
-Space Elevator
+Космический лифт
 
 BLD_SPACE_ELEVATOR_DESC
-'''Triples resource supply range on the planet on which it is built.
+'''Утраивает диапазон маршрутов поддержки с планеты на которой построен.
 
-An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end.'''
+Огромные и практически неразрывная нить кабеля привязана к спутнику на геостационарной околоземной орбите с одного конца, и к стартовой платформе на планете с другого.'''
 
 BLD_GENOME_BANK
-Genome Bank
+Банк Генома
 
 BLD_GENOME_BANK_DESC
-'''Provides the empire with immunity from bioterror.
+'''Обеспечивает империю иммунитетом против биологического оружия.
 
-The largest database ever conceived. The Genome Bank includes maps of the genomes of every organism known to the empire. This database is invaluable in the treatment of disease.'''
+Самая большая база данных, из когда-либо созданных. Банк генома включает в себя карты генома каждого организма известного империи. Эта база данных имеет бесценное значение при лечении заболеваний.'''
 
 BLD_GAIA_TRANS
-Gaia Transformation
+Трансформация Гайа
 
 BLD_GAIA_TRANS_DESC
-'''Increases max Population according to planet size-- Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
+'''Увеличивает максимальное население на плоанете в соответствии с размером-- Крошечная: 3, Малая: 6, Средняя: 9, Большая: 12, Огромная: 15.
 
-Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
+Преобразует планету в Гайа - живую, почти богоподобную, основанную на клетках компьютерную программу. Эта планета просто поразительна и известна всей галатике, как торжество жизни и гармонии. Жители этого мира, думают и действуют как будто часть большого организма, обслуживая его потребности одновременно со своими собственными.'''
 
 BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases Industry on planets with the Industry focus by half of the planet's population, and research on Planets with the Research focus by one and a half. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases Industry on planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 0.5 per [[INFRA_PER_PRODUCTION]] units of Infrastructure, and research on Planets with the Research focus by the greater of 3 per [[POP_PER_PRODUCTION]] units of Population or 1.5 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 
@@ -6555,7 +6553,7 @@ BLD_ENCLAVE_VOID
 Enclave of the Void
 
 BLD_ENCLAVE_VOID_DESC
-'''Multiplies target Research on all planets with the Research focus by 1.5.
+'''Increases target Research on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population, or 0.5 per [[INFRA_PER_PRODUCTION]] units of infrastructure.
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
 
@@ -6569,7 +6567,7 @@ BLD_HYPER_DAM
 Гиперпространственная плотина
 
 BLD_HYPER_DAM_DESC
-'''Увеличивает промышленность на планетах с промышленно ориентированным населением, но уменьшает население на таких планетах на 5.
+'''Повышает производство для планет соединённых маршрутами обеспечения на 1 за [[POP_PER_PRODUCTION]] населения или 2 за [[INFRA_PER_PRODUCTION]] инфраструктуры, но понижает население таких планет на 5.
 
 Разрыв в ткани вселенной, безопасно управляемый и используемый. Каждая планета может построить собственную гиперпространственную плотину, но необходим единый центр управления, чтобы пространственно-временной континуум не был разорван созданными давлением. Кроме того, на всех планетах, которые используют гиперпространственные плотины, население испытывает проблемы со здоровьем, если планеты вращаются вокруг черной дыры.'''
 
@@ -6583,11 +6581,7 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Blue and White stars give bonuses equal to the planet's population to Industry on planets with the Industry focus in the same system.
-
-Yellow and Orange stars give bonuses equal to half the planet's population to Industry on planets with the Industry focus in the same system.
-
-Red stars give bonuses equal to one quarter the planet's population to Industry on planets with the Industry focus in the same system.
+'''Increases target industry on resource-supply connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependant on star type. This building can be built at an outpost.'''
 
@@ -6655,7 +6649,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-Increases Industry on all planets in the empire with the Industry focus by double the planet's population. This building can be built at an outpost.
+Increases Industry on all resource-supply connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. This building can be built at an outpost.
 
 BLD_REPLICATORS
 Replicators
@@ -7445,160 +7439,164 @@ SH_SOLAR_DESC
 Requires a Basic Shipyard, an Energy Compressor and a Solar Containment Unit at the planet where it is built.'''
 
 SH_BASIC_SMALL
-Basic Small Hull
+Базовый Малый Корпус
 SH_BASIC_SMALL_DESC
-Basic Small Hull
+'''Основной малый межзвёздный корпус. Может делать дополнительный скачок в отличие от всех остальных корпусов.
+
+Требуются Базовые Верфи для постройки.'''
 
 SH_BASIC_MEDIUM
-Basic Medium Hull
+Базовый Средний Корпус
 SH_BASIC_MEDIUM_DESC
-Basic Medium Hull
+'''Базовый межзвёздный корпус средних размеров.
+
+Требуются Базовые Верфи для постройки.'''
 
 SH_STANDARD
-Standard Hull
+Базовый Большой Корпус
 
 SH_STANDARD_DESC
-'''Basic interstellar hull.
+'''Большой базовый межзвёздный корпус.
 
-Requires a Basic Shipyard at the planet where it is Constructed.'''
+Требуются Базовые Верфи для постройки.'''
 
 SH_XENTRONIUM
-Xentronium Hull
+Ксетрониумный Корпус
 
 SH_XENTRONIUM_DESC
-A hull constructed primarily with xentronium. Though small, it has extremely high max structure.
+Корпус, созданный в основном из ксетрониума. Несмотря на небольшие размеры, этот корпус чрезвычайно вместительный.
 
 SH_COLONY_BASE
-Colony Base Hull
+Корпус Колонии
 
 SH_COLONY_BASE_DESC
-A hull designed to create a colony on another planet in system. It cannot move between systems or move quickly in-system.
+Корпус разработанный для кораблей-колоний. Он не может перемещаться между звёздными системами, да и внутри системы двигается достаточно медленно.
 
 SH_WEAK_MONSTER_BODY
-Weak Body
+Слабое Тело
 
 SH_WEAK_MONSTER_BODY_DESC
-Small frail body that is unable to withstand significant damage.
+Маленькое хрупкое тело, которое не в состоянии выдерживать значительные повреждения.
 
 SH_IMMOBILE_MONSTER_BODY
-Immobile Body
+Неподвижное Тело
 
 SH_IMMOBILE_MONSTER_BODY_DESC
-Rigid tree-like body that is unable to move between systems.
+Твёрдое древовидное тело, которое не может перемещаться между системами.
 
 SH_STRONG_MONSTER_BODY
-Strong Body
+Сильное тело
 
 SH_STRONG_MONSTER_BODY_DESC
-Large strong body with fearsome natural weapons and strong natural armor.
+Большое сильное тело с страшным природным оружием и сильной естественной броней.
 
 SH_GUARD_MONSTER_BODY
-Guard Hull
+Корпус Часового
 SH_GUARD_MONSTER_BODY_DESC
-A Strong Hull for Guardian Class Monsters
+Крепкий корпус часовых класса монстров.
 
 SH_KRILL_1_BODY
-Krill Body 1
+Тело Криля 1
 SH_KRILL_1_BODY_DESC
-Krill Body 1
+Тело Криля 1
 
 SH_KRILL_2_BODY
-Krill Body 2
+Тело Криля 2
 SH_KRILL_2_BODY_DESC
-Krill Body 2
+Тело Криля 2
 
 SH_KRILL_3_BODY
-Krill Body 3
+Тело Криля 3
 SH_KRILL_3_BODY_DESC
-Krill Body 3
+Тело Криля 3
 
 SH_KRILL_4_BODY
-Krill Body 4
+Тело Криля 4
 SH_KRILL_4_BODY_DESC
-Krill Body 4
+Тело Криля 4
 
 SH_DRONE_BODY
-Drone Hull
+Корпус Дрона
 SH_DRONE_BODY_DESC
-Drone Hull
+Корпус Дрона
 
 SH_IMMOBILE_FACTORY
-Drone Factory
+Завод Дронов
 SH_IMMOBILE_FACTORY_DESC
-Drone Factory
+Завод Дронов
 
 SH_KRAKEN_1_BODY
-Larval Kraken Body
+Тело Личинки Кракена
 SH_KRAKEN_1_BODY_DESC
-A formidable medium-weight space monster.
+Грозный космический монстр средней весовой категории.
 
 SH_KRAKEN_2_BODY
-Kraken Body
+Тело Кракена
 SH_KRAKEN_2_BODY_DESC
-A formidable medium-weight space monster.
+Грозный космический монстр средней весовой категории.
 
 SH_KRAKEN_3_BODY
-Great Kraken Body
+Тело Великого Кракена
 SH_KRAKEN_3_BODY_DESC
-A formidable medium-weight space monster.
+Грозный космический монстр средней весовой категории.
 
 SH_BLACK_KRAKEN_BODY
-Black Kraken Body
+Тело Чёрного Кракена
 SH_BLACK_KRAKEN_BODY_DESC
-A monstrous black Kraken with an unnatural aura about it.
+Чудовищный чёрный кракен с неестественной аурой вокруг него.
 
 SH_SNOWFLAKE_1_BODY
-Small Snowflake Body
+Тело Малой Снежинки
 SH_SNOWFLAKE_1_BODY_DESC
-A formidable light-weight space monster.
+Грозный космический монстр легкой весовой категории.
 
 SH_SNOWFLAKE_2_BODY
-Snowflake Body
+Тело Снежинки
 SH_SNOWFLAKE_2_BODY_DESC
-A formidable light-weight space monster.
+Грозный космический монстр легкой весовой категории.
 
 SH_SNOWFLAKE_3_BODY
-Large Snowflake Body
+Тело Большой Снежинки
 SH_SNOWFLAKE_3_BODY_DESC
-A formidable light-weight space monster.
+Грозный космический монстр легкой весовой категории.
 
 SH_PSIONIC_SNOWFLAKE_BODY
-Psionic Snowflake Body
+Тело Псионической Снежинки
 SH_PSIONIC_SNOWFLAKE_BODY_DESC
-A mentally powerful space monster.
+Обладающий психической силой космический монстр.
 
 SH_JUGGERNAUT_1_BODY
-Small Juggernaut Body
+Тело Малого Джаггернаута
 SH_JUGGERNAUT_1_BODY_DESC
-A formidable heavy-weight space monster.
+Грозный космический монстр тяжеловес.
 
 SH_JUGGERNAUT_2_BODY
-Juggernaut Body
+Тело Джаггернаута
 SH_JUGGERNAUT_2_BODY_DESC
-A formidable heavy-weight space monster.
+Грозный космический монстр тяжеловес.
 
 SH_JUGGERNAUT_3_BODY
-Large Juggernaut Body
+Тело Большого Джаггернаута
 SH_JUGGERNAUT_3_BODY_DESC
-A formidable heavy-weight space monster.
+Грозный космический монстр тяжеловес.
 
 SH_BLOATED_JUGGERNAUT_BODY
-Bloated Juggernaut Body
+Тело Раздувшегося Джаггернаута
 SH_BLOATED_JUGGERNAUT_BODY_DESC
-An unnaturally large space monster.
+Неестественно большой космический монстр.
 
 SH_NEBULOUS_BODY
-Nebulous Body
+Туманное Тело
 
 SH_EXP_OUTPOST_HULL
-Experimentor Outpost Hull
+Корпус Аванпоста Экспериментаторов
 SH_EXP_OUTPOST_HULL_DESC
-A hull used by the Experimentors use to transport experimental equipment to other galaxies.
+Корпус используемый Экспериметаторами для перевозки экспериментального оборудования в другие галактики.
 
 SH_COSMIC_DRAGON_BODY
-Cosmic Dragon Body
+Тело Космического Дракона
 SH_COSMIC_DRAGON_BODY_DESC
-A fearsom space dragon the size of a small planet.
+Страшный космический дракон размером с планету.
 
 
 #############################################################
@@ -7662,7 +7660,7 @@ ULTIMATE_GROUND_TROOPS
 '''+ + + Ultimate Ground Troops: 50 units.'''
 
 BAD_DETECTION
-'''    - Ultimate Detection: -10 malus.'''
+'''    - Bad Detection: -10 malus.'''
 
 GOOD_DETECTION
 '''    + Good Detection: +25 bonus.'''
@@ -7838,16 +7836,16 @@ NDIM_STRC_LABEL
 '''N-Dimensional Structures'''
 
 WEAK_VISION_LABEL
-'''Weak Vision'''
+'''Слабое Зрение'''
 
 MODERATE_VISION_LABEL
-'''Moderate Vision'''
+'''Среднее Зрение'''
 
 GOOD_VISION_LABEL
-'''Good Vision'''
+'''Хорошее Зрение'''
 
 EXCELLENT_VISION_LABEL
-'''Excellent Vision'''
+'''Отличное Зрение'''
 
 
 # The following two are used in tech descriptions, and should be updated if PRODUCTION_PER_POP or PRODUCTION_PER_INFRA are changed in shared_macros.txt.
