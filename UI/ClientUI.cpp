@@ -853,7 +853,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
 
     // minimum digits is 2.  If digits was 1, then 30 couldn't be displayed,
     // as 0.1k is too much and 9 is too small and just 30 is 2 digits
-    digits = std::max(digits, 3);
+    digits = std::max(digits, 2);
 
     // default result for sentinel value
     if (val == UNKNOWN_UI_DISPLAY_VALUE)
