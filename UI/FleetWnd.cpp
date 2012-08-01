@@ -1078,14 +1078,14 @@ void FleetDataPanel::AggressionToggleButtonPressed() {
 }
 
 namespace {
-    boost::shared_ptr<GG::Texture> WarIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "war.png"); }
-    boost::shared_ptr<GG::Texture> WarMouseoverIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "war_mouseover.png"); }
-    boost::shared_ptr<GG::Texture> PeaceIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "peace.png"); }
-    boost::shared_ptr<GG::Texture> PeaceMouseoverIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "peace_mouseover.png"); }
+    boost::shared_ptr<GG::Texture> FleetAggressiveIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet_aggressive.png"); }
+    boost::shared_ptr<GG::Texture> FleetAggressiveMouseoverIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet_aggressive_mouseover.png"); }
+    boost::shared_ptr<GG::Texture> FleetPassiveIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet_passive.png"); }
+    boost::shared_ptr<GG::Texture> FleetPassiveMouseoverIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet_passive_mouseover.png"); }
 }
 
 void FleetDataPanel::Refresh() {
@@ -1149,18 +1149,18 @@ void FleetDataPanel::UpdateAggressionToggle() {
     }
 
     if (aggressive) {
-        m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(WarIcon(),              GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(PeaceIcon(),            GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(WarMouseoverIcon(),     GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetAggressiveIcon(),          GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetPassiveIcon(),             GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetAggressiveMouseoverIcon(), GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
         boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-            WarIcon(), UserString("FW_AGGRESSIVE"), UserString("FW_AGGRESSIVE_DESC")));
+            FleetAggressiveIcon(), UserString("FW_AGGRESSIVE"), UserString("FW_AGGRESSIVE_DESC")));
         m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
     } else {
-        m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(PeaceIcon(),            GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(WarIcon(),              GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
-        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(PeaceMouseoverIcon(),   GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetPassiveIcon(),             GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon(),          GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
+        m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetPassiveMouseoverIcon(),    GG::X0, GG::Y0, GG::X(64), GG::Y(64)));
         boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-            PeaceIcon(), UserString("FW_PASSIVE"), UserString("FW_PASSIVE_DESC")));
+            FleetPassiveIcon(), UserString("FW_PASSIVE"), UserString("FW_PASSIVE_DESC")));
         m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
     }
 }
