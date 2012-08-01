@@ -1926,16 +1926,16 @@ FW_FLEET_ETA_OUT_OF_RANGE
 Out of Range
 
 FW_AGGRESSIVE
-Aggressive
+Control System
 
 FW_AGGRESSIVE_DESC
-Fleet blockades enemy empires and initiates battles with any targets in its system.
+Fleet blockades enemy empires and initiates battles with any enemies in the system.
 
 FW_PASSIVE
-Passive / Hidden
+Hide
 
 FW_PASSIVE_DESC
-Fleet will not blockade or initiate battle and will attempt to stay hidden.
+Fleet will attempt to stay hidden; it will not blockade or initiate battle.
 
 FW_SHIP_CLASS
 Ship Class 
