@@ -16,15 +16,14 @@ namespace {
     const double MAX_SHIP_SPEED = 500.0;        // max allowed speed of ship movement
     const double FLEET_MOVEMENT_EPSILON = 0.1;  // how close a fleet needs to be to a system to have arrived in the system
 
-    bool SystemHasNoVisibleStarlanes(int system_id, int empire_id) {
-        return !GetUniverse().SystemHasVisibleStarlanes(system_id, empire_id);
-    }
+    bool SystemHasNoVisibleStarlanes(int system_id, int empire_id)
+    { return !GetUniverse().SystemHasVisibleStarlanes(system_id, empire_id); }
 }
 
 // static(s)
-const int Fleet::ETA_UNKNOWN = (1 << 30);
+const int Fleet::ETA_UNKNOWN =      (1 << 30);
 const int Fleet::ETA_OUT_OF_RANGE = (1 << 30) - 1;
-const int Fleet::ETA_NEVER = (1 << 30) - 2;
+const int Fleet::ETA_NEVER =        (1 << 30) - 2;
 
 Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     UniverseObject(name, x, y),
@@ -709,10 +708,15 @@ void Fleet::MovementPhase() {
 
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
-    if (empire && empire->FleetOrResourceSupplyableAtSystem(this->SystemID()))
-        for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it)
-            if (Ship* ship = GetShip(*ship_it))
+    if (empire && empire->FleetOrResourceSupplyableAtSystem(this->SystemID())) {
+        for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
+            if (Ship* ship = GetShip(*ship_it)) {
                 ship->Resupply();
+                if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL))
+                    fuel_meter->BackPropegate();
+            }
+        }
+    }
 
 
     System* current_system = GetSystem(SystemID());

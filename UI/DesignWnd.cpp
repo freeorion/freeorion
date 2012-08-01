@@ -2225,13 +2225,13 @@ void DesignWnd::AddDesign() {
 
     const std::string& description = m_main_panel->DesignDescription();
 
-    std::string graphic = "hulls_design/generic_hull.png";
+    std::string icon = "ship_hulls/generic_hull.png";
     if (const HullType* hull = GetHullType(hull_name))
-        graphic = hull->Graphic();
+        icon = hull->Icon();
 
     // create design from stuff chosen in UI
     ShipDesign design(name, description, empire_id, CurrentTurn(),
-                      hull_name, parts, graphic, "some model");
+                      hull_name, parts, icon, "some model");
 
     int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
     HumanClientApp::GetApp()->Orders().IssueOrder(

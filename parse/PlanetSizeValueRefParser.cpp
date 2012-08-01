@@ -19,6 +19,8 @@ namespace {
 
             final_token
                 %=   tok.PlanetSize_
+                |    tok.NextLargerPlanetSize_
+                |    tok.NextSmallerPlanetSize_
                 ;
 
             constant

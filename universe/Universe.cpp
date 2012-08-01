@@ -1236,7 +1236,6 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
                                                  all_potential_targets, targets_causes);
         }
     }
-
 }
 
 void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
