@@ -3585,7 +3585,7 @@ MINERALS_SPECIAL_DESC
 '''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with Rich Minerals is focused on Growth, all connected planets with Lithic species receive the same bonus.
 
-Increases Production by 50 on this planet when focus is set to Mining.
+Increases Production by 25 on this planet when focus is set to Mining.
 
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
 
@@ -3595,7 +3595,7 @@ CRYSTALS_SPECIAL_DESC
 '''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with Silmaline Crystals is focused on Growth, all connected planets with Lithic species receive the same bonus.
 
-Increases Production by 50 on this planet when focus is set to Mining.
+Increases Production by 25 on this planet when focus is set to Mining.
 
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
 
@@ -3605,7 +3605,7 @@ METALOIDS_SPECIAL_DESC
 '''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with High-Energy Metaloids is focused on Growth, all connected planets with Lithic species receive the same bonus.
 
-Increases Production by 50 on this planet when focus is set to Mining.
+Increases Production by 25 on this planet when focus is set to Mining.
 
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
 
