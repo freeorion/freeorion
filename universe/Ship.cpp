@@ -9,21 +9,6 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
-namespace {
-    /** returns true iff one of the empires with the indiated ids can provide
-      * fleet supply directly or has resource connections to the system with
-      * the id \a system_id 
-      * in short: decides whether a fleet gets resupplied at the indicated
-      *           system*/
-    bool FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(int system_id, const std::set<int>& owner_ids) {
-        for (std::set<int>::const_iterator it = owner_ids.begin(); it != owner_ids.end(); ++it)
-            if (const Empire* empire = Empires().Lookup(*it))
-                if (empire->FleetOrResourceSupplyableAtSystem(system_id))
-                    return true;
-        return false;
-    }
-}
-
 class Species;
 const Species* GetSpecies(const std::string& name);
 
