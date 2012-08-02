@@ -887,37 +887,38 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
         return text;
     }
 
+
+    //std::cout << std::endl << "DoubleToString val: " << val << " digits: " << digits << std::endl;
+
     // power of 10 of highest valued digit in number
-    int pow10 = static_cast<int>(floor(log10(mag))); // = 2 (100's) for 234.4,  = 4 (10000's) for 45324 
+    int pow10 = static_cast<int>(floor(log10(mag))); // = 2 (100's) for 234.4,  = 4 (10000's) for 45324
+    //std::cout << "magnitude power of 10: " << pow10 << std::endl;
 
-    // power of 10 of lowest digit to be included in number
-    int LDPow10 = std::max(pow10 - digits + 1, -digits + 1); // = 1 (10's) for 234.4 and digits = 2,  = -1 (0.1's) for anything smaller than 1.0
-
-    // Lowest Digit's (number of) Digits Above Next Lowest Power of 1000.  Can be 0, 1 or 2
-    int LDDANLP1000;
-    if (LDPow10 >= 0)
-        LDDANLP1000 = (LDPow10 % 3);    // = 1 for 234.4 with 2 digits (23#.#)
+    // determine base unit for number: the next lower power of 10^3 from the number (inclusive)
+    int pow10_digits_above_pow1000 = 0;
+    if (pow10 >= 0)
+        pow10_digits_above_pow1000 = pow10 % 3;
     else
-        LDDANLP1000 = (LDPow10 % 3) + 3;// = 2 for 3.25 with 2 digits (3.2##)   (+3 ensure positive result)
+        pow10_digits_above_pow1000 = (pow10 % 3) + 3;   // +3 ensures positive result of mod
+    int unit_pow10 = pow10 - pow10_digits_above_pow1000;
+    if (unit_pow10 < 0)
+        unit_pow10 = 0;
+    //std::cout << "unit power of 10: " << unit_pow10 << std::endl;
 
-    // Lowest Digit's Next Lower Power of 1000
-    int LDNLP1000 = LDPow10 - LDDANLP1000;
+    // if not enough digits to include most significant digit and next lower
+    // power of 10, add extra digits. this still uses less space than using the
+    // next higher power of 10 and adding a 0. out front.  for example, 240 with
+    // 2 digits is better shown as "240" than "0.24k"
+    digits = std::max(digits, pow10_digits_above_pow1000);
+    //std::cout << "adjusted digits: " << digits << std::endl;
 
-    // Lowest Digit's Next Higher Power of 1000
-    int LDNHP1000 = LDNLP1000 + 3;
+    int lowest_digit_pow10 = pow10 - digits + 1;
+    //std::cout << "lowest_digit_pow10: " << lowest_digit_pow10 << std::endl;
 
-    /* Pick what power of 10 to use as base unit.  If lowest digit lines up with a power of 1000, use it.
-       Otherwise, have to use next higher power of 1000 to avoid having too many digits.
-       Also may set adjusting factor to remove a digit below the units digit if using the next
-       higher power of 1000, as highest digit may be less than this, in which case extra 0. at
-       start of number needs to be counted in digits */
-    int unitPow10, digitCor = 0;
-    if (LDDANLP1000 == 0)
-        unitPow10 = LDNLP1000;
-    else
-        unitPow10 = LDNHP1000;
+    // fraction digits:
+    int fractionDigits = std::min(digits - 1, unit_pow10 - lowest_digit_pow10);
+    //std::cout << "fractionDigits: " << fractionDigits << std::endl;
 
-    if (pow10 < unitPow10) digitCor = -1;   // if value is less than the base unit, there will be a leading 0 using up one digit
 
     /* round number down at lowest digit to be displayed, to prevent lexical_cast from rounding up
        in cases like 0.998k with 2 digits -> 1.00k  instead of  0.99k  (as it should be) */
@@ -927,20 +928,16 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     mag *= roundingFactor;
 
     // scale number by unit power of 10
-    mag /= pow(10.0, static_cast<double>(unitPow10));  // if mag = 45324 and unitPow = 3, get mag = 45.324
+    mag /= pow(10.0, static_cast<double>(unit_pow10));  // if mag = 45324 and unitPow = 3, get mag = 45.324
 
-    // total digits
-    int totalDigits = digits + digitCor;
-    // fraction digits:
-    int fractionDigits = unitPow10 - LDPow10;
 
     std::string format;
-    format += "%" + boost::lexical_cast<std::string>(totalDigits) + "." +
+    format += "%" + boost::lexical_cast<std::string>(digits) + "." +
                     boost::lexical_cast<std::string>(fractionDigits) + "f";
     text += (boost::format(format) % mag).str();
 
     // append base scale SI prefix (as postfix)
-    switch (unitPow10) {
+    switch (unit_pow10) {
     case -15:
         text += "f";        // femto
         break;
