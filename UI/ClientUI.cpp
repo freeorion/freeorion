@@ -909,14 +909,14 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     // power of 10, add extra digits. this still uses less space than using the
     // next higher power of 10 and adding a 0. out front.  for example, 240 with
     // 2 digits is better shown as "240" than "0.24k"
-    digits = std::max(digits, pow10_digits_above_pow1000);
+    digits = std::max(digits, pow10_digits_above_pow1000 + 1);
     //std::cout << "adjusted digits: " << digits << std::endl;
 
     int lowest_digit_pow10 = pow10 - digits + 1;
     //std::cout << "lowest_digit_pow10: " << lowest_digit_pow10 << std::endl;
 
     // fraction digits:
-    int fractionDigits = std::min(digits - 1, unit_pow10 - lowest_digit_pow10);
+    int fractionDigits = std::max(0, std::min(digits - 1, unit_pow10 - lowest_digit_pow10));
     //std::cout << "fractionDigits: " << fractionDigits << std::endl;
 
 
