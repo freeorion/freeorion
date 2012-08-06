@@ -364,17 +364,14 @@ private:
     std::map<int, MovementLineData>                 m_fleet_lines;                          //!< lines used for moving fleets in the main map
     std::map<int, MovementLineData>                 m_projected_fleet_lines;                //!< lines that show the projected path of the active fleet in the FleetWnd
 
-    
+
     std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>  m_star_core_quad_vertices;
     std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>  m_star_halo_quad_vertices;
     std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>  m_galaxy_gas_quad_vertices;
     GLTexCoordBuffer                    m_star_texture_coords;
-    
+
     GL2DVertexBuffer                    m_starlane_vertices;
     GLRGBAColorBuffer                   m_starlane_colors;
-    
-    GL2DVertexBuffer                    m_starlane_fleet_supply_vertices;
-    GLRGBAColorBuffer                   m_starlane_fleet_supply_colors;
 
     boost::shared_ptr<ShaderProgram>    m_scanline_shader;
 

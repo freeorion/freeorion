@@ -2214,7 +2214,7 @@ Tech
                 Not OwnerHasTech "SHP_NEUTRON_SCANNER"
                 Not OwnerHasTech "SHP_SENSORS"
             ]
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION" 50
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH_STRENGTH" 50
     ]
 
 Tech
@@ -2606,7 +2606,7 @@ Tech
                 Not OwnerHasTech "SHP_NEUTRON_SCANNER"
                 Not OwnerHasTech "SHP_SENSORS"
             ]
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION" 200
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 200
     ]
 
 Tech
@@ -2686,7 +2686,7 @@ Tech
         EffectsGroup
             scope = Source
             activation = Not OwnerHasTech "SHP_SENSORS"
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION" 400
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 400
     ]
 
 Tech
@@ -2946,7 +2946,7 @@ Tech
 
         EffectsGroup
             scope = Source
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION" 700
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 700
     ]
 
 Tech

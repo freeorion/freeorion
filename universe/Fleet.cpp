@@ -708,7 +708,7 @@ void Fleet::MovementPhase() {
 
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
-    if (empire && empire->FleetOrResourceSupplyableAtSystem(this->SystemID())) {
+    if (empire && empire->SystemHasFleetSupply(this->SystemID())) {
         for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
             if (Ship* ship = GetShip(*ship_it)) {
                 ship->Resupply();
@@ -787,7 +787,7 @@ void Fleet::MovementPhase() {
             prev_prev_system = m_prev_system;
             m_prev_system = system->ID();               // passing a system, so update previous system of this fleet
 
-            bool resupply_here = empire ? empire->FleetOrResourceSupplyableAtSystem(system->ID()) : false;
+            bool resupply_here = empire ? empire->SystemHasFleetSupply(system->ID()) : false;
 
             // if this system can provide supplies, reset consumed fuel and refuel ships
             if (resupply_here) {

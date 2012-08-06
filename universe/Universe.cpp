@@ -1469,7 +1469,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
     for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
         const Empire* empire = empire_it->second;
         int empire_id = empire_it->first;
-        const Meter* detection_meter = empire->GetMeter("METER_DETECTION");
+        const Meter* detection_meter = empire->GetMeter("METER_DETECTION_STRENGTH");
         double detection_strength = detection_meter ? detection_meter->Current() : 0.0;
 
         // filter objects as detectors for this empire or detectable objects
@@ -1756,7 +1756,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
         ObjectSpecialsMap& obj_specials_map = m_empire_object_visible_specials[empire_id];
 
         const Empire* empire = empire_it->second;
-        const Meter* detection_meter = empire->GetMeter("METER_DETECTION");
+        const Meter* detection_meter = empire->GetMeter("METER_DETECTION_STRENGTH");
         if (!detection_meter)
             continue;
         double detection_strength = detection_meter->Current();

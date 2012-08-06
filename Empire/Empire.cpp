@@ -952,7 +952,7 @@ void Empire::Init() {
         const Alignment& alignment = *it;
         m_meters[alignment.Name()];
     }
-    m_meters["METER_DETECTION"];
+    m_meters["METER_DETECTION_STRENGTH"];
 }
 
 Empire::~Empire()
@@ -1259,23 +1259,19 @@ void Empire::EliminationCleanup() {
     m_population_pool.SetPopCenters(std::vector<int>());
     m_maintenance_total_cost = 0;
     // m_ship_names_used;
-    m_fleet_supplyable_system_ids.clear();
-    m_fleet_supply_starlane_traversals.clear();
-    m_fleet_supply_system_ranges.clear();
-    m_resource_supply_groups.clear();
-    m_resource_supply_starlane_traversals.clear();
-    m_resource_supply_obstructed_starlane_traversals.clear();
-    m_resource_supply_system_ranges.clear();
+    m_supply_system_ranges.clear();
     m_supply_unobstructed_systems.clear();
+    m_supply_starlane_traversals.clear();
+    m_supply_starlane_obstructed_traversals.clear();
+    m_fleet_supplyable_system_ids.clear();
+    m_resource_supply_groups.clear();
 }
 
 void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     //std::cout << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name() << std::endl;
-    m_fleet_supply_system_ranges.clear();
-    m_resource_supply_system_ranges.clear();
+    m_supply_system_ranges.clear();
 
-    // as of this writing, only planets can distribute supplies to fleets or other planets.  If other objects
-    // get the ability to distribute supplies, this should be expanded to them as well
+    // as of this writing, only planets can generate supply propegation
     std::vector<const UniverseObject*> owned_planets;
     for (std::set<int>::const_iterator it = known_objects.begin(); it != known_objects.end(); ++it) {
         if (const Planet* planet = GetPlanet(*it))
@@ -1293,29 +1289,16 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
         if (system_id == INVALID_OBJECT_ID)
             continue;   // TODO: consider future special case if current object is itself a system
 
-        // check if object has a construction meter
-        if (obj->GetMeter(METER_CONSTRUCTION)) {
-            // get resource supply range for next turn for this object
-            int resource_supply_range = static_cast<int>(floor(obj->NextTurnCurrentMeterValue(METER_CONSTRUCTION) / 20.0));
-
-            // if this object can provide more resource supply range than the best previously checked object in this system, record its range as the new best for the system
-            std::map<int, int>::iterator system_it = m_resource_supply_system_ranges.find(system_id);               // try to find a previous entry for this system's supply range
-            if (system_it == m_resource_supply_system_ranges.end() || resource_supply_range > system_it->second) {  // if there is no previous entry, or the previous entry is shorter than the new one, add or replace the entry
-                //std::cout << " ... object " << obj->Name() << " has resource supply range: " << resource_supply_range << std::endl;
-                m_resource_supply_system_ranges[system_id] = resource_supply_range;
-            }
-        }
-
         // check if object has a supply meter
         if (obj->GetMeter(METER_SUPPLY)) {
-            // get fleet supply range for next turn for this object
-            int fleet_supply_range = static_cast<int>(floor(obj->NextTurnCurrentMeterValue(METER_SUPPLY)));
+            // get resource supply range for next turn for this object
+            int supply_range = static_cast<int>(floor(obj->NextTurnCurrentMeterValue(METER_SUPPLY)));
 
-            // if this object can provide more supply than the best previously checked object in this system, record its range as the new best for the system
-            std::map<int, int>::iterator system_it = m_fleet_supply_system_ranges.find(system_id);          // try to find a previous entry for this system's supply range
-            if (system_it == m_fleet_supply_system_ranges.end() || fleet_supply_range > system_it->second) {// if there is no previous entry, or the previous entry is shorter than the new one, add or replace the entry
-                m_fleet_supply_system_ranges[system_id] = fleet_supply_range;
-                //std::cout << " ... object " << obj->Name() << " has fleet supply range: " << fleet_supply_range << std::endl;
+            // if this object can provide more supply range than the best previously checked object in this system, record its range as the new best for the system
+            std::map<int, int>::iterator system_it = m_supply_system_ranges.find(system_id);               // try to find a previous entry for this system's supply range
+            if (system_it == m_supply_system_ranges.end() || supply_range > system_it->second) {  // if there is no previous entry, or the previous entry is shorter than the new one, add or replace the entry
+                //std::cout << " ... object " << obj->Name() << " has resource supply range: " << resource_supply_range << std::endl;
+                m_supply_system_ranges[system_id] = supply_range;
             }
         }
     }
@@ -1375,12 +1358,15 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     for (std::vector<Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
         const Fleet* fleet = *it;
         int system_id = fleet->SystemID();
-        if (system_id == INVALID_OBJECT_ID/* || known_systems.find(system_id) == known_systems.end()*/)
-            continue;                       // not in a (potential supply unobstructed) system
-        else if (fleet->OwnedBy(m_id))
+        if (system_id == INVALID_OBJECT_ID) {
+            continue;   // not in a system, so can't affect system obstruction
+        } else if (fleet->OwnedBy(m_id) && fleet->HasArmedShips() && fleet->Aggressive()) {
             systems_containing_friendly_fleets.insert(system_id);
-        else if (fleet->HasArmedShips() && fleet->Aggressive()) // aggressive armed ships owned by another empire, or with no owners
-            systems_containing_obstructing_objects.insert(system_id);
+        } else if (fleet->HasArmedShips() && fleet->Aggressive()) {
+            int fleet_owner = fleet->Owner();
+            if (fleet_owner == ALL_EMPIRES || Empires().GetDiplomaticStatus(m_id, fleet_owner) == DIPLO_WAR)
+                systems_containing_obstructing_objects.insert(system_id);
+        }
     }
 
     // check each potential supplyable system for whether it can propegate supply.
@@ -1407,44 +1393,61 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     }
 }
 
-void Empire::UpdateFleetSupply()
-{ UpdateFleetSupply(this->KnownStarlanes()); }
+void Empire::UpdateSupply()
+{ UpdateSupply(this->KnownStarlanes()); }
 
-void Empire::UpdateFleetSupply(const std::map<int, std::set<int> >& starlanes) {
-    //std::cout << "Empire::UpdateFleetSupply for empire " << this->Name() << std::endl;
+void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
+    //std::cout << "Empire::UpdateSupply for empire " << this->Name() << std::endl;
 
+    m_supply_starlane_traversals.clear();
+    m_supply_starlane_obstructed_traversals.clear();
     m_fleet_supplyable_system_ids.clear();
-    m_fleet_supply_starlane_traversals.clear();
+    m_resource_supply_groups.clear();
 
-    // store range of all systems before propegation of supply in working map
-    // used to propegate that range to other systems.  exclude systems that are
-    // supply obstructed
-    std::map<int, int> propegating_fleet_supply_ranges;
-    for (std::map<int, int>::const_iterator it = m_fleet_supply_system_ranges.begin();
-         it != m_fleet_supply_system_ranges.end(); ++it)
+    // need to get a set of sets of systems that can exchange resources.  some
+    // sets may be just one system, in which resources can be exchanged between
+    // UniverseObjects producing or consuming them, but which can't exchange
+    // with any other systems.
+
+    // map from system id to set of systems that are supply-connected to it
+    // directly (which may involve multiple starlane jumps
+    std::map<int, std::set<int> > supply_groups_map;
+
+
+    // store supply range in jumps of all unobstructed systems before
+    // propegation, and add to list of systems to propegate from.
+    std::map<int, int> propegating_supply_ranges;
+    std::list<int> propegating_systems_list;
+    for (std::map<int, int>::const_iterator it = m_supply_system_ranges.begin();
+         it != m_supply_system_ranges.end(); ++it)
     {
         if (m_supply_unobstructed_systems.find(it->first) != m_supply_unobstructed_systems.end())
-            propegating_fleet_supply_ranges.insert(*it);
+            propegating_supply_ranges.insert(*it);
+
+        // system can supply itself, so store this fact
+        supply_groups_map[it->first].insert(it->first);
+
+        // add system to list of systems to popegate supply from
+        propegating_systems_list.push_back(it->first);
     }
 
-    // insert all systems that produce supply on their own into a list of systems to process
-    std::list<int> propegating_systems_list;    // working list of systems to propegate supply from
-    for (std::map<int, int>::const_iterator it = propegating_fleet_supply_ranges.begin(); it != propegating_fleet_supply_ranges.end(); ++it)
-        propegating_systems_list.push_back(it->first);
 
-    // iterate through list of accessible systems, processing each in order it was added (like breadth first search) until no
-    // systems are left able to further propregate
+    // iterate through list of accessible systems, processing each in order it
+    // was added (like breadth first search) until no systems are left able to
+    // further propregate
     std::list<int>::iterator sys_list_it = propegating_systems_list.begin();
     std::list<int>::iterator sys_list_end = propegating_systems_list.end();
     while (sys_list_it != sys_list_end) {
         int cur_sys_id = *sys_list_it;
-        int cur_sys_range = propegating_fleet_supply_ranges[cur_sys_id];    // range away from this system that supplies can be transported
+        int cur_sys_range = propegating_supply_ranges[cur_sys_id];    // range away from this system that supplies can be transported
 
         if (cur_sys_range <= 0) {
-            // can't propegate supply out a system that
+            // can't propegate supply out a system that has no range
             ++sys_list_it;
             continue;
         }
+
+        m_fleet_supplyable_system_ids.insert(cur_sys_id);
 
         // can propegate further, if adjacent systems have smaller supply range
         // than one less than this system's range
@@ -1455,212 +1458,70 @@ void Empire::UpdateFleetSupply(const std::map<int, std::set<int> >& starlanes) {
             continue;
         }
 
+
         const std::set<int>& starlane_ends = system_it->second;
         for (std::set<int>::const_iterator lane_it = starlane_ends.begin();
              lane_it != starlane_ends.end(); ++lane_it)
         {
             int lane_end_sys_id = *lane_it;
 
-            if (m_supply_unobstructed_systems.find(lane_end_sys_id) == m_supply_unobstructed_systems.end())
-                continue; // can't propegate here
+            if (m_supply_unobstructed_systems.find(lane_end_sys_id) == m_supply_unobstructed_systems.end()) {
+                // can't propegate here
+                m_supply_starlane_obstructed_traversals.insert(std::make_pair(cur_sys_id, lane_end_sys_id));
+                continue;
+            }
+
+            // can supply fleets here
+            m_fleet_supplyable_system_ids.insert(lane_end_sys_id);
 
             // compare next system's supply range to this system's supply range.  propegate if necessary.
-            std::map<int, int>::const_iterator lane_end_sys_it = propegating_fleet_supply_ranges.find(lane_end_sys_id);
-            if (lane_end_sys_it == propegating_fleet_supply_ranges.end() || lane_end_sys_it->second <= cur_sys_range) {
+            std::map<int, int>::const_iterator lane_end_sys_it = propegating_supply_ranges.find(lane_end_sys_id);
+            if (lane_end_sys_it == propegating_supply_ranges.end() || lane_end_sys_it->second <= cur_sys_range) {
                 // next system has no supply yet, or its range equal to or smaller than this system's
 
                 // update next system's range, if propegating from this system would make it larger
-                if (lane_end_sys_it == propegating_fleet_supply_ranges.end() || lane_end_sys_it->second < cur_sys_range - 1) {
+                if (lane_end_sys_it == propegating_supply_ranges.end() || lane_end_sys_it->second < cur_sys_range - 1) {
                     // update with new range
-                    propegating_fleet_supply_ranges[lane_end_sys_id] = cur_sys_range - 1;
+                    propegating_supply_ranges[lane_end_sys_id] = cur_sys_range - 1;
                     // add next system to list of systems to propegate further
                     propegating_systems_list.push_back(lane_end_sys_id);
                 }
 
-                // regardless of whether propegating from current to next system increased its range, add the
-                // traversed lane to show redundancies in supply network to player
-                m_fleet_supply_starlane_traversals.insert(std::make_pair(cur_sys_id, lane_end_sys_id));
+                // regardless of whether propegating from current to next system
+                // increased its range, add the traversed lane to show
+                // redundancies in supply network to player
+                m_supply_starlane_traversals.insert(std::make_pair(cur_sys_id, lane_end_sys_id));
+
+                // current system can share resources with next system
+                supply_groups_map[cur_sys_id].insert(lane_end_sys_id);
+                supply_groups_map[lane_end_sys_id].insert(cur_sys_id);
             }
         }
         ++sys_list_it;
         sys_list_end = propegating_systems_list.end();
     }
 
-    // convert supply ranges info into output set of supplyable systems
-    for (std::map<int, int>::const_iterator it = propegating_fleet_supply_ranges.begin();
-         it != propegating_fleet_supply_ranges.end(); ++it)
-    {
-        m_fleet_supplyable_system_ids.insert(it->first);
-    }
-}
-
-void Empire::UpdateResourceSupply()
-{ UpdateResourceSupply(this->KnownStarlanes()); }
-
-void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes) {
-    //std::cout << "Empire::UpdateResourceSupply for empire " << this->Name() << std::endl;
-
-    // need to get a set of sets of systems that can exchange resources.  some sets may be just one system,
-    // in which resources can be exchanged between UniverseObjects producing or consuming them, but which
-    // can't exchange with any other systems.
-
-    m_resource_supply_groups.clear();
-    m_resource_supply_starlane_traversals.clear();
-    m_resource_supply_obstructed_starlane_traversals.clear();
-
-    // map from system id to set of systems that are supply-connected to it directly (which may involve
-    // multiple starlane jumps
-    std::map<int, std::set<int> > supply_groups_map;
-
-    // all systems that can supply another system or within themselves, or can be supplied by another system.
-    // need to keep track of this so that only these systems are put into the boost adjacency graph.  if
-    // additional systems were put in, they would be returned as being in their own "connected" component and
-    // would have to be filtered out of the results before being returned
-    std::set<int> all_supply_exchanging_systems;
-
-
-    // loop through systems, getting set of systems that can be supplied by each.  (may be an empty set for
-    // some systems that cannot supply within themselves, or may contain only source systems, or could contain
-    // multiple other systems)
-    //std::cout << " ... m_supply_unobstructed_systems.size(): " << m_supply_unobstructed_systems.size() << std::endl;
-    for (std::set<int>::const_iterator source_sys_it = m_supply_unobstructed_systems.begin(); source_sys_it != m_supply_unobstructed_systems.end(); ++source_sys_it) {
-        int source_sys_id = *source_sys_it;
-
-        //// DEBUG
-        //const UniverseObject* asdf = GetUniverse().Object(source_sys_id);
-        //std::cout << " .. unobstructed system : " << asdf->Name() << std::endl;
-
-        // skip systems that don't have any supply to propegate.
-        std::map<int, int>::const_iterator system_supply_it = m_resource_supply_system_ranges.find(source_sys_id);
-        if (system_supply_it == m_resource_supply_system_ranges.end())
-            continue;
-
-
-        // system can supply itself, so store this fact
-        supply_groups_map[source_sys_id].insert(source_sys_id);
-
-
-        // add source system to start of list of systems to propegate supply to
-        std::list<int> propegating_systems_list;
-        propegating_systems_list.push_back(source_sys_id);
-
-        // set up map from system_id to number of supply jumps further supply can propegate from that system.
-        // this ensures that supply propegation is limited in distance, and doesn't back-propegate
-        std::map<int, int> propegating_system_supply_ranges;
-        // initialize with source supply range
-        propegating_system_supply_ranges[source_sys_id] = system_supply_it->second;
-
-        //std::cout << " ..... can propegate suppply " << system_supply_it->second << " jumps" << std::endl;
-
-
-        // iterate through list of accessible systems, processing each in order it was added (like breadth first
-        // search) adding adjacent systems as appropriate, until no systems are left able to further propregate
-        std::list<int>::iterator sys_list_it = propegating_systems_list.begin();
-        std::list<int>::iterator sys_list_end = propegating_systems_list.end();
-        while (sys_list_it != sys_list_end) {
-            int cur_sys_id = *sys_list_it;
-
-            // get additional supply range this system can propegate
-            int cur_sys_range = propegating_system_supply_ranges[cur_sys_id];
-
-            // skip system if it can't propegate futher
-            if (cur_sys_range <= 0) {
-                ++sys_list_it;
-                continue;
-            }
-
-            // attempt to propegate to unobstructed adjacent systems
-            std::map<int, std::set<int> >::const_iterator system_it = starlanes.find(cur_sys_id);
-            if (system_it == starlanes.end()) {
-                ++sys_list_it;
-                continue; // no starlanes out of this system
-            }
-
-            const std::set<int>& starlane_ends = system_it->second;
-            for (std::set<int>::const_iterator lane_it = starlane_ends.begin(); lane_it != starlane_ends.end(); ++lane_it) {
-                int lane_end_sys_id = *lane_it;
-
-                // ensure this adjacent system is unobstructed
-                if (m_supply_unobstructed_systems.find(lane_end_sys_id) == m_supply_unobstructed_systems.end()) {
-                    // can't propegate here
-                    m_resource_supply_obstructed_starlane_traversals.insert(std::make_pair(cur_sys_id, lane_end_sys_id));
-                    continue;
-                }
-
-                // compare next system's supply range to this system's supply range.  propegate if necessary.
-                std::map<int, int>::const_iterator lane_end_sys_it = propegating_system_supply_ranges.find(lane_end_sys_id);
-                if (lane_end_sys_it == propegating_system_supply_ranges.end() || propegating_system_supply_ranges[lane_end_sys_id] <= cur_sys_range) {
-                    // next system has no supply yet, or its range equal to or smaller than this system's
-
-                    int next_sys_range = cur_sys_range - 1;
-
-                    // if propegating from this system would make it longer, update next system's range
-                    if (lane_end_sys_it == propegating_system_supply_ranges.end() || propegating_system_supply_ranges[lane_end_sys_id] < next_sys_range) {
-                        // update with new range
-                        propegating_system_supply_ranges[lane_end_sys_id] = next_sys_range;
-                        // add next system to list of systems to propegate further
-                        propegating_systems_list.push_back(lane_end_sys_id);
-                    }
-
-                    // regardless of whether propegating from current to next system increased its range, add the
-                    // traversed lane to show redundancies in supply network to player
-                    m_resource_supply_starlane_traversals.insert(std::make_pair(cur_sys_id, lane_end_sys_id));
-                }
-            }
-            ++sys_list_it;
-            sys_list_end = propegating_systems_list.end();
-        }
-
-        // for debug purposes, output the propegated supply
-        //Logger().debugStream() << "source system " << source_sys_id << " propegated ranges:";
-        //for (std::map<int, int>::const_iterator pssr_it = propegating_system_supply_ranges.begin(); pssr_it != propegating_system_supply_ranges.end(); ++pssr_it)
-        //    Logger().debugStream() << "....system id: " << pssr_it->first << " range: " << pssr_it->second;
-
-        all_supply_exchanging_systems.insert(source_sys_id);
-        // have now propegated supply as far as it can go from this source.  store results
-        for (std::map<int, int>::const_iterator pssr_it = propegating_system_supply_ranges.begin(); pssr_it != propegating_system_supply_ranges.end(); ++pssr_it) {
-            int cur_sys_id = pssr_it->first;
-            supply_groups_map[source_sys_id].insert(cur_sys_id);    // source system can share with current system
-            all_supply_exchanging_systems.insert(cur_sys_id);
-        }
-    }
-
-    //// DEBUG
-    //Logger().debugStream() << "resource supply traversals:";
-    //for (std::set<std::pair<int, int> >::const_iterator it = m_resource_supply_starlane_traversals.begin(); it != m_resource_supply_starlane_traversals.end(); ++it) {
-    //    Logger().debugStream() << " ... from: " << GetUniverse().Object(it->first)->Name() << " to: " << GetUniverse().Object(it->second)->Name();
-    //}
-    //
-    //Logger().debugStream() << "obstructed resource supply traversals:";
-    //for (std::set<std::pair<int, int> >::const_iterator it = m_resource_supply_obstructed_starlane_traversals.begin(); it != m_resource_supply_obstructed_starlane_traversals.end(); ++it) {
-    //    const UniverseObject* from = GetUniverse().Object(it->first);
-    //    const UniverseObject* to = GetUniverse().Object(it->second);
-    //    if (from && to)
-    //        Logger().debugStream() << " ... from: " << from->Name() << " to: " << to->Name();
-    //    else if (from)
-    //        Logger().debugStream() << " ... from: " << from->Name() << " to id: " << it->second;
-    //    else
-    //        Logger().debugStream() << " ... from id: " << it->first << " to id: " << it->second;
-    //}
-
-    if (supply_groups_map.empty()) return;  // need to avoid going to boost graph stuff below, which doesn't seem to like being fed empty graphs...
-
-
-    // Need to merge interconnected supply groups into as few sets of mutually-supply-exchanging systems
-    // as possible.  This requires finding the connected components of an undirected graph, where the node
+    // Need to merge interconnected supply groups into as few sets of mutually-
+    // supply-exchanging systems as possible.  This requires finding the
+    // connected components of an undirected graph, where the node
     // adjacency are the directly-connected systems determined above.
+
+    // note: using fleet supplyable system ids as a list of all systems where
+    // resources could be exchanged
 
     // create graph
     boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> graph;
 
-    // boost expects vertex labels to range from 0 to num vertices - 1, so need to map from system id
-    // to graph id and back when accessing vertices
+    // boost expects vertex labels to range from 0 to num vertices - 1, so need
+    // to map from system id to graph id and back when accessing vertices
     std::vector<int> graph_id_to_sys_id;
-    graph_id_to_sys_id.reserve(all_supply_exchanging_systems.size());
+    graph_id_to_sys_id.reserve(m_fleet_supplyable_system_ids.size());
 
     std::map<int, int> sys_id_to_graph_id;
     int graph_id = 0;
-    for (std::set<int>::const_iterator sys_it = all_supply_exchanging_systems.begin(); sys_it != all_supply_exchanging_systems.end(); ++sys_it, ++graph_id) {
+    for (std::set<int>::const_iterator sys_it = m_fleet_supplyable_system_ids.begin();
+         sys_it != m_fleet_supplyable_system_ids.end(); ++sys_it, ++graph_id)
+    {
         int sys_id = *sys_it;
         //const UniverseObject* sys = GetUniverse().Object(sys_id);
         //std::string name = sys->Name();
@@ -1673,7 +1534,9 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
     }
 
     // add edges for all direct connections between systems
-    for (std::map<int, std::set<int> >::const_iterator maps_it = supply_groups_map.begin(); maps_it != supply_groups_map.end(); ++maps_it) {
+    for (std::map<int, std::set<int> >::const_iterator maps_it = supply_groups_map.begin();
+         maps_it != supply_groups_map.end(); ++maps_it)
+    {
         int start_graph_id = sys_id_to_graph_id[maps_it->first];
         const std::set<int>& set = maps_it->second;
         for(std::set<int>::const_iterator set_it = set.begin(); set_it != set.end(); ++set_it) {
@@ -1730,46 +1593,31 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
     }
 }
 
-const std::set<int>& Empire::FleetSupplyableSystemIDs() const
-{ return m_fleet_supplyable_system_ids; }
-
-const std::set<std::pair<int, int> >& Empire::FleetSupplyStarlaneTraversals() const
-{ return m_fleet_supply_starlane_traversals; }
-
-const std::map<int, int>& Empire::FleetSupplyRanges() const
-{ return m_fleet_supply_system_ranges; }
-
-const std::set<std::set<int> >& Empire::ResourceSupplyGroups() const
-{ return m_resource_supply_groups; }
-
-const std::set<std::pair<int, int> >& Empire::ResourceSupplyStarlaneTraversals() const
-{ return m_resource_supply_starlane_traversals; }
-
-const std::set<std::pair<int, int> >& Empire::ResourceSupplyOstructedStarlaneTraversals() const
-{ return m_resource_supply_obstructed_starlane_traversals; }
-
-const std::map<int, int>& Empire::ResourceSupplyRanges() const
-{ return m_resource_supply_system_ranges; }
+const std::map<int, int>& Empire::SystemSupplyRanges() const
+{ return m_supply_system_ranges; }
 
 const std::set<int>& Empire::SupplyUnobstructedSystems() const
 { return m_supply_unobstructed_systems; }
 
-bool Empire::FleetOrResourceSupplyableAtSystem(int system_id) const {
+const std::set<std::pair<int, int> >& Empire::SupplyStarlaneTraversals() const
+{ return m_supply_starlane_traversals; }
+
+const std::set<std::pair<int, int> >& Empire::SupplyOstructedStarlaneTraversals() const
+{ return m_supply_starlane_obstructed_traversals; }
+
+const std::set<int>& Empire::FleetSupplyableSystemIDs() const
+{ return m_fleet_supplyable_system_ids; }
+
+bool Empire::SystemHasFleetSupply(int system_id) const {
     if (system_id == INVALID_OBJECT_ID)
         return false;
-
-    // check fleet supplyable systems
     if (m_fleet_supplyable_system_ids.find(system_id) != m_fleet_supplyable_system_ids.end())
         return true;
-
-    // check all resource supply groups
-    for (std::set<std::set<int> >::const_iterator groups_it = m_resource_supply_groups.begin(); groups_it != m_resource_supply_groups.end(); ++groups_it)
-        if (groups_it->find(system_id) != groups_it->end())
-            return true;
-
-    // couldn't find any reason to supply specified system.  default to false
     return false;
 }
+
+const std::set<std::set<int> >& Empire::ResourceSupplyGroups() const
+{ return m_resource_supply_groups; }
 
 Empire::TechItr Empire::TechBegin() const
 { return m_techs.begin(); }

@@ -598,8 +598,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
-        empire->UpdateFleetSupply();                // determines which systems can access fleet supply, and starlane traversals used to do this
-        empire->UpdateResourceSupply();             // determines the separate groups of systems within which (but not between which) resources can be shared
+        empire->UpdateSupply();                     // determines which systems can access fleet supply and which groups of systems can exchange resources
         empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
@@ -801,8 +800,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
-        empire->UpdateFleetSupply();                // determines which systems can access fleet supply, and starlane traversals used to do this
-        empire->UpdateResourceSupply();             // determines the separate groups of systems within which (but not between which) resources can be shared
+        empire->UpdateSupply();                     // determines which systems can access fleet supply and which groups of systems can exchange resources
         empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
@@ -1990,8 +1988,7 @@ void ServerApp::PostCombatProcessTurns() {
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
-        empire->UpdateFleetSupply();                // determines which systems can access fleet supply, and starlane traversals used to do this
-        empire->UpdateResourceSupply();             // determines the separate groups of systems within which (but not between which) resources can be shared
+        empire->UpdateSupply();                     // determines which systems can access fleet supply and which groups of systems can exchange resources
         empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
