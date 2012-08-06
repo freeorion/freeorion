@@ -417,7 +417,8 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         m_selection_indicator->Hide();
     }
 
-    const bool USE_TINY_MOUSEOVER_INDICATOR = Value(Width()) < m_tiny_mouseover_indicator->Width();
+    const bool USE_TINY_MOUSEOVER_INDICATOR = m_tiny_mouseover_indicator &&
+                                              (Value(Width()) < m_tiny_mouseover_indicator->Width());
 
     // normal mouseover indicator - attach / detach / show / hide done by MouseEnter and MouseLeave
     if (m_mouseover_indicator && !USE_TINY_MOUSEOVER_INDICATOR) {
@@ -496,7 +497,8 @@ void SystemIcon::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { if (!Disabled()) RightDoubleClickedSignal(m_system_id); }
 
 void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    const bool USE_TINY_MOUSEOVER_INDICATOR = Value(Width()) < m_tiny_mouseover_indicator->Width();
+    const bool USE_TINY_MOUSEOVER_INDICATOR = m_tiny_mouseover_indicator &&
+                                              (Value(Width()) < m_tiny_mouseover_indicator->Width());
     // indicate mouseover
     if (m_mouseover_indicator && !USE_TINY_MOUSEOVER_INDICATOR) {
         AttachChild(m_mouseover_indicator);

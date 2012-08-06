@@ -864,7 +864,8 @@ BuildingType
             effects = Destroy
     ]
     icon = ""
-
+    
+/*  Remote Terraforming is broken badly so hidden
 BuildingType
     name = "BLD_REMOTE_TERRAFORM"
     description = "BLD_REMOTE_TERRAFORM_DESC"
@@ -888,7 +889,7 @@ BuildingType
             effects = Destroy
     ]
     icon = ""
-
+*/
 BuildingType
     name = "BLD_NEUTRONIUM_EXTRACTOR"
     description = "BLD_NEUTRONIUM_EXTRACTOR_DESC"

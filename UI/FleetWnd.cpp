@@ -72,7 +72,7 @@ namespace {
       * default, 12 pt, font size. */
     GG::Pt StatIconSize() {
         const int font_size = std::max(ClientUI::Pts(), 12);
-        return GG::Pt(GG::X(font_size*10/3), GG::Y(font_size*4/3));
+        return GG::Pt(GG::X(font_size*11/3), GG::Y(font_size*4/3));
     }
 
     GG::Y ListRowHeight()

@@ -2401,7 +2401,7 @@ void ServerApp::HandleDiplomaticMessageChange(int empire1_id, int empire2_id) {
     // get players corresponding to empires in message
     int player1_id = EmpirePlayerID(empire1_id);
     int player2_id = EmpirePlayerID(empire2_id);
-    if (player2_id == Networking::INVALID_PLAYER_ID || player2_id == Networking::INVALID_PLAYER_ID)
+    if (player1_id == Networking::INVALID_PLAYER_ID || player2_id == Networking::INVALID_PLAYER_ID)
         return;
 
     ServerNetworking::established_iterator player1_it = m_networking.GetPlayer(player1_id);

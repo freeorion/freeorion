@@ -1,9 +1,9 @@
 Russian
 
-#This is the Russian String Table file for FreeOrion 0.4 SVN5050
+#This is the Russian String Table file for FreeOrion 0.4 SVN5089
 #Translater cjckem at gmail.com
 #support by black_owl at mail.ru
-#Этот языковой файл для FreeOrion 0.4 SVN5062
+#Этот языковой файл для FreeOrion 0.4 SVN5089
 #кодовая страница UTF8
 #Переводит cjckem at gmail.com
 #при поддержке black_owl at mail.ru
@@ -1932,16 +1932,16 @@ FW_FLEET_ETA_OUT_OF_RANGE
 Вне досягаемости
 
 FW_AGGRESSIVE
-Агрессивный
+Контролирует Систему
 
 FW_AGGRESSIVE_DESC
-Флот блокирует вражеские империи и начинает бой с любой целью в своей системе.
+Флот блокирует вражеские империи и начинает бой при появлении врага в системе.
 
 FW_PASSIVE
-Пассивный / Скрытный
+Скрытный
 
 FW_PASSIVE_DESC
-Флот не будет блокировать системы и начинать бои с другими целями, отдавая предпочтение скрытности.
+Флот переходит в скрытный режим; он не будет блокировать системы и начинать бои с другими целями.
 
 FW_SHIP_CLASS
 Класс корабля 
@@ -5162,9 +5162,9 @@ CON_FRC_ENRG_STRC
 Энергосиловые Строения
 
 CON_FRC_ENRG_STRC_DESC
-'''Increases the growth of resource meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn.
+'''Увеличивает показания ресурсов на 3 за ход, но не выше максимального уровня, и утрату превышения максимального уровня на 5 за ход.
 
-The flexibility and versatility of force-energy structures permits a colonies buildings to be more easily re-tooled to suit new purposes, increasing the rate at which focus changes can take effect.
+Гибкость и универсальность энергосиловых строений позволяет легко переоборудовать здания колонии в соответствии с меняющимися потребностями, увеличивая скорость, с которой изменения приоритета вступают в силу.
 
 Если силами и энергией можно манипулировать как пожелаешь, вплоть до того, что они смогут предоставить такие же функциональные возможности как твердые поверхности, то нет никакой потребности применять физические материалы для конструирования зданий. У строений составленных полностью из энергии, есть много преимуществ, включая простую реконфигурацию, упругость, мобильность и новые дизайнерские возможности.'''
 
@@ -5172,9 +5172,9 @@ CON_CONTGRAV_ARCH
 Контролируемая Гравитация в Архитектуре
 
 CON_CONTGRAV_ARCH_DESC
-'''Increases the max resource supply range of all colonies by 1.
+'''Повышает максимальный диапазон маршрутов поддержки всех колоний на 1.
 
-By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
+После установки огромного генератора нулевой гравитации в ядре планеты, становится возможным включать и выключать силу гравитации планеты, наподобие выключателя света на стене, но делать это в определённой узкой области. Промышленность планеты получает всю выгоду низкой гравитации и невесомости, без недостатков. Так же могут быть созданы зоны обратной силы тяжести, делая стоимость космических запусков фактически нулевой.
 
 Полностью управляя ориентацией и силой гравитационных полей, существующих вне и внутри строений, проекты могут одновременно демонстрировать свободу невесомости и пользу наличия опциональных "верха" и "низа". Само строение  и окружающая его среда, могут образовывать любую форму в пространстве, простираясь на большие расстояния, делая петли вокруг себя, и создавая произвольные взаимосвязи. Одновременно, окружению, в определенных пределах, можно придать полезные свойства, которые могут меняться или полностью отличаться от смежных областей. Такая эксплуатационная гибкость предлагает новые функциональные возможности для социальных, производственных или других целей.'''
 
@@ -5182,11 +5182,11 @@ CON_GAL_INFRA
 Галактическая Инфраструктура
 
 CON_GAL_INFRA_DESC
-'''Increases the max resource supply range of all colonies by 1.
+'''Повышает максимальный диапазон маршрутов поддержки всех колоний на 1.
 
-The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena. By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
+Последовательная и эффективная транспортировка ресурсов сквозь большие межзвездные расстояния требует трудоемкого планирования и осложнена многочисленными факторами, такими как наличие космических монстров, вражеских империй и опасных межзвездных феноменов. Благодаря использованию интегрированной галактической инфраструктуры, может быть достигнуто создание потока распределения ресурсов между развитыми и развивающимися колониями, а так же могут быть найдены решения особенно тревожных логистических проблем.
 
-Развитие и интеграция инфраструктур очень производительных миров в объединенную, охватывающую всю галактику сеть - один из величайших мыслимых вызовов в сфере логистики. По готовности такая система функционально объединяет миры, из которых она составлена. Интегрированная транспортировка, жилье, поддержка, и строительные инструменты могут быть гибко предоставлены везде, где необходимы оптимально изменить распределения ресурсов или приспособиться к изменениям.'''
+Развитие и интеграция инфраструктур высокопроизводительных миров в объединенную, охватывающую всю галактику сеть - один из величайших мыслимых вызовов в сфере логистики. По готовности такая система функционально объединяет миры, из которых она составлена. Интегрированные транспортировка, жилье, поддержка, и строительные инструменты могут быть предоставлены везде, где необходимы для оптимального изменения распределения ресурсов или приспособления к изменениям.'''
 
 CON_ART_HEAVENLY
 Искусственные небесные тела
@@ -5198,23 +5198,23 @@ CON_TRANS_ARCH
 Превосходная Архитектура
 
 CON_TRANS_ARCH_DESC
-'''Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring Megalith.
+'''Освоение продвинутых орбитальных методов строительства, ученые создают методы позволяющие строительство внушающих благоговение Мегалитов.
 
 Воплощение дизайна - это объединение оптимальных функциональных возможностей и элегантности формы. Превосходное строение расширяет и вдохновляет умы его жителей или внешних наблюдателей своими: формой, размещением, материалом и интеграцией, через внушающий страх масштаб, прекрасно подчеркнутую идею, ощущения или их отсутствие, или чрезвычайную простоту и пригодность определенной цели.'''
 
 CON_ORBITAL_HAB
-Orbital Habitation
+Орбитальное Жильё
 
 CON_ORBITAL_HAB_DESC
-'''If this planet is inhabitable, increases the Population capacity of this planet by 5.'''
+'''Если планета является обитаемой, повышает максимальное население планеты на 5.'''
 
 CON_NDIM_STRC
 N-мерные Строения
 
 CON_NDIM_STRC_DESC
-'''If this planet is inhabitable, increases the Population capacity of this planet by 15.
+'''Если планета является обитаемой, повышает максимальное население планеты на 15.
 
-The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
+Основными сдерживающими факторами роста населения планеты являются экологическая безопасность и пространство. Пространственные ограничения могут быть сняты путём постепенного переноса инфраструктуры в несколько измерений, и, в идеальных условиях, максимальное население планеты может быть значительно увеличено.
 
 Из всех странных открытий прикладной физики у способности свернуть пространство само в себя имеется самое прямое и глубокое влияние на форму строения и его дизайн. Потенциал бесконечен, буквально бесконечен,  поскольку конец коридора может быть замкнут на начало, или коридоры могут быть закручены так, что их потолок становится их полом. Также, понятие перенаселения становится смехотворным, поскольку любое число жителей может вписаться в произвольно маленький объем, безопасно сложенный в смежную плоскость реальности.'''
 
@@ -5741,15 +5741,15 @@ PRO_SOL_ORB_GEN
 Solar Orbital Generation
 
 PRO_SOL_ORB_GEN_DESC
-Traditional solar generation methods rely solely on radiating solar energy. By placing generators in low orbit around the star itself, the ability to directly harness the energy of supermassive stellar phenomena becomes a possibility, and a sizable and far-reaching benefit to industry can be obtained.
+Традиционные методы получения солнечной энергии полагаются исключительно на излучение солнца. Генераторы, размещённые на низкой орбите вокруг звезды, дают возможность использовать гигантскую энергию сверхмассивных звездных процессов, что даёт значительные выгоды и позволяет строить далеко идущие планы промышленному сектору.
 
 PRO_INDUSTRY_CENTER_I
-Industrial Centers
+Индустриальные Центры
 
 PRO_INDUSTRY_CENTER_I_DESC
-'''Coordinating industrial activity between planets and star systems can be effectively accomplished at large centralized complexes.
+'''Координирование производственной деятельности между планетами и звёздными системами может завершиться созданием эффективных крупных централизованных комплексов.
 
-Facility's large cost and build time, as well as significant future range growth potential, require strong planning to produce in location with ideal future utility. Industrial Centers come with large up-front cost, in both production resources and time, but with great opportunity for possible expansion. This makes them ideal for long-term strategies, but unattractive for empires planning on a quick victory.'''
+Высокая стоимость и длительное время возведения сооружений, as well as significant future range growth potential, require strong planning to produce in location with ideal future utility. Industrial Centers come with large up-front cost, in both production resources and time, but with great opportunity for possible expansion. This makes them ideal for long-term strategies, but unattractive for empires planning on a quick victory.'''
 
 PRO_NEUTRONIUM_FAC
 Neutronium Facilities
@@ -5767,311 +5767,311 @@ DEF_LIGHTHOUSE_DESC
 By using a complex pattern of EM pulses and particle streams to reveal the location of objects in a system, it is possible for even very stealthy objects to be illuminated and detected with moderate detection equipment.
 
 DEF_DEFENSE_NET
-Planetary Defense Network
+Планетарная Оборонная Сеть
 
 DEF_DEFENSE_NET_DESC
-'''Increases max defense on all planets by 5.
+'''Повышает максимальную защиту всех планет на 5.
 
-With galactic exploration comes the possibility of meeting new races - and new enemies. By placing several armed defense bases in orbit around a planet, it is possible to give that planet defensive capabilities without the need for ships.'''
+С исследованием галактики появляется возможность познакомиться с новыми расами... и новыми врагами. Размещение на орбите вокруг планеты нескольких вооруженных оборонных баз позволит этой планете обороняться при отсутствии флота.'''
 
 DEF_HI_ENRG_FOCUS
-High Energy Focus
+Фокусирование Высоких Энергий
 
 DEF_HI_ENRG_FOCUS_DESC
-'''Increases max defense on all planets by 15.
+'''Повышает максимальную защиту всех планет на 10.
 
-While having a multitude of defense satellites is superior to a single large defense satellite in terms of versatility and dependability, it is considerably inferior in terms of firepower. Often, enemy shields can simply absorb numerous weak attacks where a single powerful attack would be able to penetrate its shields and severely damage the ship. By using a high energy focusing device, the power of multiple defense satellites can be unified into a single powerful beam weapon.'''
+Большое количество оборонных спутников превосходит по универсальности и надёжности один большой спутник, но уступает по огневой мощи. Зачастую защитные поля противника способны поглотить многочисленные слабые атаки, в то время как один мощный удар мог бы проникнуть сквозь защитное поле и нанести серьезные повреждения кораблю. С помощью фокусирующего высокие энергии устройства, сила нескольких военных спутников может быть объединена в одно мощное лучевое оружие.'''
 
 DEF_PLAN_DEFLECT_SHLD
-Planetary Deflector Shield
+Планетарное Отражательное Поле
 
 DEF_PLAN_DEFLECT_SHLD_DESC
-'''Increases max shield on all planets by 10.
+'''Повышает максимальное защитное поле на всех планетах на 10.
 
-Basic Planetary Shield. This is not cumulative with Planetary Barrier Shield.'''
+Базовое планетарное защитное поле. Не суммируется с Планетарным Полем-Барьером.'''
 
 DEF_PLAN_BARRIER_SHLD
-Planetary Barrier Shield
+Планетарное Поле-Барьер
 
 DEF_PLAN_BARRIER_SHLD_DESC
-'''Increases max shield on all planets by 45. 
+'''Повышает максимальное защитное поле на всех планетах на 45. 
 
-Advanced Planetary Shield. This is not cumulative with Planetary Deflector Shield.'''
+Продвинутое планетарное защитное поле. Не суммируется с Планетарным Отражательным Полем.'''
 
 DEF_ROOT_DEFENSE
-Self Defense
+Самозащита
 
 DEF_ROOT_DEFENSE_DESC
-'''Increases max troops on all planets by 5.
+'''Повышает максимальное количество наземных войск на всех планетах на 5.
 
-The concept of 'self defense' is at the root of many avenues of technological advance.'''
+Понятие 'самооборона' лежит в основе многих направлений технического прогресса.'''
 
 DEF_GARRISON_1
-Planetary Garrison 1
+Гарнизон Планеты 1
 
 DEF_GARRISON_1_DESC
-Increases max troops on all planets by 10.
+Повышает максимальное число наземных войск на 10 на всех планетах.
 
 DEF_GARRISON_2
-Planetary Garrison 2
+Гарнизон Планеты 2
 
 DEF_GARRISON_2_DESC
-Increases max troops on all planets by 20.
+Повышает максимальное число наземных войск на 20 на всех планетах.
 
 DEF_GARRISON_3
-Planetary Garrison 3
+Гарнизон Планеты 3
 
 DEF_GARRISON_3_DESC
-Increases max troops on all planets by 40.
+Повышает максимальное число наземных войск на 40 на всех планетах.
 
 DEF_GARRISON_4
-Planetary Garrison 4
+Гарнизон Планеты 4
 
 DEF_GARRISON_4_DESC
-Increases max troops on all planets by 80.
+Повышает максимальное число наземных войск на 80 на всех планетах.
 
 DEF_PLANET_CLOAK
-Planetary Cloaking Device
+Планетарное Устройство Маскировки
 
 DEF_PLANET_CLOAK_DESC
-By phasing parts a planet in and out of space-time, its stealth can be increased massively.
+Путём фазирования частей планеты вне пространства-времени и обратно, можно добиться грандиозного повышения скрытности.
 
 SHP_FLEET_LOGISTICS
-Fleet Logistics
+Логистика Флота
 
 SHP_FLEET_LOGISTICS_DESC
-Unlocks the Logistics focus setting, which increases the Supply meter of planets by an amount equal to one half the planet's population.
+Открывает Приоритет Логистики, который увеличивает шкалу поддержки планеты на количество, равное половине населения планеты.
 
 SHP_FLEET_REPAIR
-Fleet Field Repair
+Полевой Ремонт Флота
 
 SHP_FLEET_REPAIR_DESC
-Allows ships within supply range to repair damage at a rate of 1 per turn. Does not function immediately after battles.
+Позволяет судам находящимся в диапазоне поддержки ремонтировать повреждения в размере 1 за ход. Не работает сразу после сражения.
 
 SHP_REINFORCED_HULL
-Reinforced Hull
+Усиленный Корпус
 
 SHP_REINFORCED_HULL_DESC
-'''Increases max structure of all ships by 5.
+'''Повышает максимальную структуру всех кораблей на 5.
 
-Standard ship hulls are designed and constructed with advanced microgravity architectural techniques and highly resistant materials. However, the limitations of physical matter impose a severe limitation on the strength of hulls. By enhancing the hull with structural integrity fields, a sizable increase in strength can be obtained.'''
+Стандартный корпус корабля спроектирован и построен с использованием передовых методов микрогравитационной архитектуры и высокопрочных материалов. Тем не менее, свойства физической материи налагают жесткие ограничения на прочность корпусов. Благодаря укреплению корпуса структурно интегрированными полями, можно получить значительное увеличение прочности.'''
 
 SHP_BASIC_DAM_CONT
-Basic Damage Control
+Базовый Контроль Повреждений
 
 SHP_BASIC_DAM_CONT_DESC
-Gradually repairs damaged ships. Current structure of all ships is replenished at a rate of 1 per turn.
+Постепенно восстанавливает повреждённые корабли. Текущая структура всех судов пополняется со скоростью 1 за ход.
 
 SHP_ADV_DAM_CONT
-Advanced Damage Control
+Продвинутый Контроль Повреждений
 
 SHP_ADV_DAM_CONT_DESC
-Fully repairs damaged ships between battles.
+Полностью восстанавливает повреждённые корабли между битвами.
 
 SHP_SYST_DEF_MINE
-System Defense Mines
+Минная Защита Системы
 
 SHP_SYST_DEF_MINE_DESC
-'''When friendly ships are not present in a system, enemy ships are free to blockade the system, stopping the transfer of resources without directly engaging the planet's defenses, thus with no risk of damage to themselves. A network of system defense mines can deter these tactics by damaging enemy ships each turn they are in the system.
+'''Когда в системе отсутствует дружественный флот, вражеские корабли могут заблокировать систему, остановив транспортировку ресурсов не вступая при этом в непосредственный контакт с системой обороны планеты, то есть не рискуя ничем. Сеть мин защищающая систему позволит предупредить такую тактику нанося повреждения вражеским кораблям каждый ход, пока они находятся в системе.
 
-The structure of all ships belonging to an enemy empire which are present in a system containing a planet owned by the empire that possesses this technology will be reduced at a rate of 2 per turn.
+Структура всех вражеских судов, находящихся в системе с планетой империи, которая владеет данной технологией, будет уменьшаться на 2 каждый ход.
 
-The mines have a lifetime of one turn; they are gone by the time combat begins in a system and are replaced in time for the next turn.'''
+Срок жизни мин - 1 ход; они исчезают к тому времени, когда начинается бой в системе, и восстанавливаются как раз к следующему ходу.'''
 
 SHP_ROOT_AGGRESSION
-Aggression
+Агрессия
 
 SHP_ROOT_AGGRESSION_DESC
-Allows basic weapons and troop pods.
+Открывает базовое вооружение кораблей и капсулы с наземными войсками.
 
 SHP_WEAPON_2
-Mass Driver 2
+Электромагнитная Пушка 2
 SHP_WEAPON_2_DESC
-'''Refines Mass Driver to level 2.'''
+'''Улучшает электромагнитную пушку до 2го уровня.'''
 
 SHP_WEAPON_3
-Mass Driver 3
+Электромагнитная Пушка 3
 SHP_WEAPON_3_DESC
-'''Refines Mass Driver to level 3.'''
+'''Улучшает электромагнитную пушку до 3го уровня.'''
 
 SHP_WEAPON_4
-Mass Driver 4
+Электромагнитная Пушка 4
 SHP_WEAPON_4_DESC
-'''Refines Mass Driver to level 4.'''
+'''Улучшает электромагнитную пушку до 4го уровня.'''
 
 SHP_WEAPON_5
-Laser 1
+Лазер 1
 SHP_WEAPON_5_DESC
-'''Unlocks the Laser, a more powerful ship's weapon than the Mass Driver.'''
+'''Открывает лазер - более мощное корабельное оружие, чем электромагнитная пушка.'''
 
 SHP_WEAPON_6
-Laser 2
+Лазер 2
 SHP_WEAPON_6_DESC
-'''Refines Laser to level 2.'''
+'''Улучшает лазер до 2го уровня.'''
 
 SHP_WEAPON_7
-Laser 3
+Лазер 3
 SHP_WEAPON_7_DESC
-'''Refines Laser to level 3.'''
+'''Улучшает лазер до 3го уровня.'''
 
 SHP_WEAPON_8
-Laser 4
+Лазер 4
 SHP_WEAPON_8_DESC
-'''Refines Laser to level 4.'''
+'''Улучшает лазер до 4го уровня.'''
 
 SHP_WEAPON_9
-Plasma Cannon 1
+Плазменная Пушка 1
 SHP_WEAPON_9_DESC
-'''Unlocks the Plasma Cannon, a more powerful ship's weapon than the Laser.'''
+'''Открывает плазменную пушку - более мощное корабельное оружие, чем лазер.'''
 
 SHP_WEAPON_10
-Plasma Cannon 2
+Плазменная Пушка 2
 SHP_WEAPON_10_DESC
-'''Refines Plasma Cannon to level 2.'''
+'''Улучшает плазменную пушку до 2го уровня.'''
 
 SHP_WEAPON_11
-Plasma Cannon 3
+Плазменная Пушка 3
 SHP_WEAPON_11_DESC
-'''Refines Plasma Cannon to level 3.'''
+'''Улучшает плазменную пушку до 3го уровня.'''
 
 SHP_WEAPON_12
-Plasma Cannon 4
+Плазменная Пушка 4
 SHP_WEAPON_12_DESC
-'''Refines Plasma Cannon to level 4.'''
+'''Улучшает плазменную пушку до 4го уровня.'''
 
 SHP_WEAPON_13
-Death Ray 1
+Луч Смерти 1
 SHP_WEAPON_13_DESC
-'''Unlocks the Death Ray, the ultimate ship's weapon.'''
+'''Открывает луч смерти - лучшее корабельное оружие.'''
 
 SHP_WEAPON_14
-Death Ray 2
+Луч Смерти 2
 SHP_WEAPON_14_DESC
-'''Refines Death Ray to level 2.'''
+'''Улучшает луч смерти до 2го уровня.'''
 
 SHP_WEAPON_15
-Death Ray 3
+Луч Смерти 3
 SHP_WEAPON_15_DESC
-'''Refines Death Ray to level 3.'''
+'''Улучшает луч смерти до 3го уровня.'''
 
 SHP_WEAPON_16
-Death Ray 4
+Луч Смерти 4
 SHP_WEAPON_16_DESC
-'''Refines Death Ray to level 4.'''
+'''Улучшает луч смерти до 4го уровня.'''
 
 SHP_WEAPON_17
-Death Ray 5
+Луч Смерти 5
 SHP_WEAPON_17_DESC
-'''Refines Death Ray to level 5. The ultimate refinement of the ultimate weapon.'''
+'''Улучшает луч смерти до 5го уровня. Последнее улучшение самого мощного корабельного оружия.'''
 
 SHP_ION_CANNON
-Ion Cannon
+Ионная Пушка
 
 SHP_ION_CANNON_DESC
-Unlocks Ion Cannon ship part.
+Открывает корабельное оружие - ионную пушку.
 
 SHP_MASS_DRIVER
-Mass Driver
+Электромагнитная Пушка
 
 SHP_MASS_DRIVER_DESC
-With the advent of space age weaponry, a paradigm shift tends to occur away from projectile weapons and towards energy or particle weapons. However, as the ability to manipulate matter continuously increases, it becomes possible to fire massive projectiles at relativistic speeds, more deadly than most energy weapons.
+С появлением оружия космического века происходит изменение парадигмы от метательного оружия к энергитическому или основанному на воздействии элементарных частиц. Однако, способности управлять материей постоянно возрастают, вследствие чего становится возможным вести огонь массивными снарядами с релятивисткой скоростью, что более смертоносно для врага, чем большинство энергетического оружия.
 
 SHP_DEATH_RAY
-Death Ray
+Луч Смерти
 
 SHP_DEATH_RAY_DESC
-A devastating beam of ultra-massive high-energy particles, tearing open deadly rifts in space-time as well as delivering an incredibly high-energy impact.
+Разрушительный луч ультра-массивных высокоэнергетических частиц, разрывает пространство-время образуя смертельные зияющие трещины, и обеспечивает невероятно высокую энергию удара.
 
 SHP_PULSE_LASER
-Pulse Laser
+Импульсный Лазер
 
 SHP_PULSE_LASER_DESC
-Unlocks Pulse Laser ship part.
+Открывает корабельное оружие - импульсный лазер.
 
 SHP_PHASOR
-Phasor
+Фазор
 
 SHP_PHASOR_DESC
-Unlocks Phasor ship part.
+Открывает корабельное оружие - фазор.
 
 SHP_INTERCEPTOR
-Interceptor
+Перехватчик
 
 SHP_INTERCEPTOR_DESC
-Unlocks Interceptor ship part.
+Открывает перехватчик.
 
 SHP_BOMBER
-Bomber
+Бомбардировщик
 
 SHP_BOMBER_DESC
-Unlocks Bomber ship part.
+Открывает бомбардировщик.
 
 SHP_RECON_FIGHT
-Reconnaissance Fighter
+Разведывательный Истребитель
 
 SHP_RECON_FIGHT_DESC
-Unlocks Reconnaissance Fighter ship part.
+Открывает разведывательный истребитель.
 
 SHP_NUCLEAR_MISSILE
-Nuclear Missile
+Ядерные Ракеты
 
 SHP_NUCLEAR_MISSILE_DESC
-Unlocks Nuclear Missile ship part.
+Открывает ядерные ракеты.
 
 SHP_NEUTRONIUM_PLATE_NUC_MIS
-Neutronium Plated Nuclear Missile
+Ядерные Ракеты с Нейтронным Покрытием
 
 SHP_NEUTRONIUM_PLATE_NUC_MIS_DESC
-Unlocks Neutronium Plated Nuclear Missile ship part.
+Открывает ядерные ракеты с нейтронным покрытием.
 
 SHP_SPECTRAL_MISSILE
-Spectral Missile
+Спектральные ракеты
 
 SHP_SPECTRAL_MISSILE_DESC
-Unlocks Spectral Missile ship part.
+Открывает спектральные ракеты.
 
 SHP_NEUTRONIUM_PLATE_SPEC_MIS
-Neutronium Plated Spectral Missile
+Спектральные Ракеты с Нейтронным Покрытием
 
 SHP_NEUTRONIUM_PLATE_SPEC_MIS_DESC
-Unlocks Neutronium Plated Spectral Missile ship part.
+Открывает спектральные ракеты с нейтронным покрытием.
 
 SHP_DEFLECTOR
-Deflector Shield
+Отражающие Защитные Поля
 
 SHP_DEFLECTOR_DESC
-Unlocks Deflector Shield ship part.
+Открывает отражающие защитные поля кораблей.
 
 SHP_MULTISPEC_SHIELD
-Multi-Spectral Shielding
+Мульти-Спектральные защитные поля
 
 SHP_MULTISPEC_SHIELD_DESC
-Provides adequate shielding to allow a ship to enter into the heart of a star. Ships in a system with a star type other than Black Hole and Neutron receive a mighty stealth bonus.
+Обеспечивают достаточную защиту для входа корабля в сердце звезды. Суда в системе со звездой типа, отличного от черной дыры и нейтронные получают существенный бонус к скрытности.
 
 SHP_OPTICAL_SCANNER
-Optical Scanner
+Оптический Сканер
 
 SHP_OPTICAL_SCANNER_DESC
-All colonies start the game with a detection level of 20, and the ship part Optical Scanner permits ships to reach the same level of detection.
+Все колонии начинают игру с уровня обнаружения 50, Оптический Сканер позволяет кораблям достичь того же уровня обнаружения.
 
 SHP_RADAR
-Active Radar
+Активный Радар
 
 SHP_RADAR_DESC
-'''Increases the detection of all planets to 40.
+'''Открывает нейтронный сканер, увеличивает дальность обнаружения всех планет до 200, а также повышает уровень имперского обнаружения до 400.
 
-Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened. By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
+Непрактично полагаться на пассивное обнаружение объектов по поступающему от них электромагнитному излучению, ведь это излучение может быть замаскировано или приглушено. Путём излучения электромагнитных волн и фиксации их отражений можно определить расположение и скорость многих объектов.'''
 
 SHP_NEUTRON_SCANNER
-Neutron Scanner
+Нейтронный сканер
 
 SHP_NEUTRON_SCANNER_DESC
-'''Increases the detection of all planets to 60.
+'''Открывает нейтронный сканер, увеличивает дальность обнаружения всех планет до 200, а также повышает уровень имперского обнаружения до 400.
 
-Electromagnetic radiation has no rest mass and is easily manipulable. Simply by bending waves of light around an object, it is possible to render radar devices virtually useless. By firing waves of neutrons instead of electromagnetic radiation, more effective active scanning can be utilized.'''
+Электромагнитное излучение не имеет массы покоя, и им можно с лёгкостью манипулировать. Радиолокационные устройства могут стать бесполезными, просто изогнув волны света проходящие вокруг объекта. Но можно добиться более эффективного сканирования, используя излучение нейтронных волн вместо электромагнитных.'''
 
 SHP_SENSORS
-Sensors
+Сенсоры
 
 SHP_SENSORS_DESC
 Unlocks Sensors ship part and increases the detection of all planets to 80.

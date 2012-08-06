@@ -2274,7 +2274,6 @@ void Empire::LockItem(const ItemSpec& item) {
     switch (item.type) {
     case UIT_BUILDING:
         RemoveBuildingType(item.name);
-        (item.name);
         break;
     case UIT_SHIP_PART:
         RemovePartType(item.name);

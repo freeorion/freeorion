@@ -1929,7 +1929,7 @@ BASIC_POPULATION
             activation = NOT HasTag "SELF_SUSTAINING"
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation Value + 1000 * Target.SizeAsDouble
 
         EffectsGroup
             scope = AND [

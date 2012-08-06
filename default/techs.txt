@@ -1129,7 +1129,8 @@ Tech
     prerequisites = "GRO_NANOTECH_MED"
     unlock = Item type = Building name = "BLD_BIOTERROR_PROJECTOR"
     graphic = "icons/tech/bioterror_facilities.png"
-
+    
+/*  Remote Terraforming is broken badly so hidden
 Tech
     name = "GRO_REMOTE_TERRAFORM"
     description = "GRO_REMOTE_TERRAFORM_DESC"
@@ -1141,6 +1142,7 @@ Tech
     prerequisites = "GRO_ECO_METAMORPH"
     unlock = Item type = Building name = "BLD_REMOTE_TERRAFORM"
     graphic = "icons/tech/terraform_rapid.png"
+    */
 
 Tech
     name = "GRO_GAIA_TRANS"

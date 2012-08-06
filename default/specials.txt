@@ -1273,35 +1273,8 @@ Special
 STANDARD_MINERAL_BOOST
 '''EffectsGroup
             scope = Source
-            activation = And [
-                Focus "FOCUS_MINING"
-                [[STANDARD_CONDITION_INFRA]]
-            ]
-            effects = SetTargetIndustry Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_MINING"
-                [[STANDARD_CONDITION_POP]]
-            ]
-            effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_HEAVY_MINING"
-                [[STANDARD_CONDITION_INFRA]]
-            ]
-            effects = SetTargetIndustry Value + Target.Construction * 4 * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_HEAVY_MINING"
-                [[STANDARD_CONDITION_POP]]
-            ]
-            effects = SetTargetIndustry Value + Target.Population * 4 * [[PRODUCTION_PER_POP]]
+            activation = Focus "FOCUS_MINING"
+            effects = SetTargetIndustry Value + 25
 '''
 
 STANDARD_INDUSTRY_BOOST

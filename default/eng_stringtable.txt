@@ -1926,16 +1926,16 @@ FW_FLEET_ETA_OUT_OF_RANGE
 Out of Range
 
 FW_AGGRESSIVE
-Aggressive
+Control System
 
 FW_AGGRESSIVE_DESC
-Fleet blockades enemy empires and initiates battles with any targets in its system.
+Fleet blockades enemy empires and initiates battles with any enemies in the system.
 
 FW_PASSIVE
-Passive / Hidden
+Hide
 
 FW_PASSIVE_DESC
-Fleet will not blockade or initiate battle and will attempt to stay hidden.
+Fleet will attempt to stay hidden; it will not blockade or initiate battle.
 
 FW_SHIP_CLASS
 Ship Class 
@@ -2502,12 +2502,12 @@ ROBOTIC_SPECIES_TEXT
 PHOTOTROPHIC_SPECIES_TITLE
 Phototrophic Species
 PHOTOTROPHIC_SPECIES_TEXT
-'''Phototrophic species are live mainly or entirely on sunlight. These species max population is greatly influenced by the size of the local star -- the bigger the better.  Growth specials do not benefit them.'''
+'''Phototrophic species live mainly or entirely on sunlight. These species max population is greatly influenced by the brightness of the local star -- the bigger the better.  Growth specials do not benefit them.'''
 
 SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Species
 SELF_SUSTAINING_SPECIES_TEXT
-'''Self-Sustaining species may be energy or crystaline beings or something else.  Their commonality is that they need no sustainace. So their basic population growth is very high.'''
+'''Self-Sustaining species may be energy or crystaline beings or something else.  Their commonality is that they need no sustenance. So their basic population growth is very high.'''
 
 
 ####################
@@ -3585,7 +3585,7 @@ MINERALS_SPECIAL_DESC
 '''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with Rich Minerals is focused on Growth, all connected planets with Lithic species receive the same bonus.
 
-Increases Production by 50 on this planet when focus is set to Mining.
+Increases Production by 25 on this planet when focus is set to Mining.
 
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
 
@@ -3595,7 +3595,7 @@ CRYSTALS_SPECIAL_DESC
 '''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with Silmaline Crystals is focused on Growth, all connected planets with Lithic species receive the same bonus.
 
-Increases Production by 50 on this planet when focus is set to Mining.
+Increases Production by 25 on this planet when focus is set to Mining.
 
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
 
@@ -3605,7 +3605,7 @@ METALOIDS_SPECIAL_DESC
 '''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 When a planet with High-Energy Metaloids is focused on Growth, all connected planets with Lithic species receive the same bonus.
 
-Increases Production by 50 on this planet when focus is set to Mining.
+Increases Production by 25 on this planet when focus is set to Mining.
 
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
 

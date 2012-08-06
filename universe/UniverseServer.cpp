@@ -2348,7 +2348,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
 
         // set ownership of home planet
         Planet* home_planet = GetPlanet(homeworld_id);
-        System* home_system = GetSystem(home_planet->SystemID());
+        System* home_system = (home_planet ? GetSystem(home_planet->SystemID()) : 0);
         if (!home_planet || !home_system) {
             Logger().errorStream() << "Couldn't get homeworld or system for generated empire...";
             continue;

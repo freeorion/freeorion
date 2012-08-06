@@ -415,7 +415,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
 
     for (std::list<MovePathNode>::const_iterator path_it = path.begin(); path_it != path.end(); ++path_it) {
         // stop rendering if end of path is indicated
-        if (path_it->eta == Fleet::ETA_NEVER || path_it->eta == Fleet::ETA_NEVER || path_it->eta == Fleet::ETA_OUT_OF_RANGE)
+        if (path_it->eta == Fleet::ETA_UNKNOWN || path_it->eta == Fleet::ETA_NEVER || path_it->eta == Fleet::ETA_OUT_OF_RANGE)
             break;
 
         const MovePathNode& node = *path_it;
