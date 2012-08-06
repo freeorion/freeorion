@@ -96,6 +96,7 @@ Bugs:
  ~ Fixed some crashes with test / temporary code in 3D combat testing.
  ~ Fixed issue where last tech on the queue wouldn't disappear when removed by the player.
  ~ Fixed broken pre-made ship fleet window icons.
+ ~ Many description improvements, and some spelling corrections
 
 v0.4 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
