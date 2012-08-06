@@ -82,8 +82,8 @@ void InGameMenu::Save() {
     save_file_types.push_back(std::make_pair(UserString("GAME_MENU_SAVE_FILES"), "*" + SAVE_GAME_EXTENSION));
 
     try {
-#ifndef FREEORION_WIN32
-        std::string path_String = GetSaveDir().string();
+#ifdef FREEORION_WIN32
+        std::string path_string = GetSaveDir().string();
 #else
         boost::filesystem::path::string_type native_path_string = GetSaveDir().native();
         std::string path_string;

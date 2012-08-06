@@ -86,7 +86,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         return 1;
     }
 #endif
-
+#ifndef FREEORION_MACOSX
     // did the player request help output?
     if (GetOptionsDB().Get<bool>("help")) {
         GetOptionsDB().GetUsage(std::cerr);
@@ -100,6 +100,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     }
     return 0;
 }
+#endif
 
 
 int mainConfigOptionsSetup(const std::vector<std::string>& args) {
