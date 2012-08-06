@@ -84,6 +84,7 @@ GUI:
  ~ Added basic combat damage sitreps.
  ~ Made top-of-screen toolbar not draggable again.
  ~ Rearranged military icons of planets to make troops more prominently displayed.
+ ~ Adjusted display of numbers like 240 so they are shown as "240" instead of "0.24 k" in some cases.
 
 Bugs:
  ~ Fixed bug where new fleets created by the player wouldn't appear in fleets window until the next turn.

@@ -80,8 +80,7 @@ namespace {
             Empire* empire = it->second;
             empire->UpdateSupplyUnobstructedSystems();
             empire->UpdateSystemSupplyRanges();
-            empire->UpdateFleetSupply();
-            empire->UpdateResourceSupply();
+            empire->UpdateSupply();
             empire->InitResourcePools();
         }
     }

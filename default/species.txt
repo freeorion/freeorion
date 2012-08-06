@@ -1292,7 +1292,7 @@ Species
 
         EffectsGroup
             scope = Source
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION" 10000  // Omniscient Detection
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 10000  // Omniscient Detection
         
         [[GREAT_INDUSTRY]]
         [[GREAT_RESEARCH]]

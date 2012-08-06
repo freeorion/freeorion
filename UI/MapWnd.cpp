@@ -530,8 +530,6 @@ MapWnd::MapWnd() :
     m_star_texture_coords(),
     m_starlane_vertices(),
     m_starlane_colors(),
-    m_starlane_fleet_supply_vertices(),
-    m_starlane_fleet_supply_colors(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
     m_turn_update(0),
@@ -1203,38 +1201,6 @@ void MapWnd::RenderStarlanes()
 
 
     } 
-    
-    if (m_starlane_fleet_supply_vertices.size() && m_starlane_fleet_supply_colors.size() && GetOptionsDB().Get<bool>("UI.fleet-supply-lines")) {
-        // render fleet supply lines
-        const GLushort PATTERN = 0x8080;    // = 1000000010000000  -> widely space small dots
-        const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
-        const double RATE = 0.1;            // slow crawl
-        const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
-        const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
-
-        glDisable(GL_TEXTURE_2D);
-        glEnable(GL_LINE_SMOOTH);
-        glEnable(GL_LINE_STIPPLE);
-
-        glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.fleet-supply-line-width")), STIPPLE);
-        glLineWidth(static_cast<GLfloat>(GetOptionsDB().Get<double>("UI.fleet-supply-line-width")));
-
-        glPushAttrib(GL_COLOR_BUFFER_BIT);
-        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
-
-        m_starlane_fleet_supply_vertices.activate();
-        m_starlane_fleet_supply_colors.activate();
-        glDrawArrays(GL_LINES, 0, m_starlane_fleet_supply_vertices.size());
-
-        glPopClientAttrib();
-        glPopAttrib();
-
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_LINE_SMOOTH);
-        glDisable(GL_LINE_STIPPLE);
-    }
 
     glLineWidth(1.0);
 }
@@ -2108,7 +2074,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
                 for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
                     Empire* empire = empire_it->second;
-                    const std::set<std::pair<int, int> >& resource_supply_lanes = empire->ResourceSupplyStarlaneTraversals();
+                    const std::set<std::pair<int, int> >& resource_supply_lanes = empire->SupplyStarlaneTraversals();
 
                     //std::cout << "resource supply starlane traversals for empire " << empire->Name() << ": " << resource_supply_lanes.size() << std::endl;
 
@@ -2148,7 +2114,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
                 for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
                     Empire* empire = empire_it->second;
-                    const std::set<std::pair<int, int> >& resource_obstructed_supply_lanes = empire->ResourceSupplyOstructedStarlaneTraversals();
+                    const std::set<std::pair<int, int> >& resource_obstructed_supply_lanes = empire->SupplyOstructedStarlaneTraversals();
 
                     std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
 
@@ -2183,51 +2149,10 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     }
 
 
-    // create animated lines indicating fleet supply flow
-    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        // which empires' fleet supply to show?
-        if (it->first != HumanClientApp::GetApp()->EmpireID())
-            continue;
-
-        Empire* empire = it->second;
-        const std::set<std::pair<int, int> >& fleet_supply_lanes = empire->FleetSupplyStarlaneTraversals();
-        for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
-            std::pair<int, int> lane = UnorderedIntPair(lane_it->first, lane_it->second);
-            assert(m_starlane_endpoints[lane].X1 != UniverseObject::INVALID_POSITION);
-
-            // coordinates map is oblivious to lane direction, so we need to take care of it here
-            if (lane_it->first == lane.first) { 
-                m_starlane_fleet_supply_vertices.store(m_starlane_endpoints[lane].X1,
-                                                       m_starlane_endpoints[lane].Y1);
-                m_starlane_fleet_supply_vertices.store(m_starlane_endpoints[lane].X2,
-                                                       m_starlane_endpoints[lane].Y2);
-            } else {
-                m_starlane_fleet_supply_vertices.store(m_starlane_endpoints[lane].X2,
-                                                       m_starlane_endpoints[lane].Y2);
-                m_starlane_fleet_supply_vertices.store(m_starlane_endpoints[lane].X1,
-                                                       m_starlane_endpoints[lane].Y1);
-            }
-
-            m_starlane_fleet_supply_colors.store(empire->Color().r,
-                                                 empire->Color().g,
-                                                 empire->Color().b,
-                                                 empire->Color().a);
-            m_starlane_fleet_supply_colors.store(empire->Color().r,
-                                                 empire->Color().g,
-                                                 empire->Color().b,
-                                                 empire->Color().a);
-        }
-    }
-
-
     // fill new buffers
     m_starlane_vertices.createServerBuffer();
     m_starlane_colors.createServerBuffer();
-    m_starlane_vertices.harmonizeBufferType(m_starlane_colors);    
-    
-    m_starlane_fleet_supply_vertices.createServerBuffer();
-    m_starlane_fleet_supply_colors.createServerBuffer();
-    m_starlane_fleet_supply_vertices.harmonizeBufferType(m_starlane_fleet_supply_colors);
+    m_starlane_vertices.harmonizeBufferType(m_starlane_colors);
 
 
     Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers time: " << (timer.elapsed() * 1000.0);
@@ -2236,9 +2161,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 void MapWnd::ClearStarlaneRenderingBuffers() {
     m_starlane_vertices.clear();
     m_starlane_colors.clear();
-
-    m_starlane_fleet_supply_vertices.clear();
-    m_starlane_fleet_supply_colors.clear();
 }
 
 LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2) {
