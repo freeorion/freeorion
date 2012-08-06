@@ -268,8 +268,18 @@ const std::string& HumanClientApp::SaveFileName() const
 bool HumanClientApp::SinglePlayerGame() const
 { return m_single_player_game; }
 
+namespace {
+    std::string ServerClientExe() {
+#ifdef FREEORION_WIN32
+        return PathString(GetBinDir() / "freeoriond.exe");
+#else
+        return (GetBinDir() / "freeoriond").string();
+#endif
+    }
+}
+
 void HumanClientApp::StartServer() {
-    std::string SERVER_CLIENT_EXE = PathString(GetBinDir() / "freeoriond.exe");
+    std::string SERVER_CLIENT_EXE = ServerClientExe();
     std::vector<std::string> args;
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
     args.push_back("--resource-dir");
