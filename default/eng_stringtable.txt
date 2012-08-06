@@ -5027,7 +5027,7 @@ Although high level initial design and initial facility setup still require acti
 PRO_EXOBOTS
 Semi-autonomous Exobots
 PRO_EXOBOTS_DESC
-Allows the contruction of Exobots optimsied for industry on hostile planets.
+Allows the contruction of Exobots optimized for industry on hostile planets.
 
 PRO_RAPID_EXO_PROD
 Rapid Exobot Production
