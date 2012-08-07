@@ -1441,12 +1441,16 @@ void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
         int cur_sys_id = *sys_list_it;
         int cur_sys_range = propegating_supply_ranges[cur_sys_id];    // range away from this system that supplies can be transported
 
+        // any unobstructed system can share resources within itself
+        supply_groups_map[cur_sys_id].insert(cur_sys_id);
+
         if (cur_sys_range <= 0) {
             // can't propegate supply out a system that has no range
             ++sys_list_it;
             continue;
         }
 
+        // any system with nonzero fleet supply range can provide fleet supply
         m_fleet_supplyable_system_ids.insert(cur_sys_id);
 
         // can propegate further, if adjacent systems have smaller supply range
@@ -1506,23 +1510,20 @@ void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
     // connected components of an undirected graph, where the node
     // adjacency are the directly-connected systems determined above.
 
-    // note: using fleet supplyable system ids as a list of all systems where
-    // resources could be exchanged
-
     // create graph
     boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> graph;
 
     // boost expects vertex labels to range from 0 to num vertices - 1, so need
     // to map from system id to graph id and back when accessing vertices
     std::vector<int> graph_id_to_sys_id;
-    graph_id_to_sys_id.reserve(m_fleet_supplyable_system_ids.size());
+    graph_id_to_sys_id.reserve(supply_groups_map.size());
 
     std::map<int, int> sys_id_to_graph_id;
     int graph_id = 0;
-    for (std::set<int>::const_iterator sys_it = m_fleet_supplyable_system_ids.begin();
-         sys_it != m_fleet_supplyable_system_ids.end(); ++sys_it, ++graph_id)
+    for (std::map<int, std::set<int> >::const_iterator sys_it = supply_groups_map.begin();
+         sys_it != supply_groups_map.end(); ++sys_it, ++graph_id)
     {
-        int sys_id = *sys_it;
+        int sys_id = sys_it->first;
         //const UniverseObject* sys = GetUniverse().Object(sys_id);
         //std::string name = sys->Name();
         //Logger().debugStream() << "supply-exchanging system: " << name;

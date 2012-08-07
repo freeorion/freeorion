@@ -1,3 +1,9 @@
+v0.4.1+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Balancing:
+ ~ Reworked how supply networks work. There is now no distinction between fleet and resource supply ranges; both use the supply meter.
+
+
 v0.4.1 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 New Features / Improvements:
