@@ -312,7 +312,9 @@ const fs::path GetResourceDir() {
     return fs::path(directory_native);
 #else
     if (options_resource_dir.empty() || !fs::is_directory(fs::path(options_resource_dir)) || !fs::exists(fs::path(options_resource_dir)))
-    return fs::path(GetOptionsDB().GetDefault<std::string>("resource-dir"));
+        return fs::path(GetOptionsDB().GetDefault<std::string>("resource-dir"));
+    else
+        return fs::path(options_resource_dir);
 #endif
 }
 
