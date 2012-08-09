@@ -1196,7 +1196,7 @@ namespace {
                  fleet_it != aggressive_empire_visible_fleets.end(); ++fleet_it)
             {
                 int fleet_id = *fleet_it;
-                const Fleet* fleet = GetFleet(*fleet_it);
+                const Fleet* fleet = GetFleet(fleet_id);
                 if (!fleet)
                     continue;
                 int visible_fleet_empire_id = fleet->Owner();

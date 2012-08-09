@@ -396,7 +396,7 @@ namespace {
     }
 
     bool ObjectCanBeAttacked(const UniverseObject* obj) {
-        if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
+        if (/*const Ship* ship = */universe_object_cast<const Ship*>(obj)) {
             return true;
         } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
             if (planet->CurrentMeterValue(METER_POPULATION) > 0.0 || !planet->Unowned())
@@ -429,7 +429,7 @@ namespace {
     bool ObjectAttackableByMonsters(const UniverseObject* obj, const ObjectMap& objects) {
         if (obj->Unowned())
             return false;
-        if (const Planet* planet = universe_object_cast<const Planet*>(obj))
+        if (/*const Planet* planet = */universe_object_cast<const Planet*>(obj))
             return true;
         if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
             // TODO: something about visiblity...

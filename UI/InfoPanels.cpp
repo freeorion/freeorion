@@ -109,7 +109,7 @@ namespace {
         }
 
 
-        const PopCenter* pc = 0;
+        //const PopCenter* pc = 0;
         double prod_queue_allocation_sum = 0.0;
         const Building* building = 0;
 
@@ -2764,7 +2764,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         const Empire*   empire = 0;
         const Building* building = 0;
         const Planet*   planet = 0;
-        const Ship*     ship = 0;
+        //const Ship*     ship = 0;
         std::string     text;
         std::string     name;
         if (source)
