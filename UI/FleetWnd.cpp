@@ -30,9 +30,8 @@ namespace {
     const GG::Pt        DATA_PANEL_ICON_SPACE = GG::Pt(GG::X(38), GG::Y(38));   // area reserved for ship or fleet icon in data panels (actual height can be bigger if the row expands due to font size)
 
     // how should ship and fleet icons be scaled and/or positioned in the reserved space
-    const GG::Flags<GG::GraphicStyle>   DataPanelIconStyle() {
-        return GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
-    }
+    const GG::Flags<GG::GraphicStyle>   DataPanelIconStyle()
+    { return GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE; }
 
     const GG::X         DATA_PANEL_TEXT_PAD = GG::X(4); // padding on the left and right of fleet/ship description
     const int           DATA_PANEL_BORDER = 1;          // how thick should the border around ship or fleet panel be
@@ -1606,9 +1605,9 @@ public:
         // store selected ship rows
         std::set<int> old_selected_ship_ids;
         try {
-        for (ShipsListBox::SelectionSet::const_iterator it = this->Selections().begin(); it != this->Selections().end(); ++it)
-            if (const ShipRow* row = dynamic_cast<const ShipRow*>(**it))
-                old_selected_ship_ids.insert(row->ShipID());
+            for (ShipsListBox::SelectionSet::const_iterator it = this->Selections().begin(); it != this->Selections().end(); ++it)
+                if (const ShipRow* row = dynamic_cast<const ShipRow*>(**it))
+                    old_selected_ship_ids.insert(row->ShipID());
         } catch (const std::exception& e) {
             Logger().errorStream() << "caught exception looping over old selections: " << e.what();
         }

@@ -126,7 +126,6 @@ namespace {
         virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             const GG::Pt old_size = Size();
             GG::Control::SizeMove(ul, lr);
-            //std::cout << "ShipDataPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
             if (old_size != Size())
                 DoLayout();
         }
