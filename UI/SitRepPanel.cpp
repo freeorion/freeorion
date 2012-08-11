@@ -19,6 +19,7 @@ namespace {
         db.Add("verbose-sitrep", "OPTIONS_DB_VERBOSE_SITREP_DESC",  false,  Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
         using boost::lexical_cast;
         try {
@@ -60,6 +61,53 @@ namespace {
         } catch (const boost::bad_lexical_cast&) {
             Logger().errorStream() << "SitrepPanel.cpp HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
         }
+    }
+
+    ////////////////////////////////////////////////
+    // SitRepRow
+    ////////////////////////////////////////////////
+    /** A ListBox::Row subclass used to display SitReps. */
+    class SitRepRow : public GG::ListBox::Row {
+    public:
+        SitRepRow(GG::X w, GG::Y h, const SitRepEntry& sitrep) :
+            GG::ListBox::Row(w, h, ""),
+            m_sitrep_entry(sitrep)/*,
+            m_panel(0)*/
+        {
+            SetName("SitRepRow");
+            SetChildClippingMode(ClipToClient);
+            //m_panel = new ShipDataPanel(w, h, m_ship_id);
+            //push_back(m_panel);
+        }
+
+        void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            const GG::Pt old_size = Size();
+            GG::ListBox::Row::SizeMove(ul, lr);
+            //std::cout << "ShipRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
+            //if (!empty() && old_size != Size() && m_panel)
+            //    m_panel->Resize(Size());
+        }
+
+        const SitRepEntry&  GetSitRepEntry() const { return m_sitrep_entry; }
+
+    private:
+        SitRepEntry     m_sitrep_entry;
+        //ShipDataPanel*  m_panel;
+    };
+
+
+    GG::ListBox::Row* SitRepRow(const SitRepEntry& sitrep, GG::X ) {
+        //boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+        //GG::Flags<GG::TextFormat> format = GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK;
+        //GG::X width = m_sitreps_lb->Width() - 8;
+
+        //LinkText* link_text = new LinkText(GG::X0, GG::Y0, width, sitrep->GetText() + " ", font, format, ClientUI::TextColor());
+        //GG::Connect(link_text->LinkClickedSignal,       &HandleLinkClick);
+        //GG::Connect(link_text->LinkDoubleClickedSignal, &HandleLinkClick);
+        //GG::Connect(link_text->LinkRightClickedSignal,  &HandleLinkClick);
+        //GG::ListBox::Row *row = new GG::ListBox::Row(link_text->Width(), link_text->Height(), "");
+        //row->push_back(link_text);
+        return 0;
     }
 }
 
@@ -177,12 +225,12 @@ void SitRepPanel::Update() {
     // loop through sitreps and display
     for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
         if (!GetOptionsDB().Get<bool>("verbose-sitrep")) {
-            if (!(*sitrep_it)->Validate())
+            if (!sitrep_it->Validate())
                 continue;
         }
-        if (m_showing_turn != INVALID_GAME_TURN && m_showing_turn != (*sitrep_it)->GetTurn())
+        if (m_showing_turn != INVALID_GAME_TURN && m_showing_turn != sitrep_it->GetTurn())
             continue;
-        LinkText* link_text = new LinkText(GG::X0, GG::Y0, width, (*sitrep_it)->GetText() + " ", font, format, ClientUI::TextColor());
+        LinkText* link_text = new LinkText(GG::X0, GG::Y0, width, sitrep_it->GetText() + " ", font, format, ClientUI::TextColor());
         GG::Connect(link_text->LinkClickedSignal,       &HandleLinkClick);
         GG::Connect(link_text->LinkDoubleClickedSignal, &HandleLinkClick);
         GG::Connect(link_text->LinkRightClickedSignal,  &HandleLinkClick);

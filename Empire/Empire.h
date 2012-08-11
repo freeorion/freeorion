@@ -265,11 +265,11 @@ public:
     friend class EmpireManager;
 
     /** \name Iterator Types */ //@{
-    typedef std::set<std::string>::const_iterator   TechItr;
-    typedef std::set<std::string>::const_iterator   BuildingTypeItr;
-    typedef std::set<int>::const_iterator           SystemIDItr;
-    typedef std::set<int>::const_iterator           ShipDesignItr;
-    typedef std::list<SitRepEntry*>::const_iterator SitRepItr;
+    typedef std::set<std::string>::const_iterator       TechItr;
+    typedef std::set<std::string>::const_iterator       BuildingTypeItr;
+    typedef std::set<int>::const_iterator               SystemIDItr;
+    typedef std::set<int>::const_iterator               ShipDesignItr;
+    typedef std::vector<SitRepEntry>::const_iterator    SitRepItr;
     //@}
 
     /** \name Structors */ //@{
@@ -455,7 +455,7 @@ public:
      *  the empire's sitrep is cleared.  Be careful you do not have any
      *  references to SitRepEntries lying around when this happens.
      *  You \a must pass in a dynamically allocated sitrep entry */
-    void        AddSitRepEntry(SitRepEntry* entry);
+    void        AddSitRepEntry(const SitRepEntry& entry);
     void        ClearSitRep();                              ///< Clears all sitrep entries
 
     void        RemoveTech(const std::string& name);        ///< Removes the given Tech from the empire's list
@@ -572,7 +572,7 @@ private:
     std::set<int>                   m_explored_systems;         ///< systems you've explored
     std::set<int>                   m_ship_designs;             ///< The Empire's ship designs, indexed by design id
 
-    std::list<SitRepEntry*>         m_sitrep_entries;           ///< The Empire's sitrep entries
+    std::vector<SitRepEntry>        m_sitrep_entries;           ///< The Empire's sitrep entries
 
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >    m_resource_pools;
     PopulationPool                                              m_population_pool;

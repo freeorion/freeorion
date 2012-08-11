@@ -35,21 +35,21 @@ private:
 };
 
 /** Sitrep constructors for each SitRep type */
-SitRepEntry* CreateTechResearchedSitRep(const std::string& tech_name);
-SitRepEntry* CreateShipBuiltSitRep(int ship_id, int system_id, int shipdesign_id);
-SitRepEntry* CreateBuildingBuiltSitRep(int building_id, int planet_id);
-SitRepEntry* CreateCombatSitRep(int system_id);
-SitRepEntry* CreateGroundCombatSitRep(int planet_id);
-SitRepEntry* CreatePlanetCapturedSitRep(int planet_id, int empire_id);
-SitRepEntry* CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id, int empire_id);
-SitRepEntry* CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_id, int empire_id);
-SitRepEntry* CreatePlanetStarvedToDeathSitRep(int planet_id);
-SitRepEntry* CreatePlanetColonizedSitRep(int planet_id);
-SitRepEntry* CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id);
-SitRepEntry* CreateEmpireEliminatedSitRep(int empire_id);
-SitRepEntry* CreateVictorySitRep(const std::string& reason_string, int empire_id);
-SitRepEntry* CreateSitRep(const std::string& template_string,
-                          const std::vector<std::pair<std::string, std::string> >& parameters);
+SitRepEntry CreateTechResearchedSitRep(const std::string& tech_name);
+SitRepEntry CreateShipBuiltSitRep(int ship_id, int system_id, int shipdesign_id);
+SitRepEntry CreateBuildingBuiltSitRep(int building_id, int planet_id);
+SitRepEntry CreateCombatSitRep(int system_id);
+SitRepEntry CreateGroundCombatSitRep(int planet_id);
+SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id);
+SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id, int empire_id);
+SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_id, int empire_id);
+SitRepEntry CreatePlanetStarvedToDeathSitRep(int planet_id);
+SitRepEntry CreatePlanetColonizedSitRep(int planet_id);
+SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id);
+SitRepEntry CreateEmpireEliminatedSitRep(int empire_id);
+SitRepEntry CreateVictorySitRep(const std::string& reason_string, int empire_id);
+SitRepEntry CreateSitRep(const std::string& template_string,
+                         const std::vector<std::pair<std::string, std::string> >& parameters);
 
 // template implementations
 template <class Archive>
