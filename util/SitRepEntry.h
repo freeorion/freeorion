@@ -15,19 +15,21 @@ class SitRepEntry : public VarText {
 public:
     /** \name Structors */ //@{
     SitRepEntry();  ///< default ctor
-    SitRepEntry(const std::string& template_string);
-    SitRepEntry(const std::string& template_string, int turn);
+    explicit SitRepEntry(const std::string& template_string, const std::string& icon = "");
+    SitRepEntry(const std::string& template_string, int turn, const std::string& icon = "");
     //@}
 
     /** Accessors */ //@{
     int                 GetDataIDNumber(const std::string& tag) const;
     const std::string&  GetDataString(const std::string& tag) const;
     int                 GetTurn() const { return m_turn; }
+    const std::string&  GetIcon() const { return m_icon; }
     std::string         Dump() const;
     //@}
 
 private:
-    int m_turn;
+    int         m_turn;
+    std::string m_icon;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -56,7 +58,8 @@ template <class Archive>
 void SitRepEntry::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(VarText)
-        & BOOST_SERIALIZATION_NVP(m_turn);
+        & BOOST_SERIALIZATION_NVP(m_turn),
+        & BOOST_SERIALIZATION_NVP(m_icon);
 }
 
 #endif // _SitRepEntry_h_

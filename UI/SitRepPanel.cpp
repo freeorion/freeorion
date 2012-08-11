@@ -15,9 +15,8 @@
 
 namespace {
             /** Adds options related to SitRepPanel to Options DB. */
-    void AddOptions(OptionsDB& db) {
-        db.Add("verbose-sitrep", "OPTIONS_DB_VERBOSE_SITREP_DESC",  false,  Validator<bool>());
-    }
+    void AddOptions(OptionsDB& db)
+    { db.Add("verbose-sitrep", "OPTIONS_DB_VERBOSE_SITREP_DESC",  false,  Validator<bool>()); }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
@@ -63,6 +62,71 @@ namespace {
         }
     }
 
+
+    //////////////////////////////////
+    // SitRepDataPanel
+    //////////////////////////////////
+    class SitRepDataPanel : public GG::Control {
+    public:
+        SitRepDataPanel(GG::X w, GG::Y h, const SitRepEntry& sitrep) :
+            Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+            m_sitrep_entry(sitrep),
+            m_icon(0),
+            m_link_text(0)
+        {
+            SetChildClippingMode(ClipToClient);
+            std::string icon_texture = (sitrep.GetIcon().empty() ? "/icons/sitrep/generic.png" : sitrep.GetIcon());
+            boost::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(ClientUI::ArtDir() / icon_texture, true);
+            m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h)), h, icon,
+                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            AttachChild(m_icon);
+
+            m_link_text = new LinkText(m_icon->Width(), GG::Y0, Width() - m_icon->Width(),
+                                       sitrep.GetText() + " ", ClientUI::GetFont(),
+                                       GG::FORMAT_LEFT | GG::FORMAT_VCENTER, ClientUI::TextColor());
+            AttachChild(m_link_text);
+
+            GG::Connect(m_link_text->LinkClickedSignal,       &HandleLinkClick);
+            GG::Connect(m_link_text->LinkDoubleClickedSignal, &HandleLinkClick);
+            GG::Connect(m_link_text->LinkRightClickedSignal,  &HandleLinkClick);
+
+            DoLayout();
+        }
+
+        virtual void        Render() {
+            GG::Clr background_clr = this->Disabled() ? ClientUI::WndColor() : ClientUI::CtrlColor();
+            GG::FlatRectangle(UpperLeft(), LowerRight(), background_clr, ClientUI::WndOuterBorderColor(), 1u);
+        }
+
+        virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            const GG::Pt old_size = Size();
+            GG::Control::SizeMove(ul, lr);
+            if (old_size != Size())
+                DoLayout();
+        }
+
+        const SitRepEntry&  GetSitRepEntry() const { return m_sitrep_entry; }
+
+    private:
+        void            DoLayout() {
+            const GG::Y ICON_HEIGHT(ClientHeight());
+            const GG::X ICON_WIDTH(Value(ClientHeight()));
+
+            GG::X left(GG::X0);
+            GG::Y top(GG::Y0);
+            GG::Y bottom(ClientHeight());
+
+            m_icon->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ICON_WIDTH, bottom));
+            left += ICON_WIDTH + GG::X(3);
+
+            m_link_text->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(ClientWidth(), bottom));
+        }
+
+        SitRepEntry         m_sitrep_entry;
+        GG::StaticGraphic*  m_icon;
+        LinkText*           m_link_text;
+    };
+
     ////////////////////////////////////////////////
     // SitRepRow
     ////////////////////////////////////////////////
@@ -71,44 +135,27 @@ namespace {
     public:
         SitRepRow(GG::X w, GG::Y h, const SitRepEntry& sitrep) :
             GG::ListBox::Row(w, h, ""),
-            m_sitrep_entry(sitrep)/*,
-            m_panel(0)*/
+            m_panel(0)
         {
             SetName("SitRepRow");
             SetChildClippingMode(ClipToClient);
-            //m_panel = new ShipDataPanel(w, h, m_ship_id);
-            //push_back(m_panel);
+            SetDragDropDataType("SitRepRow");
+            m_panel = new SitRepDataPanel(w, h, sitrep);
+            push_back(m_panel);
         }
 
-        void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
-            //std::cout << "ShipRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
-            //if (!empty() && old_size != Size() && m_panel)
-            //    m_panel->Resize(Size());
+            if (!empty() && old_size != Size() && m_panel)
+                m_panel->Resize(Size());
         }
 
-        const SitRepEntry&  GetSitRepEntry() const { return m_sitrep_entry; }
+        const SitRepEntry&  GetSitRepEntry() const { return m_panel->GetSitRepEntry(); }
 
     private:
-        SitRepEntry     m_sitrep_entry;
-        //ShipDataPanel*  m_panel;
+        SitRepDataPanel*    m_panel;
     };
-
-
-    GG::ListBox::Row* SitRepRow(const SitRepEntry& sitrep, GG::X ) {
-        //boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-        //GG::Flags<GG::TextFormat> format = GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK;
-        //GG::X width = m_sitreps_lb->Width() - 8;
-
-        //LinkText* link_text = new LinkText(GG::X0, GG::Y0, width, sitrep->GetText() + " ", font, format, ClientUI::TextColor());
-        //GG::Connect(link_text->LinkClickedSignal,       &HandleLinkClick);
-        //GG::Connect(link_text->LinkDoubleClickedSignal, &HandleLinkClick);
-        //GG::Connect(link_text->LinkRightClickedSignal,  &HandleLinkClick);
-        //GG::ListBox::Row *row = new GG::ListBox::Row(link_text->Width(), link_text->Height(), "");
-        //row->push_back(link_text);
-        return 0;
-    }
 }
 
 SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
@@ -218,8 +265,6 @@ void SitRepPanel::Update() {
     if (!empire)
         return;
 
-    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-    GG::Flags<GG::TextFormat> format = GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK;
     GG::X width = m_sitreps_lb->Width() - 8;
 
     // loop through sitreps and display
@@ -230,13 +275,7 @@ void SitRepPanel::Update() {
         }
         if (m_showing_turn != INVALID_GAME_TURN && m_showing_turn != sitrep_it->GetTurn())
             continue;
-        LinkText* link_text = new LinkText(GG::X0, GG::Y0, width, sitrep_it->GetText() + " ", font, format, ClientUI::TextColor());
-        GG::Connect(link_text->LinkClickedSignal,       &HandleLinkClick);
-        GG::Connect(link_text->LinkDoubleClickedSignal, &HandleLinkClick);
-        GG::Connect(link_text->LinkRightClickedSignal,  &HandleLinkClick);
-        GG::ListBox::Row *row = new GG::ListBox::Row(link_text->Width(), link_text->Height(), "");
-        row->push_back(link_text);
-        m_sitreps_lb->Insert(row);
+        m_sitreps_lb->Insert(new SitRepRow(width, GG::Y(ClientUI::Pts()*2), *sitrep_it));
     }
 
     if (CurrentTurn() >= 1 && m_showing_turn > 1) {
