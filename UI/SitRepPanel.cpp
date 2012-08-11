@@ -63,18 +63,52 @@ namespace {
     }
 }
 
-
-SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) : 
-    CUIWnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE)
+SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
+    CUIWnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE),
+    m_sitreps_lb(0),
+    m_prev_turn_button(0),
+    m_next_turn_button(0),
+    m_last_turn_button(0),
+    m_showing_turn(INVALID_GAME_TURN)
 {
     Sound::TempUISoundDisabler sound_disabler;
-    m_sitreps_lb = new CUIListBox(GG::X0, GG::Y0, ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET));
+    m_sitreps_lb = new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1);
     m_sitreps_lb->SetStyle(GG::LIST_NOSORT);
 
     AttachChild(m_sitreps_lb);
     SetChildClippingMode(DontClip);
 
+    m_prev_turn_button = new CUIButton(GG::X0, GG::Y0, GG::X(20), UserString("BACK"));
+    AttachChild(m_prev_turn_button);
+    m_next_turn_button = new CUIButton(GG::X0, GG::Y0, GG::X(20), UserString("NEXT"));
+    AttachChild(m_next_turn_button);
+    m_last_turn_button = new CUIButton(GG::X0, GG::Y0, GG::X(20), UserString("LAST"));
+    AttachChild(m_last_turn_button);
+
+    GG::Connect(m_prev_turn_button->ClickedSignal,  &SitRepPanel::PrevClicked,  this);
+    GG::Connect(m_next_turn_button->ClickedSignal,  &SitRepPanel::NextClicked,  this);
+    GG::Connect(m_last_turn_button->ClickedSignal,  &SitRepPanel::LastClicked,  this);
+
+    DoLayout();
     Hide();
+}
+
+void SitRepPanel::DoLayout() {
+    GG::X BUTTON_WIDTH(ClientUI::Pts()*4);
+    GG::Y BUTTON_HEIGHT = m_last_turn_button->Height();
+    int PAD(3);
+
+    GG::Pt button_ul(ClientWidth() - GG::X(INNER_BORDER_ANGLE_OFFSET) - BUTTON_WIDTH,
+                     ClientHeight() - BUTTON_HEIGHT);
+
+    m_last_turn_button->SizeMove(button_ul, button_ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
+    button_ul -= GG::Pt(BUTTON_WIDTH + GG::X(PAD), GG::Y0);
+    m_next_turn_button->SizeMove(button_ul, button_ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
+    button_ul -= GG::Pt(BUTTON_WIDTH + GG::X(PAD), GG::Y0);
+    m_prev_turn_button->SizeMove(button_ul, button_ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT));
+    button_ul -= GG::Pt(BUTTON_WIDTH + GG::X(PAD), GG::Y0);
+
+    m_sitreps_lb->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(ClientWidth(), button_ul.y));
 }
 
 void SitRepPanel::KeyPress (GG::Key key, boost::uint32_t key_code_point,
@@ -97,9 +131,10 @@ void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
 
     CUIWnd::SizeMove(ul, lr);
-    m_sitreps_lb->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)));
-    if (old_size != GG::Wnd::Size())
+    if (old_size != GG::Wnd::Size()) {
+        DoLayout();
         Update();
+    }
 }
 
 void SitRepPanel::OnClose()
@@ -108,8 +143,28 @@ void SitRepPanel::OnClose()
 void SitRepPanel::CloseClicked()
 { ClosingSignal(); }
 
+void SitRepPanel::PrevClicked() {
+    m_showing_turn = std::max(1, m_showing_turn - 1);
+    Update();
+}
+
+void SitRepPanel::NextClicked() {
+    m_showing_turn = std::min(CurrentTurn(), std::max(1, m_showing_turn + 1));
+    Update();
+}
+
+void SitRepPanel::LastClicked() {
+    m_showing_turn = CurrentTurn();
+    Update();
+}
+
 void SitRepPanel::Update() {
     m_sitreps_lb->Clear();
+
+    if (m_showing_turn == INVALID_GAME_TURN)
+        this->SetName(UserString("SITREP_PANEL_TITLE"));
+    else
+        this->SetName(boost::io::str(FlexibleFormat(UserString("SITREP_PANEL_TITLE_TURN")) % m_showing_turn));
 
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
@@ -125,6 +180,8 @@ void SitRepPanel::Update() {
             if (!(*sitrep_it)->Validate())
                 continue;
         }
+        if (m_showing_turn != INVALID_GAME_TURN && m_showing_turn != (*sitrep_it)->GetTurn())
+            continue;
         LinkText* link_text = new LinkText(GG::X0, GG::Y0, width, (*sitrep_it)->GetText() + " ", font, format, ClientUI::TextColor());
         GG::Connect(link_text->LinkClickedSignal,       &HandleLinkClick);
         GG::Connect(link_text->LinkDoubleClickedSignal, &HandleLinkClick);
@@ -133,4 +190,21 @@ void SitRepPanel::Update() {
         row->push_back(link_text);
         m_sitreps_lb->Insert(row);
     }
+
+    if (CurrentTurn() >= 1 && m_showing_turn > 1) {
+        m_prev_turn_button->Disable(false);
+    } else {
+        m_prev_turn_button->Disable();
+    }
+
+    if (CurrentTurn() >= 1 && m_showing_turn < CurrentTurn()) {
+        m_next_turn_button->Disable(false);
+        m_last_turn_button->Disable(false);
+    } else {
+        m_next_turn_button->Disable();
+        m_last_turn_button->Disable();
+    }
 }
+
+void SitRepPanel::ShowSitRepsForTurn(int turn)
+{ m_showing_turn = turn; }

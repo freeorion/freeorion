@@ -1739,10 +1739,7 @@ void ServerApp::PreCombatProcessTurns() {
 
     // execute orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-        Empire* empire = empires.Lookup(it->first);
-        empire->ClearSitRep();
         OrderSet* order_set = it->second;
-
         for (OrderSet::const_iterator order_it = order_set->begin(); order_it != order_set->end(); ++order_it)
             order_it->second->Execute();
     }

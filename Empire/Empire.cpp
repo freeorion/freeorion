@@ -1230,8 +1230,15 @@ bool Empire::BuildableItem(const ProductionQueue::ProductionItem& item, int loca
     return false;
 }
 
-int Empire::NumSitRepEntries() const
-{ return m_sitrep_entries.size(); }
+int Empire::NumSitRepEntries(int turn/* = INVALID_GAME_TURN*/) const {
+    if (turn == INVALID_GAME_TURN)
+        return m_sitrep_entries.size();
+    int count = 0;
+    for (SitRepItr it = SitRepBegin(); it != SitRepEnd(); ++it)
+        if ((*it)->GetTurn() == turn)
+            count++;
+    return count;
+}
 
 void Empire::EliminationCleanup() {
     // some Empire data not cleared when eliminating since it might be useful

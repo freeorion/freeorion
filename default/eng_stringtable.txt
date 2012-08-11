@@ -106,6 +106,9 @@ Next
 BACK
 Back
 
+LAST
+Last
+
 # used to generate names for new fleets when they are created
 NEW_FLEET_NAME
 Fleet %1%
@@ -2621,6 +2624,9 @@ Waiting
 
 SITREP_PANEL_TITLE
 Situation Report
+
+SITREP_PANEL_TITLE_TURN
+Situation Report - Turn %1%
 
 SITREP_ERROR
 An unknown event occurred.

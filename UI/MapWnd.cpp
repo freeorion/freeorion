@@ -1677,9 +1677,9 @@ void MapWnd::InitTurn() {
 
 
     // are there any sitreps to show?
+    m_sitrep_panel->ShowSitRepsForTurn(CurrentTurn());
     m_sitrep_panel->Update();
-
-    if (this_client_empire && this_client_empire->NumSitRepEntries() > 0)
+    if (this_client_empire && this_client_empire->NumSitRepEntries(CurrentTurn()) > 0)
         ShowSitRep();
 
 

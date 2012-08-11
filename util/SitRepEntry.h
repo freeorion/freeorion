@@ -16,14 +16,19 @@ public:
     /** \name Structors */ //@{
     SitRepEntry();  ///< default ctor
     SitRepEntry(const std::string& template_string);
+    SitRepEntry(const std::string& template_string, int turn);
     //@}
 
     /** Accessors */ //@{
-    int                         GetDataIDNumber(const std::string& tag) const;
-    const std::string&          GetDataString(const std::string& tag) const;
+    int                 GetDataIDNumber(const std::string& tag) const;
+    const std::string&  GetDataString(const std::string& tag) const;
+    int                 GetTurn() const { return m_turn; }
+    std::string         Dump() const;
     //@}
 
 private:
+    int m_turn;
+
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -50,7 +55,8 @@ SitRepEntry* CreateSitRep(const std::string& template_string,
 template <class Archive>
 void SitRepEntry::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(VarText);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(VarText)
+        & BOOST_SERIALIZATION_NVP(m_turn);
 }
 
 #endif // _SitRepEntry_h_

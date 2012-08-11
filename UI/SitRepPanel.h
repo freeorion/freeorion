@@ -2,18 +2,15 @@
 #ifndef _SitRepPanel_h_
 #define _SitRepPanel_h_
 
-#ifndef _CUIWnd_h_
 #include "CUIWnd.h"
-#endif
+
+namespace GG {
+    class Button;
+    class ListBox;
+}
 
 
-class CUIListBox;
-class CUIButton;
-namespace GG {class TextControl;}
-
-
-class SitRepPanel : public CUIWnd
-{
+class SitRepPanel : public CUIWnd {
 public:
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()> ClosingSignalType;   ///< emitted when the window is manually closed by user by clicking on the sitrep panel itself
@@ -24,21 +21,30 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-
-    void Update(); ///< loads all the relevant SitReps into the window
-
-    virtual void OnClose();
-
-    mutable ClosingSignalType ClosingSignal;
+    virtual void    KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void            Update(); ///< loads all the relevant SitReps into the window
+    virtual void    OnClose();
+    void            ShowSitRepsForTurn(int turn);
     //@}
 
+    mutable ClosingSignalType ClosingSignal;
+
 protected:
-    virtual void CloseClicked();
+    virtual void    CloseClicked();
+    void            PrevClicked();
+    void            NextClicked();
+    void            LastClicked();
 
 private:
-    CUIListBox*           m_sitreps_lb;
+    void            DoLayout();
+
+    GG::ListBox*    m_sitreps_lb;
+    GG::Button*     m_prev_turn_button;
+    GG::Button*     m_next_turn_button;
+    GG::Button*     m_last_turn_button;
+
+    int             m_showing_turn;
 };
 
 #endif // _SitRepPanel_h_

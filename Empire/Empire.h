@@ -335,7 +335,7 @@ public:
 
     bool                    HasExploredSystem(int ID) const;                            ///< returns  true if the given item is in the appropriate list, false if it is not.
 
-    int                     NumSitRepEntries() const;                                   ///< number of entries in the SitRep.
+    int                     NumSitRepEntries(int turn = INVALID_GAME_TURN) const;       ///< number of entries in the SitRep.
 
     /** Returns distance in jumps away from each system that this empire can
       * propegate supply. */

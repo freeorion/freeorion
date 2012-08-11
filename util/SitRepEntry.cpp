@@ -13,11 +13,18 @@ namespace {
 }
 
 SitRepEntry::SitRepEntry() :
-    VarText()
+    VarText(),
+    m_turn(INVALID_GAME_TURN)
 {}
 
 SitRepEntry::SitRepEntry(const std::string& template_string) :
-    VarText(template_string, true)
+    VarText(template_string, true),
+    m_turn(CurrentTurn()+1) // sitreps typically created by server before incrementing the turn counter, so they first appear the turn after when CurrentTurn indicates
+{}
+
+SitRepEntry::SitRepEntry(const std::string& template_string, int turn) :
+    VarText(template_string, true),
+    m_turn(turn)
 {}
 
 int SitRepEntry::GetDataIDNumber(const std::string& tag) const {
@@ -40,6 +47,16 @@ const std::string& SitRepEntry::GetDataString(const std::string& tag) const {
     const XMLElement& token_elem = m_variables.Child(tag);
     return token_elem.Attribute("value");
     return EMPTY_STRING;
+}
+
+std::string SitRepEntry::Dump() const {
+    std::string retval = "SitRep template_string = \"" + m_template_string + "\"";
+    if (m_variables.NumChildren() > 0) {
+        for (XMLElement::const_child_iterator it = m_variables.child_begin(); it != m_variables.child_end(); ++it)
+            retval += " " + it->Tag() + " = " + it->Attribute("value");
+    }
+    retval += " turn = " + boost::lexical_cast<std::string>(m_turn);
+    return retval;
 }
 
 SitRepEntry* CreateTechResearchedSitRep(const std::string& tech_name) {
