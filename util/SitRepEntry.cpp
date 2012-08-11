@@ -227,8 +227,11 @@ SitRepEntry CreateVictorySitRep(const std::string& reason_string, int empire_id)
     return sitrep;
 }
 
-SitRepEntry CreateSitRep(const std::string& template_string, const std::vector<std::pair<std::string, std::string> >& parameters) {
-    SitRepEntry sitrep(template_string, "icons/sitrep/generic.png");
+SitRepEntry CreateSitRep(const std::string& template_string,
+                         const std::string& icon,
+                         const std::vector<std::pair<std::string, std::string> >& parameters)
+{
+    SitRepEntry sitrep(template_string, icon);
     for (std::vector<std::pair<std::string, std::string> >::const_iterator it = parameters.begin();
          it != parameters.end(); ++it)
     { sitrep.AddVariable(it->first, it->second); }

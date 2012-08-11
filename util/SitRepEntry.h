@@ -50,7 +50,7 @@ SitRepEntry CreatePlanetColonizedSitRep(int planet_id);
 SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id);
 SitRepEntry CreateEmpireEliminatedSitRep(int empire_id);
 SitRepEntry CreateVictorySitRep(const std::string& reason_string, int empire_id);
-SitRepEntry CreateSitRep(const std::string& template_string,
+SitRepEntry CreateSitRep(const std::string& template_string, const std::string& icon,
                          const std::vector<std::pair<std::string, std::string> >& parameters);
 
 // template implementations
