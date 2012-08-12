@@ -8,26 +8,22 @@
 #include "../universe/Ship.h"
 #include "../universe/Fleet.h"
 
-namespace {
-    const std::string SITREP_UPDATE_TAG = "SitRepUpdate";
-}
-
 SitRepEntry::SitRepEntry() :
     VarText(),
     m_turn(INVALID_GAME_TURN),
-    m_icon("")
+    m_icon("/icons/sitrep/generic.png")
 {}
 
 SitRepEntry::SitRepEntry(const std::string& template_string, const std::string& icon) :
     VarText(template_string, true),
     m_turn(CurrentTurn()+1), // sitreps typically created by server before incrementing the turn counter, so they first appear the turn after when CurrentTurn indicates
-    m_icon(icon)
+    m_icon(icon.empty() ? "/icons/sitrep/generic.png" : icon)
 {}
 
 SitRepEntry::SitRepEntry(const std::string& template_string, int turn, const std::string& icon) :
     VarText(template_string, true),
     m_turn(turn),
-    m_icon(icon)
+    m_icon(icon.empty() ? "/icons/sitrep/generic.png" : icon)
 {}
 
 int SitRepEntry::GetDataIDNumber(const std::string& tag) const {

@@ -58,7 +58,7 @@ template <class Archive>
 void SitRepEntry::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(VarText)
-        & BOOST_SERIALIZATION_NVP(m_turn),
+        & BOOST_SERIALIZATION_NVP(m_turn)
         & BOOST_SERIALIZATION_NVP(m_icon);
 }
 
