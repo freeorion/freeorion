@@ -1196,7 +1196,7 @@ namespace {
                  fleet_it != aggressive_empire_visible_fleets.end(); ++fleet_it)
             {
                 int fleet_id = *fleet_it;
-                const Fleet* fleet = GetFleet(*fleet_it);
+                const Fleet* fleet = GetFleet(fleet_id);
                 if (!fleet)
                     continue;
                 int visible_fleet_empire_id = fleet->Owner();
@@ -1739,10 +1739,7 @@ void ServerApp::PreCombatProcessTurns() {
 
     // execute orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-        Empire* empire = empires.Lookup(it->first);
-        empire->ClearSitRep();
         OrderSet* order_set = it->second;
-
         for (OrderSet::const_iterator order_it = order_set->begin(); order_it != order_set->end(); ++order_it)
             order_it->second->Execute();
     }

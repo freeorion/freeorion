@@ -327,8 +327,6 @@ FleetTransferOrder::FleetTransferOrder(int empire, int fleet_from, int fleet_to,
 void FleetTransferOrder::ExecuteImpl() const {
     ValidateEmpireID();
 
-    ObjectMap& objects = GetUniverse().Objects();
-
     // look up the source fleet and destination fleet
     Fleet* source_fleet = GetFleet(SourceFleet());
     Fleet* target_fleet = GetFleet(DestinationFleet());

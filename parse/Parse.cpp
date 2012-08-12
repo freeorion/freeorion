@@ -213,7 +213,7 @@ namespace parse {
                 if (!regex_search(text_it, text.end(), match, MACRO_DEFINITION, regex_constants::match_default))
                     break;
 
-                const std::string& matched_text = match.str();  // [[MACRO_KEY]] '''macro text'''
+                //const std::string& matched_text = match.str();  // [[MACRO_KEY]] '''macro text'''
                 //Logger().debugStream() << "found macro definition:\n" << matched_text;
 
                 // get macro key and macro text from match

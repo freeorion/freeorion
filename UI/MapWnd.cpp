@@ -1677,10 +1677,10 @@ void MapWnd::InitTurn() {
 
 
     // are there any sitreps to show?
-    m_sitrep_panel->Update();
-
-    if (this_client_empire && this_client_empire->NumSitRepEntries() > 0)
+    if (m_sitrep_panel->NumVisibleSitrepsThisTurn() > 0) {
+        m_sitrep_panel->ShowSitRepsForTurn(CurrentTurn());
         ShowSitRep();
+    }
 
 
     EnableAlphaNumAccels();

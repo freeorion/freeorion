@@ -261,23 +261,26 @@ namespace {
 
             generate_sitrep_message
                 =    tok.GenerateSitrepMessage_
-                >    parse::label(Message_name) > tok.string [ _a = _1 ]
+                >    parse::label(Message_name) >> tok.string [ _a = _1 ]
                 >> -(
-                        parse::label(Parameters_name) >> string_and_string_ref_vector [ _b = _1 ]
+                        parse::label(Icon_name) >> tok.string [ _b = _1 ]
+                    )
+                >> -(
+                        parse::label(Parameters_name) >> string_and_string_ref_vector [ _c = _1 ]
                     )
                 >>  (
                         (
                             (
-                                parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _c = _1 ]
-                            |   eps [ _c = AFFIL_SELF ]
+                                parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
+                            |   eps [ _d = AFFIL_SELF ]
                             )
-                        >>  parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _1, _c) ]
+                        >>  parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d) ]
                         )
                     |   (
-                            parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _c = _1 ]
-                        |   eps [ _c = AFFIL_ANY ]
+                            parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
+                        |   eps [ _d = AFFIL_ANY ]
                         )
-                        [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c) ]
+                        [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d) ]
                     )
                 ;
 
@@ -477,6 +480,7 @@ namespace {
             parse::token_iterator,
             Effect::EffectBase* (),
             qi::locals<
+                std::string,
                 std::string,
                 std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >,
                 EmpireAffiliationType

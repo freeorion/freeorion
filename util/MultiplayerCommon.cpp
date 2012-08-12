@@ -506,8 +506,6 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
     using OpenSteer::Vec3;
     m_pathing_engine.AddObstacle(new SphereObstacle(StarRadius() / 2.0, Vec3()));
 
-    ObjectMap& objects = GetUniverse().Objects();
-
     std::map<int, std::vector<Fleet*> > present_fleets_by_empire;
     std::map<int, std::map<int, std::vector<Fleet*> > > arriving_fleets_by_starlane_by_empire;
     std::map<int, std::set<int> > empires_by_starlane;

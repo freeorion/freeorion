@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "FreeOrion"
-!define PRODUCT_VERSION "0.4.1"
+!define PRODUCT_VERSION "0.4.1+"
 !define PRODUCT_PUBLISHER "FreeOrion Community"
 !define PRODUCT_WEB_SITE "http://www.freeorion.org"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_NAME}"
@@ -44,7 +44,7 @@ SetCompressor bzip2
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "..\..\FreeOrion-v0.4.1-Win32-Setup.exe"
+OutFile "..\..\FreeOrion-v0.4.1-Non-Latin-Path-Test-Win32-Setup.exe"
 InstallDir "$PROGRAMFILES\FreeOrion"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show

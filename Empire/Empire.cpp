@@ -1230,8 +1230,15 @@ bool Empire::BuildableItem(const ProductionQueue::ProductionItem& item, int loca
     return false;
 }
 
-int Empire::NumSitRepEntries() const
-{ return m_sitrep_entries.size(); }
+int Empire::NumSitRepEntries(int turn/* = INVALID_GAME_TURN*/) const {
+    if (turn == INVALID_GAME_TURN)
+        return m_sitrep_entries.size();
+    int count = 0;
+    for (SitRepItr it = SitRepBegin(); it != SitRepEnd(); ++it)
+        if (it->GetTurn() == turn)
+            count++;
+    return count;
+}
 
 void Empire::EliminationCleanup() {
     // some Empire data not cleared when eliminating since it might be useful
@@ -2113,7 +2120,7 @@ void Empire::RemoveShipDesign(int ship_design_id) {
     }
 }
 
-void Empire::AddSitRepEntry(SitRepEntry* entry)
+void Empire::AddSitRepEntry(const SitRepEntry& entry)
 { m_sitrep_entries.push_back(entry); }
 
 void Empire::RemoveTech(const std::string& name)
@@ -2162,11 +2169,8 @@ void Empire::RemoveHullType(const std::string& name) {
     m_available_hull_types.erase(name);
 }
 
-void Empire::ClearSitRep() {
-    for (SitRepItr it = m_sitrep_entries.begin(); it != m_sitrep_entries.end(); ++it)
-        delete *it;
-    m_sitrep_entries.clear();
-}
+void Empire::ClearSitRep()
+{ m_sitrep_entries.clear(); }
 
 namespace {
     // remove nonexistant / invalid techs from queue
@@ -2252,13 +2256,10 @@ void Empire::CheckProductionProgress() {
                 }
 
                 Building* building = new Building(m_id, m_production_queue[i].item.name, m_id);
-
                 int building_id = universe.Insert(building);
-
                 planet->AddBuilding(building_id);
 
-                SitRepEntry* entry = CreateBuildingBuiltSitRep(building_id, planet->ID());
-                AddSitRepEntry(entry);
+                AddSitRepEntry(CreateBuildingBuiltSitRep(building_id, planet->ID()));
                 //Logger().debugStream() << "New Building created on turn: " << building->CreationTurn();
                 break;
             }
@@ -2331,8 +2332,7 @@ void Empire::CheckProductionProgress() {
                 Logger().debugStream() << "New Ship created on turn: " << ship->CreationTurn();
 
                 // add sitrep
-                SitRepEntry* entry = CreateShipBuiltSitRep(ship_id, system->ID(), ship->DesignID());
-                AddSitRepEntry(entry);
+                AddSitRepEntry(CreateShipBuiltSitRep(ship_id, system->ID(), ship->DesignID()));
                 break;
             }
 

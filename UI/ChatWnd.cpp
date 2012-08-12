@@ -44,20 +44,24 @@ private:
                                 const std::pair<GG::CPSize, const GG::CPSize>& cursor_pos, std::string& text);
 
     // Set for autocomplete game words
-    std::set<std::string> m_gameWords;
+    std::set<std::string>       m_gameWords;
 
     // Repeated tabs variables
-     std::vector<std::string> autoCompleteChoices;
-     unsigned int m_repeatedTabCount;
-     std::string m_lastLineRead;
-     std::string m_lastGameWord;
+     std::vector<std::string>   autoCompleteChoices;
+     unsigned int               m_repeatedTabCount;
+     std::string                m_lastLineRead;
+     std::string                m_lastGameWord;
 };
 
 ////////////////////
 // MessageWndEdit //
 ////////////////////
 MessageWndEdit::MessageWndEdit(GG::X x, GG::Y y, GG::X w) :
-    CUIEdit(x, y, w, ""), m_lastGameWord(""), m_lastLineRead(""), m_repeatedTabCount(0)
+    CUIEdit(x, y, w, ""),
+    autoCompleteChoices(),
+    m_repeatedTabCount(0),
+    m_lastLineRead(),
+    m_lastGameWord()
 {}
 
 void MessageWndEdit::GainingFocus() {

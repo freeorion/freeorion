@@ -22,8 +22,7 @@ namespace {
 
     /** A simple client that broadcasts UDP datagrams on the local network for
         FreeOrion servers, and reports any it finds. */
-    class ServerDiscoverer
-    {
+    class ServerDiscoverer {
     public:
         typedef ClientNetworking::ServerList ServerList;
 
@@ -39,8 +38,7 @@ namespace {
         const ServerList& Servers() const
         { return m_servers; }
 
-        void DiscoverServers()
-        {
+        void DiscoverServers() {
             using namespace boost::asio::ip;
             udp::resolver resolver(*m_io_service);
             udp::resolver::query query(udp::v4(), "255.255.255.255",
@@ -81,8 +79,7 @@ namespace {
         }
 
     private:
-        void HandleReceive(const boost::system::error_code& error, std::size_t length)
-        {
+        void HandleReceive(const boost::system::error_code& error, std::size_t length) {
             if (error == boost::asio::error::message_size) {
                 m_socket.async_receive_from(
                     boost::asio::buffer(m_recv_buf),
@@ -132,8 +129,7 @@ ClientNetworking::ClientNetworking() :
     m_cancel_retries(false)
 {}
 
-bool ClientNetworking::Connected() const
-{
+bool ClientNetworking::Connected() const {
     boost::mutex::scoped_lock lock(m_mutex);
     return m_connected;
 }
@@ -142,24 +138,18 @@ bool ClientNetworking::MessageAvailable() const
 { return !m_incoming_messages.Empty(); }
 
 int ClientNetworking::PlayerID() const
-{
-    return m_player_id;
-}
+{ return m_player_id; }
 
 int ClientNetworking::HostPlayerID() const
-{
-    return m_host_player_id;
-}
+{ return m_host_player_id; }
 
-bool ClientNetworking::PlayerIsHost(int player_id) const
-{
+bool ClientNetworking::PlayerIsHost(int player_id) const {
     if (player_id == Networking::INVALID_PLAYER_ID)
         return false;
     return player_id == m_host_player_id;
 }
 
-ClientNetworking::ServerList ClientNetworking::DiscoverLANServers()
-{
+ClientNetworking::ServerList ClientNetworking::DiscoverLANServers() {
     if (!Connected())
         return ServerList();
     ServerDiscoverer discoverer(m_io_service);
@@ -227,25 +217,19 @@ bool ClientNetworking::ConnectToLocalHostServer(
     return retval;
 }
 
-void ClientNetworking::DisconnectFromServer()
-{
+void ClientNetworking::DisconnectFromServer() {
     if (Connected())
         m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
     Sleep(1000); // HACK! wait a bit for the disconnect to occur
 }
 
 void ClientNetworking::SetPlayerID(int player_id)
-{
-    m_player_id = player_id;
-}
+{ m_player_id = player_id; }
 
 void ClientNetworking::SetHostPlayerID(int host_player_id)
-{
-    m_host_player_id = host_player_id;
-}
+{ m_host_player_id = host_player_id; }
 
-void ClientNetworking::SendMessage(Message message)
-{
+void ClientNetworking::SendMessage(Message message) {
     if (!Connected()) {
         Logger().errorStream() << "ClientNetworking::SendMessage can't send message when not connected";
         return;
@@ -256,8 +240,7 @@ void ClientNetworking::SendMessage(Message message)
     m_io_service.post(boost::bind(&ClientNetworking::SendMessageImpl, this, message));
 }
 
-void ClientNetworking::GetMessage(Message& message)
-{
+void ClientNetworking::GetMessage(Message& message) {
     if (!MessageAvailable()) {
         Logger().errorStream() << "ClientNetworking::GetMessage can't get message if none available";
         return;
@@ -268,8 +251,7 @@ void ClientNetworking::GetMessage(Message& message)
                                << message;
 }
 
-void ClientNetworking::SendSynchronousMessage(Message message, Message& response_message)
-{
+void ClientNetworking::SendSynchronousMessage(Message message, Message& response_message) {
     if (TRACE_EXECUTION)
         Logger().debugStream() << "ClientNetworking::SendSynchronousMessage : sending message "
                                << message;
@@ -307,8 +289,7 @@ void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
 void ClientNetworking::CancelRetries()
 { m_cancel_retries = true; }
 
-void ClientNetworking::HandleException(const boost::system::system_error& error)
-{
+void ClientNetworking::HandleException(const boost::system::system_error& error) {
     if (error.code() == boost::asio::error::eof ||
         error.code() == boost::asio::error::connection_reset ||
         error.code() == boost::asio::error::operation_aborted) {
@@ -322,8 +303,7 @@ void ClientNetworking::HandleException(const boost::system::system_error& error)
     }
 }
 
-void ClientNetworking::NetworkingThread()
-{
+void ClientNetworking::NetworkingThread() {
     try {
         if (!m_outgoing_messages.empty())
             AsyncWriteMessage();
@@ -384,8 +364,7 @@ void ClientNetworking::HandleMessageHeaderRead(boost::system::error_code error,
     }
 }
 
-void ClientNetworking::AsyncReadMessage()
-{
+void ClientNetworking::AsyncReadMessage() {
     boost::asio::async_read(m_socket, boost::asio::buffer(m_incoming_header),
                             boost::bind(&ClientNetworking::HandleMessageHeaderRead, this,
                                         boost::asio::placeholders::error,
@@ -407,8 +386,7 @@ void ClientNetworking::HandleMessageWrite(boost::system::error_code error,
     }
 }
 
-void ClientNetworking::AsyncWriteMessage()
-{
+void ClientNetworking::AsyncWriteMessage() {
     HeaderToBuffer(m_outgoing_messages.front(), m_outgoing_header.c_array());
     std::vector<boost::asio::const_buffer> buffers;
     buffers.push_back(boost::asio::buffer(m_outgoing_header));
@@ -420,8 +398,7 @@ void ClientNetworking::AsyncWriteMessage()
                                          boost::asio::placeholders::bytes_transferred));
 }
 
-void ClientNetworking::SendMessageImpl(Message message)
-{
+void ClientNetworking::SendMessageImpl(Message message) {
     bool start_write = m_outgoing_messages.empty();
     m_outgoing_messages.push_back(Message());
     swap(m_outgoing_messages.back(), message);

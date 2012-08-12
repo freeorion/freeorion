@@ -39,14 +39,15 @@ namespace {
     const ProductionQueue::Element&
                             (ProductionQueue::*ProductionQueueOperatorSquareBrackets)(int) const =      &ProductionQueue::operator[];
 
-    const SitRepEntry*  GetSitRep(const Empire& empire, int index) {
+    const SitRepEntry&  GetSitRep(const Empire& empire, int index) {
+        static SitRepEntry EMPTY_ENTRY;
         if (index < 0 || index >= empire.NumSitRepEntries())
-            return 0;
+            return EMPTY_ENTRY;
         Empire::SitRepItr it = empire.SitRepBegin();
         std::advance(it, index);
         return *it;
     }
-    boost::function<const SitRepEntry*(const Empire&, int)> GetEmpireSitRepFunc =                       GetSitRep;
+    boost::function<const SitRepEntry&(const Empire&, int)> GetEmpireSitRepFunc =                       GetSitRep;
 }
 
 namespace FreeOrionPython {
@@ -122,7 +123,7 @@ namespace FreeOrionPython {
             .def("getSitRep",                       make_function(
                                                         GetEmpireSitRepFunc,
                                                         return_internal_reference<>(),
-                                                        boost::mpl::vector<const SitRepEntry*, const Empire&, int>()
+                                                        boost::mpl::vector<const SitRepEntry&, const Empire&, int>()
                                                     ))
         ;
 
@@ -218,6 +219,7 @@ namespace FreeOrionPython {
             .def("getDataString",               make_function(&SitRepEntry::GetDataString,      return_value_policy<copy_const_reference>()))
             .def("getDataIDNumber",             &SitRepEntry::GetDataIDNumber)
             .add_property("getTags",            make_function(&SitRepEntry::GetVariableTags,    return_value_policy<return_by_value>()))
+            .add_property("getTurn",            &SitRepEntry::GetTurn)
         ;
 
         ///////////////////////

@@ -712,11 +712,11 @@ private:
   * are ignored, and missing parameters are left as blank text. */
 class Effect::GenerateSitRepMessage : public Effect::EffectBase {
 public:
-    GenerateSitRepMessage(const std::string& message_string,
+    GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                           const ValueRef::ValueRefBase<int>* recipient_empire_id,
                           EmpireAffiliationType affiliation);
-    GenerateSitRepMessage(const std::string& message_string,
+    GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                           EmpireAffiliationType affiliation);
     virtual ~GenerateSitRepMessage();
@@ -727,6 +727,7 @@ public:
 
 private:
     std::string                                     m_message_string;
+    std::string                                     m_icon;
     std::vector<std::pair<std::string,
     const ValueRef::ValueRefBase<std::string>*> >   m_message_parameters;
     const ValueRef::ValueRefBase<int>*              m_recipient_empire_id;
@@ -985,6 +986,7 @@ void Effect::GenerateSitRepMessage::serialize(Archive& ar, const unsigned int ve
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_message_string)
+        & BOOST_SERIALIZATION_NVP(m_icon)
         & BOOST_SERIALIZATION_NVP(m_message_parameters)
         & BOOST_SERIALIZATION_NVP(m_recipient_empire_id)
         & BOOST_SERIALIZATION_NVP(m_affiliation);

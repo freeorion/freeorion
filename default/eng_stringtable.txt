@@ -106,6 +106,9 @@ Next
 BACK
 Back
 
+LAST
+Last
+
 # used to generate names for new fleets when they are created
 NEW_FLEET_NAME
 Fleet %1%
@@ -2622,95 +2625,229 @@ Waiting
 SITREP_PANEL_TITLE
 Situation Report
 
+SITREP_PANEL_TITLE_TURN
+Situation Report - Turn %1%
+
 SITREP_ERROR
 An unknown event occurred.
 
+FILTERS
+Filters
 
 SITREP_SHIP_BUILT
 The %shipdesign% '%ship%' has been produced at %system%.
+SITREP_SHIP_BUILT_LABEL
+Ship Produced
 
 SITREP_BUILDING_BUILT
 %building% has been produced on %planet%.
+SITREP_BUILDING_BUILT_LABEL
+Building Produced
 
 SITREP_TECH_RESEARCHED
 %tech% has been researched.
+SITREP_TECH_RESEARCHED_LABEL
+Tech Researched
 
 SITREP_COMBAT_SYSTEM
 A battle occurred at %system%.
+SITREP_COMBAT_SYSTEM_LABEL
+Combat at System
 
 SITREP_OBJECT_DESTROYED_AT_SYSTEM
 An object was destroyed at %system%.
+SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
+Object Destroyed
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
 The %empire% %shipdesign% '%ship%' was destroyed at %system%.
+SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
+Empire Ship Destroyed
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
 A %shipdesign% was destroyed at %system%.
+SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL
+Unowned Ship Destroyed
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM
 The %empire% fleet %fleet% was destroyed at %system%.
+SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL
+Empire Fleet Destroyed
 
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM
 The fleet %fleet% was destroyed at %system%.
+SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM_LABEL
+Unowned Fleet Destroyed
 
 SITREP_PLANET_DESTROYED_AT_SYSTEM
 The %empire% planet %planet% was destroyed at %system%.
+SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL
+Empire Planet Destroyed
 
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM
 The planet %planet% was destroyed at %system%.
+SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM_LABEL
+Unowned Planet Destroyed
 
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
 The %empire% building %building% on planet %planet% was destroyed at %system%.
+SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
+Empire Building Destroyed
 
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
 The building %building% on planet %planet% was destroyed at %system%.
-
+SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
+Unowned Building Destroyed
 
 SITREP_OBJECT_DAMAGED_AT_SYSTEM
 An object was damaged at %system%.
+SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
+Object Damaged
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
 The %empire% %shipdesign% '%ship%' was damaged at %system%.
+SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
+Empire Ship Damaged
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
 A %shipdesign% was damaged at %system%.
+SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
+Unowned Ship Damaged
 
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
 The %empire% planet %planet% was bombarded at %system%.
+SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
+Empire Planet Bombarded
 
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
 The planet %planet% was bombarded at %system%.
-
+SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL
+Unowned Planet Bombarded
 
 SITREP_GROUND_BATTLE
 A ground battle occurred on %planet%.
+SITREP_GROUND_BATTLE_LABEL
+Ground Battle
 
 SITREP_PLANET_CAPTURED
 %planet% was captured by %empire%.
+SITREP_PLANET_CAPTURED_LABEL
+Planet Captured
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
 The colony on %planet% is destroyed.
+SITREP_PLANET_LOST_STARVED_TO_DEATH_LABEL
+Planet Destroyed
 
 SITREP_PLANET_COLONIZED
 %planet% has been colonized.
+SITREP_PLANET_COLONIZED_LABEL
+Planet Colonized
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% has arrived at %system%.
+SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
+Fleet Arrived
 
 SITREP_EMPIRE_ELIMINATED
 %empire% has been eliminated.
+SITREP_EMPIRE_ELIMINATED_LABEL
+Empire Eliminated
 
 SITREP_VICTORY
 %empire% %text%
+SITREP_VICTORY_LABEL
+Victory
 
 SITREP_VICTORY_DESTRUCTION
 At last, the mysterious violent threat plagueing the galaxy has been eliminated.  The source of the galaxy's peril has been vanquished, and its origins will forever remain a mystery.
+SITREP_VICTORY_DESTRUCTION_LABEL
+Victory Destruction
 
 SITREP_VICTORY_CAPTURE
 The mystery of the fearsome threat plagueing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have fallen uder your control.
+SITREP_VICTORY_CAPTURE_LABEL
+Victory Capture
 
 SITREP_VICTORY_BIO
 The mystery of the fearsome threat plagueing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have met their just fate at the hands of your mighty warfleet.
+SITREP_VICTORY_BIO_LABEL
+Victory Biological
+
+EFFECT_ANCIENT_SHIP
+Ancient Ruins in %planet% have revealed a %predefinedshipdesign%.
+EFFECT_ANCIENT_SHIP_LABEL
+Ancient Ruins Ship
+
+EFFECT_ANCIENT_BUILDING
+Ancient Ruins in %planet% have revealed a %buildingtype%.
+EFFECT_ANCIENT_BUILDING_LABEL
+Ancient Ruins Building
+
+EFFECT_ANCIENT_TECH
+Ancient Ruins in %planet% have revealed %tech%.
+EFFECT_ANCIENT_TECH_LABEL
+Ancient Ruins Tech
+
+EFFECT_DRYDOCK_SHIP_REPAIR
+%ship% was repaired by %building% on %planet%.
+EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
+Drydock Repair
+
+EFFECT_MONSTER_SPAWNING
+A %predefinedshipdesign% was spawned in %system%!
+EFFECT_MONSTER_SPAWNING_LABEL
+Monster Spawn
+
+EFFECT_GAIAN_TERRAFORM
+The Gaian planet %planet% has terraformed itself to better accommodate its inhabitants.
+EFFECT_GAIAN_TERRAFORM_LABEL
+Gaia Terraform
+
+EFFECT_TERRAFORM
+%planet% has been terraformed.
+EFFECT_TERRAFORM_LABEL
+Terraform
+
+EFFECT_STARVATION
+Famine struck %planet%.
+EFFECT_STARVATION_LABEL
+Famine
+
+EFFECT_TAME_MONSTER_HATCHED
+A tamed %predefinedshipdesign% is ready for service at %planet%.
+EFFECT_TAME_MONSTER_HATCHED_LABEL
+Monster Hatched
+
+EFFECT_GATEWAY_VOID_DESTROY
+The %buildingtype% at %planet% destroyed the %fleet% fleet.
+EFFECT_GATEWAY_VOID_DESTROY_LABEL
+Gateway Void Destroy
+
+EFFECT_DERELICT_MINERALS
+Twenty minerals were scavenged from an abandoned derelict at %system%.
+EFFECT_DERELICT_MINERALS_LABEL
+Derelict Minerals
+
+EFFECT_DERELICT_MAP
+Information on the area was obtained from an abandoned derelict at %system%.
+EFFECT_DERELICT_MAP_LABEL
+Derelict Map
+
+EFFECT_DERELICT_FUEL
+Ships were refuled from the residual supply found in an abandoned derelict at %system%.
+EFFECT_DERELICT_FUEL_LABEL
+Derelict Fuel
+
+EFFECT_BIOWEAPON
+%system% has lost population due to a biological attack!
+EFFECT_BIOWEAPON_LABEL
+Bioweapon Attack
+
+EFFECT_EXOBOT
+An Exobot colony ship has been built at %planet%.
+EFFECT_EXOBOT_LABEL
+Exobot Ship
 
 
 #############################################################
@@ -4338,53 +4475,6 @@ Creates a new ship of design %1% owned by the %2% empire crewed by %3%
 DESC_CREATE_SHIP_SIMPLE
 Creates a new ship of design %1% with no owner and no species
 
-# Effect Sitreps
-
-EFFECT_ANCIENT_SHIP
-Ancient Ruins in %planet% have revealed a %predefinedshipdesign%.
-
-EFFECT_ANCIENT_BUILDING
-Ancient Ruins in %planet% have revealed a %buildingtype%.
-
-EFFECT_ANCIENT_TECH
-Ancient Ruins in %planet% have revealed %tech%.
-
-EFFECT_DRYDOCK_SHIP_REPAIR
-%ship% was repaired by %building% on %planet%.
-
-#The following is for monster spawning testing.
-EFFECT_MONSTER_SPAWNING
-A %predefinedshipdesign% was spawned in %system%!
-
-EFFECT_GAIAN_TERRAFORM
-The Gaian planet %planet% has terraformed itself to better accommodate its inhabitants.
-
-EFFECT_TERRAFORM
-%planet% has been terraformed.
-
-EFFECT_STARVATION
-Famine struck %planet%.
-
-EFFECT_TAME_MONSTER_HATCHED
-A tamed %predefinedshipdesign% is ready for service at %planet%.
-
-EFFECT_GATEWAY_VOID_DESTROY
-The %buildingtype% at %planet% destroyed the %fleet% fleet.
-
-EFFECT_DERELICT_MINERALS
-Twenty minerals were scavenged from an abandoned derelict at %system%.
-
-EFFECT_DERELICT_MAP
-Information on the area was obtained from an abandoned derelict at %system%.
-
-EFFECT_DERELICT_FUEL
-Ships were refuled from the residual supply found in an abandoned derelict at %system%.
-
-EFFECT_BIOWEAPON
-%system% has lost population due to a biological attack!
-
-EFFECT_EXOBOT
-An Exobot colony ship has been built at %planet%.
 
 # Conditions
 

@@ -4460,8 +4460,6 @@ namespace {
     const int MANY_JUMPS(999999);
 
     int JumpsBetweenObjects(const UniverseObject* one, const UniverseObject* two) {
-        ObjectMap& objects = GetUniverse().Objects();
-
         if (!one || !two)
             return MANY_JUMPS;
 
