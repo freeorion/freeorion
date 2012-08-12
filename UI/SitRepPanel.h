@@ -22,6 +22,7 @@ public:
 
     /** \name Accessors */ //@{
     std::set<std::string>   HiddenSitRepTemplates() const { return m_hidden_sitrep_templates; }
+    int                     NumVisibleSitrepsThisTurn() const;
     //@}
 
     /** \name Mutators */ //@{

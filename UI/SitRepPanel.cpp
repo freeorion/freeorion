@@ -14,7 +14,7 @@
 
 
 namespace {
-            /** Adds options related to SitRepPanel to Options DB. */
+    /** Adds options related to SitRepPanel to Options DB. */
     void AddOptions(OptionsDB& db)
     { db.Add("verbose-sitrep", "OPTIONS_DB_VERBOSE_SITREP_DESC",  false,  Validator<bool>()); }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -358,4 +358,22 @@ void SitRepPanel::SetHiddenSitRepTemplates(const std::set<std::string>& template
     m_hidden_sitrep_templates = templates;
     if (old_hidden_sitrep_templates != m_hidden_sitrep_templates)
         Update();
+}
+
+int SitRepPanel::NumVisibleSitrepsThisTurn() const {
+    int count = 0;
+
+    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return count;
+
+    for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
+        if (CurrentTurn() != sitrep_it->GetTurn())
+            continue;
+        if (m_hidden_sitrep_templates.find(sitrep_it->GetTemplateString()) != m_hidden_sitrep_templates.end())
+            continue;
+        ++count;
+    }
+
+    return count;
 }
