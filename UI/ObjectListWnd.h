@@ -4,6 +4,11 @@
 
 #include "CUIWnd.h"
 
+namespace GG {
+    class ListBox;
+}
+class ObjectListBox;
+
 class ObjectListWnd : public CUIWnd {
 public:
     //! \name Structors //!@{
@@ -12,9 +17,12 @@ public:
 
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void            Update();
     //!@}
 private:
+    void            DoLayout();
 
+    ObjectListBox*  m_list_box;
 };
 
 #endif // _ObjectListWnd_h_

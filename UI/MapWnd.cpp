@@ -3472,7 +3472,7 @@ void MapWnd::Sanitize() {
     m_sitrep_panel->MoveTo(GG::Pt(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->LowerRight().y));
     m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
 
-    m_object_list_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->LowerRight().y));
+    m_object_list_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN)));
 
     m_pedia_panel->MoveTo(GG::Pt(m_sitrep_panel->UpperLeft().x, m_sitrep_panel->LowerRight().y));
 
@@ -3579,10 +3579,10 @@ void MapWnd::ShowObjects() {
     HideProduction();
     HideDesign();
 
-    // update sitrep window
-    //m_object_list_wnd->Update();
+    // update objects window
+    m_object_list_wnd->Update();
 
-    // show the sitrep window
+    // show the objects window
     m_object_list_wnd->Show();
 
     // indicate selection on button
