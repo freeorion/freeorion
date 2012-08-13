@@ -180,7 +180,7 @@ SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     SetChildClippingMode(DontClip);
 
     m_sitreps_lb = new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1);
-    m_sitreps_lb->SetStyle(GG::LIST_NOSORT);
+    m_sitreps_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     AttachChild(m_sitreps_lb);
 
     m_prev_turn_button = new CUIButton(GG::X0, GG::Y0, GG::X(20), UserString("BACK"));
