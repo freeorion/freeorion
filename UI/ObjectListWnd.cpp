@@ -91,11 +91,22 @@ namespace {
             boost::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
             retval.push_back(size_icon);
         } else if (const System* system = universe_object_cast<const System*>(obj)) {
+            StarType star_type = system->GetStarType();
+            ClientUI* ui = ClientUI::GetClientUI();
+            boost::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
+                ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], system->ID());
+            retval.push_back(disc_texture);
+            boost::shared_ptr<GG::Texture> halo_texture = ui->GetModuloTexture(
+                ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[star_type], system->ID());
+            retval.push_back(halo_texture);
         } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
+
         } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
-        } else {
-            retval.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "generic_object.png", true));
+            boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(building->TypeName());
+            retval.push_back(texture);
         }
+        if (retval.empty())
+            retval.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "generic_object.png", true));
         return retval;
     }
 

@@ -28,9 +28,8 @@
 
 namespace {
     /** Returns text wrapped in GG RGBA tags for specified colour */
-    std::string ColourWrappedtext(const std::string& text, const GG::Clr colour) {
-        return GG::RgbaTag(colour) + text + "</rgba>";
-    }
+    std::string ColourWrappedtext(const std::string& text, const GG::Clr colour)
+    { return GG::RgbaTag(colour) + text + "</rgba>"; }
 
     /** Returns text representation of number wrapped in GG RGBA tags for
       * colour depending on whether number is positive, negative or 0.0 */
