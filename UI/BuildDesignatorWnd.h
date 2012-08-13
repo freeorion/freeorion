@@ -10,8 +10,7 @@
 class SidePanel;
 class EncyclopediaDetailPanel;
 
-class BuildDesignatorWnd : public GG::Wnd
-{
+class BuildDesignatorWnd : public GG::Wnd {
 public:
     /** \name Structors */ //@{
     BuildDesignatorWnd(GG::X w, GG::Y h);

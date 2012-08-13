@@ -368,7 +368,6 @@ public:
 
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MinimizeClicked();
 
     /** Sets build location for this selector, which may be used to filter
@@ -533,39 +532,6 @@ void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt&
 
     if (Visible() && old_size != GG::Wnd::Size())
         DoLayout();
-}
-
-void BuildDesignatorWnd::BuildSelector::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
-    if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) {  // resize-dragging
-        GG::Pt new_lr = pt - m_drag_offset;
-
-        // constrain to within parent
-        if (GG::Wnd* parent = Parent()) {
-            GG::Pt max_lr = parent->ClientLowerRight();
-            new_lr.x = std::min(new_lr.x, max_lr.x);
-            new_lr.y = std::min(new_lr.y, max_lr.y);
-        }        
-
-        Resize(new_lr - UpperLeft());
-    } else {    // normal-dragging
-        GG::Pt final_move = move;
-
-        if (GG::Wnd* parent = Parent()) {
-            GG::Pt ul = UpperLeft(), lr = LowerRight();
-            GG::Pt new_ul = ul + move, new_lr = lr + move;
-
-            GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
-            GG::Pt max_lr = parent->ClientLowerRight();
-            GG::Pt max_ul = max_lr - this->Size();
-
-            new_ul.x = std::max(min_ul.x, std::min(max_ul.x, new_ul.x));
-            new_ul.y = std::max(min_ul.y, std::min(max_ul.y, new_ul.y));
-
-            final_move = new_ul - ul;
-        }
-
-        GG::Wnd::LDrag(pt, final_move, mod_keys);
-    }
 }
 
 void BuildDesignatorWnd::BuildSelector::MinimizeClicked() {

@@ -319,13 +319,6 @@ void MessageWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         DoLayout();
 }
 
-void MessageWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey>& mod_keys) {
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
-    GG::Pt final_move(std::max(-ul.x, std::min(move.x, GG::GUI::GetGUI()->AppWidth() - 1 - lr.x)),
-                      std::max(-ul.y, std::min(move.y, GG::GUI::GetGUI()->AppHeight() - 1 - lr.y)));
-    GG::Wnd::LDrag(pt + final_move - move, final_move, mod_keys);
-}
-
 void MessageWnd::HandlePlayerChatMessage(const std::string& text, int sender_player_id, int recipient_player_id) {
     const ClientApp* app = ClientApp::GetApp();
     if (!app) {

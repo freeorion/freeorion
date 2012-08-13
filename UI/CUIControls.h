@@ -395,10 +395,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
     void            Render();
     //@}
-
 private:
 };
 

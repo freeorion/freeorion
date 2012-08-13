@@ -240,9 +240,10 @@ void SitRepPanel::KeyPress (GG::Key key, boost::uint32_t key_code_point,
 }
 
 void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
+    GG::Pt old_size = GG::Wnd::Size();
 
     CUIWnd::SizeMove(ul, lr);
+
     if (old_size != GG::Wnd::Size()) {
         DoLayout();
         Update();

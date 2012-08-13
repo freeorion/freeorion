@@ -1744,6 +1744,9 @@ MAP_SCALE_INDICATOR
 MAP_BTN_MENU
 Menu
 
+MAP_BTN_OBJECTS
+Objects
+
 MAP_BTN_SITREP
 SitRep
 
@@ -4719,13 +4722,13 @@ DESC_CAN_ADD_STARLANE_CONNECTION
  that can have starlanes added connecting to all systems that contain objects%1%
 
 DESC_CAN_ADD_STARLANE_CONNECTION_NOT
-that can not have starlanes added connecting to all systems that contain objects%1%
+ that can not have starlanes added connecting to all systems that contain objects%1%
 
 DESC_CAN_REMOVE_STARLANE_CONNECTION
  that can have starlanes removed that connect to all systems that contain objects%1%
 
 DESC_CAN_REMOVE_STARLANE_CONNECTION_NOT
-that can not have starlanes removed that connect to all systems that contain objects%1%
+ that can not have starlanes removed that connect to all systems that contain objects%1%
 
 DESC_EXPLORED_BY_EMPIRE
  that has been explored by the %1% empire
@@ -4791,19 +4794,19 @@ DESC_MAX_NUMBER_OF
  that is one of %1% objects with the largest value of%2% and%3%
 
 DESC_MAX_NUMBER_OF_NOT
-that is not one of %1% objects with the largest value of%2% and%3%
+ that is not one of %1% objects with the largest value of%2% and%3%
 
 DESC_MIN_NUMBER_OF
-that is one of %1% objects with the smallest value of%2% and%3%
+ that is one of %1% objects with the smallest value of%2% and%3%
 
 DESC_MIN_NUMBER_OF_NOT
-that is not one of %1% objects with the smallest value of%2% and%3%
+ that is not one of %1% objects with the smallest value of%2% and%3%
 
 DESC_MODE_NUMBER_OF
-that is one of %1% objects with the most common value of%2% and%3%
+ that is one of %1% objects with the most common value of%2% and%3%
 
 DESC_MODE_NUMBER_OF_NOT
-that is not one of %1% objects with the most common value of%2% and%3%
+ that is not one of %1% objects with the most common value of%2% and%3%
 
 DESC_CONTAINED_BY
  that is contained by an object%1%

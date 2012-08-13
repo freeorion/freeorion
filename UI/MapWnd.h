@@ -22,6 +22,7 @@ class DesignWnd;
 class ProductionWnd;
 class ResearchWnd;
 class EncyclopediaDetailPanel;
+class ObjectListWnd;
 struct SaveGameUIData;
 class SidePanel;
 class SitRepPanel;
@@ -269,6 +270,10 @@ private:
 
     bool            EndTurn();
 
+    bool            ToggleObjects();
+    void            ShowObjects();
+    void            HideObjects();
+
     bool            ToggleSitRep();
     void            ShowSitRep();
     void            HideSitRep();
@@ -347,7 +352,7 @@ private:
     ProductionWnd*              m_production_wnd;   //!< production screen
     DesignWnd*                  m_design_wnd;       //!< design screen
     EncyclopediaDetailPanel*    m_pedia_panel;      //!< encyclpedia panel
-
+    ObjectListWnd*              m_object_list_wnd;  //!< filterable list of objects in universe
 
     std::map<std::pair<int, int>, LaneEndpoints>    m_starlane_endpoints;                   //!< map from starlane start and end system IDs (stored in pair in increasing order) to the universe coordiates at which to draw the starlane ends
 
@@ -388,7 +393,7 @@ private:
 
     CUIToolBar*                 m_toolbar;
     StatisticIcon               *m_mineral, *m_trade, *m_population, *m_research, *m_industry;
-    SettableInWindowCUIButton   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_pedia, *m_btn_menu;
+    SettableInWindowCUIButton   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_pedia, *m_btn_objects, *m_btn_menu;
     FPSIndicator*               m_FPS;
 
     MapScaleLine*               m_scale_line;       //!< indicates the on-screen distance that reprensents an in-universe distance
@@ -400,8 +405,7 @@ private:
 
 /** Derive any window from this class to have it managed by MapWnd. For example, MapWnd will delete all open popups
    when the end turn button is hit. */
-class MapWndPopup : public CUIWnd
-{
+class MapWndPopup : public CUIWnd {
 public:
     MapWndPopup(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags);
     virtual ~MapWndPopup();

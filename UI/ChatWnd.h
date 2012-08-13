@@ -13,8 +13,7 @@
 namespace GG { class MultiEdit; }
 class MessageWndEdit;
 
-class MessageWnd : public CUIWnd
-{
+class MessageWnd : public CUIWnd {
 public:
     //! \name Structors //@{
     MessageWnd(GG::X x, GG::Y y, GG::X w, GG::Y h);
@@ -30,7 +29,6 @@ public:
     void            OpenForInput();
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey>& mod_keys);
     //@}
 
     mutable boost::signal<void ()> TypingSignal;        // emitted when the edit gains focus.  keyboard accelerators elsehwere should be disabled
