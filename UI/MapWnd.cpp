@@ -1702,6 +1702,9 @@ void MapWnd::InitTurn() {
         ShowSitRep();
     }
 
+    if (m_object_list_wnd->Visible())
+        m_object_list_wnd->Update();
+
 
     EnableAlphaNumAccels();
 

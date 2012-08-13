@@ -94,6 +94,7 @@ set(THIS_EXE_SOURCES
     ../../UI/MapWnd.cpp
     ../../UI/GLClientAndServerBuffer.cpp
     ../../UI/MultiplayerLobbyWnd.cpp
+    ../../UI/ObjectListWnd.cpp
     ../../UI/OptionsWnd.cpp
     ../../UI/DesignWnd.cpp
     ../../UI/ProductionWnd.cpp
