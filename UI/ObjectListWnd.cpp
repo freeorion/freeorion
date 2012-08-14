@@ -181,7 +181,7 @@ namespace {
             const GG::Y ICON_HEIGHT(ClientHeight());
             const GG::X ICON_WIDTH(Value(ClientHeight()));
 
-            GG::X left(ICON_WIDTH * m_indent);
+            GG::X left(ICON_WIDTH * m_indent / 2);
             GG::Y top(GG::Y0);
             GG::Y bottom(ClientHeight());
             GG::X PAD(3);
@@ -253,10 +253,134 @@ void ObjectListWnd::Update() {
 
     const GG::Pt row_size = m_list_box->ListRowSize();
 
-    for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
-        const UniverseObject* obj = it->second;
-        ObjectRow* object_row = new ObjectRow(row_size.x, row_size.y, obj, 0);
-        m_list_box->Insert(object_row);
-        object_row->Resize(row_size);
+    bool nested = true;
+
+    if (nested) {
+        // sort objects by containment associations
+        std::map<int, const System*>                    systems;
+        std::map<int, std::map<int, const Fleet*> >     system_fleets;
+        std::map<int, std::map<int, const Ship*> >      fleet_ships;
+        std::map<int, std::map<int, const Planet*> >    system_planets;
+        std::map<int, std::map<int, const Building*> >  planet_buildings;
+        for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
+            const UniverseObject* obj = it->second;
+            if (const System* system = universe_object_cast<const System*>(obj)) {
+                systems[obj->ID()] = system;
+            } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
+                system_fleets[fleet->SystemID()][fleet->ID()] = fleet;
+            } else if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
+                fleet_ships[ship->FleetID()][ship->ID()] = ship;
+            } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
+                system_planets[planet->SystemID()][planet->ID()] = planet;
+            } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
+                planet_buildings[building->PlanetID()][building->ID()] = building;
+            }
+        }
+
+        ObjectRow* object_row = 0;
+        int indent = 0;
+
+        // add system rows
+        for (std::map<int, const System*>::const_iterator sys_it = systems.begin(); sys_it != systems.end(); ++sys_it) {
+            int system_id = sys_it->first;
+            const System* system = sys_it->second;
+            // add system row
+            object_row = new ObjectRow(row_size.x, row_size.y, system, indent);
+            m_list_box->Insert(object_row);
+            object_row->Resize(row_size);
+
+            ++indent;
+            // add planet rows in this system
+            std::map<int, std::map<int, const Planet*> >::const_iterator sp_it = system_planets.find(system_id);
+            if (sp_it != system_planets.end()) {
+                const std::map<int, const Planet*>& planets = sp_it->second;
+                for (std::map<int, const Planet*>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
+                    int planet_id = planet_it->first;
+                    const Planet* planet = planet_it->second;
+                    // add Planet row
+                    object_row = new ObjectRow(row_size.x, row_size.y, planet, indent);
+                    m_list_box->Insert(object_row);
+                    object_row->Resize(row_size);
+
+                    ++indent;
+                    // add building rows on this planet
+                    std::map<int, std::map<int, const Building*> >::const_iterator pb_it = planet_buildings.find(planet_id);
+                    if (pb_it != planet_buildings.end()) {
+                        const std::map<int, const Building*>& buildings = pb_it->second;
+                        for (std::map<int, const Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
+                            int building_id = building_it->first;
+                            const Building* building = building_it->second;
+                            // add Building row
+                            object_row = new ObjectRow(row_size.x, row_size.y, building, indent);
+                            m_list_box->Insert(object_row);
+                            object_row->Resize(row_size);
+                        }
+                    }
+                    indent--;
+                }
+            }
+
+            // add fleet rows in this system
+            std::map<int, std::map<int, const Fleet*> >::const_iterator sf_it = system_fleets.find(system_id);
+            if (sf_it != system_fleets.end()) {
+                const std::map<int, const Fleet*>& fleets = sf_it->second;
+                for (std::map<int, const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
+                    int fleet_id = fleet_it->first;
+                    const Fleet* fleet = fleet_it->second;
+                    // add Fleet row
+                    object_row = new ObjectRow(row_size.x, row_size.y, fleet, indent);
+                    m_list_box->Insert(object_row);
+                    object_row->Resize(row_size);
+
+                    ++indent;
+                    // add ship rows on this fleet
+                    std::map<int, std::map<int, const Ship*> >::const_iterator fs_it = fleet_ships.find(fleet_id);
+                    if (fs_it != fleet_ships.end()) {
+                        const std::map<int, const Ship*>& ships = fs_it->second;
+                        for (std::map<int, const Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+                            int ship_id = ship_it->first;
+                            const Ship* ship = ship_it->second;
+                            // add Building row
+                            object_row = new ObjectRow(row_size.x, row_size.y, ship, indent);
+                            m_list_box->Insert(object_row);
+                            object_row->Resize(row_size);
+                        }
+                    }
+                    indent--;
+                }
+            }
+
+            indent--;
+        }
+
+        // add fleets outside systems...
+        std::map<int, std::map<int, const Fleet*> >::const_iterator sf_it = system_fleets.find(INVALID_OBJECT_ID);
+        if (sf_it != system_fleets.end()) {
+            const std::map<int, const Fleet*>& fleets = sf_it->second;
+            for (std::map<int, const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
+                int fleet_id = fleet_it->first;
+                const Fleet* fleet = fleet_it->second;
+                // add Fleet row
+                object_row = new ObjectRow(row_size.x, row_size.y, fleet, indent);
+                m_list_box->Insert(object_row);
+                object_row->Resize(row_size);
+
+                ++indent;
+                // add ship rows on this fleet
+                std::map<int, std::map<int, const Ship*> >::const_iterator fs_it = fleet_ships.find(fleet_id);
+                if (fs_it != fleet_ships.end()) {
+                    const std::map<int, const Ship*>& ships = fs_it->second;
+                    for (std::map<int, const Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+                        int ship_id = ship_it->first;
+                        const Ship* ship = ship_it->second;
+                        // add Building row
+                        object_row = new ObjectRow(row_size.x, row_size.y, ship, indent);
+                        m_list_box->Insert(object_row);
+                        object_row->Resize(row_size);
+                    }
+                }
+                indent--;
+            }
+        }
     }
 }
