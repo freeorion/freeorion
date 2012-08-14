@@ -252,6 +252,7 @@
 		820638A614A87C8B00A83D5A /* libEffectParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 820638A314A87AF200A83D5A /* libEffectParser.a */; };
 		820638A914A87CAA00A83D5A /* libEffectParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 820638A314A87AF200A83D5A /* libEffectParser.a */; };
 		820638AC14A87D0500A83D5A /* libEffectParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 820638A314A87AF200A83D5A /* libEffectParser.a */; };
+		82132C2F15DA2BBC00F5B537 /* ObjectListWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82132C2D15DA2BBC00F5B537 /* ObjectListWnd.cpp */; };
 		8218685814AA6E77009441B8 /* AlignmentsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936D6147E3B1B00B840A5 /* AlignmentsParser.cpp */; };
 		8218688F14AA6F67009441B8 /* BuildingsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936D7147E3B1B00B840A5 /* BuildingsParser.cpp */; };
 		8218689F14AA6FE2009441B8 /* Double.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936DF147E3B1B00B840A5 /* Double.cpp */; };
@@ -2111,6 +2112,8 @@
 		47B6160A0CF09ADC00318761 /* alutWaveform.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutWaveform.c; sourceTree = "<group>"; };
 		47B6160B0CF09ADC00318761 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		820638A314A87AF200A83D5A /* libEffectParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libEffectParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		82132C2D15DA2BBC00F5B537 /* ObjectListWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectListWnd.cpp; sourceTree = "<group>"; };
+		82132C2E15DA2BBC00F5B537 /* ObjectListWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectListWnd.h; sourceTree = "<group>"; };
 		8218687614AA6E77009441B8 /* libAlignmentsParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAlignmentsParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8218689C14AA6F67009441B8 /* libBuildingsParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBuildingsParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		821868BE14AA6FE2009441B8 /* libParserMisc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libParserMisc.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3795,6 +3798,8 @@
 		471D5CA40A98A3F900DA9C21 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				82132C2D15DA2BBC00F5B537 /* ObjectListWnd.cpp */,
+				82132C2E15DA2BBC00F5B537 /* ObjectListWnd.h */,
 				82592EEB147E365700B840A5 /* CUISlider.h */,
 				2F276A39130401E000153050 /* GLClientAndServerBuffer.cpp */,
 				2F276A3A130401E000153050 /* GLClientAndServerBuffer.h */,
@@ -5449,6 +5454,7 @@
 				2F60966B12EEAF0200F58913 /* GroupBox.cpp in Sources */,
 				2F22EC0612F7F4CF00456CDE /* TechTreeLayout.cpp in Sources */,
 				2F276A3B130401E000153050 /* GLClientAndServerBuffer.cpp in Sources */,
+				82132C2F15DA2BBC00F5B537 /* ObjectListWnd.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
