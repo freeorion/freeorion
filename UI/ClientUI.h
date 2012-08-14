@@ -90,6 +90,8 @@ public:
 
     bool    ZoomToEncyclopediaEntry(const std::string& str);           //!< Opens the encyclodedia window and presents the entry for the given term
 
+    void    DumpObject(int object_id);                                 //!< Displays debug info about specified object in messages window
+
     /** Loads a texture at random from the set of files starting with \a prefix in directory \a dir. */
     boost::shared_ptr<GG::Texture> GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap = false);
 

@@ -170,6 +170,9 @@ All Of:
 ANY_OF
 Any Of:
 
+DUMP
+Debug Data Dump
+
 ###########################
 # Predefined Ship Designs #
 ###########################

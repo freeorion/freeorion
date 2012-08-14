@@ -4,9 +4,8 @@
 
 #include "CUIWnd.h"
 
-namespace GG {
-    class ListBox;
-}
+#include <GG/ListBox.h>
+
 class ObjectListBox;
 
 class ObjectListWnd : public CUIWnd {
@@ -19,8 +18,16 @@ public:
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void            Update();
     //!@}
+
+    mutable boost::signal<void (int)>   ObjectDoubleClickedSignal;
+    mutable boost::signal<void (int)>   ObjectDumpSignal;
+
 private:
     void            DoLayout();
+
+    void            ObjectDoubleClicked(GG::ListBox::iterator it);
+    void            ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    int             ObjectInRow(GG::ListBox::iterator it) const;
 
     ObjectListBox*  m_list_box;
 };

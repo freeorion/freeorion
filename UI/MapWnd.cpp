@@ -606,6 +606,7 @@ MapWnd::MapWnd() :
     //GG::Connect(m_object_list_wnd->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleObjects, this)));// sitrep panel is manually closed by user
     GG::GUI::GetGUI()->Register(m_object_list_wnd);
     m_object_list_wnd->Hide();
+    GG::Connect(m_object_list_wnd->ObjectDumpSignal,    &ClientUI::DumpObject,  ClientUI::GetClientUI());
 
 
     // research window

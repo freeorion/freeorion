@@ -57,6 +57,8 @@ ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
     m_list_box = new ObjectListBox();
     m_list_box->SetHiliteColor(GG::CLR_ZERO);
     m_list_box->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
+    GG::Connect(m_list_box->DoubleClickedSignal,    &ObjectListWnd::ObjectDoubleClicked,    this);
+    GG::Connect(m_list_box->RightClickedSignal,     &ObjectListWnd::ObjectRightClicked,     this);
 
     AttachChild(m_list_box);
     DoLayout();
@@ -181,7 +183,8 @@ namespace {
             const GG::Y ICON_HEIGHT(ClientHeight());
             const GG::X ICON_WIDTH(Value(ClientHeight()));
 
-            GG::X left(ICON_WIDTH * m_indent / 2);
+            GG::X indent(ICON_WIDTH * m_indent / 2);
+            GG::X left = indent;
             GG::Y top(GG::Y0);
             GG::Y bottom(ClientHeight());
             GG::X PAD(3);
@@ -190,7 +193,7 @@ namespace {
             m_icon->SizeMove(GG::Pt(left, top), GG::Pt(left + ctrl_width, bottom));
             left += ctrl_width + PAD;
 
-            ctrl_width = GG::X(ClientUI::Pts()*12);
+            ctrl_width = GG::X(ClientUI::Pts()*12) - indent;    // so second column all line up
             m_name_label->SizeMove(GG::Pt(left, top), GG::Pt(left + ctrl_width, bottom));
             left += ctrl_width + PAD;
 
@@ -384,3 +387,42 @@ void ObjectListWnd::Update() {
         }
     }
 }
+
+void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it) {
+    int object_id = ObjectInRow(it);
+    if (object_id != INVALID_OBJECT_ID)
+        ObjectDoubleClickedSignal(object_id);
+}
+
+void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+    int object_id = ObjectInRow(it);
+    if (object_id == INVALID_OBJECT_ID)
+        return;
+
+    // create popup menu with diplomacy options in it
+    GG::MenuItem menu_contents;
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("DUMP"), 1, false, false));
+
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+        case 1: {
+            ObjectDumpSignal(object_id);
+            break;
+        }
+        default:
+            break;
+        }
+    }
+}
+
+int ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {
+    if (it == m_list_box->end())
+        return INVALID_OBJECT_ID;
+
+    if (ObjectRow* obj_row = dynamic_cast<ObjectRow*>(*it))
+        return obj_row->ObjectID();
+
+    return INVALID_OBJECT_ID;
+}
+
