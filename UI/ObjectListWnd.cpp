@@ -392,6 +392,7 @@ void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it) {
     int object_id = ObjectInRow(it);
     if (object_id != INVALID_OBJECT_ID)
         ObjectDoubleClickedSignal(object_id);
+    ClientUI::GetClientUI()->ZoomToObject(object_id);
 }
 
 void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
