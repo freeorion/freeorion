@@ -14,8 +14,7 @@ namespace {
 
 /** A control similar to GG::MultiEdit that displayed text, links, and images with layout determined
   * from HTML-like markup in the provided text. */
-class MarkupBox : public GG::Control
-{
+class MarkupBox : public GG::Control {
 public:
     /** \name Structors */ ///@{
     /** Ctor. */

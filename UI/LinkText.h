@@ -4,8 +4,7 @@
 
 #include <GG/TextControl.h>
 
-class TextLinker
-{
+class TextLinker {
 public:
     /** \name Structors */ //@{
     TextLinker();
@@ -69,8 +68,7 @@ private:
   * <br><br>Note that for link tags to be correctly handled, they must not
   * overlap each other at all, even though overlap with regular GG::Font tags
   * is fine. */
-class LinkText : public GG::TextControl, public TextLinker
-{
+class LinkText : public GG::TextControl, public TextLinker {
 public:
     /** \name Structors */ //@{
     LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< ctor taking a font directly

@@ -19,7 +19,15 @@
 ////////////////////////////////////////////////
 // FilterDialog
 ////////////////////////////////////////////////
-class FilterDialog {
+class FilterDialog : public CUIWnd {
+public:
+    FilterDialog(GG::X x, GG::Y y) : CUIWnd(UserString("FILTERS"), x, y, GG::X(200), GG::Y(200),
+                                            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE)
+    {}
+    ~FilterDialog()
+    {}
+    //@}
+private:
 };
 
 ////////////////////////////////////////////////
@@ -111,7 +119,7 @@ ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
 }
 
 void ObjectListWnd::DoLayout() {
-    GG::X BUTTON_WIDTH(ClientUI::Pts()*6);
+    GG::X BUTTON_WIDTH(ClientUI::Pts()*7);
     GG::Y BUTTON_HEIGHT = m_filter_button->Height();
     int PAD(3);
 

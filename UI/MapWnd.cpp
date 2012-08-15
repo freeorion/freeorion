@@ -3444,6 +3444,7 @@ void MapWnd::Cleanup() {
     HideDesign();
     HideSitRep();
     HidePedia();
+    HideObjects();
     m_pedia_panel->ClearItems();    // deletes all pedia items in the memory
     m_toolbar->Hide();
     m_FPS->Hide();
