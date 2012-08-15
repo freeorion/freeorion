@@ -2620,6 +2620,21 @@ Combat
 WAITING
 Waiting
 
+####################
+## Objects Window ##
+####################
+
+SORT
+Sort
+
+COLUMNS
+Columns
+
+COLLAPSE_ALL
+Collapse All
+
+EXPAND_ALL
+Expand All
 
 #############################################################
 ####                    S I T   R E P                    ####

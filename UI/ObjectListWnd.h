@@ -5,6 +5,12 @@
 #include "CUIWnd.h"
 
 #include <GG/ListBox.h>
+namespace GG {
+    class Button;
+}
+namespace Condition {
+    struct ConditionBase;
+}
 
 class ObjectListBox;
 
@@ -29,7 +35,18 @@ private:
     void            ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
     int             ObjectInRow(GG::ListBox::iterator it) const;
 
-    ObjectListBox*  m_list_box;
+    void            FilterClicked();
+    void            SortClicked();
+    void            ColumnsClicked();
+    void            CollapseExpandClicked();
+
+    Condition::ConditionBase*   m_filter_condition;
+
+    ObjectListBox*              m_list_box;
+    GG::Button*                 m_filter_button;
+    GG::Button*                 m_sort_button;
+    GG::Button*                 m_columns_button;
+    GG::Button*                 m_collapse_button;
 };
 
 #endif // _ObjectListWnd_h_
