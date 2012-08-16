@@ -8,9 +8,6 @@
 namespace GG {
     class Button;
 }
-namespace Condition {
-    struct ConditionBase;
-}
 
 class ObjectListBox;
 
@@ -22,7 +19,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    void            Update();
+    void            Refresh();
     //!@}
 
     mutable boost::signal<void (int)>   ObjectDoubleClickedSignal;
@@ -39,8 +36,6 @@ private:
     void            SortClicked();
     void            ColumnsClicked();
     void            CollapseExpandClicked();
-
-    Condition::ConditionBase*   m_filter_condition;
 
     ObjectListBox*              m_list_box;
     GG::Button*                 m_filter_button;

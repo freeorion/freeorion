@@ -1704,7 +1704,7 @@ void MapWnd::InitTurn() {
     }
 
     if (m_object_list_wnd->Visible())
-        m_object_list_wnd->Update();
+        m_object_list_wnd->Refresh();
 
 
     EnableAlphaNumAccels();
@@ -3585,7 +3585,7 @@ void MapWnd::ShowObjects() {
     HideDesign();
 
     // update objects window
-    m_object_list_wnd->Update();
+    m_object_list_wnd->Refresh();
 
     // show the objects window
     m_object_list_wnd->Show();
