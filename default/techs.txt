@@ -1480,7 +1480,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 TargetPopulation low = 1
             ]
-            effects = SetTargetConstruction Value + 10
+            effects = SetSupply Value + 1
 
 Tech
     name = "CON_FRC_ENRG_STRC"
@@ -1672,7 +1672,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 TargetPopulation low = 1
             ]
-            effects = SetTargetConstruction Value + 10
+            effects = SetSupply Value + 1
     graphic = "icons/tech/controlled_gravity_architecture.png"
 
 Tech
@@ -1701,7 +1701,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 TargetPopulation low = 1
             ]
-            effects = SetTargetConstruction Value + 10
+            effects = SetSupply Value + 1
     graphic = "icons/tech/orbital_construction.png"
 
 Tech

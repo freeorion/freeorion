@@ -6612,7 +6612,7 @@ BLD_MEGALITH
 Megalith
 
 BLD_MEGALITH_DESC
-'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to resource supply range, and 30 to construction. Additionally all resource meters are able to reach target in a single turn. Furthermore, all colonies belonging the empire receive an increase of 1 to max resource supply range.
+'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to resource supply range, and 30 to construction. Additionally all resource meters are able to reach target in a single turn.
 
 The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
 
