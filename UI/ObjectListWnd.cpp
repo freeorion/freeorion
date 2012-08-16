@@ -328,6 +328,8 @@ public:
     }
 
     void            Refresh() {
+        std::size_t first_visible_queue_row = std::distance(this->begin(), this->FirstRowShown());
+
         const ObjectMap& objects = Objects();
         Clear();
 
@@ -495,6 +497,11 @@ public:
                 }
             }
         }
+
+        if (!this->Empty())
+            this->BringRowIntoView(--this->end());
+        if (first_visible_queue_row < this->NumRows())
+            this->BringRowIntoView(boost::next(this->begin(), first_visible_queue_row));
     }
 
 private:
