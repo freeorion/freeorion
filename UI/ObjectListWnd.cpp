@@ -92,6 +92,7 @@ public:
         m_expanded(expanded),
         m_have_contents(have_contents),
         m_expand_button(0),
+        m_dot(0),
         m_icon(0),
         m_name_label(0),
         m_empire_label(0)
@@ -99,15 +100,20 @@ public:
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::Clr clr = ClientUI::TextColor();
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
         if (m_have_contents) {
             m_expand_button = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16),
                                                 "", font, GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
             AttachChild(m_expand_button);
             GG::Connect(m_expand_button->ClickedSignal, &ObjectPanel::ExpandCollapseButtonPressed, this);
+        } else {
+            m_dot = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(16), GG::Y(16),
+                                          ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "dot.png", true),
+                                          style, GG::Flags<GG::WndFlag>());
+            AttachChild(m_dot);
         }
 
-        GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
         std::vector<boost::shared_ptr<GG::Texture> > textures = ObjectTextures(obj);
 
         m_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, GG::X(Value(ClientHeight())), ClientHeight(),
@@ -142,13 +148,13 @@ public:
     void                Update() {
         if (m_expand_button) {
             if (m_expanded) {
-                m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"     , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-                m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"    , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-                m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"  , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+                m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "minusnormal.png"     , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+                m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "minusclicked.png"    , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+                m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "minusmouseover.png"  , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
             } else {
-                m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-                m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-                m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png", true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+                m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "plusnormal.png"   , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+                m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "plusclicked.png"  , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+                m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "plusmouseover.png", true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
             }
         }
     }
@@ -159,7 +165,7 @@ private:
         const GG::Y ICON_HEIGHT(ClientHeight());
         const GG::X ICON_WIDTH(Value(ClientHeight()));
 
-        GG::X indent(ICON_WIDTH * m_indent / 2);
+        GG::X indent(ICON_WIDTH * m_indent);
         GG::X left = indent;
         GG::Y top(GG::Y0);
         GG::Y bottom(ClientHeight());
@@ -169,13 +175,15 @@ private:
 
         if (m_expand_button) {
             m_expand_button->SizeMove(GG::Pt(left, top), GG::Pt(left + ctrl_width, bottom));
+        } else if (m_dot) {
+            m_dot->SizeMove(GG::Pt(left, top), GG::Pt(left + ctrl_width, bottom));
         }
         left += ctrl_width + PAD;
 
         m_icon->SizeMove(GG::Pt(left, top), GG::Pt(left + ctrl_width, bottom));
         left += ctrl_width + PAD;
 
-        ctrl_width = GG::X(ClientUI::Pts()*12) - indent;    // so second column all line up
+        ctrl_width = GG::X(ClientUI::Pts()*14) - indent;    // so second column all line up
         m_name_label->SizeMove(GG::Pt(left, top), GG::Pt(left + ctrl_width, bottom));
         left += ctrl_width + PAD;
 
@@ -196,6 +204,7 @@ private:
     bool                        m_have_contents;
 
     GG::Button*                 m_expand_button;
+    GG::StaticGraphic*          m_dot;
     MultiTextureStaticGraphic*  m_icon;
     GG::TextControl*            m_name_label;
     GG::TextControl*            m_empire_label;
