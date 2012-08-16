@@ -1916,6 +1916,13 @@ STANDARD_CONSTRUCTION
             activation = Source
             accountinglabel = "STANDARD_CONSTRUCTION_LABEL"
             effects = SetTargetConstruction Value + 20
+            
+        EffectsGroup
+            scope = Source
+            activation = Source
+            accountinglabel = "STANDARD_COLONY_SUPPLY_LABEL"
+            effects = SetSupply Value + 2
+            
 '''
 
 BASIC_POPULATION

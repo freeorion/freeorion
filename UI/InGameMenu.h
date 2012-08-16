@@ -9,8 +9,7 @@
 
 class CUIButton;
 
-class InGameMenu : public CUIWnd
-{
+class InGameMenu : public CUIWnd {
 public:
     /** \name Structors */ //@{
     InGameMenu();  //!< default ctor

@@ -661,6 +661,13 @@ bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str) {
     return true;
 }
 
+void ClientUI::DumpObject(int object_id) {
+    const UniverseObject* obj = GetUniverseObject(object_id);
+    if (!obj)
+        return;
+    m_message_wnd->HandleLogMessage(obj->Dump() + "\n");
+}
+
 boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir,
                                                           const std::string& prefix, bool mipmap/* = false*/)
 {

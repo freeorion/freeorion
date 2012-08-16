@@ -31,12 +31,9 @@ namespace {
 CUI_MinRestoreButton::CUI_MinRestoreButton(GG::X x, GG::Y y) : 
     GG::Button(x, y, GG::X(12), GG::Y(12), "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor()),
     m_mode(MIN_BUTTON)
-{
-    GG::Connect(ClickedSignal, &CUI_MinRestoreButton::Toggle, this);
-}
+{ GG::Connect(ClickedSignal, &CUI_MinRestoreButton::Toggle, this); }
 
-void CUI_MinRestoreButton::Render()
-{
+void CUI_MinRestoreButton::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     GG::Clr color_to_use = ClientUI::WndInnerBorderColor();
@@ -58,8 +55,7 @@ void CUI_MinRestoreButton::Render()
     }
 }
 
-void CUI_MinRestoreButton::Toggle()
-{
+void CUI_MinRestoreButton::Toggle() {
     if (m_mode == MIN_BUTTON) {
         PlayMinimizeSound();
         m_mode = RESTORE_BUTTON;
@@ -75,12 +71,9 @@ void CUI_MinRestoreButton::Toggle()
 ////////////////////////////////////////////////
 CUI_CloseButton::CUI_CloseButton(GG::X x, GG::Y y) : 
     GG::Button(x, y, GG::X(12), GG::Y(12), "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
-{
-    GG::Connect(ClickedSignal, &PlayCloseSound, -1);
-}
+{ GG::Connect(ClickedSignal, &PlayCloseSound, -1); }
 
-void CUI_CloseButton::Render()
-{
+void CUI_CloseButton::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     GG::Clr color_to_use = ClientUI::WndInnerBorderColor();
@@ -110,8 +103,7 @@ GG::WndFlag MINIMIZABLE(1 << 10);
 GG::WndFlag CLOSABLE(1 << 11);
 
 namespace {
-    bool RegisterWndFlags()
-    {
+    bool RegisterWndFlags() {
         GG::FlagSpec<GG::WndFlag>::instance().insert(MINIMIZABLE, "MINIMIZABLE");
         GG::FlagSpec<GG::WndFlag>::instance().insert(CLOSABLE, "CLOSABLE");
         return true;
@@ -152,8 +144,7 @@ CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Fla
 CUIWnd::~CUIWnd()
 {}
 
-void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
+void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     Wnd::SizeMove(ul, lr);
     GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET) + UpperLeft() - ClientUpperLeft();
     if (m_close_button)
@@ -162,8 +153,7 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
         m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y));
 }
 
-void CUIWnd::Render()
-{
+void CUIWnd::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     GG::Pt cl_ul = ClientUpperLeft();
@@ -240,8 +230,7 @@ void CUIWnd::Render()
     GG::EndScissorClipping();
 }
 
-void CUIWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void CUIWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_minimized && m_resizable) {
         GG::Pt cl_lr = LowerRight() - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
         GG::Pt dist_from_lr = cl_lr - pt;
@@ -251,43 +240,58 @@ void CUIWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     }
 }
 
-void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
-{
+void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
     if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) { // resize-dragging
-        Resize((pt - m_drag_offset) - UpperLeft());
+        GG::Pt new_lr = pt - m_drag_offset;
+
+        // constrain to within parent
+        if (GG::Wnd* parent = Parent()) {
+            GG::Pt max_lr = parent->ClientLowerRight();
+            new_lr.x = std::min(new_lr.x, max_lr.x);
+            new_lr.y = std::min(new_lr.y, max_lr.y);
+        }
+
+        Resize(new_lr - UpperLeft());
     } else { // normal-dragging
-        GG::Pt ul = UpperLeft(), lr = LowerRight();
-        GG::Pt final_move(std::max(-ul.x, std::min(move.x, GG::GUI::GetGUI()->AppWidth() - 1 - lr.x)),
-                          std::max(-ul.y, std::min(move.y, GG::GUI::GetGUI()->AppHeight() - 1 - lr.y)));
-        GG::Wnd::LDrag(pt + final_move - move, final_move, mod_keys);
+        if (GG::Wnd* parent = Parent()) {
+            GG::Pt ul = UpperLeft(), lr = LowerRight();
+            GG::Pt new_ul = ul + move, new_lr = lr + move;
+
+            GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
+            GG::Pt max_lr = parent->ClientLowerRight();
+            GG::Pt max_ul = max_lr - Size();
+
+            new_ul.x = std::max(min_ul.x, std::min(max_ul.x, new_ul.x));
+            new_ul.y = std::max(min_ul.y, std::min(max_ul.y, new_ul.y));
+
+            GG::Pt final_move = new_ul - ul;
+            GG::Wnd::LDrag(pt, final_move, mod_keys);
+        } else {
+            GG::Pt ul = UpperLeft(), lr = LowerRight();
+            GG::Pt final_move(std::max(-ul.x, std::min(move.x, GG::GUI::GetGUI()->AppWidth() - 1 - lr.x)),
+                              std::max(-ul.y, std::min(move.y, GG::GUI::GetGUI()->AppHeight() - 1 - lr.y)));
+            GG::Wnd::LDrag(pt + final_move - move, final_move, mod_keys);
+        }
     }
 }
 
 void CUIWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
-}
+{ m_drag_offset = GG::Pt(-GG::X1, -GG::Y1); }
 
 GG::Pt CUIWnd::ClientUpperLeft() const
-{
-    return m_minimized ? UpperLeft() : UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_TOP);
-}
+{ return m_minimized ? UpperLeft() : UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_TOP); }
 
 GG::Pt CUIWnd::ClientLowerRight() const
-{
-    return m_minimized ? LowerRight() : LowerRight() - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
-}
+{ return m_minimized ? LowerRight() : LowerRight() - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM); }
 
-bool CUIWnd::InWindow(const GG::Pt& pt) const
-{
+bool CUIWnd::InWindow(const GG::Pt& pt) const {
     GG::Pt lr = LowerRight();
     GG::Pt dist_from_lr = lr - pt;
     bool inside_lower_right_corner = OUTER_EDGE_ANGLE_OFFSET < Value(dist_from_lr.x) + Value(dist_from_lr.y);
     return (UpperLeft() <= pt && pt < lr && inside_lower_right_corner);
 }
 
-void CUIWnd::InitButtons()
-{
+void CUIWnd::InitButtons() {
     // create the close button
     GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET) + UpperLeft() - ClientUpperLeft();
     if (m_closable) {
@@ -307,37 +311,24 @@ void CUIWnd::InitButtons()
 }
 
 GG::X CUIWnd::MinimizedWidth() const
-{
-    return MINIMIZED_WND_WIDTH;
-}
+{ return MINIMIZED_WND_WIDTH; }
 
 GG::X CUIWnd::LeftBorder() const
-{
-    return BORDER_LEFT;
-}
+{ return BORDER_LEFT; }
 
 GG::Y CUIWnd::TopBorder() const
-{
-    return BORDER_TOP;
-}
+{ return BORDER_TOP; }
 
 GG::X CUIWnd::RightBorder() const
-{
-    return BORDER_RIGHT;
-}
+{ return BORDER_RIGHT; }
 
 GG::Y CUIWnd::BottomBorder() const
-{
-    return BORDER_BOTTOM;
-}
+{ return BORDER_BOTTOM; }
 
 int CUIWnd::InnerBorderAngleOffset() const
-{
-    return INNER_BORDER_ANGLE_OFFSET;
-}
+{ return INNER_BORDER_ANGLE_OFFSET; }
 
-void CUIWnd::CloseClicked()
-{
+void CUIWnd::CloseClicked() {
     m_done = true;
     if (Parent())
         Parent()->DetachChild(this);
@@ -345,8 +336,7 @@ void CUIWnd::CloseClicked()
         GG::GUI::GetGUI()->Remove(this);
 }
 
-void CUIWnd::MinimizeClicked()
-{
+void CUIWnd::MinimizeClicked() {
     if (!m_minimized) {
         m_minimized = true;
         m_original_size = Size();
@@ -405,12 +395,9 @@ CUIEditWnd::CUIEditWnd(GG::X w, const std::string& prompt_text, const std::strin
 }
 
 void CUIEditWnd::ModalInit()
-{
-    GG::GUI::GetGUI()->SetFocusWnd(m_edit);
-}
+{ GG::GUI::GetGUI()->SetFocusWnd(m_edit); }
 
-void CUIEditWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
-{
+void CUIEditWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     switch (key) {
     case GG::GGK_RETURN: if (!m_ok_bn->Disabled()) OkClicked(); break;
     case GG::GGK_ESCAPE: CloseClicked(); break;
@@ -419,12 +406,9 @@ void CUIEditWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags
 }
 
 const std::string& CUIEditWnd::Result() const 
-{
-    return m_result;
-}
+{ return m_result; }
 
-void CUIEditWnd::OkClicked() 
-{
+void CUIEditWnd::OkClicked() {
     m_result = m_edit->Text();
     CloseClicked();
 }

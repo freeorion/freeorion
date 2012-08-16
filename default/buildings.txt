@@ -59,8 +59,8 @@ BuildingType
                 OwnedBy TheEmpire Source.ProducedByEmpireID
                 Contains Source
             ]
-            stackinggroup = "IMERIAL_PALACE_SUPPLY_EFFECT"
-            effects = SetSupply Value + 3
+            stackinggroup = "IMPERIAL_PALACE_SUPPLY_EFFECT"
+            effects = SetSupply Value + 1
 
         EffectsGroup
             scope = And [
@@ -517,7 +517,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BLD_MEGALITH_EFFECT"
-            effects = SetTargetConstruction Value + 10
+            effects = SetSupply Value + 2
     ]
     icon = "icons/building/megalith.png"
 
@@ -613,7 +613,7 @@ BuildingType
         EffectsGroup
             scope = Contains Source
             activation = Source
-            effects = SetSupply Value * 3
+            effects = SetSupply Value * 2
     icon = ""
 
 BuildingType

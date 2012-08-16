@@ -302,16 +302,14 @@ void EncyclopediaDetailPanel::DoLayout() {
 void EncyclopediaDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
-    // maybe later do something interesting with docking
-    GG::Wnd::SizeMove(ul, lr);
+    CUIWnd::SizeMove(ul, lr);
 
-    if (Visible() && old_size != GG::Wnd::Size())
+    if (old_size != GG::Wnd::Size())
         DoLayout();
 }
 
-GG::Pt EncyclopediaDetailPanel::ClientUpperLeft() const {
-    return GG::Wnd::UpperLeft();
-}
+GG::Pt EncyclopediaDetailPanel::ClientUpperLeft() const
+{ return GG::Wnd::UpperLeft(); }
 
 void EncyclopediaDetailPanel::Render() {
     GG::Pt ul = UpperLeft();
@@ -372,40 +370,6 @@ void EncyclopediaDetailPanel::Render() {
         glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
     glEnd();
     glEnable(GL_TEXTURE_2D);
-}
-
-void EncyclopediaDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
-    if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) {  // resize-dragging
-        GG::Pt new_lr = pt - m_drag_offset;
-
-        // constrain to within parent
-        if (GG::Wnd* parent = Parent()) {
-            GG::Pt max_lr = parent->ClientLowerRight();
-            new_lr.x = std::min(new_lr.x, max_lr.x);
-            new_lr.y = std::min(new_lr.y, max_lr.y);
-        }
-
-        Resize(new_lr - UpperLeft());
-
-    } else {    // normal-dragging
-        GG::Pt final_move = move;
-
-        if (GG::Wnd* parent = Parent()) {
-            GG::Pt ul = UpperLeft(), lr = LowerRight();
-            GG::Pt new_ul = ul + move, new_lr = lr + move;
-
-            GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
-            GG::Pt max_lr = parent->ClientLowerRight();
-            GG::Pt max_ul = max_lr - Size();
-
-            new_ul.x = std::max(min_ul.x, std::min(max_ul.x, new_ul.x));
-            new_ul.y = std::max(min_ul.y, std::min(max_ul.y, new_ul.y));
-
-            final_move = new_ul - ul;
-        }
-
-        GG::Wnd::LDrag(pt, final_move, mod_keys);
-    }
 }
 
 void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, const std::string& data) {

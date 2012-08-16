@@ -296,13 +296,11 @@ public:
         }
     }
 
-    GG::Pt          ListRowSize() const {
-        return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight());
-    }
+    GG::Pt          ListRowSize() const
+    { return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight()); }
 
-    static GG::Y    ListRowHeight() {
-        return GG::Y(ClientUI::Pts() * 3/2);
-    }
+    static GG::Y    ListRowHeight()
+    { return GG::Y(ClientUI::Pts() * 3/2); }
 };
 
 
@@ -429,16 +427,8 @@ void PlayerListWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         DoLayout();
 }
 
-void PlayerListWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey>& mod_keys) {
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
-    GG::Pt final_move(std::max(-ul.x, std::min(move.x, GG::GUI::GetGUI()->AppWidth() - 1 - lr.x)),
-                      std::max(-ul.y, std::min(move.y, GG::GUI::GetGUI()->AppHeight() - 1 - lr.y)));
-    GG::Wnd::LDrag(pt + final_move - move, final_move, mod_keys);
-}
-
-void PlayerListWnd::DoLayout() {
-    m_player_list->SizeMove(GG::Pt(), GG::Pt(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)));
-}
+void PlayerListWnd::DoLayout()
+{ m_player_list->SizeMove(GG::Pt(), GG::Pt(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET))); }
 
 void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     // mark as selected all PlayerDataPanel that are in \a rows and mark as not

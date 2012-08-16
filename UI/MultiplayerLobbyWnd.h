@@ -15,13 +15,12 @@ class CUIListBox;
 class CUIMultiEdit;
 class Message;
 namespace GG {
-class StaticGraphic;
-class TextControl;
+    class StaticGraphic;
+    class TextControl;
 }
 
 /** multiplayer lobby window */
-class MultiPlayerLobbyWnd : public CUIWnd
-{
+class MultiPlayerLobbyWnd : public CUIWnd {
 public:
     /** \name Structors */ //@{
     MultiPlayerLobbyWnd();

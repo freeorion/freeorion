@@ -23,8 +23,7 @@ class CUIStateButton;
 namespace GG { class TabWnd; }
 
 //! This is a dialog box that allows the user to control certain basic game parameters, such as sound and music
-class OptionsWnd : public CUIWnd
-{
+class OptionsWnd : public CUIWnd {
 public:
     typedef bool (*StringValidator)(const std::string& file);
 

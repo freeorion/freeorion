@@ -27,7 +27,6 @@ public:
     void            SetSelectedPlayers(const std::set<int>& player_ids);
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey>& mod_keys);
     //@}
 
     mutable boost::signal<void ()>      SelectedPlayersChangedSignal;

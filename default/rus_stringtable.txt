@@ -1,9 +1,9 @@
 Russian
 
-#This is the Russian String Table file for FreeOrion 0.4 SVN5100
+#This is the Russian String Table file for FreeOrion 0.4 SVN5130
 #Translater cjckem at gmail.com
 #support by black_owl at mail.ru
-#Этот языковой файл для FreeOrion 0.4 SVN5100
+#Этот языковой файл для FreeOrion 0.4 SVN5130
 #кодовая страница UTF8
 #Переводит cjckem at gmail.com
 #при поддержке black_owl at mail.ru
@@ -111,6 +111,9 @@ NEXT
 BACK
 Назад
 
+LAST
+Последний
+
 # used to generate names for new fleets when they are created
 NEW_FLEET_NAME
 Флот %1%
@@ -171,6 +174,9 @@ ALL_OF
 
 ANY_OF
 Любой из:
+
+DUMP
+Дамп данных отладки
 
 ###########################
 # Predefined Ship Designs #
@@ -882,13 +888,13 @@ OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
 Встречаемость межзвездных путей.
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-Частота случайных событий в галактике.
+Количество планет с аномалиями и артефактами.
 
 OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY
 Частота появления монстров.
 
 OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY
-Густонаселённость коренными народами.
+Количество планет с аборигенами.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 Название вашей империи.
@@ -1204,11 +1210,11 @@ GSETUP_STARLANE_FREQ
 GSETUP_PLANET_DENSITY
 Количество планет
 GSETUP_SPECIALS_FREQ
-Случайные события
+Артефакты
 GSETUP_MONSTER_FREQ
 Появление монстров
 GSETUP_NATIVE_FREQ
-Встречаемость коренных видов
+Аборигены
 
 GSETUP_2ARM
 Спираль, 2-рукава
@@ -1746,6 +1752,9 @@ MAP_SCALE_INDICATOR
 
 MAP_BTN_MENU
 Меню
+
+MAP_BTN_OBJECTS
+Объекты
 
 MAP_BTN_SITREP
 События
@@ -2521,7 +2530,7 @@ COMBAT_BATTLE
 Битва : 
 
 COMBAT_SYSTEM
-The %1% System
+Система %1%
 
 COMBAT_MILITARY_SHIPS
 Военные корабли
@@ -2622,9 +2631,14 @@ WAITING
 SITREP_PANEL_TITLE
 Отчет о событиях
 
+SITREP_PANEL_TITLE_TURN
+Отчет о событиях - Ход %1%
+
 SITREP_ERROR
 Произошло неизвестное событие.
 
+FILTERS
+Фильтры
 
 SITREP_SHIP_BUILT
 Новый корабль %ship% был построен в систем %system%.
@@ -2632,85 +2646,255 @@ SITREP_SHIP_BUILT
 SITREP_BUILDING_BUILT
 Новый комплекс %building% был построен на планете %planet%.
 
+SITREP_BUILDING_BUILT_LABEL
+Построено здание
+
 SITREP_TECH_RESEARCHED
 Технология %tech% была исследована.
 
+SITREP_TECH_RESEARCHED_LABEL
+Исследована технология
+
 SITREP_COMBAT_SYSTEM
-Произошла битва в %system%.
+Состоялось сражение в %system%.
+
+SITREP_COMBAT_SYSTEM_LABEL
+Сражение в системе
 
 SITREP_OBJECT_DESTROYED_AT_SYSTEM
 В системе %system% уничтожен объект.
 
+SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
+Объект уничтожен
+
 SITREP_SHIP_DESTROYED_AT_SYSTEM
 %empire% %shipdesign% '%ship%' был уничтожен в %system%.
+
+SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
+Уничтожен корабль империи
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
 %shipdesign% был уничтожен в %system%.
 
+SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL
+Уничтожен корабль не имеющий владельца
+
 SITREP_FLEET_DESTROYED_AT_SYSTEM
 %empire% флот %fleet% был уничтожен в %system%.
+
+SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL
+Уничтожен флот империи
 
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM
 Флот %fleet% был уничтожен в %system%.
 
+SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM_LABEL
+Уничтожен флот не имеющий владельца
+
 SITREP_PLANET_DESTROYED_AT_SYSTEM
 Планета %planet% принадлежавшая %empire% была уничтожена в %system%.
+
+SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL
+Уничтожена планета империи
 
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM
 Планета %planet% была уничтожена в %system%.
 
+SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM_LABEL
+Уничтожена планета не имеющая владельца
+
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
 Строение %building% на планете %planet% принадлжавшее %empire% было уничтожено в %system%.
+
+SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
+Уничтожено строение империи
 
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
 Строение %building% на планете %planet% было уничтожено в %system%.
 
+SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
+Уничтожено строение не имевшее владельца
 
 SITREP_OBJECT_DAMAGED_AT_SYSTEM
 Объект был повреждён в %system%.
 
+SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
+Повреждён объект
+
 SITREP_SHIP_DAMAGED_AT_SYSTEM
 Корабль %shipdesign% '%ship%' принадлежащий %empire%  был повреждён в %system%.
+
+SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
+Повреждён корабль империи
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
 %shipdesign% был повреждён %system%.
 
+SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
+Повреждён корабль не имеющий владельца
+
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
 Планета %planet% принадлежащая %empire% в %system% подверглась бомбардировке.
+
+SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
+Планета империи подверглась бомбардировке
 
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
 Планета %planet% в %system% подверглась бомбардировке.
 
+SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL
+Подверглась бомбардировке планета не имеющая владельца
 
 SITREP_GROUND_BATTLE
-На планете %planet% произошёл наземный бой.
+На планете %planet% произошло наземное сражение.
+
+SITREP_GROUND_BATTLE_LABEL
+Наземное сражение
 
 SITREP_PLANET_CAPTURED
 %planet% была захвачена %empire%.
 
+SITREP_PLANET_CAPTURED_LABEL
+Захвачена планета
+
 SITREP_PLANET_LOST_STARVED_TO_DEATH
 Вся популяция планеты %planet% погибла голодной смертью. Планета потеряна!
+
+SITREP_PLANET_LOST_STARVED_TO_DEATH_LABEL
+Уничтожена планета
 
 SITREP_PLANET_COLONIZED
 Колонизирована планета %planet%.
 
+SITREP_PLANET_COLONIZED_LABEL
+Колонизирована планета
+
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 Флот %fleet% прибыл в систему %system%.
+
+SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
+Прибыл флот
 
 SITREP_EMPIRE_ELIMINATED
 Империя %empire% была уничтожена.
 
+SITREP_EMPIRE_ELIMINATED_LABEL
+Уничтожена империя
+
 SITREP_VICTORY
 Империя %empire% %text%
+
+SITREP_VICTORY_LABEL
+Победа
 
 SITREP_VICTORY_DESTRUCTION
 Наконец, таинственная страшная угроза, нависшая над галактикой, была ликвидирована. Источник опасности в галактике была побеждён, но его происхождение навсегда останется тайной.
 
+SITREP_VICTORY_DESTRUCTION_LABEL
+Победа уничтожением
+
 SITREP_VICTORY_CAPTURE
 Загадка, внушившая страх угрозы преследовавшей галактику, была разгадана и виновники, могущественные Экпериментаторы, находятся теперь под вашим контролем.
 
+SITREP_VICTORY_CAPTURE_LABEL
+Победа захватом
+
 SITREP_VICTORY_BIO
-Тайна страшных угроз, преследующих галактика была решена, и его исполнители, мощный экспериментаторы, встретили их просто судьба в руках ваш могучий флот войны.
+Загадка страшных угроз, преследовавших галактику была разгадана, и их виновники, могущественные экспериментаторы, встретили свою судьбу в руках вашего могучего военного флота.
+
+SITREP_VICTORY_BIO_LABEL
+Победа биологическая
+
+EFFECT_ANCIENT_SHIP
+В древних руинах на %planet% был обнаружен %predefinedshipdesign%.
+
+EFFECT_ANCIENT_SHIP_LABEL
+Корабль из древних руин
+
+EFFECT_ANCIENT_BUILDING
+В древних руинах на %planet% был обнаружен %buildingtype%.
+
+EFFECT_ANCIENT_BUILDING_LABEL
+Строение из древних руин
+
+EFFECT_ANCIENT_TECH
+В древних руинах на %planet% был обнаружен %tech%.
+
+EFFECT_ANCIENT_TECH_LABEL
+Технология из древних руин
+
+EFFECT_DRYDOCK_SHIP_REPAIR
+%ship% был отремонтирован в %building% на %planet%.
+
+EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
+Корабль отремонтирован
+
+#The following is for monster spawning testing.
+EFFECT_MONSTER_SPAWNING
+%predefinedshipdesign% был рождён в %system%!
+
+EFFECT_MONSTER_SPAWNING_LABEL
+Потомство монстра
+
+EFFECT_GAIAN_TERRAFORM
+Дух планеты %planet% терраформировал себя сам, чтобы быть помочь жителям планеты.
+
+EFFECT_GAIAN_TERRAFORM_LABEL
+Терраформинг Гайа
+
+EFFECT_TERRAFORM
+Планета %planet% терраформирована.
+
+EFFECT_TERRAFORM_LABEL
+Терраформирована
+
+EFFECT_STARVATION
+Голод поразил %planet%.
+
+EFFECT_STARVATION_LABEL
+Голод
+
+EFFECT_TAME_MONSTER_HATCHED
+Прирученый %predefinedshipdesign% готов к службе на %planet%.
+
+EFFECT_TAME_MONSTER_HATCHED_LABEL
+Приручен монстр
+
+EFFECT_GATEWAY_VOID_DESTROY
+%buildingtype% на %planet% уничтожен флотом %fleet%.
+
+EFFECT_GATEWAY_VOID_DESTROY_LABEL
+Уничтожен космический шлюз
+
+EFFECT_DERELICT_MINERALS
+20 минералов было найдено в заброшенном кем-то оборудовании в %system%.
+
+EFFECT_DERELICT_MINERALS_LABEL
+Найдены минералы
+
+EFFECT_DERELICT_MAP
+Информация об регионе была найдена в заброшенном кем-то оборудовании в %system%.
+
+EFFECT_DERELICT_MAP_LABEL
+Найдена карта
+
+EFFECT_DERELICT_FUEL
+Корабли были заправлены от найденого источника энергии в заброшенном кем-то оборудовании в %system%.
+
+EFFECT_DERELICT_FUEL_LABEL
+Найдено топливо
+
+EFFECT_BIOWEAPON
+В %system% произошла атака биологическим оружием, потеряно население!
+
+EFFECT_BIOWEAPON_LABEL
+Атака биологическим оружием
+
+EFFECT_EXOBOT
+Корабль-колония экзоботов был построен на %planet%.
+
+EFFECT_EXOBOT_LABEL
+Корабль экзоботов
 
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
@@ -2797,7 +2981,7 @@ SP_GYISACHE_DESC
 SP_CHATO
 Чато
 SP_CHATO_DESC
-'''Кристаллические образования, которые передвигаются верхом на животных Гормошк. 
+'''Кристаллические образования, которые передвигаются верхом на животных Джомош. 
 Предпочитаю токсичные планеты.
 Фототрофные
 
@@ -3245,18 +3429,16 @@ Prefer Ocean planets.
 
 
 Biology:
-A giant serpentine swimmer, an Ourbools most distinctive feature is the massive bow curving away on either side of their head.  This houses the gravi-sensory organs.  Three tentacles hanging in front of the mouth allow Ourbools to manipulate their environment.  Ourbools mate only once in their life, and devote the next 35 years to caring for the school of 5 to 7 young -- generally assisted by relatives.  Ourbools live long so
+Гигантские змеевидные водные обитатели, наиболее яркой отличительной особенностью которых является массивная дуга проходящая за головой с обеих её сторон. В ней располагаются органы чувствительные к гравитации. В передней части рта располагаются три щупальца посредством которых Аурбулсы контактируют с окружающим миром. Аурбулсы спариваются лишь один раз в жизни, и посвящают следующие 35 лет подготовке и образованию 5-7 летних, в чём обычно помогают родственники. Аурбулсы живут очень долго.
 
-Personality:
-Ourbools are inclined to a nomadic life, hunting or herding their prey ichtioids.  Society focuses to a large degree on the proper and graceful interaction between two wandering groups that meet by chance.
-A significant minority drop out of society and adopt sedentary lives bound by the practical requirements of their craft
+Индивидуальность:
+Аурбулсы склонны вести кочевой образ жизни, они охотятся или пасут свою рыбообразных добычу. Социальность в большей степени проявляется в виде  корректного и изящного взаимодействия между двумя случайно встретившимися блуждающими группами. Значительная доля из той малой части Аурбулсов покидающих общество и начинающих вести осёдлый образ жизни, делает это ради своего дела, продолжать которое ведя кочевой образ жизни невозможно.
 
-Homeworld:
-The homeworld, Oolur is orbited by 23 moons.
+Родная планета:
+На орбите родной планеты Аурбулсов 23 луны.
 
-Reason for Staying:
-The Ourbools find their sense of position via the regular movements of the 23 moons.  Everything is perceived against that gravitational background.  To be removed from that context is extremely disorienting to the point of "blinding" the unlucky traveler.  He no longer has the familiar to calibrate against so all he can perceive is meaningless graviton noise.
-'''
+Причины оставаться:
+Аурбулсы находят своё местоположение через регулярные движения 23х лун. Всё восприятие построено на этом гравитационном фоне. При удалении из этого окружения становятся крайне дезориентированы, вплоть до полной "слепоты" неудачных путешественников. Нет отправной точки для калибровки, и поэтому всё что они смогут воспринять - это бессмысленный гравитационный шум.'''
 
 SP_VOLP
 Volp-Uglush
@@ -4331,52 +4513,6 @@ DESC_CREATE_SHIP
 
 DESC_CREATE_SHIP_SIMPLE
 Построить новый корабль по проекту %1% без владельца и без расы
-
-
-# Effect Sitreps
-
-EFFECT_ANCIENT_SHIP
-В древних руинах на %planet% был обнаружен %predefinedshipdesign%.
-
-EFFECT_ANCIENT_BUILDING
-В древних руинах на %planet% был обнаружен %buildingtype%.
-
-EFFECT_ANCIENT_TECH
-В древних руинах на %planet% был обнаружен %tech%.
-
-EFFECT_DRYDOCK_SHIP_REPAIR
-%ship% был отремонтирован в %building% на %planet%.
-
-#The following is for monster spawning testing.
-EFFECT_MONSTER_SPAWNING
-%predefinedshipdesign% был рождён в %system%!
-
-EFFECT_GAIAN_TERRAFORM
-Дух планеты %planet% терраформировал себя сам, чтобы быть помочь жителям планеты.
-
-EFFECT_TERRAFORM
-Планета %planet% терраформирована.
-
-EFFECT_STARVATION
-Голод поразил %planet%.
-
-EFFECT_TAME_MONSTER_HATCHED
-Прирученый %predefinedshipdesign% готов к службе на %planet%.
-
-EFFECT_GATEWAY_VOID_DESTROY
-%buildingtype% на %planet% уничтожен флотом %fleet%.
-
-EFFECT_DERELICT_MINERALS
-20 минералов было найдено в заброшенном кем-то оборудовании в %system%.
-
-EFFECT_DERELICT_MAP
-Информация об регионе была найдена в заброшенном кем-то оборудовании в %system%.
-
-EFFECT_DERELICT_FUEL
-Корабли были заправлены от найденого источника энергии в заброшенном кем-то оборудовании в %system%.
-
-EFFECT_BIOWEAPON
-Биологическая атака произошла в %system% население потеряно!
 
 
 # Conditions
@@ -7721,121 +7857,121 @@ NARROW_EP
 
 
 STANDARD_CONSTRUCTION_LABEL
-'''%1% Average Infrastructure'''
+'''%1% Обычная Инфраструктура'''
 
 GOOD_ENVIRONMENT_LABEL
-'''%1% Good Environment'''
+'''%1% Хорошая Окружающая Среда'''
 
 ADEQUATE_ENVIRONMENT_LABEL
-'''%1% Adequate Environment'''
+'''%1% Адекватная Окружающая Среда'''
 
 POOR_ENVIRONMENT_LABEL
-'''%1% Poor Environment'''
+'''%1% Плохая Окружающая Среда'''
 
 HOSTILE_ENVIRONMENT_LABEL
-'''%1% Hostile Environment'''
+'''%1% Враждебная Среда'''
 
 ENV_ENCAPSUL_LABEL
-'''%1% Environmental Encapsulation'''
+'''%1% Инкапсуляция Природной Среды'''
 
 TUNNELS_LABEL
-'''Subterranean Bonus'''
+'''Бонус Подземных Туннелей '''
 
 HOMEWORLD_LABEL
-'''Homeworld'''
+'''Родная Планета'''
 
 BAD_POPULATION_LABEL
-'''%2% Bad Population 75%%'''
+'''%2% Плохой Рост Населения 75%%'''
 
 GOOD_POPULATION_LABEL
-'''%2% Good Population 125%%'''
+'''%2% Хороший Рост Населения 125%%'''
 
 FOCUS_MINING_LABEL
-'''%1% Mining Focus'''
+'''%1% Приоритет Добычи'''
 
 FOCUS_HEAVY_MINING_LABEL
-'''%1% Heavy Mining Focus'''
+'''%1% Приоритет Тяжёлой Горной Промышленности'''
 
 BAD_MINING_LABEL
-'''%1% Bad Mining'''
+'''%1% Плохая Добыча'''
 
 GOOD_MINING_LABEL
-'''%1% Good Mining'''
+'''%1% Хорошая Добыча'''
 
 GREAT_MINING_LABEL
-'''%1% Great Mining'''
+'''%1% Отличная Добыча'''
 
 ULTIMATE_MINING_LABEL
-'''%1% Ultimate Mining'''
+'''%1% Лучшая Добыча'''
 
 FOCUS_INDUSTRY_LABEL
-'''%2% Industry Focus'''
+'''%2% Приоритет Промышленности'''
 
 BAD_INDUSTRY_LABEL
-'''%2% Bad Industry'''
+'''%2% Плохая Промышленность'''
 
 GOOD_INDUSTRY_LABEL
-'''%2% Good Industry'''
+'''%2% Хорошая Промышленность'''
 
 GREAT_INDUSTRY_LABEL
-'''%2% Great Industry'''
+'''%2% Отличная Промышленность'''
 
 ULTIMATE_INDUSTRY_LABEL
-'''%2% Ultimate Industry'''
+'''%2% Лучшая Промышленность'''
 
 FOCUS_RESEARCH_LABEL
-'''%2% Research Focus'''
+'''%2% Приоритет Исследований'''
 
 BAD_RESEARCH_LABEL
-'''%2% Bad Research'''
+'''%2% Плохие Исследователи'''
 
 GOOD_RESEARCH_LABEL
-'''%2% Good Research'''
+'''%2% Хорошие Иследователи'''
 
 GREAT_RESEARCH_LABEL
-'''%2% Great Research'''
+'''%2% Отличные Исследователи'''
 
 ULTIMATE_RESEARCH_LABEL
-'''%2% Ultimate Research'''
+'''%2% Лучшие Исследователи'''
 
 BAD_TROOPS_LABEL
-'''%2% Bad Ground Troops'''
+'''%2% Плохие Сухопутные Войска'''
 
 AVERAGE_TROOPS_LABEL
-'''%2% Average Ground Troops'''
+'''%2% Обычные Сухопутные Войска'''
 
 GOOD_TROOPS_LABEL
-'''%2% Good Ground Troops'''
+'''%2% Хорошие Сухопутные Войска'''
 
 GREAT_TROOPS_LABEL
-'''%2% Great Ground Troops'''
+'''%2% Отличные Сухопутные Войска'''
 
 ULTIMATE_TROOPS_LABEL
-'''%2% Ultimate Ground Troops'''
+'''%2% Лучшие Сухопутные Войска'''
 
 VERY_BRIGHT_STAR
-'''Very bright star'''
+'''Очень яркая звезда'''
 
 BRIGHT_STAR
-'''Bright star'''
+'''Яркая звезда'''
 
 DIM_STAR
-'''Dim star'''
+'''Тусклая звезда'''
 
 NO_STAR
-'''No star'''
+'''Нет Звезды'''
 
 HOMEWORLD_SUPPLY
-'''Homeworld Supply'''
+'''Поддержка Родной Планеты'''
 
 HOMEWORLD_BONUS
-'''Homeworld'''
+'''Родная Планета'''
 
 ORBITAL_HAB_LABEL
-'''Orbital Habitation'''
+'''Орбитальное Жильё'''
 
 NDIM_STRC_LABEL
-'''N-Dimensional Structures'''
+'''Многомерные Строения'''
 
 WEAK_VISION_LABEL
 '''Weak Vision'''

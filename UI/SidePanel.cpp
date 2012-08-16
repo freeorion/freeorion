@@ -90,8 +90,7 @@ namespace {
         };
 
         PlanetAtmosphereData() {}
-        PlanetAtmosphereData(const XMLElement& elem)
-        {
+        PlanetAtmosphereData(const XMLElement& elem) {
             if (elem.Tag() != "PlanetAtmosphereData")
                 throw std::invalid_argument("Attempted to construct a PlanetAtmosphereData from an XMLElement that had a tag other than \"PlanetAtmosphereData\"");
             planet_filename = elem.Child("planet_filename").Text();
@@ -186,8 +185,7 @@ namespace {
         return retval;
     }
 
-    double      GetRotatingPlanetDiffuseIntensity()
-    {
+    double      GetRotatingPlanetDiffuseIntensity() {
         static double retval = -1.0;
 
         if (retval == -1.0) {
@@ -359,14 +357,12 @@ namespace {
         glPopAttrib();
     }
 
-    int         MaxPlanetDiameter() {
-        return GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
-    }
+    int         MaxPlanetDiameter()
+    { return GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter"); }
 
     int         PlanetDiameter(PlanetSize size) {
         double scale = 0.0;
-        switch (size)
-        {
+        switch (size) {
         case SZ_TINY      : scale = 1.0/7.0; break;
         case SZ_SMALL     : scale = 2.0/7.0; break;
         case SZ_MEDIUM    : scale = 3.0/7.0; break;

@@ -157,6 +157,7 @@
     <ClInclude Include="..\..\UI\MapWnd.h" />
     <ClInclude Include="..\..\UI\MarkupBox.h" />
     <ClInclude Include="..\..\UI\MultiplayerLobbyWnd.h" />
+    <ClInclude Include="..\..\UI\ObjectListWnd.h" />
     <ClInclude Include="..\..\UI\OptionsWnd.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\BatchedGeometry.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\BatchPage.h" />
@@ -268,6 +269,7 @@
     <ClCompile Include="..\..\UI\MapWnd.cpp" />
     <ClCompile Include="..\..\UI\MarkupBox.cpp" />
     <ClCompile Include="..\..\UI\MultiplayerLobbyWnd.cpp" />
+    <ClCompile Include="..\..\UI\ObjectListWnd.cpp" />
     <ClCompile Include="..\..\UI\OptionsWnd.cpp" />
     <ClCompile Include="..\..\UI\PagedGeometry\BatchedGeometry.cpp" />
     <ClCompile Include="..\..\UI\PagedGeometry\BatchPage.cpp" />

@@ -12,8 +12,7 @@ class CUIButton;
 
 
 /** a simple minimize/restore button that toggles its appearance between the styles for minimize and restore*/
-class CUI_MinRestoreButton : public GG::Button
-{
+class CUI_MinRestoreButton : public GG::Button {
 public:
    /** the two modes of operation of this class of button: as a minimize button or as a restore button */
    enum Mode {
@@ -34,8 +33,7 @@ private:
 };
 
 /** a basic X-shaped close button. */
-class CUI_CloseButton : public GG::Button
-{
+class CUI_CloseButton : public GG::Button {
 public:
    CUI_CloseButton(GG::X x, GG::Y y);
 
@@ -81,8 +79,7 @@ extern GG::WndFlag CLOSABLE;       ///< allows the window to be closed
       to the resize signal.
     
 */
-class CUIWnd : public GG::Wnd
-{
+class CUIWnd : public GG::Wnd {
 public:
     //! \name Structors //@{
     CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); //!< Constructs the window to be a CUI window
@@ -153,8 +150,7 @@ protected:
 
 // This didn't seem big enough to warrant its own file, so this seemed like a good enough place for it....
 /** provides a convenient modal wnd for getting text user input. */
-class CUIEditWnd : public CUIWnd
-{
+class CUIEditWnd : public CUIWnd {
 public:
     CUIEditWnd(GG::X w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags = GG::MODAL);
 

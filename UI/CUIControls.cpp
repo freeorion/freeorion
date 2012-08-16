@@ -959,13 +959,6 @@ bool CUIToolBar::InWindow(const GG::Pt& pt) const {
     return GG::Wnd::InWindow(pt);
 }
 
-void CUIToolBar::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
-    GG::Pt final_move(std::max(-ul.x, std::min(move.x, GG::GUI::GetGUI()->AppWidth() - 1 - lr.x)),
-                      std::max(-ul.y, std::min(move.y, GG::GUI::GetGUI()->AppHeight() - 1 - lr.y)));
-    GG::Wnd::LDrag(pt + final_move - move, final_move, mod_keys);
-}
-
 void CUIToolBar::Render() {
     GG::Pt ul(UpperLeft() - GG::Pt(GG::X1, GG::Y1));
     GG::Pt lr(LowerRight() + GG::Pt(GG::X(1), GG::Y0));

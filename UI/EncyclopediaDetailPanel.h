@@ -4,8 +4,6 @@
 
 #include "CUIWnd.h"
 
-#include <boost/weak_ptr.hpp>
-
 class Tech;
 class PartType;
 class HullType;
@@ -27,13 +25,12 @@ namespace GG {
 class EncyclopediaDetailPanel : public CUIWnd {
 public:
     //! \name Structors //!@{
-    EncyclopediaDetailPanel(GG::X x, GG::Y y);
+    EncyclopediaDetailPanel(GG::X w, GG::Y h);
     //!@}
 
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void    Render();
-    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
 
     /** Need to redefine this so that icons and name can be put at the top of
       * the Wnd, rather than being restricted to the client area of a CUIWnd */
@@ -77,7 +74,7 @@ public:
 
 private:
     void DoLayout();
-    
+
     void HandleLinkClick(const std::string& link_type, const std::string& data);
     void HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
     void CheckUpButton();

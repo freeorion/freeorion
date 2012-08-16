@@ -55,28 +55,29 @@ namespace {
     public:
         RowContentsWnd(GG::X w, GG::Y h, Wnd* contents, int indentation_level) :
             Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE)
-            {
-                assert(contents);
-                if (!indentation_level) {
-                    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, w, h, 1, 1);
-                    layout->Add(contents, 0, 0);
-                    SetLayout(layout);
-                } else {
-                    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, w, h, 1, 2);
-                    layout->SetMinimumColumnWidth(0, indentation_level * INDENTATION);
-                    layout->SetColumnStretch(1, 1.0);
-                    layout->Add(new PlaceholderWnd(GG::X1, GG::Y1), 0, 0);
-                    layout->Add(contents, 0, 1);
-                    SetLayout(layout);
-                }
+        {
+            assert(contents);
+            if (!indentation_level) {
+                GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, w, h, 1, 1);
+                layout->Add(contents, 0, 0);
+                SetLayout(layout);
+            } else {
+                GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, w, h, 1, 2);
+                layout->SetMinimumColumnWidth(0, indentation_level * INDENTATION);
+                layout->SetColumnStretch(1, 1.0);
+                layout->Add(new PlaceholderWnd(GG::X1, GG::Y1), 0, 0);
+                layout->Add(contents, 0, 1);
+                SetLayout(layout);
             }
+        }
         virtual void Render() {}
     };
 
     struct BrowseForPathButtonFunctor {
         BrowseForPathButtonFunctor(const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters,
                                    CUIEdit* edit, bool directory, bool return_relative_path) :
-            m_path(path), m_filters(filters), m_edit(edit), m_directory(directory), m_return_relative_path(return_relative_path) {}
+            m_path(path), m_filters(filters), m_edit(edit), m_directory(directory), m_return_relative_path(return_relative_path)
+        {}
 
         void operator()() {
             try {
@@ -223,8 +224,8 @@ namespace {
         SetOptionFunctor(const std::string& option_name, CUIEdit* edit = 0, OptionsWnd::StringValidator string_validator = 0) :
             m_option_name(option_name), m_edit(edit), m_string_validator(string_validator)
         { assert(bool(m_edit) == bool(m_string_validator)); }
-        void operator()(const std::string& str)
-        {
+
+        void operator()(const std::string& str) {
             if (m_string_validator && !m_string_validator(str)) {
                 if (m_edit)
                     m_edit->SetTextColor(GG::CLR_RED);
@@ -241,7 +242,8 @@ namespace {
 
     struct DropListIndexSetOptionFunctor {
         DropListIndexSetOptionFunctor(const std::string& option_name, CUIDropDownList* drop_list) :
-            m_option_name(option_name), m_drop_list(drop_list) {}
+            m_option_name(option_name), m_drop_list(drop_list)
+        {}
         void operator()(GG::DropDownList::iterator it) {
             assert(it != m_drop_list->end());
             GetOptionsDB().Set<std::string>(m_option_name, (*it)->Name());

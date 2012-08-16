@@ -15,6 +15,7 @@
 #include "ProductionWnd.h"
 #include "ResearchWnd.h"
 #include "EncyclopediaDetailPanel.h"
+#include "ObjectListWnd.h"
 #include "SidePanel.h"
 #include "SitRepPanel.h"
 #include "SystemIcon.h"
@@ -514,6 +515,7 @@ MapWnd::MapWnd() :
     m_production_wnd(0),
     m_design_wnd(0),
     m_pedia_panel(0),
+    m_object_list_wnd(0),
     m_starlane_endpoints(),
     m_stationary_fleet_buttons(),
     m_departing_fleet_buttons(),
@@ -550,6 +552,7 @@ MapWnd::MapWnd() :
     m_btn_production(0),
     m_btn_design(0),
     m_btn_pedia(0),
+    m_btn_objects(0),
     m_btn_menu(0),
     m_FPS(0),
     m_scale_line(0),
@@ -594,9 +597,16 @@ MapWnd::MapWnd() :
 
     // encyclpedia panel
     m_pedia_panel = new EncyclopediaDetailPanel(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
-    //GG::Connect(m_pedia_panel->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::TogglePedia, this)));    // pedia panel is manually closed by user (not possible?)
     GG::GUI::GetGUI()->Register(m_pedia_panel);
     m_pedia_panel->Hide();
+
+
+    // objects list
+    m_object_list_wnd = new ObjectListWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    //GG::Connect(m_object_list_wnd->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleObjects, this)));// sitrep panel is manually closed by user
+    GG::GUI::GetGUI()->Register(m_object_list_wnd);
+    m_object_list_wnd->Hide();
+    GG::Connect(m_object_list_wnd->ObjectDumpSignal,    &ClientUI::DumpObject,  ClientUI::GetClientUI());
 
 
     // research window
@@ -734,6 +744,17 @@ MapWnd::MapWnd() :
     m_btn_siterep->SetInWindow(in_window_func);
 
 
+    // Objects button
+    button_width = font->TextExtent(UserString("MAP_BTN_OBJECTS")).x + BUTTON_TOTAL_MARGIN;
+    m_btn_objects = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_OBJECTS"));
+    GG::Connect(m_btn_objects->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleObjects, this)));
+    in_window_func =
+        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_objects),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, m_btn_objects),  boost::bind(&WndBottom, m_btn_objects),
+                    _1);
+    m_btn_objects->SetInWindow(in_window_func);
+
+
     // resources
     const GG::X ICON_DUAL_WIDTH(100);
     const GG::X ICON_WIDTH(ICON_DUAL_WIDTH - 30);
@@ -785,6 +806,11 @@ MapWnd::MapWnd() :
 
     layout->SetColumnStretch(layout_column, 1.0);
     layout->Add(m_population,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, m_btn_objects->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_btn_objects,      0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, m_btn_siterep->Width());
@@ -853,6 +879,7 @@ MapWnd::~MapWnd() {
     delete m_scale_line;
     delete m_zoom_slider;
     delete m_sitrep_panel;
+    delete m_object_list_wnd;
     delete m_pedia_panel;
     delete m_research_wnd;
     delete m_production_wnd;
@@ -1515,8 +1542,7 @@ void MapWnd::RenderVisibilityRadii() {
 void MapWnd::LButtonDown(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 { m_drag_offset = pt - ClientUpperLeft(); }
 
-void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> mod_keys)
-{
+void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> mod_keys) {
     GG::Pt move_to_pt = pt - m_drag_offset;
     CorrectMapPosition(move_to_pt);
 
@@ -1524,14 +1550,12 @@ void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> m
     m_dragged = true;
 }
 
-void MapWnd::LButtonUp(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void MapWnd::LButtonUp(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     m_dragged = false;
 }
 
-void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     if (!m_dragged && !m_in_production_view_mode) {
         SelectSystem(INVALID_OBJECT_ID);
@@ -1540,8 +1564,7 @@ void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
     m_dragged = false;
 }
 
-void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
+void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     // Attempt to close open fleet windows (if any are open and this is allowed), then attempt to close the SidePanel (if open);
     // if these fail, go ahead with the context-sensitive popup menu . Note that this enforces a one-close-per-click policy.
 
@@ -1556,14 +1579,12 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     }
 }
 
-void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{
+void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {
     if (move)
         Zoom(move, pt);
 }
 
-void MapWnd::EnableOrderIssuing(bool enable/* = true*/)
-{
+void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
     // disallow order enabling if there is no empire for this client
     if (HumanClientApp::GetApp()->EmpireID() == ALL_EMPIRES)
         enable = false;
@@ -1681,6 +1702,9 @@ void MapWnd::InitTurn() {
         m_sitrep_panel->ShowSitRepsForTurn(CurrentTurn());
         ShowSitRep();
     }
+
+    if (m_object_list_wnd->Visible())
+        m_object_list_wnd->Refresh();
 
 
     EnableAlphaNumAccels();
@@ -3423,6 +3447,7 @@ void MapWnd::Cleanup() {
     HideDesign();
     HideSitRep();
     HidePedia();
+    HideObjects();
     m_pedia_panel->ClearItems();    // deletes all pedia items in the memory
     m_toolbar->Hide();
     m_FPS->Hide();
@@ -3454,6 +3479,8 @@ void MapWnd::Sanitize() {
 
     m_sitrep_panel->MoveTo(GG::Pt(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->LowerRight().y));
     m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
+
+    m_object_list_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN)));
 
     m_pedia_panel->MoveTo(GG::Pt(m_sitrep_panel->UpperLeft().x, m_sitrep_panel->LowerRight().y));
 
@@ -3552,6 +3579,37 @@ bool MapWnd::EndTurn() {
     return true;
 }
 
+void MapWnd::ShowObjects() {
+    ClearProjectedFleetMovementLines();
+
+    // hide other "competing" windows
+    HideResearch();
+    HideProduction();
+    HideDesign();
+
+    // update objects window
+    m_object_list_wnd->Refresh();
+
+    // show the objects window
+    m_object_list_wnd->Show();
+
+    // indicate selection on button
+    m_btn_objects->MarkSelectedGray();
+}
+
+void MapWnd::HideObjects() {
+    m_object_list_wnd->Hide(); // necessary so it won't be visible when next toggled
+    m_btn_objects->MarkNotSelected();
+}
+
+bool MapWnd::ToggleObjects() {
+    if (m_object_list_wnd->Visible())
+        HideObjects();
+    else
+        ShowObjects();
+    return true;
+}
+
 void MapWnd::ShowSitRep() {
     ClearProjectedFleetMovementLines();
 
@@ -3628,6 +3686,7 @@ void MapWnd::ShowResearch() {
     ClearProjectedFleetMovementLines();
 
     // hide other "competing" windows
+    HideObjects();
     HideSitRep();
     HideProduction();
     HideDesign();
@@ -3662,6 +3721,7 @@ void MapWnd::ShowProduction() {
     ClearProjectedFleetMovementLines();
 
     // hide other "competing" windows
+    HideObjects();
     HideSitRep();
     HideResearch();
     HideDesign();
@@ -3714,6 +3774,7 @@ void MapWnd::ShowDesign() {
     ClearProjectedFleetMovementLines();
 
     // hide other "competing" windows
+    HideObjects();
     HideSitRep();
     HideResearch();
     HideProduction();

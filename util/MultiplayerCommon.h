@@ -54,8 +54,7 @@ void Sleep(int ms);
 #endif
 
 /** The data that represent the galaxy setup for a new game. */
-struct GalaxySetupData
-{
+struct GalaxySetupData {
     /** \name Structors */ //@{
     GalaxySetupData() :
         m_size(100),
@@ -86,8 +85,7 @@ private:
 
 /** Contains the UI data that must be saved in save game files in order to
   * restore games to the users' last views. */
-struct SaveGameUIData
-{
+struct SaveGameUIData {
     int     map_top;
     int     map_left;
     double  map_zoom_steps_in;
@@ -99,8 +97,7 @@ private:
 };
 
 /** The data for one empire necessary for game-setup during multiplayer loading. */
-struct SaveGameEmpireData
-{
+struct SaveGameEmpireData {
     /** \name Structors */ //@{
     SaveGameEmpireData() :
         m_empire_id(ALL_EMPIRES),
@@ -130,8 +127,7 @@ private:
 
 /** The data structure used to represent a single player's setup options for a
   * multiplayer game (in the multiplayer lobby screen). */
-struct PlayerSetupData
-{
+struct PlayerSetupData {
     /** \name Structors */ //@{
     PlayerSetupData() :
         m_player_name(),
@@ -166,8 +162,7 @@ bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
   * is true, a new game is to be started, using the remaining members besides
   * \a m_filename.  Otherwise, the saved game \a m_filename will be loaded
   * instead. */
-struct SinglePlayerSetupData : public GalaxySetupData
-{
+struct SinglePlayerSetupData : public GalaxySetupData {
     /** \name Structors */ //@{
     SinglePlayerSetupData():
         m_new_game(true),
@@ -187,8 +182,7 @@ private:
 };
 
 /** The data structure that represents the state of the multiplayer lobby. */
-struct MultiplayerLobbyData : public GalaxySetupData
-{
+struct MultiplayerLobbyData : public GalaxySetupData {
     /** \name Structors */ //@{
     MultiplayerLobbyData() :
         m_new_game(true),
@@ -214,8 +208,7 @@ private:
 };
 
 /** Information about one player that other players are informed of.  Assembled by server and sent to players. */
-struct PlayerInfo
-{
+struct PlayerInfo {
     PlayerInfo() :
         name(""),
         empire_id(ALL_EMPIRES),
@@ -244,8 +237,7 @@ struct CombatSetupGroup;
 
 /** The state of combat (units, planets, their health, etc.) at the start of a
     round of combat. */
-struct CombatData
-{
+struct CombatData {
     CombatData() :
         m_combat_turn_number(0),
         m_system(0)
@@ -267,8 +259,7 @@ struct CombatData
 
 /** Regions in which the user is allowed or disallowed to place ships during
     combat setup. */
-struct CombatSetupRegion
-{
+struct CombatSetupRegion {
     /** The types of setup-regions. */
     enum Type {
         RING,           ///< A ring concentric with the System.
@@ -319,8 +310,7 @@ struct CombatSetupRegion
 bool PointInRegion(double point[2], const CombatSetupRegion& region);
 
 /** A group of ships and a description of where they may be placed. */
-struct CombatSetupGroup
-{
+struct CombatSetupGroup {
     CombatSetupGroup() :
         m_allow(false)
     {}

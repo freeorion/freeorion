@@ -29,7 +29,6 @@ public:
     void            OpenForInput();
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey>& mod_keys);
     //@}
 
     mutable boost::signal<void ()> TypingSignal;        // emitted when the edit gains focus.  keyboard accelerators elsehwere should be disabled
