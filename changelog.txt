@@ -1,7 +1,8 @@
 v0.4.1+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Balancing:
- ~ Reworked how supply networks work. There is now no distinction between fleet and resource supply ranges; both use the supply meter.
+ ~ Unified resource and fleet supply into a single meter-- the Supply Meter.
+ ~ ~ Outpost now provide 1 jump supply, and colonies 2 jump supply.  Techs and buildings can extend that.
 
 
 v0.4.1 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

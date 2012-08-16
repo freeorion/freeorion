@@ -2475,7 +2475,7 @@ Peace is the diplomatic state between empires in which they mutually agree not t
 OUTPOSTS_TITLE
 Outposts
 OUTPOSTS_TEXT
-'''Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they can create supply lines and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an outpost pod on a ship.'''
+'''Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create supply lines (+1) and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an outpost pod on a ship.'''
 
 GROWTH_FOCUS_TITLE
 Growth Focus
@@ -5276,7 +5276,7 @@ CON_CONTGRAV_ARCH
 Controlled Gravity Architecture
 
 CON_CONTGRAV_ARCH_DESC
-'''Increases the max resource supply range of all colonies by 1.
+'''Increases the Supply range of all colonies by 1.
 
 By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
 
@@ -5286,7 +5286,7 @@ CON_GAL_INFRA
 Galactic Infrastructure
 
 CON_GAL_INFRA_DESC
-'''Increases the max resource supply range of all colonies by 1.
+'''Increases the Supply range of all colonies by 1.
 
 The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena. By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
 
@@ -5564,7 +5564,7 @@ TRADE_SHORT_DESC
 Improves Trade
 
 CONSTRUCTION_SHORT_DESC
-Improves Resource Supply
+Improves Infrastructure
 
 DEFENSE_SHORT_DESC
 Improves Planetary Defense
@@ -5621,7 +5621,7 @@ CON_ORBITAL_CON
 Orbital Construction
 
 CON_ORBITAL_CON_DESC
-'''Increases the max resource supply range of all colonies by 1.
+'''Increases the Supply range of all colonies by 1.
 
 On a planet, there is always a fixed reference direction: "up". Microgravity is effectively isotropic. This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment. As well, the interior configuration of spaces in orbit must be rethought. However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces. Rather than a complete break from older styles, a gradual transition may be more effective.'''
 
@@ -6470,7 +6470,7 @@ BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases Resource Supply Range by 3, Construction by 20, Defense by 5, and Troops by 10. Also sets the owner's Capital for the empire.
+'''Increases Supply Range by 1, Infrastructure by 20, Defense by 5, and Troops by 10. Also sets the owner's Capital for the empire.
 
 Represents imperial power and prestige and functions as a centre of control for the empire's holdings.'''
 
@@ -6612,7 +6612,7 @@ BLD_MEGALITH
 Megalith
 
 BLD_MEGALITH_DESC
-'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to resource supply range, and 30 to construction. Additionally all resource meters are able to reach target in a single turn.
+'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to Supply range, and 30 to construction. Additionally all resource meters are able to reach target in a single turn.
 
 The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
 
@@ -6620,7 +6620,7 @@ BLD_SPACE_ELEVATOR
 Space Elevator
 
 BLD_SPACE_ELEVATOR_DESC
-'''Triples resource supply range on the planet on which it is built.
+'''Doubles Supply range on the planet on which it is built.
 
 An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end.'''
 
@@ -7263,7 +7263,7 @@ CO_OUTPOST_POD
 Outpost Module
 
 CO_OUTPOST_POD_DESC
-'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets.  Outposts do not supply production.'''
+'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they create supply lines (+1) and provide vision. Colonies can be founded on planets that already have an Outpost.'''
 
 GT_TROOP_POD
 Ground Troop Pod
@@ -7825,6 +7825,12 @@ NARROW_EP
 
 STANDARD_CONSTRUCTION_LABEL
 '''%1% Average Infrastructure'''
+
+STANDARD_COLONY_SUPPLY_LABEL
+'''%2% Average Colony Supply'''
+
+STANDARD_OUTPOST_SUPPLY_LABEL
+'''%2% Average Outpost Supply'''
 
 GOOD_ENVIRONMENT_LABEL
 '''%1% Good Environment'''

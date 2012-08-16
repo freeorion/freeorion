@@ -863,8 +863,8 @@ Tech
             OwnedBy TheEmpire Source.Owner
             Planet Population high = 0
             ] 
-        accountinglabel = "STANDARD_CONSTRUCTION_LABEL"
-        effects = SetTargetConstruction Value + 20
+        accountinglabel = "STANDARD_OUTPOST_SUPPLY_LABEL"
+        effects = SetSupply Value + 1
     graphic = "icons/tech/habitation_domes.png"
 
 Tech
