@@ -1,7 +1,7 @@
 v0.4.1+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Balancing:
- ~ Unified resource and fleet supply into a single meter-- the Supply Meter.
+ ~ Unified resource and fleet supply into a single meter-- the Supply Meter. Infrastructure is not involved.
  ~ ~ Outpost now provide 1 jump supply, and colonies 2 jump supply.  Techs and buildings can extend that.
 
 
