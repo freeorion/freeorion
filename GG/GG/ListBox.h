@@ -375,6 +375,7 @@ public:
     void           SetSelections(const SelectionSet& s);  ///< sets the set of selected rows to \a s
     void           SetCaret(iterator it);                 ///< sets the position of the caret to \a it
     void           BringRowIntoView(iterator it);         ///< moves the scrollbars so that row \a it is visible
+    void           SetFirstRowShown(iterator it);         ///< moves the scrollbars so that row \a it is the first visible
 
     void           SetInteriorColor(Clr c);               ///< sets the color painted into the client area of the control
     void           SetHiliteColor(Clr c);                 ///< sets the color behind selected line items

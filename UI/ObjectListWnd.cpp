@@ -498,10 +498,11 @@ public:
             }
         }
 
-        if (!this->Empty())
+        if (first_visible_queue_row < this->NumRows()) {
+            this->SetFirstRowShown(boost::next(this->begin(), first_visible_queue_row));
+        } else if (!this->Empty()) {
             this->BringRowIntoView(--this->end());
-        if (first_visible_queue_row < this->NumRows())
-            this->BringRowIntoView(boost::next(this->begin(), first_visible_queue_row));
+        }
     }
 
 private:

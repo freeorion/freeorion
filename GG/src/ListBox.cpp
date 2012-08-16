@@ -923,6 +923,20 @@ void ListBox::BringRowIntoView(iterator it)
     }
 }
 
+void ListBox::SetFirstRowShown(iterator it)
+{
+    if (it != m_rows.end()) {
+        m_first_row_shown = it;
+        if (m_vscroll) {
+            Y acc(0);
+            for (iterator it2 = m_rows.begin(); it2 != m_first_row_shown; ++it2)
+                acc += (*it)->Height();
+            m_vscroll->ScrollTo(Value(acc));
+            SignalScroll(*m_vscroll, true);
+        }
+    }
+}
+
 void ListBox::SetInteriorColor(Clr c)
 { m_int_color = c; }
 
