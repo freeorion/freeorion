@@ -108,6 +108,7 @@ BuildingType
     buildtime = 5
     tags = "ORBITAL"
     location = And [
+        TargetPopulation low = 1
         Not Contains And [
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
