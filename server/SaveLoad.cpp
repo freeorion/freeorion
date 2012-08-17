@@ -13,6 +13,10 @@
 #include "../util/OrderSet.h"
 #include "../util/Serialize.h"
 
+#include <GG/utf8/checked.h>
+
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/map.hpp>
@@ -20,6 +24,9 @@
 #include <boost/serialization/vector.hpp>
 
 #include <fstream>
+
+
+namespace fs = boost::filesystem;
 
 namespace {
     std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empire_manager) {
@@ -42,9 +49,19 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
     std::map<int, SaveGameEmpireData> empire_save_game_data = CompileSaveGameEmpireData(empire_manager);
 
     try {
-        std::ofstream ofs(filename.c_str(), std::ios_base::binary);
+#ifdef FREEORION_WIN32
+        // convert UTF-8 file name to UTF-16
+        fs::path::string_type file_name_native;
+        utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(file_name_native));
+        fs::path path = fs::path(file_name_native);
+#else
+        fs::path path = fs::path(filename);
+#endif
+        fs::ofstream ofs(path, std::ios_base::binary);
+
         if (!ofs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
+
         FREEORION_OARCHIVE_TYPE oa(ofs);
         oa << BOOST_SERIALIZATION_NVP(server_save_game_data);
         oa << BOOST_SERIALIZATION_NVP(player_save_game_data);
@@ -62,6 +79,8 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
               std::vector<PlayerSaveGameData>& player_save_game_data,
               Universe& universe, EmpireManager& empire_manager, SpeciesManager& species_manager)
 {
+    Sleep(10000);
+
     // player notifications
     if (ServerApp* server = ServerApp::GetApp())
         server->Networking().SendMessage(TurnProgressMessage(Message::LOADING_GAME));
@@ -74,7 +93,16 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
     universe.Clear();
 
     try {
-        std::ifstream ifs(filename.c_str(), std::ios_base::binary);
+#ifdef FREEORION_WIN32
+        // convert UTF-8 file name to UTF-16
+        fs::path::string_type file_name_native;
+        utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(file_name_native));
+        fs::path path = fs::path(file_name_native);
+#else
+        fs::path path = fs::path(filename);
+#endif
+        fs::ifstream ifs(path, std::ios_base::binary);
+
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         FREEORION_IARCHIVE_TYPE ia(ifs);
@@ -96,7 +124,16 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
     ServerSaveGameData ignored_server_save_game_data;
 
     try {
-        std::ifstream ifs(filename.c_str(), std::ios_base::binary);
+#ifdef FREEORION_WIN32
+        // convert UTF-8 file name to UTF-16
+        fs::path::string_type file_name_native;
+        utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(file_name_native));
+        fs::path path = fs::path(file_name_native);
+#else
+        fs::path path = fs::path(filename);
+#endif
+        fs::ifstream ifs(path, std::ios_base::binary);
+
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         FREEORION_IARCHIVE_TYPE ia(ifs);
@@ -115,7 +152,16 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
     std::vector<PlayerSaveGameData> ignored_player_save_game_data;
 
     try {
-        std::ifstream ifs(filename.c_str(), std::ios_base::binary);
+#ifdef FREEORION_WIN32
+        // convert UTF-8 file name to UTF-16
+        fs::path::string_type file_name_native;
+        utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(file_name_native));
+        fs::path path = fs::path(file_name_native);
+#else
+        fs::path path = fs::path(filename);
+#endif
+        fs::ifstream ifs(path, std::ios_base::binary);
+
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         FREEORION_IARCHIVE_TYPE ia(ifs);

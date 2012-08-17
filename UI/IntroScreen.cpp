@@ -46,8 +46,7 @@ namespace {
 /////////////////////////////////
 
 /** Displays scrolling credits. */
-class CreditsWnd : public GG::Wnd
-{
+class CreditsWnd : public GG::Wnd {
 public:
     CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &credits, int cx, int cy, int cw, int ch, int co);
     ~CreditsWnd();
@@ -97,8 +96,7 @@ void CreditsWnd::StopRendering() {
     }
 }
 
-void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency)
-{
+void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency) {
     GG::Flags<GG::TextFormat> format = GG::FORMAT_CENTER | GG::FORMAT_TOP;
 
     //offset starts with 0, credits are place by transforming the viewport
@@ -138,8 +136,7 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transpa
     m_creditsHeight = Value(offset);
 }
 
-void CreditsWnd::Render()
-{
+void CreditsWnd::Render() {
     if (!m_bRender)
         return;
     GG::Pt ul = UpperLeft(), lr = LowerRight();
@@ -300,43 +297,37 @@ IntroScreen::IntroScreen() :
     GG::Connect(m_exit_game->ClickedSignal,     &IntroScreen::OnExitGame,       this);
 }
 
-IntroScreen::~IntroScreen()
-{
+IntroScreen::~IntroScreen() {
     delete m_credits_wnd;
     delete m_splash;
     // m_menu, m_version, m_logo were childs of m_splash, so don't need to be deleted here
 }
 
-void IntroScreen::OnSinglePlayer()
-{
+void IntroScreen::OnSinglePlayer() {
     delete m_credits_wnd;
     m_credits_wnd = 0;
     HumanClientApp::GetApp()->NewSinglePlayerGame();
 }
 
-void IntroScreen::OnQuickStart()
-{
+void IntroScreen::OnQuickStart() {
     delete m_credits_wnd;
     m_credits_wnd = 0;
     HumanClientApp::GetApp()->NewSinglePlayerGame(true);
 }
 
-void IntroScreen::OnMultiPlayer()
-{
+void IntroScreen::OnMultiPlayer() {
     delete m_credits_wnd;
     m_credits_wnd = 0;
     HumanClientApp::GetApp()->MultiPlayerGame();
 }
 
-void IntroScreen::OnLoadGame()
-{
+void IntroScreen::OnLoadGame() {
     delete m_credits_wnd;
     m_credits_wnd = 0;
     HumanClientApp::GetApp()->LoadSinglePlayerGame();
 }
 
-void IntroScreen::OnOptions()
-{
+void IntroScreen::OnOptions() {
     delete m_credits_wnd;
     m_credits_wnd = 0;
 
@@ -344,8 +335,7 @@ void IntroScreen::OnOptions()
     options_wnd.Run();
 }
 
-void IntroScreen::OnAbout()
-{
+void IntroScreen::OnAbout() {
     delete m_credits_wnd;
     m_credits_wnd = 0;
 
@@ -353,8 +343,7 @@ void IntroScreen::OnAbout()
     about_wnd.Run();
 }
 
-void IntroScreen::OnCredits()
-{
+void IntroScreen::OnCredits() {
     if (m_credits_wnd) {
         delete m_credits_wnd;
         m_credits_wnd = 0;
@@ -387,16 +376,14 @@ void IntroScreen::OnCredits()
     m_splash->AttachChild(m_credits_wnd);
 }
 
-void IntroScreen::OnExitGame()
-{
+void IntroScreen::OnExitGame() {
     delete m_credits_wnd;
     m_credits_wnd = 0;
 
     GG::GUI::GetGUI()->Exit(0);
 }
 
-void IntroScreen::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
-{
+void IntroScreen::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (key == GG::GGK_ESCAPE)
         OnExitGame();
 }
@@ -407,8 +394,7 @@ void IntroScreen::Close()
 void IntroScreen::Render()
 {}
 
-void IntroScreen::DoLayout()
-{
+void IntroScreen::DoLayout() {
     m_splash->Resize(this->Size());
     m_logo->Resize(GG::Pt(this->Width(), this->Height() / 10));
     m_version->MoveTo(GG::Pt(this->Width() - m_version->Width(), this->Height() - m_version->Height()));

@@ -1,0 +1,540 @@
+/*
+   This file contains documentation for GG that doesn't fit in the source code.
+*/
+
+/** \page design Design
+    \section design_purpose Purpose 
+    GG is designed to achieve several goals:
+    - Platform-independence: GG should be buildable on any platform that supports OpenGL
+    - Driver-independence: GG should be a standalone GUI framework that does not require any particular application framework;
+    though SDL and Ogre drivers are supplied, GG should be usable with any driver code the user wishes to supply
+    - Easy extensibility: new controls and GUI behavior should be easy to incorporate
+    - Complete graphical control for the user/designer: the user should not be limited by the author's lack of artistic skill!
+    - Independence of UI elements from the source code: GG UI elements should be configurable as text files, so that UI design 
+    and alteration should not require a recompilation
+    - Overall time efficiency: an application with a reasonable number of GG UI elements should not slow down significantly 
+    because of the rendering or handling of those elements
+    - Overall space efficiency: each GG UI element should have a reasonably small data size
+    - Efficient mixture of 2D and 3D graphical elements: it should be appropriate to use GG in any frame-based 3D application, 
+    even a realtime 3D video game
+    - Simplicity of use: GG UI elements should be able to send arbitrary messages when manipulated by the user; there should be 
+    no message passing hierarchy imposed on the user
+
+    \section design_features Features
+    GG has the following features and services:
+    - Communication of UI controls via signals and slots
+    - Support for 2D-, 3D-, and mixed-mode rendering
+    - Managment of textures and fonts
+    - Serialization of UI elements
+
+    \section nonfeatures Non-Features
+    - GG is not fully threadsafe, due to its use of signals and slots
+    - No sound support is provided
+*/
+
+/** \page architecture Architecture
+    \section arch_rendering Rendering Overview
+
+    GG uses OpenGL to render its graphics.  It is assumed that the entire GUI
+    is being redrawn multiple times each second, as part of a high-framerate
+    application.  Each GG UI element is drawn using calls to OpenGL.
+    Therefore, each element can be rendered as a pre-rendered pixmap, flat 2D
+    texture or sprite, or even a fully 3D rendering; the complexity of the
+    graphics used to represent the UI elements is only limited by the target
+    rendering hardware and the user's skill.
+
+    \section arch_main_loop_integration Integration With Application Render Loop
+
+    GG supplies a render loop in the form of GUI::Run().  For many
+    applications, this default render loop is sufficient.  However, for users
+    who are integrating GG with an existing application that already has its
+    own render loop, there is another way.  See the GG::EventPump
+    documentation for info on how you can update GG's GUI once per frame from
+    your application's render loop.
+
+    \section arch_UI_overview UI Overview
+    \subsection arch_input_events Input Events
+
+    GG is organized as a layer on top of an existing user input framework.  GG
+    has no way of determining that a mouse click, mouse move, or any other
+    user input event, has taken place.  To use GG, one must subclass off of
+    the abstract class GG::GUI, and define several of GG::GUI's pure virtual
+    functions.  These functions poll the underlying operating system or input
+    framework, and generate GG input messages from them.  Such messages are
+    mouse moves and clicks, key presses and releases, joystick movement,
+    etc. GG maintains internal state as to what part of the GUI is being
+    dragged, clicked, etc.
+
+    \subsection arch_UI_overview_example Example:
+
+    Suppose the user clicks the left mouse button at screen position (50, 37).
+    GG will receive a message from the underlying application framework that a
+    left mouse click has occurred; it then determines what UI element is under
+    that screen location, if any.  If it turns out there is a button under
+    that spot, GG sets internal state indicating that the left mouse button is
+    being held down, and that it is over the button.  GG then sends a message
+    to the button that it is depressed.  The button sets its own internal
+    state and returns.  All processing is complete for this input; the next
+    time the button is redrawn, it knows to draw itself in a depressed state.
+    Very little computation is involved in processing a single user input
+    event.  GG's performance is therefore usually limited only by the
+    application-defined processing that is associated with manipulating the
+    controls (e.g., a button click may trigger disk IO).
+
+    \subsection arch_UI_element_conns UI Element Connections
+
+    GG UI elements are connected using signals and slots, using the
+    Boost.Signals library.  This allows arbitrary connections between one
+    control and another, and between a control and any other code; there is no
+    hierarchy of passed messages as there is in some other GUIs, and no
+    type-unsafe callbacks are used.  Refer to the \ref sigs_n_slots
+    documentation for details.
+
+    \subsection arch_gui_services GG::GUI Services
+
+    The singleton GG::GUI object is globally available through a static member
+    function, GG::GUI::GetGUI().  This allows all code in the application to
+    rely on GG::GUI for certain essential services.  GUI-specific services
+    include registering windows into the GUI, registering windows as
+    always-on-top or modal windows, moving windows up or down in the z-order
+    layers of the GUI, removing windows from the GUI, getting mouse state
+    (position and button depression), setting mouse delay repeat (see GG::GUI
+    for a description of this), entering and exiting from an orthographic
+    projection (2D) rendering mode.  Most of these services must be provided
+    by the user when subclassing from GG::GUI; if either of SDLGUI or OgreGUI
+    is used, these services are already implemented.
+
+    <p>
+
+    GG::GUI does a variety of things for the user, some of which are not
+    strictly necessary for the core GUI functionality.  GG::GUI provides
+    limited timing info via FPS() and DeltaT().  These are provided to
+    indicate how fast the GUI is rendering, and how long it has been since the
+    last frame was rendered.  There is also a font manager, an
+    application-wide font "pool", from which the user can request fonts.  The
+    font pool loads and stores the fonts as needed by the application, and
+    multiple requests for the same font at the same size will result in the
+    creation of only one font object.  A texture manager exists which does a
+    similar job with textures.  If the user wants to programmatically create
+    textures, she can also add them to the texture pool, provide a name, and
+    request that texture as many times as needed.  OpenGL texture objects are
+    used as the underlying texture rendering method.  */
+
+/** \page sigs_n_slots Signals and Slots
+    \section sigs_n_slots_definition Sig-who? Slo-what?
+
+    If you've never been exposed to the signals and slots pattern before, it
+    can be a little confusing.  Simply put, a slot is a function or function
+    object that is "listening" for a signal.  A slot "listening" to a certain
+    signal is said to be connected to that signal.  When a signal is emitted,
+    all slots that are connected to that signal are called (since they are all
+    functions/function objects).  If a signal is emitted to which no slots are
+    connected, nothing happens.
+
+    \section sigs_n_slots_motivation Motivation for the Signals and Slots Pattern
+    \subsection prob The Problem
+
+    Originally, GG used a very simple strategy for passing messages between
+    windows/controls.  The method was to call a Command() function, which
+    passed to the callee an integer representing the type of message (button
+    click, scroll, or whatever), an ID number associated with the calling
+    control, and a single integer parameter.  It could have been made more
+    general and even less typesafe by replacing the int parameter with a void
+    pointer, but in either case it suffers from two huge limitations.  First,
+    the type of message and the parameter must be known to both caller and
+    callee; this means that, for example, the user must keep track of the
+    integer value representing a button click message, and make sure that
+    separate sections of code are using the same value to represent it.
+    Second, any code that doesn't contain a control, but that wants to know
+    about button pushes, scrolling scrollbars, etc., must deal with that
+    control's parent (or break encapsulation).  This creates a lot of chains
+    of passed messages, and a large number of kludges to get messages to the
+    sections of code that need them.
+
+    \subsection sigs_n_slots_soln The Solution
+
+    Now, each control emits a signal every time a significant event occurs.
+    If no processing needs to be associated with such an event, its signal
+    need not be connected to anything.  Futhermore, no matter how many modules
+    need to react to a certain signal, they can all be connected.
+
+    \section sigs_n_slots_use Using Signals and Slots
+    \subsection sigs_n_slots_connecting Connecting Signals To Slots
+
+    There are two types of connections between signals and slots.  The first
+    type of connection is between a signal and a slot, which may be a functor
+    (which in turn may be a boost::bind object), a free function or a static
+    member function or function object.  Just call Connect(sig, slot).  The
+    second type is between a signal and a non-static member function.  In this
+    case, the call to Connect() requires a third parameter: a pointer to the
+    object whose member function is to be called.  For instance, if I have a
+    class Foo and an object foo1 of class Foo, I cannot call foo1.bar() by
+    simply knowing the address of bar().  I need to call Connect(sig,
+    &Foo::bar, &foo1) so that the signal knows which object's bar() to call.
+    Both versions of Connect() return a connection object.  By keeping this
+    connection object, you can later disconnect() the connection you made.  In
+    addition, signal-signal connections are possible.  Calling Connect(sig1,
+    sig2) forwards all sig1's signal emissions to sig2.  This is provided as a
+    convenience to avoid having to write dummy forwarding functions that do
+    this.
+
+    \subsection sigs_n_slots_emitting Emitting Signals
+
+    To emit a signal from a signal object "sig", just use its function call
+    operator ("operator()"), like this: "sig();"
+
+    \subsection disconnecting Disconnecting Signals and Slots
+
+    If you kept the connection object returned by Connect(), a
+    connection_obj.disconnect() call will disconnect the associated signal and
+    slot.  Also, consider this: what happens if a signal A is connected to a
+    slot consisting of a member function of object B, B is deleted, and then
+    A() is called?  A segfault, unless the B's class inherits from
+    boost::trackable, which auto-disconnects slots in its destructor.  GG::Wnd
+    is derived from boost::trackable, so all GG::Wnd-derived classes should
+    handle such situations gracefully.  See the Boost tutorial below for
+    details.  \see http://boost.org/doc/html/signals.html for a tutorial on
+    other aspects of signals and slots; you can create connections that have
+    scope, control the order of the invocation of multiple slots that are
+    called by a signal, and combine the return values of such slots (take the
+    first return value, the last, the average of all of them, etc.).  */
+
+/** \page text_handling Text Handling
+    \section text_handling_unicode_support Unicode Support
+
+    GG supports Unicode characters.  All strings that are rendered as text in
+    GG are considered to be UTF-8 encoded.  GG uses the utfcpp library
+    (http://utfcpp.sourceforge.net) to handle conversions from UTF-8 encoded
+    strings to Unicode code points.  A detail that you must know about utfcpp
+    is that it throws exceptions on invalid input.  Any time you pass a string
+    to a GG function, you run the risk of generating an exception if the
+    string is not UTF-8 encoded.  Note that ISO-8859-1 (commonly called
+    "Latin-1"), Windows-1252, and other common single-byte encodings are not
+    usable as UTF-8 strings.
+
+    \section text_handling_all_chars_considered_utf8 All Characters Are Considered UTF-8 Encoded
+
+    Yes, all characters!  Even if you call GG::Font::RenderGlyph() with a char
+    parameter, that char had better conform to UTF-8 requirements for a valid
+    codepoint (in particular, it's value must be in the range [0x0, 0x7f]).
+
+    \section text_handling_font_support Font Support
+
+    Be sure to use a TrueType font capable of rendering the character sets you
+    need for whatever language(s) you need to support.  Note that due to the
+    large number of Unicode characters and the space requirements of using
+    textured fonts, GG::Font requires you to supply it with the Unicode
+    character sets you want at construction time.  A useful pattern for
+    constructing a GG::Font with the right character set coverage is to use
+    UnicodeCharsetsToRender().  You simply pass it a string containing
+    representative characters, and it returns a set of GG::UnicodeCharsets
+    that covers all the characters in the string.
+
+    \section text_handling_user_input User Input
+
+    Unicode characters can be input by the user, as long as the input driver
+    handles Unicode input.  The SDL reference driver does.  The Ogre OIS input
+    plugin does not.  GG will convert any Unicode input to a multibyte UTF-8
+    sequence before adding it to a user-editable string (e.g. as in a
+    GG::Edit).
+
+*/
+
+/** \page drag_n_drop Drag and Drop
+    \section drag_n_drop_basics Basics
+
+    GG has drag and drop support that allows you to potentially drag any
+    GG::Wnd and drop it onto any other GG::Wnd.  The results of this drop
+    depend on the two GG::Wnd's involved.  Each GG::Wnd has a
+    GG::Wnd::DragDropDataType() method that returns a string describing what
+    kind of data the GG::Wnd represents.  The string can be a MIME type, or
+    any arbitrary string the user likes.  During the dragging portion of the
+    operation, a GG::Wnd under the cursor has its GG::Wnd::DropsAcceptable()
+    member called, in which it can examine the data type string and other
+    relevant aspects of each dragged GG::Wnd and decide whether or not to
+    accept it.  On the drop, the GG::Wnd under the cursor has its
+    GG::Wnd::AcceptDrops() method called with those GG::Wnd's it has
+    previously deemed accepted in GG::Wnd::DropAcceptable().  GG::Wnd's
+    accepted by the drop target are removed from their original parent, if
+    any, through a call to GG::Wnd::ChildrenDraggedAway().
+
+    Note that only GG::Wnd's with non-empty GG::Wnd::DragDropDataType() may be
+    dragged and dropped.  Within those GG::Wnd's, there are two categories: 1)
+    GG::Wnd's with GG::Wnd::Dragable() true and those without.  A
+    GG::Wnd::Dragable() GG::Wnd moves across the screen normally when dragged.
+    A Non-GG::Wnd::Dragable() GG::Wnd does not move when drag-and-dropped;
+    instead, it is rendered in place, and an additional copy of it is rendered
+    as if the cursor were dragging it.
+
+    \section drag_n_drop_advanced Advanced Use
+
+    There is an extensive set of notification functions that may be called
+    during a drag and drop operation.  The drop target and the orginal parent
+    of the dragged GG::Wnd(s), if any, may be notified of various events or
+    queried (e.g. GG::Wnd::DropsAcceptable()).  Additionally,
+    GG::Wnd::GetDragDropRenderingState() indicates whether a GG::Wnd is being
+    dragged, whether it is over a valid drop target, etc.  See the GG::Wnd
+    documentation for details.
+
+*/
+
+/** \page building Building GG
+    \section building_reqs Requirements
+    GG requires GCC 3.4 or later, or MSVC++ 8.0 SP1 or later.  Note that both are available for free download.
+    <p>
+    GG relies on a few other open-source libraries:
+    - FreeType 2 - http://www.freetype.org
+    - Boost >= 1.36 - http://www.boost.org
+
+    Image loading library/libraries:
+    Either:
+    - DevIL 1.6.1 - http://openil.sourceforge.net
+
+    Or, at least one of:
+    - libpng - http://www.libpng.org/pub/png/libpng.html
+    - libjpeg - http://www.ijg.org
+    - libtiff - http://www.libtiff.org
+
+    Optional libraries for input drivers:
+    - SDL >= 1.2 - http://www.libsdl.org
+    - Ogre >= 1.4 - http://ogre3d.org
+
+    GG's documentation relies on Doxygen
+    (http://www.stack.nl/~dimitri/doxygen). If you have Doxygen installed in a
+    standard location, the docs will be built automatically.  Otherwise, from
+    the GG/doc directory, run Doxygen; the documentation will appear in the
+    GG/doc/GG directory.
+    <br>
+
+    \section howto_build How To Build GG
+
+    \subsection howto_build_all_platforms All Platforms
+
+    You will need to first build the buildable portions of the Boost
+    libraries.  See http://boost.org/more/getting_started/index.html for
+    details on building Boost.  There are often pre-built binaries available
+    for download for the latest Microsoft C++ compiler.  You will also need to
+    decide whether to use DevIL, or GG's built-in image loading code (built-in
+    is the default).  The built-in image loader only supports PNG, JPEG, and
+    TIFF formats, using a modified version of Boost.GIL from Boost 1.37.
+    DevIL supports more image formats, but is less portable.  If you choose
+    not to use DevIL, you must make at least one of the PNG, JPEG, and TIFF
+    format-specific libraries available instead.
+
+    GG uses CMake to generate makefiles, MSVC and XCode projects files, etc.
+    Here is the quick-and-dirty info on using CMake.  Download and install
+    CMake if necessary, of course.  You run ccmake (Linux) or cmake-gui
+    (Windows or Mac OS X) to set the build options, such as whether to use
+    DevIL, whether to build static or dynamic libs, etc.  It's really
+    straightforward, and the end result of using CMake is that you get to use
+    make, Visual Studio's IDE, XCode projects, or whatever CMake-supported
+    build tool you like.  It supports just about everything.
+
+    \subsection howto_build_unix Unix
+
+    To build GG, you will need to have CMake installed.  The headers and built
+    binaries for the libraries you intend to use should be available in your
+    include and link paths, respectively.  just run cmake from the command
+    line, and the defaults will probably work for you just fine.  If you need
+    to configure the build in some way, run ccmake next.  Once you've picked
+    your options, hit 'c' for configure, then 'g' for generate.
+
+    You can let CMake know about any nonstandard paths to these headers and
+    library binaries by running ccmake, then toggling on advanced mode by
+    hitting 't', then filling in what CMake couldn't find.  For example, if
+    you want to use your own zlib, you can point CMake at it by setting
+    ZLIB_INCLUDE_DIR and ZLIB_LIBRARY from the advanced mode.  Other than
+    cases like this, you shouldn't need to use the advanced mode.
+
+    Once this is done, Unix users can simply type
+    \verbatim
+      make
+      make install [as root, if necessary]\endverbatim
+
+    \subsection howto_build_win32_microsoft Windows
+
+    First off, try to avoid building GG altogether by downloading a Windows
+    installer containing pre-built GG binaries and headers from the
+    SourceForge download page.
+
+    If you want to build GG, you will need to have CMake installed, even if
+    you want to use the Visual Studio IDE.  Run cmake-gui, and select the
+    top-level GG folder for the "Where is the source code" field, and wherever
+    you want the build products to go for the "Where to build the binaries"
+    field (these can be the same place if you like).  Next, hit the Configure
+    button.  If the config step succeeds (unlikely ;) ), hit "Generate".  Be sure
+    to select the generator you want -- I think Borland CodeBuilder is the
+    default, if you can believe that.  After this, you should be able to
+    launch your favorite IDE, or build using nmake, or whatever, from the
+    "Where to build the binaries" folder.
+
+    If the config step fails, which is very likely, select the "Advanced
+    View" in the view drop-list, and fill in the paths to headers and libs
+    that CMake couldn't find.  For instance, you'll probably need to fill in
+    FREETYPE_INCLUDE_DIR_freetype2, FREETYPE_INCLUDE_DIR_ft2build, and
+    FREETYPE_LIBRARY with the paths to the freetype2 folder, the path to the
+    ft2build.h header, and the path to the FreeType link library,
+    respectively.  The fields you need to fill in will contain {field
+    name}-NOTFOUND.  Note that some fields are optional, e.g. those related to
+    DevIL.
+
+    \subsection howto_build_macos Mac OS X
+
+    As of this writing, GG builds fine on Mac OS X.  As for the generation of
+    XCode projects and makefiles, I'm not so certain, since I don't have
+    access to a Mac OS X box.
+ */
+
+/** \page brief_tour A Brief Tour
+
+    In a library as diverse in functionality as GG, it can be difficult even
+    to figure out what the library has to offer.  This "tour" is designed to
+    provide a brief overview of the various features of GG not covered
+    elsewhere, and to point users to the more detailed information elsewhere
+    in the documentation.  The topics are covered in no particular order.
+
+    First off, it should be noted that there is a lot of general overview-type
+    documentation in the GG::Wnd and GG::GUI detailed documentation.  Many of
+    the things mentioned below are covered there in more detail.
+
+    \section tour_event_filters Event Filters
+
+    Event filtering allows one to use a GG::Wnd to intrusively handle the
+    events sent to another GG::Wnd.  This can be useful, for example, in a
+    control (the parent) that is composed of multiple controls (the children),
+    but which needs to handle certain events uniformly.  Perhaps right-clicks
+    should always bring up a context menu, for instance.  Without event
+    filtering, each child control would have to explicitly forward its
+    right-clicks instead of processing them normally, which would in turn
+    require subclassing.  Event filters remove the need for such subclassing.
+    \see The GG::Wnd description, GG::Wnd::EventFilter(),
+    GG::Wnd::InstallEventFilter(), and GG::Wnd::RemoveEventFilter().
+
+    \section tour_layouts Layouts
+
+    GG::Layout encapsulates the relative arrangement of child GG::Wnd's in the
+    client area of a GG::Wnd, so that positioning such children requires less
+    hand-coding.  \see The GG::Wnd description.
+
+    \section tour_browse_info The Browse-Info System
+
+    Like "tooltips", but more general.  You can have any non-interactive GUI
+    elements you like inside of a GG::BrowseInfoWnd, and the contents of the
+    GG::BrowseInfoWnd can vary, for example to provide increasing amounts of
+    info over time.  \see The GG::Wnd description.
+
+    \section tour_style_factory The Style Factory
+
+    Many of the control classes reuse other controls to do part of their work.
+    For instance, GG::Scroll uses a pair of GG::Button objects for its up and
+    down (or left and right) buttons.  If a user wishes to use a custom
+    subclass of GG::Button throughout an application, how is she to get
+    GG::Scroll to create GG::Button's of the right type?  The answer is that
+    all controls created by GG are requested from a GG::StyleFactory.  \see
+    The GG::Wnd description and the GG::GUI description.
+
+    \section tour_plugins Plugins
+
+    Plugins (dynamically loaded shared libraries/DLLs not linked into the
+    application when it is built) can be created and used with GG.  Plugins
+    provide a GG::StyleFactory, and a default font name and size.  \see
+    GG::PluginInterface.
+
+    \section tour_standard_dialogs Standard Dialogs
+
+    Three standard dialogs are provided:
+    - A color selection dialog, GG::ColorDlg;
+    - A file(s)/directory selection dialog, GG::FileDlg; and
+    - A general-purpose message dialog containing at most three buttons, GG::ThreeButtonDlg.
+
+    \section tour_cursor_rendering Cursor Rendering
+
+    GG can optionally render a cursor.  By default, GG assumes that the
+    underlying system is rendering the cursor, and so does not attempt to do
+    so.  \see GG::GUI::RenderCursor(), GG::GUI::GetCursor(),
+    GG::GUI::SetCursor(), and GG::Cursor.
+
+    \section tour_flags Flags
+
+    GG uses format flags, window creation flags, and several other types of
+    bit-flag sets in various places.  These bit-flag sets are not
+    interoperable.  This is designed as a workaround to problems inherent to
+    C++ enums, such as implicit conversion to integral types, which in turn
+    leads to comparability of arbitrary enumeration values from different
+    enumerations.  For instance, it is impossible (due to a compile-time
+    error) to accidentally pass the (nonsensical) flag GG::FORMAT_NONE to the
+    \a flags parameter of GG::Wnd::Wnd().  With built-in C++ enums, this would
+    not be caught by the compiler.  GG provides two classes, GG::Flags and
+    GG::FlagSpec, that allow the user to extend the sets of flags used in GG,
+    if user-created subclasses should require more flags than the ones GG
+    provides.
+
+    \section tour_text_formatting_tags Text Formatting Tags
+
+    Text rendered by GG can make use of text formatting tags, similar to those
+    used in HTML documents (e.g. \<i><i>italicized text here</i>\</i>).  GG
+    defines numerous tags that control text justification, text color,
+    bolding, underlining, italicizing, etc.  Users can also add their own
+    tags.  Though GG does not associate any semantics with user-defined tags,
+    it will treat them as tags, meaning they will be automatically be removed
+    from the text as it appears when rendered.  \see The GG::Font description.
+
+    \section tour_keyboard_accelerators Keyboard Accelerators
+
+    Keyboard accelerators may be established that emit signals on (and
+    possibly filter out) keystrokes.  Accelerators can include a modifier
+    specification, so for instance Ctrl-K, Alt-K, and K may be created as
+    different accelerators.  Each accelerator has an associated signal to
+    which arbitrarily many slots can be connected.  \see The GG::GUI
+    description.
+
+    \section tour_user_input_drivers User Input Drivers
+
+    Two input drivers are currently available for use with GG -- one for <a
+    href="http://libsdl.org">SDL</a> and one for <a
+    href="http://ogre3d.org">Ogre</a>.  Note that Ogre does not have built-in
+    support for user input.  As of this writing, it uses another library
+    called <a href="http://sourceforge.net/projects/wgois">OIS</a>.  An Ogre
+    plugin that provides OIS support is also provided in src/Ogre/Plugins.
+    \see GG::SDLGUI, GG::OgreGUI, GG::OgreGUIInputPlugin, and OISInput.
+
+    \section tour_timers Timers
+
+    Timers are available to which slots can be connected.  A timer fires its
+    signal after at least T time has elapsed, where T is a user-provided time
+    interval.  Note the use of "at least".  Timers are only evaluated during
+    GG's normal processing loop, so if the application is cycling slowly (due
+    to heavy processing, etc.), timers can fire arbitrarily less frequently
+    than desired.
+
+    \section tour_event_pumps Event Pumps
+
+    GG abstracts out the inner loop that processes events and renders frames
+    into a class called GG::EventPump.  Most users will never need to use
+    event pumps, but those users writing a new input driver will.  Note that
+    if you are integrating GG with an existing application that has its own
+    render loop, you will almost certainly need to use GG::EventPump.  See the
+    GG::EventPump documnentation for details.
+
+*/
+
+/** \page tutorials Tutorials
+    \section tut_using Using the Tutorials
+    The following tutorials are available in the tutorial directory.  They are built by default when you build GG.
+    \section tut_1 Tutorial 1: Minimal (minimal.cpp)
+    This is the minimal interesting GG application, and uses one of the default input drivers, SDL.
+    \section tut_2 Tutorial 2: Controls (controls.cpp)
+    This builds upon Tutorial 1 by adding one of every type of Control, and connecting some signals and slots.
+*/
+
+/** \mainpage GG Documentation Overviews
+    \section Overviews
+    -# \ref design
+    -# \ref architecture
+    -# \ref sigs_n_slots
+    -# \ref text_handling
+    -# \ref drag_n_drop
+    -# \ref brief_tour
+    -# \ref building
+    -# \ref tutorials
+*/

@@ -27,7 +27,7 @@
 // static member(s)
 AIClientApp*  AIClientApp::s_app = 0;
 
-AIClientApp::AIClientApp(int argc, char* argv[]) :
+AIClientApp::AIClientApp(const std::vector<std::string>& args) :
     m_AI(0),
     m_player_name("")
 {
@@ -36,14 +36,14 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
 
     s_app = this;
 
-    if (argc < 2) {
+    if (args.size() < 2) {
         std::cerr << "The AI client should not be executed directly!  Run freeorion to start the game.";
         Exit(1);
     }
 
     // read command line args
 
-    m_player_name = argv[1];
+    m_player_name = args.at(1);
     const std::string AICLIENT_LOG_FILENAME((GetUserDir() / (m_player_name + ".log")).string());
 
     // a platform-independent way to erase the old log

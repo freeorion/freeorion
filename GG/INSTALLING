@@ -1,0 +1,42 @@
+GG uses CMake to generate its build system.  CMake just creates build files
+for you to use with your preferred build tool (GNU Make, MSVC Project files,
+etc.).
+
+You need to have CMake installed (get it at http://cmake.org), and then just
+execute "cmake" from the top of the GG source tree.  If you want to build
+multiple variants, you might want to move to another directory, and execute
+"cmake path/to/GG" instead.  This will create all the build products where
+ever you are, instead of in the GG source tree.  CMake should be able to guess
+which build tool you'd like to use; if you want to specify something other
+than what it guesses, see the -G option in the cmake docs.
+
+To configure the GG build (debug vs. release, static vs. dynamic libs, etc.),
+run "ccmake [path/to/GG]" on unices, or cmake-gui on Windows and Mac OSX.
+
+Once you've configured GG, just build it and/or install it with your build
+tool.
+
+Note that you should know about a few variables that will help CMake
+find Boost when it is installed somewhere odd, or on a platform like
+Windows where there is no default install location.  Look in the CMake
+documentation for your version of CMake, for BOOST_ROOT,
+BOOST_INCLUDEDIR, and BOOST_LIBRARYDIR.
+
+To summarize...
+
+For unices:
+
+cmake
+ccmake (optional)
+make
+make install
+
+For Windows:
+
+Run cmake-gui
+Build GG in MSVC's IDE using the generated project files.
+
+For Mac OS X:
+
+Run cmake-gui
+Build GG in XCode's IDE using the generated project files.

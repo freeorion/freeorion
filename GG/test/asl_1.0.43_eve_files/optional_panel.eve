@@ -1,0 +1,39 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+*/
+
+layout optional_panel
+{
+ interface:
+    mask : false;
+    show : false;
+    more : true;
+    
+    view dialog(name: "Calculations", placement: place_column)
+    {
+        checkbox(name: "Mask", bind: @mask);
+        optional (bind: @mask)
+        {
+            checkbox(name: "Show", bind: @show);
+        }
+        optional (bind: @show)
+        {
+            group(name: "Stuff")
+            {
+                checkbox(name: "More!", bind: @more);
+                optional (bind: @more)
+                {
+                    edit_number(name: "To This Over Here:");
+                }
+                optional (bind: @more, value: false)
+                {
+                    static_text(name: "Not to this long text");
+                }
+                button(name: "Close", action: @ok);
+                edit_number(name: "Align This:");
+            }
+        }
+    }
+}

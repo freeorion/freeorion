@@ -30,6 +30,7 @@
 
 #include <GG/BrowseInfoWnd.h>
 #include <GG/Cursor.h>
+#include <GG/utf8/checked.h>
 
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
@@ -46,6 +47,8 @@
 #include <boost/serialization/vector.hpp>
 
 #include <sstream>
+
+namespace fs = boost::filesystem;
 
 #ifdef ENABLE_CRASH_BACKTRACE
 # include <signal.h>
@@ -149,6 +152,17 @@ namespace {
             GetOptionsDB().Set<bool>("UI.system-fog-of-war",            false);
         }
     }
+
+    std::string PathString(const fs::path& path) {
+#ifndef FREEORION_WIN32
+        return path.string();
+#else
+        fs::path::string_type native_string = path.native();
+        std::string retval;
+        utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
+        return retval;
+#endif
+    }
 }
 
 HumanClientApp::HumanClientApp(Ogre::Root* root,
@@ -156,9 +170,9 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
                                Ogre::SceneManager* scene_manager,
                                Ogre::Camera* camera,
                                Ogre::Viewport* viewport,
-                               const std::string& ois_input_cfg_file_name) :
+                               const boost::filesystem::path& ois_input_cfg_file_path) :
     ClientApp(),
-    OgreGUI(window, ois_input_cfg_file_name),
+    OgreGUI(window, ois_input_cfg_file_path),
     m_fsm(0),
     m_single_player_game(true),
     m_game_started(false),
@@ -174,14 +188,13 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 #endif
     m_fsm = new HumanClientFSM(*this);
 
-    const std::string LOG_FILENAME((GetUserDir() / "freeorion.log").string());
+    boost::filesystem::path log_path = GetUserDir() / "freeorion.log";
 
-    // a platform-independent way to erase the old log We cannot use
-    // boost::filesystem::ofstream here, as stupid b::f won't allow us
-    // to have a dot in the directory name, which is where local data
-    // is kept under unix.
-    std::ofstream temp(LOG_FILENAME.c_str());
+    // erase old log
+    boost::filesystem::ofstream temp(log_path);
     temp.close();
+
+    std::string LOG_FILENAME = PathString(log_path);
 
     log4cpp::Appender* appender = new log4cpp::FileAppender("FileAppender", LOG_FILENAME);
     log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
@@ -255,12 +268,18 @@ const std::string& HumanClientApp::SaveFileName() const
 bool HumanClientApp::SinglePlayerGame() const
 { return m_single_player_game; }
 
-void HumanClientApp::StartServer() {
+namespace {
+    std::string ServerClientExe() {
 #ifdef FREEORION_WIN32
-    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond.exe").string();
+        return PathString(GetBinDir() / "freeoriond.exe");
 #else
-    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond").string();
+        return (GetBinDir() / "freeoriond").string();
 #endif
+    }
+}
+
+void HumanClientApp::StartServer() {
+    std::string SERVER_CLIENT_EXE = ServerClientExe();
     std::vector<std::string> args;
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
     args.push_back("--resource-dir");
@@ -471,10 +490,17 @@ void HumanClientApp::EndGame()
 { EndGame(false); }
 
 void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
-    if (filename != "") {
-        if (!exists(boost::filesystem::path(filename))) {
-            std::string msg =
-                "HumanClientApp::LoadSinglePlayerGame() given a nonexistent file \"" + filename + "\" to load; aborting.";
+    if (!filename.empty()) {
+#if defined(FREEORION_WIN32)
+        boost::filesystem::path::string_type file_name_native;
+        utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(file_name_native));
+        boost::filesystem::path file_path(file_name_native);
+#else
+        boost::filesystem::path file_path(filename);
+#endif
+        if (!exists(file_path)) {
+            std::string msg = "HumanClientApp::LoadSinglePlayerGame() given a nonexistent file \""
+                            + filename + "\" to load; aborting.";
             Logger().fatalStream() << msg;
             std::cerr << msg << '\n';
             abort();
@@ -483,8 +509,8 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         try {
             std::vector<std::pair<std::string, std::string> > save_file_types;
             save_file_types.push_back(std::pair<std::string, std::string>(UserString("GAME_MENU_SAVE_FILES"), "*.sav"));
-
-            FileDlg dlg(GetSaveDir().string(), "", false, false, save_file_types);
+            std::string path_string = PathString(GetSaveDir());
+            FileDlg dlg(path_string, "", false, false, save_file_types);
             dlg.Run();
             if (!dlg.Result().empty())
                 filename = *dlg.Result().begin();
@@ -776,9 +802,9 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
                 GetOptionsDB().GetXML().WriteDoc(ofs);
             } else {
                 std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
-                std::cerr << GetConfigPath().string() << std::endl;
+                std::cerr << PathString(GetConfigPath()) << std::endl;
                 Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
-                Logger().errorStream() << GetConfigPath().string();
+                Logger().errorStream() << PathString(GetConfigPath());
             }
         }
     }
@@ -839,14 +865,12 @@ void HumanClientApp::Autosave() {
         extension = MP_SAVE_FILE_EXTENSION;
 
     std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d%s") % player_name % empire_name % CurrentTurn() % extension);
+    boost::filesystem::path save_path(GetSaveDir() / save_filename);
+    std::string path_string = PathString(save_path);
 
-    namespace fs = boost::filesystem;
-    fs::path save_dir(GetSaveDir());
-
-    Logger().debugStream() << "Autosaving to: " << (save_dir / save_filename).string();
-
+    Logger().debugStream() << "Autosaving to: " << path_string;
     try {
-        SaveGame((save_dir / save_filename).string());
+        SaveGame(path_string);
     } catch (const std::exception& e) {
         Logger().errorStream() << "Autosave failed: " << e.what();
         std::cerr << "Autosave failed: " << e.what() << std::endl;

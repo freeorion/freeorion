@@ -38,7 +38,7 @@ public:
                    Ogre::SceneManager* scene_manager,
                    Ogre::Camera* camera,
                    Ogre::Viewport* viewport,
-                   const std::string& ois_input_cfg_file_name);
+                   const boost::filesystem::path& ois_input_cfg_file_path);
     virtual ~HumanClientApp();
     //@}
 

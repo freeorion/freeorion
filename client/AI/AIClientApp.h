@@ -3,6 +3,7 @@
 #define _AIClientApp_h_
 
 #include "../ClientApp.h"
+#include <vector>
 
 class AIBase;
 
@@ -12,7 +13,7 @@ namespace log4cpp {class Category;}
 class AIClientApp : public ClientApp {
 public:
    /** \name Structors */ //@{
-   AIClientApp(int argc, char* argv[]);
+   AIClientApp(const std::vector<std::string>& args);
    ~AIClientApp();
    //@}
 

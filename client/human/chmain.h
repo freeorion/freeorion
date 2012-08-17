@@ -2,7 +2,10 @@
 #ifndef _CHMAIN_H
 #define _CHMAIN_H
 
-int mainConfigOptionsSetup(int argc, char* argv[]);
+#include <string>
+#include <vector>
+
+int mainConfigOptionsSetup(const std::vector<std::string>& args);
 int mainSetupAndRunOgre();
 
 #endif

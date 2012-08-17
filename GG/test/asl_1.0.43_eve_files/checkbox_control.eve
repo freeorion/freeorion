@@ -1,0 +1,22 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+*/
+
+layout checkbox_control
+{
+    view dialog(name: "Control Example", placement: place_column)
+    {
+        column(spacing: 10)
+        {
+            checkbox(name: "Control", bind: @control);
+            checkbox(name: "Make Mixed Control", bind: @control, value_on: @mixed, value_off: false);
+            checkbox(name: "Enable me", bind: @enable_me);
+            checkbox(name: "Enable me too", bind: @enable_me_too);
+            checkbox(name: "Remember me", bind: @remember_me);
+        }
+    
+        button(name: "Close", default: true, action: @cancel, horizontal: align_right);
+    }
+}

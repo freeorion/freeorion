@@ -1,0 +1,118 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+*/
+
+layout image_size
+{
+    view dialog(name: localize("<xstr id='image_size_dialog_title'>Image Size</xstr>"), placement: place_row)
+    {
+        column()
+        {
+            group(name: localize("<xstr id='image_size_dimensions_group'>Pixel Dimensions</xstr>"), horizontal: align_fill, placement: place_row)
+            {
+                column(guide_mask: [ ], horizontal: align_fill, child_horizontal: align_fill)
+                {
+                    edit_number(name: localize("<xstr id='image_size_width'>Width:</xstr>"), digits: 9, display_disable: true, alt: "Describes the width in pixels",
+                                touch: [ @doc_resolution ], bind_units: @pixel_display_units,
+                                units: [    { name: localize("<xstr id='image_size_pixels'>pixels</xstr>"), bind: @dim_width_pixels, format: "#" },
+                                            { name: localize("<xstr id='image_size_percent'>percent</xstr>"), bind: @dim_width_percent, format: "#.00" }  ]);
+        
+                    edit_number(name: localize("<xstr id='image_size_height'>Height:</xstr>"), digits: 9, display_disable: true, alt: "Describes the height in pixels",
+                                touch: [ @doc_resolution ], bind_units: @pixel_display_units,
+                                units: [    { name: localize("<xstr id='image_size_pixels'>pixels</xstr>"), bind: @dim_height_pixels, format: "#" },
+                                            { name: localize("<xstr id='image_size_percent'>percent</xstr>"), bind: @dim_height_percent, format: "#.00" }  ]);
+                }
+
+                link(bind: @constrain, count: 2, value_on: true, value_off: false);
+            }
+
+            group(name: localize("<xstr id='image_size_size_group'>Document Size:</xstr>"), horizontal: align_fill, placement: place_row)
+            {
+                column(guide_mask: [  ], horizontal: align_fill, child_horizontal: align_fill)
+                {
+                edit_number(name: localize("<xstr id='image_size_width'>Width:</xstr>"), digits: 9, alt: "Set the document width",
+                            touch: [ @doc_resolution ],
+                            units: [    { name: localize("<xstr id='image_size_percent'>percent</xstr>"), bind: @doc_width_percent, format: "#.00" },
+                                            { name: localize("<xstr id='image_size_inches'>inches</xstr>"), bind: @doc_width_inches, format: "#.000" },
+                                            { name: localize("<xstr id='image_size_cm'>cm</xstr>"), bind: @doc_width_inches, scale: [2.54, 0.0 ], format: "#.00" },
+                                            { name: localize("<xstr id='image_size_mm'>mm</xstr>"), bind: @doc_width_inches, scale: [ 25.4, 0.0 ], format: "#.0" },
+                                            { name: localize("<xstr id='image_size_points'>points</xstr>"), bind: @doc_width_inches, scale: [ 72, 0 ], format: "#.0" },
+                                            { name: localize("<xstr id='image_size_picas'>picas</xstr>"), bind: @doc_width_inches, scale: [ 6, 0.0 ], format: "#.00" },
+                                            { name: localize("<xstr id='image_size_columns'>columns</xstr>"), bind: @doc_width_inches, scale: [ 1, 0.0 ], format: "#.000" }
+                                        ]);
+                    
+                edit_number(name: localize("<xstr id='image_size_height'>Height:</xstr>"), digits: 9, alt: "Set the document height",
+                            touch: [ @doc_resolution ],
+                            units: [    { name: localize("<xstr id='image_size_percent'>percent</xstr>"), bind: @doc_height_percent, format: "#.00" },
+                                        { name: localize("<xstr id='image_size_inches'>inches</xstr>"), bind: @doc_height_inches, format: "#.000" },
+                                        { name: localize("<xstr id='image_size_cm'>cm</xstr>"), bind: @doc_height_inches, scale: [2.54, 0.0 ], format: "#.00" },
+                                        { name: localize("<xstr id='image_size_mm'>mm</xstr>"), bind: @doc_height_inches, scale: [ 25.4, 0.0 ], format: "#.0" },
+                                        { name: localize("<xstr id='image_size_points'>points</xstr>"), bind: @doc_height_inches, scale: [ 72, 0 ], format: "#.0" },
+                                        { name: localize("<xstr id='image_size_picas'>picas</xstr>"), bind: @doc_height_inches, scale: [ 6, 0.0 ], format: "#.00" },
+                                        { name: localize("<xstr id='image_size_columns'>columns</xstr>"), bind: @doc_height_inches, scale: [ 1, 0.0 ], format: "#.000" }
+                                        ]);
+    
+                edit_number(name: localize("<xstr id='image_size_resolution'>Resolution:</xstr>"), digits: 9, alt: "Set the document resolution",
+                            format: "#.000",
+                            touch: [ @dim_width_pixels, @dim_height_pixels ],
+                            units: [    { name: localize("<xstr id='image_size_pixels_per_inch'>pixels/inch</xstr>"), bind: @doc_resolution },
+                                        { name: localize("<xstr id='image_size_pixels_per_cm'>pixels/cm</xstr>"), bind: @doc_resolution, scale: [0.393700787, 0.0 ] }
+                                    ]);
+                }
+
+                overlay(vertical: align_fill)
+                {
+                    link(bind: @resample, count: 3, value_on: false, value_off: true);
+                    link(bind: @constrain, count: 2, value_on: true, value_off: false);
+                }
+            }
+    
+            column(guide_balance: [@guide_baseline])
+            {
+                checkbox(bind: @scale_styles, name: localize("<xstr id='image_size_scale_styles'>Scale Styles</xstr>"), alt: "Scale effects proportionally when image is resized");
+                checkbox(bind: @constrain, name: localize("<xstr id='image_size_constrain'>Constrain Proportions</xstr>"), alt: "Constrain aspect ratio");
+                row(spacing: 5)
+                {
+                    checkbox(bind: @resample, name: localize("<xstr id='image_size_resample'>Resample Image:</xstr>"), alt: "Interpolate the pixel information");
+                    popup(  bind: @resample_method, alt: "Method of pixel interpolation",
+                            items: [    { name: localize("<xstr id='image_size_nearest'>Nearest Neighbor</xstr>"), value: @nearest },
+                                            { name: localize("<xstr id='image_size_bilinear'>Bilinear</xstr>"), value: @bilinear },
+                                            { name: localize("<xstr id='image_size_bicubic'>Bicubic</xstr>"), value: @bicubic },
+                                            { name: localize("<xstr id='image_size_bicubic_smoother'>Bicubic Smoother</xstr>"), value: @bicubic_smoother },
+                                            { name: localize("<xstr id='image_size_bicubic_sharper'>Bicubic Sharper</xstr>"), value: @bicubic_sharper } ]);
+                }
+            }
+        }
+
+        /*
+
+        REVISIT (sparent) : Need to add variables to Eve2 for space_normal, space_small, space_large.
+
+        */
+
+        column(child_horizontal: align_fill)
+        {
+            button(name: localize("<xstr id='ok'>OK</xstr>"), action: @ok, bind: @result, default: true, alt: "Resize the image with the current settings");
+            button(name: localize("Cancel"), action: @cancel, alt: "Do not resize the image and close the dialog");
+
+            button(name: localize("<xstr id='image_size_auto'>Auto...</xstr>"), action: @dialog, value: "image_size_auto.eve", alt: "Auto-calculate image resolution");
+/*
+            preset(alt: "Select and manage predefined settings for image size", horizontal: align_left,
+                   domain: "AdobeSource", name: "ImageSize",
+                   bind: [
+                            [ @dim_width_pixels, localize("<xstr id='preset_image_width'>Image Width</xstr>") ],
+                            [ @dim_height_pixels, localize("<xstr id='preset_image_height'>Image Height</xstr>") ],
+                            [ @doc_width_inches, localize("<xstr id='preset_document_width'>Document Width</xstr>") ],
+                            [ @doc_height_inches, localize("<xstr id='preset_document_height'>Document Height</xstr>") ],
+                            [ @doc_resolution, localize("<xstr id='preset_document_resolution'>Resolution</xstr>") ],
+                            [ @scale_styles, localize("<xstr id='preset_scale_styles'>Scale Styles</xstr>") ],
+                            [ @constrain, localize("<xstr id='preset_constrain'>Constrain Proportions</xstr>") ],
+                            [ @resample, localize("<xstr id='preset_resample'>Resample Image</xstr>") ],
+                            [ @resample_method, localize("<xstr id='preset_resample_method'>Resample Method</xstr>") ]
+                         ]);
+*/
+        }
+    }
+}

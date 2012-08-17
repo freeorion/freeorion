@@ -1,0 +1,65 @@
+/*
+    Copyright 2005-2007 Adobe Systems Incorporated
+    Distributed under the MIT License (see accompanying file LICENSE_1_0_0.txt
+    or a copy at http://stlab.adobe.com/licenses.html)
+*/
+
+layout preset_test
+{
+    interface:
+        menu_item_set_set : [ {
+                          name: "Odds",
+                          value: [
+                              { name: "One", value: "1" },
+                              { name: "Three", value: "3" },
+                              { name: "Five", value: "5" },
+                              { name: "Seven", value: "7" },
+                              { name: "Nine", value: "9" }
+                          ]
+                      }, {
+                          name: "Evens",
+                          value: [
+                              { name: "Two", value: "2" },
+                              { name: "Four", value: "4" },
+                              { name: "Six", value: "6" },
+                              { name: "Eight", value: "8" },
+                              { name: "Ten", value: "10" }
+                          ]
+                      } ];
+
+        popup_item_set : [ ];
+
+    view dialog(name: "Popup Test", placement: place_row, grow: true)
+    {
+        column(horizontal: align_fill, child_horizontal: align_fill)
+        {
+            group(horizontal: align_fill, child_horizontal: align_fill)
+            {
+                popup(name: "Static Popup:", bind: @value_one,
+                      items: [
+                            { name: "Eeny", value: "Eeny" },
+                            { name: "Meeny", value: "Meeny" },
+                            { name: "Meiny", value: "Meiny" },
+                            { name: "Moe", value: "Moe" }
+                         ]);
+
+                edit_text(name: "Popup Value:", bind: @value_one);
+            }
+
+            group(horizontal: align_fill, child_horizontal: align_fill)
+            {
+                popup(name: "Number Set:", bind: @popup_item_set, items: @menu_item_set_set);
+
+                popup(name: "Number:", bind: @value_two, items: @popup_item_set);
+
+                edit_text(name: "Number Value:", bind: @value_two);
+            }
+        }
+
+        column(child_horizontal: align_fill)
+        {
+            button(name: "OK", action: @ok, default: true);
+            button(name: "Cancel", action: @cancel, cancel: true);
+        }
+    }
+}

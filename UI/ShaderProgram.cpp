@@ -10,6 +10,11 @@
 
 #include "../client/human/HumanClientApp.h"
 
+#include <GG/utf8/checked.h>
+
+#include <boost/filesystem/fstream.hpp>
+
+
 namespace {
     void CHECK_ERROR(const char* fn, const char* e) {
         GLenum error = glGetError();
@@ -47,14 +52,26 @@ namespace {
     }
 }
 
-std::string ReadFile(const std::string& filename)
-{
-    std::string retval;
-    std::ifstream ifs(filename.c_str());
-    int c;
-    while ((c = ifs.get()) != std::ifstream::traits_type::eof())
-        retval += c;
-    return retval;
+bool ReadFile(const boost::filesystem::path& path, std::string& file_contents) {
+    boost::filesystem::ifstream ifs(path);
+    if (!ifs)
+        return false;
+
+    // skip byte order mark (BOM)
+    static const int UTF8_BOM[3] = {0x00EF, 0x00BB, 0x00BF};
+    for (int i = 0; i < 3; i++) {
+        if (UTF8_BOM[i] != ifs.get()) {
+            // no header set stream back to start of file
+            ifs.seekg(0, std::ios::beg);
+            // and continue
+            break;
+        }
+    }
+
+    std::getline(ifs, file_contents, '\0');
+
+    // no problems?
+    return true;
 }
 
 ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string& fragment_shader) :
@@ -118,16 +135,15 @@ ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string
     GetProgramLog(m_program_id, m_program_log);
 }
 
-ShaderProgram* ShaderProgram::shaderProgramFactory(const std::string& vertex_shader, const std::string& fragment_shader)
+ShaderProgram* ShaderProgram::shaderProgramFactory(const std::string& vertex_shader,
+                                                   const std::string& fragment_shader)
 {
     if (HumanClientApp::GetApp()->GLVersion() >= 2.0f) 
         return new ShaderProgram(vertex_shader,fragment_shader);
-
     return 0;
 }
 
-ShaderProgram::~ShaderProgram()
-{
+ShaderProgram::~ShaderProgram() {
     glGetError();
     glDeleteShader(m_vertex_shader_id);
     CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteShader(m_vertex_shader_id)");
@@ -155,8 +171,7 @@ const std::string& ShaderProgram::VertexShaderInfoLog() const
 const std::string& ShaderProgram::FragmentShaderInfoLog() const
 { return m_fragment_shader_log; }
 
-void ShaderProgram::Bind(const std::string& name, float f)
-{
+void ShaderProgram::Bind(const std::string& name, float f) {
     glGetError();
     GLint location = glGetUniformLocation(m_program_id, name.c_str());
     CHECK_ERROR("ShaderProgram::Bind", "glGetUniformLocation()");
@@ -166,8 +181,7 @@ void ShaderProgram::Bind(const std::string& name, float f)
     CHECK_ERROR("ShaderProgram::Bind", "glUniform1f()");
 }
 
-void ShaderProgram::Bind(const std::string& name, float f0, float f1)
-{
+void ShaderProgram::Bind(const std::string& name, float f0, float f1) {
     glGetError();
     GLint location = glGetUniformLocation(m_program_id, name.c_str());
     CHECK_ERROR("ShaderProgram::Bind", "glGetUniformLocation()");
@@ -177,8 +191,7 @@ void ShaderProgram::Bind(const std::string& name, float f0, float f1)
     CHECK_ERROR("ShaderProgram::Bind", "glUniform2f()");
 }
 
-void ShaderProgram::Bind(const std::string& name, float f0, float f1, float f2)
-{
+void ShaderProgram::Bind(const std::string& name, float f0, float f1, float f2) {
     glGetError();
     GLint location = glGetUniformLocation(m_program_id, name.c_str());
     CHECK_ERROR("ShaderProgram::Bind", "glGetUniformLocation()");
@@ -188,8 +201,7 @@ void ShaderProgram::Bind(const std::string& name, float f0, float f1, float f2)
     CHECK_ERROR("ShaderProgram::Bind", "glUniform3f()");
 }
 
-void ShaderProgram::Bind(const std::string& name, float f0, float f1, float f2, float f3)
-{
+void ShaderProgram::Bind(const std::string& name, float f0, float f1, float f2, float f3) {
     glGetError();
     GLint location = glGetUniformLocation(m_program_id, name.c_str());
     CHECK_ERROR("ShaderProgram::Bind", "glGetUniformLocation()");
@@ -199,8 +211,7 @@ void ShaderProgram::Bind(const std::string& name, float f0, float f1, float f2, 
     CHECK_ERROR("ShaderProgram::Bind", "glUniform4f()");
 }
 
-void ShaderProgram::Bind(const std::string& name, std::size_t element_size, const std::vector<float> &floats)
-{
+void ShaderProgram::Bind(const std::string& name, std::size_t element_size, const std::vector<float> &floats) {
     assert(1 <= element_size && element_size <= 4);
     assert((floats.size() % element_size) == 0);
 
@@ -223,8 +234,7 @@ void ShaderProgram::Bind(const std::string& name, std::size_t element_size, cons
     CHECK_ERROR("ShaderProgram::Bind", "glUniformNfv()");
 }
 
-void ShaderProgram::Bind(const std::string& name, GLuint texture_id)
-{
+void ShaderProgram::Bind(const std::string& name, GLuint texture_id) {
     glGetError();
     GLint location = glGetUniformLocation(m_program_id, name.c_str());
     CHECK_ERROR("ShaderProgram::Bind", "glGetUniformLocation()");
@@ -234,8 +244,7 @@ void ShaderProgram::Bind(const std::string& name, GLuint texture_id)
     CHECK_ERROR("ShaderProgram::Bind", "glUniform1i()");
 }
 
-void ShaderProgram::BindInt(const std::string& name, int i)
-{
+void ShaderProgram::BindInt(const std::string& name, int i) {
     glGetError();
     GLint location = glGetUniformLocation(m_program_id, name.c_str());
     CHECK_ERROR("ShaderProgram::BindInt", "glGetUniformLocation()");
@@ -245,8 +254,7 @@ void ShaderProgram::BindInt(const std::string& name, int i)
     CHECK_ERROR("ShaderProgram::BindInt", "glUniform1i()");
 }
 
-void ShaderProgram::BindInts(const std::string& name, int i0, int i1)
-{
+void ShaderProgram::BindInts(const std::string& name, int i0, int i1) {
     glGetError();
     GLint location = glGetUniformLocation(m_program_id, name.c_str());
     CHECK_ERROR("ShaderProgram::BindInts", "glGetUniformLocation()");
@@ -256,8 +264,7 @@ void ShaderProgram::BindInts(const std::string& name, int i0, int i1)
     CHECK_ERROR("ShaderProgram::BindInts", "glUniform2i()");
 }
 
-void ShaderProgram::BindInts(const std::string& name, int i0, int i1, int i2)
-{
+void ShaderProgram::BindInts(const std::string& name, int i0, int i1, int i2) {
     glGetError();
     GLint location = glGetUniformLocation(m_program_id, name.c_str());
     CHECK_ERROR("ShaderProgram::BindInts", "glGetUniformLocation()");
@@ -267,8 +274,7 @@ void ShaderProgram::BindInts(const std::string& name, int i0, int i1, int i2)
     CHECK_ERROR("ShaderProgram::BindInts", "glUniform3i()");
 }
 
-void ShaderProgram::BindInts(const std::string& name, int i0, int i1, int i2, int i3)
-{
+void ShaderProgram::BindInts(const std::string& name, int i0, int i1, int i2, int i3) {
     glGetError();
     GLint location = glGetUniformLocation(m_program_id, name.c_str());
     CHECK_ERROR("ShaderProgram::BindInts", "glGetUniformLocation()");
@@ -278,8 +284,7 @@ void ShaderProgram::BindInts(const std::string& name, int i0, int i1, int i2, in
     CHECK_ERROR("ShaderProgram::BindInts", "glUniform4i()");
 }
 
-void ShaderProgram::BindInts(const std::string& name, std::size_t element_size, const std::vector<GLint> &ints)
-{
+void ShaderProgram::BindInts(const std::string& name, std::size_t element_size, const std::vector<GLint> &ints) {
     assert(1 <= element_size && element_size <= 4);
     assert((ints.size() % element_size) == 0);
 
@@ -302,8 +307,7 @@ void ShaderProgram::BindInts(const std::string& name, std::size_t element_size, 
     CHECK_ERROR("ShaderProgram::BindInts", "glUniformNiv()");
 }
 
-bool ShaderProgram::AllValuesBound()
-{
+bool ShaderProgram::AllValuesBound() {
     bool retval = false;
     glGetError();
     glValidateProgram(m_program_id);
@@ -316,14 +320,11 @@ bool ShaderProgram::AllValuesBound()
     return retval;
 }
 
-void ShaderProgram::Use()
-{
+void ShaderProgram::Use() {
     glGetError();
     glUseProgram(m_program_id);
     CHECK_ERROR("ShaderProgram::Use", "glUseProgram()");
 }
 
 void ShaderProgram::stopUse()
-{
-    glUseProgram(0);
-}
+{ glUseProgram(0); }

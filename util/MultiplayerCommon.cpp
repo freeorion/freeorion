@@ -18,6 +18,8 @@
 #undef int64_t
 #endif
 
+#include <GG/utf8/checked.h>
+
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/system/system_error.hpp>
@@ -31,12 +33,23 @@ const std::string SP_SAVE_FILE_EXTENSION = ".sav";
 namespace fs = boost::filesystem;
 
 namespace {
+    std::string PathString(const fs::path& path) {
+#ifndef FREEORION_WIN32
+        return path.string();
+#else
+        fs::path::string_type native_string = path.native();
+        std::string retval;
+        utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
+        return retval;
+#endif
+    }
+
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add<std::string>("resource-dir",         "OPTIONS_DB_RESOURCE_DIR",          (GetRootDataDir() / "default").string());
-        db.Add<std::string>('S', "save-dir",        "OPTIONS_DB_SAVE_DIR",              (GetUserDir() / "save").string());
+        db.Add<std::string>("resource-dir",         "OPTIONS_DB_RESOURCE_DIR",          PathString(GetRootDataDir() / "default"));
+        db.Add<std::string>('S', "save-dir",        "OPTIONS_DB_SAVE_DIR",              PathString(GetUserDir() / "save"));
         db.Add<std::string>("log-level",            "OPTIONS_DB_LOG_LEVEL",             "DEBUG");
-        db.Add<std::string>("stringtable-filename", "OPTIONS_DB_STRINGTABLE_FILENAME",  (GetRootDataDir() / "default" / "eng_stringtable.txt").string());
+        db.Add<std::string>("stringtable-filename", "OPTIONS_DB_STRINGTABLE_FILENAME",  PathString(GetRootDataDir() / "default" / "eng_stringtable.txt"));
         db.AddFlag("test-3d-combat",                "OPTIONS_DB_TEST_3D_COMBAT",        false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -44,7 +57,7 @@ namespace {
     const double TWO_PI = 8.0 * std::atan(1.0);
 
     std::string GetDefaultStringTableFileName()
-    { return (GetResourceDir() / "eng_stringtable.txt").string(); }
+    { return PathString(GetResourceDir() / "eng_stringtable.txt"); }
 
     std::string GetStringTableFileName() {
         std::string option_filename = GetOptionsDB().Get<std::string>("stringtable-filename");
@@ -456,13 +469,13 @@ MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
 
     // build a list of save files
     fs::path save_dir(GetSaveDir());
-    Logger().debugStream() << "MultiplayerLobbyData::MultiplayerLobbyData save dir path: " << save_dir.string();
+    Logger().debugStream() << "MultiplayerLobbyData::MultiplayerLobbyData save dir path: " << PathString(save_dir);
     fs::directory_iterator end_it;
     for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
         try {
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
-            if (fs::exists(*it) && !fs::is_directory(*it) && it->path().filename().string()[0] != '.') {
-                std::string filename = it->path().filename().string();
+            if (fs::exists(*it) && !fs::is_directory(*it) && PathString(it->path().filename())[0] != '.') {
+                std::string filename = PathString(it->path().filename());
 #else
             if (fs::exists(*it) && !fs::is_directory(*it) && it->path().filename()[0] != '.') {
                 std::string filename = it->path().filename();
