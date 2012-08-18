@@ -1844,6 +1844,12 @@ HAS_MINING_FOCUS
 
 HAS_ADVANCED_FOCI
 '''        Focus
+            name = "FOCUS_PROTECTION"
+            description = "FOCUS_PROTECTION_DESC"
+            location = OwnerHasTech name = "DEF_ROOT_DEFENSE"
+            graphic = "icons/focus/protection.png"
+            
+        Focus
             name = "FOCUS_LOGISTICS"
             description = "FOCUS_LOGISTICS_DESC"
             location = OwnerHasTech name = "SHP_FLEET_LOGISTICS"
@@ -2164,7 +2170,17 @@ ENVIRONMENT_MODIFIER
 
 
 ADVANCED_FOCUS_EFFECTS
-'''        EffectsGroup
+'''     EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_PROTECTION"
+            accountinglabel = "FOCUS_PROTECTION_LABLE"
+            effects = [
+                SetMaxTroops Value + 25
+                SetMaxDefense Value + 25
+                SetMaxShield Value + 25
+            ]
+            
+        EffectsGroup
             scope = Source
             activation = Focus "FOCUS_STEALTH"
             effects = SetStealth Value + 1000
