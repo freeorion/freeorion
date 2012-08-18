@@ -17,6 +17,10 @@
 
 #include <GG/DrawUtil.h>
 
+namespace {
+    enum VIS_DISPLAY { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
+}
+
 ////////////////////////////////////////////////
 // FilterDialog
 ////////////////////////////////////////////////
@@ -229,7 +233,7 @@ class ObjectRow : public GG::ListBox::Row {
 public:
     ObjectRow(GG::X w, GG::Y h, const UniverseObject* obj, bool expanded,
               int container_object_panel,
-              const std::vector<int>& contained_object_panels, int indent) :
+              const std::set<int>& contained_object_panels, int indent) :
         GG::ListBox::Row(w, h, "ObjectRow", GG::ALIGN_CENTER, 1),
         m_panel(0),
         m_container_object_panel(container_object_panel),
@@ -252,10 +256,10 @@ public:
     int                     ContainedByPanel() const
     { return m_container_object_panel; }
 
-    const std::vector<int>& ContainedPanels() const
+    const std::set<int>& ContainedPanels() const
     { return m_contained_object_panels; }
 
-    void                    SetContainedPanels(const std::vector<int>& contained_object_panels) {
+    void                    SetContainedPanels(const std::set<int>& contained_object_panels) {
         m_contained_object_panels = contained_object_panels;
         m_panel->SetHasContents(!m_contained_object_panels.empty());
         m_panel->Refresh();
@@ -281,7 +285,7 @@ public:
 private:
     ObjectPanel*        m_panel;
     int                 m_container_object_panel;
-    std::vector<int>    m_contained_object_panels;
+    std::set<int>       m_contained_object_panels;
 };
 
 ////////////////////////////////////////////////
@@ -291,8 +295,10 @@ class ObjectListBox : public CUIListBox {
 public:
     ObjectListBox() :
         CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1),
+        m_object_change_connections(),
         m_collapsed_objects(),
-        m_filter_condition(0)
+        m_filter_condition(0),
+        m_visibilities()
     {
         // preinitialize listbox/row column widths, because what
         // ListBox::Insert does on default is not suitable for this case
@@ -301,6 +307,15 @@ public:
         LockColWidths();
 
         m_filter_condition = new Condition::All();
+
+        m_visibilities[OBJ_BUILDING].insert(SHOW_VISIBLE);
+        m_visibilities[OBJ_BUILDING].insert(SHOW_PREVIOUSLY_VISIBLE);
+        m_visibilities[OBJ_SHIP].insert(SHOW_VISIBLE);
+        m_visibilities[OBJ_FLEET].insert(SHOW_VISIBLE);
+        m_visibilities[OBJ_PLANET].insert(SHOW_VISIBLE);
+        m_visibilities[OBJ_PLANET].insert(SHOW_PREVIOUSLY_VISIBLE);
+        m_visibilities[OBJ_SYSTEM].insert(SHOW_VISIBLE);
+        m_visibilities[OBJ_SYSTEM].insert(SHOW_PREVIOUSLY_VISIBLE);
 
         GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &ObjectListBox::UniverseObjectDeleted,  this);
     }
@@ -365,51 +380,109 @@ public:
         m_object_change_connections.clear();
     }
 
+    bool            ObjectShown(int object_id, UniverseObjectType type, bool assume_visible_without_checking = false) {
+        if (object_id == INVALID_OBJECT_ID)
+            return false;
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+
+        if (GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).find(object_id) != GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).end())
+            return m_visibilities[type].find(SHOW_DESTROYED) != m_visibilities[type].end();
+
+        if (assume_visible_without_checking || GetUniverse().GetObjectVisibilityByEmpire(object_id, client_empire_id))
+            return m_visibilities[type].find(SHOW_VISIBLE) != m_visibilities[type].end();
+
+        return m_visibilities[type].find(SHOW_PREVIOUSLY_VISIBLE) != m_visibilities[type].end();
+    }
+
     void            Refresh() {
         std::size_t first_visible_queue_row = std::distance(this->begin(), this->FirstRowShown());
         ClearContents();
 
-        const ObjectMap& objects = GetUniverse().Objects();
+        const ObjectMap& visible_objects = GetUniverse().Objects();
+        const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
+
+        std::set<int> already_filtered_objects;
 
         bool nested = true;
 
         if (!nested) {
         } else {
             // sort objects by containment associations
-            std::vector<int>                        systems;
-            std::map<int, std::vector<int> >        system_fleets;
-            std::map<int, std::vector<int> >        fleet_ships;
-            std::map<int, std::vector<int> >        system_planets;
-            std::map<int, std::vector<int> >        planet_buildings;
+            std::set<int>                   systems;
+            std::map<int, std::set<int> >   system_fleets;
+            std::map<int, std::set<int> >   fleet_ships;
+            std::map<int, std::set<int> >   system_planets;
+            std::map<int, std::set<int> >   planet_buildings;
 
-            for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
+            for (ObjectMap::const_iterator it = visible_objects.const_begin(); it != visible_objects.const_end(); ++it) {
+                int object_id = it->first;
+                already_filtered_objects.insert(object_id);
                 const UniverseObject* obj = it->second;
-                if (const System* system = universe_object_cast<const System*>(obj))
-                    systems.push_back(system->ID());
-                else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj))
-                    system_fleets[fleet->SystemID()].push_back(fleet->ID());
-                else if (const Ship* ship = universe_object_cast<const Ship*>(obj))
-                    fleet_ships[ship->FleetID()].push_back(ship->ID());
-                else if (const Planet* planet = universe_object_cast<const Planet*>(obj))
-                    system_planets[planet->SystemID()].push_back(planet->ID());
-                else if (const Building* building = universe_object_cast<const Building*>(obj))
-                    planet_buildings[building->PlanetID()].push_back(building->ID());
+
+                if (const System* system = universe_object_cast<const System*>(obj)) {
+                    if (ObjectShown(object_id, OBJ_SYSTEM, true))
+                        systems.insert(object_id);
+
+                } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
+                    if (ObjectShown(object_id, OBJ_FLEET, true))
+                        system_fleets[fleet->SystemID()].insert(object_id);
+
+                } else if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
+                    if (ObjectShown(object_id, OBJ_SHIP, true))
+                        fleet_ships[ship->FleetID()].insert(object_id);
+
+                } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
+                    if (ObjectShown(object_id, OBJ_PLANET, true))
+                        system_planets[planet->SystemID()].insert(object_id);
+
+                } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
+                    if (ObjectShown(object_id, OBJ_BUILDING, true))
+                        planet_buildings[building->PlanetID()].insert(object_id);
+                }
             }
+            for (ObjectMap::const_iterator it = known_objects.const_begin(); it != known_objects.const_end(); ++it) {
+                int object_id = it->first;
+                if (already_filtered_objects.find(object_id) != already_filtered_objects.end())
+                    continue;
+                const UniverseObject* obj = it->second;
+
+                if (const System* system = universe_object_cast<const System*>(obj)) {
+                    if (ObjectShown(object_id, OBJ_SYSTEM))
+                        systems.insert(object_id);
+
+                } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
+                    if (ObjectShown(object_id, OBJ_FLEET))
+                        system_fleets[fleet->SystemID()].insert(object_id);
+
+                } else if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
+                    if (ObjectShown(object_id, OBJ_SHIP))
+                        fleet_ships[ship->FleetID()].insert(object_id);
+
+                } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
+                    if (ObjectShown(object_id, OBJ_PLANET))
+                        system_planets[planet->SystemID()].insert(object_id);
+
+                } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
+                    if (ObjectShown(object_id, OBJ_BUILDING))
+                        planet_buildings[building->PlanetID()].insert(object_id);
+                }
+            }
+
 
             int indent = 0;
 
             // add system rows
-            for (std::vector<int>::const_iterator sys_it = systems.begin(); sys_it != systems.end(); ++sys_it) {
+            for (std::set<int>::const_iterator sys_it = systems.begin(); sys_it != systems.end(); ++sys_it) {
                 int system_id = *sys_it;
 
-                std::map<int, std::vector<int> >::const_iterator sp_it = system_planets.find(system_id);
-                std::map<int, std::vector<int> >::const_iterator sf_it = system_fleets.find(system_id);
+                std::map<int, std::set<int> >::const_iterator sp_it = system_planets.find(system_id);
+                std::map<int, std::set<int> >::const_iterator sf_it = system_fleets.find(system_id);
                 bool has_contents_system_row = sp_it != system_planets.end() || sf_it != system_fleets.end();
-                std::vector<int> system_contents;
+                std::set<int> system_contents;
                 if (sp_it != system_planets.end())
                     system_contents = sp_it->second;
                 if (sf_it != system_fleets.end())
-                    std::copy(sf_it->second.begin(), sf_it->second.end(), std::back_inserter(system_contents));
+                    system_contents.insert(sf_it->second.begin(), sf_it->second.end());
 
                 AddObjectRow(system_id, INVALID_OBJECT_ID, system_contents, indent);
 
@@ -419,15 +492,15 @@ public:
                 ++indent;
                 // add planet rows in this system
                 if (sp_it != system_planets.end()) {
-                    const std::vector<int>& planets = sp_it->second;
-                    for (std::vector<int>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
+                    const std::set<int>& planets = sp_it->second;
+                    for (std::set<int>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
                         int planet_id = *planet_it;
 
-                        std::map<int, std::vector<int> >::const_iterator pb_it = planet_buildings.find(planet_id);
+                        std::map<int, std::set<int> >::const_iterator pb_it = planet_buildings.find(planet_id);
                         bool has_contents_planet_row = pb_it != planet_buildings.end();
 
                         AddObjectRow(planet_id, system_id,
-                                     pb_it != planet_buildings.end() ? pb_it->second : std::vector<int>(),
+                                     pb_it != planet_buildings.end() ? pb_it->second : std::set<int>(),
                                      indent);
 
                         if (!has_contents_planet_row || ObjectCollapsed(planet_id))
@@ -436,9 +509,9 @@ public:
                         ++indent;
                         // add building rows on this planet
                         if (pb_it != planet_buildings.end()) {
-                            const std::vector<int>& buildings = pb_it->second;
-                            for (std::vector<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-                                AddObjectRow(*building_it, planet_id, std::vector<int>(), indent);
+                            const std::set<int>& buildings = pb_it->second;
+                            for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
+                                AddObjectRow(*building_it, planet_id, std::set<int>(), indent);
                             }
                         }
                         indent--;
@@ -447,15 +520,15 @@ public:
 
                 // add fleet rows in this system
                 if (sf_it != system_fleets.end()) {
-                    const std::vector<int>& fleets = sf_it->second;
-                    for (std::vector<int>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
+                    const std::set<int>& fleets = sf_it->second;
+                    for (std::set<int>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
                         int fleet_id = *fleet_it;
 
-                        std::map<int, std::vector<int> >::const_iterator fs_it = fleet_ships.find(fleet_id);
+                        std::map<int, std::set<int> >::const_iterator fs_it = fleet_ships.find(fleet_id);
                         bool has_contents_fleet_row = fs_it != fleet_ships.end();
 
                         AddObjectRow(fleet_id, system_id, 
-                                     fs_it != fleet_ships.end() ? fs_it->second : std::vector<int>(),
+                                     fs_it != fleet_ships.end() ? fs_it->second : std::set<int>(),
                                      indent);
 
                         if (!has_contents_fleet_row || ObjectCollapsed(fleet_id))
@@ -464,9 +537,9 @@ public:
                         ++indent;
                         // add ship rows on this fleet
                         if (fs_it != fleet_ships.end()) {
-                            const std::vector<int>& ships = fs_it->second;
-                            for (std::vector<int>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
-                                AddObjectRow(*ship_it, fleet_id, std::vector<int>(), indent);
+                            const std::set<int>& ships = fs_it->second;
+                            for (std::set<int>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+                                AddObjectRow(*ship_it, fleet_id, std::set<int>(), indent);
                             }
                         }
                         indent--;
@@ -476,17 +549,17 @@ public:
             }
 
             // add fleets outside systems...
-            std::map<int, std::vector<int> >::const_iterator sf_it = system_fleets.find(INVALID_OBJECT_ID);
+            std::map<int, std::set<int> >::const_iterator sf_it = system_fleets.find(INVALID_OBJECT_ID);
             if (sf_it != system_fleets.end()) {
-                const std::vector<int>& fleets = sf_it->second;
-                for (std::vector<int>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
+                const std::set<int>& fleets = sf_it->second;
+                for (std::set<int>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
                     int fleet_id = *fleet_it;
 
-                    std::map<int, std::vector<int> >::const_iterator fs_it = fleet_ships.find(fleet_id);
+                    std::map<int, std::set<int> >::const_iterator fs_it = fleet_ships.find(fleet_id);
                     bool has_contents_fleet_row = fs_it != fleet_ships.end();
 
                     AddObjectRow(fleet_id, INVALID_OBJECT_ID,
-                                 fs_it != fleet_ships.end() ? fs_it->second : std::vector<int>(),
+                                 fs_it != fleet_ships.end() ? fs_it->second : std::set<int>(),
                                  indent);
 
                     if (!has_contents_fleet_row || ObjectCollapsed(fleet_id))
@@ -495,9 +568,9 @@ public:
                     ++indent;
                     // add ship rows on this fleet
                     if (fs_it != fleet_ships.end()) {
-                        const std::vector<int>& ships = fs_it->second;
-                        for (std::vector<int>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
-                            AddObjectRow(*ship_it, fleet_id, std::vector<int>(), indent);
+                        const std::set<int>& ships = fs_it->second;
+                        for (std::set<int>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+                            AddObjectRow(*ship_it, fleet_id, std::set<int>(), indent);
                         }
                     }
                     indent--;
@@ -523,10 +596,10 @@ public:
     }
 
 private:
-    void            AddObjectRow(int object_id, int container, const std::vector<int>& contents, int indent)
+    void            AddObjectRow(int object_id, int container, const std::set<int>& contents, int indent)
     { AddObjectRow(object_id, container, contents, indent, this->end()); }
 
-    void            AddObjectRow(int object_id, int container, const std::vector<int>& contents,
+    void            AddObjectRow(int object_id, int container, const std::set<int>& contents,
                                  int indent, GG::ListBox::iterator it)
     {
         const UniverseObject* obj = GetUniverseObject(object_id);
@@ -565,13 +638,13 @@ private:
         for (GG::ListBox::iterator it = this->begin(); it != this->end(); ++it) {
             if (ObjectRow* object_row = dynamic_cast<ObjectRow*>(*it)) {
                 if (object_row->ObjectID() == container_object_id) {
-                    const std::vector<int>& contents = object_row->ContainedPanels();
-                    std::vector<int> new_contents;
-                    for (std::vector<int>::const_iterator contents_it = contents.begin();
+                    const std::set<int>& contents = object_row->ContainedPanels();
+                    std::set<int> new_contents;
+                    for (std::set<int>::const_iterator contents_it = contents.begin();
                          contents_it != contents.end(); ++contents_it)
                     {
                         if (*contents_it != object_id)
-                            new_contents.push_back(*contents_it);
+                            new_contents.insert(*contents_it);
                     }
                     object_row->SetContainedPanels(new_contents);
                     object_row->Update();
@@ -589,7 +662,7 @@ private:
         ObjectRow* object_row = dynamic_cast<ObjectRow*>(*it);
 
         // recursively remove contained rows first
-        const std::vector<int>& contents = object_row->ContainedPanels();
+        const std::set<int>& contents = object_row->ContainedPanels();
         for (unsigned int i = 0; i < contents.size(); ++i) {
             GG::ListBox::iterator next_it = it; ++next_it;
             if (next_it == this->end())
@@ -642,9 +715,10 @@ private:
             RemoveObjectRow(obj->ID());
     }
 
-    std::map<int, boost::signals::connection>   m_object_change_connections;
-    std::set<int>                               m_collapsed_objects;
-    Condition::ConditionBase*                   m_filter_condition;
+    std::map<int, boost::signals::connection>           m_object_change_connections;
+    std::set<int>                                       m_collapsed_objects;
+    Condition::ConditionBase*                           m_filter_condition;
+    std::map<UniverseObjectType, std::set<VIS_DISPLAY> >m_visibilities;
 };
 
 ////////////////////////////////////////////////
