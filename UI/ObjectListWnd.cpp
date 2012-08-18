@@ -485,12 +485,12 @@ public:
                     std::map<int, std::vector<int> >::const_iterator fs_it = fleet_ships.find(fleet_id);
                     bool has_contents_fleet_row = fs_it != fleet_ships.end();
 
-                    if (!has_contents_fleet_row || ObjectCollapsed(fleet_id))
-                        continue;
-
                     AddObjectRow(fleet_id, INVALID_OBJECT_ID,
                                  fs_it != fleet_ships.end() ? fs_it->second : std::vector<int>(),
                                  indent);
+
+                    if (!has_contents_fleet_row || ObjectCollapsed(fleet_id))
+                        continue;
 
                     ++indent;
                     // add ship rows on this fleet
