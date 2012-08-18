@@ -31,9 +31,10 @@ public:
 private:
 };
 
-static std::string EMPTY_STRING;
+namespace {
+    static std::string EMPTY_STRING;
 
-std::vector<boost::shared_ptr<GG::Texture> > ObjectTextures(const UniverseObject* obj) {
+    std::vector<boost::shared_ptr<GG::Texture> > ObjectTextures(const UniverseObject* obj) {
     std::vector<boost::shared_ptr<GG::Texture> > retval;
 
     if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
@@ -67,7 +68,7 @@ std::vector<boost::shared_ptr<GG::Texture> > ObjectTextures(const UniverseObject
     return retval;
 }
 
-const std::string& ObjectName(const UniverseObject* obj) {
+    const std::string& ObjectName(const UniverseObject* obj) {
     if (!obj)
         return EMPTY_STRING;
     if (const System* system = universe_object_cast<const System*>(obj))
@@ -75,60 +76,33 @@ const std::string& ObjectName(const UniverseObject* obj) {
     return obj->PublicName(HumanClientApp::GetApp()->EmpireID());
 }
 
-std::pair<std::string, GG::Clr> ObjectEmpireNameAndColour(const UniverseObject* obj) {
+    std::pair<std::string, GG::Clr> ObjectEmpireNameAndColour(const UniverseObject* obj) {
     if (!obj)
         return std::make_pair("", ClientUI::TextColor());
     if (const Empire* empire = Empires().Lookup(obj->Owner()))
         return std::make_pair(empire->Name(), empire->Color());
     return std::make_pair("", ClientUI::TextColor());
 }
+}
 
+////////////////////////////////////////////////
+// ObjectPanel
+////////////////////////////////////////////////
 class ObjectPanel : public GG::Control {
 public:
-    ObjectPanel(GG::X w, GG::Y h, const UniverseObject* obj, bool expanded, bool have_contents, int indent = 0) :
+    ObjectPanel(GG::X w, GG::Y h, const UniverseObject* obj, bool expanded, bool has_contents, int indent = 0) :
         Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
         m_object_id(obj ? obj->ID() : INVALID_OBJECT_ID),
         m_indent(indent),
         m_expanded(expanded),
-        m_have_contents(have_contents),
+        m_has_contents(has_contents),
         m_expand_button(0),
         m_dot(0),
         m_icon(0),
         m_name_label(0),
         m_empire_label(0)
     {
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-        GG::Clr clr = ClientUI::TextColor();
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-        GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
-
-        if (m_have_contents) {
-            m_expand_button = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16),
-                                                "", font, GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
-            AttachChild(m_expand_button);
-            GG::Connect(m_expand_button->ClickedSignal, &ObjectPanel::ExpandCollapseButtonPressed, this);
-        } else {
-            m_dot = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(16), GG::Y(16),
-                                          ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "dot.png", true),
-                                          style, GG::Flags<GG::WndFlag>());
-            AttachChild(m_dot);
-        }
-
-        std::vector<boost::shared_ptr<GG::Texture> > textures = ObjectTextures(obj);
-
-        m_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, GG::X(Value(ClientHeight())), ClientHeight(),
-                                                textures, std::vector<GG::Flags<GG::GraphicStyle> >(textures.size(), style));
-        AttachChild(m_icon);
-
-        m_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(Value(ClientHeight())), ClientHeight(), ObjectName(obj), font, clr, GG::FORMAT_LEFT);
-        AttachChild(m_name_label);
-
-        std::pair<std::string, GG::Clr> empire_and_colour = ObjectEmpireNameAndColour(obj);
-        m_empire_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(Value(ClientHeight())), ClientHeight(), empire_and_colour.first, font, empire_and_colour.second, GG::FORMAT_LEFT);
-        AttachChild(m_empire_label);
-
-        Update();
-        DoLayout();
+        Refresh();
     }
 
     int                 ObjectID() const { return m_object_id; }
@@ -145,8 +119,23 @@ public:
             DoLayout();
     }
 
-    void                Update() {
-        if (m_expand_button) {
+    void                Refresh() {
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+        GG::Clr clr = ClientUI::TextColor();
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
+
+        delete m_dot;           m_dot = 0;
+        delete m_expand_button; m_expand_button = 0;
+        delete m_icon;          m_icon = 0;
+        delete m_name_label;    m_name_label = 0;
+
+        if (m_has_contents) {
+            m_expand_button = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16),
+                                                "", font, GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
+            AttachChild(m_expand_button);
+            GG::Connect(m_expand_button->ClickedSignal, &ObjectPanel::ExpandCollapseButtonPressed, this);
+
             if (m_expanded) {
                 m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "minusnormal.png"     , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
                 m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "minusclicked.png"    , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
@@ -156,8 +145,32 @@ public:
                 m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "plusclicked.png"  , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
                 m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "plusmouseover.png", true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
             }
+        } else {
+            m_dot = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(16), GG::Y(16),
+                                          ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "dot.png", true),
+                                          style, GG::Flags<GG::WndFlag>());
+            AttachChild(m_dot);
         }
+
+        const UniverseObject* obj = GetUniverseObject(m_object_id);
+        std::vector<boost::shared_ptr<GG::Texture> > textures = ObjectTextures(obj);
+
+        m_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, GG::X(Value(ClientHeight())), ClientHeight(),
+                                                textures, std::vector<GG::Flags<GG::GraphicStyle> >(textures.size(), style));
+        AttachChild(m_icon);
+
+        m_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(Value(ClientHeight())), ClientHeight(), ObjectName(obj), font, clr, GG::FORMAT_LEFT);
+        AttachChild(m_name_label);
+
+        std::pair<std::string, GG::Clr> empire_and_colour = ObjectEmpireNameAndColour(obj);
+        m_empire_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(Value(ClientHeight())), ClientHeight(), empire_and_colour.first, font, empire_and_colour.second, GG::FORMAT_LEFT);
+        AttachChild(m_empire_label);
+
+        DoLayout();
     }
+
+    void                SetHasContents(bool has_contents)
+    { m_has_contents = has_contents; }
 
     mutable boost::signal<void ()>  ExpandCollapseSignal;
 private:
@@ -194,14 +207,13 @@ private:
 
     void                ExpandCollapseButtonPressed() {
         m_expanded = !m_expanded;
-        Update();
         ExpandCollapseSignal();
     }
 
     int                         m_object_id;
     int                         m_indent;
     bool                        m_expanded;
-    bool                        m_have_contents;
+    bool                        m_has_contents;
 
     GG::Button*                 m_expand_button;
     GG::StaticGraphic*          m_dot;
@@ -215,32 +227,46 @@ private:
 ////////////////////////////////////////////////
 class ObjectRow : public GG::ListBox::Row {
 public:
-    ObjectRow(GG::X w, GG::Y h, const UniverseObject* obj, bool expanded, bool have_contents, int indent) :
+    ObjectRow(GG::X w, GG::Y h, const UniverseObject* obj, bool expanded,
+              int container_object_panel,
+              const std::vector<int>& contained_object_panels, int indent) :
         GG::ListBox::Row(w, h, "ObjectRow", GG::ALIGN_CENTER, 1),
-        m_panel(0)
+        m_panel(0),
+        m_container_object_panel(container_object_panel),
+        m_contained_object_panels(contained_object_panels)
     {
         SetName("ObjectRow");
         SetChildClippingMode(ClipToClient);
         SetDragDropDataType("ObjectRow");
-        m_panel = new ObjectPanel(w, h, obj, expanded, have_contents, indent);
+        m_panel = new ObjectPanel(w, h, obj, expanded, !m_contained_object_panels.empty(), indent);
         push_back(m_panel);
         GG::Connect(m_panel->ExpandCollapseSignal,  &ObjectRow::ExpandCollapseClicked, this);
     }
 
-    int     ObjectID() const {
+    int                     ObjectID() const {
         if (m_panel)
             return m_panel->ObjectID();
         return INVALID_OBJECT_ID;
     }
 
-    void    Update() {
-        if (m_panel)
-            m_panel->Update();
+    int                     ContainedByPanel() const
+    { return m_container_object_panel; }
+
+    const std::vector<int>& ContainedPanels() const
+    { return m_contained_object_panels; }
+
+    void                    SetContainedPanels(const std::vector<int>& contained_object_panels) {
+        m_contained_object_panels = contained_object_panels;
+        m_panel->SetHasContents(!m_contained_object_panels.empty());
+        m_panel->Refresh();
     }
+
+    void                    Update()
+    { m_panel->Refresh(); }
 
     /** This function overridden because otherwise, rows don't expand
         * larger than their initial size when resizing the list. */
-    void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         const GG::Pt old_size = Size();
         GG::ListBox::Row::SizeMove(ul, lr);
         //std::cout << "ObjectRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
@@ -248,12 +274,14 @@ public:
             m_panel->Resize(Size());
     }
 
-    void    ExpandCollapseClicked()
+    void                    ExpandCollapseClicked()
     { ExpandCollapseSignal(m_panel ? m_panel->ObjectID() : INVALID_OBJECT_ID); }
 
     mutable boost::signal<void (int)>   ExpandCollapseSignal;
 private:
-    ObjectPanel*    m_panel;
+    ObjectPanel*        m_panel;
+    int                 m_container_object_panel;
+    std::vector<int>    m_contained_object_panels;
 };
 
 ////////////////////////////////////////////////
@@ -273,6 +301,8 @@ public:
         LockColWidths();
 
         m_filter_condition = new Condition::All();
+
+        GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &ObjectListBox::UniverseObjectDeleted,  this);
     }
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -327,92 +357,88 @@ public:
         Refresh();
     }
 
+    void            ClearContents() {
+        Clear();
+        for (std::map<int, boost::signals::connection>::iterator it = m_object_change_connections.begin();
+             it != m_object_change_connections.end(); ++it)
+        { it->second.disconnect(); }
+        m_object_change_connections.clear();
+    }
+
     void            Refresh() {
         std::size_t first_visible_queue_row = std::distance(this->begin(), this->FirstRowShown());
+        ClearContents();
 
-        const ObjectMap& objects = Objects();
-        Clear();
-
-        const GG::Pt row_size = ListRowSize();
+        const ObjectMap& objects = GetUniverse().Objects();
 
         bool nested = true;
 
-        if (nested) {
+        if (!nested) {
+        } else {
             // sort objects by containment associations
-            std::map<int, const System*>                    systems;
-            std::map<int, std::map<int, const Fleet*> >     system_fleets;
-            std::map<int, std::map<int, const Ship*> >      fleet_ships;
-            std::map<int, std::map<int, const Planet*> >    system_planets;
-            std::map<int, std::map<int, const Building*> >  planet_buildings;
+            std::vector<int>                        systems;
+            std::map<int, std::vector<int> >        system_fleets;
+            std::map<int, std::vector<int> >        fleet_ships;
+            std::map<int, std::vector<int> >        system_planets;
+            std::map<int, std::vector<int> >        planet_buildings;
+
             for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
                 const UniverseObject* obj = it->second;
-                if (const System* system = universe_object_cast<const System*>(obj)) {
-                    systems[obj->ID()] = system;
-                } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
-                    system_fleets[fleet->SystemID()][fleet->ID()] = fleet;
-                } else if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
-                    fleet_ships[ship->FleetID()][ship->ID()] = ship;
-                } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
-                    system_planets[planet->SystemID()][planet->ID()] = planet;
-                } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
-                    planet_buildings[building->PlanetID()][building->ID()] = building;
-                }
+                if (const System* system = universe_object_cast<const System*>(obj))
+                    systems.push_back(system->ID());
+                else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj))
+                    system_fleets[fleet->SystemID()].push_back(fleet->ID());
+                else if (const Ship* ship = universe_object_cast<const Ship*>(obj))
+                    fleet_ships[ship->FleetID()].push_back(ship->ID());
+                else if (const Planet* planet = universe_object_cast<const Planet*>(obj))
+                    system_planets[planet->SystemID()].push_back(planet->ID());
+                else if (const Building* building = universe_object_cast<const Building*>(obj))
+                    planet_buildings[building->PlanetID()].push_back(building->ID());
             }
 
-            ObjectRow* object_row = 0;
             int indent = 0;
 
             // add system rows
-            for (std::map<int, const System*>::const_iterator sys_it = systems.begin(); sys_it != systems.end(); ++sys_it) {
-                int system_id = sys_it->first;
-                const System* system = sys_it->second;
+            for (std::vector<int>::const_iterator sys_it = systems.begin(); sys_it != systems.end(); ++sys_it) {
+                int system_id = *sys_it;
 
-                std::map<int, std::map<int, const Planet*> >::const_iterator sp_it = system_planets.find(system_id);
-                std::map<int, std::map<int, const Fleet*> >::const_iterator sf_it = system_fleets.find(system_id);
-                bool collapsed_system_row = ObjectCollapsed(system_id);
+                std::map<int, std::vector<int> >::const_iterator sp_it = system_planets.find(system_id);
+                std::map<int, std::vector<int> >::const_iterator sf_it = system_fleets.find(system_id);
                 bool has_contents_system_row = sp_it != system_planets.end() || sf_it != system_fleets.end();
+                std::vector<int> system_contents;
+                if (sp_it != system_planets.end())
+                    system_contents = sp_it->second;
+                if (sf_it != system_fleets.end())
+                    std::copy(sf_it->second.begin(), sf_it->second.end(), std::back_inserter(system_contents));
 
-                // add system row
-                object_row = new ObjectRow(row_size.x, row_size.y, system, !collapsed_system_row, has_contents_system_row, indent);
-                this->Insert(object_row);
-                object_row->Resize(row_size);
-                GG::Connect(object_row->ExpandCollapseSignal,   &ObjectListBox::ObjectExpandCollapseClicked,    this);
+                AddObjectRow(system_id, INVALID_OBJECT_ID, system_contents, indent);
 
-                if (!has_contents_system_row || collapsed_system_row)
+                if (!has_contents_system_row || ObjectCollapsed(system_id))
                     continue;
 
                 ++indent;
                 // add planet rows in this system
                 if (sp_it != system_planets.end()) {
-                    const std::map<int, const Planet*>& planets = sp_it->second;
-                    for (std::map<int, const Planet*>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
-                        int planet_id = planet_it->first;
-                        const Planet* planet = planet_it->second;
+                    const std::vector<int>& planets = sp_it->second;
+                    for (std::vector<int>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
+                        int planet_id = *planet_it;
 
-                        std::map<int, std::map<int, const Building*> >::const_iterator pb_it = planet_buildings.find(planet_id);
-                        bool collapsed_planet_row = ObjectCollapsed(planet_id);
+                        std::map<int, std::vector<int> >::const_iterator pb_it = planet_buildings.find(planet_id);
                         bool has_contents_planet_row = pb_it != planet_buildings.end();
 
-                        // add Planet row
-                        object_row = new ObjectRow(row_size.x, row_size.y, planet, !collapsed_planet_row, has_contents_planet_row, indent);
-                        this->Insert(object_row);
-                        object_row->Resize(row_size);
-                        GG::Connect(object_row->ExpandCollapseSignal,   &ObjectListBox::ObjectExpandCollapseClicked,    this);
+                        AddObjectRow(planet_id, system_id,
+                                     pb_it != planet_buildings.end() ? pb_it->second : std::vector<int>(),
+                                     indent);
 
-                        if (!has_contents_planet_row || collapsed_planet_row)
+                        if (!has_contents_planet_row || ObjectCollapsed(planet_id))
                             continue;
 
                         ++indent;
                         // add building rows on this planet
                         if (pb_it != planet_buildings.end()) {
-                            const std::map<int, const Building*>& buildings = pb_it->second;
-                            for (std::map<int, const Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-                                int building_id = building_it->first;
-                                const Building* building = building_it->second;
-                                // add Building row
-                                object_row = new ObjectRow(row_size.x, row_size.y, building, false, false, indent);
-                                this->Insert(object_row);
-                                object_row->Resize(row_size);
+                            const std::vector<int>& buildings = pb_it->second;
+                            for (std::vector<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
+                                AddObjectRow(*building_it, planet_id, std::vector<int>(), indent);
                             }
                         }
                         indent--;
@@ -421,76 +447,57 @@ public:
 
                 // add fleet rows in this system
                 if (sf_it != system_fleets.end()) {
-                    const std::map<int, const Fleet*>& fleets = sf_it->second;
-                    for (std::map<int, const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
-                        int fleet_id = fleet_it->first;
-                        const Fleet* fleet = fleet_it->second;
+                    const std::vector<int>& fleets = sf_it->second;
+                    for (std::vector<int>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
+                        int fleet_id = *fleet_it;
 
-                        std::map<int, std::map<int, const Ship*> >::const_iterator fs_it = fleet_ships.find(fleet_id);
-                        bool collapsed_fleet_row = ObjectCollapsed(fleet_id);
+                        std::map<int, std::vector<int> >::const_iterator fs_it = fleet_ships.find(fleet_id);
                         bool has_contents_fleet_row = fs_it != fleet_ships.end();
 
-                        // add Fleet row
-                        object_row = new ObjectRow(row_size.x, row_size.y, fleet, !collapsed_fleet_row, has_contents_fleet_row, indent);
-                        this->Insert(object_row);
-                        object_row->Resize(row_size);
-                        GG::Connect(object_row->ExpandCollapseSignal,   &ObjectListBox::ObjectExpandCollapseClicked,    this);
+                        AddObjectRow(fleet_id, system_id, 
+                                     fs_it != fleet_ships.end() ? fs_it->second : std::vector<int>(),
+                                     indent);
 
-                        if (!has_contents_fleet_row || collapsed_fleet_row)
+                        if (!has_contents_fleet_row || ObjectCollapsed(fleet_id))
                             continue;
 
                         ++indent;
                         // add ship rows on this fleet
                         if (fs_it != fleet_ships.end()) {
-                            const std::map<int, const Ship*>& ships = fs_it->second;
-                            for (std::map<int, const Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
-                                int ship_id = ship_it->first;
-                                const Ship* ship = ship_it->second;
-                                // add Building row
-                                object_row = new ObjectRow(row_size.x, row_size.y, ship, false, false, indent);
-                                this->Insert(object_row);
-                                object_row->Resize(row_size);
+                            const std::vector<int>& ships = fs_it->second;
+                            for (std::vector<int>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+                                AddObjectRow(*ship_it, fleet_id, std::vector<int>(), indent);
                             }
                         }
                         indent--;
                     }
                 }
-
                 indent--;
             }
 
             // add fleets outside systems...
-            std::map<int, std::map<int, const Fleet*> >::const_iterator sf_it = system_fleets.find(INVALID_OBJECT_ID);
+            std::map<int, std::vector<int> >::const_iterator sf_it = system_fleets.find(INVALID_OBJECT_ID);
             if (sf_it != system_fleets.end()) {
-                const std::map<int, const Fleet*>& fleets = sf_it->second;
-                for (std::map<int, const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
-                    int fleet_id = fleet_it->first;
-                    const Fleet* fleet = fleet_it->second;
+                const std::vector<int>& fleets = sf_it->second;
+                for (std::vector<int>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
+                    int fleet_id = *fleet_it;
 
-                    std::map<int, std::map<int, const Ship*> >::const_iterator fs_it = fleet_ships.find(fleet_id);
-                    bool collapsed_fleet_row = ObjectCollapsed(fleet_id);
+                    std::map<int, std::vector<int> >::const_iterator fs_it = fleet_ships.find(fleet_id);
                     bool has_contents_fleet_row = fs_it != fleet_ships.end();
 
-                    if (!has_contents_fleet_row || collapsed_fleet_row)
+                    if (!has_contents_fleet_row || ObjectCollapsed(fleet_id))
                         continue;
 
-                    // add Fleet row
-                    object_row = new ObjectRow(row_size.x, row_size.y, fleet, !collapsed_fleet_row, has_contents_fleet_row, indent);
-                    this->Insert(object_row);
-                    object_row->Resize(row_size);
-                    GG::Connect(object_row->ExpandCollapseSignal,   &ObjectListBox::ObjectExpandCollapseClicked,    this);
+                    AddObjectRow(fleet_id, INVALID_OBJECT_ID,
+                                 fs_it != fleet_ships.end() ? fs_it->second : std::vector<int>(),
+                                 indent);
 
                     ++indent;
                     // add ship rows on this fleet
                     if (fs_it != fleet_ships.end()) {
-                        const std::map<int, const Ship*>& ships = fs_it->second;
-                        for (std::map<int, const Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
-                            int ship_id = ship_it->first;
-                            const Ship* ship = ship_it->second;
-                            // add Building row
-                            object_row = new ObjectRow(row_size.x, row_size.y, ship, false, false, indent);
-                            this->Insert(object_row);
-                            object_row->Resize(row_size);
+                        const std::vector<int>& ships = fs_it->second;
+                        for (std::vector<int>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+                            AddObjectRow(*ship_it, fleet_id, std::vector<int>(), indent);
                         }
                     }
                     indent--;
@@ -504,7 +511,104 @@ public:
             this->BringRowIntoView(boost::next(this->begin(), first_visible_queue_row));
     }
 
+    void            UpdateObjectPanel(int object_id = INVALID_OBJECT_ID) {
+        if (object_id == INVALID_OBJECT_ID)
+            return;
+        for (GG::ListBox::iterator it = this->begin(); it != this->end(); ++it) {
+            if (ObjectRow* row = dynamic_cast<ObjectRow*>(*it)) {
+                row->Update();
+                return;
+            }
+        }
+    }
+
 private:
+    void            AddObjectRow(int object_id, int container, const std::vector<int>& contents, int indent)
+    { AddObjectRow(object_id, container, contents, indent, this->end()); }
+
+    void            AddObjectRow(int object_id, int container, const std::vector<int>& contents,
+                                 int indent, GG::ListBox::iterator it)
+    {
+        const UniverseObject* obj = GetUniverseObject(object_id);
+        if (!obj)
+            return;
+        const GG::Pt row_size = ListRowSize();
+        ObjectRow* object_row = new ObjectRow(row_size.x, row_size.y, obj, !ObjectCollapsed(object_id),
+                                              container, contents, indent);
+        this->Insert(object_row, it);
+        object_row->Resize(row_size);
+        GG::Connect(object_row->ExpandCollapseSignal,   &ObjectListBox::ObjectExpandCollapseClicked,    this, boost::signals::at_front);
+        m_object_change_connections[obj->ID()].disconnect();
+        m_object_change_connections[obj->ID()] = GG::Connect(obj->StateChangedSignal, boost::bind(&ObjectListBox::ObjectStateChanged, this, obj->ID()), boost::signals::at_front);
+    }
+
+    // Removes row of indicated object, and all contained rows, recursively.
+    // Also updates contents tracking of containing row, if any.
+    void            RemoveObjectRow(int object_id) {
+        if (object_id == INVALID_OBJECT_ID)
+            return;
+        int container_object_id = INVALID_OBJECT_ID;
+        for (GG::ListBox::iterator it = this->begin(); it != this->end(); ++it) {
+            if (ObjectRow* object_row = dynamic_cast<ObjectRow*>(*it)) {
+                if (object_row->ObjectID() == object_id) {
+                    container_object_id = object_row->ContainedByPanel();
+                    RemoveObjectRow(it);
+                    break;
+                }
+            }
+        }
+
+        if (container_object_id == INVALID_OBJECT_ID)
+            return;
+
+        // remove this row from parent row's contents
+        for (GG::ListBox::iterator it = this->begin(); it != this->end(); ++it) {
+            if (ObjectRow* object_row = dynamic_cast<ObjectRow*>(*it)) {
+                if (object_row->ObjectID() == container_object_id) {
+                    const std::vector<int>& contents = object_row->ContainedPanels();
+                    std::vector<int> new_contents;
+                    for (std::vector<int>::const_iterator contents_it = contents.begin();
+                         contents_it != contents.end(); ++contents_it)
+                    {
+                        if (*contents_it != object_id)
+                            new_contents.push_back(*contents_it);
+                    }
+                    object_row->SetContainedPanels(new_contents);
+                    object_row->Update();
+                    break;
+                }
+            }
+        }
+    }
+
+    // Removes row at indicated iterator location and its contained rows.
+    // Does not adjust containing row.
+    void            RemoveObjectRow(GG::ListBox::iterator it) {
+        if (it == this->end())
+            return;
+        ObjectRow* object_row = dynamic_cast<ObjectRow*>(*it);
+
+        // recursively remove contained rows first
+        const std::vector<int>& contents = object_row->ContainedPanels();
+        for (unsigned int i = 0; i < contents.size(); ++i) {
+            GG::ListBox::iterator next_it = it; ++next_it;
+            if (next_it == this->end())
+                break;
+            ObjectRow* contained_row = dynamic_cast<ObjectRow*>(*next_it);
+            if (!contained_row)
+                continue;
+            // remove only rows that are contained by this row
+            if (contained_row->ContainedByPanel() != object_row->ObjectID())
+                break;
+            RemoveObjectRow(next_it);
+        }
+
+        // erase this row and remove any signals related to it
+        m_object_change_connections[object_row->ObjectID()].disconnect();
+        m_object_change_connections.erase(object_row->ObjectID());
+        this->Erase(it);
+    }
+
     void            ObjectExpandCollapseClicked(int object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
@@ -514,10 +618,38 @@ private:
             CollapseObject(object_id);
     }
 
-    std::set<int>               m_collapsed_objects;
-    Condition::ConditionBase*   m_filter_condition;
+    void            ObjectStateChanged(int object_id) {
+        if (object_id == INVALID_OBJECT_ID)
+            return;
+        const UniverseObject* obj = GetUniverseObject(object_id);
+        Logger().debugStream() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
+        if (!obj)
+            return;
+        if (universe_object_cast<const Ship*>(obj) ||
+            universe_object_cast<const Building*>(obj))
+        {
+            UpdateObjectPanel(object_id);
+        } else if (universe_object_cast<const Fleet*>(obj) ||
+                   universe_object_cast<const Planet*>(obj) ||
+                   universe_object_cast<const System*>(obj))
+        {
+            Refresh();
+        }
+    }
+
+    void            UniverseObjectDeleted(const UniverseObject* obj) {
+        if (obj)
+            RemoveObjectRow(obj->ID());
+    }
+
+    std::map<int, boost::signals::connection>   m_object_change_connections;
+    std::set<int>                               m_collapsed_objects;
+    Condition::ConditionBase*                   m_filter_condition;
 };
 
+////////////////////////////////////////////////
+// ObjectListWnd
+////////////////////////////////////////////////
 ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
     CUIWnd(UserString("MAP_BTN_OBJECTS"), GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
     m_list_box(0),
