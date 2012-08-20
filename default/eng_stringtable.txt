@@ -934,6 +934,9 @@ If true, autosaves will occur during multiplayer games.
 OPTIONS_DB_AUTOSAVE_TURNS
 Sets the number of turns between autosaves.
 
+OPTIONS_DB_UI_MOUSE_LR_SWAP
+Swaps results of clicking left and right mouse buttons.
+
 OPTIONS_DB_MUSIC_VOLUME
 The volume (0 to 255) at which music should be played.
 
@@ -1348,6 +1351,9 @@ Vertical
 
 OPTIONS_TOOLTIP_DELAY
 Tooltip delay (ms)
+
+OPTIONS_SWAP_MOUSE_LR
+Swap Mouse Buttons Left-Right
 
 OPTIONS_VIDEO_MODE
 Full-Screen Video Mode

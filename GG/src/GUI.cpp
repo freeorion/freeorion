@@ -164,6 +164,7 @@ struct GG::GUIImpl
         m_wnd_region(WR_NONE),
         m_browse_target(0),
         m_drag_drop_originating_wnd(0),
+        m_mouse_lr_swap(false),
         m_delta_t(0),
         m_rendering_drag_drop_wnds(false),
         m_FPS(-1.0),
@@ -235,6 +236,8 @@ struct GG::GUIImpl
 
     std::map<std::pair<Key, Flags<ModKey> >, boost::shared_ptr<GUI::AcceleratorSignalType> >
                  m_accelerator_sigs;      // the signals emitted by the keyboard accelerators
+
+    bool         m_mouse_lr_swap;         // treat left and right mouse events as each other
 
     int          m_delta_t;               // the number of ms since the last frame
     bool         m_rendering_drag_drop_wnds;
@@ -607,6 +610,9 @@ Pt GUI::MouseMovement() const
 Flags<ModKey> GUI::ModKeys() const
 { return s_impl->m_mod_keys; }
 
+bool GUI::MouseLRSwapped() const
+{ return s_impl->m_mouse_lr_swap; }
+
 std::set<std::pair<CPSize, CPSize> > GUI::FindWords(const std::string& str) const
 {
     std::set<std::pair<CPSize, CPSize> > retval;
@@ -739,14 +745,22 @@ void GUI::HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point
         s_impl->m_prev_wnd_under_cursor = s_impl->m_curr_wnd_under_cursor; // update this for the next time around
         break; }
     case LPRESS:
+        s_impl->HandlePress((s_impl->m_mouse_lr_swap ? RPRESS : LPRESS) - LPRESS, pos, curr_ticks);
+        break;
     case MPRESS:
+        s_impl->HandlePress(MPRESS - LPRESS, pos, curr_ticks);
+        break;
     case RPRESS:
-        s_impl->HandlePress(event - LPRESS, pos, curr_ticks);
+        s_impl->HandlePress((s_impl->m_mouse_lr_swap ? LPRESS : RPRESS) - LPRESS, pos, curr_ticks);
         break;
     case LRELEASE:
+        s_impl->HandleRelease((s_impl->m_mouse_lr_swap ? RRELEASE : LRELEASE) - LRELEASE, pos, curr_ticks);
+        break;
     case MRELEASE:
+        s_impl->HandleRelease(MRELEASE - LRELEASE, pos, curr_ticks);
+        break;
     case RRELEASE:
-        s_impl->HandleRelease(event - LRELEASE, pos, curr_ticks);
+        s_impl->HandleRelease((s_impl->m_mouse_lr_swap ? LRELEASE : RRELEASE) - LRELEASE, pos, curr_ticks);
         break;
     case MOUSEWHEEL: {
         s_impl->m_curr_wnd_under_cursor = CheckedGetWindowUnder(pos, mod_keys);
@@ -943,6 +957,9 @@ void GUI::RemoveAccelerator(Key key, Flags<ModKey> mod_keys/* = MOD_KEY_NONE*/)
 
 void GUI::RemoveAccelerator(accel_iterator it)
 { s_impl->m_accelerators.erase(it); }
+
+void GUI::SetMouseLRSwapped(bool swapped/* = true*/)
+{ s_impl->m_mouse_lr_swap = swapped; }
 
 boost::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts)
 { return GetFontManager().GetFont(font_filename, pts); }

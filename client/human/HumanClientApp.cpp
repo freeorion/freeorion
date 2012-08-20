@@ -93,6 +93,7 @@ namespace {
         db.Add("autosave.single-player",    "OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER",    true,   Validator<bool>());
         db.Add("autosave.multiplayer",      "OPTIONS_DB_AUTOSAVE_MULTIPLAYER",      false,  Validator<bool>());
         db.Add("autosave.turns",            "OPTIONS_DB_AUTOSAVE_TURNS",            1,      RangedValidator<int>(1, 50));
+        db.Add("UI.swap-mouse-lr",          "OPTIONS_DB_UI_MOUSE_LR_SWAP",          false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -251,6 +252,8 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 
     SetStringtableDependentOptionDefaults();
     SetGLVersionDependentOptionDefaults();
+
+    this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("UI.swap-mouse-lr"));
 
     m_fsm->initiate();
 }
