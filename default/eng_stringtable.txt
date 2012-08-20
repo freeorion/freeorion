@@ -3991,6 +3991,9 @@ Launch Rate
 METER_FIGHTER_WEAPON_RANGE
 Fighter Weapon Range
 
+METER_DETECTION_STRENGTH
+Detection Strength
+
 ALIGN_MILITARISM
 Militarism
 
