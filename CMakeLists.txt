@@ -248,6 +248,8 @@ set(THIS_LIB_SOURCES
     parse/ConditionParser2.cpp
     parse/ConditionParser3.cpp
     parse/EffectParser.cpp
+    parse/EffectParser1.cpp
+    parse/EffectParser2.cpp
     parse/Parse.cpp
     parse/BuildingsParser.cpp
     parse/SpecialsParser.cpp

@@ -108,6 +108,8 @@
     <ClCompile Include="..\..\parse\Double.cpp" />
     <ClCompile Include="..\..\parse\DoubleValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\EffectParser.cpp" />
+    <ClCompile Include="..\..\parse\EffectParser1.cpp" />
+    <ClCompile Include="..\..\parse\EffectParser2.cpp" />
     <ClCompile Include="..\..\parse\EncyclopediaParser.cpp" />
     <ClCompile Include="..\..\parse\EnumParser.cpp" />
     <ClCompile Include="..\..\parse\FleetPlansParser.cpp" />
@@ -137,6 +139,7 @@
     <ClInclude Include="..\..\parse\ConditionParserImpl.h" />
     <ClInclude Include="..\..\parse\Double.h" />
     <ClInclude Include="..\..\parse\EffectParser.h" />
+    <ClInclude Include="..\..\parse\EffectParserImpl.h" />
     <ClInclude Include="..\..\parse\EnumParser.h" />
     <ClInclude Include="..\..\parse\Int.h" />
     <ClInclude Include="..\..\parse\Label.h" />

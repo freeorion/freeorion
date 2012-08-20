@@ -122,6 +122,12 @@
     <ClCompile Include="..\..\parse\EncyclopediaParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\parse\EffectParser1.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\EffectParser2.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\parse\ConditionParser.h">
@@ -161,6 +167,9 @@
       <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\ValueRefParser.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\EffectParserImpl.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
   </ItemGroup>
