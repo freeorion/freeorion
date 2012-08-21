@@ -248,6 +248,8 @@
 		47FAB6770A98D89F00F0AF3F /* dmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C9F0A98A3F900DA9C21 /* dmain.cpp */; };
 		47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA20A98A3F900DA9C21 /* ServerApp.cpp */; };
 		47FAB7490A98DE2F00F0AF3F /* liblog4cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D65510A98B7F800DA9C21 /* liblog4cpp.a */; };
+		8201E5F515E2C0770037D453 /* EffectParser1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8201E5F215E2C0770037D453 /* EffectParser1.cpp */; };
+		8201E5F615E2C0770037D453 /* EffectParser2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8201E5F315E2C0770037D453 /* EffectParser2.cpp */; };
 		8206388C14A87AF200A83D5A /* EffectParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936E2147E3B1B00B840A5 /* EffectParser.cpp */; };
 		820638A614A87C8B00A83D5A /* libEffectParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 820638A314A87AF200A83D5A /* libEffectParser.a */; };
 		820638A914A87CAA00A83D5A /* libEffectParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 820638A314A87AF200A83D5A /* libEffectParser.a */; };
@@ -2112,6 +2114,9 @@
 		47B616090CF09ADC00318761 /* alutVersion.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutVersion.c; sourceTree = "<group>"; };
 		47B6160A0CF09ADC00318761 /* alutWaveform.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutWaveform.c; sourceTree = "<group>"; };
 		47B6160B0CF09ADC00318761 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		8201E5F215E2C0770037D453 /* EffectParser1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser1.cpp; sourceTree = "<group>"; };
+		8201E5F315E2C0770037D453 /* EffectParser2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser2.cpp; sourceTree = "<group>"; };
+		8201E5F415E2C0770037D453 /* EffectParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParserImpl.h; sourceTree = "<group>"; };
 		820638A314A87AF200A83D5A /* libEffectParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libEffectParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		82132C2D15DA2BBC00F5B537 /* ObjectListWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectListWnd.cpp; sourceTree = "<group>"; };
 		82132C2E15DA2BBC00F5B537 /* ObjectListWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectListWnd.h; sourceTree = "<group>"; };
@@ -4125,6 +4130,9 @@
 		825936D5147E3B1B00B840A5 /* parse */ = {
 			isa = PBXGroup;
 			children = (
+				8201E5F215E2C0770037D453 /* EffectParser1.cpp */,
+				8201E5F315E2C0770037D453 /* EffectParser2.cpp */,
+				8201E5F415E2C0770037D453 /* EffectParserImpl.h */,
 				82BB838215AAD20A006F635F /* EncyclopediaParser.cpp */,
 				825936D6147E3B1B00B840A5 /* AlignmentsParser.cpp */,
 				825936D7147E3B1B00B840A5 /* BuildingsParser.cpp */,
@@ -5177,6 +5185,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				8206388C14A87AF200A83D5A /* EffectParser.cpp in Sources */,
+				8201E5F515E2C0770037D453 /* EffectParser1.cpp in Sources */,
+				8201E5F615E2C0770037D453 /* EffectParser2.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
