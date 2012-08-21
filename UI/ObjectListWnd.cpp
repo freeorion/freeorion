@@ -14,25 +14,166 @@
 #include "../universe/Planet.h"
 #include "../universe/Building.h"
 #include "../universe/Condition.h"
+#include "../universe/ValueRef.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/Layout.h>
 
-namespace {
-    enum VIS_DISPLAY { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
-}
+namespace
+{ enum VIS_DISPLAY { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED }; }
 
 ////////////////////////////////////////////////
 // FilterDialog
 ////////////////////////////////////////////////
 class FilterDialog : public CUIWnd {
 public:
-    FilterDialog(GG::X x, GG::Y y) : CUIWnd(UserString("FILTERS"), x, y, GG::X(200), GG::Y(200),
-                                            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE)
-    {}
-    ~FilterDialog()
-    {}
-    //@}
+    FilterDialog(GG::X x, GG::Y y, GG::X w, GG::Y h,
+                 const std::map<UniverseObjectType, std::set<VIS_DISPLAY> >& vis_filters,
+                 const Condition::ConditionBase* const condition_filter) :
+        CUIWnd(UserString("FILTERS"), x, y, w, h, GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE),
+        m_vis_filters(vis_filters)
+    {
+        GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ClientWidth(), ClientHeight(), 4, 6);
+        SetLayout(layout);
+        Init(condition_filter);
+    }
+
+    ~FilterDialog() {
+        for (std::vector<const Condition::ConditionBase*>::iterator it = m_conditions.begin();
+             it != m_conditions.end(); ++it)
+        { delete *it; }
+        m_conditions.clear();
+    }
+
+    std::map<UniverseObjectType, std::set<VIS_DISPLAY> >    GetVisibilityFilters() const
+    { return m_vis_filters; }
+
+    // caller takes ownership of returned ConditionBase*
+    const Condition::ConditionBase*                         GetConditionFilter() {
+        if (m_conditions.empty()) {
+            return new Condition::All();
+        } else if (m_conditions.size() == 1) {
+            const Condition::ConditionBase* retval = *(m_conditions.begin());
+            m_conditions.clear();
+            return retval;
+        } else {
+            const Condition::ConditionBase* retval = new Condition::And(m_conditions);
+            m_conditions.clear();
+            return retval;
+        }
+    }
+
+    mutable boost::signal<void ()>  FiltersChangedSignal;
+
 private:
+    const ValueRef::ValueRefBase<std::string>*  CopyStringValueRef(const ValueRef::ValueRefBase<std::string>* const value_ref) {
+        if (const ValueRef::Constant<std::string>* constant =
+            dynamic_cast<const ValueRef::Constant<std::string>*>(value_ref))
+        { return new ValueRef::Constant<std::string>(constant->Value()); }
+        return new ValueRef::Constant<std::string>("");
+    }
+    const ValueRef::ValueRefBase<int>*          CopyIntValueRef(const ValueRef::ValueRefBase<int>* const value_ref) {
+        if (const ValueRef::Constant<int>* constant =
+            dynamic_cast<const ValueRef::Constant<int>*>(value_ref))
+        { return new ValueRef::Constant<int>(constant->Value()); }
+        return new ValueRef::Constant<int>(0);
+    }
+    const ValueRef::ValueRefBase<double>*       CopyDoubleValueRef(const ValueRef::ValueRefBase<double>* const value_ref) {
+        if (const ValueRef::Constant<double>* constant =
+            dynamic_cast<const ValueRef::Constant<double>*>(value_ref))
+        { return new ValueRef::Constant<double>(constant->Value()); }
+        return new ValueRef::Constant<double>(0.0);
+    }
+
+    const Condition::ConditionBase*             CopyCondition(const Condition::ConditionBase* const condition) {
+        if (dynamic_cast<const Condition::Source* const>(condition)) {
+            return new Condition::Source();
+
+        } else if (dynamic_cast<const Condition::Homeworld* const>(condition)) {
+            return new Condition::Homeworld();
+
+        } else if (dynamic_cast<const Condition::Building* const>(condition)) {
+
+        }
+
+        return new Condition::All();
+    }
+
+    void    Init(const Condition::ConditionBase* const condition_filter) {
+        GG::Layout* layout = GetLayout();
+        if (!layout)
+            return;
+
+        layout->RenderOutline(true);
+
+        layout->SetMinimumColumnWidth(0, GG::X(ClientUI::Pts()*8));
+        layout->SetColumnStretch(0, 0.0);
+
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+        GG::Clr color = ClientUI::TextColor();
+
+        layout->Add(new GG::TextControl(GG::X0, GG::Y0, UserString("VISIBLE"),              font, color),
+                    1, 0, GG::ALIGN_CENTER);
+        layout->Add(new GG::TextControl(GG::X0, GG::Y0, UserString("PREVIOUSLY_VISIBLE"),   font, color),
+                    2, 0, GG::ALIGN_CENTER);
+        layout->Add(new GG::TextControl(GG::X0, GG::Y0, UserString("DESTROYED"),            font, color),
+                    3, 0, GG::ALIGN_CENTER);
+
+        int col = 1;
+        for (std::map<UniverseObjectType, std::set<VIS_DISPLAY> >::const_iterator uot_it = m_vis_filters.begin();
+             uot_it != m_vis_filters.end(); ++uot_it, ++col)
+        {
+            const UniverseObjectType& uot = uot_it->first;
+            const std::string& uot_label = UserString(GG::GetEnumMap<UniverseObjectType>().FromEnum(uot));
+            const std::set<VIS_DISPLAY>& vis_display = uot_it->second;
+
+            layout->SetColumnStretch(col, 1.0);
+
+            layout->Add(new GG::TextControl(GG::X0, GG::Y0, uot_label, font, color, GG::FORMAT_CENTER),
+                        0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+
+            CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
+            button->SetCheck(vis_display.find(SHOW_VISIBLE) != vis_display.end());
+            layout->Add(button, 1, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+
+            button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
+            button->SetCheck(vis_display.find(SHOW_PREVIOUSLY_VISIBLE) != vis_display.end());
+            layout->Add(button, 2, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+
+            button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
+            button->SetCheck(vis_display.find(SHOW_DESTROYED) != vis_display.end());
+            layout->Add(button, 3, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+        }
+
+        if (!condition_filter) {
+            m_conditions.clear();
+
+        } else if (const Condition::And* const and = dynamic_cast<const Condition::And* const>(condition_filter)) {
+            const std::vector<const Condition::ConditionBase*>& operands = and->Operands();
+            for (std::vector<const Condition::ConditionBase*>::const_iterator it = operands.begin();
+                 it != operands.end(); ++it)
+            {
+                const Condition::ConditionBase* copied_condition = CopyCondition(*it);
+                if (copied_condition)
+                    m_conditions.push_back(copied_condition);
+            }
+
+        } else {
+            const Condition::ConditionBase* copied_condition = CopyCondition(condition_filter);
+            if (copied_condition)
+                m_conditions.push_back(copied_condition);
+        }
+    }
+
+    void    Done()
+    { m_done = true; }
+
+    virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+        Done();
+    }
+
+    std::map<UniverseObjectType, std::set<VIS_DISPLAY> >    m_vis_filters;
+    std::vector<const Condition::ConditionBase*>            m_conditions;
 };
 
 namespace {
@@ -338,6 +479,12 @@ public:
     static GG::Y    ListRowHeight()
     { return GG::Y(ClientUI::Pts() * 2); }
 
+    const Condition::ConditionBase* const                       FilterCondition() const
+    { return m_filter_condition; }
+
+    const std::map<UniverseObjectType, std::set<VIS_DISPLAY> >  Visibilities() const
+    { return m_visibilities; }
+
     void            CollapseObject(int object_id = INVALID_OBJECT_ID) {
         if (object_id == INVALID_OBJECT_ID) {
             for (GG::ListBox::iterator row_it = this->begin(); row_it != this->end(); ++row_it)
@@ -363,9 +510,6 @@ public:
             return false;
         return m_collapsed_objects.find(object_id) != m_collapsed_objects.end();
     }
-
-    const Condition::ConditionBase* FilterCondition() const
-    { return m_filter_condition; }
 
     void            SetFilterCondition(Condition::ConditionBase* condition) {
         m_filter_condition = condition;
@@ -834,6 +978,10 @@ int ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {
 }
 
 void ObjectListWnd::FilterClicked() {
+    FilterDialog dlg(GG::X(100), GG::Y(100), GG::X(200), GG::Y(200),
+                     m_list_box->Visibilities(), m_list_box->FilterCondition());
+
+    dlg.Run();
 }
 
 void ObjectListWnd::SortClicked() {

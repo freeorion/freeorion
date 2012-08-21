@@ -2642,6 +2642,15 @@ Collapse All
 EXPAND_ALL
 Expand All
 
+VISIBLE
+Visible
+
+PREVIOUSLY_VISIBLE
+Prev. Visible
+
+DESTROYED
+Destroyed
+
 #############################################################
 ####                    S I T   R E P                    ####
 #############################################################
