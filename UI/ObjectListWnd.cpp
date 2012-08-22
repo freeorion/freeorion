@@ -148,8 +148,8 @@ private:
         if (!condition_filter) {
             m_conditions.clear();
 
-        } else if (const Condition::And* const and = dynamic_cast<const Condition::And* const>(condition_filter)) {
-            const std::vector<const Condition::ConditionBase*>& operands = and->Operands();
+        } else if (const Condition::And* const and_condition = dynamic_cast<const Condition::And* const>(condition_filter)) {
+            const std::vector<const Condition::ConditionBase*>& operands = and_condition->Operands();
             for (std::vector<const Condition::ConditionBase*>::const_iterator it = operands.begin();
                  it != operands.end(); ++it)
             {
