@@ -27,14 +27,15 @@ namespace
 ////////////////////////////////////////////////
 class FilterDialog : public CUIWnd {
 public:
-    FilterDialog(GG::X x, GG::Y y, GG::X w, GG::Y h,
+    FilterDialog(GG::X x, GG::Y y,
                  const std::map<UniverseObjectType, std::set<VIS_DISPLAY> >& vis_filters,
                  const Condition::ConditionBase* const condition_filter) :
-        CUIWnd(UserString("FILTERS"), x, y, w, h, GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE),
-        m_vis_filters(vis_filters)
+        CUIWnd(UserString("FILTERS"), x, y, GG::X(400), GG::Y(250), GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL),
+        m_vis_filters(vis_filters),
+        m_filters_layout(0),
+        m_cancel_button(0),
+        m_apply_button(0)
     {
-        GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ClientWidth(), ClientHeight(), 4, 6);
-        SetLayout(layout);
         Init(condition_filter);
     }
 
@@ -100,24 +101,23 @@ private:
     }
 
     void    Init(const Condition::ConditionBase* const condition_filter) {
-        GG::Layout* layout = GetLayout();
-        if (!layout)
-            return;
+        if (m_filters_layout)
+            delete m_filters_layout;
+        m_filters_layout = new GG::Layout(GG::X0, GG::Y0, GG::X(390), GG::Y(90), 4, 6);
+        AttachChild(m_filters_layout);
 
-        layout->RenderOutline(true);
-
-        layout->SetMinimumColumnWidth(0, GG::X(ClientUI::Pts()*8));
-        layout->SetColumnStretch(0, 0.0);
+        m_filters_layout->SetMinimumColumnWidth(0, GG::X(ClientUI::Pts()*8));
+        m_filters_layout->SetColumnStretch(0, 0.0);
 
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::Clr color = ClientUI::TextColor();
 
-        layout->Add(new GG::TextControl(GG::X0, GG::Y0, UserString("VISIBLE"),              font, color),
-                    1, 0, GG::ALIGN_CENTER);
-        layout->Add(new GG::TextControl(GG::X0, GG::Y0, UserString("PREVIOUSLY_VISIBLE"),   font, color),
-                    2, 0, GG::ALIGN_CENTER);
-        layout->Add(new GG::TextControl(GG::X0, GG::Y0, UserString("DESTROYED"),            font, color),
-                    3, 0, GG::ALIGN_CENTER);
+        m_filters_layout->Add(new GG::TextControl(GG::X0, GG::Y0, UserString("VISIBLE"),              font, color),
+                              1, 0, GG::ALIGN_CENTER);
+        m_filters_layout->Add(new GG::TextControl(GG::X0, GG::Y0, UserString("PREVIOUSLY_VISIBLE"),   font, color),
+                              2, 0, GG::ALIGN_CENTER);
+        m_filters_layout->Add(new GG::TextControl(GG::X0, GG::Y0, UserString("DESTROYED"),            font, color),
+                              3, 0, GG::ALIGN_CENTER);
 
         int col = 1;
         for (std::map<UniverseObjectType, std::set<VIS_DISPLAY> >::const_iterator uot_it = m_vis_filters.begin();
@@ -127,22 +127,22 @@ private:
             const std::string& uot_label = UserString(GG::GetEnumMap<UniverseObjectType>().FromEnum(uot));
             const std::set<VIS_DISPLAY>& vis_display = uot_it->second;
 
-            layout->SetColumnStretch(col, 1.0);
+            m_filters_layout->SetColumnStretch(col, 1.0);
 
-            layout->Add(new GG::TextControl(GG::X0, GG::Y0, uot_label, font, color, GG::FORMAT_CENTER),
-                        0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            m_filters_layout->Add(new GG::TextControl(GG::X0, GG::Y0, uot_label, font, color, GG::FORMAT_CENTER),
+                                  0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
 
             CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
             button->SetCheck(vis_display.find(SHOW_VISIBLE) != vis_display.end());
-            layout->Add(button, 1, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            m_filters_layout->Add(button, 1, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
 
             button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
             button->SetCheck(vis_display.find(SHOW_PREVIOUSLY_VISIBLE) != vis_display.end());
-            layout->Add(button, 2, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            m_filters_layout->Add(button, 2, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
 
             button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
             button->SetCheck(vis_display.find(SHOW_DESTROYED) != vis_display.end());
-            layout->Add(button, 3, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            m_filters_layout->Add(button, 3, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
         }
 
         if (!condition_filter) {
@@ -163,17 +163,29 @@ private:
             if (copied_condition)
                 m_conditions.push_back(copied_condition);
         }
+
+        m_cancel_button = new CUIButton(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8), UserString("CANCEL"), font);
+        AttachChild(m_cancel_button);
+        m_apply_button = new CUIButton(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8), UserString("APPLY"), font);
+        AttachChild(m_apply_button);
+
+        GG::Pt button_lr = this->ClientSize();
+        m_apply_button->MoveTo(GG::Pt(button_lr.x - m_apply_button->Width(),
+                                      button_lr.y - m_apply_button->Height()));
+        button_lr = button_lr - GG::Pt(m_apply_button->Width() + GG::X(3), GG::Y0);
+        m_cancel_button->MoveTo(GG::Pt(button_lr.x - m_cancel_button->Width(),
+                                       button_lr.y - m_cancel_button->Height()));
     }
 
     void    Done()
     { m_done = true; }
 
-    virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-        Done();
-    }
-
     std::map<UniverseObjectType, std::set<VIS_DISPLAY> >    m_vis_filters;
     std::vector<const Condition::ConditionBase*>            m_conditions;
+
+    GG::Layout* m_filters_layout;
+    GG::Button* m_cancel_button;
+    GG::Button* m_apply_button;
 };
 
 namespace {
@@ -978,9 +990,8 @@ int ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {
 }
 
 void ObjectListWnd::FilterClicked() {
-    FilterDialog dlg(GG::X(100), GG::Y(100), GG::X(200), GG::Y(200),
+    FilterDialog dlg(GG::X(100), GG::Y(100),
                      m_list_box->Visibilities(), m_list_box->FilterCondition());
-
     dlg.Run();
 }
 

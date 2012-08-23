@@ -271,16 +271,20 @@ CUIStateButton::CUIStateButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::st
 }
 
 GG::Pt CUIStateButton::MinUsableSize() const {
-    // HACK! This code assumes that the text_format flag GG::FORMAT_VCENTER is in effect.  This is currently the case for
-    // all of CUIStateButton in FO.
-    GG::Pt retval = StateButton::MinUsableSize();
-    retval.y = TextControl::MinUsableSize().y;
+    // same as StateButton::MinUsableSize, but without the forced minimum 25 width
+    GG::Pt button_ul = this->ButtonUpperLeft();
+    GG::Pt button_lr = this->ButtonLowerRight();
+    GG::Pt text_ul = this->TextUpperLeft();
+    GG::Pt text_lr = text_ul + TextControl::MinUsableSize();
+    GG::Pt retval = GG::Pt(std::max(button_lr.x, text_lr.x) - std::min(button_ul.x, text_ul.x),
+                           std::max(button_lr.y, text_lr.y) - std::min(button_ul.y, text_ul.y));
     return retval;
 }
 
 void CUIStateButton::Render() {
-    if (static_cast<int>(Style()) == GG::SBSTYLE_3D_CHECKBOX || 
-        static_cast<int>(Style()) == GG::SBSTYLE_3D_RADIO) {
+    if (static_cast<int>(Style()) == GG::SBSTYLE_3D_CHECKBOX ||
+        static_cast<int>(Style()) == GG::SBSTYLE_3D_RADIO)
+    {
         // draw button
         GG::Pt bn_ul = ClientUpperLeft() + ButtonUpperLeft();
         GG::Pt bn_lr = ClientUpperLeft() + ButtonLowerRight();

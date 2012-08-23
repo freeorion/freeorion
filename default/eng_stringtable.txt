@@ -16,6 +16,9 @@ Browse...
 OK
 OK
 
+APPLY
+Apply
+
 CANCEL
 Cancel
 
