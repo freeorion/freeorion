@@ -41,53 +41,58 @@ public:
     }
 
     ~FilterDialog() {
-        for (std::vector<const Condition::ConditionBase*>::iterator it = m_conditions.begin();
+        for (std::vector<Condition::ConditionBase*>::iterator it = m_conditions.begin();
              it != m_conditions.end(); ++it)
         { delete *it; }
         m_conditions.clear();
     }
 
+    bool    ChangesAccepted()
+    { return m_accept_changes; }
+
     std::map<UniverseObjectType, std::set<VIS_DISPLAY> >    GetVisibilityFilters() const
     { return m_vis_filters; }
 
     // caller takes ownership of returned ConditionBase*
-    const Condition::ConditionBase*                         GetConditionFilter() {
+    Condition::ConditionBase*                               GetConditionFilter() {
         if (m_conditions.empty()) {
             return new Condition::All();
         } else if (m_conditions.size() == 1) {
-            const Condition::ConditionBase* retval = *(m_conditions.begin());
+            Condition::ConditionBase* retval = *(m_conditions.begin());
             m_conditions.clear();
             return retval;
         } else {
-            const Condition::ConditionBase* retval = new Condition::And(m_conditions);
+            std::vector<const Condition::ConditionBase*> params;
+            for (std::vector<Condition::ConditionBase*>::const_iterator it = m_conditions.begin();
+                 it != m_conditions.end(); ++it)
+            { params.push_back(*it); }
+            Condition::ConditionBase* retval = new Condition::And(params);
             m_conditions.clear();
             return retval;
         }
     }
 
-    mutable boost::signal<void ()>  FiltersChangedSignal;
-
 private:
-    const ValueRef::ValueRefBase<std::string>*  CopyStringValueRef(const ValueRef::ValueRefBase<std::string>* const value_ref) {
+    ValueRef::ValueRefBase<std::string>*  CopyStringValueRef(const ValueRef::ValueRefBase<std::string>* const value_ref) {
         if (const ValueRef::Constant<std::string>* constant =
             dynamic_cast<const ValueRef::Constant<std::string>*>(value_ref))
         { return new ValueRef::Constant<std::string>(constant->Value()); }
         return new ValueRef::Constant<std::string>("");
     }
-    const ValueRef::ValueRefBase<int>*          CopyIntValueRef(const ValueRef::ValueRefBase<int>* const value_ref) {
+    ValueRef::ValueRefBase<int>*          CopyIntValueRef(const ValueRef::ValueRefBase<int>* const value_ref) {
         if (const ValueRef::Constant<int>* constant =
             dynamic_cast<const ValueRef::Constant<int>*>(value_ref))
         { return new ValueRef::Constant<int>(constant->Value()); }
         return new ValueRef::Constant<int>(0);
     }
-    const ValueRef::ValueRefBase<double>*       CopyDoubleValueRef(const ValueRef::ValueRefBase<double>* const value_ref) {
+    ValueRef::ValueRefBase<double>*       CopyDoubleValueRef(const ValueRef::ValueRefBase<double>* const value_ref) {
         if (const ValueRef::Constant<double>* constant =
             dynamic_cast<const ValueRef::Constant<double>*>(value_ref))
         { return new ValueRef::Constant<double>(constant->Value()); }
         return new ValueRef::Constant<double>(0.0);
     }
 
-    const Condition::ConditionBase*             CopyCondition(const Condition::ConditionBase* const condition) {
+    Condition::ConditionBase*                   CopyCondition(const Condition::ConditionBase* const condition) {
         if (dynamic_cast<const Condition::Source* const>(condition)) {
             return new Condition::Source();
 
@@ -136,14 +141,17 @@ private:
             CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
             button->SetCheck(vis_display.find(SHOW_VISIBLE) != vis_display.end());
             m_filters_layout->Add(button, 1, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisfiltersFromStateButtons,    this);
 
             button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
             button->SetCheck(vis_display.find(SHOW_PREVIOUSLY_VISIBLE) != vis_display.end());
             m_filters_layout->Add(button, 2, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisfiltersFromStateButtons,    this);
 
             button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", GG::FORMAT_CENTER);
             button->SetCheck(vis_display.find(SHOW_DESTROYED) != vis_display.end());
             m_filters_layout->Add(button, 3, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisfiltersFromStateButtons,    this);
         }
 
         if (!condition_filter) {
@@ -154,13 +162,13 @@ private:
             for (std::vector<const Condition::ConditionBase*>::const_iterator it = operands.begin();
                  it != operands.end(); ++it)
             {
-                const Condition::ConditionBase* copied_condition = CopyCondition(*it);
+                Condition::ConditionBase* copied_condition = CopyCondition(*it);
                 if (copied_condition)
                     m_conditions.push_back(copied_condition);
             }
 
         } else {
-            const Condition::ConditionBase* copied_condition = CopyCondition(condition_filter);
+            Condition::ConditionBase* copied_condition = CopyCondition(condition_filter);
             if (copied_condition)
                 m_conditions.push_back(copied_condition);
         }
@@ -191,8 +199,36 @@ private:
         m_done = true;
     }
 
+    void    UpdateVisfiltersFromStateButtons(bool button_checked) {
+        std::vector<std::vector<const GG::Wnd*> > layout_cells = m_filters_layout->Cells();
+
+        int col = 1;
+        for (std::map<UniverseObjectType, std::set<VIS_DISPLAY> >::iterator uot_it = m_vis_filters.begin();
+             uot_it != m_vis_filters.end(); ++uot_it, ++col)
+        {
+            const UniverseObjectType& uot = uot_it->first;
+            std::set<VIS_DISPLAY>& vis_display = uot_it->second;
+            vis_display.clear();
+
+            const GG::Wnd* wnd = layout_cells[1][col];
+            const CUIStateButton* button = dynamic_cast<const CUIStateButton*>(wnd);
+            if (button && button->Checked())
+                m_vis_filters[uot].insert(SHOW_VISIBLE);
+
+            wnd = layout_cells[2][col];
+            button = dynamic_cast<const CUIStateButton*>(wnd);
+            if (button && button->Checked())
+                m_vis_filters[uot].insert(SHOW_PREVIOUSLY_VISIBLE);
+
+            wnd = layout_cells[3][col];
+            button = dynamic_cast<const CUIStateButton*>(wnd);
+            if (button && button->Checked())
+                m_vis_filters[uot].insert(SHOW_DESTROYED);
+        }
+    }
+
     std::map<UniverseObjectType, std::set<VIS_DISPLAY> >    m_vis_filters;
-    std::vector<const Condition::ConditionBase*>            m_conditions;
+    std::vector<Condition::ConditionBase*>                  m_conditions;
 
     bool        m_accept_changes;
 
@@ -539,6 +575,13 @@ public:
     void            SetFilterCondition(Condition::ConditionBase* condition) {
         m_filter_condition = condition;
         Refresh();
+    }
+
+    void            SetVisibilityFilters(const std::map<UniverseObjectType, std::set<VIS_DISPLAY> >& vis) {
+        if (vis != m_visibilities) {
+            m_visibilities = vis;
+            Refresh();
+        }
     }
 
     void            ClearContents() {
@@ -1006,6 +1049,11 @@ void ObjectListWnd::FilterClicked() {
     FilterDialog dlg(GG::X(100), GG::Y(100),
                      m_list_box->Visibilities(), m_list_box->FilterCondition());
     dlg.Run();
+
+    if (dlg.ChangesAccepted()) {
+        m_list_box->SetVisibilityFilters(dlg.GetVisibilityFilters());
+        m_list_box->SetFilterCondition(dlg.GetConditionFilter());
+    }
 }
 
 void ObjectListWnd::SortClicked() {
