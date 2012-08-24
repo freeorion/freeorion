@@ -32,6 +32,7 @@ public:
                  const Condition::ConditionBase* const condition_filter) :
         CUIWnd(UserString("FILTERS"), x, y, GG::X(400), GG::Y(250), GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL),
         m_vis_filters(vis_filters),
+        m_accept_changes(false),
         m_filters_layout(0),
         m_cancel_button(0),
         m_apply_button(0)
@@ -166,22 +167,34 @@ private:
 
         m_cancel_button = new CUIButton(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8), UserString("CANCEL"), font);
         AttachChild(m_cancel_button);
+        GG::Connect(m_cancel_button->ClickedSignal, &FilterDialog::CancelClicked,   this);
+
         m_apply_button = new CUIButton(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8), UserString("APPLY"), font);
         AttachChild(m_apply_button);
+        GG::Connect(m_apply_button->ClickedSignal, &FilterDialog::AcceptClicked,   this);
 
         GG::Pt button_lr = this->ClientSize();
-        m_apply_button->MoveTo(GG::Pt(button_lr.x - m_apply_button->Width(),
-                                      button_lr.y - m_apply_button->Height()));
-        button_lr = button_lr - GG::Pt(m_apply_button->Width() + GG::X(3), GG::Y0);
         m_cancel_button->MoveTo(GG::Pt(button_lr.x - m_cancel_button->Width(),
                                        button_lr.y - m_cancel_button->Height()));
+        button_lr = button_lr - GG::Pt(m_apply_button->Width() + GG::X(3), GG::Y0);
+        m_apply_button->MoveTo(GG::Pt(button_lr.x - m_apply_button->Width(),
+                                      button_lr.y - m_apply_button->Height()));
     }
 
-    void    Done()
-    { m_done = true; }
+    void    AcceptClicked() {
+        m_accept_changes = true;
+        m_done = true;
+    }
+
+    void    CancelClicked() {
+        m_accept_changes = false;
+        m_done = true;
+    }
 
     std::map<UniverseObjectType, std::set<VIS_DISPLAY> >    m_vis_filters;
     std::vector<const Condition::ConditionBase*>            m_conditions;
+
+    bool        m_accept_changes;
 
     GG::Layout* m_filters_layout;
     GG::Button* m_cancel_button;
