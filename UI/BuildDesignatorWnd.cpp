@@ -720,10 +720,20 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     if (!empire)
         return;
 
-    // keep track of initially selected row, so that new rows added may be compared to it to see if they should be selected after repopulating
-    std::string selected_row;
+    // keep track of initially selected row, so that new rows added may be
+    // compared to it to see if they should be selected after repopulating
+    std::string initially_selected_row_name;
     if (m_buildable_items->Selections().size() == 1)
-        selected_row = (**m_buildable_items->Selections().begin())->DragDropDataType();
+        initially_selected_row_name = (**m_buildable_items->Selections().begin())->DragDropDataType();
+
+    // keep track of first shown row and the scroll position, in order to
+    // restore the first shown row, or the scroll position if the first row
+    // shown isn't in the repopulated list.
+    GG::ListBox::iterator initial_first_row_shown_it = m_buildable_items->FirstRowShown();
+    std::string initial_first_row_name;
+    if (initial_first_row_shown_it != m_buildable_items->end())
+        initial_first_row_name = (*initial_first_row_shown_it)->DragDropDataType();
+    std::size_t initial_scroll_pos = std::distance(m_buildable_items->begin(), initial_first_row_shown_it);
 
 
     m_buildable_items->Clear(); // the list of items to be populated
@@ -733,8 +743,13 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     boost::shared_ptr<GG::Font> default_font = ClientUI::GetFont();
     const GG::Pt row_size = m_buildable_items->ListRowSize();
 
-    GG::ListBox::iterator row_to_select = m_buildable_items->end(); // may be set while populating - used to reselect previously selected row after populating
-    int i = 0;              // counter that keeps track of how many rows have been added so far
+    // may be set while populating - used to reselect previously selected row
+    // after populating
+    GG::ListBox::iterator row_to_select_it = m_buildable_items->end();
+    // may be set while populating - used to rescroll the list after populating
+    GG::ListBox::iterator new_first_row_it = m_buildable_items->end();
+    // counter that keeps track of how many rows have been added so far
+    int i = 0;
 
 
     // populate list with building types
@@ -752,8 +767,10 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 
             GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);
             m_build_types[row_it] = BT_BUILDING;
-            if (item_row->DragDropDataType() == selected_row)
-                row_to_select = row_it;
+            if (item_row->DragDropDataType() == initially_selected_row_name)
+                row_to_select_it = row_it;
+            if (item_row->DragDropDataType() == initial_first_row_name)
+                new_first_row_it = row_it;
 
             item_row->Resize(row_size);
         }
@@ -785,17 +802,29 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 
             GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);
             m_build_types[row_it] = BT_SHIP;
-            if (item_row->DragDropDataType() == selected_row)
-                row_to_select = row_it;
+            if (item_row->DragDropDataType() == initially_selected_row_name)
+                row_to_select_it = row_it;
+            if (item_row->DragDropDataType() == initial_first_row_name)
+                new_first_row_it = row_it;
 
             item_row->Resize(row_size);
         }
     }
 
+
+
     //Logger().debugStream() << "Selecting Row";
-    if (row_to_select != m_buildable_items->end()) {
-        m_buildable_items->SelectRow(row_to_select);
+    if (row_to_select_it != m_buildable_items->end()) {
+        m_buildable_items->SelectRow(row_to_select_it);
         BuildItemSelected(m_buildable_items->Selections());
+    }
+    if (new_first_row_it != m_buildable_items->end()) {
+        m_buildable_items->SetFirstRowShown(new_first_row_it);
+    } else {
+        if (!m_buildable_items->Empty())
+            m_buildable_items->BringRowIntoView(--m_buildable_items->end());
+        if (initial_scroll_pos < m_buildable_items->NumRows())
+            m_buildable_items->BringRowIntoView(boost::next(m_buildable_items->begin(), initial_scroll_pos));
     }
     //Logger().debugStream() << "Done";
 }
