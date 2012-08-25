@@ -1260,7 +1260,7 @@ void Font::Init(FT_Face& face)
     std::vector<Pt> buffer_sizes;
     std::map<boost::uint32_t, TempGlyphData> temp_glyph_data;
     boost::uint16_t* temp_buf = new boost::uint16_t[BUF_SZ]; // 16 bpp: we are creating a luminance + alpha image
-    std::memset(temp_buf, 0, BUF_SZ);
+    std::memset(temp_buf, 0, BUF_SZ * sizeof(boost::uint16_t));
     buffer_vec.push_back(temp_buf);
     buffer_sizes.push_back(Pt(BUF_WIDTH, BUF_HEIGHT));
 
@@ -1291,7 +1291,7 @@ void Font::Init(FT_Face& face)
                         x = X0;
                         y = Y0;
                         temp_buf = new boost::uint16_t[BUF_SZ];
-                        std::memset(temp_buf, 0, BUF_SZ);
+                        std::memset(temp_buf, 0, BUF_SZ * sizeof(boost::uint16_t));
                         buffer_vec.push_back(temp_buf);
                         buffer_sizes.push_back(Pt(BUF_WIDTH, BUF_HEIGHT));
                     }
