@@ -1188,7 +1188,6 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
         }
     }
 
-    // select top pop planet
-    if (found_planet)
-        this->SelectPlanet(best_planet_id);
+    // select top pop planet or invalid planet if no suitable planet found
+    this->SelectPlanet(best_planet_id);
 }
