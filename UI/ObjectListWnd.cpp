@@ -2,6 +2,7 @@
 
 #include "ClientUI.h"
 #include "CUIControls.h"
+#include "CUISpin.h"
 #include "FleetButton.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
@@ -19,8 +20,161 @@
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 
-namespace
-{ enum VIS_DISPLAY { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED }; }
+namespace {
+    enum VIS_DISPLAY { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
+
+    ValueRef::ValueRefBase<std::string>*  CopyStringValueRef(const ValueRef::ValueRefBase<std::string>* const value_ref) {
+        if (const ValueRef::Constant<std::string>* constant =
+            dynamic_cast<const ValueRef::Constant<std::string>*>(value_ref))
+        { return new ValueRef::Constant<std::string>(constant->Value()); }
+        return new ValueRef::Constant<std::string>("");
+    }
+    ValueRef::ValueRefBase<int>*          CopyIntValueRef(const ValueRef::ValueRefBase<int>* const value_ref) {
+        if (const ValueRef::Constant<int>* constant =
+            dynamic_cast<const ValueRef::Constant<int>*>(value_ref))
+        { return new ValueRef::Constant<int>(constant->Value()); }
+        return new ValueRef::Constant<int>(0);
+    }
+    ValueRef::ValueRefBase<double>*       CopyDoubleValueRef(const ValueRef::ValueRefBase<double>* const value_ref) {
+        if (const ValueRef::Constant<double>* constant =
+            dynamic_cast<const ValueRef::Constant<double>*>(value_ref))
+        { return new ValueRef::Constant<double>(constant->Value()); }
+        return new ValueRef::Constant<double>(0.0);
+    }
+
+    Condition::ConditionBase*                   CopyCondition(const Condition::ConditionBase* const condition) {
+        if (dynamic_cast<const Condition::Source* const>(condition)) {
+            return new Condition::Source();
+
+        } else if (dynamic_cast<const Condition::Homeworld* const>(condition)) {
+            return new Condition::Homeworld();
+
+        } else if (dynamic_cast<const Condition::Building* const>(condition)) {
+
+        }
+
+        return new Condition::All();
+    }
+
+    const std::string EMPTY_STRING;
+
+    const std::string ALL_CONDITION("All");
+    const std::string HOMEWORLD_CONDITION("Homeworld");
+    const std::string CAPITAL_CONDITION("Capital");
+    const std::string MONSTER_CONDITION("Monster");
+    const std::string ARMED_CONDITION("Armed");
+    const std::string STATIONARY_CONDITION("Stationary");
+    //const std::string CAPITAL_CONDITION("Capital");
+    //const std::string CAPITAL_CONDITION("Capital");
+    //const std::string CAPITAL_CONDITION("Capital");
+    //const std::string CAPITAL_CONDITION("Capital");
+    //const std::string CAPITAL_CONDITION("Capital");
+    //const std::string CAPITAL_CONDITION("Capital");
+
+    //struct Homeworld;
+    //struct Building;
+    //struct HasSpecial;
+    //struct HasTag;
+    //struct ProducedByEmpire;
+    //struct ExploredByEmpire;
+    //struct ContainedBy;
+    //struct InSystem;
+    //struct ObjectID;
+    //struct CreatedOnTurn;
+}
+
+
+////////////////////////////////////////////////
+// ConditionWidget
+////////////////////////////////////////////////
+class ConditionWidget : public GG::Control {
+public:
+    ConditionWidget(GG::X x, GG::Y y, const Condition::ConditionBase* initial_condition = 0) :
+        GG::Control(x, y, GG::X(380), GG::Y(30), GG::INTERACTIVE),
+        m_class_drop(0),
+        m_param_edit(0),
+        m_param_spin(0)
+    {
+        Condition::ConditionBase* init_condition = 0;
+        if (!initial_condition) {
+            init_condition = new Condition::All();
+        } else {
+            init_condition = CopyCondition(initial_condition);
+        }
+        Init(init_condition);
+    }
+
+    ~ConditionWidget() {
+        delete m_class_drop;
+        delete m_param_edit;
+        delete m_param_spin;
+    }
+
+    Condition::ConditionBase*       GetCondition() {
+        Condition::ConditionBase* retval = 0;
+
+        return retval;
+    }
+
+    ValueRef::ValueRefBase<int>*    GetIntValueRef() {
+        if (m_param_spin)
+            return new ValueRef::Constant<int>(m_param_spin->Value());
+        else
+            return new ValueRef::Constant<int>(0);
+    }
+
+    std::string                     GetString() {
+        if (m_param_edit)
+            return m_param_edit->Text();
+        else
+            return "";
+    }
+
+    virtual void Render() {
+        GG::Pt ul = UpperLeft(), lr = LowerRight();
+        GG::FlatRectangle(ul, lr, ClientUI::CtrlColor(), ClientUI::CtrlBorderColor());
+    }
+
+private:
+    class ConditionRow : public GG::ListBox::Row {
+    public:
+        ConditionRow(GG::X w, GG::Y h, const std::string& key, const std::string& label) :
+            GG::ListBox::Row(w, h, "ConditionRow"),
+            m_condition_key(key)
+        {
+            SetChildClippingMode(ClipToClient);
+            push_back(label, ClientUI::GetFont(), ClientUI::TextColor());
+        }
+        const std::string&  GetKey() const
+        { return m_condition_key; }
+    private:
+        std::string m_condition_key;
+    };
+
+    void    Init(const Condition::ConditionBase* init_condition) {
+        // fill droplist with basic types of conditions and select appropriate row
+        m_class_drop = new CUIDropDownList(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*10),
+                                           GG::Y(ClientUI::Pts()*3/2), GG::Y(ClientUI::Pts()*8));
+        AttachChild(m_class_drop);
+        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), ALL_CONDITION,         UserString("ALL")));
+        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), HOMEWORLD_CONDITION,   UserString("HOMEWORLD")));
+        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), CAPITAL_CONDITION,     UserString("CAPITAL")));
+        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), MONSTER_CONDITION,     UserString("MONSTER")));
+        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), ARMED_CONDITION,       UserString("ARMED")));
+        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), STATIONARY_CONDITION,  UserString("STAIONARY")));
+
+        SetMinSize(m_class_drop->Size());
+
+        delete init_condition;
+    }
+
+    void    DoLayout() {
+    }
+
+    CUIDropDownList*    m_class_drop;
+    CUIEdit*            m_param_edit;
+    CUISpin<int>*       m_param_spin;
+};
 
 ////////////////////////////////////////////////
 // FilterDialog
@@ -73,39 +227,6 @@ public:
     }
 
 private:
-    ValueRef::ValueRefBase<std::string>*  CopyStringValueRef(const ValueRef::ValueRefBase<std::string>* const value_ref) {
-        if (const ValueRef::Constant<std::string>* constant =
-            dynamic_cast<const ValueRef::Constant<std::string>*>(value_ref))
-        { return new ValueRef::Constant<std::string>(constant->Value()); }
-        return new ValueRef::Constant<std::string>("");
-    }
-    ValueRef::ValueRefBase<int>*          CopyIntValueRef(const ValueRef::ValueRefBase<int>* const value_ref) {
-        if (const ValueRef::Constant<int>* constant =
-            dynamic_cast<const ValueRef::Constant<int>*>(value_ref))
-        { return new ValueRef::Constant<int>(constant->Value()); }
-        return new ValueRef::Constant<int>(0);
-    }
-    ValueRef::ValueRefBase<double>*       CopyDoubleValueRef(const ValueRef::ValueRefBase<double>* const value_ref) {
-        if (const ValueRef::Constant<double>* constant =
-            dynamic_cast<const ValueRef::Constant<double>*>(value_ref))
-        { return new ValueRef::Constant<double>(constant->Value()); }
-        return new ValueRef::Constant<double>(0.0);
-    }
-
-    Condition::ConditionBase*                   CopyCondition(const Condition::ConditionBase* const condition) {
-        if (dynamic_cast<const Condition::Source* const>(condition)) {
-            return new Condition::Source();
-
-        } else if (dynamic_cast<const Condition::Homeworld* const>(condition)) {
-            return new Condition::Homeworld();
-
-        } else if (dynamic_cast<const Condition::Building* const>(condition)) {
-
-        }
-
-        return new Condition::All();
-    }
-
     void    Init(const Condition::ConditionBase* const condition_filter) {
         if (m_filters_layout)
             delete m_filters_layout;
@@ -173,6 +294,9 @@ private:
                 m_conditions.push_back(copied_condition);
         }
 
+        m_condition_widget = new ConditionWidget(GG::X(3), m_filters_layout->Height() + GG::Y(3));
+        AttachChild(m_condition_widget);
+
         m_cancel_button = new CUIButton(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8), UserString("CANCEL"), font);
         AttachChild(m_cancel_button);
         GG::Connect(m_cancel_button->ClickedSignal, &FilterDialog::CancelClicked,   this);
@@ -230,16 +354,16 @@ private:
     std::map<UniverseObjectType, std::set<VIS_DISPLAY> >    m_vis_filters;
     std::vector<Condition::ConditionBase*>                  m_conditions;
 
-    bool        m_accept_changes;
+    bool                m_accept_changes;
 
-    GG::Layout* m_filters_layout;
-    GG::Button* m_cancel_button;
-    GG::Button* m_apply_button;
+    ConditionWidget*    m_condition_widget;
+
+    GG::Layout*         m_filters_layout;
+    GG::Button*         m_cancel_button;
+    GG::Button*         m_apply_button;
 };
 
 namespace {
-    static std::string EMPTY_STRING;
-
     std::vector<boost::shared_ptr<GG::Texture> > ObjectTextures(const UniverseObject* obj) {
     std::vector<boost::shared_ptr<GG::Texture> > retval;
 
@@ -250,24 +374,27 @@ namespace {
             retval.push_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID));  // default icon
     } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
         boost::shared_ptr<GG::Texture> head_icon = FleetHeadIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
-        retval.push_back(head_icon);
+        if (head_icon)
+            retval.push_back(head_icon);
         boost::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
-        retval.push_back(size_icon);
+        if (size_icon)
+            retval.push_back(size_icon);
     } else if (const System* system = universe_object_cast<const System*>(obj)) {
         StarType star_type = system->GetStarType();
         ClientUI* ui = ClientUI::GetClientUI();
         boost::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
             ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], system->ID());
-        retval.push_back(disc_texture);
+        if (disc_texture)
+            retval.push_back(disc_texture);
         boost::shared_ptr<GG::Texture> halo_texture = ui->GetModuloTexture(
             ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[star_type], system->ID());
-        retval.push_back(halo_texture);
+        if (halo_texture)
+            retval.push_back(halo_texture);
     } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
         // don't have any icons for each planet type, so use generic / default object icon
 
     } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
-        boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(building->BuildingTypeName());
-        retval.push_back(texture);
+        retval.push_back(ClientUI::BuildingIcon(building->BuildingTypeName()));
     }
     if (retval.empty())
         retval.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "generic_object.png", true));
