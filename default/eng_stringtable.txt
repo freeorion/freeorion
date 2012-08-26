@@ -7771,110 +7771,110 @@ A fearsom space dragon the size of a small planet.
 
 
 NO_INDUSTRY
-'''- - - No Industry'''
+'''−−−	No Industry'''
 
 BAD_INDUSTRY
-'''    - Bad Industry: 50%'''
+'''−	Bad Industry: 50%'''
 
 AVERAGE_INDUSTRY
-'''      Average Industry: 100%'''
+'''	Average Industry: 100%'''
 
 GOOD_INDUSTRY
-'''    + Good Industry: 150%'''
+'''+	Good Industry: 150%'''
 
 GREAT_INDUSTRY
-'''  + + Great Industry: 250%'''
+'''++	Great Industry: 250%'''
 
 ULTIMATE_INDUSTRY
-'''+ + + Ultimate Industry: 400%'''
+'''+++	Ultimate Industry: 400%'''
 
 NO_RESEARCH
-'''- - - No Research'''
+'''−−−	No Research'''
 
 BAD_RESEARCH
-'''    - Bad Research: 50%'''
+'''−	Bad Research: 50%'''
 
 AVERAGE_RESEARCH
-'''      Average Research: 100%'''
+'''	Average Research: 100%'''
 
 GOOD_RESEARCH
-'''    + Good Research: 150%'''
+'''+	Good Research: 150%'''
 
 GREAT_RESEARCH
-'''  + + Great Research: 250%'''
+'''++	Great Research: 250%'''
 
 ULTIMATE_RESEARCH
-'''+ + + Ultimate Research: 400%'''
+'''+++	Ultimate Research: 400%'''
 
 
 NO_GROUND_TROOPS
-'''- - - No Ground Troops'''
+'''−−−	No Ground Troops'''
 
 BAD_GROUND_TROOPS
-'''    - Bad Ground Troops: 1 unit.'''
+'''−	Bad Ground Troops: 1 unit.'''
 
 AVERAGE_GROUND_TROOPS
-'''      Average Ground Troops: 5 units.'''
+'''	Average Ground Troops: 5 units.'''
 
 GOOD_GROUND_TROOPS
-'''    + Good Ground Troops: 15 units.'''
+'''+	Good Ground Troops: 15 units.'''
 
 GREAT_GROUND_TROOPS
-'''  + + Great Ground Troops: 25 units.'''
+'''++	Great Ground Troops: 25 units.'''
 
 ULTIMATE_GROUND_TROOPS
-'''+ + + Ultimate Ground Troops: 50 units.'''
+'''+++	Ultimate Ground Troops: 50 units.'''
 
 BAD_DETECTION
-'''    - Bad Detection: -10 malus.'''
+'''−	Bad Detection: −10 malus.'''
 
 GOOD_DETECTION
-'''    + Good Detection: +25 bonus.'''
+'''+	Good Detection: +25 bonus.'''
 
 GREAT_DETECTION
-'''  + + Great Detection: +50 bonus.'''
+'''++	Great Detection: +50 bonus.'''
 
 ULTIMATE_DETECTION
-'''+ + + Ultimate Detection: +100 bonus.'''
+'''+++	Ultimate Detection: +100 bonus.'''
 
 BAD_STEALTH
-'''    - Bad Stealth: -25 malus.'''
+'''−	Bad Stealth: −25 malus.'''
 
 AVERAGE_STEALTH
-'''      Average Stealth.'''
+'''	Average Stealth.'''
 
 GOOD_STEALTH
-'''    + Good Stealth: +25 bonus.'''
+'''+	Good Stealth: +25 bonus.'''
 
 GREAT_STEALTH
-'''  + + Great Stealth: +50 bonus.'''
+'''++	Great Stealth: +50 bonus.'''
 
 ULTIMATE_STEALTH
-'''+ + + Ultimate Stealth: +100 bonus.'''
+'''+++	Ultimate Stealth: +100 bonus.'''
 
 GOOD_WEAPONS
-'''    + Starts with Mass Driver 3.'''
+'''+	Starts with Mass Driver 3.'''
 
 GREAT_WEAPONS
-'''  + + Starts with Mass Driver 4.'''
+'''++	Starts with Mass Driver 4.'''
 
 ULTIMATE_WEAPONS
-'''+ + + Starts with Laser 1.'''
+'''+++	Starts with Laser 1.'''
 
 BAD_POPULATION
-'''    - Bad Population'''
+'''−	Bad Population'''
 
 AVERAGE_POPULATION
-'''Average Population'''
+'''	Average Population'''
 
 GOOD_POPULATION
-'''    + Good Population'''
+'''+	Good Population'''
 
 BROAD_EP
-'''  + + Broad Planet Tolerance: flourishes on more types.'''
+'''++	Broad Planet Tolerance: flourishes on more types.'''
 
 NARROW_EP
-'''    - Narrow Planet Tolerance: flourishes on fewer types.'''
+'''−	Narrow Planet Tolerance: flourishes on fewer types.'''
 
 
 #############################################################
