@@ -660,7 +660,7 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
 {
     double orig_color[4];
     glGetDoublev(GL_CURRENT_COLOR, orig_color);
-    
+
     if (!render_state.colors.empty())
         glColor(render_state.colors.top());
 
@@ -1444,26 +1444,35 @@ void Font::HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_c
 {
     if (tag->tag_name == "i") {
         if (tag->close_tag) {
-            assert(render_state.use_italics);
-            --render_state.use_italics;
+            if (render_state.use_italics) {
+                --render_state.use_italics;
+            }
         } else {
             ++render_state.use_italics;
         }
     } else if (tag->tag_name == "u") {
         if (tag->close_tag) {
-            assert(render_state.draw_underline);
-            --render_state.draw_underline;
+            if (render_state.draw_underline) {
+                --render_state.draw_underline;
+            }
         } else {
             ++render_state.draw_underline;
         }
     } else if (tag->tag_name == "rgba") {
         if (tag->close_tag) {
-            assert(!render_state.colors.empty());
-            render_state.colors.pop();
-            if (render_state.colors.empty())
-                glColor4dv(orig_color);
-            else
-                glColor(render_state.colors.top());
+            // commenting out this assert because, I think, if a multi-word
+            // substring is wrapped in rgba tags and then is split over a line-
+            // break, the render state (or at least the colour portion thereof,
+            // I think...) is reset, but the closing rgba tag will still be
+            // present on the next line, leading to a crash due to a closing
+            // rgba tag when the render state for the line has no colour
+            if (!render_state.colors.empty()) {
+                render_state.colors.pop();
+                if (render_state.colors.empty())
+                    glColor4dv(orig_color);
+                else
+                    glColor(render_state.colors.top());
+            }
         } else {
             using boost::lexical_cast;
             bool well_formed_tag = true;
