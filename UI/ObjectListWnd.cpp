@@ -58,12 +58,12 @@ namespace {
 
     const std::string EMPTY_STRING;
 
-    const std::string ALL_CONDITION("All");
-    const std::string HOMEWORLD_CONDITION("Homeworld");
-    const std::string CAPITAL_CONDITION("Capital");
-    const std::string MONSTER_CONDITION("Monster");
-    const std::string ARMED_CONDITION("Armed");
-    const std::string STATIONARY_CONDITION("Stationary");
+    const std::string ALL_CONDITION("CONDITION_ALL");
+    const std::string HOMEWORLD_CONDITION("CONDITION_HOMEWORLD");
+    const std::string CAPITAL_CONDITION("CONDITION_CAPITAL");
+    const std::string MONSTER_CONDITION("CONDITION_MONSTER");
+    const std::string ARMED_CONDITION("CONDITION_ARMED");
+    const std::string STATIONARY_CONDITION("CONDITION_STATIONARY");
     //const std::string CAPITAL_CONDITION("Capital");
     //const std::string CAPITAL_CONDITION("Capital");
     //const std::string CAPITAL_CONDITION("Capital");
@@ -138,12 +138,14 @@ public:
 private:
     class ConditionRow : public GG::ListBox::Row {
     public:
-        ConditionRow(GG::X w, GG::Y h, const std::string& key, const std::string& label) :
+        ConditionRow(GG::X w, GG::Y h, const std::string& key) :
             GG::ListBox::Row(w, h, "ConditionRow"),
             m_condition_key(key)
         {
             SetChildClippingMode(ClipToClient);
-            push_back(label, ClientUI::GetFont(), ClientUI::TextColor());
+            push_back(new GG::TextControl(GG::X0, GG::Y0, ClientWidth(), ClientHeight(),
+                                          UserString(m_condition_key), ClientUI::GetFont(),
+                                          ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
         }
         const std::string&  GetKey() const
         { return m_condition_key; }
@@ -153,15 +155,20 @@ private:
 
     void    Init(const Condition::ConditionBase* init_condition) {
         // fill droplist with basic types of conditions and select appropriate row
+        const GG::Y DROPLIST_HEIGHT = GG::Y(ClientUI::Pts() + 4);
+        const GG::Y DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 10;
+
         m_class_drop = new CUIDropDownList(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*10),
-                                           GG::Y(ClientUI::Pts()*3/2), GG::Y(ClientUI::Pts()*8));
+                                           DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+        m_class_drop->SetStyle(GG::LIST_NOSORT);
         AttachChild(m_class_drop);
-        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), ALL_CONDITION,         UserString("ALL")));
-        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), HOMEWORLD_CONDITION,   UserString("HOMEWORLD")));
-        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), CAPITAL_CONDITION,     UserString("CAPITAL")));
-        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), MONSTER_CONDITION,     UserString("MONSTER")));
-        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), ARMED_CONDITION,       UserString("ARMED")));
-        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), STATIONARY_CONDITION,  UserString("STAIONARY")));
+
+        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), ALL_CONDITION));
+        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), HOMEWORLD_CONDITION));
+        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), CAPITAL_CONDITION));
+        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), MONSTER_CONDITION));
+        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), ARMED_CONDITION));
+        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), STATIONARY_CONDITION));
 
         SetMinSize(m_class_drop->Size());
 

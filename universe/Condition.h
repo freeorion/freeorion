@@ -67,6 +67,8 @@ namespace Condition {
     struct EmpireMeterValue;
     struct EmpireStockpileValue;
     struct OwnerHasTech;
+    struct OwnerHasBuildingTypeAvailable;
+    struct OwnerHasShipDesignAvailable;
     struct VisibleToEmpire;
     struct WithinDistance;
     struct WithinStarlaneJumps;
@@ -1214,7 +1216,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects that have a single owner who has tech \a tech_name. */
+/** Matches all objects whose owner who has tech \a name. */
 struct Condition::OwnerHasTech : public Condition::ConditionBase {
     OwnerHasTech(const std::string& name) :
         m_name(name)
@@ -1228,6 +1230,46 @@ private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
     std::string m_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches all objects whose owner who has the building type \a name available. */
+struct Condition::OwnerHasBuildingTypeAvailable : public Condition::ConditionBase {
+    OwnerHasBuildingTypeAvailable(const std::string& name) :
+        m_name(name)
+    {}
+    virtual bool        RootCandidateInvariant() const { return true; }
+    virtual bool        TargetInvariant() const { return true; }
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    std::string m_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches all objects whose owner who has the ship design \a id available. */
+struct Condition::OwnerHasShipDesignAvailable : public Condition::ConditionBase {
+    OwnerHasShipDesignAvailable(int id) :
+        m_id(id)
+    {}
+    virtual bool        RootCandidateInvariant() const { return true; }
+    virtual bool        TargetInvariant() const { return true; }
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    int m_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1817,6 +1859,20 @@ void Condition::OwnerHasTech::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_name);
+}
+
+template <class Archive>
+void Condition::OwnerHasBuildingTypeAvailable::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_name);
+}
+
+template <class Archive>
+void Condition::OwnerHasShipDesignAvailable::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_id);
 }
 
 template <class Archive>

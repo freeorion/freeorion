@@ -4252,6 +4252,64 @@ bool Condition::OwnerHasTech::Match(const ScriptingContext& local_context) const
 }
 
 ///////////////////////////////////////////////////////////
+// OwnerHasBuildingTypeAvailable                         //
+///////////////////////////////////////////////////////////
+std::string Condition::OwnerHasBuildingTypeAvailable::Description(bool negated/* = false*/) const {
+    std::string description_str = "DESC_OWNER_HAS_BUILDING_TYPE";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str); // used internally for a tooltip where context is apparent, so don't need to name builing type here
+}
+
+std::string Condition::OwnerHasBuildingTypeAvailable::Dump() const
+{ return DumpIndent() + "OwnerHasBuildingTypeAvailable name = \"" + m_name + "\"\n"; }
+
+bool Condition::OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& local_context) const {
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "OwnerHasBuildingTypeAvailable::Match passed no candidate object";
+        return false;
+    }
+
+    if (candidate->Unowned())
+        return false;
+
+    if (const Empire* empire = Empires().Lookup(candidate->Owner()))
+        return empire->BuildingTypeAvailable(m_name);
+    else
+        return false;
+}
+
+///////////////////////////////////////////////////////////
+// OwnerHasShipDesignAvailable                           //
+///////////////////////////////////////////////////////////
+std::string Condition::OwnerHasShipDesignAvailable::Description(bool negated/* = false*/) const {
+    std::string description_str = "DESC_OWNER_HAS_SHIP_DESIGN";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str); // used internally for a tooltip where context is apparent, so don't need to name design here
+}
+
+std::string Condition::OwnerHasShipDesignAvailable::Dump() const
+{ return DumpIndent() + "OwnerHasShipDesignAvailable id = \"" + boost::lexical_cast<std::string>(m_id) + "\"\n"; }
+
+bool Condition::OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) const {
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "OwnerHasShipDesignAvailable::Match passed no candidate object";
+        return false;
+    }
+
+    if (candidate->Unowned())
+        return false;
+
+    if (const Empire* empire = Empires().Lookup(candidate->Owner()))
+        return empire->ShipDesignAvailable(m_id);
+    else
+        return false;
+}
+
+///////////////////////////////////////////////////////////
 // VisibleToEmpire                                       //
 ///////////////////////////////////////////////////////////
 Condition::VisibleToEmpire::~VisibleToEmpire()

@@ -181,6 +181,8 @@ namespace {
                                              int empire_id)
     {
         std::vector<const Condition::ConditionBase*> location_conditions;
+        Condition::OwnerHasBuildingTypeAvailable bld_avail_cond(building_name);
+        location_conditions.push_back(&bld_avail_cond);
         if (const BuildingType* building_type = GetBuildingType(building_name))
             location_conditions.push_back(building_type->Location());
         const UniverseObject* source = GetSourceObjectForEmpire(empire_id);
@@ -191,6 +193,8 @@ namespace {
                                              int empire_id)
     {
         std::vector<const Condition::ConditionBase*> location_conditions;
+        Condition::OwnerHasShipDesignAvailable ship_avail_cond(ship_design_id);
+        location_conditions.push_back(&ship_avail_cond);
         if (const ShipDesign* ship_design = GetShipDesign(ship_design_id)) {
             if (const HullType* hull_type = ship_design->GetHull())
                 location_conditions.push_back(hull_type->Location());

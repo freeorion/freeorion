@@ -2645,6 +2645,10 @@ Collapse All
 EXPAND_ALL
 Expand All
 
+####################
+## Filters Dialog ##
+####################
+
 VISIBLE
 Visible
 
@@ -2653,6 +2657,24 @@ Prev. Visible
 
 DESTROYED
 Destroyed
+
+CONDITION_ALL
+All
+
+CONDITION_ARMED
+Armed
+
+CONDITION_CAPITAL
+Capital
+
+CONDITION_MONSTER
+Monster
+
+CONDITION_STATIONARY
+Stationary
+
+CONDITION_HOMEWORLD
+Homeworld
 
 #############################################################
 ####                    S I T   R E P                    ####
@@ -4880,6 +4902,18 @@ DESC_OWNER_HAS_TECH
 
 DESC_OWNER_HAS_TECH_NOT
  that does not belong to an empire that has the tech %1%
+
+DESC_OWNER_HAS_BUILDING_TYPE
+ building unlocked for empire
+
+DESC_OWNER_HAS_BUILDING_TYPE_NOT
+ building not unlocked for empire
+
+DESC_OWNER_HAS_SHIP_DESIGN
+ ship design unlocked for empire
+
+DESC_OWNER_HAS_SHIP_DESIGN_NOT
+ ship design not unlocked for empire
 
 DESC_NUMBER
  if there are between %1% and %2% objects%3%
