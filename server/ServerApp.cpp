@@ -1977,7 +1977,8 @@ void ServerApp::PostCombatProcessTurns() {
     Logger().debugStream() << "ServerApp::ProcessTurns empire resources updates";
 
 
-    // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
+    // Determine how much of each resource is available, and determine how to
+    // distribute it to planets or on queues
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
         if (empires.Eliminated(it->first))
             continue;   // skip eliminated empires

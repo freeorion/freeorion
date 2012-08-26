@@ -2232,6 +2232,8 @@ void Empire::CheckProductionProgress() {
 
     Universe& universe = GetUniverse();
 
+    std::map<int, std::vector<Ship*> >  system_new_ships;
+
     // go through queue, updating production progress.  If a build item is completed, create the built object or take whatever other
     // action is appropriate, and record that queue item as complete, so it can be erased from the queue
     std::vector<int> to_erase;
@@ -2275,18 +2277,6 @@ void Empire::CheckProductionProgress() {
                     continue;
                 }
 
-                // create new fleet with new ship
-                Fleet* fleet = new Fleet("", system->X(), system->Y(), m_id);
-                // start with max stealth to ensure new fleet won't be visisble
-                // to other empires on first turn if it shouldn't be.  current
-                // value will be clamped to max meter value after effects are
-                // applied
-
-                int fleet_id = universe.Insert(fleet);
-
-                system->Insert(fleet);
-                Logger().debugStream() << "New Fleet created on turn: " << fleet->CreationTurn();
-
 
                 // get species for this ship.  use popcenter species if build
                 // location is a popcenter, or use ship species if build
@@ -2303,7 +2293,7 @@ void Empire::CheckProductionProgress() {
                 // else give up...
 
 
-                // add ship
+                // create ship
                 Ship* ship = new Ship(m_id, m_production_queue[i].item.design_id, species_name, m_id);
                 // set active meters that have associated max meters to an
                 // initial very large value, so that when the active meters are
@@ -2323,11 +2313,10 @@ void Empire::CheckProductionProgress() {
 
                 ship->Rename(NewShipName());
 
-                fleet->AddShip(ship_id);
 
-                // rename fleet, given its id and the ship that is in it
-                std::vector<int> ship_ids;  ship_ids.push_back(ship_id);
-                fleet->Rename(Fleet::GenerateFleetName(ship_ids, fleet_id));
+                // store ships to put into fleets later
+                system_new_ships[system->ID()].push_back(ship);
+
 
                 Logger().debugStream() << "New Ship created on turn: " << ship->CreationTurn();
 
@@ -2345,6 +2334,40 @@ void Empire::CheckProductionProgress() {
             if (!--m_production_queue[i].remaining)     // decrement number of remaining items to be produced in current queue element
                 to_erase.push_back(i);                  // remember completed element so that it can be removed from queue
         }
+    }
+
+    // create fleets for new ships and put ships into fleets
+    for (std::map<int, std::vector<Ship*> >::iterator it = system_new_ships.begin();
+         it != system_new_ships.end(); ++it)
+    {
+        System* system = GetSystem(it->first);
+        if (!system) {
+            Logger().errorStream() << "Couldn't get system with id " << it->first << " for creating new fleets for newly produced ships";
+            continue;
+        }
+
+        std::vector<int> ship_ids;
+
+        std::vector<Ship*>& ships = it->second;
+        if (ships.empty())
+            continue;
+
+        // create new fleet for ships
+        Fleet* fleet = new Fleet("", system->X(), system->Y(), m_id);
+        int fleet_id = universe.Insert(fleet);
+
+        system->Insert(fleet);
+
+        for (std::vector<Ship*>::iterator it = ships.begin(); it != ships.end(); ++it) {
+            Ship* ship = *it;
+            ship_ids.push_back(ship->ID());
+            fleet->AddShip(ship->ID());
+        }
+
+        // rename fleet, given its id and the ship that is in it
+        fleet->Rename(Fleet::GenerateFleetName(ship_ids, fleet_id));
+
+        Logger().debugStream() << "New Fleet \"" + fleet->Name() + "\"created on turn: " << fleet->CreationTurn();
     }
 
     // removed completed items from queue
