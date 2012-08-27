@@ -23,6 +23,23 @@
 namespace {
     enum VIS_DISPLAY { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
 
+    const std::string EMPTY_STRING;
+    const std::string ALL_CONDITION("CONDITION_ALL");
+    const std::string HOMEWORLD_CONDITION("CONDITION_HOMEWORLD");
+    const std::string CAPITAL_CONDITION("CONDITION_CAPITAL");
+    const std::string MONSTER_CONDITION("CONDITION_MONSTER");
+    const std::string ARMED_CONDITION("CONDITION_ARMED");
+    const std::string STATIONARY_CONDITION("CONDITION_STATIONARY");
+    const std::string BUILDING_CONDITION("CONDITION_BUILDING");
+    const std::string HASSPECIAL_CONDITION("CONDITION_HASSPECIAL");
+    const std::string HASTAG_CONDITION("CONDITION_HASTAG");
+    const std::string PRODUCEDBYEMPIRE_CONDITION("CONDITION_PRODUCEDBYEMPIRE");
+    const std::string EXPLOREDBYEMPIRE_CONDITION("CONDITION_EXPLOREDBYEMPIRE");
+    const std::string CONTAINEDBY_CONDITION("CONDITION_CONTAINEDBY");
+    const std::string INSYSTEM_CONDITION("CONDITION_INSYSTEM");
+    const std::string OBJECTID_CONDITION("CONDITION_OBJECTID");
+    const std::string CREATEDONTURN_CONDITION("CONDITION_CREATEDONTURN");
+
     ValueRef::ValueRefBase<std::string>*  CopyStringValueRef(const ValueRef::ValueRefBase<std::string>* const value_ref) {
         if (const ValueRef::Constant<std::string>* constant =
             dynamic_cast<const ValueRef::Constant<std::string>*>(value_ref))
@@ -56,31 +73,21 @@ namespace {
         return new Condition::All();
     }
 
-    const std::string EMPTY_STRING;
-
-    const std::string ALL_CONDITION("CONDITION_ALL");
-    const std::string HOMEWORLD_CONDITION("CONDITION_HOMEWORLD");
-    const std::string CAPITAL_CONDITION("CONDITION_CAPITAL");
-    const std::string MONSTER_CONDITION("CONDITION_MONSTER");
-    const std::string ARMED_CONDITION("CONDITION_ARMED");
-    const std::string STATIONARY_CONDITION("CONDITION_STATIONARY");
-    //const std::string CAPITAL_CONDITION("Capital");
-    //const std::string CAPITAL_CONDITION("Capital");
-    //const std::string CAPITAL_CONDITION("Capital");
-    //const std::string CAPITAL_CONDITION("Capital");
-    //const std::string CAPITAL_CONDITION("Capital");
-    //const std::string CAPITAL_CONDITION("Capital");
-
-    //struct Homeworld;
-    //struct Building;
-    //struct HasSpecial;
-    //struct HasTag;
-    //struct ProducedByEmpire;
-    //struct ExploredByEmpire;
-    //struct ContainedBy;
-    //struct InSystem;
-    //struct ObjectID;
-    //struct CreatedOnTurn;
+    const std::string&                          ConditionClassName(const Condition::ConditionBase* const condition) {
+        if (dynamic_cast<const Condition::All* const>(condition))
+            return ALL_CONDITION;
+        else if (dynamic_cast<const Condition::Homeworld* const>(condition))
+            return HOMEWORLD_CONDITION;
+        else if (dynamic_cast<const Condition::Capital* const>(condition))
+            return CAPITAL_CONDITION;
+        else if (dynamic_cast<const Condition::Monster* const>(condition))
+            return MONSTER_CONDITION;
+        else if (dynamic_cast<const Condition::Armed* const>(condition))
+            return ARMED_CONDITION;
+        else if (dynamic_cast<const Condition::Stationary* const>(condition))
+            return STATIONARY_CONDITION;
+        else return EMPTY_STRING;
+    }
 }
 
 
@@ -138,24 +145,23 @@ public:
 private:
     class ConditionRow : public GG::ListBox::Row {
     public:
-        ConditionRow(GG::X w, GG::Y h, const std::string& key) :
-            GG::ListBox::Row(w, h, "ConditionRow"),
+        ConditionRow(const std::string& key, GG::Y row_height) :
+            GG::ListBox::Row(GG::X1, row_height, "ConditionRow"),
             m_condition_key(key)
         {
             SetChildClippingMode(ClipToClient);
-            push_back(new GG::TextControl(GG::X0, GG::Y0, ClientWidth(), ClientHeight(),
-                                          UserString(m_condition_key), ClientUI::GetFont(),
+            push_back(new GG::TextControl(GG::X0, GG::Y0, UserString(m_condition_key), ClientUI::GetFont(),
                                           ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
         }
-        const std::string&  GetKey() const
-        { return m_condition_key; }
+        const std::string&  GetKey() const { return m_condition_key; }
+
     private:
         std::string m_condition_key;
     };
 
     void    Init(const Condition::ConditionBase* init_condition) {
         // fill droplist with basic types of conditions and select appropriate row
-        const GG::Y DROPLIST_HEIGHT = GG::Y(ClientUI::Pts() + 4);
+        const GG::Y DROPLIST_HEIGHT(ClientUI::Pts() + 4);
         const GG::Y DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 10;
 
         m_class_drop = new CUIDropDownList(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*10),
@@ -163,16 +169,28 @@ private:
         m_class_drop->SetStyle(GG::LIST_NOSORT);
         AttachChild(m_class_drop);
 
-        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), ALL_CONDITION));
-        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), HOMEWORLD_CONDITION));
-        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), CAPITAL_CONDITION));
-        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), MONSTER_CONDITION));
-        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), ARMED_CONDITION));
-        m_class_drop->Insert(new ConditionRow(ClientWidth(), ClientHeight(), STATIONARY_CONDITION));
+        std::vector<std::string> row_keys;
+        row_keys.push_back(ALL_CONDITION);      row_keys.push_back(HOMEWORLD_CONDITION);
+        row_keys.push_back(CAPITAL_CONDITION);  row_keys.push_back(MONSTER_CONDITION);
+        row_keys.push_back(ARMED_CONDITION);    row_keys.push_back(STATIONARY_CONDITION);
 
         SetMinSize(m_class_drop->Size());
+        GG::ListBox::iterator select_row_it = m_class_drop->end();
+        const std::string& init_condition_key = ConditionClassName(init_condition);
 
-        delete init_condition;
+        for (std::vector<std::string>::const_iterator key_it = row_keys.begin();
+             key_it != row_keys.end(); ++key_it)
+        {
+            const std::string& key = *key_it;
+            GG::ListBox::iterator row_it = m_class_drop->Insert(new ConditionRow(key,  GG::Y(ClientUI::Pts())));
+            if (init_condition_key == key)
+                select_row_it = row_it;
+        }
+
+        if (select_row_it != m_class_drop->end())
+            m_class_drop->Select(select_row_it);
+        else if (!m_class_drop->Empty())
+            m_class_drop->Select(0);
     }
 
     void    DoLayout() {
