@@ -182,6 +182,9 @@ struct Condition::Number : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
+    const ValueRef::ValueRefBase<int>*  High() const { return m_low; }
+    const ConditionBase*                GetCondition() const { return m_condition; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -210,6 +213,8 @@ struct Condition::Turn : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
+    const ValueRef::ValueRefBase<int>*  High() const { return m_low; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -256,6 +261,10 @@ struct Condition::SortedNumberOf : public Condition::ConditionBase {
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<int>*      Number() const { return m_number; }
+    const ValueRef::ValueRefBase<double>*   SortKey() const { return m_sort_key; }
+    SortingMethod                           GetSortingMethod() const { return m_sorting_method; }
+    const ConditionBase*                    GetCondition() const { return m_condition; }
 
 private:
     const ValueRef::ValueRefBase<int>*      m_number;
@@ -307,6 +316,8 @@ struct Condition::EmpireAffiliation : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
+    EmpireAffiliationType               GetAffiliation() const { return m_affiliation; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -392,6 +403,7 @@ struct Condition::Homeworld : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::vector<const ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -465,6 +477,7 @@ struct Condition::Type : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<UniverseObjectType>*   GetType() const { return m_type; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -491,6 +504,7 @@ struct Condition::Building : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::vector<const ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -525,6 +539,9 @@ struct Condition::HasSpecial : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::string&                  Name() const { return m_name; }
+    const ValueRef::ValueRefBase<int>*  Low() const { return m_since_turn_low; }
+    const ValueRef::ValueRefBase<int>*  High() const { m_since_turn_high; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
