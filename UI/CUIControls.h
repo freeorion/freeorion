@@ -331,7 +331,8 @@ private:
     std::string     m_raw_text;
 };
 
-/** A simple GG::ListBox::Row subclass designed for use in text-only drop-down lists, such as the ones used in the game setup dialogs. */
+/** A simple GG::ListBox::Row subclass designed for use in text-only drop-down
+  * lists, such as the ones used in the game setup dialogs. */
 struct CUISimpleDropDownListRow : public GG::ListBox::Row {
     CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height = DEFAULT_ROW_HEIGHT);
     static const GG::Y DEFAULT_ROW_HEIGHT;

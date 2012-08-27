@@ -181,14 +181,12 @@ GalaxySetupOption GalaxySetupPanel::GetNativeFrequency() const
 boost::shared_ptr<GG::Texture> GalaxySetupPanel::PreviewImage() const
 { return m_textures[GetShape()]; }
 
-void GalaxySetupPanel::Disable(bool b/* = true*/)
-{
+void GalaxySetupPanel::Disable(bool b/* = true*/) {
     for (std::list<GG::Wnd*>::const_iterator it = Children().begin(); it != Children().end(); ++it)
         static_cast<GG::Control*>(*it)->Disable(b);
 }
 
-void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data)
-{
+void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
     m_stars_spin->SetValue(setup_data.m_size);
     m_galaxy_shapes_list->Select(setup_data.m_shape);
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
@@ -200,8 +198,7 @@ void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data)
     m_native_freq_list->Select(setup_data.m_native_freq);
 }
 
-void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const
-{
+void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const {
     setup_data.m_size =             Systems();
     setup_data.m_shape =            GetShape();
     setup_data.m_age =              GetAge();
@@ -212,8 +209,7 @@ void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const
     setup_data.m_native_freq =      GetNativeFrequency();
 }
 
-void GalaxySetupPanel::Init()
-{
+void GalaxySetupPanel::Init() {
     AttachChild(m_stars_spin);
     AttachChild(m_galaxy_shapes_list);
     AttachChild(m_galaxy_ages_list);
@@ -296,8 +292,7 @@ void GalaxySetupPanel::Init()
     SettingsChangedSignal();
 }
 
-void GalaxySetupPanel::SettingChanged_(int)
-{
+void GalaxySetupPanel::SettingChanged_(int) {
     Sound::TempUISoundDisabler sound_disabler;
     SettingsChangedSignal();
 }
@@ -432,8 +427,7 @@ const std::string& GalaxySetupWnd::StartingSpeciesName() const
 int GalaxySetupWnd::NumberAIs() const
 { return m_number_ais_spin->Value(); }
 
-void GalaxySetupWnd::Render()
-{
+void GalaxySetupWnd::Render() {
     CUIWnd::Render();
     GG::FlatRectangle(GG::Pt(ClientUpperLeft().x + m_preview_ul.x - 2,
                              ClientUpperLeft().y + m_preview_ul.y - 2),
@@ -442,16 +436,14 @@ void GalaxySetupWnd::Render()
                       GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
-void GalaxySetupWnd::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
-{
+void GalaxySetupWnd::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_ok->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) // Same behaviour as if "OK" was pressed
         OkClicked();
     else if (key == GG::GGK_ESCAPE) // Same behaviour as if "Cancel" was pressed
         CancelClicked();
 }
 
-void GalaxySetupWnd::Init()
-{
+void GalaxySetupWnd::Init() {
     AttachChild(m_galaxy_setup_panel);
     AttachChild(m_player_name_label);
     AttachChild(m_player_name_edit);
@@ -476,8 +468,7 @@ void GalaxySetupWnd::Init()
     PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
 }
 
-void GalaxySetupWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image)
-{
+void GalaxySetupWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image) {
     if (m_preview_image) {
         DeleteChild(m_preview_image);
         m_preview_image = 0;
@@ -492,8 +483,7 @@ void GalaxySetupWnd::EmpireNameChanged(const std::string& name)
 void GalaxySetupWnd::PlayerNameChanged(const std::string& name)
 { m_ok->Disable(name.empty()); }
 
-void GalaxySetupWnd::OkClicked()
-{
+void GalaxySetupWnd::OkClicked() {
     // record selected galaxy setup options as new defaults
     GetOptionsDB().Set("GameSetup.stars",               m_galaxy_setup_panel->Systems());
     GetOptionsDB().Set("GameSetup.galaxy-shape",        m_galaxy_setup_panel->GetShape());
@@ -527,8 +517,7 @@ void GalaxySetupWnd::OkClicked()
     m_done = true;
 }
 
-void GalaxySetupWnd::CancelClicked()
-{
+void GalaxySetupWnd::CancelClicked() {
     m_ended_with_ok = false;
     m_done = true;
 }

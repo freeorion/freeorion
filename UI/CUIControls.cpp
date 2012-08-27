@@ -819,7 +819,10 @@ const GG::Y CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT(22);
 
 CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height/* = DEFAULT_ROW_HEIGHT*/) :
     GG::ListBox::Row(GG::X1, row_height, "")
-{ push_back(new GG::TextControl(GG::X0, GG::Y0, row_text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT)); }
+{
+    push_back(new GG::TextControl(GG::X0, GG::Y0, row_text, ClientUI::GetFont(),
+                                ClientUI::TextColor(), GG::FORMAT_LEFT));
+}
 
 
 ///////////////////////////////////////
