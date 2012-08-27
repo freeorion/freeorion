@@ -40,26 +40,34 @@ namespace {
     const std::string OBJECTID_CONDITION("CONDITION_OBJECTID");
     const std::string CREATEDONTURN_CONDITION("CONDITION_CREATEDONTURN");
 
-    ValueRef::ValueRefBase<std::string>*  CopyStringValueRef(const ValueRef::ValueRefBase<std::string>* const value_ref) {
+    ValueRef::ValueRefBase<std::string>*    CopyStringValueRef(const ValueRef::ValueRefBase<std::string>* const value_ref) {
         if (const ValueRef::Constant<std::string>* constant =
             dynamic_cast<const ValueRef::Constant<std::string>*>(value_ref))
         { return new ValueRef::Constant<std::string>(constant->Value()); }
         return new ValueRef::Constant<std::string>("");
     }
-    ValueRef::ValueRefBase<int>*          CopyIntValueRef(const ValueRef::ValueRefBase<int>* const value_ref) {
+    ValueRef::ValueRefBase<int>*            CopyIntValueRef(const ValueRef::ValueRefBase<int>* const value_ref) {
         if (const ValueRef::Constant<int>* constant =
             dynamic_cast<const ValueRef::Constant<int>*>(value_ref))
         { return new ValueRef::Constant<int>(constant->Value()); }
         return new ValueRef::Constant<int>(0);
     }
-    ValueRef::ValueRefBase<double>*       CopyDoubleValueRef(const ValueRef::ValueRefBase<double>* const value_ref) {
+    ValueRef::ValueRefBase<double>*         CopyDoubleValueRef(const ValueRef::ValueRefBase<double>* const value_ref) {
         if (const ValueRef::Constant<double>* constant =
             dynamic_cast<const ValueRef::Constant<double>*>(value_ref))
         { return new ValueRef::Constant<double>(constant->Value()); }
         return new ValueRef::Constant<double>(0.0);
     }
 
-    Condition::ConditionBase*                   CopyCondition(const Condition::ConditionBase* const condition) {
+    template <class enumT>
+    ValueRef::ValueRefBase<enumT>*          CopyEnumValueRef(const ValueRef::ValueRefBase<enumT>* const value_ref) {
+        if (const ValueRef::Constant<enumT>* constant =
+            dynamic_cast<const ValueRef::Constant<enumT>*>(value_ref))
+        { return new ValueRef::Constant<enumT>(constant->Value()); }
+        return new ValueRef::Constant<enumT>(enumT(-1));
+    }
+
+    Condition::ConditionBase*               CopyCondition(const Condition::ConditionBase* const condition) {
         if (dynamic_cast<const Condition::Source* const>(condition)) {
             return new Condition::Source();
 
@@ -73,7 +81,7 @@ namespace {
         return new Condition::All();
     }
 
-    const std::string&                          ConditionClassName(const Condition::ConditionBase* const condition) {
+    const std::string&                      ConditionClassName(const Condition::ConditionBase* const condition) {
         if (dynamic_cast<const Condition::All* const>(condition))
             return ALL_CONDITION;
         else if (dynamic_cast<const Condition::Homeworld* const>(condition))
@@ -86,6 +94,8 @@ namespace {
             return ARMED_CONDITION;
         else if (dynamic_cast<const Condition::Stationary* const>(condition))
             return STATIONARY_CONDITION;
+        else if (dynamic_cast<const Condition::HasSpecial* const>(condition))
+            return HASSPECIAL_CONDITION;
         else return EMPTY_STRING;
     }
 }
@@ -97,8 +107,9 @@ namespace {
 class ConditionWidget : public GG::Control {
 public:
     ConditionWidget(GG::X x, GG::Y y, const Condition::ConditionBase* initial_condition = 0) :
-        GG::Control(x, y, GG::X(380), GG::Y(30), GG::INTERACTIVE),
+        GG::Control(x, y, GG::X(380), GG::Y1, GG::INTERACTIVE),
         m_class_drop(0),
+        m_enum_drop(0),
         m_param_edit(0),
         m_param_spin(0)
     {
@@ -109,18 +120,52 @@ public:
             init_condition = CopyCondition(initial_condition);
         }
         Init(init_condition);
+        delete init_condition;
     }
 
     ~ConditionWidget() {
         delete m_class_drop;
+        delete m_enum_drop;
         delete m_param_edit;
         delete m_param_spin;
     }
 
     Condition::ConditionBase*       GetCondition() {
-        Condition::ConditionBase* retval = 0;
+        GG::ListBox::iterator row_it = m_class_drop->CurrentItem();
+        if (row_it == m_class_drop->end())
+            return new Condition::All();
+        ConditionRow* condition_row = dynamic_cast<ConditionRow*>(*row_it);
+        if (!condition_row)
+            return new Condition::All();
+        const std::string& condition_key = condition_row->GetKey();
 
-        return retval;
+        if (condition_key == ALL_CONDITION) {
+            return new Condition::All();
+
+        } else if (condition_key == HOMEWORLD_CONDITION) {
+            if (!m_param_edit || m_param_edit->Empty()) {
+                return new Condition::Homeworld();
+            }
+            std::vector<const ValueRef::ValueRefBase<std::string>*> names;
+            names.push_back(new ValueRef::Constant<std::string>(m_param_edit->Text()));
+            return new Condition::Homeworld(names);
+        }
+        return new Condition::All();
+    }
+
+    template <typename enumT>
+    enumT                           GetEnumValue() {
+        if (m_enum_drop) {
+            return m_enum_drop->
+        }
+        return 0;
+    }
+
+    const std::string&              GetString() {
+        if (m_param_edit)
+            return m_param_edit->Text();
+        else
+            return EMPTY_STRING;
     }
 
     ValueRef::ValueRefBase<int>*    GetIntValueRef() {
@@ -130,11 +175,11 @@ public:
             return new ValueRef::Constant<int>(0);
     }
 
-    std::string                     GetString() {
-        if (m_param_edit)
-            return m_param_edit->Text();
+    int                             GetInt() {
+        if (m_param_spin)
+            return m_param_spin->Value();
         else
-            return "";
+            return 0;
     }
 
     virtual void Render() {
@@ -154,9 +199,25 @@ private:
                                           ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
         }
         const std::string&  GetKey() const { return m_condition_key; }
-
     private:
         std::string m_condition_key;
+    };
+
+    template <typename enumT>
+    class EnumRow : public GG::ListBox::Row {
+    public:
+        EnumRow(enumT value, GG::Y row_height) :
+            GG::ListBox::Row(GG::X1, row_height, "EnumRow"),
+            m_value(value)
+        {
+            SetChildClippingMode(ClipToClient);
+            const std::string& label = UserString(GG::GetEnumMap<enumT>().FromEnum(m_value));
+            push_back(new GG::TextControl(GG::X0, GG::Y0, UserString(label), ClientUI::GetFont(),
+                                          ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
+        }
+        enumT   GetValue() const { return m_value; }
+    private:
+        enumT   m_value;
     };
 
     void    Init(const Condition::ConditionBase* init_condition) {
@@ -170,14 +231,16 @@ private:
         AttachChild(m_class_drop);
 
         std::vector<std::string> row_keys;
-        row_keys.push_back(ALL_CONDITION);      row_keys.push_back(HOMEWORLD_CONDITION);
-        row_keys.push_back(CAPITAL_CONDITION);  row_keys.push_back(MONSTER_CONDITION);
-        row_keys.push_back(ARMED_CONDITION);    row_keys.push_back(STATIONARY_CONDITION);
+        row_keys.push_back(ALL_CONDITION);          row_keys.push_back(HOMEWORLD_CONDITION);
+        row_keys.push_back(CAPITAL_CONDITION);      row_keys.push_back(MONSTER_CONDITION);
+        row_keys.push_back(ARMED_CONDITION);        row_keys.push_back(STATIONARY_CONDITION);
+        row_keys.push_back(HASSPECIAL_CONDITION);
 
         SetMinSize(m_class_drop->Size());
         GG::ListBox::iterator select_row_it = m_class_drop->end();
         const std::string& init_condition_key = ConditionClassName(init_condition);
 
+        // fill droplist with rows for the available condition classes to be selected
         for (std::vector<std::string>::const_iterator key_it = row_keys.begin();
              key_it != row_keys.end(); ++key_it)
         {
@@ -187,17 +250,60 @@ private:
                 select_row_it = row_it;
         }
 
+        GG::Connect(m_class_drop->SelChangedSignal, &ConditionWidget::ConditionClassSelected, this);
+
         if (select_row_it != m_class_drop->end())
             m_class_drop->Select(select_row_it);
         else if (!m_class_drop->Empty())
             m_class_drop->Select(0);
+
+        UpdateParameterControls();
+
+        // TODO: set newly created parameter controls' values based on init condition
     }
 
-    void    DoLayout() {
+    void    ConditionClassSelected(GG::ListBox::iterator iterator)
+    { UpdateParameterControls(); }
+
+    void    UpdateParameterControls() {
+        if (!m_class_drop)
+            return;
+        // remove old parameter controls
+        delete m_enum_drop;     m_enum_drop = 0;
+        delete m_param_edit;    m_param_edit = 0;
+        delete m_param_spin;    m_param_spin = 0;
+
+        // determine which condition is selected
+        GG::ListBox::iterator row_it = m_class_drop->CurrentItem();
+        if (row_it == m_class_drop->end())
+            return;
+        ConditionRow* condition_row = dynamic_cast<ConditionRow*>(*row_it);
+        if (!condition_row)
+            return;
+        const std::string& condition_key = condition_row->GetKey();
+
+        GG::X PAD(3);
+        GG::X param_widget_left = m_class_drop->LowerRight().x + PAD - ClientUpperLeft().x;
+        GG::Y param_widget_top = m_class_drop->UpperLeft().y - ClientUpperLeft().y + GG::Y1;
+
+        // create controls for selected condition
+        if (condition_key == ALL_CONDITION ||       condition_key == CAPITAL_CONDITION ||
+            condition_key == ARMED_CONDITION ||     condition_key == STATIONARY_CONDITION ||
+            condition_key == MONSTER_CONDITION)
+        {
+            // no params
+        } else if (condition_key == HOMEWORLD_CONDITION ||  condition_key == HASSPECIAL_CONDITION) {
+            // just an edit to specify a string name
+            m_param_edit = new CUIEdit(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*6), "", ClientUI::GetFont());
+            AttachChild(m_param_edit);
+        }
+
+        Resize(GG::Pt(Width(), GG::Y(40)));
     }
 
     CUIDropDownList*    m_class_drop;
-    CUIEdit*            m_param_edit;
+    CUIDropDownList*    m_enum_drop;
+    CUIEdit*            m_param_edit;   // TODO: replace with droplist of valid options, so as to avoid needing to do reverse stringtable lookups
     CUISpin<int>*       m_param_spin;
 };
 
