@@ -153,14 +153,6 @@ public:
         return new Condition::All();
     }
 
-    template <typename enumT>
-    enumT                           GetEnumValue() {
-        if (m_enum_drop) {
-            return m_enum_drop->
-        }
-        return 0;
-    }
-
     const std::string&              GetString() {
         if (m_param_edit)
             return m_param_edit->Text();
@@ -211,13 +203,13 @@ private:
             m_value(value)
         {
             SetChildClippingMode(ClipToClient);
-            const std::string& label = UserString(GG::GetEnumMap<enumT>().FromEnum(m_value));
+            const std::string& label = UserString(GG::GetEnumMap<typename enumT>().FromEnum(m_value));
             push_back(new GG::TextControl(GG::X0, GG::Y0, UserString(label), ClientUI::GetFont(),
                                           ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
         }
-        enumT   GetValue() const { return m_value; }
+        typename enumT  GetValue() const { return m_value; }
     private:
-        enumT   m_value;
+        typename enumT  m_value;
     };
 
     void    Init(const Condition::ConditionBase* init_condition) {
