@@ -183,7 +183,7 @@ struct Condition::Number : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
-    const ValueRef::ValueRefBase<int>*  High() const { return m_low; }
+    const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
     const ConditionBase*                GetCondition() const { return m_condition; }
 
 private:
@@ -214,7 +214,7 @@ struct Condition::Turn : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
-    const ValueRef::ValueRefBase<int>*  High() const { return m_low; }
+    const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -541,7 +541,7 @@ struct Condition::HasSpecial : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const std::string&                  Name() const { return m_name; }
     const ValueRef::ValueRefBase<int>*  Low() const { return m_since_turn_low; }
-    const ValueRef::ValueRefBase<int>*  High() const { m_since_turn_high; }
+    const ValueRef::ValueRefBase<int>*  High() const { return m_since_turn_high; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -564,6 +564,7 @@ struct Condition::HasTag : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::string&  Name() const { return m_name; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -590,6 +591,8 @@ struct Condition::CreatedOnTurn : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
+    const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -618,6 +621,7 @@ struct Condition::Contains : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ConditionBase*GetCondition() const { return m_condition; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -645,6 +649,7 @@ struct Condition::ContainedBy : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ConditionBase*GetCondition() const { return m_condition; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -670,6 +675,7 @@ struct Condition::InSystem : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<int>*  SystemId() const { return m_system_id; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -695,6 +701,7 @@ struct Condition::ObjectID : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<int>*  ObjectId() const { return m_object_id; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -722,6 +729,7 @@ struct Condition::PlanetType : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>&    Types() const { return m_types; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -749,6 +757,7 @@ struct Condition::PlanetSize : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>&    Sizes() const { return m_sizes; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -775,6 +784,7 @@ struct Condition::PlanetEnvironment : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& Environments() const { return m_environments; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -805,6 +815,7 @@ struct Condition::Species : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::vector<const ValueRef::ValueRefBase<std::string>*>&  Names() const { return m_names; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -857,6 +868,12 @@ struct Condition::Enqueued : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    BuildType           GetBuildType() const { return m_build_type; }
+    const std::string&  GetName() const { return m_name; }
+    const ValueRef::ValueRefBase<int>*  DesignID() const { return m_design_id; }
+    const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
+    const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
+    const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -887,6 +904,7 @@ struct Condition::FocusType : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::vector<const ValueRef::ValueRefBase<std::string>*>&  Names() const { return m_names; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -913,6 +931,7 @@ struct Condition::StarType : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::vector<const ValueRef::ValueRefBase< ::StarType>*>&  Types() const { return m_types; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -933,6 +952,7 @@ struct Condition::DesignHasHull : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::string&  Name() const { return m_name; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -962,6 +982,9 @@ struct Condition::DesignHasPart : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
+    const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
+    const std::string&                  Name() const { return m_name; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -993,6 +1016,9 @@ struct Condition::DesignHasPartClass : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
+    const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
+    ShipPartClass                       Class() const { return m_class; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1016,6 +1042,7 @@ struct Condition::PredefinedShipDesign : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::string&  Name() const { return m_name; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1041,6 +1068,7 @@ struct Condition::NumberedShipDesign : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<int>*  DesignID() const { return m_design_id; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1066,6 +1094,7 @@ struct Condition::ProducedByEmpire : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1091,6 +1120,7 @@ struct Condition::Chance : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<double>*   GetChance() const { return m_chance; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1119,6 +1149,9 @@ struct Condition::MeterValue : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<double>*   Low() const { return m_low; }
+    const ValueRef::ValueRefBase<double>*   High() const { return m_high; }
+    MeterType                               GetMeterType() const { return m_meter; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1153,6 +1186,10 @@ struct Condition::ShipPartMeterValue : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::string&                      PartName() const { return m_part_name; }
+    const ValueRef::ValueRefBase<double>*   Low() const { return m_low; }
+    const ValueRef::ValueRefBase<double>*   High() const { return m_high; }
+    MeterType                               GetMeterType() const { return m_meter; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1192,6 +1229,10 @@ struct Condition::EmpireMeterValue : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::string&                      Meter() const { return m_meter; }
+    const ValueRef::ValueRefBase<double>*   Low() const { return m_low; }
+    const ValueRef::ValueRefBase<double>*   High() const { return m_high; }
+    const ValueRef::ValueRefBase<int>*      EmpireID() const { return m_empire_id; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1220,6 +1261,9 @@ struct Condition::EmpireStockpileValue : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<double>*   Low() const { return m_low; }
+    const ValueRef::ValueRefBase<double>*   High() const { return m_high; }
+    ResourceType                            Stockpile() const { return m_stockpile; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1242,6 +1286,7 @@ struct Condition::OwnerHasTech : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::string&  Tech() const { return m_name; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1262,6 +1307,7 @@ struct Condition::OwnerHasBuildingTypeAvailable : public Condition::ConditionBas
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::string&  GetBuildingType() const { return m_name; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1282,6 +1328,7 @@ struct Condition::OwnerHasShipDesignAvailable : public Condition::ConditionBase 
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    int                 GetDesignID() const { return m_id; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1307,6 +1354,7 @@ struct Condition::VisibleToEmpire : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
