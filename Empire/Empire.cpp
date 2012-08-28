@@ -1884,7 +1884,12 @@ void Empire::MoveBuildWithinQueue(int index, int new_index) {
         --new_index;
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index ||
         new_index < 0 || static_cast<int>(m_production_queue.size()) <= new_index)
-        throw std::runtime_error("Empire::MoveBuildWithinQueue() : Attempted to move a production queue item to or from an invalid index.");
+    {
+        Logger().debugStream() << "Empire::MoveBuildWithinQueue index: " << index << "  new index: "
+                               << new_index << "  queue size: " << m_production_queue.size();
+        Logger().errorStream() << "Attempted to move a production queue item to or from an invalid index.";
+        return;
+    }
     ProductionQueue::Element build = m_production_queue[index];
     double status = m_production_progress[index];
     m_production_queue.erase(index);
@@ -1895,8 +1900,11 @@ void Empire::MoveBuildWithinQueue(int index, int new_index) {
 }
 
 void Empire::RemoveBuildFromQueue(int index) {
-    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
-        throw std::runtime_error("Empire::RemoveBuildFromQueue() : Attempted to delete a production queue item with an invalid index.");
+    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index) {
+        Logger().debugStream() << "Empire::RemoveBuildFromQueue index: " << index << "  queue size: " << m_production_queue.size();
+        Logger().errorStream() << "Attempted to delete a production queue item with an invalid index.";
+        return;
+    }
     m_production_queue.erase(index);
     m_production_progress.erase(m_production_progress.begin() + index);
     m_production_queue.Update(this, m_resource_pools, m_production_progress);
