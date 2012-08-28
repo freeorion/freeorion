@@ -203,13 +203,13 @@ private:
             m_value(value)
         {
             SetChildClippingMode(ClipToClient);
-            const std::string& label = UserString(GG::GetEnumMap<typename enumT>().FromEnum(m_value));
+            const std::string& label = UserString(GG::GetEnumMap<enumT>().FromEnum(m_value));
             push_back(new GG::TextControl(GG::X0, GG::Y0, UserString(label), ClientUI::GetFont(),
                                           ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
         }
-        typename enumT  GetValue() const { return m_value; }
+        enumT  GetValue() const { return m_value; }
     private:
-        typename enumT  m_value;
+        enumT  m_value;
     };
 
     void    Init(const Condition::ConditionBase* init_condition) {
