@@ -156,6 +156,8 @@ public:
         } else if (condition_key == HASSPECIAL_CONDITION) {
             return new Condition::HasSpecial(GetString());
 
+        } else if (condition_key == HASTAG_CONDITION) {
+            return new Condition::HasTag(GetString());
         }
 
         return new Condition::All();
@@ -396,13 +398,6 @@ public:
         Init(condition_filter);
     }
 
-    ~FilterDialog() {
-        for (std::vector<Condition::ConditionBase*>::iterator it = m_conditions.begin();
-             it != m_conditions.end(); ++it)
-        { delete *it; }
-        m_conditions.clear();
-    }
-
     bool    ChangesAccepted()
     { return m_accept_changes; }
 
@@ -411,21 +406,7 @@ public:
 
     // caller takes ownership of returned ConditionBase*
     Condition::ConditionBase*                               GetConditionFilter() {
-        if (m_conditions.empty()) {
-            return new Condition::All();
-        } else if (m_conditions.size() == 1) {
-            Condition::ConditionBase* retval = *(m_conditions.begin());
-            m_conditions.clear();
-            return retval;
-        } else {
-            std::vector<const Condition::ConditionBase*> params;
-            for (std::vector<Condition::ConditionBase*>::const_iterator it = m_conditions.begin();
-                 it != m_conditions.end(); ++it)
-            { params.push_back(*it); }
-            Condition::ConditionBase* retval = new Condition::And(params);
-            m_conditions.clear();
-            return retval;
-        }
+        return m_condition_widget->GetCondition();
     }
 
 private:
@@ -477,25 +458,8 @@ private:
             GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisfiltersFromStateButtons,    this);
         }
 
-        if (!condition_filter) {
-            m_conditions.clear();
 
-        } else if (const Condition::And* const and_condition = dynamic_cast<const Condition::And* const>(condition_filter)) {
-            const std::vector<const Condition::ConditionBase*>& operands = and_condition->Operands();
-            for (std::vector<const Condition::ConditionBase*>::const_iterator it = operands.begin();
-                 it != operands.end(); ++it)
-            {
-                Condition::ConditionBase* copied_condition = CopyCondition(*it);
-                if (copied_condition)
-                    m_conditions.push_back(copied_condition);
-            }
-
-        } else {
-            Condition::ConditionBase* copied_condition = CopyCondition(condition_filter);
-            if (copied_condition)
-                m_conditions.push_back(copied_condition);
-        }
-
+        // TODO: Add multiple condition widgets initialized for input condition
         m_condition_widget = new ConditionWidget(GG::X(3), m_filters_layout->Height() + GG::Y(3));
         AttachChild(m_condition_widget);
 
@@ -554,12 +518,9 @@ private:
     }
 
     std::map<UniverseObjectType, std::set<VIS_DISPLAY> >    m_vis_filters;
-    std::vector<Condition::ConditionBase*>                  m_conditions;
-
-    bool                m_accept_changes;
+    bool                                                    m_accept_changes;
 
     ConditionWidget*    m_condition_widget;
-
     GG::Layout*         m_filters_layout;
     GG::Button*         m_cancel_button;
     GG::Button*         m_apply_button;
@@ -925,6 +886,13 @@ public:
         if (object_id == INVALID_OBJECT_ID)
             return false;
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+
+        const UniverseObject* obj = GetUniverseObject(object_id);
+        if (!obj)
+            return false;
+
+        if (!m_filter_condition->Eval(obj))
+            return false;
 
         if (GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).find(object_id) != GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).end())
             return m_visibilities[type].find(SHOW_DESTROYED) != m_visibilities[type].end();
