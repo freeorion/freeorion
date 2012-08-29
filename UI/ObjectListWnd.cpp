@@ -251,7 +251,7 @@ private:
         row_keys.push_back(ALL_CONDITION);          row_keys.push_back(HOMEWORLD_CONDITION);
         row_keys.push_back(CAPITAL_CONDITION);      row_keys.push_back(MONSTER_CONDITION);
         row_keys.push_back(ARMED_CONDITION);        row_keys.push_back(STATIONARY_CONDITION);
-        row_keys.push_back(HASSPECIAL_CONDITION);
+        row_keys.push_back(HASSPECIAL_CONDITION);   row_keys.push_back(HASTAG_CONDITION);
 
         SetMinSize(m_class_drop->Size());
         GG::ListBox::iterator select_row_it = m_class_drop->end();
@@ -344,6 +344,29 @@ private:
                 row_it = m_string_drop->Insert(new StringRow(special_name, GG::Y(ClientUI::Pts())));
             }
 
+        } else if (condition_key == HASTAG_CONDITION) {
+            // droplist of valid tags
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
+                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            AttachChild(m_string_drop);
+
+            // collect all valid tags on any object in universe
+            std::set<std::string> all_tags;
+            const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
+            for (ObjectMap::const_iterator obj_it = known_objects.const_begin();
+                 obj_it != known_objects.const_end(); ++obj_it)
+            {
+                std::vector<std::string> obj_tags = obj_it->second->Tags();
+                std::copy(obj_tags.begin(), obj_tags.end(), std::inserter(all_tags, all_tags.end()));
+            }
+
+            GG::ListBox::iterator row_it = m_string_drop->end();
+            for (std::set<std::string>::iterator tag_it = all_tags.begin(); tag_it != all_tags.end(); ++tag_it) {
+                const std::string tag = *tag_it;
+                row_it = m_string_drop->Insert(new StringRow(tag, GG::Y(ClientUI::Pts())));
+            }
+            if (!m_string_drop->Empty())
+                m_string_drop->Select(0);
         }
 
         Resize(GG::Pt(Width(), GG::Y(40)));

@@ -2679,6 +2679,9 @@ Homeworld
 CONDITION_HASSPECIAL
 Has Special
 
+CONDITION_HASTAG
+Has Tag
+
 #############################################################
 ####                    S I T   R E P                    ####
 #############################################################
@@ -8036,6 +8039,12 @@ INFRA_PER_PRODUCTION
 ####                       T A G S                       ####
 #############################################################
 
+
+ANTIQUATED
+Antiquated
+
+STYLISH
+Stylish
 
 ORGANIC
 Organic
