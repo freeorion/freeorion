@@ -14,11 +14,14 @@
 #include "../universe/Ship.h"
 #include "../universe/Planet.h"
 #include "../universe/Building.h"
+#include "../universe/Species.h"
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
+
+std::vector<std::string> SpecialNames();
 
 namespace {
     enum VIS_DISPLAY { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
@@ -110,7 +113,7 @@ public:
         GG::Control(x, y, GG::X(380), GG::Y1, GG::INTERACTIVE),
         m_class_drop(0),
         m_enum_drop(0),
-        m_param_edit(0),
+        m_string_drop(0),
         m_param_spin(0)
     {
         Condition::ConditionBase* init_condition = 0;
@@ -126,7 +129,7 @@ public:
     ~ConditionWidget() {
         delete m_class_drop;
         delete m_enum_drop;
-        delete m_param_edit;
+        delete m_string_drop;
         delete m_param_spin;
     }
 
@@ -143,35 +146,19 @@ public:
             return new Condition::All();
 
         } else if (condition_key == HOMEWORLD_CONDITION) {
-            if (!m_param_edit || m_param_edit->Empty()) {
+            const std::string& species_name = GetString();
+            if (species_name.empty())
                 return new Condition::Homeworld();
-            }
             std::vector<const ValueRef::ValueRefBase<std::string>*> names;
-            names.push_back(new ValueRef::Constant<std::string>(m_param_edit->Text()));
+            names.push_back(new ValueRef::Constant<std::string>(species_name));
             return new Condition::Homeworld(names);
+
+        } else if (condition_key == HASSPECIAL_CONDITION) {
+            return new Condition::HasSpecial(GetString());
+
         }
+
         return new Condition::All();
-    }
-
-    const std::string&              GetString() {
-        if (m_param_edit)
-            return m_param_edit->Text();
-        else
-            return EMPTY_STRING;
-    }
-
-    ValueRef::ValueRefBase<int>*    GetIntValueRef() {
-        if (m_param_spin)
-            return new ValueRef::Constant<int>(m_param_spin->Value());
-        else
-            return new ValueRef::Constant<int>(0);
-    }
-
-    int                             GetInt() {
-        if (m_param_spin)
-            return m_param_spin->Value();
-        else
-            return 0;
     }
 
     virtual void Render() {
@@ -211,6 +198,44 @@ private:
     private:
         enumT  m_value;
     };
+
+    class StringRow : public GG::ListBox::Row  {
+    public:
+        StringRow(const std::string& text, GG::Y row_height) :
+            GG::ListBox::Row(GG::X1, row_height, "StringRow"),
+            m_string(text)
+        {
+            SetChildClippingMode(ClipToClient);
+            const std::string& label = text.empty() ? EMPTY_STRING : UserString(text);
+            push_back(new GG::TextControl(GG::X0, GG::Y0, label, ClientUI::GetFont(),
+                                          ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
+        }
+        const std::string&  Text() const { return m_string; }
+    private:
+        std::string m_string;
+    };
+
+    const std::string&              GetString() {
+        if (!m_string_drop)
+            return EMPTY_STRING;
+        GG::ListBox::iterator row_it = m_string_drop->CurrentItem();
+        if (row_it == m_string_drop->end())
+            return EMPTY_STRING;
+        StringRow* string_row = dynamic_cast<StringRow*>(*row_it);
+        if (!string_row)
+            return EMPTY_STRING;
+        return string_row->Text();
+    }
+
+    ValueRef::ValueRefBase<int>*    GetIntValueRef()
+    { return new ValueRef::Constant<int>(GetInt()); }
+
+    int                             GetInt() {
+        if (m_param_spin)
+            return m_param_spin->Value();
+        else
+            return 0;
+    }
 
     void    Init(const Condition::ConditionBase* init_condition) {
         // fill droplist with basic types of conditions and select appropriate row
@@ -262,8 +287,11 @@ private:
             return;
         // remove old parameter controls
         delete m_enum_drop;     m_enum_drop = 0;
-        delete m_param_edit;    m_param_edit = 0;
+        delete m_string_drop;   m_string_drop = 0;
         delete m_param_spin;    m_param_spin = 0;
+
+        const GG::Y DROPLIST_HEIGHT(ClientUI::Pts() + 4);
+        const GG::Y DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 10;
 
         // determine which condition is selected
         GG::ListBox::iterator row_it = m_class_drop->CurrentItem();
@@ -284,10 +312,38 @@ private:
             condition_key == MONSTER_CONDITION)
         {
             // no params
-        } else if (condition_key == HOMEWORLD_CONDITION ||  condition_key == HASSPECIAL_CONDITION) {
-            // just an edit to specify a string name
-            m_param_edit = new CUIEdit(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*6), "", ClientUI::GetFont());
-            AttachChild(m_param_edit);
+        } else if (condition_key == HOMEWORLD_CONDITION) {
+            // droplist of valid species
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
+                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            AttachChild(m_string_drop);
+
+            // add empty row, allowing for matching any species' homeworld
+            GG::ListBox::iterator row_it = m_string_drop->Insert(new StringRow("", GG::Y(ClientUI::Pts())));
+            m_string_drop->Select(row_it);
+
+            const SpeciesManager& sm = GetSpeciesManager();
+            for (SpeciesManager::iterator sp_it = sm.begin(); sp_it != sm.end(); ++sp_it) {
+                const std::string species_name = sp_it->first;
+                row_it = m_string_drop->Insert(new StringRow(species_name, GG::Y(ClientUI::Pts())));
+            }
+
+        } else if (condition_key == HASSPECIAL_CONDITION) {
+            // droplist of valid specials
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
+                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            AttachChild(m_string_drop);
+
+            // add empty row, allowing for matching any special
+            GG::ListBox::iterator row_it = m_string_drop->Insert(new StringRow("", GG::Y(ClientUI::Pts())));
+            m_string_drop->Select(row_it);
+
+            std::vector<std::string> special_names = SpecialNames();
+            for (std::vector<std::string>::iterator sp_it = special_names.begin(); sp_it != special_names.end(); ++sp_it) {
+                const std::string special_name = *sp_it;
+                row_it = m_string_drop->Insert(new StringRow(special_name, GG::Y(ClientUI::Pts())));
+            }
+
         }
 
         Resize(GG::Pt(Width(), GG::Y(40)));
@@ -295,7 +351,7 @@ private:
 
     CUIDropDownList*    m_class_drop;
     CUIDropDownList*    m_enum_drop;
-    CUIEdit*            m_param_edit;   // TODO: replace with droplist of valid options, so as to avoid needing to do reverse stringtable lookups
+    CUIDropDownList*    m_string_drop;
     CUISpin<int>*       m_param_spin;
 };
 
