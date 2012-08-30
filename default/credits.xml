@@ -36,6 +36,7 @@
       <PERSON name="Sebastian Wagner"         nick="night"            task="Programming"/>
       <PERSON name="Carsten Milkau"           nick="cami"             task="Programming"/>
       <PERSON name="Greg Mojonnier"           nick="fixIt"            task="Programming"/>
+      <PERSON name=""                         nick="Spike"            task="Programming"/>
     </GROUP>
     <GROUP name ="GAMEDESIGN">
       <PERSON name="Samuel Knowlton"          nick="Aquitaine"        task="Game Design"/>

@@ -502,10 +502,11 @@ private:
     struct Glyph
     {
         Glyph(); ///< Default ctor
-        Glyph(const boost::shared_ptr<Texture>& texture, const Pt& ul, const Pt& lr,
+        Glyph(const boost::shared_ptr<Texture>& texture, const Pt& ul, const Pt& lr, Y y_ofs,
               X lb, X adv); ///< Ctor
 
         SubTexture  sub_texture;   ///< The subtexture containing just this glyph
+        Y           y_offset;      ///< The vertical offset to draw this glyph (may be negative!)
         X           left_bearing;  ///< The space that should remain before the glyph
         X           advance;       ///< The amount of space the glyph should occupy, including glyph graphic and inter-glyph spacing
         X           width;         ///< The width of the glyph only

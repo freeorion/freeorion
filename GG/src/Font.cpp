@@ -88,10 +88,11 @@ namespace {
     struct TempGlyphData
     {
         TempGlyphData() {}
-        TempGlyphData(std::size_t i, const Pt& ul_, const Pt& lr_, X lb, X a) :
-            idx(i), ul(ul_), lr(lr_), left_b(lb), adv(a) {}
+        TempGlyphData(std::size_t i, const Pt& ul_, const Pt& lr_, Y y_ofs, X lb, X a) :
+            idx(i), ul(ul_), lr(lr_), y_offset(y_ofs), left_b(lb), adv(a) {}
         std::size_t idx;      ///< index into m_textures of texture that contains this glyph
         Pt          ul, lr;   ///< area of glyph subtexture within texture
+        Y           y_offset; ///< vertical offset to draw texture (may be negative!)
         X           left_b;   ///< left bearing (see Glyph)
         X           adv;      ///< advance of glyph (see Glyph)
     };
@@ -174,8 +175,6 @@ namespace {
 
     const double ITALICS_SLANT_ANGLE = 12; // degrees
     const double ITALICS_FACTOR = 1.0 / tan((90 - ITALICS_SLANT_ANGLE) * 3.1415926 / 180.0); // factor used to shear glyphs ITALICS_SLANT_ANGLE degrees CW from straight up
-
-    const int FT_MAGIC_NUMBER = 4; // taken from the ftview FreeType demo (I have no idea....)
 
     const std::vector<std::pair<boost::uint32_t, boost::uint32_t> > PRINTABLE_ASCII_ALPHA_RANGES = boost::assign::list_of
         (std::pair<boost::uint32_t, boost::uint32_t>(0x41, 0x5B))
@@ -506,13 +505,15 @@ Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_siz
 // struct GG::Font::Glyph
 ///////////////////////////////////////
 Font::Glyph::Glyph() :
+    y_offset(0),
     left_bearing(0),
     advance(0),
     width(0)
 {}
 
-Font::Glyph::Glyph(const boost::shared_ptr<Texture>& texture, const Pt& ul, const Pt& lr, X lb, X adv) :
+Font::Glyph::Glyph(const boost::shared_ptr<Texture>& texture, const Pt& ul, const Pt& lr, Y y_ofs, X lb, X adv) :
     sub_texture(texture, ul.x, ul.y, lr.x, lr.y),
+    y_offset(y_ofs),
     left_bearing(lb),
     advance(adv),
     width(ul.x - lr.x)
@@ -1267,6 +1268,7 @@ void Font::Init(FT_Face& face)
     X x = X0;
     Y y = Y0;
     X max_x = X0;
+    Y max_y = Y0;
     for (std::size_t i = 0; i < range_vec.size(); ++i) {
         boost::uint32_t low = range_vec[i].first;
         boost::uint32_t high = range_vec[i].second;
@@ -1275,36 +1277,42 @@ void Font::Init(FT_Face& face)
         for (boost::uint32_t c = low; c < high; ++c) {
             if (temp_glyph_data.find(c) == temp_glyph_data.end() && GenerateGlyph(face, c)) {
                 const FT_Bitmap& glyph_bitmap = face->glyph->bitmap;
+                if ((glyph_bitmap.width > BUF_WIDTH) | (glyph_bitmap.rows > BUF_HEIGHT)) {
+                    ThrowBadGlyph("GG::Font::Init : Glyph too large for buffer'%1%'", c); // catch broken fonts
+                }
 
-                if (x + glyph_bitmap.width >= BUF_WIDTH) { // start a new row of glyph images
+                if (x + glyph_bitmap.width > BUF_WIDTH) { // start a new row of glyph images
                     if (x > max_x) max_x = x;
                     x = X0;
-                    y += m_height;
-                    if (y + m_height >= BUF_HEIGHT) { // if there's not enough room for another row, create a new buffer
-                        // cut off bottom portion of buffer just written, if it is possible to do so and maintain power-of-two height
-                        X pow_of_2_x(NextPowerOfTwo(max_x));
-                        Y pow_of_2_y(NextPowerOfTwo(y + m_height));
-                        if (pow_of_2_y < buffer_sizes.back().y)
-                            buffer_sizes.back().y = pow_of_2_y;
-                        if (pow_of_2_x < buffer_sizes.back().x)
-                            buffer_sizes.back().x = pow_of_2_x;
-                        x = X0;
-                        y = Y0;
-                        temp_buf = new boost::uint16_t[BUF_SZ];
-                        std::memset(temp_buf, 0, BUF_SZ * sizeof(boost::uint16_t));
-                        buffer_vec.push_back(temp_buf);
-                        buffer_sizes.push_back(Pt(BUF_WIDTH, BUF_HEIGHT));
-                    }
+                    y = max_y;
+                }
+                if (y + glyph_bitmap.rows > BUF_HEIGHT) { // if there's not enough room, create a new buffer
+                    // cut off bottom and side of buffer just written, if it is possible to do so and maintain power-of-two height
+                    X pow_of_2_x(NextPowerOfTwo(max_x));
+                    Y pow_of_2_y(NextPowerOfTwo(max_y));
+                    if (pow_of_2_y < buffer_sizes.back().y)
+                        buffer_sizes.back().y = pow_of_2_y;
+                    if (pow_of_2_x < buffer_sizes.back().x)
+                        buffer_sizes.back().x = pow_of_2_x;
+                    x = X0;
+                    y = Y0;
+                    max_x = X0;
+                    max_y = Y0;
+                    temp_buf = new boost::uint16_t[BUF_SZ];
+                    std::memset(temp_buf, 0, BUF_SZ * sizeof(boost::uint16_t));
+                    buffer_vec.push_back(temp_buf);
+                    buffer_sizes.push_back(Pt(BUF_WIDTH, BUF_HEIGHT));
+                }
+                if (y + glyph_bitmap.rows > max_y) {
+                    max_y = y + glyph_bitmap.rows;
                 }
 
                 boost::uint8_t*  src_start = glyph_bitmap.buffer;
                 boost::uint16_t* dst_start = buffer_vec.back() + Value(y) * Value(BUF_WIDTH) + Value(x);
 
-                Y y_offset = m_height - 1 + m_descent - face->glyph->bitmap_top + FT_MAGIC_NUMBER;
-
                 for (int row = 0; row < glyph_bitmap.rows; ++row) {
                     boost::uint8_t*  src = src_start + row * glyph_bitmap.pitch;
-                    boost::uint16_t* dst = dst_start + (row + Value(y_offset)) * Value(BUF_WIDTH);
+                    boost::uint16_t* dst = dst_start + row * Value(BUF_WIDTH);
                     for (int col = 0; col < glyph_bitmap.width; ++col) {
 #ifdef __BIG_ENDIAN__
                         *dst++ = *src++ | (255 << 8); // big-endian uses different byte ordering
@@ -1317,7 +1325,8 @@ void Font::Init(FT_Face& face)
                 // record info on how to find and use this glyph later
                 temp_glyph_data[c] =
                     TempGlyphData(static_cast<int>(buffer_vec.size()) - 1,
-                                  Pt(x, y + FT_MAGIC_NUMBER), Pt(x + glyph_bitmap.width, y + m_height + FT_MAGIC_NUMBER),
+                                  Pt(x, y), Pt(x + glyph_bitmap.width, y + glyph_bitmap.rows),
+                                  Y(m_height - 1 + m_descent - face->glyph->bitmap_top),
                                   X(static_cast<int>((std::ceil(face->glyph->metrics.horiBearingX / 64.0)))),
                                   X(static_cast<int>((std::ceil(face->glyph->metrics.horiAdvance / 64.0)))));
 
@@ -1346,7 +1355,7 @@ void Font::Init(FT_Face& face)
 
     // create Glyph objects from temp glyph data
     for (std::map<boost::uint32_t, TempGlyphData>::iterator it = temp_glyph_data.begin(); it != temp_glyph_data.end(); ++it)
-        m_glyphs[it->first] = Glyph(m_textures[it->second.idx], it->second.ul, it->second.lr, it->second.left_b, it->second.adv);
+        m_glyphs[it->first] = Glyph(m_textures[it->second.idx], it->second.ul, it->second.lr, it->second.y_offset, it->second.left_b, it->second.adv);
 
     // record the width of the space character
     GlyphMap::const_iterator glyph_it = m_glyphs.find(WIDE_SPACE);
@@ -1410,17 +1419,17 @@ X Font::RenderGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* r
         glBindTexture(GL_TEXTURE_2D, glyph.sub_texture.GetTexture()->OpenGLId());
         glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2f(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[1]);
-        glVertex(pt.x + glyph.left_bearing + m_italics_offset, pt.y);
+        glVertex(pt.x + glyph.left_bearing + m_italics_offset, pt.y + glyph.y_offset);
         glTexCoord2f(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[1]);
-        glVertex(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + m_italics_offset, pt.y);
+        glVertex(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + m_italics_offset, pt.y + glyph.y_offset);
         glTexCoord2f(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[3]);
-        glVertex(pt.x + glyph.left_bearing - m_italics_offset, pt.y + glyph.sub_texture.Height());
+        glVertex(pt.x + glyph.left_bearing - m_italics_offset, pt.y + glyph.sub_texture.Height() + glyph.y_offset);
         glTexCoord2f(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[3]);
         glVertex(pt.x + glyph.sub_texture.Width() + glyph.left_bearing - m_italics_offset,
-                 pt.y + glyph.sub_texture.Height());
+                 pt.y + glyph.sub_texture.Height() + glyph.y_offset);
         glEnd();
     } else {
-        glyph.sub_texture.OrthoBlit(Pt(pt.x + glyph.left_bearing, pt.y));
+        glyph.sub_texture.OrthoBlit(Pt(pt.x + glyph.left_bearing, pt.y + glyph.y_offset));
     }
     if (render_state && render_state->draw_underline) {
         X x1 = pt.x;
