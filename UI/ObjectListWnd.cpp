@@ -36,6 +36,7 @@ namespace {
     const std::string BUILDING_CONDITION("CONDITION_BUILDING");
     const std::string HASSPECIAL_CONDITION("CONDITION_HASSPECIAL");
     const std::string HASTAG_CONDITION("CONDITION_HASTAG");
+    const std::string SPECIES_CONDITION("CONDITION_SPECIES");
     const std::string PRODUCEDBYEMPIRE_CONDITION("CONDITION_PRODUCEDBYEMPIRE");
     const std::string EXPLOREDBYEMPIRE_CONDITION("CONDITION_EXPLOREDBYEMPIRE");
     const std::string CONTAINEDBY_CONDITION("CONDITION_CONTAINEDBY");
@@ -158,6 +159,22 @@ public:
 
         } else if (condition_key == HASTAG_CONDITION) {
             return new Condition::HasTag(GetString());
+
+        } else if (condition_key == MONSTER_CONDITION) {
+            return new Condition::Monster();
+
+        } else if (condition_key == CAPITAL_CONDITION) {
+            return new Condition::Capital();
+
+        } else if (condition_key == ARMED_CONDITION) {
+            return new Condition::Armed();
+
+        } else if (condition_key == STATIONARY_CONDITION) {
+            return new Condition::Stationary();
+
+        } else if (condition_key == SPECIES_CONDITION) {
+            return new Condition::Species(GetStringValueRefVec());
+
         }
 
         return new Condition::All();
@@ -229,8 +246,14 @@ private:
         return string_row->Text();
     }
 
-    ValueRef::ValueRefBase<int>*    GetIntValueRef()
-    { return new ValueRef::Constant<int>(GetInt()); }
+    ValueRef::ValueRefBase<std::string>*                    GetStringValueRef()
+    { return new ValueRef::Constant<std::string>(GetString()); }
+
+    std::vector<const ValueRef::ValueRefBase<std::string>*> GetStringValueRefVec() {
+        std::vector<const ValueRef::ValueRefBase<std::string>*> retval;
+        retval.push_back(GetStringValueRef());
+        return retval;
+    }
 
     int                             GetInt() {
         if (m_param_spin)
@@ -238,6 +261,9 @@ private:
         else
             return 0;
     }
+
+    ValueRef::ValueRefBase<int>*    GetIntValueRef()
+    { return new ValueRef::Constant<int>(GetInt()); }
 
     void    Init(const Condition::ConditionBase* init_condition) {
         // fill droplist with basic types of conditions and select appropriate row
@@ -254,6 +280,7 @@ private:
         row_keys.push_back(CAPITAL_CONDITION);      row_keys.push_back(MONSTER_CONDITION);
         row_keys.push_back(ARMED_CONDITION);        row_keys.push_back(STATIONARY_CONDITION);
         row_keys.push_back(HASSPECIAL_CONDITION);   row_keys.push_back(HASTAG_CONDITION);
+        row_keys.push_back(SPECIES_CONDITION);
 
         SetMinSize(m_class_drop->Size());
         GG::ListBox::iterator select_row_it = m_class_drop->end();
@@ -314,13 +341,13 @@ private:
             condition_key == MONSTER_CONDITION)
         {
             // no params
-        } else if (condition_key == HOMEWORLD_CONDITION) {
+        } else if (condition_key == HOMEWORLD_CONDITION || condition_key == SPECIES_CONDITION) {
             // droplist of valid species
             m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
                                                 DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
             AttachChild(m_string_drop);
 
-            // add empty row, allowing for matching any species' homeworld
+            // add empty row, allowing for matching any species
             GG::ListBox::iterator row_it = m_string_drop->Insert(new StringRow("", GG::Y(ClientUI::Pts())));
             m_string_drop->Select(row_it);
 
