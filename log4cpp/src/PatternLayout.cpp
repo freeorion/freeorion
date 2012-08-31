@@ -23,7 +23,7 @@
 
 #include <iomanip>
 #include <ctime>
-#include <cmath>
+#include <cstdlib>
 #include "Localtime.hh"
 
 #ifdef LOG4CPP_HAVE_INT64_T
@@ -370,7 +370,7 @@ namespace log4cpp {
                         literal = "";
                     }
                     if ((minWidth != 0) || (maxWidth != 0)) {
-                        component = new FormatModifierComponent(component, std::abs((float)minWidth), maxWidth, minWidth < 0);
+                        component = new FormatModifierComponent(component, std::abs(minWidth), maxWidth, minWidth < 0);
                         minWidth = maxWidth = 0;
                     }
                     _components.push_back(component);

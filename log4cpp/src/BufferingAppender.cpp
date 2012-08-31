@@ -1,3 +1,4 @@
+#include "PortabilityImpl.hh"
 #include <log4cpp/BufferingAppender.hh>
 #include <algorithm>
 #include <sstream>
@@ -9,7 +10,7 @@ namespace log4cpp
                                         std::auto_ptr<Appender> sink, std::auto_ptr<TriggeringEventEvaluator> evaluator) 
                      :LayoutAppender(name), max_size_(max_size), sink_(sink), evaluator_(evaluator), lossy_(false)
    {
-      max_size_ = (std::max)(1UL, max_size_);
+      max_size_ = (max)(1UL, max_size_);
    }
    
    void BufferingAppender::_append(const LoggingEvent& event)

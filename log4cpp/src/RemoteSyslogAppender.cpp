@@ -13,7 +13,7 @@
 #    include <unistd.h>
 #endif
 #include <cstdlib>
-#include <cstdio>
+#include <stdio.h>
 #include <cstring>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -137,7 +137,7 @@ namespace log4cpp {
         size_t messageLength = message.length();
         char *buf = new char [messageLength + 16];
         int priority = _facility + toSyslogPriority(event.priority);
-        int preambleLength = std::sprintf (buf, "<%d>", priority);
+        int preambleLength = sprintf (buf, "<%d>", priority);
         memcpy (buf + preambleLength, message.data(), messageLength);
 
         sockaddr_in sain;

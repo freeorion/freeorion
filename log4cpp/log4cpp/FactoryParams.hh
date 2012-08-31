@@ -48,17 +48,54 @@ namespace log4cpp
             }
       };
 
+      class parameter_validator;
+   }
+
+   class LOG4CPP_EXPORT FactoryParams
+   {
+         typedef std::map<std::string, std::string> storage_t;
+		 
+	 		    storage_t storage_;
+      
+      public:
+         typedef storage_t::const_iterator const_iterator;
+
+         const std::string& operator[](const std::string& v) const;
+         std::string& operator[](const std::string& v) { return storage_[v]; }
+         details::parameter_validator get_for(const char* tag) const;
+         const_iterator find(const std::string& t) const;
+         const_iterator begin() const { return storage_.begin(); }
+         const_iterator end() const { return storage_.end(); }
+   };
+
+   namespace details
+   {
       class optional_params_validator;
       class required_params_validator : public base_validator_data
       {
          public:
             required_params_validator(const char* tag, const FactoryParams* params) : base_validator_data(tag, params) {}
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
+            template<typename T>
+            optional_params_validator optional(const char* param, T& value) const { optional_params_validator v(tag_, params_); v(param, value); return v; }
+#else
             template<typename T>
             optional_params_validator optional(const char* param, T& value) const;
+#endif
             
             template<typename T>
-            const required_params_validator& operator()(const char* param, T& value) const;
+            const required_params_validator& operator()(const char* param, T& value) const
+            {
+               FactoryParams::const_iterator i = params_->find(param);
+               if (i != params_->end())
+                  assign(i->second, value);
+               else
+                  throw_error(param);
+
+               return *this;
+            }
+
       };
       
       class optional_params_validator : public base_validator_data
@@ -70,11 +107,16 @@ namespace log4cpp
             required_params_validator required(const char* param, T& value) const { required_params_validator v(tag_, params_); v(param, value); return v; }
 
             template<typename T>
-            const optional_params_validator& operator()(const char* param, T& value) const;
-      };
+            const optional_params_validator& operator()(const char* param, T& value) const
+            {
+               FactoryParams::const_iterator i = params_->find(param);
+               if (i != params_->end())
+                  assign(i->second, value);
 
-      template<typename T>
-      optional_params_validator required_params_validator::optional(const char* param, T& value) const { optional_params_validator v(tag_, params_); v(param, value); return v; }
+               return *this;
+
+            }
+      };
 
       class parameter_validator : public base_validator_data
       {
@@ -87,53 +129,22 @@ namespace log4cpp
             template<typename T>
             optional_params_validator optional(const char* param, T& value) const { optional_params_validator v(tag_, params_); v(param, value); return v; }
       };
+
+#if !(defined(_MSC_VER) && _MSC_VER < 1300)
+      template<typename T>
+      optional_params_validator 
+      required_params_validator::optional(const char* param, T& value) const 
+      { 
+         optional_params_validator v(tag_, params_); 
+         v(param, value); 
+         return v; 
+      }
+#endif
    }
 
-   class LOG4CPP_EXPORT FactoryParams
+   inline details::parameter_validator FactoryParams::get_for(const char* tag) const 
    {
-         typedef std::map<std::string, std::string> storage_t;
-		 
-		 		 storage_t storage_;
-      
-      public:
-         typedef storage_t::const_iterator const_iterator;
-
-         const std::string& operator[](const std::string& v) const;
-         std::string& operator[](const std::string& v) { return storage_[v]; }
-         details::parameter_validator get_for(const char* tag) const { return details::parameter_validator(tag, this); }
-         const_iterator find(const std::string& t) const;
-         const_iterator begin() const { return storage_.begin(); }
-         const_iterator end() const { return storage_.end(); }
-
-      private:
-         /*typedef std::map<std::string, std::string> storage_t;
-
-         storage_t storage_; */
-   };
-
-   namespace details
-   {
-      template<typename T>
-      const required_params_validator& required_params_validator::operator()(const char* param, T& value) const
-      {
-         FactoryParams::const_iterator i = params_->find(param);
-         if (i != params_->end())
-            assign(i->second, value);
-         else
-            throw_error(param);
-
-         return *this;
-      }
-      
-      template<typename T>
-      const optional_params_validator& optional_params_validator::operator()(const char* param, T& value) const
-      {
-         FactoryParams::const_iterator i = params_->find(param);
-         if (i != params_->end())
-            assign(i->second, value);
-
-         return *this;
-      }
+      return details::parameter_validator(tag, this); 
    }
 }
 

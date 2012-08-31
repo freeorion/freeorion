@@ -41,6 +41,9 @@ namespace std {
         return ::strftime(strDest,maxsize,format,timeptr);
     }
     static inline struct tm *localtime( const time_t *timer ) { return ::localtime(timer); }
+    using ::clock;
+    using ::tm;
+    using ::time_t;
 }
 #endif
 
@@ -50,5 +53,18 @@ namespace std {
     static inline int abs(int i) { return ::abs(i); }
 }
 #endif
+
+namespace log4cpp
+{
+    template<typename T> const T& min(const T& a, const T& b)
+    {
+       return a < b ? a : b;
+    }
+
+    template<typename T> const T& max(const T& a, const T& b)
+    {
+       return a > b ? a : b;
+    }
+}
 
 #endif // _LOG4CPP_PORTABILITYIMPL_HH

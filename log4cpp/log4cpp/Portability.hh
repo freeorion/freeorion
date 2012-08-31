@@ -11,11 +11,11 @@
 #define _LOG4CPP_PORTABILITY_HH
 
 #if defined (_MSC_VER) || defined(__BORLANDC__)
-#    if defined (LOG4CPP_STLPORT_AND_BOOST_BUILD)
+//#    if defined (LOG4CPP_STLPORT_AND_BOOST_BUILD)
 #        include <log4cpp/config-win32-stlport-boost.h>
-#    else
-#        include <log4cpp/config-win32.h>
-#    endif
+//#    else
+//#        include <log4cpp/config-win32.h>
+//#    endif
 #else
 #if defined(__OPENVMS__)
 #    include <log4cpp/config-openvms.h>
@@ -36,14 +36,18 @@
 #    pragma warning( disable : 4251 ) // "class XXX should be exported"
 #endif
 
-#ifndef LOG4CPP_HAVE_SSTREAM
-#include <strstream>
-namespace std {
-    class LOG4CPP_EXPORT ostringstream : public ostrstream {
-        public:
-        std::string str();
-    };
-}
-#endif
+#ifdef __APPLE__
+#  include <sstream>
+#else
+#  ifndef LOG4CPP_HAVE_SSTREAM
+#    include <strstream>
+     namespace std {
+       class LOG4CPP_EXPORT ostringstream : public ostrstream {
+       public:
+	 std::string str();
+       };
+     };
+#  endif // LOG4CPP_HAVE_SSTREAM
+#endif // _APPLE_
 
 #endif

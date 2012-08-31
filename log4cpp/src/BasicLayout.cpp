@@ -11,11 +11,11 @@
 #include <log4cpp/BasicLayout.hh>
 #include <log4cpp/Priority.hh>
 #include <log4cpp/FactoryParams.hh>
+#include <memory>
+
 #ifdef LOG4CPP_HAVE_SSTREAM
 #include <sstream>
 #endif
-
-#include <memory>
 
 namespace log4cpp {
 

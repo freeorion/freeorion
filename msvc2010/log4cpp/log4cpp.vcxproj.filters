@@ -161,9 +161,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\log4cpp\log4cpp\config-win32.h">
-      <Filter>Header Files\log4cpp</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\log4cpp\log4cpp\config.h">
       <Filter>Header Files\log4cpp</Filter>
     </ClInclude>

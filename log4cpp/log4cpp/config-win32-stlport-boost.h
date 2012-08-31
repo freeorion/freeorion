@@ -17,7 +17,11 @@
 /* define if the compiler has int64_t */
 #ifndef LOG4CPP_HAVE_INT64_T 
 #define LOG4CPP_HAVE_INT64_T
-#define int64_t __int64  
+
+#include <boost/cstdint.hpp>
+using boost::int64_t;
+
+#endif
 
 /* define if the compiler has in_addr_t */
 #ifndef LOG4CPP_HAVE_IN_ADDR_T 
@@ -32,12 +36,6 @@ typedef u_long in_addr_t;
 
 /* u_short is the type of sockaddr_in.sin_port */
 // typedef u_short		in_port_t;
-
-#endif
-
-#if defined(_MSC_VER) && _MSC_VER < 1300
-#define LOG4CPP_MISSING_INT64_OSTREAM_OP   
-#endif
 
 #endif
 
@@ -75,14 +73,22 @@ typedef u_long in_addr_t;
 #define LOG4CPP_HAVE_SSTREAM 1
 #endif
 
-#define LOG4CPP_HAS_WCHAR_T 1
+#if defined(_MSC_VER)
+#    if _MSC_VER < 1300
+#       define LOG4CPP_HAS_WCHAR_T 0
+#    else
+#       define LOG4CPP_HAS_WCHAR_T 1
+#    endif
+#else
+#   define LOG4CPP_HAS_WCHAR_T 1
+#endif
 
 /* define if the C library has snprintf */
 #ifndef LOG4CPP_HAVE_SNPRINTF
 #define LOG4CPP_HAVE_SNPRINTF 1
 #endif
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && _MSC_VER >= 1300
 #define LOG4CPP_HAVE_LOCALTIME_R 1
 #endif
 
@@ -101,9 +107,9 @@ typedef u_long in_addr_t;
 #define LOG4CPP_HAVE_THREADING
 #endif
 
-/* use ms threads */
-#ifndef LOG4CPP_USE_MSTHREADS
-#define LOG4CPP_USE_MSTHREADS
+/* use boost threads */
+#ifndef LOG4CPP_USE_BOOSTTHREADS
+#define LOG4CPP_USE_BOOSTTHREADS
 #endif
 
 /* supply DLL main */
@@ -138,15 +144,7 @@ typedef u_long in_addr_t;
 #endif
 
 /* define mode_t. Move to Portability.hh if more platforms need it */
-#if !defined(__BORLANDC__)
 typedef int mode_t;
-#endif
-
-#if defined(_MSC_VER) && _MSC_VER == 1310
-// warning C4275: interface non dll class 'std::runtime_error' utilisée comme base 
-// d'une interface dll class 'log4cpp::ConfigureFailure'
-#pragma warning(disable: 4275)
-#endif
 
 /* _INCLUDE_LOG4CPP_CONFIG_WIN32_H */
 #endif

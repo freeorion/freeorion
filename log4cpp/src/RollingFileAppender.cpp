@@ -34,7 +34,7 @@ namespace log4cpp {
                                              bool append,
                                              mode_t mode) :
         FileAppender(name, fileName, append, mode),
-        _maxBackupIndex(maxBackupIndex),
+        _maxBackupIndex(maxBackupIndex > 0 ? maxBackupIndex : 1),
         _maxFileSize(maxFileSize) {
     }
 
@@ -57,23 +57,19 @@ namespace log4cpp {
     void RollingFileAppender::rollOver() {
         ::close(_fd);
         if (_maxBackupIndex > 0) {
-            std::ostringstream oldName;
-            oldName << _fileName << "." << _maxBackupIndex << std::ends;
-            ::remove(oldName.str().c_str());
-                        size_t n = _fileName.length() + 1;
+            
+            std::ostringstream filename_stream;
+            filename_stream << _fileName << "." << _maxBackupIndex << std::ends;
+            std::string last_log_filename = filename_stream.str();
+            ::remove(last_log_filename.c_str());
+            
             for(unsigned int i = _maxBackupIndex; i > 1; i--) {
-                std::string newName = oldName.str();
-#ifndef LOG4CPP_STLPORT_AND_BOOST_BUILD
-                                oldName.seekp(static_cast<std::ios::off_type>(n), std::ios::beg);
-#else
-                                // the direction parameter is broken in STLport 4.5.3, 
-                                // so we don't specify it (the code works without it)
-                                oldName.seekp(n);
-#endif
-                oldName << i-1 << std::ends;
-                ::rename(oldName.str().c_str(), newName.c_str());
+                filename_stream.str(std::string());
+                filename_stream << _fileName << '.' << i - 1 << std::ends;
+                ::rename(filename_stream.str().c_str(), last_log_filename.c_str());
+                last_log_filename = filename_stream.str();
             }
-            ::rename(_fileName.c_str(), oldName.str().c_str());
+            ::rename(_fileName.c_str(), last_log_filename.c_str());
         }
         _fd = ::open(_fileName.c_str(), _flags, _mode);
     }
