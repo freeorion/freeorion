@@ -424,7 +424,11 @@ const std::string& Language()
 void Sleep(int ms)
 {
     boost::xtime t;
+#if BOOST_VERSION >= 105000
+    boost::xtime_get(&t, boost::TIME_UTC_);
+#else /* BOOST_VERSION >= 105000 */
     boost::xtime_get(&t, boost::TIME_UTC);
+#endif /* BOOST_VERSION >= 105000 */
     int ns_sum = t.nsec + ms * 1000000;
     const int NANOSECONDS_PER_SECOND = 1000000000;
     int delta_secs = ns_sum / NANOSECONDS_PER_SECOND;
