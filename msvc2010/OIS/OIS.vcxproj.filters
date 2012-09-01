@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Header Files\Interface">
       <UniqueIdentifier>{7e06cc44-1a7a-460c-9215-95000b37c1fc}</UniqueIdentifier>
     </Filter>
@@ -66,22 +62,22 @@
     <ClInclude Include="..\..\OIS\includes\OISEvents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Users\Geoff\Desktop\OIS_TRUNK\includes\win32\Win32ForceFeedback.h">
+    <ClInclude Include="..\..\OIS\includes\win32\Win32ForceFeedback.h">
       <Filter>Header Files\Win32</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Users\Geoff\Desktop\OIS_TRUNK\includes\win32\Win32InputManager.h">
+    <ClInclude Include="..\..\OIS\includes\win32\Win32InputManager.h">
       <Filter>Header Files\Win32</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Users\Geoff\Desktop\OIS_TRUNK\includes\win32\Win32JoyStick.h">
+    <ClInclude Include="..\..\OIS\includes\win32\Win32JoyStick.h">
       <Filter>Header Files\Win32</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Users\Geoff\Desktop\OIS_TRUNK\includes\win32\Win32KeyBoard.h">
+    <ClInclude Include="..\..\OIS\includes\win32\Win32KeyBoard.h">
       <Filter>Header Files\Win32</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Users\Geoff\Desktop\OIS_TRUNK\includes\win32\Win32Mouse.h">
+    <ClInclude Include="..\..\OIS\includes\win32\Win32Mouse.h">
       <Filter>Header Files\Win32</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Users\Geoff\Desktop\OIS_TRUNK\includes\win32\Win32Prereqs.h">
+    <ClInclude Include="..\..\OIS\includes\win32\Win32Prereqs.h">
       <Filter>Header Files\Win32</Filter>
     </ClInclude>
   </ItemGroup>

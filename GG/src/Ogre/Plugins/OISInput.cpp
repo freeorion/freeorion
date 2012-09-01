@@ -301,13 +301,14 @@ void OISInput::initialise()
 {
     Ogre::RenderWindow* window = GetRenderWindow();
 
+    typedef OIS::ParamList::value_type ParamType;
+
     OIS::ParamList param_list;
     std::size_t window_handle = 0;
+    std::ostringstream window_handle_string;
     window->getCustomAttribute("WINDOW", &window_handle);
-    typedef OIS::ParamList::value_type ParamType;
-    param_list.insert(
-        ParamType("WINDOW",
-                  boost::lexical_cast<std::string>(window_handle)));
+    window_handle_string << window_handle;
+    param_list.insert(ParamType(std::string("WINDOW"), window_handle_string.str()));
 
     OgreGUI* gui = OgreGUI::GetGUI();
     assert(gui);

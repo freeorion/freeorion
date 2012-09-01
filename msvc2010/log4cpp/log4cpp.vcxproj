@@ -62,7 +62,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;LOG4CPP_HAS_DLL;LOG4CPP_BUILD_DLL;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../log4cpp/;../../../Boost/include/boost_1_47/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../log4cpp/;../../../Boost/include/boost_1_51/</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <PrecompiledHeaderFile>

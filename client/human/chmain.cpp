@@ -242,7 +242,7 @@ int mainSetupAndRunOgre() {
 
 
         RenderSystem* selected_render_system = root->getRenderSystemByName("OpenGL Rendering Subsystem");
-        if (selected_render_system == 0)
+        if (!selected_render_system)
             throw std::runtime_error("Failed to find an Ogre GL render system.");
 
         root->setRenderSystem(selected_render_system);
@@ -276,6 +276,7 @@ int mainSetupAndRunOgre() {
         SceneManager* scene_manager = root->createSceneManager("OctreeSceneManager", "SceneMgr");
 
         Camera* camera = scene_manager->createCamera("Camera");
+
         camera->setPosition(Vector3(0, 0, 500));    // Position it at 500 in Z direction
         camera->lookAt(Vector3(0, 0, -300));        // Look back along -Z
         camera->setNearClipDistance(5);

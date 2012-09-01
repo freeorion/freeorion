@@ -56,7 +56,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>../../OIS/includes</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../OIS/OIS</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <PreprocessorDefinitions>WIN32;NDEBUG;OIS_NONCLIENT_BUILD;OIS_DYNAMIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -75,12 +75,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Users\Geoff\Desktop\OIS_TRUNK\includes\win32\Win32ForceFeedback.h" />
-    <ClInclude Include="..\..\..\..\Users\Geoff\Desktop\OIS_TRUNK\includes\win32\Win32InputManager.h" />
-    <ClInclude Include="..\..\..\..\Users\Geoff\Desktop\OIS_TRUNK\includes\win32\Win32JoyStick.h" />
-    <ClInclude Include="..\..\..\..\Users\Geoff\Desktop\OIS_TRUNK\includes\win32\Win32KeyBoard.h" />
-    <ClInclude Include="..\..\..\..\Users\Geoff\Desktop\OIS_TRUNK\includes\win32\Win32Mouse.h" />
-    <ClInclude Include="..\..\..\..\Users\Geoff\Desktop\OIS_TRUNK\includes\win32\Win32Prereqs.h" />
     <ClInclude Include="..\..\OIS\includes\OIS.h" />
     <ClInclude Include="..\..\OIS\includes\OISConfig.h" />
     <ClInclude Include="..\..\OIS\includes\OISEffect.h" />
@@ -95,6 +89,12 @@
     <ClInclude Include="..\..\OIS\includes\OISMouse.h" />
     <ClInclude Include="..\..\OIS\includes\OISObject.h" />
     <ClInclude Include="..\..\OIS\includes\OISPrereqs.h" />
+    <ClInclude Include="..\..\OIS\includes\win32\Win32ForceFeedback.h" />
+    <ClInclude Include="..\..\OIS\includes\win32\Win32InputManager.h" />
+    <ClInclude Include="..\..\OIS\includes\win32\Win32JoyStick.h" />
+    <ClInclude Include="..\..\OIS\includes\win32\Win32KeyBoard.h" />
+    <ClInclude Include="..\..\OIS\includes\win32\Win32Mouse.h" />
+    <ClInclude Include="..\..\OIS\includes\win32\Win32Prereqs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\OIS\src\OISEffect.cpp" />
