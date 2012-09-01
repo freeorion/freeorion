@@ -94,11 +94,13 @@ void WindBatchPage::_updateShaders()
 		if (subBatch->vertexData->vertexDeclaration->findElementBySemantic(VES_DIFFUSE) != NULL)
 			tmpName << "clr_";
 
-		for (unsigned short i = 0; i < subBatch->vertexData->vertexDeclaration->getElementCount(); ++i) {
-			const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(i);
-			if (el->getSemantic() == VES_TEXTURE_COORDINATES) {
+		const VertexDeclaration::VertexElementList& elements = subBatch->vertexData->vertexDeclaration->getElements();
+		for (VertexDeclaration::VertexElementList::const_iterator it = elements.begin(); it != elements.end(); ++it)
+		{
+			const VertexElement& el = *it;
+			if (el.getSemantic() == VES_TEXTURE_COORDINATES) {
 				String uvType = "";
-				switch (el->getType()) {
+				switch (el.getType()) {
 						case VET_FLOAT1: uvType = "1"; break;
 						case VET_FLOAT2: uvType = "2"; break;
 						case VET_FLOAT3: uvType = "3"; break;
@@ -144,28 +146,29 @@ void WindBatchPage::_updateShaders()
 				int texNum = 0;
 
 				unsigned short texCoordCount = 0;
-				for (unsigned short j = 0; j < subBatch->vertexData->vertexDeclaration->getElementCount(); ++j) 
+				const VertexDeclaration::VertexElementList& elements = subBatch->vertexData->vertexDeclaration->getElements();
+				for (VertexDeclaration::VertexElementList::const_iterator it = elements.begin(); it != elements.end(); ++it)
 				{
-					const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(j);
-					if (el->getSemantic() == VES_TEXTURE_COORDINATES) 
+					const VertexElement& el = *it;
+					if (el.getSemantic() == VES_TEXTURE_COORDINATES)
 					{
 						++ texCoordCount;
 					}
 				}
 
-				for (unsigned short i = 0; i < subBatch->vertexData->vertexDeclaration->getElementCount(); ++i)
+				for (VertexDeclaration::VertexElementList::const_iterator it = elements.begin(); it != elements.end(); ++it)
 				{
-					const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(i);
-					if (el->getSemantic() == VES_TEXTURE_COORDINATES)
+					const VertexElement& el = *it;
+					if (el.getSemantic() == VES_TEXTURE_COORDINATES)
 					{
-						if (el->getIndex() == texCoordCount - 2)
+						if (el.getIndex() == texCoordCount - 2)
 						{
 							vertexProgSource += 
 								"	float4 params 	: TEXCOORD" + StringConverter::toString(texCoordCount-2) + ", \n";
 						}
 						else
 						{
-							if (el->getIndex() == texCoordCount - 1)
+							if (el.getIndex() == texCoordCount - 1)
 							{
 								vertexProgSource += 
 									"	float4 originPos 	: TEXCOORD" + StringConverter::toString(texCoordCount-1) + ", \n";
@@ -173,7 +176,7 @@ void WindBatchPage::_updateShaders()
 							else
 							{
 								String uvType = "";
-								switch (el->getType())
+								switch (el.getType())
 								{
 									case VET_FLOAT1: uvType = "float"; break;
 									case VET_FLOAT2: uvType = "float2"; break;
@@ -291,10 +294,11 @@ void WindBatchPage::_updateShaders()
 			if(!shaderLanguage.compare("glsl"))
 			{
 				unsigned short texCoordCount = 0;
-				for (unsigned short j = 0; j < subBatch->vertexData->vertexDeclaration->getElementCount(); ++j) 
+				const VertexDeclaration::VertexElementList& elements = subBatch->vertexData->vertexDeclaration->getElements();
+				for (VertexDeclaration::VertexElementList::const_iterator it = elements.begin(); it != elements.end(); ++it)
 				{
-					const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(j);
-					if (el->getSemantic() == VES_TEXTURE_COORDINATES) 
+					const VertexElement& el = *it;
+					if (el.getSemantic() == VES_TEXTURE_COORDINATES) 
 					{
 						++ texCoordCount;
 					}
@@ -323,19 +327,20 @@ void WindBatchPage::_updateShaders()
 
 				int texNum = 0;
 
-				for (unsigned short i = 0; i < subBatch->vertexData->vertexDeclaration->getElementCount(); ++i)
+				for (VertexDeclaration::VertexElementList::const_iterator it = elements.begin(); it != elements.end(); ++it)
 				{
-					const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(i);
-					if (el->getSemantic() == VES_TEXTURE_COORDINATES)
+					const VertexElement& el = *it;
+
+					if (el.getSemantic() == VES_TEXTURE_COORDINATES)
 					{
-						if (el->getIndex() == texCoordCount - 2)
+						if (el.getIndex() == texCoordCount - 2)
 						{
 							vertexProgSource += 
 								"	vec4 params = gl_MultiTexCoord" + StringConverter::toString(texCoordCount-2) + "; \n";
 						}
 						else
 						{
-							if (el->getIndex() == texCoordCount - 1)
+							if (el.getIndex() == texCoordCount - 1)
 							{
 								vertexProgSource += 
 									"	vec4 originPos = gl_MultiTexCoord" + StringConverter::toString(texCoordCount-1) + "; \n";

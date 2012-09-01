@@ -35,6 +35,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <OgreMaterial.h>
 using namespace Ogre;
 
+
 namespace Forests {
 
 //-------------------------------------------------------------------------------------
@@ -136,18 +137,19 @@ void WindBatchedGeometry::WindSubBatch::build()
 	VertexDeclaration *vertDecl = vertexData->vertexDeclaration;
 
 	unsigned short texCoordCount = 0;
-		for (unsigned short j = 0; j < vertexData->vertexDeclaration->getElementCount(); ++j) 
+	const VertexDeclaration::VertexElementList& elements = vertexData->vertexDeclaration->getElements();
+	for (VertexDeclaration::VertexElementList::const_iterator it = elements.begin(); it != elements.end(); ++it)
+	{
+		const VertexElement& el = *it;
+		if (el.getSemantic() == VES_TEXTURE_COORDINATES) 
 		{
-			const VertexElement *el = vertexData->vertexDeclaration->getElement(j);
-			if (el->getSemantic() == VES_TEXTURE_COORDINATES) 
-			{
-				++ texCoordCount;
-			}
+			++ texCoordCount;
 		}
-		Ogre::ushort k = (Ogre::ushort)vertBinding->getBufferCount();
+	}
+	Ogre::ushort k = (Ogre::ushort)vertBinding->getBufferCount();
 
-		vertDecl->addElement(k-1, vertDecl->getVertexSize(0), VET_FLOAT4 , VES_TEXTURE_COORDINATES, texCoordCount);
-		vertDecl->addElement(k-1, vertDecl->getVertexSize(0), VET_FLOAT4 , VES_TEXTURE_COORDINATES, texCoordCount+1);
+	vertDecl->addElement(k-1, vertDecl->getVertexSize(0), VET_FLOAT4 , VES_TEXTURE_COORDINATES, texCoordCount);
+	vertDecl->addElement(k-1, vertDecl->getVertexSize(0), VET_FLOAT4 , VES_TEXTURE_COORDINATES, texCoordCount+1);
 
 	for (Ogre::ushort i = 0; i < vertBinding->getBufferCount(); ++i)
 	{

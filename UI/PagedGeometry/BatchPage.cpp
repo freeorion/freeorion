@@ -205,12 +205,13 @@ void BatchPage::_updateShaders()
 		if (subBatch->vertexData->vertexDeclaration->findElementBySemantic(VES_DIFFUSE) != NULL)
 			tmpName << "clr_";
 
-		for (unsigned short i = 0; i < subBatch->vertexData->vertexDeclaration->getElementCount(); ++i)
+		const VertexDeclaration::VertexElementList& elements = subBatch->vertexData->vertexDeclaration->getElements();
+		for (VertexDeclaration::VertexElementList::const_iterator it = elements.begin(); it != elements.end(); ++it)
 		{
-			const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(i);
-			if (el->getSemantic() == VES_TEXTURE_COORDINATES) {
+			const VertexElement& el = *it;
+			if (el.getSemantic() == VES_TEXTURE_COORDINATES) {
 				String uvType = "";
-				switch (el->getType()) {
+				switch (el.getType()) {
 						case VET_FLOAT1: uvType = "1"; break;
 						case VET_FLOAT2: uvType = "2"; break;
 						case VET_FLOAT3: uvType = "3"; break;
@@ -251,11 +252,13 @@ void BatchPage::_updateShaders()
 					"	float4 iColor    : COLOR, \n";
 
 				unsigned texNum = 0;
-				for (unsigned short i = 0; i < subBatch->vertexData->vertexDeclaration->getElementCount(); ++i) {
-					const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(i);
-					if (el->getSemantic() == VES_TEXTURE_COORDINATES) {
+				const VertexDeclaration::VertexElementList& elements = subBatch->vertexData->vertexDeclaration->getElements();
+				for (VertexDeclaration::VertexElementList::const_iterator it = elements.begin(); it != elements.end(); ++it)
+				{
+					const VertexElement& el = *it;
+					if (el.getSemantic() == VES_TEXTURE_COORDINATES) {
 						String uvType = "";
-						switch (el->getType()) {
+						switch (el.getType()) {
 							case VET_FLOAT1: uvType = "float"; break;
 							case VET_FLOAT2: uvType = "float2"; break;
 							case VET_FLOAT3: uvType = "float3"; break;
@@ -310,9 +313,10 @@ void BatchPage::_updateShaders()
 					"	oColor.a *= (invisibleDist - dist) / fadeGap;   \n";
 
 				texNum = 0;
-				for (unsigned short i = 0; i < subBatch->vertexData->vertexDeclaration->getElementCount(); ++i) {
-					const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(i);
-					if (el->getSemantic() == VES_TEXTURE_COORDINATES) {
+				for (VertexDeclaration::VertexElementList::const_iterator it = elements.begin(); it != elements.end(); ++it)
+				{
+					const VertexElement& el = *it;
+					if (el.getSemantic() == VES_TEXTURE_COORDINATES) {
 						vertexProgSource +=
 						"	oUV" + StringConverter::toString(texNum) + " = iUV" + StringConverter::toString(texNum) + ";	\n";
 						++texNum;
@@ -379,10 +383,11 @@ void BatchPage::_updateShaders()
 				}
 
 				unsigned texNum = 0;
-				for (unsigned short i = 0; i < subBatch->vertexData->vertexDeclaration->getElementCount(); ++i)
+				const VertexDeclaration::VertexElementList& elements = subBatch->vertexData->vertexDeclaration->getElements();
+				for (VertexDeclaration::VertexElementList::const_iterator it = elements.begin(); it != elements.end(); ++it)
 				{
-					const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(i);
-					if (el->getSemantic() == VES_TEXTURE_COORDINATES)
+					const VertexElement& el = *it;
+					if (el.getSemantic() == VES_TEXTURE_COORDINATES)
 					{
 						vertexProgSource +=
 						"   gl_TexCoord[" + StringConverter::toString(texNum) + "] = gl_MultiTexCoord" + StringConverter::toString(texNum) + ";	\n";
