@@ -1060,7 +1060,7 @@ public:
                     for (std::set<int>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
                         int fleet_id = *fleet_it;
 
-                        std::map<int, std::set<int> >::const_iterator fs_it = fleet_ships.find(fleet_id);
+                        std::map<int, std::set<int> >::iterator fs_it = fleet_ships.find(fleet_id);
 
                         if (!ObjectCollapsed(system_id)) {
                             AddObjectRow(fleet_id, system_id, 
