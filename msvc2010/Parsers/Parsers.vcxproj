@@ -127,6 +127,7 @@
     <ClCompile Include="..\..\parse\ShipDesignsParser.cpp" />
     <ClCompile Include="..\..\parse\ShipHullsParser.cpp" />
     <ClCompile Include="..\..\parse\ShipPartsParser.cpp" />
+    <ClCompile Include="..\..\parse\ShipPartStatsParser.cpp" />
     <ClCompile Include="..\..\parse\SpecialsParser.cpp" />
     <ClCompile Include="..\..\parse\SpeciesParser.cpp" />
     <ClCompile Include="..\..\parse\StarTypeValueRefParser.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="..\..\parse\Parse.h" />
     <ClInclude Include="..\..\parse\ParseImpl.h" />
     <ClInclude Include="..\..\parse\ReportParseError.h" />
+    <ClInclude Include="..\..\parse\ShipPartStatsParser.h" />
     <ClInclude Include="..\..\parse\ValueRefParser.h" />
     <ClInclude Include="..\..\parse\ValueRefParserImpl.h" />
   </ItemGroup>

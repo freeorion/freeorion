@@ -2,9 +2,7 @@
 
 
 namespace parse {
-
-    label_rule& label(adobe::name_t name)
-    {
+    label_rule& label(adobe::name_t name) {
         static std::map<adobe::name_t, label_rule> rules;
         std::map<adobe::name_t, label_rule>::iterator it = rules.find(name);
         if (it == rules.end()) {
@@ -22,5 +20,4 @@ namespace parse {
             return it->second;
         }
     }
-
 }

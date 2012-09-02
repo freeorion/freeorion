@@ -257,6 +257,7 @@ set(THIS_LIB_SOURCES
     parse/TechsParser.cpp
     parse/ItemsParser.cpp
     parse/ShipPartsParser.cpp
+    parse/ShipPartStatsParser.cpp
     parse/ShipHullsParser.cpp
     parse/ShipDesignsParser.cpp
     parse/FleetPlansParser.cpp

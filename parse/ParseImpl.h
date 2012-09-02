@@ -23,8 +23,8 @@ namespace parse { namespace detail {
         std::vector<boost::shared_ptr<const Effect::EffectsGroup> > (),
         skipper_type
     > effects_group_rule;
-
     effects_group_rule& effects_group_parser();
+
 
     typedef boost::spirit::qi::rule<
         token_iterator,
@@ -36,17 +36,17 @@ namespace parse { namespace detail {
         >,
         skipper_type
     > color_parser_rule;
-
     color_parser_rule& color_parser();
 
+
     typedef boost::spirit::qi::rule<
-        parse::token_iterator,
+        token_iterator,
         ItemSpec (),
         qi::locals<UnlockableItemType>,
-        parse::skipper_type
+        skipper_type
     > item_spec_parser_rule;
-
     item_spec_parser_rule& item_spec_parser();
+
 
     void parse_file_common(const boost::filesystem::path& path,
                            const lexer& l,
