@@ -71,30 +71,31 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>dxguid.lib;dinput8.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dinput8.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\OIS\includes\OIS.h" />
-    <ClInclude Include="..\..\OIS\includes\OISConfig.h" />
-    <ClInclude Include="..\..\OIS\includes\OISEffect.h" />
-    <ClInclude Include="..\..\OIS\includes\OISEvents.h" />
-    <ClInclude Include="..\..\OIS\includes\OISException.h" />
-    <ClInclude Include="..\..\OIS\includes\OISFactoryCreator.h" />
-    <ClInclude Include="..\..\OIS\includes\OISForceFeedback.h" />
-    <ClInclude Include="..\..\OIS\includes\OISInputManager.h" />
-    <ClInclude Include="..\..\OIS\includes\OISInterface.h" />
-    <ClInclude Include="..\..\OIS\includes\OISJoyStick.h" />
-    <ClInclude Include="..\..\OIS\includes\OISKeyboard.h" />
-    <ClInclude Include="..\..\OIS\includes\OISMouse.h" />
-    <ClInclude Include="..\..\OIS\includes\OISObject.h" />
-    <ClInclude Include="..\..\OIS\includes\OISPrereqs.h" />
-    <ClInclude Include="..\..\OIS\includes\win32\Win32ForceFeedback.h" />
-    <ClInclude Include="..\..\OIS\includes\win32\Win32InputManager.h" />
-    <ClInclude Include="..\..\OIS\includes\win32\Win32JoyStick.h" />
-    <ClInclude Include="..\..\OIS\includes\win32\Win32KeyBoard.h" />
-    <ClInclude Include="..\..\OIS\includes\win32\Win32Mouse.h" />
-    <ClInclude Include="..\..\OIS\includes\win32\Win32Prereqs.h" />
+    <ClInclude Include="..\..\OIS\OIS\OIS.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISConfig.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISEffect.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISEvents.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISException.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISFactoryCreator.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISForceFeedback.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISInputManager.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISInterface.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISJoyStick.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISKeyboard.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISMouse.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISMultiTouch.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISObject.h" />
+    <ClInclude Include="..\..\OIS\OIS\OISPrereqs.h" />
+    <ClInclude Include="..\..\OIS\OIS\win32\Win32ForceFeedback.h" />
+    <ClInclude Include="..\..\OIS\OIS\win32\Win32InputManager.h" />
+    <ClInclude Include="..\..\OIS\OIS\win32\Win32JoyStick.h" />
+    <ClInclude Include="..\..\OIS\OIS\win32\Win32KeyBoard.h" />
+    <ClInclude Include="..\..\OIS\OIS\win32\Win32Mouse.h" />
+    <ClInclude Include="..\..\OIS\OIS\win32\Win32Prereqs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\OIS\src\OISEffect.cpp" />

@@ -76,6 +76,7 @@ restrictions:
 #               endif
 #			endif
 #		endif
+#       include <InitGuid.h>
 #	endif
 #elif defined( __APPLE_CC__ ) // Apple OS X
     // Device                                       Simulator
