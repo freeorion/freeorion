@@ -2230,7 +2230,7 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
     // this correction ensures that zooming in doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
     CorrectMapPosition(move_to_pt);
-    GG::Pt final_move = move_to_pt - ul;
+    //GG::Pt final_move = move_to_pt - ul;
 
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
 }

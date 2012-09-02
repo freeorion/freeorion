@@ -287,7 +287,7 @@ void OptionsDB::Remove(const std::string& name) {
 }
 
 void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
-    bool option_changed = false;
+    //bool option_changed = false;
 
     for (unsigned int i = 1; i < args.size(); ++i) {
         std::string current_token(args[i]);
@@ -306,7 +306,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
             if (option.validator) { // non-flag
                 try {
                     // ensure a parameter exists...
-                    if (i + 1 >= static_cast<int>(args.size()))
+                    if (i + 1 >= static_cast<unsigned int>(args.size()))
                         throw std::runtime_error("the option \"" + option.name + 
                                                  "\" was specified, at the end of the list, with no parameter value.");
                     // get parameter value
@@ -326,7 +326,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 option.value = true;
             }
 
-            option_changed = true;
+            //option_changed = true;
         } else if (current_token.find('-') == 0
 #ifdef FREEORION_MACOSX
                 && current_token.find("-psn") != 0 // Mac OS X passes a process serial number to all applications using Carbon or Cocoa, it should be ignored here
@@ -361,7 +361,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                         option.value = true;
                     }
 
-                    option_changed = true;
+                    //option_changed = true;
                 }
             }
         }

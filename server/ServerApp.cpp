@@ -671,7 +671,7 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
     std::map<int, int> player_id_to_save_game_data_index;
 
 
-    ServerNetworking::const_established_iterator established_player_it = m_networking.established_begin();
+    //ServerNetworking::const_established_iterator established_player_it = m_networking.established_begin();
     const std::list<std::pair<int, PlayerSetupData> >& player_setup_data = lobby_data.m_players;
 
     // * Multiplayer lobby data has a map from player ID to PlayerSetupData.
@@ -1725,7 +1725,6 @@ namespace {
 }
 
 void ServerApp::PreCombatProcessTurns() {
-    EmpireManager& empires = Empires();
     ObjectMap& objects = m_universe.Objects();
 
 

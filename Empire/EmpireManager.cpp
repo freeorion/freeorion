@@ -191,7 +191,7 @@ void EmpireManager::RemoveDiplomaticMessage(int empire1, int empire2) {
 void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
     int sender_empire_id = message.SenderEmpireID();
     int recipient_empire_id = message.RecipientEmpireID();
-    std::pair<int, int> key = DiploKey(sender_empire_id, recipient_empire_id);
+    //std::pair<int, int> key = DiploKey(sender_empire_id, recipient_empire_id);
     DiplomaticStatus diplo_status = GetDiplomaticStatus(sender_empire_id, recipient_empire_id);
     bool message_already_available = DiplomaticMessageAvailable(sender_empire_id, recipient_empire_id);
     const DiplomaticMessage& existing_message = GetDiplomaticMessage(sender_empire_id, recipient_empire_id);

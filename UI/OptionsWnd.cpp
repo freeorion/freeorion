@@ -671,7 +671,7 @@ void OptionsWnd::ResolutionOption() {
 
     // apply button, sized to fit text
     std::string apply_button_text = UserString("OPTIONS_APPLY");
-    GG::X button_width = ClientUI::GetFont()->TextExtent(apply_button_text).x + GG::X(LAYOUT_MARGIN);
+    //GG::X button_width = ClientUI::GetFont()->TextExtent(apply_button_text).x + GG::X(LAYOUT_MARGIN);
     GG::Button* apply_button = new CUIButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20), apply_button_text, ClientUI::GetFont());
     row = new GG::ListBox::Row();
     row->Resize(GG::Pt(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6));

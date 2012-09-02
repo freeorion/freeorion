@@ -1198,7 +1198,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
     }
 
 
-    bool found_planet = false;                              // was a suitable planet found?
+    //bool found_planet = false;                              // was a suitable planet found?
     int best_planet_id = INVALID_OBJECT_ID; // id of selected planet
     double best_planet_pop = -99999.9;                      // arbitrary negative number, so any planet's pop will be better
 
@@ -1215,7 +1215,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
         double planet_pop = planet->CurrentMeterValue(METER_POPULATION);
         if (planet_pop > best_planet_pop) {
             // found new planet to pick
-            found_planet = true;
+            //found_planet = true;
             best_planet_pop = planet_pop;
             best_planet_id = planet_id;
         }

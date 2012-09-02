@@ -255,7 +255,8 @@ void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> m
     } else { // normal-dragging
         if (GG::Wnd* parent = Parent()) {
             GG::Pt ul = UpperLeft(), lr = LowerRight();
-            GG::Pt new_ul = ul + move, new_lr = lr + move;
+            GG::Pt new_ul = ul + move;
+            //GG::Pt new_lr = lr + move;
 
             GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
             GG::Pt max_lr = parent->ClientLowerRight();

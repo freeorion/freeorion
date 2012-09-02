@@ -209,7 +209,6 @@ namespace {
 
     void QueueBuildPanel::Draw(GG::Clr clr, bool fill) {
         const int CORNER_RADIUS = 7;
-        GG::Pt ul = UpperLeft(), lr = LowerRight();
         glColor(clr);
         PartlyRoundedRect(UpperLeft(), LowerRight(), CORNER_RADIUS, true, false, true, false, fill);
     }

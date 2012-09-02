@@ -580,7 +580,7 @@ namespace {
             ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[star_type], system->ID());
         if (halo_texture)
             retval.push_back(halo_texture);
-    } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
+    } else if (/*const Planet* planet = */universe_object_cast<const Planet*>(obj)) {
         // don't have any icons for each planet type, so use generic / default object icon
 
     } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
@@ -645,7 +645,7 @@ public:
     void                Refresh() {
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::Clr clr = ClientUI::TextColor();
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        //int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
         delete m_dot;           m_dot = 0;
@@ -955,7 +955,7 @@ public:
                 already_filtered_objects.insert(object_id);
                 const UniverseObject* obj = it->second;
 
-                if (const System* system = universe_object_cast<const System*>(obj)) {
+                if (/*const System* system = */universe_object_cast<const System*>(obj)) {
                     if (ObjectShown(object_id, OBJ_SYSTEM, true))
                         systems.insert(object_id);
 
@@ -982,7 +982,7 @@ public:
                     continue;
                 const UniverseObject* obj = it->second;
 
-                if (const System* system = universe_object_cast<const System*>(obj)) {
+                if (/*const System* system = */universe_object_cast<const System*>(obj)) {
                     if (ObjectShown(object_id, OBJ_SYSTEM))
                         systems.insert(object_id);
 

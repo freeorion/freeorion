@@ -380,8 +380,8 @@ void TechTreeWnd::TechTreeControls::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 void TechTreeWnd::TechTreeControls::Render() {
     CUIWnd::Render();
 
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
+    //GG::Pt ul = UpperLeft();
+    //GG::Pt lr = LowerRight();
     GG::Pt cl_ul = ClientUpperLeft();
     GG::Pt cl_lr = ClientLowerRight();
 
@@ -436,7 +436,8 @@ void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, 
 
         if (GG::Wnd* parent = Parent()) {
             GG::Pt ul = UpperLeft(), lr = LowerRight();
-            GG::Pt new_ul = ul + move, new_lr = lr + move;
+            GG::Pt new_ul = ul + move;
+            //GG::Pt new_lr = lr + move;
 
             GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
             GG::Pt max_lr = parent->ClientLowerRight();
@@ -630,7 +631,7 @@ TechTreeWnd::TechNavigator::TechControl::TechControl(const std::string& tech_nam
         SetColor(ClientUI::UnresearchableTechFillColor());
         m_border_color = ClientUI::UnresearchableTechTextAndBorderColor();
     }
-    GG::Pt client_size = ClientSize();
+
     m_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(3*ClientUI::Pts()/2 + 4),
                                       UserString(m_tech_name), ClientUI::GetFont(),
                                       m_border_color, GG::FORMAT_LEFT);
