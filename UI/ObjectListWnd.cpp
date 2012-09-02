@@ -1011,8 +1011,8 @@ public:
             for (std::set<int>::const_iterator sys_it = systems.begin(); sys_it != systems.end(); ++sys_it) {
                 int system_id = *sys_it;
 
-                std::map<int, std::set<int> >::const_iterator sp_it = system_planets.find(system_id);
-                std::map<int, std::set<int> >::const_iterator sf_it = system_fleets.find(system_id);
+                std::map<int, std::set<int> >::iterator sp_it = system_planets.find(system_id);
+                std::map<int, std::set<int> >::iterator sf_it = system_fleets.find(system_id);
                 std::set<int> system_contents;
                 if (sp_it != system_planets.end())
                     system_contents = sp_it->second;
@@ -1028,7 +1028,7 @@ public:
                     for (std::set<int>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
                         int planet_id = *planet_it;
 
-                        std::map<int, std::set<int> >::const_iterator pb_it = planet_buildings.find(planet_id);
+                        std::map<int, std::set<int> >::iterator pb_it = planet_buildings.find(planet_id);
 
                         if (!ObjectCollapsed(system_id)) {
                             AddObjectRow(planet_id, system_id,
@@ -1041,7 +1041,7 @@ public:
                         if (pb_it != planet_buildings.end()) {
                             if (!ObjectCollapsed(planet_id) && !ObjectCollapsed(system_id)) {
                                 const std::set<int>& buildings = pb_it->second;
-                                for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
+                                for (std::set<int>::iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
                                     AddObjectRow(*building_it, planet_id, std::set<int>(), indent);
                                 }
                             }
@@ -1094,10 +1094,10 @@ public:
                  sp_it != system_planets.end(); ++sp_it)
             {
                 const std::set<int>& planets = sp_it->second;
-                for (std::set<int>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
+                for (std::set<int>::iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
                     int planet_id = *planet_it;
 
-                    std::map<int, std::set<int> >::const_iterator pb_it = planet_buildings.find(planet_id);
+                    std::map<int, std::set<int> >::iterator pb_it = planet_buildings.find(planet_id);
 
                     AddObjectRow(planet_id, INVALID_OBJECT_ID,
                                  pb_it != planet_buildings.end() ? pb_it->second : std::set<int>(),
@@ -1108,7 +1108,7 @@ public:
                     if (pb_it != planet_buildings.end()) {
                         if (!ObjectCollapsed(planet_id)) {
                             const std::set<int>& buildings = pb_it->second;
-                            for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
+                            for (std::set<int>::iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
                                 AddObjectRow(*building_it, planet_id, std::set<int>(), indent);
                             }
                         }
@@ -1136,10 +1136,10 @@ public:
                  sf_it != system_fleets.end(); ++sf_it)
             {
                 const std::set<int>& fleets = sf_it->second;
-                for (std::set<int>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
+                for (std::set<int>::iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
                     int fleet_id = *fleet_it;
 
-                    std::map<int, std::set<int> >::const_iterator fs_it = fleet_ships.find(fleet_id);
+                    std::map<int, std::set<int> >::iterator fs_it = fleet_ships.find(fleet_id);
 
                     AddObjectRow(fleet_id, INVALID_OBJECT_ID,
                                  fs_it != fleet_ships.end() ? fs_it->second : std::set<int>(),
@@ -1150,7 +1150,7 @@ public:
                     if (fs_it != fleet_ships.end()) {
                         if (!ObjectCollapsed(fleet_id)) {
                             const std::set<int>& ships = fs_it->second;
-                            for (std::set<int>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+                            for (std::set<int>::iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
                                 AddObjectRow(*ship_it, fleet_id, std::set<int>(), indent);
                             }
                         }
@@ -1166,7 +1166,7 @@ public:
                  fs_it != fleet_ships.end(); ++fs_it)
             {
                 const std::set<int>& ships = fs_it->second;
-                for (std::set<int>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+                for (std::set<int>::iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
                     AddObjectRow(*ship_it, INVALID_OBJECT_ID, std::set<int>(), indent);
                 }
             }
