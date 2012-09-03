@@ -328,6 +328,8 @@ void OISInput::initialise()
     m_keyboard = boost::polymorphic_downcast<OIS::Keyboard*>(
         m_input_manager->createInputObject(OIS::OISKeyboard, true));
     m_keyboard->setEventCallback(this);
+    m_keyboard->setTextTranslation(OIS::Keyboard::Unicode);
+
     m_mouse = boost::polymorphic_downcast<OIS::Mouse*>(
         m_input_manager->createInputObject(OIS::OISMouse, true));
     m_mouse->setEventCallback(this);
@@ -418,7 +420,7 @@ bool OISInput::keyPressed(const OIS::KeyEvent& event)
     Key key = GGKeyFromOISKey(event, mods, m_keyboard->getTextTranslation());
     assert(OgreGUI::GetGUI());
     if (key != GGK_UNKNOWN)
-        OgreGUI::GetGUI()->HandleGGEvent(GUI::KEYPRESS, key, 0, mods, Pt(), Pt());
+        OgreGUI::GetGUI()->HandleGGEvent(GUI::KEYPRESS, key, event.text, mods, Pt(), Pt());
     return true;
 }
 
