@@ -264,6 +264,7 @@ set(THIS_LIB_SOURCES
     parse/MonsterFleetPlansParser.cpp
     parse/AlignmentsParser.cpp
     parse/EncyclopediaParser.cpp
+    parse/KeymapParser.cpp
 )
 
 library_all_variants(parse)

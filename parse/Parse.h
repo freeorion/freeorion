@@ -49,6 +49,8 @@ namespace parse {
                     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups);
 
     bool encyclopedia_articles(const boost::filesystem::path& path, Encyclopedia& enc);
+
+    bool keymaps(const boost::filesystem::path& path, std::map<std::string, std::map<int, int> >& nkm);
 }
 
 #endif

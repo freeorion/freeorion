@@ -126,6 +126,8 @@
     (Internal)                                  \
     (Item)                                      \
     (Jumps)                                     \
+    (Keymap)                                    \
+    (Keys)                                      \
     (Label)                                     \
     (Large)                                     \
     (LastTurnBattleHere)                        \

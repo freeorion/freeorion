@@ -116,6 +116,7 @@
     <ClCompile Include="..\..\parse\Int.cpp" />
     <ClCompile Include="..\..\parse\IntValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\ItemsParser.cpp" />
+    <ClCompile Include="..\..\parse\KeymapParser.cpp" />
     <ClCompile Include="..\..\parse\Label.cpp" />
     <ClCompile Include="..\..\parse\Lexer.cpp" />
     <ClCompile Include="..\..\parse\MonsterFleetPlansParser.cpp" />

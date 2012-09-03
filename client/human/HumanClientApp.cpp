@@ -27,6 +27,7 @@
 #include "../../universe/Planet.h"
 #include "../../universe/Species.h"
 #include "../../Empire/Empire.h"
+#include "../parse/Parse.h"
 
 #include <GG/BrowseInfoWnd.h>
 #include <GG/Cursor.h>
@@ -254,6 +255,29 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     SetGLVersionDependentOptionDefaults();
 
     this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("UI.swap-mouse-lr"));
+
+    std::map<std::string, std::map<int, int> > named_key_maps;
+    parse::keymaps(GetResourceDir() / "keymaps.txt", named_key_maps);
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "Keymaps:";
+        for (std::map<std::string, std::map<int, int> >::const_iterator km_it = named_key_maps.begin();
+             km_it != named_key_maps.end(); ++km_it)
+        {
+            Logger().debugStream() << "Keymap name = \"" << km_it->first << "\"";
+            const std::map<int, int>& key_map = km_it->second;
+            for (std::map<int, int>::const_iterator keys_it = key_map.begin(); keys_it != key_map.end(); ++keys_it)
+                Logger().debugStream() << "    " << char(keys_it->first) << " : " << char(keys_it->second);
+        }
+    }
+    std::map<std::string, std::map<int, int> >::const_iterator km_it = named_key_maps.find("TEST");
+    if (km_it != named_key_maps.end()) {
+        const std::map<int, int> int_key_map = km_it->second;
+        std::map<GG::Key, GG::Key> key_map;
+        for (std::map<int, int>::const_iterator key_int_it = int_key_map.begin();
+             key_int_it != int_key_map.end(); ++key_int_it)
+        { key_map[GG::Key(key_int_it->first)] = GG::Key(key_int_it->second); }
+        this->SetKeyMap(key_map);
+    }
 
     m_fsm->initiate();
 }
