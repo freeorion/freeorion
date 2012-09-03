@@ -89,6 +89,13 @@ namespace {
         return mod_keys;
     }
 
+    Key           KeyMappedKey(Key key, const std::map<Key, Key>& key_map) {
+        std::map<Key, Key>::const_iterator it = key_map.find(key);
+        if (it != key_map.end())
+            return it->second;
+        return key;
+    }
+
     WndEvent::EventType ButtonEvent(WndEvent::EventType left_type, unsigned int mouse_button)
     { return WndEvent::EventType(left_type + (WndEvent::MButtonDown - WndEvent::LButtonDown) * mouse_button); }
 
@@ -238,6 +245,8 @@ struct GG::GUIImpl
                  m_accelerator_sigs;      // the signals emitted by the keyboard accelerators
 
     bool         m_mouse_lr_swap;         // treat left and right mouse events as each other
+    std::map<Key, Key>
+                 m_key_map;               // substitute Key press events with different Key press events
 
     int          m_delta_t;               // the number of ms since the last frame
     bool         m_rendering_drag_drop_wnds;
@@ -613,6 +622,9 @@ Flags<ModKey> GUI::ModKeys() const
 bool GUI::MouseLRSwapped() const
 { return s_impl->m_mouse_lr_swap; }
 
+const std::map<Key, Key>& GUI::KeyMap() const
+{ return s_impl->m_key_map; }
+
 std::set<std::pair<CPSize, CPSize> > GUI::FindWords(const std::string& str) const
 {
     std::set<std::pair<CPSize, CPSize> > retval;
@@ -697,6 +709,7 @@ void GUI::HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point
         }
         break; }
     case KEYPRESS: {
+        key = KeyMappedKey(key, s_impl->m_key_map);
         s_impl->m_browse_info_wnd.reset();
         s_impl->m_browse_info_mode = -1;
         s_impl->m_browse_target = 0;
@@ -714,6 +727,7 @@ void GUI::HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point
             FocusWnd()->HandleEvent(WndEvent(WndEvent::KeyPress, key, key_code_point, mod_keys));
         break; }
     case KEYRELEASE: {
+        key = KeyMappedKey(key, s_impl->m_key_map);
         s_impl->m_browse_info_wnd.reset();
         s_impl->m_browse_info_mode = -1;
         s_impl->m_browse_target = 0;
@@ -964,6 +978,9 @@ void GUI::RemoveAccelerator(accel_iterator it)
 
 void GUI::SetMouseLRSwapped(bool swapped/* = true*/)
 { s_impl->m_mouse_lr_swap = swapped; }
+
+void GUI::SetKeyMap(const std::map<Key, Key>& key_map)
+{ s_impl->m_key_map = key_map; }
 
 boost::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts)
 { return GetFontManager().GetFont(font_filename, pts); }
@@ -1221,7 +1238,6 @@ void GUI::SetFPS(double FPS)
 
 void GUI::SetDeltaT(unsigned int delta_t)
 { s_impl->m_delta_t = delta_t; }
-
 
 bool GG::MatchesOrContains(const Wnd* lwnd, const Wnd* rwnd)
 {

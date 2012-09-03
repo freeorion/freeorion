@@ -185,6 +185,8 @@ public:
     Pt             MouseMovement() const;              ///< returns the relative position of mouse, based on the last mouse motion event
     Flags<ModKey>  ModKeys() const;                    ///< returns the set of modifier keys that are currently depressed, based on the last event
     bool           MouseLRSwapped() const;             ///< returns true if the left and right mouse button press events are set to be swapped before event handling. This is to facilitate left-handed mouse users semi-automatically.
+    const std::map<Key, Key>&
+                   KeyMap() const;                     ///< returns the the key remappings set, which causes the GUI to respond to one Key press as though a different Key were pressed.
 
     /** Returns the (begin, end) indices of the code points of all the
         word-tokens in the given string.  This is perhaps an odd place for
@@ -275,6 +277,9 @@ public:
 
     /** Sets whether to swap left and right mouse button events. */
     void           SetMouseLRSwapped(bool swapped = true);
+
+    /** Sets which Key presses are substitued for actual key presses before event handling. */
+    void           SetKeyMap(const std::map<Key, Key>& key_map);
 
     /** Returns a shared_ptr to the desired font, supporting all printable
         ASCII characters. */
