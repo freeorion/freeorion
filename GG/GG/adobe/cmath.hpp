@@ -35,9 +35,9 @@ back to include math.h. This also needs to add any other C99 math.h extensions.
 // Guessing at gcc 3 support
 #if  (__GNUC__ == 3) && (__GNUC_MINOR__ > 2)
 
-#define ADOBE_HAS_CPP_CMATH 
+#define ADOBE_HAS_CPP_CMATH
 
-#elif ((__GNUC__ == 4) && (__GNUC_MINOR__ <= 6))
+#elif (__GNUC__ == 4)
 /*
     The currently supported version of GNUC has C99 extensions in math.h. But no TR1 extensions.
 */

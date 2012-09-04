@@ -763,7 +763,7 @@ class closed_hash_map : public closed_hash_set<pair<Key, T>,
     mapped_type& operator[](const Key& x)
     {
         typename set_type::iterator i = this->find(x);
-        if (i == this->end()) return insert(adobe::make_pair(x, mapped_type())).first->second;
+        if (i == this->end()) return this->insert(adobe::make_pair(x, mapped_type())).first->second;
         return i->second;
     }
     
