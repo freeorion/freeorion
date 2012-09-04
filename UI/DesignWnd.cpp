@@ -1781,6 +1781,7 @@ void DesignWnd::MainPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
         DesignChangedSignal();
     else if (m_complete_design_id != ShipDesign::INVALID_DESIGN_ID)
         CompleteDesignClickedSignal(m_complete_design_id);
+    CUIWnd::LClick(pt, mod_keys);
 }
 
 void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
