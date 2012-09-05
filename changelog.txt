@@ -6,6 +6,7 @@ New Features / Improvements:
 Balancing:
  ~ Unified resource and fleet supply into a single meter-- the Supply Meter. Infrastructure is not involved.
  ~ ~ Outpost now provide 1 jump supply, and colonies 2 jump supply.  Techs and buildings can extend that.
+ ~ Reduced detection ranges for ships and planets by roughly half.
  
  Bugs:
   ~ Disabled building shipyards at outposts.

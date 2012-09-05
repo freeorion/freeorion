@@ -6230,7 +6230,7 @@ SHP_RADAR
 Active Radar
 
 SHP_RADAR_DESC
-'''Unlocks the Active Radar ship part, increases the detection range of all planets to 100, and increases the imperial detection level to 200.
+'''Unlocks the Active Radar ship part, increases the detection range of all planets to 75, and increases the imperial detection level to 200.
 
 Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened. By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
 
@@ -6238,7 +6238,7 @@ SHP_NEUTRON_SCANNER
 Neutron Scanner
 
 SHP_NEUTRON_SCANNER_DESC
-'''Unlocks the Neutron Scanner ship part, increases the detection range of all planets to 200, and increases the imperial detection level to 400.
+'''Unlocks the Neutron Scanner ship part, increases the detection range of all planets to 150, and increases the imperial detection level to 400.
 
 Electromagnetic radiation has no rest mass and is easily manipulable. Simply by bending waves of light around an object, it is possible to render radar devices virtually useless. By firing waves of neutrons instead of electromagnetic radiation, more effective active scanning can be utilized.'''
 
@@ -6246,7 +6246,7 @@ SHP_SENSORS
 Sensors
 
 SHP_SENSORS_DESC
-Unlocks the Sensors ship part, increases the detection range of all planets to 400, and increases the imperial detection level to 700.
+Unlocks the Sensors ship part, increases the detection range of all planets to 200, and increases the imperial detection level to 700.
 
 SHP_EM_DAMPER
 Electromagnetic Damper

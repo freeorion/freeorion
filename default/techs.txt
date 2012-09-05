@@ -2598,7 +2598,7 @@ Tech
                 Not OwnerHasTech "SHP_NEUTRON_SCANNER"
                 Not OwnerHasTech "SHP_SENSORS"
             ]
-            effects = SetDetection Value + 100
+            effects = SetDetection Value + 75
 
         EffectsGroup
             scope = Source
@@ -2681,7 +2681,7 @@ Tech
                 Planet
             ]
             activation = Not OwnerHasTech "SHP_SENSORS"
-            effects = SetDetection Value + 200
+            effects = SetDetection Value + 150
 
         EffectsGroup
             scope = Source
@@ -2942,7 +2942,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            effects = SetDetection Value + 400
+            effects = SetDetection Value + 200
 
         EffectsGroup
             scope = Source

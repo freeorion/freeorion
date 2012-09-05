@@ -947,7 +947,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 100
+            effects = SetDetection Value + 50
     ]
     icon = "icons/ship_hulls/endomorphic_hull_small.png"
     graphic = "hulls_design/endomorphic_hull.png"
@@ -994,7 +994,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 100
+            effects = SetDetection Value + 50
     ]
     icon = "icons/ship_hulls/endosymbiotic_hull_small.png"
     graphic = "hulls_design/symbiotic_hull.png"
@@ -1044,7 +1044,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 100
+            effects = SetDetection Value + 50
     ]
     icon = "icons/ship_hulls/protoplasmic_hull_small.png"
     graphic = "hulls_design/protoplasmic_hull.png"
@@ -1097,7 +1097,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 100
+            effects = SetDetection Value + 50
     ]
     icon = "icons/ship_hulls/endosymbiotic_hull_small.png"
     graphic = "hulls_design/endosymbiotic_hull.png"
@@ -1140,7 +1140,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 150
+            effects = SetDetection Value + 75
     ]
     icon = "icons/ship_hulls/ravenous_hull_small.png"
     graphic = "hulls_design/ravenous_hull.png"
@@ -1188,7 +1188,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 150
+            effects = SetDetection Value + 75
     ]
     icon = "icons/ship_hulls/bio_adaptive_hull_small.png"
     graphic = "hulls_design/bio_adaptive_hull.png"
@@ -1251,13 +1251,13 @@ Hull
             stackinggroup = "FLAGSHIP_EFFECT_SENTIENT"
             effects = [
                 SetStealth Value + 100
-                SetDetection Value + 100
+                SetDetection Value + 50
             ]
 
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 100
+            effects = SetDetection Value + 50
     ]
     icon = "icons/ship_hulls/sentient_hull_small.png"
     graphic = "hulls_design/sentient_hull.png"
@@ -2549,7 +2549,7 @@ WEAK_VISION
         scope = Source
         activation = Source
         accountinglabel = "WEAK_VISION_LABEL"
-        effects = SetDetection Value + 15
+        effects = SetDetection Value + 50
 '''
 
 MODERATE_VISION
@@ -2557,7 +2557,7 @@ MODERATE_VISION
         scope = Source
         activation = Source
         accountinglabel = "MODERATE_VISION_LABEL"
-        effects = SetDetection Value + 25
+        effects = SetDetection Value + 75
 '''
 
 GOOD_VISION
@@ -2565,7 +2565,7 @@ GOOD_VISION
         scope = Source
         activation = Source
         accountinglabel = "GOOD_VISION_LABEL"
-        effects = SetDetection Value + 45
+        effects = SetDetection Value + 100
 '''
 
 EXCELLENT_VISION
@@ -2573,7 +2573,7 @@ EXCELLENT_VISION
         scope = Source
         activation = Source
         accountinglabel = "EXCELLENT_VISION_LABEL"
-        effects = SetDetection Value + 70
+        effects = SetDetection Value + 150
 '''
 
 
