@@ -362,6 +362,12 @@
 		82592EF0147E381B00B840A5 /* EffectAccounting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EEF147E381B00B840A5 /* EffectAccounting.cpp */; };
 		82592EF5147E387100B840A5 /* Names.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF1147E387100B840A5 /* Names.cpp */; };
 		82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF3147E387100B840A5 /* ObjectMap.cpp */; };
+		82641A2115F7E5D70072CDF8 /* ShipPartStatsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82641A1F15F7E5B20072CDF8 /* ShipPartStatsParser.cpp */; };
+		82641A2415F7E5EA0072CDF8 /* AlignmentsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936D6147E3B1B00B840A5 /* AlignmentsParser.cpp */; };
+		82641A2C15F7E6360072CDF8 /* KeymapParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82641A1E15F7E5B20072CDF8 /* KeymapParser.cpp */; };
+		82641A2F15F7E6A40072CDF8 /* libKeymapParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82641A2B15F7E5EA0072CDF8 /* libKeymapParser.a */; };
+		82641A3215F7E6C10072CDF8 /* libKeymapParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82641A2B15F7E5EA0072CDF8 /* libKeymapParser.a */; };
+		82641A3515F7E6EE0072CDF8 /* libKeymapParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82641A2B15F7E5EA0072CDF8 /* libKeymapParser.a */; };
 		8273F49515DD774C000F6A09 /* changelog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8273F49415DD7724000F6A09 /* changelog.txt */; };
 		82B4313414A74E07003EEE42 /* UniverseServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B4313314A74E07003EEE42 /* UniverseServer.cpp */; };
 		82BB838E15AAD46E006F635F /* EncyclopediaParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82BB838215AAD20A006F635F /* EncyclopediaParser.cpp */; };
@@ -1006,6 +1012,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8230803814A87FFB00C1BC15;
 			remoteInfo = ConditionParser;
+		};
+		82641A2D15F7E68D0072CDF8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 82641A2215F7E5EA0072CDF8;
+			remoteInfo = KeymapParser;
+		};
+		82641A3015F7E6B60072CDF8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 82641A2215F7E5EA0072CDF8;
+			remoteInfo = KeymapParser;
+		};
+		82641A3315F7E6D30072CDF8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 82641A2215F7E5EA0072CDF8;
+			remoteInfo = KeymapParser;
 		};
 		82BB838F15AAD598006F635F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2302,6 +2329,10 @@
 		8259376A147E3B1C00B840A5 /* UniverseObjectTypeValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseObjectTypeValueRefParser.cpp; sourceTree = "<group>"; };
 		8259376B147E3B1C00B840A5 /* ValueRefParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefParser.h; sourceTree = "<group>"; };
 		8259376C147E3B1C00B840A5 /* ValueRefParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefParserImpl.h; sourceTree = "<group>"; };
+		82641A1E15F7E5B20072CDF8 /* KeymapParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeymapParser.cpp; sourceTree = "<group>"; };
+		82641A1F15F7E5B20072CDF8 /* ShipPartStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShipPartStatsParser.cpp; sourceTree = "<group>"; };
+		82641A2015F7E5B20072CDF8 /* ShipPartStatsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipPartStatsParser.h; sourceTree = "<group>"; };
+		82641A2B15F7E5EA0072CDF8 /* libKeymapParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKeymapParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8273F49415DD7724000F6A09 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = changelog.txt; path = ../changelog.txt; sourceTree = SOURCE_ROOT; };
 		82B4313314A74E07003EEE42 /* UniverseServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseServer.cpp; sourceTree = "<group>"; };
 		82BB838115AAD16C006F635F /* Encyclopedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encyclopedia.h; sourceTree = "<group>"; };
@@ -2364,6 +2395,7 @@
 				82186B8014AA760D009441B8 /* libTechsParser.a in Frameworks */,
 				82186B8114AA760D009441B8 /* libUniverseObjectTypeValueRefParser.a in Frameworks */,
 				82BB839115AAD5DE006F635F /* libEncyclopediaParser.a in Frameworks */,
+				82641A2F15F7E6A40072CDF8 /* libKeymapParser.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2411,6 +2443,7 @@
 				82186C0A14AA7723009441B8 /* libTechsParser.a in Frameworks */,
 				82186C0B14AA7723009441B8 /* libUniverseObjectTypeValueRefParser.a in Frameworks */,
 				82BB839715AAD630006F635F /* libEncyclopediaParser.a in Frameworks */,
+				82641A3515F7E6EE0072CDF8 /* libKeymapParser.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2475,6 +2508,7 @@
 				82186BC514AA76C2009441B8 /* libTechsParser.a in Frameworks */,
 				82186BC614AA76C2009441B8 /* libUniverseObjectTypeValueRefParser.a in Frameworks */,
 				82BB839415AAD60B006F635F /* libEncyclopediaParser.a in Frameworks */,
+				82641A3215F7E6C10072CDF8 /* libKeymapParser.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2541,6 +2575,7 @@
 				82186B1B14AA73AF009441B8 /* libTechsParser.a */,
 				82186B3A14AA73E1009441B8 /* libUniverseObjectTypeValueRefParser.a */,
 				82BB838C15AAD2AB006F635F /* libEncyclopediaParser.a */,
+				82641A2B15F7E5EA0072CDF8 /* libKeymapParser.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4130,6 +4165,9 @@
 		825936D5147E3B1B00B840A5 /* parse */ = {
 			isa = PBXGroup;
 			children = (
+				82641A1E15F7E5B20072CDF8 /* KeymapParser.cpp */,
+				82641A1F15F7E5B20072CDF8 /* ShipPartStatsParser.cpp */,
+				82641A2015F7E5B20072CDF8 /* ShipPartStatsParser.h */,
 				8201E5F215E2C0770037D453 /* EffectParser1.cpp */,
 				8201E5F315E2C0770037D453 /* EffectParser2.cpp */,
 				8201E5F415E2C0770037D453 /* EffectParserImpl.h */,
@@ -4388,6 +4426,7 @@
 				82186B6814AA75D8009441B8 /* PBXTargetDependency */,
 				82186B6A14AA75D8009441B8 /* PBXTargetDependency */,
 				82BB839015AAD598006F635F /* PBXTargetDependency */,
+				82641A2E15F7E68D0072CDF8 /* PBXTargetDependency */,
 				478417670CF057BF00BE4710 /* PBXTargetDependency */,
 				474A956E0A9A6101007F8CD7 /* PBXTargetDependency */,
 			);
@@ -4433,6 +4472,7 @@
 				82186BF214AA76ED009441B8 /* PBXTargetDependency */,
 				82186BF414AA76ED009441B8 /* PBXTargetDependency */,
 				82BB839615AAD626006F635F /* PBXTargetDependency */,
+				82641A3415F7E6D30072CDF8 /* PBXTargetDependency */,
 				478418EA0CF05A2800BE4710 /* PBXTargetDependency */,
 				478417690CF057C300BE4710 /* PBXTargetDependency */,
 				471FEF880A9A629800C36AA3 /* PBXTargetDependency */,
@@ -4847,6 +4887,21 @@
 			productReference = 8230803F14A87FFB00C1BC15 /* libConditionParser.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		82641A2215F7E5EA0072CDF8 /* KeymapParser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 82641A2515F7E5EA0072CDF8 /* Build configuration list for PBXNativeTarget "KeymapParser" */;
+			buildPhases = (
+				82641A2315F7E5EA0072CDF8 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KeymapParser;
+			productName = Common;
+			productReference = 82641A2B15F7E5EA0072CDF8 /* libKeymapParser.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		82BB838315AAD2AB006F635F /* EncyclopediaParser */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 82BB838615AAD2AB006F635F /* Build configuration list for PBXNativeTarget "EncyclopediaParser" */;
@@ -4914,6 +4969,7 @@
 				82186BAD14AA766B009441B8 /* PBXTargetDependency */,
 				82186BAF14AA766B009441B8 /* PBXTargetDependency */,
 				82BB839315AAD606006F635F /* PBXTargetDependency */,
+				82641A3115F7E6B60072CDF8 /* PBXTargetDependency */,
 				478418EC0CF05A2E00BE4710 /* PBXTargetDependency */,
 				478417650CF057B800BE4710 /* PBXTargetDependency */,
 				471D65490A98B73C00DA9C21 /* PBXTargetDependency */,
@@ -4979,6 +5035,7 @@
 				82186ADE14AA7388009441B8 /* StringValueRefParser */,
 				82186AFD14AA73AF009441B8 /* TechsParser */,
 				82186B1C14AA73E1009441B8 /* UniverseObjectTypeValueRefParser */,
+				82641A2215F7E5EA0072CDF8 /* KeymapParser */,
 				47103BE10CF04D8800A7DF2B /* Common */,
 				4784177C0CF0592E00BE4710 /* ClientCommon */,
 				471D5D430A98A46000DA9C21 /* FreeOrionServer */,
@@ -5325,6 +5382,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				82186A6D14AA72EB009441B8 /* ShipPartsParser.cpp in Sources */,
+				82641A2115F7E5D70072CDF8 /* ShipPartStatsParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5384,6 +5442,15 @@
 				8230805E14A8803F00C1BC15 /* ConditionParser1.cpp in Sources */,
 				8230805F14A8803F00C1BC15 /* ConditionParser2.cpp in Sources */,
 				8230806114A8803F00C1BC15 /* ConditionParser3.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82641A2315F7E5EA0072CDF8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				82641A2415F7E5EA0072CDF8 /* AlignmentsParser.cpp in Sources */,
+				82641A2C15F7E6360072CDF8 /* KeymapParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5909,6 +5976,21 @@
 			isa = PBXTargetDependency;
 			target = 8230803814A87FFB00C1BC15 /* ConditionParser */;
 			targetProxy = 8230806814A880D500C1BC15 /* PBXContainerItemProxy */;
+		};
+		82641A2E15F7E68D0072CDF8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 82641A2215F7E5EA0072CDF8 /* KeymapParser */;
+			targetProxy = 82641A2D15F7E68D0072CDF8 /* PBXContainerItemProxy */;
+		};
+		82641A3115F7E6B60072CDF8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 82641A2215F7E5EA0072CDF8 /* KeymapParser */;
+			targetProxy = 82641A3015F7E6B60072CDF8 /* PBXContainerItemProxy */;
+		};
+		82641A3415F7E6D30072CDF8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 82641A2215F7E5EA0072CDF8 /* KeymapParser */;
+			targetProxy = 82641A3315F7E6D30072CDF8 /* PBXContainerItemProxy */;
 		};
 		82BB839015AAD598006F635F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8075,6 +8157,57 @@
 			};
 			name = "ReleaseUniversal-OLD";
 		};
+		82641A2615F7E5EA0072CDF8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = KeymapParser;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		82641A2715F7E5EA0072CDF8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = KeymapParser;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		82641A2815F7E5EA0072CDF8 /* Release_LLVM */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = KeymapParser;
+				ZERO_LINK = NO;
+			};
+			name = Release_LLVM;
+		};
+		82641A2915F7E5EA0072CDF8 /* Release_10_5 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = KeymapParser;
+				ZERO_LINK = NO;
+			};
+			name = Release_10_5;
+		};
+		82641A2A15F7E5EA0072CDF8 /* ReleaseUniversal-OLD */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INSTALL_PATH = /usr/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = KeymapParser;
+				SDKROOT = macosx10.6;
+				USER_HEADER_SEARCH_PATHS = "$(inherited)";
+				ZERO_LINK = NO;
+			};
+			name = "ReleaseUniversal-OLD";
+		};
 		82BB838715AAD2AB006F635F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8560,6 +8693,18 @@
 				8219A98514AAFFC300EEE387 /* Release_LLVM */,
 				8218683C14AA28BE009441B8 /* Release_10_5 */,
 				8230803E14A87FFB00C1BC15 /* ReleaseUniversal-OLD */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		82641A2515F7E5EA0072CDF8 /* Build configuration list for PBXNativeTarget "KeymapParser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				82641A2615F7E5EA0072CDF8 /* Debug */,
+				82641A2715F7E5EA0072CDF8 /* Release */,
+				82641A2815F7E5EA0072CDF8 /* Release_LLVM */,
+				82641A2915F7E5EA0072CDF8 /* Release_10_5 */,
+				82641A2A15F7E5EA0072CDF8 /* ReleaseUniversal-OLD */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
