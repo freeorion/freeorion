@@ -419,7 +419,7 @@ bool OISInput::keyPressed(const OIS::KeyEvent& event)
     Flags<ModKey> mods = GetModKeys(m_keyboard);
     Key key = GGKeyFromOISKey(event, mods, m_keyboard->getTextTranslation());
     assert(OgreGUI::GetGUI());
-    if (key != GGK_UNKNOWN)
+    if (key != GGK_UNKNOWN || event.text != 0)
         OgreGUI::GetGUI()->HandleGGEvent(GUI::KEYPRESS, key, event.text, mods, Pt(), Pt());
     return true;
 }
@@ -429,7 +429,7 @@ bool OISInput::keyReleased(const OIS::KeyEvent& event)
     Flags<ModKey> mods = GetModKeys(m_keyboard);
     Key key = GGKeyFromOISKey(event, mods, m_keyboard->getTextTranslation());
     assert(OgreGUI::GetGUI());
-    if (key != GGK_UNKNOWN)
+    if (key != GGK_UNKNOWN || event.text != 0)
         OgreGUI::GetGUI()->HandleGGEvent(GUI::KEYRELEASE, key, 0, mods, Pt(), Pt());
     return true;
 }
