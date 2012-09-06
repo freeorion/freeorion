@@ -13,6 +13,7 @@ namespace parse {
                 %=   detail::condition_parser_1()
                 |    detail::condition_parser_2()
                 |    detail::condition_parser_3()
+                |    detail::condition_parser_4()
                 ;
             detail::condition_parser.name("Condition");
 #if DEBUG_CONDITION_PARSERS

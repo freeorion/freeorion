@@ -14,7 +14,7 @@ namespace parse { namespace detail {
     const condition_parser_rule& condition_parser_1();
     const condition_parser_rule& condition_parser_2();
     const condition_parser_rule& condition_parser_3();
-
+    const condition_parser_rule& condition_parser_4();
 } }
 
 #endif

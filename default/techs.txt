@@ -1355,11 +1355,11 @@ Tech
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Planet Type = Asteroids
+                Planet type = Asteroids
                 OwnedBy TheEmpire Source.Owner
-                Planet Population high = 0
-                ]   
-
+                Planet
+                Population high = 0
+            ]
             effects = SetTargetIndustry Value + 5
     ]
     graphic = "icons/tech/asteroid_mining_i.png"
