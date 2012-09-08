@@ -5,6 +5,7 @@
 #include "Planet.h"
 #include "Ship.h"
 #include "System.h"
+#include "Field.h"
 #include "UniverseObject.h"
 
 #include "../util/MultiplayerCommon.h"
@@ -33,6 +34,8 @@ UniverseObject* UniverseObjectVisitor::Visit(Ship* obj) const
 UniverseObject* UniverseObjectVisitor::Visit(System* obj) const
 { return Visit(static_cast<UniverseObject*>(obj)); }
 
+UniverseObject* UniverseObjectVisitor::Visit(Field* obj) const
+{ return Visit(static_cast<UniverseObject*>(obj)); }
 
 ////////////////////////////////////////////////
 // StationaryFleetVisitor

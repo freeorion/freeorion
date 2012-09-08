@@ -8,6 +8,7 @@ class Fleet;
 class Planet;
 class Ship;
 class System;
+class Field;
 
 #include <boost/mpl/assert.hpp>
 #include <boost/mpl/if.hpp>
@@ -38,14 +39,14 @@ T1 universe_object_cast(T2 ptr);
     subclasses can override Visit(UniverseObject*) only, and calls to all Visit() overloads will work.  The default return value for
     Visit(UniverseObject*) is 0, so overridding any \a one Visit() method besides this one will ensure that only UniverseObjects
     of a single subclass are recognized by the visitor. */
-struct UniverseObjectVisitor
-{
+struct UniverseObjectVisitor {
     virtual UniverseObject* Visit(UniverseObject* obj) const;
     virtual UniverseObject* Visit(Building* obj) const;
     virtual UniverseObject* Visit(Fleet* obj) const;
     virtual UniverseObject* Visit(Planet* obj) const;
     virtual UniverseObject* Visit(Ship* obj) const;
     virtual UniverseObject* Visit(System* obj) const;
+    virtual UniverseObject* Visit(Field* obj) const;
     virtual ~UniverseObjectVisitor();
 };
 

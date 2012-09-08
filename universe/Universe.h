@@ -496,6 +496,9 @@ private:
     /** Names the planets in each system, based on the system's name. */
     void    NamePlanets();
 
+    /** Creates some initial fields in universe. */
+    void    GenerateFields(GalaxySetupOption freq);
+
     /** Creates Empires objects for each entry in \a player_setup_data with
       * empire id equal to the specified player ids (so that the calling code
       * can know which empire belongs to which player).  Homeworlds are

@@ -8,8 +8,10 @@
 #include "../universe/Planet.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
+#include "../universe/Field.h"
 
 BOOST_CLASS_EXPORT(System)
+BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Planet)
 BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
@@ -105,6 +107,14 @@ void System::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_objects)
         & BOOST_SERIALIZATION_NVP(m_starlanes_wormholes)
         & BOOST_SERIALIZATION_NVP(m_last_turn_battle_here);
+}
+
+template <class Archive>
+void Field::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
+        & BOOST_SERIALIZATION_NVP(m_type_name)
+        & BOOST_SERIALIZATION_NVP(m_radius);
 }
 
 template <class Archive>

@@ -15,6 +15,7 @@
 #include "Ship.h"
 #include "ShipDesign.h"
 #include "System.h"
+#include "Field.h"
 #include "UniverseObject.h"
 #include "Effect.h"
 #include "Predicates.h"
@@ -1546,6 +1547,7 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
     GenerateStarlanes(starlane_freq, adjacency_grid);
     InitializeSystemGraph();
     GenerateHomeworlds(total_players, homeworld_planet_ids);
+    GenerateFields(GALAXY_SETUP_MEDIUM);
     GenerateEmpires(homeworld_planet_ids, player_setup_data);
     NamePlanets();
     GenerateNatives(native_freq);
@@ -1843,9 +1845,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq) {
     std::map<MonsterFleetPlanManager::iterator, int> monster_fleets_created;
     for (MonsterFleetPlanManager::iterator monster_plan_it = monster_manager.begin();
          monster_plan_it != monster_manager.end(); ++monster_plan_it)
-    {
-        monster_fleets_created[monster_plan_it] = 0;
-    }
+    { monster_fleets_created[monster_plan_it] = 0; }
 
     // for each system, find a monster whose location condition allows the
     // system, which hasn't already been added too many times, and then attempt
@@ -2215,6 +2215,16 @@ void Universe::NamePlanets() {
             }
         }
     }
+}
+
+void Universe::GenerateFields(GalaxySetupOption freq) {
+    const FieldType* storm_type = GetFieldType("ION_STORM");
+    if (!storm_type) {
+        Logger().errorStream() << "AddFields couldn't find storm field type!";
+        return;
+    }
+    Field* field = new Field(storm_type->Name(), 0.0, 0.0, 100.0);
+    Insert(field);
 }
 
 namespace {

@@ -16,6 +16,7 @@
 #include "../universe/Ship.h"
 #include "../universe/Fleet.h"
 #include "../universe/Building.h"
+#include "../universe/Field.h"
 
 const int INVALID_GAME_TURN = -(2 << 15) + 1;
 const int BEFORE_FIRST_TURN = -(2 << 14);
@@ -103,6 +104,12 @@ System* GetSystem(int object_id)
 
 System* GetEmpireKnownSystem(int object_id, int empire_id)
 { return GetEmpireKnownObject<System>(object_id, empire_id); }
+
+Field* GetField(int object_id)
+{ return GetUniverseObject<Field>(object_id); }
+
+Field* GetEmpireKnownField(int object_id, int empire_id)
+{ return GetEmpireKnownObject<Field>(object_id, empire_id); }
 
 Ship* GetShip(int object_id)
 { return GetUniverseObject<Ship>(object_id); }

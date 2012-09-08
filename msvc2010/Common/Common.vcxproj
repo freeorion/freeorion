@@ -118,6 +118,7 @@
     <ClInclude Include="..\..\universe\Effect.h" />
     <ClInclude Include="..\..\universe\EffectAccounting.h" />
     <ClInclude Include="..\..\universe\Enums.h" />
+    <ClInclude Include="..\..\universe\Field.h" />
     <ClInclude Include="..\..\universe\Fleet.h" />
     <ClInclude Include="..\..\universe\InhibitableSignal.h" />
     <ClInclude Include="..\..\universe\Meter.h" />
@@ -182,6 +183,7 @@
     <ClCompile Include="..\..\universe\Effect.cpp" />
     <ClCompile Include="..\..\universe\EffectAccounting.cpp" />
     <ClCompile Include="..\..\universe\Enums.cpp" />
+    <ClCompile Include="..\..\universe\Field.cpp" />
     <ClCompile Include="..\..\universe\Fleet.cpp" />
     <ClCompile Include="..\..\universe\Meter.cpp" />
     <ClCompile Include="..\..\universe\Names.cpp" />

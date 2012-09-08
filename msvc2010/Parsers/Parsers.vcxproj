@@ -113,6 +113,7 @@
     <ClCompile Include="..\..\parse\EffectParser2.cpp" />
     <ClCompile Include="..\..\parse\EncyclopediaParser.cpp" />
     <ClCompile Include="..\..\parse\EnumParser.cpp" />
+    <ClCompile Include="..\..\parse\FieldsParser.cpp" />
     <ClCompile Include="..\..\parse\FleetPlansParser.cpp" />
     <ClCompile Include="..\..\parse\Int.cpp" />
     <ClCompile Include="..\..\parse\IntValueRefParser.cpp" />

@@ -274,6 +274,9 @@
     <ClInclude Include="..\..\UI\StringTable.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\Field.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">
@@ -446,6 +449,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Empire\Diplomacy.cpp">
       <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Field.cpp">
+      <Filter>Source Files\universe</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

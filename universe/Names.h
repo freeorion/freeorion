@@ -211,6 +211,7 @@
     (Progress)                                  \
     (Property)                                  \
     (Radiated)                                  \
+    (Radius)                                    \
     (Random)                                    \
     (Range)                                     \
     (Reason)                                    \

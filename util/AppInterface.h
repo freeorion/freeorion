@@ -17,6 +17,7 @@ class System;
 class Ship;
 class Fleet;
 class Building;
+class Field;
 
 /** Accessor for the App's empire manager */
 EmpireManager& Empires();
@@ -38,6 +39,8 @@ Planet* GetPlanet(int object_id);
 Planet* GetEmpireKnownPlanet(int object_id, int empire_id);
 System* GetSystem(int object_id);
 System* GetEmpireKnownSystem(int object_id, int empire_id);
+Field* GetField(int object_id);
+Field* GetEmpireKnownField(int object_id, int empire_id);
 Ship* GetShip(int object_id);
 Ship* GetEmpireKnownShip(int object_id, int empire_id);
 Fleet* GetFleet(int object_id);

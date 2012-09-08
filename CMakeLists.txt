@@ -173,6 +173,7 @@ set(THIS_LIB_SOURCES
     universe/Special.cpp
     universe/Species.cpp
     universe/System.cpp
+    universe/Field.cpp
     universe/Tech.cpp
     universe/Universe.cpp
     universe/UniverseObject.cpp
@@ -251,6 +252,7 @@ set(THIS_LIB_SOURCES
     parse/EffectParser.cpp
     parse/EffectParser1.cpp
     parse/EffectParser2.cpp
+    parse/FieldsParser.cpp
     parse/Parse.cpp
     parse/BuildingsParser.cpp
     parse/SpecialsParser.cpp

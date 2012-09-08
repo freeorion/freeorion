@@ -9,6 +9,7 @@
 
 class Alignment;
 class BuildingType;
+class FieldType;
 class FleetPlan;
 class HullType;
 class MonsterFleetPlan;
@@ -22,6 +23,8 @@ namespace parse {
     void init();
 
     bool buildings(const boost::filesystem::path& path, std::map<std::string, BuildingType*>& building_types);
+
+    bool fields(const boost::filesystem::path& path, std::map<std::string, FieldType*>&field_types);
 
     bool specials(const boost::filesystem::path& path, std::map<std::string, Special*>& specials_);
 

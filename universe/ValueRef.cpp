@@ -5,6 +5,7 @@
 #include "Ship.h"
 #include "Planet.h"
 #include "System.h"
+#include "Field.h"
 #include "UniverseObject.h"
 #include "Condition.h"
 #include "../Empire/EmpireManager.h"
@@ -64,15 +65,17 @@ namespace {
         ObjectTypeVisitor() : m_type(INVALID_UNIVERSE_OBJECT_TYPE) {}
 
         virtual UniverseObject* Visit(Building* obj) const
-            { m_type = OBJ_BUILDING; return obj; }
+        { m_type = OBJ_BUILDING; return obj; }
         virtual UniverseObject* Visit(Fleet* obj) const
-            { m_type = OBJ_FLEET; return obj; }
+        { m_type = OBJ_FLEET; return obj; }
         virtual UniverseObject* Visit(Planet* obj) const
-            { m_type = OBJ_PLANET; return obj; }
+        { m_type = OBJ_PLANET; return obj; }
         virtual UniverseObject* Visit(Ship* obj) const
-            { m_type = OBJ_SHIP; return obj; }
+        { m_type = OBJ_SHIP; return obj; }
         virtual UniverseObject* Visit(System* obj) const
-            { m_type = OBJ_SYSTEM; return obj; }
+        { m_type = OBJ_SYSTEM; return obj; }
+        virtual UniverseObject* Visit(Field* obj) const
+        { m_type = OBJ_FIELD; return obj; }
 
         mutable UniverseObjectType m_type;
     };
