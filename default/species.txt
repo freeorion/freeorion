@@ -1267,7 +1267,7 @@ Species
 
     graphic = "icons/species/two-headed-03.png"
         
-/*
+
 Species
     name = "SP_SUPER_TEST"
     description = "SP_SUPER_TEST_DESC"
@@ -1310,7 +1310,7 @@ Species
 
     graphic = "icons/species/other-04.png"
 
-
+/*
 Species
     name = "SP_TEST"
     description = "SP_TEST_DESC"
@@ -2452,7 +2452,7 @@ BAD_DETECTION
 '''EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value -10
+            effects = SetDetection Value -25
 '''
 
 GOOD_DETECTION
