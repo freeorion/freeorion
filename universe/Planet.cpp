@@ -213,6 +213,7 @@ int Planet::SizeAsInt() const {
     case SZ_HUGE:       return 5;   break;
     case SZ_LARGE:      return 4;   break;
     case SZ_MEDIUM:     return 3;   break;
+    case SZ_ASTEROIDS:  return 3;   break;
     case SZ_SMALL:      return 2;   break;
     case SZ_TINY:       return 1;   break;
     default:            return 0;   break;
