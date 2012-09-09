@@ -1105,11 +1105,17 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
         all_potential_targets.push_back(m_objects.Object(*it));
 
     Logger().debugStream() << "Universe::GetEffectsAndTargets";
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "All objects:";
+        for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it)
+            Logger().debugStream() << "... object (" << it->first << "): " << it->second->Name();
+    }
+
 
     // 1) EffectsGroups from Species
-    Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
+    if (GetOptionsDB().Get<bool>("verbose-logging"))
+        Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
-        Logger().debugStream() << "... object (" << it->first << "): " << it->second->Name();
         const PopCenter* pc = dynamic_cast<const PopCenter*>(it->second);
         const Ship* ship = 0;
         if (!pc) {
@@ -1130,7 +1136,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     }
 
     // 2) EffectsGroups from Specials
-    Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIALS";
+    if (GetOptionsDB().Get<bool>("verbose-logging"))
+        Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIALS";
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int source_object_id = it->first;
         const std::map<std::string, int>& specials = it->second->Specials();
@@ -1147,7 +1154,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     }
 
     // 3) EffectsGroups from Techs
-    Logger().debugStream() << "Universe::GetEffectsAndTargets for TECHS";
+    if (GetOptionsDB().Get<bool>("verbose-logging"))
+        Logger().debugStream() << "Universe::GetEffectsAndTargets for TECHS";
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         const Empire* empire = it->second;
         int source_id = empire->CapitalID();
@@ -1182,7 +1190,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     }
 
     // 4) EffectsGroups from Buildings
-    Logger().debugStream() << "Universe::GetEffectsAndTargets for BUILDINGS";
+    if (GetOptionsDB().Get<bool>("verbose-logging"))
+        Logger().debugStream() << "Universe::GetEffectsAndTargets for BUILDINGS";
     std::vector<Building*> buildings = m_objects.FindObjects<Building>();
     for (std::vector<Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
         const Building* building = *building_it;
@@ -1201,7 +1210,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     }
 
     // 5) EffectsGroups from Ship Hull and Ship Parts
-    Logger().debugStream() << "Universe::GetEffectsAndTargets for SHIPS";
+    if (GetOptionsDB().Get<bool>("verbose-logging"))
+        Logger().debugStream() << "Universe::GetEffectsAndTargets for SHIPS";
     std::vector<Ship*> ships = m_objects.FindObjects<Ship>();
     for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
         const Ship* ship = *ship_it;
@@ -1239,7 +1249,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     }
 
     // 6) EffectsGroups from Fields
-    Logger().debugStream() << "Universe::GetEffectsAndTargets for FIELDS";
+    if (GetOptionsDB().Get<bool>("verbose-logging"))
+        Logger().debugStream() << "Universe::GetEffectsAndTargets for FIELDS";
     std::vector<Field*> fields = m_objects.FindObjects<Field>();
     for (std::vector<Field*>::const_iterator field_it = fields.begin(); field_it != fields.end(); ++field_it) {
         const Field* field = *field_it;
