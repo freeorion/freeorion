@@ -597,6 +597,7 @@ enum EffectsCauseType {
     ECT_INHERENT,
     ECT_TECH,
     ECT_BUILDING,
+    ECT_FIELD,
     ECT_SPECIAL,
     ECT_SPECIES,
     ECT_SHIP_PART,

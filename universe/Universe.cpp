@@ -15,6 +15,7 @@
 #include "Ship.h"
 #include "ShipDesign.h"
 #include "System.h"
+#include "Field.h"
 #include "UniverseObject.h"
 #include "Effect.h"
 #include "Predicates.h"
@@ -1236,6 +1237,26 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
                                                  all_potential_targets, targets_causes);
         }
     }
+
+    // 6) EffectsGroups from Fields
+    Logger().debugStream() << "Universe::GetEffectsAndTargets for FIELDS";
+    std::vector<Field*> fields = m_objects.FindObjects<Field>();
+    for (std::vector<Field*>::const_iterator field_it = fields.begin(); field_it != fields.end(); ++field_it) {
+        const Field* field = *field_it;
+        if (!field) {
+            Logger().errorStream() << "GetEffectsAndTargets couldn't get Field";
+            continue;
+        }
+        const FieldType* field_type = GetFieldType(field->FieldTypeName());
+        if (!field_type) {
+            Logger().errorStream() << "GetEffectsAndTargets couldn't get FieldType " << field->FieldTypeName();
+            continue;
+        }
+
+        StoreTargetsAndCausesOfEffectsGroups(field_type->Effects(), field->ID(), ECT_FIELD, field_type->Name(),
+                                             all_potential_targets, targets_causes);
+    }
+
 }
 
 void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,

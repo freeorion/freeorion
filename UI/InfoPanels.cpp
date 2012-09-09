@@ -2787,6 +2787,11 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             text += boost::io::str(FlexibleFormat(UserString(label_template)) % name % UserString(info_it->specific_cause));
             break;
         }
+        case ECT_FIELD: {
+            const std::string& label_template = (info_it->custom_label.empty() ? "TT_FIELD" : info_it->custom_label);
+            text += boost::io::str(FlexibleFormat(UserString(label_template)) % name % UserString(info_it->specific_cause));
+            break;
+        }
         case ECT_SPECIAL: {
             const std::string& label_template = (info_it->custom_label.empty() ? "TT_SPECIAL" : info_it->custom_label);
             text += boost::io::str(FlexibleFormat(UserString(label_template)) % name % UserString(info_it->specific_cause));

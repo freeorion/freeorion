@@ -102,6 +102,14 @@ std::string Field::Dump() const {
 UniverseObject* Field::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(const_cast<Field* const>(this)); }
 
+bool Field::InField(const UniverseObject* obj) const
+{ return obj && InField(obj->X(), obj->Y()); }
+
+bool Field::InField(double x, double y) const {
+    double dist2 = (x - this->X())*(x - this->X()) + (y - this->Y())*(y - this->Y());
+    return dist2 < m_radius*m_radius;
+}
+
 
 /////////////////////////////////////////////////
 // FieldType                                   //
@@ -154,7 +162,7 @@ FieldTypeManager::FieldTypeManager() {
 
     //parse::fields(GetResourceDir() / "fields.txt", m_field_types);
     std::vector<Effect::EffectBase*> effects;
-    effects.push_back(new Effect::MoveTo(new Condition::All()));
+    effects.push_back(new Effect::MoveTo(new Condition::Chance(new ValueRef::Constant<double>(0.1))));
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects_groups;
     Effect::EffectsGroup* group = new Effect::EffectsGroup(new Condition::Source(), new Condition::Source(), effects);
     effects_groups.push_back(boost::shared_ptr<const Effect::EffectsGroup>(group));

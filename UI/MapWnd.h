@@ -231,11 +231,11 @@ private:
     LaneEndpoints   StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2);
 
     void            RenderStarfields();                         //!< renders the background starfiends
-    void            RenderNebulae();                            //!< renders nebulae
     void            RenderGalaxyGas();                          //!< renders gassy substance to make shape of galaxy
     void            RenderSystemOverlays();                     //!< renders textures "overlayed" on systems by effects
     void            RenderSystems();                            //!< renders stars and halos
     void            RenderStarlanes();                          //!< renders the starlanes between the systems
+    void            RenderFields();                             //!< renders field objects
 
     /* renders the dashed lines indicating where each fleet is going */
     void            RenderFleetMovementLines();

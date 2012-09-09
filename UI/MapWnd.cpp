@@ -29,6 +29,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
 #include "../universe/System.h"
+#include "../universe/Field.h"
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
@@ -944,8 +945,8 @@ void MapWnd::Render() {
                  0.0f);
 
     RenderGalaxyGas();
-    RenderNebulae();
     RenderVisibilityRadii();
+    RenderFields();
     RenderSystemOverlays();
     RenderStarlanes();
     RenderSystems();
@@ -991,33 +992,45 @@ void MapWnd::RenderStarfields() {
     glMatrixMode(GL_MODELVIEW);
 }
 
-void MapWnd::RenderNebulae() {
-    // nebula rendering disabled until we add nebulae worth rendering, which likely
-    // means for them to have some gameplay purpose and artist-approved way to
-    // specify what colours or specific nebula images to use
-    //
-    //glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    //glEnableClientState(GL_VERTEX_ARRAY);
-    //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    //
-    //glColor4f(1.0, 1.0, 1.0, 1.0);
-    //glPushMatrix();
-    //glLoadIdentity();
-    //for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
-    //    int nebula_width = m_nebulae[i]->Width() / 3;   // factor of 3 chosen to give ok-seeming nebula sizes for images in use at time of this writing
-    //    int nebula_height = m_nebulae[i]->Height() / 3;
+void MapWnd::RenderFields() {
+    const ObjectMap& objects = GetUniverse().Objects();
+    const std::vector<const Field*> fields = objects.FindObjects<Field>();
+    //const std::set<int> visible_object_ids = GetUniverse().EmpireVisibleObjectIDs();
 
-    //    GG::Pt ul = 
-    //        ClientUpperLeft() + 
-    //        GG::Pt(static_cast<int>((m_nebula_centers[i].x - nebula_width / 2.0) * ZoomFactor()),
-    //               static_cast<int>((m_nebula_centers[i].y - nebula_height / 2.0) * ZoomFactor()));
-    //    m_nebulae[i]->OrthoBlit(ul, 
-    //                            ul + GG::Pt(static_cast<int>(nebula_width * ZoomFactor()), 
-    //                                        static_cast<int>(nebula_height * ZoomFactor())));
-    //}
-    //glPopMatrix();
-    //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    //glPopClientAttrib();
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    const double TWO_PI = 2.0*3.1415926536;
+    const GG::Pt UNIT(GG::X1, GG::Y1);
+
+    glLineWidth(1.5);
+    glPushMatrix();
+    glLoadIdentity();
+    glEnable(GL_LINE_SMOOTH);
+    glDisable(GL_TEXTURE_2D);
+
+    // draw circle for each field
+    for (std::vector<const Field*>::const_iterator field_it = fields.begin(); field_it != fields.end(); ++field_it) {
+        const Field* field = *field_it;
+
+        GG::Clr circle_colour = GG::CLR_MAGENTA;
+
+        GG::Pt circle_centre = ScreenCoordsFromUniversePosition(field->X(), field->Y());
+        double radius = field->Radius()*ZoomFactor();
+        if (radius < 10.0)
+            continue;
+
+        GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
+        GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
+
+        glColor(circle_colour);
+        CircleArc(ul, lr, 0.0, TWO_PI, false);
+    }
+
+    glPopMatrix();
+    glLineWidth(1.0);
+
+    glPopClientAttrib();
 }
 
 void MapWnd::RenderGalaxyGas() {
@@ -1185,8 +1198,7 @@ void MapWnd::RenderSystems() {
     glPopClientAttrib();
 }
 
-void MapWnd::RenderStarlanes()
-{
+void MapWnd::RenderStarlanes() {
     bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
 
     if (m_starlane_vertices.size() && (m_starlane_colors.size() || !coloured)) {
@@ -1225,15 +1237,12 @@ void MapWnd::RenderStarlanes()
         glEnable(GL_TEXTURE_2D);
         glDisable(GL_LINE_SMOOTH);
         glDisable(GL_LINE_STIPPLE);
-
-
-    } 
+    }
 
     glLineWidth(1.0);
 }
 
-void MapWnd::RenderFleetMovementLines()
-{
+void MapWnd::RenderFleetMovementLines() {
     if (ZoomFactor() < ClientUI::TinyFleetButtonZoomThreshold())
         return;
 
@@ -1272,8 +1281,7 @@ void MapWnd::RenderFleetMovementLines()
         RenderMovementLineETAIndicators(it->second, GG::CLR_WHITE);
 }
 
-void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, GG::Clr clr)
-{
+void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, GG::Clr clr) {
     const std::vector<MovementLineData::Vertex>& vertices = move_line.vertices;
     if (vertices.empty())
         return; // nothing to draw.  need at least two nodes at different locations to draw a line
@@ -1347,8 +1355,7 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, GG::C
     glPopMatrix();
 }
 
-void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line, GG::Clr clr)
-{
+void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line, GG::Clr clr) {
     const std::vector<MovementLineData::Vertex>& vertices = move_line.vertices;
     if (vertices.empty())
         return; // nothing to draw.
@@ -1501,22 +1508,20 @@ void MapWnd::RenderVisibilityRadii() {
     glDisable(GL_TEXTURE_2D);
 
     for (std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> >, ClrLess>::iterator it = circles.begin();
-         it != circles.end();
-         ++it) {
+         it != circles.end(); ++it)
+    {
         glClear(GL_STENCIL_BUFFER_BIT);
         glStencilOp(GL_INCR, GL_INCR, GL_INCR);
         glStencilFunc(GL_EQUAL, 0x0, 0xf);
         glColor(it->first);
         const std::vector<std::pair<GG::Pt, GG::Pt> >& circles_in_this_colour = it->second;
-        for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i)
-        {
+        for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
             CircleArc(circles_in_this_colour[i].first, circles_in_this_colour[i].second,
                       0.0, TWO_PI, true);
         }
         glStencilFunc(GL_GREATER, 0x2, 0xf);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-        for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i)
-        {
+        for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
             CircleArc(circles_in_this_colour[i].first + UNIT, circles_in_this_colour[i].second - UNIT,
                       0.0, TWO_PI, false);
         }

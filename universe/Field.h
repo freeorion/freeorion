@@ -23,6 +23,9 @@ public:
     const std::string&          FieldTypeName() const { return m_type_name; }
     virtual std::string         Dump() const;
     virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
+
+    bool                        InField(const UniverseObject* obj) const;
+    bool                        InField(double x, double y) const;
     //@}
 
     /** \name Mutators */ //@{

@@ -56,8 +56,8 @@
       <PERSON name="Isaac Supeene"            nick="Bigjoe5"          task="Game Design"/>
     </GROUP>
     <GROUP name ="GRAPHICS">
-      <PERSON name="Mathias Köhler"           nick="pd"               task="Graphics Lead"/>
       <PERSON name="J. W. Bjerk"              nick="eleazar"          task="Graphics, Game Design"/>
+      <PERSON name="Mathias Köhler"           nick="pd"               task="Graphics"/>
       <PERSON name="Josh Combs"               nick="Josh"             task="Graphics"/>
       <PERSON name="Anton Ruonala"            nick="Miu"              task="Graphics"/>
       <PERSON name="Jonathan Hill"            nick="Obiwan"           task="Graphics"/>

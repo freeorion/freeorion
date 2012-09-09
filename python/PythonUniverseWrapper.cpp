@@ -8,6 +8,7 @@
 #include "../universe/PopCenter.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
+#include "../universe/Field.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 
@@ -52,6 +53,13 @@ namespace {
             retval = ::GetSystem(id);
         return retval;
     }
+    const Field*            GetFieldP(const Universe& universe, int id) {
+        //Logger().debugStream() << "GetFieldP(universe, " << id << ")";
+        const Field* retval = universe.Objects().Object<Field>(id);
+        if (!retval)
+            retval = ::GetField(id);
+        return retval;
+    }
     const Building*         GetBuildingP(const Universe& universe, int id) {
         //Logger().debugStream() << "GetBuildingP(universe, " << id << ")";
         const Building* retval = universe.Objects().Object<Building>(id);
@@ -66,6 +74,8 @@ namespace {
     { return universe.Objects().FindObjectIDs<Fleet>(); }
     std::vector<int>        SystemIDs(const Universe& universe)
     { return Objects().FindObjectIDs<System>(); }
+    std::vector<int>        FieldIDs(const Universe& universe)
+    { return Objects().FindObjectIDs<Field>(); }
     std::vector<int>        PlanetIDs(const Universe& universe)
     { return Objects().FindObjectIDs<Planet>(); }
     std::vector<int>        ShipIDs(const Universe& universe)
@@ -138,9 +148,6 @@ namespace {
         return retval;
     }
 
-    boost::function<double(const UniverseObject*, MeterType)> InitialCurrentMeterValueFromObject =
-        boost::bind(&Meter::Initial, boost::bind(ObjectGetMeter, _1, _2));
-
     bool                    (*ValidDesignHullAndParts)(const std::string& hull,
                                                        const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
     bool                    (*ValidDesignDesign)(const ShipDesign&) =                           &ShipDesign::ValidDesign;
@@ -150,6 +157,10 @@ namespace {
 
     unsigned int            (HullType::*NumSlotsTotal)(void) const =                            &HullType::NumSlots;
     unsigned int            (HullType::*NumSlotsOfSlotType)(ShipSlotType) const =               &HullType::NumSlots;
+
+    bool                    ObjectInField(const Field& field, const UniverseObject& obj)
+    { return field.InField(obj.X(), obj.Y()); }
+    bool                    (Field::*LocationInField)(double x, double y) const =               &Field::InField;
 }
 
 namespace FreeOrionPython {
@@ -191,11 +202,13 @@ namespace FreeOrionPython {
             .def("getShip",                     make_function(GetShipP,             return_value_policy<reference_existing_object>()))
             .def("getPlanet",                   make_function(GetPlanetP,           return_value_policy<reference_existing_object>()))
             .def("getSystem",                   make_function(GetSystemP,           return_value_policy<reference_existing_object>()))
+            .def("getField",                    make_function(GetFieldP,            return_value_policy<reference_existing_object>()))
             .def("getBuilding",                 make_function(GetBuildingP,         return_value_policy<reference_existing_object>()))
 
             .add_property("allObjectIDs",       make_function(ObjectIDs,            return_value_policy<return_by_value>()))
             .add_property("fleetIDs",           make_function(FleetIDs,             return_value_policy<return_by_value>()))
             .add_property("systemIDs",          make_function(SystemIDs,            return_value_policy<return_by_value>()))
+            .add_property("fieldIDs",           make_function(FieldIDs,            return_value_policy<return_by_value>()))
             .add_property("planetIDs",          make_function(PlanetIDs,            return_value_policy<return_by_value>()))
             .add_property("shipIDs",            make_function(ShipIDs,              return_value_policy<return_by_value>()))
             .add_property("buildingIDs",        make_function(BuildingIDs,          return_value_policy<return_by_value>()))
@@ -410,6 +423,26 @@ namespace FreeOrionPython {
             .add_property("planetIDs",          make_function(&System::FindObjectIDs<Planet>,           return_value_policy<return_by_value>()))
             .add_property("fleetIDs",           make_function(&System::FindObjectIDs<Fleet>,            return_value_policy<return_by_value>()))
         ;
+
+        //////////////////
+        //    Field     //
+        //////////////////
+        class_<Field, bases<UniverseObject>, noncopyable>("field", no_init)
+            .add_property("fieldTypeName",      make_function(&Field::FieldTypeName,    return_value_policy<copy_const_reference>()))
+            .add_property("radius",             &Field::Radius)
+            .def("inField",                     &ObjectInField)
+            .def("inField",                     LocationInField)
+        ;
+
+        //////////////////
+        //   FieldType  //
+        //////////////////
+        class_<FieldType, noncopyable>("fieldType", no_init)
+            .add_property("name",               make_function(&FieldType::Name,             return_value_policy<copy_const_reference>()))
+            .add_property("description",        make_function(&FieldType::Description,      return_value_policy<copy_const_reference>()))
+        ;
+        def("getFieldType",                     &GetFieldType,                           return_value_policy<reference_existing_object>());
+
 
         /////////////////
         //   Special   //

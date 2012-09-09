@@ -11,6 +11,7 @@
 #include "Building.h"
 #include "Planet.h"
 #include "System.h"
+#include "Field.h"
 #include "Fleet.h"
 #include "Ship.h"
 #include "Tech.h"
@@ -1842,6 +1843,8 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             //System* destination_system = GetSystem(destination->SystemID());
             // TODO: merge systems
         }
+    } else if (Field* field = universe_object_cast<Field*>(context.effect_target)) {
+        field->UniverseObject::MoveTo(destination);
     }
 }
 
