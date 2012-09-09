@@ -185,7 +185,6 @@
 		47103C3C0CF0524200A7DF2B /* Version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471032080CEF625900A7DF2B /* Version.cpp */; };
 		471D5D3F0A98A40900DA9C21 /* libGG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D5A300A988D5700DA9C21 /* libGG.a */; };
 		471D5D400A98A42B00DA9C21 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D180A98A3F900DA9C21 /* AppInterface.cpp */; };
-		471D5E080A98A8C300DA9C21 /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D0F0A98A3F900DA9C21 /* Universe.cpp */; };
 		471D5E0E0A98A96700DA9C21 /* About.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA50A98A3F900DA9C21 /* About.cpp */; };
 		471D5E0F0A98A96D00DA9C21 /* BuildDesignatorWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA70A98A3F900DA9C21 /* BuildDesignatorWnd.cpp */; };
 		471D5E100A98A97300DA9C21 /* ClientUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA90A98A3F900DA9C21 /* ClientUI.cpp */; };
@@ -217,7 +216,6 @@
 		471D65540A98B7F800DA9C21 /* libILU.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654F0A98B7F800DA9C21 /* libILU.dylib */; };
 		471D65560A98B7F800DA9C21 /* liblog4cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D65510A98B7F800DA9C21 /* liblog4cpp.a */; };
 		471FEF8D0A9A629800C36AA3 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D180A98A3F900DA9C21 /* AppInterface.cpp */; };
-		471FEFB30A9A629800C36AA3 /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D0F0A98A3F900DA9C21 /* Universe.cpp */; };
 		471FEFD00A9A629800C36AA3 /* libGG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D5A300A988D5700DA9C21 /* libGG.a */; };
 		471FEFD20A9A629800C36AA3 /* liblog4cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D65510A98B7F800DA9C21 /* liblog4cpp.a */; };
 		471FEFDE0A9A631C00C36AA3 /* AIClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C5A0A98A3F900DA9C21 /* AIClientApp.cpp */; };
@@ -225,7 +223,6 @@
 		478417700CF0581A00BE4710 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* libCommon.a */; };
 		478417730CF0589200BE4710 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* libCommon.a */; };
 		478417760CF058B100BE4710 /* Process.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D300A98A3F900DA9C21 /* Process.cpp */; };
-		478417770CF058C900BE4710 /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D0F0A98A3F900DA9C21 /* Universe.cpp */; };
 		4784177A0CF058F000BE4710 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 47103BE20CF04D8800A7DF2B /* libCommon.a */; };
 		478418DF0CF059D700BE4710 /* ClientNetworking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FAA0CEF566200A7DF2B /* ClientNetworking.cpp */; };
 		478418E00CF059DC00BE4710 /* ClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C5D0A98A3F900DA9C21 /* ClientApp.cpp */; };
@@ -349,6 +346,12 @@
 		82186C0914AA7722009441B8 /* libStringValueRefParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82186AFC14AA7388009441B8 /* libStringValueRefParser.a */; };
 		82186C0A14AA7723009441B8 /* libTechsParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82186B1B14AA73AF009441B8 /* libTechsParser.a */; };
 		82186C0B14AA7723009441B8 /* libUniverseObjectTypeValueRefParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82186B3A14AA73E1009441B8 /* libUniverseObjectTypeValueRefParser.a */; };
+		821A1FA915FCC27D00B65060 /* ConditionParser4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 821A1FA715FCC26900B65060 /* ConditionParser4.cpp */; };
+		821A1FBA15FCC3D100B65060 /* libFieldsParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 821A1FB315FCC2AF00B65060 /* libFieldsParser.a */; };
+		821A1FBB15FCC3D100B65060 /* libFieldsParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 821A1FB315FCC2AF00B65060 /* libFieldsParser.a */; };
+		821A1FBC15FCC3D200B65060 /* libFieldsParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 821A1FB315FCC2AF00B65060 /* libFieldsParser.a */; };
+		821A1FC515FCC45F00B65060 /* Field.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 821A1FC315FCC45F00B65060 /* Field.cpp */; };
+		821A1FCA15FCC4C700B65060 /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D0F0A98A3F900DA9C21 /* Universe.cpp */; };
 		8230805E14A8803F00C1BC15 /* ConditionParser1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936DB147E3B1B00B840A5 /* ConditionParser1.cpp */; };
 		8230805F14A8803F00C1BC15 /* ConditionParser2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936DC147E3B1B00B840A5 /* ConditionParser2.cpp */; };
 		8230806014A8803F00C1BC15 /* ConditionParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936D9147E3B1B00B840A5 /* ConditionParser.cpp */; };
@@ -359,11 +362,11 @@
 		8243E08C147EEAC800636C9E /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FB0FC5D02600EF792E /* memory.cpp */; };
 		8243E08D147EEAC800636C9E /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
 		8243E08E147EEAC800636C9E /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
+		824FF6F915FCD0A60018ED1B /* FieldsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 821A1FA815FCC26900B65060 /* FieldsParser.cpp */; };
 		82592EF0147E381B00B840A5 /* EffectAccounting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EEF147E381B00B840A5 /* EffectAccounting.cpp */; };
 		82592EF5147E387100B840A5 /* Names.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF1147E387100B840A5 /* Names.cpp */; };
 		82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF3147E387100B840A5 /* ObjectMap.cpp */; };
 		82641A2115F7E5D70072CDF8 /* ShipPartStatsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82641A1F15F7E5B20072CDF8 /* ShipPartStatsParser.cpp */; };
-		82641A2415F7E5EA0072CDF8 /* AlignmentsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936D6147E3B1B00B840A5 /* AlignmentsParser.cpp */; };
 		82641A2C15F7E6360072CDF8 /* KeymapParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82641A1E15F7E5B20072CDF8 /* KeymapParser.cpp */; };
 		82641A2F15F7E6A40072CDF8 /* libKeymapParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82641A2B15F7E5EA0072CDF8 /* libKeymapParser.a */; };
 		82641A3215F7E6C10072CDF8 /* libKeymapParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82641A2B15F7E5EA0072CDF8 /* libKeymapParser.a */; };
@@ -991,6 +994,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 82186B1C14AA73E1009441B8;
 			remoteInfo = UniverseObjectTypeValueRefParser;
+		};
+		821A1FBD15FCC40000B65060 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 821A1FAA15FCC2AF00B65060;
+			remoteInfo = FieldsParser;
+		};
+		821A1FBF15FCC40F00B65060 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 821A1FAA15FCC2AF00B65060;
+			remoteInfo = FieldsParser;
+		};
+		821A1FC115FCC42500B65060 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 821A1FAA15FCC2AF00B65060;
+			remoteInfo = FieldsParser;
 		};
 		8230806214A880A600C1BC15 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2170,6 +2194,11 @@
 		82186AFC14AA7388009441B8 /* libStringValueRefParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStringValueRefParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		82186B1B14AA73AF009441B8 /* libTechsParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTechsParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		82186B3A14AA73E1009441B8 /* libUniverseObjectTypeValueRefParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUniverseObjectTypeValueRefParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		821A1FA715FCC26900B65060 /* ConditionParser4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser4.cpp; sourceTree = "<group>"; };
+		821A1FA815FCC26900B65060 /* FieldsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FieldsParser.cpp; sourceTree = "<group>"; };
+		821A1FB315FCC2AF00B65060 /* libFieldsParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFieldsParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		821A1FC315FCC45F00B65060 /* Field.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Field.cpp; sourceTree = "<group>"; };
+		821A1FC415FCC45F00B65060 /* Field.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Field.h; sourceTree = "<group>"; };
 		8230803F14A87FFB00C1BC15 /* libConditionParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libConditionParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		82592EEB147E365700B840A5 /* CUISlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUISlider.h; sourceTree = "<group>"; };
 		82592EEC147E374500B840A5 /* MersenneTwister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MersenneTwister.h; sourceTree = "<group>"; };
@@ -2396,6 +2425,7 @@
 				82186B8114AA760D009441B8 /* libUniverseObjectTypeValueRefParser.a in Frameworks */,
 				82BB839115AAD5DE006F635F /* libEncyclopediaParser.a in Frameworks */,
 				82641A2F15F7E6A40072CDF8 /* libKeymapParser.a in Frameworks */,
+				821A1FBC15FCC3D200B65060 /* libFieldsParser.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2444,6 +2474,7 @@
 				82186C0B14AA7723009441B8 /* libUniverseObjectTypeValueRefParser.a in Frameworks */,
 				82BB839715AAD630006F635F /* libEncyclopediaParser.a in Frameworks */,
 				82641A3515F7E6EE0072CDF8 /* libKeymapParser.a in Frameworks */,
+				821A1FBA15FCC3D100B65060 /* libFieldsParser.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2509,6 +2540,7 @@
 				82186BC614AA76C2009441B8 /* libUniverseObjectTypeValueRefParser.a in Frameworks */,
 				82BB839415AAD60B006F635F /* libEncyclopediaParser.a in Frameworks */,
 				82641A3215F7E6C10072CDF8 /* libKeymapParser.a in Frameworks */,
+				821A1FBB15FCC3D100B65060 /* libFieldsParser.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2576,6 +2608,7 @@
 				82186B3A14AA73E1009441B8 /* libUniverseObjectTypeValueRefParser.a */,
 				82BB838C15AAD2AB006F635F /* libEncyclopediaParser.a */,
 				82641A2B15F7E5EA0072CDF8 /* libKeymapParser.a */,
+				821A1FB315FCC2AF00B65060 /* libFieldsParser.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3948,6 +3981,8 @@
 		471D5CE40A98A3F900DA9C21 /* universe */ = {
 			isa = PBXGroup;
 			children = (
+				821A1FC315FCC45F00B65060 /* Field.cpp */,
+				821A1FC415FCC45F00B65060 /* Field.h */,
 				82B4313314A74E07003EEE42 /* UniverseServer.cpp */,
 				82592EF7147E38ED00B840A5 /* ValueRefFwd.h */,
 				82592EF1147E387100B840A5 /* Names.cpp */,
@@ -4165,6 +4200,8 @@
 		825936D5147E3B1B00B840A5 /* parse */ = {
 			isa = PBXGroup;
 			children = (
+				821A1FA715FCC26900B65060 /* ConditionParser4.cpp */,
+				821A1FA815FCC26900B65060 /* FieldsParser.cpp */,
 				82641A1E15F7E5B20072CDF8 /* KeymapParser.cpp */,
 				82641A1F15F7E5B20072CDF8 /* ShipPartStatsParser.cpp */,
 				82641A2015F7E5B20072CDF8 /* ShipPartStatsParser.h */,
@@ -4427,6 +4464,7 @@
 				82186B6A14AA75D8009441B8 /* PBXTargetDependency */,
 				82BB839015AAD598006F635F /* PBXTargetDependency */,
 				82641A2E15F7E68D0072CDF8 /* PBXTargetDependency */,
+				821A1FBE15FCC40000B65060 /* PBXTargetDependency */,
 				478417670CF057BF00BE4710 /* PBXTargetDependency */,
 				474A956E0A9A6101007F8CD7 /* PBXTargetDependency */,
 			);
@@ -4473,6 +4511,7 @@
 				82186BF414AA76ED009441B8 /* PBXTargetDependency */,
 				82BB839615AAD626006F635F /* PBXTargetDependency */,
 				82641A3415F7E6D30072CDF8 /* PBXTargetDependency */,
+				821A1FC215FCC42500B65060 /* PBXTargetDependency */,
 				478418EA0CF05A2800BE4710 /* PBXTargetDependency */,
 				478417690CF057C300BE4710 /* PBXTargetDependency */,
 				471FEF880A9A629800C36AA3 /* PBXTargetDependency */,
@@ -4872,6 +4911,21 @@
 			productReference = 82186B3A14AA73E1009441B8 /* libUniverseObjectTypeValueRefParser.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		821A1FAA15FCC2AF00B65060 /* FieldsParser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 821A1FAD15FCC2AF00B65060 /* Build configuration list for PBXNativeTarget "FieldsParser" */;
+			buildPhases = (
+				821A1FAB15FCC2AF00B65060 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FieldsParser;
+			productName = Common;
+			productReference = 821A1FB315FCC2AF00B65060 /* libFieldsParser.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		8230803814A87FFB00C1BC15 /* ConditionParser */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8230803B14A87FFB00C1BC15 /* Build configuration list for PBXNativeTarget "ConditionParser" */;
@@ -4970,6 +5024,7 @@
 				82186BAF14AA766B009441B8 /* PBXTargetDependency */,
 				82BB839315AAD606006F635F /* PBXTargetDependency */,
 				82641A3115F7E6B60072CDF8 /* PBXTargetDependency */,
+				821A1FC015FCC40F00B65060 /* PBXTargetDependency */,
 				478418EC0CF05A2E00BE4710 /* PBXTargetDependency */,
 				478417650CF057B800BE4710 /* PBXTargetDependency */,
 				471D65490A98B73C00DA9C21 /* PBXTargetDependency */,
@@ -5036,6 +5091,7 @@
 				82186AFD14AA73AF009441B8 /* TechsParser */,
 				82186B1C14AA73E1009441B8 /* UniverseObjectTypeValueRefParser */,
 				82641A2215F7E5EA0072CDF8 /* KeymapParser */,
+				821A1FAA15FCC2AF00B65060 /* FieldsParser */,
 				47103BE10CF04D8800A7DF2B /* Common */,
 				4784177C0CF0592E00BE4710 /* ClientCommon */,
 				471D5D430A98A46000DA9C21 /* FreeOrionServer */,
@@ -5125,6 +5181,8 @@
 				82592EF5147E387100B840A5 /* Names.cpp in Sources */,
 				82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */,
 				82BEB659159853B300B024CB /* Diplomacy.cpp in Sources */,
+				821A1FC515FCC45F00B65060 /* Field.cpp in Sources */,
+				821A1FCA15FCC4C700B65060 /* Universe.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5181,7 +5239,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				47FAB64D0A98D83B00F0AF3F /* AppInterface.cpp in Sources */,
-				478417770CF058C900BE4710 /* Universe.cpp in Sources */,
 				47FAB6770A98D89F00F0AF3F /* dmain.cpp in Sources */,
 				47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */,
 				471032540CEF6C9700A7DF2B /* ServerNetworking.cpp in Sources */,
@@ -5198,7 +5255,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				471FEF8D0A9A629800C36AA3 /* AppInterface.cpp in Sources */,
-				471FEFB30A9A629800C36AA3 /* Universe.cpp in Sources */,
 				471FEFDE0A9A631C00C36AA3 /* AIClientApp.cpp in Sources */,
 				471FEFDF0A9A632000C36AA3 /* camain.cpp in Sources */,
 				471033860CEF721B00A7DF2B /* PythonAI.cpp in Sources */,
@@ -5434,6 +5490,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		821A1FAB15FCC2AF00B65060 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				824FF6F915FCD0A60018ED1B /* FieldsParser.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8230803914A87FFB00C1BC15 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5442,6 +5506,7 @@
 				8230805E14A8803F00C1BC15 /* ConditionParser1.cpp in Sources */,
 				8230805F14A8803F00C1BC15 /* ConditionParser2.cpp in Sources */,
 				8230806114A8803F00C1BC15 /* ConditionParser3.cpp in Sources */,
+				821A1FA915FCC27D00B65060 /* ConditionParser4.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5449,7 +5514,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				82641A2415F7E5EA0072CDF8 /* AlignmentsParser.cpp in Sources */,
 				82641A2C15F7E6360072CDF8 /* KeymapParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5479,7 +5543,6 @@
 				34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */,
 				343EC66F0F3F60F000782AD3 /* DesignWnd.cpp in Sources */,
 				471D5D400A98A42B00DA9C21 /* AppInterface.cpp in Sources */,
-				471D5E080A98A8C300DA9C21 /* Universe.cpp in Sources */,
 				471D5E0E0A98A96700DA9C21 /* About.cpp in Sources */,
 				471D5E0F0A98A96D00DA9C21 /* BuildDesignatorWnd.cpp in Sources */,
 				471D5E100A98A97300DA9C21 /* ClientUI.cpp in Sources */,
@@ -5961,6 +6024,21 @@
 			isa = PBXTargetDependency;
 			target = 82186B1C14AA73E1009441B8 /* UniverseObjectTypeValueRefParser */;
 			targetProxy = 82186BF314AA76ED009441B8 /* PBXContainerItemProxy */;
+		};
+		821A1FBE15FCC40000B65060 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 821A1FAA15FCC2AF00B65060 /* FieldsParser */;
+			targetProxy = 821A1FBD15FCC40000B65060 /* PBXContainerItemProxy */;
+		};
+		821A1FC015FCC40F00B65060 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 821A1FAA15FCC2AF00B65060 /* FieldsParser */;
+			targetProxy = 821A1FBF15FCC40F00B65060 /* PBXContainerItemProxy */;
+		};
+		821A1FC215FCC42500B65060 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 821A1FAA15FCC2AF00B65060 /* FieldsParser */;
+			targetProxy = 821A1FC115FCC42500B65060 /* PBXContainerItemProxy */;
 		};
 		8230806314A880A600C1BC15 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8130,6 +8208,56 @@
 			};
 			name = Release_LLVM;
 		};
+		821A1FAE15FCC2AF00B65060 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = FieldsParser;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		821A1FAF15FCC2AF00B65060 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = FieldsParser;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		821A1FB015FCC2AF00B65060 /* Release_LLVM */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = FieldsParser;
+				ZERO_LINK = NO;
+			};
+			name = Release_LLVM;
+		};
+		821A1FB115FCC2AF00B65060 /* Release_10_5 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = FieldsParser;
+				ZERO_LINK = NO;
+			};
+			name = Release_10_5;
+		};
+		821A1FB215FCC2AF00B65060 /* ReleaseUniversal-OLD */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INSTALL_PATH = /usr/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = FieldsParser;
+				SDKROOT = macosx10.6;
+				ZERO_LINK = NO;
+			};
+			name = "ReleaseUniversal-OLD";
+		};
 		8230803C14A87FFB00C1BC15 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8681,6 +8809,18 @@
 				8219A99C14AAFFC300EEE387 /* Release_LLVM */,
 				82186B3814AA73E1009441B8 /* Release_10_5 */,
 				82186B3914AA73E1009441B8 /* ReleaseUniversal-OLD */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		821A1FAD15FCC2AF00B65060 /* Build configuration list for PBXNativeTarget "FieldsParser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				821A1FAE15FCC2AF00B65060 /* Debug */,
+				821A1FAF15FCC2AF00B65060 /* Release */,
+				821A1FB015FCC2AF00B65060 /* Release_LLVM */,
+				821A1FB115FCC2AF00B65060 /* Release_10_5 */,
+				821A1FB215FCC2AF00B65060 /* ReleaseUniversal-OLD */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
