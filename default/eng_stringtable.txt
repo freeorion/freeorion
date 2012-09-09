@@ -6591,7 +6591,7 @@ Asteroid Processor
 BLD_SHIPYARD_AST_DESC
 '''This is an upgrade to the Basic Shipyard and is required for the production of all asteroid hulls and all further asteroid hulls shipyard upgrades.
 
-A shipyard dedicated to the purpose of hollowing out asteroids and using them as ships' hulls. It can only be built at an asteroid belt.'''
+A shipyard dedicated to the purpose of hollowing out asteroids and using them as ships' hulls. It can only be built in systems containing asteroid belts.'''
 
 BLD_SHIPYARD_AST_REF
 Asteroid Reformation Processor
