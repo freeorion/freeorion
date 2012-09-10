@@ -1231,7 +1231,7 @@ Species
         type = Desert       environment = Hostile
         type = Terran       environment = Hostile
         type = Ocean        environment = Hostile
-        type = Asteroids    environment = Hostile
+        type = Asteroids    environment = Poor
         type = Gasgiant     environment = Uninhabitable
     ]
     

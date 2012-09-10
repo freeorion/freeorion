@@ -3191,7 +3191,7 @@ SP_PHINNERT
 Phinnert
 SP_PHINNERT_DESC
 '''Flying Monkeys.
-Prefer Ocean planets.
+Prefer Swamp planets.
 Organic
 
 [[AVERAGE_INDUSTRY]]
