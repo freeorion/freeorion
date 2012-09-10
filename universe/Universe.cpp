@@ -874,6 +874,7 @@ void Universe::ApplyAppearanceEffects()
 { ApplyAppearanceEffects(m_objects.FindObjectIDs()); }
 
 void Universe::InitMeterEstimatesAndDiscrepancies() {
+    Logger().debugStream() << "Universe::InitMeterEstimatesAndDiscrepancies";
     ScopedTimer timer("Universe::InitMeterEstimatesAndDiscrepancies");
 
     // clear old discrepancies and accounting
@@ -1050,7 +1051,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
                 Meter* meter = obj->GetMeter(type);
 
                 if (meter) {
-                    //Logger().debugStream() << "object " << obj_id << " has meter " << type << " discrepancy: " << discrepancy << " and final max: " << meter->Max();
+                    if (GetOptionsDB().Get<bool>("verbose-logging"))
+                        Logger().debugStream() << "object " << obj_id << " has meter " << type << ": discrepancy: " << discrepancy << " and : " << meter->Dump();
 
                     meter->AddToCurrent(discrepancy);
 
@@ -1583,6 +1585,8 @@ void Universe::UpdateEmpireObjectVisibilities() {
                     continue;   // objects already give their owner full visibility of themselves
 
                 double range_limit = detector_it->first;
+                if (const Field* field = universe_object_cast<const Field*>(detectable_obj))
+                    range_limit += field->CurrentMeterValue(METER_SIZE);
                 double x_dist = detectable_obj->X() - detector_obj->X();
                 double y_dist = detectable_obj->Y() - detector_obj->Y();
                 double dist2 = x_dist*x_dist + y_dist*y_dist;

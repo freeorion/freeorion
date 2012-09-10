@@ -1940,6 +1940,8 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
         CreateNewFleet(new_x, new_y, ship); // creates new fleet and inserts ship into fleet
         if (old_fleet && old_fleet->NumShips() < 1)
             GetUniverse().EffectDestroy(old_fleet->ID());
+    } else if (Field* field = universe_object_cast<Field*>(target)) {
+        field->MoveTo(new_x, new_y);
     }
     // don't move planets or buildings, as these can't exist outside of systems
 }
@@ -1981,6 +1983,131 @@ std::string MoveInOrbit::Dump() const {
         return DumpIndent() + "MoveInOrbit";
 }
 
+///////////////////////////////////////////////////////////
+// MoveTowards                                           //
+///////////////////////////////////////////////////////////
+MoveTowards::MoveTowards(const ValueRef::ValueRefBase<double>* speed,
+                         const Condition::ConditionBase* dest_condition) :
+    m_speed(speed),
+    m_dest_condition(dest_condition),
+    m_dest_x(0),
+    m_dest_y(0)
+{}
+
+MoveTowards::MoveTowards(const ValueRef::ValueRefBase<double>* speed,
+                         const ValueRef::ValueRefBase<double>* dest_x/* = 0*/,
+                         const ValueRef::ValueRefBase<double>* dest_y/* = 0*/) :
+    m_speed(speed),
+    m_dest_condition(0),
+    m_dest_x(dest_x),
+    m_dest_y(dest_y)
+{}
+
+MoveTowards::~MoveTowards() {
+    delete m_speed;
+    delete m_dest_condition;
+    delete m_dest_x;
+    delete m_dest_y;
+}
+
+void MoveTowards::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target) {
+        Logger().errorStream() << "MoveTowards::Execute given no target object";
+        return;
+    }
+    UniverseObject* target = context.effect_target;
+
+    double dest_x = 0.0, dest_y = 0.0, speed = 1.0;
+    if (m_dest_x)
+        dest_x = m_dest_x->Eval(ScriptingContext(context, target->X()));
+    if (m_dest_y)
+        dest_y = m_dest_y->Eval(ScriptingContext(context, target->Y()));
+    if (m_speed)
+        speed = m_speed->Eval(context);
+    if (speed <= 0.1)
+        return;
+    if (m_dest_condition) {
+        Condition::ObjectSet matches;
+        m_dest_condition->Eval(context, matches);
+        if (matches.empty())
+            return;
+        const UniverseObject* focus_object = *matches.begin();
+        dest_x = focus_object->X();
+        dest_y = focus_object->Y();
+    }
+
+    double dest_to_target_x = dest_x - target->X();
+    double dest_to_target_y = dest_y - target->Y();
+    double dest_to_target_dist = std::sqrt(dest_to_target_x * dest_to_target_x +
+                                           dest_to_target_y * dest_to_target_y);
+
+    double new_x, new_y;
+
+    if (dest_to_target_dist < speed) {
+        new_x = dest_x;
+        new_y = dest_y;
+    } else {
+        new_x = target->X() + dest_to_target_x / dest_to_target_dist * speed;
+        new_y = target->Y() + dest_to_target_y / dest_to_target_dist * speed;
+    }
+    if (target->X() == new_x && target->Y() == new_y)
+        return;
+
+    if (System* system = universe_object_cast<System*>(target)) {
+        system->MoveTo(new_x, new_y);
+        return;
+    } else if (Fleet* fleet = universe_object_cast<Fleet*>(target)) {
+        fleet->MoveTo(new_x, new_y);
+        // todo: is fleet now close enough to fall into a system?
+        UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);
+        return;
+    } else if (Ship* ship = universe_object_cast<Ship*>(target)) {
+        Fleet* old_fleet = GetFleet(ship->FleetID());
+        CreateNewFleet(new_x, new_y, ship); // creates new fleet and inserts ship into fleet
+        if (old_fleet && old_fleet->NumShips() < 1)
+            GetUniverse().EffectDestroy(old_fleet->ID());
+    } else if (Field* field = universe_object_cast<Field*>(target)) {
+        field->MoveTo(new_x, new_y);
+    }
+    // don't move planets or buildings, as these can't exist outside of systems
+}
+
+std::string MoveTowards::Description() const {
+    std::string dest_str;
+    if (m_dest_condition)
+        dest_str = m_dest_condition->Description();
+
+    std::string speed_str;
+    if (m_speed)
+        speed_str = m_speed->Description();
+
+    if (!dest_str.empty())
+        return str(FlexibleFormat(UserString("DESC_MOVE_TOWARDS_OBJECT"))
+                   % dest_str
+                   % speed_str);
+
+    std::string x_str = "0.0";
+    if (m_dest_x)
+        x_str = m_dest_x->Description();
+
+    std::string y_str = "0.0";
+    if (m_dest_y)
+        y_str = m_dest_y->Description();
+
+    return str(FlexibleFormat(UserString("DESC_MOVE_TOWARDS_XY"))
+               % x_str
+               % y_str
+               % speed_str);
+}
+
+std::string MoveTowards::Dump() const {
+    if (m_dest_condition)
+        return DumpIndent() + "MoveTowards destination = " + m_dest_condition->Dump() + "\n";
+    else if (m_dest_x && m_dest_y)
+        return DumpIndent() + "MoveTowards x = " + m_dest_x->Dump() + " y = " + m_dest_y->Dump() + "\n";
+    else
+        return DumpIndent() + "MoveTowards";
+}
 
 ///////////////////////////////////////////////////////////
 // SetDestination                                        //

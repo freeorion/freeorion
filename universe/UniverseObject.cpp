@@ -191,7 +191,7 @@ std::string UniverseObject::Dump() const {
     os << "  Meters: ";
     for (std::map<MeterType, Meter>::const_iterator it = m_meters.begin(); it != m_meters.end(); ++it)
         os << UserString(GG::GetEnumMap<MeterType>().FromEnum(it->first))
-           << ": " << it->second.Current() << "  ";
+           << ": " << it->second.Dump() << "  ";
     return os.str();
 }
 
@@ -365,7 +365,7 @@ void UniverseObject::ResetPairedActiveMeters() {
     // target meter.  if another paired meter type is added to Enums.h, it
     // should be added here as well.
     for (MeterType meter_type = MeterType(METER_POPULATION);
-         meter_type <= MeterType(METER_TROOPS);
+         meter_type <= MeterType(METER_REBEL_TROOPS);
          meter_type = MeterType(meter_type + 1))
     {
         if (Meter* meter = GetMeter(meter_type))

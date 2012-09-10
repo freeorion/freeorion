@@ -21,21 +21,23 @@ extern int g_indent;
 /////////////////////////////////////////////////
 Field::Field() :
     UniverseObject(),
-    m_type_name(""),
-    m_radius(1.0)
+    m_type_name("")
 {}
 
 Field::Field(const std::string& field_type, double x, double y, double radius) :
     UniverseObject("", x, y),
-    m_type_name(field_type),
-    m_radius(radius)
+    m_type_name(field_type)
 {
     const FieldType* type = GetFieldType(m_type_name);
     if (type)
         Rename(UserString(type->Name()));
     else
         Rename(UserString("ENC_FIELD"));
+
     UniverseObject::Init();
+
+    AddMeter(METER_STARLANE_SPEED);
+    AddMeter(METER_SIZE);
 }
 
 Field* Field::Clone(int empire_id) const {
@@ -66,7 +68,6 @@ void Field::Copy(const UniverseObject* copied_object, int empire_id) {
 
     if (vis >= VIS_BASIC_VISIBILITY) {
         this->m_type_name =                 copied_field->m_type_name;
-        this->m_radius =                    copied_field->m_radius;
     }
 }
 
@@ -94,8 +95,7 @@ const std::string& Field::TypeName() const
 std::string Field::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
-    os << " field type: " << m_type_name
-       << " radius: " << m_radius;
+    os << " field type: " << m_type_name;
     return os.str();
 }
 
@@ -106,10 +106,28 @@ bool Field::InField(const UniverseObject* obj) const
 { return obj && InField(obj->X(), obj->Y()); }
 
 bool Field::InField(double x, double y) const {
+    const Meter* size_meter = GetMeter(METER_SIZE);
+    double radius = 1.0;
+    if (size_meter)
+        radius = size_meter->Current();
+
     double dist2 = (x - this->X())*(x - this->X()) + (y - this->Y())*(y - this->Y());
-    return dist2 < m_radius*m_radius;
+    return dist2 < radius*radius;
 }
 
+void Field::ResetTargetMaxUnpairedMeters() {
+    UniverseObject::ResetTargetMaxUnpairedMeters();
+
+    GetMeter(METER_STARLANE_SPEED)->ResetCurrent();
+    GetMeter(METER_SIZE)->ResetCurrent();
+}
+
+void Field::ClampMeters() {
+    UniverseObject::ClampMeters();
+
+    // intentionally not clamping METER_STARLANE_SPEED, to allow negative speeds
+    UniverseObject::GetMeter(METER_SIZE)->ClampCurrentToRange();
+}
 
 /////////////////////////////////////////////////
 // FieldType                                   //
@@ -162,13 +180,21 @@ FieldTypeManager::FieldTypeManager() {
 
     //parse::fields(GetResourceDir() / "fields.txt", m_field_types);
     std::vector<Effect::EffectBase*> effects;
-    effects.push_back(new Effect::MoveTo(new Condition::Chance(new ValueRef::Constant<double>(0.1))));
+    std::vector<adobe::name_t> property_name;
+    property_name.push_back(Source_name);
+    property_name.push_back(StarlaneSpeed_name);
+    effects.push_back(new Effect::MoveTowards(new ValueRef::Variable<double>(property_name),
+                                              new Condition::Chance(new ValueRef::Constant<double>(0.1))));
+    effects.push_back(new Effect::SetMeter(METER_SIZE, new ValueRef::Constant<double>(50)));
+    effects.push_back(new Effect::SetMeter(METER_STARLANE_SPEED, new ValueRef::Constant<double>(10)));
+
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects_groups;
     Effect::EffectsGroup* group = new Effect::EffectsGroup(new Condition::Source(), new Condition::Source(), effects);
     effects_groups.push_back(boost::shared_ptr<const Effect::EffectsGroup>(group));
+
     m_field_types["ION_STORM"] = new FieldType("ION_STORM", "ION_STORM_DESC", std::vector<std::string>(),
                                                new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_SYSTEM)),
-                                               effects_groups, "");
+                                               effects_groups, "fields/rainbow_storm.png");
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "Field Types:";

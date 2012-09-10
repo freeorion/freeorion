@@ -161,6 +161,9 @@ Planet
 BUILDING
 Building
 
+FIELD
+Field
+
 PASSED
 <rgba 0 255 0 255>(PASSED)</rgba>
 
@@ -441,6 +444,12 @@ Cosmic Dragon
 SM_COSMIC_DRAGON_DESC
 A fearsome space monster with the power to destroy entire star systems.
 
+##########
+# Fields #
+##########
+
+ION_STORM
+Ion Storm
 
 ##############################
 # Predefined Starting Fleets #
@@ -2369,6 +2378,9 @@ Building
 ENC_SYSTEM
 System
 
+END_FIELD
+Field
+
 ENC_INDEX
 Encyclopedia Index
 
@@ -4040,6 +4052,9 @@ Launch Rate
 METER_FIGHTER_WEAPON_RANGE
 Fighter Weapon Range
 
+METER_SIZE
+Size
+
 METER_DETECTION_STRENGTH
 Detection Strength
 
@@ -4515,6 +4530,12 @@ Moves the object in orbit of an object%1% at speed %2%
 
 DESC_MOVE_IN_ORBIT_OF_XY
 Moves the object in orbit of an object located at %1% and %2% at speed %3%
+
+DESC_MOVE_TOWARDS_OBJECT
+Moves the object toward an object%1% at speed %2%
+
+DESC_MOVE_TOWARDS_XY
+Moves the object toward an object located at %1% and %2% at speed %3%
 
 DESC_SET_DESTINATION
 Sets the destination of the object to an object%1%

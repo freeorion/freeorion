@@ -15,7 +15,6 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    double                      Radius() const { return m_radius; }
     virtual std::vector<std::string>
                                 Tags() const;                                       ///< returns all tags this object has
     virtual bool                HasTag(const std::string& name) const;              ///< returns true iff this object has the tag with the indicated \a name
@@ -29,13 +28,16 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
-    void            SetRadius(double radius);
+    virtual void                Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
     //@}
 
+protected:
+    virtual void                ResetTargetMaxUnpairedMeters();
+
 private:
+    virtual void                ClampMeters();
+
     std::string     m_type_name;
-    double          m_radius;
 
     friend class boost::serialization::access;
     template <class Archive>

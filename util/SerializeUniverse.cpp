@@ -113,8 +113,7 @@ template <class Archive>
 void Field::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(m_type_name)
-        & BOOST_SERIALIZATION_NVP(m_radius);
+        & BOOST_SERIALIZATION_NVP(m_type_name);
 }
 
 template <class Archive>

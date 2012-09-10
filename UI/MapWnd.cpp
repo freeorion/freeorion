@@ -1008,7 +1008,6 @@ void MapWnd::RenderFields() {
     glLoadIdentity();
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_TEXTURE_2D);
-
     // draw circle for each field
     for (std::vector<const Field*>::const_iterator field_it = fields.begin(); field_it != fields.end(); ++field_it) {
         const Field* field = *field_it;
@@ -1016,15 +1015,44 @@ void MapWnd::RenderFields() {
         GG::Clr circle_colour = GG::CLR_MAGENTA;
 
         GG::Pt circle_centre = ScreenCoordsFromUniversePosition(field->X(), field->Y());
-        double radius = field->Radius()*ZoomFactor();
-        if (radius < 10.0)
-            continue;
+        double size = field->CurrentMeterValue(METER_SIZE);
+        double radius = size*ZoomFactor();
+        if (radius < ClientUI::SystemTinyIconSizeThreshold())
+            radius = ClientUI::SystemTinyIconSizeThreshold();
 
         GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
         GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
 
         glColor(circle_colour);
         CircleArc(ul, lr, 0.0, TWO_PI, false);
+    }
+
+    glEnable(GL_TEXTURE_2D);
+
+    glColor(GG::CLR_WHITE);
+    for (std::vector<const Field*>::const_iterator field_it = fields.begin(); field_it != fields.end(); ++field_it) {
+        const Field* field = *field_it;
+        const std::string& field_type_name = field->FieldTypeName();
+        if (field_type_name.empty())
+            continue;
+        const FieldType* ft = GetFieldType(field_type_name);
+        if (!ft)
+            continue;
+        const std::string& texture_name = ft->Graphic();
+        if (texture_name.empty())
+            continue;
+
+        GG::Pt circle_centre = ScreenCoordsFromUniversePosition(field->X(), field->Y());
+        double radius = field->CurrentMeterValue(METER_SIZE)*ZoomFactor();
+        if (radius < 10.0)
+            continue;
+
+        GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
+        GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
+
+        boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / texture_name, true);
+        if (texture)
+            texture->OrthoBlit(ul, lr);
     }
 
     glPopMatrix();
@@ -1043,9 +1071,7 @@ void MapWnd::RenderGalaxyGas() {
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it =
-            m_galaxy_gas_quad_vertices.begin();
-         it != m_galaxy_gas_quad_vertices.end();
-         ++it)
+            m_galaxy_gas_quad_vertices.begin(); it != m_galaxy_gas_quad_vertices.end(); ++it)
     {
         glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
         it->second.activate();
@@ -1648,8 +1674,9 @@ void MapWnd::InitTurn() {
     // update effect accounting and meter estimates
     universe.InitMeterEstimatesAndDiscrepancies();
 
-    // if we've just loaded the game there may be some unexecuted orders, we should reapply them now, so they are reflected
-    // in the UI, but do not influence current meters or their discrepancies for this turn
+    // if we've just loaded the game there may be some unexecuted orders, we
+    // should reapply them now, so they are reflected in the UI, but do not
+    // influence current meters or their discrepancies for this turn
     HumanClientApp::GetApp()->Orders().ApplyOrders();
 
     // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet

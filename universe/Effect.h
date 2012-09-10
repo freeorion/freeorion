@@ -45,6 +45,7 @@ namespace Effect {
     class GiveEmpireTech;
     class MoveTo;
     class MoveInOrbit;
+    class MoveTowards;
     class Victory;
     class GenerateSitRepMessage;
     class SetDestination;
@@ -597,6 +598,33 @@ private:
     const Condition::ConditionBase*         m_focal_point_condition;
     const ValueRef::ValueRefBase<double>*   m_focus_x;
     const ValueRef::ValueRefBase<double>*   m_focus_y;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Moves an UniverseObject a specified distance towards some object or
+  * position on the map. */
+class Effect::MoveTowards : public Effect::EffectBase {
+public:
+    MoveTowards(const ValueRef::ValueRefBase<double>* speed,
+                const Condition::ConditionBase* dest_condition);
+    MoveTowards(const ValueRef::ValueRefBase<double>* speed,
+                const ValueRef::ValueRefBase<double>* dest_x = 0,
+                const ValueRef::ValueRefBase<double>* dest_y = 0);
+
+    virtual ~MoveTowards();
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    const ValueRef::ValueRefBase<double>*   m_speed;
+    const Condition::ConditionBase*         m_dest_condition;
+    const ValueRef::ValueRefBase<double>*   m_dest_x;
+    const ValueRef::ValueRefBase<double>*   m_dest_y;
 
     friend class boost::serialization::access;
     template <class Archive>

@@ -1897,7 +1897,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq) {
 
                         // create ships and add to fleet
                         for (std::vector<std::string>::const_iterator monster_it = monsters.begin();
-                                monster_it != monsters.end(); ++monster_it)
+                             monster_it != monsters.end(); ++monster_it)
                         {
                             int design_id = predefined_design_manager.GenericDesignID(*monster_it);
                             if (design_id == ShipDesign::INVALID_DESIGN_ID) {

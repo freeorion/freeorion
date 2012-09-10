@@ -429,7 +429,6 @@ namespace FreeOrionPython {
         //////////////////
         class_<Field, bases<UniverseObject>, noncopyable>("field", no_init)
             .add_property("fieldTypeName",      make_function(&Field::FieldTypeName,    return_value_policy<copy_const_reference>()))
-            .add_property("radius",             &Field::Radius)
             .def("inField",                     &ObjectInField)
             .def("inField",                     LocationInField)
         ;
