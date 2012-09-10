@@ -14,6 +14,7 @@
 #include "../universe/Ship.h"
 #include "../universe/Planet.h"
 #include "../universe/Building.h"
+#include "../universe/Field.h"
 #include "../universe/Species.h"
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
@@ -592,12 +593,12 @@ namespace {
 }
 
     const std::string& ObjectName(const UniverseObject* obj) {
-    if (!obj)
-        return EMPTY_STRING;
-    if (const System* system = universe_object_cast<const System*>(obj))
-        return system->ApparentName(HumanClientApp::GetApp()->EmpireID());
-    return obj->PublicName(HumanClientApp::GetApp()->EmpireID());
-}
+        if (!obj)
+            return EMPTY_STRING;
+        if (const System* system = universe_object_cast<const System*>(obj))
+            return system->ApparentName(HumanClientApp::GetApp()->EmpireID());
+        return obj->PublicName(HumanClientApp::GetApp()->EmpireID());
+    }
 
     std::pair<std::string, GG::Clr> ObjectEmpireNameAndColour(const UniverseObject* obj) {
     if (!obj)
@@ -835,6 +836,7 @@ public:
         m_visibilities[OBJ_PLANET].insert(SHOW_PREVIOUSLY_VISIBLE);
         m_visibilities[OBJ_SYSTEM].insert(SHOW_VISIBLE);
         m_visibilities[OBJ_SYSTEM].insert(SHOW_PREVIOUSLY_VISIBLE);
+        m_visibilities[OBJ_FIELD].insert(SHOW_VISIBLE);
 
         GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &ObjectListBox::UniverseObjectDeleted,  this);
     }
@@ -949,6 +951,7 @@ public:
             std::map<int, std::set<int> >   fleet_ships;
             std::map<int, std::set<int> >   system_planets;
             std::map<int, std::set<int> >   planet_buildings;
+            std::set<int>                   fields;
 
             for (ObjectMap::const_iterator it = visible_objects.const_begin(); it != visible_objects.const_end(); ++it) {
                 int object_id = it->first;
@@ -974,6 +977,10 @@ public:
                 } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
                     if (ObjectShown(object_id, OBJ_BUILDING, true))
                         planet_buildings[building->PlanetID()].insert(object_id);
+
+                } else if (/*const Field* field = */universe_object_cast<const Field*>(obj)) {
+                    if (ObjectShown(object_id, OBJ_FIELD, true))
+                        fields.insert(object_id);
                 }
             }
             for (ObjectMap::const_iterator it = known_objects.const_begin(); it != known_objects.const_end(); ++it) {
@@ -1001,6 +1008,10 @@ public:
                 } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
                     if (ObjectShown(object_id, OBJ_BUILDING))
                         planet_buildings[building->PlanetID()].insert(object_id);
+
+                } else if (/*const Field* field = */universe_object_cast<const Field*>(obj)) {
+                    if (ObjectShown(object_id, OBJ_FIELD, true))
+                        fields.insert(object_id);
                 }
             }
 
@@ -1171,6 +1182,9 @@ public:
                 }
             }
             fleet_ships.clear();
+
+            for (std::set<int>::iterator fld_it = fields.begin(); fld_it != fields.end(); ++fld_it)
+                AddObjectRow(*fld_it, INVALID_OBJECT_ID, std::set<int>(), indent);
         }
 
 

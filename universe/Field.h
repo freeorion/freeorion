@@ -25,6 +25,8 @@ public:
 
     bool                        InField(const UniverseObject* obj) const;
     bool                        InField(double x, double y) const;
+
+    virtual const std::string&  PublicName(int empire_id) const;
     //@}
 
     /** \name Mutators */ //@{
