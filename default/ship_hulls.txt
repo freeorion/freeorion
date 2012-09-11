@@ -446,8 +446,6 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
-        Planet type = Asteroids
     ]
     effectsgroups = [
         EffectsGroup
@@ -483,8 +481,6 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
-        Planet type = Asteroids
     ]
     effectsgroups = [
         EffectsGroup
@@ -527,8 +523,6 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
-        Planet type = Asteroids
     ]
     effectsgroups = [
         EffectsGroup
@@ -566,8 +560,6 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
-        Planet type = Asteroids
     ]
     effectsgroups = [
         EffectsGroup
@@ -603,8 +595,6 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
-        Planet type = Asteroids
     ]
     effectsgroups = [
         EffectsGroup
@@ -661,8 +651,6 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
-        Planet type = Asteroids
     ]
     effectsgroups = [
         EffectsGroup
@@ -702,8 +690,6 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
-        Planet type = Asteroids
     ]
     effectsgroups = [
         EffectsGroup
@@ -760,8 +746,6 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
-        Planet type = Asteroids
     ]
     effectsgroups = [
         EffectsGroup
@@ -814,8 +798,6 @@ Hull
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
-        Planet type = Asteroids
     ]
     effectsgroups = [
         EffectsGroup
