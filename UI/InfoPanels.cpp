@@ -56,10 +56,27 @@ namespace {
             break;
         case METER_TRADE:
         case METER_TARGET_TRADE:
-        case METER_TROOPS:
-        case METER_MAX_TROOPS:
             return GG::Clr(255, 148, 0, 255);   // orange
             break;
+        case METER_SHIELD:
+        case METER_MAX_SHIELD:
+            return GG::Clr(0, 255, 186, 255);   // "00ffba"
+            break;
+        case METER_DEFENSE:
+        case METER_MAX_DEFENSE:
+            return GG::CLR_RED;
+            break;
+        case METER_TROOPS:
+        case METER_MAX_TROOPS:
+            return GG::Clr(168, 107, 0, 255);   // "a86b00"
+            break;
+        case METER_DETECTION:
+            return GG::Clr(191, 255, 0, 255);   // "bfff00"
+            break;
+        case METER_STEALTH:
+            return GG::Clr(174, 0, 255, 255);   // "ae00ff"
+            break;
+        case METER_SUPPLY:
         case METER_CONSTRUCTION:
         case METER_TARGET_CONSTRUCTION:
         case METER_POPULATION:
