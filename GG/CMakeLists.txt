@@ -149,7 +149,13 @@ endmacro ()
 include(CMakeDependentOption)
 cmake_dependent_option(BUILD_TUTORIALS
                        "Build tutorial apps (requires SDL driver)."
-                       ON
+                       OFF
+                       BUILD_SDL_DRIVER
+                       OFF)
+
+cmake_dependent_option(BUILD_TESTS
+                       "Build test apps (requires SDL driver)."
+                       OFF
                        BUILD_SDL_DRIVER
                        OFF)
 
@@ -302,7 +308,9 @@ endif ()
 ########################################
 add_subdirectory(src)
 
-add_subdirectory(test)
+if (BUILD_TESTS)
+    add_subdirectory(test)
+endif ()
 
 if (BUILD_TUTORIALS)
     add_subdirectory(tutorial)
