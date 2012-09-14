@@ -1852,7 +1852,7 @@ void MapWnd::InitTurnRendering() {
         DeleteChild(it->second);
     m_field_icons.clear();
 
-    // create system icons
+    // create field icons
     std::vector<const Field*> fields = known_objects.FindObjects<Field>();
     for (unsigned int i = 0; i < fields.size(); ++i) {
         const Field* field = fields[i];
@@ -1883,6 +1883,12 @@ void MapWnd::InitTurnRendering() {
 
     // create fleet buttons and move lines.  needs to be after InitStarlaneRenderingBuffers so that m_starlane_endpoints is populated
     RefreshFleetButtons();
+
+
+    // move field icons to bottom of child stack so that other icons can be moused over with a field
+    for (std::map<int, FieldIcon*>::iterator it = m_field_icons.begin(); it != m_field_icons.end(); ++it)
+        MoveChildDown(it->second);
+
 
     Logger().debugStream() << "MapWnd::InitTurnRendering time: " << (timer.elapsed() * 1000.0);
 }
@@ -3132,13 +3138,19 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position)
     DoFieldIconsLayout();
 
 
-    // if fleet buttons need to change size, need to fully refresh them (clear and recreate).  If they are the
-    // same size as before the zoom, then can just reposition them without recreating
+    // if fleet buttons need to change size, need to fully refresh them (clear
+    // and recreate).  If they are the same size as before the zoom, then can
+    // just reposition them without recreating
     const FleetButton::SizeType NEW_FLEETBUTTON_SIZE = FleetButtonSizeType();
     if (OLD_FLEETBUTTON_SIZE != NEW_FLEETBUTTON_SIZE)
         RefreshFleetButtons();
     else
         DoFleetButtonsLayout();
+
+
+    // move field icons to bottom of child stack so that other icons can be moused over with a field
+    for (std::map<int, FieldIcon*>::iterator it = m_field_icons.begin(); it != m_field_icons.end(); ++it)
+        MoveChildDown(it->second);
 
 
     // translate map and UI widgets to account for the change in upper left due to zooming

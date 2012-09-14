@@ -155,7 +155,7 @@ void FieldIcon::SetSelected(bool selected) {
 
 bool FieldIcon::InWindow(const GG::Pt& pt) const {
     // find if cursor is within required distance of centre of icon
-    const int RADIUS = Value(Width());
+    const int RADIUS = Value(Width())/2;
     const int RADIUS2 = RADIUS*RADIUS;
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
@@ -167,6 +167,8 @@ bool FieldIcon::InWindow(const GG::Pt& pt) const {
 
     const int distx = Value(delta.x);
     const int disty = Value(delta.y);
+
+    //std::cout << "Radius: " << RADIUS << "  dist: " << std::sqrt<double>(distx*distx + disty*disty) << std::endl;
 
     return distx*distx + disty*disty <= RADIUS2;
 }
