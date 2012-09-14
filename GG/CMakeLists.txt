@@ -328,15 +328,17 @@ if (DOXYGEN_FOUND)
             COMMAND ${DOXYGEN_EXECUTABLE}
             WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}/doc
         )
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_HOME_DIRECTORY}/doc/GG
-            ${CMAKE_BINARY_DIR}/doc/GG
-        )
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E remove_directory
-            ${CMAKE_HOME_DIRECTORY}/doc/GG
-        )
+        if (NOT ${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_HOME_DIRECTORY})
+            execute_process(
+                COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_HOME_DIRECTORY}/doc/GG
+                ${CMAKE_BINARY_DIR}/doc/GG
+            )
+            execute_process(
+                COMMAND ${CMAKE_COMMAND} -E remove_directory
+                ${CMAKE_HOME_DIRECTORY}/doc/GG
+            )
+        endif ()
     endif ()
     if (BUILD_DOCUMENTATION AND NOT NO_DOCS_PACKAGE)
         install(
