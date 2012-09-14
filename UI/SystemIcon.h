@@ -3,30 +3,32 @@
 #ifndef _SystemIcon_h_
 #define _SystemIcon_h_
 
-#include <GG/Button.h>
 #include "CUIDrawUtil.h"
+#include <GG/Control.h>
 
-class Fleet;
 class FleetButton;
-class System;
 namespace GG {
     class StaticGraphic;
     class DynamicGraphic;
     class TextControl;
+    class Texture;
 }
 
-/** A TextControl-like GG::Control that displays the name of a system in the color(s) of the owning empire(s). 
-    This class is derived from GG::Control because GG::ListBox::Row accepts GG::Control but not GG::Wnd being
-    added to them.  OwnerColoredSystemName are added to the list of systems on the SidePanel. */
+/** A TextControl-like GG::Control that displays the name of a system in the
+  * color(s) of the owning empire(s).  This class is derived from GG::Control
+  * because GG::ListBox::Row accepts GG::Control but not GG::Wnd being added
+  * to them.  OwnerColoredSystemName are added to the list of systems on the
+  * SidePanel. */
 class OwnerColoredSystemName : public GG::Control {
 public:
     OwnerColoredSystemName(int system_id, int font_size, bool blank_unexplored_and_none);
     virtual void Render();
 };
 
-/** a GUI control that allows interaction with a star system.  This class allows user interaction with star systems on
-    the galaxy map.  It contains the graphic to display the system, along with the object ID of the UniverseObject
-    associated with it. */
+/** A control that allows interaction with a star system.  This class allows
+  * user interaction with star systems on the galaxy map.  It contains the
+  * graphic to display the system, along with the object ID of the
+  * UniverseObject associated with it. */
 class SystemIcon : public GG::Control {
 public:
     //! \name Signal Types //!@{
