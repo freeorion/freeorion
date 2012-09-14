@@ -108,7 +108,7 @@ void FieldIcon::Refresh() {
     const FieldType* type = GetFieldType(field->FieldTypeName());
     if (!type)
         return;
-    m_texture = ui->GetTexture(ClientUI::ArtDir() / type->Graphic());
+    m_texture = ui->GetTexture(ClientUI::ArtDir() / type->Graphic(), true);
 }
 
 void FieldIcon::Render()

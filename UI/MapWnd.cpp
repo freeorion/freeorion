@@ -994,72 +994,20 @@ void MapWnd::RenderStarfields() {
 }
 
 void MapWnd::RenderFields() {
-    const ObjectMap& objects = GetUniverse().Objects();
-    const std::vector<const Field*> fields = objects.FindObjects<Field>();
-    //const std::set<int> visible_object_ids = GetUniverse().EmpireVisibleObjectIDs();
-
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    glEnableClientState(GL_VERTEX_ARRAY);
-
-    const double TWO_PI = 2.0*3.1415926536;
-    const GG::Pt UNIT(GG::X1, GG::Y1);
-
-    glLineWidth(1.5);
     glPushMatrix();
     glLoadIdentity();
-    glEnable(GL_LINE_SMOOTH);
-    glDisable(GL_TEXTURE_2D);
-    // draw circle for each field
-    for (std::vector<const Field*>::const_iterator field_it = fields.begin(); field_it != fields.end(); ++field_it) {
-        const Field* field = *field_it;
-
-        GG::Clr circle_colour = GG::CLR_MAGENTA;
-
-        GG::Pt circle_centre = ScreenCoordsFromUniversePosition(field->X(), field->Y());
-        double size = field->CurrentMeterValue(METER_SIZE);
-        double radius = size*ZoomFactor();
-        if (radius < ClientUI::SystemTinyIconSizeThreshold())
-            radius = ClientUI::SystemTinyIconSizeThreshold();
-
-        GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
-        GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
-
-        glColor(circle_colour);
-        CircleArc(ul, lr, 0.0, TWO_PI, false);
-    }
-
-    glEnable(GL_TEXTURE_2D);
-
     glColor(GG::CLR_WHITE);
-    for (std::vector<const Field*>::const_iterator field_it = fields.begin(); field_it != fields.end(); ++field_it) {
-        const Field* field = *field_it;
-        const std::string& field_type_name = field->FieldTypeName();
-        if (field_type_name.empty())
-            continue;
-        const FieldType* ft = GetFieldType(field_type_name);
-        if (!ft)
-            continue;
-        const std::string& texture_name = ft->Graphic();
-        if (texture_name.empty())
-            continue;
-
-        GG::Pt circle_centre = ScreenCoordsFromUniversePosition(field->X(), field->Y());
-        double radius = field->CurrentMeterValue(METER_SIZE)*ZoomFactor();
-        if (radius < 10.0)
-            continue;
-
-        GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
-        GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
-
-        boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / texture_name, true);
+    for (std::map<int, FieldIcon*>::const_iterator it = m_field_icons.begin();
+         it != m_field_icons.end(); ++it)
+    {
+        const FieldIcon* icon = it->second;
+        GG::Pt ul = icon->UpperLeft();
+        GG::Pt lr = icon->LowerRight();
+        boost::shared_ptr<GG::Texture> texture = icon->FieldTexture();
         if (texture)
             texture->OrthoBlit(ul, lr);
     }
-
     glPopMatrix();
-    glLineWidth(1.0);
-
-    glPopClientAttrib();
 }
 
 void MapWnd::RenderGalaxyGas() {
