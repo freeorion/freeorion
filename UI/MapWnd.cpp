@@ -19,6 +19,7 @@
 #include "SidePanel.h"
 #include "SitRepPanel.h"
 #include "SystemIcon.h"
+#include "FieldIcon.h"
 #include "TurnProgressWnd.h"
 #include "ShaderProgram.h"
 #include "../util/Directories.h"
@@ -1857,6 +1858,7 @@ void MapWnd::InitTurnRendering() {
     ClearProjectedFleetMovementLines();
 
 
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
 
 
     // remove old system icons
@@ -1864,21 +1866,18 @@ void MapWnd::InitTurnRendering() {
         DeleteChild(it->second);
     m_system_icons.clear();
 
-
-    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-
     // create system icons
     std::vector<const System*> systems = known_objects.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
-        const System* start_system = systems[i];
+        const System* system = systems[i];
 
         // skip known destroyed objects
-        if (this_client_known_destroyed_objects.find(start_system->ID()) != this_client_known_destroyed_objects.end())
+        if (this_client_known_destroyed_objects.find(system->ID()) != this_client_known_destroyed_objects.end())
             continue;
 
         // create new system icon
-        SystemIcon* icon = new SystemIcon(GG::X0, GG::Y0, GG::X(10), start_system->ID());
-        m_system_icons[start_system->ID()] = icon;
+        SystemIcon* icon = new SystemIcon(GG::X0, GG::Y0, GG::X(10), system->ID());
+        m_system_icons[system->ID()] = icon;
         icon->InstallEventFilter(this);
         if (SidePanel::SystemID() == systems[i]->ID())
             icon->SetSelected(true);
@@ -1892,14 +1891,47 @@ void MapWnd::InitTurnRendering() {
         GG::Connect(icon->MouseLeavingSignal,       &MapWnd::MouseLeavingSystem,        this);
     }
 
-
     // create buffers for system icon and galaxy gas rendering, and starlane rendering
     InitSystemRenderingBuffers();
     InitStarlaneRenderingBuffers();
 
-
     // position system icons
     DoSystemIconsLayout();
+
+
+    // remove old field icons
+    for (std::map<int, FieldIcon*>::iterator it = m_field_icons.begin(); it != m_field_icons.end(); ++it)
+        DeleteChild(it->second);
+    m_field_icons.clear();
+
+    // create system icons
+    std::vector<const Field*> fields = known_objects.FindObjects<Field>();
+    for (unsigned int i = 0; i < fields.size(); ++i) {
+        const Field* field = fields[i];
+
+        // skip known destroyed objects
+        if (this_client_known_destroyed_objects.find(field->ID()) != this_client_known_destroyed_objects.end())
+            continue;
+
+        // create new system icon
+        FieldIcon* icon = new FieldIcon(GG::X0, GG::Y0, field->ID());
+        m_field_icons[field->ID()] = icon;
+        icon->InstallEventFilter(this);
+        //if (SidePanel::SystemID() == systems[i]->ID())
+        //    icon->SetSelected(true);
+        AttachChild(icon);
+
+        // connect UI response signals.  TODO: Make these configurable in GUI?
+        //GG::Connect(icon->LeftClickedSignal,        &MapWnd::SystemLeftClicked,         this);
+        //GG::Connect(icon->RightClickedSignal,       &MapWnd::SystemRightClicked,        this);
+        //GG::Connect(icon->LeftDoubleClickedSignal,  &MapWnd::SystemDoubleClicked,       this);
+        //GG::Connect(icon->MouseEnteringSignal,      &MapWnd::MouseEnteringSystem,       this);
+        //GG::Connect(icon->MouseLeavingSignal,       &MapWnd::MouseLeavingSystem,        this);
+    }
+
+    // position field icons
+    DoFieldIconsLayout();
+
 
     // create fleet buttons and move lines.  needs to be after InitStarlaneRenderingBuffers so that m_starlane_endpoints is populated
     RefreshFleetButtons();
@@ -2645,10 +2677,9 @@ bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 
 void MapWnd::DoSystemIconsLayout() {
     // position and resize system icons and gaseous substance
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
     const int SYSTEM_ICON_SIZE = SystemIconSize();
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
-        const System* system = GetEmpireKnownSystem(it->first, empire_id);
+        const System* system = GetSystem(it->first);
         if (!system) {
             Logger().errorStream() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << it->first;
             continue;
@@ -2657,6 +2688,25 @@ void MapWnd::DoSystemIconsLayout() {
         GG::Pt icon_ul(GG::X(static_cast<int>(system->X()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)),
                        GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
         it->second->SizeMove(icon_ul, icon_ul + GG::Pt(GG::X(SYSTEM_ICON_SIZE), GG::Y(SYSTEM_ICON_SIZE)));
+    }
+}
+
+void MapWnd::DoFieldIconsLayout() {
+    // position and resize field icons
+    for (std::map<int, FieldIcon*>::const_iterator field_it = m_field_icons.begin();
+         field_it != m_field_icons.end(); ++field_it)
+    {
+        const Field* field = GetField(field_it->first);
+        if (!field) {
+            Logger().errorStream() << "MapWnd::DoFieldIconsLayout couldn't get field with id " << field_it->first;
+            continue;
+        }
+
+        double RADIUS = ZoomFactor()*field->CurrentMeterValue(METER_SIZE);
+
+        GG::Pt icon_ul(GG::X(static_cast<int>(field->X()*ZoomFactor() - RADIUS)),
+                       GG::Y(static_cast<int>(field->Y()*ZoomFactor() - RADIUS)));
+        field_it->second->SizeMove(icon_ul, icon_ul + GG::Pt(GG::X(2*RADIUS), GG::Y(2*RADIUS)));
     }
 }
 
@@ -3108,7 +3158,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position)
     // set new zoom level
     m_zoom_steps_in = new_steps_in;
 
-    
+
     // keeps position the same after zooming
     // used to keep the mouse at the same position when doing mouse wheel zoom
     const GG::Pt position_center_delta = GG::Pt(position.x - center_x, position.y - center_y); 
@@ -3131,6 +3181,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position)
 
 
     DoSystemIconsLayout();
+    DoFieldIconsLayout();
 
 
     // if fleet buttons need to change size, need to fully refresh them (clear and recreate).  If they are the

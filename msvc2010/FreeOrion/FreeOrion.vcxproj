@@ -146,6 +146,7 @@
     <ClInclude Include="..\..\UI\Encyclopedia.h" />
     <ClInclude Include="..\..\UI\EncyclopediaDetailPanel.h" />
     <ClInclude Include="..\..\UI\EntityRenderer.h" />
+    <ClInclude Include="..\..\UI\FieldIcon.h" />
     <ClInclude Include="..\..\UI\FleetButton.h" />
     <ClInclude Include="..\..\UI\FleetWnd.h" />
     <ClInclude Include="..\..\UI\GalaxySetupWnd.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="..\..\universe\Effect.h" />
     <ClInclude Include="..\..\universe\EffectAccounting.h" />
     <ClInclude Include="..\..\universe\Enums.h" />
+    <ClInclude Include="..\..\universe\Field.h" />
     <ClInclude Include="..\..\universe\Fleet.h" />
     <ClInclude Include="..\..\universe\InhibitableSignal.h" />
     <ClInclude Include="..\..\universe\Meter.h" />
@@ -258,6 +260,7 @@
     <ClCompile Include="..\..\UI\DesignWnd.cpp" />
     <ClCompile Include="..\..\UI\EncyclopediaDetailPanel.cpp" />
     <ClCompile Include="..\..\UI\EntityRenderer.cpp" />
+    <ClCompile Include="..\..\UI\FieldIcon.cpp" />
     <ClCompile Include="..\..\UI\FleetButton.cpp" />
     <ClCompile Include="..\..\UI\FleetWnd.cpp" />
     <ClCompile Include="..\..\UI\GalaxySetupWnd.cpp" />

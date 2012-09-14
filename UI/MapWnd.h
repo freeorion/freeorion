@@ -27,6 +27,7 @@ struct SaveGameUIData;
 class SidePanel;
 class SitRepPanel;
 class SystemIcon;
+class FieldIcon;
 class StatisticIcon;
 class CUIToolBar;
 class UniverseObject;
@@ -215,6 +216,7 @@ private:
     std::pair<double, double>   MovingFleetMapPositionOnLane(const Fleet* fleet) const; //!< returns position on map where a moving fleet should be displayed.  This is different from the fleet's actual universe position due to the squishing of fleets moving along a lane into the space between the system circles at the ends of the lane
 
     void            DoSystemIconsLayout();                      //!< does layout of system icons
+    void            DoFieldIconsLayout();                       //!< does layout of field icons
 
     void            RefreshFleetSignals();                      //!< disconnects and reconnects all fleet change signals
 
@@ -347,6 +349,7 @@ private:
     double                      m_zoom_steps_in;    //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
     SidePanel*                  m_side_panel;       //!< planet view panel on the side of the main map
     std::map<int, SystemIcon*>  m_system_icons;     //!< system icons in the main map, indexed by system id
+    std::map<int, FieldIcon*>   m_field_icons;      //!< field icons in the main map, indexed by field id
     SitRepPanel*                m_sitrep_panel;     //!< sitrep panel
     ResearchWnd*                m_research_wnd;     //!< research screen
     ProductionWnd*              m_production_wnd;   //!< production screen
