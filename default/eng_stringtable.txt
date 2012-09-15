@@ -448,8 +448,12 @@ A fearsome space monster with the power to destroy entire star systems.
 # Fields #
 ##########
 
-ION_STORM
+FLD_ION_STORM
 Ion Storm
+
+FLD_ION_STORM_DESC
+Magnetic vortex of relativistic charged particles that can interfere with sensors and damage ships and planets.
+
 
 ##############################
 # Predefined Starting Fleets #

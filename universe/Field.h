@@ -55,25 +55,18 @@ public:
     FieldType() :
         m_name(""),
         m_description(""),
-        m_location(0),
+        m_stealth(0.0),
+        //m_location(0),
         m_effects(0),
         m_graphic("")
     {}
 
     /** basic ctor */
     FieldType(const std::string& name, const std::string& description,
-              const std::vector<std::string>& tags,
-              const Condition::ConditionBase* location,
+              double stealth, const std::vector<std::string>& tags,
+//              const Condition::ConditionBase* location,
               const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-              const std::string& graphic) :
-        m_name(name),
-        m_description(description),
-        m_tags(tags),
-        m_location(location),
-        m_effects(effects),
-        m_graphic(graphic)
-    {}
-
+              const std::string& graphic);
     ~FieldType(); ///< dtor
     //@}
 
@@ -81,8 +74,9 @@ public:
     const std::string&              Name() const            { return m_name; }          ///< returns the unique name for this type of field
     const std::string&              Description() const     { return m_description; }   ///< returns a text description of this type of building
     std::string                     Dump() const;                                       ///< returns a data file format representation of this object
+    double                          Stealth() const         { return m_stealth; }       ///< returns stealth of field type
     const std::vector<std::string>& Tags() const            { return m_tags; }
-    const Condition::ConditionBase* Location() const        { return m_location; }      ///< returns the condition that determines the locations where this building can be produced
+//    const Condition::ConditionBase* Location() const        { return m_location; }      ///< returns the condition that determines the locations where this building can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                     Effects() const         { return m_effects; }       ///< returns the EffectsGroups that encapsulate the effects of this FieldType
     const std::string&              Graphic() const         { return m_graphic; }       ///< returns the name of the grapic file for this field type
@@ -91,8 +85,9 @@ public:
 private:
     std::string                                                 m_name;
     std::string                                                 m_description;
+    double                                                      m_stealth;
     std::vector<std::string>                                    m_tags;
-    const Condition::ConditionBase*                             m_location;
+//    const Condition::ConditionBase*                             m_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
     std::string                                                 m_graphic;
 };

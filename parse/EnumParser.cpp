@@ -403,18 +403,20 @@ namespace parse {
             |    tok.SetPopulation_ [ _val = METER_POPULATION ]
             |    tok.SetResearch_ [ _val = METER_RESEARCH ]
             |    tok.SetTrade_ [ _val = METER_TRADE ]
-            
+
             |    tok.SetDefense_ [ _val = METER_DEFENSE ]
             |    tok.SetFuel_ [ _val = METER_FUEL ]
             |    tok.SetShield_ [ _val = METER_SHIELD ]
             |    tok.SetStructure_ [ _val = METER_STRUCTURE ]
             |    tok.SetTroops_ [ _val = METER_TROOPS ]
-            
+
             |    tok.SetSupply_ [ _val = METER_SUPPLY ]
             |    tok.SetStealth_ [ _val = METER_STEALTH ]
             |    tok.SetDetection_ [ _val = METER_DETECTION ]
             |    tok.SetBattleSpeed_ [ _val = METER_BATTLE_SPEED ]
             |    tok.SetStarlaneSpeed_ [ _val = METER_STARLANE_SPEED ]
+
+            |    tok.SetSize_ [ _val = METER_SIZE ]
             ;
         static bool once = true;
         if (once) {

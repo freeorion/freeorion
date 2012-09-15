@@ -192,6 +192,21 @@ namespace {
                     )
                 ;
 
+            move_towards
+                =    tok.MoveTowards_
+                >>  (
+                        (
+                            parse::label(Speed_name) >> double_value_ref[ _a = _1 ]
+                        >>  parse::label(Target_name) >> parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ]
+                        )
+                    |   (
+                            parse::label(Speed_name) >> double_value_ref [ _a = _1 ]
+                        >>  parse::label(X_name) >>     double_value_ref [ _b = _1 ]
+                        >>  parse::label(Y_name) >>     double_value_ref [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
+                        )
+                    )
+                ;
+
             set_destination
                 =    tok.SetDestination_
                 >    parse::label(Destination_name) > parse::detail::condition_parser [ _val = new_<Effect::SetDestination>(_1) ]
@@ -324,6 +339,7 @@ namespace {
                 //|    create_ship_4
                 |    move_to
                 |    move_in_orbit
+                |    move_towards
                 |    set_destination
                 |    set_aggression
                 |    destroy
@@ -358,6 +374,7 @@ namespace {
             //create_ship_4.name("CreateShip (string DesignName only)");
             move_to.name("MoveTo");
             move_in_orbit.name("MoveInOrbit");
+            move_towards.name("MoveTowards");
             set_destination.name("SetDestination");
             set_aggression.name("SetAggression");
             destroy.name("Destroy");
@@ -395,6 +412,7 @@ namespace {
             //debug(create_ship_4);
             debug(move_to);
             debug(move_in_orbit);
+            debug(move_towards)
             debug(set_destination);
             debug(set_aggression);
             debug(destroy);
@@ -527,6 +545,7 @@ namespace {
         //string_and_intref_and_intref_rule   create_ship_4;
         parse::effect_parser_rule           move_to;
         doubles_rule                        move_in_orbit;
+        doubles_rule                        move_towards;
         parse::effect_parser_rule           set_destination;
         parse::effect_parser_rule           set_aggression;
         parse::effect_parser_rule           destroy;

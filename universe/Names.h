@@ -93,6 +93,7 @@
     (External)
 
 #define NAMES_SEQ_2                             \
+    (FieldType)                                 \
     (Fighters)                                  \
     (FighterType)                               \
     (FighterWeaponRange)                        \
@@ -156,7 +157,8 @@
     (MonsterFleet)                              \
     (MountableSlotTypes)                        \
     (MoveInOrbit)                               \
-    (MoveTo)
+    (MoveTo)                                    \
+    (MoveTowards)
 
 #define NAMES_SEQ_3                             \
     (Name)                                      \
@@ -265,6 +267,7 @@
     (SetResearch)                               \
     (SetROF)                                    \
     (SetShield)                                 \
+    (SetSize)                                   \
     (SetSpecies)                                \
     (SetSpeed)                                  \
     (SetStarlaneSpeed)                          \

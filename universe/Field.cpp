@@ -16,6 +16,25 @@ std::string DumpIndent();
 
 extern int g_indent;
 
+namespace {
+    boost::shared_ptr<const Effect::EffectsGroup>
+    IncreaseMeter(MeterType meter_type, double increase) {
+        typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
+        typedef std::vector<Effect::EffectBase*> Effects;
+        Condition::Source* scope = new Condition::Source;
+        Condition::Source* activation = new Condition::Source;
+        ValueRef::ValueRefBase<double>* vr =
+            new ValueRef::Operation<double>(
+                ValueRef::PLUS,
+                new ValueRef::Variable<double>(std::vector<adobe::name_t>(1, Value_name)),
+                new ValueRef::Constant<double>(increase)
+            );
+        return EffectsGroupPtr(
+            new Effect::EffectsGroup(
+                scope, activation, Effects(1, new Effect::SetMeter(meter_type, vr))));
+    }
+}
+
 /////////////////////////////////////////////////
 // Field                                       //
 /////////////////////////////////////////////////
@@ -137,8 +156,25 @@ void Field::ClampMeters() {
 /////////////////////////////////////////////////
 // FieldType                                   //
 /////////////////////////////////////////////////
+FieldType::FieldType(const std::string& name, const std::string& description,
+                     double stealth, const std::vector<std::string>& tags,
+                     //const Condition::ConditionBase* location,
+                     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+                     const std::string& graphic) :
+    m_name(name),
+    m_description(description),
+    m_stealth(stealth),
+    m_tags(tags),
+    //m_location(location),
+    m_effects(effects),
+    m_graphic(graphic)
+{
+    if (m_stealth != 0)
+        m_effects.push_back(IncreaseMeter(METER_STEALTH,    m_stealth));
+}
+
 FieldType::~FieldType()
-{ delete m_location; }
+{ /*delete m_location;*/ }
 
 std::string FieldType::Dump() const {
     using boost::lexical_cast;
@@ -148,9 +184,9 @@ std::string FieldType::Dump() const {
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
     retval += DumpIndent() + "location = \n";
-    ++g_indent;
-    retval += m_location->Dump();
-    --g_indent;
+    //++g_indent;
+    //retval += m_location->Dump();
+    //--g_indent;
     if (m_effects.size() == 1) {
         retval += DumpIndent() + "effectsgroups =\n";
         ++g_indent;
@@ -183,7 +219,9 @@ FieldTypeManager::FieldTypeManager() {
 
     s_instance = this;
 
-    //parse::fields(GetResourceDir() / "fields.txt", m_field_types);
+    parse::fields(GetResourceDir() / "fields.txt", m_field_types);
+
+
     std::vector<Effect::EffectBase*> effects;
     std::vector<adobe::name_t> property_name;
     property_name.push_back(Source_name);
@@ -197,8 +235,8 @@ FieldTypeManager::FieldTypeManager() {
     Effect::EffectsGroup* group = new Effect::EffectsGroup(new Condition::Source(), new Condition::Source(), effects);
     effects_groups.push_back(boost::shared_ptr<const Effect::EffectsGroup>(group));
 
-    m_field_types["ION_STORM"] = new FieldType("ION_STORM", "ION_STORM_DESC", std::vector<std::string>(),
-                                               new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_SYSTEM)),
+    m_field_types["ION_STORM"] = new FieldType("ION_STORM", "ION_STORM_DESC", 0.01, std::vector<std::string>(),
+//                                               new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_SYSTEM)),
                                                effects_groups, "fields/rainbow_storm.png");
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
