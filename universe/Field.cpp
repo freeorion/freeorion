@@ -57,6 +57,8 @@ Field::Field(const std::string& field_type, double x, double y, double radius) :
 
     AddMeter(METER_STARLANE_SPEED);
     AddMeter(METER_SIZE);
+
+    UniverseObject::GetMeter(METER_SIZE)->Set(radius, radius);
 }
 
 Field* Field::Clone(int empire_id) const {
@@ -143,7 +145,7 @@ void Field::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
     GetMeter(METER_STARLANE_SPEED)->ResetCurrent();
-    GetMeter(METER_SIZE)->ResetCurrent();
+    // intentionally not resetting size, so that it is presistant
 }
 
 void Field::ClampMeters() {

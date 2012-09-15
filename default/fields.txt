@@ -1,0 +1,20 @@
+FieldType
+    name = "FLD_ION_STORM"
+    description = "FLD_ION_STORM_DESC"
+    stealth = 0.01
+    tags = [ "EXOTIC" ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetStarlaneSpeed value = -10    // move away from random object
+                MoveTowards speed = Source.StarlaneSpeed target = Star type = [ Blue White ]
+                SetSize Value * 0.9             // shrink by 10% per turn
+                SetSize Value + 1.0 * Number condition = And [
+                    Star type = [ Blue White Yellow Orange ]
+                    WithinDistance distance = Source.Size condition = Source
+                ]
+            ]        
+    graphic = "fields/rainbow_storm.png"
+
+
