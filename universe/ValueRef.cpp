@@ -105,6 +105,7 @@ namespace {
             map[Defense_name] = METER_DEFENSE;
             map[MaxTroops_name] = METER_MAX_TROOPS;
             map[Troops_name] = METER_TROOPS;
+            //map[RebelTroops_name] = METER_REBEL_TROOPS;
             map[Supply_name] = METER_SUPPLY;
             map[Stealth_name] = METER_STEALTH;
             map[Detection_name] = METER_DETECTION;
@@ -119,6 +120,7 @@ namespace {
             map[AntiFighterDamage_name] = METER_ANTI_FIGHTER_DAMAGE;
             map[LaunchRate_name] = METER_LAUNCH_RATE;
             map[FighterWeaponRange_name] = METER_FIGHTER_WEAPON_RANGE;
+            map[Size_name] = METER_SIZE;
             once = false;
         }
         MeterType retval = INVALID_METER_TYPE;
@@ -127,7 +129,6 @@ namespace {
             retval = it->second;
         return retval;
     }
-
 }
 
 std::string ValueRef::ReconstructName(const std::vector<adobe::name_t>& property_name,

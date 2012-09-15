@@ -46,6 +46,7 @@ namespace {
                 |    tok.TradeStockpile_
                 |    tok.DistanceToSource_
                 |    tok.SizeAsDouble_
+                |    tok.Size_
                 ;
 
             constant
