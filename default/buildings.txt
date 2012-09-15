@@ -622,8 +622,8 @@ BuildingType
 BuildingType
     name = "BLD_GAIA_TRANS"
     description = "BLD_GAIA_TRANS_DESC"
-    buildcost = 48
-    buildtime = 4
+    buildcost = 400
+    buildtime = 15
     location = And [
         OwnedBy TheEmpire Source.Owner
         Planet environment = Good
@@ -840,8 +840,8 @@ BuildingType
 BuildingType
     name = "BLD_TERRAFORM"
     description = "BLD_TERRAFORM_DESC"
-    buildcost = 72
-    buildtime = 1
+    buildcost = 300
+    buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
@@ -1030,7 +1030,7 @@ BuildingType
     name = "BLD_ART_PLANET"
     description = "BLD_ART_PLANET_DESC"
     buildcost = 2500
-    buildtime = 1
+    buildtime = 15
     location = And [
         OwnedBy TheEmpire Source.Owner
         Planet type = [Asteroids GasGiant]
