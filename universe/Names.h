@@ -59,6 +59,7 @@
     (CounterClockwiseNextPlanetType)            \
     (CreateBuilding)                            \
     (CreatedOnTurn)                             \
+    (CreateField)                               \
     (CreatePlanet)                              \
     (CreateShip)                                \
     (CreationTurn)                              \

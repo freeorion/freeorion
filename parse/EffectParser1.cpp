@@ -138,20 +138,20 @@ namespace {
 
             create_planet
                 =    tok.CreatePlanet_
-                >    parse::label(Type_name)        > planet_type_value_ref [ _a = _1 ]
-                >    parse::label(PlanetSize_name)  > planet_size_value_ref [ new_<Effect::CreatePlanet>(_a, _1) ]
+                >>   parse::label(Type_name)       >> planet_type_value_ref [ _a = _1 ]
+                >>   parse::label(PlanetSize_name) >> planet_size_value_ref [ new_<Effect::CreatePlanet>(_a, _1) ]
                 ;
 
             create_building
                 =    tok.CreateBuilding_
-                >    parse::label(Name_name) > string_value_ref [ _val = new_<Effect::CreateBuilding>(_1) ]
+                >>   parse::label(Name_name)       >> string_value_ref [ _val = new_<Effect::CreateBuilding>(_1) ]
                 ;
 
             create_ship_1
                 =    tok.CreateShip_
                 >>   parse::label(DesignName_name) >> int_value_ref [ _b = _1 ] // TODO: DesignName -> DesignID.
-                >    parse::label(Empire_name)     >  int_value_ref [ _c = _1 ]
-                >    parse::label(Species_name)    >  string_value_ref [ _val = new_<Effect::CreateShip>(_b, _c, _1) ]
+                >>   parse::label(Empire_name)     >> int_value_ref [ _c = _1 ]
+                >>   parse::label(Species_name)    >> string_value_ref [ _val = new_<Effect::CreateShip>(_b, _c, _1) ]
                 ;
 
             create_ship_2
@@ -169,7 +169,13 @@ namespace {
 
             create_ship_4
                 =    tok.CreateShip_
-                >    parse::label(DesignName_name) > tok.string [ _val = new_<Effect::CreateShip>(_1) ]
+                >>   parse::label(DesignName_name) >> tok.string [ _val = new_<Effect::CreateShip>(_1) ]
+                ;
+
+            create_field
+                =   tok.CreateField_
+                >>  parse::label(FieldType_name)   >> tok.string [ _a = _1 ]
+                >>  parse::label(Size_name)        >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _1) ]
                 ;
 
             //move_to
@@ -322,6 +328,7 @@ namespace {
                 |    create_ship_2
                 |    create_ship_3
                 |    create_ship_4
+                |    create_field
                 //|    move_to
                 //|    move_in_orbit
                 //|    set_destination
@@ -356,6 +363,7 @@ namespace {
             create_ship_2.name("CreateShip (empire and species)");
             create_ship_3.name("CreateShip (string DesignName and empire)");
             create_ship_4.name("CreateShip (string DesignName only)");
+            create_field.name("CreateField");
             //move_to.name("MoveTo");
             //move_in_orbit.name("MoveInOrbit");
             //set_destination.name("SetDestination");
@@ -393,6 +401,7 @@ namespace {
             debug(create_ship_2);
             debug(create_ship_3);
             debug(create_ship_4);
+            debug(create_field);
             //debug(move_to);
             //debug(move_in_orbit);
             //debug(set_destination);
@@ -525,6 +534,7 @@ namespace {
         string_and_intref_and_intref_rule   create_ship_2;
         string_and_intref_and_intref_rule   create_ship_3;
         string_and_intref_and_intref_rule   create_ship_4;
+        string_and_doubleref_rule           create_field;
         //parse::effect_parser_rule           move_to;
         //doubles_rule                        move_in_orbit;
         //parse::effect_parser_rule           set_destination;

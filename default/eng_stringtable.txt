@@ -4577,6 +4577,12 @@ Creates a new ship of design %1% owned by the %2% empire crewed by %3%
 DESC_CREATE_SHIP_SIMPLE
 Creates a new ship of design %1% with no owner and no species
 
+DESC_CREATE_FIELD_SIZE
+Creates a new field of type %1% with radius %2%
+
+DESC_CREATE_FIELD
+Creates a new field of type %1%
+
 
 # Conditions
 

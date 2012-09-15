@@ -35,6 +35,7 @@ namespace Effect {
     class CreatePlanet;
     class CreateBuilding;
     class CreateShip;
+    class CreateField;
     class Destroy;
     class AddSpecial;
     class RemoveSpecial;
@@ -438,6 +439,26 @@ private:
     const ValueRef::ValueRefBase<int>*          m_design_id;
     const ValueRef::ValueRefBase<int>*          m_empire_id;
     const ValueRef::ValueRefBase<std::string>*  m_species_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Creates a new Field with specified \a field_type_name FieldType
+  * of the specified \a size. */
+class Effect::CreateField : public Effect::EffectBase {
+public:
+    CreateField(const std::string& field_type_name,
+                const ValueRef::ValueRefBase<double>* size = 0);
+    virtual ~CreateField();
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+private:
+    const std::string                       m_field_type_name;
+    const ValueRef::ValueRefBase<double>*   m_size;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -911,6 +932,14 @@ void Effect::CreateShip::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_design_name)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
+}
+
+template <class Archive>
+void Effect::CreateField::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_field_type_name)
+        & BOOST_SERIALIZATION_NVP(m_size);
 }
 
 template <class Archive>

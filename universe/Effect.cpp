@@ -1437,6 +1437,80 @@ std::string CreateShip::Dump() const {
     return retval;
 }
 
+///////////////////////////////////////////////////////////
+// CreateField                                           //
+///////////////////////////////////////////////////////////
+CreateField::CreateField(const std::string& field_type_name,
+                         const ValueRef::ValueRefBase<double>* size/* = 0*/) :
+    m_field_type_name(field_type_name),
+    m_size(size)
+{}
+
+CreateField::~CreateField()
+{ delete m_size; }
+
+void CreateField::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target) {
+        Logger().errorStream() << "CreateField::Execute passed null target";
+        return;
+    }
+    const UniverseObject* target = context.effect_target;
+
+    const FieldType* field_type = GetFieldType(m_field_type_name);
+    if (!field_type) {
+        Logger().errorStream() << "CreateField::Execute couldn't get field type with name: " << m_field_type_name;
+        return;
+    }
+
+    double size = 10.0;
+    if (m_size)
+        size = m_size->Eval(context);
+    if (size < 1.0) {
+        Logger().errorStream() << "CreateField::Execute given very small / negative size: " << size << "  ... so resetting to 1.0";
+        size = 1.0;
+    }
+    if (size > 10000) {
+        Logger().errorStream() << "CreateField::Execute given very large size: " << size << "  ... so resetting to 10000";
+        size = 10000;
+    }
+
+    Field* field = new Field(m_field_type_name, target->X(), target->Y(), size);
+    if (!field) {
+        Logger().errorStream() << "CreateField::Execute couldn't create field!";
+        return;
+    }
+
+    int new_field_id = GetNewObjectID();
+    GetUniverse().InsertID(field, new_field_id);
+}
+
+std::string CreateField::Description() const {
+    std::string size_str;
+    if (m_size) {
+        if (ValueRef::ConstantExpr(m_size)) {
+            size_str = boost::lexical_cast<std::string>(m_size->Eval());
+        } else {
+            size_str = m_size->Description();
+        }
+        return str(FlexibleFormat(UserString("DESC_CREATE_FIELD_SIZE"))
+                   % UserString(m_field_type_name)
+                   % size_str);
+    } else {
+        return str(FlexibleFormat(UserString("DESC_CREATE_FIELD"))
+                   % UserString(m_field_type_name));
+    }
+}
+
+std::string CreateField::Dump() const {
+    std::string retval;
+    if (m_size)
+        retval = DumpIndent() + "CreateField fieldtype = " + m_field_type_name + " size = " + m_size->Dump();
+    else
+        retval = DumpIndent() + "CreateField fieldtype = " + m_field_type_name;
+    retval += "\n";
+    return retval;
+}
+
 
 ///////////////////////////////////////////////////////////
 // Destroy                                               //
