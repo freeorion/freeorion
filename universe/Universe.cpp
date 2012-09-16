@@ -1995,6 +1995,9 @@ void Universe::RecursiveDestroy(int object_id) {
 
     } else if (universe_object_cast<Building*>(obj)) {
         Destroy(object_id);
+
+    } else if (universe_object_cast<Field*>(obj)) {
+        Destroy(object_id);
     }
     // else ??? object is of some type unknown as of this writing.
 }
