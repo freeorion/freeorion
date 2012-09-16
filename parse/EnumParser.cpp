@@ -338,12 +338,15 @@ namespace parse {
             |    tok.Shield_ [ _val = METER_SHIELD ]
             |    tok.Structure_ [ _val = METER_STRUCTURE ]
             |    tok.Troops_ [ _val = METER_TROOPS ]
+            |    tok.RebelTroops_ [ _val = METER_REBEL_TROOPS ]
 
             |    tok.Supply_ [ _val = METER_SUPPLY ]
             |    tok.Stealth_ [ _val = METER_STEALTH ]
             |    tok.Detection_ [ _val = METER_DETECTION ]
             |    tok.BattleSpeed_ [ _val = METER_BATTLE_SPEED ]
             |    tok.StarlaneSpeed_ [ _val = METER_STARLANE_SPEED ]
+
+            |    tok.Size_ [ _val = METER_SIZE ]
             ;
         static bool once = true;
         if (once) {

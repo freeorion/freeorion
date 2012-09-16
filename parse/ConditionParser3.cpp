@@ -92,8 +92,8 @@ namespace {
             number_of
                 =    (
                         tok.NumberOf_
-                        >   parse::label(Number_name)    > int_value_ref [ _a = _1 ]
-                        >   parse::label(Condition_name) > parse::detail::condition_parser [ _val = new_<Condition::SortedNumberOf>(_a, _1) ]
+                        >>  parse::label(Number_name)    >> int_value_ref [ _a = _1 ]
+                        >>  parse::label(Condition_name) >> parse::detail::condition_parser [ _val = new_<Condition::SortedNumberOf>(_a, _1) ]
                         )
                 |    (
                         (
@@ -101,9 +101,9 @@ namespace {
                             |   tok.MinimumNumberOf_ [ _b = Condition::SORT_MIN ]
                             |   tok.ModeNumberOf_ [ _b = Condition::SORT_MODE ]
                         )
-                        >   parse::label(Number_name)    > int_value_ref [ _a = _1 ]
-                        >   parse::label(SortKey_name)   > double_value_ref [ _c = _1 ]
-                        >   parse::label(Condition_name) > parse::detail::condition_parser [ _val = new_<Condition::SortedNumberOf>(_a, _c, _b, _1) ]
+                        >>  parse::label(Number_name)    >> int_value_ref [ _a = _1 ]
+                        >>  parse::label(SortKey_name)   >> double_value_ref [ _c = _1 ]
+                        >>  parse::label(Condition_name) >> parse::detail::condition_parser [ _val = new_<Condition::SortedNumberOf>(_a, _c, _b, _1) ]
                     )
                 ;
 

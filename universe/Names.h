@@ -218,6 +218,7 @@
     (Random)                                    \
     (Range)                                     \
     (Reason)                                    \
+    (RebelTroops)                               \
     (Red)                                       \
     (Refinement)                                \
     (RemoveSpecial)                             \
