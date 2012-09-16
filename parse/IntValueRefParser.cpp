@@ -69,7 +69,8 @@ namespace {
                         )
                     |   (
                             tok.CurrentTurn_
-                        |  tok.Value_
+                        |   tok.Value_
+                            // add more object-independent ValueRef int functions here
                         )
                         [ push_back(_a, _1) ]
                     )
