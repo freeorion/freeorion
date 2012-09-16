@@ -409,9 +409,7 @@ ValueRef::Variable<T>::Variable(const std::vector<adobe::name_t>& property_name)
 {
     assert(!property_name.empty());
     adobe::name_t ref_type_name = property_name.front();
-    if (ref_type_name == CurrentTurn_name) {
-        m_ref_type = NON_OBJECT_REFERENCE;
-    } else if (ref_type_name == Source_name) {
+    if (ref_type_name == Source_name) {
         m_ref_type = SOURCE_REFERENCE;
     } else if (ref_type_name == Value_name || ref_type_name == Target_name) {
         m_ref_type = EFFECT_TARGET_REFERENCE;
@@ -419,6 +417,8 @@ ValueRef::Variable<T>::Variable(const std::vector<adobe::name_t>& property_name)
         m_ref_type = CONDITION_LOCAL_CANDIDATE_REFERENCE;
     } else if (ref_type_name == RootCandidate_name) {
         m_ref_type = CONDITION_ROOT_CANDIDATE_REFERENCE;
+    } else {
+        m_ref_type = NON_OBJECT_REFERENCE;
     }
 }
 
