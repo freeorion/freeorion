@@ -32,11 +32,11 @@ namespace {
 
         const UniverseObject* obj(0);
         switch(ref_type) {
+        case ValueRef::NON_OBJECT_REFERENCE:                    return context.condition_local_candidate;   break;
         case ValueRef::SOURCE_REFERENCE:                        obj = context.source;                       break;
         case ValueRef::EFFECT_TARGET_REFERENCE:                 obj = context.effect_target;                break;
         case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:      obj = context.condition_root_candidate;     break;
         case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE:
-        case ValueRef::NON_OBJECT_REFERENCE:
         default:                                                obj = context.condition_local_candidate;    break;
         }
 
@@ -309,9 +309,9 @@ namespace ValueRef {
         } else if (property_name == NextSmallerPlanetSize_name) {
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 return p->NextSmallerPlanetSize();
-        } else {
-            throw std::runtime_error("Attempted to read a non-PlanetSize value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type PlanetSize.");
         }
+
+        Logger().errorStream() << "Variable<PlanetSize>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
         return INVALID_PLANET_SIZE;
     }
 
@@ -340,9 +340,9 @@ namespace ValueRef {
         } else if (property_name == CounterClockwiseNextPlanetType_name) {
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 return p->CounterClockwiseNextPlanetType();
-        } else {
-            throw std::runtime_error("Attempted to read a non-PlanetType value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type PlanetType.");
         }
+
+        Logger().errorStream() << "Variable<PlanetType>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
         return INVALID_PLANET_TYPE;
     }
 
@@ -361,9 +361,9 @@ namespace ValueRef {
             }
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 return p->EnvironmentForSpecies();
-        } else {
-            throw std::runtime_error("Attempted to read a non-PlanetEnvironment value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type PlanetEnvironment.");
         }
+
+        Logger().errorStream() << "Variable<PlanetEnvironment>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
         return INVALID_PLANET_ENVIRONMENT;
     }
 
@@ -387,9 +387,9 @@ namespace ValueRef {
                 return OBJ_POP_CENTER;
             else if (dynamic_cast<const ResourceCenter*>(object))
                 return OBJ_PROD_CENTER;
-        } else {
-            throw std::runtime_error("Attempted to read a non-ObjectType value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type ObjectType.");
         }
+
+        Logger().errorStream() << "Variable<UniverseObjectType>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
         return INVALID_UNIVERSE_OBJECT_TYPE;
     }
 
@@ -415,9 +415,9 @@ namespace ValueRef {
         } else if (property_name == NextYoungerStarType_name) {
             if (const System* s = universe_object_cast<const System*>(object))
                 return s->NextYoungerStarType();
-        } else {
-            throw std::runtime_error("Attempted to read a non-StarType value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type StarType.");
-        }
+        } 
+
+        Logger().errorStream() << "Variable<StarType>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
         return INVALID_STAR_TYPE;
     }
 
@@ -428,6 +428,20 @@ namespace ValueRef {
 
         IF_CURRENT_VALUE(double)
 
+        if (m_ref_type == ValueRef::NON_OBJECT_REFERENCE) {
+            if (property_name == CurrentTurn_name) {
+                return CurrentTurn();
+            } else if (property_name == UniverseCentreX_name |
+                       property_name == UniverseCentreY_name)
+            {
+                return GetUniverse().UniverseWidth() / 2;
+            }
+
+            // add more non-object reference double functions here
+            Logger().errorStream() << "Variable<double>::Eval unrecognized non-object property: " << ReconstructName(m_property_name, m_ref_type);
+            return 0.0;
+        }
+
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                                        m_ref_type, context);
         if (!object) {
@@ -436,7 +450,7 @@ namespace ValueRef {
         }
 
         MeterType meter_type = NameToMeter(property_name);
-        if (meter_type != INVALID_METER_TYPE) {
+        if (object && meter_type != INVALID_METER_TYPE) {
             if (object->GetMeter(meter_type))
                 return object->InitialMeterValue(meter_type);
 
@@ -466,15 +480,9 @@ namespace ValueRef {
         } else if (property_name == CurrentTurn_name) {
             return CurrentTurn();
 
-        } else if (property_name == UniverseCentreX_name |
-                   property_name == UniverseCentreY_name)
-        {
-            return GetUniverse().UniverseWidth() / 2;
-
-        } else {
-            throw std::runtime_error("Attempted to read a non-double value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type double.");
         }
 
+        Logger().errorStream() << "Variable<double>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
         return 0.0;
     }
 
@@ -485,11 +493,19 @@ namespace ValueRef {
 
         IF_CURRENT_VALUE(int)
 
+        if (m_ref_type == ValueRef::NON_OBJECT_REFERENCE) {
+            if (property_name == CurrentTurn_name)
+                return CurrentTurn();
+
+            // add more non-object reference int functions here
+            Logger().errorStream() << "Variable<int>::Eval unrecognized non-object property: " << ReconstructName(m_property_name, m_ref_type);
+            return 0;
+        }
+
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(),
                                                        m_ref_type, context);
         if (!object) {
-            Logger().errorStream() << "Variable<int>::Eval unable to follow reference: "
-                                   << ReconstructName(m_property_name, m_ref_type);
+            Logger().errorStream() << "Variable<int>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return 0;
         }
 
@@ -554,12 +570,9 @@ namespace ValueRef {
             if (const System* system = GetSystem(object->SystemID()))
                 return system->OrbitOfObjectID(object->ID());
             return -1;
-        } else if (property_name == CurrentTurn_name) {
-            return CurrentTurn();
-        } else {
-            throw std::runtime_error("Attempted to read a non-int value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type int.");
         }
 
+        Logger().errorStream() << "Variable<int>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
         return 0;
     }
 
@@ -569,6 +582,12 @@ namespace ValueRef {
         const adobe::name_t& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE(std::string)
+
+        if (m_ref_type == ValueRef::NON_OBJECT_REFERENCE) {
+            // add non-object reference string functions here
+            Logger().errorStream() << "Variable<std::string>::Eval unrecognized non-object property: " << ReconstructName(m_property_name, m_ref_type);
+            return "";
+        }
 
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
@@ -589,10 +608,9 @@ namespace ValueRef {
         } else if (property_name == Focus_name) {
             if (const Planet* planet = universe_object_cast<const Planet*>(object))
                 return planet->Focus();
-        } else {
-            throw std::runtime_error("Attempted to read a non-string value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type std::string.");
         }
 
+        Logger().errorStream() << "Variable<std::string>::Eval unrecognized object property: " << ReconstructName(m_property_name, m_ref_type);
         return "";
     }
 
