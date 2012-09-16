@@ -105,7 +105,7 @@ namespace {
             map[Defense_name] = METER_DEFENSE;
             map[MaxTroops_name] = METER_MAX_TROOPS;
             map[Troops_name] = METER_TROOPS;
-            //map[RebelTroops_name] = METER_REBEL_TROOPS;
+            map[RebelTroops_name] = METER_REBEL_TROOPS;
             map[Supply_name] = METER_SUPPLY;
             map[Stealth_name] = METER_STEALTH;
             map[Detection_name] = METER_DETECTION;
@@ -462,6 +462,14 @@ namespace ValueRef {
         } else if (property_name == SizeAsDouble_name) {
             if (const Planet* planet = universe_object_cast<const Planet*>(object))
                 return planet->SizeAsInt();
+
+        } else if (property_name == CurrentTurn_name) {
+            return CurrentTurn();
+
+        } else if (property_name == UniverseCentreX_name |
+                   property_name == UniverseCentreY_name)
+        {
+            return GetUniverse().UniverseWidth() / 2;
 
         } else {
             throw std::runtime_error("Attempted to read a non-double value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type double.");

@@ -65,8 +65,14 @@ namespace {
                         )
                   )
                 | (
-                        tok.CurrentTurn_ [ push_back(_a, _1), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_a)) ]
-                    |  tok.Value_ [ push_back(_a, _1), _val = new_<ValueRef::Variable<double> >(_a) ]
+                        (       tok.CurrentTurn_
+                            |   tok.UniverseCentreX_
+                            |   tok.UniverseCentreY_
+                        )
+                        [ push_back(_a, _1), _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_a)) ]
+                  )
+                | (
+                        tok.Value_ [ push_back(_a, _1), _val = new_<ValueRef::Variable<double> >(_a) ]
                   )
                 ;
 
