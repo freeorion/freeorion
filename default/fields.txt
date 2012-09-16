@@ -3,18 +3,24 @@ FieldType
     description = "FLD_ION_STORM_DESC"
     stealth = 0.01
     tags = [ "EXOTIC" ]
-    effectsgroups =
-        EffectsGroup
+    effectsgroups = [
+        EffectsGroup    // move around, grow when near stars, shrink a bit each turn
             scope = Source
             effects = [
                 SetStarlaneSpeed value = -10    // move away from random object
-                MoveTowards speed = Source.StarlaneSpeed target = Star type = [ Blue White ]
-                SetSize Value * 0.9             // shrink by 10% per turn
-                SetSize Value + 1.0 * Number condition = And [
-                    Star type = [ Blue White Yellow Orange ]
-                    WithinDistance distance = Source.Size condition = Source
+                MoveTowards speed = Source.StarlaneSpeed target = 
+                    MaximumNumberOf number = 1 sortkey = LocalCandidate.DistanceToSource condition = System
+                SetSize Value*0.90 + 1*Number condition = And [
+                    System
+                    WithinDistance distance = 80 condition = Source
                 ]
-            ]        
+            ]
+            
+        EffectsGroup
+            scope = Source
+            activation = Size high = 10
+            effects = Destroy
+    ]
     graphic = "fields/rainbow_storm.png"
 
 

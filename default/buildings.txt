@@ -31,6 +31,11 @@ BuildingType
                 SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
                 SetTargetIndustry Value + Target.Population * 2 * [[PRODUCTION_PER_POP]]
             ]
+            
+        EffectsGroup
+            scope = NumberOf number = 4 condition = System
+            activation = Turn high = 0
+            effects = CreateField type = "FLD_ION_STORM" size = 50
     ]
     icon = "icons/building/archive.png"
 
