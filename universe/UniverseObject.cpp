@@ -44,8 +44,8 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
     m_created_on_turn(-1)
 {
     //Logger().debugStream() << "UniverseObject::UniverseObject(" << name << ", " << x << ", " << y << ")";
-    if (m_x < 0.0 || GetUniverse().UniverseWidth() < m_x || m_y < 0.0 || GetUniverse().UniverseWidth() < m_y)
-        throw std::invalid_argument("UniverseObject::UniverseObject : Attempted to create an object \"" + m_name + "\" off the map area.");
+    //if (m_x < 0.0 || GetUniverse().UniverseWidth() < m_x || m_y < 0.0 || GetUniverse().UniverseWidth() < m_y)
+    //    throw std::invalid_argument("UniverseObject::UniverseObject : Attempted to create an object \"" + m_name + "\" off the map area.");
     m_created_on_turn = CurrentTurn();
 }
 
