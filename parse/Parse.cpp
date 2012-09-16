@@ -40,26 +40,26 @@ namespace {
 
             effects_group
                 =    tok.EffectsGroup_
-                >>   parse::label(Scope_name) > parse::detail::condition_parser [ _a = _1 ]
-                >>  -(
-                        parse::label(Activation_name) >> parse::detail::condition_parser [ _b = _1 ]
+                >   parse::label(Scope_name)                >> parse::detail::condition_parser [ _a = _1 ]
+                >  -(
+                        parse::label(Activation_name)       >> parse::detail::condition_parser [ _b = _1 ]
                      )
-                >>  -(
-                        parse::label(StackingGroup_name) >> tok.string [ _c = _1 ]
+                >  -(
+                        parse::label(StackingGroup_name)    >> tok.string [ _c = _1 ]
                      )
-                >>  -(
-                        parse::label(AccountingLabel_name) >> tok.string [ _e = _1 ]
+                >  -(
+                        parse::label(AccountingLabel_name)  >> tok.string [ _e = _1 ]
                      )
-                >>   parse::label(Effects_name)
-                >>   (
-                            '[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']'
+                >   parse::label(Effects_name)
+                >   (
+                            '[' >> +parse::effect_parser() [ push_back(_d, _1) ] >> ']'
                         |   parse::effect_parser() [ push_back(_d, _1) ]
                      )
                      [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c) ]
                 ;
 
             start
-                =    '[' > +effects_group [ push_back(_val, construct<boost::shared_ptr<const Effect::EffectsGroup> >(_1)) ] > ']'
+                =    '[' >> +effects_group [ push_back(_val, construct<boost::shared_ptr<const Effect::EffectsGroup> >(_1)) ] >> ']'
                 |    effects_group [ push_back(_val, construct<boost::shared_ptr<const Effect::EffectsGroup> >(_1)) ]
                 ;
 
@@ -109,12 +109,12 @@ namespace {
                 ;
 
             start
-                =    '(' > channel [ _a = _1 ]
-                >    ',' > channel [ _b = _1 ]
-                >    ',' > channel [ _c = _1 ]
+                =    '(' >> channel [ _a = _1 ]
+                >    ',' >> channel [ _b = _1 ]
+                >    ',' >> channel [ _c = _1 ]
                 >>   (
                         (
-                            ',' > channel [ _val = construct<GG::Clr>(_a, _b, _c, _1) ]
+                            ',' >> channel [ _val = construct<GG::Clr>(_a, _b, _c, _1) ]
                         )
                         |         eps [ _val = construct<GG::Clr>(_a, _b, _c, phoenix::val(255)) ]
                      )
@@ -174,14 +174,14 @@ namespace parse {
         using phoenix::static_cast_;
 
         int_
-            =    '-' > tok.int_ [ _val = -_1 ]
+            =    '-' >> tok.int_ [ _val = -_1 ]
             |    tok.int_ [ _val = _1 ]
             ;
 
         double_
             =    '-' >> tok.int_ [ _val = -static_cast_<double>(_1) ]
             |    tok.int_ [ _val = static_cast_<double>(_1) ]
-            |    '-' > tok.double_ [ _val = -_1 ]
+            |    '-' >> tok.double_ [ _val = -_1 ]
             |    tok.double_ [ _val = _1 ]
             ;
 
