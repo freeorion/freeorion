@@ -61,8 +61,8 @@ namespace {
 //  Server-Only Galaxy Setup Functions  //
 //////////////////////////////////////////
 namespace {
-    const double        MIN_SYSTEM_SEPARATION       = 35.0;                         // in universe units [0.0, s_universe_width]
-    const double        MIN_HOME_SYSTEM_SEPARATION  = 200.0;                        // in universe units [0.0, s_universe_width]
+    const double        MIN_SYSTEM_SEPARATION       = 35.0;                         // in universe units [0.0, m_universe_width]
+    const double        MIN_HOME_SYSTEM_SEPARATION  = 200.0;                        // in universe units [0.0, m_universe_width]
     const double        AVG_UNIVERSE_WIDTH          = 1000.0 / std::sqrt(150.0);    // so a 150 star universe is 1000 units across
     const int           ADJACENCY_BOXES             = 25;
     const double        PI                          = 3.141592653589793;
@@ -428,7 +428,7 @@ namespace {
     }
 
     void GetNeighbors(double x, double y, const Universe::AdjacencyGrid& adjacency_grid, std::set<System*>& neighbors) {
-        const double ADJACENCY_BOX_SIZE = Universe::UniverseWidth() / ADJACENCY_BOXES;
+        const double ADJACENCY_BOX_SIZE = GetUniverse().UniverseWidth() / ADJACENCY_BOXES;
         std::pair<unsigned int, unsigned int> grid_box(static_cast<unsigned int>(x / ADJACENCY_BOX_SIZE),
                                                        static_cast<unsigned int>(y / ADJACENCY_BOX_SIZE));
 
@@ -617,8 +617,8 @@ namespace Delauney {
         // add points for covering triangle.  the point positions should be big enough to form a triangle
         // that encloses all the systems of the galaxy (or at least one whose circumcircle covers all points)
         points.push_back(Delauney::DTPoint(-1.0, -1.0));
-        points.push_back(Delauney::DTPoint(2.0 * (Universe::UniverseWidth() + 1.0), -1.0));
-        points.push_back(Delauney::DTPoint(-1.0, 2.0 * (Universe::UniverseWidth() + 1.0)));
+        points.push_back(Delauney::DTPoint(2.0 * (GetUniverse().UniverseWidth() + 1.0), -1.0));
+        points.push_back(Delauney::DTPoint(-1.0, 2.0 * (GetUniverse().UniverseWidth() + 1.0)));
 
         // initialize triList.  algorithm adds and removes triangles from this list, and the resulting
         // list is returned (so should be deleted externally)
@@ -1509,7 +1509,7 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
     // in order to ensure that they get spaced out properly
     AdjacencyGrid adjacency_grid(ADJACENCY_BOXES, std::vector<std::set<System*> >(ADJACENCY_BOXES));
 
-    s_universe_width = std::sqrt(static_cast<double>(size)) * AVG_UNIVERSE_WIDTH;
+    m_universe_width = std::sqrt(static_cast<double>(size)) * AVG_UNIVERSE_WIDTH;
 
     std::vector<std::pair<double, double> > positions;
 
@@ -1518,30 +1518,30 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
     case SPIRAL_2:
     case SPIRAL_3:
     case SPIRAL_4:
-        SpiralGalaxyCalcPositions(positions, 2 + (shape - SPIRAL_2), size, s_universe_width, s_universe_width);
+        SpiralGalaxyCalcPositions(positions, 2 + (shape - SPIRAL_2), size, m_universe_width, m_universe_width);
         break;
     case CLUSTER: {
         int average_clusters = size / 20; // chosen so that a "typical" size of 100 yields about 5 clusters
         if (!average_clusters)
             average_clusters = 2;
         int clusters = RandSmallInt(average_clusters * 8 / 10, average_clusters * 12 / 10); // +/- 20%
-        ClusterGalaxyCalcPositions(positions, clusters, size, s_universe_width, s_universe_width);
+        ClusterGalaxyCalcPositions(positions, clusters, size, m_universe_width, m_universe_width);
         break;
     }
     case ELLIPTICAL:
-        EllipticalGalaxyCalcPositions(positions, size, s_universe_width, s_universe_width);
+        EllipticalGalaxyCalcPositions(positions, size, m_universe_width, m_universe_width);
         break;
     case IRREGULAR:
-        IrregularGalaxyPositions(positions, size, s_universe_width, s_universe_width);
+        IrregularGalaxyPositions(positions, size, m_universe_width, m_universe_width);
         break;
     case RING:
-        RingGalaxyCalcPositions(positions, size, s_universe_width, s_universe_width);
+        RingGalaxyCalcPositions(positions, size, m_universe_width, m_universe_width);
         break;
     default:
         Logger().errorStream() << "Universe::Universe : Unknown galaxy shape: " << shape << ".  Using IRREGULAR as default.";
-        IrregularGalaxyPositions(positions, size, s_universe_width, s_universe_width);
+        IrregularGalaxyPositions(positions, size, m_universe_width, m_universe_width);
     }
-    GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
+    GenerateStarField(*this, age, positions, adjacency_grid, m_universe_width / ADJACENCY_BOXES);
 
     PopulateSystems(planet_density);
     GenerateStarlanes(starlane_freq, adjacency_grid);

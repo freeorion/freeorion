@@ -451,6 +451,11 @@ class Effect::CreateField : public Effect::EffectBase {
 public:
     CreateField(const std::string& field_type_name,
                 const ValueRef::ValueRefBase<double>* size = 0);
+    CreateField(const std::string& field_type_name,
+                const ValueRef::ValueRefBase<double>* x,
+                const ValueRef::ValueRefBase<double>* y,
+                const ValueRef::ValueRefBase<double>* size = 0);
+
     virtual ~CreateField();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -458,6 +463,8 @@ public:
     virtual std::string Dump() const;
 private:
     const std::string                       m_field_type_name;
+    const ValueRef::ValueRefBase<double>*   m_x;
+    const ValueRef::ValueRefBase<double>*   m_y;
     const ValueRef::ValueRefBase<double>*   m_size;
 
     friend class boost::serialization::access;
@@ -939,6 +946,8 @@ void Effect::CreateField::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_field_type_name)
+        & BOOST_SERIALIZATION_NVP(m_x)
+        & BOOST_SERIALIZATION_NVP(m_y)
         & BOOST_SERIALIZATION_NVP(m_size);
 }
 
@@ -998,6 +1007,16 @@ void Effect::MoveInOrbit::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_focal_point_condition)
         & BOOST_SERIALIZATION_NVP(m_focus_x)
         & BOOST_SERIALIZATION_NVP(m_focus_y);
+}
+
+template <class Archive>
+void Effect::MoveTowards::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_speed)
+        & BOOST_SERIALIZATION_NVP(m_dest_condition)
+        & BOOST_SERIALIZATION_NVP(m_dest_x)
+        & BOOST_SERIALIZATION_NVP(m_dest_y);
 }
 
 template <class Archive>

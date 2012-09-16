@@ -345,6 +345,8 @@
     (Turn)                                      \
     (Type)                                      \
     (Uninhabitable)                             \
+    (UniverseCentreX)                           \
+    (UniverseCentreY)                           \
     (Unlock)                                    \
     (Unproducible)                              \
     (Unresearchable)                            \

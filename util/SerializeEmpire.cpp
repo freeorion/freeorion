@@ -75,9 +75,9 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_player_name)
         & BOOST_SERIALIZATION_NVP(m_color);
 
-    if (Universe::ALL_OBJECTS_VISIBLE ||
-        Universe::s_encoding_empire == ALL_EMPIRES ||
-        m_id == Universe::s_encoding_empire)
+    if (GetUniverse().AllObjectsVisible() ||
+        GetUniverse().EncodingEmpire() == ALL_EMPIRES ||
+        m_id == GetUniverse().EncodingEmpire())
     {
         ar  & BOOST_SERIALIZATION_NVP(m_capital_id)
             & BOOST_SERIALIZATION_NVP(m_techs)
@@ -119,7 +119,7 @@ void EmpireManager::serialize(Archive& ar, const unsigned int version)
 
     std::map<std::pair<int, int>, DiplomaticMessage> messages;
     if (Archive::is_saving::value)
-        GetDiplomaticMessagesToSerialize(messages, Universe::s_encoding_empire);
+        GetDiplomaticMessagesToSerialize(messages, GetUniverse().EncodingEmpire());
 
     ar  & BOOST_SERIALIZATION_NVP(m_empire_map)
         & BOOST_SERIALIZATION_NVP(m_eliminated_empires)

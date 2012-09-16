@@ -43,19 +43,19 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     ar.template register_type<System>();
 
     if (Archive::is_saving::value) {
-        GetObjectsToSerialize(              objects,                            s_encoding_empire);
-        GetEmpireKnownObjectsToSerialize(   empire_latest_known_objects,        s_encoding_empire);
-        GetEmpireObjectVisibilityMap(       empire_object_visibility,           s_encoding_empire);
-        GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns,     s_encoding_empire);
-        GetEmpireKnownDestroyedObjects(     empire_known_destroyed_object_ids,  s_encoding_empire);
-        GetShipDesignsToSerialize(          ship_designs,                       s_encoding_empire);
+        GetObjectsToSerialize(              objects,                            m_encoding_empire);
+        GetEmpireKnownObjectsToSerialize(   empire_latest_known_objects,        m_encoding_empire);
+        GetEmpireObjectVisibilityMap(       empire_object_visibility,           m_encoding_empire);
+        GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns,     m_encoding_empire);
+        GetEmpireKnownDestroyedObjects(     empire_known_destroyed_object_ids,  m_encoding_empire);
+        GetShipDesignsToSerialize(          ship_designs,                       m_encoding_empire);
     }
 
     if (Archive::is_loading::value) {
         Clear();    // clean up any existing dynamically allocated contents before replacing containers with deserialized data
     }
 
-    ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
+    ar  & BOOST_SERIALIZATION_NVP(m_universe_width)
         & BOOST_SERIALIZATION_NVP(ship_designs)
         & BOOST_SERIALIZATION_NVP(m_empire_known_ship_design_ids)
         & BOOST_SERIALIZATION_NVP(empire_object_visibility)

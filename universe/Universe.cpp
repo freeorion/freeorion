@@ -425,16 +425,14 @@ struct Universe::GraphImpl {
 /////////////////////////////////////////////
 // class Universe
 /////////////////////////////////////////////
-// static(s)
-const bool  Universe::ALL_OBJECTS_VISIBLE =                 false;
-double      Universe::s_universe_width =                    1000.0;
-bool        Universe::s_inhibit_universe_object_signals =   false;
-int         Universe::s_encoding_empire =                   ALL_EMPIRES;
-
 Universe::Universe() :
     m_graph_impl(new GraphImpl),
     m_last_allocated_object_id(-1), // this is conicidentally equal to INVALID_OBJECT_ID as of this writing, but the reason for this to be -1 is so that the first object has id 0, and all object ids are non-negative
-    m_last_allocated_design_id(-1)  // same, but for ShipDesign::INVALID_DESIGN_ID
+    m_last_allocated_design_id(-1), // same, but for ShipDesign::INVALID_DESIGN_ID
+    m_universe_width(1000.0),
+    m_inhibit_universe_object_signals(false),
+    m_encoding_empire(ALL_EMPIRES),
+    m_all_objects_visible(false)
 {}
 
 Universe::~Universe() {
@@ -546,7 +544,7 @@ const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const {
 }
 
 Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) const {
-    if (empire_id == ALL_EMPIRES || Universe::ALL_OBJECTS_VISIBLE)
+    if (empire_id == ALL_EMPIRES || GetUniverse().AllObjectsVisible())
         return VIS_FULL_VISIBILITY;
 
     EmpireObjectVisibilityMap::const_iterator empire_it = m_empire_object_visibility.find(empire_id);
@@ -1472,7 +1470,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
     m_empire_object_visible_specials.clear();
 
 
-    if (ALL_OBJECTS_VISIBLE) {
+    if (m_all_objects_visible) {
         // set every object visible to all empires
         std::set<int> all_empire_ids;
         for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
@@ -2163,14 +2161,17 @@ void Universe::UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id) {
     }
 }
 
-double Universe::UniverseWidth()
-{ return s_universe_width; }
+int& Universe::EncodingEmpire()
+{ return m_encoding_empire; }
+
+double Universe::UniverseWidth() const
+{ return m_universe_width; }
 
 const bool& Universe::UniverseObjectSignalsInhibited()
-{ return s_inhibit_universe_object_signals; }
+{ return m_inhibit_universe_object_signals; }
 
 void Universe::InhibitUniverseObjectSignals(bool inhibit)
-{ s_inhibit_universe_object_signals = inhibit; }
+{ m_inhibit_universe_object_signals = inhibit; }
 
 void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const {
     if (encoding_empire == ALL_EMPIRES) {

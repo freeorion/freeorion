@@ -65,8 +65,6 @@ private:
     typedef std::map<int, std::set<int> >           ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
 
 public:
-    static const bool ALL_OBJECTS_VISIBLE;                                          ///< Set to true to make everything visible for everyone. Useful for debugging.
-
     typedef std::map<int, Visibility>               ObjectVisibilityMap;            ///< map from object id to Visibility level for a particular empire
     typedef std::map<int, ObjectVisibilityMap>      EmpireObjectVisibilityMap;      ///< map from empire id to ObjectVisibilityMap for that empire
 
@@ -360,13 +358,9 @@ public:
 
     /** Sets whether to inhibit UniverseObjectSignals.  Inhibits if \a inhibit
       * is true, and (re)enables UniverseObjectSignals if \a inhibit is false. */
-    static void     InhibitUniverseObjectSignals(bool inhibit = true);
+    void            InhibitUniverseObjectSignals(bool inhibit = true);
     //@}
 
-    /** Returns the size of the galaxy map.  Does not measure absolute
-      * distances; the ratio between map coordinates and actual distance varies
-      * depending on universe size. */
-    static double   UniverseWidth();
 
     /** Generates an object ID for a future object. Usually used by the server
       * to service new ID requests. */
@@ -379,14 +373,17 @@ public:
     typedef std::vector<std::vector<std::set<System*> > > AdjacencyGrid;
 
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
-    static const bool&  UniverseObjectSignalsInhibited();
+    const bool&     UniverseObjectSignalsInhibited();
 
     /** HACK! This must be set to the encoding empire's id when serializing a
       * Universe, so that only the relevant parts of the Universe are
       * serialized.  The use of this global variable is done just so I don't
       * have to rewrite any custom boost::serialization classes that implement
       * empire-dependent visibility. */
-    static int                      s_encoding_empire;
+    int&            EncodingEmpire();
+
+    double          UniverseWidth() const;
+    bool            AllObjectsVisible() const { return m_all_objects_visible; }
 
 private:
     template <typename T>
@@ -533,8 +530,10 @@ private:
     std::set<int>                   m_marked_destroyed;                 ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object
     std::multimap<int, std::string> m_marked_for_victory;               ///< used while applying effects to cache objects whose owner should be victorious.  Victory testing is done separately from effects execution, so this needs to be stored temporarily...
 
-    static double                   s_universe_width;
-    static bool                     s_inhibit_universe_object_signals;
+    double                          m_universe_width;
+    bool                            m_inhibit_universe_object_signals;
+    int                             m_encoding_empire;
+    bool                            m_all_objects_visible;
 
     /** Fills \a designs_to_serialize with ShipDesigns known to the empire with
       * the ID \a encoding empire.  If encoding_empire is ALL_EMPIRES, then all

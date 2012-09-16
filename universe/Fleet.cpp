@@ -131,7 +131,7 @@ std::string Fleet::Dump() const {
 const std::string& Fleet::PublicName(int empire_id) const {
     // Disclose real fleet name only to fleet owners. Rationale: a player might become suspicious if the incoming
     // foreign fleet is called "Decoy"
-    if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
+    if (GetUniverse().AllObjectsVisible() || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
         return Name();
     else if (Unowned() && HasMonsters())
         return UserString("MONSTERS");

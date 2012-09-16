@@ -295,7 +295,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
         oa << BOOST_SERIALIZATION_NVP(single_player_game)
            << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(current_turn);
-        Universe::s_encoding_empire = empire_id;
+        GetUniverse().EncodingEmpire() = empire_id;
         oa << BOOST_SERIALIZATION_NVP(empires)
            << BOOST_SERIALIZATION_NVP(species);
         Serialize(oa, universe);
@@ -318,7 +318,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
         oa << BOOST_SERIALIZATION_NVP(single_player_game)
            << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(current_turn);
-        Universe::s_encoding_empire = empire_id;
+        GetUniverse().EncodingEmpire() = empire_id;
         oa << BOOST_SERIALIZATION_NVP(empires)
            << BOOST_SERIALIZATION_NVP(species);
         Serialize(oa, universe);
@@ -348,7 +348,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
         oa << BOOST_SERIALIZATION_NVP(single_player_game)
            << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(current_turn);
-        Universe::s_encoding_empire = empire_id;
+        GetUniverse().EncodingEmpire() = empire_id;
         oa << BOOST_SERIALIZATION_NVP(empires)
            << BOOST_SERIALIZATION_NVP(species);
         Serialize(oa, universe);
@@ -410,7 +410,7 @@ Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
-        Universe::s_encoding_empire = empire_id;
+        GetUniverse().EncodingEmpire() = empire_id;
         oa << BOOST_SERIALIZATION_NVP(current_turn)
            << BOOST_SERIALIZATION_NVP(empires)
            << BOOST_SERIALIZATION_NVP(species);
@@ -424,7 +424,7 @@ Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& u
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
-        Universe::s_encoding_empire = empire_id;
+        GetUniverse().EncodingEmpire() = empire_id;
         Serialize(oa, universe);
     }
     return Message(Message::TURN_PARTIAL_UPDATE, Networking::INVALID_PLAYER_ID, player_id, os.str());
@@ -592,7 +592,7 @@ Message ServerCombatStartMessage(int receiver, int empire_id,
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
-        Universe::s_encoding_empire = empire_id;
+        GetUniverse().EncodingEmpire() = empire_id;
         oa << BOOST_SERIALIZATION_NVP(combat_data)
            << BOOST_SERIALIZATION_NVP(setup_groups)
            << BOOST_SERIALIZATION_NVP(foreign_designs);
@@ -604,7 +604,7 @@ Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData&
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
-        Universe::s_encoding_empire = empire_id;
+        GetUniverse().EncodingEmpire() = empire_id;
         oa << BOOST_SERIALIZATION_NVP(combat_data);
     }
     return Message(Message::COMBAT_TURN_UPDATE, Networking::INVALID_PLAYER_ID, receiver, os.str());
@@ -667,7 +667,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
         ia >> BOOST_SERIALIZATION_NVP(single_player_game)
            >> BOOST_SERIALIZATION_NVP(empire_id)
            >> BOOST_SERIALIZATION_NVP(current_turn);
-        Universe::s_encoding_empire = empire_id;
+        GetUniverse().EncodingEmpire() = empire_id;
 
         boost::timer deserialize_timer;
         ia >> BOOST_SERIALIZATION_NVP(empires);
@@ -743,7 +743,7 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
-        Universe::s_encoding_empire = empire_id;
+        GetUniverse().EncodingEmpire() = empire_id;
         ia >> BOOST_SERIALIZATION_NVP(current_turn)
            >> BOOST_SERIALIZATION_NVP(empires)
            >> BOOST_SERIALIZATION_NVP(species);
@@ -763,7 +763,7 @@ void ExtractMessageData(const Message& msg, int empire_id, Universe& universe) {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
-        Universe::s_encoding_empire = empire_id;
+        GetUniverse().EncodingEmpire() = empire_id;
         Deserialize(ia, universe);
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, int empire_id, "

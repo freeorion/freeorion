@@ -175,7 +175,14 @@ namespace {
             create_field
                 =   tok.CreateField_
                 >>  parse::label(Type_name)        >> tok.string [ _a = _1 ]
-                >>  parse::label(Size_name)        >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _1) ]
+                >> (
+                        parse::label(Size_name)    >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _1) ]
+                   )
+                |  (
+                        parse::label(X_name)       >> double_value_ref [ _b = _1 ]
+                   >>   parse::label(Y_name)       >> double_value_ref [ _c = _1 ]
+                   >>   parse::label(Size_name)    >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _b, _c, _1) ]
+                   )
                 ;
 
             //move_to
@@ -192,8 +199,8 @@ namespace {
             //            )
             //        |   (
             //                parse::label(Speed_name) >> double_value_ref [ _a = _1 ]
-            //            >>  parse::label(X_name) >>     double_value_ref [ _b = _1 ]
-            //            >>  parse::label(Y_name) >>     double_value_ref [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
+            //            >>  parse::label(X_name)     >> double_value_ref [ _b = _1 ]
+            //            >>  parse::label(Y_name)     >> double_value_ref [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
             //            )
             //        )
             //    ;
@@ -473,6 +480,7 @@ namespace {
             Effect::EffectBase* (),
             qi::locals<
                 std::string,
+                ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*
             >,
             parse::skipper_type

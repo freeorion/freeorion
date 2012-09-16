@@ -129,9 +129,9 @@ void System::Copy(const UniverseObject* copied_object, int empire_id) {
                 // copy system name if at partial visibility, as it won't be copied
                 // by UniverseObject::Copy unless at full visibility, but players
                 // should know system names even if they don't own the system
-                Universe::InhibitUniverseObjectSignals(true);
+                GetUniverse().InhibitUniverseObjectSignals(true);
                 this->Rename(copied_system->Name());
-                Universe::InhibitUniverseObjectSignals(false);
+                GetUniverse().InhibitUniverseObjectSignals(false);
             }
         }
     }

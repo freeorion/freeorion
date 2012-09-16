@@ -502,8 +502,8 @@ struct MapWnd::FleetButtonClickedFunctor {
 ///////////////////////////
 MapWnd::MapWnd() :
     GG::Wnd(-AppWidth(), -AppHeight(),
-            static_cast<GG::X>(Universe::UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
-            static_cast<GG::Y>(Universe::UniverseWidth() * ZOOM_MAX + AppHeight() * 1.5),
+            static_cast<GG::X>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
+            static_cast<GG::Y>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppHeight() * 1.5),
             GG::INTERACTIVE | GG::DRAGABLE),
     m_backgrounds(),
     m_bg_scroll_rate(),
@@ -1791,8 +1791,8 @@ void MapWnd::InitTurnRendering() {
     const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
 
     // adjust size of map window for universe and application size
-    Resize(GG::Pt(static_cast<GG::X>(Universe::UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
-                  static_cast<GG::Y>(Universe::UniverseWidth() * ZOOM_MAX + AppHeight() * 1.5)));
+    Resize(GG::Pt(static_cast<GG::X>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
+                  static_cast<GG::Y>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppHeight() * 1.5)));
 
 
     // set up backgrounds on first turn.  if m_backgrounds already contains textures, does nothing
@@ -3178,7 +3178,7 @@ void MapWnd::ZoomSlid(double pos, double low, double high)
 { SetZoom(pos, false); }
 
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt) {
-    GG::X contents_width(static_cast<int>(ZoomFactor() * Universe::UniverseWidth()));
+    GG::X contents_width(static_cast<int>(ZoomFactor() * GetUniverse().UniverseWidth()));
     GG::X app_width =  AppWidth();
     GG::Y app_height = AppHeight();
     GG::X map_margin_width(app_width / 2.0);
@@ -3984,7 +3984,7 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     ObjectMap& objects = GetUniverse().Objects();
 
 
-    Universe::InhibitUniverseObjectSignals(true);
+    GetUniverse().InhibitUniverseObjectSignals(true);
 
 
     // if there is a selected colony ship, add temporary species to planets in
@@ -4034,7 +4034,7 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     }
 
 
-    Universe::InhibitUniverseObjectSignals(false);
+    GetUniverse().InhibitUniverseObjectSignals(false);
 }
 
 void MapWnd::UpdateEmpireResourcePools() {

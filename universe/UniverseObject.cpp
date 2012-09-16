@@ -17,7 +17,7 @@ const int       UniverseObject::INVALID_OBJECT_AGE = -(1 << 30) - 1;  // using b
 const int       UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
 
 UniverseObject::UniverseObject() :
-    StateChangedSignal(Universe::UniverseObjectSignalsInhibited()),
+    StateChangedSignal(GetUniverse().UniverseObjectSignalsInhibited()),
     m_id(INVALID_OBJECT_ID),
     m_name(""),
     m_x(INVALID_POSITION),
@@ -33,7 +33,7 @@ UniverseObject::UniverseObject() :
 
 UniverseObject::UniverseObject(const std::string name, double x, double y,
                                const std::set<int>& owners/* = std::set<int>()*/) :
-    StateChangedSignal(Universe::UniverseObjectSignalsInhibited()),
+    StateChangedSignal(GetUniverse().UniverseObjectSignalsInhibited()),
     m_id(INVALID_OBJECT_ID),
     m_name(name),
     m_x(x),
@@ -44,13 +44,13 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
     m_created_on_turn(-1)
 {
     //Logger().debugStream() << "UniverseObject::UniverseObject(" << name << ", " << x << ", " << y << ")";
-    if (m_x < 0.0 || Universe::UniverseWidth() < m_x || m_y < 0.0 || Universe::UniverseWidth() < m_y)
+    if (m_x < 0.0 || GetUniverse().UniverseWidth() < m_x || m_y < 0.0 || GetUniverse().UniverseWidth() < m_y)
         throw std::invalid_argument("UniverseObject::UniverseObject : Attempted to create an object \"" + m_name + "\" off the map area.");
     m_created_on_turn = CurrentTurn();
 }
 
 UniverseObject::UniverseObject(const UniverseObject& rhs) :
-    StateChangedSignal(Universe::UniverseObjectSignalsInhibited()),
+    StateChangedSignal(GetUniverse().UniverseObjectSignalsInhibited()),
     m_id(rhs.m_id),
     m_name(rhs.m_name),
     m_x(rhs.m_x),
@@ -290,7 +290,7 @@ void UniverseObject::MoveTo(UniverseObject* object) {
 
 void UniverseObject::MoveTo(double x, double y) {
     //Logger().debugStream() << "UniverseObject::MoveTo(double x, double y)";
-    if (x < 0.0 || Universe::UniverseWidth() < x || y < 0.0 || Universe::UniverseWidth() < y)
+    if (x < 0.0 || GetUniverse().UniverseWidth() < x || y < 0.0 || GetUniverse().UniverseWidth() < y)
         Logger().debugStream() << "UniverseObject::MoveTo : Placing object \"" + m_name + "\" off the map area.";
 
     m_x = x;

@@ -189,7 +189,7 @@ namespace AIInterface {
             // get all planets the player knows about that aren't yet colonized (aren't owned by anyone).  Add this
             // the current player's ownership to all, while remembering which planets this is done to
             std::vector<Planet*> all_planets = universe.Objects().FindObjects<Planet>();
-            Universe::InhibitUniverseObjectSignals(true);
+            universe.InhibitUniverseObjectSignals(true);
             for (std::vector<Planet*>::iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
                  Planet* planet = *it;
                  if (planet->Unowned()) {
@@ -206,7 +206,7 @@ namespace AIInterface {
             // remove temporary ownership added above
             for (std::vector<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it)
                 (*it)->SetOwner(ALL_EMPIRES);
-            Universe::InhibitUniverseObjectSignals(false);
+            universe.InhibitUniverseObjectSignals(false);
         }
     }
 

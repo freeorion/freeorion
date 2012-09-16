@@ -44,7 +44,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
               const Universe& universe, const EmpireManager& empire_manager,
               const SpeciesManager& species_manager)
 {
-    Universe::s_encoding_empire = ALL_EMPIRES;
+    GetUniverse().EncodingEmpire() = ALL_EMPIRES;
 
     std::map<int, SaveGameEmpireData> empire_save_game_data = CompileSaveGameEmpireData(empire_manager);
 
@@ -85,7 +85,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
     if (ServerApp* server = ServerApp::GetApp())
         server->Networking().SendMessage(TurnProgressMessage(Message::LOADING_GAME));
 
-    Universe::s_encoding_empire = ALL_EMPIRES;
+    GetUniverse().EncodingEmpire() = ALL_EMPIRES;
 
     std::map<int, SaveGameEmpireData> ignored_save_game_empire_data;
 

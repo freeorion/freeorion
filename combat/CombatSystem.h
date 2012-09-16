@@ -59,12 +59,12 @@ void CombatInfo::save(Archive & ar, const unsigned int version) const
     std::set<int>                   filtered_destroyed_object_ids;
     std::map<int, std::set<int> >   filtered_destroyed_object_knowers;
 
-    GetEmpireIdsToSerialize(                filtered_empire_ids,                Universe::s_encoding_empire);
-    GetObjectsToSerialize(                  filtered_objects,                   Universe::s_encoding_empire);
-    GetEmpireKnownObjectsToSerialize(       filtered_empire_known_objects,      Universe::s_encoding_empire);
-    GetDamagedObjectsToSerialize(           filtered_damaged_object_ids,        Universe::s_encoding_empire);
-    GetDestroyedObjectsToSerialize(         filtered_destroyed_object_ids,      Universe::s_encoding_empire);
-    GetDestroyedObjectKnowersToSerialize(   filtered_destroyed_object_knowers,  Universe::s_encoding_empire);
+    GetEmpireIdsToSerialize(                filtered_empire_ids,                GetUniverse().EncodingEmpire());
+    GetObjectsToSerialize(                  filtered_objects,                   GetUniverse().EncodingEmpire());
+    GetEmpireKnownObjectsToSerialize(       filtered_empire_known_objects,      GetUniverse().EncodingEmpire());
+    GetDamagedObjectsToSerialize(           filtered_damaged_object_ids,        GetUniverse().EncodingEmpire());
+    GetDestroyedObjectsToSerialize(         filtered_destroyed_object_ids,      GetUniverse().EncodingEmpire());
+    GetDestroyedObjectKnowersToSerialize(   filtered_destroyed_object_knowers,  GetUniverse().EncodingEmpire());
 
     ar  & BOOST_SERIALIZATION_NVP(system_id)
         & BOOST_SERIALIZATION_NVP(filtered_empire_ids)

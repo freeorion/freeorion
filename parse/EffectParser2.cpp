@@ -186,8 +186,8 @@ namespace {
                         )
                     |   (
                             parse::label(Speed_name) >> double_value_ref [ _a = _1 ]
-                        >>  parse::label(X_name) >>     double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_name) >>     double_value_ref [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
+                        >>  parse::label(X_name)     >> double_value_ref [ _b = _1 ]
+                        >>  parse::label(Y_name)     >> double_value_ref [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
                         )
                     )
                 ;
@@ -197,12 +197,12 @@ namespace {
                 >>  (
                         (
                             parse::label(Speed_name) >> double_value_ref[ _a = _1 ]
-                        >>  parse::label(Target_name) >> parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ]
+                        >>  parse::label(Target_name)>> parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ]
                         )
                     |   (
                             parse::label(Speed_name) >> double_value_ref [ _a = _1 ]
-                        >>  parse::label(X_name) >>     double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_name) >>     double_value_ref [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
+                        >>  parse::label(X_name)     >> double_value_ref [ _b = _1 ]
+                        >>  parse::label(Y_name)     >> double_value_ref [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
                         )
                     )
                 ;

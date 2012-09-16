@@ -1443,6 +1443,18 @@ std::string CreateShip::Dump() const {
 CreateField::CreateField(const std::string& field_type_name,
                          const ValueRef::ValueRefBase<double>* size/* = 0*/) :
     m_field_type_name(field_type_name),
+    m_x(0),
+    m_y(0),
+    m_size(size)
+{}
+
+CreateField::CreateField(const std::string& field_type_name,
+                         const ValueRef::ValueRefBase<double>* x,
+                         const ValueRef::ValueRefBase<double>* y,
+                         const ValueRef::ValueRefBase<double>* size/* = 0*/) :
+    m_field_type_name(field_type_name),
+    m_x(x),
+    m_y(y),
     m_size(size)
 {}
 
@@ -1474,7 +1486,18 @@ void CreateField::Execute(const ScriptingContext& context) const {
         size = 10000;
     }
 
-    Field* field = new Field(m_field_type_name, target->X(), target->Y(), size);
+    double x = 0.0;
+    double y = 0.0;
+    if (m_x)
+        x = m_x->Eval(context);
+    else
+        x = target->X();
+    if (m_y)
+        y = m_y->Eval(context);
+    else
+        y = target->Y();
+
+    Field* field = new Field(m_field_type_name, x, y, size);
     if (!field) {
         Logger().errorStream() << "CreateField::Execute couldn't create field!";
         return;
@@ -1502,11 +1525,13 @@ std::string CreateField::Description() const {
 }
 
 std::string CreateField::Dump() const {
-    std::string retval;
+    std::string retval = DumpIndent() + "CreateField type = " + m_field_type_name;
+    if (m_x)
+        retval += " x = " + m_x->Dump();
+    if (m_y)
+        retval += " y = " + m_y->Dump();
     if (m_size)
-        retval = DumpIndent() + "CreateField fieldtype = " + m_field_type_name + " size = " + m_size->Dump();
-    else
-        retval = DumpIndent() + "CreateField fieldtype = " + m_field_type_name;
+        retval += " size = " + m_size->Dump();
     retval += "\n";
     return retval;
 }

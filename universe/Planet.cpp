@@ -152,9 +152,9 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id) {
                 // copy system name if at partial visibility, as it won't be copied
                 // by UniverseObject::Copy unless at full visibility, but players
                 // should know planet names even if they don't own the planet
-                Universe::InhibitUniverseObjectSignals(true);
+                GetUniverse().InhibitUniverseObjectSignals(true);
                 this->Rename(copied_planet->Name());
-                Universe::InhibitUniverseObjectSignals(false);
+                GetUniverse().InhibitUniverseObjectSignals(false);
             }
         }
     }

@@ -249,7 +249,7 @@ void SpeciesManager::serialize(Archive& ar, const unsigned int version)
     std::map<std::string, std::set<int> > species_homeworlds_map;
 
     if (Archive::is_saving::value) {
-        species_homeworlds_map = GetSpeciesHomeworldsMap(Universe::s_encoding_empire);
+        species_homeworlds_map = GetSpeciesHomeworldsMap(GetUniverse().EncodingEmpire());
     }
 
     ar  & BOOST_SERIALIZATION_NVP(species_homeworlds_map);
