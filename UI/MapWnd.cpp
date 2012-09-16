@@ -1860,6 +1860,8 @@ void MapWnd::InitTurnRendering() {
         // skip known destroyed objects
         if (this_client_known_destroyed_objects.find(field->ID()) != this_client_known_destroyed_objects.end())
             continue;
+        if (field->GetVisibility(HumanClientApp::GetApp()->EmpireID()) <= VIS_NO_VISIBILITY)
+            continue;
 
         // create new system icon
         FieldIcon* icon = new FieldIcon(GG::X0, GG::Y0, field->ID());
