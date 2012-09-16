@@ -2098,7 +2098,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
         dest_y = m_dest_y->Eval(ScriptingContext(context, target->Y()));
     if (m_speed)
         speed = m_speed->Eval(context);
-    if (speed <= 0.1)
+    if (speed == 0.0)
         return;
     if (m_dest_condition) {
         Condition::ObjectSet matches;
@@ -2114,13 +2114,19 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
     double dest_to_target_y = dest_y - target->Y();
     double dest_to_target_dist = std::sqrt(dest_to_target_x * dest_to_target_x +
                                            dest_to_target_y * dest_to_target_y);
-
     double new_x, new_y;
 
     if (dest_to_target_dist < speed) {
         new_x = dest_x;
         new_y = dest_y;
     } else {
+        // ensure no divide by zero issues
+        if (dest_to_target_dist < 1.0)
+            dest_to_target_dist = 1.0;
+        // avoid stalling when right on top of object and attempting to move away from it
+        if (dest_to_target_x == 0.0 && dest_to_target_y == 0.0)
+            dest_to_target_x = 1.0;
+        // move in direction of target
         new_x = target->X() + dest_to_target_x / dest_to_target_dist * speed;
         new_y = target->Y() + dest_to_target_y / dest_to_target_dist * speed;
     }

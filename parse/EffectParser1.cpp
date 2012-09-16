@@ -174,7 +174,7 @@ namespace {
 
             create_field
                 =   tok.CreateField_
-                >>  parse::label(FieldType_name)   >> tok.string [ _a = _1 ]
+                >>  parse::label(Type_name)        >> tok.string [ _a = _1 ]
                 >>  parse::label(Size_name)        >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _1) ]
                 ;
 
