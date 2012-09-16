@@ -33,9 +33,12 @@ BuildingType
             ]
             
         EffectsGroup
-            scope = NumberOf number = 4 condition = System
+            scope = Source
             activation = Turn high = 0
-            effects = CreateField type = "FLD_ION_STORM" size = 50
+            effects = CreateField type = "FLD_ION_STORM"
+                                  x = 2*UniverseCentreX
+                                  y = -UniverseCentreY/2
+                                  size = 50
     ]
     icon = "icons/building/archive.png"
 
