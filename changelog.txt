@@ -7,9 +7,12 @@ Balancing:
  ~ Unified resource and fleet supply into a single meter-- the Supply Meter. Infrastructure is not involved.
  ~ ~ Outpost now provide 1 jump supply, and colonies 2 jump supply.  Techs and buildings can extend that.
  ~ Reduced detection ranges for ships and planets by roughly half.
- ~ Loosened requirements for asteroid shipyards.  Now the asteroid belt only needs to be in the same system.
+ ~ Loosened requirements for Asteroid hulls/parts
+ ~ ~ Asteroid processors are no longer shipyards, but must be built on a belt for a shipyard anywhere in the system to build asteroid hulls.
+ ~ ~ Rock/Crystallized Armor Plating now requires an Asteroid Reformation Processor somewhere in the empire.
  ~ Halved weapon damage and Hull structure doubled Armor and Shield part strength.  I think adding defences to ships is now valid.
  ~ Made Terraforming more expensive.
+ ~ 
  
  Bugs:
   ~ Disabled building shipyards at outposts.
