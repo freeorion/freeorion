@@ -9,9 +9,10 @@ FieldType
             effects = [
                 SetStarlaneSpeed value = 50
                 
-                MoveTowards speed = Source.StarlaneSpeed x = UniverseCentreX y = UniverseCentreY
+                MoveTowards speed = Source.StarlaneSpeed/1.4 x = UniverseCentreX y = UniverseCentreY
+                MoveInOrbit speed = Source.StarlaneSpeed/1.4 x = UniverseCentreX y = UniverseCentreY
 
-                SetSize Value - 1*Number condition = And [
+                SetSize Value - 0.5*Number condition = And [
                     System
                     WithinDistance distance = 80 condition = Source
                 ]

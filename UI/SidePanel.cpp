@@ -1537,7 +1537,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
     // been ordered
 
     const Planet* planet = GetPlanet(m_planet_id);
-    if (!planet || planet->CurrentMeterValue(METER_POPULATION) <= 0.0 || !m_order_issuing_enabled)
+    if (!planet || !m_order_issuing_enabled || (planet->CurrentMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
         return;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
