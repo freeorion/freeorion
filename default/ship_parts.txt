@@ -269,7 +269,6 @@ Part
                 OwnedBy TheEmpire Source.Owner
                 OwnedBy AllyOf Source.Owner
             ]
-            ContainedBy Planet type = Asteroids
         ]
         OwnedBy TheEmpire Source.Owner
     ]
@@ -290,7 +289,6 @@ Part
                 OwnedBy TheEmpire Source.Owner
                 OwnedBy AllyOf Source.Owner
             ]
-            ContainedBy Planet type = Asteroids
         ]
         OwnedBy TheEmpire Source.Owner
     ]

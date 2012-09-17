@@ -223,12 +223,10 @@ BuildingType
     buildcost = 75
     buildtime = 5
     location = And [
-        Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
-        ]
-        ContainedBy Contains And [
-            Planet type = Asteroids
+        Planet type = Asteroids
+        OwnedBy TheEmpire Source.Owner
+        Not Contains And [
+            Building "BLD_SHIPYARD_AST"
             OwnedBy TheEmpire Source.Owner
         ]
     ]
@@ -240,16 +238,16 @@ BuildingType
     buildcost = 500
     buildtime = 5
     location = And [
+        Planet type = Asteroids
+        OwnedBy TheEmpire Source.Owner
         Contains And [
             Building "BLD_SHIPYARD_AST"
             OwnedBy TheEmpire Source.Owner
         ]
-        Contains And [
-            Building "BLD_SHIPYARD_BASE"
+        Not Contains And [
+            Building "BLD_SHIPYARD_AST_REF"
             OwnedBy TheEmpire Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
-        Planet type = Asteroids
     ]
     icon = "icons/building/shipyard-6.png"
 

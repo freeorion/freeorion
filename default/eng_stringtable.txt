@@ -2921,7 +2921,7 @@ EFFECT_DERELICT_MAP_LABEL
 Derelict Map
 
 EFFECT_DERELICT_FUEL
-Ships were refuled from the residual supply found in an abandoned derelict at %system%.
+Ships were refueled from the residual supply found in an abandoned derelict at %system%.
 EFFECT_DERELICT_FUEL_LABEL
 Derelict Fuel
 
@@ -6620,17 +6620,17 @@ BLD_SHIPYARD_AST
 Asteroid Processor
 
 BLD_SHIPYARD_AST_DESC
-'''This is an upgrade to the Basic Shipyard and is required for the production of all asteroid hulls and all further asteroid hulls shipyard upgrades.
+'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades.
 
-A shipyard dedicated to the purpose of hollowing out asteroids and using them as ships' hulls. It can only be built in systems containing asteroid belts.'''
+A massive processing plant dedicated to the purpose of hollowing out asteroids and preparing them to be used as ships' hulls. Asteroids thus prepared are sent to a shipyard in the same system, where they are turned into the final hull. This building can only be built on asteroid belts.'''
 
 BLD_SHIPYARD_AST_REF
 Asteroid Reformation Processor
 
 BLD_SHIPYARD_AST_REF_DESC
-'''This is an upgrade to the Asteroid Shipyard and allows production of Nano-Asteroid Swarms, Compound Asteroid Hulls, Scattered Asteroid Hull flagships, and Crystallized Asteroid Hulls. In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Rock Armor Plating ship part.
+'''This is an upgrade to the Asteroid Processor and allows production of Nano-Asteroid Swarms, Compound Asteroid Hulls, Scattered Asteroid Hull flagships, and Crystallized Asteroid Hulls. In addition, this processor upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Rock and Crystallized Armor Plating ship parts.
 
-An extensive facility dedicated to fusing, shattering, deconstructing and rebuilding preexisting asteroids to form ship's parts and hulls.'''
+An extensive facility dedicated to fusing, shattering, deconstructing and rebuilding preexisting asteroids to form ship's parts and prepare them to be used as hulls.'''
 
 BLD_SHIPYARD_ORG_ORB_INC
 Orbital Incubator
@@ -7474,7 +7474,7 @@ Asteroid Hull
 SH_ASTEROID_DESC
 '''This hull is constructed from an average-sized asteroid. A bit roomier than the standard hull, it has four external slots and two internal slots. Speed and structure are relatively low, but it is fairly inexpensive to build. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard and an Asteroid Processor at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
 SH_SMALL_ASTEROID
 Small Asteroid Hull
@@ -7482,7 +7482,7 @@ Small Asteroid Hull
 SH_SMALL_ASTEROID_DESC
 '''This hull is constructed from a very small asteroid. It has only a single external slot and a single internal slot. Speed is very good, but structure is quite low. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard and an Asteroid Processor at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
 SH_HEAVY_ASTEROID
 Heavy Asteroid Hull
@@ -7490,7 +7490,7 @@ Heavy Asteroid Hull
 SH_HEAVY_ASTEROID_DESC
 '''This hull is constructed from a gigantic asteroid, and has six external slots and three internal slots. Speed is very low, but structure is moderately high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard and an Asteroid Processor at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
 SH_CAMOUFLAGE_ASTEROID
 Camouflage Asteroid Hull
@@ -7498,7 +7498,7 @@ Camouflage Asteroid Hull
 SH_CAMOUFLAGE_ASTEROID_DESC
 '''This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. Structure is average, but speed is fairly low. This hull gets a tremendous bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard and an Asteroid Processor at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
 SH_SMALL_CAMOUFLAGE_ASTEROID
 Small Camouflage Asteroid Hull
@@ -7506,7 +7506,7 @@ Small Camouflage Asteroid Hull
 SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
 '''This camouflage asteroid hull is able to make use of camouflage asteroid parts on its exterior, although it must be made much smaller to compensate and avoid losing its stealth bonus. It has a single external slot and a single internal slot. Speed is average, but structure is quite low. This hull gets a tremendous bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard and an Asteroid Processor at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
 SH_AGREGATE_ASTEROID
 Aggregate Asteroid Hull
@@ -7514,7 +7514,7 @@ Aggregate Asteroid Hull
 SH_AGREGATE_ASTEROID_DESC
 '''This massive hull is formed by combining several large asteroids. It has fifteen external slots and four internal slots. Structure is good, but speed is very low. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard, an Asteroid Processor and an Asteroid Reformation Facility at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
 SH_MINIASTEROID_SWARM
 Mini-Asteroid Swarm
@@ -7522,7 +7522,7 @@ Mini-Asteroid Swarm
 SH_MINIASTEROID_SWARM_DESC
 '''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to shields. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard, an Asteroid Processor and an Asteroid Reformation Facility at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
 SH_SCATTERED_ASTEROID
 Scattered Asteroid Hull
@@ -7530,7 +7530,7 @@ Scattered Asteroid Hull
 SH_SCATTERED_ASTEROID_DESC
 '''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to shields for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard, an Asteroid Processor and an Asteroid Reformation Facility at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
 SH_CRYSTALLIZED_ASTEROID
 Crystallized Asteroid Hull
@@ -7538,7 +7538,7 @@ Crystallized Asteroid Hull
 SH_CRYSTALLIZED_ASTEROID_DESC
 '''This sturdy hull is made from a average-sized asteroid, hardened by advanced crystallization techniques. Like the regular Asteroid Hull, it has four external slots and two internal slots. Speed is somewhat low, but structure is extremely high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard, an Asteroid Processor and a Asteroid Reformation Processor at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
 SH_ORGANIC
 Organic Hull
