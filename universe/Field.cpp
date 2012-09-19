@@ -223,24 +223,6 @@ FieldTypeManager::FieldTypeManager() {
 
     parse::fields(GetResourceDir() / "fields.txt", m_field_types);
 
-
-    std::vector<Effect::EffectBase*> effects;
-    std::vector<adobe::name_t> property_name;
-    property_name.push_back(Source_name);
-    property_name.push_back(StarlaneSpeed_name);
-    effects.push_back(new Effect::MoveTowards(new ValueRef::Variable<double>(property_name),
-                                              new Condition::Chance(new ValueRef::Constant<double>(0.1))));
-    effects.push_back(new Effect::SetMeter(METER_SIZE, new ValueRef::Constant<double>(50)));
-    effects.push_back(new Effect::SetMeter(METER_STARLANE_SPEED, new ValueRef::Constant<double>(10)));
-
-    std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects_groups;
-    Effect::EffectsGroup* group = new Effect::EffectsGroup(new Condition::Source(), new Condition::Source(), effects);
-    effects_groups.push_back(boost::shared_ptr<const Effect::EffectsGroup>(group));
-
-    m_field_types["ION_STORM"] = new FieldType("ION_STORM", "ION_STORM_DESC", 0.01, std::vector<std::string>(),
-//                                               new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_SYSTEM)),
-                                               effects_groups, "fields/rainbow_storm.png");
-
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "Field Types:";
         for (iterator it = begin(); it != end(); ++it) {

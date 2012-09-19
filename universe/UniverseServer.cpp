@@ -2218,13 +2218,13 @@ void Universe::NamePlanets() {
 }
 
 void Universe::GenerateFields(GalaxySetupOption freq) {
-    const FieldType* storm_type = GetFieldType("ION_STORM");
-    if (!storm_type) {
-        Logger().errorStream() << "AddFields couldn't find storm field type!";
-        return;
-    }
-    Field* field = new Field(storm_type->Name(), 0.0, 0.0, 100.0);
-    Insert(field);
+    //const FieldType* storm_type = GetFieldType("ION_STORM");
+    //if (!storm_type) {
+    //    Logger().errorStream() << "AddFields couldn't find storm field type!";
+    //    return;
+    //}
+    //Field* field = new Field(storm_type->Name(), 0.0, 0.0, 100.0);
+    //Insert(field);
 }
 
 namespace {
