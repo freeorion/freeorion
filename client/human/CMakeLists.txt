@@ -84,6 +84,7 @@ set(THIS_EXE_SOURCES
     ../../UI/CUIWnd.cpp
     ../../UI/EncyclopediaDetailPanel.cpp
     ../../UI/EntityRenderer.cpp
+    ../../UI/FieldIcon.cpp
     ../../UI/FleetButton.cpp
     ../../UI/FleetWnd.cpp
     ../../UI/GalaxySetupWnd.cpp
