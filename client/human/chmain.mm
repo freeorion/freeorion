@@ -1,5 +1,8 @@
 //This main is compiled only for Mac OS X builds
 
+// workaround by Apple to avoid conflicting macro names, fixes compile error
+#define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
+
 #import <Cocoa/Cocoa.h>
 
 #include "../../util/OptionsDB.h"

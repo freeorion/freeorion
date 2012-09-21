@@ -41,6 +41,7 @@
 #undef TCP_OOBINLINE
 #undef TCP_URGENT_PTR_TYPE
 #undef TCP_KEEPALIVE
+#define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0 // workaround by Apple to avoid conflicting macro names, fixes compile error
 #include <Carbon/Carbon.h>
 #endif
 

@@ -406,6 +406,7 @@ Object* MacHIDManager::createObject(InputManager* creator, Type iType, bool buff
 			switch(iType)
 			{
 				case OISJoyStick:
+                {
 					int totalDevs = totalDevices(iType);
 					int freeDevs = freeDevices(iType);
 					int devID = totalDevs - freeDevs;
@@ -413,6 +414,7 @@ Object* MacHIDManager::createObject(InputManager* creator, Type iType, bool buff
 					obj = new MacJoyStick((*it)->combinedKey, bufferMode, *it, creator, devID);
 					(*it)->inUse = true;
 					return obj;
+                }
 				case OISTablet:
 					//Create MacTablet
 					break;
