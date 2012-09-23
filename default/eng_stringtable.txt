@@ -3854,6 +3854,8 @@ OBJ_PROD_CENTER
 production center
 OBJ_SYSTEM
 system
+OBJ_FIELD
+field
 
 
 # StarTypes

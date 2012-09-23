@@ -441,7 +441,7 @@ private:
     void    Init(const Condition::ConditionBase* const condition_filter) {
         if (m_filters_layout)
             delete m_filters_layout;
-        m_filters_layout = new GG::Layout(GG::X0, GG::Y0, GG::X(390), GG::Y(90), 4, 6);
+        m_filters_layout = new GG::Layout(GG::X0, GG::Y0, GG::X(390), GG::Y(90), 4, 7);
         AttachChild(m_filters_layout);
 
         m_filters_layout->SetMinimumColumnWidth(0, GG::X(ClientUI::Pts()*8));
