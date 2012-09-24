@@ -7,12 +7,12 @@ FieldType
         EffectsGroup    // move around, grow when near stars, shrink a bit each turn
             scope = Source
             effects = [
-                SetStarlaneSpeed value = 50
+                SetStarlaneSpeed value = 25
                 
                 MoveTowards speed = Source.StarlaneSpeed/1.4 x = UniverseCentreX y = UniverseCentreY
                 MoveInOrbit speed = Source.StarlaneSpeed/1.4 x = UniverseCentreX y = UniverseCentreY
 
-                SetSize Value - 0.5*Number condition = And [
+                SetSize Value - 0.3*Number condition = And [
                     System
                     WithinDistance distance = 80 condition = Source
                 ]
