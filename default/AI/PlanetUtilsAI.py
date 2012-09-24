@@ -26,6 +26,7 @@ def getOwnedPlanetsByEmpire(planetIDs, empireID):
             result.append(planetID)
 
     return result
+    
 
 def getTypePlanetEmpireOwned(planetType):
     "return list of specific type planets owned by empireID"
@@ -57,34 +58,23 @@ def getAllOwnedPlanetIDs(planetIDs):
             allOwnedPlanetIDs.append(planetID)
 
     return allOwnedPlanetIDs
+    
+def getPopulatedPlanetIDs(planetIDs):
+    universe = fo.getUniverse()
+    pops=[]
+    for planetID in planetIDs:
+        planet = universe.getPlanet(planetID)
+        if planet.currentMeterValue(fo.meterType.population) >0:
+            pops.append(planetID)
+    return pops
 
 def getAllPopulatedSystemIDs(planetIDs):
     "return list of all populated systemIDs"
 
     universe = fo.getUniverse()
     allPopulatedSystemIDs = []
-
-    for planetID in planetIDs:
-        planet = universe.getPlanet(planetID)
-        systemID = planet.systemID
-
-        allPopulatedSystemIDs.append(systemID)
-
-    return allPopulatedSystemIDs
-
-def getSystemsOccupiedByEmpire(planetIDs, empireID):
-    "return list of systems occupied by empireID"
-
-    universe = fo.getUniverse()
-    occupiedSystemIDs = []
-
-    for planetID in planetIDs:
-        planet = universe.getPlanet(planetID)
-        systemID = planet.systemID
-
-        occupiedSystemIDs.append(systemID)
-
-    return occupiedSystemIDs
+    popPlanets=getPopulatedPlanetIDs(planetIDs)
+    return [universe.getPlanet(planetID).systemID for planetID in popPlanets ]
 
 def getSystems(planetIDs):
     "return list of systems containing planetIDs"

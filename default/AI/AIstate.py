@@ -6,7 +6,7 @@ import AIFleetMission
 
 # global variables
 foodStockpileSize = 1     # food stored per population
-minimalColoniseValue = 4  # minimal value for a planet to be colonised, now a size 2 terran world
+minimalColoniseValue = 3  # minimal value for a planet to be colonised
 colonisablePlanetIDs = []  # TODO: move into AIstate
 colonyTargetedSystemIDs = []
 colonisableOutpostIDs = []  # TODO: move into AIstate

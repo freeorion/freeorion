@@ -5,7 +5,9 @@
 def unusableTechsList():
     "techs currently unusable by the AI"
 
-    unusableTechs = [
+    unusableTechs = []
+    ptechs = primaryMetaTechsList()
+    for tech in [    
 
         'CON_ART_HEAVENLY',
         'CON_ART_PLANET',
@@ -125,7 +127,9 @@ def unusableTechsList():
         'SHP_WEAPON_15',
         'SHP_WEAPON_16',
         'SHP_WEAPON_17'
-    ]
+    ] :
+        if tech not in ptechs:
+            unusableTechs.append(tech)
 
     return unusableTechs
 
@@ -165,3 +169,72 @@ def primaryShipsTechsList():
         ]
 
     return primaryShipsTechs
+
+def primaryMetaTechsList():
+    "primary techs for al categories"
+
+
+    primaryMetaTechs = [
+        'GRO_SUBTER_HAB', 
+        'CON_ORBITAL_CON', 
+        'SHP_WEAPON_2',
+        'SHP_WEAPON_3',
+        'SHP_WEAPON_4',
+        'SHP_WEAPON_5',
+        'GRO_SYMBIOTIC_BIO', 
+        'SHP_GAL_EXPLO', 
+        'SHP_SPACE_TACTICS', 
+        'SHP_DEFLECTOR',
+        'GRO_GENETIC_ENG', 
+        'GRO_ENV_ENCAPSUL', 
+        'GRO_XENO_GENETICS', 
+        'LRN_ALGO_ELEGANCE', 
+        'LRN_ARTIF_MINDS', 
+        'GRO_XENO_HYBRIDS', 
+        'SHP_WEAPON_6',
+        'SHP_WEAPON_7',
+        'SHP_WEAPON_8',
+        'SHP_DOMESTIC_MONSTER', 
+        'SHP_HAB_MEGAFAUN', 
+        'SHP_ORG_HULL', 
+        'SHP_MULTICELL_CAST', 
+        'DEF_GARRISON_1', 
+        'DEF_DEFENSE_NET', 
+        'LRN_PHYS_BRAIN', 
+        'LRN_TRANSLING_THT', 
+        'LRN_PSIONICS', 
+        'LRN_XENOARCH',
+        'LRN_DISTRIB_THOUGHT', 
+        'PRO_FUSION_GEN', 
+        'PRO_ROBOTIC_PROD', 
+        'PRO_INDUSTRY_CENTER_I', 
+        'DEF_GARRISON_2', 
+        'DEF_GARRISON_3', 
+        'DEF_GARRISON_4', 
+        'CON_METRO_INFRA', 
+        'CON_SUBTER_CONST', 
+        'SHP_ENDOMORPH_HULL', 
+        'SHP_TACT_COUNTER', 
+        'DEF_PLAN_DEFLECT_SHLD', 
+        'PRO_INDUSTRY_CENTER_II', 
+        'SHP_NAVIGATION', 
+        'SHP_RADAR', 
+        'SHP_BASIC_DAM_CONT', 
+        'SHP_ADV_NAVIGATION', 
+        'SHP_ADV_DAM_CONT', 
+        'SHP_WEAPON_9',
+        'SHP_WEAPON_10', 
+        'GRO_GENETIC_MED',
+        'PRO_NANOTECH_PROD', 
+        'GRO_NANOTECH_MED', 
+        'GRO_NANO_CYBERNET', 
+        'GRO_CYBORG', 
+        'PRO_INDUSTRY_CENTER_III', 
+        'PRO_SENTIENT_AUTOMATION', 
+        'SHP_WEAPON_11', 
+        'SHP_WEAPON_12', 
+        'GRO_PLANET_ECOL', 
+        'GRO_ADV_ECOMAN', 
+        'GRO_TERRAFORM',
+        ]
+    return primaryMetaTechs

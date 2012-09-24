@@ -4,7 +4,36 @@ import TechsListsAI
 from EnumsAI import AIPriorityType, getAIPriorityResearchTypes
 import AIstate
 
+
 def generateResearchOrders():
+    "generate research orders"
+
+    empire = fo.getEmpire()
+    print "Research Queue Management:"
+    print ""
+    print "Techs researched and available for use:"
+    completedTechs = getCompletedTechs()
+    for techname in completedTechs:
+        print "    " + techname
+    print""
+    print "Techs currently in Research Queue:"
+    researchQueue = empire.researchQueue
+    researchQueueList = getResearchQueueTechs()
+    for element in researchQueue:
+        print "    " + element.tech
+    print ""
+    newtech = TechsListsAI.primaryMetaTechsList()
+    #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
+    pLTsToEnqueue = newtech[:]
+    for tech in pLTsToEnqueue:
+        if (tech in completedTechs) or (tech in researchQueueList): pLTsToEnqueue.remove(tech)
+    for name in pLTsToEnqueue:
+        fo.issueEnqueueTechOrder(name, -1)
+        print "    Enqueued Tech: " + name
+    print""
+    generateDefaultResearchOrders()
+
+def generateResearchOrders_old():
     "generate research orders"
 
     empire = fo.getEmpire()

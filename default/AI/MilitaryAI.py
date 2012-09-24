@@ -5,6 +5,7 @@ import AITarget
 from EnumsAI import AIFleetMissionType, AITargetType
 import FleetUtilsAI
 import PlanetUtilsAI
+from random import choice
 
 def getMilitaryFleets():
     "get armed military fleets"
@@ -35,7 +36,7 @@ def getMilitaryFleets():
     print "All Populated SystemIDs:             " + str(list(set(allPopulatedSystemIDs)))
 
     empirePlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
-    empireOccupiedSystemIDs = list(set(PlanetUtilsAI.getSystemsOccupiedByEmpire(empirePlanetIDs, empireID)))
+    empireOccupiedSystemIDs = list(set(PlanetUtilsAI.getSystems(empirePlanetIDs)))
     print ""
     print "Empire Capital SystemID:             " + str(capitalSystemID)
     # print "Empire Occupied SystemIDs:    " + str(empireOccupiedSystemIDs)
@@ -130,7 +131,7 @@ def evaluateSystem(systemID, missionType, empireProvinceSystemIDs, otherTargeted
     if systemID == homeSystemID:
         return 10
     elif systemID in empireProvinceSystemIDs:
-        return 3 + distanceFactor
+        return 4 + distanceFactor
     elif systemID in otherTargetedSystemIDs:
         return 2 + distanceFactor
     else:
@@ -138,20 +139,42 @@ def evaluateSystem(systemID, missionType, empireProvinceSystemIDs, otherTargeted
 
 def sendMilitaryFleets(militaryFleetIDs, evaluatedSystems, missionType):
     "sends a list of military fleets to a list of system_value_pairs"
+    
+    if len(militaryFleetIDs)==0: return
 
-    i = 0
+    allMilitaryFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY)
+    #AIstate.militaryFleetIDs = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allMilitaryFleetIDs)
 
+    targets=[]
     for systemID_value_pair in evaluatedSystems: # evaluatedSystems is a dictionary
-        if i >= len(militaryFleetIDs): return
+        targets.extend(  int(systemID_value_pair[1]) *[ systemID_value_pair[0] ]    )
+    #currentFleetSizes= dict (  [ (fleetID, len( universe.getFleet(fleetID).shipIDs) )   for fleetID in allMilitaryFleetIDs ] )
+    #newFleetSizes= dict (  [ (fleetID, len( universe.getFleet(fleetID).shipIDs) )   for fleetID in AIstate.militaryFleetIDs ] )
 
-        fleetID = militaryFleetIDs[i]
-        systemID = systemID_value_pair[0]
+    if len(targets)==0: return
 
-        aiTarget = AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID)
-        aiFleetMission = foAI.foAIstate.getAIFleetMission(fleetID)
-        aiFleetMission.addAITarget(missionType, aiTarget)
+    if True:
+        for fleetID in militaryFleetIDs:
+            systemID = choice( targets )
+            aiTarget = AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID)
+            aiFleetMission = foAI.foAIstate.getAIFleetMission(fleetID)
+            aiFleetMission.addAITarget(missionType, aiTarget)
+        return
+    else:
 
-        i = i + 1
+        i = 0
+        for systemID_value_pair in evaluatedSystems: # evaluatedSystems is a dictionary
+            if i >= len(militaryFleetIDs): return
+
+            fleetID = militaryFleetIDs[i]
+            systemID = systemID_value_pair[0]
+
+            aiTarget = AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID)
+            aiFleetMission = foAI.foAIstate.getAIFleetMission(fleetID)
+            aiFleetMission.addAITarget(missionType, aiTarget)
+            i = i + 1
+            
+        return
 
 def assignMilitaryFleetsToSystems():
     # assign military fleets to military theater systems

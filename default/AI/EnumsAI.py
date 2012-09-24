@@ -90,6 +90,13 @@ class AIFleetOrderType(object):
 def getAIFleetOrderTypes():
     return __getInterval(0, 10)
 
+class AIShipDesignTypes(object):
+    explorationShip = "SD_SCOUT"
+    colonyShip = "SD_COLONY_SHIP"
+    outpostShip = "SD_OUTPOST_SHIP"
+    troopShip = "SD_TROOP_SHIP"
+    attackShip= "SD_MARK"
+    
 class AIShipRoleType(object):
     SHIP_ROLE_INVALID = -1
     SHIP_ROLE_MILITARY_ATTACK = 0
@@ -119,6 +126,13 @@ class AITargetType(object):
 def getAITargetTypes():
     return __getInterval(0, 7)
 
+class AIEmpireProductionTypes(object):
+    INVALID_BUILD_TYPE = -1
+    BT_NOT_BUILDING=0 #         ///< no building is taking place
+    BT_BUILDING=1 #,             ///< a Building object is being built
+    BT_SHIP = 2 #,                 ///< a Ship object is being built
+    NUM_BUILD_TYPES =3
+    
 class AIProductionDemandType(object):
     PRODUCTION_DEMAND_INVALID = -1
     PRODUCTION_DEMAND_SHIP = 0
@@ -186,3 +200,6 @@ class AIFocusType(object):
     FOCUS_RESEARCH = "FOCUS_RESEARCH"
     FOCUS_TRADE = "FOCUS_TRADE"
     FOCUS_CONSTRUCTION = "FOCUS_CONSTRUCTION"
+    FOCUS_MINING="FOCUS_MINING"
+    FOCUS_HEAVY_MINING="FOCUS_HEAVY_MINING"
+

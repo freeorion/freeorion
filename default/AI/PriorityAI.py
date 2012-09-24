@@ -8,6 +8,7 @@ import FleetUtilsAI
 from ResearchAI import getCompletedTechs
 import InvasionAI
 import MilitaryAI
+import PlanetUtilsAI
 
 def calculatePriorities():
     "calculates the priorities of the AI player"
@@ -67,16 +68,30 @@ def calculateFoodPriority():
 def calculateIndustryPriority():
     "calculates the demand for industry"
 
+    universe = fo.getUniverse()
     empire = fo.getEmpire()
-
-    # get current industry production
+    empireID = empire.empireID
+    # get current industry production & Target
     industryProduction = empire.resourceProduction(fo.resourceType.industry)
+    ownedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
+    planets = map(universe.getPlanet,  ownedPlanetIDs)
+    targetPP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetIndustry),  planets) )
+
+    if fo.currentTurn < 20:
+        industryPriority = 10 # mid industry , high research at beginning of game to get easy gro tech
+    elif fo.currentTurn < 30:
+        industryPriority = 15 # mid industry , mid research 
+    elif fo.currentTurn < 40:
+        industryPriority = 40 # high  industry , low research 
+    else:
+        industryPriority = 50 # high  industry , mid research 
+
 
     # increase demand for industry industry production is low
-    industryPriority = 380 / (industryProduction + 0.001)
+    #industryPriority = 380 / (industryProduction + 0.001)
 
     print ""
-    print "Industry Production  : " + str(industryProduction)
+    print "Industry Production (current/target) : ( %.1f / %.1f )"%(industryProduction,  targetPP)
     print "Priority for Industry: " + str(industryPriority)
 
     return industryPriority
@@ -84,15 +99,28 @@ def calculateIndustryPriority():
 def calculateResearchPriority():
     "calculates the AI empire's demand for research"
 
+    universe = fo.getUniverse()
     empire = fo.getEmpire()
+    empireID = empire.empireID
     totalPP = empire.productionPoints
     totalRP = empire.resourceProduction(fo.resourceType.research)
+    # get current industry production & Target
+    ownedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
+    planets = map(universe.getPlanet,  ownedPlanetIDs)
+    targetRP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetResearch),  planets) )
 
-    # increase demand for research if significantly lagging production capability
-    researchPriority = 10 * totalPP / (totalRP + 1)
+    if fo.currentTurn < 20:
+        researchPriority = 25 # mid industry , high research at beginning of game to get easy gro tech
+    elif fo.currentTurn < 30:
+        researchPriority = 15 # mid industry , mid research 
+    elif fo.currentTurn < 40:
+        researchPriority = 10 # high  industry , low research 
+    else:
+        researchPriority = 20 # high  industry , mid research 
+
 
     print  ""
-    print  "Research Production  : " + str(totalRP)
+    print  "Research Production (current/target) : ( %.1f / %.1f )"%(totalRP,  targetRP)
     print  "Priority for Research: " + str(researchPriority)
 
     return researchPriority
