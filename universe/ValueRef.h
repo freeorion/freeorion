@@ -1017,37 +1017,79 @@ bool ValueRef::Operation<T>::TargetInvariant() const
 template <class T>
 std::string ValueRef::Operation<T>::Description() const
 {
-    if (m_op_type == NEGATE)
-        return ("-(" + m_operand1->Description() + ")");
+    if (m_op_type == NEGATE) {
+        if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
+            OpType op_type = rhs->GetOpType();
+            if (op_type == PLUS     || op_type == MINUS ||
+                op_type == TIMES    || op_type == DIVIDE ||
+                op_type == NEGATE   || op_type == EXPONENTIATE)
+            return "-(" + m_operand1->Description() + ")";
+        } else {
+            return "-" + m_operand1->Description();
+        }
+    }
+
+    if (m_op_type == LOGARITHM)
+        return "log(" + m_operand1->Description() + ")";
+    if (m_op_type == SINE)
+        return "sin(" + m_operand1->Description() + ")";
+    if (m_op_type == COSINE)
+        return "cos(" + m_operand1->Description() + ")";
+    if (m_op_type == MINIMUM)
+        return "min(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+    if (m_op_type == MAXIMUM)
+        return "max(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+    if (m_op_type == RANDOM_UNIFORM)
+        return "random(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+
 
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
     if (const ValueRef::Operation<T>* lhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
-        if ((m_op_type == TIMES || m_op_type == DIVIDE) &&
-            (lhs->GetOpType() == PLUS || lhs->GetOpType() == MINUS))
+        OpType op_type = lhs->GetOpType();
+        if (
+            (m_op_type == EXPONENTIATE &&
+             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
+              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+            ) ||
+            ((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+             (op_type == PLUS           || op_type == MINUS)    || op_type == NEGATE)
+           )
             parenthesize_lhs = true;
     }
     if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand2)) {
-        if ((m_op_type == TIMES || m_op_type == DIVIDE) &&
-            (rhs->GetOpType() == PLUS || rhs->GetOpType() == MINUS))
+        OpType op_type = rhs->GetOpType();
+        if (
+            (m_op_type == EXPONENTIATE &&
+             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
+              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+            ) ||
+            ((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+             (op_type == PLUS           || op_type == MINUS)    || op_type == NEGATE)
+           )
             parenthesize_rhs = true;
     }
+
     std::string retval;
     if (parenthesize_lhs)
         retval += '(' + m_operand1->Description() + ')';
     else
         retval += m_operand1->Description();
+
     switch (m_op_type) {
-    case PLUS:      retval += " + "; break;
-    case MINUS:     retval += " - "; break;
-    case TIMES:     retval += " * "; break;
-    case DIVIDE:    retval += " / "; break;
-    default:        retval += " ? "; break;
+    case PLUS:          retval += " + "; break;
+    case MINUS:         retval += " - "; break;
+    case TIMES:         retval += " * "; break;
+    case DIVIDE:        retval += " / "; break;
+    case EXPONENTIATE:  retval += " ^ "; break;
+    default:            retval += " ? "; break;
     }
+
     if (parenthesize_rhs)
         retval += '(' + m_operand2->Description() + ')';
     else
         retval += m_operand2->Description();
+
     return retval;
 }
 
@@ -1055,22 +1097,55 @@ template <class T>
 std::string ValueRef::Operation<T>::Dump() const
 {
     if (m_op_type == NEGATE) {
-        if (dynamic_cast<const ValueRef::Operation<T>*>(m_operand1))
+        if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
+            OpType op_type = rhs->GetOpType();
+            if (op_type == PLUS     || op_type == MINUS ||
+                op_type == TIMES    || op_type == DIVIDE ||
+                op_type == NEGATE   || op_type == EXPONENTIATE)
             return "-(" + m_operand1->Dump() + ")";
-        else
+        } else {
             return "-" + m_operand1->Dump();
+        }
     }
+
+    if (m_op_type == LOGARITHM)
+        return "log(" + m_operand1->Dump() + ")";
+    if (m_op_type == SINE)
+        return "sin(" + m_operand1->Dump() + ")";
+    if (m_op_type == COSINE)
+        return "cos(" + m_operand1->Dump() + ")";
+    if (m_op_type == MINIMUM)
+        return "min(" + m_operand1->Dump() + ", " + m_operand1->Dump() + ")";
+    if (m_op_type == MAXIMUM)
+        return "max(" + m_operand1->Dump() + ", " + m_operand1->Dump() + ")";
+    if (m_op_type == RANDOM_UNIFORM)
+        return "random(" + m_operand1->Dump() + ", " + m_operand1->Dump() + ")";
+
 
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
     if (const ValueRef::Operation<T>* lhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
-        if ((m_op_type == TIMES || m_op_type == DIVIDE) &&
-            (lhs->GetOpType() == PLUS || lhs->GetOpType() == MINUS))
+        OpType op_type = lhs->GetOpType();
+        if (
+            (m_op_type == EXPONENTIATE &&
+             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
+              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+            ) ||
+            ((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+             (op_type == PLUS           || op_type == MINUS)    || op_type == NEGATE)
+           )
             parenthesize_lhs = true;
     }
     if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand2)) {
-        if ((m_op_type == TIMES || m_op_type == DIVIDE) &&
-            (rhs->GetOpType() == PLUS || rhs->GetOpType() == MINUS))
+        OpType op_type = rhs->GetOpType();
+        if (
+            (m_op_type == EXPONENTIATE &&
+             (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
+              op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
+            ) ||
+            ((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+             (op_type == PLUS           || op_type == MINUS)    || op_type == NEGATE)
+           )
             parenthesize_rhs = true;
     }
 
@@ -1081,11 +1156,12 @@ std::string ValueRef::Operation<T>::Dump() const
         retval += m_operand1->Dump();
 
     switch (m_op_type) {
-    case PLUS:      retval += " + "; break;
-    case MINUS:     retval += " - "; break;
-    case TIMES:     retval += " * "; break;
-    case DIVIDE:    retval += " / "; break;
-    default:        retval += " ? "; break;
+    case PLUS:          retval += " + "; break;
+    case MINUS:         retval += " - "; break;
+    case TIMES:         retval += " * "; break;
+    case DIVIDE:        retval += " / "; break;
+    case EXPONENTIATE:  retval += " ^ "; break;
+    default:            retval += " ? "; break;
     }
 
     if (parenthesize_rhs)
