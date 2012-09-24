@@ -38,8 +38,15 @@ namespace ValueRef {
         PLUS,
         MINUS,
         TIMES,
-        DIVIDES,
-        NEGATE
+        DIVIDE,
+        NEGATE,
+        EXPONENTIATE,
+        LOGARITHM,
+        SINE,
+        COSINE,
+        MINIMUM,
+        MAXIMUM,
+        RANDOM_UNIFORM
     };
     template <class T> bool ConstantExpr(const ValueRefBase<T>* expr);
 }

@@ -127,12 +127,11 @@ const boost::phoenix::function<make_expression_> make_expression;
 
 template <typename T>
 void initialize_expression_parsers(
-    typename parse::value_ref_parser_rule<T>::type& negate_expr,
-    typename multiplicative_expr_rule<T>::type& multiplicative_expr,
-    typename additive_expr_rule<T>::type& additive_expr,
-    typename parse::value_ref_parser_rule<T>::type& expr,
-    typename parse::value_ref_parser_rule<T>::type& primary_expr
-)
+    typename parse::value_ref_parser_rule<T>::type&     negate_expr,
+    typename multiplicative_expr_rule<T>::type&         multiplicative_expr,
+    typename additive_expr_rule<T>::type&               additive_expr,
+    typename parse::value_ref_parser_rule<T>::type&     expr,
+    typename parse::value_ref_parser_rule<T>::type&     primary_expr         )
 {
     qi::_1_type _1;
     qi::_a_type _a;
@@ -153,7 +152,7 @@ void initialize_expression_parsers(
         >>  *(
                   (
                        lit('*') [ _a = ValueRef::TIMES ]
-                   |   lit('/') [ _a = ValueRef::DIVIDES ]
+                   |   lit('/') [ _a = ValueRef::DIVIDE ]
                   )
               >   negate_expr [ push_back(_r1, _1) ]
              ) [ push_back(_r1, _a) ]

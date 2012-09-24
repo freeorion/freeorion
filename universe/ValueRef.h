@@ -967,24 +967,8 @@ T ValueRef::Operation<T>::Eval(const ScriptingContext& context) const
             return T(m_operand1->Eval(context) -
                      m_operand2->Eval(context));
             break;
-        case TIMES:
-            return T(m_operand1->Eval(context) *
-                     m_operand2->Eval(context));
-            break;
-        case DIVIDES:
-        {
-            T op2 = m_operand2->Eval(context);
-            if (op2 == T(0))
-                return T(0);
-            return T(m_operand1->Eval(context) /
-                     op2);
-            break;
-        }
-        case NEGATE:
-            return T(-m_operand1->Eval(context));
-            break;
         default:
-            throw std::runtime_error("ValueRef evaluated with an unknown OpType.");
+            throw std::runtime_error("ValueRef evaluated with an unknown or invalid OpType.");
             break;
     }
 }
@@ -992,6 +976,12 @@ T ValueRef::Operation<T>::Eval(const ScriptingContext& context) const
 namespace ValueRef {
     template <>
     std::string Operation<std::string>::Eval(const ScriptingContext& context) const;
+
+    template <>
+    double      Operation<double>::Eval(const ScriptingContext& context) const;
+
+    template <>
+    int         Operation<int>::Eval(const ScriptingContext& context) const;
 }
 
 template <class T>
@@ -1033,12 +1023,12 @@ std::string ValueRef::Operation<T>::Description() const
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
     if (const ValueRef::Operation<T>* lhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
-        if ((m_op_type == TIMES || m_op_type == DIVIDES) &&
+        if ((m_op_type == TIMES || m_op_type == DIVIDE) &&
             (lhs->GetOpType() == PLUS || lhs->GetOpType() == MINUS))
             parenthesize_lhs = true;
     }
     if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand2)) {
-        if ((m_op_type == TIMES || m_op_type == DIVIDES) &&
+        if ((m_op_type == TIMES || m_op_type == DIVIDE) &&
             (rhs->GetOpType() == PLUS || rhs->GetOpType() == MINUS))
             parenthesize_rhs = true;
     }
@@ -1048,11 +1038,11 @@ std::string ValueRef::Operation<T>::Description() const
     else
         retval += m_operand1->Description();
     switch (m_op_type) {
-    case PLUS:    retval += " + "; break;
-    case MINUS:   retval += " - "; break;
-    case TIMES:   retval += " * "; break;
-    case DIVIDES: retval += " / "; break;
-    default:      retval += " ? "; break;
+    case PLUS:      retval += " + "; break;
+    case MINUS:     retval += " - "; break;
+    case TIMES:     retval += " * "; break;
+    case DIVIDE:    retval += " / "; break;
+    default:        retval += " ? "; break;
     }
     if (parenthesize_rhs)
         retval += '(' + m_operand2->Description() + ')';
@@ -1074,12 +1064,12 @@ std::string ValueRef::Operation<T>::Dump() const
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
     if (const ValueRef::Operation<T>* lhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
-        if ((m_op_type == TIMES || m_op_type == DIVIDES) &&
+        if ((m_op_type == TIMES || m_op_type == DIVIDE) &&
             (lhs->GetOpType() == PLUS || lhs->GetOpType() == MINUS))
             parenthesize_lhs = true;
     }
     if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand2)) {
-        if ((m_op_type == TIMES || m_op_type == DIVIDES) &&
+        if ((m_op_type == TIMES || m_op_type == DIVIDE) &&
             (rhs->GetOpType() == PLUS || rhs->GetOpType() == MINUS))
             parenthesize_rhs = true;
     }
@@ -1091,11 +1081,11 @@ std::string ValueRef::Operation<T>::Dump() const
         retval += m_operand1->Dump();
 
     switch (m_op_type) {
-    case PLUS:    retval += " + "; break;
-    case MINUS:   retval += " - "; break;
-    case TIMES:   retval += " * "; break;
-    case DIVIDES: retval += " / "; break;
-    default:      retval += " ? "; break;
+    case PLUS:      retval += " + "; break;
+    case MINUS:     retval += " - "; break;
+    case TIMES:     retval += " * "; break;
+    case DIVIDE:    retval += " / "; break;
+    default:        retval += " ? "; break;
     }
 
     if (parenthesize_rhs)

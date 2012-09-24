@@ -568,7 +568,7 @@ std::string SetMeter::Description() const {
         case ValueRef::PLUS:    op_char = '+'; break;
         case ValueRef::MINUS:   op_char = '-'; break;
         case ValueRef::TIMES:   op_char = '*'; break;
-        case ValueRef::DIVIDES: op_char = '/'; break;
+        case ValueRef::DIVIDE: op_char = '/'; break;
         default: op_char = '?';
         }
         return str(FlexibleFormat(UserString("DESC_SIMPLE_SET_METER"))

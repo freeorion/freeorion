@@ -11,6 +11,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/Random.h"
 
 #include <GG/adobe/closed_hash.hpp>
 
@@ -710,21 +711,155 @@ namespace ValueRef {
     std::string Operation<std::string>::Eval(const ScriptingContext& context) const
     {
         std::string op_link;
+        if (m_op_type == PLUS)
+            return m_operand1->Eval(context) + m_operand2->Eval(context);
+        throw std::runtime_error("std::string ValueRef evaluated with an unknown or invalid OpType.");
+        return "";
+    }
+
+    template <>
+    double      Operation<double>::Eval(const ScriptingContext& context) const
+    {
         switch (m_op_type) {
-            case PLUS:      op_link = " + ";    break;
-            case MINUS:     op_link = " - ";    break;
-            case TIMES:     op_link = " * ";    break;
-            case DIVIDES:   op_link = " / ";    break;
-            case NEGATE:
-                return "-" + m_operand1->Eval(context);
+            case PLUS:
+                return m_operand1->Eval(context) + m_operand2->Eval(context);   break;
+
+            case MINUS:
+                return m_operand1->Eval(context) - m_operand2->Eval(context);   break;
+
+            case TIMES:
+                return m_operand1->Eval(context) * m_operand2->Eval(context);   break;
+
+            case DIVIDE: {
+                double op2 = m_operand2->Eval(context);
+                if (op2 == 0.0)
+                    return 0.0;
+                return m_operand1->Eval(context) / op2;
                 break;
+            }
+
+            case NEGATE:
+                return -m_operand1->Eval(context);                              break;
+
+            case EXPONENTIATE: {
+                return std::pow(m_operand1->Eval(context),
+                                m_operand2->Eval(context));
+                break;
+            }
+
+            case LOGARITHM: {
+                double op1 = m_operand1->Eval(context);
+                if (op1 <= 0.0)
+                    return 0.0;
+                return std::log(op1);
+                break;
+            }
+
+            case SINE:
+                return std::sin(m_operand1->Eval(context));                     break;
+
+            case COSINE:
+                return std::cos(m_operand1->Eval(context));                     break;
+
+            case MINIMUM:
+                return std::min(m_operand1->Eval(context),
+                                m_operand2->Eval(context));
+                break;
+
+            case MAXIMUM:
+                return std::max(m_operand1->Eval(context),
+                                m_operand2->Eval(context));
+                break;
+
+            case RANDOM_UNIFORM: {
+                double op1 = m_operand1->Eval(context);
+                double op2 = m_operand2->Eval(context);
+                double min_val = std::min(op1, op2);
+                double max_val = std::max(op1, op2);
+                return RandDouble(min_val, max_val);
+                break;
+            }
+
             default:
-                throw std::runtime_error("std::string ValueRef evaluated with an unknown OpType.");
+                throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");
                 break;
         }
-        return m_operand1->Eval(context)
-               + op_link +
-               m_operand2->Eval(context);
+    }
+
+    template <>
+    int         Operation<int>::Eval(const ScriptingContext& context) const
+    {
+        switch (m_op_type) {
+            case PLUS:
+                return m_operand1->Eval(context) + m_operand2->Eval(context);   break;
+
+            case MINUS:
+                return m_operand1->Eval(context) - m_operand2->Eval(context);   break;
+
+            case TIMES:
+                return m_operand1->Eval(context) * m_operand2->Eval(context);   break;
+
+            case DIVIDE: {
+                int op2 = m_operand2->Eval(context);
+                if (op2 == 0)
+                    return 0;
+                return m_operand1->Eval(context) / op2;
+                break;
+            }
+
+            case NEGATE:
+                return -m_operand1->Eval(context);                              break;
+
+            case EXPONENTIATE: {
+                double op1 = m_operand1->Eval(context);
+                double op2 = m_operand2->Eval(context);
+                return static_cast<int>(std::pow(op1, op2));
+                break;
+            }
+
+            case LOGARITHM: {
+                double op1 = m_operand1->Eval(context);
+                if (op1 <= 0.0)
+                    return 0;
+                return static_cast<int>(std::log(op1));
+                break;
+            }
+
+            case SINE: {
+                double op1 = m_operand1->Eval(context);
+                return static_cast<int>(std::sin(op1));
+                break;
+            }
+
+            case COSINE: {
+                double op1 = m_operand1->Eval(context);
+                return static_cast<int>(std::cos(op1));
+                break;
+            }
+
+            case MINIMUM:
+                return std::min<int>(m_operand1->Eval(context),
+                                     m_operand2->Eval(context));
+                break;
+
+            case MAXIMUM:
+                return std::max<int>(m_operand1->Eval(context),
+                                     m_operand2->Eval(context));
+                break;
+
+            case RANDOM_UNIFORM: {
+                double op1 = m_operand1->Eval(context);
+                double op2 = m_operand2->Eval(context);
+                int min_val = static_cast<int>(std::min(op1, op2));
+                int max_val = static_cast<int>(std::max(op1, op2));
+                return RandInt(min_val, max_val);
+                break;
+            }
+
+            default:
+                throw std::runtime_error("int ValueRef evaluated with an unknown or invalid OpType.");
+                break;
+        }
     }
 }
 
