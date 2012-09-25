@@ -302,15 +302,19 @@ namespace FreeOrionPython {
         //     Ship     //
         //////////////////
         class_<Ship, bases<UniverseObject>, noncopyable>("ship", no_init)
-            .add_property("design",             make_function(&Ship::Design,                return_value_policy<reference_existing_object>()))
-            .add_property("designID",           &Ship::DesignID)
-            .add_property("fleetID",            &Ship::FleetID)
-            .add_property("isMonster",          &Ship::IsMonster)
-            .add_property("isArmed",            &Ship::IsArmed)
-            .add_property("canColonize",        &Ship::CanColonize)
-            .add_property("canInvade",          &Ship::HasTroops)
-            .add_property("speed",              &Ship::Speed)
-        ;
+            .add_property("design",                 make_function(&Ship::Design,            return_value_policy<reference_existing_object>()))
+            .add_property("designID",               &Ship::DesignID)
+            .add_property("fleetID",                &Ship::FleetID)
+            .add_property("isMonster",              &Ship::IsMonster)
+            .add_property("isArmed",                &Ship::IsArmed)
+            .add_property("canColonize",            &Ship::CanColonize)
+            .add_property("canInvade",              &Ship::HasTroops)
+            .add_property("speciesName",            make_function(&Ship::SpeciesName,       return_value_policy<copy_const_reference>()))
+            .add_property("speed",                  &Ship::Speed)
+            .add_property("orderedScrapped",        &Ship::OrderedScrapped)
+            .add_property("orderedColonizePlanet",  &Ship::OrderedColonizePlanet)
+            .add_property("orderedInvadePlanet",    &Ship::OrderedInvadePlanet)
+            ;
 
         //////////////////
         //  ShipDesign  //
