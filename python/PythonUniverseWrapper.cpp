@@ -305,6 +305,7 @@ namespace FreeOrionPython {
             .add_property("design",                 make_function(&Ship::Design,            return_value_policy<reference_existing_object>()))
             .add_property("designID",               &Ship::DesignID)
             .add_property("fleetID",                &Ship::FleetID)
+            .add_property("producedByEmpireID",     &Ship::ProducedByEmpireID)
             .add_property("isMonster",              &Ship::IsMonster)
             .add_property("isArmed",                &Ship::IsArmed)
             .add_property("canColonize",            &Ship::CanColonize)
@@ -370,8 +371,9 @@ namespace FreeOrionPython {
         //////////////////
         class_<Building, bases<UniverseObject>, noncopyable>("building", no_init)
             .add_property("buildingTypeName",   make_function(&Building::BuildingTypeName,  return_value_policy<copy_const_reference>()))
-            //.add_property("operating",          &Building::Operating)
             .add_property("planetID",           make_function(&Building::PlanetID,          return_value_policy<return_by_value>()))
+            .add_property("producedByEmpireID", &Building::ProducedByEmpireID)
+            .add_property("orderedScrapped",    &Building::OrderedScrapped)
         ;
 
         //////////////////
@@ -426,6 +428,7 @@ namespace FreeOrionPython {
             .add_property("allObjectIDs",       make_function(&System::FindObjectIDs<UniverseObject>,   return_value_policy<return_by_value>()))
             .add_property("planetIDs",          make_function(&System::FindObjectIDs<Planet>,           return_value_policy<return_by_value>()))
             .add_property("fleetIDs",           make_function(&System::FindObjectIDs<Fleet>,            return_value_policy<return_by_value>()))
+            .add_property("lastTurnBattleHere", &System::LastTurnBattleHere)
         ;
 
         //////////////////
