@@ -60,3 +60,31 @@ Article
     short_description = "PRODUCTION_ARTICLE_SHORT_DESC"
     description = "TRADE_FOCUS_TEXT"
     icon = "icons/focus/trade.png"
+    
+Article
+    name = "PROTECTION_FOCUS_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "PRODUCTION_ARTICLE_SHORT_DESC"
+    description = "PROTECTION_FOCUS_TEXT"
+    icon = "icons/focus/protection.png"
+
+Article
+    name = "FUEL_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "SHIPS_ARTICLE_SHORT_DESC"
+    description = "FUEL_TEXT"
+    icon = "icons/meter/fuel.png"
+    
+Article
+    name = "SUPPLY_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "SHIPS_ARTICLE_SHORT_DESC"
+    description = "SUPPLY_TEXT"
+    icon = "icons/meter/supply.png"
+    
+Article
+    name = "OUTPOSTS_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "OUTPOSTS_ARTICLE_SHORT_DESC"
+    description = "OUTPOSTS_TEXT"
+    icon = "icons/tech/habitation_domes.png"

@@ -2560,6 +2560,9 @@ Diplomacy
 SPECIES_ARTICLE_SHORT_DESC
 Species
 
+SHIPS_ARTICLE_SHORT_DESC
+Ships
+
 
 ###########################################
 # ARTICLES #
@@ -2590,6 +2593,11 @@ Trade Focus
 TRADE_FOCUS_TEXT
 '''Trade doesn't do anything, yet.  It is just a placeholder to show that more resources are planned.'''
 
+PROTECTION_FOCUS_TITLE
+Protection Focus
+PROTECTION_FOCUS_TEXT
+'''The Protection focus represents a planet wholly focused on defending itself.  Troops, Planetary Defences, and Planetary Shields are all increased.'''
+
 ORGANIC_SPECIES_TITLE
 Organic Species
 ORGANIC_SPECIES_TEXT
@@ -2614,7 +2622,17 @@ PHOTOTROPHIC_SPECIES_TEXT
 SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Species
 SELF_SUSTAINING_SPECIES_TEXT
-'''Self-Sustaining species may be energy or crystaline beings or something else.  Their commonality is that they need no sustenance. So their basic population growth is very high.'''
+'''Self-Sustaining species may be energy or crystaline beings or something else.  Their commonality is that they need no sustenance, so their basic population growth is very high.'''
+
+FUEL_TITLE
+Fuel
+FUEL_TEXT
+'''Fuel allows ships to travel the star-lanes. When entering a star-lane a ship consumes 1 unit of fuel.  Fuel is not used up at any other time.  [[encyclopedia SUPPLY_TITLE]] will fully refuel a ship.  If a ship travels beyond friendly supply lines, fuel will slowly regenerate when the ship is outside of the star-lanes.'''
+
+SUPPLY_TITLE
+Supply Lines
+SUPPLY_TEXT
+'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share resources, -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.'''
 
 
 ####################

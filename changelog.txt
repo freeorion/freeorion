@@ -14,6 +14,9 @@ Balancing:
  ~ Made Terraforming more expensive.
  ~ 
  
+ Content:
+  ~ More Game Concepts 'pedia entries.
+ 
  Bugs:
   ~ Disabled building shipyards at outposts.
   ~ Disabled the construction of any duplicate buildings at the same location.  It is still possible to double-queue a building and get multiples.
