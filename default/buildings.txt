@@ -50,6 +50,7 @@ BuildingType
     captureresult = destroy
     location = And [
         OwnedBy TheEmpire Source.Owner
+        Not Contains Building "BLD_IMPERIAL_PALACE"
         TargetPopulation low = 1
     ]
     effectsgroups = [
@@ -102,7 +103,10 @@ BuildingType
     description = "BLD_OBSERVATORY_DESC"
     buildcost = 60
     buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        OwnedBy TheEmpire Source.Owner
+        Not Contains Building "BLD_OBSERVATORY"
+        ]
     effectsgroups =
         EffectsGroup
             scope = NumberOf 1 System
@@ -117,10 +121,7 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         TargetPopulation low = 1
-        Not Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
-        ]
+        Not Contains Building "BLD_SHIPYARD_BASE"
         OwnedBy TheEmpire Source.Owner
     ]
     icon = "icons/building/shipyard.png"
@@ -132,6 +133,7 @@ BuildingType
     buildtime = 5
     tags = "ORBITAL"
     location = And [
+        Not Contains Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
@@ -167,6 +169,7 @@ BuildingType
     buildtime = 5
     tags = "ORBITAL"
     location = And [
+        Not Contains Building "BLD_SHIPYARD_CON_NANOROBO"
         Contains And [
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
@@ -186,6 +189,7 @@ BuildingType
     buildtime = 5
     tags = "ORBITAL"
     location = And [
+        Not Contains Building "BLD_SHIPYARD_CON_GEOINT"
         Contains And [
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
@@ -205,6 +209,7 @@ BuildingType
     buildtime = 5
     tags = "ORBITAL"
     location = And [
+        Not Contains Building "BLD_SHIPYARD_CON_ADV_ENGINE"
         Contains And [
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
@@ -223,6 +228,7 @@ BuildingType
     buildcost = 75
     buildtime = 5
     location = And [
+        Not Contains Building "BLD_SHIPYARD_AST"
         Planet type = Asteroids
         OwnedBy TheEmpire Source.Owner
         Not Contains And [
@@ -238,6 +244,7 @@ BuildingType
     buildcost = 500
     buildtime = 5
     location = And [
+        Not Contains Building "BLD_SHIPYARD_AST_REF"
         Planet type = Asteroids
         OwnedBy TheEmpire Source.Owner
         Contains And [
@@ -258,6 +265,7 @@ BuildingType
     buildtime = 10
     tags = "ORBITAL"
     location = And [
+        Not Contains Building "BLD_SHIPYARD_ORG_ORB_INC"
         Contains And [
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
@@ -273,6 +281,7 @@ BuildingType
     buildtime = 10
     tags = "ORBITAL"
     location = And [
+        Not Contains Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
         Contains And [
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
@@ -292,6 +301,7 @@ BuildingType
     buildtime = 10
     tags = "ORBITAL"
     location = And [
+        Not Contains Building "BLD_SHIPYARD_ORG_XENO_FAC"
         Contains And [
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
@@ -311,6 +321,7 @@ BuildingType
     buildtime = 5
     tags = "ORBITAL"
     location = And [
+        Not Contains Building "BLD_SHIPYARD_ENRG_COMP"
         Contains And [
             Building "BLD_SHIPYARD_BASE"
             OwnedBy TheEmpire Source.Owner
@@ -326,6 +337,7 @@ BuildingType
     buildtime = 5
     tags = "ORBITAL"
     location = And [
+        Not Contains Building "BLD_SHIPYARD_ENRG_SOLAR"
         Contains And [
             Building "BLD_SHIPYARD_ENRG_COMP"
             OwnedBy TheEmpire Source.Owner
@@ -344,6 +356,7 @@ BuildingType
     buildcost = 75
     buildtime = 15
     location = And [
+        Not Contains Building "BLD_BIOTERROR_PROJECTOR"
         OwnedBy TheEmpire Source.Owner
         HasSpecial name = "RESONANT_MOON_SPECIAL"
         Not Contains Or [
@@ -358,7 +371,10 @@ BuildingType
     description = "BLD_LIGHTHOUSE_DESC"
     buildcost = 25
     buildtime = 10
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_LIGHTHOUSE"
+        OwnedBy TheEmpire Source.Owner
+        ]
     effectsgroups =
         EffectsGroup
             scope = WithinDistance 0 Source
@@ -372,6 +388,7 @@ BuildingType
     buildcost = 75
     buildtime = 1
     location = And [
+        Not Contains Building "BLD_HEAVY_MINE_PROCESSOR"
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
@@ -383,6 +400,7 @@ BuildingType
     buildcost = 75
     buildtime = 1
     location = And [
+        Not Contains Building "BLD_INDUSTRY_CENTER"
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
@@ -503,6 +521,7 @@ BuildingType
     buildcost = 250
     buildtime = 10
     location = And [
+        Not Contains Building "BLD_MEGALITH"
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
@@ -536,6 +555,7 @@ BuildingType
     buildcost = 250
     buildtime = 10
     location = And [
+        Not Contains Building "BLD_COLLECTIVE_NET"
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
@@ -604,6 +624,7 @@ BuildingType
     buildcost = 15
     buildtime = 30
     location = And [
+        Not Contains Building "BLD_GENOME_BANK"
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
@@ -615,6 +636,7 @@ BuildingType
     buildcost = 150
     buildtime = 5
     location = And [
+        Not Contains Building "BLD_SPACE_ELEVATOR"
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
@@ -631,6 +653,7 @@ BuildingType
     buildcost = 400
     buildtime = 15
     location = And [
+        Not Contains Building "BLD_GAIA_TRANS"
         OwnedBy TheEmpire Source.Owner
         Planet environment = Good
         Not Planet type = [Asteroids GasGiant]
@@ -657,6 +680,7 @@ BuildingType
     buildcost = 40
     buildtime = 10
     location = And [
+        Not Contains Building "BLD_ART_BLACK_HOLE"
         OwnedBy TheEmpire Source.Owner
         Star type = Red
     ]
@@ -680,6 +704,7 @@ BuildingType
     buildtime = 10
     tags = "ORBITAL"
     location = And [
+        Not Contains Building "BLD_HYPER_DAM"
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
@@ -725,7 +750,10 @@ BuildingType
     buildcost = 75
     buildtime = 5
     tags = "ORBITAL"
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_SOL_ORB_GEN"
+        OwnedBy TheEmpire Source.Owner
+        ]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -835,6 +863,7 @@ BuildingType
     buildcost = 100
     buildtime = 5
     location = And [
+        Not Contains Building "BLD_CLONING_CENTER"
         OwnedBy TheEmpire Source.Owner
         Not Contains Or [
             Building "BLD_CLONING_CENTER"
@@ -849,6 +878,7 @@ BuildingType
     buildcost = 300
     buildtime = 10
     location = And [
+        Not Contains Building "BLD_TERRAFORM"
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
         Not Planet type = [Asteroids GasGiant]
@@ -881,6 +911,7 @@ BuildingType
     buildcost = 6
     buildtime = 16
     location = And [
+        Not Contains Building "BLD_REMOTE_TERRAFORM"
         OwnedBy TheEmpire Source.Owner
         Not Planet environment = [Uninhabitable Good]
         Not Planet type = [Asteroids GasGiant]
@@ -905,7 +936,11 @@ BuildingType
     buildcost = 25
     buildtime = 8
     tags = "ORBITAL"
-    location = Star type = Neutron
+    location = AND [
+        Not Contains Building "BLD_NEUTRONIUM_EXTRACTOR"
+        OwnedBy TheEmpire Source.Owner
+        Star type = Neutron
+        ]
     icon = "icons/building/neutronium-forge.png"
 
 BuildingType
@@ -915,6 +950,7 @@ BuildingType
     buildtime = 1
     tags = "ORBITAL"
     location = And [
+        Not Contains Building "BLD_NEUTRONIUM_FORGE"
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
     ]
@@ -925,7 +961,10 @@ BuildingType
     description = "BLD_NEUTRONIUM_SYNTH_DESC"
     buildcost = 1200
     buildtime = 10
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_NEUTRONIUM_SYNTH"
+        OwnedBy TheEmpire Source.Owner
+        ]
     icon = "icons/building/neutronium-forge.png"
 
 BuildingType
@@ -933,7 +972,10 @@ BuildingType
     description = "BLD_CONC_CAMP_DESC"
     buildcost = 5
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_CONC_CAMP"
+        OwnedBy TheEmpire Source.Owner
+        ]
     effectsgroups = [
         EffectsGroup
             scope = Contains Source
@@ -953,18 +995,7 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/building/concentration-camp.png"
-/*
-BuildingType
-    name = "BLD_INDUSTRY_FARM"
-    description = "BLD_INDUSTRY_FARM_DESC"
-    buildcost = 4
-    buildtime = 25
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        TargetPopulation low = 1
-    ]
-    icon = ""
-*/
+
 BuildingType
     name = "BLD_BLACK_HOLE_POW_GEN"
     description = "BLD_BLACK_HOLE_POW_GEN_DESC"
@@ -972,6 +1003,7 @@ BuildingType
     buildtime = 10
     tags = "ORBITAL"
     location = And [
+        Not Contains Building "BLD_BLACK_HOLE_POW_GEN"
         OwnedBy TheEmpire Source.Owner
         Star type = BlackHole
     ]
@@ -1005,7 +1037,10 @@ BuildingType
     description = "BLD_REPLICATORS_DESC"
     buildcost = 125
     buildtime = 4
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_REPLICATORS"
+        OwnedBy TheEmpire Source.Owner
+        ]
     icon = ""
 
 BuildingType
@@ -1014,6 +1049,7 @@ BuildingType
     buildcost = 125
     buildtime = 5
     location = And [
+        Not Contains Building "BLD_PLANET_DRIVE"
         OwnedBy TheEmpire Source.Owner
         Not Planet type = Asteroids
     ]
@@ -1024,7 +1060,10 @@ BuildingType
     description = "BLD_PLANET_BEACON_DESC"
     buildcost = 1
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_PLANET_BEACON"
+        OwnedBy TheEmpire Source.Owner
+        ]
     effectsgroups =
         EffectsGroup
             scope = Source
@@ -1038,6 +1077,7 @@ BuildingType
     buildcost = 2500
     buildtime = 15
     location = And [
+        Not Contains Building "BLD_ART_PLANET"
         OwnedBy TheEmpire Source.Owner
         Planet type = [Asteroids GasGiant]
     ]
@@ -1060,6 +1100,7 @@ BuildingType
     buildcost = 250
     buildtime = 1
     location = And [
+        Not Contains Building "BLD_ART_MOON"
         OwnedBy TheEmpire Source.Owner
         Not Planet type = [Asteroids GasGiant]
     ]
@@ -1078,7 +1119,10 @@ BuildingType
     description = "BLD_TRANSFORMER_DESC"
     buildcost = 100
     buildtime = 15
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_TRANSFORMER"
+        OwnedBy TheEmpire Source.Owner
+        ]
     icon = ""
 
 BuildingType
@@ -1086,7 +1130,10 @@ BuildingType
     description = "BLD_GATEWAY_VOID_DESC"
     buildcost = 45
     buildtime = 10
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_GATEWAY_VOID"
+        OwnedBy TheEmpire Source.Owner
+        ]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1125,7 +1172,10 @@ BuildingType
     description = "BLD_ENCLAVE_VOID_DESC"
     buildcost = 100
     buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_ENCLAVE_VOID"
+        OwnedBy TheEmpire Source.Owner
+        ]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1154,7 +1204,10 @@ BuildingType
     description = "BLD_PLANET_CLOAK_DESC"
     buildcost = 150
     buildtime = 8
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_PLANET_CLOAK"
+        OwnedBy TheEmpire Source.Owner
+        ]
     icon = ""
 
 BuildingType
@@ -1162,7 +1215,10 @@ BuildingType
     description = "BLD_SPATIAL_DISTORT_GEN_DESC"
     buildcost = 30
     buildtime = 10
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_SPATIAL_DISTORT_GEN"
+        OwnedBy TheEmpire Source.Owner
+        ]
     icon = ""
 
 BuildingType
@@ -1171,7 +1227,10 @@ BuildingType
     buildcost = 125
     buildtime = 5
     tags = "ORBITAL"
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_STARGATE"
+        OwnedBy TheEmpire Source.Owner
+        ]
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -1195,7 +1254,10 @@ BuildingType
     description = "BLD_STARGATE_ACTIVATOR_DESC"
     buildcost = 1
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_STARGATE_ACTIVATOR"
+        OwnedBy TheEmpire Source.Owner
+        ]
     effectsgroups =
         EffectsGroup
             scope = Source
@@ -1208,7 +1270,10 @@ BuildingType
     description = "BLD_STARGATE_BEACON_DESC"
     buildcost = 1
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = AND [
+        Not Contains Building "BLD_STARGATE_BEACON"
+        OwnedBy TheEmpire Source.Owner
+        ]
     effectsgroups =
         EffectsGroup
             scope = Source
@@ -1223,6 +1288,7 @@ BuildingType
     buildtime = 3
     tags = "ORBITAL"
     location = And [
+        Not Contains Building "BLD_GAS_GIANT_GEN"
         OwnedBy TheEmpire Source.Owner
         Planet type = GasGiant
     ]
@@ -1242,6 +1308,7 @@ BuildingType
     buildcost = 45
     buildtime = 1
     location = And [
+        Not Contains Building "BLD_COLONY_BASE"
         Population low = 3
         OwnedBy TheEmpire Source.Owner
     ]
@@ -1426,18 +1493,5 @@ BuildingType
             
     icon = "icons/species/other-04.png"
 
-/*
-BuildingType
-    name = "BLD_ORBITAL_FARM"
-    description = "BLD_ORBITAL_FARM_DESC"
-    buildcost = 60
-    buildtime = 20
-    tags = "ORBITAL"
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        Planet
-    ]
-    icon = ""
-*/
 
 
