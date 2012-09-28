@@ -2,6 +2,7 @@ v0.4.1 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 New Features / Improvements:
  ~ Roughly added the new Protection Focus
+ ~ Improved (but still basic) AI.
 
 Balancing:
  ~ Unified resource and fleet supply into a single meter-- the Supply Meter. Infrastructure is not involved.
@@ -16,6 +17,9 @@ Balancing:
  
  Content:
   ~ More Game Concepts 'pedia entries.
+  
+ Graphics:
+  ~ New Focus icons.
  
  Bugs:
   ~ Disabled building shipyards at outposts.

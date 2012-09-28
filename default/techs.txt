@@ -1707,7 +1707,7 @@ Tech
 Tech
     name = "CON_SUBTER_CONST"
     description = "CON_SUBTER_CONST_DESC"
-    short_description = "POPULATION_SHORT_DESC"
+    short_description = "CONSTRUCTION_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 4
