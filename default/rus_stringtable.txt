@@ -1,9 +1,9 @@
 Russian
 
-#This is the Russian String Table file for FreeOrion 0.4 SVN5130
+#This is the Russian String Table file for FreeOrion 0.4 SVN5270
 #Translater cjckem at gmail.com
 #support by black_owl at mail.ru
-#Этот языковой файл для FreeOrion 0.4 SVN5130
+#Этот языковой файл для FreeOrion 0.4 SVN5270
 #кодовая страница UTF8
 #Переводит cjckem at gmail.com
 #при поддержке black_owl at mail.ru
@@ -20,6 +20,9 @@ BROWSE_BTN
 
 OK
 OK
+
+APPLY
+Применить
 
 CANCEL
 Отмена
@@ -163,6 +166,9 @@ PLANET
 BUILDING
 Здание
 
+FIELD
+Защитное поле
+
 PASSED
 <rgba 0 255 0 255>(Выполнено)</rgba>
 
@@ -189,50 +195,124 @@ SD_SCOUT
 SD_SCOUT_DESC
 Маленькое и дешёвое безоружное судно, предназначено для разведки.
 
-SD_MARK1
+SD_MARK_A1
 Mark I
 SD_MARK1_DESC
 Базовый патрульный фрегат, вооружён электромагнитными пушками.
 
-SD_MARK2
+SD_MARK_A2
 Mark II
 SD_MARK2_DESC
 Улучшеный патрульный фрегат, вооружён электромагнитными пушками.
 
-SD_MARK3
+SD_MARK_A3
 Mark III
 SD_MARK3_DESC
 Продвинутый патрульный фрегат, вооружён электромагнитными пушками.
         
-SD_MARK4
+SD_MARK_A3B
+Mark III B
+
+SD_MARK_A4
 Mark IV
 SD_MARK4_DESC
 Первоклассный патрульный фрегат, вооружён электромагнитными пушками.
 
-SD_MARK5
+SD_MARK_A4B
+Mark IV B
+
+SD_MARK_A5
 Mark V
 SD_MARK5_DESC
 Базовый лазерный патрульный фрегат.
 
-SD_MARK6
+	
+SD_MARK_A5B
+Mark V B
+
+SD_MARK_A6
 Mark VI
 SD_MARK6_DESC
 Улучшеный лазерный патрульный фрегат.
 
-SD_MARK7
+SD_MARK_A6B
+Mark VI B
+
+SD_MARK_A7
 Mark VII
 SD_MARK7_DESC
 Продвинутый лазерный патрульный фрегат.
 
-SD_MARK8
+SD_MARK_A7B
+Mark VII B
+
+SD_MARK_A8
 Mark VIII
 SD_MARK8_DESC
 Первоклассный лазерный патрульный фрегат.
 
-SD_ROBOTIC1
+SD_MARK_A8B
+Mark VIII B
+
+SD_MARK_B_ROBOTIC1
 Robotic I
-SD_ROBOTIC1_DESC
+SD_MARK_B_ROBOTIC1_DESC
 Современный крейсер с тяжелым вооружением и броней, предназначенный для грязной работы.
+
+SD_MARK_B_ROBOTIC2
+Robotic II
+SD_MARK_B_ROBOTIC2_DESC
+Advanced cruiser with heavy weaponry and armor to do the dirty work.
+
+SD_MARK_B_ROBOTIC3
+Robotic III
+SD_MARK_B_ROBOTIC3_DESC
+Advanced cruiser with heavy weaponry and armor to do the dirty work.
+
+SD_MARK_B_ROBOTIC4
+Robotic IV
+SD_MARK_B_ROBOTIC4_DESC
+Advanced cruiser with heavy weaponry and armor to do the dirty work.
+
+SD_MARK_C_ENDO1
+Endomorphic I
+SD_MARK_C_ENDO1_DESC
+Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
+
+SD_MARK_C_ENDO2
+Endomorphic II
+SD_MARK_C_ENDO2_DESC
+Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
+
+SD_MARK_C_ENDO3
+Endomorphic III
+SD_MARK_C_ENDO3_DESC
+Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
+
+SD_MARK_C_ENDO4
+Endomorphic IV
+SD_MARK_C_ENDO4_DESC
+Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
+
+SD_MARK_C_ENDO5
+Endomorphic V
+SD_MARK_C_ENDO5_DESC
+Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
+
+SD_MARK_C_ENDO6
+Endomorphic VI
+SD_MARK_C_ENDO6_DESC
+Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
+
+SD_MARK_C_ENDO7
+Endomorphic VII
+SD_MARK_C_ENDO7_DESC
+Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
+
+SD_MARK_C_ENDO8
+Endomorphic VIII
+SD_ENDO8_DESC
+Advanced endomorphic cruiser with heavy weaponry and armor to do the dirty work.
         
 SD_GRAVITATING1
 Gravitating I
@@ -442,6 +522,16 @@ SM_COSMIC_DRAGON
 Космический Дракон
 SM_COSMIC_DRAGON_DESC
 Страшный космический монстр, обладающий силой достаточной для уничтожения целых звёздных систем.
+
+##########
+# Fields #
+##########
+
+FLD_ION_STORM
+Ion Storm
+
+FLD_ION_STORM_DESC
+Magnetic vortex of relativistic charged particles that can interfere with sensors and damage ships and planets.
 
 ##############################
 # Predefined Starting Fleets #
@@ -937,6 +1027,9 @@ OPTIONS_DB_AUTOSAVE_MULTIPLAYER
 
 OPTIONS_DB_AUTOSAVE_TURNS
 Количество ходов между автосохранениями.
+
+OPTIONS_DB_UI_MOUSE_LR_SWAP
+Поменять действие кнопок мыши правой с левой. 
 
 OPTIONS_DB_MUSIC_VOLUME
 Громкость (0 до 255) музыки.
@@ -2358,8 +2451,11 @@ ENC_PLANET
 ENC_BUILDING
 Строение
 
-END_SYSTEM
+ENC_SYSTEM
 Система
+
+END_FIELD
+Поле
 
 ENC_INDEX
 Указатель
@@ -2462,6 +2558,8 @@ DIPLOMACY_ARTICLE_SHORT_DESC
 SPECIES_ARTICLE_SHORT_DESC
 Виды
 
+SHIPS_ARTICLE_SHORT_DESC
+Корабли
 
 ###########################################
 # ARTICLES #
@@ -2475,7 +2573,7 @@ PEACE_TEXT
 OUTPOSTS_TITLE
 Аванпосты
 OUTPOSTS_TEXT
-'''Аванпосты -это автоматические станции, которые могут размещаться в местах слишком враждебных для выживания колонии. На них отсутствует население, и, как правило не производят ресурсы. Но через них может проходить маршрут снабжения, а так же они обеспечивают обзор той области, где расположены. На планетах, где уже есть Аванспост могут быть основаны колонии. Чтобы построить Аванспост необходим корабль с модулем аванспота на борту.'''
+'''Аванпосты -это автоматические станции, которые могут размещаться в местах слишком враждебных для выживания колонии. На них отсутствует население, и, как правило не производят ресурсы. Но они увеличивают маршруты снабжения (+1), а так же обеспечивают обзор той области, где расположены. На планетах, где уже есть Аванспост могут быть основаны колонии. Чтобы построить Аванспост необходим корабль с модулем аванспота на борту.'''
 
 GROWTH_FOCUS_TITLE
 Приоритет Роста
@@ -2491,6 +2589,11 @@ TRADE_FOCUS_TITLE
 Приоритет Торговли
 TRADE_FOCUS_TEXT
 '''Торговля пока ничего не делает. Это прототип для того, чтобы показать, что к реализации запланировано больше ресурсов.'''
+
+PROTECTION_FOCUS_TITLE
+Приоритет защиты
+PROTECTION_FOCUS_TEXT
+'''Приоритет защиты представляет собой планету целиком сосредоточены на своей защите. Увеличиваются войска, планетарная защита, и планетарные щиты.'''
 
 ORGANIC_SPECIES_TITLE
 Органические Виды
@@ -2517,6 +2620,16 @@ SELF_SUSTAINING_SPECIES_TITLE
 Самодостаточные
 SELF_SUSTAINING_SPECIES_TEXT
 '''Самодостаточные существа могут иметь кристаллическую, энергетическую или какую-то другую природу происхождения. Их объединяет то, что они не нуждаются в какой-либо пище. Именно поэтому прирост населения таких видов очень высок.'''
+
+FUEL_TITLE
+Топливо
+FUEL_TEXT
+'''С помощью топлива корабли проходят межзвздные пути. Входя в звёздный путь судно потребляет 1 единицу топлива.  Во всё остальное время топливо не используется.  [[encyclopedia SUPPLY_TITLE]] полностью перезаправит корабль.  Если судно путешествует за пределами дружественной поддержки, топливо будет восстанавливаться медленно, когда судно находится за пределами звездных путей.'''
+
+SUPPLY_TITLE
+Линии Поддержки
+SUPPLY_TEXT
+'''Линии поддержки показаны путём подкрашивания звёздных путей в цвет империи. Планеты соединённые линиями обеспечения могут совместно использовать ресурсы, -- продукция одной планеты может быть использована на любой другой соединённой планете для постройки сооружения или корабля.  Линии поддержки могут быть использованы так же для пополнения [[encyclopedia FUEL_TITLE]] кораблей.'''
 
 
 ####################
@@ -2620,6 +2733,61 @@ RESOLVING_COMBAT
 WAITING
 Ждёт
 
+####################
+## Objects Window ##
+####################
+
+SORT
+Sort
+
+COLUMNS
+Columns
+
+COLLAPSE_ALL
+Collapse All
+
+EXPAND_ALL
+Expand All
+
+####################
+## Filters Dialog ##
+####################
+
+VISIBLE
+Видимый
+
+PREVIOUSLY_VISIBLE
+Пред. видимый
+
+DESTROYED
+Уничтожен
+
+CONDITION_ALL
+Все
+
+CONDITION_ARMED
+Вооружен
+
+CONDITION_CAPITAL
+Столица
+
+CONDITION_MONSTER
+Монстр
+
+CONDITION_STATIONARY
+Стационарный
+
+CONDITION_HOMEWORLD
+Родная планета
+
+CONDITION_HASSPECIAL
+Есть особенность
+
+CONDITION_HASTAG
+Есть тэг
+
+CONDITION_SPECIES
+Виды
 
 #############################################################
 ####                    S I T   R E P                    ####
@@ -3151,7 +3319,7 @@ SP_PHINNERT
 Финнорты
 SP_PHINNERT_DESC
 '''Летающие обезьяны.
-Предпочитают океанические планеты.
+Предпочитают болотистые планеты.
 Органические
 
 [[AVERAGE_INDUSTRY]]
@@ -3801,6 +3969,8 @@ OBJ_PROD_CENTER
 продуктовый центр
 OBJ_SYSTEM
 система
+OBJ_FIELD
+поле
 
 
 # StarTypes
@@ -3914,6 +4084,10 @@ FOCUS_PLANET_DRIVE
 Диск Планеты
 FOCUS_DISTORTION
 Пространственное искажение
+FOCUS_PROTECTION
+Защита
+FOCUS_PROTECTION_DESC
+Увеличивает поля, защиту и наземные войска.
 
 
 # MeterTypes
@@ -4000,6 +4174,12 @@ METER_LAUNCH_RATE
 Скорость Запуска
 METER_FIGHTER_WEAPON_RANGE
 Диапазон Оружия Истребителя
+
+METER_SIZE
+Расстояние
+
+METER_DETECTION_STRENGTH
+Обнаружение
 
 ALIGN_MILITARISM
 Милитаризм
@@ -4474,6 +4654,12 @@ DESC_MOVE_IN_ORBIT_OF_OBJECT
 DESC_MOVE_IN_ORBIT_OF_XY
 Перемещение объекта на орбите объекта, находящегося на %1% и %2% на скорости %3%
 
+DESC_MOVE_TOWARDS_OBJECT
+Перемещает объект к объекту%1% на скорости %2%
+
+DESC_MOVE_TOWARDS_XY
+Перемещает объект к объекту находящемуся на %1% и %2% на скорости %3%
+
 DESC_SET_DESTINATION
 Устанавливает назвначение объекта на объект%1%
 
@@ -4510,6 +4696,11 @@ DESC_CREATE_SHIP
 DESC_CREATE_SHIP_SIMPLE
 Построить новый корабль по проекту %1% без владельца и без расы
 
+DESC_CREATE_FIELD_SIZE
+Создать новое поле типа %1% с радиусом %2%
+
+DESC_CREATE_FIELD
+Создать новое поле типа %1%
 
 # Conditions
 
@@ -4869,6 +5060,18 @@ DESC_OWNER_HAS_TECH
 
 DESC_OWNER_HAS_TECH_NOT
  that does not belong to an empire that has the tech %1%
+
+DESC_OWNER_HAS_BUILDING_TYPE
+ building unlocked for empire
+
+DESC_OWNER_HAS_BUILDING_TYPE_NOT
+ building not unlocked for empire
+
+DESC_OWNER_HAS_SHIP_DESIGN
+ ship design unlocked for empire
+
+DESC_OWNER_HAS_SHIP_DESIGN_NOT
+ ship design not unlocked for empire
 
 DESC_NUMBER
  if there are between %1% and %2% objects%3%
@@ -5304,7 +5507,7 @@ CON_CONTGRAV_ARCH
 Контролируемая Гравитация в Архитектуре
 
 CON_CONTGRAV_ARCH_DESC
-'''Повышает максимальный диапазон маршрутов поддержки всех колоний на 1.
+'''Увеличивает диапазон маршрутов поддержки всех колоний на 1.
 
 После установки огромного генератора нулевой гравитации в ядре планеты, становится возможным включать и выключать силу гравитации планеты, наподобие выключателя света на стене, но делать это в определённой узкой области. Промышленность планеты получает всю выгоду низкой гравитации и невесомости, без недостатков. Так же могут быть созданы зоны обратной силы тяжести, делая стоимость космических запусков фактически нулевой.
 
@@ -5314,7 +5517,7 @@ CON_GAL_INFRA
 Галактическая Инфраструктура
 
 CON_GAL_INFRA_DESC
-'''Повышает максимальный диапазон маршрутов поддержки всех колоний на 1.
+'''Увеличивает диапазон маршрутов поддержки всех колоний на 1.
 
 Последовательная и эффективная транспортировка ресурсов сквозь большие межзвездные расстояния требует трудоемкого планирования и осложнена многочисленными факторами, такими как наличие космических монстров, вражеских империй и опасных межзвездных феноменов. Благодаря использованию интегрированной галактической инфраструктуры, может быть достигнуто создание потока распределения ресурсов между развитыми и развивающимися колониями, а так же могут быть найдены решения особенно тревожных логистических проблем.
 
@@ -5649,7 +5852,7 @@ CON_ORBITAL_CON
 Орбитальное конструирование
 
 CON_ORBITAL_CON_DESC
-'''Увеличивает на 1 диапазон маршрутов поддержки всех колоний.
+'''Увеличивает диапазон маршрутов поддержки всех колоний на 1.
 
 На планете всегда есть неизменная ссылка на направление: "вверх", микрогравитация же изотропна (направления ничем качественно не отличаются). У этой единственного отличия есть множество последствий для типов конструкций, которые могут быть построены, и для их форм, которые оптимально используют пространство, материалы и энергию в каждой среде. Внутренняя конфигурация пространств на орбите должна быть заново продумана. Хоть это и приводит к попытке полной переделки парадигмы конструирования, полностью независимой от типов, используемых на поверхностях планеты, практическое применение этих пространств будет начато прежде всего теми, кто привык и приспособлен к поверхности планеты. Поэтому более эффективным может быть не полный разрыв с уже наработанными типами конструкций, а постепенный переход.'''
 
@@ -6190,7 +6393,7 @@ SHP_RADAR
 Активный Радар
 
 SHP_RADAR_DESC
-'''Открывает нейтронный сканер, увеличивает дальность обнаружения всех планет до 200, а также повышает уровень имперского обнаружения до 400.
+'''Открывает нейтронный сканер, увеличивает дальность обнаружения всех планет до 75, а также повышает уровень имперского обнаружения до 200.
 
 Непрактично полагаться на пассивное обнаружение объектов по поступающему от них электромагнитному излучению, ведь это излучение может быть замаскировано или приглушено. Путём излучения электромагнитных волн и фиксации их отражений можно определить расположение и скорость многих объектов.'''
 
@@ -6198,7 +6401,7 @@ SHP_NEUTRON_SCANNER
 Нейтронный сканер
 
 SHP_NEUTRON_SCANNER_DESC
-'''Открывает нейтронный сканер, увеличивает дальность обнаружения всех планет до 200, а также повышает уровень имперского обнаружения до 400.
+'''Открывает нейтронный сканер, увеличивает дальность обнаружения всех планет до 150, а также повышает уровень имперского обнаружения до 400.
 
 Электромагнитное излучение не имеет массы покоя, и им можно с лёгкостью манипулировать. Радиолокационные устройства могут стать бесполезными, просто изогнув волны света проходящие вокруг объекта. Но можно добиться более эффективного сканирования, используя излучение нейтронных волн вместо электромагнитных.'''
 
@@ -6206,7 +6409,7 @@ SHP_SENSORS
 Сенсоры
 
 SHP_SENSORS_DESC
-Unlocks the Sensors ship part, increases the detection range of all planets to 400, and increases the imperial detection level to 700.
+Unlocks the Sensors ship part, increases the detection range of all planets to 200, and increases the imperial detection level to 700.
 
 SHP_EM_DAMPER
 Electromagnetic Damper
@@ -6497,7 +6700,7 @@ BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases Resource Supply Range by 3, Construction by 20, Defense by 5, and Troops by 10. Also sets the owner's Capital for the empire.
+'''Increases Supply Range by 1, Infrastructure by 20, Defense by 5, and Troops by 10. Also sets the owner's Capital for the empire.
 
 Represents imperial power and prestige and functions as a centre of control for the empire's holdings.'''
 
@@ -6548,17 +6751,17 @@ BLD_SHIPYARD_AST
 Asteroid Processor
 
 BLD_SHIPYARD_AST_DESC
-'''This is an upgrade to the Basic Shipyard and is required for the production of all asteroid hulls and all further asteroid hulls shipyard upgrades.
+'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades.
 
-A shipyard dedicated to the purpose of hollowing out asteroids and using them as ships' hulls. It can only be built at an asteroid belt.'''
+A massive processing plant dedicated to the purpose of hollowing out asteroids and preparing them to be used as ships' hulls. Asteroids thus prepared are sent to a shipyard in the same system, where they are turned into the final hull. This building can only be built on asteroid belts.'''
 
 BLD_SHIPYARD_AST_REF
 Asteroid Reformation Processor
 
 BLD_SHIPYARD_AST_REF_DESC
-'''This is an upgrade to the Asteroid Shipyard and allows production of Nano-Asteroid Swarms, Compound Asteroid Hulls, Scattered Asteroid Hull flagships, and Crystallized Asteroid Hulls. In addition, this shipyard upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Rock Armor Plating ship part.
+'''This is an upgrade to the Asteroid Processor and allows production of Nano-Asteroid Swarms, Compound Asteroid Hulls, Scattered Asteroid Hull flagships, and Crystallized Asteroid Hulls. In addition, this processor upgrade allows any shipyard in the empire or an ally's empire to produce ships with the Rock and Crystallized Armor Plating ship parts.
 
-An extensive facility dedicated to fusing, shattering, deconstructing and rebuilding preexisting asteroids to form ship's parts and hulls.'''
+An extensive facility dedicated to fusing, shattering, deconstructing and rebuilding preexisting asteroids to form ship's parts and prepare them to be used as hulls.'''
 
 BLD_SHIPYARD_ORG_ORB_INC
 Orbital Incubator
@@ -6624,7 +6827,7 @@ BLD_INDUSTRY_CENTER
 Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to Industry on all resource-supply connected planets with Industry focus equal to othe greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
+'''Initially provides a bonus to Industry on all supply connected planets with Industry focus equal to othe greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 [[tech PRO_INDUSTRY_CENTER_II]] refinement increases the bonus to equal the planet's population.
 
@@ -6639,7 +6842,7 @@ BLD_MEGALITH
 Мегалит
 
 BLD_MEGALITH_DESC
-'''Устанавливает столицу империи, аннулируя все существующие Императорские дворцы. Планета, на которой он построен получает увеличение на 2 диапазона поддержки, и на 30 строительства. Кроме того, все ресурсы способны достичь максимума за один ход, а так же, все колонии, принадлежащие империи получают увеличение на 1 максимального диапазона поставки ресурсов.
+'''Устанавливает столицу империи, аннулируя все существующие Императорские дворцы. Планета, на которой он построен получает увеличение на 2 диапазона поддержки, и на 30 строительства. Кроме того, все ресурсы способны достичь максимума за один ход, а так же, все колонии, принадлежащие империи получают увеличение на 1 максимального диапазона поставки ресурсов. Кроме того, все колонии, принадлежащие империи получат прибавку на 1 к максимальному диапазону поддержки.
 
 Мегалит является аномально массивных, он многокилометровый в диаметре, и является источником вдохновения для архитекторов всей империи.'''
 
@@ -6647,7 +6850,7 @@ BLD_SPACE_ELEVATOR
 Космический лифт
 
 BLD_SPACE_ELEVATOR_DESC
-'''Утраивает диапазон маршрутов поддержки с планеты на которой построен.
+'''Удваивает диапазон маршрутов поддержки с планеты на которой построен.
 
 Огромные и практически неразрывная нить кабеля привязана к спутнику на геостационарной околоземной орбите с одного конца, и к стартовой платформе на планете с другого.'''
 
@@ -6715,7 +6918,7 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Increases target industry on resource-supply connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
+'''Increases target industry on supply connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependant on star type. This building can be built at an outpost.'''
 
@@ -6783,7 +6986,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-Increases Industry on all resource-supply connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. This building can be built at an outpost.
+Increases Industry on all supply connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. This building can be built at an outpost.
 
 BLD_REPLICATORS
 Replicators
@@ -7290,7 +7493,7 @@ CO_OUTPOST_POD
 Outpost Module
 
 CO_OUTPOST_POD_DESC
-'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets.  Outposts do not supply production.'''
+'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they create supply lines (+1) and provide vision. Colonies can be founded on planets that already have an Outpost.'''
 
 GT_TROOP_POD
 Ground Troop Pod
@@ -7402,7 +7605,7 @@ Asteroid Hull
 SH_ASTEROID_DESC
 '''This hull is constructed from an average-sized asteroid. A bit roomier than the standard hull, it has four external slots and two internal slots. Speed and structure are relatively low, but it is fairly inexpensive to build. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard and an Asteroid Processor at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
 SH_SMALL_ASTEROID
 Small Asteroid Hull
@@ -7410,7 +7613,7 @@ Small Asteroid Hull
 SH_SMALL_ASTEROID_DESC
 '''This hull is constructed from a very small asteroid. It has only a single external slot and a single internal slot. Speed is very good, but structure is quite low. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard and an Asteroid Processor at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
 SH_HEAVY_ASTEROID
 Heavy Asteroid Hull
@@ -7418,7 +7621,7 @@ Heavy Asteroid Hull
 SH_HEAVY_ASTEROID_DESC
 '''This hull is constructed from a gigantic asteroid, and has six external slots and three internal slots. Speed is very low, but structure is moderately high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard and an Asteroid Processor at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
 SH_CAMOUFLAGE_ASTEROID
 Camouflage Asteroid Hull
@@ -7426,7 +7629,7 @@ Camouflage Asteroid Hull
 SH_CAMOUFLAGE_ASTEROID_DESC
 '''This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. Structure is average, but speed is fairly low. This hull gets a tremendous bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard and an Asteroid Processor at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
 SH_SMALL_CAMOUFLAGE_ASTEROID
 Small Camouflage Asteroid Hull
@@ -7434,7 +7637,7 @@ Small Camouflage Asteroid Hull
 SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
 '''This camouflage asteroid hull is able to make use of camouflage asteroid parts on its exterior, although it must be made much smaller to compensate and avoid losing its stealth bonus. It has a single external slot and a single internal slot. Speed is average, but structure is quite low. This hull gets a tremendous bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard and an Asteroid Processor at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
 SH_AGREGATE_ASTEROID
 Aggregate Asteroid Hull
@@ -7442,7 +7645,7 @@ Aggregate Asteroid Hull
 SH_AGREGATE_ASTEROID_DESC
 '''This massive hull is formed by combining several large asteroids. It has fifteen external slots and four internal slots. Structure is good, but speed is very low. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard, an Asteroid Processor and an Asteroid Reformation Facility at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
 SH_MINIASTEROID_SWARM
 Mini-Asteroid Swarm
@@ -7450,7 +7653,7 @@ Mini-Asteroid Swarm
 SH_MINIASTEROID_SWARM_DESC
 '''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to shields. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard, an Asteroid Processor and an Asteroid Reformation Facility at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
 SH_SCATTERED_ASTEROID
 Scattered Asteroid Hull
@@ -7458,7 +7661,7 @@ Scattered Asteroid Hull
 SH_SCATTERED_ASTEROID_DESC
 '''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to shields for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard, an Asteroid Processor and an Asteroid Reformation Facility at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
 SH_CRYSTALLIZED_ASTEROID
 Crystallized Asteroid Hull
@@ -7466,7 +7669,7 @@ Crystallized Asteroid Hull
 SH_CRYSTALLIZED_ASTEROID_DESC
 '''This sturdy hull is made from a average-sized asteroid, hardened by advanced crystallization techniques. Like the regular Asteroid Hull, it has four external slots and two internal slots. Speed is somewhat low, but structure is extremely high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-Requires a Basic Shipyard, an Asteroid Processor and a Asteroid Reformation Processor at the asteroid belt where it is produced.'''
+Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
 SH_ORGANIC
 Organic Hull
@@ -7739,111 +7942,110 @@ SH_COSMIC_DRAGON_BODY_DESC
 
 
 NO_INDUSTRY
-'''- - - No Industry'''
+'''−−−	No Industry'''
 
 BAD_INDUSTRY
-'''    - Bad Industry: 50%'''
+'''−	Bad Industry: 50%'''
 
 AVERAGE_INDUSTRY
-'''      Average Industry: 100%'''
+'''	Average Industry: 100%'''
 
 GOOD_INDUSTRY
-'''    + Good Industry: 150%'''
+'''+	Good Industry: 150%'''
 
 GREAT_INDUSTRY
-'''  + + Great Industry: 250%'''
+'''++	Great Industry: 250%'''
 
 ULTIMATE_INDUSTRY
-'''+ + + Ultimate Industry: 400%'''
+'''+++	Ultimate Industry: 400%'''
 
 NO_RESEARCH
-'''- - - No Research'''
+'''−−−	No Research'''
 
 BAD_RESEARCH
-'''    - Bad Research: 50%'''
+'''−	Bad Research: 50%'''
 
 AVERAGE_RESEARCH
-'''      Average Research: 100%'''
+'''	Average Research: 100%'''
 
 GOOD_RESEARCH
-'''    + Good Research: 150%'''
+'''+	Good Research: 150%'''
 
 GREAT_RESEARCH
-'''  + + Great Research: 250%'''
+'''++	Great Research: 250%'''
 
 ULTIMATE_RESEARCH
-'''+ + + Ultimate Research: 400%'''
+'''+++	Ultimate Research: 400%'''
 
 
 NO_GROUND_TROOPS
-'''- - - No Ground Troops'''
+'''−−−	No Ground Troops'''
 
 BAD_GROUND_TROOPS
-'''    - Bad Ground Troops: 1 unit.'''
+'''−	Bad Ground Troops: 1 unit.'''
 
 AVERAGE_GROUND_TROOPS
-'''      Average Ground Troops: 5 units.'''
+'''	Average Ground Troops: 5 units.'''
 
 GOOD_GROUND_TROOPS
-'''    + Good Ground Troops: 15 units.'''
+'''+	Good Ground Troops: 15 units.'''
 
 GREAT_GROUND_TROOPS
-'''  + + Great Ground Troops: 25 units.'''
+'''++	Great Ground Troops: 25 units.'''
 
 ULTIMATE_GROUND_TROOPS
-'''+ + + Ultimate Ground Troops: 50 units.'''
+'''+++	Ultimate Ground Troops: 50 units.'''
 
 BAD_DETECTION
-'''    - Bad Detection: -10 malus.'''
+'''−	Bad Detection: −10 malus.'''
 
 GOOD_DETECTION
-'''    + Good Detection: +25 bonus.'''
+'''+	Good Detection: +25 bonus.'''
 
 GREAT_DETECTION
-'''  + + Great Detection: +50 bonus.'''
+'''++	Great Detection: +50 bonus.'''
 
 ULTIMATE_DETECTION
-'''+ + + Ultimate Detection: +100 bonus.'''
+'''+++	Ultimate Detection: +100 bonus.'''
 
 BAD_STEALTH
-'''    - Bad Stealth: -25 malus.'''
+'''−	Bad Stealth: −25 malus.'''
 
 AVERAGE_STEALTH
-'''      Average Stealth.'''
+'''	Average Stealth.'''
 
 GOOD_STEALTH
-'''    + Good Stealth: +25 bonus.'''
+'''+	Good Stealth: +25 bonus.'''
 
 GREAT_STEALTH
-'''  + + Great Stealth: +50 bonus.'''
+'''++	Great Stealth: +50 bonus.'''
 
 ULTIMATE_STEALTH
-'''+ + + Ultimate Stealth: +100 bonus.'''
+'''+++	Ultimate Stealth: +100 bonus.'''
 
 GOOD_WEAPONS
-'''    + Starts with Mass Driver 3.'''
+'''+	Starts with Mass Driver 3.'''
 
 GREAT_WEAPONS
-'''  + + Starts with Mass Driver 4.'''
+'''++	Starts with Mass Driver 4.'''
 
 ULTIMATE_WEAPONS
-'''+ + + Starts with Laser 1.'''
+'''+++	Starts with Laser 1.'''
 
 BAD_POPULATION
-'''   - Bad Population'''
+'''−	Bad Population'''
 
 AVERAGE_POPULATION
-'''Average Population'''
+'''	Average Population'''
 
 GOOD_POPULATION
-'''   + Good Population'''
+'''+	Good Population'''
 
 BROAD_EP
-'''  + + Broad Planet Tolerance: flourishes on more types.'''
+'''++	Broad Planet Tolerance: flourishes on more types.'''
 
-	
 NARROW_EP
-'''    - Narrow Planet Tolerance: flourishes on fewer types.'''
+'''−	Narrow Planet Tolerance: flourishes on fewer types.'''
 
 
 
@@ -7854,6 +8056,12 @@ NARROW_EP
 
 STANDARD_CONSTRUCTION_LABEL
 '''%1% Обычная Инфраструктура'''
+
+STANDARD_COLONY_SUPPLY_LABEL
+'''%2% Обычная Поддержка Колоний'''
+
+STANDARD_OUTPOST_SUPPLY_LABEL
+'''%2% Обычная Поддержка Аванпостов'''
 
 GOOD_ENVIRONMENT_LABEL
 '''%1% Хорошая Окружающая Среда'''
@@ -7981,6 +8189,8 @@ GOOD_VISION_LABEL
 EXCELLENT_VISION_LABEL
 '''Отличное Зрение'''
 
+FOCUS_PROTECTION_LABLE
+'''Приоритет Защиты'''
 
 # The following two are used in tech descriptions, and should be updated if PRODUCTION_PER_POP or PRODUCTION_PER_INFRA are changed in shared_macros.txt.
 POP_PER_PRODUCTION
@@ -7994,6 +8204,11 @@ INFRA_PER_PRODUCTION
 ####                       T A G S                       ####
 #############################################################
 
+ANTIQUATED
+Устарелые
+
+STYLISH
+Модные
 
 ORGANIC
 Органические
