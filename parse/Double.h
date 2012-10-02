@@ -7,7 +7,6 @@
 #include <boost/spirit/include/qi.hpp>
 
 namespace parse {
-
     typedef boost::spirit::qi::rule<
         parse::token_iterator,
         double (),
@@ -15,7 +14,6 @@ namespace parse {
     > double_parser_rule;
 
     extern double_parser_rule double_;
-
 }
 
 #endif

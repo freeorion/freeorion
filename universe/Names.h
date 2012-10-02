@@ -55,6 +55,7 @@
     (Construction)                              \
     (ContainedBy)                               \
     (Contains)                                  \
+    (Cos)                                       \
     (Count)                                     \
     (CounterClockwiseNextPlanetType)            \
     (CreateBuilding)                            \
@@ -136,6 +137,7 @@
     (LaunchRate)                                \
     (LocalCandidate)                            \
     (Location)                                  \
+    (Log)                                       \
     (Low)                                       \
     (Max)                                       \
     (MaxDefense)                                \
@@ -294,6 +296,7 @@
     (Ships)                                     \
     (Short_Description)                         \
     (ShortRange)                                \
+    (Sin)                                       \
     (Size)                                      \
     (SizeAsDouble)                              \
     (Slot)                                      \

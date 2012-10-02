@@ -7,7 +7,6 @@
 #include <boost/spirit/include/qi.hpp>
 
 namespace parse {
-
     typedef boost::spirit::qi::rule<
         parse::token_iterator,
         int (),
@@ -15,7 +14,6 @@ namespace parse {
     > int_parser_rule;
 
     extern int_parser_rule int_;
-
 }
 
 #endif

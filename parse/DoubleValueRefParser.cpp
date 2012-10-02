@@ -1,9 +1,10 @@
 #include "ValueRefParserImpl.h"
 
-#include "Double.h"
+//#include "Double.h"
+//#include <GG/ReportParseError.h>
 
-#include <GG/ReportParseError.h>
-
+//extern name_token_rule              first_token;      // in IntValueRefParser.cpp
+//extern name_token_rule              container_token;  // in IntValueRefParser.cpp
 
 namespace {
     struct double_parser_rules {
@@ -18,7 +19,7 @@ namespace {
             const parse::lexer& tok = parse::lexer::instance();
 
             final_token
-                %=   tok.Industry_
+                =   tok.Industry_
                 |    tok.TargetIndustry_
                 |    tok.Research_
                 |    tok.TargetResearch_
@@ -50,7 +51,8 @@ namespace {
                 ;
 
             constant
-                =    parse::double_ [ _val = new_<ValueRef::Constant<double> >(_1) ]
+                =    tok.int_ [ _val = new_<ValueRef::Constant<double> >(static_cast_<double>(_1)) ]
+                |    tok.double_ [ _val = new_<ValueRef::Constant<double> >(_1) ]
                 ;
 
             variable
@@ -80,7 +82,8 @@ namespace {
 
             initialize_numeric_statistic_parser<double>(statistic, final_token);
 
-            initialize_expression_parsers<double>(negate_expr,
+            initialize_expression_parsers<double>(function_expr,
+                                                  exponential_expr,
                                                   multiplicative_expr,
                                                   additive_expr,
                                                   expr,
@@ -91,21 +94,24 @@ namespace {
                 ;
 
             primary_expr
-                %=   '(' > expr > ')'
-                |    constant
-                |    variable
-                |    int_statistic
-                |    statistic
+                =   '(' > expr > ')'
+                |   constant
+                |   variable
+                |   int_statistic
+                |   statistic
                 ;
 
             final_token.name("real number variable name (e.g., Growth)");
-            constant.name("real number");
+            constant.name("real number constant");
+
+
             variable.name("real number variable");
             statistic.name("real number statistic");
             int_statistic.name("integer statistic");
-            negate_expr.name("real number or real number expression");
-            multiplicative_expr.name("real number or real number expression");
-            additive_expr.name("real number or real number expression");
+            function_expr.name("real number function expression");
+            exponential_expr.name("real number exponential expression");
+            multiplicative_expr.name("real number multiplication expression");
+            additive_expr.name("real number additive expression");
             expr.name("real number expression");
             primary_expr.name("real number expression");
 
@@ -126,19 +132,19 @@ namespace {
         typedef parse::value_ref_parser_rule<double>::type  rule;
         typedef variable_rule<double>::type                 variable_rule;
         typedef statistic_rule<double>::type                statistic_rule;
-        typedef multiplicative_expr_rule<double>::type      multiplicative_expression_rule;
-        typedef additive_expr_rule<double>::type            additive_expression_rule;
+        typedef expression_rule<double>::type               expression_rule;
 
-        name_token_rule                 final_token;
-        rule                            constant;
-        variable_rule                   variable;
-        statistic_rule                  statistic;
-        rule                            int_statistic;
-        rule                            negate_expr;
-        multiplicative_expression_rule  multiplicative_expr;
-        additive_expression_rule        additive_expr;
-        rule                            expr;
-        rule                            primary_expr;
+        name_token_rule     final_token;
+        rule                constant;
+        variable_rule       variable;
+        statistic_rule      statistic;
+        rule                int_statistic;
+        expression_rule     function_expr;
+        expression_rule     exponential_expr;
+        expression_rule     multiplicative_expr;
+        expression_rule     additive_expr;
+        rule                expr;
+        rule                primary_expr;
     };
 
     double_parser_rules& get_double_parser_rules() {
