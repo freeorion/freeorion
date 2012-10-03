@@ -562,13 +562,15 @@ std::string SetMeter::Description() const {
     ValueRef::OpType op;
     double const_operand;
     boost::tie(simple, op, const_operand) = SimpleMeterModification(m_meter, m_value);
+    //Logger().debugStream() << "SetMeter::Description " << simple << " / " << op << " / " << const_operand;
     if (simple) {
         char op_char = '+';
         switch (op) {
-        case ValueRef::PLUS:    op_char = '+'; break;
-        case ValueRef::MINUS:   op_char = '-'; break;
-        case ValueRef::TIMES:   op_char = '*'; break;
-        case ValueRef::DIVIDE: op_char = '/'; break;
+        case ValueRef::PLUS:            op_char = '+'; break;
+        case ValueRef::MINUS:           op_char = '-'; break;
+        case ValueRef::TIMES:           op_char = '*'; break;
+        case ValueRef::DIVIDE:          op_char = '/'; break;
+        case ValueRef::EXPONENTIATE:    op_char = '^'; break;
         default: op_char = '?';
         }
         return str(FlexibleFormat(UserString("DESC_SIMPLE_SET_METER"))

@@ -1017,7 +1017,9 @@ bool ValueRef::Operation<T>::TargetInvariant() const
 template <class T>
 std::string ValueRef::Operation<T>::Description() const
 {
+    //Logger().debugStream() << "ValueRef::Operation<T>::Description()";
     if (m_op_type == NEGATE) {
+        //Logger().debugStream() << "Operation is negation";
         if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
             OpType op_type = rhs->GetOpType();
             if (op_type == PLUS     || op_type == MINUS ||
@@ -1041,11 +1043,13 @@ std::string ValueRef::Operation<T>::Description() const
         return "max(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
     if (m_op_type == RANDOM_UNIFORM)
         return "random(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+    //Logger().debugStream() << "Operation is not a function";
 
 
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
     if (const ValueRef::Operation<T>* lhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
+        //Logger().debugStream() << "operand 1 is operation";
         OpType op_type = lhs->GetOpType();
         if (
             (m_op_type == EXPONENTIATE &&
@@ -1058,6 +1062,7 @@ std::string ValueRef::Operation<T>::Description() const
             parenthesize_lhs = true;
     }
     if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand2)) {
+        //Logger().debugStream() << "operand 2 is operation";
         OpType op_type = rhs->GetOpType();
         if (
             (m_op_type == EXPONENTIATE &&
@@ -1075,6 +1080,7 @@ std::string ValueRef::Operation<T>::Description() const
         retval += '(' + m_operand1->Description() + ')';
     else
         retval += m_operand1->Description();
+    //Logger().debugStream() << "retval with operand1: " << retval;
 
     switch (m_op_type) {
     case PLUS:          retval += " + "; break;
@@ -1084,11 +1090,13 @@ std::string ValueRef::Operation<T>::Description() const
     case EXPONENTIATE:  retval += " ^ "; break;
     default:            retval += " ? "; break;
     }
+    //Logger().debugStream() << "retval with operation: " << retval;
 
     if (parenthesize_rhs)
         retval += '(' + m_operand2->Description() + ')';
     else
         retval += m_operand2->Description();
+    //Logger().debugStream() << "retval final: " << retval;
 
     return retval;
 }
