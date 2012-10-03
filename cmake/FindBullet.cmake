@@ -30,7 +30,7 @@ IF (WIN32) #Windows
 ELSE (WIN32) #Unix
     # No .pc for this one
     SET(BULLET_SDK $ENV{BULLET_HOME})
-    FIND_PATH(BULLET_INCLUDE_DIR btBulletDynamicsCommon.h PATHS /usr/local/include /usr/include ${BULLET_SDK} PATH_SUFFIXES src bullet)
+    FIND_PATH(BULLET_INCLUDE_DIR btBulletDynamicsCommon.h PATHS /usr/local/include /usr/include ${BULLET_SDK}/include PATH_SUFFIXES src bullet)
 
     FIND_LIBRARY(LIB_DYNAMICS bulletdynamics BulletDynamics PATHS ${BULLET_SDK}/lib /usr/lib /usr/local/lib)
     FIND_LIBRARY(LIB_COLLISION bulletcollision BulletCollision PATHS ${BULLET_SDK}/lib /usr/lib /usr/local/lib)
