@@ -117,17 +117,27 @@ def handleDiplomaticMessage(message):
 def handleDiplomaticStatusUpdate(statusUpdate):
     print "Received diplomatic status update to " + str (statusUpdate.status) + " about empire " + str(statusUpdate.empire1) + " and empire " + str(statusUpdate.empire2)
 
+def declareWarOnAll():
+    my_emp_id = fo.empireID()
+    for emp_id in fo.allEmpireIDs():
+        if emp_id != my_emp_id:
+            msg = fo.diplomaticMessage(my_emp_id, emp_id, fo.diplomaticMessageType.warDeclaration)
+            fo.sendDiplomaticMessage(msg)
+
 # called once per turn to tell the Python AI to generate and issue orders to control its empire.
 # at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
 # and can be sent to the server for processing.
 def generateOrders():
-    print ("Genearting Orders")
+    print ("Generating Orders")
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     planetID = empire.capitalID
     planet = universe.getPlanet(planetID)
     print "EmpireID:    " + str(empire.empireID) + " Name: " + empire.name + " Turn: " + str(fo.currentTurn())
     print "CapitalID: " + str(planetID) + " Name: " + planet.name + " Species: " + planet.speciesName 
+    
+    if fo.currentTurn() == 1:
+        declareWarOnAll()
 
     # turn cleanup
     splitFleet()
