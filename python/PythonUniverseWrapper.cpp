@@ -139,11 +139,11 @@ namespace {
     boost::function<bool(const Universe&, int, int, int)> SystemsConnectedFunc =                &SystemsConnectedP;
 
     std::vector<int>   ImmediateNeighborsP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
-        std::map<double, int>  lanemap;
+        std::multimap<double, int> lanemap;
         std::vector<int> retval;
         try {
             lanemap = universe.ImmediateNeighbors(system1_id, empire_id);
-            for (std::map<double, int>::const_iterator it = lanemap.begin(); it != lanemap.end(); ++it)
+            for (std::multimap<double, int>::const_iterator it = lanemap.begin(); it != lanemap.end(); ++it)
             { retval.push_back(it->second); }
             return retval;
         } catch (...) {

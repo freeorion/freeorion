@@ -194,7 +194,7 @@ public:
       * \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if the  system
       * ID is out of range. */
-    std::map<double, int>   ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
+    std::multimap<double, int>              ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
 
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects

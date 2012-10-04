@@ -328,19 +328,19 @@ namespace SystemPathing {
     }
 
     template <class Graph>
-    std::map<double, int> ImmediateNeighborsImpl(const Graph& graph, int system_id, const boost::unordered_map<int, int>& id_to_graph_index)
+    std::multimap<double, int> ImmediateNeighborsImpl(const Graph& graph, int system_id,
+                                                      const boost::unordered_map<int, int>& id_to_graph_index)
     {
         typedef typename Graph::out_edge_iterator OutEdgeIterator;
         typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
         typedef typename boost::property_map<Graph, boost::edge_weight_t>::const_type ConstEdgeWeightPropertyMap;
 
-        std::map<double, int> retval;
+        std::multimap<double, int> retval;
         ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
         ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
         std::pair<OutEdgeIterator, OutEdgeIterator> edges = boost::out_edges(id_to_graph_index.at(system_id), graph);
-        for (OutEdgeIterator it = edges.first; it != edges.second; ++it) {
-            retval[edge_weight_map[*it]] = sys_id_property_map[boost::target(*it, graph)];
-        }
+        for (OutEdgeIterator it = edges.first; it != edges.second; ++it)
+        { retval.insert(std::make_pair(edge_weight_map[*it], sys_id_property_map[boost::target(*it, graph)])); }
         return retval;
     }
 }
@@ -708,7 +708,7 @@ bool Universe::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
     return false;
 }
 
-std::map<double, int> Universe::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const {
+std::multimap<double, int> Universe::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const {
     if (empire_id == ALL_EMPIRES) {
         return ImmediateNeighborsImpl(m_graph_impl->system_graph, system_id, m_system_id_to_graph_index);
     } else {
@@ -716,7 +716,7 @@ std::map<double, int> Universe::ImmediateNeighbors(int system_id, int empire_id/
         if (graph_it != m_graph_impl->empire_system_graph_views.end())
             return ImmediateNeighborsImpl(*graph_it->second, system_id, m_system_id_to_graph_index);
     }
-    return std::map<double, int>();
+    return std::multimap<double, int>();
 }
 
 int Universe::Insert(UniverseObject* obj) {
