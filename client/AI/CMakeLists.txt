@@ -30,25 +30,11 @@ else ()
     message(FATAL_ERROR "Boost libraries not found.")
 endif ()
 
-find_package(PythonLibs)
+find_package(PythonLibs 2)
 if (PYTHONLIBS_FOUND)
     include_directories(${PYTHON_INCLUDE_PATH})
-    SET(_VERSION_REGEX
-      "^#define[ \t]+PY([A-Z_]*_VERSION)[ \t]+[\"]*([0-9A-Za-z\\.]+)[\"]*[ \t]*$")
-    FILE(STRINGS "${PYTHON_INCLUDE_DIR}/patchlevel.h" _VERSION_STRINGS
-       LIMIT_COUNT 10 REGEX ${_VERSION_REGEX})
-    FOREACH(_VERSION_STRING ${_VERSION_STRINGS})
-        STRING(REGEX REPLACE ${_VERSION_REGEX} "PYTHON\\1"
-           _VERSION_VARIABLE "${_VERSION_STRING}")
-        STRING(REGEX REPLACE ${_VERSION_REGEX} "\\2"
-           _VERSION_NUMBER "${_VERSION_STRING}")
-        SET(${_VERSION_VARIABLE} ${_VERSION_NUMBER})
-    ENDFOREACH(_VERSION_STRING ${_VERSION_STRINGS})
-    IF(PYTHON_MAJOR_VERSION EQUAL 3)
-        MESSAGE(FATAL_ERROR "Python 3 is not supported!")
-    ENDIF()
 else ()
-    message(FATAL_ERROR " library not found.")
+    message(FATAL_ERROR "Python2 library not found.")
 endif ()
 
 add_definitions(-DFREEORION_BUILD_AI)
