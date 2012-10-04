@@ -93,14 +93,11 @@ def extractFleetIDsWithoutMissionTypes(fleetIDs):
 
 def assessFleetRole(fleetID):
     "counts the number of ShipRoles in a fleet and returns a corresponding fleetRole"
-    print ("assessing role of fleet with id " + str(fleetID))
-    # TODO: one colony ship in fleet should mean it's a colony fleet
+    # Done: one colony ship in fleet should mean it's a colony fleet
 
     universe = fo.getUniverse()
 
     shipRoles = {}
-    for shipRole in EnumsAI.getAIShipRolesTypes():
-        shipRoles[shipRole] = 0
 
     fleet = universe.getFleet(fleetID)
     if not fleet:
@@ -116,8 +113,8 @@ def assessFleetRole(fleetID):
             role = AIShipRoleType.SHIP_ROLE_INVALID
 
         if role != AIShipRoleType.SHIP_ROLE_INVALID:
-            shipRoles[role] = shipRoles[role] + 1
-
+            shipRoles[role] = shipRoles.get(role,  0)  + 1
+    print "found ship roles  ",  shipRoles,  "  for fleet ID %d"%fleetID
     # determine most common shipRole
     favouriteRole = AIShipRoleType.SHIP_ROLE_INVALID
     for shipRole in shipRoles:
@@ -125,12 +122,13 @@ def assessFleetRole(fleetID):
             favouriteRole = shipRole
 
     # assign fleet role
+    if  AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION in shipRoles:
+        return AIFleetMissionType.FLEET_MISSION_COLONISATION
+    if AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST in shipRoles:
+        return AIFleetMissionType.FLEET_MISSION_OUTPOST
+        
     if favouriteRole == AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION:
         return AIFleetMissionType.FLEET_MISSION_EXPLORATION
-    if favouriteRole == AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
-        return AIFleetMissionType.FLEET_MISSION_COLONISATION
-    if favouriteRole == AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST:
-        return AIFleetMissionType.FLEET_MISSION_OUTPOST
     if favouriteRole == AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
         return AIFleetMissionType.FLEET_MISSION_INVASION
     if favouriteRole == AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK:
@@ -147,11 +145,11 @@ def assessShipRole(shipID):
     universe = fo.getUniverse()
     ship = universe.getShip(shipID)
 
-    if ship.canColonize:
-        # look for the CO_OUTPOST_MOD
-        if ship.design.parts.__contains__("CO_OUTPOST_MOD"):
-            # print ">> assessShipRole Outpost Ship:" + str(shipID)
-            return AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST
+    if ship.design.parts.__contains__("CO_OUTPOST_POD"):
+        # print ">> assessShipRole Outpost Ship:" + str(shipID)
+        return AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST
+        
+    if ship.canColonize:# is this test necessary or helpful?
         if ship.design.parts.__contains__("CO_COLONY_POD"):
             # print ">> assessShipRole Colony Ship:" + str(shipID)
             return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
@@ -197,6 +195,11 @@ def generateAIFleetOrdersForAIFleetMissions():
     colonisationAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_COLONISATION])
     for colonisationAIFleetMission in colonisationAIFleetMissions:
         print "    " + str(colonisationAIFleetMission)
+
+    print "Outpost targets: fleetID[MissionType]:{TargetType:targetID}"
+    outpostAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_OUTPOST])
+    for outpostAIFleetMission in outpostAIFleetMissions:
+        print "    " + str(outpostAIFleetMission)
 
     print "Invasion targets: fleetID[MissionType]:{TargetType:targetID}"
     invasionAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_INVASION])

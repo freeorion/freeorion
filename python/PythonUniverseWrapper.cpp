@@ -126,17 +126,60 @@ namespace {
     }
     boost::function<std::vector<int>(const Universe&, int, int, int)> LeastJumpsFunc =          &LeastJumpsPath;
 
-    bool                    SystemsConnectedP(const Universe& universe, int system1_id, int system2_id) {
+    bool             SystemsConnectedP(const Universe& universe, int system1_id, int system2_id, int empire_id=ALL_EMPIRES) {
         //Logger().debugStream() << "SystemsConnected!(" << system1_id << ", " << system2_id << ")";
         try {
-            bool retval = universe.SystemsConnected(system1_id, system2_id);
+            bool retval = universe.SystemsConnected(system1_id, system2_id, empire_id);
             //Logger().debugStream() << "SystemsConnected! retval: " << retval;
             return retval;
         } catch (...) {
         }
         return false;
     }
-    boost::function<bool(const Universe&, int, int)> SystemsConnectedFunc =                     &SystemsConnectedP;
+    boost::function<bool(const Universe&, int, int, int)> SystemsConnectedFunc =                &SystemsConnectedP;
+
+    std::vector<int>   ImmediateNeighborsP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
+        std::map<double, int>  lanemap;
+        std::vector<int> retval;
+        try {
+            lanemap = universe.ImmediateNeighbors(system1_id, empire_id);
+            for (std::map<double, int>::const_iterator it = lanemap.begin(); it != lanemap.end(); ++it)
+            { retval.push_back(it->second); }
+            return retval;
+        } catch (...) {
+        }
+        return retval;
+    }
+    boost::function<std::vector<int> (const Universe&, int, int)> ImmediateNeighborsFunc =      &ImmediateNeighborsP;
+    
+    int   VisibilityP(const Universe& universe, int object_id, int empire_id = ALL_EMPIRES) {
+        int retval;
+        //std::vector<int> retval;
+        try {
+            retval = universe.GetObjectVisibilityByEmpire(object_id, empire_id);
+            return retval;
+        } catch (...) {
+        }
+        return INVALID_VISIBILITY;
+    }
+    boost::function<int (const Universe&, int, int)> VisibilityFunc =                           &VisibilityP;
+    
+    std::vector<int>   VisibilityTurnsP(const Universe& universe, int object_id, int empire_id = ALL_EMPIRES) {
+        Universe::VisibilityTurnMap  vismap;
+        std::vector<int> retval;
+        //std::vector<int> retval;
+        try {
+            vismap = universe.GetObjectVisibilityTurnMapByEmpire(object_id, empire_id);
+            retval.push_back(vismap[VIS_NO_VISIBILITY]);
+            retval.push_back(vismap[VIS_BASIC_VISIBILITY]);
+            retval.push_back(vismap[VIS_PARTIAL_VISIBILITY]);
+            retval.push_back(vismap[VIS_FULL_VISIBILITY]);
+            return retval;
+        } catch (...) {
+        }
+        return retval;
+    }
+    boost::function<std::vector<int> (const Universe&, int, int)> VisibilityTurnsFunc =         &VisibilityTurnsP;
 
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
 
@@ -244,9 +287,26 @@ namespace FreeOrionPython {
             .def("systemsConnected",            make_function(
                                                     SystemsConnectedFunc,
                                                     return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<bool, const Universe&, int, int>()
+                                                    boost::mpl::vector<bool, const Universe&, int, int, int>()
                                                 ))
 
+            .def("getImmediateNeighbors",       make_function(
+                                                    ImmediateNeighborsFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<std::vector<int>, const Universe&, int, int>()
+                                                ))
+
+            .def("getVisibilityTurns",          make_function(
+                                                    VisibilityTurnsFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<std::vector<int>, const Universe&, int, int>()
+                                                ))
+
+            .def("getVisibility",               make_function(
+                                                    VisibilityFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<int, const Universe&, int, int>()
+                                                ))
             .def("dump",                        &DumpObjects)
         ;
 
@@ -292,6 +352,7 @@ namespace FreeOrionPython {
             .add_property("hasMonsters",                &Fleet::HasMonsters)
             .add_property("hasArmedShips",              &Fleet::HasArmedShips)
             .add_property("hasColonyShips",             &Fleet::HasColonyShips)
+            .add_property("hasOutpostShips",            &Fleet::HasOutpostShips)
             .add_property("hasTroopShips",              &Fleet::HasTroopShips)
             .add_property("numShips",                   &Fleet::NumShips)
             .add_property("empty",                      &Fleet::Empty)
@@ -315,7 +376,7 @@ namespace FreeOrionPython {
             .add_property("orderedScrapped",        &Ship::OrderedScrapped)
             .add_property("orderedColonizePlanet",  &Ship::OrderedColonizePlanet)
             .add_property("orderedInvadePlanet",    &Ship::OrderedInvadePlanet)
-            ;
+        ;
 
         //////////////////
         //  ShipDesign  //
@@ -374,7 +435,7 @@ namespace FreeOrionPython {
             .add_property("planetID",           make_function(&Building::PlanetID,          return_value_policy<return_by_value>()))
             .add_property("producedByEmpireID", &Building::ProducedByEmpireID)
             .add_property("orderedScrapped",    &Building::OrderedScrapped)
-        ;
+            ;
 
         //////////////////
         // BuildingType //

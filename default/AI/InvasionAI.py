@@ -104,13 +104,16 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire):
 
     # give preference to closest invadable planets
     empireID = empire.empireID
-    capitalID = empire.capitalID
+    capitalID = PlanetUtilsAI.getCapital()
     homeworld = universe.getPlanet(capitalID)
-    homeSystemID = homeworld.systemID
-    evalSystemID = planet.systemID
-    leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
-    distanceFactor = 1.001/(leastJumpsPath + 1)
-
+    if homeworld:
+        homeSystemID = homeworld.systemID
+        evalSystemID = planet.systemID
+        leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
+        distanceFactor = 1.001/(leastJumpsPath + 1)
+    else:
+        distanceFactor = 0
+        
     if planetID in fleetSupplyablePlanetIDs:
         return getPlanetPopulation(planetID) * planet.size * planet.type * distanceFactor
     else:

@@ -61,10 +61,13 @@ class AIFleetOrder(object):
                     ship = universe.getShip(self.getSourceAITarget().getTargetID())
                     if ship.canColonize:
                         sourceAITargetTypeValid = True
+                    else:
+                        print "Fleet outpost order fails due to ship %d faile  ship.canColonize"%ship.id
+                        print "from source target %s and targetTarget %s"%(self.__sourceAITarget ,  self.__targetAITarget) 
                 # with fleet
                 elif AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
                     fleet = universe.getFleet(self.getSourceAITarget().getTargetID())
-                    if fleet.hasColonyShips:
+                    if fleet.hasOutpostShips:
                         sourceAITargetTypeValid = True
                 # colonise planet
                 if AITargetType.TARGET_PLANET == self.getTargetAITarget().getAITargetType():

@@ -4,6 +4,17 @@ import AIstate
 from EnumsAI import AIPriorityType, getAIPriorityResourceTypes, AIFocusType
 import PlanetUtilsAI
 from random import shuffle
+from time import time
+
+resourceTimerFile=None
+doResourceTiming=True
+__timerEntries1=["TopResources",  "SetCapital",  "SetPlanets",  "SetAsteroids",  "SetGiants",  "PrintResources" ]
+__timerEntries2=["getPlanets",  "Filter",  "Priority",  "Shuffle",  "Targets",  "Loop" ]
+__timerEntries = __timerEntries2
+__timerFileFmt = "%8d"+ (len(__timerEntries)*"\t %8d")
+
+
+
 
 def topResourcePriority():
     "calculate top resource priority"
@@ -31,7 +42,7 @@ def getResourceTargetTotals():
     empire = fo.getEmpire()
     empireID = empire.empireID
     ownedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
-    capitalID = empire.capitalID
+    capitalID = PlanetUtilsAI.getCapital()
     #    planet = universe.getPlanet(planetID)
     #   if planet.currentMeterValue(fo.meterType.population) >0:
     planets = map(universe.getPlanet,  ownedPlanetIDs)
@@ -46,7 +57,7 @@ def setCapitalIDResourceFocus():
     empire = fo.getEmpire()
     empireID = empire.empireID
     ownedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
-    capitalID = empire.capitalID
+    capitalID = PlanetUtilsAI.getCapital()
     topPriority = topResourcePriority()
 
     if topPriority == AIPriorityType.PRIORITY_RESOURCE_GROWTH:
@@ -73,72 +84,78 @@ def setCapitalIDResourceFocus():
 
 def setGeneralPlanetResourceFocus():
     "set resource focus of planets except capitalID, asteroids, and gas giants"
+    global __timerFile
 
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
+    timer= [ time() ] # getPlanets
     empirePlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
-    capitalID = [empire.capitalID]
+    timer.append( time() ) #filter
+    capitalIDL = [PlanetUtilsAI.getCapital()]
     asteroids = PlanetUtilsAI.getTypePlanetEmpireOwned(fo.planetType.asteroids)
     gasGiants = PlanetUtilsAI.getTypePlanetEmpireOwned(fo.planetType.gasGiant)
-    generalPlanetIDs = list(set(empirePlanetIDs) - (set(capitalID)|set(asteroids)|set(gasGiants)))
-    fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
-    fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
+    generalPlanetIDs = list(set(empirePlanetIDs) - (set(capitalIDL)|set(asteroids)|set(gasGiants)))
+    timer.append( time() ) #Priority
+    #fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
+    #fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
     ppPrio = foAI.foAIstate.getPriority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
     rpPrio = foAI.foAIstate.getPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH)
     priorityRatio = float(ppPrio)/rpPrio
-
-    if True: # use new code   -- not supporting Growth for general planets until also adding code to make sure would actually benefit
-        shuffle(generalPlanetIDs)
-        for planetID in generalPlanetIDs:
-            planet = universe.getPlanet(planetID)
-            oldFocus=planet.focus
-            pp, rp = getResourceTargetTotals()
-            targetRatio = pp/rp
-            ratioRatio = priorityRatio / targetRatio
-            if  (AIFocusType.FOCUS_MINING in planet.availableFoci) and ((priorityRatio > 1.0) or ( ratioRatio > 1.25 ) ) :  #could be a more complex decision here, 
-                if oldFocus != AIFocusType.FOCUS_MINING:
-                    fo.issueChangeFocusOrder(planetID, AIFocusType.FOCUS_MINING)
-                    print "Changing planet focus for ID %s : %s  from %s to %s "%(planetID,  planet.name,  oldFocus,   AIFocusType.FOCUS_MINING )
+    timer.append( time() ) # shuffle
+    # not supporting Growth for general planets until also adding code to make sure would actually benefit
+    shuffle(generalPlanetIDs)
+    timer.append( time() ) # targets
+    pp, rp = getResourceTargetTotals()
+    targetRatio = pp/rp
+    nplanets = len(generalPlanetIDs)
+    nChanges = int(  (  nplanets *  max( 1.0/rp,  2.0/pp)  *  ( (pp - rp* priorityRatio)/(priorityRatio +2)))  +0.5 ) # weird formula I came up with to estimate desired number of changes
+    print "current target totals -- pp: %.1f   rp: %.1f   ; ratio %.2f  ; desired ratio %.2f  will change up to %d  foci from total of %d planets"%(pp, rp, targetRatio,  priorityRatio,  nChanges,  nplanets)
+    timer.append( time() ) #loop
+    iChanges = 0
+    for planetID in generalPlanetIDs:
+        if iChanges >= nChanges: break
+        planet = universe.getPlanet(planetID)
+        oldFocus=planet.focus
+        targetRatio = pp/rp
+        ratioRatio = priorityRatio / targetRatio
+        if  (AIFocusType.FOCUS_MINING in planet.availableFoci) and ((priorityRatio > 0.5 ) or ( ratioRatio > 0.9  ) ) :  #could be a more complex decision here, 
+            if oldFocus != AIFocusType.FOCUS_MINING:
+                iChanges +=1 #even if not necessarily  directed towards desired ratio
+                fo.issueChangeFocusOrder(planetID, AIFocusType.FOCUS_MINING)
+                print "Changing planet focus for ID %s : %s  from %s to %s "%(planetID,  planet.name,  oldFocus,   AIFocusType.FOCUS_MINING )
+            continue
+        newFocus=None
+        if ( ratioRatio > 1.1 ): #needs industry
+            if oldFocus == AIFocusType.FOCUS_INDUSTRY:
                 continue
-            # don't alter foci for minor course offsets
-            if ( ratioRatio > 1.25 ): #needs industry
-                if oldFocus == AIFocusType.FOCUS_INDUSTRY:
-                    continue
-                fo.issueChangeFocusOrder(planetID, AIFocusType.FOCUS_INDUSTRY)
-                print "Changing planet focus for ID %s : %s  from %s to %s "%(planetID,  planet.name,  oldFocus,   AIFocusType.FOCUS_INDUSTRY )
-            elif ( ratioRatio < 0.8 ):
-                if oldFocus == AIFocusType.FOCUS_RESEARCH:
-                    continue
-                fo.issueChangeFocusOrder(planetID, AIFocusType.FOCUS_RESEARCH)
-                print "Changing planet focus for ID %s : %s  from %s to %s "%(planetID,  planet.name,  oldFocus,   AIFocusType.FOCUS_RESEARCH )
+            else:
+                newFocus = AIFocusType.FOCUS_INDUSTRY
+        elif ( ratioRatio < 0.91 ):
+            if oldFocus == AIFocusType.FOCUS_RESEARCH:
+                continue
+            else:
+                newFocus = AIFocusType.FOCUS_RESEARCH
+        if newFocus:
+            #pp -= planet.currentMeterValue(fo.meterType.targetIndustry)
+            #rp -= planet.currentMeterValue(fo.meterType.targetResearch)
+            fo.issueChangeFocusOrder(planetID, newFocus)
+            iChanges += 1
+            #pp += planet.currentMeterValue(fo.meterType.targetIndustry)
+            #rp += planet.currentMeterValue(fo.meterType.targetResearch)
+            print "Changing planet focus for ID %s : %s  from %s to %s "%(planetID,  planet.name,  oldFocus,   newFocus )
+    timer.append( time() ) #end
+    if doResourceTiming and __timerEntries==__timerEntries2:
+        times = [timer[i] - timer[i-1] for i in range(1,  len(timer) ) ]
+        timeFmt = "%30s: %8d msec  "
+        print "ResourcesAI Time Requirements:"
+        for mod,  modTime in zip(__timerEntries,  times):
+            print timeFmt%((30*' '+mod)[-30:],  int(1000*modTime))
+        if resourceTimerFile:
+            print "len times: %d  ;  len entries: %d "%(len(times),  len(__timerEntries))
+            resourceTimerFile.write(  __timerFileFmt%tuple( [ fo.currentTurn() ]+map(lambda x: int(1000*x),  times )) +'\n')
+            resourceTimerFile.flush()
 
-    else: #use old code
-        if topPriority == AIPriorityType.PRIORITY_RESOURCE_GROWTH:
-            newFocus = AIFocusType.FOCUS_GROWTH
-            for planetID in generalPlanetIDs:
-                planet = universe.getPlanet(planetID)
-                focus = newFocus
-                if focus in planet.availableFoci:
-                    fo.issueChangeFocusOrder(planetID, focus)
-        elif topPriority == AIPriorityType.PRIORITY_RESOURCE_PRODUCTION:
-            newFocus = AIFocusType.FOCUS_INDUSTRY
-            for planetID in generalPlanetIDs:
-                planet = universe.getPlanet(planetID)
-                focus = newFocus
-                if planetID in fleetSupplyablePlanetIDs and focus in planet.availableFoci:
-                    fo.issueChangeFocusOrder(planetID, focus)
-        elif topPriority == AIPriorityType.PRIORITY_RESOURCE_RESEARCH:
-            newFocus = AIFocusType.FOCUS_RESEARCH
-            for planetID in generalPlanetIDs:
-                planet = universe.getPlanet(planetID)
-                focus = newFocus
-                if planetID in fleetSupplyablePlanetIDs and focus in planet.availableFoci:
-                    fo.issueChangeFocusOrder(planetID, focus)
-        else:
-            focus = AIFocusType.FOCUS_FARMING
-            if focus in planet.availableFoci:
-                fo.issueChangeFocusOrder(planetID, focus)
 
 def setAsteroidsResourceFocus():
     "change resource focus of asteroids from farming to mining"
@@ -202,15 +219,32 @@ def printResourcesPriority():
 
 
 def generateResourcesOrders():
+    global __timerFile
     "generate resources focus orders"
 
+    timer= [ time() ]
     # calculate top resource priority
     topResourcePriority()
-
+    timer.append( time() )
     # set resource foci of planets
     setCapitalIDResourceFocus()
+    timer.append( time() )
     setGeneralPlanetResourceFocus()
+    timer.append( time() )
     setAsteroidsResourceFocus()
+    timer.append( time() )
     setGasGiantsResourceFocus()
+    timer.append( time() )
 
     printResourcesPriority()
+    timer.append( time() )
+
+    if doResourceTiming and __timerEntries==__timerEntries1:
+        times = [timer[i] - timer[i-1] for i in range(1,  len(timer) ) ]
+        timeFmt = "%30s: %8d msec  "
+        print "ResourcesAI Time Requirements:"
+        for mod,  modTime in zip(__timerEntries,  times):
+            print timeFmt%((30*' '+mod)[-30:],  int(1000*modTime))
+        if resourceTimerFile:
+            resourceTimerFile.write(  __timerFileFmt%tuple( [ fo.currentTurn() ]+map(lambda x: int(1000*x),  times )) +'\n')
+            resourceTimerFile.flush()

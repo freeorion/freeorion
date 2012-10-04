@@ -17,6 +17,13 @@ namespace FreeOrionPython {
             .value("noStar",    STAR_NONE)
             .value("unknown",   INVALID_STAR_TYPE)
         ;
+        enum_<Visibility>("visibility")
+            .value("invalid",   INVALID_VISIBILITY)
+            .value("none",      VIS_NO_VISIBILITY)
+            .value("basic",     VIS_BASIC_VISIBILITY)
+            .value("partial",   VIS_PARTIAL_VISIBILITY)
+            .value("full",      VIS_FULL_VISIBILITY)
+        ;
         enum_<PlanetSize>("planetSize")
             .value("tiny",      SZ_TINY)
             .value("small",     SZ_SMALL)

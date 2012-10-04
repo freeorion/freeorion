@@ -74,6 +74,7 @@ class AIFleetMission(AIAbstractMission):
     def __getAIFleetOrderFromAITarget(self, aiFleetMissionType, aiTarget):
         result = None
         fleetAITarget = AITarget.AITarget(AITargetType.TARGET_FLEET, self.getAITargetID())
+        
         if aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_OUTPOST:
             result = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_OUTPOST, fleetAITarget, aiTarget)
         elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_COLONISATION:
@@ -158,6 +159,7 @@ class AIFleetMission(AIAbstractMission):
                 if not aiFleetOrder.isExecutionCompleted():
                     ordersInSystemCompleted = False
             # moving to another system stops issuing all orders in system where fleet is
+            
             # move order is also the last order in system
             if aiFleetOrder.getAIFleetOrderType() == AIFleetOrderType.ORDER_MOVE:
                 break

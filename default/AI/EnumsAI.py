@@ -38,6 +38,28 @@ class AIPriorityType(object):
     PRIORITY_RESEARCH_SHIPS = 17
     PRIORITY_RESEARCH_DEFENSE = 18
 
+AIPriorityNames = [
+        "PRIORITY_RESOURCE_GROWTH", 
+        "Priority_slot_empty", 
+        "PRIORITY_RESOURCE_PRODUCTION", 
+        "PRIORITY_RESOURCE_RESEARCH", 
+        "PRIORITY_RESOURCE_TRADE", 
+        "PRIORITY_RESOURCE_CONSTRUCTION", 
+        "PRIORITY_PRODUCTION_EXPLORATION", 
+        "PRIORITY_PRODUCTION_OUTPOST", 
+        "PRIORITY_PRODUCTION_COLONISATION", 
+        "PRIORITY_PRODUCTION_INVASION", 
+        "PRIORITY_PRODUCTION_MILITARY", 
+        "PRIORITY_PRODUCTION_BUILDINGS", 
+        "PRIORITY_RESEARCH_LEARNING", 
+        "PRIORITY_RESEARCH_GROWTH", 
+        "PRIORITY_RESEARCH_PRODUCTION", 
+        "PRIORITY_RESEARCH_CONSTRUCTION", 
+        "PRIORITY_RESEARCH_ECONOMICS", 
+        "PRIORITY_RESEARCH_SHIPS", 
+        "PRIORITY_RESEARCH_DEFENSE", 
+        "PRIORITY_INVALID" ]
+
 def getAIPriorityResourceTypes():
     return __getInterval(0, 5)
 def getAIPriorityProductionTypes():
@@ -46,15 +68,17 @@ def getAIPriorityResearchTypes():
     return __getInterval(12, 18)
 def getAIPriorityTypes():
     return __getInterval(0, 18)
+   
 
 class AIExplorableSystemType(object):
     EXPLORABLE_SYSTEM_INVALID = -1
-    EXPLORABLE_SYSTEM_UNEXPLORED = 0
-    EXPLORABLE_SYSTEM_EXPLORED = 1
-    EXPLORABLE_SYSTEM_VISIBLE = 2
+    EXPLORABLE_SYSTEM_UNREACHABLE = 0
+    EXPLORABLE_SYSTEM_UNEXPLORED = 1
+    EXPLORABLE_SYSTEM_EXPLORED = 2
+    EXPLORABLE_SYSTEM_VISIBLE = 3
 
 def getAIExplorableSystemTypes():
-    return __getInterval(0, 2)
+    return __getInterval(0, 3)
 
 class AIFleetMissionType(object):
     FLEET_MISSION_INVALID = -1

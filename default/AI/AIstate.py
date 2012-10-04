@@ -3,7 +3,10 @@ import freeOrionAIInterface as fo
 import EnumsAI
 from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType
 import AIFleetMission
+import FleetUtilsAI
+import ExplorationAI
 
+##moving ALL or NEARLY ALL  'global' variables into AIState object rather than module
 # global variables
 foodStockpileSize = 1     # food stored per population
 minimalColoniseValue = 3  # minimal value for a planet to be colonised
@@ -29,6 +32,23 @@ class AIstate(object):
 
     def __init__(self):
         "constructor"
+        # 'global' (?) variables
+        self.foodStockpileSize =  1    # food stored per population
+        self.minimalColoniseValue = 3  # minimal value for a planet to be colonised
+        self.colonisablePlanetIDs = []  # TODO: move into AIstate
+        self.colonyTargetedSystemIDs = []
+        self.colonisableOutpostIDs = []  # TODO: move into AIstate
+        self.outpostTargetedSystemIDs = []
+        self.opponentPlanetIDs = []
+        self.invasionTargetedSystemIDs = []
+        self.militarySystemIDs = []
+        self.militaryTargetedSystemIDs = []
+        self.colonyFleetIDs = []
+        self.outpostFleetIDs = []
+        self.invasionFleetIDs = []
+        self.militaryFleetIDs = []
+        
+        self.untaskedFleets=[]
 
         self.__missionsByType = {}
         for missionType in EnumsAI.getAIFleetMissionTypes():
@@ -40,34 +60,69 @@ class AIstate(object):
         self.__fleetRoleByID = {}
         self.__priorityByType = {}
 
-        self.__explorableSystemByType = {}
-        for explorableSystemsType in EnumsAI.getAIExplorableSystemTypes():
-            self.__explorableSystemByType[explorableSystemsType] = {}
+        #self.__explorableSystemByType = {}
+        #for explorableSystemsType in EnumsAI.getAIExplorableSystemTypes():
+        #    self.__explorableSystemByType[explorableSystemsType] = {}
+            
+        #initialize home system knowledge
+        universe = fo.getUniverse()
+        empire = fo.getEmpire()
+        self.empireID = empire.empireID
+        self.origHomeworldID = empire.capitalID
+        homeworld = universe.getPlanet(self.origHomeworldID)
+        self.origSpeciesName = homeworld.speciesName
+        self.origHomeSystemID = homeworld.systemID
+        self.visBorderSystemIDs = {self.origHomeSystemID:1}
+        self.visInteriorSystemIDs= {}
+        self.expBorderSystemIDs = {self.origHomeSystemID:1}
+        self.expInteriorSystemIDs= {}
+        self.exploredSystemIDs = {}
+        self.unexploredSystemIDs = {self.origHomeSystemID:1}
 
     def __del__(self):
         "destructor"
-
         del self.__missionsByType
         del self.__shipRoleByDesignID
         del self.__fleetRoleByID
         del self.__priorityByType
-        del self.__explorableSystemByType
+        #del self.__explorableSystemByType
         del self.__aiMissionsByFleetID
-
-    def clean(self, startSystemID, fleetIDs):
-        "turn AIstate cleanup"
-
-        # cleanup explorable systems
-        self.__cleanExplorableSystems(startSystemID)
+        del self.colonisablePlanetIDs
+        del self.colonyTargetedSystemIDs
+        del self.colonisableOutpostIDs
+        del self.outpostTargetedSystemIDs
+        del self.opponentPlanetIDs
+        del self.invasionTargetedSystemIDs
+        del self.militarySystemIDs
+        del self.militaryTargetedSystemIDs
+        del self.colonyFleetIDs 
+        del self.outpostFleetIDs 
+        del self.invasionFleetIDs 
+        del self.militaryFleetIDs 
+        
+    def clean(self):
+        "turn start AIstate cleanup"
+        
+        ExplorationAI.graphFlags.clear()
+        for sysID in list(self.visBorderSystemIDs):
+            ExplorationAI.followVisSystemConnections(sysID,  self.origHomeSystemID)
+        ExplorationAI.updateExploredSystems()
+        print "************************************************************"
+        print "newCalc explored systems: %s"%list(self.exploredSystemIDs)
+        print "---------------------------------------------------------------------"
+        print "newCalc unexplored systems: %s"%list(self.unexploredSystemIDs)
+        print "************************************************************"
         # TODO: cleanup colonisable planets
         # cleanup fleet roles
         self.__cleanFleetRoles()
+        self.__cleanAIFleetMissions(FleetUtilsAI.getEmpireFleetIDs())
+        ExplorationAI.updateScoutFleets() #should do this after clearing dead  fleets
 
-        self.__cleanAIFleetMissions(fleetIDs)
+
+
 
     def afterTurnCleanup(self):
         "removes not required information to save from AI state after AI complete its turn"
-
         # some ships in fleet can be destroyed between turns and then fleet may have have different roles
         self.__fleetRoleByID = {}
 
@@ -206,90 +261,29 @@ class AIstate(object):
     def __cleanFleetRoles(self):
         "removes fleetRoles if a fleet has been lost"
 
-        deleteRoles = []
+        #deleteRoles = []
         universe = fo.getUniverse()
 
         for fleetID in self.__fleetRoleByID:
             fleet = universe.getFleet(fleetID)
             if (fleet == None):
-                deleteRoles.append(fleetID)
-
-        for fleetID in deleteRoles:
-            del self.__fleetRoleByID[fleetID]
-            print "Deleted fleetRole: " + str(fleetID)
-
-    def getExplorableSystem(self, systemID):
-        "determines system type from ID and returns it"
-        print ("determining explorable system type for system with id " + str(systemID))
-
-        for explorableSystemsType in EnumsAI.getAIExplorableSystemTypes():
-            systems = self.getExplorableSystems(explorableSystemsType)
-            if systemID in systems:
-                return explorableSystemsType
-
-        print "SystemID " + str(systemID) + " not found."
-        return AIExplorableSystemType.EXPLORABLE_SYSTEM_INVALID
-
-    def addExplorableSystem(self, explorableSystemsType, systemID):
-        "add explorable system ID with type"
-
-        if not (explorableSystemsType in EnumsAI.getAIExplorableSystemTypes()):
-            return
-
-        systems = self.__explorableSystemByType[explorableSystemsType]
-        if systemID in systems:
-            return
-        systems[systemID] = systemID
-
-    def removeExplorableSystem(self, explorableSystemsType, systemID):
-        "removes explorable system ID with type"
-        print ("removing explorable system with id " + str(systemID))
-
-        systems = self.__explorableSystemByType[explorableSystemsType]
-        if len(systems) == 0:
-            return
-        if systemID in systems:
-            del systems[systemID]
-
-    def __cleanExplorableSystems(self, startSystemID):
-        "cleanup of all explorable systems"
-        print ("Cleaning up explorable systems")
-
-        universe = fo.getUniverse()
-        systemIDs = universe.systemIDs
-        empireID = fo.empireID()
-        empire = fo.getEmpire()
-
-        for systemID in systemIDs:
-            system = universe.getSystem(systemID)
-            if not system: continue
-
-            print ("   system with id: " + str(systemID))
-
-            print ("       is it explored?")
-            if (empire.hasExploredSystem(systemID)):
-                print "    has been explored"
-                self.addExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED, systemID)
-                self.removeExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED, systemID)
-                continue
-            print ("       is it connected?")
-            if (startSystemID == -1 or not universe.systemsConnected(systemID, startSystemID)):
-                print ("   is not connected to system with id " + str(startSystemID))
-                for explorableSystemsType in EnumsAI.getAIExplorableSystemTypes():
-                    self.removeExplorableSystem(explorableSystemsType, systemID)
-                continue
-            print("        is it already an exploration target")
-            explorableSystemsType = self.getExplorableSystem(systemID)
-            if (explorableSystemsType == AIExplorableSystemType.EXPLORABLE_SYSTEM_VISIBLE):
-                print "    is already explored system target"
-                continue
-            print "    is now an unexplored system"
-            self.addExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED, systemID)
+                print "Fleet %d  with role %s was destroyed"%(fleetID,  self.__fleetRoleByID[fleetID])  #perhaps diff message for successful colony fleets
+                del self.__fleetRoleByID[fleetID]
+                #deleteRoles.append(fleetID)
+       # for fleetID in deleteRoles:
+            #del self.__fleetRoleByID[fleetID]
+            #print "Fleet %d destroyed; deleting fleetRole %s "%(fleetID)
 
     def getExplorableSystems(self, explorableSystemsType):
         "get all explorable systems determined by type "
-
-        return copy.deepcopy(self.__explorableSystemByType[explorableSystemsType])
+        #return copy.deepcopy(self.__explorableSystemByType[explorableSystemsType])
+        if explorableSystemsType == AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED:
+            return list(self.exploredSystemIDs)
+        elif explorableSystemsType == AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED:
+            return list(self.unexploredSystemIDs)
+        else:
+            print "Error -- unexpected  explorableSystemsType (value %s ) submited to AIState.getExplorableSystems "
+            return {}
 
     def setPriority(self, priorityType, value):
         "sets a priority of the specified type"

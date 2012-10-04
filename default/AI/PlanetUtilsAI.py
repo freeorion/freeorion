@@ -1,5 +1,28 @@
 import freeOrionAIInterface as fo
 
+def getCapital(): # if no current capital returns planet with biggest pop
+    universe = fo.getUniverse()
+    empire = fo.getEmpire()
+    empireID = empire.empireID
+    capitalID = empire.capitalID
+    homeworld = universe.getPlanet(capitalID)
+    if homeworld:
+        return capitalID
+    #exploredSystemIDs = empire.exploredSystemIDs
+    #exploredPlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(exploredSystemIDs)
+    empireOwnedPlanetIDs = getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
+    peopledPlanets = getPopulatedPlanetIDs(  empireOwnedPlanetIDs)
+    if not peopledPlanets:
+        if empireOwnedPlanetIDs:
+            return empireOwnedPlanetIDs[0]
+        else:
+            return None
+    popMap = []
+    for planetID in peopledPlanets:
+        popMap.append( ( universe.getPlanet(planetID).currentMeterValue(fo.meterType.population) ,  planetID) )
+    popMap.sort()
+    return popMap[-1][-1]
+    
 def getPlanetsInSystemsIDs(systemIDs):
     "return list of planets in systems"
 

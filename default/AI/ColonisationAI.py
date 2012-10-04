@@ -32,10 +32,24 @@ def getColonyFleets():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
-    capitalID = empire.capitalID
+    capitalID = PlanetUtilsAI.getCapital()
+    #capitalID = empire.capitalID
     homeworld = universe.getPlanet(capitalID)
-    speciesName = homeworld.speciesName
+    if homeworld:
+        speciesName = homeworld.speciesName
+        homeworldName=homeworld.name
+    else:
+        speciesName = ""
+        homeworldName=" no remaining homeworld "
+    if not speciesName:
+        speciesName = foAI.foAIstate.origSpeciesName
     species = fo.getSpecies(speciesName)
+    if not species:
+        print "**************************************************************************************"
+        print "**************************************************************************************"
+        print "Problem determining species for colonization planning: capitalID: %s,  homeworld %s  and species name %s"%(capitalID,  homeworldName,  speciesName)
+    else:
+        print "Plannning colonization for species name %s"%species.name
 
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
     fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
@@ -45,7 +59,8 @@ def getColonyFleets():
     print ""
 
     # get outpost and colonization planets
-    exploredSystemIDs = empire.exploredSystemIDs
+    exploredSystemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
+    print "Unexplored SystemIDs: " + str(list(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED)))
     print "Explored SystemIDs: " + str(list(exploredSystemIDs))
 
     exploredPlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(exploredSystemIDs)
@@ -124,14 +139,14 @@ def getColonyFleets():
     AIstate.outpostFleetIDs = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allOutpostFleetIDs)
 
     evaluatedOutpostPlanets = assignColonisationValues(evaluatedOutpostPlanetIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST, fleetSupplyablePlanetIDs, species, empire)
-    removeLowValuePlanets(evaluatedOutpostPlanets)
+    removeLowValuePlanets(evaluatedOutpostPlanets) #bad! lol, was preventing all mining outposts
 
     sortedOutposts = evaluatedOutpostPlanets.items()
     sortedOutposts.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
 
     print "Settleable Outpost PlanetIDs:"
-    for evaluationPair in sortedOutposts:
-        print "    ID|Score: " + str(evaluationPair)
+    for ID, score in sortedOutposts:
+        print "   %5s | %5s  | %s  | %s "%(score,  ID,  universe.getPlanet(ID).name ,  list(universe.getPlanet(ID).specials)) 
     print ""
 
     # export outposts for other AI modules
@@ -196,8 +211,18 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
     universe = fo.getUniverse()
     planet = universe.getPlanet(planetID)
     if (planet == None): return 0
-    if  ( planet.size  ==  fo.planetSize.asteroids ) or (planet.size==fo.planetSize.gasGiant): 
+    planetSpecials = list(planet.specials)
+    if   (missionType == AIFleetMissionType.FLEET_MISSION_COLONISATION ) and ( planet.size  ==  fo.planetSize.asteroids ) or (planet.size==fo.planetSize.gasGiant): 
         return 0   # currently not supporting species inhabiting asteroids
+    elif   (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ):
+        retval = 0
+        if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_ASTEROID_MINE") == fo.techStatus.complete ) ): 
+                retval= 10   # asteroid mining is great return
+        for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
+            if special in planetSpecials:
+                retval = 25
+        return retval
+            
     planetEnv  = environs[ str(species.getPlanetEnvironment(planet.type)) ]
 
     popSizeMod=0
@@ -213,7 +238,6 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
     if empire.getTechStatus("GRO_CYBORG") == fo.techStatus.complete:
         popSizeMod += popSizeModMap["cyborg"][planetEnv]
     
-    planetSpecials = list(planet.specials)
     for special in [ "SLOW_ROTATION_SPECIAL",  "SOLID_CORE_SPECIAL"] :
         if special in planetSpecials:
             popSizeMod -= 1
@@ -250,12 +274,15 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
 
     # give preference to closest worlds
     empireID = empire.empireID
-    capitalID = empire.capitalID
+    capitalID = PlanetUtilsAI.getCapital()
     homeworld = universe.getPlanet(capitalID)
-    homeSystemID = homeworld.systemID
-    evalSystemID = planet.systemID
-    leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
-    distanceFactor = 1.001 / (leastJumpsPath + 1)
+    if homeworld:
+        homeSystemID = homeworld.systemID
+        evalSystemID = planet.systemID
+        leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
+        distanceFactor = 1.001 / (leastJumpsPath + 1)
+    else:
+        distanceFactor = 0
 
     # print ">>> evaluatePlanet ID:" + str(planetID) + "/" + str(planet.type) + "/" + str(planet.size) + "/" + str(leastJumpsPath) + "/" + str(distanceFactor)
     if missionType == AIFleetMissionType.FLEET_MISSION_COLONISATION:
@@ -314,7 +341,7 @@ def sendColonyShips(colonyFleetIDs, evaluatedPlanets, missionType):
     "sends a list of colony ships to a list of planet_value_pairs"
 
     i = 0
-
+    print "colony/outpost  ship matching -- fleets  %s to planets %s"%( colonyFleetIDs,  evaluatedPlanets)
     for planetID_value_pair in evaluatedPlanets:
         if i >= len(colonyFleetIDs): return
 

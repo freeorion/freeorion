@@ -9,6 +9,7 @@ from ResearchAI import getCompletedTechs
 import InvasionAI
 import MilitaryAI
 import PlanetUtilsAI
+import ExplorationAI
 
 def calculatePriorities():
     "calculates the priorities of the AI player"
@@ -128,14 +129,10 @@ def calculateResearchPriority():
 def calculateExplorationPriority():
     "calculates the demand for scouts by unexplored systems"
 
-    numUnexploredSystems = len(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
-
-    scoutIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
+    numUnexploredSystems =  len( ExplorationAI.__borderUnexploredSystemIDs   )  #len(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
+    scoutIDs = ExplorationAI.currentScoutFleetIDs #    FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
     numScouts = len(scoutIDs)
-
-    if (numUnexploredSystems == 0) or (numScouts >= 2): return 0
-
-    explorationPriority = 95 * (numUnexploredSystems - numScouts) / numUnexploredSystems
+    explorationPriority = int( 95 * (numUnexploredSystems - numScouts) / (numUnexploredSystems +0.001) )
 
     print ""
     print "Number of Scouts            : " + str(numScouts)
@@ -180,7 +177,7 @@ def calculateOutpostPriority():
     # print ""
     # print "Number of Outpost Ships       : " + str(numOutpostShips)
     # print "Number of Colonisable outposts: " + str(numOutpostPlanetIDs)
-    # print "Priority for outpost ships    : " + str(outpostPriority)
+    print "Priority for outpost ships    : " + str(outpostPriority)
 
     if outpostPriority < 0: return 0
 

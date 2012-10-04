@@ -17,8 +17,11 @@ def getMilitaryFleets():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
-    capitalID = empire.capitalID
+    capitalID = PlanetUtilsAI.getCapital()
     capitalPlanet = universe.getPlanet(capitalID)
+    #TODO if no owned planets try to capture one!
+    if not capitalPlanet: return
+    
     capitalPlanetSystem = capitalPlanet.systemID
 
     capitalSystemID = []
@@ -38,7 +41,7 @@ def getMilitaryFleets():
     empirePlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
     empireOccupiedSystemIDs = list(set(PlanetUtilsAI.getSystems(empirePlanetIDs)))
     print ""
-    print "Empire Capital SystemID:             " + str(capitalSystemID)
+    print "Empire Capital SystemID:             " + str(capitalID)
     # print "Empire Occupied SystemIDs:    " + str(empireOccupiedSystemIDs)
 
     empireProvinceSystemIDs = list(set(empireOccupiedSystemIDs) - set(capitalSystemID))
@@ -121,12 +124,16 @@ def evaluateSystem(systemID, missionType, empireProvinceSystemIDs, otherTargeted
 
     # give preference to home system then closest systems
     empireID = empire.empireID
-    capitalID = empire.capitalID
+    capitalID = PlanetUtilsAI.getCapital()
     homeworld = universe.getPlanet(capitalID)
-    homeSystemID = homeworld.systemID
-    evalSystemID = system.systemID
-    leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
-    distanceFactor = 1.001/(leastJumpsPath + 1)
+    if homeworld:
+        homeSystemID = homeworld.systemID
+        evalSystemID = system.systemID
+        leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
+        distanceFactor = 1.001/(leastJumpsPath + 1)
+    else:
+        homeSystemID=-1
+        distanceFactor=0
 
     if systemID == homeSystemID:
         return 10
