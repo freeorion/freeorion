@@ -34,10 +34,10 @@ BuildingType
             
         EffectsGroup
             scope = Source
-            activation = Random probability = 0.05
+            activation = Random probability = 0.02
             effects = CreateField type = "FLD_ION_STORM"
-                                  x = UniverseCentreX + 2*UniverseCentreX*sin(CurrentTurn)
-                                  y = UniverseCentreY + 2*UniverseCentreY*cos(CurrentTurn)
+                                  x = UniverseCentreX + Random(2,4)*UniverseCentreX*sin(CurrentTurn)
+                                  y = UniverseCentreY + Random(2,4)*UniverseCentreY*cos(CurrentTurn)
                                   size = 50
     ]
     icon = "icons/building/archive.png"
