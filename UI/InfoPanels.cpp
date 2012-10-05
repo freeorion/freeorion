@@ -48,33 +48,33 @@ namespace {
         switch (meter_type) {
         case METER_INDUSTRY:
         case METER_TARGET_INDUSTRY:
-            return GG::Clr(0, 100, 255, 255);   // a bit greener / brighter than blue, at pd's suggestion on forums (sort of)
+            return GG::Clr(240, 90, 0, 255);
             break;
         case METER_RESEARCH:
         case METER_TARGET_RESEARCH:
-            return GG::CLR_GREEN;
+            return GG::Clr(0, 255, 255, 255);
             break;
         case METER_TRADE:
         case METER_TARGET_TRADE:
-            return GG::Clr(255, 148, 0, 255);   // orange
+            return GG::Clr(255, 200, 0, 255);
             break;
         case METER_SHIELD:
         case METER_MAX_SHIELD:
-            return GG::Clr(0, 255, 186, 255);   // "00ffba"
+            return GG::Clr(0, 255, 186, 255);
             break;
         case METER_DEFENSE:
         case METER_MAX_DEFENSE:
-            return GG::CLR_RED;
+            return GG::Clr(255, 0, 0, 255);
             break;
         case METER_TROOPS:
         case METER_MAX_TROOPS:
-            return GG::Clr(168, 107, 0, 255);   // "a86b00"
+            return GG::Clr(168, 107, 0, 255);
             break;
         case METER_DETECTION:
-            return GG::Clr(191, 255, 0, 255);   // "bfff00"
+            return GG::Clr(191, 255, 0, 255);
             break;
         case METER_STEALTH:
-            return GG::Clr(174, 0, 255, 255);   // "ae00ff"
+            return GG::Clr(174, 0, 255, 255);
             break;
         case METER_SUPPLY:
         case METER_CONSTRUCTION:
@@ -84,6 +84,9 @@ namespace {
         default:
             return GG::CLR_WHITE;
         }
+        // For future:
+        //Happiness GG::Clr(255, 255,   0, 255);
+        //Influence GG::Clr(255,   0, 255, 255);
     }
 
     /** How big we want meter icons with respect to the current UI font size.
