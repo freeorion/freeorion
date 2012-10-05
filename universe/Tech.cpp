@@ -86,8 +86,7 @@ namespace {
         }
     }
 
-    const Tech* Cheapest(const std::vector<const Tech*>& next_techs)
-    {
+    const Tech* Cheapest(const std::vector<const Tech*>& next_techs) {
         if (next_techs.empty())
             return 0;
 
@@ -109,8 +108,7 @@ namespace {
 ///////////////////////////////////////////////////////////
 // Tech                                                  //
 ///////////////////////////////////////////////////////////
-std::string Tech::Dump() const
-{
+std::string Tech::Dump() const {
     using boost::lexical_cast;
 
     std::string retval = DumpIndent() + "Tech\n";
@@ -178,8 +176,7 @@ std::string Tech::Dump() const
     return retval;
 }
 
-double Tech::ResearchCost() const
-{
+double Tech::ResearchCost() const {
     if (!CHEAP_AND_FAST_TECH_RESEARCH)
         return m_research_cost;
     else
@@ -189,8 +186,7 @@ double Tech::ResearchCost() const
 double Tech::PerTurnCost() const
 { return ResearchCost() / std::max(1, ResearchTime()); }
 
-int Tech::ResearchTime() const
-{
+int Tech::ResearchTime() const {
     if (!CHEAP_AND_FAST_TECH_RESEARCH)
         return m_research_turns;
     else
@@ -202,8 +198,7 @@ int Tech::ResearchTime() const
 ///////////////////////////////////////////////////////////
 // ItemSpec                                        //
 ///////////////////////////////////////////////////////////
-std::string ItemSpec::Dump() const
-{
+std::string ItemSpec::Dump() const {
     std::string retval = "Item type = ";
     switch (type) {
     case UIT_BUILDING:      retval += "Building";   break;
@@ -224,20 +219,17 @@ std::string ItemSpec::Dump() const
 // static(s)
 TechManager* TechManager::s_instance = 0;
 
-const Tech* TechManager::GetTech(const std::string& name)
-{
+const Tech* TechManager::GetTech(const std::string& name) const {
     iterator it = m_techs.get<NameIndex>().find(name);
     return it == m_techs.get<NameIndex>().end() ? 0 : *it;
 }
 
-const TechCategory* TechManager::GetTechCategory(const std::string& name)
-{
+const TechCategory* TechManager::GetTechCategory(const std::string& name) const {
     std::map<std::string, TechCategory*>::const_iterator it = m_categories.find(name);
     return it == m_categories.end() ? 0 : it->second;
 }
 
-std::vector<std::string> TechManager::CategoryNames() const
-{
+std::vector<std::string> TechManager::CategoryNames() const {
     std::vector<std::string> retval;
     for (std::map<std::string, TechCategory*>::const_iterator it = m_categories.begin(); it != m_categories.end(); ++it)
         retval.push_back(it->first);
@@ -259,8 +251,7 @@ std::vector<std::string> TechManager::TechNames(const std::string& name) const {
     return retval;
 }
 
-std::vector<const Tech*> TechManager::AllNextTechs(const std::set<std::string>& known_techs)
-{
+std::vector<const Tech*> TechManager::AllNextTechs(const std::set<std::string>& known_techs) {
     std::vector<const Tech*> retval;
     std::set<const Tech*> checked_techs;
     iterator end_it = m_techs.get<NameIndex>().end();
@@ -298,8 +289,7 @@ TechManager::category_iterator TechManager::category_begin(const std::string& na
 TechManager::category_iterator TechManager::category_end(const std::string& name) const
 { return m_techs.get<CategoryIndex>().upper_bound(name); }
 
-TechManager::TechManager()
-{
+TechManager::TechManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one TechManager.");
 
@@ -377,16 +367,14 @@ TechManager::TechManager()
 #endif
 }
 
-TechManager::~TechManager()
-{
+TechManager::~TechManager() {
     for (std::map<std::string, TechCategory*>::iterator it = m_categories.begin(); it != m_categories.end(); ++it)
         delete it->second;
     for (TechContainer::iterator it = m_techs.begin(); it != m_techs.end(); ++it)
         delete *it;
 }
 
-std::string TechManager::FindIllegalDependencies()
-{
+std::string TechManager::FindIllegalDependencies() {
     assert(!m_techs.empty());
     std::string retval;
     for (iterator it = begin(); it != end(); ++it) {
@@ -414,8 +402,7 @@ std::string TechManager::FindIllegalDependencies()
     return retval;
 }
 
-std::string TechManager::FindFirstDependencyCycle()
-{
+std::string TechManager::FindFirstDependencyCycle() {
     assert(!m_techs.empty());
     static const std::set<std::string> EMPTY_STRING_SET;    // used in case an invalid tech is processed
 
@@ -473,8 +460,7 @@ std::string TechManager::FindFirstDependencyCycle()
     return "";
 }
 
-std::string TechManager::FindRedundantDependency()
-{
+std::string TechManager::FindRedundantDependency() {
     assert(!m_techs.empty());
 
     for (iterator it = begin(); it != end(); ++it) {
@@ -511,8 +497,7 @@ std::string TechManager::FindRedundantDependency()
     return "";
 }
 
-void TechManager::AllChildren(const Tech* tech, std::map<std::string, std::string>& children)
-{
+void TechManager::AllChildren(const Tech* tech, std::map<std::string, std::string>& children) {
     const std::set<std::string>& unlocked_techs = tech->UnlockedTechs();
     for (std::set<std::string>::const_iterator it = unlocked_techs.begin(); it != unlocked_techs.end(); ++it) {
         children[*it] = tech->Name();
@@ -520,12 +505,51 @@ void TechManager::AllChildren(const Tech* tech, std::map<std::string, std::strin
     }
 }
 
-TechManager& TechManager::GetTechManager()
-{
+TechManager& TechManager::GetTechManager() {
     static TechManager manager;
     return manager;
 }
 
+std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_name) const {
+    const Tech* tech = this->GetTech(tech_name);
+    if (!tech)
+        return std::vector<std::string>();
+
+    // compile set of recursive prereqs
+    std::list<std::string> prereqs_list;                    // working list of prereqs as being processed.  may contain duplicates
+    std::set<std::string> prereqs_set;                      // set of (unique) prereqs leading to tech
+    std::multimap<double, std::string> techs_to_add_map;    // indexed and sorted by cost per turn
+
+    // initialize working list with 1st order prereqs
+    std::set<std::string> cur_prereqs = tech->Prerequisites();
+    std::copy(cur_prereqs.begin(), cur_prereqs.end(), std::back_inserter(prereqs_list));
+
+    // traverse list, appending new prereqs to it, and putting unique prereqs into set
+    for (std::list<std::string>::iterator it = prereqs_list.begin(); it != prereqs_list.end(); ++it) {
+        std::string cur_name = *it;
+        const Tech* cur_tech = this->GetTech(cur_name);
+
+        // check if this tech is already in the map of prereqs.  If so, it has already been processed, and can be skipped.
+        if (prereqs_set.find(cur_name) != prereqs_set.end()) continue;
+
+        // tech is new, so put it into the set of already-processed prereqs
+        prereqs_set.insert(cur_name);
+        // and the map of techs, sorted by cost
+        techs_to_add_map.insert(std::pair<double, std::string>(cur_tech->ResearchCost(), cur_name));
+
+        // get prereqs of new tech, append to list
+        cur_prereqs = cur_tech->Prerequisites();
+        std::copy(cur_prereqs.begin(), cur_prereqs.end(), std::back_inserter(prereqs_list));
+    }
+
+    // extract sorted techs into vector, to be passed to signal...
+    std::vector<std::string> retval;
+    for (std::multimap<double, std::string>::const_iterator it = techs_to_add_map.begin();
+         it != techs_to_add_map.end(); ++it)
+    { retval.push_back(it->second); }
+
+    return retval;
+}
 
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //

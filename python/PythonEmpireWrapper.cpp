@@ -12,12 +12,15 @@ namespace {
     // functions take an Element and returns the associated Tech name string.
     const std::string&  TechFromResearchQueueElement(const ResearchQueue::Element& element)             { return element.name; }
 
-    std::vector<std::string> (TechManager::*TechNamesVoid)(void) const =                                    &TechManager::TechNames;
-    boost::function<std::vector<std::string>(const TechManager*)> TechNamesMemberFunc =                     TechNamesVoid;
+    std::vector<std::string> (TechManager::*TechNamesVoid)(void) const =                                &TechManager::TechNames;
+    boost::function<std::vector<std::string>(const TechManager*)> TechNamesMemberFunc =                 TechNamesVoid;
 
-    std::vector<std::string> (TechManager::*TechNamesCategory)(const std::string&) const =                  &TechManager::TechNames;
+    std::vector<std::string> (TechManager::*TechNamesCategory)(const std::string&) const =              &TechManager::TechNames;
     boost::function<std::vector<std::string>(const TechManager*, const std::string&)>
-                                                                  TechNamesCategoryMemberFunc =             TechNamesCategory;
+                                                                  TechNamesCategoryMemberFunc =         TechNamesCategory;
+
+    std::vector<std::string>    TechRecursivePrereqs(const Tech& tech)                                  { return GetTechManager().RecursivePrereqs(tech.Name()); }
+    boost::function<std::vector<std::string>(const Tech& tech)> TechRecursivePrereqsFunc =              TechRecursivePrereqs;
 
     // Concatenate functions to create one that takes two parameters.  The first parameter is a ResearchQueue*, which
     // is passed directly to ResearchQueue::InQueue as the this pointer.  The second parameter is a
@@ -188,28 +191,33 @@ namespace FreeOrionPython {
         //     Tech     //
         //////////////////
         class_<Tech, noncopyable>("tech", no_init)
-            .add_property("name",               make_function(&Tech::Name,              return_value_policy<copy_const_reference>()))
-            .add_property("description",        make_function(&Tech::Description,       return_value_policy<copy_const_reference>()))
-            .add_property("shortDescription",   make_function(&Tech::ShortDescription,  return_value_policy<copy_const_reference>()))
-            .add_property("type",               &Tech::Type)
-            .add_property("category",           make_function(&Tech::Category,          return_value_policy<copy_const_reference>()))
-            .add_property("researchCost",       &Tech::ResearchCost)
-            .add_property("researchTime",       &Tech::ResearchTime)
-            .add_property("prerequisites",      make_function(&Tech::Prerequisites,     return_internal_reference<>()))
-            .add_property("unlockedTechs",      make_function(&Tech::UnlockedTechs,     return_internal_reference<>()))
+            .add_property("name",                   make_function(&Tech::Name,              return_value_policy<copy_const_reference>()))
+            .add_property("description",            make_function(&Tech::Description,       return_value_policy<copy_const_reference>()))
+            .add_property("shortDescription",       make_function(&Tech::ShortDescription,  return_value_policy<copy_const_reference>()))
+            .add_property("type",                   &Tech::Type)
+            .add_property("category",               make_function(&Tech::Category,          return_value_policy<copy_const_reference>()))
+            .add_property("researchCost",           &Tech::ResearchCost)
+            .add_property("researchTime",           &Tech::ResearchTime)
+            .add_property("prerequisites",          make_function(&Tech::Prerequisites,     return_internal_reference<>()))
+            .add_property("unlockedTechs",          make_function(&Tech::UnlockedTechs,     return_internal_reference<>()))
+            .add_property("recursivePrerequisites", make_function(
+                                                        TechRecursivePrereqsFunc,
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<std::vector<std::string>, const Tech&>()
+                                                    ))
         ;
-        def("getTech",                          &GetTech,                               return_value_policy<reference_existing_object>());
-        def("getTechCategories",                &TechManager::CategoryNames,            return_value_policy<return_by_value>());
-        def("techs",                            make_function(
-                                                    boost::bind(TechNamesMemberFunc, &(GetTechManager())),
-                                                    return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<std::vector<std::string> >()
-                                                ));
-        def("techsInCategory",                  make_function(
-                                                    boost::bind(TechNamesCategoryMemberFunc, &(GetTechManager()), _1),
-                                                    return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<std::vector<std::string>, const std::string&>()
-                                                ));
+        def("getTech",                              &GetTech,                               return_value_policy<reference_existing_object>());
+        def("getTechCategories",                    &TechManager::CategoryNames,            return_value_policy<return_by_value>());
+        def("techs",                                make_function(
+                                                        boost::bind(TechNamesMemberFunc, &(GetTechManager())),
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<std::vector<std::string> >()
+                                                    ));
+        def("techsInCategory",                      make_function(
+                                                        boost::bind(TechNamesCategoryMemberFunc, &(GetTechManager()), _1),
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<std::vector<std::string>, const std::string&>()
+                                                    ));
 
         ///////////////////
         //  SitRepEntry  //

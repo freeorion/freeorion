@@ -1976,22 +1976,22 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     const GG::X NAVIGATOR_WIDTH(214);
 
     m_layout_panel = new LayoutPanel(w, h);
-    GG::Connect(m_layout_panel->TechBrowsedSignal, &TechTreeWnd::TechBrowsedSlot, this);
-    GG::Connect(m_layout_panel->TechClickedSignal, &TechTreeWnd::TechClickedSlot, this);
-    GG::Connect(m_layout_panel->TechDoubleClickedSignal, &TechTreeWnd::TechDoubleClickedSlot, this);
+    GG::Connect(m_layout_panel->TechBrowsedSignal,          &TechTreeWnd::TechBrowsedSlot, this);
+    GG::Connect(m_layout_panel->TechClickedSignal,          &TechTreeWnd::TechClickedSlot, this);
+    GG::Connect(m_layout_panel->TechDoubleClickedSignal,    &TechTreeWnd::TechDoubleClickedSlot, this);
     AttachChild(m_layout_panel);
 
     m_tech_list = new TechListBox(GG::X0, GG::Y0, w, h);
-    GG::Connect(m_tech_list->TechBrowsedSignal, &TechTreeWnd::TechBrowsedSlot, this);
-    GG::Connect(m_tech_list->TechClickedSignal, &TechTreeWnd::TechClickedSlot, this);
-    GG::Connect(m_tech_list->TechDoubleClickedSignal, &TechTreeWnd::TechDoubleClickedSlot, this);
+    GG::Connect(m_tech_list->TechBrowsedSignal,             &TechTreeWnd::TechBrowsedSlot, this);
+    GG::Connect(m_tech_list->TechClickedSignal,             &TechTreeWnd::TechClickedSlot, this);
+    GG::Connect(m_tech_list->TechDoubleClickedSignal,       &TechTreeWnd::TechDoubleClickedSlot, this);
 
     m_enc_detail_panel = new EncyclopediaDetailPanel(m_layout_panel->ClientWidth() - NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
     AttachChild(m_enc_detail_panel);
 
     m_tech_navigator = new TechNavigator(NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
     m_tech_navigator->MoveTo(GG::Pt(m_enc_detail_panel->Width(), GG::Y1));
-    GG::Connect(m_tech_navigator->TechClickedSignal, &TechTreeWnd::CenterOnTech, this);
+    GG::Connect(m_tech_navigator->TechClickedSignal,        &TechTreeWnd::CenterOnTech, this);
     m_layout_panel->AttachChild(m_tech_navigator);
 
     m_tech_tree_controls = new TechTreeControls(GG::X1, NAVIGATOR_AND_DETAIL_HEIGHT, m_layout_panel->Width() - ClientUI::ScrollWidth());
@@ -2252,41 +2252,8 @@ void TechTreeWnd::TechDoubleClickedSlot(const std::string& tech_name) {
     // if tech can't yet be researched, add any prerequisites it requires (recursively) and then add it
 
     TechManager& manager = GetTechManager();
-    // compile set of recursive prereqs
-    std::list<std::string> prereqs_list;                    // working list of prereqs as being processed.  may contain duplicates
-    std::set<std::string> prereqs_set;                      // set of (unique) prereqs leading to tech
-    std::multimap<double, std::string> techs_to_add_map;    // indexed and sorted by cost per turn
-
-    // initialize working list with 1st order prereqs
-    std::set<std::string> cur_prereqs = tech->Prerequisites();
-    std::copy(cur_prereqs.begin(), cur_prereqs.end(), std::back_inserter(prereqs_list));
-
-    // traverse list, appending new prereqs to it, and putting unique prereqs into set
-    for (std::list<std::string>::iterator it = prereqs_list.begin(); it != prereqs_list.end(); ++it) {
-        std::string cur_name = *it;
-        const Tech* cur_tech = manager.GetTech(cur_name);
-
-        // check if this tech is already in the map of prereqs.  If so, it has already been processed, and can be skipped.
-        if (prereqs_set.find(cur_name) != prereqs_set.end()) continue;
-
-        // tech is new, so put it into the set of already-processed prereqs
-        prereqs_set.insert(cur_name);
-        // and the map of techs, sorted by cost
-        techs_to_add_map.insert(std::pair<double, std::string>(cur_tech->ResearchCost(), cur_name));
-
-        // get prereqs of new tech, append to list
-        cur_prereqs = cur_tech->Prerequisites();
-        std::copy(cur_prereqs.begin(), cur_prereqs.end(), std::back_inserter(prereqs_list));
-    }
-
-    // extract sorted techs into vector, to be passed to signal...
-    std::vector<std::string> tech_vec;
-    for (std::multimap<double, std::string>::const_iterator it = techs_to_add_map.begin();
-         it != techs_to_add_map.end(); ++it)
-    {
-        tech_vec.push_back(it->second);
-    }
-    // put original tech to be enqueued into vector last
+    std::vector<std::string> tech_vec = manager.RecursivePrereqs(tech_name);
     tech_vec.push_back(tech_name);
+
     AddMultipleTechsToQueueSignal(tech_vec);
 }

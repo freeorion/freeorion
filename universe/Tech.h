@@ -16,16 +16,14 @@
 
 #include <GG/Clr.h>
 
-namespace Effect {
-    class EffectsGroup;
-}
+namespace Effect
+{ class EffectsGroup; }
 class TechManager;
 struct ItemSpec;
 
 
 /** encasulates the data for a single FreeOrion technology */
-class Tech
-{
+class Tech {
 public:
     /** Helper struct for parsing tech definitions */
     struct TechInfo {
@@ -144,8 +142,7 @@ private:
   * stores the type of item that is being unlocked, such as a building or ship component, and the
   * \a name field contains the name of the actual item (e.g. (UIT_BUILDING, "Superfarm") or
   * (UIT_SHIP_PART, "Death Ray")). */
-struct ItemSpec
-{
+struct ItemSpec {
     ItemSpec() :
         type(INVALID_UNLOCKABLE_ITEM_TYPE),
         name("")
@@ -181,8 +178,7 @@ struct TechCategory {
 
 /** holds all FreeOrion techs.  Techs may be looked up by name and by category, and the next researchable techs can be querried,
     given a set of currently-known techs. */
-class TechManager
-{
+class TechManager {
 public:
     struct CategoryIndex {};
     struct NameIndex {};
@@ -216,10 +212,10 @@ public:
 
     /** \name Accessors */ //@{
     /** returns the tech with the name \a name; you should use the free function GetTech() instead */
-    const Tech*                     GetTech(const std::string& name);
+    const Tech*                     GetTech(const std::string& name) const;
 
     /** returns the tech category with the name \a name; you should use the free function GetTechCategory() instead */
-    const TechCategory*             GetTechCategory(const std::string& name);
+    const TechCategory*             GetTechCategory(const std::string& name) const;
 
     /** returns the list of category names */
     std::vector<std::string>        CategoryNames() const;
@@ -255,6 +251,10 @@ public:
 
     /** iterator to the last + 1th tech in category \a name */
     category_iterator               category_end(const std::string& name) const;
+
+    /** Returns names of indicated tech's prerequisites, and all prereqs of
+      * those techs, etc. recursively. */
+    std::vector<std::string>        RecursivePrereqs(const std::string& tech_name) const;
     //@}
 
     /** returns the instance of this singleton class; you should use the free function GetTechManager() instead */
