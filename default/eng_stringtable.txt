@@ -3300,7 +3300,7 @@ SP_EGASSEM_DESC
 Prefer Inferno planets.
 Lithic
 
-[[GOOD_INDUSTRY]]
+[[GREAT_INDUSTRY]]
 [[BAD_RESEARCH]]
 
 [[BAD_POPULATION]]
