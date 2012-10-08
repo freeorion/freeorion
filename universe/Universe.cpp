@@ -135,8 +135,7 @@ namespace SystemPathing {
         void initialize_vertex(const Vertex& v, const Graph& g)
         {}
 
-        void discover_vertex(const Vertex& v, const Graph& g)
-        {
+        void discover_vertex(const Vertex& v, const Graph& g) {
             m_predecessors[static_cast<int>(v)] = m_source;
 
             if (v == m_stop)
@@ -148,8 +147,7 @@ namespace SystemPathing {
             }
         }
 
-        void examine_vertex(const Vertex& v, const Graph& g)
-        {
+        void examine_vertex(const Vertex& v, const Graph& g) {
             if (v == m_marker) {
                 if (!m_levels_remaining)
                     throw ReachedDepthLimit();
@@ -161,11 +159,8 @@ namespace SystemPathing {
         }
 
         void examine_edge(const Edge& e, const Graph& g) {}
+        void tree_edge(const Edge& e, const Graph& g) {}    // wait till target is calculated
 
-        void tree_edge(const Edge& e, const Graph& g)
-        {
-            // wait till target is calculated
-        }
 
         void non_tree_edge(const Edge& e, const Graph& g) {}
         void gray_target(const Edge& e, const Graph& g) {}
@@ -185,7 +180,8 @@ namespace SystemPathing {
       * between the two vertices, then the list is empty and the path length
       * is -1.0 */
     template <class Graph>
-    std::pair<std::list<int>, double> ShortestPathImpl(const Graph& graph, int system1_id, int system2_id, double linear_distance, const boost::unordered_map<int, int>& id_to_graph_index)
+    std::pair<std::list<int>, double> ShortestPathImpl(const Graph& graph, int system1_id, int system2_id,
+                                                       double linear_distance, const boost::unordered_map<int, int>& id_to_graph_index)
     {
         typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type     ConstSystemIDPropertyMap;
         typedef typename boost::property_map<Graph, boost::vertex_index_t>::const_type  ConstIndexPropertyMap;
