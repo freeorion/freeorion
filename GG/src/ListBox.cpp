@@ -933,6 +933,9 @@ void ListBox::SetFirstRowShown(iterator it)
                 acc += (*it)->Height();
             m_vscroll->ScrollTo(Value(acc));
             SignalScroll(*m_vscroll, true);
+        } else {
+            std::size_t row_num = std::distance(m_rows.begin(), m_first_row_shown);
+            VScrolled(row_num, 0, 0, 0);
         }
     }
 }
