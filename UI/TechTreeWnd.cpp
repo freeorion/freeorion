@@ -1771,7 +1771,7 @@ TechTreeWnd::TechListBox::TechListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     GG::Connect(DoubleClickedSignal,    &TechListBox::PropagateDoubleClickSignal,   this);
     GG::Connect(LeftClickedSignal,      &TechListBox::PropagateLeftClickSignal,     this);
 
-    SetStyle(GG::LIST_NOSORT);
+    SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
 
     // show all categories...
     m_categories_shown.clear();
@@ -1844,8 +1844,8 @@ void TechTreeWnd::TechListBox::Populate() {
     Clear();
 
     for (std::vector<TechRow*>::iterator it = m_all_tech_rows.begin();
-         it != m_all_tech_rows.end();
-         ++it) {
+         it != m_all_tech_rows.end(); ++it)
+    {
         TechRow* tech_row = *it;
         if (TechVisible(tech_row->GetTech())) {
             insertion_timer.restart();

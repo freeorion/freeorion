@@ -256,6 +256,8 @@ namespace {
             }
             m_panel->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
             SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, production_location, m_empire_id));
+
+            //std::cout << "ProductionItemRow(building) height: " << Value(Height()) << std::endl;
         }
 
         ProductionItemRow(GG::X w, GG::Y h, int design_id, int empire_id,
@@ -278,6 +280,7 @@ namespace {
             }
             m_panel->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
             SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, production_location, m_empire_id));
+            //std::cout << "ProductionItemRow(ship) height: " << Value(Height()) << std::endl;
         }
 
         const   ProductionQueue::ProductionItem& Item() const
@@ -305,16 +308,12 @@ namespace {
         BuildableItemsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
             CUIListBox(x, y, w, h)
         {
+            SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
             // preinitialize listbox/row column widths, because what
             // ListBox::Insert does on default is not suitable for this case
             SetNumCols(1);
             SetColWidth(0, GG::X0);
             LockColWidths();
-        }
-
-        virtual void    GainingFocus() {
-            DeselectAll();
-            SelChangedSignal(Selections());
         }
 
         virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -329,13 +328,11 @@ namespace {
             }
         }
 
-        GG::Pt          ListRowSize() const {
-            return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight());
-        }
+        GG::Pt          ListRowSize() const
+        { return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight()); }
 
-        static GG::Y    ListRowHeight() {
-            return GG::Y(ClientUI::Pts() * 3/2);
-        }
+        static GG::Y    ListRowHeight()
+        { return GG::Y(ClientUI::Pts() * 3/2); }
     };
 
     struct ToggleBuildTypeFunctor {
@@ -372,7 +369,6 @@ public:
 
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void    MinimizeClicked();
 
     /** Sets build location for this selector, which may be used to filter
       * items in the list or enable / disable them at some point in the
@@ -405,12 +401,6 @@ public:
     mutable boost::signal<void (BuildType, int, int)>                   RequestIDedBuildItemSignal;
 
 private:
-    typedef std::map<
-        GG::ListBox::iterator,
-        BuildType,
-        GG::ListBox::RowPtrIteratorLess<GG::ListBox>
-     > RowToBuildTypeMap;
-
     static const GG::X TEXT_MARGIN_X;
     static const GG::Y TEXT_MARGIN_Y;
 
@@ -424,7 +414,7 @@ private:
     void    PopulateList();
 
     /** respond to the user single-click to select item on the queue */
-    void    BuildItemSelected(const GG::ListBox::SelectionSet& selections);
+    void    BuildItemClicked(GG::ListBox::iterator it, const GG::Pt& pt);
 
     /** respond to the user double-clicking an item on the queue */
     void    BuildItemDoubleClicked(GG::ListBox::iterator it);
@@ -436,7 +426,6 @@ private:
     std::pair<bool, bool>                   m_availabilities_shown; //!< .first -> available items; .second -> unavailable items
 
     BuildableItemsListBox*                  m_buildable_items;
-    RowToBuildTypeMap                       m_build_types;
     GG::Pt                                  m_original_ul;
 
     int                                     m_production_location;
@@ -453,7 +442,6 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
     CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), GG::X1, GG::Y1, w - 1, h - 1,
            GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
     m_buildable_items(new BuildableItemsListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
-    m_build_types(GG::ListBox::RowPtrIteratorLess<GG::ListBox>(m_buildable_items)),
     m_production_location(INVALID_OBJECT_ID),
     m_empire_id(ALL_EMPIRES)
 {
@@ -471,12 +459,10 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
 
     // selectable list of buildable items
     AttachChild(m_buildable_items);
-    GG::Connect(m_buildable_items->SelChangedSignal,
-                &BuildDesignatorWnd::BuildSelector::BuildItemSelected, this);
+    GG::Connect(m_buildable_items->LeftClickedSignal,
+                &BuildDesignatorWnd::BuildSelector::BuildItemClicked, this);
     GG::Connect(m_buildable_items->DoubleClickedSignal,
                 &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this);
-    m_buildable_items->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
-
 
     //GG::ListBox::Row* header = new GG::ListBox::Row();
     //boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
@@ -501,7 +487,7 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
 }
 
 const std::set<BuildType>& BuildDesignatorWnd::BuildSelector::GetBuildTypesShown() const
-{return m_build_types_shown; }
+{ return m_build_types_shown; }
 
 const std::pair<bool, bool>& BuildDesignatorWnd::BuildSelector::GetAvailabilitiesShown() const
 { return m_availabilities_shown; }
@@ -536,39 +522,6 @@ void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt&
 
     if (Visible() && old_size != GG::Wnd::Size())
         DoLayout();
-}
-
-void BuildDesignatorWnd::BuildSelector::MinimizeClicked() {
-    if (!m_minimized) {
-        m_minimized = true;
-        m_original_size = Size();
-        m_original_ul = RelativeUpperLeft();
-        GG::Pt original_lr = m_original_ul + m_original_size;
-        GG::Pt new_size(Width(), BORDER_TOP);
-        SetMinSize(GG::Pt(new_size.x, new_size.y));
-        SizeMove(original_lr - new_size, original_lr);
-        GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
-        if (m_close_button)
-            m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
-        if (m_minimize_button)
-            m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y));
-        Hide();
-        Show(false);
-        if (m_close_button)
-            m_close_button->Show();
-        if (m_minimize_button)
-            m_minimize_button->Show();
-    } else {
-        m_minimized = false;
-        SetMinSize(GG::Pt(Width(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
-        SizeMove(m_original_ul, m_original_ul + m_original_size);
-        GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET) + UpperLeft() - ClientUpperLeft();
-        if (m_close_button)
-            m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
-        if (m_minimize_button)
-            m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y));
-        Show();
-    }
 }
 
 void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool refresh_list) {
@@ -724,12 +677,6 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     if (!empire)
         return;
 
-    // keep track of initially selected row, so that new rows added may be
-    // compared to it to see if they should be selected after repopulating
-    std::string initially_selected_row_name;
-    if (m_buildable_items->Selections().size() == 1)
-        initially_selected_row_name = (**m_buildable_items->Selections().begin())->DragDropDataType();
-
     // keep track of first shown row and the scroll position, in order to
     // restore the first shown row, or the scroll position if the first row
     // shown isn't in the repopulated list.
@@ -741,7 +688,6 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 
 
     m_buildable_items->Clear(); // the list of items to be populated
-    m_build_types.clear();      // map from row to BuildType
 
 
     boost::shared_ptr<GG::Font> default_font = ClientUI::GetFont();
@@ -770,9 +716,6 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
                                                                 m_empire_id, m_production_location);
 
             GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);
-            m_build_types[row_it] = BT_BUILDING;
-            if (item_row->DragDropDataType() == initially_selected_row_name)
-                row_to_select_it = row_it;
             if (item_row->DragDropDataType() == initial_first_row_name)
                 new_first_row_it = row_it;
 
@@ -805,9 +748,6 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
                                                                 m_empire_id, m_production_location);
 
             GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);
-            m_build_types[row_it] = BT_SHIP;
-            if (item_row->DragDropDataType() == initially_selected_row_name)
-                row_to_select_it = row_it;
             if (item_row->DragDropDataType() == initial_first_row_name)
                 new_first_row_it = row_it;
 
@@ -815,13 +755,6 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         }
     }
 
-
-
-    //Logger().debugStream() << "Selecting Row";
-    if (row_to_select_it != m_buildable_items->end()) {
-        m_buildable_items->SelectRow(row_to_select_it);
-        BuildItemSelected(m_buildable_items->Selections());
-    }
     if (new_first_row_it != m_buildable_items->end()) {
         m_buildable_items->SetFirstRowShown(new_first_row_it);
     } else {
@@ -833,32 +766,27 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     //Logger().debugStream() << "Done";
 }
 
-void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const GG::ListBox::SelectionSet& selections) {
-    if (selections.size() != 1)
+void BuildDesignatorWnd::BuildSelector::BuildItemClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+
+    ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(*it);
+    if (!item_row)
         return;
-    GG::ListBox::iterator row = *selections.begin();
-    BuildType build_type = m_build_types[row];
-    const std::string& dddt = (*row)->DragDropDataType();
+    const ProductionQueue::ProductionItem& item = item_row->Item();
+
+    BuildType build_type = item.build_type;
 
     if (build_type == BT_BUILDING) {
-        const BuildingType* building_type = GetBuildingType(dddt);
+        const BuildingType* building_type = GetBuildingType(item.name);
         if (!building_type) {
-            Logger().errorStream() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to get building type: " << dddt;
+            Logger().errorStream() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to get building type: " << item.name;
             return;
         }
         DisplayBuildingTypeSignal(building_type);
 
     } else if (build_type == BT_SHIP) {
-        int design_id = ShipDesign::INVALID_DESIGN_ID;
-        try {
-            design_id = boost::lexical_cast<int>(dddt);
-        } catch (...) {
-            Logger().errorStream() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to cast row drag drop data type (" << dddt << ") to design id integer";
-            return;
-        }
-        const ShipDesign* design = GetShipDesign(design_id);
+        const ShipDesign* design = GetShipDesign(item.design_id);
         if (!design) {
-            Logger().errorStream() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to find design with id " << design_id;
+            Logger().errorStream() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to find design with id " << item.design_id;
             return;
         }
         DisplayShipDesignSignal(design);
@@ -869,11 +797,15 @@ void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iter
     //std::cout << "BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked" << std::endl;
     if ((*it)->Disabled())
         return;
-    BuildType build_type = m_build_types[it];
-    if (build_type == BT_BUILDING)
-        RequestNamedBuildItemSignal(BT_BUILDING, (*it)->DragDropDataType(), 1);
-    else if (build_type == BT_SHIP)
-        RequestIDedBuildItemSignal(BT_SHIP, boost::lexical_cast<int>((*it)->DragDropDataType()), 1);
+    ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(*it);
+    if (!item_row)
+        return;
+    const ProductionQueue::ProductionItem& item = item_row->Item();
+
+    if (item.build_type == BT_BUILDING)
+        RequestNamedBuildItemSignal(BT_BUILDING, item.name, 1);
+    else if (item.build_type == BT_SHIP)
+        RequestIDedBuildItemSignal(BT_SHIP, item.design_id, 1);
 }
 
 //////////////////////////////////////////////////
