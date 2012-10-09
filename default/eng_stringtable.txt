@@ -3193,7 +3193,7 @@ Phototrophic
 '''
 
 SP_TAEGHIRUS
-T'aeghirus
+Tae Ghirus
 SP_TAEGHIRUS_DESC
 '''Weak, flightless birds, united in total mutual cooperation.
 Prefer Swamp planets.
@@ -3208,7 +3208,7 @@ Organic
 
 
 SP_MUURSH
-Muursh
+Mu Ursh
 SP_MUURSH_DESC
 '''Militantly peaceful herbivores.
 Prefer Desert planets.
@@ -3463,7 +3463,7 @@ Self-Sustaining
 
 
 SP_UGMORRS
-Ugmorrs
+Ugmors
 SP_UGMORRS_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Prefer Inferno planets.
@@ -3487,7 +3487,7 @@ Organic
         
 [[BAD_GROUND_TROOPS]]
 
-Most of the equatorial region of the Gis Guf G'thrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis lifecycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
+Most of the equatorial region of the Gis Guf Gthrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis lifecycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
 '''
 
 SP_HIDDENGARDENER
@@ -3514,7 +3514,7 @@ The wide ranging, delicate fungi-nets are too large and integrated into the soil
 
 
 SP_ABADDONNIANS
-Abaddonni
+Abaddoni
 SP_ABADDONNIANS_DESC
 '''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
 Prefers Inferno planets.
