@@ -592,24 +592,28 @@ std::string SetMeter::Dump() const {
     case METER_TARGET_RESEARCH:     retval += "TargetResearch"; break;
     case METER_TARGET_TRADE:        retval += "TargetTrade"; break;
     case METER_TARGET_CONSTRUCTION: retval += "TargetConstruction"; break;
+    case METER_TARGET_HAPPINESS:    retval += "TargetHappiness"; break;
 
     case METER_MAX_FUEL:            retval += "MaxFuel"; break;
     case METER_MAX_SHIELD:          retval += "MaxShield"; break;
     case METER_MAX_STRUCTURE:       retval += "MaxStructure"; break;
     case METER_MAX_DEFENSE:         retval += "MaxDefense"; break;
     case METER_MAX_TROOPS:          retval += "MaxTroops"; break;
+    case METER_MAX_REBEL_TROOPS:    retval += "MaxRebelTroops"; break;
 
     case METER_POPULATION:          retval += "Population"; break;
     case METER_INDUSTRY:            retval += "Industry"; break;
     case METER_RESEARCH:            retval += "Research"; break;
     case METER_TRADE:               retval += "Trade"; break;
     case METER_CONSTRUCTION:        retval += "Construction"; break;
+    case METER_HAPPINESS:           retval += "Happiness"; break;
 
     case METER_FUEL:                retval += "Fuel"; break;
     case METER_SHIELD:              retval += "Shield"; break;
     case METER_STRUCTURE:           retval += "Structure"; break;
     case METER_DEFENSE:             retval += "Defense"; break;
     case METER_TROOPS:              retval += "Troops"; break;
+    case METER_REBEL_TROOPS:        retval += "RebelTroops"; break;
 
     case METER_SUPPLY:              retval += "Supply"; break;
     case METER_STEALTH:             retval += "Stealth"; break;
@@ -617,8 +621,7 @@ std::string SetMeter::Dump() const {
     case METER_BATTLE_SPEED:        retval += "BattleSpeed"; break;
     case METER_STARLANE_SPEED:      retval += "StarlaneSpeed"; break;
 
-    default: retval += "?"; break;
-
+    default:                        retval += "?"; break;
     }
     retval += " value = " + m_value->Dump() + "\n";
     return retval;

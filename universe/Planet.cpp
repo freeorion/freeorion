@@ -406,9 +406,10 @@ double Planet::NextTurnCurrentMeterValue(MeterType type) const {
     case METER_CONSTRUCTION:
         return ResourceCenterNextTurnMeterValue(type);
         break;
-    case METER_SHIELD:  max_meter_type = METER_MAX_SHIELD;  break;
-    case METER_TROOPS:  max_meter_type = METER_MAX_TROOPS;  break;
-    case METER_DEFENSE: max_meter_type = METER_MAX_DEFENSE; break;
+    case METER_SHIELD:      max_meter_type = METER_MAX_SHIELD;          break;
+    case METER_TROOPS:      max_meter_type = METER_MAX_TROOPS;          break;
+    case METER_REBEL_TROOPS:max_meter_type = METER_MAX_REBEL_TROOPS;    break;
+    case METER_DEFENSE:     max_meter_type = METER_MAX_DEFENSE;         break;
         break;
     default:
         return UniverseObject::NextTurnCurrentMeterValue(type);
@@ -693,6 +694,7 @@ void Planet::PopGrowthProductionResearchPhase() {
     GetMeter(METER_SHIELD)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SHIELD));
     GetMeter(METER_DEFENSE)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_DEFENSE));
     GetMeter(METER_TROOPS)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_TROOPS));
+    GetMeter(METER_REBEL_TROOPS)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_REBEL_TROOPS));
 
     StateChangedSignal();
 }
@@ -713,6 +715,7 @@ void Planet::ResetTargetMaxUnpairedMeters() {
     GetMeter(METER_MAX_SHIELD)->ResetCurrent();
     GetMeter(METER_MAX_DEFENSE)->ResetCurrent();
     GetMeter(METER_MAX_TROOPS)->ResetCurrent();
+    GetMeter(METER_MAX_REBEL_TROOPS)->ResetCurrent();
     GetMeter(METER_DETECTION)->ResetCurrent();
 }
 
@@ -727,6 +730,8 @@ void Planet::ClampMeters() {
     UniverseObject::GetMeter(METER_DEFENSE)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_DEFENSE)->Current());
     UniverseObject::GetMeter(METER_MAX_TROOPS)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_TROOPS)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_TROOPS)->Current());
+    UniverseObject::GetMeter(METER_MAX_REBEL_TROOPS)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_REBEL_TROOPS)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_REBEL_TROOPS)->Current());
 
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_SUPPLY)->ClampCurrentToRange();

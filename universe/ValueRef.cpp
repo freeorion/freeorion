@@ -108,7 +108,7 @@ namespace {
             map[Defense_name] = METER_DEFENSE;
             map[MaxTroops_name] = METER_MAX_TROOPS;
             map[Troops_name] = METER_TROOPS;
-            map[MaxRebelTroops_name] = METER_MAX_TROOPS;
+            map[MaxRebelTroops_name] = METER_MAX_REBEL_TROOPS;
             map[RebelTroops_name] = METER_REBEL_TROOPS;
             map[Supply_name] = METER_SUPPLY;
             map[Stealth_name] = METER_STEALTH;
