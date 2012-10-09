@@ -68,6 +68,8 @@ namespace {
             break;
         case METER_TROOPS:
         case METER_MAX_TROOPS:
+        case METER_REBEL_TROOPS:
+        case METER_MAX_REBEL_TROOPS:
             return GG::Clr(168, 107, 0, 255);
             break;
         case METER_DETECTION:
@@ -76,6 +78,9 @@ namespace {
         case METER_STEALTH:
             return GG::Clr(174, 0, 255, 255);
             break;
+        case METER_HAPPINESS:
+        case METER_TARGET_HAPPINESS:
+            return GG::Clr(255, 255, 0, 255);
         case METER_SUPPLY:
         case METER_CONSTRUCTION:
         case METER_TARGET_CONSTRUCTION:
@@ -85,8 +90,7 @@ namespace {
             return GG::CLR_WHITE;
         }
         // For future:
-        //Happiness GG::Clr(255, 255,   0, 255);
-        //Influence GG::Clr(255,   0, 255, 255);
+        //Influence GG::Clr(255, 0, 255, 255);
     }
 
     /** How big we want meter icons with respect to the current UI font size.
@@ -247,6 +251,7 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*2), GG::INTERACTIVE),
     m_popcenter_id(object_id),
     m_pop_stat(0),
+    m_happiness_stat(0),
     m_multi_icon_value_indicator(0), m_multi_meter_status_bar(0),
     m_expand_button(0)
 {
@@ -271,10 +276,15 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
                                    0, 3, false);
     AttachChild(m_pop_stat);
 
+    m_happiness_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_HAPPINESS),
+                                         0, 3, false);
+    AttachChild(m_happiness_stat);
+
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
-    meters.push_back(std::make_pair(METER_POPULATION, METER_TARGET_POPULATION));
+    meters.push_back(std::make_pair(METER_POPULATION,   METER_TARGET_POPULATION));
+    meters.push_back(std::make_pair(METER_HAPPINESS,    METER_TARGET_HAPPINESS));
 
     // attach and show meter bars and large resource indicators
     m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_popcenter_id, meters);
@@ -291,6 +301,7 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
 PopulationPanel::~PopulationPanel() {
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
     delete m_pop_stat;
+    delete m_happiness_stat;
     delete m_multi_icon_value_indicator;
     delete m_multi_meter_status_bar;
 
@@ -322,6 +333,7 @@ void PopulationPanel::ExpandCollapse(bool expanded) {
 void PopulationPanel::DoExpandCollapseLayout() {
     // initially detach most things.  Some will be reattached later.
     DetachChild(m_pop_stat);
+    DetachChild(m_happiness_stat);
 
     // detach / hide meter bars and large resource indicators
     DetachChild(m_multi_meter_status_bar);
@@ -333,6 +345,7 @@ void PopulationPanel::DoExpandCollapseLayout() {
 
         std::vector<StatisticIcon*> icons;
         icons.push_back(m_pop_stat);
+        icons.push_back(m_happiness_stat);
 
         // position and reattach icons to be shown
         for (int n = 0; n < static_cast<int>(icons.size()); ++n) {
@@ -422,6 +435,14 @@ void PopulationPanel::Render() {
 }
 
 void PopulationPanel::Update() {
+    // remove any old browse wnds
+    m_pop_stat->ClearBrowseInfoWnd();
+    m_multi_icon_value_indicator->ClearToolTip(METER_POPULATION);
+
+    m_happiness_stat->ClearBrowseInfoWnd();
+    m_multi_icon_value_indicator->ClearToolTip(METER_HAPPINESS);
+
+
     const PopCenter*        pop = GetPopCenter();
     const UniverseObject*   obj = GetUniverseObject(m_popcenter_id);
 
@@ -435,12 +456,21 @@ void PopulationPanel::Update() {
     m_multi_icon_value_indicator->Update();
 
     m_pop_stat->SetValue(pop->InitialMeterValue(METER_POPULATION));
+    m_happiness_stat->SetValue(pop->InitialMeterValue(METER_HAPPINESS));
 
 
-    // tooltips
-    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(m_popcenter_id, METER_POPULATION, METER_TARGET_POPULATION));
+    // create an attach browse info wnds for each meter type on the icon + number stats used when collapsed and
+    // for all meter types shown in the multi icon value indicator.  this replaces any previous-present
+    // browse wnd on these indicators
+    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
+
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_popcenter_id, METER_POPULATION, METER_TARGET_POPULATION));
     m_pop_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_POPULATION, browse_wnd);
+
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_popcenter_id, METER_HAPPINESS, METER_TARGET_HAPPINESS));
+    m_happiness_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_HAPPINESS, browse_wnd);
 }
 
 void PopulationPanel::Refresh() {
@@ -478,6 +508,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     m_industry_stat(0),
     m_research_stat(0),
     m_trade_stat(0),
+    m_construction_stat(0),
     m_multi_icon_value_indicator(0),
     m_multi_meter_status_bar(0),
     m_focus_drop(0),
@@ -523,9 +554,9 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
                                      ClientUI::MeterIcon(METER_TRADE), 0, 3, false);
     AttachChild(m_trade_stat);
 
-    //m_pop_mod_stat = new MeterModifiersIndicator(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
-    //                                             m_rescenter_id, METER_TARGET_POPULATION);
-    //AttachChild(m_pop_mod_stat);
+    m_construction_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
+                                            ClientUI::MeterIcon(METER_CONSTRUCTION), 0, 3, false);
+    AttachChild(m_construction_stat);
 
 
     // meter and production indicators
@@ -551,10 +582,10 @@ ResourcePanel::~ResourcePanel() {
     delete m_multi_icon_value_indicator;
     delete m_multi_meter_status_bar;
 
-    //delete m_pop_mod_stat;
     delete m_industry_stat;
     delete m_research_stat;
     delete m_trade_stat;
+    delete m_construction_stat;
 
     delete m_focus_drop;
 
@@ -575,7 +606,7 @@ void ResourcePanel::ExpandCollapse(bool expanded) {
 void ResourcePanel::DoExpandCollapseLayout() {
     // initially detach everything (most things?).  Some will be reattached later.
     DetachChild(m_industry_stat);   DetachChild(m_research_stat);
-    DetachChild(m_trade_stat);      /*DetachChild(m_pop_mod_stat);*/
+    DetachChild(m_trade_stat);      DetachChild(m_construction_stat);
 
     DetachChild(m_focus_drop);
 
@@ -592,10 +623,10 @@ void ResourcePanel::DoExpandCollapseLayout() {
             // determine which two resource icons to display while collapsed: the two with the highest production.
             // sort by insereting into multimap keyed by production amount, then taking the first two icons therein.
             std::multimap<double, StatisticIcon*> res_prod_icon_map;
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_industry_stat->GetValue(), m_industry_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_research_stat->GetValue(), m_research_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_trade_stat->GetValue(),    m_trade_stat));
-            //res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_pop_mod_stat->GetValue(),  m_pop_mod_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_industry_stat->GetValue(),     m_industry_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_research_stat->GetValue(),     m_research_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_trade_stat->GetValue(),        m_trade_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_construction_stat->GetValue(), m_construction_stat));
 
             // position and reattach icons to be shown
             int n = 0;
@@ -738,8 +769,7 @@ void ResourcePanel::Update() {
     m_trade_stat->ClearBrowseInfoWnd();
     m_multi_icon_value_indicator->ClearToolTip(METER_TRADE);
 
-    //m_pop_mod_stat->ClearBrowseInfoWnd();
-
+    m_construction_stat->ClearBrowseInfoWnd();
     m_multi_icon_value_indicator->ClearToolTip(METER_CONSTRUCTION);
 
 
@@ -788,7 +818,7 @@ void ResourcePanel::Update() {
     m_industry_stat->SetValue(res->InitialMeterValue(METER_INDUSTRY));
     m_research_stat->SetValue(res->InitialMeterValue(METER_RESEARCH));
     m_trade_stat->SetValue(res->InitialMeterValue(METER_TRADE));
-    //m_pop_mod_stat->Update();
+    m_construction_stat->SetValue(res->InitialMeterValue(METER_CONSTRUCTION));
 
 
     // create an attach browse info wnds for each meter type on the icon + number stats used when collapsed and
@@ -809,6 +839,7 @@ void ResourcePanel::Update() {
     m_multi_icon_value_indicator->SetToolTip(METER_TRADE, browse_wnd);
 
     browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_CONSTRUCTION, METER_TARGET_CONSTRUCTION));
+    m_construction_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_CONSTRUCTION, browse_wnd);
 
     //browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterModifiersIndicatorBrowseWnd(m_rescenter_id, METER_TARGET_POPULATION));

@@ -96,6 +96,8 @@ namespace {
             map[TargetTrade_name] = METER_TARGET_TRADE;
             map[Construction_name] = METER_CONSTRUCTION;
             map[TargetConstruction_name] = METER_TARGET_CONSTRUCTION;
+            map[Happiness_name] = METER_HAPPINESS;
+            map[TargetHappiness_name] = METER_TARGET_HAPPINESS;
             map[MaxFuel_name] = METER_MAX_FUEL;
             map[Fuel_name] = METER_FUEL;
             map[MaxStructure_name] = METER_MAX_STRUCTURE;
@@ -106,6 +108,7 @@ namespace {
             map[Defense_name] = METER_DEFENSE;
             map[MaxTroops_name] = METER_MAX_TROOPS;
             map[Troops_name] = METER_TROOPS;
+            map[MaxRebelTroops_name] = METER_MAX_TROOPS;
             map[RebelTroops_name] = METER_REBEL_TROOPS;
             map[Supply_name] = METER_SUPPLY;
             map[Stealth_name] = METER_STEALTH;

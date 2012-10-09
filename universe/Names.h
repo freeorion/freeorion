@@ -112,6 +112,7 @@
     (GiveEmpireTech)                            \
     (Good)                                      \
     (Graphic)                                   \
+    (Happiness)                                 \
     (HasSpecial)                                \
     (HasSpecialSinceTurn)                       \
     (HasTag)                                    \
@@ -143,6 +144,7 @@
     (MaxDefense)                                \
     (MaxFuel)                                   \
     (MaximumNumberOf)                           \
+    (MaxRebelTroops)                            \
     (MaxShield)                                 \
     (MaxStructure)                              \
     (MaxTroops)                                 \
@@ -254,10 +256,12 @@
     (SetEmpireTradeStockpile)                   \
     (SetFighterWeaponRange)                     \
     (SetFuel)                                   \
+    (SetHappiness)                              \
     (SetIndustry)                               \
     (SetLaunchRate)                             \
     (SetMaxDefense)                             \
     (SetMaxFuel)                                \
+    (SetMaxRebelTroops)                         \
     (SetMaxShield)                              \
     (SetMaxStructure)                           \
     (SetMaxTroops)                              \
@@ -268,6 +272,7 @@
     (SetPlanetType)                             \
     (SetPopulation)                             \
     (SetRange)                                  \
+    (SetRebelTroops)                            \
     (SetResearch)                               \
     (SetROF)                                    \
     (SetShield)                                 \
@@ -280,6 +285,7 @@
     (SetStructure)                              \
     (SetSupply)                                 \
     (SetTargetConstruction)                     \
+    (SetTargetHappiness)                        \
     (SetTargetIndustry)                         \
     (SetTargetPopulation)                       \
     (SetTargetResearch)                         \
@@ -327,9 +333,10 @@
     (System)                                    \
     (SystemID)                                  \
     (Tag)                                       \
-    (Tags)                                       \
+    (Tags)                                      \
     (Target)                                    \
     (TargetConstruction)                        \
+    (TargetHappiness)                           \
     (TargetIndustry)                            \
     (TargetPopulation)                          \
     (TargetResearch)                            \

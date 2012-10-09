@@ -44,6 +44,8 @@ void PopCenter::Init() {
     //Logger().debugStream() << "PopCenter::Init";
     AddMeter(METER_POPULATION);
     AddMeter(METER_TARGET_POPULATION);
+    AddMeter(METER_HAPPINESS);
+    AddMeter(METER_TARGET_HAPPINESS);
 }
 
 std::string PopCenter::Dump() const {

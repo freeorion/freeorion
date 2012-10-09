@@ -71,6 +71,7 @@ private:
     int                         m_popcenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
     StatisticIcon*              m_pop_stat;             ///< icon and number of population
+    StatisticIcon*              m_happiness_stat;       ///< icon and number of happiness
 
     MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates population
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
@@ -117,10 +118,10 @@ private:
 
     int                         m_rescenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
-    //MeterModifiersIndicator*    m_pop_mod_stat;         ///< indicator of modifiers to other objects' population
     StatisticIcon*              m_industry_stat;        ///< icon and number of industry production
     StatisticIcon*              m_research_stat;        ///< icon and number of research production
     StatisticIcon*              m_trade_stat;           ///< icon and number of trade production
+    StatisticIcon*              m_construction_stat;    ///< icon and number of infrastructure
 
     MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates resource production and construction meter
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values

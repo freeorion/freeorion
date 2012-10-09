@@ -34,11 +34,13 @@ MeterType AssociatedMeterType(MeterType meter_type) {
     case METER_RESEARCH:    return METER_TARGET_RESEARCH;       break;
     case METER_TRADE:       return METER_TARGET_TRADE;          break;
     case METER_CONSTRUCTION:return METER_TARGET_CONSTRUCTION;   break;
+    case METER_HAPPINESS:   return METER_TARGET_HAPPINESS;      break;
     case METER_FUEL:        return METER_MAX_FUEL;              break;
     case METER_SHIELD:      return METER_MAX_SHIELD;            break;
     case METER_STRUCTURE:   return METER_MAX_STRUCTURE;         break;
     case METER_DEFENSE:     return METER_MAX_DEFENSE;           break;
     case METER_TROOPS:      return METER_MAX_TROOPS;            break;
+    case METER_REBEL_TROOPS:return METER_MAX_REBEL_TROOPS;      break;
     default:                return INVALID_METER_TYPE;          break;
     }
 }

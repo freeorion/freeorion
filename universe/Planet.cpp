@@ -229,6 +229,8 @@ void Planet::Init() {
     AddMeter(METER_TROOPS);
     AddMeter(METER_MAX_TROOPS);
     AddMeter(METER_DETECTION);
+    AddMeter(METER_MAX_REBEL_TROOPS);
+    AddMeter(METER_REBEL_TROOPS);
 }
 
 PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/* = ""*/) const {
