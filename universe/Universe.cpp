@@ -356,6 +356,9 @@ struct Universe::GraphImpl {
     typedef boost::property<boost::edge_weight_t, double>                   edge_property_t;    ///< a system graph property map type
 
     // declare main graph types, including properties declared above
+    // could add boost::disallow_parallel_edge_tag GraphProperty but it doesn't
+    // work for vecS vector-based lists and parallel edges can be avoided while
+    // creating the graph by filtering the edges to be added
     typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
                                   vertex_property_t, edge_property_t> SystemGraph;
 
@@ -2078,8 +2081,10 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
         for (System::const_lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
             // get id in universe of system at other end of lane
             const int lane_dest_id = it->first;
-            // skip null lanes
-            if (lane_dest_id == system1_id)
+            // skip null lanes and only add edges in one direction, to avoid
+            // duplicating edges ( since this is an undirected graph, A->B
+            // duplicates B->A )
+            if (lane_dest_id >= system1_id)
                 continue;
 
             // get m_graph_impl->system_graph index for this system
