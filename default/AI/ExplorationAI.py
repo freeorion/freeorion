@@ -85,6 +85,8 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
     explorationList=[  startSystemID ]
     while explorationList !=[]:
         curSystemID = explorationList.pop(0)
+        if curSystemID in graphFlags:
+            continue
         graphFlags[curSystemID] = 1
         system=universe.getSystem(curSystemID)
         if not system: 
