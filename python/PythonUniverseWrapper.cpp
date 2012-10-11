@@ -486,6 +486,7 @@ namespace FreeOrionPython {
             .add_property("numWormholes",       &System::NumWormholes)
             .def("HasStarlaneToSystemID",       &System::HasStarlaneTo)
             .def("HasWormholeToSystemID",       &System::HasWormholeTo)
+            .add_property("starlanesWormholes", make_function(&System::StarlanesWormholes,              return_value_policy<return_by_value>()))
             .add_property("allObjectIDs",       make_function(&System::FindObjectIDs<UniverseObject>,   return_value_policy<return_by_value>()))
             .add_property("planetIDs",          make_function(&System::FindObjectIDs<Planet>,           return_value_policy<return_by_value>()))
             .add_property("fleetIDs",           make_function(&System::FindObjectIDs<Fleet>,            return_value_policy<return_by_value>()))

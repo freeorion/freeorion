@@ -160,6 +160,10 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .def(vector_indexing_suite<std::vector<std::string> >())
     ;
 
+    class_<std::map<int, bool> >("IntBoolMap")
+        .def(map_indexing_suite<std::map<int, bool> >())
+    ;
+
     FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
     FreeOrionPython::SetWrapper<std::string>::Wrap("StringSet");
 }
