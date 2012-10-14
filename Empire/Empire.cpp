@@ -1910,20 +1910,27 @@ void Empire::RemoveBuildFromQueue(int index) {
     m_production_queue.Update(this, m_resource_pools, m_production_progress);
 }
 
-void Empire::ConquerBuildsAtLocation(int location_id) {
-    if (location_id == INVALID_OBJECT_ID)
-        throw std::invalid_argument("Empire::ConquerBuildsAtLocationFromEmpire: tried to conquer build items located at an invalid location");
+void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_id) {
+    if (location_id == INVALID_OBJECT_ID) {
+        Logger().errorStream() << "Empire::ConquerProductionQueueItemsAtLocation: tried to conquer build items located at an invalid location";
+        return;
+    }
 
-    Logger().debugStream() << "Empire::ConquerBuildsAtLocationFromEmpire: conquering items located at " << location_id << " to empire " << m_id;
-    /** Processes Builditems on queues of empires other than this empire, at the location with id \a location_id and,
-        as appropriate, adds them to the build queue of \a this empire, deletes them, or leaves them on the build
-        queue of their current empire */
+    Logger().debugStream() << "Empire::ConquerProductionQueueItemsAtLocation: conquering items located at "
+                           << location_id << " to empire " << empire_id;
 
-    for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
-        int from_empire_id = emp_it->first;
-        if (from_empire_id == m_id) continue;    // skip this empire; can't capture one's own builditems
+    Empire* to_empire = Empires().Lookup(empire_id);    // may be null
+    if (!to_empire && empire_id != ALL_EMPIRES) {
+        Logger().errorStream() << "Couldn't get empire with id " << empire_id;
+        return;
+    }
 
-        Empire* from_empire = emp_it->second;
+
+    for (EmpireManager::iterator from_empire_it = Empires().begin(); from_empire_it != Empires().end(); ++from_empire_it) {
+        int from_empire_id = from_empire_it->first;
+        if (from_empire_id == empire_id) continue;    // skip this empire; can't capture one's own ProductionItems
+
+        Empire* from_empire = from_empire_it->second;
         ProductionQueue& queue = from_empire->m_production_queue;
         std::vector<double>& status = from_empire->m_production_progress;
 
@@ -1940,10 +1947,12 @@ void Empire::ConquerBuildsAtLocation(int location_id) {
             if (item.build_type == BT_BUILDING) {
                 std::string name = item.name;
                 const BuildingType* type = GetBuildingType(name);
-                if (!type)
-                    throw std::invalid_argument("Empire::ConquerBuildsAtLocationFromEmpire: ProductionQueue item had an invalid BuildingType name");
+                if (!type) {
+                    Logger().errorStream() << "ConquerProductionQueueItemsAtLocation couldn't get building with name " << name;
+                    continue;
+                }
 
-                CaptureResult result = type->GetCaptureResult(from_empire_id, m_id, location_id, true);
+                CaptureResult result = type->GetCaptureResult(from_empire_id, empire_id, location_id, true);
 
                 if (result == CR_DESTROY) {
                     // item removed from current queue, NOT added to conquerer's queue
@@ -1951,17 +1960,19 @@ void Empire::ConquerBuildsAtLocation(int location_id) {
                     status.erase(status.begin() + i);
 
                 } else if (result == CR_CAPTURE) {
-                    // item removed from current queue, added to conquerer's queue
-                    ProductionQueue::Element build(item, elem.ordered, elem.remaining, location_id);
-                    m_production_queue.push_back(build);
+                    if (to_empire) {
+                        // item removed from current queue, added to conquerer's queue
+                        ProductionQueue::Element build(item, elem.ordered, elem.remaining, location_id);
+                        to_empire->m_production_queue.push_back(build);
+                        to_empire->m_production_progress.push_back(status[i]);
 
-                    m_production_progress.push_back(status[i]);
-
-                    queue_it = queue.erase(queue_it);
-                    status.erase(status.begin() + i);
+                        queue_it = queue.erase(queue_it);
+                        status.erase(status.begin() + i);
+                    }
+                    // else do nothing; no empire can't capure things
 
                 } else if (result == INVALID_CAPTURE_RESULT) {
-                    throw std::invalid_argument("Empire::ConquerBuildsAtLocationFromEmpire: BuildingType had an invalid CaptureResult");
+                    Logger().errorStream() << "Empire::ConquerBuildsAtLocationFromEmpire: BuildingType had an invalid CaptureResult";
                 } else {
                     ++queue_it;
                     ++i;

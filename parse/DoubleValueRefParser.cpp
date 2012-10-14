@@ -19,7 +19,7 @@ namespace {
             const parse::lexer& tok = parse::lexer::instance();
 
             final_token
-                =   tok.Industry_
+                =    tok.Industry_
                 |    tok.TargetIndustry_
                 |    tok.Research_
                 |    tok.TargetResearch_
@@ -29,6 +29,8 @@ namespace {
                 |    tok.TargetConstruction_
                 |    tok.Population_
                 |    tok.TargetPopulation_
+                |    tok.TargetHappiness_
+                |    tok.Happiness_
                 |    tok.MaxFuel_
                 |    tok.Fuel_
                 |    tok.MaxShield_
@@ -37,6 +39,7 @@ namespace {
                 |    tok.Defense_
                 |    tok.MaxTroops_
                 |    tok.Troops_
+                |    tok.RebelTroops_
                 |    tok.MaxStructure_
                 |    tok.Structure_
                 |    tok.Supply_

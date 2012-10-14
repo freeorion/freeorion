@@ -69,7 +69,6 @@ namespace {
         case METER_TROOPS:
         case METER_MAX_TROOPS:
         case METER_REBEL_TROOPS:
-        case METER_MAX_REBEL_TROOPS:
             return GG::Clr(168, 107, 0, 255);
             break;
         case METER_DETECTION:

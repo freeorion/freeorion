@@ -138,7 +138,6 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     case METER_MAX_TROOPS:
         icon_filename = "troops.png";       break;
     case METER_REBEL_TROOPS:
-    case METER_MAX_REBEL_TROOPS:
         icon_filename = "rebels.png";       break;
     default:
         break;

@@ -365,7 +365,7 @@ void UniverseObject::ResetPairedActiveMeters() {
     // target meter.  if another paired meter type is added to Enums.h, it
     // should be added here as well.
     for (MeterType meter_type = MeterType(METER_POPULATION);
-         meter_type <= MeterType(METER_REBEL_TROOPS);
+         meter_type <= MeterType(METER_TROOPS);
          meter_type = MeterType(meter_type + 1))
     {
         if (Meter* meter = GetMeter(meter_type))

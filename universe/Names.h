@@ -144,7 +144,6 @@
     (MaxDefense)                                \
     (MaxFuel)                                   \
     (MaximumNumberOf)                           \
-    (MaxRebelTroops)                            \
     (MaxShield)                                 \
     (MaxStructure)                              \
     (MaxTroops)                                 \
@@ -261,7 +260,6 @@
     (SetLaunchRate)                             \
     (SetMaxDefense)                             \
     (SetMaxFuel)                                \
-    (SetMaxRebelTroops)                         \
     (SetMaxShield)                              \
     (SetMaxStructure)                           \
     (SetMaxTroops)                              \

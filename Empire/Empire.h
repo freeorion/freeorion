@@ -431,11 +431,7 @@ public:
     void        SetBuildQuantity(int index, int quantity);      ///< Changes the remaining number to build for queue item \a index to \a quantity
     void        MoveBuildWithinQueue(int index, int new_index); ///< Moves \a tech from the production queue, if it is in the production queue already.
     void        RemoveBuildFromQueue(int index);                ///< Removes the build at position \a index in the production queue, if such an index exists.
-    /** Processes Builditems on queues of empires other than this empire, at
-      * the location with id \a location_id and, as appropriate, adds them to
-      * the build queue of \a this empire, deletes them, or leaves them on the
-      * build queue of their current empire */
-    void        ConquerBuildsAtLocation(int location_id);
+
     void        AddTech(const std::string& name);           ///< Inserts the given Tech into the Empire's list of available technologies.
     void        UnlockItem(const ItemSpec& item);           ///< Adds a given producible item (Building, Ship Hull, Ship part) to the list of available items.
     void        AddBuildingType(const std::string& name);   ///< Inserts the given BuildingType into the Empire's list of available BuldingTypes.
@@ -540,10 +536,17 @@ public:
     /** Has m_population_pool recalculate all PopCenters' and empire's total
       * expected population growth */
     void        UpdatePopulationGrowth();
-    //@}
 
     /** Resets empire meters. */
     void        ResetMeters();
+    //@}
+
+    /** Processes Builditems on queues of empires other than the indicated
+      * empires, at the location with id \a location_id and, as appropriate,
+      * adds them to the build queue of the indicated empires (if it is an
+      * empire), deletes them, or leaves them on the build queue of their
+      * current empire */
+    static void ConquerProductionQueueItemsAtLocation(int location_id, int empire_id);
 
     mutable boost::signal<void ()>  ShipDesignsChangedSignal;
 

@@ -599,7 +599,6 @@ std::string SetMeter::Dump() const {
     case METER_MAX_STRUCTURE:       retval += "MaxStructure"; break;
     case METER_MAX_DEFENSE:         retval += "MaxDefense"; break;
     case METER_MAX_TROOPS:          retval += "MaxTroops"; break;
-    case METER_MAX_REBEL_TROOPS:    retval += "MaxRebelTroops"; break;
 
     case METER_POPULATION:          retval += "Population"; break;
     case METER_INDUSTRY:            retval += "Industry"; break;
@@ -613,8 +612,8 @@ std::string SetMeter::Dump() const {
     case METER_STRUCTURE:           retval += "Structure"; break;
     case METER_DEFENSE:             retval += "Defense"; break;
     case METER_TROOPS:              retval += "Troops"; break;
-    case METER_REBEL_TROOPS:        retval += "RebelTroops"; break;
 
+    case METER_REBEL_TROOPS:        retval += "RebelTroops"; break;
     case METER_SUPPLY:              retval += "Supply"; break;
     case METER_STEALTH:             retval += "Stealth"; break;
     case METER_DETECTION:           retval += "Detection"; break;

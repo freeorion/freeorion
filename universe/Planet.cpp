@@ -229,7 +229,6 @@ void Planet::Init() {
     AddMeter(METER_TROOPS);
     AddMeter(METER_MAX_TROOPS);
     AddMeter(METER_DETECTION);
-    AddMeter(METER_MAX_REBEL_TROOPS);
     AddMeter(METER_REBEL_TROOPS);
 }
 
@@ -408,7 +407,6 @@ double Planet::NextTurnCurrentMeterValue(MeterType type) const {
         break;
     case METER_SHIELD:      max_meter_type = METER_MAX_SHIELD;          break;
     case METER_TROOPS:      max_meter_type = METER_MAX_TROOPS;          break;
-    case METER_REBEL_TROOPS:max_meter_type = METER_MAX_REBEL_TROOPS;    break;
     case METER_DEFENSE:     max_meter_type = METER_MAX_DEFENSE;         break;
         break;
     default:
@@ -553,6 +551,7 @@ void Planet::Reset() {
     GetMeter(METER_DEFENSE)->Reset();
     GetMeter(METER_MAX_DEFENSE)->Reset();
     GetMeter(METER_DETECTION)->Reset();
+    GetMeter(METER_REBEL_TROOPS)->Reset();
 
     // reset buildings
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
@@ -567,18 +566,10 @@ void Planet::Reset() {
 }
 
 void Planet::Conquer(int conquerer) {
-    if (conquerer == ALL_EMPIRES)
-        return;
-
     m_just_conquered = true;
-    Empire* empire = Empires().Lookup(conquerer);
-    if (!empire) {
-        Logger().errorStream() << "Planet::Conquer: attempted to conquer a planet with an invalid conquerer with id: " << conquerer;
-        return;
-    }
 
     // deal with things on production queue located at this planet
-    empire->ConquerBuildsAtLocation(ID());
+    Empire::ConquerProductionQueueItemsAtLocation(ID(), conquerer);
 
     // deal with UniverseObjects (eg. buildings) located on this planet
     std::vector<UniverseObject*> contained_objects = this->FindObjects();
@@ -715,7 +706,7 @@ void Planet::ResetTargetMaxUnpairedMeters() {
     GetMeter(METER_MAX_SHIELD)->ResetCurrent();
     GetMeter(METER_MAX_DEFENSE)->ResetCurrent();
     GetMeter(METER_MAX_TROOPS)->ResetCurrent();
-    GetMeter(METER_MAX_REBEL_TROOPS)->ResetCurrent();
+    GetMeter(METER_REBEL_TROOPS)->ResetCurrent();
     GetMeter(METER_DETECTION)->ResetCurrent();
 }
 
@@ -730,9 +721,8 @@ void Planet::ClampMeters() {
     UniverseObject::GetMeter(METER_DEFENSE)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_DEFENSE)->Current());
     UniverseObject::GetMeter(METER_MAX_TROOPS)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_TROOPS)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_TROOPS)->Current());
-    UniverseObject::GetMeter(METER_MAX_REBEL_TROOPS)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_REBEL_TROOPS)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_REBEL_TROOPS)->Current());
 
+    UniverseObject::GetMeter(METER_REBEL_TROOPS)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_SUPPLY)->ClampCurrentToRange();
 }

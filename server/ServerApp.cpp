@@ -1617,11 +1617,11 @@ namespace {
     /** Determines which ships ordered to invade planets, does invasion and
       * ground combat resolution */
     void HandleInvasion() {
-        // collect, for each planet, what ships have been ordered to invade it
         std::map<int, std::map<int, double> > planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
         std::vector<Ship*> ships = GetUniverse().Objects().FindObjects<Ship>();
-        std::set<Planet*> planets;
+        std::vector<Planet*> planets = GetUniverse().Objects().FindObjects<Planet>();
 
+        // assemble invasion forces from each invasion ship
         for (std::vector<Ship*>::iterator it = ships.begin(); it != ships.end(); ++it) {
             const Ship* ship = *it;
             if (!ship) {
@@ -1645,11 +1645,10 @@ namespace {
             Planet* planet = GetPlanet(invade_planet_id);
             if (!planet)
                 continue;
+            planet->ResetIsAboutToBeInvaded();
 
             if (ship->SystemID() != planet->SystemID())
                 continue;
-
-            planets.insert(planet);
 
             // how many troops are invading?
             planet_empire_troops[invade_planet_id][ship->Owner()] += design->TroopCapacity();
@@ -1657,27 +1656,40 @@ namespace {
             GetUniverse().Destroy(ship_id);
         }
 
-        for (std::set<Planet*>::iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
+        // check each planet for other troops, such as due to empire troops, native troops, or rebel troops
+        for (std::vector<Planet*>::iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
             Planet* planet = *planet_it;
-            planet->ResetIsAboutToBeInvaded();
-            if (planet->CurrentMeterValue(METER_SHIELD) > 0.0)
-                continue;               // can't invade shielded planets
-            if (planet->CurrentMeterValue(METER_POPULATION) <= 0.0)
-                continue;               // can't invade unpopulated planets
-            // current owner may also have troops from meter
-            planet_empire_troops[planet->ID()][planet->Owner()] += planet->CurrentMeterValue(METER_TROOPS) + 0.0001;    // small bonus to ensure ties are won by initial owner
+            if (!planet) {
+                Logger().errorStream() << "HandleInvasion couldn't get planet";
+                continue;
+            }
+            if (planet->CurrentMeterValue(METER_TROOPS) > 0.0) {
+                // empires may have garrisons on planets
+                planet_empire_troops[planet->ID()][planet->Owner()] += planet->CurrentMeterValue(METER_TROOPS) + 0.0001;    // small bonus to ensure ties are won by initial owner
+            }
+            if (!planet->Unowned() && planet->CurrentMeterValue(METER_REBEL_TROOPS) > 0.0) {
+                // rebels may be present on empire-owned planets
+                planet_empire_troops[planet->ID()][ALL_EMPIRES] += planet->CurrentMeterValue(METER_REBEL_TROOPS);
+            }
         }
 
-        // process each planet's invasions
+        // process each planet's ground combats
         for (std::map<int, std::map<int, double> >::iterator planet_it = planet_empire_troops.begin();
              planet_it != planet_empire_troops.end(); ++planet_it)
         {
             int planet_id = planet_it->first;
             Planet* planet = GetPlanet(planet_id);
-            // mark planet as no longer being invaded
-            planet->ResetIsAboutToBeInvaded();
 
             std::map<int, double>& empires_troops = planet_it->second;
+            if (empires_troops.size() < 2)
+                continue;   // no single participant battles...
+
+            Logger().debugStream() << "Ground combat on" << planet->Name();
+            for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
+                    empire_it != empires_troops.end(); ++empire_it)
+            { Logger().debugStream() << " empire: " << empire_it->first << ": " << empire_it->second; }
+
+
             // create sitreps for all empires involved in battle
             std::set<int> all_involved_empires;
             for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
@@ -1708,6 +1720,27 @@ namespace {
                         if (Empire* empire = Empires().Lookup(*empire_it))
                             empire->AddSitRepEntry(CreatePlanetCapturedSitRep(planet_id, victor_id));
                     }
+
+                    Logger().debugStream() << "Empire conquers planet";
+                    for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
+                         empire_it != empires_troops.end(); ++empire_it)
+                    { Logger().debugStream() << " empire: " << empire_it->first << ": " << empire_it->second; }
+
+
+                } else if (!planet->Unowned() && victor_id == ALL_EMPIRES) {
+                    planet->Conquer(ALL_EMPIRES);
+                    Logger().debugStream() << "Independents conquer planet";
+                    for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
+                         empire_it != empires_troops.end(); ++empire_it)
+                    { Logger().debugStream() << " empire: " << empire_it->first << ": " << empire_it->second; }
+
+                    // TODO: planet lost to rebels sitrep
+                } else {
+                    // defender held theh planet
+                    Logger().debugStream() << "Defender holds planet";
+                    for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
+                         empire_it != empires_troops.end(); ++empire_it)
+                    { Logger().debugStream() << " empire: " << empire_it->first << ": " << empire_it->second; }
                 }
 
                 // regardless of whether battle resulted in conquering, it did
@@ -1715,11 +1748,16 @@ namespace {
                 if (Meter* meter = planet->GetMeter(METER_TROOPS))
                     meter->SetCurrent(empires_troops.begin()->second);  // new troops on planet is remainder after battle
 
+
             } else {
                 // no troops left?
                 if (Meter* meter = planet->GetMeter(METER_TROOPS))
                     meter->SetCurrent(0.0);
+                if (Meter* meter = planet->GetMeter(METER_REBEL_TROOPS))
+                    meter->SetCurrent(0.0);
             }
+
+            planet->BackPropegateMeters();
         }
     }
 }
