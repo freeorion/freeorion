@@ -164,8 +164,8 @@ std::string BuildingType::Dump() const {
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
-    retval += DumpIndent() + "buildcost = " + lexical_cast<std::string>(m_production_cost) + "\n";
-    retval += DumpIndent() + "buildtime = " + lexical_cast<std::string>(m_production_time) + "\n";
+    retval += DumpIndent() + "buildcost = " + m_production_cost->Dump() + "\n";
+    retval += DumpIndent() + "buildtime = " + m_production_time->Dump() + "\n";
     retval += DumpIndent() + "captureresult = " + lexical_cast<std::string>(m_capture_result) + "\n";
     retval += DumpIndent() + "location = \n";
     ++g_indent;
@@ -190,53 +190,85 @@ std::string BuildingType::Dump() const {
     return retval;
 }
 
-double BuildingType::ProductionCost() const {
-    if (!CHEAP_AND_FAST_BUILDING_PRODUCTION)
-        return m_production_cost;
-    else
-        return 1.0;
+namespace {
+    const UniverseObject* SourceForEmpire(int empire_id) {
+        const Empire* empire = Empires().Lookup(empire_id);
+        if (!empire) {
+            Logger().debugStream() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
+            return 0;
+        }
+        // get a source object, which is owned by the empire with the passed-in
+        // empire id.  this is used in conditions to reference which empire is
+        // doing the building.  Ideally this will be the capital, but any object
+        // owned by the empire will work.
+        const UniverseObject* source = GetUniverseObject(empire->CapitalID());
+        // no capital?  scan through all objects to find one owned by this empire
+        if (!source) {
+            for (ObjectMap::const_iterator obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
+                if (obj_it->second->OwnedBy(empire_id)) {
+                    source = obj_it->second;
+                    break;
+                }
+            }
+        }
+        return source;
+    }
 }
 
-double BuildingType::PerTurnCost() const
-{ return ProductionCost() / std::max(1, ProductionTime()); }
+double BuildingType::ProductionCost(int empire_id, int location_id) const {
+    if (CHEAP_AND_FAST_BUILDING_PRODUCTION || !m_production_cost) {
+        return 1.0;
+    } else {
+        if (!m_production_time)
+            return 999999.9;
 
-int BuildingType::ProductionTime() const {
-    if (!CHEAP_AND_FAST_BUILDING_PRODUCTION)
-        return m_production_time;
-    else
+        if (ValueRef::ConstantExpr(m_production_cost))
+            return m_production_cost->Eval();
+
+        UniverseObject* location = GetUniverseObject(location_id);
+        if (!location)
+            return 999999.9;    // arbitrary large number
+
+        const UniverseObject* source = SourceForEmpire(empire_id);
+        ScriptingContext context(source, location);
+
+        return m_production_cost->Eval(context);
+    }
+}
+
+double BuildingType::PerTurnCost(int empire_id, int location_id) const
+{ return ProductionCost(empire_id, location_id) / std::max(1, ProductionTime(empire_id, location_id)); }
+
+int BuildingType::ProductionTime(int empire_id, int location_id) const {
+    if (CHEAP_AND_FAST_BUILDING_PRODUCTION || !m_production_cost) {
         return 1;
+    } else {
+        if (!m_production_time)
+            return 9999;
+
+        if (ValueRef::ConstantExpr(m_production_time))
+            return m_production_time->Eval();
+
+        UniverseObject* location = GetUniverseObject(location_id);
+        if (!location)
+            return 9999;    // arbitrary large number
+
+        const UniverseObject* source = SourceForEmpire(empire_id);
+        ScriptingContext context(source, location);
+
+        return m_production_time->Eval(context);
+    }
 }
 
 bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
-    const UniverseObject* location = GetUniverseObject(location_id);
-    if (!location) return false;
-
-    const Empire* empire = Empires().Lookup(empire_id);
-    if (!empire) {
-        Logger().debugStream() << "BuildingType::ProductionLocation: Unable to get pointer to empire " << empire_id;
-        return false;
-    }
-
     if (!m_location)
         return true;
 
-    // get a source object, which is owned by the empire with the passed-in
-    // empire id.  this is used in conditions to reference which empire is
-    // doing the building.  Ideally this will be the capital, but any object
-    // owned by the empire will work.
-    const UniverseObject* source = GetUniverseObject(empire->CapitalID());
-    if (!source && location->OwnedBy(empire_id))
-        source = location;
-    // still no valid source?!  scan through all objects to find one owned by this empire
-    if (!source) {
-        for (ObjectMap::const_iterator obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
-            if (obj_it->second->OwnedBy(empire_id)) {
-                source = obj_it->second;
-                break;
-            }
-        }
-    }
-    // if this empire doesn't own ANYTHING, then how is it building anyway?
+    const UniverseObject* location = GetUniverseObject(location_id);
+    if (!location)
+        return false;
+
+    const UniverseObject* source = SourceForEmpire(empire_id);
     if (!source)
         return false;
 

@@ -3,6 +3,7 @@
 #define _Building_h_
 
 #include "UniverseObject.h"
+#include "ValueRefFwd.h"
 
 class BuildingType;
 namespace Effect {
@@ -81,7 +82,7 @@ public:
     BuildingType() :
         m_name(""),
         m_description(""),
-        m_production_cost(0.0),
+        m_production_cost(0),
         m_production_time(0),
         m_capture_result(CR_DESTROY),
         m_tags(),
@@ -92,7 +93,9 @@ public:
 
     /** basic ctor */
     BuildingType(const std::string& name, const std::string& description,
-                 double production_cost, int production_time, bool producible,
+                 const ValueRef::ValueRefBase<double>* production_cost,
+                 const ValueRef::ValueRefBase<int>* production_time,
+                 bool producible,
                  CaptureResult capture_result,
                  const std::vector<std::string>& tags,
                  const Condition::ConditionBase* location,
@@ -114,19 +117,19 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&              Name() const            { return m_name; }          ///< returns the unique name for this type of building
-    const std::string&              Description() const     { return m_description; }   ///< returns a text description of this type of building
-    std::string                     Dump() const;                   ///< returns a data file format representation of this object
-    double                          ProductionCost() const;         ///< returns the number of production points required to build this building
-    double                          PerTurnCost() const;            ///< returns the maximum number of production points per turn that can be spend on this building
-    int                             ProductionTime() const;         ///< returns the number of turns required to build this building
-    bool                            Producible() const      { return m_producible; }    ///< returns whether this building type is producible by players and appears on the production screen
-    double                          MaintenanceCost() const { return 0.0; }             ///< returns the number of monetary points required per turn to operate this building
+    const std::string&              Name() const            { return m_name; }              ///< returns the unique name for this type of building
+    const std::string&              Description() const     { return m_description; }       ///< returns a text description of this type of building
+    std::string                     Dump() const;                                           ///< returns a data file format representation of this object
+    double                          ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to build this building
+    double                          PerTurnCost(int empire_id, int location_id) const;      ///< returns the maximum number of production points per turn that can be spend on this building
+    int                             ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to build this building
+    bool                            Producible() const      { return m_producible; }        ///< returns whether this building type is producible by players and appears on the production screen
+    double                          MaintenanceCost() const { return 0.0; }                 ///< returns the number of monetary points required per turn to operate this building
     const std::vector<std::string>& Tags() const            { return m_tags; }
-    const Condition::ConditionBase* Location() const        { return m_location; }      ///< returns the condition that determines the locations where this building can be produced
+    const Condition::ConditionBase* Location() const        { return m_location; }          ///< returns the condition that determines the locations where this building can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
-                                    Effects() const         { return m_effects; }       ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
-    const std::string&              Icon() const            { return m_icon; }       ///< returns the name of the grapic file for this building type
+                                    Effects() const         { return m_effects; }           ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
+    const std::string&              Icon() const            { return m_icon; }              ///< returns the name of the grapic file for this building type
     bool ProductionLocation(int empire_id, int location_id) const;  ///< returns true iff the empire with ID empire_id can produce this building at the location with location_id
 
     /** returns CaptureResult for empire with ID \a to_empire_id capturing from
@@ -142,8 +145,8 @@ public:
 private:
     std::string                                                 m_name;
     std::string                                                 m_description;
-    double                                                      m_production_cost;
-    int                                                         m_production_time;
+    const ValueRef::ValueRefBase<double>*                       m_production_cost;
+    const ValueRef::ValueRefBase<int>*                          m_production_time;
     bool                                                        m_producible;
     CaptureResult                                               m_capture_result;
     std::vector<std::string>                                    m_tags;

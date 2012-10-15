@@ -319,15 +319,8 @@ public:
     /** Returns the maximum cost per turn and the minimum number of turns
       * required to produce the indicated item, or (-1.0, -1) if the item is
       * unknown, unavailable, or invalid. */
-    std::pair<double, int>  ProductionCostAndTime(BuildType build_type, std::string name) const;
-    /** Returns the maximum cost per turn and the minimum number of turns
-      * required to produce the indicated item, or (-1.0, -1) if the item is
-      * unknown, unavailable, or invalid. */
-    std::pair<double, int>  ProductionCostAndTime(BuildType build_type, int design_id = INVALID_OBJECT_ID) const;
-    /** Returns the maximum cost per turn and the minimum number of turns
-      * required to produce the indicated item, or (-1.0, -1) if the item is
-      * unknown, unavailable, or invalid. */
-    std::pair<double, int>  ProductionCostAndTime(const ProductionQueue::ProductionItem& item) const;
+    std::pair<double, int>  ProductionCostAndTime(const ProductionQueue::Element& element) const;
+    std::pair<double, int>  ProductionCostAndTime(const ProductionQueue::ProductionItem& item, int location_id) const;
 
     bool                    BuildableItem(BuildType build_type, const std::string& name, int location) const;  ///< Returns true iff this empire can produce the specified item at the specified location.
     bool                    BuildableItem(BuildType build_type, int design_id, int location) const;            ///< Returns true iff this empire can produce the specified item at the specified location.

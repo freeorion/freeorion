@@ -28,10 +28,12 @@ namespace {
     //////////////////////////////////
     class ProductionItemPanel : public GG::Control {
     public:
-        ProductionItemPanel(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item, int empire_id) :
+        ProductionItemPanel(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
+                            int empire_id, int location_id) :
             Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
             m_item(item),
             m_empire_id(empire_id),
+            m_location_id(location_id),
             m_icon(0),
             m_name(0),
             m_cost(0),
@@ -56,7 +58,9 @@ namespace {
             case BT_SHIP: {
                 texture = ClientUI::ShipDesignIcon(m_item.design_id);
                 desc_text = UserString("BT_SHIP");
-                name_text = m_item.name;
+                const ShipDesign* design = GetShipDesign(m_item.design_id);
+                if (design)
+                    name_text = design->Name(true);
                 break;
             }
             default:
@@ -77,7 +81,7 @@ namespace {
             std::string cost_text;
             std::string time_text;
             if (empire) {
-                std::pair<double, int> cost_time = empire->ProductionCostAndTime(m_item);
+                std::pair<double, int> cost_time = empire->ProductionCostAndTime(m_item, location_id);
                 cost_text = DoubleToString(cost_time.first, 3, false);
                 time_text = boost::lexical_cast<std::string>(cost_time.second);
             }
@@ -141,14 +145,15 @@ namespace {
             m_desc->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + DESC_WIDTH, bottom));
         }
 
-        const ProductionQueue::ProductionItem&  m_item;
-        int                 m_empire_id;
+        const ProductionQueue::ProductionItem   m_item;
+        int                                     m_empire_id;
+        int                                     m_location_id;
 
-        GG::StaticGraphic*  m_icon;
-        GG::TextControl*    m_name;
-        GG::TextControl*    m_cost;
-        GG::TextControl*    m_time;
-        GG::TextControl*    m_desc;
+        GG::StaticGraphic*              m_icon;
+        GG::TextControl*                m_name;
+        GG::TextControl*                m_cost;
+        GG::TextControl*                m_time;
+        GG::TextControl*                m_desc;
     };
 
     const UniverseObject* GetSourceObjectForEmpire(int empire_id) {
@@ -236,55 +241,44 @@ namespace {
     ////////////////////////////////////////////////
     class ProductionItemRow : public GG::ListBox::Row {
     public:
-        ProductionItemRow(GG::X w, GG::Y h, const std::string& building_name, int empire_id,
-                          int production_location = INVALID_OBJECT_ID) :
+        ProductionItemRow(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
+                          int empire_id, int location_id) :
             GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
-            m_item(BT_BUILDING, building_name),
+            m_item(item),
             m_empire_id(empire_id),
+            m_location_id(location_id),
             m_panel(0)
         {
             SetName("ProductionItemRow");
             SetChildClippingMode(ClipToClient);
-            SetDragDropDataType(building_name);
-            m_panel = new ProductionItemPanel(w, h, m_item, m_empire_id);
+
+            if (m_item.build_type == BT_SHIP) {
+                SetDragDropDataType(boost::lexical_cast<std::string>(m_item.design_id));
+            } else {
+                SetDragDropDataType(m_item.name);
+            }
+
+            m_panel = new ProductionItemPanel(w, h, m_item, m_empire_id, m_location_id);
             push_back(m_panel);
+
             if (const Empire* empire = Empires().Lookup(m_empire_id)) {
-                if (!empire->BuildableItem(BT_BUILDING, building_name, production_location)) {
+                if (!empire->BuildableItem(m_item, m_location_id)) {
                     this->Disable(true);
                     m_panel->Disable(true);
                 }
             }
+
             m_panel->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-            SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, production_location, m_empire_id));
+            SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, m_location_id, m_empire_id));
 
             //std::cout << "ProductionItemRow(building) height: " << Value(Height()) << std::endl;
         }
 
-        ProductionItemRow(GG::X w, GG::Y h, int design_id, int empire_id,
-                          int production_location = INVALID_OBJECT_ID) :
-            GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
-            m_item(BT_SHIP, design_id),
-            m_empire_id(empire_id),
-            m_panel(0)
-        {
-            SetName("ProductionItemRow");
-            SetChildClippingMode(ClipToClient);
-            SetDragDropDataType(boost::lexical_cast<std::string>(design_id));
-            m_panel = new ProductionItemPanel(w, h, m_item, m_empire_id);
-            push_back(m_panel);
-            if (const Empire* empire = Empires().Lookup(m_empire_id)) {
-                if (!empire->BuildableItem(BT_SHIP, design_id, production_location)) {
-                    this->Disable(true);
-                    m_panel->Disable(true);
-                }
-            }
-            m_panel->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-            SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, production_location, m_empire_id));
-            //std::cout << "ProductionItemRow(ship) height: " << Value(Height()) << std::endl;
-        }
-
-        const   ProductionQueue::ProductionItem& Item() const
+        const ProductionQueue::ProductionItem& Item() const
         { return m_item; }
+
+        int Location() const
+        { return m_location_id; }
 
         void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             const GG::Pt old_size = Size();
@@ -297,6 +291,7 @@ namespace {
     private:
         ProductionQueue::ProductionItem m_item;
         int                             m_empire_id;
+        int                             m_location_id;
         ProductionItemPanel*            m_panel;
     };
 
@@ -712,7 +707,8 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 
             if (!BuildableItemVisible(BT_BUILDING, name)) continue;
 
-            ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y, name,
+            ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y,
+                                                                ProductionQueue::ProductionItem(BT_BUILDING, name),
                                                                 m_empire_id, m_production_location);
 
             GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);
@@ -744,7 +740,8 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 
             // add build item panel
 
-            ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y, ship_design_id,
+            ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y,
+                                                                ProductionQueue::ProductionItem(BT_SHIP, ship_design_id),
                                                                 m_empire_id, m_production_location);
 
             GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);

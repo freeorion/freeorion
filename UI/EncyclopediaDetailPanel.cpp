@@ -457,6 +457,30 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
     }
 }
 
+namespace {
+    int DefaultLocationForEmpire(int empire_id) {
+        const Empire* empire = Empires().Lookup(empire_id);
+        if (!empire) {
+            Logger().debugStream() << "DefaultLocationForEmpire: Unable to get empire with ID: " << empire_id;
+            return INVALID_OBJECT_ID;
+        }
+        // get a location where the empire might build something.
+        const UniverseObject* location = GetUniverseObject(empire->CapitalID());
+        // no capital?  scan through all objects to find one owned by this empire
+        // TODO: only loop over planets?
+        // TODO: pass in a location condition, and pick a location that matches it if possible
+        if (!location) {
+            for (ObjectMap::const_iterator obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
+                if (obj_it->second->OwnedBy(empire_id)) {
+                    location = obj_it->second;
+                    break;
+                }
+            }
+        }
+        return location ? location->ID() : INVALID_OBJECT_ID;
+    }
+}
+
 void EncyclopediaDetailPanel::Refresh() {
     if (m_icon) {
         DeleteChild(m_icon);
@@ -630,8 +654,9 @@ void EncyclopediaDetailPanel::Refresh() {
         // Building types
         name = UserString(m_items_it->second);
         texture = ClientUI::BuildingIcon(m_items_it->second);
-        turns = building_type->ProductionTime();
-        cost = building_type->ProductionCost();
+        int default_location_id = DefaultLocationForEmpire(client_empire_id);
+        turns = building_type->ProductionTime(client_empire_id, default_location_id);
+        cost = building_type->ProductionCost(client_empire_id, default_location_id);
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_BUILDING_TYPE");
         detailed_description = UserString(building_type->Description());

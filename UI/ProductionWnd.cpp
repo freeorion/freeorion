@@ -58,7 +58,7 @@ namespace {
     //////////////////////////////////////////////////
     // QueueRow implementation
     //////////////////////////////////////////////////
-    QueueRow::QueueRow(GG::X w, const ProductionQueue::Element& build, int queue_index_) :
+    QueueRow::QueueRow(GG::X w, const ProductionQueue::Element& elem, int queue_index_) :
         GG::ListBox::Row(),
         queue_index(queue_index_)
     {
@@ -66,14 +66,14 @@ namespace {
         double total_cost(1.0);
         int minimum_turns(1.0);
         if (empire)
-            boost::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(build.item);
+            boost::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(elem);
         double per_turn_cost = total_cost / std::max(1, minimum_turns);
         double progress = empire->ProductionStatus(queue_index);
         if (progress == -1.0)
             progress = 0.0;
 
-        GG::Control* panel = new QueueBuildPanel(w, build,
-                                                 build.allocated_pp, minimum_turns, build.remaining,
+        GG::Control* panel = new QueueBuildPanel(w, elem,
+                                                 elem.allocated_pp, minimum_turns, elem.remaining,
                                                  static_cast<int>(progress / per_turn_cost),
                                                  std::fmod(progress, per_turn_cost) / per_turn_cost);
         Resize(panel->Size());

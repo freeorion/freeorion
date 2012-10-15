@@ -165,7 +165,7 @@ namespace {
             // get max contribution per turn and turns to build at max contribution rate
             double item_cost;
             int build_turns;
-            boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(item);
+            boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(queue_element);
             //Logger().debugStream() << "item " << item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
 
@@ -570,7 +570,7 @@ ProductionQueue::const_iterator ProductionQueue::UnderfundedProject(const Empire
     for (const_iterator it = begin(); it != end(); ++it) {
         double item_cost;
         int build_turns;
-        boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(it->item);
+        boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
         if (it->allocated_pp && it->allocated_pp < item_cost && 1 < it->turns_left_to_next_item)
             return it;
     }
@@ -742,7 +742,7 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType,
 
             double item_cost;
             int build_turns;
-            boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(element.item);
+            boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(element);
 
 
             double& status = sim_production_status[i];  // get previous iteration's accumulated PP for this element
@@ -821,10 +821,12 @@ ProductionQueue::Element& ProductionQueue::operator[](int i) {
 }
 
 ProductionQueue::iterator ProductionQueue::UnderfundedProject(const Empire* empire) {
+    if (!empire)
+        return end();
     for (iterator it = begin(); it != end(); ++it) {
         double item_cost;
         int build_turns;
-        boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(it->item);
+        boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
         if (it->allocated_pp && it->allocated_pp < item_cost && 1 < it->turns_left_to_next_item)
             return it;
     }
@@ -1121,41 +1123,25 @@ const ProductionQueue& Empire::GetProductionQueue() const
 double Empire::ProductionStatus(int i) const
 { return (0 <= i && i < static_cast<int>(m_production_progress.size())) ? m_production_progress[i] : -1.0; }
 
-std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, std::string name) const {
-    switch (build_type) {
-    case BT_BUILDING: {
-        const BuildingType* building_type = GetBuildingType(name);
-        if (!building_type)
-            break;
-        return std::make_pair(building_type->ProductionCost(), building_type->ProductionTime());
-    }
-    default:
-        break;
-    }
-    return std::make_pair(-1.0, -1);
-}
+std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::Element& element) const
+{ return ProductionCostAndTime(element.item, element.location); }
 
-std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, int design_id) const {
-    switch (build_type) {
-    case BT_SHIP: {
-        const ShipDesign* ship_design = GetShipDesign(design_id);
-        if (!ship_design)
-            break;
-        return std::make_pair(ship_design->ProductionCost(), ship_design->ProductionTime());
+std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::ProductionItem& item,
+                                                     int location_id) const
+{
+    if (item.build_type == BT_BUILDING) {
+        const BuildingType* type =  GetBuildingType(item.name);
+        if (!type)
+            return std::make_pair(-1.0, -1);
+        return std::make_pair(type->ProductionCost(m_id, location_id),
+                              type->ProductionTime(m_id, location_id));
+    } else if (item.build_type == BT_SHIP) {
+        const ShipDesign* design = GetShipDesign(item.design_id);
+        if (design)
+            return std::make_pair(design->ProductionCost(), design->ProductionTime());
+        return std::make_pair(-1.0, -1);
     }
-    default:
-        break;
-    }
-    return std::make_pair(-1.0, -1);
-}
-
-std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::ProductionItem& item) const {
-    if (item.build_type == BT_BUILDING)
-        return ProductionCostAndTime(BT_BUILDING, item.name);
-    else if (item.build_type == BT_SHIP)
-        return ProductionCostAndTime(BT_SHIP, item.design_id);
-    else
-        throw std::invalid_argument("Empire::ProductionCostAndTime was passed a ProductionItem with an invalid BuildType");
+    Logger().errorStream() << "Empire::ProductionCostAndTime was passed a ProductionItem with an invalid BuildType";
     return std::make_pair(-1.0, -1);
 }
 
@@ -1167,18 +1153,16 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
     if (build_type == BT_SHIP)
         throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_SHIP with a name, but ship designs are tracked by number");
 
-    if (build_type == BT_BUILDING && !BuildingTypeAvailable(name)) return false;
+    if (build_type == BT_BUILDING && !BuildingTypeAvailable(name))
+        return false;
 
     const BuildingType* building_type = GetBuildingType(name);
-    if (!building_type || !building_type->Producible()) return false;
-
-    if (ProductionCostAndTime(build_type, name) == std::make_pair(-1.0, -1)) {
-        // item is unknown, unavailable, or invalid.
+    if (!building_type || !building_type->Producible())
         return false;
-    }
 
     UniverseObject* build_location = GetUniverseObject(location);
-    if (!build_location) return false;
+    if (!build_location)
+        return false;
 
     if (build_type == BT_BUILDING) {
         // specified location must be a valid production location for that building type
@@ -1195,17 +1179,13 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
     if (build_type == BT_BUILDING)
         throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_BUILDING with a design id number, but these types are tracked by name");
 
-    if (build_type == BT_SHIP && !ShipDesignAvailable(design_id)) return false;
+    if (build_type == BT_SHIP && !ShipDesignAvailable(design_id))
+        return false;
 
     // design must be known to this empire
     const ShipDesign* ship_design = GetShipDesign(design_id);
-    if (!ship_design || !ship_design->Producible()) return false;
-
-
-    if (ProductionCostAndTime(build_type, design_id) == std::make_pair(-1.0, ShipDesign::INVALID_DESIGN_ID)) {
-        // item is unknown, unavailable, or invalid.
+    if (!ship_design || !ship_design->Producible())
         return false;
-    }
 
     UniverseObject* build_location = GetUniverseObject(location);
     if (!build_location) return false;
@@ -2259,7 +2239,7 @@ void Empire::CheckProductionProgress() {
     for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
         double item_cost;
         int build_turns;
-        boost::tie(item_cost, build_turns) = ProductionCostAndTime(m_production_queue[i].item);
+        boost::tie(item_cost, build_turns) = ProductionCostAndTime(m_production_queue[i]);
         double& status = m_production_progress[i];
         status += m_production_queue[i].allocated_pp;               // add allocated PP to queue item
 

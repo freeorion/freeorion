@@ -1,6 +1,7 @@
 #include "Double.h"
 #include "Int.h"
 #include "Label.h"
+#include "ValueRefParser.h"
 #include "ParseImpl.h"
 #include "../universe/Building.h"
 
@@ -35,6 +36,9 @@ namespace {
         rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
+            const parse::value_ref_parser_rule<int>::type& int_value_ref =          parse::value_ref_parser<int>();
+            const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
+
             qi::_1_type _1;
             qi::_2_type _2;
             qi::_3_type _3;
@@ -61,11 +65,6 @@ namespace {
                 >    parse::label(Description_name) > tok.string [ _r2 = _1 ]
                 ;
 
-            cost
-                =    parse::label(BuildCost_name)   > parse::double_ [ _r1 = _1 ]
-                >    parse::label(BuildTime_name)   > parse::int_ [ _r2 = _1 ]
-                ;
-
             producible
                 =    tok.Unproducible_ [ _val = false ]
                 |    tok.Producible_ [ _val = true ]
@@ -84,16 +83,17 @@ namespace {
 
             building_type
                 =    building_prefix(_a, _b)
-                >    cost(_c, _d)
+                >    parse::label(BuildCost_name)               > double_value_ref [ _c = _1 ]
+                >    parse::label(BuildTime_name)               > int_value_ref [ _d = _1 ]
                 >    producible [ _e = _1 ]
                 >    (
-                            parse::label(CaptureResult_name)    >> parse::enum_parser<CaptureResult>() [ _f = _1 ]
+                            parse::label(CaptureResult_name)   >> parse::enum_parser<CaptureResult>() [ _f = _1 ]
                         |   eps [ _f = CR_CAPTURE ]
                      )
                 >    tags(_g)
                 >    parse::label(Location_name)                > parse::detail::condition_parser [ _h = _1 ]
                 >    parse::label(EffectsGroups_name)           > -parse::detail::effects_group_parser() [ _i = _1 ]
-                >    parse::label(Icon_name)                    >  tok.string
+                >    parse::label(Icon_name)                    > tok.string
                     [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _e, _f, _g, _h, _i, _1)) ]
                 ;
 
@@ -102,14 +102,12 @@ namespace {
                 ;
 
             building_prefix.name("BuildingType");
-            cost.name("cost");
             producible.name("Producible or Unproducible");
             tags.name("Tags");
             building_type.name("BuildingType");
 
 #if DEBUG_PARSERS
             debug(building_prefix);
-            debug(cost);
             debug(producible);
             debug(tags);
             debug(building_type);
@@ -123,12 +121,6 @@ namespace {
             void (std::string&, std::string&),
             parse::skipper_type
         > building_prefix_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (double&, int&),
-            parse::skipper_type
-        > cost_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -148,8 +140,8 @@ namespace {
             qi::locals<
                 std::string,
                 std::string,
-                double,
-                int,
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<int>*,
                 bool,
                 CaptureResult,
                 std::vector<std::string>,
@@ -166,7 +158,6 @@ namespace {
         > start_rule;
 
         building_prefix_rule    building_prefix;
-        cost_rule               cost;
         producible_rule         producible;
         tags_rule               tags;
         building_type_rule      building_type;
