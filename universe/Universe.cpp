@@ -786,6 +786,7 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id) {
 }
 
 void Universe::ApplyAllEffectsAndUpdateMeters() {
+    ScopedTimer timer("Universe::ApplyAllEffectsAndUpdateMeters");
     std::vector<int> object_ids = m_objects.FindObjectIDs();
 
     // cache all activation and scoping condition results before applying
@@ -815,6 +816,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters() {
 }
 
 void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids) {
+    ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on " + boost::lexical_cast<std::string>(object_ids.size()) + " objects");
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
@@ -842,6 +844,8 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
 }
 
 void Universe::ApplyMeterEffectsAndUpdateMeters() {
+    ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on all objects");
+
     std::vector<int> object_ids = m_objects.FindObjectIDs();
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes, object_ids);
@@ -859,6 +863,8 @@ void Universe::ApplyMeterEffectsAndUpdateMeters() {
 }
 
 void Universe::ApplyAppearanceEffects(const std::vector<int>& object_ids) {
+    ScopedTimer timer("Universe::ApplyAppearanceEffects on " + boost::lexical_cast<std::string>(object_ids.size()) + " objects");
+
     // cache all activation and scoping condition results before applying
     // Effects, since the application of these Effects may affect the
     // activation and scoping evaluations
@@ -983,6 +989,8 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
 }
 
 void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
+    ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + boost::lexical_cast<std::string>(objects_vec.size()) + " objects");
+
     for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
         int obj_id = *obj_it;
         UniverseObject* obj = m_objects.Object(obj_id);
@@ -1097,6 +1105,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes) {
 }
 
 void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const std::vector<int>& target_objects) {
+    ScopedTimer timer("Universe::GetEffectsAndTargets");
+
     // transfer target objects from input vector to a set
     Effect::TargetSet all_potential_targets;
     all_potential_targets.reserve(RESERVE_SET_SIZE);
@@ -1274,6 +1284,8 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
                                                     const std::string& specific_cause_name,
                                                     Effect::TargetSet& target_objects, Effect::TargetsCauses& targets_causes)
 {
+    ScopedTimer timer("Universe::StoreTargetsAndCausesOfEffectsGroups");
+
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "Universe::StoreTargetsAndCausesOfEffectsGroups( , source id: " << source_object_id << ", , specific cause: " << specific_cause_name << ", , )";
     }
@@ -1326,6 +1338,8 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                               bool only_appearance_effects/* = false*/,
                               bool include_empire_meter_effects/* = false*/)
 {
+    ScopedTimer timer("Universe::ExecuteEffects");
+
     m_marked_destroyed.clear();
     m_marked_for_victory.clear();
     std::map<std::string, Effect::TargetSet> executed_nonstacking_effects;
