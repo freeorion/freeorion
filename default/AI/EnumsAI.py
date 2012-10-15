@@ -39,26 +39,26 @@ class AIPriorityType(object):
     PRIORITY_RESEARCH_DEFENSE = 18
 
 AIPriorityNames = [
-        "PRIORITY_RESOURCE_GROWTH", 
-        "Priority_slot_empty", 
-        "PRIORITY_RESOURCE_PRODUCTION", 
-        "PRIORITY_RESOURCE_RESEARCH", 
-        "PRIORITY_RESOURCE_TRADE", 
-        "PRIORITY_RESOURCE_CONSTRUCTION", 
-        "PRIORITY_PRODUCTION_EXPLORATION", 
-        "PRIORITY_PRODUCTION_OUTPOST", 
-        "PRIORITY_PRODUCTION_COLONISATION", 
-        "PRIORITY_PRODUCTION_INVASION", 
-        "PRIORITY_PRODUCTION_MILITARY", 
-        "PRIORITY_PRODUCTION_BUILDINGS", 
-        "PRIORITY_RESEARCH_LEARNING", 
-        "PRIORITY_RESEARCH_GROWTH", 
-        "PRIORITY_RESEARCH_PRODUCTION", 
-        "PRIORITY_RESEARCH_CONSTRUCTION", 
-        "PRIORITY_RESEARCH_ECONOMICS", 
-        "PRIORITY_RESEARCH_SHIPS", 
-        "PRIORITY_RESEARCH_DEFENSE", 
-        "PRIORITY_INVALID" ]
+        "RESOURCE_GROWTH", 
+        "slot_empty", 
+        "RESOURCE_PRODUCTION", 
+        "RESOURCE_RESEARCH", 
+        "RESOURCE_TRADE", 
+        "RESOURCE_CONSTRUCTION", 
+        "PRODUCTION_EXPLORATION", 
+        "PRODUCTION_OUTPOST", 
+        "PRODUCTION_COLONISATION", 
+        "PRODUCTION_INVASION", 
+        "PRODUCTION_MILITARY", 
+        "PRODUCTION_BUILDINGS", 
+        "RESEARCH_LEARNING", 
+        "RESEARCH_GROWTH", 
+        "RESEARCH_PRODUCTION", 
+        "RESEARCH_CONSTRUCTION", 
+        "RESEARCH_ECONOMICS", 
+        "RESEARCH_SHIPS", 
+        "RESEARCH_DEFENSE", 
+        "INVALID" ]
 
 def getAIPriorityResourceTypes():
     return __getInterval(0, 5)
@@ -94,6 +94,15 @@ class AIFleetMissionType(object):
     FLEET_MISSION_INVASION = 9
     FLEET_MISSION_MILITARY = 10
 
+    MissionTypeNames=['explore',  'outpost',  'colonize',  'splitFleet',  'mergeFleet',  'hit&Run',  'attack',  'defend',  'last_stand', 'invasion', 'military', 'invalid']
+    
+    def name(self, mtype):
+        try:
+            name=self.MissionTypeNames[mtype]
+            return name
+        except:
+            return "invalidMissionType"
+
 def getAIFleetMissionTypes():
     return __getInterval(0, 10)
 
@@ -106,10 +115,18 @@ class AIFleetOrderType(object):
     ORDER_MERGE_FLEET = 4
     ORDER_OUTPOST = 5
     ORDER_COLONISE = 6
-    ORDER_ATACK = 7
+    ORDER_ATTACK = 7
     ORDER_DEFEND = 8
     ORDER_INVADE = 9
     ORDER_MILITARY = 10
+    ORDRER_STAGING = 11
+    FleetOrderTypeNames = [ "scrap",  "move",  "resupply",  "splitFleet",  "mergeFleet",  "outpost",  "colonize",  "attack",  "defend",  "invade",  "military",  "staging", "invalid"]
+    def name(self, otype):
+        try:
+            name=self.FleetOrderTypeNames[otype]
+            return name
+        except:
+            return "invalidFleetOrderType"
 
 def getAIFleetOrderTypes():
     return __getInterval(0, 10)
@@ -132,6 +149,13 @@ class AIShipRoleType(object):
     SHIP_ROLE_CIVILIAN_OUTPOST = 6
     SHIP_ROLE_MILITARY_INVASION = 7
     SHIP_ROLE_MILITARY = 8
+    ShipRoleNames=['milAttack',  'milLongrange',  'milMissiles',  'MilPD',  'CivExplore',  'CivColonize', 'CivOutpost', 'MilInvasion', 'MilMil', 'invalid']
+    def name(self, roletype):
+        try:
+            name=self.ShipRoleNames[roletype]
+            return name
+        except:
+            return "invalidRoleType"
 
 def getAIShipRolesTypes():
     return __getInterval(0, 8)
@@ -146,6 +170,13 @@ class AITargetType(object):
     TARGET_FLEET = 5
     TARGET_EMPIRE = 6
     TARGET_ALL_OTHER_EMPIRES = 7
+    TargetTypeNames = ["building",  "technology",  "planet",  "system",  "ship",  "fleet",  "empire",  "Opponents",  "invalid"]
+    def name(self, targettype):
+        try:
+            name=self.TargetTypeNames[targettype]
+            return name
+        except:
+            return "invalidTargetType"
 
 def getAITargetTypes():
     return __getInterval(0, 7)

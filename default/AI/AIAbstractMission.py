@@ -70,7 +70,7 @@ class AIAbstractMission(object):
     def getAITargets(self, aiMissionType):
         "getter"
 
-        return self.__aiMissionTypes[aiMissionType]
+        return self.__aiMissionTypes.get(aiMissionType,  [])
 
     def hasTarget(self, aiMissionType, aiTarget):
         targets = self.getAITargets(aiMissionType)

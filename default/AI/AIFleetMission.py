@@ -2,8 +2,12 @@ from EnumsAI import AIFleetOrderType, AIFleetMissionType, AITargetType, AIMissio
 import MoveUtilsAI
 import AITarget
 import AIFleetOrder
+import FleetUtilsAI
 import freeOrionAIInterface as fo
+import FreeOrionAI as foAI
 from AIAbstractMission import AIAbstractMission
+
+AIFleetMissionTypeNames = AIFleetMissionType()
 
 class AIFleetMission(AIAbstractMission):
     '''
@@ -19,16 +23,18 @@ class AIFleetMission(AIAbstractMission):
     def __str__(self):
         "returns describing string"
 
-        result = ""
+        missionStrings=[]
         for aiFleetMissionType in self.getAIMissionTypes():
             universe = fo.getUniverse()
-            fleet = universe.getFleet(self.getAITargetID())
-            targetsString = "fleet name:" + fleet.name + " id:" + str(self.getAITargetID()) + "[" + str(aiFleetMissionType) + "]:"
+            fleetID = self.getAITargetID()
+            fleet = universe.getFleet(fleetID)
+            targetsString = "fleet %4d (%14s) [ %10s mission ] : %3d ships , total Rating:%7d "%(fleetID,  fleet.name,   AIFleetMissionTypeNames.name(aiFleetMissionType) ,  
+                                                                                                 len(fleet.shipIDs),  foAI.foAIstate.getRating(fleetID))
             targets = self.getAITargets(aiFleetMissionType)
             for target in targets:
                 targetsString = targetsString + str(target)
-            result = result + targetsString + "\n"
-        return result
+            missionStrings.append( targetsString  )
+        return "\n".join(missionStrings)
 
     def __getRequiredToVisitSystemAITargets(self):
         "returns all system AITargets required to visit in this object"
@@ -148,22 +154,30 @@ class AIFleetMission(AIAbstractMission):
         "issues AIFleetOrders which can be issued in system and moves to next one if is possible"
 
         # TODO: priority
-        ordersInSystemCompleted = True
+        ordersCompleted = True
+        print "Checking orders for fleet %d"%(self.getAITargetID())
         for aiFleetOrder in self.getAIFleetOrders():
-            if aiFleetOrder.canIssueOrder():
-                print "    " + str(aiFleetOrder)
-                if aiFleetOrder.getAIFleetOrderType() == AIFleetOrderType.ORDER_MOVE and ordersInSystemCompleted:
+            print "   %s"%(aiFleetOrder)
+            if aiFleetOrder.canIssueOrder(considerMergers=True,  verbose=True):
+                #print "    " + str(aiFleetOrder) currently already printed in canIssueOrder()
+                if aiFleetOrder.getAIFleetOrderType() == AIFleetOrderType.ORDER_MOVE and ordersCompleted: #only move if all other orders completed
                     aiFleetOrder.issueOrder()
                 elif aiFleetOrder.getAIFleetOrderType() != AIFleetOrderType.ORDER_MOVE:
                     aiFleetOrder.issueOrder()
                 if not aiFleetOrder.isExecutionCompleted():
-                    ordersInSystemCompleted = False
+                    ordersCompleted = False
             # moving to another system stops issuing all orders in system where fleet is
-            
             # move order is also the last order in system
             if aiFleetOrder.getAIFleetOrderType() == AIFleetOrderType.ORDER_MOVE:
-                break
-
+                fleet = fo.getUniverse().getFleet(self.getAITargetID())
+                if fleet.systemID != aiFleetOrder.getTargetAITarget().getTargetID():
+                    break
+        else: #went through entire order list
+            if ordersCompleted:
+                print "Fleet %d has completed its mission; clearing all orders and targets."%(self.getAITargetID() )
+                self.clearAIFleetOrders()
+                self.clearAITargets( (self.getAIMissionTypes() + [-1])[0] )
+                FleetUtilsAI.splitFleet(self.getAITargetID() ) #current task is done, split up fleet for later deployments
     def generateAIFleetOrders(self):
         "generates AIFleetOrders from fleets targets to accomplish"
 
@@ -172,6 +186,9 @@ class AIFleetMission(AIAbstractMission):
         # for some targets fleet has to visit systems and therefore fleet visit them
         systemAITargets = self.__getRequiredToVisitSystemAITargets()
         aiFleetOrdersToVisitSystems = MoveUtilsAI.getAIFleetOrdersFromSystemAITargets(self.getAITarget(), systemAITargets)
+
+        for aiFleetOrder in aiFleetOrdersToVisitSystems:
+            self.appendAIFleetOrder(aiFleetOrder)
 
         # if fleet is in some system = fleet.systemID >=0, then also generate system AIFleetOrders
         universe = fo.getUniverse()
@@ -191,8 +208,6 @@ class AIFleetMission(AIAbstractMission):
                         aiFleetOrder = self.__getAIFleetOrderFromAITarget(aiFleetMissionType, aiTarget)
                         self.appendAIFleetOrder(aiFleetOrder)
 
-        for aiFleetOrder in aiFleetOrdersToVisitSystems:
-            self.appendAIFleetOrder(aiFleetOrder)
 
         # if fleet don't have any mission, then resupply if is current location not in supplyable system
         empire = fo.getEmpire()
@@ -205,14 +220,13 @@ class AIFleetMission(AIAbstractMission):
     def getLocationAITarget(self):
         "system AITarget where fleet is or will be"
         # TODO add parameter turn
-
         universe = fo.getUniverse()
         fleet = universe.getFleet(self.getAITargetID())
         systemID = fleet.systemID
         if systemID >= 0:
             return AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID)
         else:
-            return AITarget.AITarget(AITargetType.TARGET_SYSTEM, fleet.nextSystemID)
+            return AITarget.AITarget(AITargetType.TARGET_SYSTEM, fleet.nextSystemID)#TODO: huh?
 
 def getFleetIDsFromAIFleetMissions(aiFleetMissions):
     result = []

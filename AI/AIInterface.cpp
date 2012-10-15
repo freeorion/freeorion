@@ -354,7 +354,7 @@ namespace AIInterface {
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
 
-        return 1;
+        return new_fleet_id;
     }
 
     int IssueNewFleetOrder(const std::string& fleet_name, int ship_id) {

@@ -16,12 +16,13 @@ def generateResearchOrders():
         for techname in completedTechs:
             print "    " + techname
         print""
-        print "Techs currently in Research Queue:"
         researchQueue = empire.researchQueue
         researchQueueList = getResearchQueueTechs()
-        for element in researchQueue:
-            print "    " + element.tech
-        print ""
+        if  researchQueueList:
+            print "Techs currently at head of Research Queue:"
+            for element in researchQueueList[:10]:
+                print "    " + element.tech
+            print ""
         newtech = TechsListsAI.primaryMetaTechsList()
         #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
         pLTsToEnqueue = newtech[:]

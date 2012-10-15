@@ -42,58 +42,71 @@ def startNewGame():
     if ResourcesAI.resourceTimerFile:
         ResourcesAI.resourceTimerFile.close()
     empireID = fo.getEmpire().empireID
-    if os.path.exists("timers") and os.path.isdir("timers"):
-        timerpath="timers"+os.path.sep+"timer_%02d.dat"%(empireID-1)
-        __timerFile = open(timerpath,  'w')
-        __timerFile.write("Turn\t" + "\t".join(__timerEntries) +'\n')
-        if ResourcesAI.doResourceTiming:
-            ResourcesAI.resourceTimerFile = open("timers"+os.path.sep+"resourceTimer_%2d.dat"%(empireID-1),  'w')
-            ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI.__timerEntries)+"\n")
-        print "timer file saved at "+timerpath
+    try:
+        if os.path.exists("timers") and os.path.isdir("timers"):
+            timerpath="timers"+os.path.sep+"timer_%02d.dat"%(empireID-1)
+            __timerFile = open(timerpath,  'w')
+            __timerFile.write("Turn\t" + "\t".join(__timerEntries) +'\n')
+            if ResourcesAI.doResourceTiming:
+                ResourcesAI.resourceTimerFile = open("timers"+os.path.sep+"resourceTimer_%2d.dat"%(empireID-1),  'w')
+                ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI.__timerEntries)+"\n")
+            print "timer file saved at "+timerpath
+    except:
+        __timerFile=None
+        ResourcesAI.resourceTimerFile  =None
+        ResourcesAI.doResourceTiming = False
 
-def splitFleet():
-    "split all fleets"
-    print ("spitting fleets")
+def splitNewFleets():
+    "split any fleets (at creation, can have unplanned mix of ship roles)"
 
-    # TODO: only after analyzing situation in map can fleet can be split
-    universe = fo.getUniverse()
-    for fleetID in universe.fleetIDs:
-        FleetUtilsAI.splitFleet(fleetID)
-        # old fleet may have different role after split, later will be again identified
-        foAIstate.removeFleetRole(fleetID)
+    print "Review of current Fleet Role/Mission records:"
+    print "--------------------"
+    print "Map of Roles keyed by Fleet ID: %s"%foAIstate.getFleetRolesMap()
+    print "--------------------"
+    print "Map of Missions  keyed by ID:"
+    for item in  foAIstate.getFleetMissionsMap().items():
+        print " %4d : %s "%item 
+    print "--------------------"
+    # TODO: check length of fleets for losses  or do in AIstat.__cleanRoles
+    knownFleets= foAIstate.getFleetRolesMap().keys()
+    splitableFleets=[]
+    for fleetID in FleetUtilsAI.getEmpireFleetIDs(): 
+        if fleetID  in  knownFleets: #not a new fleet
+            continue
+        else:
+            splitableFleets.append(fleetID)
+    if splitableFleets:
+        print ("splitting new fleets")
+        for fleetID in splitableFleets:
+            print "\t splitting fleet ID %4d:"%fleetID
+            newFleets = FleetUtilsAI.splitFleet(fleetID) # try splitting fleet
+            # old fleet may have different role after split, later will be again identified
+            #foAIstate.removeFleetRole(fleetID)  # in current system, orig new fleet will not yet have been assigned a role
+            for newID in newFleets:
+                fo.issueRenameOrder(newID,  "Fleet %5d"%newID) #to ease review of debugging logs
+                foAIstate.getFleetRole(newID) #and mission?
 
-def identifyShipDesigns():
-    "identify ship designs"
-    print ("Identifying ship designs")
-    
+def updateShipDesigns(): #
+    "update ship design records"
+    print ("Updating ship design records")
     shipIDs = []
-
     universe = fo.getUniverse()
 
     for fleetID in universe.fleetIDs:
         fleet = universe.getFleet(fleetID)
         if fleet:
-            for ID in fleet.shipIDs: shipIDs = shipIDs + [ID]
-        else:
-            print "couldn't get fleet with id " + str(fleetID)
-
-    for shipID in shipIDs:
-        ship = universe.getShip(shipID)
-        if ship and ship.design:
-            shipRole = FleetUtilsAI.assessShipRole(shipID)
-            foAIstate.addShipRole(ship.design.id, shipRole)
+            for shipID in fleet.shipIDs: 
+                ship = universe.getShip(shipID)
+                if ship and ship.design:
+                    foAIstate.getShipRole(ship.design.id)
             # print str(ship.design.id) + ": " + str(shipRole)
 
-def identifyFleetsRoles():
-    "identify fleet roles"
-    print ("Identifying fleet roles")
-
+def updateFleetsRoles():
+    "updating fleet role records"
+    print ("Updating fleet role records")
     # assign roles to fleets
-    universe = fo.getUniverse()
-    for fleetID in universe.fleetIDs:
-        print ("considering fleet with id: " + str(fleetID))
-        foAIstate.addFleetRole(fleetID, FleetUtilsAI.assessFleetRole(fleetID))
-        # print str(fleetID) + ": " + FleetUtilsAI.assessFleetRole(fleetID)
+    for fleetID in FleetUtilsAI.getEmpireFleetIDs(): 
+        foAIstate.getFleetRole(fleetID) #force assessment if not previously known
 
 # called when client receives a load game message
 def resumeLoadedGame(savedStateString):
@@ -112,14 +125,19 @@ def resumeLoadedGame(savedStateString):
     if ResourcesAI.resourceTimerFile:
         ResourcesAI.resourceTimerFile.close()
     empireID = fo.getEmpire().empireID
-    if os.path.exists("timers") and os.path.isdir("timers"):
-        timerpath="timers"+os.path.sep+"timer_%02d.dat"%(empireID-1)
-        __timerFile = open(timerpath,  'w')
-        __timerFile.write("Turn\t" + "\t".join(__timerEntries) +'\n')
-        if ResourcesAI.doResourceTiming:
-            ResourcesAI.resourceTimerFile = open("timers"+os.path.sep+"resourceTimer_%2d.dat"%(empireID-1),  'w')
-            ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI.timerEntries)+"\n")
-        print "timer file saved at "+timerpath
+    try:
+        if os.path.exists("timers") and os.path.isdir("timers"):
+            timerpath="timers"+os.path.sep+"timer_%02d.dat"%(empireID-1)
+            __timerFile = open(timerpath,  'w')
+            __timerFile.write("Turn\t" + "\t".join(__timerEntries) +'\n')
+            if ResourcesAI.doResourceTiming:
+                ResourcesAI.resourceTimerFile = open("timers"+os.path.sep+"resourceTimer_%2d.dat"%(empireID-1),  'w')
+                ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI.timerEntries)+"\n")
+            print "timer file saved at "+timerpath
+    except:
+        __timerFile=None
+        ResourcesAI.resourceTimerFile  =None
+        ResourcesAI.doResourceTiming = False
 
 # called when the game is about to be saved, to let the Python AI know it should save any AI state
 # information, such as plans or knowledge about the game from previous turns, in the state string so that
@@ -163,27 +181,32 @@ def declareWarOnAll():
 # at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
 # and can be sent to the server for processing.
 def generateOrders():
-    print ("Genearting Orders")
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     planetID = PlanetUtilsAI.getCapital()
     planet = universe.getPlanet(planetID)
+    print "***************************************************************************"
+    print "***************************************************************************"
+    print ("Generating Orders")
     print "EmpireID:    " + str(empire.empireID) + " Name: " + empire.name + " Turn: " + str(fo.currentTurn())
     if planet: 
         print "CapitalID: " + str(planetID) + " Name: " + planet.name + " Species: " + planet.speciesName 
     else:
         print "No current capital"
+    print "***************************************************************************"
+    print "***************************************************************************"
     
     if fo.currentTurn() == 1:
         declareWarOnAll()
 
     # turn cleanup !!! this was formerly done at start of every turn -- not sure why
-    splitFleet()
+    splitNewFleets()
 
-    identifyShipDesigns()
-    identifyFleetsRoles()
-    #foAIstate.clean(ExplorationAI.getHomeSystemID(), FleetUtilsAI.getEmpireFleetIDs())
-    foAIstate.clean()
+    #updateShipDesigns()   #should not be needed anymore;
+    #updateFleetsRoles()
+    
+    foAIstate.clean() #checks exploration border & clears roles/missions of missing fleets & updates fleet locs
+    foAIstate.reportSystemThreats()
     # ...missions
     # ...demands/priorities
 

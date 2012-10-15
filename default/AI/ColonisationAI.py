@@ -95,13 +95,13 @@ def getColonyFleets():
     numColonyFleets = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(colonyFleetIDs))
     print "Colony Fleets Without Missions:      " + str(numColonyFleets)
 
-    print ""
-    print "Outpost Targeted SystemIDs:        " + str(AIstate.outpostTargetedSystemIDs)
     outpostTargetedPlanetIDs = getOutpostTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST, empireID)
     allOutpostTargetedSystemIDs = PlanetUtilsAI.getSystems(outpostTargetedPlanetIDs)
 
     # export outpost targeted systems for other AI modules
     AIstate.outpostTargetedSystemIDs = allOutpostTargetedSystemIDs
+    print ""
+    print "Outpost Targeted SystemIDs:        " + str(AIstate.outpostTargetedSystemIDs)
     print "Outpost Targeted PlanetIDs:        " + str(outpostTargetedPlanetIDs)
 
     outpostFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST)
@@ -132,7 +132,7 @@ def getColonyFleets():
     print ""
 
     # export planets for other AI modules
-    AIstate.colonisablePlanetIDs = sortedPlanets
+    AIstate.colonisablePlanetIDs = sortedPlanets#TODO: should include species designation corresponding to rating
 
     # get outpost fleets
     allOutpostFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST)
@@ -208,101 +208,107 @@ def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, s
 def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, empire):
     "returns the colonisation value of a planet"
     # TODO: in planet evaluation consider specials and distance
+    valMod = 0
     universe = fo.getUniverse()
     planet = universe.getPlanet(planetID)
     if (planet == None): return 0
     planetSpecials = list(planet.specials)
-    if   (missionType == AIFleetMissionType.FLEET_MISSION_COLONISATION ) and ( planet.size  ==  fo.planetSize.asteroids ) or (planet.size==fo.planetSize.gasGiant): 
-        return 0   # currently not supporting species inhabiting asteroids
-    elif   (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ):
+    if   (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ):
         retval = 0
+        for special in planetSpecials:
+            if "_NEST_" in special:
+                return 30 # get an outpost on the nest quick
         if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_ASTEROID_MINE") == fo.techStatus.complete ) ): 
-                retval= 10   # asteroid mining is great return
+                retval= 15   # asteroid mining is great, fast return
         for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
             if special in planetSpecials:
-                retval = 25
+                retval = 20 #expects we can make exobots soonish
         return retval
+    else: #colonization mission
+        if   (planet.size==fo.planetSize.gasGiant): 
+            return 0   
+        elif ( planet.size  ==  fo.planetSize.asteroids ):
+            if  (species and species.name  ==  "SP_EXOBOT"):
+                return 50
+            return 0
+        planetEnv  = environs[ str(species.getPlanetEnvironment(planet.type)) ]
+        popSizeMod=0
+        popSizeMod += popSizeModMap["env"][planetEnv]
+        if empire.getTechStatus("GRO_SUBTER_HAB") == fo.techStatus.complete:    
+            popSizeMod += popSizeModMap["subHab"][planetEnv]
+        if empire.getTechStatus("GRO_SYMBIOTIC_BIO") == fo.techStatus.complete:
+            popSizeMod += popSizeModMap["symBio"][planetEnv]
+        if empire.getTechStatus("GRO_XENO_GENETICS") == fo.techStatus.complete:
+            popSizeMod += popSizeModMap["xenoGen"][planetEnv]
+        if empire.getTechStatus("GRO_XENO_HYBRID") == fo.techStatus.complete:
+            popSizeMod += popSizeModMap["xenoHyb"][planetEnv]
+        if empire.getTechStatus("GRO_CYBORG") == fo.techStatus.complete:
+            popSizeMod += popSizeModMap["cyborg"][planetEnv]
+
+        tagList = [tag for tag in species.tags]
+
+        for special in [ "SLOW_ROTATION_SPECIAL",  "SOLID_CORE_SPECIAL"] :
+            if special in planetSpecials:
+                popSizeMod -= 1
+
+        #have to use these namelists since species tags don't seem available to AI currently
+        #for special, namelist in [ ("PROBIOTIC_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYISACHE",  "SP_HHHOH",  "SP_EAXAW"]),
+        #                                                   ("FRUIT_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYISACHE",  "SP_HHHOH",  "SP_EAXAW",  "SP_TRITH"]),
+        #                                                   ("SPICE_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYISACHE",  "SP_HHHOH",  "SP_EAXAW"]),
+        #                                                   ("MONOPOLE_SPECIAL",  ["SP_CRAY"]),
+        #                                                   ("SUPERCONDUCTOR_SPECIAL",  ["SP_CRAY"]),
+        #                                                   ("POSITRONIUM_SPECIAL",  ["SP_CRAY"]),
+        #                                                   ("MINERALS_SPECIAL",  ["SP_GEORGE",  "SP_EGASSEM"]),
+        #                                                   ("METALOIDS_SPECIAL",  ["SP_GEORGE",  "SP_EGASSEM"]),
+        #                                             ]:
+        for special, tag in [ ("PROBIOTIC_SPECIAL",  "ORGANIC"),
+                                                           ("FRUIT_SPECIAL",  "ORGANIC"),
+                                                           ("SPICE_SPECIAL",  "ORGANIC"),
+                                                           ("MONOPOLE_SPECIAL",  "ROBOTIC"),
+                                                           ("SUPERCONDUCTOR_SPECIAL",  "ROBOTIC"),
+                                                           ("POSITRONIUM_SPECIAL",  "ROBOTIC"),
+                                                           ("MINERALS_SPECIAL",  "LITHIC"),
+                                                           ("METALOIDS_SPECIAL",  "LITHIC"),
+                                                     ]:
+            if special in planetSpecials:
+                valMod += 5  # extra bonus due to potential applicability to other planets, or to industry
+                if  tag in tagList:
+                    popSizeMod += 1
+                #    print "planet %s had special %s that triggers pop mod for species %s"%(planet.name,  special,  species.name)
+                #else:
+                #    print "planet %s had special %s without pop mod for species %s"%(planet.name,  special,  species.name)
             
-    planetEnv  = environs[ str(species.getPlanetEnvironment(planet.type)) ]
+        if "GAIA_SPECIAL" in planet.specials:
+            popSizeMod += 3
 
-    popSizeMod=0
-    popSizeMod += popSizeModMap["env"][planetEnv]
-    if empire.getTechStatus("GRO_SUBTER_HAB") == fo.techStatus.complete:    
-        popSizeMod += popSizeModMap["subHab"][planetEnv]
-    if empire.getTechStatus("GRO_SYMBIOTIC_BIO") == fo.techStatus.complete:
-        popSizeMod += popSizeModMap["symBio"][planetEnv]
-    if empire.getTechStatus("GRO_XENO_GENETICS") == fo.techStatus.complete:
-        popSizeMod += popSizeModMap["xenoGen"][planetEnv]
-    if empire.getTechStatus("GRO_XENO_HYBRID") == fo.techStatus.complete:
-        popSizeMod += popSizeModMap["xenoHyb"][planetEnv]
-    if empire.getTechStatus("GRO_CYBORG") == fo.techStatus.complete:
-        popSizeMod += popSizeModMap["cyborg"][planetEnv]
-    
-    for special in [ "SLOW_ROTATION_SPECIAL",  "SOLID_CORE_SPECIAL"] :
-        if special in planetSpecials:
-            popSizeMod -= 1
-    
-    #have to use these namelists since species tags don't seem available to AI currently
-    for special, namelist in [ ("PROBIOTIC_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYISACHE",  "SP_HHHOH",  "SP_EAXAW"]),
-                                                       ("FRUIT_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYISACHE",  "SP_HHHOH",  "SP_EAXAW",  "SP_TRITH"]),
-                                                       ("SPICE_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYISACHE",  "SP_HHHOH",  "SP_EAXAW"]),
-                                                       ("MONOPOLE_SPECIAL",  ["SP_CRAY"]),
-                                                       ("SUPERCONDUCTOR_SPECIAL",  ["SP_CRAY"]),
-                                                       ("POSITRONIUM_SPECIAL",  ["SP_CRAY"]),
-                                                       ("MINERALS_SPECIAL",  ["SP_GEORGE",  "SP_EGASSEM"]),
-                                                       ("METALOIDS_SPECIAL",  ["SP_GEORGE",  "SP_EGASSEM"]),
-                                                 ]:
-        if special in planetSpecials:
-            if  species.name in namelist:
-                popSizeMod += 1
-            #    print "planet %s had special %s that triggers pop mod for species %s"%(planet.name,  special,  species.name)
-            #else:
-            #    print "planet %s had special %s without pop mod for species %s"%(planet.name,  special,  species.name)
-        
-    if "GAIA_SPECIAL" in planet.specials:
-        popSizeMod += 3
+        popSize = planet.size * popSizeMod
+        if empire.getTechStatus("CON_NDIM_STRUC") == fo.techStatus.complete:
+            popSize += popSizeModMap["ndim"][planetEnv]
+        if empire.getTechStatus("CON_ORBITAL_HAB") == fo.techStatus.complete:
+            popSize += popSizeModMap["orbit"][planetEnv]
 
-    popSize = planet.size * popSizeMod
-    if empire.getTechStatus("CON_NDIM_STRUC") == fo.techStatus.complete:
-        popSize += popSizeModMap["ndim"][planetEnv]
-    if empire.getTechStatus("CON_ORBITAL_HAB") == fo.techStatus.complete:
-        popSize += popSizeModMap["orbit"][planetEnv]
-
-    if "DIM_RIFT_MASTER_SPECIAL" in planet.specials:
-        popSize -= 4
+        if "DIM_RIFT_MASTER_SPECIAL" in planet.specials:
+            popSize -= 4
 
 
-    # give preference to closest worlds
-    empireID = empire.empireID
-    capitalID = PlanetUtilsAI.getCapital()
-    homeworld = universe.getPlanet(capitalID)
-    if homeworld:
-        homeSystemID = homeworld.systemID
-        evalSystemID = planet.systemID
-        leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
-        distanceFactor = 1.001 / (leastJumpsPath + 1)
-    else:
-        distanceFactor = 0
+        # give preference to closest worlds
+        empireID = empire.empireID
+        capitalID = PlanetUtilsAI.getCapital()
+        homeworld = universe.getPlanet(capitalID)
+        if homeworld:
+            homeSystemID = homeworld.systemID
+            evalSystemID = planet.systemID
+            leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
+            distanceFactor = 1.001 / (leastJumpsPath + 1)
+        else:
+            distanceFactor = 0
 
-    # print ">>> evaluatePlanet ID:" + str(planetID) + "/" + str(planet.type) + "/" + str(planet.size) + "/" + str(leastJumpsPath) + "/" + str(distanceFactor)
-    if missionType == AIFleetMissionType.FLEET_MISSION_COLONISATION:
-        # planet size ranges from 1-5
         if (planetID in fleetSupplyablePlanetIDs):
-            return popSize + distanceFactor
+            return popSize + distanceFactor + valMod
             #return getPlanetHospitality(planetID, species) * planet.size + distanceFactor
         else:
-            return popSize - distanceFactor
+            return popSize - distanceFactor  + valMod
             #return getPlanetHospitality(planetID, species) * planet.size - distanceFactor
-    elif missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST:
-        planetEnvironment = species.getPlanetEnvironment(planet.type)
-        if planetEnvironment == fo.planetEnvironment.uninhabitable:
-            # prevent outposts from being built when they cannot get food
-            if (planetID in fleetSupplyablePlanetIDs):
-                return AIstate.minimalColoniseValue + distanceFactor
-            elif (str("GRO_ORBIT_FARMING") in empire.availableTechs):
-                return AIstate.minimalColoniseValue + distanceFactor
-            else:
-                return AIstate.minimalColoniseValue - distanceFactor
 
 def getPlanetHospitality(planetID, species):
     "returns a value depending on the planet type"

@@ -22,7 +22,15 @@ def getCapital(): # if no current capital returns planet with biggest pop
         popMap.append( ( universe.getPlanet(planetID).currentMeterValue(fo.meterType.population) ,  planetID) )
     popMap.sort()
     return popMap[-1][-1]
-    
+
+def getCapitalSysID(): 
+    capID = getCapital()
+    if capID is None:
+        return -1
+    else:
+        return fo.getUniverse().getPlanet(capID).systemID
+
+
 def getPlanetsInSystemsIDs(systemIDs):
     "return list of planets in systems"
 

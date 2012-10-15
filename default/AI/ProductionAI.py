@@ -7,14 +7,32 @@ import AIstate
 import FleetUtilsAI
 from random import choice
 
+shipTypeMap = dict( zip( [AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION,  AIPriorityType.PRIORITY_PRODUCTION_OUTPOST,  AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  AIPriorityType.PRIORITY_PRODUCTION_INVASION,  AIPriorityType.PRIORITY_PRODUCTION_MILITARY], 
+                                            [AIShipDesignTypes.explorationShip,  AIShipDesignTypes.outpostShip,  AIShipDesignTypes.colonyShip,  AIShipDesignTypes.troopShip,  AIShipDesignTypes.attackShip ] ) )
+
+def curBestMilShipRating():
+    bestShip,  bestDesign,  buildChoices = getBestShipInfo( AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
+    if bestDesign is None:
+        return 0.00001  #  empire cannot currently produce any military ships, don't make zero though, to avoid divide-by-zero
+    stats = foAI.foAIstate.getDesignIDStats(bestDesign.id)
+    return stats['attack'] * ( stats['structure'] + stats['shields'] )
+
+def getBestShipInfo(priority):
+    empire = fo.getEmpire()
+    theseDesigns = [shipDesign for shipDesign in empire.availableShipDesigns if shipTypeMap.get(priority,  "nomatch")  in fo.getShipDesign(shipDesign).name(False)  and getAvailableBuildLocations(shipDesign) != [] ]
+    if theseDesigns == []: 
+        return None,  None,  None #must be missing a Shipyard
+    ships = [ ( fo.getShipDesign(shipDesign).name(False),  shipDesign) for shipDesign in theseDesigns ]
+    bestShip = sorted( ships)[-1][-1]
+    buildChoices = getAvailableBuildLocations(bestShip)
+    bestDesign=  fo.getShipDesign(bestShip)
+    return bestShip,  bestDesign,  buildChoices
+
 def generateProductionOrders():
-    
+    "generate production orders"
     empire = fo.getEmpire()
     universe = fo.getUniverse()
     homeworld = universe.getPlanet(PlanetUtilsAI.getCapital())
-    
-    "generate production orders"
-
     print "Production Queue Management:"
     empire = fo.getEmpire()
     totalPP = empire.productionPoints
@@ -23,44 +41,45 @@ def generateProductionOrders():
 
     movedCapital=False
     if not homeworld:
-        print "no capital, should get around to building a new one"#TODO
+        print "no capital, should get around to capturing or colonizing a new one"#TODO
     else:
         print "Empire ID %d has current Capital  %s:"%(empire.empireID,  homeworld.name )
         print "Buildings present at empire Capital (ID, Name, Type, Tags, Specials, OwnedbyEmpire):"
         for bldg in homeworld.buildingIDs:
             thisObj=universe.getObject(bldg)
-            tags=" ".join( thisObj.tags)
-            specials=" ".join(thisObj.specials)
-            print  "%10s \t %30s \t type:%30s \t tags:%20s \t specials: %20s \t owner:%d "%(bldg,  thisObj.name,  thisObj.buildingTypeName,  tags,  specials,  thisObj.owner )
+            tags=",".join( thisObj.tags)
+            specials=",".join(thisObj.specials)
+            print  "%8s | %20s | type:%20s | tags:%20s | specials: %20s | owner:%d "%(bldg,  thisObj.name,  "_".join(thisObj.buildingTypeName.split("_")[-2:])[:20],  tags,  specials,  thisObj.owner )
         
         capitalBldgs = [universe.getObject(bldg).buildingTypeName for bldg in homeworld.buildingIDs]
 
-        print "Possible building types to build:"
-        possibleBuildingTypeIDs = empire.availableBuildingTypes
-        for buildingTypeID in possibleBuildingTypeIDs:
-            buildingType = fo.getBuildingType(buildingTypeID)
-            print "    " + str(buildingType.name) + " cost:" + str(buildingType.productionCost) + " time:" + str(buildingType.productionTime)
+        possibleBuildingTypeIDs = [bldTID for bldTID in empire.availableBuildingTypes if  fo.getBuildingType(bldTID).canBeProduced(empire.empireID,  homeworld.id)]
+        if  possibleBuildingTypeIDs:
+            print "Possible building types to build:"
+            for buildingTypeID in possibleBuildingTypeIDs:
+                buildingType = fo.getBuildingType(buildingTypeID)
+                print "    " + str(buildingType.name) + " cost:" + str(buildingType.productionCost) + " time:" + str(buildingType.productionTime)
 
-        possibleBuildingTypes = [ fo.getBuildingType(buildingTypeID).name  for buildingTypeID in possibleBuildingTypeIDs ]
+            possibleBuildingTypes = [ fo.getBuildingType(buildingTypeID).name  for buildingTypeID in possibleBuildingTypeIDs ]
 
-        print ""
-        print "Buildings already in Production Queue:"
-        productionQueue = empire.productionQueue
-        queuedBldgs=[element for element in productionQueue if element.buildType == AIEmpireProductionTypes.BT_BUILDING]
-        for bldg in queuedBldgs:
-            print "    " + bldg.name + " turns:" + str(bldg.turnsLeft) + " PP:" + str(bldg.allocation)
-        if queuedBldgs == []: print "None"
-        print
-        queuedBldgNames=[ bldg.name for bldg in queuedBldgs ]
+            print ""
+            print "Buildings already in Production Queue:"
+            productionQueue = empire.productionQueue
+            queuedBldgs=[element for element in productionQueue if element.buildType == AIEmpireProductionTypes.BT_BUILDING]
+            for bldg in queuedBldgs:
+                print "    " + bldg.name + " turns:" + str(bldg.turnsLeft) + " PP:" + str(bldg.allocation)
+            if queuedBldgs == []: print "None"
+            print
+            queuedBldgNames=[ bldg.name for bldg in queuedBldgs ]
 
-        
-        if  ("BLD_INDUSTRY_CENTER" in possibleBuildingTypes) and ("BLD_INDUSTRY_CENTER" not in (capitalBldgs+queuedBldgNames)):
-            print "Enqueueing BLD_INDUSTRY_CENTER"
-            fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", empire.capitalID)
-            
-        if  ("BLD_EXOBOT_SHIP" in possibleBuildingTypes) and ("BLD_EXOBOT_SHIP" not in capitalBldgs+queuedBldgNames):
-            print "Enqueueing BLD_EXOBOT_SHIP"
-            fo.issueEnqueueBuildingProductionOrder("BLD_EXOBOT_SHIP", empire.capitalID)
+
+            if  ("BLD_INDUSTRY_CENTER" in possibleBuildingTypes) and ("BLD_INDUSTRY_CENTER" not in (capitalBldgs+queuedBldgNames)):
+                print "Enqueueing BLD_INDUSTRY_CENTER"
+                fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", empire.capitalID)
+
+            if  ("BLD_EXOBOT_SHIP" in possibleBuildingTypes) and ("BLD_EXOBOT_SHIP" not in capitalBldgs+queuedBldgNames):
+                print "Enqueueing BLD_EXOBOT_SHIP"
+                fo.issueEnqueueBuildingProductionOrder("BLD_EXOBOT_SHIP", empire.capitalID)
 
     totalPPSpent = fo.getEmpire().productionQueue.totalSpent
     print "  Total Production Points Spent:     " + str(totalPPSpent)
@@ -70,8 +89,7 @@ def generateProductionOrders():
 
     print ""
     print "Possible ship designs to build:"
-    possibleShipDesigns = empire.availableShipDesigns
-    for shipDesignID in possibleShipDesigns:
+    for shipDesignID in empire.availableShipDesigns:
         shipDesign = fo.getShipDesign(shipDesignID)
         print "    " + str(shipDesign.name(True)) + " cost:" + str(shipDesign.productionCost) + " time:" + str(shipDesign.productionTime)
 
@@ -81,7 +99,7 @@ def generateProductionOrders():
     print "production summary: %s"%[elem.name for elem in productionQueue]
     queuedColonyShips=0
     
-    #TODO:  so far, a need to dequeue means the queue is ireparably broken, needs investigation    
+    #TODO:  blocked items might not need dequeuing, but rather for supply lines to be un-blockaded 
     anyItemsDequeued=False  
     itemDequeued=True
     lastIndex=0
@@ -112,7 +130,6 @@ def generateProductionOrders():
 
     print ""
     # get the highest production priorities
-    print "Production Queue Priorities:"
     productionPriorities = {}
     for priorityType in getAIPriorityProductionTypes():
         productionPriorities[priorityType] = foAI.foAIstate.getPriority(priorityType)
@@ -126,12 +143,13 @@ def generateProductionOrders():
     numColonyFleets=len( FleetUtilsAI.getEmpireFleetIDsByRole( AIFleetMissionType.FLEET_MISSION_COLONISATION) )# counting existing colony fleets each as one ship
     totColonyFleets = queuedColonyShips + numColonyFleets
     
+    print "Production Queue Priorities:"
     filteredPriorities = {}
     for ID,  score in sortedPriorities:
         if topscore < score:
             topPriority = ID
             topscore = score #don't really need topscore nor sorting with current handling
-        print "    ID|Score: " + str([ID, score])
+        print " Score: %4d -- %s "%(score,  AIPriorityNames[ID] )
         if ID != AIPriorityType.PRIORITY_PRODUCTION_BUILDINGS:
             if ( ID != AIPriorityType.PRIORITY_PRODUCTION_COLONISATION ) or (  totColonyFleets <  numColonyTargs ):
                 filteredPriorities[ID]= score
@@ -139,26 +157,20 @@ def generateProductionOrders():
         print "No non-building-production priorities with nonzero score, setting to default: Military"
         filteredPriorities [AIPriorityType.PRIORITY_PRODUCTION_MILITARY ] =  1 
 
-    shipTypeMap = dict( zip( [AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION,  AIPriorityType.PRIORITY_PRODUCTION_OUTPOST,  AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  AIPriorityType.PRIORITY_PRODUCTION_INVASION,  AIPriorityType.PRIORITY_PRODUCTION_MILITARY], 
-                                                [AIShipDesignTypes.explorationShip,  AIShipDesignTypes.outpostShip,  AIShipDesignTypes.colonyShip,  AIShipDesignTypes.troopShip,  AIShipDesignTypes.attackShip ] ) )
     bestShips={}
     for priority in list(filteredPriorities):
-        theseDesigns = [shipDesign for shipDesign in possibleShipDesigns if shipTypeMap.get(priority,  "nomatch")  in fo.getShipDesign(shipDesign).name(False)  and getAvailableBuildLocations(shipDesign) != [] ]
-        if theseDesigns == []: 
+        bestShip,  bestDesign,  buildChoices = getBestShipInfo(priority)
+        if bestShip is None:
             del filteredPriorities[priority] #must be missing a shipyard -- TODO build a shipyard if necessary
             continue
-        ships = [ ( fo.getShipDesign(shipDesign).name(False),  shipDesign) for shipDesign in theseDesigns ]
-        bestShip = sorted( ships)[-1][-1]
-        buildChoices = getAvailableBuildLocations(bestShip)
-        bestDesign=  fo.getShipDesign(bestShip)
         bestShips[priority] = [bestShip,  bestDesign,  buildChoices ]
         
     priorityChoices=[]
     for priority in filteredPriorities:
         priorityChoices.extend( int(filteredPriorities[priority]) * [priority] )
 
-    print "  Top Production Queue Priority: " + str(topPriority)
-    print "\n ship priority selection list: \n %s \n\n"%str(priorityChoices)
+    #print "  Top Production Queue Priority: " + str(topPriority)
+    #print "\n ship priority selection list: \n %s \n\n"%str(priorityChoices)
     loopCount = 0
         
     while (wastedPP > 0) and (loopCount <100) and (priorityChoices != [] ): #make sure don't get stuck in some nonbreaking loop like if all shipyards captured

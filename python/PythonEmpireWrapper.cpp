@@ -5,6 +5,11 @@
 #include <boost/function.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
+#include <boost/python/suite/indexing/map_indexing_suite.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include "PythonSetWrapper.h"
+#include <boost/python/tuple.hpp>
+#include <boost/python/to_python_converter.hpp>
 
 namespace {
     // Research queue tests whether it contains a Tech by name, but Python needs
@@ -53,6 +58,34 @@ namespace {
     boost::function<const SitRepEntry&(const Empire&, int)> GetEmpireSitRepFunc =                       GetSitRep;
 }
 
+template<class T1, class T2>
+struct PairToTupleConverter {
+    static PyObject* convert(const std::pair<T1, T2>& pair) {
+        return boost::python::incref(boost::python::make_tuple(pair.first, pair.second).ptr());
+    }
+};
+
+typedef PairToTupleConverter<int, int> myIntIntPairConverter;
+
+typedef std::pair<int, int> IntPair;
+
+typedef std::map<std::pair<int, int>,int > PairIntInt_IntMap;
+
+std::vector<IntPair>   obstructedStarlanesP(const Empire& empire) {
+    std::set<IntPair > laneset;
+    std::vector<IntPair>  retval;
+    try {
+        laneset = empire.SupplyOstructedStarlaneTraversals();
+        for (std::set<std::pair<int, int> >::const_iterator it = laneset.begin(); it != laneset.end(); ++it)
+        {retval.push_back(*it); }
+        return retval;
+    } catch (...) {
+    }
+    return retval;
+}
+boost::function<std::vector<IntPair>(const Empire&)> obstructedStarlanesFunc =      &obstructedStarlanesP;
+
+
 namespace FreeOrionPython {
     using boost::python::class_;
     using boost::python::iterator;
@@ -83,6 +116,19 @@ namespace FreeOrionPython {
      *                                                  called
      */
     void WrapEmpire() {
+        //SetWrapper< std::pair<int, int> >  myIntIntPairSetWrapper;
+        //        myIntIntPairSetWrapper.Wrap("IntIntPairSet");
+        class_<PairIntInt_IntMap>("PairIntInt_IntMap")
+        .def(boost::python::map_indexing_suite< PairIntInt_IntMap, true >())
+        ;
+        boost::python::to_python_converter<
+        IntPair, 
+        myIntIntPairConverter > ();
+        
+        class_<std::vector<IntPair> >("IntPairVec")
+        .def(boost::python::vector_indexing_suite<std::vector<IntPair>, true >())
+        ;
+
         ///////////////////
         //     Empire    //
         ///////////////////
@@ -128,6 +174,11 @@ namespace FreeOrionPython {
                                                         return_internal_reference<>(),
                                                         boost::mpl::vector<const SitRepEntry&, const Empire&, int>()
                                                     ))
+            //.add_property("obstructedStarlanes",  make_function(&Empire::SupplyOstructedStarlaneTraversals,   return_value_policy<return_by_value>()))   
+            .def("obstructedStarlanes",             make_function(obstructedStarlanesFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<std::vector<IntPair>, const Empire&>()
+            ))
         ;
 
 

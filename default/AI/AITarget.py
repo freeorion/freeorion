@@ -2,6 +2,8 @@ import EnumsAI
 from EnumsAI import AITargetType
 import freeOrionAIInterface as fo
 
+AITargetTypeNames = AITargetType()
+
 class AITarget(object):
     "stores information about AI target - its id and type"
 
@@ -63,8 +65,26 @@ class AITarget(object):
 
     def __str__(self):
         "returns describing string"
+        target= self.getTargetObj()
+        if target is None:
+            targetName = "%4d"%self.__targetID__ 
+        else:
+            targetName = target.name
+        return "{ %7s : [%4d] %9s}"%(AITargetTypeNames.name(self.__aiTargetType__ ),  self.__targetID__ ,  targetName)
 
-        return "{" + str(self.getAITargetType()) + ":" + str(self.getTargetID()) + "}"
+    def getTargetObj(self):
+        "returns target UniverseObject for fleets, systems, planets, buildings; None for other targets"
+        universe = fo.getUniverse()
+        if self.__aiTargetType__ == AITargetType.TARGET_FLEET  :
+            return universe.getFleet(self.__targetID__ )
+        elif self.__aiTargetType__ == AITargetType.TARGET_SYSTEM  :
+            return universe.getSystem(self.__targetID__ )
+        elif self.__aiTargetType__ == AITargetType.TARGET_PLANET  :
+            return universe.getPlanet(self.__targetID__ )
+        elif self.__aiTargetType__ == AITargetType.TARGET_BUILDING  :
+            return universe.getBuilding(self.__targetID__ )
+        else:
+            return None
 
     def isValid(self):
         "returns if this object is valid"

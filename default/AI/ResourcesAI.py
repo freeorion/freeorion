@@ -101,15 +101,15 @@ def setGeneralPlanetResourceFocus():
     #fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
     ppPrio = foAI.foAIstate.getPriority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
     rpPrio = foAI.foAIstate.getPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH)
-    priorityRatio = float(ppPrio)/rpPrio
+    priorityRatio = float(ppPrio)/(rpPrio+0.0001)
     timer.append( time() ) # shuffle
     # not supporting Growth for general planets until also adding code to make sure would actually benefit
     shuffle(generalPlanetIDs)
     timer.append( time() ) # targets
     pp, rp = getResourceTargetTotals()
-    targetRatio = pp/rp
+    targetRatio = pp/(rp+0.0001)
     nplanets = len(generalPlanetIDs)
-    nChanges = int(  (  nplanets *  max( 1.0/rp,  2.0/pp)  *  ( (pp - rp* priorityRatio)/(priorityRatio +2)))  +0.5 ) # weird formula I came up with to estimate desired number of changes
+    nChanges = int(  (  nplanets *  max( 1.0/(rp+0.001),  2.0/(pp+0.0001))  *  ( (pp - rp* priorityRatio)/(priorityRatio +2)))  +0.5 ) # weird formula I came up with to estimate desired number of changes
     print "current target totals -- pp: %.1f   rp: %.1f   ; ratio %.2f  ; desired ratio %.2f  will change up to %d  foci from total of %d planets"%(pp, rp, targetRatio,  priorityRatio,  nChanges,  nplanets)
     timer.append( time() ) #loop
     iChanges = 0
@@ -117,8 +117,8 @@ def setGeneralPlanetResourceFocus():
         if iChanges >= nChanges: break
         planet = universe.getPlanet(planetID)
         oldFocus=planet.focus
-        targetRatio = pp/rp
-        ratioRatio = priorityRatio / targetRatio
+        targetRatio = pp/(rp + 0.0001)
+        ratioRatio = priorityRatio / ( targetRatio + 0.0001)
         if  (AIFocusType.FOCUS_MINING in planet.availableFoci) and ((priorityRatio > 0.5 ) or ( ratioRatio > 0.9  ) ) :  #could be a more complex decision here, 
             if oldFocus != AIFocusType.FOCUS_MINING:
                 iChanges +=1 #even if not necessarily  directed towards desired ratio
@@ -214,7 +214,10 @@ def printResourcesPriority():
     for planetID in ownedPlanetIDs:
         planet = universe.getPlanet(planetID)
         planetPopulation = planet.currentMeterValue(fo.meterType.population)
-        print "  ID: " + str(planetID) + " Name: " + str(planet.name) + " Type: " + str(planet.type) + " Size: " + str(planet.size) + " Focus: " + str(planet.focus) + " Species: " + str(planet.speciesName) + " Population: " + str(planetPopulation)
+        maxPop = planet.currentMeterValue(fo.meterType.targetPopulation)
+        statusStr =    "  ID: " + str(planetID) + " Name: % 18s  -- % 6s  % 8s "%(str(planet.name) ,  str(planet.size),  str(planet.type) ) 
+        statusStr += " Focus: % 8s"%("_".join(str(planet.focus).split("_")[1:])[:8]) + " Species: " + str(planet.speciesName) + " Pop: %2d/%2d"%(planetPopulation,  maxPop)
+        print statusStr
     print "\n\nEmpire Totals:\nPopulation: %5d \nProduction: %5d\nResearch: %5d\n"%(empire.population(),  empire.productionPoints,  empire.resourceProduction(fo.resourceType.research))
 
 

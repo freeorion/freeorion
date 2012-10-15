@@ -14,6 +14,7 @@
 
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
+#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 
 namespace {
     void                    DumpObjects(const Universe& universe)
@@ -151,6 +152,22 @@ namespace {
         return retval;
     }
     boost::function<std::vector<int> (const Universe&, int, int)> ImmediateNeighborsFunc =      &ImmediateNeighborsP;
+
+    std::map<int,double>   SystemNeighborsMapP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
+        std::multimap<double, int> lanemap;
+        std::map<int,double> retval;
+        try {
+            lanemap = universe.ImmediateNeighbors(system1_id, empire_id);
+            for (std::multimap<double, int>::const_iterator it = lanemap.begin(); it != lanemap.end(); ++it)
+            { retval[it->second] = it->first; }
+            return retval;
+        } catch (...) {
+        }
+        return retval;
+    }
+    boost::function<std::map<int,double> (const Universe&, int, int)> SystemNeighborsMapFunc =      &SystemNeighborsMapP;
+    
+    
     
     int   VisibilityP(const Universe& universe, int object_id, int empire_id = ALL_EMPIRES) {
         int retval;
@@ -236,6 +253,22 @@ namespace FreeOrionPython {
      *                                                  called
      */
     void WrapUniverseClasses() {
+        ////////////////////////
+        // Container Wrappers //
+        ////////////////////////
+        class_<std::map<int, int> >("IntIntMap")
+        .def(boost::python::map_indexing_suite<std::map<int, int>, true >())
+        ;
+        class_<std::map<int, double> >("IntDblMap")
+        .def(boost::python::map_indexing_suite<std::map<int, double>,true >())
+        ;
+        class_<std::map<int, Visibility> >("IntVisibilityMap")
+        .def(boost::python::map_indexing_suite<std::map<int, Visibility>,true >())
+        ;
+        class_<std::map<Visibility,int> >("VisibilityIntMap")
+        .def(boost::python::map_indexing_suite<std::map<Visibility,int>,true >())
+        ;
+        
         ////////////////////
         //    Universe    //
         ////////////////////
@@ -255,6 +288,8 @@ namespace FreeOrionPython {
             .add_property("planetIDs",          make_function(PlanetIDs,            return_value_policy<return_by_value>()))
             .add_property("shipIDs",            make_function(ShipIDs,              return_value_policy<return_by_value>()))
             .add_property("buildingIDs",        make_function(BuildingIDs,          return_value_policy<return_by_value>()))
+            .def("destroyedObjectIDs",          make_function(&Universe::EmpireKnownDestroyedObjectIDs, 
+                                                                                    return_value_policy<return_by_value>()))
 
             .def("systemHasStarlane",           &Universe::SystemHasVisibleStarlanes)
 
@@ -296,6 +331,17 @@ namespace FreeOrionPython {
                                                     boost::mpl::vector<std::vector<int>, const Universe&, int, int>()
                                                 ))
 
+            .def("getSystemNeighborsMap",       make_function(
+                                                    SystemNeighborsMapFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<std::map<int,double>, const Universe&, int, int>()
+                                                ))
+            .def("getVisibilityMap",             make_function(&Universe::GetObjectVisibilityByEmpire, return_value_policy<return_by_value>()
+                                                ))
+
+            .def("getVisibilityTurnsMap",        make_function(&Universe::GetObjectVisibilityTurnMapByEmpire, return_value_policy<return_by_value>()
+                                                ))
+
             .def("getVisibilityTurns",          make_function(
                                                     VisibilityTurnsFunc,
                                                     return_value_policy<return_by_value>(),
@@ -307,9 +353,11 @@ namespace FreeOrionPython {
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<int, const Universe&, int, int>()
                                                 ))
+            .def("getVisibilityMap",             make_function(&Universe::GetObjectVisibilityByEmpire, return_value_policy<return_by_value>()
+                                                ))
+
             .def("dump",                        &DumpObjects)
         ;
-
 
         ////////////////////
         // UniverseObject //
@@ -389,6 +437,8 @@ namespace FreeOrionPython {
             .add_property("designedOnTurn",     make_function(&ShipDesign::DesignedOnTurn,  return_value_policy<return_by_value>()))
             .add_property("battleSpeed",        make_function(&ShipDesign::BattleSpeed,     return_value_policy<return_by_value>()))
             .add_property("starlaneSpeed",      make_function(&ShipDesign::StarlaneSpeed,   return_value_policy<return_by_value>()))
+            .add_property("structure",          make_function(&ShipDesign::Structure,       return_value_policy<return_by_value>()))//since defense does not include Hull
+            .add_property("shields",            make_function(&ShipDesign::Shields,         return_value_policy<return_by_value>()))
             .add_property("defense",            make_function(&ShipDesign::Defense,         return_value_policy<return_by_value>()))
             .add_property("attack",             make_function(&ShipDesign::Attack,          return_value_policy<return_by_value>()))
             .add_property("canColonize",        make_function(&ShipDesign::CanColonize,     return_value_policy<return_by_value>()))
@@ -448,6 +498,7 @@ namespace FreeOrionPython {
             .add_property("maintenanceCost",    &BuildingType::MaintenanceCost)
             .add_property("perTurnCost",        &BuildingType::PerTurnCost)
             .def("captureResult",               &BuildingType::GetCaptureResult)
+            .def("canBeProduced",               &BuildingType::ProductionLocation)  //(int empire_id, int location_id)
         ;
         def("getBuildingType",                  &GetBuildingType,                           return_value_policy<reference_existing_object>());
 
@@ -528,6 +579,8 @@ namespace FreeOrionPython {
             .add_property("name",               make_function(&Species::Name,           return_value_policy<copy_const_reference>()))
             .add_property("description",        make_function(&Species::Description,    return_value_policy<copy_const_reference>()))
             .add_property("homeworlds",         make_function(&Species::Homeworlds,     return_value_policy<copy_const_reference>()))
+            .add_property("canColonize",        make_function(&Species::CanColonize,    return_value_policy<return_by_value>()))
+            .add_property("tags",               make_function(&Species::Tags,           return_value_policy<return_by_value>()))
             // TODO: const std::vector<FocusType>& Species::Foci()
             .def("getPlanetEnvironment",        &Species::GetPlanetEnvironment)
         ;
