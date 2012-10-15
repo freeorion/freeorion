@@ -100,10 +100,10 @@ void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis,
         for (std::map<std::string, int>::const_iterator copied_special_it = copied_object->m_specials.begin();
              copied_special_it != copied_object->m_specials.end(); ++copied_special_it)
         {
-            Logger().debugStream() << "UniverseObject::Copy " << copied_object->Name() << " has special " << copied_special_it->first;
+            //Logger().debugStream() << "UniverseObject::Copy " << copied_object->Name() << " has special " << copied_special_it->first;
             if (visible_specials.find(copied_special_it->first) != visible_specials.end()) {
                 this->m_specials[copied_special_it->first] = copied_special_it->second;
-                Logger().debugStream() << " ... which is copied.";
+                //Logger().debugStream() << " ... which is copied.";
             }
         }
 
