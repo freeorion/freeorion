@@ -227,7 +227,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 50
+    buildcost = 25
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-5.png"  
