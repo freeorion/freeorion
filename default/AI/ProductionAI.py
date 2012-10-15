@@ -58,7 +58,7 @@ def generateProductionOrders():
             print "Possible building types to build:"
             for buildingTypeID in possibleBuildingTypeIDs:
                 buildingType = fo.getBuildingType(buildingTypeID)
-                print "    " + str(buildingType.name) + # " cost:" + str(buildingType.productionCost) + " time:" + str(buildingType.productionTime)
+                print "    " + str(buildingType.name) # + " cost:" + str(buildingType.productionCost) + " time:" + str(buildingType.productionTime)
 
             possibleBuildingTypes = [ fo.getBuildingType(buildingTypeID).name  for buildingTypeID in possibleBuildingTypeIDs ]
 
