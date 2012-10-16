@@ -38,8 +38,6 @@
 #include <stdexcept>
 
 
-const std::size_t RESERVE_SET_SIZE = 2048;
-
 namespace {
     const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;      // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
 
@@ -1109,7 +1107,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
 
     // transfer target objects from input vector to a set
     Effect::TargetSet all_potential_targets;
-    all_potential_targets.reserve(RESERVE_SET_SIZE);
+    all_potential_targets.reserve(target_objects.size());
     for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it)
         all_potential_targets.push_back(m_objects.Object(*it));
 
@@ -1314,7 +1312,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
 
         // create non_targets and targets sets for current effects group
         Effect::TargetSet target_set;                                    // initially empty
-        target_set.reserve(RESERVE_SET_SIZE);
+        target_set.reserve(target_objects.size());
 
         // get effects group to process for this iteration
         boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;

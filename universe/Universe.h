@@ -41,9 +41,6 @@ namespace Condition {
     typedef std::vector<const UniverseObject*> ObjectSet;
 }
 
-extern const std::size_t RESERVE_SET_SIZE;
-
-
 /** The Universe class contains the majority of FreeOrion gamestate: All the
   * UniverseObjects in a game, and (of less importance) all ShipDesigns in a
   * game.  (Other gamestate is contained in the Empire class.)

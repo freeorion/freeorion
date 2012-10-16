@@ -192,14 +192,14 @@ namespace {
 
     Condition::ObjectSet EffectTargetSetToConditionObjectSet(const TargetSet& target_set) {
         Condition::ObjectSet retval;
-        retval.reserve(RESERVE_SET_SIZE);
+        retval.reserve(target_set.size());
         std::copy(target_set.begin(), target_set.end(), std::inserter(retval, retval.begin()));
         return retval;
     }
 
     TargetSet ConditionObjectSetToEffectTargetSet(const Condition::ObjectSet& object_set) {
         TargetSet retval;
-        retval.reserve(RESERVE_SET_SIZE);
+        retval.reserve(object_set.size());
         for (Condition::ObjectSet::const_iterator it = object_set.begin(); it != object_set.end(); ++it)
             retval.push_back(const_cast<UniverseObject*>(*it));
         return retval;
@@ -263,7 +263,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& po
 void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const {
     ObjectMap& objects = GetUniverse().Objects();
     TargetSet potential_targets;
-    potential_targets.reserve(RESERVE_SET_SIZE);
+    potential_targets.reserve(objects.NumObjects());
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         potential_targets.push_back(it->second);
     GetTargetSet(source_id, targets, potential_targets);
@@ -1635,12 +1635,12 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
 
     // get all objects in an ObjectSet
     Condition::ObjectSet potential_endpoint_objects;
-    potential_endpoint_objects.reserve(RESERVE_SET_SIZE);
+    potential_endpoint_objects.reserve(objects.NumObjects());
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         potential_endpoint_objects.push_back(it->second);
 
     Condition::ObjectSet endpoint_objects;
-    endpoint_objects.reserve(RESERVE_SET_SIZE);
+    endpoint_objects.reserve(potential_endpoint_objects.size());
 
     // apply endpoints condition to determine objects whose systems should be
     // connected to the source system
@@ -1709,12 +1709,12 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
 
     // get all objects in an ObjectSet
     Condition::ObjectSet potential_endpoint_objects;
-    potential_endpoint_objects.reserve(RESERVE_SET_SIZE);
+    potential_endpoint_objects.reserve(objects.NumObjects());
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         potential_endpoint_objects.push_back(it->second);
 
     Condition::ObjectSet endpoint_objects;
-    endpoint_objects.reserve(RESERVE_SET_SIZE);
+    endpoint_objects.reserve(potential_endpoint_objects.size());
 
     // apply endpoints condition to determine objects whose systems should be
     // connected to the source system
@@ -1807,12 +1807,12 @@ void MoveTo::Execute(const ScriptingContext& context) const {
 
     // get all objects in an ObjectSet
     Condition::ObjectSet potential_locations;
-    potential_locations.reserve(RESERVE_SET_SIZE);
+    potential_locations.reserve(objects.NumObjects());
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         potential_locations.push_back(it->second);
 
     Condition::ObjectSet valid_locations;
-    valid_locations.reserve(RESERVE_SET_SIZE);
+    valid_locations.reserve(potential_locations.size());
 
     // apply location condition to determine valid location to move target to
     m_location_condition->Eval(context, valid_locations, potential_locations);
@@ -2246,12 +2246,12 @@ void SetDestination::Execute(const ScriptingContext& context) const {
 
     // get all objects in an ObjectSet
     Condition::ObjectSet potential_locations;
-    potential_locations.reserve(RESERVE_SET_SIZE);
+    potential_locations.reserve(objects.NumObjects());
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         potential_locations.push_back(it->second);
 
     Condition::ObjectSet valid_locations;
-    valid_locations.reserve(RESERVE_SET_SIZE);
+    valid_locations.reserve(potential_locations.size());
 
     // apply location condition to determine valid location to move target to
     m_location_condition->Eval(context, valid_locations, potential_locations);

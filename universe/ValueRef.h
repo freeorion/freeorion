@@ -600,7 +600,6 @@ T ValueRef::Statistic<T>::Eval(const ScriptingContext& context) const
         throw std::runtime_error("ValueRef evaluated with an invalid StatisticType for the return type.");
 
     Condition::ObjectSet condition_matches;
-    condition_matches.reserve(RESERVE_SET_SIZE);
     GetConditionMatches(context, condition_matches, m_sampling_condition);
 
     if (condition_matches.empty())

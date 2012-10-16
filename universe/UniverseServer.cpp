@@ -1749,7 +1749,7 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
 
     // select only planets far away from player homeworlds
     Condition::ObjectSet native_safe_planet_set;
-    native_safe_planet_set.reserve(RESERVE_SET_SIZE);
+    native_safe_planet_set.reserve(planet_set.size());
     homeworld_jumps_filter.Eval(native_safe_planet_set, planet_set);
     Logger().debugStream() << "Number of planets far enough from players for natives to be allowed: " << native_safe_planet_set.size();
     if (native_safe_planet_set.empty())

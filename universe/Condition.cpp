@@ -161,9 +161,10 @@ void Condition::ConditionBase::Eval(const ScriptingContext& parent_context,
                                     Condition::ObjectSet& matches) const
 {
     matches.clear();
+    matches.reserve(Objects().NumObjects());
     // evaluate condition on all objects in Universe
     Condition::ObjectSet condition_non_targets;
-    condition_non_targets.reserve(RESERVE_SET_SIZE);
+    condition_non_targets.reserve(Objects().NumObjects());
     for (ObjectMap::const_iterator it = Objects().const_begin(); it != Objects().const_end(); ++it)
         condition_non_targets.push_back(it->second);
     Eval(parent_context, matches, condition_non_targets);
@@ -284,11 +285,11 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
         int high = (m_high ? m_high->Eval(local_context) : INT_MAX);
 
         // get set of all UniverseObjects that satisfy m_condition
-        ObjectSet condition_matches;
-        condition_matches.reserve(RESERVE_SET_SIZE);
-        ObjectSet condition_non_matches;
-        condition_non_matches.reserve(RESERVE_SET_SIZE);
         ObjectMap& objects = GetUniverse().Objects();
+        ObjectSet condition_matches;
+        condition_matches.reserve(objects.NumObjects());
+        ObjectSet condition_non_matches;
+        condition_non_matches.reserve(objects.NumObjects());
         for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit)
             condition_non_matches.push_back(uit->second);
         // can evaluate subcondition once for all objects being tested by this condition
@@ -325,11 +326,11 @@ bool Condition::Number::Match(const ScriptingContext& local_context) const {
     double high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
 
     // get set of all UniverseObjects that satisfy m_condition
-    ObjectSet condition_matches;
-    condition_matches.reserve(RESERVE_SET_SIZE);
-    ObjectSet condition_non_matches;
-    condition_non_matches.reserve(RESERVE_SET_SIZE);
     ObjectMap& objects = GetUniverse().Objects();
+    ObjectSet condition_matches;
+    condition_matches.reserve(objects.NumObjects());
+    ObjectSet condition_non_matches;
+    condition_non_matches.reserve(objects.NumObjects());
     for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit)
         condition_non_matches.push_back(uit->second);
     m_condition->Eval(local_context, condition_matches, condition_non_matches, NON_MATCHES);
@@ -637,7 +638,7 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
 
     // which input matches match the subcondition?
     ObjectSet subcondition_matching_matches;
-    subcondition_matching_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_matching_matches.reserve(matches.size());
     m_condition->Eval(local_context, subcondition_matching_matches, matches, NON_MATCHES);
 
     // remaining input matches don't match the subcondition...
@@ -646,7 +647,7 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
 
     // which input non_matches match the subcondition?
     ObjectSet subcondition_matching_non_matches;
-    subcondition_matching_non_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_matching_non_matches.reserve(non_matches.size());
     m_condition->Eval(local_context, subcondition_matching_non_matches, non_matches, NON_MATCHES);
 
     // remaining input non_matches don't match the subcondition...
@@ -654,8 +655,9 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
     non_matches.clear();    // to be refilled later
 
     // assemble single set of subcondition matching objects
-    ObjectSet all_subcondition_matches = subcondition_matching_matches;
-    all_subcondition_matches.reserve(RESERVE_SET_SIZE);
+    ObjectSet all_subcondition_matches;
+    all_subcondition_matches.reserve(subcondition_matching_matches.size() + subcondition_matching_non_matches.size());
+    all_subcondition_matches.insert(all_subcondition_matches.end(), subcondition_matching_matches.begin(), subcondition_matching_matches.end());
     all_subcondition_matches.insert(all_subcondition_matches.end(), subcondition_matching_non_matches.begin(), subcondition_matching_non_matches.end());
 
     // how many subcondition matches to select as matches to this condition
@@ -665,7 +667,7 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
     // these are the objects that should be transferred from non_matches into
     // matches, or those left in matches while the rest are moved into non_matches
     ObjectSet matched_objects;
-    matched_objects.reserve(RESERVE_SET_SIZE);
+    matched_objects.reserve(number);
     TransferSortedObjects(number, m_sort_key, local_context, m_sorting_method, all_subcondition_matches, matched_objects);
 
     // put objects back into matches and non_target sets as output...
@@ -1809,11 +1811,11 @@ void Condition::Contains::Eval(const ScriptingContext& parent_context, ObjectSet
 
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
-        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
+        subcondition_non_matches.reserve(objects.NumObjects());
         for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
             subcondition_non_matches.push_back(it->second);
         ObjectSet subcondition_matches;
-        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
+        subcondition_non_matches.reserve(objects.NumObjects());
 
         m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
@@ -1856,11 +1858,11 @@ bool Condition::Contains::Match(const ScriptingContext& local_context) const {
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_non_matches.reserve(objects.NumObjects());
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_matches.reserve(objects.NumObjects());
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
@@ -1915,11 +1917,11 @@ void Condition::ContainedBy::Eval(const ScriptingContext& parent_context, Object
 
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
-        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
+        subcondition_non_matches.reserve(objects.NumObjects());
         for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
             subcondition_non_matches.push_back(it->second);
         ObjectSet subcondition_matches;
-        subcondition_matches.reserve(RESERVE_SET_SIZE);
+        subcondition_matches.reserve(objects.NumObjects());
 
         m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
@@ -1962,11 +1964,11 @@ bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const 
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_non_matches.reserve(objects.NumObjects());
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_matches.reserve(objects.NumObjects());
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
@@ -4439,11 +4441,11 @@ void Condition::WithinDistance::Eval(const ScriptingContext& parent_context, Obj
 
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
-        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
+        subcondition_non_matches.reserve(objects.NumObjects());
         for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
             subcondition_non_matches.push_back(it->second);
         ObjectSet subcondition_matches;
-        subcondition_matches.reserve(RESERVE_SET_SIZE);
+        subcondition_matches.reserve(objects.NumObjects());
 
         m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
@@ -4493,11 +4495,11 @@ bool Condition::WithinDistance::Match(const ScriptingContext& local_context) con
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_non_matches.reserve(objects.NumObjects());
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_matches.reserve(objects.NumObjects());
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
     if (subcondition_matches.empty())
@@ -4652,11 +4654,11 @@ void Condition::WithinStarlaneJumps::Eval(const ScriptingContext& parent_context
 
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
-        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
+        subcondition_non_matches.reserve(objects.NumObjects());
         for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
             subcondition_non_matches.push_back(it->second);
         ObjectSet subcondition_matches;
-        subcondition_matches.reserve(RESERVE_SET_SIZE);
+        subcondition_matches.reserve(objects.NumObjects());
 
         m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
         int jump_limit = m_jumps->Eval(local_context);
@@ -4703,11 +4705,11 @@ bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_non_matches.reserve(objects.NumObjects());
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_matches.reserve(objects.NumObjects());
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
     int jump_limit = m_jumps->Eval(local_context);
@@ -4730,26 +4732,7 @@ namespace {
         bool operator()(const UniverseObject* candidate) const {
             if (!candidate)
                 return false;
-
-            ObjectMap& objects = GetUniverse().Objects();
-
-            // assemble all systems that are or that contain subcondition matches
-            Condition::ObjectSet destination_systems;
-            destination_systems.reserve(RESERVE_SET_SIZE);
-            for (Condition::ObjectSet::const_iterator it = m_destination_objects.begin(); it != m_destination_objects.end(); ++it)
-                if (const System* system = objects.Object< ::System>((*it)->SystemID()))
-                    destination_systems.push_back(system);
-
-            if (destination_systems.empty())
-                return false;
-
             // TODO: implement this test
-
-            // can the candidate object have starlanes added to all destination systems?
-            for (Condition::ObjectSet::const_iterator it = destination_systems.begin(); it != destination_systems.end(); ++it) {
-                return false;
-            }
-
             return true;
         }
 
@@ -4771,11 +4754,11 @@ void Condition::CanAddStarlaneConnection::Eval(const ScriptingContext& parent_co
 
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
-        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
+        subcondition_non_matches.reserve(objects.NumObjects());
         for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
             subcondition_non_matches.push_back(it->second);
         ObjectSet subcondition_matches;
-        subcondition_matches.reserve(RESERVE_SET_SIZE);
+        subcondition_matches.reserve(objects.NumObjects());
 
         m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
@@ -4818,11 +4801,11 @@ bool Condition::CanAddStarlaneConnection::Match(const ScriptingContext& local_co
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_non_matches.reserve(objects.NumObjects());
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_matches.reserve(objects.NumObjects());
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
@@ -4986,13 +4969,15 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
     if (!candidate_system)
         return false;
 
+    const ObjectMap& objects = GetUniverse().Objects();
+
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
-    for (ObjectMap::const_iterator it = Objects().const_begin(); it != Objects().const_end(); ++it)
+    subcondition_non_matches.reserve(objects.NumObjects());
+    for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it)
         subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_matches.reserve(objects.NumObjects());
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
@@ -5017,7 +5002,6 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
     // create starlane graph, fill with system info, exclusing lanes to
     // subcondition-matches from candidate
     std::map<int, std::set<int> > system_lanes;
-    const ObjectMap& objects = Objects();
     std::vector<const System*> systems = objects.FindObjects<System>();
 
     //for (std::vector<const System*>::const_iterator system_it = systems.begin(); system_it != systems.end(); ++system_it) {
@@ -5327,11 +5311,11 @@ void Condition::ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& pa
 
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
-        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
+        subcondition_non_matches.reserve(objects.NumObjects());
         for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
             subcondition_non_matches.push_back(it->second);
         ObjectSet subcondition_matches;
-        subcondition_matches.reserve(RESERVE_SET_SIZE);
+        subcondition_matches.reserve(objects.NumObjects());
         m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
         int empire_id = m_empire_id->Eval(local_context);
@@ -5360,11 +5344,11 @@ bool Condition::ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& l
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
-    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_non_matches.reserve(objects.NumObjects());
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
-    subcondition_matches.reserve(RESERVE_SET_SIZE);
+    subcondition_matches.reserve(objects.NumObjects());
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
     int empire_id = m_empire_id->Eval(local_context);
@@ -5418,7 +5402,7 @@ void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& mat
 
     if (search_domain == NON_MATCHES) {
         ObjectSet partly_checked_non_matches;
-        partly_checked_non_matches.reserve(RESERVE_SET_SIZE);
+        partly_checked_non_matches.reserve(non_matches.size());
 
         // move items in non_matches set that pass first operand condition into
         // partly_checked_non_matches set
@@ -5520,7 +5504,7 @@ void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matc
 
     } else {
         ObjectSet partly_checked_matches;
-        partly_checked_matches.reserve(RESERVE_SET_SIZE);
+        partly_checked_matches.reserve(matches.size());
 
         // move items in matches set the fail the first operand condition into 
         // partly_checked_matches set
