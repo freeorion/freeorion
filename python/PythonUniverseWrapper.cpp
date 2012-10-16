@@ -257,16 +257,16 @@ namespace FreeOrionPython {
         // Container Wrappers //
         ////////////////////////
         class_<std::map<int, int> >("IntIntMap")
-        .def(boost::python::map_indexing_suite<std::map<int, int>, true >())
+            .def(boost::python::map_indexing_suite<std::map<int, int>, true >())
         ;
         class_<std::map<int, double> >("IntDblMap")
-        .def(boost::python::map_indexing_suite<std::map<int, double>,true >())
+            .def(boost::python::map_indexing_suite<std::map<int, double>,true >())
         ;
         class_<std::map<int, Visibility> >("IntVisibilityMap")
-        .def(boost::python::map_indexing_suite<std::map<int, Visibility>,true >())
+            .def(boost::python::map_indexing_suite<std::map<int, Visibility>,true >())
         ;
         class_<std::map<Visibility,int> >("VisibilityIntMap")
-        .def(boost::python::map_indexing_suite<std::map<Visibility,int>,true >())
+            .def(boost::python::map_indexing_suite<std::map<Visibility,int>,true >())
         ;
         
         ////////////////////
@@ -476,7 +476,6 @@ namespace FreeOrionPython {
         ;
         def("getHullType",                      &GetHullType,                               return_value_policy<reference_existing_object>());
 
-
         //////////////////
         //   Building   //
         //////////////////
@@ -493,16 +492,14 @@ namespace FreeOrionPython {
         class_<BuildingType, noncopyable>("buildingType", no_init)
             .add_property("name",               make_function(&BuildingType::Name,          return_value_policy<copy_const_reference>()))
             .add_property("description",        make_function(&BuildingType::Description,   return_value_policy<copy_const_reference>()))
-            .add_property("productionCost",     &BuildingType::ProductionCost)
-            .add_property("productionTime",     &BuildingType::ProductionTime)
+            .def("productionCost",              &BuildingType::ProductionCost)
+            .def("productionTime",              &BuildingType::ProductionTime)
+            .def("perTurnCost",                 &BuildingType::PerTurnCost)
             .add_property("maintenanceCost",    &BuildingType::MaintenanceCost)
-            .add_property("perTurnCost",        &BuildingType::PerTurnCost)
             .def("captureResult",               &BuildingType::GetCaptureResult)
             .def("canBeProduced",               &BuildingType::ProductionLocation)  //(int empire_id, int location_id)
         ;
         def("getBuildingType",                  &GetBuildingType,                           return_value_policy<reference_existing_object>());
-
-
         ////////////////////
         // ResourceCenter //
         ////////////////////
