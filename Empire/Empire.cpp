@@ -26,6 +26,14 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
 #include <boost/timer.hpp>
+#include "boost/date_time/posix_time/posix_time.hpp"
+
+#undef ORIG_RES_SIMULATOR
+#define  DP_RES_QUEUE_SIMULATOR
+#undef  ORIG_SIMULATOR
+#define DP_QUEUE_SIMULATOR
+#undef COMPARE_SIMS
+
 
 
 namespace {
@@ -122,7 +130,7 @@ namespace {
             // get resource sharing group and amount of resource available to build this item
             const std::set<int>& group = queue_element_resource_sharing_object_groups[i];
             if (group.empty()) {
-                Logger().debugStream() << "resource sharing group for queue element is empty.  no allocating any resources to element";
+                Logger().debugStream() << "resource sharing group for queue element is empty.  not allocating any resources to element";
                 queue_element.allocated_pp = 0.0;
                 continue;
             }
@@ -304,78 +312,250 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
 
     const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
 
-    if (EPSILON < RPs) {
-        // simulate future turns in order to determine when the techs in the queue will be finished
-        int turns = 1;
-        QueueType sim_queue = m_queue;
-        std::map<std::string, double> sim_research_progress = research_progress;
+    // initialize status of everything to never getting done
+    for (unsigned int i = 0; i < m_queue.size(); ++i)
+        m_queue[i].turns_left = -1;
 
-        std::map<std::string, int> simulation_results;
-        // initialize simulation_results with -1 for all techs, so that any techs that aren't
-        // finished in simulation by turn TOO_MANY_TURNS will be left marked as never to be finished
-        for (unsigned int i = 0; i < sim_queue.size(); ++i)
-            simulation_results[m_queue[i].name] = -1;
-
-        while (!sim_queue.empty() && turns < TOO_MANY_TURNS) {
-            double total_RPs_spent = 0.0;
-            int projects_in_progress = 0;
-            SetTechQueueElementSpending(RPs, sim_research_progress, sim_tech_status_map, sim_queue, total_RPs_spent, projects_in_progress);
-            QueueType::iterator sim_q_it = sim_queue.begin();
-            while (sim_q_it != sim_queue.end()) {
-                const std::string& name = sim_q_it->name;
-                const Tech* tech = GetTech(name);
-                if (!tech) {
-                    Logger().errorStream() << "ResearchQueue::Update found null tech on future simulated research queue.  skipping.";
-                    ++sim_q_it;
-                    continue;
-                }
-                double& tech_progress = sim_research_progress[name];
-                tech_progress += sim_q_it->allocated_rp;
-                if (tech->ResearchCost() - EPSILON <= tech_progress) {
-                    sim_tech_status_map[name] = TS_COMPLETE;
-                    sim_q_it->turns_left = simulation_results[name];
-                    simulation_results[name] = turns;
-                    sim_q_it = sim_queue.erase(sim_q_it);
-                } else {
-                    ++sim_q_it;
-                }
-            }
-
-            // update simulated status of techs: some may be not researchable that were previously not.
-            // only need to check techs that are actually on the queue, as these are the only ones
-            // that might now be researched
-            for (unsigned int i = 0; i < sim_queue.size(); ++i) {
-                const std::string& tech_name = sim_queue[i].name;
-                const Tech* tech = GetTech(tech_name);
-                if (!tech) continue;   // already output error message above
-                // if tech is currently not researchable, this is because one or more of its prereqs is not researched
-                if (sim_tech_status_map[tech_name] == TS_UNRESEARCHABLE) {
-                    const std::set<std::string>& prereqs = tech->Prerequisites();
-                    // find if any prereqs are presently not researched.  if all prereqs are researched, this tech should be researchable
-                    bool has_not_complete_prereq = false;
-                    for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
-                        if (sim_tech_status_map[*it] != TS_COMPLETE) {
-                            has_not_complete_prereq = true;
-                            break;
-                        }
-                    }
-                    if (!has_not_complete_prereq) {
-                        // all prereqs were complete!  this tech is researchable!
-                        sim_tech_status_map[tech_name] = TS_RESEARCHABLE;
-                    }
-                }
-            }
-            ++turns;
-        }
-        // return results
-        for (unsigned int i = 0; i < m_queue.size(); ++i)
-            m_queue[i].turns_left = simulation_results[m_queue[i].name];
-
-    } else {
-        // since there are so few RPs, indicate that the number of turns left is indeterminate by providing a number < 0
-        for (unsigned int i = 0; i < m_queue.size(); ++i)
-            m_queue[i].turns_left = -1;
+    if ( RPs <= EPSILON ) {
+        ResearchQueueChangedSignal();
+        return;    // nothing more to do if not enough RP...
     }
+
+#ifdef  DP_RES_QUEUE_SIMULATOR
+    boost::posix_time::ptime dp_time_start;
+    boost::posix_time::ptime dp_time_end;
+#ifdef ORIG_RES_SIMULATOR
+    long dp_time;
+#endif
+
+    // "Dynamic Programming" version of research queue simulator -- copy the queue simulator containers
+    // perform dynamic programming calculation of completion times, then after regular simulation is done compare results (if both enabled)
+
+    //record original order & progress
+    // will take advantage of fact that sets (& map keys) are by default kept in sorted order lowest to highest
+    std::map<std::string, double> dp_prog = research_progress;
+    std::map< std::string, int > origQueueOrder;
+    std::map<int, double> dpsim_research_progress;
+    for (unsigned int i = 0; i < m_queue.size(); ++i) {
+        std::string tname = m_queue[i].name;
+        origQueueOrder[ tname ] = i;
+        dpsim_research_progress[i] = dp_prog[ tname ];
+    }
+
+    std::map<std::string, TechStatus> dpsim_tech_status_map = sim_tech_status_map;
+
+    // initialize simulation_results with -1 for all techs, so that any techs that aren't
+    // finished in simulation by turn TOO_MANY_TURNS will be left marked as never to be finished
+    std::vector<int>  dpsimulation_results(m_queue.size(), -1);
+
+    const int DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
+#ifdef ORIG_RES_SIMULATOR
+    dp_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
+#endif
+    std::map<std::string, std::set<std::string> > waitingForPrereqs;
+    std::set<int> dpResearchableTechs;
+ 
+    for (unsigned int i = 0; i < m_queue.size(); ++i) {
+        std::string techname = m_queue[i].name;
+        const Tech* tech = GetTech( techname );
+        if ( dpsim_tech_status_map[ techname  ] == TS_RESEARCHABLE ) {
+            dpResearchableTechs.insert(i);
+        } else if ( dpsim_tech_status_map[ techname  ] == TS_UNRESEARCHABLE ) {
+            std::set<std::string> thesePrereqs = tech->Prerequisites();
+            for (std::set<std::string>::iterator ptech_it = thesePrereqs.begin(); ptech_it != thesePrereqs.end(); ++ptech_it){
+                if (dpsim_tech_status_map[ *ptech_it ] == TS_COMPLETE ) {
+                    thesePrereqs.erase( ptech_it );
+                }
+            }
+            waitingForPrereqs[ techname ] = thesePrereqs;
+        }
+    }
+
+    int dpturns = 0;
+    //ppStillAvailable[turn-1] gives the RP still available in this resource pool at turn "turn"
+    std::vector<double> rpStillAvailable(DP_TURNS, RPs );  // initialize to the  full RP allocation for every turn
+
+    while ((dpturns < DP_TURNS ) && !(dpResearchableTechs.empty() ) ) {// if we haven't used up our turns and still have techs to process
+        ++dpturns;
+        std::map<int, bool> alreadyProcessed;
+        std::set<int>::iterator curTechIt;
+        for (curTechIt= dpResearchableTechs.begin(); curTechIt!=dpResearchableTechs.end(); ++curTechIt) {
+            alreadyProcessed[ *curTechIt ] = false;
+        }
+        curTechIt = dpResearchableTechs.begin();
+        while ((rpStillAvailable[dpturns-1]> EPSILON)) { // try to use up this turns RPs
+            if ( curTechIt==dpResearchableTechs.end() ) {
+                break; //will be wasting some RP this turn
+            }
+            int curTech = *curTechIt;
+            if ( alreadyProcessed[curTech ] ) {
+                ++curTechIt;
+                continue;
+            }
+            alreadyProcessed[curTech] = true;
+            const std::string& tech_name = m_queue[curTech].name;
+            const Tech* tech = GetTech(tech_name);
+            double progress = dpsim_research_progress[curTech];
+            double RPs_needed = tech->ResearchCost() - progress;
+            double RPs_per_turn_limit = tech->ResearchCost() / std::max(tech->ResearchTime(), 1);
+            double RPs_to_spend = std::min( std::min(RPs_needed, RPs_per_turn_limit), rpStillAvailable[dpturns-1] );
+            progress += RPs_to_spend;
+            dpsim_research_progress[curTech] = progress;
+            rpStillAvailable[dpturns-1] -= RPs_to_spend;
+            std::set<int>::iterator nextResTechIt = curTechIt;
+            int nextResTechIdx;
+            if ( ++nextResTechIt == dpResearchableTechs.end() ) {
+                nextResTechIdx = m_queue.size()+1;
+            } else {
+                nextResTechIdx = *(nextResTechIt);
+            }
+            if (tech->ResearchCost() - EPSILON <= progress) {
+                dpsim_tech_status_map[tech_name] = TS_COMPLETE;
+                dpsimulation_results[curTech] = dpturns;
+#ifndef ORIG_RES_SIMULATOR
+                m_queue[curTech].turns_left = dpturns;
+#endif
+                dpResearchableTechs.erase(curTechIt);
+                std::set<std::string> unlockedTechs= tech->UnlockedTechs();
+                for (std::set<std::string>::iterator utechIt = unlockedTechs.begin(); utechIt!=unlockedTechs.end(); ++utechIt) {
+                    std::string utechName = *utechIt;
+                    std::map<std::string,std::set<std::string> >::iterator prereqTechIt = waitingForPrereqs.find(utechName);
+                    if (prereqTechIt != waitingForPrereqs.end() ){
+                        std::set<std::string> &thesePrereqs = prereqTechIt->second;
+                        std::set<std::string>::iterator justFinishedIt = thesePrereqs.find( tech_name );
+                        if (justFinishedIt != thesePrereqs.end() ) {  //should always find it
+                            thesePrereqs.erase( justFinishedIt );
+                            if ( thesePrereqs.empty() ) { // tech now fully unlocked
+                                int thisTechIdx = origQueueOrder[utechName];
+                                dpResearchableTechs.insert(thisTechIdx);
+                                waitingForPrereqs.erase( prereqTechIt );
+                                alreadyProcessed[ thisTechIdx ] = true;//doesn't get any allocation on current turn
+                                if (thisTechIdx < nextResTechIdx ) {
+                                    nextResTechIdx = thisTechIdx;
+                                }
+                            }
+                        } else { //couldnt find tech_name in prereqs list  
+                            Logger().debugStream() << "ResearchQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << utechName << "but the latter disagreed";
+                        }
+                    } //else { //tech_name thinks itself a prereq for ytechName, but utechName not in prereqs -- not a problem so long as utechName not in our queue at all
+                      //  Logger().debugStream() << "ResearchQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << utechName << "but the latter disagreed";
+                      //}
+                }
+            }// if (tech->ResearchCost() - EPSILON <= progress)
+            curTechIt = dpResearchableTechs.find(nextResTechIdx);
+        }//while ((rpStillAvailable[dpturns-1]> EPSILON))
+
+#ifdef ORIG_RES_SIMULATOR
+        dp_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
+        dp_time = (dp_time_end - dp_time_start).total_nanoseconds();
+        dp_time = dp_time; // just to suppresss the compiler warning of unused var if the comparisons are not being done below.
+#endif
+        //dp_time = dpsim_queue_timer.elapsed() * 1000;
+        // Logger().debugStream() << "ProductionQueue::Update queue dynamic programming sim time: " << dpsim_queue_timer.elapsed() * 1000.0;
+    } // while ((dpturns < DP_TURNS ) && !(dpResearchableTechs.empty() ) )        
+#endif //DP_RES_QUEUE_SIMULATOR
+
+#ifdef ORIG_RES_SIMULATOR
+#ifdef DP_RES_QUEUE_SIMULATOR
+    boost::posix_time::ptime orig_time_start;
+    boost::posix_time::ptime orig_time_end;
+    long orig_time;
+    orig_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
+#endif
+    // simulate future turns in order to determine when the techs in the queue will be finished
+    int turns = 1;
+    QueueType sim_queue = m_queue;
+    std::map<std::string, double> sim_research_progress = research_progress;
+
+    std::map<std::string, int> simulation_results;
+    // initialize simulation_results with -1 for all techs, so that any techs that aren't
+    // finished in simulation by turn TOO_MANY_TURNS will be left marked as never to be finished
+    for (unsigned int i = 0; i < sim_queue.size(); ++i)
+        simulation_results[m_queue[i].name] = -1;
+
+    while (!sim_queue.empty() && turns < TOO_MANY_TURNS) {
+        double total_RPs_spent = 0.0;
+        int projects_in_progress = 0;
+        SetTechQueueElementSpending(RPs, sim_research_progress, sim_tech_status_map, sim_queue, total_RPs_spent, projects_in_progress);
+        QueueType::iterator sim_q_it = sim_queue.begin();
+        while (sim_q_it != sim_queue.end()) {
+            const std::string& name = sim_q_it->name;
+            const Tech* tech = GetTech(name);
+            if (!tech) {
+                Logger().errorStream() << "ResearchQueue::Update found null tech on future simulated research queue.  skipping.";
+                ++sim_q_it;
+                continue;
+            }
+            double& tech_progress = sim_research_progress[name];
+            tech_progress += sim_q_it->allocated_rp;
+            if (tech->ResearchCost() - EPSILON <= tech_progress) {
+                sim_tech_status_map[name] = TS_COMPLETE;
+                sim_q_it->turns_left = simulation_results[name];
+                simulation_results[name] = turns;
+                sim_q_it = sim_queue.erase(sim_q_it);
+            } else {
+                ++sim_q_it;
+            }
+        }
+
+        // update simulated status of techs: some may be not researchable that were previously not.
+        // only need to check techs that are actually on the queue, as these are the only ones
+        // that might now be researched
+        for (unsigned int i = 0; i < sim_queue.size(); ++i) {
+            const std::string& tech_name = sim_queue[i].name;
+            const Tech* tech = GetTech(tech_name);
+            if (!tech) continue;   // already output error message above
+            // if tech is currently not researchable, this is because one or more of its prereqs is not researched
+            if (sim_tech_status_map[tech_name] == TS_UNRESEARCHABLE) {
+                const std::set<std::string>& prereqs = tech->Prerequisites();
+                // find if any prereqs are presently not researched.  if all prereqs are researched, this tech should be researchable
+                bool has_not_complete_prereq = false;
+                for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
+                    if (sim_tech_status_map[*it] != TS_COMPLETE) {
+                        has_not_complete_prereq = true;
+                        break;
+                    }
+                }
+                if (!has_not_complete_prereq) {
+                    // all prereqs were complete!  this tech is researchable!
+                    sim_tech_status_map[tech_name] = TS_RESEARCHABLE;
+                }
+            }
+        }
+        ++turns;
+    }
+    // return results
+    for (unsigned int i = 0; i < m_queue.size(); ++i)
+        m_queue[i].turns_left = simulation_results[m_queue[i].name];
+    
+#ifdef DP_RES_QUEUE_SIMULATOR  // if both simulations were done, compare results
+orig_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
+orig_time = (orig_time_end - orig_time_start).total_nanoseconds();
+orig_time = orig_time; // just to suppresss the compiler warning of unused var if the comparisons are not being done below.
+
+#ifdef COMPARE_SIMS
+    bool sameResults = true;
+    for (unsigned int i = 0; i< m_queue.size(); ++i ) {
+        if (m_queue[i].turns_left != dpsimulation_results[i]) {
+            sameResults = false;
+            break;
+        }
+    }
+    if (sameResults ) {
+        Logger().debugStream() << "ResearchQueue::Update orig sim and dp_sim gave same results";
+        Logger().debugStream() << "ResearchQueue::Update orig sim time: " << orig_time*1e-3 << " , dp sim time: " << dp_time*1.0e-3 << " micro sec";
+    } else  {
+        Logger().debugStream() << "ResearchQueue::Update orig sim and dp_sim gave different results";
+        Logger().debugStream() << "ResearchQueue::Update orig sim time: " << orig_time*1e-3 << " , dp sim time: " << dp_time*1.0e-3 << " micro sec";
+        for (unsigned int i = 0; i< m_queue.size(); ++i ) {
+            Logger().debugStream() << "ResearchQueue::Update    Queue Item: " << m_queue[i].name;
+            Logger().debugStream() << "ResearchQueue::Update         orig sim gave next: " << m_queue[i].turns_left;
+            Logger().debugStream() << "ResearchQueue::Update          dp  sim gave next: " << dpsimulation_results[i];
+        }
+    } 
+#endif //  COMPARE_SIMS
+#endif //  DP_RES_QUEUE_SIMULATOR
+#endif //ORIG_RES_SIMULATOR
 
     ResearchQueueChangedSignal();
 }
@@ -678,7 +858,6 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType,
         sim_queue_original_indices[i] = i;
 
 
-    int turns = 1;  // to keep track of how man turn-iterations simulation takes to finish items
     const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
     const double TOO_LONG_TIME = 0.1;   // max time in ms to spend simulating queue
 
@@ -719,12 +898,151 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType,
     }
 
 
+#ifdef DP_QUEUE_SIMULATOR
+    boost::posix_time::ptime dp_time_start;
+    boost::posix_time::ptime dp_time_end;
+    long dp_time;
+
+    // "Dynamic Programming" version of queue simulator -- copy the queue simulator containers at this point, after removal of unbuildable items,
+    // perform dynamic programming calculation of completion times, then after regular simulation is done compare results
+
+    //init production queue to 'never' status
+    for (ProductionQueue::QueueType::iterator queue_it = m_queue.begin(); queue_it != m_queue.end(); ++queue_it) {
+        queue_it->turns_left_to_next_item = -1;     // -1 is sentinel value indicating never to be complete.  ProductionWnd checks for turns to completeion less than 0 and displays "NEVER" when appropriate
+        queue_it->turns_left_to_completion = -1;
+    }
+
+    // duplicate simulation production queue state (post-bad-item-removal) for dynamic programming
+    QueueType                   dpsim_queue = sim_queue;
+    std::vector<double>         dpsim_production_status = sim_production_status;
+    //std::vector<std::set<int> > sim_queue_element_groups = queue_element_groups;  //not necessary to duplicate this since won't be further modified
+    std::vector<int>            dpsimulation_results_to_next(production_status.size(), -1);
+    std::vector<int>            dpsimulation_results_to_completion(production_status.size(), -1);
+    //std::vector<int>            sim_queue_original_indices(sim_production_status.size()); //not necessary to duplicate this since won't be further modified
+
+    const int DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
+    const double DP_TOO_LONG_TIME = TOO_LONG_TIME;   // max time in ms to spend simulating queue
+
+    // The DP version will do calculations for one resource group at a time
+    // unfortunately need to copy code from SetProdQueueElementSpending  in order to work it in more efficiently here
+    dp_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
+
+    //invert lookup direction of sim_queue_element_groups:
+    std::map< std::set<int>, std::vector<int>  > elementsByGroup;
+    for (unsigned int i = 0; i < dpsim_queue.size(); ++i) {
+        elementsByGroup[ sim_queue_element_groups[i] ].push_back( i );
+    }
+
+    for (std::map<std::set<int>, double>::const_iterator groups_it = available_pp.begin(); groups_it != available_pp.end(); ++groups_it) {
+        int firstTurnPPAvailable = 1; //the first turn any pp in this resource group is available to the next item for this group
+        int turnJump = 0;
+        //ppStillAvailable[turn-1] gives the PP still available in this resource pool at turn "turn"
+        std::vector<double> ppStillAvailable(DP_TURNS, groups_it->second );  // initialize to the groups full PP allocation for each turn modeled
+
+        std::vector<int> &thisGroupsElements = elementsByGroup[ groups_it->first ];
+        std::vector<int>::const_iterator groupBegin = thisGroupsElements.begin();
+        std::vector<int>::const_iterator groupEnd = thisGroupsElements.end();
+
+        // cycle through items on queue, if in this resource group then allocate production costs over time against those available to group
+        for (std::vector<int>::const_iterator el_it = groupBegin; 
+             ( el_it != groupEnd ) &&  ((boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time())-dp_time_start).seconds() < DP_TOO_LONG_TIME) ; ++el_it) {
+            firstTurnPPAvailable += turnJump;
+            turnJump = 0;
+            if (firstTurnPPAvailable > DP_TURNS )
+                break; // this resource group is allocated-out for span of simulation; remaining items in group left as never completing
+
+            unsigned int i = *el_it;
+            ProductionQueue::Element& element = dpsim_queue[i];
+            double item_cost;
+            int build_turns;
+            boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(element);
+            double element_accumulated_PP = sim_production_status[i];                                   // PP accumulated by this element towards building next item
+            double element_total_cost = item_cost * element.remaining;                        // total PP to build all items in this element
+            double element_per_turn_limit = item_cost / std::max(build_turns, 1);
+            double additional_pp_to_complete_element = element_total_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to build all items in this element
+
+            int max_turns = std::max( std::max(build_turns, 1), 1+int(additional_pp_to_complete_element/ppStillAvailable[firstTurnPPAvailable-1]));
+            max_turns = std::min( max_turns, DP_TURNS - firstTurnPPAvailable +1 );
+
+            double allocation;
+            //Logger().debugStream() << "ProductionQueue::Update Queue index   Queue Item: " << element.item.name;
+
+            for (int j = 0; j < max_turns; j++ ) {  //iterate over the turns necessary to complete item
+                // determine how many pp to allocate to this queue element this turn.  allocation is limited by the
+                // item cost, which is the max number of PP per turn that can be put towards this item, and by the
+                // total cost remaining to complete the last item in the queue element (eg. the element has all but
+                // the last item complete already) and by the total pp available in this element's production location's
+                // resource sharing group
+                allocation = std::min( std::min( additional_pp_to_complete_element, element_per_turn_limit), ppStillAvailable[firstTurnPPAvailable+j-1] );
+                allocation = std::max( allocation, 0.0);       // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
+                dpsim_production_status[i] +=allocation;  // add turn's allocation
+                ppStillAvailable[firstTurnPPAvailable+j-1] -= allocation;
+                if (ppStillAvailable[firstTurnPPAvailable+j-1] <= EPSILON ) {
+                    ppStillAvailable[firstTurnPPAvailable+j-1] = 0;
+                    ++turnJump;
+                }
+
+                // check if additional turn's PP allocation was enough to finish next item in element
+                if (item_cost - EPSILON <= dpsim_production_status[i] ) {
+                    // an item has been completed. 
+                    // deduct cost of one item from accumulated PP.  don't set
+                    // accumulation to zero, as this would eliminate any partial
+                    // completion of the next item
+                    dpsim_production_status[i] -= item_cost;
+                    --element.remaining;  //pretty sure this just effects the dp version & should do even if also doing ORIG_SIMULATOR
+
+// see ~90 lines up for define or undef statement
+#ifndef ORIG_SIMULATOR
+                    //Logger().debugStream() << "ProductionQueue::Recording DP sim results for item " << element.item.name;
+
+                    // if this was the first item in the element to be completed in
+                    // this simuation, update the original queue element with the
+                    // turns required to complete the next item in the element
+                    if (element.remaining +1 == m_queue[sim_queue_original_indices[i]].remaining)//had already decremented element.remaining above
+                        m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = firstTurnPPAvailable+j;
+                    if (!element.remaining) {
+                        m_queue[sim_queue_original_indices[i]].turns_left_to_completion = firstTurnPPAvailable+j;    // record the (estimated) turns to complete the whole element on the original queue
+                    }
+#endif // ORIG_SIMULATOR
+#ifdef ORIG_SIMULATOR
+                    //extra record of dp results, in case want to compare to orig results
+                    if (element.remaining +1 == m_queue[sim_queue_original_indices[i]].remaining)//had already decremented element.remaining above
+                        dpsimulation_results_to_next[i] = firstTurnPPAvailable+j;
+                    if (!element.remaining) {
+                        dpsimulation_results_to_completion[i] = firstTurnPPAvailable+j;    // record the (estimated) turns to complete the whole element on the original queue
+                    }
+#endif // ORIG_SIMULATOR
+                }
+                if (!element.remaining) {
+                    break; // this element all done
+                }
+            } //j-loop : turns relative to firstTurnPPAvailable
+        }// queue element loop
+    }// resource groups loop
+
+    dp_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
+    dp_time = (dp_time_end - dp_time_start).total_nanoseconds();
+    dp_time = dp_time; // just to suppresss the compiler warning of unused var if the comparisons are not being done below.
+
+    //dp_time = dpsim_queue_timer.elapsed() * 1000;
+    // Logger().debugStream() << "ProductionQueue::Update queue dynamic programming sim time: " << dpsim_queue_timer.elapsed() * 1000.0;
+
+#endif //DP_SIMULATOR
+
+// see ~110 lines up for define or undef statement
+#ifdef  ORIG_SIMULATOR
+    boost::posix_time::ptime orig_time_start;
+    boost::posix_time::ptime orig_time_end;
+    long orig_time;
 
     // cycle through items on queue, adding up their allotted PP until each is
     // finished and removed from queue until everything on queue has been
     // finished, in order to calculate expected completion times
-    boost::timer sim_queue_timer;
-    while (!sim_queue.empty() && turns < TOO_MANY_TURNS && sim_queue_timer.elapsed() < TOO_LONG_TIME) {
+    //boost::timer sim_queue_timer;
+    int turns = 1;  // to keep track of how man turn-iterations simulation takes to finish items
+    orig_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
+
+    while (!sim_queue.empty() && turns < TOO_MANY_TURNS && (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time())-orig_time_start).seconds() < TOO_LONG_TIME) {
         std::map<std::set<int>, double> allocated_pp;
         int projects_in_progress = 0;
 
@@ -777,8 +1095,11 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType,
         }
         ++turns;
     }   // loop while (!sim_queue.empty() && turns < TOO_MANY_TURNS)
-    //Logger().debugStream() << "ProductionQueue::Update queue sim time: " << sim_queue_timer.elapsed() * 1000.0;
-
+    // Logger().debugStream() << "ProductionQueue::Update queue orig sim time: " << sim_queue_timer.elapsed() * 1000.0;
+    //orig_time = sim_queue_timer.elapsed() *1000;
+    orig_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
+    orig_time = (orig_time_end - orig_time_start).total_nanoseconds();
+    orig_time = orig_time; // just to suppresss the compiler warning of unused var if the comparisons are not being done below.
     // mark rest of items on simulated queue (if any) as never to be finished
     for (unsigned int i = 0; i < sim_queue.size(); ++i) {
         if (sim_queue[i].remaining == m_queue[sim_queue_original_indices[i]].remaining)
@@ -786,6 +1107,32 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType,
         m_queue[sim_queue_original_indices[i]].turns_left_to_completion = -1;
     }
 
+#ifdef DP_QUEUE_SIMULATOR  // if both simulations were done, compare results
+#ifdef COMPARE_SIMS
+    bool sameResults = true;
+    for (unsigned int i = 0; i< sim_production_status.size(); ++i ) {
+        if ( (m_queue[sim_queue_original_indices[i]].turns_left_to_next_item != dpsimulation_results_to_next[i]) || 
+            (m_queue[sim_queue_original_indices[i]].turns_left_to_completion != dpsimulation_results_to_completion[i]) ) {
+            sameResults = false;
+            break;
+        }
+    }
+    if (sameResults ) {
+        Logger().debugStream() << "ProductionQueue::Update orig sim and dp_sim gave same results";
+        Logger().debugStream() << "ProductionQueue::Update orig sim time: " << orig_time*1e-3 << " , dp sim time: " << dp_time*1.0e-3 << " micro sec";
+    } else  {
+        Logger().debugStream() << "ProductionQueue::Update orig sim and dp_sim gave different results";
+        Logger().debugStream() << "ProductionQueue::Update orig sim time: " << orig_time*1e-3 << " , dp sim time: " << dp_time*1.0e-3 << " micro sec";
+        for (unsigned int i = 0; i< dpsimulation_results_to_next.size(); ++i ) {
+            ProductionQueue::Element& el = m_queue[sim_queue_original_indices[i]];
+            Logger().debugStream() << "ProductionQueue::Update    Queue Item: " << el.item.name;
+            Logger().debugStream() << "ProductionQueue::Update         orig sim gave next: " << el.turns_left_to_next_item << " ; completion: " << el.turns_left_to_completion;
+            Logger().debugStream() << "ProductionQueue::Update          dp  sim gave next: " << dpsimulation_results_to_next[i] << " ; completion: " << dpsimulation_results_to_completion[i];
+        }
+    }
+#endif //  COMPARE_SIMS
+#endif //  DP_QUEUE_SIMULATOR
+#endif //  ORIG_SIMULATOR
 
     ProductionQueueChangedSignal();
 }
@@ -1801,11 +2148,13 @@ void Empire::SetTechResearchProgress(const std::string& name, double progress) {
     // don't just give tech to empire, as another effect might reduce its progress before end of turn
 }
 
+const int MAX_PROD_QUEUE_SIZE = 500;
+
 void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/) {
     if (!BuildableItem(build_type, name, location))
         Logger().debugStream() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue...";
 
-    if (m_production_queue.size() >= 100)
+    if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE)
         return;
 
     ProductionQueue::Element build(build_type, name, number, number, location);
@@ -1823,7 +2172,7 @@ void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, 
     if (!BuildableItem(build_type, design_id, location))
         Logger().debugStream() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue...";
 
-    if (m_production_queue.size() >= 100)
+    if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE)
         return;
 
     ProductionQueue::Element build(build_type, design_id, number, number, location);
