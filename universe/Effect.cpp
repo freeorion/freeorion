@@ -444,6 +444,9 @@ void EffectsGroup::ExecuteAppearanceModifications(int source_id, const TargetSet
 
 }
 
+bool EffectsGroup::ScopeIsSource() const
+{ return dynamic_cast<const Condition::Source*>(m_scope); }
+
 EffectsGroup::Description EffectsGroup::GetDescription() const {
     Description retval;
     if (dynamic_cast<const Condition::Source*>(m_scope))

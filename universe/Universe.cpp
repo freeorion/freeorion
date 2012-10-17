@@ -1304,6 +1304,15 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         Logger().debugStream() << "Universe::StoreTargetsAndCausesOfEffectsGroups( , source id: " << source_object_id << ", , specific cause: " << specific_cause_name << ", , )";
     }
 
+    // attempt to locate source object in target objects
+    UniverseObject* source = 0;
+    for (Effect::TargetSet::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it) {
+        if ((*it)->ID() == source_object_id && source_object_id != INVALID_OBJECT_ID) {
+            source = *it;
+            break;
+        }
+    }
+
     // process all effects groups in set provided
     int eg_count = 1;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_it;
@@ -1311,18 +1320,25 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         ScopedTimer update_timer("... Universe::StoreTargetsAndCausesOfEffectsGroups done processing source " + boost::lexical_cast<std::string>(source_object_id) + " cause: " + specific_cause_name + " effects group " + boost::lexical_cast<std::string>(eg_count++));
 
         // create non_targets and targets sets for current effects group
-        Effect::TargetSet target_set;                                    // initially empty
-        target_set.reserve(target_objects.size());
+        Effect::TargetSet target_set;   // initially empty
+
 
         // get effects group to process for this iteration
         boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
 
-        {
+        bool scope_is_source = effects_group->ScopeIsSource();
+        if (scope_is_source) {
+            if (source) {
+                const Condition::ConditionBase* activation = effects_group->Activation();
+                if (!activation || activation->Eval(ScriptingContext(source), source))
+                    target_set.push_back(source);
+            }
+        } else {
             ScopedTimer update_timer2("... ... Universe::StoreTargetsAndCausesOfEffectsGroups get target set");
             // get set of target objects for this effects group from potential targets specified
+            target_set.reserve(target_objects.size());
             effects_group->GetTargetSet(source_object_id, target_set, target_objects);    // transfers objects from target_objects to target_set if they meet the condition
         }
-        //effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);    // transfers objects from potential_target_set to target_set if they meet the condition
 
         // abort if no targets
         if (target_set.empty())
@@ -1340,9 +1356,11 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         // store effect cause and targets info in map, indexed by sourced effects group
         targets_causes.push_back(std::make_pair(sourced_effects_group, target_and_cause));
 
-        // restore target_objects by moving objects back from targets to target_objects
-        // this should be cheaper than doing a full copy because target_set is usually small
-        target_objects.insert(target_objects.end(), target_set.begin(), target_set.end());
+        if (!scope_is_source) {
+            // restore target_objects by copying objects back from targets to target_objects
+            // this should be cheaper than doing a full copy because target_set is usually small
+            target_objects.insert(target_objects.end(), target_set.begin(), target_set.end());
+        }
     }
 }
 

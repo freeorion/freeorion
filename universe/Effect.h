@@ -113,6 +113,9 @@ public:
     void    ExecuteAppearanceModifications(int source_id, const TargetSet& targets) const;
 
     const std::string&              StackingGroup() const       { return m_stacking_group; }
+    const Condition::ConditionBase* Scope() const               { return m_scope; }
+    bool                            ScopeIsSource() const;
+    const Condition::ConditionBase* Activation() const          { return m_activation; }
     const std::vector<EffectBase*>& EffectsList() const         { return m_effects; }
     Description                     GetDescription() const;
     std::string                     DescriptionString() const;
