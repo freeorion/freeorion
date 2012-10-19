@@ -219,9 +219,6 @@ double BuildingType::ProductionCost(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_BUILDING_PRODUCTION || !m_production_cost) {
         return 1.0;
     } else {
-        if (!m_production_time)
-            return 999999.9;
-
         if (ValueRef::ConstantExpr(m_production_cost))
             return m_production_cost->Eval();
 
@@ -240,12 +237,9 @@ double BuildingType::PerTurnCost(int empire_id, int location_id) const
 { return ProductionCost(empire_id, location_id) / std::max(1, ProductionTime(empire_id, location_id)); }
 
 int BuildingType::ProductionTime(int empire_id, int location_id) const {
-    if (CHEAP_AND_FAST_BUILDING_PRODUCTION || !m_production_cost) {
+    if (CHEAP_AND_FAST_BUILDING_PRODUCTION || !m_production_time) {
         return 1;
     } else {
-        if (!m_production_time)
-            return 9999;
-
         if (ValueRef::ConstantExpr(m_production_time))
             return m_production_time->Eval();
 

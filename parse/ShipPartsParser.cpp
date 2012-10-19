@@ -5,6 +5,7 @@
 #include "EnumParser.h"
 #include "Int.h"
 #include "Label.h"
+#include "ValueRefParser.h"
 #include "ParseImpl.h"
 #include "ShipPartStatsParser.h"
 #include "../universe/Condition.h"
@@ -39,6 +40,9 @@ namespace {
     struct rules {
         rules() {
             const parse::lexer& tok = parse::lexer::instance();
+
+            const parse::value_ref_parser_rule<int>::type& int_value_ref =          parse::value_ref_parser<int>();
+            const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -98,23 +102,23 @@ namespace {
                 ;
 
             common_params
-                =   parse::label(BuildCost_name)     > parse::double_ [ _a = _1 ]
-                >   parse::label(BuildTime_name)     > parse::int_    [ _b = _1 ]
-                >   producible                                        [ _c = _1 ]
+                =   parse::label(BuildCost_name)    > double_value_ref  [ _a = _1 ]
+                >   parse::label(BuildTime_name)    > int_value_ref     [ _b = _1 ]
+                >   producible                                          [ _c = _1 ]
                 >   tags(_d)
                 >   location(_e)
                 >   -(
                         parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _f = _1 ]
                      )
-                >    parse::label(Icon_name) > tok.string
+                >    parse::label(Icon_name)        > tok.string
                     [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1) ]
             ;
 
             part_type
                 =    part_type_prefix(_a, _b, _c)
-                >>   parse::detail::part_stats_parser() [ _d = _1 ]
-                >>   slots(_f)
-                >>   common_params [ _e = _1 ]
+                >    parse::detail::part_stats_parser() [ _d = _1 ]
+                >    slots(_f)
+                >    common_params [ _e = _1 ]
                     [ insert(_r1, new_<PartType>(_a, _b, _c, _d, _e, _f)) ]
                 ;
 
@@ -177,8 +181,8 @@ namespace {
             parse::token_iterator,
             PartHullCommonParams (),
             qi::locals<
-                double,
-                int,
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<int>*,
                 bool,
                 std::vector<std::string>,
                 Condition::ConditionBase*,

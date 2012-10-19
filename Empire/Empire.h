@@ -73,9 +73,10 @@ struct ResearchQueue {
     //@}
 
     /** \name Structors */ //@{
-    ResearchQueue() :
+    ResearchQueue(int empire_id) :
         m_projects_in_progress(0),
-        m_total_RPs_spent(0.0)
+        m_total_RPs_spent(0.0),
+        m_empire_id(empire_id)
     {}
     //@}
 
@@ -83,6 +84,7 @@ struct ResearchQueue {
     bool            InQueue(const std::string& tech_name) const;    ///< Returns true iff \a tech is in this queue.
     int             ProjectsInProgress() const;         ///< Returns the number of research projects currently (perhaps partially) funded.
     double          TotalRPsSpent() const;              ///< Returns the number of RPs currently spent on the projects in this queue.
+    int             EmpireID() const { return m_empire_id; }
 
     // STL container-like interface
     bool            empty() const;
@@ -104,7 +106,7 @@ struct ResearchQueue {
       * precondition of this function that \a RPs must be greater than some
       * epsilon > 0; see the implementation for the actual value used for
       * epsilon. */
-    void            Update(Empire* empire, double RPs, const std::map<std::string, double>& research_progress);
+    void            Update(double RPs, const std::map<std::string, double>& research_progress);
 
     // STL container-like interface
     void            push_back(const std::string& tech_name);
@@ -125,9 +127,10 @@ struct ResearchQueue {
     //@}
 
 private:
-    QueueType m_queue;
-    int       m_projects_in_progress;
-    double    m_total_RPs_spent;
+    QueueType   m_queue;
+    int         m_projects_in_progress;
+    double      m_total_RPs_spent;
+    int         m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -186,12 +189,13 @@ struct ProductionQueue {
     //@}
 
     /** \name Structors */ //@{
-    ProductionQueue(); ///< Basic ctor.
+    ProductionQueue(int empire_id); ///< Basic ctor.
     //@}
 
     /** \name Accessors */ //@{
     int                             ProjectsInProgress() const;         ///< Returns the number of production projects currently (perhaps partially) funded.
     double                          TotalPPsSpent() const;              ///< Returns the number of PPs currently spent on the projects in this queue.
+    int                             EmpireID() const { return m_empire_id; }
 
     /** Returns map from sets of system ids that can share resources to amount
       * of PP available in those groups of systems */
@@ -212,7 +216,7 @@ struct ProductionQueue {
     const Element&                  operator[](int i) const;
 
     /** Returns an iterator to the underfunded production project, or end() if none exists. */
-    const_iterator                  UnderfundedProject(const Empire* empire) const;
+    const_iterator                  UnderfundedProject() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -221,7 +225,7 @@ struct ProductionQueue {
       * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
       * empire->CheckProductionProgress() will actually spend PP, remove items from queue and create them
       * in the universe. */
-    void                            Update(Empire* empire, const std::map<ResourceType,
+    void                            Update(const std::map<ResourceType,
                                            boost::shared_ptr<ResourcePool> >& resource_pools,
                                            const std::vector<double>& production_status);
 
@@ -239,7 +243,7 @@ struct ProductionQueue {
     void                            clear();
 
     /** Returns an iterator to the underfunded production project, or end() if none exists. */
-    iterator                        UnderfundedProject(const Empire* empire);
+    iterator                        UnderfundedProject();
 
     mutable ProductionQueueChangedSignalType ProductionQueueChangedSignal;
     //@}
@@ -248,6 +252,7 @@ private:
     QueueType                       m_queue;
     int                             m_projects_in_progress;
     std::map<std::set<int>, double> m_object_group_allocated_pp;
+    int                             m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>

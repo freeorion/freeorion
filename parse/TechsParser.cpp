@@ -1,6 +1,7 @@
 #include "Double.h"
 #include "Int.h"
 #include "Label.h"
+#include "ValueRefParser.h"
 #include "ParseImpl.h"
 #include "../universe/Species.h"
 
@@ -59,6 +60,9 @@ namespace {
         rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
+            const parse::value_ref_parser_rule<int>::type& int_value_ref =          parse::value_ref_parser<int>();
+            const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
+
             qi::_1_type _1;
             qi::_2_type _2;
             qi::_3_type _3;
@@ -93,15 +97,9 @@ namespace {
                             parse::label(TechType_name) >> parse::enum_parser<TechType>() [ _d = _1 ]
                         |   eps [ _d = TT_THEORY ]
                      )
-                >    parse::label(Category_name)          > tok.string [ _e = _1 ]
-                >>   (
-                            parse::label(ResearchCost_name) >> parse::double_ [ _f = _1 ]
-                        |   eps [ _f = 1.0 ]
-                        )
-                >>   (
-                            parse::label(ResearchTurns_name) >> parse::int_ [ _g = _1 ]
-                        |   eps [ _g = 1 ]
-                     )
+                >    parse::label(Category_name)      > tok.string      [ _e = _1 ]
+                >    parse::label(ResearchCost_name)  > double_value_ref[ _f = _1 ]
+                >    parse::label(ResearchTurns_name) > int_value_ref   [ _g = _1 ]
                 >>   (
                             tok.Unresearchable_ [ _h = false ]
                         |   tok.Researchable_ [ _h = true ]
@@ -191,8 +189,8 @@ namespace {
                 std::string,
                 TechType,
                 std::string,
-                double,
-                int,
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<int>*,
                 bool
             >,
             parse::skipper_type

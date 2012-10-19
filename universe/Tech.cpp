@@ -6,6 +6,9 @@
 #include "../util/OptionsDB.h"
 #include "../util/AppInterface.h"
 #include "../util/Directories.h"
+#include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
+#include "ValueRef.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -54,7 +57,8 @@ struct store_category_impl
 };
 
 namespace {
-    void NextTechs(std::vector<const Tech*>& retval, const std::set<std::string>& known_techs, std::set<const Tech*>& checked_techs,
+    void NextTechs(std::vector<const Tech*>& retval, const std::set<std::string>& known_techs,
+                   std::set<const Tech*>& checked_techs,
                    TechManager::iterator it, TechManager::iterator end_it)
     {
         if (checked_techs.find(*it) != checked_techs.end())
@@ -86,14 +90,14 @@ namespace {
         }
     }
 
-    const Tech* Cheapest(const std::vector<const Tech*>& next_techs) {
+    const Tech* Cheapest(const std::vector<const Tech*>& next_techs, int empire_id) {
         if (next_techs.empty())
             return 0;
 
-        double min_price = next_techs[0]->ResearchCost() * next_techs[0]->ResearchTime();
+        double min_price = next_techs[0]->ResearchCost(empire_id);
         int min_index = 0;
         for (unsigned int i = 0; i < next_techs.size(); ++i) {
-            double price = next_techs[i]->ResearchCost() * next_techs[i]->ResearchTime();
+            double price = next_techs[i]->ResearchCost(empire_id);
             if (price < min_price) {
                 min_price = price;
                 min_index = i;
@@ -125,8 +129,8 @@ std::string Tech::Dump() const {
     }
     retval += "\n";
     retval += DumpIndent() + "category = \"" + m_category + "\"\n";
-    retval += DumpIndent() + "researchcost = " + lexical_cast<std::string>(ResearchCost()) + "\n";
-    retval += DumpIndent() + "researchturns = " + lexical_cast<std::string>(ResearchTime()) + "\n";
+    retval += DumpIndent() + "researchcost = " + m_research_cost->Dump() + "\n";
+    retval += DumpIndent() + "researchturns = " + m_research_turns->Dump() + "\n";
     retval += DumpIndent() + "prerequisites = ";
     if (m_prerequisites.empty()) {
         retval += "[]\n";
@@ -176,23 +180,61 @@ std::string Tech::Dump() const {
     return retval;
 }
 
-double Tech::ResearchCost() const {
-    if (!CHEAP_AND_FAST_TECH_RESEARCH)
-        return m_research_cost;
-    else
+namespace {
+    const UniverseObject* SourceForEmpire(int empire_id) {
+        const Empire* empire = Empires().Lookup(empire_id);
+        if (!empire) {
+            Logger().debugStream() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
+            return 0;
+        }
+        // get a source object, which is owned by the empire with the passed-in
+        // empire id.  this is used in conditions to reference which empire is
+        // doing the building.  Ideally this will be the capital, but any object
+        // owned by the empire will work.
+        const UniverseObject* source = GetUniverseObject(empire->CapitalID());
+        // no capital?  scan through all objects to find one owned by this empire
+        if (!source) {
+            for (ObjectMap::const_iterator obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
+                if (obj_it->second->OwnedBy(empire_id)) {
+                    source = obj_it->second;
+                    break;
+                }
+            }
+        }
+        return source;
+    }
+}
+
+double Tech::ResearchCost(int empire_id) const {
+    if (CHEAP_AND_FAST_TECH_RESEARCH || !m_research_cost) {
         return 1.0;
+    } else {
+        if (ValueRef::ConstantExpr(m_research_cost))
+            return m_research_cost->Eval();
+
+        const UniverseObject* source = SourceForEmpire(empire_id);
+        ScriptingContext context(source);
+
+        return m_research_cost->Eval(context);
+    }
 }
 
-double Tech::PerTurnCost() const
-{ return ResearchCost() / std::max(1, ResearchTime()); }
+double Tech::PerTurnCost(int empire_id) const
+{ return ResearchCost(empire_id) / std::max(1, ResearchTime(empire_id)); }
 
-int Tech::ResearchTime() const {
-    if (!CHEAP_AND_FAST_TECH_RESEARCH)
-        return m_research_turns;
-    else
+int Tech::ResearchTime(int empire_id) const {
+    if (CHEAP_AND_FAST_TECH_RESEARCH || !m_research_turns) {
         return 1;
-}
+    } else {
+        if (ValueRef::ConstantExpr(m_research_turns))
+            return m_research_turns->Eval();
 
+        const UniverseObject* source = SourceForEmpire(empire_id);
+        ScriptingContext context(source);
+
+        return m_research_turns->Eval(context);
+    }
+}
 
 
 ///////////////////////////////////////////////////////////
@@ -261,21 +303,24 @@ std::vector<const Tech*> TechManager::AllNextTechs(const std::set<std::string>& 
     return retval;
 }
 
-const Tech* TechManager::CheapestNextTech(const std::set<std::string>& known_techs)
-{ return Cheapest(AllNextTechs(known_techs)); }
+const Tech* TechManager::CheapestNextTech(const std::set<std::string>& known_techs, int empire_id)
+{ return Cheapest(AllNextTechs(known_techs), empire_id); }
 
 std::vector<const Tech*> TechManager::NextTechsTowards(const std::set<std::string>& known_techs,
-                                                       const std::string& desired_tech)
+                                                       const std::string& desired_tech,
+                                                       int empire_id)
 {
     std::vector<const Tech*> retval;
     std::set<const Tech*> checked_techs;
-    NextTechs(retval, known_techs, checked_techs, m_techs.get<NameIndex>().find(desired_tech), m_techs.get<NameIndex>().end());
+    NextTechs(retval, known_techs, checked_techs, m_techs.get<NameIndex>().find(desired_tech),
+              m_techs.get<NameIndex>().end());
     return retval;
 }
 
 const Tech* TechManager::CheapestNextTechTowards(const std::set<std::string>& known_techs,
-                                                 const std::string& desired_tech)
-{ return Cheapest(NextTechsTowards(known_techs, desired_tech)); }
+                                                 const std::string& desired_tech,
+                                                 int empire_id)
+{ return Cheapest(NextTechsTowards(known_techs, desired_tech, empire_id), empire_id); }
 
 TechManager::iterator TechManager::begin() const
 { return m_techs.get<NameIndex>().begin(); }
@@ -510,7 +555,7 @@ TechManager& TechManager::GetTechManager() {
     return manager;
 }
 
-std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_name) const {
+std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_name, int empire_id) const {
     const Tech* tech = this->GetTech(tech_name);
     if (!tech)
         return std::vector<std::string>();
@@ -535,7 +580,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
         // tech is new, so put it into the set of already-processed prereqs
         prereqs_set.insert(cur_name);
         // and the map of techs, sorted by cost
-        techs_to_add_map.insert(std::pair<double, std::string>(cur_tech->ResearchCost(), cur_name));
+        techs_to_add_map.insert(std::pair<double, std::string>(cur_tech->ResearchCost(empire_id), cur_name));
 
         // get prereqs of new tech, append to list
         cur_prereqs = cur_tech->Prerequisites();

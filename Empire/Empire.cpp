@@ -46,7 +46,7 @@ namespace {
     void SetTechQueueElementSpending(double RPs, const std::map<std::string, double>& research_progress,
                                      const std::map<std::string, TechStatus>& research_status,
                                      ResearchQueue::QueueType& queue,
-                                     double& total_RPs_spent, int& projects_in_progress)
+                                     double& total_RPs_spent, int& projects_in_progress, int empire_id)
     {
         total_RPs_spent = 0.0;
         projects_in_progress = 0;
@@ -70,8 +70,8 @@ namespace {
             if (researchable) {
                 std::map<std::string, double>::const_iterator progress_it = research_progress.find(it->name);
                 double progress = progress_it == research_progress.end() ? 0.0 : progress_it->second;
-                double RPs_needed = tech->ResearchCost() - progress;
-                double RPs_per_turn_limit = tech->ResearchCost() / std::max(tech->ResearchTime(), 1);
+                double RPs_needed = tech->ResearchCost(empire_id) - progress;
+                double RPs_per_turn_limit = tech->PerTurnCost(empire_id);
                 double RPs_to_spend = std::min(RPs_needed, RPs_per_turn_limit);
 
                 if (total_RPs_spent + RPs_to_spend <= RPs - EPSILON) {
@@ -92,18 +92,19 @@ namespace {
         }
     }
 
-    /** sets the allocated_pp value for each Element in the passed
+    /** Sets the allocated_pp value for each Element in the passed
       * ProductionQueue \a queue.  Elements are allocated PP based on their need,
       * the limits they can be given per turn, and the amount available at their
       * production location (which is itself limited by the resource supply
       * system groups that are able to exchange resources with the build
       * location and the amount of minerals and industry produced in the group).
-      * Elements will not receive funding if they cannot be built by \a empire
-      * this turn, or can't be built at their build location. */
-    void SetProdQueueElementSpending(Empire* empire, std::map<std::set<int>, double> available_pp,
+      * Elements will not receive funding if they cannot be produced by the
+      * empire with the indicated \a empire_id this turn at their build location. */
+    void SetProdQueueElementSpending(std::map<std::set<int>, double> available_pp,
                                      const std::vector<std::set<int> >& queue_element_resource_sharing_object_groups,
                                      const std::vector<double>& production_status, ProductionQueue::QueueType& queue,
-                                     std::map<std::set<int>, double>& allocated_pp, int& projects_in_progress)
+                                     std::map<std::set<int>, double>& allocated_pp, int& projects_in_progress,
+                                     int empire_id)
     {
         //Logger().debugStream() << "========SetProdQueueElementSpending========";
         //Logger().debugStream() << "production status: ";
@@ -122,6 +123,10 @@ namespace {
         allocated_pp.clear();
 
         //Logger().debugStream() << "queue size: " << queue.size();
+        const Empire* empire = Empires().Lookup(empire_id);
+        if (!empire)
+            return;
+
 
         int i = 0;
         for (ProductionQueue::iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
@@ -154,15 +159,8 @@ namespace {
             }
             //Logger().debugStream() << "group has " << group_pp_available << " PP available";
 
-
-            ProductionQueue::ProductionItem& item = queue_element.item;
-
-
             // see if item is buildable this turn...
-            int location = queue_element.location;
-            bool buildable = empire->BuildableItem(item, location);
-
-            if (!buildable) {
+            if (!empire->BuildableItem(queue_element.item, queue_element.location)) {
                 // can't be built at this location this turn.
                 queue_element.allocated_pp = 0.0;
                 Logger().debugStream() << "item can't be built at location this turn";
@@ -174,7 +172,7 @@ namespace {
             double item_cost;
             int build_turns;
             boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(queue_element);
-            //Logger().debugStream() << "item " << item.name << " costs " << item_cost << " for " << build_turns << " turns";
+            //Logger().debugStream() << "item " << queue_element.item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
 
             // determine additional PP needed to complete build queue element: total cost - progress
@@ -209,8 +207,7 @@ namespace {
         }
     }
 
-    void LoadShipNames(std::vector<std::string>& names)
-    {
+    void LoadShipNames(std::vector<std::string>& names) {
         std::string file_name = "shipnames.txt";
 
         boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
@@ -283,7 +280,7 @@ ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const {
     for (const_iterator it = begin(); it != end(); ++it) {
         if (const Tech* tech = GetTech(it->name)) {
             if (it->allocated_rp &&
-                it->allocated_rp < tech->ResearchCost()
+                it->allocated_rp < tech->ResearchCost(m_empire_id)
                 && 1 < it->turns_left)
             {
                 return it;
@@ -294,8 +291,11 @@ ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const {
     return end();
 }
 
-void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::string, double>& research_progress) {
+void ResearchQueue::Update(double RPs, const std::map<std::string, double>& research_progress) {
     // status of all techs for this empire
+    const Empire* empire = Empires().Lookup(m_empire_id);
+    if (!empire)
+        return;
     TechManager& tech_manager = GetTechManager();
     std::map<std::string, TechStatus> sim_tech_status_map;
     for (TechManager::iterator tech_it = tech_manager.begin(); tech_it != tech_manager.end(); ++tech_it) {
@@ -303,7 +303,8 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
         sim_tech_status_map[tech_name] = empire->GetTechStatus(tech_name);
     }
 
-    SetTechQueueElementSpending(RPs, research_progress, sim_tech_status_map, m_queue, m_total_RPs_spent, m_projects_in_progress);
+    SetTechQueueElementSpending(RPs, research_progress, sim_tech_status_map, m_queue,
+                                m_total_RPs_spent, m_projects_in_progress, m_empire_id);
 
     if (m_queue.empty()) {
         ResearchQueueChangedSignal();
@@ -396,8 +397,8 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
             const std::string& tech_name = m_queue[curTech].name;
             const Tech* tech = GetTech(tech_name);
             double progress = dpsim_research_progress[curTech];
-            double RPs_needed = tech->ResearchCost() - progress;
-            double RPs_per_turn_limit = tech->ResearchCost() / std::max(tech->ResearchTime(), 1);
+            double RPs_needed = tech->ResearchCost(m_empire_id) - progress;
+            double RPs_per_turn_limit = tech->PerTurnCost(m_empire_id);
             double RPs_to_spend = std::min( std::min(RPs_needed, RPs_per_turn_limit), rpStillAvailable[dpturns-1] );
             progress += RPs_to_spend;
             dpsim_research_progress[curTech] = progress;
@@ -409,7 +410,7 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
             } else {
                 nextResTechIdx = *(nextResTechIt);
             }
-            if (tech->ResearchCost() - EPSILON <= progress) {
+            if (tech->ResearchCost(m_empire_id) - EPSILON <= progress) {
                 dpsim_tech_status_map[tech_name] = TS_COMPLETE;
                 dpsimulation_results[curTech] = dpturns;
 #ifndef ORIG_RES_SIMULATOR
@@ -589,7 +590,7 @@ ResearchQueue::iterator ResearchQueue::UnderfundedProject() {
     for (iterator it = begin(); it != end(); ++it) {
         if (const Tech* tech = GetTech(it->name)) {
             if (it->allocated_rp &&
-                it->allocated_rp < tech->ResearchCost()
+                it->allocated_rp < tech->ResearchCost(m_empire_id)
                 && 1 < it->turns_left)
             {
                 return it;
@@ -677,8 +678,9 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int order
 /////////////////////
 // ProductionQueue //
 /////////////////////
-ProductionQueue::ProductionQueue() :
-    m_projects_in_progress(0)
+ProductionQueue::ProductionQueue(int empire_id) :
+    m_projects_in_progress(0),
+    m_empire_id(empire_id)
 {}
 
 int ProductionQueue::ProjectsInProgress() const
@@ -746,7 +748,10 @@ const ProductionQueue::Element& ProductionQueue::operator[](int i) const {
     return m_queue[i];
 }
 
-ProductionQueue::const_iterator ProductionQueue::UnderfundedProject(const Empire* empire) const {
+ProductionQueue::const_iterator ProductionQueue::UnderfundedProject() const {
+    const Empire* empire = Empires().Lookup(m_empire_id);
+    if (!empire)
+        return end();
     for (const_iterator it = begin(); it != end(); ++it) {
         double item_cost;
         int build_turns;
@@ -757,10 +762,11 @@ ProductionQueue::const_iterator ProductionQueue::UnderfundedProject(const Empire
     return end();
 }
 
-void ProductionQueue::Update(Empire* empire, const std::map<ResourceType,
+void ProductionQueue::Update(const std::map<ResourceType,
                              boost::shared_ptr<ResourcePool> >& resource_pools,
                              const std::vector<double>& production_status)
 {
+    const Empire* empire = Empires().Lookup(m_empire_id);
     if (!empire) {
         Logger().errorStream() << "ProductionQueue::Update passed null empire.  doing nothing.";
         m_projects_in_progress = 0;
@@ -815,8 +821,8 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType,
 
     // allocate pp to queue elements, returning updated available pp and updated
     // allocated pp for each group of resource sharing objects
-    SetProdQueueElementSpending(empire, available_pp, queue_element_groups, production_status,
-                                m_queue, m_object_group_allocated_pp, m_projects_in_progress);
+    SetProdQueueElementSpending(available_pp, queue_element_groups, production_status,
+                                m_queue, m_object_group_allocated_pp, m_projects_in_progress, m_empire_id);
 
 
     // if at least one resource-sharing system group have available PP, simulate
@@ -1167,7 +1173,8 @@ ProductionQueue::Element& ProductionQueue::operator[](int i) {
     return m_queue[i];
 }
 
-ProductionQueue::iterator ProductionQueue::UnderfundedProject(const Empire* empire) {
+ProductionQueue::iterator ProductionQueue::UnderfundedProject() {
+    const Empire* empire = Empires().Lookup(m_empire_id);
     if (!empire)
         return end();
     for (iterator it = begin(); it != end(); ++it) {
@@ -1270,6 +1277,8 @@ namespace {
 Empire::Empire() :
     m_id(-1),
     m_capital_id(INVALID_OBJECT_ID),
+    m_research_queue(m_id),
+    m_production_queue(m_id),
     m_resource_pools(),
     m_population_pool(),
     m_maintenance_total_cost(0)
@@ -1280,6 +1289,8 @@ Empire::Empire(const std::string& name, const std::string& player_name, int empi
     m_name(name),
     m_player_name(player_name),
     m_color(color),
+    m_research_queue(m_id),
+    m_production_queue(m_id),
     m_capital_id(INVALID_OBJECT_ID),
     m_resource_pools(),
     m_population_pool(),
@@ -1485,7 +1496,7 @@ std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::Prod
     } else if (item.build_type == BT_SHIP) {
         const ShipDesign* design = GetShipDesign(item.design_id);
         if (design)
-            return std::make_pair(design->ProductionCost(), design->ProductionTime());
+            return std::make_pair(design->ProductionCost(m_id, location_id), design->ProductionTime(m_id, location_id));
         return std::make_pair(-1.0, -1);
     }
     Logger().errorStream() << "Empire::ProductionCostAndTime was passed a ProductionItem with an invalid BuildType";
@@ -2114,14 +2125,14 @@ void Empire::PlaceTechInQueue(const std::string& name, int pos/* = -1*/) {
             m_research_queue.erase(it);
         m_research_queue.insert(m_research_queue.begin() + pos, name);
     }
-    m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
+    m_research_queue.Update(m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
 }
 
 void Empire::RemoveTechFromQueue(const std::string& name) {
     ResearchQueue::iterator it = m_research_queue.find(name);
     if (it != m_research_queue.end()) {
         m_research_queue.erase(it);
-        m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
+        m_research_queue.Update(m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
     }
 }
 
@@ -2135,11 +2146,11 @@ void Empire::SetTechResearchProgress(const std::string& name, double progress) {
         return; // can't affect already-researched tech
 
     // set progress
-    double clamped_progress = std::min(tech->ResearchCost(), std::max(0.0, progress));
+    double clamped_progress = std::min(tech->ResearchCost(m_id), std::max(0.0, progress));
     m_research_progress[name] = clamped_progress;
 
     // if tech is complete, ensure it is on the queue, so it will be researched next turn
-    if (clamped_progress >= tech->ResearchCost() &&
+    if (clamped_progress >= tech->ResearchCost(m_id) &&
         m_research_queue.find(name) == m_research_queue.end())
     {
         m_research_queue.push_back(name);
@@ -2165,7 +2176,7 @@ void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, in
         m_production_queue.insert(m_production_queue.begin() + pos, build);
         m_production_progress.insert(m_production_progress.begin() + pos, 0.0);
     }
-    m_production_queue.Update(this, m_resource_pools, m_production_progress);
+    m_production_queue.Update(m_resource_pools, m_production_progress);
 }
 
 void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos/* = -1*/) {
@@ -2183,7 +2194,7 @@ void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, 
         m_production_queue.insert(m_production_queue.begin() + pos, build);
         m_production_progress.insert(m_production_progress.begin() + pos, 0.0);
     }
-    m_production_queue.Update(this, m_resource_pools, m_production_progress);
+    m_production_queue.Update(m_resource_pools, m_production_progress);
 }
 
 void Empire::PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos/* = -1*/) {
@@ -2205,7 +2216,7 @@ void Empire::SetBuildQuantity(int index, int quantity) {
     int original_quantity = m_production_queue[index].remaining;
     m_production_queue[index].remaining = quantity;
     m_production_queue[index].ordered += quantity - original_quantity;
-    m_production_queue.Update(this, m_resource_pools, m_production_progress);
+    m_production_queue.Update(m_resource_pools, m_production_progress);
 }
 
 void Empire::MoveBuildWithinQueue(int index, int new_index) {
@@ -2225,7 +2236,7 @@ void Empire::MoveBuildWithinQueue(int index, int new_index) {
     m_production_progress.erase(m_production_progress.begin() + index);
     m_production_queue.insert(m_production_queue.begin() + new_index, build);
     m_production_progress.insert(m_production_progress.begin() + new_index, status);
-    m_production_queue.Update(this, m_resource_pools, m_production_progress);
+    m_production_queue.Update(m_resource_pools, m_production_progress);
 }
 
 void Empire::RemoveBuildFromQueue(int index) {
@@ -2236,7 +2247,7 @@ void Empire::RemoveBuildFromQueue(int index) {
     }
     m_production_queue.erase(index);
     m_production_progress.erase(m_production_progress.begin() + index);
-    m_production_queue.Update(this, m_resource_pools, m_production_progress);
+    m_production_queue.Update(m_resource_pools, m_production_progress);
 }
 
 void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_id) {
@@ -2555,7 +2566,7 @@ void Empire::CheckResearchProgress() {
         }
         double& progress = m_research_progress[it->name];
         progress += it->allocated_rp;
-        if (tech->ResearchCost() - EPSILON <= progress) {
+        if (tech->ResearchCost(m_id) - EPSILON <= progress) {
             AddTech(it->name);
             AddSitRepEntry(CreateTechResearchedSitRep(it->name));
             // TODO: create unlocked item sitreps?
@@ -2798,7 +2809,7 @@ void Empire::UpdateResourcePools() {
 
 void Empire::UpdateResearchQueue() {
     m_resource_pools[RE_RESEARCH]->Update();
-    m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
+    m_research_queue.Update(m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
     m_resource_pools[RE_RESEARCH]->ChangedSignal();
 }
 
@@ -2806,7 +2817,7 @@ void Empire::UpdateProductionQueue() {
     Logger().debugStream() << "========= Production Update for empire: " << EmpireID() << " ========";
 
     m_resource_pools[RE_INDUSTRY]->Update();
-    m_production_queue.Update(this, m_resource_pools, m_production_progress);
+    m_production_queue.Update(m_resource_pools, m_production_progress);
     m_resource_pools[RE_INDUSTRY]->ChangedSignal();
 }
 

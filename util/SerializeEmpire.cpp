@@ -24,7 +24,8 @@ void ResearchQueue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_queue)
         & BOOST_SERIALIZATION_NVP(m_projects_in_progress)
-        & BOOST_SERIALIZATION_NVP(m_total_RPs_spent);
+        & BOOST_SERIALIZATION_NVP(m_total_RPs_spent)
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template void ResearchQueue::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
@@ -61,7 +62,8 @@ void ProductionQueue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_queue)
         & BOOST_SERIALIZATION_NVP(m_projects_in_progress)
-        & BOOST_SERIALIZATION_NVP(m_object_group_allocated_pp);
+        & BOOST_SERIALIZATION_NVP(m_object_group_allocated_pp)
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template void ProductionQueue::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);

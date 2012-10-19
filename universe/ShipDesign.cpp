@@ -306,6 +306,31 @@ FighterStats::FighterStats(CombatFighterType type,
 }
 
 
+namespace {
+    const UniverseObject* SourceForEmpire(int empire_id) {
+        const Empire* empire = Empires().Lookup(empire_id);
+        if (!empire) {
+            Logger().debugStream() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
+            return 0;
+        }
+        // get a source object, which is owned by the empire with the passed-in
+        // empire id.  this is used in conditions to reference which empire is
+        // doing the building.  Ideally this will be the capital, but any object
+        // owned by the empire will work.
+        const UniverseObject* source = GetUniverseObject(empire->CapitalID());
+        // no capital?  scan through all objects to find one owned by this empire
+        if (!source) {
+            for (ObjectMap::const_iterator obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
+                if (obj_it->second->OwnedBy(empire_id)) {
+                    source = obj_it->second;
+                    break;
+                }
+            }
+        }
+        return source;
+    }
+}
+
 ////////////////////////////////////////////////
 // PartType
 ////////////////////////////////////////////////
@@ -434,6 +459,42 @@ bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
     return false;
 }
 
+double PartType::ProductionCost(int empire_id, int location_id) const {
+    if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_cost) {
+        return 1.0;
+    } else {
+        if (ValueRef::ConstantExpr(m_production_cost))
+            return m_production_cost->Eval();
+
+        UniverseObject* location = GetUniverseObject(location_id);
+        if (!location)
+            return 999999.9;    // arbitrary large number
+
+        const UniverseObject* source = SourceForEmpire(empire_id);
+        ScriptingContext context(source, location);
+
+        return m_production_cost->Eval(context);
+    }
+}
+
+int PartType::ProductionTime(int empire_id, int location_id) const {
+    if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_time) {
+        return 1;
+    } else {
+        if (ValueRef::ConstantExpr(m_production_time))
+            return m_production_time->Eval();
+
+        UniverseObject* location = GetUniverseObject(location_id);
+        if (!location)
+            return 9999;    // arbitrary large number
+
+        const UniverseObject* source = SourceForEmpire(empire_id);
+        ScriptingContext context(source, location);
+
+        return m_production_time->Eval(context);
+    }
+}
+
 
 ////////////////////////////////////////////////
 // HullType
@@ -475,6 +536,41 @@ unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
     return count;
 }
 
+double HullType::ProductionCost(int empire_id, int location_id) const {
+    if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_cost) {
+        return 1.0;
+    } else {
+        if (ValueRef::ConstantExpr(m_production_cost))
+            return m_production_cost->Eval();
+
+        UniverseObject* location = GetUniverseObject(location_id);
+        if (!location)
+            return 999999.9;    // arbitrary large number
+
+        const UniverseObject* source = SourceForEmpire(empire_id);
+        ScriptingContext context(source, location);
+
+        return m_production_cost->Eval(context);
+    }
+}
+
+int HullType::ProductionTime(int empire_id, int location_id) const {
+    if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_time) {
+        return 1;
+    } else {
+        if (ValueRef::ConstantExpr(m_production_time))
+            return m_production_time->Eval();
+
+        UniverseObject* location = GetUniverseObject(location_id);
+        if (!location)
+            return 9999;    // arbitrary large number
+
+        const UniverseObject* source = SourceForEmpire(empire_id);
+        ScriptingContext context(source, location);
+
+        return m_production_time->Eval(context);
+    }
+}
 
 /////////////////////////////////////
 // HullTypeManager                 //
@@ -550,8 +646,6 @@ ShipDesign::ShipDesign() :
     m_structure(0.0),
     m_battle_speed(0.0),
     m_starlane_speed(0.0),
-    m_production_cost(0.0),
-    m_production_time(0),
     m_min_SR_range(DBL_MAX),
     m_max_SR_range(0.0),
     m_min_LR_range(DBL_MAX),
@@ -589,8 +683,6 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_structure(0.0),
     m_battle_speed(0.0),
     m_starlane_speed(0.0),
-    m_production_cost(0.0),
-    m_production_time(0),
     m_min_SR_range(DBL_MAX),
     m_max_SR_range(0.0),
     m_min_LR_range(DBL_MAX),
@@ -629,21 +721,35 @@ const std::string& ShipDesign::Description(bool stringtable_lookup /* = true */)
         return m_description;
 }
 
-double ShipDesign::ProductionCost() const {
-    if (!CHEAP_AND_FAST_SHIP_PRODUCTION)
-        return m_production_cost;
-    else
+double ShipDesign::ProductionCost(int empire_id, int location_id) const {
+    if (CHEAP_AND_FAST_SHIP_PRODUCTION) {
         return 1.0;
+    } else {
+        double cost_accumulator = 0.0;
+        if (const HullType* hull = GetHullType(m_hull))
+            cost_accumulator += hull->ProductionCost(empire_id, location_id);
+        for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it)
+            if (const PartType* part = GetPartType(*it))
+                cost_accumulator += part->ProductionCost(empire_id, location_id);
+        return std::max(0.0, cost_accumulator);
+    }
 }
 
-double ShipDesign::PerTurnCost() const
-{ return ProductionCost() / std::max(1, ProductionTime()); }
+double ShipDesign::PerTurnCost(int empire_id, int location_id) const
+{ return ProductionCost(empire_id, location_id) / std::max(1, ProductionTime(empire_id, location_id)); }
 
-int ShipDesign::ProductionTime() const {
-    if (!CHEAP_AND_FAST_SHIP_PRODUCTION)
-        return m_production_time;
-    else
+int ShipDesign::ProductionTime(int empire_id, int location_id) const {
+    if (CHEAP_AND_FAST_SHIP_PRODUCTION) {
         return 1;
+    } else {
+        int time_accumulator = 1;
+        if (const HullType* hull = GetHullType(m_hull))
+            time_accumulator = std::max(time_accumulator, hull->ProductionTime(empire_id, location_id));
+        for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it)
+            if (const PartType* part = GetPartType(*it))
+                time_accumulator = std::max(time_accumulator, part->ProductionTime(empire_id, location_id));
+        return std::max(1, time_accumulator);
+    }
 }
 
 bool ShipDesign::CanColonize() const {
@@ -746,18 +852,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     // empire id.  this is used in conditions to reference which empire is
     // doing the producing.  Ideally this will be the capital, but any object
     // owned by the empire will work.
-    const UniverseObject* source = GetUniverseObject(empire->CapitalID());
-    if (!source && location->OwnedBy(empire_id))
-        source = location;
-    // still no valid source?!  scan through all objects to find one owned by this empire
-    if (!source) {
-        for (ObjectMap::const_iterator obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
-            if (obj_it->second->OwnedBy(empire_id)) {
-                source = obj_it->second;
-                break;
-            }
-        }
-    }
+    const UniverseObject* source = SourceForEmpire(empire_id);
     // if this empire doesn't own ANYTHING, then how is it producing anyway?
     if (!source)
         return false;
@@ -839,8 +934,6 @@ void ShipDesign::BuildStatCaches() {
         return;
     }
 
-    m_production_time = hull->ProductionTime();
-    m_production_cost = hull->ProductionCost();
     m_producible =      hull->Producible();
     m_detection =       hull->Detection();
     m_colony_capacity = hull->ColonyCapacity();
@@ -862,8 +955,6 @@ void ShipDesign::BuildStatCaches() {
             continue;
         }
 
-        m_production_time = std::max(m_production_time, part->ProductionTime()); // assume hull and parts are built in parallel
-        m_production_cost += part->ProductionCost();                             // add up costs of all parts
         if (!part->Producible())
             m_producible = false;
 

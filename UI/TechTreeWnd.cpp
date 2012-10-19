@@ -954,8 +954,8 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
     bool researchable_tech = false;
 
     const Tech* tech = GetTech(m_tech_name);
-    int time = tech ? tech->ResearchTime() : 999999;         // arbitrary large value
-    double cost = tech ? tech->ResearchCost() : 9999999.9;    // arbitrary large value
+    int time = tech ? tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()) : 999999;        // arbitrary large value
+    double cost = tech ? tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) : 9999999.9;  // arbitrary large value
 
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire) {
@@ -1736,12 +1736,12 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     text->ClipText(true);
     push_back(text);
 
-    std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost() + 0.5));
+    std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));
     text = new GG::TextControl(GG::X0, GG::Y0, COST_WIDTH, HEIGHT, cost_str, font, ClientUI::TextColor(),
                                GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     push_back(text);
 
-    std::string time_str = boost::lexical_cast<std::string>(this_row_tech->ResearchTime());
+    std::string time_str = boost::lexical_cast<std::string>(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
     text = new GG::TextControl(GG::X0, GG::Y0, TIME_WIDTH, HEIGHT, time_str, font, ClientUI::TextColor(),
                                GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     push_back(text);
@@ -2252,7 +2252,7 @@ void TechTreeWnd::TechDoubleClickedSlot(const std::string& tech_name) {
     // if tech can't yet be researched, add any prerequisites it requires (recursively) and then add it
 
     TechManager& manager = GetTechManager();
-    std::vector<std::string> tech_vec = manager.RecursivePrereqs(tech_name);
+    std::vector<std::string> tech_vec = manager.RecursivePrereqs(tech_name, HumanClientApp::GetApp()->EmpireID());
     tech_vec.push_back(tech_name);
 
     AddMultipleTechsToQueueSignal(tech_vec);

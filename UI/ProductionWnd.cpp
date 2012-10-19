@@ -36,7 +36,8 @@ namespace {
     //////////////////////////////////////////////////
     class QueueBuildPanel : public GG::Control {
     public:
-        QueueBuildPanel(GG::X w, const ProductionQueue::Element& build, double turn_cost, int turns, int number, int turns_completed, double partially_complete_turn);
+        QueueBuildPanel(GG::X w, const ProductionQueue::Element& build, double turn_cost,
+                        int turns, int number, int turns_completed, double partially_complete_turn);
         virtual void Render();
 
     private:
@@ -356,7 +357,7 @@ void ProductionWnd::UpdateInfoPanel() {
     const ProductionQueue& queue = empire->GetProductionQueue();
     double PPs = empire->ProductionPoints();
     double total_queue_cost = queue.TotalPPsSpent();
-    ProductionQueue::const_iterator underfunded_it = queue.UnderfundedProject(empire);
+    ProductionQueue::const_iterator underfunded_it = queue.UnderfundedProject();
     double PPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->allocated_pp;
     m_production_info_panel->Reset(PPs, total_queue_cost, queue.ProjectsInProgress(), PPs_to_underfunded_projects, queue.size());
 }

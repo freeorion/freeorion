@@ -59,13 +59,14 @@ namespace {
         GG::ListBox::Row(),
         tech_name(queue_element.name)
     {
-        const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* empire = Empires().Lookup(empire_id);
 
         const Tech* tech = GetTech(tech_name);
-        double per_turn_cost = tech ? tech->PerTurnCost() : 1;
+        double per_turn_cost = tech ? tech->PerTurnCost(empire_id) : 1;
         double progress = 0.0;
         if (empire && empire->TechResearched(tech_name))
-            progress = tech->ResearchCost();
+            progress = tech->ResearchCost(empire_id);
         else if (empire)
             progress = empire->ResearchProgress(tech_name);
 
@@ -103,7 +104,7 @@ namespace {
 
         const Tech* tech = GetTech(m_tech_name);
         if (tech)
-            m_total_turns = tech->ResearchTime();
+            m_total_turns = tech->ResearchTime(HumanClientApp::GetApp()->EmpireID());
 
         Resize(GG::Pt(w, HEIGHT));
 
@@ -130,7 +131,7 @@ namespace {
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
 
-        m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech ? tech->ResearchTime() : 1,
+        m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech ? tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()) : 1,
                                                   turns_completed, ClientUI::TechWndProgressBarColor(),
                                                   ClientUI::TechWndProgressBarBackgroundColor(), clr);
         m_progress_bar->MoveTo(GG::Pt(left, top));

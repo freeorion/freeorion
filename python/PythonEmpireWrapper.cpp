@@ -24,8 +24,9 @@ namespace {
     boost::function<std::vector<std::string>(const TechManager*, const std::string&)>
                                                                   TechNamesCategoryMemberFunc =         TechNamesCategory;
 
-    std::vector<std::string>    TechRecursivePrereqs(const Tech& tech)                                  { return GetTechManager().RecursivePrereqs(tech.Name()); }
-    boost::function<std::vector<std::string>(const Tech& tech)> TechRecursivePrereqsFunc =              TechRecursivePrereqs;
+    std::vector<std::string>    TechRecursivePrereqs(const Tech& tech, int empire_id)
+    { return GetTechManager().RecursivePrereqs(tech.Name(), empire_id); }
+    boost::function<std::vector<std::string>(const Tech& tech, int)> TechRecursivePrereqsFunc =         TechRecursivePrereqs;
 
     // Concatenate functions to create one that takes two parameters.  The first parameter is a ResearchQueue*, which
     // is passed directly to ResearchQueue::InQueue as the this pointer.  The second parameter is a
@@ -116,17 +117,14 @@ namespace FreeOrionPython {
      *                                                  called
      */
     void WrapEmpire() {
-        //SetWrapper< std::pair<int, int> >  myIntIntPairSetWrapper;
-        //        myIntIntPairSetWrapper.Wrap("IntIntPairSet");
         class_<PairIntInt_IntMap>("PairIntInt_IntMap")
-        .def(boost::python::map_indexing_suite< PairIntInt_IntMap, true >())
+            .def(boost::python::map_indexing_suite<PairIntInt_IntMap, true>())
         ;
-        boost::python::to_python_converter<
-        IntPair, 
-        myIntIntPairConverter > ();
-        
+
+        boost::python::to_python_converter<IntPair, myIntIntPairConverter>();
+
         class_<std::vector<IntPair> >("IntPairVec")
-        .def(boost::python::vector_indexing_suite<std::vector<IntPair>, true >())
+            .def(boost::python::vector_indexing_suite<std::vector<IntPair>, true>())
         ;
 
         ///////////////////
@@ -203,6 +201,7 @@ namespace FreeOrionPython {
                                                         boost::mpl::vector<bool, const ResearchQueue*, const ResearchQueue::Element&>()
                                                     ))
             .add_property("totalSpent",             &ResearchQueue::TotalRPsSpent)
+            .add_property("empireID",               &ResearchQueue::EmpireID)
         ;
 
         //////////////////////
@@ -235,6 +234,7 @@ namespace FreeOrionPython {
             .add_property("size",                   &ProductionQueue::size)
             .add_property("empty",                  &ProductionQueue::empty)
             .add_property("totalSpent",             &ProductionQueue::TotalPPsSpent)
+            .add_property("empireID",               &ProductionQueue::EmpireID)
         ;
 
 
@@ -247,14 +247,15 @@ namespace FreeOrionPython {
             .add_property("shortDescription",       make_function(&Tech::ShortDescription,  return_value_policy<copy_const_reference>()))
             .add_property("type",                   &Tech::Type)
             .add_property("category",               make_function(&Tech::Category,          return_value_policy<copy_const_reference>()))
-            .add_property("researchCost",           &Tech::ResearchCost)
-            .add_property("researchTime",           &Tech::ResearchTime)
+            .def("researchCost",                    &Tech::ResearchCost)
+            .def("perTurnCost",                     &Tech::PerTurnCost)
+            .def("researchTime",                    &Tech::ResearchTime)
             .add_property("prerequisites",          make_function(&Tech::Prerequisites,     return_internal_reference<>()))
             .add_property("unlockedTechs",          make_function(&Tech::UnlockedTechs,     return_internal_reference<>()))
             .add_property("recursivePrerequisites", make_function(
                                                         TechRecursivePrereqsFunc,
                                                         return_value_policy<return_by_value>(),
-                                                        boost::mpl::vector<std::vector<std::string>, const Tech&>()
+                                                        boost::mpl::vector<std::vector<std::string>, const Tech&, int>()
                                                     ))
         ;
         def("getTech",                              &GetTech,                               return_value_policy<reference_existing_object>());

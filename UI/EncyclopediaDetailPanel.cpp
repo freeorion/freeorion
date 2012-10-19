@@ -556,8 +556,9 @@ void EncyclopediaDetailPanel::Refresh() {
         // Ship Parts
         name = UserString(m_items_it->second);
         texture = ClientUI::PartIcon(m_items_it->second);
-        turns = part->ProductionTime();
-        cost = part->ProductionCost();
+        int default_location_id = DefaultLocationForEmpire(client_empire_id);
+        turns = part->ProductionTime(client_empire_id, default_location_id);
+        cost = part->ProductionCost(client_empire_id, default_location_id);
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_PART");
         specific_type = UserString(boost::lexical_cast<std::string>(part->Class()));
@@ -579,8 +580,9 @@ void EncyclopediaDetailPanel::Refresh() {
         // Ship Hulls
         name = UserString(m_items_it->second);
         texture = ClientUI::HullTexture(m_items_it->second);
-        turns = hull->ProductionTime();
-        cost = hull->ProductionCost();
+        int default_location_id = DefaultLocationForEmpire(client_empire_id);
+        turns = hull->ProductionTime(client_empire_id, default_location_id);
+        cost = hull->ProductionCost(client_empire_id, default_location_id);
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_HULL");
         detailed_description = UserString(hull->Description()) + "\n\n" + hull->StatDescription();
@@ -603,8 +605,8 @@ void EncyclopediaDetailPanel::Refresh() {
         texture = ClientUI::TechIcon(m_items_it->second);
         other_texture = ClientUI::CategoryIcon(tech->Category()); 
         color = ClientUI::CategoryColor(tech->Category());
-        turns = tech->ResearchTime();
-        cost = tech->ResearchCost();
+        turns = tech->ResearchTime(client_empire_id);
+        cost = tech->ResearchCost(client_empire_id);
         cost_units = UserString("ENC_RP");
         general_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR"))
             % UserString(tech->Category())
@@ -878,8 +880,9 @@ void EncyclopediaDetailPanel::Refresh() {
         // Ship Designs
         name = design->Name();
         texture = ClientUI::ShipDesignIcon(design_id);
-        turns = design->ProductionTime();
-        cost = design->ProductionCost();
+        int default_location_id = DefaultLocationForEmpire(client_empire_id);
+        turns = design->ProductionTime(client_empire_id, default_location_id);
+        cost = design->ProductionCost(client_empire_id, default_location_id);
         cost_units = UserString("ENC_PP");
         general_type = design->IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
 
@@ -960,8 +963,9 @@ void EncyclopediaDetailPanel::Refresh() {
             else
                 texture = ClientUI::GetTexture(ClientUI::ArtDir() / design_icon, true);
 
-            turns = incomplete_design->ProductionTime();
-            cost = incomplete_design->ProductionCost();
+            int default_location_id = DefaultLocationForEmpire(client_empire_id);
+            turns = incomplete_design->ProductionTime(client_empire_id, default_location_id);
+            cost = incomplete_design->ProductionCost(client_empire_id, default_location_id);
             cost_units = UserString("ENC_PP");
 
             std::string hull_link;
