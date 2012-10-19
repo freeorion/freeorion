@@ -6,6 +6,7 @@ import PlanetUtilsAI
 import AIstate
 import FleetUtilsAI
 from random import choice
+import sys
 
 shipTypeMap = dict( zip( [AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION,  AIPriorityType.PRIORITY_PRODUCTION_OUTPOST,  AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  AIPriorityType.PRIORITY_PRODUCTION_INVASION,  AIPriorityType.PRIORITY_PRODUCTION_MILITARY], 
                                             [AIShipDesignTypes.explorationShip,  AIShipDesignTypes.outpostShip,  AIShipDesignTypes.colonyShip,  AIShipDesignTypes.troopShip,  AIShipDesignTypes.attackShip ] ) )
@@ -58,9 +59,16 @@ def generateProductionOrders():
             print "Possible building types to build:"
             for buildingTypeID in possibleBuildingTypeIDs:
                 buildingType = fo.getBuildingType(buildingTypeID)
+                print "buildingType  object:",  buildingType
+                print "dir(buildingType): ",  dir(buildingType)
                 print "    " + str(buildingType.name) # + " cost:" + str(buildingType.productionCost) + " time:" + str(buildingType.productionTime)
-
-            possibleBuildingTypes = [ fo.getBuildingType(buildingTypeID).name  for buildingTypeID in possibleBuildingTypeIDs ]
+                print "'try'ing to print  'cost:' + str(buildingType.productionCost) + ' time:' + str(buildingType.productionTime)"
+                try:
+                    print " cost:" + str(buildingType.productionCost(empire.empireID,  homeworld.id)) + " time:" + str(buildingType.productionTime(empire.empireID,  homeworld.id))
+                except:
+                    print"failed with error:",  sys.exc_info()[0]
+                
+            possibleBuildingTypes = [fo.getBuildingType(buildingTypeID) and  fo.getBuildingType(buildingTypeID).name  for buildingTypeID in possibleBuildingTypeIDs ] #makes sure is not None before getting name
 
             print ""
             print "Buildings already in Production Queue:"

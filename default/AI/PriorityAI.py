@@ -219,7 +219,7 @@ def calculateMilitaryPriority():
 
     # build one more military ship than military targeted systems
     #militaryPriority = 100 * ((numMilitaryTargetedSystemIDs +2) - numMilitaryShips) / (numMilitaryTargetedSystemIDs + 1)
-    militaryPriority = int( 30 + max(0,  100*((2.0*totalThreat  -  totalFleetRating ) / curShipRating)) )
+    militaryPriority = int( 30 + max(0,  50*((1.25*totalThreat  -  totalFleetRating ) / curShipRating)) )
     # print ""
     # print "Number of Military Ships Without Missions: " + str(numMilitaryShips)
     # print "Number of Military Targeted Systems: " + str(numMilitaryTargetedSystemIDs)
