@@ -185,6 +185,7 @@ public:
     virtual void    Render();
     void            Select(bool b);
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    //@}
 
 private:
     double          StatValue(const std::string& stat_name) const;
@@ -192,6 +193,10 @@ private:
     void            SetShipIcon();
     void            Refresh();
     void            DoLayout();
+
+    void            Init();
+
+    bool                        m_initialized;
 
     int                         m_ship_id;
     GG::StaticGraphic*          m_ship_icon;

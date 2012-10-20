@@ -25,9 +25,28 @@
 #include <GG/TextControl.h>
 
 #include <boost/cast.hpp>
+#include <boost/timer.hpp>
 
 namespace {
     const GG::Pt        DATA_PANEL_ICON_SPACE = GG::Pt(GG::X(38), GG::Y(38));   // area reserved for ship or fleet icon in data panels (actual height can be bigger if the row expands due to font size)
+
+    /** Wrapper for boost::timer that outputs time during which this object
+      * existed.  Created in the scope of a function, and passed the appropriate
+      * name, it will output to Logger().debugStream() the time elapsed while
+      * the function was executing. */
+    class ScopedTimer {
+    public:
+        ScopedTimer(const std::string& timed_name = "scoped timer") :
+            m_timer(),
+            m_name(timed_name)
+        {}
+        ~ScopedTimer() {
+            Logger().debugStream() << m_name << " time: " << (m_timer.elapsed() * 1000.0);
+        }
+    private:
+        boost::timer    m_timer;
+        std::string     m_name;
+    };
 
     // how should ship and fleet icons be scaled and/or positioned in the reserved space
     const GG::Flags<GG::GraphicStyle>   DataPanelIconStyle()
@@ -135,6 +154,8 @@ namespace {
     void CreateNewFleetFromShips(const std::vector<int>& ship_ids, bool aggressive = false) {
         if (ship_ids.empty())
             return;
+
+        ScopedTimer timer("CreateNewFleetFromShips with " + boost::lexical_cast<std::string>(ship_ids.size()) + " ship ids");
 
         // get system where new fleet is to be created.
         int first_ship_id = ship_ids.front();
@@ -461,8 +482,11 @@ namespace {
             SetChildClippingMode(ClipToClient);
             if (GetShip(m_ship_id))
                 SetDragDropDataType(SHIP_DROP_TYPE_STRING);
-            m_panel = new ShipDataPanel(w, h, m_ship_id);
-            push_back(m_panel);
+            {
+                //ScopedTimer timer("ShipRow Panel creation / pushing");
+                m_panel = new ShipDataPanel(w, h, m_ship_id);
+                push_back(m_panel);
+            }
         }
 
         void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -485,6 +509,7 @@ namespace {
 ////////////////////////////////////////////////
 ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
     Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+    m_initialized(false),
     m_ship_id(ship_id),
     m_ship_icon(0),
     m_scrap_indicator(0),
@@ -495,70 +520,7 @@ ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
     m_stat_icons(),
     m_selected(false)
 {
-    const Ship* ship = GetShip(m_ship_id);
-
     SetChildClippingMode(ClipToClient);
-
-    // ship name text.  blank if no ship.  TODO: if no ship show "No Ship" or somesuch?
-    std::string ship_name = "";
-    if (ship)
-        ship_name = ship->Name();
-
-    m_ship_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
-                                            ship_name, ClientUI::GetFont(),
-                                            ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-    AttachChild(m_ship_name_text);
-
-
-    // design name and statistic icons
-    if (!ship)
-        return;
-
-    if (const ShipDesign* design = ship->Design()) {
-        m_design_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
-                                                    design->Name(), ClientUI::GetFont(),
-                                                    ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-        AttachChild(m_design_name_text);
-    }
-
-
-    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-
-
-    // damage stat icon
-    StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                            DamageIcon(), 0, 0, false);
-    m_stat_icons.push_back(std::make_pair(DAMAGE_STAT_STRING, icon));
-    AttachChild(icon);
-    icon->SetBrowseModeTime(tooltip_delay);
-
-    // meter stat icons
-    std::vector<MeterType> meters;
-    meters.push_back(METER_STRUCTURE);  meters.push_back(METER_SHIELD); meters.push_back(METER_FUEL);
-    meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);
-    for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
-        StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                                ClientUI::MeterIcon(*it), 0, 0, false);
-        m_stat_icons.push_back(std::make_pair(MeterStatString(*it), icon));
-        AttachChild(icon);
-        icon->SetBrowseModeTime(tooltip_delay);
-    }
-
-    // speed stat icon
-    icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                SpeedIcon(), 0, 0, false);
-    m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
-    AttachChild(icon);
-    icon->SetBrowseModeTime(tooltip_delay);
-
-
-    // bookkeeping
-    m_ship_connection = GG::Connect(ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
-
-    if (Fleet* fleet = GetFleet(ship->FleetID()))
-        m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &ShipDataPanel::Refresh, this);
-
-    Refresh();
 }
 
 ShipDataPanel::~ShipDataPanel() {
@@ -573,6 +535,9 @@ GG::Pt ShipDataPanel::ClientLowerRight() const
 { return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER));  }
 
 void ShipDataPanel::Render() {
+    if (!m_initialized)
+        Init();
+
     // main background position and colour
     const GG::Clr& background_colour = ClientUI::WndColor();
     const GG::Pt ul = UpperLeft(), lr = LowerRight(), cul = ClientUpperLeft();
@@ -767,7 +732,8 @@ void ShipDataPanel::DoLayout() {
     // position ship name text at the top to the right of icons
     const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE.x + DATA_PANEL_TEXT_PAD, GG::Y0);
     const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD,           LabelHeight());
-    m_ship_name_text->SizeMove(name_ul, name_lr);
+    if (m_ship_name_text)
+        m_ship_name_text->SizeMove(name_ul, name_lr);
 
     if (m_design_name_text)
         m_design_name_text->SizeMove(name_ul, name_lr);
@@ -778,6 +744,75 @@ void ShipDataPanel::DoLayout() {
         it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
     }
+}
+
+void ShipDataPanel::Init() {
+    if (m_initialized)
+        return;
+    m_initialized = true;
+
+    // ship name text.  blank if no ship.  TODO: if no ship show "No Ship" or somesuch?
+    const Ship* ship = GetShip(m_ship_id);
+
+    std::string ship_name = "";
+    if (ship)
+        ship_name = ship->Name();
+
+    m_ship_name_text = new GG::TextControl(GG::X(Value(Height())), GG::Y0, GG::X1, LabelHeight(),
+                                            ship_name, ClientUI::GetFont(),
+                                            ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    AttachChild(m_ship_name_text);
+
+
+    // design name and statistic icons
+    if (!ship)
+        return;
+
+    if (const ShipDesign* design = ship->Design()) {
+        m_design_name_text = new GG::TextControl(GG::X(Value(Height())), GG::Y0, GG::X1, LabelHeight(),
+                                                    design->Name(), ClientUI::GetFont(),
+                                                    ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        AttachChild(m_design_name_text);
+    }
+
+
+    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+
+
+    // damage stat icon
+    StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                            DamageIcon(), 0, 0, false);
+    m_stat_icons.push_back(std::make_pair(DAMAGE_STAT_STRING, icon));
+    AttachChild(icon);
+    icon->SetBrowseModeTime(tooltip_delay);
+
+    // meter stat icons
+    std::vector<MeterType> meters;
+    meters.push_back(METER_STRUCTURE);  meters.push_back(METER_SHIELD); meters.push_back(METER_FUEL);
+    meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);
+    for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
+        StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                                ClientUI::MeterIcon(*it), 0, 0, false);
+        m_stat_icons.push_back(std::make_pair(MeterStatString(*it), icon));
+        AttachChild(icon);
+        icon->SetBrowseModeTime(tooltip_delay);
+    }
+
+    // speed stat icon
+    icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                SpeedIcon(), 0, 0, false);
+    m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
+    AttachChild(icon);
+    icon->SetBrowseModeTime(tooltip_delay);
+
+
+    // bookkeeping
+    m_ship_connection = GG::Connect(ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
+
+    if (Fleet* fleet = GetFleet(ship->FleetID()))
+        m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &ShipDataPanel::Refresh, this);
+
+    Refresh();
 }
 
 ////////////////////////////////////////////////
@@ -1023,6 +1058,7 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
 
 void FleetDataPanel::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
     std::vector<int> ship_ids;
+    ship_ids.reserve(wnds.size());
     for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it)
         if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(*it))
             ship_ids.push_back(ship_row->ShipID());
@@ -1602,6 +1638,8 @@ public:
     {}
 
     void            Refresh() {
+        ScopedTimer timer("ShipsListBox::Refresh");
+
         // store selected ship rows
         std::set<int> old_selected_ship_ids;
         try {

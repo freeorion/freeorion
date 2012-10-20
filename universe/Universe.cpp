@@ -972,8 +972,6 @@ void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects
 }
 
 void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
-    ScopedTimer timer("Universe::UpdateMeterEstimates");
-
     std::set<int> objects_set;  // ensures no duplicates
 
     for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
