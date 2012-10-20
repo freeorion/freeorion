@@ -1557,6 +1557,49 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
             return;
         }
     }
+
+    // create popup menu with map options in it.
+    GG::MenuItem menu_contents;
+    bool fps            = GetOptionsDB().Get<bool>("show-fps");
+    bool autoselect     = GetOptionsDB().Get<bool>("UI.fleet-autoselect");
+    bool showPlanets    = GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown");
+    bool systemCircles  = GetOptionsDB().Get<bool>("UI.system-circles");
+    bool resourceColor  = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
+    bool fleetSupply    = GetOptionsDB().Get<bool>("UI.fleet-supply-lines");
+    bool gas            = GetOptionsDB().Get<bool>("UI.galaxy-gas-background");
+    bool starfields     = GetOptionsDB().Get<bool>("UI.galaxy-starfields");
+    bool scale          = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale");
+    bool zoomSlider     = GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider");
+    bool detectionRange = GetOptionsDB().Get<bool>("UI.show-detection-range");
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_SHOW_FPS"),            1, false, fps));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_AUTOSELECT_FLEET"),      2, false, autoselect));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"),  3, false, showPlanets));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_UI_SYSTEM_CIRCLES"),         4, false, systemCircles));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"), 5, false, resourceColor));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_FLEET_SUPPLY_LINES"),    6, false, fleetSupply));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_GAS"),         7, false, gas));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_STARFIELDS"),   8, false, starfields));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"),    9, false, scale));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"),    10, false, zoomSlider));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"), 11, false, detectionRange));
+    // display popup menu
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+            case 1: { GetOptionsDB().Set<bool>("show-fps",                       !fps);        break; }
+            case 2: { GetOptionsDB().Set<bool>("UI.fleet-autoselect",            !autoselect);  break; }
+            case 3: { GetOptionsDB().Set<bool>("UI.sidepanel-planet-shown",      !showPlanets);  break; }
+            case 4: { GetOptionsDB().Set<bool>("UI.system-circles",              !systemCircles); break; }
+            case 5: { GetOptionsDB().Set<bool>("UI.resource-starlane-colouring", !resourceColor);  break; }
+            case 6: { GetOptionsDB().Set<bool>("UI.fleet-supply-lines",          !fleetSupply);     break; }
+            case 7: { GetOptionsDB().Set<bool>("UI.galaxy-gas-background",       !gas);        break; }
+            case 8: { GetOptionsDB().Set<bool>("UI.galaxy-starfields",           !starfields);  break; }
+            case 9: { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale",       !scale);        break; }
+            case 10: { GetOptionsDB().Set<bool>("UI.show-galaxy-map-zoom-slider",!zoomSlider);    break; }
+            case 11: { GetOptionsDB().Set<bool>("UI.show-detection-range",       !detectionRange); break; }
+            default: break;
+        }
+    }
 }
 
 void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {
@@ -3306,9 +3349,10 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
 void MapWnd::FleetButtonClicked(FleetButton& fleet_btn) {
     //std::cout << "MapWnd::FleetButtonClicked" << std::endl;
 
-    // ignore clicks when in production mode
-    if (m_in_production_view_mode)
-        return;
+    // allow switching to fleetView even when in production mode
+    if (m_in_production_view_mode) {
+        HideProduction();
+    }
 
 
     // get possible fleets to select from, and a pointer to one of those fleets
