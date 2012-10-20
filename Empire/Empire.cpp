@@ -757,7 +757,8 @@ ProductionQueue::const_iterator ProductionQueue::UnderfundedProject() const {
         double item_cost;
         int build_turns;
         boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
-        if (it->allocated_pp && it->allocated_pp < item_cost && 1 < it->turns_left_to_next_item)
+        double maxPerTurn = item_cost / std::max(build_turns,1);
+        if (it->allocated_pp && (it->allocated_pp < (maxPerTurn-EPSILON)) && (1 < it->turns_left_to_next_item) )
             return it;
     }
     return end();
@@ -860,7 +861,7 @@ void ProductionQueue::Update(const std::map<ResourceType,
     std::vector<double>         sim_production_status = production_status;
     std::vector<std::set<int> > sim_queue_element_groups = queue_element_groups;
     std::vector<int>            simulation_results(sim_production_status.size(), -1);
-    std::vector<int>            sim_queue_original_indices(sim_production_status.size());
+    std::vector< unsigned int>            sim_queue_original_indices(sim_production_status.size());
     for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i)
         sim_queue_original_indices[i] = i;
 
@@ -903,8 +904,6 @@ void ProductionQueue::Update(const std::map<ResourceType,
             sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
         }
     }
-
-
 #ifdef DP_QUEUE_SIMULATOR
     boost::posix_time::ptime dp_time_start;
     boost::posix_time::ptime dp_time_end;
@@ -925,9 +924,9 @@ void ProductionQueue::Update(const std::map<ResourceType,
     //std::vector<std::set<int> > sim_queue_element_groups = queue_element_groups;  //not necessary to duplicate this since won't be further modified
     std::vector<int>            dpsimulation_results_to_next(production_status.size(), -1);
     std::vector<int>            dpsimulation_results_to_completion(production_status.size(), -1);
-    //std::vector<int>            sim_queue_original_indices(sim_production_status.size()); //not necessary to duplicate this since won't be further modified
+    std::vector<unsigned int>            dpsim_queue_original_indices(sim_queue_original_indices); 
 
-    const int DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
+    const unsigned int DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
     const double DP_TOO_LONG_TIME = TOO_LONG_TIME;   // max time in ms to spend simulating queue
 
     // The DP version will do calculations for one resource group at a time
@@ -941,8 +940,8 @@ void ProductionQueue::Update(const std::map<ResourceType,
     }
 
     for (std::map<std::set<int>, double>::const_iterator groups_it = available_pp.begin(); groups_it != available_pp.end(); ++groups_it) {
-        int firstTurnPPAvailable = 1; //the first turn any pp in this resource group is available to the next item for this group
-        int turnJump = 0;
+        unsigned int firstTurnPPAvailable = 1; //the first turn any pp in this resource group is available to the next item for this group
+        unsigned int turnJump = 0;
         //ppStillAvailable[turn-1] gives the PP still available in this resource pool at turn "turn"
         std::vector<double> ppStillAvailable(DP_TURNS, groups_it->second );  // initialize to the groups full PP allocation for each turn modeled
 
@@ -952,7 +951,7 @@ void ProductionQueue::Update(const std::map<ResourceType,
 
         // cycle through items on queue, if in this resource group then allocate production costs over time against those available to group
         for (std::vector<int>::const_iterator el_it = groupBegin; 
-             ( el_it != groupEnd ) &&  ((boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time())-dp_time_start).seconds() < DP_TOO_LONG_TIME) ; ++el_it) {
+             ( el_it != groupEnd ) &&  ((boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time())-dp_time_start).total_microseconds()*1e-6 < DP_TOO_LONG_TIME) ; ++el_it) {
             firstTurnPPAvailable += turnJump;
             turnJump = 0;
             if (firstTurnPPAvailable > DP_TURNS )
@@ -968,13 +967,13 @@ void ProductionQueue::Update(const std::map<ResourceType,
             double element_per_turn_limit = item_cost / std::max(build_turns, 1);
             double additional_pp_to_complete_element = element_total_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to build all items in this element
 
-            int max_turns = std::max( std::max(build_turns, 1), 1+int(additional_pp_to_complete_element/ppStillAvailable[firstTurnPPAvailable-1]));
+            unsigned int max_turns = std::max( std::max(build_turns, 1), 1+int(additional_pp_to_complete_element/ppStillAvailable[firstTurnPPAvailable-1]));
             max_turns = std::min( max_turns, DP_TURNS - firstTurnPPAvailable +1 );
 
             double allocation;
             //Logger().debugStream() << "ProductionQueue::Update Queue index   Queue Item: " << element.item.name;
 
-            for (int j = 0; j < max_turns; j++ ) {  //iterate over the turns necessary to complete item
+            for (unsigned int j = 0; j < max_turns; j++ ) {  //iterate over the turns necessary to complete item
                 // determine how many pp to allocate to this queue element this turn.  allocation is limited by the
                 // item cost, which is the max number of PP per turn that can be put towards this item, and by the
                 // total cost remaining to complete the last item in the queue element (eg. the element has all but
@@ -1117,9 +1116,9 @@ void ProductionQueue::Update(const std::map<ResourceType,
 #ifdef DP_QUEUE_SIMULATOR  // if both simulations were done, compare results
 #ifdef COMPARE_SIMS
     bool sameResults = true;
-    for (unsigned int i = 0; i< sim_production_status.size(); ++i ) {
-        if ( (m_queue[sim_queue_original_indices[i]].turns_left_to_next_item != dpsimulation_results_to_next[i]) || 
-            (m_queue[sim_queue_original_indices[i]].turns_left_to_completion != dpsimulation_results_to_completion[i]) ) {
+    for (unsigned int i = 0; i< dpsim_queue_original_indices.size(); ++i ) {
+        if ( (m_queue[dpsim_queue_original_indices[i]].turns_left_to_next_item != dpsimulation_results_to_next[i]) || 
+            (m_queue[dpsim_queue_original_indices[i]].turns_left_to_completion != dpsimulation_results_to_completion[i]) ) {
             sameResults = false;
             break;
         }
@@ -1290,9 +1289,9 @@ Empire::Empire(const std::string& name, const std::string& player_name, int empi
     m_name(name),
     m_player_name(player_name),
     m_color(color),
+    m_capital_id(INVALID_OBJECT_ID),
     m_research_queue(m_id),
     m_production_queue(m_id),
-    m_capital_id(INVALID_OBJECT_ID),
     m_resource_pools(),
     m_population_pool(),
     m_maintenance_total_cost(0)
@@ -2160,7 +2159,7 @@ void Empire::SetTechResearchProgress(const std::string& name, double progress) {
     // don't just give tech to empire, as another effect might reduce its progress before end of turn
 }
 
-const int MAX_PROD_QUEUE_SIZE = 500;
+const unsigned int MAX_PROD_QUEUE_SIZE = 500;
 
 void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/) {
     if (!BuildableItem(build_type, name, location))
@@ -2607,7 +2606,7 @@ void Empire::CheckProductionProgress() {
 
         // if accumulated PP is sufficient, the item is complete
         if (item_cost - EPSILON <= status) {
-            m_production_progress[i] -= item_cost * build_turns;
+            m_production_progress[i] -= item_cost; // this is the correct calculation -- item_cost is now for one full item, not just one turn's portion
             switch (m_production_queue[i].item.build_type) {
             case BT_BUILDING: {
                 int planet_id = m_production_queue[i].location;

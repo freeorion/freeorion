@@ -321,7 +321,7 @@ public:
     const       ProductionQueue& GetProductionQueue() const;            ///< Returns the queue of items being or queued to be produced.
     double      ProductionStatus(int i) const;                          ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
 
-    /** Returns the maximum cost per turn and the minimum number of turns
+    /** Returns the total cost per item and the minimum number of turns
       * required to produce the indicated item, or (-1.0, -1) if the item is
       * unknown, unavailable, or invalid. */
     std::pair<double, int>  ProductionCostAndTime(const ProductionQueue::Element& element) const;

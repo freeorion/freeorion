@@ -1,6 +1,7 @@
 #include "ProductionWnd.h"
 
 #include "../util/AppInterface.h"
+#include "../util/OptionsDB.h"
 #include "BuildDesignatorWnd.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
@@ -19,7 +20,8 @@
 
 
 namespace {
-    const GG::X PRODUCTION_INFO_AND_QUEUE_WIDTH(250);
+    const GG::X PRODUCTION_INFO_AND_QUEUE_WIDTH(250); //standard width 250
+    const GG::X WIDE_PRODUCTION_INFO_AND_QUEUE_WIDTH(300); //standard width 250
     const double PI = 3.141594;
     const double OUTER_LINE_THICKNESS = 2.0;
 
@@ -29,6 +31,190 @@ namespace {
     struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ProductionQueue::Element& build, int queue_index_);
         const int queue_index;
+        const ProductionQueue::Element m_build;
+        mutable boost::signal<void (int,int)>RowQuantChangedSignal;
+        void RowQuantChanged(int quantity) {
+            RowQuantChangedSignal(queue_index, quantity);
+        }
+    };
+
+    class QuantLabel : public GG::Control {
+    public:
+        QuantLabel(int quantity, int designID, boost::shared_ptr<GG::Font> font, bool inProgress) :
+            Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::Flags<GG::WndFlag>())
+        {
+            GG::Clr txtClr = inProgress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
+            std::string nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_MULTIPLES")) % quantity);
+            nameText += GetShipDesign(designID)->Name();
+            GG::TextControl* text = new GG::TextControl(GG::X0, GG::Y0, nameText, font, txtClr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+            text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3))); //
+            AttachChild(text);
+            Resize(GG::Pt(text->Width(), text->Height()));
+        }
+        void Render()
+        {}
+    };
+
+    class QuantRow : public GG::ListBox::Row {
+    public:
+        QuantRow(int quantity, int designID, boost::shared_ptr<GG::Font> font, bool inProgress) :
+            GG::ListBox::Row(),
+            width(0),
+            m_quant(quantity)
+        {
+            SetDragDropDataType("QuantRow");
+            QuantLabel* newLabel = new QuantLabel(m_quant, designID, font, inProgress);
+            width = newLabel->Width();
+            height = newLabel->Height();
+            push_back(newLabel);
+            Resize(GG::Pt(width, height-GG::Y0));//might subtract more; assessing aesthetics
+            //OffsetMove(GG::Pt(GG::X0, GG::Y(-2))); // didn't appear to have an effect
+        }
+        GG::X width;
+        GG::Y height;
+        int Quant() const { return m_quant; }
+    private:
+        int m_quant;
+    };
+
+    class QuantitySelector : public CUIDropDownList {
+    public:
+        mutable boost::signal<void (int)> QuantChangedSignal;
+
+        /** \name Structors */
+        QuantitySelector(const ProductionQueue::Element &build, GG::X xoffset, GG::Y yoffset, GG::Y h, boost::shared_ptr<GG::Font> font, bool inProgress, GG::X nwidth) :
+            //CUIDropDownList(GG::X0, GG::Y0, GG::X(36),h, h, GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5)),
+            CUIDropDownList(xoffset, yoffset, nwidth,h-GG::Y(2), h, inProgress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor(), 
+                           ( inProgress ? GG::LightColor(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor() ) ),
+            //CUIDropDownList(xoffset, yoffset, GG::X(50),h, h, GG::Clr(0, 0, 0, 0), GG::FloatClr(0.0, 0.0, 0.0, 0.0)),
+            quantity(build.remaining),
+            prevQuant(build.remaining),
+            amOn(false),
+            h(h)
+        {
+            GG::X width = GG::X0;
+            DisableDropArrow();
+            SetStyle(GG::LIST_LEFT | GG::LIST_NOSORT);
+            //SetInteriorColor(GG::Clr(0, 0, 0, 200));
+            SetNumCols(1);
+            //m_quantityBox->SetColWidth(0, GG::X(14));
+            //m_quantityBox->LockColWidths();
+
+            int quantInts[] = {1, 5, 10, 20, 50, 100, 200, 500};
+            std::set<int> myQuantSet(quantInts,quantInts+6);
+            myQuantSet.insert(build.remaining);
+            GG::Y height;
+            for (std::set<int>::iterator it=myQuantSet.begin(); it != myQuantSet.end(); it++ ) {
+                QuantRow* newRow =  new QuantRow(*it, build.item.design_id, font, inProgress);
+                if (newRow->width)
+                    width = newRow->width;
+                GG::DropDownList::iterator latest_it = Insert(newRow);
+                if (build.remaining == *it)
+                    Select(latest_it);
+                height = newRow->height;
+                //Resize(GG::Pt(width, height)); //doesn't work on DropDownList itself, goes by Row
+            }
+            // set dropheight.  shrink to fit a small number, but cap at a reasonable max
+            SetDropHeight(GG::Y(std::min( 8, int(myQuantSet.size() ) )*height + 2));
+            //QuantLabel ref1 = QuantLabel(quantity, ClientUI::Pts());
+            //QuantLabel ref2 = QuantLabel(100, ClientUI::Pts());
+            //OffsetMove(GG::Pt(ref1.Width()-GG::X(50) +GG::X(8), GG::Y(-4)));
+        }
+
+        QuantitySelector(const ProductionQueue::Element &build, GG::Y h) :
+            //CUIDropDownList(GG::X0, GG::Y0, GG::X(36),h, h, GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5)),
+            CUIDropDownList(GG::X0, GG::Y0, GG::X(36),h, h, ClientUI::KnownTechTextAndBorderColor(), ClientUI::KnownTechFillColor()),
+            quantity(build.remaining),
+            prevQuant(build.remaining),
+            amOn(false)
+        {
+            DisableDropArrow();
+            SetStyle(GG::LIST_CENTER);
+            SetInteriorColor(GG::Clr(0, 0, 0, 200));
+            SetNumCols(1);
+            //m_quantityBox->SetColWidth(0, GG::X(14));
+            //m_quantityBox->LockColWidths();
+            
+            int quantInts[] = {1, 5, 10, 20, 50, 100};
+            std::set<int> myQuantSet(quantInts,quantInts+6);
+            myQuantSet.insert(build.remaining);
+            for (std::set<int>::iterator it=myQuantSet.begin(); it != myQuantSet.end(); it++ ) {
+                GG::DropDownList::iterator latest_it = Insert(new QuantRow(*it, 0, ClientUI::GetFont(), false));
+                if (build.remaining == *it)
+                    Select(latest_it);
+            }
+            // set dropheight.  shrink to fit a small number, but cap at a reasonable max
+            SetDropHeight(std::min(8, int(myQuantSet.size()))* CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT +4);
+        }
+
+        QuantitySelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr border_color/* = ClientUI::CtrlBorderColor()*/,
+            GG::Clr interior/* = ClientUI::WndColor()*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
+            CUIDropDownList(GG::X0, GG::Y0, GG::X0, GG::Y0, GG::Y0, GG::Clr(0, 0, 0, 0), GG::FloatClr(0.0, 0.0, 0.0, 0.5),GG::Flags<GG::WndFlag>()),
+            quantity(0),
+            prevQuant(0),
+            amOn(false)
+        {}
+
+        void SelectionChanged(GG::DropDownList::iterator it) {
+            int quant;
+            //SetInteriorColor(GG::Clr(0, 0, 0, 0));
+            amOn=false;
+            //Hide();
+            //Render();
+            Logger().debugStream() << "QuantSelector:  selection made ";
+            if (it != end()) {
+                quant = boost::polymorphic_downcast<const QuantRow*>(*it)->Quant();
+                Logger().debugStream() << "QuantSelector:  selection changed to " << quant;
+                quantity=quant;
+            }
+        }
+
+    private:
+        const ProductionQueue::Element m_build;
+        int quantity;
+        int prevQuant;
+        bool amOn;
+        GG::Y h;
+
+        void GainingFocus() {
+            //amOn = !amOn;
+            //if (amOn)
+            Logger().debugStream() << "QuantSelector:  gained focus";
+            DropDownList::GainingFocus();
+        }
+
+        void LosingFocus() {
+            //amOn = !amOn;
+            //if (amOn)
+            Logger().debugStream() << "QuantSelector:  lost focus";
+            //SetInteriorColor(GG::Clr(0, 0, 0, 0));
+            amOn=false;
+            DropDownList::LosingFocus();
+        }
+
+        void LButtonDown ( const GG::Pt&  pt, GG::Flags< GG::ModKey >  mod_keys  )   {
+            Logger().debugStream() << "QuantSelector:  got a left button down msg";
+            if (!amOn ) {
+                //SetInteriorColor(ClientUI::KnownTechFillColor());
+                amOn=true;
+                Logger().debugStream() << "QuantSelector:  just came on";
+                Render();
+            } else {
+                //SetInteriorColor(GG::Clr(0, 0, 0, 0));
+                amOn=false;
+                Logger().debugStream() << "QuantSelector:  just went off";
+                Render();
+            }
+            DropDownList::LButtonDown(pt, mod_keys);
+        }
+
+        void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+            Logger().debugStream() << "QuantSelector:  got a left click";
+
+            DropDownList::LClick(pt, mod_keys);
+            if (quantity != prevQuant)
+                QuantChangedSignal(quantity);
+        }
     };
 
     //////////////////////////////////////////////////
@@ -39,6 +225,9 @@ namespace {
         QueueBuildPanel(GG::X w, const ProductionQueue::Element& build, double turn_cost,
                         int turns, int number, int turns_completed, double partially_complete_turn);
         virtual void Render();
+        void UpdateQueue();
+        void ItemQuantityChanged(int quant) ;
+        mutable boost::signal<void(int)>    PanelUpdateQuantSignal;
 
     private:
         void Draw(GG::Clr clr, bool fill);
@@ -50,6 +239,7 @@ namespace {
         GG::TextControl*                m_turns_remaining_until_next_complete_text;
         GG::StaticGraphic*              m_icon;
         MultiTurnProgressBar*           m_progress_bar;
+        QuantitySelector*               m_quantityBox;
         bool                            m_in_progress;
         int                             m_total_turns;
         int                             m_turns_completed;
@@ -61,7 +251,8 @@ namespace {
     //////////////////////////////////////////////////
     QueueRow::QueueRow(GG::X w, const ProductionQueue::Element& elem, int queue_index_) :
         GG::ListBox::Row(),
-        queue_index(queue_index_)
+        queue_index(queue_index_),
+        m_build(elem)
     {
         const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
         double total_cost(1.0);
@@ -73,12 +264,15 @@ namespace {
         if (progress == -1.0)
             progress = 0.0;
 
-        GG::Control* panel = new QueueBuildPanel(w, elem,
-                                                 elem.allocated_pp, minimum_turns, elem.remaining,
-                                                 static_cast<int>(progress / per_turn_cost),
-                                                 std::fmod(progress, per_turn_cost) / per_turn_cost);
+        //        GG::Control* panel = new QueueBuildPanel(w, elem,
+        QueueBuildPanel* panel = new QueueBuildPanel(w, elem,
+                                                        elem.allocated_pp, minimum_turns, elem.remaining,
+                                                        static_cast<int>(progress / std::max(1e-6,per_turn_cost)),
+                                                        std::fmod(progress, per_turn_cost) / std::max(1e-6,per_turn_cost));
         Resize(panel->Size());
         push_back(panel);
+
+        GG::Connect(panel->PanelUpdateQuantSignal,  &QueueRow::RowQuantChanged, this);
 
         SetDragDropDataType("PRODUCTION_QUEUE_ROW");
     }
@@ -86,9 +280,7 @@ namespace {
     //////////////////////////////////////////////////
     // QueueBuildPanel implementation
     //////////////////////////////////////////////////
-    QueueBuildPanel::QueueBuildPanel(GG::X w, const ProductionQueue::Element& build,
-                                     double turn_spending, int turns, int number,
-                                     int turns_completed, double partially_complete_turn) :
+    QueueBuildPanel::QueueBuildPanel(GG::X w, const ProductionQueue::Element& build, double turn_spending, int turns, int number, int turns_completed, double partially_complete_turn) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
         m_build(build),
         m_name_text(0),
@@ -134,17 +326,15 @@ namespace {
             name_text = UserString("FW_UNKNOWN_DESIGN_NAME");
         }
 
-
         // things other than buildings can be built in multiple copies with one order
         if (build.item.build_type != BT_BUILDING)
-            name_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_MULTIPLES")) % number) + name_text;
-
+            //name_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_MULTIPLES")) % number) + name_text;
+            name_text = " "; // leave blank to not interfere with quantitybox
 
         // get location indicator text
         std::string location_text;
         if (const UniverseObject* location = GetUniverseObject(build.location))
             location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name());
-
 
         // create and arrange widgets to display info
         GG::Y top(MARGIN);
@@ -164,10 +354,17 @@ namespace {
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
 
+        if (m_build.item.build_type != BT_BUILDING) {
+            //const GG::Y TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
+            m_quantityBox = new QuantitySelector(m_build, left, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), font, m_in_progress, NAME_WIDTH);
+            GG::Connect(m_quantityBox->SelChangedSignal,                &QuantitySelector::SelectionChanged, m_quantityBox);
+        } else {
+            m_quantityBox = new QuantitySelector(GG::X0, GG::Y0, GG::X0, GG::Y0, GG::Y0, GG::Clr(0,0,0,0), GG::FloatClr(0.0, 0.0, 0.0, 0.0),GG::Flags<GG::WndFlag>());
+        }
         m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, turns,
-                                                  turns_completed + partially_complete_turn,
-                                                  ClientUI::TechWndProgressBarColor(),
-                                                  ClientUI::TechWndProgressBarBackgroundColor(), clr);
+                                                    turns_completed + partially_complete_turn,
+                                                    ClientUI::TechWndProgressBarColor(),
+                                                    ClientUI::TechWndProgressBarBackgroundColor(), clr);
         m_progress_bar->MoveTo(GG::Pt(left, top));
 
         top += m_progress_bar->Height() + MARGIN;
@@ -178,20 +375,25 @@ namespace {
 
         left += TURNS_AND_COST_WIDTH;
 
-
         int turns_left = build.turns_left_to_next_item;
         std::string turns_left_text = turns_left < 0 ? UserString("PRODUCTION_TURNS_LEFT_NEVER") : str(FlexibleFormat(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
         m_turns_remaining_until_next_complete_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
-                                                                         turns_left_text, font, clr, GG::FORMAT_RIGHT);
+                                                                            turns_left_text, font, clr, GG::FORMAT_RIGHT);
         m_turns_remaining_until_next_complete_text->ClipText(true);
 
-        if (m_icon) AttachChild(m_icon);
+        if (m_icon)
+            AttachChild(m_icon);
         AttachChild(m_name_text);
+        AttachChild(m_quantityBox);
         AttachChild(m_location_text);
         AttachChild(m_PPs_and_turns_text);
         AttachChild(m_turns_remaining_until_next_complete_text);
         AttachChild(m_progress_bar);
+        GG::Connect(m_quantityBox->QuantChangedSignal,                &QueueBuildPanel::ItemQuantityChanged, this);
     }
+
+    void QueueBuildPanel::ItemQuantityChanged(int quant)
+    { PanelUpdateQuantSignal(quant); }
 
     void QueueBuildPanel::Render() {
         GG::Clr fill = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor();
@@ -226,8 +428,15 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     m_build_designator_wnd(0),
     m_enabled(false)
 {
-    m_production_info_panel = new ProductionInfoPanel(PRODUCTION_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
-                                                      static_cast<GLfloat>(OUTER_LINE_THICKNESS), ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
+    Logger().debugStream() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width") << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
+
+    if ( GetOptionsDB().Get<int>("app-width-windowed") <= 1280 ) {
+        m_production_info_panel = new ProductionInfoPanel(PRODUCTION_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
+        static_cast<GLfloat>(OUTER_LINE_THICKNESS), ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
+    } else {
+        m_production_info_panel = new ProductionInfoPanel(WIDE_PRODUCTION_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
+                                                          static_cast<GLfloat>(OUTER_LINE_THICKNESS), ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
+    }
 
     m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height(), "PRODUCTION_QUEUE_ROW");
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
@@ -273,7 +482,6 @@ void ProductionWnd::Refresh() {
     if (Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID()))
         m_empire_connection = GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,
                                           &ProductionWnd::ProductionQueueChangedSlot, this);
-
     UpdateInfoPanel();
     UpdateQueue();
 
@@ -331,6 +539,7 @@ void ProductionWnd::ProductionQueueChangedSlot() {
 }
 
 void ProductionWnd::UpdateQueue() {
+    Logger().debugStream() << "ProductionWnd::UpdateQueue()";
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
@@ -341,8 +550,11 @@ void ProductionWnd::UpdateQueue() {
     const GG::X QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
 
     int i = 0;
-    for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it, ++i)
-        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, *it, i));
+    for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
+        QueueRow* newRow = new QueueRow(QUEUE_WIDTH, *it, i);
+        GG::Connect(newRow->RowQuantChangedSignal,     &ProductionWnd::ChangeBuildQuantitySlot, this);
+        m_queue_lb->Insert(newRow);
+    }
 
     if (!m_queue_lb->Empty())
         m_queue_lb->BringRowIntoView(--m_queue_lb->end());

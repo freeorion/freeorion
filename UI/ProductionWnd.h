@@ -58,8 +58,9 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void (int)> SystemSelectedSignal; ///< emitted when the user changes the selected system in the production screen
-    mutable boost::signal<void (int)> PlanetSelectedSignal; ///< emitted when the user changes the selected planet in the production screen
+    mutable boost::signal<void (int)>       SystemSelectedSignal;   ///< emitted when the user changes the selected system in the production screen
+    mutable boost::signal<void (int)>       PlanetSelectedSignal;   ///< emitted when the user changes the selected planet in the production screen
+    mutable boost::signal<void (int,int)>   RowQuantChangedSignal;  ///< emitted when the user changes the number of items to produce in a production row
 
 private:
     void    ProductionQueueChangedSlot();
