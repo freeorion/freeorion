@@ -179,12 +179,8 @@ void NewFleetOrder::ExecuteImpl() const {
     // an ID is provided to ensure consistancy between server and client universes
     universe.InsertID(fleet, m_new_id);
     system->Insert(fleet);
-    fleet->SetAggressive(false);    // TODO: Copy from old fleet of ships?
-
-
-    // add ship(s) to fleet
-    for (unsigned int i = 0; i < validated_ships.size(); ++i)
-        fleet->AddShip(validated_ships[i]);
+    fleet->SetAggressive(false);
+    fleet->AddShips(validated_ships);
 }
 
 
@@ -362,8 +358,9 @@ void FleetTransferOrder::ExecuteImpl() const {
     }
 
 
-    // iterate down the ship vector and add each one to the fleet
-    // after first verifying that it is a valid ship id
+    // iterate down the ship vector check validity of each
+    std::vector<int> validated_ship_ids;
+    validated_ship_ids.reserve(m_add_ships.size());
     std::vector<int>::const_iterator itr = m_add_ships.begin();
     while (itr != m_add_ships.end()) {
         // find the ship, verify that ID is valid
@@ -381,13 +378,10 @@ void FleetTransferOrder::ExecuteImpl() const {
             return;
         }
 
-        // send the ship to its new fleet
-        //a_ship->SetFleetID(DestinationFleet());  // redundant: AddShip resets the Fleet ID of ships it adds
-        //source_fleet->RemoveShip(curr);  // redundant: AddShip calls RemoveShip on ship's old fleet
-        target_fleet->AddShip(curr);
-
+        validated_ship_ids.push_back(curr);
         itr++;
     }
+    target_fleet->AddShips(validated_ship_ids);
 }
 
 

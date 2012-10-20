@@ -115,7 +115,9 @@ public:
     virtual void            MovementPhase();
 
     void                    AddShip(int ship_id);                           ///< adds the ship to the fleet
-    bool                    RemoveShip(int ship);                           ///< removes the ship from the fleet. Returns false if no ship with ID \a id was found.
+    void                    AddShips(const std::vector<int>& ship_ids);     ///< adds the ships to the fleet
+    void                    RemoveShip(int ship_id);                        ///< removes the ship from the fleet.
+    void                    RemoveShips(const std::vector<int>& ship_ids);  ///< removes the ships from the fleet.
 
     iterator                begin() { return m_ships.begin(); }             ///< returns the begin iterator for the ships in the fleet
     iterator                end()   { return m_ships.end(); }               ///< returns the end iterator for the ships in the fleet

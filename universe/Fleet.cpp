@@ -9,6 +9,7 @@
 #include "../Empire/EmpireManager.h"
 
 #include <boost/lexical_cast.hpp>
+#include <boost/timer.hpp>
 
 #include <cmath>
 
@@ -18,6 +19,24 @@ namespace {
 
     bool SystemHasNoVisibleStarlanes(int system_id, int empire_id)
     { return !GetUniverse().SystemHasVisibleStarlanes(system_id, empire_id); }
+
+    /** Wrapper for boost::timer that outputs time during which this object
+      * existed.  Created in the scope of a function, and passed the appropriate
+      * name, it will output to Logger().debugStream() the time elapsed while
+      * the function was executing. */
+    class ScopedTimer {
+    public:
+        ScopedTimer(const std::string& timed_name = "scoped timer") :
+            m_timer(),
+            m_name(timed_name)
+        {}
+        ~ScopedTimer() {
+            Logger().debugStream() << m_name << " time: " << (m_timer.elapsed() * 1000.0);
+        }
+    private:
+        boost::timer    m_timer;
+        std::string     m_name;
+    };
 }
 
 // static(s)
@@ -630,47 +649,73 @@ void Fleet::SetAggressive(bool aggressive/* = true*/) {
 }
 
 void Fleet::AddShip(int ship_id) {
-    if (this->Contains(ship_id)) {
-        Logger().debugStream() << "Fleet::AddShip this fleet '" << this->Name() << "' already contained ship '" << ship_id << "'";
-        return;
-    }
-
-    Ship* ship = GetShip(ship_id);
-    if (!ship) {
-        Logger().errorStream() << "Fleet::AddShips() : Attempted to add an id (" << ship_id << ") of a non-ship object to a fleet.";
-        return;
-    }
-
-    //Logger().debugStream() << "Fleet '" << this->Name() << "' adding ship: " << ship_id;
-
-    // remove ship from old fleet
-    if (Fleet* old_fleet = GetFleet(ship->FleetID()))
-        old_fleet->RemoveShip(ship_id);
-
-    // ensure ship is in same system as this fleet
-    int ship_system_id = ship->SystemID();
-    int this_fleet_system_id = this->SystemID();
-    if (ship_system_id != this_fleet_system_id)
-        if (System* system = GetSystem(this_fleet_system_id))
-            system->Insert(ship);   // sets ship's system, remove from old system (if any) and moves ship to system's location (if necessary)
-
-    // add ship to this fleet, and set its internal fleet record
-
-    ship->SetFleetID(ID());
-    m_ships.insert(ship_id);
-
-    StateChangedSignal();
+    std::vector<int> ship_ids;
+    ship_ids.push_back(ship_id);
+    AddShips(ship_ids);
 }
 
-bool Fleet::RemoveShip(int ship) {
-    //std::cout << "Fleet::RemoveShip" << std::endl;
-    iterator it = m_ships.find(ship);
-    if (it != m_ships.end()) {
-        m_ships.erase(it);
-        StateChangedSignal();
-        return true;;
+void Fleet::AddShips(const std::vector<int>& ship_ids) {
+    ScopedTimer timer("Fleet::AddShips for " + boost::lexical_cast<std::string>(ship_ids.size()) + " ship ids");
+    // sort ships to be added by old fleet
+    std::map<int, std::pair<std::vector<int>, std::vector<Ship*> > > old_fleets_ships;
+    for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
+        Ship* ship = GetShip(*it);
+        if (!ship) {
+            Logger().errorStream() << "Fleet::AddShips couldn't find ship with id  " << *it;
+            continue;
+        }
+        if (this->Contains(*it))
+            continue;
+        old_fleets_ships[ship->FleetID()].first.push_back(*it);
+        old_fleets_ships[ship->FleetID()].second.push_back(ship);
     }
-    return false;
+
+    bool changed = false;
+
+    // move all the ships from each source fleet together
+    for (std::map<int, std::pair<std::vector<int>, std::vector<Ship*> > >::const_iterator
+         old_fleet_it = old_fleets_ships.begin();
+         old_fleet_it != old_fleets_ships.end(); ++old_fleet_it)
+    {
+        const std::vector<int>& ships_to_move_ids = old_fleet_it->second.first;
+        const std::vector<Ship*>& ships_to_move = old_fleet_it->second.second;
+        int old_fleet_id = old_fleet_it->first;
+
+        if (Fleet* old_fleet = GetFleet(old_fleet_id))
+            old_fleet->RemoveShips(ships_to_move_ids);
+
+        // ensure ships are in same system as this fleet and set their fleet IDs
+        int fleet_system_id = this->SystemID();
+        for (std::vector<Ship*>::const_iterator ship_it = ships_to_move.begin();
+             ship_it != ships_to_move.end(); ++ship_it)
+        {
+            Ship* ship = *ship_it;
+            if (fleet_system_id != ship->SystemID())
+                if (System* system = GetSystem(fleet_system_id))
+                    system->Insert(ship);
+            ship->SetFleetID(this->ID());
+        }
+        // record this fleet's ships
+        std::copy(ships_to_move_ids.begin(), ships_to_move_ids.end(), std::inserter(m_ships, m_ships.end()));
+        changed = true;
+    }
+    if (changed)
+        StateChangedSignal;
+}
+
+void Fleet::RemoveShip(int ship_id) {
+    std::vector<int> ship_ids;
+    ship_ids.push_back(ship_id);
+    RemoveShips(ship_ids);
+}
+
+void Fleet::RemoveShips(const std::vector<int>& ship_ids) {
+    ScopedTimer timer("Fleet::RemoveShips for " + boost::lexical_cast<std::string>(ship_ids.size()) + " ship ids");
+    std::set<int> initial_m_ships = m_ships;
+    for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it)
+        m_ships.erase(*it);
+    if (m_ships != initial_m_ships)
+        StateChangedSignal();
 }
 
 void Fleet::SetSystem(int sys) {
