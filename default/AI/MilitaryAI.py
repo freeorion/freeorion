@@ -176,7 +176,7 @@ def getMilitaryFleets():
         print "-----------------"
 
     if remainingMilRating <=6:
-        newAllocations = allocations
+        newAllocations = [ (sid,  alc,  alc,  ta) for (sid,  alc,  ta) in allocations ]
     else:
         totAlloc = sum( [alloc for sid,  alloc,  takeAny  in allocations ] )
         factor =(2.0* remainingMilRating ) / ( totAlloc  + 0.1)
@@ -184,10 +184,10 @@ def getMilitaryFleets():
         newAllocations = []
         for sid,  alloc,  takeAny in allocations:
             if remainingMilRating <= 0 :
-                newAllocations.append(  ( sid, alloc,  takeAny )  )
+                newAllocations.append(  ( sid, alloc,  alloc,  takeAny )  )
             else:
                 thisAlloc =  int( factor * alloc )
-                newAllocations.append(  ( sid, alloc+thisAlloc,  takeAny )  )
+                newAllocations.append(  ( sid, alloc+thisAlloc, alloc,  takeAny )  )
                 remainingMilRating -= thisAlloc
 
     MilitaryAllocations = newAllocations
@@ -242,7 +242,7 @@ def getMilitaryFleets():
             print "    ID|Score: " + str(evaluationPair)
 
     # export military systems for other AI modules
-    AIstate.militarySystemIDs = [sid for sid, alloc,  takeAny  in newAllocations]
+    AIstate.militarySystemIDs = [sid for sid, alloc,  minalloc,  takeAny  in newAllocations]
 
 def getMilitaryTargetedSystemIDs(systemIDs, missionType, empireID):
     "return list of military targeted systems"
@@ -362,11 +362,12 @@ def assignMilitaryFleetsToSystems():
     # get systems to defend
     universe = fo.getUniverse()
 
-    for sysID,  alloc,  takeAny in MilitaryAllocations:
+    for sysID,  alloc,  minalloc,   takeAny in MilitaryAllocations:
         foundFleets = []
-        theseFleets = FleetUtilsAI.getFleetsForMission(1,  alloc,  0,  "",  systemsToCheck=[sysID],  systemsChecked=[], fleetPool=availMilFleetIDs,   fleetList=foundFleets,  verbose=False)
+        foundRating=[0]
+        theseFleets = FleetUtilsAI.getFleetsForMission(1,  alloc, minalloc,   foundRating,  "",  systemsToCheck=[sysID],  systemsChecked=[], fleetPool=availMilFleetIDs,   fleetList=foundFleets,  verbose=False)
         if theseFleets == []:
-            if foundFleets==[]  or  not takeAny:
+            if foundFleets==[]  or  (foundRating[0]<minalloc and not takeAny):
                 print "NO available/suitable military  allocation for system %d ( %s ) -- requested allocation %8d"%(sysID,  universe.getSystem(sysID).name,  alloc)
                 continue
             else:

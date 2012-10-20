@@ -69,7 +69,7 @@ def assignScoutsToExploreSystems():
     sentList=[]
     while (len(availableScouts) > 0 ) and ( len(needsCoverage) >0):
         thisSysID = needsCoverage.pop(0)
-        thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  minRating=0,  curRating=0,  species="",  systemsToCheck=[thisSysID],  systemsChecked=[], 
+        thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetRating=0,  minRating=0,  curRating=[0],  species="",  systemsToCheck=[thisSysID],  systemsChecked=[], 
                                                      fleetPool = availableScouts,   fleetList=[],  verbose=False)
         if thisFleetList==[]:
              break #must have ran out of scouts

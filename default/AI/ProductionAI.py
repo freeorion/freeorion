@@ -61,12 +61,7 @@ def generateProductionOrders():
                 buildingType = fo.getBuildingType(buildingTypeID)
                 print "buildingType  object:",  buildingType
                 print "dir(buildingType): ",  dir(buildingType)
-                print "    " + str(buildingType.name) # + " cost:" + str(buildingType.productionCost) + " time:" + str(buildingType.productionTime)
-                print "'try'ing to print  'cost:' + str(buildingType.productionCost) + ' time:' + str(buildingType.productionTime)"
-                try:
-                    print " cost:" + str(buildingType.productionCost(empire.empireID,  homeworld.id)) + " time:" + str(buildingType.productionTime(empire.empireID,  homeworld.id))
-                except:
-                    print"failed with error:",  sys.exc_info()[0]
+                print "    " + str(buildingType.name)  + " cost: " +str(buildingType.productionCost(empire.empireID,  homeworld.id)) + " time: " + str(buildingType.productionTime(empire.empireID,  homeworld.id))
                 
             possibleBuildingTypes = [fo.getBuildingType(buildingTypeID) and  fo.getBuildingType(buildingTypeID).name  for buildingTypeID in possibleBuildingTypeIDs ] #makes sure is not None before getting name
 
@@ -99,7 +94,7 @@ def generateProductionOrders():
     print "Possible ship designs to build:"
     for shipDesignID in empire.availableShipDesigns:
         shipDesign = fo.getShipDesign(shipDesignID)
-        print "    " + str(shipDesign.name(True)) + " cost:" + str(shipDesign.productionCost) + " time:" + str(shipDesign.productionTime)
+        print "    " + str(shipDesign.name(True)) + " cost:" + str(shipDesign.productionCost(empire.empireID,  homeworld.id) )+ " time:" + str(shipDesign.productionTime(empire.empireID,  homeworld.id))
 
     print ""
     print "Projects already in Production Queue:"
@@ -195,10 +190,10 @@ def generateProductionOrders():
                 totColonyFleets +=1  # assumes the enqueueing below succeeds, but really no harm if assumption proves wrong
         bestShip,  bestDesign,  buildChoices = bestShips[thisPriority]
         loc = choice(buildChoices)
-        print "adding new ship to production queue:  %s; per turn production cost %.1f"%(bestDesign.name(True),  (float(bestDesign.productionCost) / bestDesign.productionTime))
+        print "adding new ship to production queue:  %s; per turn production cost %.1f"%(bestDesign.name(True),  (float(bestDesign.productionCost(empire.empireID,  homeworld.id)) / bestDesign.productionTime(empire.empireID,  homeworld.id)))
         print ""
         fo.issueEnqueueShipProductionOrder(bestShip, loc)
-        wastedPP -=  ( float(bestDesign.productionCost) / bestDesign.productionTime)
+        wastedPP -=  ( float(bestDesign.productionCost(empire.empireID,  homeworld.id)) / bestDesign.productionTime(empire.empireID,  homeworld.id))
     print ""
 
 def getAvailableBuildLocations(shipDesignID):

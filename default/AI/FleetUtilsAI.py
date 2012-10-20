@@ -12,15 +12,15 @@ def clearShipDesignInfo():
     __designStats.clear()
     
 
-def getFleetsForMission(nships,  minRating,  curRating,  species,  systemsToCheck,  systemsChecked, fleetPool,   fleetList, takeAny=False,  verbose=False): #implements breadth-first search through systems
+def getFleetsForMission(nships,  targetRating,  minRating,  curRating,  species,  systemsToCheck,  systemsChecked, fleetPool,   fleetList, takeAny=False,  verbose=False): #implements breadth-first search through systems
     if verbose:
-        print "getFleetsForMission: (nships:%1d,  minRating:%6d,  curRating:%6d,  species:%6s,  systemsToCheck:%8s,  systemsChecked:%8s, fleetPool:%8s,   fleetList:%8s) "%(
-                                                                                                                                        nships,  minRating,  curRating,  species,  systemsToCheck,  systemsChecked, fleetPool,   fleetList)
+        print "getFleetsForMission: (nships:%1d,  targetRating:%6d,  minRating:%6d, curRating:%6d,  species:%6s,  systemsToCheck:%8s,  systemsChecked:%8s, fleetPool:%8s,   fleetList:%8s) "%(
+                                                                                                                                        nships,  targetRating,  minRating, curRating[0],  species,  systemsToCheck,  systemsChecked, fleetPool,   fleetList)
     universe = fo.getUniverse()
     if not (systemsToCheck and fleetPool):
         if verbose: 
             print "no more systems or fleets to check"
-        if takeAny:
+        if takeAny or curRating[0] > minRating:
             return fleetList
         else:
             return []
@@ -28,7 +28,7 @@ def getFleetsForMission(nships,  minRating,  curRating,  species,  systemsToChec
     systemsChecked.append(thisSystemID)
     #thisSys = universe.getSystem(thisSystemID)
     #if not thisSys:
-    #    return getFleetsForMission(nships,  minRating,  curRating,  species,  systemsToCheck,  systemsChecked, fleetPool,  fleetList)
+    #    return getFleetsForMission(nships,  targetRating,  minRating, curRating,  species,  systemsToCheck,  systemsChecked, fleetPool,  fleetList)
     fleetsHere = [fleetID for fleetID in fleetPool if ( foAI.foAIstate.fleetStatus.get(fleetID,  {}).get('sysID',  -1) == thisSystemID ) ]
     if verbose:
         print "found fleetPool Fleets  %s"%fleetsHere
@@ -37,8 +37,8 @@ def getFleetsForMission(nships,  minRating,  curRating,  species,  systemsToChec
             pass #TODO:  colony mission species req not implemented yet
         fleetList.append(fleetID)
         del fleetPool[ fleetPool.index( fleetID) ]
-        curRating += foAI.foAIstate.getRating(fleetID)
-        if  ( len(fleetList) >= nships ) and ( curRating >= minRating ):
+        curRating[0] += foAI.foAIstate.getRating(fleetID)
+        if  ( len(fleetList) >= nships ) and ( curRating[0] >= targetRating ):
             if verbose: 
                 print  "returning fleetlist: %s"%fleetList
             return fleetList
@@ -47,7 +47,7 @@ def getFleetsForMission(nships,  minRating,  curRating,  species,  systemsToChec
     for neighborID in [el.key() for el in universe.getSystemNeighborsMap(thisSystemID,  foAI.foAIstate.empireID) ]:
         if neighborID not in systemsChecked and neighborID in foAI.foAIstate.exploredSystemIDs:
             systemsToCheck.append(neighborID)
-    return getFleetsForMission(nships,  minRating,  curRating,  species,  systemsToCheck,  systemsChecked, fleetPool,  fleetList,  takeAny,  verbose)
+    return getFleetsForMission(nships,  targetRating,  minRating,  curRating,  species,  systemsToCheck,  systemsChecked, fleetPool,  fleetList,  takeAny,  verbose)
     
     
 def getEmpireFleets(empireID=None):
