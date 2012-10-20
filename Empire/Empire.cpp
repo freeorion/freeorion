@@ -365,7 +365,8 @@ void ResearchQueue::Update(double RPs, const std::map<std::string, double>& rese
             std::set<std::string> thesePrereqs = tech->Prerequisites();
             for (std::set<std::string>::iterator ptech_it = thesePrereqs.begin(); ptech_it != thesePrereqs.end(); ++ptech_it){
                 if (dpsim_tech_status_map[ *ptech_it ] == TS_COMPLETE ) {
-                    thesePrereqs.erase( ptech_it );
+                    std::set<std::string>::iterator eraseit = ptech_it--;
+                    thesePrereqs.erase( eraseit);
                 }
             }
             waitingForPrereqs[ techname ] = thesePrereqs;
