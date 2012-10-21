@@ -49,6 +49,7 @@ namespace {
                 |   tok.PreviousSystemID_
                 |   tok.NumShips_
                 |   tok.LastTurnBattleHere_
+                |   tok.Orbit_
                 ;
 
             constant

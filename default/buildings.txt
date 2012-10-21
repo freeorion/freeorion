@@ -875,7 +875,7 @@ BuildingType
 BuildingType
     name = "BLD_TERRAFORM"
     description = "BLD_TERRAFORM_DESC"
-    buildcost = 300
+    buildcost = 300 * (1 + Target.DistanceFromOriginalType)
     buildtime = 10
     location = And [
         Not Contains Building "BLD_TERRAFORM"
