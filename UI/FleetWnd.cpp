@@ -557,21 +557,22 @@ void ShipDataPanel::Render() {
 }
 
 void ShipDataPanel::Select(bool b) {
-    if (m_selected != b) {
-        m_selected = b;
+    if (m_selected == b)
+        return;
+    m_selected = b;
 
-        const GG::Clr& unselected_text_color = ClientUI::TextColor();
-        const GG::Clr& selected_text_color = GG::CLR_BLACK;
+    const GG::Clr& unselected_text_color = ClientUI::TextColor();
+    const GG::Clr& selected_text_color = GG::CLR_BLACK;
 
-        GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
+    GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
 
-        if (Disabled())
-            text_color_to_use = DisabledColor(text_color_to_use);
+    if (Disabled())
+        text_color_to_use = DisabledColor(text_color_to_use);
 
+    if (m_ship_name_text)
         m_ship_name_text->SetTextColor(text_color_to_use);
-        if (m_design_name_text)
-            m_design_name_text->SetTextColor(text_color_to_use);
-    }
+    if (m_design_name_text)
+        m_design_name_text->SetTextColor(text_color_to_use);
 }
 
 void ShipDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
