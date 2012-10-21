@@ -334,6 +334,9 @@ namespace ValueRef {
         if (property_name == PlanetType_name) {
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 return p->Type();
+        } else if (property_name == OriginalType_name) {
+            if (const Planet* p = universe_object_cast<const Planet*>(object))
+                return p->OriginalType();
         } else if (property_name == NextBetterPlanetType_name) {
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 return p->NextBetterPlanetTypeForSpecies();
@@ -479,6 +482,10 @@ namespace ValueRef {
         } else if (property_name == SizeAsDouble_name) {
             if (const Planet* planet = universe_object_cast<const Planet*>(object))
                 return planet->SizeAsInt();
+
+        } else if (property_name == DistanceFromOriginalType_name) {
+            if (const Planet* planet = universe_object_cast<const Planet*>(object))
+                return planet->DistanceFromOriginalType();
 
         } else if (property_name == CurrentTurn_name) {
             return CurrentTurn();

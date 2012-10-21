@@ -511,15 +511,29 @@ namespace FreeOrionPython {
         ///////////////////
         class_<PopCenter, noncopyable>("popCenter", no_init)
             .add_property("speciesName",        make_function(&PopCenter::SpeciesName,      return_value_policy<copy_const_reference>()))
+            .add_property("nextTurnPopGrowth",  &PopCenter::NextTurnPopGrowth)
         ;
 
         //////////////////
         //    Planet    //
         //////////////////
         class_<Planet, bases<UniverseObject, PopCenter, ResourceCenter>, noncopyable>("planet", no_init)
-            .add_property("size",               &Planet::Size)
-            .add_property("type",               &Planet::Type)
-            .add_property("buildingIDs",        make_function(&Planet::Buildings,           return_internal_reference<>()))
+            .add_property("size",                           &Planet::Size)
+            .add_property("type",                           &Planet::Type)
+            .add_property("originalType",                   &Planet::OriginalType)
+            .add_property("distanceFromOriginalType",       &Planet::DistanceFromOriginalType)
+            .def("environmentForSpecies",                   &Planet::EnvironmentForSpecies)
+            .def("nextBetterPlanetTypeForSpecies",          &Planet::NextBetterPlanetTypeForSpecies)
+            .add_property("clockwiseNextPlanetType",        &Planet::ClockwiseNextPlanetType)
+            .add_property("counterClockwiseNextPlanetType", &Planet::CounterClockwiseNextPlanetType)
+            .add_property("nextLargerPlanetSize",           &Planet::NextLargerPlanetSize)
+            .add_property("nextSmallerPlanetSize",          &Planet::NextSmallerPlanetSize)
+            .add_property("OrbitalPeriod",                  &Planet::OrbitalPeriod)
+            .add_property("InitialOrbitalPosition",         &Planet::InitialOrbitalPosition)
+            .def("OrbitalPositionOnTurn",                   &Planet::OrbitalPositionOnTurn)
+            .add_property("RotationalPeriod",               &Planet::RotationalPeriod)
+            .add_property("AxialTilt",                      &Planet::AxialTilt)
+            .add_property("buildingIDs",                    make_function(&Planet::Buildings,           return_internal_reference<>()))
         ;
 
         //////////////////
@@ -543,7 +557,7 @@ namespace FreeOrionPython {
         //    Field     //
         //////////////////
         class_<Field, bases<UniverseObject>, noncopyable>("field", no_init)
-            .add_property("fieldTypeName",      make_function(&Field::FieldTypeName,    return_value_policy<copy_const_reference>()))
+            .add_property("fieldTypeName",      make_function(&Field::FieldTypeName,        return_value_policy<copy_const_reference>()))
             .def("inField",                     &ObjectInField)
             .def("inField",                     LocationInField)
         ;

@@ -81,6 +81,7 @@
     (Detection)                                 \
     (Distance)                                  \
     (DistanceToSource)                          \
+    (DistanceFromOriginalType)                  \
     (Effects)                                   \
     (EffectsGroup)                              \
     (EffectsGroups)                             \
@@ -185,6 +186,7 @@
     (Or)                                        \
     (Orange)                                    \
     (Orbit)                                     \
+    (OriginalType)                              \
     (OwnedBy)                                   \
     (Owner)                                     \
     (OwnerHasTech)                              \

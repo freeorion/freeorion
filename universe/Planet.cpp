@@ -55,6 +55,7 @@ Planet::Planet() :
     PopCenter(),
     ResourceCenter(),
     m_type(PT_TERRAN),
+    m_original_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
     m_orbital_period(1.0),
     m_initial_orbital_position(0.0),
@@ -77,6 +78,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     PopCenter(),
     ResourceCenter(),
     m_type(type),
+    m_original_type(type),
     m_size(size),
     m_orbital_period(1.0),
     m_initial_orbital_position(RandZeroToOne() * 2 * 3.14159),
@@ -94,8 +96,6 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     PopCenter::Init();
     ResourceCenter::Init();
     Planet::Init();
-    SetType(type);
-    SetSize(size);
 
     const double SPIN_STD_DEV = 0.1;
     const double REVERSE_SPIN_CHANCE = 0.06;
@@ -135,6 +135,7 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id) {
     if (vis >= VIS_BASIC_VISIBILITY) {
         this->m_buildings =                 copied_planet->VisibleContainedObjects(empire_id);
         this->m_type =                      copied_planet->m_type;
+        this->m_original_type =             copied_planet->m_original_type;
         this->m_size =                      copied_planet->m_size;
         this->m_orbital_period =            copied_planet->m_orbital_period;
         this->m_initial_orbital_position =  copied_planet->m_initial_orbital_position;
@@ -186,7 +187,8 @@ std::string Planet::Dump() const {
     os << UniverseObject::Dump();
     os << PopCenter::Dump();
     os << ResourceCenter::Dump();
-    os << " planet type: " << UserString(GG::GetEnumMap<PlanetType>().FromEnum(m_type))
+    os << " type: " << UserString(GG::GetEnumMap<PlanetType>().FromEnum(m_type))
+       << " original type: " << UserString(GG::GetEnumMap<PlanetType>().FromEnum(m_original_type))
        << " size: " << UserString(GG::GetEnumMap<PlanetSize>().FromEnum(m_size))
        << " rot period: " << m_rotational_period
        << " axis tilt: " << m_axial_tilt
@@ -297,6 +299,19 @@ PlanetType Planet::ClockwiseNextPlanetType() const
 
 PlanetType Planet::CounterClockwiseNextPlanetType() const
 { return LoopPlanetTypeIncrement(m_type, -1); }
+
+int Planet::TypeDifference(PlanetType type1, PlanetType type2) {
+    // no distance defined for invalid types
+    if (type1 == INVALID_PLANET_TYPE || type2 == INVALID_PLANET_TYPE)
+        return -1;
+    // if the same, distance is zero
+    if (type1 == type2)
+        return 0;
+    // no distance defined for asteroids or gas giants with anything else
+    if (type1 == PT_ASTEROIDS || type1 == PT_GASGIANT || type2 == PT_ASTEROIDS || type2 == PT_GASGIANT)
+        return -1;
+    return std::abs(int(type1) - int(type2));
+}
 
 namespace {
     PlanetSize PlanetSizeIncrement(PlanetSize initial_size, int step) {
@@ -426,9 +441,8 @@ double Planet::NextTurnCurrentMeterValue(MeterType type) const {
     double max_meter_value = max_meter->Current();
 
     // being attacked prevents meter growth
-    if (LastTurnAttackedByShip() >= CurrentTurn()) {
+    if (LastTurnAttackedByShip() >= CurrentTurn())
         return std::min(current_meter_value, max_meter_value);
-    }
 
     // currently meter growth is one per turn.
     return std::min(current_meter_value + 1.0, max_meter_value);

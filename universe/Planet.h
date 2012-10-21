@@ -95,8 +95,10 @@ public:
     virtual const std::string&  TypeName() const;                       ///< returns user-readable string indicating the type of UniverseObject this is
     virtual std::string         Dump() const;
 
-    PlanetType                  Type() const { return m_type; }
-    PlanetSize                  Size() const { return m_size; }
+    PlanetType                  Type() const                        { return m_type; }
+    PlanetType                  OriginalType() const                { return m_original_type; }
+    int                         DistanceFromOriginalType() const    { return TypeDifference(m_type, m_original_type); }
+    PlanetSize                  Size() const                        { return m_size; }
     int                         SizeAsInt() const;
 
     PlanetEnvironment           EnvironmentForSpecies(const std::string& species_name = "") const;
@@ -172,6 +174,8 @@ public:
     void            SetSurfaceTexture(const std::string& texture);
     //@}
 
+    static int      TypeDifference(PlanetType type1, PlanetType type2);
+
 protected:
     virtual void            ResetTargetMaxUnpairedMeters();
 
@@ -189,6 +193,7 @@ private:
     std::set<int>           VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_buildings that is visible to empire with id \a empire_id
 
     PlanetType      m_type;
+    PlanetType      m_original_type;
     PlanetSize      m_size;
     Year            m_orbital_period;
     Radian          m_initial_orbital_position;
