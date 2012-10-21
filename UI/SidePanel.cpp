@@ -871,8 +871,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_specials_panel = new SpecialsPanel(panel_width, m_planet_id);
     AttachChild(m_specials_panel);
 
-    std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE")) % GetPlanetSizeName(*planet) % GetPlanetTypeName(*planet));
-    m_env_size = new GG::TextControl(GG::X(MaxPlanetDiameter()), GG::Y0, env_size_text, ClientUI::GetFont(), ClientUI::TextColor());
+    m_env_size = new GG::TextControl(GG::X(MaxPlanetDiameter()), GG::Y0, "", ClientUI::GetFont(), ClientUI::TextColor());
     AttachChild(m_env_size);
 
 
@@ -1180,8 +1179,16 @@ void SidePanel::PlanetPanel::Refresh() {
     DetachChild(m_invade_button);
     DetachChild(m_colonize_button);
     DetachChild(m_colonize_instruction);
+
+    std::string species_name;
+    if (!planet->SpeciesName().empty())
+        species_name = planet->SpeciesName();
+    else if (!colony_ship_species_name.empty())
+        species_name = colony_ship_species_name;
+
     std::string env_size_text;
-    if (colony_ship_species_name.empty())
+
+    if (species_name.empty())
         env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
                                        % GetPlanetSizeName(*planet)
                                        % GetPlanetTypeName(*planet));
@@ -1189,7 +1196,7 @@ void SidePanel::PlanetPanel::Refresh() {
         env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
                                        % GetPlanetSizeName(*planet)
                                        % GetPlanetTypeName(*planet)
-                                       % GetPlanetEnvironmentName(*planet, colony_ship_species_name));
+                                       % GetPlanetEnvironmentName(*planet, species_name));
 
 
     if (Disabled() || !(can_colonize || could_colonize || being_colonized || invadable || being_invaded)) {
