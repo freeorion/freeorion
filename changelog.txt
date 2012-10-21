@@ -1,30 +1,57 @@
 v0.4.1 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 New Features / Improvements:
- ~ Roughly added the new Protection Focus
- ~ Improved (but still basic) AI.
+ ~ Improved AI.
+ ~ Keyboard presses should now account for the operating system language setting, and it should be possible to type non-Latin characters in-game as long as the appropriate character set is used in the selected stringtable file.
+ ~ Added an objects list window, with collapsable rows showing objects containing other objects
+ ~~ Objects list has an incomplete filtering function to control what objects are shown.
+ ~~ Right clicking an object in the objects list give a command to data dump about that object to the messages window. (For debug purposes)
+ ~ Added ion storms moving around the map.
+ ~ Roughly added a Protection Focus
+ ~ Added sitrep type filters.
+ ~ Old sitrep entries are kept on later turns, and may be reviewed.
+ ~ All ships produced by an empire on a single turn are now put into a single fleet, rather than a separate fleet for each ship.
+ ~ Added a happiness meter to planets.
+ ~ Disabled production of duplicate buildings when one already has been produced.
+ ~ Various turn-processing and GUI speed improvements.
+ ~ Added droplist to items on production queue to produce multiple items before being removed from the queue.
 
 Balancing:
- ~ Unified resource and fleet supply into a single meter-- the Supply Meter. Infrastructure is not involved.
+ ~ Unified resource and fleet supply into a single meter: the Supply meter. Infrastructure is not involved.
  ~ ~ Outpost now provide 1 jump supply, and colonies 2 jump supply.  Techs and buildings can extend that.
  ~ Reduced detection ranges for ships and planets by roughly half.
  ~ Loosened requirements for Asteroid hulls/parts
  ~ ~ Asteroid processors are no longer shipyards, but must be built on a belt for a shipyard anywhere in the system to build asteroid hulls.
  ~ ~ Rock/Crystallized Armor Plating now requires an Asteroid Reformation Processor somewhere in the empire.
  ~ Halved weapon damage and Hull structure doubled Armor and Shield part strength.  I think adding defences to ships is now valid.
- ~ Made Terraforming more expensive.
- ~ 
+ ~ Made Terraforming more expensive, and made it get more expensive for repeatedly terraforming the same planet.
+ ~ Disable production of shipyards at outposts.
  
  Content:
   ~ More Game Concepts 'pedia entries.
+  ~ Russian translation update.
   
  Graphics:
   ~ New Focus icons.
+  ~ Sitrep icons.
+  ~ New planet meter icons.
+ 
+ GUI:
+  ~ Numpad keypresses now enter numbers when numlock is on, and act as arrow navigation keys in text edit widgets.
+  ~ Added option to swap left and right mouse buttons, for left-handed players.
+  ~ Added line to producible item tooltips to indicate that items must be unlocked.
+  ~ Added key remapping function for hotkeys, via the file keymaps.txt
+  ~ Recoloured most planet meters.
+  ~ Added right-click popup menu to set map / misc options.
+  ~ Added right-click popup menu to split damaged ships from a fleet.
+  ~ Added right-click popup menu to scrap a whole fleet.
  
  Bugs:
   ~ Disabled building shipyards at outposts.
   ~ Disabled the construction of any duplicate buildings at the same location.  It is still possible to double-queue a building and get multiples.
-
+  ~ Fixed longstanding font corruption with non-Latin text.
+  ~ Partial fix for a crash with font text colours wrapping over line ending in the encyclopedia window.  May still result in glitchy text colouring, but hopefully won't crash.
+  ~ Fixed issue where some producible items would be replaced by empty space on their list.
 
 v0.4.1 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
