@@ -2535,6 +2535,9 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     if (system && ship_ids_set.size() > 1)
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_FLEET"),           3, false, false));
 
+    // add a fleet popup command to order all ships in the fleet scrapped
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),            4, false, false));
+
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
 
     if (popup.Run()) {
@@ -2574,6 +2577,16 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
                 CreateNewFleetFromShips(ship_ids_vec, aggressive);
             }
             break;
+        }
+
+        case 4: { // issure scrap orders to all ships in this fleet
+            std::set<int> ship_ids_set = fleet->ShipIDs();
+            for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
+                int ship_id = *it;
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new ScrapOrder(empire_id, ship_id))
+                );
+            }
         }
 
         default:

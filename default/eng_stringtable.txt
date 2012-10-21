@@ -2118,6 +2118,9 @@ Split Fleet
 ORDER_SHIP_SCRAP
 Scrap Ship
 
+ORDER_FLEET_SCRAP
+Scrap Fleet's Ships
+
 ORDER_CANCEL_SHIP_SCRAP
 Cancel Scrapping Ship
 
