@@ -2536,7 +2536,12 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_FLEET"),           3, false, false));
 
     // add a fleet popup command to order all ships in the fleet scrapped
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),            4, false, false));
+    if (system && fleet->HasShipsWithoutScrapOrders())
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),        4, false, false));
+
+    // add a fleet popup command to cancel all scrap orders on ships in this fleet
+    if (system && fleet->HasShipsOrderedScrapped())
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_SCRAP"), 5, false, false));
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
 
@@ -2579,7 +2584,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             break;
         }
 
-        case 4: { // issure scrap orders to all ships in this fleet
+        case 4: { // issue scrap orders to all ships in this fleet
             std::set<int> ship_ids_set = fleet->ShipIDs();
             for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
                 int ship_id = *it;
@@ -2587,6 +2592,16 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
                     OrderPtr(new ScrapOrder(empire_id, ship_id))
                 );
             }
+            break;
+        }
+
+        case 5: { // cancel scrap orders for all ships in this fleet
+            std::set<int> ship_ids_set = fleet->ShipIDs();
+            for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
+                int ship_id = *it;
+                GetShip(ship_id)->SetOrderedScrapped(false);
+            }
+            break;
         }
 
         default:

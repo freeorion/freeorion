@@ -543,6 +543,23 @@ bool Fleet::HasTroopShips() const {
     return false;
 }
 
+bool Fleet::HasShipsOrderedScrapped() const {
+    for (Fleet::const_iterator it = begin(); it != end(); it++)
+        if (const Ship* ship = GetShip(*it))
+            if (ship->OrderedScrapped())
+                return true;
+    return false;
+}
+
+bool Fleet::HasShipsWithoutScrapOrders() const {
+    for (Fleet::const_iterator it = begin(); it != end(); it++)
+        if (const Ship* ship = GetShip(*it))
+            if (!ship->OrderedScrapped())
+                return true;
+    return false;
+}
+
+
 bool Fleet::Contains(int object_id) const
 { return m_ships.find(object_id) != m_ships.end(); }
 

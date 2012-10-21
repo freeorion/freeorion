@@ -2119,11 +2119,13 @@ ORDER_SHIP_SCRAP
 Scrap Ship
 
 ORDER_FLEET_SCRAP
-Scrap Fleet's Ships
+Scrap Ships
 
 ORDER_CANCEL_SHIP_SCRAP
 Cancel Scrapping Ship
 
+ORDER_CANCEL_FLEET_SCRAP
+Cancel Scrapping Ships
 
 ###############
 #  Diplomacy  #
