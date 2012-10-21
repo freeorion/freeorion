@@ -2109,6 +2109,9 @@ Fleet Fuel - Equal to the minimum fuel of ships in the fleet.
 FW_FLEET_SPEED_SUMMARY
 Fleet Speed - Equal to the minimum speed of ships in the fleet.
 
+FW_SPLIT_DAMAGED_FLEET
+Split Damaged Ships From Fleet
+
 FW_SPLIT_FLEET
 Split Fleet
 

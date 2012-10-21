@@ -2509,16 +2509,36 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
 
     const System* system = GetSystem(fleet->SystemID());    // may be null
 
+    std::set<int> ship_ids_set = fleet->ShipIDs();
+
+    // find damaged ships
+    std::vector<int> damaged_ship_ids;
+    damaged_ship_ids.reserve(ship_ids_set.size());
+    for (std::set<int>::const_iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
+        const Ship* ship = GetShip(*it);
+        if (!ship)
+            continue;
+        if (ship->CurrentMeterValue(METER_STRUCTURE) < ship->CurrentMeterValue(METER_MAX_STRUCTURE))
+            damaged_ship_ids.push_back(*it);
+    }
+
     GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"),               1, false, false));
-    if (system && fleet->NumShips() > 1)    // can't split fleets without more than one ship, or which are not in a system
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_FLEET"),   2, false, false));
+    // Rename fleet
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"),                       1, false, false));
+
+    // Split damaged ships - need some, but not all, ships damaged, and need to be in a system
+    if (system && ship_ids_set.size() > 1 && !damaged_ship_ids.empty() && damaged_ship_ids.size() != ship_ids_set.size())
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_DAMAGED_FLEET"),   2, false, false));
+
+    // Split fleet - can't split fleets without more than one ship, or which are not in a system
+    if (system && ship_ids_set.size() > 1)
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_FLEET"),           3, false, false));
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
 
     if (popup.Run()) {
         switch (popup.MenuID()) {
-        case 1: { // rename fleet
+        case 1: {   // rename fleet
             std::string fleet_name = fleet->Name();
             CUIEditWnd edit_wnd(GG::X(350), UserString("ENTER_NEW_NAME"), fleet_name);
             edit_wnd.Run();
@@ -2532,23 +2552,25 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             break;
         }
 
-        case 2: { // split ships in fleet into one-ship fleets
-            std::set<int> ship_ids_set = fleet->ShipIDs();
+        case 2: {   // split damaged
+            bool aggressive = false;    // damaged ships want to avoid fighting more
+            CreateNewFleetFromShips(damaged_ship_ids, aggressive);
+            break;
+        }
 
-            if (ship_ids_set.size() >= 2) {
-                // remove first ship from set
-                std::set<int>::iterator it = ship_ids_set.begin();
-                ship_ids_set.erase(it);
+        case 3: {   // split
+            // remove first ship from set
+            std::set<int>::iterator it = ship_ids_set.begin();
+            ship_ids_set.erase(it);
 
-                // put remaining ships into their own fleets
-                for (it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
-                    std::vector<int> ship_ids_vec;
-                    ship_ids_vec.push_back(*it);
-                    bool aggressive = false;
-                    if (m_new_fleet_drop_target)
-                        aggressive = m_new_fleet_drop_target->NewFleetAggression();
-                    CreateNewFleetFromShips(ship_ids_vec, aggressive);
-                }
+            // put remaining ships into their own fleets
+            for (it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
+                std::vector<int> ship_ids_vec;
+                ship_ids_vec.push_back(*it);
+                bool aggressive = false;
+                if (m_new_fleet_drop_target)
+                    aggressive = m_new_fleet_drop_target->NewFleetAggression();
+                CreateNewFleetFromShips(ship_ids_vec, aggressive);
             }
             break;
         }
