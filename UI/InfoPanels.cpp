@@ -2025,9 +2025,11 @@ SpecialsPanel::SpecialsPanel(GG::X w, int object_id) :
 
 bool SpecialsPanel::InWindow(const GG::Pt& pt) const {
     bool retval = false;
-    for (std::vector<GG::StaticGraphic*>::const_iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
-        if ((*it)->InWindow(pt))
+    for (std::map<std::string, GG::StaticGraphic*>::const_iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
+        if (it->second->InWindow(pt)) {
             retval = true;
+            break;
+        }
     }
     return retval;
 }
@@ -2049,8 +2051,8 @@ void SpecialsPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void SpecialsPanel::Update() {
     //std::cout << "SpecialsPanel::Update" << std::endl;
-    for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it)
-        DeleteChild(*it);
+    for (std::map<std::string, GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it)
+        DeleteChild(it->second);
     m_icons.clear();
 
 
@@ -2080,15 +2082,17 @@ void SpecialsPanel::Update() {
             new IconTextBrowseWnd(ClientUI::SpecialIcon(special->Name()),
                                   UserString(special->Name()),
                                   desc)));
-        m_icons.push_back(graphic);
+        m_icons[it->first] = graphic;
+
+        graphic->InstallEventFilter(this);
     }
 
     const GG::X AVAILABLE_WIDTH = Width() - EDGE_PAD;
     GG::X x(EDGE_PAD);
     GG::Y y(EDGE_PAD);
 
-    for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
-        GG::StaticGraphic* icon = *it;
+    for (std::map<std::string, GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
+        GG::StaticGraphic* icon = it->second;
         icon->MoveTo(GG::Pt(x, y));
         AttachChild(icon);
 
@@ -2110,6 +2114,21 @@ void SpecialsPanel::Update() {
 void SpecialsPanel::EnableOrderIssuing(bool enable/* = true*/)
 {}
 
+bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
+    if (event.Type() == GG::WndEvent::RClick) {
+        for (std::map<std::string, GG::StaticGraphic*>::const_iterator it = m_icons.begin();
+             it != m_icons.end(); ++it)
+        {
+            if (it->second == w) {
+                std::cout << "RightClicked on special icon: " << it->first << std::endl;
+                return true;
+                break;
+            }
+        }
+        return false;
+    }
+    return false;
+}
 
 /////////////////////////////////////
 //        ShipDesignPanel          //

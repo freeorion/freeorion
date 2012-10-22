@@ -263,13 +263,14 @@ public:
 
     /** \name Accessors */ //@{
     bool                    InWindow(const GG::Pt& pt) const;
-    int                     ObjectID() const {return m_object_id;}
+    int                     ObjectID() const { return m_object_id; }
     //@}
 
     /** \name Mutators */ //@{
     virtual void            Render();
     virtual void            MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
     virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual bool            EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
     void                    Update();          ///< regenerates indicators according to buildings on planets and on queue on planet and redoes layout
 
@@ -279,8 +280,10 @@ public:
     //@}
 
 private:
-    int                             m_object_id;        ///< id for the Object whose specials this panel displays
-    std::vector<GG::StaticGraphic*> m_icons;
+    void                    SpecialRightClicked(const std::string& name);
+
+    int                                         m_object_id;        ///< id for the Object whose specials this panel displays
+    std::map<std::string, GG::StaticGraphic*>   m_icons;
 };
 
 /** Represents a ShipDesign */
