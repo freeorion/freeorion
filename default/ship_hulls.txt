@@ -53,7 +53,12 @@ Hull
     slots = [
         Slot type = External position = (0.50, 0.45)
     ]
-    buildCost = 2.0
+    buildCost = 2.0 + 0.1 *
+        Number condition = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ]
     buildTime = 2
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
