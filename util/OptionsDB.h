@@ -170,7 +170,7 @@ public:
     {
         if (m_options.find(name) != m_options.end())
             throw std::runtime_error("OptionsDB::Add<>() : Option " + name + " was specified twice.");
-        m_options[name] = Option(static_cast<char>(0), name, default_value, default_value, description, validator.Clone(), storable);
+        m_options[name] = Option(static_cast<char>(0), name, default_value, default_value, description, validator.Clone(), storable, false);
         OptionAddedSignal(name);
     }
 
@@ -182,7 +182,7 @@ public:
     {
         if (m_options.find(name) != m_options.end())
             throw std::runtime_error("OptionsDB::Add<>() : Option " + name + " was specified twice.");
-        m_options[name] = Option(short_name, name, default_value, default_value, description, validator.Clone(), storable);
+        m_options[name] = Option(short_name, name, default_value, default_value, description, validator.Clone(), storable, false);
         OptionAddedSignal(name);
     }
 
@@ -195,7 +195,7 @@ public:
         if (m_options.find(name) != m_options.end())
             throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was specified twice.");
         m_options[name] = Option(static_cast<char>(0), name, false, boost::lexical_cast<std::string>(false),
-                                 description, 0, storable);
+                                 description, 0, storable, true);
         OptionAddedSignal(name);
     }
 
@@ -208,7 +208,7 @@ public:
         if (m_options.find(name) != m_options.end())
             throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was specified twice.");
         m_options[name] = Option(short_name, name, false, boost::lexical_cast<std::string>(false),
-                                 description, 0, storable);
+                                 description, 0, storable, true);
         OptionAddedSignal(name);
     }
 
@@ -241,7 +241,7 @@ private:
         Option();
         Option(char short_name_, const std::string& name_, const boost::any& value_,
                const boost::any& default_value_, const std::string& description_,
-               const ValidatorBase *validator_, bool storable_);
+               const ValidatorBase *validator_, bool storable_, bool flag_);
 
         void            SetFromString(const std::string& str);
         std::string     ValueToString() const;
@@ -255,6 +255,7 @@ private:
         boost::shared_ptr<const ValidatorBase>
                         validator;      ///< a validator for the option. Flags have no validators; lexical_cast boolean conversions are done for them.
         bool            storable;       ///< whether this option can be stored in an XML config file for use across multiple runs
+        bool            flag;
 
         mutable boost::shared_ptr<boost::signal<void ()> > option_changed_sig_ptr;
 

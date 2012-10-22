@@ -73,7 +73,7 @@ OptionsDB::Option::Option()
 
 OptionsDB::Option::Option(char short_name_, const std::string& name_, const boost::any& value_,
                           const boost::any& default_value_, const std::string& description_,
-                          const ValidatorBase* validator_, bool storable_) :
+                          const ValidatorBase* validator_, bool storable_, bool flag_) :
     name(name_),
     short_name(short_name_),
     value(value_),
@@ -81,6 +81,7 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
     description(description_),
     validator(validator_),
     storable(storable_),
+    flag(flag_),
     option_changed_sig_ptr(new boost::signal<void ()>())
 {
     if (short_name_)
@@ -88,27 +89,24 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
 }
 
 void OptionsDB::Option::SetFromString(const std::string& str) {
-    if (validator) { // non-flag
+    if (!flag)
         value = validator->Validate(str);
-    } else { // flag
+    else
         value = boost::lexical_cast<bool>(str);
-    }
 }
 
 std::string OptionsDB::Option::ValueToString() const {
-    if (validator) { // non-flag
+    if (!flag)
         return validator->String(value);
-    } else { // flag
+    else
         return boost::lexical_cast<std::string>(boost::any_cast<bool>(value));
-    }
 }
 
 std::string OptionsDB::Option::DefaultValueToString() const {
-    if (validator) { // non-flag
+    if (!flag)
         return validator->String(default_value);
-    } else { // flag
+    else
         return boost::lexical_cast<std::string>(boost::any_cast<bool>(default_value));
-    }
 }
 
 
@@ -130,11 +128,10 @@ void OptionsDB::Validate(const std::string& name, const std::string& value) cons
     if (it == m_options.end())
         throw std::runtime_error("Attempted to validate unknown option \"" + name + "\".");
 
-    if (it->second.validator) { // non-flag
+    if (it->second.validator)
         it->second.validator->Validate(value);
-    } else { // flag
+    else if (it->second.flag)
         boost::lexical_cast<bool>(value);
-    }
 }
 
 std::string OptionsDB::GetValueString(const std::string& option_name) const {
@@ -257,9 +254,9 @@ XMLDoc OptionsDB::GetXML() const {
         }
 
         XMLElement temp(name);
-        if (it->second.validator) { // non-flag
+        if (it->second.validator) {
             temp.SetText(it->second.ValueToString());
-        } else { // flag
+        } else if (it->second.flag) {
             if (!boost::any_cast<bool>(it->second.value))
                 continue;
         }
@@ -303,7 +300,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
             if (option.value.empty())
                 throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
 
-            if (option.validator) { // non-flag
+            if (!option.flag) { // non-flag
                 try {
                     // ensure a parameter exists...
                     if (i + 1 >= static_cast<unsigned int>(args.size()))
@@ -352,16 +349,14 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                     if (option.value.empty())
                         throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
 
-                    if (option.validator) { // non-flag
+                    if (!option.flag) {
                         if (j < single_char_options.size() - 1)
                             throw std::runtime_error(std::string("Option \"-") + single_char_options[j] + "\" was given with no parameter.");
                         else
                             option.SetFromString(args[++i]);
-                    } else { // flag
+                    } else {
                         option.value = true;
                     }
-
-                    //option_changed = true;
                 }
             }
         }
@@ -369,18 +364,18 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
 }
 
 void OptionsDB::SetFromXML(const XMLDoc& doc) {
-    for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
+    for (int i = 0; i < doc.root_node.NumChildren(); ++i)
         SetFromXMLRecursive(doc.root_node.Child(i), "");
-    }
 }
 
 void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name) {
     std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
 
-    // flags have no text or children; their presence at all indicates a value of true
-    std::string option_value = elem.NumChildren() || elem.Text() != "" ? elem.Text() : "1";
+    if (elem.NumChildren()) {
+        for (int i = 0; i < elem.NumChildren(); ++i)
+            SetFromXMLRecursive(elem.Child(i), option_name);
 
-    if (option_value != "") {
+    } else {
         std::map<std::string, Option>::iterator it = m_options.find(option_name);
 
         if (it == m_options.end()) {
@@ -389,19 +384,19 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
         }
 
         Option& option = it->second;
-        if (option.value.empty()) {
-            Logger().errorStream() << "The value member of option \"" << option.name << "\" in config.xml is undefined.";
-            return;
-        }
+        //if (!option.flag && option.value.empty()) {
+        //    Logger().errorStream() << "The value member of option \"" << option.name << "\" in config.xml is undefined.";
+        //    return;
+        //}
 
-        try {
-            option.SetFromString(option_value);
-        } catch (const std::exception& e) {
-            Logger().errorStream() << "OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attemptimg to set option \"" << option_name << "\": " << e.what();
-            return;
+        if (option.flag) {
+            option.value = true;
+        } else {
+            try {
+                option.SetFromString(elem.Text());
+            } catch (const std::exception& e) {
+                Logger().errorStream() << "OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attemptimg to set option \"" << option_name << "\": " << e.what();
+            }
         }
     }
-
-    for (int i = 0; i < elem.NumChildren(); ++i)
-        SetFromXMLRecursive(elem.Child(i), option_name);
 }
