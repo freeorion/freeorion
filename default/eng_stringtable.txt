@@ -2545,6 +2545,8 @@ ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 ENC_TECH_DETAIL_TYPE_STR
 %1% %2% - %3%
 
+ENC_LOOKUP
+Pedia Lookup %1%
 
 ###########################################
 # ARTICLE CATAGORIES & SHORT DESCRIPTIONS #

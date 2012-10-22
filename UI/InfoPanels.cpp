@@ -2116,11 +2116,29 @@ void SpecialsPanel::EnableOrderIssuing(bool enable/* = true*/)
 
 bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     if (event.Type() == GG::WndEvent::RClick) {
+        const GG::Pt pt = event.Point();
+
         for (std::map<std::string, GG::StaticGraphic*>::const_iterator it = m_icons.begin();
              it != m_icons.end(); ++it)
         {
             if (it->second == w) {
-                std::cout << "RightClicked on special icon: " << it->first << std::endl;
+
+                std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
+                                                         UserString(it->first));
+
+                GG::MenuItem menu_contents;
+                menu_contents.next_level.push_back(GG::MenuItem(popup_label, 1, false, false));
+
+                GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+                if (popup.Run()) {
+                    switch (popup.MenuID()) {
+                    case 1:
+                        ClientUI::GetClientUI()->ZoomToSpecial(it->first);
+                        break;
+                    default:
+                        break;
+                    }
+                }
                 return true;
                 break;
             }
