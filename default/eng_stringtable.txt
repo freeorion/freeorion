@@ -2826,6 +2826,11 @@ The %shipdesign% '%ship%' has been produced at %system%.
 SITREP_SHIP_BUILT_LABEL
 Ship Produced
 
+SITREP_SHIP_BLOCK_BUILT
+A block of ships of type %shipdesign% has been produced at %system%.
+SITREP_SHIP_BLOCK_BUILT_LABEL
+Ship Block Produced
+
 SITREP_BUILDING_BUILT
 %building% has been produced on %planet%.
 SITREP_BUILDING_BUILT_LABEL

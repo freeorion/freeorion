@@ -60,8 +60,8 @@ public:
 
     mutable boost::signal<void (int)>       SystemSelectedSignal;   ///< emitted when the user changes the selected system in the production screen
     mutable boost::signal<void (int)>       PlanetSelectedSignal;   ///< emitted when the user changes the selected planet in the production screen
-    mutable boost::signal<void (int,int)>   RowQuantChangedSignal;  ///< emitted when the user changes the number of items to produce in a production row
-
+    mutable boost::signal<void (int,int)>RowQuantChangedSignal;           ///
+    
 private:
     void    ProductionQueueChangedSlot();
     void    UpdateQueue();     ///< Clears and repopulates queue list with listitems corresponding to contents of empire's production queue
@@ -71,7 +71,8 @@ private:
     void    AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location);
 
     void    ChangeBuildQuantitySlot(int queue_idx, int quantity);
-
+    void    ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize);
+    
     void    QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
     void    QueueItemDeletedSlot(GG::ListBox::iterator it);
     void    QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt);

@@ -715,6 +715,7 @@ ProductionQueueOrder::ProductionQueueOrder() :
     m_location(INVALID_OBJECT_ID),
     m_index(INVALID_INDEX),
     m_new_quantity(INVALID_QUANTITY),
+    m_new_blocksize(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
 {}
 
@@ -727,6 +728,7 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, con
     m_location(location),
     m_index(INVALID_INDEX),
     m_new_quantity(INVALID_QUANTITY),
+    m_new_blocksize(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
 {
     if (m_build_type == BT_SHIP) {
@@ -743,10 +745,28 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, int
     m_location(location),
     m_index(INVALID_INDEX),
     m_new_quantity(INVALID_QUANTITY),
+    m_new_blocksize(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
 {
     if (m_build_type == BT_BUILDING) {
         Logger().errorStream() << "Attempted to construct a ProductionQueueOrder for a BT_BUILDING with a design id, not a name";
+    }
+}
+
+ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quantity, int new_blocksize) :
+    Order(empire),
+    m_build_type(INVALID_BUILD_TYPE),
+    m_item_name(""),
+    m_design_id(INVALID_OBJECT_ID),
+    m_number(0),
+    m_location(INVALID_OBJECT_ID),
+    m_index(index),
+    m_new_quantity(new_quantity),
+    m_new_blocksize(new_blocksize),
+    m_new_index(INVALID_INDEX)
+{
+    if (m_build_type == BT_BUILDING) {
+        Logger().errorStream() << "Attempted to construct a ProductionQueueOrder for changing quantity &/or blocksize of a BT_BUILDING";
     }
 }
 
@@ -759,8 +779,13 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quanti
     m_location(INVALID_OBJECT_ID),
     m_index(index),
     m_new_quantity(new_quantity),
+    m_new_blocksize(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
-{}
+{
+    if (m_build_type == BT_BUILDING) {
+        Logger().errorStream() << "Attempted to construct a ProductionQueueOrder for changing quantity of a BT_BUILDING";
+    }
+}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_index) :
     Order(empire),
@@ -771,6 +796,7 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_index)
     m_location(INVALID_OBJECT_ID),
     m_index(index),
     m_new_quantity(INVALID_QUANTITY),
+    m_new_blocksize(INVALID_QUANTITY),
     m_new_index(new_index)
 {}
 
@@ -783,6 +809,7 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index) :
     m_location(INVALID_OBJECT_ID),
     m_index(index),
     m_new_quantity(INVALID_QUANTITY),
+    m_new_blocksize(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
 {}
 
@@ -794,6 +821,10 @@ void ProductionQueueOrder::ExecuteImpl() const {
         empire->PlaceBuildInQueue(BT_BUILDING, m_item_name, m_number, m_location);
     else if (m_build_type == BT_SHIP)
         empire->PlaceBuildInQueue(BT_SHIP, m_design_id, m_number, m_location);
+    else if (m_new_blocksize != INVALID_QUANTITY) {
+        Logger().debugStream() << "ProductionQueueOrder quantity " << m_new_quantity << " Blocksize " << m_new_blocksize;
+        empire->SetBuildQuantityAndBlocksize(m_index, m_new_quantity, m_new_blocksize);
+    }
     else if (m_new_quantity != INVALID_QUANTITY)
         empire->SetBuildQuantity(m_index, m_new_quantity);
     else if (m_new_index != INVALID_INDEX)

@@ -162,9 +162,10 @@ struct ProductionQueue {
         Element(ProductionItem item_, int ordered_, int remaining_, int location_); ///< basic ctor.
         Element(BuildType build_type, std::string name, int ordered_, int remaining_, int location_); ///< basic ctor.
         Element(BuildType build_type, int design_id, int ordered_, int remaining_, int location_); ///< basic ctor.
-
+        
         ProductionItem  item;
-        int             ordered;                    ///< how many of item to produce
+        int             ordered;                    ///< how many of item (blocks) to produce
+        int             blocksize;                  ///< size of block to produce (default=1)
         int             remaining;                  ///< how many left to produce
         int             location;                   ///< the ID of the UniverseObject at which this item is being produced
         double          allocated_pp;               ///< amount of PP allocated to this ProductionQueue Element by Empire production update
@@ -321,7 +322,7 @@ public:
     const       ProductionQueue& GetProductionQueue() const;            ///< Returns the queue of items being or queued to be produced.
     double      ProductionStatus(int i) const;                          ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
 
-    /** Returns the total cost per item and the minimum number of turns
+    /** Returns the total cost per item (blocksize 1) and the minimum number of turns
       * required to produce the indicated item, or (-1.0, -1) if the item is
       * unknown, unavailable, or invalid. */
     std::pair<double, int>  ProductionCostAndTime(const ProductionQueue::Element& element) const;
@@ -427,6 +428,7 @@ public:
       * placed at the end of the queue. */
     void        PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
     void        SetBuildQuantity(int index, int quantity);      ///< Changes the remaining number to build for queue item \a index to \a quantity
+    void        SetBuildQuantityAndBlocksize(int index, int quantity, int blocksize);  ///< Changes the remaining number and blocksize to build for queue item \a index to \a quantity and \a blocksize 
     void        MoveBuildWithinQueue(int index, int new_index); ///< Moves \a tech from the production queue, if it is in the production queue already.
     void        RemoveBuildFromQueue(int index);                ///< Removes the build at position \a index in the production queue, if such an index exists.
 

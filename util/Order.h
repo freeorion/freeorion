@@ -426,6 +426,7 @@ public:
     ProductionQueueOrder(int empire, BuildType build_type, const std::string& item, int number, int location);
     ProductionQueueOrder(int empire, BuildType build_type, int design_id, int number, int location);
     ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy);
+    ProductionQueueOrder(int empire, int index, int new_quantity, int new_blocksize);
     ProductionQueueOrder(int empire, int index, int new_index);
     ProductionQueueOrder(int empire, int index);
     //@}
@@ -440,6 +441,7 @@ private:
     int         m_location;
     int         m_index;
     int         m_new_quantity;
+    int         m_new_blocksize;
     int         m_new_index;
 
     static const int INVALID_INDEX = -500;

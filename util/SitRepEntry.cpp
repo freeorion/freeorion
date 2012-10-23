@@ -73,6 +73,14 @@ SitRepEntry CreateShipBuiltSitRep(int ship_id, int system_id, int shipdesign_id)
     return sitrep;
 }
 
+SitRepEntry CreateShipBlockBuiltSitRep( int system_id, int shipdesign_id) {
+    SitRepEntry sitrep("SITREP_SHIP_BLOCK_BUILT", "icons/sitrep/ship_produced.png");
+    sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
+    sitrep.AddVariable(VarText::DESIGN_ID_TAG,     boost::lexical_cast<std::string>(shipdesign_id));
+    //sitrep.AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(blocksize));
+    return sitrep;
+}
+
 SitRepEntry CreateBuildingBuiltSitRep(int building_id, int planet_id) {
     SitRepEntry sitrep("SITREP_BUILDING_BUILT", "icons/sitrep/building_produced.png");
     sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));

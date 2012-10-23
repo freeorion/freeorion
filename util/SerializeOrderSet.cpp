@@ -122,6 +122,7 @@ void ProductionQueueOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_index)
         & BOOST_SERIALIZATION_NVP(m_new_quantity)
+        & BOOST_SERIALIZATION_NVP(m_new_blocksize)
         & BOOST_SERIALIZATION_NVP(m_new_index);
 }
 

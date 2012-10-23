@@ -174,7 +174,7 @@ namespace {
             boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(queue_element);
             //Logger().debugStream() << "item " << queue_element.item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
-
+            item_cost *= queue_element.blocksize;
             // determine additional PP needed to complete build queue element: total cost - progress
             double element_accumulated_PP = production_status[i];                                   // PP accumulated by this element towards building next item
             double element_total_cost = item_cost * queue_element.remaining;                        // total PP to build all items in this element
@@ -639,6 +639,7 @@ ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int desig
 //////////////////////////////
 ProductionQueue::Element::Element() :
     ordered(0),
+    blocksize(1),
     remaining(0),
     location(INVALID_OBJECT_ID),
     allocated_pp(0.0),
@@ -649,6 +650,7 @@ ProductionQueue::Element::Element() :
 ProductionQueue::Element::Element(ProductionItem item_, int ordered_, int remaining_, int location_) :
     item(item_),
     ordered(ordered_),
+    blocksize(1),
     remaining(remaining_),
     location(location_),
     allocated_pp(0.0),
@@ -659,6 +661,7 @@ ProductionQueue::Element::Element(ProductionItem item_, int ordered_, int remain
 ProductionQueue::Element::Element(BuildType build_type, std::string name, int ordered_, int remaining_, int location_) :
     item(build_type, name),
     ordered(ordered_),
+    blocksize(1),
     remaining(remaining_),
     location(location_),
     allocated_pp(0.0),
@@ -669,12 +672,14 @@ ProductionQueue::Element::Element(BuildType build_type, std::string name, int or
 ProductionQueue::Element::Element(BuildType build_type, int design_id, int ordered_, int remaining_, int location_) :
     item(build_type, design_id),
     ordered(ordered_),
+    blocksize(1),
     remaining(remaining_),
     location(location_),
     allocated_pp(0.0),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1)
 {}
+
 
 /////////////////////
 // ProductionQueue //
@@ -757,6 +762,7 @@ ProductionQueue::const_iterator ProductionQueue::UnderfundedProject() const {
         double item_cost;
         int build_turns;
         boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
+        item_cost *= it->blocksize;
         double maxPerTurn = item_cost / std::max(build_turns,1);
         if (it->allocated_pp && (it->allocated_pp < (maxPerTurn-EPSILON)) && (1 < it->turns_left_to_next_item) )
             return it;
@@ -962,7 +968,8 @@ void ProductionQueue::Update(const std::map<ResourceType,
             double item_cost;
             int build_turns;
             boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(element);
-            double element_accumulated_PP = sim_production_status[i];                                   // PP accumulated by this element towards building next item
+            item_cost *= element.blocksize;
+            double element_accumulated_PP = dpsim_production_status[i];                                   // PP accumulated by this element towards building next item
             double element_total_cost = item_cost * element.remaining;                        // total PP to build all items in this element
             double element_per_turn_limit = item_cost / std::max(build_turns, 1);
             double additional_pp_to_complete_element = element_total_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to build all items in this element
@@ -1067,7 +1074,8 @@ void ProductionQueue::Update(const std::map<ResourceType,
             double item_cost;
             int build_turns;
             boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(element);
-
+            item_cost *= element.blocksize;
+            
 
             double& status = sim_production_status[i];  // get previous iteration's accumulated PP for this element
             status += element.allocated_pp;             // add one turn's allocated PP to element
@@ -1181,7 +1189,9 @@ ProductionQueue::iterator ProductionQueue::UnderfundedProject() {
         double item_cost;
         int build_turns;
         boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
-        if (it->allocated_pp && it->allocated_pp < item_cost && 1 < it->turns_left_to_next_item)
+        item_cost *= it->blocksize;
+        double maxPerTurn = item_cost / std::max(build_turns,1);
+        if (it->allocated_pp && (it->allocated_pp < (maxPerTurn-EPSILON)) && (1 < it->turns_left_to_next_item) )
             return it;
     }
     return end();
@@ -2206,6 +2216,25 @@ void Empire::PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int 
         throw std::invalid_argument("Empire::PlaceBuildInQueue was passed a ProductionQueue::ProductionItem with an invalid BuildType");
 }
 
+void Empire::SetBuildQuantityAndBlocksize(int index, int quantity, int blocksize) {
+    Logger().debugStream() << "Empire::SetBuildQuantityAndBlocksize() called for item "<< m_production_queue[index].item.name << "with new quant " << quantity << " and new blocksize " << blocksize;
+    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
+        throw std::runtime_error("Empire::SetBuildQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
+    if (quantity < 1)
+        throw std::runtime_error("Empire::SetBuildQuantity() : Attempted to set the quantity of a build run to a value less than zero.");
+    if (m_production_queue[index].item.build_type == BT_BUILDING && ((1 < quantity) || ( 1 < blocksize) ))
+        throw std::runtime_error("Empire::SetBuildQuantity() : Attempted to build more than one instance of a building in the same build run.");
+    int original_quantity = m_production_queue[index].remaining;
+    int original_blocksize = m_production_queue[index].blocksize;
+    blocksize = std::max(1, blocksize);
+    m_production_queue[index].remaining = quantity;
+    m_production_queue[index].ordered += quantity - original_quantity;
+    m_production_queue[index].blocksize = blocksize;
+    if ( blocksize < original_blocksize ) // must lose the progress from the excess former blocksize, or min-turns-to-build could be bypassed
+        m_production_progress[index] = (m_production_progress[index] / original_blocksize ) * blocksize;
+    m_production_queue.Update(m_resource_pools, m_production_progress);
+}
+
 void Empire::SetBuildQuantity(int index, int quantity) {
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
         throw std::runtime_error("Empire::SetBuildQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
@@ -2600,6 +2629,7 @@ void Empire::CheckProductionProgress() {
         double item_cost;
         int build_turns;
         boost::tie(item_cost, build_turns) = ProductionCostAndTime(m_production_queue[i]);
+        item_cost *= m_production_queue[i].blocksize;
         double& status = m_production_progress[i];
         status += m_production_queue[i].allocated_pp;               // add allocated PP to queue item
 
@@ -2650,37 +2680,45 @@ void Empire::CheckProductionProgress() {
                 else if (const Planet* capital_planet = GetPlanet(this->CapitalID()))
                     species_name = capital_planet->SpeciesName();
                 // else give up...
+                Ship* ship;
+                int ship_id;
+                ship_id = 0;
+                for (int count=0; count < m_production_queue[i].blocksize; count++) {
+                    // create ship
+                    ship = new Ship(m_id, m_production_queue[i].item.design_id, species_name, m_id);
+                    // set active meters that have associated max meters to an
+                    // initial very large value, so that when the active meters are
+                    // later clamped, they will equal the max meter after effects
+                    // have been applied, letting new ships start with maxed
+                    // everything that is traced with an associated max meter.
+                    ship->UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
+                    ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
+                    ship->UniverseObject::GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
+                    ship->BackPropegateMeters();
+                    // for colony ships, set species
+                    if (ship->CanColonize())
+                        if (const PopCenter* build_loc_pop_center = dynamic_cast<const PopCenter*>(build_location))
+                            ship->SetSpecies(build_loc_pop_center->SpeciesName());
+
+                    ship_id = universe.Insert(ship);
+
+                    ship->Rename(NewShipName());
 
 
-                // create ship
-                Ship* ship = new Ship(m_id, m_production_queue[i].item.design_id, species_name, m_id);
-                // set active meters that have associated max meters to an
-                // initial very large value, so that when the active meters are
-                // later clamped, they will equal the max meter after effects
-                // have been applied, letting new ships start with maxed
-                // everything that is traced with an associated max meter.
-                ship->UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
-                ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
-                ship->UniverseObject::GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
-                ship->BackPropegateMeters();
-                // for colony ships, set species
-                if (ship->CanColonize())
-                    if (const PopCenter* build_loc_pop_center = dynamic_cast<const PopCenter*>(build_location))
-                        ship->SetSpecies(build_loc_pop_center->SpeciesName());
-
-                int ship_id = universe.Insert(ship);
-
-                ship->Rename(NewShipName());
+                    // store ships to put into fleets later
+                    system_new_ships[system->ID()].push_back(ship);
 
 
-                // store ships to put into fleets later
-                system_new_ships[system->ID()].push_back(ship);
-
-
-                Logger().debugStream() << "New Ship created on turn: " << ship->CreationTurn();
-
+                }
                 // add sitrep
-                AddSitRepEntry(CreateShipBuiltSitRep(ship_id, system->ID(), ship->DesignID()));
+                if (m_production_queue[i].blocksize ==1) {
+                    AddSitRepEntry(CreateShipBuiltSitRep(ship_id, system->ID(), ship->DesignID()));
+                    Logger().debugStream() << "New Ship, id " << ship_id << ", created on turn: " << ship->CreationTurn();
+                }
+                else {
+                    AddSitRepEntry(CreateShipBlockBuiltSitRep(system->ID(), ship->DesignID()));
+                    Logger().debugStream() << "New block of "<< m_production_queue[i].blocksize << "ships created on turn: " << ship->CreationTurn();
+                }
                 break;
             }
 
@@ -2705,28 +2743,42 @@ void Empire::CheckProductionProgress() {
             continue;
         }
 
-        std::vector<int> ship_ids;
-
-        std::vector<Ship*>& ships = it->second;
-        if (ships.empty())
+        std::vector<Ship*>& allShips = it->second;
+        if (allShips.empty())
             continue;
-
-        // create new fleet for ships
-        Fleet* fleet = new Fleet("", system->X(), system->Y(), m_id);
-        int fleet_id = universe.Insert(fleet);
-
-        system->Insert(fleet);
-
-        for (std::vector<Ship*>::iterator it = ships.begin(); it != ships.end(); ++it) {
+        
+        //group ships into fleets, by design
+            
+        std::map<int,std::vector<Ship*> > shipsByDesign;
+        for (std::vector<Ship*>::iterator it = allShips.begin(); it != allShips.end(); ++it) {
             Ship* ship = *it;
-            ship_ids.push_back(ship->ID());
-            fleet->AddShip(ship->ID());
+            shipsByDesign[ship->DesignID()].push_back(ship);
         }
+        for (std::map<int, std::vector<Ship*> >::iterator design_it = shipsByDesign.begin();
+             design_it != shipsByDesign.end(); ++design_it) {
+                 std::vector<int> ship_ids;
+                 
+                 std::vector<Ship*>& ships = design_it->second;
+                 if (ships.empty())
+                     continue;
+                 
+                // create new fleet for ships
+                Fleet* fleet = new Fleet("", system->X(), system->Y(), m_id);
+                int fleet_id = universe.Insert(fleet);
 
-        // rename fleet, given its id and the ship that is in it
-        fleet->Rename(Fleet::GenerateFleetName(ship_ids, fleet_id));
+                system->Insert(fleet);
 
-        Logger().debugStream() << "New Fleet \"" + fleet->Name() + "\"created on turn: " << fleet->CreationTurn();
+                for (std::vector<Ship*>::iterator it = ships.begin(); it != ships.end(); ++it) {
+                    Ship* ship = *it;
+                    ship_ids.push_back(ship->ID());
+                    fleet->AddShip(ship->ID());
+                }
+
+                // rename fleet, given its id and the ship that is in it
+                fleet->Rename(Fleet::GenerateFleetName(ship_ids, fleet_id));
+
+                Logger().debugStream() << "New Fleet \"" + fleet->Name() + "\"created on turn: " << fleet->CreationTurn();
+        }
     }
 
     // removed completed items from queue
