@@ -200,9 +200,7 @@ namespace {
 
             //Logger().debugStream() << "... leaving " << group_pp_available << " PP available to group";
 
-
-            // check if this will complete the element
-            if (allocation >= additional_pp_to_complete_element - EPSILON)
+            if (allocation > 0.9)
                 ++projects_in_progress;
         }
     }
