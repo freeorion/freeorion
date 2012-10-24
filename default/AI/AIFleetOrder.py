@@ -227,8 +227,8 @@ class AIFleetOrder(object):
         otherFleetsHere = [ fID for fID,  val in foAI.foAIstate.fleetStatus.items() if (fID != fleetID) and (val.get('sysID',  -2)==systemID)]
         for fID in otherFleetsHere:
             fleet2 = universe.getFleet(fID)
-            if not fleet2.systemID == systemID:
-                #print "\t\t fleet2 (id %4d)  not actually in system %4d %s"%(fID,  systemID,  sysName)
+            if not (fleet2 and (fleet2.systemID == systemID)):
+                print "\t\t fleet2 (id %4d)  not actually in system %4d %s although AI records thought it should be"%(fID,  systemID,  sysName)
                 continue
             if not fleet2.ownedBy(foAI.foAIstate.empireID):
                 #print "\t\t tried fleet %d,  but not owned by this empire"%fID

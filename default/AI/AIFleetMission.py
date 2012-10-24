@@ -28,8 +28,8 @@ class AIFleetMission(AIAbstractMission):
             universe = fo.getUniverse()
             fleetID = self.getAITargetID()
             fleet = universe.getFleet(fleetID)
-            targetsString = "fleet %4d (%14s) [ %10s mission ] : %3d ships , total Rating:%7d "%(fleetID,  fleet.name,   AIFleetMissionTypeNames.name(aiFleetMissionType) ,  
-                                                                                                 len(fleet.shipIDs),  foAI.foAIstate.getRating(fleetID))
+            targetsString = "fleet %4d (%14s) [ %10s mission ] : %3d ships , total Rating:%7d "%(fleetID,  (fleet and fleet.name) or "Fleet Invalid",   AIFleetMissionTypeNames.name(aiFleetMissionType) ,  
+                                                                                                 (fleet and len(fleet.shipIDs)) or 0,  foAI.foAIstate.getRating(fleetID))
             targets = self.getAITargets(aiFleetMissionType)
             for target in targets:
                 targetsString = targetsString + str(target)
@@ -175,6 +175,9 @@ class AIFleetMission(AIAbstractMission):
         else: #went through entire order list
             if ordersCompleted:
                 print "Fleet %d has completed its mission; clearing all orders and targets."%(self.getAITargetID() )
+                print "Full set of orders were:"
+                for aiFleetOrder2 in self.getAIFleetOrders():
+                    print "\t\t %s"%aiFleetOrder2
                 self.clearAIFleetOrders()
                 self.clearAITargets( (self.getAIMissionTypes() + [-1])[0] )
                 FleetUtilsAI.splitFleet(self.getAITargetID() ) #current task is done, split up fleet for later deployments
