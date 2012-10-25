@@ -200,7 +200,7 @@ namespace {
 
             //Logger().debugStream() << "... leaving " << group_pp_available << " PP available to group";
 
-            if (allocation > 0.9)
+            if (allocation > 0.0)
                 ++projects_in_progress;
         }
     }
