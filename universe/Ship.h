@@ -16,6 +16,8 @@ public:
     // number of fighters (or missiles) available of that type) pairs
     typedef std::map<std::string, std::pair<std::size_t, std::size_t> > ConsumablesMap;
 
+    typedef std::map<std::pair<MeterType, std::string>, Meter>          PartMeterMap;
+
     /** \name Structors */ //@{
     Ship();                                         ///< default ctor
     Ship(int empire_id, int design_id, const std::string& species_name,
@@ -58,13 +60,16 @@ public:
     int                         OrderedInvadePlanet() const     { return m_ordered_invade_planet_id; }  ///< returns the ID of the planet this ship has been ordered to invade with ground troops, or INVALID_OBJECT_ID if this ship hasn't been ordered to invade a planet
     int                         LastTurnActiveInCombat() const  { return m_last_turn_active_in_combat; }///< returns the last turn this ship has been actively involved in combat
 
-    const Meter*                GetMeter(MeterType type, const std::string& part_name) const; ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    const PartMeterMap&         PartMeters() const { return m_part_meters; }                                ///< returns this Ship's part meters
+    const Meter*                GetPartMeter(MeterType type, const std::string& part_name) const;           ///< returns the requested part Meter, or 0 if no such part Meter of that type is found in this ship for that part name
+    double                      CurrentPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns current value of the specified part meter \a type for the specified part name
+    double                      InitialPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns this turn's initial value for the speicified part meter \a type for the specified part name
     //@}
 
     /** \name Mutators */ //@{
     virtual void    Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
 
-    void            SetFleetID(int fleet_id);                               ///< sets the ID of the fleet the ship resides in
+    void            SetFleetID(int fleet_id);                                   ///< sets the ID of the fleet the ship resides in
 
     void            Resupply();
 
@@ -76,14 +81,14 @@ public:
 
     virtual void    MoveTo(double x, double y);
 
-    void            SetOrderedScrapped(bool b = true);                      ///< flags ship for scrapping
-    void            SetColonizePlanet(int planet_id);                       ///< marks ship to colonize the indicated planet
-    void            ClearColonizePlanet();                                  ///< marks ship to colonize no planets
-    void            SetInvadePlanet(int planet_id);                         ///< marks ship to invade the indicated planet
-    void            ClearInvadePlanet();                                    ///< marks ship to invade no planets
+    void            SetOrderedScrapped(bool b = true);                          ///< flags ship for scrapping
+    void            SetColonizePlanet(int planet_id);                           ///< marks ship to colonize the indicated planet
+    void            ClearColonizePlanet();                                      ///< marks ship to colonize no planets
+    void            SetInvadePlanet(int planet_id);                             ///< marks ship to invade the indicated planet
+    void            ClearInvadePlanet();                                        ///< marks ship to invade no planets
     void            SetLastTurnActiveInCombat(int turn) { m_last_turn_active_in_combat = turn; } ///< sets the last turn this ship was actively involved in combat
 
-    Meter*          GetMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    Meter*          GetPartMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     //@}
 
 protected:
@@ -91,9 +96,6 @@ protected:
 
 private:
     virtual void    PopGrowthProductionResearchPhase();
-
-    typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeters;
-
     virtual void    ClampMeters();
 
     int             m_design_id;
@@ -104,7 +106,7 @@ private:
     int             m_last_turn_active_in_combat;
     ConsumablesMap  m_fighters;
     ConsumablesMap  m_missiles;
-    PartMeters      m_part_meters;
+    PartMeterMap    m_part_meters;
     std::string     m_species_name;
     int             m_produced_by_empire_id;
 

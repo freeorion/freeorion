@@ -88,7 +88,7 @@ public:
     virtual bool                ContainedBy(int object_id) const;   ///< returns true if there is an object with id \a object_id that contains this UniverseObject
 
     const std::map<MeterType, Meter>&
-                                Meters() const { return m_meters; } ///< returns this UniverseObject's meters
+                                Meters() const { return m_meters; }             ///< returns this UniverseObject's meters
     const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     double                      CurrentMeterValue(MeterType type) const;        ///< returns current value of the specified meter \a type
     double                      InitialMeterValue(MeterType type) const;        ///< returns this turn's initial value for the speicified meter \a type

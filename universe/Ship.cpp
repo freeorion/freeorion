@@ -140,7 +140,7 @@ void Ship::Copy(const UniverseObject* copied_object, int empire_id) {
             this->m_design_id =             copied_ship->m_design_id;
             this->m_fighters =              copied_ship->m_fighters;
             this->m_missiles =              copied_ship->m_missiles;
-            for (PartMeters::const_iterator it = copied_ship->m_part_meters.begin();
+            for (PartMeterMap::const_iterator it = copied_ship->m_part_meters.begin();
                  it != copied_ship->m_part_meters.end();
                  ++it) {
                 this->m_part_meters[it->first];
@@ -245,7 +245,7 @@ std::string Ship::Dump() const {
     }
     //typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeters;
     os << " part meters: ";
-    for (PartMeters::const_iterator it = m_part_meters.begin(); it != m_part_meters.end();) {
+    for (PartMeterMap::const_iterator it = m_part_meters.begin(); it != m_part_meters.end();) {
         const std::string part_name = it->first.second;
         MeterType meter_type = it->first.first;
         const Meter& meter = it->second;
@@ -342,8 +342,22 @@ double Ship::NextTurnCurrentMeterValue(MeterType type) const {
     return UniverseObject::NextTurnCurrentMeterValue(type);
 }
 
-const Meter* Ship::GetMeter(MeterType type, const std::string& part_name) const
-{ return const_cast<Ship*>(this)->GetMeter(type, part_name); }
+const Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) const
+{ return const_cast<Ship*>(this)->GetPartMeter(type, part_name); }
+
+Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) {
+    Meter* retval = 0;
+    PartMeterMap::iterator it = m_part_meters.find(std::make_pair(type, part_name));
+    if (it != m_part_meters.end())
+        retval = &it->second;
+    return retval;
+}
+
+double Ship::CurrentPartMeterValue(MeterType type, const std::string& part_name) const
+{ return 0.0; }
+
+double Ship::InitialPartMeterValue(MeterType type, const std::string& part_name) const
+{ return 0.0; }
 
 void Ship::SetFleetID(int fleet_id) {
     m_fleet_id = fleet_id;
@@ -446,14 +460,6 @@ void Ship::ClearInvadePlanet() {
     SetInvadePlanet(INVALID_OBJECT_ID);
 }
 
-Meter* Ship::GetMeter(MeterType type, const std::string& part_name) {
-    Meter* retval = 0;
-    PartMeters::iterator it = m_part_meters.find(std::make_pair(type, part_name));
-    if (it != m_part_meters.end())
-        retval = &it->second;
-    return retval;
-}
-
 void Ship::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
@@ -465,7 +471,7 @@ void Ship::ResetTargetMaxUnpairedMeters() {
     UniverseObject::GetMeter(METER_BATTLE_SPEED)->ResetCurrent();
     UniverseObject::GetMeter(METER_STARLANE_SPEED)->ResetCurrent();
 
-    for (PartMeters::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
+    for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
         it->second.ResetCurrent();
 }
 
@@ -491,6 +497,6 @@ void Ship::ClampMeters() {
     UniverseObject::GetMeter(METER_BATTLE_SPEED)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_STARLANE_SPEED)->ClampCurrentToRange();
 
-    for (PartMeters::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
+    for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
         it->second.ClampCurrentToRange();
 }

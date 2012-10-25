@@ -137,13 +137,13 @@ void Missile::Init(const Ship& launcher,
     assert(!launcher.Unowned());
     m_empire_id = launcher.Owner();
 
-    m_stats.m_damage =      launcher.GetMeter(METER_DAMAGE,     m_part_name)->Current();
-    m_stats.m_ROF =         launcher.GetMeter(METER_ROF,        m_part_name)->Current();
-    m_stats.m_range =       launcher.GetMeter(METER_RANGE,      m_part_name)->Current();
-    m_stats.m_speed =       launcher.GetMeter(METER_SPEED,      m_part_name)->Current();
-    m_stats.m_stealth =     launcher.GetMeter(METER_STEALTH,    m_part_name)->Current();
-    m_stats.m_structure =   launcher.GetMeter(METER_STRUCTURE,  m_part_name)->Current();
-    m_stats.m_capacity=     launcher.GetMeter(METER_CAPACITY,   m_part_name)->Current();
+    m_stats.m_damage =      launcher.GetPartMeter(METER_DAMAGE,     m_part_name)->Current();
+    m_stats.m_ROF =         launcher.GetPartMeter(METER_ROF,        m_part_name)->Current();
+    m_stats.m_range =       launcher.GetPartMeter(METER_RANGE,      m_part_name)->Current();
+    m_stats.m_speed =       launcher.GetPartMeter(METER_SPEED,      m_part_name)->Current();
+    m_stats.m_stealth =     launcher.GetPartMeter(METER_STEALTH,    m_part_name)->Current();
+    m_stats.m_structure =   launcher.GetPartMeter(METER_STRUCTURE,  m_part_name)->Current();
+    m_stats.m_capacity=     launcher.GetPartMeter(METER_CAPACITY,   m_part_name)->Current();
 
     m_structure = m_stats.m_structure;
 

@@ -197,6 +197,8 @@ namespace {
     boost::function<std::vector<int> (const Universe&, int, int)> VisibilityTurnsFunc =         &VisibilityTurnsP;
 
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
+    const std::map<MeterType, Meter>&
+                            (UniverseObject::*ObjectMeters)(void) const =                       &UniverseObject::Meters;
 
     std::vector<std::string>    ObjectSpecials(const UniverseObject& object) {
         std::vector<std::string> retval;
@@ -205,6 +207,10 @@ namespace {
         { retval.push_back(it->first); }
         return retval;
     }
+
+    const Meter*            (Ship::*ShipGetPartMeter)(MeterType, const std::string&) const =    &Ship::GetPartMeter;
+    const Ship::PartMeterMap&
+                            (Ship::*ShipPartMeters)(void) const =                               &Ship::PartMeters;
 
     bool                    (*ValidDesignHullAndParts)(const std::string& hull,
                                                        const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
@@ -282,11 +288,11 @@ namespace FreeOrionPython {
             .add_property("allObjectIDs",       make_function(ObjectIDs,            return_value_policy<return_by_value>()))
             .add_property("fleetIDs",           make_function(FleetIDs,             return_value_policy<return_by_value>()))
             .add_property("systemIDs",          make_function(SystemIDs,            return_value_policy<return_by_value>()))
-            .add_property("fieldIDs",           make_function(FieldIDs,            return_value_policy<return_by_value>()))
+            .add_property("fieldIDs",           make_function(FieldIDs,             return_value_policy<return_by_value>()))
             .add_property("planetIDs",          make_function(PlanetIDs,            return_value_policy<return_by_value>()))
             .add_property("shipIDs",            make_function(ShipIDs,              return_value_policy<return_by_value>()))
             .add_property("buildingIDs",        make_function(BuildingIDs,          return_value_policy<return_by_value>()))
-            .def("destroyedObjectIDs",          make_function(&Universe::EmpireKnownDestroyedObjectIDs, 
+            .def("destroyedObjectIDs",          make_function(&Universe::EmpireKnownDestroyedObjectIDs,
                                                                                     return_value_policy<return_by_value>()))
 
             .def("systemHasStarlane",           &Universe::SystemHasVisibleStarlanes)
@@ -332,12 +338,16 @@ namespace FreeOrionPython {
             .def("getSystemNeighborsMap",       make_function(
                                                     SystemNeighborsMapFunc,
                                                     return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<std::map<int,double>, const Universe&, int, int>()
+                                                    boost::mpl::vector<std::map<int, double>, const Universe&, int, int>()
                                                 ))
-            .def("getVisibilityMap",             make_function(&Universe::GetObjectVisibilityByEmpire, return_value_policy<return_by_value>()
+            .def("getVisibilityMap",            make_function(
+                                                    &Universe::GetObjectVisibilityByEmpire,
+                                                    return_value_policy<return_by_value>()
                                                 ))
 
-            .def("getVisibilityTurnsMap",        make_function(&Universe::GetObjectVisibilityTurnMapByEmpire, return_value_policy<return_by_value>()
+            .def("getVisibilityTurnsMap",       make_function(
+                                                    &Universe::GetObjectVisibilityTurnMapByEmpire,
+                                                    return_value_policy<return_by_value>()
                                                 ))
 
             .def("getVisibilityTurns",          make_function(
@@ -351,7 +361,9 @@ namespace FreeOrionPython {
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<int, const Universe&, int, int>()
                                                 ))
-            .def("getVisibilityMap",             make_function(&Universe::GetObjectVisibilityByEmpire, return_value_policy<return_by_value>()
+            .def("getVisibilityMap",            make_function(
+                                                    &Universe::GetObjectVisibilityByEmpire,
+                                                    return_value_policy<return_by_value>()
                                                 ))
 
             .def("dump",                        &DumpObjects)
@@ -381,6 +393,8 @@ namespace FreeOrionPython {
             .def("nextTurnCurrentMeterValue",   &UniverseObject::NextTurnCurrentMeterValue)
             .add_property("tags",               make_function(&UniverseObject::Tags,        return_value_policy<return_by_value>()))
             .def("hasTag",                      &UniverseObject::HasTag)
+            .add_property("meters",             make_function(ObjectMeters,                 return_internal_reference<>()))
+            .def("getMeter",                    make_function(ObjectGetMeter,               return_internal_reference<>()))
         ;
 
         ///////////////////
@@ -422,6 +436,10 @@ namespace FreeOrionPython {
             .add_property("orderedScrapped",        &Ship::OrderedScrapped)
             .add_property("orderedColonizePlanet",  &Ship::OrderedColonizePlanet)
             .add_property("orderedInvadePlanet",    &Ship::OrderedInvadePlanet)
+            .def("initialPartMeterValue",           &Ship::InitialPartMeterValue)
+            .def("currentPartMeterValue",           &Ship::CurrentPartMeterValue)
+            .add_property("partMeters",             make_function(ShipPartMeters,           return_internal_reference<>()))
+            .def("getMeter",                        make_function(ShipGetPartMeter,         return_internal_reference<>()))
         ;
 
         //////////////////
@@ -482,7 +500,7 @@ namespace FreeOrionPython {
             .add_property("planetID",           make_function(&Building::PlanetID,          return_value_policy<return_by_value>()))
             .add_property("producedByEmpireID", &Building::ProducedByEmpireID)
             .add_property("orderedScrapped",    &Building::OrderedScrapped)
-            ;
+        ;
 
         //////////////////
         // BuildingType //

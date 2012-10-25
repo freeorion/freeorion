@@ -3906,7 +3906,7 @@ namespace {
             const Ship* ship = universe_object_cast<const Ship*>(candidate);
             if (!ship)
                 return false;
-            const Meter* meter = ship->GetMeter(m_meter, m_part_name);
+            const Meter* meter = ship->GetPartMeter(m_meter, m_part_name);
             if (!meter)
                 return false;
             double meter_current = meter->Current();

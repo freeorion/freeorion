@@ -38,9 +38,9 @@ namespace {
             const std::string name = elem.second->Name();
             return CombatShip::DirectWeapon(
                 name,
-                m_ship.GetMeter(METER_RANGE, name)->Current(),
-                m_ship.GetMeter(METER_DAMAGE, name)->Current() *
-                m_ship.GetMeter(METER_ROF, name)->Current() *
+                m_ship.GetPartMeter(METER_RANGE, name)->Current(),
+                m_ship.GetPartMeter(METER_DAMAGE, name)->Current() *
+                m_ship.GetPartMeter(METER_ROF, name)->Current() *
                 m_structure_factor);
         }
         const Ship& m_ship;
@@ -194,7 +194,7 @@ void CombatShip::LaunchFighters()
 
         std::vector<CombatFighterPtr>& fighters_vec = it->second.second;
         std::size_t num_fighters = fighters_vec.size();
-        double launch_rate = GetShip().GetMeter(METER_LAUNCH_RATE, part->Name())->Current();
+        double launch_rate = GetShip().GetPartMeter(METER_LAUNCH_RATE, part->Name())->Current();
         std::size_t launch_size =
             std::min<std::size_t>(num_fighters, launch_rate * it->second.first);
 
@@ -411,27 +411,27 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
         assert(part);
         if (part->Class() == PC_POINT_DEFENSE) {
             const std::string& part_name = part->Name();
-            double damage = GetShip().GetMeter(METER_DAMAGE, part_name)->Current();
+            double damage = GetShip().GetPartMeter(METER_DAMAGE, part_name)->Current();
             m_raw_PD_strength +=
                 damage *
-                GetShip().GetMeter(METER_ROF, part_name)->Current() *
-                GetShip().GetMeter(METER_RANGE, part_name)->Current();
+                GetShip().GetPartMeter(METER_ROF, part_name)->Current() *
+                GetShip().GetPartMeter(METER_RANGE, part_name)->Current();
             PD_minus_non_PD += damage;
         } else if (part->Class() == PC_SHORT_RANGE) {
             const std::string& part_name = part->Name();
-            double damage = GetShip().GetMeter(METER_DAMAGE, part_name)->Current();
+            double damage = GetShip().GetPartMeter(METER_DAMAGE, part_name)->Current();
             m_raw_SR_strength +=
                 damage *
-                GetShip().GetMeter(METER_ROF, part_name)->Current() *
-                GetShip().GetMeter(METER_RANGE, part_name)->Current();
+                GetShip().GetPartMeter(METER_ROF, part_name)->Current() *
+                GetShip().GetPartMeter(METER_RANGE, part_name)->Current();
             PD_minus_non_PD -= damage;
         } else if (part->Class() == PC_MISSILES) {
             const std::string& part_name = part->Name();
-            double damage = GetShip().GetMeter(METER_DAMAGE, part_name)->Current();
+            double damage = GetShip().GetPartMeter(METER_DAMAGE, part_name)->Current();
             m_raw_LR_strength +=
                 damage *
-                GetShip().GetMeter(METER_ROF, part_name)->Current() *
-                GetShip().GetMeter(METER_RANGE, part_name)->Current();
+                GetShip().GetPartMeter(METER_ROF, part_name)->Current() *
+                GetShip().GetPartMeter(METER_RANGE, part_name)->Current();
             PD_minus_non_PD -= damage;
         }
     }
@@ -769,7 +769,7 @@ void CombatShip::FireAt(CombatObjectPtr target)
                 if (m_next_LR_fire_turns[i] == INVALID_TURN)
                     m_next_LR_fire_turns[i] = m_turn;
                 m_next_LR_fire_turns[i] +=
-                    GetShip().GetMeter(METER_ROF, it->second->Name())->Current() * structure_factor;
+                    GetShip().GetPartMeter(METER_ROF, it->second->Name())->Current() * structure_factor;
                 Listener().MissileLaunched(missile);
             }
         }

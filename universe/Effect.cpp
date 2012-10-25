@@ -700,7 +700,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
         if (target_part_name.empty())
             continue;   // slots in a design may be empty... this isn't an error
 
-        Meter* meter = ship->GetMeter(m_meter, target_part_name);
+        Meter* meter = ship->GetPartMeter(m_meter, target_part_name);
         if (!meter)
             continue;   // some parts may not have the requested meter.  this isn't an error
 
