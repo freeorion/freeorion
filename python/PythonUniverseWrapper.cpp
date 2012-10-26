@@ -19,60 +19,26 @@
 namespace {
     void                    DumpObjects(const Universe& universe)
     { Logger().debugStream() << universe.Objects().Dump(); }
-    const UniverseObject*   GetUniverseObjectP(const Universe& universe, int id) {
-        //Logger().debugStream() << "GetUniverseObjectP(universe, " << id << ")";
-        const UniverseObject* retval = universe.Objects().Object(id);
-        if (!retval)
-            retval = ::GetUniverseObject(id);
-        return retval;
-    }
-    const Fleet*            GetFleetP(const Universe& universe, int id) {
-        //Logger().debugStream() << "GetFleetP(universe, " << id << ")";
-        const Fleet* retval = universe.Objects().Object<Fleet>(id);
-        if (!retval)
-            retval = ::GetFleet(id);
-        return retval;
-    }
-    const Ship*             GetShipP(const Universe& universe, int id) {
-        //Logger().debugStream() << "GetShipP(universe, " << id << ")";
-        const Ship* retval = universe.Objects().Object<Ship>(id);
-        if (!retval)
-            retval = ::GetShip(id);
-        return retval;
-    }
-    const Planet*           GetPlanetP(const Universe& universe, int id) {
-        //Logger().debugStream() << "GetPlanetP(universe, " << id << ")";
-        const Planet* retval = universe.Objects().Object<Planet>(id);
-        if (!retval)
-            retval = ::GetPlanet(id);
-        return retval;
-    }
-    const System*           GetSystemP(const Universe& universe, int id) {
-        //Logger().debugStream() << "GetSystemP(universe, " << id << ")";
-        const System* retval = universe.Objects().Object<System>(id);
-        if (!retval)
-            retval = ::GetSystem(id);
-        return retval;
-    }
-    const Field*            GetFieldP(const Universe& universe, int id) {
-        //Logger().debugStream() << "GetFieldP(universe, " << id << ")";
-        const Field* retval = universe.Objects().Object<Field>(id);
-        if (!retval)
-            retval = ::GetField(id);
-        return retval;
-    }
-    const Building*         GetBuildingP(const Universe& universe, int id) {
-        //Logger().debugStream() << "GetBuildingP(universe, " << id << ")";
-        const Building* retval = universe.Objects().Object<Building>(id);
-        if (!retval)
-            retval = ::GetBuilding(id);
-        return retval;
-    }
+
+    const UniverseObject*   GetUniverseObjectP(const Universe& universe, int id)
+    { return ::GetUniverseObject(id); }
+    const Fleet*            GetFleetP(const Universe& universe, int id)
+    { return ::GetFleet(id); }
+    const Ship*             GetShipP(const Universe& universe, int id)
+    { return ::GetShip(id); }
+    const Planet*           GetPlanetP(const Universe& universe, int id)
+    { return ::GetPlanet(id); }
+    const System*           GetSystemP(const Universe& universe, int id)
+    { return ::GetSystem(id); }
+    const Field*            GetFieldP(const Universe& universe, int id)
+    { return ::GetField(id);  }
+    const Building*         GetBuildingP(const Universe& universe, int id)
+    { return ::GetBuilding(id); }
 
     std::vector<int>        ObjectIDs(const Universe& universe)
-    { return universe.Objects().FindObjectIDs(); }
+    { return Objects().FindObjectIDs(); }
     std::vector<int>        FleetIDs(const Universe& universe)
-    { return universe.Objects().FindObjectIDs<Fleet>(); }
+    { return Objects().FindObjectIDs<Fleet>(); }
     std::vector<int>        SystemIDs(const Universe& universe)
     { return Objects().FindObjectIDs<System>(); }
     std::vector<int>        FieldIDs(const Universe& universe)
@@ -80,7 +46,7 @@ namespace {
     std::vector<int>        PlanetIDs(const Universe& universe)
     { return Objects().FindObjectIDs<Planet>(); }
     std::vector<int>        ShipIDs(const Universe& universe)
-    { return universe.Objects().FindObjectIDs<Ship>(); }
+    { return Objects().FindObjectIDs<Ship>(); }
     std::vector<int>        BuildingIDs(const Universe& universe)
     { return Objects().FindObjectIDs<Building>(); }
 
