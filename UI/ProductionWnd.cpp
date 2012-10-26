@@ -395,7 +395,7 @@ namespace {
         m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, turns,
                                                   turns_completed + partially_complete_turn,
                                                   ClientUI::TechWndProgressBarColor(),
-                                                  ClientUI::TechWndProgressBarBackgroundColor(), clr);
+                                                  GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()), clr);
         m_progress_bar->MoveTo(GG::Pt(left, top));
 
         top += m_progress_bar->Height() + MARGIN;
