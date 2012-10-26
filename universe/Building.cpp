@@ -166,7 +166,19 @@ std::string BuildingType::Dump() const {
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
     retval += DumpIndent() + "buildcost = " + m_production_cost->Dump() + "\n";
     retval += DumpIndent() + "buildtime = " + m_production_time->Dump() + "\n";
+    retval += DumpIndent() + (m_producible ? "Producible" : "Unproducible") + "\n";
     retval += DumpIndent() + "captureresult = " + lexical_cast<std::string>(m_capture_result) + "\n";
+    if (!m_tags.empty()) {
+        if (m_tags.size() == 1) {
+            retval += DumpIndent() + "tags = \"" + *m_tags.begin() + "\"\n";
+        } else {
+            retval += DumpIndent() + "tags = [ ";
+            for (std::vector<std::string>::const_iterator tag_it = m_tags.begin();
+                 tag_it != m_tags.end(); ++tag_it)
+            { retval += "\"" + *tag_it + "\" "; }
+            retval += " ]\n";
+        }
+    }
     retval += DumpIndent() + "location = \n";
     ++g_indent;
     retval += m_location->Dump();
