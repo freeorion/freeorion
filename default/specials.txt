@@ -855,6 +855,7 @@ Special
     spawnlimit = 0
     graphic = ""
 
+/*
 Special
     name = "EXPERIMENTOR_OUTPOST_SPECIAL"
     description = "EXPERIMENTOR_OUTPOST_SPECIAL_DESC"
@@ -895,7 +896,8 @@ Special
             ]
     ]
     graphic = ""
-    
+*/
+
 Special
     name = "PROBIOTIC_SPECIAL"
     description = "PROBIOTIC_SPECIAL_DESC"
