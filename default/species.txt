@@ -2114,13 +2114,13 @@ ENVIRONMENT_MODIFIER
             scope = Source
             activation = Planet environment = Hostile
             accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value - 6 * Source.SizeAsDouble
+            effects = SetTargetPopulation Value - 3 * Source.SizeAsDouble
             
         EffectsGroup
             scope = Source
             activation = Planet environment = Poor
             accountinglabel = "POOR_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value - 3 * Source.SizeAsDouble
+            effects = SetTargetPopulation Value - 1 * Source.SizeAsDouble
 
         EffectsGroup
             scope = Source
