@@ -62,7 +62,6 @@ namespace {
             width(0),
             m_quant(quantity)
         {
-            SetDragDropDataType("QuantRow");
             QuantLabel* newLabel = new QuantLabel(m_quant, designID, font, nwidth, h, inProgress);
             width = newLabel->Width();
             height = newLabel->Height();
@@ -83,10 +82,8 @@ namespace {
 
         /** \name Structors */
         QuantitySelector(const ProductionQueue::Element &build, GG::X xoffset, GG::Y yoffset, GG::Y h, boost::shared_ptr<GG::Font> font, bool inProgress, GG::X nwidth, bool amBlockType) :
-            //CUIDropDownList(GG::X0, GG::Y0, GG::X(36),h, h, GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5)),
             CUIDropDownList(xoffset, yoffset, nwidth,h-GG::Y(2), h, inProgress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor(), 
                            ( inProgress ? GG::LightColor(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor() ) ),
-            //CUIDropDownList(xoffset, yoffset, GG::X(50),h, h, GG::Clr(0, 0, 0, 0), GG::FloatClr(0.0, 0.0, 0.0, 0.0)),
             quantity(build.remaining),
             prevQuant(build.remaining),
             blocksize(build.blocksize),
@@ -103,7 +100,7 @@ namespace {
             //m_quantityBox->SetColWidth(0, GG::X(14));
             //m_quantityBox->LockColWidths();
 
-            int quantInts[] = {1, 5, 10, 20, 50, 100};
+            int quantInts[] = {1, 5, 10, 20, 50, 99};
             std::set<int> myQuantSet(quantInts,quantInts+6);
             if (amBlockType)
                 myQuantSet.insert(blocksize); //as currently implemented this one not actually necessary since blocksize has no other way to change
@@ -148,8 +145,8 @@ namespace {
             SetNumCols(1);
             //m_quantityBox->SetColWidth(0, GG::X(14));
             //m_quantityBox->LockColWidths();
-            
-            int quantInts[] = {1, 5, 10, 20, 50, 100};
+
+            int quantInts[] = {1, 5, 10, 20, 50, 99};
             std::set<int> myQuantSet(quantInts,quantInts+6);
             myQuantSet.insert(build.remaining);
             for (std::set<int>::iterator it=myQuantSet.begin(); it != myQuantSet.end(); it++ ) {
@@ -340,29 +337,22 @@ namespace {
         // get graphic and player-visible name text for item
         boost::shared_ptr<GG::Texture> graphic;
         std::string name_text;
-        std::string spacer_text = "     ";
         if (build.item.build_type == BT_BUILDING) {
             graphic = ClientUI::BuildingIcon(build.item.name);
             name_text = UserString(build.item.name);
-            spacer_text = "";
         } else if (build.item.build_type == BT_SHIP) {
             graphic = ClientUI::ShipDesignIcon(build.item.design_id);
             name_text = GetShipDesign(build.item.design_id)->Name();
         } else {
             graphic = ClientUI::GetTexture(""); // get "missing texture" texture by supply intentionally bad path
             name_text = UserString("FW_UNKNOWN_DESIGN_NAME");
-            spacer_text = "";
         }
 
-        // things other than buildings can be built in multiple copies with one order
-        //if (build.item.build_type != BT_BUILDING)
-            //name_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_MULTIPLES")) % number) + name_text;
-            //name_text = " "; // leave blank to not interfere with quantitybox
-            //name_text = name_text;
         // get location indicator text
         std::string location_text;
-        if (const UniverseObject* location = GetUniverseObject(build.location))
-            location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name());
+        if (w > GG::X(300))
+            if (const UniverseObject* location = GetUniverseObject(build.location))
+                location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name());
 
         // create and arrange widgets to display info
         GG::Y top(MARGIN);
@@ -376,10 +366,10 @@ namespace {
         left += GRAPHIC_SIZE + MARGIN;
 
         if (m_build.item.build_type == BT_SHIP) {
-            m_quantityBox = new QuantitySelector(m_build, left, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), font, m_in_progress, GG::X(FONT_PTS*3.5), false);
+            m_quantityBox = new QuantitySelector(m_build, left, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), font, m_in_progress, GG::X(FONT_PTS*2.5), false);
             GG::Connect(m_quantityBox->SelChangedSignal,        &QuantitySelector::SelectionChanged, m_quantityBox);
             left += m_quantityBox->Width();
-            m_blockBox = new QuantitySelector(m_build, left,    GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), font, m_in_progress, GG::X(FONT_PTS*3.5), true);
+            m_blockBox = new QuantitySelector(m_build, left,    GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), font, m_in_progress, GG::X(FONT_PTS*2.5), true);
             GG::Connect(m_blockBox->SelChangedSignal,           &QuantitySelector::SelectionChanged, m_blockBox);
             left += m_blockBox->Width();
         }
