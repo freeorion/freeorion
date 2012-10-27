@@ -2527,6 +2527,37 @@ Hull
     icon = ""
     graphic = ""
 
+Hull
+    name = "SH_DAMPENING_CLOUD_BODY"
+    description = "SH_DAMPENING_CLOUD_BODY_DESC"
+    speed = 50
+    starlaneSpeed = 20
+    fuel = 1
+    stealth = 50
+    structure = 5000
+    slots = [
+        Slot type = External position = (0.60, 0.45)
+        Slot type = Internal position = (0.40, 0.55)
+    ]
+    buildcost = 1
+    buildtime = 1
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[INFINITE_FUEL]]
+        [[MONSTER_MOVE_PRE]]0.05[[MONSTER_MOVE_POST_NOT_OWNED]]
+        EffectsGroup
+            scope = NumberOf 1 And [
+                ContainedBy Contains Source
+                Ship
+                OwnedBy AnyEmpire
+            ]
+            effects = [
+                SetFuel value - 99
+            ]
+    ]
+    icon = ""
+    graphic = ""
 
 REGULAR_HULL_DETECTION
 '''EffectsGroup

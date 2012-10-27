@@ -502,6 +502,11 @@ Asteroid Snail
 SM_SNAIL_DESC
 Feeding upon minerals, the shell of a space snail strongly resembles a normal asteroid making them very hard to detect.
 
+SM_DAMPENING_CLOUD
+Dampening Cloud
+SM_DAMPENING_CLOUD_DESC
+'''A cosmic cloud of high energetic particles that has gained some form of sentience. It's highly attracted to and will discharge any greater reserves of potential energy, which will lead to entire space ship fleets being bereft of fuel in a matter of seconds.'''
+
 SM_ACIREMA_GUARD
 Acirema Guard Ship
 SM_ACIREMA_GUARD_DESC
@@ -7918,6 +7923,11 @@ SH_COSMIC_DRAGON_BODY
 Cosmic Dragon Body
 SH_COSMIC_DRAGON_BODY_DESC
 A fearsom space dragon the size of a small planet.
+
+SH_DAMPENING_CLOUD_BODY
+Dampening Cloud Body
+SH_DAMPENING_CLOUD_BODY_DESC
+A cosmic cloud of high energetic particles.
 
 
 #############################################################

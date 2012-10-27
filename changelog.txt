@@ -30,6 +30,7 @@ Balancing:
  Content:
   ~ More Game Concepts 'pedia entries.
   ~ Russian translation update.
+  ~ Added Dampening Cloud monster
   
  Graphics:
   ~ New Focus icons.

@@ -192,3 +192,18 @@ MonsterFleet
             OwnedBy AnyEmpire
         ]
     ]
+
+MonsterFleet
+    name = "SM_DAMPENING_CLOUD"
+    ships = [
+         "SM_DAMPENING_CLOUD"
+     ]
+    spawnrate = 0.5
+    spawnlimit = 1
+    location = And [
+        Not Contains Monster
+        Not WithinStarlaneJumps 4 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
