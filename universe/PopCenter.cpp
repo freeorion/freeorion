@@ -116,7 +116,6 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
 }
 
 void PopCenter::PopCenterClampMeters() {
-    GetMeter(METER_TARGET_POPULATION)->ClampCurrentToRange();
     GetMeter(METER_POPULATION)->ClampCurrentToRange();
 }
 
