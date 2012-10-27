@@ -6804,7 +6804,7 @@ BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
 BLD_LIGHTHOUSE_DESC
-Decreases the Stealth of all objects in the same system by 450. This building can be built at an outpost.
+Increases speed of ships deparing this system, and decreases the Stealth of all objects in the same system by 450. This building can be built at an outpost.
 
 BLD_HEAVY_MINE_PROCESSOR
 Heavy Mining Processor

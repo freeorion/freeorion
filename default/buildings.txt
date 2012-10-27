@@ -106,7 +106,7 @@ BuildingType
     location = AND [
         OwnedBy TheEmpire Source.Owner
         Not Contains Building "BLD_OBSERVATORY"
-        ]
+    ]
     effectsgroups =
         EffectsGroup
             scope = NumberOf 1 System
@@ -374,12 +374,20 @@ BuildingType
     location = AND [
         Not Contains Building "BLD_LIGHTHOUSE"
         OwnedBy TheEmpire Source.Owner
-        ]
-    effectsgroups =
+    ]
+    effectsgroups = [
         EffectsGroup
             scope = WithinDistance 0 Source
-            activation = Source
             effects = SetStealth Value - 450
+            
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy TheEmpire Source.Owner
+                WithinDistance 50 Source
+            ]
+        effects = SetStarlaneSpeed Value + 20
+    ]
     icon = "icons/building/lighthouse.png"
 
 BuildingType
