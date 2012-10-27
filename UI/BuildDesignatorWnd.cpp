@@ -549,6 +549,11 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
 
 void BuildDesignatorWnd::BuildSelector::Refresh() {
     Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::Refresh()";
+    if (const UniverseObject* prod_loc = GetUniverseObject(this->m_production_location))
+        this->SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE_LOCATION")) % prod_loc->Name()));
+    else
+        this->SetName(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"));
+
     m_empire_ship_designs_changed_signal.disconnect();
     if (const Empire* empire = Empires().Lookup(m_empire_id))
         m_empire_ship_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal,
