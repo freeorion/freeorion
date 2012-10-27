@@ -2335,8 +2335,11 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
 
                         queue_it = queue.erase(queue_it);
                         status.erase(status.begin() + i);
+                    } else {
+                        // else do nothing; no empire can't capure things
+                        ++queue_it;
+                        ++i;
                     }
-                    // else do nothing; no empire can't capure things
 
                 } else if (result == INVALID_CAPTURE_RESULT) {
                     Logger().errorStream() << "Empire::ConquerBuildsAtLocationFromEmpire: BuildingType had an invalid CaptureResult";
