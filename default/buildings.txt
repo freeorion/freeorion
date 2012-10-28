@@ -52,6 +52,11 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         Not Contains Building "BLD_IMPERIAL_PALACE"
         TargetPopulation low = 1
+        Number 0 0 And [
+            Building name = "BLD_IMPERIAL_PALACE"
+            OwnedBy Target.Owner
+            ProducedByEmpire empire = Target.Owner
+        ]
     ]
     effectsgroups = [
         EffectsGroup
@@ -73,9 +78,8 @@ BuildingType
 
         EffectsGroup
             scope = And [
-                Planet
+                Object Source.PlanetID
                 OwnedBy TheEmpire Source.ProducedByEmpireID
-                Contains Source
             ]
             activation = Not Number low = 1 And [
                 Building "BLD_MEGALITH"
@@ -89,11 +93,10 @@ BuildingType
 
         EffectsGroup
             scope = And [
-                Planet
+                Object Source.PlanetID
                 OwnedBy TheEmpire Source.ProducedByEmpireID
-                Contains Source
-                OwnerHasTech "DEF_ROOT_DEFENSE"
             ]
+            activation = OwnerHasTech "DEF_ROOT_DEFENSE"
             effects = SetMaxTroops Value + 10
         ]
     icon = "icons/building/palace.png"
@@ -107,10 +110,15 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         Not Contains Building "BLD_OBSERVATORY"
     ]
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = NumberOf 1 System
             effects = SetStealth Value - 1
+            
+        EffectsGroup
+            scope = Object Source.PlanetID
+            effects = SetTargetConstruction Value - 10
+    ]
     icon = "icons/building/lighthouse.png"
 
 BuildingType
@@ -124,6 +132,10 @@ BuildingType
         Not Contains Building "BLD_SHIPYARD_BASE"
         OwnedBy TheEmpire Source.Owner
     ]
+    effectsgroups =
+        EffectsGroup
+            scope = Object Source.PlanetID
+            effects = SetTargetConstruction Value - 10
     icon = "icons/building/shipyard.png"
 
 BuildingType
@@ -140,7 +152,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Ship
@@ -160,6 +172,11 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
+            
+        EffectsGroup
+            scope = Object Source.PlanetID
+            effects = SetTargetConstruction Value - 15
+        ]
     icon = "icons/building/shipyard-1.png"
 
 BuildingType

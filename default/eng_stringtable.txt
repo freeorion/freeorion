@@ -4779,10 +4779,10 @@ DESC_TYPE_NOT
  that is not a %1%
 
 DESC_BUILDING
- that contains a %1% building
+ that is a %1% building
 
 DESC_BUILDING_NOT
- that does't contain a %1% building
+ that is not a %1% building
 
 DESC_SPECIAL
  that has a %1% special
