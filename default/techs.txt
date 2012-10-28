@@ -144,6 +144,7 @@ Tech
     researchturns = 3
     prerequisites = "SHP_WEAPON_2"
     unlock = Item type = ShipPart name = "SR_WEAPON_3"
+    graphic = "icons/ship_parts/mass-driver-3.png"
 
 Tech
     name = "SHP_WEAPON_4"
@@ -155,6 +156,7 @@ Tech
     researchturns = 4
     prerequisites = "SHP_WEAPON_3"
     unlock = Item type = ShipPart name = "SR_WEAPON_4"
+    graphic = "icons/ship_parts/mass-driver-4.png"
 
 Tech
     name = "SHP_WEAPON_5"
@@ -166,6 +168,7 @@ Tech
     researchturns = 10
     prerequisites = "SHP_ROOT_AGGRESSION"
     unlock = Item type = ShipPart name = "SR_WEAPON_5"
+    graphic = "icons/ship_parts/laser-1.png"
 
 Tech
     name = "SHP_WEAPON_6"
@@ -177,6 +180,7 @@ Tech
     researchturns = 5
     prerequisites = "SHP_WEAPON_5"
     unlock = Item type = ShipPart name = "SR_WEAPON_6"
+    graphic = "icons/ship_parts/laser-2.png"
 
 Tech
     name = "SHP_WEAPON_7"
@@ -188,6 +192,7 @@ Tech
     researchturns = 6
     prerequisites = "SHP_WEAPON_6"
     unlock = Item type = ShipPart name = "SR_WEAPON_7"
+    graphic = "icons/ship_parts/laser-3.png"
 
 Tech
     name = "SHP_WEAPON_8"
@@ -199,6 +204,7 @@ Tech
     researchturns = 7
     prerequisites = "SHP_WEAPON_7"
     unlock = Item type = ShipPart name = "SR_WEAPON_8"
+    graphic = "icons/ship_parts/laser-4.png"
 
 Tech
     name = "SHP_WEAPON_9"
@@ -210,6 +216,7 @@ Tech
     researchturns = 15
     prerequisites = "SHP_WEAPON_5"
     unlock = Item type = ShipPart name = "SR_WEAPON_9"
+    graphic = "icons/ship_parts/plasma-1.png"
 
 Tech
     name = "SHP_WEAPON_10"
@@ -221,6 +228,7 @@ Tech
     researchturns = 8
     prerequisites = "SHP_WEAPON_9"
     unlock = Item type = ShipPart name = "SR_WEAPON_10"
+    graphic = "icons/ship_parts/plasma-2.png"
 
 Tech
     name = "SHP_WEAPON_11"
@@ -232,6 +240,7 @@ Tech
     researchturns = 9
     prerequisites = "SHP_WEAPON_10"
     unlock = Item type = ShipPart name = "SR_WEAPON_11"
+    graphic = "icons/ship_parts/plasma-3.png"
 
 Tech
     name = "SHP_WEAPON_12"
@@ -243,6 +252,7 @@ Tech
     researchturns = 10
     prerequisites = "SHP_WEAPON_11"
     unlock = Item type = ShipPart name = "SR_WEAPON_12"
+    graphic = "icons/ship_parts/plasma-4.png"
 
 Tech
     name = "SHP_WEAPON_13"
@@ -254,6 +264,7 @@ Tech
     researchturns = 20
     prerequisites = "SHP_WEAPON_9"
     unlock = Item type = ShipPart name = "SR_WEAPON_13"
+    graphic = "icons/ship_parts/death-ray-1.png"
 
 Tech
     name = "SHP_WEAPON_14"
@@ -265,6 +276,7 @@ Tech
     researchturns = 11
     prerequisites = "SHP_WEAPON_13"
     unlock = Item type = ShipPart name = "SR_WEAPON_14"
+    graphic = "icons/ship_parts/death-ray-2.png"
 
 Tech
     name = "SHP_WEAPON_15"
@@ -276,6 +288,7 @@ Tech
     researchturns = 12
     prerequisites = "SHP_WEAPON_14"
     unlock = Item type = ShipPart name = "SR_WEAPON_15"
+    graphic = "icons/ship_parts/death-ray-3.png"
 
 Tech
     name = "SHP_WEAPON_16"
@@ -287,6 +300,7 @@ Tech
     researchturns = 13
     prerequisites = "SHP_WEAPON_15"
     unlock = Item type = ShipPart name = "SR_WEAPON_16"
+    graphic = "icons/ship_parts/death-ray-4.png"
 
 Tech
     name = "SHP_WEAPON_17"
@@ -298,6 +312,7 @@ Tech
     researchturns = 14
     prerequisites = "SHP_WEAPON_16"
     unlock = Item type = ShipPart name = "SR_WEAPON_17"
+    graphic = "icons/ship_parts/death-ray-5.png"
 
 Tech
     name = "LRN_PHYS_BRAIN"
