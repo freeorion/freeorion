@@ -1208,7 +1208,15 @@ void SidePanel::PlanetPanel::Refresh() {
         std::string colonize_text;
         if (colony_ship_capacity > 0.0) {
             std::string initial_pop = DoubleToString(colony_ship_capacity, 2, false);
-            std::string target_pop = DoubleToString(planet_capacity, 2, false);
+
+            std::string clr_tag;
+            if (planet_capacity < colony_ship_capacity && colony_ship_capacity > 0.0)
+                clr_tag = GG::RgbaTag(ClientUI::StatDecrColor());
+            else if (planet_capacity > colony_ship_capacity && colony_ship_capacity > 0.0)
+                clr_tag = GG::RgbaTag(ClientUI::StatIncrColor());
+            std::string clr_tag_close = (clr_tag.empty() ? "" : "</rgba>");
+            std::string target_pop = clr_tag + DoubleToString(planet_capacity, 2, false) + clr_tag_close;
+
             colonize_text = boost::io::str(FlexibleFormat(UserString("PL_COLONIZE")) % initial_pop % target_pop);
         } else {
             colonize_text = UserString("PL_OUTPOST");
