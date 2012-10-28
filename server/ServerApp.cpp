@@ -1653,6 +1653,7 @@ namespace {
             // how many troops are invading?
             planet_empire_troops[invade_planet_id][ship->Owner()] += design->TroopCapacity();
             // destroy invading ships
+            Logger().debugStream() << "HandleInvasion has accounted for "<< design->TroopCapacity() << " troops to invade " << planet->Name() << " and is destroying ship " << ship_id << " named " << ship->Name();
             GetUniverse().Destroy(ship_id);
         }
 
@@ -1679,29 +1680,34 @@ namespace {
         {
             int planet_id = planet_it->first;
             Planet* planet = GetPlanet(planet_id);
+            std::set<int> all_involved_empires;
 
             std::map<int, double>& empires_troops = planet_it->second;
-            if (empires_troops.size() < 2)
-                continue;   // no single participant battles...
+            if (empires_troops.size() < 2) { // no single participant battles
+                if ( planet->OwnedBy( empires_troops.begin()->first ) ) {
+                    continue;   // if troops all belong to planet owner, nothing to do...
+                } else {
+                    Logger().debugStream() << "Ground combat on " << planet->Name() << " was unopposed";
+                }
+            } else {
 
-            Logger().debugStream() << "Ground combat on" << planet->Name();
-            for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
+                Logger().debugStream() << "Ground combat on " << planet->Name();
+                for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
+                        empire_it != empires_troops.end(); ++empire_it)
+                { Logger().debugStream() << " empire: " << empire_it->first << ": " << empire_it->second; }
+
+
+                // create sitreps for all empires involved in battle
+                for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
                     empire_it != empires_troops.end(); ++empire_it)
-            { Logger().debugStream() << " empire: " << empire_it->first << ": " << empire_it->second; }
+                {
+                    all_involved_empires.insert(empire_it->first);
+                    if (Empire* empire = Empires().Lookup(empire_it->first))
+                        empire->AddSitRepEntry(CreateGroundCombatSitRep(planet_id));
+                }
 
-
-            // create sitreps for all empires involved in battle
-            std::set<int> all_involved_empires;
-            for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
-                 empire_it != empires_troops.end(); ++empire_it)
-            {
-                all_involved_empires.insert(empire_it->first);
-                if (Empire* empire = Empires().Lookup(empire_it->first))
-                    empire->AddSitRepEntry(CreateGroundCombatSitRep(planet_id));
+                ResolveGroundCombat(empires_troops);
             }
-
-            ResolveGroundCombat(empires_troops);
-
             // who won?
             if (empires_troops.size() == 1) {
                 int victor_id = empires_troops.begin()->first;
