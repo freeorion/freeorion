@@ -442,8 +442,8 @@ void ColonizeOrder::ExecuteImpl() const {
         return;
     }
     if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_PARTIAL_VISIBILITY) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that empire has insufficient visibility of";
-        return;
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
+        //return;
     }
     if (colonist_capacity > 0.0 && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl nonzero colonist capacity and planet that ship's species can't colonize";
@@ -552,8 +552,8 @@ void InvadeOrder::ExecuteImpl() const {
         return;
     }
     if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_PARTIAL_VISIBILITY) {
-        Logger().errorStream() << "InvadeOrder::ExecuteImpl given planet that empire has insufficient visibility of";
-        return;
+        Logger().errorStream() << "InvadeOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
+        //return;
     }
 
     int ship_system_id = ship->SystemID();
@@ -568,7 +568,7 @@ void InvadeOrder::ExecuteImpl() const {
     }
 
     // note: multiple ships, from same or different empires, can invade the same planet on the same turn
-
+    Logger().debugStream() << "InvadeOrder::ExecuteImpl set for ship "<< m_ship<<" "<<ship->Name()<<" to invade planet "<<m_planet<<" "<<planet->Name();    
     planet->SetIsAboutToBeInvaded(true);
     ship->SetInvadePlanet(m_planet);
 }

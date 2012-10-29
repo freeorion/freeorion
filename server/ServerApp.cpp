@@ -1787,6 +1787,13 @@ void ServerApp::PreCombatProcessTurns() {
             order_it->second->Execute();
     }
 
+    // update production queues after order execution
+    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        if (Empires().Eliminated(it->first))
+            continue;   // skip eliminated empires
+        it->second->UpdateProductionQueue();
+    }
+
 
 
     Logger().debugStream() << "ServerApp::ProcessTurns colonization and scrapping";

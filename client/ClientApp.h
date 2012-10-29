@@ -7,25 +7,28 @@
 #include "../network/Message.h"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
+#include "../util/MultiplayerCommon.h"
+#include "../network/Networking.h"
 #include "../util/OrderSet.h"
 
 #include <string>
 
 namespace log4cpp {class Category;};
 
-/** the abstract base class for the application framework classes AIClientApp and HumanClientApp.  The static functions
-    are designed to give both types of client (which are very different) a unified interface.  This allows code in either
-    type of client app to handle Messages and gain access to the data structures common to both apps, without worrying 
-    about which type of app the code is being run in.  This allows for a more modular design.*/
-class ClientApp
-{
+/** The abstract base class for the application framework classes AIClientApp
+  * and HumanClientApp.  The static functions are designed to give both types
+  * of client (which are very different) a unified interface.  This allows code
+  * in either type of client app to handle Messages and gain access to the data
+  * structures common to both apps, without worrying about which type of app the
+  * code is being run in.*/
+class ClientApp {
 public:
     /** \name Structors */ //@{
     ClientApp();
     virtual ~ClientApp();
     //@}
 
-    /** \name Accessors */ //@{   
+    /** \name Accessors */ //@{
     int                     PlayerID() const;         ///< returns the player ID of this client
     int                     EmpireID() const;         ///< returns the empire ID of this client
     int                     CurrentTurn() const;      ///< returns the current game turn
@@ -41,6 +44,8 @@ public:
     const OrderSet&         Orders() const;      ///< returns Order set for this client's player
     const CombatOrderSet&   CombatOrders() const;///< returns CombatOrder set for this client's player
     const ClientNetworking& Networking() const;  ///< returns the networking object for this client's player
+    const Networking::ClientType
+                            GetEmpireClientType(int empire_id) const;  ///< returns the networking client type for the given empireID
     //@}
 
     /** \name Mutators */ //@{

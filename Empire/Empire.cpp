@@ -2184,7 +2184,7 @@ void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, in
         m_production_queue.insert(m_production_queue.begin() + pos, build);
         m_production_progress.insert(m_production_progress.begin() + pos, 0.0);
     }
-    m_production_queue.Update(m_resource_pools, m_production_progress);
+    //m_production_queue.Update(m_resource_pools, m_production_progress);
 }
 
 void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos/* = -1*/) {
@@ -2202,7 +2202,7 @@ void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, 
         m_production_queue.insert(m_production_queue.begin() + pos, build);
         m_production_progress.insert(m_production_progress.begin() + pos, 0.0);
     }
-    m_production_queue.Update(m_resource_pools, m_production_progress);
+    //m_production_queue.Update(m_resource_pools, m_production_progress);
 }
 
 void Empire::PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos/* = -1*/) {
@@ -2230,7 +2230,7 @@ void Empire::SetBuildQuantityAndBlocksize(int index, int quantity, int blocksize
     m_production_queue[index].blocksize = blocksize;
     if ( blocksize < original_blocksize ) // must lose the progress from the excess former blocksize, or min-turns-to-build could be bypassed
         m_production_progress[index] = (m_production_progress[index] / original_blocksize ) * blocksize;
-    m_production_queue.Update(m_resource_pools, m_production_progress);
+    //m_production_queue.Update(m_resource_pools, m_production_progress);
 }
 
 void Empire::SetBuildQuantity(int index, int quantity) {
@@ -2243,7 +2243,7 @@ void Empire::SetBuildQuantity(int index, int quantity) {
     int original_quantity = m_production_queue[index].remaining;
     m_production_queue[index].remaining = quantity;
     m_production_queue[index].ordered += quantity - original_quantity;
-    m_production_queue.Update(m_resource_pools, m_production_progress);
+    //m_production_queue.Update(m_resource_pools, m_production_progress);
 }
 
 void Empire::MoveBuildWithinQueue(int index, int new_index) {
@@ -2263,7 +2263,7 @@ void Empire::MoveBuildWithinQueue(int index, int new_index) {
     m_production_progress.erase(m_production_progress.begin() + index);
     m_production_queue.insert(m_production_queue.begin() + new_index, build);
     m_production_progress.insert(m_production_progress.begin() + new_index, status);
-    m_production_queue.Update(m_resource_pools, m_production_progress);
+    //m_production_queue.Update(m_resource_pools, m_production_progress);
 }
 
 void Empire::RemoveBuildFromQueue(int index) {
@@ -2274,7 +2274,7 @@ void Empire::RemoveBuildFromQueue(int index) {
     }
     m_production_queue.erase(index);
     m_production_progress.erase(m_production_progress.begin() + index);
-    m_production_queue.Update(m_resource_pools, m_production_progress);
+    //m_production_queue.Update(m_resource_pools, m_production_progress);
 }
 
 void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_id) {

@@ -2,7 +2,7 @@ import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
 import AIstate
 import EnumsAI
-from EnumsAI import AIPriorityType, AIFleetMissionType, AIExplorableSystemType, getAIPriorityProductionTypes
+from EnumsAI import *
 import ColonisationAI
 import FleetUtilsAI
 from ResearchAI import getCompletedTechs
@@ -11,6 +11,7 @@ import MilitaryAI
 import PlanetUtilsAI
 import ExplorationAI
 from ProductionAI import curBestMilShipRating
+import math
 
 def calculatePriorities():
     "calculates the priorities of the AI player"
@@ -84,9 +85,9 @@ def calculateIndustryPriority():
     elif fo.currentTurn < 30:
         industryPriority = 15 # mid industry , mid research 
     elif fo.currentTurn < 40:
-        industryPriority = 40 # high  industry , low research 
+        industryPriority = 40 # high  industry , mid research 
     else:
-        industryPriority = 50 # high  industry , mid research 
+        industryPriority = 60 # high  industry , low-mid research 
 
 
     # increase demand for industry industry production is low
@@ -116,7 +117,7 @@ def calculateResearchPriority():
     elif fo.currentTurn < 30:
         researchPriority = 15 # mid industry , mid research 
     elif fo.currentTurn < 40:
-        researchPriority = 10 # high  industry , low research 
+        researchPriority = 20 # high  industry , low research 
     else:
         researchPriority = 20 # high  industry , mid research 
 
@@ -133,7 +134,7 @@ def calculateExplorationPriority():
     numUnexploredSystems =  len( ExplorationAI.__borderUnexploredSystemIDs   )  #len(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
     scoutIDs = ExplorationAI.currentScoutFleetIDs #    FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
     numScouts = len(scoutIDs)
-    explorationPriority = int( 95 * max(0,  (numUnexploredSystems - numScouts)) / (numUnexploredSystems +0.001) )
+    explorationPriority = 95*math.ceil(  math.sqrt(max(0,  (numUnexploredSystems - numScouts)) / (numUnexploredSystems +0.001) ))
 
     print ""
     print "Number of Scouts            : " + str(numScouts)
@@ -184,13 +185,26 @@ def calculateOutpostPriority():
 
 def calculateInvasionPriority():
     "calculates the demand for troop ships by opponent planets"
+    empire=fo.getEmpire()
 
     numOpponentPlanetIDs = len(AIstate.opponentPlanetIDs)
-    if numOpponentPlanetIDs == 0: return 0
+    if numOpponentPlanetIDs == 0: 
+        return 10  #hsould always have at least a  low lvl of production going into fleets
+    opponentTroops = sum( [ptroops+1 for sid, pscore, ptroops in AIstate.invasionTargets] )
+
+    productionQueue = empire.productionQueue
+    queuedTroopShips=0
+    for queue_index  in range(0,  len(productionQueue)):
+        element=productionQueue[queue_index]
+        if element.buildType == AIEmpireProductionTypes.BT_SHIP:
+             if foAI.foAIstate.getShipRole(element.designID) ==       AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
+                 queuedTroopShips +=1
+
+
 
     troopShipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION)
-    numTroopShips = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(troopShipIDs))
-    invasionPriority = 110 * (numOpponentPlanetIDs - numTroopShips) / numOpponentPlanetIDs
+    #numTroopShips = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(troopShipIDs))
+    invasionPriority = 30+ 200*max(0,  math.ceil(opponentTroops/5) - len(troopShipIDs) -queuedTroopShips )
 
     # print ""
     # print "Number of Troop Ships Without Missions: " + str(numTroopShips)
@@ -206,7 +220,7 @@ def calculateMilitaryPriority():
 
     totalThreat = 0
     for sysStatus in foAI.foAIstate.systemStatus.values():
-        totalThreat += (sysStatus['fleetThreat'] + sysStatus['planetThreat'] )
+        totalThreat += max(0, (sysStatus['fleetThreat'] + 0.5*sysStatus['planetThreat']  - 0.9*sysStatus['monsterThreat'])) #being safe; should never be neg since fleetThreat should include monsterThreat
     totalFleetRating = 0
     for fleetStatus in foAI.foAIstate.fleetStatus.values():
         totalFleetRating += fleetStatus['rating']
@@ -219,7 +233,8 @@ def calculateMilitaryPriority():
 
     # build one more military ship than military targeted systems
     #militaryPriority = 100 * ((numMilitaryTargetedSystemIDs +2) - numMilitaryShips) / (numMilitaryTargetedSystemIDs + 1)
-    militaryPriority = int( 30 + max(0,  50*((1.25*totalThreat  -  totalFleetRating ) / curShipRating)) )
+    militaryPriority = int( 30 + max(0,  10*((1.25*totalThreat  -  totalFleetRating ) / curShipRating)) )
+    print "Military Priority Calc:  int( 30 + max(0,  10*((1.25*totalThreat(%d)  -  totalFleetRating(%d)  ) / curShipRating(%d)  )) ) = %d"%(totalThreat,  totalFleetRating,  curShipRating, militaryPriority)
     # print ""
     # print "Number of Military Ships Without Missions: " + str(numMilitaryShips)
     # print "Number of Military Targeted Systems: " + str(numMilitaryTargetedSystemIDs)

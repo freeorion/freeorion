@@ -83,6 +83,7 @@ namespace FreeOrionPython {
             .value("maxShield",         METER_MAX_SHIELD)
             .value("maxStructure",      METER_MAX_STRUCTURE)
             .value("maxDefense",        METER_MAX_DEFENSE)
+            .value("maxTroops",         METER_MAX_TROOPS)
 
             .value("population",        METER_POPULATION)
             .value("industry",          METER_INDUSTRY)
@@ -94,6 +95,8 @@ namespace FreeOrionPython {
             .value("shield",            METER_SHIELD)
             .value("structure",         METER_STRUCTURE)
             .value("defense",           METER_DEFENSE)
+            .value("troops",            METER_TROOPS)
+            .value("rebels",            METER_REBEL_TROOPS)
 
             .value("supply",            METER_SUPPLY)
             .value("stealth",           METER_STEALTH)

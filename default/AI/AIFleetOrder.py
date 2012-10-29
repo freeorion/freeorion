@@ -334,6 +334,8 @@ class AIFleetOrder(object):
         # invade
         #
         elif AIFleetOrderType.ORDER_INVADE == self.getAIFleetOrderType():
+            if (considerMergers):
+                self.checkMergers(fleetID)
             if AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
                 shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_MILITARY_INVASION)
             ship = universe.getShip(shipID)
@@ -386,6 +388,7 @@ class AIFleetOrder(object):
         if not self.canIssueOrder(considerMergers=False):  #appears to be redundant with check in IAFleetMission?
             print "\tcan't issue %s"%self
         else:
+            universe=fo.getUniverse()
             self.__setExecuted()
             # outpost
             if AIFleetOrderType.ORDER_OUTPOST == self.getAIFleetOrderType():
@@ -409,14 +412,21 @@ class AIFleetOrder(object):
                 fo.issueColonizeOrder(shipID, self.getTargetAITarget().getTargetID())
             # invade
             elif AIFleetOrderType.ORDER_INVADE == self.getAIFleetOrderType():
+                result = False
                 shipID = None
+                planetID = self.getTargetAITarget().getTargetID()
+                planet=universe.getPlanet(planetID)
+                planetName = (planet and planet.name) or "invisible"
                 if AITargetType.TARGET_SHIP == self.getSourceAITarget().getAITargetType():
                     shipID = self.getSourceAITarget().getTargetID()
                 elif AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
                     fleetID = self.getSourceAITarget().getTargetID()
-                    shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_MILITARY_INVASION)
-
-                fo.issueInvadeOrder(shipID, self.getTargetAITarget().getTargetID())
+                    fleet = fo.getUniverse().getFleet(fleetID)
+                    for shipID in fleet.shipIDs:
+                        ship = universe.getShip(shipID)
+                        if (foAI.foAIstate.getShipRole(ship.design.id) == AIShipRoleType.SHIP_ROLE_MILITARY_INVASION):
+                            result = fo.issueInvadeOrder(shipID, planetID)  or  result #will track if at least one invasion troops successfully deployed
+                            print "Ordered troop ship ID %d to invade %s"%(shipID, planetName)
             # military
             elif AIFleetOrderType.ORDER_MILITARY == self.getAIFleetOrderType():
                 shipID = None

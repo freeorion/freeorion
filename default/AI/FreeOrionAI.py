@@ -184,7 +184,8 @@ def generateOrders():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     planetID = PlanetUtilsAI.getCapital()
-    planet = universe.getPlanet(planetID)
+    if planetID is not None:
+        planet = universe.getPlanet(planetID)
     print "***************************************************************************"
     print "***************************************************************************"
     print ("Generating Orders")

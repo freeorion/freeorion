@@ -5,6 +5,7 @@
 #include "../util/Serialize.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
+#include "../network/Networking.h"
 
 #include <stdexcept>
 
@@ -71,7 +72,17 @@ int ClientApp::GetEmpirePlayerID(int empire_id) const {
     for (std::map<int, PlayerInfo>::const_iterator it = m_player_info.begin(); it != m_player_info.end(); ++it)
         if (it->second.empire_id == empire_id)
             return it->first;
-    return -1;
+    return Networking::INVALID_PLAYER_ID;
+}
+
+const Networking::ClientType ClientApp::GetEmpireClientType(int empire_id) const {
+    const int player_id = ClientApp::GetEmpirePlayerID(empire_id);
+    if (player_id == Networking::INVALID_PLAYER_ID)
+        return Networking::INVALID_CLIENT_TYPE;
+    std::map<int, PlayerInfo>::const_iterator it = m_player_info.find(player_id);
+    if (it != m_player_info.end())
+        return it->second.client_type;
+    return Networking::INVALID_CLIENT_TYPE;
 }
 
 const std::map<int, PlayerInfo>& ClientApp::Players() const

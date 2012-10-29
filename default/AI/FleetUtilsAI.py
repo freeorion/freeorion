@@ -20,7 +20,7 @@ def getFleetsForMission(nships,  targetRating,  minRating,  curRating,  species,
     if not (systemsToCheck and fleetPool):
         if verbose: 
             print "no more systems or fleets to check"
-        if takeAny or curRating[0] > minRating:
+        if takeAny or ( (curRating[0] > minRating)  and ( sum( [len(universe.getFleet(fID).shipIDs) for fID in fleetList] )  >= nships)):
             return fleetList
         else:
             return []
@@ -38,7 +38,7 @@ def getFleetsForMission(nships,  targetRating,  minRating,  curRating,  species,
         fleetList.append(fleetID)
         del fleetPool[ fleetPool.index( fleetID) ]
         curRating[0] += foAI.foAIstate.getRating(fleetID)
-        if  ( len(fleetList) >= nships ) and ( curRating[0] >= targetRating ):
+        if  ( sum( [len(universe.getFleet(fID).shipIDs) for fID in fleetList] )  >= nships ) and ( curRating[0] >= targetRating ):
             if verbose: 
                 print  "returning fleetlist: %s"%fleetList
             return fleetList

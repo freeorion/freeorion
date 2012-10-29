@@ -164,6 +164,10 @@ def getMilitaryFleets():
         otSysAlloc = 0
         otSysThreat = [  ( oSID,  foAI.foAIstate.systemStatus[oSID]['fleetThreat'] + foAI.foAIstate.systemStatus[oSID]['planetThreat'] )   for oSID in   exploTargetIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
+        if totMilRating <1025:
+            maxMilRating = totMilRating
+        else:
+            maxMilRating = 0.5*totMilRating
         for sid,  thrt in otSysThreat:
             if (thrt > 0) and remainingMilRating > 0:
                 thisAlloc = min( min( int(0.99999 + thrt*1.5),  remainingMilRating ),  0.5*totMilRating)

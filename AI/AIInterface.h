@@ -86,6 +86,7 @@ namespace AIInterface {
 
     int                 IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id);
     int                 IssueEnqueueShipProductionOrder(int design_id, int location_id);
+    int                 IssueChangeProductionQuantityOrder(int queue_index, int new_quantity, int new_blocksize);
     int                 IssueRequeueProductionOrder(int old_queue_index, int new_queue_index);
     int                 IssueDequeueProductionOrder(int queue_index);
 

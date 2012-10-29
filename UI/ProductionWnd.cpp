@@ -558,6 +558,9 @@ void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) 
         OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(),
                                           boost::polymorphic_downcast<QueueRow*>(row)->queue_index,
                                           position)));
+    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (empire)
+        empire->UpdateProductionQueue();
 }
 
 void ProductionWnd::Sanitize()
@@ -607,25 +610,42 @@ void ProductionWnd::UpdateInfoPanel() {
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location) {
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, name, number, location)));
+    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (empire)
+        empire->UpdateProductionQueue();
     m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
 }
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location) {
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, design_id, number, location)));
+    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (empire)
+        empire->UpdateProductionQueue();
     m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
 }
 
-void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity)
-{ HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, true))); }
+void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, true)));
+    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (empire)
+        empire->UpdateProductionQueue();
+}
 
-void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize)
-{ HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, blocksize))); }
+void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize) {
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, blocksize)));
+    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (empire)
+        empire->UpdateProductionQueue();
+}
 
 void ProductionWnd::QueueItemDeletedSlot(GG::ListBox::iterator it) {
     //std::cout << "ProductionWnd::QueueItemDeletedSlot" << std::endl;
     HumanClientApp::GetApp()->Orders().IssueOrder(
         OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(),
                                           std::distance(m_queue_lb->begin(), it))));
+    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (empire)
+        empire->UpdateProductionQueue();
 }
 
 void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt)

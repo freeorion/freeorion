@@ -7,6 +7,7 @@ import AIstate
 import FleetUtilsAI
 from random import choice
 import sys
+import math
 
 shipTypeMap = dict( zip( [AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION,  AIPriorityType.PRIORITY_PRODUCTION_OUTPOST,  AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  AIPriorityType.PRIORITY_PRODUCTION_INVASION,  AIPriorityType.PRIORITY_PRODUCTION_MILITARY], 
                                             [AIShipDesignTypes.explorationShip,  AIShipDesignTypes.outpostShip,  AIShipDesignTypes.colonyShip,  AIShipDesignTypes.troopShip,  AIShipDesignTypes.attackShip ] ) )
@@ -18,6 +19,16 @@ def curBestMilShipRating():
     stats = foAI.foAIstate.getDesignIDStats(bestDesign.id)
     return stats['attack'] * ( stats['structure'] + stats['shields'] )
 
+def checkTroopShips():
+    troopDesigns = [shipDesign for shipDesign in empire.availableShipDesigns if shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_INVASION,  "nomatch")  in fo.getShipDesign(shipDesign).name(False) ]
+    if len(theseDesigns) !=1 : 
+        return 
+    try:
+        fo.issueCreateShipDesignOrder("SD_TROOP_SHIP_A2",  "Medium Hulled Troopship for economical large quantities of troops",  
+                                                                                    "SH_BASIC_MEDIUM",  ["", "", "GT_TROOP_POD"],  "",  "fighter")
+    except:
+        pass
+    
 def getBestShipInfo(priority):
     empire = fo.getEmpire()
     theseDesigns = [shipDesign for shipDesign in empire.availableShipDesigns if shipTypeMap.get(priority,  "nomatch")  in fo.getShipDesign(shipDesign).name(False)  and getAvailableBuildLocations(shipDesign) != [] ]
@@ -81,8 +92,9 @@ def generateProductionOrders():
                 fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", empire.capitalID)
 
             if  ("BLD_EXOBOT_SHIP" in possibleBuildingTypes) and ("BLD_EXOBOT_SHIP" not in capitalBldgs+queuedBldgNames):
-                print "Enqueueing BLD_EXOBOT_SHIP"
-                fo.issueEnqueueBuildingProductionOrder("BLD_EXOBOT_SHIP", empire.capitalID)
+                #TODO:
+                print "Would Enqueueing BLD_EXOBOT_SHIP if had better handling"
+                #fo.issueEnqueueBuildingProductionOrder("BLD_EXOBOT_SHIP", empire.capitalID)
 
     totalPPSpent = fo.getEmpire().productionQueue.totalSpent
     print "  Total Production Points Spent:     " + str(totalPPSpent)
@@ -103,33 +115,18 @@ def generateProductionOrders():
     queuedColonyShips=0
     
     #TODO:  blocked items might not need dequeuing, but rather for supply lines to be un-blockaded 
-    anyItemsDequeued=False  
-    itemDequeued=True
-    lastIndex=0
-    while (itemDequeued):# this outside loop used to  deal with indices changeing upon item dequeuing
-        itemDequeued=False
-        for queue_index  in range(lastIndex,  len(productionQueue)):
-            lastIndex=queue_index
-            element=productionQueue[queue_index]
-            print "    " + element.name + " turns:" + str(element.turnsLeft) + " PP:%.2f"%element.allocation + " being built at " + universe.getObject(element.locationID).name
-            if element.turnsLeft == -1:
-                print "element %s will never be completed as stands -- deleting from queue"%element.name 
-                fo.issueDequeueProductionOrder(queue_index) 
-                itemDequeued=True
-                anyItemsDequeued=True
-                break
-            if element.buildType == AIEmpireProductionTypes.BT_SHIP:
-                 if foAI.foAIstate.getShipRole(element.designID) ==       AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
-                     queuedColonyShips +=1
+    for queue_index  in range( len(productionQueue)):
+        element=productionQueue[queue_index]
+        print "    " + element.name + " turns:" + str(element.turnsLeft) + " PP:%.2f"%element.allocation + " being built at " + universe.getObject(element.locationID).name
+        if element.turnsLeft == -1:
+            print "element %s will never be completed as stands  "%element.name 
+            #fo.issueDequeueProductionOrder(queue_index) 
+            break
+        elif element.buildType == AIEmpireProductionTypes.BT_SHIP:
+             if foAI.foAIstate.getShipRole(element.designID) ==       AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
+                 queuedColonyShips +=1
     if queuedColonyShips:
         print "\nFound %d colony ships in build queue"%queuedColonyShips
-
-    if anyItemsDequeued:
-        print " "
-        print "after dequeuing of broken production entries:"
-        totalPPSpent = fo.getEmpire().productionQueue.totalSpent
-        wastedPP = totalPP - totalPPSpent
-        print "  Total Production Points Spent:   %.1f     ; Wasted Production Points: %.1f"%(totalPPSpent,  wastedPP)
 
     print ""
     # get the highest production priorities
@@ -159,6 +156,17 @@ def generateProductionOrders():
     if filteredPriorities == {}:
         print "No non-building-production priorities with nonzero score, setting to default: Military"
         filteredPriorities [AIPriorityType.PRIORITY_PRODUCTION_MILITARY ] =  1 
+    while (topscore >5000):
+        topscore = 0
+        for pty in filteredPriorities:
+            score = filteredPriorities[pty]
+            if score <= 500:
+                score = math.ceil(score/50)
+            else:
+                score = math.ceil(score/100)
+            filteredPriorities[pty] = score
+            if score > topscore:
+                topscore=score
 
     bestShips={}
     for priority in list(filteredPriorities):
@@ -176,6 +184,7 @@ def generateProductionOrders():
     #print "\n ship priority selection list: \n %s \n\n"%str(priorityChoices)
     loopCount = 0
         
+    nextIdx = len(productionQueue)
     while (wastedPP > 0) and (loopCount <100) and (priorityChoices != [] ): #make sure don't get stuck in some nonbreaking loop like if all shipyards captured
         loopCount +=1
         print "Beginning  build enqueue loop %d; %.1f PP available"%(loopCount,  wastedPP)
@@ -190,10 +199,19 @@ def generateProductionOrders():
                 totColonyFleets +=1  # assumes the enqueueing below succeeds, but really no harm if assumption proves wrong
         bestShip,  bestDesign,  buildChoices = bestShips[thisPriority]
         loc = choice(buildChoices)
-        print "adding new ship to production queue:  %s; per turn production cost %.1f"%(bestDesign.name(True),  (float(bestDesign.productionCost(empire.empireID,  homeworld.id)) / bestDesign.productionTime(empire.empireID,  homeworld.id)))
-        print ""
-        fo.issueEnqueueShipProductionOrder(bestShip, loc)
-        wastedPP -=  ( float(bestDesign.productionCost(empire.empireID,  homeworld.id)) / bestDesign.productionTime(empire.empireID,  homeworld.id))
+        numShips=1
+        perTurnCost = (float(bestDesign.productionCost(empire.empireID,  homeworld.id)) / bestDesign.productionTime(empire.empireID,  homeworld.id))
+        while ( totalPP > 25*perTurnCost):
+            numShips *= 5
+            perTurnCost *= 5
+        retval  = fo.issueEnqueueShipProductionOrder(bestShip, loc)
+        if retval !=0:
+            print "adding %d new ship(s) to production queue:  %s; per turn production cost %.1f"%(numShips,  bestDesign.name(True),  perTurnCost)
+            print ""
+            if numShips>1:
+                fo.issueChangeProductionQuantityOrder(nextIdx,  1,  numShips)
+            wastedPP -=  perTurnCost
+            nextIdx+=1
     print ""
 
 def getAvailableBuildLocations(shipDesignID):

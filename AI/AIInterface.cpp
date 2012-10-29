@@ -113,7 +113,7 @@ namespace AIInterface {
             if (it->first == player_id)
                 return it->second.empire_id;
         }
-        return -1;  // default invalid value
+        return ALL_EMPIRES; // default invalid value
     }
 
     std::vector<int>  AllEmpireIDs() {
@@ -452,7 +452,7 @@ namespace AIInterface {
             return 0;
         }
         if (!planet->Unowned()) {
-            Logger().errorStream() << "AIInterface::IssueColonizeOrder : planet with passed planet_id is already owned or colonized";
+            Logger().errorStream() << "AIInterface::IssueColonizeOrder : planet with passed planet_id "<<planet_id<<" is already owned or colonized";
             return 0;
         }
 
@@ -507,11 +507,12 @@ namespace AIInterface {
             return 0;
         }
         bool owned_by_invader = planet->OwnedBy(empire_id);
+        bool unowned = planet->Unowned();
         bool populated = planet->CurrentMeterValue(METER_POPULATION) > 0.;
         bool visible = GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_PARTIAL_VISIBILITY;
         bool vulnerable = planet->CurrentMeterValue(METER_SHIELD) <= 0.;
         bool being_invaded = planet->IsAboutToBeInvaded();
-        bool invadable = !owned_by_invader && vulnerable && populated && visible && !being_invaded;
+        bool invadable = !owned_by_invader && vulnerable && (populated || !unowned) && visible ;// && !being_invaded; a 'being_invaded' check prevents AI from invading with multiple ships at once, which is important
         if (!invadable) {
             Logger().errorStream() << "AIInterface::IssueInvadeOrder : planet with passed planet_id is "
                                    << "not invadable due to one or more of: owned by invader empire, "
@@ -567,7 +568,7 @@ namespace AIInterface {
 
         const Planet* planet = objects.Object<Planet>(planet_id);
         if (!planet) {
-            Logger().errorStream() << "AIInterface::IssueChangeFocusOrder : no planet with passed planet_id";
+            Logger().errorStream() << "AIInterface::IssueChangeFocusOrder : no planet with passed planet_id "<<planet_id;
             return 0;
         }
         if (!planet->OwnedBy(empire_id)) {
@@ -614,7 +615,7 @@ namespace AIInterface {
 
     int IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        const Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+        Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
 
         if (!empire->BuildableItem(BT_BUILDING, item_name, location_id)) {
             Logger().errorStream() << "AIInterface::IssueEnqueueBuildingProductionOrder : specified item_name and location_id that don't indicate an item that can be built at that location";
@@ -622,13 +623,13 @@ namespace AIInterface {
         }
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, BT_BUILDING, item_name, 1, location_id)));
-
+        empire->UpdateProductionQueue();
         return 1;
     }
 
     int IssueEnqueueShipProductionOrder(int design_id, int location_id) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        const Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+        Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
 
         if (!empire->BuildableItem(BT_SHIP, design_id, location_id)) {
             Logger().errorStream() << "AIInterface::IssueEnqueueShipProductionOrder : specified design_id and location_id that don't indicate a design that can be built at that location";
@@ -636,7 +637,26 @@ namespace AIInterface {
         }
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, BT_SHIP, design_id, 1, location_id)));
+        empire->UpdateProductionQueue();
+        return 1;
+    }
 
+    int IssueChangeProductionQuantityOrder(int queue_index, int new_quantity, int new_blocksize) {
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+
+        const ProductionQueue& queue = empire->GetProductionQueue();
+        if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
+            Logger().errorStream() << "AIInterface::IssueChangeProductionQuantityOrder : passed queue_index outside range of items on queue.";
+            return 0;
+        }
+        if (queue[queue_index].item.build_type != BT_SHIP) {
+            Logger().errorStream() << "AIInterface::IssueChangeProductionQuantityOrder : passed queue_index for a non-ship item.";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, queue_index, new_quantity, new_blocksize)));
+        empire->UpdateProductionQueue();
         return 1;
     }
 
@@ -647,7 +667,7 @@ namespace AIInterface {
         }
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        const Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+        Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         if (old_queue_index < 0 || static_cast<int>(queue.size()) <= old_queue_index) {
@@ -668,13 +688,13 @@ namespace AIInterface {
         }
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, old_queue_index, new_queue_index)));
-
+        empire->UpdateProductionQueue();
         return 1;
     }
 
     int IssueDequeueProductionOrder(int queue_index) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        const Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+        Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
@@ -683,7 +703,7 @@ namespace AIInterface {
         }
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, queue_index)));
-
+        empire->UpdateProductionQueue();
         return 1;
     }
 

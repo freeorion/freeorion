@@ -119,6 +119,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("issueDequeueTechOrder",                AIInterface::IssueDequeueTechOrder);
     def("issueEnqueueBuildingProductionOrder",  AIInterface::IssueEnqueueBuildingProductionOrder);
     def("issueEnqueueShipProductionOrder",      AIInterface::IssueEnqueueShipProductionOrder);
+    def("issueChangeProductionQuantityOrder",   AIInterface::IssueChangeProductionQuantityOrder);
     def("issueRequeueProductionOrder",          AIInterface::IssueRequeueProductionOrder);
     def("issueDequeueProductionOrder",          AIInterface::IssueDequeueProductionOrder);
     def("issueCreateShipDesignOrder",           AIInterface::IssueCreateShipDesignOrder);
