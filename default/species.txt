@@ -2173,7 +2173,7 @@ ADVANCED_FOCUS_EFFECTS
 '''     EffectsGroup
             scope = Source
             activation = Focus "FOCUS_PROTECTION"
-            accountinglabel = "FOCUS_PROTECTION_LABLE"
+            accountinglabel = "FOCUS_PROTECTION_LABEL"
             effects = [
                 SetMaxTroops Value + 25
                 SetMaxDefense Value + 25

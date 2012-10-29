@@ -1504,6 +1504,51 @@ BuildingType
     icon = ""
 
 BuildingType
+    name = "BLD_EVACUATION"
+    description = "BLD_EVACUATION_DESC"
+    buildcost = 10
+    buildtime = 1
+    location = AND [
+        Not Contains Building "BLD_EVACUATION"
+        OwnedBy TheEmpire Source.Owner
+        ]
+    effectsgroups = [
+    
+        EffectsGroup
+            scope = Contains Source
+            activation =  Number low = 1 condition = And 
+                    [
+                    Species name = Source.Planet.Species
+                    ResourceSupplyConnected Source.Owner Source
+                    Population low = 1 high = LocalCandidate.TargetPopulation - 1
+                    ]
+
+            accountinglabel = "EVACUEES_LABEL"
+            effects = SetPopulation Value + 2
+    
+        EffectsGroup
+            scope = Contains Source
+            activation = ContainedBy And [
+                OwnedBy TheEmpire Source.Owner
+                PopulationCenter
+            ]
+            accountinglabel ="EVACUATION_LABEL"
+            effects = [
+                SetPopulation Target.Population - 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = OR [
+                NOT OwnedBy TheEmpire Source.Owner
+                Population low = 0 high = 0
+                ]
+            effects = Destroy
+
+    ]
+    icon = "icons/building/evacuation.png"
+
+BuildingType
     name = "BLD_SUPER_TESTERS"
     description = "BLD_SUPER_TESTERS_DESC"
     buildcost = 1

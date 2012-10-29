@@ -31,6 +31,7 @@ Balancing:
   ~ More Game Concepts 'pedia entries.
   ~ Russian translation update.
   ~ Added Dampening Cloud monster
+  ~ Adding Planetary Evacuation
   
  Graphics:
   ~ New Focus icons.

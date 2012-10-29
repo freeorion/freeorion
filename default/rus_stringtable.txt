@@ -8189,7 +8189,7 @@ GOOD_VISION_LABEL
 EXCELLENT_VISION_LABEL
 '''Отличное Зрение'''
 
-FOCUS_PROTECTION_LABLE
+FOCUS_PROTECTION_LABEL
 '''Приоритет Защиты'''
 
 # The following two are used in tech descriptions, and should be updated if PRODUCTION_PER_POP or PRODUCTION_PER_INFRA are changed in shared_macros.txt.

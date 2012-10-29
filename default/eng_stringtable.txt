@@ -6698,6 +6698,11 @@ Super-Tester Takeover
 BLD_SUPER_TESTERS_DESC
 '''Switches the species of the planet to Super-Testers.  For Official Testing Purposes, or for cheating.'''
 
+BLD_EVACUATION
+Planetary Evacuation
+BLD_EVACUATION_DESC
+'''Evacuates the entires planet's population over time to other planets of the same species.'''
+
 BLD_SHIPYARD_BASE
 Basic Shipyard
 
@@ -8182,9 +8187,14 @@ GOOD_VISION_LABEL
 EXCELLENT_VISION_LABEL
 '''Excellent Vision'''
 
-FOCUS_PROTECTION_LABLE
+FOCUS_PROTECTION_LABEL
 '''Protection Focus'''
 
+EVACUEES_LABEL
+'''Evacuees'''
+
+EVACUATION_LABEL
+'''Evacuation'''
 
 # The following two are used in tech descriptions, and should be updated if PRODUCTION_PER_POP or PRODUCTION_PER_INFRA are changed in shared_macros.txt.
 POP_PER_PRODUCTION
