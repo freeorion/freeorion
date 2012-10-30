@@ -49,6 +49,7 @@ namespace {
             qi::_g_type _g;
             qi::_r1_type _r1;
             qi::_val_type _val;
+            qi::eps_type eps;
             using phoenix::construct;
             using phoenix::insert;
             using phoenix::new_;
@@ -100,11 +101,11 @@ namespace {
                 ;
 
             species_params
-                =   -tok.Playable_ [ _a = true ]
-                >   -tok.Native_ [ _b = true ]
-                >   -tok.CanProduceShips_ [ _c = true ]
-                >   -tok.CanColonize_ [ _d = true ]
-                    [ _val = construct<SpeciesParams>(_a, _b, _c, _d) ]
+                =   ((tok.Playable_ [ _a = true ]) | eps)
+                >   ((tok.Native_ [ _b = true ]) | eps)
+                >   ((tok.CanProduceShips_ [ _c = true ]) | eps)
+                >   ((tok.CanColonize_ [ _d = true ]) | eps)
+                    [ _val = construct<SpeciesParams>(_a, _b, _d, _c) ]
                 ;
 
             species

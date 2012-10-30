@@ -252,7 +252,11 @@ SpeciesManager::SpeciesManager() {
         Logger().debugStream() << "Species:";
         for (iterator it = begin(); it != end(); ++it) {
             const Species* s = it->second;
-            Logger().debugStream() << " ... " << s->Name();
+            Logger().debugStream() << " ... " << s->Name() << "  \t" <<
+                (s->Playable() ?        "Playable " : "         ") <<
+                (s->Native() ?          "Native " : "       ") <<
+                (s->CanProduceShips() ? "CanProduceShips " : "                ") <<
+                (s->CanColonize() ?     "CanColonize " : "            ");
         }
     }
 }
