@@ -1366,27 +1366,6 @@ Tech
     graphic = "icons/tech/zero_point_energy.png"
 
 Tech
-    name = "PRO_ASTEROID_MINE"
-    description = "PRO_ASTEROID_MINE_DESC"
-    short_description = "INDUSTRY_SHORT_DESC"
-    techtype = Application
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 4
-    researchturns = 1
-    prerequisites = "PRO_MICROGRAV_MAN"
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Planet type = Asteroids
-                OwnedBy TheEmpire Source.Owner
-                Planet
-                Population high = 0
-            ]
-            effects = SetTargetIndustry Value + 5
-    ]
-    graphic = "icons/tech/asteroid_mining_i.png"
-
-Tech
     name = "PRO_CORE_MINE"
     description = "PRO_CORE_MINE_DESC"
     short_description = "THEORY_SHORT_DESC"
