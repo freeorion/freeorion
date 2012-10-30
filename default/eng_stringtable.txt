@@ -5244,10 +5244,10 @@ GRO_GENETIC_ENG_DESC
 
 The palette of genetics is as varied as the forms of life from which it borrows. Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existent or possible in nature. As well, genes may be altered prior to reinsertion, by altering the base codes directly, allowing entirely new genes to be created. Techniques are limited, however, to small modifications of existing genes that are available for study.'''
 
-GRO_ENV_ENCAPSUL
+CON_ENV_ENCAPSUL
 Environmental Encapsulation
 
-GRO_ENV_ENCAPSUL_DESC
+CON_ENV_ENCAPSUL_DESC
 '''Allows unmanned stations on uninhabitable planet types, including Asteroids and Gas Giants. Many building types cannot be constructed on these outposts. Outposts are cheaper, and while they don't provide production, might be chosen as a faster way to claim territory.'''
 
 GRO_SYMBIOTIC_BIO
@@ -5331,10 +5331,14 @@ While transforming an entire population into beings of pure energy would be impr
 The ultimate stage of physical development is to transcend the physical altogether. Without bodies, individuals and society may move, grow and exist freely, unhindered by unnecessary physical limitations and inefficient metabolic processes that waste energy supporting homeostasis.'''
 
 PRO_MICROGRAV_MAN
-Microgravity Manufacturing
+Microgravity Industry
 
 PRO_MICROGRAV_MAN_DESC
-The microgravity of low planetary orbit offers great potential for novel manufacturing facility designs, equipment and techniques not possible on planet surfaces. Solids may be held in place with minimal support. Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated. Factory equipment may be arranged optimally in three dimensions. These conditions permit great increases in efficiency and productivity, if properly exploited.
+'''Increases Industry by +5 on Asteroid belt outposts.
+
+Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
+
+The microgravity of low planetary orbit offers great potential for novel manufacturing facility designs, equipment and techniques not possible on planet surfaces. Solids may be held in place with minimal support. Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated. Factory equipment may be arranged optimally in three dimensions. These conditions permit great increases in efficiency and productivity, if properly exploited.'''
 
 PRO_CORE_MINE
 Tectonic Minerology
@@ -5558,12 +5562,6 @@ Space Weaponry
 
 SHP_SPACE_WEAPON_DESC
 Basic land-oriented weaponry can be adapted for use in space and utilized quite effectively. These weapons cannot however, be as effective as weaponry designed specifically for use in space, with the paradigm of space combat completely dominant over that of ground combat in the minds of the designers.
-
-SHP_MAX_DISRUPT
-Maximized Disruption
-
-SHP_MAX_DISRUPT_DESC
-The ideas of engineering and construction are very different in the environment of space. Different structural forms are utilized, and the basic architectural principals are drastically affected by the lack of gravity. By applying these ideas to the development of weaponry, it is possible to create weapons which are highly effective against microgravity architecture.
 
 SHP_TACT_COUNTER
 Tactical Countermeasures
@@ -5852,12 +5850,6 @@ CON_SUBTER_CONST_DESC
 
 When space is at a premium, the ability to build downwards as well as up is an invaluable asset. Entire underground cities and facilities can be constructed and maintained, and trans-planetary subterranean transportation routes can be established.'''
 
-CON_SPACE_ELEVATOR
-Space Elevator
-
-CON_SPACE_ELEVATOR_DESC
-Nano-construction enables production of tensile cables strong enough to reach beyond geostationary orbit. Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity.
-
 CON_CONC_CAMP
 Concentration Camps
 
@@ -6051,14 +6043,6 @@ Heavy Mining Processors
 
 PRO_HEAVY_MINING_I_DESC
 When increased minerals production is the only concern, no environmental damage considerations exist and the environment itself is conducive, partially automated bulk mining activities can be optimal. Heavy mining processors are expensive however, and are only practical to use on worlds with primary focus mining. As well, these processors severely damage the ecology of a planet, reducing its maximum population somewhat.
-
-PRO_ASTEROID_MINE
-Asteroid Mining
-
-PRO_ASTEROID_MINE_DESC
-'''Increases Industry by +5 on Asteroid belt outposts.
-
-Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.'''
 
 PRO_SOL_ORB_GEN
 Solar Orbital Generation
@@ -6487,12 +6471,6 @@ Trans-Spatial Hull
 SHP_TRANSSPACE_HULL_DESC
 This hull is able to travel stealthily and at an incredible speed due to the Trans-Spatial drive. It has only a single external slot however, and its max structure is extremely low.
 
-SHP_LOGISTICS_FAC
-Logistics Facilitator
-
-SHP_LOGISTICS_FAC_DESC
-This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots and two internal slots. Its speed is low, but max structure is fairly high. In addition, its built-in fleet of stealthy freighters allows transfer of personnel and materiel during battle, enabling all friendly ships to recover structure during combat and completely restore structure between combats.
-
 SHP_ANTIMAT_TORP
 Antimatter Torpedo
 
@@ -6552,12 +6530,6 @@ Static Multicellular Hull
 
 SHP_STAT_MULTICELL_HULL_DESC
 Despite being organic, this hull is non-living, being produced via multicellular casting. The versatility of the interior and the lack of necessity for internal organs increases its capacity, but without living systems to maintain its structure it is very weak. It has three external slots and two internal slots. Stealth is average and speed is good, but structure is very low. Unlike most organic hulls, this hull regenerates neither structure nor fuel between combats.
-
-SHP_ENDOMORPH_HULL
-Endomorphic Hull
-
-SHP_ENDOMORPH_HULL_DESC
-This living hull contains non-living multicellular components for greater internal modularity. This hull has four external slots and three internal slots. Stealth is good and speed is average, but structure is low. This hull regenerates structure and fuel between combats.
 
 SHP_SYMB_HULL
 Symbiotic Hull
@@ -6697,11 +6669,6 @@ BLD_SUPER_TESTERS
 Super-Tester Takeover
 BLD_SUPER_TESTERS_DESC
 '''Switches the species of the planet to Super-Testers.  For Official Testing Purposes, or for cheating.'''
-
-BLD_EVACUATION
-Planetary Evacuation
-BLD_EVACUATION_DESC
-'''Evacuates the entires planet's population over time to other planets of the same species.'''
 
 BLD_SHIPYARD_BASE
 Basic Shipyard
@@ -6846,7 +6813,7 @@ Space Elevator
 BLD_SPACE_ELEVATOR_DESC
 '''Doubles Supply range on the planet on which it is built.
 
-An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end.'''
+Nano-construction enables production of tensile cables strong enough to reach beyond geostationary orbit. Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity. An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end.'''
 
 BLD_GENOME_BANK
 Genome Bank

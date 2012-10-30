@@ -1927,7 +1927,7 @@ STANDARD_CONSTRUCTION
             scope = Source
             activation = Source
             accountinglabel = "STANDARD_COLONY_SUPPLY_LABEL"
-            effects = SetSupply Value + 2
+            effects = SetSupply Value + 1
             
 '''
 
