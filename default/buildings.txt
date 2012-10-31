@@ -22,7 +22,7 @@ BuildingType
 
         EffectsGroup          // These bonuses given to anyone
             scope = And [
-                Planet
+                PopulationCenter
                 OwnedBy TheEmpire Source.Owner
                 Contains Source
                 [[STANDARD_CONDITION_POP]]
@@ -432,6 +432,7 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
+                PopulationCenter            
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
@@ -446,6 +447,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
+                PopulationCenter
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
@@ -460,6 +462,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
+                PopulationCenter            
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
@@ -474,6 +477,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
+                PopulationCenter
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
@@ -488,6 +492,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
+                PopulationCenter
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
@@ -499,6 +504,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
+                PopulationCenter
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
@@ -736,6 +742,7 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
+                PopulationCenter
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
@@ -747,6 +754,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
+                PopulationCenter
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
@@ -782,6 +790,7 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
+                PopulationCenter
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
@@ -794,6 +803,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
+                PopulationCenter
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
@@ -806,6 +816,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
+                PopulationCenter
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
@@ -825,6 +836,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
+                PopulationCenter
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
@@ -844,6 +856,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
+                PopulationCenter
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
@@ -863,6 +876,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
+                PopulationCenter
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
@@ -1003,7 +1017,10 @@ BuildingType
         ]
     effectsgroups = [
         EffectsGroup
-            scope = Contains Source
+            scope = And [
+                Contains Source
+                PopulationCenter
+            ]
             activation = ContainedBy And [
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
@@ -1035,6 +1052,7 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
+                PopulationCenter
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
@@ -1046,6 +1064,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
+                PopulationCenter
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
@@ -1204,6 +1223,7 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
+                PopulationCenter
                 OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_RESEARCH"
                 [[POP_CONDITION_INFRA]]
@@ -1214,6 +1234,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
+                PopulationCenter
                 OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_RESEARCH"
                 [[POP_CONDITION_POP]]
@@ -1527,7 +1548,10 @@ BuildingType
             effects = SetPopulation Value + 2
     
         EffectsGroup
-            scope = Contains Source
+            scope = And [
+                Contains Source
+                PopulationCenter                
+            ]
             activation = ContainedBy And [
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
