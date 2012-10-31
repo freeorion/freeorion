@@ -2083,8 +2083,7 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.InitializeSystemGraph();
 
 
-    // Population growth or loss, resource current meter
-    // growth, etc.
+    // Population growth or loss, resource current meter growth, etc.
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();
         it->second->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()

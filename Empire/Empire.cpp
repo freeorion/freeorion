@@ -295,6 +295,9 @@ void ResearchQueue::Update(double RPs, const std::map<std::string, double>& rese
     if (!empire)
         return;
     TechManager& tech_manager = GetTechManager();
+
+
+
     std::map<std::string, TechStatus> sim_tech_status_map;
     for (TechManager::iterator tech_it = tech_manager.begin(); tech_it != tech_manager.end(); ++tech_it) {
         std::string tech_name = (*tech_it)->Name();
@@ -357,7 +360,9 @@ void ResearchQueue::Update(double RPs, const std::map<std::string, double>& rese
     for (unsigned int i = 0; i < m_queue.size(); ++i) {
         std::string techname = m_queue[i].name;
         const Tech* tech = GetTech( techname );
-        if ( dpsim_tech_status_map[ techname  ] == TS_RESEARCHABLE ) {
+        if (!tech)
+            continue;
+        if ( dpsim_tech_status_map[ techname ] == TS_RESEARCHABLE ) {
             dpResearchableTechs.insert(i);
         } else if ( dpsim_tech_status_map[ techname  ] == TS_UNRESEARCHABLE ) {
             std::set<std::string> thesePrereqs = tech->Prerequisites();
@@ -396,8 +401,8 @@ void ResearchQueue::Update(double RPs, const std::map<std::string, double>& rese
             const std::string& tech_name = m_queue[curTech].name;
             const Tech* tech = GetTech(tech_name);
             double progress = dpsim_research_progress[curTech];
-            double RPs_needed = tech->ResearchCost(m_empire_id) - progress;
-            double RPs_per_turn_limit = tech->PerTurnCost(m_empire_id);
+            double RPs_needed = tech ? tech->ResearchCost(m_empire_id) - progress : 0.0;
+            double RPs_per_turn_limit = tech ? tech->PerTurnCost(m_empire_id) : 1.0;
             double RPs_to_spend = std::min( std::min(RPs_needed, RPs_per_turn_limit), rpStillAvailable[dpturns-1] );
             progress += RPs_to_spend;
             dpsim_research_progress[curTech] = progress;
@@ -409,14 +414,17 @@ void ResearchQueue::Update(double RPs, const std::map<std::string, double>& rese
             } else {
                 nextResTechIdx = *(nextResTechIt);
             }
-            if (tech->ResearchCost(m_empire_id) - EPSILON <= progress) {
+            double tech_cost = tech ? tech->ResearchCost(m_empire_id) : 0.0;
+            if (tech_cost - EPSILON <= progress) {
                 dpsim_tech_status_map[tech_name] = TS_COMPLETE;
                 dpsimulation_results[curTech] = dpturns;
 #ifndef ORIG_RES_SIMULATOR
                 m_queue[curTech].turns_left = dpturns;
 #endif
                 dpResearchableTechs.erase(curTechIt);
-                std::set<std::string> unlockedTechs= tech->UnlockedTechs();
+                std::set<std::string> unlockedTechs;
+                if (tech)
+                    unlockedTechs = tech->UnlockedTechs();
                 for (std::set<std::string>::iterator utechIt = unlockedTechs.begin(); utechIt!=unlockedTechs.end(); ++utechIt) {
                     std::string utechName = *utechIt;
                     std::map<std::string,std::set<std::string> >::iterator prereqTechIt = waitingForPrereqs.find(utechName);
