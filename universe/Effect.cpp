@@ -556,7 +556,7 @@ void SetMeter::Execute(const ScriptingContext& context) const {
     Meter* m = context.effect_target->GetMeter(m_meter);
     if (!m) return;
 
-    double val = m_value->Eval(ScriptingContext(context, m->Current()));
+    float val = m_value->Eval(ScriptingContext(context, m->Current()));
     m->SetCurrent(val);
 }
 

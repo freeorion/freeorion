@@ -29,7 +29,7 @@ public:
     const_iterator end() const;
 
     CombatFighter& Leader();
-    double Damage(double d);
+    float Damage(float d);
     void push_back(const CombatFighterPtr& fighter);
     void erase(const CombatFighterPtr& fighter);
     void erase(CombatFighter* fighter);
@@ -69,11 +69,11 @@ public:
     const FighterStats&     Stats() const;
     const std::string&      PartName() const;
     const FighterMission&   CurrentMission() const;
-    virtual double          StructureAndShield() const;
-    virtual double          Structure() const;
-    virtual double          FractionalStructure() const;
-    virtual double          AntiFighterStrength() const;
-    virtual double          AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
+    virtual float           StructureAndShield() const;
+    virtual float           Structure() const;
+    virtual float           FractionalStructure() const;
+    virtual float           AntiFighterStrength() const;
+    virtual float           AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
     virtual bool            IsFighter() const;
     virtual bool            IsShip() const;
     virtual int             Owner() const;
@@ -89,7 +89,7 @@ public:
     void            ClearMissions();
     void            ExitSpace();
 
-    virtual void    Damage(double d, DamageSource source);
+    virtual void    Damage(float d, DamageSource source);
     virtual void    Damage(const CombatFighterPtr& source);
     virtual void    TurnStarted(unsigned int number);
     virtual void    SignalDestroyed();
@@ -102,7 +102,7 @@ private:
     CombatFighter(CombatObjectPtr base, int empire_id, PathingEngine& pathing_engine);
 
     void Init(const PartType& part);
-    void DamageImpl(double d);
+    void DamageImpl(float d);
     void SetFormation(const CombatFighterFormationPtr& formation);
     void PushMission(const FighterMission& mission);
     OpenSteer::Vec3 GlobalFormationPosition();
@@ -130,7 +130,7 @@ private:
     CombatFighterFormationPtr   m_formation;
     OpenSteer::Vec3             m_out_of_formation;
 
-    double              m_structure;
+    float               m_structure;
 
     unsigned int        m_last_queue_update_turn;
     unsigned int        m_last_fired_turn;
@@ -147,7 +147,7 @@ private:
     boost::weak_ptr<CombatFighter>  m_weak_ptr;
 
     friend class PathingEngine;
-    friend double CombatFighterFormation::Damage(double);
+    friend float CombatFighterFormation::Damage(float);
 
     friend class boost::serialization::access;
     template <class Archive>

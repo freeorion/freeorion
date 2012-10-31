@@ -21,11 +21,11 @@ public:
 
     const LRStats& Stats() const;
     const std::string& PartName() const;
-    virtual double StructureAndShield() const;
-    virtual double Structure() const;
-    virtual double FractionalStructure() const;
-    virtual double AntiFighterStrength() const;
-    virtual double AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
+    virtual float StructureAndShield() const;
+    virtual float Structure() const;
+    virtual float FractionalStructure() const;
+    virtual float AntiFighterStrength() const;
+    virtual float AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
     virtual bool IsFighter() const;
     virtual bool IsShip() const;
     virtual int Owner() const;
@@ -34,7 +34,7 @@ public:
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,
                                       const float elapsedTime);
 
-    virtual void Damage(double d, DamageSource source);
+    virtual void Damage(float d, DamageSource source);
     virtual void Damage(const CombatFighterPtr& source);
     virtual void TurnStarted(unsigned int number);
     virtual void SignalDestroyed();
@@ -56,7 +56,7 @@ private:
     OpenSteer::Vec3 m_last_steer;
     OpenSteer::Vec3 m_destination; // Only the X and Y values should be nonzero.
     CombatObjectWeakPtr m_target;
-    double m_structure;
+    float m_structure;
     LRStats m_stats;
     PathingEngine* m_pathing_engine;
 

@@ -397,13 +397,13 @@ Meter* Planet::GetMeter(MeterType type)
 const Meter* Planet::GetMeter(MeterType type) const
 { return UniverseObject::GetMeter(type); }
 
-double Planet::InitialMeterValue(MeterType type) const
+float Planet::InitialMeterValue(MeterType type) const
 { return UniverseObject::InitialMeterValue(type); }
 
-double Planet::CurrentMeterValue(MeterType type) const
+float Planet::CurrentMeterValue(MeterType type) const
 { return UniverseObject::CurrentMeterValue(type); }
 
-double Planet::NextTurnCurrentMeterValue(MeterType type) const {
+float Planet::NextTurnCurrentMeterValue(MeterType type) const {
     MeterType max_meter_type = INVALID_METER_TYPE;
     switch (type) {
     case METER_TARGET_POPULATION:
@@ -432,20 +432,20 @@ double Planet::NextTurnCurrentMeterValue(MeterType type) const {
     if (!meter) {
         throw std::invalid_argument("Planet::NextTurnCurrentMeterValue passed meter type that the Planet does not have, but should.");
     }
-    double current_meter_value = meter->Current();
+    float current_meter_value = meter->Current();
 
     const Meter* max_meter = GetMeter(max_meter_type);
     if (!max_meter) {
         throw std::runtime_error("Planet::NextTurnCurrentMeterValue dealing with invalid meter type");
     }
-    double max_meter_value = max_meter->Current();
+    float max_meter_value = max_meter->Current();
 
     // being attacked prevents meter growth
     if (LastTurnAttackedByShip() >= CurrentTurn())
         return std::min(current_meter_value, max_meter_value);
 
     // currently meter growth is one per turn.
-    return std::min(current_meter_value + 1.0, max_meter_value);
+    return std::min(current_meter_value + 1.0f, max_meter_value);
 }
 
 std::vector<std::string> Planet::AvailableFoci() const {
@@ -713,7 +713,7 @@ void Planet::ResetTargetMaxUnpairedMeters() {
     // seen from a distance without high detection ability
     if (Meter* stealth = GetMeter(METER_STEALTH)) {
         stealth->ResetCurrent();
-        stealth->AddToCurrent(0.01);
+        stealth->AddToCurrent(0.01f);
     }
 
     GetMeter(METER_SUPPLY)->ResetCurrent();

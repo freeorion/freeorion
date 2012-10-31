@@ -426,7 +426,7 @@ double Fleet::Fuel() const {
         return 0.0;
 
     // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
-    double fuel = Meter::LARGE_VALUE;
+    float fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
     for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
         const Ship* ship = GetShip(*ship_it);
@@ -456,7 +456,7 @@ double Fleet::MaxFuel() const {
 
     // determine the maximum amount of fuel that can be stored by the ship in the fleet that
     // can store the least amount of fuel
-    double max_fuel = Meter::LARGE_VALUE;
+    float max_fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
     for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
         const Ship* ship = GetShip(*ship_it);
@@ -789,7 +789,7 @@ void Fleet::MovementPhase() {
                 for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
                     if (Ship* ship = GetShip(*ship_it))
                         if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
-                            fuel_meter->AddToCurrent(0.1001);
+                            fuel_meter->AddToCurrent(0.1001f);
                             fuel_meter->BackPropegate();
                         }
                 }

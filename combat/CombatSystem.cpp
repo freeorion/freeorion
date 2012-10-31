@@ -244,9 +244,9 @@ void CombatInfo::GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int
 // AutoResolveCombat
 ////////////////////////////////////////////////
 namespace {
-    void AttackShipShip(Ship* attacker, double damage, Ship* target, std::set<int>& damaged_object_ids) {
+    void AttackShipShip(Ship* attacker, float damage, Ship* target, std::set<int>& damaged_object_ids) {
         if (!attacker || ! target) return;
-        if (damage <= 0.0)
+        if (damage <= 0.0f)
             return;
 
         const ShipDesign* attacker_design = attacker->Design();
@@ -266,8 +266,8 @@ namespace {
 
         // damage shields, limited by shield current value and damage amount.
         // remaining damage, if any, above shield current value goes to structure
-        double shield_damage = std::min(target_shield->Current(), damage);
-        double structure_damage = 0.0;
+        float shield_damage = std::min(target_shield->Current(), damage);
+        float structure_damage = 0.0f;
         if (shield_damage >= target_shield->Current())
             structure_damage = std::min(target_structure->Current(), damage - shield_damage);
 
@@ -287,9 +287,9 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackShipPlanet(Ship* attacker, double damage, Planet* target, std::set<int>& damaged_object_ids) {
+    void AttackShipPlanet(Ship* attacker, float damage, Planet* target, std::set<int>& damaged_object_ids) {
         if (!attacker || ! target) return;
-        if (damage <= 0.0)
+        if (damage <= 0.0f)
             return;
 
         const ShipDesign* attacker_design = attacker->Design();
@@ -320,9 +320,9 @@ namespace {
         // damage shields, limited by shield current value and damage amount.
         // remaining damage, if any, above shield current value goes to defense.
         // remaining damage, if any, above defense current value goes to construction
-        double shield_damage = std::min(target_shield->Current(), damage);
-        double defense_damage = 0.0;
-        double construction_damage = 0.0;
+        float shield_damage = std::min(target_shield->Current(), damage);
+        float defense_damage = 0.0f;
+        float construction_damage = 0.0f;
         if (shield_damage >= target_shield->Current())
             defense_damage = std::min(target_defense->Current(), damage - shield_damage);
 
@@ -352,7 +352,7 @@ namespace {
     void AttackPlanetShip(Planet* attacker, Ship* target, std::set<int>& damaged_object_ids) {
         if (!attacker || ! target) return;
 
-        double damage = attacker->UniverseObject::GetMeter(METER_DEFENSE)->Current();   // planet "Defense" meter is actually its attack power
+        float damage = attacker->UniverseObject::GetMeter(METER_DEFENSE)->Current();   // planet "Defense" meter is actually its attack power
         if (damage <= 0.0)
             return;
 
@@ -369,8 +369,8 @@ namespace {
 
         // damage shields, limited by shield current value and damage amount.
         // remaining damage, if any, above shield current value goes to structure
-        double shield_damage = std::min(target_shield->Current(), damage);
-        double structure_damage = 0.0;
+        float shield_damage = std::min(target_shield->Current(), damage);
+        float structure_damage = 0.0f;
         if (shield_damage >= target_shield->Current())
             structure_damage = std::min(target_structure->Current(), damage - shield_damage);
 
@@ -398,7 +398,7 @@ namespace {
         if (/*const Ship* ship = */universe_object_cast<const Ship*>(obj)) {
             return true;
         } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
-            if (planet->CurrentMeterValue(METER_POPULATION) > 0.0 || !planet->Unowned())
+            if (planet->CurrentMeterValue(METER_POPULATION) > 0.0f || !planet->Unowned())
                 return true;
             else
                 return false;

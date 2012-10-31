@@ -45,20 +45,20 @@ const LRStats& Missile::Stats() const
 const std::string& Missile::PartName() const
 { return m_part_name; }
 
-double Missile::StructureAndShield() const
+float Missile::StructureAndShield() const
 { return m_structure; }
 
-double Missile::Structure() const
+float Missile::Structure() const
 { return m_structure; }
 
-double Missile::FractionalStructure() const
-{ return 1.0; }
+float Missile::FractionalStructure() const
+{ return 1.0f; }
 
-double Missile::AntiFighterStrength() const
-{ return 0.0; }
+float Missile::AntiFighterStrength() const
+{ return 0.0f; }
 
-double Missile::AntiShipStrength(CombatShipPtr target/* = CombatShipPtr()*/) const
-{ return 0.0; }
+float Missile::AntiShipStrength(CombatShipPtr target/* = CombatShipPtr()*/) const
+{ return 0.0f; }
 
 bool Missile::IsFighter() const
 { return false; }
@@ -105,11 +105,11 @@ void Missile::regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,
                                    const float elapsedTime)
 {}
 
-void Missile::Damage(double d, DamageSource source)
+void Missile::Damage(float d, DamageSource source)
 {
     if (source == NON_PD_DAMAGE)
         d *= CombatShip::NON_PD_VS_FIGHTER_FACTOR;
-    m_structure = std::max(0.0, m_structure - d);
+    m_structure = std::max(0.0f, m_structure - d);
 }
 
 void Missile::Damage(const CombatFighterPtr& source)

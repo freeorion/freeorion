@@ -26,17 +26,17 @@ class Empire;
 /** Part stats for the PC_SHORT_RANGE and PC_POINT_DEFENSE part classes. */
 struct DirectFireStats {
     DirectFireStats();
-    DirectFireStats(double damage,
-                    double ROF,
-                    double range);
+    DirectFireStats(float damage,
+                    float ROF,
+                    float range);
 
-    double m_damage;
-    double m_ROF;
-    double m_range;
+    float m_damage;
+    float m_ROF;
+    float m_range;
 
     /** The factor by which PD damage should be multiplied when used in
         defense of the ship firing it. */
-    static const double PD_SELF_DEFENSE_FACTOR;
+    static const float PD_SELF_DEFENSE_FACTOR;
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int) {
@@ -49,20 +49,20 @@ struct DirectFireStats {
 /** Part stats for the PC_MISSILES part class. */
 struct LRStats {
     LRStats();
-    LRStats(double damage,
-            double ROF,
-            double range,
-            double speed,
-            double stealth,
-            double structure,
+    LRStats(float damage,
+            float ROF,
+            float range,
+            float speed,
+            float stealth,
+            float structure,
             int capacity);
 
-    double m_damage;
-    double m_ROF;
-    double m_range;
-    double m_speed;
-    double m_stealth;
-    double m_structure;
+    float m_damage;
+    float m_ROF;
+    float m_range;
+    float m_speed;
+    float m_stealth;
+    float m_structure;
     int m_capacity;
 
     template <class Archive>
@@ -81,25 +81,25 @@ struct LRStats {
 struct FighterStats {
     FighterStats();
     FighterStats(CombatFighterType type,
-                 double anti_ship_damage,
-                 double anti_fighter_damage,
-                 double launch_rate,
-                 double fighter_weapon_range,
-                 double speed,
-                 double stealth,
-                 double structure,
-                 double detection,
+                 float anti_ship_damage,
+                 float anti_fighter_damage,
+                 float launch_rate,
+                 float fighter_weapon_range,
+                 float speed,
+                 float stealth,
+                 float structure,
+                 float detection,
                  int capacity);
 
     CombatFighterType   m_type;
-    double              m_anti_ship_damage;
-    double              m_anti_fighter_damage;
-    double              m_launch_rate;
-    double              m_fighter_weapon_range;
-    double              m_speed;
-    double              m_stealth;
-    double              m_structure;
-    double              m_detection;
+    float               m_anti_ship_damage;
+    float               m_anti_fighter_damage;
+    float               m_launch_rate;
+    float              m_fighter_weapon_range;
+    float               m_speed;
+    float               m_stealth;
+    float               m_structure;
+    float               m_detection;
     int                 m_capacity;
 
     template <class Archive>
@@ -120,7 +120,7 @@ struct FighterStats {
 /** A variant type containing all ShipPartClass-specific stats for a PartType.
   * Note that most parts need only a single value to represent their
   * capabilities.  This is represented by the double variant. */
-typedef boost::variant<double, DirectFireStats, LRStats, FighterStats> PartTypeStats;
+typedef boost::variant<float, DirectFireStats, LRStats, FighterStats> PartTypeStats;
 
 /** Common parameters for PartType and HullType constructors.  Used as temporary
   * storage for parsing to reduce number of sub-items parsed per item. */
@@ -526,40 +526,40 @@ public:
     double                          BattleSpeed() const     { return m_battle_speed; }          ///< returns design speed on the battle map
     double                          StarlaneSpeed() const   { return m_starlane_speed; }        ///< returns design speed along starlanes
 
-    double                          Structure() const       { return m_structure; }             ///< returns the max structure of this design
-    double                          Shields() const         { return m_shields; }               ///< returns the max shields of this design
-    double                          Fuel() const            { return m_fuel; }                  ///< returns the max fuel capacity of this design
-    double                          Detection() const       { return m_detection; }             ///< returns the detection ability of this design
-    double                          ColonyCapacity() const  { return m_colony_capacity; }       ///< returns the colonization capacity of this design
-    double                          TroopCapacity() const   { return m_troop_capacity; }        ///< returns the troop capacity of this design
-    double                          Stealth() const         { return m_stealth; }               ///< returns the stealth of this design
+    float                           Structure() const       { return m_structure; }             ///< returns the max structure of this design
+    float                           Shields() const         { return m_shields; }               ///< returns the max shields of this design
+    float                           Fuel() const            { return m_fuel; }                  ///< returns the max fuel capacity of this design
+    float                           Detection() const       { return m_detection; }             ///< returns the detection ability of this design
+    float                           ColonyCapacity() const  { return m_colony_capacity; }       ///< returns the colonization capacity of this design
+    float                           TroopCapacity() const   { return m_troop_capacity; }        ///< returns the troop capacity of this design
+    float                           Stealth() const         { return m_stealth; }               ///< returns the stealth of this design
 
     bool                            CanColonize() const;
-    bool                            HasTroops() const       { return (m_troop_capacity > 0.0); }
+    bool                            HasTroops() const       { return (m_troop_capacity > 0.0f); }
     bool                            IsArmed() const         { return m_is_armed; }
     bool                            IsMonster() const       { return m_is_monster; }
 
     /** Return maps from ranges to stats for various types of weapons in design */
-    const std::multimap<double, const PartType*>& SRWeapons() const { return m_SR_weapons; }
-    const std::multimap<double, const PartType*>& LRWeapons() const { return m_LR_weapons; }
-    const std::multimap<double, const PartType*>& PDWeapons() const { return m_PD_weapons; }
+    const std::multimap<float, const PartType*>& SRWeapons() const { return m_SR_weapons; }
+    const std::multimap<float, const PartType*>& LRWeapons() const { return m_LR_weapons; }
+    const std::multimap<float, const PartType*>& PDWeapons() const { return m_PD_weapons; }
     /** Returns the set of Fighter weapons in this design. */
     const std::vector<const PartType*>&           FWeapons() const  { return m_F_weapons; }
 
-    double  MinSRRange() const          { return m_min_SR_range; }
-    double  MaxSRRange() const          { return m_max_SR_range; }
-    double  MinLRRange() const          { return m_min_LR_range; }
-    double  MaxLRRange() const          { return m_max_LR_range; }
-    double  MinPDRange() const          { return m_min_PD_range; }
-    double  MaxPDRange() const          { return m_max_PD_range; }
-    double  MinWeaponRange() const      { return m_min_weapon_range; }
-    double  MaxWeaponRange() const      { return m_max_weapon_range; }
-    double  MinNonPDWeaponRange() const { return m_min_non_PD_weapon_range; }
-    double  MaxNonPDWeaponRange() const { return m_max_non_PD_weapon_range; }
+    float  MinSRRange() const          { return m_min_SR_range; }
+    float  MaxSRRange() const          { return m_max_SR_range; }
+    float  MinLRRange() const          { return m_min_LR_range; }
+    float  MaxLRRange() const          { return m_max_LR_range; }
+    float  MinPDRange() const          { return m_min_PD_range; }
+    float  MaxPDRange() const          { return m_max_PD_range; }
+    float  MinWeaponRange() const      { return m_min_weapon_range; }
+    float  MaxWeaponRange() const      { return m_max_weapon_range; }
+    float  MinNonPDWeaponRange() const { return m_min_non_PD_weapon_range; }
+    float  MaxNonPDWeaponRange() const { return m_max_non_PD_weapon_range; }
 
     /////// TEMPORARY ///////
-    double  Defense() const;
-    double  Attack() const;
+    float  Defense() const;
+    float  Attack() const;
     /////// TEMPORARY ///////
 
 
@@ -620,30 +620,30 @@ private:
     // Note that these are fine to compute on demand and cache here -- it is
     // not necessary to serialize them.
     bool    m_is_armed;
-    double  m_detection;
-    double  m_colony_capacity;
-    double  m_troop_capacity;
-    double  m_stealth;
-    double  m_fuel;
-    double  m_shields;
-    double  m_structure;
-    double  m_battle_speed;
-    double  m_starlane_speed;
+    float   m_detection;
+    float   m_colony_capacity;
+    float   m_troop_capacity;
+    float   m_stealth;
+    float   m_fuel;
+    float   m_shields;
+    float   m_structure;
+    float   m_battle_speed;
+    float   m_starlane_speed;
     bool    m_producible;
-    std::multimap<double, const PartType*>  m_SR_weapons;
-    std::multimap<double, const PartType*>  m_LR_weapons;
-    std::multimap<double, const PartType*>  m_PD_weapons;
+    std::multimap<float, const PartType*>  m_SR_weapons;
+    std::multimap<float, const PartType*>  m_LR_weapons;
+    std::multimap<float, const PartType*>  m_PD_weapons;
     std::vector<const PartType*>            m_F_weapons;
-    double  m_min_SR_range;
-    double  m_max_SR_range;
-    double  m_min_LR_range;
-    double  m_max_LR_range;
-    double  m_min_PD_range;
-    double  m_max_PD_range;
-    double  m_min_weapon_range;
-    double  m_max_weapon_range;
-    double  m_min_non_PD_weapon_range;
-    double  m_max_non_PD_weapon_range;
+    float   m_min_SR_range;
+    float   m_max_SR_range;
+    float   m_min_LR_range;
+    float   m_max_LR_range;
+    float   m_min_PD_range;
+    float   m_max_PD_range;
+    float   m_min_weapon_range;
+    float   m_max_weapon_range;
+    float   m_min_non_PD_weapon_range;
+    float   m_max_non_PD_weapon_range;
 
     friend class boost::serialization::access;
     template <class Archive>

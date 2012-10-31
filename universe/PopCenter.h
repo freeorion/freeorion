@@ -28,11 +28,11 @@ public:
 
     std::string         Dump() const;
 
-    double              NextTurnPopGrowth() const;                          ///< predicted pop growth next turn
+    float               NextTurnPopGrowth() const;                          ///< predicted pop growth next turn
 
-    virtual double      InitialMeterValue(MeterType type) const = 0;        ///< implementation should return the initial value of the specified meter \a type
-    virtual double      CurrentMeterValue(MeterType type) const = 0;        ///< implementation should current value of the specified meter \a type
-    virtual double      NextTurnCurrentMeterValue(MeterType type) const = 0;///< implementation should return an estimate of the next turn's current value of the specified meter \a type
+    virtual float       InitialMeterValue(MeterType type) const = 0;        ///< implementation should return the initial value of the specified meter \a type
+    virtual float       CurrentMeterValue(MeterType type) const = 0;        ///< implementation should current value of the specified meter \a type
+    virtual float       NextTurnCurrentMeterValue(MeterType type) const = 0;///< implementation should return an estimate of the next turn's current value of the specified meter \a type
     //@}
 
     /** \name Mutators */ //@{
@@ -44,7 +44,7 @@ public:
 protected:
     void    Init();                                     ///< initialization that needs to be called by derived class after derived class is constructed
 
-    double  PopCenterNextTurnMeterValue(MeterType meter_type) const;///< returns estimate of the next turn's current values of meters relevant to this PopCenter
+    float   PopCenterNextTurnMeterValue(MeterType meter_type) const;///< returns estimate of the next turn's current values of meters relevant to this PopCenter
     void    PopCenterResetTargetMaxUnpairedMeters();
     void    PopCenterClampMeters();
 

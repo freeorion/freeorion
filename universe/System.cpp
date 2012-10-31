@@ -545,7 +545,7 @@ void System::ResetTargetMaxUnpairedMeters() {
     // seen from a distance without high detection ability
     if (Meter* stealth = GetMeter(METER_STEALTH)) {
         stealth->ResetCurrent();
-        stealth->AddToCurrent(0.01);
+        stealth->AddToCurrent(0.01f);
     }
 }
 

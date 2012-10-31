@@ -1391,7 +1391,7 @@ void MapWnd::RenderVisibilityRadii() {
     const std::set<int>     visible_object_ids = GetUniverse().EmpireVisibleObjectIDs();
 
     // for each map position and empire, find max value of detection range at that position
-    std::map<std::pair<int, std::pair<double, double> >, double> empire_position_max_detection_ranges;
+    std::map<std::pair<int, std::pair<double, double> >, float> empire_position_max_detection_ranges;
     for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
         int object_id = it->first;
         // skip destroyed objects
@@ -1426,14 +1426,14 @@ void MapWnd::RenderVisibilityRadii() {
         // if this object has the largest yet checked visibility range at this location, update the location's range
         double X = obj->X();
         double Y = obj->Y();
-        double D = detection_meter->Current();
+        float D = detection_meter->Current();
         // skip objects that don't contribute detection
-        if (D <= 0.0)
+        if (D <= 0.0f)
             continue;
 
         // find this empires entry for this location, if any
         std::pair<int, std::pair<double, double> > key = std::make_pair(obj->Owner(), std::make_pair(X, Y));
-        std::map<std::pair<int, std::pair<double, double> >, double>::iterator range_it =
+        std::map<std::pair<int, std::pair<double, double> >, float>::iterator range_it =
             empire_position_max_detection_ranges.find(key);
         if (range_it != empire_position_max_detection_ranges.end()) {
             if (range_it->second < D) range_it->second = D; // update existing entry
@@ -1443,7 +1443,8 @@ void MapWnd::RenderVisibilityRadii() {
     }
 
     std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> >, ClrLess> circles;
-    for (std::map<std::pair<int, std::pair<double, double> >, double>::const_iterator it = empire_position_max_detection_ranges.begin();
+    for (std::map<std::pair<int, std::pair<double, double> >, float>::const_iterator it =
+            empire_position_max_detection_ranges.begin();
          it != empire_position_max_detection_ranges.end(); ++it)
     {
         if (const Empire* empire = Empires().Lookup(it->first.first)) {

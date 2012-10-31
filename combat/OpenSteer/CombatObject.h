@@ -24,16 +24,16 @@ public:
 
     void SetListener(CombatEventListener& listener);
 
-    virtual double  StructureAndShield() const = 0;
-    virtual double  Structure() const = 0;
-    virtual double  FractionalStructure() const = 0;
-    virtual double  AntiFighterStrength() const = 0;
-    virtual double  AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const = 0;
+    virtual float   StructureAndShield() const = 0;
+    virtual float   Structure() const = 0;
+    virtual float   FractionalStructure() const = 0;
+    virtual float   AntiFighterStrength() const = 0;
+    virtual float   AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const = 0;
     virtual bool    IsFighter() const = 0;
     virtual bool    IsShip() const = 0;
     virtual int     Owner() const = 0;
 
-    virtual void    Damage(double d, DamageSource source) = 0;
+    virtual void    Damage(float d, DamageSource source) = 0;
     virtual void    Damage(const CombatFighterPtr& source) = 0;
     virtual void    TurnStarted(unsigned int number) = 0;
     virtual void    SignalDestroyed() = 0;
@@ -47,7 +47,7 @@ private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
-        { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SimpleVehicle); }
+    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SimpleVehicle); }
 };
 
 #endif

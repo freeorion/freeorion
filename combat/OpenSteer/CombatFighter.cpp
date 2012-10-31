@@ -65,11 +65,11 @@ CombatFighterFormation::~CombatFighterFormation()
 const CombatFighter& CombatFighterFormation::Leader() const
 { return *m_leader; }
 
-double CombatFighterFormation::Damage(double d)
+float CombatFighterFormation::Damage(float d)
 {
     for (iterator it = begin(); it != end(); ) {
         CombatFighterPtr f = *it++;
-        double damage_to_this_fighter = std::min(d, f->StructureAndShield());
+        float damage_to_this_fighter = std::min(d, f->StructureAndShield());
         f->DamageImpl(damage_to_this_fighter);
         d -= damage_to_this_fighter;
     }
@@ -264,19 +264,19 @@ const std::string& CombatFighter::PartName() const
 const FighterMission& CombatFighter::CurrentMission() const
 { return m_mission_queue.back(); }
 
-double CombatFighter::StructureAndShield() const
+float CombatFighter::StructureAndShield() const
 { return m_structure; }
 
-double CombatFighter::Structure() const
+float CombatFighter::Structure() const
 { return m_structure; }
 
-double CombatFighter::FractionalStructure() const
-{ return 1.0; }
+float CombatFighter::FractionalStructure() const
+{ return 1.0f; }
 
-double CombatFighter::AntiFighterStrength() const
+float CombatFighter::AntiFighterStrength() const
 { return Stats().m_anti_fighter_damage * Stats().m_fighter_weapon_range; }
 
-double CombatFighter::AntiShipStrength(CombatShipPtr/* target = CombatShipPtr()*/) const
+float CombatFighter::AntiShipStrength(CombatShipPtr/* target = CombatShipPtr()*/) const
 { return Stats().m_anti_ship_damage * Stats().m_fighter_weapon_range; }
 
 bool CombatFighter::IsFighter() const
@@ -377,7 +377,7 @@ void CombatFighter::ExitSpace()
     Listener().FighterDocked(shared_from_this());
 }
 
-void CombatFighter::Damage(double d, DamageSource source)
+void CombatFighter::Damage(float d, DamageSource source)
 {
     if (source == PD_DAMAGE)
         m_formation->Damage(d);
@@ -387,7 +387,7 @@ void CombatFighter::Damage(double d, DamageSource source)
 
 void CombatFighter::Damage(const CombatFighterPtr& source)
 {
-    double damage = source->Stats().m_anti_fighter_damage * source->Formation()->size();
+    float damage = source->Stats().m_anti_fighter_damage * source->Formation()->size();
     m_formation->Damage(damage);
 }
 
@@ -423,8 +423,8 @@ void CombatFighter::Init(const PartType& part)
     m_stats.m_capacity =            base.GetPartMeter(METER_CAPACITY,               m_part_name)->Current();
 }
 
-void CombatFighter::DamageImpl(double d)
-{ m_structure = std::max(0.0, m_structure - d); }
+void CombatFighter::DamageImpl(float d)
+{ m_structure = std::max(0.0f, m_structure - d); }
 
 void CombatFighter::SetFormation(const CombatFighterFormationPtr& formation)
 { m_formation = formation; }

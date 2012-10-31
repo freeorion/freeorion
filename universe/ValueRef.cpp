@@ -432,7 +432,7 @@ namespace ValueRef {
     {
         const adobe::name_t& property_name = m_property_name.back();
 
-        IF_CURRENT_VALUE(double)
+        IF_CURRENT_VALUE(float)
 
         if (m_ref_type == ValueRef::NON_OBJECT_REFERENCE) {
             if (property_name == CurrentTurn_name) {

@@ -46,14 +46,14 @@ public:
     bool                        CanColonize() const;
     bool                        HasTroops() const;
     const std::string&          SpeciesName() const         { return m_species_name; }
-    double                      Speed() const;
+    float                       Speed() const;
 
     const ConsumablesMap&       Fighters() const            { return m_fighters; }
     const ConsumablesMap&       Missiles() const            { return m_missiles; }
 
     virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
 
-    virtual double              NextTurnCurrentMeterValue(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
+    virtual float               NextTurnCurrentMeterValue(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
 
     bool                        OrderedScrapped() const         { return m_ordered_scrapped; }          ///< returns true iff this ship has been ordered scrapped, or false otherwise
     int                         OrderedColonizePlanet() const   { return m_ordered_colonize_planet_id; }///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet
@@ -62,8 +62,8 @@ public:
 
     const PartMeterMap&         PartMeters() const { return m_part_meters; }                                ///< returns this Ship's part meters
     const Meter*                GetPartMeter(MeterType type, const std::string& part_name) const;           ///< returns the requested part Meter, or 0 if no such part Meter of that type is found in this ship for that part name
-    double                      CurrentPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns current value of the specified part meter \a type for the specified part name
-    double                      InitialPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns this turn's initial value for the speicified part meter \a type for the specified part name
+    float                       CurrentPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns current value of the specified part meter \a type for the specified part name
+    float                       InitialPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns this turn's initial value for the speicified part meter \a type for the specified part name
     //@}
 
     /** \name Mutators */ //@{

@@ -36,9 +36,9 @@ public:
 
     std::string     Dump() const;
 
-    virtual double  InitialMeterValue(MeterType type) const = 0;            ///< implementation should return the initial value of the specified meter \a type
-    virtual double  CurrentMeterValue(MeterType type) const = 0;            ///< implementation should return the current value of the specified meter \a type
-    virtual double  NextTurnCurrentMeterValue(MeterType type) const = 0;    ///< implementation should return an estimate of the next turn's current value of the specified meter \a type
+    virtual float   InitialMeterValue(MeterType type) const = 0;            ///< implementation should return the initial value of the specified meter \a type
+    virtual float   CurrentMeterValue(MeterType type) const = 0;            ///< implementation should return the current value of the specified meter \a type
+    virtual float   NextTurnCurrentMeterValue(MeterType type) const = 0;    ///< implementation should return an estimate of the next turn's current value of the specified meter \a type
 
     mutable boost::signal<void ()> ResourceCenterChangedSignal;             ///< the state changed signal object for this ResourceCenter
     //@}

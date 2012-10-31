@@ -48,7 +48,7 @@ namespace {
     }
 
     boost::shared_ptr<const Effect::EffectsGroup>
-    IncreaseMeter(MeterType meter_type, double increase) {
+    IncreaseMeter(MeterType meter_type, float increase) {
         typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
@@ -65,7 +65,7 @@ namespace {
     }
 
     boost::shared_ptr<const Effect::EffectsGroup>
-    IncreaseMeter(MeterType meter_type, const std::string& part_name, double increase) {
+    IncreaseMeter(MeterType meter_type, const std::string& part_name, float increase) {
         typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
@@ -87,7 +87,7 @@ namespace {
             m_class(part_class),
             m_description(description)
         {}
-        void operator()(const double& d) const {
+        void operator()(const float& d) const {
             std::string desc_string =
                 m_class == PC_FUEL || m_class == PC_COLONY ?
                 "PART_DESC_CAPACITY" : "PART_DESC_STRENGTH";
@@ -216,7 +216,7 @@ PartTypeManager::iterator PartTypeManager::end() const
 ////////////////////////////////////////////////
 // PartType stat variant types                //
 ////////////////////////////////////////////////
-const double DirectFireStats::PD_SELF_DEFENSE_FACTOR = 2.0 / 3.0;
+const float DirectFireStats::PD_SELF_DEFENSE_FACTOR = 2.0f / 3.0f;
 
 DirectFireStats::DirectFireStats() :
     m_damage(),
@@ -224,9 +224,9 @@ DirectFireStats::DirectFireStats() :
     m_range()
 {}
 
-DirectFireStats::DirectFireStats(double damage,
-                                 double ROF,
-                                 double range) :
+DirectFireStats::DirectFireStats(float damage,
+                                 float ROF,
+                                 float range) :
     m_damage(damage),
     m_ROF(ROF),
     m_range(range)
@@ -241,12 +241,12 @@ LRStats::LRStats() :
     m_structure()
 {}
 
-LRStats::LRStats(double damage,
-                 double ROF,
-                 double range,
-                 double speed,
-                 double stealth,
-                 double structure,
+LRStats::LRStats(float damage,
+                 float ROF,
+                 float range,
+                 float speed,
+                 float stealth,
+                 float structure,
                  int capacity) :
     m_damage(damage),
     m_ROF(ROF),
@@ -275,14 +275,14 @@ FighterStats::FighterStats() :
 {}
 
 FighterStats::FighterStats(CombatFighterType type,
-                           double anti_ship_damage,
-                           double anti_fighter_damage,
-                           double launch_rate,
-                           double fighter_weapon_range,
-                           double speed,
-                           double stealth,
-                           double structure,
-                           double detection,
+                           float anti_ship_damage,
+                           float anti_fighter_damage,
+                           float launch_rate,
+                           float fighter_weapon_range,
+                           float speed,
+                           float stealth,
+                           float structure,
+                           float detection,
                            int capacity) :
     m_type(type),
     m_anti_ship_damage(anti_ship_damage),
@@ -364,11 +364,11 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
         }
         break;
     default:
-        if (!boost::get<double>(&m_stats)) {
+        if (!boost::get<float>(&m_stats)) {
             throw std::runtime_error("PartType::PartType() : Wrong kind of stats specified "
                                      "for generic part \"" + m_name + "\" -- "
                                      "was " + PartTypeStatsString(m_stats) + "; should have "
-                                     "been " + PartTypeStatsString(double()));
+                                     "been " + PartTypeStatsString(float()));
         }
         break;
     }
@@ -407,32 +407,32 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
         break;
     }
     case PC_SHIELD:
-        if (boost::get<double>(m_stats) != 0)
-            m_effects.push_back(IncreaseMeter(METER_MAX_SHIELD,     boost::get<double>(m_stats)));
+        if (boost::get<float>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_MAX_SHIELD,     boost::get<float>(m_stats)));
         break;
     case PC_DETECTION:
-        if (boost::get<double>(m_stats) != 0)
-            m_effects.push_back(IncreaseMeter(METER_DETECTION,      boost::get<double>(m_stats)));
+        if (boost::get<float>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_DETECTION,      boost::get<float>(m_stats)));
         break;
     case PC_STEALTH:
-        if (boost::get<double>(m_stats) != 0)
-            m_effects.push_back(IncreaseMeter(METER_STEALTH,        boost::get<double>(m_stats)));
+        if (boost::get<float>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_STEALTH,        boost::get<float>(m_stats)));
         break;
     case PC_FUEL:
-        if (boost::get<double>(m_stats) != 0)
-            m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       boost::get<double>(m_stats)));
+        if (boost::get<float>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       boost::get<float>(m_stats)));
         break;
     case PC_ARMOUR:
-        if (boost::get<double>(m_stats) != 0)
-            m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  boost::get<double>(m_stats)));
+        if (boost::get<float>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  boost::get<float>(m_stats)));
         break;
     case PC_BATTLE_SPEED:
-        if (boost::get<double>(m_stats) != 0)
-            m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   boost::get<double>(m_stats)));
+        if (boost::get<float>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   boost::get<float>(m_stats)));
         break;
     case PC_STARLANE_SPEED:
-        if (boost::get<double>(m_stats) != 0)
-            m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, boost::get<double>(m_stats)));
+        if (boost::get<float>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, boost::get<float>(m_stats)));
     default:
         break;
     }
@@ -511,8 +511,9 @@ void HullType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
     if (m_starlane_speed != 0)
         m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, m_starlane_speed));
 
-    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
-        m_effects.push_back(*it);
+    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin();
+         it != effects.end(); ++it)
+    { m_effects.push_back(*it); }
 }
 
 HullType::~HullType()
@@ -646,16 +647,16 @@ ShipDesign::ShipDesign() :
     m_structure(0.0),
     m_battle_speed(0.0),
     m_starlane_speed(0.0),
-    m_min_SR_range(DBL_MAX),
+    m_min_SR_range(FLT_MAX),
     m_max_SR_range(0.0),
-    m_min_LR_range(DBL_MAX),
+    m_min_LR_range(FLT_MAX),
     m_max_LR_range(0.0),
-    m_min_PD_range(DBL_MAX),
+    m_min_PD_range(FLT_MAX),
     m_max_PD_range(0.0),
-    m_min_weapon_range(DBL_MAX),
-    m_max_weapon_range(0.0),
-    m_min_non_PD_weapon_range(DBL_MAX),
-    m_max_non_PD_weapon_range(0.0)
+    m_min_weapon_range(FLT_MAX),
+    m_max_weapon_range(0.0f),
+    m_min_non_PD_weapon_range(FLT_MAX),
+    m_max_non_PD_weapon_range(0.0f)
 {}
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
@@ -683,15 +684,15 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_structure(0.0),
     m_battle_speed(0.0),
     m_starlane_speed(0.0),
-    m_min_SR_range(DBL_MAX),
+    m_min_SR_range(FLT_MAX),
     m_max_SR_range(0.0),
-    m_min_LR_range(DBL_MAX),
+    m_min_LR_range(FLT_MAX),
     m_max_LR_range(0.0),
-    m_min_PD_range(DBL_MAX),
+    m_min_PD_range(FLT_MAX),
     m_max_PD_range(0.0),
-    m_min_weapon_range(DBL_MAX),
+    m_min_weapon_range(FLT_MAX),
     m_max_weapon_range(0.0),
-    m_min_non_PD_weapon_range(DBL_MAX),
+    m_min_non_PD_weapon_range(FLT_MAX),
     m_max_non_PD_weapon_range(0.0)
 {
     // expand parts list to have empty values if fewer parts are given than hull has slots
@@ -768,7 +769,7 @@ bool ShipDesign::CanColonize() const {
 
 
 //// TEMPORARY
-double ShipDesign::Defense() const {
+float ShipDesign::Defense() const {
     // accumulate defense from defensive parts in design.
     double total_defense = 0.0;
     const PartTypeManager& part_manager = GetPartTypeManager();
@@ -776,16 +777,16 @@ double ShipDesign::Defense() const {
     for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
         const PartType* part = part_manager.GetPartType(*it);
         if (part && (part->Class() == PC_SHIELD || part->Class() == PC_ARMOUR))
-            total_defense += boost::get<double>(part->Stats());
+            total_defense += boost::get<float>(part->Stats());
     }
     return total_defense;
 }
 
-double ShipDesign::Attack() const {
+float ShipDesign::Attack() const {
     // accumulate attack stat from all weapon parts in design
     const PartTypeManager& manager = GetPartTypeManager();
 
-    double total_attack = 0.0;
+    float total_attack = 0.0f;
     std::vector<std::string> all_parts = Parts();
     for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
         const PartType* part = manager.GetPartType(*it);
@@ -998,31 +999,31 @@ void ShipDesign::BuildStatCaches() {
             break;
         }
         case PC_COLONY:
-            m_colony_capacity += boost::get<double>(part->Stats());
+            m_colony_capacity += boost::get<float>(part->Stats());
             break;
         case PC_TROOPS:
-            m_troop_capacity += boost::get<double>(part->Stats());
+            m_troop_capacity += boost::get<float>(part->Stats());
             break;
         case PC_STEALTH:
-            m_stealth += boost::get<double>(part->Stats());
+            m_stealth += boost::get<float>(part->Stats());
             break;
         case PC_BATTLE_SPEED:
-            m_battle_speed += boost::get<double>(part->Stats());
+            m_battle_speed += boost::get<float>(part->Stats());
             break;
         case PC_STARLANE_SPEED:
-            m_starlane_speed += boost::get<double>(part->Stats());
+            m_starlane_speed += boost::get<float>(part->Stats());
             break;
         case PC_SHIELD:
-            m_shields += boost::get<double>(part->Stats());
+            m_shields += boost::get<float>(part->Stats());
             break;
         case PC_FUEL:
-            m_fuel += boost::get<double>(part->Stats());
+            m_fuel += boost::get<float>(part->Stats());
             break;
         case PC_ARMOUR:
-            m_structure += boost::get<double>(part->Stats());
+            m_structure += boost::get<float>(part->Stats());
             break;
         case PC_DETECTION:
-            m_detection += boost::get<double>(part->Stats());
+            m_detection += boost::get<float>(part->Stats());
             break;
         default:
             break;

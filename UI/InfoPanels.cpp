@@ -2752,7 +2752,7 @@ void MeterBrowseWnd::UpdateSummary() {
     const Meter* primary_meter = obj->GetMeter(m_primary_meter_type);
     const Meter* secondary_meter = obj->GetMeter(m_secondary_meter_type);
 
-    double breakdown_total = 0.0;
+    float breakdown_total = 0.0f;
     std::string breakdown_meter_name;
 
     if (primary_meter && secondary_meter) {
@@ -2764,9 +2764,9 @@ void MeterBrowseWnd::UpdateSummary() {
         // Primary meter holds value from turn to turn and changes slow each turn.
         // The current value of the primary meter doesn't change with focus changes
         // so its growth from turn to turn is important to show
-        double primary_current = obj->InitialMeterValue(m_primary_meter_type);
-        double primary_next = obj->NextTurnCurrentMeterValue(m_primary_meter_type);
-        double primary_change = primary_next - primary_current;
+        float primary_current = obj->InitialMeterValue(m_primary_meter_type);
+        float primary_next = obj->NextTurnCurrentMeterValue(m_primary_meter_type);
+        float primary_change = primary_next - primary_current;
 
         m_current_value->SetText(DoubleToString(primary_current, 3, false));
         m_next_turn_value->SetText(DoubleToString(primary_next, 3, false));

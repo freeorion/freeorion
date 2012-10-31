@@ -132,9 +132,9 @@ public:
 
     virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
 
-    virtual double              InitialMeterValue(MeterType type) const;
-    virtual double              CurrentMeterValue(MeterType type) const;
-    virtual double              NextTurnCurrentMeterValue(MeterType type) const;
+    virtual float               InitialMeterValue(MeterType type) const;
+    virtual float               CurrentMeterValue(MeterType type) const;
+    virtual float               NextTurnCurrentMeterValue(MeterType type) const;
 
     const std::string&          SurfaceTexture() const          { return m_surface_texture; }
     //@}

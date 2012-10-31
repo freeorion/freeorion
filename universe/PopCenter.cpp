@@ -54,7 +54,7 @@ std::string PopCenter::Dump() const {
     return os.str();
 }
 
-double PopCenter::CurrentMeterValue(MeterType type) const {
+float PopCenter::CurrentMeterValue(MeterType type) const {
     const Meter* meter = GetMeter(type);
     if (!meter) {
         throw std::invalid_argument("PopCenter::CurrentMeterValue was passed a MeterType that this PopCenter does not have");
@@ -62,7 +62,7 @@ double PopCenter::CurrentMeterValue(MeterType type) const {
     return meter->Current();
 }
 
-double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const {
+float PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const {
     const Meter* meter = GetMeter(meter_type);
     if (!meter) {
         throw std::invalid_argument("PopCenter::PopCenterNextTurnMeterValue passed meter type that the PopCenter does not have.");
@@ -76,14 +76,14 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const {
 
     } else {
         Logger().errorStream() << "PopCenter::PopCenterNextTurnMeterValue dealing with invalid meter type";
-        return 0.0;
+        return 0.0f;
     }
 }
 
-double PopCenter::NextTurnPopGrowth() const {
-    double target_pop = GetMeter(METER_TARGET_POPULATION)->Current();
-    double cur_pop = GetMeter(METER_POPULATION)->Current();
-    double pop_change = 0.0;
+float PopCenter::NextTurnPopGrowth() const {
+    float target_pop = GetMeter(METER_TARGET_POPULATION)->Current();
+    float cur_pop = GetMeter(METER_POPULATION)->Current();
+    float pop_change = 0.0f;
 
     if (target_pop > cur_pop) {
         pop_change = cur_pop * (target_pop + 1 - cur_pop) / 100; // Using target population slightly above actual population avoids excessively slow asymptotic growth towards target.
@@ -100,9 +100,9 @@ void PopCenter::PopCenterResetTargetMaxUnpairedMeters()
 { GetMeter(METER_TARGET_POPULATION)->ResetCurrent(); }
 
 void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
-    double cur_pop = CurrentMeterValue(METER_POPULATION);
-    double pop_growth = NextTurnPopGrowth();                        // may be negative
-    double new_pop = cur_pop + pop_growth;
+    float cur_pop = CurrentMeterValue(METER_POPULATION);
+    float pop_growth = NextTurnPopGrowth();                        // may be negative
+    float new_pop = cur_pop + pop_growth;
 
     //if (cur_pop > 0.0)
     //    Logger().debugStream() << "Planet Pop: " << cur_pop << " growth: " << pop_growth;

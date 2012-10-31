@@ -22,11 +22,11 @@ public:
     struct DirectWeapon
     {
         DirectWeapon();
-        DirectWeapon(const std::string& name, double range, double damage);
+        DirectWeapon(const std::string& name, float range, float damage);
 
         std::string m_name;
-        double      m_range;
-        double      m_damage;
+        float       m_range;
+        float       m_damage;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version);
@@ -42,11 +42,11 @@ public:
 
     Ship& GetShip() const;
     const ShipMission& CurrentMission() const;
-    virtual double StructureAndShield() const;
-    virtual double Structure() const;
-    virtual double FractionalStructure() const;
-    virtual double AntiFighterStrength() const;
-    virtual double AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
+    virtual float StructureAndShield() const;
+    virtual float Structure() const;
+    virtual float FractionalStructure() const;
+    virtual float AntiFighterStrength() const;
+    virtual float AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
     virtual bool IsFighter() const;
     virtual bool IsShip() const;
     virtual int Owner() const;
@@ -62,7 +62,7 @@ public:
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,
                                       const float elapsedTime);
 
-    virtual void Damage(double d, DamageSource source);
+    virtual void Damage(float d, DamageSource source);
     virtual void Damage(const CombatFighterPtr& source);
     virtual void TurnStarted(unsigned int number);
     virtual void SignalDestroyed();
@@ -70,15 +70,15 @@ public:
     void SetWeakPtr(const CombatShipPtr& ptr);
     CombatShipPtr shared_from_this();
 
-    static const double PD_VS_SHIP_FACTOR;
-    static const double NON_PD_VS_FIGHTER_FACTOR;
+    static const float PD_VS_SHIP_FACTOR;
+    static const float NON_PD_VS_FIGHTER_FACTOR;
 
 private:
     CombatShip();
 
-    double MaxWeaponRange() const;
-    double MinNonPDWeaponRange() const;
-    double MaxPDRange() const;
+    float MaxWeaponRange() const;
+    float MinNonPDWeaponRange() const;
+    float MaxPDRange() const;
 
     void Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction);
     void PushMission(const ShipMission& mission);
@@ -105,15 +105,15 @@ private:
 
     unsigned int            m_last_queue_update_turn;
     unsigned int            m_enter_starlane_start_turn;
-    std::vector<double>     m_next_LR_fire_turns;
-    double                  m_turn_start_structure;
+    std::vector<float>      m_next_LR_fire_turns;
+    float                   m_turn_start_structure;
     unsigned int            m_turn;
 
     PathingEngine*          m_pathing_engine;
 
-    double                  m_raw_PD_strength;
-    double                  m_raw_SR_strength;
-    double                  m_raw_LR_strength;
+    float                   m_raw_PD_strength;
+    float                   m_raw_SR_strength;
+    float                   m_raw_LR_strength;
     bool                    m_is_PD_ship;
 
     SRVec                   m_unfired_SR_weapons;

@@ -216,7 +216,7 @@ const Meter* UniverseObject::GetMeter(MeterType type) const {
     return 0;
 }
 
-double UniverseObject::CurrentMeterValue(MeterType type) const {
+float UniverseObject::CurrentMeterValue(MeterType type) const {
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
     if (it == m_meters.end())
         throw std::invalid_argument("UniverseObject::CurrentMeterValue was passed a MeterType that this UniverseObject does not have");
@@ -224,7 +224,7 @@ double UniverseObject::CurrentMeterValue(MeterType type) const {
     return it->second.Current();
 }
 
-double UniverseObject::InitialMeterValue(MeterType type) const {
+float UniverseObject::InitialMeterValue(MeterType type) const {
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
     if (it == m_meters.end())
         throw std::invalid_argument("UniverseObject::InitialMeterValue was passed a MeterType that this UniverseObject does not have");
@@ -232,7 +232,7 @@ double UniverseObject::InitialMeterValue(MeterType type) const {
     return it->second.Initial();
 }
 
-double UniverseObject::NextTurnCurrentMeterValue(MeterType type) const
+float UniverseObject::NextTurnCurrentMeterValue(MeterType type) const
 { return UniverseObject::CurrentMeterValue(type); }
 
 void UniverseObject::AddMeter(MeterType meter_type) {

@@ -195,6 +195,8 @@ bool Ship::HasTag(const std::string& name) const {
     if (!design)
         return false;
 
+    //Logger().debugStream() << "searching for tag: " << name;
+
     const HullType* hull = ::GetHullType(design->Hull());
     if (!hull)
         return false;
@@ -210,9 +212,11 @@ bool Ship::HasTag(const std::string& name) const {
     for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
         if (const PartType* part = GetPartType(*part_it)) {
             const std::vector<std::string>& part_tags = part->Tags();
-            for (std::vector<std::string>::const_iterator it = part_tags.begin(); it != part_tags.end(); ++it)
+            for (std::vector<std::string>::const_iterator it = part_tags.begin(); it != part_tags.end(); ++it) {
+                //Logger().debugStream() << "part tag: " << *it;
                 if (*it == name)
                     return true;
+            }
         }
     }
     return false;
@@ -299,7 +303,7 @@ bool Ship::HasTroops() const {
     return design && design->HasTroops();
 }
 
-double Ship::Speed() const
+float Ship::Speed() const
 { return CurrentMeterValue(METER_STARLANE_SPEED); }
 
 const std::string& Ship::PublicName(int empire_id) const {
@@ -323,7 +327,7 @@ UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const {
     return visitor.Visit(const_cast<Ship* const>(this));
 }
 
-double Ship::NextTurnCurrentMeterValue(MeterType type) const {
+float Ship::NextTurnCurrentMeterValue(MeterType type) const {
     //if (type == METER_FUEL) {
     //    // todo: consider fleet movement or being stationary, which may partly replenish fuel
     //    // todo: consider fleet passing through or being in a supplied system, which replenishes fuel
@@ -332,7 +336,7 @@ double Ship::NextTurnCurrentMeterValue(MeterType type) const {
     //}
     if (type == METER_SHIELD) {
         if (m_last_turn_active_in_combat >= CurrentTurn())
-            return std::max(0.0,
+            return std::max(0.0f,
                             std::min(UniverseObject::GetMeter(METER_SHIELD)->Current(),
                                      UniverseObject::GetMeter(METER_MAX_SHIELD)->Current()));
         else
@@ -353,11 +357,11 @@ Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) {
     return retval;
 }
 
-double Ship::CurrentPartMeterValue(MeterType type, const std::string& part_name) const
-{ return 0.0; }
+float Ship::CurrentPartMeterValue(MeterType type, const std::string& part_name) const
+{ return 0.0f; }
 
-double Ship::InitialPartMeterValue(MeterType type, const std::string& part_name) const
-{ return 0.0; }
+float Ship::InitialPartMeterValue(MeterType type, const std::string& part_name) const
+{ return 0.0f; }
 
 void Ship::SetFleetID(int fleet_id) {
     m_fleet_id = fleet_id;

@@ -90,9 +90,9 @@ public:
     const std::map<MeterType, Meter>&
                                 Meters() const { return m_meters; }             ///< returns this UniverseObject's meters
     const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
-    double                      CurrentMeterValue(MeterType type) const;        ///< returns current value of the specified meter \a type
-    double                      InitialMeterValue(MeterType type) const;        ///< returns this turn's initial value for the speicified meter \a type
-    virtual double              NextTurnCurrentMeterValue(MeterType type) const;///< returns an estimate of the next turn's current value of the specified meter \a type
+    float                       CurrentMeterValue(MeterType type) const;        ///< returns current value of the specified meter \a type
+    float                       InitialMeterValue(MeterType type) const;        ///< returns this turn's initial value for the speicified meter \a type
+    virtual float               NextTurnCurrentMeterValue(MeterType type) const;///< returns an estimate of the next turn's current value of the specified meter \a type
 
     bool                        Unowned() const;                    ///< returns true iff there are no owners of this object
     bool                        OwnedBy(int empire) const;          ///< returns true iff the empire with id \a empire owns this object
