@@ -264,7 +264,7 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
         return;
     }
 
-    Logger().debugStream() << "ServerApp::HandleMessage type " << boost::lexical_cast<std::string>(msg.Type());
+    //Logger().debugStream() << "ServerApp::HandleMessage type " << boost::lexical_cast<std::string>(msg.Type());
 
     switch (msg.Type()) {
     case Message::HOST_SP_GAME:             m_fsm->process_event(HostSPGame(msg, player_connection));       break;

@@ -1758,12 +1758,7 @@ void Universe::GenerateNatives(GalaxySetupOption freq) {
     Logger().debugStream() << "Species that can be added as natives:";
     for (SpeciesManager::native_iterator species_it = species_manager.native_begin();
         species_it != species_manager.native_end(); ++species_it)
-    {
-        Logger().debugStream() << "... " << species_it->first << " : " <<
-            (species_it->second->Playable() ? "Playable" : "") << " / " <<
-            (species_it->second->CanProduceShips() ? "CanProuduceShips" : "") << " / " <<
-            (species_it->second->CanColonize() ? "CanColonize" : "");
-    }
+    { Logger().debugStream() << "... " << species_it->first; }
 
     std::vector<Planet*> native_safe_planets;
     for (Condition::ObjectSet::iterator it = native_safe_planet_set.begin(); it != native_safe_planet_set.end(); ++it)

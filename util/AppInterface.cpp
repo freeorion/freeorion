@@ -18,6 +18,11 @@
 #include "../universe/Building.h"
 #include "../universe/Field.h"
 
+#include "OptionsDB.h"
+
+#include <boost/timer.hpp>
+#include <string>
+
 const int INVALID_GAME_TURN = -(2 << 15) + 1;
 const int BEFORE_FIRST_TURN = -(2 << 14);
 const int IMPOSSIBLY_LARGE_TURN = 2 << 15;
@@ -131,6 +136,29 @@ Building* GetEmpireKnownBuilding(int object_id, int empire_id)
 
 log4cpp::Category& Logger()
 { return log4cpp::Category::getRoot(); }
+
+class ScopedTimer::ScopedTimerImpl {
+public:
+    ScopedTimerImpl(const std::string& timed_name, bool always_output) :
+        m_timer(),
+        m_name(timed_name),
+        m_always_output(always_output)
+    {}
+    ~ScopedTimerImpl() {
+        if (m_timer.elapsed() * 1000.0 > 1 && ( m_always_output || GetOptionsDB().Get<bool>("verbose-logging")))
+            Logger().debugStream() << m_name << " time: " << (m_timer.elapsed() * 1000.0);
+    }
+    boost::timer    m_timer;
+    std::string     m_name;
+    bool            m_always_output;
+};
+
+ScopedTimer::ScopedTimer(const std::string& timed_name, bool always_output) :
+    m_impl(new ScopedTimerImpl(timed_name, always_output))
+{}
+
+ScopedTimer::~ScopedTimer()
+{ delete m_impl; }
 
 int GetNewObjectID() {
 #ifdef FREEORION_BUILD_SERVER

@@ -3,6 +3,7 @@
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
 #include "../universe/Predicates.h"
 
 #include "../universe/Planet.h"
@@ -478,6 +479,7 @@ namespace {
                 continue;
 
             double part_attack = 0.0;
+            // TODO: base this off meter values, not part stats
             if (part->Class() == PC_SHORT_RANGE || part->Class() == PC_POINT_DEFENSE)
                 part_attack = boost::get<DirectFireStats>(part->Stats()).m_damage;
             else if (part->Class() == PC_MISSILES)
@@ -500,9 +502,10 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     if (!system)
         Logger().errorStream() << "AutoResolveCombat couldn't get system with id " << combat_info.system_id;
 
-
-    Logger().debugStream() << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%";
-    Logger().debugStream() << "AutoResolveCombat objects before resolution: " << combat_info.objects.Dump();
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%";
+        Logger().debugStream() << "AutoResolveCombat objects before resolution: " << combat_info.objects.Dump();
+    }
 
     // reasonably unpredictable but reproducible random seeding
     const int base_seed = combat_info.objects.begin()->first + CurrentTurn();
@@ -752,5 +755,6 @@ void AutoResolveCombat(CombatInfo& combat_info) {
          it != combat_info.empire_known_objects.end(); ++it)
     { it->second.Copy(combat_info.objects); }
 
-    Logger().debugStream() << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
+    if (GetOptionsDB().Get<bool>("verbose-logging"))
+        Logger().debugStream() << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
 }

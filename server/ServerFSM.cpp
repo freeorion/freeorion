@@ -1149,13 +1149,13 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 }
 
 sc::result WaitingForTurnEnd::react(const RequestObjectID& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.RequestObjectID";
+    //if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.RequestObjectID";
     Server().m_networking.SendMessage(DispatchObjectIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateObjectID()));
     return discard_event();
 }
 
 sc::result WaitingForTurnEnd::react(const RequestDesignID& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.RequestDesignID";
+    //if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.RequestDesignID";
     Server().m_networking.SendMessage(DispatchDesignIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateDesignID()));
     return discard_event();
 }

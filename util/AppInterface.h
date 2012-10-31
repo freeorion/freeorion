@@ -3,6 +3,7 @@
 #define _AppInterface_h_
 
 #include <log4cpp/Category.hh>
+#include <string>
 
 #if defined(_MSC_VER) && defined(int64_t)
 #undef int64_t
@@ -50,6 +51,19 @@ Building* GetEmpireKnownBuilding(int object_id, int empire_id);
 
 /** Accessor for the App's logger */
 log4cpp::Category& Logger();
+
+/** Wrapper for boost::timer that outputs time during which this object
+  * existed.  Created in the scope of a function, and passed the appropriate
+  * name, it will output to Logger().debugStream() the time elapsed while
+  * the function was executing. */
+class ScopedTimer {
+public:
+    ScopedTimer(const std::string& timed_name, bool always_output = false);
+    ~ScopedTimer();
+private:
+    class ScopedTimerImpl;
+    ScopedTimerImpl*    m_impl;
+};
 
 /** Returns a new object ID from the server */
 int GetNewObjectID();

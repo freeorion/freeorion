@@ -46,26 +46,6 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    /** Wrapper for boost::timer that outputs time during which this object
-      * existed.  Created in the scope of a function, and passed the appropriate
-      * name, it will output to Logger().debugStream() the time elapsed while
-      * the function was executing. */
-    class ScopedTimer {
-    public:
-        ScopedTimer(const std::string& timed_name = "scoped timer") :
-            m_timer(),
-            m_name(timed_name)
-        {}
-        ~ScopedTimer() {
-            if (m_timer.elapsed() * 1000.0 > 1) {
-                Logger().debugStream() << m_name << " time: " << (m_timer.elapsed() * 1000.0);
-            }
-        }
-    private:
-        boost::timer    m_timer;
-        std::string     m_name;
-    };
-
     const double  OFFROAD_SLOWDOWN_FACTOR = 1000000000.0;   // the factor by which non-starlane travel is slower than starlane travel
 
     template <class Key, class Value> struct constant_property
@@ -985,7 +965,7 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
 }
 
 void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
-    ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + boost::lexical_cast<std::string>(objects_vec.size()) + " objects");
+    ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + boost::lexical_cast<std::string>(objects_vec.size()) + " objects", true);
 
     for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
         int obj_id = *obj_it;
@@ -1368,7 +1348,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                               bool only_appearance_effects/* = false*/,
                               bool include_empire_meter_effects/* = false*/)
 {
-    ScopedTimer timer("Universe::ExecuteEffects");
+    ScopedTimer timer("Universe::ExecuteEffects", true);
 
     m_marked_destroyed.clear();
     m_marked_for_victory.clear();

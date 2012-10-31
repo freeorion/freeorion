@@ -25,28 +25,9 @@
 #include <GG/TextControl.h>
 
 #include <boost/cast.hpp>
-#include <boost/timer.hpp>
 
 namespace {
     const GG::Pt        DATA_PANEL_ICON_SPACE = GG::Pt(GG::X(38), GG::Y(38));   // area reserved for ship or fleet icon in data panels (actual height can be bigger if the row expands due to font size)
-
-    /** Wrapper for boost::timer that outputs time during which this object
-      * existed.  Created in the scope of a function, and passed the appropriate
-      * name, it will output to Logger().debugStream() the time elapsed while
-      * the function was executing. */
-    class ScopedTimer {
-    public:
-        ScopedTimer(const std::string& timed_name = "scoped timer") :
-            m_timer(),
-            m_name(timed_name)
-        {}
-        ~ScopedTimer() {
-            Logger().debugStream() << m_name << " time: " << (m_timer.elapsed() * 1000.0);
-        }
-    private:
-        boost::timer    m_timer;
-        std::string     m_name;
-    };
 
     // how should ship and fleet icons be scaled and/or positioned in the reserved space
     const GG::Flags<GG::GraphicStyle>   DataPanelIconStyle()

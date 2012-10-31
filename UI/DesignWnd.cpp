@@ -60,24 +60,6 @@ namespace {
         }
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
-
-    /** Wrapper for boost::timer that outputs time during which this object
-      * existed.  Created in the scope of a function, and passed the appropriate
-      * name, it will output to Logger().debugStream() the time elapsed while
-      * the function was executing. */
-    class ScopedTimer {
-    public:
-        ScopedTimer(const std::string& timed_name = "scoped timer") :
-            m_timer(),
-            m_name(timed_name)
-        {}
-        ~ScopedTimer() {
-            Logger().debugStream() << m_name << " time: " << (m_timer.elapsed() * 1000.0);
-        }
-    private:
-        boost::timer    m_timer;
-        std::string     m_name;
-    };
 }
 
 //////////////////////////////////////////////////

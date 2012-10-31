@@ -1623,8 +1623,7 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
 void MapWnd::InitTurn() {
     int turn_number = CurrentTurn();
     Logger().debugStream() << "Initializing turn " << turn_number;
-    boost::timer turn_init_timer;
-
+    ScopedTimer("MapWnd::InitTurn", true);
 
     SetAccelerators();
 
@@ -1795,33 +1794,25 @@ void MapWnd::InitTurn() {
 
 
     FleetUIManager::GetFleetUIManager().RefreshAll();
-
-
-    Logger().debugStream() << "MapWnd::InitTurn time: " << (turn_init_timer.elapsed() * 1000.0);
 }
 
 void MapWnd::MidTurnUpdate() {
     Logger().debugStream() << "MapWnd::MidTurnUpdate";
-    boost::timer turn_init_timer;
-
+    ScopedTimer("MapWnd::MidTurnUpdate", true);
 
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
-
 
     // show or hide system names, depending on zoom.  replicates code in MapWnd::Zoom
     if (ZoomFactor() * ClientUI::Pts() < MIN_SYSTEM_NAME_SIZE)
         HideSystemNames();
     else
         ShowSystemNames();
-
-
-    Logger().debugStream() << "MapWnd::MidTurnUpdate time: " << (turn_init_timer.elapsed() * 1000.0);
 }
 
 void MapWnd::InitTurnRendering() {
     Logger().debugStream() << "MapWnd::InitTurnRendering";
-    boost::timer timer;
+    ScopedTimer("MapWnd::InitTurnRendering", true);
 
     if (!m_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
         boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
@@ -1933,19 +1924,15 @@ void MapWnd::InitTurnRendering() {
     // move field icons to bottom of child stack so that other icons can be moused over with a field
     for (std::map<int, FieldIcon*>::iterator it = m_field_icons.begin(); it != m_field_icons.end(); ++it)
         MoveChildDown(it->second);
-
-
-    Logger().debugStream() << "MapWnd::InitTurnRendering time: " << (timer.elapsed() * 1000.0);
 }
 
 void MapWnd::InitSystemRenderingBuffers() {
     Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers";
-
-    boost::timer timer;
+    ScopedTimer("MapWnd::InitSystemRenderingBuffers", true);
 
     // clear out all the old buffers
     ClearSystemRenderingBuffers();
-    
+
     // Generate texture coordinates to be used for subsequent vertex buffer creation.
     // Note these coordinates assume the texture is twice as large as it should
     // be.  This allows us to use one set of texture coords for everything, even
@@ -2053,31 +2040,21 @@ void MapWnd::InitSystemRenderingBuffers() {
 
     // star cores
     for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it =
-             m_star_core_quad_vertices.begin();
-         it != m_star_core_quad_vertices.end();
-         ++it)
-    {
-        m_star_core_quad_vertices[it->first].createServerBuffer();
-    }
+             m_star_core_quad_vertices.begin(); it != m_star_core_quad_vertices.end(); ++it)
+    { m_star_core_quad_vertices[it->first].createServerBuffer(); }
 
     // star halos
     for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
          it != m_star_halo_quad_vertices.end(); ++it)
-    {
-        m_star_halo_quad_vertices[it->first].createServerBuffer();
-    }
+    { m_star_halo_quad_vertices[it->first].createServerBuffer(); }
 
     // galaxy gas
     for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
          it != m_galaxy_gas_quad_vertices.end(); ++it)
-    {
-        m_galaxy_gas_quad_vertices[it->first].createServerBuffer();
-    }
+    { m_galaxy_gas_quad_vertices[it->first].createServerBuffer(); }
 
     // fill buffers with star textures
     m_star_texture_coords.createServerBuffer();
-
-    Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers time: " << (timer.elapsed() * 1000.0);
 }
 
 void MapWnd::ClearSystemRenderingBuffers() {
@@ -2089,7 +2066,7 @@ void MapWnd::ClearSystemRenderingBuffers() {
 
 void MapWnd::InitStarlaneRenderingBuffers() {
     Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers";
-    boost::timer timer;
+    ScopedTimer("MapWnd::InitStarlaneRenderingBuffers", true);
 
     // clear old buffers
     ClearStarlaneRenderingBuffers();
@@ -2243,9 +2220,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     m_starlane_vertices.createServerBuffer();
     m_starlane_colors.createServerBuffer();
     m_starlane_vertices.harmonizeBufferType(m_starlane_colors);
-
-
-    Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers time: " << (timer.elapsed() * 1000.0);
 }
 
 void MapWnd::ClearStarlaneRenderingBuffers() {
@@ -4025,58 +3999,76 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     Logger().debugStream() << "MapWnd::UpdateMeterEstimates";
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    ObjectMap& objects = GetUniverse().Objects();
-
-
     GetUniverse().InhibitUniverseObjectSignals(true);
 
+    std::string             colony_ship_species;
+    std::vector<Planet*>    potential_colonization_targets;
 
-    // if there is a selected colony ship, add temporary species to planets in
-    // order to generate estimates of what their population would be after
-    // colonization by the selected colony ship.
-    std::string         selected_colony_ship_species;
-    std::set<Planet*>   unowned_planets;
+    const Ship* ship = GetShip(FleetUIManager::GetFleetUIManager().SelectedShipID());
+    if (ship) {
+        // there is a selected colony ship.
+        if (ship->CanColonize() &&              ship->OwnedBy(empire_id) &&
+            !ship->SpeciesName().empty() &&     ship->SystemID() != INVALID_OBJECT_ID)
+        {
+            // selected ship: exists, is a colony ship, is owned by this client's player
+            //                is in a system, and has a usable species.
 
-    const Ship* ship = objects.Object<Ship>(FleetUIManager::GetFleetUIManager().SelectedShipID());
-    if (ship && ship->CanColonize() &&
-        ship->OwnedBy(empire_id) &&
-        !ship->SpeciesName().empty() &&
-        ship->SystemID() != INVALID_OBJECT_ID)
-    {
-        // selected ship: exists, is a colony ship, is owned by this client's player
-        //                is in a system, and has a usable species.
+            const std::string& species_name = ship->SpeciesName();
+            int ship_system_id = ship->SystemID();
 
-        // use species to estimate planet's projected population target if
-        // it were colonized
-        const std::string& species_name = ship->SpeciesName();
-        int ship_system_id = ship->SystemID();
+            // get all planets the player knows about that aren't yet colonized
+            // (aren't owned by anyone) and are otherwise valid colonization
+            // targets for the selected ship. Add the current player's ownership
+            // to all, while remembering which planets this is done to (so it
+            // can be undone later)
+            for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
+                Planet* planet = GetPlanet(*it);
+                if (!planet || (!planet->Unowned() && !planet->OwnedBy(empire_id))
+                    || planet->SystemID() != ship_system_id ||
+                    planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+                { continue; }
+                PlanetEnvironment planet_env_for_colony_species = planet->EnvironmentForSpecies(species_name);
+                if (planet_env_for_colony_species > PE_GOOD || planet_env_for_colony_species < PE_HOSTILE)
+                    continue;
 
-        // get all planets the player knows about that aren't yet colonized (aren't owned by anyone).  Add this
-        // the current player's ownership to all, while remembering which planets this is done to
+                potential_colonization_targets.push_back(planet);
+                planet->SetOwner(empire_id);
+                planet->SetSpecies(species_name);
+            }
+        }
+    } else {
+        // no colony ship selected.  instead, for each planet being updated,
+        // attempt to find a colony ship for it, and use that ship's species
+        // to do meter estimates
         for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
-            int planet_id = *it;
-            Planet* planet = objects.Object<Planet>(planet_id);
-            if (!planet || !planet->Unowned() || planet->SystemID() != ship_system_id)
+            Planet* planet = GetPlanet(*it);
+            if (!planet || (!planet->Unowned() && !planet->OwnedBy(empire_id))
+                || planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+            { continue; }
+
+            // attempt to find colony ship for this planet
+            const Ship* ship = GetShip(m_side_panel->AutomaticallyChosenColonyShip(*it));
+            if (!ship)
                 continue;
 
-            unowned_planets.insert(planet);
+            const std::string& species_name = ship->SpeciesName();
+            potential_colonization_targets.push_back(planet);
             planet->SetOwner(empire_id);
             planet->SetSpecies(species_name);
-            Logger().debugStream() << "... Set planet(" << planet_id << "): " << planet->Name() << " species to " << species_name;
         }
     }
-
 
     // update meter estimates with temporary ownership
     GetUniverse().UpdateMeterEstimates(objects_vec);
 
 
     // remove any temporary ownership added above
-    for (std::set<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it) {
+    for (std::vector<Planet*>::iterator it = potential_colonization_targets.begin();
+         it != potential_colonization_targets.end(); ++it)
+    {
         (*it)->SetOwner(ALL_EMPIRES);
         (*it)->SetSpecies("");
     }
-
 
     GetUniverse().InhibitUniverseObjectSignals(false);
 }

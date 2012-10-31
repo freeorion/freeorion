@@ -1012,7 +1012,33 @@ void SidePanel::PlanetPanel::CheckDisplayPlanets() {
 }
 
 namespace {
-    Ship* ValidSelectedColonyShip(int system_id) {
+    bool AvailableToColonize(const Ship* ship, int system_id, int empire_id) {
+        if (!ship)
+            return false;
+        Fleet* fleet = GetFleet(ship->FleetID());
+        if (!fleet)
+            return false;
+        if (ship->SystemID() == system_id &&
+            ship->OwnedBy(empire_id) &&
+            ship->CanColonize() &&
+            ship->OrderedColonizePlanet() == INVALID_OBJECT_ID &&
+            ship->OrderedScrapped() == false &&
+            fleet->FinalDestinationID() == INVALID_OBJECT_ID )
+        { return true; }
+        return false;
+    };
+
+    bool CanColonizePlanetType(const Ship* ship, PlanetType planet_type) {
+        if (!ship || planet_type == INVALID_PLANET_TYPE)
+            return false;
+        if (const Species* colony_ship_species = GetSpecies(ship->SpeciesName())) {
+            PlanetEnvironment planet_env_for_colony_species = colony_ship_species->GetPlanetEnvironment(planet_type);
+            return planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
+        }
+        return false;
+    }
+
+    const Ship* ValidSelectedColonyShip(int system_id) {
         // if not looking in a valid system, no valid colony ship can be available
         if (system_id == INVALID_OBJECT_ID)
             return 0;
@@ -1020,7 +1046,7 @@ namespace {
         // is there a valid selected ship in the active FleetWnd?
         std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
         for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
-            if (Ship* ship = GetUniverse().Objects().Object<Ship>(*ss_it))
+            if (const Ship* ship = GetShip(*ss_it))
                 if (ship->SystemID() == system_id && ship->CanColonize() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                     return ship;
         return 0;
@@ -1062,6 +1088,52 @@ namespace {
         }
         return false;
     }
+}
+
+int SidePanel::AutomaticallyChosenColonyShip(int target_planet_id) const {
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (empire_id == ALL_EMPIRES)
+        return INVALID_OBJECT_ID;
+    const Planet* target_planet = GetPlanet(target_planet_id);
+    if (!target_planet)
+        return INVALID_OBJECT_ID;
+    int system_id = target_planet->SystemID();
+    const System* system = GetSystem(system_id);
+    if (!system)
+        return INVALID_OBJECT_ID;
+    // is planet a valid colonization target?
+    if (target_planet->CurrentMeterValue(METER_POPULATION) > 0.0 ||
+        (!target_planet->Unowned() && !target_planet->OwnedBy(empire_id)))
+    { return INVALID_OBJECT_ID; }
+
+    PlanetType target_planet_type = target_planet->Type();
+
+    const ObjectMap& objects = GetUniverse().Objects();
+    std::vector<const Ship*> ships = objects.FindObjects<Ship>();
+    std::vector<const Ship*> capable_and_available_colony_ships;
+    capable_and_available_colony_ships.reserve(ships.size());
+
+    // get all ships that can colonize and that are free to do so in the
+    // specified planet'ssystem and that can colonize the requested planet
+    for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
+        const Ship* ship = *it;
+        if (!AvailableToColonize(ship, system_id, empire_id))
+            continue;
+        if (!CanColonizePlanetType(ship, target_planet_type))
+            continue;
+        capable_and_available_colony_ships.push_back(ship);
+    }
+
+    // simple case early exits: no ships, or just one capable ship
+    if (capable_and_available_colony_ships.empty())
+        return INVALID_OBJECT_ID;
+    if (capable_and_available_colony_ships.size() == 1)
+        return (*capable_and_available_colony_ships.begin())->ID();
+
+    // TODO: have more than one ship capable and available to colonize.
+    // pick the "best" one.
+
+    return (*capable_and_available_colony_ships.begin())->ID();
 }
 
 void SidePanel::PlanetPanel::Refresh() {
@@ -1117,8 +1189,10 @@ void SidePanel::PlanetPanel::Refresh() {
         }
     }
 
-    const Ship* selected_colony_ship =  ValidSelectedColonyShip(SidePanel::SystemID());
-    std::set<Ship*> invasion_ships =    ValidSelectedInvasionShips(SidePanel::SystemID());
+    const Ship* selected_colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
+    //if (!selected_colony_ship)
+    //    selected_colony_ship = AutomaticallyChosenColonyShip(m_planet_id);
+    std::set<Ship*> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
 
     std::string colony_ship_species_name;
     const ShipDesign* design = 0;
@@ -1458,7 +1532,7 @@ void SidePanel::PlanetPanel::Select(bool selected) {
 }
 
 namespace {
-    void CancelColonizeInvadeScrapShipOrders(Ship* ship) {
+    void CancelColonizeInvadeScrapShipOrders(const Ship* ship) {
         if (!ship)
             return;
 
@@ -1526,7 +1600,10 @@ void SidePanel::PlanetPanel::ClickColonize() {
 
     } else {
         // find colony ship and order it to colonize
-        Ship* ship = ValidSelectedColonyShip(planet->SystemID());
+        const Ship* ship = ValidSelectedColonyShip(SidePanel::SystemID());
+        //if (!ship)
+        //    ship = AutomaticallyChosenColonyShip(m_planet_id);
+
         if (!ship) {
             Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize valid colony not found!";
             return;
@@ -1535,15 +1612,10 @@ void SidePanel::PlanetPanel::ClickColonize() {
             Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize selected colony ship not owned by this client's empire.";
             return;
         }
-        const Fleet* fleet = GetFleet(ship->FleetID());
-        if (!fleet) {
-            Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize fleet not found!";
-            return;
-        }
 
         CancelColonizeInvadeScrapShipOrders(ship);
-
-        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ColonizeOrder(empire_id, ship->ID(), m_planet_id)));
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+            new ColonizeOrder(empire_id, ship->ID(), m_planet_id)));
     }
 }
 
@@ -1552,8 +1624,10 @@ void SidePanel::PlanetPanel::ClickInvade() {
     // been ordered
 
     const Planet* planet = GetPlanet(m_planet_id);
-    if (!planet || !m_order_issuing_enabled || (planet->CurrentMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
-        return;
+    if (!planet ||
+        !m_order_issuing_enabled ||
+        (planet->CurrentMeterValue(METER_POPULATION) <= 0.0 && planet->Unowned()))
+    { return; }
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     if (empire_id == ALL_EMPIRES)
