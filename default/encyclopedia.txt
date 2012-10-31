@@ -20,6 +20,20 @@ Article
     icon = "icons/focus/mining.png"
 
 Article
+    name = "HAPPINESS_METER_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "HAPPINESS_METER_TEXT"
+    icon = "icons/meter/happiness.png"
+    
+Article
+    name = "TROOP_METER_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "TROOP_METER_TEXT"
+    icon = "icons/meter/troops.png"
+
+Article
     name = "ORGANIC_SPECIES_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
     short_description = "SPECIES_ARTICLE_SHORT_DESC"

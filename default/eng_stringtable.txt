@@ -2581,6 +2581,8 @@ Species
 SHIPS_ARTICLE_SHORT_DESC
 Ships
 
+METER_ARTICLE_SHORT_DESC
+Meters
 
 ###########################################
 # ARTICLES #
@@ -2589,17 +2591,17 @@ Ships
 PEACE_TITLE
 Peace
 PEACE_TEXT
-Peace is the diplomatic state between empires in which they mutually agree not to attack each other's ships or planets, not to obstruct eachother's fleet resupply or resource exchange, and not to impede colonization.
+Peace is the diplomatic state between empires in which they mutually agree not to attack each other's ships or planets, not to obstruct each other's [[encyclopedia SUPPLY_TITLE]], and not to impede colonization.
 
 OUTPOSTS_TITLE
 Outposts
 OUTPOSTS_TEXT
-'''Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create supply lines (+1) and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an outpost pod on a ship.'''
+'''Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create supply lines (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an outpost pod on a ship.'''
 
 GROWTH_FOCUS_TITLE
 Growth Focus
 GROWTH_FOCUS_TEXT
-'''The Growth Focus represents a focus on exporting rare materials and substances that aid the population growth of a certain species. Is only available in certain situations: on some homeworlds, and on planets with growth specials.  A planet focused on Growth increases the max Population only of other planets connected to it by supply lines.  A Homeworld focused on Growth only helps other planets of the same species.  Growth Special planets focused on growth, only help a single classification of species, for instance some only help Organic Species.'''
+'''The Growth Focus represents exporting rare materials and substances that aid the population growth of a certain species. Is only available in certain situations: on some homeworlds, and on planets with growth specials.  A planet focused on Growth increases the max Population only of other planets connected to it by supply lines.  A Homeworld focused on Growth only helps other planets of the same species.  Growth Special planets focused on growth, only help a single classification of species, for instance some only help Organic Species.'''
 
 MINING_FOCUS_TITLE
 Mining Focus
@@ -2616,6 +2618,16 @@ Protection Focus
 PROTECTION_FOCUS_TEXT
 '''The Protection focus represents a planet wholly focused on defending itself.  Troops, Planetary Defences, and Planetary Shields are all increased.'''
 
+HAPPINESS_METER_TITLE
+Happiness Meter
+HAPPINESS_METER_TEXT
+'''Happiness doesn't do anything, yet.'''
+
+TROOP_METER_TITLE
+Troops Meter
+TROOP_METER_TEXT
+'''The Troop meter represents the power of the defending ground forces.  The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.'''
+
 ORGANIC_SPECIES_TITLE
 Organic Species
 ORGANIC_SPECIES_TEXT
@@ -2630,7 +2642,6 @@ ROBOTIC_SPECIES_TITLE
 Robotic Species
 ROBOTIC_SPECIES_TEXT
 '''Robotic species are sapient machines.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when when an Robotic Growth Special is colonized, and focused on Growth.  Robotic Growth specials are marked with a little red 'R' in the corner.'''
-
 
 PHOTOTROPHIC_SPECIES_TITLE
 Phototrophic Species
@@ -2650,7 +2661,7 @@ FUEL_TEXT
 SUPPLY_TITLE
 Supply Lines
 SUPPLY_TEXT
-'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share resources, -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.'''
+'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share resources -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.'''
 
 
 ####################
@@ -6117,25 +6128,25 @@ DEF_GARRISON_1
 Planetary Garrison 1
 
 DEF_GARRISON_1_DESC
-Increases max troops on all planets by 10.
+Increases max troop power on all planets by 10.
 
 DEF_GARRISON_2
 Planetary Garrison 2
 
 DEF_GARRISON_2_DESC
-Increases max troops on all planets by 20.
+Increases max troopspower on all planets by 20.
 
 DEF_GARRISON_3
 Planetary Garrison 3
 
 DEF_GARRISON_3_DESC
-Increases max troops on all planets by 40.
+Increases max troop power on all planets by 40.
 
 DEF_GARRISON_4
 Planetary Garrison 4
 
 DEF_GARRISON_4_DESC
-Increases max troops on all planets by 80.
+Increases max troop power on all planets by 80.
 
 DEF_PLANET_CLOAK
 Planetary Cloaking Device
