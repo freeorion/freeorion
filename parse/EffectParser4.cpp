@@ -14,8 +14,8 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 namespace {
-    struct effect_parser_rules_1 {
-        effect_parser_rules_1() {
+    struct effect_parser_rules_4 {
+        effect_parser_rules_4() {
             qi::_1_type _1;
             qi::_2_type _2;
             qi::_3_type _3;
@@ -73,18 +73,18 @@ namespace {
             //    >    parse::label(SlotType_name) > parse::enum_parser<ShipSlotType>() [ _val = new_<Effect::SetShipPartMeter>(_r1, _c, _d, _1) ]
             //    ;
 
-            set_empire_meter_1
-                =    tok.SetEmpireMeter_
-                >>   parse::label(Empire_name) >> int_value_ref [ _b = _1 ]
-                >    parse::label(Meter_name)  >  tok.string [ _a = _1 ]
-                >    parse::label(Value_name)  >  double_value_ref [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
-                ;
+            //set_empire_meter_1
+            //    =    tok.SetEmpireMeter_
+            //    >>   parse::label(Empire_name) >> int_value_ref [ _b = _1 ]
+            //    >    parse::label(Meter_name)  >  tok.string [ _a = _1 ]
+            //    >    parse::label(Value_name)  >  double_value_ref [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
+            //    ;
 
-            set_empire_meter_2
-                =    tok.SetEmpireMeter_
-                >>   parse::label(Meter_name) >> tok.string [ _a = _1 ]
-                >    parse::label(Value_name) >  double_value_ref [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
-                ;
+            //set_empire_meter_2
+            //    =    tok.SetEmpireMeter_
+            //    >>   parse::label(Meter_name) >> tok.string [ _a = _1 ]
+            //    >    parse::label(Value_name) >  double_value_ref [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
+            //    ;
 
             //set_empire_stockpile
             //    =   (
@@ -131,56 +131,56 @@ namespace {
             //    >    parse::label(Empire_name) > int_value_ref [ _val = new_<Effect::SetOwner>(_1) ]
             //    ;
 
-            //create_planet
-            //    =    tok.CreatePlanet_
-            //    >>   parse::label(Type_name)       >> planet_type_value_ref [ _a = _1 ]
-            //    >>   parse::label(PlanetSize_name) >> planet_size_value_ref [ new_<Effect::CreatePlanet>(_a, _1) ]
-            //    ;
+            create_planet
+                =    tok.CreatePlanet_
+                >>   parse::label(Type_name)       >> planet_type_value_ref [ _a = _1 ]
+                >>   parse::label(PlanetSize_name) >> planet_size_value_ref [ new_<Effect::CreatePlanet>(_a, _1) ]
+                ;
 
-            //create_building
-            //    =    tok.CreateBuilding_
-            //    >>   parse::label(Name_name)       >> string_value_ref [ _val = new_<Effect::CreateBuilding>(_1) ]
-            //    ;
+            create_building
+                =    tok.CreateBuilding_
+                >>   parse::label(Name_name)       >> string_value_ref [ _val = new_<Effect::CreateBuilding>(_1) ]
+                ;
 
-            //create_ship_1
-            //    =    tok.CreateShip_
-            //    >>   parse::label(DesignName_name) >> int_value_ref [ _b = _1 ] // TODO: DesignName -> DesignID.
-            //    >>   parse::label(Empire_name)     >> int_value_ref [ _c = _1 ]
-            //    >>   parse::label(Species_name)    >> string_value_ref [ _val = new_<Effect::CreateShip>(_b, _c, _1) ]
-            //    ;
+            create_ship_1
+                =    tok.CreateShip_
+                >>   parse::label(DesignName_name) >> int_value_ref [ _b = _1 ] // TODO: DesignName -> DesignID.
+                >>   parse::label(Empire_name)     >> int_value_ref [ _c = _1 ]
+                >>   parse::label(Species_name)    >> string_value_ref [ _val = new_<Effect::CreateShip>(_b, _c, _1) ]
+                ;
 
-            //create_ship_2
-            //    =    tok.CreateShip_
-            //    >>   parse::label(DesignName_name) >> tok.string [ _a = _1 ]
-            //    >>   parse::label(Empire_name)     >> int_value_ref [ _b = _1 ]
-            //    >>   parse::label(Species_name)    >> string_value_ref [ _val = new_<Effect::CreateShip>(_a, _b, _1) ]
-            //    ;
+            create_ship_2
+                =    tok.CreateShip_
+                >>   parse::label(DesignName_name) >> tok.string [ _a = _1 ]
+                >>   parse::label(Empire_name)     >> int_value_ref [ _b = _1 ]
+                >>   parse::label(Species_name)    >> string_value_ref [ _val = new_<Effect::CreateShip>(_a, _b, _1) ]
+                ;
 
-            //create_ship_3
-            //    =    tok.CreateShip_
-            //    >>   parse::label(DesignName_name) >> tok.string [ _a = _1 ]
-            //    >>   parse::label(Empire_name)     >> int_value_ref [ _val = new_<Effect::CreateShip>(_a, _1) ]
-            //    ;
+            create_ship_3
+                =    tok.CreateShip_
+                >>   parse::label(DesignName_name) >> tok.string [ _a = _1 ]
+                >>   parse::label(Empire_name)     >> int_value_ref [ _val = new_<Effect::CreateShip>(_a, _1) ]
+                ;
 
-            //create_ship_4
-            //    =    tok.CreateShip_
-            //    >>   parse::label(DesignName_name) >> tok.string [ _val = new_<Effect::CreateShip>(_1) ]
-            //    ;
+            create_ship_4
+                =    tok.CreateShip_
+                >>   parse::label(DesignName_name) >> tok.string [ _val = new_<Effect::CreateShip>(_1) ]
+                ;
 
-            //create_field
-            //    =   tok.CreateField_
-            //    >>  parse::label(Type_name)        >> tok.string [ _a = _1 ]
-            //    >>  (
-            //            (
-            //                parse::label(Size_name)    >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _1) ]
-            //            )
-            //        |   (
-            //                parse::label(X_name)       >> double_value_ref [ _b = _1 ]
-            //            >>  parse::label(Y_name)       >> double_value_ref [ _c = _1 ]
-            //            >>  parse::label(Size_name)    >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _b, _c, _1) ]
-            //            )
-            //        )
-            //    ;
+            create_field
+                =   tok.CreateField_
+                >>  parse::label(Type_name)        >> tok.string [ _a = _1 ]
+                >>  (
+                        (
+                            parse::label(Size_name)    >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _1) ]
+                        )
+                    |   (
+                            parse::label(X_name)       >> double_value_ref [ _b = _1 ]
+                        >>  parse::label(Y_name)       >> double_value_ref [ _c = _1 ]
+                        >>  parse::label(Size_name)    >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _b, _c, _1) ]
+                        )
+                    )
+                ;
 
             //move_to
             //    =    tok.MoveTo_
@@ -246,59 +246,59 @@ namespace {
             //    >    parse::label(Type_name) > star_type_value_ref [ _val = new_<Effect::SetStarType>(_1) ]
             //    ;
 
-            give_empire_tech
-                =    tok.GiveEmpireTech_
-                >>   parse::label(Name_name) >>     tok.string [ _a = _1 ]
-                >>   (
-                        (
-                            parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::GiveEmpireTech>(_a, _1) ]
-                        )
-                     |  eps [ _val = new_<Effect::GiveEmpireTech>(_a) ]
-                     )
-                ;
+            //give_empire_tech
+            //    =    tok.GiveEmpireTech_
+            //    >>   parse::label(Name_name) >>     tok.string [ _a = _1 ]
+            //    >>   (
+            //            (
+            //                parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::GiveEmpireTech>(_a, _1) ]
+            //            )
+            //         |  eps [ _val = new_<Effect::GiveEmpireTech>(_a) ]
+            //         )
+            //    ;
 
-            set_empire_tech_progress
-                =    tok.SetEmpireTechProgress_
-                >>   parse::label(Name_name) >>     tok.string [ _a = _1 ]
-                >>   parse::label(Progress_name) >> double_value_ref [ _b = _1 ]
-                >>   (
-                        (
-                            parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ]
-                        )
-                     |  eps [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b) ]
-                     )
-                ;
+            //set_empire_tech_progress
+            //    =    tok.SetEmpireTechProgress_
+            //    >>   parse::label(Name_name) >>     tok.string [ _a = _1 ]
+            //    >>   parse::label(Progress_name) >> double_value_ref [ _b = _1 ]
+            //    >>   (
+            //            (
+            //                parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ]
+            //            )
+            //         |  eps [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b) ]
+            //         )
+            //    ;
 
-            generate_sitrep_message
-                =    tok.GenerateSitrepMessage_
-                >    parse::label(Message_name) >> tok.string [ _a = _1 ]
-                >> -(
-                        parse::label(Icon_name) >> tok.string [ _b = _1 ]
-                    )
-                >> -(
-                        parse::label(Parameters_name) >> string_and_string_ref_vector [ _c = _1 ]
-                    )
-                >>  (
-                        (
-                            (
-                                parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
-                            |   eps [ _d = AFFIL_SELF ]
-                            )
-                        >>  parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d) ]
-                        )
-                    |   (
-                            parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
-                        |   eps [ _d = AFFIL_ANY ]
-                        )
-                        [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d) ]
-                    )
-                ;
+            //generate_sitrep_message
+            //    =    tok.GenerateSitrepMessage_
+            //    >    parse::label(Message_name) >> tok.string [ _a = _1 ]
+            //    >> -(
+            //            parse::label(Icon_name) >> tok.string [ _b = _1 ]
+            //        )
+            //    >> -(
+            //            parse::label(Parameters_name) >> string_and_string_ref_vector [ _c = _1 ]
+            //        )
+            //    >>  (
+            //            (
+            //                (
+            //                    parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
+            //                |   eps [ _d = AFFIL_SELF ]
+            //                )
+            //            >>  parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d) ]
+            //            )
+            //        |   (
+            //                parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
+            //            |   eps [ _d = AFFIL_ANY ]
+            //            )
+            //            [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d) ]
+            //        )
+            //    ;
 
-            set_overlay_texture
-                =    tok.SetOverlayTexture_
-                >    parse::label(Name_name)    > tok.string [ _a = _1 ]
-                >    parse::label(Size_name)    > double_value_ref [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
-                ;
+            //set_overlay_texture
+            //    =    tok.SetOverlayTexture_
+            //    >    parse::label(Name_name)    > tok.string [ _a = _1 ]
+            //    >    parse::label(Size_name)    > double_value_ref [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
+            //    ;
 
             //set_texture
             //    =    tok.SetTexture_
@@ -316,23 +316,23 @@ namespace {
                 ;
 
             start
-                //%=     set_meter
+                //%=    set_meter
                 //|    set_ship_part_meter
-                %=   set_empire_meter_1
-                |    set_empire_meter_2
+                //|    set_empire_meter_1
+                //|    set_empire_meter_2
                 //|    set_empire_stockpile
                 //|    set_empire_capital
                 //|    set_planet_type
                 //|    set_planet_size
                 //|    set_species
                 //|    set_owner
-                //|    create_planet
-                //|    create_building
-                //|    create_ship_1
-                //|    create_ship_2
-                //|    create_ship_3
-                //|    create_ship_4
-                //|    create_field
+                %=   create_planet
+                |    create_building
+                |    create_ship_1
+                |    create_ship_2
+                |    create_ship_3
+                |    create_ship_4
+                |    create_field
                 //|    move_to
                 //|    move_in_orbit
                 //|    set_destination
@@ -344,30 +344,30 @@ namespace {
                 //|    add_starlanes
                 //|    remove_starlanes
                 //|    set_star_type
-                |    give_empire_tech
-                |    set_empire_tech_progress
-                |    generate_sitrep_message
-                |    set_overlay_texture
+                //|    give_empire_tech
+                //|    set_empire_tech_progress
+                //|    generate_sitrep_message
+                //|    set_overlay_texture
                 //|    set_texture
                 ;
 
             //set_meter.name("SetMeter");
             //set_ship_part_meter.name("SetShipPartMeter");
-            set_empire_meter_1.name("SetEmpireMeter (w/empire ID)");
-            set_empire_meter_2.name("SetEmpireMeter");
+            //set_empire_meter_1.name("SetEmpireMeter (w/empire ID)");
+            //set_empire_meter_2.name("SetEmpireMeter");
             //set_empire_stockpile.name("SetEmpireStockpile");
             //set_empire_capital.name("SetEmpireCapital");
             //set_planet_type.name("SetPlanetType");
             //set_planet_size.name("SetPlanetSize");
             //set_species.name("SetSpecies");
             //set_owner.name("SetOwner");
-            //create_planet.name("CreatePlanet");
-            //create_building.name("CreateBuilding");
-            //create_ship_1.name("CreateShip (int DesignID)");
-            //create_ship_2.name("CreateShip (empire and species)");
-            //create_ship_3.name("CreateShip (string DesignName and empire)");
-            //create_ship_4.name("CreateShip (string DesignName only)");
-            //create_field.name("CreateField");
+            create_planet.name("CreatePlanet");
+            create_building.name("CreateBuilding");
+            create_ship_1.name("CreateShip (int DesignID)");
+            create_ship_2.name("CreateShip (empire and species)");
+            create_ship_3.name("CreateShip (string DesignName and empire)");
+            create_ship_4.name("CreateShip (string DesignName only)");
+            create_field.name("CreateField");
             //move_to.name("MoveTo");
             //move_in_orbit.name("MoveInOrbit");
             //set_destination.name("SetDestination");
@@ -379,33 +379,33 @@ namespace {
             //add_starlanes.name("AddStarlanes");
             //remove_starlanes.name("RemoveStarlanes");
             //set_star_type.name("SetStarType");
-            give_empire_tech.name("GiveEmpireTech");
-            set_empire_tech_progress.name("SetEmpireTechProgress");
-            generate_sitrep_message.name("GenerateSitrepMessage");
-            set_overlay_texture.name("SetOverlayTexture");
-            //set_texture.name("SetTexture");
-            string_and_string_ref.name("Tag and Data (string reference)");
-            string_and_string_ref_vector.name("List of Tags and Data");
+            //give_empire_tech.name("GiveEmpireTech");
+            //set_empire_tech_progress.name("SetEmpireTechProgress");
+            //generate_sitrep_message.name("GenerateSitrepMessage");
+            //set_overlay_texture.name("SetOverlayTexture");
+            ////set_texture.name("SetTexture");
+            //string_and_string_ref.name("Tag and Data (string reference)");
+            //string_and_string_ref_vector.name("List of Tags and Data");
 
 
 #if DEBUG_EFFECT_PARSERS
             //debug(set_meter);
             //debug(set_ship_part_meter);
-            debug(set_empire_meter_1);
-            debug(set_empire_meter_2);
+            //debug(set_empire_meter_1);
+            //debug(set_empire_meter_2);
             //debug(set_empire_stockpile);
             //debug(set_empire_capital);
             //debug(set_planet_type);
             //debug(set_planet_size);
             //debug(set_species);
             //debug(set_owner);
-            //debug(create_planet);
-            //debug(create_building);
-            //debug(create_ship_1);
-            //debug(create_ship_2);
-            //debug(create_ship_3);
-            //debug(create_ship_4);
-            //debug(create_field);
+            debug(create_planet);
+            debug(create_building);
+            debug(create_ship_1);
+            debug(create_ship_2);
+            debug(create_ship_3);
+            debug(create_ship_4);
+            debug(create_field);
             //debug(move_to);
             //debug(move_in_orbit);
             //debug(set_destination);
@@ -417,10 +417,10 @@ namespace {
             //debug(add_starlanes);
             //debug(remove_starlanes);
             //debug(set_star_type);
-            debug(give_empire_tech);
-            debug(set_empire_tech_progress);
-            debug(generate_sitrep_message);
-            debug(set_overlay_texture);
+            //debug(give_empire_tech);
+            //debug(set_empire_tech_progress);
+            //debug(generate_sitrep_message);
+            //debug(set_overlay_texture);
             //debug(set_texture);
 #endif
         }
@@ -522,8 +522,8 @@ namespace {
 
         //set_meter_rule                      set_meter;
         //set_meter_rule                      set_ship_part_meter;
-        string_and_intref_and_intref_rule   set_empire_meter_1;
-        string_and_intref_and_intref_rule   set_empire_meter_2;
+        //string_and_intref_and_intref_rule   set_empire_meter_1;
+        //string_and_intref_and_intref_rule   set_empire_meter_2;
         //set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_1;
         //set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_2;
         //set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_3;
@@ -533,13 +533,13 @@ namespace {
         //parse::effect_parser_rule           set_planet_size;
         //parse::effect_parser_rule           set_species;
         //parse::effect_parser_rule           set_owner;
-        //create_planet_rule                  create_planet;
-        //parse::effect_parser_rule           create_building;
-        //string_and_intref_and_intref_rule   create_ship_1;
-        //string_and_intref_and_intref_rule   create_ship_2;
-        //string_and_intref_and_intref_rule   create_ship_3;
-        //string_and_intref_and_intref_rule   create_ship_4;
-        //string_and_doubleref_rule           create_field;
+        create_planet_rule                  create_planet;
+        parse::effect_parser_rule           create_building;
+        string_and_intref_and_intref_rule   create_ship_1;
+        string_and_intref_and_intref_rule   create_ship_2;
+        string_and_intref_and_intref_rule   create_ship_3;
+        string_and_intref_and_intref_rule   create_ship_4;
+        string_and_doubleref_rule           create_field;
         //parse::effect_parser_rule           move_to;
         //doubles_rule                        move_in_orbit;
         //parse::effect_parser_rule           set_destination;
@@ -551,10 +551,10 @@ namespace {
         //parse::effect_parser_rule           add_starlanes;
         //parse::effect_parser_rule           remove_starlanes;
         //parse::effect_parser_rule           set_star_type;
-        string_and_intref_and_intref_rule   give_empire_tech;
-        string_and_doubleref_rule           set_empire_tech_progress;
-        generate_sitrep_message_rule        generate_sitrep_message;
-        string_and_doubleref_rule           set_overlay_texture;
+        //string_and_intref_and_intref_rule   give_empire_tech;
+        //string_and_doubleref_rule           set_empire_tech_progress;
+        //generate_sitrep_message_rule        generate_sitrep_message;
+        //string_and_doubleref_rule           set_overlay_texture;
         //parse::effect_parser_rule           set_texture;
         string_and_string_ref_rule          string_and_string_ref;
         string_and_string_ref_vector_rule   string_and_string_ref_vector;
@@ -563,8 +563,8 @@ namespace {
 }
 
 namespace parse { namespace detail {
-    const effect_parser_rule& effect_parser_1() {
-        static effect_parser_rules_1 retval;
+    const effect_parser_rule& effect_parser_4() {
+        static effect_parser_rules_4 retval;
         return retval.start;
     }
 } }

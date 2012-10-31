@@ -252,6 +252,8 @@ set(THIS_LIB_SOURCES
     parse/EffectParser.cpp
     parse/EffectParser1.cpp
     parse/EffectParser2.cpp
+    parse/EffectParser3.cpp
+    parse/EffectParser4.cpp
     parse/FieldsParser.cpp
     parse/Parse.cpp
     parse/BuildingsParser.cpp
