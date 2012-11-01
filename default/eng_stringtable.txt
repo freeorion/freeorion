@@ -5118,6 +5118,8 @@ SHIPS_CATEGORY
 Ships
 DEFENSE_CATEGORY
 Defense
+SPY_CATEGORY
+Intelligence
 
 
 #############################################################
@@ -5143,7 +5145,9 @@ LRN_TRANSLING_THT
 Translinguistics
 
 LRN_TRANSLING_THT_DESC
-Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truly great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?
+'''Does nothing. Later this can enable peaceful acquistion of native planets.
+
+Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truly great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?'''
 
 LRN_PSIONICS
 Psionics
@@ -5277,7 +5281,9 @@ GRO_LIFECYCLE_MAN
 Lifecycle Manipulation
 
 GRO_LIFECYCLE_MAN_DESC
-Most complex organisms progress through various physiological stages during a lifetime, whether distinctly separated by metamorphoses, or blurred by continuous slow aging. In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others. By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.
+'''Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, the capacity of colony ships can be greatly increased.
+
+Most complex organisms progress through various physiological stages during a lifetime, whether distinctly separated by metamorphoses, or blurred by continuous slow aging. In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others. By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.'''
 
 GRO_ADV_ECOMAN
 Advanced Ecomanipulation
@@ -5355,7 +5361,9 @@ PRO_CORE_MINE
 Tectonic Minerology
 
 PRO_CORE_MINE_DESC
-'''The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to vulcanism. The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations. Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
+'''Some sort of very aggressive mining goes here.
+
+The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to vulcanism. The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations. Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
 
 Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis. After creation, processes such as plate tectonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources. Understanding these processes and their effects, causes and signs is essential for large scale efficient mining operations.'''
 
@@ -5438,19 +5446,15 @@ PRO_SINGULAR_GEN_DESC
 
 As matter is drawn towards a singularity by the intense space-time curvature, or gravitational field, the matter forms an accretion disk and is greatly compressed and heated. High energy radiation emitted from the disk may be captured and harnessed for power generation. The event horizon of the singularity itself also emits radiation due to the annihilation of virtual particle-antiparticle pairs that form in its vicinity. This method of power generation is significantly more delicate and unstable than the accretion disk method, but can produce an even greater output.'''
 
-PRO_ENERGY_CONV
-Energy Conversion
-
-PRO_ENERGY_CONV_DESC
-'''At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon. Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two. Transmutation and replication, at limited scales, become possible.  However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation.
-
-Previous production techniques were essentially ways to avoid or remove particularly vexing problems with manipulation of matter. None of these techniques fundamentally changed the basic method however, which was to assemble larger objects out of supplied materials, be they prefabricated subsections, or raw minerals. By converting pure energy directly into the desired material object, the need for supplied materials such as minerals or food can become greatly reduced in times of necessity.'''
-
 PRO_ZERO_GEN
 Zero-Point Generation
 
 PRO_ZERO_GEN_DESC
-Any power generation mechanism that involves a material fuel supply is limited by the relativistic mass-energy relationship: no more energy can be produced than equivalent mass consumed, even with perfect efficiency. By tapping the inherent energy of the vacuum, or zero-point energy, an effectively infinite source is made available. The rate, or power, of this extraction is also theoretically unbounded, with limits only in the available means to collect and use the output.
+'''Any power generation mechanism that involves a material fuel supply is limited by the relativistic mass-energy relationship: no more energy can be produced than equivalent mass consumed, even with perfect efficiency. By tapping the inherent energy of the vacuum, or zero-point energy, an effectively infinite source is made available. The rate, or power, of this extraction is also theoretically unbounded, with limits only in the available means to collect and use the output.
+
+At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon. Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two. Transmutation and replication, at limited scales, become possible.  However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation.
+
+Previous production techniques were essentially ways to avoid or remove particularly vexing problems with manipulation of matter. None of these techniques fundamentally changed the basic method however, which was to assemble larger objects out of supplied materials, be they prefabricated subsections, or raw minerals. By converting pure energy directly into the desired material object, the need for supplied materials such as minerals or food can become greatly reduced in times of necessity.'''
 
 PRO_NEUTRONIUM_EXTRACTION
 Neutronium Extraction
@@ -5568,36 +5572,6 @@ Space Tactics
 SHP_SPACE_TACTICS_DESC
 Battles in microgravity and vacuum require specialized weapon and defensive systems, as well as the theoretical tactics that motivate their use.
 
-SHP_SPACE_WEAPON
-Space Weaponry
-
-SHP_SPACE_WEAPON_DESC
-Basic land-oriented weaponry can be adapted for use in space and utilized quite effectively. These weapons cannot however, be as effective as weaponry designed specifically for use in space, with the paradigm of space combat completely dominant over that of ground combat in the minds of the designers.
-
-SHP_TACT_COUNTER
-Tactical Countermeasures
-
-SHP_TACT_COUNTER_DESC
-Due to the unfamiliarity of space combat, not all tactical events and possibilities have been thought out and their consequences analyzed. As such, there may be certain tactics against which a tactically underdeveloped empire would have very little defense. Theoretical countermeasures to these tactics motivate the development of more advanced defensive systems and special devices.
-
-SHP_TACT_SUPER
-Tactical Superiority
-
-SHP_TACT_SUPER_DESC
-Many tactical scenarios are a complex form of Rock-Paper-Scissors; a defender may find himself vulnerable to attack because he prepared for a different sort of assault than that with which he was faced. Likewise, an attacker may have received incorrect or inaccurate information about an opponents defenses and find that his method of attack is ineffective. By developing an ideal fighting force for nearly all scenarios, the risk of loss due to unforeseen circumstances can be greatly reduced.
-
-SHP_SURGICAL_DESTRUCT
-Surgical Destruction
-
-SHP_SURGICAL_DESTRUCT_DESC
-Often, there are highly valuable strategic and tactical targets in a battle which are of far more importance than any other ship engaged in battle, and in some circumstances, every other ship engaged in battle. Maximizing the effectiveness with which a single valuable target can be identified and destroyed can be of great strategic value.
-
-SHP_STRAT_DEFENSE
-Strategic Defense
-
-SHP_STRAT_DEFENSE_DESC
-When the protection of a strategic target is the primary or only concern in a battle, any cost in either production of defensive material or casualties is acceptable. With proper equipment and tactics, a strategic target can be made significantly more difficult to destroy.
-
 SHP_NAVIGATION
 Interstellar Navigation
 
@@ -5608,13 +5582,9 @@ SHP_INTSTEL_LOG
 Interstellar Logistics
 
 SHP_INTSTEL_LOG_DESC
-Effectively supplying ships, ordering general fleet movement and even organizing the movement of specific ships in battle requires a complex understanding of navigation and detection, and of methods of information acquisition.
+'''Unlocks the Logistics focus setting, which increases the Supply meter of planets by an amount equal to one half the planet's population.
 
-SHP_ADV_NAVIGATION
-Advanced Navigation
-
-SHP_ADV_NAVIGATION_DESC
-The dangers of the untampered universe are minuscule compared to the dangers of a universe fraught with other ships, both friend and foe. By integrated the known effects of other empires on the conditions of starlanes and interplanetary space, more effective navigation methods can be enacted.
+Effectively supplying ships, ordering general fleet movement and even organizing the movement of specific ships in battle requires a complex understanding of navigation and detection, and of methods of information acquisition.'''
 
 SHP_NEUTRONIUM_ARM
 Neutronium Armor
@@ -5857,7 +5827,7 @@ CON_SUBTER_CONST
 Subterranean Construction
 
 CON_SUBTER_CONST_DESC
-'''Increases Infrastructure by 10.  Cannot improve a planet with the Tunnels or Techtonic Instability special.
+'''Increases Infrastructure by 10.  Cannot improve a planet with the Tunnels or Tectonic Instability special.
 
 When space is at a premium, the ability to build downwards as well as up is an invaluable asset. Entire underground cities and facilities can be constructed and maintained, and trans-planetary subterranean transportation routes can be established.'''
 
@@ -5922,12 +5892,6 @@ Industrial Cloning
 
 GRO_INDUSTRY_CLONE_DESC
 Primitive manual nuclear transfer cloning techniques are little more than novelties for large organisms. By applying techniques similar to industrial mass production or biochemical process engineering, it becomes possible to generate dozens, or millions, of full-grown copies of a single genetic blueprint. Populations may be made to order, tailored to meet the specific needs of society.
-
-GRO_SUSPENDED_ANIMATION
-Suspended Animation
-
-GRO_SUSPENDED_ANIMATION_DESC
-Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, the capacity of colony ships can be greatly increased.
 
 GRO_ORBIT_FARMING
 Orbital Farming
@@ -6078,10 +6042,10 @@ By extracting neutronium from a neutron star, it is possible to utilize it in th
 PRO_INDUSTRY_MOD
 Industry Modifier
 
-DEF_LIGHTHOUSE
+SPY_LIGHTHOUSE
 Interstellar Lighthouses
 
-DEF_LIGHTHOUSE_DESC
+SPY_LIGHTHOUSE_DESC
 By using a complex pattern of EM pulses and particle streams to reveal the location of objects in a system, it is possible for even very stealthy objects to be illuminated and detected with moderate detection equipment.
 
 DEF_DEFENSE_NET
@@ -6154,12 +6118,6 @@ Planetary Cloaking Device
 DEF_PLANET_CLOAK_DESC
 By phasing parts a planet in and out of space-time, its stealth can be increased massively.
 
-SHP_FLEET_LOGISTICS
-Fleet Logistics
-
-SHP_FLEET_LOGISTICS_DESC
-Unlocks the Logistics focus setting, which increases the Supply meter of planets by an amount equal to one half the planet's population.
-
 SHP_FLEET_REPAIR
 Fleet Field Repair
 
@@ -6186,10 +6144,10 @@ Advanced Damage Control
 SHP_ADV_DAM_CONT_DESC
 Fully repairs damaged ships between battles.
 
-SHP_SYST_DEF_MINE
+DEF_SYST_DEF_MINE
 System Defense Mines
 
-SHP_SYST_DEF_MINE_DESC
+DEF_SYST_DEF_MINE_DESC
 '''When friendly ships are not present in a system, enemy ships are free to blockade the system, stopping the transfer of resources without directly engaging the planet's defenses, thus with no risk of damage to themselves. A network of system defense mines can deter these tactics by damaging enemy ships each turn they are in the system.
 
 The structure of all ships belonging to an enemy empire which are present in a system containing a planet owned by the empire that possesses this technology will be reduced at a rate of 2 per turn.
@@ -6366,13 +6324,13 @@ Multi-Spectral Shielding
 SHP_MULTISPEC_SHIELD_DESC
 Provides adequate shielding to allow a ship to enter into the heart of a star. Ships in a system with a star type other than Black Hole and Neutron receive a mighty stealth bonus.
 
-SHP_OPTICAL_SCANNER
+SPY_OPTICAL_SCANNER
 Optical Scanner
 
-SHP_OPTICAL_SCANNER_DESC
+SPY_OPTICAL_SCANNER_DESC
 All colonies start the game with a detection level of 50, and the ship part Optical Scanner permits ships to reach the same level of detection.
 
-SHP_RADAR
+SPY_RADAR
 Active Radar
 
 SHP_RADAR_DESC
@@ -6380,44 +6338,44 @@ SHP_RADAR_DESC
 
 Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened. By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
 
-SHP_NEUTRON_SCANNER
+SPY_NEUTRON_SCANNER
 Neutron Scanner
 
-SHP_NEUTRON_SCANNER_DESC
+SPY_NEUTRON_SCANNER_DESC
 '''Unlocks the Neutron Scanner ship part, increases the detection range of all planets to 150, and increases the imperial detection level to 400.
 
 Electromagnetic radiation has no rest mass and is easily manipulable. Simply by bending waves of light around an object, it is possible to render radar devices virtually useless. By firing waves of neutrons instead of electromagnetic radiation, more effective active scanning can be utilized.'''
 
-SHP_SENSORS
+SPY_SENSORS
 Sensors
 
-SHP_SENSORS_DESC
+SPY_SENSORS_DESC
 Unlocks the Sensors ship part, increases the detection range of all planets to 200, and increases the imperial detection level to 700.
 
-SHP_EM_DAMPER
+SPY_EM_DAMPER
 Electromagnetic Damper
 
-SHP_EM_DAMPER_DESC
+SPY_EM_DAMPER_DESC
 Unlocks the Electromagnetic Damper ship part and increases the Stealth of all planets, systems and buildings by 5. This bonus is not cumulative with that of other stealth techs.
 
-SHP_ABSORPTION_FIELD
+SPY_ABSORPTION_FIELD
 Absorption Field
 
-SHP_ABSORPTION_FIELD_DESC
+SPY_ABSORPTION_FIELD_DESC
 '''Increases the Stealth of all planets, systems, and buildings by 30. This bonus is not cumulative with that of other stealth techs.
 
 Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the stealth of a ship can be greatly increased.'''
 
-SHP_DIM_CLOAK
+SPY_DIM_CLOAK
 Dimensional Cloak
 
-SHP_DIM_CLOAK_DESC
+SPY_DIM_CLOAK_DESC
 Unlocks the Dimensional Cloak ship part and increases the Stealth of all planets, systems and buildings by 15. This bonus is not cumulative with that of other stealth techs.
 
-SHP_PHASING_CLOAK
+SPY_PHASING_CLOAK
 Phasing Cloak
 
-SHP_PHASING_CLOAK_DESC
+SPY_PHASING_CLOAK_DESC
 '''Increases the stealth of all planets, systems and buildings by 80. This bonus is not cumulative with that of other stealth techs.
 
 Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
@@ -6452,10 +6410,10 @@ Neutronium Armor Plating
 SHP_NEUTRONIUM_PLATE_DESC
 Unlocks Neutronium Armor Plating ship part.
 
-SHP_DIST_MOD
+SPY_DIST_MOD
 Distortion Modulator
 
-SHP_DIST_MOD_DESC
+SPY_DIST_MOD_DESC
 All objects with mass cause a curvature in space-time due to gravitational effects. Other forces such as the electromagnetic force have similar geometric effects. By indiscriminately amplifying these effects in a localized area, space-time distortion caused by ships can easily be distinguished from background electromagnetic and gravitational radiation.
 
 SHP_SELFGRAV_HULL
@@ -6475,12 +6433,6 @@ Titanic Hull
 
 SHP_TITAN_HULL_DESC
 This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots and three internal slots, and its max structure is very high, but at the cost of a great deal of speed and stealth.
-
-SHP_TRANSSPACE_HULL
-Trans-Spatial Hull
-
-SHP_TRANSSPACE_HULL_DESC
-This hull is able to travel stealthily and at an incredible speed due to the Trans-Spatial drive. It has only a single external slot however, and its max structure is extremely low.
 
 SHP_ANTIMAT_TORP
 Antimatter Torpedo
@@ -6512,23 +6464,11 @@ Scattered Asteroid Hull
 SHP_SCAT_AST_HULL_DESC
 This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to shields for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-SHP_CRYSTAL_AST_HULL
-Crystallized Asteroid Hull
-
-SHP_CRYSTAL_AST_HULL_DESC
-This sturdy hull is made from a average-sized asteroid, hardened by advanced crystallization techniques. Like the regular Asteroid Hull, it has four external slots and two internal slots. Speed is somewhat low, but structure is extremely high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
 SHP_ROCK_PLATE
 Rock Armor Plating
 
 SHP_ROCK_PLATE_DESC
 A strong, cheap alternative to alloys. This part can only be built if there is an Asteroid Reformation Facility at an asteroid belt somewhere in the empire or an ally's empire.
-
-SHP_CRYSTAL_PLATE
-Crystal Armor Plating
-
-SHP_CRYSTAL_PLATE_DESC
-An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is a Asteroid Reformation Processor at an asteroid belt somewhere in the empire or an ally's empire.
 
 SHP_ORG_HULL
 Organic Hull
@@ -6559,18 +6499,6 @@ Endosymbiotic Hull
 
 SHP_ENDOSYMB_HULL_DESC
 This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has three external slots and two internal slots. Speed and stealth are good, and structure is average. This hull regenerates structure and fuel between combats.
-
-SHP_RAVEN_HULL
-Ravenous Hull
-
-SHP_RAVEN_HULL_DESC
-This living hull has been raised on the blood of its brethren. It has four external slots and two internal slots. Stealth is low, but speed and structure are high. Unlike most organic hulls, the Ravenous Hull will only regenerate fuel between combats, not structure.
-
-SHP_BIOADAPT_HULL
-Bio-Adaptive Hull
-
-SHP_BIOADAPT_HULL_DESC
-This living hull has mind and body working in perfect unison, allowing it to react and adapt to its surroundings with unparalleled efficiency. It has only two of each internal and external slots, but stealth, speed and structure are all very high. This hull regenerates fuel and completely recovers structure between combats.
 
 SHP_SENT_HULL
 Sentient Hull
@@ -6608,10 +6536,10 @@ Bio-Terminators
 SHP_BIOTERM_DESC
 Unlocks the Bio-Terminators ship part, which allows ships to greatly reduce the population of planets.
 
-SHP_PLANET_STEALTH_MOD
+SPY_PLANET_STEALTH_MOD
 Planet Stealth Modifier
 
-SHP_PLANET_STEALTH_MOD_DESC
+SPY_PLANET_STEALTH_MOD_DESC
 '''Increases the natural stealth of planets to 4.99, so that systems will be made visible to empires before their planets.'''
 
 

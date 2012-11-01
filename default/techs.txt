@@ -29,6 +29,15 @@ Category
     name = "SHIPS_CATEGORY"
     graphic = "ships.png"
     colour = (255, 139, 85, 255)
+    
+Category 
+    name = "SPY_CATEGORY"
+    graphic = "spy.png"
+    colour = (168, 0, 255, 255)
+
+//########################################################
+//#     D E F E N S E
+//########################################################
 
 Tech
     Name ="DEF_ROOT_DEFENSE"
@@ -110,209 +119,112 @@ Tech
     graphic = ""
 
 Tech
-    Name ="SHP_ROOT_AGGRESSION"
-    description = "SHP_ROOT_AGGRESSION_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    name = "DEF_DEFENSE_NET"
+    description = "DEF_DEFENSE_NET_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
     techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 1
+    category = "DEFENSE_CATEGORY"
+    researchcost = 8
     researchturns = 1
-    unlock = [
-        Item type = ShipPart name = "SR_WEAPON_1"
-        Item type = ShipPart name = "GT_TROOP_POD"
-    ]
-    graphic = ""
+    prerequisites = "DEF_ROOT_DEFENSE"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = SetMaxDefense Value + 5
+            
+Tech
+    name = "DEF_HI_ENRG_FOCUS"
+    description = "DEF_HI_ENRG_FOCUS_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
+    techtype = Application
+    category = "DEFENSE_CATEGORY"
+    researchcost = 80
+    researchturns = 2
+    prerequisites = "DEF_DEFENSE_NET"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = SetMaxDefense Value + 15            
 
 Tech
-    name = "SHP_WEAPON_2"
-    description = "SHP_WEAPON_2_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Refinement
-    category = "SHIPS_CATEGORY"
-    researchcost = 2
+    name = "DEF_PLAN_DEFLECT_SHLD"
+    description = "DEF_PLAN_DEFLECT_SHLD_DESC"
+    short_description = "SHIELD_SHORT_DESC"
+    techtype = Application
+    category = "DEFENSE_CATEGORY"
+    researchcost = 120
     researchturns = 5
-    prerequisites = "SHP_ROOT_AGGRESSION"
-    unlock = Item type = ShipPart name = "SR_WEAPON_2"
+    prerequisites = "DEF_DEFENSE_NET"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            activation = Not OwnerHasTech "DEF_PLAN_BARRIER_SHLD"
+            effects = SetMaxShield Value + 10
+
+Tech
+    name = "DEF_PLAN_BARRIER_SHLD"
+    description = "DEF_PLAN_BARRIER_SHLD_DESC"
+    short_description = "SHIELD_SHORT_DESC"
+    techtype = Application
+    category = "DEFENSE_CATEGORY"
+    researchcost = 500
+    researchturns = 8
+    prerequisites = "DEF_PLAN_DEFLECT_SHLD"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = SetMaxShield Value + 45
+            
+Tech
+    name = "DEF_PLANET_CLOAK"
+    description = "DEF_PLANET_CLOAK_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "DEFENSE_CATEGORY"
+    researchcost = 9999
+    researchturns = 9999
+    Unresearchable
+    prerequisites = "SPY_DIM_CLOAK"
+    unlock = Item type = Building name = "BLD_PLANET_CLOAK"
     
 Tech
-    name = "SHP_WEAPON_3"
-    description = "SHP_WEAPON_3_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Refinement
-    category = "SHIPS_CATEGORY"
-    researchcost = 4
-    researchturns = 3
-    prerequisites = "SHP_WEAPON_2"
-    unlock = Item type = ShipPart name = "SR_WEAPON_3"
-    graphic = "icons/ship_parts/mass-driver-3.png"
-
-Tech
-    name = "SHP_WEAPON_4"
-    description = "SHP_WEAPON_4_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Refinement
-    category = "SHIPS_CATEGORY"
-    researchcost = 5
+    name = "DEF_SYST_DEF_MINE"
+    description = "DEF_SYST_DEF_MINE_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
+    techtype = Application
+    category = "DEFENSE_CATEGORY"
+    researchcost = 120
     researchturns = 4
-    prerequisites = "SHP_WEAPON_3"
-    unlock = Item type = ShipPart name = "SR_WEAPON_4"
-    graphic = "icons/ship_parts/mass-driver-4.png"
+    prerequisites = "DEF_DEFENSE_NET"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains And [
+                    OwnedBy TheEmpire Source.Owner
+                    Planet
+                ]
+                Ship
+                OwnedBy EnemyOf Source.Owner
+            ]
+            effects = SetStructure Value - 2
 
-Tech
-    name = "SHP_WEAPON_5"
-    description = "SHP_WEAPON_5_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 20
-    researchturns = 10
-    prerequisites = "SHP_ROOT_AGGRESSION"
-    unlock = Item type = ShipPart name = "SR_WEAPON_5"
-    graphic = "icons/ship_parts/laser-1.png"
 
-Tech
-    name = "SHP_WEAPON_6"
-    description = "SHP_WEAPON_6_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Refinement
-    category = "SHIPS_CATEGORY"
-    researchcost = 10
-    researchturns = 5
-    prerequisites = "SHP_WEAPON_5"
-    unlock = Item type = ShipPart name = "SR_WEAPON_6"
-    graphic = "icons/ship_parts/laser-2.png"
+//########################################################
+//#     L E A R N I N G
+//########################################################
 
-Tech
-    name = "SHP_WEAPON_7"
-    description = "SHP_WEAPON_7_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Refinement
-    category = "SHIPS_CATEGORY"
-    researchcost = 20
-    researchturns = 6
-    prerequisites = "SHP_WEAPON_6"
-    unlock = Item type = ShipPart name = "SR_WEAPON_7"
-    graphic = "icons/ship_parts/laser-3.png"
-
-Tech
-    name = "SHP_WEAPON_8"
-    description = "SHP_WEAPON_8_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Refinement
-    category = "SHIPS_CATEGORY"
-    researchcost = 40
-    researchturns = 7
-    prerequisites = "SHP_WEAPON_7"
-    unlock = Item type = ShipPart name = "SR_WEAPON_8"
-    graphic = "icons/ship_parts/laser-4.png"
-
-Tech
-    name = "SHP_WEAPON_9"
-    description = "SHP_WEAPON_9_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 100
-    researchturns = 15
-    prerequisites = "SHP_WEAPON_5"
-    unlock = Item type = ShipPart name = "SR_WEAPON_9"
-    graphic = "icons/ship_parts/plasma-1.png"
-
-Tech
-    name = "SHP_WEAPON_10"
-    description = "SHP_WEAPON_10_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Refinement
-    category = "SHIPS_CATEGORY"
-    researchcost = 50
-    researchturns = 8
-    prerequisites = "SHP_WEAPON_9"
-    unlock = Item type = ShipPart name = "SR_WEAPON_10"
-    graphic = "icons/ship_parts/plasma-2.png"
-
-Tech
-    name = "SHP_WEAPON_11"
-    description = "SHP_WEAPON_11_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Refinement
-    category = "SHIPS_CATEGORY"
-    researchcost = 100
-    researchturns = 9
-    prerequisites = "SHP_WEAPON_10"
-    unlock = Item type = ShipPart name = "SR_WEAPON_11"
-    graphic = "icons/ship_parts/plasma-3.png"
-
-Tech
-    name = "SHP_WEAPON_12"
-    description = "SHP_WEAPON_12_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Refinement
-    category = "SHIPS_CATEGORY"
-    researchcost = 200
-    researchturns = 10
-    prerequisites = "SHP_WEAPON_11"
-    unlock = Item type = ShipPart name = "SR_WEAPON_12"
-    graphic = "icons/ship_parts/plasma-4.png"
-
-Tech
-    name = "SHP_WEAPON_13"
-    description = "SHP_WEAPON_13_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 500
-    researchturns = 20
-    prerequisites = "SHP_WEAPON_9"
-    unlock = Item type = ShipPart name = "SR_WEAPON_13"
-    graphic = "icons/ship_parts/death-ray-1.png"
-
-Tech
-    name = "SHP_WEAPON_14"
-    description = "SHP_WEAPON_14_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Refinement
-    category = "SHIPS_CATEGORY"
-    researchcost = 250
-    researchturns = 11
-    prerequisites = "SHP_WEAPON_13"
-    unlock = Item type = ShipPart name = "SR_WEAPON_14"
-    graphic = "icons/ship_parts/death-ray-2.png"
-
-Tech
-    name = "SHP_WEAPON_15"
-    description = "SHP_WEAPON_15_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Refinement
-    category = "SHIPS_CATEGORY"
-    researchcost = 500
-    researchturns = 12
-    prerequisites = "SHP_WEAPON_14"
-    unlock = Item type = ShipPart name = "SR_WEAPON_15"
-    graphic = "icons/ship_parts/death-ray-3.png"
-
-Tech
-    name = "SHP_WEAPON_16"
-    description = "SHP_WEAPON_16_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Refinement
-    category = "SHIPS_CATEGORY"
-    researchcost = 1000
-    researchturns = 13
-    prerequisites = "SHP_WEAPON_15"
-    unlock = Item type = ShipPart name = "SR_WEAPON_16"
-    graphic = "icons/ship_parts/death-ray-4.png"
-
-Tech
-    name = "SHP_WEAPON_17"
-    description = "SHP_WEAPON_17_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Refinement
-    category = "SHIPS_CATEGORY"
-    researchcost = 2000
-    researchturns = 14
-    prerequisites = "SHP_WEAPON_16"
-    unlock = Item type = ShipPart name = "SR_WEAPON_17"
-    graphic = "icons/ship_parts/death-ray-5.png"
 
 Tech
     name = "LRN_PHYS_BRAIN"
@@ -367,10 +279,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 36
     researchturns = 10
-    prerequisites = [
-        "SHP_GAL_EXPLO"
-        "LRN_TRANSLING_THT"
-    ]
+    prerequisites = "LRN_TRANSLING_THT"
     graphic = "icons/tech/xenoarchaeology.png"
 
 Tech
@@ -401,7 +310,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 40
+    researchcost = 400
     researchturns = 10
     prerequisites = "LRN_GRAVITONICS"
     graphic = "icons/tech/the_theory_of_everything.png"
@@ -834,6 +743,12 @@ Tech
             effects = SetTargetResearch Value + Target.Population * 0.25 * [[PRODUCTION_PER_POP]]
     ]
 
+
+//########################################################
+//#     G R O W T H
+//########################################################
+
+
 Tech
     name = "GRO_MEDICAL_PATH"
     description = "GRO_MEDICAL_PATH_DESC"
@@ -890,6 +805,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 12
     researchturns = 10
+    prerequisites = "GRO_PLANET_ECOL"
     graphic = "icons/tech/symbiosis_biology.png"
 
 Tech
@@ -975,12 +891,13 @@ Tech
 Tech
     name = "GRO_LIFECYCLE_MAN"
     description = "GRO_LIFECYCLE_MAN_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 12
     researchturns = 6
     prerequisites = "GRO_MEDICAL_PATH"
+    unlock = Item type = ShipPart name = "CO_SUSPEND_ANIM_POD"
     graphic = "icons/tech/lifecycle_manipulation.png"
 
 Tech
@@ -1110,16 +1027,6 @@ Tech
     unlock = Item type = Building name = "BLD_CLONING_CENTER"
     graphic = "icons/tech/industrial_cloning.png"
 */
-Tech
-    name = "GRO_SUSPENDED_ANIMATION"
-    description = "GRO_SUSPENDED_ANIMATION_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 8
-    researchturns = 3
-    prerequisites = "GRO_LIFECYCLE_MAN"
-    unlock = Item type = ShipPart name = "CO_SUSPEND_ANIM_POD"
 
 Tech
     name = "GRO_TERRAFORM"
@@ -1170,6 +1077,12 @@ Tech
     prerequisites = "GRO_TRANSORG_SENT"
     unlock = Item type = Building name = "BLD_GAIA_TRANS"
     graphic = "icons/tech/the_living_planet.png"
+
+
+//########################################################
+//#     P R O D U C T I O N
+//########################################################
+
 
 Tech
     name = "PRO_MICROGRAV_MAN"
@@ -1311,27 +1224,16 @@ Tech
     ]
     graphic = "icons/tech/basic_autofactories.png"
 
-/* Find some other use for this concept: */
-Tech
-    name = "PRO_ENERGY_CONV"
-    description = "PRO_ENERGY_CONV_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Theory
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 200
-    researchturns = 3
-    prerequisites = "LRN_EVERYTHING"
-    graphic = "icons/tech/matter-energy_replication.png"
-
 Tech
     name = "PRO_NDIM_ASSMB"
     description = "PRO_NDIM_ASSMB_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 200
     researchturns = 3
     prerequisites = "LRN_NDIM_SUBSPACE"
+    unlock = Item type = Building name = "BLD_HYPER_DAM"
     graphic = "icons/tech/n-dimensional_assembly.png"
 
 Tech
@@ -1355,12 +1257,12 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 250
+    researchcost = 500
     researchturns = 7
     prerequisites = [
         "PRO_NDIM_ASSMB"
         "PRO_SINGULAR_GEN"
-        "PRO_ENERGY_CONV"
+        "LRN_EVERYTHING"
     ]
     unlock = Item type = Building name = "BLD_HYPER_DAM"
     graphic = "icons/tech/zero_point_energy.png"
@@ -1373,6 +1275,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 70
     researchturns = 1
+    prerequisites = "PRO_ROBOTIC_PROD"
     graphic = "icons/tech/deep_core_mining.png"
 
 Tech
@@ -1433,6 +1336,12 @@ Tech
         Item type = Building name = "BLD_NEUTRONIUM_EXTRACTOR"
         Item type = Building name = "BLD_NEUTRONIUM_FORGE"
     ]
+
+
+//########################################################
+//#     C O N S T R U C T I O N
+//########################################################
+
 
 Tech
     name = "CON_METRO_INFRA"
@@ -1802,6 +1711,12 @@ Tech
     ]
     unlock = Item type = Building name = "BLD_ART_PLANET"
 
+
+//########################################################
+//#     S H I P S
+//########################################################
+
+
 Tech
     name = "SHP_GAL_EXPLO"
     description = "SHP_GAL_EXPLO_DESC"
@@ -1820,6 +1735,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 4
     researchturns = 1
+    prerequisites = "GRO_PLANET_ECOL"
 
 Tech
     name = "SHP_SPACE_TACTICS"
@@ -1851,69 +1767,6 @@ Tech
     researchcost = 75
     researchturns = 3
     prerequisites = "SHP_NAVIGATION"
-
-Tech
-    name = "SHP_SPACE_WEAPON"
-    description = "SHP_SPACE_WEAPON_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "SHIPS_CATEGORY"
-    researchcost = 62
-    researchturns = 2
-    prerequisites = "SHP_SPACE_TACTICS"
-
-Tech
-    name = "SHP_ADV_NAVIGATION"
-    description = "SHP_ADV_NAVIGATION_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "SHIPS_CATEGORY"
-    researchcost = 120
-    researchturns = 5
-    prerequisites = "SHP_INTSTEL_LOG"
-
-Tech
-    name = "SHP_TACT_COUNTER"
-    description = "SHP_TACT_COUNTER_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "SHIPS_CATEGORY"
-    researchcost = 62
-    researchturns = 2
-    prerequisites = "SHP_SPACE_TACTICS"
-
-Tech
-    name = "SHP_TACT_SUPER"
-    description = "SHP_TACT_SUPER_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "SHIPS_CATEGORY"
-    researchcost = 125
-    researchturns = 3
-    prerequisites = "SHP_TACT_COUNTER"
-
-Tech
-    name = "SHP_SURGICAL_DESTRUCT"
-    description = "SHP_SURGICAL_DESTRUCT_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "SHIPS_CATEGORY"
-    researchcost = 150
-    researchturns = 4
-    prerequisites = [
-        "SHP_TACT_SUPER"
-        "SHP_SPACE_WEAPON"
-    ]
-
-Tech
-    name = "SHP_STRAT_DEFENSE"
-    description = "SHP_STRAT_DEFENSE_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "SHIPS_CATEGORY"
-    researchcost = 200
-    researchturns = 5
-    prerequisites = "SHP_SURGICAL_DESTRUCT"
 
 Tech
     name = "SHP_MIL_ROBO_CONT"
@@ -1976,12 +1829,16 @@ Tech
 Tech
     name = "SHP_TRANSSPACE_DRIVE"
     description = "SHP_TRANSSPACE_DRIVE_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 600
-    researchturns = 2
+    researchcost = 850
+    researchturns = 4
     prerequisites = "SHP_MASSPROP_SPEC"
+    unlock = [
+        Item type = ShipHull name = "SH_TRANSSPATIAL"
+        Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
+    ]
 
 Tech
     name = "SHP_MIDCOMB_LOG"
@@ -2035,12 +1892,16 @@ Tech
 Tech
     name = "SHP_MONOMOLEC_LATTICE"
     description = "SHP_MONOMOLEC_LATTICE_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 900
+    researchcost = 1200
     researchturns = 5
     prerequisites = "SHP_ASTEROID_REFORM"
+    unlock = [
+        Item type = ShipHull name = "SH_CRYSTALLIZED_ASTEROID"
+        Item type = ShipPart name = "AR_CRYSTAL_PLATE"
+        ]
 
 Tech
     name = "SHP_MULTICELL_CAST"
@@ -2060,10 +1921,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 6
     researchturns = 5
-    prerequisites = [
-        "GRO_SYMBIOTIC_BIO"
-        "SHP_DOMESTIC_MONSTER"
-    ]
+    prerequisites = "SHP_DOMESTIC_MONSTER"
     unlock = [
         Item type = ShipHull name = "SH_ENDOMORPHIC"
         Item type = Building name = "BLD_SHIPYARD_ORG_ORB_INC"
@@ -2098,24 +1956,29 @@ Tech
 Tech
     name = "SHP_CONT_BIOADAPT"
     description = "SHP_CONT_BIOADAPT_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 125
     researchturns = 12
     prerequisites = "SHP_CONT_SYMB"
+    unlock = Item type = ShipHull name = "SH_RAVENOUS"
 
 Tech
     name = "SHP_BIONEUR_SPEC"
     description = "SHP_BIONEUR_SPEC_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 125
     researchturns = 12
     prerequisites = [
         "SHP_MONOCELL_EXP"
         "GRO_TRANSORG_SENT"
+    ]
+    unlock = [
+        Item type = ShipHull name = "SH_BIOADAPTIVE"
+        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
 
 Tech
@@ -2177,38 +2040,6 @@ Tech
     ]
 
 Tech
-    name = "SHP_OPTICAL_SCANNER"
-    description = "SHP_OPTICAL_SCANNER_DESC"
-    short_description = "DETECTION_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 1
-    researchturns = 1
-    Unresearchable
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet
-            ]
-            activation = And [
-                Not OwnerHasTech "SHP_RADAR"
-                Not OwnerHasTech "SHP_NEUTRON_SCANNER"
-                Not OwnerHasTech "SHP_SENSORS"
-            ]
-            effects = SetDetection Value + 50
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Not OwnerHasTech "SHP_RADAR"
-                Not OwnerHasTech "SHP_NEUTRON_SCANNER"
-                Not OwnerHasTech "SHP_SENSORS"
-            ]
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 50
-    ]
-
-Tech
     name = "SHP_SELFGRAV_HULL"
     description = "SHP_SELFGRAV_HULL_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
@@ -2248,20 +2079,6 @@ Tech
     unlock = [
         Item type = ShipHull name = "SH_TITANIC"
         Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
-    ]
-
-Tech
-    name = "SHP_TRANSSPACE_HULL"
-    description = "SHP_TRANSSPACE_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 250
-    researchturns = 1
-    prerequisites = "SHP_TRANSSPACE_DRIVE"
-    unlock = [
-        Item type = ShipHull name = "SH_TRANSSPATIAL"
-        Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
     ]
 
 Tech
@@ -2308,17 +2125,6 @@ Tech
     ]
 
 Tech
-    name = "SHP_CRYSTAL_AST_HULL"
-    description = "SHP_CRYSTAL_AST_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 160
-    researchturns = 2
-    prerequisites = "SHP_MONOMOLEC_LATTICE"
-    unlock = Item type = ShipHull name = "SH_CRYSTALLIZED_ASTEROID"
-
-Tech
     name = "SHP_ROCK_PLATE"
     description = "SHP_ROCK_PLATE_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
@@ -2331,17 +2137,6 @@ Tech
         Item type = ShipPart name = "AR_ROCK_PLATE"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
     ]
-
-Tech
-    name = "SHP_CRYSTAL_PLATE"
-    description = "SHP_CRYSTAL_PLATE_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 160
-    researchturns = 2
-    prerequisites = "SHP_MONOMOLEC_LATTICE"
-    unlock = Item type = ShipPart name = "AR_CRYSTAL_PLATE"
 
 Tech
     name = "SHP_ORG_HULL"
@@ -2415,31 +2210,6 @@ Tech
     ]
 
 Tech
-    name = "SHP_RAVEN_HULL"
-    description = "SHP_RAVEN_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 156
-    researchturns = 4
-    prerequisites = "SHP_CONT_BIOADAPT"
-    unlock = Item type = ShipHull name = "SH_RAVENOUS"
-
-Tech
-    name = "SHP_BIOADAPT_HULL"
-    description = "SHP_BIOADAPT_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 156
-    researchturns = 4
-    prerequisites = "SHP_BIONEUR_SPEC"
-    unlock = [
-        Item type = ShipHull name = "SH_BIOADAPTIVE"
-        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
-    ]
-
-Tech
     name = "SHP_SENT_HULL"
     description = "SHP_SENT_HULL_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
@@ -2473,35 +2243,10 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 125
+    researchcost = 325
     researchturns = 4
-    prerequisites = [
-        "SHP_STRAT_DEFENSE"
-        "PRO_NEUTRONIUM_EXTRACTION"
-    ]
+    prerequisites = "PRO_NEUTRONIUM_EXTRACTION"
     unlock = Item type = ShipPart name = "AR_NEUTRONIUM_PLATE"
-
-Tech
-    name = "DEF_LIGHTHOUSE"
-    description = "DEF_LIGHTHOUSE_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 75
-    researchturns = 3
-    prerequisites = "SHP_ADV_NAVIGATION"
-    unlock = Item type = Building name = "BLD_LIGHTHOUSE"
-    graphic = "icons/tech/interstellar_lighthouse.png"
-
-Tech
-    name = "SHP_FLEET_LOGISTICS"
-    description = "SHP_FLEET_LOGISTICS_DESC"
-    short_description = "FLEET_RANGE_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 36
-    researchturns = 2
-    prerequisites = "SHP_INTSTEL_LOG"
 
 Tech
     name = "SHP_FLEET_REPAIR"
@@ -2511,7 +2256,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 40
     researchturns = 10
-    prerequisites = "SHP_FLEET_LOGISTICS"
+    prerequisites = "SHP_INTSTEL_LOG"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -2535,37 +2280,6 @@ Tech
     researchturns = 1
     prerequisites = "SHP_SPACE_TACTICS"
     unlock = Item type = ShipPart name = "SH_DEFLECTOR"
-
-Tech
-    name = "SHP_RADAR"
-    description = "SHP_RADAR_DESC"
-    short_description = "DETECTION_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 100
-    researchturns = 2
-    prerequisites = "SHP_GAL_EXPLO"
-    unlock = Item type = ShipPart name = "DT_ACTIVE_RADAR"
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet
-            ]
-            activation = And [
-                Not OwnerHasTech "SHP_NEUTRON_SCANNER"
-                Not OwnerHasTech "SHP_SENSORS"
-            ]
-            effects = SetDetection Value + 75
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Not OwnerHasTech "SHP_NEUTRON_SCANNER"
-                Not OwnerHasTech "SHP_SENSORS"
-            ]
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 200
-    ]
 
 Tech
     name = "SHP_DEUTERIUM_TANK"
@@ -2596,58 +2310,6 @@ Tech
             effects = SetMaxStructure Value + 5
 
 Tech
-    name = "SHP_EM_DAMPER"
-    description = "SHP_EM_DAMPER_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 8
-    researchturns = 1
-    prerequisites = "SHP_SPACE_TACTICS"
-    unlock = Item type = ShipPart name = "ST_EM_DAMPER"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Or [
-                    Planet
-                    System
-                ]
-            ]
-            activation = And [
-                Not OwnerHasTech "SHP_ABSORPTION_FIELD"
-                Not OwnerHasTech "SHP_DIM_CLOAK"
-                Not OwnerHasTech "SHP_PHASING_CLOAK"
-            ]
-            effects = AddSpecial "CLOUD_COVER_SLAVE_SPECIAL"
-
-
-Tech
-    name = "SHP_NEUTRON_SCANNER"
-    description = "SHP_NEUTRON_SCANNER_DESC"
-    short_description = "DETECTION_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 200
-    researchturns = 2
-    prerequisites = "SHP_RADAR"
-    unlock = Item type = ShipPart name = "DT_NEUTRON_SCANNER"
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet
-            ]
-            activation = Not OwnerHasTech "SHP_SENSORS"
-            effects = SetDetection Value + 150
-
-        EffectsGroup
-            scope = Source
-            activation = Not OwnerHasTech "SHP_SENSORS"
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 400
-    ]
-
-Tech
     name = "SHP_BASIC_DAM_CONT"
     description = "SHP_BASIC_DAM_CONT_DESC"
     short_description = "STRUCTURE_SHORT_DESC"
@@ -2670,9 +2332,9 @@ Tech
     short_description = "STRUCTURE_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 75
+    researchcost = 200
     researchturns = 3
-    prerequisites = "SHP_ADV_NAVIGATION"
+    prerequisites = "SHP_BASIC_DAM_CONT"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -2687,137 +2349,10 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 75
+    researchcost = 200
     researchturns = 3
-    prerequisites = "SHP_ADV_NAVIGATION"
+    prerequisites = "SHP_LEAD_PLATE"
     unlock = Item type = ShipPart name = "AR_ZORTRIUM_PLATE"
-
-Tech
-    name = "DEF_DEFENSE_NET"
-    description = "DEF_DEFENSE_NET_DESC"
-    short_description = "DEFENSE_SHORT_DESC"
-    techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 8
-    researchturns = 1
-    prerequisites = "DEF_ROOT_DEFENSE"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet
-            ]
-            effects = SetMaxDefense Value + 5
-
-Tech
-    name = "DEF_PLAN_DEFLECT_SHLD"
-    description = "DEF_PLAN_DEFLECT_SHLD_DESC"
-    short_description = "SHIELD_SHORT_DESC"
-    techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 45
-    researchturns = 1
-    prerequisites = "SHP_TACT_COUNTER"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet
-            ]
-            activation = Not OwnerHasTech "DEF_PLAN_BARRIER_SHLD"
-            effects = SetMaxShield Value + 10
-
-Tech
-    name = "SHP_SYST_DEF_MINE"
-    description = "SHP_SYST_DEF_MINE_DESC"
-    short_description = "DEFENSE_SHORT_DESC"
-    techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 120
-    researchturns = 4
-    prerequisites = "DEF_DEFENSE_NET"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                ContainedBy Contains And [
-                    OwnedBy TheEmpire Source.Owner
-                    Planet
-                ]
-                Ship
-                OwnedBy EnemyOf Source.Owner
-            ]
-            effects = SetStructure Value - 2
-
-Tech
-    name = "SHP_ABSORPTION_FIELD"
-    description = "SHP_ABSORPTION_FIELD_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 45
-    researchturns = 1
-    prerequisites = "SHP_TACT_COUNTER"
-    unlock = Item type = ShipPart name = "ST_ABSORPTION_FIELD"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Or [
-                    Planet
-                    System
-                ]
-            ]
-            activation = And [
-                Not OwnerHasTech "SHP_DIM_CLOAK"
-                Not OwnerHasTech "SHP_PHASING_CLOAK"
-            ]
-            effects = [
-                AddSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
-                RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
-            ]
-
-Tech
-    name = "SHP_DIM_CLOAK"
-    description = "SHP_DIM_CLOAK_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 52
-    researchturns = 2
-    prerequisites = "SHP_TACT_SUPER"
-    unlock = Item type = ShipPart name = "ST_DIM_CLOAK"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Or [
-                    Planet
-                    System
-                ]
-            ]
-            activation = Not OwnerHasTech "SHP_PHASING_CLOAK"
-            effects = [
-                AddSpecial "DIM_RIFT_SLAVE_SPECIAL"
-                RemoveSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
-                RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
-            ]
-
-Tech
-    name = "DEF_HI_ENRG_FOCUS"
-    description = "DEF_HI_ENRG_FOCUS_DESC"
-    short_description = "DEFENSE_SHORT_DESC"
-    techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 80
-    researchturns = 2
-    prerequisites = "DEF_DEFENSE_NET"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet
-            ]
-            effects = SetMaxDefense Value + 15
 
 Tech
     name = "SHP_ANTIMATTER_TANK"
@@ -2831,42 +2366,524 @@ Tech
     unlock = Item type = ShipPart name = "FU_ANTIMATTER_TANK"
 
 Tech
-    name = "DEF_PLAN_BARRIER_SHLD"
-    description = "DEF_PLAN_BARRIER_SHLD_DESC"
-    short_description = "SHIELD_SHORT_DESC"
+    name = "SHP_NOVA_BOMB"
+    description = "SHP_NOVA_BOMB_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 125
+    category = "SHIPS_CATEGORY"
+    researchcost = 750
+    researchturns = 12
+    prerequisites = [
+        "LRN_TIME_MECH"
+        "PRO_ZERO_GEN"
+    ]
+    unlock = [
+        Item type = ShipPart name = "SP_NOVA_BOMB"
+        Item type = Building name = "BLD_NOVA_BOMB_ACTIVATOR"
+    ]
+
+Tech
+    name = "SHP_DEATH_SPORE"
+    description = "SHP_DEATH_SPORE_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 450
+    researchturns = 3
+    prerequisites = 
+        "GRO_ADV_ECOMAN"
+    unlock = Item type = ShipPart name = "SP_DEATH_SPORE"
+
+Tech
+    name = "SHP_BIOTERM"
+    description = "SHP_BIOTERM_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 75
+    researchturns = 5
+    prerequisites = [
+        "SHP_DEATH_SPORE"
+        "GRO_BIOTERROR"
+    ]
+    unlock = Item type = ShipPart name = "SP_BIOTERM"
+
+Tech
+    name = "SHP_MULTISPEC_SHIELD"
+    description = "SHP_MULTISPEC_SHIELD_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 9999
+    researchturns = 9999
+    Unresearchable
+    prerequisites = "SPY_DIST_MOD"
+    unlock = Item type = ShipPart name = "SH_MULTISPEC"
+
+//#
+//#     S H I P S   W E A P O N S
+//#
+
+Tech
+    Name ="SHP_ROOT_AGGRESSION"
+    description = "SHP_ROOT_AGGRESSION_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    unlock = [
+        Item type = ShipPart name = "SR_WEAPON_1"
+        Item type = ShipPart name = "GT_TROOP_POD"
+    ]
+    graphic = ""
+
+Tech
+    name = "SHP_WEAPON_2"
+    description = "SHP_WEAPON_2_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 2
+    researchturns = 5
+    prerequisites = "SHP_ROOT_AGGRESSION"
+    unlock = Item type = ShipPart name = "SR_WEAPON_2"
+    graphic = "icons/ship_parts/mass-driver-2.png"
+    
+Tech
+    name = "SHP_WEAPON_3"
+    description = "SHP_WEAPON_3_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 4
+    researchturns = 3
+    prerequisites = "SHP_WEAPON_2"
+    unlock = Item type = ShipPart name = "SR_WEAPON_3"
+    graphic = "icons/ship_parts/mass-driver-3.png"
+
+Tech
+    name = "SHP_WEAPON_4"
+    description = "SHP_WEAPON_4_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 5
     researchturns = 4
-    prerequisites = "SHP_STRAT_DEFENSE"
+    prerequisites = "SHP_WEAPON_3"
+    unlock = Item type = ShipPart name = "SR_WEAPON_4"
+    graphic = "icons/ship_parts/mass-driver-4.png"
+
+Tech
+    name = "SHP_WEAPON_5"
+    description = "SHP_WEAPON_5_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 20
+    researchturns = 10
+    prerequisites = "SHP_ROOT_AGGRESSION"
+    unlock = Item type = ShipPart name = "SR_WEAPON_5"
+    graphic = "icons/ship_parts/laser-1.png"
+
+Tech
+    name = "SHP_WEAPON_6"
+    description = "SHP_WEAPON_6_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 10
+    researchturns = 5
+    prerequisites = "SHP_WEAPON_5"
+    unlock = Item type = ShipPart name = "SR_WEAPON_6"
+    graphic = "icons/ship_parts/laser-2.png"
+
+Tech
+    name = "SHP_WEAPON_7"
+    description = "SHP_WEAPON_7_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 20
+    researchturns = 6
+    prerequisites = "SHP_WEAPON_6"
+    unlock = Item type = ShipPart name = "SR_WEAPON_7"
+    graphic = "icons/ship_parts/laser-3.png"
+
+Tech
+    name = "SHP_WEAPON_8"
+    description = "SHP_WEAPON_8_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 40
+    researchturns = 7
+    prerequisites = "SHP_WEAPON_7"
+    unlock = Item type = ShipPart name = "SR_WEAPON_8"
+    graphic = "icons/ship_parts/laser-4.png"
+
+Tech
+    name = "SHP_WEAPON_9"
+    description = "SHP_WEAPON_9_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 100
+    researchturns = 15
+    prerequisites = "SHP_WEAPON_5"
+    unlock = Item type = ShipPart name = "SR_WEAPON_9"
+    graphic = "icons/ship_parts/plasma-1.png"
+
+Tech
+    name = "SHP_WEAPON_10"
+    description = "SHP_WEAPON_10_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 50
+    researchturns = 8
+    prerequisites = "SHP_WEAPON_9"
+    unlock = Item type = ShipPart name = "SR_WEAPON_10"
+    graphic = "icons/ship_parts/plasma-2.png"
+
+Tech
+    name = "SHP_WEAPON_11"
+    description = "SHP_WEAPON_11_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 100
+    researchturns = 9
+    prerequisites = "SHP_WEAPON_10"
+    unlock = Item type = ShipPart name = "SR_WEAPON_11"
+    graphic = "icons/ship_parts/plasma-3.png"
+
+Tech
+    name = "SHP_WEAPON_12"
+    description = "SHP_WEAPON_12_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 200
+    researchturns = 10
+    prerequisites = "SHP_WEAPON_11"
+    unlock = Item type = ShipPart name = "SR_WEAPON_12"
+    graphic = "icons/ship_parts/plasma-4.png"
+
+Tech
+    name = "SHP_WEAPON_13"
+    description = "SHP_WEAPON_13_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 500
+    researchturns = 20
+    prerequisites = "SHP_WEAPON_9"
+    unlock = Item type = ShipPart name = "SR_WEAPON_13"
+    graphic = "icons/ship_parts/death-ray-1.png"
+
+Tech
+    name = "SHP_WEAPON_14"
+    description = "SHP_WEAPON_14_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 250
+    researchturns = 11
+    prerequisites = "SHP_WEAPON_13"
+    unlock = Item type = ShipPart name = "SR_WEAPON_14"
+    graphic = "icons/ship_parts/death-ray-2.png"
+
+Tech
+    name = "SHP_WEAPON_15"
+    description = "SHP_WEAPON_15_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 500
+    researchturns = 12
+    prerequisites = "SHP_WEAPON_14"
+    unlock = Item type = ShipPart name = "SR_WEAPON_15"
+    graphic = "icons/ship_parts/death-ray-3.png"
+
+Tech
+    name = "SHP_WEAPON_16"
+    description = "SHP_WEAPON_16_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 1000
+    researchturns = 13
+    prerequisites = "SHP_WEAPON_15"
+    unlock = Item type = ShipPart name = "SR_WEAPON_16"
+    graphic = "icons/ship_parts/death-ray-4.png"
+
+Tech
+    name = "SHP_WEAPON_17"
+    description = "SHP_WEAPON_17_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 2000
+    researchturns = 14
+    prerequisites = "SHP_WEAPON_16"
+    unlock = Item type = ShipPart name = "SR_WEAPON_17"
+    graphic = "icons/ship_parts/death-ray-5.png"
+
+Tech
+    name = "SPY_PLANET_STEALTH_MOD"
+    description = "SPY_PLANET_STEALTH_MOD_DESC"
+    short_description = "GAME_MAKE_WORK_SHORT_DESC"
+    techtype = Application
+    category = "SPY_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    Unresearchable
     effectsgroups =
+        EffectsGroup
+            scope = Building
+            stackinggroup = "PLANET_STEALTH_MOD_STACK"
+            effects = SetStealth Value + 9.99
+    graphic = ""
+
+
+//########################################################
+//#     I N T E L L I G E N C E
+//########################################################
+
+
+    
+//#
+//#     D E T E C T I O N
+//#
+
+Tech
+    name = "SPY_OPTICAL_SCANNER"
+    description = "SPY_OPTICAL_SCANNER_DESC"
+    short_description = "DETECTION_SHORT_DESC"
+    techtype = Application
+    category = "SPY_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    Unresearchable
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            effects = SetMaxShield Value + 45
+            activation = And [
+                Not OwnerHasTech "SPY_RADAR"
+                Not OwnerHasTech "SPY_NEUTRON_SCANNER"
+                Not OwnerHasTech "SPY_SENSORS"
+            ]
+            effects = SetDetection Value + 50
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Not OwnerHasTech "SPY_RADAR"
+                Not OwnerHasTech "SPY_NEUTRON_SCANNER"
+                Not OwnerHasTech "SPY_SENSORS"
+            ]
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 50
+    ]
 
 Tech
-    name = "SHP_DIST_MOD"
-    description = "SHP_DIST_MOD_DESC"
+    name = "SPY_RADAR"
+    description = "SPY_RADAR_DESC"
+    short_description = "DETECTION_SHORT_DESC"
+    techtype = Application
+    category = "SPY_CATEGORY"
+    researchcost = 100
+    researchturns = 2
+    prerequisites = "SHP_GAL_EXPLO"
+    unlock = Item type = ShipPart name = "DT_ACTIVE_RADAR"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech "SPY_NEUTRON_SCANNER"
+                Not OwnerHasTech "SPY_SENSORS"
+            ]
+            effects = SetDetection Value + 75
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Not OwnerHasTech "SPY_NEUTRON_SCANNER"
+                Not OwnerHasTech "SPY_SENSORS"
+            ]
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 200
+    ]
+    
+Tech
+    name = "SPY_NEUTRON_SCANNER"
+    description = "SPY_NEUTRON_SCANNER_DESC"
+    short_description = "DETECTION_SHORT_DESC"
+    techtype = Application
+    category = "SPY_CATEGORY"
+    researchcost = 200
+    researchturns = 2
+    prerequisites = "SPY_RADAR"
+    unlock = Item type = ShipPart name = "DT_NEUTRON_SCANNER"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            activation = Not OwnerHasTech "SPY_SENSORS"
+            effects = SetDetection Value + 150
+
+        EffectsGroup
+            scope = Source
+            activation = Not OwnerHasTech "SPY_SENSORS"
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 400
+    ]
+    
+Tech
+    name = "SPY_SENSORS"
+    description = "SPY_SENSORS_DESC"
+    short_description = "DETECTION_SHORT_DESC"
+    techtype = Application
+    category = "SPY_CATEGORY"
+    researchcost = 500
+    researchturns = 3
+    prerequisites = "SPY_NEUTRON_SCANNER"
+    unlock = Item type = ShipPart name = "DT_SENSORS"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = SetDetection Value + 200
+
+        EffectsGroup
+            scope = Source
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 700
+    ]
+
+Tech
+    name = "SPY_DIST_MOD"
+    description = "SPY_DIST_MOD_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
-    category = "SHIPS_CATEGORY"
+    category = "SPY_CATEGORY"
     researchcost = 75
     researchturns = 3
-    prerequisites = "SHP_SURGICAL_DESTRUCT"
+    prerequisites = "LRN_EVERYTHING"
     unlock = Item type = ShipPart name = "SP_DISTORTION_MODULATOR"
+    
+Tech
+    name = "SPY_LIGHTHOUSE"
+    description = "SPY_LIGHTHOUSE_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SPY_CATEGORY"
+    researchcost = 75
+    researchturns = 3
+    prerequisites = "SPY_RADAR"
+    unlock = Item type = Building name = "BLD_LIGHTHOUSE"
+    graphic = "icons/tech/interstellar_lighthouse.png"
+
+//#
+//#     S T E A L T H
+//#    
 
 Tech
-    name = "SHP_PHASING_CLOAK"
-    description = "SHP_PHASING_CLOAK_DESC"
+    name = "SPY_EM_DAMPER"
+    description = "SPY_EM_DAMPER_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
-    category = "SHIPS_CATEGORY"
+    category = "SPY_CATEGORY"
+    researchcost = 8
+    researchturns = 1
+    prerequisites = "SHP_SPACE_TACTICS"
+    unlock = Item type = ShipPart name = "ST_EM_DAMPER"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Or [
+                    Planet
+                    System
+                ]
+            ]
+            activation = And [
+                Not OwnerHasTech "SPY_ABSORPTION_FIELD"
+                Not OwnerHasTech "SPY_DIM_CLOAK"
+                Not OwnerHasTech "SPY_PHASING_CLOAK"
+            ]
+            effects = AddSpecial "CLOUD_COVER_SLAVE_SPECIAL"
+            
+Tech
+    name = "SPY_ABSORPTION_FIELD"
+    description = "SPY_ABSORPTION_FIELD_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SPY_CATEGORY"
+    researchcost = 45
+    researchturns = 1
+    prerequisites = "SPY_EM_DAMPER"
+    unlock = Item type = ShipPart name = "ST_ABSORPTION_FIELD"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Or [
+                    Planet
+                    System
+                ]
+            ]
+            activation = And [
+                Not OwnerHasTech "SPY_DIM_CLOAK"
+                Not OwnerHasTech "SPY_PHASING_CLOAK"
+            ]
+            effects = [
+                AddSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
+                RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
+            ]
+            
+Tech
+    name = "SPY_DIM_CLOAK"
+    description = "SPY_DIM_CLOAK_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SPY_CATEGORY"
+    researchcost = 52
+    researchturns = 2
+    prerequisites = "SPY_ABSORPTION_FIELD"
+    unlock = Item type = ShipPart name = "ST_DIM_CLOAK"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Or [
+                    Planet
+                    System
+                ]
+            ]
+            activation = Not OwnerHasTech "SPY_PHASING_CLOAK"
+            effects = [
+                AddSpecial "DIM_RIFT_SLAVE_SPECIAL"
+                RemoveSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
+                RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
+            ]
+            
+Tech
+    name = "SPY_PHASING_CLOAK"
+    description = "SPY_PHASING_CLOAK_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SPY_CATEGORY"
     researchcost = 125
     researchturns = 4
-    prerequisites = "SHP_STRAT_DEFENSE"
+    prerequisites = "SPY_DIM_CLOAK"
     unlock = Item type = ShipPart name = "ST_PHASING_CLOAK"
     effectsgroups =
         EffectsGroup
@@ -2883,113 +2900,4 @@ Tech
                 RemoveSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
                 RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
             ]
-
-Tech
-    name = "SHP_SENSORS"
-    description = "SHP_SENSORS_DESC"
-    short_description = "DETECTION_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 500
-    researchturns = 3
-    prerequisites = "SHP_NEUTRON_SCANNER"
-    unlock = Item type = ShipPart name = "DT_SENSORS"
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet
-            ]
-            effects = SetDetection Value + 200
-
-        EffectsGroup
-            scope = Source
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 700
-    ]
-
-Tech
-    name = "SHP_NOVA_BOMB"
-    description = "SHP_NOVA_BOMB_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 400
-    researchturns = 12
-    prerequisites = [
-        "SHP_SURGICAL_DESTRUCT"
-        "LRN_TIME_MECH"
-        "PRO_ZERO_GEN"
-    ]
-    unlock = [
-        Item type = ShipPart name = "SP_NOVA_BOMB"
-        Item type = Building name = "BLD_NOVA_BOMB_ACTIVATOR"
-    ]
-
-Tech
-    name = "SHP_DEATH_SPORE"
-    description = "SHP_DEATH_SPORE_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 45
-    researchturns = 3
-    prerequisites = [
-        "SHP_SPACE_WEAPON"
-        "GRO_ADV_ECOMAN"
-    ]
-    unlock = Item type = ShipPart name = "SP_DEATH_SPORE"
-
-Tech
-    name = "SHP_BIOTERM"
-    description = "SHP_BIOTERM_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 75
-    researchturns = 5
-    prerequisites = [
-        "SHP_SURGICAL_DESTRUCT"
-        "GRO_BIOTERROR"
-    ]
-    unlock = Item type = ShipPart name = "SP_BIOTERM"
-
-Tech
-    name = "DEF_PLANET_CLOAK"
-    description = "DEF_PLANET_CLOAK_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 9999
-    researchturns = 9999
-    Unresearchable
-    prerequisites = "SHP_DIM_CLOAK"
-    unlock = Item type = Building name = "BLD_PLANET_CLOAK"
-
-Tech
-    name = "SHP_MULTISPEC_SHIELD"
-    description = "SHP_MULTISPEC_SHIELD_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 9999
-    researchturns = 9999
-    Unresearchable
-    prerequisites = "SHP_DIST_MOD"
-    unlock = Item type = ShipPart name = "SH_MULTISPEC"
-
-Tech
-    name = "SHP_PLANET_STEALTH_MOD"
-    description = "SHP_PLANET_STEALTH_MOD_DESC"
-    short_description = "GAME_MAKE_WORK_SHORT_DESC"
-    techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 1
-    researchturns = 1
-    Unresearchable
-    effectsgroups =
-        EffectsGroup
-            scope = Building
-            stackinggroup = "PLANET_STEALTH_MOD_STACK"
-            effects = SetStealth Value + 9.99
-    graphic = ""
 

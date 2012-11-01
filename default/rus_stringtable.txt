@@ -5247,10 +5247,10 @@ GRO_INDUSTY_FARM
 GRO_INDUSTY_FARM_DESC
 Традиционные, простые фермерские методы достаточны для малых, вполне само-достаточных поселений без существенных ограничений на доступном пространстве или времени. Тем не менее, с гораздо большей специализацией более продвинутых сообществ, несколько фермеров должны кормить множество рабочих на довольно больших расстояниях, включающие даже межзвездную доставку продовольствия для молодых колоний. Гидропоника, автоматизация, удобрение, контроль паразитов и изменение освещенности циклов роста становится важным. Успешное использование этих инструментов требует понимание их функционирования, взаимодействия, цены и низко-уровневых механизмов.
 
-GRO_ENV_ENCAPSUL
+CON_ENV_ENCAPSUL
 Инкапсуляция Природной Среды
 
-GRO_ENV_ENCAPSUL_DESC
+CON_ENV_ENCAPSUL_DESC
 '''Позволяет создавать автоматизированные станции на непригоднях для жилья планетах, в том числе на астероидах и газовых гигантах. Многие типы строений не могут быть возведены на этой станции. Аванпосты дешевле, и пока они не производят продукцию, то могут быть использованы в качестве быстрого способа заявления права на территорию.'''
 
 GRO_SYMBIOTIC_BIO
@@ -6095,10 +6095,10 @@ By extracting neutronium from a neutron star, it is possible to utilize it in th
 PRO_INDUSTRY_MOD
 Industry Modifier
 
-DEF_LIGHTHOUSE
+SPY_LIGHTHOUSE
 Interstellar Lighthouses
 
-DEF_LIGHTHOUSE_DESC
+SPY_LIGHTHOUSE_DESC
 By using a complex pattern of EM pulses and particle streams to reveal the location of objects in a system, it is possible for even very stealthy objects to be illuminated and detected with moderate detection equipment.
 
 DEF_DEFENSE_NET
@@ -6203,10 +6203,10 @@ SHP_ADV_DAM_CONT
 SHP_ADV_DAM_CONT_DESC
 Полностью восстанавливает повреждённые корабли между битвами.
 
-SHP_SYST_DEF_MINE
+DEF_SYST_DEF_MINE
 Минная Защита Системы
 
-SHP_SYST_DEF_MINE_DESC
+DEF_SYST_DEF_MINE_DESC
 '''Когда в системе отсутствует дружественный флот, вражеские корабли могут заблокировать систему, остановив транспортировку ресурсов не вступая при этом в непосредственный контакт с системой обороны планеты, то есть не рискуя ничем. Сеть мин защищающая систему позволит предупредить такую тактику нанося повреждения вражеским кораблям каждый ход, пока они находятся в системе.
 
 Структура всех вражеских судов, находящихся в системе с планетой империи, которая владеет данной технологией, будет уменьшаться на 2 каждый ход.
@@ -6383,13 +6383,13 @@ SHP_MULTISPEC_SHIELD
 SHP_MULTISPEC_SHIELD_DESC
 Обеспечивают достаточную защиту для входа корабля в сердце звезды. Суда в системе со звездой типа, отличного от черной дыры и нейтронные получают существенный бонус к скрытности.
 
-SHP_OPTICAL_SCANNER
+SPY_OPTICAL_SCANNER
 Оптический Сканер
 
-SHP_OPTICAL_SCANNER_DESC
+SPY_OPTICAL_SCANNER_DESC
 Все колонии начинают игру с уровня обнаружения 50, Оптический Сканер позволяет кораблям достичь того же уровня обнаружения.
 
-SHP_RADAR
+SPY_RADAR
 Активный Радар
 
 SHP_RADAR_DESC
@@ -6397,44 +6397,44 @@ SHP_RADAR_DESC
 
 Непрактично полагаться на пассивное обнаружение объектов по поступающему от них электромагнитному излучению, ведь это излучение может быть замаскировано или приглушено. Путём излучения электромагнитных волн и фиксации их отражений можно определить расположение и скорость многих объектов.'''
 
-SHP_NEUTRON_SCANNER
+SPY_NEUTRON_SCANNER
 Нейтронный сканер
 
-SHP_NEUTRON_SCANNER_DESC
+SPY_NEUTRON_SCANNER_DESC
 '''Открывает нейтронный сканер, увеличивает дальность обнаружения всех планет до 150, а также повышает уровень имперского обнаружения до 400.
 
 Электромагнитное излучение не имеет массы покоя, и им можно с лёгкостью манипулировать. Радиолокационные устройства могут стать бесполезными, просто изогнув волны света проходящие вокруг объекта. Но можно добиться более эффективного сканирования, используя излучение нейтронных волн вместо электромагнитных.'''
 
-SHP_SENSORS
+SPY_SENSORS
 Сенсоры
 
-SHP_SENSORS_DESC
+SPY_SENSORS_DESC
 Unlocks the Sensors ship part, increases the detection range of all planets to 200, and increases the imperial detection level to 700.
 
-SHP_EM_DAMPER
+SPY_EM_DAMPER
 Electromagnetic Damper
 
-SHP_EM_DAMPER_DESC
+SPY_EM_DAMPER_DESC
 Unlocks the Electromagnetic Damper ship part and increases the Stealth of all planets, systems and buildings by 5. This bonus is not cumulative with that of other stealth techs.
 
-SHP_ABSORPTION_FIELD
+SPY_ABSORPTION_FIELD
 Absorption Field
 
-SHP_ABSORPTION_FIELD_DESC
+SPY_ABSORPTION_FIELD_DESC
 '''Increases the Stealth of all planets, systems, and buildings by 30. This bonus is not cumulative with that of other stealth techs.
 
 Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the stealth of a ship can be greatly increased.'''
 
-SHP_DIM_CLOAK
+SPY_DIM_CLOAK
 Dimensional Cloak
 
-SHP_DIM_CLOAK_DESC
+SPY_DIM_CLOAK_DESC
 Unlocks the Dimensional Cloak ship part and increases the Stealth of all planets, systems and buildings by 15. This bonus is not cumulative with that of other stealth techs.
 
-SHP_PHASING_CLOAK
+SPY_PHASING_CLOAK
 Phasing Cloak
 
-SHP_PHASING_CLOAK_DESC
+SPY_PHASING_CLOAK_DESC
 '''Increases the stealth of all planets, systems and buildings by 80. This bonus is not cumulative with that of other stealth techs.
 
 Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
@@ -6469,10 +6469,10 @@ SHP_NEUTRONIUM_PLATE
 SHP_NEUTRONIUM_PLATE_DESC
 Разблокирует часть корабля - Нейтронная Броня Обшивки.
 
-SHP_DIST_MOD
+SPY_DIST_MOD
 Модулятор Искажений
 
-SHP_DIST_MOD_DESC
+SPY_DIST_MOD_DESC
 Все объекты имеющие массу искривляют пространство-время за счёт гравитационного воздействия. Другие факторы, такие, как электромагнитные силы дают похожие геометрические эффекты. Безразборное локализованное усиление искажений пространства-времени, вызываемое космическими кораблями, можно легко отличить от фонового электромагнитного и гравитационного излучения. 
 
 SHP_SELFGRAV_HULL
@@ -6637,10 +6637,10 @@ Bio-Terminators
 SHP_BIOTERM_DESC
 Unlocks the Bio-Terminators ship part, which allows ships to greatly reduce the population of planets.
 
-SHP_PLANET_STEALTH_MOD
+SPY_PLANET_STEALTH_MOD
 Planet Stealth Modifier
 
-SHP_PLANET_STEALTH_MOD_DESC
+SPY_PLANET_STEALTH_MOD_DESC
 '''Increases the natural stealth of planets to 4.99, so that systems will be made visible to empires before their planets.'''
 
 #############################################################
@@ -8189,7 +8189,7 @@ GOOD_VISION_LABEL
 EXCELLENT_VISION_LABEL
 '''Отличное Зрение'''
 
-FOCUS_PROTECTION_LABEL
+FOCUS_PROTECTION_LABLE
 '''Приоритет Защиты'''
 
 # The following two are used in tech descriptions, and should be updated if PRODUCTION_PER_POP or PRODUCTION_PER_INFRA are changed in shared_macros.txt.

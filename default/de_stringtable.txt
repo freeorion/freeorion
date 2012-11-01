@@ -3030,10 +3030,10 @@ Industrielle Landwirtschaft
 GRO_INDUSTY_FARM_DESC
 Traditionelle landwirtschaftliche Methoden reichen für lokal selbstständige Gemeinschaften aus; durch die größere Spezialisierung fortschrittlicher Gesellschaften müssen jedoch weniger Landwirte eine größere Zahl an Arbeitern über größere Entfernungen versorgen, unter anderem auch wachsende Kolonien mit instellaren Lebensmittellieferungen. Hydroponiken, Automatisierung, Dünger, Schädlingsbekämpfung und modifizierte Beleuchtungszyklen werden nötig. Der erfolgreiche Einsatz dieser Werkzeuge setzt das Verständnis ihrer Funktionen, Interaktionen, Kosten und zu Grunde liegenden Mechanismen voraus.
 
-GRO_ENV_ENCAPSUL
+CON_ENV_ENCAPSUL
 Umwelteindämmung
 
-GRO_ENV_ENCAPSUL_DESC
+CON_ENV_ENCAPSUL_DESC
 Ummantelte und versiegelte Räume zur Beherbergung eines bestimmten Lebensraums sind für Raumreisen, die Kolonisierung gefährlicher Planeten oder die Erhaltung der natürlichen Vielfalt auf stark industrialisierten Welten unerlässlich. Die Aufrechterhaltung der erwünschten Bedingungen ist nicht so simpel, wie es erscheinen mag, da es in vielen Fällen keine äußere Quelle für reine Materialien oder Organismen gibt. Es ist daher notwendig, eine selbstständige Umwelt, oft ein ganzes Ökosystem, zu erschaffen, das fähig ist, seine Abfälle wieder zu verwerten und alle seine Bedürfnisse selbst zu decken.
 
 GRO_SYMBIOTIC_BIO
@@ -3762,7 +3762,7 @@ Deflektorschild
 SHP_DEFLECTOR_DESC
 Schaltet den Schiffsteil Deflektorschild frei.
 
-SHP_RADAR
+SPY_RADAR
 Aktiver Radar
 
 SHP_RADAR_DESC

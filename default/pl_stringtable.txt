@@ -2857,10 +2857,10 @@ Industrial Farming
 GRO_INDUSTY_FARM_DESC
 Traditional, simple farming methods are sufficient for small, locally self-sufficient populations without significant limits on available space or time.  With greater specialization of more advanced societies, however, fewer farmers must feed many more workers from much greater distances away, including even interstellar food shipment for fledgling colonies.  Hydroponics, automation, fertilization, pest control and altered illumination growth cycles become necessary.  Successful use of these tools requires understanding of their function, interactions, costs and low-level mechanisms.
 
-GRO_ENV_ENCAPSUL
+CON_ENV_ENCAPSUL
 Environmental Encapsulation
 
-GRO_ENV_ENCAPSUL_DESC
+CON_ENV_ENCAPSUL_DESC
 Covered, surrounded and sealed pockets of a particular environment are essential for space travel, colonization of hazardous planets and preservation of natural diversity on heavily industrialized worlds.  Maintaining the desired conditions is not as trivial as it may seem however, as in many cases there is no external source of pure and clean materials or organisms available.  Rather, it is necessary to create a self-sufficient and sustainable environment, often an entire ecology, capable of recycling and reusing its wastes to supply everything it needs and consumes.
 
 GRO_SYMBIOTIC_BIO
@@ -3589,7 +3589,7 @@ Deflector Shield
 SHP_DEFLECTOR_DESC
 Unlocks Deflector Shield ship part.
 
-SHP_RADAR
+SPY_RADAR
 Active Radar
 
 SHP_RADAR_DESC

@@ -3182,10 +3182,10 @@ Ingeniería Genética
 GRO_GENETIC_ENG_DESC
 La paleta de genes es tan variada como las formas de vida que permiten. Los genes se pueden eliminar, copiar y reinsertar en los genomas para crear organismos transgénicos con combinaciones de rasgos que no existen o son posibles en la naturaleza. También se pueden alterar antes de reinsertar, modificando las bases directamente, permitiendo genes totalmente nuevos sean creados. Las técnicas son limitadas, aun así, las pequeñas modificaciones de los genes existentes están disponibles para el estudio
 
-GRO_ENV_ENCAPSUL
+CON_ENV_ENCAPSUL
 Encapsulación Medio Ambiental
 
-GRO_ENV_ENCAPSUL_DESC
+CON_ENV_ENCAPSUL_DESC
 Capsulas cubiertas, rodeadas y selladas de habitats particulares son esenciales para el viaje espacial, colonización de planetas difíciles y la preservación de la diversidad natural en mundos fuertemente industrializados.  Mantener las condiciones deseadas no es trivial, ya que en muchos casos no hay una fuente de materiales externa pura y limpia u organismo disponibles.  Sin embargo, is necesario crear un ambiente sostenible auto suficiente, a veces un ecosistema completo, capaz de reciclar y reusar sus desechos para suministrar todo lo que necesita y consume.
 
 GRO_SYMBIOTIC_BIO
@@ -4178,10 +4178,10 @@ Control Avanzado de Daño
 SHP_ADV_DAM_CONT_DESC
 Restaura la salud de naves dañadas entre batallas.
 
-SHP_SYST_DEF_MINE
+DEF_SYST_DEF_MINE
 Minas de Defensa de Sistema
 
-SHP_SYST_DEF_MINE_DESC
+DEF_SYST_DEF_MINE_DESC
 '''Cuando naves amigas no están presentes en el sistema, las naves enemigas son libres de bloquear el sistema, parando la transferencia de recursos sin atacar las directamente las defensas del planeta, sin riesgo de dañarse a si mismos.  Una red de minas de sistema defensivas puede disuadir estas tácticas dañando naves enemigas cada turno que están en el sistema.
 
 La estructura de todas las naves que pertenezcan a un imperio enemigo que esten presentes en un sistema que contenga un planeta propiedad de un imperio que posee esta tecnología sera reducido a un ritmo de 2 por turno.
@@ -4278,56 +4278,56 @@ Escudo Multi-Espectral
 SHP_MULTISPEC_SHIELD_DESC
 Proporciona una protección adecuada para permitir a una nave entrar en el corazón de una estrella.  Las naves en un sistema con una estrella tipo que no sea Agujero Negro y Neutron reciben una poderosa bonificación a la ocultación.
 
-SHP_OPTICAL_SCANNER
+SPY_OPTICAL_SCANNER
 Escaner Óptico 
 
-SHP_OPTICAL_SCANNER_DESC
+SPY_OPTICAL_SCANNER_DESC
 Todas las colonias empiezan el juego con una detección de nivel 20 y la parte de nave Escaner Óptico permite a la nave alcanzar el mismo nivel de detección.
 
-SHP_RADAR
+SPY_RADAR
 Radar Activo
 
 SHP_RADAR_DESC
 Desbloquea la parte de nave del Radar Activo.
 
-SHP_NEUTRON_SCANNER
+SPY_NEUTRON_SCANNER
 Escaner de Neutrones
 
-SHP_NEUTRON_SCANNER_DESC
+SPY_NEUTRON_SCANNER_DESC
 '''La radiación electromagnética no tiene restos de masa y es fácilmente manipulable.  Flexionando las ondas de la luz alrededor de un objeto, es posible dejar a los radares virtualmente inútiles.  Disparando ondas de neutrones en vez de radiación electromagnética, un escaneo activo mas efectivo puede ser utilizado.
 
 Incrementa la detección de todos los planetas por 60.'''
 
-SHP_SENSORS
+SPY_SENSORS
 Sensores
 
-SHP_SENSORS_DESC
+SPY_SENSORS_DESC
 Desbloquea la parte de nave Sensores e incrementa la detección de todos los planetas en 80.
 
-SHP_EM_DAMPER
+SPY_EM_DAMPER
 Amortiguador Electromagnético
 
-SHP_EM_DAMPER_DESC
+SPY_EM_DAMPER_DESC
 Desbloquea la parte de nave Amortiguador Electromagnético e incrementa la ocultación de todos los planetas, sistemas y edificios por 5.  Esta bonificación no es acumulativa con las de otras tecnologías de ocultación.
 
-SHP_ABSORPTION_FIELD
+SPY_ABSORPTION_FIELD
 Campo de Absorción
 
-SHP_ABSORPTION_FIELD_DESC
+SPY_ABSORPTION_FIELD_DESC
 '''Amortiguando simples emisiones electromagnéticas puede hacer completamente invisible a escaneos pasivos.  Aunque los escenos activos, pueden hacer que esos métodos para esconder un objeto casi inútil.  Absorbiendo, en vez de reflejar la radiación emitida por dispositivos de escaneo activo, la ocultación de una nave puede ser altamente incrementada.
 
 Incrementa la ocultación de todos los planetas, sistemas y edificios por 30.  Esta bonificación no es acumulativa con otras tecnologías de ocultación.'''
 
-SHP_DIM_CLOAK
+SPY_DIM_CLOAK
 Camuflaje Dimensional
 
-SHP_DIM_CLOAK_DESC
+SPY_DIM_CLOAK_DESC
 Desbloquea la parte de nave Camuflaje Dimensional e incrementa la salud de todos los planetas, sistemas y edificios por 55. Esta bonificación no es acumulativa con otras tecnologías de ocultación.
 
-SHP_PHASING_CLOAK
+SPY_PHASING_CLOAK
 Camuflaje de Fase
 
-SHP_PHASING_CLOAK_DESC
+SPY_PHASING_CLOAK_DESC
 '''Incluso con la mas cuidadosa nave oculta emite radiación en forma de partículas de fuerza con carga.  Modulando la forma de las ondas de estas partículas, es posible sincronizarlas con la radiación de fondo, recolectan incluso intentos avanzados de detectar la nave.
 
 Incrementa la ocultación de todos los planetas, sistemas y edificios por 80.  Esta bonificación no es acumulativa con otras tecnologías de ocultación.'''
@@ -4362,10 +4362,10 @@ Armadura de Blindaje de Neutronium
 SHP_NEUTRONIUM_PLATE_DESC
 Desbloquea la parte de nave Armadura de Blindaje de Neutronium.
 
-SHP_DIST_MOD
+SPY_DIST_MOD
 Modulador de Distorsión
 
-SHP_DIST_MOD_DESC
+SPY_DIST_MOD_DESC
 Todos los objetos con masa causan una curvatura en el espacio-tiempo debido a los efectos gravitacionales.  Otras fuerzas como  las fuerzas electromagnéticas tiene efectos geométricos similares.  Amplificando indiscriminadamente estos efectos en un area localizada, distorsiones en el espacio-tiempo causadas por naves puede ser fácilmente distinguidas de el fondo electromagnético y la radiación gravitacional.
 
 SHP_ROBO_HULL
@@ -4578,10 +4578,10 @@ Casco Solar
 SHP_SOLAR_HULL_DESC
 Esta majestuosa nave insignia es esencialmente un sol en miniatura y como tal es una gran fuente de combustible y visibilidad.  Todas las naves amigas recuperan completamente el combustible entre combates y todas las naves enemigas en la vecindad reciben una penalización a la ocultación.  Este casco tiene 80 espacios externos y 9 internos - una mayor capacidad interna que cualquier otro casco.  La estructura es extremadamente alta pero la velocidad y la ocultación son muy bajas.  Aun así, esta nave tiene la habilidad de entrar en una estrella y esconderse, otorgando la ocultación perfecta en el mapa de galaxia cuando esta en un sistema con una estrella de cualquiera que no sea Agujero Negro o Neutrónica y en combate, cuando se esconde en esa estrella.  Esta nave requiere una cantidad tremenda de energía para construirla y debe captar energía desde colisiones partícula-antipartícula en el evento del horizonte de un Agujero Negro en su formación.
 
-SHP_PLANET_STEALTH_MOD
+SPY_PLANET_STEALTH_MOD
 Modificador de Ocultación Planetaria
 
-SHP_PLANET_STEALTH_MOD_DESC
+SPY_PLANET_STEALTH_MOD_DESC
 Incrementa la ocultación natural de los planetas en 15, por lo que los sistemas se harán visibles a los imperios antes que sus planetas.
 
 ########################################

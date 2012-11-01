@@ -3150,10 +3150,10 @@ Agriculture industrielle
 GRO_INDUSTY_FARM_DESC
 Traditionnellement, les méthodes agricoles simples sont suffisantes pour des petites populations auto-suffisantes localement sans limite significative sur l'espace et le temps disponible. Avec une meilleure spécialisation des sociétés plus avancées, alors, moins de fermiers peuvent nourrir beaucoup plus de travailleurs à des distances plus grandes, incluant aussi la nourriture pour les expéditions interstellaire de colonisation. Hydroponiques, automatisations, fertilisations, lutte antiparasitaire, cycle de croissance altérés deviennent nécessaires. l'utilisation avec succès de ces outils requiert la compréhension de leur fonction, interaction, coûts et mécanismes les plus fins.
 
-GRO_ENV_ENCAPSUL
+CON_ENV_ENCAPSUL
 Encapsulation Environnementale
 
-GRO_ENV_ENCAPSUL_DESC
+CON_ENV_ENCAPSUL_DESC
 Les poches couvertes, entourées et scellées d'un envionnement particulier sont essentielles pour le voyage spacial, la  colonisation de planètes risquées et la préservation de la diversité naturelle sur des mondes extrèmement industrialisés. Le maintien des conditions désirées n'est pas si insignifiant qu'il y paraît, cependant, dans de nombreux cas, il n'y a pas de source externe de matériel ou d'organisme pur et propre disponiblePlutot il est nécessaire de créer un environnement auto-suffisant et durable, souvent une écologie entière, capable de recyclage et réutilisation de ses déchets pour fournir tout ce qui est nécessaire et consommé.
 
 GRO_SYMBIOTIC_BIO
@@ -3896,7 +3896,7 @@ Bouclier Déflecteur
 SHP_DEFLECTOR_DESC
 Débloque les boucliers déflecteurs pour Vaisseau.
 
-SHP_RADAR
+SPY_RADAR
 Radar actif
 
 SHP_RADAR_DESC

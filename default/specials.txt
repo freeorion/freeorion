@@ -539,7 +539,7 @@ Special
             scope = Source
             activation = Not Or [
                 HasSpecial "CLOUD_COVER_MASTER_SPECIAL"
-                OwnerHasTech "SHP_EM_DAMPER"
+                OwnerHasTech "SPY_EM_DAMPER"
             ]
             effects = RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
 
@@ -598,7 +598,7 @@ Special
             scope = Source
             activation = Not Or [
                 HasSpecial "VOLCANIC_ACTIVITY_SPECIAL"
-                OwnerHasTech "SHP_ABSORPTION_FIELD"
+                OwnerHasTech "SPY_ABSORPTION_FIELD"
             ]
             effects = RemoveSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
 
@@ -650,7 +650,7 @@ Special
             scope = Source
             activation = Not Or [
                 HasSpecial "DIM_RIFT_MASTER_SPECIAL"
-                OwnerHasTech "SHP_DIM_CLOAK"
+                OwnerHasTech "SPY_DIM_CLOAK"
             ]
             effects = RemoveSpecial "DIM_RIFT_SLAVE_SPECIAL"
 
@@ -696,7 +696,7 @@ Special
             scope = Source
             activation = And [
                 Not HasSpecial "VOID_MASTER_SPECIAL"
-                Not OwnerHasTech "SHP_PHASING_CLOAK"
+                Not OwnerHasTech "SPY_PHASING_CLOAK"
             ]
             effects = RemoveSpecial "VOID_SLAVE_SPECIAL"
 

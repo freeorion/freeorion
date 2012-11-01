@@ -18,7 +18,8 @@ New Features / Improvements:
 
 Balancing:
  ~ Unified resource and fleet supply into a single meter: the Supply meter. Infrastructure is not involved.
- ~ ~ Outpost now provide 1 jump supply, and colonies 2 jump supply.  Techs and buildings can extend that.
+ ~ Reduced the number of Theory techs that have no direct effect.
+ ~ ~ Outpost now provide 0 jump supply, and colonies 1 jump supply.  Techs and buildings can extend that.
  ~ Reduced detection ranges for ships and planets by roughly half.
  ~ Loosened requirements for Asteroid hulls/parts
  ~ ~ Asteroid processors are no longer shipyards, but must be built on a belt for a shipyard anywhere in the system to build asteroid hulls.

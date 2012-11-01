@@ -1852,7 +1852,7 @@ HAS_ADVANCED_FOCI
         Focus
             name = "FOCUS_LOGISTICS"
             description = "FOCUS_LOGISTICS_DESC"
-            location = OwnerHasTech name = "SHP_FLEET_LOGISTICS"
+            location = OwnerHasTech name = "SHP_INTSTEL_LOG"
             graphic = "icons/focus/supply.png"
 
         Focus

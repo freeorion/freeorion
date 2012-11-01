@@ -626,7 +626,7 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SHP_ABSORPTION_FIELD"
+            activation = Number low = 1 OwnerHasTech "SPY_ABSORPTION_FIELD"
             effects = [
                 CreateShip "SM_ASH" Source.Owner
                 Destroy
@@ -634,7 +634,7 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SHP_DIM_CLOAK"
+            activation = Number low = 1 OwnerHasTech "SPY_DIM_CLOAK"
             effects = [
                 CreateShip "SM_DIM" Source.Owner
                 Destroy
@@ -642,7 +642,7 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SHP_PHASING_CLOAK"
+            activation = Number low = 1 OwnerHasTech "SPY_PHASING_CLOAK"
             effects = [
                 CreateShip "SM_VOID" Source.Owner
                 Destroy
@@ -670,7 +670,7 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SHP_DIM_CLOAK"
+            activation = Number low = 1 OwnerHasTech "SPY_DIM_CLOAK"
             effects = [
                 CreateShip "SM_DIM" Source.Owner
                 Destroy
@@ -678,7 +678,7 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SHP_PHASING_CLOAK"
+            activation = Number low = 1 OwnerHasTech "SPY_PHASING_CLOAK"
             effects = [
                 CreateShip "SM_VOID" Source.Owner
                 Destroy
@@ -714,7 +714,7 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SHP_PHASING_CLOAK"
+            activation = Number low = 1 OwnerHasTech "SPY_PHASING_CLOAK"
             effects = [
                 CreateShip "SM_VOID" Source.Owner
                 Destroy
