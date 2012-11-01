@@ -7,30 +7,38 @@ import AIstate
 
 def generateResearchOrders():
     "generate research orders"
-    if fo.currentTurn()<=1:
-        empire = fo.getEmpire()
-        print "Research Queue Management:"
+    empire = fo.getEmpire()
+    print "Research Queue Management:"
+    print ""
+    print "Techs researched and available for use:"
+    completedTechs = sorted(list(getCompletedTechs()))
+    tlist = completedTechs+3*[" "]
+    tlines = zip( tlist[0::3],  tlist[1::3],  tlist[2::3])
+    for tline in tlines:
+        print "%25s  %25s  %25s"%tline
+    print""
+    researchQueue = empire.researchQueue
+    researchQueueList = getResearchQueueTechs()
+    if  researchQueueList:
+        print "Techs currently at head of Research Queue:"
+        for element in list(researchQueue)[:10]:
+            print "    %25s  allocated %6.2f RP"%(element.tech,  element.allocation)
         print ""
-        print "Techs researched and available for use:"
-        completedTechs = getCompletedTechs()
-        for techname in completedTechs:
-            print "    " + techname
-        print""
-        researchQueue = empire.researchQueue
-        researchQueueList = getResearchQueueTechs()
-        if  researchQueueList:
-            print "Techs currently at head of Research Queue:"
-            for element in researchQueueList[:10]:
-                print "    " + element.tech
-            print ""
+    if fo.currentTurn()<=1:
         newtech = TechsListsAI.primaryMetaTechsList()
         #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
         pLTsToEnqueue = newtech[:]
         for tech in pLTsToEnqueue:
             if (tech in completedTechs) or (tech in researchQueueList): pLTsToEnqueue.remove(tech)
         for name in pLTsToEnqueue:
-            fo.issueEnqueueTechOrder(name, -1)
-            print "    Enqueued Tech: " + name
+            try:
+                enqueueRes = fo.issueEnqueueTechOrder(name, -1)
+                if enqueueRes == 1:
+                    print "    Enqueued Tech: " + name
+                else:
+                    print "    Error: failed attempt to enqueued Tech: " + name
+            except:
+                print "    Error: failed attempt to enqueued Tech: " + name
         print""
         generateDefaultResearchOrders()
     elif fo.currentTurn() >100:
@@ -139,7 +147,7 @@ def generateDefaultResearchOrders():
     # store projects mapped to their costs, so they can be sorted by that cost
     projectsDict = dict()
     for name in possibleResearchProjects:
-        projectsDict[name] = fo.getTech(name).researchCost
+        projectsDict[name] = fo.getTech(name).researchCost(empire.empireID)
 
     # iterate through techs in order of cost
     print "enqueuing techs.  already spent RP: " + str(spentRP()) + "  total RP: " + str(totalRP)

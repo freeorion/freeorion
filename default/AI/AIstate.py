@@ -26,6 +26,10 @@ invasionFleetIDs = []
 militaryFleetIDs = []
 fleetsLostBySystem={}
 fleetsLostByID={}
+popCtrSystemIDs=[]
+popCtrIDs=[]
+outpostIDs=[]
+outpostSystemIDs=[]
 
 def dictFromMap(map):
     return dict(  [  (el.key(),  el.data() ) for el in map ] )

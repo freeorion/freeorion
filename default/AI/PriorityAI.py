@@ -131,10 +131,21 @@ def calculateResearchPriority():
 def calculateExplorationPriority():
     "calculates the demand for scouts by unexplored systems"
 
+    universe = fo.getUniverse()
+    empire = fo.getEmpire()
     numUnexploredSystems =  len( ExplorationAI.__borderUnexploredSystemIDs   )  #len(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
     scoutIDs = ExplorationAI.currentScoutFleetIDs #    FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
     numScouts = len(scoutIDs)
-    explorationPriority = 95*math.ceil(  math.sqrt(max(0,  (numUnexploredSystems - numScouts)) / (numUnexploredSystems +0.001) ))
+    productionQueue = empire.productionQueue
+    queuedScoutShips=0
+    for queue_index  in range(0,  len(productionQueue)):
+        element=productionQueue[queue_index]
+        if element.buildType == AIEmpireProductionTypes.BT_SHIP:
+             if foAI.foAIstate.getShipRole(element.designID) ==       AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION  :
+                 queuedScoutShips +=1
+
+    
+    explorationPriority = 95*math.ceil(  math.sqrt(max(0,  (numUnexploredSystems - (numScouts+queuedScoutShips)) / (numUnexploredSystems +0.001) )))
 
     print ""
     print "Number of Scouts            : " + str(numScouts)
@@ -204,7 +215,12 @@ def calculateInvasionPriority():
 
     troopShipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION)
     #numTroopShips = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(troopShipIDs))
-    invasionPriority = 30+ 200*max(0,  math.ceil(opponentTroops/5) - len(troopShipIDs) -queuedTroopShips )
+    myTroopShips = len(troopShipIDs) -queuedTroopShips 
+    troopShipsNeeded = math.ceil(opponentTroops/5) - myTroopShips 
+    milFleetEquiv= math.ceil( MilitaryAI.totMilRating /   curBestMilShipRating() )
+    troopShipsNeeded = min( troopShipsNeeded ,  math.floor( milFleetEquiv / 2) - myTroopShips)
+    
+    invasionPriority = 20+ 200*max(0,  troopShipsNeeded )
 
     # print ""
     # print "Number of Troop Ships Without Missions: " + str(numTroopShips)

@@ -82,7 +82,26 @@ def getColonyFleets():
     unOwnedPlanetIDs = list(set(exploredPlanetIDs) -set(allOwnedPlanetIDs))
     print "UnOwned PlanetIDs:             " + str(unOwnedPlanetIDs)
     
-    empireOutpostIDs=set(empireOwnedPlanetIDs) - set( PlanetUtilsAI.getPopulatedPlanetIDs(  empireOwnedPlanetIDs) )
+    empirePopCtrs = set( PlanetUtilsAI.getPopulatedPlanetIDs(  empireOwnedPlanetIDs) )
+    empireOutpostIDs=set(empireOwnedPlanetIDs) - empirePopCtrs
+    AIstate.popCtrIDs=empirePopCtrs
+    AIstate.popCtrSystemIDs=set(PlanetUtilsAI.getSystems(empirePopCtrs))
+    AIstate.outpostIDs=empireOutpostIDs
+    AIstate.outpostSystemIDs=set(PlanetUtilsAI.getSystems(empireOutpostIDs))
+    
+    empireSpecies={}
+    for pID in empirePopCtrs:
+        planet=universe.getPlanet(pID)
+        if not planet:
+            print "Error empire has apparently lost sight of former colony at planet %d but doesn't realize it"%pID
+            continue
+        pSpecName=planet.speciesName
+        empireSpecies[pSpecName] = empireSpecies.get(pSpecName,  [])+[pID]
+    print "\n"+"Empire species roster:"
+    for specName in empireSpecies:
+        thisSpec=fo.getSpecies(specName)
+        print "%s on planets %s; has tags %s"%(specName,  empireSpecies[specName],  list(thisSpec.tags))
+    print""
 
     # export colony targeted systems for other AI modules
     colonyTargetedPlanetIDs = getColonyTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, empireID)
@@ -224,7 +243,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         for special in planetSpecials:
             if "_NEST_" in special:
                 return 30 # get an outpost on the nest quick
-        if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_ASTEROID_MINE") == fo.techStatus.complete ) ): 
+        if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete ) ): 
                 retval= 15   # asteroid mining is great, fast return
         for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
             if special in planetSpecials:

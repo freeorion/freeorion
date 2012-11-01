@@ -11,10 +11,11 @@ import ExplorationAI
 MinThreat = 6 # the minimum threat level that will be ascribed to an unkown threat capable of killing scouts
 MilitaryAllocations = []
 minMilAllocations = {}
+totMilRating=0
 
 def getMilitaryFleets():
     "get armed military fleets"
-    global MilitaryAllocations
+    global MilitaryAllocations, totMilRating
 
     allMilitaryFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY)
     if allMilitaryFleetIDs == []:

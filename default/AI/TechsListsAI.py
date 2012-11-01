@@ -148,7 +148,7 @@ def primaryGroTechsList():
 
     primaryGroTechs = [
 
-        'GRO_ENV_ENCAPSUL']
+        'CON_ENV_ENCAPSUL']
  
     return primaryGroTechs
 
@@ -176,9 +176,9 @@ def primaryMetaTechsList():
 
     primaryMetaTechs = [
         'GRO_SUBTER_HAB', 
-        'CON_ORBITAL_CON', 
         'DEF_GARRISON_1', 
         'SHP_WEAPON_2',
+        'SHP_HAB_MEGAFAUN', 
         'SHP_WEAPON_3',
         'SHP_WEAPON_4',
         'SHP_WEAPON_5',
@@ -187,10 +187,10 @@ def primaryMetaTechsList():
         'SHP_SPACE_TACTICS', 
         'SHP_DEFLECTOR',
         'GRO_GENETIC_ENG', 
-        'GRO_ENV_ENCAPSUL', 
+        'CON_ENV_ENCAPSUL', 
         'GRO_XENO_GENETICS', 
         'PRO_MICROGRAV_MAN', 
-        'PRO_ASTEROID_MINE', 
+        'CON_ORBITAL_CON', 
         'LRN_ALGO_ELEGANCE', 
         'LRN_ARTIF_MINDS', 
         'GRO_XENO_HYBRIDS', 
@@ -200,10 +200,8 @@ def primaryMetaTechsList():
         'SHP_WEAPON_7',
         'SHP_WEAPON_8',
         'SHP_DOMESTIC_MONSTER', 
-        'SHP_HAB_MEGAFAUN', 
         'SHP_ORG_HULL', 
         'SHP_MULTICELL_CAST', 
-        'SHP_ENDOMORPH_HULL', 
         'DEF_DEFENSE_NET', 
         'PRO_FUSION_GEN', 
         'PRO_INDUSTRY_CENTER_I', 

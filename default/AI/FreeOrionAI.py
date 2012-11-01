@@ -14,6 +14,7 @@ import sys
 import PlanetUtilsAI
 from time import time
 import os
+import traceback
 
 # AIstate
 foAIstate = None
@@ -215,27 +216,38 @@ def generateOrders():
 
     # call AI modules
     timer=[time()]
-    PriorityAI.calculatePriorities()
+    try: PriorityAI.calculatePriorities()
+    except: print "Error: exception triggered:  ",  traceback.format_exc()
     timer.append( time()  )
-    ExplorationAI.assignScoutsToExploreSystems()
+    try: ExplorationAI.assignScoutsToExploreSystems()
+    except: print "Error: exception triggered:  ",  traceback.format_exc()
     timer.append( time()  )
-    ColonisationAI.assignColonyFleetsToColonise()
+    try: ColonisationAI.assignColonyFleetsToColonise()
+    except: print "Error: exception triggered:  ",  traceback.format_exc()
     timer.append( time()  )
-    InvasionAI.assignInvasionFleetsToInvade()
+    try: InvasionAI.assignInvasionFleetsToInvade()
+    except: print "Error: exception triggered:  ",  traceback.format_exc()
     timer.append( time()  )
-    MilitaryAI.assignMilitaryFleetsToSystems()
+    try: MilitaryAI.assignMilitaryFleetsToSystems()
+    except: print "Error: exception triggered:  ",  traceback.format_exc()
     timer.append( time()  )
-    FleetUtilsAI.generateAIFleetOrdersForAIFleetMissions()
+    try: FleetUtilsAI.generateAIFleetOrdersForAIFleetMissions()
+    except: print "Error: exception triggered:  ",  traceback.format_exc()
     timer.append( time()  )
-    FleetUtilsAI.issueAIFleetOrdersForAIFleetMissions()
+    try: FleetUtilsAI.issueAIFleetOrdersForAIFleetMissions()
+    except: print "Error: exception triggered:  ",  traceback.format_exc()
     timer.append( time()  )
-    ResearchAI.generateResearchOrders()
+    try: ResearchAI.generateResearchOrders()
+    except: print "Error: exception triggered:  ",  traceback.format_exc()
     timer.append( time()  )
-    ProductionAI.generateProductionOrders()
+    try: ProductionAI.generateProductionOrders()
+    except: print "Error: exception triggered:  ",  traceback.format_exc()
     timer.append( time()  )
-    ResourcesAI.generateResourcesOrders()    
+    try: ResourcesAI.generateResourcesOrders()    
+    except: print "Error: exception triggered:  ",  traceback.format_exc()
     timer.append( time()  )
-    foAIstate.afterTurnCleanup()
+    try: foAIstate.afterTurnCleanup()
+    except: print "Error: exception triggered:  ",  traceback.format_exc()
     timer.append( time()  )
     times = [timer[i] - timer[i-1] for i in range(1,  len(timer) ) ]
     timeFmt = "%30s: %8d msec  "
@@ -245,4 +257,5 @@ def generateOrders():
     if __timerFile:
         __timerFile.write(  __timerFileFmt%tuple( [ fo.currentTurn() ]+map(lambda x: int(1000*x),  times )) +'\n')
         __timerFile.flush()
-    fo.doneTurn()
+    try: fo.doneTurn()
+    except: print "Error: exception triggered:  ",  traceback.format_exc()

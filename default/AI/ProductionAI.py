@@ -33,7 +33,7 @@ def getBestShipInfo(priority):
     empire = fo.getEmpire()
     theseDesigns = [shipDesign for shipDesign in empire.availableShipDesigns if shipTypeMap.get(priority,  "nomatch")  in fo.getShipDesign(shipDesign).name(False)  and getAvailableBuildLocations(shipDesign) != [] ]
     if theseDesigns == []: 
-        return None,  None,  None #must be missing a Shipyard
+        return None,  None,  None #must be missing a Shipyard (or checking for outpost ship but missing tech)
     ships = [ ( fo.getShipDesign(shipDesign).name(False),  shipDesign) for shipDesign in theseDesigns ]
     bestShip = sorted( ships)[-1][-1]
     buildChoices = getAvailableBuildLocations(bestShip)
@@ -86,10 +86,25 @@ def generateProductionOrders():
             print
             queuedBldgNames=[ bldg.name for bldg in queuedBldgs ]
 
-
             if  ("BLD_INDUSTRY_CENTER" in possibleBuildingTypes) and ("BLD_INDUSTRY_CENTER" not in (capitalBldgs+queuedBldgNames)):
                 print "Enqueueing BLD_INDUSTRY_CENTER"
                 fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", empire.capitalID)
+
+            if  ("BLD_SHIPYARD_BASE" in possibleBuildingTypes) and ("BLD_SHIPYARD_BASE" not in (capitalBldgs+queuedBldgNames)):
+                try:
+                    fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_BASE", empire.capitalID)
+                    print "Enqueueing BLD_SHIPYARD_BASE"
+                except:
+                    print "Error: cant build shipyard at new capital,  probably no population; we're hosed"
+
+            if  ("BLD_SHIPYARD_ORG_ORB_INC" in possibleBuildingTypes) and ("BLD_SHIPYARD_ORG_ORB_INC" not in (capitalBldgs+queuedBldgNames)):
+                try:
+                    fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_ORG_ORB_INC", empire.capitalID)
+                    print "Enqueueing BLD_SHIPYARD_ORG_ORB_INC"
+                except:
+                    pass
+
+
 
             if  ("BLD_EXOBOT_SHIP" in possibleBuildingTypes) and ("BLD_EXOBOT_SHIP" not in capitalBldgs+queuedBldgNames):
                 #TODO:
