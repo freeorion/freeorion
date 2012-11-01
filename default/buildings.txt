@@ -791,7 +791,6 @@ BuildingType
         EffectsGroup
             scope = And [
                 PopulationCenter
-                ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
@@ -804,7 +803,6 @@ BuildingType
         EffectsGroup
             scope = And [
                 PopulationCenter
-                ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
@@ -817,7 +815,6 @@ BuildingType
         EffectsGroup
             scope = And [
                 PopulationCenter
-                ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
@@ -837,7 +834,6 @@ BuildingType
         EffectsGroup
             scope = And [
                 PopulationCenter
-                ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
@@ -857,7 +853,6 @@ BuildingType
         EffectsGroup
             scope = And [
                 PopulationCenter
-                ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
@@ -877,7 +872,6 @@ BuildingType
         EffectsGroup
             scope = And [
                 PopulationCenter
-                ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
