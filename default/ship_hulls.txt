@@ -13,7 +13,12 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 100
+    buildCost = 100 * (1 + 0.05 *
+        Number condition = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ])
     buildTime = 10
     tags = [ "SHINY" "EXOTIC" ]
     location = Contains And [
@@ -53,12 +58,12 @@ Hull
     slots = [
         Slot type = External position = (0.50, 0.45)
     ]
-    buildCost = 2.0 + 0.1 *
+    buildCost = 10.0 * (1 + 0.05 *
         Number condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
-        ]
+        ])
     buildTime = 2
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
@@ -81,7 +86,12 @@ Hull
         Slot type = External position = (0.65, 0.40)
         Slot type = Internal position = (0.50, 0.65)
     ]
-    buildCost = 5.0
+    buildCost = 25 * (1 + 0.05 *
+        Number condition = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ])
     buildTime = 2
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
@@ -106,7 +116,12 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 10.0
+    buildCost = 50 * (1 + 0.05 *
+        Number condition = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ])
     buildTime = 2
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
@@ -132,7 +147,12 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 15
+    buildCost = 75 * (1 + 0.05 *
+        Number condition = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ])
     buildTime = 2
     location = And [
         Contains And [
@@ -168,7 +188,12 @@ Hull
         Slot type = External position = (0.40, 0.50)
         Slot type = External position = (0.60, 0.50)
     ]
-    buildCost = 5.0
+    buildCost = 50 * (1 + 0.05 *
+        Number condition = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ])
     buildTime = 2
     location = And [
         Contains And [
@@ -212,7 +237,12 @@ Hull
         Slot type = Internal position = (0.20, 0.85)
         Slot type = Internal position = (0.40, 0.85)
     ]
-    buildCost = 40
+    buildCost = 200 * (1 + 0.05 *
+        Number condition = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ])
     buildTime = 2
     location = And [
         Contains And [
@@ -251,8 +281,13 @@ Hull
         Slot type = External position = (0.90, 0.15)
         Slot type = Internal position = (0.30, 0.75)
     ]
-    buildCost = 12.5
-    buildTime = 2
+    buildCost = 50
+    buildTime = 2 * (1 + 0.05 *
+        Number condition = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ])
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_CON_NANOROBO"
@@ -308,7 +343,12 @@ Hull
         Slot type = Internal position = (0.20, 0.85)
         Slot type = Internal position = (0.30, 0.85)
     ]
-    buildCost = 40.0
+    buildCost = 400 * (1 + 0.05 *
+        Number condition = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ])
     buildTime = 5
     location = And [
         Contains And [
@@ -339,7 +379,12 @@ Hull
     stealth = 30
     structure = 1
     slots = Slot type = External position = (0.50, 0.50)
-    buildCost = 5.0
+    buildCost = 50 * (1 + 0.05 *
+        Number condition = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ])
     buildTime = 3
     location = And [
         Contains And [
@@ -380,7 +425,12 @@ Hull
         Slot type = Internal position = (0.22, 0.75)
         Slot type = Internal position = (0.34, 0.75)
     ]
-    buildCost = 75.0
+    buildCost = 200 * (1 + 0.05 *
+        Number condition = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ])
     buildTime = 15
     location = And [
         Contains And [

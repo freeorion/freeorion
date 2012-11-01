@@ -61,7 +61,8 @@ namespace {
                     FlattenAndNestedConditions(and_condition->Operands());
                 std::copy(flattened_operands.begin(), flattened_operands.end(), std::back_inserter(retval));
             } else {
-                retval.push_back(*it);
+                if (*it)
+                    retval.push_back(*it);
             }
         }
         return retval;
