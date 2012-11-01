@@ -398,6 +398,8 @@
 		82271C9115F8ABEE0063179C /* OISKeyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82271C7815F8ABEE0063179C /* OISKeyboard.cpp */; };
 		82271C9215F8ABEE0063179C /* OISObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82271C7915F8ABEE0063179C /* OISObject.cpp */; };
 		82271C9A15F8AD2B0063179C /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82271C3A15F8AB900063179C /* libOIS.a */; };
+		822B16B71642A6F8000ADE58 /* EffectParser3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 822B16B51642A6F8000ADE58 /* EffectParser3.cpp */; };
+		822B16B81642A6F8000ADE58 /* EffectParser4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 822B16B61642A6F8000ADE58 /* EffectParser4.cpp */; };
 		8230805E14A8803F00C1BC15 /* ConditionParser1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936DB147E3B1B00B840A5 /* ConditionParser1.cpp */; };
 		8230805F14A8803F00C1BC15 /* ConditionParser2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936DC147E3B1B00B840A5 /* ConditionParser2.cpp */; };
 		8230806014A8803F00C1BC15 /* ConditionParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936D9147E3B1B00B840A5 /* ConditionParser.cpp */; };
@@ -2397,6 +2399,8 @@
 		82271C7715F8ABEE0063179C /* OISJoyStick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OISJoyStick.cpp; sourceTree = "<group>"; };
 		82271C7815F8ABEE0063179C /* OISKeyboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OISKeyboard.cpp; sourceTree = "<group>"; };
 		82271C7915F8ABEE0063179C /* OISObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OISObject.cpp; sourceTree = "<group>"; };
+		822B16B51642A6F8000ADE58 /* EffectParser3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser3.cpp; sourceTree = "<group>"; };
+		822B16B61642A6F8000ADE58 /* EffectParser4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser4.cpp; sourceTree = "<group>"; };
 		8230803F14A87FFB00C1BC15 /* libConditionParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libConditionParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		82483B7A15F4F24100D27614 /* libboost_date_time.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_date_time.a; sourceTree = "<group>"; };
 		82483B7B15F4F26200D27614 /* libFreeImage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFreeImage.a; sourceTree = "<group>"; };
@@ -4592,6 +4596,8 @@
 		825936D5147E3B1B00B840A5 /* parse */ = {
 			isa = PBXGroup;
 			children = (
+				822B16B51642A6F8000ADE58 /* EffectParser3.cpp */,
+				822B16B61642A6F8000ADE58 /* EffectParser4.cpp */,
 				8250FDE115FCEFC400523C1C /* ConditionParser4.cpp */,
 				8250FDE215FCEFC400523C1C /* FieldsParser.cpp */,
 				82D68C6C15F4F720006B772D /* KeymapParser.cpp */,
@@ -5757,6 +5763,8 @@
 				8206388C14A87AF200A83D5A /* EffectParser.cpp in Sources */,
 				8201E5F515E2C0770037D453 /* EffectParser1.cpp in Sources */,
 				8201E5F615E2C0770037D453 /* EffectParser2.cpp in Sources */,
+				822B16B71642A6F8000ADE58 /* EffectParser3.cpp in Sources */,
+				822B16B81642A6F8000ADE58 /* EffectParser4.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
