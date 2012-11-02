@@ -1862,7 +1862,7 @@ HAS_ADVANCED_FOCI
                 Contains Building "BLD_PLANET_CLOAK"
                 And [
                     Contains Building "BLD_TRANSFORMER"
-                    OwnerHasTech "SHP_PLANET_CLOAK"
+                    OwnerHasTech "DEF_PLANET_CLOAK"
                 ]
             ]
             graphic = "icons/focus/stealth.png"

@@ -3765,7 +3765,7 @@ Schaltet den Schiffsteil Deflektorschild frei.
 SPY_RADAR
 Aktiver Radar
 
-SHP_RADAR_DESC
+SPY_RADAR_DESC
 Schaltet den Schiffsteil Aktiver Radar frei.
 
 SHP_DEUTERIUM_TANK

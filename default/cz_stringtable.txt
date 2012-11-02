@@ -3828,7 +3828,7 @@ Unlocks Deflector Shield ship part.
 SPY_RADAR
 Active Radar
 
-SHP_RADAR_DESC
+SPY_RADAR_DESC
 Unlocks Active Radar ship part.
 
 SHP_DEUTERIUM_TANK

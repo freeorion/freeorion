@@ -3622,7 +3622,7 @@ Unlocks Deflector Shield ship part.
 SPY_RADAR
 Aktiivitutka
 
-SHP_RADAR_DESC
+SPY_RADAR_DESC
 Avaa aktiivitutkan, aluksen osa.
 
 SHP_DEUTERIUM_TANK

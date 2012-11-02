@@ -4124,32 +4124,32 @@ Faros Interestelares
 SHP_LIGHTHOUSE_DESC
 Naves útiles para viajar dentro y fuera de un sistema por líneas estelares.  Los faros interestelares indican la posición de la entrada de la línea estelar en el sistema, y además hace a la línea segura para navegar en ambos sentidos.  El uso de la línea se hace significativamente mas seguro.
 
-SHP_DEFENSE_NET
+DEF_DEFENSE_NET
 Red de Defensa Planetaria
 
-SHP_DEFENSE_NET_DESC
+DEF_DEFENSE_NET_DESC
 '''Con la exploración galáctica se abre la posibilidad de conocer nuevas razas - y nuevos enemigos.  Emplazando varias bases de defensa armadas en órbita alrededor del planeta, es posible dar capacidad defensiva al planeta sin la necesidad de naves.
 
 Incrementar la defensa máxima de todos los planetas por 5.'''
 
-SHP_HI_ENRG_FOCUS
+DEF_HI_ENRG_FOCUS
 Enfoque de Alta Energía
 
-SHP_HI_ENRG_FOCUS_DESC
+DEF_HI_ENRG_FOCUS_DESC
 '''Mientras que tener una multitud de satelites defensivos es superior para una sola gran defensa satelite en terminos de versatilidad y dependiente, es considerablemente inferior en terminos de potencia de fuego.  A veces, los escudos enemigos pueden simplemente absorber numerosos ataques debiles donde un solo ataque poderoso puede penetrar sus escudos y daños severamente la nave.  Usando un dispositivo enfocado en alta energía, el poder de multiples satelites defensivos puede ser unificado en una sola podersa arma concentrada.
 
 Incrementa la defensa máxima de todos los planetas por 15.'''
 
-SHP_PLAN_DEFLECT_SHLD
+DEF_PLAN_DEFLECT_SHLD
 Escudo Deflector Planetario
 
-SHP_PLAN_DEFLECT_SHLD_DESC
+DEF_PLAN_DEFLECT_SHLD_DESC
 Escudos Planetarios Básicos. Incrementa el escudo máximo de todos los planetas por 10.  No es acumulativo con las Escudos Barrera Planetarios.
 
-SHP_PLAN_BARRIER_SHLD
+DEF_PLAN_BARRIER_SHLD
 Escudo Barrera Planetario
 
-SHP_PLAN_BARRIER_SHLD_DESC
+DEF_PLAN_BARRIER_SHLD_DESC
 Escudos Planetarios Avanzados.  Incrementa el escudo máximo de todos los planetas por 45.  No es acumulativo con los Escudo Deflector Planetario.
 
 SHP_FLEET_LOGISTICS
@@ -4188,10 +4188,10 @@ La estructura de todas las naves que pertenezcan a un imperio enemigo que esten 
 
 Las minas tienen un vida de un turno; desaparacen en el momento que el combate empiece en el sistema y son reemplazadas a tiempo para el siguiente turno.'''
 
-SHP_PLANET_CLOAK
+DEF_PLANET_CLOAK
 Dispositivo de Ocultación Planetario
 
-SHP_PLANET_CLOAK_DESC
+DEF_PLANET_CLOAK_DESC
 Ajustando fases de partes de un planeta dentro y afuera en el espacio-tiempo, su ocultación puede ser incrementada masivamente.
 
 SHP_ION_CANNON
@@ -4287,7 +4287,7 @@ Todas las colonias empiezan el juego con una detección de nivel 20 y la parte d
 SPY_RADAR
 Radar Activo
 
-SHP_RADAR_DESC
+SPY_RADAR_DESC
 Desbloquea la parte de nave del Radar Activo.
 
 SPY_NEUTRON_SCANNER

@@ -3899,7 +3899,7 @@ Débloque les boucliers déflecteurs pour Vaisseau.
 SPY_RADAR
 Radar actif
 
-SHP_RADAR_DESC
+SPY_RADAR_DESC
 Débloque les radars actifs pour les Vaisseaux.
 
 SHP_DEUTERIUM_TANK
