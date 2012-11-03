@@ -2634,9 +2634,16 @@ void Empire::CheckProductionProgress() {
                 Planet* planet = GetPlanet(planet_id);
                 if (!planet) {
                     Logger().errorStream() << "Couldn't get planet with id  " << planet_id << " on which to create building";
-                    continue;
+                    break;
                 }
 
+                // check location condition before each building is created, so
+                // that buildings being produced can prevent subsequent
+                // buildings completions on the same turn from going through
+                if (!this->BuildableItem(m_production_queue[i].item, m_production_queue[i].location))
+                    break;
+
+                // create new building
                 Building* building = new Building(m_id, m_production_queue[i].item.name, m_id);
                 int building_id = universe.Insert(building);
                 planet->AddBuilding(building_id);
@@ -2647,16 +2654,25 @@ void Empire::CheckProductionProgress() {
             }
 
             case BT_SHIP: {
+                if (m_production_queue[i].blocksize < 1)
+                    break;   // nothing to do!
+
                 UniverseObject* build_location = GetUniverseObject(m_production_queue[i].location);
                 System* system = universe_object_cast<System*>(build_location);
                 if (!system && build_location)
                     system = GetSystem(build_location->SystemID());
-                // TODO: account for shipyards and/or other ship production sites that are in interstellar space, if needed
+                // TODO: account for shipyards and/or other ship production
+                // sites that are in interstellar space, if needed
                 if (!system) {
                     Logger().errorStream() << "Empire::CheckProductionProgress couldn't get system for building new ship";
-                    continue;
+                    break;
                 }
 
+                // check location condition before each ship is created, so
+                // that ships being produced can prevent subsequent
+                // ship completions on the same turn from going through
+                if (!this->BuildableItem(m_production_queue[i].item, m_production_queue[i].location))
+                    break;
 
                 // get species for this ship.  use popcenter species if build
                 // location is a popcenter, or use ship species if build
@@ -2671,10 +2687,23 @@ void Empire::CheckProductionProgress() {
                 else if (const Planet* capital_planet = GetPlanet(this->CapitalID()))
                     species_name = capital_planet->SpeciesName();
                 // else give up...
-                Ship* ship;
-                int ship_id;
-                ship_id = 0;
-                for (int count=0; count < m_production_queue[i].blocksize; count++) {
+                if (species_name.empty()) {
+                    // only really a problem for colony ships, which need to have a species to function
+                    const ShipDesign* design = GetShipDesign(m_production_queue[i].item.design_id);
+                    if (!design) {
+                        Logger().errorStream() << "Couldn't get ShipDesign with id: " << m_production_queue[i].item.design_id;
+                        break;
+                    }
+                    if (design->CanColonize()) {
+                        Logger().errorStream() << "Couldn't get species in order to make colony ship!";
+                        break;
+                    }
+                }
+
+                Ship* ship = 0;
+                int ship_id = INVALID_OBJECT_ID;
+
+                for (int count = 0; count < m_production_queue[i].blocksize; count++) {
                     // create ship
                     ship = new Ship(m_id, m_production_queue[i].item.design_id, species_name, m_id);
                     // set active meters that have associated max meters to an
@@ -2686,27 +2715,18 @@ void Empire::CheckProductionProgress() {
                     ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
                     ship->UniverseObject::GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
                     ship->BackPropegateMeters();
-                    // for colony ships, set species
-                    if (ship->CanColonize())
-                        if (const PopCenter* build_loc_pop_center = dynamic_cast<const PopCenter*>(build_location))
-                            ship->SetSpecies(build_loc_pop_center->SpeciesName());
 
                     ship_id = universe.Insert(ship);
-
                     ship->Rename(NewShipName());
-
 
                     // store ships to put into fleets later
                     system_new_ships[system->ID()].push_back(ship);
-
-
                 }
                 // add sitrep
-                if (m_production_queue[i].blocksize ==1) {
+                if (m_production_queue[i].blocksize == 1) {
                     AddSitRepEntry(CreateShipBuiltSitRep(ship_id, system->ID(), ship->DesignID()));
                     Logger().debugStream() << "New Ship, id " << ship_id << ", created on turn: " << ship->CreationTurn();
-                }
-                else {
+                } else {
                     AddSitRepEntry(CreateShipBlockBuiltSitRep(system->ID(), ship->DesignID(), m_production_queue[i].blocksize));
                     Logger().debugStream() << "New block of "<< m_production_queue[i].blocksize << "ships created on turn: " << ship->CreationTurn();
                 }
@@ -2717,7 +2737,6 @@ void Empire::CheckProductionProgress() {
                 Logger().debugStream() << "Build item of unknown build type finished on production queue.";
                 break;
             }
-
 
             if (!--m_production_queue[i].remaining)     // decrement number of remaining items to be produced in current queue element
                 to_erase.push_back(i);                  // remember completed element so that it can be removed from queue
@@ -2737,38 +2756,38 @@ void Empire::CheckProductionProgress() {
         std::vector<Ship*>& allShips = it->second;
         if (allShips.empty())
             continue;
-        
+
         //group ships into fleets, by design
-            
         std::map<int,std::vector<Ship*> > shipsByDesign;
         for (std::vector<Ship*>::iterator it = allShips.begin(); it != allShips.end(); ++it) {
             Ship* ship = *it;
             shipsByDesign[ship->DesignID()].push_back(ship);
         }
         for (std::map<int, std::vector<Ship*> >::iterator design_it = shipsByDesign.begin();
-             design_it != shipsByDesign.end(); ++design_it) {
-                 std::vector<int> ship_ids;
-                 
-                 std::vector<Ship*>& ships = design_it->second;
-                 if (ships.empty())
-                     continue;
-                 
-                // create new fleet for ships
-                Fleet* fleet = new Fleet("", system->X(), system->Y(), m_id);
-                int fleet_id = universe.Insert(fleet);
+             design_it != shipsByDesign.end(); ++design_it)
+        {
+            std::vector<int> ship_ids;
 
-                system->Insert(fleet);
+            std::vector<Ship*>& ships = design_it->second;
+            if (ships.empty())
+                continue;
 
-                for (std::vector<Ship*>::iterator it = ships.begin(); it != ships.end(); ++it) {
-                    Ship* ship = *it;
-                    ship_ids.push_back(ship->ID());
-                    fleet->AddShip(ship->ID());
-                }
+            // create new fleet for ships
+            Fleet* fleet = new Fleet("", system->X(), system->Y(), m_id);
+            int fleet_id = universe.Insert(fleet);
 
-                // rename fleet, given its id and the ship that is in it
-                fleet->Rename(Fleet::GenerateFleetName(ship_ids, fleet_id));
+            system->Insert(fleet);
 
-                Logger().debugStream() << "New Fleet \"" + fleet->Name() + "\"created on turn: " << fleet->CreationTurn();
+            for (std::vector<Ship*>::iterator it = ships.begin(); it != ships.end(); ++it) {
+                Ship* ship = *it;
+                ship_ids.push_back(ship->ID());
+                fleet->AddShip(ship->ID());
+            }
+
+            // rename fleet, given its id and the ship that is in it
+            fleet->Rename(Fleet::GenerateFleetName(ship_ids, fleet_id));
+
+            Logger().debugStream() << "New Fleet \"" + fleet->Name() + "\"created on turn: " << fleet->CreationTurn();
         }
     }
 
