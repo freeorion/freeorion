@@ -60,10 +60,14 @@ namespace {
 
             const XMLElement& token_elem = m_variables.Child(token);
 
-            // plain text substitution token
+            // stringtable text substitution token
             if (token == VarText::TEXT_TAG) {
                 const std::string& text = token_elem.Attribute("value");
                 m_str += UserString(text);
+                return;
+            } else if (token == VarText::RAW_TEXT_TAG) {
+                const std::string& text = token_elem.Attribute("value");
+                m_str += text;
                 return;
             }
 
@@ -237,6 +241,7 @@ namespace {
 
 // static(s)
 const std::string VarText::TEXT_TAG = "text";
+const std::string VarText::RAW_TEXT_TAG = "rawtext";
 
 const std::string VarText::PLANET_ID_TAG = "planet";
 const std::string VarText::SYSTEM_ID_TAG = "system";

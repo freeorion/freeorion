@@ -2707,7 +2707,7 @@ void Empire::CheckProductionProgress() {
                     Logger().debugStream() << "New Ship, id " << ship_id << ", created on turn: " << ship->CreationTurn();
                 }
                 else {
-                    AddSitRepEntry(CreateShipBlockBuiltSitRep(system->ID(), ship->DesignID()));
+                    AddSitRepEntry(CreateShipBlockBuiltSitRep(system->ID(), ship->DesignID(), m_production_queue[i].blocksize));
                     Logger().debugStream() << "New block of "<< m_production_queue[i].blocksize << "ships created on turn: " << ship->CreationTurn();
                 }
                 break;

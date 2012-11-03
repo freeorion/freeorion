@@ -45,7 +45,8 @@ public:
     //@}
 
     /** Tag strings that are recognized and replaced in VarText. */
-    static const std::string TEXT_TAG;
+    static const std::string TEXT_TAG;      // stringtable lookup
+    static const std::string RAW_TEXT_TAG;  // no stringtable lookup
 
     static const std::string PLANET_ID_TAG;
     static const std::string SYSTEM_ID_TAG;
