@@ -464,9 +464,9 @@ double Fleet::MaxFuel() const {
             Logger().errorStream() << "Fleet::MaxFuel couldn't get ship with id " << *ship_it;
             continue;
         }
-        const Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL);
+        const Meter* meter = ship->UniverseObject::GetMeter(METER_MAX_FUEL);
         if (!meter) {
-            Logger().errorStream() << "Fleet::MaxFuel skipping ship with no fuel meter";
+            Logger().errorStream() << "Fleet::MaxFuel skipping ship with no max fuel meter";
             continue;
         }
         if (!ship->OrderedScrapped()) {
