@@ -5725,6 +5725,11 @@ SHP_SOLAR_CONT_DESC
 
 This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to stealth. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and stealth are very low. However, this ship has the ability to enter a star and hide, giving it perfect stealth on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.'''
 
+SPY_ROOT_DECEPTION
+Deception
+SPY_ROOT_DECEPTION_DESC
+'''The art of deception is not natural to every species, but the ability to hide the truth can be most useful.'''
+
 
 #############################################################
 ####          T E C H   A P P L I C A T I O N S          ####
@@ -5763,6 +5768,9 @@ Improves Trade
 
 CONSTRUCTION_SHORT_DESC
 Improves Infrastructure
+
+SUPPLY_SHORT_DESC
+Improves Supply
 
 DEFENSE_SHORT_DESC
 Improves Planetary Defense
@@ -6416,24 +6424,6 @@ Distortion Modulator
 SPY_DIST_MOD_DESC
 All objects with mass cause a curvature in space-time due to gravitational effects. Other forces such as the electromagnetic force have similar geometric effects. By indiscriminately amplifying these effects in a localized area, space-time distortion caused by ships can easily be distinguished from background electromagnetic and gravitational radiation.
 
-SHP_SELFGRAV_HULL
-Self-Gravitating Hull
-
-SHP_SELFGRAV_HULL_DESC
-This hull is immense in both size and power, with eight external slots and two internal slots. It is fairly sturdy, having a high max structure, but stealth and speed are fairly low.
-
-SHP_NANOROBO_HULL
-Nano-Robotic Hull
-
-SHP_NANOROBO_HULL_DESC
-This automated hull is large and fast, and repairs damage to itself using millions of nano-robots. It has six external slots and one internal slot, but it has low stealth and is very fragile, though it regenerates structure during combat and restores structure completely between combats.
-
-SHP_TITAN_HULL
-Titanic Hull
-
-SHP_TITAN_HULL_DESC
-This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots and three internal slots, and its max structure is very high, but at the cost of a great deal of speed and stealth.
-
 SHP_ANTIMAT_TORP
 Antimatter Torpedo
 
@@ -6476,23 +6466,11 @@ Organic Hull
 SHP_ORG_HULL_DESC
 This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. It has three external slots and one internal slot. Stealth is high and speed is average, but structure is a bit low. This hull regenerates structure and fuel between combats.
 
-SHP_STAT_MULTICELL_HULL
-Static Multicellular Hull
-
-SHP_STAT_MULTICELL_HULL_DESC
-Despite being organic, this hull is non-living, being produced via multicellular casting. The versatility of the interior and the lack of necessity for internal organs increases its capacity, but without living systems to maintain its structure it is very weak. It has three external slots and two internal slots. Stealth is average and speed is good, but structure is very low. Unlike most organic hulls, this hull regenerates neither structure nor fuel between combats.
-
 SHP_SYMB_HULL
 Symbiotic Hull
 
 SHP_SYMB_HULL_DESC
 This living hull exists in a symbiotic relationship with its crew, increasing its stealth and speed. It has two external slots and one internal slot. Stealth, speed and structure are all good. This hull regenerates structure and fuel between combats.
-
-SHP_PROTOPLASM_HULL
-Protoplasmic Hull
-
-SHP_PROTOPLASM_HULL_DESC
-This mono-cellular hull suspends its internal parts in its cytoplasm rather than mounting them on a solid internal structure. It has three of each internal slots and external slots. Speed is average and stealth is high, but structure is very low. This hull regenerates structure and fuel between combats.
 
 SHP_ENDOSYMB_HULL
 Endosymbiotic Hull

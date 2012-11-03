@@ -1367,7 +1367,7 @@ Tech
 Tech
     name = "CON_ARCH_MONOFILS"
     description = "CON_ARCH_MONOFILS_DESC"
-    short_description = "CONSTRUCTION_SHORT_DESC"
+    short_description = "SUPPLY_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 275
@@ -1379,7 +1379,7 @@ Tech
 Tech
     name = "CON_GAL_INFRA"
     description = "CON_GAL_INFRA_DESC"
-    short_description = "CONSTRUCTION_SHORT_DESC"
+    short_description = "SUPPLY_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 750
@@ -1571,7 +1571,7 @@ Tech
 Tech
     name = "CON_CONTGRAV_ARCH"
     description = "CON_CONTGRAV_ARCH_DESC"
-    short_description = "CONSTRUCTION_SHORT_DESC"
+    short_description = "SUPPLY_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 50
@@ -1601,7 +1601,7 @@ Tech
 Tech
     name = "CON_ORBITAL_CON"
     description = "CON_ORBITAL_CON_DESC"
-    short_description = "CONSTRUCTION_SHORT_DESC"
+    short_description = "SUPPLY_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 40
@@ -1656,7 +1656,7 @@ Tech
     description = "CON_FRC_ENRG_CAMO_DESC"
     short_description = "STEALTH_SHORT_DESC"
     techtype = Application
-    category = "CONSTRUCTION_CATEGORY"
+    category = "SPY_CATEGORY"
     researchcost = 32
     researchturns = 1
     prerequisites = "CON_FRC_ENRG_STRC"
@@ -1761,12 +1761,12 @@ Tech
 Tech
     name = "SHP_INTSTEL_LOG"
     description = "SHP_INTSTEL_LOG_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "SHIPS_CATEGORY"
+    short_description = "SUPPLY_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
     researchcost = 75
     researchturns = 3
-    prerequisites = "SHP_NAVIGATION"
+    prerequisites = "CON_ORBITAL_CON"
 
 Tech
     name = "SHP_MIL_ROBO_CONT"
@@ -1793,8 +1793,8 @@ Tech
 Tech
     name = "SHP_CONTGRAV_MAINT"
     description = "SHP_CONTGRAV_MAINT_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 250
     researchturns = 1
@@ -1802,29 +1802,41 @@ Tech
         "SHP_SPACE_FLUX_DRIVE"
         "CON_ARCH_MONOFILS"
     ]
+    unlock = [
+        Item type = ShipHull name = "SH_SELF_GRAVITATING"
+        Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
+    ]
 
 Tech
     name = "SHP_NANOROBO_MAINT"
     description = "SHP_NANOROBO_MAINT_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 500
-    researchturns = 1
+    researchcost = 600
+    researchturns = 8
     prerequisites = [
         "SHP_CONTGRAV_MAINT"
         "PRO_NANOTECH_PROD"
+    ]
+    unlock = [
+        Item type = ShipHull name = "SH_NANOROBOTIC"
+        Item type = Building name = "BLD_SHIPYARD_CON_NANOROBO"
     ]
 
 Tech
     name = "SHP_MASSPROP_SPEC"
     description = "SHP_MASSPROP_SPEC_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 800
-    researchturns = 1
+    researchcost = 1000
+    researchturns = 10
     prerequisites = "SHP_NANOROBO_MAINT"
+    unlock = [
+        Item type = ShipHull name = "SH_TITANIC"
+        Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
+    ]
 
 Tech
     name = "SHP_TRANSSPACE_DRIVE"
@@ -1906,12 +1918,13 @@ Tech
 Tech
     name = "SHP_MULTICELL_CAST"
     description = "SHP_MULTICELL_CAST_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 2
     researchturns = 5
     prerequisites = "GRO_GENETIC_ENG"
+    unlock = Item type = ShipHull name = "SH_STATIC_MULTICELLULAR"
 
 Tech
     name = "SHP_HAB_MEGAFAUN"
@@ -1930,14 +1943,18 @@ Tech
 Tech
     name = "SHP_MONOCELL_EXP"
     description = "SHP_MONOCELL_EXP_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 45
     researchturns = 8
     prerequisites = [
         "SHP_MULTICELL_CAST"
         "GRO_LIFECYCLE_MAN"
+    ]
+    unlock = [
+        Item type = ShipHull name = "SH_PROTOPLASMIC"
+        Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
     ]
 
 Tech
@@ -2031,54 +2048,11 @@ Tech
     prerequisites = [
         "SHP_QUANT_ENRG_MAG"
         "SHP_ENRG_BOUND_MAN"
-        "LRN_EVERYTHING"
         "LRN_NDIM_SUBSPACE"
     ]
     unlock = [
         Item type = ShipHull name = "SH_SOLAR"
         Item type = Building name = "BLD_SHIPYARD_ENRG_SOLAR"
-    ]
-
-Tech
-    name = "SHP_SELFGRAV_HULL"
-    description = "SHP_SELFGRAV_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 85
-    researchturns = 1
-    prerequisites = "SHP_CONTGRAV_MAINT"
-    unlock = [
-        Item type = ShipHull name = "SH_SELF_GRAVITATING"
-        Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
-    ]
-
-Tech
-    name = "SHP_NANOROBO_HULL"
-    description = "SHP_NANOROBO_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 120
-    researchturns = 1
-    prerequisites = "SHP_NANOROBO_MAINT"
-    unlock = [
-        Item type = ShipHull name = "SH_NANOROBOTIC"
-        Item type = Building name = "BLD_SHIPYARD_CON_NANOROBO"
-    ]
-
-Tech
-    name = "SHP_TITAN_HULL"
-    description = "SHP_TITAN_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 180
-    researchturns = 1
-    prerequisites = "SHP_MASSPROP_SPEC"
-    unlock = [
-        Item type = ShipHull name = "SH_TITANIC"
-        Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
     ]
 
 Tech
@@ -2153,17 +2127,6 @@ Tech
     ]
 
 Tech
-    name = "SHP_STAT_MULTICELL_HULL"
-    description = "SHP_STAT_MULTICELL_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 4
-    researchturns = 2
-    prerequisites = "SHP_MULTICELL_CAST"
-    unlock = Item type = ShipHull name = "SH_STATIC_MULTICELLULAR"
-
-Tech
     name = "SHP_SYMB_HULL"
     description = "SHP_SYMB_HULL_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
@@ -2175,20 +2138,6 @@ Tech
     unlock = [
         Item type = ShipHull name = "SH_SYMBIOTIC"
         Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
-    ]
-
-Tech
-    name = "SHP_PROTOPLASM_HULL"
-    description = "SHP_PROTOPLASM_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 54
-    researchturns = 3
-    prerequisites = "SHP_MONOCELL_EXP"
-    unlock = [
-        Item type = ShipHull name = "SH_PROTOPLASMIC"
-        Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
     ]
 
 Tech
@@ -2796,6 +2745,15 @@ Tech
 //#    
 
 Tech
+    name = "SPY_ROOT_DECEPTION"
+    description = "SPY_ROOT_DECEPTION_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "SPY_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+
+Tech
     name = "SPY_EM_DAMPER"
     description = "SPY_EM_DAMPER_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
@@ -2803,7 +2761,7 @@ Tech
     category = "SPY_CATEGORY"
     researchcost = 8
     researchturns = 1
-    prerequisites = "SHP_SPACE_TACTICS"
+    prerequisites = "SPY_ROOT_DECEPTION"
     unlock = Item type = ShipPart name = "ST_EM_DAMPER"
     effectsgroups =
         EffectsGroup
