@@ -303,14 +303,27 @@ PlanetType Planet::CounterClockwiseNextPlanetType() const
 int Planet::TypeDifference(PlanetType type1, PlanetType type2) {
     // no distance defined for invalid types
     if (type1 == INVALID_PLANET_TYPE || type2 == INVALID_PLANET_TYPE)
-        return -1;
+        return 0;
     // if the same, distance is zero
     if (type1 == type2)
         return 0;
     // no distance defined for asteroids or gas giants with anything else
     if (type1 == PT_ASTEROIDS || type1 == PT_GASGIANT || type2 == PT_ASTEROIDS || type2 == PT_GASGIANT)
-        return -1;
-    return std::abs(int(type1) - int(type2));
+        return 0;
+    // find distance around loop:
+    //
+    //  0  1  2
+    //  8     3
+    //  7     4
+    //    6 5
+    int diff = std::abs(int(type1) - int(type2));
+    // raw_dist -> actual dist
+    //  0 to 4       0 to 4
+    //  5 to 8       4 to 1
+    if (diff > 4)
+        diff = 9 - diff;
+    std::cout << "typedifference type1: " << int(type1) << "  type2: " << int(type2) << "  diff: " << diff << std::endl;
+    return diff;
 }
 
 namespace {
