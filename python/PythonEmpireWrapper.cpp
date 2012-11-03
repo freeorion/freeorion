@@ -140,6 +140,7 @@ namespace FreeOrionPython {
             .def("buildingTypeAvailable",           &Empire::BuildingTypeAvailable)
             .add_property("availableBuildingTypes", make_function(&Empire::AvailableBuildingTypes,  return_internal_reference<>()))
             .def("shipDesignAvailable",             &Empire::ShipDesignAvailable)
+            .add_property("allShipDesigns",         make_function(&Empire::ShipDesigns,             return_value_policy<return_by_value>()))
             .add_property("availableShipDesigns",   make_function(&Empire::AvailableShipDesigns,    return_value_policy<return_by_value>()))
             .add_property("productionQueue",        make_function(&Empire::GetProductionQueue,      return_internal_reference<>()))
 
@@ -226,6 +227,7 @@ namespace FreeOrionPython {
             .def_readonly("locationID",             &ProductionQueue::Element::location)
             .def_readonly("allocation",             &ProductionQueue::Element::allocated_pp)
             .def_readonly("turnsLeft",              &ProductionQueue::Element::turns_left_to_completion)
+            .def_readonly("remaining",              &ProductionQueue::Element::remaining)
         ;
         class_<ProductionQueue, noncopyable>("productionQueue", no_init)
             .def("__iter__",                        iterator<ProductionQueue>())  // ProductionQueue provides STL container-like interface to contained queue
@@ -252,7 +254,7 @@ namespace FreeOrionPython {
             .def("researchTime",                    &Tech::ResearchTime)
             .add_property("prerequisites",          make_function(&Tech::Prerequisites,     return_internal_reference<>()))
             .add_property("unlockedTechs",          make_function(&Tech::UnlockedTechs,     return_internal_reference<>()))
-            .add_property("recursivePrerequisites", make_function(
+            .def("recursivePrerequisites",          make_function(
                                                         TechRecursivePrereqsFunc,
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<std::vector<std::string>, const Tech&, int>()

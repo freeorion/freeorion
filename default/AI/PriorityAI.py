@@ -10,7 +10,7 @@ import InvasionAI
 import MilitaryAI
 import PlanetUtilsAI
 import ExplorationAI
-from ProductionAI import curBestMilShipRating
+from ProductionAI import curBestMilShipRating,  getBestShipInfo
 import math
 
 def calculatePriorities():
@@ -113,13 +113,13 @@ def calculateResearchPriority():
     targetRP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetResearch),  planets) )
 
     if fo.currentTurn < 20:
-        researchPriority = 25 # mid industry , high research at beginning of game to get easy gro tech
+        researchPriority = 35 # mid industry , high research at beginning of game to get easy gro tech
     elif fo.currentTurn < 30:
-        researchPriority = 15 # mid industry , mid research 
+        researchPriority = 25 # mid industry , mid research 
     elif fo.currentTurn < 40:
         researchPriority = 20 # high  industry , low research 
     else:
-        researchPriority = 20 # high  industry , mid research 
+        researchPriority = 15 # high  industry , low research 
 
 
     print  ""
@@ -142,7 +142,7 @@ def calculateExplorationPriority():
         element=productionQueue[queue_index]
         if element.buildType == AIEmpireProductionTypes.BT_SHIP:
              if foAI.foAIstate.getShipRole(element.designID) ==       AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION  :
-                 queuedScoutShips +=1
+                 queuedScoutShips +=element.remaining
 
     
     explorationPriority = 95*math.ceil(  math.sqrt(max(0,  (numUnexploredSystems - (numScouts+queuedScoutShips)) / (numUnexploredSystems +0.001) )))
@@ -209,14 +209,17 @@ def calculateInvasionPriority():
         element=productionQueue[queue_index]
         if element.buildType == AIEmpireProductionTypes.BT_SHIP:
              if foAI.foAIstate.getShipRole(element.designID) ==       AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
-                 queuedTroopShips +=1
-
-
+                 queuedTroopShips +=element.remaining
+    bestShip,  bestDesign,  buildChoices = getBestShipInfo( AIPriorityType.PRIORITY_PRODUCTION_INVASION)
+    if bestDesign:
+        troopsPerBestShip = 5*(  list(bestDesign.parts).count("GT_TROOP_POD") )
+    else:
+        troopsPerBestShip=5 #may actually not have any troopers available, but this num will do for now
 
     troopShipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION)
     #numTroopShips = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(troopShipIDs))
     myTroopShips = len(troopShipIDs) -queuedTroopShips 
-    troopShipsNeeded = math.ceil(opponentTroops/5) - myTroopShips 
+    troopShipsNeeded = math.ceil(opponentTroops/troopsPerBestShip) - myTroopShips # counting all my ships as if they're my best ships
     milFleetEquiv= math.ceil( MilitaryAI.totMilRating /   curBestMilShipRating() )
     troopShipsNeeded = min( troopShipsNeeded ,  math.floor( milFleetEquiv / 2) - myTroopShips)
     

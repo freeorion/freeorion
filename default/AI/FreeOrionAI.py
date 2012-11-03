@@ -56,6 +56,7 @@ def startNewGame():
         __timerFile=None
         ResourcesAI.resourceTimerFile  =None
         ResourcesAI.doResourceTiming = False
+        print "Error: exception triggered:  ",  traceback.format_exc()
 
 def splitNewFleets():
     "split any fleets (at creation, can have unplanned mix of ship roles)"
@@ -121,6 +122,7 @@ def resumeLoadedGame(savedStateString):
         print "failed to parse saved state string"
         #assigning new state
         foAIstate = AIstate.AIstate()
+        print "Error: exception triggered:  ",  traceback.format_exc()
     if __timerFile:
         __timerFile.close()
     if ResourcesAI.resourceTimerFile:
@@ -139,6 +141,7 @@ def resumeLoadedGame(savedStateString):
         __timerFile=None
         ResourcesAI.resourceTimerFile  =None
         ResourcesAI.doResourceTiming = False
+        print "Error: exception triggered:  ",  traceback.format_exc()
 
 # called when the game is about to be saved, to let the Python AI know it should save any AI state
 # information, such as plans or knowledge about the game from previous turns, in the state string so that

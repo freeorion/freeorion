@@ -1,3 +1,6 @@
+import traceback
+import sys
+
 def checkValidity(value):
     "checks if value is valid"
 
@@ -102,6 +105,7 @@ class AIFleetMissionType(object):
             return name
         except:
             return "invalidMissionType"
+            print "Error: exception triggered:  ",  traceback.format_exc()
 
 def getAIFleetMissionTypes():
     return __getInterval(0, 10)
@@ -127,6 +131,7 @@ class AIFleetOrderType(object):
             return name
         except:
             return "invalidFleetOrderType"
+            print "Error: exception triggered:  ",  traceback.format_exc()
 
 def getAIFleetOrderTypes():
     return __getInterval(0, 10)
@@ -156,6 +161,7 @@ class AIShipRoleType(object):
             return name
         except:
             return "invalidRoleType"
+            print "Error: exception triggered:  ",  traceback.format_exc()
 
 def getAIShipRolesTypes():
     return __getInterval(0, 8)
@@ -177,6 +183,7 @@ class AITargetType(object):
             return name
         except:
             return "invalidTargetType"
+            print "Error: exception triggered:  ",  traceback.format_exc()
 
 def getAITargetTypes():
     return __getInterval(0, 7)

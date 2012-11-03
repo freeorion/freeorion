@@ -1,4 +1,6 @@
 import copy
+import sys
+import traceback
 import freeOrionAIInterface as fo
 import EnumsAI
 from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType,  AITargetType
@@ -228,7 +230,7 @@ class AIstate(object):
                             threat += ( planet.currentMeterValue(fo.meterType.defense) ) * ( planet.currentMeterValue(fo.meterType.shield) +1)
                         except:
                             print "Error:  couldn't read meters for threat assessment of visible planet %d : %s"%(planetID,  planet.name)
-                            pass
+                            print "Error: exception triggered:  ",  traceback.format_exc()
                 sysStatus['planetThreat'] = int( threat )
                 self.systemStatus[sysID] = sysStatus
 
@@ -492,7 +494,7 @@ class AIstate(object):
                     del self.__aiMissionsByFleetID[fleetID]
                     del self.fleetStatus[fleetID]
                 except:
-                    pass
+                    print "Error: exception triggered:  ",  traceback.format_exc()
                 continue
             else:
                 sys1 =  universe.getSystem(sysID)

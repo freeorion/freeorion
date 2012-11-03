@@ -375,12 +375,19 @@ class AIFleetOrder(object):
             targ1Name = (targ1 and targ1.name) or "unknown"
             fleetRating = foAI.foAIstate.rateFleet(fleetID)
             threat = foAI.foAIstate.systemStatus.get(targetID,  {}).get('fleetThreat',  -1)
+
             if threat==0 or fleetRating > threat:
                 return True
             else:
-                if verbose:
-                    print "\tHolding fleet %d (rating %d) at system %d (%s) before travelling to system %d (%s) with threat %d"%(fleetID,  fleetRating,  systemID,  sys1Name,  targetID,  targ1Name,  threat)
-                return False
+                myOtherFleetsRating =   sum([foAI.foAIstate.fleetStatus.get(fleetID, {}).get('rating', 0)  for fleetID in foAI.foAIstate.militaryFleetIDs   if ( foAI.foAIstate.fleetStatus.get(fleetID,  {}).get('sysID',  -1) == thisSystemID ) ])
+                if  myOtherFleetsRating > threat:
+                    if verbose:
+                        print "\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d because of sufficient empire fleet strength already at desination"%(fleetID,  fleetRating,  systemID,  sys1Name,  targetID,  targ1Name,  threat)
+                    return True
+                else:
+                    if verbose:
+                        print "\tHolding fleet %d (rating %d) at system %d (%s) before travelling to system %d (%s) with threat %d"%(fleetID,  fleetRating,  systemID,  sys1Name,  targetID,  targ1Name,  threat)
+                    return False
         else:  # default returns true
             return True
 

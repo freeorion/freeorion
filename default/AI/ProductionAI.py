@@ -7,6 +7,7 @@ import AIstate
 import FleetUtilsAI
 from random import choice
 import sys
+import traceback
 import math
 
 shipTypeMap = dict( zip( [AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION,  AIPriorityType.PRIORITY_PRODUCTION_OUTPOST,  AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  AIPriorityType.PRIORITY_PRODUCTION_INVASION,  AIPriorityType.PRIORITY_PRODUCTION_MILITARY], 
@@ -20,16 +21,81 @@ def curBestMilShipRating():
     return stats['attack'] * ( stats['structure'] + stats['shields'] )
 
 def checkTroopShips():
-    troopDesigns = [shipDesign for shipDesign in empire.availableShipDesigns if shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_INVASION,  "nomatch")  in fo.getShipDesign(shipDesign).name(False) ]
-    if len(theseDesigns) !=1 : 
-        return 
-    try:
-        fo.issueCreateShipDesignOrder("SD_TROOP_SHIP_A2",  "Medium Hulled Troopship for economical large quantities of troops",  
-                                                                                    "SH_BASIC_MEDIUM",  ["", "", "GT_TROOP_POD"],  "",  "fighter")
-    except:
-        pass
+    empire = fo.getEmpire()
+    troopDesignIDs = [shipDesignID for shipDesignID in empire.allShipDesigns if shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_INVASION,  "nomatch")  in fo.getShipDesign(shipDesignID).name(False) ]
+    troopShipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in troopDesignIDs]
+    print "Current Troopship Designs: %s"%troopShipNames
+    if len(troopDesignIDs) ==1 : 
+        try:
+            res=fo.issueCreateShipDesignOrder("SD_TROOP_SHIP_A2",  "Medium Hulled Troopship for economical large quantities of troops",  
+                                                                                    "SH_BASIC_MEDIUM",  ["GT_TROOP_POD", "GT_TROOP_POD", "GT_TROOP_POD"],  "",  "fighter")
+            print "added  Troopship SD_TROOP_SHIP_A2, with result %d"%res
+        except:
+            print "Error: exception triggered:  ",  traceback.format_exc()
+    if "SD_TROOP_SHIP_A3" not in troopShipNames:
+        try:
+            res=fo.issueCreateShipDesignOrder("SD_TROOP_SHIP_A3",  "multicell Hulled Troopship for economical large quantities of troops",  
+                                                                                    "SH_STATIC_MULTICELLULAR",  ["GT_TROOP_POD",  "GT_TROOP_POD",  "SR_WEAPON_2",  "SH_DEFENSE_GRID", "SH_DEFENSE_GRID"],  "",  "fighter")
+            print "added  Troopship SD_TROOP_SHIP_A3, with result %d"%res
+        except:
+            print "Error: exception triggered:  ",  traceback.format_exc()
+    if "SD_TROOP_SHIP_A4" not in troopShipNames:
+        try:
+            res=fo.issueCreateShipDesignOrder("SD_TROOP_SHIP_A4",  "multicell Hulled Troopship for economical large quantities of troops",  
+                                                                                    "SH_STATIC_MULTICELLULAR",  ["GT_TROOP_POD",  "GT_TROOP_POD",  "SR_WEAPON_5",  "GT_TROOP_POD", "SH_DEFLECTOR"],  "",  "fighter")
+            print "added  Troopship SD_TROOP_SHIP_A4, with result %d"%res
+        except:
+            print "Error: exception triggered:  ",  traceback.format_exc()
+    bestShip,  bestDesign,  buildChoices = getBestShipInfo( AIPriorityType.PRIORITY_PRODUCTION_INVASION)
+    if bestDesign:
+        print "Best Troopship buildable is %s"%bestDesign.name(False)
+    else:
+        print "Troopships apparently unbuildable at present,  ruh-roh"
+
+
+def checkScouts():
+    empire = fo.getEmpire()
+    scoutDesignIDs = [shipDesignID for shipDesignID in empire.allShipDesigns if shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION,  "nomatch")  in fo.getShipDesign(shipDesignID).name(False) ]
+    scoutShipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in scoutDesignIDs]
+    print "Current Scout Designs: %s"%scoutShipNames
+    if "SD_SCOUT_A1" not in scoutShipNames:
+        try:
+            res=fo.issueCreateShipDesignOrder("SD_SCOUT_A1",  "multicell Hulled economical scout",  "SH_STATIC_MULTICELLULAR",  
+                                                                                    ["DT_OPTICAL_SCANNER",  "SH_DEFENSE_GRID",  "SR_WEAPON_2",  "FU_BASIC_TANK", "FU_BASIC_TANK"],  "",  "fighter")
+            print "added  Scout SD_SCOUT_A2, with result %d"%res
+        except:
+            print "Error: exception triggered:  ",  traceback.format_exc()
+    if "SD_SCOUT_A2" not in scoutShipNames:
+        try:
+            res=fo.issueCreateShipDesignOrder("SD_SCOUT_A2",  "multicell Hulled economical scout",  "SH_STATIC_MULTICELLULAR",  
+                                                                                    ["DT_OPTICAL_SCANNER",  "SH_DEFENSE_GRID",  "SR_WEAPON_2",  "FU_BASIC_TANK", "ST_EM_DAMPER"],  "",  "fighter")
+            print "added  Scout SD_SCOUT_A2, with result %d"%res
+        except:
+            print "Error: exception triggered:  ",  traceback.format_exc()
+    if "SD_SCOUT_B1" not in scoutShipNames:
+        try:
+            res=fo.issueCreateShipDesignOrder("SD_SCOUT_B1",  "multicell Hulled economical scout",  "SH_STATIC_MULTICELLULAR",  
+                                                                                    ["DT_ACTIVE_RADAR",  "SH_DEFLECTOR",  "SR_WEAPON_5",  "FU_BASIC_TANK", "FU_BASIC_TANK"],  "",  "fighter")
+            print "added  Scout SD_SCOUT_A2, with result %d"%res
+        except:
+            print "Error: exception triggered:  ",  traceback.format_exc()
+    if "SD_SCOUT_B2" not in scoutShipNames:
+        try:
+            res=fo.issueCreateShipDesignOrder("SD_SCOUT_B2",  "multicell Hulled economical scout",  "SH_STATIC_MULTICELLULAR",  
+                                                                                    ["DT_ACTIVE_RADAR",  "SH_DEFLECTOR",  "SR_WEAPON_5",  "FU_BASIC_TANK", "ST_EM_DAMPER"],  "",  "fighter")
+            print "added  Scout SD_SCOUT_A2, with result %d"%res
+        except:
+            print "Error: exception triggered:  ",  traceback.format_exc()
+    bestShip,  bestDesign,  buildChoices = getBestShipInfo( AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION)
+    if bestDesign:
+        print "Best Scout buildable is %s"%bestDesign.name(False)
+    else:
+        print "Scouts apparently unbuildable at present,  ruh-roh"
+    #TODO: add more advanced designs
+
     
 def getBestShipInfo(priority):
+    "returns designID,  design,  buildLocList"
     empire = fo.getEmpire()
     theseDesigns = [shipDesign for shipDesign in empire.availableShipDesigns if shipTypeMap.get(priority,  "nomatch")  in fo.getShipDesign(shipDesign).name(False)  and getAvailableBuildLocations(shipDesign) != [] ]
     if theseDesigns == []: 
@@ -50,6 +116,11 @@ def generateProductionOrders():
     totalPP = empire.productionPoints
     print ""
     print "  Total Available Production Points: " + str(totalPP)
+    
+    try:    checkScouts()
+    except: print "Error: exception triggered:  ",  traceback.format_exc()
+    try:    checkTroopShips()
+    except: print "Error: exception triggered:  ",  traceback.format_exc()
 
     movedCapital=False
     if not homeworld:
@@ -87,22 +158,23 @@ def generateProductionOrders():
             queuedBldgNames=[ bldg.name for bldg in queuedBldgs ]
 
             if  ("BLD_INDUSTRY_CENTER" in possibleBuildingTypes) and ("BLD_INDUSTRY_CENTER" not in (capitalBldgs+queuedBldgNames)):
-                print "Enqueueing BLD_INDUSTRY_CENTER"
-                fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", empire.capitalID)
+                res=fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", empire.capitalID)
+                print "Enqueueing BLD_INDUSTRY_CENTER, with result %d"%res
 
             if  ("BLD_SHIPYARD_BASE" in possibleBuildingTypes) and ("BLD_SHIPYARD_BASE" not in (capitalBldgs+queuedBldgNames)):
                 try:
-                    fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_BASE", empire.capitalID)
-                    print "Enqueueing BLD_SHIPYARD_BASE"
+                    res=fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_BASE", empire.capitalID)
+                    print "Enqueueing BLD_SHIPYARD_BASE, with result %d"%res
                 except:
                     print "Error: cant build shipyard at new capital,  probably no population; we're hosed"
+                    print "Error: exception triggered:  ",  traceback.format_exc()
 
             if  ("BLD_SHIPYARD_ORG_ORB_INC" in possibleBuildingTypes) and ("BLD_SHIPYARD_ORG_ORB_INC" not in (capitalBldgs+queuedBldgNames)):
                 try:
-                    fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_ORG_ORB_INC", empire.capitalID)
-                    print "Enqueueing BLD_SHIPYARD_ORG_ORB_INC"
+                    res=fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_ORG_ORB_INC", empire.capitalID)
+                    print "Enqueueing BLD_SHIPYARD_ORG_ORB_INC, with result %d"%res
                 except:
-                    pass
+                    print "Error: exception triggered:  ",  traceback.format_exc()
 
 
 
@@ -139,7 +211,7 @@ def generateProductionOrders():
             break
         elif element.buildType == AIEmpireProductionTypes.BT_SHIP:
              if foAI.foAIstate.getShipRole(element.designID) ==       AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
-                 queuedColonyShips +=1
+                 queuedColonyShips +=element.remaining
     if queuedColonyShips:
         print "\nFound %d colony ships in build queue"%queuedColonyShips
 

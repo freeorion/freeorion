@@ -3,11 +3,13 @@ import FreeOrionAI as foAI
 import TechsListsAI
 from EnumsAI import AIPriorityType, getAIPriorityResearchTypes
 import AIstate
-
+import traceback
+import sys
 
 def generateResearchOrders():
     "generate research orders"
     empire = fo.getEmpire()
+    empireID = empire.empireID
     print "Research Queue Management:"
     print ""
     print "Techs researched and available for use:"
@@ -22,15 +24,28 @@ def generateResearchOrders():
     if  researchQueueList:
         print "Techs currently at head of Research Queue:"
         for element in list(researchQueue)[:10]:
-            print "    %25s  allocated %6.2f RP"%(element.tech,  element.allocation)
+            thisTech=fo.getTech(element.tech)
+            missingPrereqs = [preReq for preReq in thisTech.recursivePrerequisites(empireID) if preReq not in completedTechs]
+            if not missingPrereqs:
+                print "    %25s  allocated %6.2f RP "%(element.tech,  element.allocation)
+            else:
+                print "    %25s  allocated %6.2f RP   --  missing preReqs: %s"%(element.tech,  element.allocation,  missingPrereqs)
         print ""
     if fo.currentTurn()<=1:
         newtech = TechsListsAI.primaryMetaTechsList()
         #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
         pLTsToEnqueue = newtech[:]
+        techBase = set(completedTechs+researchQueueList)
+        techsToAdd=[]
         for tech in pLTsToEnqueue:
-            if (tech in completedTechs) or (tech in researchQueueList): pLTsToEnqueue.remove(tech)
-        for name in pLTsToEnqueue:
+            if (tech not in  techBase): 
+                thisTech=fo.getTech(tech)
+                if thisTech is None:
+                    continue
+                missingPrereqs = [preReq for preReq in thisTech.recursivePrerequisites(empireID) if preReq not in techBase] 
+                techsToAdd.extend( missingPrereqs+[tech] )
+                techBase.update(  missingPrereqs+[tech]  )
+        for name in techsToAdd:
             try:
                 enqueueRes = fo.issueEnqueueTechOrder(name, -1)
                 if enqueueRes == 1:
@@ -39,9 +54,18 @@ def generateResearchOrders():
                     print "    Error: failed attempt to enqueued Tech: " + name
             except:
                 print "    Error: failed attempt to enqueued Tech: " + name
+                print "    Error: exception triggered:  ",  traceback.format_exc()
         print""
         generateDefaultResearchOrders()
-    elif fo.currentTurn() >100:
+        print "\n\nAll techs:"
+        alltechs = fo.techs() # returns names of all techs
+        for tname in alltechs:
+            print tname
+        print "\n-------------------------------\nAll unqueued techs:"
+        for tname in [tn for tn in alltechs if tn not in newtech]:
+            print tname
+
+    elif fo.currentTurn() >50:
         generateDefaultResearchOrders()
 
 def generateResearchOrders_old():

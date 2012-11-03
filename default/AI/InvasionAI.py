@@ -1,11 +1,12 @@
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
 import AIstate
-from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
+from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType,  AIPriorityType
 import FleetUtilsAI
 import PlanetUtilsAI
 import AITarget
 import math
+from ProductionAI import  getBestShipInfo
 
 def getInvasionFleets():
     "get invasion fleets"
@@ -158,6 +159,11 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
     "sends a list of invasion fleets to a list of planet_value_pairs"
     universe=fo.getUniverse()
     invasionPool = invasionFleetIDs[:]  #need to make a copy
+    bestShip,  bestDesign,  buildChoices = getBestShipInfo( AIPriorityType.PRIORITY_PRODUCTION_INVASION)
+    if bestDesign:
+        troopsPerBestShip = 5*(  list(bestDesign.parts).count("GT_TROOP_POD") )
+    else:
+        troopsPerBestShip=5 #may actually not have any troopers available, but this num will do for now
 
     for pID,  pscore,  ptroops in evaluatedPlanets: # evaluatedPlanets is a dictionary
         if invasionPool ==[]: return
