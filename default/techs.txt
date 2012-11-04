@@ -153,24 +153,6 @@ Tech
             effects = SetMaxDefense Value + 15            
 
 Tech
-    name = "DEF_PLAN_DEFLECT_SHLD"
-    description = "DEF_PLAN_DEFLECT_SHLD_DESC"
-    short_description = "SHIELD_SHORT_DESC"
-    techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 120
-    researchturns = 5
-    prerequisites = "DEF_DEFENSE_NET"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet
-            ]
-            activation = Not OwnerHasTech "DEF_PLAN_BARRIER_SHLD"
-            effects = SetMaxShield Value + 10
-    
-Tech
     name = "DEF_PLAN_BARRIER_SHLD"
     description = "DEF_PLAN_BARRIER_SHLD_DESC"
     short_description = "SHIELD_SHORT_DESC"
@@ -178,7 +160,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 500
     researchturns = 8
-    prerequisites = "DEF_PLAN_DEFLECT_SHLD"
+    prerequisites = "LRN_FORCE_FIELD"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -239,11 +221,20 @@ Tech
 Tech
     name = "LRN_ALGO_ELEGANCE"
     description = "LRN_ALGO_ELEGANCE_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "RESEARCH_SHORT_DESC"
+    techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 6
+    researchcost = 12
     researchturns = 4
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Focus "FOCUS_RESEARCH"
+            ]
+            effects = SetTargetResearch Value + Target.Population * 0.25
+    ]
     graphic = "icons/tech/algorithmic_elegance.png"
 
 Tech
@@ -268,7 +259,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 24
     researchturns = 3
-    prerequisites = "LRN_PHYS_BRAIN"
+    prerequisites = "LRN_TRANSLING_THT"
     graphic = "icons/tech/psionics.png"
 
 Tech
@@ -296,12 +287,21 @@ Tech
 Tech
     name = "LRN_FORCE_FIELD"
     description = "LRN_FORCE_FIELD_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "LEARNING_CATEGORY"
+    short_description = "SHIELD_SHORT_DESC"
+    techtype = Application
+    category = "DEFENSE_CATEGORY"
     researchcost = 48
     researchturns = 4
-    prerequisites = "LRN_PSIONICS"
+    prerequisites = "LRN_ARTIF_MINDS"
+    unlock = Item type = ShipPart name = "SH_DEFLECTOR"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            activation = Not OwnerHasTech "DEF_PLAN_BARRIER_SHLD"
+            effects = SetMaxShield Value + 10
     graphic = "icons/tech/force-field_harmonics.png"
 
 Tech
@@ -384,10 +384,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 30
     researchturns = 1
-    prerequisites = [
-        "LRN_TRANSLING_THT"
-        "LRN_PSIONICS"
-    ]
+    prerequisites = "LRN_PSIONICS"
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1142,10 +1139,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 25
     researchturns = 4
-    prerequisites = [
-    	"PRO_ROBOTIC_PROD"
-    	"LRN_ARTIF_MINDS"
-    ]
+    prerequisites = "PRO_SENTIENT_AUTOMATION"
     unlock = Item type = Building name = "BLD_EXOBOT_SHIP"
     
     graphic = "icons/species/robotic-01.png"
@@ -1318,8 +1312,8 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 24
-    researchturns = 1
+    researchcost = 100
+    researchturns = 8
     prerequisites = "PRO_ORBITAL_GEN"
     unlock = Item type = Building name = "BLD_SOL_ORB_GEN"
 
@@ -1335,6 +1329,7 @@ Tech
     unlock = [
         Item type = Building name = "BLD_NEUTRONIUM_EXTRACTOR"
         Item type = Building name = "BLD_NEUTRONIUM_FORGE"
+        Item type = ShipPart name = "AR_NEUTRONIUM_PLATE"
     ]
 
 
@@ -1506,7 +1501,7 @@ Tech
     description = "CON_ORBITAL_HAB_DESC"
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
-    category = "CONSTRUCTION_CATEGORY"
+    category = "GROWTH_CATEGORY"
     researchcost = 250
     researchturns = 1
     prerequisites = "PRO_MICROGRAV_MAN"
@@ -1738,17 +1733,6 @@ Tech
     prerequisites = "GRO_PLANET_ECOL"
 
 Tech
-    name = "SHP_NAVIGATION"
-    description = "SHP_NAVIGATION_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "SHIPS_CATEGORY"
-    researchcost = 32
-    researchturns = 2
-    prerequisites = "SHP_GAL_EXPLO"
-    graphic = "icons/tech/stellar_navigation.png"
-
-Tech
     name = "SHP_INTSTEL_LOG"
     description = "SHP_INTSTEL_LOG_DESC"
     short_description = "SUPPLY_DESC"
@@ -1889,6 +1873,7 @@ Tech
     unlock = [
         Item type = ShipHull name = "SH_AGREGATE_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
+        Item type = ShipPart name = "AR_ROCK_PLATE"
     ]
 
 Tech
@@ -1950,14 +1935,18 @@ Tech
 Tech
     name = "SHP_CONT_SYMB"
     description = "SHP_CONT_SYMB_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 45
     researchturns = 8
     prerequisites = [
         "SHP_HAB_MEGAFAUN"
         "GRO_XENO_GENETICS"
+    ]
+    unlock = [
+        Item type = ShipHull name = "SH_SYMBIOTIC"
+        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
 
 Tech
@@ -2089,20 +2078,6 @@ Tech
     ]
 
 Tech
-    name = "SHP_ROCK_PLATE"
-    description = "SHP_ROCK_PLATE_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 80
-    researchturns = 2
-    prerequisites = "SHP_ASTEROID_REFORM"
-    unlock = [
-        Item type = ShipPart name = "AR_ROCK_PLATE"
-        Item type = Building name = "BLD_SHIPYARD_AST_REF"
-    ]
-
-Tech
     name = "SHP_ORG_HULL"
     description = "SHP_ORG_HULL_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
@@ -2114,20 +2089,6 @@ Tech
     unlock = [
         Item type = ShipHull name = "SH_ORGANIC"
         Item type = Building name = "BLD_SHIPYARD_ORG_ORB_INC"
-    ]
-
-Tech
-    name = "SHP_SYMB_HULL"
-    description = "SHP_SYMB_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 54
-    researchturns = 3
-    prerequisites = "SHP_CONT_SYMB"
-    unlock = [
-        Item type = ShipHull name = "SH_SYMBIOTIC"
-        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
 
 Tech
@@ -2173,20 +2134,9 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 24
     researchturns = 1
-    prerequisites = "SHP_NAVIGATION"
+    prerequisites = "SHP_GAL_EXPLO"
     unlock = Item type = ShipPart name = "AR_LEAD_PLATE"
     graphic = "icons/ship_parts/lead_armor_plating.png"
-
-Tech
-    name = "SHP_NEUTRONIUM_PLATE"
-    description = "SHP_NEUTRONIUM_PLATE_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 325
-    researchturns = 4
-    prerequisites = "PRO_NEUTRONIUM_EXTRACTION"
-    unlock = Item type = ShipPart name = "AR_NEUTRONIUM_PLATE"
 
 Tech
     name = "SHP_FLEET_REPAIR"
@@ -2209,18 +2159,6 @@ Tech
                 ResupplyableBy empire = Source.Owner
             ]
             effects = SetStructure Value + 1
-
-Tech
-    name = "SHP_DEFLECTOR"
-    description = "SHP_DEFLECTOR_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 8
-    researchturns = 1
-    prerequisites = "SHP_NAVIGATION"
-    unlock = Item type = ShipPart name = "SH_DEFLECTOR"
-    graphic = "icons/ship_parts/deflector_shield.png"
 
 Tech
     name = "SHP_IMPROVED_ENGINE_COUPLINGS"
@@ -2297,9 +2235,9 @@ Tech
     short_description = "STRUCTURE_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 24
+    researchcost = 40
     researchturns = 1
-    prerequisites = "SHP_NAVIGATION"
+    prerequisites = "SHP_LEAD_PLATE"
     effectsgroups =
         EffectsGroup
             scope = And [
