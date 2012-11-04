@@ -7015,7 +7015,7 @@ HULL_DESC
 '''Starlane Speed: %1%
 Fuel Capacity: %2%
 Combat Speed: %3%
-Health: %4%'''
+Structure: %4%'''
 
 PART_DESC_CAPACITY
 Capacity: %1%
