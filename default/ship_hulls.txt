@@ -54,7 +54,7 @@ Hull
     starlaneSpeed = 75
     fuel = 4
     stealth = 2
-    structure = 4
+    structure = 5
     slots = [
         Slot type = External position = (0.50, 0.45)
     ]
@@ -80,7 +80,7 @@ Hull
     starlaneSpeed = 60
     fuel = 3
     stealth = 2
-    structure = 7
+    structure = 10
     slots = [
         Slot type = External position = (0.35, 0.40)
         Slot type = External position = (0.65, 0.40)
@@ -109,7 +109,7 @@ Hull
     starlaneSpeed = 40
     fuel = 3
     stealth = 2
-    structure = 12
+    structure = 15
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
@@ -139,7 +139,7 @@ Hull
     starlaneSpeed = 75
     fuel = 3
     stealth = 2
-    structure = 8
+    structure = 25
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -181,7 +181,7 @@ Hull
     description = "SH_SPATIAL_FLUX_DESC"
     speed = 80
     starlaneSpeed = 80
-    fuel = 3
+    fuel = 10
     stealth = 10
     structure = 3
     slots = [
@@ -224,7 +224,7 @@ Hull
     starlaneSpeed = 80
     fuel = 3
     stealth = -5
-    structure = 25
+    structure = 100
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -271,7 +271,7 @@ Hull
     starlaneSpeed = 80
     fuel = 3
     stealth = 10
-    structure = 5
+    structure = 30
     slots = [
         Slot type = External position = (0.15, 0.15)
         Slot type = External position = (0.30, 0.15)
@@ -321,7 +321,7 @@ Hull
     starlaneSpeed = 80
     fuel = 3
     stealth = -30
-    structure = 40
+    structure = 160
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.20, 0.15)
@@ -377,7 +377,7 @@ Hull
     starlaneSpeed = 80
     fuel = 3
     stealth = 30
-    structure = 1
+    structure = 9
     slots = Slot type = External position = (0.50, 0.50)
     buildCost = 50 * (1 + 0.05 *
         Number condition = And [
@@ -413,7 +413,7 @@ Hull
     starlaneSpeed = 80
     fuel = 3
     stealth = 10
-    structure = 30
+    structure = 110
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.22, 0.15)
@@ -481,7 +481,7 @@ Hull
     starlaneSpeed = 60
     fuel = 4
     stealth = 3
-    structure = 7
+    structure = 30
     slots = [
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.20, 0.50)
@@ -520,7 +520,7 @@ Hull
     starlaneSpeed = 60
     fuel = 4
     stealth = 5
-    structure = 3
+    structure = 15
     slots = [
         Slot type = External position = (0.50, 0.15)
         Slot type = Internal position = (0.50, 0.75)
@@ -555,7 +555,7 @@ Hull
     starlaneSpeed = 60
     fuel = 4
     stealth = 10
-    structure = 20
+    structure = 50
     slots = [
         Slot type = External position = (0.12, 0.15)
         Slot type = External position = (0.24, 0.15)
@@ -597,7 +597,7 @@ Hull
     starlaneSpeed = 60
     fuel = 4
     stealth = 5
-    structure = 10
+    structure = 40
     slots = [
         Slot type = Internal position = (0.15, 0.40)
         Slot type = Internal position = (0.30, 0.40)
@@ -634,7 +634,7 @@ Hull
     starlaneSpeed = 60
     fuel = 4
     stealth = 100
-    structure = 3
+    structure = 15
     slots = [
         Slot type = External position = (0.50, 0.15)
         Slot type = Internal position = (0.50, 0.75)
@@ -669,7 +669,7 @@ Hull
     starlaneSpeed = 60
     fuel = 4
     stealth = -20
-    structure = 10
+    structure = 140
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.20, 0.15)
@@ -725,7 +725,7 @@ Hull
     starlaneSpeed = 60
     fuel = 4
     stealth = 100
-    structure = 2
+    structure = 11
     slots = [
         Slot type = External position = (0.20, 0.40)
         Slot type = External position = (0.40, 0.40)
@@ -764,7 +764,7 @@ Hull
     starlaneSpeed = 60
     fuel = 4
     stealth = -20
-    structure = 10
+    structure = 160
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.20, 0.15)
@@ -833,7 +833,7 @@ Hull
     starlaneSpeed = 60
     fuel = 4
     stealth = 5
-    structure = 50
+    structure = 55
     slots = [
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.20, 0.50)
@@ -876,7 +876,7 @@ Hull
     starlaneSpeed = 90
     fuel = 2
     stealth = 20
-    structure = 7
+    structure = 11
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -920,7 +920,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 10
-    structure = 3
+    structure = 16
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -953,7 +953,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 20
-    structure = 7
+    structure = 20
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -1000,7 +1000,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 20
-    structure = 15
+    structure = 12
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -1047,7 +1047,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 20
-    structure = 3
+    structure = 23
     slots = [
         Slot type = External position = (0.15, 0.15)
         Slot type = External position = (0.30, 0.15)
@@ -1097,7 +1097,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 20
-    structure = 10
+    structure = 20
     slots = [
         Slot type = External position = (0.15, 0.15)
         Slot type = External position = (0.30, 0.15)
@@ -1150,7 +1150,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 0
-    structure = 30
+    structure = 25
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -1193,7 +1193,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 30
-    structure = 25
+    structure = 36
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -1241,7 +1241,7 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 20
-    structure = 20
+    structure = 57
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.25, 0.15)
@@ -1310,7 +1310,7 @@ Hull
     starlaneSpeed = 120
     fuel = 5
     stealth = 75
-    structure = 3
+    structure = 10
     slots = Slot type = External position = (0.15, 0.40)
     buildCost = 2.5
     buildTime = 2
@@ -1338,7 +1338,7 @@ Hull
     starlaneSpeed = 120
     fuel = 5
     stealth = 0
-    structure = 10
+    structure = 80
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.20, 0.15)
@@ -1394,7 +1394,7 @@ Hull
     starlaneSpeed = 120
     fuel = 5
     stealth = -15
-    structure = 40
+    structure = 100
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.22, 0.15)
@@ -1433,7 +1433,7 @@ Hull
     starlaneSpeed = 120
     fuel = 5
     stealth = -250
-    structure = 50
+    structure = 300
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.20, 0.15)

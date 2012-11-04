@@ -1526,43 +1526,45 @@ BuildingType
     location = AND [
         Not Contains Building "BLD_EVACUATION"
         OwnedBy TheEmpire Source.Owner
-        ]
+    ]
     effectsgroups = [
-    
-        EffectsGroup
-            scope = Contains Source
-            activation =  Number low = 1 condition = And 
-                    [
-                    Species name = Source.Planet.Species
-                    ResourceSupplyConnected Source.Owner Source
-                    Population low = 1 high = LocalCandidate.TargetPopulation - 1
-                    ]
-
+        EffectsGroup            // add population to connected plants with room and suitable species
+            scope = NumberOf number = 1 condition = And [
+                PopulationCenter
+                Species name = Source.Planet.Species
+                Not Object Source.PlanetID
+                ResourceSupplyConnected Source.Owner Source
+                Population low = 1 high = LocalCandidate.TargetPopulation - 1
+            ]
+            activation = Number low = 1 condition = And [
+                PopulationCenter
+                Species name = Source.Planet.Species
+                Not Object Source.PlanetID
+                ResourceSupplyConnected Source.Owner Source
+                Population low = 1 high = LocalCandidate.TargetPopulation - 1
+            ]
             accountinglabel = "EVACUEES_LABEL"
             effects = SetPopulation Value + 2
     
-        EffectsGroup
-            scope = And [
-                Contains Source
-                PopulationCenter                
-            ]
+        EffectsGroup            // remove population from location
+            scope = Object Source.PlanetID            
             activation = ContainedBy And [
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
             ]
-            accountinglabel ="EVACUATION_LABEL"
-            effects = [
-                SetPopulation Target.Population - 2
-            ]
+            accountinglabel = "EVACUATION_LABEL"
+            effects = SetPopulation Target.Population - 2
 
-        EffectsGroup
+        EffectsGroup            // remove evacuation when planet is depopulated or no longer owned by empire that produced this building
             scope = Source
             activation = OR [
                 NOT OwnedBy TheEmpire Source.Owner
-                Population low = 0 high = 0
+                ContainedBy And [
+                    Object Source.PlanetID
+                    Population high = 0
                 ]
+            ]
             effects = Destroy
-
     ]
     icon = "icons/building/evacuation.png"
 

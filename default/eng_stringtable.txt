@@ -6388,6 +6388,24 @@ SPY_PHASING_CLOAK_DESC
 
 Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
 
+SHP_IMPROVED_ENGINE_COUPLINGS
+Improved Engine Couplings
+
+SHP_IMPROVED_ENGINE_COUPLINGS_DESC
+Better engine parts equate to better engines. Increases Starlane speed by 10
+
+SHP_N_DIMENSIONAL_ENGINE_MATRIX
+N-Dimensional Engine Matrix
+
+SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
+N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Starlane speed by 15. 
+
+SHP_SINGULARITY_ENGINE_CORE
+Singularity Engine Core
+
+SHP_SINGULARITY_ENGINE_CORE_DESC
+A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. 
+
 SHP_DEUTERIUM_TANK
 Deuterium Tank
 
@@ -6557,6 +6575,11 @@ Halves the population penalties on planets with the Heavy Mining focus.'''
 ####                  B U I L D I N G S                  ####
 #############################################################
 
+BLD_EVACUATION
+Evacuation
+
+BLD_EVACUATION_DESC
+Remove population from this planet over several turns.  If a suitable alternate planets are available, with the same species and sufficient extra capacity, population will move there.
 
 BLD_OBSERVATORY
 Observatory
@@ -7250,8 +7273,27 @@ Sensors
 DT_SENSORS_DESC
 Ultimate detection
 
+FU_IMPROVED_ENGINE_COUPLINGS
+Improved Engine Couplings
+
+FU_IMPROVED_ENGINE_COUPLINGS_DESC
+Better engine parts equate to better engines. Increases Starlane speed by 10
+
+FU_N_DIMENSIONAL_ENGINE_MATRIX
+N-Dimensional Engine Matrix
+
+FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
+N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Starlane speed by 15. 
+
+FU_SINGULARITY_ENGINE_CORE
+Singularity Engine Core
+
+FU_SINGULARITY_ENGINE_CORE_DESC
+A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. 
+
 FU_BASIC_TANK
 Extra Fuel Tank
+
 FU_BASIC_TANK_DESC
 Allows an additional jump.
 
@@ -7301,31 +7343,41 @@ AR_LEAD_PLATE
 Lead Armor Plating
 
 AR_LEAD_PLATE_DESC
-Weak defense with large mass
+'''Weak defense with large mass. 
+
+All armor carries a speed penalty due to the extra energy needed to move the additional mass. However, due to its simplicity, armor is very cost effective.'''
 
 AR_ZORTRIUM_PLATE
 Zortrium Armor Plating
 
 AR_ZORTRIUM_PLATE_DESC
-Stronger defense than lead plating
+'''Stronger defense than lead plating
+
+All armor carries a speed penalty due to the extra energy needed to move the additional mass. However, due to its simplicity, armor is very cost effective.'''
 
 AR_ROCK_PLATE
 Rock Armor Plating
 
 AR_ROCK_PLATE_DESC
-A strong, cheap alternative to alloys. This part can only be built if there is an Asteroid Reformation Facility at an asteroid belt somewhere in the empire or an ally's empire.
+'''A strong, cheap alternative to alloys. This part can only be built if there is an Asteroid Reformation Facility at an asteroid belt somewhere in the empire or an ally's empire.
+
+All armor carries a speed penalty due to the extra energy needed to move the additional mass. However, due to its simplicity, armor is very cost effective.'''
 
 AR_CRYSTAL_PLATE
 Crystal Armor Plating
 
 AR_CRYSTAL_PLATE_DESC
-An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is a Asteroid Reformation Processor at an asteroid belt somewhere in the empire or an ally's empire.
+'''An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is a Asteroid Reformation Processor at an asteroid belt somewhere in the empire or an ally's empire.
+
+All armor carries a speed penalty due to the extra energy needed to move the additional mass. However, due to its simplicity, armor is very cost effective.'''
 
 AR_NEUTRONIUM_PLATE
 Neutronium Armor Plating
 
 AR_NEUTRONIUM_PLATE_DESC
-Admirable defense with moderate mass
+'''Admirable defense with moderate mass
+
+All armor carries a speed penalty due to the extra energy needed to move the additional mass. However, due to its simplicity, armor is very cost effective.'''
 
 AR_PRECURSOR_PLATE
 Precursor Armor Plating
@@ -7337,13 +7389,17 @@ SH_DEFENSE_GRID
 Defense Grid
 
 SH_DEFENSE_GRID_DESC
-Weak defense with no extra mass
+'''Weak defense with no extra mass. 
+
+Shield technology is generally much more expensive than armor, due to the technology needed to produce shielding fields, but have the benefits of no speed penalties.'''
 
 SH_DEFLECTOR
 Deflector Shield
 
 SH_DEFLECTOR_DESC
-Strong defense with small mass
+'''Moderate defense with small mass. 
+
+Shield technology is generally much more expensive than armor, due to the technology needed to produce shielding fields, but have the benefits of no speed penalties.'''
 
 SH_MULTISPEC
 Multi-Spectral Shield

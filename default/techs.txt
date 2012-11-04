@@ -169,7 +169,7 @@ Tech
             ]
             activation = Not OwnerHasTech "DEF_PLAN_BARRIER_SHLD"
             effects = SetMaxShield Value + 10
-
+    
 Tech
     name = "DEF_PLAN_BARRIER_SHLD"
     description = "DEF_PLAN_BARRIER_SHLD_DESC"
@@ -1738,16 +1738,6 @@ Tech
     prerequisites = "GRO_PLANET_ECOL"
 
 Tech
-    name = "SHP_SPACE_TACTICS"
-    description = "SHP_SPACE_TACTICS_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "SHIPS_CATEGORY"
-    researchcost = 16
-    researchturns = 2
-    prerequisites = "SHP_GAL_EXPLO"
-
-Tech
     name = "SHP_NAVIGATION"
     description = "SHP_NAVIGATION_DESC"
     short_description = "THEORY_SHORT_DESC"
@@ -2185,6 +2175,7 @@ Tech
     researchturns = 1
     prerequisites = "SHP_NAVIGATION"
     unlock = Item type = ShipPart name = "AR_LEAD_PLATE"
+    graphic = "icons/ship_parts/lead_armor_plating.png"
 
 Tech
     name = "SHP_NEUTRONIUM_PLATE"
@@ -2227,9 +2218,51 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 8
     researchturns = 1
-    prerequisites = "SHP_SPACE_TACTICS"
+    prerequisites = "SHP_NAVIGATION"
     unlock = Item type = ShipPart name = "SH_DEFLECTOR"
+    graphic = "icons/ship_parts/deflector_shield.png"
 
+Tech
+    name = "SHP_IMPROVED_ENGINE_COUPLINGS"
+    description = "SHP_IMPROVED_ENGINE_COUPLINGS_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 24
+    researchturns = 1
+    prerequisites = "SHP_GAL_EXPLO"
+    unlock = Item type = ShipPart name = "FU_IMPROVED_ENGINE_COUPLINGS"
+    
+Tech
+    name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX"
+    description = "SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 250
+    researchturns = 5
+    prerequisites = [
+        "SHP_IMPROVED_ENGINE_COUPLINGS"
+        "LRN_NDIM_SUBSPACE"
+    ]
+    unlock = Item type = ShipPart name = "FU_N_DIMENSIONAL_ENGINE_MATRIX"
+    graphic = "icons/tech/n-dimensional_subspace.png"
+    
+Tech
+    name = "SHP_SINGULARITY_ENGINE_CORE"
+    description = "SHP_SINGULARITY_ENGINE_CORE_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 500
+    researchturns = 10
+    prerequisites = [
+        "SHP_N_DIMENSIONAL_ENGINE_MATRIX"
+        "PRO_ZERO_GEN"
+    ]
+    unlock = Item type = ShipPart name = "FU_SINGULARITY_ENGINE_CORE"
+    graphic = "icons/tech/zero_point_energy.png"
+    
 Tech
     name = "SHP_DEUTERIUM_TANK"
     description = "SHP_DEUTERIUM_TANK_DESC"

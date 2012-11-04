@@ -241,6 +241,11 @@ Part
     buildcost = 1
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetStarlaneSpeed Value - 5
     icon = "icons/ship_parts/lead_armor_plating.png"
 
 Part
@@ -252,6 +257,11 @@ Part
     buildcost = 2
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetStarlaneSpeed Value - 3
     icon = ""
 
 Part
@@ -272,6 +282,11 @@ Part
         ]
         OwnedBy TheEmpire Source.Owner
     ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetStarlaneSpeed Value - 3
     icon = ""
 
 Part
@@ -280,7 +295,7 @@ Part
     class = Armour
     capacity = 80
     mountableSlotTypes = External
-    buildcost = 2
+    buildcost = 4
     buildtime = 3
     location = And [
         Number low = 1 high = 999 And [
@@ -292,6 +307,11 @@ Part
         ]
         OwnedBy TheEmpire Source.Owner
     ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetStarlaneSpeed Value - 3
     icon = ""
 
 Part
@@ -313,6 +333,11 @@ Part
             ]
         ]
     ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetStarlaneSpeed Value - 5
     icon = ""
     
 Part
@@ -332,7 +357,7 @@ Part
     class = Shield
     capacity = 5
     mountableSlotTypes = [External Internal]
-    buildcost = 1
+    buildcost = 10
     buildtime = 0
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/defense_grid.png"
@@ -343,8 +368,8 @@ Part
     class = Shield
     capacity = 15
     mountableSlotTypes = [External Internal]
-    buildcost = 2
-    buildtime = 2
+    buildcost = 20
+    buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/deflector_shield.png"
 
@@ -433,6 +458,55 @@ Part
             effects = SetDetection Value + 25
     icon = "icons/ship_parts/optical_sensors.png"
 
+Part
+    name = "FU_IMPROVED_ENGINE_COUPLINGS"
+    description = "FU_IMPROVED_ENGINE_COUPLINGS_DESC"
+    class = Fuel
+    capacity = 0
+    mountableSlotTypes = Internal
+    buildcost = 40
+    buildtime = 3
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetStarlaneSpeed Value + 10
+    icon = "icons/ship_parts/basic-tank.png"
+    
+    
+Part
+    name = "FU_N_DIMENSIONAL_ENGINE_MATRIX"
+    description = "FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC"
+    class = Fuel
+    capacity = 0
+    mountableSlotTypes = Internal
+    buildcost = 100
+    buildtime = 4
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetStarlaneSpeed Value + 15
+    icon = "icons/ship_parts/basic-tank.png"
+    
+Part
+    name = "FU_SINGULARITY_ENGINE_CORE"
+    description = "FU_SINGULARITY_ENGINE_CORE_DESC"
+    class = Fuel
+    capacity = 0
+    mountableSlotTypes = Internal
+    buildcost = 200
+    buildtime = 5
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetStarlaneSpeed Value + 20
+    icon = "icons/ship_parts/basic-tank.png"
+    
 Part
     name = "FU_BASIC_TANK"
     description = "FU_BASIC_TANK_DESC"
