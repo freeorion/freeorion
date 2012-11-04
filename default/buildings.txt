@@ -54,24 +54,22 @@ BuildingType
         TargetPopulation low = 1
         Number 0 0 And [
             Building name = "BLD_IMPERIAL_PALACE"
-            OwnedBy Target.Owner
-            ProducedByEmpire empire = Target.Owner
+            OwnedBy Source.Owner
+            ProducedByEmpire empire = Source.Owner
         ]
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Planet
+                Object Source.PlanetID
                 OwnedBy TheEmpire Source.ProducedByEmpireID
-                Contains Source
             ]
             effects = SetEmpireCapital
 
         EffectsGroup
             scope = And [
-                Planet
+                Object Source.PlanetID
                 OwnedBy TheEmpire Source.ProducedByEmpireID
-                Contains Source
             ]
             stackinggroup = "IMPERIAL_PALACE_SUPPLY_EFFECT"
             effects = SetSupply Value + 1
