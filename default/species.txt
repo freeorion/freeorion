@@ -1275,7 +1275,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "ROBOTIC" "LITHIC" "PHOTOTROPHIC"]
+    tags = [ "ORGANIC" "ROBOTIC" "LITHIC" "PHOTOTROPHIC" "TELEPATHIC" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
