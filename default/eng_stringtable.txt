@@ -2584,6 +2584,9 @@ Ships
 METER_ARTICLE_SHORT_DESC
 Meters
 
+POPULATION_TITLE_SHORT_DESC
+Population
+
 ###########################################
 # ARTICLES #
 ###########################################
@@ -2596,12 +2599,12 @@ Peace is the diplomatic state between empires in which they mutually agree not t
 OUTPOSTS_TITLE
 Outposts
 OUTPOSTS_TEXT
-'''Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create supply lines (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an outpost pod on a ship.'''
+'''Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create [[encyclopedia SUPPLY_TITLE]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an [[shippart CO_OUTPOST_POD]] on a ship. Outposts are also formed when the population of a colony drops to zero for any reason.'''
 
 GROWTH_FOCUS_TITLE
 Growth Focus
 GROWTH_FOCUS_TEXT
-'''The Growth Focus represents exporting rare materials and substances that aid the population growth of a certain species. Is only available in certain situations: on some homeworlds, and on planets with growth specials.  A planet focused on Growth increases the max Population only of other planets connected to it by supply lines.  A Homeworld focused on Growth only helps other planets of the same species.  Growth Special planets focused on growth, only help a single classification of species, for instance some only help Organic Species.'''
+'''The Growth Focus represents exporting rare materials and substances that aid the population growth of a certain species. Is only available in certain situations: on some homeworlds, and on planets with growth specials.  A planet focused on Growth increases the max Population only of other planets connected to it by [[encyclopedia SUPPLY_TITLE]].  A Homeworld focused on Growth only helps other planets of the same species.  Growth Special planets focused on growth, only help a single classification of species, for instance some only help Organic Species.'''
 
 MINING_FOCUS_TITLE
 Mining Focus
@@ -2616,7 +2619,7 @@ TRADE_FOCUS_TEXT
 PROTECTION_FOCUS_TITLE
 Protection Focus
 PROTECTION_FOCUS_TEXT
-'''The Protection focus represents a planet wholly focused on defending itself.  Troops, Planetary Defences, and Planetary Shields are all increased.'''
+'''The Protection focus represents a planet wholly focused on defending itself.  [[encyclopedia TROOP_METER_TITLE]], Planetary Defences, and Planetary Shields are all increased.'''
 
 HAPPINESS_METER_TITLE
 Happiness Meter
@@ -2651,7 +2654,7 @@ PHOTOTROPHIC_SPECIES_TEXT
 SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Species
 SELF_SUSTAINING_SPECIES_TEXT
-'''Self-Sustaining species may be energy or crystaline beings or something else.  Their commonality is that they need no sustenance, so their basic population growth is very high.'''
+'''Self-Sustaining species may be energy or crystaline beings or something stranger.  Their commonality is that they need no sustenance, so their basic population growth is very high.'''
 
 FUEL_TITLE
 Fuel
@@ -2662,6 +2665,12 @@ SUPPLY_TITLE
 Supply Lines
 SUPPLY_TEXT
 '''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share resources -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.'''
+
+EVACUATION_TITLE
+Evacuation
+EVACUATION_TEXT
+'''The [[buildingtype BLD_EVACUATION]] project when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[encyclopedia SUPPLY_TITLE]], one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disapears into the vastness of space.
+During an evacuation production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] deletes itself.'''  
 
 
 ####################
@@ -3059,6 +3068,11 @@ EFFECT_EXOBOT
 An Exobot colony ship has been built at %planet%.
 EFFECT_EXOBOT_LABEL
 Exobot Ship
+
+EFFECT_EVACUEES
+Evacuees have settled at %planet%.
+EFFECT_EVACUEES_LABEL
+Evacuees
 
 
 #############################################################
@@ -8085,12 +8099,6 @@ EXCELLENT_VISION_LABEL
 
 FOCUS_PROTECTION_LABEL
 '''Protection Focus'''
-
-EVACUEES_LABEL
-'''Evacuees'''
-
-EVACUATION_LABEL
-'''Evacuation'''
 
 # The following two are used in tech descriptions, and should be updated if PRODUCTION_PER_POP or PRODUCTION_PER_INFRA are changed in shared_macros.txt.
 POP_PER_PRODUCTION

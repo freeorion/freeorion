@@ -102,3 +102,11 @@ Article
     short_description = "OUTPOSTS_ARTICLE_SHORT_DESC"
     description = "OUTPOSTS_TEXT"
     icon = "icons/tech/habitation_domes.png"
+
+Article
+    name = "EVACUATION_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "POPULATION_TITLE_SHORT_DESC"
+    description = "EVACUATION_TEXT"
+    icon = "icons/building/evacuation.png"    
+    

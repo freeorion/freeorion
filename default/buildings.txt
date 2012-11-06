@@ -1541,8 +1541,13 @@ BuildingType
                 ResourceSupplyConnected Source.Owner Source
                 Population low = 1 high = LocalCandidate.TargetPopulation - 1
             ]
-            accountinglabel = "EVACUEES_LABEL"
-            effects = SetPopulation Value + 2
+            effects = [
+                SetPopulation Value + 2
+                GenerateSitRepMessage
+                    message = "EFFECT_EVACUEES"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
+                ]
     
         EffectsGroup            // remove population from location
             scope = Object Source.PlanetID            
@@ -1550,8 +1555,13 @@ BuildingType
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
             ]
-            accountinglabel = "EVACUATION_LABEL"
-            effects = SetPopulation Target.Population - 2
+            effects = [
+                SetPopulation Target.Population - 2
+                SetIndustry Value = 0
+                SetTargetIndustry Value = 0
+                SetResearch Value = 0
+                SetTargetResearch Value = 0
+                ]
 
         EffectsGroup            // remove evacuation when planet is depopulated or no longer owned by empire that produced this building
             scope = Source
