@@ -334,8 +334,5 @@
     <ClCompile Include="..\..\GG\src\GroupBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\GG\src\ReportParseError.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

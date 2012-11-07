@@ -106,7 +106,6 @@
     <ClCompile Include="..\..\GG\src\Menu.cpp" />
     <ClCompile Include="..\..\GG\src\MultiEdit.cpp" />
     <ClCompile Include="..\..\GG\src\PtRect.cpp" />
-    <ClCompile Include="..\..\GG\src\ReportParseError.cpp" />
     <ClCompile Include="..\..\GG\src\Scroll.cpp" />
     <ClCompile Include="..\..\GG\src\StaticGraphic.cpp" />
     <ClCompile Include="..\..\GG\src\StyleFactory.cpp" />
