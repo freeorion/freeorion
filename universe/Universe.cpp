@@ -834,6 +834,8 @@ void Universe::ApplyMeterEffectsAndUpdateMeters() {
         (*it)->ResetTargetMaxUnpairedMeters();
         (*it)->ResetPairedActiveMeters();
     }
+    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
+        it->second->ResetMeters();
     ExecuteEffects(targets_causes, true, true, false, true);
 
     for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it)
