@@ -167,6 +167,12 @@ public:
     void            Sanitize();                                     //!< sanitizes the MapWnd after a game
     //!@}
 
+
+    void            SetFleetExploring(const int fleet_id);
+    void            StopFleetExploring(const int fleet_id);
+    bool            IsFleetExploring(const int fleet_id);
+    void            DispatchFleetsExploring();                      //!< called at each turn begin and when a fleet start/stop exploring to redispatch everyone.
+
 protected:
     virtual bool    EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
@@ -401,6 +407,8 @@ private:
 
     MapScaleLine*               m_scale_line;       //!< indicates the on-screen distance that reprensents an in-universe distance
     GG::Slider<double>*         m_zoom_slider;      //!< allows user to set zoom level
+
+    std::set<int>              m_fleets_exploring;
 
     friend class PlayingTurn;
 };

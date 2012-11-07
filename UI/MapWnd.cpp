@@ -916,6 +916,7 @@ void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const {
     data.map_left = Value(UpperLeft().x);
     data.map_top = Value(UpperLeft().y);
     data.map_zoom_steps_in = m_zoom_steps_in;
+    data.fleets_exploring = m_fleets_exploring;
 }
 
 bool MapWnd::InProductionViewMode() const
@@ -1795,6 +1796,8 @@ void MapWnd::InitTurn() {
 
 
     FleetUIManager::GetFleetUIManager().RefreshAll();
+
+    DispatchFleetsExploring();
 }
 
 void MapWnd::MidTurnUpdate() {
@@ -2271,6 +2274,8 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
     //GG::Pt final_move = move_to_pt - ul;
 
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
+
+    m_fleets_exploring = data.fleets_exploring;
 }
 
 void MapWnd::ShowSystemNames() {
@@ -3313,8 +3318,10 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
         }
 
         // if actually ordering fleet movement, not just prospectively previewing, ... do so
-        if (execute_move && !route.empty())
+        if (execute_move && !route.empty()){
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet_id, start_system, system_id)));
+            StopFleetExploring(fleet_id);
+        }
 
         // show route on map
         SetProjectedFleetMovementLine(fleet_id, route);
@@ -3606,6 +3613,8 @@ void MapWnd::Sanitize() {
     m_system_icons.clear();
 
     m_scanline_shader.reset();
+
+    m_fleets_exploring.clear();
 }
 
 bool MapWnd::ReturnToMap() {
@@ -4398,6 +4407,212 @@ void MapWnd::CloseAllPopups() {
 void MapWnd::HideAllPopups() {
     for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ++it) {
         (*it)->Hide();
+    }
+}
+
+void MapWnd::SetFleetExploring(const int fleet_id){
+    std::set<int>::iterator it = std::find(m_fleets_exploring.begin(), m_fleets_exploring.end(), fleet_id);
+    if(it == m_fleets_exploring.end()){ //this fleet is not currently exploring
+        m_fleets_exploring.insert(fleet_id);
+        DispatchFleetsExploring();
+    }
+}
+
+void MapWnd::StopFleetExploring(const int fleet_id){
+    m_fleets_exploring.erase(fleet_id);
+    DispatchFleetsExploring();
+}
+
+bool MapWnd::IsFleetExploring(const int fleet_id){
+    std::set<int>::iterator it;
+    it = std::find(m_fleets_exploring.begin(), m_fleets_exploring.end(), fleet_id);
+    return it != m_fleets_exploring.end();
+}
+
+namespace{ //helper function for DispatchFleetsExploring
+    //return the set of all systems ID with a starlane connecting them to a system in set
+    std::set<int> AddNeighboorsToSet(const Empire *empire, const std::set<int> set){
+        std::set<int> retval;
+        std::map<int, std::set<int> > starlanes = empire->KnownStarlanes();
+        for(std::set<int>::iterator el = set.begin(); el != set.end(); el ++){ //for all elements of the set
+            std::map<int, std::set<int> >::iterator new_neighboors_it = starlanes.find(*el);
+            if(new_neighboors_it != starlanes.end()){
+                std::set<int> new_neighboors = new_neighboors_it->second;
+                for(std::set<int>::iterator it = new_neighboors.begin(); it != new_neighboors.end(); it ++){ //for all neighboors of this element
+                    retval.insert(*it);
+                }
+            }
+        }
+
+        return retval;
+    }
+
+    //return the pair (systemID, dist) of the closest supply point.
+    std::pair<int, int> GetNearestSupplyPoint(const Empire *empire, int system_id){
+        std::set<int> supplyable_systems = empire->FleetSupplyableSystemIDs();
+        std::map<int, std::set<int> > starlanes = empire->KnownStarlanes();
+        std::set<int> frontier;
+        frontier.insert(system_id);
+        int distance = 0;
+        bool found = false;
+        while(distance < 50 && !found){ //assume 50 is an upperbound an the max fuel limit or the distance to a supply system. TODO : #define it
+            for(std::set<int>::iterator sys = frontier.begin(); sys != frontier.end() && !found; sys ++){
+                if(supplyable_systems.count(*sys) > 0){
+                    //we found a route to a supplyable system
+                    return std::pair<int, int>(*sys, distance);
+                }
+             }
+             distance ++;
+             frontier = AddNeighboorsToSet(empire, frontier);
+        }
+
+        return std::pair<int, int>(INVALID_OBJECT_ID, INT_MAX);
+    }
+
+};
+
+void MapWnd::DispatchFleetsExploring() {
+    Logger().debugStream() << "MapWnd::DispatchFleetsExploring called";
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(empire_id);
+    if (!empire) return;
+    const std::set<int> destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
+
+    //int nbr_ship_idle = 0;
+    std::set<int> fleet_idle;
+    std::set<int> systems_being_explored; //all systems ID for which an exploring fleet is in route
+
+    //clean the fleet list by removing non-existing fleet, and extract the fleets waiting for orders
+    for (std::set<int>::iterator it = m_fleets_exploring.begin(); it != m_fleets_exploring.end();) {
+        Fleet *fleet = GetFleet(*it);
+        if (!fleet || destroyed_objects.find(fleet->ID()) != destroyed_objects.end()) {
+            m_fleets_exploring.erase(it++); //this fleet can't explore anymore
+        } else {
+             if (fleet->MovePath().empty())
+                fleet_idle.insert(fleet->ID());
+            else
+                systems_being_explored.insert(fleet->FinalDestinationID());
+            it++;
+        }
+    }
+
+    if (fleet_idle.empty())
+        return;
+
+    Logger().debugStream() << "MapWnd::DispatchFleetsExploring There is " << fleet_idle.size() << "ships to dispatch";
+
+    //list all unexplored systems by taking the neighboors of explored systems because ObjectMap does not list them all.
+    std::set<int> candidates_unknown_systems;
+    std::set<int> explored_systems =  empire->ExploredSystems();
+    candidates_unknown_systems = AddNeighboorsToSet(empire, explored_systems);
+    std::set<int> neighboors = AddNeighboorsToSet(empire, candidates_unknown_systems);
+    candidates_unknown_systems.insert(neighboors.begin(), neighboors.end());
+
+    //list all unknow systems with the distance to the nearest supply available
+    std::map<int, int> unknown_systems;
+    std::set<int> supplyable_systems = empire->FleetSupplyableSystemIDs();
+    for (std::set<int>::iterator it = candidates_unknown_systems.begin(); it != candidates_unknown_systems.end(); it ++) {
+        if (System* system = GetSystem(*it)){
+            if (!empire->HasExploredSystem(system->ID()) && systems_being_explored.find(*it) == systems_being_explored.end()) {
+                //we compute the minimum distance to find a supplyable system
+                std::pair<int, int> pair = GetNearestSupplyPoint(empire, system->ID());
+                if (pair.first != INVALID_OBJECT_ID) {
+                    unknown_systems[system->ID()] = pair.second;
+                }
+            }
+        }
+    }
+
+    Logger().debugStream() << "MapWnd::DispatchFleetsExploring There is " << unknown_systems.size() << "unknown systems";
+
+    //for now, send each ship to the nearest unexplored system where no other ship has been ordered so far
+    std::set<int> systems_order_sent; //list all systems ID for which a ship was sent this turn
+    int nbr_fleet_to_send = fleet_idle.size();
+    bool remaining_system_to_explore = true;
+    for (int i = 0; i < nbr_fleet_to_send; i++){ //at each iteration, we should send one ship on its way
+
+        double min_dist = DBL_MAX;
+        int end_system_id, start_system_id;
+        int last_visibility = NUM_VISIBILITIES; //greater than max visibility
+        int better_fleet_id;
+
+        for (std::set<int>::iterator it = fleet_idle.begin(); it != fleet_idle.end(); it ++){
+            Fleet *fleet = GetFleet(*it);
+            if (fleet && fleet->MovePath().empty()) {
+
+                double far_min_dist = DBL_MAX;
+                int far_system_id; //id of the closest unknown system without taking fuel into account
+
+                for (std::map<int, int>::iterator system_it = unknown_systems.begin(); system_it != unknown_systems.end(); system_it ++) {
+                    if (systems_order_sent.find(system_it->first) != systems_order_sent.end())
+                        continue; //someone already went there this turn
+
+                    std::pair<std::list<int>, double> pair = GetUniverse().ShortestPath(fleet->SystemID(), system_it->first, empire_id);
+
+                    //we check for the fuel.
+                    bool is_doable_for_fuel = true;
+                    std::list<int> route = pair.first;
+                    double current_fuel = fleet->Fuel();
+                    for (std::list<int>::iterator route_it = ++(route.begin()); route_it != route.end(); route_it ++) {
+                        if (supplyable_systems.count(*route_it) > 0) {
+                            if (fleet->Fuel() != fleet->MaxFuel()) {
+                                is_doable_for_fuel = false; //if we need to ressupply, do it the first time we enter the empire. If we are full, we can cross it.
+                            }
+                        } else {
+                            current_fuel --;
+                        }
+                        if (current_fuel < 0) {
+                            is_doable_for_fuel = false;
+                        }
+                    }
+
+                    if (current_fuel < system_it->second)
+                        is_doable_for_fuel = false;
+
+                    int vis = GetUniverse().GetObjectVisibilityByEmpire(system_it->first, empire_id);
+                    if (vis == VIS_NO_VISIBILITY) vis = VIS_BASIC_VISIBILITY; //those two levels of visibility appears to be identical for a system
+
+                    if (((pair.second < min_dist && vis <= last_visibility) || vis < last_visibility) && is_doable_for_fuel) { //we can explore this system
+                        min_dist = pair.second;
+                        end_system_id = system_it->first;
+                        last_visibility = vis;
+                        better_fleet_id = fleet->ID();
+                        start_system_id = fleet->SystemID();
+                    }
+
+                    if (pair.second < far_min_dist) { //we can explore this system
+                        far_min_dist = pair.second;
+                        far_system_id = system_it->first;
+                    }
+                }
+
+                if (!remaining_system_to_explore || min_dist == DBL_MAX) {
+                    if (fleet->Fuel() == fleet->MaxFuel()) {
+                        //we have full fuel and no unknown planet in range, we will have to wait for resupply
+                        Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Next sytem for fleet " << fleet->ID() << " is " << far_system_id << ". Not enough fuel for the round trip";
+                        systems_order_sent.insert(far_system_id);
+                        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), fleet->SystemID(), far_system_id)));
+                    } else {
+                        //no unknown planet in range. Let's try to get home to resupply
+                        std::pair<int, int> pair = GetNearestSupplyPoint(empire, fleet->SystemID());
+                        Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Fleet " << fleet->ID() << " going to resupply at " << pair.first;
+                        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), fleet->SystemID(), pair.first)));
+                    }
+                    i = nbr_fleet_to_send; //stop the loop since every fleet will have order
+                }
+            }
+        }
+
+        if (min_dist != DBL_MAX) {
+            //there is an unexplored system rechable
+            Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Next sytem for fleet " << better_fleet_id << " is " << end_system_id;
+            systems_order_sent.insert(end_system_id);
+            fleet_idle.erase(better_fleet_id);
+            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, better_fleet_id, start_system_id, end_system_id)));
+        } else {
+            remaining_system_to_explore = false; //from now on, each ship will be sent to a supply depot or a far system
+        }
     }
 }
 

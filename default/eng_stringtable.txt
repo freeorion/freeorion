@@ -2025,6 +2025,15 @@ Holding at %1%
 FW_FLEET_MOVING_TO
 Moving to %1%
 
+FW_FLEET_EXPLORING_REFUEL
+Waiting for Fuel
+
+FW_FLEET_EXPLORING_WAITING
+Waiting for system to explore
+
+FW_FLEET_EXPLORING_TO
+Exploring %1%
+
 FW_FLEET_ETA_NEVER
 Never
 
@@ -2131,6 +2140,12 @@ Cancel Scrapping Ship
 
 ORDER_CANCEL_FLEET_SCRAP
 Cancel Scrapping Ships
+
+ORDER_FLEET_EXPLORE
+Explore
+
+ORDER_CANCEL_FLEET_EXPLORE
+Stop Exploring
 
 ###############
 #  Diplomacy  #

@@ -121,13 +121,23 @@ namespace {
             else
                 final_eta_text = boost::lexical_cast<std::string>(eta.first);
 
-
-            retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_MOVING_TO")) %
+            if(ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()))
+                retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_EXPLORING_TO")) %
+                                                dest_name % final_eta_text % next_eta_text);
+            else
+                retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_MOVING_TO")) % 
                                                 dest_name % final_eta_text % next_eta_text);
 
         } else if (cur_sys) {
             const std::string& cur_system_name = cur_sys->ApparentName(empire_id);
-            retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_HOLDING_AT")) % cur_system_name);
+            if(ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID())){ 
+                if(fleet->Fuel() == fleet->MaxFuel())
+                    retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_EXPLORING_WAITING")));
+                else
+                    retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_EXPLORING_REFUEL")));
+            } else {
+                retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_HOLDING_AT")) % cur_system_name);
+            }
         }
         return retval;
     }
@@ -2535,6 +2545,12 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     if (system && fleet->HasShipsOrderedScrapped())
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_SCRAP"), 5, false, false));
 
+    // add a fleet poput command to send the fleet exploring, and stop it from exploring
+    if (system && !ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()) )
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),      6, false, false));
+    else if(system)
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), 7, false, false));
+
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
 
     if (popup.Run()) {
@@ -2593,6 +2609,16 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
                 int ship_id = *it;
                 GetShip(ship_id)->SetOrderedScrapped(false);
             }
+            break;
+        }
+
+        case 6: { // send order to explore to the fleet
+            ClientUI::GetClientUI()->GetMapWnd()->SetFleetExploring(fleet->ID());
+            break;
+        }
+
+        case 7: { // send order to stop exploring to the fleet
+            ClientUI::GetClientUI()->GetMapWnd()->StopFleetExploring(fleet->ID());
             break;
         }
 

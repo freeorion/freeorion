@@ -89,6 +89,7 @@ struct SaveGameUIData {
     int     map_top;
     int     map_left;
     double  map_zoom_steps_in;
+    std::set<int> fleets_exploring;
 
 private:
     friend class boost::serialization::access;
