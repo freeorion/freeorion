@@ -4407,6 +4407,9 @@ statistic
 DESC_VAR_PLANETSIZE
 planet size
 
+DESC_VAR_SIZEASDOUBLE
+planet size
+
 DESC_VAR_PLANETTYPE
 planet type
 
