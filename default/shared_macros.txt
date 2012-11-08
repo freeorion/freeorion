@@ -189,16 +189,16 @@ LOW_STEALTH
 '''50'''
 
 MEDIUM_STEALTH
-'''200'''
+'''40'''
 
 HIGH_STEALTH
-'''400'''
+'''60'''
 
 VERY_HIGH_STEALTH
-'''650'''
+'''80'''
 
 PLUS_STEALTH
-'''25'''
+'''5'''
 
 PLUS_PLUS_STEALTH
 '''[[PLUS_STEALTH]] + [[PLUS_STEALTH]]'''

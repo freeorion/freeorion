@@ -18,8 +18,11 @@ New Features / Improvements:
 
 Balancing:
  ~ Unified resource and fleet supply into a single meter: the Supply meter. Infrastructure is not involved.
- ~ Reduced the number of Theory techs that have no direct effect.
  ~ ~ Outpost now provide 0 jump supply, and colonies 1 jump supply.  Techs and buildings can extend that.
+ ~ Greatly reduced the number of Theory techs that have no direct effect.
+ ~ Recallibrated Stealth & Detection Strength numbers
+ ~ ~ to max around 100
+ ~ ~ to work with the new mechanics
  ~ Reduced detection ranges for ships and planets by roughly half.
  ~ Loosened requirements for Asteroid hulls/parts
  ~ ~ Asteroid processors are no longer shipyards, but must be built on a belt for a shipyard anywhere in the system to build asteroid hulls.
@@ -33,6 +36,8 @@ Balancing:
   ~ Russian translation update.
   ~ Added Dampening Cloud monster
   ~ Adding Planetary Evacuation
+  ~ New ultimate detection strenght tech "Omni-scanners"
+  ~ New detction strength booster special the Panopticon
   
  Graphics:
   ~ New Focus icons.

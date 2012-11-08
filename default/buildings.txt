@@ -1199,7 +1199,7 @@ BuildingType
         EffectsGroup
             scope = ContainedBy Contains Source
             activation = Source
-            effects = SetStealth 1500
+            effects = SetStealth 60
     ]
     icon = ""
 
@@ -1379,7 +1379,7 @@ BuildingType
                     Planet
                 ]
             ]
-            effects = SetStealth Value + 1500
+            effects = SetStealth Value + 60
 
         EffectsGroup
             scope = Or [
@@ -1393,7 +1393,7 @@ BuildingType
                     Planet
                 ]
             ]
-            effects = SetStealth Value + 600
+            effects = SetStealth Value + 40
 
         EffectsGroup
             scope = And [
@@ -1582,13 +1582,19 @@ BuildingType
     buildcost = 1
     buildtime = 1
     location = Planet
-    effectsgroups = Effectsgroup
+    effectsgroups = [
+        Effectsgroup
         scope = And [
             Planet
             Contains Source
         ]
         effects = SetSpecies name = "SP_SUPER_TEST"
-            
+        
+        EffectsGroup            // remove building when done
+            scope = Source
+            activation = Species name = "SP_SUPER_TEST"
+            effects = Destroy
+    ]
     icon = "icons/species/other-04.png"
 
 

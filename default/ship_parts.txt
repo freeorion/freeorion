@@ -386,8 +386,8 @@ Part
         EffectsGroup
             scope = Source
             activation = Star type = [Red Orange Yellow White Blue]
-            stackinggroup = "SH_MULTISPEC_STEALTH_STACK"
-            effects = SetStealth Value + 500
+            stackinggroup = "STEALTH_PART_STACK"
+            effects = SetStealth Value + 60
     icon = ""
 
 Part
@@ -570,7 +570,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth Value + 650
+            effects = SetStealth Value + 80
     icon = ""
 
 Part
@@ -587,7 +587,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth Value + 400
+            effects = SetStealth Value + 60
     icon = ""
 
 Part
@@ -604,7 +604,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth Value + 200
+            effects = SetStealth Value + 40
     icon = ""
 
 Part
@@ -621,7 +621,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth Value + 50
+            effects = SetStealth Value + 20
     icon = "icons/ship_parts/electromagnetic_damper.png"
 
 Part
@@ -677,7 +677,7 @@ Part
             scope = WithinDistance 0 Source
             activation = Source
             stackinggroup = "SP_DISTORTION_MODULATOR_STACK"
-            effects = SetStealth Value - 20
+            effects = SetStealth Value - 10
     icon = ""
 
 Part

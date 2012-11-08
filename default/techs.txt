@@ -1665,7 +1665,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Building
             ]
-            effects = SetStealth Value + 50
+            effects = SetStealth Value + 10
 
 Tech
     name = "CON_PLANET_DRIVE"
@@ -2567,7 +2567,7 @@ Tech
         EffectsGroup
             scope = Building
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
-            effects = SetStealth Value + 9.99
+            effects = SetStealth Value + 1
     graphic = ""
 
 
@@ -2600,6 +2600,7 @@ Tech
                 Not OwnerHasTech "SPY_RADAR"
                 Not OwnerHasTech "SPY_NEUTRON_SCANNER"
                 Not OwnerHasTech "SPY_SENSORS"
+                Not OwnerHasTech "SPY_OMNI_SCAN"
             ]
             effects = SetDetection Value + 50
 
@@ -2609,8 +2610,9 @@ Tech
                 Not OwnerHasTech "SPY_RADAR"
                 Not OwnerHasTech "SPY_NEUTRON_SCANNER"
                 Not OwnerHasTech "SPY_SENSORS"
+                Not OwnerHasTech "SPY_OMNI_SCAN"
             ]
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 50
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 10
     ]
 
 Tech
@@ -2632,6 +2634,7 @@ Tech
             activation = And [
                 Not OwnerHasTech "SPY_NEUTRON_SCANNER"
                 Not OwnerHasTech "SPY_SENSORS"
+                Not OwnerHasTech "SPY_OMNI_SCAN"
             ]
             effects = SetDetection Value + 75
 
@@ -2640,8 +2643,9 @@ Tech
             activation = And [
                 Not OwnerHasTech "SPY_NEUTRON_SCANNER"
                 Not OwnerHasTech "SPY_SENSORS"
+                Not OwnerHasTech "SPY_OMNI_SCAN"
             ]
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 200
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 30
     ]
     
 Tech
@@ -2660,13 +2664,19 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            activation = Not OwnerHasTech "SPY_SENSORS"
+            activation = And [
+                Not OwnerHasTech "SPY_SENSORS"
+                Not OwnerHasTech "SPY_OMNI_SCAN"
+                ]
             effects = SetDetection Value + 150
 
         EffectsGroup
             scope = Source
-            activation = Not OwnerHasTech "SPY_SENSORS"
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 400
+            activation = And [
+                Not OwnerHasTech "SPY_SENSORS"
+                Not OwnerHasTech "SPY_OMNI_SCAN"
+                ]
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 50
     ]
     
 Tech
@@ -2685,11 +2695,36 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
+            activation = Not OwnerHasTech "SPY_OMNI_SCAN"
             effects = SetDetection Value + 200
 
         EffectsGroup
             scope = Source
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 700
+            activation = Not OwnerHasTech "SPY_OMNI_SCAN"
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 70
+    ]
+    
+Tech
+    name = "SPY_OMNI_SCAN"
+    description = "SPY_OMNI_SCAN_DESC"
+    short_description = "DETECTION_SHORT_DESC"
+    techtype = Application
+    category = "SPY_CATEGORY"
+    researchcost = 1000
+    researchturns = 5
+    prerequisites = "SPY_SENSORS"
+   // unlock = Item type = ShipPart name = "DT_SENSORS"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = SetDetection Value + 300
+
+        EffectsGroup
+            scope = Source
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 90
     ]
 
 Tech

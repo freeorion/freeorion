@@ -1291,8 +1291,11 @@ Species
             effects = SetDetection Value + 10000
 
         EffectsGroup
-            scope = Source
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 2500  // Omniscient Detection
+            scope = And [
+                Source
+                Capital
+                ]
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 100  // Omniscient Detection
         
         [[GREAT_INDUSTRY]]
         [[GREAT_RESEARCH]]
@@ -2183,7 +2186,7 @@ ADVANCED_FOCUS_EFFECTS
         EffectsGroup
             scope = Source
             activation = Focus "FOCUS_STEALTH"
-            effects = SetStealth Value + 1000
+            effects = SetStealth Value + 15
 
         EffectsGroup
             scope = And [
@@ -2483,28 +2486,28 @@ BAD_STEALTH
 '''EffectsGroup
             scope = Source
             stackinggroup = "SPECIES_STEALTH_STACK"
-            effects = SetStealth Value - 20
+            effects = SetStealth Value - 15
 '''
 
 GOOD_STEALTH
 '''EffectsGroup
             scope = Source
             stackinggroup = "SPECIES_STEALTH_STACK"
-            effects = SetStealth Value + 25
+            effects = SetStealth Value + 15
 '''
             
 GREAT_STEALTH
 '''EffectsGroup
             scope = Source
             stackinggroup = "SPECIES_STEALTH_STACK"
-            effects = SetStealth Value + 50
+            effects = SetStealth Value + 40
 '''
 
 ULTIMATE_STEALTH
 '''EffectsGroup
             scope = Source
             stackinggroup = "SPECIES_STEALTH_STACK"
-            effects = SetStealth Value + 100
+            effects = SetStealth Value + 60
 '''
 
 //#####      W E A P O N S     #####//

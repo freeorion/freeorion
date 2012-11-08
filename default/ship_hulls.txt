@@ -4,7 +4,7 @@ Hull
     speed = 50
     starlaneSpeed = 70
     fuel = 3
-    stealth = 10
+    stealth = 5
     structure = 50
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -36,7 +36,7 @@ Hull
     speed = 10
     starlaneSpeed = 0
     fuel = 0
-    stealth = 10
+    stealth = 5
     structure = 2
     slots = Slot type = Internal position = (0.50, 0.50)
     buildCost = 1
@@ -53,7 +53,7 @@ Hull
     speed = 50
     starlaneSpeed = 75
     fuel = 4
-    stealth = 2
+    stealth = 5
     structure = 5
     slots = [
         Slot type = External position = (0.50, 0.45)
@@ -79,7 +79,7 @@ Hull
     speed = 50
     starlaneSpeed = 60
     fuel = 3
-    stealth = 2
+    stealth = 5
     structure = 10
     slots = [
         Slot type = External position = (0.35, 0.40)
@@ -108,7 +108,7 @@ Hull
     speed = 50
     starlaneSpeed = 40
     fuel = 3
-    stealth = 2
+    stealth = 5
     structure = 15
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -138,7 +138,7 @@ Hull
     speed = 60
     starlaneSpeed = 75
     fuel = 3
-    stealth = 2
+    stealth = 5
     structure = 25
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -182,7 +182,7 @@ Hull
     speed = 80
     starlaneSpeed = 80
     fuel = 10
-    stealth = 10
+    stealth = 15
     structure = 3
     slots = [
         Slot type = External position = (0.40, 0.50)
@@ -412,7 +412,7 @@ Hull
     speed = 25
     starlaneSpeed = 80
     fuel = 3
-    stealth = 10
+    stealth = 5
     structure = 110
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -480,7 +480,7 @@ Hull
     speed = 35
     starlaneSpeed = 60
     fuel = 4
-    stealth = 3
+    stealth = 5
     structure = 30
     slots = [
         Slot type = External position = (0.50, 0.15)
@@ -506,7 +506,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 200
+            effects = SetStealth Value + 25
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -541,7 +541,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 200
+            effects = SetStealth Value + 25
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -583,7 +583,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 200
+            effects = SetStealth Value + 25
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -620,7 +620,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 400
+            effects = SetStealth Value + 45
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -633,7 +633,7 @@ Hull
     speed = 50
     starlaneSpeed = 60
     fuel = 4
-    stealth = 100
+    stealth = 35
     structure = 15
     slots = [
         Slot type = External position = (0.50, 0.15)
@@ -655,7 +655,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 400
+            effects = SetStealth Value + 20
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -711,7 +711,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 200
+            effects = SetStealth Value + 40
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -724,7 +724,7 @@ Hull
     speed = 70
     starlaneSpeed = 60
     fuel = 4
-    stealth = 100
+    stealth = 40
     structure = 11
     slots = [
         Slot type = External position = (0.20, 0.40)
@@ -750,7 +750,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 200
+            effects = SetStealth Value + 20
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -763,7 +763,7 @@ Hull
     speed = 10
     starlaneSpeed = 60
     fuel = 4
-    stealth = -20
+    stealth = 1
     structure = 160
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -806,7 +806,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 200
+            effects = SetStealth Value + 40
 
         EffectsGroup
             scope = And [
@@ -862,7 +862,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = ContainedBy Contains Planet type = Asteroids
-            effects = SetStealth Value + 50
+            effects = SetStealth Value + 15
 
         [[REGULAR_HULL_DETECTION]]
     ]
@@ -1192,7 +1192,7 @@ Hull
     speed = 80
     starlaneSpeed = 100
     fuel = 2
-    stealth = 30
+    stealth = 20
     structure = 36
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1291,7 +1291,7 @@ Hull
             activation = Source
             stackinggroup = "FLAGSHIP_EFFECT_SENTIENT"
             effects = [
-                SetStealth Value + 100
+                SetStealth Value + 20
                 SetDetection Value + 50
             ]
 
@@ -1309,7 +1309,7 @@ Hull
     speed = 100
     starlaneSpeed = 120
     fuel = 5
-    stealth = 75
+    stealth = 40
     structure = 10
     slots = Slot type = External position = (0.15, 0.40)
     buildCost = 2.5
@@ -1432,7 +1432,7 @@ Hull
     speed = 5
     starlaneSpeed = 120
     fuel = 5
-    stealth = -250
+    stealth = -60
     structure = 300
     slots = [
         Slot type = External position = (0.10, 0.15)
@@ -1485,7 +1485,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Star type = [Blue White Yellow Orange Red]
-            effects = SetStealth Value + 500
+            effects = SetStealth Value + 120
 
         EffectsGroup
             scope = And [
@@ -2380,7 +2380,7 @@ Hull
     speed = 50
     starlaneSpeed = 100
     fuel = 1
-    stealth = 650
+    stealth = 80
     structure = 5000
     slots = [
         Slot type = External position = (0.60, 0.45)
@@ -2404,7 +2404,7 @@ Hull
     speed = 0
     starlaneSpeed = 0
     fuel = 1
-    stealth = 320
+    stealth = 50
     structure = 1
     slots = [
         Slot type = External position = (0.60, 0.45)
@@ -2438,7 +2438,7 @@ Hull
     speed = 120
     starlaneSpeed = 200
     fuel = 100
-    stealth = 10
+    stealth = 20
     structure = 4000
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2496,7 +2496,7 @@ Hull
     speed = 300
     starlaneSpeed = 300
     fuel = 100
-    stealth = 10
+    stealth = 20
     structure = 1800
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2583,7 +2583,7 @@ Hull
     speed = 50
     starlaneSpeed = 20
     fuel = 1
-    stealth = 50
+    stealth = 40
     structure = 5000
     slots = [
         Slot type = External position = (0.60, 0.45)

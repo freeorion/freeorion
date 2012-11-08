@@ -3703,7 +3703,7 @@ The Experimentors are an ancient precursor race, whose existence is devoted to t
 SP_SUPER_TEST
 Super Testers
 SP_SUPER_TEST_DESC
-'''Super Testers are unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets.
+'''Super Testers are grossly unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets. (Stealth-busting power only works when they are in a Capital)
 
 [[GREAT_INDUSTRY]]
 [[GREAT_RESEARCH]]
@@ -7953,19 +7953,19 @@ ULTIMATE_DETECTION
 '''+++	Ultimate Detection: +100 bonus.'''
 
 BAD_STEALTH
-'''−	Bad Stealth: −25 malus.'''
+'''−	Bad Stealth: −15 malus.'''
 
 AVERAGE_STEALTH
 '''	Average Stealth.'''
 
 GOOD_STEALTH
-'''+	Good Stealth: +25 bonus.'''
+'''+	Good Stealth: +15 bonus.'''
 
 GREAT_STEALTH
-'''++	Great Stealth: +50 bonus.'''
+'''++	Great Stealth: +40 bonus.'''
 
 ULTIMATE_STEALTH
-'''+++	Ultimate Stealth: +100 bonus.'''
+'''+++	Ultimate Stealth: +60 bonus.'''
 
 GOOD_WEAPONS
 '''+	Starts with Mass Driver 3.'''
