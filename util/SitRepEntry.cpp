@@ -74,7 +74,7 @@ SitRepEntry CreateShipBuiltSitRep(int ship_id, int system_id, int shipdesign_id)
 }
 
 SitRepEntry CreateShipBlockBuiltSitRep( int system_id, int shipdesign_id, int number) {
-    SitRepEntry sitrep("SITREP_SHIP_BLOCK_BUILT", "icons/sitrep/ship_produced.png");
+    SitRepEntry sitrep("SITREP_SHIP_BATCH_BUILT", "icons/sitrep/ship_produced.png");
     sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
     sitrep.AddVariable(VarText::DESIGN_ID_TAG,     boost::lexical_cast<std::string>(shipdesign_id));
     sitrep.AddVariable(VarText::RAW_TEXT_TAG,      boost::lexical_cast<std::string>(number));
