@@ -18,7 +18,7 @@ namespace std {
 namespace {
     struct part_stats_parser_rules {
         part_stats_parser_rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            //const parse::lexer& tok = parse::lexer::instance();
 
             qi::_1_type _1;
             qi::_2_type _2;

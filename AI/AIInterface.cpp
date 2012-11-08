@@ -217,8 +217,6 @@ namespace AIInterface {
     }
 
     int IssueFleetMoveOrder(int fleet_id, int destination_id) {
-        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
-
         const Fleet* fleet = GetFleet(fleet_id);
         if (!fleet) {
             Logger().errorStream() << "AIInterface::IssueFleetMoveOrder : passed an invalid fleet_id";
@@ -249,7 +247,6 @@ namespace AIInterface {
             return 0;
         }
 
-        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         int empire_id = AIClientApp::GetApp()->EmpireID();
         const UniverseObject* obj = GetUniverseObject(object_id);
 
@@ -273,7 +270,6 @@ namespace AIInterface {
                 return 0;
             }
 
-            const Universe& universe = AIClientApp::GetApp()->GetUniverse();
             int empire_id = AIClientApp::GetApp()->EmpireID();
 
             // make sure all objects exist and are owned just by this player
@@ -359,7 +355,6 @@ namespace AIInterface {
     }
 
     int IssueFleetTransferOrder(int ship_id, int new_fleet_id) {
-        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
         const Ship* ship = GetShip(ship_id);
@@ -411,7 +406,6 @@ namespace AIInterface {
     }
 
     int IssueColonizeOrder(int ship_id, int planet_id) {
-        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
         // make sure ship_id is a ship...
@@ -465,7 +459,6 @@ namespace AIInterface {
     }
 
     int IssueInvadeOrder(int ship_id, int planet_id) {
-        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
         // make sure ship_id is a ship...
@@ -503,7 +496,7 @@ namespace AIInterface {
         bool populated = planet->CurrentMeterValue(METER_POPULATION) > 0.;
         bool visible = GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_PARTIAL_VISIBILITY;
         bool vulnerable = planet->CurrentMeterValue(METER_SHIELD) <= 0.;
-        bool being_invaded = planet->IsAboutToBeInvaded();
+        //bool being_invaded = planet->IsAboutToBeInvaded();
         bool invadable = !owned_by_invader && vulnerable && (populated || !unowned) && visible ;// && !being_invaded; a 'being_invaded' check prevents AI from invading with multiple ships at once, which is important
         if (!invadable) {
             Logger().errorStream() << "AIInterface::IssueInvadeOrder : planet with passed planet_id is "
@@ -534,7 +527,6 @@ namespace AIInterface {
 
     int IssueAggressionOrder(int object_id, bool aggressive) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
 
         const Fleet* fleet = GetFleet(object_id);
         if (!fleet) {
@@ -553,7 +545,6 @@ namespace AIInterface {
     }
 
     int IssueChangeFocusOrder(int planet_id, const std::string& focus) {
-        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
         const Planet* planet = GetPlanet(planet_id);

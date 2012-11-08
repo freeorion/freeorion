@@ -695,7 +695,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 
     // may be set while populating - used to reselect previously selected row
     // after populating
-    GG::ListBox::iterator row_to_select_it = m_buildable_items->end();
+    //GG::ListBox::iterator row_to_select_it = m_buildable_items->end();
     // may be set while populating - used to rescroll the list after populating
     GG::ListBox::iterator new_first_row_it = m_buildable_items->end();
     // counter that keeps track of how many rows have been added so far

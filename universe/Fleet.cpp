@@ -700,7 +700,7 @@ void Fleet::AddShips(const std::vector<int>& ship_ids) {
         changed = true;
     }
     if (changed)
-        StateChangedSignal;
+        StateChangedSignal();
 }
 
 void Fleet::RemoveShip(int ship_id) {

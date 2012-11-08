@@ -254,7 +254,7 @@ void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> m
         Resize(new_lr - UpperLeft());
     } else { // normal-dragging
         if (GG::Wnd* parent = Parent()) {
-            GG::Pt ul = UpperLeft(), lr = LowerRight();
+            GG::Pt ul = UpperLeft();
             GG::Pt new_ul = ul + move;
             //GG::Pt new_lr = lr + move;
 

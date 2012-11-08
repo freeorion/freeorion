@@ -4533,7 +4533,8 @@ void MapWnd::DispatchFleetsExploring() {
     for (int i = 0; i < nbr_fleet_to_send; i++){ //at each iteration, we should send one ship on its way
 
         double min_dist = DBL_MAX;
-        int end_system_id, start_system_id;
+        int end_system_id = INVALID_OBJECT_ID;
+        int start_system_id = INVALID_OBJECT_ID;
         int last_visibility = NUM_VISIBILITIES; //greater than max visibility
         int better_fleet_id;
 

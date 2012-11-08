@@ -435,7 +435,7 @@ void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, 
         GG::Pt final_move = move;
 
         if (GG::Wnd* parent = Parent()) {
-            GG::Pt ul = UpperLeft(), lr = LowerRight();
+            GG::Pt ul = UpperLeft();
             GG::Pt new_ul = ul + move;
             //GG::Pt new_lr = lr + move;
 
