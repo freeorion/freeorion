@@ -2853,7 +2853,7 @@ Species
 #Window title####
 
 SITREP_PANEL_TITLE
-Situat⟳ion Report
+Situation Report
 
 SITREP_PANEL_TITLE_TURN
 Situation Report - Turn %1%
@@ -3747,6 +3747,13 @@ ANCIENT_RUINS_SPECIAL_DESCRIPTION
 '''Triples the Research on this planet and increases Research on Research-focused planets by one twentieth (non-stacking).
 
 This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech Xenoarchaeology to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
+
+PANOPTICON_SPECIAL
+Panopticon Complex
+PANOPTICON_SPECIAL_DESC
+'''Extends empire-wide detection strength by +10
+
+Buried deep within the crust of the planet, the Panopticon is a powerful relic of an unknown precursor civilization. When fed the data from an empire's detection equipment, it has the power to pull reliable information from the chaotic static beyond the edges of certainty.'''
 
 TUNNELS_SPECIAL
 Natural Tunnels
@@ -6362,6 +6369,13 @@ Sensors
 
 SPY_SENSORS_DESC
 Unlocks the Sensors ship part, increases the detection range of all planets to 200, and increases the imperial detection level to 700.
+
+SPY_OMNI_SCAN
+Omni-scanner
+
+SPY_OMNI_SCAN_DESC
+The ultimate in detection. Increases the detection range of all planets to 300, and increases the imperial detection level to 90.
+
 
 SPY_EM_DAMPER
 Electromagnetic Damper
