@@ -384,8 +384,9 @@ namespace {
         left = GG::X(GRAPHIC_SIZE + MARGIN*2);
         m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, turns,
                                                   turns_completed + partially_complete_turn,
+                                                  GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
                                                   ClientUI::TechWndProgressBarColor(),
-                                                  GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()), clr);
+                                                  m_in_progress ? ClientUI::ResearchableTechFillColor() : GG::LightColor(ClientUI::ResearchableTechFillColor()) );
         m_progress_bar->MoveTo(GG::Pt(left, top));
 
         top += m_progress_bar->Height() + MARGIN;

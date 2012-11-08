@@ -4588,8 +4588,8 @@ void MapWnd::DispatchFleetsExploring() {
                 }
 
                 if (!remaining_system_to_explore || min_dist == DBL_MAX) {
-                    if (fleet->Fuel() == fleet->MaxFuel()) {
-                        //we have full fuel and no unknown planet in range, we will have to wait for resupply
+                    if (fleet->Fuel() == fleet->MaxFuel() && far_min_dist != DBL_MAX) {
+                        //we have full fuel and no unknown planet in range. We can go to a far system, but we will have to wait for resupply
                         Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Next sytem for fleet " << fleet->ID() << " is " << far_system_id << ". Not enough fuel for the round trip";
                         systems_order_sent.insert(far_system_id);
                         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), fleet->SystemID(), far_system_id)));

@@ -1347,20 +1347,22 @@ void MultiTurnProgressBar::Render() {
         segmented = false;
 
     // draw background over whole area
-    FlatRectangle(ul, lr, m_background, m_outline_color, 2);
+    FlatRectangle(ul, lr, m_background, m_outline_color, 1);
     // draw completed portion bar
     GG::X completed_bar_width(std::max(1.0, Value(Width() * m_turns_completed / m_total_turns)));
     if (completed_bar_width > 3) {
         GG::Pt bar_lr(ul.x + completed_bar_width, lr.y);
-        FlatRectangle(ul, bar_lr, m_bar_color, m_outline_color, 2);
+        FlatRectangle(ul, bar_lr, m_bar_color, m_outline_color, 1);
     }
     // draw segment separators
     if (segmented) {
-        glColor(m_outline_color);
+        glColor(GG::DarkColor(m_bar_color));
         glDisable(GL_TEXTURE_2D);
         glBegin(GL_LINES);
         for (int n = 1; n < m_total_turns; ++n) {
             GG::X separator_x = ul.x + Width() * n / m_total_turns;
+            if (separator_x > ul.x + completed_bar_width)
+                glColor(GG::LightColor(m_background));            
             glVertex(separator_x, ul.y);
             glVertex(separator_x, lr.y);
         }

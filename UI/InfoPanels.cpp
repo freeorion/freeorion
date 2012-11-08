@@ -1854,8 +1854,8 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
                                       GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
 
-    m_progress_bar = new MultiTurnProgressBar(w, GG::Y(Value(w/5)), total_turns, turns_completed, ClientUI::TechWndProgressBarColor(),
-                                              GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()), GG::CLR_WHITE);
+    m_progress_bar = new MultiTurnProgressBar(w, GG::Y(Value(w/5)), total_turns, turns_completed, GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                              ClientUI::TechWndProgressBarColor(),  GG::LightColor(ClientUI::ResearchableTechFillColor()) );
     m_progress_bar->MoveTo(GG::Pt(GG::X0, Height() - m_progress_bar->Height()));
     AttachChild(m_progress_bar);
 }

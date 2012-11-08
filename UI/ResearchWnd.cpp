@@ -108,9 +108,7 @@ namespace {
 
         Resize(GG::Pt(w, HEIGHT));
 
-
-        GG::Clr clr = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
-                                    : ClientUI::ResearchableTechTextAndBorderColor();
+        GG::Clr clr = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
         GG::Y top(MARGIN);
@@ -132,8 +130,10 @@ namespace {
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
 
         m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech ? tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()) : 1,
-                                                  turns_completed, ClientUI::TechWndProgressBarColor(), m_in_progress ? 
-                                                  GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()) : ClientUI::TechWndProgressBarBackgroundColor(), clr);
+                                                  turns_completed,
+                                                  GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                                  ClientUI::TechWndProgressBarColor(),
+                                                  m_in_progress ? ClientUI::ResearchableTechFillColor() : GG::LightColor(ClientUI::ResearchableTechFillColor()) );
         m_progress_bar->MoveTo(GG::Pt(left, top));
 
         top += m_progress_bar->Height() + MARGIN;
