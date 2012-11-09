@@ -6352,13 +6352,13 @@ SPY_OPTICAL_SCANNER
 Optical Scanner
 
 SPY_OPTICAL_SCANNER_DESC
-All colonies start the game with a detection level of 50, and the ship part Optical Scanner permits ships to reach the same level of detection.
+All colonies start the game with a detection range of 50, and the imperial detection strength to 10, and the ship part Optical Scanner permits ships to reach the same level of detection.
 
 SPY_RADAR
 Active Radar
 
 SPY_RADAR_DESC
-'''Unlocks the Active Radar ship part, increases the detection range of all planets to 75, and increases the imperial detection level to 200.
+'''Unlocks the Active Radar ship part, increases the detection range of all planets to 75, and increases the imperial detection strength to 30.
 
 Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened. By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
 
@@ -6366,7 +6366,7 @@ SPY_NEUTRON_SCANNER
 Neutron Scanner
 
 SPY_NEUTRON_SCANNER_DESC
-'''Unlocks the Neutron Scanner ship part, increases the detection range of all planets to 150, and increases the imperial detection level to 400.
+'''Unlocks the Neutron Scanner ship part, increases the detection range of all planets to 150, and increases the imperial detection strength to 50.
 
 Electromagnetic radiation has no rest mass and is easily manipulable. Simply by bending waves of light around an object, it is possible to render radar devices virtually useless. By firing waves of neutrons instead of electromagnetic radiation, more effective active scanning can be utilized.'''
 
@@ -6374,13 +6374,13 @@ SPY_SENSORS
 Sensors
 
 SPY_SENSORS_DESC
-Unlocks the Sensors ship part, increases the detection range of all planets to 200, and increases the imperial detection level to 700.
+Unlocks the Sensors ship part, increases the detection range of all planets to 200, and increases the imperial detection strength to 70.
 
 SPY_OMNI_SCAN
 Omni-scanner
 
 SPY_OMNI_SCAN_DESC
-The ultimate in detection. Increases the detection range of all planets to 300, and increases the imperial detection level to 90.
+The ultimate in detection. Increases the detection range of all planets to 300, and increases the imperial detection strength to 90.
 
 
 SPY_EM_DAMPER
