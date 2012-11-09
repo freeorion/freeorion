@@ -2484,28 +2484,40 @@ ULTIMATE_DETECTION
 
 BAD_STEALTH
 '''EffectsGroup
-            scope = Source
+            scope = AND [
+                Source
+                Planet
+            ]
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value - 15
 '''
 
 GOOD_STEALTH
 '''EffectsGroup
-            scope = Source
+            scope = AND [
+                Source
+                Planet
+            ]
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value + 15
 '''
             
 GREAT_STEALTH
 '''EffectsGroup
-            scope = Source
+            scope = AND [
+                Source
+                Planet
+            ]
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value + 40
 '''
 
 ULTIMATE_STEALTH
 '''EffectsGroup
-            scope = Source
+            scope = AND [
+                Source
+                Planet
+            ]
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value + 60
 '''
