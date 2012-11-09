@@ -2622,7 +2622,7 @@ Tech
     techtype = Application
     category = "SPY_CATEGORY"
     researchcost = 100
-    researchturns = 2
+    researchturns = 5
     prerequisites = "SHP_GAL_EXPLO"
     unlock = Item type = ShipPart name = "DT_ACTIVE_RADAR"
     effectsgroups = [
@@ -2655,7 +2655,7 @@ Tech
     techtype = Application
     category = "SPY_CATEGORY"
     researchcost = 200
-    researchturns = 2
+    researchturns = 5
     prerequisites = "SPY_RADAR"
     unlock = Item type = ShipPart name = "DT_NEUTRON_SCANNER"
     effectsgroups = [
@@ -2686,7 +2686,7 @@ Tech
     techtype = Application
     category = "SPY_CATEGORY"
     researchcost = 500
-    researchturns = 3
+    researchturns = 5
     prerequisites = "SPY_NEUTRON_SCANNER"
     unlock = Item type = ShipPart name = "DT_SENSORS"
     effectsgroups = [
@@ -2769,8 +2769,8 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
-    researchcost = 8
-    researchturns = 1
+    researchcost = 100
+    researchturns = 5
     prerequisites = "SPY_ROOT_DECEPTION"
     unlock = Item type = ShipPart name = "ST_EM_DAMPER"
     effectsgroups =
@@ -2795,8 +2795,8 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
-    researchcost = 45
-    researchturns = 1
+    researchcost = 200
+    researchturns = 5
     prerequisites = "SPY_EM_DAMPER"
     unlock = Item type = ShipPart name = "ST_ABSORPTION_FIELD"
     effectsgroups =
@@ -2823,8 +2823,8 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
-    researchcost = 52
-    researchturns = 2
+    researchcost = 500
+    researchturns = 5
     prerequisites = "SPY_ABSORPTION_FIELD"
     unlock = Item type = ShipPart name = "ST_DIM_CLOAK"
     effectsgroups =
@@ -2849,8 +2849,8 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
-    researchcost = 125
-    researchturns = 4
+    researchcost = 1000
+    researchturns = 5
     prerequisites = "SPY_DIM_CLOAK"
     unlock = Item type = ShipPart name = "ST_PHASING_CLOAK"
     effectsgroups =
