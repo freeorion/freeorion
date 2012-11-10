@@ -105,6 +105,7 @@ namespace {
     };
 
     const std::map<PlanetType, std::vector<RotatingPlanetData> >&   GetRotatingPlanetData() {
+        ScopedTimer timer("GetRotatingPlanetData", true);
         static std::map<PlanetType, std::vector<RotatingPlanetData> > data;
         if (data.empty()) {
             XMLDoc doc;
@@ -618,6 +619,7 @@ public:
     }
 
     void Refresh() {
+        ScopedTimer timer("RotatingPlanetControl::Refresh", true);
         const Planet* planet = GetPlanet(m_planet_id);
         if (!planet) return;
 
