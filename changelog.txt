@@ -43,6 +43,7 @@ Balancing:
   ~ New Focus icons.
   ~ Sitrep icons.
   ~ New planet meter icons.
+  ~ More ship part icons.
  
  GUI:
   ~ Numpad keypresses now enter numbers when numlock is on, and act as arrow navigation keys in text edit widgets.

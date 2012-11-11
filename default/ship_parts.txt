@@ -262,7 +262,7 @@ Part
             scope = Source
             activation = Source
             effects = SetStarlaneSpeed Value - 3
-    icon = ""
+    icon = "icons/ship_parts/zortrium_plating.png"
 
 Part
     name = "AR_ROCK_PLATE"
@@ -391,8 +391,8 @@ Part
     icon = ""
 
 Part
-    name = "DT_SENSORS"
-    description = "DT_SENSORS_DESC"
+    name = "DT_DETECTOR_4"
+    description = "DT_DETECTOR_4_DESC"
     class = Detection
     capacity = 0
     mountableSlotTypes = External
@@ -405,11 +405,11 @@ Part
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
             effects = SetDetection Value + 200
-    icon = "icons/ship_parts/sensors.png"
+    icon = "icons/ship_parts/detector-4.png"
 
 Part
-    name = "DT_NEUTRON_SCANNER"
-    description = "DT_NEUTRON_SCANNER_DESC"
+    name = "DT_DETECTOR_3"
+    description = "DT_DETECTOR_3_DESC"
     class = Detection
     capacity = 0
     mountableSlotTypes = External
@@ -422,11 +422,11 @@ Part
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
             effects = SetDetection Value + 150
-    icon = "icons/ship_parts/neutron-scanner.png"
+    icon = "icons/ship_parts/detector-3.png"
 
 Part
-    name = "DT_ACTIVE_RADAR"
-    description = "DT_ACTIVE_RADAR_DESC"
+    name = "DT_DETECTOR_2"
+    description = "DT_DETECTOR_2_DESC"
     class = Detection
     capacity = 0
     mountableSlotTypes = External
@@ -439,11 +439,11 @@ Part
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
             effects = SetDetection Value + 75
-    icon = "icons/ship_parts/active_radar.png"
+    icon = "icons/ship_parts/detector-2.png"
 
 Part
-    name = "DT_OPTICAL_SCANNER"
-    description = "DT_OPTICAL_SCANNER_DESC"
+    name = "DT_DETECTOR_1"
+    description = "DT_DETECTOR_1_DESC"
     class = Detection
     capacity = 0
     mountableSlotTypes = External
@@ -456,7 +456,7 @@ Part
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
             effects = SetDetection Value + 25
-    icon = "icons/ship_parts/optical_sensors.png"
+    icon = "icons/ship_parts/detector-1.png"
 
 Part
     name = "FU_IMPROVED_ENGINE_COUPLINGS"
@@ -557,8 +557,8 @@ Part
     icon = ""
 
 Part
-    name = "ST_PHASING_CLOAK"
-    description = "ST_PHASING_CLOAK_DESC"
+    name = "ST_CLOAK_4"
+    description = "ST_CLOAK_4_DESC"
     class = Stealth
     capacity = 0
     mountableSlotTypes = Internal
@@ -571,11 +571,11 @@ Part
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
             effects = SetStealth Value + 80
-    icon = ""
+    icon = "icons/ship_parts/cloak-4.png"
 
 Part
-    name = "ST_DIM_CLOAK"
-    description = "ST_DIM_CLOAK_DESC"
+    name = "ST_CLOAK_3"
+    description = "ST_CLOAK_3_DESC"
     class = Stealth
     capacity = 0
     mountableSlotTypes = Internal
@@ -588,11 +588,11 @@ Part
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
             effects = SetStealth Value + 60
-    icon = ""
+    icon = "icons/ship_parts/cloak-3.png"
 
 Part
-    name = "ST_ABSORPTION_FIELD"
-    description = "ST_ABSORPTION_FIELD_DESC"
+    name = "ST_CLOAK_2"
+    description = "ST_CLOAK_2_DESC"
     class = Stealth
     capacity = 0
     mountableSlotTypes = Internal
@@ -605,11 +605,11 @@ Part
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
             effects = SetStealth Value + 40
-    icon = ""
+    icon = "icons/ship_parts/cloak-2.png"
 
 Part
-    name = "ST_EM_DAMPER"
-    description = "ST_EM_DAMPER_DESC"
+    name = "ST_CLOAK_1"
+    description = "ST_CLOAK_1_DESC"
     class = Stealth
     capacity = 0
     mountableSlotTypes = Internal
@@ -622,7 +622,7 @@ Part
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
             effects = SetStealth Value + 20
-    icon = "icons/ship_parts/electromagnetic_damper.png"
+    icon = "icons/ship_parts/cloak-1.png"
 
 Part
     name = "CO_COLONY_POD"
@@ -700,7 +700,7 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SPY_ABSORPTION_FIELD"
+            activation = Number low = 1 OwnerHasTech "SPY_STEALTH_2"
             effects = [
                 CreateShip "SM_ASH" Source.Owner
                 Destroy
@@ -708,7 +708,7 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SPY_DIM_CLOAK"
+            activation = Number low = 1 OwnerHasTech "SPY_STEALTH_3"
             effects = [
                 CreateShip "SM_DIM" Source.Owner
                 Destroy
@@ -716,7 +716,7 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SPY_PHASING_CLOAK"
+            activation = Number low = 1 OwnerHasTech "SPY_STEALTH_4"
             effects = [
                 CreateShip "SM_VOID" Source.Owner
                 Destroy
@@ -744,7 +744,7 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SPY_DIM_CLOAK"
+            activation = Number low = 1 OwnerHasTech "SPY_STEALTH_3"
             effects = [
                 CreateShip "SM_DIM" Source.Owner
                 Destroy
@@ -752,7 +752,7 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SPY_PHASING_CLOAK"
+            activation = Number low = 1 OwnerHasTech "SPY_STEALTH_4"
             effects = [
                 CreateShip "SM_VOID" Source.Owner
                 Destroy
@@ -788,7 +788,7 @@ Part
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SPY_PHASING_CLOAK"
+            activation = Number low = 1 OwnerHasTech "SPY_STEALTH_4"
             effects = [
                 CreateShip "SM_VOID" Source.Owner
                 Destroy

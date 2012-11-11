@@ -237,6 +237,41 @@ Special
     graphic = "icons/specials_huge/ancient_ruins.png"
 
 Special
+    name = "PANOPTICON_SPECIAL"
+    description = "PANOPTICON_SPECIAL_DESC"
+    stealth = 2
+    spawnrate = 1.0
+    spawnlimit = 1
+    location = And [
+        Planet
+        Not Planet type = [Asteroids GasGiant]
+        Not ContainedBy Contains Capital
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetDetection Value + 75
+                SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 10
+            ]
+        EffectsGroup
+            scope = Source
+            effects = SetTexture name = "planets/overlays/ruins.png"        
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Turn high = 0
+                Random probability = 0.66
+                Not WithinStarlaneJumps 1 Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+            ]
+            effects = CreateShip "SM_GUARD_3"
+        ]
+        graphic = "icons/meter/detection.png"
+
+Special
     name = "TUNNELS_SPECIAL"
     description = "TUNNELS_SPECIAL_DESCRIPTION"
     stealth = 30
@@ -539,7 +574,7 @@ Special
             scope = Source
             activation = Not Or [
                 HasSpecial "CLOUD_COVER_MASTER_SPECIAL"
-                OwnerHasTech "SPY_EM_DAMPER"
+                OwnerHasTech "SPY_STEALTH_1"
             ]
             effects = RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
 
@@ -598,7 +633,7 @@ Special
             scope = Source
             activation = Not Or [
                 HasSpecial "VOLCANIC_ACTIVITY_SPECIAL"
-                OwnerHasTech "SPY_ABSORPTION_FIELD"
+                OwnerHasTech "SPY_STEALTH_2"
             ]
             effects = RemoveSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
 
@@ -650,7 +685,7 @@ Special
             scope = Source
             activation = Not Or [
                 HasSpecial "DIM_RIFT_MASTER_SPECIAL"
-                OwnerHasTech "SPY_DIM_CLOAK"
+                OwnerHasTech "SPY_STEALTH_3"
             ]
             effects = RemoveSpecial "DIM_RIFT_SLAVE_SPECIAL"
 
@@ -696,7 +731,7 @@ Special
             scope = Source
             activation = And [
                 Not HasSpecial "VOID_MASTER_SPECIAL"
-                Not OwnerHasTech "SPY_PHASING_CLOAK"
+                Not OwnerHasTech "SPY_STEALTH_4"
             ]
             effects = RemoveSpecial "VOID_SLAVE_SPECIAL"
 

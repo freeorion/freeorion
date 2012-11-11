@@ -6383,58 +6383,58 @@ SHP_MULTISPEC_SHIELD
 SHP_MULTISPEC_SHIELD_DESC
 Обеспечивают достаточную защиту для входа корабля в сердце звезды. Суда в системе со звездой типа, отличного от черной дыры и нейтронные получают существенный бонус к скрытности.
 
-SPY_OPTICAL_SCANNER
+SPY_DETECT_1
 Оптический Сканер
 
-SPY_OPTICAL_SCANNER_DESC
+SPY_DETECT_1_DESC
 Все колонии начинают игру с уровня обнаружения 50, Оптический Сканер позволяет кораблям достичь того же уровня обнаружения.
 
-SPY_RADAR
+SPY_DETECT_2
 Активный Радар
 
-SPY_RADAR_DESC
+SPY_DETECT_2_DESC
 '''Открывает нейтронный сканер, увеличивает дальность обнаружения всех планет до 75, а также повышает уровень имперского обнаружения до 200.
 
 Непрактично полагаться на пассивное обнаружение объектов по поступающему от них электромагнитному излучению, ведь это излучение может быть замаскировано или приглушено. Путём излучения электромагнитных волн и фиксации их отражений можно определить расположение и скорость многих объектов.'''
 
-SPY_NEUTRON_SCANNER
+SPY_DETECT_3
 Нейтронный сканер
 
-SPY_NEUTRON_SCANNER_DESC
+SPY_DETECT_3_DESC
 '''Открывает нейтронный сканер, увеличивает дальность обнаружения всех планет до 150, а также повышает уровень имперского обнаружения до 400.
 
 Электромагнитное излучение не имеет массы покоя, и им можно с лёгкостью манипулировать. Радиолокационные устройства могут стать бесполезными, просто изогнув волны света проходящие вокруг объекта. Но можно добиться более эффективного сканирования, используя излучение нейтронных волн вместо электромагнитных.'''
 
-SPY_SENSORS
+SPY_DETECT_4
 Сенсоры
 
-SPY_SENSORS_DESC
+SPY_DETECT_4_DESC
 Unlocks the Sensors ship part, increases the detection range of all planets to 200, and increases the imperial detection level to 700.
 
-SPY_EM_DAMPER
+SPY_STEALTH_1
 Electromagnetic Damper
 
-SPY_EM_DAMPER_DESC
+SPY_STEALTH_1_DESC
 Unlocks the Electromagnetic Damper ship part and increases the Stealth of all planets, systems and buildings by 5. This bonus is not cumulative with that of other stealth techs.
 
-SPY_ABSORPTION_FIELD
+SPY_STEALTH_2
 Absorption Field
 
-SPY_ABSORPTION_FIELD_DESC
+SPY_STEALTH_2_DESC
 '''Increases the Stealth of all planets, systems, and buildings by 30. This bonus is not cumulative with that of other stealth techs.
 
 Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the stealth of a ship can be greatly increased.'''
 
-SPY_DIM_CLOAK
+SPY_STEALTH_3
 Dimensional Cloak
 
-SPY_DIM_CLOAK_DESC
+SPY_STEALTH_3_DESC
 Unlocks the Dimensional Cloak ship part and increases the Stealth of all planets, systems and buildings by 15. This bonus is not cumulative with that of other stealth techs.
 
-SPY_PHASING_CLOAK
+SPY_STEALTH_4
 Phasing Cloak
 
-SPY_PHASING_CLOAK_DESC
+SPY_STEALTH_4_DESC
 '''Increases the stealth of all planets, systems and buildings by 80. This bonus is not cumulative with that of other stealth techs.
 
 Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
@@ -7348,28 +7348,28 @@ Plasma Torpedo
 LR_PLASMA_TORPEDO_DESC
 A fast, long-range missile with excellent stealth, powered by the Trans-Spatial Drive and armed with a devastatingly powerful plasma warhead. This part can only be built if there is an Advanced Engineering Bay somewhere in the empire or an ally's empire.
 
-DT_OPTICAL_SCANNER
+DT_DETECTOR_1
 Optical Scanner
 
-DT_OPTICAL_SCANNER_DESC
+DT_DETECTOR_1_DESC
 Basic detection capability
 
-DT_ACTIVE_RADAR
+DT_DETECTOR_2
 Active Radar
 
-DT_ACTIVE_RADAR_DESC
+DT_DETECTOR_2_DESC
 Moderate detection
 
-DT_NEUTRON_SCANNER
+DT_DETECTOR_3
 Neutron Scanner
 
-DT_NEUTRON_SCANNER_DESC
+DT_DETECTOR_3_DESC
 Strong detection
 
-DT_SENSORS
+DT_DETECTOR_4
 Sensors
 
-DT_SENSORS_DESC
+DT_DETECTOR_4_DESC
 Ultimate detection
 
 FU_BASIC_TANK
@@ -7395,28 +7395,28 @@ Zero-Point Fuel Generator
 FU_ZERO_FUEL_DESC
 Generates energy using Zero-Point generation and converts it into fuel using matter-energy conversion techniques.
 
-ST_EM_DAMPER
+ST_CLOAK_1
 Electromagnetic Damper
 
-ST_EM_DAMPER_DESC
+ST_CLOAK_1_DESC
 Improves stealth of ship on which it is mounted by damping electromagnetic emissions from ship systems. Can only compensate for small amount of emissions, and will be overpowered by large-emission producing parts, if present.
 
-ST_ABSORPTION_FIELD
+ST_CLOAK_2
 Absorption Field
 
-ST_ABSORPTION_FIELD_DESC
+ST_CLOAK_2_DESC
 Creates an absorption field around the ship, effectively transforming it into a perfect blackbody.
 
-ST_DIM_CLOAK
+ST_CLOAK_3
 Dimensional Cloak
 
-ST_DIM_CLOAK_DESC
+ST_CLOAK_3_DESC
 Hides this ship within a dimensional rift, greatly increasing stealth.
 
-ST_PHASING_CLOAK
+ST_CLOAK_4
 Phasing Cloak
 
-ST_PHASING_CLOAK_DESC
+ST_CLOAK_4_DESC
 Modulates the frequency of any matter waves emitted from the ship to match that of the background radiation.
 
 AR_LEAD_PLATE

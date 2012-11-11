@@ -332,7 +332,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_5"
         "SH_DEFLECTOR"
-        "DT_NEUTRON_SCANNER"
+        "DT_DETECTOR_3"
         ""
         ""
     ]
@@ -358,7 +358,7 @@ ShipDesign
         "SP_BIOTERM"
         "SR_WEAPON_17"
         "SR_WEAPON_17"
-        "ST_ABSORPTION_FIELD"
+        "ST_CLOAK_2"
     ]
     icon = "icons/monsters/kraken-4.png"
     model = "seed"
@@ -374,7 +374,7 @@ ShipDesign
         "SR_WEAPON_17"
         "SR_WEAPON_17"
         "SR_WEAPON_17"
-        "ST_DIM_CLOAK"
+        "ST_CLOAK_3"
     ]
     icon  = "icons/monsters/juggernaut-4.png"
     model = "seed"
@@ -387,7 +387,7 @@ ShipDesign
         "SP_BIOTERM"
         "SR_WEAPON_17"
         ""
-        "ST_DIM_CLOAK"
+        "ST_CLOAK_3"
     ]
     icon = "icons/monsters/snowflake-4.png"
     model = "seed"
@@ -400,7 +400,7 @@ ShipDesign
         "SP_NOVA_BOMB"
         "SR_WEAPON_17"
         ""
-        "ST_PHASING_CLOAK"
+        "ST_CLOAK_4"
     ]
     icon = "icons/monsters/dragon-2.png"
     model = "seed"

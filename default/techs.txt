@@ -178,7 +178,7 @@ Tech
     researchcost = 9999
     researchturns = 9999
     Unresearchable
-    prerequisites = "SPY_DIM_CLOAK"
+    prerequisites = "SPY_STEALTH_3"
     unlock = Item type = Building name = "BLD_PLANET_CLOAK"
     
 Tech
@@ -1739,7 +1739,7 @@ Tech
 Tech
     name = "SHP_INTSTEL_LOG"
     description = "SHP_INTSTEL_LOG_DESC"
-    short_description = "SUPPLY_DESC"
+    short_description = "SUPPLY_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 75
@@ -2582,8 +2582,8 @@ Tech
 //#
 
 Tech
-    name = "SPY_OPTICAL_SCANNER"
-    description = "SPY_OPTICAL_SCANNER_DESC"
+    name = "SPY_DETECT_1"
+    description = "SPY_DETECT_1_DESC"
     short_description = "DETECTION_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
@@ -2597,34 +2597,34 @@ Tech
                 Planet
             ]
             activation = And [
-                Not OwnerHasTech "SPY_RADAR"
-                Not OwnerHasTech "SPY_NEUTRON_SCANNER"
-                Not OwnerHasTech "SPY_SENSORS"
-                Not OwnerHasTech "SPY_OMNI_SCAN"
+                Not OwnerHasTech "SPY_DETECT_2"
+                Not OwnerHasTech "SPY_DETECT_3"
+                Not OwnerHasTech "SPY_DETECT_4"
+                Not OwnerHasTech "SPY_DETECT_5"
             ]
             effects = SetDetection Value + 50
 
         EffectsGroup
             scope = Source
             activation = And [
-                Not OwnerHasTech "SPY_RADAR"
-                Not OwnerHasTech "SPY_NEUTRON_SCANNER"
-                Not OwnerHasTech "SPY_SENSORS"
-                Not OwnerHasTech "SPY_OMNI_SCAN"
+                Not OwnerHasTech "SPY_DETECT_2"
+                Not OwnerHasTech "SPY_DETECT_3"
+                Not OwnerHasTech "SPY_DETECT_4"
+                Not OwnerHasTech "SPY_DETECT_5"
             ]
             effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 10
     ]
 
 Tech
-    name = "SPY_RADAR"
-    description = "SPY_RADAR_DESC"
+    name = "SPY_DETECT_2"
+    description = "SPY_DETECT_2_DESC"
     short_description = "DETECTION_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
     researchcost = 100
     researchturns = 5
     prerequisites = "SHP_GAL_EXPLO"
-    unlock = Item type = ShipPart name = "DT_ACTIVE_RADAR"
+    unlock = Item type = ShipPart name = "DT_DETECTOR_2"
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -2632,32 +2632,32 @@ Tech
                 Planet
             ]
             activation = And [
-                Not OwnerHasTech "SPY_NEUTRON_SCANNER"
-                Not OwnerHasTech "SPY_SENSORS"
-                Not OwnerHasTech "SPY_OMNI_SCAN"
+                Not OwnerHasTech "SPY_DETECT_3"
+                Not OwnerHasTech "SPY_DETECT_4"
+                Not OwnerHasTech "SPY_DETECT_5"
             ]
             effects = SetDetection Value + 75
 
         EffectsGroup
             scope = Source
             activation = And [
-                Not OwnerHasTech "SPY_NEUTRON_SCANNER"
-                Not OwnerHasTech "SPY_SENSORS"
-                Not OwnerHasTech "SPY_OMNI_SCAN"
+                Not OwnerHasTech "SPY_DETECT_3"
+                Not OwnerHasTech "SPY_DETECT_4"
+                Not OwnerHasTech "SPY_DETECT_5"
             ]
             effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 30
     ]
     
 Tech
-    name = "SPY_NEUTRON_SCANNER"
-    description = "SPY_NEUTRON_SCANNER_DESC"
+    name = "SPY_DETECT_3"
+    description = "SPY_DETECT_3_DESC"
     short_description = "DETECTION_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
     researchcost = 200
     researchturns = 5
-    prerequisites = "SPY_RADAR"
-    unlock = Item type = ShipPart name = "DT_NEUTRON_SCANNER"
+    prerequisites = "SPY_DETECT_2"
+    unlock = Item type = ShipPart name = "DT_DETECTOR_3"
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -2665,55 +2665,54 @@ Tech
                 Planet
             ]
             activation = And [
-                Not OwnerHasTech "SPY_SENSORS"
-                Not OwnerHasTech "SPY_OMNI_SCAN"
+                Not OwnerHasTech "SPY_DETECT_4"
+                Not OwnerHasTech "SPY_DETECT_5"
                 ]
             effects = SetDetection Value + 150
 
         EffectsGroup
             scope = Source
             activation = And [
-                Not OwnerHasTech "SPY_SENSORS"
-                Not OwnerHasTech "SPY_OMNI_SCAN"
+                Not OwnerHasTech "SPY_DETECT_4"
+                Not OwnerHasTech "SPY_DETECT_5"
                 ]
             effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 50
     ]
     
 Tech
-    name = "SPY_SENSORS"
-    description = "SPY_SENSORS_DESC"
+    name = "SPY_DETECT_4"
+    description = "SPY_DETECT_4_DESC"
     short_description = "DETECTION_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
     researchcost = 500
     researchturns = 5
-    prerequisites = "SPY_NEUTRON_SCANNER"
-    unlock = Item type = ShipPart name = "DT_SENSORS"
+    prerequisites = "SPY_DETECT_3"
+    unlock = Item type = ShipPart name = "DT_DETECTOR_4"
     effectsgroups = [
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            activation = Not OwnerHasTech "SPY_OMNI_SCAN"
+            activation = Not OwnerHasTech "SPY_DETECT_5"
             effects = SetDetection Value + 200
 
         EffectsGroup
             scope = Source
-            activation = Not OwnerHasTech "SPY_OMNI_SCAN"
+            activation = Not OwnerHasTech "SPY_DETECT_5"
             effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 70
     ]
     
 Tech
-    name = "SPY_OMNI_SCAN"
-    description = "SPY_OMNI_SCAN_DESC"
+    name = "SPY_DETECT_5"
+    description = "SPY_DETECT_5_DESC"
     short_description = "DETECTION_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
     researchcost = 1000
     researchturns = 5
-    prerequisites = "SPY_SENSORS"
-   // unlock = Item type = ShipPart name = "DT_SENSORS"
+    prerequisites = "SPY_DETECT_4"
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -2746,7 +2745,7 @@ Tech
     category = "SPY_CATEGORY"
     researchcost = 75
     researchturns = 3
-    prerequisites = "SPY_RADAR"
+    prerequisites = "SPY_DETECT_2"
     unlock = Item type = Building name = "BLD_LIGHTHOUSE"
     graphic = "icons/tech/interstellar_lighthouse.png"
 
@@ -2764,15 +2763,15 @@ Tech
     researchturns = 1
 
 Tech
-    name = "SPY_EM_DAMPER"
-    description = "SPY_EM_DAMPER_DESC"
+    name = "SPY_STEALTH_1"
+    description = "SPY_STEALTH_1_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
     researchcost = 100
     researchturns = 5
     prerequisites = "SPY_ROOT_DECEPTION"
-    unlock = Item type = ShipPart name = "ST_EM_DAMPER"
+    unlock = Item type = ShipPart name = "ST_CLOAK_1"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -2783,22 +2782,22 @@ Tech
                 ]
             ]
             activation = And [
-                Not OwnerHasTech "SPY_ABSORPTION_FIELD"
-                Not OwnerHasTech "SPY_DIM_CLOAK"
-                Not OwnerHasTech "SPY_PHASING_CLOAK"
+                Not OwnerHasTech "SPY_STEALTH_2"
+                Not OwnerHasTech "SPY_STEALTH_3"
+                Not OwnerHasTech "SPY_STEALTH_4"
             ]
             effects = AddSpecial "CLOUD_COVER_SLAVE_SPECIAL"
             
 Tech
-    name = "SPY_ABSORPTION_FIELD"
-    description = "SPY_ABSORPTION_FIELD_DESC"
+    name = "SPY_STEALTH_2"
+    description = "SPY_STEALTH_2_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
     researchcost = 200
     researchturns = 5
-    prerequisites = "SPY_EM_DAMPER"
-    unlock = Item type = ShipPart name = "ST_ABSORPTION_FIELD"
+    prerequisites = "SPY_STEALTH_1"
+    unlock = Item type = ShipPart name = "ST_CLOAK_2"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -2809,8 +2808,8 @@ Tech
                 ]
             ]
             activation = And [
-                Not OwnerHasTech "SPY_DIM_CLOAK"
-                Not OwnerHasTech "SPY_PHASING_CLOAK"
+                Not OwnerHasTech "SPY_STEALTH_3"
+                Not OwnerHasTech "SPY_STEALTH_4"
             ]
             effects = [
                 AddSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
@@ -2818,15 +2817,15 @@ Tech
             ]
             
 Tech
-    name = "SPY_DIM_CLOAK"
-    description = "SPY_DIM_CLOAK_DESC"
+    name = "SPY_STEALTH_3"
+    description = "SPY_STEALTH_3_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
     researchcost = 500
     researchturns = 5
-    prerequisites = "SPY_ABSORPTION_FIELD"
-    unlock = Item type = ShipPart name = "ST_DIM_CLOAK"
+    prerequisites = "SPY_STEALTH_2"
+    unlock = Item type = ShipPart name = "ST_CLOAK_3"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -2836,7 +2835,7 @@ Tech
                     System
                 ]
             ]
-            activation = Not OwnerHasTech "SPY_PHASING_CLOAK"
+            activation = Not OwnerHasTech "SPY_STEALTH_4"
             effects = [
                 AddSpecial "DIM_RIFT_SLAVE_SPECIAL"
                 RemoveSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
@@ -2844,15 +2843,15 @@ Tech
             ]
             
 Tech
-    name = "SPY_PHASING_CLOAK"
-    description = "SPY_PHASING_CLOAK_DESC"
+    name = "SPY_STEALTH_4"
+    description = "SPY_STEALTH_4_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
     researchcost = 1000
     researchturns = 5
-    prerequisites = "SPY_DIM_CLOAK"
-    unlock = Item type = ShipPart name = "ST_PHASING_CLOAK"
+    prerequisites = "SPY_STEALTH_3"
+    unlock = Item type = ShipPart name = "ST_CLOAK_4"
     effectsgroups =
         EffectsGroup
             scope = And [

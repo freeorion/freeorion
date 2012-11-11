@@ -3589,10 +3589,10 @@ Deflector Shield
 SHP_DEFLECTOR_DESC
 Unlocks Deflector Shield ship part.
 
-SPY_RADAR
+SPY_DETECT_2
 Active Radar
 
-SPY_RADAR_DESC
+SPY_DETECT_2_DESC
 Unlocks Active Radar ship part.
 
 SHP_DEUTERIUM_TANK
@@ -3922,10 +3922,10 @@ Pocisk nuklearny
 LR_NUCLEAR_MISSILE_DESC
 Pocisk dalekiego zasięgu i średniej mocy
 
-DT_ACTIVE_RADAR
+DT_DETECTOR_2
 Radar aktywny
 
-DT_ACTIVE_RADAR_DESC
+DT_DETECTOR_2_DESC
 Średnia skuteczność wykrywania, niestety bardzo ułatwia też wykrycie okręty, na którym jest zamontowany.
 
 FU_DEUTERIUM_TANK
@@ -3940,10 +3940,10 @@ Zbiornik antymaterii
 FU_ANTIMATTER_TANK_DESC
 Zwiększa zasięg okrętu powiększając jego zasoby paliwa. Zwarty, o niewielkiem masie.
 
-ST_EM_DAMPER
+ST_CLOAK_1
 Tłumik elektromagnetyczny
 
-ST_EM_DAMPER_DESC
+ST_CLOAK_1_DESC
 Zmniejsza wykrywalność okrętu, na którym został zamontowany, poprzez tłumienie emisji elektromagnetycznych generowanych przez systemy okrętu. Może skompensować tylko niewielką ilość takich emisji, dlatego elementy generujące wiele szumów nie będą przez niego skutecznie maskowane.
 
 AR_LEAD_PLATE

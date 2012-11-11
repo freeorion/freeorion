@@ -3618,10 +3618,10 @@ Deflector Shield
 SHP_DEFLECTOR_DESC
 Unlocks Deflector Shield ship part.
 
-SPY_RADAR
+SPY_DETECT_2
 Aktiver Radar
 
-SPY_RADAR_DESC
+SPY_DETECT_2_DESC
 Ermöglicht das Schiffsteil Aktiver Radar.
 
 SHP_DEUTERIUM_TANK
@@ -3955,10 +3955,10 @@ Atomare Rakete
 LR_NUCLEAR_MISSILE_DESC
 Hohe Reichweite und akzeptable Durchschlagskraft
 
-DT_ACTIVE_RADAR
+DT_DETECTOR_2
 Aktiver Radar
 
-DT_ACTIVE_RADAR_DESC
+DT_DETECTOR_2_DESC
 Moderate power detection with large stealth penalty to mounting ship.
 
 DT_OPTICAL_SENSORS
@@ -3979,10 +3979,10 @@ Antimaterien-Tank
 FU_ANTIMATTER_TANK_DESC
 Moderate increase to shiprange by increasing fuel capacity.  Compact and low mass.
 
-ST_EM_DAMPER
+ST_CLOAK_1
 Elektromagnetische Dämpfung
 
-ST_EM_DAMPER_DESC
+ST_CLOAK_1_DESC
 Improves stealth of ship on which it is mounted by damping electromagnetic emissions from ship systems.  Can only compensate for small amount of emissions, and will be overpowered by large-emission producing parts, if present.
 
 AR_LEAD_PLATE

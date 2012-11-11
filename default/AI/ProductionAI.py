@@ -61,28 +61,28 @@ def checkScouts():
     if "SD_SCOUT_A1" not in scoutShipNames:
         try:
             res=fo.issueCreateShipDesignOrder("SD_SCOUT_A1",  "multicell Hulled economical scout",  "SH_STATIC_MULTICELLULAR",  
-                                                                                    ["DT_OPTICAL_SCANNER",  "SH_DEFENSE_GRID",  "SR_WEAPON_2",  "FU_BASIC_TANK", "FU_BASIC_TANK"],  "",  "fighter")
+                                                                                    ["DT_DETECTOR_1",  "SH_DEFENSE_GRID",  "SR_WEAPON_2",  "FU_BASIC_TANK", "FU_BASIC_TANK"],  "",  "fighter")
             print "added  Scout SD_SCOUT_A2, with result %d"%res
         except:
             print "Error: exception triggered:  ",  traceback.format_exc()
     if "SD_SCOUT_A2" not in scoutShipNames:
         try:
             res=fo.issueCreateShipDesignOrder("SD_SCOUT_A2",  "multicell Hulled economical scout",  "SH_STATIC_MULTICELLULAR",  
-                                                                                    ["DT_OPTICAL_SCANNER",  "SH_DEFENSE_GRID",  "SR_WEAPON_2",  "FU_BASIC_TANK", "ST_EM_DAMPER"],  "",  "fighter")
+                                                                                    ["DT_DETECTOR_1",  "SH_DEFENSE_GRID",  "SR_WEAPON_2",  "FU_BASIC_TANK", "ST_CLOAK_1"],  "",  "fighter")
             print "added  Scout SD_SCOUT_A2, with result %d"%res
         except:
             print "Error: exception triggered:  ",  traceback.format_exc()
     if "SD_SCOUT_B1" not in scoutShipNames:
         try:
             res=fo.issueCreateShipDesignOrder("SD_SCOUT_B1",  "multicell Hulled economical scout",  "SH_STATIC_MULTICELLULAR",  
-                                                                                    ["DT_ACTIVE_RADAR",  "SH_DEFLECTOR",  "SR_WEAPON_5",  "FU_BASIC_TANK", "FU_BASIC_TANK"],  "",  "fighter")
+                                                                                    ["DT_DETECTOR_2",  "SH_DEFLECTOR",  "SR_WEAPON_5",  "FU_BASIC_TANK", "FU_BASIC_TANK"],  "",  "fighter")
             print "added  Scout SD_SCOUT_A2, with result %d"%res
         except:
             print "Error: exception triggered:  ",  traceback.format_exc()
     if "SD_SCOUT_B2" not in scoutShipNames:
         try:
             res=fo.issueCreateShipDesignOrder("SD_SCOUT_B2",  "multicell Hulled economical scout",  "SH_STATIC_MULTICELLULAR",  
-                                                                                    ["DT_ACTIVE_RADAR",  "SH_DEFLECTOR",  "SR_WEAPON_5",  "FU_BASIC_TANK", "ST_EM_DAMPER"],  "",  "fighter")
+                                                                                    ["DT_DETECTOR_2",  "SH_DEFLECTOR",  "SR_WEAPON_5",  "FU_BASIC_TANK", "ST_CLOAK_1"],  "",  "fighter")
             print "added  Scout SD_SCOUT_A2, with result %d"%res
         except:
             print "Error: exception triggered:  ",  traceback.format_exc()

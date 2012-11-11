@@ -3896,10 +3896,10 @@ Bouclier Déflecteur
 SHP_DEFLECTOR_DESC
 Débloque les boucliers déflecteurs pour Vaisseau.
 
-SPY_RADAR
+SPY_DETECT_2
 Radar actif
 
-SPY_RADAR_DESC
+SPY_DETECT_2_DESC
 Débloque les radars actifs pour les Vaisseaux.
 
 SHP_DEUTERIUM_TANK
@@ -4250,10 +4250,10 @@ Missile Nucleaire
 LR_NUCLEAR_MISSILE_DESC
 Longue portée, puissance moyenne
 
-DT_ACTIVE_RADAR
+DT_DETECTOR_2
 Radar Actif
 
-DT_ACTIVE_RADAR_DESC
+DT_DETECTOR_2_DESC
 Pouvoir de détection modéré avec de grandes pénalité à la furtivité du vaisseau.
 
 DT_OPTICAL_SENSORS
@@ -4274,10 +4274,10 @@ Réservoir d'anti-matière
 FU_ANTIMATTER_TANK_DESC
 Augmentation modérée de l'autonomie en augmentant la capacité de carburant. Compacte et faible en masse.
 
-ST_EM_DAMPER
+ST_CLOAK_1
 Amortisseur électromagnétique
 
-ST_EM_DAMPER_DESC
+ST_CLOAK_1_DESC
 Améliore la furtivité du vaisseau par l'amortissement des émissions électromagnétiques des systèmes embarqués. Ne peut compenser que des faibles émissions, et sera submergé par des éléments produisant de grandes émissions éléctromagnétiques
 
 AR_LEAD_PLATE

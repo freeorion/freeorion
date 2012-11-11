@@ -3762,10 +3762,10 @@ Deflektorschild
 SHP_DEFLECTOR_DESC
 Schaltet den Schiffsteil Deflektorschild frei.
 
-SPY_RADAR
+SPY_DETECT_2
 Aktiver Radar
 
-SPY_RADAR_DESC
+SPY_DETECT_2_DESC
 Schaltet den Schiffsteil Aktiver Radar frei.
 
 SHP_DEUTERIUM_TANK
@@ -4099,10 +4099,10 @@ Nuklear Rakete
 LR_NUCLEAR_MISSILE_DESC
 Große Reichweite und mittlere Kraft
 
-DT_ACTIVE_RADAR
+DT_DETECTOR_2
 Aktives Radar
 
-DT_ACTIVE_RADAR_DESC
+DT_DETECTOR_2_DESC
 Mittlere Aufklärungswirkung mit großem Malus auf die Tarnung des Schiffes mit dem aktivem Radar.
 
 DT_OPTICAL_SENSORS
@@ -4123,10 +4123,10 @@ Antimaterie Tank
 FU_ANTIMATTER_TANK_DESC
 Mittlerer Anstieg der Schiffsreichweite durch verbesserte Treibstoffkapazität. Kompakt und geringe Masse.
 
-ST_EM_DAMPER
+ST_CLOAK_1
 Elektromagnetischer Dämpfer
 
-ST_EM_DAMPER_DESC
+ST_CLOAK_1_DESC
 Verbessert die Tarnung des Schiffes auf dem es installiert wurde, indem es die Elektromagnetische Abstrahlung der Schiffssysteme dämpft. Kann nur kleine Emissionsmengen kompensieren, und wird von vorhandenen Schiffsteilen die hohe Strahlungsmengen abgeben überladen.
 
 AR_LEAD_PLATE

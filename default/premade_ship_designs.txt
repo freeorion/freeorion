@@ -12,7 +12,7 @@ ShipDesign
     description = "SD_SCOUT_DESC"
     hull = "SH_BASIC_SMALL"
     parts = [
-        "DT_OPTICAL_SCANNER"
+        "DT_DETECTOR_1"
         ]
     model = "fighter"
 
@@ -385,7 +385,7 @@ ShipDesign
     description = "SD_GRAVITATING1_DESC"
     hull = "SH_SELF_GRAVITATING"
     parts = [
-        "DT_OPTICAL_SCANNER"
+        "DT_DETECTOR_1"
         "SR_WEAPON_9"
         "SR_WEAPON_9"
         "SR_WEAPON_9"
@@ -403,7 +403,7 @@ ShipDesign
     description = "SD_DRAGON_TOOTH_DESC"
     hull = "SH_XENTRONIUM"
     parts = [
-        "DT_SENSORS"
+        "DT_DETECTOR_4"
         "SR_WEAPON_10"
         "SR_WEAPON_8"
         "SR_WEAPON_8"
