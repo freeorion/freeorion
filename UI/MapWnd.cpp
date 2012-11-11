@@ -566,11 +566,14 @@ MapWnd::MapWnd() :
 
     // toolbar
     m_toolbar = new CUIToolBar(GG::X0, GG::Y0, AppWidth(), TOOLBAR_HEIGHT);
+    m_toolbar->SetName("MapWnd Toolbar");
     GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
+
     GG::Layout* layout = new GG::Layout(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
                                         m_toolbar->ClientWidth(), m_toolbar->ClientHeight(),
                                         1, 14);
+    layout->SetName("Toolbar Layout");
     m_toolbar->SetLayout(layout);
 
     // system-view side panel
@@ -763,18 +766,22 @@ MapWnd::MapWnd() :
     m_population = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
                                      ClientUI::MeterIcon(METER_POPULATION),
                                      0, 3, false);
+    m_population->SetName("Population StatisticIcon");
 
     m_industry = new StatisticIcon(GG::X0, GG::Y0, ICON_WIDTH, m_turn_update->Height(),
                                    ClientUI::MeterIcon(METER_INDUSTRY),
                                    0, 3, false);
+    m_industry->SetName("Industry StatisticIcon");
 
     m_research = new StatisticIcon(GG::X0, GG::Y0, ICON_WIDTH, m_turn_update->Height(),
                                    ClientUI::MeterIcon(METER_RESEARCH),
                                    0, 3, false);
+    m_research->SetName("Research StatisticIcon");
 
     m_trade = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
                                 ClientUI::MeterIcon(METER_TRADE),
                                 0, 3, false);
+    m_trade->SetName("Trade StatisticIcon");
 
     m_menu_showing = false;
 
@@ -848,6 +855,15 @@ MapWnd::MapWnd() :
     layout->SetCellMargin(5);
     layout->SetBorderMargin(5);
 
+    //GG::StaticGraphic* glah = new GG::StaticGraphic(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)),
+    //                                                ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /"wasted_ressource.png", true), 
+    //                                                GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_CENTER, GG::INTERACTIVE);
+    //layout->SetMinimumColumnWidth(layout_column, m_btn_menu->Width());
+    //layout->SetColumnStretch(layout_column, 0.0);
+    //layout->Add(glah,         0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    //++layout_column;
+    //glah->SetBrowseModeTime(1);
+    //glah->SetBrowseText("foobar");
 
     //clear background images
     m_backgrounds.clear();

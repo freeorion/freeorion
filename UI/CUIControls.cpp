@@ -871,6 +871,7 @@ StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::sh
     m_show_signs(std::vector<bool>(2, false)),
     m_icon(0), m_text(0)
 {
+    SetName("StatisticIcon");
     // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
     if (w >= Value(h)) {
         m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h)), h, texture, GG::GRAPHIC_FITGRAPHIC);
