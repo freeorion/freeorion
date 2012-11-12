@@ -402,6 +402,7 @@ private:
 
     CUIToolBar*                 m_toolbar;
     StatisticIcon               *m_mineral, *m_trade, *m_population, *m_research, *m_industry;
+    GG::StaticGraphic           *m_industry_wasted, *m_research_wasted;
     SettableInWindowCUIButton   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_pedia, *m_btn_objects, *m_btn_menu;
     FPSIndicator*               m_FPS;
 

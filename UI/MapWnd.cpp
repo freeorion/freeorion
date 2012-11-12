@@ -549,6 +549,8 @@ MapWnd::MapWnd() :
     m_population(0),
     m_research(0),
     m_industry(0),
+    m_industry_wasted(0),
+    m_research_wasted(0),
     m_btn_siterep(0),
     m_btn_research(0),
     m_btn_production(0),
@@ -572,7 +574,7 @@ MapWnd::MapWnd() :
 
     GG::Layout* layout = new GG::Layout(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
                                         m_toolbar->ClientWidth(), m_toolbar->ClientHeight(),
-                                        1, 14);
+                                        1, 16);
     layout->SetName("Toolbar Layout");
     m_toolbar->SetLayout(layout);
 
@@ -783,6 +785,14 @@ MapWnd::MapWnd() :
                                 0, 3, false);
     m_trade->SetName("Trade StatisticIcon");
 
+    m_industry_wasted = new GG::StaticGraphic(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)),
+                                              ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /"wasted_resource.png", true),
+                                              GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_LEFT);
+
+    m_research_wasted = new GG::StaticGraphic(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)),
+                                              ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "wasted_resource.png", true),
+                                              GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_LEFT);
+
     m_menu_showing = false;
 
     int layout_column(0);
@@ -802,19 +812,29 @@ MapWnd::MapWnd() :
     ++layout_column;
 
     layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_industry,         0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_industry,         0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, GG::X(Value(layout->Height())));
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_industry_wasted,  0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_research,         0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_research,         0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, GG::X(Value(layout->Height())));
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_research_wasted,  0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_trade,            0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_trade,            0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_population,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    layout->Add(m_population,       0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, m_btn_objects->Width());
@@ -887,7 +907,6 @@ MapWnd::MapWnd() :
             &MapWnd::DisableAlphaNumAccels,     this);
     Connect(ClientUI::GetClientUI()->GetMessageWnd()->DoneTypingSignal,
             &MapWnd::EnableAlphaNumAccels,     this);
-
 
     DoLayout();
 }
@@ -1766,6 +1785,8 @@ void MapWnd::InitTurn() {
         GG::Connect(this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this, 0);
         GG::Connect(this_client_empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this, 1);
         GG::Connect(this_client_empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Update);
+        GG::Connect(this_client_empire->GetResearchQueue().ResearchQueueChangedSignal,      &MapWnd::RefreshResearchResourceIndicator,  this);
+        GG::Connect(this_client_empire->GetProductionQueue().ProductionQueueChangedSignal,  &MapWnd::RefreshIndustryResourceIndicator,  this);
     }
 
     m_toolbar->Show();
@@ -1795,6 +1816,9 @@ void MapWnd::InitTurn() {
     timer.restart();
     m_production_wnd->Refresh();
     Logger().debugStream() << "MapWnd::InitTurn m_production_wnd refresh time: " << (timer.elapsed() * 1000.0);
+
+    const ResourcePool *research = this_client_empire->GetResourcePool(RE_TRADE);
+    Logger().debugStream() << "MapWnd::InitTurn research total available :" << research->TotalAvailable() << " production " << research->Production();
 
 
     if (turn_number == 1 && this_client_empire) {
@@ -3931,13 +3955,27 @@ void MapWnd::RefreshTradeResourceIndicator() {
 }
 
 void MapWnd::RefreshResearchResourceIndicator() {
-    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    const Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    if (!empire)
+        return;
     m_research->SetValue(empire->ResourceProduction(RE_RESEARCH));
+    //Logger().debugStream() << "Research spend: " << empire->GetResearchQueue().TotalRPsSpent() << " output: " << empire->ResourceProduction(RE_RESEARCH);
+    if (empire->GetResearchQueue().TotalRPsSpent() < empire->ResourceProduction(RE_RESEARCH))
+        m_research_wasted->Show();
+    else
+        m_research_wasted->Hide();
 }
 
 void MapWnd::RefreshIndustryResourceIndicator() {
-    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    const Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    if (!empire)
+        return;
     m_industry->SetValue(empire->ResourceProduction(RE_INDUSTRY));
+    //Logger().debugStream() << "Industry spend: " << empire->GetProductionQueue().TotalPPsSpent() << " output: " << empire->ResourceProduction(RE_INDUSTRY);
+    if (empire->GetProductionQueue().TotalPPsSpent() < empire->ResourceProduction(RE_INDUSTRY))
+        m_industry_wasted->Show();
+    else
+        m_industry_wasted->Hide();
 }
 
 void MapWnd::RefreshPopulationIndicator() {
