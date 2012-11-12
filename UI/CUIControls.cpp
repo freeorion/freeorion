@@ -1303,10 +1303,10 @@ void ProductionInfoPanel::Reset(double total_points, double total_queue_cost, in
                                 double points_to_underfunded_projects, int queue_size)
 {
     double wasted_points = total_queue_cost < total_points ? total_points - total_queue_cost : 0.0;
-    *m_total_points << static_cast<int>(total_points);
-    *m_wasted_points << static_cast<int>(wasted_points);
+    *m_total_points << DoubleToString(total_points, 3, false);
+    *m_wasted_points << DoubleToString(wasted_points, 3, false);
     *m_projects_in_progress << projects_in_progress;
-    *m_points_to_underfunded_projects << static_cast<int>(points_to_underfunded_projects);
+    *m_points_to_underfunded_projects << DoubleToString(points_to_underfunded_projects, 3, false);
     *m_projects_in_queue << queue_size;
 }
 
