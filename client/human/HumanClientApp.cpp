@@ -862,7 +862,7 @@ void HumanClientApp::Autosave() {
     if (!m_single_player_game && !GetOptionsDB().Get<bool>("autosave.multiplayer"))
         return;
 
-    const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
+    const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-";
 
     // get empire name, filtered for filename acceptability
     std::string empire_name = Empires().Lookup(EmpireID())->Name();
