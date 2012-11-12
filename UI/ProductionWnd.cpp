@@ -290,9 +290,9 @@ namespace {
             progress = 0.0;
 
         QueueBuildPanel* panel = new QueueBuildPanel(w, elem,
-                                                        elem.allocated_pp, minimum_turns, elem.remaining,
-                                                        static_cast<int>(progress / std::max(1e-6,per_turn_cost)),
-                                                        std::fmod(progress, per_turn_cost) / std::max(1e-6,per_turn_cost));
+                                                     elem.allocated_pp, minimum_turns, elem.remaining,
+                                                     static_cast<int>(progress / std::max(1e-6,per_turn_cost)),
+                                                     std::fmod(progress, per_turn_cost) / std::max(1e-6,per_turn_cost));
         Resize(panel->Size());
         push_back(panel);
 
@@ -462,15 +462,16 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
 {
     Logger().debugStream() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width") << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
 
-    if ( GetOptionsDB().Get<int>("app-width-windowed") <= 1280 ) {
+    if (GetOptionsDB().Get<int>("app-width-windowed") <= 1280) {
         m_production_info_panel = new ProductionInfoPanel(PRODUCTION_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
-        static_cast<GLfloat>(OUTER_LINE_THICKNESS), ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
+                                                          static_cast<GLfloat>(OUTER_LINE_THICKNESS), ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
     } else {
         m_production_info_panel = new ProductionInfoPanel(WIDE_PRODUCTION_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
                                                           static_cast<GLfloat>(OUTER_LINE_THICKNESS), ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
     }
 
-    m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height(), "PRODUCTION_QUEUE_ROW");
+    m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4,
+                                  ClientSize().y - 4 - m_production_info_panel->Height(), "PRODUCTION_QUEUE_ROW");
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
 
     GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width(), GG::Y0);

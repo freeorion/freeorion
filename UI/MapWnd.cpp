@@ -4066,7 +4066,9 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     GetUniverse().InhibitUniverseObjectSignals(true);
 
     std::string             colony_ship_species;
-    std::vector<Planet*>    potential_colonization_targets;
+    // remember which planes are temporarily modified so it can be undone after updating meter estimates
+    std::vector<Planet*>    ownership_modified_planets;
+    std::vector<Planet*>    species_modified_planets;
 
     const Ship* ship = GetShip(FleetUIManager::GetFleetUIManager().SelectedShipID());
     if (ship) {
@@ -4087,52 +4089,58 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
             // can be undone later)
             for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
                 Planet* planet = GetPlanet(*it);
-                if (!planet || (!planet->Unowned() && !planet->OwnedBy(empire_id))
-                    || planet->SystemID() != ship_system_id ||
-                    planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+                if (!planet
+                    || (!planet->Unowned() && !planet->OwnedBy(empire_id))
+                    || planet->SystemID() != ship_system_id
+                    || planet->CurrentMeterValue(METER_POPULATION) > 0.0)
                 { continue; }
                 PlanetEnvironment planet_env_for_colony_species = planet->EnvironmentForSpecies(species_name);
                 if (planet_env_for_colony_species > PE_GOOD || planet_env_for_colony_species < PE_HOSTILE)
                     continue;
 
-                potential_colonization_targets.push_back(planet);
-                planet->SetOwner(empire_id);
-                planet->SetSpecies(species_name);
+                if (planet->Unowned()) {
+                    ownership_modified_planets.push_back(planet);
+                    planet->SetOwner(empire_id);
+                }
+                if (planet->SpeciesName().empty()) {
+                    species_modified_planets.push_back(planet);
+                    planet->SetSpecies(species_name);
+                }
             }
         }
-    } else {
-        // no colony ship selected.  instead, for each planet being updated,
-        // attempt to find a colony ship for it, and use that ship's species
-        // to do meter estimates
-        for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
-            Planet* planet = GetPlanet(*it);
-            if (!planet || (!planet->Unowned() && !planet->OwnedBy(empire_id))
-                || planet->CurrentMeterValue(METER_POPULATION) > 0.0)
-            { continue; }
-
-            // attempt to find colony ship for this planet
-            const Ship* ship = GetShip(m_side_panel->AutomaticallyChosenColonyShip(*it));
-            if (!ship)
-                continue;
-
-            const std::string& species_name = ship->SpeciesName();
-            potential_colonization_targets.push_back(planet);
-            planet->SetOwner(empire_id);
-            planet->SetSpecies(species_name);
-        }
     }
+    //else {
+    //    // no colony ship selected.  instead, for each planet being updated,
+    //    // attempt to find a colony ship for it, and use that ship's species
+    //    // to do meter estimates
+    //    for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
+    //        Planet* planet = GetPlanet(*it);
+    //        if (!planet || (!planet->Unowned() && !planet->OwnedBy(empire_id))
+    //            || planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+    //        { continue; }
+
+    //        // attempt to find colony ship for this planet
+    //        const Ship* ship = GetShip(m_side_panel->AutomaticallyChosenColonyShip(*it));
+    //        if (!ship)
+    //            continue;
+
+    //        const std::string& species_name = ship->SpeciesName();
+    //        potential_colonization_targets.push_back(planet);
+    //        planet->SetOwner(empire_id);
+    //        planet->SetSpecies(species_name);
+    //    }
+    //}
 
     // update meter estimates with temporary ownership
     GetUniverse().UpdateMeterEstimates(objects_vec);
 
-
-    // remove any temporary ownership added above
-    for (std::vector<Planet*>::iterator it = potential_colonization_targets.begin();
-         it != potential_colonization_targets.end(); ++it)
-    {
-        (*it)->SetOwner(ALL_EMPIRES);
-        (*it)->SetSpecies("");
-    }
+    // undo any temporary changes from above
+    for (std::vector<Planet*>::iterator it = ownership_modified_planets.begin();
+         it != ownership_modified_planets.end(); ++it)
+    { (*it)->SetOwner(ALL_EMPIRES); }
+    for (std::vector<Planet*>::iterator it = species_modified_planets.begin();
+         it != species_modified_planets.end(); ++it)
+    { (*it)->SetSpecies(""); }
 
     GetUniverse().InhibitUniverseObjectSignals(false);
 }
