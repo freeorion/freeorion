@@ -79,7 +79,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
               std::vector<PlayerSaveGameData>& player_save_game_data,
               Universe& universe, EmpireManager& empire_manager, SpeciesManager& species_manager)
 {
-    Sleep(10000);
+    Sleep(5000);
 
     // player notifications
     if (ServerApp* server = ServerApp::GetApp())
@@ -106,21 +106,26 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         FREEORION_IARCHIVE_TYPE ia(ifs);
+        Logger().debugStream() << "LoadGame : Reading Server Save Game Data";
         ia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
+        Logger().debugStream() << "LoadGame : Reading Player Save Game Data";
         ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
+        Logger().debugStream() << "LoadGame : Reading Empire Save Game Data (Ignored)";
         ia >> BOOST_SERIALIZATION_NVP(ignored_save_game_empire_data);
+        Logger().debugStream() << "LoadGame : Reading Empires Data";
         ia >> BOOST_SERIALIZATION_NVP(empire_manager);
+        Logger().debugStream() << "LoadGame : Reading Species Data";
         ia >> BOOST_SERIALIZATION_NVP(species_manager);
+        Logger().debugStream() << "LoadGame : Reading Universe Data";
         Deserialize(ia, universe);
     } catch (const std::exception& e) {
         Logger().errorStream() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadGame exception: " << ": " << e.what();
         throw e;
     }
-    Logger().debugStream() << "Done loading save file";
+    Logger().debugStream() << "LoadGame : Done loading save file";
 }
 
-void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveGameData>& player_save_game_data)
-{
+void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveGameData>& player_save_game_data) {
     ServerSaveGameData ignored_server_save_game_data;
 
     try {
@@ -146,8 +151,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
     }
 }
 
-void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameEmpireData>& empire_save_game_data)
-{
+void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameEmpireData>& empire_save_game_data) {
     ServerSaveGameData              ignored_server_save_game_data;
     std::vector<PlayerSaveGameData> ignored_player_save_game_data;
 
