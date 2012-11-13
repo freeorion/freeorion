@@ -46,6 +46,7 @@
 
 #include <vector>
 #include <deque>
+#include <valarray>
 
 namespace {
     const double    ZOOM_STEP_SIZE = std::pow(2.0, 1.0/3.0);
@@ -534,6 +535,9 @@ MapWnd::MapWnd() :
     m_star_texture_coords(),
     m_starlane_vertices(),
     m_starlane_colors(),
+    m_RC_starlane_vertices(),
+    m_RC_starlane_colors(),
+    m_resourceCenters(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
     m_turn_update(0),
@@ -1209,7 +1213,7 @@ void MapWnd::RenderSystems() {
     glPopClientAttrib();
 }
 
-void MapWnd::RenderStarlanes() {
+/* void MapWnd::RenderStarlanes() {
     bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
 
     if (m_starlane_vertices.size() && (m_starlane_colors.size() || !coloured)) {
@@ -1250,6 +1254,54 @@ void MapWnd::RenderStarlanes() {
         glDisable(GL_LINE_STIPPLE);
     }
 
+    glLineWidth(1.0);
+} */
+
+void MapWnd::RenderStarlanes() {
+    bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
+    RenderStarlanes( m_RC_starlane_vertices, m_RC_starlane_colors, 6.0, coloured, false);
+    RenderStarlanes( m_starlane_vertices, m_starlane_colors, 1.0, coloured, true);
+}
+void MapWnd::RenderStarlanes( GL2DVertexBuffer& vertices, GLRGBAColorBuffer& colours, double thickness, bool coloured, bool doBase) {
+    
+    if (vertices.size() && (colours.size() || !coloured) && (coloured || doBase ) ) {
+        // render starlanes with vertex buffer (and possibly colour buffer)
+        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
+        
+        glDisable(GL_TEXTURE_2D);
+        glEnable(GL_LINE_SMOOTH);
+        glEnable(GL_LINE_STIPPLE);
+        
+        glLineWidth(static_cast<GLfloat>(thickness * GetOptionsDB().Get<double>("UI.starlane-thickness")));
+        glLineStipple(1, 0xffff);   // solid line / no stipple
+        
+        glPushAttrib(GL_COLOR_BUFFER_BIT);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        
+        if (coloured)
+            glEnableClientState(GL_COLOR_ARRAY);
+        else
+            glColor(UNOWNED_LANE_COLOUR);
+        
+        vertices.activate();
+        
+        if (coloured) {
+            colours.activate();
+        }
+        
+        glDrawArrays(GL_LINES, 0, vertices.size());
+        
+        glLineWidth(1.0);
+        
+        glPopClientAttrib();
+        glPopAttrib();
+        
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_LINE_SMOOTH);
+        glDisable(GL_LINE_STIPPLE);
+    }
+    
     glLineWidth(1.0);
 }
 
@@ -1657,6 +1709,11 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
     FleetUIManager::GetFleetUIManager().EnableOrderIssuing(enable);
 }
 
+void MapWnd::ProductionUpdate() {
+    SidePanel::Update();
+    MidTurnUpdate();
+}
+
 void MapWnd::InitTurn() {
     int turn_number = CurrentTurn();
     Logger().debugStream() << "Initializing turn " << turn_number;
@@ -1784,7 +1841,7 @@ void MapWnd::InitTurn() {
         GG::Connect(this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this, 0);
         GG::Connect(this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this, 0);
         GG::Connect(this_client_empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this, 1);
-        GG::Connect(this_client_empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Update);
+        GG::Connect(this_client_empire->GetProductionQueue().ProductionQueueChangedSignal,  &MapWnd::ProductionUpdate,                  this, 1);
         GG::Connect(this_client_empire->GetResearchQueue().ResearchQueueChangedSignal,      &MapWnd::RefreshResearchResourceIndicator,  this);
         GG::Connect(this_client_empire->GetProductionQueue().ProductionQueueChangedSignal,  &MapWnd::RefreshIndustryResourceIndicator,  this);
     }
@@ -2108,12 +2165,56 @@ void MapWnd::ClearSystemRenderingBuffers() {
     m_star_texture_coords.clear();
 }
 
+std::vector<int> MapWnd::GetLeastJumps(int startSys, int endSys, const std::set<int>& resGroup,
+                                       const std::set<std::pair<int, int> >& supplylanes, const ObjectMap& objMap)
+{
+    //std::map<int,bool> sysChecked;
+    std::map<int,int> ancestor;
+    std::deque<int> tryNext;
+    std::vector<int> path;
+    path.push_back(startSys);
+    if (startSys==endSys)
+        return path;
+
+    for (std::set<int>::const_iterator sysIt = resGroup.begin(); sysIt!=resGroup.end(); sysIt++)
+        ancestor[*sysIt] = -1;
+    ancestor[startSys] = startSys;
+    tryNext.push_back(startSys);
+    while (!tryNext.empty() ) {
+        int sysID = tryNext.front();
+        //Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers  ==> GetLeastJumps, checking system "<< sysID;
+        for (System::const_lane_iterator laneIt= universe_object_cast<System*>(objMap.Object(sysID))->begin_lanes(); 
+             laneIt!= universe_object_cast<System*>(objMap.Object(sysID))->end_lanes(); laneIt++)
+        {
+            int newSys = laneIt->first;
+            //Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers         ==> GetLeastJumps, considering lane/WH to system "<< newSys;
+            if (!laneIt->second && ( ancestor[newSys] == -1 )) { //is a starlane, and not yet visited newSys //TODO: should allow wormholes here?
+                ancestor[newSys] = sysID;
+                if (newSys==endSys) {
+                    int iSys = newSys;
+                    while ((ancestor[iSys] !=-1)&&( ancestor[iSys] != iSys )) {
+                        path.push_back(iSys);
+                        iSys = ancestor[iSys];
+                    }
+                    return path;
+                }
+                tryNext.push_back(newSys);
+            }
+        }
+        tryNext.pop_front();
+    }
+    //found no path, return empty vec
+    std::vector<int> nullPath;
+    return nullPath;
+}
+
 void MapWnd::InitStarlaneRenderingBuffers() {
     Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers";
     ScopedTimer("MapWnd::InitStarlaneRenderingBuffers", true);
 
     // clear old buffers
     ClearStarlaneRenderingBuffers();
+    m_resourceCenters.clear();
 
     // temp storage
     std::set<std::pair<int, int> >  rendered_half_starlanes;    // stored as unaltered pairs, so that a each direction of traversal can be shown separately
@@ -2122,8 +2223,97 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+    ObjectMap objMap = HumanClientApp::GetApp()->GetUniverse().EmpireKnownObjects(empire_id);
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
+    Empire* thisEmpire = Empires().Lookup(empire_id);
+    std::set<int> underAllocResSys;
 
+    std::map<std::set<int>, std::set<int> > resPoolSystems;//map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
+    std::map<std::set<int>, std::set<int> > resPoolToGroupMap;//map keyed by ResourcePool (set of objects) to the corresponding ResourceGroup (which may be larger than the above resPoolSystem set)
+    std::map<std::set<int>, std::set<int> > resGroupCores;// map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
+    std::set<int> resGrpCoreMembers;
+    std::map<int, std::set<int> > memberToPool;
+    std::set<int> underAllocResGrpCoreMembers;
+
+    if (thisEmpire) {
+        const std::set<std::set<int> >& resGroups = thisEmpire->ResourceSupplyGroups();
+        const ProductionQueue& queue = thisEmpire->GetProductionQueue();
+        std::map<std::set<int>, double> allocatedPP(queue.AllocatedPP());
+        std::map<std::set<int>, double> availablePP(thisEmpire->GetResourcePool(RE_INDUSTRY)->Available() );
+        for (std::map<std::set<int>, double>::const_iterator it = availablePP.begin(); it != availablePP.end(); ++it) {
+            std::string thisPool = "( ";
+            for (std::set<int>::const_iterator objIt = it->first.begin(); objIt != it->first.end(); ++objIt) {
+                //Logger().debugStream() << "Empire " << empire_id << "; Object (" << *objIt << ") is named " << objMap.Object(*objIt)->Name();
+                thisPool += boost::lexical_cast<std::string>(*objIt) +", ";
+                int sysID = objMap.Object(*objIt)->SystemID();
+                if ( (sysID != -1) ) {
+                    std::vector<int> planetIDs = universe_object_cast<System*>(objMap.Object(sysID))->FindObjectIDs<Planet>();
+                    std::set<int> planetSet(planetIDs.begin(), planetIDs.end() );
+                    if (planetSet.find(*objIt) != planetSet.end()) { // currently only wanting systems containing a planetary resGrp member, not ship members
+                        if (it->second > 1e-4) {
+                            resPoolSystems[it->first].insert(sysID);
+                            m_resourceCenters.insert(sysID );
+                            if ( ( it->second > allocatedPP[it->first] + 1e-4 ))
+                                underAllocResSys.insert(sysID );
+                        }
+                    }
+                }
+            }
+            thisPool += ")";
+            //Logger().debugStream() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << thisPool << ") has (" << it->second << " PP available";
+            //Logger().debugStream() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << thisPool << ") has (" << allocatedPP[it->first] << " PP allocated";
+        }
+        //Logger().debugStream() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 1";
+        for (std::map<std::set<int>, std::set<int> >::iterator resPoolSysIt = resPoolSystems.begin(); resPoolSysIt != resPoolSystems.end(); resPoolSysIt++){
+            for (std::set<std::set<int> >::const_iterator rgIt = resGroups.begin(); rgIt != resGroups.end(); ++rgIt) {
+                bool placedPool = false;
+                for (std::set<int>::iterator sysIt=resPoolSysIt->second.begin(); sysIt!=resPoolSysIt->second.end(); sysIt++) {
+                    if (rgIt->find(*sysIt) != rgIt->end()) {
+                        resPoolToGroupMap[resPoolSysIt->first] = *rgIt;
+                        placedPool = true;
+                        break;
+                    }
+                }
+                if (placedPool)
+                    break;
+            }
+        }//TODO: could add double checking that pool was successfully linked to a group, but *shouldn't* be necessary I think
+        //Logger().debugStream() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 2";
+
+        std::set<std::pair<int, int> > resource_supply_lanes (thisEmpire->SupplyStarlaneTraversals()) ;
+        for (std::map<std::set<int>, std::set<int> >::iterator resPoolSysIt = resPoolSystems.begin(); resPoolSysIt != resPoolSystems.end(); resPoolSysIt++){
+            std::string thisPoolCtrs = "( ";
+            for (std::set<int>::iterator startSys=resPoolSysIt->second.begin(); startSys != resPoolSysIt->second.end(); startSys++) 
+                thisPoolCtrs += boost::lexical_cast<std::string>(*startSys) +", ";
+            thisPoolCtrs += ")";
+            //Logger().debugStream() << "           MapWnd::InitStarlaneRenderingBuffers  getting resGrpCore for ResPool Ctrs  (" << thisPoolCtrs << ")";
+            
+            resGroupCores[ resPoolSysIt->first ].insert(*(resPoolSysIt->second.begin())); // if pool only has one sys, ensure it is added to core
+            resGrpCoreMembers.insert(*(resPoolSysIt->second.begin()));
+            std::set<int>::iterator lastSys = resPoolSysIt->second.end();
+            lastSys--;
+            for (std::set<int>::iterator startSys=resPoolSysIt->second.begin(); startSys != lastSys; startSys++) {//ok since resPoolSysIt->second cannot be empty
+                std::set<int>::iterator nextSys = startSys;
+                for (std::set<int>::iterator endSys=++nextSys; endSys!=resPoolSysIt->second.end(); endSys++) {
+                    //Logger().debugStream() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*startSys) << " to "<< (*endSys) ;
+                    std::vector<int> path = GetLeastJumps(*startSys, *endSys, resPoolToGroupMap[resPoolSysIt->first], resource_supply_lanes, objMap);
+                    int plen = path.size();
+                    //Logger().debugStream() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< plen ;
+                    for (std::vector<int>::iterator pathSys= path.begin(); pathSys!= path.end(); pathSys++) {
+                        resGroupCores[ resPoolSysIt->first ].insert(*pathSys);
+                        resGrpCoreMembers.insert(*pathSys);
+                        memberToPool[*pathSys] = resPoolSysIt->first;
+                    }
+                }
+            }
+        }
+        //Logger().debugStream() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 3";
+
+        for (std::map<std::set<int>, std::set<int> >::iterator resPoolSysIt = resPoolSystems.begin(); resPoolSysIt != resPoolSystems.end(); resPoolSysIt++)
+            if (underAllocResSys.find( *(resPoolSysIt->second.begin())  ) != underAllocResSys.end())
+                underAllocResGrpCoreMembers.insert( resGroupCores[ resPoolSysIt->first ].begin(), resGroupCores[ resPoolSysIt->first ].end() );
+    }
+    //Logger().debugStream() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection";
 
     // calculate in-universe apparent starlane endpoints and create buffers for starlane rendering
     m_starlane_endpoints.clear();
@@ -2178,11 +2368,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 m_starlane_vertices.store(static_cast<float>(m_starlane_endpoints[lane].X2),
                                           static_cast<float>(m_starlane_endpoints[lane].Y2));
 
-
                 // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
                 // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
                 GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
-
                 for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
                     Empire* empire = empire_it->second;
                     const std::set<std::pair<int, int> >& resource_supply_lanes = empire->SupplyStarlaneTraversals();
@@ -2209,7 +2397,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                                         lane_colour.g,
                                         lane_colour.b,
                                         lane_colour.a);
-                
+
                 //Logger().debugStream() << "adding full lane from " << start_system->Name() << " to " << dest_system->Name();
             }
 
@@ -2222,25 +2410,53 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 //std::cout << "half lane not found... considering possible half lanes to add" << std::endl;
 
                 // scan through possible empires to have a half-lane here and add a half-lane if one is found
+                std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
+                //std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
+                LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
+                GG::Clr lane_colour;
+                if ( (thisEmpire) &&(resGrpCoreMembers.find(start_system->ID()) != resGrpCoreMembers.end()))  {//start system is a res Grp core member for thisEmpire -- highlight
+                    lane_colour = thisEmpire->Color();
+                    float indicatorExtent = 0.5;
+                    if (underAllocResGrpCoreMembers.find(start_system->ID()) != underAllocResGrpCoreMembers.end() ) {
+                        GG::Clr eclr= thisEmpire->Color();
+                        lane_colour = GG::DarkColor( GG::Clr(255-eclr.r, 255-eclr.g, 255-eclr.b, eclr.a));
+                    }
+                    /*if ((thisEmpire->SupplyOstructedStarlaneTraversals().find(lane_forward) != thisEmpire->SupplyOstructedStarlaneTraversals().end()) ||
+                        (thisEmpire->SupplyOstructedStarlaneTraversals().find(lane_backward) != thisEmpire->SupplyOstructedStarlaneTraversals().end()) ||
+                        !( (thisEmpire->SupplyStarlaneTraversals().find(lane_forward) != thisEmpire->SupplyStarlaneTraversals().end()) ||
+                        (thisEmpire->SupplyStarlaneTraversals().find(lane_backward) != thisEmpire->SupplyStarlaneTraversals().end())   )  ) */
+                    if (resGroupCores[ memberToPool[start_system->ID()]] != resGroupCores[ memberToPool[dest_system->ID()]])
+                        indicatorExtent = 0.2;
+                    m_RC_starlane_vertices.store(lane_endpoints.X1,
+                                                lane_endpoints.Y1);
+                    m_RC_starlane_vertices.store((lane_endpoints.X2 - lane_endpoints.X1) * indicatorExtent + lane_endpoints.X1,   // part way along starlane
+                                                        (lane_endpoints.Y2 - lane_endpoints.Y1) * indicatorExtent + lane_endpoints.Y1);
+
+                    m_RC_starlane_colors.store(lane_colour.r,
+                                            lane_colour.g,
+                                            lane_colour.b,
+                                            lane_colour.a);
+                    m_RC_starlane_colors.store(lane_colour.r,
+                                            lane_colour.g,
+                                            lane_colour.b,
+                                            lane_colour.a);
+                }
 
                 for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
                     Empire* empire = empire_it->second;
                     const std::set<std::pair<int, int> >& resource_obstructed_supply_lanes = empire->SupplyOstructedStarlaneTraversals();
 
-                    std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
-
                     // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
                     if (resource_obstructed_supply_lanes.find(lane_forward) != resource_obstructed_supply_lanes.end()) {
                         // found an empire that has a half lane here, so add it.
                         rendered_half_starlanes.insert(std::make_pair(start_system->ID(), dest_system->ID()));  // inserted as ordered pair, so both directions can have different half-lanes
-                        LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
 
                         m_starlane_vertices.store(lane_endpoints.X1,
                                                   lane_endpoints.Y1);
                         m_starlane_vertices.store((lane_endpoints.X1 + lane_endpoints.X2) * 0.5f,   // half way along starlane
                                                   (lane_endpoints.Y1 + lane_endpoints.Y2) * 0.5f);
 
-                        const GG::Clr& lane_colour = empire->Color();
+                        lane_colour = empire->Color();
                         m_starlane_colors.store(lane_colour.r,
                                                 lane_colour.g,
                                                 lane_colour.b,
@@ -2264,11 +2480,17 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     m_starlane_vertices.createServerBuffer();
     m_starlane_colors.createServerBuffer();
     m_starlane_vertices.harmonizeBufferType(m_starlane_colors);
+    m_RC_starlane_vertices.createServerBuffer();
+    m_RC_starlane_colors.createServerBuffer();
+    m_RC_starlane_vertices.harmonizeBufferType(m_RC_starlane_colors);
 }
 
 void MapWnd::ClearStarlaneRenderingBuffers() {
     m_starlane_vertices.clear();
     m_starlane_colors.clear();
+    m_RC_starlane_vertices.clear();
+    m_RC_starlane_colors.clear();
+    m_resourceCenters.clear();
 }
 
 LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2) {
@@ -4152,6 +4374,7 @@ void MapWnd::UpdateEmpireResourcePools() {
        update, they emit ChangeSignal, which is connected to MapWnd::Refresh???ResourceIndicator, which
        updates the empire resource pool indicators of the MapWnd. */
     empire->UpdateResourcePools();
+    MidTurnUpdate();
 
     // Update indicators on sidepanel, which are not directly connected to from the ResourcePool ChangedSignal
     SidePanel::Update();

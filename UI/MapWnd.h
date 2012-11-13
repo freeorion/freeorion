@@ -190,7 +190,7 @@ private:
     void            UpdateMeterEstimates(int object_id, bool update_contained_objects = false);         ///< re-estimates meter values of specified objects
     void            UpdateMeterEstimates(const std::vector<int>& objects_vec);                          ///< re-estimates meter values of specified objects
     void            UpdateEmpireResourcePools();                                                        ///< recalculates production and predicted changes of player's empire's resource and population pools
-
+    void            ProductionUpdate();
     /** contains information necessary to render a single fleet movement line on the main map. also
       * contains cached infromation */
     struct MovementLineData {
@@ -243,7 +243,14 @@ private:
     void            RenderSystemOverlays();                     //!< renders textures "overlayed" on systems by effects
     void            RenderSystems();                            //!< renders stars and halos
     void            RenderStarlanes();                          //!< renders the starlanes between the systems
+    void            RenderStarlanes( GL2DVertexBuffer& vertices, GLRGBAColorBuffer& colours, double thickness, bool coloured, bool doBase);
     void            RenderFields();                             //!< renders field objects
+
+    /* Gets systemID path (reversed) along supplylanes via BFS, is used to
+     * build ResourceGroupCores ideally, instead, a supplylane filter would be
+     * added the the universe graph impl. */
+    std::vector<int> GetLeastJumps(int startSys, int endSys, const std::set<int>& resGroup,
+                                   const std::set<std::pair<int, int> >& supplylanes, const ObjectMap& objMap);
 
     /* renders the dashed lines indicating where each fleet is going */
     void            RenderFleetMovementLines();
@@ -386,6 +393,9 @@ private:
 
     GL2DVertexBuffer                    m_starlane_vertices;
     GLRGBAColorBuffer                   m_starlane_colors;
+    GL2DVertexBuffer                    m_RC_starlane_vertices;
+    GLRGBAColorBuffer                   m_RC_starlane_colors;
+    std::set<int>                       m_resourceCenters;
 
     boost::shared_ptr<ShaderProgram>    m_scanline_shader;
 
