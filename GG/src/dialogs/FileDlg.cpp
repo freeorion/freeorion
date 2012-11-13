@@ -131,8 +131,8 @@ namespace fs = boost::filesystem;
 
 // static member definition(s)
 fs::path FileDlg::s_working_dir = fs::current_path();
-const X FileDlg::DEFAULT_WIDTH(400);
-const Y FileDlg::DEFAULT_HEIGHT(350);
+const X FileDlg::DEFAULT_WIDTH(500);
+const Y FileDlg::DEFAULT_HEIGHT(450);
 
 
 FileDlg::FileDlg() :
@@ -152,7 +152,9 @@ FileDlg::FileDlg() :
 
 FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
                  const boost::shared_ptr<Font>& font, Clr color, Clr border_color, Clr text_color/* = CLR_BLACK*/) : 
-    Wnd((GUI::GetGUI()->AppWidth() - DEFAULT_WIDTH) / 2, (GUI::GetGUI()->AppHeight() - DEFAULT_HEIGHT) / 2, DEFAULT_WIDTH, DEFAULT_HEIGHT, INTERACTIVE | DRAGABLE | MODAL),
+    Wnd((GUI::GetGUI()->AppWidth() - DEFAULT_WIDTH) / 2,
+        (GUI::GetGUI()->AppHeight() - DEFAULT_HEIGHT) / 2,
+        DEFAULT_WIDTH, DEFAULT_HEIGHT, INTERACTIVE | DRAGABLE | MODAL),
     m_color(color),
     m_border_color(border_color),
     m_text_color(text_color),
