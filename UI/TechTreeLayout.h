@@ -143,12 +143,13 @@ private:
     Node* m_child ;              // primary child for layout
     std::vector<Edge*> m_out_edges;// outgoing edges
 };
+
 class TechTreeLayout::Column {
 public:
     Column();
     bool Fit(int index, TechTreeLayout::Node* node);
-    bool PlaceNextFree(int index, TechTreeLayout::Node* node);
-    int NextFree(int index, TechTreeLayout::Node* node);
+    bool PlaceClosestFreeIndex(int index, TechTreeLayout::Node* node);
+    int ClosestFreeIndex(int index, TechTreeLayout::Node* node);
     bool Place(int index, TechTreeLayout::Node* node);
     bool Move(int to, TechTreeLayout::Node* node);
     Node* Seek(Node* m, int direction);

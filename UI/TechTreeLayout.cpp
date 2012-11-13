@@ -7,15 +7,14 @@ namespace  {
     const int LINE_CELL_HEIGHT = 1;
     const int CATEGORY_SEPARATOR_HEIGHT = 6;
 
-//////////////////////////
+///////////////////////////
 // struct NodePointerCmp //
-//////////////////////////
-    struct NodePointerCmp{
-        bool operator ()(const TechTreeLayout::Node* x, const TechTreeLayout::Node* y) const {
-            return (*x) < (*y);
-        }
+///////////////////////////
+    struct NodePointerCmp {
+        bool operator()(const TechTreeLayout::Node* x, const TechTreeLayout::Node* y) const
+        { return x && y && (*x) < (*y); }
     };
-}//namespace
+} //namespace
 
 //////////////////
 // class Column //
@@ -25,38 +24,30 @@ TechTreeLayout::Column::Column() :
 {}
 
 bool TechTreeLayout::Column::Fit(int index, TechTreeLayout::Node* node) {
+    if (0 >= index)
+        return false;
+
     int size = m_column.size();
     if (index + node->m_weight > size)
         m_column.resize(index + node->m_weight, 0);
 
-    if (0 < index) {
-        for ( int j = index + node->m_weight; j-->index; ) {
-            if ( m_column[j] != 0 && m_column[j] != node )
-                return false;
-        }
-        return true;
+    for ( int j = index + node->m_weight; j-->index; ) {
+        if ( m_column[j] != 0 && m_column[j] != node )
+            return false;
     }
-    return false;
+    return true;
 }
 
-bool TechTreeLayout::Column::PlaceNextFree(int index, TechTreeLayout::Node* node) {
-    int step = 0;
-    int i = index;
-    while (true) {
-        i = i - step;
-        step = step + 1;
-        if (Place(i, node))
-            return true;
-
-        i = i + step;
-        step = step + 1;
-        if (Place(i, node))
-            return true;
-    }
+bool TechTreeLayout::Column::PlaceClosestFreeIndex(int index, TechTreeLayout::Node* node) {
+    if (Place(ClosestFreeIndex(index, node), node))
+        return true;
     return false; //should never happen :-)
 }
 
-int TechTreeLayout::Column::NextFree(int index, TechTreeLayout::Node* node) {
+int TechTreeLayout::Column::ClosestFreeIndex(int index, TechTreeLayout::Node* node) {
+    // search for free node nearest to ideal index:
+    // start at ideal, then search in adjacent indices above and below
+    // in order of increasing distance to find a free spot.
     int step = 0;
     int i = index;
     while (true) {
@@ -106,9 +97,14 @@ unsigned int TechTreeLayout::Column::Size() {
 }
 
 TechTreeLayout::Node* TechTreeLayout::Column::Seek(Node* m, int direction) {
+    if (!m || direction == 0)
+        return 0;
+
     Node* n = 0;
     int i = m->m_row;
-    while(n == 0 || n == m) {
+
+    // find next node adjacent to node m in requested direction
+    while (!n || n == m) {
         if (i < 0 || i >= static_cast<int>(m_column.size()))
             return 0;
 
@@ -123,7 +119,7 @@ bool TechTreeLayout::Column::Swap(Node* m, Node* n) {
         //if they have different size shifting would be needed
         return false;
     }
-    for(int i = 0; i < m->m_weight; i++) {
+    for (int i = 0; i < m->m_weight; i++) {
         m_column[m->m_row + i] = n;
         m_column[n->m_row + i] = m;
     }
@@ -425,29 +421,33 @@ double TechTreeLayout::Node::CalculateFamilyDistance(int row) {
 bool TechTreeLayout::Node::Wobble(Column & column) {
     double dist, new_dist, s_dist, new_s_dist;
     dist = CalculateFamilyDistance(m_row);
-    int direction = (dist > 0)?+1:-1;
-    double improvement = 0;
+
     //try to find free space arround optimal position
-    int nextfree = column.NextFree(static_cast<int>(m_row+dist+0.5), this);
+    int closest_free_index = column.ClosestFreeIndex(static_cast<int>(m_row + dist + 0.5), this);
+
     //check if that space is better
-    new_dist = CalculateFamilyDistance(nextfree);
-    improvement = std::abs(dist) - std::abs(new_dist);
-    if (improvement > 0.5) {
-        if(column.Move(nextfree , this) ) {
+    new_dist = CalculateFamilyDistance(closest_free_index);
+    double improvement = std::abs(dist) - std::abs(new_dist);
+    if (improvement > 0.25) {
+        if (column.Move(closest_free_index , this) ) {
             //std::cout << m_name << ":" << dist << " -> " << new_dist <<"\n";
             return true;
         }
     }
 
-    //try to switch node with neighbour node
-    //find neighbour
+    // no free space found, but might be able to swap positions with another node
+
+    // find neighbour
+    int direction = (dist > 0) ? 1 : -1;
     Node* n = column.Seek(this, direction);
+
+    // try to switch node with neighbour node
     if (n != 0) {
         s_dist     = n->CalculateFamilyDistance(n->m_row);
         new_s_dist = n->CalculateFamilyDistance(   m_row);
         new_dist   =    CalculateFamilyDistance(n->m_row);
         improvement = std::abs(dist) + std::abs(s_dist) - std::abs(new_dist) - std::abs(new_s_dist);
-        if (improvement > 0.5) { //0 produces endless loop
+        if (improvement > 0.25) { // 0 produces endless loop
             if (column.Swap(this, n)) {
                 //std::cout << "(S)" << m_name  << ":" << dist << " -> " << new_dist << " & "<< n->m_name  << ":" << s_dist << " -> " << new_s_dist << "\n";
                 return true;
@@ -562,19 +562,22 @@ void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*> & nodes ) {
 
 void TechTreeLayout::Node::DoLayout( std::vector<Column> & row_index, bool cat ) {
     //assert(row_height > 0 && column_width > 0 && row_index != 0);
-    if(m_row != -1) return; //already done
+    if (m_row != -1) return; //already done
+
+    // find average row index of node's children and parents
+
     // 2. place node
     int index = 0;
     int count = 0;
     //check children
-    for(int i = m_children.size(); i --> 0; ) {
+    for(int i = m_children.size(); i --> 0;) {
         if (m_children[i]->m_row != -1) {
             index += m_children[i]->m_row;
             count++;
         }
     }
     //check parents
-    for(int i = m_parents.size(); i --> 0; ) {
+    for(int i = m_parents.size(); i --> 0;) {
         if (m_parents[i]->m_row != -1) {
             index += m_parents[i]->m_row;
             count++;
@@ -582,10 +585,13 @@ void TechTreeLayout::Node::DoLayout( std::vector<Column> & row_index, bool cat )
     }
     if (static_cast<int>(row_index.size()) < m_depth + 1) row_index.resize(m_depth + 1);
 
+    // if any parents or children have been placed, put this node in next free
+    // space after the ideal node.  if no parents or children have been placed,
+    // put node at start of row
     if (count != 0)
-        row_index[m_depth].PlaceNextFree(index / count, this);
+        row_index[m_depth].PlaceClosestFreeIndex(index / count, this);
     else
-        row_index[m_depth].PlaceNextFree(1, this);
+        row_index[m_depth].PlaceClosestFreeIndex(1, this);
 
     // 3. place holder children
 /*    Node* n = 0;
@@ -593,7 +599,7 @@ void TechTreeLayout::Node::DoLayout( std::vector<Column> & row_index, bool cat )
         n = m_children[i];
         while (n->m_place_holder) {
             if (static_cast<int>(row_index.size()) < n->m_depth + 1) row_index.resize(n->m_depth + 1);
-            row_index[n->m_depth].PlaceNextFree(m_row, n);
+            row_index[n->m_depth].PlaceClosestFreeIndex(m_row, n);
             n = n->m_child;
         }
     }*/
