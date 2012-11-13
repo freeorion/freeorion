@@ -46,6 +46,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <sstream>
 
@@ -891,7 +892,14 @@ void HumanClientApp::Autosave() {
     else
         extension = MP_SAVE_FILE_EXTENSION;
 
-    std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d%s") % player_name % empire_name % CurrentTurn() % extension);
+    // Add timestamp to autosave generated files
+    boost::posix_time::time_facet* facet = new boost::posix_time::time_facet("%Y%m%d_%H%M%S");
+    std::stringstream date_stream;
+    date_stream.imbue(std::locale(date_stream.getloc(), facet));
+    date_stream << boost::posix_time::microsec_clock::local_time();
+    std::string datetime_str=date_stream.str();
+
+    std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d_%s%s") % player_name % empire_name % CurrentTurn() % datetime_str % extension);
     boost::filesystem::path save_path(GetSaveDir() / save_filename);
     std::string path_string = PathString(save_path);
 
