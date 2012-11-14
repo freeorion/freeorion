@@ -257,11 +257,10 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 300 - (250 * Number condition =
-        NumberOf number = 1 AND [
-            OwnedBy TheEmpire Source.Owner
-            HasTag "TELEPATHIC"
-            ])
+    researchcost = 300 - (250 * If condition = AND [
+        OwnedBy TheEmpire Source.Owner
+        HasTag "TELEPATHIC"
+    ])
     researchturns = 3
     prerequisites = "LRN_TRANSLING_THT"
     graphic = "icons/tech/psionics.png"

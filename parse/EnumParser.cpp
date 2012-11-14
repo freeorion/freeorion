@@ -270,9 +270,9 @@ namespace parse {
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<CaptureResult>::type retval
-            =    tok.Capture_ [ _val = CR_CAPTURE ]
-            |    tok.Retain_ [ _val = CR_RETAIN ]
-            |    tok.Destroy_ [ _val = CR_DESTROY ]
+            =    tok.Capture_   [ _val = CR_CAPTURE ]
+            |    tok.Retain_    [ _val = CR_RETAIN ]
+            |    tok.Destroy_   [ _val = CR_DESTROY ]
             ;
         static bool once = true;
         if (once) {
@@ -290,16 +290,18 @@ namespace parse {
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<ValueRef::StatisticType>::type retval
-            =    tok.Count_ [ _val = ValueRef::COUNT ]
-            |    tok.Sum_ [ _val = ValueRef::SUM ]
-            |    tok.Mean_ [ _val = ValueRef::MEAN ]
-            |    tok.RMS_ [ _val = ValueRef::RMS ]
-            |    tok.Mode_ [ _val = ValueRef::MODE ]
-            |    tok.Max_ [ _val = ValueRef::MAX ]
-            |    tok.Min_ [ _val = ValueRef::MIN ]
-            |    tok.Spread_ [ _val = ValueRef::SPREAD ]
-            |    tok.StDev_ [ _val = ValueRef::STDEV ]
-            |    tok.Product_ [ _val = ValueRef::PRODUCT ]
+            =    tok.CountUnique_   [ _val = ValueRef::UNIQUE_COUNT ]
+            |    tok.Count_         [ _val = ValueRef::COUNT ]
+            |    tok.If_            [ _val = ValueRef::IF ]
+            |    tok.Sum_           [ _val = ValueRef::SUM ]
+            |    tok.Mean_          [ _val = ValueRef::MEAN ]
+            |    tok.RMS_           [ _val = ValueRef::RMS ]
+            |    tok.Mode_          [ _val = ValueRef::MODE ]
+            |    tok.Max_           [ _val = ValueRef::MAX ]
+            |    tok.Min_           [ _val = ValueRef::MIN ]
+            |    tok.Spread_        [ _val = ValueRef::SPREAD ]
+            |    tok.StDev_         [ _val = ValueRef::STDEV ]
+            |    tok.Product_       [ _val = ValueRef::PRODUCT ]
             ;
         static bool once = true;
         if (once) {
@@ -315,40 +317,40 @@ namespace parse {
     enum_parser_rule<MeterType>::type& non_ship_part_meter_type_enum() {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<MeterType>::type retval
-            =    tok.TargetConstruction_ [ _val = METER_TARGET_CONSTRUCTION ]
-            |    tok.TargetIndustry_ [ _val = METER_TARGET_INDUSTRY ]
-            |    tok.TargetPopulation_ [ _val = METER_TARGET_POPULATION ]
-            |    tok.TargetResearch_ [ _val = METER_TARGET_RESEARCH ]
-            |    tok.TargetTrade_ [ _val = METER_TARGET_TRADE ]
-            |    tok.TargetHappiness_ [ _val = METER_TARGET_HAPPINESS ]
+            =    tok.TargetConstruction_    [ _val = METER_TARGET_CONSTRUCTION ]
+            |    tok.TargetIndustry_        [ _val = METER_TARGET_INDUSTRY ]
+            |    tok.TargetPopulation_      [ _val = METER_TARGET_POPULATION ]
+            |    tok.TargetResearch_        [ _val = METER_TARGET_RESEARCH ]
+            |    tok.TargetTrade_           [ _val = METER_TARGET_TRADE ]
+            |    tok.TargetHappiness_       [ _val = METER_TARGET_HAPPINESS ]
 
-            |    tok.MaxDefense_ [ _val = METER_MAX_DEFENSE ]
-            |    tok.MaxFuel_ [ _val = METER_MAX_FUEL ]
-            |    tok.MaxShield_ [ _val = METER_MAX_SHIELD ]
-            |    tok.MaxStructure_ [ _val = METER_MAX_STRUCTURE ]
-            |    tok.MaxTroops_ [ _val = METER_MAX_TROOPS ]
+            |    tok.MaxDefense_            [ _val = METER_MAX_DEFENSE ]
+            |    tok.MaxFuel_               [ _val = METER_MAX_FUEL ]
+            |    tok.MaxShield_             [ _val = METER_MAX_SHIELD ]
+            |    tok.MaxStructure_          [ _val = METER_MAX_STRUCTURE ]
+            |    tok.MaxTroops_             [ _val = METER_MAX_TROOPS ]
 
-            |    tok.Construction_ [ _val = METER_CONSTRUCTION ]
-            |    tok.Industry_ [ _val = METER_INDUSTRY ]
-            |    tok.Population_ [ _val = METER_POPULATION ]
-            |    tok.Research_ [ _val = METER_RESEARCH ]
-            |    tok.Trade_ [ _val = METER_TRADE ]
-            |    tok.Happiness_ [ _val = METER_HAPPINESS ]
+            |    tok.Construction_          [ _val = METER_CONSTRUCTION ]
+            |    tok.Industry_              [ _val = METER_INDUSTRY ]
+            |    tok.Population_            [ _val = METER_POPULATION ]
+            |    tok.Research_              [ _val = METER_RESEARCH ]
+            |    tok.Trade_                 [ _val = METER_TRADE ]
+            |    tok.Happiness_             [ _val = METER_HAPPINESS ]
 
-            |    tok.Defense_ [ _val = METER_DEFENSE ]
-            |    tok.Fuel_ [ _val = METER_FUEL ]
-            |    tok.Shield_ [ _val = METER_SHIELD ]
-            |    tok.Structure_ [ _val = METER_STRUCTURE ]
-            |    tok.Troops_ [ _val = METER_TROOPS ]
+            |    tok.Defense_               [ _val = METER_DEFENSE ]
+            |    tok.Fuel_                  [ _val = METER_FUEL ]
+            |    tok.Shield_                [ _val = METER_SHIELD ]
+            |    tok.Structure_             [ _val = METER_STRUCTURE ]
+            |    tok.Troops_                [ _val = METER_TROOPS ]
 
-            |    tok.RebelTroops_ [ _val = METER_REBEL_TROOPS ]
-            |    tok.Supply_ [ _val = METER_SUPPLY ]
-            |    tok.Stealth_ [ _val = METER_STEALTH ]
-            |    tok.Detection_ [ _val = METER_DETECTION ]
-            |    tok.BattleSpeed_ [ _val = METER_BATTLE_SPEED ]
-            |    tok.StarlaneSpeed_ [ _val = METER_STARLANE_SPEED ]
+            |    tok.RebelTroops_           [ _val = METER_REBEL_TROOPS ]
+            |    tok.Supply_                [ _val = METER_SUPPLY ]
+            |    tok.Stealth_               [ _val = METER_STEALTH ]
+            |    tok.Detection_             [ _val = METER_DETECTION ]
+            |    tok.BattleSpeed_           [ _val = METER_BATTLE_SPEED ]
+            |    tok.StarlaneSpeed_         [ _val = METER_STARLANE_SPEED ]
 
-            |    tok.Size_ [ _val = METER_SIZE ]
+            |    tok.Size_                  [ _val = METER_SIZE ]
             ;
         static bool once = true;
         if (once) {
@@ -392,39 +394,39 @@ namespace parse {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<MeterType>::type retval
             =    tok.SetTargetConstruction_ [ _val = METER_TARGET_CONSTRUCTION ]
-            |    tok.SetTargetIndustry_ [ _val = METER_TARGET_INDUSTRY ]
-            |    tok.SetTargetPopulation_ [ _val = METER_TARGET_POPULATION ]
-            |    tok.SetTargetResearch_ [ _val = METER_TARGET_RESEARCH ]
-            |    tok.SetTargetTrade_ [ _val = METER_TARGET_TRADE ]
-            |    tok.SetTargetHappiness_ [ _val = METER_TARGET_HAPPINESS ]
+            |    tok.SetTargetIndustry_     [ _val = METER_TARGET_INDUSTRY ]
+            |    tok.SetTargetPopulation_   [ _val = METER_TARGET_POPULATION ]
+            |    tok.SetTargetResearch_     [ _val = METER_TARGET_RESEARCH ]
+            |    tok.SetTargetTrade_        [ _val = METER_TARGET_TRADE ]
+            |    tok.SetTargetHappiness_    [ _val = METER_TARGET_HAPPINESS ]
 
-            |    tok.SetMaxDefense_ [ _val = METER_MAX_DEFENSE ]
-            |    tok.SetMaxFuel_ [ _val = METER_MAX_FUEL ]
-            |    tok.SetMaxShield_ [ _val = METER_MAX_SHIELD ]
-            |    tok.SetMaxStructure_ [ _val = METER_MAX_STRUCTURE ]
-            |    tok.SetMaxTroops_ [ _val = METER_MAX_TROOPS ]
+            |    tok.SetMaxDefense_         [ _val = METER_MAX_DEFENSE ]
+            |    tok.SetMaxFuel_            [ _val = METER_MAX_FUEL ]
+            |    tok.SetMaxShield_          [ _val = METER_MAX_SHIELD ]
+            |    tok.SetMaxStructure_       [ _val = METER_MAX_STRUCTURE ]
+            |    tok.SetMaxTroops_          [ _val = METER_MAX_TROOPS ]
 
-            |    tok.SetConstruction_ [ _val = METER_CONSTRUCTION ]
-            |    tok.SetIndustry_ [ _val = METER_INDUSTRY ]
-            |    tok.SetPopulation_ [ _val = METER_POPULATION ]
-            |    tok.SetResearch_ [ _val = METER_RESEARCH ]
-            |    tok.SetTrade_ [ _val = METER_TRADE ]
-            |    tok.SetHappiness_ [ _val = METER_HAPPINESS ]
+            |    tok.SetConstruction_       [ _val = METER_CONSTRUCTION ]
+            |    tok.SetIndustry_           [ _val = METER_INDUSTRY ]
+            |    tok.SetPopulation_         [ _val = METER_POPULATION ]
+            |    tok.SetResearch_           [ _val = METER_RESEARCH ]
+            |    tok.SetTrade_              [ _val = METER_TRADE ]
+            |    tok.SetHappiness_          [ _val = METER_HAPPINESS ]
 
-            |    tok.SetDefense_ [ _val = METER_DEFENSE ]
-            |    tok.SetFuel_ [ _val = METER_FUEL ]
-            |    tok.SetShield_ [ _val = METER_SHIELD ]
-            |    tok.SetStructure_ [ _val = METER_STRUCTURE ]
-            |    tok.SetTroops_ [ _val = METER_TROOPS ]
+            |    tok.SetDefense_            [ _val = METER_DEFENSE ]
+            |    tok.SetFuel_               [ _val = METER_FUEL ]
+            |    tok.SetShield_             [ _val = METER_SHIELD ]
+            |    tok.SetStructure_          [ _val = METER_STRUCTURE ]
+            |    tok.SetTroops_             [ _val = METER_TROOPS ]
 
-            |    tok.SetRebelTroops_ [ _val = METER_REBEL_TROOPS ]
-            |    tok.SetSupply_ [ _val = METER_SUPPLY ]
-            |    tok.SetStealth_ [ _val = METER_STEALTH ]
-            |    tok.SetDetection_ [ _val = METER_DETECTION ]
-            |    tok.SetBattleSpeed_ [ _val = METER_BATTLE_SPEED ]
-            |    tok.SetStarlaneSpeed_ [ _val = METER_STARLANE_SPEED ]
+            |    tok.SetRebelTroops_        [ _val = METER_REBEL_TROOPS ]
+            |    tok.SetSupply_             [ _val = METER_SUPPLY ]
+            |    tok.SetStealth_            [ _val = METER_STEALTH ]
+            |    tok.SetDetection_          [ _val = METER_DETECTION ]
+            |    tok.SetBattleSpeed_        [ _val = METER_BATTLE_SPEED ]
+            |    tok.SetStarlaneSpeed_      [ _val = METER_STARLANE_SPEED ]
 
-            |    tok.SetSize_ [ _val = METER_SIZE ]
+            |    tok.SetSize_               [ _val = METER_SIZE ]
             ;
         static bool once = true;
         if (once) {
@@ -441,18 +443,18 @@ namespace parse {
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<MeterType>::type retval
-            =    tok.SetDamage_ [ _val = METER_DAMAGE ]
-            |    tok.SetROF_ [ _val = METER_ROF ]
-            |    tok.SetRange_ [ _val = METER_RANGE ]
-            |    tok.SetSpeed_ [ _val = METER_SPEED ]
-            |    tok.SetCapacity_ [ _val = METER_CAPACITY ]
-            |    tok.SetAntiShipDamage_ [ _val = METER_ANTI_SHIP_DAMAGE ]
-            |    tok.SetAntiFighterDamage_ [ _val = METER_ANTI_FIGHTER_DAMAGE ]
-            |    tok.SetLaunchRate_ [ _val = METER_LAUNCH_RATE ]
+            =    tok.SetDamage_             [ _val = METER_DAMAGE ]
+            |    tok.SetROF_                [ _val = METER_ROF ]
+            |    tok.SetRange_              [ _val = METER_RANGE ]
+            |    tok.SetSpeed_              [ _val = METER_SPEED ]
+            |    tok.SetCapacity_           [ _val = METER_CAPACITY ]
+            |    tok.SetAntiShipDamage_     [ _val = METER_ANTI_SHIP_DAMAGE ]
+            |    tok.SetAntiFighterDamage_  [ _val = METER_ANTI_FIGHTER_DAMAGE ]
+            |    tok.SetLaunchRate_         [ _val = METER_LAUNCH_RATE ]
             |    tok.SetFighterWeaponRange_ [ _val = METER_FIGHTER_WEAPON_RANGE ]
-            |    tok.SetStealth_ [ _val = METER_STEALTH ]
-            |    tok.SetDetection_ [ _val = METER_DETECTION ]
-            |    tok.SetStructure_ [ _val = METER_STRUCTURE ]
+            |    tok.SetStealth_            [ _val = METER_STEALTH ]
+            |    tok.SetDetection_          [ _val = METER_DETECTION ]
+            |    tok.SetStructure_          [ _val = METER_STRUCTURE ]
             ;
         static bool once = true;
         if (once) {

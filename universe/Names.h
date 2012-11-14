@@ -57,6 +57,7 @@
     (Contains)                                  \
     (Cos)                                       \
     (Count)                                     \
+    (CountUnique)                               \
     (CounterClockwiseNextPlanetType)            \
     (CreateBuilding)                            \
     (CreatedOnTurn)                             \
@@ -124,6 +125,7 @@
     (Hull)                                      \
     (Icon)                                      \
     (ID)                                        \
+    (If)                                        \
     (Industry)                                  \
     (Inferno)                                   \
     (InSystem)                                  \

@@ -658,13 +658,25 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
             return T(object_property_values.size());
             break;
         }
+        case UNIQUE_COUNT: {
+            std::set<T> observed_values;
+            for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+                 it != object_property_values.end(); ++it)
+            { observed_values.insert(it->second); }
+            return T(observed_values.size());
+            break;
+        }
+        case IF: {
+            if (object_property_values.empty())
+                return T(0);
+            return T(1);
+            break;
+        }
         case SUM: {
             T accumulator(0);
             for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
-            {
-                accumulator += it->second;
-            }
+            { accumulator += it->second; }
             return accumulator;
             break;
         }
@@ -673,9 +685,7 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
             T accumulator(0);
             for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
-            {
-                accumulator += it->second;
-            }
+            { accumulator += it->second; }
             return accumulator / static_cast<T>(object_property_values.size());
             break;
         }
@@ -684,9 +694,7 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
             T accumulator(0);
             for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
-            {
-                accumulator += (it->second * it->second);
-            }
+            { accumulator += (it->second * it->second); }
             accumulator /= static_cast<T>(object_property_values.size());
 
             double retval = std::sqrt(static_cast<double>(accumulator));
@@ -782,18 +790,14 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
             T accumulator(0);
             for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
-            {
-                accumulator += it->second;
-            }
+            { accumulator += it->second; }
             const T MEAN(accumulator / static_cast<T>(object_property_values.size()));
 
             // find average of squared deviations from sample mean
             accumulator = T(0);
             for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
-            {
-                accumulator += (it->second - MEAN) * (it->second - MEAN);
-            }
+            { accumulator += (it->second - MEAN) * (it->second - MEAN); }
             const T MEAN_DEV2(accumulator / static_cast<T>(static_cast<int>(object_property_values.size()) - 1));
             double retval = std::sqrt(static_cast<double>(MEAN_DEV2));
             return static_cast<T>(retval);
@@ -804,9 +808,7 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
             T accumulator(1);
             for (typename std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
-            {
-                accumulator *= it->second;
-            }
+            { accumulator *= it->second; }
             return accumulator;
             break;
         }

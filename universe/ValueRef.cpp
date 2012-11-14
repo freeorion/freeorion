@@ -639,6 +639,8 @@ namespace ValueRef {
 
         if (m_stat_type == COUNT)
             return static_cast<double>(condition_matches.size());
+        if (m_stat_type == IF)
+            return condition_matches.empty() ? 0.0 : 1.0;
 
         // evaluate property for each condition-matched object
         std::map<const UniverseObject*, double> object_property_values;
@@ -655,6 +657,8 @@ namespace ValueRef {
 
         if (m_stat_type == COUNT)
             return static_cast<int>(condition_matches.size());
+        if (m_stat_type == IF)
+            return condition_matches.empty() ? 0 : 1;
 
         // evaluate property for each condition-matched object
         std::map<const UniverseObject*, int> object_property_values;

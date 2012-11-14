@@ -14,7 +14,7 @@ Hull
         Slot type = Internal position = (0.40, 0.75)
     ]
     buildCost = 100 * (1 + 0.05 *
-        Number condition = And [
+        Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
@@ -59,7 +59,7 @@ Hull
         Slot type = External position = (0.50, 0.45)
     ]
     buildCost = 10.0 * (1 + 0.05 *
-        Number condition = And [
+        Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
@@ -87,7 +87,7 @@ Hull
         Slot type = Internal position = (0.50, 0.65)
     ]
     buildCost = 25 * (1 + 0.05 *
-        Number condition = And [
+        Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
@@ -117,7 +117,7 @@ Hull
         Slot type = Internal position = (0.40, 0.75)
     ]
     buildCost = 50 * (1 + 0.05 *
-        Number condition = And [
+        Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
@@ -148,7 +148,7 @@ Hull
         Slot type = Internal position = (0.40, 0.75)
     ]
     buildCost = 75 * (1 + 0.05 *
-        Number condition = And [
+        Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
@@ -189,7 +189,7 @@ Hull
         Slot type = External position = (0.60, 0.50)
     ]
     buildCost = 50 * (1 + 0.05 *
-        Number condition = And [
+        Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
@@ -238,7 +238,7 @@ Hull
         Slot type = Internal position = (0.40, 0.85)
     ]
     buildCost = 200 * (1 + 0.05 *
-        Number condition = And [
+        Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
@@ -283,7 +283,7 @@ Hull
     ]
     buildCost = 50
     buildTime = 2 * (1 + 0.05 *
-        Number condition = And [
+        Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
@@ -344,7 +344,7 @@ Hull
         Slot type = Internal position = (0.30, 0.85)
     ]
     buildCost = 400 * (1 + 0.05 *
-        Number condition = And [
+        Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
@@ -380,7 +380,7 @@ Hull
     structure = 9
     slots = Slot type = External position = (0.50, 0.50)
     buildCost = 50 * (1 + 0.05 *
-        Number condition = And [
+        Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
@@ -426,7 +426,7 @@ Hull
         Slot type = Internal position = (0.34, 0.75)
     ]
     buildCost = 200 * (1 + 0.05 *
-        Number condition = And [
+        Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner

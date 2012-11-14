@@ -206,8 +206,11 @@ void initialize_numeric_statistic_parser(
     statistic
         =    (
                   (
-                       tok.Number_ [ _b = ValueRef::COUNT ]
-                   >>  parse::label(Condition_name) >> parse::detail::condition_parser [ _c = _1 ]
+                        (
+                            tok.Count_ [ _b = ValueRef::COUNT ]
+                        |   tok.If_ [ _b = ValueRef::IF ]
+                        )
+                   >   parse::label(Condition_name) >> parse::detail::condition_parser [ _c = _1 ]
                   )
               |   (
                        parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
