@@ -182,10 +182,10 @@ struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
 protected:
     Variable(ReferenceType ref_type, const std::vector<adobe::name_t>& property_name);
 
-private:
-    ReferenceType                   m_ref_type;
-    std::vector<adobe::name_t>      m_property_name;
+    mutable ReferenceType       m_ref_type;
+    std::vector<adobe::name_t>  m_property_name;
 
+private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -560,10 +560,13 @@ void ValueRef::Statistic<T>::GetObjectPropertyValues(const ScriptingContext& con
     //Logger().debugStream() << "ValueRef::Statistic<T>::GetObjectPropertyValues source: " << source->Dump()
     //                       << " sampling condition: " << m_sampling_condition->Dump()
     //                       << " property name final: " << this->PropertyName().back();
+    ReferenceType original_ref_type = m_ref_type;
+    m_ref_type = ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE;
     for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
         T property_value = this->Variable<T>::Eval(ScriptingContext(context, *it));
         object_property_values[*it] = property_value;
     }
+    m_ref_type = original_ref_type;
 }
 
 template <class T>
