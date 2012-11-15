@@ -10,6 +10,7 @@
 #include "CUIControls.h"
 #include "FleetButton.h"
 #include "FleetWnd.h"
+#include "InfoPanels.h"
 #include "InGameMenu.h"
 #include "DesignWnd.h"
 #include "ProductionWnd.h"
@@ -789,13 +790,31 @@ MapWnd::MapWnd() :
                                 0, 3, false);
     m_trade->SetName("Trade StatisticIcon");
 
-    m_industry_wasted = new GG::StaticGraphic(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)),
-                                              ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /"wasted_resource.png", true),
-                                              GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_LEFT);
+    m_industry_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
+    m_research_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
 
-    m_research_wasted = new GG::StaticGraphic(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)),
-                                              ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "wasted_resource.png", true),
-                                              GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_LEFT);
+    AttachChild(m_industry_wasted);
+    AttachChild(m_research_wasted);
+
+    boost::shared_ptr<GG::Texture> wasted_ressource_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /"wasted_resource.png", false);
+    GG::SubTexture wasted_ressource_subtexture = GG::SubTexture::SubTexture(wasted_ressource_texture, GG::X(0), GG::Y(0), GG::X(32), GG::Y(32));
+
+    m_industry_wasted->SetUnpressedGraphic(wasted_ressource_subtexture);
+    m_industry_wasted->SetPressedGraphic  (wasted_ressource_subtexture);
+    m_industry_wasted->SetRolloverGraphic (wasted_ressource_subtexture);
+    m_research_wasted->SetUnpressedGraphic(wasted_ressource_subtexture);
+    m_research_wasted->SetPressedGraphic  (wasted_ressource_subtexture);
+    m_research_wasted->SetRolloverGraphic (wasted_ressource_subtexture);
+
+    m_industry_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+
+    GG::Connect(m_industry_wasted->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleProduction, this)));
+    GG::Connect(m_research_wasted->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch, this)));
+
+    //Set the correct tooltips
+    RefreshIndustryResourceIndicator();
+    RefreshResearchResourceIndicator();
 
     m_menu_showing = false;
 
@@ -815,30 +834,30 @@ MapWnd::MapWnd() :
     layout->Add(m_mineral,          0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
+    layout->SetMinimumColumnWidth(layout_column, GG::X(Value(layout->Height())));
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_industry_wasted,  0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
+    ++layout_column;
+
     layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_industry,         0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
+    layout->Add(m_industry,         0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, GG::X(Value(layout->Height())));
     layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_industry_wasted,  0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
+    layout->Add(m_research_wasted,  0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_research,         0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
-    ++layout_column;
-
-    layout->SetMinimumColumnWidth(layout_column, GG::X(Value(layout->Height())));
-    layout->SetColumnStretch(layout_column, 0.0);
-    layout->Add(m_research_wasted,  0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
+    layout->Add(m_research,         0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_trade,            0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
+    layout->Add(m_trade,            0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_population,       0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
+    layout->Add(m_population,       0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, m_btn_objects->Width());
@@ -878,16 +897,6 @@ MapWnd::MapWnd() :
 
     layout->SetCellMargin(5);
     layout->SetBorderMargin(5);
-
-    //GG::StaticGraphic* glah = new GG::StaticGraphic(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)),
-    //                                                ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /"wasted_ressource.png", true), 
-    //                                                GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_CENTER, GG::INTERACTIVE);
-    //layout->SetMinimumColumnWidth(layout_column, m_btn_menu->Width());
-    //layout->SetColumnStretch(layout_column, 0.0);
-    //layout->Add(glah,         0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    //++layout_column;
-    //glah->SetBrowseModeTime(1);
-    //glah->SetBrowseText("foobar");
 
     //clear background images
     m_backgrounds.clear();
@@ -2426,7 +2435,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                         !( (thisEmpire->SupplyStarlaneTraversals().find(lane_forward) != thisEmpire->SupplyStarlaneTraversals().end()) ||
                         (thisEmpire->SupplyStarlaneTraversals().find(lane_backward) != thisEmpire->SupplyStarlaneTraversals().end())   )  ) */
                     if (resGroupCores[ memberToPool[start_system->ID()]] != resGroupCores[ memberToPool[dest_system->ID()]])
-                        indicatorExtent = 0.2;
+                        indicatorExtent = 0.2f;
                     m_RC_starlane_vertices.store(lane_endpoints.X1,
                                                 lane_endpoints.Y1);
                     m_RC_starlane_vertices.store((lane_endpoints.X2 - lane_endpoints.X1) * indicatorExtent + lane_endpoints.X1,   // part way along starlane
@@ -4182,10 +4191,17 @@ void MapWnd::RefreshResearchResourceIndicator() {
         return;
     m_research->SetValue(empire->ResourceProduction(RE_RESEARCH));
     //Logger().debugStream() << "Research spend: " << empire->GetResearchQueue().TotalRPsSpent() << " output: " << empire->ResourceProduction(RE_RESEARCH);
-    if (empire->GetResearchQueue().TotalRPsSpent() < empire->ResourceProduction(RE_RESEARCH))
+    double totalRPSpent = empire->GetResearchQueue().TotalRPsSpent();
+    double totalProduction = empire->ResourceProduction(RE_RESEARCH);
+    double totalWastedRP = totalProduction - totalRPSpent;
+    if (totalWastedRP > 0){
         m_research_wasted->Show();
-    else
+        m_research_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(UserString("MAP_RES_WASTED_TITLE"), 
+                                                                     boost::io::str(FlexibleFormat(UserString("MAP_RES_WASTED_TEXT")) % DoubleToString(totalProduction, 3, false) 
+                                                                                                                                       % DoubleToString(totalWastedRP, 3, false)))));
+    } else {
         m_research_wasted->Hide();
+    }
 }
 
 void MapWnd::RefreshIndustryResourceIndicator() {
@@ -4194,11 +4210,20 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         return;
     m_industry->SetValue(empire->ResourceProduction(RE_INDUSTRY));
     //Logger().debugStream() << "Industry spend: " << empire->GetProductionQueue().TotalPPsSpent() << " output: " << empire->ResourceProduction(RE_INDUSTRY);
-    if (empire->GetProductionQueue().TotalPPsSpent() < empire->ResourceProduction(RE_INDUSTRY))
+    double totalPPSpent = empire->GetProductionQueue().TotalPPsSpent();
+    double totalProduction = empire->ResourceProduction(RE_INDUSTRY);
+    double totalWastedPP = totalProduction - totalPPSpent;
+    if (totalWastedPP > 0){
         m_industry_wasted->Show();
-    else
+        m_industry_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(UserString("MAP_PROD_WASTED_TITLE"), 
+                                                                     boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT")) % DoubleToString(totalProduction, 3, false) 
+                                                                                                                                       % DoubleToString(totalWastedPP, 3, false)))));
+
+    } else {
         m_industry_wasted->Hide();
+    }
 }
+
 
 void MapWnd::RefreshPopulationIndicator() {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );

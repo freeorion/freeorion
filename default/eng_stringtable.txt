@@ -1865,6 +1865,24 @@ Design
 MAP_BTN_PEDIA
 Pedia
 
+MAP_PROD_WASTED_TITLE
+Unused Production
+
+MAP_PROD_WASTED_TEXT
+'''Total Production : %1%
+Wasted Production : %2%
+
+Click here to open the production menu'''
+
+MAP_RES_WASTED_TITLE
+Unused Research
+
+MAP_RES_WASTED_TEXT
+'''Total Research : %1%
+Wasted Research : %2%
+
+Click here to open the research menu'''
+
 #################
 # SidePanel     #
 #################

@@ -193,6 +193,7 @@ namespace {
     const GG::X     ICON_BROWSE_TEXT_WIDTH(400);
     const GG::X     ICON_BROWSE_ICON_WIDTH(64);
     const GG::Y     ICON_BROWSE_ICON_HEIGHT(64);
+    const GG::X     BROWSE_TEXT_WIDTH(200);
     const GG::X     SPECIAL_ICON_WIDTH(24);
     const GG::Y     SPECIAL_ICON_HEIGHT(24);
 
@@ -2216,6 +2217,45 @@ void IconTextBrowseWnd::Render() {
     const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);    // main background
     GG::FlatRectangle(GG::Pt(ul.x + ICON_BROWSE_ICON_WIDTH, ul.y), GG::Pt(lr.x, ul.y + ROW_HEIGHT), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
+}
+
+/////////////////////////////////////
+//         TextBrowseWnd           //
+/////////////////////////////////////
+TextBrowseWnd::TextBrowseWnd(const std::string& title_text, const std::string& main_text) :
+    GG::BrowseInfoWnd(GG::X0, GG::Y0, BROWSE_TEXT_WIDTH, GG::Y1)
+{
+    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
+    const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
+    const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
+
+    m_offset = GG::Pt(GG::X0, ICON_BROWSE_ICON_HEIGHT/2); //lower the window
+
+    m_title_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, GG::Y0 + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text,
+                                       font_bold, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    AttachChild(m_title_text);
+
+    m_main_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, ROW_HEIGHT + m_offset.y, BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT, main_text,
+                                      font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
+    AttachChild(m_main_text);
+
+    m_main_text->SetMinSize(true);
+    m_main_text->Resize(m_main_text->MinSize());
+
+    Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT + m_main_text->Height()));
+}
+
+bool TextBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
+    assert(mode <= wnd->BrowseModes().size());
+    return true;
+}
+
+void TextBrowseWnd::Render() {
+    GG::Pt      ul = UpperLeft();
+    GG::Pt      lr = LowerRight();
+    const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
+    GG::FlatRectangle(ul + m_offset, lr + m_offset, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);    // main background
+    GG::FlatRectangle(ul + m_offset, GG::Pt(lr.x, ul.y + ROW_HEIGHT) + m_offset, ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
 }
 
 

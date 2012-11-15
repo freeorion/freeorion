@@ -396,6 +396,19 @@ private:
     GG::TextControl*    m_main_text;
 };
 
+/** A popup tooltop for display when mousing over in-game icons.  A title and some detail text.*/
+class TextBrowseWnd : public GG::BrowseInfoWnd {
+public:
+    TextBrowseWnd(const std::string& title_text, const std::string& main_text);
+    virtual bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
+    virtual void Render();
+
+private:
+    GG::TextControl*    m_title_text;
+    GG::TextControl*    m_main_text;
+    GG::Pt              m_offset;
+};
+
 /** Gives information about inporting and exporting of resources to and from this system when mousing
   * over the system resource production summary. */
 class SystemResourceSummaryBrowseWnd : public GG::BrowseInfoWnd {
