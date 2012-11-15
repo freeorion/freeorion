@@ -560,13 +560,13 @@ void ValueRef::Statistic<T>::GetObjectPropertyValues(const ScriptingContext& con
     //Logger().debugStream() << "ValueRef::Statistic<T>::GetObjectPropertyValues source: " << source->Dump()
     //                       << " sampling condition: " << m_sampling_condition->Dump()
     //                       << " property name final: " << this->PropertyName().back();
-    ReferenceType original_ref_type = m_ref_type;
-    m_ref_type = ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE;
+    ReferenceType original_ref_type = this->m_ref_type;
+    this->m_ref_type = ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE;
     for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
         T property_value = this->Variable<T>::Eval(ScriptingContext(context, *it));
         object_property_values[*it] = property_value;
     }
-    m_ref_type = original_ref_type;
+    this->m_ref_type = original_ref_type;
 }
 
 template <class T>
