@@ -1,4 +1,5 @@
 import freeOrionAIInterface as fo
+import FreeOrionAI as foAI
 
 def getCapital(): # if no current capital returns planet with biggest pop
     universe = fo.getUniverse()
@@ -38,10 +39,11 @@ def getPlanetsInSystemsIDs(systemIDs):
     planetIDs = []
 
     for systemID in systemIDs:
+        thesePlanets=set(foAI.foAIstate.systemStatus.get(systemID, {}).get('planets', {}).keys())
         system = universe.getSystem(systemID)
-        if system == None: continue
-
-        planetIDs.extend(list(system.planetIDs)) # added list
+        if system != None: 
+            thesePlanets.update(list(system.planetIDs))
+        planetIDs.extend(list(thesePlanets)) # added list
 
     return planetIDs
 
@@ -53,7 +55,7 @@ def getOwnedPlanetsByEmpire(planetIDs, empireID):
 
     for planetID in planetIDs:
         planet = universe.getPlanet(planetID)
-        if (not planet.unowned) and planet.ownedBy(empireID):
+        if planet and (not planet.unowned) and planet.ownedBy(empireID):
             result.append(planetID)
 
     return result
@@ -84,9 +86,10 @@ def getAllOwnedPlanetIDs(planetIDs):
 
     for planetID in planetIDs:
         planet = universe.getPlanet(planetID)
-        planetPopulation = planet.currentMeterValue(fo.meterType.population)
-        if not planet.unowned or planetPopulation > 0:
-            allOwnedPlanetIDs.append(planetID)
+        if planet:
+            planetPopulation = planet.currentMeterValue(fo.meterType.population)
+            if not planet.unowned or planetPopulation > 0:
+                allOwnedPlanetIDs.append(planetID)
 
     return allOwnedPlanetIDs
     

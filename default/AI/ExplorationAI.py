@@ -59,7 +59,9 @@ def assignScoutsToExploreSystems():
 
     print "explorable sys IDs: %s"%exploreList
     print "already targeted: %s"%alreadyCovered
-    needsCoverage= [sysID for sysID in exploreList if sysID not in  alreadyCovered ]
+    if 'needsEmergencyExploration' not in dir(foAI.foAIstate):
+        foAI.foAIstate.needsEmergencyExploration=[]
+    needsCoverage= foAI.foAIstate.needsEmergencyExploration + [sysID for sysID in exploreList if sysID not in  alreadyCovered ] # emergency coverage cane be due to invasion detection trouble, etc.
     print "needs coverage: %s"%needsCoverage
     print "available scouts & AIstate locs: %s"%(map( lambda x: (x,  foAI.foAIstate.fleetStatus.get(x, {}).get('sysID', -1)),    availableScouts) )
     print "available scouts & universe locs: %s"%(map( lambda x: (x,  universe.getFleet(x).systemID),  availableScouts) )
@@ -69,7 +71,7 @@ def assignScoutsToExploreSystems():
     sentList=[]
     while (len(availableScouts) > 0 ) and ( len(needsCoverage) >0):
         thisSysID = needsCoverage.pop(0)
-        thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetRating=0,  minRating=0,  curRating=[0],  species="",  systemsToCheck=[thisSysID],  systemsChecked=[], 
+        thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetStats={},  minStats={},  curStats={},  species="",  systemsToCheck=[thisSysID],  systemsChecked=[], 
                                                      fleetPool = availableScouts,   fleetList=[],  verbose=False)
         if thisFleetList==[]:
              break #must have ran out of scouts
@@ -133,17 +135,17 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
         graphFlags[curSystemID] = 1
         system=universe.getSystem(curSystemID)
         if not system: 
-            sysName="name unknown"
+            sysName=foAI.foAIstate.systemStatus.get(curSystemID, {}).get('name',  "name unknown")
         else:
-            sysName="named %s"%system.name
+            sysName = system.name or foAI.foAIstate.systemStatus.get(curSystemID, {}).get('name',  "name unknown")
         if curSystemID in foAI.foAIstate.visBorderSystemIDs:
             preVis = "a border system"
         elif curSystemID in foAI.foAIstate.visInteriorSystemIDs:
             preVis = "an interior system"
         else:
             preVis = "an unknown system"
-        print "*** system ID %d  %s ; previously %s, new visibility_turns vector is %s "%(curSystemID, sysName, preVis,   [turn for turn in universe.getVisibilityTurns(curSystemID,  empireID)])
-        statusStr = "*** system ID %d  %s ; "%(curSystemID, sysName)
+        print "*** system ID %d ( %s ) ; previously %s, new visibility_turns vector is %s "%(curSystemID, sysName, preVis,   [turn for turn in universe.getVisibilityTurns(curSystemID,  empireID)])
+        statusStr = "*** system ID %d  ( %s ) ; "%(curSystemID, sysName)
         isVisible = ( universe.getVisibilityTurns(curSystemID,  empireID)[fo.visibility.partial] > 0 ) # more precisely, this means HAS BEEN visible
         #print "previous visTurns result: %s"% ([val for val in universe.getVisibilityTurns(curSystemID,  empireID)],  )
         #print "new visTurns result: %s"% (dictFromMap( universe.getVisibilityTurnsMap(curSystemID,  empireID)),  )
@@ -151,11 +153,38 @@ def followVisSystemConnections(startSystemID,  homeSystemID):
         statusStr += " -- is %s partially visible "%(["not",  ""][isVisible])
         statusStr += " -- is %s visibly connected to homesystem "%(["not",  ""][isConnected])
         if isVisible:
+            sysStatus = foAI.foAIstate.systemStatus.get(curSystemID, {})
             foAI.foAIstate.visInteriorSystemIDs[curSystemID] = 1
             if curSystemID in foAI.foAIstate.visBorderSystemIDs:
                 del foAI.foAIstate.visBorderSystemIDs[curSystemID]
             #neighbors= dict( [(el.key(), el.data()) for el in  universe.getSystemNeighborsMap(curSystemID,  empireID)] )  #
             neighbors = dictFromMap( universe.getSystemNeighborsMap(curSystemID,  empireID) ).keys()
+            if neighbors !={}:
+                sysNeighbors=sysStatus.get('neighbors', {})
+                for neighbor in neighbors:
+                    if neighbor not in sysNeighbors:
+                        sysNeighbors.setdefault(neighbor, {}).setdefault('placeholder',"")
+                sysStatus['neighbors']=sysNeighbors
+            neighbors=sysStatus['neighbors'].keys()
+            sysPlanets=sysStatus.get('planets', {})
+            print "    previously knew of system %d planets %s"%(curSystemID,  sysPlanets.keys())
+            if system:
+                for planet in system.planetIDs:
+                    targPop=sysPlanets.setdefault(planet, {}).setdefault('targetPop',0)
+                    planetObj=universe.getPlanet(planet)
+                    troops=sysPlanets[planet].setdefault('troops', 0)
+                    if planetObj:
+                        newPop=planetObj.currentMeterValue(fo.meterType.targetPopulation)
+                        if newPop != sysPlanets[planet]['targetPop']:
+                            print "  * updating targetPop of planet %d ( %s ) to %.2f  from %.2f"%(planet,  planetObj.name,  newPop,  sysPlanets[planet]['targetPop'])
+                        troops = planetObj.currentMeterValue(fo.meterType.troops)
+                        if troops != sysPlanets[planet].get('troops', 0):
+                            print "  * updating troops of planet %d ( %s ) to %.2f  from %.2f"%(planet,  planetObj.name,  troops,  sysPlanets[planet]['troops'])
+                        sysPlanets[planet]['targetPop']= newPop
+                        sysPlanets[planet]['troops']= troops
+                sysStatus['planets']=sysPlanets
+            print "    now know of system %d planets %s"%(curSystemID,  sysPlanets.keys())
+            foAI.foAIstate.systemStatus[curSystemID]=sysStatus
             #neighbors = list(  universe.getImmediateNeighbors(curSystemID,  empireID) )   #imNeighbors
             #if set(neighbors) != set(neighbors2):
             #    print "Error with neighbors: imn giving %s ; giN giving %s"%(neighbors2,  neighbors)

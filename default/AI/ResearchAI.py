@@ -6,12 +6,15 @@ import AIstate
 import traceback
 import sys
 
+inProgressTechs={}
+
 def generateResearchOrders():
+    global inProgressTechs
     "generate research orders"
     empire = fo.getEmpire()
     empireID = empire.empireID
     print "Research Queue Management:"
-    print ""
+    print "\nTotal Current Research Points: %.2f\n"%empire.resourceProduction(fo.resourceType.research)
     print "Techs researched and available for use:"
     completedTechs = sorted(list(getCompletedTechs()))
     tlist = completedTechs+3*[" "]
@@ -21,15 +24,19 @@ def generateResearchOrders():
     print""
     researchQueue = empire.researchQueue
     researchQueueList = getResearchQueueTechs()
+    inProgressTechs.clear()
     if  researchQueueList:
         print "Techs currently at head of Research Queue:"
         for element in list(researchQueue)[:10]:
+            if element.allocation > 0.0:
+                inProgressTechs[element.tech]=True
             thisTech=fo.getTech(element.tech)
             missingPrereqs = [preReq for preReq in thisTech.recursivePrerequisites(empireID) if preReq not in completedTechs]
+            unlockedItems = [(uli.name,  uli.type) for uli in thisTech.unlockedItems]
             if not missingPrereqs:
-                print "    %25s  allocated %6.2f RP "%(element.tech,  element.allocation)
+                print "    %25s  allocated %6.2f RP -- unlockable items: %s "%(element.tech,  element.allocation,  unlockedItems)
             else:
-                print "    %25s  allocated %6.2f RP   --  missing preReqs: %s"%(element.tech,  element.allocation,  missingPrereqs)
+                print "    %25s  allocated %6.2f RP   --  missing preReqs: %s   -- unlockable items: %s "%(element.tech,  element.allocation,  missingPrereqs,  unlockedItems)
         print ""
     if fo.currentTurn()<=1:
         newtech = TechsListsAI.primaryMetaTechsList()
@@ -62,7 +69,8 @@ def generateResearchOrders():
         for tname in alltechs:
             print tname
         print "\n-------------------------------\nAll unqueued techs:"
-        for tname in [tn for tn in alltechs if tn not in newtech]:
+        coveredTechs = newtech+completedTechs
+        for tname in [tn for tn in alltechs if tn not in coveredTechs]:
             print tname
 
     elif fo.currentTurn() >50:

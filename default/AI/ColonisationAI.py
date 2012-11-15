@@ -5,6 +5,10 @@ import FleetUtilsAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
 import AITarget
 import PlanetUtilsAI
+import TechsListsAI
+
+empireSpecies = {}
+empireColonizers = {}
 
 # makes these mapped to string version of values in case any sizes become reals instead of int
 planetSIzes=            {   str(fo.planetSize.tiny): 1,     str(fo.planetSize.small): 2,    str(fo.planetSize.medium): 3,   str(fo.planetSize.large): 4,    str(fo.planetSize.huge): 5,  str(fo.planetSize.asteroids): 0,  str(fo.planetSize.gasGiant): 0 }
@@ -23,6 +27,8 @@ popSizeModMap={
 
 
 def getColonyFleets():
+    global empireSpecies,  empireColonizers
+    
     "get colony fleets"
 
     allColonyFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
@@ -58,6 +64,9 @@ def getColonyFleets():
     print "    fleetSupplyablePlanetIDs: " + str(fleetSupplyablePlanetIDs)
     print ""
 
+    print "-------\nEmpire Obstructed Starlanes:"
+    print  list(empire.obstructedStarlanes())
+
     # get outpost and colonization planets
     
     exploredSystemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
@@ -89,7 +98,13 @@ def getColonyFleets():
     AIstate.outpostIDs=empireOutpostIDs
     AIstate.outpostSystemIDs=set(PlanetUtilsAI.getSystems(empireOutpostIDs))
     
-    empireSpecies={}
+    oldEmpSpec = empireSpecies
+    empireSpecies.clear()
+    oldEmpCol=empireColonizers
+    empireColonizers.clear()
+    if empire.getTechStatus(TechsListsAI.exobotTechName) == fo.techStatus.complete:
+        empireColonizers["SP_EXOBOT"]=[]# get it into colonizer list even if no colony yet
+    
     for pID in empirePopCtrs:
         planet=universe.getPlanet(pID)
         if not planet:
@@ -100,8 +115,24 @@ def getColonyFleets():
     print "\n"+"Empire species roster:"
     for specName in empireSpecies:
         thisSpec=fo.getSpecies(specName)
-        print "%s on planets %s; has tags %s"%(specName,  empireSpecies[specName],  list(thisSpec.tags))
+        if thisSpec:
+            shipyards=[]
+            if thisSpec.canColonize:
+                for pID in empireSpecies[specName]:
+                    planet=universe.getPlanet(pID)
+                    if "BLD_SHIPYARD_BASE" in [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]:
+                        shipyards.append(pID)
+                empireColonizers[specName]=shipyards
+            print "%s on planets %s; can%s colonize from %d shipyards; has tags %s"%(specName,  empireSpecies[specName],  ["not", ""][thisSpec.canColonize], len(shipyards),  list(thisSpec.tags))
+        else:
+            print "Unable to retrieve info for Species named %s"%specName
     print""
+    if empireSpecies!=oldEmpSpec:
+        print "Old empire species: %s  ; new empire species: %s"%(oldEmpSpec,  empireSpecies)
+    if empireColonizers!=oldEmpCol:
+        print "Old empire colonizers: %s  ; new empire colonizers: %s"%(oldEmpCol,  empireColonizers)
+    
+    print 
 
     # export colony targeted systems for other AI modules
     colonyTargetedPlanetIDs = getColonyTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, empireID)
@@ -224,9 +255,17 @@ def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, s
     "creates a dictionary that takes planetIDs as key and their colonisation score as value"
 
     planetValues = {}
-
     for planetID in planetIDs:
-        planetValues[planetID] = evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, empire)
+        pv = []
+        for specName in empireColonizers:
+            thisSpecies=fo.getSpecies(specName)
+            pv.append( (evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, thisSpecies, empire),  specName) )
+        best = sorted(pv)[-1:]
+        if best!=[]:
+            if   (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ):
+                planetValues[planetID] = (best[0][0],  "")
+            else:
+                planetValues[planetID] = best[0]
 
     return planetValues
 
@@ -248,6 +287,8 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
             if special in planetSpecials:
                 retval = 20 #expects we can make exobots soonish
+        if foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0) > 0:
+            retval = retval / 2.0
         return retval
     else: #colonization mission
         if   (planet.size==fo.planetSize.gasGiant): 
@@ -327,12 +368,17 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             distanceFactor = 1.001 / (leastJumpsPath + 1)
         else:
             distanceFactor = 0
+        
+        if foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0) > 0:
+            threatFactor = 0.7
+        else:
+            threatFactor = 1.0
 
         if (planetID in fleetSupplyablePlanetIDs):
-            return popSize + distanceFactor + valMod
+            return (popSize + distanceFactor + valMod)*threatFactor
             #return getPlanetHospitality(planetID, species) * planet.size + distanceFactor
         else:
-            return popSize - distanceFactor  + valMod
+            return  (popSize - distanceFactor  + valMod)*threatFactor
             #return getPlanetHospitality(planetID, species) * planet.size - distanceFactor
 
 def getPlanetHospitality(planetID, species):
@@ -362,25 +408,31 @@ def removeLowValuePlanets(evaluatedPlanets):
 
     # print ":: min:" + str(AIstate.minimalColoniseValue)
     for planetID in evaluatedPlanets.iterkeys():
-        # print ":: eval:" + str(planetID) + " val:" + str(evaluatedPlanets[planetID])
-        if (evaluatedPlanets[planetID] < AIstate.minimalColoniseValue):
+        #print ":: eval:" + str(planetID) + " val:" + str(evaluatedPlanets[planetID])
+        if (evaluatedPlanets[planetID][0] < AIstate.minimalColoniseValue):
             removeIDs.append(planetID)
-
+    #print "removing ",  removeIDs
     for ID in removeIDs: del evaluatedPlanets[ID]
 
 def sendColonyShips(colonyFleetIDs, evaluatedPlanets, missionType):
     "sends a list of colony ships to a list of planet_value_pairs"
+    fleetPool = colonyFleetIDs[:]
+    potentialTargets = evaluatedPlanets[:]
 
-    i = 0
-    print "colony/outpost  ship matching -- fleets  %s to planets %s"%( colonyFleetIDs,  evaluatedPlanets)
-    for planetID_value_pair in evaluatedPlanets:
-        if i >= len(colonyFleetIDs): return
+    print "colony/outpost  ship matching -- fleets  %s to planets %s"%( fleetPool,  evaluatedPlanets)
+    #for planetID_value_pair in evaluatedPlanets:
+    universe=fo.getUniverse()
+    while (len(fleetPool) > 0 ) and ( len(potentialTargets) >0):
+        thisTarget = potentialTargets.pop(0)
+        thisPlanetID=thisTarget[0]
+        thisSysID = universe.getPlanet(thisPlanetID).systemID
+        thisSpec=thisTarget[1][1]
+        thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetStats={},  minStats={},  curStats={},  species=thisSpec,  systemsToCheck=[thisSysID],  systemsChecked=[], 
+                                                     fleetPool = fleetPool,   fleetList=[],  verbose=False)
+        if thisFleetList==[]:
+             continue #must have no compatible colony/outpost ships 
+        fleetID = thisFleetList[0]
 
-        fleetID = colonyFleetIDs[i]
-        planetID = planetID_value_pair[0]
-
-        aiTarget = AITarget.AITarget(AITargetType.TARGET_PLANET, planetID)
+        aiTarget = AITarget.AITarget(AITargetType.TARGET_PLANET, thisPlanetID)
         aiFleetMission = foAI.foAIstate.getAIFleetMission(fleetID)
         aiFleetMission.addAITarget(missionType, aiTarget)
-
-        i = i + 1

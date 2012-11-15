@@ -4,6 +4,7 @@
 
 #include "../universe/Universe.h"
 #include "../universe/ShipDesign.h"
+#include <boost/python/list.hpp>
 
 #include <string>
 
@@ -92,7 +93,7 @@ namespace AIInterface {
 
     int                 IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
                                                    const std::string& hull,
-                                                   const std::vector<std::string>& parts,
+                                                   boost::python::list partsList,
                                                    const std::string& graphic, const std::string& model);
 
     void                SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);

@@ -126,6 +126,9 @@ namespace FreeOrionPython {
         class_<std::vector<IntPair> >("IntPairVec")
             .def(boost::python::vector_indexing_suite<std::vector<IntPair>, true>())
         ;
+        class_<std::vector<ItemSpec> >("ItemSpecVec")
+            .def(boost::python::vector_indexing_suite<std::vector<ItemSpec>, true>())
+        ;
 
         ///////////////////
         //     Empire    //
@@ -180,7 +183,6 @@ namespace FreeOrionPython {
             ))
         ;
 
-
         ////////////////////
         // Research Queue //
         ////////////////////
@@ -228,7 +230,8 @@ namespace FreeOrionPython {
             .def_readonly("allocation",             &ProductionQueue::Element::allocated_pp)
             .def_readonly("turnsLeft",              &ProductionQueue::Element::turns_left_to_completion)
             .def_readonly("remaining",              &ProductionQueue::Element::remaining)
-        ;
+            .def_readonly("blocksize",              &ProductionQueue::Element::remaining)
+            ;
         class_<ProductionQueue, noncopyable>("productionQueue", no_init)
             .def("__iter__",                        iterator<ProductionQueue>())  // ProductionQueue provides STL container-like interface to contained queue
             .def("__getitem__",                     ProductionQueueOperatorSquareBrackets,          return_internal_reference<>())
@@ -254,6 +257,7 @@ namespace FreeOrionPython {
             .def("researchTime",                    &Tech::ResearchTime)
             .add_property("prerequisites",          make_function(&Tech::Prerequisites,     return_internal_reference<>()))
             .add_property("unlockedTechs",          make_function(&Tech::UnlockedTechs,     return_internal_reference<>()))
+            .add_property("unlockedItems",          make_function(&Tech::UnlockedItems,     return_internal_reference<>()))
             .def("recursivePrerequisites",          make_function(
                                                         TechRecursivePrereqsFunc,
                                                         return_value_policy<return_by_value>(),
@@ -272,6 +276,10 @@ namespace FreeOrionPython {
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<std::vector<std::string>, const std::string&>()
                                                     ));
+        class_<ItemSpec>("itemSpec")
+            .add_property("type",               &ItemSpec::type)
+            .add_property("name",               &ItemSpec::name)
+        ;
 
         ///////////////////
         //  SitRepEntry  //

@@ -148,5 +148,12 @@ namespace FreeOrionPython {
             .value("battleSpeed",   PC_BATTLE_SPEED)
             .value("starlaneSpeed", PC_STARLANE_SPEED)
         ;
+        enum_<UnlockableItemType>("unlockableItemType")
+            .value("building",      UIT_BUILDING)
+            .value("shipPart",      UIT_SHIP_PART)
+            .value("shipHull",      UIT_SHIP_HULL)
+            .value("shipDesign",    UIT_SHIP_DESIGN)
+            .value("tech",          UIT_TECH)
+        ;
     }
 }

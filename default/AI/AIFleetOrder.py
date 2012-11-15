@@ -2,6 +2,7 @@ from EnumsAI import AIFleetOrderType, AITargetType, AIShipRoleType,  AIFleetMiss
 import FleetUtilsAI
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
+import ExplorationAI
 
 AIFleetOrderTypeNames=AIFleetOrderType()
 AIFleetMissionTypeNames = AIFleetMissionType()
@@ -93,7 +94,7 @@ class AIFleetOrder(object):
                 # colonise planet
                 if AITargetType.TARGET_PLANET == self.getTargetAITarget().getAITargetType():
                     planet = universe.getPlanet(self.getTargetAITarget().getTargetID())
-                    if planet.unowned:
+                    if planet.unowned or  (planet.ownedBy(fo.empireID()) and   planet.currentMeterValue(fo.meterType.population)==0 ):
                         targetAITargetTypeValid = True
             # invade
             elif AIFleetOrderType.ORDER_INVADE == self.getAIFleetOrderType():
@@ -327,6 +328,8 @@ class AIFleetOrder(object):
                 shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION)
             ship = universe.getShip(shipID)
             planet = universe.getPlanet(self.getTargetAITarget().getTargetID())
+            if ship and not ship.canColonize:
+                print "Error: colonization fleet %d has no colony ship"%fleetID
             if (ship != None) and (fleet.systemID == planet.systemID) and ship.canColonize:
                 return True
             return False
@@ -416,7 +419,11 @@ class AIFleetOrder(object):
                     fleetID = self.getSourceAITarget().getTargetID()
                     shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION)
 
-                fo.issueColonizeOrder(shipID, self.getTargetAITarget().getTargetID())
+                planetID = self.getTargetAITarget().getTargetID()
+                planet=universe.getPlanet(planetID)
+                planetName = (planet and planet.name) or "apparently nvisible"
+                result = fo.issueColonizeOrder(shipID, planetID)
+                print "Ordered colony ship ID %d to colonize %s, got result %d"%(shipID, planetName,  result)
             # invade
             elif AIFleetOrderType.ORDER_INVADE == self.getAIFleetOrderType():
                 result = False
@@ -433,7 +440,12 @@ class AIFleetOrder(object):
                         ship = universe.getShip(shipID)
                         if (foAI.foAIstate.getShipRole(ship.design.id) == AIShipRoleType.SHIP_ROLE_MILITARY_INVASION):
                             result = fo.issueInvadeOrder(shipID, planetID)  or  result #will track if at least one invasion troops successfully deployed
-                            print "Ordered troop ship ID %d to invade %s"%(shipID, planetName)
+                            print "Ordered troop ship ID %d to invade %s, got result %d"%(shipID, planetName,  result)
+                            if result == 0:
+                                if 'needsEmergencyExploration' not in dir(foAI.foAIstate):
+                                    foAI.foAIstate.needsEmergencyExploration=[]
+                                foAI.foAIstate.needsEmergencyExploration.append(fleet.systemID)
+                                print "Due to trouble invading,  adding system %d to Emergency Exploration List"%fleet.systemID
             # military
             elif AIFleetOrderType.ORDER_MILITARY == self.getAIFleetOrderType():
                 shipID = None
@@ -457,6 +469,11 @@ class AIFleetOrder(object):
                 if  systemID not in [fleet.systemID,  fleet.nextSystemID] :
                     fo.issueFleetMoveOrder(fleetID, systemID)
                 if systemID == fleet.systemID:
+                    if  fleetID in ExplorationAI.currentScoutFleetIDs:
+                        if 'needsEmergencyExploration' not in dir(foAI.foAIstate):
+                            foAI.foAIstate.needsEmergencyExploration=[]
+                        if systemID in foAI.foAIstate.needsEmergencyExploration:
+                            del foAI.foAIstate.needsEmergencyExploration[ foAI.foAIstate.needsEmergencyExploration.index(systemID) ]
                     self.__setExecutionCompleted()
 
             # split fleet

@@ -174,6 +174,27 @@ class AIFleetMission(AIAbstractMission):
                     break
         else: #went through entire order list
             if ordersCompleted:
+                orders=self.getAIFleetOrders()
+                if orders and orders[-1].getAIFleetOrderType() == AIFleetOrderType.ORDER_COLONISE:
+                    lastOrder=orders[-1]
+                    universe=fo.getUniverse()
+                    planet = universe.getPlanet(lastOrder.getTargetAITarget().getTargetID())
+                    pop=planet.currentMeterValue(fo.meterType.population)
+                    if pop==0:
+                        print "Fleet %d has tentatively completed its colonize mission but will wait to confirm population."%(self.getAITargetID() )
+                        print "    Order details are %s"%lastOrder
+                        print "    Order is valid: %s ; is Executed : %s  ; is execution completed: %s "%(lastOrder.isValid(),  lastOrder.isExecuted(),  lastOrder.isExecutionCompleted())
+                        if not lastOrder.isValid():
+                            sourceT = lastOrder.getSourceAITarget()
+                            targT = lastOrder.getTargetAITarget()
+                            print "        source target validity: %s   ; target target validity: %s "%(sourceT.isValid() ,  targT.isValid())
+                            if AITargetType.TARGET_SHIP == sourceT:
+                                shipID = sourceT.getTargetID()
+                                ship = universe.getShip(shipID)
+                                if not ship:
+                                    print "Ship id %d not a valid ship id"%(shipID)
+                                print "        source target Ship (%d), species %s,   can%s colonize"%(   shipID,  ship.speciesName,    ["not", ""][ship.canColonize])
+                        return  # colonize order must not have completed yet
                 print "Fleet %d has completed its mission; clearing all orders and targets."%(self.getAITargetID() )
                 print "Full set of orders were:"
                 for aiFleetOrder2 in self.getAIFleetOrders():

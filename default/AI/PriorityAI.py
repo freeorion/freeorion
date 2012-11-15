@@ -16,12 +16,12 @@ import math
 def calculatePriorities():
     "calculates the priorities of the AI player"
     print("calculating priorities")
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH, calculateResearchPriority())
     ColonisationAI.getColonyFleets() # sets AIstate.colonisablePlanetIDs and AIstate.outpostPlanetIDs
     InvasionAI.getInvasionFleets() # sets AIstate.invasionFleetIDs, AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
     MilitaryAI.getMilitaryFleets() # sets AIstate.militaryFleetIDs and AIstate.militaryTargetedSystemIDs
 
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION, calculateIndustryPriority())
-    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH, calculateResearchPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_TRADE, 0)
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_CONSTRUCTION, 0)
 
@@ -178,7 +178,7 @@ def calculateOutpostPriority():
 
     numOutpostPlanetIDs = len(AIstate.colonisableOutpostIDs)
     completedTechs = getCompletedTechs()
-    if numOutpostPlanetIDs == 0 or not 'GRO_ENV_ENCAPSUL' in completedTechs:
+    if numOutpostPlanetIDs == 0 or not 'CON_ENV_ENCAPSUL' in completedTechs:
         return 0
 
     outpostShipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST)
@@ -201,34 +201,35 @@ def calculateInvasionPriority():
     numOpponentPlanetIDs = len(AIstate.opponentPlanetIDs)
     if numOpponentPlanetIDs == 0: 
         return 10  #hsould always have at least a  low lvl of production going into fleets
-    opponentTroops = sum( [ptroops+1 for sid, pscore, ptroops in AIstate.invasionTargets] )
+    opponentTroopPods = sum( [math.ceil((ptroops+1)/5) for sid, pscore, ptroops in AIstate.invasionTargets] )
 
     productionQueue = empire.productionQueue
-    queuedTroopShips=0
+    queuedTroopPods=0
     for queue_index  in range(0,  len(productionQueue)):
         element=productionQueue[queue_index]
         if element.buildType == AIEmpireProductionTypes.BT_SHIP:
              if foAI.foAIstate.getShipRole(element.designID) ==       AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
-                 queuedTroopShips +=element.remaining
+                 design = fo.getShipDesign(element.designID)
+                 queuedTroopPods += element.remaining*element.blocksize * list(design.parts).count("GT_TROOP_POD") 
     bestShip,  bestDesign,  buildChoices = getBestShipInfo( AIPriorityType.PRIORITY_PRODUCTION_INVASION)
     if bestDesign:
         troopsPerBestShip = 5*(  list(bestDesign.parts).count("GT_TROOP_POD") )
     else:
         troopsPerBestShip=5 #may actually not have any troopers available, but this num will do for now
 
-    troopShipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION)
-    #numTroopShips = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(troopShipIDs))
-    myTroopShips = len(troopShipIDs) -queuedTroopShips 
-    troopShipsNeeded = math.ceil(opponentTroops/troopsPerBestShip) - myTroopShips # counting all my ships as if they're my best ships
-    milFleetEquiv= math.ceil( MilitaryAI.totMilRating /   curBestMilShipRating() )
-    troopShipsNeeded = min( troopShipsNeeded ,  math.floor( milFleetEquiv / 2) - myTroopShips)
-    
+    troopFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION)
+    numTroopPods =  sum([ FleetUtilsAI.countPartsFleetwide(fleetID,  ["GT_TROOP_POD"]) for fleetID in  FleetUtilsAI.extractFleetIDsWithoutMissionTypes(troopFleetIDs)])
+    troopShipsNeeded = math.ceil((opponentTroopPods - (numTroopPods+ queuedTroopPods ))/troopsPerBestShip)  
+    #milFleetEquiv= math.ceil( MilitaryAI.totMilRating /   curBestMilShipRating() )
+    #troopShipsNeeded = min( troopShipsNeeded ,  math.floor( milFleetEquiv / 2) - myTroopShips) # stale calcs to limit troops priority relative to current tot mil rating
+     
     invasionPriority = 20+ 200*max(0,  troopShipsNeeded )
 
     # print ""
     # print "Number of Troop Ships Without Missions: " + str(numTroopShips)
     # print "Number of Opponent Planets:             " + str(numOpponentPlanetIDs)
     # print "Priority for Troop Ships  :             " + str(invasionPriority)
+    print "Invasion Priority Calc:  Opponent TroopsPods: %d ,  my queued Pods: %d,  my fleet troop pods: %d  -- priority %d"%(opponentTroopPods,  queuedTroopPods,  numTroopPods,  invasionPriority)
 
     if invasionPriority < 0: return 0
 
@@ -239,7 +240,7 @@ def calculateMilitaryPriority():
 
     totalThreat = 0
     for sysStatus in foAI.foAIstate.systemStatus.values():
-        totalThreat += max(0, (sysStatus['fleetThreat'] + 0.5*sysStatus['planetThreat']  - 0.9*sysStatus['monsterThreat'])) #being safe; should never be neg since fleetThreat should include monsterThreat
+        totalThreat += max(0, (sysStatus.get('fleetThreat', 0) + sysStatus.get('planetThreat', 0)  - 0.7*sysStatus.get('monsterThreat', 0) + sysStatus.get('neighborThreat', 0)   )) #being safe; should never be neg since fleetThreat should include monsterThreat
     totalFleetRating = 0
     for fleetStatus in foAI.foAIstate.fleetStatus.values():
         totalFleetRating += fleetStatus['rating']
@@ -252,7 +253,7 @@ def calculateMilitaryPriority():
 
     # build one more military ship than military targeted systems
     #militaryPriority = 100 * ((numMilitaryTargetedSystemIDs +2) - numMilitaryShips) / (numMilitaryTargetedSystemIDs + 1)
-    militaryPriority = int( 30 + max(0,  10*((1.25*totalThreat  -  totalFleetRating ) / curShipRating)) )
+    militaryPriority = int( 40 + max(0,  15*((1.25*totalThreat  -  totalFleetRating ) / curShipRating)) )
     print "Military Priority Calc:  int( 30 + max(0,  10*((1.25*totalThreat(%d)  -  totalFleetRating(%d)  ) / curShipRating(%d)  )) ) = %d"%(totalThreat,  totalFleetRating,  curShipRating, militaryPriority)
     # print ""
     # print "Number of Military Ships Without Missions: " + str(numMilitaryShips)

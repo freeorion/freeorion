@@ -15,6 +15,8 @@
 #include "../util/OrderSet.h"
 
 #include <boost/timer.hpp>
+#include <boost/python/list.hpp>
+#include <boost/python/extract.hpp>
 
 #include <stdexcept>
 #include <string>
@@ -438,8 +440,8 @@ namespace AIInterface {
             Logger().errorStream() << "AIInterface::IssueColonizeOrder : no planet with passed planet_id";
             return 0;
         }
-        if (!planet->Unowned()) {
-            Logger().errorStream() << "AIInterface::IssueColonizeOrder : planet with passed planet_id "<<planet_id<<" is already owned or colonized";
+        if ((!planet->Unowned()) && !( planet->OwnedBy(empire_id) && planet->CurrentMeterValue(METER_POPULATION)==0)) {
+            Logger().errorStream() << "AIInterface::IssueColonizeOrder : planet with passed planet_id "<<planet_id<<" is already owned, or colonized by own empire";
             return 0;
         }
 
@@ -689,12 +691,17 @@ namespace AIInterface {
     }
 
     int IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
-                                   const std::string& hull, const std::vector<std::string>& parts,
+                                   const std::string& hull, boost::python::list partsList,
                                    const std::string& icon, const std::string& model)
     {
+        std::vector<std::string> parts;
+        int const numParts = boost::python::len(partsList);
         if (name.empty() || description.empty() || hull.empty()) {
             Logger().errorStream() << "AIInterface::IssueCreateShipDesignOrderOrder : passed an empty name, description, or hull.";
             return 0;
+        }
+        for (int i =0; i<numParts; i++){
+            parts.push_back( boost::python::extract<std::string>(partsList[i]) );
         }
         if (!ShipDesign::ValidDesign(hull, parts)) {
             Logger().errorStream() << "AIInterface::IssueCreateShipDesignOrderOrder : pass a hull and parts that do not make a valid ShipDesign";

@@ -71,6 +71,7 @@ def splitNewFleets():
     print "--------------------"
     # TODO: check length of fleets for losses  or do in AIstat.__cleanRoles
     knownFleets= foAIstate.getFleetRolesMap().keys()
+    foAIstate.newlySplitFleets.clear()
     splitableFleets=[]
     for fleetID in FleetUtilsAI.getEmpireFleetIDs(): 
         if fleetID  in  knownFleets: #not a new fleet
@@ -78,15 +79,20 @@ def splitNewFleets():
         else:
             splitableFleets.append(fleetID)
     if splitableFleets:
+        universe=fo.getUniverse()
         print ("splitting new fleets")
         for fleetID in splitableFleets:
-            print "\t splitting fleet ID %4d:"%fleetID
+            fleet = universe.getFleet(fleetID)
+            if not fleet:
+                print "Error splittting new fleets; resulting fleet ID %d  appears to not exist"%fleetID
+                continue
+            fleetLen = len(list(fleet.shipIDs))
+            if fleetLen ==1:
+                continue
             newFleets = FleetUtilsAI.splitFleet(fleetID) # try splitting fleet
+            print "\t from splitting fleet ID %4d  with %d ships, got %d new fleets:"%(fleetID,  fleetLen,  len(newFleets))
             # old fleet may have different role after split, later will be again identified
             #foAIstate.removeFleetRole(fleetID)  # in current system, orig new fleet will not yet have been assigned a role
-            for newID in newFleets:
-                fo.issueRenameOrder(newID,  "Fleet %5d"%newID) #to ease review of debugging logs
-                foAIstate.getFleetRole(newID) #and mission?
 
 def updateShipDesigns(): #
     "update ship design records"
@@ -118,6 +124,7 @@ def resumeLoadedGame(savedStateString):
     try:
         #loading saved state
         foAIstate = pickle.loads(savedStateString)
+        foAIstate.resumedGameCleanup()
     except:
         print "failed to parse saved state string"
         #assigning new state
@@ -141,7 +148,7 @@ def resumeLoadedGame(savedStateString):
         __timerFile=None
         ResourcesAI.resourceTimerFile  =None
         ResourcesAI.doResourceTiming = False
-        print "Error: exception triggered:  ",  traceback.format_exc()
+        print "Won't do timers: exception triggered:  ",  traceback.format_exc()
 
 # called when the game is about to be saved, to let the Python AI know it should save any AI state
 # information, such as plans or knowledge about the game from previous turns, in the state string so that

@@ -254,6 +254,13 @@ std::string ItemSpec::Dump() const {
     return retval;
 }
 
+bool operator==(const ItemSpec& lhs, const ItemSpec& rhs) {
+    return lhs.type == rhs.type &&
+    lhs.name == rhs.name;
+}
+
+bool operator!=(const ItemSpec& lhs, const ItemSpec& rhs)
+{ return !(lhs == rhs); }
 
 ///////////////////////////////////////////////////////////
 // TechManager                                           //

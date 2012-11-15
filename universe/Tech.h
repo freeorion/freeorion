@@ -161,6 +161,8 @@ struct ItemSpec {
     std::string        name;    ///< the exact item this is
 };
 
+bool operator==(const ItemSpec& lhs, const ItemSpec& rhs);
+bool operator!=(const ItemSpec& lhs, const ItemSpec& rhs);
 
 /** specifies a category of techs, with associated \a name, \a graphic (icon), and \a colour.*/
 struct TechCategory {
