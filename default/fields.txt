@@ -12,13 +12,20 @@ FieldType
                 MoveTowards speed = Source.StarlaneSpeed/1.4 x = UniverseCentreX y = UniverseCentreY
                 MoveInOrbit speed = Source.StarlaneSpeed/1.4 x = UniverseCentreX y = UniverseCentreY
 
-                SetSize Value - 0.3*Number condition = And [
+                SetSize Value - 0.3*(Count condition = And [
                     System
                     WithinDistance distance = 80 condition = Source
-                ]
+                ])
             ]
             
-        EffectsGroup
+        EffectsGroup    // affect stealth / detection of objects in storm
+            scope = WithinDistance distance = Source.Size condition = Source
+            effects = [
+                SetStealth Value - Target.DistanceToSource
+                SetDetection Value - Target.DistanceToSource
+            ]
+            
+        EffectsGroup    // dissipate when small
             scope = Source
             activation = Size high = 10
             effects = Destroy
