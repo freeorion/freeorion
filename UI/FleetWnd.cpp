@@ -669,11 +669,6 @@ void ShipDataPanel::Refresh() {
                 DamageIcon(), UserString("SHIP_DAMAGE_STAT_TITLE"),
                 UserString("SHIP_DAMAGE_STAT_MAIN")));
             it->second->SetBrowseInfoWnd(browse_wnd);
-        } else if (it->first == SPEED_STAT_STRING) {
-            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                SpeedIcon(), UserString("SHIP_SPEED_STAT_TITLE"),
-                UserString("SHIP_SPEED_STAT_MAIN")));
-            it->second->SetBrowseInfoWnd(browse_wnd);
         } else {
             MeterType meter_type = MeterTypeFromStatString(it->first);
             MeterType associated_meter_type = AssociatedMeterType(meter_type);
@@ -694,8 +689,6 @@ double ShipDataPanel::StatValue(const std::string& stat_name) const {
                 return design->Attack();
             else
                 return 0.0;
-        } else if (stat_name == SPEED_STAT_STRING) {
-            return ship->Speed();
         }
 
         MeterType meter_type = MeterTypeFromStatString(stat_name);
@@ -780,8 +773,8 @@ void ShipDataPanel::Init() {
 
     // meter stat icons
     std::vector<MeterType> meters;
-    meters.push_back(METER_STRUCTURE);  meters.push_back(METER_SHIELD); meters.push_back(METER_FUEL);
-    meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);
+    meters.push_back(METER_STRUCTURE);  meters.push_back(METER_SHIELD);     meters.push_back(METER_FUEL);
+    meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);    meters.push_back(METER_STARLANE_SPEED);
     for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
         StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                                 ClientUI::MeterIcon(*it), 0, 0, false);
@@ -789,14 +782,6 @@ void ShipDataPanel::Init() {
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
     }
-
-    // speed stat icon
-    icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                SpeedIcon(), 0, 0, false);
-    m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
-    AttachChild(icon);
-    icon->SetBrowseModeTime(tooltip_delay);
-
 
     // bookkeeping
     m_ship_connection = GG::Connect(ship->StateChangedSignal, &ShipDataPanel::Refresh, this);

@@ -115,7 +115,7 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
         icon_filename = "construction.png"; break;
     case METER_HAPPINESS:
     case METER_TARGET_HAPPINESS:
-        icon_filename = "happiness.png"; break;
+        icon_filename = "happiness.png";    break;
     case METER_STRUCTURE:
     case METER_MAX_STRUCTURE:
         icon_filename = "structure.png";    break;
@@ -139,6 +139,9 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
         icon_filename = "troops.png";       break;
     case METER_REBEL_TROOPS:
         icon_filename = "rebels.png";       break;
+    case METER_STARLANE_SPEED:
+    case METER_BATTLE_SPEED:
+        icon_filename = "speed.png";        break;
     default:
         break;
     }
