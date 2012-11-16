@@ -3707,7 +3707,7 @@ While not as efficient as fully self-directed citizens, Exobots can colonize oth
 SP_EXPERIMENTOR
 Experimentor
 SP_EXPERIMENTOR_DESC
-'''Percursor mad scientists
+'''Precursor mad scientists
 
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
@@ -3815,7 +3815,7 @@ SLOW_ROTATION_SPECIAL
 Very Slow Rotation
 
 SLOW_ROTATION_SPECIAL_DESC
-'''Construction on this planet is decreased by 20. Decreaases max Population by planet size; Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
+'''Construction on this planet is decreased by 20. Decreases max Population by planet size; Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
 
 This planet rotates about its axis very slowly, causing very long days and nights. Infrastructure growth and food production are reduced.'''
 
@@ -8170,10 +8170,10 @@ FOCUS_PROTECTION_LABEL
 
 # The following two are used in tech descriptions, and should be updated if PRODUCTION_PER_POP or PRODUCTION_PER_INFRA are changed in shared_macros.txt.
 POP_PER_PRODUCTION
-'''5'''
+5
 
 INFRA_PER_PRODUCTION
-'''8'''
+8
 
 
 #############################################################
