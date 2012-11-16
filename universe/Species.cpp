@@ -276,6 +276,13 @@ Species* SpeciesManager::GetSpecies(const std::string& name) {
     return it != m_species.end() ? it->second : 0;
 }
 
+int SpeciesManager::GetSpeciesID(const std::string& name) const {
+    iterator it = m_species.find(name);
+    if (it == m_species.end())
+        return -1;
+    return std::distance(m_species.begin(), it);
+}
+
 SpeciesManager& SpeciesManager::GetSpeciesManager() {
     static SpeciesManager manager;
     return manager;

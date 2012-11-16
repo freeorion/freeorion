@@ -4,6 +4,7 @@
 #include "Fleet.h"
 #include "Ship.h"
 #include "Planet.h"
+#include "Species.h"
 #include "System.h"
 #include "Field.h"
 #include "UniverseObject.h"
@@ -539,14 +540,25 @@ namespace ValueRef {
                 return ship->DesignID();
             else
                 return ShipDesign::INVALID_DESIGN_ID;
+        } else if (property_name == Species_name) {
+            if (const Planet* planet = universe_object_cast<const Planet*>(object))
+                return GetSpeciesManager().GetSpeciesID(planet->SpeciesName());
+            else if (const Ship* ship = universe_object_cast<const Ship*>(object))
+                return GetSpeciesManager().GetSpeciesID(ship->SpeciesName());
+            else
+                return -1;
         } else if (property_name == FleetID_name) {
             if (const Ship* ship = universe_object_cast<const Ship*>(object))
                 return ship->FleetID();
+            else if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
+                return fleet->ID();
             else
                 return INVALID_OBJECT_ID;
         } else if (property_name == PlanetID_name) {
             if (const Building* building = universe_object_cast<const Building*>(object))
                 return building->PlanetID();
+            else if (const Planet* planet = universe_object_cast<const Planet*>(object))
+                return planet->ID();
             else
                 return INVALID_OBJECT_ID;
         } else if (property_name == SystemID_name) {
