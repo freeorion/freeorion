@@ -6,8 +6,6 @@
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
 
-//#include <GG/ReportParseError.h>
-
 #include <boost/spirit/home/phoenix.hpp>
 
 
@@ -61,7 +59,6 @@ namespace {
             qi::_d_type _d;
             qi::_val_type _val;
             qi::eps_type eps;
-            //qi::lit_type lit;
             using phoenix::new_;
             using phoenix::push_back;
 
@@ -69,50 +66,6 @@ namespace {
                 =    '[' > +string_value_ref [ push_back(_val, _1) ] > ']'
                 |    string_value_ref [ push_back(_val, _1) ]
                 ;
-
-            //all
-            //    =    tok.All_ [ _val = new_<Condition::All>() ]
-            //    ;
-
-            //source
-            //    =    tok.Source_ [ _val = new_<Condition::Source>() ]
-            //    ;
-
-            //root_candidate
-            //    =    tok.RootCandidate_ [ _val = new_<Condition::RootCandidate>() ]
-            //    ;
-
-            //target
-            //    =    tok.Target_ [ _val = new_<Condition::Target>() ]
-            //    ;
-
-            //stationary
-            //    =    tok.Stationary_ [ _val = new_<Condition::Stationary>() ]
-            //    ;
-
-            //capital
-            //    =    tok.Capital_ [ _val = new_<Condition::Capital>() ]
-            //    ;
-
-            //monster
-            //    =    tok.Monster_ [ _val = new_<Condition::Monster>() ]
-            //    ;
-
-            //armed
-            //    =    tok.Armed_ [ _val = new_<Condition::Armed>() ]
-            //    ;
-
-            //owned_by
-            //    =    tok.OwnedBy_
-            //    >>  -(
-            //                parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _a = _1 ]
-            //            |   eps [ _a = AFFIL_SELF ]
-            //         )
-            //    >>   (
-            //                parse::label(Empire_name) >> int_value_ref [ _val = new_<Condition::EmpireAffiliation>(_1, _a) ]
-            //            |   eps [ _val = new_<Condition::EmpireAffiliation>(_a) ]
-            //         )
-            //    ;
 
             homeworld
                 =    (
@@ -238,34 +191,8 @@ namespace {
                     )
                 ;
 
-            //and_
-            //    =    tok.And_
-            //    >>   '[' >> parse::detail::condition_parser [ push_back(_a, _1) ] >> +parse::detail::condition_parser [ push_back(_a, _1) ] >> lit(']')
-            //            [ _val = new_<Condition::And>(_a) ]
-            //    ;
-
-            //or_
-            //    =    tok.Or_
-            //    >>   '[' >> parse::detail::condition_parser [ push_back(_a, _1) ] >> +parse::detail::condition_parser [ push_back(_a, _1) ] >> lit(']')
-            //            [ _val = new_<Condition::Or>(_a) ]
-            //    ;
-
-            //not_
-            //    =    tok.Not_
-            //    >>   parse::detail::condition_parser [ _val = new_<Condition::Not>(_1) ]
-            //    ;
-
             start
-                %=   /*all
-                |    source
-                |    root_candidate
-                |    target
-                |    stationary
-                |    capital
-                |    monster
-                |    armed
-                |    owned_by
-                |*/    homeworld
+                %=   homeworld
                 |    building
                 |    species
                 |    focus_type
@@ -276,21 +203,9 @@ namespace {
                 |    meter_value
                 |    ship_part_meter_value
                 |    empire_meter_value
-                //|    and_
-                //|    or_
-                //|    not_
                 ;
 
             string_ref_vec.name("sequence of string expressions");
-            //all.name("All");
-            //source.name("Source");
-            //root_candidate.name("RootCandidate");
-            //target.name("Target");
-            //stationary.name("Stationary");
-            //capital.name("Capital");
-            //monster.name("Monster");
-            //armed.name("Armed");
-            //owned_by.name("OwnedBy");  // TODO: Should this be renamed Affilated or similar?
             homeworld.name("Homeworld");
             building.name("Building");
             species.name("Species");
@@ -302,21 +217,9 @@ namespace {
             meter_value.name("MeterValue");
             ship_part_meter_value.name("ShipPartMeterValue");
             empire_meter_value.name("EmpireMeterValue");
-            //and_.name("And");
-            //or_.name("Or");
-            //not_.name("Not");
 
 #if DEBUG_CONDITION_PARSERS
             debug(string_ref_vec);
-            //debug(all);
-            //debug(source);
-            //debug(root_candidate);
-            //debug(target);
-            //debug(stationary);
-            //debug(capital);
-            //debug(monster);
-            //debug(armed);
-            //debug(owned_by);
             debug(homeworld);
             debug(building);
             debug(species);
@@ -328,9 +231,6 @@ namespace {
             debug(meter_value);
             debug(ship_part_meter_value);
             debug(empire_meter_value);
-            //debug(and_);
-            //debug(or_);
-            //debug(not_);
 #endif
         }
 
@@ -339,13 +239,6 @@ namespace {
             std::vector<const ValueRef::ValueRefBase<std::string>*> (),
             parse::skipper_type
         > string_ref_vec_rule;
-
-        //typedef boost::spirit::qi::rule<
-        //    parse::token_iterator,
-        //    Condition::ConditionBase* (),
-        //    qi::locals<EmpireAffiliationType>,
-        //    parse::skipper_type
-        //> owned_by_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -399,23 +292,7 @@ namespace {
             parse::skipper_type
         > planet_environment_rule;
 
-        //typedef boost::spirit::qi::rule<
-        //    parse::token_iterator,
-        //    Condition::ConditionBase* (),
-        //    qi::locals<std::vector<const Condition::ConditionBase*> >,
-        //    parse::skipper_type
-        //> and_or_rule;
-
         string_ref_vec_rule             string_ref_vec;
-        //parse::condition_parser_rule    all;
-        //parse::condition_parser_rule    source;
-        //parse::condition_parser_rule    root_candidate;
-        //parse::condition_parser_rule    target;
-        //parse::condition_parser_rule    stationary;
-        //parse::condition_parser_rule    capital;
-        //parse::condition_parser_rule    monster;
-        //parse::condition_parser_rule    armed;
-        //owned_by_rule                   owned_by;
         parse::condition_parser_rule    homeworld;
         building_rule                   building;
         parse::condition_parser_rule    species;
@@ -427,9 +304,6 @@ namespace {
         meter_value_rule                meter_value;
         meter_value_rule                ship_part_meter_value;
         empire_meter_value_rule         empire_meter_value;
-        //and_or_rule                     and_;
-        //and_or_rule                     or_;
-        //parse::condition_parser_rule    not_;
         parse::condition_parser_rule    start;
     };
 }

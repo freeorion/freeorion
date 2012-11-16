@@ -5,8 +5,6 @@
 #include "ValueRefParser.h"
 #include "../universe/Condition.h"
 
-//#include <GG/ReportParseError.h>
-
 #include <boost/spirit/home/phoenix.hpp>
 
 
