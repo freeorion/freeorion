@@ -797,7 +797,7 @@ MapWnd::MapWnd() :
     AttachChild(m_research_wasted);
 
     boost::shared_ptr<GG::Texture> wasted_ressource_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /"wasted_resource.png", false);
-    GG::SubTexture wasted_ressource_subtexture = GG::SubTexture::SubTexture(wasted_ressource_texture, GG::X(0), GG::Y(0), GG::X(32), GG::Y(32));
+    GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(wasted_ressource_texture, GG::X(0), GG::Y(0), GG::X(32), GG::Y(32));
 
     m_industry_wasted->SetUnpressedGraphic(wasted_ressource_subtexture);
     m_industry_wasted->SetPressedGraphic  (wasted_ressource_subtexture);
