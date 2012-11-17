@@ -47,7 +47,7 @@ ObjectMap& Objects() {
 #ifdef FREEORION_BUILD_SERVER
     return ServerApp::GetApp()->GetUniverse().Objects();
 #else
-    return ClientApp::GetApp()->GetUniverse().EmpireKnownObjects(ClientApp::GetApp()->EmpireID());
+    return ClientApp::GetApp()->GetUniverse().Objects();
 #endif
 }
 

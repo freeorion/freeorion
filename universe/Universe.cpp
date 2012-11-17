@@ -2242,12 +2242,7 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
         if (it == m_empire_latest_known_objects.end())
             return;                 // empire has no object knowledge, so there is nothing to send
 
-        // completely copy visible objects, rather than copying only the
-        // currently visible information as would be done with 
-        // objects.Copy as the empire's latest known objects map already
-        // contains only information known to the empire for which objects are
-        // being serialized.
-        objects.CompleteCopyVisible(it->second, encoding_empire);
+        objects.Copy(it->second);
     }
 }
 

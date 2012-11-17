@@ -1072,13 +1072,12 @@ namespace {
     }
 
     bool OwnedColonyShipsInSystem(int empire_id, int system_id) {
-        const ObjectMap& objects = GetUniverse().Objects();
-
         if (!GetSystem(system_id))
             return false;
 
-        std::vector<const Ship*> system_ships = objects.FindObjects<Ship>();
-        for (std::vector<const Ship*>::const_iterator it = system_ships.begin(); it != system_ships.end(); ++it) {
+        const ObjectMap& objects = Objects();
+        std::vector<const Ship*> ships = objects.FindObjects<Ship>();
+        for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
             const Ship* ship = *it;
             if (ship->SystemID() == system_id &&
                 ship->OwnedBy(empire_id) &&
@@ -1110,7 +1109,7 @@ int SidePanel::AutomaticallyChosenColonyShip(int target_planet_id) const {
 
     PlanetType target_planet_type = target_planet->Type();
 
-    const ObjectMap& objects = GetUniverse().Objects();
+    const ObjectMap& objects = Objects();
     std::vector<const Ship*> ships = objects.FindObjects<Ship>();
     std::vector<const Ship*> capable_and_available_colony_ships;
     capable_and_available_colony_ships.reserve(ships.size());
@@ -2203,15 +2202,14 @@ void SidePanel::RefreshImpl() {
 
     // get info with which to repopulate
     int app_empire_id = HumanClientApp::GetApp()->EmpireID();
-    const ObjectMap& objects = GetUniverse().EmpireKnownObjects(app_empire_id);
-    const System* system = objects.Object<const System>(s_system_id);
+    const System* system = GetSystem(s_system_id);
     // if no system object, there is nothing to populate with.  early abort.
     if (!system)
         return;
 
 
     // populate droplist of system names
-    std::vector<const System*> sys_vec = objects.FindObjects<const System>();
+    std::vector<const System*> sys_vec = Objects().FindObjects<const System>();
 
     int system_names_in_droplist = 0;
     for (unsigned int i = 0; i < sys_vec.size(); i++) {
@@ -2274,6 +2272,7 @@ void SidePanel::RefreshImpl() {
     // case it shouldn't be shown.
     const std::set<int>& destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(app_empire_id);
     std::vector<int> known_system_planet_ids;
+    const ObjectMap& objects = Objects();
     std::vector<const Planet*> all_planets = objects.FindObjects<Planet>();
     for (std::vector<const Planet*>::const_iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
         const Planet* planet = *it;

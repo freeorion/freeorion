@@ -4,6 +4,9 @@
 
 #include <GG/Button.h>
 
+#include "GLClientAndServerBuffer.h"
+
+class ShaderProgram;
 class Fleet;
 class FleetWnd;
 class UniverseObject;
@@ -48,12 +51,14 @@ protected:
 private:
     void Init(const std::vector<int>& fleet_IDs, SizeType size_type);
 
-    std::vector<int>                m_fleets;               ///< the fleets represented by this button
-    boost::shared_ptr<GG::Texture>  m_head_icon;            ///< icon texture representing type of fleet
-    boost::shared_ptr<GG::Texture>  m_size_icon;            ///< icon texture representing number of ships in fleet
-    boost::shared_ptr<GG::Texture>  m_selection_texture;    ///< texture shown to indicate button is selected
-    std::vector<double>             m_vertex_components;    ///< x and y componentes of vertices to use to render this fleet button, relative to centre of the button
-    bool                            m_selected;             ///< should this button render itself specially to show that it is selected?
+    static boost::shared_ptr<ShaderProgram> s_scanline_shader;
+
+    std::vector<int>                        m_fleets;           ///< the fleets represented by this button
+    boost::shared_ptr<GG::Texture>          m_head_icon;        ///< icon texture representing type of fleet
+    boost::shared_ptr<GG::Texture>          m_size_icon;        ///< icon texture representing number of ships in fleet
+    boost::shared_ptr<GG::Texture>          m_selection_texture;///< texture shown to indicate button is selected
+    std::vector<double>                     m_vertex_components;///< x and y componentes of vertices to use to render this fleet button, relative to centre of the button
+    bool                                    m_selected;         ///< should this button render itself specially to show that it is selected?
 };
 
 /* returns head icon for passed fleet at passed icon size */
