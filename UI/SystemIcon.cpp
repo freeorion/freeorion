@@ -55,13 +55,17 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    const ObjectMap& objects = GetUniverse().EmpireKnownObjects(client_empire_id);
-    const SpeciesManager& species_manager = GetSpeciesManager();
-    const EmpireManager& empire_manager = Empires();
-
     const System* system = GetSystem(system_id);
     if (!system)
         return;
+
+    const std::set<int>& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
+    if (known_destroyed_object_ids.find(system_id) != known_destroyed_object_ids.end())
+        return;
+
+    const ObjectMap& objects = Objects();
+    const SpeciesManager& species_manager = GetSpeciesManager();
+    const EmpireManager& empire_manager = Empires();
 
     // get system name
     const std::string& system_name = system->ApparentName(client_empire_id, blank_unexplored_and_none);
@@ -72,9 +76,14 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
     std::vector<const Planet*> system_planets;
     std::vector<const Planet*> planets = objects.FindObjects<Planet>();
-    for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it)
-        if ((*it)->SystemID() == system_id)
-            system_planets.push_back(*it);
+    for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
+        const Planet* planet = *it;
+        if (planet->SystemID() != system_id)
+            continue;
+        if (known_destroyed_object_ids.find(planet->ID()) != known_destroyed_object_ids.end())
+            continue;
+        system_planets.push_back(*it);
+    }
 
     std::set<int> owner_empire_ids;
     for (std::vector<const Planet*>::const_iterator it = system_planets.begin(); it != system_planets.end(); ++it) {
@@ -105,6 +114,8 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         if (!has_shipyard) {
             const std::set<int>& buildings = planet->Buildings();
             for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
+                if (known_destroyed_object_ids.find(*building_it) != known_destroyed_object_ids.end())
+                    continue;
                 const Building* building = objects.Object<Building>(*building_it);
                 if (!building)
                     continue;
