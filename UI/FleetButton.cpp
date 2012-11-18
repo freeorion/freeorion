@@ -384,7 +384,7 @@ void FleetButton::RenderUnpressed() {
         return;
 
     bool at_least_one_fleet_visible = false;
-    for (std::vector<int>::const_iterator it = m_fleets.cbegin(); it != m_fleets.cend(); ++it) {
+    for (std::vector<int>::const_iterator it = m_fleets.begin(); it != m_fleets.end(); ++it) {
         if (GetUniverse().GetObjectVisibilityByEmpire(*it, empire_id) >= VIS_BASIC_VISIBILITY) {
             at_least_one_fleet_visible = true;
             break;
