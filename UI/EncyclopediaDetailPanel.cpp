@@ -55,39 +55,39 @@ namespace {
         const Encyclopedia& encyclopedia = GetEncyclopedia();
         const Universe& universe = GetUniverse();
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-        const ObjectMap& objects = (client_empire_id != ALL_EMPIRES) ?
-            universe.EmpireKnownObjects(client_empire_id) :
-            universe.Objects();
+        const ObjectMap& objects = Objects();
+
+        std::multimap<std::string, std::string> sorted_entries_list;
 
         if (dir_name == "ENC_INDEX") {
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_PART") + "\n";
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_HULL") + "\n";
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_TECH") + "\n";
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING_TYPE") + "\n";
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIAL") + "\n";
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIES") + "\n";
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_EMPIRE") + "\n";
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_DESIGN") + "\n";
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP") + "\n";
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_MONSTER") + "\n";
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FLEET") + "\n";
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_PLANET") + "\n";
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING") + "\n";
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SYSTEM") + "\n";
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_PART"),      LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_PART") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_HULL"),      LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_HULL") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_TECH"),           LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_TECH") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_BUILDING_TYPE"),  LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING_TYPE") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SPECIAL"),        LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIAL") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SPECIES"),        LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIES") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_EMPIRE"),         LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_EMPIRE") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_DESIGN"),    LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_DESIGN") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP"),           LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_MONSTER"),        LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_MONSTER") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_FLEET"),          LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FLEET") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_PLANET"),         LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_PLANET") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_BUILDING"),       LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING") + "\n"));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_SYSTEM"),         LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SYSTEM") + "\n"));
 
             for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator it = encyclopedia.articles.begin();
                  it != encyclopedia.articles.end(); ++it)
-            { retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, it->first) + "\n"; }
+            { sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, it->first) + "\n")); }
 
         } else if (dir_name == "ENC_SHIP_PART") {
             const PartTypeManager& part_type_manager = GetPartTypeManager();
             for (PartTypeManager::iterator it = part_type_manager.begin(); it != part_type_manager.end(); ++it)
-                retval += LinkTaggedText(VarText::SHIP_PART_TAG, it->first) + "\n";
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(VarText::SHIP_PART_TAG, it->first) + "\n"));
 
         } else if (dir_name == "ENC_SHIP_HULL") {
             const HullTypeManager& hull_type_manager = GetHullTypeManager();
             for (HullTypeManager::iterator it = hull_type_manager.begin(); it != hull_type_manager.end(); ++it)
-                retval += LinkTaggedText(VarText::SHIP_HULL_TAG, it->first) + "\n";
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(VarText::SHIP_HULL_TAG, it->first) + "\n"));
 
         } else if (dir_name == "ENC_TECH") {
             std::vector<std::string> tech_names = GetTechManager().TechNames();
@@ -96,37 +96,40 @@ namespace {
             for (std::vector<std::string>::const_iterator it = tech_names.begin(); it != tech_names.end(); ++it)
                 userstring_tech_names[UserString(*it)] = *it;
             for (std::map<std::string, std::string>::const_iterator it = userstring_tech_names.begin(); it != userstring_tech_names.end(); ++it)
-                retval += LinkTaggedText(VarText::TECH_TAG, it->second) + "\n";
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(VarText::TECH_TAG, it->second) + "\n"));
 
         } else if (dir_name == "ENC_BUILDING_TYPE") {
             const BuildingTypeManager& building_type_manager = GetBuildingTypeManager();
             for (BuildingTypeManager::iterator it = building_type_manager.begin(); it != building_type_manager.end(); ++it)
-                retval += LinkTaggedText(VarText::BUILDING_TYPE_TAG, it->first) + "\n";
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(VarText::BUILDING_TYPE_TAG, it->first) + "\n"));
 
         } else if (dir_name == "ENC_SPECIAL") {
             const std::vector<std::string> special_names = SpecialNames();
             for (std::vector<std::string>::const_iterator it = special_names.begin(); it != special_names.end(); ++it)
-                retval += LinkTaggedText(VarText::SPECIAL_TAG, *it) + "\n";
+                sorted_entries_list.insert(std::make_pair(UserString(*it),  LinkTaggedText(VarText::SPECIAL_TAG, *it) + "\n"));
 
         } else if (dir_name == "ENC_SPECIES") {
             const SpeciesManager& species_manager = GetSpeciesManager();
             for (SpeciesManager::iterator it = species_manager.begin(); it != species_manager.end(); ++it)
-                retval += LinkTaggedText(VarText::SPECIES_TAG, it->first) + "\n";
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),  LinkTaggedText(VarText::SPECIES_TAG, it->first) + "\n"));
 
         } else if (dir_name == "ENC_EMPIRE") {
             const EmpireManager& empire_manager = Empires();
             for (EmpireManager::const_iterator it = empire_manager.begin(); it != empire_manager.end(); ++it)
-                retval += LinkTaggedIDText(VarText::EMPIRE_ID_TAG, it->first, it->second->Name()) + "\n";
+                sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),  LinkTaggedIDText(VarText::EMPIRE_ID_TAG, it->first, it->second->Name()) + "\n"));
 
         } else if (dir_name == "ENC_SHIP_DESIGN") {
             for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it)
                 if (!it->second->IsMonster())
-                    retval += LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n";
+                    sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),  LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n"));
 
         } else if (dir_name == "ENC_SHIP") {
             std::vector<const Ship*> ships = objects.FindObjects<Ship>();
-            for (std::vector<const Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it)
-                retval += LinkTaggedIDText(VarText::SHIP_ID_TAG, (*ship_it)->ID(), (*ship_it)->Name()) + "  ";
+            for (std::vector<const Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+                const Ship* ship = *ship_it;
+                const std::string& ship_name = ship->PublicName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(ship_name,  LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  "));
+            }
 
         } else if (dir_name == "ENC_MONSTER") {
             // monster objects
@@ -137,8 +140,11 @@ namespace {
                     monsters.push_back(*ship_it);
             if (!monsters.empty()) {
                 retval += UserString("MONSTER_OBJECTS");
-                for (std::vector<const Ship*>::const_iterator ship_it = monsters.begin(); ship_it != monsters.end(); ++ship_it)
-                    retval += LinkTaggedIDText(VarText::SHIP_ID_TAG, (*ship_it)->ID(), (*ship_it)->Name()) + "  ";
+                for (std::vector<const Ship*>::const_iterator ship_it = monsters.begin(); ship_it != monsters.end(); ++ship_it) {
+                    const Ship* ship = *ship_it;
+                    const std::string& ship_name = ship->PublicName(client_empire_id);
+                    retval += LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  ";
+                }
             } else {
                 retval += UserString("NO_MONSTER_OBJECTS");
             }
@@ -147,29 +153,38 @@ namespace {
             retval += "\n\n" + UserString("MONSTER_TYPES") + "\n";
             for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it)
                 if (it->second->IsMonster())
-                    retval += LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n";
+                    sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),  LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n"));
 
         } else if (dir_name == "ENC_FLEET") {
             std::vector<const Fleet*> fleets = objects.FindObjects<Fleet>();
-            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
-                retval += LinkTaggedIDText(VarText::FLEET_ID_TAG, (*fleet_it)->ID(), (*fleet_it)->PublicName(client_empire_id)) + "  ";
+            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
+                const Fleet* fleet = *fleet_it;
+                const std::string& flt_name = fleet->PublicName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(flt_name,  LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), flt_name) + "  "));
+            }
 
         } else if (dir_name == "ENC_PLANET") {
             std::vector<const Planet*> planets = objects.FindObjects<Planet>();
-            for (std::vector<const Planet*>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it)
-                retval += LinkTaggedIDText(VarText::PLANET_ID_TAG, (*planet_it)->ID(), (*planet_it)->PublicName(client_empire_id)) + "  ";
+            for (std::vector<const Planet*>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
+                const Planet* planet = *planet_it;
+                const std::string& plt_name = planet->PublicName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(plt_name,  LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), plt_name) + "  "));
+            }
 
         } else if (dir_name == "ENC_BUILDING") {
             std::vector<const Building*> buildings = objects.FindObjects<Building>();
-            for (std::vector<const Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it)
-                retval += LinkTaggedIDText(VarText::BUILDING_ID_TAG, (*building_it)->ID(), (*building_it)->PublicName(client_empire_id)) + "  ";
+            for (std::vector<const Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
+                const Building* building = *building_it;
+                const std::string& bld_name = building->PublicName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(bld_name,  LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), bld_name) + "  "));
+            }
 
         } else if (dir_name == "ENC_SYSTEM") {
             std::vector<const System*> systems = objects.FindObjects<System>();
             for (std::vector<const System*>::const_iterator system_it = systems.begin(); system_it != systems.end(); ++system_it) {
                 const System* system = *system_it;
-                std::string sys_name = system->ApparentName(client_empire_id);
-                retval += LinkTaggedIDText(VarText::SYSTEM_ID_TAG, (*system_it)->ID(), sys_name) + "  ";
+                const std::string& sys_name = system->ApparentName(client_empire_id);
+                sorted_entries_list.insert(std::make_pair(sys_name,  LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name) + "  "));
             }
 
         } else {
@@ -179,9 +194,15 @@ namespace {
                 const std::vector<EncyclopediaArticle>& articles = category_it->second;
                 for (std::vector<EncyclopediaArticle>::const_iterator article_it = articles.begin();
                      article_it != articles.end(); ++article_it)
-                { retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, article_it->name) + "\n"; }
+                { sorted_entries_list.insert(std::make_pair(UserString(article_it->name),  LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, article_it->name) + "\n")); }
             }
         }
+
+        // add sorted entries
+        for (std::multimap<std::string, std::string>::const_iterator it = sorted_entries_list.begin();
+             it != sorted_entries_list.end(); ++it)
+        { retval += it->second; }
+
         return retval;
     }
 }
