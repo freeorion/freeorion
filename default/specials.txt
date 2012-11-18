@@ -878,11 +878,61 @@ Special
         EffectsGroup
             scope = Source
             effects = [
-                SetOverlayTexture name = "stars/nova-boom3.png" size = 100
+                SetOverlayTexture name = "stars/nova-boom3.png" size = 50
+                SetStealth Value - 1000     // should be visible from afar...
                 RemoveSpecial "NOVA_BOMB_ACTIVATOR_SPECIAL"
+                RemoveSpecial "SUPERNOVA_SPECIAL"
+                AddSpecial    "SUPERNOVA_SPECIAL2"
             ]
     graphic = ""
 
+Special
+    name = "SUPERNOVA_SPECIAL2"
+    description = "SUPERNOVA_SPECIAL_DESC"
+    spawnrate = 0
+    spawnlimit = 0
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetOverlayTexture name = "stars/nova-boom3.png" size = 80
+                SetStealth Value - 1000     // should be visible from afar...
+                RemoveSpecial "SUPERNOVA_SPECIAL2"
+                AddSpecial    "SUPERNOVA_SPECIAL3"
+            ]
+    graphic = ""
+
+Special
+    name = "SUPERNOVA_SPECIAL3"
+    description = "SUPERNOVA_SPECIAL_DESC"
+    spawnrate = 0
+    spawnlimit = 0
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetOverlayTexture name = "stars/nova-boom3.png" size = 110
+                SetStealth Value - 1000     // should be visible from afar...
+                RemoveSpecial "SUPERNOVA_SPECIAL3"
+                AddSpecial    "SUPERNOVA_SPECIAL4"
+            ]
+    graphic = ""
+
+Special
+    name = "SUPERNOVA_SPECIAL4"
+    description = "SUPERNOVA_SPECIAL_DESC"
+    spawnrate = 0
+    spawnlimit = 0
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetOverlayTexture name = "stars/nova-boom3.png" size = 140
+                SetStealth Value - 1000     // should be visible from afar...
+                RemoveSpecial "SUPERNOVA_SPECIAL4"
+            ]
+    graphic = ""
+    
 Special
     name = "NOVA_BOMB_ACTIVATOR_SPECIAL"
     description = "NOVA_BOMB_ACTIVATOR_SPECIAL_DESC"
