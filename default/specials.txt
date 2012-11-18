@@ -884,7 +884,7 @@ Special
                 RemoveSpecial "SUPERNOVA_SPECIAL"
                 AddSpecial    "SUPERNOVA_SPECIAL2"
             ]
-    graphic = ""
+    graphic = "icons/specials_huge/nova_boom.png"
 
 Special
     name = "SUPERNOVA_SPECIAL2"
@@ -900,7 +900,7 @@ Special
                 RemoveSpecial "SUPERNOVA_SPECIAL2"
                 AddSpecial    "SUPERNOVA_SPECIAL3"
             ]
-    graphic = ""
+    graphic = "icons/specials_huge/nova_boom.png"
 
 Special
     name = "SUPERNOVA_SPECIAL3"
@@ -916,7 +916,7 @@ Special
                 RemoveSpecial "SUPERNOVA_SPECIAL3"
                 AddSpecial    "SUPERNOVA_SPECIAL4"
             ]
-    graphic = ""
+    graphic = "icons/specials_huge/nova_boom.png"
 
 Special
     name = "SUPERNOVA_SPECIAL4"
@@ -931,14 +931,14 @@ Special
                 SetStealth Value - 1000     // should be visible from afar...
                 RemoveSpecial "SUPERNOVA_SPECIAL4"
             ]
-    graphic = ""
+    graphic = "icons/specials_huge/nova_boom.png"
     
 Special
     name = "NOVA_BOMB_ACTIVATOR_SPECIAL"
     description = "NOVA_BOMB_ACTIVATOR_SPECIAL_DESC"
     spawnrate = 0
     spawnlimit = 0
-    graphic = ""
+    graphic = "icons/specials_huge/nova_boom.png"
 
 /*
 Special
