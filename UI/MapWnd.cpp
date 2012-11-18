@@ -1929,8 +1929,6 @@ void MapWnd::InitTurnRendering() {
             ShaderProgram::shaderProgramFactory("", shader_text));
     }
 
-    const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
-
     // adjust size of map window for universe and application size
     Resize(GG::Pt(static_cast<GG::X>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
                   static_cast<GG::Y>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppHeight() * 1.5)));
@@ -1948,7 +1946,7 @@ void MapWnd::InitTurnRendering() {
 
 
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-
+    const ObjectMap& objects = Objects();
 
     // remove old system icons
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
@@ -1956,19 +1954,20 @@ void MapWnd::InitTurnRendering() {
     m_system_icons.clear();
 
     // create system icons
-    std::vector<const System*> systems = known_objects.FindObjects<System>();
-    for (unsigned int i = 0; i < systems.size(); ++i) {
-        const System* system = systems[i];
+    std::vector<const System*> systems = objects.FindObjects<System>();
+    for (std::vector<const System*>::const_iterator sys_it = systems.begin(); sys_it != systems.end(); ++sys_it) {
+        const System* sys = *sys_it;
+        int sys_id = sys->ID();
 
         // skip known destroyed objects
-        if (this_client_known_destroyed_objects.find(system->ID()) != this_client_known_destroyed_objects.end())
+        if (this_client_known_destroyed_objects.find(sys_id) != this_client_known_destroyed_objects.end())
             continue;
 
         // create new system icon
-        SystemIcon* icon = new SystemIcon(GG::X0, GG::Y0, GG::X(10), system->ID());
-        m_system_icons[system->ID()] = icon;
+        SystemIcon* icon = new SystemIcon(GG::X0, GG::Y0, GG::X(10), sys_id);
+        m_system_icons[sys_id] = icon;
         icon->InstallEventFilter(this);
-        if (SidePanel::SystemID() == systems[i]->ID())
+        if (SidePanel::SystemID() == sys_id)
             icon->SetSelected(true);
         AttachChild(icon);
 
@@ -1994,19 +1993,20 @@ void MapWnd::InitTurnRendering() {
     m_field_icons.clear();
 
     // create field icons
-    std::vector<const Field*> fields = known_objects.FindObjects<Field>();
-    for (unsigned int i = 0; i < fields.size(); ++i) {
-        const Field* field = fields[i];
+    std::vector<const Field*> fields = objects.FindObjects<Field>();
+    for (std::vector<const Field*>::const_iterator fld_it = fields.begin(); fld_it != fields.end(); ++fld_it) {
+        const Field* field = *fld_it;
+        int fld_id = field->ID();
 
         // skip known destroyed objects
-        if (this_client_known_destroyed_objects.find(field->ID()) != this_client_known_destroyed_objects.end())
+        if (this_client_known_destroyed_objects.find(fld_id) != this_client_known_destroyed_objects.end())
             continue;
         if (field->GetVisibility(HumanClientApp::GetApp()->EmpireID()) <= VIS_NO_VISIBILITY)
             continue;
 
         // create new system icon
-        FieldIcon* icon = new FieldIcon(GG::X0, GG::Y0, field->ID());
-        m_field_icons[field->ID()] = icon;
+        FieldIcon* icon = new FieldIcon(GG::X0, GG::Y0, fld_id);
+        m_field_icons[fld_id] = icon;
         icon->InstallEventFilter(this);
         //if (SidePanel::SystemID() == systems[i]->ID())
         //    icon->SetSelected(true);
@@ -2229,9 +2229,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
-    ObjectMap objMap = HumanClientApp::GetApp()->GetUniverse().EmpireKnownObjects(empire_id);
+
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-    Empire* thisEmpire = Empires().Lookup(empire_id);
+    Empire* this_client_empire = Empires().Lookup(empire_id);
     std::set<int> underAllocResSys;
 
     std::map<std::set<int>, std::set<int> > resPoolSystems;//map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
@@ -2241,29 +2241,33 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     std::map<int, std::set<int> > memberToPool;
     std::set<int> underAllocResGrpCoreMembers;
 
-    if (thisEmpire) {
-        const std::set<std::set<int> >& resGroups = thisEmpire->ResourceSupplyGroups();
-        const ProductionQueue& queue = thisEmpire->GetProductionQueue();
+    if (this_client_empire) {
+        const std::set<std::set<int> >& resGroups = this_client_empire->ResourceSupplyGroups();
+        const ProductionQueue& queue = this_client_empire->GetProductionQueue();
         std::map<std::set<int>, double> allocatedPP(queue.AllocatedPP());
-        std::map<std::set<int>, double> availablePP(thisEmpire->GetResourcePool(RE_INDUSTRY)->Available() );
+        std::map<std::set<int>, double> availablePP(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
+
         for (std::map<std::set<int>, double>::const_iterator it = availablePP.begin(); it != availablePP.end(); ++it) {
+            double group_pp = it->second;
+            if (group_pp < 1e-4)
+                continue;
+
             std::string thisPool = "( ";
             for (std::set<int>::const_iterator objIt = it->first.begin(); objIt != it->first.end(); ++objIt) {
-                //Logger().debugStream() << "Empire " << empire_id << "; Object (" << *objIt << ") is named " << objMap.Object(*objIt)->Name();
-                thisPool += boost::lexical_cast<std::string>(*objIt) +", ";
-                int sysID = objMap.Object(*objIt)->SystemID();
-                if ( (sysID != -1) ) {
-                    std::vector<int> planetIDs = universe_object_cast<System*>(objMap.Object(sysID))->FindObjectIDs<Planet>();
-                    std::set<int> planetSet(planetIDs.begin(), planetIDs.end() );
-                    if (planetSet.find(*objIt) != planetSet.end()) { // currently only wanting systems containing a planetary resGrp member, not ship members
-                        if (it->second > 1e-4) {
-                            resPoolSystems[it->first].insert(sysID);
-                            m_resourceCenters.insert(sysID );
-                            if ( ( it->second > allocatedPP[it->first] + 1e-4 ))
-                                underAllocResSys.insert(sysID );
-                        }
-                    }
-                }
+                int object_id = *objIt;
+                thisPool += boost::lexical_cast<std::string>(object_id) +", ";
+
+                const Planet* planet = GetPlanet(object_id);
+                if (!planet)
+                    continue;
+
+                //Logger().debugStream() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
+
+                int system_id = planet->SystemID();
+                resPoolSystems[it->first].insert(system_id);
+                m_resourceCenters.insert(system_id);
+                if (group_pp > allocatedPP[it->first] + 1e-4)
+                    underAllocResSys.insert(system_id);
             }
             thisPool += ")";
             //Logger().debugStream() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << thisPool << ") has (" << it->second << " PP available";
@@ -2286,7 +2290,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         }//TODO: could add double checking that pool was successfully linked to a group, but *shouldn't* be necessary I think
         //Logger().debugStream() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 2";
 
-        std::set<std::pair<int, int> > resource_supply_lanes (thisEmpire->SupplyStarlaneTraversals()) ;
+        std::set<std::pair<int, int> > resource_supply_lanes (this_client_empire->SupplyStarlaneTraversals()) ;
         for (std::map<std::set<int>, std::set<int> >::iterator resPoolSysIt = resPoolSystems.begin(); resPoolSysIt != resPoolSystems.end(); resPoolSysIt++){
             std::string thisPoolCtrs = "( ";
             for (std::set<int>::iterator startSys=resPoolSysIt->second.begin(); startSys != resPoolSysIt->second.end(); startSys++) 
@@ -2302,7 +2306,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 std::set<int>::iterator nextSys = startSys;
                 for (std::set<int>::iterator endSys=++nextSys; endSys!=resPoolSysIt->second.end(); endSys++) {
                     //Logger().debugStream() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*startSys) << " to "<< (*endSys) ;
-                    std::vector<int> path = GetLeastJumps(*startSys, *endSys, resPoolToGroupMap[resPoolSysIt->first], resource_supply_lanes, objMap);
+                    std::vector<int> path = GetLeastJumps(*startSys, *endSys, resPoolToGroupMap[resPoolSysIt->first], resource_supply_lanes, Objects());
                     int plen = path.size();
                     //Logger().debugStream() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< plen ;
                     for (std::vector<int>::iterator pathSys= path.begin(); pathSys!= path.end(); pathSys++) {
@@ -2331,7 +2335,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
             continue;
 
-        const System* start_system = GetEmpireKnownSystem(system_id, empire_id);
+        const System* start_system = GetSystem(system_id);
         if (!start_system) {
             Logger().errorStream() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -2348,7 +2352,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
                 continue;
 
-            const System* dest_system = GetEmpireKnownSystem(lane_it->first, empire_id);
+            const System* dest_system = GetSystem(lane_it->first);
             if (!dest_system)
                 continue;
             //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
@@ -2420,32 +2424,32 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 //std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
                 LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
                 GG::Clr lane_colour;
-                if ( (thisEmpire) &&(resGrpCoreMembers.find(start_system->ID()) != resGrpCoreMembers.end()))  {//start system is a res Grp core member for thisEmpire -- highlight
-                    lane_colour = thisEmpire->Color();
-                    float indicatorExtent = 0.5;
+                if ( (this_client_empire) &&(resGrpCoreMembers.find(start_system->ID()) != resGrpCoreMembers.end()))  {//start system is a res Grp core member for this_client_empire -- highlight
+                    lane_colour = this_client_empire->Color();
+                    float indicatorExtent = 0.5f;
                     if (underAllocResGrpCoreMembers.find(start_system->ID()) != underAllocResGrpCoreMembers.end() ) {
-                        GG::Clr eclr= thisEmpire->Color();
+                        GG::Clr eclr= this_client_empire->Color();
                         lane_colour = GG::DarkColor( GG::Clr(255-eclr.r, 255-eclr.g, 255-eclr.b, eclr.a));
                     }
-                    /*if ((thisEmpire->SupplyOstructedStarlaneTraversals().find(lane_forward) != thisEmpire->SupplyOstructedStarlaneTraversals().end()) ||
-                        (thisEmpire->SupplyOstructedStarlaneTraversals().find(lane_backward) != thisEmpire->SupplyOstructedStarlaneTraversals().end()) ||
-                        !( (thisEmpire->SupplyStarlaneTraversals().find(lane_forward) != thisEmpire->SupplyStarlaneTraversals().end()) ||
-                        (thisEmpire->SupplyStarlaneTraversals().find(lane_backward) != thisEmpire->SupplyStarlaneTraversals().end())   )  ) */
+                    /*if ((this_client_empire->SupplyOstructedStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyOstructedStarlaneTraversals().end()) ||
+                        (this_client_empire->SupplyOstructedStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyOstructedStarlaneTraversals().end()) ||
+                        !( (this_client_empire->SupplyStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyStarlaneTraversals().end()) ||
+                        (this_client_empire->SupplyStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyStarlaneTraversals().end())   )  ) */
                     if (resGroupCores[ memberToPool[start_system->ID()]] != resGroupCores[ memberToPool[dest_system->ID()]])
                         indicatorExtent = 0.2f;
                     m_RC_starlane_vertices.store(lane_endpoints.X1,
-                                                lane_endpoints.Y1);
+                                                 lane_endpoints.Y1);
                     m_RC_starlane_vertices.store((lane_endpoints.X2 - lane_endpoints.X1) * indicatorExtent + lane_endpoints.X1,   // part way along starlane
-                                                        (lane_endpoints.Y2 - lane_endpoints.Y1) * indicatorExtent + lane_endpoints.Y1);
+                                                 (lane_endpoints.Y2 - lane_endpoints.Y1) * indicatorExtent + lane_endpoints.Y1);
 
                     m_RC_starlane_colors.store(lane_colour.r,
-                                            lane_colour.g,
-                                            lane_colour.b,
-                                            lane_colour.a);
+                                               lane_colour.g,
+                                               lane_colour.b,
+                                               lane_colour.a);
                     m_RC_starlane_colors.store(lane_colour.r,
-                                            lane_colour.g,
-                                            lane_colour.b,
-                                            lane_colour.a);
+                                               lane_colour.g,
+                                               lane_colour.b,
+                                               lane_colour.a);
                 }
 
                 for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
