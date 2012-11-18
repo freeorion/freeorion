@@ -36,18 +36,12 @@ const std::string& StringTable_::operator[] (const std::string& index) const {
     return it == m_strings.end() ? error_retval = S_ERROR_STRING + index : it->second;
 }
 
-void StringTable_::Load() {
-#ifndef FREEORION_WIN32
-    std::ifstream ifs(m_filename.c_str());
-#else
-    boost::filesystem::path::string_type native_filename;
-    utf8::utf8to16(m_filename.begin(), m_filename.end(), std::back_inserter(native_filename));
-    boost::filesystem::path path(native_filename);
-    boost::filesystem::ifstream ifs(path);
-#endif
-    std::string file_contents;
+namespace {
+    bool read_file(const boost::filesystem::path& path, std::string& file_contents) {
+        boost::filesystem::ifstream ifs(path);
+        if (!ifs)
+            return false;
 
-    if (ifs) {
         // skip byte order mark (BOM)
         static const int UTF8_BOM[3] = {0x00EF, 0x00BB, 0x00BF};
         for (int i = 0; i < 3; i++) {
@@ -59,11 +53,27 @@ void StringTable_::Load() {
             }
         }
 
-        int c;
-        while ((c = ifs.get()) != std::ifstream::traits_type::eof())
-            file_contents += c;
-    } else {
-        Logger().errorStream() << "Could not open or read StringTable file \"" << m_filename << "\"";
+        std::getline(ifs, file_contents, '\0');
+
+        // no problems?
+        return true;
+    }
+}
+
+
+void StringTable_::Load() {
+#ifndef FREEORION_WIN32
+    boost::filesystem::path path(m_filename);
+#else
+    boost::filesystem::path::string_type native_filename;
+    utf8::utf8to16(m_filename.begin(), m_filename.end(), std::back_inserter(native_filename));
+    boost::filesystem::path path(native_filename);
+#endif
+    std::string file_contents;
+
+    bool read_success = read_file(path, file_contents);
+    if (!read_success) {
+        Logger().errorStream() << "StringTable_::Load failed to read file at path: " << path.string();
         return;
     }
 

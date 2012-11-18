@@ -347,9 +347,7 @@ namespace parse {
         // text with the macro text corresponding to MACRO_KEY.
         for (std::map<std::string, std::string>::iterator macro_it = macros.begin();
              macro_it != macros.end(); ++macro_it)
-        {
-            replace_macro_references(macro_it->second, macros);
-        }
+        { replace_macro_references(macro_it->second, macros); }
 
         // substitute macro keys - replace [[MACRO_KEY]] in the input text with
         // the macro text corresponding to MACRO_KEY
