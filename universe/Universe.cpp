@@ -2268,26 +2268,6 @@ void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_k
         }
         return;
     }
-
-    // copy just encoding_empire's known objects
-    EmpireObjectMap::const_iterator it = m_empire_latest_known_objects.find(encoding_empire);
-    if (it != m_empire_latest_known_objects.end()) {
-        const ObjectMap& map = it->second;
-
-        //Logger().debugStream() << "empire " << encoding_empire << " latest known map initial: ";
-        //for (ObjectMap::const_iterator oit = map.const_begin(); oit != map.const_end(); ++oit)
-        //    Logger().debugStream() << oit->second->TypeName() << "(" << oit->second->ID() << ")";
-
-        empire_latest_known_objects[encoding_empire].Copy(map, ALL_EMPIRES);
-
-        //Logger().debugStream() << "empire " << encoding_empire << " latest known map after copying: ";
-        //for (ObjectMap::const_iterator oit = map.const_begin(); oit != map.const_end(); ++oit)
-        //    Logger().debugStream() << oit->second->TypeName() << "(" << oit->second->ID() << ")";
-
-        //Logger().debugStream() << "empire_latest_known_objects[" << encoding_empire << "] after copying: ";
-        //for (ObjectMap::const_iterator oit = empire_latest_known_objects[encoding_empire].const_begin(); oit != empire_latest_known_objects[encoding_empire].const_end(); ++oit)
-        //    Logger().debugStream() << oit->second->TypeName() << "(" << oit->second->ID() << ")";
-    }
 }
 
 void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire) const {
