@@ -1,16 +1,18 @@
 #include "FleetButton.h"
 
-#include "../util/AppInterface.h"
-#include "../universe/Fleet.h"
 #include "FleetWnd.h"
-#include "../client/human/HumanClientApp.h"
 #include "MapWnd.h"
 #include "Sound.h"
+#include "CUIDrawUtil.h"
+#include "ShaderProgram.h"
+#include "../util/AppInterface.h"
+#include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../client/human/HumanClientApp.h"
+#include "../universe/Fleet.h"
 #include "../universe/System.h" 
 #include "../Empire/Empire.h"
-#include "CUIDrawUtil.h"
 
 #include <GG/DrawUtil.h>
 
@@ -119,11 +121,15 @@ namespace {
         db.Add("UI.fleet-selection-indicator-size", "OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE", 1.625, RangedStepValidator<double>(0.125, 0.5, 5));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    const double TWO_PI = 2.0*3.14159;
 }
 
 ///////////////////////////
 // FleetButton
 ///////////////////////////
+boost::shared_ptr<ShaderProgram> FleetButton::s_scanline_shader;
+
 FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) :
     GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
@@ -151,6 +157,14 @@ FleetButton::FleetButton(int fleet_id, SizeType size_type) :
 }
 
 void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
+    if (!s_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
+        boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
+        std::string shader_text;
+        ReadFile(shader_path, shader_text);
+        s_scanline_shader = boost::shared_ptr<ShaderProgram>(
+            ShaderProgram::shaderProgramFactory("", shader_text));
+    }
+
     // get fleets
     std::vector<const Fleet*> fleets;
     for (std::vector<int>::const_iterator it = fleet_IDs.begin(); it != fleet_IDs.end(); ++it) {
@@ -362,6 +376,28 @@ void FleetButton::RenderUnpressed() {
         RenderTexturedQuad(vertsXY, m_head_icon);
         RenderTexturedQuad(vertsXY, m_size_icon);
     }
+
+
+    // Scanlines for not currently-visible objects?
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (!s_scanline_shader || empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+        return;
+
+    bool at_least_one_fleet_visible = false;
+    for (std::vector<int>::const_iterator it = m_fleets.cbegin(); it != m_fleets.cend(); ++it) {
+        if (GetUniverse().GetObjectVisibilityByEmpire(*it, empire_id) >= VIS_BASIC_VISIBILITY) {
+            at_least_one_fleet_visible = true;
+            break;
+        }
+    }
+    if (at_least_one_fleet_visible)
+        return;
+
+    float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
+    s_scanline_shader->Use();
+    s_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
+    CircleArc(ul, lr, 0.0, TWO_PI, true);
+    s_scanline_shader->stopUse();
 }
 
 void FleetButton::RenderPressed() {
