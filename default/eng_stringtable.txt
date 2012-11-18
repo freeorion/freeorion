@@ -3925,7 +3925,13 @@ DERELICT_SPECIAL_DESC
 An ancient, derelict ship from an unknown species. Who knows what it could reveal...
 
 SUPERNOVA_SPECIAL
-Supernova
+New Supernova
+SUPERNOVA_SPECIAL2
+Young Supernova
+SUPERNOVA_SPECIAL3
+Mature Supernova
+SUPERNOVA_SPECIAL4
+Supernova Remnant
 SUPERNOVA_SPECIAL_DESC
 A supernova occurred in this system in the relatively recent past, leaving only scattered debris where another majestic star system once lay.
 

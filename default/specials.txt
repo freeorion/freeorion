@@ -878,7 +878,7 @@ Special
         EffectsGroup
             scope = Source
             effects = [
-                SetOverlayTexture name = "stars/nova-boom3.png" size = 50
+                SetOverlayTexture name = "stars/nova-boom1.png" size = 120
                 SetStealth Value - 1000     // should be visible from afar...
                 RemoveSpecial "NOVA_BOMB_ACTIVATOR_SPECIAL"
                 RemoveSpecial "SUPERNOVA_SPECIAL"
@@ -895,7 +895,7 @@ Special
         EffectsGroup
             scope = Source
             effects = [
-                SetOverlayTexture name = "stars/nova-boom3.png" size = 80
+                SetOverlayTexture name = "stars/nova-boom2.png" size = 120
                 SetStealth Value - 1000     // should be visible from afar...
                 RemoveSpecial "SUPERNOVA_SPECIAL2"
                 AddSpecial    "SUPERNOVA_SPECIAL3"
@@ -911,7 +911,7 @@ Special
         EffectsGroup
             scope = Source
             effects = [
-                SetOverlayTexture name = "stars/nova-boom3.png" size = 110
+                SetOverlayTexture name = "stars/nova-boom3.png" size = 120
                 SetStealth Value - 1000     // should be visible from afar...
                 RemoveSpecial "SUPERNOVA_SPECIAL3"
                 AddSpecial    "SUPERNOVA_SPECIAL4"
@@ -927,7 +927,7 @@ Special
         EffectsGroup
             scope = Source
             effects = [
-                SetOverlayTexture name = "stars/nova-boom3.png" size = 140
+                SetOverlayTexture name = "stars/nova-boom4.png" size = 120
                 SetStealth Value - 1000     // should be visible from afar...
                 RemoveSpecial "SUPERNOVA_SPECIAL4"
             ]
