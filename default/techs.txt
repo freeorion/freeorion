@@ -1096,10 +1096,13 @@ Tech
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Planet type = Asteroids
-                OwnedBy TheEmpire Source.Owner
-                Planet
-                Population high = 0
+                ContainedBy Contains And [
+                    Planet type = Asteroids
+                    OwnedBy TheEmpire Source.Owner
+                    Planet
+                    Population high = 0
+                ]
+                Focus "FOCUS_INDUSTRY"
             ]
             effects = SetTargetIndustry Value + 5
     ]

@@ -30,6 +30,7 @@ Balancing:
  ~ Halved weapon damage and Hull structure doubled Armor and Shield part strength.  I think adding defences to ships is now valid.
  ~ Made Terraforming more expensive, and made it get more expensive for repeatedly terraforming the same planet.
  ~ Disable production of shipyards at outposts.
+ ~ Adjusted Microgravity Industry to "Increases Industry by +5 on all Industry-focused colonies in system with an asteroid belt outposts. Additional asteriod outposts do not provide additional benefit."
  
  Content:
   ~ More Game Concepts 'pedia entries.
