@@ -102,7 +102,7 @@ namespace {
                 ;
 
             start
-                %=   create_planet
+                =    create_planet
                 |    create_building
                 |    create_ship_1
                 |    create_ship_2

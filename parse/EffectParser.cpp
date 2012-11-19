@@ -10,7 +10,7 @@ namespace parse {
         static bool once = true;
         if (once) {
             detail::effect_parser
-                %=   detail::effect_parser_1()
+                =    detail::effect_parser_1()
                 |    detail::effect_parser_2()
                 |    detail::effect_parser_3()
                 |    detail::effect_parser_4()

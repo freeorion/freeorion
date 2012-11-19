@@ -435,9 +435,8 @@ const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
         return m_objects;
 
     EmpireObjectMap::const_iterator it = m_empire_latest_known_objects.find(empire_id);
-    if (it != m_empire_latest_known_objects.end()) {
+    if (it != m_empire_latest_known_objects.end())
         return it->second;
-    }
 
     static const ObjectMap const_empty_map;
     return const_empty_map;
