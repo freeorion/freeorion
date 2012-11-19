@@ -1369,7 +1369,7 @@ Hull
         Slot type = External position = (0.90, 0.85)
     ]
     buildCost = 20.0
-    buildTime = 5
+    buildTime = 10
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ENRG_COMP"
@@ -1408,7 +1408,7 @@ Hull
         Slot type = Internal position = (0.34, 0.75)
     ]
     buildCost = 7.5
-    buildTime = 10
+    buildTime = 5
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ENRG_COMP"
