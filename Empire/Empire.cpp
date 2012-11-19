@@ -1649,7 +1649,7 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
 
 void Empire::UpdateSystemSupplyRanges() {
     const Universe& universe = GetUniverse();
-    const ObjectMap& empire_known_objects = universe.EmpireKnownObjects(this->EmpireID());
+    const ObjectMap& empire_known_objects = EmpireKnownObjects(this->EmpireID());
 
     // get ids of objects partially or better visible to this empire.
     std::vector<int> known_objects_vec = empire_known_objects.FindObjectIDs();
@@ -1669,7 +1669,7 @@ void Empire::UpdateSupplyUnobstructedSystems() {
 
     // get ids of systems partially or better visible to this empire.
     // TODO: make a UniverseObjectVisitor for objects visible to an empire at a specified visibility or greater
-    std::vector<int> known_systems_vec = universe.EmpireKnownObjects(this->EmpireID()).FindObjectIDs<System>();
+    std::vector<int> known_systems_vec = EmpireKnownObjects(this->EmpireID()).FindObjectIDs<System>();
     const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     std::set<int> known_systems_set;
@@ -1985,7 +1985,7 @@ const std::map<int, std::set<int> > Empire::KnownStarlanes() const {
     const Universe& universe = GetUniverse();
 
     const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
-    std::vector<const System*> systems = universe.EmpireKnownObjects(this->EmpireID()).FindObjects<const System>();
+    std::vector<const System*> systems = EmpireKnownObjects(this->EmpireID()).FindObjects<const System>();
 
     for (std::vector<const System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
         const System* system = *it;

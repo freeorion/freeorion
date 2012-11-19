@@ -43,13 +43,20 @@ Universe& GetUniverse() {
 #endif
 }
 
-ObjectMap& Objects() {
+ObjectMap& Objects()
+{ return GetUniverse().Objects(); }
+
+ObjectMap& EmpireKnownObjects(int empire_id) {
 #ifdef FREEORION_BUILD_SERVER
-    return ServerApp::GetApp()->GetUniverse().Objects();
+    return GetUniverse().EmpireKnownObjects(empire_id);
 #else
-    return ClientApp::GetApp()->GetUniverse().Objects();
+    int client_empire_id = ClientApp::GetApp()->EmpireID();
+    if (empire_id == ALL_EMPIRES || empire_id == client_empire_id)
+        return Objects();
+    return GetUniverse().EmpireKnownObjects(empire_id); // should be empty as of this writing, as other empires' known objects aren't sent to clients
 #endif
 }
+
 
 UniverseObject* GetUniverseObject(int object_id) {
 #ifdef FREEORION_BUILD_SERVER
@@ -59,14 +66,14 @@ UniverseObject* GetUniverseObject(int object_id) {
     UniverseObject* obj = GetUniverse().Objects().Object(object_id);
     // if not up to date info, use latest known out of date info about object
     if (!obj)
-        obj = GetUniverse().EmpireKnownObjects(ClientApp::GetApp()->EmpireID()).Object(object_id);
+        obj = EmpireKnownObjects(ClientApp::GetApp()->EmpireID()).Object(object_id);
     return obj;
 #endif
 }
 
 UniverseObject* GetEmpireKnownObject(int object_id, int empire_id) {
 #ifdef FREEORION_BUILD_SERVER
-    return GetUniverse().EmpireKnownObjects(empire_id).Object(object_id);
+    return EmpireKnownObjects(empire_id).Object(object_id);
 #else
     return GetUniverseObject(object_id);// as of this writing, players don't have info about what other players know about objects
 #endif

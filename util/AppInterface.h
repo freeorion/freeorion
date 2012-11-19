@@ -29,6 +29,9 @@ Universe& GetUniverse();
 /** Accessor for all (on server) or all known (on client) objects ObjectMap */
 ObjectMap& Objects();
 
+/** Accessor for known objects of specified empire. */
+ObjectMap& EmpireKnownObjects(int empire_id);
+
 /** Accessor for individual objects.  These are all implemented as separate
   * functions to avoid needing template code in header, as the template code
   * also needs to have implementation-dependent #ifdef code in it which would
