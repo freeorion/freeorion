@@ -93,7 +93,7 @@ namespace {
     }
     boost::function<std::vector<int>(const Universe&, int, int, int)> LeastJumpsFunc =          &LeastJumpsPath;
 
-    bool             SystemsConnectedP(const Universe& universe, int system1_id, int system2_id, int empire_id=ALL_EMPIRES) {
+    bool                    SystemsConnectedP(const Universe& universe, int system1_id, int system2_id, int empire_id=ALL_EMPIRES) {
         //Logger().debugStream() << "SystemsConnected!(" << system1_id << ", " << system2_id << ")";
         try {
             bool retval = universe.SystemsConnected(system1_id, system2_id, empire_id);
@@ -105,7 +105,7 @@ namespace {
     }
     boost::function<bool(const Universe&, int, int, int)> SystemsConnectedFunc =                &SystemsConnectedP;
 
-    std::vector<int>   ImmediateNeighborsP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
+    std::vector<int>        ImmediateNeighborsP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
         std::multimap<double, int> lanemap;
         std::vector<int> retval;
         try {
@@ -119,7 +119,7 @@ namespace {
     }
     boost::function<std::vector<int> (const Universe&, int, int)> ImmediateNeighborsFunc =      &ImmediateNeighborsP;
 
-    std::map<int,double>   SystemNeighborsMapP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
+    std::map<int,double>    SystemNeighborsMapP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
         std::multimap<double, int> lanemap;
         std::map<int,double> retval;
         try {
@@ -133,7 +133,7 @@ namespace {
     }
     boost::function<std::map<int,double> (const Universe&, int, int)> SystemNeighborsMapFunc =      &SystemNeighborsMapP;
 
-    int   VisibilityP(const Universe& universe, int object_id, int empire_id = ALL_EMPIRES) {
+    int                     VisibilityP(const Universe& universe, int object_id, int empire_id = ALL_EMPIRES) {
         int retval;
         //std::vector<int> retval;
         try {
@@ -145,7 +145,7 @@ namespace {
     }
     boost::function<int (const Universe&, int, int)> VisibilityFunc =                           &VisibilityP;
 
-    std::vector<int>   VisibilityTurnsP(const Universe& universe, int object_id, int empire_id = ALL_EMPIRES) {
+    std::vector<int>        VisibilityTurnsP(const Universe& universe, int object_id, int empire_id = ALL_EMPIRES) {
         Universe::VisibilityTurnMap  vismap;
         std::vector<int> retval;
         //std::vector<int> retval;
@@ -166,7 +166,7 @@ namespace {
     const std::map<MeterType, Meter>&
                             (UniverseObject::*ObjectMeters)(void) const =                       &UniverseObject::Meters;
 
-    std::vector<std::string>    ObjectSpecials(const UniverseObject& object) {
+    std::vector<std::string> ObjectSpecials(const UniverseObject& object) {
         std::vector<std::string> retval;
         for (std::map<std::string, int>::const_iterator it = object.Specials().begin();
              it != object.Specials().end(); ++it)
@@ -236,9 +236,9 @@ namespace FreeOrionPython {
             .def(boost::python::map_indexing_suite<std::map<int, Visibility>,true >())
         ;
         class_<std::map<Visibility,int> >("VisibilityIntMap")
-            .def(boost::python::map_indexing_suite<std::map<Visibility,int>,true >())
+            .def(boost::python::map_indexing_suite<std::map<Visibility, int>, true>())
         ;
-        
+
         ////////////////////
         //    Universe    //
         ////////////////////
