@@ -382,7 +382,7 @@ private:
 
             // collect all valid tags on any object in universe
             std::set<std::string> all_tags;
-            const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
+            const ObjectMap& known_objects = Objects();
             for (ObjectMap::const_iterator obj_it = known_objects.const_begin();
                  obj_it != known_objects.const_end(); ++obj_it)
             {
@@ -936,11 +936,7 @@ public:
         std::size_t first_visible_queue_row = std::distance(this->begin(), this->FirstRowShown());
         ClearContents();
 
-        const ObjectMap& visible_objects = GetUniverse().Objects();
-        const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
-
-        std::set<int> already_filtered_objects;
-
+        const ObjectMap& objects = GetUniverse().Objects();
         bool nested = true;
 
         if (!nested) {
@@ -953,12 +949,11 @@ public:
             std::map<int, std::set<int> >   planet_buildings;
             std::set<int>                   fields;
 
-            for (ObjectMap::const_iterator it = visible_objects.const_begin(); it != visible_objects.const_end(); ++it) {
+            for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
                 int object_id = it->first;
-                already_filtered_objects.insert(object_id);
                 const UniverseObject* obj = it->second;
 
-                if (/*const System* system = */universe_object_cast<const System*>(obj)) {
+                if (universe_object_cast<const System*>(obj)) {
                     if (ObjectShown(object_id, OBJ_SYSTEM, true))
                         systems.insert(object_id);
 
@@ -983,38 +978,6 @@ public:
                         fields.insert(object_id);
                 }
             }
-            for (ObjectMap::const_iterator it = known_objects.const_begin(); it != known_objects.const_end(); ++it) {
-                int object_id = it->first;
-                if (already_filtered_objects.find(object_id) != already_filtered_objects.end())
-                    continue;
-                const UniverseObject* obj = it->second;
-
-                if (/*const System* system = */universe_object_cast<const System*>(obj)) {
-                    if (ObjectShown(object_id, OBJ_SYSTEM))
-                        systems.insert(object_id);
-
-                } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
-                    if (ObjectShown(object_id, OBJ_FLEET))
-                        system_fleets[fleet->SystemID()].insert(object_id);
-
-                } else if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
-                    if (ObjectShown(object_id, OBJ_SHIP))
-                        fleet_ships[ship->FleetID()].insert(object_id);
-
-                } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
-                    if (ObjectShown(object_id, OBJ_PLANET))
-                        system_planets[planet->SystemID()].insert(object_id);
-
-                } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
-                    if (ObjectShown(object_id, OBJ_BUILDING))
-                        planet_buildings[building->PlanetID()].insert(object_id);
-
-                } else if (/*const Field* field = */universe_object_cast<const Field*>(obj)) {
-                    if (ObjectShown(object_id, OBJ_FIELD, true))
-                        fields.insert(object_id);
-                }
-            }
-
 
             int indent = 0;
 

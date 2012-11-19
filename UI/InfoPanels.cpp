@@ -1679,7 +1679,7 @@ void BuildingsPanel::Update() {
         int object_id = *it;
         const Building* building = GetBuilding(object_id);
         if (!building)
-            building = GetEmpireKnownBuilding(object_id, HumanClientApp::GetApp()->EmpireID());
+            building = GetBuilding(object_id);
         if (!building) {
             Logger().errorStream() << "BuildingsPanel::Update couldn't get building with id: " << object_id << " on planet " << plt->Name();
             continue;

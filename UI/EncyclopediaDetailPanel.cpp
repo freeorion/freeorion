@@ -536,9 +536,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
     const Universe& universe = GetUniverse();
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    const ObjectMap& objects = (client_empire_id != ALL_EMPIRES) ?
-        universe.EmpireKnownObjects(client_empire_id) :
-        universe.Objects();
+    const ObjectMap& objects = Objects();
 
     if (m_items_it->first == TextLinker::ENCYCLOPEDIA_TAG) {
         // attempt to treat as a directory

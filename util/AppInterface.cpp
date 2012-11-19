@@ -82,27 +82,13 @@ UniverseObject* GetEmpireKnownObject(int object_id, int empire_id) {
 template <class T>
 T* GetUniverseObject(int object_id)
 {
-#ifdef FREEORION_BUILD_SERVER
-    return GetUniverse().Objects().Object<T>(object_id);
-#else
-    // attempt to get live / up to date / mutable object
-    T* obj = GetUniverse().Objects().Object<T>(object_id);
-    // if not up to date info, use latest known out of date info about object
-    if (!obj)
-        obj = GetUniverse().EmpireKnownObjects(ClientApp::GetApp()->EmpireID()).Object<T>(object_id);
-    return obj;
-#endif
+    return Objects().Object<T>(object_id);
 }
 
 template <class T>
 T* GetEmpireKnownObject(int object_id, int empire_id)
 {
-#ifdef FREEORION_BUILD_SERVER
-    return GetUniverse().EmpireKnownObjects(empire_id).Object<T>(object_id);
-#else
-    // as of this writing, players don't have info about what other players know about objects
-    return GetUniverseObject<T>(object_id);
-#endif
+    return EmpireKnownObjects(empire_id).Object<T>(object_id);
 }
 
 Planet* GetPlanet(int object_id)

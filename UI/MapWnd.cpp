@@ -1204,7 +1204,7 @@ void MapWnd::RenderSystems() {
 
             // render circles around systems that have at least one starlane, if circles are enabled.
             if (circles) {
-                if (const System* system = GetEmpireKnownSystem(it->first, empire_id))
+                if (const System* system = GetSystem(it->first))
                     if (system->NumStarlanes() > 0)
                         CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
             }
@@ -2048,12 +2048,10 @@ void MapWnd::InitSystemRenderingBuffers() {
     }
 
 
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-
     for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const SystemIcon* icon = it->second;
         int system_id = it->first;
-        const System* system = GetEmpireKnownSystem(system_id, empire_id);
+        const System* system = GetSystem(system_id);
         if (!system) {
             Logger().errorStream() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -2644,8 +2642,6 @@ void MapWnd::ReselectLastSystem() {
 void MapWnd::SelectSystem(int system_id) {
     //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
     const System* system = GetSystem(system_id);
-    if (!system)
-        system = GetEmpireKnownSystem(system_id, HumanClientApp::GetApp()->EmpireID());
     if (!system && system_id != INVALID_OBJECT_ID) {
         Logger().errorStream() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
         system_id = INVALID_OBJECT_ID;
@@ -3573,9 +3569,9 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
         // disallow "offroad" (direct non-starlane non-wormhole) travel
         if (route.size() == 2 && *route.begin() != *route.rbegin()) {
             int begin_id = *route.begin();
-            const System* begin_sys = GetEmpireKnownSystem(begin_id, empire_id);
+            const System* begin_sys = GetSystem(begin_id);
             int end_id = *route.rbegin();
-            const System* end_sys = GetEmpireKnownSystem(end_id, empire_id);
+            const System* end_sys = GetSystem(end_id);
 
             if (!begin_sys->HasStarlaneTo(end_id) && !begin_sys->HasWormholeTo(end_id) &&
                 !end_sys->HasStarlaneTo(begin_id) && !end_sys->HasWormholeTo(begin_id))

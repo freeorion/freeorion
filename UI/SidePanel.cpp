@@ -779,8 +779,6 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     SetName(UserString("PLANET_PANEL"));
 
     const Planet* planet = GetPlanet(m_planet_id);
-    if (!planet)
-        planet = GetEmpireKnownPlanet(m_planet_id, HumanClientApp::GetApp()->EmpireID());
     if (!planet) {
         Logger().errorStream() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
         return;
@@ -823,7 +821,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     // check for shipyard
     const std::set<int>& buildings = planet->Buildings();
     for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-        const Building* building = GetEmpireKnownBuilding(*building_it, HumanClientApp::GetApp()->EmpireID());
+        const Building* building = GetBuilding(*building_it);
         if (!building)
             continue;
         // annoying hard-coded building name here... not sure how better to deal with it
@@ -2463,10 +2461,9 @@ void SidePanel::SelectPlanetImpl(int planet_id) {
 void SidePanel::SetSystem(int system_id) {
     if (s_system_id == system_id)
         return;
-
     s_system_id = system_id;
 
-    if (GetEmpireKnownSystem(s_system_id, HumanClientApp::GetApp()->EmpireID()))
+    if (GetSystem(s_system_id))
         PlaySidePanelOpenSound();
 
     // refresh sidepanels

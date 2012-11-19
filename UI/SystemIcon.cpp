@@ -190,7 +190,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_showing_name(false)
 {
     ClientUI* ui = ClientUI::GetClientUI();
-    if (const System* system = GetEmpireKnownSystem(m_system_id, HumanClientApp::GetApp()->EmpireID())) {
+    if (const System* system = GetSystem(m_system_id)) {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
                                               ClientUI::StarTypeFilePrefixes()[star_type],
@@ -560,8 +560,6 @@ void SystemIcon::Refresh() {
     m_system_connection.disconnect();
 
     const System* system = GetSystem(m_system_id);
-    if (!system)
-        system = GetEmpireKnownSystem(m_system_id, HumanClientApp::GetApp()->EmpireID());
     if (system) {
         name = system->Name();
         m_system_connection = GG::Connect(system->StateChangedSignal,   &SystemIcon::Refresh,   this,   boost::signals::at_front);
