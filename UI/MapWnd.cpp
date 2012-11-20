@@ -4178,7 +4178,7 @@ void MapWnd::RefreshTradeResourceIndicator() {
 }
 
 void MapWnd::RefreshResearchResourceIndicator() {
-    const Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    const Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
     m_research->SetValue(empire->ResourceProduction(RE_RESEARCH));
@@ -4188,16 +4188,18 @@ void MapWnd::RefreshResearchResourceIndicator() {
     double totalWastedRP = totalProduction - totalRPSpent;
     if (totalWastedRP > 0){
         m_research_wasted->Show();
-        m_research_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(UserString("MAP_RES_WASTED_TITLE"), 
-                                                                     boost::io::str(FlexibleFormat(UserString("MAP_RES_WASTED_TEXT")) % DoubleToString(totalProduction, 3, false) 
-                                                                                                                                       % DoubleToString(totalWastedRP, 3, false)))));
+        m_research_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new TextBrowseWnd(UserString("MAP_RES_WASTED_TITLE"),
+                              boost::io::str(FlexibleFormat(UserString("MAP_RES_WASTED_TEXT"))
+                                % DoubleToString(totalProduction, 3, false)
+                                % DoubleToString(totalWastedRP, 3, false)))));
     } else {
         m_research_wasted->Hide();
     }
 }
 
 void MapWnd::RefreshIndustryResourceIndicator() {
-    const Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    const Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
     m_industry->SetValue(empire->ResourceProduction(RE_INDUSTRY));
@@ -4207,10 +4209,11 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     double totalWastedPP = totalProduction - totalPPSpent;
     if (totalWastedPP > 0){
         m_industry_wasted->Show();
-        m_industry_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(UserString("MAP_PROD_WASTED_TITLE"), 
-                                                                     boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT")) % DoubleToString(totalProduction, 3, false) 
-                                                                                                                                       % DoubleToString(totalWastedPP, 3, false)))));
-
+        m_industry_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new TextBrowseWnd(UserString("MAP_PROD_WASTED_TITLE"),
+                              boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
+                                % DoubleToString(totalProduction, 3, false) 
+                                % DoubleToString(totalWastedPP, 3, false)))));
     } else {
         m_industry_wasted->Hide();
     }
