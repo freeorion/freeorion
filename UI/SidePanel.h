@@ -52,10 +52,6 @@ public:
     /** Returns whether this SidePanel contains an object with the indicated
       * \a object_id that can be selected within the SidePanel. */
     bool                PlanetSelectable(int id) const;
-
-    /** Autmoatically picks a colony ship in this sytem, if any, that is best
-      * for colonizing the planet with the indicated \a target_planet_id. */
-    int                 AutomaticallyChosenColonyShip(int target_planet_id) const;
     //@}
 
     /** \name Mutators */ //@{

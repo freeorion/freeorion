@@ -1087,52 +1087,52 @@ namespace {
         }
         return false;
     }
-}
 
-int SidePanel::AutomaticallyChosenColonyShip(int target_planet_id) const {
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (empire_id == ALL_EMPIRES)
-        return INVALID_OBJECT_ID;
-    const Planet* target_planet = GetPlanet(target_planet_id);
-    if (!target_planet)
-        return INVALID_OBJECT_ID;
-    int system_id = target_planet->SystemID();
-    const System* system = GetSystem(system_id);
-    if (!system)
-        return INVALID_OBJECT_ID;
-    // is planet a valid colonization target?
-    if (target_planet->CurrentMeterValue(METER_POPULATION) > 0.0 ||
-        (!target_planet->Unowned() && !target_planet->OwnedBy(empire_id)))
-    { return INVALID_OBJECT_ID; }
+    int AutomaticallyChosenColonyShip(int target_planet_id) {
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        if (empire_id == ALL_EMPIRES)
+            return INVALID_OBJECT_ID;
+        const Planet* target_planet = GetPlanet(target_planet_id);
+        if (!target_planet)
+            return INVALID_OBJECT_ID;
+        int system_id = target_planet->SystemID();
+        const System* system = GetSystem(system_id);
+        if (!system)
+            return INVALID_OBJECT_ID;
+        // is planet a valid colonization target?
+        if (target_planet->CurrentMeterValue(METER_POPULATION) > 0.0 ||
+            (!target_planet->Unowned() && !target_planet->OwnedBy(empire_id)))
+        { return INVALID_OBJECT_ID; }
 
-    PlanetType target_planet_type = target_planet->Type();
+        PlanetType target_planet_type = target_planet->Type();
 
-    const ObjectMap& objects = Objects();
-    std::vector<const Ship*> ships = objects.FindObjects<Ship>();
-    std::vector<const Ship*> capable_and_available_colony_ships;
-    capable_and_available_colony_ships.reserve(ships.size());
+        const ObjectMap& objects = Objects();
+        std::vector<const Ship*> ships = objects.FindObjects<Ship>();
+        std::vector<const Ship*> capable_and_available_colony_ships;
+        capable_and_available_colony_ships.reserve(ships.size());
 
-    // get all ships that can colonize and that are free to do so in the
-    // specified planet'ssystem and that can colonize the requested planet
-    for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
-        const Ship* ship = *it;
-        if (!AvailableToColonize(ship, system_id, empire_id))
-            continue;
-        if (!CanColonizePlanetType(ship, target_planet_type))
-            continue;
-        capable_and_available_colony_ships.push_back(ship);
-    }
+        // get all ships that can colonize and that are free to do so in the
+        // specified planet'ssystem and that can colonize the requested planet
+        for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
+            const Ship* ship = *it;
+            if (!AvailableToColonize(ship, system_id, empire_id))
+                continue;
+            if (!CanColonizePlanetType(ship, target_planet_type))
+                continue;
+            capable_and_available_colony_ships.push_back(ship);
+        }
 
-    // simple case early exits: no ships, or just one capable ship
-    if (capable_and_available_colony_ships.empty())
-        return INVALID_OBJECT_ID;
-    if (capable_and_available_colony_ships.size() == 1)
+        // simple case early exits: no ships, or just one capable ship
+        if (capable_and_available_colony_ships.empty())
+            return INVALID_OBJECT_ID;
+        if (capable_and_available_colony_ships.size() == 1)
+            return (*capable_and_available_colony_ships.begin())->ID();
+
+        // TODO: have more than one ship capable and available to colonize.
+        // pick the "best" one.
+
         return (*capable_and_available_colony_ships.begin())->ID();
-
-    // TODO: have more than one ship capable and available to colonize.
-    // pick the "best" one.
-
-    return (*capable_and_available_colony_ships.begin())->ID();
+    }
 }
 
 void SidePanel::PlanetPanel::Refresh() {
@@ -1189,8 +1189,8 @@ void SidePanel::PlanetPanel::Refresh() {
     }
 
     const Ship* selected_colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
-    //if (!selected_colony_ship)
-    //    selected_colony_ship = AutomaticallyChosenColonyShip(m_planet_id);
+    if (!selected_colony_ship)
+        selected_colony_ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
     std::set<Ship*> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
 
     std::string colony_ship_species_name;
@@ -1600,8 +1600,8 @@ void SidePanel::PlanetPanel::ClickColonize() {
     } else {
         // find colony ship and order it to colonize
         const Ship* ship = ValidSelectedColonyShip(SidePanel::SystemID());
-        //if (!ship)
-        //    ship = AutomaticallyChosenColonyShip(m_planet_id);
+        if (!ship)
+            ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
 
         if (!ship) {
             Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize valid colony not found!";
