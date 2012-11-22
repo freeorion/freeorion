@@ -2693,7 +2693,7 @@ PHOTOTROPHIC_SPECIES_TEXT
 SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Metabolism
 SELF_SUSTAINING_SPECIES_TEXT
-'''Self-Sustaining species may be energy or crystaline beings or something stranger.  Their commonality is that they need no sustenance, so their basic population growth is very high.'''
+'''Self-Sustaining species may be energy or crystaline beings or something even stranger.  Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three growth specials.'''
 
 TELEPATHIC_TITLE
 Telepathy
