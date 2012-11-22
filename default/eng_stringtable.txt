@@ -2671,29 +2671,34 @@ TROOP_METER_TEXT
 '''The Troop meter represents the power of the defending ground forces.  The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.'''
 
 ORGANIC_SPECIES_TITLE
-Organic Species
+Organic Metabolism
 ORGANIC_SPECIES_TEXT
 '''Organic species are more or less, 'life as we know it'.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when when an Organic Growth Special is colonized, and focused on Growth.  Organic Growth specials are marked with a little green 'O' in the corner.'''
 
 LITHIC_SPECIES_TITLE
-Lithic Species
+Lithic Metabolism
 LITHIC_SPECIES_TEXT
 '''Lithic species are silicon or mineral-based.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when when a Lithic Growth Special is colonized, and focused on Growth.  Lithic Growth specials are marked with a little grey 'L' in the corner.'''
 
 ROBOTIC_SPECIES_TITLE
-Robotic Species
+Robotic Metabolism
 ROBOTIC_SPECIES_TEXT
 '''Robotic species are sapient machines.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when when an Robotic Growth Special is colonized, and focused on Growth.  Robotic Growth specials are marked with a little red 'R' in the corner.'''
 
 PHOTOTROPHIC_SPECIES_TITLE
-Phototrophic Species
+Phototrophic Metabolism
 PHOTOTROPHIC_SPECIES_TEXT
 '''Phototrophic species live mainly or entirely on sunlight. These species max population is greatly influenced by the brightness of the local star -- the bigger the better.  Growth specials do not benefit them.'''
 
 SELF_SUSTAINING_SPECIES_TITLE
-Self-Sustaining Species
+Self-Sustaining Metabolism
 SELF_SUSTAINING_SPECIES_TEXT
 '''Self-Sustaining species may be energy or crystaline beings or something stranger.  Their commonality is that they need no sustenance, so their basic population growth is very high.'''
+
+TELEPATHIC_TITLE
+Telepathy
+TELEPATHY_TEXT
+'''Telepathic species are immune to mind-control and make it easier to research [[tech LRN_PSIONICS]].'''
 
 FUEL_TITLE
 Fuel
@@ -3163,7 +3168,7 @@ Human
 SP_HUMAN_DESC
 '''Mostly Harmless. All average stats for testing purposes.
 Prefer Terran planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3174,7 +3179,7 @@ Scylior
 SP_SCYLIOR_DESC
 '''Three-tentacled, aquatic Nautiloid.
 Prefer Ocean planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[GREAT_RESEARCH]]
@@ -3187,7 +3192,7 @@ Gyisache
 SP_GYISACHE_DESC
 '''Cowardly, freakish sheep-like herbivores.
 Prefer Swamp planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[GOOD_INDUSTRY]]
 [[GOOD_RESEARCH]]
@@ -3201,7 +3206,7 @@ Chato
 SP_CHATO_DESC
 '''Sessile crystalline entities which ride the animal Goshk.
 Prefer Toxic planets.
-Phototrophic
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[GREAT_RESEARCH]]
@@ -3215,7 +3220,7 @@ Trith
 SP_TRITH_DESC
 '''Bereaved xenophobic telepaths.
 Prefer Desert planets.
-Self-Sufficient
+[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
@@ -3229,7 +3234,7 @@ Hhhoh
 SP_HHHOH_DESC
 '''Huge, slow, multi-trunked Mammoths.
 Prefer Tundra planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3243,7 +3248,7 @@ Eaxaw
 SP_EAXAW_DESC
 '''Evil amazonian xenophobic agressive worms.
 Prefer Terran planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3256,7 +3261,7 @@ Derthrean
 SP_DERTHREAN_DESC
 '''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
 Prefer Toxic planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3267,7 +3272,7 @@ Laenfa
 SP_LAENFA_DESC
 '''Sneaky, telepathic, sentient vines.
 Prefer Ocean Planets.
-Phototrophic
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[GREAT_DETECTION]]
 [[GREAT_STEALTH]]
@@ -3284,7 +3289,7 @@ Tae Ghirus
 SP_TAEGHIRUS_DESC
 '''Weak, flightless birds, united in total mutual cooperation.
 Prefer Swamp planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[GOOD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3299,7 +3304,7 @@ Mu Ursh
 SP_MUURSH_DESC
 '''Militantly peaceful herbivores.
 Prefer Desert planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3314,7 +3319,7 @@ George
 SP_GEORGE_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
 Prefers Tundra planets.
-Lithic
+[[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3328,7 +3333,7 @@ Cray
 SP_CRAY_DESC
 '''Cheerful enthusiastic robots.
 Prefer Barren planets.
-Robotic
+[[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
@@ -3343,7 +3348,7 @@ Etty
 SP_ETTY_DESC
 '''Cybernetic plants.
 Prefer Desert planets.
-Phototrophic
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 
 [[BAD_DETECTION]]
 [[GOOD_STEALTH]]
@@ -3361,7 +3366,7 @@ Cynos
 SP_CYNOS_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
 Prefer Swamp planets.
-Phototrophic
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3374,7 +3379,7 @@ Phinnert
 SP_PHINNERT_DESC
 '''Flying Monkeys.
 Prefer Swamp planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -3385,7 +3390,7 @@ Egassem
 SP_EGASSEM_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
 Prefer Inferno planets.
-Lithic
+[[encyclopedia LITHIC_SPECIES_TITLE]]
 
 [[GREAT_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3399,7 +3404,7 @@ Sslith
 SP_SSLITH_DESC
 '''Flat, aquatic, pliable creatures.
 Prefer Tundra planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3412,7 +3417,7 @@ Fifty-seven
 SP_FIFTYSEVEN_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
 Prefer Swamp planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
@@ -3439,7 +3444,7 @@ Setinon
 SP_SETINON_DESC
 '''Individualistic sentient microscopic cells.
 Prefer Ocean planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[GREAT_STEALTH]]
 
@@ -3456,7 +3461,7 @@ Nymnmn
 SP_NYMNMN_DESC
 '''Planet-wide sapient magnetic waveforms.
 Prefer Desert planets.
-Self-Sustaining
+[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
@@ -3474,7 +3479,7 @@ Trenchers
 SP_TRENCHERS_DESC
 '''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
 Prefers Barren planets.
-Robotic
+[[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -3488,7 +3493,7 @@ Raaagh
 SP_RAAAGH_DESC
 '''Highly territorial felinoids.
 Prefer Terran planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -3513,7 +3518,7 @@ Beige Goo
 SP_BEIGEGOO_DESC
 '''Insane, intensely private, planet-engulfing nanite swarm.
 Prefers Radiated planets.
-Robotic
+[[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[GREAT_INDUSTRY]]
 [[NO_RESEARCH]]
@@ -3529,7 +3534,7 @@ Silexian
 SP_SILEXIAN_DESC
 '''Gleaming gardener robots, left on their own.
 Prefer Terran planets.
-Robotic
+[[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[NO_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3540,7 +3545,7 @@ Kobuntura
 SP_KOBUNTURA_DESC
 '''Sentient magnetic dust formations with a fascination for building and construction.
 Prefer Barren planets.
-Self-Sustaining
+[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 
 [[GREAT_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3554,7 +3559,7 @@ Ugmors
 SP_UGMORRS_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Prefer Inferno planets.
-Lithic
+[[encyclopedia LITHIC_SPECIES_TITLE]]
 
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3567,7 +3572,7 @@ SP_GISGUFGTHRIM
 SP_GISGUFGTHRIM_DESC
 '''Shelled herbivores that live off a singular planets-sized colonial gel.
 Prefer Toxic planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
@@ -3582,7 +3587,7 @@ Hidden Gardener
 SP_HIDDENGARDENER_DESC
 '''A sapient fungal network that tends its plant food from beneath
 Prefers Terran planets
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[GOOD_STEALTH]]
 
@@ -3605,7 +3610,7 @@ Abaddoni
 SP_ABADDONNIANS_DESC
 '''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
 Prefers Inferno planets.
-Lithic
+[[encyclopedia LITHIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3619,7 +3624,7 @@ Acirema
 SP_ACIREMA_DESC
 '''A race with nearly limitless power, that cannot survive in this universe.
 Prefers Radiated planets.
-Self-Sustaining
+[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 
 [[GREAT_INDUSTRY]]
 [[GOOD_RESEARCH]]
@@ -3643,7 +3648,7 @@ Ourbools
 SP_OURBOOLS_DESC
 '''Giant blind swimmers who "see" gravitation.
 Prefer Ocean planets.
-Organic
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[ULTIMATE_DETECTION]]
 
@@ -3670,7 +3675,7 @@ Volp-Uglush
 SP_VOLP_DESC
 '''Highly bureacratic, overcrowded burrowers.
 Prefer Barren planets.
-Lithic
+[[encyclopedia LITHIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3694,6 +3699,7 @@ SP_EXOBOT
 Exobot
 SP_EXOBOT_DESC
 '''Semi-autonomous robots, designed for industry on Barren, Radiated, & Inferno planets.
+[[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
@@ -3708,6 +3714,7 @@ SP_EXPERIMENTOR
 Experimentor
 SP_EXPERIMENTOR_DESC
 '''Precursor mad scientists
+[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
@@ -3725,6 +3732,9 @@ SP_SUPER_TEST
 Super Testers
 SP_SUPER_TEST_DESC
 '''Super Testers are grossly unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets. (Stealth-busting power only works when they are in a Capital)
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
+[[encyclopedia TELEPATHIC_TITLE]]
+
 
 [[GREAT_INDUSTRY]]
 [[GREAT_RESEARCH]]

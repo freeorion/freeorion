@@ -67,6 +67,13 @@ Article
     short_description = "SPECIES_ARTICLE_SHORT_DESC"
     description = "SELF_SUSTAINING_SPECIES_TEXT"
     icon = "icons/species/acirema.png"
+    
+Article
+    name = "TELEPATHIC_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "SPECIES_ARTICLE_SHORT_DESC"
+    description = "TELEPATHY_TEXT"
+    icon = "icons/tech/psionics.png"
 
 Article
     name = "TRADE_FOCUS_TITLE"
