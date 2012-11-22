@@ -76,35 +76,34 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_id)
         & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_player_name)
-        & BOOST_SERIALIZATION_NVP(m_color);
+        & BOOST_SERIALIZATION_NVP(m_color)
+        & BOOST_SERIALIZATION_NVP(m_capital_id)
+        & BOOST_SERIALIZATION_NVP(m_techs)
+        & BOOST_SERIALIZATION_NVP(m_meters)
+        & BOOST_SERIALIZATION_NVP(m_research_queue)
+        & BOOST_SERIALIZATION_NVP(m_research_progress)
+        & BOOST_SERIALIZATION_NVP(m_production_queue)
+        & BOOST_SERIALIZATION_NVP(m_production_progress)
+        & BOOST_SERIALIZATION_NVP(m_available_building_types)
+        & BOOST_SERIALIZATION_NVP(m_available_part_types)
+        & BOOST_SERIALIZATION_NVP(m_available_hull_types)
+        & BOOST_SERIALIZATION_NVP(m_supply_system_ranges)
+        & BOOST_SERIALIZATION_NVP(m_supply_unobstructed_systems)
+        & BOOST_SERIALIZATION_NVP(m_supply_starlane_traversals)
+        & BOOST_SERIALIZATION_NVP(m_supply_starlane_obstructed_traversals)
+        & BOOST_SERIALIZATION_NVP(m_fleet_supplyable_system_ids)
+        & BOOST_SERIALIZATION_NVP(m_resource_supply_groups);
 
     if (GetUniverse().AllObjectsVisible() ||
         GetUniverse().EncodingEmpire() == ALL_EMPIRES ||
         m_id == GetUniverse().EncodingEmpire())
     {
-        ar  & BOOST_SERIALIZATION_NVP(m_capital_id)
-            & BOOST_SERIALIZATION_NVP(m_techs)
-            & BOOST_SERIALIZATION_NVP(m_meters)
-            & BOOST_SERIALIZATION_NVP(m_research_queue)
-            & BOOST_SERIALIZATION_NVP(m_research_progress)
-            & BOOST_SERIALIZATION_NVP(m_production_queue)
-            & BOOST_SERIALIZATION_NVP(m_production_progress)
-            & BOOST_SERIALIZATION_NVP(m_available_building_types)
-            & BOOST_SERIALIZATION_NVP(m_available_part_types)
-            & BOOST_SERIALIZATION_NVP(m_available_hull_types)
-            & BOOST_SERIALIZATION_NVP(m_explored_systems)
-
-            & BOOST_SERIALIZATION_NVP(m_supply_system_ranges)
-            & BOOST_SERIALIZATION_NVP(m_supply_unobstructed_systems)
-            & BOOST_SERIALIZATION_NVP(m_supply_starlane_traversals)
-            & BOOST_SERIALIZATION_NVP(m_supply_starlane_obstructed_traversals)
-            & BOOST_SERIALIZATION_NVP(m_fleet_supplyable_system_ids)
-            & BOOST_SERIALIZATION_NVP(m_resource_supply_groups)
-
-            & BOOST_SERIALIZATION_NVP(m_ship_designs)
+        ar  & BOOST_SERIALIZATION_NVP(m_ship_designs)
             & BOOST_SERIALIZATION_NVP(m_sitrep_entries)
             & BOOST_SERIALIZATION_NVP(m_resource_pools)
             & BOOST_SERIALIZATION_NVP(m_population_pool)
+
+            & BOOST_SERIALIZATION_NVP(m_explored_systems)
             & BOOST_SERIALIZATION_NVP(m_maintenance_total_cost)
             & BOOST_SERIALIZATION_NVP(m_ship_names_used);
     }
