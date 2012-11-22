@@ -713,7 +713,7 @@ namespace AIInterface {
 
         // create design from stuff chosen in UI
         ShipDesign* design = new ShipDesign(name, description, empire_id, current_turn,
-                                            hull, parts, icon, model);
+                                            hull, parts, icon, model, true);
 
         if (!design) {
             Logger().errorStream() << "AIInterface::IssueCreateShipDesignOrderOrder failed to create a new ShipDesign object";
