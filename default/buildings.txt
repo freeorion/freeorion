@@ -517,8 +517,8 @@ BuildingType
 BuildingType
     name = "BLD_EXOBOT_SHIP"
     description = "BLD_EXOBOT_SHIP_DESC"
-    buildcost = 50
-    buildtime = 5
+    buildcost = 70
+    buildtime = 8
     location = And [
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
