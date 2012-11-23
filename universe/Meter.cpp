@@ -1,7 +1,7 @@
 #include "Meter.h"
 
 #include <algorithm>
-#include <boost/lexical_cast.hpp>
+#include <sstream>
 
 const float Meter::DEFAULT_VALUE = 0.0;
 const float Meter::LARGE_VALUE = static_cast<float>(2 << 15);
@@ -28,8 +28,12 @@ float Meter::Current() const
 float Meter::Initial() const
 { return m_initial_value; }
 
-std::string Meter::Dump() const
-{ return "Cur: " + boost::lexical_cast<std::string>(m_current_value) + " Initial: " + boost::lexical_cast<std::string>(m_initial_value); }
+std::string Meter::Dump() const {
+    std::ostringstream strstm;
+    strstm.precision(5);
+    strstm << "Cur: " << m_current_value << " Init: " << m_initial_value;
+    return strstm.str();
+}
 
 void Meter::SetCurrent(float current_value)
 { m_current_value = current_value; }
