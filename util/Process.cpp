@@ -104,6 +104,7 @@ void Process::ProcessImpl::Kill() {
 #include <unistd.h>
 #include <signal.h>
 #include <cstdio>
+#include <sys/wait.h>
 
 
 Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std::string>& argv) :
@@ -143,8 +144,11 @@ bool Process::ProcessImpl::SetLowPriority(bool low) {
         return (setpriority(PRIO_PROCESS, m_process_id, 0) == 0);
 }
 
-void Process::ProcessImpl::Kill()
-{ kill(m_process_id, SIGHUP); }
+void Process::ProcessImpl::Kill() {
+    int status;
+    kill(m_process_id, SIGHUP); 
+    waitpid(m_process_id, &status, 0);
+}
 
 #endif
 
