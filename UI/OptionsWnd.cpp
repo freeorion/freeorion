@@ -800,6 +800,7 @@ void OptionsWnd::Init() {
     BeginSection(UserString("OPTIONS_STARLANES"));
     DoubleOption("UI.starlane-thickness",               UserString("OPTIONS_STARLANE_THICKNESS"));
     BoolOption("UI.resource-starlane-colouring",        UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
+    DoubleOption("UI.starlane-core-multiplier",         UserString("OPTIONS_DB_STARLANE_CORE"));
     BoolOption("UI.fleet-supply-lines",                 UserString("OPTIONS_FLEET_SUPPLY_LINES"));
     DoubleOption("UI.fleet-supply-line-width",          UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
     IntOption("UI.fleet-supply-line-dot-spacing",       UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));

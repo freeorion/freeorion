@@ -101,6 +101,7 @@ namespace {
         db.Add("UI.show-galaxy-map-zoom-slider",    "OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER",            false,      Validator<bool>());
         db.Add("UI.optimized-system-rendering",     "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING",        true,       Validator<bool>());
         db.Add("UI.starlane-thickness",             "OPTIONS_DB_STARLANE_THICKNESS",                2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
+        db.Add("UI.starlane-core-multiplier",       "OPTIONS_DB_STARLANE_CORE",                     6.0,        RangedStepValidator<double>(1.0, 1.0, 10.0));
         db.Add("UI.resource-starlane-colouring",    "OPTIONS_DB_RESOURCE_STARLANE_COLOURING",       true,       Validator<bool>());
         db.Add("UI.fleet-supply-lines",             "OPTIONS_DB_FLEET_SUPPLY_LINES",                true,       Validator<bool>());
         db.Add("UI.fleet-supply-line-width",        "OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH",           3.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
@@ -1266,7 +1267,8 @@ void MapWnd::RenderSystems() {
 
 void MapWnd::RenderStarlanes() {
     bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
-    RenderStarlanes( m_RC_starlane_vertices, m_RC_starlane_colors, 6.0, coloured, false);
+    float core_multiplier = static_cast<float>(GetOptionsDB().Get<double>("UI.starlane-core-multiplier"));
+    RenderStarlanes( m_RC_starlane_vertices, m_RC_starlane_colors, core_multiplier, coloured, false);
     RenderStarlanes( m_starlane_vertices, m_starlane_colors, 1.0, coloured, true);
 }
 void MapWnd::RenderStarlanes(GL2DVertexBuffer& vertices, GLRGBAColorBuffer& colours,
@@ -1725,10 +1727,11 @@ void MapWnd::InitTurn() {
     Logger().debugStream() << "Initializing turn " << turn_number;
     ScopedTimer("MapWnd::InitTurn", true);
 
+    Logger().debugStream() << "Mapwnd Init -- Setting Accelerators";
     SetAccelerators();
 
     Universe& universe = GetUniverse();
-    const ObjectMap& objects = universe.Objects();
+    const ObjectMap& objects = Objects();
 
     universe.InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
 
@@ -1875,9 +1878,10 @@ void MapWnd::InitTurn() {
     m_production_wnd->Refresh();
     Logger().debugStream() << "MapWnd::InitTurn m_production_wnd refresh time: " << (timer.elapsed() * 1000.0);
 
-    const ResourcePool *research = this_client_empire->GetResourcePool(RE_TRADE);
-    Logger().debugStream() << "MapWnd::InitTurn research total available :" << research->TotalAvailable() << " production " << research->Production();
-
+    if (this_client_empire) {
+        const ResourcePool *research = this_client_empire->GetResourcePool(RE_TRADE);
+        Logger().debugStream() << "MapWnd::InitTurn research total available :" << research->TotalAvailable() << " production " << research->Production();
+    }
 
     if (turn_number == 1 && this_client_empire) {
         // start first turn with player's system selected
@@ -4218,7 +4222,6 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         m_industry_wasted->Hide();
     }
 }
-
 
 void MapWnd::RefreshPopulationIndicator() {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
