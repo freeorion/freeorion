@@ -568,7 +568,7 @@ Hull
         Slot type = Internal position = (0.36, 0.75)
     ]
     buildCost = 10.0
-    buildTime = 2
+    buildTime = 3
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_BASE"
@@ -662,6 +662,7 @@ Hull
     icon = "icons/ship_hulls/small_camouflage_asteroid_hull_small.png"
     graphic = "hulls_design/small_camouflage_asteroid_hull.png"
 
+/*
 Hull
     name = "SH_AGREGATE_ASTEROID"
     description = "SH_AGREGATE_ASTEROID_DESC"
@@ -717,7 +718,8 @@ Hull
     ]
     icon = "icons/ship_hulls/agregate_asteroid_hull_small.png"
     graphic = "hulls_design/agregate_asteroid_hull.png"
-
+*/
+    
 Hull
     name = "SH_MINIASTEROID_SWARM"
     description = "SH_MINIASTEROID_SWARM_DESC"
@@ -884,7 +886,7 @@ Hull
         Slot type = Internal position = (0.20, 0.75)
     ]
     buildCost = 1.0
-    buildTime = 5
+    buildTime = 4
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_ORB_INC"
@@ -1007,7 +1009,7 @@ Hull
         Slot type = Internal position = (0.20, 0.75)
     ]
     buildCost = 2.0
-    buildTime = 5
+    buildTime = 3
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -1057,7 +1059,7 @@ Hull
         Slot type = Internal position = (0.75, 0.75)
     ]
     buildCost = 2.0
-    buildTime = 7
+    buildTime = 4
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -1106,7 +1108,7 @@ Hull
         Slot type = Internal position = (0.75, 0.75)
     ]
     buildCost = 2.5
-    buildTime = 8
+    buildTime = 5
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -1160,7 +1162,7 @@ Hull
         Slot type = Internal position = (0.40, 0.75)
     ]
     buildCost = 3.0
-    buildTime = 10
+    buildTime = 6
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_ORB_INC"
@@ -1201,7 +1203,7 @@ Hull
         Slot type = Internal position = (0.40, 0.75)
     ]
     buildCost = 7.5
-    buildTime = 15
+    buildTime = 6
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -1254,7 +1256,7 @@ Hull
         Slot type = Internal position = (0.40, 0.75)
     ]
     buildCost = 5.0
-    buildTime = 30
+    buildTime = 15
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -1341,35 +1343,22 @@ Hull
     structure = 80
     slots = [
         Slot type = External position = (0.10, 0.15)
-        Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.30, 0.15)
-        Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.50, 0.15)
-        Slot type = External position = (0.60, 0.15)
         Slot type = External position = (0.70, 0.15)
-        Slot type = External position = (0.80, 0.15)
         Slot type = External position = (0.90, 0.15)
-        Slot type = External position = (0.10, 0.50)
         Slot type = External position = (0.20, 0.50)
-        Slot type = External position = (0.30, 0.50)
         Slot type = External position = (0.40, 0.50)
-        Slot type = External position = (0.50, 0.50)
         Slot type = External position = (0.60, 0.50)
-        Slot type = External position = (0.70, 0.50)
         Slot type = External position = (0.80, 0.50)
-        Slot type = External position = (0.90, 0.50)
         Slot type = External position = (0.10, 0.85)
-        Slot type = External position = (0.20, 0.85)
         Slot type = External position = (0.30, 0.85)
-        Slot type = External position = (0.40, 0.85)
         Slot type = External position = (0.50, 0.85)
-        Slot type = External position = (0.60, 0.85)
         Slot type = External position = (0.70, 0.85)
-        Slot type = External position = (0.80, 0.85)
         Slot type = External position = (0.90, 0.85)
     ]
     buildCost = 20.0
-    buildTime = 10
+    buildTime = 7
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ENRG_COMP"
