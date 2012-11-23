@@ -14,6 +14,8 @@
 #include <boost/mpl/vector.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/timer.hpp>
+#include <boost/python/list.hpp>
+#include <boost/python/extract.hpp>
 
 using boost::python::class_;
 using boost::python::def;
@@ -57,7 +59,21 @@ namespace {
 
     static void SetStaticSaveStateString(const std::string& new_state_string)
     { s_save_state_string = new_state_string; }
+
+    int IssueCreateShipDesignOrderWrapper(const std::string& name, const std::string& description,
+                                          const std::string& hull, boost::python::list partsList,
+                                          const std::string& icon, const std::string& model, bool nameDescInStringTable)
+    {
+        std::vector<std::string> parts;
+        int const numParts = boost::python::len(partsList);
+        for (int i = 0; i < numParts; i++)
+            parts.push_back(boost::python::extract<std::string>(partsList[i]));
+        int result = AIInterface::IssueCreateShipDesignOrder(name, description, hull, parts, icon, model, nameDescInStringTable);
+        return result;
+    }
+    
 }
+
 
 
 // Create the freeOrionLogger Python module, which exposes debug and error (stdout and stderr respectively)
@@ -122,7 +138,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("issueChangeProductionQuantityOrder",   AIInterface::IssueChangeProductionQuantityOrder);
     def("issueRequeueProductionOrder",          AIInterface::IssueRequeueProductionOrder);
     def("issueDequeueProductionOrder",          AIInterface::IssueDequeueProductionOrder);
-    def("issueCreateShipDesignOrder",           AIInterface::IssueCreateShipDesignOrder);
+    def("issueCreateShipDesignOrder",           IssueCreateShipDesignOrderWrapper);
 
     def("sendChatMessage",          AIInterface::SendPlayerChatMessage);
     def("sendDiplomaticMessage",    AIInterface::SendDiplomaticMessage);

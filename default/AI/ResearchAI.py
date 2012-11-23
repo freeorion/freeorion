@@ -5,12 +5,14 @@ from EnumsAI import AIPriorityType, getAIPriorityResearchTypes
 import AIstate
 import traceback
 import sys
+import ColonisationAI
 
 inProgressTechs={}
 
 def generateResearchOrders():
     global inProgressTechs
     "generate research orders"
+    universe=fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
     print "Research Queue Management:"
@@ -22,6 +24,28 @@ def generateResearchOrders():
     for tline in tlines:
         print "%25s  %25s  %25s"%tline
     print""
+    
+    gotSymBio = empire.getTechStatus("GRO_SYMBIOTIC_BIO") == fo.techStatus.complete
+    gotXenoGen = empire.getTechStatus("GRO_XENO_GENETICS") == fo.techStatus.complete
+    #assess if our empire has any non-lousy colonizers, & boost gro_xeno_gen if we don't
+    if gotSymBio and (not gotXenoGen):
+        mostAdequate=0
+        for specName in ColonisationAI.empireColonizers:
+            environs={}
+            thisSpec = fo.getSpecies(specName)
+            if not thisSpec: continue
+            for ptype in [fo.planetType.swamp,  fo.planetType.radiated,  fo.planetType.toxic,  fo.planetType.inferno,  fo.planetType.barren,  fo.planetType.tundra,  fo.planetType.desert,  fo.planetType.terran,  fo.planetType.ocean,  fo.planetType.asteroids]:
+                environ=thisSpec.getPlanetEnvironment(ptype)
+                environs.setdefault(environ, []).append(ptype)
+            mostAdequate = max(mostAdequate,  len(environs.get( fo.planetEnvironment.adequate, [])))
+            if mostAdequate==0:
+                researchQueue = empire.researchQueue
+                researchQueueList = getResearchQueueTechs()
+                if "GRO_XENO_GENETICS" not in researchQueueList[:2]:
+                    res=fo.issueEnqueueTechOrder("GRO_XENO_GENETICS", 0)
+                    print "Empire has poor colonizers,  so attempted to fast-track GRO_XENO_GENETICS,  got result %d"%res
+    
+    
     researchQueue = empire.researchQueue
     researchQueueList = getResearchQueueTechs()
     inProgressTechs.clear()
@@ -61,7 +85,7 @@ def generateResearchOrders():
                     print "    Error: failed attempt to enqueued Tech: " + name
             except:
                 print "    Error: failed attempt to enqueued Tech: " + name
-                print "    Error: exception triggered:  ",  traceback.format_exc()
+                print "    Error: exception triggered and caught:  ",  traceback.format_exc()
         print""
         generateDefaultResearchOrders()
         print "\n\nAll techs:"

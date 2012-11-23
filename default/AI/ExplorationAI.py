@@ -71,10 +71,14 @@ def assignScoutsToExploreSystems():
     sentList=[]
     while (len(availableScouts) > 0 ) and ( len(needsCoverage) >0):
         thisSysID = needsCoverage.pop(0)
+        if (foAI.foAIstate.systemStatus.setdefault(thisSysID, {}).setdefault('monsterThreat', 0) > 2000) or (fo.currentTurn() <20  and foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'] > 200):
+            print "Skipping exploration of system %d due to Big Monster,  threat %d"%(thisSysID,  foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'])
+            continue
         thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetStats={},  minStats={},  curStats={},  species="",  systemsToCheck=[thisSysID],  systemsChecked=[], 
                                                      fleetPool = availableScouts,   fleetList=[],  verbose=False)
         if thisFleetList==[]:
-             break #must have ran out of scouts
+            print "seem to have run out of scouts while trying to cover sysID %d"%thisSysID
+            break #must have ran out of scouts
         fleetID = thisFleetList[0]
         aiFleetMission = foAI.foAIstate.getAIFleetMission( fleetID )
         aiTarget = AITarget.AITarget(AITargetType.TARGET_SYSTEM, thisSysID )
@@ -82,6 +86,7 @@ def assignScoutsToExploreSystems():
             aiFleetMission.addAITarget(AIFleetMissionType.FLEET_MISSION_EXPLORATION, aiTarget)
             sentList.append(thisSysID)
         else: #system too far out, skip it, but can add scout back to available pool
+            print "sysID %d too far out for fleet ( ID %d ) to readch"%(thisSysID,  fleetID)
             availableScouts.append(fleetID)
     print "sent scouting fleets to sysIDs : %s"%sentList
     return 
@@ -217,6 +222,8 @@ def updateExploredSystems():
         if  (empire.hasExploredSystem(sysID)): 
             del foAI.foAIstate.unexploredSystemIDs[sysID]
             foAI.foAIstate.exploredSystemIDs[sysID] = 1
+            sys=universe.getSystem(sysID)
+            print "Moved system %d ( %s ) from unexplored list to explored list"%( sysID,  (sys and sys.name) or "name unknown")
             if sysID in __borderUnexploredSystemIDs:
                 del __borderUnexploredSystemIDs[sysID]
             newlyExplored.append(sysID)

@@ -50,6 +50,14 @@ namespace {
     std::vector<int>        BuildingIDs(const Universe& universe)
     { return Objects().FindObjectIDs<Building>(); }
 
+    void                    UpdateMetersWrapper(const Universe& universe, boost::python::list objList) {
+        std::vector<int> objvec;
+        int const numObjects = boost::python::len(objList);
+        for (int i = 0; i < numObjects; i++)
+            objvec.push_back(boost::python::extract<int>(objList[i]));
+        GetUniverse().UpdateMeterEstimates(objvec);
+    }
+
     void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                   &Universe::UpdateMeterEstimates;
 
     double                  LinearDistance(const Universe& universe, int system1_id, int system2_id) {
@@ -263,7 +271,7 @@ namespace FreeOrionPython {
 
             .def("systemHasStarlane",           &Universe::SystemHasVisibleStarlanes)
 
-            .def("updateMeterEstimates",        UpdateMeterEstimatesVoidFunc)
+            .def("updateMeterEstimates",        &UpdateMetersWrapper)
 
             .def("linearDistance",              make_function(
                                                     LinearDistanceFunc,

@@ -37,6 +37,7 @@ def startNewGame():
     # initialize AIstate
     global foAIstate
     foAIstate = AIstate.AIstate()
+    foAIstate.sessionStartCleanup()
     print "Initialized foAIstate class"
     if __timerFile:
         __timerFile.close()
@@ -56,7 +57,8 @@ def startNewGame():
         __timerFile=None
         ResourcesAI.resourceTimerFile  =None
         ResourcesAI.doResourceTiming = False
-        print "Error: exception triggered:  ",  traceback.format_exc()
+        print "Error: exception caught starting timing:  ",  traceback.format_exc()
+        print "won't record timing info"
 
 def splitNewFleets():
     "split any fleets (at creation, can have unplanned mix of ship roles)"
@@ -124,12 +126,13 @@ def resumeLoadedGame(savedStateString):
     try:
         #loading saved state
         foAIstate = pickle.loads(savedStateString)
-        foAIstate.resumedGameCleanup()
+        foAIstate.sessionStartCleanup()
     except:
         print "failed to parse saved state string"
         #assigning new state
         foAIstate = AIstate.AIstate()
-        print "Error: exception triggered:  ",  traceback.format_exc()
+        foAIstate.sessionStartCleanup()
+        print "Error: exception triggered and caught:  ",  traceback.format_exc()
     if __timerFile:
         __timerFile.close()
     if ResourcesAI.resourceTimerFile:
@@ -142,14 +145,14 @@ def resumeLoadedGame(savedStateString):
             __timerFile.write("Turn\t" + "\t".join(__timerEntries) +'\n')
             if ResourcesAI.doResourceTiming:
                 ResourcesAI.resourceTimerFile = open("timers"+os.path.sep+"resourceTimer_%2d.dat"%(empireID-1),  'w')
-                ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI.timerEntries)+"\n")
+                ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI.__timerEntries)+"\n")
             print "timer file saved at "+timerpath
     except:
         __timerFile=None
         ResourcesAI.resourceTimerFile  =None
         ResourcesAI.doResourceTiming = False
-        print "Won't do timers: exception triggered:  ",  traceback.format_exc()
-
+        print "Error: exception caught starting timing:  ",  traceback.format_exc()
+        print "won't record timing info"
 # called when the game is about to be saved, to let the Python AI know it should save any AI state
 # information, such as plans or knowledge about the game from previous turns, in the state string so that
 # they can be restored if the game is loaded
@@ -227,37 +230,37 @@ def generateOrders():
     # call AI modules
     timer=[time()]
     try: PriorityAI.calculatePriorities()
-    except: print "Error: exception triggered:  ",  traceback.format_exc()
+    except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
     try: ExplorationAI.assignScoutsToExploreSystems()
-    except: print "Error: exception triggered:  ",  traceback.format_exc()
+    except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
     try: ColonisationAI.assignColonyFleetsToColonise()
-    except: print "Error: exception triggered:  ",  traceback.format_exc()
+    except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
     try: InvasionAI.assignInvasionFleetsToInvade()
-    except: print "Error: exception triggered:  ",  traceback.format_exc()
+    except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
     try: MilitaryAI.assignMilitaryFleetsToSystems()
-    except: print "Error: exception triggered:  ",  traceback.format_exc()
+    except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
     try: FleetUtilsAI.generateAIFleetOrdersForAIFleetMissions()
-    except: print "Error: exception triggered:  ",  traceback.format_exc()
+    except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
     try: FleetUtilsAI.issueAIFleetOrdersForAIFleetMissions()
-    except: print "Error: exception triggered:  ",  traceback.format_exc()
+    except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
     try: ResearchAI.generateResearchOrders()
-    except: print "Error: exception triggered:  ",  traceback.format_exc()
+    except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
     try: ProductionAI.generateProductionOrders()
-    except: print "Error: exception triggered:  ",  traceback.format_exc()
+    except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
     try: ResourcesAI.generateResourcesOrders()    
-    except: print "Error: exception triggered:  ",  traceback.format_exc()
+    except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
     try: foAIstate.afterTurnCleanup()
-    except: print "Error: exception triggered:  ",  traceback.format_exc()
+    except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
     times = [timer[i] - timer[i-1] for i in range(1,  len(timer) ) ]
     timeFmt = "%30s: %8d msec  "
@@ -268,4 +271,4 @@ def generateOrders():
         __timerFile.write(  __timerFileFmt%tuple( [ fo.currentTurn() ]+map(lambda x: int(1000*x),  times )) +'\n')
         __timerFile.flush()
     try: fo.doneTurn()
-    except: print "Error: exception triggered:  ",  traceback.format_exc()
+    except: print "Error: exception triggered and caught:  ",  traceback.format_exc()

@@ -15,8 +15,6 @@
 #include "../util/OrderSet.h"
 
 #include <boost/timer.hpp>
-#include <boost/python/list.hpp>
-#include <boost/python/extract.hpp>
 
 #include <stdexcept>
 #include <string>
@@ -361,7 +359,7 @@ namespace AIInterface {
 
         const Ship* ship = GetShip(ship_id);
         if (!ship) {
-            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed an invalid ship_id";
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed an invalid ship_id " << ship_id;
             return 0;
         }
         int ship_sys_id = ship->SystemID();
@@ -376,7 +374,7 @@ namespace AIInterface {
 
         const Fleet* fleet = GetFleet(new_fleet_id);
         if (!fleet) {
-            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed an invalid new_fleet_id";
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed an invalid new_fleet_id " << new_fleet_id;
             return 0;
         }
         int fleet_sys_id = fleet->SystemID();
@@ -385,18 +383,18 @@ namespace AIInterface {
             return 0;
         }
         if (!fleet->OwnedBy(empire_id)) {
-            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed fleet_id of fleet not owned by player";
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed fleet_id "<< new_fleet_id << " of fleet not owned by player";
             return 0;
         }
 
         if (fleet_sys_id != ship_sys_id) {
-            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : new fleet and ship are not in the same system";
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : new fleet in system " << fleet_sys_id << " and ship in system "<< ship_sys_id <<  " are not in the same system";
             return 0;
         }
 
         int old_fleet_id = ship->FleetID();
         if (new_fleet_id == old_fleet_id) {
-            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : ship is already in new fleet";
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : ship is already in new fleet id" << new_fleet_id;
             return 0;
         }
 
@@ -691,17 +689,12 @@ namespace AIInterface {
     }
 
     int IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
-                                   const std::string& hull, boost::python::list partsList,
-                                   const std::string& icon, const std::string& model)
+                                   const std::string& hull, const std::vector<std::string> parts,
+                                   const std::string& icon, const std::string& model, bool nameDescInStringTable)
     {
-        std::vector<std::string> parts;
-        int const numParts = boost::python::len(partsList);
         if (name.empty() || description.empty() || hull.empty()) {
             Logger().errorStream() << "AIInterface::IssueCreateShipDesignOrderOrder : passed an empty name, description, or hull.";
             return 0;
-        }
-        for (int i =0; i<numParts; i++){
-            parts.push_back( boost::python::extract<std::string>(partsList[i]) );
         }
         if (!ShipDesign::ValidDesign(hull, parts)) {
             Logger().errorStream() << "AIInterface::IssueCreateShipDesignOrderOrder : pass a hull and parts that do not make a valid ShipDesign";
@@ -713,7 +706,7 @@ namespace AIInterface {
 
         // create design from stuff chosen in UI
         ShipDesign* design = new ShipDesign(name, description, empire_id, current_turn,
-                                            hull, parts, icon, model, true);
+                                            hull, parts, icon, model, nameDescInStringTable);
 
         if (!design) {
             Logger().errorStream() << "AIInterface::IssueCreateShipDesignOrderOrder failed to create a new ShipDesign object";

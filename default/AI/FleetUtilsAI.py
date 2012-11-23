@@ -12,6 +12,11 @@ def clearShipDesignInfo():
     __designRoles.clear()
     __designStats.clear()
     
+def statsMeetReq(stats,  reqs,  reqName):
+    if stats.get(reqName,  0) < reqs.get(reqName, 0):
+            return False
+    return True
+
 def statsMeetReqs(stats,  reqs):
     try:
         for key in reqs:
@@ -21,7 +26,7 @@ def statsMeetReqs(stats,  reqs):
         return True
     except:
         return False
-        
+
 def countPartsFleetwide(fleetID,  partsList):
     tally=0
     universe = fo.getUniverse()
@@ -93,28 +98,6 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
             systemsToCheck.append(neighborID)
     return getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPool,  fleetList,  takeAny,  verbose)
     
-    
-def getEmpireFleets(empireID=None):
-    if empireID is None:
-        empireID=foAI.foAIstate.empireID
-    universe = fo.getUniverse()
-    empireFleets=[]
-    for fleetID in universe.fleetIDs:  #this actually currently pulls all visible fleets, not just empire-owned
-        fleet=universe.getFleet(fleetID)
-        if fleet and fleet.ownedBy(empireID):
-            empireFleets.append(fleetID)
-    newFleets=[]
-    for fleetID in foAI.foAIState.newlySplitFleets:
-        fleet=universe.getFleet(fleetID)
-        if fleet:
-            print "adding newly split fleet %d to empire fleets"%fleetID
-            newFleets.append(fleetID)
-        else:
-            print "newly split fleet %d unavailable from universe; can't add  to empire fleets"%fleetID
-            
-    return empireFleets+newFleets
-
-        
 def splitFleet(fleetID):
     "splits a fleet into its ships"
 
@@ -144,11 +127,46 @@ def splitFleet(fleetID):
             foAI.foAIstate.newlySplitFleets[newFleetID]=True
         else:
             print "Error - got no fleet ID back after trying to split a ship from fleet %d"%fleetID
-    foAI.foAIstate.getFleetRole(fleetID) #
-    foAI.foAIstate.getRating(fleetID) #
+    foAI.foAIstate.getFleetRole(fleetID, forceNew=True) #
+    foAI.foAIstate.updateFleetRating(fleetID) #
     foAI.foAIstate.ensureHaveFleetMissions(newfleets)
-
     return newfleets
+
+def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  context=""):
+        universe = fo.getUniverse()
+        fleetA = universe.getFleet(fleetA_ID)
+        sysID=fleetA.systemID
+        if not fleetA:
+            return 0
+        success = True
+        remainingRating = foAI.foAIstate.getRating(fleetA_ID)
+        transferredRating = 0
+        for shipID in fleetA.shipIDs:
+            thisShip=universe.getShip(shipID)
+            if not thisShip: continue  
+            stats = foAI.foAIstate.getDesignIDStats(thisShip.designID)
+            thisRating = stats['attack'] * ( stats['structure'] + stats['shields'] )
+            if remainingRating - thisRating < leaveRating:
+                continue
+            transferredRating += thisRating
+            remainingRating -= thisRating
+            thisSuccess =  ( fo.issueFleetTransferOrder(shipID,  fleetB_ID) )#returns a zero if transfer failure
+            print "\t\t\t\t *** attempting transfer of ship %4d,  formerly of fleet %4d,  into fleet %4d  with result %d; %s"%(shipID,  fleetA_ID,  fleetB_ID,  thisSuccess,   [" context is %s"%context, ""][context==""])
+            success = success and thisSuccess
+            if needRating !=0 and needRating <= transferredRating:
+                break
+        fleetA = universe.getFleet(fleetA_ID)
+        if (not fleetA) or fleetA.empty  or fleetA_ID in universe.destroyedObjectIDs(fo.empireID()):
+            print "\t\t\t\t\tdeleting fleet info for old fleet %d after transfers into fleet %d"%(fleetA_ID,  fleetB_ID)
+            foAI.foAIstate.deleteFleetInfo(fleetA_ID)
+        else:
+            newARating = foAI.foAIstate.updateFleetRating(fleetA_ID)
+            if  success and ( newARating==remainingRating) :
+                print "\t\t\t\t\t\t\%d rating from fleet %d successfully transferred to fleet %d,  leaving %d"%(transferredRating,  fleetA_ID,  fleetB_ID,  remainingRating)
+            else:
+                print "\t\t\t\t\t\t transfer of %d rating from fleet %d  to fleet %d was attempted but appears to have had problems, leaving %d"%(transferredRating,  fleetA_ID,  fleetB_ID,  newARating)
+        foAI.foAIstate.updateFleetRating(fleetB_ID)
+        return transferredRating
 
 def fleetHasShipWithRole(fleetID, shipRole):
     "returns True if a ship with shipRole is in the fleet"
@@ -161,7 +179,6 @@ def fleetHasShipWithRole(fleetID, shipRole):
         ship = universe.getShip(shipID)
         if (foAI.foAIstate.getShipRole(ship.design.id) == shipRole):
             return True
-
     return False
 
 def getShipIDWithRole(fleetID, shipRole):
@@ -189,7 +206,7 @@ def getEmpireFleetIDs( empireID=None):
     universe = fo.getUniverse()
     empireFleetIDs = []
     destroyedObjectIDs = universe.destroyedObjectIDs(empireID)
-    for fleetID in universe.fleetIDs:
+    for fleetID in set(list(universe.fleetIDs) + list(foAI.foAIstate.newlySplitFleets)):
         fleet = universe.getFleet(fleetID)
         if (fleet == None): continue
         if ( fleet.ownedBy(empireID))  and (fleetID not in destroyedObjectIDs) and (not(fleet.empty) )and  (not (len(fleet.shipIDs)==0) ):
@@ -255,14 +272,14 @@ def assessFleetRole(fleetID):
         selectedRole= AIFleetMissionType.FLEET_MISSION_MILITARY
     else:
         selectedRole= AIShipRoleType.SHIP_ROLE_INVALID
-    print "fleetID %d : primary fleet mission type %d: '%s' ; found ship roles %s : %s"%(fleetID,selectedRole,   __AIFleetMissionTypeNames.name(selectedRole),  
-                                                                               shipRoles,  [ "%s: %d "%(__AIShipRoleTypeNames.name(rtype),  rnum) for rtype, rnum in  shipRoles.items()] )
+    print "fleetID %d : primary fleet mission type %d: '%s' ; found ship roles %s : %s ; rating %d"%(fleetID,selectedRole,   __AIFleetMissionTypeNames.name(selectedRole),  
+                                                                               shipRoles,  [ "%s: %d "%(__AIShipRoleTypeNames.name(rtype),  rnum) for rtype, rnum in  shipRoles.items()] ,  foAI.foAIstate.getRating(fleetID))
     return selectedRole
 
 def assessShipDesignRole(design):
     if design.parts.__contains__("CO_OUTPOST_POD"):
         return AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST
-    if design.parts.__contains__("CO_COLONY_POD"):
+    if design.parts.__contains__("CO_COLONY_POD") or design.parts.__contains__("CO_SUSPEND_ANIM_POD"):
         return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
     if design.parts.__contains__("CO_SUSPEND_ANIM_POD"):
         return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
@@ -270,7 +287,7 @@ def assessShipDesignRole(design):
         return AIShipRoleType.SHIP_ROLE_MILITARY_INVASION
     stats = foAI.foAIstate.getDesignStats(design)
     rating = stats['attack'] * ( stats['structure'] + stats['shields'] )
-    if rating < 0.25* ProductionAI.curBestMilShipRating():
+    if  ( "SD_SCOUT" in design.name(False)  )  or (rating < 0.2* ProductionAI.curBestMilShipRating()):
         for part in design.parts:
             if "DT_DETECTOR" in part:
                 return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION
@@ -307,6 +324,7 @@ def generateAIFleetOrdersForAIFleetMissions():
     print "Defend Fleets      : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_DEFEND))
     print "Invasion Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION))
     print "Military Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY))
+    print "Securing Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_SECURE)) + " (currently FLEET_MISSION_MILITARY should be used instead of this Role)"
 
     print ""
     print "Explored systems  :"
@@ -364,10 +382,12 @@ def issueAIFleetOrdersForAIFleetMissions():
 
     print ""
     print "issuing fleet orders:"
+    universe=fo.getUniverse()
     aiFleetMissions = foAI.foAIstate.getAllAIFleetMissions()
     for aiFleetMission in aiFleetMissions:
+        fleetID = aiFleetMission.getAITargetID()
         fleet = aiFleetMission.getAITarget().getTargetObj()
-        if (not fleet) or ( len(fleet.shipIDs)==0):  # in case fleet was merged into another previously during this turn
+        if (not fleet) or ( len(fleet.shipIDs)==0)  or fleetID in universe.destroyedObjectIDs(fo.empireID()):  # in case fleet was merged into another previously during this turn
             continue
         aiFleetMission.issueAIFleetOrders()
     print ""

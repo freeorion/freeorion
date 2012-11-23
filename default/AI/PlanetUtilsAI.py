@@ -55,7 +55,8 @@ def getOwnedPlanetsByEmpire(planetIDs, empireID):
 
     for planetID in planetIDs:
         planet = universe.getPlanet(planetID)
-        if planet and (not planet.unowned) and planet.ownedBy(empireID):
+        #even if our universe says we own it, if we can't see it we must have lost it
+        if planet and (not planet.unowned) and planet.ownedBy(empireID) and (universe.getVisibility(planetID,  empireID) >= fo.visibility.partial):  
             result.append(planetID)
 
     return result

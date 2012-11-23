@@ -13,7 +13,7 @@ def getAIFleetOrdersFromSystemAITargets(fleetAITarget, aiTargets):
     # for every system which fleet wanted to visit, determine systems to visit and create move orders 
     for aiTarget in aiTargets:
         # determine systems required to visit(with possible return to supplied system)
-        systemAITargets = canTravelToSystemAndReturnToResupply(fleetAITarget.getTargetID(), lastSystemAITarget, aiTarget, empireID)
+        systemAITargets = canTravelToSystemAndReturnToResupply(fleetAITarget.getTargetID(), lastSystemAITarget, aiTarget, empireID)#TODO: dont require return
         if len(systemAITargets) > 0:
             # for every system required to visit create move order
             for systemAITarget in systemAITargets:
@@ -27,7 +27,7 @@ def getAIFleetOrdersFromSystemAITargets(fleetAITarget, aiTargets):
 
     return result
 
-def canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAITarget, empireID):
+def canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAITarget, empireID,  verbose=False):
     "check if fleet can travel from starting system to wanted system"
 
     systemAITargets = []
@@ -40,6 +40,8 @@ def canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAI
         fleet = universe.getFleet(fleetID)
         maxFuel = int(fleet.maxFuel)
         fuel = int(fleet.fuel)
+        if verbose:
+            print "   fleet ID %d  has  %.1f fuel  to get from %s    to  %s"%(fleetID,  fuel,  fromSystemAITarget,  toSystemAITarget )
 
         # try to find path without going resupply first
         supplySystemAITarget = getNearestSuppliedSystem(toSystemAITarget.getTargetID(), empireID)

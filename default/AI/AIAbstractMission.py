@@ -63,7 +63,12 @@ class AIAbstractMission(object):
             del aiTarget
 
     def clearAITargets(self, aiMissionType):
-        aiTargets = self.getAITargets(aiMissionType)
+        if aiMissionType==-1:
+            aiTargets=[]
+            for aiMissionType in self.getAIMissionTypes():
+                aiTargets.extend( self.getAITargets( aiMissionType  )  )
+        else:
+            aiTargets = self.getAITargets(aiMissionType)
         for aiTarget in aiTargets:
             self.removeAITarget(aiMissionType, aiTarget)
 

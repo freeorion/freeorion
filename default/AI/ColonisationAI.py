@@ -2,12 +2,14 @@ import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
 import AIstate
 import FleetUtilsAI
-from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
+from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType, AIFocusType
 import AITarget
 import PlanetUtilsAI
 import TechsListsAI
+import ProductionAI 
 
 empireSpecies = {}
+empireSpeciesSystems={}
 empireColonizers = {}
 
 # makes these mapped to string version of values in case any sizes become reals instead of int
@@ -27,7 +29,7 @@ popSizeModMap={
 
 
 def getColonyFleets():
-    global empireSpecies,  empireColonizers
+    global empireSpecies,  empireColonizers,  empireSpeciesSystems
     
     "get colony fleets"
 
@@ -44,9 +46,11 @@ def getColonyFleets():
     if homeworld:
         speciesName = homeworld.speciesName
         homeworldName=homeworld.name
+        homeSystemID = homeworld.systemID
     else:
         speciesName = ""
         homeworldName=" no remaining homeworld "
+        homeSystemID = -1
     if not speciesName:
         speciesName = foAI.foAIstate.origSpeciesName
     species = fo.getSpecies(speciesName)
@@ -70,7 +74,9 @@ def getColonyFleets():
     # get outpost and colonization planets
     
     exploredSystemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
-    print "Unexplored SystemIDs: " + str(list(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED)))
+    unExSysIDs = list(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
+    unExSystems = map(universe.getSystem,  unExSysIDs)
+    print "Unexplored Systems: %s " % [(sysID,  (sys and sys.name) or "name unknown") for sysID,  sys in zip( unExSysIDs,  unExSystems)]
     print "Explored SystemIDs: " + str(list(exploredSystemIDs))
 
     exploredPlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(exploredSystemIDs)
@@ -82,13 +88,19 @@ def getColonyFleets():
     print "VisiblePlanets: %s "%[ (pid,  (universe.getPlanet(pid) and  universe.getPlanet(pid).name) or "unknown") for pid in  visiblePlanetIDs]
     print ""
     
-    allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs) #working with Explored systems not all 'visible' because might not have a path to the latter
+    accessibleSystemIDs = [sysID for sysID in visibleSystemIDs if  universe.systemsConnected(sysID, homeSystemID, empireID) ]
+    acessiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(accessibleSystemIDs)
+    
+    #allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs) #working with Explored systems not all 'visible' because might not have a path to the latter
+    allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(acessiblePlanetIDs) #
     print "All Owned or Populated PlanetIDs: " + str(allOwnedPlanetIDs)
 
     empireOwnedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
     print "Empire Owned PlanetIDs:            " + str(empireOwnedPlanetIDs)
+    
 
-    unOwnedPlanetIDs = list(set(exploredPlanetIDs) -set(allOwnedPlanetIDs))
+    #unOwnedPlanetIDs = list(set(exploredPlanetIDs) -set(allOwnedPlanetIDs))
+    unOwnedPlanetIDs = list(set(acessiblePlanetIDs) -set(allOwnedPlanetIDs))
     print "UnOwned PlanetIDs:             " + str(unOwnedPlanetIDs)
     
     empirePopCtrs = set( PlanetUtilsAI.getPopulatedPlanetIDs(  empireOwnedPlanetIDs) )
@@ -97,13 +109,27 @@ def getColonyFleets():
     AIstate.popCtrSystemIDs=set(PlanetUtilsAI.getSystems(empirePopCtrs))
     AIstate.outpostIDs=empireOutpostIDs
     AIstate.outpostSystemIDs=set(PlanetUtilsAI.getSystems(empireOutpostIDs))
+    for pid in empireOwnedPlanetIDs:
+        planet=universe.getPlanet(pid)
+        if planet:
+            AIstate.colonizedSystems.setdefault(planet.systemID,  []).append(pid)   # track these to plan Solar Generators and Singularity Generators
+    AIstate.empireStars.clear()
+    for sysID in AIstate.colonizedSystems:
+        system = universe.getSystem(sysID)
+        if system:
+            AIstate.empireStars.setdefault(system.starType, []).append(sysID)
     
+    
+    oldPopCtrs=[]
+    for specN in empireSpecies:
+        oldPopCtrs.extend(empireSpecies[specN])
     oldEmpSpec = empireSpecies
     empireSpecies.clear()
     oldEmpCol=empireColonizers
     empireColonizers.clear()
     if empire.getTechStatus(TechsListsAI.exobotTechName) == fo.techStatus.complete:
         empireColonizers["SP_EXOBOT"]=[]# get it into colonizer list even if no colony yet
+    empireSpeciesSystems.clear()
     
     for pID in empirePopCtrs:
         planet=universe.getPlanet(pID)
@@ -111,17 +137,23 @@ def getColonyFleets():
             print "Error empire has apparently lost sight of former colony at planet %d but doesn't realize it"%pID
             continue
         pSpecName=planet.speciesName
+        if pID not in oldPopCtrs:
+            if  (AIFocusType.FOCUS_MINING in planet.availableFoci): 
+                fo.issueChangeFocusOrder(pID, AIFocusType.FOCUS_MINING)
+                print "Changing focus of newly settled planet ID %d : %s  to mining "%(pID,  planet.name )
         empireSpecies[pSpecName] = empireSpecies.get(pSpecName,  [])+[pID]
     print "\n"+"Empire species roster:"
     for specName in empireSpecies:
         thisSpec=fo.getSpecies(specName)
         if thisSpec:
             shipyards=[]
-            if thisSpec.canColonize:
-                for pID in empireSpecies[specName]:
-                    planet=universe.getPlanet(pID)
+            for pID in empireSpecies[specName]:
+                planet=universe.getPlanet(pID)
+                if thisSpec.canColonize:
                     if "BLD_SHIPYARD_BASE" in [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]:
                         shipyards.append(pID)
+                empireSpeciesSystems[planet.systemID]=True
+            if thisSpec.canColonize:
                 empireColonizers[specName]=shipyards
             print "%s on planets %s; can%s colonize from %d shipyards; has tags %s"%(specName,  empireSpecies[specName],  ["not", ""][thisSpec.canColonize], len(shipyards),  list(thisSpec.tags))
         else:
@@ -182,13 +214,13 @@ def getColonyFleets():
     sortedPlanets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
 
     print ""
-    print "Settleable Colony Planets score | ID | Name | Specials:"
+    print "Settleable Colony Planets (score,species) | ID | Name | Specials:"
     for ID, score in sortedPlanets:
-        print "   %5s | %5s  | %s  | %s "%(score,  ID,  universe.getPlanet(ID).name ,  list(universe.getPlanet(ID).specials)) 
+        print "   %15s | %5s  | %s  | %s "%(score,  ID,  universe.getPlanet(ID).name ,  list(universe.getPlanet(ID).specials)) 
     print ""
 
     # export planets for other AI modules
-    AIstate.colonisablePlanetIDs = sortedPlanets#TODO: should include species designation corresponding to rating
+    foAI.foAIstate.colonisablePlanetIDs = sortedPlanets#TODO: should include species designation corresponding to rating
 
     # get outpost fleets
     allOutpostFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST)
@@ -206,7 +238,7 @@ def getColonyFleets():
     print ""
 
     # export outposts for other AI modules
-    AIstate.colonisableOutpostIDs = sortedOutposts
+    foAI.foAIstate.colonisableOutpostIDs = sortedOutposts
 
 def getColonyTargetedPlanetIDs(planetIDs, missionType, empireID):
     "return list being settled with colony planets"
@@ -246,10 +278,10 @@ def getOutpostTargetedPlanetIDs(planetIDs, missionType, empireID):
 
 def assignColonyFleetsToColonise():
     # assign fleet targets to colonisable planets
-    sendColonyShips(AIstate.colonyFleetIDs, AIstate.colonisablePlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION)
+    sendColonyShips(AIstate.colonyFleetIDs, foAI.foAIstate.colonisablePlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION)
 
     # assign fleet targets to colonisable outposts
-    sendColonyShips(AIstate.outpostFleetIDs, AIstate.colonisableOutpostIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST)
+    sendColonyShips(AIstate.outpostFleetIDs, foAI.foAIstate.colonisableOutpostIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST)
 
 def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, species, empire):
     "creates a dictionary that takes planetIDs as key and their colonisation score as value"
@@ -274,34 +306,91 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
     # TODO: in planet evaluation consider specials and distance
     valMod = 0
     universe = fo.getUniverse()
+    empireResearchList = [element.tech for element in empire.researchQueue]
     planet = universe.getPlanet(planetID)
     if (planet == None): return 0
+    system = universe.getSystem(planet.systemID)
+    tagList=[]
+    starBonus=0
+    if species:
+        tagList = [tag for tag in species.tags]
+    if system:
+        if (empire.getTechStatus("PRO_SOL_ORB_GEN") == fo.techStatus.complete) or (  "PRO_SOL_ORB_GEN"  in empireResearchList[:8])  :    
+            if system.starType in [fo.starType.blue, fo.starType.white]:
+                if len (AIstate.empireStars.get(fo.starType.blue,  [])+AIstate.empireStars.get(fo.starType.white,  []))==0:
+                    starBonus +=20
+                else:
+                    starBonus +=5 #still has extra value as an alternate location for solar generators
+            if system.starType in [fo.starType.yellow, fo.starType.orange]:
+                if len (     AIstate.empireStars.get(fo.starType.blue,  [])+AIstate.empireStars.get(fo.starType.white,  [])+
+                                    AIstate.empireStars.get(fo.starType.yellow,  [])+AIstate.empireStars.get(fo.starType.orange,  []))==0:
+                    starBonus +=10
+                else:
+                    starBonus +=3 #still has extra value as an alternate location for solar generators
+        if (empire.getTechStatus("PRO_SINGULAR_GEN") == fo.techStatus.complete) or (  "PRO_SINGULAR_GEN"  in empireResearchList[:8])  :    
+            if system.starType in [fo.starType.blackHole]:
+                if len (AIstate.empireStars.get(fo.starType.blackHole,  []))==0:
+                    starBonus +=60 #pretty rare planets, good for generator
+                else:
+                    starBonus +=10 #still has extra value as an alternate location for generators & for bnlocking enemies generators
+        if (empire.getTechStatus("PRO_NEUTRONIUM_EXTRACTION") == fo.techStatus.complete) or (  "PRO_NEUTRONIUM_EXTRACTION"  in empireResearchList[:8])  :    
+            if system.starType in [fo.starType.neutron]:
+                if len (AIstate.empireStars.get(fo.starType.neutron,  []))==0:
+                    starBonus +=20 #pretty rare planets, good for armor
+                else:
+                    starBonus +=5 #still has extra value as an alternate location for generators & for bnlocking enemies generators
+    retval = starBonus
+    
     planetSpecials = list(planet.specials)
     if   (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ):
-        retval = 0
         for special in planetSpecials:
             if "_NEST_" in special:
-                return 30 # get an outpost on the nest quick
-        if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete ) ): 
-                retval= 15   # asteroid mining is great, fast return
+                retval+=10 # get an outpost on the nest quick
+        if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete ) and planet.systemID in empireSpeciesSystems): 
+                retval+=25   # asteroid mining is good return
         for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
             if special in planetSpecials:
-                retval = 20 #expects we can make exobots soonish
+                retval += 30 #expects we can make exobots soonish or will have other colonizers & want to claim the planet
+        if  ( ( planet.size  ==  fo.planetSize.gasGiant ) and  ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:10]) ) and planet.systemID in empireSpeciesSystems ): 
+                retval += 45   # gias giant generators great, fast return
         if foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0) > 0:
             retval = retval / 2.0
-        return retval
+        return int(retval)
     else: #colonization mission
-        if   (planet.size==fo.planetSize.gasGiant): 
+        asteroidBonus=0
+        gasGiantBonus=0
+        if   (planet.size==fo.planetSize.gasGiant) and not (species and species.name  ==  "SP_SUPER_TEST"): 
             return 0   
         elif ( planet.size  ==  fo.planetSize.asteroids ):
-            if  (species and species.name  ==  "SP_EXOBOT"):
-                return 50
+            if  (species and species.name  in [  "SP_EXOBOT", "SP_SUPER_TEST"  ]):
+                for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] : #even though as of time of writing only crystals can be in asteroids it seems
+                    if special in planetSpecials:
+                        retval+=60
+                    else:
+                        retval+=20
+                thrtRatio = foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0) / float(ProductionAI.curBestMilShipRating())
+                if thrtRatio > 4:
+                    retval = 2* retval / thrtRatio
+                elif thrtRatio >= 2:
+                    retval = 0.6* retval
+                elif thrtRatio > 0:
+                    retval = 0.8* retval
+                return int(retval)
             return 0
+        if system:
+            for pid  in [id for id in system.planetIDs if id != planetID]:
+                p2 = universe.getPlanet(pid)
+                if p2:
+                    if p2.size== fo.planetSize.asteroids :
+                        asteroidBonus = 5
+                    if p2.size== fo.planetSize.gasGiant :
+                        gasGiantBonus += 10
         planetEnv  = environs[ str(species.getPlanetEnvironment(planet.type)) ]
         popSizeMod=0
         popSizeMod += popSizeModMap["env"][planetEnv]
         if empire.getTechStatus("GRO_SUBTER_HAB") == fo.techStatus.complete:    
-            popSizeMod += popSizeModMap["subHab"][planetEnv]
+            if "TECTONIC_INSTABILITY_SPECIAL" not in planetSpecials:
+                popSizeMod += popSizeModMap["subHab"][planetEnv]
         if empire.getTechStatus("GRO_SYMBIOTIC_BIO") == fo.techStatus.complete:
             popSizeMod += popSizeModMap["symBio"][planetEnv]
         if empire.getTechStatus("GRO_XENO_GENETICS") == fo.techStatus.complete:
@@ -310,8 +399,6 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             popSizeMod += popSizeModMap["xenoHyb"][planetEnv]
         if empire.getTechStatus("GRO_CYBORG") == fo.techStatus.complete:
             popSizeMod += popSizeModMap["cyborg"][planetEnv]
-
-        tagList = [tag for tag in species.tags]
 
         for special in [ "SLOW_ROTATION_SPECIAL",  "SOLID_CORE_SPECIAL"] :
             if special in planetSpecials:
@@ -373,12 +460,14 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             threatFactor = 0.7
         else:
             threatFactor = 1.0
-
+    
+        if popSize<1:
+            return 0
         if (planetID in fleetSupplyablePlanetIDs):
-            return (popSize + distanceFactor + valMod)*threatFactor
+            return (retval+ popSize + distanceFactor + valMod + gasGiantBonus + asteroidBonus)*threatFactor
             #return getPlanetHospitality(planetID, species) * planet.size + distanceFactor
         else:
-            return  (popSize - distanceFactor  + valMod)*threatFactor
+            return  (retval+popSize - distanceFactor  + valMod)*threatFactor
             #return getPlanetHospitality(planetID, species) * planet.size - distanceFactor
 
 def getPlanetHospitality(planetID, species):
@@ -426,6 +515,9 @@ def sendColonyShips(colonyFleetIDs, evaluatedPlanets, missionType):
         thisTarget = potentialTargets.pop(0)
         thisPlanetID=thisTarget[0]
         thisSysID = universe.getPlanet(thisPlanetID).systemID
+        if (foAI.foAIstate.systemStatus.setdefault(thisSysID, {}).setdefault('monsterThreat', 0) > 2000) or (fo.currentTurn() <20  and foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'] > 200):
+            print "Skipping colonization of system %d due to Big Monster,  threat %d"%(thisSysID,  foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'])
+            continue
         thisSpec=thisTarget[1][1]
         thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetStats={},  minStats={},  curStats={},  species=thisSpec,  systemsToCheck=[thisSysID],  systemsChecked=[], 
                                                      fleetPool = fleetPool,   fleetList=[],  verbose=False)

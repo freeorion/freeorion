@@ -41,27 +41,37 @@ class AIPriorityType(object):
     PRIORITY_RESEARCH_SHIPS = 17
     PRIORITY_RESEARCH_DEFENSE = 18
 
-AIPriorityNames = [
-        "RESOURCE_GROWTH", 
-        "slot_empty", 
-        "RESOURCE_PRODUCTION", 
-        "RESOURCE_RESEARCH", 
-        "RESOURCE_TRADE", 
-        "RESOURCE_CONSTRUCTION", 
-        "PRODUCTION_EXPLORATION", 
-        "PRODUCTION_OUTPOST", 
-        "PRODUCTION_COLONISATION", 
-        "PRODUCTION_INVASION", 
-        "PRODUCTION_MILITARY", 
-        "PRODUCTION_BUILDINGS", 
-        "RESEARCH_LEARNING", 
-        "RESEARCH_GROWTH", 
-        "RESEARCH_PRODUCTION", 
-        "RESEARCH_CONSTRUCTION", 
-        "RESEARCH_ECONOMICS", 
-        "RESEARCH_SHIPS", 
-        "RESEARCH_DEFENSE", 
-        "INVALID" ]
+    AIPriorityNames = [
+            "RESOURCE_GROWTH", 
+            "slot_empty", 
+            "RESOURCE_PRODUCTION", 
+            "RESOURCE_RESEARCH", 
+            "RESOURCE_TRADE", 
+            "RESOURCE_CONSTRUCTION", 
+            "PRODUCTION_EXPLORATION", 
+            "PRODUCTION_OUTPOST", 
+            "PRODUCTION_COLONISATION", 
+            "PRODUCTION_INVASION", 
+            "PRODUCTION_MILITARY", 
+            "PRODUCTION_BUILDINGS", 
+            "RESEARCH_LEARNING", 
+            "RESEARCH_GROWTH", 
+            "RESEARCH_PRODUCTION", 
+            "RESEARCH_CONSTRUCTION", 
+            "RESEARCH_ECONOMICS", 
+            "RESEARCH_SHIPS", 
+            "RESEARCH_DEFENSE", 
+            "INVALID" ]
+
+    def name(self, mtype):
+        try:
+            name=self.AIPriorityNames[mtype]
+            return name
+        except:
+            return "invalidMissionType"
+            print "Error: exception triggered and caught:  ",  traceback.format_exc()
+
+AIPriorityNames = AIPriorityType.AIPriorityNames
 
 def getAIPriorityResourceTypes():
     return __getInterval(0, 5)
@@ -89,15 +99,16 @@ class AIFleetMissionType(object):
     FLEET_MISSION_OUTPOST = 1
     FLEET_MISSION_COLONISATION = 2
     FLEET_MISSION_SPLIT_FLEET = 3
-    FLEET_MISSION_MERGE_FLEET = 4
-    FLEET_MISSION_HIT_AND_RUN = 5
-    FLEET_MISSION_ATTACK = 6
-    FLEET_MISSION_DEFEND = 7
-    FLEET_MISSION_LAST_STAND = 8
+    FLEET_MISSION_MERGE_FLEET = 4 # not really supported yet
+    FLEET_MISSION_HIT_AND_RUN = 5 # currently same as MILITARY
+    FLEET_MISSION_ATTACK = 6                # currently same as MILITARY
+    FLEET_MISSION_DEFEND = 7            # currently same as MILITARY
+    FLEET_MISSION_LAST_STAND = 8    # currently same as MILITARY
     FLEET_MISSION_INVASION = 9
     FLEET_MISSION_MILITARY = 10
+    FLEET_MISSION_SECURE = 11   # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
 
-    MissionTypeNames=['explore',  'outpost',  'colonize',  'splitFleet',  'mergeFleet',  'hit&Run',  'attack',  'defend',  'last_stand', 'invasion', 'military', 'invalid']
+    MissionTypeNames=['explore',  'outpost',  'colonize',  'splitFleet',  'mergeFleet',  'hit&Run',  'attack',  'defend',  'last_stand', 'invasion', 'military', 'secure',  'invalid']
     
     def name(self, mtype):
         try:
@@ -105,10 +116,10 @@ class AIFleetMissionType(object):
             return name
         except:
             return "invalidMissionType"
-            print "Error: exception triggered:  ",  traceback.format_exc()
+            print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
 def getAIFleetMissionTypes():
-    return __getInterval(0, 10)
+    return __getInterval(0, 11)
 
 class AIFleetOrderType(object):
     ORDER_INVALID = -1
@@ -131,10 +142,38 @@ class AIFleetOrderType(object):
             return name
         except:
             return "invalidFleetOrderType"
-            print "Error: exception triggered:  ",  traceback.format_exc()
+            print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
 def getAIFleetOrderTypes():
     return __getInterval(0, 10)
+
+def getFleetOrderTypeForMission(aiFleetMissionType,  option=None):
+        if aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_EXPLORATION:
+            return AIFleetOrderType.ORDER_MOVE
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_OUTPOST:
+            return AIFleetOrderType.ORDER_OUTPOST
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_COLONISATION:
+            return AIFleetOrderType.ORDER_COLONISE
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_SPLIT_FLEET: #not really supported in this fashion currently
+            return AIFleetOrderType.ORDER_SPLIT_FLEET 
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_MERGE_FLEET: #not really supported in this fashion currently
+            return AIFleetOrderType.ORDER_MERGE_FLEET
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN: # currently same as MILITARY
+            return AIFleetOrderType.ORDER_MILITARY
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ATTACK:                # currently same as MILITARY
+            return AIFleetOrderType.ORDER_MILITARY
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_DEFEND:            # currently same as MILITARY
+            return AIFleetOrderType.ORDER_MILITARY
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_LAST_STAND:    # currently same as MILITARY
+            return AIFleetOrderType.ORDER_MILITARY
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_INVASION:
+            return AIFleetOrderType.ORDER_INVADE
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_MILITARY:
+            return AIFleetOrderType.ORDER_MILITARY
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_SECURE: # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
+            return AIFleetOrderType.ORDER_MILITARY
+        else: 
+            return AIFleetOrderType.ORDER_INVALID
 
 class AIShipDesignTypes(object):
     explorationShip = "SD_SCOUT"
@@ -143,7 +182,7 @@ class AIShipDesignTypes(object):
     troopShip = "SD_TROOP_SHIP"
     attackShip= "SD_MARK"
     
-class AIShipRoleType(object):
+class AIShipRoleType(object):  #this is also used in determining fleetRoles
     SHIP_ROLE_INVALID = -1
     SHIP_ROLE_MILITARY_ATTACK = 0
     SHIP_ROLE_MILITARY_LONGRANGE = 1
@@ -161,7 +200,7 @@ class AIShipRoleType(object):
             return name
         except:
             return "invalidRoleType"
-            print "Error: exception triggered:  ",  traceback.format_exc()
+            print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
 def getAIShipRolesTypes():
     return __getInterval(0, 8)
@@ -183,7 +222,7 @@ class AITargetType(object):
             return name
         except:
             return "invalidTargetType"
-            print "Error: exception triggered:  ",  traceback.format_exc()
+            print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
 def getAITargetTypes():
     return __getInterval(0, 7)
