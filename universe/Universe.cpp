@@ -1104,12 +1104,16 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
         Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
     type_timer.restart();
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
-        const PopCenter* pc = dynamic_cast<const PopCenter*>(it->second);
+        const PopCenter* pc = 0;
+        if (it->second->ObjectType() == OBJ_PLANET) // TODO: handle non-planet popcenters if added in future
+            pc = dynamic_cast<const PopCenter*>(it->second);
         const Ship* ship = 0;
-        if (!pc) {
+        if (!pc && it->second->ObjectType() == OBJ_SHIP) {
             ship = dynamic_cast<const Ship*>(it->second);
             if (!ship) continue;
         }
+        if (!pc && !ship)
+            continue;
         const std::string& species_name = (pc ? pc->SpeciesName() : ship->SpeciesName());
         //Logger().debugStream() << "... ... PopCenter species: " << species_name;
         if (species_name.empty())
@@ -1206,7 +1210,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
 
     // 5) EffectsGroups from Ship Hull and Ship Parts
     if (GetOptionsDB().Get<bool>("verbose-logging"))
-        Logger().debugStream() << "Universe::GetEffectsAndTargets for SHIPS";
+        Logger().debugStream() << "Universe::GetEffectsAndTargets for SHIPS hulls and parts";
     type_timer.restart();
     std::vector<Ship*> ships = m_objects.FindObjects<Ship>();
     for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {

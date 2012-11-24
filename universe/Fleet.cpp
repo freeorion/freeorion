@@ -114,6 +114,9 @@ void Fleet::Copy(const UniverseObject* copied_object, int empire_id) {
 const std::string& Fleet::TypeName() const
 { return UserString("FLEET"); }
 
+UniverseObjectType Fleet::ObjectType() const
+{ return OBJ_FLEET; }
+
 std::string Fleet::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();

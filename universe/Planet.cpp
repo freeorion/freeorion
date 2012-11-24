@@ -182,6 +182,9 @@ bool Planet::HasTag(const std::string& name) const {
 const std::string& Planet::TypeName() const
 { return UserString("PLANET"); }
 
+UniverseObjectType Planet::ObjectType() const
+{ return OBJ_PLANET; }
+
 std::string Planet::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();

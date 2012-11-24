@@ -174,6 +174,9 @@ bool UniverseObject::HasTag(const std::string& name) const
 const std::string& UniverseObject::TypeName() const
 { return UserString("UNIVERSEOBJECT"); }
 
+UniverseObjectType UniverseObject::ObjectType() const
+{ return INVALID_UNIVERSE_OBJECT_TYPE; }
+
 std::string UniverseObject::Dump() const {
     const System* system = GetSystem(this->SystemID());
 

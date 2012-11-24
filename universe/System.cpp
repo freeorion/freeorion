@@ -140,6 +140,9 @@ void System::Copy(const UniverseObject* copied_object, int empire_id) {
 const std::string& System::TypeName() const
 { return UserString("SYSTEM"); }
 
+UniverseObjectType System::ObjectType() const
+{ return OBJ_SYSTEM; }
+
 std::string System::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();

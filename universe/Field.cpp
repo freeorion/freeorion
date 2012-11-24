@@ -113,6 +113,9 @@ bool Field::HasTag(const std::string& name) const {
 const std::string& Field::TypeName() const
 { return UserString("FIELD"); }
 
+UniverseObjectType Field::ObjectType() const
+{ return OBJ_FIELD; }
+
 std::string Field::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();

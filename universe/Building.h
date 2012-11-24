@@ -37,6 +37,7 @@ public:
     virtual bool                HasTag(const std::string& name) const;              ///< returns true iff this object has the tag with the indicated \a name
 
     virtual const std::string&  TypeName() const;   ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual UniverseObjectType  ObjectType() const;
     virtual std::string         Dump() const;
 
     const std::string&      BuildingTypeName() const    { return m_building_type; };        ///< returns the name of the BuildingType object for this building

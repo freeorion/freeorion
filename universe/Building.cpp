@@ -105,6 +105,9 @@ bool Building::HasTag(const std::string& name) const {
 const std::string& Building::TypeName() const
 { return UserString("BUILDING"); }
 
+UniverseObjectType Building::ObjectType() const
+{ return OBJ_BUILDING; }
+
 std::string Building::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();

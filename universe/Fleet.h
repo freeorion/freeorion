@@ -47,6 +47,7 @@ public:
 
     /** \name Accessors */ //@{
     virtual const std::string&          TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual UniverseObjectType          ObjectType() const;
     virtual std::string                 Dump() const;
 
     const_iterator                      begin() const       { return m_ships.begin(); } ///< returns the begin const_iterator for the ships in the fleet

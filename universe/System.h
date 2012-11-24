@@ -59,6 +59,7 @@ public:
 
     /** \name Accessors */ //@{
     virtual const std::string&  TypeName() const;                       ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual UniverseObjectType  ObjectType() const;
     virtual std::string         Dump() const;
 
     /** returns the name to display for players for this system.  While all

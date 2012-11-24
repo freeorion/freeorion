@@ -32,6 +32,8 @@ public:
     virtual bool                HasTag(const std::string& name) const;              ///< returns true iff this object has the tag with the indicated \a name
 
     virtual const std::string&  TypeName() const;   ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual UniverseObjectType  ObjectType() const;
+    virtual std::string         Dump() const;
 
     const ShipDesign*           Design() const;     ///< returns the design of the ship, containing engine type, weapons, etc.
     int                         DesignID() const            { return m_design_id; }             ///< returns the design id of the ship
@@ -39,7 +41,6 @@ public:
     int                         ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this ship
 
     virtual const std::string&  PublicName(int empire_id) const;
-    virtual std::string         Dump() const;
 
     bool                        IsMonster() const;
     bool                        IsArmed() const;

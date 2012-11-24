@@ -18,9 +18,12 @@ public:
     virtual std::vector<std::string>
                                 Tags() const;                                       ///< returns all tags this object has
     virtual bool                HasTag(const std::string& name) const;              ///< returns true iff this object has the tag with the indicated \a name
+
     virtual const std::string&  TypeName() const;   ///< returns user-readable string indicating the type of UniverseObject this is
-    const std::string&          FieldTypeName() const { return m_type_name; }
+    virtual UniverseObjectType  ObjectType() const;
     virtual std::string         Dump() const;
+
+    const std::string&          FieldTypeName() const { return m_type_name; }
     virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
 
     bool                        InField(const UniverseObject* obj) const;
