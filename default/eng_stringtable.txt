@@ -1883,6 +1883,12 @@ Wasted Research : %2%
 
 Click here to open the research menu'''
 
+MAP_POPULATION_DISTRIBUTION
+Census
+
+MAP_POPULATION_COUNT
+%1%: %2%
+
 #################
 # SidePanel     #
 #################

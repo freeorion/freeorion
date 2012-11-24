@@ -29,6 +29,7 @@ class UniverseObject;
 class BuildingType;
 class StatisticIcon;
 class CUIDropDownList;
+class CensusListBox;
 namespace GG {
     class StaticGraphic;
 }
@@ -409,6 +410,23 @@ private:
     GG::TextControl*    m_title_text;
     GG::TextControl*    m_main_text;
     GG::Pt              m_offset;
+};
+
+/** A popup tooltop for display when mousing over in-game icons.  A title and some detail text.*/
+class CensusBrowseWnd : public GG::BrowseInfoWnd {
+public:
+    CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts);
+    virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
+    virtual void    Render();
+    void            DoLayout();
+
+private:
+    GG::TextControl*    m_title_text;
+    CUIListBox*         m_list;
+    GG::Pt              m_offset;
+    GG::Y               m_row_height;
+
+    void InitRowSizes();
 };
 
 /** Gives information about inporting and exporting of resources to and from this system when mousing

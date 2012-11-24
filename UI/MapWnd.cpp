@@ -4223,9 +4223,58 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     }
 }
 
+const GG::Y     ICON_HEIGHT(24);
+const int       EDGE_PAD(3);
+class CensusListWnd : public GG::BrowseInfoWnd {
+
+private:
+
+public: 
+    CensusListWnd(){
+        Resize(GG::Pt(Width(), Height()));
+    };
+
+    void Update(){
+        Resize(GG::Pt(Width(), Height()));
+    }
+
+    void Render(){
+        GG::Pt ul = UpperLeft();
+        GG::Pt lr = LowerRight();
+        FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+    };
+    bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
+        return true;
+    };
+};
+
+
 void MapWnd::RefreshPopulationIndicator() {
-    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return;
     m_population->SetValue(empire->GetPopulationPool().Population());
+
+    const std::vector<int> pop_center_ids = empire->GetPopulationPool().PopCenterIDs();
+    std::map<std::string, float> population_counts;
+    const ObjectMap& objects = Objects();
+
+    //tally up all species population counts
+    for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); it++) {
+        const UniverseObject* obj = objects.Object(*it);
+        const PopCenter* pc = dynamic_cast<const PopCenter*>(obj);
+        if (!pc)
+            continue;
+
+        const std::string& species_name = pc->SpeciesName();
+        if (species_name.empty())
+            continue;
+
+        population_counts[species_name] += pc->CurrentMeterValue(METER_POPULATION);
+    }
+
+    m_population->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new CensusBrowseWnd(UserString("MAP_POPULATION_DISTRIBUTION"), population_counts)));
 }
 
 void MapWnd::UpdateMetersAndResourcePools() {

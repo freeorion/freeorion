@@ -2332,6 +2332,133 @@ void TextBrowseWnd::Render() {
     GG::FlatRectangle(ul + m_offset, GG::Pt(lr.x, ul.y + ROW_HEIGHT) + m_offset, ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
 }
 
+/////////////////////////////////////
+//         CensusRowPanel          //
+/////////////////////////////////////
+class CensusRowPanel : public GG::Control {
+public:
+    CensusRowPanel(GG::X w, GG::Y h, const std::string& species, double species_census) :
+        Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>())
+    {
+        SetChildClippingMode(ClipToClient);
+
+        boost::shared_ptr<GG::Texture> texture = ClientUI::SpeciesIcon(species);
+        m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
+                                       texture, GG::GRAPHIC_FITGRAPHIC);
+        AttachChild(m_icon);
+
+        m_species_name = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString(species),
+            ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT);
+        AttachChild(m_species_name);
+
+        int num_digits = species_census < 10 ? 2 : 3; // this allows the decimal point to line up when there number above and below 10.
+        m_species_census = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1,
+                                               DoubleToString(species_census, num_digits, false),
+                                               ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT);
+        AttachChild(m_species_census);
+
+        DoLayout();
+    }
+
+    virtual void    Render()
+    { GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndColor(), 1u); }
+
+private:
+    void            DoLayout() {
+        const GG::Y ICON_HEIGHT(32);
+        const GG::X ICON_WIDTH(16);
+        const GG::X SPECIES_NAME_WIDTH(ClientUI::Pts() * 9);
+        const GG::X SPECIES_CENSUS_WIDTH(ClientUI::Pts() * 5);
+
+        GG::X left(GG::X0);
+        GG::Y top(GG::Y0);
+        GG::Y bottom(ClientHeight());
+
+        m_icon->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ICON_WIDTH, bottom));
+        left += ICON_WIDTH + GG::X(3);
+
+        m_species_name->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + SPECIES_NAME_WIDTH, bottom));
+        left += SPECIES_NAME_WIDTH;
+
+        m_species_census->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + SPECIES_CENSUS_WIDTH, bottom));
+        left += SPECIES_CENSUS_WIDTH;
+    }
+
+    GG::StaticGraphic*  m_icon;
+    GG::TextControl*    m_species_name;
+    GG::TextControl*    m_species_census;
+};
+
+
+/////////////////////////////////////
+//         CensusBrowseWnd         //
+/////////////////////////////////////
+CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
+                                 const std::map<std::string, float>& population_counts) :
+    GG::BrowseInfoWnd(GG::X0, GG::Y0, BROWSE_TEXT_WIDTH, GG::Y1)
+{
+    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
+    const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
+    const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
+
+    GG::Y top = GG::Y0;
+
+    m_row_height = GG::Y(ClientUI::Pts()*3/2);
+
+    m_offset = GG::Pt(GG::X0, ICON_BROWSE_ICON_HEIGHT/2); //lower the window
+
+    m_title_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, GG::Y0 + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text,
+        font_bold, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    AttachChild(m_title_text);
+
+
+    m_list = new CUIListBox(m_offset.x, ROW_HEIGHT + m_offset.y, BROWSE_TEXT_WIDTH, GG::Y1);
+    m_list->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
+    m_list->SetInteriorColor(ClientUI::WndColor());
+    // preinitialize listbox/row column widths, because what ListBox::Insert does on default is not suitable for this case
+    m_list->SetNumCols(1);
+    m_list->SetColWidth(0, GG::X0);
+    m_list->LockColWidths();
+    AttachChild(m_list);
+
+    // put into multimap to sort by population, ascending
+    std::multimap<float, std::string> counts_species;
+    for (std::map<std::string, float>::const_iterator it = population_counts.begin();
+         it != population_counts.end(); ++it)
+    { counts_species.insert(std::make_pair(it->second, it->first)); }
+
+    // add rows
+    for (std::multimap<float, std::string>::const_reverse_iterator it = counts_species.rbegin();
+         it != counts_species.rend(); ++it)
+    {
+        GG::ListBox::Row* row = new GG::ListBox::Row(m_list->Width(), ROW_HEIGHT, "Census Row");
+        row->push_back(new CensusRowPanel(m_list->Width(), ROW_HEIGHT, it->second, it->first));
+        m_list->Insert(row);
+        row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));
+        top += m_row_height;
+    }
+
+    m_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, top + (EDGE_PAD*2)));
+    Resize(GG::Pt(BROWSE_TEXT_WIDTH, top + (EDGE_PAD*2)));
+}
+
+bool CensusBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
+    assert(mode <= wnd->BrowseModes().size());
+    return true;
+}
+
+void CensusBrowseWnd::Render() {
+    GG::Pt      ul = UpperLeft();
+    GG::Pt      lr = LowerRight();
+    const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
+    // main background
+    GG::FlatRectangle(ul + m_offset, lr + m_offset, ClientUI::WndColor(),
+                      ClientUI::WndOuterBorderColor(), 1);
+    // top title filled background
+    GG::FlatRectangle(ul + m_offset, GG::Pt(lr.x, ul.y + ROW_HEIGHT) + m_offset,
+                      ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
+}
+
 
 //////////////////////////////////////
 //  SystemResourceSummaryBrowseWnd  //
