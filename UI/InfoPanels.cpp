@@ -275,6 +275,7 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     m_pop_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::SpeciesIcon(pop->SpeciesName()),
                                    0, 3, false);
     AttachChild(m_pop_stat);
+    m_pop_stat->InstallEventFilter(this);
 
     m_happiness_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_HAPPINESS),
                                          0, 3, false);
@@ -494,6 +495,39 @@ const PopCenter* PopulationPanel::GetPopCenter() const {
 
 void PopulationPanel::EnableOrderIssuing(bool enable/* = true*/)
 {}
+
+bool PopulationPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
+    if (event.Type() != GG::WndEvent::RClick)
+        return false;
+    const GG::Pt& pt = event.Point();
+
+    const UniverseObject* obj = GetUniverseObject(m_popcenter_id);
+    if (!obj)
+        return false;
+
+    const PopCenter* pc = dynamic_cast<const PopCenter*>(obj);
+    if (!pc)
+        return false;
+
+    const std::string& species_name = pc->SpeciesName();
+    if (species_name.empty())
+        return false;
+
+    if (m_pop_stat != w)
+        return false;
+
+    GG::MenuItem menu_contents;
+
+    std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
+    menu_contents.next_level.push_back(GG::MenuItem(popup_label, 1, false, false));
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+
+    if (!popup.Run() || popup.MenuID() != 1)
+        return false;
+
+    ClientUI::GetClientUI()->ZoomToSpecies(species_name);
+    return true;
+}
 
 
 /////////////////////////////////////
@@ -1261,6 +1295,7 @@ void MultiIconValueIndicator::Init() {
         m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH,
                                             MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2,
                                             texture, 0.0, 3, false));
+        m_icons.back()->InstallEventFilter(this);
         AttachChild(m_icons.back());
         x += MULTI_INDICATOR_ICON_WIDTH + MULTI_INDICATOR_ICON_SPACING;
     }
@@ -1320,6 +1355,51 @@ void MultiIconValueIndicator::ClearToolTip(MeterType meter_type) {
         if (m_meter_types.at(i).first == meter_type)
             m_icons.at(i)->ClearBrowseInfoWnd();
 }
+
+bool MultiIconValueIndicator::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
+    if (event.Type() != GG::WndEvent::RClick)
+        return false;
+    const GG::Pt& pt = event.Point();
+
+    if (m_object_ids.size() != 1)
+        return false;
+    const UniverseObject* obj = GetUniverseObject(*m_object_ids.begin());
+    if (!obj)
+        return false;
+
+    const PopCenter* pc = dynamic_cast<const PopCenter*>(obj);
+    if (!pc)
+        return false;
+
+    const std::string& species_name = pc->SpeciesName();
+    if (species_name.empty())
+        return false;
+
+    for (unsigned int i = 0; i < m_icons.size(); ++i) {
+        if (m_icons.at(i) != w)
+            continue;
+        MeterType meter_type = m_meter_types.at(i).first;
+        if (meter_type != METER_POPULATION)
+            continue;
+
+        GG::MenuItem menu_contents;
+
+        std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
+        menu_contents.next_level.push_back(GG::MenuItem(popup_label, 1, false, false));
+        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+
+        if (!popup.Run() || popup.MenuID() != 1) {
+            return false;
+            break;
+        }
+
+        ClientUI::GetClientUI()->ZoomToSpecies(species_name);
+        return true;
+    }
+
+    return false;
+}
+
 
 /////////////////////////////////////
 //       MultiMeterStatusBar       //

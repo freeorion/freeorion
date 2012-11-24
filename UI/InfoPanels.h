@@ -51,6 +51,7 @@ public:
     virtual void        Render();
     virtual void        MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
     virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    bool                EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
     void                Update();                       ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void                Refresh();                      ///< updates, redoes layout, resizes indicator
@@ -332,6 +333,7 @@ public:
 
     void            SetToolTip(MeterType meter_type, const boost::shared_ptr<GG::BrowseInfoWnd>& browse_wnd);
     void            ClearToolTip(MeterType meter_type);
+    bool            EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
 private:
     void            Init();
