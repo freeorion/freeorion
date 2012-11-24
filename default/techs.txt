@@ -2250,6 +2250,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Ship
             ]
+            activation = Not OwnerHasTech "SHP_ADV_DAM_CONT"
             effects = SetStructure Value + 1
 
 Tech
@@ -2267,7 +2268,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Ship
             ]
-            effects = SetStructure Target.MaxStructure
+            effects = SetStructure Value + (Target.MaxStructure/4)
 
 Tech
     name = "SHP_ZORTRIUM_PLATE"
