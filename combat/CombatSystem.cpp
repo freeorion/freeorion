@@ -685,7 +685,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
 
             // check for destruction of ships
-            if (universe_object_cast<Ship*>(target)) {
+            if (target->ObjectType() == OBJ_SHIP) {
                 if (target->CurrentMeterValue(METER_STRUCTURE) <= 0.0) {
                     Logger().debugStream() << "!! Target Ship is destroyed!";
                     // object id destroyed
@@ -708,7 +708,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
                          target_vec_it != empire_valid_attacker_object_ids.end(); ++target_vec_it)
                     { target_vec_it->second.erase(target_id); }
                 }
-            } else if (universe_object_cast<Planet*>(target)) {
+            } else if (target->ObjectType() == OBJ_PLANET) {
                 if (target->CurrentMeterValue(METER_SHIELD) <= 0.0 &&
                     target->CurrentMeterValue(METER_DEFENSE) <= 0.0 &&
                     target->CurrentMeterValue(METER_CONSTRUCTION) <= 0.0)

@@ -1627,7 +1627,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
                 //
                 //else if (dist2 == 0.0 && obj_vis <= VIS_NO_VISIBILITY) {
                 //    // planets always basically visible if at same location as a detector
-                //    if (universe_object_cast<const Planet*>(detectable_obj)) {
+                //    if (detectable_obj->ObjectType() == OBJ_PLANET)) {
                 //        SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
                 //                                  empire_id, detectable_obj->ID(), VIS_BASIC_VISIBILITY);
                 //        // no break here.  may be partially visible due to
@@ -2016,13 +2016,13 @@ void Universe::RecursiveDestroy(int object_id) {
             Destroy(*it);
         Destroy(object_id);
 
-    } else if (universe_object_cast<System*>(obj)) {
+    } else if (obj->ObjectType() == OBJ_SYSTEM) {
         // unsupported: do nothing
 
-    } else if (universe_object_cast<Building*>(obj)) {
+    } else if (obj->ObjectType() == OBJ_BUILDING) {
         Destroy(object_id);
 
-    } else if (universe_object_cast<Field*>(obj)) {
+    } else if (obj->ObjectType() == OBJ_FIELD) {
         Destroy(object_id);
     }
     // else ??? object is of some type unknown as of this writing.

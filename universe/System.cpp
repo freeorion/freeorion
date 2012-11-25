@@ -392,7 +392,7 @@ int System::Insert(UniverseObject* obj, int orbit) {
 
 
     // special cases for if object is a planet or fleet
-    if (universe_object_cast<Planet*>(obj))
+    if (obj->ObjectType() == OBJ_PLANET)
         UpdateOwnership();
     else if (Fleet* fleet = universe_object_cast<Fleet*>(obj))
         FleetInsertedSignal(*fleet);
@@ -451,7 +451,7 @@ void System::Remove(UniverseObject* obj) {
 
                 removed_something = true;
 
-                if (universe_object_cast<Planet*>(cur_obj))
+                if (cur_obj->ObjectType() == OBJ_PLANET)
                     removed_planet = true;
                 if (Fleet* fleet = universe_object_cast<Fleet*>(cur_obj))
                     removed_fleets.push_back(fleet);

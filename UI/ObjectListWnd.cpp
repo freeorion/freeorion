@@ -953,9 +953,13 @@ public:
                 int object_id = it->first;
                 const UniverseObject* obj = it->second;
 
-                if (universe_object_cast<const System*>(obj)) {
+                if (obj->ObjectType() == OBJ_SYSTEM) {
                     if (ObjectShown(object_id, OBJ_SYSTEM, true))
                         systems.insert(object_id);
+
+                } else if (obj->ObjectType() == OBJ_FIELD) {
+                    if (ObjectShown(object_id, OBJ_FIELD, true))
+                        fields.insert(object_id);
 
                 } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
                     if (ObjectShown(object_id, OBJ_FLEET, true))
@@ -972,10 +976,6 @@ public:
                 } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
                     if (ObjectShown(object_id, OBJ_BUILDING, true))
                         planet_buildings[building->PlanetID()].insert(object_id);
-
-                } else if (/*const Field* field = */universe_object_cast<const Field*>(obj)) {
-                    if (ObjectShown(object_id, OBJ_FIELD, true))
-                        fields.insert(object_id);
                 }
             }
 
@@ -1271,16 +1271,12 @@ private:
         Logger().debugStream() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
         if (!obj)
             return;
-        if (universe_object_cast<const Ship*>(obj) ||
-            universe_object_cast<const Building*>(obj))
-        {
+
+        UniverseObjectType type = obj->ObjectType();
+        if (type == OBJ_SHIP || type == OBJ_BUILDING)
             UpdateObjectPanel(object_id);
-        } else if (universe_object_cast<const Fleet*>(obj) ||
-                   universe_object_cast<const Planet*>(obj) ||
-                   universe_object_cast<const System*>(obj))
-        {
+        else if (type == OBJ_FLEET || type == OBJ_PLANET || type == OBJ_SYSTEM)
             Refresh();
-        }
     }
 
     void            UniverseObjectDeleted(const UniverseObject* obj) {
