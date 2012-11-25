@@ -129,4 +129,6 @@ private:
     static std::map<int, boost::signals::connection>    s_fleet_state_change_signals;
 };
 
+int AutomaticallyChosenColonyShip(int target_planet_id);
+
 #endif // _SidePanel_h_
