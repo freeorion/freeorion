@@ -4223,32 +4223,6 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     }
 }
 
-const GG::Y     ICON_HEIGHT(24);
-const int       EDGE_PAD(3);
-class CensusListWnd : public GG::BrowseInfoWnd {
-
-private:
-
-public: 
-    CensusListWnd(){
-        Resize(GG::Pt(Width(), Height()));
-    };
-
-    void Update(){
-        Resize(GG::Pt(Width(), Height()));
-    }
-
-    void Render(){
-        GG::Pt ul = UpperLeft();
-        GG::Pt lr = LowerRight();
-        FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
-    };
-    bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
-        return true;
-    };
-};
-
-
 void MapWnd::RefreshPopulationIndicator() {
     Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
