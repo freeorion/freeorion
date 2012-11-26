@@ -2334,7 +2334,7 @@ ULTIMATE_INDUSTRY
         EffectsGroup
             scope = Source
             accountinglabel = "ULTIMATE_INDUSTRY_LABEL"
-            effects = SetTargetIndustry Value*[[GREAT_MULTIPLIER]]
+            effects = SetTargetIndustry Value*[[ULTIMATE_MULTIPLIER]]
 '''
 
 //#####      R E S E A R C H    #####//
