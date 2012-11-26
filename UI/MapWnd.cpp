@@ -1751,13 +1751,12 @@ void MapWnd::InitTurn() {
     //Logger().debugStream() << "Visible UniverseObjects: ";
     //objects.Dump();
 
-    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
     //// DEBUG
-    //for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it)
+    //for (EmpireManager::const_iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
     //    Logger().debugStream() << "MapWnd::InitTurn: empire id: " << empire_it->first << " named: " << empire_it->second->Name();
     //// END DEBUG
 
-    Empire* this_client_empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
+    Empire* this_client_empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
 
 
     // update effect accounting and meter estimates
@@ -1857,7 +1856,7 @@ void MapWnd::InitTurn() {
 
 
     timer.restart();
-    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
+    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->UpdateResourcePools();
 
 
@@ -2225,7 +2224,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
 
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
     Empire* this_client_empire = Empires().Lookup(empire_id);
@@ -2378,7 +2376,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
                 // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
                 GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
-                for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
                     Empire* empire = empire_it->second;
                     const std::set<std::pair<int, int> >& resource_supply_lanes = empire->SupplyStarlaneTraversals();
 
@@ -2449,7 +2447,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                                                lane_colour.a);
                 }
 
-                for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
                     Empire* empire = empire_it->second;
                     const std::set<std::pair<int, int> >& resource_obstructed_supply_lanes = empire->SupplyOstructedStarlaneTraversals();
 
@@ -3915,6 +3913,14 @@ bool MapWnd::OpenChatWindow() {
 
 bool MapWnd::EndTurn() {
     Logger().debugStream() << "MapWnd::EndTurn";
+    const Empire *empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (empire) {
+        double RP = empire->ResourceProduction(RE_RESEARCH);
+        double PP = empire->ResourceProduction(RE_INDUSTRY);
+        int turn_number = CurrentTurn();
+        float ratio = (RP/(PP+0.0001));
+        Logger().debugStream() << "Current Output (turn " << turn_number << " ) RP/PP: " << ratio << " ( " << RP << "/"<< PP << ")";
+    }
     HumanClientApp::GetApp()->StartTurn();
     return true;
 }
