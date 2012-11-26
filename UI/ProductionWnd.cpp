@@ -40,11 +40,15 @@ namespace {
 
     class QuantLabel : public GG::Control {
     public:
-        QuantLabel(int quantity, int designID, boost::shared_ptr<GG::Font> font, GG::X nwidth, GG::Y h, bool inProgress) :
+        QuantLabel(int quantity, int designID, boost::shared_ptr<GG::Font> font, GG::X nwidth, GG::Y h, bool inProgress, bool amBlockType) :
             Control(GG::X0, GG::Y0, nwidth, h, GG::Flags<GG::WndFlag>())
         {
             GG::Clr txtClr = inProgress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
-            std::string nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_MULTIPLES")) % quantity);
+            std::string nameText;
+            if (amBlockType)
+                nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_MULTIPLES")) % quantity);
+            else
+                nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_REPETITIONS")) % quantity);
             //nameText += GetShipDesign(designID)->Name();
             GG::TextControl* text = new GG::TextControl(GG::X0, GG::Y0, nameText, font, txtClr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
             text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3))); //
@@ -57,12 +61,12 @@ namespace {
 
     class QuantRow : public GG::ListBox::Row {
     public:
-        QuantRow(int quantity, int designID, boost::shared_ptr<GG::Font> font, GG::X nwidth, GG::Y h, bool inProgress) :
+        QuantRow(int quantity, int designID, boost::shared_ptr<GG::Font> font, GG::X nwidth, GG::Y h, bool inProgress, bool amBlockType) :
             GG::ListBox::Row(),
             width(0),
             m_quant(quantity)
         {
-            QuantLabel* newLabel = new QuantLabel(m_quant, designID, font, nwidth, h, inProgress);
+            QuantLabel* newLabel = new QuantLabel(m_quant, designID, font, nwidth, h, inProgress,amBlockType);
             width = newLabel->Width();
             height = newLabel->Height();
             push_back(newLabel);
@@ -108,7 +112,7 @@ namespace {
                 myQuantSet.insert(quantity);
             GG::Y height;
             for (std::set<int>::iterator it=myQuantSet.begin(); it != myQuantSet.end(); it++ ) {
-                QuantRow* newRow =  new QuantRow(*it, build.item.design_id, font, nwidth, h, inProgress);
+                QuantRow* newRow =  new QuantRow(*it, build.item.design_id, font, nwidth, h, inProgress,amBlockType);
                 if (newRow->width)
                     width = newRow->width;
                 GG::DropDownList::iterator latest_it = Insert(newRow);
@@ -150,7 +154,7 @@ namespace {
             std::set<int> myQuantSet(quantInts,quantInts+6);
             myQuantSet.insert(build.remaining);
             for (std::set<int>::iterator it=myQuantSet.begin(); it != myQuantSet.end(); it++ ) {
-                GG::DropDownList::iterator latest_it = Insert(new QuantRow(*it, 0, ClientUI::GetFont(), GG::X1, h, false));
+                GG::DropDownList::iterator latest_it = Insert(new QuantRow(*it, 0, ClientUI::GetFont(), GG::X1, h, false, amBlockType));
                 if (build.remaining == *it)
                     Select(latest_it);
             }
