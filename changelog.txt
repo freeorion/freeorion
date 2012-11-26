@@ -32,6 +32,11 @@ Balancing:
  ~ Disable production of shipyards at outposts.
  ~ Adjusted Microgravity Industry to "Increases Industry by +5 on all Industry-focused colonies in system with an asteroid belt outposts. Additional asteriod outposts do not provide additional benefit."
  ~ Removed loophole that made Exobot Origin buildings cheaper than building Exobot colony ships on Exobot worlds.
+ ~ Some rough species balancing:
+ ~ ~ Weakened Trith with Narrow EP
+ ~ ~ Strengthened Egassem with Ultimate Industry
+ ~ ~ Strengthened Laenfa with Average Industry
+ ~ ~ Strengthened Gyisache with Great Research
  
  Content:
   ~ More Game Concepts 'pedia entries.

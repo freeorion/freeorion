@@ -96,7 +96,7 @@ Species
     
     effectsgroups = [
         [[GOOD_INDUSTRY]]
-        [[GOOD_RESEARCH]]
+        [[GREAT_RESEARCH]]
 
         [[BAD_GROUND_TROOPS]]
         [[GOOD_POPULATION]]
@@ -178,11 +178,11 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
-        [[AVERAGE_POPULATION]]
+        [[GOOD_POPULATION]]
         [[LARGE_PLANET]]
     ]
     
-    [[DESERT_STANDARD_EP]]
+    [[DESERT_NARROW_EP]]
     
     graphic = "icons/species/trith.png"
 
@@ -283,7 +283,7 @@ Species
         [[GREAT_DETECTION]]
         [[GREAT_STEALTH]]
         
-        [[BAD_INDUSTRY]]
+        [[AVERAGE_INDUSTRY]]
         [[BAD_RESEARCH]]
 
         [[BAD_GROUND_TROOPS]]
@@ -389,7 +389,7 @@ Species
     ]
     
     effectsgroups = [
-        [[GREAT_INDUSTRY]]
+        [[ULTIMATE_INDUSTRY]]
         [[BAD_RESEARCH]]
         
         [[GREAT_GROUND_TROOPS]]
@@ -2333,7 +2333,7 @@ ULTIMATE_INDUSTRY
 
         EffectsGroup
             scope = Source
-            accountinglabel = "GREAT_INDUSTRY_LABEL"
+            accountinglabel = "ULTIMATE_INDUSTRY_LABEL"
             effects = SetTargetIndustry Value*[[GREAT_MULTIPLIER]]
 '''
 
