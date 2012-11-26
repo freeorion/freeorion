@@ -256,18 +256,30 @@ Special
             ]
         EffectsGroup
             scope = Source
-            effects = SetTexture name = "planets/overlays/ruins.png"        
+            effects = SetTexture name = "planets/overlays/ruins.png"     
+            
         EffectsGroup     
             scope = Source     
             activation = AND [
                 Turn high = 0
-                Random probability = 0.66
+                Random probability = 0.5
                 Not WithinStarlaneJumps 1 Contains And [
                     Planet
                     OwnedBy AnyEmpire
                 ]
             ]
-            effects = CreateShip "SM_GUARD_3"
+            effects = CreateShip "SM_GUARD_2"
+        
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Turn high = 0
+                Not WithinStarlaneJumps 1 Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+            ]
+            effects = CreateShip "SM_GUARD_2"
         ]
         graphic = "icons/meter/detection.png"
 
@@ -1417,7 +1429,7 @@ CHANCE_OF_GUARD_1
             scope = Source     
             activation = AND [
                 Turn high = 0
-                Random probability = 0.7
+                Random probability = 0.60
             ]
             effects = CreateShip "SM_GUARD_1"
 '''

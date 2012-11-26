@@ -933,7 +933,7 @@ BuildingType
             scope = Source
             effects = Destroy
     ]
-    icon = ""
+    icon = "icons/building/terraform.png"
     
 /*  Remote Terraforming is broken badly so hidden
 BuildingType

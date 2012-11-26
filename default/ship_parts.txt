@@ -287,7 +287,7 @@ Part
             scope = Source
             activation = Source
             effects = SetStarlaneSpeed Value - 3
-    icon = ""
+    icon = "icons/ship_parts/rock_plating.png"
 
 Part
     name = "AR_CRYSTAL_PLATE"
@@ -312,7 +312,7 @@ Part
             scope = Source
             activation = Source
             effects = SetStarlaneSpeed Value - 3
-    icon = ""
+    icon = "icons/ship_parts/crystal_plating.png"
 
 Part
     name = "AR_NEUTRONIUM_PLATE"
@@ -338,7 +338,7 @@ Part
             scope = Source
             activation = Source
             effects = SetStarlaneSpeed Value - 5
-    icon = ""
+    icon = "icons/ship_parts/neutronium_plating.png"
     
 Part
     name = "AR_PRECURSOR_PLATE"
