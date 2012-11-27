@@ -48,11 +48,6 @@ Tech
     researchcost = 1
     researchturns = 1
     unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
-    effectsgroups =
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = NOT OwnerHasTech "DEF_GARRISON_1"
-            effects = SetMaxTroops Value + 5
     graphic = ""
 
 Tech
@@ -61,15 +56,10 @@ Tech
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 2
-    researchturns = 2
+    researchcost = 5
+    researchturns = 3
     prerequisites = "DEF_ROOT_DEFENSE"
-    effectsgroups =
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = NOT OwnerHasTech "DEF_GARRISON_2"
-            effects = SetMaxTroops Value + 10
-    graphic = ""
+    graphic = "icons/tech/troops.png"
     
 Tech
     Name ="DEF_GARRISON_2"
@@ -77,15 +67,10 @@ Tech
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 5
+    researchcost = 15
     researchturns = 5
     prerequisites = "DEF_GARRISON_1"
-    effectsgroups =
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = NOT OwnerHasTech "DEF_GARRISON_3"
-            effects = SetMaxTroops Value + 20
-    graphic = ""
+    graphic = "icons/tech/troops.png"
     
 Tech
     Name ="DEF_GARRISON_3"
@@ -93,15 +78,10 @@ Tech
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 15
+    researchcost = 50
     researchturns = 8
     prerequisites = "DEF_GARRISON_2"
-    effectsgroups =
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = NOT OwnerHasTech "DEF_GARRISON_4"
-            effects = SetMaxTroops Value + 40
-    graphic = ""
+    graphic = "icons/tech/troops.png"
     
 Tech
     Name ="DEF_GARRISON_4"
@@ -109,14 +89,10 @@ Tech
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 40
-    researchturns = 15
+    researchcost = 150
+    researchturns = 12
     prerequisites = "DEF_GARRISON_3"
-    effectsgroups =
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            effects = SetMaxTroops Value + 80
-    graphic = ""
+    graphic = "icons/tech/troops.png"
 
 Tech
     name = "DEF_DEFENSE_NET"

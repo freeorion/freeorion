@@ -3,9 +3,9 @@ Part
     name = "GT_TROOP_POD"
     description = "GT_TROOP_POD_DESC"
     class = Troops
-    capacity = 5
+    capacity = 2
     mountableSlotTypes = [External Internal]
-    buildcost = 5
+    buildcost = 3
     buildtime = 1
     tags = "COMFORTABLE"
     location = OwnedBy TheEmpire Source.Owner

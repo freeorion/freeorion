@@ -88,14 +88,6 @@ BuildingType
                 SetTargetConstruction Value + 20
                 SetMaxDefense Value + 5
             ]
-
-        EffectsGroup
-            scope = And [
-                Object Source.PlanetID
-                OwnedBy TheEmpire Source.ProducedByEmpireID
-            ]
-            activation = OwnerHasTech "DEF_ROOT_DEFENSE"
-            effects = SetMaxTroops Value + 10
         ]
     icon = "icons/building/palace.png"
 

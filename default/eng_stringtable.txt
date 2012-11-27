@@ -7955,7 +7955,7 @@ GOOD_INDUSTRY
 '''+	Good Industry: 150%'''
 
 GREAT_INDUSTRY
-'''++	Great Industry: 250%'''
+'''++	Great Industry: 200%'''
 
 ULTIMATE_INDUSTRY
 '''+++	Ultimate Industry: 400%'''
@@ -7973,7 +7973,7 @@ GOOD_RESEARCH
 '''+	Good Research: 150%'''
 
 GREAT_RESEARCH
-'''++	Great Research: 250%'''
+'''++	Great Research: 200%'''
 
 ULTIMATE_RESEARCH
 '''+++	Ultimate Research: 400%'''
@@ -7983,19 +7983,19 @@ NO_GROUND_TROOPS
 '''−−−	No Ground Troops'''
 
 BAD_GROUND_TROOPS
-'''−	Bad Ground Troops: 1 unit.'''
+'''−	Bad Ground Troops: 50%'''
 
 AVERAGE_GROUND_TROOPS
-'''	Average Ground Troops: 5 units.'''
+'''	Average Ground Troops: 100%'''
 
 GOOD_GROUND_TROOPS
-'''+	Good Ground Troops: 15 units.'''
+'''+	Good Ground Troops: 150%.'''
 
 GREAT_GROUND_TROOPS
-'''++	Great Ground Troops: 25 units.'''
+'''++	Great Ground Troops: 200%.'''
 
 ULTIMATE_GROUND_TROOPS
-'''+++	Ultimate Ground Troops: 50 units.'''
+'''+++	Ultimate Ground Troops: 300%.'''
 
 BAD_DETECTION
 '''−	Bad Detection: −10 malus.'''
@@ -8152,6 +8152,12 @@ GREAT_TROOPS_LABEL
 
 ULTIMATE_TROOPS_LABEL
 '''%2% Ultimate Ground Troops'''
+
+INDEPENDENT_TROOP_LABEL
+'''Independent Homeworld'''
+
+OUTPOST_TROOP_LABEL
+'''Outpost'''
 
 VERY_BRIGHT_STAR
 '''Very bright star'''

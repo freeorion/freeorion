@@ -245,7 +245,10 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-        Not ContainedBy Contains Capital
+        Not WithinStarlaneJumps 2 Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
     ]
     effectsgroups = [
         EffectsGroup
@@ -272,13 +275,7 @@ Special
         
         EffectsGroup     
             scope = Source     
-            activation = AND [
-                Turn high = 0
-                Not WithinStarlaneJumps 1 Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                ]
-            ]
+            activation = Turn high = 0
             effects = CreateShip "SM_GUARD_2"
         ]
         graphic = "icons/meter/detection.png"

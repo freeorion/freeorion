@@ -37,6 +37,12 @@ Balancing:
  ~ ~ Strengthened Egassem with Ultimate Industry
  ~ ~ Strengthened Laenfa with Average Industry
  ~ ~ Strengthened Gyisache with Great Research
+ ~ Major Redo of Ground Troops:
+ ~ ~ Protection focus now increases max troops to 200%
+ ~ ~ Species Bonus/Malus is now multiplied
+ ~ ~ Native planets and homeworlds now have a bonus to troops
+ ~ ~ Outposts have weaker defenses
+ ~ ~ Increased cost of Garrison Techs, and decreased capacity of Troop Pods
  
  Content:
   ~ More Game Concepts 'pedia entries.
