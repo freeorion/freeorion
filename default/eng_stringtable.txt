@@ -2150,6 +2150,18 @@ Fleet Fuel - Equal to the minimum fuel of ships in the fleet.
 FW_FLEET_SPEED_SUMMARY
 Fleet Speed - Equal to the minimum speed of ships in the fleet.
 
+FW_FLEET_SHIELD_SUMMARY
+Fleet Shields - Equal to the total shields of ships in the fleet.
+
+FW_FLEET_STRUCTURE_SUMMARY
+Fleet Structure - Equal to the total structure of ships in the fleet.
+
+FW_FLEET_DAMAGE_SUMMARY
+Fleet Damage - Equal to the total damage of ships in the fleet.
+
+FW_FLEET_COUNT_SUMMARY
+Fleet Count - Equal to the total number of ships in the fleet.
+
 FW_SPLIT_DAMAGED_FLEET
 Split Damaged Ships From Fleet
 
@@ -3227,6 +3239,7 @@ SP_TRITH_DESC
 '''Bereaved xenophobic telepaths.
 Prefer Desert planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
+
 
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
@@ -5748,6 +5761,12 @@ Domesticated Mega-Fauna
 SHP_DOMESTIC_MONSTER_DESC
 '''Though huge and alien the time-tested arts of domestication can also be applied to the space monsters that travel the starlanes. Building Colonies or Outposts at monster nests will enable the raising of domesticated monsters.'''
 
+SHP_ENDOCRINE_SYSTEMS
+Mega-Fauna Endocrine Systems
+
+SHP_ENDOCRINE_SYSTEMS_DESC
+The study of space-faring organisms' endocrine systems allows for the expansion of organic ships' internal structures.  
+
 SHP_HAB_MEGAFAUN
 Habitable Mega-Fauna
 
@@ -5767,15 +5786,15 @@ SHP_CONT_SYMB_DESC
 Any ship's hull is in a symbiotic relationship with its makers in that they bring it into being and sustain it, and it performs its desired functions. However, this is a purely behavioral type of symbiosis. Through careful planning and design, an organic ship can be made to have a biological symbiotic relationship with its crew, each providing the other with the essentials of life.
 
 SHP_CONT_BIOADAPT
-Controlled Bioadaption
+Controlled Ravenous Bioadaption
 
 SHP_CONT_BIOADAPT_DESC
 It is very difficult to predict the actions of a living being to any useful degree of certainty without having an intimate understanding of its behavioral patterns. By placing a life form under harshly competitive developmental conditions, its behavioral patterns can be manipulated, strengthened and effectively utilized in war.
 
-SHP_BIONEUR_SPEC
+SHP_BIOADAPTIVE_SPEC
 Bio-Neural Specialization
 
-SHP_BIONEUR_SPEC_DESC
+SHP_BIOADAPTIVE_SPEC_DESC
 As a species evolves mental capabilities, the individuals whose minds are not perfectly attuned to the needs of their bodies cannot compete with those whose minds are perfectly specialized for their bodies. Thus, all evolved life forms have nearly ideal mental development for their type of body. There are no such guarantees for artificial life forms however, and often the true potential of such a being is unrealized due to subtle incompatibilities between mind and body. By specializing the organism's neural patterns to conform to its body type, these incompatibilities can be eliminated.
 
 SHP_FRC_ENRG_COMP
@@ -7688,7 +7707,7 @@ SH_ENDOMORPHIC
 Endomorphic Hull
 
 SH_ENDOMORPHIC_DESC
-'''This living hull contains non-living multicellular components for greater internal modularity. This hull has four external slots and three internal slots. Stealth is good and speed is average, but structure is low. This hull regenerates structure and fuel between combats.
+'''This living hull contains non-living multicellular components for greater internal modularity. This hull has three external slots and two internal slots. Stealth is good and speed is average, but structure is low. This hull regenerates structure and fuel between combats.
 
 Requires a Basic Shipyard, an Orbital Incubator at the planet where it is developed.'''
 
@@ -7712,7 +7731,7 @@ SH_ENDOSYMBIOTIC
 Endosymbiotic Hull
 
 SH_ENDOSYMBIOTIC_DESC
-'''This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has three external slots and two internal slots. Speed and stealth are good, and structure is average. This hull regenerates structure and fuel between combats.
+'''This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has four external slots and three internal slots. Speed and stealth are good, and structure is average. This hull regenerates structure and fuel between combats.
 
 Requires a Basic Shipyard, an Orbital Incubator, a Xenocoordination facility and a Cellular Growth Chamber at the planet where it is developed.'''
 

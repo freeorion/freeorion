@@ -1872,6 +1872,26 @@ Tech
         Item type = ShipPart name = "AR_CRYSTAL_PLATE"
         ]
 
+        
+//########################################################
+//#     Organic Hulls
+//########################################################
+
+
+Tech
+    name = "SHP_ORG_HULL"
+    description = "SHP_ORG_HULL_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 4
+    researchturns = 2
+    prerequisites = "SHP_DOMESTIC_MONSTER"
+    unlock = [
+        Item type = ShipHull name = "SH_ORGANIC"
+        Item type = Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+    ]
+        
 Tech
     name = "SHP_MULTICELL_CAST"
     description = "SHP_MULTICELL_CAST_DESC"
@@ -1884,18 +1904,39 @@ Tech
     unlock = Item type = ShipHull name = "SH_STATIC_MULTICELLULAR"
 
 Tech
-    name = "SHP_HAB_MEGAFAUN"
-    description = "SHP_HAB_MEGAFAUN_DESC"
+    name = "SHP_ENDOCRINE_SYSTEMS"
+    description = "SHP_ENDOCRINE_SYSTEMS_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 6
     researchturns = 5
-    prerequisites = "SHP_DOMESTIC_MONSTER"
+    prerequisites = "SHP_ORG_HULL"
     unlock = [
         Item type = ShipHull name = "SH_ENDOMORPHIC"
         Item type = Building name = "BLD_SHIPYARD_ORG_ORB_INC"
     ]
+    graphic = "hulls_design/endomorphic_hull.png"
+    
+Tech
+    name = "SHP_ENDOSYMB_HULL"
+    description = "SHP_ENDOSYMB_HULL_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 72
+    researchturns = 4
+    prerequisites = [
+        "SHP_CONT_SYMB"
+        "SHP_ENDOCRINE_SYSTEMS"
+    ]
+    unlock = [
+        Item type = ShipHull name = "SH_ENDOSYMBIOTIC"
+        Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+    ]
+
+    
     
 Tech
     name = "SHP_MONOCELL_EXP"
@@ -1922,8 +1963,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 45
     researchturns = 8
-    prerequisites = [
-        "SHP_HAB_MEGAFAUN"
+    prerequisites = [        
         "GRO_XENO_GENETICS"
     ]
     unlock = [
@@ -1932,19 +1972,8 @@ Tech
     ]
 
 Tech
-    name = "SHP_CONT_BIOADAPT"
-    description = "SHP_CONT_BIOADAPT_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 125
-    researchturns = 12
-    prerequisites = "SHP_CONT_SYMB"
-    unlock = Item type = ShipHull name = "SH_RAVENOUS"
-
-Tech
-    name = "SHP_BIONEUR_SPEC"
-    description = "SHP_BIONEUR_SPEC_DESC"
+    name = "SHP_BIOADAPTIVE_SPEC"
+    description = "SHP_BIOADAPTIVE_SPEC_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
@@ -1959,6 +1988,37 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
 
+Tech
+    name = "SHP_CONT_BIOADAPT"
+    description = "SHP_CONT_BIOADAPT_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 125
+    researchturns = 12
+    prerequisites = [
+        "SHP_CONT_SYMB"
+        "SHP_BIOADAPTIVE_SPEC"
+    ]
+    unlock = Item type = ShipHull name = "SH_RAVENOUS"
+    
+Tech
+    name = "SHP_SENT_HULL"
+    description = "SHP_SENT_HULL_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 200
+    researchturns = 5
+    prerequisites = [
+        "SHP_CONT_BIOADAPT"
+    ]
+    unlock = [
+        Item type = ShipHull name = "SH_SENTIENT"
+        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+    ]
+
+    
 Tech
     name = "SHP_FRC_ENRG_COMP"
     description = "SHP_FRC_ENRG_COMP_DESC"
@@ -2059,54 +2119,7 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
     ]
 
-Tech
-    name = "SHP_ORG_HULL"
-    description = "SHP_ORG_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 4
-    researchturns = 2
-    prerequisites = "SHP_HAB_MEGAFAUN"
-    unlock = [
-        Item type = ShipHull name = "SH_ORGANIC"
-        Item type = Building name = "BLD_SHIPYARD_ORG_ORB_INC"
-    ]
 
-Tech
-    name = "SHP_ENDOSYMB_HULL"
-    description = "SHP_ENDOSYMB_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 72
-    researchturns = 4
-    prerequisites = [
-        "SHP_MONOCELL_EXP"
-        "SHP_CONT_SYMB"
-    ]
-    unlock = [
-        Item type = ShipHull name = "SH_ENDOSYMBIOTIC"
-        Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
-        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
-    ]
-
-Tech
-    name = "SHP_SENT_HULL"
-    description = "SHP_SENT_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 200
-    researchturns = 5
-    prerequisites = [
-        "SHP_CONT_BIOADAPT"
-        "SHP_BIONEUR_SPEC"
-    ]
-    unlock = [
-        Item type = ShipHull name = "SH_SENTIENT"
-        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
-    ]
 
 Tech
     name = "SHP_LEAD_PLATE"

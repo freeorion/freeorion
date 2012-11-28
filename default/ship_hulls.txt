@@ -1015,8 +1015,6 @@ Hull
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
-        Slot type = External position = (0.80, 0.15)
-        Slot type = Internal position = (0.40, 0.75)
         Slot type = Internal position = (0.60, 0.75)
         Slot type = Internal position = (0.80, 0.75)
     ]
@@ -1174,8 +1172,10 @@ Hull
         Slot type = External position = (0.15, 0.15)
         Slot type = External position = (0.30, 0.15)
         Slot type = External position = (0.45, 0.15)
+        Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.60, 0.75)
         Slot type = Internal position = (0.75, 0.75)
+        Slot type = Internal position = (0.90, 0.75)
     ]
     buildCost = 9 * (1 + 0.05 *
         Count condition = And [
@@ -1230,11 +1230,12 @@ Hull
     structure = 25
     slots = [
         Slot type = External position = (0.20, 0.15)
-        Slot type = External position = (0.40, 0.15)
-        Slot type = External position = (0.60, 0.15)
-        Slot type = External position = (0.80, 0.15)
-        Slot type = Internal position = (0.20, 0.75)
-        Slot type = Internal position = (0.40, 0.75)
+        Slot type = External position = (0.40, 0.15)        
+        Slot type = Internal position = (0.45, 0.50)
+        Slot type = Internal position = (0.55, 0.50)        
+        Slot type = External position = (0.80, 0.55)        
+        Slot type = External position = (0.20, 0.75)
+        Slot type = External position = (0.40, 0.75)
     ]
     buildCost = 11 * (1 + 0.05 *
         Count condition = And [
