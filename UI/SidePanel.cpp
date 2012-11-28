@@ -1021,6 +1021,7 @@ namespace {
             return false;
         if (ship->SystemID() == system_id &&
             ship->OwnedBy(empire_id) &&
+            ship->GetVisibility(empire_id) >= VIS_PARTIAL_VISIBILITY &&
             ship->CanColonize() &&
             ship->OrderedColonizePlanet() == INVALID_OBJECT_ID &&
             ship->OrderedScrapped() == false &&
