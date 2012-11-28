@@ -246,7 +246,7 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
         
-        [[GREAT_WEAPONS]]
+        [[ULTIMATE_WEAPONS]]
         [[AVERAGE_GROUND_TROOPS]]
         
                 
@@ -1301,6 +1301,7 @@ Species
         [[GREAT_RESEARCH]]
         
         [[GREAT_GROUND_TROOPS]]
+        [[ULTIMATE_WEAPONS]]
         [[GOOD_POPULATION]]
         
         
@@ -2629,20 +2630,57 @@ GOOD_WEAPONS
         scope = Source
         activation = Turn high = 0
         GiveEmpireTech name = "SHP_WEAPON_3"
+        
+        EffectsGroup
+            scope = AND [
+                Source
+                Homeworld
+                OwnedBy TheEmpire Source.Owner
+            ]
+            activation = Turn high = 0
+            stackinggroup = "STARTING_SHIP_STACK"
+            effects = CreateShip "SD_MARK_A3" Source.Owner Source.Species
 '''
 
 GREAT_WEAPONS
 '''EffectsGroup
         scope = Source
         activation = Turn high = 0
-        GiveEmpireTech name = "SHP_WEAPON_4"
+        GiveEmpireTech name = "SHP_WEAPON_5"
+        
+        EffectsGroup
+            scope = AND [
+                Source
+                Homeworld
+                OwnedBy TheEmpire Source.Owner
+            ]
+            activation = Turn high = 0
+            stackinggroup = "STARTING_SHIP_STACK"
+            effects = [
+                CreateShip "SD_MARK_A5" Source.Owner Source.Species
+                CreateShip "SD_MARK_A5" Source.Owner Source.Species
+            ]
 '''
 
 ULTIMATE_WEAPONS
 '''EffectsGroup
         scope = Source
         activation = Turn high = 0
-        GiveEmpireTech name = "SHP_WEAPON_5"
+        GiveEmpireTech name = "SHP_WEAPON_7"
+        
+        EffectsGroup
+            scope = AND [
+                Source
+                Homeworld
+                OwnedBy TheEmpire Source.Owner
+            ]
+            activation = Turn high = 0
+            stackinggroup = "STARTING_SHIP_STACK"
+            effects = [
+                CreateShip "SD_MARK_A7" Source.Owner Source.Species
+                CreateShip "SD_MARK_A7" Source.Owner Source.Species
+                CreateShip "SD_MARK_A7" Source.Owner Source.Species
+            ]
 '''
 
 //#####      P L A N E T   S I Z E     #####//

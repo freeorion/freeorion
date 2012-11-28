@@ -3261,7 +3261,7 @@ Prefer Terran planets.
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
-[[GREAT_WEAPONS]]
+[[ULTIMATE_WEAPONS]]
 '''
 
 SP_DERTHREAN
@@ -3748,6 +3748,7 @@ SP_SUPER_TEST_DESC
 [[GREAT_RESEARCH]]
         
 [[GREAT_GROUND_TROOPS]]
+[[ULTIMATE_WEAPONS]]
 [[GOOD_POPULATION]]
 '''
 
@@ -7946,7 +7947,7 @@ NO_INDUSTRY
 '''−−−	No Industry'''
 
 BAD_INDUSTRY
-'''−	Bad Industry: 50%'''
+'''−	Bad Industry: -50%'''
 
 AVERAGE_INDUSTRY
 '''	Average Industry: 100%'''
@@ -7964,7 +7965,7 @@ NO_RESEARCH
 '''−−−	No Research'''
 
 BAD_RESEARCH
-'''−	Bad Research: 50%'''
+'''−	Bad Research: -50%'''
 
 AVERAGE_RESEARCH
 '''	Average Research: 100%'''
@@ -7983,7 +7984,7 @@ NO_GROUND_TROOPS
 '''−−−	No Ground Troops'''
 
 BAD_GROUND_TROOPS
-'''−	Bad Ground Troops: 50%'''
+'''−	Bad Ground Troops: -50%'''
 
 AVERAGE_GROUND_TROOPS
 '''	Average Ground Troops: 100%'''
@@ -8025,22 +8026,22 @@ ULTIMATE_STEALTH
 '''+++	Ultimate Stealth: +60 bonus.'''
 
 GOOD_WEAPONS
-'''+	Starts with Mass Driver 3.'''
+'''+	Starts with Mass Driver 3, & one additional ship.'''
 
 GREAT_WEAPONS
-'''++	Starts with Mass Driver 4.'''
+'''++	Starts with Laser 1 & two additional ships.'''
 
 ULTIMATE_WEAPONS
-'''+++	Starts with Laser 1.'''
+'''+++	Starts with Laser 3 & three additional ships.'''
 
 BAD_POPULATION
-'''−	Bad Population'''
+'''−	Bad Population 75%'''
 
 AVERAGE_POPULATION
 '''	Average Population'''
 
 GOOD_POPULATION
-'''+	Good Population'''
+'''+	Good Population 125%'''
 
 BROAD_EP
 '''++	Broad Planet Tolerance: flourishes on more types.'''

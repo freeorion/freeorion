@@ -37,6 +37,7 @@ Balancing:
  ~ ~ Strengthened Egassem with Ultimate Industry
  ~ ~ Strengthened Laenfa with Average Industry
  ~ ~ Strengthened Gyisache with Great Research
+ ~ ~ Species with a starting weapons bonus now also start with more ships
  ~ Major Redo of Ground Troops:
  ~ ~ Protection focus now increases max troops to 200%
  ~ ~ Species Bonus/Malus is now multiplied
