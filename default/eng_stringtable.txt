@@ -3356,7 +3356,7 @@ Etty
 SP_ETTY_DESC
 '''Cybernetic plants.
 Prefer Desert planets.
-[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
+[[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[BAD_DETECTION]]
 [[GOOD_STEALTH]]
@@ -7998,16 +7998,16 @@ ULTIMATE_GROUND_TROOPS
 '''+++	Ultimate Ground Troops: 300%.'''
 
 BAD_DETECTION
-'''−	Bad Detection: −10 malus.'''
+'''−	Bad Detection Range: −20 malus.'''
 
 GOOD_DETECTION
-'''+	Good Detection: +25 bonus.'''
+'''+	Good Detection Range: +25 bonus.'''
 
 GREAT_DETECTION
-'''++	Great Detection: +50 bonus.'''
+'''++	Great Detection Range: +50 bonus.'''
 
 ULTIMATE_DETECTION
-'''+++	Ultimate Detection: +100 bonus.'''
+'''+++	Ultimate Detection Range: +100 bonus.'''
 
 BAD_STEALTH
 '''−	Bad Stealth: −15 malus.'''

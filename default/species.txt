@@ -2555,7 +2555,7 @@ BAD_DETECTION
 '''EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value -25
+            effects = SetDetection Value -20
 '''
 
 GOOD_DETECTION
