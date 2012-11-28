@@ -155,6 +155,7 @@ BuildingType
                 SetStructure Value + 10
                 GenerateSitRepMessage
                     message = "EFFECT_DRYDOCK_SHIP_REPAIR"
+                    icon = "icons/sitrep/ship-repair.png"
                     parameters = [
                         tag = "ship" data = Target.ID
                         tag = "building" data = Source.ID
@@ -525,6 +526,7 @@ BuildingType
                 CreateShip "SD_COLONY_SHIP" Source.Owner "SP_EXOBOT"
                 GenerateSitRepMessage
                     message = "EFFECT_EXOBOT"
+                    icon = "icons/species/robotic-1.png"
                     parameters = tag = "planet" data = Target.ID
                     empire = Source.Owner
                     
@@ -917,6 +919,7 @@ BuildingType
                 SetPlanetType Target.NextBetterPlanetType
                 GenerateSitRepMessage
                     message = "EFFECT_TERRAFORM"
+                    icon = "icons/building/terraform.png"
                     parameters = tag = "planet" data = Target.ID
                     empire = Source.Owner
             ]
@@ -1539,6 +1542,7 @@ BuildingType
                 SetPopulation Value + 2
                 GenerateSitRepMessage
                     message = "EFFECT_EVACUEES"
+                    icon = "icons/building/evacuation.png"
                     parameters = tag = "planet" data = Target.ID
                     empire = Source.Owner
                 ]
