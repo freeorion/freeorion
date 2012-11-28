@@ -382,7 +382,7 @@ def setPlanetResourceFoci():
                     if not printedHeader:
                         printedHeader=True
                         print "Rejecting further Research Focus choices  as too expensive:"
-                        print "%34s|%20s|%15s |%15s|%15s |%15s |%15s"%("                      Planet  ", " current RP/PP ", " current target RP/PP ", "current Focus ","  rejectedFocus  ", " rejected target RP/PP ",  "rejected RP-PP equivalence Factor")
+                        print "%34s|%20s|%15s |%15s|%15s |%15s |%15s"%("                      Planet  ", " current RP/PP ", " current target RP/PP ", "current Focus ","  rejectedFocus  ", " rejected target RP/PP ",  "rejected RP-PP EQF")
                     oldFocus=currentFocus[pid]
                     cPP, cRP = currentOutput[pid][IFocus],  currentOutput[pid][RFocus]
                     otPP, otRP= newTargets[pid].get(oldFocus,  (0, 0))

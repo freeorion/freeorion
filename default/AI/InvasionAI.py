@@ -166,8 +166,10 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
         troopsPerBestShip = 5*(  list(bestDesign.parts).count("GT_TROOP_POD") )
     else:
         troopsPerBestShip=5 #may actually not have any troopers available, but this num will do for now
+        
+    sortedTargets=sorted( [  ( pscore-ptroops/2 ,  pID,  pscore,  ptroops) for pID,  pscore,  ptroops in evaluatedPlanets ] ,  reverse=True)
 
-    for pID,  pscore,  ptroops in evaluatedPlanets: # evaluatedPlanets is a dictionary
+    for modscrore,  pID,  pscore,  ptroops in sortedTargets: # evaluatedPlanets is a dictionary
         if invasionPool ==[]: return
         planet=universe.getPlanet(pID)
         if not planet: continue

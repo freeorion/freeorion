@@ -12,7 +12,6 @@ import math
 from ColonisationAI import empireSpecies, empireColonizers,  empireSpeciesSystems
 import TechsListsAI
 
-
 shipTypeMap = dict( zip( [AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION,  AIPriorityType.PRIORITY_PRODUCTION_OUTPOST,  AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  AIPriorityType.PRIORITY_PRODUCTION_INVASION,  AIPriorityType.PRIORITY_PRODUCTION_MILITARY], 
                                             [AIShipDesignTypes.explorationShip,  AIShipDesignTypes.outpostShip,  AIShipDesignTypes.colonyShip,  AIShipDesignTypes.troopShip,  AIShipDesignTypes.attackShip ] ) )
 
@@ -25,31 +24,27 @@ def curBestMilShipRating():
 
 def checkTroopShips():
     empire = fo.getEmpire()
-    troopDesignIDs = [shipDesignID for shipDesignID in empire.allShipDesigns if shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_INVASION,  "nomatch")  in fo.getShipDesign(shipDesignID).name(False) ]
+    troopDesignIDs=[]
+    designNameBases= [key for key, val in sorted( shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_INVASION,  {"nomatch":0}).items(),  key=lambda x:x[1])]
+    for baseName in designNameBases:
+        troopDesignIDs.extend(  [shipDesignID for shipDesignID in empire.allShipDesigns if baseName  in fo.getShipDesign(shipDesignID).name(False) ] )
     troopShipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in troopDesignIDs]
     print "Current Troopship Designs: %s"%troopShipNames
     
     if fo.currentTurn() >1 : return
     
-    if False and len(troopDesignIDs) ==1 : 
+    if designNameBases[1] not in troopShipNames:
         try:
-            res=fo.issueCreateShipDesignOrder("SD_TROOP_SHIP_A2",  "Medium Hulled Troopship for economical large quantities of troops",  
-                                                                                    "SH_BASIC_MEDIUM",  ["GT_TROOP_POD", "GT_TROOP_POD", "GT_TROOP_POD"],  "",  "fighter",  False)
-            print "added  Troopship SD_TROOP_SHIP_A2, with result %d"%res
-        except:
-            print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    if "SD_TROOP_SHIP_A3" not in troopShipNames:
-        try:
-            res=fo.issueCreateShipDesignOrder("SD_TROOP_SHIP_A3",  "multicell Hulled Troopship for economical large quantities of troops",  
+            res=fo.issueCreateShipDesignOrder(designNameBases[1],  "multicell Hulled Troopship for economical large quantities of troops",  
                                                                                     "SH_STATIC_MULTICELLULAR",  ["GT_TROOP_POD",  "GT_TROOP_POD",  "SR_WEAPON_2",  "GT_TROOP_POD", ""],  "",  "fighter",  False)
-            print "added  Troopship SD_TROOP_SHIP_A3, with result %d"%res
+            print "added  Troopship %s, with result %d"%(designNameBases[1] , res)
         except:
             print "Error: exception triggered and caught:  ",  traceback.format_exc()
-    if "SD_TROOP_SHIP_A4" not in troopShipNames:
+    if designNameBases[2] not in troopShipNames:
         try:
-            res=fo.issueCreateShipDesignOrder("SD_TROOP_SHIP_A4",  "multicell Hulled Troopship for economical large quantities of troops",  
+            res=fo.issueCreateShipDesignOrder(designNameBases[2],  "multicell Hulled Troopship for economical large quantities of troops",  
                                                                                     "SH_STATIC_MULTICELLULAR",  ["GT_TROOP_POD",  "GT_TROOP_POD",  "SR_WEAPON_5",  "GT_TROOP_POD", ""],  "",  "fighter",  False)
-            print "added  Troopship SD_TROOP_SHIP_A4, with result %d"%res
+            print "added  Troopship %s, with result %d"%(designNameBases[2] , res)
         except:
             print "Error: exception triggered and caught:  ",  traceback.format_exc()
     bestShip,  bestDesign,  buildChoices = getBestShipInfo( AIPriorityType.PRIORITY_PRODUCTION_INVASION)
@@ -60,20 +55,23 @@ def checkTroopShips():
 
 def checkScouts():
     empire = fo.getEmpire()
-    scoutDesignIDs = [shipDesignID for shipDesignID in empire.allShipDesigns if shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION,  "nomatch")  in fo.getShipDesign(shipDesignID).name(False) ]
+    scoutDesignIDs=[]
+    designNameBases= [key for key, val in sorted( shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION,  {"nomatch":0}).items(),  key=lambda x:x[1])]
+    for baseName in designNameBases:
+        scoutDesignIDs.extend(   [shipDesignID for shipDesignID in empire.allShipDesigns if baseName  in fo.getShipDesign(shipDesignID).name(False) ]  )
     scoutShipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in scoutDesignIDs]
     #print "Current Scout Designs: %s"%scoutShipNames
     #                                                            name               desc            hull                partslist                              icon                 model
     newScoutDesigns = []
-    desc = "SD_SCOUT_DESC"
+    desc = "Scout"
     model = "fighter"
     srb = "SR_WEAPON_%1d"
-    nb,  hull =  "SD_SCOUT_A%1d_%1d",   "SH_STATIC_MULTICELLULAR"
+    nb,  hull =  designNameBases[1]+"%1d-%1d",   "SH_STATIC_MULTICELLULAR"
     db = "DT_DETECTOR_%1d"
     is1,  is2 = "FU_BASIC_TANK",  "ST_CLOAK_1"
     for id in [1, 2, 3, 4]:
         newScoutDesigns += [ (nb%(id, iw),  desc,  hull,  [ db%id,  srb%iw, srb%iw,  is1,  is1],  "",  model)    for iw in range(1, 9) ]
-    nb =  "SD_SCOUT_B%1d_%1d"
+    nb =  designNameBases[2]+"%1d_%1d"
     for id in [1, 2, 3, 4]:
         newScoutDesigns += [ (nb%(id, iw),  desc,  hull,  [ db%id,  srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(1, 9) ]
 
@@ -109,65 +107,69 @@ def checkScouts():
 
 def checkMarks():
     empire = fo.getEmpire()
-    markDesignIDs = [shipDesignID for shipDesignID in empire.allShipDesigns if shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_MILITARY,  "nomatch")  in fo.getShipDesign(shipDesignID).name(False) ]
+    markDesignIDs = []
+    designNameBases= [key for key, val in sorted( shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_MILITARY,  {"nomatch":0}).items(),  key=lambda x:x[1])]
+    for baseName in designNameBases:
+        markDesignIDs.extend(  [shipDesignID for shipDesignID in empire.allShipDesigns if baseName  in fo.getShipDesign(shipDesignID).name(False) ] )
     markShipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in markDesignIDs]
     #print "Current Mark Designs: %s"%markShipNames
     #                                                            name               desc            hull                partslist                              icon                 model
     newMarkDesigns = []
-    desc = "SD_MARK1_DESC"
+    desc = "military ship"
     model = "fighter"
     srb = "SR_WEAPON_%1d"
-    nb,  hull =  "SD_MARK_Z_A%1d",   "SH_BASIC_MEDIUM"
+    nb,  hull =  designNameBases[1]+"-%1d",   "SH_BASIC_MEDIUM"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ""],  "",  model)    for iw in range(1, 9) ]
     
-    nb,  hull =  "SD_MARK_Z_C_MC%1d",   "SH_STATIC_MULTICELLULAR"
+    nb,  hull =  designNameBases[2]+"-1-%1d",   "SH_STATIC_MULTICELLULAR"
     is1,  is2 = "FU_BASIC_TANK",  "FU_BASIC_TANK"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(2, 9) ]
-    nb=  "SD_MARK_Z_C2_MC%1d"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(2, 5) ]
+    nb=  designNameBases[2]+"-2-%1d"
     is2 = "SH_DEFLECTOR"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(7, 9) ]
+#    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(7, 9) ]
     
-    nb,  hull =  "SD_MARK_Z_D_ENDO%1d",   "SH_ENDOMORPHIC"
+    #nb,  hull =  designNameBases[3]+"-%1d",   "SH_ENDOMORPHIC"
+    nb,  hull =  designNameBases[3]+"-%1d",   "SH_STATIC_MULTICELLULAR"
     is1 = "FU_BASIC_TANK"
     #intentionally skipping 9 due to jump in expense
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + 3*[ is1],  "",  model)    for iw in [5, 6, 7, 8,   10, 11, 12 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] + 2*[ is1],  "",  model)    for iw in [5, 6, 7, 8,   10, 11, 12 ] ]
 
-    nb =  "SD_MARK_Z_D2_ENDO%1d"
+    nb =  designNameBases[3]+"-2-%1d"
     is3 = "SH_DEFLECTOR"
     #intentionally skipping 9 due to jump in expense
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + [ is1,  is1,  is3],  "",  model)    for iw in [7, 8,   10, 11, 12 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] + [ is1,  is3],  "",  model)    for iw in [7, 8,   10, 11, 12 ] ]
 
-    nb =  "SD_MARK_Z_D3_ENDO%1d"
+    nb =  designNameBases[3]+"3-%1d"
     ar1 = "AR_LEAD_PLATE"
     #intentionally skipping 9 due to jump in expense
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar1] + [ is1,  is1,  is1],  "",  model)    for iw in [5, 6, 7, 8,   10, 11, 12 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar1] + [ is1,  is1],  "",  model)    for iw in [5, 6, 7, 8,   10, 11, 12 ] ]
 
-    nb =  "SD_MARK_Z_D4_ENDO%1d"
+    nb =  designNameBases[3]+"-4-%1d"
     #intentionally skipping 9 due to jump in expense
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar1] + [ is1,  is1,  is3],  "",  model)    for iw in [7, 8,   10, 11, 12 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar1] + [ is1, is3],  "",  model)    for iw in [7, 8,   10, 11, 12 ] ]
 
-    nb =  "SD_MARK_Z_D5_ENDO%1d"
+    nb =  designNameBases[4]+"-5-%1d"
     ar2= "AR_ZORTRIUM_PLATE"
     #intentionally skipping 9 due to jump in expense
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + [ is1,  is1,  is3],  "",  model)    for iw in [7, 8,   10, 11, 12,  14,  15,  16,  17 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar2] + [ is1, is3],  "",  model)    for iw in [7, 8,   10, 11, 12,  14,  15,  16,  17 ] ]
     
-    nb =  "SD_MARK_Z_D6_ENDO%1d"
+    nb =  designNameBases[4]+"-6-%1d"
     ar3= "AR_NEUTRONIUM_PLATE"
     #intentionally skipping 9 due to jump in expense
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] +[ar3]+ [ is1,  is3,  is3],  "",  model)    for iw in [7, 8,   10, 11, 12,  14,  15,  16,  17 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw] +[ar3]+ [ is1,  is3],  "",  model)    for iw in [7, 8,   10, 11, 12,  14,  15,  16,  17 ] ]
     
-    nb =  "SD_MARK_Z_D7_ENDO%1d"
+    nb =  designNameBases[4]+"-7-%1d"
     is3= "SH_MULTISPEC"
     #intentionally skipping 9 due to jump in expense
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + [ is3,  is3,  is3],  "",  model)    for iw in [7, 8,   10, 11, 12,  14,  15,  16,  17 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] + [ is3,  is3],  "",  model)    for iw in [7, 8,   10, 11, 12,  14,  15,  16,  17 ] ]
     
-    nb =  "SD_MARK_Z_D8_ENDO%1d"
+    nb =  designNameBases[4]+"-8-%1d"
     #intentionally skipping 9 due to jump in expense
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + [ is3,  is3,  is3],  "",  model)    for iw in [7, 8,   10, 11, 12,  14,  15,  16,  17 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar2] + [ is3,  is3],  "",  model)    for iw in [7, 8,   10, 11, 12,  14,  15,  16,  17 ] ]
     
-    nb =  "SD_MARK_Z_D9_ENDO%1d"
+    nb =  designNameBases[4]+"-9-%1d"
     #intentionally skipping 9 due to jump in expense
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar3] + [ is3,  is3,  is3],  "",  model)    for iw in [7, 8,   10, 11, 12,  14,  15,  16,  17 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar3] + [ is3,  is3],  "",  model)    for iw in [7, 8,   10, 11, 12,  14,  15,  16,  17 ] ]
     
     currentTurn=fo.currentTurn()
     needsAdding=[]
@@ -200,15 +202,18 @@ def checkMarks():
 
 def checkOutpostShips():
     empire = fo.getEmpire()
-    outpostDesignIDs = [shipDesignID for shipDesignID in empire.allShipDesigns if shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_OUTPOST,  "nomatch")  in fo.getShipDesign(shipDesignID).name(False) ]
+    outpostDesignIDs = []
+    designNameBases= [key for key, val in sorted( shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_OUTPOST,  {"nomatch":0}).items(),  key=lambda x:x[1])]
+    for baseName in designNameBases:
+        outpostDesignIDs.extend( [shipDesignID for shipDesignID in empire.allShipDesigns if baseName in fo.getShipDesign(shipDesignID).name(False) ] )
     outpostShipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in outpostDesignIDs]
     #print "Current Outpost Designs: %s"%scoutShipNames
     #                                                            name               desc            hull                partslist                              icon                 model
     newOutpostDesigns = []
-    desc = "SD_OUTPOST_SHIP_DESC"
+    desc = "Outpost Ship"
     srb = "SR_WEAPON_%1d"
     model = "seed"
-    nb,  hull =  "SD_OUTPOST_SHIP_A%1d_%1d",   "SH_STATIC_MULTICELLULAR"
+    nb,  hull =  designNameBases[1]+"%1d_%1d",   "SH_STATIC_MULTICELLULAR"
     op = "CO_OUTPOST_POD"
     db = "DT_DETECTOR_%1d"
     is1,  is2 = "FU_BASIC_TANK",  "ST_CLOAK_1"
@@ -245,15 +250,18 @@ def checkOutpostShips():
 
 def checkColonyShips():
     empire = fo.getEmpire()
-    colonyDesignIDs = [shipDesignID for shipDesignID in empire.allShipDesigns if shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  "nomatch")  in fo.getShipDesign(shipDesignID).name(False) ]
+    colonyDesignIDs = []
+    designNameBases= [key for key, val in sorted( shipTypeMap.get(AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  {"nomatch":0}).items(),  key=lambda x:x[1])]
+    for baseName in designNameBases:
+        colonyDesignIDs.extend(  [shipDesignID for shipDesignID in empire.allShipDesigns if baseName  in fo.getShipDesign(shipDesignID).name(False) ] )
     colonyShipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in colonyDesignIDs]
     #print "Current Outpost Designs: %s"%scoutShipNames
     #                                                            name               desc            hull                partslist                              icon                 model
     newColonyDesigns = []
-    desc = "SD_COLONY_SHIP_DESC"
+    desc = "Colony Ship"
     model = "seed"
     srb = "SR_WEAPON_%1d"
-    nb,  hull =  "SD_COLONY_SHIP_A%1d_%1d",   "SH_STATIC_MULTICELLULAR"
+    nb,  hull =  designNameBases[1]+"%1d_%1d",   "SH_STATIC_MULTICELLULAR"
     cp = "CO_COLONY_POD"
     db = "DT_DETECTOR_%1d"
     is1,  is2 = "FU_BASIC_TANK",  "ST_CLOAK_1"
@@ -262,7 +270,7 @@ def checkColonyShips():
     for id in [1, 2, 3, 4]:
         newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  cp,  cp],  "",  model)    for iw in range(6, 9) ] # when farther along, use 2 pods
 
-    nb =  "SD_COLONY_SHIP_B%1d_%1d"
+    nb =  designNameBases[2]+"%1d_%1d"
     cp = "CO_SUSPEND_ANIM_POD"
     for id in [1, 2, 3, 4]:
         newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  cp,  is1],  "",  model)    for iw in range(2, 9) ]
@@ -299,11 +307,14 @@ def checkColonyShips():
 def getBestShipInfo(priority):
     "returns designID,  design,  buildLocList"
     empire = fo.getEmpire()
-    theseDesigns = [shipDesign for shipDesign in empire.availableShipDesigns if shipTypeMap.get(priority,  "nomatch")  in fo.getShipDesign(shipDesign).name(False)  and getAvailableBuildLocations(shipDesign) != [] ]
-    if theseDesigns == []: 
+    theseDesignIDs = []
+    designNameBases= shipTypeMap.get(priority,  ["nomatch"])
+    for baseName in designNameBases:
+        theseDesignIDs.extend(  [(designNameBases[baseName]+fo.getShipDesign(shipDesign).name(False) ,  shipDesign ) for shipDesign in empire.availableShipDesigns if baseName  in fo.getShipDesign(shipDesign).name(False)  and getAvailableBuildLocations(shipDesign) != [] ] )
+    if theseDesignIDs == []: 
         return None,  None,  None #must be missing a Shipyard (or checking for outpost ship but missing tech)
-    ships = [ ( fo.getShipDesign(shipDesign).name(False),  shipDesign) for shipDesign in theseDesigns ]
-    bestShip = sorted( ships)[-1][-1]
+    #ships = [ ( fo.getShipDesign(shipDesign).name(False),  shipDesign) for shipDesign in theseDesignIDs ]
+    bestShip = sorted( theseDesignIDs)[-1][-1]
     buildChoices = getAvailableBuildLocations(bestShip)
     bestDesign=  fo.getShipDesign(bestShip)
     return bestShip,  bestDesign,  buildChoices

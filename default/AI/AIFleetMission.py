@@ -301,8 +301,8 @@ class AIFleetMission(AIAbstractMission):
         else: #went through entire order list
             if ordersCompleted:
                 orders=self.getAIFleetOrders()
-                if orders and orders[-1].getAIFleetOrderType() == AIFleetOrderType.ORDER_COLONISE:
-                    lastOrder=orders[-1]
+                lastOrder= orders and orders[-1]
+                if orders and lastOrder.getAIFleetOrderType() == AIFleetOrderType.ORDER_COLONISE:
                     universe=fo.getUniverse()
                     planet = universe.getPlanet(lastOrder.getTargetAITarget().getTargetID())
                     pop=planet.currentMeterValue(fo.meterType.population)
@@ -322,10 +322,11 @@ class AIFleetMission(AIAbstractMission):
                                 print "        source target Ship (%d), species %s,   can%s colonize"%(   shipID,  ship.speciesName,    ["not", ""][ship.canColonize])
                         return  # colonize order must not have completed yet
                 clearAll=True
-                if orders and orders[-1].getAIFleetOrderType() == AIFleetOrderType.ORDER_MILITARY:
-                    lastOrder=orders[-1]
-                    if lastOrder.getTargetAITarget().getTargetID() in list(set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)): #consider a secure mission
-                        print "Fleet %d has completed initial stage of its mission to secure system %d, releasing a portion of ships"%(self.getAITargetID() ,  lastOrder.getTargetAITarget().getTargetID())
+                if orders and lastOrder.getAIFleetOrderType() == AIFleetOrderType.ORDER_MILITARY:
+                    # if (AIFleetMissionType.FLEET_MISSION_SECURE in self.getAIMissionTypes())  or   # not doing this until decide a way to release from a SECURE mission
+                    if   (lastOrder.getTargetAITarget().getTargetID() in list(set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + 
+                                                                                                                                                AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs))): #consider a secure mission
+                        print "Fleet %d has completed initial stage of its mission to secure system %d, may release a portion of ships"%(self.getAITargetID() ,  lastOrder.getTargetAITarget().getTargetID())
                         clearAll=False
                 if clearAll:
                     print "Fleet %d has completed its mission; clearing all orders and targets."%(self.getAITargetID() )
@@ -335,6 +336,7 @@ class AIFleetMission(AIAbstractMission):
                     self.clearAIFleetOrders()
                     self.clearAITargets(([-1]+ self.getAIMissionTypes()[:1])[-1])
                 else:
+                    #TODO: evaluate releasing a smaller portion or none of the ships 
                     FleetUtilsAI.splitFleet(self.getAITargetID() ) #at least first stage of current task is done; release extra ships for potential other deployments
     def generateAIFleetOrders(self):
         "generates AIFleetOrders from fleets targets to accomplish"

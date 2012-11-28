@@ -20,8 +20,13 @@ import traceback
 foAIstate = None
 __timerEntries= ["PriorityAI",  "ExplorationAI",  "ColonisationAI",  "InvasionAI",  "MilitaryAI",  "Gen_Fleet_Orders",  "Issue_Fleet_Orders",  
                         "ResearchAI",  "ProductionAI",  "ResourcesAI",  "Cleanup"]
+__timerBucketEntries= ["Server_Processing",  "AI_Planning"]
+
 __timerFile = None
+__timerBucketFile = None
 __timerFileFmt = "%8d"+ (len(__timerEntries)*"\t %8d")
+__timerBucketFileFmt = "%8d"+ (len(__timerBucketEntries)*"\t %8d")
+lastTurnTimestamp=0
 
 # called when Python AI starts, before any game new game starts or saved game is resumed
 def initFreeOrionAI():
@@ -31,7 +36,7 @@ def initFreeOrionAI():
 # called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
 # and set up whatever is needed for AI to generate orders
 def startNewGame():
-    global __timerFile
+    global __timerFile,  lastTurnTimestamp,  __timerBucketFile
     print "New game started"
 
     # initialize AIstate
@@ -49,6 +54,10 @@ def startNewGame():
             timerpath="timers"+os.path.sep+"timer_%02d.dat"%(empireID-1)
             __timerFile = open(timerpath,  'w')
             __timerFile.write("Turn\t" + "\t".join(__timerEntries) +'\n')
+            timerBucketpath="timers"+os.path.sep+"timer_bucket_%02d.dat"%(empireID-1)
+            __timerBucketFile = open(timerBucketpath,  'w')
+            __timerBucketFile.write("Turn\t" + "\t".join(__timerBucketEntries) +'\n')
+            lastTurnTimestamp = time() 
             if ResourcesAI.doResourceTiming:
                 ResourcesAI.resourceTimerFile = open("timers"+os.path.sep+"resourceTimer_%2d.dat"%(empireID-1),  'w')
                 ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI.__timerEntries)+"\n")
@@ -121,7 +130,7 @@ def updateFleetsRoles():
 # called when client receives a load game message
 def resumeLoadedGame(savedStateString):
     global foAIstate
-    global __timerFile
+    global __timerFile,  lastTurnTimestamp,  __timerBucketFile
     print "Resuming loaded game"
     try:
         #loading saved state
@@ -143,6 +152,10 @@ def resumeLoadedGame(savedStateString):
             timerpath="timers"+os.path.sep+"timer_%02d.dat"%(empireID-1)
             __timerFile = open(timerpath,  'w')
             __timerFile.write("Turn\t" + "\t".join(__timerEntries) +'\n')
+            timerBucketpath="timers"+os.path.sep+"timer_bucket_%02d.dat"%(empireID-1)
+            __timerBucketFile = open(timerBucketpath,  'w')
+            __timerBucketFile.write("Turn\t" + "\t".join(__timerBucketEntries) +'\n')
+            lastTurnTimestamp = time() 
             if ResourcesAI.doResourceTiming:
                 ResourcesAI.resourceTimerFile = open("timers"+os.path.sep+"resourceTimer_%2d.dat"%(empireID-1),  'w')
                 ResourcesAI.resourceTimerFile.write("Turn\t"+ "\t".join(ResourcesAI.__timerEntries)+"\n")
@@ -195,7 +208,9 @@ def declareWarOnAll():
 # at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
 # and can be sent to the server for processing.
 def generateOrders():
+    global lastTurnTimestamp
     universe = fo.getUniverse()
+    turnStartTime=time() #starting AI timer here, to be sure AI doesn't get blame for any  lags in server being able to provide the Universe object
     empire = fo.getEmpire()
     planetID = PlanetUtilsAI.getCapital()
     if planetID is not None:
@@ -263,6 +278,7 @@ def generateOrders():
     except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
     timer.append( time()  )
     times = [timer[i] - timer[i-1] for i in range(1,  len(timer) ) ]
+    turnEndTime=time()
     timeFmt = "%30s: %8d msec  "
     print "AI Module Time Requirements:"
     for mod,  modTime in zip(__timerEntries,  times):
@@ -270,5 +286,10 @@ def generateOrders():
     if __timerFile:
         __timerFile.write(  __timerFileFmt%tuple( [ fo.currentTurn() ]+map(lambda x: int(1000*x),  times )) +'\n')
         __timerFile.flush()
+    if __timerBucketFile:
+        __timerBucketFile.write(  __timerBucketFileFmt%tuple( [ fo.currentTurn(),  (turnStartTime-lastTurnTimestamp)*1000, (turnEndTime-turnStartTime)*1000   ]) +'\n')
+        __timerBucketFile.flush()
+        lastTurnTimestamp = time()
+        
     try: fo.doneTurn()
     except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
