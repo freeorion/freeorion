@@ -388,7 +388,7 @@ Part
             activation = Star type = [Red Orange Yellow White Blue]
             stackinggroup = "STEALTH_PART_STACK"
             effects = SetStealth Value + 60
-    icon = ""
+    icon = "icons/ship_parts/multi-spectral.png"
 
 Part
     name = "DT_DETECTOR_4"
@@ -554,7 +554,7 @@ Part
             scope = Source
             activation = Source
             effects = SetFuel Target.MaxFuel
-    icon = ""
+    icon = "icons/tech/zero_point_energy.png"
 
 Part
     name = "ST_CLOAK_4"
@@ -907,7 +907,7 @@ Part
                     empire = Target.Owner
             ]
     ]
-    icon = ""
+    icon = "icons/ship_parts/death-spore.png"
 
 Part
     name = "SP_BIOTERM"
@@ -960,7 +960,7 @@ Part
                     empire = Target.Owner
             ]
     ]
-    icon = ""
+    icon = "icons/ship_parts/bioterm.png"
 
 Part
     name = "SP_NOVA_BOMB"
