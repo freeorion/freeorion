@@ -3240,7 +3240,6 @@ SP_TRITH_DESC
 Prefer Desert planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
-
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
 

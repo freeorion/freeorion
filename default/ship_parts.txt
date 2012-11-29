@@ -472,7 +472,7 @@ Part
             scope = Source
             activation = Source
             effects = SetStarlaneSpeed Value + 10
-    icon = "icons/ship_parts/basic-tank.png"
+    icon = "icons/ship_parts/engine-1.png"
     
     
 Part
@@ -489,7 +489,7 @@ Part
             scope = Source
             activation = Source
             effects = SetStarlaneSpeed Value + 15
-    icon = "icons/ship_parts/basic-tank.png"
+    icon = "icons/ship_parts/engine-2.png"
     
 Part
     name = "FU_SINGULARITY_ENGINE_CORE"
@@ -505,7 +505,7 @@ Part
             scope = Source
             activation = Source
             effects = SetStarlaneSpeed Value + 20
-    icon = "icons/ship_parts/basic-tank.png"
+    icon = "icons/ship_parts/engine-3.png"
     
 Part
     name = "FU_BASIC_TANK"
