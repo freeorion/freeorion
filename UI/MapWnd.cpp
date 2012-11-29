@@ -794,9 +794,6 @@ MapWnd::MapWnd() :
     m_industry_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
     m_research_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
 
-    AttachChild(m_industry_wasted);
-    AttachChild(m_research_wasted);
-
     boost::shared_ptr<GG::Texture> wasted_ressource_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /"wasted_resource.png", false);
     GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(wasted_ressource_texture, GG::X(0), GG::Y(0), GG::X(32), GG::Y(32));
 
@@ -1271,6 +1268,7 @@ void MapWnd::RenderStarlanes() {
     RenderStarlanes( m_RC_starlane_vertices, m_RC_starlane_colors, core_multiplier, coloured, false);
     RenderStarlanes( m_starlane_vertices, m_starlane_colors, 1.0, coloured, true);
 }
+
 void MapWnd::RenderStarlanes(GL2DVertexBuffer& vertices, GLRGBAColorBuffer& colours,
                              double thickness, bool coloured, bool doBase) {
     if (vertices.size() && (colours.size() || !coloured) && (coloured || doBase)) {
@@ -1895,6 +1893,10 @@ void MapWnd::InitTurn() {
         CenterOnMapCoord(0.0, 0.0);
     }
 
+    RefreshIndustryResourceIndicator();
+    RefreshResearchResourceIndicator();
+    RefreshTradeResourceIndicator();
+    RefreshPopulationIndicator();
 
     FleetUIManager::GetFleetUIManager().RefreshAll();
 
@@ -2168,7 +2170,8 @@ void MapWnd::ClearSystemRenderingBuffers() {
 }
 
 std::vector<int> MapWnd::GetLeastJumps(int startSys, int endSys, const std::set<int>& resGroup,
-                                       const std::set<std::pair<int, int> >& supplylanes, const ObjectMap& objMap)
+                                       const std::set<std::pair<int, int> >& supplylanes,
+                                       const ObjectMap& objMap)
 {
     //std::map<int,bool> sysChecked;
     std::map<int,int> ancestor;
@@ -4182,21 +4185,27 @@ bool MapWnd::KeyboardZoomOut() {
 }
 
 void MapWnd::RefreshTradeResourceIndicator() {
-    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-
+    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire) {
+        m_trade->SetValue(0.0);
+        return;
+    }
     m_trade->SetValue(empire->ResourceStockpile(RE_TRADE));
 }
 
 void MapWnd::RefreshResearchResourceIndicator() {
-    const Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire)
+    const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire) {
+        m_research->SetValue(0.0);
+        m_research_wasted->Hide();
         return;
+    }
     m_research->SetValue(empire->ResourceProduction(RE_RESEARCH));
     //Logger().debugStream() << "Research spend: " << empire->GetResearchQueue().TotalRPsSpent() << " output: " << empire->ResourceProduction(RE_RESEARCH);
     double totalRPSpent = empire->GetResearchQueue().TotalRPsSpent();
     double totalProduction = empire->ResourceProduction(RE_RESEARCH);
     double totalWastedRP = totalProduction - totalRPSpent;
-    if (totalWastedRP > 0){
+    if (totalWastedRP > 0) {
         m_research_wasted->Show();
         m_research_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_RES_WASTED_TITLE"),
@@ -4209,15 +4218,18 @@ void MapWnd::RefreshResearchResourceIndicator() {
 }
 
 void MapWnd::RefreshIndustryResourceIndicator() {
-    const Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire)
+    const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire) {
+        m_industry->SetValue(0.0);
+        m_industry_wasted->Hide();
         return;
+    }
     m_industry->SetValue(empire->ResourceProduction(RE_INDUSTRY));
     //Logger().debugStream() << "Industry spend: " << empire->GetProductionQueue().TotalPPsSpent() << " output: " << empire->ResourceProduction(RE_INDUSTRY);
     double totalPPSpent = empire->GetProductionQueue().TotalPPsSpent();
     double totalProduction = empire->ResourceProduction(RE_INDUSTRY);
     double totalWastedPP = totalProduction - totalPPSpent;
-    if (totalWastedPP > 0){
+    if (totalWastedPP > 0) {
         m_industry_wasted->Show();
         m_industry_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_PROD_WASTED_TITLE"),
@@ -4231,8 +4243,10 @@ void MapWnd::RefreshIndustryResourceIndicator() {
 
 void MapWnd::RefreshPopulationIndicator() {
     Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire)
+    if (!empire) {
+        m_population->SetValue(0.0);
         return;
+    }
     m_population->SetValue(empire->GetPopulationPool().Population());
 
     const std::vector<int> pop_center_ids = empire->GetPopulationPool().PopCenterIDs();
