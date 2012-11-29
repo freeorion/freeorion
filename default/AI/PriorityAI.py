@@ -218,7 +218,7 @@ def calculateInvasionPriority():
                  queuedTroopPods += element.remaining*element.blocksize * list(design.parts).count("GT_TROOP_POD") 
     bestShip,  bestDesign,  buildChoices = getBestShipInfo( AIPriorityType.PRIORITY_PRODUCTION_INVASION)
     if bestDesign:
-        troopsPerBestShip = 5*(  list(bestDesign.parts).count("GT_TROOP_POD") )
+        troopsPerBestShip = 2*(  list(bestDesign.parts).count("GT_TROOP_POD") )
     else:
         troopsPerBestShip=5 #may actually not have any troopers available, but this num will do for now
 

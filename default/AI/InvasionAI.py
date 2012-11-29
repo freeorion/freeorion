@@ -163,7 +163,7 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
     invasionPool = invasionFleetIDs[:]  #need to make a copy
     bestShip,  bestDesign,  buildChoices = getBestShipInfo( AIPriorityType.PRIORITY_PRODUCTION_INVASION)
     if bestDesign:
-        troopsPerBestShip = 5*(  list(bestDesign.parts).count("GT_TROOP_POD") )
+        troopsPerBestShip = 2*(  list(bestDesign.parts).count("GT_TROOP_POD") )
     else:
         troopsPerBestShip=5 #may actually not have any troopers available, but this num will do for now
         
@@ -175,7 +175,7 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
         if not planet: continue
         sysID = planet.systemID
         foundFleets = []
-        podsNeeded= int(math.ceil( (ptroops+4)/5)+0.0001)
+        podsNeeded= int(math.ceil( (ptroops+2)/2)+0.0001)
         foundStats={}
         minStats= {'rating':0, 'troopPods':podsNeeded}
         targetStats={'rating':10,'troopPods':podsNeeded+2} 
