@@ -39,7 +39,10 @@ namespace {
     const std::string   SHIP_DROP_TYPE_STRING = "FleetWnd ShipRow";
     const std::string   FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";
 
+    const std::string   COUNT_STAT_STRING = "Count Stat";
     const std::string   DAMAGE_STAT_STRING = "Damage Stat";
+    const std::string   SHIELD_STAT_STRING = "Sheild Stat";
+    const std::string   STRUCTURE_STAT_STRING = "Structure Stat";
     const std::string   SPEED_STAT_STRING = "Speed Stat";
     const std::string   COLONY_CAPACITY_STAT_STRING = "Colony Capacity";
     const std::string   TROOP_CAPACITY_STAT_STRING = "Troop Capacity";
@@ -82,6 +85,9 @@ namespace {
 
     boost::shared_ptr<GG::Texture> DamageIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "damage.png", true); }
+
+    boost::shared_ptr<GG::Texture> FleetCountIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"); }
 
     std::string FleetDestinationText(int fleet_id) {
         std::string retval = "";
@@ -869,8 +875,40 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     if (const Fleet* fleet = GetFleet(m_fleet_id)) {
         int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
-        // stat icon for fleet fuel
+        // stat icon for fleet count
         StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                 FleetCountIcon(), 0, 0, false);
+        m_stat_icons.push_back(std::make_pair(COUNT_STAT_STRING, icon));
+        icon->SetBrowseModeTime(tooltip_delay);
+        icon->SetBrowseText(StatTooltip(COUNT_STAT_STRING));
+        AttachChild(icon);
+
+        // stat icon for fleet damage
+        icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                 DamageIcon(), 0, 0, false);
+        m_stat_icons.push_back(std::make_pair(DAMAGE_STAT_STRING, icon));
+        icon->SetBrowseModeTime(tooltip_delay);
+        icon->SetBrowseText(StatTooltip(DAMAGE_STAT_STRING));
+        AttachChild(icon);
+
+        // stat icon for fleet structure
+        icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                 ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
+        m_stat_icons.push_back(std::make_pair(STRUCTURE_STAT_STRING, icon));
+        icon->SetBrowseModeTime(tooltip_delay);
+        icon->SetBrowseText(StatTooltip(STRUCTURE_STAT_STRING));
+        AttachChild(icon);
+
+        // stat icon for fleet shields
+        icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                 ClientUI::MeterIcon(METER_SHIELD), 0, 0, false);
+        m_stat_icons.push_back(std::make_pair(SHIELD_STAT_STRING, icon));
+        icon->SetBrowseModeTime(tooltip_delay);
+        icon->SetBrowseText(StatTooltip(SHIELD_STAT_STRING));
+        AttachChild(icon);
+
+        // stat icon for fleet fuel
+        icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                                 ClientUI::MeterIcon(METER_FUEL), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(MeterStatString(METER_FUEL), icon));
         icon->SetBrowseModeTime(tooltip_delay);
@@ -884,6 +922,8 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(StatTooltip(SPEED_STAT_STRING));
         AttachChild(icon);
+
+
 
         m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDataPanel::Refresh, this);
 
@@ -1186,6 +1226,14 @@ double FleetDataPanel::StatValue(const std::string& stat_name) const {
             return fleet->Speed();
         else if (stat_name == MeterStatString(METER_FUEL))
             return fleet->Fuel();
+        else if (stat_name == SHIELD_STAT_STRING)
+            return fleet->Shields();
+        else if (stat_name == STRUCTURE_STAT_STRING)
+            return fleet->Structure();
+        else if (stat_name == DAMAGE_STAT_STRING)
+            return fleet->Damage();
+        else if (stat_name == COUNT_STAT_STRING)
+            return fleet->NumShips();
     }
     return 0.0;
 }
@@ -1193,8 +1241,16 @@ double FleetDataPanel::StatValue(const std::string& stat_name) const {
 std::string FleetDataPanel::StatTooltip(const std::string& stat_name) const {
     if (stat_name == SPEED_STAT_STRING)
         return UserString("FW_FLEET_SPEED_SUMMARY");
-    else if (stat_name == MeterStatString(METER_FUEL))
+    else if (stat_name ==  MeterStatString(METER_FUEL))
         return UserString("FW_FLEET_FUEL_SUMMARY");
+    else if (stat_name == SHIELD_STAT_STRING)
+        return UserString("FW_FLEET_SHIELD_SUMMARY");
+    else if (stat_name == STRUCTURE_STAT_STRING)
+        return UserString("FW_FLEET_STRUCTURE_SUMMARY");
+    else if (stat_name == DAMAGE_STAT_STRING) 
+        return UserString("FW_FLEET_DAMAGE_SUMMARY");
+    else if (stat_name == COUNT_STAT_STRING) 
+        return UserString("FW_FLEET_COUNT_SUMMARY");
     else
         return "";
 }

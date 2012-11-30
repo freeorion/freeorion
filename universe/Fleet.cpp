@@ -1079,6 +1079,75 @@ double Fleet::Speed() const {
     return retval;
 }
 
+double Fleet::Damage() const {
+    if (m_ships.empty())
+        return 0.0;
+
+    bool isFleetScrapped = true;
+    double retval = 0.0;
+    for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+        if (const Ship* ship = GetShip(*it)) {
+            if (!ship->OrderedScrapped()) {
+                if (const ShipDesign* design = ship->Design()){
+                    retval += design->Attack();
+                }
+                isFleetScrapped = false;
+            }
+        }
+    }
+
+    if (isFleetScrapped)
+        retval = 0.0;
+
+    return retval;
+}
+
+double Fleet::Structure() const {
+    if (m_ships.empty())
+        return 0.0;
+
+    bool isFleetScrapped = true;
+    double retval = 0.0;
+    for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+        if (const Ship* ship = GetShip(*it)) {
+            if (!ship->OrderedScrapped()) {
+                if (const ShipDesign* design = ship->Design()){
+                    retval += design->Structure();
+                }
+                isFleetScrapped = false;
+            }
+        }
+    }
+
+    if (isFleetScrapped)
+        retval = 0.0;
+
+    return retval;
+}
+
+double Fleet::Shields() const {
+    if (m_ships.empty())
+        return 0.0;
+
+    bool isFleetScrapped = true;
+    double retval = 0.0;
+    for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+        if (const Ship* ship = GetShip(*it)) {
+            if (!ship->OrderedScrapped()) {
+                if (const ShipDesign* design = ship->Design()){
+                    retval += design->Shields();
+                }
+                isFleetScrapped = false;
+            }
+        }
+    }
+
+    if (isFleetScrapped)
+        retval = 0.0;
+
+    return retval;
+}
+
 void Fleet::ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system) {
     std::list<int>::iterator visible_end_it;
     if (last_system != m_moving_to) {
