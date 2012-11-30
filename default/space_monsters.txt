@@ -51,7 +51,7 @@ ShipDesign
 ShipDesign
     name = "SM_TREE"
     description = "SM_TREE_DESC"
-    hull = "SH_IMMOBILE_MONSTER_BODY"
+    hull = "SH_TREE_BODY"
     parts = "SR_WEAPON_2"
     icon = "icons/monsters/tree.png"
     model = "seed"
@@ -59,7 +59,7 @@ ShipDesign
 ShipDesign
     name = "SM_FLOATER"
     description = "SM_FLOATER_DESC"
-    hull = "SH_WEAK_MONSTER_BODY"
+    hull = "SH_FLOATER_BODY"
     parts = [
         ""
         "SH_DEFLECTOR"

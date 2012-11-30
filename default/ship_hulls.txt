@@ -1618,8 +1618,8 @@ Hull
     graphic = "hulls_design/solar_hull.png"
     
 Hull
-    name = "SH_WEAK_MONSTER_BODY"
-    description = "SH_WEAK_MONSTER_BODY_DESC"
+    name = "SH_FLOATER_BODY"
+    description = "SH_FLOATER_BODY_DESC"
     speed = 5
     starlaneSpeed = 20
     fuel = 3
@@ -1657,8 +1657,8 @@ Hull
     graphic = "icons/monsters/floater.png"
     
 Hull
-    name = "SH_IMMOBILE_MONSTER_BODY"
-    description = "SH_IMMOBILE_MONSTER_BODY_DESC"
+    name = "SH_TREE_BODY"
+    description = "SH_TREE_BODY_DESC"
     speed = 0
     starlaneSpeed = 0
     fuel = 0

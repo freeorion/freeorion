@@ -7809,16 +7809,16 @@ SH_COLONY_BASE
 SH_COLONY_BASE_DESC
 Корпус разработанный для кораблей-колоний. Он не может перемещаться между звёздными системами, да и внутри системы двигается достаточно медленно.
 
-SH_WEAK_MONSTER_BODY
+SH_FLOATER_BODY
 Слабое Тело
 
-SH_WEAK_MONSTER_BODY_DESC
+SH_FLOATER_BODY_DESC
 Маленькое хрупкое тело, которое не в состоянии выдерживать значительные повреждения.
 
-SH_IMMOBILE_MONSTER_BODY
+SH_TREE_BODY
 Неподвижное Тело
 
-SH_IMMOBILE_MONSTER_BODY_DESC
+SH_TREE_BODY_DESC
 Твёрдое древовидное тело, которое не может перемещаться между системами.
 
 SH_STRONG_MONSTER_BODY

@@ -7824,16 +7824,16 @@ Colony Base Hull
 SH_COLONY_BASE_DESC
 A hull designed to create a colony on another planet in system. It cannot move between systems or move quickly in-system.
 
-SH_WEAK_MONSTER_BODY
+SH_FLOATER_BODY
 Weak Body
 
-SH_WEAK_MONSTER_BODY_DESC
+SH_FLOATER_BODY_DESC
 Small frail body that is unable to withstand significant damage.
 
-SH_IMMOBILE_MONSTER_BODY
+SH_TREE_BODY
 Immobile Body
 
-SH_IMMOBILE_MONSTER_BODY_DESC
+SH_TREE_BODY_DESC
 Rigid tree-like body that is unable to move between systems.
 
 SH_STRONG_MONSTER_BODY
