@@ -272,12 +272,14 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     GG::Connect(m_expand_button->ClickedSignal, &PopulationPanel::ExpandCollapseButtonPressed, this);
 
-    m_pop_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::SpeciesIcon(pop->SpeciesName()),
+    m_pop_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
+                                   ClientUI::SpeciesIcon(pop->SpeciesName()),
                                    0, 3, false);
     AttachChild(m_pop_stat);
     m_pop_stat->InstallEventFilter(this);
 
-    m_happiness_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_HAPPINESS),
+    m_happiness_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y,
+                                         ClientUI::MeterIcon(METER_HAPPINESS),
                                          0, 3, false);
     AttachChild(m_happiness_stat);
 
@@ -2365,17 +2367,15 @@ public:
 
 private:
     void            DoLayout() {
-        const GG::Y ICON_HEIGHT(32);
-        const GG::X ICON_WIDTH(16);
         const GG::X SPECIES_NAME_WIDTH(ClientUI::Pts() * 9);
         const GG::X SPECIES_CENSUS_WIDTH(ClientUI::Pts() * 5);
 
         GG::X left(GG::X0);
         GG::Y top(GG::Y0);
-        GG::Y bottom(ClientHeight());
+        GG::Y bottom(MeterIconSize().y - GG::Y(EDGE_PAD));
 
-        m_icon->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ICON_WIDTH, bottom));
-        left += ICON_WIDTH + GG::X(3);
+        m_icon->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + MeterIconSize().x, bottom));
+        left += MeterIconSize().x + GG::X(EDGE_PAD);
 
         m_species_name->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + SPECIES_NAME_WIDTH, bottom));
         left += SPECIES_NAME_WIDTH;
@@ -2399,11 +2399,11 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
 {
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
     const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
-    const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
+    const GG::Y ROW_HEIGHT(MeterIconSize().y);
 
     GG::Y top = GG::Y0;
 
-    m_row_height = GG::Y(ClientUI::Pts()*3/2);
+    m_row_height = GG::Y(MeterIconSize().y);
 
     m_offset = GG::Pt(GG::X0, ICON_BROWSE_ICON_HEIGHT/2); //lower the window
 
@@ -2412,7 +2412,7 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     AttachChild(m_title_text);
 
 
-    m_list = new CUIListBox(m_offset.x, ROW_HEIGHT + m_offset.y, BROWSE_TEXT_WIDTH, GG::Y1);
+    m_list = new CUIListBox(m_offset.x, ROW_HEIGHT + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT);
     m_list->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
     m_list->SetInteriorColor(ClientUI::WndColor());
     // preinitialize listbox/row column widths, because what ListBox::Insert does on default is not suitable for this case
@@ -2438,8 +2438,8 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
         top += m_row_height;
     }
 
-    m_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, top + (EDGE_PAD*2)));
-    Resize(GG::Pt(BROWSE_TEXT_WIDTH, top + (EDGE_PAD*2)));
+    m_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, top + (EDGE_PAD*3)));
+    Resize(GG::Pt(BROWSE_TEXT_WIDTH, top + (EDGE_PAD*3)));
 }
 
 bool CensusBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
