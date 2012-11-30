@@ -2,6 +2,8 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"
 
+#include <GG/Clr.h>
+
 #include <boost/function.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
@@ -139,6 +141,8 @@ namespace FreeOrionPython {
 
             .add_property("empireID",               &Empire::EmpireID)
             .add_property("capitalID",              &Empire::CapitalID)
+
+            .add_property("colour",                 make_function(&Empire::Color,                   return_value_policy<copy_const_reference>()))
 
             .def("buildingTypeAvailable",           &Empire::BuildingTypeAvailable)
             .add_property("availableBuildingTypes", make_function(&Empire::AvailableBuildingTypes,  return_internal_reference<>()))
@@ -310,6 +314,16 @@ namespace FreeOrionPython {
             .add_property("status",             &DiplomaticStatusUpdateInfo::diplo_status)
             .add_property("empire1",            &DiplomaticStatusUpdateInfo::empire1_id)
             .add_property("empire2",            &DiplomaticStatusUpdateInfo::empire2_id)
+        ;
+
+        ///////////
+        // Color //
+        ///////////
+        class_<GG::Clr>("GGColor", no_init)
+            .add_property("r",                  &GG::Clr::r)
+            .add_property("g",                  &GG::Clr::g)
+            .add_property("b",                  &GG::Clr::b)
+            .add_property("a",                  &GG::Clr::a)
         ;
     }
 }
