@@ -4,17 +4,19 @@ New Features / Improvements:
  ~ Very much improved AI.
  ~ Keyboard presses should now account for the operating system language setting, and it should be possible to type non-Latin characters in-game as long as the appropriate character set is used in the selected stringtable file.
  ~ Added an objects list window, with collapsable rows showing objects containing other objects
- ~~ Objects list has an incomplete filtering function to control what objects are shown.
- ~~ Right clicking an object in the objects list give a command to data dump about that object to the messages window. (For debug purposes)
+ ~ ~ Objects list has an incomplete filtering function to control what objects are shown.
+ ~ ~ Right clicking an object in the objects list give a command to data dump about that object to the messages window. (For debug purposes)
  ~ Added ion storms moving around the map.
- ~ Added a Protection Focus
- ~ Added sitrep type filters.
- ~ Old sitrep entries are kept on later turns, and may be reviewed.
+ ~ Improved Sitrep
+ ~ ~ Added type filters.
+ ~ ~ Old sitrep entries are kept on later turns, and may be reviewed.
+ ~ ~ Different icons for different events
+~ Added droplist to items on production queue to produce multiple items before being removed from the queue.
  ~ All ships produced by an empire on a single turn are now put into a single fleet, rather than a separate fleet for each ship.
  ~ Added a happiness meter to planets.
  ~ Disabled production of duplicate buildings when one already has been produced.
  ~ Various turn-processing and GUI speed improvements.
- ~ Added droplist to items on production queue to produce multiple items before being removed from the queue.
+ ~ Added a Protection Focus
 
 Balancing:
  ~ Unified resource and fleet supply into a single meter: the Supply meter. Infrastructure is not involved.
@@ -23,11 +25,11 @@ Balancing:
  ~ Recallibrated Stealth & Detection Strength numbers
  ~ ~ to max around 100
  ~ ~ to work with the new mechanics
- ~ Reduced detection ranges for ships and planets by roughly half.
+ ~ ~ Reduced detection ranges for ships and planets by roughly half.
  ~ Loosened requirements for Asteroid hulls/parts
  ~ ~ Asteroid processors are no longer shipyards, but must be built on a belt for a shipyard anywhere in the system to build asteroid hulls.
  ~ ~ Rock/Crystallized Armor Plating now requires an Asteroid Reformation Processor somewhere in the empire.
- ~ Halved weapon damage and Hull structure doubled Armor and Shield part strength.  I think adding defences to ships is now valid.
+ ~ Halved weapon damage and Hull structure doubled Armor and Shield part strength.
  ~ Made Terraforming more expensive, and made it get more expensive for repeatedly terraforming the same planet.
  ~ Disable production of shipyards at outposts.
  ~ Adjusted Microgravity Industry to "Increases Industry by +5 on all Industry-focused colonies in system with an asteroid belt outposts. Additional asteriod outposts do not provide additional benefit."
@@ -47,19 +49,19 @@ Balancing:
  
  Content:
   ~ More Game Concepts 'pedia entries.
-  ~ Russian translation update.
+  ~ Russian & French translation update.
   ~ Added Dampening Cloud monster
   ~ Added Planetary Evacuation
   ~ New ultimate detection strenght tech "Omni-scanners"
   ~ New detction strength booster special, Panopticon Complex
   
  Graphics:
-  ~ New Focus icons.
+  ~ New Focus & Planet meter icons with matching chart colors.
   ~ Sitrep icons.
-  ~ New planet meter icons.
-  ~ More ship part icons.
+  ~ More unique icons, especially fo ship parts.
  
  GUI:
+  ~ Added cumulative weapon, structure, and sheild, information to fleets so it is easy to gauge a fleet's chance of winning.
   ~ Numpad keypresses now enter numbers when numlock is on, and act as arrow navigation keys in text edit widgets.
   ~ Added option to swap left and right mouse buttons, for left-handed players.
   ~ Added line to producible item tooltips to indicate that items must be unlocked.
@@ -68,6 +70,7 @@ Balancing:
   ~ Added right-click popup menu to set map / misc options.
   ~ Added right-click popup menu to split damaged ships from a fleet.
   ~ Added right-click popup menu to scrap a whole fleet.
+  ~ New Census tootlip that shows the species breakdown of your Empire's population
  
  Bugs:
   ~ Disabled building shipyards at outposts.
