@@ -61,7 +61,7 @@ ShipDesign
     description = "SM_FLOATER_DESC"
     hull = "SH_WEAK_MONSTER_BODY"
     parts = [
-        "SP_DEATH_SPORE"
+        ""
         "SH_DEFLECTOR"
         ""
     ]
