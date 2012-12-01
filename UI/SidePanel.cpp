@@ -485,7 +485,6 @@ private:
     GG::TextControl*        m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
     CUIButton*              m_colonize_button;          ///< btn which can be pressed to colonize this planet
     CUIButton*              m_invade_button;            ///< btn which can be pressed to invade this planet
-    GG::TextControl*        m_colonize_instruction;     ///< text that tells the player to pick a colony ship to colonize
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
     bool                    m_selected;                 ///< is this planet panel selected
@@ -764,7 +763,6 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_env_size(0),
     m_colonize_button(0),
     m_invade_button(0),
-    m_colonize_instruction(0),
     m_planet_graphic(0),
     m_rotating_planet_graphic(0),
     m_selected(false),
@@ -888,10 +886,6 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
                                       ClientUI::TextColor(), GG::INTERACTIVE);
     GG::Connect(m_invade_button->ClickedSignal, &SidePanel::PlanetPanel::ClickInvade, this);
 
-    m_colonize_instruction = new GG::TextControl(GG::X(MaxPlanetDiameter()), GG::Y0,
-                                                 UserString("PL_SELECT_COLONY_SHIP_INSTRUCTION"),
-                                                 ClientUI::GetFont(), ClientUI::TextColor());
-
     if (m_planet_graphic)
         MoveChildDown(m_planet_graphic);
 
@@ -903,7 +897,6 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 SidePanel::PlanetPanel::~PlanetPanel() {
     delete m_colonize_button;
     delete m_invade_button;
-    delete m_colonize_instruction;
     delete m_env_size;
     delete m_population_panel;
     delete m_resource_panel;
@@ -932,10 +925,7 @@ void SidePanel::PlanetPanel::DoLayout() {
         y += m_env_size->Height() + EDGE_PAD;
     }
 
-    if (m_colonize_instruction && m_colonize_instruction->Parent() == this) {
-        m_colonize_instruction->MoveTo(GG::Pt(left, y));
-        y += m_colonize_instruction->Height() + EDGE_PAD;
-    } else if (m_colonize_button && m_colonize_button->Parent() == this) {
+    if (m_colonize_button && m_colonize_button->Parent() == this) {
         m_colonize_button->MoveTo(GG::Pt(left, y));
         y += m_colonize_button->Height() + EDGE_PAD;
     } else if (m_invade_button && m_invade_button->Parent() == this) {
@@ -1171,9 +1161,6 @@ void SidePanel::PlanetPanel::Refresh() {
         DetachChild(m_invade_button);
         delete m_invade_button;         m_invade_button = 0;
 
-        DetachChild(m_colonize_instruction);
-        delete m_colonize_instruction;  m_colonize_instruction = 0;
-
         DetachChild(m_specials_panel);
         delete m_specials_panel;        m_specials_panel = 0;
 
@@ -1255,7 +1242,6 @@ void SidePanel::PlanetPanel::Refresh() {
 
     DetachChild(m_invade_button);
     DetachChild(m_colonize_button);
-    DetachChild(m_colonize_instruction);
 
     std::string species_name;
     if (!planet->SpeciesName().empty())
@@ -1328,10 +1314,6 @@ void SidePanel::PlanetPanel::Refresh() {
         AttachChild(m_invade_button);
         if (m_invade_button)
             m_invade_button->SetText(UserString("PL_CANCEL_INVADE"));
-
-    } else if (!selected_colony_ship && could_colonize) {
-        // show colonization instruction text
-        AttachChild(m_colonize_instruction);
     }
 
     m_env_size->SetText(env_size_text);
