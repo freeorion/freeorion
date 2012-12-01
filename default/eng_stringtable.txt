@@ -268,6 +268,32 @@ Robotic IV
 SD_MARK_B_ROBOTIC4_DESC
 Advanced cruiser with heavy weaponry and armor to do the dirty work.
 
+SD_MARK_A_ORGANIC1
+Organic I
+SD_MARK_A_ORGANIC1_DESC
+Organic hull design with preliminary Laser weaponry
+
+SD_MARK_A_ORGANIC2
+Organic II
+SD_MARK_A_ORGANIC2_DESC
+Organic hull design with Laser weaponry
+
+SD_MARK_A_ORGANIC3
+Organic III
+SD_MARK_A_ORGANIC3_DESC
+Organic hull design with Laser weaponry
+
+SD_MARK_A_ORGANIC4
+Organic IV
+SD_MARK_A_ORGANIC4_DESC
+Organic hull design with Laser weaponry
+
+SD_MARK_B_ORGANIC1
+Organic V
+SD_MARK_B_ORGANIC1_DESC
+Organic hull design with preliminary Plasma weaponry. 
+
+
 SD_MARK_C_ENDO1
 Endomorphic I
 SD_MARK_C_ENDO1_DESC

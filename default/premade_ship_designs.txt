@@ -261,6 +261,66 @@ ShipDesign
     model = "mark1"
 
 ShipDesign
+    name = "SD_MARK_A_ORGANIC1"
+    description = "SD_MARK_A_ORGANIC1_DESC"
+    hull = "SH_ORGANIC"
+    parts = [
+        "SR_WEAPON_5"
+        "SR_WEAPON_5"
+        "SR_WEAPON_5"
+        "SH_DEFLECTOR"
+    ]
+    model = "mark1"
+    
+ShipDesign
+    name = "SD_MARK_A_ORGANIC2"
+    description = "SD_MARK_A_ORGANIC2_DESC"
+    hull = "SH_ORGANIC"
+    parts = [
+        "SR_WEAPON_6"
+        "SR_WEAPON_6"
+        "SR_WEAPON_6"
+        "SH_DEFLECTOR"
+    ]
+    model = "mark1"
+    
+ShipDesign
+    name = "SD_MARK_A_ORGANIC3"
+    description = "SD_MARK_A_ORGANIC3_DESC"
+    hull = "SH_ORGANIC"
+    parts = [
+        "SR_WEAPON_7"
+        "SR_WEAPON_7"
+        "SR_WEAPON_7"
+        "SH_DEFLECTOR"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_MARK_A_ORGANIC4"
+    description = "SD_MARK_A_ORGANIC4_DESC"
+    hull = "SH_ORGANIC"
+    parts = [
+        "SR_WEAPON_8"
+        "SR_WEAPON_8"
+        "SR_WEAPON_8"
+        "SH_DEFLECTOR"
+    ]
+    model = "mark1"
+
+ShipDesign
+    name = "SD_MARK_B_ORGANIC1"
+    description = "SD_MARK_B_ORGANIC1_DESC"
+    hull = "SH_ORGANIC"
+    parts = [
+        "SR_WEAPON_9"
+        "SR_WEAPON_9"
+        "SR_WEAPON_9"
+        "SH_DEFLECTOR"
+    ]
+    model = "mark1"    
+    
+ShipDesign
     name = "SD_MARK_C_ENDO1"
     description = "SD_MARK_C_ENDO1_DESC"
     hull = "SH_ENDOMORPHIC"
@@ -268,8 +328,6 @@ ShipDesign
         "SR_WEAPON_5"
         "SR_WEAPON_5"
         "SR_WEAPON_5"
-        "SR_WEAPON_5"
-        "SH_DEFLECTOR"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
@@ -283,8 +341,6 @@ ShipDesign
         "SR_WEAPON_6"
         "SR_WEAPON_6"
         "SR_WEAPON_6"
-        "SR_WEAPON_6"
-        "SH_DEFLECTOR"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
@@ -298,8 +354,6 @@ ShipDesign
         "SR_WEAPON_7"
         "SR_WEAPON_7"
         "SR_WEAPON_7"
-        "SR_WEAPON_7"
-        "SH_DEFLECTOR"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
@@ -313,8 +367,6 @@ ShipDesign
         "SR_WEAPON_8"
         "SR_WEAPON_8"
         "SR_WEAPON_8"
-        "SR_WEAPON_8"
-        "SH_DEFLECTOR"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
@@ -328,8 +380,6 @@ ShipDesign
         "SR_WEAPON_9"
         "SR_WEAPON_9"
         "SR_WEAPON_9"
-        "SR_WEAPON_9"
-        "SH_DEFLECTOR"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
@@ -343,8 +393,6 @@ ShipDesign
         "SR_WEAPON_10"
         "SR_WEAPON_10"
         "SR_WEAPON_10"
-        "SR_WEAPON_10"
-        "SH_DEFLECTOR"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
@@ -358,8 +406,6 @@ ShipDesign
         "SR_WEAPON_11"
         "SR_WEAPON_11"
         "SR_WEAPON_11"
-        "SR_WEAPON_11"
-        "SH_DEFLECTOR"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
@@ -373,8 +419,6 @@ ShipDesign
         "SR_WEAPON_12"
         "SR_WEAPON_12"
         "SR_WEAPON_12"
-        "SR_WEAPON_12"
-        "SH_DEFLECTOR"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
