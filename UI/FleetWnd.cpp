@@ -2567,8 +2567,12 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     }
 
     GG::MenuItem menu_contents;
-    // Rename fleet
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"),                       1, false, false));
+
+    // add a fleet poput command to send the fleet exploring, and stop it from exploring
+    if (system && !ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()) )
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),      6, false, false));
+    else if(system)
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), 7, false, false));
 
     // Split damaged ships - need some, but not all, ships damaged, and need to be in a system
     if (system && ship_ids_set.size() > 1 && !damaged_ship_ids.empty() && damaged_ship_ids.size() != ship_ids_set.size())
@@ -2578,6 +2582,9 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     if (system && ship_ids_set.size() > 1)
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_FLEET"),           3, false, false));
 
+    // Rename fleet
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"),                       1, false, false));
+
     // add a fleet popup command to order all ships in the fleet scrapped
     if (system && fleet->HasShipsWithoutScrapOrders())
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),        4, false, false));
@@ -2585,12 +2592,6 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     // add a fleet popup command to cancel all scrap orders on ships in this fleet
     if (system && fleet->HasShipsOrderedScrapped())
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_SCRAP"), 5, false, false));
-
-    // add a fleet poput command to send the fleet exploring, and stop it from exploring
-    if (system && !ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()) )
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),      6, false, false));
-    else if(system)
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), 7, false, false));
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
 
