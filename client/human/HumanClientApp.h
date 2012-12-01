@@ -43,7 +43,6 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&  SaveFileName() const;       ///< returns the current game's filename (may be "")
     bool                SinglePlayerGame() const;   ///< returns true iff this game is a single-player game
     //@}
 
@@ -58,7 +57,6 @@ public:
     void                SaveGame(const std::string& filename);          ///< saves the current game; blocks until all save-related network traffic is resolved.
     void                EndGame();                                      ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state
     void                LoadSinglePlayerGame(std::string filename = "");///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
-    void                SetSaveFileName(const std::string& filename);   ///< records the current game's filename
 
     Ogre::SceneManager* SceneManager();
     Ogre::Camera*       Camera();
@@ -90,7 +88,7 @@ private:
     void            HandleWindowClose();
 
     void            StartGame();
-    void            Autosave();                         ///< autosaves the current game, iff autosaves are enabled, and m_turns_since_autosave % autosaves.turns == 0
+    void            Autosave();                         ///< autosaves the current game, iff autosaves are enabled and any turn number requirements are met
     void            EndGame(bool suppress_FSM_reset);
     void            UpdateFPSLimit();                   ///< polls options database to find if FPS should be limited, and if so, to what rate
 
@@ -100,11 +98,8 @@ private:
     HumanClientFSM*             m_fsm;
     Process                     m_server_process;       ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
     boost::shared_ptr<ClientUI> m_ui;                   ///< the one and only ClientUI object!
-    std::string                 m_save_filename;        ///< the name under which the current game has been saved
     bool                        m_single_player_game;   ///< true when this game is a single-player game
     bool                        m_game_started;         ///< true when a game is currently in progress
-    int                         m_turns_since_autosave; ///< the number of turns that have elapsed since the last autosave
-    bool                        m_in_save_game_cycle;   ///< true during SaveGame()'s send-request, receive-save-game-data-request, send-save-game-data cycle
     bool                        m_connected;            ///< true if we are in a state in which we are supposed to be connected to the server
     Ogre::Root*                 m_root;
     Ogre::SceneManager*         m_scene_manager;

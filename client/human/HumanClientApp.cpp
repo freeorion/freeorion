@@ -95,6 +95,7 @@ namespace {
         db.Add("autosave.single-player",    "OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER",    true,   Validator<bool>());
         db.Add("autosave.multiplayer",      "OPTIONS_DB_AUTOSAVE_MULTIPLAYER",      false,  Validator<bool>());
         db.Add("autosave.turns",            "OPTIONS_DB_AUTOSAVE_TURNS",            1,      RangedValidator<int>(1, 50));
+        db.Add("autosave.limit",            "OPTIONS_DB_AUTOSAVE_LIMIT",            10,     RangedValidator<int>(1, 100));
         db.Add("UI.swap-mouse-lr",          "OPTIONS_DB_UI_MOUSE_LR_SWAP",          false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -179,7 +180,6 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     m_fsm(0),
     m_single_player_game(true),
     m_game_started(false),
-    m_turns_since_autosave(0),
     m_connected(false),
     m_root(root),
     m_scene_manager(scene_manager),
@@ -289,9 +289,6 @@ HumanClientApp::~HumanClientApp() {
     m_server_process.RequestTermination();
     delete m_fsm;
 }
-
-const std::string& HumanClientApp::SaveFileName() const
-{ return m_save_filename; }
 
 bool HumanClientApp::SinglePlayerGame() const
 { return m_single_player_game; }
@@ -591,9 +588,6 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     }
 }
 
-void HumanClientApp::SetSaveFileName(const std::string& filename)
-{ m_save_filename = filename; }
-
 Ogre::SceneManager* HumanClientApp::SceneManager()
 { return m_scene_manager; }
 
@@ -850,14 +844,61 @@ void HumanClientApp::StartGame() {
     Orders().Reset();
 }
 
+namespace {
+    void RemoveOldestFiles(int files_limit, boost::filesystem::path& p) {
+        using namespace boost::filesystem;
+        try {
+            if (!is_directory(p))
+                return;
+            if (files_limit < 0)
+                return;
+
+            std::multimap<std::time_t, path> files_by_write_time;
+
+            for (directory_iterator dir_it(p); dir_it != directory_iterator(); ++dir_it) {
+                const path& file_path = dir_it->path();
+                if (!is_regular_file(file_path))
+                    continue;
+                if (file_path.extension() != SP_SAVE_FILE_EXTENSION &&
+                    file_path.extension() != MP_SAVE_FILE_EXTENSION)
+                { continue; }
+
+                std::time_t t = last_write_time(file_path);
+                files_by_write_time.insert(std::make_pair(t, file_path));
+            }
+
+            //Logger().debugStream() << "files by write time:";
+            //for (std::multimap<std::time_t, path>::const_iterator it = files_by_write_time.begin();
+            //     it != files_by_write_time.end(); ++it)
+            //{ Logger().debugStream() << it->first << " : " << it->second.filename(); }
+
+            int num_to_delete = files_by_write_time.size() - files_limit;
+            if (num_to_delete <= 0)
+                return; // don't need to delete anything.
+
+            int num_deleted = 0;
+            for (std::multimap<std::time_t, path>::const_iterator it = files_by_write_time.begin();
+                 it != files_by_write_time.end(); ++it)
+            {
+                if (num_deleted >= num_to_delete)
+                    break;
+                remove(it->second);
+                ++num_deleted;
+            }
+        } catch (...) {
+            Logger().errorStream() << "Error removing oldest files";
+        }
+    }
+}
+
 void HumanClientApp::Autosave() {
     // autosave only on appropriate turn numbers, and when enabled for current
     // game type (single vs. multiplayer)
     int autosave_turns = GetOptionsDB().Get<int>("autosave.turns");
     if (autosave_turns < 1)
         return;     // avoid divide by zero
-    if (CurrentTurn() % autosave_turns != 0)
-        return;     // turns divisible by autosave_turns have autosaves done
+    if (CurrentTurn() % autosave_turns != 0 && CurrentTurn() != 1)
+        return;     // turns divisible by autosave_turns, and first turn, have autosaves done
     if (m_single_player_game && !GetOptionsDB().Get<bool>("autosave.single-player"))
         return;
     if (!m_single_player_game && !GetOptionsDB().Get<bool>("autosave.multiplayer"))
@@ -899,10 +940,26 @@ void HumanClientApp::Autosave() {
     date_stream << boost::posix_time::microsec_clock::local_time();
     std::string datetime_str=date_stream.str();
 
+    boost::filesystem::path autosave_dir_path(GetSaveDir() / "auto");
+
     std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d_%s%s") % player_name % empire_name % CurrentTurn() % datetime_str % extension);
-    boost::filesystem::path save_path(GetSaveDir() / save_filename);
+    boost::filesystem::path save_path(autosave_dir_path / save_filename);
     std::string path_string = PathString(save_path);
 
+    try {
+        // ensure autosave directory exists
+        if (!exists(autosave_dir_path))
+            boost::filesystem::create_directories(autosave_dir_path);
+    } catch (const std::exception& e) {
+        Logger().errorStream() << "Autosave unable to check / create autosave directory: " << e.what();
+        std::cerr << "Autosave unable to check / create autosave directory: " << e.what() << std::endl;
+    }
+
+    // check for and remove excess oldest autosaves
+    int max_autosaves = GetOptionsDB().Get<int>("autosave.limit");
+    RemoveOldestFiles(max_autosaves, autosave_dir_path);
+
+    // create new save
     Logger().debugStream() << "Autosaving to: " << path_string;
     try {
         SaveGame(path_string);

@@ -1054,6 +1054,9 @@ If true, autosaves will occur during multiplayer games.
 OPTIONS_DB_AUTOSAVE_TURNS
 Sets the number of turns between autosaves.
 
+OPTIONS_DB_AUTOSAVE_LIMIT
+Sets the maximum number of autosave files to keep.
+
 OPTIONS_DB_UI_MOUSE_LR_SWAP
 Swaps results of clicking left and right mouse buttons.
 
@@ -1439,8 +1442,8 @@ Single player
 OPTIONS_MULTIPLAYER
 Multiplayer
 
-OPTIONS_AUTOSAVE_TO_KEEP
-Autosaves to keep
+OPTIONS_AUTOSAVE_LIMIT
+Autosaves limit
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Turns between autosaves

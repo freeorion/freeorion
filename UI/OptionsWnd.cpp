@@ -870,6 +870,7 @@ void OptionsWnd::Init() {
     BoolOption("autosave.single-player",            UserString("OPTIONS_SINGLEPLAYER"));
     BoolOption("autosave.multiplayer",              UserString("OPTIONS_MULTIPLAYER"));
     IntOption("autosave.turns",                     UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
+    IntOption("autosave.limit",                     UserString("OPTIONS_AUTOSAVE_LIMIT"));
     EndPage();
 
     // Directories tab
