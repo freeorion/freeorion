@@ -872,7 +872,7 @@ namespace {
             //     it != files_by_write_time.end(); ++it)
             //{ Logger().debugStream() << it->first << " : " << it->second.filename(); }
 
-            int num_to_delete = files_by_write_time.size() - files_limit;
+            int num_to_delete = files_by_write_time.size() - files_limit + 1;   // +1 because will add a new file after deleting, bringing number back up to limit
             if (num_to_delete <= 0)
                 return; // don't need to delete anything.
 
