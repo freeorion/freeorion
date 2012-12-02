@@ -2755,7 +2755,7 @@ FUEL_TEXT
 SUPPLY_TITLE
 Supply
 SUPPLY_TEXT
-'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share resources -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.
+'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share physical resources -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.
 
 The supply meter on a planet represents the number of star-lanes supply can reach.'''
 
@@ -6516,19 +6516,19 @@ SHP_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings
 
 SHP_IMPROVED_ENGINE_COUPLINGS_DESC
-Better engine parts equate to better engines. Increases Starlane speed by 10
+Better engine parts equate to better engines. Increases Starlane speed by 10. May be added more than once to a hull.
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX
 N-Dimensional Engine Matrix
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Starlane speed by 15. 
+N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Starlane speed by 15. May be added more than once to a hull.
 
 SHP_SINGULARITY_ENGINE_CORE
 Singularity Engine Core
 
 SHP_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. 
+A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. May be added more than once to a hull.
 
 SHP_DEUTERIUM_TANK
 Deuterium Tank
@@ -6707,7 +6707,7 @@ BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases [[encyclopedia SUPPLY_TITLE]] line range by 1, Infrastructure by 20, Defense by 5, and Troops by 10. Also sets the owner's Capital for the empire.
+'''Increases [[encyclopedia SUPPLY_TITLE]] line range by 1, Infrastructure by 20, Defense by 5, and Troops by 3. Also sets the owner's Capital for the empire.
 
 Represents imperial power and prestige and functions as a centre of control for the empire's holdings.'''
 
