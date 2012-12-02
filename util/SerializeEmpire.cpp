@@ -51,6 +51,7 @@ void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version
         & BOOST_SERIALIZATION_NVP(blocksize)
         & BOOST_SERIALIZATION_NVP(location)
         & BOOST_SERIALIZATION_NVP(allocated_pp)
+        & BOOST_SERIALIZATION_NVP(progress)
         & BOOST_SERIALIZATION_NVP(turns_left_to_next_item)
         & BOOST_SERIALIZATION_NVP(turns_left_to_completion);
 }
@@ -83,7 +84,6 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_research_queue)
         & BOOST_SERIALIZATION_NVP(m_research_progress)
         & BOOST_SERIALIZATION_NVP(m_production_queue)
-        & BOOST_SERIALIZATION_NVP(m_production_progress)
         & BOOST_SERIALIZATION_NVP(m_available_building_types)
         & BOOST_SERIALIZATION_NVP(m_available_part_types)
         & BOOST_SERIALIZATION_NVP(m_available_hull_types)

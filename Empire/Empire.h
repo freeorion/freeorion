@@ -162,13 +162,14 @@ struct ProductionQueue {
         Element(ProductionItem item_, int ordered_, int remaining_, int location_); ///< basic ctor.
         Element(BuildType build_type, std::string name, int ordered_, int remaining_, int location_); ///< basic ctor.
         Element(BuildType build_type, int design_id, int ordered_, int remaining_, int location_); ///< basic ctor.
-        
+
         ProductionItem  item;
         int             ordered;                    ///< how many of item (blocks) to produce
         int             blocksize;                  ///< size of block to produce (default=1)
         int             remaining;                  ///< how many left to produce
         int             location;                   ///< the ID of the UniverseObject at which this item is being produced
-        double          allocated_pp;               ///< amount of PP allocated to this ProductionQueue Element by Empire production update
+        double          allocated_pp;               ///< PP allocated to this ProductionQueue Element by Empire production update
+        double          progress;                   ///< PP that has been spent on this production element (will increase by allocation during next turn processing)
         int             turns_left_to_next_item;
         int             turns_left_to_completion;
 
@@ -198,14 +199,17 @@ struct ProductionQueue {
     double                          TotalPPsSpent() const;              ///< Returns the number of PPs currently spent on the projects in this queue.
     int                             EmpireID() const { return m_empire_id; }
 
-    /** Returns map from sets of system ids that can share resources to amount
-      * of PP available in those groups of systems */
-    std::map<std::set<int>, double> AvailablePP(const std::map<ResourceType, boost::shared_ptr<ResourcePool> >& resource_pools) const;
+    /** Returns map from sets of object ids that can share resources to amount
+      * of PP available in those groups of objects */
+    std::map<std::set<int>, double>         AvailablePP(const boost::shared_ptr<ResourcePool>& industry_pool) const;
 
-    /** Returns map from sets of system ids that can share resources to amount
+    /** Returns map from sets of object ids that can share resources to amount
       * of PP allocated to production queue elements that have build locations
       * in systems in the group. */
-    std::map<std::set<int>, double> AllocatedPP() const;
+    const std::map<std::set<int>, double>&  AllocatedPP() const;
+
+    /** Returns sets of object ids that have more available than allocated PP */
+    std::set<std::set<int> >                ObjectsWithWastedPP(const boost::shared_ptr<ResourcePool>& industry_pool) const;
 
 
     // STL container-like interface
@@ -226,9 +230,7 @@ struct ProductionQueue {
       * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
       * empire->CheckProductionProgress() will actually spend PP, remove items from queue and create them
       * in the universe. */
-    void                            Update(const std::map<ResourceType,
-                                           boost::shared_ptr<ResourcePool> >& resource_pools,
-                                           const std::vector<double>& production_status);
+    void                            Update();
 
     // STL container-like interface
     void                            push_back(const Element& element);
@@ -362,11 +364,9 @@ public:
       * separate groups are blockaded or otherwise separated). */
     const std::set<std::set<int> >&         ResourceSupplyGroups() const;
 
-    const std::set<int>&    ExploredSystems() const;            ///< returns set of ids of systems that this empire has explored
-    const std::map<int, std::set<int> >
-                            KnownStarlanes() const;             ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
-    const std::map<int, std::set<int> >
-                            VisibleStarlanes() const;           ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
+    const std::set<int>&                    ExploredSystems() const;    ///< returns set of ids of systems that this empire has explored
+    const std::map<int, std::set<int> >     KnownStarlanes() const;     ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
+    const std::map<int, std::set<int> >     VisibleStarlanes() const;   ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
 
     TechItr                 TechBegin() const;                  ///< starting iterator for techs this empire has researched
     TechItr                 TechEnd() const;                    ///< end iterator for techs
@@ -384,7 +384,7 @@ public:
       * this number. */
     double                  TotalTradeSpending() const {return m_maintenance_total_cost;}
 
-    const ResourcePool*     GetResourcePool(ResourceType resource_type) const;  ///< Returns ResourcePool for \a resource_type or 0 if no such ResourcePool exists
+    const boost::shared_ptr<ResourcePool>   GetResourcePool(ResourceType resource_type) const;  ///< Returns ResourcePool for \a resource_type or 0 if no such ResourcePool exists
     double                  ResourceStockpile(ResourceType type) const;         ///< returns current stockpiled amount of resource \a type
     double                  ResourceMaxStockpile(ResourceType type) const;      ///< returns maximum allowed stockpile of resource \a type
     double                  ResourceProduction(ResourceType type) const;        ///< returns amount of resource \a type being produced by ResourceCenters
@@ -567,7 +567,6 @@ private:
     std::map<std::string, double>   m_research_progress;        ///< progress of partially-researched techs; fully researched techs are removed
 
     ProductionQueue                 m_production_queue;         ///< the queue of items being or waiting to be built
-    std::vector<double>             m_production_progress;      ///< progress of partially-completed builds; completed items are removed
 
     std::set<std::string>           m_available_building_types; ///< list of acquired BuildingType.  These are string names referencing BuildingType objects
     std::set<std::string>           m_available_part_types;     ///< list of acquired ship PartType.  These are string names referencing PartType objects
