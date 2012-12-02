@@ -2680,7 +2680,7 @@ Population
 PEACE_TITLE
 Peace
 PEACE_TEXT
-Peace is the diplomatic state between empires in which they mutually agree not to attack each other's ships or planets, not to obstruct each other's [[encyclopedia SUPPLY_TITLE]], and not to impede colonization.
+Peace is the diplomatic state between empires in which they mutually agree not to attack each other's ships or planets, not to obstruct each other's [[encyclopedia SUPPLY_TITLE]] lines, and not to impede colonization.
 
 OUTPOSTS_TITLE
 Outposts
@@ -2690,7 +2690,7 @@ OUTPOSTS_TEXT
 GROWTH_FOCUS_TITLE
 Growth Focus
 GROWTH_FOCUS_TEXT
-'''The Growth Focus represents exporting rare materials and substances that aid the population growth of a certain species. Is only available in certain situations: on some homeworlds, and on planets with growth specials.  A planet focused on Growth increases the max Population only of other planets connected to it by [[encyclopedia SUPPLY_TITLE]].  A Homeworld focused on Growth only helps other planets of the same species.  Growth Special planets focused on growth, only help a single classification of species, for instance some only help Organic Species.'''
+'''The Growth Focus represents exporting rare materials and substances that aid the population growth of a certain species. Is only available in certain situations: on some homeworlds, and on planets with growth specials.  A planet focused on Growth increases the max Population only of other planets connected to it by [[encyclopedia SUPPLY_TITLE]] lines.  A Homeworld focused on Growth only helps other planets of the same species.  Growth Special planets focused on growth, only help a single classification of species, for instance some only help Organic Species.'''
 
 MINING_FOCUS_TITLE
 Mining Focus
@@ -2750,12 +2750,14 @@ TELEPATHY_TEXT
 FUEL_TITLE
 Fuel
 FUEL_TEXT
-'''Fuel allows ships to travel the star-lanes. When entering a star-lane a ship consumes 1 unit of fuel.  Fuel is not used up at any other time.  [[encyclopedia SUPPLY_TITLE]] will fully refuel a ship.  If a ship travels beyond friendly supply lines, fuel will slowly regenerate when the ship is outside of the star-lanes.'''
+'''Fuel allows ships to travel the star-lanes. When entering a star-lane a ship consumes 1 unit of fuel.  Fuel is not used up at any other time.  [[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship.  If a ship travels beyond friendly supply lines, fuel will slowly regenerate when the ship is outside of the star-lanes.'''
 
 SUPPLY_TITLE
-Supply Lines
+Supply
 SUPPLY_TEXT
-'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share resources -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.'''
+'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share resources -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.
+
+The supply meter on a planet represents the number of star-lanes supply can reach.'''
 
 
 FLEET_UPKEEP_TITLE
@@ -2766,7 +2768,7 @@ FLEET_UPKEEP_TEXT
 EVACUATION_TITLE
 Evacuation
 EVACUATION_TEXT
-'''The [[buildingtype BLD_EVACUATION]] project when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[encyclopedia SUPPLY_TITLE]], one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disapears into the vastness of space.
+'''The [[buildingtype BLD_EVACUATION]] project when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[encyclopedia SUPPLY_TITLE]] lines, one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disapears into the vastness of space.
 During an evacuation production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] deletes itself.'''  
 
 
@@ -3836,7 +3838,7 @@ Ancient Ruins
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
 '''Triples the Research on this planet and increases Research on Research-focused planets by one twentieth (non-stacking).
 
-This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech Xenoarchaeology to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
+This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
 
 PANOPTICON_SPECIAL
 Panopticon Complex
@@ -5311,7 +5313,7 @@ XENOARCH_SHORT_DESC
 Allows discoveries from Ruins
 
 LRN_XENOARCH_DESC
-'''Allows discoveries from Ancient Ruins.
+'''Allows discoveries from [[special ANCIENT_RUINS_SPECIAL]].
 
 The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy. Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space. Finding and deciphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
 
@@ -5655,7 +5657,7 @@ CON_CONTGRAV_ARCH
 Controlled Gravity Architecture
 
 CON_CONTGRAV_ARCH_DESC
-'''Increases the Supply range of all colonies by 1.
+'''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies by 1.
 
 By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
 
@@ -5665,7 +5667,7 @@ CON_GAL_INFRA
 Galactic Infrastructure
 
 CON_GAL_INFRA_DESC
-'''Increases the Supply range of all colonies by 1.
+'''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies by 1.
 
 The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena. By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
 
@@ -5717,7 +5719,7 @@ SHP_INTSTEL_LOG
 Interstellar Logistics
 
 SHP_INTSTEL_LOG_DESC
-'''Unlocks the Logistics focus setting, which increases the Supply meter of planets by an amount equal to one half the planet's population.
+'''Unlocks the Logistics focus setting, which increases the [[encyclopedia SUPPLY_TITLE]] meter of planets by an amount equal to one half the planet's population.
 
 Effectively supplying ships, ordering general fleet movement and even organizing the movement of specific ships in battle requires a complex understanding of navigation and detection, and of methods of information acquisition.'''
 
@@ -5962,7 +5964,7 @@ CON_ORBITAL_CON
 Orbital Construction
 
 CON_ORBITAL_CON_DESC
-'''Increases the Supply range of all colonies by 1.
+'''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies by 1.
 
 On a planet, there is always a fixed reference direction: "up". Microgravity is effectively isotropic. This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment. As well, the interior configuration of spaces in orbit must be rethought. However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces. Rather than a complete break from older styles, a gradual transition may be more effective.'''
 
@@ -5970,7 +5972,7 @@ CON_SUBTER_CONST
 Subterranean Construction
 
 CON_SUBTER_CONST_DESC
-'''Increases Infrastructure by 10.  Cannot improve a planet with the Tunnels or Tectonic Instability special.
+'''Increases Infrastructure by 10.  Cannot improve a planet with the [[special TUNNELS_SPECIAL]] or [[special TECTONIC_INSTABILITY_SPECIAL]] special.
 
 When space is at a premium, the ability to build downwards as well as up is an invaluable asset. Entire underground cities and facilities can be constructed and maintained, and trans-planetary subterranean transportation routes can be established.'''
 
@@ -6251,7 +6253,7 @@ SHP_FLEET_REPAIR
 Fleet Field Repair
 
 SHP_FLEET_REPAIR_DESC
-Allows ships within supply range to repair damage at a rate of 1 per turn. Does not function immediately after battles.
+Allows ships within [[encyclopedia SUPPLY_TITLE]] line range to repair damage at a rate of 1 per turn. Does not function immediately after battles.
 
 SHP_REINFORCED_HULL
 Reinforced Hull
@@ -6705,7 +6707,7 @@ BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases Supply Range by 1, Infrastructure by 20, Defense by 5, and Troops by 10. Also sets the owner's Capital for the empire.
+'''Increases [[encyclopedia SUPPLY_TITLE]] line range by 1, Infrastructure by 20, Defense by 5, and Troops by 10. Also sets the owner's Capital for the empire.
 
 Represents imperial power and prestige and functions as a centre of control for the empire's holdings.'''
 
@@ -6832,7 +6834,7 @@ BLD_INDUSTRY_CENTER
 Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to Industry on all supply connected planets with Industry focus equal to othe greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
+'''Initially provides a bonus to Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus equal to the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 [[tech PRO_INDUSTRY_CENTER_II]] refinement increases the bonus to equal the planet's population.
 
@@ -6847,7 +6849,7 @@ BLD_MEGALITH
 Megalith
 
 BLD_MEGALITH_DESC
-'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to Supply range, and 30 to construction. Additionally all resource meters are able to reach target in a single turn.
+'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to [[encyclopedia SUPPLY_TITLE]] line range, and 30 to construction. Additionally all resource meters are able to reach target in a single turn.
 
 The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
 
@@ -6855,7 +6857,7 @@ BLD_SPACE_ELEVATOR
 Space Elevator
 
 BLD_SPACE_ELEVATOR_DESC
-'''Doubles Supply range on the planet on which it is built.
+'''Doubles [[encyclopedia SUPPLY_TITLE]] line range on the planet on which it is built.
 
 Nano-construction enables production of tensile cables strong enough to reach beyond geostationary orbit. Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity. An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end.'''
 
@@ -6909,7 +6911,7 @@ BLD_HYPER_DAM
 Hyperspatial Dam
 
 BLD_HYPER_DAM_DESC
-'''Increases target Industry on supply connected planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 2 per [[INFRA_PER_PRODUCTION]] units of Infrastructure, but decreases Population on such planets by 5.
+'''Increases target Industry on [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 2 per [[INFRA_PER_PRODUCTION]] units of Infrastructure, but decreases Population on such planets by 5.
 
 A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
 
@@ -6923,7 +6925,7 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Increases target industry on supply connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
+'''Increases target industry on [[encyclopedia SUPPLY_TITLE]] line connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependant on star type. This building can be built at an outpost.'''
 
@@ -6991,7 +6993,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-Increases Industry on all supply connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. This building can be built at an outpost.
+Increases Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. This building can be built at an outpost.
 
 BLD_REPLICATORS
 Replicators
@@ -7543,7 +7545,7 @@ CO_OUTPOST_POD
 Outpost Module
 
 CO_OUTPOST_POD_DESC
-'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they create supply lines (+1) and provide vision. Colonies can be founded on planets that already have an Outpost.'''
+'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the rigth tech is researched. Colonies can be founded on planets that already have an Outpost.'''
 
 GT_TROOP_POD
 Ground Troop Pod
