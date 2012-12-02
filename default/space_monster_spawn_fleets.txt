@@ -18,7 +18,7 @@ MonsterFleet
     ships = [
         "SM_TREE"
     ]
-    spawnrate = 0.5
+    spawnrate = 0.7
     spawnlimit = 9999
     location = And [
         Star type = [Blue White Yellow Orange Red]
@@ -117,12 +117,12 @@ MonsterFleet
     ships = [
         "SM_SNOWFLAKE_1"
     ]
-    spawnrate = 0.6
+    spawnrate = 1.0
     spawnlimit = 100
     location = And [
         Not Contains Monster
         Contains Planet size = Small
-        Not WithinStarlaneJumps 3 Contains And [
+        Not WithinStarlaneJumps 2 Contains And [
             Planet
             OwnedBy AnyEmpire
         ]

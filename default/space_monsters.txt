@@ -3,7 +3,7 @@ ShipDesign
     description = "SM_KRILL_1_DESC"
     hull = "SH_KRILL_1_BODY"
     parts = [
-        "SP_DEATH_SPORE"
+        ""
         ""
         ""
     ]
@@ -15,8 +15,8 @@ ShipDesign
     description = "SM_KRILL_2_DESC"
     hull = "SH_KRILL_2_BODY"
     parts = [
-        "SP_DEATH_SPORE"
         ""
+        "SR_WEAPON_3"
         ""
     ]
     icon = "icons/monsters/krill-2.png"
