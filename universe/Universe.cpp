@@ -1621,19 +1621,6 @@ void Universe::UpdateEmpireObjectVisibilities() {
                                               empire_id, detectable_obj->ID(), VIS_PARTIAL_VISIBILITY);
                     break;
                 }
-                // I suspect the following is unnecessary after changes to how visibility works..
-                // No detector objects with 0 range should be included, so anything at the same
-                // location should already have been detected by being within range.
-                //
-                //else if (dist2 == 0.0 && obj_vis <= VIS_NO_VISIBILITY) {
-                //    // planets always basically visible if at same location as a detector
-                //    if (detectable_obj->ObjectType() == OBJ_PLANET)) {
-                //        SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
-                //                                  empire_id, detectable_obj->ID(), VIS_BASIC_VISIBILITY);
-                //        // no break here.  may be partially visible due to
-                //        // another detector object
-                //    }
-                //}
             }
         }
     }
