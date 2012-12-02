@@ -25,12 +25,26 @@ Article
     short_description = "METER_ARTICLE_SHORT_DESC"
     description = "HAPPINESS_METER_TEXT"
     icon = "icons/meter/happiness.png"
-    
+
 Article
-    name = "TROOP_METER_TITLE"
+    name = "DEFENSE_METER_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
     short_description = "METER_ARTICLE_SHORT_DESC"
-    description = "TROOP_METER_TEXT"
+    description = "DEFENSE_METER_TEXT"
+    icon = "icons/meter/defense.png"
+
+Article
+    name = "SHIELDS_METER_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "SHIELDS_METER_TEXT"
+    icon = "icons/meter/shield.png"
+    
+Article
+    name = "TROOP_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "TROOP_TEXT"
     icon = "icons/meter/troops.png"
 
 Article

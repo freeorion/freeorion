@@ -367,7 +367,7 @@ SD_TROOP_SHIP
 Troop Ship
 
 SD_TROOP_SHIP_DESC
-Carries a brigade of ground troops and equipment that can be deployed onto a planet.
+Carries a brigade of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet.
 
 SD_DRAGON_TOOTH
 Dragon Tooth
@@ -2608,7 +2608,7 @@ Parts: %3%
 
 Total Attack Damage: %17%
 Structure: %8%
-Shields: %9%
+[[encyclopedia SHIELDS_METER_TITLE]]: %9%
 Detection: %10%
 Stealth: %11%
 Fuel Capacity: %14%
@@ -2705,17 +2705,31 @@ TRADE_FOCUS_TEXT
 PROTECTION_FOCUS_TITLE
 Protection Focus
 PROTECTION_FOCUS_TEXT
-'''The Protection focus represents a planet wholly focused on defending itself.  [[encyclopedia TROOP_METER_TITLE]], Planetary Defences, and Planetary Shields are all increased.'''
+'''The Protection focus represents a planet wholly focused on defending itself.  [[encyclopedia TROOP_TITLE]], Planetary [[encyclopedia DEFENSE_METER_TITLE]], and Planetary [[encyclopedia SHIELDS_METER_TITLE]] are all increased.'''
 
 HAPPINESS_METER_TITLE
 Happiness Meter
 HAPPINESS_METER_TEXT
 '''Happiness doesn't do anything, yet.'''
 
-TROOP_METER_TITLE
-Troops Meter
-TROOP_METER_TEXT
-'''The Troop meter represents the power of the defending ground forces.  The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.'''
+DEFENSE_METER_TITLE
+Defense
+DEFENSE_METER_TEXT
+'''The Defense meter of a planet represents the power of the ground to space weapons installed. It's comparable to the Damage value of a space ship.'''
+
+SHIELDS_METER_TITLE
+Shields
+SHIELDS_METER_TEXT
+'''The term Shields combines all kinds of protective forcefields. Regenerating each turn, they are usually the first barrier incoming attacks have to overcome.
+
+Space ships and planets have a Shields meter.'''
+
+TROOP_TITLE
+Troops
+TROOP_TEXT
+'''The term Troops combines all kinds of military forces capable of operating on a planets surface.
+
+The Troop meter on a planet represents the power of the defending ground forces.  The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.'''
 
 ORGANIC_SPECIES_TITLE
 Organic Metabolism
@@ -5335,7 +5349,7 @@ LRN_FORCE_FIELD
 Force-Field Harmonics
 
 LRN_FORCE_FIELD_DESC
-'''Increases max shield on all planets by 10. This is not cumulative with Planetary Barrier Shield.
+'''Increases max [[encyclopedia SHIELDS_METER_TITLE]] on all planets by 10. This is not cumulative with Planetary Barrier Shield.
 
 Like Fourier analysis of sound, electromagnetism, strong and weak forces may be expressed as harmonic quantum standing-wave superpositions of force-carrier particles. By selectively amplifying these harmonics, forces may be arbitrarily controlled to shield, attack, contain or support.'''
 
@@ -5484,7 +5498,7 @@ GRO_ENERGY_META
 Pure-Energy Metabolism
 
 GRO_ENERGY_META_DESC
-'''Increases max Fuel on all ships by 2, max Defense on all planets by 5, max Shield on all planets by 5, target Industry on all planets with the Industry focus by one quarter of the planet's population, and target Research on all planets with the Research focus by one fifth.
+'''Increases max Fuel on all ships by 2, max [[encyclopedia DEFENSE_METER_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_METER_TITLE]] on all planets by 5, target Industry on all planets with the Industry focus by one quarter of the planet's population, and target Research on all planets with the Research focus by one fifth.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -6191,7 +6205,7 @@ DEF_DEFENSE_NET
 Planetary Defense Network
 
 DEF_DEFENSE_NET_DESC
-'''Increases max defense on all planets by 5.
+'''Increases max [[encyclopedia DEFENSE_METER_TITLE]] on all planets by 5.
 
 With galactic exploration comes the possibility of meeting new races - and new enemies. By placing several armed defense bases in orbit around a planet, it is possible to give that planet defensive capabilities without the need for ships.'''
 
@@ -6199,7 +6213,7 @@ DEF_HI_ENRG_FOCUS
 High Energy Focus
 
 DEF_HI_ENRG_FOCUS_DESC
-'''Increases max defense on all planets by 15.
+'''Increases max [[encyclopedia DEFENSE_METER_TITLE]] on all planets by 15.
 
 While having a multitude of defense satellites is superior to a single large defense satellite in terms of versatility and dependability, it is considerably inferior in terms of firepower. Often, enemy shields can simply absorb numerous weak attacks where a single powerful attack would be able to penetrate its shields and severely damage the ship. By using a high energy focusing device, the power of multiple defense satellites can be unified into a single powerful beam weapon.'''
 
@@ -6207,7 +6221,7 @@ DEF_PLAN_BARRIER_SHLD
 Planetary Barrier Shield
 
 DEF_PLAN_BARRIER_SHLD_DESC
-'''Increases max shield on all planets by 45. 
+'''Increases max [[encyclopedia SHIELDS_METER_TITLE]] on all planets by 45. 
 
 Advanced Planetary Shield. This is not cumulative with Planetary Deflector Shield.'''
 
@@ -6215,7 +6229,7 @@ DEF_ROOT_DEFENSE
 Self Defense
 
 DEF_ROOT_DEFENSE_DESC
-'''Increases max troops on all planets by 5.
+'''Increases max [[encyclopedia TROOP_TITLE]] on all planets by 2.
 
 The concept of 'self defense' is at the root of many avenues of technological advance.'''
 
@@ -6223,25 +6237,25 @@ DEF_GARRISON_1
 Planetary Garrison 1
 
 DEF_GARRISON_1_DESC
-Increases max troop power on all planets by 10.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 5.
 
 DEF_GARRISON_2
 Planetary Garrison 2
 
 DEF_GARRISON_2_DESC
-Increases max troopspower on all planets by 20.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 10.
 
 DEF_GARRISON_3
 Planetary Garrison 3
 
 DEF_GARRISON_3_DESC
-Increases max troop power on all planets by 40.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 15.
 
 DEF_GARRISON_4
 Planetary Garrison 4
 
 DEF_GARRISON_4_DESC
-Increases max troop power on all planets by 80.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 20.
 
 DEF_PLANET_CLOAK
 Planetary Cloaking Device
@@ -6289,7 +6303,7 @@ SHP_ROOT_AGGRESSION
 Aggression
 
 SHP_ROOT_AGGRESSION_DESC
-Allows basic weapons and troop pods.
+Allows basic weapons and [[shippart GT_TROOP_POD]]s.
 
 SHP_WEAPON_2
 Mass Driver 2
@@ -6582,13 +6596,13 @@ SHP_MINIAST_SWARM
 Mini-Asteroid Swarm
 
 SHP_MINIAST_SWARM_DESC
-This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to shields. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 SHP_SCAT_AST_HULL
 Scattered Asteroid Hull
 
 SHP_SCAT_AST_HULL_DESC
-This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to shields for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 SHP_ORG_HULL
 Organic Hull
@@ -6707,7 +6721,7 @@ BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases [[encyclopedia SUPPLY_TITLE]] line range by 1, Infrastructure by 20, Defense by 5, and Troops by 3. Also sets the owner's Capital for the empire.
+'''Increases [[encyclopedia SUPPLY_TITLE]] line range by 1, Infrastructure by 20, [[encyclopedia DEFENSE_METER_TITLE]] by 5, and [[encyclopedia TROOP_TITLE]] by 3. Also sets the owner's Capital for the empire.
 
 Represents imperial power and prestige and functions as a centre of control for the empire's holdings.'''
 
@@ -7509,7 +7523,7 @@ Defense Grid
 SH_DEFENSE_GRID_DESC
 '''Weak defense with no extra mass. 
 
-Shield technology is generally much more expensive than armor, due to the technology needed to produce shielding fields, but have the benefits of no speed penalties.'''
+[[encyclopedia SHIELDS_METER_TITLE]] technology is generally much more expensive than armor, due to the technology needed to produce shielding fields, but have the benefits of no speed penalties.'''
 
 SH_DEFLECTOR
 Deflector Shield
@@ -7517,13 +7531,13 @@ Deflector Shield
 SH_DEFLECTOR_DESC
 '''Moderate defense with small mass. 
 
-Shield technology is generally much more expensive than armor, due to the technology needed to produce shielding fields, but have the benefits of no speed penalties.'''
+[[encyclopedia SHIELDS_METER_TITLE]] technology is generally much more expensive than armor, due to the technology needed to produce shielding fields, but have the benefits of no speed penalties.'''
 
 SH_MULTISPEC
 Multi-Spectral Shield
 
 SH_MULTISPEC_DESC
-Powerful Shield capable of protecting a ship within a star. Provides a high stealth bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat.
+Powerful [[encyclopedia SHIELDS_METER_TITLE]] capable of protecting a ship within a star. Provides a high stealth bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat.
 
 CO_COLONY_POD
 Colony Pod
@@ -7551,7 +7565,7 @@ GT_TROOP_POD
 Ground Troop Pod
 
 GT_TROOP_POD_DESC
-Carries a brigade of ground troops and equipment that can be deployed onto a planet.
+Carries a brigade of ground [[encyclopedia TROOP_TITLE]] and equipment that can be deployed onto a planet.
 
 SP_DISTORTION_MODULATOR
 Distortion Modulator
@@ -7703,7 +7717,7 @@ SH_MINIASTEROID_SWARM
 Mini-Asteroid Swarm
 
 SH_MINIASTEROID_SWARM_DESC
-'''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to shields. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
@@ -7711,7 +7725,7 @@ SH_SCATTERED_ASTEROID
 Scattered Asteroid Hull
 
 SH_SCATTERED_ASTEROID_DESC
-'''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to shields for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
@@ -8036,22 +8050,22 @@ ULTIMATE_RESEARCH
 
 
 NO_GROUND_TROOPS
-'''−−−	No Ground Troops'''
+'''−−−	No Ground [[encyclopedia TROOP_TITLE]]'''
 
 BAD_GROUND_TROOPS
-'''−	Bad Ground Troops: -50%'''
+'''−	Bad Ground [[encyclopedia TROOP_TITLE]]: -50%'''
 
 AVERAGE_GROUND_TROOPS
-'''	Average Ground Troops: 100%'''
+'''	Average Ground [[encyclopedia TROOP_TITLE]]: 100%'''
 
 GOOD_GROUND_TROOPS
-'''+	Good Ground Troops: 150%.'''
+'''+	Good Ground [[encyclopedia TROOP_TITLE]]: 150%.'''
 
 GREAT_GROUND_TROOPS
-'''++	Great Ground Troops: 200%.'''
+'''++	Great Ground [[encyclopedia TROOP_TITLE]]: 200%.'''
 
 ULTIMATE_GROUND_TROOPS
-'''+++	Ultimate Ground Troops: 300%.'''
+'''+++	Ultimate Ground [[encyclopedia TROOP_TITLE]]: 300%.'''
 
 BAD_DETECTION
 '''−	Bad Detection Range: −20 malus.'''
