@@ -230,11 +230,12 @@ namespace FreeOrionPython {
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<BuildType, const ProductionQueue::Element&>()
                                                     ))
-            .def_readonly("locationID",             &ProductionQueue::Element::location)
-            .def_readonly("allocation",             &ProductionQueue::Element::allocated_pp)
-            .def_readonly("turnsLeft",              &ProductionQueue::Element::turns_left_to_completion)
-            .def_readonly("remaining",              &ProductionQueue::Element::remaining)
-            .def_readonly("blocksize",              &ProductionQueue::Element::remaining)
+            .add_property("locationID",             &ProductionQueue::Element::location)
+            .add_property("allocation",             &ProductionQueue::Element::allocated_pp)
+            .add_property("progress",               &ProductionQueue::Element::progress)
+            .add_property("turnsLeft",              &ProductionQueue::Element::turns_left_to_completion)
+            .add_property("remaining",              &ProductionQueue::Element::remaining)
+            .add_property("blocksize",              &ProductionQueue::Element::remaining)
             ;
         class_<ProductionQueue, noncopyable>("productionQueue", no_init)
             .def("__iter__",                        iterator<ProductionQueue>())  // ProductionQueue provides STL container-like interface to contained queue
