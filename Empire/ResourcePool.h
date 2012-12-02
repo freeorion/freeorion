@@ -16,7 +16,7 @@ class UniverseObject;
 class Empire;
 
 /** The ResourcePool class keeps track of an empire's stockpile and production
-  * of a particular resource (minerals, trade, research or industry). */
+  * of a particular resource (eg. research, industry). */
 class ResourcePool {
 public:
     /** \name Structors */ //@{
@@ -73,8 +73,7 @@ private:
 };
 
 /** The PopulationPool class keeps track of an empire's total population and its growth. */
-class PopulationPool
-{
+class PopulationPool {
 public:
     /** \name Structors */ //@{
     PopulationPool();

@@ -19,25 +19,20 @@ ResourcePool::ResourcePool(ResourceType type) :
     m_type(type)
 {}
 
-const std::vector<int>& ResourcePool::ObjectIDs() const {
-    return m_object_ids;
-}
+const std::vector<int>& ResourcePool::ObjectIDs() const
+{ return m_object_ids; }
 
-int ResourcePool::StockpileObjectID() const {
-    return m_stockpile_object_id;
-}
+int ResourcePool::StockpileObjectID() const
+{ return m_stockpile_object_id; }
 
-double ResourcePool::Stockpile() const {
-    return m_stockpile;
-}
+double ResourcePool::Stockpile() const
+{ return m_stockpile; }
 
 double ResourcePool::Production() const {
     double retval = 0.0;
     for (std::map<std::set<int>, double>::const_iterator it = m_connected_object_groups_resource_production.begin();
          it != m_connected_object_groups_resource_production.end(); ++it)
-    {
-        retval += it->second;
-    }
+    { retval += it->second; }
     return retval;
 }
 
@@ -60,9 +55,7 @@ double ResourcePool::TotalAvailable() const {
     double retval = m_stockpile;
     for (std::map<std::set<int>, double>::const_iterator it = m_connected_object_groups_resource_production.begin();
          it != m_connected_object_groups_resource_production.end(); ++it)
-    {
-        retval += it->second;
-    }
+    { retval += it->second; }
     return retval;
 }
 
@@ -80,12 +73,10 @@ std::map<std::set<int>, double> ResourcePool::Available() const {
             break;  // assuming stockpile is on only one group
         }
     }
-
     return retval;
 }
 
-double ResourcePool::GroupAvailable(int object_id) const
-{
+double ResourcePool::GroupAvailable(int object_id) const {
     Logger().debugStream() << "ResourcePool::GroupAvailable(" << object_id << ")";
     // available is stockpile + production in this group
 
@@ -121,21 +112,17 @@ std::string ResourcePool::Dump() const {
     return retval;
 }
 
-void ResourcePool::SetObjects(const std::vector<int>& object_ids) {
-    m_object_ids = object_ids;
-}
+void ResourcePool::SetObjects(const std::vector<int>& object_ids)
+{ m_object_ids = object_ids; }
 
-void ResourcePool::SetConnectedSupplyGroups(const std::set<std::set<int> >& connected_system_groups) {
-    m_connected_system_groups = connected_system_groups;
-}
+void ResourcePool::SetConnectedSupplyGroups(const std::set<std::set<int> >& connected_system_groups)
+{ m_connected_system_groups = connected_system_groups; }
 
-void ResourcePool::SetStockpileObject(int stockpile_object_id) {
-    m_stockpile_object_id = stockpile_object_id;
-}
+void ResourcePool::SetStockpileObject(int stockpile_object_id)
+{ m_stockpile_object_id = stockpile_object_id; }
 
-void ResourcePool::SetStockpile(double d) {
-    m_stockpile = d;
-}
+void ResourcePool::SetStockpile(double d)
+{ m_stockpile = d; }
 
 void ResourcePool::Update() {
     //Logger().debugStream() << "ResourcePool::Update for type " << boost::lexical_cast<std::string>(m_type);
@@ -228,13 +215,11 @@ PopulationPool::PopulationPool() :
     m_growth(0.0)
 {}
 
-double PopulationPool::Population() const {
-    return m_population;
-}
+double PopulationPool::Population() const
+{ return m_population; }
 
-double PopulationPool::Growth() const {
-    return m_growth;
-}
+double PopulationPool::Growth() const
+{ return m_growth; }
 
 void PopulationPool::SetPopCenters(const std::vector<int>& pop_center_ids) {
     if (m_pop_center_ids == pop_center_ids)
