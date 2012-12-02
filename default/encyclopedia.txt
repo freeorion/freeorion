@@ -117,3 +117,10 @@ Article
     description = "EVACUATION_TEXT"
     icon = "icons/building/evacuation.png"    
     
+Article
+    name = "FLEET_UPKEEP_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "PRODUCTION_ARTICLE_SHORT_DESC"
+    description = "FLEET_UPKEEP_TEXT"
+    icon = "icons/ship_hulls/fractal_energy_hull_small.png"    
+    

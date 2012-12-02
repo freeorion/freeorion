@@ -2757,6 +2757,12 @@ Supply Lines
 SUPPLY_TEXT
 '''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share resources -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.'''
 
+
+FLEET_UPKEEP_TITLE
+Fleet Upkeep
+FLEET_UPKEEP_TEXT
+'''The cost of a fleet is more than the sum of the cost of its ships due to the oporational costs associated with managing multiple ships. When building a new ship, an additional 5% of the original hull cost times the number of ships in the fleet is added to the hull cost.'''
+
 EVACUATION_TITLE
 Evacuation
 EVACUATION_TEXT
@@ -8285,3 +8291,5 @@ Telepathic
 
 ORBITAL
 Orbital
+
+
