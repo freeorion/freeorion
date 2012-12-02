@@ -326,6 +326,7 @@ private:
     bool            ZoomToNextIdleFleet();
     bool            ZoomToPrevFleet();
     bool            ZoomToNextFleet();
+    bool            ZoomToSystemWithWastedPP();
 
     void            ConnectKeyboardAcceleratorSignals();        //!< connects signals from keyboard accelerators to various GUI responses
     void            SetAccelerators();                          //!< tells the GUI which keypress combinations to track and emit signals for when they occur

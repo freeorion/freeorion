@@ -807,8 +807,8 @@ MapWnd::MapWnd() :
     m_industry_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-    GG::Connect(m_industry_wasted->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleProduction, this)));
-    GG::Connect(m_research_wasted->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch, this)));
+    GG::Connect(m_industry_wasted->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ZoomToSystemWithWastedPP,  this)));
+    GG::Connect(m_research_wasted->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch,            this)));
 
     //Set the correct tooltips
     RefreshIndustryResourceIndicator();
@@ -1265,8 +1265,8 @@ void MapWnd::RenderSystems() {
 void MapWnd::RenderStarlanes() {
     bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
     float core_multiplier = static_cast<float>(GetOptionsDB().Get<double>("UI.starlane-core-multiplier"));
-    RenderStarlanes( m_RC_starlane_vertices, m_RC_starlane_colors, core_multiplier, coloured, false);
-    RenderStarlanes( m_starlane_vertices, m_starlane_colors, 1.0, coloured, true);
+    RenderStarlanes(m_RC_starlane_vertices, m_RC_starlane_colors, core_multiplier, coloured, false);
+    RenderStarlanes(m_starlane_vertices, m_starlane_colors, 1.0, coloured, true);
 }
 
 void MapWnd::RenderStarlanes(GL2DVertexBuffer& vertices, GLRGBAColorBuffer& colours,
@@ -1875,10 +1875,6 @@ void MapWnd::InitTurn() {
     m_production_wnd->Refresh();
     Logger().debugStream() << "MapWnd::InitTurn m_production_wnd refresh time: " << (timer.elapsed() * 1000.0);
 
-    if (this_client_empire) {
-        const ResourcePool *research = this_client_empire->GetResourcePool(RE_TRADE);
-        Logger().debugStream() << "MapWnd::InitTurn research total available :" << research->TotalAvailable() << " production " << research->Production();
-    }
 
     if (turn_number == 1 && this_client_empire) {
         // start first turn with player's system selected
@@ -2229,7 +2225,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-    Empire* this_client_empire = Empires().Lookup(empire_id);
+    const Empire* this_client_empire = Empires().Lookup(empire_id);
     std::set<int> underAllocResSys;
 
     std::map<std::set<int>, std::set<int> > resPoolSystems;//map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
@@ -2295,7 +2291,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 thisPoolCtrs += boost::lexical_cast<std::string>(*startSys) +", ";
             thisPoolCtrs += ")";
             //Logger().debugStream() << "           MapWnd::InitStarlaneRenderingBuffers  getting resGrpCore for ResPool Ctrs  (" << thisPoolCtrs << ")";
-            
+
             resGroupCores[ resPoolSysIt->first ].insert(*(resPoolSysIt->second.begin())); // if pool only has one sys, ensure it is added to core
             resGrpCoreMembers.insert(*(resPoolSysIt->second.begin()));
             std::set<int>::iterator lastSys = resPoolSysIt->second.end();
@@ -4577,6 +4573,42 @@ bool MapWnd::ZoomToNextFleet() {
     }
 
     return true;
+}
+
+bool MapWnd::ZoomToSystemWithWastedPP() {
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(empire_id);
+    if (!empire)
+        return false;
+
+    const ProductionQueue& queue = empire->GetProductionQueue();
+    const boost::shared_ptr<ResourcePool> pool = empire->GetResourcePool(RE_INDUSTRY);
+    if (!pool)
+        return false;
+    std::set<std::set<int> > wasted_PP_objects(queue.ObjectsWithWastedPP(pool));
+    if (wasted_PP_objects.empty())
+        return false;
+
+    // pick first object in first group
+    const std::set<int>& obj_group = *wasted_PP_objects.begin();
+    if (obj_group.empty())
+        return false; // shouldn't happen?
+    for (std::set<std::set<int> >::const_iterator set_set_it = wasted_PP_objects.begin();
+         set_set_it != wasted_PP_objects.end(); ++set_set_it)
+    {
+        const std::set<int>& objs = *set_set_it;
+        for (std::set<int>::const_iterator set_it = objs.begin(); set_it != objs.end(); ++set_it) {
+            const UniverseObject* obj = GetUniverseObject(*set_it);
+            if (obj && obj->SystemID() != INVALID_OBJECT_ID) {
+                // found object with wasted PP that is in a system.  zoom there.
+                CenterOnObject(obj->SystemID());
+                SelectSystem(obj->SystemID());
+                ShowProduction();
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void MapWnd::ConnectKeyboardAcceleratorSignals() {
