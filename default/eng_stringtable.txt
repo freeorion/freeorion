@@ -3930,6 +3930,13 @@ COMPUTRONIUM_SPECIAL_DESC
 
 Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
 
+PHILOSOPHER_SPECIAL
+Philosopher Planet
+PHILOSOPHER_SPECIAL_DESC
+'''As long as the Philosopher Planet is uninhabited, all research focused planets in the same system have their research increased by 10. Construction on the Philosopher Planet is decreased by 20.
+
+The lone remnant of a planet-sized space wandering species has found his final rest orbiting in this system like a normal planet. Having lived for thousands of years he lost the will and ability to travel and resorts to pondering about the mysteries of the universe he has seen and learned about. Eccentric and slightly demented he refuses to communicate with anything that isn't the size and shape of his kin, leaving scientists no choice but to ask questions via the planet they are living on. Understandably colonizing the Philosopher Planet will disturb him gravely and he will fall silent. Construction on his surface is difficult as is to be expected from a living being.'''
+
 ABANDONED_COLONY_SPECIAL
 Abandoned Colony
 ABANDONED_COLONY_SPECIAL_DESC

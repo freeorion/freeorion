@@ -359,6 +359,48 @@ Special
     graphic = "icons/specials_huge/computronium.png"
 
 Special
+    name = "PHILOSOPHER_SPECIAL"
+    description = "PHILOSOPHER_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 2.0
+    spawnlimit = 1
+    location = And [
+        Planet
+        Planet size = tiny
+        Not Planet type = [Asteroids GasGiant]
+        Not ContainedBy Contains Capital
+        Not WithinStarlaneJumps 2 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+        ContainedBy Contains And [
+            Planet
+            Not Planet size = tiny
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup     
+            scope = Source     
+            activation = Turn high = 0
+            effects = SetPlanetType Radiated
+        
+        EffectsGroup
+            scope = And [
+                Planet
+                Focus "FOCUS_RESEARCH"
+                ContainedBy Contains Source
+            ]
+            activation = Not OwnedBy AnyEmpire
+            stackinggroup = "PHILOSOPHER_STACK"
+            effects = SetTargetResearch Value + 10    
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetTargetConstruction Value - 20
+    ]
+    graphic = "icons/specials_huge/philospher-planet.png"
+
+Special
     name = "ABANDONED_COLONY_SPECIAL"
     description = "ABANDONED_COLONY_SPECIAL_DESC"
     stealth = 20
