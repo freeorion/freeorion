@@ -1676,9 +1676,22 @@ public:
         // store selected ship rows
         std::set<int> old_selected_ship_ids;
         try {
-            for (ShipsListBox::SelectionSet::const_iterator it = this->Selections().begin(); it != this->Selections().end(); ++it)
+            for (ShipsListBox::SelectionSet::const_iterator it = this->Selections().begin(); it != this->Selections().end(); ++it) {
+                std::list<GG::ListBox::Row*>::iterator starRow_it = *it;
+                bool foundStarRow=false;
+                for (std::list<GG::ListBox::Row*>::iterator lb_it = this->begin(); lb_it != this->end() ; lb_it++) {   // checking against
+                    if ( lb_it == starRow_it ) {
+                        foundStarRow=true;
+                        break;
+                    }
+                }
+                if (!foundStarRow) {
+                    Logger().errorStream() << "ShipsListBox::Refresh Error tried adding invalid ship row selection to old_selected_ship_ids";
+                    continue;
+                }
                 if (const ShipRow* row = dynamic_cast<const ShipRow*>(**it))
                     old_selected_ship_ids.insert(row->ShipID());
+            }
         } catch (const std::exception& e) {
             Logger().errorStream() << "caught exception looping over old selections: " << e.what();
         }
@@ -1973,6 +1986,18 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
     for (GG::ListBox::SelectionSet::const_iterator sel_it = selections.begin();
             sel_it != selections.end(); ++sel_it)
     {
+        std::list<GG::ListBox::Row*>::iterator starRow_it = *sel_it;
+        bool hasRow=false;
+        for (std::list<GG::ListBox::Row*>::iterator lb_it = m_ships_lb->begin(); lb_it != m_ships_lb->end(); lb_it++) {
+            if (lb_it == starRow_it) {
+                hasRow=true;
+                break;
+            }
+        }
+        if (!hasRow) {
+            Logger().errorStream() << "FleetDetailPanel::SelectedShipIDs tried to set invalid ship row selection;";
+            continue;
+        }
         GG::ListBox::Row* row = **sel_it;
         ShipRow* ship_row = 0;
         try {   // casing rows here sometimes causes RTTI exceptions.  not sure why, but need to avoid crash.
