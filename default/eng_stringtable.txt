@@ -2777,7 +2777,7 @@ The supply meter on a planet represents the number of star-lanes supply can reac
 FLEET_UPKEEP_TITLE
 Fleet Upkeep
 FLEET_UPKEEP_TEXT
-'''The cost of a fleet is more than the sum of the cost of its ships due to the oporational costs associated with managing multiple ships. When building a new ship, an additional 5% of the original hull cost times the number of ships in the fleet is added to the hull cost.'''
+'''The cost of a fleet is more than the sum of the cost of its ships due to the oporational costs associated with managing multiple ships. When producing new ships, hull costs increase by 5% for each ship already owned by the empire.'''
 
 EVACUATION_TITLE
 Evacuation
