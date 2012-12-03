@@ -724,18 +724,24 @@ namespace {
             textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "planets" / "asteroids" / boost::io::str(boost::format("asteroids%d_%03d.png") % SET % i)));
     }
 
-    std::string GetPlanetSizeName(const Planet &planet) {
+    const std::string EMPTY_STRING;
+
+    const std::string& GetPlanetSizeName(const Planet& planet) {
         if (planet.Size() == SZ_ASTEROIDS || planet.Size() == SZ_GASGIANT)
-            return "";
+            return EMPTY_STRING;
         return UserString(boost::lexical_cast<std::string>(planet.Size()));
     }
 
-    std::string GetPlanetTypeName(const Planet &planet) {
-        return UserString(boost::lexical_cast<std::string>(planet.Type()));
-    }
+    const std::string& GetPlanetTypeName(const Planet& planet)
+    { return UserString(boost::lexical_cast<std::string>(planet.Type())); }
 
-    std::string GetPlanetEnvironmentName(const Planet &planet, const std::string& species_name) {
-        return UserString(boost::lexical_cast<std::string>(planet.EnvironmentForSpecies(species_name)));
+    const std::string& GetPlanetEnvironmentName(const Planet &planet, const std::string& species_name)
+    { return UserString(boost::lexical_cast<std::string>(planet.EnvironmentForSpecies(species_name))); }
+
+    const std::string& GetStarTypeName(const System& system) {
+        if (system.GetStarType() == INVALID_STAR_TYPE)
+            return EMPTY_STRING;
+        return UserString(boost::lexical_cast<std::string>(system.GetStarType()));
     }
 
     const GG::Y PLANET_PANEL_TOP = GG::Y(140);
@@ -1963,6 +1969,7 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     CUIWnd("SidePanel", x, y, GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width")), h,
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP),
     m_system_name(0),
+    m_star_type_text(0),
     m_button_prev(0),
     m_button_next(0),
     m_star_graphic(0),
@@ -1976,9 +1983,10 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_planet_panel_container = new PlanetPanelContainer(GG::X0, GG::Y0, GG::X1, GG::Y1);
     AttachChild(m_planet_panel_container);
 
-    m_button_prev = new GG::Button(GG::X0,      GG::Y0, ButtonWidth(),  SystemNameTextControlHeight(),  "", font, GG::CLR_WHITE);
-    m_button_next = new GG::Button(GG::X0,      GG::Y0, ButtonWidth(),  SystemNameTextControlHeight(),  "", font, GG::CLR_WHITE);
-    m_system_name = new CUIDropDownList(GG::X0, GG::Y0, GG::X(40),      SystemNameTextControlHeight(),  DROP_DISPLAYED_LIST_HEIGHT, GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5));
+    m_button_prev = new GG::Button(             GG::X0, GG::Y0, ButtonWidth(),  SystemNameTextControlHeight(),  "", font, GG::CLR_WHITE);
+    m_button_next = new GG::Button(             GG::X0, GG::Y0, ButtonWidth(),  SystemNameTextControlHeight(),  "", font, GG::CLR_WHITE);
+    m_system_name = new CUIDropDownList(        GG::X0, GG::Y0, GG::X(40),      SystemNameTextControlHeight(),  DROP_DISPLAYED_LIST_HEIGHT, GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5));
+    m_star_type_text = new ShadowedTextControl( GG::X0, GG::Y0, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER);
 
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -1991,6 +1999,8 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_system_name->SetColWidth(0, GG::X0);
     m_system_name->LockColWidths();
     AttachChild(m_system_name);
+
+    AttachChild(m_star_type_text);
 
     m_button_prev->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     m_button_prev->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
@@ -2236,6 +2246,10 @@ void SidePanel::RefreshImpl() {
     MoveChildDown(m_star_graphic);
 
 
+    // star type
+    m_star_type_text->SetText(GetStarTypeName(*system));
+
+
     // configure selection of planet panels in panel container
     boost::shared_ptr<UniverseObjectVisitor> vistor;
     if (m_selection_enabled) {
@@ -2339,6 +2353,11 @@ void SidePanel::DoLayout() {
     GG::Pt row_size(ListRowSize());
     for (GG::ListBox::iterator it = m_system_name->begin(); it != m_system_name->end(); ++it)
         (*it)->Resize(row_size);
+
+    // star type text
+    ul = GG::Pt(GG::X(MaxPlanetDiameter()) + 2*EDGE_PAD, m_system_name->Height() + EDGE_PAD*4);
+    lr = GG::Pt(ClientWidth() - 1, ul.y + m_star_type_text->Height());
+    m_star_type_text->SizeMove(ul, lr);
 
     // resize planet panel container
     ul = GG::Pt(BORDER_LEFT, PLANET_PANEL_TOP);
