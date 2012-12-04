@@ -1,7 +1,7 @@
 Français
 
 #This is the French String Table file for FreeOrion
-#Translation
+#Translation by Alchemy and shivu
 
 #################
 #    Common     #
@@ -161,9 +161,8 @@ Planète
 BUILDING
 Construction
 
-# Champ/Domaine/Terrain/Gisement?
 FIELD
-Field???
+Champ
 
 PASSED
 <rgba 0 255 0 255>(CONTROLÉ)</rgba>
@@ -269,6 +268,31 @@ Robotic IV
 SD_MARK_B_ROBOTIC4_DESC
 Croiseur avancé avec blindage et armement lourd pour faire le sale boulot.
 
+SD_MARK_A_ORGANIC1
+Organic I
+SD_MARK_A_ORGANIC1_DESC
+Organic hull design with preliminary Laser weaponry
+
+SD_MARK_A_ORGANIC2
+Organic II
+SD_MARK_A_ORGANIC2_DESC
+Organic hull design with Laser weaponry
+
+SD_MARK_A_ORGANIC3
+Organic III
+SD_MARK_A_ORGANIC3_DESC
+Organic hull design with Laser weaponry
+
+SD_MARK_A_ORGANIC4
+Organic IV
+SD_MARK_A_ORGANIC4_DESC
+Organic hull design with Laser weaponry
+
+SD_MARK_B_ORGANIC1
+Organic V
+SD_MARK_B_ORGANIC1_DESC
+Organic hull design with preliminary Plasma weaponry. 
+
 SD_MARK_C_ENDO1
 Endomorphique I
 SD_MARK_C_ENDO1_DESC
@@ -342,7 +366,7 @@ SD_TROOP_SHIP
 Transporteur de troupe
 
 SD_TROOP_SHIP_DESC
-Transporte une brigade de troupes de terre avec équipement qui peut être déployée sur une planète.
+Transporte une brigade de [[encyclopedia TROOP_TITLE]] de terre avec équipement qui peut être déployée sur une planète.
 
 SD_DRAGON_TOOTH
 Dents de dragon
@@ -404,19 +428,19 @@ SM_DRONE_FACTORY_DESC
 Built in some long-forgotten war to defend long-vanished builders, amazingly the Drone Factory is still functions, slowly producing new Drone Fighters.
 
 SM_GUARD_1
-Sentry
+Factionnaire
 SM_GUARD_1_DESC
-Sentries guard cool minor stuff.
+Les factionnaires veillent jalousement sur les choses de moindre importance.
 
 SM_GUARD_2
-Sentinel
+Sentinelle
 SM_GUARD_2_DESC
-Sentinels guard cool stuff.
+Les sentinelles gardent fermement les choses.
 
 SM_GUARD_3
-Warden
+Gardien
 SM_GUARD_3_DESC
-Wardens guard cool major stuff.
+Les gardiens gardent fermement les choses importantes.
 
 SM_KRAKEN_1
 Larval Kraken
@@ -1029,6 +1053,9 @@ Si mis à vrai, le jeu effectuera des sauvegardes automatiques durant les partie
 OPTIONS_DB_AUTOSAVE_TURNS
 Détermine le nombre de tours entre chaque sauvegarde automatique.
 
+OPTIONS_DB_AUTOSAVE_LIMIT
+Détermine le nombre maximum de fichiers autosauvegardés à garder.
+
 OPTIONS_DB_UI_MOUSE_LR_SWAP
 Swaps results of clicking left and right mouse buttons.
 
@@ -1414,8 +1441,8 @@ Parties solo
 OPTIONS_MULTIPLAYER
 Parties multijoueur
 
-OPTIONS_AUTOSAVE_TO_KEEP
-Sauvegardes auto. à conserver
+OPTIONS_AUTOSAVE_LIMIT
+Limite des sauvegardes auto.
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Tours entres les sauvegardes auto.
@@ -1457,19 +1484,19 @@ OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
 Active le mode plein écran et règle le nombre de bits par pixel.
 
 OPTIONS_VIDEO_MODE_WINDOWED
-Windowed Video Mode
+Mode Vidéo Fenêtré
 
 OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION
-Sets width and height of window in windowed mode. Windowed bits per pixel uses full-screen mode setting.
+Règle la hauteur et la largeur de la fenêtre dans le mode fenêtré. Le réglage du nombre de bits par pixel de la fenêtre est celui du mode plein écran.
 
 OPTIONS_VIDEO_SETTINGS
 Réglages vidéo.
 
 OPTIONS_APP_WIDTH_WINDOWED
-Windowed Width
+Résolution horizontale de la fenêtre
 
 OPTIONS_APP_HEIGHT_WINDOWED
-Windowed Height
+Résolution verticale de la fenêtre.
 
 OPTIONS_FULLSCREEN
 Plein écran
@@ -1517,7 +1544,7 @@ OPTIONS_UI_SYSTEM_FOG_SPACING
 Fog of war scan-line spacing
 
 OPTIONS_UI_SYSTEM_CIRCLES
-Cercles entourant le Système
+Cercles entourant les Systèmes
 
 OPTIONS_UI_SYSTEM_CIRCLE_SIZE
 Taille relative du cercle entourant le Système
@@ -1556,10 +1583,10 @@ OPTIONS_GALAXY_MAP_GAS
 Rendu des nuages de la carte galactique
 
 OPTIONS_GALAXY_MAP_STARFIELDS
-Galaxy map star fields rendering
+Rendu du champ des étoiles de la galaxie
 
 OPTIONS_GALAXY_MAP_SCALE_LINE
-Galaxy distance scale line
+Ligne de l'échelle de distance galactique
 
 OPTIONS_GALAXY_MAP_ZOOM_SLIDER
 Curseur zoom de la carte galactique
@@ -1574,13 +1601,13 @@ OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Cercles de portée de détection
 
 OPTIONS_STARLANES
-liens hyperspatiaux
+Liens hyperspatiaux
 
 OPTIONS_STARLANE_THICKNESS
 Epaisseur lien hyperspatial
 
 OPTIONS_RESOURCE_STARLANE_COLOURING
-Coloration de ressource de lien hyperspatial
+Coloration lien hyperspatial de ressource
 
 OPTIONS_FLEET_SUPPLY_LINES
 Lignes d'approvisionnement de flotte
@@ -1885,7 +1912,7 @@ Recherche gaspillée : %2%
 Cliquer ici pour ouvrir le menu de recherche'''
 
 MAP_POPULATION_DISTRIBUTION
-Census
+Recensement
 
 MAP_POPULATION_COUNT
 %1%: %2%
@@ -1979,10 +2006,10 @@ BP_COMPLETE_BUILDING_TOOLTIP
 %2%'''
 
 ORDER_BUIDLING_SCRAP
-Scrap Building
+Abandonner la construction
 
 ORDER_CANCEL_BUIDLING_SCRAP
-Cancel Scrapping Building
+Annuler l'abandon de la construction
 
 ## General Tooltips#########
 
@@ -2075,13 +2102,13 @@ FW_AGGRESSIVE
 Contrôle du système
 
 FW_AGGRESSIVE_DESC
-La Flotte bloque les empires ennemis et déclenche des batailles avec tous les ennemis dans le Système.
+La Flotte bloque les empires ennemis et déclenche des batailles contre tous les ennemis dans ce Système.
 
 FW_PASSIVE
 Dissimuler
 
 FW_PASSIVE_DESC
-La Flotte tentera de rester cachée, elle ne va rien bloquer, ni tenter une bataille.
+La Flotte tentera de rester cachée, elle ne va rien bloquer, ni tenter aucune bataille.
 
 FW_SHIP_CLASS
 Classe de vaisseau 
@@ -2137,13 +2164,13 @@ SHIP_DAMAGE_STAT_TITLE
 Dommage
 
 SHIP_DAMAGE_STAT_MAIN
-Total damage done by ship weapons per combat round.
+Dommage total infligé par l'armement du vaisseau à chaque ronde de combat.
 
 SHIP_SPEED_STAT_TITLE
 Vitesse
 
 SHIP_SPEED_STAT_MAIN
-Maximum distance along starlanes travelled per turn.
+Distance maximale parcourue le long des liens hyperspatiaux par tour.
 
 FW_FLEET_FUEL_SUMMARY
 Fleet Fuel - Equal to the minimum fuel of ships in the fleet.
@@ -2151,29 +2178,41 @@ Fleet Fuel - Equal to the minimum fuel of ships in the fleet.
 FW_FLEET_SPEED_SUMMARY
 Fleet Speed - Equal to the minimum speed of ships in the fleet.
 
+FW_FLEET_SHIELD_SUMMARY
+Fleet Shields - Equal to the total shields of ships in the fleet.
+
+FW_FLEET_STRUCTURE_SUMMARY
+Fleet Structure - Equal to the total structure of ships in the fleet.
+
+FW_FLEET_DAMAGE_SUMMARY
+Fleet Damage - Equal to the total damage of ships in the fleet.
+
+FW_FLEET_COUNT_SUMMARY
+Fleet Count - Equal to the total number of ships in the fleet.
+
 FW_SPLIT_DAMAGED_FLEET
 Split Damaged Ships From Fleet
 
 FW_SPLIT_FLEET
-Split Fleet
+Scinder la flotte
 
 ORDER_SHIP_SCRAP
-Scrap Ship
+Abandonner le vaisseau
 
 ORDER_FLEET_SCRAP
-Scrap Ships
+Abandonner les vaisseaux
 
 ORDER_CANCEL_SHIP_SCRAP
-Cancel Scrapping Ship
+Annuler l'abandon du vaisseau
 
 ORDER_CANCEL_FLEET_SCRAP
-Cancel Scrapping Ships
+Annuler l'abandon des vaisseaux
 
 ORDER_FLEET_EXPLORE
 Explore
 
 ORDER_CANCEL_FLEET_EXPLORE
-Stop Exploring
+Stopper l'exploration
 
 ###############
 #  Diplomacy  #
@@ -2239,7 +2278,7 @@ TECH_WND_TYPE_APPLICATIONS
 Applications
 
 TECH_WND_TYPE_REFINEMENTS
-Perfectionnements
+Amélioration
 
 TECH_WND_STATUS_COMPLETED
 Recherches acquises
@@ -2476,13 +2515,13 @@ EMPIRE_METERS
 Meters:
 
 OWNED_PLANETS
-Planètes propres: 
+Propres Planètes: 
 
 NO_OWNED_PLANETS_KNOWN
 Pas de propre planètes connues
 
 OWNED_FLEETS
-Flottes propres: 
+Propre Flottes: 
 
 OWNED_FLEET_AT_SYSTEM
 %1% à %2%
@@ -2568,7 +2607,7 @@ Coque: %2%
 
 Puissance d'attaque: %17%
 Structure: %8%
-Boucliers: %9%
+[[encyclopedia SHIELDS_METER_TITLE]]: %9%
 Détection: %10%
 Furtivité: %11%
 Contenance carburant: %14%
@@ -2640,7 +2679,7 @@ Augmente la population planétaire
 PEACE_TITLE
 Paix
 PEACE_TEXT
-Peace is the diplomatic state between empires in which they mutually agree not to attack each other's ships or planets, not to obstruct each other's [[encyclopedia SUPPLY_TITLE]], and not to impede colonization.
+La paix est l'état diplomatique entre deux empires qui se sont mis d'accord de ne pas attaquer les vaisseaux ou les planètes de l'autre, ni de s'entraver par les lignes d'[[encyclopedia SUPPLY_TITLE]] ainsi que ne pas faire obstacle à l'essor colonial de l'autre.  
 
 OUTPOSTS_TITLE
 Avant-postes
@@ -2648,34 +2687,48 @@ OUTPOSTS_TEXT
 '''Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create [[encyclopedia SUPPLY_TITLE]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an [[shippart CO_OUTPOST_POD]] on a ship. Outposts are also formed when the population of a colony drops to zero for any reason.'''
 
 GROWTH_FOCUS_TITLE
-Growth Focus
+Focalisation sur la croissance
 GROWTH_FOCUS_TEXT
-'''The Growth Focus represents exporting rare materials and substances that aid the population growth of a certain species. Is only available in certain situations: on some homeworlds, and on planets with growth specials.  A planet focused on Growth increases the max Population only of other planets connected to it by [[encyclopedia SUPPLY_TITLE]].  A Homeworld focused on Growth only helps other planets of the same species.  Growth Special planets focused on growth, only help a single classification of species, for instance some only help Organic Species.'''
+'''La focalisation sur la croissance représente l'exportation de matériaux rares et de substance propre à aider la croissance de la population de certaines espèces. Elle n'est possible que dans cas: sur certains mondes d'origine et sur des planètes à croissance spéciale. Une planète ayant focalisé sur la croissance, n'augmente la population maximale qu'aux planètes reliées à elle par les lignes d'[[encyclopedia SUPPLY_TITLE]]. Un monde d'origine ayant focalisé sur la croissance n'aide d'autres planètes que si celles-ci appartiennent à la même espèce. Des croissances spéciales de planètes focalisées sur la croissance, n'aide qu'à une seule catégorie d'espèces, tels par exemple les espèces organiques.'''
 
 MINING_FOCUS_TITLE
-Mining Focus
+Focalisation sur l'exploitation minière
 MINING_FOCUS_TEXT
-'''The Mining Focus is only available on planets with certain rare specials.  Focusing on Mining provides a significant production bonus.'''
+'''La focalisation sur l'exploitation minière n'est seulement possible que sur des planètes avec certains effets rare. Focaliser sur l'exploitation minière fournissent un bonus de production significatif.'''
 
 TRADE_FOCUS_TITLE
-Trade Focus
+Focalisation sur le commerce
 TRADE_FOCUS_TEXT
-'''Trade doesn't do anything, yet.  It is just a placeholder to show that more resources are planned.'''
+'''Le commerce ne fait rien en soit. Il est juste un espace réservé pour montrer que plus de resources sont prévues.'''
 
 PROTECTION_FOCUS_TITLE
 Protection Focus
 PROTECTION_FOCUS_TEXT
-'''The Protection focus represents a planet wholly focused on defending itself.  [[encyclopedia TROOP_METER_TITLE]], Planetary Defences, and Planetary Shields are all increased.'''
+'''The Protection focus represents a planet wholly focused on defending itself.  [[encyclopedia TROOP_TITLE]], Planetary [[encyclopedia DEFENSE_METER_TITLE]], and Planetary [[encyclopedia SHIELDS_METER_TITLE]] are all increased.'''
 
 HAPPINESS_METER_TITLE
-Happiness Meter
+Mesure du bonheur
 HAPPINESS_METER_TEXT
-'''Happiness doesn't do anything, yet.'''
+'''Le bonheur ne fait rien, ne crée rien'''
 
-TROOP_METER_TITLE
-Troops Meter
-TROOP_METER_TEXT
-'''The Troop meter represents the power of the defending ground forces.  The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.'''
+DEFENSE_METER_TITLE
+Défense
+DEFENSE_METER_TEXT
+'''The Defense meter of a planet represents the power of the ground to space weapons installed. It's comparable to the Damage value of a space ship.'''
+
+SHIELDS_METER_TITLE
+Boucliers
+SHIELDS_METER_TEXT
+'''The term Shields combines all kinds of protective forcefields. Regenerating each turn, they are usually the first barrier incoming attacks have to overcome.
+
+Space ships and planets have a Shields meter.'''
+
+TROOP_TITLE
+Troupes
+TROOP_TEXT
+'''The term Troops combines all kinds of military forces capable of operating on a planets surface.
+
+The Troop meter on a planet represents the power of the defending ground forces.  The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.'''
 
 ORGANIC_SPECIES_TITLE
 Métabolisme organique
@@ -2708,19 +2761,27 @@ TELEPATHY_TEXT
 '''Telepathic species are immune to mind-control and make it easier to research [[tech LRN_PSIONICS]].'''
 
 FUEL_TITLE
-Fuel
+Carburant
 FUEL_TEXT
-'''Fuel allows ships to travel the star-lanes. When entering a star-lane a ship consumes 1 unit of fuel.  Fuel is not used up at any other time.  [[encyclopedia SUPPLY_TITLE]] will fully refuel a ship.  If a ship travels beyond friendly supply lines, fuel will slowly regenerate when the ship is outside of the star-lanes.'''
+'''Le carburant permet aux vaisseaux interstellaires de voyager le long des liens hyperspaciaux. Pour chaque lien emprunté, un vaisseau consomme 1 unitée de carburant. Le carburant n'est consommé à aucun autre moment. Les lignes d'[[encyclopedia SUPPLY_TITLE]] ravitaillent complètement un vaisseau. Si un vaisseau voyage au delà des lignes de ravitaillement amies, le carburant se régénérera lentement lorsque le vaisseau se trouvera en dehors des liens hyperspaciaux.''' 
 
 SUPPLY_TITLE
-Supply Lines
+Approvisionnement
 SUPPLY_TEXT
-'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share resources -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.'''
+'''Les lignes d'approvisionnement sont rendues visible par la coloration des liens hyperspatiaux avec la couleur de l'empire. Les planètes reliées par des lignes d'approvisionnement peuvent échanger des resources physiques, c. à d. la production produite sur une planète, peut être utilisée sur n'importe quelle planète reliée pour y construire des vaisseaux ou des structures quelconques. Les lignes d'approvisionnement peuvent également servir à réapprovisionner les vaisseaux en [[encyclopedia FUEL_TITLE]].
+
+La mesure de l'approvisionnement d'une planète représente le nombre de liens hyperspatiaux que l'approvisionnement peut atteindre.'''
+
+
+FLEET_UPKEEP_TITLE
+Fleet Upkeep
+FLEET_UPKEEP_TEXT
+'''The cost of a fleet is more than the sum of the cost of its ships due to the oporational costs associated with managing multiple ships. When producing new ships, hull costs increase by 5% for each ship already owned by the empire.'''
 
 EVACUATION_TITLE
 Évacuation
 EVACUATION_TEXT
-'''The [[buildingtype BLD_EVACUATION]] project when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[encyclopedia SUPPLY_TITLE]], one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disapears into the vastness of space.
+'''The [[buildingtype BLD_EVACUATION]] project when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[encyclopedia SUPPLY_TITLE]] lines, one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disapears into the vastness of space.
 During an evacuation production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] deletes itself.'''  
 
 
@@ -3264,7 +3325,7 @@ Préfére les planètes type terrestre.
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
-[[GREAT_WEAPONS]]
+[[ULTIMATE_WEAPONS]]
 '''
 
 SP_DERTHREAN
@@ -3751,6 +3812,7 @@ SP_SUPER_TEST_DESC
 [[GREAT_RESEARCH]]
         
 [[GREAT_GROUND_TROOPS]]
+[[ULTIMATE_WEAPONS]]
 [[GOOD_POPULATION]]
 '''
 
@@ -3791,7 +3853,7 @@ Ruinnnes anciennes
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
 '''Triples the Research on this planet and increases Research on Research-focused planets by one twentieth (non-stacking).
 
-This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech Xenoarchaeology to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
+This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
 #Des ruinnes d'une ancienne race avancée, oubliées depuis longtemps, se trouvent sur cette planète. La recherche scientifique reçoit un bonus.
 
 PANOPTICON_SPECIAL
@@ -3876,6 +3938,13 @@ COMPUTRONIUM_SPECIAL_DESC
 '''When a planet with a Computronium Moon is focused on research, all research focused planets in the empire gain .5 RPs per Population.
 
 Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
+
+PHILOSOPHER_SPECIAL
+Philosopher Planet
+PHILOSOPHER_SPECIAL_DESC
+'''As long as the Philosopher Planet is uninhabited, all research focused planets in the same system have their research increased by 10. Construction on the Philosopher Planet is decreased by 20.
+
+The lone remnant of a planet-sized space wandering species has found his final rest orbiting in this system like a normal planet. Having lived for thousands of years he lost the will and ability to travel and resorts to pondering about the mysteries of the universe he has seen and learned about. Eccentric and slightly demented he refuses to communicate with anything that isn't the size and shape of his kin, leaving scientists no choice but to ask questions via the planet they are living on. Understandably colonizing the Philosopher Planet will disturb him gravely and he will fall silent. Construction on his surface is difficult as is to be expected from a living being.'''
 
 ABANDONED_COLONY_SPECIAL
 Abandoned Colony
@@ -4196,7 +4265,7 @@ Augmente boucliers, défense et troupes.
 # MeterTypes
 
 INVALID_METER_TYPE
-Invalid Meter Type
+Type de mesure nonvalable
 METER_TARGET_POPULATION
 Objectif population
 METER_TARGET_HEALTH
@@ -4392,9 +4461,9 @@ recherche
 # Ship Slot Types
 
 SL_EXTERNAL
-External Slot
+Niche externe
 SL_INTERNAL
-Internal Slot
+Niche interne
 SL_TOOLTIP_DESC
 Vide
 
@@ -5008,10 +5077,10 @@ DESC_PRODUCED_BY_EMPIRE_NOT
  that was not produced by the %1% empire
 
 DESC_METER_VALUE_CURRENT
- qui a une %1% actuelle compris entre %2% et %3%
+ qui a une %1% actuelle comprise entre %2% et %3%
 
 DESC_METER_VALUE_CURRENT_NOT
- qui n'a pas une %1% actuelle compris entre %2% et %3%
+ qui n'a pas une %1% actuelle comprise entre %2% et %3%
 
 DESC_SHIP_PART_METER_VALUE_CURRENT
  that has a %2% %1% between %3% and %4%
@@ -5234,10 +5303,9 @@ LRN_ALGO_ELEGANCE
 L'élégance algorithmique
 
 LRN_ALGO_ELEGANCE_DESC
-'''Increases Target Research on all Research focused planets by 0.25 per Population.
+'''Augmente l'objectif recherche sur toutes les planètes concentré sur la recherche de 0,25 par population.
 
-With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity. At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.'''
-#Avec une difficulté grandissante dans les problèmes d'analyse des données, les mesures traditionnelles des performances algorithmique deviennent moins utile en raison des limites de la complexité irréductible..  À ce stade, des mesures de forme et de fonction algorithmique deviennent significatifs; esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisé.
+Avec une difficulté grandissante dans les problèmes d'analyse des données, les mesures traditionnelles des performances algorithmique deviennent moins utile en raison des limites de la complexité irréductible.  À ce stade, des mesures de forme et de fonction algorithmique deviennent significatifs; esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisé.'''
 
 LRN_TRANSLING_THT
 Translinguistique
@@ -5275,7 +5343,7 @@ XENOARCH_SHORT_DESC
 Allows discoveries from Ruins
 
 LRN_XENOARCH_DESC
-'''Allows discoveries from Ancient Ruins.
+'''Allows discoveries from [[special ANCIENT_RUINS_SPECIAL]].
 
 The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy. Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space. Finding and deciphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
 
@@ -5298,7 +5366,7 @@ LRN_FORCE_FIELD
 Harmonique des champs de force
 
 LRN_FORCE_FIELD_DESC
-'''Increases max shield on all planets by 10. This is not cumulative with Planetary Barrier Shield.
+'''Increases max [[encyclopedia SHIELDS_METER_TITLE]] on all planets by 10. This is not cumulative with Planetary Barrier Shield.
 
 Like Fourier analysis of sound, electromagnetism, strong and weak forces may be expressed as harmonic quantum standing-wave superpositions of force-carrier particles. By selectively amplifying these harmonics, forces may be arbitrarily controlled to shield, attack, contain or support.'''
 #Comme l'analyse du son de Fourier, l'électromagnétisme, les interactions fortes et faibles peuvent être exprimé sous la forme de superpositions d'harmonique quantique transportant des particules de force. Par l'amplification sélective de ces harmoniques, les forces peuvent être contrôlé pour défendre, attaquer, contenir ou soutenir.
@@ -5457,7 +5525,7 @@ GRO_ENERGY_META
 Métabolisme de pure énergie
 
 GRO_ENERGY_META_DESC
-'''Increases max Fuel on all ships by 2, max Defense on all planets by 5, max Shield on all planets by 5, target Industry on all planets with the Industry focus by one quarter of the planet's population, and target Research on all planets with the Research focus by one fifth.
+'''Increases max Fuel on all ships by 2, max [[encyclopedia DEFENSE_METER_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_METER_TITLE]] on all planets by 5, target Industry on all planets with the Industry focus by one quarter of the planet's population, and target Research on all planets with the Research focus by one fifth.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -5634,7 +5702,7 @@ CON_CONTGRAV_ARCH
 Architecture à gravité contrôlée
 
 CON_CONTGRAV_ARCH_DESC
-'''Increases the Supply range of all colonies by 1.
+'''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies by 1.
 
 By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
 
@@ -5644,7 +5712,7 @@ CON_GAL_INFRA
 Infrastructure Galactique
 
 CON_GAL_INFRA_DESC
-'''Increases the Supply range of all colonies by 1.
+'''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies by 1.
 
 The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena. By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
 
@@ -5665,10 +5733,10 @@ CON_TRANS_ARCH_DESC
 The epitome of design unifies optimal functionality with elegance of form. A transcendent structure expands and inspires the minds of its occupants or observers with its shape, placement, substance and integration, whether through awe-inspiring scale, perfect emphasis of a single idea, perception or lack thereof, or utter simplicity and fitness for purpose.'''
 
 CON_ORBITAL_HAB
-Orbital Habitation
+Habitation orbitale
 
 CON_ORBITAL_HAB_DESC
-'''If this planet is inhabitable, increases the Population capacity of this planet by 5.'''
+'''Si cette planète est habitable, sa capacité d'ébergement de population est augmenté par 5.'''
 
 CON_NDIM_STRC
 Structures à N-dimensions
@@ -5696,7 +5764,7 @@ SHP_INTSTEL_LOG
 Interstellar Logistics
 
 SHP_INTSTEL_LOG_DESC
-'''Unlocks the Logistics focus setting, which increases the Supply meter of planets by an amount equal to one half the planet's population.
+'''Unlocks the Logistics focus setting, which increases the [[encyclopedia SUPPLY_TITLE]] meter of planets by an amount equal to one half the planet's population.
 
 Effectively supplying ships, ordering general fleet movement and even organizing the movement of specific ships in battle requires a complex understanding of navigation and detection, and of methods of information acquisition.'''
 
@@ -5774,6 +5842,12 @@ Domesticated Mega-Fauna
 SHP_DOMESTIC_MONSTER_DESC
 '''Though huge and alien the time-tested arts of domestication can also be applied to the space monsters that travel the starlanes. Building Colonies or Outposts at monster nests will enable the raising of domesticated monsters.'''
 
+SHP_ENDOCRINE_SYSTEMS
+Mega-Fauna Endocrine Systems
+
+SHP_ENDOCRINE_SYSTEMS_DESC
+The study of space-faring organisms' endocrine systems allows for the expansion of organic ships' internal structures.  
+
 SHP_HAB_MEGAFAUN
 Habitable Mega-Fauna
 
@@ -5793,15 +5867,15 @@ SHP_CONT_SYMB_DESC
 Any ship's hull is in a symbiotic relationship with its makers in that they bring it into being and sustain it, and it performs its desired functions. However, this is a purely behavioral type of symbiosis. Through careful planning and design, an organic ship can be made to have a biological symbiotic relationship with its crew, each providing the other with the essentials of life.
 
 SHP_CONT_BIOADAPT
-Controlled Bioadaption
+Controlled Ravenous Bioadaption
 
 SHP_CONT_BIOADAPT_DESC
 It is very difficult to predict the actions of a living being to any useful degree of certainty without having an intimate understanding of its behavioral patterns. By placing a life form under harshly competitive developmental conditions, its behavioral patterns can be manipulated, strengthened and effectively utilized in war.
 
-SHP_BIONEUR_SPEC
+SHP_BIOADAPTIVE_SPEC
 Bio-Neural Specialization
 
-SHP_BIONEUR_SPEC_DESC
+SHP_BIOADAPTIVE_SPEC_DESC
 As a species evolves mental capabilities, the individuals whose minds are not perfectly attuned to the needs of their bodies cannot compete with those whose minds are perfectly specialized for their bodies. Thus, all evolved life forms have nearly ideal mental development for their type of body. There are no such guarantees for artificial life forms however, and often the true potential of such a being is unrealized due to subtle incompatibilities between mind and body. By specializing the organism's neural patterns to conform to its body type, these incompatibilities can be eliminated.
 
 SHP_FRC_ENRG_COMP
@@ -5887,7 +5961,7 @@ TROOPS_SHORT_DESC
 Améliore les troupes
 
 METER_GROWTH_SHORT_DESC
-Améliore Meter croissance
+Améliore la mesure de la croissance
 
 POPULATION_SHORT_DESC
 Augmente la population planétaire
@@ -5920,22 +5994,22 @@ VARIOUS_SHORT_DESC
 Améliore différentes choses
 
 PENALTY_ELIMINATE_SHORT_DESC
-Eliminates Penalties
+Élimine les sanctions
 
 GAME_MAKE_WORK_SHORT_DESC
-Makes the Game Work
+Fait que le jeu fonctionne
 
 TAME_MONSTER_SHORT_DESC
 Apprivoise les monstres de l'espace
 
 EXOBOT_SHORT_DESC
-Builds Exobot Citizens
+Crée des citoyens exobots
 
 CON_ORBITAL_CON
 Construction orbitale
 
 CON_ORBITAL_CON_DESC
-'''Increases the Supply range of all colonies by 1.
+'''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies by 1.
 
 On a planet, there is always a fixed reference direction: "up". Microgravity is effectively isotropic. This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment. As well, the interior configuration of spaces in orbit must be rethought. However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces. Rather than a complete break from older styles, a gradual transition may be more effective.'''
 
@@ -5943,7 +6017,7 @@ CON_SUBTER_CONST
 Construction Souterraine
 
 CON_SUBTER_CONST_DESC
-'''Increases Infrastructure by 10.  Cannot improve a planet with the Tunnels or Tectonic Instability special.
+'''Increases Infrastructure by 10.  Cannot improve a planet with the [[special TUNNELS_SPECIAL]] or [[special TECTONIC_INSTABILITY_SPECIAL]] special.
 
 When space is at a premium, the ability to build downwards as well as up is an invaluable asset. Entire underground cities and facilities can be constructed and maintained, and trans-planetary subterranean transportation routes can be established.'''
 
@@ -6172,7 +6246,7 @@ DEF_DEFENSE_NET
 Planetary Defense Network
 
 DEF_DEFENSE_NET_DESC
-'''Increases max defense on all planets by 5.
+'''Increases max [[encyclopedia DEFENSE_METER_TITLE]] on all planets by 5.
 
 With galactic exploration comes the possibility of meeting new races - and new enemies. By placing several armed defense bases in orbit around a planet, it is possible to give that planet defensive capabilities without the need for ships.'''
 
@@ -6180,7 +6254,7 @@ DEF_HI_ENRG_FOCUS
 High Energy Focus
 
 DEF_HI_ENRG_FOCUS_DESC
-'''Increases max defense on all planets by 15.
+'''Increases max [[encyclopedia DEFENSE_METER_TITLE]] on all planets by 15.
 
 While having a multitude of defense satellites is superior to a single large defense satellite in terms of versatility and dependability, it is considerably inferior in terms of firepower. Often, enemy shields can simply absorb numerous weak attacks where a single powerful attack would be able to penetrate its shields and severely damage the ship. By using a high energy focusing device, the power of multiple defense satellites can be unified into a single powerful beam weapon.'''
 
@@ -6188,41 +6262,41 @@ DEF_PLAN_BARRIER_SHLD
 Planetary Barrier Shield
 
 DEF_PLAN_BARRIER_SHLD_DESC
-'''Increases max shield on all planets by 45. 
+'''Increases max [[encyclopedia SHIELDS_METER_TITLE]] on all planets by 45. 
 
 Advanced Planetary Shield. This is not cumulative with Planetary Deflector Shield.'''
 
 DEF_ROOT_DEFENSE
-Défense propre
+Propre Défense
 
 DEF_ROOT_DEFENSE_DESC
-'''Increases max troops on all planets by 5.
+'''Augmente le maximum des [[encyclopedia TROOP_TITLE]] sur toutes les planètes par 2.
 
-The concept of 'self defense' is at the root of many avenues of technological advance.'''
+Le concepte de 'propre défense' est à la base de biens des chemins d'avancement technologique.'''
 
 DEF_GARRISON_1
 Garnison planètaire 1
 
 DEF_GARRISON_1_DESC
-Augmente la puissance maximale des troupes sur toutes les planètes par 10.
+Augmente le maximum des [[encyclopedia TROOP_TITLE]] sur toutes les planètes par 5.
 
 DEF_GARRISON_2
 Garnison planètaire 2
 
 DEF_GARRISON_2_DESC
-Augmente la puissance maximale des troupes sur toutes les planètes par 20.
+Augmente le maximum des [[encyclopedia TROOP_TITLE]] sur toutes les planètes par 10.
 
 DEF_GARRISON_3
 Garnison planètaire 3
 
 DEF_GARRISON_3_DESC
-Augmente la puissance maximale des troupes sur toutes les planètes par 40.
+Augmente le maximum des [[encyclopedia TROOP_TITLE]] sur toutes les planètes par 15.
 
 DEF_GARRISON_4
 Garnison planètaire 4
 
 DEF_GARRISON_4_DESC
-Augmente la puissance maximale des troupes sur toutes les planètes par 80.
+Augmente le maximum des [[encyclopedia TROOP_TITLE]] sur toutes les planètes par 20.
 
 DEF_PLANET_CLOAK
 Planetary Cloaking Device
@@ -6234,7 +6308,7 @@ SHP_FLEET_REPAIR
 Fleet Field Repair
 
 SHP_FLEET_REPAIR_DESC
-Allows ships within supply range to repair damage at a rate of 1 per turn. Does not function immediately after battles.
+Allows ships within [[encyclopedia SUPPLY_TITLE]] line range to repair damage at a rate of 1 per turn. Does not function immediately after battles.
 
 SHP_REINFORCED_HULL
 Reinforced Hull
@@ -6245,10 +6319,10 @@ SHP_REINFORCED_HULL_DESC
 Standard ship hulls are designed and constructed with advanced microgravity architectural techniques and highly resistant materials. However, the limitations of physical matter impose a severe limitation on the strength of hulls. By enhancing the hull with structural integrity fields, a sizable increase in strength can be obtained.'''
 
 SHP_BASIC_DAM_CONT
-Basic Damage Control
+Contrôle des dommages de base
 
 SHP_BASIC_DAM_CONT_DESC
-Gradually repairs damaged ships. Current structure of all ships is replenished at a rate of 1 per turn.
+Répare peu à peu les dommages du vaisseau. La structure courrante de tous les vaisseaux est reconstituée à raison d'un taux de 1 par tour.
 
 SHP_ADV_DAM_CONT
 Advanced Damage Control
@@ -6270,7 +6344,7 @@ SHP_ROOT_AGGRESSION
 Aggression
 
 SHP_ROOT_AGGRESSION_DESC
-Allows basic weapons and troop pods.
+Allows basic weapons and [[shippart GT_TROOP_POD]]s.
 
 SHP_WEAPON_2
 Propulseur de masse 2
@@ -6290,67 +6364,67 @@ SHP_WEAPON_4_DESC
 SHP_WEAPON_5
 Laser 1
 SHP_WEAPON_5_DESC
-'''Unlocks the Laser, a more powerful ship's weapon than the Mass Driver.'''
+'''Débloque le laser, une arme plus puissante que le propulseur de masse.'''
 
 SHP_WEAPON_6
 Laser 2
 SHP_WEAPON_6_DESC
-'''Refines Laser to level 2.'''
+'''Reconditionne le laser au niveau 2.'''
 
 SHP_WEAPON_7
 Laser 3
 SHP_WEAPON_7_DESC
-'''Refines Laser to level 3.'''
+'''Reconditionne le laser au niveau 3.'''
 
 SHP_WEAPON_8
 Laser 4
 SHP_WEAPON_8_DESC
-'''Refines Laser to level 4.'''
+'''Reconditionne le laser au niveau 4.'''
 
 SHP_WEAPON_9
-Plasma Cannon 1
+Canon à plasma 1
 SHP_WEAPON_9_DESC
-'''Unlocks the Plasma Cannon, a more powerful ship's weapon than the Laser.'''
+'''Débloque le Canon à plasma, une arme pour vaisseaux, bien plus puissante que le laser.'''
 
 SHP_WEAPON_10
-Plasma Cannon 2
+Canon à plasma 2
 SHP_WEAPON_10_DESC
-'''Refines Plasma Cannon to level 2.'''
+'''Reconditionne le canon à plasma au niveau 2.'''
 
 SHP_WEAPON_11
-Plasma Cannon 3
+Canon à plasma 3
 SHP_WEAPON_11_DESC
-'''Refines Plasma Cannon to level 3.'''
+'''Reconditionne le canon à plasma au niveau 3.'''
 
 SHP_WEAPON_12
-Plasma Cannon 4
+Canon à plasma 4
 SHP_WEAPON_12_DESC
-'''Refines Plasma Cannon to level 4.'''
+'''Reconditionne le canon à plasma au niveau 4.'''
 
 SHP_WEAPON_13
-Death Ray 1
+Rayon de la mort 1
 SHP_WEAPON_13_DESC
-'''Unlocks the Death Ray, the ultimate ship's weapon.'''
+'''Débloque le rayon de la mort, l'arme ultime des vaisseaux.'''
 
 SHP_WEAPON_14
-Death Ray 2
+Rayon de la mort 2
 SHP_WEAPON_14_DESC
-'''Refines Death Ray to level 2.'''
+'''Reconditionne le rayon de la mort au niveau 2.'''
 
 SHP_WEAPON_15
-Death Ray 3
+Rayon de la mort 3
 SHP_WEAPON_15_DESC
-'''Refines Death Ray to level 3.'''
+'''Reconditionne le rayon de la mort au niveau 3.'''
 
 SHP_WEAPON_16
-Death Ray 4
+Rayon de la mort 4
 SHP_WEAPON_16_DESC
-'''Refines Death Ray to level 4.'''
+'''Reconditionne le rayon de la mort au niveau 4.'''
 
 SHP_WEAPON_17
-Death Ray 5
+Rayon de la mort 5
 SHP_WEAPON_17_DESC
-'''Refines Death Ray to level 5. The ultimate refinement of the ultimate weapon.'''
+'''Reconditionne le rayon de la mort au niveau 4. Le nec plus ultra en matière d'armes ultimes.'''
 
 SHP_ION_CANNON
 Canon à ion
@@ -6365,16 +6439,16 @@ SHP_MASS_DRIVER_DESC
 With the advent of space age weaponry, a paradigm shift tends to occur away from projectile weapons and towards energy or particle weapons. However, as the ability to manipulate matter continuously increases, it becomes possible to fire massive projectiles at relativistic speeds, more deadly than most energy weapons.
 
 SHP_DEATH_RAY
-Death Ray
+Rayon de la mort
 
 SHP_DEATH_RAY_DESC
 A devastating beam of ultra-massive high-energy particles, tearing open deadly rifts in space-time as well as delivering an incredibly high-energy impact.
 
 SHP_PULSE_LASER
-Pulse Laser
+Laser à impulsions
 
 SHP_PULSE_LASER_DESC
-Unlocks Pulse Laser ship part.
+Débloque l'élément de vaisseau laser à impulsions.
 
 SHP_PHASOR
 Phasor
@@ -6383,22 +6457,22 @@ SHP_PHASOR_DESC
 Unlocks Phasor ship part.
 
 SHP_INTERCEPTOR
-Interceptor
+Intercepteur
 
 SHP_INTERCEPTOR_DESC
-Unlocks Interceptor ship part.
+Débloque l'élément de vaisseau intercepteur.
 
 SHP_BOMBER
-Bomber
+Bombardier
 
 SHP_BOMBER_DESC
-Unlocks Bomber ship part.
+Débloque l'élément de vaisseau bombardier.
 
 SHP_RECON_FIGHT
-Reconnaissance Fighter
+Chasseur de reconnaissance
 
 SHP_RECON_FIGHT_DESC
-Unlocks Reconnaissance Fighter ship part.
+Débloque l'élément de vaisseau chasseur de reconnaissance.
 
 SHP_NUCLEAR_MISSILE
 Missile nucléaire
@@ -6498,19 +6572,19 @@ SHP_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings
 
 SHP_IMPROVED_ENGINE_COUPLINGS_DESC
-Better engine parts equate to better engines. Increases Starlane speed by 10
+Better engine parts equate to better engines. Increases Starlane speed by 10. May be added more than once to a hull.
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX
 N-Dimensional Engine Matrix
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Starlane speed by 15. 
+N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Starlane speed by 15. May be added more than once to a hull.
 
 SHP_SINGULARITY_ENGINE_CORE
 Singularity Engine Core
 
 SHP_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. 
+A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. May be added more than once to a hull.
 
 SHP_DEUTERIUM_TANK
 Réservoir de deutérium
@@ -6519,25 +6593,25 @@ SHP_DEUTERIUM_TANK_DESC
 Débloque les réservoirs de deutérium pour les Vaisseaux.
 
 SHP_ANTIMATTER_TANK
-Antimatter Tank
+Réservoir d'antimatière
 
 SHP_ANTIMATTER_TANK_DESC
-Unlocks Antimatter Tank ship part.
+Débloque le réservoir d'antimatière pour vaisseaux.
 
 SHP_LEAD_PLATE
-Lead Armor Plating
+Plaque de blindage en plomb
 
 SHP_LEAD_PLATE_DESC
-Unlocks Lead Armor Plating ship part.
+Débloque les plaque de blindage en plomb
 
 SHP_ZORTRIUM_PLATE
-Zortrium Armor Plating
+Plaque de blindage en zortrium
 
 SHP_ZORTRIUM_PLATE_DESC
-Unlocks Zortrium Armor Plating ship part.
+Débloque les Plaque de blindage en zortrium pure.
 
 SPY_DIST_MOD
-Distortion Modulator
+Modulateur de distortions
 
 SPY_DIST_MOD_DESC
 All objects with mass cause a curvature in space-time due to gravitational effects. Other forces such as the electromagnetic force have similar geometric effects. By indiscriminately amplifying these effects in a localized area, space-time distortion caused by ships can easily be distinguished from background electromagnetic and gravitational radiation.
@@ -6564,13 +6638,13 @@ SHP_MINIAST_SWARM
 Mini-Asteroid Swarm
 
 SHP_MINIAST_SWARM_DESC
-This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to shields. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 SHP_SCAT_AST_HULL
 Scattered Asteroid Hull
 
 SHP_SCAT_AST_HULL_DESC
-This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to shields for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 SHP_ORG_HULL
 Organic Hull
@@ -6609,10 +6683,10 @@ SHP_NOVA_BOMB_DESC
 The most powerful weapon ever devised, capable of destroying an entire star system.
 
 SHP_DEATH_SPORE
-Death Spores
+Spores du trépas
 
 SHP_DEATH_SPORE_DESC
-Unlocks the Death Spores ship part, which allows ships to somewhat reduce the population of planets.
+Débloque l'élément de vaisseau "Spores du trépas", qui permet de réduire quelque peu la population des planètes.
 
 SHP_BIOTERM
 Bio-Terminators
@@ -6676,29 +6750,22 @@ BLD_OBSERVATORY_DESC
 '''One random star will be revealed each turn to the entire galaxy. Sometimes, a star which is already visible/explored may be revealed, resulting in no new star actually being made known to the empires in the galaxy.
 
 An observational facility dedicated to locating and mapping the stars in the know galaxy, particularly those which are determined to be reachable via the network of starlanes.'''
-#'''L'extension naturelle des télescopes de l'époque industrielle et de l'âge de l'information, renforcé par des algorithmes militaire, a permis de renforcer la détection longue portée. l'observatoire émet de puissants faisceaux de détection en espace lointain. Ces impulsions interfèrent avec toute tentative visant à rendre la planète discrète, mais les signaux peuvent se refléter sur des objets dans le voisinage galactique, permant de les détecter plus facilement par les planètes amies à portée de l'Observatoire. 
-
-#Donne +10 à la détection de tous les planètes amies dans un rayon de 200.
-#Diminue la furtivité de la planète par 10.'''
 
 BLD_CULTURE_ARCHIVES
-Cultural Archives
+Archives culturelles
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Increases target Research by 5, target Industry by the planet's Population.
+'''Augment l'objectif de recherche de 5, l'objectif industrie par la population de la planète.
 
-Stores the sum accumulated knowledge from thousands of years of life on this planet, giving bonuses to many aspects of planetary productivity.'''
+Conserve le savoir accumulé par des millier d'années de vie sur cette planète, donnant des bonus à bien des aspects de la productivité planètaire.'''
 
 BLD_IMPERIAL_PALACE
 Palais Impérial 
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases Supply Range by 1, Infrastructure by 20, Defense by 5, and Troops by 10. Also sets the owner's Capital for the empire.
+'''Augmente la porté des lignes d'[[encyclopedia SUPPLY_TITLE]] de 1, l'infrastructure de 20, la [[encyclopedia DEFENSE_METER_TITLE]] de 5 et les [[encyclopedia TROOP_TITLE]] de 3. Sa place définit également la capitale de l'empire.
 
-Represents imperial power and prestige and functions as a centre of control for the empire's holdings.'''
-#'''Représente le pouvoir et le prestige impérial et fonctionne comme un centre de contrôle des possessions de l'empire. 
-
-#La planète qui construit le palais reçoit +2 au maximun de construction.'''
+Représente le pouvoir et le prestige impérial et fonctionne comme un centre de contrôle des possessions de l'empire.''' 
 
 BLD_SUPER_TESTERS
 Super-Tester Takeover
@@ -6709,15 +6776,15 @@ BLD_SHIPYARD_BASE
 Chantier Spatial
 
 BLD_SHIPYARD_BASE_DESC
-Installation orbitale pour l'assemblage d'engins spatiaux militaire interstellaire. Permet la production de vaisseaux dans le système où il se trouve. Peut être amélioré par la production de bâtiments supplémentaires dans le même système.
+Installation orbitale pour l'assemblage d'engins spatiaux de qualité militaire. Permet la production de vaisseaux dans le système où il se trouve. Peut être amélioré par la production de bâtiments supplémentaires dans le même système.
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK
-Orbital Drydock
+Cale sèche orbitale
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-'''This is an upgrade for the Basic Shipyard and is required for all constructed hulls and all further constructed hulls shipyard upgrades to be built, this upgrade also provides repair abilities to repair damaged ships in a single turn.
+'''Ceci est un complément au chantier naval et est requise pour toutes les coques déjà construites et toutes les conception propres à venir. Ce complément donne aussi la possibilité de réparer des vaisseaux endommagés en un seul tour.
 
-When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly. Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.'''
+Lorsque un grand vaisseau interstellaire est construit, il n'est pas pratique de déplacer les grandes parties vers le haut ou le bas sans élévateur spatial. Au contraire, il est beaucoup plus simple de fabriquer les pièces et de les assembler dans ces même installation orbitales, éliminant par là même le transport de pièces massives depuis la suface de la planète.'''
 
 BLD_SHIPYARD_CON_NANOROBO
 Nanorobotic Processing Unit
@@ -6828,7 +6895,7 @@ BLD_INDUSTRY_CENTER
 Centre Industriel
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to Industry on all supply connected planets with Industry focus equal to othe greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
+'''Initially provides a bonus to Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus equal to the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 [[tech PRO_INDUSTRY_CENTER_II]] refinement increases the bonus to equal the planet's population.
 
@@ -6848,7 +6915,7 @@ BLD_MEGALITH
 Mégalithe
 
 BLD_MEGALITH_DESC
-'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to Supply range, and 30 to construction. Additionally all resource meters are able to reach target in a single turn.
+'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to [[encyclopedia SUPPLY_TITLE]] line range, and 30 to construction. Additionally all resource meters are able to reach target in a single turn.
 
 The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
 #Une merveille d'architecture de l'époque de l'Exode, C'est une Mégalithe anormalement massives semblant touchées les étoiles, de plusieurs kilomètres de diamètre. Cette Mégalithe est une source d'inspiration pour les architectes de l'ensemble du secteur et est souvent le joyau d'un puissant magnat de l'immobilier  de l'empire.
@@ -6857,7 +6924,7 @@ BLD_SPACE_ELEVATOR
 Ascenseur Spatial
 
 BLD_SPACE_ELEVATOR_DESC
-'''Doubles Supply range on the planet on which it is built.
+'''Doubles [[encyclopedia SUPPLY_TITLE]] line range on the planet on which it is built.
 
 Nano-construction enables production of tensile cables strong enough to reach beyond geostationary orbit. Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity. An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end.'''
 #Un énorme et pratiquement incassable câble attaché à un satellite en orbite géo-stationnaire basse d'un coté, et une plateforme de lancement sur la planète de l'autre. l'ascenseur spatial augmente le commerce pour l'ensemble du système.
@@ -6915,7 +6982,7 @@ BLD_HYPER_DAM
 Barrage Hyperspatial
 
 BLD_HYPER_DAM_DESC
-'''Increases target Industry on supply connected planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 2 per [[INFRA_PER_PRODUCTION]] units of Infrastructure, but decreases Population on such planets by 5.
+'''Increases target Industry on [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 2 per [[INFRA_PER_PRODUCTION]] units of Infrastructure, but decreases Population on such planets by 5.
 
 A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
 #Une déchirure dans le tissu de l'univers, contrôlée et exploitée en toute sécurité. Le barrage hyperspatial sert  de source d'énergie presque illimitée pour tout le secteur.
@@ -6930,7 +6997,7 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Increases target industry on supply connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
+'''Increases target industry on [[encyclopedia SUPPLY_TITLE]] line connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependant on star type. This building can be built at an outpost.'''
 
@@ -6998,7 +7065,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-Increases Industry on all supply connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. This building can be built at an outpost.
+Increases Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. This building can be built at an outpost.
 
 BLD_REPLICATORS
 Replicators
@@ -7515,7 +7582,7 @@ Grille de défense
 SH_DEFENSE_GRID_DESC
 '''Défense faible sans masse additionnelle. 
 
-La technique des boucliers est généralement plus chère que celle des armures, vu que la technique nécessaire à la création de champs de force n'encoure pas de pénalitées.'''
+La technique des [[encyclopedia SHIELDS_METER_TITLE]] est généralement plus chère que celle des armures, vu que la technique nécessaire à la création de champs de force n'encoure pas de pénalitées.'''
 
 SH_DEFLECTOR
 Bouclier déflecteur
@@ -7523,13 +7590,13 @@ Bouclier déflecteur
 SH_DEFLECTOR_DESC
 '''Moderate defense with small mass. 
 
-Shield technology is generally much more expensive than armor, due to the technology needed to produce shielding fields, but have the benefits of no speed penalties.'''
+[[encyclopedia SHIELDS_METER_TITLE]] technology is generally much more expensive than armor, due to the technology needed to produce shielding fields, but have the benefits of no speed penalties.'''
 
 SH_MULTISPEC
 Multi-Spectral Shield
 
 SH_MULTISPEC_DESC
-Powerful Shield capable of protecting a ship within a star. Provides a high stealth bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat.
+Powerful [[encyclopedia SHIELDS_METER_TITLE]] capable of protecting a ship within a star. Provides a high stealth bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat.
 
 CO_COLONY_POD
 Module de colonisation
@@ -7551,13 +7618,13 @@ CO_OUTPOST_POD
 Module d'avant-poste
 
 CO_OUTPOST_POD_DESC
-'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they create supply lines (+1) and provide vision. Colonies can be founded on planets that already have an Outpost.'''
+'''Les modules avant-poste vous permettent d'établir des stations non habités. Elles peuvent être placées sur des planètes inhabitables. Elles ne sont pas habitées et ne produisent normalement pas de resources, mais elles offrent la visions de lignes d'[[encyclopedia SUPPLY_TITLE]] quand la bonne technologie est exploitée. Des colonies peuvent être fondées sur des planètes déjà pourvues d'un avant-poste.'''
 
 GT_TROOP_POD
 Module de troupes de terre
 
 GT_TROOP_POD_DESC
-Porte une brigade de troupes de terre avec équipement pour être déployé sur une planète.
+Porte une brigade de [[encyclopedia TROOP_TITLE]] de terre avec équipement pour être déployé sur une planète.
 
 SP_DISTORTION_MODULATOR
 Distortion Modulator
@@ -7578,16 +7645,16 @@ SP_VOID
 Void Eruptor
 
 SP_DEATH_SPORE
-Death Spores
+Spores de la mort
 
 SP_DEATH_SPORE_DESC
-A biological weapon which gradually reduces the population of a planet.
+Une arme biologique qui réduit petit à petit la population d'une planète.
 
 SP_BIOTERM
-Bio-Terminators
+Bio-terminateur
 
 SP_BIOTERM_DESC
-A powerful biological weapon which quickly reduces the population of a planet.
+Une puissante arme biologique qui réduit rapidement la population d'une planète.
 
 SP_NOVA_BOMB
 Nova Bomb
@@ -7709,7 +7776,7 @@ SH_MINIASTEROID_SWARM
 Mini-Asteroid Swarm
 
 SH_MINIASTEROID_SWARM_DESC
-'''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to shields. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
@@ -7717,7 +7784,7 @@ SH_SCATTERED_ASTEROID
 Scattered Asteroid Hull
 
 SH_SCATTERED_ASTEROID_DESC
-'''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to shields for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
@@ -7749,7 +7816,7 @@ SH_ENDOMORPHIC
 Coque Endomorphique
 
 SH_ENDOMORPHIC_DESC
-'''This living hull contains non-living multicellular components for greater internal modularity. This hull has four external slots and three internal slots. Stealth is good and speed is average, but structure is low. This hull regenerates structure and fuel between combats.
+'''This living hull contains non-living multicellular components for greater internal modularity. This hull has three external slots and two internal slots. Stealth is good and speed is average, but structure is low. This hull regenerates structure and fuel between combats.
 
 Requires a Basic Shipyard, an Orbital Incubator at the planet where it is developed.'''
 
@@ -7773,7 +7840,7 @@ SH_ENDOSYMBIOTIC
 Endosymbiotic Hull
 
 SH_ENDOSYMBIOTIC_DESC
-'''This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has three external slots and two internal slots. Speed and stealth are good, and structure is average. This hull regenerates structure and fuel between combats.
+'''This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has four external slots and three internal slots. Speed and stealth are good, and structure is average. This hull regenerates structure and fuel between combats.
 
 Requires a Basic Shipyard, an Orbital Incubator, a Xenocoordination facility and a Cellular Growth Chamber at the planet where it is developed.'''
 
@@ -8008,7 +8075,7 @@ NO_INDUSTRY
 '''−−−	Pas d'industrie'''
 
 BAD_INDUSTRY
-'''−	Pauvre en industrie: 50%'''
+'''−	Pauvre en industrie: -50%'''
 
 AVERAGE_INDUSTRY
 '''	Industrie moyenne: 100%'''
@@ -8026,7 +8093,7 @@ NO_RESEARCH
 '''−−−	Pas de recherche'''
 
 BAD_RESEARCH
-'''−	Pauvre en recherche: 50%'''
+'''−	Pauvre en recherche: -50%'''
 
 AVERAGE_RESEARCH
 '''	Recherche moyenne: 100%'''
@@ -8042,22 +8109,22 @@ ULTIMATE_RESEARCH
 
 
 NO_GROUND_TROOPS
-'''−−−	Pas de troupes terrestres'''
+'''−−−	Pas de [[encyclopedia TROOP_TITLE]] terrestres'''
 
 BAD_GROUND_TROOPS
-'''−	Pauvre en troupes terrestres: 150%.'''
+'''−	Pauvre en [[encyclopedia TROOP_TITLE]] terrestres: -50%.'''
 
 AVERAGE_GROUND_TROOPS
-'''	Troupes terrestres moyennes: 100%.'''
+'''	[[encyclopedia TROOP_TITLE]] terrestres moyennes: 100%.'''
 
 GOOD_GROUND_TROOPS
-'''+	Bonne troupes terrestres: 150%.'''
+'''+	Bonne [[encyclopedia TROOP_TITLE]] terrestres: 150%.'''
 
 GREAT_GROUND_TROOPS
-'''++	Grande troupes terrestres: 200%.'''
+'''++	Grande [[encyclopedia TROOP_TITLE]] terrestres: 200%.'''
 
 ULTIMATE_GROUND_TROOPS
-'''+++	Troupes terrestres ultime: 300%.'''
+'''+++	[[encyclopedia TROOP_TITLE]] terrestres ultime: 300%.'''
 
 BAD_DETECTION
 '''−	Pauvre porté de détection: −20 malus.'''
@@ -8087,22 +8154,22 @@ ULTIMATE_STEALTH
 '''+++	Ultime furtivité: +60 bonus.'''
 
 GOOD_WEAPONS
-'''+	Commence avec le propulseur de masse 3.'''
+'''+	Commence avec le propulseur de masse 3, & un vaisseau additionnel.'''
 
 GREAT_WEAPONS
-'''++	Commence avec le propulseur de masse 4.'''
+'''++	Commence avec le laser 1, & deux vaisseaux additionnels.'''
 
 ULTIMATE_WEAPONS
-'''+++	Starts with Laser 1.'''
+'''++	Commence avec le laser 3, & trois vaisseaux additionnels.'''
 
 BAD_POPULATION
-'''−	Pauvre en population'''
+'''−	Pauvre en population 75%'''
 
 AVERAGE_POPULATION
 '''	Population moyenne'''
 
 GOOD_POPULATION
-'''+	Bonne population'''
+'''+	Bonne population 125%'''
 
 BROAD_EP
 '''++	Broad Planet Tolerance: flourishes on more types.'''
