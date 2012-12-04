@@ -663,10 +663,6 @@ void ChangeFocusOrder::ExecuteImpl() const {
     }
 
     planet->SetFocus(m_focus);
-
-    Empire* empire = Empires().Lookup(EmpireID());
-    empire->UpdateResearchQueue();
-    empire->UpdateProductionQueue();
 }
 
 ////////////////////////////////////////////////
