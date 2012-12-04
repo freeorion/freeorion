@@ -2073,22 +2073,25 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (!ship)
         return;
 
-
-    // verify that this client's player's empire owns this fleet.  if not, abort.
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (!ship->OwnedBy(empire_id))
-        return;
+    const ShipDesign* design = GetShipDesign(ship->DesignID()); // may be null
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
 
     // create popup menu with a rename ship option in it.
     GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
 
+    if (design) {
+        std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % design->Name(true));
+        menu_contents.next_level.push_back(GG::MenuItem(popup_label, 5, false, false));
+    }
 
-    if (!ship->OrderedScrapped()) {
+    if (ship->OwnedBy(client_empire_id))
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
+
+    if (!ship->OrderedScrapped() && ship->OwnedBy(client_empire_id)) {
         // create popup menu with "Scrap" option
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_SHIP_SCRAP"), 3, false, false));
-    } else {
+    } else if (ship->OwnedBy(client_empire_id)) {
         // create popup menu with "Cancel Scrap" option
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_SHIP_SCRAP"), 4, false, false));
     }
@@ -2105,14 +2108,14 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
 
             if (new_name != "" && new_name != ship_name) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new RenameOrder(empire_id, ship->ID(), new_name)));
+                    OrderPtr(new RenameOrder(client_empire_id, ship->ID(), new_name)));
             }
             break;
         }
 
         case 3: { // scrap ship
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new ScrapOrder(empire_id, ship->ID())));
+                OrderPtr(new ScrapOrder(client_empire_id, ship->ID())));
             break;
         }
 
@@ -2120,10 +2123,15 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
             // find order to scrap this ship, and recind it
             std::map<int, int> pending_scrap_orders = PendingScrapOrders();
             std::map<int, int>::const_iterator it = pending_scrap_orders.find(ship->ID());
-            if (it != pending_scrap_orders.end()) {
+            if (it != pending_scrap_orders.end())
                 HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
             break;
-            }
+        }
+
+        case 5: { // pedia lookup ship design
+            if (design)
+                ClientUI::GetClientUI()->ZoomToShipDesign(design->ID());
+            break;
         }
 
         default:
