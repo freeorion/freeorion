@@ -109,9 +109,13 @@ double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
 }
 
 void ResourceCenter::SetFocus(const std::string& focus) {
-    // TODO: verify validity of focus?
-    m_focus = focus;
-    ResourceCenterChangedSignal();
+    std::vector<std::string> avail_foci = AvailableFoci();
+    if (std::find(avail_foci.begin(), avail_foci.end(), focus) != avail_foci.end()) {
+        m_focus = focus;
+        ResourceCenterChangedSignal();
+        return;
+    }
+    Logger().errorStream() << "ResourceCenter::SetFocus Exploiter!-- unavailable focus " << focus << "attempted to be set for object w/ dump string: " << Dump();
 }
 
 void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters() {
