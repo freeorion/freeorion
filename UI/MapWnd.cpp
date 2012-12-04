@@ -3070,7 +3070,8 @@ void MapWnd::RefreshFleetButtons() {
     // be grouped by empire owner and buttons created
     const ObjectMap& objects = GetUniverse().Objects();
 
-    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
 
     // for each system, each empire's fleets that are ordered to move, but still at the system: "departing fleets"
     std::map<const System*, std::map<int, std::vector<const Fleet*> > > departing_fleets;
@@ -3079,26 +3080,24 @@ void MapWnd::RefreshFleetButtons() {
         // skip known destroyed objects
         if (this_client_known_destroyed_objects.find((*it)->ID()) != this_client_known_destroyed_objects.end())
             continue;
-
-        const Fleet* fleet = universe_object_cast<const Fleet*>(*it);
+        const UniverseObject* obj = *it;
 
         // skip fleets outside systems
-        if (fleet->SystemID() == INVALID_OBJECT_ID)
+        if (obj->SystemID() == INVALID_OBJECT_ID)
             continue;
 
-        // sanity checks
-        if (!fleet) {
-            Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
+        // TEMORARY: Skip not visible fleets
+        if (obj->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
             continue;
-        }
-        const System* system = GetSystem(fleet->SystemID());
+
+        const System* system = GetSystem(obj->SystemID());
         if (!system) {
-            Logger().errorStream() << "couldn't get system with id " << fleet->SystemID() << " of an departing fleet named " << fleet->Name() << " in RefreshFleetButtons()";
+            Logger().errorStream() << "couldn't get system with id " << obj->SystemID() << " of an departing fleet named " << obj->Name() << " in RefreshFleetButtons()";
             continue;
         }
 
         // store in map for this system and the fleet's owner empire
-        departing_fleets[system][fleet->Owner()].push_back(fleet);
+        departing_fleets[system][obj->Owner()].push_back(universe_object_cast<const Fleet*>(obj));
     }
     departing_fleet_objects.clear();
 
@@ -3110,26 +3109,24 @@ void MapWnd::RefreshFleetButtons() {
         // skip known destroyed objects
         if (this_client_known_destroyed_objects.find((*it)->ID()) != this_client_known_destroyed_objects.end())
             continue;
-
-        const Fleet* fleet = universe_object_cast<const Fleet*>(*it);
+        const UniverseObject* obj = *it;
 
         // skip fleets outside systems
-        if (fleet->SystemID() == INVALID_OBJECT_ID)
+        if (obj->SystemID() == INVALID_OBJECT_ID)
             continue;
 
-        // sanity checks
-        if (!fleet) {
-            Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
+        // TEMORARY: Skip not visible fleets
+        if (obj->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
             continue;
-        }
-        const System* system = GetSystem(fleet->SystemID());
+
+        const System* system = GetSystem(obj->SystemID());
         if (!system) {
             Logger().errorStream() << "couldn't get system of a stationary fleet in RefreshFleetButtons()";
             continue;
         }
 
         // store in map for the system and fleet's owner empire
-        stationary_fleets[system][fleet->Owner()].push_back(fleet);
+        stationary_fleets[system][obj->Owner()].push_back(universe_object_cast<const Fleet*>(obj));
     }
     stationary_fleet_objects.clear();
 
@@ -3141,21 +3138,19 @@ void MapWnd::RefreshFleetButtons() {
         // skip known destroyed objects
         if (this_client_known_destroyed_objects.find((*it)->ID()) != this_client_known_destroyed_objects.end())
             continue;
+        const UniverseObject* obj = *it;
 
-        const Fleet* fleet = universe_object_cast<const Fleet*>(*it);
-
-        // sanity checks
-        if (!fleet) {
-            Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
+        // TEMORARY: Skip not visible fleets
+        if (obj->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
             continue;
-        }
-        if (fleet->SystemID() != INVALID_OBJECT_ID) {
+
+        if (obj->SystemID() != INVALID_OBJECT_ID) {
             Logger().errorStream() << "a fleet that was supposed to be moving had a valid system in RefreshFleetButtons()";
             continue;
         }
 
         // store in map
-        moving_fleets[std::make_pair(fleet->X(), fleet->Y())][fleet->Owner()].push_back(fleet);
+        moving_fleets[std::make_pair(obj->X(), obj->Y())][obj->Owner()].push_back(universe_object_cast<const Fleet*>(obj));
     }
     moving_fleet_objects.clear();
 
@@ -3183,7 +3178,8 @@ void MapWnd::RefreshFleetButtons() {
     const FleetButton::SizeType FLEETBUTTON_SIZE = FleetButtonSizeType();
 
     // departing fleets
-    for (std::map<const System*, std::map<int, std::vector<const Fleet*> > >::iterator departing_fleets_it = departing_fleets.begin();
+    for (std::map<const System*, std::map<int, std::vector<const Fleet*> > >::iterator
+         departing_fleets_it = departing_fleets.begin();
          departing_fleets_it != departing_fleets.end(); ++departing_fleets_it)
     {
         const System* system = departing_fleets_it->first;
@@ -3217,7 +3213,8 @@ void MapWnd::RefreshFleetButtons() {
     }
 
     // stationary fleets
-    for (std::map<const System*, std::map<int, std::vector<const Fleet*> > >::iterator stationary_fleets_it = stationary_fleets.begin();
+    for (std::map<const System*, std::map<int, std::vector<const Fleet*> > >::iterator
+         stationary_fleets_it = stationary_fleets.begin();
          stationary_fleets_it != stationary_fleets.end(); ++stationary_fleets_it)
     {
         const System* system = stationary_fleets_it->first;
@@ -3251,7 +3248,8 @@ void MapWnd::RefreshFleetButtons() {
     }
 
     // moving fleets
-    for (std::map<std::pair<double, double>, std::map<int, std::vector<const Fleet*> > >::iterator moving_fleets_it = moving_fleets.begin();
+    for (std::map<std::pair<double, double>, std::map<int, std::vector<const Fleet*> > >::iterator
+         moving_fleets_it = moving_fleets.begin();
          moving_fleets_it != moving_fleets.end(); ++moving_fleets_it)
     {
         const std::map<int, std::vector<const Fleet*> >& empires_map = moving_fleets_it->second;
