@@ -55,6 +55,7 @@ Balancing:
   ~ New ultimate detection strenght tech "Omni-scanners"
   ~ New detction strength booster special, Panopticon Complex
   ~ Added Philosopher Planet special
+  ~ Added Furthest species
   
  Graphics:
   ~ New Focus & Planet meter icons with matching chart colors.

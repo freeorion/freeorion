@@ -3768,6 +3768,35 @@ Reason for Staying:
 Volp-Uglush are now to integrated and ingrown. They now totally lack the independance and innovation needed to leave Hive and start a new colony.
 '''
 
+SP_FURTHEST
+Furthest
+SP_FURTHEST_DESC
+'''Paranoid three-headed, triped herbivores
+Prefer Tundra planets.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+
+[[GOOD_DETECTION]]
+[[GREAT_STEALTH]]
+        
+[[AVERAGE_INDUSTRY]]
+[[BAD_RESEARCH]]
+        
+[[GOOD_GROUND_TROOPS]]
+[[BAD_POPULATION]]
+
+
+Biology:
+The Furthest are furry, 1.5 m tall creatures.  Radially symmetric, they have three long legs, and three long flexible necks. Atop each neck, is a compound eye, and a mouth used for ingestion and for manipulating objects.  This allows the creature too keep watch in most directions at once.  The actual brain is in the center of the body.
+
+Name:
+The Furthest believe that sapience is measured by the distance that a being can separate itself from danger. Thus the name " Furthest" describes their species as the most advanced of beings.
+
+Personality: 
+The Furthest report that their homeworld was once full of the deadliest predators imaginable.  They survived by developing caution to the utmost level.  Indeed staying alert for threats, and hiding  are the core of their psychology and culture. The Furthest homeworld currently contains no carnivore they can't crush underfoot.
+
+Reason for Staying:
+The Furthest generally consider space travel far too dangerous for a sane being, but some who consider their homeworld too dangerous may consider relocating to another world.
+'''
 
 SP_EXOBOT
 Exobot

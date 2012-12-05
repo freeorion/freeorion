@@ -1194,6 +1194,41 @@ Species
     graphic = "icons/species/volp.png"
 
 Species
+    name = "SP_FURTHEST"
+    description = "SP_FURTHEST_DESC"
+    Native
+    
+    CanColonize
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[GOOD_DETECTION]]
+        [[GREAT_STEALTH]]
+        
+        [[AVERAGE_INDUSTRY]]
+        [[BAD_RESEARCH]]
+        
+        [[GOOD_GROUND_TROOPS]]
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_CONSTRUCTION]]
+        [[BAD_POPULATION]]
+    ]
+    
+    [[TUNDRA_STANDARD_EP]]
+    
+    graphic = "icons/species/furthest.png"
+
+Species
     name = "SP_EXOBOT"
     description = "SP_EXOBOT_DESC"
     CanProduceShips
