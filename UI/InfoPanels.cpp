@@ -522,7 +522,8 @@ bool PopulationPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
     menu_contents.next_level.push_back(GG::MenuItem(popup_label, 1, false, false));
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
 
     if (!popup.Run() || popup.MenuID() != 1)
         return false;
@@ -1388,7 +1389,8 @@ bool MultiIconValueIndicator::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
         menu_contents.next_level.push_back(GG::MenuItem(popup_label, 1, false, false));
-        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
 
         if (!popup.Run() || popup.MenuID() != 1) {
             return false;
@@ -2060,7 +2062,8 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), 4, false, false));
     }
 
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 3: { // scrap building
@@ -2211,7 +2214,8 @@ bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 
         GG::MenuItem menu_contents;
         menu_contents.next_level.push_back(GG::MenuItem(popup_label, 1, false, false));
-        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
 
         if (!popup.Run() || popup.MenuID() != 1) {
             return false;
