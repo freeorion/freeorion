@@ -1,7 +1,7 @@
 Français
 
-#This is the French String Table file for FreeOrion
-#Translation by Alchemy and shivu
+#This is the French String Table file for FreeOrion. (= eng_svn5515)
+#Translation by alchemy, shivu and zareif.
 
 #################
 #    Common     #
@@ -702,6 +702,9 @@ Utilisation de OpenGL 1,5 optimisé pour le rendu de la carte galactique. Peut n
 OPTIONS_DB_STARLANE_THICKNESS
 Règle l'épaisseur des liens hyperspatiaux en pixels.
 
+OPTIONS_DB_STARLANE_CORE
+width multiplier for empire 'core' starlanes.
+
 OPTIONS_DB_RESOURCE_STARLANE_COLOURING
 Active ou désative la coloration des liens hyperspatiaux avec la couleur de l'empire lorsque les empires peuvent échanger des ressources le long de ces liens hyperspatiaux.
 
@@ -985,7 +988,7 @@ OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER
 Règle la taille minimale du rendu des planètes en rotation dans le panneau latéral.
 
 OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
-Sets whether to show rendered planets / asteroids on the side-panel.
+Montrer ou non dans le panneau latéral le rendu des planètes / astéroïdes.
 
 OPTIONS_DB_GAMESETUP_STARS
 Le nombre d'étoiles à générer dans la galaxie.
@@ -1057,7 +1060,7 @@ OPTIONS_DB_AUTOSAVE_LIMIT
 Détermine le nombre maximum de fichiers autosauvegardés à garder.
 
 OPTIONS_DB_UI_MOUSE_LR_SWAP
-Swaps results of clicking left and right mouse buttons.
+Inverser les résultats des clics droits et des clics gauches de la souris.
 
 OPTIONS_DB_MUSIC_VOLUME
 Règle le volume de la musique (de 0 à 255).
@@ -1087,13 +1090,13 @@ OPTIONS_DB_RESET_FSSIZE
 Stores whether to reset the stored fullscreen resolution. If false, the stored values are used, but if true, the values are reset to the max the rendering system supports.
 
 OPTIONS_DB_AUTO_EFFECT_DESC
-Toggles inclusion of auto-generated text in tech, building or ship part descriptions.
+Activer l'affichage de texte auto-généré dans les descriptions des technologies, des bâtiments ou des modules pour vaisseaux.
 
 OPTIONS_DB_VERBOSE_LOGGING_DESC
-Toggles verbose logging of universe contents and effect evaluation.
+Activer les logs détaillés des éléments de l'univers et des traitements des effets (pour développeurs).
 
 OPTIONS_DB_VERBOSE_SITREP_DESC
-Toggles inclusion of situation report messages with errors.
+Activer l'affichage des rapports d'erreurs (pour développeurs).
 
 OPTIONS_DB_TECH_DEMO
 Try out the 3D combat tech demo.
@@ -1119,7 +1122,7 @@ Nom de fichier invalide.
 
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% existe déjà.
-ok pou l'écraser?'''
+ok pour l'écraser?'''
 
 FILE_DLG_INVALID_FILENAME
 '''"%1%"
@@ -1430,7 +1433,7 @@ OPTIONS_QUICK_CLOSE_WNDS
 Fermeture rapide des fenêtres
 
 OPTIONS_SHOW_SIDEPANEL_PLANETS
-Montre le panneau latéral des planètes
+Montre les planètes dans le panneau latéral.
 
 OPTIONS_MISC_UI
 Réglages divers de l'IU
@@ -1475,7 +1478,7 @@ OPTIONS_TOOLTIP_DELAY
 Délai avant bulle d'info (ms)
 
 OPTIONS_SWAP_MOUSE_LR
-Swap Mouse Buttons Left-Right
+Inverser les clics droits et gauches de la souris.
 
 OPTIONS_VIDEO_MODE
 Mode vidéo plein écran
@@ -1493,7 +1496,7 @@ OPTIONS_VIDEO_SETTINGS
 Réglages vidéo.
 
 OPTIONS_APP_WIDTH_WINDOWED
-Résolution horizontale de la fenêtre
+Résolution horizontale de la fenêtre.
 
 OPTIONS_APP_HEIGHT_WINDOWED
 Résolution verticale de la fenêtre.
@@ -1688,7 +1691,7 @@ OPTIONS_SOUND_FOCUS
 Sons de Focalisation
 
 OPTIONS_SOUND_BALANCED
-Balanced focus
+Privilégier l'équilibre de l'usage des ressources
 
 OPTIONS_SOUND_FARMING
 Privilégier l'Agriculture
@@ -1841,13 +1844,13 @@ OPTIONS_SOUND_FILE
 Fichiers de sons
 
 OPTIONS_AUTO_EFFECT_DESC
-Auto-generated effect descriptions
+Génération automatique de descriptions.
 
 OPTIONS_VERBOSE_LOGGING_DESC
-Verbose logging for debugging
+Logs détaillés pour le débogage.
 
 OPTIONS_VERBOSE_SITREP_DESC
-Situation reports with errors
+Afficher les rapports d'erreurs.
 
 ##################
 # CombatSetupWnd #
@@ -2679,7 +2682,7 @@ Augmente la population planétaire
 PEACE_TITLE
 Paix
 PEACE_TEXT
-La paix est l'état diplomatique entre deux empires qui se sont mis d'accord de ne pas attaquer les vaisseaux ou les planètes de l'autre, ni de s'entraver par les lignes d'[[encyclopedia SUPPLY_TITLE]] ainsi que ne pas faire obstacle à l'essor colonial de l'autre.  
+La paix est l'état diplomatique entre deux empires qui se sont mis d'accord pour ne pas attaquer les vaisseaux ou les planètes de l'autre, ni d'entraver les lignes d'[[encyclopedia SUPPLY_TITLE]] de l'autre, ainsi que de ne pas faire obstacle à son essor colonial.  
 
 OUTPOSTS_TITLE
 Avant-postes
@@ -2689,46 +2692,46 @@ OUTPOSTS_TEXT
 GROWTH_FOCUS_TITLE
 Focalisation sur la croissance
 GROWTH_FOCUS_TEXT
-'''La focalisation sur la croissance représente l'exportation de matériaux rares et de substance propre à aider la croissance de la population de certaines espèces. Elle n'est possible que dans cas: sur certains mondes d'origine et sur des planètes à croissance spéciale. Une planète ayant focalisé sur la croissance, n'augmente la population maximale qu'aux planètes reliées à elle par les lignes d'[[encyclopedia SUPPLY_TITLE]]. Un monde d'origine ayant focalisé sur la croissance n'aide d'autres planètes que si celles-ci appartiennent à la même espèce. Des croissances spéciales de planètes focalisées sur la croissance, n'aide qu'à une seule catégorie d'espèces, tels par exemple les espèces organiques.'''
+'''La focalisation sur la croissance représente l'exportation de matériaux rares et de substance propre à aider la croissance de la population de certaines espèces. Elle n'est possible que dans certains cas: sur certains mondes d'origine et sur des planètes à croissance spéciale. Une planète ayant focalisé sur la croissance, n'augmente la population maximale qu'aux planètes reliées à elle par les lignes d'[[encyclopedia SUPPLY_TITLE]]. Un monde d'origine ayant focalisé sur la croissance n'aide d'autres planètes que si celles-ci appartiennent à la même espèce. Des croissances spéciales de planètes focalisées sur la croissance, n'aide qu'à une seule catégorie d'espèces, tels par exemple les espèces organiques.'''
 
 MINING_FOCUS_TITLE
 Focalisation sur l'exploitation minière
 MINING_FOCUS_TEXT
-'''La focalisation sur l'exploitation minière n'est seulement possible que sur des planètes avec certains effets rare. Focaliser sur l'exploitation minière fournissent un bonus de production significatif.'''
+'''La focalisation sur l'exploitation minière n'est seulement possible que sur des planètes avec certains effets rare. Focaliser sur l'exploitation minière fournit un bonus de production significatif.'''
 
 TRADE_FOCUS_TITLE
 Focalisation sur le commerce
 TRADE_FOCUS_TEXT
-'''Le commerce ne fait rien en soit. Il est juste un espace réservé pour montrer que plus de resources sont prévues.'''
+'''Le commerce ne fait rien en soit. Il s'agit est juste d'un espace réservé qui montre que, plus de resources sont prévues.'''
 
 PROTECTION_FOCUS_TITLE
-Protection Focus
+Focalisation sur la protection
 PROTECTION_FOCUS_TEXT
-'''The Protection focus represents a planet wholly focused on defending itself.  [[encyclopedia TROOP_TITLE]], Planetary [[encyclopedia DEFENSE_METER_TITLE]], and Planetary [[encyclopedia SHIELDS_METER_TITLE]] are all increased.'''
+'''La focalisation sur la protection signifie qu'une planète est entièrement concentrée sur sa défense. Les [[encyclopedia TROOP_TITLE]] de [[encyclopedia DEFENSE_METER_TITLE]] et les [[encyclopedia SHIELDS_METER_TITLE]] s'y consacre entièrement.'''
 
 HAPPINESS_METER_TITLE
-Mesure du bonheur
+Mesure bonheur
 HAPPINESS_METER_TEXT
 '''Le bonheur ne fait rien, ne crée rien'''
 
 DEFENSE_METER_TITLE
 Défense
 DEFENSE_METER_TEXT
-'''The Defense meter of a planet represents the power of the ground to space weapons installed. It's comparable to the Damage value of a space ship.'''
+'''La mesure défense d'une planète représente la puissance des armes sol-espace installées. Elle est comparable à la capacité d'endommagement des vaisseaux spatiaux.'''
 
 SHIELDS_METER_TITLE
 Boucliers
 SHIELDS_METER_TEXT
-'''The term Shields combines all kinds of protective forcefields. Regenerating each turn, they are usually the first barrier incoming attacks have to overcome.
+'''Le terme boucliers inclue toutes les sortes de champs de force de protection. Se régénérant à chaque tour, ce sont normalement les premières barrières que les envahisseurs ont à surmonter. 
 
-Space ships and planets have a Shields meter.'''
+Les vaisseaux spatiaux et les planètes ont une mesure boucliers.'''
 
 TROOP_TITLE
 Troupes
 TROOP_TEXT
-'''The term Troops combines all kinds of military forces capable of operating on a planets surface.
+'''Le terme troupes concerne toutes les sortes de forces militaires capable d'oppérer à la surface d'une planète.
 
-The Troop meter on a planet represents the power of the defending ground forces.  The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.'''
+La mesure troupe d'une planète représente la puissance des troupes de défense terrestre. Les forces d'invasion doivent envoyer des troupes plus puissantes (c. à d. un nombre cummulé suppérieur) pour pouvoir conquérir la planète.'''
 
 ORGANIC_SPECIES_TITLE
 Métabolisme organique
@@ -2756,21 +2759,21 @@ SELF_SUSTAINING_SPECIES_TEXT
 '''Self-Sustaining species may be energy or crystalline beings or something even stranger.  Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three growth specials.'''
 
 TELEPATHIC_TITLE
-Telepathy
+Télépathie
 TELEPATHY_TEXT
-'''Telepathic species are immune to mind-control and make it easier to research [[tech LRN_PSIONICS]].'''
+'''Les espèces télépathiques sont immunisées contre le contrôle de l'esprit, ce qui les rends beaucoup plus aptes à la recherche [[tech LRN_PSIONICS]].'''
 
 FUEL_TITLE
 Carburant
 FUEL_TEXT
-'''Le carburant permet aux vaisseaux interstellaires de voyager le long des liens hyperspaciaux. Pour chaque lien emprunté, un vaisseau consomme 1 unitée de carburant. Le carburant n'est consommé à aucun autre moment. Les lignes d'[[encyclopedia SUPPLY_TITLE]] ravitaillent complètement un vaisseau. Si un vaisseau voyage au delà des lignes de ravitaillement amies, le carburant se régénérera lentement lorsque le vaisseau se trouvera en dehors des liens hyperspaciaux.''' 
+'''Le carburant permet aux vaisseaux interstellaires de voyager le long des liens hyperspatiaux. Pour chaque lien emprunté, un vaisseau consomme 1 unitée de carburant. À aucun autre moment, il n'est consommé du carburant. Les lignes d'[[encyclopedia SUPPLY_TITLE]] permettent de ravitailler complètement un vaisseau. Si un vaisseau voyage au delà des lignes de ravitaillement amies, le carburant ne se régénérera que lentement et cela que lorsque le vaisseau se trouvera en dehors des liens hyperspatiaux.''' 
 
 SUPPLY_TITLE
 Approvisionnement
 SUPPLY_TEXT
-'''Les lignes d'approvisionnement sont rendues visible par la coloration des liens hyperspatiaux avec la couleur de l'empire. Les planètes reliées par des lignes d'approvisionnement peuvent échanger des resources physiques, c. à d. la production produite sur une planète, peut être utilisée sur n'importe quelle planète reliée pour y construire des vaisseaux ou des structures quelconques. Les lignes d'approvisionnement peuvent également servir à réapprovisionner les vaisseaux en [[encyclopedia FUEL_TITLE]].
+'''Les lignes d'approvisionnement sont rendues visible, par la coloration des liens hyperspatiaux avec la couleur de l'empire. Les planètes reliées par des lignes d'approvisionnement peuvent échanger des resources physiques, c. à d. que la production produite par une planète, peut être utilisée par n'importe quelle autre qui lui est reliée, pour y construire des vaisseaux ou des structures quelconques. Les lignes d'approvisionnement peuvent également servir à réapprovisionner les vaisseaux en [[encyclopedia FUEL_TITLE]].
 
-La mesure de l'approvisionnement d'une planète représente le nombre de liens hyperspatiaux que l'approvisionnement peut atteindre.'''
+La mesure approvisionnement d'une planète représente le nombre de liens hyperspatiaux que l'approvisionnement peut atteindre.'''
 
 
 FLEET_UPKEEP_TITLE
@@ -2817,7 +2820,7 @@ COMBAT_DESTROYED
  Détruit
 
 COMBAT_DEFENSELESS
- Sans Défense
+ Sans défense
 
 COMBAT_LOST
  Perdu!
@@ -4333,7 +4336,7 @@ détection
 METER_BATTLE_SPEED
 vitesse de combat
 METER_STARLANE_SPEED
-Vitesse dans les liens hyperspaciaux
+Vitesse dans les liens hyperspatiaux
 METER_DAMAGE
 Dommages
 METER_ROF
@@ -4476,7 +4479,7 @@ Missiles
 PC_FIGHTERS
 Chasseurs
 PC_POINT_DEFENSE
-Point de Défense
+Point de défense
 PC_SHIELD
 Bouclier
 PC_ARMOUR
@@ -5320,10 +5323,9 @@ LRN_PSIONICS
 Psionique
 
 LRN_PSIONICS_DESC
-'''Research Cost is greatly reduced when the empire includes a telepathic species.
+'''Les coûts de la recherche sont grandement réduits si l'empire comprend une espèce télépathique.
 
-Through deep introspection or artificial enhancement, the brain may develop abilities to directly interact with the universe around it, bypassing the limitations of a physical body. Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives. Applications of these powers, including mind control, personality alteration and possession have profound implications for the relationship between talented and untalented beings.'''
-#A travers l'introspection profonde ou une augmentation artificielle, le cerveau peut développer les capacités d'interagir directement avec l'univers autour de lui, en contournant les limitations physiques du corps. Des puissances telles que la télépathie, l'empathie, la clairvoyance, la prescience, la psychokinesie et la psychoenergie peuvent remplacer ou dépasser des alternatives biologiques ou  technologiques. Les applications de ces pouvoirs, y compris le contrôle de l'esprit, la modification de personnalité et la possession ont de grandes conséquences sur la relation entre les êtres psioniques et les autres.
+A travers l'introspection profonde ou une augmentation artificielle, le cerveau peut développer les capacités d'interagir directement avec l'univers autour de lui, en contournant les limitations physiques du corps. Des puissances telles que la télépathie, l'empathie, la clairvoyance, la prescience, la psychokinesie et la psychoenergie peuvent remplacer ou dépasser des alternatives biologiques ou  technologiques. Les applications de ces pouvoirs, y compris le contrôle de l'esprit, la modification de personnalité et la possession ont de grandes conséquences sur la relation entre les êtres psioniques et les autres.'''
 
 LRN_ARTIF_MINDS
 Intelligences Artificielles
@@ -5442,7 +5444,7 @@ Encapsulation environnementale
 
 CON_ENV_ENCAPSUL_DESC
 '''Allows unmanned stations on uninhabitable planet types, including Asteroids and Gas Giants. Many building types cannot be constructed on these outposts. Outposts are cheaper, and while they don't provide production, might be chosen as a faster way to claim territory.'''
-#Les poches couvertes, entourées et scellées d'un envionnement particulier sont essentielles pour le voyage spacial, la  colonisation de planètes risquées et la préservation de la diversité naturelle sur des mondes extrèmement industrialisés. Le maintien des conditions désirées n'est pas si insignifiant qu'il y paraît, cependant, dans de nombreux cas, il n'y a pas de source externe de matériel ou d'organisme pur et propre disponiblePlutot il est nécessaire de créer un environnement auto-suffisant et durable, souvent une écologie entière, capable de recyclage et réutilisation de ses déchets pour fournir tout ce qui est nécessaire et consommé.
+#Les poches couvertes, entourées et scellées d'un envionnement particulier sont essentielles pour le voyage spatial, la  colonisation de planètes risquées et la préservation de la diversité naturelle sur des mondes extrèmement industrialisés. Le maintien des conditions désirées n'est pas si insignifiant qu'il y paraît, cependant, dans de nombreux cas, il n'y a pas de source externe de matériel ou d'organisme pur et propre disponiblePlutot il est nécessaire de créer un environnement auto-suffisant et durable, souvent une écologie entière, capable de recyclage et réutilisation de ses déchets pour fournir tout ce qui est nécessaire et consommé.
 
 GRO_SYMBIOTIC_BIO
 Biologie Symbiotique
@@ -5961,7 +5963,7 @@ TROOPS_SHORT_DESC
 Améliore les troupes
 
 METER_GROWTH_SHORT_DESC
-Améliore la mesure de la croissance
+Améliore la mesure croissance
 
 POPULATION_SHORT_DESC
 Augmente la population planétaire
@@ -6267,7 +6269,7 @@ DEF_PLAN_BARRIER_SHLD_DESC
 Advanced Planetary Shield. This is not cumulative with Planetary Deflector Shield.'''
 
 DEF_ROOT_DEFENSE
-Propre Défense
+Propre défense
 
 DEF_ROOT_DEFENSE_DESC
 '''Augmente le maximum des [[encyclopedia TROOP_TITLE]] sur toutes les planètes par 2.
@@ -6897,9 +6899,9 @@ Centre Industriel
 BLD_INDUSTRY_CENTER_DESC
 '''Initially provides a bonus to Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus equal to the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
-[[tech PRO_INDUSTRY_CENTER_II]] refinement increases the bonus to equal the planet's population.
+[[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus.
 
-[[tech PRO_INDUSTRY_CENTER_III]] refinement further increases bonus to 1.5 times the planet's population.'''
+[[tech PRO_INDUSTRY_CENTER_III]] refinement further increases the bonus to triple the base bonus.'''
 #'''Initialement fournit +5 à l'industrie à moins de 100 en ligne directe de l'industrie, non empilable, du monde industriel ciblé.
 
 #[[tech PRO_INDUSTRY_CENTRE_II]] le raffinage augmente le bonus à +6 et augmente la distance à 200.
@@ -7190,7 +7192,7 @@ Increases the Growth on the planet on which it is built by 1, if that planet is 
 #############################################################
 
 HULL_DESC
-'''Vitesse lien hyperspacial: %1%
+'''Vitesse lien hyperspatial: %1%
 Contenance carburant: %2%
 Vitesse de combat: %3%
 Structure: %4%'''
