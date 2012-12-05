@@ -703,6 +703,9 @@ Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map. May crash on
 OPTIONS_DB_STARLANE_THICKNESS
 Sets how wide to render starlanes in pixels.
 
+OPTIONS_DB_STARLANE_CORE
+width multiplier for empire 'core' starlanes.
+
 OPTIONS_DB_RESOURCE_STARLANE_COLOURING
 Toggles whether to color starlanes with empire colors if empires can exchange resources along each starlane.
 
@@ -6857,9 +6860,9 @@ Industrial Center
 BLD_INDUSTRY_CENTER_DESC
 '''Initially provides a bonus to Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus equal to the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
 
-[[tech PRO_INDUSTRY_CENTER_II]] refinement increases the bonus to equal the planet's population.
+[[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus.
 
-[[tech PRO_INDUSTRY_CENTER_III]] refinement further increases bonus to 1.5 times the planet's population.'''
+[[tech PRO_INDUSTRY_CENTER_III]] refinement further increases the bonus to triple the base bonus.'''
 
 BLD_EXOBOT_SHIP
 Exobot Colony Origin
