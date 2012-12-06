@@ -1488,9 +1488,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
         const std::set<int>& empire_known_ship_designs = empire->ShipDesigns();
         for (std::set<int>::const_iterator design_it = empire_known_ship_designs.begin();
              design_it != empire_known_ship_designs.end(); ++design_it)
-        {
-            m_empire_known_ship_design_ids[empire_id].insert(*design_it);
-        }
+        { m_empire_known_ship_design_ids[empire_id].insert(*design_it); }
     }
 
 

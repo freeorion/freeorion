@@ -1029,7 +1029,7 @@ namespace {
                  fleet_it != fleet_ids.end(); ++fleet_it)
             {
                 Visibility fleet_vis = GetUniverse().GetObjectVisibilityByEmpire(*fleet_it, empire_id);
-                if (fleet_vis >= VIS_PARTIAL_VISIBILITY)
+                if (fleet_vis >= VIS_BASIC_VISIBILITY)
                     visible_fleets.insert(*fleet_it);
             }
             return;
@@ -1080,6 +1080,68 @@ namespace {
         }
     }
 
+    void GetPlanetsVisibleToEmpireAtSystem(std::set<int>& visible_planets, int empire_id, int system_id) {
+        visible_planets.clear();
+        const System* system = GetSystem(system_id);
+        if (!system)
+            return; // no such system
+        std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
+        if (planet_ids.empty())
+            return; // no fleets to be seen
+        if (empire_id != ALL_EMPIRES && !Empires().Lookup(empire_id))
+            return; // no such empire
+
+        // for visible planets by an empire, check visibility of planet by that empire
+        if (empire_id != ALL_EMPIRES) {
+            for (std::vector<int>::const_iterator planet_it = planet_ids.begin();
+                 planet_it != planet_ids.end(); ++planet_it)
+            {
+                // include planets visible to empire
+                Visibility planet_vis = GetUniverse().GetObjectVisibilityByEmpire(*planet_it, empire_id);
+                if (planet_vis < VIS_BASIC_VISIBILITY)
+                    continue;
+                // skip planets that have no owner and that are unpopulated; don't matter for combat conditions test
+                const Planet* planet = GetPlanet(*planet_it);
+                if (planet->Unowned() && planet->CurrentMeterValue(METER_POPULATION) <= 0.0)
+                    continue;
+                visible_planets.insert(*planet_it);
+            }
+            return;
+        }
+
+
+        // now considering only planets visible to monsters
+
+
+        // get best monster detection strength here.  Use monster detection meters for this...
+        double monster_detection_strength_here = 0.0;
+        std::vector<int> all_system_ship_ids = system->FindObjectIDs<Ship>();
+        for (std::vector<int>::const_iterator ship_it = all_system_ship_ids.begin();
+             ship_it != all_system_ship_ids.end(); ++ship_it)
+        {
+            const Ship* ship = GetShip(*ship_it);
+            if (!ship || !ship->Unowned())  // only want unowned / monster ships
+                continue;
+            if (ship->CurrentMeterValue(METER_DETECTION) > monster_detection_strength_here)
+                monster_detection_strength_here = ship->CurrentMeterValue(METER_DETECTION);
+        }
+
+        // test each planet for visibility by best monster detection here
+        for (std::vector<int>::const_iterator planet_it = planet_ids.begin();
+             planet_it != planet_ids.end(); ++planet_it)
+        {
+            const Planet* planet = GetPlanet(*planet_it);
+            if (!planet)
+                continue;
+
+            // if a planet is low enough stealth, it can be seen by monsters
+            if (monster_detection_strength_here >= planet->CurrentMeterValue(METER_STEALTH)) {
+                visible_planets.insert(*planet_it);
+                break;  // planet is seen, so don't need to check any more ships in it
+            }
+        }
+    }
+
     /** Returns true iff there is an appropriate combination of objects in the
       * system with id \a system_id for a combat to occur. */
     bool CombatConditionsInSystem(int system_id) {
@@ -1091,7 +1153,8 @@ namespace {
         // 4) empire A's fleet is set to aggressive
         // 5) empire A's fleet has at least one armed ship
         //
-        // note: monsters are treated as an empire always at war with all other empires
+        // monster ships are treated as owned by an empire at war with all other empires (may be passive or aggressive)
+        // native planets are treated as owned by an empire at war with all other empires
 
         // what empires have fleets here?
         std::map<int, std::set<int> > empire_fleets_here;
@@ -1155,8 +1218,8 @@ namespace {
         if (empires_here_at_war.empty())
             return false;
 
-        // is an empire with an aggressive fleet here at war with an empire that
-        // has a planet here?
+        // is an empire with an aggressive fleet here able to see a planet of an
+        // empire it is at war with here?
         for (std::set<int>::const_iterator empire1_it = empires_with_aggressive_fleets_here.begin();
              empire1_it != empires_with_aggressive_fleets_here.end(); ++empire1_it)
         {
@@ -1165,13 +1228,23 @@ namespace {
             // what empires is the aggressive empire at war with?
             const std::set<int>& at_war_with_empire_ids = empires_here_at_war[aggressive_empire_id];
 
-            // do any of the empires at war with the aggressive empire have a planet here?
-            for (std::set<int>::const_iterator at_war_empire_it = at_war_with_empire_ids.begin();
-                 at_war_empire_it != at_war_with_empire_ids.end(); ++at_war_empire_it)
+            // what planets can the aggressive empire see?
+            std::set<int> aggressive_empire_visible_planets;
+            GetPlanetsVisibleToEmpireAtSystem(aggressive_empire_visible_planets, aggressive_empire_id, system_id);
+
+            // is any planet owned by an empire at war with aggressive empire?
+            for (std::set<int>::const_iterator planet_it = aggressive_empire_visible_planets.begin();
+                 planet_it != aggressive_empire_visible_planets.end(); ++planet_it)
             {
-                int at_war_empire_id = *at_war_empire_it;
-                if (empire_planets_here.find(at_war_empire_id) != empire_planets_here.end())
-                    return true;
+                int planet_id = *planet_it;
+                const Planet* planet = GetPlanet(planet_id);
+                if (!planet)
+                    continue;
+                int visible_planet_empire_id = planet->Owner();
+
+                if (aggressive_empire_id != visible_planet_empire_id &&
+                    at_war_with_empire_ids.find(visible_planet_empire_id) != at_war_with_empire_ids.end())
+                { return true; }    // an aggressive empire can see a planet onwned by an empire it is at war with
             }
         }
 
