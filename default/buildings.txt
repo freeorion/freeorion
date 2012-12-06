@@ -386,7 +386,7 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = WithinDistance 0 Source
-            effects = SetStealth Value - 450
+            effects = SetStealth Value - 30
             
         EffectsGroup
             scope = And [
