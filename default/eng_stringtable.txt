@@ -4032,7 +4032,7 @@ Monsters inside the core of this planet are dragging it into the void.  There sh
 VOID_SLAVE_SPECIAL
 Void Metamorphisis
 VOID_SLAVE_SPECIAL_DESC
-This planet exists partially in this universe and partially in the void, increasing its stealth by 700.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
+This planet exists partially in this universe and partially in the void, increasing its stealth by 80.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
 
 DERELICT_SPECIAL
 Derelict
