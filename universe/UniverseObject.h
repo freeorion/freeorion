@@ -184,7 +184,6 @@ protected:
 
 private:
     std::map<MeterType, Meter>  CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
-    std::map<std::string, int>  CensoredSpecials(Visibility vis) const; ///< returns set of specials of this object that are censored based on the specified Visiblity \a vis
 
     int                         m_id;
     std::string                 m_name;
