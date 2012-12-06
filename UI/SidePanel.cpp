@@ -576,14 +576,7 @@ public:
             s_scanline_shader = boost::shared_ptr<ShaderProgram>(
                 ShaderProgram::shaderProgramFactory("", shader_text));
         }
-        s_instances_counter++;
         Refresh();
-    }
-
-    ~RotatingPlanetControl() {
-        s_instances_counter--;
-        if (!s_instances_counter && s_scanline_shader)
-            s_scanline_shader.reset();
     }
 
     virtual void Render() {
@@ -675,10 +668,9 @@ private:
     StarType                        m_star_type;
 
     static boost::shared_ptr<ShaderProgram> s_scanline_shader;
-    static int                              s_instances_counter;
 };
 boost::shared_ptr<ShaderProgram> RotatingPlanetControl::s_scanline_shader = boost::shared_ptr<ShaderProgram>();
-int RotatingPlanetControl::s_instances_counter = 0;
+
 
 namespace {
     int SystemNameFontSize() {
@@ -1211,7 +1203,7 @@ void SidePanel::PlanetPanel::Refresh() {
     bool mine =             planet->OwnedBy(client_empire_id);
     bool populated =        planet->CurrentMeterValue(METER_POPULATION) > 0.0;
     bool habitable =        planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
-    bool visible =          GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY;
+    bool visible =          GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_BASIC_VISIBILITY;
     bool shielded =         planet->CurrentMeterValue(METER_SHIELD) > 0.0;
     bool being_colonized =  planet->IsAboutToBeColonized();
     bool outpostable =                   !populated && (  !has_owner /*&& !shielded*/         ) && visible && !being_colonized;
@@ -1633,9 +1625,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
         // cancel previous invasion orders for this planet
         for (std::set<int>::const_iterator o_it = planet_invade_orders.begin();
              o_it != planet_invade_orders.end(); ++o_it)
-        {
-            HumanClientApp::GetApp()->Orders().RecindOrder(*o_it);
-        }
+        { HumanClientApp::GetApp()->Orders().RecindOrder(*o_it); }
 
     } else {
         // order selected invasion ships to invade planet
@@ -1650,7 +1640,8 @@ void SidePanel::PlanetPanel::ClickInvade() {
 
             CancelColonizeInvadeScrapShipOrders(ship);
 
-            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new InvadeOrder(empire_id, ship->ID(), m_planet_id)));
+            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+                new InvadeOrder(empire_id, ship->ID(), m_planet_id)));
         }
     }
 }
