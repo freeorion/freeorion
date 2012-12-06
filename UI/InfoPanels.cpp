@@ -14,8 +14,10 @@
 #include "../util/OptionsDB.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/Directories.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
+#include "ShaderProgram.h"
 #include "Sound.h"
 
 #include <GG/DrawUtil.h>
@@ -1890,17 +1892,16 @@ void BuildingsPanel::DoExpandCollapseLayout() {
 
 void BuildingsPanel::EnableOrderIssuing(bool enable/* = true*/) {
     for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin();
-         it != m_building_indicators.end();
-         ++it)
-    {
-        (*it)->EnableOrderIssuing(enable);
-    }
+         it != m_building_indicators.end(); ++it)
+    { (*it)->EnableOrderIssuing(enable); }
 }
 
 
 /////////////////////////////////////
 //       BuildingIndicator         //
 /////////////////////////////////////
+boost::shared_ptr<ShaderProgram> BuildingIndicator::s_scanline_shader;
+
 BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_graphic(0),
@@ -1983,9 +1984,41 @@ void BuildingIndicator::Render() {
     glPolygonMode(GL_BACK, initial_modes[1]);
 
     glEnable(GL_TEXTURE_2D);
+
+
+    // Scanlines for not currently-visible objects?
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (!s_scanline_shader || empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+        return;
+    if (m_building_id == INVALID_OBJECT_ID)
+        return;
+    if (GetUniverse().GetObjectVisibilityByEmpire(m_building_id, empire_id) >= VIS_BASIC_VISIBILITY)
+        return;
+
+    float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
+    s_scanline_shader->Use();
+    s_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
+    glPolygonMode(GL_BACK, GL_FILL);
+    glBegin(GL_POLYGON);
+        glColor(GG::CLR_WHITE);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
+    glEnd();
+    s_scanline_shader->stopUse();
 }
 
 void BuildingIndicator::Refresh() {
+    if (!s_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
+        boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
+        std::string shader_text;
+        ReadFile(shader_path, shader_text);
+        s_scanline_shader = boost::shared_ptr<ShaderProgram>(
+            ShaderProgram::shaderProgramFactory("", shader_text));
+    }
+
     ClearBrowseInfoWnd();
 
     const Building* building = GetBuilding(m_building_id);

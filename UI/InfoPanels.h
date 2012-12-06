@@ -10,6 +10,7 @@
 #include <GG/DropDownList.h>
 #include <GG/BrowseInfoWnd.h>
 
+class ShaderProgram;
 class PopulationPanel;
 class ResourcePanel;
 class BuildingsPanel;
@@ -249,6 +250,8 @@ public:
     //@}
 
 private:
+    static boost::shared_ptr<ShaderProgram> s_scanline_shader;
+
     GG::StaticGraphic*          m_graphic;
     GG::StaticGraphic*          m_scrap_indicator;  ///< shown to indicate building was ordered scrapped
     MultiTurnProgressBar*       m_progress_bar;
