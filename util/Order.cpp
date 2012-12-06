@@ -551,7 +551,7 @@ void InvadeOrder::ExecuteImpl() const {
         Logger().errorStream() << "InvadeOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
         return;
     }
-    if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_PARTIAL_VISIBILITY) {
+    if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_BASIC_VISIBILITY) {
         Logger().errorStream() << "InvadeOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
         //return;
     }
