@@ -9,6 +9,7 @@ import FleetUtilsAI
 import ExplorationAI
 from MilitaryAI import MinThreat
 import ProductionAI
+import ResourcesAI
 
 ##moving ALL or NEARLY ALL  'global' variables into AIState object rather than module
 # global variables
@@ -19,6 +20,7 @@ colonyTargetedSystemIDs = []
 #colonisableOutpostIDs = []  # moved into AIstate
 outpostTargetedSystemIDs = []
 opponentPlanetIDs = []
+opponentSystemIDs=[]
 invasionTargets=[]
 invasionTargetedSystemIDs = []
 blockadeTargetedSystemIDs=[]
@@ -57,6 +59,7 @@ class AIstate(object):
         self.colonisableOutpostIDs = []  # 
         self.outpostTargetedSystemIDs = []
         self.opponentPlanetIDs = []
+        self.opponentSystemIDs=[]
         self.invasionTargetedSystemIDs = []
         self.militarySystemIDs = []
         self.militaryTargetedSystemIDs = []
@@ -113,6 +116,7 @@ class AIstate(object):
         del self.colonisableOutpostIDs
         del self.outpostTargetedSystemIDs
         del self.opponentPlanetIDs
+        del self.opponentSystemIDs
         del self.invasionTargetedSystemIDs
         del self.militarySystemIDs
         del self.militaryTargetedSystemIDs
@@ -541,6 +545,7 @@ class AIstate(object):
             return
 
     def sessionStartCleanup(self):
+        ResourcesAI.newTargets.clear()
         self.newlySplitFleets={}
         for fleetID in FleetUtilsAI.getEmpireFleetIDs():
             self.getFleetRole(fleetID) #

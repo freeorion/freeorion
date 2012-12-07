@@ -56,6 +56,7 @@ def assignScoutsToExploreSystems():
     exploreList = [sysID for dist, sysID in expSystemsByDist ]
 
     alreadyCovered,  availableScouts  = getCurrentExplorationInfo()
+    
 
     print "explorable sys IDs: %s"%exploreList
     print "already targeted: %s"%alreadyCovered
@@ -68,14 +69,16 @@ def assignScoutsToExploreSystems():
     if not needsCoverage or not availableScouts:
         return
 
+    availableScouts = set(availableScouts)
     sentList=[]
     while (len(availableScouts) > 0 ) and ( len(needsCoverage) >0):
         thisSysID = needsCoverage.pop(0)
         if (foAI.foAIstate.systemStatus.setdefault(thisSysID, {}).setdefault('monsterThreat', 0) > 2000) or (fo.currentTurn() <20  and foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'] > 200):
             print "Skipping exploration of system %d due to Big Monster,  threat %d"%(thisSysID,  foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'])
             continue
+        foundFleets=[]
         thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetStats={},  minStats={},  curStats={},  species="",  systemsToCheck=[thisSysID],  systemsChecked=[], 
-                                                     fleetPool = availableScouts,   fleetList=[],  verbose=False)
+                                                     fleetPoolSet = availableScouts,   fleetList=foundFleets,  verbose=False)
         if thisFleetList==[]:
             print "seem to have run out of scouts while trying to cover sysID %d"%thisSysID
             break #must have ran out of scouts
@@ -87,7 +90,7 @@ def assignScoutsToExploreSystems():
             sentList.append(thisSysID)
         else: #system too far out, skip it, but can add scout back to available pool
             print "sysID %d too far out for fleet ( ID %d ) to readch"%(thisSysID,  fleetID)
-            availableScouts.append(fleetID)
+            availableScouts.update(thisFleetList)
     print "sent scouting fleets to sysIDs : %s"%sentList
     return 
     """

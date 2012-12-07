@@ -7,6 +7,7 @@ import PlanetUtilsAI
 import AITarget
 import math
 from ProductionAI import  getBestShipInfo
+from ColonisationAI import evaluatePlanet
 
 def getInvasionFleets():
     "get invasion fleets"
@@ -21,6 +22,13 @@ def getInvasionFleets():
 
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
     fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
+    
+    primeInvadableSystemIDs = set([])
+    for sysID in empire.fleetSupplyableSystemIDs:
+        primeInvadableSystemIDs.add(sysID)
+        for nID in  universe.getImmediateNeighbors(sysID,  empireID):
+            primeInvadableSystemIDs.add(nID)
+    primeInvadablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(primeInvadableSystemIDs)
 
     # get competitor planets
     exploredSystemIDs = empire.exploredSystemIDs
@@ -34,8 +42,8 @@ def getInvasionFleets():
     empireOwnedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
     # print "Empire Owned PlanetIDs:            " + str(empireOwnedPlanetIDs)
 
-    invadablePlanetIDs = list(set(allPopulatedPlanets) - set(empireOwnedPlanetIDs))
-    print "Invadable PlanetIDs:              " + str(invadablePlanetIDs)
+    invadablePlanetIDs = set(primeInvadablePlanetIDs).intersection(set(allPopulatedPlanets) - set(empireOwnedPlanetIDs))
+    print "Prime Invadable PlanetIDs:              " + str(invadablePlanetIDs)
 
     print ""
     print "Invasion Targeted SystemIDs:       " + str(AIstate.invasionTargetedSystemIDs)
@@ -103,45 +111,51 @@ def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empir
     planetValues = {}
 
     for planetID in planetIDs:
-        planetValues[planetID] = evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire)
+        planetValues[planetID] = evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire)
 
     return planetValues
 
-def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire):
+def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire):
     "return the invasion value of a planet"
-
+    #TODO: add more factors, as used for colonization
     universe = fo.getUniverse()
+    empireID = empire.empireID
     distanceFactor = 0
     planet = universe.getPlanet(planetID)
-    if (planet == None): 
+    if (planet == None) :  #TODO: exclude planets with stealth higher than empireDetection
         print "invasion AI couldn't get current info on planet %d"%planetID
         return 0, 0
-
-    # give preference to closest invadable planets
-    empireID = empire.empireID
+        
     capitalID = PlanetUtilsAI.getCapital()
     homeworld = universe.getPlanet(capitalID)
     if homeworld:
         homeSystemID = homeworld.systemID
         evalSystemID = planet.systemID
         leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
-        distanceFactor = 1.001/(leastJumpsPath + 1)
+        distanceFactor = 4.0/(leastJumpsPath + 1)
         
-    targetPop=planet.currentMeterValue(fo.meterType.targetPopulation)
-    if planetID in fleetSupplyablePlanetIDs:
-        popVal =  4*targetPop
-    else:
-        popVal =  targetPop
-
     troops = planet.currentMeterValue(fo.meterType.troops)
-    planetSpecials = list(planet.specials)
-    specialVal=0
-    if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_ASTEROID_MINE") == fo.techStatus.complete ) ): 
-            specialVal= 15   # asteroid mining is great, fast return
-    for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
-        if special in planetSpecials:
-            specialVal = 40 
-    return popVal+specialVal,  troops
+    specName=planet.speciesName
+    species=fo.getSpecies(specName)
+    if not species:# perhaps stealth might make species info inaccessible
+        targetPop=planet.currentMeterValue(fo.meterType.targetPopulation)
+        if planetID in fleetSupplyablePlanetIDs:
+            popVal =  4*targetPop
+        else:
+            popVal =  6*targetPop#assign higher value if the colony would extend our supply range
+        planetSpecials = list(planet.specials)
+        specialVal=0
+        if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_ASTEROID_MINE") == fo.techStatus.complete ) ): 
+                specialVal= 15   # asteroid mining is great, fast return
+        for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
+            if special in planetSpecials:
+                specialVal = 40 
+        return popVal+specialVal,  troops
+    else:
+        popVal = evaluatePlanet(planetID,  AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  species,  empire) #evaluatePlanet is implorted from ColonisationAI
+        if planetID not in fleetSupplyablePlanetIDs:
+            popVal =  1.3*popVal#assign higher value if the colony would extend our supply range
+        return popVal,  troops
 
         
 
@@ -169,8 +183,9 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
         
     sortedTargets=sorted( [  ( pscore-ptroops/2 ,  pID,  pscore,  ptroops) for pID,  pscore,  ptroops in evaluatedPlanets ] ,  reverse=True)
 
+    invasionPool=set(invasionPool)
     for modscrore,  pID,  pscore,  ptroops in sortedTargets: # evaluatedPlanets is a dictionary
-        if invasionPool ==[]: return
+        if not invasionPool: return
         planet=universe.getPlanet(pID)
         if not planet: continue
         sysID = planet.systemID
@@ -179,10 +194,11 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
         foundStats={}
         minStats= {'rating':0, 'troopPods':podsNeeded}
         targetStats={'rating':10,'troopPods':podsNeeded+2} 
-        theseFleets = FleetUtilsAI.getFleetsForMission(1, targetStats , minStats,   foundStats,  "",  systemsToCheck=[sysID],  systemsChecked=[], fleetPool=invasionPool,   fleetList=foundFleets,  verbose=False)
+        theseFleets = FleetUtilsAI.getFleetsForMission(1, targetStats , minStats,   foundStats,  "",  systemsToCheck=[sysID],  systemsChecked=[], fleetPoolSet=invasionPool,   fleetList=foundFleets,  verbose=False)
         if theseFleets == []:
             if not FleetUtilsAI.statsMeetReqs(foundStats,  minStats):
                 print "Insufficient invasion troop  allocation for system %d ( %s ) -- requested  %s , found %s"%(sysID,  universe.getSystem(sysID).name,  minStats,  foundStats)
+                invasionPool.update( foundFleets )
                 continue
             else:
                 theseFleets = foundFleets

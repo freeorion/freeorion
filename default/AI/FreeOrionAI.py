@@ -213,16 +213,19 @@ def generateOrders():
     turnStartTime=time() #starting AI timer here, to be sure AI doesn't get blame for any  lags in server being able to provide the Universe object
     empire = fo.getEmpire()
     planetID = PlanetUtilsAI.getCapital()
+    planet=None
     if planetID is not None:
         planet = universe.getPlanet(planetID)
     print "***************************************************************************"
     print "***************************************************************************"
     print ("Generating Orders")
     print "EmpireID:    " + str(empire.empireID) + " Name: " + empire.name + " Turn: " + str(fo.currentTurn())
+    empireColor=empire.colour
+    print "EmpireColors: %d %d %d %d"%(empireColor.r,  empireColor.g,  empireColor.b,  empireColor.a)
     if planet: 
         print "CapitalID: " + str(planetID) + " Name: " + planet.name + " Species: " + planet.speciesName 
     else:
-        print "No current capital"
+        print "CapitalID: None Currently      Name: None     Species: None "
     print "***************************************************************************"
     print "***************************************************************************"
     

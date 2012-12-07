@@ -62,7 +62,7 @@ def generateResearchOrders():
             else:
                 print "    %25s  allocated %6.2f RP   --  missing preReqs: %s   -- unlockable items: %s "%(element.tech,  element.allocation,  missingPrereqs,  unlockedItems)
         print ""
-    if fo.currentTurn()<=1:
+    if fo.currentTurn()==1:
         newtech = TechsListsAI.primaryMetaTechsList()
         #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
         pLTsToEnqueue = newtech[:]

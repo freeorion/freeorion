@@ -409,8 +409,8 @@ def generateProductionOrders():
 #TODO: add totalPP checks below, so don't overload queue
 
     queuedShipyardLocs = [element.locationID for element in productionQueue if (element.name=="BLD_SHIPYARD_BASE") ]
-    theseSystems={}
-    theseplanets={} #unused for now
+    colonySystems={}
+    colonyPlanets={} 
     for specName in empireColonizers:
         if (len( empireColonizers[specName])==0) and (specName in empireSpecies): #no current shipyards for this species#TODO: also allow orbital incubators and/or asteroid ships
             for pID in empireSpecies.get(specName, []): #SP_EXOBOT may not actually have a colony yet but be in empireColonizers
@@ -423,11 +423,11 @@ def generateProductionOrders():
                     buildLoc= pops[-1][1]
                     res=fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_BASE", buildLoc)
                     print "Enqueueing BLD_SHIPYARD_BASE at planet %d (%s) for colonizer species %s, with result %d"%(buildLoc, universe.getPlanet(buildLoc).name,  specName,   res)
-            for pid in empireSpecies.get(specName, []): 
-                planet=universe.getPlanet(pid)
-                if planet:
-                    theseSystems.setdefault(planet.systemID,  {}).setdefault('pids', []).append(pid)
-                    theseplanets[pid]=planet.systemID
+        for pid in empireSpecies.get(specName, []): 
+            planet=universe.getPlanet(pid)
+            if planet:
+                colonySystems.setdefault(planet.systemID,  {}).setdefault('pids', []).append(pid)
+                colonyPlanets[pid]=planet.systemID
 
     bldName = "BLD_SHIPYARD_ORG_ORB_INC"
     if empire.buildingTypeAvailable(bldName):
@@ -443,11 +443,13 @@ def generateProductionOrders():
     if empire.buildingTypeAvailable(bldName):
         queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
         bldType = fo.getBuildingType(bldName)
-        for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
+        for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):#TODO: check to ensure that a resource center exists in system, or GGG would be wasted
             if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
-                res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
-                if res: queuedBldLocs.append(pid)
-                print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
+                thisPlanet=universe.getPlanet(pid)
+                if thisPlanet.systemID in empireSpeciesSystems:
+                    res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
+                    if res: queuedBldLocs.append(pid)
+                    print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
     
     bldName = "BLD_SOL_ORB_GEN"
     if empire.buildingTypeAvailable(bldName):
@@ -596,7 +598,7 @@ def generateProductionOrders():
                     planet=universe.getPlanet(pid)
                     if bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
                         if  bldName not in [bld.name for bld in map( universe.getObject,  planet.buildingIDs)]:
-                            if  "BLD_SHIPYARD_BASE" not in [bld.name for bld in map( universe.getObject,  planet.buildingIDs)]:
+                            if  "BLD_SHIPYARD_BASE"  in [bld.name for bld in map( universe.getObject,  planet.buildingIDs)]:
                                 res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
                                 print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
                                 if res: 
@@ -654,13 +656,14 @@ def generateProductionOrders():
 
     topPriority = -1
     topscore = -1
+    numTotalFleets = len(foAI.foAIstate.fleetStatus)
     numColonyTargs=len(foAI.foAIstate.colonisablePlanetIDs )
     numColonyFleets=len( FleetUtilsAI.getEmpireFleetIDsByRole( AIFleetMissionType.FLEET_MISSION_COLONISATION) )# counting existing colony fleets each as one ship
     totColonyFleets = sum(queuedColonyShips.values()) + numColonyFleets
     bestShip,  bestDesign,  buildChoices = getBestShipInfo(AIPriorityType.PRIORITY_PRODUCTION_COLONISATION)
     colonyBuildLocs=[]
     speciesMap = {}
-    for loc in buildChoices:
+    for loc in (buildChoices or []):
         thisSpec = universe.getPlanet(loc).speciesName
         speciesMap.setdefault(thisSpec,  []).append( loc)
     colonyBuildChoices=[]
@@ -671,6 +674,8 @@ def generateProductionOrders():
     numOutpostTargs=len(foAI.foAIstate.colonisableOutpostIDs )
     numOutpostFleets=len( FleetUtilsAI.getEmpireFleetIDsByRole( AIFleetMissionType.FLEET_MISSION_OUTPOST) )# counting existing outpost fleets each as one ship
     totOutpostFleets = queuedOutpostShips + numOutpostFleets
+    maxColonyFleets = min( numColonyTargs+1+fo.currentTurn()/10 ,  numTotalFleets/4  )
+    maxOutpostFleets = min(numOutpostTargs+1+fo.currentTurn()/10,  numTotalFleets/4  )  
 
     print "Production Queue Priorities:"
     filteredPriorities = {}
@@ -680,9 +685,9 @@ def generateProductionOrders():
             topscore = score #don't really need topscore nor sorting with current handling
         print " Score: %4d -- %s "%(score,  AIPriorityNames[ID] )
         if ID != AIPriorityType.PRIORITY_PRODUCTION_BUILDINGS:
-            if ( ID == AIPriorityType.PRIORITY_PRODUCTION_COLONISATION ) and (  totColonyFleets <  numColonyTargs+1+int(fo.currentTurn()/10)   ) and len(colonyBuildChoices) >0:
+            if ( ID == AIPriorityType.PRIORITY_PRODUCTION_COLONISATION ) and (  totColonyFleets <  maxColonyFleets) and len(colonyBuildChoices) >0:
                 filteredPriorities[ID]= score
-            elif ( ID == AIPriorityType.PRIORITY_PRODUCTION_OUTPOST ) and (  totOutpostFleets <  numOutpostTargs+1+int(fo.currentTurn()/20)   ):
+            elif ( ID == AIPriorityType.PRIORITY_PRODUCTION_OUTPOST ) and (  totOutpostFleets <  maxOutpostFleets ):
                 filteredPriorities[ID]= score
             elif ID not in [AIPriorityType.PRIORITY_PRODUCTION_OUTPOST ,  AIPriorityType.PRIORITY_PRODUCTION_COLONISATION ]:
                 filteredPriorities[ID]= score
@@ -726,16 +731,22 @@ def generateProductionOrders():
         makingColonyShip=False
         makingOutpostShip=False
         if ( thisPriority ==  AIPriorityType.PRIORITY_PRODUCTION_COLONISATION ):
-            if ( totColonyFleets >=  numColonyTargs+1+int(fo.currentTurn()/10) ):
+            if ( totColonyFleets >=  maxColonyFleets ):
                 print "Already sufficient colony ships in queue,  trying next priority choice"
                 print ""
+                for i in range( len(priorityChoices)-1,  -1,  -1):
+                    if priorityChoices[i]==AIPriorityType.PRIORITY_PRODUCTION_COLONISATION:
+                        del priorityChoices[i]
                 continue
             else:
                 makingColonyShip=True
         if ( thisPriority ==  AIPriorityType.PRIORITY_PRODUCTION_OUTPOST ):
-            if ( totOutpostFleets >=  numOutpostTargs+1+int(fo.currentTurn()/20) ):
+            if ( totOutpostFleets >=  maxOutpostFleets ):
                 print "Already sufficient outpost ships in queue,  trying next priority choice"
                 print ""
+                for i in range( len(priorityChoices)-1,  -1,  -1):
+                    if priorityChoices[i]==AIPriorityType.PRIORITY_PRODUCTION_OUTPOST:
+                        del priorityChoices[i]
                 continue
             else:
                 makingOutpostShip=True
@@ -746,7 +757,7 @@ def generateProductionOrders():
             loc = choice(buildChoices)
         numShips=1
         perTurnCost = (float(bestDesign.productionCost(empire.empireID,  homeworld.id)) / bestDesign.productionTime(empire.empireID,  loc))
-        if  not ( makingColonyShip or  makingOutpostShip ): #TODO: consider whether to allow multiples of colony or outpost ships; if not, priority sampling gets skewed
+        if  not ( makingColonyShip ): #TODO: consider whether to allow multiples of colony  ships; if not, priority sampling gets skewed
             while ( totalPP > 25*perTurnCost):
                 numShips *= 5
                 perTurnCost *= 5

@@ -42,12 +42,12 @@ def countPartsFleetwide(fleetID,  partsList):
                 tally += 1
     return tally
 
-def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPool,   fleetList, takeAny=False,  verbose=False): #implements breadth-first search through systems
+def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList, takeAny=False,  verbose=False): #implements breadth-first search through systems
     if verbose:
-        print "getFleetsForMission: (nships:%1d,  targetStats:%6d,  minStats:%6d, curStats:%6d,  species:%6s,  systemsToCheck:%8s,  systemsChecked:%8s, fleetPool:%8s,   fleetList:%8s) "%(
-                                                                                                                                        nships,  targetStats,  minStats, curStats,  species,  systemsToCheck,  systemsChecked, fleetPool,   fleetList)
+        print "getFleetsForMission: (nships:%1d,  targetStats:%6d,  minStats:%6d, curStats:%6d,  species:%6s,  systemsToCheck:%8s,  systemsChecked:%8s, fleetPoolSet:%8s,   fleetList:%8s) "%(
+                                                                                                                                        nships,  targetStats,  minStats, curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList)
     universe = fo.getUniverse()
-    if not (systemsToCheck and fleetPool):
+    if not (systemsToCheck and fleetPoolSet):
         if verbose: 
             print "no more systems or fleets to check"
         if takeAny or ( statsMeetReqs(curStats,  minStats)  and ( sum( [len(universe.getFleet(fID).shipIDs) for fID in fleetList] )  >= nships)):
@@ -59,18 +59,20 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
     #thisSys = universe.getSystem(thisSystemID)
     #if not thisSys:
     #    return getFleetsForMission(nships....
-    fleetsHere = [fleetID for fleetID in fleetPool if ( foAI.foAIstate.fleetStatus.get(fleetID,  {}).get('sysID',  -1) == thisSystemID ) ]
+    #fleetsHere = [fleetID for fleetID in fleetPoolSet if ( foAI.foAIstate.fleetStatus.get(fleetID,  {}).get('sysID',  -1) == thisSystemID ) ]
+    fleetsHere = [ fid for fid in foAI.foAIstate.systemStatus.get(thisSystemID,  {}).get('myfleets',  []) if fid in fleetPoolSet]
     if verbose:
         print "found fleetPool Fleets  %s"%fleetsHere
     while fleetsHere !=[]:
         fleetID=fleetsHere.pop(0)
         fleet = universe.getFleet(fleetID)
         if not fleet: 
-            del fleetPool[ fleetPool.index( fleetID) ]
+            #del fleetPool[ fleetPool.index( fleetID) ]
+            fleetPoolSet.remove(  fleetID) 
             continue
         if len (list(fleet.shipIDs)) > 1:
             newFleets = splitFleet(fleetID) # try splitting fleet
-            fleetPool.extend(newFleets)
+            fleetPoolSet.update(newFleets)
             fleetsHere.extend(newFleets)
         meetsSpeciesReq=False
         if (species == ""): 
@@ -83,7 +85,8 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
                     break
         if meetsSpeciesReq:
             fleetList.append(fleetID)
-            del fleetPool[ fleetPool.index( fleetID) ]
+            #del fleetPool[ fleetPool.index( fleetID) ]
+            fleetPoolSet.remove( fleetID)
             curStats['rating'] = curStats.get('rating',  0) + foAI.foAIstate.getRating(fleetID)
             if 'troopPods' in targetStats:
                 curStats['troopPods'] = curStats.get('troopPods',  0) + countPartsFleetwide(fleetID,  ["GT_TROOP_POD"])
@@ -96,7 +99,7 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
     for neighborID in [el.key() for el in universe.getSystemNeighborsMap(thisSystemID,  foAI.foAIstate.empireID) ]:
         if neighborID not in systemsChecked and neighborID in foAI.foAIstate.exploredSystemIDs:
             systemsToCheck.append(neighborID)
-    return getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPool,  fleetList,  takeAny,  verbose)
+    return getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,  fleetList,  takeAny,  verbose)
     
 def splitFleet(fleetID):
     "splits a fleet into its ships"
