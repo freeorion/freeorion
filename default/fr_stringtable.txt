@@ -1,6 +1,6 @@
 Français
 
-#This is the French String Table file for FreeOrion. (= eng_svn5515)
+#This is the French String Table file for FreeOrion. (= eng_svn5518)
 #Translation by alchemy, shivu and zareif.
 
 #################
@@ -2176,25 +2176,25 @@ SHIP_SPEED_STAT_MAIN
 Distance maximale parcourue le long des liens hyperspatiaux par tour.
 
 FW_FLEET_FUEL_SUMMARY
-Fleet Fuel - Equal to the minimum fuel of ships in the fleet.
+Carburant de la flotte - est égal au minimum de carburant des vaissaeux de la flotte.
 
 FW_FLEET_SPEED_SUMMARY
-Fleet Speed - Equal to the minimum speed of ships in the fleet.
+Vitesse de la flotte - est égale a la vitesse minimale des vaissaeux de la flotte.
 
 FW_FLEET_SHIELD_SUMMARY
-Fleet Shields - Equal to the total shields of ships in the fleet.
+Boucliers de la flotte - est égal au total des boucliers des vaissaeux de c
 
 FW_FLEET_STRUCTURE_SUMMARY
-Fleet Structure - Equal to the total structure of ships in the fleet.
+Structures de la flotte - est égal à la structure totale de vaissaeux de la flotte.
 
 FW_FLEET_DAMAGE_SUMMARY
-Fleet Damage - Equal to the total damage of ships in the fleet.
+Endommagement de la flotte - est égal à l'endommagement total de la flotte.
 
 FW_FLEET_COUNT_SUMMARY
-Fleet Count - Equal to the total number of ships in the fleet.
+Compte de la flotte - est égal au nombre total de vaissaeux de la flotte.
 
 FW_SPLIT_DAMAGED_FLEET
-Split Damaged Ships From Fleet
+Écarter les vaisseaux endommagés de la flotte
 
 FW_SPLIT_FLEET
 Scinder la flotte
@@ -2497,7 +2497,7 @@ ENC_SHIP_DESIGN
 Conception de vaisseau
 
 SHIPS_OF_DESIGN
-Vaisseaux selon cette conception: 
+Vaisseaux bâtis suivant cette conception: 
 
 NO_SHIPS_OF_DESIGN
 Pas de vaisseaux de cette conception connus.
@@ -2655,7 +2655,7 @@ GROWTH_ARTICLE_SHORT_DESC
 Croissance
 
 OUTPOSTS_ARTICLE_SHORT_DESC
-Avant-postes
+Avant-poste
 
 PRODUCTION_ARTICLE_SHORT_DESC
 Production
@@ -2685,9 +2685,9 @@ PEACE_TEXT
 La paix est l'état diplomatique entre deux empires qui se sont mis d'accord pour ne pas attaquer les vaisseaux ou les planètes de l'autre, ni d'entraver les lignes d'[[encyclopedia SUPPLY_TITLE]] de l'autre, ainsi que de ne pas faire obstacle à son essor colonial.  
 
 OUTPOSTS_TITLE
-Avant-postes
+Avant-poste
 OUTPOSTS_TEXT
-'''Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create [[encyclopedia SUPPLY_TITLE]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an [[shippart CO_OUTPOST_POD]] on a ship. Outposts are also formed when the population of a colony drops to zero for any reason.'''
+'''Les avant-postes sont des stations inhabitées qui peuvent être placées dans des lieux trouvés trop hostiles à la survie d'une colonie. Ils n'ont pas de population et ne produisent normalement pas de resources, mais créent des lignes d'[[encyclopedia SUPPLY_TITLE]] (avec la bonne technologie) et fournissent une vision. Des colonies peuvent être fondées sur les planète déjà munies d'un avant-poste. Pour construire un avant-poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un vaisseau. Des avant-postes sont également formés si la population d'une colonie tombe à zéro et cela quelle qu'en soit la raison.'''
 
 GROWTH_FOCUS_TITLE
 Focalisation sur la croissance
@@ -2777,9 +2777,9 @@ La mesure approvisionnement d'une planète représente le nombre de liens hypers
 
 
 FLEET_UPKEEP_TITLE
-Fleet Upkeep
+Entretient des flottes
 FLEET_UPKEEP_TEXT
-'''The cost of a fleet is more than the sum of the cost of its ships due to the oporational costs associated with managing multiple ships. When producing new ships, hull costs increase by 5% for each ship already owned by the empire.'''
+'''Le coût d'une flotte se monte à plus que la somme des coûts de tous ses vaisseaux. Cela est dû au fait que les coûts de gestion de tous ces vaisseaux y sont inclus. Lorsque de nouveau vaisseaux sont produit, le coût de la coque augmente de 5% pour chaque vaisseau déja propriété de l'empire.'''
 
 EVACUATION_TITLE
 Évacuation
@@ -2802,10 +2802,10 @@ COMBAT_SYSTEM
 Le système %1%
 
 COMBAT_MILITARY_SHIPS
-Vaisseaux Militaires
+Vaisseaux militaires
 
 COMBAT_CIVILIAN_SHIPS
-Vaisseaux Civils
+Vaisseaux civils
 
 COMBAT_PLANETS
 Planètes
@@ -2965,12 +2965,12 @@ FILTERS
 Filtres
 
 SITREP_SHIP_BUILT
-Le %shipdesign% %ship% a été produit à %system%.
+Un %shipdesign% dénommé '%ship%' a été produit dans le système %system%.
 SITREP_SHIP_BUILT_LABEL
 Vaisseau produit
 
 SITREP_SHIP_BATCH_BUILT
-%rawtext%x %shipdesign% ont été produit à %system%.
+%rawtext%x %shipdesign% ont été produit dans le système %system%.
 SITREP_SHIP_BATCH_BUILT_LABEL
 Lot de vaisseau produit
 
@@ -2985,79 +2985,77 @@ SITREP_TECH_RESEARCHED_LABEL
 Technologie découverte
 
 SITREP_COMBAT_SYSTEM
-Une bataille s'est déroulée à %system%.
+Une bataille s'est déroulée dans le système %system%.
 SITREP_COMBAT_SYSTEM_LABEL
 Combat effectué
 
 SITREP_OBJECT_DESTROYED_AT_SYSTEM
-Un object a été détruit à %system%.
+Un object a été détruit dans le système %system%.
 SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Objet détruit
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
-Le(La) %shipdesign% '%ship%' (%empire%) a été détruit à %system%.
+Un %shipdesign% dénommé '%ship%' de %empire% a été détruit dans le système %system%.
 SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Vaisseau impérial détruit
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
-Un %shipdesign% a été détruit à %system%.
+Un %shipdesign% a été détruit dans le système %system%.
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Vaisseau inconnu détruit
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM
-La %fleet% de l'%empire% a été détruite à %system%.
+La %fleet% de %empire% a été détruite dans le système %system%.
 SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Flotte impériale détruite
 
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM
-La flotte %fleet% a été détruite à %system%.
+La flotte %fleet% a été détruite dans le système %system%.
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Flotte inconnue détruite
 
 SITREP_PLANET_DESTROYED_AT_SYSTEM
-La planète %planet% de l'%empire% a été détruite à %system%.
+La planète %planet% du système %system% appartenant à %empire% a été détruite.
 SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Planète impériale détruite
 
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM
-La planète %planet% de %system% a été détruite.
+La planète %planet% du système %system% a été détruite.
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Planète sans propriétaire détruite
 
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
-The %empire% building %building% on planet %planet% was destroyed at %system%.
-#La construction %building% sur la planète %planet% a été détruite à %system%.
+La construction %building% sur la planète %planet% du système %system% a été détruite.
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
 Construction impériale détruite
 
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
-The building %building% on planet %planet% was destroyed at %system%.
-#La construction %building% sur la planète %planet% a été détruite à %system%.
+La construction %building% sur la planète %planet% du système %system% a été détruite.
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
-Construction sans propriétaire détruite
+Construction sans propriétaire détruite.
 
 SITREP_OBJECT_DAMAGED_AT_SYSTEM
-Un objet a été endommagé à %system%.
+Un objet a été endommagé dans le système %system%.
 SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
 Objet endommagé
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
-Le %shipdesign% '%ship%' de l'%empire% a été endommagé à %system%.
+Un %shipdesign% dénommé '%ship%' de %empire% a été endommagé dans le système %system%.
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Vaisseau impérial endommagé
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
-Un %shipdesign% a été endommagé à %system%.
+Un %shipdesign% a été endommagé dans le système %system%.
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Vaisseau sans propriétaire détruit
 
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
-La planète %planet% de l'%empire% a été bombardée à %system%.
+La planète %planet% du système %system% appartenant à %empire% a été bombardée.
 SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
 Planète impériale bombardée
 
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
-La planète %planet% a été bombardé à %system%.
+La planète %planet% du système %system% a été bombardée.
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL
 Planète sans propriétaire bombardée
 
@@ -3082,7 +3080,7 @@ SITREP_PLANET_COLONIZED_LABEL
 Planète colonisée
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
-La %fleet% est arrivée à %system%.
+La %fleet% est arrivée dans le système %system%.
 SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Flotte arrivée à 
 
@@ -3128,12 +3126,12 @@ EFFECT_ANCIENT_TECH_LABEL
 Ancient Ruins Tech
 
 EFFECT_DRYDOCK_SHIP_REPAIR
-%ship% was repaired by %building% on %planet%.
+'%ship%' was repaired by %building% on %planet%.
 EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
 Drydock Repair
 
 EFFECT_MONSTER_SPAWNING
-Un %predefinedshipdesign% a frayé à %system%!
+Un %predefinedshipdesign% a frayé dans le système %system%!
 EFFECT_MONSTER_SPAWNING_LABEL
 Frai de monstre
 
@@ -3220,10 +3218,10 @@ UNKNOWN_PLANET
 Planète inconnue
 
 CANNOT_PRODUCE_SHIPS
-Cannot Produce Ships
+Ne peuvent pas produire de vaisseaux intersidéraux
 
 CAN_PRODUCE_SHIPS
-Can Produce Ships
+Peuvent produire des vaisseaux intersidéraux
 
 CANNNOT_COLONIZE
 Planètes impossible à coloniser
@@ -3517,7 +3515,7 @@ The Fifty-Seven are in constant contact with most of the rest of their species, 
 SP_SETINON
 Setinon
 SP_SETINON_DESC
-'''Individualistic sentient microscopic cells.
+'''Cellules microscopiques, sensibles et individualistes.
 Préfére les planètes océaniques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
@@ -3769,6 +3767,35 @@ Reason for Staying:
 Volp-Uglush are now to integrated and ingrown. They now totally lack the independance and innovation needed to leave Hive and start a new colony.
 '''
 
+SP_FURTHEST
+Furthest
+SP_FURTHEST_DESC
+'''Paranoid three-headed, triped herbivores
+Prefer Tundra planets.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+
+[[GOOD_DETECTION]]
+[[GREAT_STEALTH]]
+        
+[[AVERAGE_INDUSTRY]]
+[[BAD_RESEARCH]]
+        
+[[GOOD_GROUND_TROOPS]]
+[[BAD_POPULATION]]
+
+
+Biology:
+The Furthest are furry, 1.5 m tall creatures.  Radially symmetric, they have three long legs, and three long flexible necks. Atop each neck, is a compound eye, and a mouth used for ingestion and for manipulating objects.  This allows the creature too keep watch in most directions at once.  The actual brain is in the center of the body.
+
+Name:
+The Furthest believe that sapience is measured by the distance that a being can separate itself from danger. Thus the name " Furthest" describes their species as the most advanced of beings.
+
+Personality: 
+The Furthest report that their homeworld was once full of the deadliest predators imaginable.  They survived by developing caution to the utmost level.  Indeed staying alert for threats, and hiding  are the core of their psychology and culture. The Furthest homeworld currently contains no carnivore they can't crush underfoot.
+
+Reason for Staying:
+The Furthest generally consider space travel far too dangerous for a sane being, but some who consider their homeworld too dangerous may consider relocating to another world.
+'''
 
 SP_EXOBOT
 Exobot
@@ -3854,10 +3881,9 @@ ANCIENT_RUINS_SPECIAL
 Ruinnnes anciennes
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-'''Triples the Research on this planet and increases Research on Research-focused planets by one twentieth (non-stacking).
+'''Triple la recherche sur cette planète et augmente la recherche des planètes ayant focalisé sur la recherche d'un vingtième.
 
-This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
-#Des ruinnes d'une ancienne race avancée, oubliées depuis longtemps, se trouvent sur cette planète. La recherche scientifique reçoit un bonus.
+Des ruinnes d'une ancienne race avancée, oubliées depuis longtemps, se trouvent sur cette planète. Le premier empire qui débarque sur cette planète et pour autant qu'il possède la technique [[tech LRN_XENOARCH]] reçois gratuitement une technique avancée, ou découvre une construction, ou encore un vaisseau.'''
 
 PANOPTICON_SPECIAL
 Panopticon Complex
@@ -3870,64 +3896,57 @@ TUNNELS_SPECIAL
 Tunnels naturels
 
 TUNNELS_SPECIAL_DESCRIPTION
-'''Increases max Population by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Augmente la population maximale suivant la grandeur de la planète: minuscule: +1, petite: +2, moyenne: +3, grande: +4, énorme: +5.
 
-This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonized.'''
-#Cette planète possède un réseau très étendus de tunnels souterrains, permettant ainsi la colonisation aisée d'une plus grande portion de la planète.
+Cette planète possède un réseau très étendus de tunnels souterrains, permettant ainsi la colonisation aisée d'une plus grande portion de la planète.'''
 
 TECTONIC_INSTABILITY_SPECIAL
 Tectonically Unstable
 
 TECTONIC_INSTABILITY_SPECIAL_DESC
-'''Construction on this planet is decreased by 20. Prevents Subterrainian Construction from increasing population capacity.
+'''La construction sur cette planète est diminuée de 20. Empêche la construction sousterraine qui augmenterait par là la capacité d'habitation pour la population.
 
-This planet is tectonically unstable. Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.'''
-#Cette planète est tectoniquement instable. Des tremblements de terre fréquents, des tsunamis, des éruptions volcaniques ou l'instabilité du sol font que la construction et le développement d'infrastructures en général est difficile.
+Cette planète est tectoniquement instable. Des tremblements de terre fréquents, des tsunamis, des éruptions volcaniques ou l'instabilité du sol font que la construction et le développement d'infrastructures en général est difficile.'''
 
 SOLID_CORE_SPECIAL
 Noyau solide
 
 SOLID_CORE_SPECIAL_DESC
-'''Reduces max Population by planet size; Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
+'''Réduit la population maximale suivant la grandeur de la planète: minuscule: -1, petite: -2, moyenne: -3, grande: -4, énorme: -5.
 
-This planet's core has solidified, and it has a very weak magnetic field. The star's solar wind reaches the surface relatively unfiltered, damaging the health of the planet's population.'''
-#Le noyau de cette planète s'est solidifié, et ne possède qu'un champ magnétique très faible. Les vents solaires de l'étoile arrivent à la surface relativement intacts, avec des effets néfastes sur la santé et la production de nourriture.
+Le noyau de cette planète s'est solidifié, et ne possède qu'un champ magnétique très faible. Les vents solaires de l'étoile arrivent à la surface relativement intacts, avec des effets néfastes sur la santé et la production de nourriture.'''
 
 HIGH_AXIAL_TILT_SPECIAL
 Grande inclinaison axiale
 
 HIGH_AXIAL_TILT_SPECIAL_DESC
-'''Construction on this planet is decreased by 20.
+'''La construction sur cette planète est diminuée de 20.
 
-This planet's rotational axis is highly tilted relative to its orbital plane. Seasonal weather variations are particularly extreme and infrastructure development is significantly impeded.'''
-#Cette planète a un axe de rotation très incliné par rapport à son plan orbital. Les variations de climats sont particulièrement extrêmes ce qui gêne le développement des infrastructures.
+Cette planète a un axe de rotation très incliné par rapport à son plan orbital. Les variations de climats sont particulièrement extrêmes ce qui gêne le développement des infrastructures.'''
 
 SLOW_ROTATION_SPECIAL
 Rotation très lente
 
 SLOW_ROTATION_SPECIAL_DESC
-'''Construction on this planet is decreased by 20. Decreases max Population by planet size; Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
+'''La construction sur cette planète est diminuée de 20. Réduit la population maximale suivant la grandeur de la planète: minuscule: -1, petite: -2, moyenne: -3, grande: -4, énorme: -5.
 
-This planet rotates about its axis very slowly, causing very long days and nights. Infrastructure growth and food production are reduced.'''
-#Cette planète tourne sur elle-même très lentement, journées et nuits y sont donc très longs. Le développement d'infrastructures, l'agriculture et la capacité en population sont pénalisés.
+Cette planète tourne sur elle-même très lentement, journées et nuits y sont donc très longs. Le développement d'infrastructures, l'agriculture et la capacité en population sont pénalisés.'''
 
 TIDAL_LOCK_SPECIAL
 Rotation synchrone
 
 TIDAL_LOCK_SPECIAL_DESC
-'''Construction on this planet is decreased by 20, but Industry is increased by one fifth the planet's Population.
+'''La construction sur cette planète est diminuée de 20, mais l'industrie est augmentée de la valeur d'un cinquième de la population de la planète.
 
-This planet is tidally locked with the star it orbits. Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night. Infrastructure growth is hampered, though once established, industrial capacity benefits from the locally stable surface conditions.'''
-#Cette planète a une période de rotation identique à sa période orbitale; une face de la planète est constamment illuminée, tandis que l'autre est toujours dans la pénombre. Le développement d'infrastructures est pénalisé, mais une fois établies, les industries profitent des conditions de surface localement stables.
+Cette planète a une période de rotation identique à sa période orbitale; une face de la planète est constamment illuminée, tandis que l'autre est toujours dans la pénombre. Le développement d'infrastructures est pénalisé, mais une fois établies, les industries profitent des conditions de surface localement stables.'''
 
 ECCENTRIC_ORBIT_SPECIAL
 Orbite excentré
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''Construction on the planet is decreased by 20, but research is increased by 3.
+'''La construction sur cette planète est diminuée de 20, mais la recherche est augmenté de 3.
 
-This planet's orbit is very eccentric. It has a large distance between its closest and farthest approaches to its star. Total insolation varies significantly throughout the year. The varied conditions inhibit infrastructure development, but provide a beneficial platform for research.'''
-#l orbite de cette planète est très excentré, c'est-à-dire qu'il y a une grande distance entre le point où la planètre est la plus proche de son étoile et celui où elle l'est le moins. l'insolation totale varie beaucoup au cours de l'année. Les condition variées ralentissent le développement des infrastructures, mais sont bénéfiques pour la recherche scientifique.
+L'orbite de cette planète est très excentré, c'est-à-dire qu'il y a une grande distance entre le point où la planètre est la plus proche de son étoile et celui où elle l'est le moins. l'insolation totale varie beaucoup au cours de l'année. Les condition variées ralentissent le développement des infrastructures, mais sont bénéfiques pour la recherche scientifique.'''
 
 RESONANT_MOON_SPECIAL
 Resonant Moon
@@ -4012,7 +4031,7 @@ Monsters inside the core of this planet are dragging it into the void.  There sh
 VOID_SLAVE_SPECIAL
 Void Metamorphisis
 VOID_SLAVE_SPECIAL_DESC
-This planet exists partially in this universe and partially in the void, increasing its stealth by 700.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
+This planet exists partially in this universe and partially in the void, increasing its stealth by 80.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
 
 DERELICT_SPECIAL
 Derelict
@@ -4469,6 +4488,7 @@ SL_INTERNAL
 Niche interne
 SL_TOOLTIP_DESC
 Vide
+
 
 # Ship Part Classes
 
@@ -5314,10 +5334,9 @@ LRN_TRANSLING_THT
 Translinguistique
 
 LRN_TRANSLING_THT_DESC
-'''Does nothing. Later this can enable peaceful acquistion of native planets.
+'''Ne fait rien. Plus tard, cela permettra l'acquisition pacifique de planètes indigènes.
 
-Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truly great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?'''
-#Les faibles d'esprit luttent ou acceptent les limites de la langue qu'ils ont appris. Les esprits normaux se sentent limités par les concepts qu'ils ont les moyens d'exprimer. Les vrais grands esprits se libèrent des limites de la langue, formant et analysant des pensées à la limite de la transcendance. Mais les grands esprits sont isolés et inutiles, car sans la langue pour exprimer des pensées, comment peuvent-ils partager leurs idées?
+Les faibles d'esprit luttent ou acceptent les limites de la langue qu'ils ont appris. Les esprits normaux se sentent limités par les concepts qu'ils ont les moyens d'exprimer. Les vrais grands esprits se libèrent des limites de la langue, formant et analysant des pensées à la limite de la transcendance. Mais les grands esprits sont isolés et inutiles, car sans la langue pour exprimer des pensées, comment peuvent-ils partager leurs idées?'''
 
 LRN_PSIONICS
 Psionique
@@ -5368,10 +5387,9 @@ LRN_FORCE_FIELD
 Harmonique des champs de force
 
 LRN_FORCE_FIELD_DESC
-'''Increases max [[encyclopedia SHIELDS_METER_TITLE]] on all planets by 10. This is not cumulative with Planetary Barrier Shield.
+'''Augmente [[encyclopedia SHIELDS_METER_TITLE]] maximum sur toutes les planètes par 10. Ceci n'est pas cumulable avec les boucliers faisant barrière de la planète.
 
-Like Fourier analysis of sound, electromagnetism, strong and weak forces may be expressed as harmonic quantum standing-wave superpositions of force-carrier particles. By selectively amplifying these harmonics, forces may be arbitrarily controlled to shield, attack, contain or support.'''
-#Comme l'analyse du son de Fourier, l'électromagnétisme, les interactions fortes et faibles peuvent être exprimé sous la forme de superpositions d'harmonique quantique transportant des particules de force. Par l'amplification sélective de ces harmoniques, les forces peuvent être contrôlé pour défendre, attaquer, contenir ou soutenir.
+Comme l'analyse du son de Fourier, l'électromagnétisme, les interactions fortes et faibles peuvent être exprimé sous la forme de superpositions d'harmonique quantique transportant des particules de force. Par l'amplification sélective de ces harmoniques, les forces peuvent être contrôlé pour défendre, attaquer, contenir ou soutenir.'''
 
 LRN_MIND_VOID
 L'esprit du vide
@@ -5443,15 +5461,13 @@ CON_ENV_ENCAPSUL
 Encapsulation environnementale
 
 CON_ENV_ENCAPSUL_DESC
-'''Allows unmanned stations on uninhabitable planet types, including Asteroids and Gas Giants. Many building types cannot be constructed on these outposts. Outposts are cheaper, and while they don't provide production, might be chosen as a faster way to claim territory.'''
-#Les poches couvertes, entourées et scellées d'un envionnement particulier sont essentielles pour le voyage spatial, la  colonisation de planètes risquées et la préservation de la diversité naturelle sur des mondes extrèmement industrialisés. Le maintien des conditions désirées n'est pas si insignifiant qu'il y paraît, cependant, dans de nombreux cas, il n'y a pas de source externe de matériel ou d'organisme pur et propre disponiblePlutot il est nécessaire de créer un environnement auto-suffisant et durable, souvent une écologie entière, capable de recyclage et réutilisation de ses déchets pour fournir tout ce qui est nécessaire et consommé.
+'''Permets de placer des stations inhabitées sur des planètes de types inhabitables, y compris les astéroïdes et les géantes gazeuses. Beaucoups de types de constructions ne peuvent pas remplacer les avant-postes. Les avant-postes sont meilleur marché et comme ils ne produisent pas rien, ils leurs sera donnés la préférence comme voie facile à la revendication d'un territiore.'''
 
 GRO_SYMBIOTIC_BIO
-Biologie Symbiotique
+Biologie symbiotique
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Increases the max population of Adequate, Poor, & Hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
-#Depuis les premiers animaux domestiqués ou plants cultivés, les société ont découvert les bénéfices des relations symbiotiques avec les autres espèces. Plus tard, les bactéries ou les parasites naturels sont souvent utilisés pour des applications médicales. Dans sa forme récente, l'espèce domninante contrôle (idéalement) complètement la relation, chacun aidant et étant dépendant de l'autre pour un bénéfice mutuel. La combinaison est bien meilleure que la somme des deux séparément.
+'''Augmente la population maximale des planètes adéquates, pauvres et hostiles, suivant la taille de la planète: minuscule: +1, petite: +2, moyenne: +3, grande: +4, énorme: +5.'''
 
 GRO_GENETIC_MED
 Médecine Génétique
@@ -5478,7 +5494,7 @@ GRO_XENO_GENETICS
 Génétique xénobiologique
 
 GRO_XENO_GENETICS_DESC
-'''Increases the max population of Good, Adequate, Poor, & Hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Augmente la population maximale des planètes bonnes, adéquates, pauvres et hostiles, suivant la taille de la planète: minuscule: +1, petite: +2, moyenne: +3, grande: +4, énorme: +5.
 
 The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
 
@@ -5504,7 +5520,7 @@ GRO_XENO_HYBRIDS
 Hybridation xénobiologique
 
 GRO_XENO_HYBRIDS_DESC
-'''Increases the max population of Adequate, Poor, & Hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Augmente la population maximale des planètes adéquates, pauvres et hostiles, suivant la taille de la planète: minuscule: +1, petite: +2, moyenne: +3, grande: +4, énorme: +5.
 
 Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
 
@@ -5569,8 +5585,7 @@ Although high level initial design and initial facility setup still require acti
 PRO_EXOBOTS
 Exobots Semiautonomes
 PRO_EXOBOTS_DESC
-Allows the construction of Exobots optimized for industry on hostile planets.
-#Les exobots, comme on les appelle désormais, sont des merveilles de rencontres forme-fonction. Il existe des robots conçus pour satisfaire presque tous les emplois du secteur manufacturier, dans des domaines aussi variés que l'électronique ou la construction à grande échelle. Facilement produits en masse, ils servent plus souvent sur les colonies qui manquent d'infrastructures et dont le travail est consacré à des usines spécialisées. Chaque colonie reçoit une équipe standard d'exobots, accélérant leur constructions pendant le tout début de la phase de développement.
+Permet la construction d'exobots optimisés pour l'industrie sur des planètes hostiles.
 
 PRO_RAPID_EXO_PROD
 Rapid Exobot Production
@@ -6062,10 +6077,10 @@ CON_PALACE_EXCLUDE_DESC
 Ensures that only one imperial palace will be present in an empire at a time. Make sure you scrap your old imperial palace before your new one is built.
 
 GRO_SUBTER_HAB
-Subterranean Habitation
+Habitation sousterraine
 
 GRO_SUBTER_HAB_DESC
-'''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.  Cannot improve a planet with the Tunnels or Tectonic Instability special.'''
+'''Augmente la population maximale des planètes, suivant la taille de la planète: minuscule: +1, petite: +2, moyenne: +3, grande: +4, énorme: +5. Ne peut pas améliorer une planète avec des tunnels ou une instabilité tectonique.'''
 
 GRO_INDUSTRY_FARM
 Agriculture industrielle
@@ -6089,10 +6104,9 @@ GRO_ORBIT_FARMING
 Agriculture orbitale
 
 GRO_ORBIT_FARMING_DESC
-'''Increases target Farming on all planets by 2, regardless of focus and environment.
+'''Augmente la focalisation sur l'agriculture de toutes les planètes de 2, quel que soit la focalisation et l'environnement.
 
-The primary energy source for food production in most societies is solar radiation. Bound to a planet, farms have very limited access to this energy, due to the comparatively small solid angle subtended by the planet's surface and other land uses competing with surface farming. By moving food production to orbital installations, continuous access to solar energy is gained, and any undesired spectral filtration by planetary atmospheres is eliminated.'''
-#Les rayonnements solaires sont la première source d'énergie pour la production de nourriture dans la plupart des sociétés. Lié à une planète, les fermes ont un accès vraiment limité à cette énergie, dûs à l'angle d'arrivée relativement faible de ces rayons à la surface de la planète. De plus, la surface cultivable doit etre aussi utilisée à d'autres fins. En déplaçant la production dans des installations orbitales, les cultures ont accès permanent à l'énergie solaire, et évitent les effets indésirables des filtrations de l'atmosphère des planètes. La production de nourriture peut être augmentée incroyablement.
+Les rayonnements solaires sont la première source d'énergie pour la production de nourriture dans la plupart des sociétés. Lié à une planète, les fermes ont un accès vraiment limité à cette énergie, dûs à l'angle d'arrivée relativement faible de ces rayons à la surface de la planète. De plus, la surface cultivable doit etre aussi utilisée à d'autres fins. En déplaçant la production dans des installations orbitales, les cultures ont accès permanent à l'énergie solaire, et évitent les effets indésirables des filtrations de l'atmosphère des planètes. La production de nourriture peut être augmentée incroyablement.'''
 
 GRO_TERRAFORM
 Terraforming
@@ -6122,8 +6136,7 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Increases the max population on hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-
+'''Augmente la population maximale des planètes hostiles, suivant la taille de la planète: minuscule: +1, petite: +2, moyenne: +3, grande: +4, énorme: +5.
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
 GRO_GAIA_TRANS
@@ -6881,20 +6894,21 @@ This clandestine biological warfare base wreaks havoc on enemy planets in the vi
 #Planètes à moins de 2 sauts hyperspatiaux appartenant à l'empire qui a construit le projecteur reçoivent -1 au maximum de santé.
 #Nécessite un Centre de recherches en Bioterreur pour être exploiter, sans quoi il ne produit pas d'effets négatifs sur la santé des planètes des autres empires.'''
 
+
 BLD_LIGHTHOUSE
-Phare Interstellaire
+Phare interstellaire
 
 BLD_LIGHTHOUSE_DESC
-Increases speed of ships deparing this system, and decreases the Stealth of all objects in the same system by 450. This building can be built at an outpost.
+Augmente la vitesse des vaisseaux partant de ce système et diminue la furtivité de tous les objets dans ce même système de 30. Cette construction peut également être placée sur un avant-poste.
 
 BLD_HEAVY_MINE_PROCESSOR
 Processeur d'extraction minière lourd
 
 BLD_HEAVY_MINE_PROCESSOR_DESC
-Gives all colonies in the empire access to the Heavy Mining focus.
+Donne à toutes les colonies de l'empire accès à la focalisation sur l'exploitation minière lourde.
 
 BLD_INDUSTRY_CENTER
-Centre Industriel
+Centre industriel
 
 BLD_INDUSTRY_CENTER_DESC
 '''Initially provides a bonus to Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus equal to the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
@@ -6935,10 +6949,9 @@ BLD_GENOME_BANK
 La Banque du Gènome
 
 BLD_GENOME_BANK_DESC
-'''Provides the empire with immunity from bioterror.
+'''Immunise l'empire contre bioterrorisme.
 
-The largest database ever conceived. The Genome Bank includes maps of the genomes of every organism known to the empire. This database is invaluable in the treatment of disease.'''
-#La plus grande base de données jamais conçue. La Banque du génome comprend les cartes des génomes de tous les organismes connus de l'empire. Cette base de données est d'une valeur inestimable dans le traitement des maladie et dans les colonies agricoles.
+La plus grande base de données jamais conçue. La Banque du génome comprend les cartes des génomes de tous les organismes connus de l'empire. Cette base de données est d'une valeur inestimable dans le traitement des maladie et dans les colonies agricoles.'''
 
 BLD_GAIA_TRANS
 Gaia Transformation
@@ -7007,7 +7020,7 @@ BLD_CLONING_CENTER
 Cloning Center
 
 BLD_CLONING_CENTER_DESC
-'''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Augmente la population maximale des planètes suivant la taille de la planète: minuscule: +1, petite: +2, moyenne: +3, grande: +4, énorme: +5.
 
 Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving population.'''
 
