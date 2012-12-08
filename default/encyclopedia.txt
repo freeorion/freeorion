@@ -20,24 +20,31 @@ Article
     icon = "icons/focus/mining.png"
 
 Article
-    name = "HAPPINESS_METER_TITLE"
+    name = "HAPPINESS_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
     short_description = "METER_ARTICLE_SHORT_DESC"
-    description = "HAPPINESS_METER_TEXT"
+    description = "HAPPINESS_TEXT"
     icon = "icons/meter/happiness.png"
 
 Article
-    name = "DEFENSE_METER_TITLE"
+    name = "INFRASTRUCTURE_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
     short_description = "METER_ARTICLE_SHORT_DESC"
-    description = "DEFENSE_METER_TEXT"
+    description = "INFRASTRUCTURE_TEXT"
+    icon = "icons/meter/construction.png"
+
+Article
+    name = "DEFENSE_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "DEFENSE_TEXT"
     icon = "icons/meter/defense.png"
 
 Article
-    name = "SHIELDS_METER_TITLE"
+    name = "SHIELDS_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
     short_description = "METER_ARTICLE_SHORT_DESC"
-    description = "SHIELDS_METER_TEXT"
+    description = "SHIELDS_TEXT"
     icon = "icons/meter/shield.png"
     
 Article
@@ -46,6 +53,27 @@ Article
     short_description = "METER_ARTICLE_SHORT_DESC"
     description = "TROOP_TEXT"
     icon = "icons/meter/troops.png"
+
+Article
+    name = "STEALTH_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "STEALTH_TEXT"
+    icon = "icons/meter/stealth.png"
+
+Article
+    name = "DETECTION_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "DETECTION_TEXT"
+    icon = "icons/meter/detection.png"
+
+Article
+    name = "DETECTION_RANGE_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "DETECTION_RANGE_TEXT"
+    icon = "icons/meter/detection.png"
 
 Article
     name = "ORGANIC_SPECIES_TITLE"
