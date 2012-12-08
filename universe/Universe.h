@@ -295,6 +295,10 @@ public:
       * level, based on  */
     void            UpdateEmpireObjectVisibilities();
 
+    /** Sets visibility for indicated \a empire_id of object with \a object_id
+      * a vis */
+    void            SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis);
+
     /** Stores latest known information about each object for each empire and
       * updates the record of the last turn on which each empire has visibility
       * of object that can be seen on the current turn with the level of

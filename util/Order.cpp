@@ -181,6 +181,7 @@ void NewFleetOrder::ExecuteImpl() const {
     system->Insert(fleet);
     fleet->SetAggressive(false);
     fleet->AddShips(validated_ships);
+    universe.SetEmpireObjectVisibility(EmpireID(), fleet->ID(), VIS_FULL_VISIBILITY);
 }
 
 

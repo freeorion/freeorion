@@ -1438,41 +1438,34 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
         RecursiveDestroy(*it);
 }
 
-namespace {
-    /** Sets visibilities for indicated \a empire_id of object with \a object_id
-      * in the passed-in \a empire_vis_map to \a vis */
-    void SetEmpireObjectVisibility(Universe::EmpireObjectVisibilityMap& empire_vis_map,
-                                   std::map<int, std::set<int> >& empire_known_design_ids,
-                                   int empire_id, int object_id, Visibility vis)
-    {
-        if (empire_id == ALL_EMPIRES)
-            return;
+void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis) {
+    if (empire_id == ALL_EMPIRES || object_id == INVALID_OBJECT_ID)
+        return;
 
-        // get visibility map for empire and find object in it
-        Universe::ObjectVisibilityMap& vis_map = empire_vis_map[empire_id];
-        Universe::ObjectVisibilityMap::iterator vis_map_it = vis_map.find(object_id);
+    // get visibility map for empire and find object in it
+    Universe::ObjectVisibilityMap& vis_map = m_empire_object_visibility[empire_id];
+    Universe::ObjectVisibilityMap::iterator vis_map_it = vis_map.find(object_id);
 
-        // if object not already present, store default value (which may be replaced)
-        if (vis_map_it == vis_map.end()) {
-            vis_map[object_id] = VIS_NO_VISIBILITY;
+    // if object not already present, store default value (which may be replaced)
+    if (vis_map_it == vis_map.end()) {
+        vis_map[object_id] = VIS_NO_VISIBILITY;
 
-            // get iterator pointing at newly-created entry
-            vis_map_it = vis_map.find(object_id);
-        }
+        // get iterator pointing at newly-created entry
+        vis_map_it = vis_map.find(object_id);
+    }
 
-        // increase stored value if new visibility is higher than last recorded
-        if (vis > vis_map_it->second)
-            vis_map_it->second = vis;
+    // increase stored value if new visibility is higher than last recorded
+    if (vis > vis_map_it->second)
+        vis_map_it->second = vis;
 
-        // if object is a ship, empire also gets knowledge of its design
-        if (vis >= VIS_PARTIAL_VISIBILITY) {
-            if (const Ship* ship = GetShip(object_id)) {
-                int design_id = ship->DesignID();
-                if (design_id == ShipDesign::INVALID_DESIGN_ID) {
-                    Logger().errorStream() << "SetEmpireObjectVisibility got invalid design id for ship with id " << object_id;
-                } else {
-                    empire_known_design_ids[empire_id].insert(design_id);
-                }
+    // if object is a ship, empire also gets knowledge of its design
+    if (vis >= VIS_PARTIAL_VISIBILITY) {
+        if (const Ship* ship = GetShip(object_id)) {
+            int design_id = ship->DesignID();
+            if (design_id == ShipDesign::INVALID_DESIGN_ID) {
+                Logger().errorStream() << "SetEmpireObjectVisibility got invalid design id for ship with id " << object_id;
+            } else {
+                m_empire_known_ship_design_ids[empire_id].insert(design_id);
             }
         }
     }
@@ -1505,7 +1498,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
         for (ObjectMap::const_iterator obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it) {
             for (std::set<int>::const_iterator empire_it = all_empire_ids.begin(); empire_it != all_empire_ids.end(); ++empire_it) {
                 // objects
-                SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, *empire_it, obj_it->first, VIS_FULL_VISIBILITY);
+                SetEmpireObjectVisibility(*empire_it, obj_it->first, VIS_FULL_VISIBILITY);
                 // specials on objects
                 const std::map<std::string, int>& specials = obj_it->second->Specials();
                 for (std::map<std::string, int>::const_iterator special_it = specials.begin();
@@ -1539,8 +1532,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
 
             if (obj->OwnedBy(empire_id)) {
                 // objects empire owns -> full visibility
-                SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
-                                          empire_id, object_id, VIS_FULL_VISIBILITY);
+                SetEmpireObjectVisibility(empire_id, object_id, VIS_FULL_VISIBILITY);
                 // is object a detector?
                 const Meter* detection_meter = obj->GetMeter(METER_DETECTION);
                 if (!detection_meter || detection_meter->Current() <= 0.0)
@@ -1574,8 +1566,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
 
                 // even without a detector, is object detectable due to having zero stealth?
                 if (stealth_meter->Current() <= 0) {
-                    SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
-                                              empire_id, object_id, VIS_BASIC_VISIBILITY);
+                    SetEmpireObjectVisibility(empire_id, object_id, VIS_BASIC_VISIBILITY);
                 }
             }
         }
@@ -1615,8 +1606,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
                 double y_dist = detectable_obj->Y() - detector_obj->Y();
                 double dist2 = x_dist*x_dist + y_dist*y_dist;
                 if (range_limit*range_limit >= dist2) {
-                    SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
-                                              empire_id, detectable_obj->ID(), VIS_PARTIAL_VISIBILITY);
+                    SetEmpireObjectVisibility(empire_id, detectable_obj->ID(), VIS_PARTIAL_VISIBILITY);
                     break;
                 }
             }
