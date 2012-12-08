@@ -395,10 +395,13 @@ namespace {
     }
 
     bool ObjectCanBeAttacked(const UniverseObject* obj) {
-        if (/*const Ship* ship = */universe_object_cast<const Ship*>(obj)) {
+        if (!obj)
+            return false;
+        UniverseObjectType obj_type = obj->ObjectType();
+        if (obj_type == OBJ_SHIP) {
             return true;
-        } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
-            if (planet->CurrentMeterValue(METER_POPULATION) > 0.0f || !planet->Unowned())
+        } else if (obj_type == OBJ_PLANET) {
+            if (!obj->Unowned() || obj->CurrentMeterValue(METER_POPULATION) > 0.0f)
                 return true;
             else
                 return false;
@@ -407,7 +410,7 @@ namespace {
         }
     }
 
-    bool ObjectAttackableByEmpire(const UniverseObject* obj, int empire_id, const ObjectMap& empire_known_objects) {
+    bool ObjectAttackableByEmpire(const UniverseObject* obj, int empire_id) {
         if (obj->OwnedBy(empire_id))
             return false;
         if (obj->Unowned() && empire_id == ALL_EMPIRES)
@@ -417,7 +420,7 @@ namespace {
             Empires().GetDiplomaticStatus(empire_id, obj->Owner()) != DIPLO_WAR)
         { return false; }
 
-        if (!empire_known_objects.Object(obj->ID()))
+        if (GetUniverse().GetObjectVisibilityByEmpire(obj->ID(), empire_id) < VIS_BASIC_VISIBILITY)
             return false;
 
         return ObjectCanBeAttacked(obj);
@@ -425,20 +428,21 @@ namespace {
 
     // monsters / natives can attack any planet, but can only attack
     // visible ships or ships that are in aggressive fleets
-    bool ObjectAttackableByMonsters(const UniverseObject* obj, const ObjectMap& objects) {
+    bool ObjectAttackableByMonsters(const UniverseObject* obj, float monster_detection = 0.0) {
         if (obj->Unowned())
             return false;
-        if (/*const Planet* planet = */universe_object_cast<const Planet*>(obj))
+
+        //Logger().debugStream() << "Testing if object " << obj->Name() << " is attackable by monsters";
+
+        UniverseObjectType obj_type = obj->ObjectType();
+        if (obj_type == OBJ_PLANET) {
             return true;
-        if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
-            // TODO: something about visiblity...
-            const Fleet* fleet = objects.Object<Fleet>(ship->FleetID());
-            if (!fleet)
+        } else if (obj_type == OBJ_SHIP) {
+            float stealth = obj->CurrentMeterValue(METER_STEALTH);
+            if (monster_detection >= stealth)
                 return true;
-            if (fleet->Aggressive())
-                return true;
-            return true;    // TODO: check monster detection?
         }
+        //Logger().debugStream() << "... ... is NOT attackable by monsters";
         return false;
     }
 
@@ -501,6 +505,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     const System* system = combat_info.objects.Object<System>(combat_info.system_id);
     if (!system)
         Logger().errorStream() << "AutoResolveCombat couldn't get system with id " << combat_info.system_id;
+    else
+        Logger().debugStream() << "AutoResolveCombat at " << system->Name();
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%";
@@ -515,15 +521,22 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     std::set<int> valid_target_object_ids;                          // all objects that can be attacked
     std::set<int> valid_attacker_object_ids;                        // all objects that can attack
     std::map<int, std::set<int> > empire_valid_attacker_object_ids; // objects that can attack that each empire owns
+    float monster_detection = 0.0;
 
     for (ObjectMap::iterator it = combat_info.objects.begin(); it != combat_info.objects.end(); ++it) {
         const UniverseObject* obj = it->second;
+        //Logger().debugStream() << "Considerting object " << obj->Name() << " owned by " << obj->Owner();
         if (ObjectCanAttack(obj)) {
+            //Logger().debugStream() << "... can attack";
             valid_attacker_object_ids.insert(it->first);
             empire_valid_attacker_object_ids[obj->Owner()].insert(it->first);
         }
-        if (ObjectCanBeAttacked(obj))
+        if (ObjectCanBeAttacked(obj)) {
+            //Logger().debugStream() << "... can be attacked";
             valid_target_object_ids.insert(it->first);
+        }
+        if (obj->Unowned() && obj->ObjectType() == OBJ_SHIP)
+            monster_detection = std::max(monster_detection, obj->CurrentMeterValue(METER_DETECTION));
     }
 
 
@@ -535,6 +548,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     {
         int object_id = *target_it;
         const UniverseObject* obj = combat_info.objects.Object(object_id);
+        //Logger().debugStream() << "Considering attackability of object " << obj->Name() << " owned by " << obj->Owner();
 
         // for all empires, can they attack this object?
         for (std::set<int>::const_iterator empire_it = combat_info.empire_ids.begin();
@@ -542,18 +556,17 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         {
             int attacking_empire_id = *empire_it;
             if (attacking_empire_id == ALL_EMPIRES) {
-                if (ObjectAttackableByMonsters(obj, combat_info.objects))
+                if (ObjectAttackableByMonsters(obj, monster_detection)) {
+                    //Logger().debugStream() << "object: " << obj->Name() << " attackable by monsters";
                     empire_valid_target_object_ids[ALL_EMPIRES].insert(object_id);
+                }
 
             } else {
                 // call function to find if empires can attack objects...
-                std::map<int, ObjectMap>::const_iterator known_objects_it =
-                    combat_info.empire_known_objects.find(attacking_empire_id);
-                if (known_objects_it == combat_info.empire_known_objects.end())
-                    continue;   // no known stuff for that empire?
-
-                if (ObjectAttackableByEmpire(obj, attacking_empire_id, known_objects_it->second))
+                if (ObjectAttackableByEmpire(obj, attacking_empire_id)) {
+                    //Logger().debugStream() << "object: " << obj->Name() << " attackable by empire " << attacking_empire_id;
                     empire_valid_target_object_ids[attacking_empire_id].insert(object_id);
+                }
             }
         }
     }
@@ -644,13 +657,16 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             // each weapon that is attacking, as the previous shot might have
             // destroyed something
             int attacker_owner_id = attacker->Owner();
+
             std::map<int, std::set<int> >::iterator target_vec_it = empire_valid_target_object_ids.find(attacker_owner_id);
             if (target_vec_it == empire_valid_target_object_ids.end()) {
                 Logger().debugStream() << "No targets for attacker with id: " << attacker_owner_id;
                 break;
             }
+
             const std::set<int>& valid_target_ids = target_vec_it->second;
-            if (valid_target_ids.empty()) break; // should be redundant with this entry being erased when emptied
+            if (valid_target_ids.empty())
+                break; // should be redundant with this entry being erased when emptied
 
 
             // select target object
@@ -668,23 +684,27 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             Logger().debugStream() << "Target: " << target->Name();
 
 
-            // do actual attack
+            // do actual attacks, and mark attackers as valid targets for attacked object's owners
             if (attack_ship) {
                 if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
                     AttackShipShip(attack_ship, weapon_it->part_attack, target_ship, combat_info.damaged_object_ids);
+                    empire_valid_target_object_ids[target_ship->Owner()].insert(attack_ship->Owner());
                 } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
                     AttackShipPlanet(attack_ship, weapon_it->part_attack,  target_planet, combat_info.damaged_object_ids);
+                    empire_valid_target_object_ids[target_planet->Owner()].insert(attack_ship->Owner());
                 }
             } else if (attack_planet) {
                 if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
                     AttackPlanetShip(attack_planet, target_ship, combat_info.damaged_object_ids);
+                    empire_valid_target_object_ids[target_ship->Owner()].insert(attack_planet->Owner());
                 } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
                     AttackPlanetPlanet(attack_planet, target_planet, combat_info.damaged_object_ids);
+                    empire_valid_target_object_ids[target_planet->Owner()].insert(attack_planet->Owner());
                 }
             }
 
 
-            // check for destruction of ships
+            // check for destruction of target object
             if (target->ObjectType() == OBJ_SHIP) {
                 if (target->CurrentMeterValue(METER_STRUCTURE) <= 0.0) {
                     Logger().debugStream() << "!! Target Ship is destroyed!";
@@ -698,28 +718,38 @@ void AutoResolveCombat(CombatInfo& combat_info) {
                         if (empire_id != ALL_EMPIRES)
                             combat_info.destroyed_object_knowers[empire_id].insert(target_id);
                     }
+
                     // remove destroyed ship's ID from lists of valid attackers and targets
                     valid_attacker_object_ids.erase(target_id);
                     valid_target_object_ids.erase(target_id);   // probably not necessary as this set isn't used in this loop
+
                     for (target_vec_it = empire_valid_target_object_ids.begin();
                          target_vec_it != empire_valid_target_object_ids.end(); ++target_vec_it)
                     { target_vec_it->second.erase(target_id); }
+
                     for (target_vec_it = empire_valid_attacker_object_ids.begin();
                          target_vec_it != empire_valid_attacker_object_ids.end(); ++target_vec_it)
-                    { target_vec_it->second.erase(target_id); }
+                    { target_vec_it->second.erase(target_id); } // TODO: only erase from owner's entry in this list
                 }
+
             } else if (target->ObjectType() == OBJ_PLANET) {
                 if (target->CurrentMeterValue(METER_SHIELD) <= 0.0 &&
                     target->CurrentMeterValue(METER_DEFENSE) <= 0.0 &&
                     target->CurrentMeterValue(METER_CONSTRUCTION) <= 0.0)
                 {
                     Logger().debugStream() << "!! Target Planet is knocked out of battle";
+
                     // remove disabled planet's ID from lists of valid attackers and targets
                     valid_attacker_object_ids.erase(target_id);
                     valid_target_object_ids.erase(target_id);   // probably not necessary as this set isn't used in this loop
+
                     for (target_vec_it = empire_valid_target_object_ids.begin();
                          target_vec_it != empire_valid_target_object_ids.end(); ++target_vec_it)
                     { target_vec_it->second.erase(target_id); }
+
+                    for (target_vec_it = empire_valid_attacker_object_ids.begin();
+                         target_vec_it != empire_valid_attacker_object_ids.end(); ++target_vec_it)
+                    { target_vec_it->second.erase(target_id); } // TODO: only erase from owner's entry in this list
                 }
             }
 
