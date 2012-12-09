@@ -1757,7 +1757,7 @@ Hull
     speed = 12
     starlaneSpeed = 30
     fuel = 3
-    stealth = 15
+    stealth = 5
     structure = 10
     slots = [
         Slot type = External position = (0.20, 0.15)
