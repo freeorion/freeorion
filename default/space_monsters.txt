@@ -193,8 +193,8 @@ ShipDesign
     description = "SM_SNOWFLAKE_1_DESC"
     hull = "SH_SNOWFLAKE_1_BODY"
     parts = [
-        "SR_WEAPON_1"
-        "SR_WEAPON_1"
+        ""
+        ""
         ""
         ""
         ]
