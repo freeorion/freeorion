@@ -279,7 +279,7 @@ class AIFleetOrder(object):
             sys1Name = (sys1 and sys1.name) or "unknown"
             targ1 = universe.getSystem(targetID)
             targ1Name = (targ1 and targ1.name) or "unknown"
-            fleetRating = foAI.foAIstate.getRating(fleetID)
+            fleetRating = foAI.foAIstate.getRating(fleetID).get('overall', 0)
             threat = foAI.foAIstate.systemStatus.get(targetID,  {}).get('fleetThreat',  0) + foAI.foAIstate.systemStatus.get(targetID,  {}).get('planetThreat',  0)
 
             safetyFactor = 1.0
@@ -288,7 +288,9 @@ class AIFleetOrder(object):
             else:
                 #following line was poor because AIstate.militaryFleetIDs only covers fleets without current missions
                 #myOtherFleetsRating =   sum([foAI.foAIstate.fleetStatus.get(fleetID, {}).get('rating', 0)  for fleetID in foAI.foAIstate.militaryFleetIDs   if ( foAI.foAIstate.fleetStatus.get(fleetID,  {}).get('sysID',  -1) == thisSystemID ) ])
-                myOtherFleetsRating =   sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('rating', 0)  for fid in foAI.foAIstate.systemStatus.get( targetID, {}).get('myfleets', [])  ])
+                myOtherFleetsRatings =   [foAI.foAIstate.fleetStatus.get(fid, {}).get('rating', {})  for fid in foAI.foAIstate.systemStatus.get( targetID, {}).get('myfleets', [])  ]
+                #myOtherFleetsRating =   sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('rating', 0)  for fid in foAI.foAIstate.systemStatus.get( targetID, {}).get('myfleets', [])  ])
+                myOtherFleetsRating =   foAI.foAIstate.systemStatus.get( targetID, {}).get('myFleetRating', 0) 
                 if  (myOtherFleetsRating > safetyFactor* threat) or (myOtherFleetsRating + fleetRating  > 1.5*safetyFactor*threat):
                     if verbose:
                         print "\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d because of sufficient empire fleet strength already at desination"%(fleetID,  fleetRating,  systemID,  sys1Name,  targetID,  targ1Name,  threat)

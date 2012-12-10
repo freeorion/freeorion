@@ -258,7 +258,7 @@ def calculateMilitaryPriority():
         totalThreat += max(0, (sysStatus.get('fleetThreat', 0) + sysStatus.get('planetThreat', 0)  - 0.7*sysStatus.get('monsterThreat', 0) + sysStatus.get('neighborThreat', 0)   )) #being safe; should never be neg since fleetThreat should include monsterThreat
     totalFleetRating = 0
     for fleetStatus in foAI.foAIstate.fleetStatus.values():
-        totalFleetRating += fleetStatus.get('rating', 0)
+        totalFleetRating += fleetStatus.get('rating', {}).get('overall', 0)
 
     
     #numMilitaryTargetedSystemIDs = len(AIstate.militaryTargetedSystemIDs)

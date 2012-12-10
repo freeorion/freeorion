@@ -28,14 +28,14 @@ def getMilitaryFleets():
         homeSystemID=-1
 
     allMilitaryFleetIDs =  FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY )
-    totMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x),  allMilitaryFleetIDs   )  )
+    totMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x).get('overall', 0),  allMilitaryFleetIDs   )  )
     print "=================================================="
     print "Total Military Rating: %d"%totMilRating
     print "---------------------------------"
         
         
     milFleetIDs = list( FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allMilitaryFleetIDs))
-    availMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x),  milFleetIDs   )  )
+    availMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x).get('overall', 0),  milFleetIDs   )  )
     print "=================================================="
     print "Available Military Rating: %d"%availMilRating
     print "---------------------------------"
@@ -60,7 +60,7 @@ def getMilitaryFleets():
         if not sysTargets: #shouldn't really be possible
             continue
         lastSys = sysTargets[-1].getTargetID() # will count this fleet as assigned to last system in target list
-        alreadyAssignedRating[lastSys] +=  foAI.foAIstate.getRating(fleetID)  
+        alreadyAssignedRating[lastSys] +=  foAI.foAIstate.getRating(fleetID).get('overall', 0) #TODO: would preferably tally attack and health and take product 
 
     # get systems to defend
     capitalID = PlanetUtilsAI.getCapital()
@@ -505,8 +505,8 @@ def assignMilitaryFleetsToSystems():
     availMilFleetIDs = list( AIstate.militaryFleetIDs )
 
     #availMilFleetIDs =  list( allMilitaryFleetIDs)
-    totMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x),  allMilitaryFleetIDs   )  )
-    availMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x),  availMilFleetIDs   )  )
+    totMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x).get('overall', 0),  allMilitaryFleetIDs   )  )
+    availMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x).get('overall', 0),  availMilFleetIDs   )  )
     print "=================================================="
     print "assigning military fleets"
     print "---------------------------------"
@@ -527,7 +527,9 @@ def assignMilitaryFleetsToSystems():
                 continue
             else:
                 theseFleets = foundFleets
-                rating = sum( map(lambda x: foAI.foAIstate.rateFleet(x),  foundFleets ) )
+                #rating = sum( map(lambda x: foAI.foAIstate.rateFleet(x),  foundFleets ) )
+                ratings = map(lambda x: foAI.foAIstate.rateFleet(x),  foundFleets ) 
+                rating = sum([fr.get('attack', 0) for fr in ratings]) * sum([fr.get('health', 0) for fr in ratings])
                 if rating < minMilAllocations.get(sysID,  0):
                     print "PARTIAL  military  allocation for system %d ( %s ) -- requested allocation %8d  -- got %8d with fleets %s"%(sysID,  universe.getSystem(sysID).name,  minalloc,  rating,  theseFleets)
                 else:

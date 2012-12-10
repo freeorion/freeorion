@@ -31,8 +31,8 @@ class AIFleetMission(AIAbstractMission):
             universe = fo.getUniverse()
             fleetID = self.getAITargetID()
             fleet = universe.getFleet(fleetID)
-            targetsString = "fleet %4d (%14s) [ %10s mission ] : %3d ships , total Rating:%7d "%(fleetID,  (fleet and fleet.name) or "Fleet Invalid",   AIFleetMissionTypeNames.name(aiFleetMissionType) ,  
-                                                                                                 (fleet and len(fleet.shipIDs)) or 0,  foAI.foAIstate.getRating(fleetID))
+            targetsString = "fleet %4d (%14s) [ %10s mission ] : %3d ships , total Rating:%7d "%(fleetID,  (fleet and fleet.name) or "Fleet Invalid",   
+                                                                                                 AIFleetMissionTypeNames.name(aiFleetMissionType) ,  (fleet and len(fleet.shipIDs)) or 0,  foAI.foAIstate.getRating(fleetID).get('overall', 0))
             targets = self.getAITargets(aiFleetMissionType)
             for target in targets:
                 targetsString = targetsString + str(target)
@@ -176,7 +176,7 @@ class AIFleetMission(AIAbstractMission):
                                                                                                           [foAI.foAIstate.systemStatus.get(neighbor, {}) for neighbor in  
                                                                                                           [ nid for nid in foAI.foAIstate.systemStatus.get(systemID, {}).get('neighbors', []) if nid != mMT0ID    ]   ]  ] )
                                     fBRating = foAI.foAIstate.getRating(fid)
-                                    if needLeft < fBRating:
+                                    if (needLeft < fBRating.get('overall', 0)) and fBRating.get('nships', 0)>1 :
                                         doMerge=True
             if doMerge:
                 #print "preparing to merge fleet %d into fleet %d,  leaving at least %d rating behind"%(fid,  fleetID,  needLeft)

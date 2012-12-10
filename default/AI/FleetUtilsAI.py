@@ -87,7 +87,10 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
             fleetList.append(fleetID)
             #del fleetPool[ fleetPool.index( fleetID) ]
             fleetPoolSet.remove( fleetID)
-            curStats['rating'] = curStats.get('rating',  0) + foAI.foAIstate.getRating(fleetID)
+            thisRating=foAI.foAIstate.getRating(fleetID)
+            curStats['attack'] = curStats.get('attack',  0) + thisRating['attack']
+            curStats['health'] = curStats.get('health',  0) + thisRating['health']
+            curStats['rating'] = curStats['attack'] * curStats['health'] 
             if 'troopPods' in targetStats:
                 curStats['troopPods'] = curStats.get('troopPods',  0) + countPartsFleetwide(fleetID,  ["GT_TROOP_POD"])
             if  ( sum( [len(universe.getFleet(fID).shipIDs) for fID in fleetList] )  >= nships ) and statsMeetReqs(curStats,  targetStats)    :
@@ -142,21 +145,29 @@ def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  cont
         if not fleetA:
             return 0
         success = True
-        remainingRating = foAI.foAIstate.getRating(fleetA_ID)
+        initRating = foAI.foAIstate.getRating(fleetA_ID)
+        remainingRating = initRating.copy()
         transferredRating = 0
+        transferredAttack=0
+        transferredHealth=0
         for shipID in fleetA.shipIDs:
             thisShip=universe.getShip(shipID)
             if not thisShip: continue  
             stats = foAI.foAIstate.getDesignIDStats(thisShip.designID)
             thisRating = stats['attack'] * ( stats['structure'] + stats['shields'] )
-            if remainingRating - thisRating < leaveRating:
+            if (remainingRating['attack'] -stats['attack'])*(remainingRating['health'] -( stats['structure'] + stats['shields'] ))  < leaveRating:
                 continue
-            transferredRating += thisRating
-            remainingRating -= thisRating
+            #remainingRating -= thisRating
+            remainingRating['attack'] -= stats['attack']
+            remainingRating['health'] -= ( stats['structure'] + stats['shields'] )
             thisSuccess =  ( fo.issueFleetTransferOrder(shipID,  fleetB_ID) )#returns a zero if transfer failure
+            if thisSuccess:
+                transferredRating += thisRating
+                transferredAttack += stats['attack']
+                transferredHealth += ( stats['structure'] + stats['shields'] )
             print "\t\t\t\t *** attempting transfer of ship %4d,  formerly of fleet %4d,  into fleet %4d  with result %d; %s"%(shipID,  fleetA_ID,  fleetB_ID,  thisSuccess,   [" context is %s"%context, ""][context==""])
             success = success and thisSuccess
-            if needRating !=0 and needRating <= transferredRating:
+            if needRating !=0 and needRating <=  transferredAttack*transferredHealth:  #transferredRating:
                 break
         fleetA = universe.getFleet(fleetA_ID)
         if (not fleetA) or fleetA.empty  or fleetA_ID in universe.destroyedObjectIDs(fo.empireID()):
@@ -164,12 +175,12 @@ def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  cont
             foAI.foAIstate.deleteFleetInfo(fleetA_ID)
         else:
             newARating = foAI.foAIstate.updateFleetRating(fleetA_ID)
-            if  success and ( newARating==remainingRating) :
-                print "\t\t\t\t\t\t\%d rating from fleet %d successfully transferred to fleet %d,  leaving %d"%(transferredRating,  fleetA_ID,  fleetB_ID,  remainingRating)
+            if  success : #and ( newARating==remainingRating) :
+                print "\t\t\t\t\t\t\%d rating from fleet %d successfully transferred to fleet %d,  leaving %d"%(transferredAttack*transferredHealth,  fleetA_ID,  fleetB_ID,  newRating['overal'])
             else:
-                print "\t\t\t\t\t\t transfer of %d rating from fleet %d  to fleet %d was attempted but appears to have had problems, leaving %d"%(transferredRating,  fleetA_ID,  fleetB_ID,  newARating)
+                print "\t\t\t\t\t\t transfer of %d rating from fleet %d  to fleet %d was attempted but appears to have had problems, leaving %d"%(transferredAttack*transferredHealth,  fleetA_ID,  fleetB_ID,  newARating['overall'])
         foAI.foAIstate.updateFleetRating(fleetB_ID)
-        return transferredRating
+        return transferredAttack*transferredHealth,  transferredAttack,  transferredHealth
 
 def fleetHasShipWithRole(fleetID, shipRole):
     "returns True if a ship with shipRole is in the fleet"
@@ -276,7 +287,7 @@ def assessFleetRole(fleetID):
     else:
         selectedRole= AIShipRoleType.SHIP_ROLE_INVALID
     print "fleetID %d : primary fleet mission type %d: '%s' ; found ship roles %s : %s ; rating %d"%(fleetID,selectedRole,   __AIFleetMissionTypeNames.name(selectedRole),  
-                                                                               shipRoles,  [ "%s: %d "%(__AIShipRoleTypeNames.name(rtype),  rnum) for rtype, rnum in  shipRoles.items()] ,  foAI.foAIstate.getRating(fleetID))
+                                                                               shipRoles,  [ "%s: %d "%(__AIShipRoleTypeNames.name(rtype),  rnum) for rtype, rnum in  shipRoles.items()] ,  foAI.foAIstate.getRating(fleetID).get('overall', 0))
     return selectedRole
 
 def assessShipDesignRole(design):

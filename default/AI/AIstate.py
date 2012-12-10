@@ -211,22 +211,28 @@ class AIstate(object):
         #assess enemy fleets that may have been momentarily visible
         enemyFleetIDs = []
         enemiesBySystem = {}
+        myFleetsBySystem={}#not really used currently
         sawEnemiesAtSystem={}
         currentTurn = fo.currentTurn()
         for fleetID in universe.fleetIDs:
-            if ( fleetID in self.fleetStatus ): # only looking for enemies here
-                continue
+            #if ( fleetID in self.fleetStatus ): # only looking for enemies here
+            #    continue
             fleet = universe.getFleet(fleetID)
             if (fleet == None): continue
-            if  (not fleet.ownedBy(empireID))  and ( not(fleet.empty) ): 
-                partialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(fleetID,  empireID)).get(fo.visibility.partial, -9999)
-                if partialVisTurn >= currentTurn -1 : #only interested in immediately recent data
-                    sawEnemiesAtSystem[fleet.systemID] = True
-                    if   (fleetID not in destroyedObjIDs):
-                        enemyFleetIDs.append( fleetID )
-                        enemiesBySystem.setdefault( fleet.systemID,  [] ).append( fleetID )
+            if   not(fleet.empty) : 
+                if  fleet.ownedBy(empireID):
+                    if fleet.systemID != -1:
+                        myFleetsBySystem.setdefault( fleet.systemID,  [] ).append( fleetID )#currently, not used, info gotten through system.fleetIDs
+                else:
+                    partialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(fleetID,  empireID)).get(fo.visibility.partial, -9999)
+                    if partialVisTurn >= currentTurn -1 : #only interested in immediately recent data
+                        sawEnemiesAtSystem[fleet.systemID] = True
+                        if   (fleetID not in destroyedObjIDs):
+                            enemyFleetIDs.append( fleetID )
+                            thisSysID = (fleet.systemID!= -1 and fleet.systemID) or fleet.nextSystemID
+                            enemiesBySystem.setdefault( thisSysID,  [] ).append( fleetID )
             
-        #assess fleet and planet threats
+        #assess fleet and planet threats & my local fleets
         for sysID in sysIDList:
             sysStatus = self.systemStatus.setdefault(sysID,  {})
             sysStatus['myfleets']=[]
@@ -239,7 +245,7 @@ class AIstate(object):
                         self.deleteFleetInfo(fid)#this is safe even if fleet wasn't mine
                         continue
                     fleet = universe.getFleet(fid)
-                    if not fleet: 
+                    if not fleet or fleet.empty: 
                         self.deleteFleetInfo(fid)#this is safe even if fleet wasn't mine
                         continue
                     if fleet.ownedBy(empire.empireID):
@@ -259,8 +265,12 @@ class AIstate(object):
                 print  ("     Assessing threats on turn %d ; noting that fleets were just lost in system %d ,  enemy fleets were %s seen as of turn %d, of which %s survived and  %s were"+
                         " just briefly glimpsed")%( currentTurn,  sysID, ["not", ""][sawEnemiesAtSystem.get(sysID, False)],  partialVisTurn,   localEnemyFleetIDs,  glimpsedEnemies)
                 if partialVisTurn >= currentTurn -1:
-                    enemyRating = sum( [self.rateFleet(fid) for fid in localEnemyFleetIDs  ] )#TODO: check for monsters
-                    monsterRating = sum( [self.rateFleet(fid) for fid in localEnemyFleetIDs  ] )#TODO: check for monsters
+                    #enemyRating = sum( [self.rateFleet(fid) for fid in localEnemyFleetIDs  ] )
+                    #monsterRating = sum( [self.rateFleet(fid) for fid in localEnemyFleetIDs  ] )
+                    enemyRatings =  [self.rateFleet(fid) for fid in localEnemyFleetIDs  ] 
+                    monsterRatings = [self.rateFleet(fid) for fid in localEnemyFleetIDs  ] 
+                    enemyRating = sum( [rating.get('attack', 0) for rating in enemyRatings]) * sum( [rating.get('health', 0) for rating in enemyRatings])
+                    monsterRating = sum( [rating.get('attack', 0) for rating in enemyRatings]) * sum( [rating.get('health', 0) for rating in enemyRatings])
             if (not system) or not (universe.getVisibility(sysID,  self.empireID) >= fo.visibility.partial):#TODO split off treatment of no system from not visible
                 print "Can't see into system %d ( %s ) -- basing threat assessment on old info and lost ships"%(sysID,  sysStatus.get('name',  "name unknown"))
                 sysStatus['planetThreat'] = int( sysStatus.get('planetThreat',  0) ) # if no current info, leave as previous, or 0 if no previous rating
@@ -274,15 +284,16 @@ class AIstate(object):
             else: #system considered visible #TODO: reevaluate as visibility rules change
                 threat=0
                 monsterThreat=0
-                sawContents= len( list(system.allObjectIDs)) > 0
+                #sawContents= len( list(system.allObjectIDs)) > 0
+                sawContents=True
                 for fleetID in system.fleetIDs:
                     sawContents=True #apparently can be logged as visisble for rest of turn even if can no longer get sys contents
                     fleet = universe.getFleet(fleetID)
                     if ( fleet) and  (not fleet.ownedBy(self.empireID)):
                         if fleet.hasMonsters:
-                            monsterThreat += self.rateFleet(fleetID)#
+                            monsterThreat += self.rateFleet(fleetID).get('overall',0)#
                         else:
-                            threat += self.rateFleet(fleetID)#currently treating all unowned fleets as hostile
+                            threat += self.rateFleet(fleetID).get('overall',0)#currently treating all unowned fleets as hostile
                 if sawContents:
                     sysStatus['fleetThreat'] = max( int( threat )+int(monsterThreat),  1.05*sum(fleetsLostBySystem.get(sysID,  []) ))  #fleetThreat always includes monster threat, and may not have seen stealthed enemies
                     sysStatus['monsterThreat']=int(monsterThreat)
@@ -303,11 +314,19 @@ class AIstate(object):
                             print "Error:  couldn't read meters for threat assessment of visible planet %d : %s"%(planetID,  planet.name)
                             print "Error: exception triggered and caught:  ",  traceback.format_exc()
                 sysStatus['planetThreat'] = int( threat )
-                self.systemStatus[sysID] = sysStatus
+            #self.systemStatus[sysID] = sysStatus #no longer necessary because using setdefault
 
-        #assess secondary threats (one half of threats of surrounding systems
+        #assess secondary threats (one half of threats of surrounding systems  and update my fleet rating
         for sysID in sysIDList:
             sysStatus = self.systemStatus[sysID]
+            myattack, myhealth=0, 0
+            for fid in sysStatus['myfleets']:
+                thisRating=self.getRating(fid)
+                myattack += thisRating['attack']
+                myhealth += thisRating['health']
+            if sysID != -1:
+                sysStatus['myFleetRating'] = myattack * myhealth
+                
             system = universe.getSystem(sysID)
             neighborDict = dictFromMap( universe.getSystemNeighborsMap(sysID,  self.empireID) )
             neighbors = neighborDict.keys()
@@ -428,6 +447,9 @@ class AIstate(object):
         if not fleet:
             return 0
         rating=0
+        attack=0
+        health=0
+        nships=0
         for shipID in fleet.shipIDs:
             #could approximate by design, but checking  meters has better current accuracy
             ship = universe.getShip(shipID)
@@ -435,11 +457,14 @@ class AIstate(object):
                 continue
             stats = self.getDesignIDStats(ship.designID)
             rating += stats['attack'] * ( stats['structure'] + stats['shields'] )
-        return rating
+            attack +=  stats['attack']
+            health += ( stats['structure'] + stats['shields'] )
+            nships+=1
+        return {'overall':attack*health,  'tally':rating, 'attack':attack, 'health':health, 'nships':nships}
 
     def getRating(self,  fleetID):
         if fleetID in self.fleetStatus:
-            return self.fleetStatus[fleetID].get('rating', 0)
+            return self.fleetStatus[fleetID].get('rating', {})
         else:
             fleet = fo.getUniverse().getFleet(fleetID)
             if not fleet: return 0
@@ -517,8 +542,11 @@ class AIstate(object):
             role=FleetUtilsAI.assessFleetRole(fleetID)
             self.__fleetRoleByID[fleetID] = role
             makeAggressive=False
-            if role in [AIFleetMissionType.FLEET_MISSION_COLONISATION,  AIFleetMissionType.FLEET_MISSION_OUTPOST,  AIFleetMissionType.FLEET_MISSION_EXPLORATION]:
-                if self.getRating(fleetID) >= 2.0 * ProductionAI.curBestMilShipRating():
+            if role in [AIFleetMissionType.FLEET_MISSION_COLONISATION,  AIFleetMissionType.FLEET_MISSION_OUTPOST]:
+                pass
+            if role in [AIFleetMissionType.FLEET_MISSION_EXPLORATION]:
+                thisRating=self.getRating(fleetID)
+                if float(thisRating.get('overall', 0))/thisRating.get('nships', 1) >= 0.5 * ProductionAI.curBestMilShipRating():
                     makeAggressive=True
             else:
                     makeAggressive=True
@@ -582,7 +610,7 @@ class AIstate(object):
         print "-----------"
         for fleetID in fleetList:
             status=self.fleetStatus.get(fleetID,  {} )
-            rating = status.get('rating', -1)
+            rating = status.get('rating', {})
             newRating = self.rateFleet(fleetID)
             oldSysID = status.get('sysID',  -2)
             fleet = universe.getFleet(fleetID)
@@ -595,7 +623,7 @@ class AIstate(object):
             if (fleetID not in okFleets):# or fleet.empty:
                 if not ( (self.__fleetRoleByID.get(fleetID,  -1) ==-1)  ):
                     if not justResumed:
-                        fleetsLostBySystem[sysID] = fleetsLostBySystem.get(sysID,  []) + [max(rating,  MinThreat)]
+                        fleetsLostBySystem.setdefault(sysID,  []).append( max(rating.get('overall', 0),  MinThreat) )
                         sys=universe.getSystem(sysID)
                         sysName=(sys and sys.name) or "unknown"
                         print "Fleet %d  with role %s was used up, lost or destroyed at sys (%d) %s"%(fleetID,  self.__fleetRoleByID[fleetID],  sysID, sysName)  #perhaps diff message for successful colony fleets
@@ -606,12 +634,12 @@ class AIstate(object):
                 if fleetID in self.fleetStatus:
                     del self.fleetStatus[fleetID]
                 continue
-            else:
+            else:#fleet not in ok fleets
                 sys1 =  universe.getSystem(sysID)
                 sys1Name = (sys1 and sys1.name ) or "unknown"
                 sys2 =  universe.getSystem(fleet.nextSystemID)
                 sys2Name = (sys2 and sys2.name ) or "unknown"
-                print "Fleet %d (%s)  oldRating: %6d   | newRating %6d  | at system %d (%s)  | next system %d (%s)"%(fleetID, fleet.name,  rating,  newRating, 
+                print "Fleet %d (%s)  oldRating: %6d   | newRating %6d  | at system %d (%s)  | next system %d (%s)"%(fleetID, fleet.name,  rating.get('overall', 0),  newRating.get('overall', 0), 
                                                                                                                      fleet.systemID,  sys1Name,  fleet.nextSystemID,  sys2Name)
                 status['rating'] = newRating
                 if sysID !=-1:
@@ -629,9 +657,9 @@ class AIstate(object):
                                 status['sysID'] = mMT0.getTargetID() #hmm, but might still be a fair ways from here
                 #status['sysID'] = (fleet.systemID != -1  and fleet.systemID ) or  fleet.nextSystemID  #universe should still give fleet & fleet.systemID even if just destroyed
                 self.fleetStatus[fleetID] = status
-                if sysID != -1:
-                    self.systemStatus.setdefault(sysID, {}).setdefault('myFleetRating', 0) 
-                    self.systemStatus[sysID]['myFleetRating'] += newRating #TODO: should probably do this up at updateSystemStatus
+                #if sysID != -1:
+                #    self.systemStatus.setdefault(sysID, {}).setdefault('myFleetRating', 0) 
+                #    self.systemStatus[sysID]['myFleetRating'] += newRating #moved to updateSystemStatus
                     
     def getExplorableSystems(self, explorableSystemsType):
         "get all explorable systems determined by type "
