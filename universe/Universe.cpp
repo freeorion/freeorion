@@ -1471,292 +1471,398 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
     }
 }
 
-void Universe::UpdateEmpireObjectVisibilities() {
-    //Logger().debugStream() << "Universe::UpdateEmpireObjectVisibilities()";
+void Universe::SetEmpireSpecialVisibility(int empire_id, int object_id,
+                                          const std::string& special_name,
+                                          bool visible/* = true*/)
+{
+    if (empire_id == ALL_EMPIRES || special_name.empty() || object_id == INVALID_OBJECT_ID)
+        return;
+    //const UniverseObject* obj = GetUniverseObject(object_id);
+    //if (!obj)
+    //    return;
+    //if (!obj->HasSpecial(special_name))
+    //    return;
+    if (visible)
+        m_empire_object_visible_specials[empire_id][object_id].insert(special_name);
+    else
+        m_empire_object_visible_specials[empire_id][object_id].erase(special_name);
+}
 
-    // ensure Universe knows empires have knowledge of designs the empire is specifically remembering
-    for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
-        const Empire* empire = empire_it->second;
-        int empire_id = empire_it->first;
-        const std::set<int>& empire_known_ship_designs = empire->ShipDesigns();
-        for (std::set<int>::const_iterator design_it = empire_known_ship_designs.begin();
-             design_it != empire_known_ship_designs.end(); ++design_it)
-        { m_empire_known_ship_design_ids[empire_id].insert(*design_it); }
+namespace {
+    /** for each empire: for each position where the empire has detector objects,
+      * what is the empire's detection range at that location?  (this is the
+      * largest of the detection ranges of objects the empire has at that spot) */
+    std::map<int, std::map<std::pair<double, double>, float> >
+        GetEmpiresPositionDetectionRanges()
+    {
+        std::map<int, std::map<std::pair<double, double>, float> > retval;
+
+        for (ObjectMap::const_iterator object_it = Objects().const_begin();
+                object_it != Objects().const_end(); ++object_it)
+        {
+            // skip unowned objects, which can't provide detection to any empire
+            const UniverseObject* obj = object_it->second;
+            if (obj->Unowned())
+                continue;
+
+            // skip objects with no detection range
+            const Meter* detection_meter = obj->GetMeter(METER_DETECTION);
+            if (!detection_meter)
+                continue;
+            float object_detection_range = detection_meter->Current();
+            if (object_detection_range <= 0.0f)
+                continue;
+
+            // don't allow moving ships / fleets to give detection
+            const Fleet* fleet = 0;
+            if (obj->ObjectType() == OBJ_FLEET) {
+                fleet = universe_object_cast<const Fleet*>(obj);
+            } else if (obj->ObjectType() == OBJ_SHIP) {
+                const Ship* ship = universe_object_cast<const Ship*>(obj);
+                if (ship)
+                    fleet = Objects().Object<Fleet>(ship->FleetID());
+            }
+            if (fleet) {
+                int next_id = fleet->NextSystemID();
+                int cur_id = fleet->SystemID();
+                if (next_id != INVALID_OBJECT_ID && next_id != cur_id)
+                    continue;
+            }
+
+            // record object's detection range for owner
+            int object_owner_empire_id = obj->Owner();
+            std::pair<double, double> object_pos(obj->X(), obj->Y());
+            // store range in output map (if new for location or larger than any
+            // previously-found range at this location)
+            std::map<std::pair<double, double>, float>& retval_empire_pos_range = retval[object_owner_empire_id];
+            std::map<std::pair<double, double>, float>::iterator retval_pos_it = retval_empire_pos_range.find(object_pos);
+            if (retval_pos_it == retval_empire_pos_range.end())
+                retval_empire_pos_range[object_pos] = object_detection_range;
+            else
+                retval_pos_it->second = std::max(retval_pos_it->second, object_detection_range);
+        }
+        return retval;
     }
 
+    std::map<int, float> GetEmpiresDetectionStrengths() {
+        std::map<int, float> retval;
+        for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
+            const Meter* meter = empire_it->second->GetMeter("METER_DETECTION_STRENGTH");
+            float strength = meter ? meter->Current() : 0.0f;
+            retval[empire_it->first] = strength;
+        }
+        return retval;
+    }
 
-    m_empire_object_visibility.clear();
-    m_empire_object_visible_specials.clear();
+    /** for each empire: for each position, what objects have low enough stealth
+      * that the empire could detect them if an object owned by the empire is in
+      * range? */
+    std::map<int, std::map<std::pair<double, double>, std::vector<int> > >
+        GetEmpiresPositionsPotentiallyDetectableObjects(const ObjectMap& objects)
+    {
+        std::map<int, std::map<std::pair<double, double>, std::vector<int> > > retval;
 
+        std::map<int, float> empire_detection_strengths = GetEmpiresDetectionStrengths();
 
-    if (m_all_objects_visible) {
+        // filter objects as detectors for this empire or detectable objects
+        for (ObjectMap::const_iterator object_it = objects.const_begin();
+             object_it != objects.const_end(); ++object_it)
+        {
+            const UniverseObject* obj = object_it->second;
+            int object_id = object_it->first;
+            const Meter* stealth_meter = obj->GetMeter(METER_STEALTH);
+            if (!stealth_meter)
+                continue;
+            float object_stealth = stealth_meter->Current();
+            std::pair<double, double> object_pos(obj->X(), obj->Y());
+            // check if each empire might be able to detect object, and if so,
+            // add it to the returned list
+            for (std::map<int, float>::const_iterator empire_it = empire_detection_strengths.begin();
+                 empire_it != empire_detection_strengths.end(); ++empire_it)
+            {
+                int empire_id = empire_it->first;
+                if (object_stealth <= empire_it->second || object_stealth == 0.0f || obj->OwnedBy(empire_id))
+                    retval[empire_id][object_pos].push_back(object_id);
+            }
+        }
+        return retval;
+    }
+
+    /** sets visibility of objects for empires based on input locations of
+      * potentially detectable objects (if in range) and and input empire
+      * detection ranges at locations. */
+    void SetEmpireObjectVisibilitiesFromRanges(
+        const std::map<int, std::map<std::pair<double, double>, float> >&
+            empire_location_detection_ranges,
+        const std::map<int, std::map<std::pair<double, double>, std::vector<int> > >&
+            empire_location_potentially_detectable_objects,
+        Universe::EmpireObjectVisibilityMap& empire_object_visibility)
+    {
+        for (std::map<int, std::map<std::pair<double, double>, float> >::const_iterator
+             detecting_empire_it = empire_location_detection_ranges.begin();
+             detecting_empire_it != empire_location_detection_ranges.end();
+             ++detecting_empire_it)
+        {
+            int detecting_empire_id = detecting_empire_it->first;
+            // get empire's locations of detection ability
+            const std::map<std::pair<double, double>, float>& detector_position_ranges =
+                detecting_empire_it->second;
+            // for this empire, get objects it could potentially detect
+            const std::map<int, std::map<std::pair<double, double>, std::vector<int> > >::const_iterator
+                empire_detectable_objects_it = empire_location_potentially_detectable_objects.find(detecting_empire_id);
+            if (empire_detectable_objects_it == empire_location_potentially_detectable_objects.end())
+                continue;   // empire can't detect anything!
+            const std::map<std::pair<double, double>, std::vector<int> >& detectable_position_objects =
+                empire_detectable_objects_it->second;
+
+            // get empire's object visibility output map
+            Universe::ObjectVisibilityMap& vis_map = empire_object_visibility[detecting_empire_id];
+
+            // check each detector and range against each position
+            for (std::map<std::pair<double, double>, std::vector<int> >::const_iterator
+                 detectable_position_it = detectable_position_objects.begin();
+                 detectable_position_it != detectable_position_objects.end();
+                 ++detectable_position_it)
+            {
+                const std::pair<double, double>& detectable_pos = detectable_position_it->first;
+                const std::vector<int>& detectable_objects = detectable_position_it->second;
+                // search through detector positions until one is found in range
+                for (std::map<std::pair<double, double>, float>::const_iterator
+                     detector_position_it = detector_position_ranges.begin();
+                     detector_position_it != detector_position_ranges.end();
+                     ++detector_position_it)
+                {
+                    // check range for this detector location for this detectables location
+                    float detector_range2 = detector_position_it->second * detector_position_it->second;
+                    const std::pair<double, double>& detector_pos = detector_position_it->first;
+                    double x_dist = detector_pos.first - detectable_pos.first;
+                    double y_dist = detector_pos.second - detectable_pos.second;
+                    double dist2 = x_dist*x_dist + y_dist*y_dist;
+                    if (dist2 > detector_range2)
+                        continue;   // out of range
+
+                    // in range; set all detectable objects as partially visible for this empire
+                    for (std::vector<int>::const_iterator detected_object_it = detectable_objects.begin();
+                         detected_object_it != detectable_objects.end(); ++detected_object_it)
+                    {
+                        int detected_object_id = *detected_object_it;
+                        // set this object to at partial visibility, unless it
+                        // is already partial or better visibility.
+                        Universe::ObjectVisibilityMap::iterator vis_map_it = vis_map.find(detected_object_id);
+                        if (vis_map_it == vis_map.end()) {
+                            vis_map[detected_object_id] = VIS_PARTIAL_VISIBILITY;
+                        } else if (vis_map_it->second < VIS_PARTIAL_VISIBILITY) {
+                            vis_map_it->second = VIS_PARTIAL_VISIBILITY;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /** sets visibility of objects that empires own for those objects */
+    void SetEmpireOwnedObjectVisibilities() {
+        Universe& universe = GetUniverse();
+        for (ObjectMap::const_iterator object_it = Objects().const_begin();
+                object_it != Objects().const_end(); ++object_it)
+        {
+            const UniverseObject* obj = object_it->second;
+            if (obj->Unowned())
+                continue;
+            universe.SetEmpireObjectVisibility(obj->Owner(), object_it->first, VIS_FULL_VISIBILITY);
+        }
+    }
+
+    /** sets all objects visible to all empires */
+    void SetAllObjectsVisibleToAllEmpires() {
+        Universe& universe = GetUniverse();
         // set every object visible to all empires
-        std::set<int> all_empire_ids;
-        for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
-            all_empire_ids.insert(empire_it->first);
-
-        for (ObjectMap::const_iterator obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it) {
-            for (std::set<int>::const_iterator empire_it = all_empire_ids.begin(); empire_it != all_empire_ids.end(); ++empire_it) {
+        for (ObjectMap::const_iterator obj_it = Objects().const_begin();
+             obj_it != Objects().const_end(); ++obj_it)
+        {
+            for (EmpireManager::iterator empire_it = Empires().begin();
+                 empire_it != Empires().end(); ++empire_it)
+            {
                 // objects
-                SetEmpireObjectVisibility(*empire_it, obj_it->first, VIS_FULL_VISIBILITY);
+                universe.SetEmpireObjectVisibility(empire_it->first, obj_it->first, VIS_FULL_VISIBILITY);
                 // specials on objects
                 const std::map<std::string, int>& specials = obj_it->second->Specials();
                 for (std::map<std::string, int>::const_iterator special_it = specials.begin();
                      special_it != specials.end(); ++special_it)
                 {
-                    m_empire_object_visible_specials[*empire_it][obj_it->first].insert(special_it->first);
-                }
-            }
-        }
-
-        return;
-    }
-
-    std::map<int, std::multimap<double, const UniverseObject*> >empire_detectors;   // indexed by empire ID: objects each empire owns and their detection ranges if above 0
-    std::map<int, std::vector<const UniverseObject*> >          detectable_objects; // indexed by empire ID: objects with low enough stealth that empire could see them if in range
-
-
-    // for each empire find detector objects and potentially detectable objects
-    for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
-        const Empire* empire = empire_it->second;
-        int empire_id = empire_it->first;
-        const Meter* detection_meter = empire->GetMeter("METER_DETECTION_STRENGTH");
-        double detection_strength = detection_meter ? detection_meter->Current() : 0.0;
-
-        // filter objects as detectors for this empire or detectable objects
-        for (ObjectMap::const_iterator object_it = m_objects.const_begin();
-             object_it != m_objects.const_end(); ++object_it)
-        {
-            const UniverseObject* obj = object_it->second;
-            int object_id = object_it->first;
-
-            if (obj->OwnedBy(empire_id)) {
-                // objects empire owns -> full visibility
-                SetEmpireObjectVisibility(empire_id, object_id, VIS_FULL_VISIBILITY);
-                // is object a detector?
-                const Meter* detection_meter = obj->GetMeter(METER_DETECTION);
-                if (!detection_meter || detection_meter->Current() <= 0.0)
-                    continue;
-
-                // don't allow moving fleets or ships to provide detection
-                const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
-                if (!fleet)
-                    if (const Ship* ship = universe_object_cast<const Ship*>(obj))
-                        fleet = m_objects.Object<Fleet>(ship->FleetID());
-                if (fleet) {
-                    int next_id = fleet->NextSystemID();
-                    int cur_id = fleet->SystemID();
-                    if (next_id != INVALID_OBJECT_ID && next_id != cur_id)
-                        continue;
-                }
-
-                // object can act as a detector for this empire
-                empire_detectors[empire_id].insert(std::make_pair(detection_meter->Current(), obj));
-
-            } else {
-                // objects empire does not own: may be partially visible, so store for later
-                // may also be basically visible if stealth is 0
-                const Meter* stealth_meter = obj->GetMeter(METER_STEALTH);
-                if (!stealth_meter)
-                    continue;
-
-                // is object potentially detectable by empire? (low enough stealth compared with empire's detection strength)
-                if (stealth_meter->Current() <= detection_strength)
-                    detectable_objects[empire_id].push_back(obj);
-
-                // even without a detector, is object detectable due to having zero stealth?
-                if (stealth_meter->Current() <= 0) {
-                    SetEmpireObjectVisibility(empire_id, object_id, VIS_BASIC_VISIBILITY);
+                    universe.SetEmpireSpecialVisibility(empire_it->first, obj_it->first, special_it->first);
                 }
             }
         }
     }
 
-    // for each empire test which objects are detected
-    for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
-        int empire_id = empire_it->first;
-        ObjectVisibilityMap& obj_vis_map = m_empire_object_visibility[empire_id];
-
-        // check if each potentially detectable object is within range of any of the detectors
-        for (std::vector<const UniverseObject*>::const_iterator detectable_it = detectable_objects[empire_id].begin();
-             detectable_it != detectable_objects[empire_id].end(); ++detectable_it)
-        {
-            const UniverseObject* detectable_obj = *detectable_it;
-            ObjectVisibilityMap::iterator obj_vis_map_it = obj_vis_map.find(detectable_obj->ID());
-            Visibility obj_vis = VIS_NO_VISIBILITY;
-            if (obj_vis_map_it != obj_vis_map.end())
-                obj_vis = obj_vis_map_it->second;
-
-            if (obj_vis >= VIS_PARTIAL_VISIBILITY)
-                continue;   // Visibility can't be improved beyond partial by non-ownership detection
-
-            // start with highest-range detectors and halt when one is found
-            // that can see the current detectable object
-            for (std::multimap<double, const UniverseObject*>::reverse_iterator detector_it = empire_detectors[empire_id].rbegin();
-                 detector_it != empire_detectors[empire_id].rend(); ++detector_it)
-            {
-                const UniverseObject* detector_obj = detector_it->second;
-                if (detector_obj->ID() == detectable_obj->ID())
-                    continue;   // objects already give their owner full visibility of themselves
-
-                double range_limit = detector_it->first;
-                if (const Field* field = universe_object_cast<const Field*>(detectable_obj))
-                    range_limit += field->CurrentMeterValue(METER_SIZE);
-                double x_dist = detectable_obj->X() - detector_obj->X();
-                double y_dist = detectable_obj->Y() - detector_obj->Y();
-                double dist2 = x_dist*x_dist + y_dist*y_dist;
-                if (range_limit*range_limit >= dist2) {
-                    SetEmpireObjectVisibility(empire_id, detectable_obj->ID(), VIS_PARTIAL_VISIBILITY);
-                    break;
-                }
-            }
-        }
-    }
-
-
-    // propegate visibility from contained to container objects
-    for (ObjectMap::const_iterator container_object_it = m_objects.const_begin();
-         container_object_it != m_objects.const_end(); ++container_object_it)
+    void PropegateVisibilityToContainerObjects(const ObjectMap& objects,
+                                               Universe::EmpireObjectVisibilityMap& empire_object_visibility)
     {
-        int container_obj_id = container_object_it->first;
+        Universe& universe = GetUniverse();
 
-        // get container object
-        const UniverseObject* container_obj = container_object_it->second;
-        if (!container_obj)
-            continue;   // shouldn't be necessary, but I like to be safe...
+        // propegate visibility from contained to container objects
+        for (ObjectMap::const_iterator container_object_it = objects.const_begin();
+             container_object_it != objects.const_end(); ++container_object_it)
+        {
+            int container_obj_id = container_object_it->first;
 
-        // does object actually contain any other objects?
-        std::vector<int> contained_objects = container_obj->FindObjectIDs();
-        if (contained_objects.empty())
-            continue;   // nothing to propegate if no objects contained
+            // get container object
+            const UniverseObject* container_obj = container_object_it->second;
+            if (!container_obj)
+                continue;   // shouldn't be necessary, but I like to be safe...
 
-        // check if container object is a fleet, for special case later...
-        const Fleet* container_fleet = universe_object_cast<const Fleet*>(container_obj);
+            // does object actually contain any other objects?
+            std::vector<int> contained_objects = container_obj->FindObjectIDs();
+            if (contained_objects.empty())
+                continue;   // nothing to propegate if no objects contained
+
+            // check if container object is a fleet, for special case later...
+            bool container_fleet = container_obj->ObjectType() == OBJ_FLEET;
 
 
-        //Logger().debugStream() << "Container object " << container_obj->Name() << " (" << container_obj->ID() << ")";
+            //Logger().debugStream() << "Container object " << container_obj->Name() << " (" << container_obj->ID() << ")";
 
-        // for each contained object within container
-        for (std::vector<int>::iterator contained_obj_it = contained_objects.begin(); contained_obj_it != contained_objects.end(); ++contained_obj_it) {
-            int contained_obj_id = *contained_obj_it;
+            // for each contained object within container
+            for (std::vector<int>::iterator contained_obj_it = contained_objects.begin();
+                 contained_obj_it != contained_objects.end(); ++contained_obj_it)
+            {
+                int contained_obj_id = *contained_obj_it;
 
-            //Logger().debugStream() << " ... contained object (" << contained_obj_id << ")";
+                //Logger().debugStream() << " ... contained object (" << contained_obj_id << ")";
+
+                // for each empire with a visibility map
+                for (Universe::EmpireObjectVisibilityMap::iterator empire_it = empire_object_visibility.begin();
+                     empire_it != empire_object_visibility.end(); ++empire_it)
+                {
+                    Universe::ObjectVisibilityMap& vis_map = empire_it->second;
+
+                    //Logger().debugStream() << " ... ... empire id " << empire_it->first;
+
+                    // find current empire's visibility entry for current container object
+                    Universe::ObjectVisibilityMap::iterator container_vis_it = vis_map.find(container_obj_id);
+                    // if no entry yet stored for this object, default to not visible
+                    if (container_vis_it == vis_map.end()) {
+                        vis_map[container_obj_id] = VIS_NO_VISIBILITY;
+
+                        // get iterator pointing at newly-created entry
+                        container_vis_it = vis_map.find(container_obj_id);
+                    } else {
+                        // check whether having a contained object would change container's visibility
+                        if (container_fleet) {
+                            // special case for fleets: grant partial visibility if
+                            // a contained ship is seen with partial visibility or
+                            // higher visibilitly
+                            if (container_vis_it->second >= VIS_PARTIAL_VISIBILITY)
+                                continue;
+                        } else if (container_vis_it->second >= VIS_BASIC_VISIBILITY) {
+                            // general case: for non-fleets, having visible
+                            // contained object grants basic vis only.  if
+                            // container already has this or better for the current
+                            // empire, don't need to propegate anything
+                            continue;
+                        }
+                    }
+
+
+                    // find contained object's entry in visibility map
+                    Universe::ObjectVisibilityMap::iterator contained_vis_it = vis_map.find(contained_obj_id);
+                    if (contained_vis_it != vis_map.end()) {
+                        // get contained object's visibility for current empire
+                        Visibility contained_obj_vis = contained_vis_it->second;
+
+                        // no need to propegate if contained object isn't visible to current empire
+                        if (contained_obj_vis <= VIS_NO_VISIBILITY)
+                            continue;
+
+                        //Logger().debugStream() << " ... ... contained object vis: " << contained_obj_vis;
+
+                        // contained object is at least basically visible.
+                        // container should be at least partially visible, but don't
+                        // want to decrease visibility of container if it is already
+                        // higher than partially visible
+                        if (container_vis_it->second < VIS_BASIC_VISIBILITY)
+                            container_vis_it->second = VIS_BASIC_VISIBILITY;
+
+                        // special case for fleets: grant partial visibility if
+                        // visible contained object is partially or better visible
+                        // this way fleet ownership is known to players who can 
+                        // see ships with partial or better visibility (and thus
+                        // know the owner of the ships and thus should know the
+                        // owners of the fleet)
+                        if (container_fleet && contained_obj_vis >= VIS_PARTIAL_VISIBILITY &&
+                            container_vis_it->second < VIS_PARTIAL_VISIBILITY)
+                        { container_vis_it->second = VIS_PARTIAL_VISIBILITY; }
+                    }
+                }   // end for empire visibility entries
+            }   // end for contained objects
+        }   // end for container objects
+    }
+
+    void PropegateVisibilityToSystemsAlongStarlanes(const ObjectMap& objects,
+                                                    Universe::EmpireObjectVisibilityMap& empire_object_visibility) {
+        const std::vector<const System*> systems = objects.FindObjects<System>();
+        for (std::vector<const System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
+            const System* system = *it;
+            int system_id = system->ID();
 
             // for each empire with a visibility map
-            for (EmpireObjectVisibilityMap::iterator empire_it = m_empire_object_visibility.begin(); empire_it != m_empire_object_visibility.end(); ++empire_it) {
-                ObjectVisibilityMap& vis_map = empire_it->second;
+            for (Universe::EmpireObjectVisibilityMap::iterator empire_it = empire_object_visibility.begin();
+                 empire_it != empire_object_visibility.end(); ++empire_it)
+            {
+                Universe::ObjectVisibilityMap& vis_map = empire_it->second;
 
-                //Logger().debugStream() << " ... ... empire id " << empire_it->first;
-
-                // find current empire's visibility entry for current container object
-                ObjectVisibilityMap::iterator container_vis_it = vis_map.find(container_obj_id);
-                // if no entry yet stored for this object, default to not visible
-                if (container_vis_it == vis_map.end()) {
-                    vis_map[container_obj_id] = VIS_NO_VISIBILITY;
-
-                    // get iterator pointing at newly-created entry
-                    container_vis_it = vis_map.find(container_obj_id);
-                } else {
-                    // check whether having a contained object would change container's visibility
-                    if (container_fleet) {
-                        // special case for fleets: grant partial visibility if
-                        // a contained ship is seen with partial visibility or
-                        // higher visibilitly
-                        if (container_vis_it->second >= VIS_PARTIAL_VISIBILITY)
-                            continue;
-                    } else if (container_vis_it->second >= VIS_BASIC_VISIBILITY) {
-                        // general case: for non-fleets, having visible
-                        // contained object grants basic vis only.  if
-                        // container already has this or better for the current
-                        // empire, don't need to propegate anything
-                        continue;
-                    }
-                }
-
-
-                // find contained object's entry in visibility map
-                ObjectVisibilityMap::iterator contained_vis_it = vis_map.find(contained_obj_id);
-                if (contained_vis_it != vis_map.end()) {
-                    // get contained object's visibility for current empire
-                    Visibility contained_obj_vis = contained_vis_it->second;
-
-                    // no need to propegate if contained object isn't visible to current empire
-                    if (contained_obj_vis <= VIS_NO_VISIBILITY)
-                        continue;
-
-                    //Logger().debugStream() << " ... ... contained object vis: " << contained_obj_vis;
-
-                    // contained object is at least basically visible.
-                    // container should be at least partially visible, but don't
-                    // want to decrease visibility of container if it is already
-                    // higher than partially visible
-                    if (container_vis_it->second < VIS_BASIC_VISIBILITY)
-                        container_vis_it->second = VIS_BASIC_VISIBILITY;
-
-                    // special case for fleets: grant partial visibility if
-                    // visible contained object is partially or better visible
-                    // this way fleet ownership is known to players who can 
-                    // see ships with partial or better visibility (and thus
-                    // know the owner of the ships and thus should know the
-                    // owners of the fleet)
-                    if (container_fleet && contained_obj_vis >= VIS_PARTIAL_VISIBILITY && container_vis_it->second < VIS_PARTIAL_VISIBILITY)
-                        container_vis_it->second = VIS_PARTIAL_VISIBILITY;
-                }
-            }   // end for empire visibility entries
-        }   // end for contained objects
-    }   // end for container objects
-
-
-    // propegate visibility along starlanes
-    const std::vector<System*> systems = m_objects.FindObjects<System>();
-    for (std::vector<System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
-        const System* system = *it;
-        int system_id = system->ID();
-
-        // for each empire with a visibility map
-        for (EmpireObjectVisibilityMap::iterator empire_it = m_empire_object_visibility.begin(); empire_it != m_empire_object_visibility.end(); ++empire_it) {
-            ObjectVisibilityMap& vis_map = empire_it->second;
-
-            // find current system's visibility
-            ObjectVisibilityMap::iterator system_vis_it = vis_map.find(system_id);
-            if (system_vis_it == vis_map.end())
-                continue;
-
-            // skip systems that aren't at least partially visible; they can't propegate visibility along starlanes
-            Visibility system_vis = system_vis_it->second;
-            if (system_vis <= VIS_BASIC_VISIBILITY)
-                continue;
-
-            // get all starlanes emanating from this system, and loop through them
-            System::StarlaneMap starlane_map = system->StarlanesWormholes();
-            for (System::StarlaneMap::const_iterator lane_it = starlane_map.begin(); lane_it != starlane_map.end(); ++lane_it) {
-                bool is_wormhole = lane_it->second;
-                if (is_wormhole)
+                // find current system's visibility
+                Universe::ObjectVisibilityMap::iterator system_vis_it = vis_map.find(system_id);
+                if (system_vis_it == vis_map.end())
                     continue;
 
-                // find entry for system on other end of starlane in visibility
-                // map, and upgrade to basic visibility if not already at that
-                // leve, so that starlanes will be visible if either system it
-                // ends at is partially visible or better
-                int lane_end_sys_id = lane_it->first;
-                ObjectVisibilityMap::iterator lane_end_vis_it = vis_map.find(lane_end_sys_id);
-                if (lane_end_vis_it == vis_map.end())
-                    vis_map[lane_end_sys_id] = VIS_BASIC_VISIBILITY;
-                else if (lane_end_vis_it->second < VIS_BASIC_VISIBILITY)
-                    lane_end_vis_it->second = VIS_BASIC_VISIBILITY;
+                // skip systems that aren't at least partially visible; they can't propegate visibility along starlanes
+                Visibility system_vis = system_vis_it->second;
+                if (system_vis <= VIS_BASIC_VISIBILITY)
+                    continue;
+
+                // get all starlanes emanating from this system, and loop through them
+                System::StarlaneMap starlane_map = system->StarlanesWormholes();
+                for (System::StarlaneMap::const_iterator lane_it = starlane_map.begin();
+                     lane_it != starlane_map.end(); ++lane_it)
+                {
+                    bool is_wormhole = lane_it->second;
+                    if (is_wormhole)
+                        continue;
+
+                    // find entry for system on other end of starlane in visibility
+                    // map, and upgrade to basic visibility if not already at that
+                    // leve, so that starlanes will be visible if either system it
+                    // ends at is partially visible or better
+                    int lane_end_sys_id = lane_it->first;
+                    Universe::ObjectVisibilityMap::iterator lane_end_vis_it = vis_map.find(lane_end_sys_id);
+                    if (lane_end_vis_it == vis_map.end())
+                        vis_map[lane_end_sys_id] = VIS_BASIC_VISIBILITY;
+                    else if (lane_end_vis_it->second < VIS_BASIC_VISIBILITY)
+                        lane_end_vis_it->second = VIS_BASIC_VISIBILITY;
+                }
             }
         }
+
     }
 
-
-    // ensure systems on either side of a starlane along which a fleet is
-    // moving are at least basically visible, so that the starlane itself can /
-    // will be visible
-    std::vector<const Fleet*> moving_fleets;
-    std::vector<UniverseObject*> moving_fleet_objects = m_objects.FindObjects(MovingFleetVisitor());
-    for (std::vector<UniverseObject*>::iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it) {
-        if (const Fleet* fleet = universe_object_cast<const Fleet*>(*it)) {
-            if (fleet->SystemID() != INVALID_OBJECT_ID || fleet->Unowned())
+    void SetTravelledStarlaneEndpointsVisible(const ObjectMap& objects,
+                                              Universe::EmpireObjectVisibilityMap& empire_object_visibility)
+    {
+        // ensure systems on either side of a starlane along which a fleet is
+        // moving are at least basically visible, so that the starlane itself can /
+        // will be visible
+        std::vector<const Fleet*> moving_fleets;
+        std::vector<const UniverseObject*> moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
+        for (std::vector<const UniverseObject*>::iterator it = moving_fleet_objects.begin();
+             it != moving_fleet_objects.end(); ++it)
+        {
+            const UniverseObject* obj = *it;
+            if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID || obj->ObjectType() != OBJ_FLEET)
+                continue;
+            const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
+            if (!fleet)
                 continue;
 
             int prev = fleet->PreviousSystemID();
@@ -1764,9 +1870,9 @@ void Universe::UpdateEmpireObjectVisibilities() {
 
             // ensure fleet's owner has at least basic visibility of the next
             // and previous systems on the fleet's path
-            ObjectVisibilityMap& vis_map = m_empire_object_visibility[fleet->Owner()];
+            Universe::ObjectVisibilityMap& vis_map = empire_object_visibility[fleet->Owner()];
 
-            ObjectVisibilityMap::iterator system_vis_it = vis_map.find(prev);
+            Universe::ObjectVisibilityMap::iterator system_vis_it = vis_map.find(prev);
             if (system_vis_it == vis_map.end()) {
                 vis_map[prev] = VIS_BASIC_VISIBILITY;
             } else {
@@ -1784,53 +1890,105 @@ void Universe::UpdateEmpireObjectVisibilities() {
         }
     }
 
-
-    // after setting object visibility, similarly set visibility of objects'
-    // specials for each empire
-    for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
-        int empire_id = empire_it->first;
-        ObjectVisibilityMap& obj_vis_map = m_empire_object_visibility[empire_id];
-        ObjectSpecialsMap& obj_specials_map = m_empire_object_visible_specials[empire_id];
-
-        const Empire* empire = empire_it->second;
-        const Meter* detection_meter = empire->GetMeter("METER_DETECTION_STRENGTH");
-        if (!detection_meter)
-            continue;
-        double detection_strength = detection_meter->Current();
-
-        // every object empire has visibility of might have specials
-        for (ObjectVisibilityMap::const_iterator obj_it = obj_vis_map.begin();
-             obj_it != obj_vis_map.end(); ++obj_it)
+    void SetEmpireSpecialVisibilities(const ObjectMap& objects,
+                                      Universe::EmpireObjectVisibilityMap& empire_object_visibility,
+                                      Universe::EmpireObjectSpecialsMap& empire_object_visible_specials)
+    {
+        // after setting object visibility, similarly set visibility of objects'
+        // specials for each empire
+        for (EmpireManager::iterator empire_it = Empires().begin();
+             empire_it != Empires().end(); ++empire_it)
         {
-            if (obj_it->second <= VIS_NO_VISIBILITY)
+            int empire_id = empire_it->first;
+            Universe::ObjectVisibilityMap& obj_vis_map = empire_object_visibility[empire_id];
+            Universe::ObjectSpecialsMap& obj_specials_map = empire_object_visible_specials[empire_id];
+
+            const Empire* empire = empire_it->second;
+            const Meter* detection_meter = empire->GetMeter("METER_DETECTION_STRENGTH");
+            if (!detection_meter)
                 continue;
+            double detection_strength = detection_meter->Current();
 
-            int object_id = obj_it->first;
-            const UniverseObject* obj = m_objects.Object(object_id);
-            const std::map<std::string, int>& all_object_specials = obj->Specials();
-            if (all_object_specials.empty())
-                continue;
-
-            std::set<std::string>& visible_specials = obj_specials_map[object_id];
-
-            // check all object's specials.
-            std::vector<std::string> potentially_detectable_object_specials;
-            for (std::map<std::string, int>::const_iterator special_it = all_object_specials.begin();
-                 special_it != all_object_specials.end(); ++special_it)
+            // every object empire has visibility of might have specials
+            for (Universe::ObjectVisibilityMap::const_iterator obj_it = obj_vis_map.begin();
+                 obj_it != obj_vis_map.end(); ++obj_it)
             {
-                const Special* special = GetSpecial(special_it->first);
-                if (!special)
+                if (obj_it->second <= VIS_NO_VISIBILITY)
                     continue;
-                double special_stealth = special->Stealth();
-                // if special is 0 stealth, or has stealth less than empire's
-                // detection strength, mark as visible
-                if (special_stealth <= 0.0 || special_stealth <= detection_strength) {
-                    visible_specials.insert(special_it->first);
-                    //Logger().debugStream() << "Special " << special_it->first << " on " << obj->Name() << " is visible to empire " << empire_id;
+
+                int object_id = obj_it->first;
+                const UniverseObject* obj = objects.Object(object_id);
+                const std::map<std::string, int>& all_object_specials = obj->Specials();
+                if (all_object_specials.empty())
+                    continue;
+
+                std::set<std::string>& visible_specials = obj_specials_map[object_id];
+
+                // check all object's specials.
+                std::vector<std::string> potentially_detectable_object_specials;
+                for (std::map<std::string, int>::const_iterator special_it = all_object_specials.begin();
+                     special_it != all_object_specials.end(); ++special_it)
+                {
+                    const Special* special = GetSpecial(special_it->first);
+                    if (!special)
+                        continue;
+                    double special_stealth = special->Stealth();
+                    // if special is 0 stealth, or has stealth less than empire's
+                    // detection strength, mark as visible
+                    if (special_stealth <= 0.0 || special_stealth <= detection_strength) {
+                        visible_specials.insert(special_it->first);
+                        //Logger().debugStream() << "Special " << special_it->first << " on " << obj->Name() << " is visible to empire " << empire_id;
+                    }
                 }
             }
         }
     }
+}
+
+void Universe::UpdateEmpireObjectVisibilities() {
+    //Logger().debugStream() << "Universe::UpdateEmpireObjectVisibilities()";
+
+    // ensure Universe knows empires have knowledge of designs the empire is specifically remembering
+    for (EmpireManager::iterator empire_it = Empires().begin();
+         empire_it != Empires().end(); ++empire_it)
+    {
+        const Empire* empire = empire_it->second;
+        int empire_id = empire_it->first;
+        const std::set<int>& empire_known_ship_designs = empire->ShipDesigns();
+        for (std::set<int>::const_iterator design_it = empire_known_ship_designs.begin();
+             design_it != empire_known_ship_designs.end(); ++design_it)
+        { m_empire_known_ship_design_ids[empire_id].insert(*design_it); }
+    }
+
+    m_empire_object_visibility.clear();
+    m_empire_object_visible_specials.clear();
+
+    if (m_all_objects_visible) {
+        SetAllObjectsVisibleToAllEmpires();
+        return;
+    }
+
+
+    SetEmpireOwnedObjectVisibilities();
+
+    std::map<int, std::map<std::pair<double, double>, float> >
+        empire_position_detection_ranges = GetEmpiresPositionDetectionRanges();
+
+    std::map<int, std::map<std::pair<double, double>, std::vector<int> > >
+        empire_position_potentially_detectable_objects =
+            GetEmpiresPositionsPotentiallyDetectableObjects(Objects());
+
+    SetEmpireObjectVisibilitiesFromRanges(empire_position_detection_ranges,
+                                          empire_position_potentially_detectable_objects,
+                                          m_empire_object_visibility);
+
+    PropegateVisibilityToContainerObjects(Objects(), m_empire_object_visibility);
+
+    PropegateVisibilityToSystemsAlongStarlanes(Objects(), m_empire_object_visibility);
+
+    SetTravelledStarlaneEndpointsVisible(Objects(), m_empire_object_visibility);
+
+    SetEmpireSpecialVisibilities(Objects(), m_empire_object_visibility, m_empire_object_visible_specials);
 }
 
 void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
@@ -1847,7 +2005,6 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
     if (current_turn == INVALID_GAME_TURN)
         return;
 
-
     // for each object in universe
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int object_id = it->first;
@@ -1858,8 +2015,9 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
         }
 
         // for each empire with a visibility map
-        for (EmpireObjectVisibilityMap::const_iterator empire_it = m_empire_object_visibility.begin(); empire_it != m_empire_object_visibility.end(); ++empire_it) {
-
+        for (EmpireObjectVisibilityMap::const_iterator empire_it = m_empire_object_visibility.begin();
+             empire_it != m_empire_object_visibility.end(); ++empire_it)
+        {
             // can empire see object?
             const ObjectVisibilityMap& vis_map = empire_it->second;    // stores level of visibility empire has for each object it can detect this turn
             ObjectVisibilityMap::const_iterator vis_it = vis_map.find(object_id);
@@ -1908,6 +2066,14 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
             }
         }
     }
+}
+
+void Universe::UpdateEmpireLatestKnownObjectsThatAreNotButShouldHaveBeenVisible() {
+    // if any objects in the latest known objects for an empire are not
+    // currently visible, but that empire has detectors in range of the objects'
+    // latest known location and the objects' latest known stealth is low enough to be
+    // detectable by that empire, then the objects would appear to have moved,
+    // and the empire's latest known objects should be updated to reflect this
 }
 
 void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id) {

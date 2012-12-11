@@ -104,9 +104,9 @@ public:
       * returned. */
     const std::set<int>&    EmpireKnownDestroyedObjectIDs(int empire_id) const;
 
-    const ShipDesign*       GetShipDesign(int ship_design_id) const;                        ///< returns the ship design with id \a ship_design id, or 0 if non exists
-    ship_design_iterator    beginShipDesigns() const   {return m_ship_designs.begin();}     ///< returns the begin iterator for ship designs
-    ship_design_iterator    endShipDesigns() const     {return m_ship_designs.end();}       ///< returns the end iterator for ship designs
+    const ShipDesign*       GetShipDesign(int ship_design_id) const;                    ///< returns the ship design with id \a ship_design id, or 0 if non exists
+    ship_design_iterator    beginShipDesigns() const   {return m_ship_designs.begin();} ///< returns the begin iterator for ship designs
+    ship_design_iterator    endShipDesigns() const     {return m_ship_designs.end();}   ///< returns the end iterator for ship designs
 
     const ShipDesign*       GetGenericShipDesign(const std::string& name) const;
 
@@ -299,11 +299,22 @@ public:
       * a vis */
     void            SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis);
 
+    /** Sets visibility for indicated \a empire_id for the indicated \a special */
+    void            SetEmpireSpecialVisibility(int empire_id, int object_id,
+                                               const std::string& special_name, bool visible = true);
+
     /** Stores latest known information about each object for each empire and
       * updates the record of the last turn on which each empire has visibility
       * of object that can be seen on the current turn with the level of
       * visibility that the empire has this turn. */
     void            UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
+
+    /** Checks latest known information about each object for each empire and
+      * in cases when the latest known state (stealth and location) suggests
+      * that the empire should be able to see the object, but the object can't
+      * be seen by the empire, update the latest known state to note this, by
+      * moving the object to a sentinel location. */
+    void            UpdateEmpireLatestKnownObjectsThatAreNotButShouldHaveBeenVisible();
 
     /** Resizes the system graph to the appropriate size and populates
       * m_system_distances.  Uses the Universe latest known set of objects for
