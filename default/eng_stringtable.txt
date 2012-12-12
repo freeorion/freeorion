@@ -7040,7 +7040,7 @@ BLD_NEUTRONIUM_FORGE
 Neutronium Forge
 
 BLD_NEUTRONIUM_FORGE_DESC
-'''This building is required for building any ships with neutronium parts.
+'''This building is required at the same location as a shipyard to enable building ships with neutronium parts.
 
 The industrial processing of neutronium requires an extensive specialized facility. Unlike most shipyards and shipyard upgrades, this building cannot be built at an outpost.'''
 
