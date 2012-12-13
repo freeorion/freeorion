@@ -1,6 +1,6 @@
 Français
 
-#This is the French String Table file for FreeOrion. (= eng_svn5518)
+#This is the French String Table file for FreeOrion. (= eng_svn5529)
 #Translation by alchemy, shivu and zareif.
 
 #################
@@ -293,6 +293,7 @@ Organic V
 SD_MARK_B_ORGANIC1_DESC
 Organic hull design with preliminary Plasma weaponry. 
 
+
 SD_MARK_C_ENDO1
 Endomorphique I
 SD_MARK_C_ENDO1_DESC
@@ -505,22 +506,22 @@ A massive, sickly-looking space monster.
 SM_CLOUD
 Space Cloud
 SM_CLOUD_DESC
-A nebulous creature that adds stealth to random planets.
+A nebulous creature that adds [[encyclopedia STEALTH_METER_TITLE]] to random planets.
 
 SM_ASH
 Space Volcano
 SM_ASH_DESC
-A nebulous creature that adds stealth to random planets.
+A nebulous creature that adds [[encyclopedia STEALTH_METER_TITLE]] to random planets.
 
 SM_DIM
 Dimensional Drifter
 SM_DIM_DESC
-A nebulous creature that adds stealth to random planets.
+A nebulous creature that adds [[encyclopedia STEALTH_METER_TITLE]] to random planets.
 
 SM_VOID
 Behemoth of the Void
 SM_VOID_DESC
-A nebulous creature that adds stealth to random planets.
+A nebulous creature that adds [[encyclopedia STEALTH_METER_TITLE]] to random planets.
 
 SM_SNAIL
 Asteroid Snail
@@ -2611,8 +2612,8 @@ Coque: %2%
 Puissance d'attaque: %17%
 Structure: %8%
 [[encyclopedia SHIELDS_METER_TITLE]]: %9%
-Détection: %10%
-Furtivité: %11%
+[[encyclopedia DETECTION_RANGE_METER_TITLE]]: %10%
+[[encyclopedia STEALTH_METER_TITLE]]: %11%
 Contenance carburant: %14%
 Capacité colonisatrice: %15%
 Troupes: %16%
@@ -2710,9 +2711,14 @@ PROTECTION_FOCUS_TEXT
 '''La focalisation sur la protection signifie qu'une planète est entièrement concentrée sur sa défense. Les [[encyclopedia TROOP_TITLE]] de [[encyclopedia DEFENSE_METER_TITLE]] et les [[encyclopedia SHIELDS_METER_TITLE]] s'y consacre entièrement.'''
 
 HAPPINESS_METER_TITLE
-Mesure bonheur
+Bonheur
 HAPPINESS_METER_TEXT
-'''Le bonheur ne fait rien, ne crée rien'''
+'''Happiness doesn't do anything, yet.'''
+
+INFRASTRUCTURE_METER_TITLE
+Infrastructure
+INFRASTRUCTURE_METER_TEXT
+'''The term Infrastructure refers to technical structures that support a colonized planet: energy, transportation, telecommunication and social services for the citizens.'''
 
 DEFENSE_METER_TITLE
 Défense
@@ -2724,7 +2730,28 @@ Boucliers
 SHIELDS_METER_TEXT
 '''Le terme boucliers inclue toutes les sortes de champs de force de protection. Se régénérant à chaque tour, ce sont normalement les premières barrières que les envahisseurs ont à surmonter. 
 
-Les vaisseaux spatiaux et les planètes ont une mesure boucliers.'''
+Space ships and planets have a Shields meter.'''
+
+STEALTH_METER_TITLE
+Stealth
+STEALTH_METER_TEXT
+'''The term Stealth represents the ability of an object to dodge all kinds of sensors. Only empires with a [[encyclopedia DETECTION_METER_TITLE]] value higher than or equal to the Stealth value can see the object.
+
+Space ships, buildings, specials, systems and planets have a Stealth meter.'''
+
+DETECTION_METER_TITLE
+Detection Strength
+DETECTION_METER_TEXT
+'''The term Detection Strength represents the technological level of an empire's sensors. An empire can only see objects that have a [[encyclopedia STEALTH_METER_TITLE]] value lower than or equal to its Detection Strength value and are within [[encyclopedia DETECTION_RANGE_METER_TITLE]] of a controlled space ship or planet.
+
+Empires have a Detection Strength meter.'''
+
+DETECTION_RANGE_METER_TITLE
+Detection Range
+DETECTION_RANGE_METER_TEXT
+'''The Detection Range represents the number of uus sensors can reach. An empire can only see objects that have a [[encyclopedia STEALTH_METER_TITLE]] value lower than or equal to its [[encyclopedia DETECTION_METER_TITLE]] value and are within Detection Range of a controlled space ship or planet.
+
+Space ships and planets have a Detection Range meter. There is the option to display Detection Range circles in the Galaxy Map section of the Options menu.'''
 
 TROOP_TITLE
 Troupes
@@ -3171,12 +3198,12 @@ EFFECT_DERELICT_MAP_LABEL
 Carte d'épaves
 
 EFFECT_DERELICT_FUEL
-Ships were refueled from the residual supply found in an abandoned derelict at %system%.
+Les vaisseaux ont été réapprovisionnés grace à des résidus de carburant trouvé sur une épave abandonnée à %system%.
 EFFECT_DERELICT_FUEL_LABEL
 Derelict Fuel
 
 EFFECT_BIOWEAPON
-%system% has lost population due to a biological attack!
+%system% a perdu sa population des suites d'une attaque biologique!
 EFFECT_BIOWEAPON_LABEL
 Bioweapon Attack
 
@@ -3888,7 +3915,7 @@ Des ruinnes d'une ancienne race avancée, oubliées depuis longtemps, se trouven
 PANOPTICON_SPECIAL
 Panopticon Complex
 PANOPTICON_SPECIAL_DESC
-'''Extends empire-wide detection strength by +10
+'''Extends empire-wide [[encyclopedia DETECTION_METER_TITLE]] by +10
 
 Buried deep within the crust of the planet, the Panopticon is a powerful relic of an unknown precursor civilization. When fed the data from an empire's detection equipment, it has the power to pull reliable information from the chaotic static beyond the edges of certainty.'''
 
@@ -3904,7 +3931,7 @@ TECTONIC_INSTABILITY_SPECIAL
 Tectonically Unstable
 
 TECTONIC_INSTABILITY_SPECIAL_DESC
-'''La construction sur cette planète est diminuée de 20. Empêche la construction sousterraine qui augmenterait par là la capacité d'habitation pour la population.
+'''La [[encyclopedia INFRASTRUCTURE_METER_TITLE]] sur cette planète est diminuée de 20. Empêche la construction sousterraine qui augmenterait par là la capacité d'habitation pour la population.
 
 Cette planète est tectoniquement instable. Des tremblements de terre fréquents, des tsunamis, des éruptions volcaniques ou l'instabilité du sol font que la construction et le développement d'infrastructures en général est difficile.'''
 
@@ -3920,7 +3947,7 @@ HIGH_AXIAL_TILT_SPECIAL
 Grande inclinaison axiale
 
 HIGH_AXIAL_TILT_SPECIAL_DESC
-'''La construction sur cette planète est diminuée de 20.
+'''La [[encyclopedia INFRASTRUCTURE_METER_TITLE]] sur cette planète est diminuée de 20.
 
 Cette planète a un axe de rotation très incliné par rapport à son plan orbital. Les variations de climats sont particulièrement extrêmes ce qui gêne le développement des infrastructures.'''
 
@@ -3928,7 +3955,7 @@ SLOW_ROTATION_SPECIAL
 Rotation très lente
 
 SLOW_ROTATION_SPECIAL_DESC
-'''La construction sur cette planète est diminuée de 20. Réduit la population maximale suivant la grandeur de la planète: minuscule: -1, petite: -2, moyenne: -3, grande: -4, énorme: -5.
+'''La [[encyclopedia INFRASTRUCTURE_METER_TITLE]] sur cette planète est diminuée de 20. Réduit la population maximale suivant la grandeur de la planète: minuscule: -1, petite: -2, moyenne: -3, grande: -4, énorme: -5.
 
 Cette planète tourne sur elle-même très lentement, journées et nuits y sont donc très longs. Le développement d'infrastructures, l'agriculture et la capacité en population sont pénalisés.'''
 
@@ -3936,7 +3963,7 @@ TIDAL_LOCK_SPECIAL
 Rotation synchrone
 
 TIDAL_LOCK_SPECIAL_DESC
-'''La construction sur cette planète est diminuée de 20, mais l'industrie est augmentée de la valeur d'un cinquième de la population de la planète.
+'''La [[encyclopedia INFRASTRUCTURE_METER_TITLE]] sur cette planète est diminuée de 20, mais l'industrie est augmentée de la valeur d'un cinquième de la population de la planète.
 
 Cette planète a une période de rotation identique à sa période orbitale; une face de la planète est constamment illuminée, tandis que l'autre est toujours dans la pénombre. Le développement d'infrastructures est pénalisé, mais une fois établies, les industries profitent des conditions de surface localement stables.'''
 
@@ -3944,7 +3971,7 @@ ECCENTRIC_ORBIT_SPECIAL
 Orbite excentré
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''La construction sur cette planète est diminuée de 20, mais la recherche est augmenté de 3.
+'''La [[encyclopedia INFRASTRUCTURE_METER_TITLE]] sur cette planète est diminuée de 20, mais la recherche est augmenté de 3.
 
 L'orbite de cette planète est très excentré, c'est-à-dire qu'il y a une grande distance entre le point où la planètre est la plus proche de son étoile et celui où elle l'est le moins. l'insolation totale varie beaucoup au cours de l'année. Les condition variées ralentissent le développement des infrastructures, mais sont bénéfiques pour la recherche scientifique.'''
 
@@ -3971,7 +3998,7 @@ The lone remnant of a planet-sized space wandering species has found his final r
 ABANDONED_COLONY_SPECIAL
 Abandoned Colony
 ABANDONED_COLONY_SPECIAL_DESC
-An old abandoned colony. Some of the infrastructure should still be useful.
+An old abandoned colony. Some of the [[encyclopedia INFRASTRUCTURE_METER_TITLE]] should still be useful.
 
 KRAKEN_NEST_SPECIAL
 Kraken Nest
@@ -3996,7 +4023,7 @@ This planet is populated with aerial creatures that emit humidity, causing high 
 CLOUD_COVER_SLAVE_SPECIAL
 High Cloud Cover
 CLOUD_COVER_SLAVE_SPECIAL_DESC
-This planet has unusually dense cloud cover, increasing its stealth.
+This planet has unusually dense cloud cover, increasing its [[encyclopedia STEALTH_METER_TITLE]].
 
 VOLCANIC_ASH_MASTER_SPECIAL
 Hidden Burrowers
@@ -4011,7 +4038,7 @@ VOLCANIC_ACTIVITY_SPECIAL_DESC
 VOLCANIC_ASH_SLAVE_SPECIAL
 Volcanic Ash
 VOLCANIC_ASH_SLAVE_SPECIAL_DESC
-This planet is surrounded by volcanic ash, increasing its stealth.
+This planet is surrounded by volcanic ash, increasing its [[encyclopedia STEALTH_METER_TITLE]].
 
 DIM_RIFT_MASTER_SPECIAL
 Dimensional Burrowers
@@ -4021,7 +4048,7 @@ This planet has monsters burrowing around in its core causing dimensional tears 
 DIM_RIFT_SLAVE_SPECIAL
 Dimensional Rift
 DIM_RIFT_SLAVE_SPECIAL_DESC
-This planet is partially concealed by a dimensional rift, increasing its stealth.
+This planet is partially concealed by a dimensional rift, increasing its [[encyclopedia STEALTH_METER_TITLE]].
 
 VOID_MASTER_SPECIAL
 Monstres vacants
@@ -4031,7 +4058,7 @@ Monsters inside the core of this planet are dragging it into the void.  There sh
 VOID_SLAVE_SPECIAL
 Void Metamorphisis
 VOID_SLAVE_SPECIAL_DESC
-This planet exists partially in this universe and partially in the void, increasing its stealth by 80.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
+This planet exists partially in this universe and partially in the void, increasing its [[encyclopedia STEALTH_METER_TITLE]] by 80.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
 
 DERELICT_SPECIAL
 Derelict
@@ -4373,25 +4400,25 @@ Anti-Fighter Damage
 METER_LAUNCH_RATE
 Cadence de lancement
 METER_FIGHTER_WEAPON_RANGE
-Fighter Weapon Range
+Porté des armes des chasseurs
 
 METER_SIZE
-Size
+Portée
 
 METER_DETECTION_STRENGTH
-Detection Strength
+Puissance de détection
 
 ALIGN_MILITARISM
 Militarisme
 
 ALIGN_MILITARY_STRENGTH_DESC
-Strength and size of military
+Grandeur et puissance des militaires
 
 ALIGN_SOCIAL_CONTROL
-Social Control
+Contròle social
 
 ALIGN_SOCIAL_CONTROL_DESC
-Degree to which population is monitored, restricted and manipulated
+Degré auquel une population est surveillée, limitée et manipulée.
 
 ALIGN_ENVIRONMENT_MODIFICATION
 Environment Modification
@@ -4406,10 +4433,10 @@ ALIGN_BIOLOGICAL_ALTERATION_DESC
 Use of biological engineering and alteration
 
 ALIGN_MECHANIZATION
-Mechanization
+Méchanisation
 
 ALIGN_MECHANIZATION_DESC
-Use of artificial sentience and automation
+Utilisation de sensibilité artificielle et d'automatisation
 
 # EmpireAffiliationTypes
 
@@ -4543,10 +4570,10 @@ DESC_VAR_TARGET
 Objectif
 
 DESC_VAR_LOCAL_CANDIDATE
-local condition candidate
+Candidat aux conditions locales
 
 DESC_VAR_ROOT_CANDIDATE
-root condition candidate
+Candidat aux conditions d'origines
 
 DESC_STATISTIC
 statistique
@@ -4573,7 +4600,7 @@ DESC_VAR_STARTYPE
 type d'étoile
 
 DESC_VAR_VALUE
-previous value for this meter
+Valeur précédente pour cette mesure
 
 DESC_VAR_TARGETPOPULATION
 [[METER_TARGET_POPULATION]]
@@ -4660,15 +4687,15 @@ DESC_VAR_FOODSTOCKPILE
 stock de nourritures
 
 DESC_VAR_TRADEOUTPUT
-trade output
+production commerciale
 DESC_VAR_FOODOUTPUT
-food output
+production alimentaire
 DESC_VAR_MINERALOUTPUT
-mineral output
+production minière
 DESC_VAR_INDUSTRYOUTPUT
-industry output
+production industrielle
 DESC_VAR_RESEARCHOUTPUT
-research output
+production de la recherche
 
 DESC_VAR_OWNER
 propriétaire
@@ -4680,7 +4707,7 @@ DESC_VAR_AGE
 âge en tours
 
 DESC_VAR_PRODUCEDBYEMPIREID
-producer
+producteur
 
 DESC_VAR_CREATIONTURN
 tour de création
@@ -4719,19 +4746,19 @@ DESC_VAR_SPECIES
 espèce
 
 DESC_VAR_BUILDINGTYPE
-building type name
+Nom du type de construction
 
 DESC_VAR_FOCUS
 focus
 
 DESC_VAR_LASTTURNBATTLEHERE
-last turn a battle occurred here
+une bataille s'est déroulée ici au dernier tour
 
 DESC_VAR_ALLOCATEDFOOD
-allocated food
+alimentation allouée
 
 FoodAllocationForMaxGrowth
-food allocation needed for max growth
+alimentation à allouer pour une croissance maximale
 
 # this one is intentionally left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
@@ -4753,8 +4780,7 @@ DESC_VALUE_REF_MULTIPART_VARIABLE5
 %1%'s %2%'s %3%'s %4%'s %5%'s %6%
 
 # six is probably more than will be needed, but just in case ...
-# six est probablement plus que nécessaire, mais juste au cas où ...
-DESC_VALUE_REF_MULTIPART_VARIABLE6
+ DESC_VALUE_REF_MULTIPART_VARIABLE6
 %1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%
 
 
@@ -5350,7 +5376,7 @@ LRN_ARTIF_MINDS
 Intelligences Artificielles
 
 LRN_ARTIF_MINDS_DESC
-'''Increases Target Research on all planets by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
+'''Increases Target Research on all planets by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_METER_TITLE]].
 
 While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience. While these traits remain elusive, reasonable faximilies may be produced. These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
 
@@ -5422,7 +5448,7 @@ LRN_QUANT_NET
 Quantum Networking
 
 LRN_QUANT_NET_DESC
-'''Increases target Research on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population or 1 per [[INFRA_PER_PRODUCTION]] units of infrastructure.
+'''Increases target Research on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_METER_TITLE]].
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes. This advancement greatly facilitates research throughout the empire.
 
@@ -5575,7 +5601,7 @@ PRO_ROBOTIC_PROD
 Production robotisée
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases target Industry on all planets with the Industry focus by the greater of 0.2 per [[POP_PER_PRODUCTION]] units of Population or 0.4 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
+'''Increases target Industry on all planets with the Industry focus by the greater of 0.2 per [[POP_PER_PRODUCTION]] units of Population or 0.4 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_METER_TITLE]].
 
 Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
 
@@ -5597,7 +5623,7 @@ PRO_FUSION_GEN
 Génération de la fusion
 
 PRO_FUSION_GEN_DESC
-'''Increases target Industry on planets with the Industry focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
+'''Increases target Industry on planets with the Industry focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_METER_TITLE]].
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -5837,7 +5863,7 @@ SHP_ASTEROID_REFORM
 Asteroid Reformation
 
 SHP_ASTEROID_REFORM_DESC
-'''This massive hull is formed by combining several large asteroids. It has fifteen external slots and four internal slots. Structure is good, but speed is very low. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This massive hull is formed by combining several large asteroids. It has fifteen external slots and four internal slots. Structure is good, but speed is very low. This hull gets a large bonus to [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 While modifying asteroids to serve as ship's hulls is very efficient, it is limited by the available sizes and shapes of available asteroids. By combining or breaking apart asteroids, asteroid hulls of extremely large or small sizes could be produced.'''
 
@@ -5905,7 +5931,7 @@ SHP_QUANT_ENRG_MAG
 Quantum Energy Magnification
 
 SHP_QUANT_ENRG_MAG_DESC
-'''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. Speed and structure are very high, but stealth is very low. This hull requires a very great deal of energy to construct and can only be build at a system with a star of type Blue or Black Hole.
+'''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. Speed and structure are very high, but [[encyclopedia STEALTH_METER_TITLE]] is very low. This hull requires a very great deal of energy to construct and can only be build at a system with a star of type Blue or Black Hole.
 
 Due to quantum uncertainty, it is possible for a particle to arbitrarily gain a small amount of energy or for new particles to temporarily enter existence. By detecting and magnifying these fluctuations in quantum energy, it would be possible to tremendously increase the capabilities of an energy hull.'''
 
@@ -5915,14 +5941,14 @@ Energy Boundary Manipulation
 SHP_ENRG_BOUND_MAN_DESC
 '''Whether constructed, grown, or adapted from a pre-existing structure, ships composed of matter must have a logical and co-ordinated structure to allow even basic utility. Pure energy however, has no such restrictions. This allows a pure energy hull to take on any form whatsoever, however impractical it would be from a material standpoint.
 
-This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has twenty-seven external slots, but no internal slots. Stealth is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.'''
+This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has twenty-seven external slots, but no internal slots. [[encyclopedia STEALTH_METER_TITLE]] is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.'''
 SHP_SOLAR_CONT
 Solar Containment
 
 SHP_SOLAR_CONT_DESC
 '''A hull constructed from pure energy, while far more versatile than a solid hull, has a disadvantage in that it is unable to harness the potential energy of material objects. If, however, it were made possible to contain a hull composed not of pure energy, but of super-heated gases constantly undergoing a self-sustaining fusion reaction, the limitations of both pure energy and solid matter could be avoided.
 
-This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to stealth. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and stealth are very low. However, this ship has the ability to enter a star and hide, giving it perfect stealth on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.'''
+This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_METER_TITLE]]. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and [[encyclopedia STEALTH_METER_TITLE]] are very low. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.'''
 
 SPY_ROOT_DECEPTION
 Deception
@@ -6034,7 +6060,7 @@ CON_SUBTER_CONST
 Construction Souterraine
 
 CON_SUBTER_CONST_DESC
-'''Increases Infrastructure by 10.  Cannot improve a planet with the [[special TUNNELS_SPECIAL]] or [[special TECTONIC_INSTABILITY_SPECIAL]] special.
+'''Increases [[encyclopedia INFRASTRUCTURE_METER_TITLE]] by 10.  Cannot improve a planet with the [[special TUNNELS_SPECIAL]] or [[special TECTONIC_INSTABILITY_SPECIAL]] special.
 
 When space is at a premium, the ability to build downwards as well as up is an invaluable asset. Entire underground cities and facilities can be constructed and maintained, and trans-planetary subterranean transportation routes can be established.'''
 
@@ -6048,7 +6074,7 @@ CON_FRC_ENRG_CAMO
 Force-Energy Camouflage
 
 CON_FRC_ENRG_CAMO_DESC
-'''Increases the Stealth of all buildings by 50.
+'''Increases the [[encyclopedia STEALTH_METER_TITLE]] of all buildings by 50.
 
 Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials. A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one color to another at will. While most buildings are easily visible from many uus away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.'''
 
@@ -6166,7 +6192,7 @@ LRN_DISTRIB_THOUGHT
 Pensée assistée par Ordinateur#Reflexion
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases target Research on all planets with the Research focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
+'''Increases target Research on all planets with the Research focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_METER_TITLE]].
 
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
 #Le citoyen moyen gaspille litteralement son esprit, de loin l'un des plus fins esprits informatiques de l'univers. En puisant dans les cycles inactifs du cerveau d'une population suffisament large, par le biais d'un réseau de simple émetteurs-récepteurs cybernetics, les centres de recherche d'un monde peuvent accéder à une puissance de calcul abondante et à bas prix.
@@ -6175,7 +6201,7 @@ LRN_STELLAR_TOMOGRAPHY
 Tomographie Stellaire
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Increases target Research on planets with the Research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
+'''Increases target Research on planets with the Research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_METER_TITLE]].
 
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 #'''Un réseau de satellites spécialisés peut utiliser des méthodes tomographiques pour reconstruire des activités qui se produisent dans les profondeurs d'une étoile. Ces conditions couteuses à produire sont idéales pour une multitude de projets de recherche, avec les plus grands avantages pour les types d'étoiles les plus exotiques.
@@ -6317,7 +6343,7 @@ DEF_PLANET_CLOAK
 Planetary Cloaking Device
 
 DEF_PLANET_CLOAK_DESC
-By phasing parts a planet in and out of space-time, its stealth can be increased massively.
+By phasing parts a planet in and out of space-time, its [[encyclopedia STEALTH_METER_TITLE]] can be increased massively.
 
 SHP_FLEET_REPAIR
 Fleet Field Repair
@@ -6517,19 +6543,19 @@ SHP_MULTISPEC_SHIELD
 Multi-Spectral Shielding
 
 SHP_MULTISPEC_SHIELD_DESC
-Provides adequate shielding to allow a ship to enter into the heart of a star. Ships in a system with a star type other than Black Hole and Neutron receive a mighty stealth bonus.
+Provides adequate shielding to allow a ship to enter into the heart of a star. Ships in a system with a star type other than Black Hole and Neutron receive a mighty [[encyclopedia STEALTH_METER_TITLE]] bonus.
 
 SPY_DETECT_1
 Scanner optique
 
 SPY_DETECT_1_DESC
-All colonies start the game with a detection range of 50, and the imperial detection strength to 10, and the ship part Optical Scanner permits ships to reach the same level of detection.
+All colonies start the game with a [[encyclopedia DETECTION_RANGE_METER_TITLE]] of 50, and the imperial [[encyclopedia DETECTION_METER_TITLE]] to 10, and the ship part Optical Scanner permits ships to reach the same level of detection.
 
 SPY_DETECT_2
 Radar actif
 
 SPY_DETECT_2_DESC
-'''Unlocks the Active Radar ship part, increases the detection range of all planets to 75, and increases the imperial detection strength to 30.
+'''Unlocks the Active Radar ship part, increases the [[encyclopedia DETECTION_RANGE_METER_TITLE]] of all planets to 75, and increases the imperial [[encyclopedia DETECTION_METER_TITLE]] to 30.
 
 Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened. By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
 #Débloque les radars actifs pour les Vaisseaux.
@@ -6538,7 +6564,7 @@ SPY_DETECT_3
 Scanner à neutrons
 
 SPY_DETECT_3_DESC
-'''Unlocks the Neutron Scanner ship part, increases the detection range of all planets to 150, and increases the imperial detection strength to 50.
+'''Unlocks the Neutron Scanner ship part, increases the [[encyclopedia DETECTION_RANGE_METER_TITLE]] of all planets to 150, and increases the imperial [[encyclopedia DETECTION_METER_TITLE]] to 50.
 
 Electromagnetic radiation has no rest mass and is easily manipulable. Simply by bending waves of light around an object, it is possible to render radar devices virtually useless. By firing waves of neutrons instead of electromagnetic radiation, more effective active scanning can be utilized.'''
 
@@ -6546,40 +6572,40 @@ SPY_DETECT_4
 Capteurs
 
 SPY_DETECT_4_DESC
-Unlocks the Sensors ship part, increases the detection range of all planets to 200, and increases the imperial detection strength to 70.
+Unlocks the Sensors ship part, increases the [[encyclopedia DETECTION_RANGE_METER_TITLE]] of all planets to 200, and increases the imperial [[encyclopedia DETECTION_METER_TITLE]] to 70.
 
 SPY_DETECT_5
 Omni-scanner
 
 SPY_DETECT_5_DESC
-The ultimate in detection. Increases the detection range of all planets to 300, and increases the imperial detection strength to 90.
+The ultimate in detection. Increases the [[encyclopedia DETECTION_RANGE_METER_TITLE]] of all planets to 300, and increases the imperial [[encyclopedia DETECTION_METER_TITLE]] to 90.
 
 
 SPY_STEALTH_1
 Electromagnetic Damper
 
 SPY_STEALTH_1_DESC
-Unlocks the Electromagnetic Damper ship part and increases the Stealth of all planets, systems and buildings by 5. This bonus is not cumulative with that of other stealth techs.
+Unlocks the Electromagnetic Damper ship part and increases the [[encyclopedia STEALTH_METER_TITLE]] of all planets, systems and buildings by 5. This bonus is not cumulative with that of other stealth techs.
 
 SPY_STEALTH_2
 Champ d'absortion
 
 SPY_STEALTH_2_DESC
-'''Increases the Stealth of all planets, systems, and buildings by 30. This bonus is not cumulative with that of other stealth techs.
+'''Increases the [[encyclopedia STEALTH_METER_TITLE]] of all planets, systems, and buildings by 30. This bonus is not cumulative with that of other stealth techs.
 
-Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the stealth of a ship can be greatly increased.'''
+Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the [[encyclopedia STEALTH_METER_TITLE]] of a ship can be greatly increased.'''
 
 SPY_STEALTH_3
 Dimensional Cloak
 
 SPY_STEALTH_3_DESC
-Unlocks the Dimensional Cloak ship part and increases the Stealth of all planets, systems and buildings by 15. This bonus is not cumulative with that of other stealth techs.
+Unlocks the Dimensional Cloak ship part and increases the [[encyclopedia STEALTH_METER_TITLE]] of all planets, systems and buildings by 15. This bonus is not cumulative with that of other stealth techs.
 
 SPY_STEALTH_4
 Phasing Cloak
 
 SPY_STEALTH_4_DESC
-'''Increases the stealth of all planets, systems and buildings by 80. This bonus is not cumulative with that of other stealth techs.
+'''Increases the [[encyclopedia STEALTH_METER_TITLE]] of all planets, systems and buildings by 80. This bonus is not cumulative with that of other stealth techs.
 
 Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
 
@@ -6647,37 +6673,37 @@ SHP_CAMO_AST_HULL
 Camouflage Asteroid Hull
 
 SHP_CAMO_AST_HULL_DESC
-This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. Structure is average, but speed is fairly low. This hull gets a tremendous bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. Structure is average, but speed is fairly low. This hull gets a tremendous bonus to [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 SHP_MINIAST_SWARM
 Mini-Asteroid Swarm
 
 SHP_MINIAST_SWARM_DESC
-This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 SHP_SCAT_AST_HULL
 Scattered Asteroid Hull
 
 SHP_SCAT_AST_HULL_DESC
-This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 SHP_ORG_HULL
 Organic Hull
 
 SHP_ORG_HULL_DESC
-This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. It has three external slots and one internal slot. Stealth is high and speed is average, but structure is a bit low. This hull regenerates structure and fuel between combats.
+This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. It has three external slots and one internal slot. [[encyclopedia STEALTH_METER_TITLE]] is high and speed is average, but structure is a bit low. This hull regenerates structure and fuel between combats.
 
 SHP_ENDOSYMB_HULL
 Endosymbiotic Hull
 
 SHP_ENDOSYMB_HULL_DESC
-This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has three external slots and two internal slots. Speed and stealth are good, and structure is average. This hull regenerates structure and fuel between combats.
+This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has three external slots and two internal slots. Speed and [[encyclopedia STEALTH_METER_TITLE]] are good, and structure is average. This hull regenerates structure and fuel between combats.
 
 SHP_SENT_HULL
 Sentient Hull
 
 SHP_SENT_HULL_DESC
-This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a stealth and detection bonus to all accompanying friendly ships. It has six external slots and three internal slots. It has low speed, but stealth and structure are good. This hull regenerates structure and fuel between combats.
+This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[encyclopedia STEALTH_METER_TITLE]] and [[encyclopedia DETECTION_RANGE_METER_TITLE]] bonus to all accompanying friendly ships. It has six external slots and three internal slots. It has low speed, but [[encyclopedia STEALTH_METER_TITLE]] and structure are good. This hull regenerates structure and fuel between combats.
 
 SHP_BIOINTERCEPTOR
 Biointerceptors
@@ -6713,7 +6739,7 @@ SPY_PLANET_STEALTH_MOD
 Planet Stealth Modifier
 
 SPY_PLANET_STEALTH_MOD_DESC
-'''Increases the natural stealth of planets to 4.99, so that systems will be made visible to empires before their planets.'''
+'''Increases the natural [[encyclopedia STEALTH_METER_TITLE]] of planets to 4.99, so that systems will be made visible to empires before their planets.'''
 
 
 #############################################################
@@ -6778,7 +6804,7 @@ BLD_IMPERIAL_PALACE
 Palais Impérial 
 
 BLD_IMPERIAL_PALACE_DESC
-'''Augmente la porté des lignes d'[[encyclopedia SUPPLY_TITLE]] de 1, l'infrastructure de 20, la [[encyclopedia DEFENSE_METER_TITLE]] de 5 et les [[encyclopedia TROOP_TITLE]] de 3. Sa place définit également la capitale de l'empire.
+'''Augmente la porté des lignes d'[[encyclopedia SUPPLY_TITLE]] de 1, l'[[encyclopedia INFRASTRUCTURE_METER_TITLE]] de 20, la [[encyclopedia DEFENSE_METER_TITLE]] de 5 et les [[encyclopedia TROOP_TITLE]] de 3. Sa place définit également la capitale de l'empire.
 
 Représente le pouvoir et le prestige impérial et fonctionne comme un centre de contrôle des possessions de l'empire.''' 
 
@@ -6899,7 +6925,7 @@ BLD_LIGHTHOUSE
 Phare interstellaire
 
 BLD_LIGHTHOUSE_DESC
-Augmente la vitesse des vaisseaux partant de ce système et diminue la furtivité de tous les objets dans ce même système de 30. Cette construction peut également être placée sur un avant-poste.
+Augmente la vitesse des vaisseaux partant de ce système et diminue la [[encyclopedia STEALTH_METER_TITLE]] de tous les objets dans ce même système de 30. Cette construction peut également être placée sur un avant-poste.
 
 BLD_HEAVY_MINE_PROCESSOR
 Processeur d'extraction minière lourd
@@ -6911,7 +6937,7 @@ BLD_INDUSTRY_CENTER
 Centre industriel
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus equal to the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
+'''Initially provides a bonus to Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus equal to the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_METER_TITLE]].
 
 [[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus.
 
@@ -6949,7 +6975,7 @@ BLD_GENOME_BANK
 La Banque du Gènome
 
 BLD_GENOME_BANK_DESC
-'''Immunise l'empire contre bioterrorisme.
+'''Immunise l'empire contre le bioterrorisme.
 
 La plus grande base de données jamais conçue. La Banque du génome comprend les cartes des génomes de tous les organismes connus de l'empire. Cette base de données est d'une valeur inestimable dans le traitement des maladie et dans les colonies agricoles.'''
 
@@ -6965,7 +6991,7 @@ BLD_COLLECTIVE_NET
 Réseau de pensée collective
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases Industry on planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 0.5 per [[INFRA_PER_PRODUCTION]] units of Infrastructure, and research on Planets with the Research focus by the greater of 3 per [[POP_PER_PRODUCTION]] units of Population or 1.5 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases Industry on planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 0.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_METER_TITLE]], and research on Planets with the Research focus by the greater of 3 per [[POP_PER_PRODUCTION]] units of Population or 1.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_METER_TITLE]]. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 #En transférant des esprits dans le cyberespace, des milliers d'esprits peuvent agir à l'unisson, résolvant des problèmes et faisant des avancées qu'aucun esprit unique ne pourrait faire.
@@ -6982,7 +7008,7 @@ BLD_ENCLAVE_VOID
 Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-'''Increases target Research on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population, or 0.5 per [[INFRA_PER_PRODUCTION]] units of infrastructure.
+'''Increases target Research on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population, or 0.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_METER_TITLE]].
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
 #l ensemble de la population de la planète est génétiquement adapté à l'esprit du Vide et est dédiée à la transmission de sa sagesse à l'empire. Les habitants de l'Enclave du Vide sont considérés comme des prêtres, messager de la sagesse et des pensées les plus élevés. Leurs conseils sont recherchés pour toutes les questions d'importance de l'empire. Des émissaires de l'Enclave peuvent même être envoyés à travers l'empire pour aider dans des projets de recherche. Les productions industrielles et minière de ce monde ne dépassera  jamais 30.
@@ -6997,7 +7023,7 @@ BLD_HYPER_DAM
 Barrage Hyperspatial
 
 BLD_HYPER_DAM_DESC
-'''Increases target Industry on [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 2 per [[INFRA_PER_PRODUCTION]] units of Infrastructure, but decreases Population on such planets by 5.
+'''Increases target Industry on [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 2 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_METER_TITLE]], but decreases Population on such planets by 5.
 
 A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
 #Une déchirure dans le tissu de l'univers, contrôlée et exploitée en toute sécurité. Le barrage hyperspatial sert  de source d'énergie presque illimitée pour tout le secteur.
@@ -7012,7 +7038,7 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Increases target industry on [[encyclopedia SUPPLY_TITLE]] line connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of Infrastructure.
+'''Increases target industry on [[encyclopedia SUPPLY_TITLE]] line connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_METER_TITLE]].
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependant on star type. This building can be built at an outpost.'''
 
@@ -7080,7 +7106,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-Increases Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of Infrastructure. This building can be built at an outpost.
+Increases Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_METER_TITLE]]. This building can be built at an outpost.
 
 BLD_REPLICATORS
 Replicators
@@ -7140,7 +7166,7 @@ BLD_PLANET_CLOAK
 Planetary Cloaking Device
 
 BLD_PLANET_CLOAK_DESC
-'''Gives the planet it is built on a huge bonus to Stealth.
+'''Gives the planet it is built on a huge bonus to [[encyclopedia STEALTH_METER_TITLE]].
 
 A powerful cloaking device able to shroud an entire world.'''
 
@@ -7229,7 +7255,7 @@ Rate of Fire: %2% missiles/turn
 Range: %3%
 Missile Speed: %4%
 Missile Structure: %5%
-Missile Stealth: %6%
+Missile [[encyclopedia STEALTH_METER_TITLE]]: %6%
 Capacity: %7% missiles'''
 
 PART_DESC_FIGHTER_STATS
@@ -7239,7 +7265,7 @@ Fighter Anti-Ship Damage: %2%
 Fighter Launch Rate: %4% fighters/turn
 Fighter Speed: %5%
 Fighter Structure: %6%
-Fighter Stealth: %7%
+Fighter [[encyclopedia STEALTH_METER_TITLE]]: %7%
 Fighter Detection: %8%
 Capacity: %9% fighters'''
 
@@ -7440,7 +7466,7 @@ LR_PLASMA_TORPEDO
 Plasma Torpedo
 
 LR_PLASMA_TORPEDO_DESC
-A fast, long-range missile with excellent stealth, powered by the Trans-Spatial Drive and armed with a devastatingly powerful plasma warhead. This part can only be built if there is an Advanced Engineering Bay somewhere in the empire or an ally's empire.
+A fast, long-range missile with excellent [[encyclopedia STEALTH_METER_TITLE]], powered by the Trans-Spatial Drive and armed with a devastatingly powerful plasma warhead. This part can only be built if there is an Advanced Engineering Bay somewhere in the empire or an ally's empire.
 
 DT_DETECTOR_1
 Scanner optique
@@ -7518,7 +7544,7 @@ Amortisseur électromagnétique
 ST_CLOAK_1_DESC
 '''Weak Cloaking
 
-Améliore la furtivité du vaisseau par l'amortissement des émissions électromagnétiques des systèmes embarqués. Ne peut compenser que des faibles émissions, et sera submergé par des éléments produisant de grandes émissions éléctromagnétiques'''
+Améliore la [[encyclopedia STEALTH_METER_TITLE]] du vaisseau par l'amortissement des émissions électromagnétiques des systèmes embarqués. Ne peut compenser que des faibles émissions, et sera submergé par des éléments produisant de grandes émissions éléctromagnétiques'''
 
 ST_CLOAK_2
 Absorption Field
@@ -7534,7 +7560,7 @@ Dimensional Cloak
 ST_CLOAK_3_DESC
 '''Strong Cloking
 
-Hides this ship within a dimensional rift, greatly increasing stealth.'''
+Hides this ship within a dimensional rift, greatly increasing [[encyclopedia STEALTH_METER_TITLE]].'''
 
 ST_CLOAK_4
 Phasing Cloak
@@ -7611,7 +7637,7 @@ SH_MULTISPEC
 Multi-Spectral Shield
 
 SH_MULTISPEC_DESC
-Powerful [[encyclopedia SHIELDS_METER_TITLE]] capable of protecting a ship within a star. Provides a high stealth bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat.
+Powerful [[encyclopedia SHIELDS_METER_TITLE]] capable of protecting a ship within a star. Provides a high [[encyclopedia STEALTH_METER_TITLE]] bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat.
 
 CO_COLONY_POD
 Module de colonisation
@@ -7645,7 +7671,7 @@ SP_DISTORTION_MODULATOR
 Distortion Modulator
 
 SP_DISTORTION_MODULATOR_DESC
-Distinguishes natural geometric irregularities from enemy ships by manipulating space-time distortions caused by all objects in the vicinity. All objects within 0 uus have max stealth reduced by 20. The effect is non-stacking.
+Distinguishes natural geometric irregularities from enemy ships by manipulating space-time distortions caused by all objects in the vicinity. All objects within 0 uus have max [[encyclopedia STEALTH_METER_TITLE]] reduced by 20. The effect is non-stacking.
 
 SP_CLOUD
 Cloud Generator
@@ -7695,7 +7721,7 @@ SH_SPATIAL_FLUX
 Spatial Flux Hull
 
 SH_SPATIAL_FLUX_DESC
-'''This tiny hull is capable of immense speed due to the power of the Spatial Flux Drive. It has only two external slots however, and its max structure is low. Stealth is fairly high, but it receives a large stealth penalty for movement both in combat and on the galaxy map.
+'''This tiny hull is capable of immense speed due to the power of the Spatial Flux Drive. It has only two external slots however, and its max structure is low. [[encyclopedia STEALTH_METER_TITLE]] is fairly high, but it receives a large [[encyclopedia STEALTH_METER_TITLE]] penalty for movement both in combat and on the galaxy map.
 
 In addition to a Basic Shipyard and an Orbital Drydock, and an Advanced Engineering Bay is required at the planet where it is constructed.'''
 
@@ -7703,7 +7729,7 @@ SH_SELF_GRAVITATING
 Self-Gravitating Hull
 
 SH_SELF_GRAVITATING_DESC
-'''This hull is immense in both size and power, with eight external slots and two internal slots. It is fairly sturdy, having a high max structure, but stealth and speed are fairly low.
+'''This hull is immense in both size and power, with eight external slots and two internal slots. It is fairly sturdy, having a high max structure, but [[encyclopedia STEALTH_METER_TITLE]] and speed are fairly low.
 
 In addition to a Basic Shipyard and an Orbital Drydock, and a Geointegration Facility is required at the planet where it is constructed.'''
 
@@ -7711,7 +7737,7 @@ SH_NANOROBOTIC
 Nano-Robotic Hull
 
 SH_NANOROBOTIC_DESC
-'''This automated hull is large and fast, and repairs damage to itself using millions of nano-robots. It has six external slots and one internal slot, but it has low stealth and is very fragile, though it regenerates structure during combat and restores structure completely between combats.
+'''This automated hull is large and fast, and repairs damage to itself using millions of nano-robots. It has six external slots and one internal slot, but it has low [[encyclopedia STEALTH_METER_TITLE]] and is very fragile, though it regenerates structure during combat and restores structure completely between combats.
 
 Requires a Basic Shipyard, an Orbital Drydock and a Nanorobotic Processing unit at the planet where it is constructed.'''
 
@@ -7719,7 +7745,7 @@ SH_TITANIC
 Titanic Hull
 
 SH_TITANIC_DESC
-'''This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots and three internal slots, and its max structure is very high, but at the cost of a great deal of speed and stealth.
+'''This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots and three internal slots, and its max structure is very high, but at the cost of a great deal of speed and [[encyclopedia STEALTH_METER_TITLE]].
 
 Requires a Basic Shipyard, an Orbital Drydock and a Geointegration Facility at the planet where it is constructed.'''
 
@@ -7743,7 +7769,7 @@ SH_ASTEROID
 Asteroid Hull
 
 SH_ASTEROID_DESC
-'''This hull is constructed from an average-sized asteroid. A bit roomier than the standard hull, it has four external slots and two internal slots. Speed and structure are relatively low, but it is fairly inexpensive to build. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This hull is constructed from an average-sized asteroid. A bit roomier than the standard hull, it has four external slots and two internal slots. Speed and structure are relatively low, but it is fairly inexpensive to build. This hull gets a large bonus to [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
@@ -7751,7 +7777,7 @@ SH_SMALL_ASTEROID
 Small Asteroid Hull
 
 SH_SMALL_ASTEROID_DESC
-'''This hull is constructed from a very small asteroid. It has only a single external slot and a single internal slot. Speed is very good, but structure is quite low. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This hull is constructed from a very small asteroid. It has only a single external slot and a single internal slot. Speed is very good, but structure is quite low. This hull gets a large bonus to [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
@@ -7759,7 +7785,7 @@ SH_HEAVY_ASTEROID
 Heavy Asteroid Hull
 
 SH_HEAVY_ASTEROID_DESC
-'''This hull is constructed from a gigantic asteroid, and has six external slots and three internal slots. Speed is very low, but structure is moderately high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This hull is constructed from a gigantic asteroid, and has six external slots and three internal slots. Speed is very low, but structure is moderately high. This hull gets a large bonus to [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
@@ -7767,7 +7793,7 @@ SH_CAMOUFLAGE_ASTEROID
 Camouflage Asteroid Hull
 
 SH_CAMOUFLAGE_ASTEROID_DESC
-'''This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. Structure is average, but speed is fairly low. This hull gets a tremendous bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. Structure is average, but speed is fairly low. This hull gets a tremendous bonus to [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
@@ -7775,7 +7801,7 @@ SH_SMALL_CAMOUFLAGE_ASTEROID
 Small Camouflage Asteroid Hull
 
 SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
-'''This camouflage asteroid hull is able to make use of camouflage asteroid parts on its exterior, although it must be made much smaller to compensate and avoid losing its stealth bonus. It has a single external slot and a single internal slot. Speed is average, but structure is quite low. This hull gets a tremendous bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This camouflage asteroid hull is able to make use of camouflage asteroid parts on its exterior, although it must be made much smaller to compensate and avoid losing its [[encyclopedia STEALTH_METER_TITLE]] bonus. It has a single external slot and a single internal slot. Speed is average, but structure is quite low. This hull gets a tremendous bonus to [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard and an asteroid belt with an Asteroid Processor present in the system where it is produced.'''
 
@@ -7783,7 +7809,7 @@ SH_AGREGATE_ASTEROID
 Aggregate Asteroid Hull
 
 SH_AGREGATE_ASTEROID_DESC
-'''This massive hull is formed by combining several large asteroids. It has fifteen external slots and four internal slots. Structure is good, but speed is very low. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This massive hull is formed by combining several large asteroids. It has fifteen external slots and four internal slots. Structure is good, but speed is very low. This hull gets a large bonus to [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
@@ -7791,7 +7817,7 @@ SH_MINIASTEROID_SWARM
 Mini-Asteroid Swarm
 
 SH_MINIASTEROID_SWARM_DESC
-'''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
@@ -7799,7 +7825,7 @@ SH_SCATTERED_ASTEROID
 Scattered Asteroid Hull
 
 SH_SCATTERED_ASTEROID_DESC
-'''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_METER_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
@@ -7807,7 +7833,7 @@ SH_CRYSTALLIZED_ASTEROID
 Crystallized Asteroid Hull
 
 SH_CRYSTALLIZED_ASTEROID_DESC
-'''This sturdy hull is made from a average-sized asteroid, hardened by advanced crystallization techniques. Like the regular Asteroid Hull, it has four external slots and two internal slots. Speed is somewhat low, but structure is extremely high. This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+'''This sturdy hull is made from a average-sized asteroid, hardened by advanced crystallization techniques. Like the regular Asteroid Hull, it has four external slots and two internal slots. Speed is somewhat low, but structure is extremely high. This hull gets a large bonus to [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a Basic Shipyard, and an asteroid belt with an Asteroid Processor and an Asteroid Reformation Processor present in the system where it is produced.'''
 
@@ -7815,7 +7841,7 @@ SH_ORGANIC
 Organic Hull
 
 SH_ORGANIC_DESC
-'''This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. It has three external slots and one internal slot. Stealth is high and speed is average, but structure is a bit low. This hull regenerates structure and fuel between combats.
+'''This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. It has three external slots and one internal slot. [[encyclopedia STEALTH_METER_TITLE]] is high and speed is average, but structure is a bit low. This hull regenerates structure and fuel between combats.
 
 Requires a Basic Shipyard and an Orbital Incubator at the planet where it is developed.'''
 
@@ -7823,7 +7849,7 @@ SH_STATIC_MULTICELLULAR
 Static Multicellular Hull
 
 SH_STATIC_MULTICELLULAR_DESC
-'''Despite being organic, this hull is non-living, being produced via multi-cellular casting. The versatility of the interior and the lack of necessity for internal organs increases its capacity, but without living systems to maintain its structure it is very weak. It has three external slots and two internal slots. Stealth is average and speed is good, but structure is very low. Unlike most organic hulls, this hull regenerates neither structure nor fuel between combats.
+'''Despite being organic, this hull is non-living, being produced via multi-cellular casting. The versatility of the interior and the lack of necessity for internal organs increases its capacity, but without living systems to maintain its structure it is very weak. It has three external slots and two internal slots. [[encyclopedia STEALTH_METER_TITLE]] is average and speed is good, but structure is very low. Unlike most organic hulls, this hull regenerates neither structure nor fuel between combats.
 
 Requires a Basic Shipyard and an Orbital Incubator at the planet where it is constructed.'''
 
@@ -7831,7 +7857,7 @@ SH_ENDOMORPHIC
 Coque Endomorphique
 
 SH_ENDOMORPHIC_DESC
-'''This living hull contains non-living multicellular components for greater internal modularity. This hull has three external slots and two internal slots. Stealth is good and speed is average, but structure is low. This hull regenerates structure and fuel between combats.
+'''This living hull contains non-living multicellular components for greater internal modularity. This hull has three external slots and two internal slots. [[encyclopedia STEALTH_METER_TITLE]] is good and speed is average, but structure is low. This hull regenerates structure and fuel between combats.
 
 Requires a Basic Shipyard, an Orbital Incubator at the planet where it is developed.'''
 
@@ -7839,7 +7865,7 @@ SH_SYMBIOTIC
 Symbiotic Hull
 
 SH_SYMBIOTIC_DESC
-'''This living hull exists in a symbiotic relationship with its crew, increasing its stealth and speed. It has two external slots and one internal slot. Stealth, speed and structure are all good. This hull regenerates structure and fuel between combats.
+'''This living hull exists in a symbiotic relationship with its crew, increasing its [[encyclopedia STEALTH_METER_TITLE]] and speed. It has two external slots and one internal slot. [[encyclopedia STEALTH_METER_TITLE]], speed and structure are all good. This hull regenerates structure and fuel between combats.
 
 Requires a Basic Shipyard, an Orbital Incubator and a Xenocoordination Facility at the planet where it is developed.'''
 
@@ -7847,7 +7873,7 @@ SH_PROTOPLASMIC
 Protoplasmic Hull
 
 SH_PROTOPLASMIC_DESC
-'''This monocellular hull suspends its internal parts in its cytoplasm rather than mounting them on a solid internal structure. It has three of each internal slots and external slots. Speed is average and stealth is high, but structure is very low. This hull regenerates structure and fuel between combats.
+'''This monocellular hull suspends its internal parts in its cytoplasm rather than mounting them on a solid internal structure. It has three of each internal slots and external slots. Speed is average and [[encyclopedia STEALTH_METER_TITLE]] is high, but structure is very low. This hull regenerates structure and fuel between combats.
 
 Requires a Basic Shipyard, an Orbital Incubator and a Cellular Growth Chamber at the planet where it is developed.'''
 
@@ -7855,7 +7881,7 @@ SH_ENDOSYMBIOTIC
 Endosymbiotic Hull
 
 SH_ENDOSYMBIOTIC_DESC
-'''This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has four external slots and three internal slots. Speed and stealth are good, and structure is average. This hull regenerates structure and fuel between combats.
+'''This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has four external slots and three internal slots. Speed and [[encyclopedia STEALTH_METER_TITLE]] are good, and structure is average. This hull regenerates structure and fuel between combats.
 
 Requires a Basic Shipyard, an Orbital Incubator, a Xenocoordination facility and a Cellular Growth Chamber at the planet where it is developed.'''
 
@@ -7863,7 +7889,7 @@ SH_RAVENOUS
 Ravenous Hull
 
 SH_RAVENOUS_DESC
-'''This living hull has been raised on the blood of its brethren. It has four external slots and two internal slots. Stealth is low, but speed and structure are high. Unlike most organic hulls, the Ravenous Hull will only regenerate fuel between combats, not structure.
+'''This living hull has been raised on the blood of its brethren. It has four external slots and two internal slots. [[encyclopedia STEALTH_METER_TITLE]] is low, but speed and structure are high. Unlike most organic hulls, the Ravenous Hull will only regenerate fuel between combats, not structure.
 
 Requires a Basic Shipyard, an Orbital Incubator at the planet where it is developed.'''
 
@@ -7871,7 +7897,7 @@ SH_BIOADAPTIVE
 Bio-Adaptive Hull
 
 SH_BIOADAPTIVE_DESC
-'''This living hull has mind and body working in perfect unison, allowing it to react and adapt to its surroundings with unparalleled efficiency. It has only two of each internal and external slots, but stealth, speed and structure are all very high. This hull regenerates fuel and completely recovers structure between combats.
+'''This living hull has mind and body working in perfect unison, allowing it to react and adapt to its surroundings with unparalleled efficiency. It has only two of each internal and external slots, but [[encyclopedia STEALTH_METER_TITLE]], speed and structure are all very high. This hull regenerates fuel and completely recovers structure between combats.
 
 Requires a Basic Shipyard, an Orbital Incubator and a Xenocoordination Facility at the planet where it is developed.'''
 
@@ -7879,7 +7905,7 @@ SH_SENTIENT
 Sentient Hull
 
 SH_SENTIENT_DESC
-'''This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a stealth and detection bonus to all accompanying friendly ships. It has six external slots and three internal slots. It has low speed, but stealth and structure are good. This hull regenerates structure and fuel between combats.
+'''This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[encyclopedia STEALTH_METER_TITLE]] and [[encyclopedia DETECTION_RANGE_METER_TITLE]] bonus to all accompanying friendly ships. It has six external slots and three internal slots. It has low speed, but [[encyclopedia STEALTH_METER_TITLE]] and structure are good. This hull regenerates structure and fuel between combats.
 
 Requires a Basic Shipyard, an Orbital Incubator, and a Xenocoordination Facility at the planet where it is developed.'''
 
@@ -7887,7 +7913,7 @@ SH_COMPRESSED_ENERGY
 Compressed Energy Hull
 
 SH_COMPRESSED_ENERGY_DESC
-'''This fast hull is comprised entirely of compressed energy and has a single external slot. Structure is low, but stealth and speed are very high. This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole.
+'''This fast hull is comprised entirely of compressed energy and has a single external slot. Structure is low, but [[encyclopedia STEALTH_METER_TITLE]] and speed are very high. This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole.
 
 Requires a Basic Shipyard and an Energy Compressor at the planet where it is formed.'''
 
@@ -7895,7 +7921,7 @@ SH_FRACTAL_ENERGY
 Fractal Energy Hull
 
 SH_FRACTAL_ENERGY_DESC
-'''This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has twenty-seven external slots, but no internal slots. Stealth is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
+'''This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has twenty-seven external slots, but no internal slots. [[encyclopedia STEALTH_METER_TITLE]] is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
 
 Requires a Basic Shipyard, and an Energy Compressor at the planet where it is formed.'''
 
@@ -7903,7 +7929,7 @@ SH_QUANTUM_ENERGY
 Quantum Energy Hull
 
 SH_QUANTUM_ENERGY_DESC
-'''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. Speed and structure are very high, but stealth is very low. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
+'''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. Speed and structure are very high, but [[encyclopedia STEALTH_METER_TITLE]] is very low. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
 
 Requires a Basic Shipyard, and an Energy Compressor at the planet where it is formed.'''
 
@@ -7911,7 +7937,7 @@ SH_SOLAR
 Solar Hull
 
 SH_SOLAR_DESC
-'''This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to stealth. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and stealth are very low. However, this ship has the ability to enter a star and hide, giving it perfect stealth on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.
+'''This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_METER_TITLE]]. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and [[encyclopedia STEALTH_METER_TITLE]] are very low. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_METER_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.
 
 Requires a Basic Shipyard, an Energy Compressor and a Solar Containment Unit at the planet where it is built.'''
 
@@ -8142,31 +8168,31 @@ ULTIMATE_GROUND_TROOPS
 '''+++	[[encyclopedia TROOP_TITLE]] terrestres ultime: 300%.'''
 
 BAD_DETECTION
-'''−	Pauvre porté de détection: −20 malus.'''
+'''−	Pauvre porté de [[encyclopedia DETECTION_RANGE_METER_TITLE]]: −20 malus.'''
 
 GOOD_DETECTION
-'''+	Bonne porté de détection: +25 bonus.'''
+'''+	Bonne porté de [[encyclopedia DETECTION_RANGE_METER_TITLE]]: +25 bonus.'''
 
 GREAT_DETECTION
-'''++	Grande porté de détection: +50 bonus.'''
+'''++	Grande porté de [[encyclopedia DETECTION_RANGE_METER_TITLE]]: +50 bonus.'''
 
 ULTIMATE_DETECTION
-'''+++	Ultime porté de détection: +100 bonus.'''
+'''+++	Ultime porté de [[encyclopedia DETECTION_RANGE_METER_TITLE]]: +100 bonus.'''
 
 BAD_STEALTH
-'''−	Pauvre en furtivité: −15 malus.'''
+'''−	Pauvre en [[encyclopedia STEALTH_METER_TITLE]]: −15 malus.'''
 
 AVERAGE_STEALTH
-'''	Furtivité moyenne:'''
+'''	[[encyclopedia STEALTH_METER_TITLE]] moyenne:'''
 
 GOOD_STEALTH
-'''+	Bonne furtivité: +15 bonus.'''
+'''+	Bonne [[encyclopedia STEALTH_METER_TITLE]]: +15 bonus.'''
 
 GREAT_STEALTH
-'''++	Grande furtivité: +40 bonus.'''
+'''++	Grande [[encyclopedia STEALTH_METER_TITLE]]: +40 bonus.'''
 
 ULTIMATE_STEALTH
-'''+++	Ultime furtivité: +60 bonus.'''
+'''+++	Ultime [[encyclopedia STEALTH_METER_TITLE]]: +60 bonus.'''
 
 GOOD_WEAPONS
 '''+	Commence avec le propulseur de masse 3, & un vaisseau additionnel.'''
@@ -8199,7 +8225,7 @@ NARROW_EP
 
 
 STANDARD_CONSTRUCTION_LABEL
-'''%1% Infrastructure moyenne'''
+'''%1% [[encyclopedia INFRASTRUCTURE_METER_TITLE]] moyenne'''
 
 STANDARD_COLONY_SUPPLY_LABEL
 '''%2% Average Colony Supply'''
