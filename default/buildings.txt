@@ -4,7 +4,7 @@ BuildingType
     name = "BLD_CULTURE_ARCHIVES"
     description = "BLD_CULTURE_ARCHIVES_DESC"
     buildcost = 200
-    buildtime = 200
+    buildtime = 1
     tags = "ANTIQUATED"
     location = Not All
     effectsgroups = [
@@ -45,8 +45,8 @@ BuildingType
 BuildingType
     name = "BLD_IMPERIAL_PALACE"
     description = "BLD_IMPERIAL_PALACE_DESC"
-    buildcost = 3
-    buildtime = 10
+    buildcost = 10
+    buildtime = 8
     captureresult = destroy
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -115,7 +115,7 @@ BuildingType
     name = "BLD_SHIPYARD_BASE"
     description = "BLD_SHIPYARD_BASE_DESC"
     buildcost = 10
-    buildtime = 5
+    buildtime = 4
     tags = "ORBITAL"
     location = And [
         TargetPopulation low = 1
@@ -414,7 +414,7 @@ BuildingType
     name = "BLD_INDUSTRY_CENTER"
     description = "BLD_INDUSTRY_CENTER_DESC"
     buildcost = 75
-    buildtime = 1
+    buildtime = 5
     location = And [
         Not Contains Building "BLD_INDUSTRY_CENTER"
         OwnedBy TheEmpire Source.Owner
@@ -511,7 +511,7 @@ BuildingType
     name = "BLD_EXOBOT_SHIP"
     description = "BLD_EXOBOT_SHIP_DESC"
     buildcost = 140
-    buildtime = 16
+    buildtime = 12
     location = And [
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
@@ -645,7 +645,7 @@ BuildingType
     name = "BLD_GENOME_BANK"
     description = "BLD_GENOME_BANK_DESC"
     buildcost = 15
-    buildtime = 30
+    buildtime = 16
     location = And [
         Not Contains Building "BLD_GENOME_BANK"
         OwnedBy TheEmpire Source.Owner
@@ -657,7 +657,7 @@ BuildingType
     name = "BLD_SPACE_ELEVATOR"
     description = "BLD_SPACE_ELEVATOR_DESC"
     buildcost = 150
-    buildtime = 5
+    buildtime = 6
     location = And [
         Not Contains Building "BLD_SPACE_ELEVATOR"
         OwnedBy TheEmpire Source.Owner
@@ -673,8 +673,8 @@ BuildingType
 BuildingType
     name = "BLD_GAIA_TRANS"
     description = "BLD_GAIA_TRANS_DESC"
-    buildcost = 400
-    buildtime = 15
+    buildcost = 1000
+    buildtime = 12
     location = And [
         Not Contains Building "BLD_GAIA_TRANS"
         OwnedBy TheEmpire Source.Owner
@@ -773,7 +773,7 @@ BuildingType
     name = "BLD_SOL_ORB_GEN"
     description = "BLD_SOL_ORB_GEN_DESC"
     buildcost = 75
-    buildtime = 5
+    buildtime = 6
     tags = "ORBITAL"
     location = AND [
         Not Contains Building "BLD_SOL_ORB_GEN"
@@ -900,8 +900,8 @@ BuildingType
 BuildingType
     name = "BLD_TERRAFORM"
     description = "BLD_TERRAFORM_DESC"
-    buildcost = 600 * (1 + Target.DistanceFromOriginalType)
-    buildtime = 10
+    buildcost = 500 * (1 + Target.DistanceFromOriginalType)
+    buildtime = 8
     location = And [
         Not Contains Building "BLD_TERRAFORM"
         OwnedBy TheEmpire Source.Owner
@@ -973,7 +973,7 @@ BuildingType
     name = "BLD_NEUTRONIUM_FORGE"
     description = "BLD_NEUTRONIUM_FORGE_DESC"
     buildcost = 100
-    buildtime = 1
+    buildtime = 3
     tags = "ORBITAL"
     location = And [
         Not Contains Building "BLD_NEUTRONIUM_FORGE"
@@ -1029,7 +1029,7 @@ BuildingType
     name = "BLD_BLACK_HOLE_POW_GEN"
     description = "BLD_BLACK_HOLE_POW_GEN_DESC"
     buildcost = 250
-    buildtime = 10
+    buildtime = 8
     tags = "ORBITAL"
     location = And [
         Not Contains Building "BLD_BLACK_HOLE_POW_GEN"
@@ -1129,7 +1129,7 @@ BuildingType
     name = "BLD_ART_MOON"
     description = "BLD_ART_MOON_DESC"
     buildcost = 250
-    buildtime = 1
+    buildtime = 5
     location = And [
         Not Contains Building "BLD_ART_MOON"
         OwnedBy TheEmpire Source.Owner
@@ -1149,7 +1149,7 @@ BuildingType
     name = "BLD_TRANSFORMER"
     description = "BLD_TRANSFORMER_DESC"
     buildcost = 100
-    buildtime = 15
+    buildtime = 8
     location = AND [
         Not Contains Building "BLD_TRANSFORMER"
         OwnedBy TheEmpire Source.Owner
@@ -1159,7 +1159,7 @@ BuildingType
 BuildingType
     name = "BLD_GATEWAY_VOID"
     description = "BLD_GATEWAY_VOID_DESC"
-    buildcost = 45
+    buildcost = 200
     buildtime = 10
     location = AND [
         Not Contains Building "BLD_GATEWAY_VOID"
@@ -1502,7 +1502,7 @@ BuildingType
 BuildingType
     name = "BLD_NOVA_BOMB_ACTIVATOR"
     description = "BLD_NOVA_BOMB_ACTIVATOR_DESC"
-    buildcost = 1
+    buildcost = 25
     buildtime = 1
     location = All
     effectsgroups =

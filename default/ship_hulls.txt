@@ -2687,7 +2687,6 @@ Hull
     structure = 5000
     slots = [
         Slot type = External position = (0.60, 0.45)
-        Slot type = Internal position = (0.40, 0.55)
     ]
     buildcost = 1
     buildtime = 1
