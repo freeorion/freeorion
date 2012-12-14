@@ -673,7 +673,7 @@ BuildingType
 BuildingType
     name = "BLD_GAIA_TRANS"
     description = "BLD_GAIA_TRANS_DESC"
-    buildcost = 1000
+    buildcost = 500
     buildtime = 12
     location = And [
         Not Contains Building "BLD_GAIA_TRANS"
@@ -900,7 +900,7 @@ BuildingType
 BuildingType
     name = "BLD_TERRAFORM"
     description = "BLD_TERRAFORM_DESC"
-    buildcost = 500 * (1 + Target.DistanceFromOriginalType)
+    buildcost = 200 * (1 + Target.DistanceFromOriginalType)
     buildtime = 8
     location = And [
         Not Contains Building "BLD_TERRAFORM"
@@ -1105,7 +1105,7 @@ BuildingType
 BuildingType
     name = "BLD_ART_PLANET"
     description = "BLD_ART_PLANET_DESC"
-    buildcost = 2500
+    buildcost = 2000
     buildtime = 15
     location = And [
         Not Contains Building "BLD_ART_PLANET"
