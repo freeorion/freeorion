@@ -688,18 +688,18 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             if (attack_ship) {
                 if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
                     AttackShipShip(attack_ship, weapon_it->part_attack, target_ship, combat_info.damaged_object_ids);
-                    empire_valid_target_object_ids[target_ship->Owner()].insert(attack_ship->Owner());
+                    empire_valid_target_object_ids[target_ship->Owner()].insert(attacker_id);
                 } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
                     AttackShipPlanet(attack_ship, weapon_it->part_attack,  target_planet, combat_info.damaged_object_ids);
-                    empire_valid_target_object_ids[target_planet->Owner()].insert(attack_ship->Owner());
+                    empire_valid_target_object_ids[target_planet->Owner()].insert(attacker_id);
                 }
             } else if (attack_planet) {
                 if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
                     AttackPlanetShip(attack_planet, target_ship, combat_info.damaged_object_ids);
-                    empire_valid_target_object_ids[target_ship->Owner()].insert(attack_planet->Owner());
+                    empire_valid_target_object_ids[target_ship->Owner()].insert(attacker_id);
                 } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
                     AttackPlanetPlanet(attack_planet, target_planet, combat_info.damaged_object_ids);
-                    empire_valid_target_object_ids[target_planet->Owner()].insert(attack_planet->Owner());
+                    empire_valid_target_object_ids[target_planet->Owner()].insert(attacker_id);
                 }
             }
 
