@@ -1111,9 +1111,7 @@ double Fleet::Structure() const {
     for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
         if (const Ship* ship = GetShip(*it)) {
             if (!ship->OrderedScrapped()) {
-                if (const ShipDesign* design = ship->Design()){
-                    retval += design->Structure();
-                }
+                retval += ship->CurrentMeterValue(METER_STRUCTURE);
                 isFleetScrapped = false;
             }
         }
@@ -1133,10 +1131,8 @@ double Fleet::Shields() const {
     double retval = 0.0;
     for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
         if (const Ship* ship = GetShip(*it)) {
-            if (!ship->OrderedScrapped()) {
-                if (const ShipDesign* design = ship->Design()){
-                    retval += design->Shields();
-                }
+            if (!ship->OrderedScrapped()) {                
+                retval += ship->CurrentMeterValue(METER_SHIELD);                
                 isFleetScrapped = false;
             }
         }
