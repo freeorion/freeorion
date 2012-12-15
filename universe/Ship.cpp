@@ -315,15 +315,17 @@ const std::string& Ship::PublicName(int empire_id) const {
     // ship's name is "Scout"
     if (GetUniverse().AllObjectsVisible() || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
         return Name();
-    else if (Unowned() && IsMonster())
-        if (const ShipDesign* design = Design())
-            return design->Name();
-        else
-            return UserString("SM_MONSTER");
-    else if (Unowned())
+    const ShipDesign* design = Design();
+    if (design)
+        return design->Name();
+    else if (IsMonster())
+        return UserString("SM_MONSTER");
+    else if (!Unowned())
+        return UserString("FW_FOREIGN_SHIP");
+    else if (Unowned() && GetVisibility(empire_id) > VIS_NO_VISIBILITY)
         return UserString("FW_ROGUE_SHIP");
     else
-        return UserString("FW_FOREIGN_SHIP");
+        return UserString("SHIP");
 }
 
 UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const {

@@ -134,16 +134,17 @@ std::string Fleet::Dump() const {
 }
 
 const std::string& Fleet::PublicName(int empire_id) const {
-    // Disclose real fleet name only to fleet owners. Rationale: a player might become suspicious if the incoming
-    // foreign fleet is called "Decoy"
+    // Disclose real fleet name only to fleet owners.
     if (GetUniverse().AllObjectsVisible() || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
         return Name();
+    else if (!Unowned())
+        return UserString("FW_FOREIGN_FLEET");
     else if (Unowned() && HasMonsters())
         return UserString("MONSTERS");
-    else if (Unowned())
+    else if (Unowned() && GetVisibility(empire_id) > VIS_NO_VISIBILITY)
         return UserString("FW_ROGUE_FLEET");
     else
-        return UserString("FW_FOREIGN_FLEET");
+        return UserString("FLEET");
 }
 
 const std::list<int>& Fleet::TravelRoute() const {
@@ -544,7 +545,6 @@ bool Fleet::HasShipsWithoutScrapOrders() const {
                 return true;
     return false;
 }
-
 
 bool Fleet::Contains(int object_id) const
 { return m_ships.find(object_id) != m_ships.end(); }
