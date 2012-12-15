@@ -2186,15 +2186,17 @@ void ServerApp::PostCombatProcessTurns() {
     empires.BackPropegateMeters();
 
 
-    // store any changes in objects from various progress functions, such as
-    // starvation of planets, before updating visibility again, so that if the
+    // store any changes in objects from various progress functions
+    // before updating visibility again, so that if the
     // visibility update removes an empires ability to detect an object, the
-    // empire will still know the latest state (eg. 0 population planet) on the
+    // empire will still know the latest state on the
     // turn when the empire did have detection ability for the object
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
     // post-production and meter-effects visibility update
     m_universe.UpdateEmpireObjectVisibilities();
+
+    m_universe.UpdateEmpireStaleObjectKnowledge();
 
     // update empire-visibility filtered graphs after visiblity update
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphs();

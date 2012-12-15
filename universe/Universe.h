@@ -104,6 +104,11 @@ public:
       * returned. */
     const std::set<int>&    EmpireKnownDestroyedObjectIDs(int empire_id) const;
 
+    /** Returns IDs of objects that the Empire with id \a empire_id has stale
+      * knowledge of in its latest known objects.  The latest known data about
+      * these objects suggests that they should be visible, but they are not. */
+    const std::set<int>&    EmpireStaleKnowledgeObjectIDs(int empire_id) const;
+
     const ShipDesign*       GetShipDesign(int ship_design_id) const;                    ///< returns the ship design with id \a ship_design id, or 0 if non exists
     ship_design_iterator    beginShipDesigns() const   {return m_ship_designs.begin();} ///< returns the begin iterator for ship designs
     ship_design_iterator    endShipDesigns() const     {return m_ship_designs.end();}   ///< returns the end iterator for ship designs
@@ -309,12 +314,11 @@ public:
       * visibility that the empire has this turn. */
     void            UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
-    /** Checks latest known information about each object for each empire and
+    /** Checks latest known information about each object for each empire and,
       * in cases when the latest known state (stealth and location) suggests
       * that the empire should be able to see the object, but the object can't
-      * be seen by the empire, update the latest known state to note this, by
-      * moving the object to a sentinel location. */
-    void            UpdateEmpireLatestKnownObjectsThatAreNotButShouldHaveBeenVisible();
+      * be seen by the empire, updates the latest known state to note this. */
+    void            UpdateEmpireStaleObjectKnowledge();
 
     /** Resizes the system graph to the appropriate size and populates
       * m_system_distances.  Uses the Universe latest known set of objects for
@@ -524,6 +528,7 @@ private:
     EmpireObjectSpecialsMap         m_empire_object_visible_specials;   ///< map from empire id to (map from object id to (set of names of specials that empire can see are on that object) )
 
     ObjectKnowledgeMap              m_empire_known_destroyed_object_ids;///< map from empire id to (set of object ids that the empire knows have been destroyed)
+    ObjectKnowledgeMap              m_empire_stale_knowledge_object_ids;///< map from empire id to (set of object ids that the empire has previously observed but has subsequently been unable to detect at its last known location despite expecting to be able to detect it based on stealth of the object and having detectors in range)
 
     ShipDesignMap                   m_ship_designs;                     ///< ship designs in the universe
     std::map<int, std::set<int> >   m_empire_known_ship_design_ids;     ///< ship designs known to each empire
@@ -569,7 +574,10 @@ private:
     void    GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns, int encoding_empire) const;
 
     /***/
-    void    GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& m_empire_known_destroyed_object_ids, int encoding_empire) const;
+    void    GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, int encoding_empire) const;
+
+    /***/
+    void    GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, int encoding_empire) const;
 
     friend class boost::serialization::access;
     template <class Archive>

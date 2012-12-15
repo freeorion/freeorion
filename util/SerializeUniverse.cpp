@@ -38,6 +38,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     EmpireObjectVisibilityMap       empire_object_visibility;
     EmpireObjectVisibilityTurnMap   empire_object_visibility_turns;
     ObjectKnowledgeMap              empire_known_destroyed_object_ids;
+    ObjectKnowledgeMap              empire_stale_knowledge_object_ids;
     ShipDesignMap                   ship_designs;
 
     ar.template register_type<System>();
@@ -49,6 +50,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         GetEmpireObjectVisibilityMap(       empire_object_visibility,           m_encoding_empire);
         GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns,     m_encoding_empire);
         GetEmpireKnownDestroyedObjects(     empire_known_destroyed_object_ids,  m_encoding_empire);
+        GetEmpireStaleKnowledgeObjects(     empire_stale_knowledge_object_ids,  m_encoding_empire);
         GetShipDesignsToSerialize(          ship_designs,                       m_encoding_empire);
     }
 
@@ -65,6 +67,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(empire_object_visibility);
     ar  & BOOST_SERIALIZATION_NVP(empire_object_visibility_turns);
     ar  & BOOST_SERIALIZATION_NVP(empire_known_destroyed_object_ids);
+    ar  & BOOST_SERIALIZATION_NVP(empire_stale_knowledge_object_ids);
     Logger().debugStream() << "Universe::serialize : (de)serializing actual objects";
     ar  & BOOST_SERIALIZATION_NVP(objects);
     Logger().debugStream() << "Universe::serialize : (de)serializing empre known objects";
@@ -90,6 +93,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         m_empire_object_visibility.swap(empire_object_visibility);
         m_empire_object_visibility_turns.swap(empire_object_visibility_turns);
         m_empire_known_destroyed_object_ids.swap(empire_known_destroyed_object_ids);
+        m_empire_stale_knowledge_object_ids.swap(empire_stale_knowledge_object_ids);
         m_ship_designs.swap(ship_designs);
     }
 }

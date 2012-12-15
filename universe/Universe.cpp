@@ -491,6 +491,14 @@ const std::set<int>& Universe::EmpireKnownDestroyedObjectIDs(int empire_id) cons
     return empty_set;
 }
 
+const std::set<int>& Universe::EmpireStaleKnowledgeObjectIDs(int empire_id) const {
+    ObjectKnowledgeMap::const_iterator it = m_empire_stale_knowledge_object_ids.find(empire_id);
+    if (it != m_empire_stale_knowledge_object_ids.end())
+        return it->second;
+    static const std::set<int> empty_set;
+    return empty_set;
+}
+
 const ShipDesign* Universe::GetShipDesign(int ship_design_id) const {
     if (ship_design_id == ShipDesign::INVALID_DESIGN_ID)
         return 0;
@@ -1544,12 +1552,20 @@ namespace {
         return retval;
     }
 
-    std::map<int, float> GetEmpiresDetectionStrengths() {
+    std::map<int, float> GetEmpiresDetectionStrengths(int empire_id = ALL_EMPIRES) {
         std::map<int, float> retval;
-        for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
-            const Meter* meter = empire_it->second->GetMeter("METER_DETECTION_STRENGTH");
-            float strength = meter ? meter->Current() : 0.0f;
-            retval[empire_it->first] = strength;
+        if (empire_id == ALL_EMPIRES) {
+            for (EmpireManager::iterator empire_it = Empires().begin();
+                 empire_it != Empires().end(); ++empire_it)
+            {
+                const Meter* meter = empire_it->second->GetMeter("METER_DETECTION_STRENGTH");
+                float strength = meter ? meter->Current() : 0.0f;
+                retval[empire_it->first] = strength;
+            }
+        } else {
+            if (const Empire* empire = Empires().Lookup(empire_id))
+                if (const Meter* meter = empire->GetMeter("METER_DETECTION_STRENGTH"))
+                    retval[empire_id] = meter->Current();
         }
         return retval;
     }
@@ -1558,11 +1574,12 @@ namespace {
       * that the empire could detect them if an object owned by the empire is in
       * range? */
     std::map<int, std::map<std::pair<double, double>, std::vector<int> > >
-        GetEmpiresPositionsPotentiallyDetectableObjects(const ObjectMap& objects)
+        GetEmpiresPositionsPotentiallyDetectableObjects(const ObjectMap& objects,
+                                                        int empire_id = ALL_EMPIRES)
     {
         std::map<int, std::map<std::pair<double, double>, std::vector<int> > > retval;
 
-        std::map<int, float> empire_detection_strengths = GetEmpiresDetectionStrengths();
+        std::map<int, float> empire_detection_strengths = GetEmpiresDetectionStrengths(empire_id);
 
         // filter objects as detectors for this empire or detectable objects
         for (ObjectMap::const_iterator object_it = objects.const_begin();
@@ -1588,6 +1605,69 @@ namespace {
         return retval;
     }
 
+    /** filters set of objects at locations by which of those locations are
+      * within range of a set of detectors and ranges */
+    std::vector<int> FilterObjectPositionsByDetectorPositionsAndRanges(
+        const std::map<std::pair<double, double>, std::vector<int> >& object_positions,
+        const std::map<std::pair<double, double>, float>& detector_position_ranges)
+    {
+        std::vector<int> retval;
+        // check each detector position and range against each object position
+        for (std::map<std::pair<double, double>, std::vector<int> >::const_iterator
+             object_position_it = object_positions.begin();
+             object_position_it != object_positions.end();
+             ++object_position_it)
+        {
+            const std::pair<double, double>& object_pos = object_position_it->first;
+            const std::vector<int>& objects = object_position_it->second;
+            // search through detector positions until one is found in range
+            for (std::map<std::pair<double, double>, float>::const_iterator
+                 detector_position_it = detector_position_ranges.begin();
+                 detector_position_it != detector_position_ranges.end();
+                 ++detector_position_it)
+            {
+                // check range for this detector location for this detectables location
+                float detector_range2 = detector_position_it->second * detector_position_it->second;
+                const std::pair<double, double>& detector_pos = detector_position_it->first;
+                double x_dist = detector_pos.first - object_pos.first;
+                double y_dist = detector_pos.second - object_pos.second;
+                double dist2 = x_dist*x_dist + y_dist*y_dist;
+                if (dist2 > detector_range2)
+                    continue;   // object out of range
+                // add objects at position to return value
+                std::copy(objects.begin(), objects.end(), std::back_inserter(retval));
+                break;  // done searching for a detector position in range
+            }
+        }
+        return retval;
+    }
+
+    /** removes ids of objects that the indicated empire knows have been
+      * destroyed */
+    void FilterObjectIDsByKnownDestruction(std::vector<int>& object_ids, int empire_id,
+                                           const std::map<int, std::set<int> >&
+                                               empire_known_destroyed_object_ids) {
+        if (empire_id == ALL_EMPIRES)
+            return;
+        for (std::vector<int>::iterator it = object_ids.begin(); it != object_ids.end();) {
+            int object_id = *it;
+            std::map<int, std::set<int> >::const_iterator obj_it =
+                empire_known_destroyed_object_ids.find(object_id);
+            if (obj_it == empire_known_destroyed_object_ids.end()) {
+                ++it;
+                continue;
+            }
+            const std::set<int>& empires_that_know = obj_it->second;
+            if (empires_that_know.find(empire_id) == empires_that_know.end()) {
+                ++it;
+                continue;
+            }
+            // remove object from vector...
+            *it = object_ids.back();
+            object_ids.pop_back();
+        }
+    }
+
     /** sets visibility of objects for empires based on input locations of
       * potentially detectable objects (if in range) and and input empire
       * detection ranges at locations. */
@@ -1595,9 +1675,10 @@ namespace {
         const std::map<int, std::map<std::pair<double, double>, float> >&
             empire_location_detection_ranges,
         const std::map<int, std::map<std::pair<double, double>, std::vector<int> > >&
-            empire_location_potentially_detectable_objects,
-        Universe::EmpireObjectVisibilityMap& empire_object_visibility)
+            empire_location_potentially_detectable_objects)
     {
+        Universe& universe = GetUniverse();
+
         for (std::map<int, std::map<std::pair<double, double>, float> >::const_iterator
              detecting_empire_it = empire_location_detection_ranges.begin();
              detecting_empire_it != empire_location_detection_ranges.end();
@@ -1614,48 +1695,24 @@ namespace {
                 continue;   // empire can't detect anything!
             const std::map<std::pair<double, double>, std::vector<int> >& detectable_position_objects =
                 empire_detectable_objects_it->second;
+            if (detectable_position_objects.empty())
+                continue;
 
-            // get empire's object visibility output map
-            Universe::ObjectVisibilityMap& vis_map = empire_object_visibility[detecting_empire_id];
+            // filter potentially detectable objects by which are within range
+            // of a detector
+            std::vector<int> in_range_detectable_objects =
+                FilterObjectPositionsByDetectorPositionsAndRanges(detectable_position_objects,
+                                                                  detector_position_ranges);
+            if (in_range_detectable_objects.empty())
+                continue;
 
-            // check each detector and range against each position
-            for (std::map<std::pair<double, double>, std::vector<int> >::const_iterator
-                 detectable_position_it = detectable_position_objects.begin();
-                 detectable_position_it != detectable_position_objects.end();
-                 ++detectable_position_it)
+            // set all in-range detectable objects as partially visible (unless
+            // any are already full vis, in which case do nothing)
+            for (std::vector<int>::const_iterator detected_object_it = in_range_detectable_objects.begin();
+                 detected_object_it != in_range_detectable_objects.end(); ++detected_object_it)
             {
-                const std::pair<double, double>& detectable_pos = detectable_position_it->first;
-                const std::vector<int>& detectable_objects = detectable_position_it->second;
-                // search through detector positions until one is found in range
-                for (std::map<std::pair<double, double>, float>::const_iterator
-                     detector_position_it = detector_position_ranges.begin();
-                     detector_position_it != detector_position_ranges.end();
-                     ++detector_position_it)
-                {
-                    // check range for this detector location for this detectables location
-                    float detector_range2 = detector_position_it->second * detector_position_it->second;
-                    const std::pair<double, double>& detector_pos = detector_position_it->first;
-                    double x_dist = detector_pos.first - detectable_pos.first;
-                    double y_dist = detector_pos.second - detectable_pos.second;
-                    double dist2 = x_dist*x_dist + y_dist*y_dist;
-                    if (dist2 > detector_range2)
-                        continue;   // out of range
-
-                    // in range; set all detectable objects as partially visible for this empire
-                    for (std::vector<int>::const_iterator detected_object_it = detectable_objects.begin();
-                         detected_object_it != detectable_objects.end(); ++detected_object_it)
-                    {
-                        int detected_object_id = *detected_object_it;
-                        // set this object to at partial visibility, unless it
-                        // is already partial or better visibility.
-                        Universe::ObjectVisibilityMap::iterator vis_map_it = vis_map.find(detected_object_id);
-                        if (vis_map_it == vis_map.end()) {
-                            vis_map[detected_object_id] = VIS_PARTIAL_VISIBILITY;
-                        } else if (vis_map_it->second < VIS_PARTIAL_VISIBILITY) {
-                            vis_map_it->second = VIS_PARTIAL_VISIBILITY;
-                        }
-                    }
-                }
+                universe.SetEmpireObjectVisibility(detecting_empire_id, *detected_object_it,
+                                                   VIS_PARTIAL_VISIBILITY);
             }
         }
     }
@@ -1979,8 +2036,7 @@ void Universe::UpdateEmpireObjectVisibilities() {
             GetEmpiresPositionsPotentiallyDetectableObjects(Objects());
 
     SetEmpireObjectVisibilitiesFromRanges(empire_position_detection_ranges,
-                                          empire_position_potentially_detectable_objects,
-                                          m_empire_object_visibility);
+                                          empire_position_potentially_detectable_objects);
 
     PropegateVisibilityToContainerObjects(Objects(), m_empire_object_visibility);
 
@@ -2068,12 +2124,137 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
     }
 }
 
-void Universe::UpdateEmpireLatestKnownObjectsThatAreNotButShouldHaveBeenVisible() {
+void Universe::UpdateEmpireStaleObjectKnowledge() {
     // if any objects in the latest known objects for an empire are not
     // currently visible, but that empire has detectors in range of the objects'
     // latest known location and the objects' latest known stealth is low enough to be
-    // detectable by that empire, then the objects would appear to have moved,
-    // and the empire's latest known objects should be updated to reflect this
+    // detectable by that empire, then the latest known state of the objects
+    // (including stealth and position) appears to be stale / out of date.
+
+    const std::map<int, std::map<std::pair<double, double>, float> >
+        empire_location_detection_ranges = GetEmpiresPositionDetectionRanges();
+
+    for (EmpireObjectMap::iterator empire_it = m_empire_latest_known_objects.begin();
+         empire_it != m_empire_latest_known_objects.end(); ++empire_it)
+    {
+        int empire_id = empire_it->first;
+        const ObjectMap& latest_known_objects = empire_it->second;
+        const ObjectVisibilityMap& vis_map = m_empire_object_visibility[empire_id];
+        std::set<int>& stale_set = m_empire_stale_knowledge_object_ids[empire_id];
+        const std::set<int>& destroyed_set = m_empire_known_destroyed_object_ids[empire_id];
+
+        // remove stale marking for any known destroyed or currently visible objects
+        for (std::set<int>::iterator stale_it = stale_set.begin(); stale_it != stale_set.end();) {
+            int object_id = *stale_it;
+            if (vis_map.find(object_id) != vis_map.end() ||
+                destroyed_set.find(object_id) != destroyed_set.end())
+            {
+                stale_it = stale_set.erase(stale_it);
+            } else {
+                ++stale_it;
+            }
+        }
+
+
+        // get empire latest known objects that are potentially detectable
+        std::map<int, std::map<std::pair<double, double>, std::vector<int> > >
+            empires_latest_known_objects_that_should_be_detectable =
+                GetEmpiresPositionsPotentiallyDetectableObjects(latest_known_objects, empire_id);
+
+        const std::map<std::pair<double, double>, std::vector<int> >&
+            empire_latest_known_should_be_still_detectable_objects =
+                empires_latest_known_objects_that_should_be_detectable[empire_id];
+
+        // get empire detection ranges
+        std::map<int, std::map<std::pair<double, double>, float> >::const_iterator
+            empire_detectors_it = empire_location_detection_ranges.find(empire_id);
+        if (empire_detectors_it == empire_location_detection_ranges.end())
+            continue;
+        const std::map<std::pair<double, double>, float>& empire_detector_positions_ranges =
+            empire_detectors_it->second;
+
+        // filter should-be-still-detectable objects by whether they are
+        // in range of a detector
+        std::vector<int> should_still_be_detectable_latest_known_objects =
+            FilterObjectPositionsByDetectorPositionsAndRanges(
+                empire_latest_known_should_be_still_detectable_objects,
+                empire_detector_positions_ranges);
+
+        // filter to exclude objects that are known to have been destroyed
+        FilterObjectIDsByKnownDestruction(should_still_be_detectable_latest_known_objects,
+                                          empire_id, m_empire_known_destroyed_object_ids);
+
+        // any objects that pass filters but aren't actually still visible
+        // represent out-of-date info in empire's latest known objects.  these
+        // entries need to be removed / flagged to indicate this
+        for (std::vector<int>::const_iterator
+             should_still_be_detectable_object_it = should_still_be_detectable_latest_known_objects.begin();
+             should_still_be_detectable_object_it != should_still_be_detectable_latest_known_objects.end();
+             ++should_still_be_detectable_object_it)
+        {
+            int object_id = *should_still_be_detectable_object_it;
+            ObjectVisibilityMap::const_iterator vis_it = vis_map.find(object_id);
+            if (vis_it == vis_map.end() || vis_it->second < VIS_BASIC_VISIBILITY) {
+                // object not visible even though the latest known info about it
+                // for this empire suggests it should be.  info is stale.
+                stale_set.insert(object_id);
+            }
+        }
+
+        // fleets that are not visible and that contain no non-stale ships are
+        // stale
+        for (ObjectMap::const_iterator obj_it = latest_known_objects.const_begin();
+             obj_it != latest_known_objects.const_end(); ++obj_it)
+        {
+            const UniverseObject* obj = obj_it->second;
+            if (obj->ObjectType() != OBJ_FLEET)
+                continue;
+            if (obj->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY)
+                continue;
+            const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
+            if (!fleet)
+                continue;
+            int fleet_id = obj_it->first;
+            // are there any non-stale contained ships?
+            bool non_stale_contained_ship = false;
+            const std::set<int>& ship_ids = fleet->ShipIDs();
+            for (std::set<int>::const_iterator ship_it = ship_ids.begin();
+                 ship_it != ship_ids.end(); ++ship_it)
+            {
+                int ship_id = *ship_it;
+                // is supposedly contained fleet unknown or not in this fleet?
+                // if not known or not in this fleet, doesn't make fleet non-stale
+                const Ship* ship = latest_known_objects.Object<Ship>(ship_id);
+                if (!ship || ship->FleetID() != fleet_id)
+                    continue;
+
+                // is contained ship visible?  If so, makes fleet non-stale
+                ObjectVisibilityMap::const_iterator vis_it = vis_map.find(ship_id);
+                if (vis_it != vis_map.end() && vis_it->second > VIS_NO_VISIBILITY) {
+                    non_stale_contained_ship = true;
+                    break;
+                }
+
+                // contained ship is not visible.  if it is also stale, then it
+                // doesn't make fleet non-stale
+                if (stale_set.find(ship_id) != stale_set.end())
+                    continue;
+
+                // ship is not stale, so its fleet non-stale
+                non_stale_contained_ship = true;
+                break;
+            }
+            if (!non_stale_contained_ship)
+                stale_set.insert(fleet_id);
+        }
+
+        for (std::set<int>::const_iterator stale_it = stale_set.begin();
+             stale_it != stale_set.end(); ++stale_it)
+        {
+            const UniverseObject* obj = latest_known_objects.Object(*stale_it);
+            Logger().debugStream() << "Object " << *stale_it << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << empire_id ;
+        }
+    }
 }
 
 void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id) {
@@ -2170,22 +2351,23 @@ void Universe::RecursiveDestroy(int object_id) {
 }
 
 bool Universe::Delete(int object_id) {
-    // find object amongst existing objects and delete directly, without storing any info
-    // about the previous object (as is done for destroying an object)
+    // find object amongst existing objects and delete directly, without storing
+    // any info about the previous object (as is done for destroying an object)
     UniverseObject* obj = m_objects.Object(object_id);
     if (!obj) {
         Logger().errorStream() << "Tried to delete a nonexistant object with id: " << object_id;
         return false;
     }
 
-    // move object to invalid position, thereby removing it from anything that contained it
-    // and propegating associated signals
+    // move object to invalid position, thereby removing it from anything that
+    // contained it and propegating associated signals
     obj->MoveTo(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
 
     // remove from existing objects set
     delete m_objects.Remove(object_id);
 
-    // TODO: Should this not also remove the object from the latest known objects and known destroyed objects for each empire?
+    // TODO: Should this also remove the object from the latest known objects
+    // and known destroyed objects for each empire?
 
     return true;
 }
@@ -2460,4 +2642,21 @@ void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_d
     ObjectKnowledgeMap::const_iterator it = m_empire_known_destroyed_object_ids.find(encoding_empire);
     if (it != m_empire_known_destroyed_object_ids.end())
         empire_known_destroyed_object_ids[encoding_empire] = it->second;
+}
+
+void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, int encoding_empire) const {
+    if (&empire_stale_knowledge_object_ids == &m_empire_stale_knowledge_object_ids)
+        return;
+
+    if (encoding_empire == ALL_EMPIRES) {
+        empire_stale_knowledge_object_ids = m_empire_stale_knowledge_object_ids;
+        return;
+    }
+
+    empire_stale_knowledge_object_ids.clear();
+
+    // copy stale data for this empire
+    ObjectKnowledgeMap::const_iterator it = m_empire_stale_knowledge_object_ids.find(encoding_empire);
+    if (it != m_empire_stale_knowledge_object_ids.end())
+        empire_stale_knowledge_object_ids[encoding_empire] = it->second;
 }
