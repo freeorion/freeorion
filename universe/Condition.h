@@ -88,6 +88,8 @@ namespace Condition {
     struct InSystem;
     struct ObjectID;
     struct CreatedOnTurn;
+    struct CanColonize;
+    struct CanProduceShips;
 }
 
 /** Returns a single string which describes a vector of Conditions. If multiple
@@ -1574,6 +1576,36 @@ private:
 
     const ValueRef::ValueRefBase<int>*  m_empire_id;
     const ConditionBase*                m_condition;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+struct Condition::CanColonize : public Condition::ConditionBase {
+    CanColonize() {};
+    virtual bool        RootCandidateInvariant() const { return true; }
+    virtual bool        TargetInvariant() const { return true; }
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+struct Condition::CanProduceShips : public Condition::ConditionBase {
+    CanProduceShips() {};
+    virtual bool        RootCandidateInvariant() const { return true; }
+    virtual bool        TargetInvariant() const { return true; }
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
 
     friend class boost::serialization::access;
     template <class Archive>

@@ -58,6 +58,14 @@ namespace {
                 =    tok.Stationary_ [ _val = new_<Condition::Stationary>() ]
                 ;
 
+            can_colonize
+                =    tok.CanColonize_ [ _val = new_<Condition::CanColonize>() ]
+                ;
+
+            can_produce_ships
+                =    tok.CanProduceShips_ [ _val = new_<Condition::CanProduceShips>() ]
+                ;
+
             capital
                 =    tok.Capital_ [ _val = new_<Condition::Capital>() ]
                 ;
@@ -105,6 +113,8 @@ namespace {
                 |    root_candidate
                 |    target
                 |    stationary
+                |    can_colonize
+                |    can_produce_ships
                 |    capital
                 |    monster
                 |    armed
@@ -119,6 +129,8 @@ namespace {
             root_candidate.name("RootCandidate");
             target.name("Target");
             stationary.name("Stationary");
+            can_colonize.name("CanColonize");
+            can_produce_ships.name("CanProduceShips");
             capital.name("Capital");
             monster.name("Monster");
             armed.name("Armed");
@@ -162,6 +174,8 @@ namespace {
         parse::condition_parser_rule    root_candidate;
         parse::condition_parser_rule    target;
         parse::condition_parser_rule    stationary;
+        parse::condition_parser_rule    can_colonize;
+        parse::condition_parser_rule    can_produce_ships;
         parse::condition_parser_rule    capital;
         parse::condition_parser_rule    monster;
         parse::condition_parser_rule    armed;

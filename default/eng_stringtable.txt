@@ -697,6 +697,9 @@ Show scale line for universe distance on galaxy map.
 OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER
 Toggles whether to show the zoom slider on galaxy map.
 
+OPTIONS_DB_UI_GALAXY_MAP_POPUP
+Toggles whether to show a right-click popup menu on the galaxy map.
+
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map. May crash on older graphics hardware.
 
@@ -1603,6 +1606,9 @@ Galaxy map stealth threshold slider
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Detection range circles
+
+OPTIONS_GALAXY_MAP_POPUP
+Galaxy map popup menu
 
 OPTIONS_STARLANES
 Starlanes
@@ -2959,6 +2965,12 @@ Monster
 
 CONDITION_STATIONARY
 Stationary
+
+CONDITION_CAN_COLONIZE
+Species Can Colonize
+
+CONDITION_CAN_PRODUCE_SHIPS
+Species Can Produce Ships
 
 CONDITION_HOMEWORLD
 Homeworld
@@ -5194,6 +5206,18 @@ DESC_STATIONARY
 DESC_STATIONARY_NOT
  that is moving
 
+DESC_CAN_COLONIZE
+ with a species that can colonize
+
+DESC_CAN_COLONIZE_NOT
+ without a species that can colonize
+
+DESC_CAN_PRODUCE_SHIPS
+ with a species that can produce ships
+
+DESC_CAN_PRODUCE_SHIPS_NOT
+ without a species that can produce ships
+ 
 DESC_SUPPLY_CONNECTED_FLEET
  that is in a system where the %1% empire can provide fleet supply
 

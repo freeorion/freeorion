@@ -1671,7 +1671,6 @@ bool Condition::HasTag::Match(const ScriptingContext& local_context) const {
     return candidate->HasTag(m_name);
 }
 
-
 ///////////////////////////////////////////////////////////
 // CreatedOnTurn                                         //
 ///////////////////////////////////////////////////////////
@@ -5110,7 +5109,7 @@ bool Condition::ExploredByEmpire::Match(const ScriptingContext& local_context) c
 }
 
 ///////////////////////////////////////////////////////////
-// Stationary                                      //
+// Stationary                                            //
 ///////////////////////////////////////////////////////////
 std::string Condition::Stationary::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_STATIONARY";
@@ -5377,6 +5376,130 @@ std::string Condition::ResourceSupplyConnectedByEmpire::Dump() const {
     retval += m_condition->Dump();
     --g_indent;
     return retval;
+}
+
+///////////////////////////////////////////////////////////
+// CanColonize                                           //
+///////////////////////////////////////////////////////////
+std::string Condition::CanColonize::Description(bool negated/* = false*/) const {
+    std::string description_str = "DESC_CAN_COLONIZE";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str);
+}
+
+std::string Condition::CanColonize::Dump() const
+{ return DumpIndent() + "CanColonize\n"; }
+
+bool Condition::CanColonize::Match(const ScriptingContext& local_context) const {
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "CanColonize::Match passed no candidate object";
+        return false;
+    }
+
+    // is it a ship, a planet, or a building on a planet?
+    std::string species_name;
+    if (candidate->ObjectType() == OBJ_PLANET) {
+        const Planet* planet = universe_object_cast<const Planet*>(candidate);
+        if (!planet) {
+            Logger().errorStream() << "CanColonize couldn't cast supposedly planet candidate";
+            return false;
+        }
+        species_name = planet->SpeciesName();
+
+    } else if (candidate->ObjectType() == OBJ_BUILDING) {
+        const ::Building* building = universe_object_cast<const ::Building*>(candidate);
+        if (!building) {
+            Logger().errorStream() << "CanColonize couldn't cast supposedly building candidate";
+            return false;
+        }
+        const Planet* planet = GetPlanet(building->PlanetID());
+        if (!planet) {
+            Logger().errorStream() << "CanColonize couldn't get building's planet";
+            return false;
+        }
+        species_name = planet->SpeciesName();
+
+    } else if (candidate->ObjectType() == OBJ_SHIP) {
+        const Ship* ship = universe_object_cast<const Ship*>(candidate);
+        if (!ship) {
+            Logger().errorStream() << "CanColonize couldn't cast supposedly ship candidate";
+            return false;
+        }
+        species_name = ship->SpeciesName();
+    }
+
+    if (species_name.empty())
+        return false;
+    const ::Species* species = GetSpecies(species_name);
+    if (!species) {
+        Logger().errorStream() << "CanColonize couldn't get species: " << species_name;
+        return false;
+    }
+    return species->CanColonize();
+}
+
+///////////////////////////////////////////////////////////
+// CanProduceShips                                       //
+///////////////////////////////////////////////////////////
+std::string Condition::CanProduceShips::Description(bool negated/* = false*/) const {
+    std::string description_str = "DESC_CAN_PRODUCE_SHIPS";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str);
+}
+
+std::string Condition::CanProduceShips::Dump() const
+{ return DumpIndent() + "CanColonize\n"; }
+
+bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) const {
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "CanProduceShips::Match passed no candidate object";
+        return false;
+    }
+
+    // is it a ship, a planet, or a building on a planet?
+    std::string species_name;
+    if (candidate->ObjectType() == OBJ_PLANET) {
+        const Planet* planet = universe_object_cast<const Planet*>(candidate);
+        if (!planet) {
+            Logger().errorStream() << "CanProduceShips couldn't cast supposedly planet candidate";
+            return false;
+        }
+        species_name = planet->SpeciesName();
+
+    } else if (candidate->ObjectType() == OBJ_BUILDING) {
+        const ::Building* building = universe_object_cast<const ::Building*>(candidate);
+        if (!building) {
+            Logger().errorStream() << "CanProduceShips couldn't cast supposedly building candidate";
+            return false;
+        }
+        const Planet* planet = GetPlanet(building->PlanetID());
+        if (!planet) {
+            Logger().errorStream() << "CanProduceShips couldn't get building's planet";
+            return false;
+        }
+        species_name = planet->SpeciesName();
+
+    } else if (candidate->ObjectType() == OBJ_SHIP) {
+        const Ship* ship = universe_object_cast<const Ship*>(candidate);
+        if (!ship) {
+            Logger().errorStream() << "CanProduceShips couldn't cast supposedly ship candidate";
+            return false;
+        }
+        species_name = ship->SpeciesName();
+    }
+
+    if (species_name.empty())
+        return false;
+    const ::Species* species = GetSpecies(species_name);
+    if (!species) {
+        Logger().errorStream() << "CanProduceShips couldn't get species: " << species_name;
+        return false;
+    }
+    return species->CanProduceShips();
 }
 
 ///////////////////////////////////////////////////////////
