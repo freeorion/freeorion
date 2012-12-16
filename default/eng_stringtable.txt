@@ -6703,7 +6703,7 @@ SHP_ENDOSYMB_HULL
 Endosymbiotic Hull
 
 SHP_ENDOSYMB_HULL_DESC
-This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has three external slots and two internal slots. Speed and [[encyclopedia STEALTH_TITLE]] are good, and structure is average. This hull regenerates structure and fuel between combats.
+This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has four external slots and three internal slots. Speed and [[encyclopedia STEALTH_TITLE]] are good, and structure is average. This hull regenerates structure and fuel between combats.
 
 SHP_SENT_HULL
 Sentient Hull
