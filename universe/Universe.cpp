@@ -2149,7 +2149,9 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
             if (vis_map.find(object_id) != vis_map.end() ||
                 destroyed_set.find(object_id) != destroyed_set.end())
             {
-                stale_it = stale_set.erase(stale_it);
+                std::set<int>::iterator temp = stale_it;    ++temp;
+                stale_set.erase(stale_it);
+                stale_it = temp;
             } else {
                 ++stale_it;
             }
