@@ -211,11 +211,55 @@ SitRepEntry CreatePlanetColonizedSitRep(int planet_id) {
     return sitrep;
 }
 
-SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id) {
-    SitRepEntry sitrep("SITREP_FLEET_ARRIVED_AT_DESTINATION", "icons/sitrep/fleet_arrived.png");
-    sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
-    sitrep.AddVariable(VarText::FLEET_ID_TAG,      boost::lexical_cast<std::string>(fleet_id));
-    return sitrep;
+SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id) {
+    const Fleet* fleet = GetFleet(fleet_id);
+
+    bool system_contains_recipient_empire_planets = false;
+    if (const System* system = GetSystem(system_id)) {
+        std::vector<int> system_planets = system->FindObjectIDs<Planet>();
+        for (std::vector<int>::const_iterator planet_it = system_planets.begin();
+             planet_it != system_planets.end(); ++planet_it)
+        {
+            const Planet* planet = GetPlanet(*planet_it);
+            if (!planet || planet->Unowned())
+                continue;
+            if (planet->OwnedBy(recipient_empire_id)) {
+                system_contains_recipient_empire_planets = true;
+                break;
+            }
+        }
+    }
+
+    // TODO: More variants for systems with / without recipient-owned planets
+
+    if (!fleet) {
+        SitRepEntry sitrep("SITREP_FLEET_ARRIVED_AT_SYSTEM", "icons/sitrep/fleet_arrived.png");
+        sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  boost::lexical_cast<std::string>(system_id));
+        sitrep.AddVariable(VarText::FLEET_ID_TAG,   boost::lexical_cast<std::string>(fleet_id));
+        return sitrep;
+    } else if (fleet->Unowned() && fleet->HasMonsters()) {
+        SitRepEntry sitrep("SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION", "icons/sitrep/fleet_arrived.png");
+        sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  boost::lexical_cast<std::string>(system_id));
+        sitrep.AddVariable(VarText::FLEET_ID_TAG,   boost::lexical_cast<std::string>(fleet_id));
+        return sitrep;
+    } else if (fleet->Unowned()) {
+        SitRepEntry sitrep("SITREP_FLEET_ARRIVED_AT_DESTINATION", "icons/sitrep/fleet_arrived.png");
+        sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  boost::lexical_cast<std::string>(system_id));
+        sitrep.AddVariable(VarText::FLEET_ID_TAG,   boost::lexical_cast<std::string>(fleet_id));
+        return sitrep;
+    } else if (fleet->OwnedBy(recipient_empire_id)) {
+        SitRepEntry sitrep("SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION", "icons/sitrep/fleet_arrived.png");
+        sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  boost::lexical_cast<std::string>(system_id));
+        sitrep.AddVariable(VarText::FLEET_ID_TAG,   boost::lexical_cast<std::string>(fleet_id));
+        sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  boost::lexical_cast<std::string>(fleet->Owner()));
+        return sitrep;
+    } else {
+        SitRepEntry sitrep("SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION", "icons/sitrep/fleet_arrived.png");
+        sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  boost::lexical_cast<std::string>(system_id));
+        sitrep.AddVariable(VarText::FLEET_ID_TAG,   boost::lexical_cast<std::string>(fleet_id));
+        sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  boost::lexical_cast<std::string>(fleet->Owner()));
+        return sitrep;
+    }
 }
 
 SitRepEntry CreateEmpireEliminatedSitRep(int empire_id) {

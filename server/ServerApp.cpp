@@ -1946,7 +1946,9 @@ void ServerApp::PreCombatProcessTurns() {
              empire_it != Empires().end(); ++empire_it)
         {
             if (fleet->GetVisibility(empire_it->first) >= VIS_BASIC_VISIBILITY)
-                empire_it->second->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
+                empire_it->second->AddSitRepEntry(
+                    CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID(),
+                                                          empire_it->first));
         }
     }
 

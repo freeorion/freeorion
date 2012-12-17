@@ -3121,7 +3121,22 @@ Planet Colonized
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% has arrived at %system%.
 SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
-Fleet Arrived
+Misc. Fleet Arrived
+
+SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
+%fleet% has arrived at %system%.
+SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL
+Monsters Fleet Arrived
+
+SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
+%empire% %fleet% has arrived at %system%.
+SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL
+Own Fleet Arrived
+
+SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
+%empire% %fleet% has arrived at %system%.
+SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
+Foreign Fleet Arrived
 
 SITREP_EMPIRE_ELIMINATED
 %empire% has been eliminated.
