@@ -814,22 +814,26 @@ void ProductionQueueOrder::ExecuteImpl() const {
     ValidateEmpireID();
 
     Empire* empire = Empires().Lookup(EmpireID());
-    if (m_build_type == BT_BUILDING)
-        empire->PlaceBuildInQueue(BT_BUILDING, m_item_name, m_number, m_location);
-    else if (m_build_type == BT_SHIP)
-        empire->PlaceBuildInQueue(BT_SHIP, m_design_id, m_number, m_location);
-    else if (m_new_blocksize != INVALID_QUANTITY) {
-        Logger().debugStream() << "ProductionQueueOrder quantity " << m_new_quantity << " Blocksize " << m_new_blocksize;
-        empire->SetBuildQuantityAndBlocksize(m_index, m_new_quantity, m_new_blocksize);
+    try {
+        if (m_build_type == BT_BUILDING)
+            empire->PlaceBuildInQueue(BT_BUILDING, m_item_name, m_number, m_location);
+        else if (m_build_type == BT_SHIP)
+            empire->PlaceBuildInQueue(BT_SHIP, m_design_id, m_number, m_location);
+        else if (m_new_blocksize != INVALID_QUANTITY) {
+            Logger().debugStream() << "ProductionQueueOrder quantity " << m_new_quantity << " Blocksize " << m_new_blocksize;
+            empire->SetBuildQuantityAndBlocksize(m_index, m_new_quantity, m_new_blocksize);
+        }
+        else if (m_new_quantity != INVALID_QUANTITY)
+            empire->SetBuildQuantity(m_index, m_new_quantity);
+        else if (m_new_index != INVALID_INDEX)
+            empire->MoveBuildWithinQueue(m_index, m_new_index);
+        else if (m_index != INVALID_INDEX)
+            empire->RemoveBuildFromQueue(m_index);
+        else
+            Logger().errorStream() << "Malformed ProductionQueueOrder.";
+    } catch (const std::exception& e) {
+        Logger().errorStream() << "Build order execution threw exception: " << e.what();
     }
-    else if (m_new_quantity != INVALID_QUANTITY)
-        empire->SetBuildQuantity(m_index, m_new_quantity);
-    else if (m_new_index != INVALID_INDEX)
-        empire->MoveBuildWithinQueue(m_index, m_new_index);
-    else if (m_index != INVALID_INDEX)
-        empire->RemoveBuildFromQueue(m_index);
-    else
-        Logger().errorStream() << "Malformed ProductionQueueOrder.";
 }
 
 ////////////////////////////////////////////////
