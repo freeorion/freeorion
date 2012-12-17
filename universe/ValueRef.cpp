@@ -488,6 +488,10 @@ namespace ValueRef {
             if (const Planet* planet = universe_object_cast<const Planet*>(object))
                 return planet->DistanceFromOriginalType();
 
+        } else if (property_name == NextTurnPopGrowth_name) {
+            if (const PopCenter* pop = dynamic_cast<const PopCenter*>(object))
+                return pop->NextTurnPopGrowth();
+
         } else if (property_name == CurrentTurn_name) {
             return CurrentTurn();
 

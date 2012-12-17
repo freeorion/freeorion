@@ -175,8 +175,9 @@
     (NextLargerPlanetSize)                      \
     (NextSmallerPlanetSize)                     \
     (NextOlderStarType)                         \
-    (NextYoungerStarType)                       \
     (NextSystemID)                              \
+    (NextTurnPopGrowth)                         \
+    (NextYoungerStarType)                       \
     (NoStar)                                    \
     (Not)                                       \
     (Number)                                    \

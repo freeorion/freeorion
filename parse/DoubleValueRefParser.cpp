@@ -52,6 +52,7 @@ namespace {
                 |    tok.X_
                 |    tok.Y_
                 |    tok.SizeAsDouble_
+                |    tok.NextTurnPopGrowth_
                 |    tok.Size_
                 |    tok.DistanceFromOriginalType_
                 ;
