@@ -198,14 +198,14 @@ namespace {
                                              int empire_id)
     {
         std::vector<const Condition::ConditionBase*> location_conditions;
-        Condition::CanProduceShips can_prod_ship_cond;
-        location_conditions.push_back(&can_prod_ship_cond);
+        //Condition::CanProduceShips can_prod_ship_cond;
+        //location_conditions.push_back(&can_prod_ship_cond);
         Condition::OwnerHasShipDesignAvailable ship_avail_cond(ship_design_id);
         location_conditions.push_back(&ship_avail_cond);
         if (const ShipDesign* ship_design = GetShipDesign(ship_design_id)) {
             if (ship_design->CanColonize()) {
-                Condition::CanColonize can_colonize_cond;
-                location_conditions.push_back(&can_colonize_cond);
+                //Condition::CanColonize can_colonize_cond;
+                //location_conditions.push_back(&can_colonize_cond);
             }
             if (const HullType* hull_type = ship_design->GetHull())
                 location_conditions.push_back(hull_type->Location());
