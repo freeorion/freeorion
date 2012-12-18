@@ -281,7 +281,7 @@ private:
 
 /** Matches all objects. */
 struct Condition::All : public Condition::ConditionBase {
-    All() {}
+    All() : ConditionBase() {}
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -334,7 +334,7 @@ private:
 
 /** Matches the source object only. */
 struct Condition::Source : public Condition::ConditionBase {
-    Source() {};
+    Source() : ConditionBase() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -353,7 +353,7 @@ private:
   * whole compound condition, rather than an object just being matched in a
   * subcondition in order to evaluate the outer condition. */
 struct Condition::RootCandidate : public Condition::ConditionBase {
-    RootCandidate() {};
+    RootCandidate() : ConditionBase() {}
     virtual bool        RootCandidateInvariant() const { return false; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -372,7 +372,7 @@ private:
 
 /** Matches the target of an effect being executed. */
 struct Condition::Target : public Condition::ConditionBase {
-    Target() {};
+    Target() : ConditionBase() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return false; }
     virtual std::string Description(bool negated = false) const;
@@ -391,6 +391,7 @@ private:
   * any species in the current game Universe. */
 struct Condition::Homeworld : public Condition::ConditionBase {
     Homeworld() :
+        ConditionBase(),
         m_names()
     {}
     Homeworld(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
@@ -419,7 +420,7 @@ private:
 
 /** Matches planets that are an empire's capital. */
 struct Condition::Capital : public Condition::ConditionBase {
-    Capital() {};
+    Capital() : ConditionBase() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -435,7 +436,7 @@ private:
 
 /** Matches space monsters. */
 struct Condition::Monster : public Condition::ConditionBase {
-    Monster() {};
+    Monster() : ConditionBase() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -806,6 +807,7 @@ struct Condition::Species : public Condition::ConditionBase {
         m_names(names)
     {}
     Species() :
+        ConditionBase(),
         m_names()
     {}
     virtual ~Species();
@@ -854,6 +856,7 @@ struct Condition::Enqueued : public Condition::ConditionBase {
         m_high(high)
     {}
     Enqueued() :
+        ConditionBase(),
         m_build_type(BT_NOT_BUILDING),
         m_name(),
         m_design_id(0),
@@ -1513,7 +1516,8 @@ private:
 /** Matches objects that are moving. ... What does that mean?  Departing this
   * turn, or were located somewhere else last turn...? */
 struct Condition::Stationary : public Condition::ConditionBase {
-    Stationary() {};
+    Stationary() : ConditionBase() {}
+    virtual ~Stationary() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -1583,7 +1587,8 @@ private:
 };
 
 struct Condition::CanColonize : public Condition::ConditionBase {
-    CanColonize() {};
+    CanColonize() : ConditionBase() {}
+    virtual ~CanColonize() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -1598,7 +1603,8 @@ private:
 };
 
 struct Condition::CanProduceShips : public Condition::ConditionBase {
-    CanProduceShips() {};
+    CanProduceShips() : ConditionBase() {}
+    virtual ~CanProduceShips() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -2035,6 +2041,18 @@ void Condition::ResourceSupplyConnectedByEmpire::serialize(Archive& ar, const un
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
         & BOOST_SERIALIZATION_NVP(m_condition);
+}
+
+template <class Archive>
+void Condition::CanColonize::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+}
+
+template <class Archive>
+void Condition::CanProduceShips::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
 }
 
 template <class Archive>
