@@ -728,7 +728,7 @@ Tech
 Tech
     name = "GRO_MEDICAL_PATH"
     description = "GRO_MEDICAL_PATH_DESC"
-    short_description = "POPULATION_SHORT_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 4
@@ -748,7 +748,7 @@ Tech
 Tech
     name = "GRO_GENETIC_ENG"
     description = "GRO_GENETIC_ENG_DESC"
-    short_description = "POPULATION_SHORT_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 4
@@ -811,7 +811,7 @@ Tech
 Tech
     name = "GRO_NANOTECH_MED"
     description = "GRO_NANOTECH_MED_DESC"
-    short_description = "POPULATION_SHORT_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 40
@@ -856,7 +856,7 @@ Tech
 Tech
     name = "GRO_GENETIC_MED"
     description = "GRO_GENETIC_MED_DESC"
-    short_description = "POPULATION_SHORT_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 12
