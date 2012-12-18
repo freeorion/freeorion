@@ -104,8 +104,8 @@ namespace {
             //m_quantityBox->SetColWidth(0, GG::X(14));
             //m_quantityBox->LockColWidths();
 
-            int quantInts[] = {1, 5, 10, 20, 50, 99};
-            std::set<int> myQuantSet(quantInts,quantInts+6);
+            int quantInts[] = {1, 2, 3, 4, 5, 10, 20, 50, 99};
+            std::set<int> myQuantSet(quantInts,quantInts+9);
             if (amBlockType)
                 myQuantSet.insert(blocksize); //as currently implemented this one not actually necessary since blocksize has no other way to change
             else
@@ -127,7 +127,7 @@ namespace {
                 //Resize(GG::Pt(width, height)); //doesn't work on DropDownList itself, goes by Row
             }
             // set dropheight.  shrink to fit a small number, but cap at a reasonable max
-            SetDropHeight(GG::Y(std::min( 8, int(myQuantSet.size() ) )*height + 4));
+            SetDropHeight(GG::Y(std::max( 8, int(myQuantSet.size() ) )*height + 4));
             //QuantLabel ref1 = QuantLabel(quantity, ClientUI::Pts());
             //QuantLabel ref2 = QuantLabel(100, ClientUI::Pts());
             //OffsetMove(GG::Pt(ref1.Width()-GG::X(50) +GG::X(8), GG::Y(-4)));
