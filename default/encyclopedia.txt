@@ -20,6 +20,27 @@ Article
     icon = "icons/focus/mining.png"
 
 Article
+    name = "INDUSTRY_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "INDUSTRY_TEXT"
+    icon = "icons/meter/industry.png"
+
+Article
+    name = "RESEARCH_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "RESEARCH_TEXT"
+    icon = "icons/meter/research.png"
+
+Article
+    name = "TRADE_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "TRADE_TEXT"
+    icon = "icons/meter/trade.png"
+
+Article
     name = "HAPPINESS_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
     short_description = "METER_ARTICLE_SHORT_DESC"

@@ -2716,10 +2716,24 @@ Protection Focus
 PROTECTION_FOCUS_TEXT
 '''The Protection focus represents a planet wholly focused on defending itself.  [[encyclopedia TROOP_TITLE]], Planetary [[encyclopedia DEFENSE_TITLE]], and Planetary [[encyclopedia SHIELDS_TITLE]] are all increased.'''
 
+INDUSTRY_TITLE
+Industry
+INDUSTRY_TEXT
+'''Industry represents the production and modification of physical goods. It is needed to produce buildings, space ships and other projects.
+
+The Industry of a planet can be used for any production projects of [[encyclopedia SUPPLY_TITLE]] line connected planets. Any un-allocated Industry is lost each turn.'''
+
+RESEARCH_TITLE
+Research
+RESEARCH_TEXT
+'''The Research of all planets in the empire is combined to research new technologies. Any un-allocated Research is lost each turn.
+
+Research does not require [[encyclopedia SUPPLY_TITLE]] line connections to be used.'''
+
 HAPPINESS_TITLE
 Happiness
 HAPPINESS_TEXT
-'''Happiness doesn't do anything, yet.'''
+'''Happiness doesn't do anything yet.'''
 
 INFRASTRUCTURE_TITLE
 Infrastructure
@@ -3927,7 +3941,7 @@ ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-'''Triples the Research on this planet and increases Research on Research-focused planets by one twentieth (non-stacking).
+'''Triples the [[encyclopedia RESEARCH_TITLE]] on this planet and increases [[encyclopedia RESEARCH_TITLE]] on Research-focused planets by one twentieth (non-stacking).
 
 This planet holds the ruins of an unknown, advanced ancient race. A valuable discovery has already been made here.'''
 
@@ -3935,7 +3949,7 @@ ANCIENT_RUINS_SPECIAL
 Ancient Ruins
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-'''Triples the Research on this planet and increases Research on Research-focused planets by one twentieth (non-stacking).
+'''Triples the [[encyclopedia RESEARCH_TITLE]] on this planet and increases [[encyclopedia RESEARCH_TITLE]] on Research-focused planets by one twentieth (non-stacking).
 
 This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
 
@@ -3958,7 +3972,7 @@ TECTONIC_INSTABILITY_SPECIAL
 Tectonically Unstable
 
 TECTONIC_INSTABILITY_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 20. Prevents Subterrainian Construction from increasing population capacity.
+'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 20. Prevents [[tech CON_SUBTER_CONST]] from increasing population capacity.
 
 This planet is tectonically unstable. Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.'''
 
@@ -3990,7 +4004,7 @@ TIDAL_LOCK_SPECIAL
 Tidally Locked Rotation
 
 TIDAL_LOCK_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 20, but Industry is increased by one fifth the planet's Population.
+'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 20, but [[encyclopedia INDUSTRY_TITLE]] is increased by one fifth the planet's Population.
 
 This planet is tidally locked with the star it orbits. Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night. Infrastructure growth is hampered, though once established, industrial capacity benefits from the locally stable surface conditions.'''
 
@@ -3998,7 +4012,7 @@ ECCENTRIC_ORBIT_SPECIAL
 Eccentric Orbit
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on the planet is decreased by 20, but research is increased by 3.
+'''[[encyclopedia INFRASTRUCTURE_TITLE]] on the planet is decreased by 20, but [[encyclopedia RESEARCH_TITLE]] is increased by 3.
 
 This planet's orbit is very eccentric. It has a large distance between its closest and farthest approaches to its star. Total insolation varies significantly throughout the year. The varied conditions inhibit infrastructure development, but provide a beneficial platform for research.'''
 
@@ -4011,14 +4025,14 @@ This planet has a natural satellite, the orbital period of which is in 1:1 reson
 COMPUTRONIUM_SPECIAL
 Computronium Moon
 COMPUTRONIUM_SPECIAL_DESC
-'''When a planet with a Computronium Moon is focused on research, all research focused planets in the empire gain .5 RPs per Population.
+'''When a planet with a Computronium Moon is focused on [[encyclopedia RESEARCH_TITLE]], all research focused planets in the empire gain .5 [[encyclopedia RESEARCH_TITLE]] per Population.
 
 Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
 
 PHILOSOPHER_SPECIAL
 Philosopher Planet
 PHILOSOPHER_SPECIAL_DESC
-'''As long as the Philosopher Planet is uninhabited, all research focused planets in the same system have their research increased by 10. Construction on the Philosopher Planet is decreased by 20.
+'''As long as the Philosopher Planet is uninhabited, all research focused planets in the same system have their [[encyclopedia RESEARCH_TITLE]] increased by 10. [[encyclopedia INFRASTRUCTURE_TITLE]] on the Philosopher Planet is decreased by 20.
 
 The lone remnant of a planet-sized space wandering species has found his final rest orbiting in this system like a normal planet. Having lived for thousands of years he lost the will and ability to travel and resorts to pondering about the mysteries of the universe he has seen and learned about. Eccentric and slightly demented he refuses to communicate with anything that isn't the size and shape of his kin, leaving scientists no choice but to ask questions via the planet they are living on. Understandably colonizing the Philosopher Planet will disturb him gravely and he will fall silent. Construction on his surface is difficult as is to be expected from a living being.'''
 
@@ -5394,7 +5408,7 @@ LRN_ALGO_ELEGANCE
 Algorithmic Elegance
 
 LRN_ALGO_ELEGANCE_DESC
-'''Increases Target Research on all Research focused planets by 0.25 per Population.
+'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all Research focused planets by 0.25 per Population.
 
 With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity. At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.'''
 
@@ -5410,7 +5424,7 @@ LRN_PSIONICS
 Psionics
 
 LRN_PSIONICS_DESC
-'''Research Cost is greatly reduced when the empire includes a telepathic species.
+'''[[encyclopedia RESEARCH_TITLE]] Cost is greatly reduced when the empire includes a telepathic species.
 
 Through deep introspection or artificial enhancement, the brain may develop abilities to directly interact with the universe around it, bypassing the limitations of a physical body. Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives. Applications of these powers, including mind control, personality alteration and possession have profound implications for the relationship between talented and untalented beings.'''
 
@@ -5418,7 +5432,7 @@ LRN_ARTIF_MINDS
 Nacent Artificial Intelligence
 
 LRN_ARTIF_MINDS_DESC
-'''Increases Target Research on all planets by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all planets by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience. While these traits remain elusive, reasonable faximilies may be produced. These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
 
@@ -5487,7 +5501,7 @@ LRN_QUANT_NET
 Quantum Networking
 
 LRN_QUANT_NET_DESC
-'''Increases target Research on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes. This advancement greatly facilitates research throughout the empire.
 
@@ -5602,7 +5616,7 @@ GRO_ENERGY_META
 Pure-Energy Metabolism
 
 GRO_ENERGY_META_DESC
-'''Increases max Fuel on all ships by 2, max [[encyclopedia DEFENSE_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_TITLE]] on all planets by 5, target Industry on all planets with the Industry focus by one quarter of the planet's population, and target Research on all planets with the Research focus by one fifth.
+'''Increases max Fuel on all ships by 2, max [[encyclopedia DEFENSE_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_TITLE]] on all planets by 5, target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by one quarter of the planet's population, and target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by one fifth.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -5612,7 +5626,7 @@ PRO_MICROGRAV_MAN
 Microgravity Industry
 
 PRO_MICROGRAV_MAN_DESC
-'''Increases Industry by +5 on all Industry-focused colonies in system with an asteroid belt outposts. Additional asteriod outposts do not provide additional benefit.
+'''Increases [[encyclopedia INDUSTRY_TITLE]] by +5 on all Industry-focused colonies in system with an asteroid belt outposts. Additional asteriod outposts do not provide additional benefit.
 
 Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
 
@@ -5632,7 +5646,7 @@ PRO_ROBOTIC_PROD
 Robotic Production
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases target Industry on all planets with the Industry focus by the greater of 0.2 per [[POP_PER_PRODUCTION]] units of Population or 0.4 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by the greater of 0.2 per [[POP_PER_PRODUCTION]] units of Population or 0.4 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
 
@@ -5653,7 +5667,7 @@ PRO_FUSION_GEN
 Fusion Generation
 
 PRO_FUSION_GEN_DESC
-'''Increases target Industry on planets with the Industry focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -5677,7 +5691,7 @@ PRO_SENTIENT_AUTOMATION
 Self-Adaptive Automation
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Increases target Industry on all planets by 5.
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets by 5.
 
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
@@ -6136,7 +6150,7 @@ GRO_SUBTER_HAB
 Subterranean Habitation
 
 GRO_SUBTER_HAB_DESC
-'''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.  Cannot improve a planet with the Tunnels or Tectonic Instability special.'''
+'''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.  Cannot improve a planet with the [[special TUNNELS_SPECIAL]] or [[special TECTONIC_INSTABILITY_SPECIAL]] special.'''
 
 GRO_INDUSTRY_FARM
 Industrial Farming
@@ -6221,7 +6235,7 @@ LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases target Research on all planets with the Research focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
 
@@ -6229,7 +6243,7 @@ LRN_STELLAR_TOMOGRAPHY
 Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Increases target Research on planets with the Research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on planets with the Research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 
@@ -6257,7 +6271,7 @@ LRN_ART_BLACK_HOLE
 Artificial Black Hole
 
 LRN_ART_BLACK_HOLE_DESC
-By carefully collapsing a red star, a Black Hole can be formed. This is an expensive and dangerous task, but with great potential benefits for Research and Industry.
+By carefully collapsing a red star, a Black Hole can be formed. This is an expensive and dangerous task, but with great potential benefits for [[encyclopedia RESEARCH_TITLE]] and [[encyclopedia INDUSTRY_TITLE]].
 
 LRN_PSY_DOM
 Psychogenic Domination
@@ -6286,7 +6300,7 @@ PRO_SOL_ORB_GEN
 Solar Orbital Generation
 
 PRO_SOL_ORB_GEN_DESC
-Traditional solar generation methods rely solely on radiating solar energy. By placing generators in low orbit around the star itself, the ability to directly harness the energy of supermassive stellar phenomena becomes a possibility, and a sizable and far-reaching benefit to industry can be obtained.
+Traditional solar generation methods rely solely on radiating solar energy. By placing generators in low orbit around the star itself, the ability to directly harness the energy of supermassive stellar phenomena becomes a possibility, and a sizable and far-reaching benefit to [[encyclopedia INDUSTRY_TITLE]] can be obtained.
 
 PRO_INDUSTRY_CENTER_I
 Industrial Centers
@@ -6778,13 +6792,13 @@ PRO_INDUSTRY_CENTER_II
 Greater Industrial Center
 
 PRO_INDUSTRY_CENTER_II_DESC
-Improved centralized management of dispersed industrial activities increases the size of increased industrial output provided. The bonus to Industry will be double that provided by basic Industrial Centers.
+Improved centralized management of dispersed industrial activities increases the size of increased industrial output provided. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be double that provided by basic Industrial Centers.
 
 PRO_INDUSTRY_CENTER_III
 Supreme Industrial Center
 
 PRO_INDUSTRY_CENTER_III_DESC
-Additional experience and facilities improvements further extend the size of industrial output improvement. The bonus to Industry will be triple that provided by basic Industrial Centers.
+Additional experience and facilities improvements further extend the size of industrial output improvement. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be triple that provided by basic Industrial Centers.
 
 PRO_ENVIRO_MINING
 Environmentally Conscious Mining
@@ -6817,7 +6831,7 @@ BLD_CULTURE_ARCHIVES
 Cultural Archives
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Increases target Research by 5, target Industry by the planet's Population.
+'''Increases target [[encyclopedia RESEARCH_TITLE]] by 5, target [[encyclopedia INDUSTRY_TITLE]] by the planet's Population.
 
 Stores the sum accumulated knowledge from thousands of years of life on this planet, giving bonuses to many aspects of planetary productivity.'''
 
@@ -6952,7 +6966,7 @@ BLD_INDUSTRY_CENTER
 Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus equal to the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Initially provides a bonus to [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus equal to the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 [[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus.
 
@@ -6967,7 +6981,7 @@ BLD_MEGALITH
 Megalith
 
 BLD_MEGALITH_DESC
-'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to [[encyclopedia SUPPLY_TITLE]] line range, and 30 to construction. Additionally all resource meters are able to reach target in a single turn.
+'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to [[encyclopedia SUPPLY_TITLE]] line range, and 30 to [[encyclopedia INFRASTRUCTURE_TITLE]]. Additionally all resource meters are able to reach target in a single turn.
 
 The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
 
@@ -6999,7 +7013,7 @@ BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases Industry on planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 0.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]], and research on Planets with the Research focus by the greater of 3 per [[POP_PER_PRODUCTION]] units of Population or 1.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]]. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 0.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]], and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by the greater of 3 per [[POP_PER_PRODUCTION]] units of Population or 1.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]]. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 
@@ -7015,7 +7029,7 @@ BLD_ENCLAVE_VOID
 Enclave of the Void
 
 BLD_ENCLAVE_VOID_DESC
-'''Increases target Research on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population, or 0.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population, or 0.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
 
@@ -7029,7 +7043,7 @@ BLD_HYPER_DAM
 Hyperspatial Dam
 
 BLD_HYPER_DAM_DESC
-'''Increases target Industry on [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 2 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]], but decreases Population on such planets by 5.
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 2 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]], but decreases Population on such planets by 5.
 
 A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
 
@@ -7043,7 +7057,7 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Increases target industry on [[encyclopedia SUPPLY_TITLE]] line connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependant on star type. This building can be built at an outpost.'''
 
@@ -7095,7 +7109,7 @@ BLD_CONC_CAMP
 Concentration Camps
 
 BLD_CONC_CAMP_DESC
-'''Decreases the planet's population at a rate of 3 per turn, and increases target Industry by 5 times the planet's population.
+'''Decreases the planet's population at a rate of 3 per turn, and increases target [[encyclopedia INDUSTRY_TITLE]] by 5 times the planet's population.
 
 Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an outpost.'''
 
@@ -7103,7 +7117,7 @@ BLD_INDUSTRY_FARM
 Industrial Farms
 
 BLD_INDUSTRY_FARM_DESC
-'''Increases Farming equal to one tenth of Industry for all planets in the empire.
+'''Increases Farming equal to one tenth of [[encyclopedia INDUSTRY_TITLE]] for all planets in the empire.
 
 Long-term adaptations to factories, shipping routes and personnel that already exist allows production of food in industrial regions with no extra cost beyond that of initially developing the additional infrastructure.'''
 
@@ -7111,7 +7125,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-Increases Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]]. This building can be built at an outpost.
+Increases [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]]. This building can be built at an outpost.
 
 BLD_REPLICATORS
 Replicators
@@ -7205,7 +7219,7 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a gas giant and gives a +10 Industry bonus to planets with the Industry focus in the same system.
+'''This building can only be constructed at a gas giant and gives a +10 [[encyclopedia INDUSTRY_TITLE]] bonus to planets with the Industry focus in the same system.
 
 A power generator designed to harvest the energy of a Gas Giant.'''
 
@@ -8117,40 +8131,40 @@ A cosmic cloud of high energetic particles.
 
 
 NO_INDUSTRY
-'''−−−	No Industry'''
+'''−−−	No [[encyclopedia INDUSTRY_TITLE]]'''
 
 BAD_INDUSTRY
-'''−	Bad Industry: -50%'''
+'''−	Bad [[encyclopedia INDUSTRY_TITLE]]: -50%'''
 
 AVERAGE_INDUSTRY
-'''	Average Industry: 100%'''
+'''	Average [[encyclopedia INDUSTRY_TITLE]]: 100%'''
 
 GOOD_INDUSTRY
-'''+	Good Industry: 150%'''
+'''+	Good [[encyclopedia INDUSTRY_TITLE]]: 150%'''
 
 GREAT_INDUSTRY
-'''++	Great Industry: 200%'''
+'''++	Great [[encyclopedia INDUSTRY_TITLE]]: 200%'''
 
 ULTIMATE_INDUSTRY
-'''+++	Ultimate Industry: 400%'''
+'''+++	Ultimate [[encyclopedia INDUSTRY_TITLE]]: 400%'''
 
 NO_RESEARCH
-'''−−−	No Research'''
+'''−−−	No [[encyclopedia RESEARCH_TITLE]]'''
 
 BAD_RESEARCH
-'''−	Bad Research: -50%'''
+'''−	Bad [[encyclopedia RESEARCH_TITLE]]: -50%'''
 
 AVERAGE_RESEARCH
-'''	Average Research: 100%'''
+'''	Average [[encyclopedia RESEARCH_TITLE]]: 100%'''
 
 GOOD_RESEARCH
-'''+	Good Research: 150%'''
+'''+	Good [[encyclopedia RESEARCH_TITLE]]: 150%'''
 
 GREAT_RESEARCH
-'''++	Great Research: 200%'''
+'''++	Great [[encyclopedia RESEARCH_TITLE]]: 200%'''
 
 ULTIMATE_RESEARCH
-'''+++	Ultimate Research: 400%'''
+'''+++	Ultimate [[encyclopedia RESEARCH_TITLE]]: 400%'''
 
 
 NO_GROUND_TROOPS
