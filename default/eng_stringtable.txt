@@ -4447,7 +4447,7 @@ METER_SIZE
 Size
 
 METER_DETECTION_STRENGTH
-Detection Strength
+[[encyclopedia DETECTION_TITLE]]
 
 ALIGN_MILITARISM
 Militarism
@@ -8213,13 +8213,13 @@ ULTIMATE_STEALTH
 '''+++	Ultimate [[encyclopedia STEALTH_TITLE]]: +60 bonus.'''
 
 GOOD_WEAPONS
-'''+	Starts with Mass Driver 3, & one additional ship.'''
+'''+	Starts with [[tech SHP_WEAPON_3]] and one additional ship.'''
 
 GREAT_WEAPONS
-'''++	Starts with Laser 1 & two additional ships.'''
+'''++	Starts with [[tech SHP_WEAPON_5]] and two additional ships.'''
 
 ULTIMATE_WEAPONS
-'''+++	Starts with Laser 3 & three additional ships.'''
+'''+++	Starts with [[tech SHP_WEAPON_7]] and three additional ships.'''
 
 BAD_POPULATION
 '''−	Bad Population 75%'''
