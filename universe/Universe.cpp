@@ -1753,6 +1753,42 @@ namespace {
         }
     }
 
+    void SetSameSystemPlanetsVisible(const ObjectMap& objects) {
+        Universe& universe = GetUniverse();
+        // map from empire ID to ID of systems where those empires own at least one object
+        std::map<int, std::set<int> > empires_systems_with_owned_objects;
+        // get systems where empires have owned objects
+        for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
+            const UniverseObject* obj = it->second;
+            if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID)
+                continue;
+            empires_systems_with_owned_objects[obj->Owner()].insert(obj->SystemID());
+        }
+        // check each planet to see which empires have owned objects in system
+        for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
+            const UniverseObject* obj = it->second;
+            if (obj->ObjectType() != OBJ_PLANET)
+                continue;
+            int obj_system_id = obj->SystemID();
+            if (obj_system_id == INVALID_OBJECT_ID)
+                continue;
+            int object_id = it->first;
+            for (std::map<int, std::set<int> >::const_iterator
+                 emp_it = empires_systems_with_owned_objects.begin();
+                 emp_it != empires_systems_with_owned_objects.end();
+                 ++emp_it)
+            {
+                int empire_id = emp_it->first;
+                const std::set<int>& empire_systems = emp_it->second;
+                if (empire_systems.find(obj_system_id) == empire_systems.end())
+                    continue;
+                // ensure planets are at least basicaly visible.  does not
+                // overwrite higher visibility levels
+                universe.SetEmpireObjectVisibility(empire_id, object_id, VIS_BASIC_VISIBILITY);
+            }
+        }
+    }
+
     void PropegateVisibilityToContainerObjects(const ObjectMap& objects,
                                                Universe::EmpireObjectVisibilityMap& empire_object_visibility)
     {
@@ -2037,6 +2073,8 @@ void Universe::UpdateEmpireObjectVisibilities() {
 
     SetEmpireObjectVisibilitiesFromRanges(empire_position_detection_ranges,
                                           empire_position_potentially_detectable_objects);
+
+    SetSameSystemPlanetsVisible(Objects());
 
     PropegateVisibilityToContainerObjects(Objects(), m_empire_object_visibility);
 
