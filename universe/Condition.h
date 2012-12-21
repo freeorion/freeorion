@@ -772,8 +772,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all Planet objects that have one of the PlanetEnvironments in \a environments.  Note that all
-    Building objects which are on matching planets are also matched. */
+/** Matches all Planet objects that have one of the PlanetEnvironments in
+  * \a environments.  Note that all Building objects which are on matching
+  * planets are also matched. */
 struct Condition::PlanetEnvironment : public Condition::ConditionBase {
     PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments) :
         m_environments(environments)
