@@ -768,6 +768,8 @@ void ShipDataPanel::DoLayout() {
         m_colonize_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
     if (m_invade_indicator)
         m_invade_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+    if (m_scanline_control)
+        m_scanline_control->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
 
     // position ship name text at the top to the right of icons
     const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE.x + DATA_PANEL_TEXT_PAD, GG::Y0);
@@ -894,6 +896,7 @@ private:
     GG::TextControl*    m_fleet_name_text;
     GG::TextControl*    m_fleet_destination_text;
     GG::Button*         m_aggression_toggle;
+    ScanlineControl*    m_scanline_control;
 
     std::vector<std::pair<std::string, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
 
@@ -910,6 +913,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     m_fleet_name_text(0),
     m_fleet_destination_text(0),
     m_aggression_toggle(0),
+    m_scanline_control(0),
     m_stat_icons(),
     m_selected(false)
 {
@@ -973,7 +977,6 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         AttachChild(icon);
 
 
-
         m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDataPanel::Refresh, this);
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -998,6 +1001,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_fleet_name_text(0),
     m_fleet_destination_text(0),
     m_aggression_toggle(0),
+    m_scanline_control(0),
     m_stat_icons(),
     m_selected(false)
 {
@@ -1190,16 +1194,20 @@ namespace {
 }
 
 void FleetDataPanel::Refresh() {
-    DeleteChild(m_fleet_icon);
+    delete m_fleet_icon;
     m_fleet_icon = 0;
+    delete m_scanline_control;
+    m_scanline_control = 0;
 
     if (m_new_fleet_drop_target) {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
         m_fleet_destination_text->Clear();
 
     } else if (const Fleet* fleet = GetFleet(m_fleet_id)) {
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+
         // set fleet name and destination text
-        m_fleet_name_text->SetText(fleet->PublicName(HumanClientApp::GetApp()->EmpireID()));
+        m_fleet_name_text->SetText(fleet->PublicName(client_empire_id));
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
 
         // set icons
@@ -1222,9 +1230,14 @@ void FleetDataPanel::Refresh() {
         else if (fleet->Unowned() && fleet->HasMonsters())
             m_fleet_icon->SetColor(GG::CLR_RED);
 
+        if (fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY) {
+            m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), true);
+            AttachChild(m_scanline_control);
+        }
+
         // set stat icon values
-        for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin();
-             it != m_stat_icons.end(); ++it)
+        for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it =
+             m_stat_icons.begin(); it != m_stat_icons.end(); ++it)
         { it->second->SetValue(StatValue(it->first)); }
     }
 
@@ -1309,6 +1322,8 @@ void FleetDataPanel::DoLayout() {
         // fleet icon will scale and position itself in the provided space
         m_fleet_icon->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
     }
+    if (m_scanline_control)
+        m_scanline_control->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
 
     // position fleet name and destination texts
     const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE.x + DATA_PANEL_TEXT_PAD, GG::Y0);
