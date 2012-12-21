@@ -18,6 +18,7 @@ class StatisticIcon;
 namespace GG {
     class StaticGraphic;
 }
+class ScanlineControl;
 
 /** Manages the lifetimes of FleetWnds. */
 class FleetUIManager {
@@ -71,8 +72,8 @@ private:
 };
 
 /** This is the top level Fleet UI element.  It shows a list of fleets, a
-    new-fleet drop target, and a detail view of the currently selectd fleet (a
-    FleetDetailPanel). */
+    new-fleet drop target, and a detail view of the currently selectd fleet
+    (a FleetDetailPanel). */
 class FleetWnd : public MapWndPopup {
 public:
     /** \name Structors */ //@{
@@ -165,6 +166,7 @@ private:
     friend class FleetUIManager;
 };
 
+/** Shows info about a single ship. */
 class ShipDataPanel : public GG::Control {
 public:
     /** \name Structors */ //@{
@@ -203,6 +205,7 @@ private:
     GG::StaticGraphic*          m_scrap_indicator;
     GG::StaticGraphic*          m_colonize_indicator;
     GG::StaticGraphic*          m_invade_indicator;
+    ScanlineControl*            m_scanline_control;
     GG::TextControl*            m_ship_name_text;
     GG::TextControl*            m_design_name_text;
 

@@ -5,11 +5,13 @@
 #include "InfoPanels.h"
 #include "ClientUI.h"
 #include "Sound.h"
+#include "ShaderProgram.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
-#include "../universe/Fleet.h"
+#include "../util/Directories.h"
 #include "../client/human/HumanClientApp.h"
+#include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
 #include "../universe/Ship.h"
@@ -247,10 +249,13 @@ namespace {
         }
         return retval;
     }
+
+    const double TWO_PI = 2.0*3.14159;
+    boost::shared_ptr<ShaderProgram> scanline_shader;
 }
 
 ////////////////////////////////////////////////
-// FleetUIManager
+// FleetUIManager                             //
 ////////////////////////////////////////////////
 FleetUIManager::FleetUIManager() :
     m_order_issuing_enabled(true),
@@ -501,6 +506,41 @@ namespace {
     };
 }
 
+/** Renders scanlines over its area. */
+class ScanlineControl : public GG::Control {
+public:
+    ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square = false) :
+        Control(x, y, w, h, GG::Flags<GG::WndFlag>()),
+        m_square(square)
+    {
+        if (!scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
+            boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
+            std::string shader_text;
+            ReadFile(shader_path, shader_text);
+            scanline_shader = boost::shared_ptr<ShaderProgram>(
+                ShaderProgram::shaderProgramFactory("", shader_text));
+        }
+    }
+
+    virtual void Render() {
+        if (!scanline_shader || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+            return;
+
+        float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
+        scanline_shader->Use();
+        scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
+
+        if (m_square) {
+            GG::FlatRectangle(  UpperLeft(),    LowerRight(), GG::CLR_WHITE, GG::CLR_WHITE, 0u);
+        } else {
+            CircleArc(          UpperLeft(),    LowerRight(), 0.0, TWO_PI, true);
+        }
+        scanline_shader->stopUse();
+    }
+private:
+    bool m_square;
+};
+
 ////////////////////////////////////////////////
 // ShipDataPanel
 ////////////////////////////////////////////////
@@ -512,6 +552,7 @@ ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
     m_scrap_indicator(0),
     m_colonize_indicator(0),
     m_invade_indicator(0),
+    m_scanline_control(0),
     m_ship_name_text(0),
     m_design_name_text(0),
     m_stat_icons(),
@@ -593,6 +634,9 @@ void ShipDataPanel::SetShipIcon() {
     delete m_invade_indicator;
     m_invade_indicator = 0;
 
+    delete m_scanline_control;
+    m_scanline_control = 0;
+
     const Ship* ship = GetShip(m_ship_id);
     if (!ship)
         return;
@@ -604,7 +648,8 @@ void ShipDataPanel::SetShipIcon() {
     else
         icon = ClientUI::ShipDesignIcon(INVALID_OBJECT_ID);  // default icon
 
-    m_ship_icon = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), icon, DataPanelIconStyle());
+    m_ship_icon = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x,
+                                        ClientHeight(), icon, DataPanelIconStyle());
     AttachChild(m_ship_icon);
 
     if (ship->OrderedScrapped()) {
@@ -621,6 +666,11 @@ void ShipDataPanel::SetShipIcon() {
         boost::shared_ptr<GG::Texture> invade_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
         m_invade_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), invade_texture, DataPanelIconStyle());
         AttachChild(m_invade_indicator);
+    }
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY) {
+        m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true);
+        AttachChild(m_scanline_control);
     }
 }
 
@@ -683,7 +733,6 @@ void ShipDataPanel::Refresh() {
             it->second->SetBrowseInfoWnd(browse_wnd);
         }
     }
-
 
     DoLayout();
 }
