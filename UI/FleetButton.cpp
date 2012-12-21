@@ -123,13 +123,12 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     const double TWO_PI = 2.0*3.14159;
+    boost::shared_ptr<ShaderProgram> scanline_shader;
 }
 
 ///////////////////////////
-// FleetButton
+// FleetButton           //
 ///////////////////////////
-boost::shared_ptr<ShaderProgram> FleetButton::s_scanline_shader;
-
 FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) :
     GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
@@ -157,11 +156,11 @@ FleetButton::FleetButton(int fleet_id, SizeType size_type) :
 }
 
 void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
-    if (!s_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
+    if (!scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
         boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
         std::string shader_text;
         ReadFile(shader_path, shader_text);
-        s_scanline_shader = boost::shared_ptr<ShaderProgram>(
+        scanline_shader = boost::shared_ptr<ShaderProgram>(
             ShaderProgram::shaderProgramFactory("", shader_text));
     }
 
@@ -380,7 +379,7 @@ void FleetButton::RenderUnpressed() {
 
     // Scanlines for not currently-visible objects?
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (!s_scanline_shader || empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    if (!scanline_shader || empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
         return;
 
     bool at_least_one_fleet_visible = false;
@@ -394,10 +393,10 @@ void FleetButton::RenderUnpressed() {
         return;
 
     float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
-    s_scanline_shader->Use();
-    s_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
+    scanline_shader->Use();
+    scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
     CircleArc(ul, lr, 0.0, TWO_PI, true);
-    s_scanline_shader->stopUse();
+    scanline_shader->stopUse();
 }
 
 void FleetButton::RenderPressed() {

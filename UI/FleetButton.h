@@ -51,8 +51,6 @@ protected:
 private:
     void Init(const std::vector<int>& fleet_IDs, SizeType size_type);
 
-    static boost::shared_ptr<ShaderProgram> s_scanline_shader;
-
     std::vector<int>                        m_fleets;           ///< the fleets represented by this button
     boost::shared_ptr<GG::Texture>          m_head_icon;        ///< icon texture representing type of fleet
     boost::shared_ptr<GG::Texture>          m_size_icon;        ///< icon texture representing number of ships in fleet
