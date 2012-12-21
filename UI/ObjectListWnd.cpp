@@ -34,6 +34,8 @@ namespace {
     const std::string MONSTER_CONDITION("CONDITION_MONSTER");
     const std::string ARMED_CONDITION("CONDITION_ARMED");
     const std::string STATIONARY_CONDITION("CONDITION_STATIONARY");
+    const std::string CANPRODUCESHIPS_CONDITION("CONDITION_CANPRODUCESHIPS");
+    const std::string CANCOLONIZE_CONDITION("CONDITION_CANCOLONIZE");
     const std::string BUILDING_CONDITION("CONDITION_BUILDING");
     const std::string HASSPECIAL_CONDITION("CONDITION_HASSPECIAL");
     const std::string HASTAG_CONDITION("CONDITION_HASTAG");
@@ -44,6 +46,8 @@ namespace {
     const std::string INSYSTEM_CONDITION("CONDITION_INSYSTEM");
     const std::string OBJECTID_CONDITION("CONDITION_OBJECTID");
     const std::string CREATEDONTURN_CONDITION("CONDITION_CREATEDONTURN");
+    const std::string PLANETSIZE_CONDITION("CONDITION_PLANETSIZE");
+    const std::string PLANETTYPE_CONDITION("CONDITION_PLANETTYPE");
 
     ValueRef::ValueRefBase<std::string>*    CopyStringValueRef(const ValueRef::ValueRefBase<std::string>* const value_ref) {
         if (const ValueRef::Constant<std::string>* constant =
@@ -99,8 +103,34 @@ namespace {
             return ARMED_CONDITION;
         else if (dynamic_cast<const Condition::Stationary* const>(condition))
             return STATIONARY_CONDITION;
+        else if (dynamic_cast<const Condition::CanProduceShips* const>(condition))
+            return CANPRODUCESHIPS_CONDITION;
+        else if (dynamic_cast<const Condition::CanColonize* const>(condition))
+            return CANCOLONIZE_CONDITION;
+        else if (dynamic_cast<const Condition::Building* const>(condition))
+            return BUILDING_CONDITION;
         else if (dynamic_cast<const Condition::HasSpecial* const>(condition))
             return HASSPECIAL_CONDITION;
+        else if (dynamic_cast<const Condition::HasTag* const>(condition))
+            return HASTAG_CONDITION;
+        else if (dynamic_cast<const Condition::Species* const>(condition))
+            return SPECIES_CONDITION;
+        else if (dynamic_cast<const Condition::ProducedByEmpire* const>(condition))
+            return PRODUCEDBYEMPIRE_CONDITION;
+        else if (dynamic_cast<const Condition::ExploredByEmpire* const>(condition))
+            return EXPLOREDBYEMPIRE_CONDITION;
+        else if (dynamic_cast<const Condition::ContainedBy* const>(condition))
+            return CONTAINEDBY_CONDITION;
+        else if (dynamic_cast<const Condition::InSystem* const>(condition))
+            return INSYSTEM_CONDITION;
+        else if (dynamic_cast<const Condition::ObjectID* const>(condition))
+            return OBJECTID_CONDITION;
+        else if (dynamic_cast<const Condition::CreatedOnTurn* const>(condition))
+            return CREATEDONTURN_CONDITION;
+        else if (dynamic_cast<const Condition::PlanetSize* const>(condition))
+            return PLANETSIZE_CONDITION;
+        else if (dynamic_cast<const Condition::PlanetType* const>(condition))
+            return PLANETTYPE_CONDITION;
         else return EMPTY_STRING;
     }
 }
@@ -109,12 +139,21 @@ namespace {
 ////////////////////////////////////////////////
 // ConditionWidget
 ////////////////////////////////////////////////
+namespace {
+    template <typename enumT>
+    std::vector<std::string> StringsFromEnums(const std::vector<enumT>& enum_vals) {
+        std::vector<std::string> retval;
+        for (std::vector<enumT>::const_iterator it = enum_vals.begin(); it != enum_vals.end(); ++it)
+            retval.push_back(boost::lexical_cast<std::string>(*it));
+        return retval;
+    }
+}
+
 class ConditionWidget : public GG::Control {
 public:
     ConditionWidget(GG::X x, GG::Y y, const Condition::ConditionBase* initial_condition = 0) :
         GG::Control(x, y, GG::X(380), GG::Y1, GG::INTERACTIVE),
         m_class_drop(0),
-        m_enum_drop(0),
         m_string_drop(0),
         m_param_spin(0)
     {
@@ -130,7 +169,6 @@ public:
 
     ~ConditionWidget() {
         delete m_class_drop;
-        delete m_enum_drop;
         delete m_string_drop;
         delete m_param_spin;
     }
@@ -176,15 +214,18 @@ public:
         } else if (condition_key == SPECIES_CONDITION) {
             return new Condition::Species(GetStringValueRefVec());
 
+        } else if (condition_key == PLANETSIZE_CONDITION) {
+            return new Condition::PlanetSize(GetEnumValueRefVec<::PlanetSize>());
+
+        } else if (condition_key == PLANETTYPE_CONDITION) {
+            return new Condition::PlanetType(GetEnumValueRefVec<::PlanetType>());
         }
 
         return new Condition::All();
     }
 
-    virtual void Render() {
-        GG::Pt ul = UpperLeft(), lr = LowerRight();
-        GG::FlatRectangle(ul, lr, ClientUI::CtrlColor(), ClientUI::CtrlBorderColor());
-    }
+    virtual void Render()
+    { GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
 
 private:
     class ConditionRow : public GG::ListBox::Row {
@@ -200,23 +241,6 @@ private:
         const std::string&  GetKey() const { return m_condition_key; }
     private:
         std::string m_condition_key;
-    };
-
-    template <typename enumT>
-    class EnumRow : public GG::ListBox::Row {
-    public:
-        EnumRow(enumT value, GG::Y row_height) :
-            GG::ListBox::Row(GG::X1, row_height, "EnumRow"),
-            m_value(value)
-        {
-            SetChildClippingMode(ClipToClient);
-            const std::string& label = UserString(GG::GetEnumMap<enumT>().FromEnum(m_value));
-            push_back(new GG::TextControl(GG::X0, GG::Y0, UserString(label), ClientUI::GetFont(),
-                                          ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
-        }
-        enumT  GetValue() const { return m_value; }
-    private:
-        enumT  m_value;
     };
 
     class StringRow : public GG::ListBox::Row  {
@@ -256,32 +280,53 @@ private:
         return retval;
     }
 
-    int                             GetInt() {
+    int                                                     GetInt() {
         if (m_param_spin)
             return m_param_spin->Value();
         else
             return 0;
     }
 
-    ValueRef::ValueRefBase<int>*    GetIntValueRef()
+    ValueRef::ValueRefBase<int>*                            GetIntValueRef()
     { return new ValueRef::Constant<int>(GetInt()); }
+
+    template <typename T>
+    ValueRef::ValueRefBase<T>*                              GetEnumValueRef() {
+        const std::string& text = GetString();
+        T enum_val = T(-1);
+        try {
+            enum_val = boost::lexical_cast<T>(text);
+        } catch (...) {
+            Logger().errorStream() << "ConditionWidget::GetEnumValueRef unable to convert text to enum type: " << text;
+        }
+        return new ValueRef::Constant<T>(enum_val);
+    }
+
+    template <typename T>
+    std::vector<const ValueRef::ValueRefBase<T>*>           GetEnumValueRefVec() {
+        std::vector<const ValueRef::ValueRefBase<T>*> retval;
+        retval.push_back(GetEnumValueRef<T>());
+        return retval;
+    }
 
     void    Init(const Condition::ConditionBase* init_condition) {
         // fill droplist with basic types of conditions and select appropriate row
         const GG::Y DROPLIST_HEIGHT(ClientUI::Pts() + 4);
         const GG::Y DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 10;
 
-        m_class_drop = new CUIDropDownList(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*10),
+        m_class_drop = new CUIDropDownList(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*16),
                                            DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
         m_class_drop->SetStyle(GG::LIST_NOSORT);
         AttachChild(m_class_drop);
 
         std::vector<std::string> row_keys;
-        row_keys.push_back(ALL_CONDITION);          row_keys.push_back(HOMEWORLD_CONDITION);
-        row_keys.push_back(CAPITAL_CONDITION);      row_keys.push_back(MONSTER_CONDITION);
-        row_keys.push_back(ARMED_CONDITION);        row_keys.push_back(STATIONARY_CONDITION);
-        row_keys.push_back(HASSPECIAL_CONDITION);   row_keys.push_back(HASTAG_CONDITION);
+        row_keys.push_back(ALL_CONDITION);              row_keys.push_back(HOMEWORLD_CONDITION);
+        row_keys.push_back(CAPITAL_CONDITION);          row_keys.push_back(MONSTER_CONDITION);
+        row_keys.push_back(ARMED_CONDITION);            row_keys.push_back(STATIONARY_CONDITION);
+        row_keys.push_back(CANPRODUCESHIPS_CONDITION);  row_keys.push_back(CANCOLONIZE_CONDITION);
+        row_keys.push_back(HASSPECIAL_CONDITION);       row_keys.push_back(HASTAG_CONDITION);
         row_keys.push_back(SPECIES_CONDITION);
+        row_keys.push_back(PLANETSIZE_CONDITION);       row_keys.push_back(PLANETTYPE_CONDITION);
 
         SetMinSize(m_class_drop->Size());
         GG::ListBox::iterator select_row_it = m_class_drop->end();
@@ -316,7 +361,6 @@ private:
         if (!m_class_drop)
             return;
         // remove old parameter controls
-        delete m_enum_drop;     m_enum_drop = 0;
         delete m_string_drop;   m_string_drop = 0;
         delete m_param_spin;    m_param_spin = 0;
 
@@ -337,12 +381,18 @@ private:
         GG::Y param_widget_top = m_class_drop->UpperLeft().y - ClientUpperLeft().y + GG::Y1;
 
         // create controls for selected condition
-        if (condition_key == ALL_CONDITION ||       condition_key == CAPITAL_CONDITION ||
-            condition_key == ARMED_CONDITION ||     condition_key == STATIONARY_CONDITION ||
+        if (condition_key == ALL_CONDITION ||
+            condition_key == CAPITAL_CONDITION ||
+            condition_key == ARMED_CONDITION ||
+            condition_key == STATIONARY_CONDITION ||
+            condition_key == CANPRODUCESHIPS_CONDITION ||
+            condition_key == CANCOLONIZE_CONDITION ||
             condition_key == MONSTER_CONDITION)
         {
             // no params
-        } else if (condition_key == HOMEWORLD_CONDITION || condition_key == SPECIES_CONDITION) {
+        } else if (condition_key == HOMEWORLD_CONDITION ||
+                   condition_key == SPECIES_CONDITION)
+        {
             // droplist of valid species
             m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
                                                 DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
@@ -391,9 +441,59 @@ private:
             }
 
             GG::ListBox::iterator row_it = m_string_drop->end();
-            for (std::set<std::string>::iterator tag_it = all_tags.begin(); tag_it != all_tags.end(); ++tag_it) {
-                const std::string tag = *tag_it;
+            for (std::set<std::string>::iterator tag_it = all_tags.begin();
+                 tag_it != all_tags.end(); ++tag_it)
+            {
+                const std::string& tag = *tag_it;
                 row_it = m_string_drop->Insert(new StringRow(tag, GG::Y(ClientUI::Pts())));
+            }
+            if (!m_string_drop->Empty())
+                m_string_drop->Select(0);
+
+        } else if (condition_key == PLANETSIZE_CONDITION) {
+            // droplist of valid sizes
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
+                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            AttachChild(m_string_drop);
+
+            std::vector<::PlanetSize> planet_sizes;
+            planet_sizes.push_back(SZ_TINY);    planet_sizes.push_back(SZ_SMALL);
+            planet_sizes.push_back(SZ_MEDIUM);  planet_sizes.push_back(SZ_LARGE);
+            planet_sizes.push_back(SZ_HUGE);    planet_sizes.push_back(SZ_ASTEROIDS);
+            planet_sizes.push_back(SZ_GASGIANT);
+            std::vector<std::string> size_strings = StringsFromEnums(planet_sizes);
+
+            GG::ListBox::iterator row_it = m_string_drop->end();
+            for (std::vector<std::string>::iterator string_it = size_strings.begin();
+                 string_it != size_strings.end(); ++string_it)
+            {
+                const std::string& text = *string_it;
+                row_it = m_string_drop->Insert(new StringRow(text, GG::Y(ClientUI::Pts())));
+            }
+            if (!m_string_drop->Empty())
+                m_string_drop->Select(0);
+
+        } else if (condition_key == PLANETTYPE_CONDITION) {
+            // droplist of valid types
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
+                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            AttachChild(m_string_drop);
+
+            std::vector<::PlanetType> planet_types;
+            planet_types.push_back(PT_SWAMP);       planet_types.push_back(PT_TOXIC);
+            planet_types.push_back(PT_INFERNO);     planet_types.push_back(PT_RADIATED);
+            planet_types.push_back(PT_BARREN);      planet_types.push_back(PT_TUNDRA);
+            planet_types.push_back(PT_DESERT);      planet_types.push_back(PT_TERRAN);
+            planet_types.push_back(PT_OCEAN);       planet_types.push_back(PT_ASTEROIDS);
+            planet_types.push_back(PT_GASGIANT);
+            std::vector<std::string> type_strings = StringsFromEnums(planet_types);
+
+            GG::ListBox::iterator row_it = m_string_drop->end();
+            for (std::vector<std::string>::iterator string_it = type_strings.begin();
+                 string_it != type_strings.end(); ++string_it)
+            {
+                const std::string& text = *string_it;
+                row_it = m_string_drop->Insert(new StringRow(text, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
@@ -403,13 +503,12 @@ private:
     }
 
     CUIDropDownList*    m_class_drop;
-    CUIDropDownList*    m_enum_drop;
     CUIDropDownList*    m_string_drop;
     CUISpin<int>*       m_param_spin;
 };
 
 ////////////////////////////////////////////////
-// FilterDialog
+// FilterDialog                               //
 ////////////////////////////////////////////////
 class FilterDialog : public CUIWnd {
 public:
@@ -422,9 +521,7 @@ public:
         m_filters_layout(0),
         m_cancel_button(0),
         m_apply_button(0)
-    {
-        Init(condition_filter);
-    }
+    { Init(condition_filter); }
 
     bool    ChangesAccepted()
     { return m_accept_changes; }
@@ -433,9 +530,8 @@ public:
     { return m_vis_filters; }
 
     // caller takes ownership of returned ConditionBase*
-    Condition::ConditionBase*                               GetConditionFilter() {
-        return m_condition_widget->GetCondition();
-    }
+    Condition::ConditionBase*                               GetConditionFilter()
+    { return m_condition_widget->GetCondition(); }
 
 private:
     void    Init(const Condition::ConditionBase* const condition_filter) {
@@ -556,57 +652,74 @@ private:
 
 namespace {
     std::vector<boost::shared_ptr<GG::Texture> > ObjectTextures(const UniverseObject* obj) {
-    std::vector<boost::shared_ptr<GG::Texture> > retval;
+        std::vector<boost::shared_ptr<GG::Texture> > retval;
 
-    if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
-        if (const ShipDesign* design = ship->Design())
-            retval.push_back(ClientUI::ShipDesignIcon(design->ID()));
-        else
-            retval.push_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID));  // default icon
-    } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
-        boost::shared_ptr<GG::Texture> head_icon = FleetHeadIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
-        if (head_icon)
-            retval.push_back(head_icon);
-        boost::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
-        if (size_icon)
-            retval.push_back(size_icon);
-    } else if (const System* system = universe_object_cast<const System*>(obj)) {
-        StarType star_type = system->GetStarType();
-        ClientUI* ui = ClientUI::GetClientUI();
-        boost::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
-            ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], system->ID());
-        if (disc_texture)
-            retval.push_back(disc_texture);
-        boost::shared_ptr<GG::Texture> halo_texture = ui->GetModuloTexture(
-            ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[star_type], system->ID());
-        if (halo_texture)
-            retval.push_back(halo_texture);
-    } else if (/*const Planet* planet = */universe_object_cast<const Planet*>(obj)) {
-        // don't have any icons for each planet type, so use generic / default object icon
+        if (obj->ObjectType() == OBJ_SHIP) {
+            const Ship* ship = universe_object_cast<const Ship*>(obj);
+            if (ship) {
+                if (const ShipDesign* design = ship->Design())
+                    retval.push_back(ClientUI::ShipDesignIcon(design->ID()));
+            }
+            if (retval.empty()) {
+                retval.push_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID));  // default icon
+            }
+        } else if (obj->ObjectType() == OBJ_FLEET) {
+            const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
+            if (fleet) {
+                boost::shared_ptr<GG::Texture> head_icon = FleetHeadIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
+                if (head_icon)
+                    retval.push_back(head_icon);
+                boost::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
+                if (size_icon)
+                    retval.push_back(size_icon);
+            }
+        } else if (obj->ObjectType() == OBJ_SYSTEM) {
+            const System* system = universe_object_cast<const System*>(obj);
+            if (system) {
+                StarType star_type = system->GetStarType();
+                ClientUI* ui = ClientUI::GetClientUI();
+                boost::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
+                    ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], system->ID());
+                if (disc_texture)
+                    retval.push_back(disc_texture);
+                boost::shared_ptr<GG::Texture> halo_texture = ui->GetModuloTexture(
+                    ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[star_type], system->ID());
+                if (halo_texture)
+                    retval.push_back(halo_texture);
+            }
+        } else if (obj->ObjectType() == OBJ_PLANET) {
+            //const Planet* planet = */universe_object_cast<const Planet*>(obj));;
+            // don't have any icons for each planet type, so use generic / default object icon
 
-    } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
-        retval.push_back(ClientUI::BuildingIcon(building->BuildingTypeName()));
+        } else if (obj->ObjectType() == OBJ_BUILDING) {
+            const Building* building = universe_object_cast<const Building*>(obj);
+            if (building)
+                retval.push_back(ClientUI::BuildingIcon(building->BuildingTypeName()));
+            else
+                retval.push_back(ClientUI::BuildingIcon(""));   // default building icon
+        }
+        if (retval.empty())
+            retval.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "generic_object.png", true));
+        return retval;
     }
-    if (retval.empty())
-        retval.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "generic_object.png", true));
-    return retval;
-}
 
     const std::string& ObjectName(const UniverseObject* obj) {
         if (!obj)
             return EMPTY_STRING;
-        if (const System* system = universe_object_cast<const System*>(obj))
-            return system->ApparentName(HumanClientApp::GetApp()->EmpireID());
+        if (obj->ObjectType() == OBJ_SYSTEM) {
+            if (const System* system = universe_object_cast<const System*>(obj))
+                return system->ApparentName(HumanClientApp::GetApp()->EmpireID());
+        }
         return obj->PublicName(HumanClientApp::GetApp()->EmpireID());
     }
 
     std::pair<std::string, GG::Clr> ObjectEmpireNameAndColour(const UniverseObject* obj) {
-    if (!obj)
+        if (!obj)
+            return std::make_pair("", ClientUI::TextColor());
+        if (const Empire* empire = Empires().Lookup(obj->Owner()))
+            return std::make_pair(empire->Name(), empire->Color());
         return std::make_pair("", ClientUI::TextColor());
-    if (const Empire* empire = Empires().Lookup(obj->Owner()))
-        return std::make_pair(empire->Name(), empire->Color());
-    return std::make_pair("", ClientUI::TextColor());
-}
+    }
 }
 
 ////////////////////////////////////////////////
@@ -891,6 +1004,9 @@ public:
         return m_collapsed_objects.find(object_id) != m_collapsed_objects.end();
     }
 
+    bool            AnythingCollapsed() const
+    { return !m_collapsed_objects.empty(); }
+
     void            SetFilterCondition(Condition::ConditionBase* condition) {
         m_filter_condition = condition;
         Refresh();
@@ -1168,6 +1284,8 @@ public:
         }
     }
 
+    mutable boost::signal<void ()> ExpandCollapseSignal;
+
 private:
     void            AddObjectRow(int object_id, int container, const std::set<int>& contents, int indent)
     { AddObjectRow(object_id, container, contents, indent, this->end()); }
@@ -1262,6 +1380,7 @@ private:
             ExpandObject(object_id);
         else
             CollapseObject(object_id);
+        ExpandCollapseSignal();
     }
 
     void            ObjectStateChanged(int object_id) {
@@ -1306,6 +1425,7 @@ ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
     m_list_box->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
     GG::Connect(m_list_box->DoubleClickedSignal,    &ObjectListWnd::ObjectDoubleClicked,    this);
     GG::Connect(m_list_box->RightClickedSignal,     &ObjectListWnd::ObjectRightClicked,     this);
+    GG::Connect(m_list_box->ExpandCollapseSignal,   &ObjectListWnd::DoLayout,               this);
     AttachChild(m_list_box);
 
     m_filter_button = new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("FILTERS"));
@@ -1325,7 +1445,6 @@ ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
     m_collapse_button = new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("COLLAPSE_ALL"));
     GG::Connect(m_collapse_button->ClickedSignal,   &ObjectListWnd::CollapseExpandClicked,  this);
     AttachChild(m_collapse_button);
-    m_collapse_button->Disable();
 
     DoLayout();
 }
@@ -1349,6 +1468,11 @@ void ObjectListWnd::DoLayout() {
     m_list_box->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(ClientWidth(), button_ul.y));
 
     SetMinSize(GG::Pt(5*BUTTON_WIDTH, 6*BUTTON_HEIGHT));
+
+    if (m_list_box->AnythingCollapsed())
+        m_collapse_button->SetText(UserString("EXPAND_ALL"));
+    else
+        m_collapse_button->SetText(UserString("COLLAPSE_ALL"));
 }
 
 void ObjectListWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1421,4 +1545,9 @@ void ObjectListWnd::ColumnsClicked() {
 }
 
 void ObjectListWnd::CollapseExpandClicked() {
+    if (m_list_box->AnythingCollapsed())
+        m_list_box->ExpandObject(INVALID_OBJECT_ID);
+    else
+        m_list_box->CollapseObject(INVALID_OBJECT_ID);
+    DoLayout();
 }
