@@ -324,7 +324,8 @@ void ServerApp::SelectNewHost() {
     {
         PlayerConnectionPtr player_connection = *players_it;
         if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-            player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+            player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+            player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         {
             new_host_id = player_connection->PlayerID();
         }
@@ -409,7 +410,8 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
     {
         const PlayerSetupData& psd = setup_data_it->second;
         if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-            psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+            psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+            psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         {
             // Human players have consistent IDs, so these can be easily
             // matched between established player connections and setup data.
@@ -510,7 +512,9 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
 
         if (client_type == Networking::CLIENT_TYPE_AI_PLAYER || client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             active_players_id_setup_data[player_id] = player_id_setup_data_it->second;
-        } else if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+        } else if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+                   client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        {
             // do nothing
         } else {
             Logger().errorStream() << "ServerApp::NewGameInit found player connection with unsupported client type.";

@@ -145,7 +145,8 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     int id = player_connection->PlayerID();
 
     // Did an active player (AI or Human) disconnect?  If so, game is over
-    if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+    if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+        player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
     {
         // can continue.  Select new host if necessary.
         if (m_server.m_networking.PlayerIsHost(player_connection->PlayerID()))
@@ -573,7 +574,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
          player_setup_it != m_lobby_data->m_players.end(); ++player_setup_it)
     {
         PlayerSetupData& psd = player_setup_it->second;
-        if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+        if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+            psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        {
             psd.m_empire_color = GG::Clr(0, 0, 0, 0);
             psd.m_empire_name.clear();
             psd.m_starting_species_name.clear();
@@ -772,6 +775,8 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
                 psd_it->m_player_name = "Human_Player_" + boost::lexical_cast<std::string>(player_num++);
             else if (psd_it->m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
                 psd_it->m_player_name = "Observer_" + boost::lexical_cast<std::string>(player_num++);
+            else if (psd_it->m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+                psd_it->m_player_name = "Moderator_" + boost::lexical_cast<std::string>(player_num++);
             else
                 psd_it->m_player_name = "Player_" + boost::lexical_cast<std::string>(player_num++);
         }
@@ -1349,7 +1354,8 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
         PlayerConnectionPtr player_ctn = *player_it;
         if (player_ctn->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER ||
             player_ctn->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-            player_ctn->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+            player_ctn->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+            player_ctn->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         {
             // inform all players that this player is playing a turn
             for (ServerNetworking::const_established_iterator recipient_player_it = server.m_networking.established_begin();

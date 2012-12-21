@@ -83,6 +83,9 @@ namespace {
                 case Networking::CLIENT_TYPE_HUMAN_PLAYER:
                     push_back(UserString("HUMAN_PLAYER"), ClientUI::GetFont(), ClientUI::TextColor());
                     break;
+                case Networking::CLIENT_TYPE_HUMAN_MODERATOR:
+                    push_back(UserString("MODERATOR"), ClientUI::GetFont(), ClientUI::TextColor());
+                    break;
                 default:
                     if (show_add_drop)
                         push_back(UserString("DROP_PLAYER"), ClientUI::GetFont(), ClientUI::TextColor());
@@ -116,7 +119,8 @@ namespace {
                     Select(0);
                 }
             } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-                       client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+                       client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+                       client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
             {
                 if (disabled) {
                     // For human players on other players non-host, have "AI" or "Observer" indicator (disabled)
@@ -126,6 +130,7 @@ namespace {
                     // For human players on host, have "Player", "Observer", and "Drop" options.  TODO: have "Ban" option.
                     Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_PLAYER));   // "Human" display / option
                     Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_OBSERVER)); // "Observer" display / option
+                    //Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_MODERATOR));// "Moderator" display / option
                     Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
                     SetDropHeight(h * 4);
                     if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
@@ -185,7 +190,8 @@ namespace {
             // player name text
             push_back(player_data.m_player_name, ClientUI::GetFont(), ClientUI::TextColor());
 
-            if (player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+            if (player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+                player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
                 // observers don't need to pick an empire or species
                 push_back("", ClientUI::GetFont());
                 push_back("", ClientUI::GetFont());
@@ -749,7 +755,9 @@ bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const
                 row.m_player_data.m_empire_color.b << 8 |
                 row.m_player_data.m_empire_color.a;
             empire_colors.insert(color_as_uint);
-        } else if (row.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+        } else if (row.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+                   row.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        {
             // do nothing special for this player
         } else {
             if (dynamic_cast<const EmptyPlayerRow*>(*it)) {

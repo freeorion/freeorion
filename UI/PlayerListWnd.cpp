@@ -18,6 +18,7 @@ namespace {
     boost::shared_ptr<GG::Texture> AIIcon()         { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ai.png"); }
     boost::shared_ptr<GG::Texture> HumanIcon()      { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "human.png"); }
     boost::shared_ptr<GG::Texture> ObserverIcon()   { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "observer.png"); }
+    boost::shared_ptr<GG::Texture> ModeratorIcon()  { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator.png"); }
     boost::shared_ptr<GG::Texture> HostIcon()       { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "host.png"); }
     boost::shared_ptr<GG::Texture> PlayingIcon()    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "playing.png"); }
     boost::shared_ptr<GG::Texture> WaitingIcon()    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "waiting.png"); }
@@ -108,9 +109,10 @@ namespace {
 
             // render player type icon
             switch (m_player_type) {
-            case Networking::CLIENT_TYPE_HUMAN_PLAYER:  HumanIcon()->OrthoBlit(   UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
-            case Networking::CLIENT_TYPE_AI_PLAYER:     AIIcon()->OrthoBlit(      UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
-            case Networking::CLIENT_TYPE_HUMAN_OBSERVER:ObserverIcon()->OrthoBlit(UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::CLIENT_TYPE_HUMAN_PLAYER:      HumanIcon()->OrthoBlit(   UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::CLIENT_TYPE_AI_PLAYER:         AIIcon()->OrthoBlit(      UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::CLIENT_TYPE_HUMAN_OBSERVER:    ObserverIcon()->OrthoBlit(UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::CLIENT_TYPE_HUMAN_MODERATOR:   ModeratorIcon()->OrthoBlit(UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
             default:    break;
             }
  

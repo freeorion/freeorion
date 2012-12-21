@@ -20,6 +20,7 @@ namespace Networking {
         CLIENT_TYPE_AI_PLAYER,
         CLIENT_TYPE_HUMAN_PLAYER,
         CLIENT_TYPE_HUMAN_OBSERVER,
+        CLIENT_TYPE_HUMAN_MODERATOR,
         NUM_CLIENT_TYPES
     };
 }

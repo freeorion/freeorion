@@ -67,6 +67,9 @@ Add AI
 OBSERVER
 Observer
 
+MODERATOR
+Moderator
+
 NO_PLAYER
 None
 
@@ -2980,10 +2983,10 @@ Monster
 CONDITION_STATIONARY
 Stationary
 
-CONDITION_CAN_COLONIZE
+CONDITION_CANCOLONIZE
 Species Can Colonize
 
-CONDITION_CAN_PRODUCE_SHIPS
+CONDITION_CANPRODUCESHIPS
 Species Can Produce Ships
 
 CONDITION_HOMEWORLD
@@ -2996,7 +2999,13 @@ CONDITION_HASTAG
 Has Tag
 
 CONDITION_SPECIES
-Species
+Species Name
+
+CONDITION_PLANETSIZE
+Planet Size
+
+CONDITION_PLANETTYPE
+Planet Type
 
 #############################################################
 ####                    S I T   R E P                    ####
