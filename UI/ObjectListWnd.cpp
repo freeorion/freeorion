@@ -149,7 +149,7 @@ namespace {
     template <typename enumT>
     std::vector<std::string> StringsFromEnums(const std::vector<enumT>& enum_vals) {
         std::vector<std::string> retval;
-        for (std::vector<enumT>::const_iterator it = enum_vals.begin(); it != enum_vals.end(); ++it)
+        for (typename std::vector<enumT>::const_iterator it = enum_vals.begin(); it != enum_vals.end(); ++it)
             retval.push_back(boost::lexical_cast<std::string>(*it));
         return retval;
     }
