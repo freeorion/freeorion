@@ -48,6 +48,8 @@ namespace {
     const std::string CREATEDONTURN_CONDITION("CONDITION_CREATEDONTURN");
     const std::string PLANETSIZE_CONDITION("CONDITION_PLANETSIZE");
     const std::string PLANETTYPE_CONDITION("CONDITION_PLANETTYPE");
+    const std::string FOCUSTYPE_CONDITION("CONDITION_FOCUSTYPE");
+    const std::string STARTYPE_CONDITION("CONDITION_STARTYPE");
 
     ValueRef::ValueRefBase<std::string>*    CopyStringValueRef(const ValueRef::ValueRefBase<std::string>* const value_ref) {
         if (const ValueRef::Constant<std::string>* constant =
@@ -131,6 +133,10 @@ namespace {
             return PLANETSIZE_CONDITION;
         else if (dynamic_cast<const Condition::PlanetType* const>(condition))
             return PLANETTYPE_CONDITION;
+        else if (dynamic_cast<const Condition::FocusType* const>(condition))
+            return FOCUSTYPE_CONDITION;
+        else if (dynamic_cast<const Condition::StarType* const>(condition))
+            return STARTYPE_CONDITION;
         else return EMPTY_STRING;
     }
 }
@@ -215,10 +221,16 @@ public:
             return new Condition::Species(GetStringValueRefVec());
 
         } else if (condition_key == PLANETSIZE_CONDITION) {
-            return new Condition::PlanetSize(GetEnumValueRefVec<::PlanetSize>());
+            return new Condition::PlanetSize(GetEnumValueRefVec< ::PlanetSize>());
 
         } else if (condition_key == PLANETTYPE_CONDITION) {
-            return new Condition::PlanetType(GetEnumValueRefVec<::PlanetType>());
+            return new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>());
+
+        } else if (condition_key == FOCUSTYPE_CONDITION) {
+            return new Condition::FocusType(GetStringValueRefVec());
+
+        } else if (condition_key == STARTYPE_CONDITION) {
+            return new Condition::StarType(GetEnumValueRefVec< ::StarType>());
         }
 
         return new Condition::All();
@@ -327,6 +339,7 @@ private:
         row_keys.push_back(HASSPECIAL_CONDITION);       row_keys.push_back(HASTAG_CONDITION);
         row_keys.push_back(SPECIES_CONDITION);
         row_keys.push_back(PLANETSIZE_CONDITION);       row_keys.push_back(PLANETTYPE_CONDITION);
+        row_keys.push_back(FOCUSTYPE_CONDITION);        row_keys.push_back(STARTYPE_CONDITION);
 
         SetMinSize(m_class_drop->Size());
         GG::ListBox::iterator select_row_it = m_class_drop->end();
@@ -456,11 +469,9 @@ private:
                                                 DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
             AttachChild(m_string_drop);
 
-            std::vector<::PlanetSize> planet_sizes;
-            planet_sizes.push_back(SZ_TINY);    planet_sizes.push_back(SZ_SMALL);
-            planet_sizes.push_back(SZ_MEDIUM);  planet_sizes.push_back(SZ_LARGE);
-            planet_sizes.push_back(SZ_HUGE);    planet_sizes.push_back(SZ_ASTEROIDS);
-            planet_sizes.push_back(SZ_GASGIANT);
+            std::vector< ::PlanetSize> planet_sizes;
+            for (::PlanetSize size = SZ_TINY; size != NUM_PLANET_SIZES; size = ::PlanetSize(size + 1))
+                planet_sizes.push_back(size);
             std::vector<std::string> size_strings = StringsFromEnums(planet_sizes);
 
             GG::ListBox::iterator row_it = m_string_drop->end();
@@ -479,13 +490,9 @@ private:
                                                 DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
             AttachChild(m_string_drop);
 
-            std::vector<::PlanetType> planet_types;
-            planet_types.push_back(PT_SWAMP);       planet_types.push_back(PT_TOXIC);
-            planet_types.push_back(PT_INFERNO);     planet_types.push_back(PT_RADIATED);
-            planet_types.push_back(PT_BARREN);      planet_types.push_back(PT_TUNDRA);
-            planet_types.push_back(PT_DESERT);      planet_types.push_back(PT_TERRAN);
-            planet_types.push_back(PT_OCEAN);       planet_types.push_back(PT_ASTEROIDS);
-            planet_types.push_back(PT_GASGIANT);
+            std::vector< ::PlanetType> planet_types;
+            for (::PlanetType type = PT_SWAMP; type != NUM_PLANET_TYPES; type = ::PlanetType(type + 1))
+                planet_types.push_back(type);
             std::vector<std::string> type_strings = StringsFromEnums(planet_types);
 
             GG::ListBox::iterator row_it = m_string_drop->end();
@@ -494,6 +501,58 @@ private:
             {
                 const std::string& text = *string_it;
                 row_it = m_string_drop->Insert(new StringRow(text, GG::Y(ClientUI::Pts())));
+            }
+            if (!m_string_drop->Empty())
+                m_string_drop->Select(0);
+        } else if (condition_key == STARTYPE_CONDITION) {
+            // droplist of valid types
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
+                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            AttachChild(m_string_drop);
+
+            std::vector< ::StarType> star_types;
+            for (::StarType type = STAR_BLUE; type != NUM_STAR_TYPES; type = ::StarType(type + 1))
+                star_types.push_back(type);
+            std::vector<std::string> type_strings = StringsFromEnums(star_types);
+
+            GG::ListBox::iterator row_it = m_string_drop->end();
+            for (std::vector<std::string>::iterator string_it = type_strings.begin();
+                 string_it != type_strings.end(); ++string_it)
+            {
+                const std::string& text = *string_it;
+                row_it = m_string_drop->Insert(new StringRow(text, GG::Y(ClientUI::Pts())));
+            }
+            if (!m_string_drop->Empty())
+                m_string_drop->Select(0);
+        } else if (condition_key == FOCUSTYPE_CONDITION) {
+            // droplist of valid foci
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
+                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            AttachChild(m_string_drop);
+
+            // collect all valid foci on any object in universe
+            std::set<std::string> all_foci;
+            const ObjectMap& known_objects = Objects();
+            for (ObjectMap::const_iterator obj_it = known_objects.const_begin();
+                 obj_it != known_objects.const_end(); ++obj_it)
+            {
+                const UniverseObject* obj = obj_it->second;
+                if (obj->ObjectType() != OBJ_PLANET)
+                    continue;
+                const Planet* planet = universe_object_cast<const Planet*>(obj);
+                if (!planet)
+                    continue;
+
+                std::vector<std::string> obj_foci = planet->AvailableFoci();
+                std::copy(obj_foci.begin(), obj_foci.end(), std::inserter(all_foci, all_foci.end()));
+            }
+
+            GG::ListBox::iterator row_it = m_string_drop->end();
+            for (std::set<std::string>::iterator focus_it = all_foci.begin();
+                 focus_it != all_foci.end(); ++focus_it)
+            {
+                const std::string& focus = *focus_it;
+                row_it = m_string_drop->Insert(new StringRow(focus, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);

@@ -3007,6 +3007,12 @@ Planet Size
 CONDITION_PLANETTYPE
 Planet Type
 
+CONDITION_FOCUSTYPE
+Focus Setting
+
+CONDITION_STARTYPE
+Star Type
+
 #############################################################
 ####                    S I T   R E P                    ####
 #############################################################
