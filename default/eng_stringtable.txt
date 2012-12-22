@@ -7954,7 +7954,7 @@ SH_FRACTAL_ENERGY
 Fractal Energy Hull
 
 SH_FRACTAL_ENERGY_DESC
-'''This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has twenty-seven external slots, but no internal slots. [[encyclopedia STEALTH_TITLE]] is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
+'''This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has fourteen external slots, but no internal slots. [[encyclopedia STEALTH_TITLE]] is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
 
 Requires a Basic Shipyard, and an Energy Compressor at the planet where it is formed.'''
 
