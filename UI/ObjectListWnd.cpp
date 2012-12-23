@@ -50,6 +50,7 @@ namespace {
     const std::string PLANETTYPE_CONDITION("CONDITION_PLANETTYPE");
     const std::string FOCUSTYPE_CONDITION("CONDITION_FOCUSTYPE");
     const std::string STARTYPE_CONDITION("CONDITION_STARTYPE");
+    const std::string METERVALUE_CONDITION("CONDITION_METERVALUE");
 
     ValueRef::ValueRefBase<std::string>*    CopyStringValueRef(const ValueRef::ValueRefBase<std::string>* const value_ref) {
         if (const ValueRef::Constant<std::string>* constant =
@@ -137,6 +138,8 @@ namespace {
             return FOCUSTYPE_CONDITION;
         else if (dynamic_cast<const Condition::StarType* const>(condition))
             return STARTYPE_CONDITION;
+        else if (dynamic_cast<const Condition::MeterValue* const>(condition))
+            return METERVALUE_CONDITION;
         else return EMPTY_STRING;
     }
 }
@@ -161,7 +164,8 @@ public:
         GG::Control(x, y, GG::X(380), GG::Y1, GG::INTERACTIVE),
         m_class_drop(0),
         m_string_drop(0),
-        m_param_spin(0)
+        m_param_spin1(0),
+        m_param_spin2(0)
     {
         Condition::ConditionBase* init_condition = 0;
         if (!initial_condition) {
@@ -176,7 +180,8 @@ public:
     ~ConditionWidget() {
         delete m_class_drop;
         delete m_string_drop;
-        delete m_param_spin;
+        delete m_param_spin1;
+        delete m_param_spin2;
     }
 
     Condition::ConditionBase*       GetCondition() {
@@ -231,6 +236,9 @@ public:
 
         } else if (condition_key == STARTYPE_CONDITION) {
             return new Condition::StarType(GetEnumValueRefVec< ::StarType>());
+
+        } else if (condition_key == METERVALUE_CONDITION) {
+            return new Condition::MeterValue(GetEnum< ::MeterType>(), GetDouble1ValueRef(), GetDouble2ValueRef());
         }
 
         return new Condition::All();
@@ -292,27 +300,61 @@ private:
         return retval;
     }
 
-    int                                                     GetInt() {
-        if (m_param_spin)
-            return m_param_spin->Value();
+    int                                                     GetInt1() {
+        if (m_param_spin1)
+            return m_param_spin1->Value();
         else
             return 0;
     }
 
-    ValueRef::ValueRefBase<int>*                            GetIntValueRef()
-    { return new ValueRef::Constant<int>(GetInt()); }
+    ValueRef::ValueRefBase<int>*                            GetInt1ValueRef()
+    { return new ValueRef::Constant<int>(GetInt1()); }
+
+    int                                                     GetInt2() {
+        if (m_param_spin2)
+            return m_param_spin2->Value();
+        else
+            return 0;
+    }
+
+    ValueRef::ValueRefBase<int>*                            GetInt2ValueRef()
+    { return new ValueRef::Constant<int>(GetInt2()); }
+
+    double                                                  GetDouble1() {
+        if (m_param_spin1)
+            return m_param_spin1->Value();
+        else
+            return 0;
+    }
+
+    ValueRef::ValueRefBase<double>*                         GetDouble1ValueRef()
+    { return new ValueRef::Constant<double>(GetDouble1()); }
+
+    double                                                  GetDouble2() {
+        if (m_param_spin2)
+            return m_param_spin2->Value();
+        else
+            return 0;
+    }
+
+    ValueRef::ValueRefBase<double>*                         GetDouble2ValueRef()
+    { return new ValueRef::Constant<double>(GetDouble2()); }
 
     template <typename T>
-    ValueRef::ValueRefBase<T>*                              GetEnumValueRef() {
+    T                                                       GetEnum() {
         const std::string& text = GetString();
         T enum_val = T(-1);
         try {
             enum_val = boost::lexical_cast<T>(text);
         } catch (...) {
-            Logger().errorStream() << "ConditionWidget::GetEnumValueRef unable to convert text to enum type: " << text;
+            Logger().errorStream() << "ConditionWidget::GetEnum unable to convert text to enum type: " << text;
         }
-        return new ValueRef::Constant<T>(enum_val);
+        return enum_val;
     }
+
+    template <typename T>
+    ValueRef::ValueRefBase<T>*                              GetEnumValueRef()
+    { return new ValueRef::Constant<T>(GetEnum<T>()); }
 
     template <typename T>
     std::vector<const ValueRef::ValueRefBase<T>*>           GetEnumValueRefVec() {
@@ -321,13 +363,19 @@ private:
         return retval;
     }
 
+    GG::X   DropListWidth() const
+    { return GG::X(ClientUI::Pts()*16); }
+
+    GG::Y   DropListHeight() const
+    { return GG::Y(ClientUI::Pts() + 4); }
+
+    GG::Y   DropListDropHeight() const
+    { return DropListHeight() * 10; }
+
     void    Init(const Condition::ConditionBase* init_condition) {
         // fill droplist with basic types of conditions and select appropriate row
-        const GG::Y DROPLIST_HEIGHT(ClientUI::Pts() + 4);
-        const GG::Y DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 10;
-
-        m_class_drop = new CUIDropDownList(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*16),
-                                           DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+        m_class_drop = new CUIDropDownList(GG::X0, GG::Y0, DropListWidth(),
+                                           DropListHeight(), DropListDropHeight());
         m_class_drop->SetStyle(GG::LIST_NOSORT);
         AttachChild(m_class_drop);
 
@@ -340,6 +388,7 @@ private:
         row_keys.push_back(SPECIES_CONDITION);
         row_keys.push_back(PLANETSIZE_CONDITION);       row_keys.push_back(PLANETTYPE_CONDITION);
         row_keys.push_back(FOCUSTYPE_CONDITION);        row_keys.push_back(STARTYPE_CONDITION);
+        row_keys.push_back(METERVALUE_CONDITION);
 
         SetMinSize(m_class_drop->Size());
         GG::ListBox::iterator select_row_it = m_class_drop->end();
@@ -375,10 +424,8 @@ private:
             return;
         // remove old parameter controls
         delete m_string_drop;   m_string_drop = 0;
-        delete m_param_spin;    m_param_spin = 0;
-
-        const GG::Y DROPLIST_HEIGHT(ClientUI::Pts() + 4);
-        const GG::Y DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 10;
+        delete m_param_spin1;   m_param_spin1 = 0;
+        delete m_param_spin2;   m_param_spin2 = 0;
 
         // determine which condition is selected
         GG::ListBox::iterator row_it = m_class_drop->CurrentItem();
@@ -390,8 +437,8 @@ private:
         const std::string& condition_key = condition_row->GetKey();
 
         GG::X PAD(3);
-        GG::X param_widget_left = m_class_drop->LowerRight().x + PAD - ClientUpperLeft().x;
-        GG::Y param_widget_top = m_class_drop->UpperLeft().y - ClientUpperLeft().y + GG::Y1;
+        GG::X param_widget_left = DropListWidth() + PAD;
+        GG::Y param_widget_top = GG::Y0;
 
         // create controls for selected condition
         if (condition_key == ALL_CONDITION ||
@@ -403,13 +450,17 @@ private:
             condition_key == MONSTER_CONDITION)
         {
             // no params
+            param_widget_top += m_class_drop->Height();
+
         } else if (condition_key == HOMEWORLD_CONDITION ||
                    condition_key == SPECIES_CONDITION)
         {
             // droplist of valid species
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
-                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
+                                                DropListHeight(), DropListDropHeight());
             AttachChild(m_string_drop);
+
+            param_widget_top += m_string_drop->Height();
 
             // add empty row, allowing for matching any species
             GG::ListBox::iterator row_it = m_string_drop->Insert(new StringRow("", GG::Y(ClientUI::Pts())));
@@ -423,9 +474,11 @@ private:
 
         } else if (condition_key == HASSPECIAL_CONDITION) {
             // droplist of valid specials
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
-                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
+                                                DropListHeight(), DropListDropHeight());
             AttachChild(m_string_drop);
+
+            param_widget_top += m_string_drop->Height();
 
             // add empty row, allowing for matching any special
             GG::ListBox::iterator row_it = m_string_drop->Insert(new StringRow("", GG::Y(ClientUI::Pts())));
@@ -439,9 +492,11 @@ private:
 
         } else if (condition_key == HASTAG_CONDITION) {
             // droplist of valid tags
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
-                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
+                                                DropListHeight(), DropListDropHeight());
             AttachChild(m_string_drop);
+
+            param_widget_top += m_string_drop->Height();
 
             // collect all valid tags on any object in universe
             std::set<std::string> all_tags;
@@ -465,9 +520,11 @@ private:
 
         } else if (condition_key == PLANETSIZE_CONDITION) {
             // droplist of valid sizes
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
-                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
+                                                DropListHeight(), DropListDropHeight());
             AttachChild(m_string_drop);
+
+            param_widget_top += m_string_drop->Height();
 
             std::vector< ::PlanetSize> planet_sizes;
             for (::PlanetSize size = SZ_TINY; size != NUM_PLANET_SIZES; size = ::PlanetSize(size + 1))
@@ -486,8 +543,8 @@ private:
 
         } else if (condition_key == PLANETTYPE_CONDITION) {
             // droplist of valid types
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
-                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
+                                                DropListHeight(), DropListDropHeight());
             AttachChild(m_string_drop);
 
             std::vector< ::PlanetType> planet_types;
@@ -504,11 +561,14 @@ private:
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
+
         } else if (condition_key == STARTYPE_CONDITION) {
             // droplist of valid types
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
-                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
+                                                DropListHeight(), DropListDropHeight());
             AttachChild(m_string_drop);
+
+            param_widget_top += m_string_drop->Height();
 
             std::vector< ::StarType> star_types;
             for (::StarType type = STAR_BLUE; type != NUM_STAR_TYPES; type = ::StarType(type + 1))
@@ -524,11 +584,14 @@ private:
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
+
         } else if (condition_key == FOCUSTYPE_CONDITION) {
             // droplist of valid foci
-            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, GG::X(ClientUI::Pts()*12),
-                                                DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
+                                                DropListHeight(), DropListDropHeight());
             AttachChild(m_string_drop);
+
+            param_widget_top += m_string_drop->Height();
 
             // collect all valid foci on any object in universe
             std::set<std::string> all_foci;
@@ -556,14 +619,49 @@ private:
             }
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
+
+        } else if (condition_key == METERVALUE_CONDITION) {
+            // droplist of meter types
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
+                                                DropListHeight(), DropListDropHeight());
+            AttachChild(m_string_drop);
+            param_widget_left = GG::X0;
+            param_widget_top = m_string_drop->Height() + GG::Y(Value(PAD));
+
+            std::vector< ::MeterType> meter_types;
+            for (::MeterType type = METER_TARGET_POPULATION; type != NUM_METER_TYPES; type = ::MeterType(type + 1))
+                meter_types.push_back(type);
+            std::vector<std::string> type_strings = StringsFromEnums(meter_types);
+
+            GG::ListBox::iterator row_it = m_string_drop->end();
+            for (std::vector<std::string>::iterator string_it = type_strings.begin();
+                 string_it != type_strings.end(); ++string_it)
+            {
+                const std::string& text = *string_it;
+                row_it = m_string_drop->Insert(new StringRow(text, GG::Y(ClientUI::Pts())));
+            }
+            if (!m_string_drop->Empty())
+                m_string_drop->Select(0);
+
+            m_param_spin1 = new CUISpin<int>(param_widget_left, param_widget_top, DropListWidth(),
+                                             0, 1, 0, 1000, true);
+            AttachChild(m_param_spin1);
+            param_widget_left = DropListWidth() + PAD;
+
+            m_param_spin2 = new CUISpin<int>(param_widget_left, param_widget_top, DropListWidth(),
+                                             0, 1, 0, 1000, true);
+            AttachChild(m_param_spin2);
+
+            param_widget_top += m_param_spin1->Height();
         }
 
-        Resize(GG::Pt(Width(), GG::Y(40)));
+        Resize(GG::Pt(Width(), param_widget_top));
     }
 
     CUIDropDownList*    m_class_drop;
     CUIDropDownList*    m_string_drop;
-    CUISpin<int>*       m_param_spin;
+    CUISpin<int>*       m_param_spin1;
+    CUISpin<int>*       m_param_spin2;
 };
 
 ////////////////////////////////////////////////
