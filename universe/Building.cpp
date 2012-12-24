@@ -73,10 +73,14 @@ void Building::Copy(const UniverseObject* copied_object, int empire_id) {
     UniverseObject::Copy(copied_object, vis, visible_specials);
 
     if (vis >= VIS_BASIC_VISIBILITY) {
-        this->m_building_type =             copied_building->m_building_type;
         this->m_planet_id =                 copied_building->m_planet_id;
+
         if (vis >= VIS_PARTIAL_VISIBILITY) {
+            this->m_name =                      copied_building->m_name;
+
+            this->m_building_type =             copied_building->m_building_type;
             this->m_produced_by_empire_id = copied_building->m_produced_by_empire_id;
+
             if (vis >= VIS_FULL_VISIBILITY) {
                 this->m_ordered_scrapped =      copied_building->m_ordered_scrapped;
             }

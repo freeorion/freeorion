@@ -182,11 +182,12 @@ protected:
     void                    Copy(const UniverseObject* copied_object, Visibility vis,
                                  const std::set<std::string>& visible_specials);///< used by public UniverseObject::Copy and derived classes' ::Copy methods
 
+    std::string                 m_name;
+
 private:
     std::map<MeterType, Meter>  CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
 
     int                         m_id;
-    std::string                 m_name;
     double                      m_x;
     double                      m_y;
     int                         m_owner_empire_id;

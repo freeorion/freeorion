@@ -137,14 +137,15 @@ void Ship::Copy(const UniverseObject* copied_object, int empire_id) {
         this->m_fleet_id =                  copied_ship->m_fleet_id;
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
+            if (this->Unowned())
+                this->m_name =              copied_ship->m_name;
+
             this->m_design_id =             copied_ship->m_design_id;
             this->m_fighters =              copied_ship->m_fighters;
             this->m_missiles =              copied_ship->m_missiles;
             for (PartMeterMap::const_iterator it = copied_ship->m_part_meters.begin();
-                 it != copied_ship->m_part_meters.end();
-                 ++it) {
-                this->m_part_meters[it->first];
-            }
+                 it != copied_ship->m_part_meters.end(); ++it)
+            { this->m_part_meters[it->first]; }
             this->m_species_name =          copied_ship->m_species_name;
 
             if (vis >= VIS_FULL_VISIBILITY) {

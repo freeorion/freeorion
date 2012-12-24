@@ -133,6 +133,8 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id) {
     ResourceCenter::Copy(copied_planet, vis);
 
     if (vis >= VIS_BASIC_VISIBILITY) {
+        this->m_name =                      copied_planet->m_name;
+
         this->m_buildings =                 copied_planet->VisibleContainedObjects(empire_id);
         this->m_type =                      copied_planet->m_type;
         this->m_original_type =             copied_planet->m_original_type;

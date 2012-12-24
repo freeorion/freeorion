@@ -106,6 +106,8 @@ void System::Copy(const UniverseObject* copied_object, int empire_id) {
         this->m_orbits =                    copied_system->m_orbits;
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
+            this->m_name =                  copied_system->m_name;
+
             this->m_star =                  copied_system->m_star;
             this->m_last_turn_battle_here = copied_system->m_last_turn_battle_here;
 
@@ -123,15 +125,6 @@ void System::Copy(const UniverseObject* copied_object, int empire_id) {
                 int lane_end_sys_id = *it;
                 if (visible_lanes_holes.find(lane_end_sys_id) == visible_lanes_holes.end())
                     this->m_starlanes_wormholes.erase(lane_end_sys_id);
-            }
-
-            if (vis < VIS_FULL_VISIBILITY) {
-                // copy system name if at partial visibility, as it won't be copied
-                // by UniverseObject::Copy unless at full visibility, but players
-                // should know system names even if they don't own the system
-                GetUniverse().InhibitUniverseObjectSignals(true);
-                this->Rename(copied_system->Name());
-                GetUniverse().InhibitUniverseObjectSignals(false);
             }
         }
     }

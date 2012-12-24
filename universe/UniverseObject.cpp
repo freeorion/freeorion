@@ -18,8 +18,8 @@ const int       UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
 
 UniverseObject::UniverseObject() :
     StateChangedSignal(GetUniverse().UniverseObjectSignalsInhibited()),
-    m_id(INVALID_OBJECT_ID),
     m_name(""),
+    m_id(INVALID_OBJECT_ID),
     m_x(INVALID_POSITION),
     m_y(INVALID_POSITION),
     m_owner_empire_id(ALL_EMPIRES),
@@ -34,8 +34,8 @@ UniverseObject::UniverseObject() :
 UniverseObject::UniverseObject(const std::string name, double x, double y,
                                const std::set<int>& owners/* = std::set<int>()*/) :
     StateChangedSignal(GetUniverse().UniverseObjectSignalsInhibited()),
-    m_id(INVALID_OBJECT_ID),
     m_name(name),
+    m_id(INVALID_OBJECT_ID),
     m_x(x),
     m_y(y),
     m_owner_empire_id(ALL_EMPIRES),
@@ -51,8 +51,8 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
 
 UniverseObject::UniverseObject(const UniverseObject& rhs) :
     StateChangedSignal(GetUniverse().UniverseObjectSignalsInhibited()),
-    m_id(rhs.m_id),
     m_name(rhs.m_name),
+    m_id(rhs.m_id),
     m_x(rhs.m_x),
     m_y(rhs.m_y),
     m_owner_empire_id(rhs.m_owner_empire_id),

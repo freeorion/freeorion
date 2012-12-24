@@ -73,6 +73,8 @@ void Fleet::Copy(const UniverseObject* copied_object, int empire_id) {
         this->m_prev_system =   copied_fleet->m_prev_system;
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
+            if (this->Unowned())
+                this->m_name =                  copied_fleet->m_name;
 
             if (vis >= VIS_FULL_VISIBILITY) {
                 this->m_aggressive =            copied_fleet->m_aggressive;

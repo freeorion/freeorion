@@ -1361,7 +1361,7 @@ namespace {
 
                 //Logger().debugStream() << "copying known objects from combat to main gamestate for empire " << empire_id;
 
-                actual_known_objects.Copy(combat_known_objects);
+                actual_known_objects.Copy(combat_known_objects, empire_id);
             };
 
 

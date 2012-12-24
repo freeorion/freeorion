@@ -88,6 +88,7 @@ void Field::Copy(const UniverseObject* copied_object, int empire_id) {
     UniverseObject::Copy(copied_object, vis, visible_specials);
 
     if (vis >= VIS_BASIC_VISIBILITY) {
+        this->m_name =                      copied_field->m_name;
         this->m_type_name =                 copied_field->m_type_name;
     }
 }
