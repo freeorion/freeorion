@@ -240,6 +240,16 @@ void CombatInfo::GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int
     filtered_destroyed_object_knowers = this->destroyed_object_knowers;
 }
 
+void CombatInfo::GetAttackerTargetDamageToSerialize(std::map<int, std::map<int, float> >&
+    filtered_attacker_target_damage, int encoding_empire) const
+{
+}
+
+void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisibilityMap& 
+    filtered_empire_object_visibility, int encoding_empire) const
+{
+}
+
 ////////////////////////////////////////////////
 // AutoResolveCombat
 ////////////////////////////////////////////////
@@ -779,8 +789,11 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         } // end for over weapons
     } // end for over combat arounds
 
-    // ensure every participant knows what happened.  TODO: this should probably
-    // be more discriminating about what info is or isn't copied.
+    // ensure every participant knows what happened.
+    // TODO: assemble list of objects to copy for each empire.  this should
+    //       include objects the empire already knows about with standard
+    //       visibility system, and also any objects the empire knows are
+    //       destroyed or
     for (std::map<int, ObjectMap>::iterator it = combat_info.empire_known_objects.begin();
          it != combat_info.empire_known_objects.end(); ++it)
     { it->second.Copy(combat_info.objects); }
