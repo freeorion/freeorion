@@ -3013,6 +3013,9 @@ Focus Setting
 CONDITION_STARTYPE
 Star Type
 
+CONDITION_METERVALUE
+Object Property Value
+
 #############################################################
 ####                    S I T   R E P                    ####
 #############################################################
