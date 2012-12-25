@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		829C76351689EFD4005881B4 /* INIT */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 829C763B1689EFF3005881B4 /* Build configuration list for PBXAggregateTarget "INIT" */;
+			buildPhases = (
+				829C76341689EFD4005881B4 /* Make Version.cpp */,
+			);
+			dependencies = (
+			);
+			name = INIT;
+			productName = INIT;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		2F22EC0612F7F4CF00456CDE /* TechTreeLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F22EC0412F7F4CF00456CDE /* TechTreeLayout.cpp */; };
 		2F276A3B130401E000153050 /* GLClientAndServerBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F276A39130401E000153050 /* GLClientAndServerBuffer.cpp */; };
@@ -1126,6 +1140,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8250FDE715FCF0A400523C1C;
 			remoteInfo = FieldsParser;
+		};
+		829C763E1689F0EA005881B4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 829C76351689EFD4005881B4;
+			remoteInfo = INIT;
 		};
 		82BB838F15AAD598006F635F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2572,6 +2593,7 @@
 		828AB7D315F7BCDD0075BE24 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.a; sourceTree = "<group>"; };
 		828C793D160778AA0075F220 /* FieldIcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FieldIcon.cpp; sourceTree = "<group>"; };
 		828C793E160778AA0075F220 /* FieldIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldIcon.h; sourceTree = "<group>"; };
+		829C75D21689CF5B005881B4 /* Version.template */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Version.template; sourceTree = "<group>"; };
 		82B4313314A74E07003EEE42 /* UniverseServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseServer.cpp; sourceTree = "<group>"; };
 		82BB838115AAD16C006F635F /* Encyclopedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encyclopedia.h; sourceTree = "<group>"; };
 		82BB838215AAD20A006F635F /* EncyclopediaParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncyclopediaParser.cpp; sourceTree = "<group>"; };
@@ -2780,6 +2802,7 @@
 			isa = PBXGroup;
 			children = (
 				471D59B00A988A2A00DA9C21 /* FreeOrion */,
+				829C75D21689CF5B005881B4 /* Version.template */,
 				471032080CEF625900A7DF2B /* Version.cpp */,
 				34B9EBEE0F5E1F7F005BF6A4 /* Config.h */,
 			);
@@ -4813,6 +4836,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				829C763F1689F0EA005881B4 /* PBXTargetDependency */,
 				3402E2650F5A319B00DF6FE7 /* PBXTargetDependency */,
 				3402E2670F5A319B00DF6FE7 /* PBXTargetDependency */,
 				3402E2630F5A319B00DF6FE7 /* PBXTargetDependency */,
@@ -5521,6 +5545,7 @@
 				..,
 			);
 			targets = (
+				829C76351689EFD4005881B4 /* INIT */,
 				47B615BE0CF099BD00318761 /* FREEALUT */,
 				471D5A2F0A988D5700DA9C21 /* GG */,
 				82271BF715F8AB900063179C /* OIS */,
@@ -5577,6 +5602,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		829C76341689EFD4005881B4 /* Make Version.cpp */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Make Version.cpp";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /usr/bin/python;
+			shellScript = "import os\nimport subprocess as sp\nfrom string import Template\n\nif os.getenv(\"ACTION\") == \"build\":\n\n\tsvn_proc = sp.Popen([\"svn\", \"info\"], stdout=sp.PIPE)\n\tsvn_info = svn_proc.communicate()[0]\n\n\tfor line in svn_info.splitlines():\n\t\tif line.startswith(\"Revision:\"):\n\t\t\twc_rev = line.partition(\" \")[2]\n\n\tif wc_rev == \"\":\n\t\tprint \"WARNING: can't determine working copy revision, Version.cpp not updated!\"\n\t\tquit()\n\n\ttemplate_file = open(\"Version.template\")\n\ttemplate = Template(template_file.read())\n\ttemplate_file.close()\n\n\tversion_cpp = open(\"Version.cpp\", \"w\")\n\tversion_cpp.write(template.substitute(WCREV=wc_rev))\n\tversion_cpp.close()\n\n\tprint \"Building rev: \" + wc_rev";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		47103BDF0CF04D8800A7DF2B /* Sources */ = {
@@ -6612,6 +6654,11 @@
 			isa = PBXTargetDependency;
 			target = 8250FDE715FCF0A400523C1C /* FieldsParser */;
 			targetProxy = 8250FE1215FCF17600523C1C /* PBXContainerItemProxy */;
+		};
+		829C763F1689F0EA005881B4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 829C76351689EFD4005881B4 /* INIT */;
+			targetProxy = 829C763E1689F0EA005881B4 /* PBXContainerItemProxy */;
 		};
 		82BB839015AAD598006F635F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8613,6 +8660,48 @@
 			};
 			name = Release_10_5;
 		};
+		829C76361689EFD4005881B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = INIT;
+			};
+			name = Debug;
+		};
+		829C76371689EFD4005881B4 /* Test */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = INIT;
+			};
+			name = Test;
+		};
+		829C76381689EFD4005881B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = INIT;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		829C76391689EFD4005881B4 /* Release_LLVM */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = INIT;
+			};
+			name = Release_LLVM;
+		};
+		829C763A1689EFD4005881B4 /* Release_10_5 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = INIT;
+			};
+			name = Release_10_5;
+		};
 		82BB838715AAD2AB006F635F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -9128,6 +9217,18 @@
 				8221B23B160F2211007D86B9 /* Release */,
 				8250FDED15FCF0A400523C1C /* Release_LLVM */,
 				8250FDEE15FCF0A400523C1C /* Release_10_5 */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Test;
+		};
+		829C763B1689EFF3005881B4 /* Build configuration list for PBXAggregateTarget "INIT" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				829C76361689EFD4005881B4 /* Debug */,
+				829C76371689EFD4005881B4 /* Test */,
+				829C76381689EFD4005881B4 /* Release */,
+				829C76391689EFD4005881B4 /* Release_LLVM */,
+				829C763A1689EFD4005881B4 /* Release_10_5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Test;
