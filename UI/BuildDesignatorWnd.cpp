@@ -31,6 +31,7 @@ namespace {
         ProductionItemPanel(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item,
                             int empire_id, int location_id) :
             Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+            m_initialized(false),
             m_item(item),
             m_empire_id(empire_id),
             m_location_id(location_id),
@@ -41,6 +42,59 @@ namespace {
             m_desc(0)
         {
             SetChildClippingMode(ClipToClient);
+        }
+
+        /** Renders panel background and border. */
+        virtual void    Render() {
+            if (!m_initialized)
+                Init();
+            GG::Clr background_clr = this->Disabled() ? ClientUI::WndColor() : ClientUI::CtrlColor();
+            GG::FlatRectangle(UpperLeft(), LowerRight(), background_clr, ClientUI::WndOuterBorderColor(), 1u);
+        }
+
+        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            const GG::Pt old_size = Size();
+            GG::Control::SizeMove(ul, lr);
+            //std::cout << "ProductionItemPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
+            if (old_size != Size())
+                DoLayout();
+        }
+
+    private:
+        void            DoLayout() {
+            if (!m_initialized)
+                return;
+
+            const GG::Y ICON_HEIGHT(ClientHeight());
+            const GG::X ICON_WIDTH(Value(ClientHeight()));
+            const GG::X ITEM_NAME_WIDTH(ClientUI::Pts() * 16);
+            const GG::X COST_WIDTH(ClientUI::Pts() * 4);
+            const GG::X TIME_WIDTH(ClientUI::Pts() * 3);
+            const GG::X DESC_WIDTH(ClientUI::Pts() * 18);
+
+            GG::X left(GG::X0);
+            GG::Y top(GG::Y0);
+            GG::Y bottom(ClientHeight());
+
+            m_icon->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ICON_WIDTH, bottom));
+            left += ICON_WIDTH + GG::X(3);
+
+            m_name->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ITEM_NAME_WIDTH, bottom));
+            left += ITEM_NAME_WIDTH;
+
+            m_cost->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + COST_WIDTH, bottom));
+            left += COST_WIDTH;
+
+            m_time->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + TIME_WIDTH, bottom));
+            left += TIME_WIDTH;
+
+            m_desc->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + DESC_WIDTH, bottom));
+        }
+
+        void Init() {
+            if (m_initialized)
+                return;
+            m_initialized = true;
 
             const Empire* empire = Empires().Lookup(m_empire_id);
 
@@ -81,7 +135,7 @@ namespace {
             std::string cost_text;
             std::string time_text;
             if (empire) {
-                std::pair<double, int> cost_time = empire->ProductionCostAndTime(m_item, location_id);
+                std::pair<double, int> cost_time = empire->ProductionCostAndTime(m_item, m_location_id);
                 cost_text = DoubleToString(cost_time.first, 3, false);
                 time_text = boost::lexical_cast<std::string>(cost_time.second);
             }
@@ -103,47 +157,7 @@ namespace {
             DoLayout();
         }
 
-        /** Renders panel background and border. */
-        virtual void    Render() {
-            GG::Clr background_clr = this->Disabled() ? ClientUI::WndColor() : ClientUI::CtrlColor();
-            GG::FlatRectangle(UpperLeft(), LowerRight(), background_clr, ClientUI::WndOuterBorderColor(), 1u);
-        }
-
-        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-            const GG::Pt old_size = Size();
-            GG::Control::SizeMove(ul, lr);
-            //std::cout << "ProductionItemPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
-            if (old_size != Size())
-                DoLayout();
-        }
-
-    private:
-        void            DoLayout() {
-            const GG::Y ICON_HEIGHT(ClientHeight());
-            const GG::X ICON_WIDTH(Value(ClientHeight()));
-            const GG::X ITEM_NAME_WIDTH(ClientUI::Pts() * 16);
-            const GG::X COST_WIDTH(ClientUI::Pts() * 4);
-            const GG::X TIME_WIDTH(ClientUI::Pts() * 3);
-            const GG::X DESC_WIDTH(ClientUI::Pts() * 18);
-
-            GG::X left(GG::X0);
-            GG::Y top(GG::Y0);
-            GG::Y bottom(ClientHeight());
-
-            m_icon->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ICON_WIDTH, bottom));
-            left += ICON_WIDTH + GG::X(3);
-
-            m_name->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ITEM_NAME_WIDTH, bottom));
-            left += ITEM_NAME_WIDTH;
-
-            m_cost->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + COST_WIDTH, bottom));
-            left += COST_WIDTH;
-
-            m_time->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + TIME_WIDTH, bottom));
-            left += TIME_WIDTH;
-
-            m_desc->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + DESC_WIDTH, bottom));
-        }
+        bool                            m_initialized;
 
         const ProductionQueue::ProductionItem   m_item;
         int                                     m_empire_id;
