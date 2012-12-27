@@ -3725,6 +3725,9 @@ void MapWnd::SelectedFleetsChanged() {
 }
 
 void MapWnd::SelectedShipsChanged() {
+    Logger().debugStream() << "SelectedShipsChanged starting...";
+    ScopedTimer("MapWnd::SelectedShipsChanged", true);
+
     // get selected ships
     std::set<int> selected_ship_ids;
     if (const FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
@@ -4364,6 +4367,7 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects) 
         }
     }
     std::vector<int> objects_vec;
+    objects_vec.reserve(objects_set.size());
     std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(objects_vec));
     UpdateMeterEstimates(objects_vec);
 }
@@ -4428,7 +4432,7 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
             }
         }
     } else {
-        // no colony ship selected.  instead, fo reach planet being updated,
+        // no colony ship selected.  instead, for each planet being updated,
         // attempt to find a colony ship for it, and use that ship's species
         // for meter estimates.
         for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {

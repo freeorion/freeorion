@@ -793,10 +793,9 @@ void ShipDataPanel::Init() {
         return;
     m_initialized = true;
 
-    // ship name text.  blank if no ship.  TODO: if no ship show "No Ship" or somesuch?
+    // ship name text.  blank if no ship.
     const Ship* ship = GetShip(m_ship_id);
-
-    std::string ship_name = "";
+    std::string ship_name;
     if (ship)
         ship_name = ship->Name();
 
@@ -1906,7 +1905,6 @@ private:
     bool    m_order_issuing_enabled;
 };
 
-
 ////////////////////////////////////////////////
 // FleetDetailPanel
 ////////////////////////////////////////////////
@@ -1944,7 +1942,6 @@ private:
 
     ShipsListBox*               m_ships_lb;
 };
-
 
 FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled, GG::Flags<GG::WndFlag> flags/* = GG::Flags<GG::WndFlag>()*/) :
     GG::Wnd(GG::X0, GG::Y0, w, h, flags),
