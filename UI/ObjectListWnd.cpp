@@ -886,6 +886,7 @@ class ObjectPanel : public GG::Control {
 public:
     ObjectPanel(GG::X w, GG::Y h, const UniverseObject* obj, bool expanded, bool has_contents, int indent = 0) :
         Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+        m_initialized(false),
         m_object_id(obj ? obj->ID() : INVALID_OBJECT_ID),
         m_indent(indent),
         m_expanded(expanded),
@@ -896,12 +897,14 @@ public:
         m_name_label(0),
         m_empire_label(0)
     {
-        Refresh();
+        SetChildClippingMode(ClipToClient);
     }
 
     int                 ObjectID() const { return m_object_id; }
 
     virtual void        Render() {
+        if (!m_initialized)
+            Init();
         GG::Clr background_clr = this->Disabled() ? ClientUI::WndColor() : ClientUI::CtrlColor();
         GG::FlatRectangle(UpperLeft(), LowerRight(), background_clr, ClientUI::WndOuterBorderColor(), 1u);
     }
@@ -914,6 +917,8 @@ public:
     }
 
     void                Refresh() {
+        if (!m_initialized)
+            return;
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::Clr clr = ClientUI::TextColor();
         //int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -969,6 +974,9 @@ public:
     mutable boost::signal<void ()>  ExpandCollapseSignal;
 private:
     void                DoLayout() {
+        if (!m_initialized)
+            return;
+
         const GG::Y ICON_HEIGHT(ClientHeight());
         const GG::X ICON_WIDTH(Value(ClientHeight()));
 
@@ -1003,6 +1011,15 @@ private:
         m_expanded = !m_expanded;
         ExpandCollapseSignal();
     }
+
+    void                Init() {
+        if (m_initialized)
+            return;
+        m_initialized = true;
+        Refresh();
+    }
+
+    bool                        m_initialized;
 
     int                         m_object_id;
     int                         m_indent;
