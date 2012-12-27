@@ -80,30 +80,17 @@ namespace {
     public:
         SitRepDataPanel(GG::X w, GG::Y h, const SitRepEntry& sitrep) :
             Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+            m_initialized(false),
             m_sitrep_entry(sitrep),
             m_icon(0),
             m_link_text(0)
         {
             SetChildClippingMode(ClipToClient);
-            std::string icon_texture = (sitrep.GetIcon().empty() ? "/icons/sitrep/generic.png" : sitrep.GetIcon());
-            boost::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(ClientUI::ArtDir() / icon_texture, true);
-            m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h)), h, icon,
-                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-            AttachChild(m_icon);
-
-            m_link_text = new LinkText(m_icon->Width(), GG::Y0, Width() - m_icon->Width(),
-                                       sitrep.GetText() + " ", ClientUI::GetFont(),
-                                       GG::FORMAT_LEFT | GG::FORMAT_VCENTER, ClientUI::TextColor());
-            AttachChild(m_link_text);
-
-            GG::Connect(m_link_text->LinkClickedSignal,       &HandleLinkClick);
-            GG::Connect(m_link_text->LinkDoubleClickedSignal, &HandleLinkClick);
-            GG::Connect(m_link_text->LinkRightClickedSignal,  &HandleLinkClick);
-
-            DoLayout();
         }
 
         virtual void        Render() {
+            if (!m_initialized)
+                Init();
             GG::Clr background_clr = this->Disabled() ? ClientUI::WndColor() : ClientUI::CtrlColor();
             GG::FlatRectangle(UpperLeft(), LowerRight(), background_clr, ClientUI::WndOuterBorderColor(), 1u);
         }
@@ -119,6 +106,8 @@ namespace {
 
     private:
         void            DoLayout() {
+            if (!m_initialized)
+                return;
             const GG::Y ICON_HEIGHT(ClientHeight());
             const GG::X ICON_WIDTH(Value(ClientHeight()));
 
@@ -131,6 +120,33 @@ namespace {
 
             m_link_text->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(ClientWidth(), bottom));
         }
+
+        void            Init() {
+            if (m_initialized)
+                return;
+            m_initialized = true;
+
+            std::string icon_texture = (m_sitrep_entry.GetIcon().empty() ?
+                "/icons/sitrep/generic.png" : m_sitrep_entry.GetIcon());
+            boost::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(
+                ClientUI::ArtDir() / icon_texture, true);
+            m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(Height())), Height(), icon,
+                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            AttachChild(m_icon);
+
+            m_link_text = new LinkText(m_icon->Width(), GG::Y0, Width() - m_icon->Width(),
+                                       m_sitrep_entry.GetText() + " ", ClientUI::GetFont(),
+                                       GG::FORMAT_LEFT | GG::FORMAT_VCENTER, ClientUI::TextColor());
+            AttachChild(m_link_text);
+
+            GG::Connect(m_link_text->LinkClickedSignal,       &HandleLinkClick);
+            GG::Connect(m_link_text->LinkDoubleClickedSignal, &HandleLinkClick);
+            GG::Connect(m_link_text->LinkRightClickedSignal,  &HandleLinkClick);
+
+            DoLayout();
+        }
+
+        bool                m_initialized;
 
         SitRepEntry         m_sitrep_entry;
         GG::StaticGraphic*  m_icon;
@@ -223,7 +239,7 @@ void SitRepPanel::DoLayout() {
     SetMinSize(GG::Pt(6*BUTTON_WIDTH, 6*BUTTON_HEIGHT));
 }
 
-void SitRepPanel::KeyPress (GG::Key key, boost::uint32_t key_code_point,
+void SitRepPanel::KeyPress(GG::Key key, boost::uint32_t key_code_point,
                             GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
