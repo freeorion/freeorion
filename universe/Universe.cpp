@@ -1111,19 +1111,12 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
     type_timer.restart();
-    for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
-        const PopCenter* pc = 0;
-        if (it->second->ObjectType() == OBJ_PLANET) // TODO: handle non-planet popcenters if added in future
-            pc = dynamic_cast<const PopCenter*>(it->second);
-        const Ship* ship = 0;
-        if (!pc && it->second->ObjectType() == OBJ_SHIP) {
-            ship = dynamic_cast<const Ship*>(it->second);
-            if (!ship) continue;
-        }
-        if (!pc && !ship)
-            continue;
-        const std::string& species_name = (pc ? pc->SpeciesName() : ship->SpeciesName());
-        //Logger().debugStream() << "... ... PopCenter species: " << species_name;
+    std::vector<Planet*> planets = m_objects.FindObjects<Planet>();
+    for (std::vector<Planet*>::const_iterator planet_it = planets.begin();
+         planet_it != planets.end(); ++planet_it)
+    {
+        const Planet* planet = *planet_it;
+        const std::string& species_name = planet->SpeciesName();
         if (species_name.empty())
             continue;
         const Species* species = GetSpecies(species_name);
@@ -1131,10 +1124,30 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
             Logger().errorStream() << "GetEffectsAndTargets couldn't get Species " << species_name;
             continue;
         }
-        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), it->first, ECT_SPECIES, species_name,
+        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), planet->ID(), ECT_SPECIES, species_name,
                                              all_potential_targets, targets_causes);
     }
-    double species_time = type_timer.elapsed();
+    double planet_species_time = type_timer.elapsed();
+    type_timer.restart();
+
+    std::vector<Ship*> ships = m_objects.FindObjects<Ship>();
+    for (std::vector<Ship*>::const_iterator ship_it = ships.begin();
+         ship_it != ships.end(); ++ship_it)
+    {
+        const Ship* ship = *ship_it;
+        const std::string& species_name = ship->SpeciesName();
+        if (species_name.empty())
+            continue;
+        const Species* species = GetSpecies(species_name);
+        if (!species) {
+            Logger().errorStream() << "GetEffectsAndTargets couldn't get Species " << species_name;
+            continue;
+        }
+        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), ship->ID(), ECT_SPECIES, species_name,
+                                             all_potential_targets, targets_causes);
+    }
+    double ship_species_time = type_timer.elapsed();
+    type_timer.restart();
 
     // 2) EffectsGroups from Specials
     if (GetOptionsDB().Get<bool>("verbose-logging"))
@@ -1199,7 +1212,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
         Logger().debugStream() << "Universe::GetEffectsAndTargets for BUILDINGS";
     type_timer.restart();
     std::vector<Building*> buildings = m_objects.FindObjects<Building>();
-    for (std::vector<Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
+    for (std::vector<Building*>::const_iterator building_it = buildings.begin();
+         building_it != buildings.end(); ++building_it)
+    {
         const Building* building = *building_it;
         if (!building) {
             Logger().errorStream() << "GetEffectsAndTargets couldn't get Building";
@@ -1220,7 +1235,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for SHIPS hulls and parts";
     type_timer.restart();
-    std::vector<Ship*> ships = m_objects.FindObjects<Ship>();
+    ships = m_objects.FindObjects<Ship>();
     for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
         const Ship* ship = *ship_it;
         if (!ship) {
@@ -1279,9 +1294,13 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     }
     double fields_time = type_timer.elapsed();
 
-    Logger().debugStream() << "Type times: species: " << species_time*1000 << " specials: " << special_time*1000
-                           << " techs: " << tech_time*1000 << " buildings: " << building_time*1000
-                           << " ships: " << ships_time*1000 << " fields: " << fields_time*1000;
+    Logger().debugStream() << "Type times: planet species: " << planet_species_time*1000
+                           << " ship species: " << ship_species_time*1000
+                           << " specials: " << special_time*1000
+                           << " techs: " << tech_time*1000
+                           << " buildings: " << building_time*1000
+                           << " hulls/parts: " << ships_time*1000
+                           << " fields: " << fields_time*1000;
 }
 
 void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
@@ -1297,7 +1316,9 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
 
     // attempt to locate source object in target objects
     UniverseObject* source = 0;
-    for (Effect::TargetSet::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it) {
+    for (Effect::TargetSet::const_iterator it = target_objects.begin();
+        it != target_objects.end(); ++it)
+    {
         if ((*it)->ID() == source_object_id && source_object_id != INVALID_OBJECT_ID) {
             source = *it;
             break;
