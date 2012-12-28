@@ -1369,7 +1369,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 
     for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin(); targets_it != targets_causes.end(); ++targets_it) {
         const UniverseObject* source = GetUniverseObject(targets_it->first.source_object_id);
-        ScopedTimer update_timer("Universe::ExecuteEffects execute one effects group (source " +
+        ScopedTimer update_timer("Universe::ExecuteEffects effgrp (source " +
                                  (source ? source->Name() : "No Source!") +
                                  ") on " + boost::lexical_cast<std::string>(targets_it->second.target_set.size()) + " objects");
 

@@ -937,7 +937,8 @@ std::string Condition::EmpireAffiliation::Dump() const {
     default:            retval += "?";          break;
     }
     if (m_empire_id)
-        retval += " empire = " + m_empire_id->Dump() + "\n";
+        retval += " empire = " + m_empire_id->Dump();
+    retval += "\n";
     return retval;
 }
 
@@ -5587,7 +5588,7 @@ std::string Condition::And::Dump() const {
         retval += m_operands[i]->Dump();
     }
     --g_indent;
-    retval += "\n" + DumpIndent() + "]\n";
+    retval += DumpIndent() + "]\n";
     return retval;
 }
 

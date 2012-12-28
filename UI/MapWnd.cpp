@@ -3075,6 +3075,8 @@ void MapWnd::RefreshFleetButtons() {
     // be grouped by empire owner and buttons created
     const ObjectMap& objects = GetUniverse().Objects();
 
+    bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging");
+
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
@@ -3126,7 +3128,8 @@ void MapWnd::RefreshFleetButtons() {
         const UniverseObject* obj = *it;
         int object_id = obj->ID();
 
-        Logger().debugStream() << "stationary fleet if: " << object_id;
+        if (verbose_logging)
+            Logger().debugStream() << "stationary fleet id: " << object_id;
 
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.find(object_id) != this_client_known_destroyed_objects.end())
@@ -3134,7 +3137,8 @@ void MapWnd::RefreshFleetButtons() {
         if (this_client_stale_object_info.find(object_id) != this_client_stale_object_info.end())
             continue;
 
-        Logger().debugStream() << " ... not stale, not destroyed";
+        if (verbose_logging)
+            Logger().debugStream() << " ... not stale, not destroyed";
 
         // skip fleets outside systems
         if (obj->SystemID() == INVALID_OBJECT_ID)
