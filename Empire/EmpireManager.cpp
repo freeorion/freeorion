@@ -128,10 +128,8 @@ void EmpireManager::Clear() {
 }
 
 DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) const {
-    if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES) {
-        Logger().errorStream() << "EmpireManager::GetDiplomaticStatus passed invalid empire id";
+    if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES)
         return INVALID_DIPLOMATIC_STATUS;
-    }
 
     std::map<std::pair<int, int>, DiplomaticStatus>::const_iterator it =
         m_empire_diplomatic_statuses.find(DiploKey(empire1, empire2));
