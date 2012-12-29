@@ -149,6 +149,7 @@ public:
     virtual ~EffectBase();
 
     virtual void        Execute(const ScriptingContext& context) const = 0;
+    virtual void        Execute(const ScriptingContext& context, const TargetSet& targets) const;
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0;
 

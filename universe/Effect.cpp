@@ -270,65 +270,68 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const {
 }
 
 void EffectsGroup::Execute(int source_id, const TargetSet& targets) const {
-    UniverseObject* source = GetUniverseObject(source_id);
-
-    // execute effects on targets
-    for (TargetSet::const_iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
-        UniverseObject* target = *target_it;
-
-        //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
-        for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
-             effect_it != m_effects.end(); ++effect_it)
-        {
-            (*effect_it)->Execute(ScriptingContext(source, target));
-        }
+    const UniverseObject* source = GetUniverseObject(source_id);
+    ScriptingContext source_context(source);
+    //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
+    for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
+         effect_it != m_effects.end(); ++effect_it)
+    {
+        (*effect_it)->Execute(source_context, targets);
     }
 }
 
 void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const {
     const UniverseObject* source = GetUniverseObject(source_id);
     const TargetSet& targets = targets_and_cause.target_set;
+    ScriptingContext source_context(source);
 
-    // execute effects on targets
-    for (TargetSet::const_iterator target_it = targets.begin();
-         target_it != targets.end(); ++target_it)
+    for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
+         effect_it != m_effects.end(); ++effect_it)
     {
-        UniverseObject* target = *target_it;
+        const EffectBase* effect = *effect_it;
+        const SetMeter* meter_effect = dynamic_cast<const SetMeter*>(effect);
 
-        for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
-             effect_it != m_effects.end(); ++effect_it)
+        // for non-meter effects, can do default batch execute
+        if (!meter_effect) {
+            effect->Execute(source_context, targets);
+            return;
+        }
+
+        // for meter effects, need to separately call effect's Execute for each
+        // target and do meter accounting before and after.
+
+        // accounting info for this effect on this meter, starting with
+        // non-target-dependent info
+        Effect::AccountingInfo info;
+        info.cause_type =           targets_and_cause.effect_cause.cause_type;
+        info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
+        info.custom_label =         targets_and_cause.effect_cause.custom_label;
+        info.source_id =            source_id;
+
+        MeterType meter_type = meter_effect->GetMeterType();
+
+        for (TargetSet::const_iterator target_it = targets.begin();
+             target_it != targets.end(); ++target_it)
         {
-            const EffectBase* effect = *effect_it;
+            UniverseObject* target = *target_it;
 
-            if (const SetMeter* meter_effect = dynamic_cast<const SetMeter*>(effect)) {
-                // record pre-effect meter values
-                MeterType meter_type = meter_effect->GetMeterType();
-                const Meter* meter = target->GetMeter(meter_type);
-                if (!meter)
-                    continue;   // some objects might match target conditions, but not actually have the relevant meter
+            // record pre-effect meter values
+            const Meter* meter = target->GetMeter(meter_type);
+            if (!meter)
+                continue;   // some objects might match target conditions, but not actually have the relevant meter
 
-                // accounting info for this effect on this meter
-                Effect::AccountingInfo info;
-                info.cause_type =           targets_and_cause.effect_cause.cause_type;
-                info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
-                info.custom_label =         targets_and_cause.effect_cause.custom_label;
-                info.source_id =            source_id;
-                info.running_meter_total =  meter->Current();
+            // accounting info for this effect on this meter of this target
+            info.running_meter_total =  meter->Current();
 
-                // actually execute effect to modify meter
-                meter_effect->Execute(ScriptingContext(source, target));
+            // actually execute effect to modify meter
+            meter_effect->Execute(ScriptingContext(source, target));
 
-                // update for meter change and new total
-                info.meter_change = meter->Current() - info.running_meter_total;
-                info.running_meter_total = meter->Current();
+            // update for meter change and new total
+            info.meter_change = meter->Current() - info.running_meter_total;
+            info.running_meter_total = meter->Current();
 
-                // add accounting for this effect to end of vector
-                accounting_map[target->ID()][meter_type].push_back(info);
-
-            } else /* (!meter_effect) **/{
-                // don't need to do accounting for non-meter effects
-                effect->Execute(ScriptingContext(source, target));
-            }
+            // add accounting for this effect to end of vector
+            accounting_map[target->ID()][meter_type].push_back(info);
         }
     }
 }
@@ -378,7 +381,6 @@ void EffectsGroup::ExecuteSetEmpireMeter(int source_id, const TargetSet& targets
         }
     }
 }
-
 
 void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause,
                                    AccountingMap& accounting_map) const
@@ -539,6 +541,16 @@ std::string EffectsDescription(const std::vector<boost::shared_ptr<const Effect:
 EffectBase::~EffectBase()
 {}
 
+void EffectBase::Execute(const ScriptingContext& context, const TargetSet& targets) const {
+    // execute effects on targets
+    ScriptingContext local_context = context;
+    for (TargetSet::const_iterator target_it = targets.begin();
+         target_it != targets.end(); ++target_it)
+    {
+        local_context.effect_target = *target_it;
+        this->Execute(local_context);
+    }
+}
 
 ///////////////////////////////////////////////////////////
 // SetMeter                                              //
