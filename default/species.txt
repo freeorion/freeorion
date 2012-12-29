@@ -65,7 +65,7 @@ Species
         
         [[AVERAGE_GROUND_TROOPS]]
         [[GOOD_POPULATION]]
-            
+        
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
@@ -174,7 +174,7 @@ Species
 
         [[AVERAGE_GROUND_TROOPS]]
         
-                
+        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
@@ -212,7 +212,7 @@ Species
         [[GOOD_WEAPONS]]
         [[GREAT_GROUND_TROOPS]]
         
-                
+        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
@@ -249,7 +249,7 @@ Species
         [[ULTIMATE_WEAPONS]]
         [[AVERAGE_GROUND_TROOPS]]
         
-                
+        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
@@ -473,7 +473,7 @@ Species
         [[BAD_GROUND_TROOPS]]
         [[GOOD_POPULATION]]
         
-                
+        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
     ]
@@ -547,7 +547,7 @@ Species
         [[GREAT_WEAPONS]]
         [[GOOD_GROUND_TROOPS]]
         
-                
+        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
@@ -1099,8 +1099,8 @@ Species
 
         [[AVERAGE_POPULATION]]
 
-        EffectsGroup     
-            scope = Source     
+        EffectsGroup
+            scope = Source
             activation = AND [
                 OR [
                     Turn low = 10 high = 10
@@ -1116,8 +1116,8 @@ Species
             ]
             effects = CreateShip "SM_ACIREMA_GUARD"
 
-        EffectsGroup     
-            scope = Source     
+        EffectsGroup
+            scope = Source
             effects = [
                 SetMaxShield Value + 5
                 SetMaxDefense Value + 5
@@ -1998,7 +1998,7 @@ BASIC_POPULATION
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_BONUS"
             effects = SetTargetPopulation Value + 2 * Source.SizeAsDouble  // Get double the homeworld bonus
-      
+            
             
 //#####     H O M E W O R L D   G R O W T H   F O C U S  B O O S T     #####  
 
@@ -2044,8 +2044,8 @@ BASIC_POPULATION
             effects = SetTargetPopulation Value + 6 * Target.SizeAsDouble    // Gets double the base population
 
 
-//#####     P H O T O T R O P H I C   S T U F F     #####            
-            
+//#####     P H O T O T R O P H I C   S T U F F     #####
+        
         EffectsGroup
             scope = Source
             activation = AND [
@@ -2796,8 +2796,8 @@ ULTIMATE_WEAPONS
 //#####      P L A N E T   S I Z E     #####//
 
 HUGE_PLANET
-'''EffectsGroup     
-        scope = Source     
+'''EffectsGroup
+        scope = Source
         activation = And [
             Planet
             Turn high = 0
@@ -2806,8 +2806,8 @@ HUGE_PLANET
 '''
 
 LARGE_PLANET
-'''EffectsGroup     
-        scope = Source     
+'''EffectsGroup
+        scope = Source
         activation = And [
             Planet
             Turn high = 0
@@ -2816,8 +2816,8 @@ LARGE_PLANET
 '''
 
 MEDIUM_PLANET
-'''EffectsGroup     
-        scope = Source     
+'''EffectsGroup
+        scope = Source
         activation = And [
             Planet
             Turn high = 0
@@ -2826,8 +2826,8 @@ MEDIUM_PLANET
 '''
 
 SMALL_PLANET
-'''EffectsGroup     
-        scope = Source     
+'''EffectsGroup
+        scope = Source
         activation = And [
             Planet
             Turn high = 0
@@ -2836,8 +2836,8 @@ SMALL_PLANET
 '''
 
 NOT_HUGE_PLANET
-'''EffectsGroup     
-        scope = Source     
+'''EffectsGroup
+        scope = Source
         activation = AND [
             Planet
             Turn high = 0
@@ -2849,8 +2849,8 @@ NOT_HUGE_PLANET
 //#####      S P E C I A L S     #####//
 
 TUNNELS_SPECIAL
-'''EffectsGroup     
-        scope = Source     
+'''EffectsGroup
+        scope = Source
         activation = And [
             Planet
             Turn high = 0
