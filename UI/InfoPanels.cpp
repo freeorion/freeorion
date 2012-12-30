@@ -1749,33 +1749,47 @@ void BuildingsPanel::Update() {
     }
     m_building_indicators.clear();
 
-    const Planet* plt = GetPlanet(m_planet_id);
-    if (!plt)
-        plt = GetEmpireKnownPlanet(m_planet_id, HumanClientApp::GetApp()->EmpireID());
-    if (!plt) {
+    const Planet* planet = GetPlanet(m_planet_id);
+    if (!planet) {
         Logger().errorStream() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;
     }
-    const std::set<int>& buildings = plt->Buildings();
+    const std::set<int>& buildings = planet->Buildings();
+    int system_id = planet->SystemID();
 
     const int indicator_size = static_cast<int>(Value(Width() * 1.0 / m_columns));
+
+
+    int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
+    const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
+
 
     // get existing / finished buildings and use them to create building indicators
     for (std::set<int>::const_iterator it = buildings.begin(); it != buildings.end(); ++it) {
         int object_id = *it;
+
+        // skip known destroyed and stale info objects
+        if (this_client_known_destroyed_objects.find(object_id) != this_client_known_destroyed_objects.end())
+            continue;
+        if (this_client_stale_object_info.find(object_id) != this_client_stale_object_info.end())
+            continue;
+
         const Building* building = GetBuilding(object_id);
-        if (!building)
-            building = GetBuilding(object_id);
         if (!building) {
-            Logger().errorStream() << "BuildingsPanel::Update couldn't get building with id: " << object_id << " on planet " << plt->Name();
+            Logger().errorStream() << "BuildingsPanel::Update couldn't get building with id: " << object_id << " on planet " << planet->Name();
             continue;
         }
+
+        if (building->SystemID() != system_id || building->PlanetID() != m_planet_id)
+            continue;
+
         BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), object_id);
         m_building_indicators.push_back(ind);
     }
 
     // get in-progress buildings
-    const Empire* empire = Empires().Lookup(plt->Owner());
+    const Empire* empire = Empires().Lookup(planet->Owner());
     if (!empire)
         return;
 
@@ -1786,8 +1800,7 @@ void BuildingsPanel::Update() {
         const ProductionQueue::Element elem = *queue_it;
 
         if (elem.item.build_type != BT_BUILDING) continue;  // don't show in-progress ships in BuildingsPanel...
-        int location = elem.location;
-        if (location != plt->ID()) continue;                // don't show buildings located elsewhere
+        if (elem.location != m_planet_id) continue;         // don't show buildings located elsewhere
 
         double total_cost;
         int total_turns;
