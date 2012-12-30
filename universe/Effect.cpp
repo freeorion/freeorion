@@ -542,6 +542,8 @@ EffectBase::~EffectBase()
 {}
 
 void EffectBase::Execute(const ScriptingContext& context, const TargetSet& targets) const {
+    if (targets.empty())
+        return;
     // execute effects on targets
     ScriptingContext local_context = context;
     for (TargetSet::const_iterator target_it = targets.begin();
@@ -570,6 +572,23 @@ void SetMeter::Execute(const ScriptingContext& context) const {
 
     float val = m_value->Eval(ScriptingContext(context, m->Current()));
     m->SetCurrent(val);
+}
+
+void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets) const {
+    if (targets.empty())
+        return;
+    // does meter value depend on target?
+    if (m_value->TargetInvariant()) {
+        float val = m_value->Eval(context);
+        for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
+            Meter* m = (*it)->GetMeter(m_meter);
+            if (!m) continue;
+            m->SetCurrent(val);
+        }
+        return;
+    }
+    // meter value does depend on target, so handle with default case
+    EffectBase::Execute(context, targets);
 }
 
 std::string SetMeter::Description() const {
