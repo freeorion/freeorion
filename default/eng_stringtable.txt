@@ -8005,15 +8005,6 @@ SH_COMPRESSED_ENERGY_DESC
 
 Requires a Basic Shipyard and an Energy Compressor at the planet where it is formed.'''
 
-
-SH_COMPRESSED_ENERGY
-Compressed Energy Hull
-
-SH_COMPRESSED_ENERGY_DESC
-'''This fast hull is comprised entirely of compressed energy and has a single external slot. Structure is low, but [[encyclopedia STEALTH_TITLE]] and speed are very high. This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole.
-
-Requires a Basic Shipyard and an Energy Compressor at the planet where it is formed.'''
-
 SH_FRACTAL_ENERGY
 Fractal Energy Hull
 
