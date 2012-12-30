@@ -1743,8 +1743,8 @@ public:
                 std::list<GG::ListBox::Row*>::iterator starRow_it = *it;
                 bool foundStarRow=false;
                 for (std::list<GG::ListBox::Row*>::iterator lb_it = this->begin(); lb_it != this->end() ; lb_it++) {   // checking against
-                    if ( lb_it == starRow_it ) {
-                        foundStarRow=true;
+                    if (lb_it == starRow_it) {
+                        foundStarRow = true;
                         break;
                     }
                 }
@@ -1780,15 +1780,19 @@ public:
         SetColWidth(0, GG::X0);
         LockColWidths();
 
-        const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
+        int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
+        const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
         std::set<int> new_selected_ship_ids;
 
         for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
             int ship_id = *it;
 
-            // skip known destroyed objects
+            // skip known destroyed and stale info objects
             if (this_client_known_destroyed_objects.find(ship_id) != this_client_known_destroyed_objects.end())
+                continue;
+            if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
                 continue;
 
             ShipRow* row = new ShipRow(GG::X1, row_size.y, ship_id);
@@ -2335,6 +2339,8 @@ void FleetWnd::RefreshStateChangedSignals() {
 void FleetWnd::Refresh() {
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
+    const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
+
 
     // save selected fleet(s) and ships(s)
     std::set<int> initially_selected_fleets = this->SelectedFleetIDs();
@@ -2359,13 +2365,21 @@ void FleetWnd::Refresh() {
         std::vector<const Fleet*> all_fleets = objects.FindObjects<Fleet>();
         for (std::vector<const Fleet*>::const_iterator it = all_fleets.begin(); it != all_fleets.end(); ++it) {
             const Fleet* fleet = *it;
-            if (fleet->SystemID() != m_system_id ||
-                this_client_known_destroyed_objects.find(fleet->ID()) != this_client_known_destroyed_objects.end())
-            {
-                // skip fleets that aren't actually in this system, or that
-                // don't actually exist anymore...
+            int fleet_id = fleet->ID();
+
+            // skip fleets in wrong system
+            if (fleet->SystemID() != m_system_id)
                 continue;
-            }
+
+            // skip known destroyed and stale info objects
+            if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end())
+                continue;
+            if (this_client_stale_object_info.find(fleet_id) != this_client_stale_object_info.end())
+                continue;
+
+            // skip fleets outside systems
+            if (fleet->SystemID() == INVALID_OBJECT_ID)
+                continue;
 
             if (m_empire_id == ALL_EMPIRES || fleet->OwnedBy(m_empire_id)) {
                 m_fleet_ids.insert(fleet->ID());
@@ -2378,10 +2392,11 @@ void FleetWnd::Refresh() {
         for (std::set<int>::const_iterator it = m_fleet_ids.begin(); it != m_fleet_ids.end(); ++it) {
             int fleet_id = *it;
 
-            if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end()) {
-                // skip fleets that don't actually exist anymore...
+            // skip known destroyed and stale info objects
+            if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end())
                 continue;
-            }
+            if (this_client_stale_object_info.find(fleet_id) != this_client_stale_object_info.end())
+                continue;
 
             if (GetFleet(fleet_id)) {
                 validated_fleet_ids.insert(fleet_id);
