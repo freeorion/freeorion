@@ -7937,33 +7937,33 @@ SH_STATIC_MULTICELLULAR
 Static Multicellular Hull
 
 SH_STATIC_MULTICELLULAR_DESC
-'''Despite being organic, this hull is non-living, being produced via multi-cellular casting. The versatility of the interior and the lack of necessity for internal organs increases its capacity, but without living systems to maintain its structure it is very weak. It has three external slots and two internal slots. [[encyclopedia STEALTH_TITLE]] is average and speed is good, but structure is very low. Unlike most organic hulls, this hull regenerates neither structure nor fuel between combats.
+'''Despite being organic, this hull is non-living, being produced via multi-cellular casting. The versatility of the interior and the lack of necessity for internal organs increases its capacity, but without living systems, it cannot replenish health or energy. It has three external slots and two internal slots. Structure is average and speed is good, but [[encyclopedia STEALTH_TITLE]] is low. This hull regenerates neither structure nor fuel between combats.
 
-Requires a Basic Shipyard and an Orbital Incubator at the planet where it is constructed.'''
+Requires a Basic Shipyard, an Orbital Incubator, and a Xenocoordination Facility at the planet where it is constructed.'''
 
 SH_ENDOMORPHIC
 Endomorphic Hull
 
 SH_ENDOMORPHIC_DESC
-'''This living hull contains non-living multicellular components for greater internal modularity. This hull has three external slots and two internal slots. [[encyclopedia STEALTH_TITLE]] is good and speed is average, but structure is low. This hull regenerates structure and fuel between combats.
+'''This hull contains non-living multicellular components for greater external modularity. This hull has four external slots and two internal slots. Structure is good and speed is average, but [[encyclopedia STEALTH_TITLE]] is low. This hull regenerates neither structure nor fuel between combats.
 
-Requires a Basic Shipyard, an Orbital Incubator at the planet where it is developed.'''
+Requires a Basic Shipyard, an Orbital Incubator, and a Xenocoordination Facility at the planet where it is developed.'''
 
 SH_SYMBIOTIC
 Symbiotic Hull
 
 SH_SYMBIOTIC_DESC
-'''This living hull exists in a symbiotic relationship with its crew, increasing its [[encyclopedia STEALTH_TITLE]] and speed. It has two external slots and one internal slot. [[encyclopedia STEALTH_TITLE]], speed and structure are all good. This hull regenerates structure and fuel between combats.
+'''This living hull exists in a symbiotic relationship with its crew, increasing its [[encyclopedia STEALTH_TITLE]] and speed. It has two of each internal and external slots. [[encyclopedia STEALTH_TITLE]], speed and structure are all good. This hull regenerates structure and fuel between combats.
 
-Requires a Basic Shipyard, an Orbital Incubator and a Xenocoordination Facility at the planet where it is developed.'''
+Requires a Basic Shipyard, an Orbital Incubator, and a Cellular Growth Chamber at the planet where it is developed.'''
 
 SH_PROTOPLASMIC
 Protoplasmic Hull
 
 SH_PROTOPLASMIC_DESC
-'''This monocellular hull suspends its internal parts in its cytoplasm rather than mounting them on a solid internal structure. It has three of each internal slots and external slots. Speed is average and [[encyclopedia STEALTH_TITLE]] is high, but structure is very low. This hull regenerates structure and fuel between combats.
+'''This monocellular hull suspends its internal parts in its cytoplasm rather than mounting them on a solid internal structure. It has three of each internal slots and external slots. Structure is high, and speed and [[encyclopedia STEALTH_TITLE]] are good. This hull regenerates structure and fuel between combats.
 
-Requires a Basic Shipyard, an Orbital Incubator and a Cellular Growth Chamber at the planet where it is developed.'''
+Requires a Basic Shipyard, an Orbital Incubator, and a Cellular Growth Chamber at the planet where it is developed.'''
 
 SH_ENDOSYMBIOTIC
 Endosymbiotic Hull
@@ -7977,17 +7977,17 @@ SH_RAVENOUS
 Ravenous Hull
 
 SH_RAVENOUS_DESC
-'''This living hull has been raised on the blood of its brethren. It has four external slots and two internal slots. [[encyclopedia STEALTH_TITLE]] is low, but speed and structure are high. Unlike most organic hulls, the Ravenous Hull will only regenerate fuel between combats, not structure.
+'''This hull has been raised on the blood of its brethren. It has five external slots and two internal slots. [[encyclopedia STEALTH_TITLE]] is low, but speed and structure are high. This hull regenerates neither structure nor fuel between combats.
 
-Requires a Basic Shipyard, an Orbital Incubator at the planet where it is developed.'''
+Requires a Basic Shipyard, an Orbital Incubator, and a Xenocoordination Facility at the planet where it is developed.'''
 
 SH_BIOADAPTIVE
 Bio-Adaptive Hull
 
 SH_BIOADAPTIVE_DESC
-'''This living hull has mind and body working in perfect unison, allowing it to react and adapt to its surroundings with unparalleled efficiency. It has only two of each internal and external slots, but [[encyclopedia STEALTH_TITLE]], speed and structure are all very high. This hull regenerates fuel and completely recovers structure between combats.
+'''This living hull has mind and body working in perfect unison, allowing it to react and adapt to its surroundings with unparalleled efficiency. It has three external slots and two internal slots. [[encyclopedia STEALTH_TITLE]], speed and structure are all very high. This hull regenerates fuel and completely recovers structure between combats.
 
-Requires a Basic Shipyard, an Orbital Incubator and a Xenocoordination Facility at the planet where it is developed.'''
+Requires a Basic Shipyard, an Orbital Incubator, and a Cellular Growth Chamber at the planet where it is developed.'''
 
 SH_SENTIENT
 Sentient Hull
@@ -7995,7 +7995,16 @@ Sentient Hull
 SH_SENTIENT_DESC
 '''This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[encyclopedia STEALTH_TITLE]] and [[encyclopedia DETECTION_RANGE_TITLE]] bonus to all accompanying friendly ships. It has six external slots and three internal slots. It has low speed, but [[encyclopedia STEALTH_TITLE]] and structure are good. This hull regenerates structure and fuel between combats.
 
-Requires a Basic Shipyard, an Orbital Incubator, and a Xenocoordination Facility at the planet where it is developed.'''
+Requires a Basic Shipyard, an Orbital Incubator, a Xenocoordination facility and a Cellular Growth Chamber at the planet where it is developed.'''
+
+SH_COMPRESSED_ENERGY
+Compressed Energy Hull
+
+SH_COMPRESSED_ENERGY_DESC
+'''This fast hull is comprised entirely of compressed energy and has a single external slot. Structure is low, but [[encyclopedia STEALTH_TITLE]] and speed are very high. This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole.
+
+Requires a Basic Shipyard and an Energy Compressor at the planet where it is formed.'''
+
 
 SH_COMPRESSED_ENERGY
 Compressed Energy Hull

@@ -922,7 +922,7 @@ Hull
     speed = 50
     starlaneSpeed = 90
     fuel = 2
-    stealth = 20
+    stealth = 10
     structure = 11
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -936,7 +936,7 @@ Hull
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
         ])
-    buildTime = 4
+    buildTime = 3
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_ORB_INC"
@@ -971,12 +971,12 @@ Hull
     speed = 75
     starlaneSpeed = 100
     fuel = 2
-    stealth = 10
+    stealth = 0
     structure = 16
     slots = [
-        Slot type = External position = (0.20, 0.15)
-        Slot type = External position = (0.40, 0.15)
-        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.30, 0.35)
+        Slot type = External position = (0.50, 0.35)
+        Slot type = External position = (0.70, 0.35)
         Slot type = Internal position = (0.40, 0.75)
         Slot type = Internal position = (0.60, 0.75)
     ]
@@ -986,8 +986,12 @@ Hull
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
         ])
-    buildTime = 3
+    buildTime = 4
     location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy TheEmpire Source.Owner
+        ]
         Contains And [
             Building "BLD_SHIPYARD_ORG_ORB_INC"
             OwnedBy TheEmpire Source.Owner
@@ -1009,12 +1013,13 @@ Hull
     speed = 50
     starlaneSpeed = 100
     fuel = 2
-    stealth = 20
+    stealth = 0
     structure = 20
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.60, 0.75)
         Slot type = Internal position = (0.80, 0.75)
     ]
@@ -1024,8 +1029,12 @@ Hull
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
         ])
-    buildTime = 6
+    buildTime = 5
     location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy TheEmpire Source.Owner
+        ]
         Contains And [
             Building "BLD_SHIPYARD_ORG_ORB_INC"
             OwnedBy TheEmpire Source.Owner
@@ -1040,14 +1049,6 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = [
-                SetStructure Value + 2
-                SetFuel Value + 0.2
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = Source
             effects = SetDetection Value + 50
     ]
     icon = "icons/ship_hulls/endomorphic_hull_small.png"
@@ -1059,23 +1060,24 @@ Hull
     speed = 70
     starlaneSpeed = 100
     fuel = 2
-    stealth = 20
-    structure = 12
+    stealth = 10
+    structure = 20
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
         Slot type = Internal position = (0.20, 0.75)
+        Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 7 * (1 + 0.05 *
+    buildCost = 8 * (1 + 0.05 *
         Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
         ])
-    buildTime = 3
+    buildTime = 4
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ORG_XENO_FAC"
+            Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
             OwnedBy TheEmpire Source.Owner
         ]
         Contains And [
@@ -1112,11 +1114,10 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 20
-    structure = 23
+    structure = 30
     slots = [
-        Slot type = External position = (0.15, 0.15)
-        Slot type = External position = (0.30, 0.15)
-        Slot type = External position = (0.45, 0.15)
+        Slot type = External position = (0.30, 0.50)
+        Slot type = External position = (0.45, 0.50)
         Slot type = Internal position = (0.45, 0.75)
         Slot type = Internal position = (0.60, 0.75)
         Slot type = Internal position = (0.75, 0.75)
@@ -1127,7 +1128,7 @@ Hull
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
         ])
-    buildTime = 4
+    buildTime = 5
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -1177,13 +1178,13 @@ Hull
         Slot type = Internal position = (0.75, 0.75)
         Slot type = Internal position = (0.90, 0.75)
     ]
-    buildCost = 9 * (1 + 0.05 *
+    buildCost = 11 * (1 + 0.05 *
         Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
         ])
-    buildTime = 5
+    buildTime = 6
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -1237,7 +1238,7 @@ Hull
         Slot type = External position = (0.20, 0.75)
         Slot type = External position = (0.40, 0.75)
     ]
-    buildCost = 11 * (1 + 0.05 *
+    buildCost = 12 * (1 + 0.05 *
         Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
@@ -1245,6 +1246,10 @@ Hull
         ])
     buildTime = 6
     location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy TheEmpire Source.Owner
+        ]
         Contains And [
             Building "BLD_SHIPYARD_ORG_ORB_INC"
             OwnedBy TheEmpire Source.Owner
@@ -1256,11 +1261,6 @@ Hull
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetFuel Value + 0.2
-
         EffectsGroup
             scope = Source
             activation = Source
@@ -1276,14 +1276,16 @@ Hull
     starlaneSpeed = 100
     fuel = 2
     stealth = 20
-    structure = 36
+    structure = 40
     slots = [
-        Slot type = External position = (0.20, 0.15)
-        Slot type = External position = (0.40, 0.15)
-        Slot type = Internal position = (0.20, 0.75)
-        Slot type = Internal position = (0.40, 0.75)
+        Slot type = External position = (0.30, 0.35)
+        Slot type = External position = (0.50, 0.35)
+        Slot type = External position = (0.70, 0.35)
+        Slot type = Internal position = (0.20, 0.65)
+        Slot type = Internal position = (0.40, 0.65)
+        Slot type = Internal position = (0.60, 0.65)
     ]
-    buildCost = 10 * (1 + 0.05 *
+    buildCost = 14 * (1 + 0.05 *
         Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
@@ -1292,7 +1294,7 @@ Hull
     buildTime = 6
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ORG_XENO_FAC"
+            Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
             OwnedBy TheEmpire Source.Owner
         ]
         Contains And [
@@ -1351,6 +1353,10 @@ Hull
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
             OwnedBy TheEmpire Source.Owner
         ]
         Contains And [
