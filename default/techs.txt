@@ -40,7 +40,7 @@ Category
 //########################################################
 
 Tech
-    Name ="DEF_ROOT_DEFENSE"
+    Name = "DEF_ROOT_DEFENSE"
     description = "DEF_ROOT_DEFENSE_DESC"
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
@@ -51,7 +51,7 @@ Tech
     graphic = ""
 
 Tech
-    Name ="DEF_GARRISON_1"
+    Name = "DEF_GARRISON_1"
     description = "DEF_GARRISON_1_DESC"
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
@@ -62,10 +62,10 @@ Tech
     graphic = "icons/tech/troops.png"
     
 Tech
-    Name ="DEF_GARRISON_2"
+    Name = "DEF_GARRISON_2"
     description = "DEF_GARRISON_2_DESC"
     short_description = "TROOPS_SHORT_DESC"
-    techtype = Application
+    techtype = Refinement
     category = "DEFENSE_CATEGORY"
     researchcost = 15
     researchturns = 5
@@ -73,10 +73,10 @@ Tech
     graphic = "icons/tech/troops.png"
     
 Tech
-    Name ="DEF_GARRISON_3"
+    Name = "DEF_GARRISON_3"
     description = "DEF_GARRISON_3_DESC"
     short_description = "TROOPS_SHORT_DESC"
-    techtype = Application
+    techtype = Refinement
     category = "DEFENSE_CATEGORY"
     researchcost = 50
     researchturns = 7
@@ -84,10 +84,10 @@ Tech
     graphic = "icons/tech/troops.png"
     
 Tech
-    Name ="DEF_GARRISON_4"
+    Name = "DEF_GARRISON_4"
     description = "DEF_GARRISON_4_DESC"
     short_description = "TROOPS_SHORT_DESC"
-    techtype = Application
+    techtype = Refinement
     category = "DEFENSE_CATEGORY"
     researchcost = 150
     researchturns = 9
@@ -95,8 +95,8 @@ Tech
     graphic = "icons/tech/troops.png"
 
 Tech
-    name = "DEF_DEFENSE_NET"
-    description = "DEF_DEFENSE_NET_DESC"
+    name = "DEF_DEFENSE_NET_1"
+    description = "DEF_DEFENSE_NET_1_DESC"
     short_description = "DEFENSE_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
@@ -112,30 +112,81 @@ Tech
             effects = SetMaxDefense Value + 5
             
 Tech
-    name = "DEF_HI_ENRG_FOCUS"
-    description = "DEF_HI_ENRG_FOCUS_DESC"
+    name = "DEF_DEFENSE_NET_2"
+    description = "DEF_DEFENSE_NET_2_DESC"
     short_description = "DEFENSE_SHORT_DESC"
-    techtype = Application
+    techtype = Refinement
     category = "DEFENSE_CATEGORY"
     researchcost = 80
     researchturns = 4
-    prerequisites = "DEF_DEFENSE_NET"
+    prerequisites = "DEF_DEFENSE_NET_1"
     effectsgroups =
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            effects = SetMaxDefense Value + 15            
+            effects = SetMaxDefense Value + 15
 
 Tech
-    name = "DEF_PLAN_BARRIER_SHLD"
-    description = "DEF_PLAN_BARRIER_SHLD_DESC"
+    name = "DEF_DEFENSE_NET_3"
+    description = "DEF_DEFENSE_NET_3_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
+    techtype = Refinement
+    category = "DEFENSE_CATEGORY"
+    researchcost = 160
+    researchturns = 6
+    prerequisites = "DEF_DEFENSE_NET_2"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = SetMaxDefense Value + 25
+
+Tech
+    name = "DEF_DEFENSE_NET_REGEN_1"
+    description = "DEF_DEFENSE_NET_REGEN_1_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
+    techtype = Refinement
+    category = "DEFENSE_CATEGORY"
+    researchcost = 60
+    researchturns = 6
+    prerequisites = "DEF_DEFENSE_NET_2"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = SetDefense Value + 0.1*Target.MaxDefense
+
+Tech
+    name = "DEF_DEFENSE_NET_REGEN_2"
+    description = "DEF_DEFENSE_NET_REGEN_2_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
+    techtype = Refinement
+    category = "DEFENSE_CATEGORY"
+    researchcost = 160
+    researchturns = 8
+    prerequisites = "DEF_DEFENSE_NET_REGEN_1"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = SetDefense Value + 0.25*Target.Construction
+
+Tech
+    name = "DEF_PLAN_BARRIER_SHLD_1"
+    description = "DEF_PLAN_BARRIER_SHLD_1_DESC"
     short_description = "SHIELD_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
-    researchcost = 500
-    researchturns = 8
+    researchcost = 80
+    researchturns = 5
     prerequisites = "LRN_FORCE_FIELD"
     effectsgroups =
         EffectsGroup
@@ -143,8 +194,91 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            effects = SetMaxShield Value + 45
-            
+            effects = [
+                SetMaxShield Value + 30
+                SetShield Value + 0.25*Target.Construction
+            ]
+
+Tech
+    name = "DEF_PLAN_BARRIER_SHLD_2"
+    description = "DEF_PLAN_BARRIER_SHLD_2_DESC"
+    short_description = "SHIELD_SHORT_DESC"
+    techtype = Refinement
+    category = "DEFENSE_CATEGORY"
+    researchcost = 120
+    researchturns = 6
+    prerequisites = "DEF_PLAN_BARRIER_SHLD_1"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = [
+                SetMaxShield Value + 60
+                SetShield Value + 0.75*Target.Construction
+            ]
+
+Tech
+    name = "DEF_PLAN_BARRIER_SHLD_3"
+    description = "DEF_PLAN_BARRIER_SHLD_3_DESC"
+    short_description = "SHIELD_SHORT_DESC"
+    techtype = Refinement
+    category = "DEFENSE_CATEGORY"
+    researchcost = 240
+    researchturns = 8
+    prerequisites = "DEF_PLAN_BARRIER_SHLD_2"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = [
+                SetMaxShield Value + 90
+                SetShield Value + 1.0*Target.Construction
+            ]
+
+Tech
+    name = "DEF_PLAN_BARRIER_SHLD_4"
+    description = "DEF_PLAN_BARRIER_SHLD_4_DESC"
+    short_description = "SHIELD_SHORT_DESC"
+    techtype = Refinement
+    category = "DEFENSE_CATEGORY"
+    researchcost = 500
+    researchturns = 10
+    prerequisites = "DEF_PLAN_BARRIER_SHLD_3"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = [
+                SetMaxShield Value + 150
+                SetShield Value + 1.5*Target.Construction
+            ]
+
+Tech
+    name = "DEF_PLAN_BARRIER_SHLD_5"
+    description = "DEF_PLAN_BARRIER_SHLD_5_DESC"
+    short_description = "SHIELD_SHORT_DESC"
+    techtype = Refinement
+    category = "DEFENSE_CATEGORY"
+    researchcost = 1200
+    researchturns = 12
+    prerequisites = "DEF_PLAN_BARRIER_SHLD_4"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet
+            ]
+            effects = [
+                SetMaxShield Value + 150
+                SetShield Value + 2.5*Target.Construction
+            ]
+
 Tech
     name = "DEF_PLANET_CLOAK"
     description = "DEF_PLANET_CLOAK_DESC"
@@ -158,14 +292,14 @@ Tech
     unlock = Item type = Building name = "BLD_PLANET_CLOAK"
     
 Tech
-    name = "DEF_SYST_DEF_MINE"
-    description = "DEF_SYST_DEF_MINE_DESC"
+    name = "DEF_SYST_DEF_MINE_1"
+    description = "DEF_SYST_DEF_MINE_1_DESC"
     short_description = "DEFENSE_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
     researchcost = 120
     researchturns = 4
-    prerequisites = "DEF_DEFENSE_NET"
+    prerequisites = "DEF_DEFENSE_NET_1"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -177,6 +311,48 @@ Tech
                 OwnedBy EnemyOf Source.Owner
             ]
             effects = SetStructure Value - 2
+
+Tech
+    name = "DEF_SYST_DEF_MINE_2"
+    description = "DEF_SYST_DEF_MINE_2_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
+    techtype = Refinement
+    category = "DEFENSE_CATEGORY"
+    researchcost = 240
+    researchturns = 6
+    prerequisites = "DEF_SYST_DEF_MINE_1"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains And [
+                    OwnedBy TheEmpire Source.Owner
+                    Planet
+                ]
+                Ship
+                OwnedBy EnemyOf Source.Owner
+            ]
+            effects = SetStructure Value - 4
+
+Tech
+    name = "DEF_SYST_DEF_MINE_3"
+    description = "DEF_SYST_DEF_MINE_3_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
+    techtype = Refinement
+    category = "DEFENSE_CATEGORY"
+    researchcost = 500
+    researchturns = 8
+    prerequisites = "DEF_SYST_DEF_MINE_2"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains And [
+                    OwnedBy TheEmpire Source.Owner
+                    Planet
+                ]
+                Ship
+                OwnedBy EnemyOf Source.Owner
+            ]
+            effects = SetStructure Value - 8
 
 
 //########################################################
@@ -276,10 +452,9 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = And [
-                OwnedBy TheEmpire Source.Owner
                 Planet
+                OwnedBy TheEmpire Source.Owner
             ]
-            activation = Not OwnerHasTech "DEF_PLAN_BARRIER_SHLD"
             effects = SetMaxShield Value + 10
     graphic = "icons/tech/force-field_harmonics.png"
 

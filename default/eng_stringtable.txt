@@ -5485,7 +5485,7 @@ LRN_FORCE_FIELD
 Force-Field Harmonics
 
 LRN_FORCE_FIELD_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on all planets by 10. This is not cumulative with Planetary Barrier Shield.
+'''Increases max [[encyclopedia SHIELDS_TITLE]] on all planets by 10.
 
 Like Fourier analysis of sound, electromagnetism, strong and weak forces may be expressed as harmonic quantum standing-wave superpositions of force-carrier particles. By selectively amplifying these harmonics, forces may be arbitrarily controlled to shield, attack, contain or support.'''
 
@@ -6337,29 +6337,91 @@ Interstellar Lighthouses
 SPY_LIGHTHOUSE_DESC
 By using a complex pattern of EM pulses and particle streams to reveal the location of objects in a system, it is possible for even very stealthy objects to be illuminated and detected with moderate detection equipment.
 
-DEF_DEFENSE_NET
-Planetary Defense Network
+DEF_DEFENSE_NET_1
+Planetary Defense Network 1
 
-DEF_DEFENSE_NET_DESC
+DEF_DEFENSE_NET_1_DESC
 '''Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 5.
 
 With galactic exploration comes the possibility of meeting new races - and new enemies. By placing several armed defense bases in orbit around a planet, it is possible to give that planet defensive capabilities without the need for ships.'''
 
-DEF_HI_ENRG_FOCUS
-High Energy Focus
+DEF_DEFENSE_NET_2
+Planetary Defense Network 2
 
-DEF_HI_ENRG_FOCUS_DESC
-'''Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 15.
+DEF_DEFENSE_NET_2_DESC
+'''Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 15, cumulative with [[tech DEF_DEFENSE_NET_1]].'''
 
-While having a multitude of defense satellites is superior to a single large defense satellite in terms of versatility and dependability, it is considerably inferior in terms of firepower. Often, enemy shields can simply absorb numerous weak attacks where a single powerful attack would be able to penetrate its shields and severely damage the ship. By using a high energy focusing device, the power of multiple defense satellites can be unified into a single powerful beam weapon.'''
+DEF_DEFENSE_NET_3
+Planetary Defense Network 3
 
-DEF_PLAN_BARRIER_SHLD
-Planetary Barrier Shield
+DEF_DEFENSE_NET_3_DESC
+'''Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 25, cumulative with prerequisite defense network techs.'''
 
-DEF_PLAN_BARRIER_SHLD_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on all planets by 45. 
+DEF_DEFENSE_NET_REGEN_1
+Defense Network Regeneration 1
 
-Advanced Planetary Shield. This is not cumulative with Planetary Deflector Shield.'''
+DEF_DEFENSE_NET_REGEN_1_DESC
+'''Increases planets' [[encyclopedia DEFENSE_TITLE]] by 10% of its max value each turn, up to the max value.
+
+Defense regeneration allows a planet's defenses to function on turns after they have been destroyed by orbital bombardment; regeneration would otherwise not occur until a turn passed without bombardment.'''
+
+DEF_DEFENSE_NET_REGEN_2
+Defense Network Regeneration 2
+
+DEF_DEFENSE_NET_REGEN_2_DESC
+'''Increases planets' [[encyclopedia DEFENSE_TITLE]] by 0.25 times the planets' infrastructure, each turn, up to the max defense value, cumulative with regeneration from [[tech DEF_DEFENSE_NET_REGEN_1]].'''
+
+DEF_PLAN_BARRIER_SHLD_1
+Planetary Barrier Shield 1
+
+DEF_PLAN_BARRIER_SHLD_1_DESC
+'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 30, cumulative with [[tech LRN_FORCE_FIELD]].'''
+
+DEF_PLAN_BARRIER_SHLD_2
+Planetary Barrier Shield 2
+
+DEF_PLAN_BARRIER_SHLD_2_DESC
+'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 60 plus the value of the planets' infrastructure, cumulative with other shield boosts.'''
+
+DEF_PLAN_BARRIER_SHLD_3
+Planetary Barrier Shield 3
+
+DEF_PLAN_BARRIER_SHLD_3_DESC
+'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 90 plus the 1.5 times value of the planets' infrastructure, cumulative with other shield boosts.'''
+
+DEF_PLAN_BARRIER_SHLD_4
+Planetary Barrier Shield 4
+
+DEF_PLAN_BARRIER_SHLD_4_DESC
+'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 150 plus the 2.5 times value of the planets' infrastructure, cumulative with other shield boosts.'''
+
+DEF_PLAN_BARRIER_SHLD_5
+Planetary Barrier Shield 5
+
+DEF_PLAN_BARRIER_SHLD_5_DESC
+'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 150 plus the 5 times value of the planets' infrastructure, cumulative with other shield boosts.'''
+
+DEF_SYST_DEF_MINE_1
+System Defense Mines 1
+
+DEF_SYST_DEF_MINE_1_DESC
+'''When friendly ships are not present in a system, enemy ships are free to blockade the system, stopping the transfer of resources without directly engaging the planet's defenses, thus with no risk of damage to themselves. A network of system defense mines can deter these tactics by damaging enemy ships each turn they are in the system.
+
+The structure of all ships belonging to an enemy empire which are present in a system containing a planet owned by the empire that possesses this technology will be reduced at a rate of 2 per turn.
+
+Mines regenerate each turn, so are not depleted by use.'''
+
+DEF_SYST_DEF_MINE_2
+System Defense Mines 2
+
+DEF_SYST_DEF_MINE_2_DESC
+'''Reduces the structure of enemy ships by an additional 4 per turn, cumulative with [[tech DEF_SYST_DEF_MINE_1]].'''
+
+DEF_SYST_DEF_MINE_3
+System Defense Mines 3
+
+DEF_SYST_DEF_MINE_3_DESC
+'''Reduces the structure of enemy ships by an additional 8 per turn, cumulative with prerequisite defense mine techs.'''
 
 DEF_ROOT_DEFENSE
 Self Defense
@@ -6424,16 +6486,6 @@ Advanced Damage Control
 
 SHP_ADV_DAM_CONT_DESC
 '''Repairs damaged ships by 25% of structure per turn-- not during battles.'''
-
-DEF_SYST_DEF_MINE
-System Defense Mines
-
-DEF_SYST_DEF_MINE_DESC
-'''When friendly ships are not present in a system, enemy ships are free to blockade the system, stopping the transfer of resources without directly engaging the planet's defenses, thus with no risk of damage to themselves. A network of system defense mines can deter these tactics by damaging enemy ships each turn they are in the system.
-
-The structure of all ships belonging to an enemy empire which are present in a system containing a planet owned by the empire that possesses this technology will be reduced at a rate of 2 per turn.
-
-The mines have a lifetime of one turn; they are gone by the time combat begins in a system and are replaced in time for the next turn.'''
 
 SHP_ROOT_AGGRESSION
 Aggression
@@ -7643,7 +7695,7 @@ AR_NEUTRONIUM_PLATE
 Neutronium Armor Plating
 
 AR_NEUTRONIUM_PLATE_DESC
-'''Admirable defense with moderate mass
+'''Admirable defense.
 
 All armor carries a speed penalty due to the extra energy needed to move the additional mass. However, due to its simplicity, armor is very cost effective.'''
 
@@ -7657,7 +7709,7 @@ SH_DEFENSE_GRID
 Defense Grid
 
 SH_DEFENSE_GRID_DESC
-'''Weak defense with no extra mass. 
+'''Weak defense. 
 
 [[encyclopedia SHIELDS_TITLE]] technology is generally much more expensive than armor, due to the technology needed to produce shielding fields, but have the benefits of no speed penalties.'''
 
@@ -7665,7 +7717,7 @@ SH_DEFLECTOR
 Deflector Shield
 
 SH_DEFLECTOR_DESC
-'''Moderate defense with small mass. 
+'''Moderate regenerating defense. 
 
 [[encyclopedia SHIELDS_TITLE]] technology is generally much more expensive than armor, due to the technology needed to produce shielding fields, but have the benefits of no speed penalties.'''
 
