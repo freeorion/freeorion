@@ -178,10 +178,10 @@ void NewFleetOrder::ExecuteImpl() const {
     fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
     // an ID is provided to ensure consistancy between server and client universes
     universe.InsertID(fleet, m_new_id);
+    universe.SetEmpireObjectVisibility(EmpireID(), fleet->ID(), VIS_FULL_VISIBILITY);
     system->Insert(fleet);
     fleet->SetAggressive(false);
     fleet->AddShips(validated_ships);
-    universe.SetEmpireObjectVisibility(EmpireID(), fleet->ID(), VIS_FULL_VISIBILITY);
 }
 
 
