@@ -16,7 +16,8 @@ def generateResearchOrders():
     empire = fo.getEmpire()
     empireID = empire.empireID
     print "Research Queue Management:"
-    print "\nTotal Current Research Points: %.2f\n"%empire.resourceProduction(fo.resourceType.research)
+    tRP = empire.resourceProduction(fo.resourceType.research)
+    print "\nTotal Current Research Points: %.2f\n"%tRP
     print "Techs researched and available for use:"
     completedTechs = sorted(list(getCompletedTechs()))
     tlist = completedTechs+3*[" "]
@@ -25,6 +26,18 @@ def generateResearchOrders():
         print "%25s  %25s  %25s"%tline
     print""
     
+    if tRP >= 20:
+        researchQueueList = getResearchQueueTechs()
+        if (empire.getTechStatus("LRN_PSIONICS") != fo.techStatus.complete)  and ( "LRN_PSIONICS" not in researchQueueList[:5]  )  :
+            for specName in ColonisationAI.empireSpecies:
+                thisSpec=fo.getSpecies(specName)
+                if thisSpec:
+                    if "TELEPATHIC" in list(thisSpec.tags):
+                        res=fo.issueEnqueueTechOrder("LRN_DISTRIB_THOUGHT", 0)
+                        res=fo.issueEnqueueTechOrder("LRN_PSIONICS", 0)
+                        break
+
+
     gotSymBio = empire.getTechStatus("GRO_SYMBIOTIC_BIO") == fo.techStatus.complete
     gotXenoGen = empire.getTechStatus("GRO_XENO_GENETICS") == fo.techStatus.complete
     #assess if our empire has any non-lousy colonizers, & boost gro_xeno_gen if we don't

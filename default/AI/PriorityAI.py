@@ -220,7 +220,7 @@ def calculateInvasionPriority():
     if bestDesign:
         troopsPerBestShip = 2*(  list(bestDesign.parts).count("GT_TROOP_POD") )
     else:
-        troopsPerBestShip=5 #may actually not have any troopers available, but this num will do for now
+        troopsPerBestShip=2 #may actually not have any troopers available, but this num will do for now
 
     troopFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION)
     numTroopPods =  sum([ FleetUtilsAI.countPartsFleetwide(fleetID,  ["GT_TROOP_POD"]) for fleetID in  FleetUtilsAI.extractFleetIDsWithoutMissionTypes(troopFleetIDs)])
@@ -228,7 +228,7 @@ def calculateInvasionPriority():
     #milFleetEquiv= math.ceil( MilitaryAI.totMilRating /   curBestMilShipRating() )
     #troopShipsNeeded = min( troopShipsNeeded ,  math.floor( milFleetEquiv / 2) - myTroopShips) # stale calcs to limit troops priority relative to current tot mil rating
      
-    invasionPriority = 20+ 200*max(0,  troopShipsNeeded )
+    invasionPriority = 10+ 200*max(0,  troopShipsNeeded )
 
     # print ""
     # print "Number of Troop Ships Without Missions: " + str(numTroopShips)
@@ -286,7 +286,7 @@ def calculateMilitaryPriority():
     # build one more military ship than military targeted systems
     #militaryPriority = 100 * ((numMilitaryTargetedSystemIDs +2) - numMilitaryShips) / (numMilitaryTargetedSystemIDs + 1)
     militaryPriority = int( 40 + max(0,  15*((1.25*totalThreat +threatBias  -  totalFleetRating ) / curShipRating)) )
-    print "Military Priority Calc:  int( 30 + max(0,  10*((1.25*totalThreat(%d)  -  totalFleetRating(%d)  ) / curShipRating(%d)  )) ) = %d"%(totalThreat,  totalFleetRating,  curShipRating, militaryPriority)
+    print "Military Priority Calc:  int( 40 + max(0,  10*((1.25*totalThreat(%d)  -  totalFleetRating(%d)  ) / curShipRating(%d)  )) ) = %d"%(totalThreat,  totalFleetRating,  curShipRating, militaryPriority)
     # print ""
     # print "Number of Military Ships Without Missions: " + str(numMilitaryShips)
     # print "Number of Military Targeted Systems: " + str(numMilitaryTargetedSystemIDs)
