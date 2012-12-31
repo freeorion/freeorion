@@ -1001,7 +1001,7 @@ void SidePanel::PlanetPanel::CheckDisplayPlanets() {
 }
 
 namespace {
-    bool AvailableToColonize(const Ship* ship, int system_id, int empire_id) {
+    bool IsAvailable(const Ship* ship, int system_id, int empire_id) {
         if (!ship)
             return false;
         Fleet* fleet = GetFleet(ship->FleetID());
@@ -1010,10 +1010,34 @@ namespace {
         if (ship->SystemID() == system_id &&
             ship->OwnedBy(empire_id) &&
             ship->GetVisibility(empire_id) >= VIS_PARTIAL_VISIBILITY &&
-            ship->CanColonize() &&
-            ship->OrderedColonizePlanet() == INVALID_OBJECT_ID &&
             ship->OrderedScrapped() == false &&
             fleet->FinalDestinationID() == INVALID_OBJECT_ID )
+        { return true; }
+        return false;
+    }
+
+    bool AvailableToColonize(const Ship* ship, int system_id, int empire_id) {
+        if (!ship)
+            return false;
+        Fleet* fleet = GetFleet(ship->FleetID());
+        if (!fleet)
+            return false;
+        if ( IsAvailable(ship, system_id, empire_id) &&
+            ship->CanColonize() &&
+            ship->OrderedColonizePlanet() == INVALID_OBJECT_ID )
+        { return true; }
+        return false;
+    };
+
+    bool AvailableToInvade(const Ship* ship, int system_id, int empire_id) {
+        if (!ship)
+            return false;
+        Fleet* fleet = GetFleet(ship->FleetID());
+        if (!fleet)
+            return false;
+        if (IsAvailable(ship, system_id, empire_id) &&
+            ship->HasTroops() &&
+            ship->OrderedInvadePlanet() == INVALID_OBJECT_ID )
         { return true; }
         return false;
     };
@@ -1042,8 +1066,8 @@ namespace {
         return 0;
     }
 
-    std::set<Ship*> ValidSelectedInvasionShips(int system_id) {
-        std::set<Ship*> retval;
+    std::set<const Ship*> ValidSelectedInvasionShips(int system_id) {
+        std::set<const Ship*> retval;
 
         // if not looking in a valid system, no valid colony ship can be available
         if (system_id == INVALID_OBJECT_ID)
@@ -1127,6 +1151,56 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     return (*capable_and_available_colony_ships.begin())->ID();
 }
 
+
+std::set<const Ship*> AutomaticallyChosenInvasionShips(int target_planet_id) {
+    std::set<const Ship*> retval;
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (empire_id == ALL_EMPIRES)
+        return retval;
+
+    const Planet* target_planet = GetPlanet(target_planet_id);
+    if (!target_planet)
+        return retval;
+    int system_id = target_planet->SystemID();
+    const System* system = GetSystem(system_id);
+    if (!system)
+        return retval;
+
+    //Can't invade owned-by-self planets; early exit
+    if ( target_planet->OwnedBy(empire_id))
+        return retval; 
+
+
+    // get "just enough" ships that can invade and that are free to do so
+
+    double defending_troops = target_planet->CurrentMeterValue(METER_TROOPS);
+
+
+    const ObjectMap& objects = Objects();
+    std::vector<const Ship*> ships = objects.FindObjects<Ship>();
+
+    double invasion_troops = 0;
+    for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
+        const Ship* ship = *it;
+        if (!AvailableToInvade(ship, system_id, empire_id))
+            continue;
+
+        if (const ShipDesign* design = ship->Design())
+            invasion_troops += design->TroopCapacity();
+
+
+        retval.insert(ship);
+
+        //Rational for "+1" : Based on observation, ground combat seems to round up the defending troops value when it's fractional.
+        //Either that or growth of the planet's troop meter tends to need a little buffer when invading. 
+        if (invasion_troops > (defending_troops +1))
+            break;
+    }
+
+    return retval;
+}
+
 void SidePanel::PlanetPanel::Refresh() {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     m_planet_connection.disconnect();
@@ -1180,7 +1254,12 @@ void SidePanel::PlanetPanel::Refresh() {
     const Ship* selected_colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
     if (!selected_colony_ship)
         selected_colony_ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
-    std::set<Ship*> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
+    std::set<const Ship*> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
+    if( invasion_ships.empty() ){
+        std::set<const Ship*> autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
+        invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
+    }
+
 
     std::string colony_ship_species_name;
     const ShipDesign* design = 0;
@@ -1295,7 +1374,7 @@ void SidePanel::PlanetPanel::Refresh() {
         // show invade button
         AttachChild(m_invade_button);
         double invasion_troops = 0.0;
-        for (std::set<Ship*>::const_iterator ship_it = invasion_ships.begin();
+        for (std::set<const Ship*>::const_iterator ship_it = invasion_ships.begin();
              ship_it != invasion_ships.end(); ++ship_it)
         {
             const Ship* invasion_ship = *ship_it;
@@ -1629,12 +1708,18 @@ void SidePanel::PlanetPanel::ClickInvade() {
 
     } else {
         // order selected invasion ships to invade planet
-        std::set<Ship*> invasion_ships = ValidSelectedInvasionShips(planet->SystemID());
+        
+        std::set<const Ship*> invasion_ships = ValidSelectedInvasionShips(planet->SystemID());
 
-        for (std::set<Ship*>::const_iterator ship_it = invasion_ships.begin();
+        if( invasion_ships.empty() ){
+            std::set<const Ship*> autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
+            invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
+        }
+
+        for (std::set<const Ship*>::const_iterator ship_it = invasion_ships.begin();
              ship_it != invasion_ships.end(); ++ship_it)
         {
-            Ship* ship = *ship_it;
+            const Ship* ship = *ship_it;
             if (!ship)
                 continue;
 
