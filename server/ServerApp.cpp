@@ -942,10 +942,21 @@ void ServerApp::ClearEmpireTurnOrders() {
 }
 
 bool ServerApp::AllOrdersReceived() {
-    Logger().debugStream() << "ServerApp::AllOrdersReceived()";
+    // debug output
+    Logger().debugStream() << "ServerApp::AllOrdersReceived for turn: " << m_current_turn;
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin();
+         it != m_turn_sequence.end(); ++it)
+    {
+        if (!it->second)
+            Logger().debugStream() << " ... no orders from empire id: " << it->first;
+        else
+            Logger().debugStream() << " ... have ordres from empire id: " << it->first;
+    }
 
     // Loop through to find empire ID and check for valid orders pointer
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin();
+         it != m_turn_sequence.end(); ++it)
+    {
         if (!it->second)
             return false;
     }
@@ -1864,6 +1875,9 @@ void ServerApp::PreCombatProcessTurns() {
             order_it->second->Execute();
     }
 
+    // clean up orders, which are no longer needed
+    ClearEmpireTurnOrders();
+
     // update production queues after order execution
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
         if (Empires().Eliminated(it->first))
@@ -1871,21 +1885,13 @@ void ServerApp::PreCombatProcessTurns() {
         it->second->UpdateProductionQueue();
     }
 
-
-
     Logger().debugStream() << "ServerApp::ProcessTurns colonization and scrapping";
 
     // player notifications
     m_networking.SendMessage(TurnProgressMessage(Message::COLONIZE_AND_SCRAP));
 
-
-    // clean up orders, which are no longer needed
-    ClearEmpireTurnOrders();
-
-
     HandleColonization();
     HandleInvasion();
-
 
     // scrap orders
     std::vector<int> objects_to_scrap;
@@ -2086,7 +2092,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     // notify players that production and growth is being processed
     m_networking.SendMessage(TurnProgressMessage(Message::EMPIRE_PRODUCTION));
-    Logger().debugStream() << "ServerApp::ProcessTurns effects and meter updates";
+    Logger().debugStream() << "ServerApp::PostCombatProcessTurns effects and meter updates";
 
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
@@ -2103,7 +2109,7 @@ void ServerApp::PostCombatProcessTurns() {
     }
 
 
-    Logger().debugStream() << "ServerApp::ProcessTurns empire resources updates";
+    Logger().debugStream() << "ServerApp::PostCombatProcessTurns empire resources updates";
 
 
     // Determine how much of each resource is available, and determine how to
@@ -2126,7 +2132,7 @@ void ServerApp::PostCombatProcessTurns() {
     }
 
 
-    Logger().debugStream() << "ServerApp::ProcessTurns queue progress checking";
+    Logger().debugStream() << "ServerApp::PostCombatProcessTurns queue progress checking";
 
     // Consume distributed resources to planets and on queues, create new
     // objects for completed production and give techs to empires that have
@@ -2225,6 +2231,7 @@ void ServerApp::PostCombatProcessTurns() {
     // update current turn number so that following visibility updates and info
     // sent to players will have updated turn associated with them
     ++m_current_turn;
+    Logger().debugStream() << "ServerApp::PostCombatProcessTurns Turn number incremetned to " << m_current_turn;
 
 
     // new turn visibility update
@@ -2254,6 +2261,7 @@ void ServerApp::PostCombatProcessTurns() {
                                         m_networking.PlayerIsHost(player_id));
     }
 
+    Logger().debugStream() << "ServerApp::PostCombatProcessTurns Sending turn updates to players";
     // send new-turn updates to all players
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
          player_it != m_networking.established_end(); ++player_it)
@@ -2268,6 +2276,7 @@ void ServerApp::PostCombatProcessTurns() {
                                               GetSpeciesManager(),
                                               players));
     }
+    Logger().debugStream() << "ServerApp::PostCombatProcessTurns done";
 }
 
 void ServerApp::CheckForEmpireEliminationOrVictory() {

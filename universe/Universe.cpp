@@ -2309,12 +2309,12 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
                 stale_set.insert(fleet_id);
         }
 
-        for (std::set<int>::const_iterator stale_it = stale_set.begin();
-             stale_it != stale_set.end(); ++stale_it)
-        {
-            const UniverseObject* obj = latest_known_objects.Object(*stale_it);
-            //Logger().debugStream() << "Object " << *stale_it << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << empire_id ;
-        }
+        //for (std::set<int>::const_iterator stale_it = stale_set.begin();
+        //     stale_it != stale_set.end(); ++stale_it)
+        //{
+        //    const UniverseObject* obj = latest_known_objects.Object(*stale_it);
+        //    Logger().debugStream() << "Object " << *stale_it << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << empire_id ;
+        //}
     }
 }
 
