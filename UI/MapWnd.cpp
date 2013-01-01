@@ -3958,8 +3958,11 @@ bool MapWnd::EndTurn() {
         int turn_number = CurrentTurn();
         float ratio = (RP/(PP+0.0001));
         const GG::Clr color = empire->Color();
-        Logger().debugStream() << "Current Output (turn " << turn_number << " ) RP/PP: " << ratio << " ( " << RP << "/"<< PP << ")";
-        Logger().debugStream() << "EmpireColors: " << color.r << " " << color.g << " " << color.b << " "<< color.a;
+        Logger().debugStream() << "Current Output (turn " << turn_number << ") RP/PP: " << ratio << " (" << RP << "/" << PP << ")";
+        Logger().debugStream() << "EmpireColors: " << static_cast<int>(color.r)
+                                            << " " << static_cast<int>(color.g)
+                                            << " " << static_cast<int>(color.b)
+                                            << " " << static_cast<int>(color.a);
     }
     HumanClientApp::GetApp()->StartTurn();
     return true;
