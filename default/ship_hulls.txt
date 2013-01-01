@@ -2176,6 +2176,10 @@ Hull
             scope = NumberOf number = 2 condition = And [
                 Planet
                 Planet type = GasGiant
+                Not WithinStarlaneJumps 2 Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
             ]
             activation = Turn high = 2
             effects = AddSpecial name = "KRAKEN_NEST_SPECIAL"
@@ -2284,7 +2288,14 @@ Hull
     location = All
     effectsgroups = [
         EffectsGroup
-            scope = NumberOf number = 2 condition = Planet size = Small
+            scope = NumberOf number = 2 condition = And [
+                Planet
+                Planet size = Small
+                Not WithinStarlaneJumps 2 Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+            ]
             activation = Not Turn low = 1
             effects = AddSpecial name = "SNOWFLAKE_NEST_SPECIAL"
             
@@ -2390,8 +2401,15 @@ Hull
     Unproducible
     location = All
     effectsgroups = [
-        EffectsGroup     
-            scope = NumberOf number = 2 condition = Planet type = Asteroids
+        EffectsGroup
+            scope = NumberOf number = 2 condition = And [
+                Planet
+                Planet type = Asteroids
+                Not WithinStarlaneJumps 2 Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+            ]
             activation = Not Turn low = 1
             effects = AddSpecial name = "JUGGERNAUT_NEST_SPECIAL"
             
@@ -2409,7 +2427,6 @@ Hull
                 Destroy
             ]
         [[GOOD_VISION]]
-        
     ]
     icon = ""
     graphic = "icons/monsters/juggernaut-1.png"

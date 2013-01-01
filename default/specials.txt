@@ -443,9 +443,9 @@ Special
         Planet
         Not Planet type = [Asteroids GasGiant]
         Not WithinStarlaneJumps 2 Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                ]
+            Planet
+            OwnedBy AnyEmpire
+        ]
     ]
     effectsgroups = [
         EffectsGroup
@@ -500,6 +500,14 @@ Special
 Special
     name = "KRAKEN_NEST_SPECIAL"
     description = "KRAKEN_NEST_SPECIAL_DESC"
+    location = And [
+        Planet
+        Not Planet type = [Asteroids GasGiant]
+        Not WithinStarlaneJumps 2 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
     effectsgroups = [
         EffectsGroup
             scope = Source
@@ -536,6 +544,14 @@ Special
 Special
     name = "SNOWFLAKE_NEST_SPECIAL"
     description = "SNOWFLAKE_NEST_SPECIAL_DESC"
+    location = And [
+        Planet
+        Not Planet type = [Asteroids GasGiant]
+        Not WithinStarlaneJumps 2 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
     effectsgroups = [
         EffectsGroup
             scope = Source
@@ -572,6 +588,14 @@ Special
 Special
     name = "JUGGERNAUT_NEST_SPECIAL"
     description = "JUGGERNAUT_NEST_SPECIAL_DESC"
+    location = And [
+        Planet
+        Not Planet type = [Asteroids GasGiant]
+        Not WithinStarlaneJumps 2 Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+    ]
     effectsgroups = [
         EffectsGroup
             scope = Source
