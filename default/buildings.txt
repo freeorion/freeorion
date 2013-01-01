@@ -1013,7 +1013,7 @@ BuildingType
                 PopulationCenter
             ]
             effects = [
-                SetPopulation Target.Population - 3
+                SetPopulation Target.Population - max(0, Target.NextTurnPopGrowth) - 3
                 SetTargetIndustry Value + Target.Population * 10 * [[PRODUCTION_PER_POP]]
                 SetIndustry Target.TargetIndustry
             ]
