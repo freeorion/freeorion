@@ -4062,7 +4062,7 @@ An old abandoned colony. Some of the [[encyclopedia INFRASTRUCTURE_TITLE]] shoul
 KRAKEN_NEST_SPECIAL
 Kraken Nest
 KRAKEN_NEST_SPECIAL_DESC
-At some point young kraken will rise from this place. With the proper tech, these mega-fauna could be domesticated.
+At some point young kraken will rise from this place. With knowledge of [[tech SHP_DOMESTIC_MONSTER]], these mega-fauna could be domesticated.
 
 SNOWFLAKE_NEST_SPECIAL
 Snowflake Nest
