@@ -6375,31 +6375,31 @@ DEF_PLAN_BARRIER_SHLD_1
 Planetary Barrier Shield 1
 
 DEF_PLAN_BARRIER_SHLD_1_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 30, cumulative with [[tech LRN_FORCE_FIELD]].'''
+'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 30, cumulative with [[tech LRN_FORCE_FIELD]], and regenerates each turn by one plus 25% of the value of the planets' infrastructure.'''
 
 DEF_PLAN_BARRIER_SHLD_2
 Planetary Barrier Shield 2
 
 DEF_PLAN_BARRIER_SHLD_2_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 60 plus the value of the planets' infrastructure, cumulative with other shield boosts.'''
+'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 60, cumulative with other shield boosts, and regenerates each turn by one plus the value of the planets' infrastructure.'''
 
 DEF_PLAN_BARRIER_SHLD_3
 Planetary Barrier Shield 3
 
 DEF_PLAN_BARRIER_SHLD_3_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 90 plus the 1.5 times value of the planets' infrastructure, cumulative with other shield boosts.'''
+'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 90, cumulative with other shield boosts, and regenerates each turn by one plus twice the value of the planets' infrastructure.'''
 
 DEF_PLAN_BARRIER_SHLD_4
 Planetary Barrier Shield 4
 
 DEF_PLAN_BARRIER_SHLD_4_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 150 plus the 2.5 times value of the planets' infrastructure, cumulative with other shield boosts.'''
+'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 150, cumulative with other shield boosts, and regenerates each turn by one plus 2.5 times the value of the planets' infrastructure.'''
 
 DEF_PLAN_BARRIER_SHLD_5
 Planetary Barrier Shield 5
 
 DEF_PLAN_BARRIER_SHLD_5_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 150 plus the 5 times value of the planets' infrastructure, cumulative with other shield boosts.'''
+'''Increases max [[encyclopedia SHIELDS_TITLE]] on planets by an additional 150, cumulative with other shield boosts and regenerates each turn by one plus 5 times the value of the planets' infrastructure.'''
 
 DEF_SYST_DEF_MINE_1
 System Defense Mines 1
@@ -7961,7 +7961,7 @@ SH_PROTOPLASMIC
 Protoplasmic Hull
 
 SH_PROTOPLASMIC_DESC
-'''This monocellular hull suspends its internal parts in its cytoplasm rather than mounting them on a solid internal structure. It has three of each internal slots and external slots. Structure is high, and speed and [[encyclopedia STEALTH_TITLE]] are good. This hull regenerates structure and fuel between combats.
+'''This monocellular hull suspends its internal parts in its cytoplasm rather than mounting them on a solid internal structure. It has three internal slots and two external slots. Structure is high, and speed and [[encyclopedia STEALTH_TITLE]] are good. This hull regenerates structure and fuel between combats.
 
 Requires a Basic Shipyard, an Orbital Incubator, and a Cellular Growth Chamber at the planet where it is developed.'''
 
@@ -7985,7 +7985,7 @@ SH_BIOADAPTIVE
 Bio-Adaptive Hull
 
 SH_BIOADAPTIVE_DESC
-'''This living hull has mind and body working in perfect unison, allowing it to react and adapt to its surroundings with unparalleled efficiency. It has three external slots and two internal slots. [[encyclopedia STEALTH_TITLE]], speed and structure are all very high. This hull regenerates fuel and completely recovers structure between combats.
+'''This living hull has mind and body working in perfect unison, allowing it to react and adapt to its surroundings with unparalleled efficiency. It has three external slots and three internal slots. [[encyclopedia STEALTH_TITLE]], speed and structure are all very high. This hull regenerates fuel and completely recovers structure between combats.
 
 Requires a Basic Shipyard, an Orbital Incubator, and a Cellular Growth Chamber at the planet where it is developed.'''
 

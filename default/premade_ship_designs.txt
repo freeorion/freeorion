@@ -328,6 +328,7 @@ ShipDesign
         "SR_WEAPON_5"
         "SR_WEAPON_5"
         "SR_WEAPON_5"
+        "SR_WEAPON_5"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
@@ -338,6 +339,7 @@ ShipDesign
     description = "SD_MARK_C_ENDO2_DESC"
     hull = "SH_ENDOMORPHIC"
     parts = [
+        "SR_WEAPON_6"
         "SR_WEAPON_6"
         "SR_WEAPON_6"
         "SR_WEAPON_6"
@@ -354,6 +356,7 @@ ShipDesign
         "SR_WEAPON_7"
         "SR_WEAPON_7"
         "SR_WEAPON_7"
+        "SR_WEAPON_7"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
@@ -364,6 +367,7 @@ ShipDesign
     description = "SD_MARK_C_ENDO4_DESC"
     hull = "SH_ENDOMORPHIC"
     parts = [
+        "SR_WEAPON_8"
         "SR_WEAPON_8"
         "SR_WEAPON_8"
         "SR_WEAPON_8"
@@ -380,6 +384,7 @@ ShipDesign
         "SR_WEAPON_9"
         "SR_WEAPON_9"
         "SR_WEAPON_9"
+        "SR_WEAPON_9"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
@@ -390,6 +395,7 @@ ShipDesign
     description = "SD_MARKC_ENDO6_DESC"
     hull = "SH_ENDOMORPHIC"
     parts = [
+        "SR_WEAPON_10"
         "SR_WEAPON_10"
         "SR_WEAPON_10"
         "SR_WEAPON_10"
@@ -406,6 +412,7 @@ ShipDesign
         "SR_WEAPON_11"
         "SR_WEAPON_11"
         "SR_WEAPON_11"
+        "SR_WEAPON_11"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
@@ -416,6 +423,7 @@ ShipDesign
     description = "SD_MARK_C_ENDO8_DESC"
     hull = "SH_ENDOMORPHIC"
     parts = [
+        "SR_WEAPON_12"
         "SR_WEAPON_12"
         "SR_WEAPON_12"
         "SR_WEAPON_12"
@@ -430,6 +438,7 @@ ShipDesign
     hull = "SH_SELF_GRAVITATING"
     parts = [
         "DT_DETECTOR_1"
+        "SR_WEAPON_9"
         "SR_WEAPON_9"
         "SR_WEAPON_9"
         "SR_WEAPON_9"
