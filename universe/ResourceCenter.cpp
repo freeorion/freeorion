@@ -115,7 +115,7 @@ void ResourceCenter::SetFocus(const std::string& focus) {
         ResourceCenterChangedSignal();
         return;
     }
-    Logger().errorStream() << "ResourceCenter::SetFocus Exploiter!-- unavailable focus " << focus << "attempted to be set for object w/ dump string: " << Dump();
+    Logger().errorStream() << "ResourceCenter::SetFocus Exploiter!-- unavailable focus " << focus << " attempted to be set for object w/ dump string: " << Dump();
 }
 
 void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters() {

@@ -2313,7 +2313,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
              stale_it != stale_set.end(); ++stale_it)
         {
             const UniverseObject* obj = latest_known_objects.Object(*stale_it);
-            Logger().debugStream() << "Object " << *stale_it << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << empire_id ;
+            //Logger().debugStream() << "Object " << *stale_it << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << empire_id ;
         }
     }
 }
