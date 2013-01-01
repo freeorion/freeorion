@@ -529,9 +529,8 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
                        Client().m_player_info);
 
     // if I am the host, do autosave
-    for (std::map<int, PlayerInfo>::const_iterator it = Client().m_player_info.begin(); it != Client().m_player_info.end(); ++it)
-        if (it->second.host && it->first == Client().PlayerID())
-            Client().Autosave();
+    if (Client().Networking().PlayerIsHost(Client().PlayerID()))
+        Client().Autosave();
 
     return transit<PlayingTurn>();
 }
@@ -574,9 +573,11 @@ boost::statechart::result WaitingForTurnData::react(const GameStart& msg) {
     if (loaded_game_data && ui_data_available)
         Client().m_ui->RestoreFromSaveData(ui_data);
 
-    // if I am the host, do autosave
-    if (Client().Networking().PlayerIsHost(Client().PlayerID()))
-            Client().Autosave();
+    // if I am the host on the first turn, do an autosave. on later turns, will
+    // have just loaded save, so don't need to autosave. might also have just
+    // loaded a turn 1 autosave, but not sure how to check for that here...
+    if (Client().CurrentTurn() == 1 && Client().Networking().PlayerIsHost(Client().PlayerID()))
+        Client().Autosave();
 
     return transit<PlayingTurn>();
 }
