@@ -1738,9 +1738,8 @@ void MapWnd::InitTurn() {
 
     universe.InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
 
-    Logger().debugStream() << Empires().Dump();
-
     //// DEBUG
+    //Logger().debugStream() << Empires().Dump();
     //std::cout << "MapWnd::InitTurn() m_selected_fleet_ids: " << std::endl;
     //for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
     //    const UniverseObject* obj = const_universe.Object(*it);
