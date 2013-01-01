@@ -2637,6 +2637,13 @@ Starlane Speed: %13%
 # Battle Speed: %12%
 ##
 
+ENC_UNLOCKED_BY
+'''
+
+<u>Unlocked By Techs:</u>
+
+'''
+
 ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
 '''
 
