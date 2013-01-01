@@ -586,7 +586,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     // something, if it is able to do so.  The number of rounds scales with the
     // number of objects, so the total actions per object is independent of
     // number of objects in the battle
-    const int NUM_COMBAT_ROUNDS = 10*valid_attacker_object_ids.size();
+    const int NUM_COMBAT_ROUNDS = 3*valid_attacker_object_ids.size();
 
     for (int round = 1; round <= NUM_COMBAT_ROUNDS; ++round) {
         Seed(base_seed + round);    // ensure each combat round produces different results
