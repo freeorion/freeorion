@@ -454,4 +454,9 @@
       <Filter>Source Files\universe</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\src\Version.template">
+      <Filter>Source Files\util</Filter>
+    </CustomBuild>
+  </ItemGroup>
 </Project>
