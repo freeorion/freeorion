@@ -413,7 +413,7 @@ def generateProductionOrders():
             print  "%8s | %20s | type:%20s | tags:%20s | specials: %20s | owner:%d "%(bldg,  thisObj.name,  "_".join(thisObj.buildingTypeName.split("_")[-2:])[:20],  tags,  specials,  thisObj.owner )
         
         capitalBldgs = [universe.getObject(bldg).buildingTypeName for bldg in homeworld.buildingIDs]
-
+        
         possibleBuildingTypeIDs = [bldTID for bldTID in empire.availableBuildingTypes if  fo.getBuildingType(bldTID).canBeProduced(empire.empireID,  homeworld.id)]
         if  possibleBuildingTypeIDs:
             print "Possible building types to build:"
@@ -681,16 +681,27 @@ def generateProductionOrders():
         queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
         bldType = fo.getBuildingType(bldName)
         for pid in AIstate.popCtrIDs:
-            if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
-                planet=universe.getPlanet(pid)
+            planet=universe.getPlanet(pid)
+            if not planet:
+                continue
+            tPop = planet.currentMeterValue(fo.meterType.targetPopulation)
+            if (tPop >= 36):
                 cPop = planet.currentMeterValue(fo.meterType.population)
-                tPop = planet.currentMeterValue(fo.meterType.targetPopulation)
-                if (tPop >= 32) and (cPop >=0.9*tPop):
-                    if planet.focus in [ AIFocusType.FOCUS_INDUSTRY,  AIFocusType.FOCUS_MINING ]:
-                         fo.issueChangeFocusOrder(pid, AIFocusType.FOCUS_RESEARCH)
-                    res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
-                    if res: queuedBldLocs.append(pid)
-                    print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
+                if (cPop >=0.9*tPop):
+                    if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
+                        if planet.focus in [ AIFocusType.FOCUS_INDUSTRY,  AIFocusType.FOCUS_MINING ]:
+                             fo.issueChangeFocusOrder(pid, AIFocusType.FOCUS_RESEARCH)
+                        res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
+                        if res: 
+                            queuedBldLocs.append(pid)
+                            res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                        print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
+                elif (cPop < 20 ):
+                    for bldg in planet.buildingIDs:
+                        if universe.getObject(bldg).buildingTypeName  == bldName:
+                            res=fo.issueScrapOrder( bldg)
+                            print "Tried scrapping %s at planet %s,  got result %d"%(bldName,  planet.Name,  res)
+
 
     totalPPSpent = fo.getEmpire().productionQueue.totalSpent
     print "  Total Production Points Spent:     " + str(totalPPSpent)
