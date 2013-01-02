@@ -445,7 +445,6 @@ ShipDesign
         "SR_WEAPON_9"
         "SR_WEAPON_9"
         "SR_WEAPON_9"
-        "SR_WEAPON_9"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
