@@ -1736,43 +1736,16 @@ public:
     void            Refresh() {
         ScopedTimer timer("ShipsListBox::Refresh");
 
-        // store selected ship rows
-        std::set<int> old_selected_ship_ids;
-        try {
-            for (ShipsListBox::SelectionSet::const_iterator it = this->Selections().begin(); it != this->Selections().end(); ++it) {
-                std::list<GG::ListBox::Row*>::iterator starRow_it = *it;
-                bool foundStarRow=false;
-                for (std::list<GG::ListBox::Row*>::iterator lb_it = this->begin(); lb_it != this->end() ; lb_it++) {   // checking against
-                    if (lb_it == starRow_it) {
-                        foundStarRow = true;
-                        break;
-                    }
-                }
-                if (!foundStarRow) {
-                    Logger().errorStream() << "ShipsListBox::Refresh Error tried adding invalid ship row selection to old_selected_ship_ids";
-                    continue;
-                }
-                if (const ShipRow* row = dynamic_cast<const ShipRow*>(**it))
-                    old_selected_ship_ids.insert(row->ShipID());
-            }
-        } catch (const std::exception& e) {
-            Logger().errorStream() << "caught exception looping over old selections: " << e.what();
+        const Fleet* fleet = GetFleet(m_fleet_id);
+        if (!fleet) {
+            Clear();
+            return;
         }
 
-
-        //Logger().debugStream() << "ShipsListBox::Refresh initial selected ships:";
-        //for (std::set<int>::const_iterator it = old_selected_ship_ids.begin(); it != old_selected_ship_ids.end(); ++it)
-        //    Logger().debugStream() << " ... " << *it;
-
-        // repopulate list with ships in current fleet
-
+        const GG::Pt row_size = ListRowSize();
         Clear();
 
-        const Fleet* fleet = GetFleet(m_fleet_id);
-        if (!fleet)
-            return;
-
-        const GG::Pt row_size = ListRowSize();
+        // repopulate list with ships in current fleet
 
         // preinitialize listbox/row column widths, because what
         // ListBox::Insert does on default is not suitable for this case
@@ -1784,7 +1757,7 @@ public:
         const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
         const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
-        std::set<int> new_selected_ship_ids;
+        bool select_first = true;
 
         for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
             int ship_id = *it;
@@ -1798,19 +1771,17 @@ public:
             ShipRow* row = new ShipRow(GG::X1, row_size.y, ship_id);
             ShipsListBox::iterator row_it = Insert(row);
             row->Resize(row_size);
-            if (old_selected_ship_ids.find(ship_id) != old_selected_ship_ids.end()) {
+            if (select_first) {
                 SelectRow(row_it);  // select in listbox
                 // and mark data panel in row as selected, as would happen if it
                 // was selected by user or programmatically via FleetDetailPanel
                 if (ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>((*row)[0]))
                     ship_panel->Select(true);
-                //Logger().debugStream() << "ShipsListBox::Refresh re-selecting ship: " << ship_id;
-                new_selected_ship_ids.insert(ship_id);
+                select_first = false;
             }
         }
 
-        if (new_selected_ship_ids != old_selected_ship_ids)
-            SelChangedSignal(this->Selections());
+        SelChangedSignal(this->Selections());
     }
 
     void            SetFleet(int fleet_id) {
