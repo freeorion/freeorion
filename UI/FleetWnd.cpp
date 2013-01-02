@@ -1985,7 +1985,8 @@ void FleetDetailPanel::SetSelectedShips(const std::set<int>& ship_ids) {
 
     // early exit if nothing to select, since everything has already been deselected above.
     if (ship_ids.empty()) {
-        ShipSelectionChanged(m_ships_lb->Selections());
+        if (!initial_selections.empty())
+            ShipSelectionChanged(m_ships_lb->Selections());
         return;
     }
 
@@ -2312,27 +2313,29 @@ void FleetWnd::Refresh() {
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
     const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
-
     // save selected fleet(s) and ships(s)
     std::set<int> initially_selected_fleets = this->SelectedFleetIDs();
     std::set<int> initially_selected_ships = this->SelectedShipIDs();
 
     // remove existing fleet rows
     m_fleets_lb->Clear();   // deletes rows when removing; they don't need to be manually deleted
+    std::set<int> initial_fleet_ids = m_fleet_ids;
+    m_fleet_ids.clear();
 
     // skip nonexistant systems
-    if (m_system_id != INVALID_OBJECT_ID &&
-        this_client_known_destroyed_objects.find(m_system_id) != this_client_known_destroyed_objects.end())
+    if (m_system_id != INVALID_OBJECT_ID && (
+        this_client_known_destroyed_objects.find(m_system_id) != this_client_known_destroyed_objects.end() ||
+        this_client_stale_object_info.find(m_system_id) != this_client_stale_object_info.end()))
     {
         m_system_connection.disconnect();
+        m_fleet_detail_panel->SetFleet(INVALID_OBJECT_ID);
         return;
     }
 
     // repopulate m_fleet_ids according to FleetWnd settings
     if (GetSystem(m_system_id)) {
         // get fleets to show from system, based on required ownership
-        m_fleet_ids.clear();
-        const ObjectMap& objects = GetUniverse().Objects();
+        const ObjectMap& objects = Objects();
         std::vector<const Fleet*> all_fleets = objects.FindObjects<Fleet>();
         for (std::vector<const Fleet*>::const_iterator it = all_fleets.begin(); it != all_fleets.end(); ++it) {
             const Fleet* fleet = *it;
@@ -2343,24 +2346,22 @@ void FleetWnd::Refresh() {
                 continue;
 
             // skip known destroyed and stale info objects
-            if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end())
-                continue;
-            if (this_client_stale_object_info.find(fleet_id) != this_client_stale_object_info.end())
-                continue;
+            if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end() ||
+                this_client_stale_object_info.find(fleet_id) != this_client_stale_object_info.end())
+            { continue; }
 
             // skip fleets outside systems
             if (fleet->SystemID() == INVALID_OBJECT_ID)
                 continue;
 
             if (m_empire_id == ALL_EMPIRES || fleet->OwnedBy(m_empire_id)) {
-                m_fleet_ids.insert(fleet->ID());
-                AddFleet(fleet->ID());
+                m_fleet_ids.insert(fleet_id);
+                AddFleet(fleet_id);
             }
         }
     } else {
-        // check all fleets whose IDs are already in m_fleet_ids, removing any that no longer exist.
-        std::set<int> validated_fleet_ids;
-        for (std::set<int>::const_iterator it = m_fleet_ids.begin(); it != m_fleet_ids.end(); ++it) {
+        // check all fleets whose IDs are in initial_fleet_ids, adding back those that still exist
+        for (std::set<int>::const_iterator it = initial_fleet_ids.begin(); it != initial_fleet_ids.end(); ++it) {
             int fleet_id = *it;
 
             // skip known destroyed and stale info objects
@@ -2370,16 +2371,36 @@ void FleetWnd::Refresh() {
                 continue;
 
             if (GetFleet(fleet_id)) {
-                validated_fleet_ids.insert(fleet_id);
+                m_fleet_ids.insert(fleet_id);
                 AddFleet(fleet_id);
             }
         }
-        m_fleet_ids = validated_fleet_ids;
     }
 
-    // reselect previously-selected fleets
-    this->SetSelectedFleets(initially_selected_fleets);
-    this->SetSelectedShips(initially_selected_ships);
+    // filter initially selected fleets according to present fleets
+    std::set<int> still_present_initially_selected_fleets;
+    for (std::set<int>::const_iterator it = initially_selected_fleets.begin();
+         it != initially_selected_fleets.end(); ++it)
+    {
+        int fleet_id =  *it;
+        if (m_fleet_ids.find(fleet_id) != m_fleet_ids.end())
+            still_present_initially_selected_fleets.insert(fleet_id);
+    }
+
+    if (!still_present_initially_selected_fleets.empty()) {
+        // reselect any previously-selected fleets
+        this->SetSelectedFleets(still_present_initially_selected_fleets);
+        // reselect any previously-selected ships
+        this->SetSelectedShips(initially_selected_ships);
+    } else if (!m_fleets_lb->Empty()) {
+        // default select first fleet and first ship
+        int first_fleet_id = FleetInRow(m_fleets_lb->begin());
+        if (first_fleet_id != INVALID_OBJECT_ID) {
+            std::set<int> fleet_id_set;
+            fleet_id_set.insert(first_fleet_id);
+            this->SetSelectedFleets(fleet_id_set);
+        }
+    }
 
     RefreshStateChangedSignals();
 }
@@ -2508,12 +2529,12 @@ void FleetWnd::SelectFleet(int fleet_id) {
 
 void FleetWnd::SetSelectedFleets(const std::set<int>& fleet_ids) {
     const GG::ListBox::SelectionSet initial_selections = m_fleets_lb->Selections();
-
     m_fleets_lb->DeselectAll();
 
     // early exit if nothing to select
     if (fleet_ids.empty()) {
-        FleetSelectionChanged(m_fleets_lb->Selections());
+        const GG::ListBox::SelectionSet sels = m_fleets_lb->Selections();
+        FleetSelectionChanged(sels);
         return;
     }
 
@@ -2532,8 +2553,10 @@ void FleetWnd::SetSelectedFleets(const std::set<int>& fleet_ids) {
         }
     }
 
-    if (initial_selections != m_fleets_lb->Selections())
-        FleetSelectionChanged(m_fleets_lb->Selections());
+    const GG::ListBox::SelectionSet sels = m_fleets_lb->Selections();
+
+    if (sels.empty() || initial_selections != sels)
+        FleetSelectionChanged(sels);
 }
 
 void FleetWnd::SetSelectedShips(const std::set<int>& ship_ids)
@@ -2588,40 +2611,46 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     // then show no ships.
     if (rows.size() == 1) {
         // find selected row and fleet
+        bool found_row = false;
         for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
             if (rows.find(it) != rows.end()) {
                 m_fleet_detail_panel->SetFleet(FleetInRow(it));
+                found_row = true;
                 break;
             }
         }
+        if (!found_row)
+            m_fleet_detail_panel->SetFleet(INVALID_OBJECT_ID);
     } else {
         m_fleet_detail_panel->SetFleet(INVALID_OBJECT_ID);
     }
 
-    // mark as selected all FleetDataPanel that are in \a rows and mark as not
-    // selected all FleetDataPanel that aren't in \a rows
-    for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
-        bool select_this_row = (rows.find(it) != rows.end());
+    if (!rows.empty()) {
+        // mark as selected all FleetDataPanel that are in \a rows and mark as not
+        // selected all FleetDataPanel that aren't in \a rows
+        for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
+            bool select_this_row = (rows.find(it) != rows.end());
 
-        GG::ListBox::Row* row = *it;
-        if (!row) {
-            Logger().errorStream() << "FleetWnd::FleetSelectionChanged couldn't get row";
-            continue;
+            GG::ListBox::Row* row = *it;
+            if (!row) {
+                Logger().errorStream() << "FleetWnd::FleetSelectionChanged couldn't get row";
+                continue;
+            }
+            GG::Control* control = (*row)[0];
+            if (!control) {
+                Logger().errorStream() << "FleetWnd::FleetSelectionChanged couldn't get control from row";
+                continue;
+            }
+            FleetDataPanel* data_panel = dynamic_cast<FleetDataPanel*>(control);
+            if (!data_panel) {
+                Logger().errorStream() << "FleetWnd::FleetSelectionChanged couldn't get FleetDataPanel from control";
+                continue;
+            }
+            data_panel->Select(select_this_row);
         }
-        GG::Control* control = (*row)[0];
-        if (!control) {
-            Logger().errorStream() << "FleetWnd::FleetSelectionChanged couldn't get control from row";
-            continue;
-        }
-        FleetDataPanel* data_panel = dynamic_cast<FleetDataPanel*>(control);
-        if (!data_panel) {
-            Logger().errorStream() << "FleetWnd::FleetSelectionChanged couldn't get FleetDataPanel from control";
-            continue;
-        }
-        data_panel->Select(select_this_row);
     }
 
-    ClickedSignal(this);
+    //ClickedSignal(this);
     SelectedFleetsChangedSignal();
 }
 
