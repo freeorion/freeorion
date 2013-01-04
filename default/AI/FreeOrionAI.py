@@ -208,7 +208,7 @@ def declareWarOnAll():
 # at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
 # and can be sent to the server for processing.
 def generateOrders():
-    aggressions=["Turtle",  "Cautious",  "Typical",  "Aggressive",  "Maniacal"]
+    aggressions=["Turtle",  "Cautious",  "Moderate",  "Aggressive",  "Maniacal"]
     global lastTurnTimestamp
     universe = fo.getUniverse()
     turnStartTime=time() #starting AI timer here, to be sure AI doesn't get blame for any  lags in server being able to provide the Universe object
