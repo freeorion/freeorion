@@ -123,37 +123,27 @@ class AIFleetMission(AIAbstractMission):
         sysName = (sys1 and sys1.name) or "unknown"
         mMT0=mainMissionTargets[0]
         mMT0ID = mMT0.getTargetID()
-        #targetID = self.getTargetAITarget().getTargetID()
-        #print "\tMain-Mission type %s  -- primary target :   %s"%( AIFleetMissionTypeNames.name(mainMissionType),  mMT0)
         for fid in otherFleetsHere:
             fleetRoleA = foAI.foAIstate.getFleetRole(fid)
             if fleetRoleA != AIFleetMissionType.FLEET_MISSION_MILITARY: #TODO: if fleetRoles such as LongRange start being used, adjust this
                 continue # will only considering subsuming fleets that have a military type role
             fleet2 = universe.getFleet(fid)
             if not (fleet2 and (fleet2.systemID == systemID)):
-                #print "\t\t considering merging fleet (id %d )  into fleet (id %4d)  but the former no longer exists or not actually in system %4d %s although AI records thought it should be"%(fid, fleetID,   systemID,  sysName)
                 continue
             if not fleet2.ownedBy(foAI.foAIstate.empireID):
-                #print "\t\t considered merging fleet (id %d ) into fleet (id %d ),  but former not owned by this empire"%(fid,  fleetID)
                 continue
             f2Mission=foAI.foAIstate.getAIFleetMission(fid)
             doMerge=False
             needLeft=0
             if not f2Mission:
-                #continue #no, let's take this fleet over
                 doMerge=True
             else:
                 f2MType = (f2Mission.getAIMissionTypes()+[-1])[0]
-                #print "\t\t fleet2 (id %d)  has  mission type %s "%(fid,   AIFleetMissionTypeNames.name(f2MType))
                 f2Targets = f2Mission.getAITargets(f2MType)
                 if len(f2Targets)>1: 
-                    #print "\t\t\t considered merging fleet (id %d ) into  fleet (id %d  ) but former has multiple targets: %s"%(fid, fleetID,   str(f2Targets))
                     pass
                 elif len(f2Targets)==0: 
-                    #print "\t\t\t *****"
-                    print "\t\t\t ** Considering merging  fleetA (id: %4d)  into fleetB (id %d  ) and former has no targets, will take it.  FleetA mission was %s   "%(fid, fleetID,   f2Mission)
-                    #print "\t\t\t ** FleetA has ship ids %s"%list(fleet2.shipIDs)
-                    #print "\t\t\t *****"
+                    #print "\t\t\t ** Considering merging  fleetA (id: %4d)  into fleetB (id %d  ) and former has no targets, will take it.  FleetA mission was %s   "%(fid, fleetID,   f2Mission)
                     doMerge=True
                 else:
                     targetB = f2Targets[0].getTargetID()
@@ -179,7 +169,6 @@ class AIFleetMission(AIAbstractMission):
                                     if (needLeft < fBRating.get('overall', 0)) and fBRating.get('nships', 0)>1 :
                                         doMerge=True
             if doMerge:
-                #print "preparing to merge fleet %d into fleet %d,  leaving at least %d rating behind"%(fid,  fleetID,  needLeft)
                 FleetUtilsAI.mergeFleetAintoB(fid,  fleetID,  needLeft,  context="Order %s  of mission %s"%(context,  str(self)))
         return
 

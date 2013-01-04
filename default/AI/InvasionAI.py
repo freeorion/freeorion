@@ -154,7 +154,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     else:
         popVal = evaluatePlanet(planetID,  AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  species,  empire) #evaluatePlanet is implorted from ColonisationAI
         if planetID not in fleetSupplyablePlanetIDs:
-            popVal =  1.3*popVal#assign higher value if the colony would extend our supply range
+            popVal =  2.0*popVal#assign higher value if the colony would extend our supply range
         return popVal,  troops
 
         

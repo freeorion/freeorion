@@ -496,11 +496,14 @@ def removeLowValuePlanets(evaluatedPlanets):
     "removes all planets with a colonisation value < minimalColoniseValue"
 
     removeIDs = []
+    minVal = AIstate.minimalColoniseValue
+    if foAI.foAIstate.aggression <2:
+        minVal *= 3
 
     # print ":: min:" + str(AIstate.minimalColoniseValue)
     for planetID in evaluatedPlanets.iterkeys():
         #print ":: eval:" + str(planetID) + " val:" + str(evaluatedPlanets[planetID])
-        if (evaluatedPlanets[planetID][0] < AIstate.minimalColoniseValue):
+        if (evaluatedPlanets[planetID][0] < minVal):
             removeIDs.append(planetID)
     #print "removing ",  removeIDs
     for ID in removeIDs: del evaluatedPlanets[ID]

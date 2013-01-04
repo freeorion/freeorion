@@ -180,7 +180,7 @@ class AIShipDesignTypes(object):
     colonyShip = {"SD_COLONY_SHIP":"A", "Seeder":"B", "Nest-Maker":"C", "Den-Maker":"D"}
     outpostShip = {"SD_OUTPOST_SHIP":"A", "Outposter":"B"}
     troopShip = {"SD_TROOP_SHIP":"A", "Basic-Troopers":"B", "Medium-Troopers":"C",  "Heavy-Troopers":"D", "Very-Heavy-Troopers":"D"}
-    attackShip= {"SD_MARK":"A", "Lynx":"B","Griffon":"C",  "Wyvern":"D", "Manticore":"E",  "Reaver":"F"}
+    attackShip= {"SD_MARK":"A", "Lynx":"B","Griffon":"C",  "Wyvern":"D", "Manticore":"E",  "Devil":"F",  "Reaver":"G"}
     
 class AIShipRoleType(object):  #this is also used in determining fleetRoles
     SHIP_ROLE_INVALID = -1

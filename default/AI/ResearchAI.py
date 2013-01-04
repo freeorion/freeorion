@@ -26,7 +26,7 @@ def generateResearchOrders():
         print "%25s  %25s  %25s"%tline
     print""
     
-    if tRP >= 20:
+    if tRP >= 20  and foAI.foAIstate.aggression > 1:
         researchQueueList = getResearchQueueTechs()
         if (empire.getTechStatus("LRN_PSIONICS") != fo.techStatus.complete)  and ( "LRN_PSIONICS" not in researchQueueList[:5]  )  :
             for specName in ColonisationAI.empireSpecies:
@@ -41,7 +41,7 @@ def generateResearchOrders():
     gotSymBio = empire.getTechStatus("GRO_SYMBIOTIC_BIO") == fo.techStatus.complete
     gotXenoGen = empire.getTechStatus("GRO_XENO_GENETICS") == fo.techStatus.complete
     #assess if our empire has any non-lousy colonizers, & boost gro_xeno_gen if we don't
-    if gotSymBio and (not gotXenoGen):
+    if gotSymBio and (not gotXenoGen) and foAI.foAIstate.aggression!=0:
         mostAdequate=0
         for specName in ColonisationAI.empireColonizers:
             environs={}

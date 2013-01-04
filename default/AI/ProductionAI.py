@@ -181,45 +181,72 @@ def checkMarks():
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ""],  "",  model)    for iw in range(1, 9) ]
     
     nb,  hull =  designNameBases[2]+"-1-%1d",   "SH_ORGANIC"
-    is1,  is2 = "FU_BASIC_TANK",  "FU_BASIC_TANK"
+    is1= "FU_BASIC_TANK"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1],  "",  model)    for iw in range(2, 9) ]
     nb,  hull =  designNameBases[2]+"-2-%1d",   "SH_STATIC_MULTICELLULAR"
     is2 = "SH_DEFLECTOR"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(7, 9) ]
     
+    if foAI.foAIstate.aggression ==0: 
+        maxEM= 8
+    elif foAI.foAIstate.aggression ==1: 
+        maxEM= 12
+    else:
+        maxEM= 10
+    
     nb,  hull =  designNameBases[3]+"-%1d",   "SH_ENDOMORPHIC"
-    is1 = "FU_BASIC_TANK"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + 2*[ is1],  "",  model)    for iw in [5, 6, 7, 8 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + 2*[ is1],  "",  model)    for iw in [5, 6, 7 ] ]
 
     nb =  designNameBases[3]+"-2-%1d"
-    is3 = "SH_DEFLECTOR"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + [ is3,  is3],  "",  model)    for iw in [7, 8,  9,  10, 11, 12 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + [ is2,  is2],  "",  model)    for iw in range(6,  maxEM+1) ]
 
     nb =  designNameBases[3]+"3-%1d"
     ar1 = "AR_LEAD_PLATE"
     #newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar1] + [ is1,  is1],  "",  model)    for iw in [5, 6, 7, 8,   10, 11, 12 ] ]
 
     nb =  designNameBases[3]+"-4-%1d"
-    #newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar1] + [ is1, is3],  "",  model)    for iw in [7, 8,   10, 11, 12 ] ]
+    #newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar1] + [ is1, is2],  "",  model)    for iw in [7, 8,   10, 11, 12 ] ]
 
     nb =  designNameBases[4]+"-5-%1d"
     ar2= "AR_ZORTRIUM_PLATE"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + 2*[ is3],  "",  model)    for iw in [7, 8, 9, 10, 11, 12,  14,  15,  16,  17 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + 2*[ is2],  "",  model)    for iw in range(7,  maxEM+1) ]
     
     nb =  designNameBases[4]+"-6-%1d"
     ar3= "AR_NEUTRONIUM_PLATE"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] +[ar3]+ 2*[ is3],  "",  model)    for iw in [7, 8, 9, 10, 11, 12,  14,  15,  16,  17 ] ]
-    
+    if foAI.foAIstate.aggression ==0: 
+        newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw] +[ar3, ar3]+ 2*[ is2],  "",  model)    for iw in range(8,  maxEM+1) ]
+    else:
+        newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] +[ar3]+ 2*[ is2],  "",  model)    for iw in range(8,  maxEM+1) ]
+
     nb =  designNameBases[4]+"-7-%1d"
     is3= "SH_MULTISPEC"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + [ is3,  is3],  "",  model)    for iw in [7, 8, 9,  10, 11, 12,  14,  15,  16,  17 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
     
     nb =  designNameBases[4]+"-8-%1d"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + [ is3,  is3],  "",  model)    for iw in [7, 8,  9,   10, 11, 12,  14,  15,  16,  17 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
     
     nb =  designNameBases[4]+"-9-%1d"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar3] + [ is3,  is3],  "",  model)    for iw in [7, 8,  9,  10, 11, 12,  14,  15,  16,  17 ] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar3] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
     
+    if foAI.foAIstate.aggression >=2: 
+        nb,  hull =  designNameBases[4]+"-%1d-%1d",   "SH_ENDOSYMBIOTIC"
+        newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  3*[srb%iw]+[ar2] + 3*[ is2],  "",  model)    for iw in range(7,  12) ]
+        newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  3*[srb%iw]+[ar3] + 3*[ is2],  "",  model)    for iw in range(8,  12) ]
+        newMarkDesigns += [ (nb%(3, iw),  desc,  hull,  3*[srb%iw]+[ar2] + 3*[ is3],  "",  model)    for iw in range(7,  12) ]
+        newMarkDesigns += [ (nb%(4, iw),  desc,  hull,  3*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(8,  12) ]
+        #bioadaptive
+        nb,  hull =  designNameBases[4]+"-%1d-%1d",   "SH_BIOADAPTIVE"
+        newMarkDesigns += [ (nb%(5, iw),  desc,  hull,  3*[srb%iw] + 3*[ is2],  "",  model)    for iw in range(9,  14) ]
+        newMarkDesigns += [ (nb%(6, iw),  desc,  hull,  2*[srb%iw]+[ar2] + 3*[ is2],  "",  model)    for iw in range(9,  14) ]
+        newMarkDesigns += [ (nb%(7, iw),  desc,  hull,  3*[srb%iw] + 3*[ is3],  "",  model)    for iw in range(9,  14) ]
+        newMarkDesigns += [ (nb%(8, iw),  desc,  hull,  2*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(9,  14) ]
+    if foAI.foAIstate.aggression >2: 
+        nb,  hull =  designNameBases[5]+"-%1d-%1d",   "SH_SENTIENT"
+        newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  4*[srb%iw]+2*[ar2] + 3*[ is2],  "",  model)    for iw in range(10,  17) ]
+        newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  5*[srb%iw]+[ar3] + 3*[ is2],  "",  model)    for iw in range(10,  17) ]
+        newMarkDesigns += [ (nb%(3, iw),  desc,  hull,  5*[srb%iw]+[ar2] + 3*[ is3],  "",  model)    for iw in range(10,  17) ]
+        newMarkDesigns += [ (nb%(4, iw),  desc,  hull,  5*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(10,  17) ]
+        
     currentTurn=fo.currentTurn()
     needsAdding=[]
     namesToAdd=[]
@@ -287,9 +314,9 @@ def checkOutpostShips():
             for name,  desc,  hull,  partslist,  icon,  model in needsAdding:
                 try:
                     res=fo.issueCreateShipDesignOrder( name,  desc,  hull,  partslist,  icon,  model,  False)
-                    print "added  Mark Design %s, with result %d"%(name,  res)
+                    print "added  Outposter Design %s, with result %d"%(name,  res)
                 except:
-                    print "Error: exception triggered and caught adding outpost %s:  "%name,  traceback.format_exc()
+                    print "Error: exception triggered and caught adding outposter %s:  "%name,  traceback.format_exc()
 
     bestShip,  bestDesign,  buildChoices = getBestShipInfo( AIPriorityType.PRIORITY_PRODUCTION_OUTPOST)
     if bestDesign:
@@ -457,7 +484,7 @@ def generateProductionOrders():
                     except:
                         print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
-            if  ("BLD_EXOBOT_SHIP" in possibleBuildingTypes) and ("BLD_EXOBOT_SHIP" not in capitalBldgs+queuedBldgNames):
+            if  ("BLD_EXOBOT_SHIP" in possibleBuildingTypes) and ("BLD_EXOBOT_SHIP" not in queuedBldgNames):
                 if  len( empireColonizers.get("SP_EXOBOT", []))==0 : #don't have an exobot shipyard yet
                     try:
                         res=fo.issueEnqueueBuildingProductionOrder("BLD_EXOBOT_SHIP", empire.capitalID)
@@ -677,7 +704,7 @@ def generateProductionOrders():
                                     break #only initiate max of one new build per turn
 
     bldName = "BLD_CONC_CAMP"
-    if empire.buildingTypeAvailable(bldName):
+    if foAI.foAIstate.aggression>2 and empire.buildingTypeAvailable(bldName):
         queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
         bldType = fo.getBuildingType(bldName)
         for pid in AIstate.popCtrIDs:

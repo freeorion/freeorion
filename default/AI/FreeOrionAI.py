@@ -35,13 +35,13 @@ def initFreeOrionAI():
 
 # called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
 # and set up whatever is needed for AI to generate orders
-def startNewGame():
+def startNewGame(aggression=4):
     global __timerFile,  lastTurnTimestamp,  __timerBucketFile
-    print "New game started"
+    print "New game started, AI Agression level %d"%aggression
 
     # initialize AIstate
     global foAIstate
-    foAIstate = AIstate.AIstate()
+    foAIstate = AIstate.AIstate(aggression=aggression)
     foAIstate.sessionStartCleanup()
     print "Initialized foAIstate class"
     if __timerFile:
@@ -139,7 +139,7 @@ def resumeLoadedGame(savedStateString):
     except:
         print "failed to parse saved state string"
         #assigning new state
-        foAIstate = AIstate.AIstate()
+        foAIstate = AIstate.AIstate(aggression=4)
         foAIstate.sessionStartCleanup()
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     if __timerFile:
@@ -208,6 +208,7 @@ def declareWarOnAll():
 # at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
 # and can be sent to the server for processing.
 def generateOrders():
+    aggressions=["Turtle",  "Cautious",  "Typical",  "Aggressive",  "Maniacal"]
     global lastTurnTimestamp
     universe = fo.getUniverse()
     turnStartTime=time() #starting AI timer here, to be sure AI doesn't get blame for any  lags in server being able to provide the Universe object
@@ -219,7 +220,7 @@ def generateOrders():
     print "***************************************************************************"
     print "***************************************************************************"
     print ("Generating Orders")
-    print "EmpireID:    " + str(empire.empireID) + " Name: " + empire.name + " Turn: " + str(fo.currentTurn())
+    print "EmpireID:    " + str(empire.empireID) + " Name: " + empire.name+ "_"+str(empire.empireID) +"_"+aggressions[foAIstate.aggression] + " Turn: " + str(fo.currentTurn())
     empireColor=empire.colour
     print "EmpireColors: %d %d %d %d"%(empireColor.r,  empireColor.g,  empireColor.b,  empireColor.a)
     if planet: 

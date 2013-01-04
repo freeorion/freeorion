@@ -120,9 +120,9 @@ def calculateResearchPriority():
     if  (fo.currentTurn() < 20) or not gotAlgo:
         researchPriority = 60 # mid industry , high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
     elif fo.currentTurn() < 30:
-        researchPriority = 20 # mid industry , mid research 
+        researchPriority = 30 # mid industry , mid research 
     elif fo.currentTurn() < 40:
-        researchPriority = 15 # high  industry , low research 
+        researchPriority = 20 # high  industry , low research 
     else:
         researchPriority = 15 # high  industry , low research 
 

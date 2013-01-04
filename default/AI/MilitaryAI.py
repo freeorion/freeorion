@@ -13,7 +13,7 @@ MilitaryAllocations = []
 minMilAllocations = {}
 totMilRating=0
 
-def getMilitaryFleets():
+def getMilitaryFleets(tryReset=True):
     "get armed military fleets"
     global MilitaryAllocations, totMilRating
 
@@ -90,15 +90,27 @@ def getMilitaryFleets():
     elif fo.currentTurn() < 60:
         threatBias = 80
     elif fo.currentTurn() < 80:
-        threatBias = 100
-    else:
         threatBias = 200
-        
+    else:
+        threatBias = 400
+    
+
+    safetyFactor = [ 2.0,  1.25,  1.0,  0.95,  0.95    ][foAI.foAIstate.aggression] 
+
     # allocation format: ( sysID, newAllocation, takeAny, maxMultiplier )    
     #================================
     #--------Capital Threat ----------
-    capitalThreat = 2* threatBias +sum( [ foAI.foAIstate.systemStatus[capitalSysID][thrtKey] for thrtKey in [tkey for tkey in  foAI.foAIstate.systemStatus.get(capitalSysID,  {}).keys() if 'Threat' in tkey]] )
+    capitalThreat = safetyFactor*(2* threatBias +sum( [ foAI.foAIstate.systemStatus[capitalSysID][thrtKey] for thrtKey in [tkey for tkey in  foAI.foAIstate.systemStatus.get(capitalSysID,  {}).keys() if 'Threat' in tkey]] ))
     newAlloc=0
+    if (capitalThreat > (availMilRating+0.8*alreadyAssignedRating[capitalSysID]) ) and tryReset:
+        if foAI.foAIstate.aggression > 0:
+            for fid in allMilitaryFleetIDs:
+                thisMission=foAI.foAIstate.getAIFleetMission(fid)
+                thisMission.clearAIFleetOrders()
+                thisMission.clearAITargets(-1)
+            getMilitaryFleets(tryReset=False)
+            return
+    
     if capitalThreat > 0.8*alreadyAssignedRating[capitalSysID]:
         newAlloc = min(remainingMilRating,  int( 0.999 + 1.2*(capitalThreat- 0.8*alreadyAssignedRating[capitalSysID]) ) )
         allocations.append( ( capitalSysID,  newAlloc,  True,  3)  )  
@@ -113,7 +125,7 @@ def getMilitaryFleets():
     print "Empire-Occupied  Systems:  %s"%(   [ "| %d %s |"%(eoSysID,  universe.getSystem(eoSysID).name)  for eoSysID in empireOccupiedSystemIDs  ]  )
     print "-----------------"
     if len( empireOccupiedSystemIDs ) > 0:
-        ocSysTotThreat = [  ( oSID,  threatBias +sum( [ foAI.foAIstate.systemStatus.get(oSID,  {}).get(thrtKey, 0) for thrtKey in ['fleetThreat', 'planetThreat', 'neighborThreat']] ) )  for oSID in   empireOccupiedSystemIDs      ]
+        ocSysTotThreat = [  ( oSID,  threatBias +safetyFactor*sum( [ foAI.foAIstate.systemStatus.get(oSID,  {}).get(thrtKey, 0) for thrtKey in ['fleetThreat', 'planetThreat', 'neighborThreat']] ) )  for oSID in   empireOccupiedSystemIDs      ]
         totocSysThreat = sum( [thrt  for sid,  thrt in ocSysTotThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid]  for sid,  thrt in ocSysTotThreat] )
         allocationFactor = min(  1.2,  remainingMilRating /max(0.01,  ( totocSysThreat -totCurAlloc) ))
@@ -138,7 +150,7 @@ def getMilitaryFleets():
     # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
     if len( otherTargetedSystemIDs ) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0)  )   for oSID in   otherTargetedSystemIDs      ]
+        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0))  )   for oSID in   otherTargetedSystemIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
@@ -160,7 +172,7 @@ def getMilitaryFleets():
     # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
     if len( otherTargetedSystemIDs ) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0)  )   for oSID in   otherTargetedSystemIDs      ]
+        otSysThreat = [  ( oSID,  safetyFactor*(threatBias +foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0)  ))   for oSID in   otherTargetedSystemIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
@@ -192,7 +204,7 @@ def getMilitaryFleets():
     # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
     if len( otherTargetedSystemIDs ) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0)  )   for oSID in   otherTargetedSystemIDs      ]
+        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0)  ))   for oSID in   otherTargetedSystemIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
@@ -218,7 +230,7 @@ def getMilitaryFleets():
     # for these, calc fleet  threat only, no neighbor threat, but use a multiplier for fleet safety
     if len(interiorTargets) >0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)  )   for oSID in   interiorTargets      ]
+        otSysThreat = [  ( oSID,  threatBias +safetyFactor*foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)  )   for oSID in   interiorTargets      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
@@ -247,7 +259,7 @@ def getMilitaryFleets():
     # for these, calc fleet  threat only, no neighbor threat, but use a multiplier for fleet safety
     if len(exploTargetIDs) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0) )   for oSID in   exploTargetIDs      ]
+        otSysThreat = [  ( oSID,  safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0) ))   for oSID in   exploTargetIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         if availMilRating <1125:
@@ -281,7 +293,7 @@ def getMilitaryFleets():
     # for these, calc fleet  threat only, no neighbor threat, but use a multiplier for fleet safety
     if len(borderTargets) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0)  )   for oSID in   borderTargets      ]
+        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0))  )   for oSID in   borderTargets      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
@@ -311,7 +323,7 @@ def getMilitaryFleets():
     # for these, calc fleet  threat only, no neighbor threat, but use a multiplier for fleet safety
     if len(monsterDens) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0)  )   for oSID in   monsterDens      ]
+        otSysThreat = [  ( oSID,  safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0) ) )   for oSID in   monsterDens      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
@@ -344,54 +356,6 @@ def getMilitaryFleets():
     MilitaryAllocations = newAllocations
     minMilAllocations = dict( [ (sid, alloc) for sid, alloc, takeAny,  mm in allocations   ]   )
     print "------------------------------\nFinal Military Allocations: %s \n-----------------------"%dict( [ (sid, alloc) for sid, alloc, minalloc,  takeAny in newAllocations   ]   )
-
-    if False:  #keep old code for reference, for now
-        fleetSupplyableSystemIDs = list(empire.fleetSupplyableSystemIDs)
-        exploredSystemIDs = empire.exploredSystemIDs
-
-        exploredPlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(exploredSystemIDs)
-        allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs)
-        allPopulatedSystemIDs = PlanetUtilsAI.getAllPopulatedSystemIDs(allOwnedPlanetIDs)
-        print ""
-        print "All Populated SystemIDs:             " + str(list(set(allPopulatedSystemIDs)))
-
-        empireProvinceSystemIDs = list(set(empireOccupiedSystemIDs) - set([capitalSysID]))
-        print "Empire Province SystemIDs:           " + str(empireProvinceSystemIDs)
-
-        competitorSystemIDs = list(set(allPopulatedSystemIDs) - set(empireOccupiedSystemIDs))
-        print "Competitor SystemIDs:                " + str(competitorSystemIDs)
-
-
-        militaryTheaterSystemIDs = list(set(fleetSupplyableSystemIDs + empireOccupiedSystemIDs + competitorSystemIDs + otherTargetedSystemIDs))
-        print "Military Theater SystemIDs:          " + str(militaryTheaterSystemIDs)
-
-        allMilitaryTargetedSystemIDs = getMilitaryTargetedSystemIDs(universe.systemIDs, AIFleetMissionType.FLEET_MISSION_MILITARY, empireID)
-        # export military targeted systems for other AI modules
-        AIstate.militaryTargetedSystemIDs = allMilitaryTargetedSystemIDs
-        print ""
-        print "Military Targeted SystemIDs:         " + str(allMilitaryTargetedSystemIDs)
-
-        militaryFleetIDs = allMilitaryFleetIDs
-        if not militaryFleetIDs:
-            print "Available Military Fleets:             0"
-        else:
-            print "Military FleetIDs:                   " + str(allMilitaryFleetIDs)
-
-        numMilitaryFleets = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(militaryFleetIDs))
-        print "Military Fleets Without Missions:      " + str(numMilitaryFleets)
-
-        evaluatedSystemIDs = list(set(militaryTheaterSystemIDs) - set(allMilitaryTargetedSystemIDs))
-        # print "Evaluated SystemIDs:               " +str(evaluatedSystemIDs)
-
-        evaluatedSystems = assignMilitaryValues(evaluatedSystemIDs, AIFleetMissionType.FLEET_MISSION_MILITARY, empireProvinceSystemIDs, otherTargetedSystemIDs, empire)
-
-        sortedSystems = evaluatedSystems.items()
-        sortedSystems.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
-
-        print ""
-        print "Military SystemIDs:"
-        for evaluationPair in sortedSystems:
-            print "    ID|Score: " + str(evaluationPair)
 
     # export military systems for other AI modules
     AIstate.militarySystemIDs = [sid for sid, alloc,  minalloc,  takeAny  in newAllocations]

@@ -56,10 +56,6 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
             return []
     thisSystemID = systemsToCheck.pop(0) #take the head of the line
     systemsChecked.append(thisSystemID)
-    #thisSys = universe.getSystem(thisSystemID)
-    #if not thisSys:
-    #    return getFleetsForMission(nships....
-    #fleetsHere = [fleetID for fleetID in fleetPoolSet if ( foAI.foAIstate.fleetStatus.get(fleetID,  {}).get('sysID',  -1) == thisSystemID ) ]
     fleetsHere = [ fid for fid in foAI.foAIstate.systemStatus.get(thisSystemID,  {}).get('myfleets',  []) if fid in fleetPoolSet]
     if verbose:
         print "found fleetPool Fleets  %s"%fleetsHere
@@ -67,7 +63,6 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
         fleetID=fleetsHere.pop(0)
         fleet = universe.getFleet(fleetID)
         if not fleet: 
-            #del fleetPool[ fleetPool.index( fleetID) ]
             fleetPoolSet.remove(  fleetID) 
             continue
         if len (list(fleet.shipIDs)) > 1:
@@ -85,7 +80,6 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
                     break
         if meetsSpeciesReq:
             fleetList.append(fleetID)
-            #del fleetPool[ fleetPool.index( fleetID) ]
             fleetPoolSet.remove( fleetID)
             thisRating=foAI.foAIstate.getRating(fleetID)
             curStats['attack'] = curStats.get('attack',  0) + thisRating['attack']
@@ -309,7 +303,6 @@ def assessShipDesignRole(design):
         return AIShipRoleType.SHIP_ROLE_MILITARY
     else:
         return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION  #let this be the default since even without detection part a ship has some inherent
-    #return AIShipRoleType.SHIP_ROLE_INVALID
 
 def assessDesignIDStats(designID):
     design = fo.getShipDesign(designID)

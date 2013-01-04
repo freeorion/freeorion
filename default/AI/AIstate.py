@@ -49,7 +49,7 @@ class AIstate(object):
     # def colonisablePlanets (should be set at start of turn)
     # getColonisablePlanets (deepcopy!)
 
-    def __init__(self):
+    def __init__(self,  aggression=2):
         "constructor"
         # 'global' (?) variables
         self.foodStockpileSize =  1    # food stored per population
@@ -67,12 +67,7 @@ class AIstate(object):
         self.outpostFleetIDs = []
         self.invasionFleetIDs = []
         self.militaryFleetIDs = []
-        
         self.untaskedFleets=[]
-        self.__missionsByType = {}
-        for missionType in EnumsAI.getAIFleetMissionTypes():
-            self.__missionsByType[missionType] = {}
-
         self.__aiMissionsByFleetID = {}
 
         self.__shipRoleByDesignID = {}
@@ -102,10 +97,10 @@ class AIstate(object):
         self.systemStatus={} #keys: 'fleetThreat'. 'planetThreat', 'monsterThreat', 'myfleets', 'neighbors', 'name'
         self.needsEmergencyExploration=[]
         self.newlySplitFleets={}
+        self.aggression=aggression
 
     def __del__(self):
         "destructor"
-        del self.__missionsByType
         del self.__shipRoleByDesignID
         del self.__fleetRoleByID
         del self.__priorityByType
