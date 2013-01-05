@@ -29,6 +29,9 @@ public:
     virtual void                StartNewGame();                                             ///< Called when a new game (not loaded) is started.  AI should clear its state and prepare to start a new game
     virtual void                ResumeLoadedGame(const std::string& save_state_string);     ///< Called when a game is loaded from save.  AI should extract any state information stored in \a save_state_string so as to be able to continue generating orders when asked to do so
     virtual const std::string&  GetSaveStateString();                                       ///< Called when the server is saving the game.  AI should store any state information it will need to resume at a later time, and return this information in the save_state_string
+    void                        SetAggression(int aggr);
+protected:
+    int m_aggression;
 };
 
 /* Public interface providing relatively easy-to use and somewhat conveniently grouped-together functions that

@@ -32,6 +32,7 @@
 #include <log4cpp/FileAppender.hh>
 
 #include <ctime>
+#include <sstream>
 
 namespace fs = boost::filesystem;
 
@@ -143,7 +144,7 @@ namespace {
 #include <stdlib.h>
 #endif
 
-void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data) {
+void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int maxAggr) {
     // check if AI clients are needed for given setup data
     bool need_AIs = false;
     for (int i = 0; i < static_cast<int>(player_setup_data.size()); ++i) {
@@ -193,12 +194,15 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         std::vector<std::string> args;
         args.push_back("\"" + AI_CLIENT_EXE + "\"");
         args.push_back(player_name);
+        std::stringstream maxAggrStr;
+        maxAggrStr << maxAggr;
+        args.push_back(maxAggrStr.str());
         args.push_back("--resource-dir");
         args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
         args.push_back("--log-level");
         args.push_back(GetOptionsDB().Get<std::string>("log-level"));
-
-        Logger().debugStream() << "starting " << AI_CLIENT_EXE;
+        
+        Logger().debugStream() << "starting " << AI_CLIENT_EXE << " with GameSetup.ai-aggression set to " << maxAggr;
 
         m_ai_client_processes.push_back(Process(AI_CLIENT_EXE, args));
 

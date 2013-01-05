@@ -56,6 +56,10 @@ const std::string& AIBase::GetSaveStateString() {
     return default_state_string;
 }
 
+void AIBase::SetAggression(int aggr){
+    m_aggression = aggr;
+}
+
 
 //////////////////////////////////
 //        AI Interface          //

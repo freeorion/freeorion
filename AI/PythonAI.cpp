@@ -350,7 +350,7 @@ void PythonAI::StartNewGame() {
     try {
         // call Python function that sets up the AI to be able to generate orders for a new game
         object startNewGamePythonFunction = s_ai_module.attr("startNewGame");
-        startNewGamePythonFunction();
+        startNewGamePythonFunction(m_aggression);
     } catch (error_already_set err) {
         PyErr_Print();
     }

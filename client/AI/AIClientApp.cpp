@@ -6,6 +6,7 @@
 #include "../../util/Directories.h"
 #include "../../util/Serialize.h"
 #include "../../network/Message.h"
+#include "../util/Random.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -29,7 +30,8 @@ AIClientApp*  AIClientApp::s_app = 0;
 
 AIClientApp::AIClientApp(const std::vector<std::string>& args) :
     m_AI(0),
-    m_player_name("")
+    m_player_name(""),
+    m_max_aggression(0)
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of singleton class AIClientApp");
@@ -45,6 +47,9 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
 
     m_player_name = args.at(1);
     const std::string AICLIENT_LOG_FILENAME((GetUserDir() / (m_player_name + ".log")).string());
+    if (args.size() >=3) {
+        m_max_aggression = boost::lexical_cast<int>(args.at(2));
+    }
 
     // a platform-independent way to erase the old log
     std::ofstream temp(AICLIENT_LOG_FILENAME.c_str());
@@ -182,6 +187,25 @@ void AIClientApp::HandleMessage(const Message& msg) {
                 Orders().ApplyOrders();
             } else {
                 Logger().debugStream() << "Message::GAME_START Starting New Game!";
+                // Distributions
+                // Aggression   :  0  1  2  3  4 
+                //                __ __ __ __ __
+                //Max 0         :  1  0  0  0  0
+                //Max 1         :  1  3  0  0  0
+                //Max 2         :  1  5  3  0  0
+                //Max 3         :  1  5  7  3  0
+                //Max 4         :  1  5  9  7  3
+                //unsigned mySeed = m_player_name.c_str()[0] + m_player_name.size();
+                void* seedPtr = &m_player_name;
+                unsigned int mySeed = static_cast<unsigned int>(reinterpret_cast<unsigned long>(seedPtr));
+                Seed(mySeed);
+                int rand1 = RandSmallInt(0, m_max_aggression);
+                int rand2 = RandSmallInt(0, m_max_aggression);
+                int thisAggr = int(( rand1+rand2+1)/2);
+                Logger().debugStream() << "Message::GAME_START getting AI aggression, max is  "<< m_max_aggression;
+                Logger().debugStream() << "Message::GAME_START starting new game with AI aggression set to "<< thisAggr <<" from int("<< rand1<<"+"<<rand2<<"+1)/2";
+                
+                m_AI->SetAggression(thisAggr);
                 m_AI->StartNewGame();
             }
             m_AI->GenerateOrders();

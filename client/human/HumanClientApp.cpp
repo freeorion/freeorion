@@ -378,7 +378,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
             setup_data.m_specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("GameSetup.specials-frequency");
             setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("GameSetup.monster-frequency");
             setup_data.m_native_freq =      GetOptionsDB().Get<GalaxySetupOption>("GameSetup.native-frequency");
-
+            setup_data.m_ai_aggr =          GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression");
 
             // SinglePlayerSetupData contains a map of PlayerSetupData, for
             // the human and AI players.  Need to compile this information

@@ -295,6 +295,30 @@ namespace GG {
 GG_ENUM_STREAM_IN(Shape)
 GG_ENUM_STREAM_OUT(Shape)
 
+/** levels of AI Aggression during galaxy generation */
+enum Aggression {
+    INVALID_AGGRESSION = -1,
+    TURTLE,        ///< very defensive
+    CAUTIOUS,      ///< Somewhat Defensive
+    TYPICAL,       ///< Typical
+    AGGRESSIVE,    ///< Aggressive
+    MANIACAL,     ///< Very Aggressive
+    NUM_AI_AGGRESSION_LEVELS
+};
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(Aggression)
+    GG_ENUM_MAP_INSERT(INVALID_AGGRESSION)
+    GG_ENUM_MAP_INSERT(TURTLE)
+    GG_ENUM_MAP_INSERT(CAUTIOUS)
+    GG_ENUM_MAP_INSERT(TYPICAL)
+    GG_ENUM_MAP_INSERT(AGGRESSIVE)
+    GG_ENUM_MAP_INSERT(MANIACAL)
+    GG_ENUM_MAP_END
+}
+GG_ENUM_STREAM_IN(Aggression)
+GG_ENUM_STREAM_OUT(Aggression)
+
 /** General-use option for galaxy setup picks with "more" or "less" options. */
 enum GalaxySetupOption {
     INVALID_GALAXY_SETUP_OPTION = -1,

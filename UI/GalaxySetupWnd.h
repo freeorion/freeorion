@@ -45,7 +45,8 @@ public:
     GalaxySetupOption               GetSpecialsFrequency() const;   //!< Returns the rarity of planetary and system specials
     GalaxySetupOption               GetMonsterFrequency() const;    //!< Returns the frequency of space monsters
     GalaxySetupOption               GetNativeFrequency() const;     //!< Returns the frequency of natives
-
+    Aggression                      GetAIAggression() const;        //!< Returns the  maximum AI aggression level 
+    
     boost::shared_ptr<GG::Texture>  PreviewImage() const;           //!< Returns the current preview image texture
 
     mutable SettingsChangedSignalType SettingsChangedSignal;        ///< the settings changed signal object for this GalaxySetupPanel
@@ -74,7 +75,8 @@ private:
     CUIDropDownList*    m_specials_freq_list;   //!< The frequency of specials in systems and on planets
     CUIDropDownList*    m_monster_freq_list;    //!< The frequency of monsters
     CUIDropDownList*    m_native_freq_list;     //!< The frequency of natives
-
+    CUIDropDownList*    m_ai_aggression_list;   //!< The max aggression choices for AI opponents
+    
     std::vector<boost::shared_ptr<GG::Texture> > m_textures; //!< textures for galaxy previews
 };
 

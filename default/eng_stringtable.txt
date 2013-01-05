@@ -1021,6 +1021,9 @@ The frequency of monsters in the galaxy to be generated.
 OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY
 The frequency of natives in the galaxy to be generated.
 
+OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
+The maximum aggression level for AI opponents
+
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 The name used in the game for your empire.
 
@@ -1346,6 +1349,8 @@ GSETUP_MONSTER_FREQ
 Monster Frequency
 GSETUP_NATIVE_FREQ
 Native Frequency
+GSETUP_AI_AGGR
+Max AI Aggression
 
 GSETUP_2ARM
 Spiral, 2-arm
@@ -1377,6 +1382,17 @@ GSETUP_MATURE
 Mature
 GSETUP_ANCIENT
 Ancient
+
+GSETUP_TURTLE
+Turtle
+GSETUP_DEFENSIVE
+Cautious
+GSETUP_MODERATE
+Typical
+GSETUP_AGGRESSIVE
+Aggressive
+GSETUP_MANIACAL
+Maniacal
 
 #Error messages####
 

@@ -92,7 +92,7 @@ public:
     void    Exit(int code);             ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
 
     /** creates an AI client child process for each element of \a AIs*/
-    void    CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data);
+    void    CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int maxAggr=4);
 
     /**  Adds an existing empire to turn processing. The position the empire is
       * in the vector is it's position in the turn processing.*/

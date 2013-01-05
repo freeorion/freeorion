@@ -64,7 +64,8 @@ struct GalaxySetupData {
         m_planet_density(GALAXY_SETUP_MEDIUM),
         m_specials_freq(GALAXY_SETUP_MEDIUM),
         m_monster_freq(GALAXY_SETUP_MEDIUM),
-        m_native_freq(GALAXY_SETUP_MEDIUM)
+        m_native_freq(GALAXY_SETUP_MEDIUM),
+        m_ai_aggr(MANIACAL)
     {}
     //@}
 
@@ -76,6 +77,7 @@ struct GalaxySetupData {
     GalaxySetupOption   m_specials_freq;
     GalaxySetupOption   m_monster_freq;
     GalaxySetupOption   m_native_freq;
+    Aggression          m_ai_aggr;
 
 private:
     friend class boost::serialization::access;

@@ -19,12 +19,12 @@ namespace {
     const GG::X CONTROL_MARGIN(5);
     const GG::Y CONTROL_HEIGHT(30);
     const GG::Y PANEL_CONTROL_SPACING(33);
-    const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 8);
+    const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 9);
     const GG::X GAL_SETUP_WND_WD(645);
     const GG::Y GAL_SETUP_WND_HT(29 + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT);
     const GG::Pt PREVIEW_SZ(GG::X(248), GG::Y(186));
     const bool ALLOW_NO_STARLANES = false;
-    const int MAX_AI_PLAYERS = 12;
+    const int MAX_AI_PLAYERS = 20;
 
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
@@ -41,6 +41,7 @@ namespace {
         db.Add("GameSetup.empire-color",        "OPTIONS_DB_GAMESETUP_EMPIRE_COLOR",            0,                  RangedValidator<int>(0, 100));
         db.Add("GameSetup.starting-species",    "OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME",   std::string("SP_HUMAN"),    Validator<std::string>());
         db.Add("GameSetup.ai-players",          "OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS",          3,                  RangedValidator<int>(0, MAX_AI_PLAYERS));
+        db.Add("GameSetup.ai-aggression",       "OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION",       MANIACAL,           RangedValidator<Aggression>(TURTLE, MANIACAL));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -59,7 +60,8 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_planet_density_list(0),
     m_specials_freq_list(0),
     m_monster_freq_list(0),
-    m_native_freq_list(0)
+    m_native_freq_list(0),
+    m_ai_aggression_list(0)
 {
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -151,6 +153,16 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_native_freq_list->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_native_freq_list->Height()) / 2));
     m_native_freq_list->SetStyle(GG::LIST_NOSORT);
 
+    // ai aggression
+    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_AI_AGGR"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-aggression")));
+    AttachChild(label);
+    drop_height = std::min(TEXT_ROW_HEIGHT * NUM_AI_AGGRESSION_LEVELS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+    m_ai_aggression_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
+    m_ai_aggression_list->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_ai_aggression_list->Height()) / 2));
+    m_ai_aggression_list->SetStyle(GG::LIST_NOSORT);
+    
     Init();
 }
 
@@ -178,6 +190,9 @@ GalaxySetupOption GalaxySetupPanel::GetMonsterFrequency() const
 GalaxySetupOption GalaxySetupPanel::GetNativeFrequency() const
 { return GalaxySetupOption(m_native_freq_list->CurrentItemIndex()); }
 
+Aggression GalaxySetupPanel::GetAIAggression() const
+{ return Aggression(m_ai_aggression_list->CurrentItemIndex()); }
+
 boost::shared_ptr<GG::Texture> GalaxySetupPanel::PreviewImage() const
 { return m_textures[GetShape()]; }
 
@@ -196,6 +211,7 @@ void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
     m_specials_freq_list->Select(setup_data.m_specials_freq);
     m_monster_freq_list->Select(setup_data.m_monster_freq);
     m_native_freq_list->Select(setup_data.m_native_freq);
+    m_ai_aggression_list->Select(setup_data.m_ai_aggr);
 }
 
 void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const {
@@ -207,6 +223,7 @@ void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const {
     setup_data.m_specials_freq =    GetSpecialsFrequency();
     setup_data.m_monster_freq =     GetMonsterFrequency();
     setup_data.m_native_freq =      GetNativeFrequency();
+    setup_data.m_ai_aggr =          GetAIAggression();
 }
 
 void GalaxySetupPanel::Init() {
@@ -218,7 +235,8 @@ void GalaxySetupPanel::Init() {
     AttachChild(m_specials_freq_list);
     AttachChild(m_monster_freq_list);
     AttachChild(m_native_freq_list);
-
+    AttachChild(m_ai_aggression_list);
+    
     GG::Connect(m_stars_spin->ValueChangedSignal,           &GalaxySetupPanel::SettingChanged_, this);
     GG::Connect(m_galaxy_shapes_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
     GG::Connect(m_galaxy_ages_list->SelChangedSignal,       &GalaxySetupPanel::SettingChanged,  this);
@@ -227,6 +245,7 @@ void GalaxySetupPanel::Init() {
     GG::Connect(m_specials_freq_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
     GG::Connect(m_monster_freq_list->SelChangedSignal,      &GalaxySetupPanel::SettingChanged,  this);
     GG::Connect(m_native_freq_list->SelChangedSignal,       &GalaxySetupPanel::SettingChanged,  this);
+    GG::Connect(m_ai_aggression_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
     GG::Connect(m_galaxy_shapes_list->SelChangedSignal,     &GalaxySetupPanel::ShapeChanged,    this);
 
     // create and load textures
@@ -277,7 +296,13 @@ void GalaxySetupPanel::Init() {
     m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
     m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
     m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
-
+    
+    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_TURTLE")));
+    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_DEFENSIVE")));
+    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MODERATE")));
+    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_AGGRESSIVE")));
+    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MANIACAL")));
+    
     // initial settings from stored results or defaults
     m_stars_spin->SetValue(GetOptionsDB().Get<int>("GameSetup.stars"));
     m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape"));
@@ -288,7 +313,8 @@ void GalaxySetupPanel::Init() {
     m_specials_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.specials-frequency"));
     m_monster_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.monster-frequency"));
     m_native_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.native-frequency"));
-
+    m_ai_aggression_list->Select(GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression"));
+    
     SettingsChangedSignal();
 }
 
@@ -493,6 +519,7 @@ void GalaxySetupWnd::OkClicked() {
     GetOptionsDB().Set("GameSetup.specials-frequency",  m_galaxy_setup_panel->GetSpecialsFrequency());
     GetOptionsDB().Set("GameSetup.monster-frequency",   m_galaxy_setup_panel->GetMonsterFrequency());
     GetOptionsDB().Set("GameSetup.native-frequency",    m_galaxy_setup_panel->GetNativeFrequency());
+    GetOptionsDB().Set("GameSetup.ai-aggression",       m_galaxy_setup_panel->GetAIAggression());
     GetOptionsDB().Set("GameSetup.player-name",         m_player_name_edit->Text());
     GetOptionsDB().Set("GameSetup.empire-name",         EmpireName());
     GetOptionsDB().Set("GameSetup.empire-color",        static_cast<int>(m_empire_color_selector->CurrentItemIndex()));

@@ -440,17 +440,22 @@ namespace {
                 names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
         }
     }
-
-    const std::string& GenerateEmpireName() {
+    
+    const std::string& GenerateEmpireName(std::list<std::pair<int, PlayerSetupData> > &players) {
         // load default empire names
         static std::list<std::string> empire_names;
         if (empire_names.empty())
             LoadEmpireNames(empire_names);
-
-        if (!empire_names.empty()) {
+        std::set<std::string> validNames(empire_names.begin(), empire_names.end());
+        for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = players.begin(); player_setup_it != players.end(); player_setup_it++) {
+            std::set<std::string>::iterator name_it = validNames.find(player_setup_it->second.m_empire_name);
+            if (name_it != validNames.end())
+                validNames.erase(name_it);
+        }
+        if (!validNames.empty()) {
             // pick a name from the list of empire names
-            int empire_name_idx = RandSmallInt(0, static_cast<int>(empire_names.size()) - 1);
-            std::list<std::string>::iterator it = empire_names.begin();
+            int empire_name_idx = RandSmallInt(0, static_cast<int>(validNames.size()) - 1);
+            std::set<std::string>::iterator it = validNames.begin();
             std::advance(it, empire_name_idx);
             return *it;
         } else {
@@ -458,6 +463,11 @@ namespace {
             return UserString("EMPIRE");
         }
     }
+}
+
+const std::string& GenerateEmpireName() {
+    std::list<std::pair<int, PlayerSetupData> > empty_data;
+    return GenerateEmpireName(empty_data);
 }
 
 sc::result MPLobby::react(const LobbyUpdate& msg) {
@@ -491,7 +501,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     m_lobby_data->m_specials_freq = incoming_lobby_data.m_specials_freq;
     m_lobby_data->m_monster_freq =  incoming_lobby_data.m_monster_freq;
     m_lobby_data->m_native_freq =   incoming_lobby_data.m_native_freq;
-
+    m_lobby_data->m_ai_aggr     =   incoming_lobby_data.m_ai_aggr;
+    
     // directly configurable lobby data
     m_lobby_data->m_new_game =      incoming_lobby_data.m_new_game;
     m_lobby_data->m_players =       incoming_lobby_data.m_players;
@@ -588,7 +599,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             if (psd.m_player_name.empty())
                 psd.m_player_name = UserString("AI_PLAYER") + "_" + boost::lexical_cast<std::string>(AI_count++);
             if (psd.m_empire_name.empty())
-                psd.m_empire_name = GenerateEmpireName();
+                psd.m_empire_name = GenerateEmpireName(m_lobby_data->m_players);
             if (psd.m_starting_species_name.empty())
                 psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
 
@@ -598,7 +609,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             if (psd.m_player_name.empty())
                 psd.m_player_name = UserString("PLAYER") + "_" + boost::lexical_cast<std::string>(nameless_player_count++);
             if (psd.m_empire_name.empty())
-                psd.m_empire_name = GenerateEmpireName();
+                psd.m_empire_name = GenerateEmpireName(m_lobby_data->m_players);
             if (psd.m_starting_species_name.empty())
                 psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
         }
@@ -834,7 +845,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         if (it->m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             m_expected_ai_player_names.insert(it->m_player_name);
 
-    server.CreateAIClients(players);    // also disconnects any currently-connected AI clients
+        server.CreateAIClients(players, m_single_player_setup_data->m_ai_aggr);    // also disconnects any currently-connected AI clients
 
     // force immediate check if all expected AIs are present, so that the FSM
     // won't get stuck in this state waiting for JoinGame messages that will
@@ -961,7 +972,7 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
             m_expected_ai_player_names.insert(it->second.m_player_name);
     }
 
-    server.CreateAIClients(player_setup_data);
+    server.CreateAIClients(player_setup_data, m_lobby_data->m_ai_aggr);
 
     // force immediate check if all expected AIs are present, so that the FSM
     // won't get stuck in this state waiting for JoinGame messages that will
