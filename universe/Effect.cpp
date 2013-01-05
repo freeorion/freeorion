@@ -294,7 +294,7 @@ void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cau
         // for non-meter effects, can do default batch execute
         if (!meter_effect) {
             effect->Execute(source_context, targets);
-            return;
+            continue;
         }
 
         // for meter effects, need to separately call effect's Execute for each
