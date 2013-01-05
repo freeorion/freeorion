@@ -1757,8 +1757,6 @@ public:
         const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
         const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
-        bool select_first = true;
-
         for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
             int ship_id = *it;
 
@@ -1771,14 +1769,6 @@ public:
             ShipRow* row = new ShipRow(GG::X1, row_size.y, ship_id);
             ShipsListBox::iterator row_it = Insert(row);
             row->Resize(row_size);
-            if (select_first) {
-                SelectRow(row_it);  // select in listbox
-                // and mark data panel in row as selected, as would happen if it
-                // was selected by user or programmatically via FleetDetailPanel
-                if (ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>((*row)[0]))
-                    ship_panel->Select(true);
-                select_first = false;
-            }
         }
 
         SelChangedSignal(this->Selections());
