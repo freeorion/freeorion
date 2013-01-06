@@ -457,17 +457,23 @@ def generateProductionOrders():
 
             print ""
             print "Buildings already in Production Queue:"
-            capitolQueuedBldgs=[element for element in productionQueue if (element.buildType == AIEmpireProductionTypes.BT_BUILDING and element.locationID==homeworld.id)]
+            capitolQueuedBldgs=[]
+            bldgExpense=0.0
+            for element in [e for e in productionQueue if (e.buildType == AIEmpireProductionTypes.BT_BUILDING)]:
+                bldgExpense += element.allocation
+                if ( element.locationID==homeworld.id):
+                    capitolQueuedBldgs.append ( element )
             for bldg in capitolQueuedBldgs:
                 print "    " + bldg.name + " turns:" + str(bldg.turnsLeft) + " PP:" + str(bldg.allocation)
             if capitolQueuedBldgs == []: print "None"
             print
             queuedBldgNames=[ bldg.name for bldg in capitolQueuedBldgs ]
             
-            
-            if  ("BLD_INDUSTRY_CENTER" in possibleBuildingTypes) and ("BLD_INDUSTRY_CENTER" not in (capitalBldgs+queuedBldgNames)):
+            if  ("BLD_INDUSTRY_CENTER" in possibleBuildingTypes) and ("BLD_INDUSTRY_CENTER" not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<0.5*totalPP):
                 res=fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", empire.capitalID)
                 print "Enqueueing BLD_INDUSTRY_CENTER, with result %d"%res
+                if res: 
+                    bldgExpense += productionQueue[productionQueue.size -1].allocation
 
             if  ("BLD_SHIPYARD_BASE" in possibleBuildingTypes) and ("BLD_SHIPYARD_BASE" not in (capitalBldgs+queuedBldgNames)):
                 try:
@@ -478,12 +484,14 @@ def generateProductionOrders():
                     print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
             for bldName in [ "BLD_SHIPYARD_ORG_ORB_INC", "BLD_SHIPYARD_ORG_XENO_FAC",  "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"   ]:
-                if  (bldName in possibleBuildingTypes) and (bldName not in (capitalBldgs+queuedBldgNames)):
+                if  (bldName in possibleBuildingTypes) and (bldName not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<0.5*totalPP):
                     try:
                         res=fo.issueEnqueueBuildingProductionOrder(bldName, empire.capitalID)
                         print "Enqueueing %s at capitol, with result %d"%(bldName,  res)
-                        res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
-                        print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
+                        if res:
+                            res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                            bldgExpense += productionQueue[0].allocation
+                            print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
                     except:
                         print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
@@ -531,7 +539,7 @@ def generateProductionOrders():
 
     popCtrs = list(AIstate.popCtrIDs)
     for bldName in [ "BLD_SHIPYARD_ORG_ORB_INC" ,  "BLD_SHIPYARD_ORG_XENO_FAC" ]:
-        if empire.buildingTypeAvailable(bldName):
+        if empire.buildingTypeAvailable(bldName) and (bldgExpense<0.5*totalPP):
             queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
             bldType = fo.getBuildingType(bldName)
             for pid in popCtrs:
@@ -543,6 +551,7 @@ def generateProductionOrders():
                     if res: 
                         queuedBldLocs.append(pid)
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                        bldgExpense += productionQueue[0].allocation
                         print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
 
     bldName = "BLD_GAS_GIANT_GEN"
@@ -557,6 +566,7 @@ def generateProductionOrders():
                     if res: 
                         queuedBldLocs.append(pid)
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                        bldgExpense += productionQueue[0].allocation
                         print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
                     print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
     
@@ -611,6 +621,7 @@ def generateProductionOrders():
                         print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  useLoc, universe.getPlanet(useLoc).name,  res)
                         if res:
                             res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                            bldgExpense += productionQueue[0].allocation
                             print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
                     except:
                         print "problem queueing BLD_SOL_ORB_GEN at planet",  useloc,  "of system ",  useSys
@@ -790,7 +801,8 @@ def generateProductionOrders():
     #TODO:  blocked items might not need dequeuing, but rather for supply lines to be un-blockaded 
     for queue_index  in range( len(productionQueue)):
         element=productionQueue[queue_index]
-        print "    " + element.name + " turns:" + str(element.turnsLeft) + " PP:%.2f"%element.allocation + " being built at " + universe.getObject(element.locationID).name
+        blockStr = ["",  "in blocks of %d "%element.blocksize][element.blocksize>1]
+        print "    " + element.name+blockStr + " turns:" + str(element.turnsLeft) + " PP:%.2f"%element.allocation + " being built at " + universe.getObject(element.locationID).name
         if element.turnsLeft == -1:
             print "element %s will never be completed as stands  "%element.name 
             #fo.issueDequeueProductionOrder(queue_index) 
