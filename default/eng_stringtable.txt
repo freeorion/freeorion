@@ -4061,7 +4061,9 @@ RESONANT_MOON_SPECIAL
 Resonant Moon
 
 RESONANT_MOON_SPECIAL_DESC
-This planet has a natural satellite, the orbital period of which is in 1:1 resonance with its rotational period, causing there to be a "dark side" which is constantly facing away from the planet. This "dark side" is a perfect site for clandestine facilities.
+'''[[encyclopedia STEALTH_TITLE]] of buildings on the planet and controlled ships in the same system is increased by 10.
+
+This planet has a natural satellite, the orbital period of which is in 1:1 resonance with its rotational period, causing there to be a "dark side" which is constantly facing away from the planet. This "dark side" is a perfect site for clandestine facilities. The space between the planet and the moon can be used to hide buildings and fleets from other empires.'''
 
 COMPUTRONIUM_SPECIAL
 Computronium Moon

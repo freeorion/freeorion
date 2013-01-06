@@ -140,6 +140,7 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_POPULATION]]
+        [[PHOTOTROPHIC_POPULATION]]
         [[LARGE_PLANET]]
     ]
     
@@ -179,6 +180,7 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[GOOD_POPULATION]]
+        [[SELF_SUSTAINING_POPULATION]]
         [[LARGE_PLANET]]
     ]
     
@@ -292,6 +294,7 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[GOOD_POPULATION]]
+        [[PHOTOTROPHIC_POPULATION]]
         [[LARGE_PLANET]]
     ]
     
@@ -584,6 +587,8 @@ Species
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_POPULATION]]
+        [[PHOTOTROPHIC_POPULATION]]
+
     ]
     
     [[SWAMP_BROAD_EP]]
@@ -751,7 +756,7 @@ Species
         
         [[BAD_GROUND_TROOPS]]
         [[BAD_POPULATION]]
-        
+        [[SELF_SUSTAINING_POPULATION]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
@@ -923,6 +928,7 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[AVERAGE_POPULATION]]
+        [[SELF_SUSTAINING_POPULATION]]
     ]
     
     [[BARREN_STANDARD_EP]]
@@ -1098,6 +1104,7 @@ Species
         [[STANDARD_CONSTRUCTION]]
 
         [[AVERAGE_POPULATION]]
+        [[SELF_SUSTAINING_POPULATION]]
 
         EffectsGroup
             scope = Source
@@ -1293,6 +1300,7 @@ Species
         [[ULTIMATE_GROUND_TROOPS]]
 
         [[GOOD_POPULATION]]
+        [[SELF_SUSTAINING_POPULATION]]
 
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
@@ -1330,7 +1338,7 @@ Species
                 Source
                 Capital
                 ]
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 100  // Omniscient Detection
+            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 200  // Omniscient Detection
         
         [[GREAT_INDUSTRY]]
         [[GREAT_RESEARCH]]
@@ -1338,6 +1346,7 @@ Species
         [[GREAT_GROUND_TROOPS]]
         [[ULTIMATE_WEAPONS]]
         [[GOOD_POPULATION]]
+        [[PHOTOTROPHIC_POPULATION]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
@@ -1984,23 +1993,132 @@ BASIC_POPULATION
             ]
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  
+
+//#####     B A S E   P O P U L A T I O N     #####
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet environment = Good
+                NOT HasTag "SELF_SUSTAINING"
+            ]
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble
+'''
+
+SELF_SUSTAINING_POPULATION
+'''     //#####     H O M E W O R L D   P O P U L A T I O N   B O O S T S    #####
 
         EffectsGroup
             scope = AND [
                 Source
                 Homeworld name = Source.Species
             ]
-            activation = And [
-                Planet
-                HasTag "SELF_SUSTAINING"
-            ]
+            activation = Planet
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_BONUS"
             effects = SetTargetPopulation Value + 2 * Source.SizeAsDouble  // Get double the homeworld bonus
+
+//#####     B A S E   P O P U L A T I O N     #####
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = Good
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value + 6 * Target.SizeAsDouble    // Gets double the base population
+'''
+
+PHOTOTROPHIC_POPULATION
+''' //#####     P H O T O T R O P H I C   S T U F F     #####
+
+        EffectsGroup
+            scope = Contains Source
+            activation = AND [
+                Planet
+                Turn high = 0
+                NOT Star type = [Orange]
+            ]
+            effects = SetStarType Yellow
+ 
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Star type = [Blue]
+            ]
+            accountinglabel = "VERY_BRIGHT_STAR"
+            effects = SetTargetPopulation Value + 3 * Source.SizeAsDouble
             
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Star type = [White]
+            ]
+            accountinglabel = "BRIGHT_STAR"
+            effects = SetTargetPopulation Value + 1.5 * Source.SizeAsDouble
             
-//#####     H O M E W O R L D   G R O W T H   F O C U S  B O O S T     #####  
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Star type = [Red Neutron]
+            ]
+            accountinglabel = "DIM_STAR"
+            effects = SetTargetPopulation Value - 1 * Source.SizeAsDouble
+            
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Star type = [BlackHole NoStar]
+            ]
+            accountinglabel = "NO_STAR"
+            effects = SetTargetPopulation Value - 10 * Source.SizeAsDouble
+'''
+
+BAD_POPULATION
+'''[[BASIC_POPULATION]]
+
+        EffectsGroup
+            scope = Source
+            activation = Planet
+            accountinglabel = "BAD_POPULATION_LABEL"
+            effects = SetTargetPopulation Value*.75   // doesn't matter if these modifiers don't match ther other 'bad' modifiers.
+
+        [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
+        [[TUNNELS_MODIFIER]]
+        [[ENVIRONMENT_MODIFIER]]
+        [[POPULATION_TECHS]]
+'''
+
+AVERAGE_POPULATION
+'''[[BASIC_POPULATION]]
+
+        [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
+        [[TUNNELS_MODIFIER]]
+        [[ENVIRONMENT_MODIFIER]]
+        [[POPULATION_TECHS]]
+'''
+
+GOOD_POPULATION
+'''[[BASIC_POPULATION]]
+
+        EffectsGroup
+            scope = Source
+            activation = Planet
+            accountinglabel = "GOOD_POPULATION_LABEL"
+            effects = SetTargetPopulation Value*1.25  // doesn't matter if these modifiers don't match ther other 'good' modifiers.
+
+        [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
+        [[TUNNELS_MODIFIER]]
+        [[ENVIRONMENT_MODIFIER]]
+        [[POPULATION_TECHS]]
+'''
+
+HOMEWORLD_GROWTH_FOCUS_BOOST
+'''//#####     H O M E W O R L D   G R O W T H   F O C U S  B O O S T     #####  
 
         EffectsGroup 
             scope = And [
@@ -2019,109 +2137,8 @@ BASIC_POPULATION
             ]
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_SUPPLY"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble   
-
-
-//#####     B A S E   P O P U L A T I O N     #####
-
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet environment = Good
-                NOT HasTag "SELF_SUSTAINING"
-            ]
-            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble
-
-
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet environment = Good
-                HasTag "SELF_SUSTAINING"
-            ]
-            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 6 * Target.SizeAsDouble    // Gets double the base population
-
-
-//#####     P H O T O T R O P H I C   S T U F F     #####
-        
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                HasTag "PHOTOTROPHIC"
-                Star type = [Blue]
-            ]
-            accountinglabel = "VERY_BRIGHT_STAR"
-            effects = SetTargetPopulation Value + 3 * Source.SizeAsDouble
-            
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                HasTag "PHOTOTROPHIC"
-                Star type = [White]
-            ]
-            accountinglabel = "BRIGHT_STAR"
-            effects = SetTargetPopulation Value + 1.5 * Source.SizeAsDouble
-            
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                HasTag "PHOTOTROPHIC"
-                Star type = [Red Neutron]
-            ]
-            accountinglabel = "DIM_STAR"
-            effects = SetTargetPopulation Value - 1 * Source.SizeAsDouble
-            
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                HasTag "PHOTOTROPHIC"
-                Star type = [BlackHole NoStar]
-            ]
-            accountinglabel = "NO_STAR"
-            effects = SetTargetPopulation Value - 10 * Source.SizeAsDouble
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
 '''
-
-BAD_POPULATION
-'''[[BASIC_POPULATION]]
-
-        EffectsGroup
-            scope = Source
-            activation = Planet
-            accountinglabel = "BAD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value*.75   // doesn't matter if these modifiers don't match ther other 'bad' modifiers.
-
-        [[TUNNELS_MODIFIER]]
-        [[ENVIRONMENT_MODIFIER]]
-        [[POPULATION_TECHS]]
-'''
-
-AVERAGE_POPULATION
-'''[[BASIC_POPULATION]]
-        [[TUNNELS_MODIFIER]]
-        [[ENVIRONMENT_MODIFIER]]
-        [[POPULATION_TECHS]]
-'''
-
-GOOD_POPULATION
-'''[[BASIC_POPULATION]]
-
-        EffectsGroup
-            scope = Source
-            activation = Planet
-            accountinglabel = "GOOD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value*1.25  // doesn't matter if these modifiers don't match ther other 'good' modifiers.
-
-        [[TUNNELS_MODIFIER]]
-        [[ENVIRONMENT_MODIFIER]]
-        [[POPULATION_TECHS]]
-'''
-
 
 TUNNELS_MODIFIER
 '''EffectsGroup

@@ -312,6 +312,28 @@ Special
         Not Capital
         Not Planet type = [Asteroids GasGiant]
     ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Building
+                ContainedBy And [
+                    Planet
+                    Contains Source
+                ]
+            ]
+            effects = SetStealth Value + 10
+
+        EffectsGroup
+            scope = And [
+                Ship
+                ContainedBy And [
+                    System
+                    Contains Source
+                ]
+                OwnedBy TheEmpire Source.Owner
+            ]
+            effects = SetStealth Value + 10
+    ]
     graphic = "icons/specials_huge/resonant_moon.png"
 
 Special
