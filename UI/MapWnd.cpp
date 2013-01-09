@@ -3743,13 +3743,33 @@ void MapWnd::SelectedShipsChanged() {
     // set new selected fleets
     m_selected_ship_ids = selected_ship_ids;
 
-    // refresh meters of objects in currently selected system, as changing selected fleets
+
+    // refresh meters of planets in currently selected system, as changing selected fleets
     // may have changed which species a planet should have population estimates shown for
+
     int sidepanel_system_id = SidePanel::SystemID();
     if (sidepanel_system_id == INVALID_OBJECT_ID)
         return;
 
-    UpdateMeterEstimates(sidepanel_system_id, true);
+    // todo: update only target population meters
+
+    int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
+
+    std::vector<int> planets = Objects().FindObjectIDs<Planet>();
+    std::vector<int> system_planets;    system_planets.reserve(16); // arbitrary number big enough for all planets in a system
+    for (std::vector<int>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
+        if (this_client_known_destroyed_objects.find(*it) != this_client_known_destroyed_objects.end())
+            continue;
+        const Planet* planet = GetPlanet(*it);
+        if (!planet)
+            continue;
+        if (planet->SystemID() != sidepanel_system_id)
+            continue;
+        system_planets.push_back(*it);
+    }
+
+    UpdateMeterEstimates(system_planets);
     SidePanel::Update();
 }
 
@@ -4336,12 +4356,22 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects) 
     //Logger().debugStream() << "MapWnd::UpdateMeterEstimates";
 
     const ObjectMap& objects = GetUniverse().Objects();
+    int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
+    const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
+
 
     if (object_id == INVALID_OBJECT_ID) {
-        // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
+        // update meters for all objects.  Value of updated_contained_objects is
+        // irrelivant and is ignored in this case.
         std::vector<int> object_ids;
-        for (ObjectMap::const_iterator obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it)
-            object_ids.push_back(obj_it->first);
+        for (ObjectMap::const_iterator obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it) {
+            int object_id = obj_it->first;
+            // skip known destroyed objects, but do update for stale objects
+            if (this_client_known_destroyed_objects.find(object_id) != this_client_known_destroyed_objects.end())
+                continue;
+            object_ids.push_back(object_id);
+        }
 
         UpdateMeterEstimates(object_ids);
         return;
@@ -4363,10 +4393,16 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects) 
             continue;
         }
 
+        // skip known destroyed objects, but do update for stale objects
+        if (this_client_known_destroyed_objects.find(cur_object_id) != this_client_known_destroyed_objects.end())
+            continue;
+
         // add current object to list
         objects_set.insert(cur_object_id);
 
-        // add contained objects within current object to list of objects to process, if requested.  assumes no objects contain themselves (which could cause infinite loops)
+        // add contained objects within current object to list of objects to
+        // process, if requested.  assumes no objects contain themselves (which
+        // could cause infinite loops)
         if (update_contained_objects) {
             std::vector<int> contained_objects = cur_object->FindObjectIDs(); // get all contained objects
             std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(objects_list));
