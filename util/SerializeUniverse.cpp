@@ -34,6 +34,7 @@ template <class Archive>
 void Universe::serialize(Archive& ar, const unsigned int version)
 {
     ObjectMap                       objects;
+    std::set<int>                   destroyed_object_ids;
     EmpireObjectMap                 empire_latest_known_objects;
     EmpireObjectVisibilityMap       empire_object_visibility;
     EmpireObjectVisibilityTurnMap   empire_object_visibility_turns;
@@ -46,6 +47,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     if (Archive::is_saving::value) {
         Logger().debugStream() << "Universe::serialize : Getting gamestate data";
         GetObjectsToSerialize(              objects,                            m_encoding_empire);
+        GetDestroyedObjectsToSerialize(     destroyed_object_ids,               m_encoding_empire);
         GetEmpireKnownObjectsToSerialize(   empire_latest_known_objects,        m_encoding_empire);
         GetEmpireObjectVisibilityMap(       empire_object_visibility,           m_encoding_empire);
         GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns,     m_encoding_empire);
@@ -69,7 +71,8 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(empire_known_destroyed_object_ids);
     ar  & BOOST_SERIALIZATION_NVP(empire_stale_knowledge_object_ids);
     Logger().debugStream() << "Universe::serialize : (de)serializing actual objects";
-    ar  & BOOST_SERIALIZATION_NVP(objects);
+    ar  & BOOST_SERIALIZATION_NVP(objects)
+        & BOOST_SERIALIZATION_NVP(destroyed_object_ids);
     Logger().debugStream() << "Universe::serialize : (de)serializing empre known objects";
     ar  & BOOST_SERIALIZATION_NVP(empire_latest_known_objects);
     Logger().debugStream() << "Universe::serialize : (de)serializing last allocated ids";
@@ -89,6 +92,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     if (Archive::is_loading::value) {
         Logger().debugStream() << "Universe::serialize : Swapping old/new data";
         m_objects.swap(objects);
+        m_destroyed_object_ids.swap(destroyed_object_ids);
         m_empire_latest_known_objects.swap(empire_latest_known_objects);
         m_empire_object_visibility.swap(empire_object_visibility);
         m_empire_object_visibility_turns.swap(empire_object_visibility_turns);

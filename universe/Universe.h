@@ -522,6 +522,8 @@ private:
     ObjectMap                       m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
     EmpireObjectMap                 m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
 
+    std::set<int>                   m_destroyed_object_ids;             ///< all ids of objects that have been destroyed (on server) or that a player knows were destroyed (on clients)
+
     EmpireObjectVisibilityMap       m_empire_object_visibility;         ///< map from empire id to (map from object id to visibility of that object for that empire)
     EmpireObjectVisibilityTurnMap   m_empire_object_visibility_turns;   ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
 
@@ -560,6 +562,11 @@ private:
     /** Fills \a objects with copies of UniverseObjects that should be sent
       * to the empire with id \a encoding_empires */
     void    GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const;
+
+    /** Fills \a destroyed_object_ids with ids of objects known to be destroyed
+      * by the empire with ID \a encoding empire. If encoding_empire is
+      * ALL_EMPIRES, then all destroyed objects are included. */
+    void    GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_ids, int encoding_empire) const;
 
     /** Fills \a empire_latest_known_objects map with the latest known data
       * about UniverseObjects for the empire with id \a encoding_empire.  If

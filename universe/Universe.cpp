@@ -428,6 +428,8 @@ void Universe::Clear() {
     for (ShipDesignMap::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it)
         delete it->second;
     m_ship_designs.clear();
+
+    m_destroyed_object_ids.clear();
 }
 
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
@@ -487,8 +489,7 @@ const std::set<int>& Universe::EmpireKnownDestroyedObjectIDs(int empire_id) cons
     ObjectKnowledgeMap::const_iterator it = m_empire_known_destroyed_object_ids.find(empire_id);
     if (it != m_empire_known_destroyed_object_ids.end())
         return it->second;
-    static const std::set<int> empty_set;
-    return empty_set;
+    return m_destroyed_object_ids;
 }
 
 const std::set<int>& Universe::EmpireStaleKnowledgeObjectIDs(int empire_id) const {
@@ -2353,6 +2354,8 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
     }
     //Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
 
+    m_destroyed_object_ids.insert(object_id);
+
     if (update_destroyed_object_knowers) {
         // record empires that know this object has been destroyed
         for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
@@ -2630,6 +2633,22 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
             return;                 // empire has no object knowledge, so there is nothing to send
 
         objects.Copy(it->second);
+    }
+}
+
+void Universe::GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_ids, int encoding_empire) const {
+    if (&destroyed_object_ids == &m_destroyed_object_ids)
+        return;
+
+    if (encoding_empire == ALL_EMPIRES) {
+        // all destroyed objects
+        destroyed_object_ids = m_destroyed_object_ids;
+    } else {
+        destroyed_object_ids.clear();
+        // get empire's known destroyed objects
+        ObjectKnowledgeMap::const_iterator it = m_empire_known_destroyed_object_ids.find(encoding_empire);
+        if (it != m_empire_known_destroyed_object_ids.end())
+            destroyed_object_ids = it->second;
     }
 }
 
