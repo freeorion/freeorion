@@ -1,6 +1,24 @@
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
 
+def sysNameIDs(sysIDs):
+    universe = fo.getUniverse()
+    res=[]
+    for sysID in sysIDs:
+        sys = universe.getSystem(sysID)
+        if sys:
+            res.append( "%s:%d"%(sys.name, sysID ) )
+    return res
+
+def planetNameIDs(planetIDs):
+    universe = fo.getUniverse()
+    res=[]
+    for pid in planetIDs:
+        planet = universe.getSystem(pid)
+        if planet:
+            res.append( "%s:%d"%(planet.name, pid ) )
+    return res
+
 def getCapital(): # if no current capital returns planet with biggest pop
     universe = fo.getUniverse()
     empire = fo.getEmpire()
@@ -8,7 +26,10 @@ def getCapital(): # if no current capital returns planet with biggest pop
     capitalID = empire.capitalID
     homeworld = universe.getPlanet(capitalID)
     if homeworld:
-        return capitalID
+        if homeworld.owner==empireID:
+            return capitalID
+        else:
+            print "Nominal Capitol %s does not appear to be owned by empire %d  %s"%(homeworld.name,  empireID,  empire.name)
     #exploredSystemIDs = empire.exploredSystemIDs
     #exploredPlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(exploredSystemIDs)
     empireOwnedPlanetIDs = getOwnedPlanetsByEmpire(universe.planetIDs, empireID)

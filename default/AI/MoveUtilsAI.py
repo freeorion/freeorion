@@ -1,7 +1,9 @@
 import freeOrionAIInterface as fo
+import FreeOrionAI as foAI
 from EnumsAI import AITargetType, AIFleetOrderType
 import AITarget
 import AIFleetOrder
+from ColonisationAI import annexableSystemIDs,  annexableRing1,  annexableRing2,  annexableRing3
 
 def getAIFleetOrdersFromSystemAITargets(fleetAITarget, aiTargets):
     result = []
@@ -13,7 +15,7 @@ def getAIFleetOrdersFromSystemAITargets(fleetAITarget, aiTargets):
     # for every system which fleet wanted to visit, determine systems to visit and create move orders 
     for aiTarget in aiTargets:
         # determine systems required to visit(with possible return to supplied system)
-        systemAITargets = canTravelToSystemAndReturnToResupply(fleetAITarget.getTargetID(), lastSystemAITarget, aiTarget, empireID)#TODO: dont require return
+        systemAITargets = canTravelToSystem(fleetAITarget.getTargetID(), lastSystemAITarget, aiTarget, empireID)
         if len(systemAITargets) > 0:
             # for every system required to visit create move order
             for systemAITarget in systemAITargets:
@@ -27,6 +29,38 @@ def getAIFleetOrdersFromSystemAITargets(fleetAITarget, aiTargets):
 
     return result
 
+def  canTravelToSystem(fleetID, fromSystemAITarget, toSystemAITarget, empireID,  ensureReturn=False):
+    empire = fo.getEmpire()
+    fleetSupplyableSystemIDs = set(empire.fleetSupplyableSystemIDs)
+    # get current fuel and max fuel
+    universe = fo.getUniverse()
+    fleet = universe.getFleet(fleetID)
+    maxFuel = int(fleet.maxFuel)
+    fuel = int(fleet.fuel)
+    if fuel < 1.0 or fromSystemAITarget.getTargetID() == toSystemAITarget.getTargetID:
+        return []
+    if foAI.foAIstate.aggression<=2:
+        pathFunc=universe.leastJumpsPath
+    else:
+        pathFunc=universe.shortestPath
+    startSysID = fromSystemAITarget.getTargetID()
+    targetSysID = toSystemAITarget.getTargetID()
+    shortPath= pathFunc(startSysID, targetSysID, empireID)
+    suppliedStops = [ sid for sid in shortPath if sid in fleetSupplyableSystemIDs  ] 
+    unsuppliedStops = [sid for sid in shortPath if sid not in suppliedStops ]
+    if len( unsuppliedStops) == 0:
+        return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
+    elif targetSysID in fleetSupplyableSystemIDs and len( unsuppliedStops) < fuel -1:
+        return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
+    elif targetSysID in fleetSupplyableSystemIDs.union(annexableRing1) and len( unsuppliedStops) < fuel -1:
+        return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
+    elif foAI.foAIstate.aggression >=2  and targetSysID in fleetSupplyableSystemIDs.union(annexableRing2) and len( unsuppliedStops) < fuel -2:
+        return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
+    elif foAI.foAIstate.aggression >=3  and targetSysID in fleetSupplyableSystemIDs.union(annexableRing3) and len( unsuppliedStops) < fuel -3:
+        return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
+    else:
+        return canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAITarget, empireID)
+ 
 def canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAITarget, empireID,  verbose=False):
     "check if fleet can travel from starting system to wanted system"
 

@@ -11,6 +11,12 @@ import ProductionAI
 empireSpecies = {}
 empireSpeciesSystems={}
 empireColonizers = {}
+annexableSystemIDs=set([])
+annexableRing1=set([])
+annexableRing2=set([])
+annexableRing3=set([])
+annexablePlanetIDs=set([])
+curBestMilShipRating = 20
 
 # makes these mapped to string version of values in case any sizes become reals instead of int
 planetSIzes=            {   str(fo.planetSize.tiny): 1,     str(fo.planetSize.small): 2,    str(fo.planetSize.medium): 3,   str(fo.planetSize.large): 4,    str(fo.planetSize.huge): 5,  str(fo.planetSize.asteroids): 0,  str(fo.planetSize.gasGiant): 0 }
@@ -29,7 +35,10 @@ popSizeModMap={
 
 
 def getColonyFleets():
-    global empireSpecies,  empireColonizers,  empireSpeciesSystems
+    global empireSpecies,  empireColonizers,  empireSpeciesSystems,  annexableSystemIDs,  annexableRing1,  annexableRing2,  annexableRing3
+    global  annexablePlanetIDs,  curBestMilShipRating
+    
+    curBestMilShipRating = ProductionAI.curBestMilShipRating()
     
     "get colony fleets"
 
@@ -73,6 +82,35 @@ def getColonyFleets():
     print "-------\nEmpire Obstructed Starlanes:"
     print  list(empire.obstructedStarlanes())
 
+
+    annexableSystemIDs.clear()
+    annexableRing1.clear()
+    annexableRing2.clear()
+    annexableRing3.clear()
+    annexablePlanetIDs.clear()
+    for sysID in empire.fleetSupplyableSystemIDs:
+        annexableSystemIDs.add(sysID)
+        for nID in  universe.getImmediateNeighbors(sysID,  empireID):
+            annexableSystemIDs.add(nID)
+            annexableRing1.add(nID)
+    annexableRing1.difference_update(empire.fleetSupplyableSystemIDs)
+    print "First Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing1)
+    if empire.getTechStatus("CON_ORBITAL_CON") == fo.techStatus.complete:
+        for sysID in list(annexableRing1):
+            for nID in  universe.getImmediateNeighbors(sysID,  empireID):
+                annexableRing2.add(nID)
+        annexableRing2.difference_update(annexableSystemIDs)
+        print "Second Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing2)
+        annexableSystemIDs.update(annexableRing2)
+        if foAI.foAIstate.aggression > 1:
+            for sysID in list(annexableRing2):
+                for nID in  universe.getImmediateNeighbors(sysID,  empireID):
+                    annexableRing3.add(nID)
+            annexableRing3.difference_update(annexableSystemIDs)
+            print "Third Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing3)
+            annexableSystemIDs.update(annexableRing3)
+    annexablePlanetIDs.update( PlanetUtilsAI.getPlanetsInSystemsIDs(annexableSystemIDs))
+
     # get outpost and colonization planets
     
     exploredSystemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
@@ -85,25 +123,24 @@ def getColonyFleets():
     print "Explored PlanetIDs: " + str(exploredPlanetIDs)
     print ""
     
-    visibleSystemIDs = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate. visBorderSystemIDs.keys()
-    visiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(visibleSystemIDs)
-    print "VisiblePlanets: %s "%[ (pid,  (universe.getPlanet(pid) and  universe.getPlanet(pid).name) or "unknown") for pid in  visiblePlanetIDs]
-    print ""
+    #visibleSystemIDs = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate. visBorderSystemIDs.keys()
+    #visiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(visibleSystemIDs)
+    #print "VisiblePlanets: %s "%[ (pid,  (universe.getPlanet(pid) and  universe.getPlanet(pid).name) or "unknown") for pid in  visiblePlanetIDs]
+    #print ""
     
-    accessibleSystemIDs = [sysID for sysID in visibleSystemIDs if  universe.systemsConnected(sysID, homeSystemID, empireID) ]
-    acessiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(accessibleSystemIDs)
-    
-    #allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs) #working with Explored systems not all 'visible' because might not have a path to the latter
-    allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(acessiblePlanetIDs) #
-    print "All Owned or Populated PlanetIDs: " + str(allOwnedPlanetIDs)
+    #accessibleSystemIDs = [sysID for sysID in visibleSystemIDs if  universe.systemsConnected(sysID, homeSystemID, empireID) ]
+    #acessiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(accessibleSystemIDs)
 
     empireOwnedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
     print "Empire Owned PlanetIDs:            " + str(empireOwnedPlanetIDs)
     
+    #allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs) #working with Explored systems not all 'visible' because might not have a path to the latter
+    allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(annexablePlanetIDs) #
+    print "All annexable Owned or Populated PlanetIDs: " + str(set(allOwnedPlanetIDs)-set(empireOwnedPlanetIDs))
 
     #unOwnedPlanetIDs = list(set(exploredPlanetIDs) -set(allOwnedPlanetIDs))
-    unOwnedPlanetIDs = list(set(acessiblePlanetIDs) -set(allOwnedPlanetIDs))
-    print "UnOwned PlanetIDs:             " + str(unOwnedPlanetIDs)
+    unOwnedPlanetIDs = list(set(annexablePlanetIDs) -set(allOwnedPlanetIDs))
+    print "UnOwned annexable PlanetIDs:             " + str(PlanetUtilsAI.planetNameIDs(unOwnedPlanetIDs))
     
     empirePopCtrs = set( PlanetUtilsAI.getPopulatedPlanetIDs(  empireOwnedPlanetIDs) )
     empireOutpostIDs=set(empireOwnedPlanetIDs) - empirePopCtrs
@@ -206,7 +243,7 @@ def getColonyFleets():
     evaluatedColonyPlanetIDs = list(set(unOwnedPlanetIDs).union(empireOutpostIDs) - set(colonyTargetedPlanetIDs) )
     # print "Evaluated Colony PlanetIDs:        " + str(evaluatedColonyPlanetIDs)
 
-    evaluatedOutpostPlanetIDs = list(set(unOwnedPlanetIDs) - set(outpostTargetedPlanetIDs))
+    evaluatedOutpostPlanetIDs = list(set(unOwnedPlanetIDs) - set(outpostTargetedPlanetIDs)- set(colonyTargetedPlanetIDs))
     # print "Evaluated Outpost PlanetIDs:       " + str(evaluatedOutpostPlanetIDs)
 
     evaluatedColonyPlanets = assignColonisationValues(evaluatedColonyPlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, fleetSupplyablePlanetIDs, species, empire)
@@ -285,7 +322,7 @@ def assignColonyFleetsToColonise():
     # assign fleet targets to colonisable outposts
     sendColonyShips(AIstate.outpostFleetIDs, foAI.foAIstate.colonisableOutpostIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST)
 
-def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, species, empire):
+def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, species, empire): #TODO: clean up supplyable versus annexable
     "creates a dictionary that takes planetIDs as key and their colonisation score as value"
 
     planetValues = {}
@@ -298,7 +335,7 @@ def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, s
         if best!=[]:
             if   (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ):
                 planetValues[planetID] = (best[0][0],  "")
-            else:
+            else:#TODO: check for system-local colonizer; also,  if a tie amongst top try to choose empire main species
                 planetValues[planetID] = best[0]
 
     return planetValues
@@ -349,18 +386,37 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             if "_NEST_" in special:
                 retval+=10 # get an outpost on the nest quick
         if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete )): 
-                retval+=10*len( empireSpeciesSystems.get(planet.systemID , []))   # asteroid mining is good return #TODO: check that no preexisting asteroid outpost in system
-        for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
-            if special in planetSpecials:
-                retval += 30 #expects we can make exobots soonish or will have other colonizers & want to claim the planet
+            if system:
+                astVal=0
+                for pid in system.planetIDs:
+                    otherPlanet=universe.getPlanet(pid)
+                    if otherPlanet.size == fo.planetSize.asteroids:
+                        if pid==planetID:
+                            continue
+                        elif pid < planetID:
+                            astVal=0
+                            break
+                    elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID:
+                        astVal+=20
+                retval += astVal
         if  ( ( planet.size  ==  fo.planetSize.gasGiant ) and  ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:10]) )): 
-                retval += 45*len( empireSpeciesSystems.get(planet.systemID , []))   # gias giant generators great, fast return
-        if foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0) > 0:
+            if system:
+                orbGenVal=0
+                for pid in system.planetIDs:
+                    otherPlanet=universe.getPlanet(pid)
+                    if otherPlanet.size == fo.planetSize.asteroids and otherPlanet.owner==empire.empireID:
+                        if empire.getTechStatus("PRO_EXOBOTS") == fo.techStatus.complete:
+                            orbGenVal+=30
+                    elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID:
+                        orbGenVal+=50
+                retval += orbGenVal
+        if foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0) > curBestMilShipRating:
             retval = retval / 2.0
         return int(retval)
     else: #colonization mission
         asteroidBonus=0
         gasGiantBonus=0
+        miningBonus=0
         if   (planet.size==fo.planetSize.gasGiant) and not (species and species.name  ==  "SP_SUPER_TEST"): 
             return 0   
         elif ( planet.size  ==  fo.planetSize.asteroids ):
@@ -384,9 +440,9 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                 p2 = universe.getPlanet(pid)
                 if p2:
                     if p2.size== fo.planetSize.asteroids :
-                        asteroidBonus = 5
+                        asteroidBonus = 30
                     if p2.size== fo.planetSize.gasGiant :
-                        gasGiantBonus += 10
+                        gasGiantBonus += 50
         planetEnv  = environs[ str(species.getPlanetEnvironment(planet.type)) ]
         popSizeMod=0
         popSizeMod += popSizeModMap["env"][planetEnv]
@@ -445,8 +501,12 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         if "DIM_RIFT_MASTER_SPECIAL" in planet.specials:
             popSize -= 4
 
+        for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] : 
+            if special in planetSpecials:
+                miningBonus=150
 
-        # give preference to closest worlds
+
+        # used to give preference to closest worlds
         empireID = empire.empireID
         capitalID = PlanetUtilsAI.getCapital()
         homeworld = universe.getPlanet(capitalID)
@@ -457,20 +517,32 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             distanceFactor = 1.001 / (leastJumpsPath + 1)
         else:
             distanceFactor = 0
+
+        retval=0.0
+        if popSize<0: #can still have industry focus bonuses and buildings
+            if foAI.foAIstate.aggression > 2:
+                retval  = starBonus+asteroidBonus+gasGiantBonus
+        elif popSize==0:
+            if foAI.foAIstate.aggression > 2:
+                retval  = starBonus+max(asteroidBonus+gasGiantBonus,  miningBonus)
+        else:
+            retval  = starBonus+max(asteroidBonus+gasGiantBonus,  miningBonus) + valMod + 2*popSize
+            if planet.systemID in annexableRing1:
+                retval += 10
+            elif planet.systemID in annexableRing2:
+                retval += 20
+            elif planet.systemID in annexableRing3:
+                retval += 10
         
-        if foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0) > 0:
-            threatFactor = 0.7
-        else:
-            threatFactor = 1.0
-    
-        if popSize<1:
-            return 0
-        if (planetID in fleetSupplyablePlanetIDs):
-            return (retval+ popSize + distanceFactor + valMod + gasGiantBonus + asteroidBonus)*threatFactor
-            #return getPlanetHospitality(planetID, species) * planet.size + distanceFactor
-        else:
-            return  (retval+popSize + distanceFactor  + valMod)*threatFactor
-            #return getPlanetHospitality(planetID, species) * planet.size - distanceFactor
+        thrtRatio = (foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0)+0.2*foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('neighborThreat', 0)) / float(curBestMilShipRating)
+        if thrtRatio > 4:
+            retval = 0.3*retval 
+        elif thrtRatio >= 2:
+            retval = 0.7* retval
+        elif thrtRatio > 0:
+            retval = 0.85* retval
+
+    return retval
 
 def getPlanetHospitality(planetID, species):
     "returns a value depending on the planet type"

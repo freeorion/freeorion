@@ -7,25 +7,8 @@ import PlanetUtilsAI
 import AITarget
 import math
 from ProductionAI import  getBestShipInfo
-from ColonisationAI import evaluatePlanet
-
-def sysNameIDs(sysIDs):
-    universe = fo.getUniverse()
-    res=[]
-    for sysID in sysIDs:
-        sys = universe.getSystem(sysID)
-        if sys:
-            res.append( "%s:%d"%(sys.name, sysID ) )
-    return res
-
-def planetNameIDs(planetIDs):
-    universe = fo.getUniverse()
-    res=[]
-    for pid in planetIDs:
-        planet = universe.getSystem(pid)
-        if planet:
-            res.append( "%s:%d"%(planet.name, pid ) )
-    return res
+from ColonisationAI import evaluatePlanet,  annexableSystemIDs,  annexableRing1,  annexableRing2,  annexableRing3
+import ColonisationAI
 
 def getInvasionFleets():
     "get invasion fleets"
@@ -52,32 +35,7 @@ def getInvasionFleets():
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
     fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
     
-    primeInvadableSystemIDs1 = set([])
-    primeInvadableSystemIDs = set([])
-    print "Current Fleet Supplyable Systems: ",  sysNameIDs(empire.fleetSupplyableSystemIDs)
-    for sysID in empire.fleetSupplyableSystemIDs:
-        primeInvadableSystemIDs.add(sysID)
-        for nID in  universe.getImmediateNeighbors(sysID,  empireID):
-            primeInvadableSystemIDs.add(nID)
-            primeInvadableSystemIDs1.add(nID)
-    primeInvadableSystemIDs1.difference_update(empire.fleetSupplyableSystemIDs)
-    print "First Ring of invadable systems: ",  sysNameIDs(primeInvadableSystemIDs1)
-    if empire.getTechStatus("CON_ORBITAL_CON") == fo.techStatus.complete:
-        primeInvadableSystemIDs2 = set([])
-        for sysID in list(primeInvadableSystemIDs1):
-            for nID in  universe.getImmediateNeighbors(sysID,  empireID):
-                primeInvadableSystemIDs2.add(nID)
-        primeInvadableSystemIDs2.difference_update(primeInvadableSystemIDs)
-        print "Second Ring of invadable systems: ",  sysNameIDs(primeInvadableSystemIDs2)
-        primeInvadableSystemIDs.update(primeInvadableSystemIDs2)
-        primeInvadableSystemIDs3 = set([])
-        if foAI.foAIstate.aggression > 1:
-            for sysID in list(primeInvadableSystemIDs2):
-                for nID in  universe.getImmediateNeighbors(sysID,  empireID):
-                    primeInvadableSystemIDs3.add(nID)
-            primeInvadableSystemIDs3.difference_update(primeInvadableSystemIDs)
-            print "Third Ring of invadable systems: ",  sysNameIDs(primeInvadableSystemIDs3)
-            primeInvadableSystemIDs.update(primeInvadableSystemIDs3)
+    primeInvadableSystemIDs = set(ColonisationAI.annexableSystemIDs)
     primeInvadablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(primeInvadableSystemIDs)
 
     # get competitor planets
@@ -88,29 +46,28 @@ def getInvasionFleets():
     visiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(visibleSystemIDs)
     accessibleSystemIDs = [sysID for sysID in visibleSystemIDs if  universe.systemsConnected(sysID, homeSystemID, empireID) ]
     acessiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(accessibleSystemIDs)
-    
 
     #allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs)
     allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(acessiblePlanetIDs)
     # print "All Owned and Populated PlanetIDs: " + str(allOwnedPlanetIDs)
     
     allPopulatedPlanets=PlanetUtilsAI.getPopulatedPlanetIDs(acessiblePlanetIDs)
-    print "All Visible and accessible Populated PlanetIDs (including this empire's):              " + str(planetNameIDs(allPopulatedPlanets))
+    print "All Visible and accessible Populated PlanetIDs (including this empire's):              " + str(PlanetUtilsAI.planetNameIDs(allPopulatedPlanets))
 
     empireOwnedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
     # print "Empire Owned PlanetIDs:            " + str(empireOwnedPlanetIDs)
 
     invadablePlanetIDs = set(primeInvadablePlanetIDs).intersection(set(allPopulatedPlanets) - set(empireOwnedPlanetIDs))
-    print "Prime Invadable PlanetIDs:              " + str(planetNameIDs(invadablePlanetIDs))
+    print "Prime Invadable PlanetIDs:              " + str(PlanetUtilsAI.planetNameIDs(invadablePlanetIDs))
 
     print ""
-    print "Invasion Targeted SystemIDs:       " + str(sysNameIDs(AIstate.invasionTargetedSystemIDs))
+    print "Current Invasion Targeted SystemIDs:       " + str(PlanetUtilsAI.sysNameIDs(AIstate.invasionTargetedSystemIDs))
     invasionTargetedPlanetIDs = getInvasionTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_INVASION, empireID)
     allInvasionTargetedSystemIDs = PlanetUtilsAI.getSystems(invasionTargetedPlanetIDs)
  
     # export invasion targeted systems for other AI modules
     AIstate.invasionTargetedSystemIDs = allInvasionTargetedSystemIDs
-    print "Invasion Targeted PlanetIDs:       " + str(planetNameIDs(invasionTargetedPlanetIDs))
+    print "Current Invasion Targeted PlanetIDs:       " + str(PlanetUtilsAI.planetNameIDs(invasionTargetedPlanetIDs))
 
     invasionFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION)
     if not invasionFleetIDs:

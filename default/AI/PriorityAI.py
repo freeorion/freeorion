@@ -124,7 +124,18 @@ def calculateResearchPriority():
     elif fo.currentTurn() < 40:
         researchPriority = 20 # high  industry , low research 
     else:
+        researchQueue = list(empire.researchQueue)
         researchPriority = 15 # high  industry , low research 
+        if len(researchQueue) == 0 :
+            researchPriority = 0 # done with research
+        elif len(researchQueue) <5 and researchQueue[-1].allocation > 0 :
+            researchPriority = 1 # barely not done with research 
+        elif len(researchQueue) <10 and researchQueue[-1].allocation > 0 :
+            researchPriority = 2 # almost done with research 
+        elif len(researchQueue) <20 and researchQueue[int(len(researchQueue)/2)].allocation > 0 :
+            researchPriority = 5 # closing in on end of research 
+        elif len(researchQueue) <20:
+            researchPriority = 10 # high  industry , low research 
 
 
     print  ""
@@ -167,7 +178,7 @@ def calculateColonisationPriority():
 
     colonyshipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
     numColonyships = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(colonyshipIDs))
-    colonisationPriority = 101 * (numColonisablePlanetIDs - numColonyships) / numColonisablePlanetIDs
+    colonisationPriority = 121 * (2+numColonisablePlanetIDs - numColonyships) / (numColonisablePlanetIDs+1)
 
     # print ""
     # print "Number of Colony Ships        : " + str(numColonyships)
