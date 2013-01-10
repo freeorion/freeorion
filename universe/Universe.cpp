@@ -1775,6 +1775,8 @@ namespace {
         }
     }
 
+    /** sets planets in system where an empire owns an object to be basically
+      * visible, and those systems to be partially visible */
     void SetSameSystemPlanetsVisible(const ObjectMap& objects) {
         Universe& universe = GetUniverse();
         // map from empire ID to ID of systems where those empires own at least one object
@@ -1786,15 +1788,28 @@ namespace {
                 continue;
             empires_systems_with_owned_objects[obj->Owner()].insert(obj->SystemID());
         }
-        // check each planet to see which empires have owned objects in system
-        for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
-            const UniverseObject* obj = it->second;
-            if (obj->ObjectType() != OBJ_PLANET)
+
+        // set system visibility
+        for (std::map<int, std::set<int> >::const_iterator it = empires_systems_with_owned_objects.begin();
+             it != empires_systems_with_owned_objects.end(); ++it)
+        {
+            int empire_id = it->first;
+            const std::set<int>& system_ids = it->second;
+            for (std::set<int>::const_iterator sys_it = system_ids.begin();
+                 sys_it != system_ids.end(); ++sys_it)
+            { universe.SetEmpireObjectVisibility(empire_id, *sys_it, VIS_PARTIAL_VISIBILITY); }
+        }
+
+        // get planets, check their locations...
+        const ObjectMap& objects = Objects();
+        std::vector<const Planet*> planets = objects.FindObjects<Planet>();
+        for (std::vector<const Planet*>::iterator it = planets.begin(); it != planets.end(); ++it) {
+            const Planet* planet = *it;
+            int system_id = planet->SystemID();
+            if (system_id == INVALID_OBJECT_ID)
                 continue;
-            int obj_system_id = obj->SystemID();
-            if (obj_system_id == INVALID_OBJECT_ID)
-                continue;
-            int object_id = it->first;
+
+            int planet_id = planet->ID();
             for (std::map<int, std::set<int> >::const_iterator
                  emp_it = empires_systems_with_owned_objects.begin();
                  emp_it != empires_systems_with_owned_objects.end();
@@ -1802,11 +1817,11 @@ namespace {
             {
                 int empire_id = emp_it->first;
                 const std::set<int>& empire_systems = emp_it->second;
-                if (empire_systems.find(obj_system_id) == empire_systems.end())
+                if (empire_systems.find(system_id) == empire_systems.end())
                     continue;
                 // ensure planets are at least basicaly visible.  does not
                 // overwrite higher visibility levels
-                universe.SetEmpireObjectVisibility(empire_id, object_id, VIS_BASIC_VISIBILITY);
+                universe.SetEmpireObjectVisibility(empire_id, planet_id, VIS_BASIC_VISIBILITY);
             }
         }
     }
