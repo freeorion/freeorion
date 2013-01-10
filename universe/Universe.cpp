@@ -1801,7 +1801,6 @@ namespace {
         }
 
         // get planets, check their locations...
-        const ObjectMap& objects = Objects();
         std::vector<const Planet*> planets = objects.FindObjects<Planet>();
         for (std::vector<const Planet*>::iterator it = planets.begin(); it != planets.end(); ++it) {
             const Planet* planet = *it;
@@ -1829,8 +1828,6 @@ namespace {
     void PropegateVisibilityToContainerObjects(const ObjectMap& objects,
                                                Universe::EmpireObjectVisibilityMap& empire_object_visibility)
     {
-        Universe& universe = GetUniverse();
-
         // propegate visibility from contained to container objects
         for (ObjectMap::const_iterator container_object_it = objects.const_begin();
              container_object_it != objects.const_end(); ++container_object_it)
