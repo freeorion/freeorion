@@ -822,7 +822,11 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = Source
-            effects = Victory "TECH_VICTORY"
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_VICTORY_TECH"
+                Victory "TECH_VICTORY"
+                ]
     graphic = "icons/tech/singularity_of_transcendence.png"
 
 Tech

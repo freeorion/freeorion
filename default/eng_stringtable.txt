@@ -3213,6 +3213,11 @@ The mystery of the fearsome threat plagueing the galaxy has been solved, and its
 SITREP_VICTORY_CAPTURE_LABEL
 Victory Capture
 
+SITREP_VICTORY_TECH
+Your Empire has discovered the Singularity of Transcendence. You win!
+SITREP_VICTORY_TECH_LABEL
+Victory Technology
+
 SITREP_VICTORY_BIO
 The mystery of the fearsome threat plagueing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have met their just fate at the hands of your mighty warfleet.
 SITREP_VICTORY_BIO_LABEL
