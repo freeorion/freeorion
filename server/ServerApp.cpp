@@ -201,14 +201,14 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
         args.push_back("--log-level");
         args.push_back(GetOptionsDB().Get<std::string>("log-level"));
-        
+
         Logger().debugStream() << "starting " << AI_CLIENT_EXE << " with GameSetup.ai-aggression set to " << maxAggr;
 
         m_ai_client_processes.push_back(Process(AI_CLIENT_EXE, args));
 
         Logger().debugStream() << "done starting " << AI_CLIENT_EXE;
     }
-    
+
     // set initial AI process priority to low
     SetAIsProcessPriorityToLow(true);
 }
@@ -1800,6 +1800,9 @@ namespace {
 
                 ResolveGroundCombat(empires_troops);
             }
+
+            int planet_initial_owner_id = planet->Owner();
+
             // who won?
             if (empires_troops.size() == 1) {
                 int victor_id = empires_troops.begin()->first;
@@ -1846,7 +1849,6 @@ namespace {
                 if (Meter* meter = planet->GetMeter(METER_TROOPS))
                     meter->SetCurrent(empires_troops.begin()->second);  // new troops on planet is remainder after battle
 
-
             } else {
                 // no troops left?
                 if (Meter* meter = planet->GetMeter(METER_TROOPS))
@@ -1856,6 +1858,13 @@ namespace {
             }
 
             planet->BackPropegateMeters();
+
+            // knowledge update to ensure previous owner of planet knows who owns it now?
+            if (planet_initial_owner_id != ALL_EMPIRES && planet_initial_owner_id != planet->Owner()) {
+                // get empire's knowledge of object
+                ObjectMap& empire_latest_known_objects = EmpireKnownObjects(planet_initial_owner_id);
+                empire_latest_known_objects.Copy(planet, planet_initial_owner_id);
+            }
         }
     }
 }
