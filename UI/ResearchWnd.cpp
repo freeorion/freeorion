@@ -354,8 +354,7 @@ void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& p
     QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
     if (!queue_row)
         return;
-    m_tech_tree_wnd->CenterOnTech(queue_row->tech_name);
-    m_tech_tree_wnd->SetEncyclopediaTech(queue_row->tech_name);
+    ShowTech(queue_row->tech_name);
 }
 
 void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it) {
