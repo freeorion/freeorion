@@ -2276,19 +2276,6 @@ void FleetWnd::Init(int selected_fleet_id) {
         selected_fleet_id = INVALID_OBJECT_ID;
     }
 
-    // autoselect a fleet, if supposed to
-    if (selected_fleet_id != INVALID_OBJECT_ID && GetOptionsDB().Get<bool>("UI.fleet-autoselect")) {
-        for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
-            int fleet_in_row = FleetInRow(it);
-            if (fleet_in_row == selected_fleet_id) {
-                m_fleets_lb->SelectRow(it);
-                m_fleets_lb->BringRowIntoView(it);
-                m_fleet_detail_panel->SetFleet(selected_fleet_id);
-                break;
-            }
-        }
-    }
-
     DoLayout();
 }
 
@@ -2383,7 +2370,7 @@ void FleetWnd::Refresh() {
         // reselect any previously-selected ships
         this->SetSelectedShips(initially_selected_ships);
     } else if (!m_fleets_lb->Empty()) {
-        // default select first fleet and first ship
+        // default select first fleet
         int first_fleet_id = FleetInRow(m_fleets_lb->begin());
         if (first_fleet_id != INVALID_OBJECT_ID) {
             std::set<int> fleet_id_set;

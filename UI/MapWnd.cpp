@@ -1659,7 +1659,6 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         // create popup menu with map options in it.
         GG::MenuItem menu_contents;
         bool fps            = GetOptionsDB().Get<bool>("show-fps");
-        bool autoselect     = GetOptionsDB().Get<bool>("UI.fleet-autoselect");
         bool showPlanets    = GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown");
         bool systemCircles  = GetOptionsDB().Get<bool>("UI.system-circles");
         bool resourceColor  = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
@@ -1670,7 +1669,6 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         bool zoomSlider     = GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider");
         bool detectionRange = GetOptionsDB().Get<bool>("UI.show-detection-range");
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_SHOW_FPS"),            1, false, fps));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_AUTOSELECT_FLEET"),      2, false, autoselect));
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"),  3, false, showPlanets));
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_UI_SYSTEM_CIRCLES"),         4, false, systemCircles));
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"), 5, false, resourceColor));
@@ -1686,7 +1684,6 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         if (popup.Run()) {
             switch (popup.MenuID()) {
                 case 1: { GetOptionsDB().Set<bool>("show-fps",                       !fps);        break; }
-                case 2: { GetOptionsDB().Set<bool>("UI.fleet-autoselect",            !autoselect);  break; }
                 case 3: { GetOptionsDB().Set<bool>("UI.sidepanel-planet-shown",      !showPlanets);  break; }
                 case 4: { GetOptionsDB().Set<bool>("UI.system-circles",              !systemCircles); break; }
                 case 5: { GetOptionsDB().Set<bool>("UI.resource-starlane-colouring", !resourceColor);  break; }

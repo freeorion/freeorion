@@ -751,7 +751,6 @@ void OptionsWnd::Init() {
     BeginPage(UserString("OPTIONS_PAGE_UI"));
     BeginSection(UserString("OPTIONS_MISC_UI"));
     BoolOption("UI.swap-mouse-lr",              UserString("OPTIONS_SWAP_MOUSE_LR"));
-    BoolOption("UI.fleet-autoselect",           UserString("OPTIONS_AUTOSELECT_FLEET"));
     BoolOption("UI.multiple-fleet-windows",     UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
     BoolOption("UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
     BoolOption("UI.sidepanel-planet-shown",     UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));

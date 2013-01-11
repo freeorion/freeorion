@@ -979,9 +979,6 @@ Sets UI tooltip popup delay, in ms.
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 If true, clicks on multiple fleet buttons will open multiple fleet windows at the same time. Otherwise, opening a fleet window will close any currently-open fleet window.
 
-OPTIONS_DB_UI_FLEET_AUTOSELECT
-Auto-select the top fleet when a fleet window is opened. Consider using this flag if you use UI.multiple-fleet-windows.
-
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Close open windows such as fleet windows and the system-view side panel when you right-click on the main map.
 
@@ -1445,9 +1442,6 @@ Save Game Files
 
 OPTIONS_TITLE
 Options
-
-OPTIONS_AUTOSELECT_FLEET
-Auto-select first fleet
 
 OPTIONS_MULTIPLE_FLEET_WNDS
 Multiple fleet windows
