@@ -237,7 +237,7 @@ Hull
         Slot type = Internal position = (0.20, 0.85)
         Slot type = Internal position = (0.40, 0.85)
     ]
-    buildCost = 200 * (1 + 0.05 *
+    buildCost = 200 * (1 + 0.01 *
         Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
@@ -343,7 +343,7 @@ Hull
         Slot type = Internal position = (0.20, 0.85)
         Slot type = Internal position = (0.30, 0.85)
     ]
-    buildCost = 400 * (1 + 0.05 *
+    buildCost = 400 * (1 + 0.01 *
         Count condition = And [
             Ship
             OwnedBy TheEmpire Source.Owner
