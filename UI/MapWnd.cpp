@@ -4431,12 +4431,10 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     std::vector<Planet*>    ownership_modified_planets;
     std::vector<Planet*>    species_modified_planets;
 
-    const Ship* ship = GetShip(FleetUIManager::GetFleetUIManager().SelectedShipID());
-    if (ship) {
-        // there is a selected colony ship.
-        if (ship->CanColonize() &&              ship->OwnedBy(empire_id) &&
-            !ship->SpeciesName().empty() &&     ship->SystemID() != INVALID_OBJECT_ID)
-        {
+
+    if (const Ship* ship = ValidSelectedColonyShip(SidePanel::SystemID())) {
+        // there is a selected colony ship suitable for the visible system
+        if (ship->CanColonize() && ship->OwnedBy(empire_id) && !ship->SpeciesName().empty()) {
             // selected ship: exists, is a colony ship, is owned by this client's player
             //                is in a system, and has a usable species.
 
@@ -4470,10 +4468,10 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
                 }
             }
         }
-    } else {
-        // no colony ship selected.  instead, for each planet being updated,
-        // attempt to find a colony ship for it, and use that ship's species
-        // for meter estimates.
+    } else if (FleetUIManager::GetFleetUIManager().SelectedShipIDs().empty()) {
+        // no suitable colony ship selected.  instead, for each planet being
+        // updated, attempt to find a colony ship for it, and use that ship's
+        // species for meter estimates.
         for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
             Planet* planet = GetPlanet(*it);
             if (!planet ||
@@ -4499,8 +4497,10 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
         }
     }
 
-    // update meter estimates with temporary ownership
+
+    // update meter estimates with temporary ownership / species set
     GetUniverse().UpdateMeterEstimates(objects_vec);
+
 
     // undo any temporary changes from above
     for (std::vector<Planet*>::iterator it = ownership_modified_planets.begin();

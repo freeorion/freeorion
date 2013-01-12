@@ -1052,20 +1052,6 @@ namespace {
         return false;
     }
 
-    const Ship* ValidSelectedColonyShip(int system_id) {
-        // if not looking in a valid system, no valid colony ship can be available
-        if (system_id == INVALID_OBJECT_ID)
-            return 0;
-
-        // is there a valid selected ship in the active FleetWnd?
-        std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
-        for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
-            if (const Ship* ship = GetShip(*ss_it))
-                if (ship->SystemID() == system_id && ship->CanColonize() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-                    return ship;
-        return 0;
-    }
-
     std::set<const Ship*> ValidSelectedInvasionShips(int system_id) {
         std::set<const Ship*> retval;
 
@@ -1101,6 +1087,20 @@ namespace {
         }
         return false;
     }
+}
+
+const Ship* ValidSelectedColonyShip(int system_id) {
+    // if not looking in a valid system, no valid colony ship can be available
+    if (system_id == INVALID_OBJECT_ID)
+        return 0;
+
+    // is there a valid selected ship in the active FleetWnd?
+    std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
+    for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
+        if (const Ship* ship = GetShip(*ss_it))
+            if (ship->SystemID() == system_id && ship->CanColonize() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+                return ship;
+    return 0;
 }
 
 int AutomaticallyChosenColonyShip(int target_planet_id) {
@@ -1150,7 +1150,6 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
 
     return (*capable_and_available_colony_ships.begin())->ID();
 }
-
 
 std::set<const Ship*> AutomaticallyChosenInvasionShips(int target_planet_id) {
     std::set<const Ship*> retval;
@@ -1252,10 +1251,11 @@ void SidePanel::PlanetPanel::Refresh() {
     }
 
     const Ship* selected_colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
-    if (!selected_colony_ship)
+    if (!selected_colony_ship && FleetUIManager::GetFleetUIManager().SelectedShipIDs().empty())
         selected_colony_ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
+
     std::set<const Ship*> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
-    if (invasion_ships.empty()){
+    if (invasion_ships.empty()) {
         std::set<const Ship*> autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
         invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
     }
