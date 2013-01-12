@@ -1,12 +1,21 @@
 <?xml version="1.0"?>
 <XMLDoc>
   <CREDITS>
-    <GROUP name ="PROGRAMMING">
+    <GROUP name="LEAD">
       <PERSON name="Geoff Topping"            nick="Geoff the Medio"  task="Programming, Game Design"/>
-      <PERSON name="Zach Laine"               nick="Tzlaine"          task="Programming, Game Design"/>
+      <PERSON name="J. W. Bjerk"              nick="eleazar"          task="Game Design, Graphics"/>
+    </GROUP>
+    <GROUP name="LEAD EMPERITUS">
       <PERSON name="Mark Saward"              nick="Tyreth"           task="Programming, Game Design, Graphics"/>
+      <PERSON name="Zach Laine"               nick="Tzlaine"          task="Programming, Game Design"/>
+      <PERSON name="Samuel Knowlton"          nick="Aquitaine"        task="Game Design"/>
+      <PERSON name="Mathias Köhler"           nick="pd"               task="Graphics"/>
+      <PERSON name="Anton Ruonala"            nick="Miu"              task="Graphics"/>
+    </GROUP>
+    <GROUP name="PROGRAMMING">
       <PERSON name="Joseph Bissonnette"       nick="Oceanmachine"     task="Programming, Game Design"/>
       <PERSON name="Dennis Brakhane"          nick="Yoghurt"          task="Programming"/>
+      <PERSON name="Isaac Supeene"            nick="Bigjoe5"          task="Programming, Game Design"/>
       <PERSON name="Joshua Barczak"           nick="jbarcz1"          task="Programming, Game Design"/>
       <PERSON name="Andrew Emmons"            nick=""                 task="Programming"/>
       <PERSON name="Ronald Nölte"             nick="Noelte"           task="Programming"/>
@@ -38,10 +47,10 @@
       <PERSON name=""                         nick="Dilvish"          task="Programming"/>
       <PERSON name=""                         nick="aineko"           task="Programming"/>
       <PERSON name="Patrick B."               nick="Rogor"            task="Programming"/>
+      <PERSON name=""                         nick="Vezzra"           task="Programming"/>
+      <PERSON name="Landon Manning"           nick="yandonman"        task="Programming"/>
     </GROUP>
-    <GROUP name ="GAMEDESIGN">
-      <PERSON name="J. W. Bjerk"              nick="eleazar"          task="Game Design, Graphics"/>
-      <PERSON name="Samuel Knowlton"          nick="Aquitaine"        task="Game Design"/>
+    <GROUP name="GAMEDESIGN and CONTENT">
       <PERSON name="Krum Stanoev"             nick=""                 task="Game Design"/>
       <PERSON name="Ben Lake"                 nick="Drek"             task="Game Design"/>
       <PERSON name="Nightfish"                nick=""                 task="Game Design"/>
@@ -55,12 +64,11 @@
       <PERSON name="Bryan Patterson"          nick="PowerCrazy"       task="Game Design"/>
       <PERSON name="Andrew Hull"              nick="moxy"             task="Game Design"/>
       <PERSON name="Benjamin Confino"         nick="Tortanick"        task="Game Design"/>
-      <PERSON name="Isaac Supeene"            nick="Bigjoe5"          task="Game Design"/>
+      <PERSON name="Colin Ng"                 nick="unjashfan"        task="Game Design"/>
+      <PERSON name=""                         nick="Sloth"            task="Game Design"/>
     </GROUP>
-    <GROUP name ="GRAPHICS">
-      <PERSON name="Mathias Köhler"           nick="pd"               task="Graphics"/>
+    <GROUP name="GRAPHICS">
       <PERSON name="Josh Combs"               nick="Josh"             task="Graphics"/>
-      <PERSON name="Anton Ruonala"            nick="Miu"              task="Graphics"/>
       <PERSON name="Jonathan Hill"            nick="Obiwan"           task="Graphics"/>
       <PERSON name="Ka"                       nick=""                 task="Graphics"/>
       <PERSON name="Alex Kaludis"             nick="That Guy"         task="Graphics"/>
@@ -77,7 +85,7 @@
       <PERSON name="Hugh Edward Durham III"   nick="GlasShadow"       task="Graphics"/>
       <PERSON name="Marko Brasovan"           nick="Cmd. Marko"       task="Graphics"/>
     </GROUP>
-    <GROUP name ="AUDIO">
+    <GROUP name="AUDIO">
       <PERSON name="Scott R. Looney"          nick="metaphysician"    task="Audio"/>
       <PERSON name="Kenneth Welch"            nick="LithiumMongoose"  task="Audio"/>
       <PERSON name="Shannon Roberts"          nick="Guiguibaah"       task="Audio"/>
@@ -85,7 +93,7 @@
       <PERSON name="Run_Lugge"                nick=""                 task="Audio"/>
       <PERSON name="_Robbob_"                 nick=""                 task="Audio"/>
     </GROUP>
-    <GROUP name ="TRANSLATION">
+    <GROUP name="TRANSLATION">
       <PERSON name="Ivan Sanchez"             nick="Ivan s c"         task="Spanish Translation"/>
       <PERSON name="Myckel Habets"            nick="Myckel"           task="Dutch Translation"/>
       <PERSON name="Martin Roth"              nick="Captain Rage"     task="Swedish Translation"/>

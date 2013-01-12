@@ -13,12 +13,7 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 100 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 10
     tags = [ "SHINY" "EXOTIC" ]
     location = Contains And [
@@ -58,12 +53,7 @@ Hull
     slots = [
         Slot type = External position = (0.50, 0.45)
     ]
-    buildCost = 10.0 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
@@ -86,12 +76,7 @@ Hull
         Slot type = External position = (0.65, 0.40)
         Slot type = Internal position = (0.50, 0.65)
     ]
-    buildCost = 25 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
@@ -116,12 +101,7 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 50 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"
@@ -147,12 +127,7 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 75 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 75 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -188,12 +163,7 @@ Hull
         Slot type = External position = (0.40, 0.50)
         Slot type = External position = (0.60, 0.50)
     ]
-    buildCost = 50 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -237,12 +207,7 @@ Hull
         Slot type = Internal position = (0.20, 0.85)
         Slot type = Internal position = (0.40, 0.85)
     ]
-    buildCost = 200 * (1 + 0.01 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 200 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -281,13 +246,8 @@ Hull
         Slot type = External position = (0.90, 0.15)
         Slot type = Internal position = (0.30, 0.75)
     ]
-    buildCost = 50
-    buildTime = 2 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 2
     location = And [
         Contains And [
             Building "BLD_SHIPYARD_CON_NANOROBO"
@@ -343,12 +303,7 @@ Hull
         Slot type = Internal position = (0.20, 0.85)
         Slot type = Internal position = (0.30, 0.85)
     ]
-    buildCost = 400 * (1 + 0.01 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 400 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
     location = And [
         Contains And [
@@ -379,12 +334,7 @@ Hull
     stealth = 30
     structure = 9
     slots = Slot type = External position = (0.50, 0.50)
-    buildCost = 50 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -425,12 +375,7 @@ Hull
         Slot type = Internal position = (0.22, 0.75)
         Slot type = Internal position = (0.34, 0.75)
     ]
-    buildCost = 200 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 200 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 15
     location = And [
         Contains And [
@@ -490,12 +435,7 @@ Hull
         Slot type = Internal position = (0.40, 0.50)
         Slot type = Internal position = (0.60, 0.50)
     ]
-    buildCost = 5.0 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 5.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -530,12 +470,7 @@ Hull
         Slot type = External position = (0.50, 0.15)
         Slot type = Internal position = (0.50, 0.75)
     ]
-    buildCost = 2.0 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 2.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -577,12 +512,7 @@ Hull
         Slot type = Internal position = (0.24, 0.75)
         Slot type = Internal position = (0.36, 0.75)
     ]
-    buildCost = 10.0 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -619,12 +549,7 @@ Hull
         Slot type = Internal position = (0.45, 0.40)
         Slot type = Internal position = (0.60, 0.40)
     ]
-    buildCost = 8.0 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 8.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -659,12 +584,7 @@ Hull
         Slot type = External position = (0.50, 0.15)
         Slot type = Internal position = (0.50, 0.75)
     ]
-    buildCost = 3.0 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 3.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -717,12 +637,7 @@ Hull
         Slot type = Internal position = (0.90, 0.50)
         Slot type = Internal position = (0.10, 0.85)
     ]
-    buildCost = 60.0 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 60.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -762,12 +677,7 @@ Hull
         Slot type = External position = (0.20, 0.40)
         Slot type = External position = (0.40, 0.40)
     ]
-    buildCost = 5.0 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 5.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -823,12 +733,7 @@ Hull
         Slot type = Internal position = (0.90, 0.50)
         Slot type = Internal position = (0.10, 0.85)
     ]
-    buildCost = 50.0 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 50.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 15
     location = And [
         Contains And [
@@ -884,12 +789,7 @@ Hull
         Slot type = Internal position = (0.40, 0.50)
         Slot type = Internal position = (0.60, 0.50)
     ]
-    buildCost = 10.0 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -930,12 +830,7 @@ Hull
         Slot type = External position = (0.60, 0.15)
         Slot type = Internal position = (0.20, 0.75)
     ]
-    buildCost = 7 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 7 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -980,12 +875,7 @@ Hull
         Slot type = Internal position = (0.40, 0.75)
         Slot type = Internal position = (0.60, 0.75)
     ]
-    buildCost = 8 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 4
     location = And [
         Contains And [
@@ -1023,12 +913,7 @@ Hull
         Slot type = Internal position = (0.60, 0.75)
         Slot type = Internal position = (0.80, 0.75)
     ]
-    buildCost = 10 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
     location = And [
         Contains And [
@@ -1068,12 +953,7 @@ Hull
         Slot type = Internal position = (0.20, 0.75)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 8 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 4
     location = And [
         Contains And [
@@ -1122,12 +1002,7 @@ Hull
         Slot type = Internal position = (0.60, 0.75)
         Slot type = Internal position = (0.75, 0.75)
     ]
-    buildCost = 10 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
     location = And [
         Contains And [
@@ -1178,12 +1053,7 @@ Hull
         Slot type = Internal position = (0.75, 0.75)
         Slot type = Internal position = (0.90, 0.75)
     ]
-    buildCost = 11 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 11 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 6
     location = And [
         Contains And [
@@ -1238,12 +1108,7 @@ Hull
         Slot type = External position = (0.20, 0.75)
         Slot type = External position = (0.40, 0.75)
     ]
-    buildCost = 12 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 12 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 6
     location = And [
         Contains And [
@@ -1285,12 +1150,7 @@ Hull
         Slot type = Internal position = (0.40, 0.65)
         Slot type = Internal position = (0.60, 0.65)
     ]
-    buildCost = 14 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 14 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 6
     location = And [
         Contains And [
@@ -1343,12 +1203,7 @@ Hull
         Slot type = Internal position = (0.25, 0.75)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    buildCost = 16 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 16 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 15
     location = And [
         Contains And [
@@ -1411,12 +1266,7 @@ Hull
     stealth = 40
     structure = 10
     slots = Slot type = External position = (0.15, 0.40)
-    buildCost = 2.5 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 2.5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -1459,12 +1309,7 @@ Hull
         Slot type = External position = (0.70, 0.85)
         Slot type = External position = (0.90, 0.85)
     ]
-    buildCost = 20.0 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 20.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 7
     location = And [
         Contains And [
@@ -1503,12 +1348,7 @@ Hull
         Slot type = Internal position = (0.22, 0.75)
         Slot type = Internal position = (0.34, 0.75)
     ]
-    buildCost = 7.5 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 7.5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
     location = And [
         Contains And [
@@ -1564,12 +1404,7 @@ Hull
         Slot type = Internal position = (0.80, 0.85)
         Slot type = Internal position = (0.90, 0.85)
     ]
-    buildCost = 30.0 * (1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])
+    buildCost = 30.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 20
     location = And [
         Contains And [
@@ -2915,3 +2750,11 @@ HUNT_PLANETS
                 ]
             ]
 '''
+
+FLEET_UPKEEP_MULTIPLICATOR
+'''(1 + 0.05 *
+        Count condition = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ])'''
