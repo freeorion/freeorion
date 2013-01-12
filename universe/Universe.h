@@ -97,6 +97,9 @@ public:
       * of on the current turn if \a empire_id = ALL_EMPIRES */
     std::set<int>           EmpireVisibleObjectIDs(int empire_id = ALL_EMPIRES) const;
 
+    /** Returns IDs of objects that have been destroyed. */
+    const std::set<int>&    DestroyedObjectIds() const;
+
     /** Returns IDs of objects that the Empire with id \a empire_id knows have
       * been destroyed.  Each empire's latest known objects data contains the
       * last known information about each object, whether it has been destroyed

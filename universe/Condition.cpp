@@ -163,11 +163,12 @@ void Condition::ConditionBase::Eval(const ScriptingContext& parent_context,
 {
     matches.clear();
     matches.reserve(Objects().NumObjects());
-    // evaluate condition on all objects in Universe
+    // evaluate condition on all non-destroyed objects in Universe
     Condition::ObjectSet condition_non_targets;
     condition_non_targets.reserve(Objects().NumObjects());
     for (ObjectMap::const_iterator it = Objects().const_begin(); it != Objects().const_end(); ++it)
-        condition_non_targets.push_back(it->second);
+        if (GetUniverse().DestroyedObjectIds().find(it->first) == GetUniverse().DestroyedObjectIds().end())
+            condition_non_targets.push_back(it->second);
     Eval(parent_context, matches, condition_non_targets);
 }
 

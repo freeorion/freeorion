@@ -485,10 +485,14 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id/* = ALL_EMPIRES*/) 
     return retval;
 }
 
+const std::set<int>& Universe::DestroyedObjectIds() const
+{ return m_destroyed_object_ids; }
+
 const std::set<int>& Universe::EmpireKnownDestroyedObjectIDs(int empire_id) const {
     ObjectKnowledgeMap::const_iterator it = m_empire_known_destroyed_object_ids.find(empire_id);
     if (it != m_empire_known_destroyed_object_ids.end())
         return it->second;
+    static std::set<int> EMPTY_SET;
     return m_destroyed_object_ids;
 }
 
@@ -881,7 +885,12 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
     for (Effect::AccountingMap::iterator obj_it = m_effect_accounting_map.begin();
          obj_it != m_effect_accounting_map.end(); ++obj_it)
     {
-        UniverseObject* obj = m_objects.Object(obj_it->first);    // object that has some meters
+        int object_id = obj_it->first;
+        // skip destroyed objects
+        if (m_destroyed_object_ids.find(object_id) != m_destroyed_object_ids.end())
+            continue;
+        // get object
+        UniverseObject* obj = m_objects.Object(object_id);
         if (!obj) {
             Logger().errorStream() << "Universe::InitMeterEstimatesAndDiscrepancies couldn't find an object that was in the effect accounting map...?";
             continue;
@@ -893,7 +902,6 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
         {
             MeterType type = meter_it->first;
             Meter& meter = meter_it->second;
-            int object_id = obj->ID();
 
             // discrepancy is the difference between expected and actual meter values at start of turn
             double discrepancy = meter.Initial() - meter.Current();
@@ -938,8 +946,9 @@ void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects
     objects_list.push_back(object_id);
 
     for (std::list<int>::iterator list_it = objects_list.begin(); list_it !=  objects_list.end(); ++list_it) {
-        // get next object on list
+        // get next object id on list
         int cur_object_id = *list_it;
+        // get object
         UniverseObject* cur_object = m_objects.Object(cur_object_id);
         if (!cur_object) {
             Logger().errorStream() << "Universe::UpdateMeterEstimates tried to get an invalid object...";
@@ -965,9 +974,12 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     std::set<int> objects_set;  // ensures no duplicates
 
     for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
-        int cur_object_id = *obj_it;
-        m_effect_accounting_map[cur_object_id].clear();
-        objects_set.insert(cur_object_id);
+        int object_id = *obj_it;
+        // skip destroyed objects
+        if (m_destroyed_object_ids.find(object_id) != m_destroyed_object_ids.end())
+            continue;
+        m_effect_accounting_map[object_id].clear();
+        objects_set.insert(object_id);
     }
     std::vector<int> final_objects_vec;
     std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(final_objects_vec));
@@ -1117,6 +1129,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
          planet_it != planets.end(); ++planet_it)
     {
         const Planet* planet = *planet_it;
+        if (m_destroyed_object_ids.find(planet->ID()) != m_destroyed_object_ids.end())
+            continue;
         const std::string& species_name = planet->SpeciesName();
         if (species_name.empty())
             continue;
@@ -1136,6 +1150,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
          ship_it != ships.end(); ++ship_it)
     {
         const Ship* ship = *ship_it;
+        if (m_destroyed_object_ids.find(ship->ID()) != m_destroyed_object_ids.end())
+            continue;
         const std::string& species_name = ship->SpeciesName();
         if (species_name.empty())
             continue;
@@ -1156,6 +1172,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     type_timer.restart();
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int source_object_id = it->first;
+        if (m_destroyed_object_ids.find(source_object_id) != m_destroyed_object_ids.end())
+            continue;
         const std::map<std::string, int>& specials = it->second->Specials();
         for (std::map<std::string, int>::const_iterator special_it = specials.begin(); special_it != specials.end(); ++special_it) {
             const Special* special = GetSpecial(special_it->first);
@@ -1217,10 +1235,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
          building_it != buildings.end(); ++building_it)
     {
         const Building* building = *building_it;
-        if (!building) {
-            Logger().errorStream() << "GetEffectsAndTargets couldn't get Building";
+        if (m_destroyed_object_ids.find(building->ID()) != m_destroyed_object_ids.end())
             continue;
-        }
         const BuildingType* building_type = GetBuildingType(building->BuildingTypeName());
         if (!building_type) {
             Logger().errorStream() << "GetEffectsAndTargets couldn't get BuildingType " << building->BuildingTypeName();
@@ -1239,10 +1255,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     ships = m_objects.FindObjects<Ship>();
     for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
         const Ship* ship = *ship_it;
-        if (!ship) {
-            Logger().errorStream() << "GetEffectsAndTargets couldn't get Ship";
+        if (m_destroyed_object_ids.find(ship->ID()) != m_destroyed_object_ids.end())
             continue;
-        }
+
         const ShipDesign* ship_design = ship->Design();
         if (!ship_design) {
             Logger().errorStream() << "GetEffectsAndTargets couldn't get ShipDesign";
@@ -1280,10 +1295,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     std::vector<Field*> fields = m_objects.FindObjects<Field>();
     for (std::vector<Field*>::const_iterator field_it = fields.begin(); field_it != fields.end(); ++field_it) {
         const Field* field = *field_it;
-        if (!field) {
-            Logger().errorStream() << "GetEffectsAndTargets couldn't get Field";
+        if (m_destroyed_object_ids.find(field->ID()) != m_destroyed_object_ids.end())
             continue;
-        }
+
         const FieldType* field_type = GetFieldType(field->FieldTypeName());
         if (!field_type) {
             Logger().errorStream() << "GetEffectsAndTargets couldn't get FieldType " << field->FieldTypeName();
