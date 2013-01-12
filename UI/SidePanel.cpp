@@ -1255,7 +1255,7 @@ void SidePanel::PlanetPanel::Refresh() {
     if (!selected_colony_ship)
         selected_colony_ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
     std::set<const Ship*> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
-    if( invasion_ships.empty() ){
+    if (invasion_ships.empty()){
         std::set<const Ship*> autoselected_invasion_ships = AutomaticallyChosenInvasionShips(m_planet_id);
         invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
     }
@@ -1288,9 +1288,6 @@ void SidePanel::PlanetPanel::Refresh() {
     bool outpostable =                   !populated && (  !has_owner /*&& !shielded*/         ) && visible && !being_colonized;
     bool colonizable =      habitable && !populated && ( (!has_owner /*&& !shielded*/) || mine) && visible && !being_colonized;
     bool can_colonize =     selected_colony_ship && (colonizable || (outpostable && colony_ship_capacity == 0.0));
-
-    bool could_colonize =   OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID()) &&
-                                         !populated && (!has_owner || mine) && visible && !being_colonized /*&& !shielded*/;
 
     bool being_invaded =    planet->IsAboutToBeInvaded();
     bool at_war_with_me =   !mine && (populated || (has_owner && Empires().GetDiplomaticStatus(client_empire_id, planet->Owner()) == DIPLO_WAR));
@@ -1339,7 +1336,7 @@ void SidePanel::PlanetPanel::Refresh() {
                                        % GetPlanetEnvironmentName(*planet, species_name));
 
 
-    if (Disabled() || !(can_colonize || could_colonize || being_colonized || invadable || being_invaded)) {
+    if (Disabled() || !(can_colonize || being_colonized || invadable || being_invaded)) {
         // hide everything
 
     } else if (can_colonize) {
