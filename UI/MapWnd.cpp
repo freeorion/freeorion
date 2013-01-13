@@ -4267,7 +4267,7 @@ void MapWnd::RefreshResearchResourceIndicator() {
     double totalRPSpent = empire->GetResearchQueue().TotalRPsSpent();
     double totalProduction = empire->ResourceProduction(RE_RESEARCH);
     double totalWastedRP = totalProduction - totalRPSpent;
-    if (totalWastedRP > 0) {
+    if (totalWastedRP > 1E-6) {
         m_research_wasted->Show();
         m_research_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_RES_WASTED_TITLE"),
@@ -4298,7 +4298,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     double totalPPSpent = empire->GetProductionQueue().TotalPPsSpent();
     double totalProduction = empire->ResourceProduction(RE_INDUSTRY);
     double totalWastedPP = totalProduction - totalPPSpent;
-    if (totalWastedPP > 0) {
+    if (totalWastedPP > 1E-6) {
         m_industry_wasted->Show();
         m_industry_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_PROD_WASTED_TITLE"),
