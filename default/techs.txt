@@ -1156,13 +1156,14 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 4
     researchturns = 2
-    effectsgroups =
+    // Effect is specified in species.txt
+    /*effectsgroups =
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            effects = SetTargetPopulation Value + Source.SizeAsDouble
+            effects = SetTargetPopulation Value + Source.SizeAsDouble*/
     graphic = "icons/tech/subterranean_construction.png"
 
 Tech
