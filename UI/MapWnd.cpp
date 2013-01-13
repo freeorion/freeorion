@@ -552,11 +552,11 @@ MapWnd::MapWnd() :
     m_in_production_view_mode(false),
     m_sidepanel_open_before_showing_other(false),
     m_toolbar(0),
-    m_mineral(0),
     m_trade(0),
     m_population(0),
     m_research(0),
     m_industry(0),
+    m_detection(0),
     m_industry_wasted(0),
     m_research_wasted(0),
     m_btn_siterep(0),
@@ -792,6 +792,11 @@ MapWnd::MapWnd() :
                                 ClientUI::MeterIcon(METER_TRADE),
                                 0, 3, false);
     m_trade->SetName("Trade StatisticIcon");
+    
+    m_detection = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
+                                    ClientUI::MeterIcon(METER_DETECTION),
+                                    0, 3, false);
+    m_detection->SetName("Detection StatisticIcon");
 
     m_industry_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
     m_research_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
@@ -830,10 +835,6 @@ MapWnd::MapWnd() :
     layout->Add(m_FPS,              0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
-    layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_mineral,          0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    ++layout_column;
-
     layout->SetMinimumColumnWidth(layout_column, GG::X(Value(layout->Height())));
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_industry_wasted,  0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
@@ -855,11 +856,15 @@ MapWnd::MapWnd() :
     layout->SetColumnStretch(layout_column, 1.0);
     layout->Add(m_trade,            0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
-
+    
     layout->SetColumnStretch(layout_column, 1.0);
     layout->Add(m_population,       0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
-
+    
+    layout->SetColumnStretch(layout_column, 1.0);
+    layout->Add(m_detection,        0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
+    ++layout_column;
+    
     layout->SetMinimumColumnWidth(layout_column, m_btn_objects->Width());
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_btn_objects,      0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
@@ -889,7 +894,7 @@ MapWnd::MapWnd() :
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_btn_pedia,        0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
-
+    
     layout->SetMinimumColumnWidth(layout_column, m_btn_menu->Width());
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_btn_menu,         0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
@@ -1894,6 +1899,7 @@ void MapWnd::InitTurn() {
     RefreshResearchResourceIndicator();
     RefreshTradeResourceIndicator();
     RefreshPopulationIndicator();
+    RefreshDetectionIndicator();
 
     FleetUIManager::GetFleetUIManager().RefreshAll();
 
@@ -4271,6 +4277,13 @@ void MapWnd::RefreshResearchResourceIndicator() {
     } else {
         m_research_wasted->Hide();
     }
+}
+
+void MapWnd::RefreshDetectionIndicator() {
+    const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return;
+    m_detection->SetValue(empire->GetMeter("METER_DETECTION_STRENGTH")->Current());
 }
 
 void MapWnd::RefreshIndustryResourceIndicator() {
