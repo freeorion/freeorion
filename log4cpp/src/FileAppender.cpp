@@ -78,6 +78,8 @@ namespace log4cpp {
 
     void FileAppender::_append(const LoggingEvent& event) {
         std::string message(_getLayout().format(event));
+        if (_fd == -1)
+            return;     // avoid crash if log file didn't open
         if (!::write(_fd, message.data(), message.length())) {
             // XXX help! help!
         }
