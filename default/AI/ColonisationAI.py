@@ -519,10 +519,10 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             distanceFactor = 0
 
         retval=0.0
-        if popSize<0: #can still have industry focus bonuses and buildings
+        if popSize<0  and (miningBonus or (fo.currentTurn() >= 10)) : #can still have industry focus bonuses and buildings
             if foAI.foAIstate.aggression > 2:
                 retval  = starBonus+asteroidBonus+gasGiantBonus
-        elif popSize==0:
+        elif popSize==0 and (miningBonus or( fo.currentTurn() >= 10)):
             if foAI.foAIstate.aggression > 2:
                 retval  = starBonus+max(asteroidBonus+gasGiantBonus,  miningBonus)
         else:
@@ -594,7 +594,7 @@ def sendColonyShips(colonyFleetIDs, evaluatedPlanets, missionType):
         thisPlanetID=thisTarget[0]
         thisSysID = universe.getPlanet(thisPlanetID).systemID
         if (foAI.foAIstate.systemStatus.setdefault(thisSysID, {}).setdefault('monsterThreat', 0) > 2000) or (fo.currentTurn() <20  and foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'] > 200):
-            print "Skipping colonization of system %d due to Big Monster,  threat %d"%(thisSysID,  foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'])
+            print "Skipping colonization of system %s due to Big Monster,  threat %d"%(PlanetUtilsAI.sysNameIDs([thisSysID]),  foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'])
             continue
         thisSpec=thisTarget[1][1]
         foundFleets=[]

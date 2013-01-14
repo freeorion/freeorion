@@ -95,7 +95,13 @@ def getMilitaryFleets(tryReset=True):
         threatBias = 400
     
 
-    safetyFactor = [ 2.0,  1.25,  1.0,  0.95,  0.95    ][foAI.foAIstate.aggression] 
+    safetyFactor = [ 3.0,  1.5,  1.0,  0.95,  0.95    ][foAI.foAIstate.aggression] 
+    
+    topTargetPlanets = [pid for pid, pscore, trp in AIstate.invasionTargets[:10]  if pscore > 500]  + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:10]  if pscore > 10] 
+    topTargetSystems = []
+    for sysID in PlanetUtilsAI.getSystems(  topTargetPlanets  ):
+        if sysID not in topTargetSystems:
+            topTargetSystems.append(sysID) #doing this rather than set, to preserve order
 
     # allocation format: ( sysID, newAllocation, takeAny, maxMultiplier )    
     #================================
@@ -142,10 +148,36 @@ def getMilitaryFleets(tryReset=True):
         print "-----------------"
 
     #================================
+    #--------Top Targeted Systems ----------
+    #TODO: do native invasions highest priority
+    otherTargetedSystemIDs = topTargetSystems
+    print "Top Colony and Invasion Targeted Systems :  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in otherTargetedSystemIDs  ]  )
+    print "-----------------"
+    # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
+    if len( otherTargetedSystemIDs ) > 0:
+        otSysAlloc = 0
+        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0))  )   for oSID in   otherTargetedSystemIDs      ]
+        tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
+        totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
+        for sid,  thrt in otSysThreat:
+            curAlloc=0.8*alreadyAssignedRating[sid]
+            thisAlloc=0
+            if thrt>curAlloc and remainingMilRating > 10+ 1.5*(thrt-curAlloc) and foAI.foAIstate.systemStatus.get(sid, {}).get('monsterThreat', 0) < 0.4*totMilRating: #only record an allocation for this invasion if we have enough rating available
+                thisAlloc =int(10.99999 + (thrt-curAlloc)*1.5)
+                allocations.append(  (sid,  thisAlloc,  False,  3) )
+                remainingMilRating -= thisAlloc
+                otSysAlloc += thisAlloc
+            print "Targeted system %4d ( %10s )  has local threat %8d  ; existing military allocation %d and new allocation %8d"%(sid,  universe.getSystem(sid).name,  thrt, curAlloc,   thisAlloc)
+        print "-----------------"
+        print "Top Colony and Invasion Targeted Systems  under total threat: %d  -- total mil allocation-- existing: %d   ; new: %d"%(tototSysThreat,  totCurAlloc,  otSysAlloc )
+        print "-----------------"
+
+
+    #================================
     #--------Targeted Systems ----------
     #TODO: do native invasions highest priority
-    otherTargetedSystemIDs = list(AIstate.invasionTargetedSystemIDs)
-    print "Invasion Targeted Systems :  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in otherTargetedSystemIDs  ]  )
+    otherTargetedSystemIDs = [sysID for sysID in AIstate.invasionTargetedSystemIDs if sysID not in topTargetSystems]
+    print "Other Invasion Targeted Systems :  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in otherTargetedSystemIDs  ]  )
     print "-----------------"
     # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
     if len( otherTargetedSystemIDs ) > 0:
@@ -166,7 +198,7 @@ def getMilitaryFleets(tryReset=True):
         print "Invasion Targeted Systems  under total threat: %d  -- total mil allocation-- existing: %d   ; new: %d"%(tototSysThreat,  totCurAlloc,  otSysAlloc )
         print "-----------------"
 
-    otherTargetedSystemIDs = list(set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs))
+    otherTargetedSystemIDs = [sysID for sysID in  list(set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs)) if sysID not in topTargetSystems]
     print "Other Targeted Systems :  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in otherTargetedSystemIDs  ]  )
     print "-----------------"
     # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
@@ -331,7 +363,7 @@ def getMilitaryFleets(tryReset=True):
             thisAlloc=0
             if (thrt > curAlloc) and remainingMilRating > 2* thrt:
                 thisAlloc = int(0.99999 + (thrt-curAlloc)*1.5)
-                allocations.append(  (sid,  thisAlloc,  False) )
+                allocations.append(  (sid,  thisAlloc,  False,  5) )
                 remainingMilRating -= thisAlloc
                 otSysAlloc += thisAlloc
             print "Monster Den  %4d ( %10s )  has local threat %8d  ; existing military allocation %d and new allocation %8d"%(sid,  universe.getSystem(sid).name,  thrt, curAlloc,   thisAlloc)
@@ -341,7 +373,10 @@ def getMilitaryFleets(tryReset=True):
     if remainingMilRating <=6:
         newAllocations = [ (sid,  alc,  alc,  ta) for (sid,  alc,  ta,  mm) in allocations ]
     else:
-        totAlloc = sum( [alloc for sid,  alloc,  takeAny,  maxMul  in allocations ] )
+        try:
+            totAlloc = sum( [alloc for sid,  alloc,  takeAny,  maxMul  in allocations ] )
+        except:
+            print "error unpacking sid,  alloc,  takeAny, maxMul  from ", allocations 
         factor =(2.0* remainingMilRating ) / ( totAlloc  + 0.1)
         print "Remaining military strength allocation %d will be allocated  as %.1f %% surplus allocation to top current priorities"%(remainingMilRating,  100*factor)
         newAllocations = []
@@ -459,6 +494,21 @@ def sendMilitaryFleets(militaryFleetIDs, evaluatedSystems, missionType):
 def assignMilitaryFleetsToSystems():
     # assign military fleets to military theater systems
     global MilitaryAllocations
+    universe = fo.getUniverse()
+    
+    baseDefenseIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE)
+    unassignedBaseDefenseIDs = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(baseDefenseIDs)
+    for fleetID in unassignedBaseDefenseIDs:
+        fleet = universe.getFleet(fleetID)
+        if not fleet:
+            continue
+        sysID = fleet.systemID
+        aiTarget = AITarget.AITarget(AITargetType.TARGET_SYSTEM, sysID)
+        aiFleetMission = foAI.foAIstate.getAIFleetMission(fleetID)
+        aiFleetMission.clearAIFleetOrders()
+        aiFleetMission.clearAITargets( (aiFleetMission.getAIMissionTypes() + [-1])[0] )
+        missionType = AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE
+        aiFleetMission.addAITarget( missionType , aiTarget)
 
     allMilitaryFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY)
     if allMilitaryFleetIDs == []:
@@ -477,13 +527,13 @@ def assignMilitaryFleetsToSystems():
     remainingMilRating = availMilRating
 
     # get systems to defend
-    universe = fo.getUniverse()
 
     availMilFleetIDs = set(availMilFleetIDs)
     for sysID,  alloc,  minalloc,   takeAny in MilitaryAllocations:
         foundFleets = []
         foundStats={}
-        theseFleets = FleetUtilsAI.getFleetsForMission(1,  {'rating':alloc}, {'rating':minalloc},   foundStats,  "",  systemsToCheck=[sysID],  systemsChecked=[], fleetPoolSet=availMilFleetIDs,   fleetList=foundFleets,  verbose=False)
+        theseFleets = FleetUtilsAI.getFleetsForMission(1,  {'rating':alloc}, {'rating':minalloc},   foundStats,  "",  systemsToCheck=[sysID],  systemsChecked=[], 
+                                                        fleetPoolSet=availMilFleetIDs,   fleetList=foundFleets,  verbose=False)
         if theseFleets == []:
             if foundFleets==[]  or  not ( FleetUtilsAI.statsMeetReqs( foundStats,  {'rating':minalloc}) or takeAny):
                 print "NO available/suitable military  allocation for system %d ( %s ) -- requested allocation %8d, found available rating  %8d in fleets %s"%(sysID,  universe.getSystem(sysID).name,  minalloc,  foundStats.get('rating',  0),  foundFleets)

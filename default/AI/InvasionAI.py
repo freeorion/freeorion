@@ -132,6 +132,30 @@ def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empir
 
 def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire):
     "return the invasion value of a planet"
+    buildingValues = {"BLD_IMPERIAL_PALACE":                    1000, 
+                                            "BLD_CULTURE_ARCHIVES":                 1000, 
+                                            "BLD_SHIPYARD_BASE":                        100, 
+                                            "BLD_SHIPYARD_ORG_ORB_INC":     200, 
+                                            "BLD_SHIPYARD_ORG_XENO_FAC": 200, 
+                                            "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB": 200, 
+                                            "BLD_SHIPYARD_CON_NANOROBO": 300, 
+                                            "BLD_SHIPYARD_CON_GEOINT":      400, 
+                                            "BLD_SHIPYARD_CON_ADV_ENGINE": 1000, 
+                                            "BLD_SHIPYARD_AST":                             150, 
+                                            "BLD_SHIPYARD_AST_REF":                     500, 
+                                            "BLD_SHIPYARD_ENRG_COMP":           500, 
+                                            "BLD_SHIPYARD_ENRG_SOLAR":          1500, 
+                                            "BLD_INDUSTRY_CENTER":                   500, 
+                                            "BLD_GAS_GIANT_GEN":                           50, 
+                                            "BLD_SOL_ORB_GEN":                              800, 
+                                            "BLD_BLACK_HOLE_POW_GEN":       2000, 
+                                            "BLD_ENCLAVE_VOID":                             500, 
+                                            "BLD_NEUTRONIUM_EXTRACTOR": 2000, 
+                                            "BLD_NEUTRONIUM_SYNTH":             2000, 
+                                            "BLD_NEUTRONIUM_FORGE":             1000, 
+                                            "BLD_CONC_CAMP":                                    100, 
+                                            "BLD_BIOTERROR_PROJECTOR":      1000, 
+                                            }
     #TODO: add more factors, as used for colonization
     universe = fo.getUniverse()
     empireID = empire.empireID
@@ -141,38 +165,39 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         print "invasion AI couldn't get current info on planet %d"%planetID
         return 0, 0
         
-    capitalID = PlanetUtilsAI.getCapital()
-    homeworld = universe.getPlanet(capitalID)
-    if homeworld:
-        homeSystemID = homeworld.systemID
-        evalSystemID = planet.systemID
-        leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
-        distanceFactor = 4.0/(leastJumpsPath + 1)
+    bldTally=0
+    for bldType in [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]:
+        bldTally += buildingValues.get(bldType,  50)
+        
+    #    capitalID = PlanetUtilsAI.getCapital()
+    #    homeworld = universe.getPlanet(capitalID)
+    #    if homeworld:
+    #        homeSystemID = homeworld.systemID
+    #        evalSystemID = planet.systemID
+    #        leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
+    #        distanceFactor = 4.0/(leastJumpsPath + 1)
         
     troops = planet.currentMeterValue(fo.meterType.troops)
     specName=planet.speciesName
     species=fo.getSpecies(specName)
     if not species:# perhaps stealth might make species info inaccessible
-        targetPop=planet.currentMeterValue(fo.meterType.targetPopulation)
-        if planetID in fleetSupplyablePlanetIDs:
-            popVal =  4*targetPop
-        else:
-            popVal =  6*targetPop#assign higher value if the colony would extend our supply range
-        planetSpecials = list(planet.specials)
-        specialVal=0
-        if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_ASTEROID_MINE") == fo.techStatus.complete ) ): 
-                specialVal= 15   # asteroid mining is great, fast return
-        for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
-            if special in planetSpecials:
-                specialVal = 40 
-        return popVal+specialVal,  troops
+        try:
+            targetPop=planet.currentMeterValue(fo.meterType.targetPopulation)
+            popVal =  2*targetPop
+        except:
+            popVal=0
     else:
         popVal = evaluatePlanet(planetID,  AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  species,  empire) #evaluatePlanet is implorted from ColonisationAI
-        if planetID not in fleetSupplyablePlanetIDs:
-            popVal =  2.0*popVal#assign higher value if the colony would extend our supply range
-        return popVal,  troops
-
-        
+    if planetID not in fleetSupplyablePlanetIDs:
+        popVal =  2.0*popVal#assign higher value if the colony would extend our supply range
+    planetSpecials = list(planet.specials)
+    specialVal=0
+    if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_ASTEROID_MINE") == fo.techStatus.complete ) ): 
+            specialVal= 15   # asteroid mining is great, fast return
+    for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
+        if special in planetSpecials:
+            specialVal = 40 
+    return popVal+specialVal+bldTally,  troops
 
 def getPlanetPopulation(planetID):
     "return planet population"

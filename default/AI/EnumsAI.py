@@ -40,6 +40,10 @@ class AIPriorityType(object):
     PRIORITY_RESEARCH_ECONOMICS = 16
     PRIORITY_RESEARCH_SHIPS = 17
     PRIORITY_RESEARCH_DEFENSE = 18
+    PRIORITY_PRODUCTION_ORBITAL_DEFENSE = 19
+    PRIORITY_PRODUCTION_ORBITAL_INVASION = 20
+    PRIORITY_PRODUCTION_ORBITAL_OUTPOST = 21
+    PRIORITY_PRODUCTION_ORBITAL_COLONISATION = 22
 
     AIPriorityNames = [
             "RESOURCE_GROWTH", 
@@ -61,6 +65,10 @@ class AIPriorityType(object):
             "RESEARCH_ECONOMICS", 
             "RESEARCH_SHIPS", 
             "RESEARCH_DEFENSE", 
+            "PRODUCTION_ORBITAL_DEFENSE", 
+            "PRODUCTION_ORBITAL_INVASION", 
+            "PRODUCTION_ORBITAL_OUTPOST", 
+            "PRODUCTION_ORBITAL_COLONISATION", 
             "INVALID" ]
 
     def name(self, mtype):
@@ -68,7 +76,7 @@ class AIPriorityType(object):
             name=self.AIPriorityNames[mtype]
             return name
         except:
-            return "invalidMissionType"
+            return "invalidPriorityType"
             print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
 AIPriorityNames = AIPriorityType.AIPriorityNames
@@ -107,8 +115,13 @@ class AIFleetMissionType(object):
     FLEET_MISSION_INVASION = 9
     FLEET_MISSION_MILITARY = 10
     FLEET_MISSION_SECURE = 11   # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
+    FLEET_MISSION_ORBITAL_DEFENSE = 12
+    FLEET_MISSION_ORBITAL_INVASION = 13
+    FLEET_MISSION_ORBITAL_OUTPOST = 14
+    FLEET_MISSION_ORBITAL_COLONISATION = 15
 
-    MissionTypeNames=['explore',  'outpost',  'colonize',  'splitFleet',  'mergeFleet',  'hit&Run',  'attack',  'defend',  'last_stand', 'invasion', 'military', 'secure',  'invalid']
+    MissionTypeNames=['explore',  'outpost',  'colonize',  'splitFleet',  'mergeFleet',  'hit&Run',  'attack',  'defend',  'last_stand', 'invasion', 'military', 'secure', 
+                                                    'orbitalDefense', 'orbitalInvasion', 'orbitalOutpost', 'orbitalColonisation', 'invalid']
     
     def name(self, mtype):
         try:
@@ -119,7 +132,7 @@ class AIFleetMissionType(object):
             print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
 def getAIFleetMissionTypes():
-    return __getInterval(0, 11)
+    return __getInterval(0, 15)
 
 class AIFleetOrderType(object):
     ORDER_INVALID = -1
@@ -172,6 +185,14 @@ def getFleetOrderTypeForMission(aiFleetMissionType,  option=None):
             return AIFleetOrderType.ORDER_MILITARY
         elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_SECURE: # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
             return AIFleetOrderType.ORDER_MILITARY
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE:
+            return AIFleetOrderType.ORDER_DEFEND
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION:
+            return AIFleetOrderType.ORDER_INVADE
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST:
+            return AIFleetOrderType.ORDER_OUTPOST
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION:
+            return AIFleetOrderType.ORDER_COLONISE
         else: 
             return AIFleetOrderType.ORDER_INVALID
 
@@ -183,7 +204,8 @@ class AIShipDesignTypes(object):
     attackShip= {"SD_MARK":"A", "Lynx":"B","Griffon":"C",  "Wyvern":"D", "Manticore":"E",  "Devil":"F",  "Reaver":"G"}
     colonyBase={"SD_COLONY_BASE":"A",  "NestBase":"B"}
     outpostBase={"SD_OUTPOST_BASE":"A",  "OutpostBase":"B"}
-    troopBase={"StormTroopers":"A"}
+    troopBase={"SpaceInvaders":"A"}
+    defenseBase={"OrbitalGrid":"A",  "OrbitalShield":"B",  "OrbitalMultiShield":"C"}
     
 class AIShipRoleType(object):  #this is also used in determining fleetRoles
     SHIP_ROLE_INVALID = -1
@@ -196,7 +218,12 @@ class AIShipRoleType(object):  #this is also used in determining fleetRoles
     SHIP_ROLE_CIVILIAN_OUTPOST = 6
     SHIP_ROLE_MILITARY_INVASION = 7
     SHIP_ROLE_MILITARY = 8
-    ShipRoleNames=['milAttack',  'milLongrange',  'milMissiles',  'MilPD',  'CivExplore',  'CivColonize', 'CivOutpost', 'MilInvasion', 'MilMil', 'invalid']
+    SHIP_ROLE_BASE_DEFENSE = 9
+    SHIP_ROLE_BASE_INVASION = 10
+    SHIP_ROLE_BASE_OUTPOST = 11
+    SHIP_ROLE_BASE_COLONISATION = 12
+    ShipRoleNames=['milAttack',  'milLongrange',  'milMissiles',  'MilPD',  'CivExplore',  'CivColonize', 'CivOutpost', 'MilInvasion', 'MilMil', 
+                                            'baseDef',  'baseInvasion',  'baseOutpost',  'baseColony',  'invalid']
     def name(self, roletype):
         try:
             name=self.ShipRoleNames[roletype]

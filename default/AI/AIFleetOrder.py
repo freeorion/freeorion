@@ -164,6 +164,13 @@ class AIFleetOrder(object):
                 # move to system
                 if AITargetType.TARGET_SYSTEM == self.getTargetAITarget().getAITargetType() or AITargetType.TARGET_PLANET == self.getTargetAITarget().getAITargetType():
                     targetAITargetTypeValid = True
+            elif AIFleetOrderType.ORDER_DEFEND == self.getAIFleetOrderType():
+                # with fleet
+                if AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
+                    sourceAITargetTypeValid = True
+                # move to system
+                if AITargetType.TARGET_SYSTEM == self.getTargetAITarget().getAITargetType() or AITargetType.TARGET_PLANET == self.getTargetAITarget().getAITargetType():
+                    targetAITargetTypeValid = True
 
             if sourceAITargetTypeValid == True and targetAITargetTypeValid == True:
                 return True
@@ -204,9 +211,11 @@ class AIFleetOrder(object):
         #
         # outpost
         #
-        if AIFleetOrderType.ORDER_OUTPOST == self.getAIFleetOrderType():
+        if AIFleetOrderType.ORDER_OUTPOST == self.getAIFleetOrderType():#TODO: check for separate fleet holding outpost  ships
             if AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
                 shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST)
+                if shipID is None:
+                    shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_BASE_OUTPOST)
             ship = universe.getShip(shipID)
             planet = universe.getPlanet(self.getTargetAITarget().getTargetID())
             if (ship != None) and (fleet.systemID == planet.systemID) and ship.canColonize:
@@ -215,9 +224,11 @@ class AIFleetOrder(object):
         #
         # colonise
         #
-        elif AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
+        elif AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():#TODO: check for separate fleet holding colony ships
             if AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
                 shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION)
+                if shipID is None:
+                    shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_BASE_COLONISATION)
             ship = universe.getShip(shipID)
             planet = universe.getPlanet(self.getTargetAITarget().getTargetID())
             if ship and not ship.canColonize:
@@ -228,9 +239,11 @@ class AIFleetOrder(object):
         #
         # invade
         #
-        elif AIFleetOrderType.ORDER_INVADE == self.getAIFleetOrderType():
+        elif AIFleetOrderType.ORDER_INVADE == self.getAIFleetOrderType():#TODO: check for separate fleet holding invasion ships
             if AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
                 shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_MILITARY_INVASION)
+                if shipID is None:
+                    shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_BASE_INVASION)
             ship = universe.getShip(shipID)
             planet = universe.getPlanet(self.getTargetAITarget().getTargetID())
             if (ship != None) and (fleet.systemID == planet.systemID) and ship.canInvade:
@@ -313,7 +326,8 @@ class AIFleetOrder(object):
                 elif AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
                     fleetID = self.getSourceAITarget().getTargetID()
                     shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST)
-
+                    if shipID is None:
+                        shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_BASE_OUTPOST)
                 fo.issueColonizeOrder(shipID, self.getTargetAITarget().getTargetID())
             # colonise
             elif AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
@@ -323,10 +337,12 @@ class AIFleetOrder(object):
                 elif AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
                     fleetID = self.getSourceAITarget().getTargetID()
                     shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION)
+                    if shipID is None:
+                        shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_BASE_COLONISATION)
 
                 planetID = self.getTargetAITarget().getTargetID()
                 planet=universe.getPlanet(planetID)
-                planetName = (planet and planet.name) or "apparently nvisible"
+                planetName = (planet and planet.name) or "apparently invisible"
                 result = fo.issueColonizeOrder(shipID, planetID)
                 print "Ordered colony ship ID %d to colonize %s, got result %d"%(shipID, planetName,  result)
             # invade
@@ -343,14 +359,16 @@ class AIFleetOrder(object):
                     fleet = fo.getUniverse().getFleet(fleetID)
                     for shipID in fleet.shipIDs:
                         ship = universe.getShip(shipID)
-                        if (foAI.foAIstate.getShipRole(ship.design.id) == AIShipRoleType.SHIP_ROLE_MILITARY_INVASION):
+                        if (foAI.foAIstate.getShipRole(ship.design.id) in [AIShipRoleType.SHIP_ROLE_MILITARY_INVASION,  AIShipRoleType.SHIP_ROLE_BASE_INVASION]):
                             result = fo.issueInvadeOrder(shipID, planetID)  or  result #will track if at least one invasion troops successfully deployed
                             print "Ordered troop ship ID %d to invade %s, got result %d"%(shipID, planetName,  result)
                             if result == 0:
                                 if 'needsEmergencyExploration' not in dir(foAI.foAIstate):
                                     foAI.foAIstate.needsEmergencyExploration=[]
-                                foAI.foAIstate.needsEmergencyExploration.append(fleet.systemID)
-                                print "Due to trouble invading,  adding system %d to Emergency Exploration List"%fleet.systemID
+                                if  fleet.systemID not in foAI.foAIstate.needsEmergencyExploration:
+                                    foAI.foAIstate.needsEmergencyExploration.append(fleet.systemID)
+                                    print "Due to trouble invading,  adding system %d to Emergency Exploration List"%fleet.systemID
+                                break
             # military
             elif AIFleetOrderType.ORDER_MILITARY == self.getAIFleetOrderType():
                 shipID = None

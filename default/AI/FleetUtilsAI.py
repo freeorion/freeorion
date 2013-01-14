@@ -42,9 +42,10 @@ def countPartsFleetwide(fleetID,  partsList):
                 tally += 1
     return tally
 
-def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList, takeAny=False,  verbose=False): #implements breadth-first search through systems
+def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList, 
+                                                            takeAny=False,  extendSearch=True,  verbose=False): #implements breadth-first search through systems
     if verbose:
-        print "getFleetsForMission: (nships:%1d,  targetStats:%6d,  minStats:%6d, curStats:%6d,  species:%6s,  systemsToCheck:%8s,  systemsChecked:%8s, fleetPoolSet:%8s,   fleetList:%8s) "%(
+        print "getFleetsForMission: (nships:%1d,  targetStats:%s,  minStats:%s, curStats:%s,  species:%6s,  systemsToCheck:%8s,  systemsChecked:%8s, fleetPoolSet:%8s,   fleetList:%8s) "%(
                                                                                                                                         nships,  targetStats,  minStats, curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList)
     universe = fo.getUniverse()
     if not (systemsToCheck and fleetPoolSet):
@@ -63,6 +64,7 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
         fleetID=fleetsHere.pop(0)
         fleet = universe.getFleet(fleetID)
         if not fleet: 
+            "in getFleetsForMission,  fleetID %d appers invalid; cannot retrieve"%fleetID 
             fleetPoolSet.remove(  fleetID) 
             continue
         if len (list(fleet.shipIDs)) > 1:
@@ -70,15 +72,24 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
             fleetPoolSet.update(newFleets)
             fleetsHere.extend(newFleets)
         meetsSpeciesReq=False
-        if (species == ""): 
-            meetsSpeciesReq=True
-        else:
-            for shipID in fleet.shipIDs:
-                ship = universe.getShip(shipID)
-                if ((foAI.foAIstate.getShipRole(ship.design.id) == AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION)  and ship.speciesName==species):
+        needsSpecies=False
+        if (species != ""): 
+            needsSpecies=True
+        hasSpecies=""
+        for shipID in fleet.shipIDs:
+            ship = universe.getShip(shipID)
+            if ((foAI.foAIstate.getShipRole(ship.design.id) in [ AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION,  AIShipRoleType.SHIP_ROLE_BASE_COLONISATION]) ):
+                hasSpecies = ship.speciesName
+                if hasSpecies==species:
                     meetsSpeciesReq=True
                     break
-        if meetsSpeciesReq:
+        hasPods=0
+        needsTroops =  'troopPods' in targetStats
+        if needsTroops:
+            hasPods =  countPartsFleetwide(fleetID,  ["GT_TROOP_POD"])
+        
+        useFleet = ( ( not needsSpecies and not hasSpecies) or  meetsSpeciesReq )  and (  (  needsTroops  and   hasPods >0)  or ( not needsTroops and hasPods==0   )  )
+        if useFleet:
             fleetList.append(fleetID)
             fleetPoolSet.remove( fleetID)
             thisRating=foAI.foAIstate.getRating(fleetID)
@@ -92,11 +103,12 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
                     print  "returning fleetlist: %s"%fleetList
                 return fleetList
     # finished loop without meeting reqs
-    thisSys = universe.getSystem(thisSystemID)
-    for neighborID in [el.key() for el in universe.getSystemNeighborsMap(thisSystemID,  foAI.foAIstate.empireID) ]:
-        if neighborID not in systemsChecked and neighborID in foAI.foAIstate.exploredSystemIDs:
-            systemsToCheck.append(neighborID)
-    return getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,  fleetList,  takeAny,  verbose)
+    if extendSearch:
+        thisSys = universe.getSystem(thisSystemID)
+        for neighborID in [el.key() for el in universe.getSystemNeighborsMap(thisSystemID,  foAI.foAIstate.empireID) ]:
+            if neighborID not in systemsChecked and neighborID in foAI.foAIstate.exploredSystemIDs:
+                systemsToCheck.append(neighborID)
+    return getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,  fleetList,  takeAny,  extendSearch,  verbose)
     
 def splitFleet(fleetID):
     "splits a fleet into its ships"
@@ -267,13 +279,21 @@ def assessFleetRole(fleetID):
     # assign fleet role
     if  AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION in shipRoles:
         selectedRole= AIFleetMissionType.FLEET_MISSION_COLONISATION
+    elif AIShipRoleType.SHIP_ROLE_BASE_COLONISATION in shipRoles:
+        selectedRole= AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION
     elif AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST in shipRoles:
         selectedRole= AIFleetMissionType.FLEET_MISSION_OUTPOST
-        
+    elif AIShipRoleType.SHIP_ROLE_BASE_OUTPOST in shipRoles:
+        selectedRole= AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST
+    elif AIShipRoleType.SHIP_ROLE_BASE_DEFENSE in shipRoles:
+        selectedRole= AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE
+    elif AIShipRoleType.SHIP_ROLE_BASE_INVASION in shipRoles:
+        selectedRole= AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION
+    elif AIShipRoleType.SHIP_ROLE_MILITARY_INVASION in shipRoles:
+        selectedRole= AIFleetMissionType.FLEET_MISSION_INVASION
+    ####
     elif favouriteRole == AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION:
         selectedRole= AIFleetMissionType.FLEET_MISSION_EXPLORATION
-    elif favouriteRole == AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
-        selectedRole= AIFleetMissionType.FLEET_MISSION_INVASION
     elif favouriteRole == AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK:
         selectedRole= AIFleetMissionType.FLEET_MISSION_ATTACK
     elif favouriteRole == AIShipRoleType.SHIP_ROLE_MILITARY:
@@ -286,13 +306,29 @@ def assessFleetRole(fleetID):
 
 def assessShipDesignRole(design):
     if design.parts.__contains__("CO_OUTPOST_POD"):
-        return AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST
+        if design.starlaneSpeed > 0:
+            return AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST
+        else:
+            return AIShipRoleType.SHIP_ROLE_BASE_OUTPOST
+            
     if design.parts.__contains__("CO_COLONY_POD") or design.parts.__contains__("CO_SUSPEND_ANIM_POD"):
-        return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
-    if design.parts.__contains__("CO_SUSPEND_ANIM_POD"):
-        return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
+        if design.starlaneSpeed > 0:
+            return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
+        else:
+            return AIShipRoleType.SHIP_ROLE_BASE_COLONISATION
+            
     if design.parts.__contains__("GT_TROOP_POD"):
-        return AIShipRoleType.SHIP_ROLE_MILITARY_INVASION
+        if design.starlaneSpeed > 0:
+            return AIShipRoleType.SHIP_ROLE_MILITARY_INVASION
+        else:
+            return AIShipRoleType.SHIP_ROLE_BASE_INVASION
+            
+    if design.starlaneSpeed == 0:
+        if design.parts[0] in [ "SH_DEFENSE_GRID", "SH_DEFLECTOR" ,  "SH_MULTISPEC" ]:
+            return AIShipRoleType.SHIP_ROLE_BASE_DEFENSE
+        else:
+            return AIShipRoleType.SHIP_ROLE_INVALID        
+            
     stats = foAI.foAIstate.getDesignStats(design)
     rating = stats['attack'] * ( stats['structure'] + stats['shields'] )
     if  ( "SD_SCOUT" in design.name(False)  )  or (rating < 0.2* ProductionAI.curBestMilShipRating()):
@@ -331,6 +367,7 @@ def generateAIFleetOrdersForAIFleetMissions():
     print "Defend Fleets      : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_DEFEND))
     print "Invasion Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION))
     print "Military Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY))
+    print "Orbital Defense Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE))
     print "Securing Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_SECURE)) + " (currently FLEET_MISSION_MILITARY should be used instead of this Role)"
 
     print ""
@@ -379,6 +416,13 @@ def generateAIFleetOrdersForAIFleetMissions():
         print "Military targets:  None"
     for militaryAIFleetMission in militaryAIFleetMissions:
         print "    " + str(militaryAIFleetMission)
+    orbDefenseAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE])
+    if len( orbDefenseAIFleetMissions) >0:
+        print "Orbital Defense targets: "
+    else:
+        print "Orbital Defense targets:  None"
+    for ODAIFleetMission in orbDefenseAIFleetMissions:
+        print "    " + str(ODAIFleetMission)
 
     aiFleetMissions = foAI.foAIstate.getAllAIFleetMissions()
     for aiFleetMission in aiFleetMissions:

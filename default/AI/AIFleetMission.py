@@ -100,6 +100,7 @@ class AIFleetMission(AIAbstractMission):
                                                                         AIFleetMissionType.FLEET_MISSION_LAST_STAND ,  
                                                                         AIFleetMissionType.FLEET_MISSION_MILITARY, 
                                                                         AIFleetMissionType.FLEET_MISSION_SECURE, 
+                                                                        AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE, 
                                                                     ]:
             return
         universe = fo.getUniverse()
@@ -125,24 +126,27 @@ class AIFleetMission(AIAbstractMission):
         mMT0ID = mMT0.getTargetID()
         for fid in otherFleetsHere:
             fleetRoleA = foAI.foAIstate.getFleetRole(fid)
-            if fleetRoleA != AIFleetMissionType.FLEET_MISSION_MILITARY: #TODO: if fleetRoles such as LongRange start being used, adjust this
-                continue # will only considering subsuming fleets that have a military type role
+            if fleetRoleA not in  [ AIFleetMissionType.FLEET_MISSION_MILITARY,  AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE]: #TODO: if fleetRoles such as LongRange start being used, adjust this
+                continue # will only considering subsuming fleets that have a compatible role
             fleet2 = universe.getFleet(fid)
             if not (fleet2 and (fleet2.systemID == systemID)):
                 continue
-            if not fleet2.ownedBy(foAI.foAIstate.empireID):
+            if not (fleet2.ownedBy(foAI.foAIstate.empireID) and ( (fleet2.speed > 0) or (fleetB.speed == 0)  )):
                 continue
             f2Mission=foAI.foAIstate.getAIFleetMission(fid)
             doMerge=False
             needLeft=0
-            if not f2Mission:
+            if  ( fleetRoleA== AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE ) or  (fleetRoleB== AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE ):
+                if fleetRoleA==fleetRoleB:
+                    doMerge=True
+            elif not f2Mission and (fleetB.speed > 0) and (fleet2.speed > 0):
                 doMerge=True
             else:
                 f2MType = (f2Mission.getAIMissionTypes()+[-1])[0]
                 f2Targets = f2Mission.getAITargets(f2MType)
                 if len(f2Targets)>1: 
                     pass
-                elif len(f2Targets)==0: 
+                elif len(f2Targets)==0 and ( (fleetB.speed > 0) or (fleet2.speed == 0)  ): 
                     #print "\t\t\t ** Considering merging  fleetA (id: %4d)  into fleetB (id %d  ) and former has no targets, will take it.  FleetA mission was %s   "%(fid, fleetID,   f2Mission)
                     doMerge=True
                 else:
@@ -150,7 +154,7 @@ class AIFleetMission(AIAbstractMission):
                     if targetB == mMT0ID:
                         print "Military fleet %d has same target as %s fleet %d and will (at least temporarily) be merged into the latter"%(fid, AIFleetMissionTypeNames.name( fleetRoleB)  ,  fleetID)
                         doMerge=True #TODO: should probably ensure that fleetA  has aggression on now
-                    else:
+                    elif (fleetB.speed > 0):
                         neighbors = foAI.foAIstate.systemStatus.get(systemID,  {}).get('neighbors', [])
                         if (targetB==systemID) and mMT0ID in neighbors: #consider 'borrowing' for work in neighbor system
                             if f2MType  in [  AIFleetMissionType.FLEET_MISSION_ATTACK,
@@ -180,7 +184,7 @@ class AIFleetMission(AIAbstractMission):
                 empire = fo.getEmpire()
                 if not empire.hasExploredSystem(aiTarget.getTargetID()):
                     return True
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_OUTPOST:
+        elif aiFleetMissionType  in [AIFleetMissionType.FLEET_MISSION_OUTPOST,  AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST]:
             universe = fo.getUniverse()
             fleet = universe.getFleet(self.getAITargetID())
             if not fleet.hasColonyShips:
@@ -189,30 +193,30 @@ class AIFleetMission(AIAbstractMission):
                 planet = universe.getPlanet(aiTarget.getTargetID())
                 if planet.unowned:
                     return True
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_COLONISATION:
+        elif aiFleetMissionType in [ AIFleetMissionType.FLEET_MISSION_COLONISATION,   AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION]:
             universe = fo.getUniverse()
             fleet = universe.getFleet(self.getAITargetID())
             if not fleet.hasColonyShips:
                 return False
             if aiTarget.getAITargetType() == AITargetType.TARGET_PLANET:
                 planet = universe.getPlanet(aiTarget.getTargetID())
-                if planet.unowned:
+                planetPopulation = planet.currentMeterValue(fo.meterType.population)
+                if planet.unowned or (planet.owner==fleet.owner and planetPopulation == 0):
                     return True
-        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_INVASION:
+        elif aiFleetMissionType in [ AIFleetMissionType.FLEET_MISSION_INVASION,   AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION]:
             universe = fo.getUniverse()
             fleet = universe.getFleet(self.getAITargetID())
             if not fleet.hasTroopShips:
                 return False
             if aiTarget.getAITargetType() == AITargetType.TARGET_PLANET:
                 planet = universe.getPlanet(aiTarget.getTargetID())
-                planetPopulation = planet.currentMeterValue(fo.meterType.population)
-                if not planet.unowned or planetPopulation > 0:
+                if not planet.unowned or planet.owner!=fleet.owner:
                     return True
-        elif aiFleetMissionType in [ AIFleetMissionType.FLEET_MISSION_MILITARY,  AIFleetMissionType.FLEET_MISSION_SECURE]:
+        elif aiFleetMissionType in [ AIFleetMissionType.FLEET_MISSION_MILITARY,  AIFleetMissionType.FLEET_MISSION_SECURE,  AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE]:
             universe = fo.getUniverse()
             fleet = universe.getFleet(self.getAITargetID())
-            if not fleet.hasArmedShips:
-                return False
+            #if not fleet.hasArmedShips:
+            #    return False
             if aiTarget.getAITargetType() == AITargetType.TARGET_SYSTEM:
                 return True
         # TODO: implement other mission types
@@ -238,7 +242,7 @@ class AIFleetMission(AIAbstractMission):
         for aiFleetOrder in self.getAIFleetOrders():
             print "   %s"%(aiFleetOrder)
             clearAll=False
-            if aiFleetOrder.getAIFleetOrderType() in [AIFleetOrderType.ORDER_COLONISE,  AIFleetOrderType.ORDER_OUTPOST]:
+            if aiFleetOrder.getAIFleetOrderType() in [AIFleetOrderType.ORDER_COLONISE,  AIFleetOrderType.ORDER_OUTPOST]:#TODO: invasion?
                 universe=fo.getUniverse()
                 planet = universe.getPlanet(aiFleetOrder.getTargetAITarget().getTargetID())
                 if  not planet:
@@ -259,7 +263,7 @@ class AIFleetMission(AIAbstractMission):
                 #print "    " + str(aiFleetOrder) currently already printed in canIssueOrder()
                 if aiFleetOrder.getAIFleetOrderType() == AIFleetOrderType.ORDER_MOVE and ordersCompleted: #only move if all other orders completed
                     aiFleetOrder.issueOrder()
-                elif aiFleetOrder.getAIFleetOrderType() != AIFleetOrderType.ORDER_MOVE:
+                elif aiFleetOrder.getAIFleetOrderType() not in [ AIFleetOrderType.ORDER_MOVE,  AIFleetOrderType.ORDER_DEFEND]:
                     aiFleetOrder.issueOrder()
                 if not aiFleetOrder.isExecutionCompleted():
                     ordersCompleted = False

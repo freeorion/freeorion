@@ -25,7 +25,10 @@ def getAIFleetOrdersFromSystemAITargets(fleetAITarget, aiTargets):
                 aiFleetOrder = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_MOVE, fleetAITarget, systemAITarget)
                 result.append(aiFleetOrder)
         else:
-            print "fleetID: " + str(fleetAITarget.getTargetID()) + " can't travel to target:" + str(aiTarget)
+            startSysID = lastSystemAITarget.getTargetID()
+            targetSysID = aiTarget.getTargetID()
+            if startSysID != targetSysID:
+                print "fleetID: " + str(fleetAITarget.getTargetID()) + " can't travel to target:" + str(aiTarget)
 
     return result
 

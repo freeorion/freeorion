@@ -41,7 +41,7 @@ def generateResearchOrders():
     gotSymBio = empire.getTechStatus("GRO_SYMBIOTIC_BIO") == fo.techStatus.complete
     gotXenoGen = empire.getTechStatus("GRO_XENO_GENETICS") == fo.techStatus.complete
     #assess if our empire has any non-lousy colonizers, & boost gro_xeno_gen if we don't
-    if gotSymBio and (not gotXenoGen) and foAI.foAIstate.aggression!=0:
+    if gotSymBio and (not gotXenoGen) and foAI.foAIstate.aggression in [1, 2, 3]:
         mostAdequate=0
         for specName in ColonisationAI.empireColonizers:
             environs={}
@@ -54,9 +54,10 @@ def generateResearchOrders():
             if mostAdequate==0:
                 researchQueue = empire.researchQueue
                 researchQueueList = getResearchQueueTechs()
-                if "GRO_XENO_GENETICS" not in researchQueueList[:2]:
-                    res=fo.issueEnqueueTechOrder("GRO_XENO_GENETICS", 0)
-                    print "Empire has poor colonizers,  so attempted to fast-track GRO_XENO_GENETICS,  got result %d"%res
+                for xgTech in [ "GRO_XENO_GENETICS", "GRO_GENETIC_ENG" ]:
+                    if   xgTech not in researchQueueList[:2]  and  empire.getTechStatus(xgTech) != fo.techStatus.complete:
+                        res=fo.issueEnqueueTechOrder(xgTech, 0)
+                        print "Empire has poor colonizers,  so attempted to fast-track %s,  got result %d"%(xgTech, res)
     
     
     researchQueue = empire.researchQueue
@@ -76,10 +77,10 @@ def generateResearchOrders():
                 print "    %25s  allocated %6.2f RP   --  missing preReqs: %s   -- unlockable items: %s "%(element.tech,  element.allocation,  missingPrereqs,  unlockedItems)
         print ""
     if fo.currentTurn()==1:
-        if foAI.foAIstate.aggression in  [0, 1, 2, 3]:
+        if foAI.foAIstate.aggression <=2:
             newtech = TechsListsAI.primaryMetaTechsList()
         else:
-            newtech = TechsListsAI.maniacalTechsList()
+            newtech = TechsListsAI.aggressiveTechs()
         #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
         pLTsToEnqueue = newtech[:]
         techBase = set(completedTechs+researchQueueList)

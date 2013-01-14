@@ -162,10 +162,12 @@ class AIstate(object):
             fleet = universe.getFleet(fleetID)
             if not fleet:
                 print "can't retrieve fleet %4d to update loc"%fleetID
+                continue #TODO: update elsewhere?
             newLoc = fleet.systemID
             if newLoc != oldLoc:
                 movedFleets.append( (fleetID,  oldLoc,  newLoc) )
                 self.fleetStatus[fleetID]['sysID']= newLoc
+                self.fleetStatus[fleetID]['nships']= len(fleet.shipIDs)
         if movedFleets:
             print "(moved_fleet,  oldSys,  newSys): %s"%movedFleets
         else:
@@ -260,8 +262,6 @@ class AIstate(object):
                 print  ("     Assessing threats on turn %d ; noting that fleets were just lost in system %d ,  enemy fleets were %s seen as of turn %d, of which %s survived and  %s were"+
                         " just briefly glimpsed")%( currentTurn,  sysID, ["not", ""][sawEnemiesAtSystem.get(sysID, False)],  partialVisTurn,   localEnemyFleetIDs,  glimpsedEnemies)
                 if partialVisTurn >= currentTurn -1:
-                    #enemyRating = sum( [self.rateFleet(fid) for fid in localEnemyFleetIDs  ] )
-                    #monsterRating = sum( [self.rateFleet(fid) for fid in localEnemyFleetIDs  ] )
                     enemyRatings =  [self.rateFleet(fid) for fid in localEnemyFleetIDs  ] 
                     monsterRatings = [self.rateFleet(fid) for fid in localEnemyFleetIDs  ] 
                     enemyRating = sum( [rating.get('attack', 0) for rating in enemyRatings]) * sum( [rating.get('health', 0) for rating in enemyRatings])
@@ -440,7 +440,7 @@ class AIstate(object):
             pass
             #fleet.setAggressive(True)
         if not fleet:
-            return 0
+            return {}
         rating=0
         attack=0
         health=0
@@ -457,26 +457,19 @@ class AIstate(object):
             nships+=1
         return {'overall':attack*health,  'tally':rating, 'attack':attack, 'health':health, 'nships':nships}
 
-    def getRating(self,  fleetID):
-        if fleetID in self.fleetStatus:
-            return self.fleetStatus[fleetID].get('rating', {})
+    def getRating(self,  fleetID,  forceNew=False):
+        if (fleetID in self.fleetStatus) and not forceNew:
+            return self.fleetStatus[fleetID].get('rating', {} )
         else:
             fleet = fo.getUniverse().getFleet(fleetID)
-            if not fleet: return 0
-            status = {'rating':self.rateFleet(fleetID),  'sysID':fleet.systemID}
+            if not fleet: 
+                return 0 #TODO: also ensure any info for that fleet is deleted
+            status = {'rating':self.rateFleet(fleetID),  'sysID':fleet.systemID,  'nships':len(fleet.shipIDs)}
             self.fleetStatus[fleetID] = status
             return status['rating']
 
     def updateFleetRating(self, fleetID):
-        universe = fo.getUniverse()
-        fleet = universe.getFleet(fleetID)
-        if not fleet:
-            return None
-        newRating = self.rateFleet(fleetID)
-        sysID = fleet.systemID
-        self.fleetStatus[fleetID] = {'rating':newRating,  'sysID':sysID}
-        return newRating
-
+        return self.getRating(fleetID,  forceNew=True)
 
     def getDesignStats(self,  design):
         if design:
@@ -613,6 +606,7 @@ class AIstate(object):
             #    fleet.setAggressive(True)
             if fleet:
                 sysID = fleet.systemID
+                status['nships']=len(fleet.shipIDs)
             else:
                 sysID = oldSysID #can still retrieve a fleet object even if fleet was just destroyed
             if (fleetID not in okFleets):# or fleet.empty:
