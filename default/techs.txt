@@ -943,13 +943,13 @@ Tech
     researchcost = 3
     researchturns = 2
     unlock = Item type = ShipPart name = "CO_OUTPOST_POD"
-//    EffectsGroup
-//        scope = And [
-//            OwnedBy TheEmpire Source.Owner
-//            Planet Population high = 0
-//            ] 
-//        accountinglabel = "STANDARD_OUTPOST_SUPPLY_LABEL"
-//        effects = SetSupply Value + 1
+    EffectsGroup
+        scope = And [
+            OwnedBy TheEmpire Source.Owner
+            Planet Population high = 0
+            ] 
+        accountinglabel = "STANDARD_OUTPOST_SUPPLY_LABEL"
+        effects = SetSupply Value + 1
     graphic = "icons/tech/habitation_domes.png"
 
 Tech
@@ -1553,7 +1553,7 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                TargetPopulation low = 1
+                Planet
             ]
             effects = SetSupply Value + 1
 
@@ -1745,7 +1745,7 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                TargetPopulation low = 1
+                Planet
             ]
             effects = SetSupply Value + 1
     graphic = "icons/tech/controlled_gravity_architecture.png"
@@ -1775,7 +1775,7 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                TargetPopulation low = 1
+                Planet
             ]
             effects = SetSupply Value + 1
     graphic = "icons/tech/orbital_construction.png"
