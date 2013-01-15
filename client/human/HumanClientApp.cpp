@@ -191,15 +191,13 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 #endif
     m_fsm = new HumanClientFSM(*this);
 
-    boost::filesystem::path log_path = GetUserDir() / "freeorion.log";
+    const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDir() / "freeorion.log").string());
 
-    // erase old log
-    boost::filesystem::ofstream temp(log_path);
+    // a platform-independent way to erase the old log
+    std::ofstream temp(HUMAN_CLIENT_LOG_FILENAME.c_str());
     temp.close();
 
-    std::string LOG_FILENAME = PathString(log_path);
-
-    log4cpp::Appender* appender = new log4cpp::FileAppender("FileAppender", LOG_FILENAME);
+    log4cpp::Appender* appender = new log4cpp::FileAppender("FileAppender", HUMAN_CLIENT_LOG_FILENAME);
     log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
     layout->setConversionPattern("%d %p Client : %m%n");
     appender->setLayout(layout);
