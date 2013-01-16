@@ -2081,16 +2081,16 @@ PHOTOTROPHIC_POPULATION
 BAD_POPULATION
 '''[[BASIC_POPULATION]]
 
+        [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
+        [[TUNNELS_MODIFIER]]
+        [[ENVIRONMENT_MODIFIER]]
+        [[POPULATION_TECHS]]
+        
         EffectsGroup
             scope = Source
             activation = Planet
             accountinglabel = "BAD_POPULATION_LABEL"
             effects = SetTargetPopulation Value*.75   // doesn't matter if these modifiers don't match ther other 'bad' modifiers.
-
-        [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
-        [[TUNNELS_MODIFIER]]
-        [[ENVIRONMENT_MODIFIER]]
-        [[POPULATION_TECHS]]
 '''
 
 AVERAGE_POPULATION
@@ -2105,16 +2105,16 @@ AVERAGE_POPULATION
 GOOD_POPULATION
 '''[[BASIC_POPULATION]]
 
+        [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
+        [[TUNNELS_MODIFIER]]
+        [[ENVIRONMENT_MODIFIER]]
+        [[POPULATION_TECHS]]
+        
         EffectsGroup
             scope = Source
             activation = Planet
             accountinglabel = "GOOD_POPULATION_LABEL"
             effects = SetTargetPopulation Value*1.25  // doesn't matter if these modifiers don't match ther other 'good' modifiers.
-
-        [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
-        [[TUNNELS_MODIFIER]]
-        [[ENVIRONMENT_MODIFIER]]
-        [[POPULATION_TECHS]]
 '''
 
 HOMEWORLD_GROWTH_FOCUS_BOOST
