@@ -13,32 +13,19 @@ BuildingType
                 Planet
                 OwnedBy TheEmpire Source.Owner
                 Contains Source
-                [[STANDARD_CONDITION_INFRA]]
             ]
             effects = [
-                SetTargetResearch Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
-                SetTargetIndustry Value + Target.Construction * 2 * [[PRODUCTION_PER_INFRA]]
-            ]
-
-        EffectsGroup          // These bonuses given to anyone
-            scope = And [
-                PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                Contains Source
-                [[STANDARD_CONDITION_POP]]
-            ]
-            effects = [
-                SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
-                SetTargetIndustry Value + Target.Population * 2 * [[PRODUCTION_PER_POP]]
+                SetTargetResearch Value + 5
+                SetTargetIndustry Value + Target.Population
             ]
             
         EffectsGroup
             scope = Source
             activation = Random probability = 0.02
             effects = CreateField type = "FLD_ION_STORM"
-                                  x = UniverseCentreX + Random(2,4)*UniverseCentreX*sin(CurrentTurn)
-                                  y = UniverseCentreY + Random(2,4)*UniverseCentreY*cos(CurrentTurn)
-                                  size = 50
+                    x = UniverseCentreX + Random(2,4)*UniverseCentreX*sin(CurrentTurn)
+                    y = UniverseCentreY + Random(2,4)*UniverseCentreY*cos(CurrentTurn)
+                    size = 50
     ]
     icon = "icons/building/archive.png"
 
@@ -423,18 +410,17 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                PopulationCenter            
+                PopulationCenter
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
-                [[INFRA_CONDITION_INFRA]]
             ]
             activation = And [
                 OwnerHasTech "PRO_INDUSTRY_CENTER_I"
                 Not OwnerHasTech "PRO_INDUSTRY_CENTER_II"
             ]
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry Value + Target.Construction * [[INFRA_PRODUCTION_PER_INFRA]]
+            effects = SetTargetIndustry Value + Target.Population * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -442,29 +428,13 @@ BuildingType
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
-                [[INFRA_CONDITION_POP]]
-            ]
-            activation = And [
-                OwnerHasTech "PRO_INDUSTRY_CENTER_I"
-                Not OwnerHasTech "PRO_INDUSTRY_CENTER_II"
-            ]
-            stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry Value + Target.Population * [[INFRA_PRODUCTION_PER_POP]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter            
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
-                Focus "FOCUS_INDUSTRY"
-                [[INFRA_CONDITION_INFRA]]
             ]
             activation = And [
                 OwnerHasTech "PRO_INDUSTRY_CENTER_II"
                 Not OwnerHasTech "PRO_INDUSTRY_CENTER_III"
             ]
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry Value + Target.Construction * 2 * [[INFRA_PRODUCTION_PER_INFRA]]
+            effects = SetTargetIndustry Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -472,38 +442,10 @@ BuildingType
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
                 Focus "FOCUS_INDUSTRY"
-                [[INFRA_CONDITION_POP]]
-            ]
-            activation = And [
-                OwnerHasTech "PRO_INDUSTRY_CENTER_II"
-                Not OwnerHasTech "PRO_INDUSTRY_CENTER_III"
-            ]
-            stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry Value + Target.Population * 2 * [[INFRA_PRODUCTION_PER_POP]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
-                Focus "FOCUS_INDUSTRY"
-                [[INFRA_CONDITION_INFRA]]
             ]
             activation = OwnerHasTech "PRO_INDUSTRY_CENTER_III"
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry Value + Target.Construction * 3 * [[INFRA_PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
-                Focus "FOCUS_INDUSTRY"
-                [[INFRA_CONDITION_POP]]
-            ]
-            activation = OwnerHasTech "PRO_INDUSTRY_CENTER_III"
-            stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry Value + Target.Population * 3 * [[INFRA_PRODUCTION_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * 3 * [[INDUSTRY_PER_POP]]
     ]
     icon = ""
 
@@ -588,56 +530,26 @@ BuildingType
                 PopulationCenter
                 OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_INDUSTRY"
-                [[POP_CONDITION_INFRA]]
             ]
             activation = Not WithinDistance 500 And [
                 Ship
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_INDUSTRY_EFFECT"
-            effects = SetTargetIndustry Value + Target.Construction * [[POP_PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_INDUSTRY"
-                [[POP_CONDITION_POP]]
-            ]
-            activation = Not WithinDistance 500 And [
-                Ship
-                Not Stationary
-            ]
-            stackinggroup = "BLD_COLLECTIVE_NET_INDUSTRY_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * [[POP_PRODUCTION_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
                 PopulationCenter
                 OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_RESEARCH"
-                [[POP_CONDITION_INFRA]]
             ]
             activation = Not WithinDistance 500 And [
                 Ship
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_RESEARCH_EFFECT"
-            effects = SetTargetResearch Value + Target.Construction * 3.0 * [[POP_PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_RESEARCH"
-                [[POP_CONDITION_POP]]
-            ]
-            activation = Not WithinDistance 500 And [
-                Ship
-                Not Stationary
-            ]
-            stackinggroup = "BLD_COLLECTIVE_NET_RESEARCH_EFFECT"
-            effects = SetTargetResearch Value + Target.Population * 3.0 * [[POP_PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 3.0 * [[RESEARCH_PER_POP]]
     ]
     icon = ""
 
@@ -738,23 +650,10 @@ BuildingType
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
-                [[INFRA_CONDITION_INFRA]]
             ]
             activation = Source
             stackinggroup = "BLD_HYPER_DAM_BONUS"
-            effects = SetTargetIndustry Value + Target.Construction * 2 * [[INFRA_PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                Focus "FOCUS_INDUSTRY"
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
-                [[INFRA_CONDITION_POP]]
-            ]
-            activation = Source
-            stackinggroup = "BLD_HYPER_DAM_BONUS"
-            effects = SetTargetIndustry Value + Target.Population * 2 * [[INFRA_PRODUCTION_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -786,11 +685,10 @@ BuildingType
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
-                [[STANDARD_CONDITION_INFRA]]
             ]
             activation = Star type = [Blue White]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
-            effects = SetTargetIndustry Value + Target.Construction * 2 * [[PRODUCTION_PER_INFRA]]
+            effects = SetTargetIndustry Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -798,19 +696,6 @@ BuildingType
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
-                [[STANDARD_CONDITION_POP]]
-            ]
-            activation = Star type = [Blue White]
-            stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * 2 * [[PRODUCTION_PER_POP]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                Focus "FOCUS_INDUSTRY"
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
-                [[STANDARD_CONDITION_INFRA]]
             ]
             activation = And [
                 Star type = [Yellow Orange]
@@ -821,7 +706,7 @@ BuildingType
                 ]
             ]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
-            effects = SetTargetIndustry Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
+            effects = SetTargetIndustry Value + Target.Population * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -829,26 +714,6 @@ BuildingType
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
-                [[STANDARD_CONDITION_POP]]
-            ]
-            activation = And [
-                Star type = [Yellow Orange]
-                Not ResourceSupplyConnected Source.Owner And [
-                    Building "BLD_SOL_ORB_GEN"
-                    OwnedBy TheEmpire Source.Owner
-                    Star type = [Blue White]
-                ]
-            ]
-            stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                Focus "FOCUS_INDUSTRY"
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
-                [[STANDARD_CONDITION_INFRA]]
             ]
             activation = And [
                 Star type = Red
@@ -859,26 +724,7 @@ BuildingType
                 ]
             ]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
-            effects = SetTargetIndustry Value + Target.Construction * 0.5 * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                Focus "FOCUS_INDUSTRY"
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
-                [[STANDARD_CONDITION_POP]]
-            ]
-            activation = And [
-                Star type = Red
-                Not ResourceSupplyConnected Source.Owner And [
-                    Building "BLD_SOL_ORB_GEN"
-                    OwnedBy TheEmpire Source.Owner
-                    Star type = [Yellow Orange Blue White]
-                ]
-            ]
-            stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * 0.5 * [[PRODUCTION_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
     ]
     icon = "icons/building/miniature_sun.png"
 /*
@@ -1014,7 +860,7 @@ BuildingType
             ]
             effects = [
                 SetPopulation Target.Population - max(0, Target.NextTurnPopGrowth) - 3
-                SetTargetIndustry Value + Target.Population * 10 * [[PRODUCTION_PER_POP]]
+                SetTargetIndustry Value + Target.Population * 10 * [[INDUSTRY_PER_POP]]
                 SetIndustry Target.TargetIndustry
             ]
 
@@ -1043,23 +889,10 @@ BuildingType
                 Focus "FOCUS_INDUSTRY"
                 OwnedBy TheEmpire Source.Owner
                 ResourceSupplyConnected Source.Owner Source
-                [[STANDARD_CONDITION_INFRA]]
             ]
             activation = Star type = BlackHole
             stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
-            effects = SetTargetIndustry Value + Target.Construction * 4 * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                Focus "FOCUS_INDUSTRY"
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
-                [[STANDARD_CONDITION_POP]]
-            ]
-            activation = Star type = BlackHole
-            stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * 4 * [[PRODUCTION_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * 4 * [[INDUSTRY_PER_POP]]
     ]
     icon = "icons/building/blackhole.png"
 
@@ -1213,22 +1046,10 @@ BuildingType
                 PopulationCenter
                 OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_RESEARCH"
-                [[POP_CONDITION_INFRA]]
             ]
             activation = Source
             stackinggroup = "BLD_ENCLAVE_VOID_STACK"
-            effects = SetTargetResearch Value + Target.Construction * [[POP_PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_RESEARCH"
-                [[POP_CONDITION_POP]]
-            ]
-            activation = Source
-            stackinggroup = "BLD_ENCLAVE_VOID_STACK"
-            effects = SetTargetResearch Value + Target.Population * [[POP_PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * [[RESEARCH_PER_POP]]
     ]
     icon = ""
 

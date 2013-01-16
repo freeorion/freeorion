@@ -16,7 +16,7 @@ Special
             scope = Source
             activation = Source
             effects = [
-                SetTargetResearch Value + .3 * [[BASIC_PRODUCTION]]
+                SetTargetResearch Value + .3 * [[RESEARCH_PER_POP]]
                 SetTargetConstruction Value - 20
             ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
@@ -35,18 +35,9 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = [[STANDARD_CONDITION_INFRA]]
             effects = [
                 SetTargetConstruction Value - 20
-                SetTargetIndustry Value + Target.Construction * 0.4 * [[PRODUCTION_PER_INFRA]]
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = [[STANDARD_CONDITION_POP]]
-            effects = [
-                SetTargetConstruction Value - 20
-                SetTargetIndustry Value + Target.Population * 0.4 * [[PRODUCTION_PER_POP]]
+                SetTargetIndustry Value + Target.Population * 0.2
             ]
     ]
     graphic = "icons/specials_huge/tidal_lock.png"
@@ -65,7 +56,6 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Not OwnerHasTech "GRO_ORBIT_FARMING"
             effects = SetTargetPopulation Value - 1 * Target.SizeAsDouble
         EffectsGroup
             scope = Source
@@ -357,22 +347,10 @@ Special
                 Planet
                 Focus "FOCUS_RESEARCH"
                 OwnedBy TheEmpire Source.Owner
-                [[STANDARD_CONDITION_INFRA]]
             ]
             activation = Focus "FOCUS_RESEARCH"
             stackinggroup = "COMPUTRONIUM_STACK"
-            effects = SetTargetResearch Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                Planet
-                Focus "FOCUS_RESEARCH"
-                OwnedBy TheEmpire Source.Owner
-                [[STANDARD_CONDITION_POP]]
-            ]
-            activation = Focus "FOCUS_RESEARCH"
-            stackinggroup = "COMPUTRONIUM_STACK"
-            effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 0.1
             
             
         [[CHANCE_OF_GUARD_1]]
@@ -1470,19 +1448,8 @@ STANDARD_MINERAL_BOOST
 STANDARD_INDUSTRY_BOOST
 '''EffectsGroup
             scope = Source
-            activation = And [
-                Focus "FOCUS_INDUSTRY"
-                [[STANDARD_CONDITION_INFRA]]
-            ]
-            effects = SetTargetIndustry Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Focus "FOCUS_INDUSTRY"
-                [[STANDARD_CONDITION_POP]]
-            ]
-            effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
+            activation = Focus "FOCUS_INDUSTRY"
+            effects = SetTargetIndustry Value + Target.Population * [[INDUSTRY_PER_POP]]
 
 '''
 

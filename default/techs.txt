@@ -516,17 +516,8 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                [[INFRA_CONDITION_INFRA]]
             ]
-            effects = SetTargetResearch Value + Target.Construction * 0.5 * [[INFRA_PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                [[INFRA_CONDITION_POP]]
-            ]
-            effects = SetTargetResearch Value + Target.Population * 0.5 * [[INFRA_PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/basic_autolabs.png"
 
@@ -545,18 +536,8 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
                 Focus "FOCUS_RESEARCH"
-                [[POP_CONDITION_INFRA]]
             ]
-            effects = SetTargetResearch Value + Target.Construction * 0.5 * [[POP_PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Focus "FOCUS_RESEARCH"
-                [[POP_CONDITION_POP]]
-            ]
-            effects = SetTargetResearch Value + Target.Population * 0.5 * [[POP_PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
     ]
 
 Tech
@@ -612,19 +593,8 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
                 Focus "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_INFRA]]
             ]
-            effects = SetTargetResearch Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
-                
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Focus "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_POP]]
-            ]
-            effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 0.2
     ]
 
 Tech
@@ -643,19 +613,8 @@ Tech
                 ProductionCenter
                 Star type = BlackHole
                 Focus "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_INFRA]]
             ]
-            effects = SetTargetResearch Value + Target.Construction * 2 * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Star type = BlackHole
-                Focus "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_POP]]
-            ]
-            effects = SetTargetResearch Value + Target.Population * 2 * [[PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value * 2
 
         EffectsGroup
             scope = And [
@@ -663,19 +622,8 @@ Tech
                 ProductionCenter
                 Star type = Neutron
                 Focus "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_INFRA]]
             ]
-            effects = SetTargetResearch Value + Target.Construction * 1.5 * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Star type = Neutron
-                Focus "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_POP]]
-            ]
-            effects = SetTargetResearch Value + Target.Population * 1.5 * [[PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value * 1.5 
 
         EffectsGroup
             scope = And [
@@ -683,19 +631,8 @@ Tech
                 ProductionCenter
                 Star type = [Blue White]
                 Focus "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_INFRA]]
             ]
-            effects = SetTargetResearch Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Star type = [Blue White]
-                Focus "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_POP]]
-            ]
-            effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value * 1
 
         EffectsGroup
             scope = And [
@@ -703,19 +640,8 @@ Tech
                 ProductionCenter
                 Star type = [Red Orange Yellow]
                 Focus "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_INFRA]]
             ]
-            effects = SetTargetResearch Value + Target.Construction * 0.5 * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Star type = [Red Orange Yellow]
-                Focus "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_POP]]
-            ]
-            effects = SetTargetResearch Value + Target.Population * 0.5 * [[PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value  * 0.5
     ]
     graphic = "icons/tech/stellar_tomography.png"
 
@@ -847,23 +773,9 @@ Tech
                     HasSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
                 ]
                 Focus "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_INFRA]]
             ]
             stackinggroup = "ANCIENT_RUINS_RESEARCH_EFFECT"
-            effects = SetTargetResearch Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Or [
-                    HasSpecial "ANCIENT_RUINS_SPECIAL"
-                    HasSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
-                ]
-                Focus "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_POP]]
-            ]
-            stackinggroup = "ANCIENT_RUINS_RESEARCH_EFFECT"
-            effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * [[RESEARCH_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -876,26 +788,9 @@ Tech
                     HasSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
                 ]
                 OwnedBy TheEmpire Source.Owner
-                [[STANDARD_CONDITION_INFRA]]
             ]
             stackinggroup = "ANCIENT_RUINS_RESEARCH_EFFECT"
-            effects = SetTargetResearch Value + Target.Construction * 0.25 * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_RESEARCH"
-            ]
-            activation = Number low = 1 And [
-                Or [
-                    HasSpecial "ANCIENT_RUINS_SPECIAL"
-                    HasSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
-                ]
-                OwnedBy TheEmpire Source.Owner
-                [[STANDARD_CONDITION_POP]]
-            ]
-            stackinggroup = "ANCIENT_RUINS_RESEARCH_EFFECT"
-            effects = SetTargetResearch Value + Target.Population * 0.25 * [[PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 0.25 * [[RESEARCH_PER_POP]]
     ]
 
 
@@ -937,19 +832,19 @@ Tech
 Tech
     name = "CON_ENV_ENCAPSUL"
     description = "CON_ENV_ENCAPSUL_DESC"
-    short_description = "CONSTRUCTION_SHORT_DESC"
+    short_description = "SUPPLY_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 3
     researchturns = 2
     unlock = Item type = ShipPart name = "CO_OUTPOST_POD"
-    EffectsGroup
-        scope = And [
-            OwnedBy TheEmpire Source.Owner
-            Planet Population high = 0
-            ] 
-        accountinglabel = "STANDARD_OUTPOST_SUPPLY_LABEL"
-        effects = SetSupply Value + 1
+//    EffectsGroup
+//        scope = And [
+//            OwnedBy TheEmpire Source.Owner
+//            Planet Population high = 0
+//            ] 
+//        accountinglabel = "STANDARD_OUTPOST_SUPPLY_LABEL"
+//        effects = SetSupply Value + 1
     graphic = "icons/tech/habitation_domes.png"
 
 Tech
@@ -1115,36 +1010,18 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
                 Focus "FOCUS_INDUSTRY"
-                [[POP_CONDITION_INFRA]]
-            ]
-            effects = SetTargetIndustry Value + Target.Construction * 0.5 * [[POP_PRODUCTION_PER_INFRA]]
 
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Focus "FOCUS_INDUSTRY"
-                [[POP_CONDITION_POP]]
             ]
-            effects = SetTargetIndustry Value + Target.Population * 0.5 * [[POP_PRODUCTION_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
                 Focus "FOCUS_RESEARCH"
-                [[POP_CONDITION_INFRA]]
-            ]
-            effects = SetTargetResearch Value  + Target.Construction * 0.25 * [[POP_PRODUCTION_PER_INFRA]]
 
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Focus "FOCUS_RESEARCH"
-                [[POP_CONDITION_POP]]
             ]
-            effects = SetTargetResearch Value  + Target.Population * 0.25 * [[POP_PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value  + Target.Population * 0.25 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/pure-energy_metabolism.png"
 
@@ -1157,13 +1034,7 @@ Tech
     researchcost = 4
     researchturns = 2
     // Effect is specified in species.txt
-    /*effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet
-            ]
-            effects = SetTargetPopulation Value + Source.SizeAsDouble*/
+
     graphic = "icons/tech/subterranean_construction.png"
 
 Tech
@@ -1285,18 +1156,8 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
                 Focus "FOCUS_INDUSTRY"
-                [[INFRA_CONDITION_INFRA]]
             ]
-            effects = SetTargetIndustry Value + Target.Construction * 0.4 * [[INFRA_PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Focus "FOCUS_INDUSTRY"
-                [[INFRA_CONDITION_POP]]
-            ]
-            effects = SetTargetIndustry Value + Target.Population * 0.4 * [[INFRA_PRODUCTION_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * 0.4 * [[INDUSTRY_PER_POP]]
         ]
     graphic = "icons/tech/robotic_production.png"
     
@@ -1327,18 +1188,8 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
                 Focus "FOCUS_INDUSTRY"
-                [[INFRA_CONDITION_INFRA]]
             ]
-            effects = SetTargetIndustry Value + Target.Construction * [[INFRA_PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Focus "FOCUS_INDUSTRY"
-                [[INFRA_CONDITION_POP]]
-            ]
-            effects = SetTargetIndustry Value + Target.Population * [[INFRA_PRODUCTION_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * [[INDUSTRY_PER_POP]]
     ]
     graphic = "icons/tech/fusion_generation.png"
 

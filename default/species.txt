@@ -2373,25 +2373,14 @@ BAD_INDUSTRY
 '''
 
 AVERAGE_INDUSTRY
-'''EffectsGroup
+'''        EffectsGroup
             scope = Source
             activation = And [
                 Planet
                 Focus type = "FOCUS_INDUSTRY"
-                [[STANDARD_CONDITION_INFRA]]
             ]
             accountinglabel = "FOCUS_INDUSTRY_LABEL"
-            effects = SetTargetIndustry Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                Focus type = "FOCUS_INDUSTRY"
-                [[STANDARD_CONDITION_POP]]
-            ]
-            accountinglabel = "FOCUS_INDUSTRY_LABEL"
-            effects = SetTargetIndustry Value + Target.Population * [[PRODUCTION_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * [[INDUSTRY_PER_POP]]
             
         EffectsGroup                    // removes residual production from a dead planet
             scope = Source
@@ -2454,20 +2443,9 @@ AVERAGE_RESEARCH
             activation = And [
                 Planet
                 Focus type = "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_INFRA]]
             ]
             accountinglabel = "FOCUS_RESEARCH_LABEL"
-            effects = SetTargetResearch Value + Target.Construction * [[PRODUCTION_PER_INFRA]]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                Focus type = "FOCUS_RESEARCH"
-                [[STANDARD_CONDITION_POP]]
-            ]
-            accountinglabel = "FOCUS_RESEARCH_LABEL"
-            effects = SetTargetResearch Value + Target.Population * [[PRODUCTION_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * [[RESEARCH_PER_POP]]
             
         EffectsGroup      // removes residual production from a dead planet
             scope = Source

@@ -28,6 +28,7 @@ New Features / Improvements:
 Balancing:
  ~ Unified resource and fleet supply into a single meter: the Supply meter. Infrastructure is not involved.
  ~ ~ Outpost now provide 0 jump supply, and colonies 1 jump supply.  Techs and buildings can extend that.
+ ~ Removed infrastructure from having any effect on producing Industry or Research.
  ~ Greatly reduced the number of Theory techs that have no direct effect.
  ~ Adjusted price and research time of many techs.
  ~ Recallibrated Stealth & Detection Strength numbers
