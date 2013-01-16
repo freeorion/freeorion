@@ -1314,11 +1314,11 @@ Species
 Species
     name = "SP_SUPER_TEST"
     description = "SP_SUPER_TEST_DESC"
-    Playable
+    //Playable
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "ROBOTIC" "LITHIC" "PHOTOTROPHIC" "TELEPATHIC" ]
+    tags = [ "ORGANIC" "ROBOTIC" "LITHIC" "TELEPATHIC" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -1346,7 +1346,7 @@ Species
         [[GREAT_GROUND_TROOPS]]
         [[ULTIMATE_WEAPONS]]
         [[GOOD_POPULATION]]
-        [[PHOTOTROPHIC_POPULATION]]
+        [[SELF_SUSTAINING_POPULATION]]
         
         
         [[ADVANCED_FOCUS_EFFECTS]]
