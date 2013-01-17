@@ -500,6 +500,7 @@ Special
 Special
     name = "KRAKEN_NEST_SPECIAL"
     description = "KRAKEN_NEST_SPECIAL_DESC"
+    spawnrate = 0.0
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
@@ -544,6 +545,7 @@ Special
 Special
     name = "SNOWFLAKE_NEST_SPECIAL"
     description = "SNOWFLAKE_NEST_SPECIAL_DESC"
+    spawnrate = 0.0
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
@@ -588,6 +590,7 @@ Special
 Special
     name = "JUGGERNAUT_NEST_SPECIAL"
     description = "JUGGERNAUT_NEST_SPECIAL_DESC"
+    spawnrate = 0.0
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
