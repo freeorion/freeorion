@@ -217,6 +217,17 @@ def getPrimaryTechsList2():
     ]
     return techsList2
     
+def defenseTechs1():
+    defTechs1=[
+        "DEF_DEFENSE_NET_1", 
+        "DEF_GARRISON_1", 
+        ]
+    return defTechs1
+
+def defenseTechs2():
+    defTechs2=[
+        ]
+    return defTechs2
 
 def primaryMetaTechsList():
     "primary techs for all categories"

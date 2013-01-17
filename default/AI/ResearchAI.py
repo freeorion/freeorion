@@ -103,6 +103,13 @@ def generateResearchOrders():
             except:
                 print "    Error: failed attempt to enqueued Tech: " + name
                 print "    Error: exception triggered and caught:  ",  traceback.format_exc()
+        if foAI.foAIstate.aggression in [0, 1]:
+            researchQueueList = getResearchQueueTechs()
+            defTechs=TechsListsAI.defenseTechs1()
+            for defTech in defTechs:
+                if   defTech not in researchQueueList[:5]  and  empire.getTechStatus(defTech) != fo.techStatus.complete:
+                    res=fo.issueEnqueueTechOrder(defTech, min(3,  len(researchQueueList)))
+                    print "Empire is very defensive,  so attempted to fast-track %s,  got result %d"%(defTech, res)
         print""
         generateDefaultResearchOrders()
         print "\n\nAll techs:"

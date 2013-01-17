@@ -444,6 +444,8 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                     if p2.size== fo.planetSize.gasGiant :
                         gasGiantBonus += 50
         planetEnv  = environs[ str(species.getPlanetEnvironment(planet.type)) ]
+        if planetEnv==0:
+            return -9999
         popSizeMod=0
         popSizeMod += popSizeModMap["env"][planetEnv]
         if empire.getTechStatus("GRO_SUBTER_HAB") == fo.techStatus.complete:    

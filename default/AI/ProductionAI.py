@@ -649,11 +649,13 @@ def generateProductionOrders():
 
 #TODO: add totalPP checks below, so don't overload queue
 
+    maxDefensePortion = [0.7,  0.6,  0.5,  0.3,  0.2  ][ foAI.foAIstate.aggression]
+
     sysOrbitalDefenses={}
     queuedDefenses={}
     orbitalDefenseNames = shipTypeNames( AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE )
     defenseAllocation=0.0
-    targetOrbitals=   int( (fo.currentTurn()/( 10.0*(foAI.foAIstate.aggression +1)))**0.8)
+    targetOrbitals=   int( ((fo.currentTurn()+4)/( 8.0*(foAI.foAIstate.aggression +1)**1.5))**0.8)
     print "Orbital Defense Check -- target Defense Orbitals: ",  targetOrbitals
     for element in productionQueue:
         if ( element.buildType == AIEmpireProductionTypes.BT_SHIP) and (foAI.foAIstate.getShipRole(element.designID) ==  AIShipRoleType.SHIP_ROLE_BASE_DEFENSE):
@@ -661,7 +663,7 @@ def generateProductionOrders():
             defenseAllocation += element.allocation
     print "Queued Defenses:",  [( PlanetUtilsAI.sysNameIDs([sysID]),  num) for sysID,  num in   queuedDefenses.items()]
     for sysID in empireSpeciesSystems:
-        if defenseAllocation > 0.5 * totalPP:
+        if defenseAllocation > maxDefensePortion * totalPP:
             break
         #print "checking ",  PlanetUtilsAI.sysNameIDs([sysID])
         sysOrbitalDefenses[sysID]=0
