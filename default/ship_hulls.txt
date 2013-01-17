@@ -2376,6 +2376,7 @@ Hull
             scope = NumberOf 1 And [
                 Planet
                 ContainedBy Contains Source
+                Not Planet type = [Asteroids GasGiant]
             ]
             effects = [
                 SetSpecies "SP_EXPERIMENTOR"

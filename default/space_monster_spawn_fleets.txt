@@ -186,6 +186,7 @@ MonsterFleet
         Contains And [
             Planet
             Not OwnedBy AnyEmpire
+            Not Planet type = [Asteroids GasGiant]
         ]
         Not WithinStarlaneJumps 6 And [
             Planet
