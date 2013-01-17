@@ -3746,6 +3746,19 @@ Prefer Inferno planets.
 [[BAD_RESEARCH]]
         
 [[GOOD_GROUND_TROOPS]]
+
+The Ugmors is a race of sentient yeast which uses rocks and minerals to make temporary bodies designed to perform specific tasks.
+
+Social Structure:
+The Larar drifts are the true center of the species. These masses of yeast sit on top of the hottest part of the lava seas and absorb energy. When enough energy is available a large colony of supercharged yeast will gather large rocks at the edge of the lava pool and join them together to form an Ugmor. The Ugmors were originally designed to get from one lava pool to another, but have since developed into a very complex society. The Larar drifts are not very intelligent on their own, acting as more of a central memory which carries out the directives of the most recent Ugmor to be privileged enough to return to the Larar drifts. 
+
+Ugmors have a very unified form of government. It resembles a hive, but without a central queen. This is because all Ugmors start out with the same racial memories and agenda. When something new is discovered the Ugmor who discovered it usually returns to the nearest Larar drift to share his discovery with the rest of the species.
+
+Description:
+An Ugmor can take on many shapes, but all of them consist of rocks or sheets of metal connected by a sticky fibrous material. They are extremely durable and can even live in empty space for several hours. In their natural environment they can live for up to five years before cooling down and dieing of “old age.” Ugmors as a race are not very bright. While the Larar pools see the value of intelligence, they tend to see it as a trait which should be grown in new Ugmors only in moderation.
+
+Homeworld:
+The Ugmors home world is a rockey planet that rotates very quickly, (once every 3 and a half hours) and 30% of it’s surface is covered by seas of lava and liquid metals.
 '''
 
 SP_GISGUFGTHRIM
