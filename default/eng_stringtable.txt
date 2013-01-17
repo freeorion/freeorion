@@ -3553,6 +3553,7 @@ Prefer Swamp planets.
 [[AVERAGE_RESEARCH]]
         
 [[GOOD_GROUND_TROOPS]]
+[[BROAD_EP]]
 '''
 
 SP_PHINNERT
@@ -3591,6 +3592,7 @@ Prefer Tundra planets.
 [[AVERAGE_RESEARCH]]
         
 [[BAD_GROUND_TROOPS]]
+[[NARROW_EP]]
 '''
 
 SP_FIFTYSEVEN
@@ -3624,7 +3626,7 @@ SP_SETINON
 Setinon
 SP_SETINON_DESC
 '''Individualistic sentient microscopic cells.
-Prefer Ocean planets.
+Prefer Swamp planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[GREAT_STEALTH]]
@@ -3662,7 +3664,7 @@ SP_TRENCHERS_DESC
 Prefers Barren planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
-[[NO_INDUSTRY]]
+[[GOOD_INDUSTRY]]
 [[NO_RESEARCH]]
         
 [[BAD_GROUND_TROOPS]]
@@ -3903,7 +3905,6 @@ Prefer Tundra planets.
         
 [[GOOD_GROUND_TROOPS]]
 [[BAD_POPULATION]]
-
 
 Biology:
 The Furthest are furry, 1.5 m tall creatures.  Radially symmetric, they have three long legs, and three long flexible necks. Atop each neck, is a compound eye, and a mouth used for ingestion and for manipulating objects.  This allows the creature too keep watch in most directions at once.  The actual brain is in the center of the body.
