@@ -29,7 +29,7 @@ namespace {
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
         db.Add("GameSetup.stars",               "OPTIONS_DB_GAMESETUP_STARS",                   61,                 RangedValidator<int>(10, 500));
-        db.Add("GameSetup.galaxy-shape",        "OPTIONS_DB_GAMESETUP_GALAXY_SHAPE",            SPIRAL_3,           RangedValidator<Shape>(SPIRAL_2, RING));
+        db.Add("GameSetup.galaxy-shape",        "OPTIONS_DB_GAMESETUP_GALAXY_SHAPE",            ELLIPTICAL,           RangedValidator<Shape>(SPIRAL_2, RING));
         db.Add("GameSetup.galaxy-age",          "OPTIONS_DB_GAMESETUP_GALAXY_AGE",              GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_HIGH));
         db.Add("GameSetup.planet-density",      "OPTIONS_DB_GAMESETUP_PLANET_DENSITY",          GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_HIGH));
         db.Add("GameSetup.starlane-frequency",  "OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY",      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(ALLOW_NO_STARLANES ? GALAXY_SETUP_NONE : GALAXY_SETUP_LOW, GALAXY_SETUP_HIGH));
@@ -41,7 +41,7 @@ namespace {
         db.Add("GameSetup.empire-color",        "OPTIONS_DB_GAMESETUP_EMPIRE_COLOR",            0,                  RangedValidator<int>(0, 100));
         db.Add("GameSetup.starting-species",    "OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME",   std::string("SP_HUMAN"),    Validator<std::string>());
         db.Add("GameSetup.ai-players",          "OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS",          3,                  RangedValidator<int>(0, MAX_AI_PLAYERS));
-        db.Add("GameSetup.ai-aggression",       "OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION",       MANIACAL,           RangedValidator<Aggression>(TURTLE, MANIACAL));
+        db.Add("GameSetup.ai-aggression",       "OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION",       BEGINNER,           RangedValidator<Aggression>(BEGINNER, MANIACAL));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -297,6 +297,7 @@ void GalaxySetupPanel::Init() {
     m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
     m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
     
+    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_BEGINNER")));
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_TURTLE")));
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_DEFENSIVE")));
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MODERATE")));

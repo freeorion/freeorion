@@ -258,7 +258,7 @@ def addOrbitalDefenseDesigns():
     is2 = "SH_DEFLECTOR"
     is3= "SH_MULTISPEC"
     hull =  "SH_COLONY_BASE"
-    if foAI.foAIstate.aggression<=1:
+    if foAI.foAIstate.aggression<=fo.aggression.cautious:
         newDesigns += [ (designNameBases[0],  desc,  hull,  [is1],  "",  model) ]
     newDesigns += [ (designNameBases[1],  desc,  hull,  [is2],  "",  model) ]
     newDesigns += [ (designNameBases[2],  desc,  hull,  [is3],  "",  model) ]
@@ -302,9 +302,9 @@ def addMarkDesigns():
     nb,  hull =  designNameBases[2]+"-2-%1d",   "SH_STATIC_MULTICELLULAR"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(7, 9) ]
     
-    if foAI.foAIstate.aggression ==0: 
+    if foAI.foAIstate.aggression in [fo.aggression.beginner, fo.aggression.turtle]: 
         maxEM= 8
-    elif foAI.foAIstate.aggression ==1: 
+    elif foAI.foAIstate.aggression ==fo.aggression.cautious: 
         maxEM= 12
     else:
         maxEM= 10
@@ -325,7 +325,7 @@ def addMarkDesigns():
     newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + 2*[ is2],  "",  model)    for iw in range(7,  maxEM+1) ]
     
     nb =  designNameBases[4]+"-6-%1d"
-    if foAI.foAIstate.aggression ==0: 
+    if foAI.foAIstate.aggression <=fo.aggression.turtle: 
         newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw] +[ar3, ar3]+ 2*[ is2],  "",  model)    for iw in range(8,  maxEM+1) ]
     else:
         newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] +[ar3]+ 2*[ is2],  "",  model)    for iw in range(8,  maxEM+1) ]
@@ -339,7 +339,7 @@ def addMarkDesigns():
     nb =  designNameBases[4]+"-9-%1d"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar3] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
     
-    if foAI.foAIstate.aggression >=2: 
+    if foAI.foAIstate.aggression >=fo.aggression.typical: 
         nb,  hull =  designNameBases[4]+"-%1d-%1d",   "SH_ENDOSYMBIOTIC"
         newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  3*[srb%iw]+[ar2] + 3*[ is2],  "",  model)    for iw in range(7,  12) ]
         newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  3*[srb%iw]+[ar3] + 3*[ is2],  "",  model)    for iw in range(8,  12) ]
@@ -351,7 +351,7 @@ def addMarkDesigns():
         newMarkDesigns += [ (nb%(6, iw),  desc,  hull,  2*[srb%iw]+[ar2] + 3*[ is2],  "",  model)    for iw in range(9,  14) ]
         newMarkDesigns += [ (nb%(7, iw),  desc,  hull,  3*[srb%iw] + 3*[ is3],  "",  model)    for iw in range(9,  14) ]
         newMarkDesigns += [ (nb%(8, iw),  desc,  hull,  2*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(9,  14) ]
-    if foAI.foAIstate.aggression >2: 
+    if foAI.foAIstate.aggression >fo.aggression.typical: 
         nb,  hull =  designNameBases[5]+"-%1d-%1d",   "SH_SENTIENT"
         newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  4*[srb%iw]+2*[ar2] + 3*[ is2],  "",  model)    for iw in range(10,  17) ]
         newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  5*[srb%iw]+[ar3] + 3*[ is2],  "",  model)    for iw in range(10,  17) ]
@@ -522,7 +522,10 @@ def generateProductionOrders():
     empire = fo.getEmpire()
     universe = fo.getUniverse()
     capitolID = PlanetUtilsAI.getCapital()
-    homeworld = universe.getPlanet(capitolID)
+    if capitolID == None:
+        homeworld=None
+    else:
+        homeworld = universe.getPlanet(capitolID)
     print "Production Queue Management:"
     empire = fo.getEmpire()
     productionQueue = empire.productionQueue
@@ -649,47 +652,48 @@ def generateProductionOrders():
 
 #TODO: add totalPP checks below, so don't overload queue
 
-    maxDefensePortion = [0.7,  0.6,  0.5,  0.3,  0.2  ][ foAI.foAIstate.aggression]
-
-    sysOrbitalDefenses={}
-    queuedDefenses={}
-    orbitalDefenseNames = shipTypeNames( AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE )
-    defenseAllocation=0.0
-    targetOrbitals=   int( ((fo.currentTurn()+4)/( 8.0*(foAI.foAIstate.aggression +1)**1.5))**0.8)
-    print "Orbital Defense Check -- target Defense Orbitals: ",  targetOrbitals
-    for element in productionQueue:
-        if ( element.buildType == AIEmpireProductionTypes.BT_SHIP) and (foAI.foAIstate.getShipRole(element.designID) ==  AIShipRoleType.SHIP_ROLE_BASE_DEFENSE):
-            queuedDefenses[element.locationID] = queuedDefenses.get( element.locationID,  0) + element.blocksize*element.remaining
-            defenseAllocation += element.allocation
-    print "Queued Defenses:",  [( PlanetUtilsAI.sysNameIDs([sysID]),  num) for sysID,  num in   queuedDefenses.items()]
-    for sysID in empireSpeciesSystems:
-        if defenseAllocation > maxDefensePortion * totalPP:
-            break
-        #print "checking ",  PlanetUtilsAI.sysNameIDs([sysID])
-        sysOrbitalDefenses[sysID]=0
-        fleetsHere = foAI.foAIstate.systemStatus.get(sysID,  {}).get('myfleets',  [])
-        for fid in fleetsHere:
-            if foAI.foAIstate.getFleetRole(fid)==AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE:
-                #print "Found %d existing Orbital Defenses in %s :"%(foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0),   PlanetUtilsAI.sysNameIDs([sysID]))
-                sysOrbitalDefenses[sysID] += foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0)
-        for pid in empireSpeciesSystems.get(sysID, {}).get('pids',  []):
-            sysOrbitalDefenses[sysID] += queuedDefenses.get(pid,  0)
-        if sysOrbitalDefenses[sysID] < targetOrbitals:
-            numNeeded =  targetOrbitals - sysOrbitalDefenses[sysID] 
+    maxDefensePortion = [0.7,  0.7,  0.6,  0.5,  0.3,  0.2  ][ foAI.foAIstate.aggression]
+    aggrIndex=max(1, foAI.foAIstate.aggression)
+    if (fo.currentTurn() %( aggrIndex))==0:
+        sysOrbitalDefenses={}
+        queuedDefenses={}
+        orbitalDefenseNames = shipTypeNames( AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE )
+        defenseAllocation=0.0
+        targetOrbitals=   int( ((fo.currentTurn()+4)/( 8.0*(aggrIndex)**1.5))**0.8)
+        print "Orbital Defense Check -- target Defense Orbitals: ",  targetOrbitals
+        for element in productionQueue:
+            if ( element.buildType == AIEmpireProductionTypes.BT_SHIP) and (foAI.foAIstate.getShipRole(element.designID) ==  AIShipRoleType.SHIP_ROLE_BASE_DEFENSE):
+                queuedDefenses[element.locationID] = queuedDefenses.get( element.locationID,  0) + element.blocksize*element.remaining
+                defenseAllocation += element.allocation
+        print "Queued Defenses:",  [( PlanetUtilsAI.sysNameIDs([sysID]),  num) for sysID,  num in   queuedDefenses.items()]
+        for sysID in empireSpeciesSystems:
+            if defenseAllocation > maxDefensePortion * totalPP:
+                break
+            #print "checking ",  PlanetUtilsAI.sysNameIDs([sysID])
+            sysOrbitalDefenses[sysID]=0
+            fleetsHere = foAI.foAIstate.systemStatus.get(sysID,  {}).get('myfleets',  [])
+            for fid in fleetsHere:
+                if foAI.foAIstate.getFleetRole(fid)==AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE:
+                    #print "Found %d existing Orbital Defenses in %s :"%(foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0),   PlanetUtilsAI.sysNameIDs([sysID]))
+                    sysOrbitalDefenses[sysID] += foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0)
             for pid in empireSpeciesSystems.get(sysID, {}).get('pids',  []):
-                bestShip,  colDesign,  buildChoices = getBestShipInfo(AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE,  pid)
-                if not bestShip:
-                    print "no orbital defenses can be built at ",  PlanetUtilsAI.planetNameIDs([pid])
-                    continue
-                #print "selecting  ",  PlanetUtilsAI.planetNameIDs([pid]),  " to build Orbital Defenses"
-                retval  = fo.issueEnqueueShipProductionOrder(bestShip, pid)
-                print "queueing %d Orbital Defenses at %s"%(numNeeded,  PlanetUtilsAI.planetNameIDs([pid]))
-                if retval !=0:
-                    if numNeeded > 1  :
-                        fo.issueChangeProductionQuantityOrder(productionQueue.size -1,  1, numNeeded )
-                    res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
-                    defenseAllocation += productionQueue[0].allocation
-                    break
+                sysOrbitalDefenses[sysID] += queuedDefenses.get(pid,  0)
+            if sysOrbitalDefenses[sysID] < targetOrbitals:
+                numNeeded =  targetOrbitals - sysOrbitalDefenses[sysID] 
+                for pid in empireSpeciesSystems.get(sysID, {}).get('pids',  []):
+                    bestShip,  colDesign,  buildChoices = getBestShipInfo(AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE,  pid)
+                    if not bestShip:
+                        print "no orbital defenses can be built at ",  PlanetUtilsAI.planetNameIDs([pid])
+                        continue
+                    #print "selecting  ",  PlanetUtilsAI.planetNameIDs([pid]),  " to build Orbital Defenses"
+                    retval  = fo.issueEnqueueShipProductionOrder(bestShip, pid)
+                    print "queueing %d Orbital Defenses at %s"%(numNeeded,  PlanetUtilsAI.planetNameIDs([pid]))
+                    if retval !=0:
+                        if numNeeded > 1  :
+                            fo.issueChangeProductionQuantityOrder(productionQueue.size -1,  1, numNeeded )
+                        res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                        defenseAllocation += productionQueue[0].allocation
+                        break
             
     queuedShipyardLocs = [element.locationID for element in productionQueue if (element.name=="BLD_SHIPYARD_BASE") ]
     colonySystems={}
@@ -730,7 +734,7 @@ def generateProductionOrders():
                         print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
 
     bldName = "BLD_GAS_GIANT_GEN"
-    if empire.buildingTypeAvailable(bldName):
+    if empire.buildingTypeAvailable(bldName) and foAI.foAIstate.aggression > fo.aggression.beginner:
         queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
         bldType = fo.getBuildingType(bldName)
         for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):#TODO: check to ensure that a resource center exists in system, or GGG would be wasted
@@ -746,7 +750,7 @@ def generateProductionOrders():
                     print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
     
     bldName = "BLD_SOL_ORB_GEN"
-    if empire.buildingTypeAvailable(bldName):
+    if empire.buildingTypeAvailable(bldName) and foAI.foAIstate.aggression > fo.aggression.turtle:
         bldType = fo.getBuildingType(bldName)
         alreadyGotOne=99
         for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
@@ -803,7 +807,7 @@ def generateProductionOrders():
                         pass
     
     bldName = "BLD_BLACK_HOLE_POW_GEN"
-    if empire.buildingTypeAvailable(bldName):
+    if empire.buildingTypeAvailable(bldName) and foAI.foAIstate.aggression > fo.aggression.cautious:
         bldType = fo.getBuildingType(bldName)
         alreadyGotOne=False
         for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
@@ -908,7 +912,7 @@ def generateProductionOrders():
                     pass
     
     bldName = "BLD_NEUTRONIUM_FORGE"
-    if empire.buildingTypeAvailable(bldName):
+    if empire.buildingTypeAvailable(bldName) and foAI.foAIstate.aggression > fo.aggression.beginner:
         print "considering building a ",  bldName
         if not alreadyGotExtractor:
             print "Apparently have no Neutronium_Extractors nor Sythesizers"
@@ -936,7 +940,7 @@ def generateProductionOrders():
                                         break #only initiate max of one new build per turn
 
     bldName = "BLD_CONC_CAMP"
-    if foAI.foAIstate.aggression>2 and empire.buildingTypeAvailable(bldName):
+    if foAI.foAIstate.aggression>fo.aggression.typical and empire.buildingTypeAvailable(bldName):
         queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
         bldType = fo.getBuildingType(bldName)
         for pid in AIstate.popCtrIDs:
@@ -1005,7 +1009,7 @@ def generateProductionOrders():
     # get the highest production priorities
     productionPriorities = {}
     for priorityType in getAIPriorityProductionTypes():
-        productionPriorities[priorityType] = int(max(1,  ( foAI.foAIstate.getPriority(priorityType) )**0.5))
+        productionPriorities[priorityType] = int(max(0,  ( foAI.foAIstate.getPriority(priorityType) )**0.5))
 
     sortedPriorities = productionPriorities.items()
     sortedPriorities.sort(lambda x,y: cmp(x[1], y[1]), reverse=True)

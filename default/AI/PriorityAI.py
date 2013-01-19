@@ -113,7 +113,7 @@ def calculateResearchPriority():
         
     totalPP = empire.productionPoints
     totalRP = empire.resourceProduction(fo.resourceType.research)
-    industrySurge=   (foAI.foAIstate.aggression > 1) and  ( totalPP <(20*(1+foAI.foAIstate.aggression))  )  and (orbGenTech  in researchQueueList[:2]  or  empire.getTechStatus(orbGenTech) == fo.techStatus.complete)
+    industrySurge=   (foAI.foAIstate.aggression > fo.aggression.cautious) and  ( totalPP <(20*(foAI.foAIstate.aggression))  )  and (orbGenTech  in researchQueueList[:2]  or  empire.getTechStatus(orbGenTech) == fo.techStatus.complete)
     # get current industry production & Target
     ownedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
     planets = map(universe.getPlanet,  ownedPlanetIDs)
@@ -220,6 +220,9 @@ def calculateInvasionPriority():
     troopsPerPod=2
     empire=fo.getEmpire()
     
+    if foAI.foAIstate.aggression==fo.aggression.beginner and fo.currentTurn()<150:
+        return 0
+    
     totalVal= sum( [pscore for pid, pscore, trp in AIstate.invasionTargets[:10] ] )
     troopsNeeded= sum( [(trp+4) for pid, pscore, trp in AIstate.invasionTargets[:10] ] )
 
@@ -244,14 +247,17 @@ def calculateInvasionPriority():
     #don't cound troop bases here since if through misplanning cannot be used where made, cannot be redeployed
     #troopFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION)  + FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION)
     troopFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION) 
-    numTroopPods =  sum([ FleetUtilsAI.countPartsFleetwide(fleetID,  ["GT_TROOP_POD"]) for fleetID in  FleetUtilsAI.extractFleetIDsWithoutMissionTypes(troopFleetIDs)])
+    numTroopPods =  sum([ FleetUtilsAI.countPartsFleetwide(fleetID,  ["GT_TROOP_POD"]) for fleetID in  troopFleetIDs])
     troopShipsNeeded = math.ceil((opponentTroopPods - (numTroopPods+ queuedTroopPods ))/troopsPerBestShip)  
      
     invasionPriority = max(  10+ 200*max(0,  troopShipsNeeded ) ,  totalVal )
     if invasionPriority < 0: 
         return 0
-    return invasionPriority
-
+    if foAI.foAIstate.aggression==fo.aggression.beginner:
+        return 0.5* invasionPriority
+    else:
+        return invasionPriority
+    
 def calculateMilitaryPriority():
     "calculates the demand for military ships by military targeted systems"
 

@@ -16,8 +16,10 @@ from time import time
 import os
 import traceback
 
-aggressions={0:"Turtle",  1:"Cautious",  2:"Moderate",  3:"Aggressive",  4:"Maniacal"}
-capitols={0:"Citadel ", 1:"Bastion of the Brave, ",  2:"Haven ",  3:"Royal Demesne ",  4:"Stairway to Heaven,  "}
+aggressions={fo.aggression.beginner:"Beginner",  fo.aggression.turtle:"Turtle",  fo.aggression.cautious:"Cautious",  fo.aggression.typical:"Moderate",  
+             fo.aggression.aggressive:"Aggressive",  fo.aggression.maniacal:"Maniacal"}
+capitols={fo.aggression.beginner:"Ivory Tower ",  fo.aggression.turtle:"Citadel ", fo.aggression.cautious:"Bastion of the Brave, ",  fo.aggression.typical:"Haven ",  
+            fo.aggression.aggressive:"Royal Demesne ",  fo.aggression.maniacal:"Throne of Heaven,  "}
 
 # AIstate
 foAIstate = None
@@ -38,7 +40,7 @@ def initFreeOrionAI():
 
 # called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
 # and set up whatever is needed for AI to generate orders
-def startNewGame(aggression=4):
+def startNewGame(aggression=fo.aggression.beginner):
     global __timerFile,  lastTurnTimestamp,  __timerBucketFile
     print "New game started, AI Agression level %d"%aggression
 
@@ -148,7 +150,7 @@ def resumeLoadedGame(savedStateString):
     except:
         print "failed to parse saved state string"
         #assigning new state
-        foAIstate = AIstate.AIstate(aggression=4)
+        foAIstate = AIstate.AIstate(aggression=fo.aggression.beginner)
         foAIstate.sessionStartCleanup()
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     if __timerFile:

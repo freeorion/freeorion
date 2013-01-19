@@ -13,6 +13,15 @@ MilitaryAllocations = []
 minMilAllocations = {}
 totMilRating=0
 
+def tryAgain(milFleetIDs,  tryReset=False):
+    for fid in milFleetIDs:
+        thisMission=foAI.foAIstate.getAIFleetMission(fid)
+        thisMission.clearAIFleetOrders()
+        thisMission.clearAITargets(-1)
+    getMilitaryFleets(tryReset=tryReset)
+    return
+    
+
 def getMilitaryFleets(tryReset=True):
     "get armed military fleets"
     global MilitaryAllocations, totMilRating
@@ -21,13 +30,19 @@ def getMilitaryFleets(tryReset=True):
     empire = fo.getEmpire()
     empireID = empire.empireID
     capitalID = PlanetUtilsAI.getCapital()
-    homeworld = universe.getPlanet(capitalID)
+    if capitalID == None:
+        homeworld=None
+    else:
+        homeworld = universe.getPlanet(capitalID)
     if homeworld:
         homeSystemID = homeworld.systemID
     else:
         homeSystemID=-1
 
     allMilitaryFleetIDs =  FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY )
+    if tryReset and ((fo.currentTurn()+empireID) % 10 ==0):
+        tryAgain(allMilitaryFleetIDs)
+    
     totMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x).get('overall', 0),  allMilitaryFleetIDs   )  )
     print "=================================================="
     print "Total Military Rating: %d"%totMilRating
@@ -95,7 +110,7 @@ def getMilitaryFleets(tryReset=True):
         threatBias = 400
     
 
-    safetyFactor = [ 3.0,  1.5,  1.0,  0.95,  0.95    ][foAI.foAIstate.aggression] 
+    safetyFactor = [ 4.0,  3.0,  1.5,  1.0,  0.95,  0.95    ][foAI.foAIstate.aggression] 
     
     topTargetPlanets = [pid for pid, pscore, trp in AIstate.invasionTargets[:10]  if pscore > 500]  + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:10]  if pscore > 10] 
     topTargetSystems = []
@@ -108,15 +123,9 @@ def getMilitaryFleets(tryReset=True):
     #--------Capital Threat ----------
     capitalThreat = safetyFactor*(2* threatBias +sum( [ foAI.foAIstate.systemStatus[capitalSysID][thrtKey] for thrtKey in [tkey for tkey in  foAI.foAIstate.systemStatus.get(capitalSysID,  {}).keys() if 'Threat' in tkey]] ))
     newAlloc=0
-    if (capitalThreat > (availMilRating+0.8*alreadyAssignedRating[capitalSysID]) ) and tryReset:
-        if foAI.foAIstate.aggression > 0:
-            for fid in allMilitaryFleetIDs:
-                thisMission=foAI.foAIstate.getAIFleetMission(fid)
-                thisMission.clearAIFleetOrders()
-                thisMission.clearAITargets(-1)
-            getMilitaryFleets(tryReset=False)
-            return
-    
+    if (capitalThreat > 0.5*(availMilRating+0.8*alreadyAssignedRating[capitalSysID]) ) and tryReset:
+        tryAgain(allMilitaryFleetIDs)
+        return
     if capitalThreat > 0.8*alreadyAssignedRating[capitalSysID]:
         newAlloc = min(remainingMilRating,  int( 0.999 + 1.2*(capitalThreat- 0.8*alreadyAssignedRating[capitalSysID]) ) )
         allocations.append( ( capitalSysID,  newAlloc,  True,  3)  )  
@@ -138,6 +147,9 @@ def getMilitaryFleets(tryReset=True):
         ocSysAlloc = 0
         for sid,  thrt in ocSysTotThreat:
             curAlloc=0.8*alreadyAssignedRating[sid]
+            if (thrt > 0.8*(remainingMilRating+curAlloc )) and tryReset:
+                tryAgain(allMilitaryFleetIDs)
+                return
             thisAlloc=0
             if (thrt > curAlloc) and remainingMilRating > 0:
                 thisAlloc = max(0,  min( min( int(0.99999 + (thrt-curAlloc)*allocationFactor ),  0.5*availMilRating) ,  remainingMilRating))

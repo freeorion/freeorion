@@ -42,7 +42,7 @@ def  canTravelToSystem(fleetID, fromSystemAITarget, toSystemAITarget, empireID, 
     fuel = int(fleet.fuel)
     if fuel < 1.0 or fromSystemAITarget.getTargetID() == toSystemAITarget.getTargetID:
         return []
-    if foAI.foAIstate.aggression<=2:
+    if foAI.foAIstate.aggression<=fo.aggression.typical:
         pathFunc=universe.leastJumpsPath
     else:
         pathFunc=universe.shortestPath
@@ -57,9 +57,9 @@ def  canTravelToSystem(fleetID, fromSystemAITarget, toSystemAITarget, empireID, 
         return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
     elif targetSysID in fleetSupplyableSystemIDs.union(annexableRing1) and len( unsuppliedStops) < fuel -1:
         return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
-    elif foAI.foAIstate.aggression >=2  and targetSysID in fleetSupplyableSystemIDs.union(annexableRing2) and len( unsuppliedStops) < fuel -2:
+    elif foAI.foAIstate.aggression >=fo.aggression.typical  and targetSysID in fleetSupplyableSystemIDs.union(annexableRing2) and len( unsuppliedStops) < fuel -2:
         return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
-    elif foAI.foAIstate.aggression >=3  and targetSysID in fleetSupplyableSystemIDs.union(annexableRing3) and len( unsuppliedStops) < fuel -3:
+    elif foAI.foAIstate.aggression >=fo.aggression.aggressive  and targetSysID in fleetSupplyableSystemIDs.union(annexableRing3) and len( unsuppliedStops) < fuel -3:
         return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
     else:
         return canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAITarget, empireID)

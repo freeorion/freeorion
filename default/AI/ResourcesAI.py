@@ -366,14 +366,14 @@ def setPlanetResourceFoci():
             curTargetPP += II  #icurTargets initially calculated by Industry focus, which will be our default focus
             curTargetRP += IR
             newFoci[pid] = IFocus
-            if foAI.foAIstate.aggression < 4:
+            if foAI.foAIstate.aggression < fo.aggression.maniacal:
                 if currentFocus[pid] in [ IFocus,  MFocus] :
                     II += min( 2,  II /4.0 )
                 elif currentFocus[pid] == RFocus:
                     RR += min( 2,  RR/4.0 )
                 #calculate factor F at  which     II + F * RI  ==  RI + F * RR   =====>  F = ( II-RI ) / (RR-IR)
             thisFactor = ( II-RI ) / max( 0.01,  RR-IR)  # don't let denominator be zero for planets where focus doesn't change RP
-            if foAI.foAIstate.aggression >3:
+            if foAI.foAIstate.aggression >fo.aggression.aggressive:
                 if currentOutput[pid][ IFocus] > II +RI - RR:
                     thisFactor = min(thisFactor,  1.0 + thisFactor/10.0 ) 
             ratios.append( (thisFactor,  pid ) )
@@ -386,7 +386,7 @@ def setPlanetResourceFoci():
         gotAlgo = empire.getTechStatus("LRN_ALGO_ELEGANCE") == fo.techStatus.complete
         for ratio,  pid in ratios:
             if priorityRatio < ( curTargetRP/ (curTargetPP + 0.0001)) : #we have enough RP
-                if ratio < 1.1  and foAI.foAIstate.aggression >1 :  #but wait, RP is still super cheap relative to PP, maybe will take more RP
+                if ratio < 1.1  and foAI.foAIstate.aggression >fo.aggression.cautious :  #but wait, RP is still super cheap relative to PP, maybe will take more RP
                     if priorityRatio < 1.5* ( curTargetRP/ (curTargetPP + 0.0001)) : #yeah, really a glut of RP, stop taking RP
                         break
                 else: #RP not super cheap & we have enough, stop taking it

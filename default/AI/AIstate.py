@@ -49,7 +49,7 @@ class AIstate(object):
     # def colonisablePlanets (should be set at start of turn)
     # getColonisablePlanets (deepcopy!)
 
-    def __init__(self,  aggression=2):
+    def __init__(self,  aggression=fo.aggression.typical):
         "constructor"
         # 'global' (?) variables
         self.foodStockpileSize =  1    # food stored per population

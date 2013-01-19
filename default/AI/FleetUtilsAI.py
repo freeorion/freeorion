@@ -182,7 +182,7 @@ def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  cont
         else:
             newARating = foAI.foAIstate.updateFleetRating(fleetA_ID)
             if  success : #and ( newARating==remainingRating) :
-                print "\t\t\t\t\t\t\%d rating from fleet %d successfully transferred to fleet %d,  leaving %d"%(transferredAttack*transferredHealth,  fleetA_ID,  fleetB_ID,  newRating['overal'])
+                print "\t\t\t\t\t\t\%d rating from fleet %d successfully transferred to fleet %d,  leaving %d"%(transferredAttack*transferredHealth,  fleetA_ID,  fleetB_ID,  newARating['overal'])
             else:
                 print "\t\t\t\t\t\t transfer of %d rating from fleet %d  to fleet %d was attempted but appears to have had problems, leaving %d"%(transferredAttack*transferredHealth,  fleetA_ID,  fleetB_ID,  newARating['overall'])
         foAI.foAIstate.updateFleetRating(fleetB_ID)

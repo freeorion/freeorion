@@ -188,13 +188,14 @@ void AIClientApp::HandleMessage(const Message& msg) {
             } else {
                 Logger().debugStream() << "Message::GAME_START Starting New Game!";
                 // Distributions
-                // Aggression   :  0  1  2  3  4 
-                //                __ __ __ __ __
-                //Max 0         :  1  0  0  0  0
-                //Max 1         :  1  3  0  0  0
-                //Max 2         :  1  5  3  0  0
-                //Max 3         :  1  5  7  3  0
-                //Max 4         :  1  5  9  7  3
+                // Aggression   :  0  1  2  3  4  5
+                //                __ __ __ __ __ __
+                //Max 0         :  1  0  0  0  0  0
+                //Max 1         :  1  3  0  0  0  0
+                //Max 2         :  1  5  3  0  0  0
+                //Max 3         :  1  5  7  3  0  0
+                //Max 4         :  1  5  9  7  3  0
+                //Max 5         :  1  5  9 11  7  3
                 //unsigned mySeed = m_player_name.c_str()[0] + m_player_name.size();
                 void* seedPtr = &m_player_name;
                 unsigned int mySeed = static_cast<unsigned int>(reinterpret_cast<unsigned long>(seedPtr));

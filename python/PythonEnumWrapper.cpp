@@ -155,5 +155,15 @@ namespace FreeOrionPython {
             .value("shipDesign",    UIT_SHIP_DESIGN)
             .value("tech",          UIT_TECH)
         ;
+        enum_<Aggression>("aggression")
+            .value("invalid",       INVALID_AGGRESSION)
+            .value("beginner",      BEGINNER)
+            .value("turtle",        TURTLE)
+            .value("cautious",      CAUTIOUS)
+            .value("typical",       TYPICAL)
+            .value("aggressive",    AGGRESSIVE)
+            .value("maniacal",      MANIACAL)
+            .value("num_ai_aggression_levels",  NUM_AI_AGGRESSION_LEVELS)
+        ;
     }
 }

@@ -26,7 +26,7 @@ def generateResearchOrders():
         print "%25s  %25s  %25s"%tline
     print""
     
-    if tRP >= 20  and foAI.foAIstate.aggression > 1:
+    if tRP >= 20  and foAI.foAIstate.aggression > fo.aggression.cautious:
         researchQueueList = getResearchQueueTechs()
         if (empire.getTechStatus("LRN_PSIONICS") != fo.techStatus.complete)  and ( "LRN_PSIONICS" not in researchQueueList[:5]  )  :
             for specName in ColonisationAI.empireSpecies:
@@ -41,7 +41,7 @@ def generateResearchOrders():
     gotSymBio = empire.getTechStatus("GRO_SYMBIOTIC_BIO") == fo.techStatus.complete
     gotXenoGen = empire.getTechStatus("GRO_XENO_GENETICS") == fo.techStatus.complete
     #assess if our empire has any non-lousy colonizers, & boost gro_xeno_gen if we don't
-    if gotSymBio and (not gotXenoGen) and foAI.foAIstate.aggression in [1, 2, 3]:
+    if gotSymBio and (not gotXenoGen) and foAI.foAIstate.aggression >= fo.aggression.cautious:
         mostAdequate=0
         for specName in ColonisationAI.empireColonizers:
             environs={}
@@ -77,7 +77,7 @@ def generateResearchOrders():
                 print "    %25s  allocated %6.2f RP   --  missing preReqs: %s   -- unlockable items: %s "%(element.tech,  element.allocation,  missingPrereqs,  unlockedItems)
         print ""
     if fo.currentTurn()==1:
-        if foAI.foAIstate.aggression <=2:
+        if foAI.foAIstate.aggression <=fo.aggression.typical:
             newtech = TechsListsAI.primaryMetaTechsList()
         else:
             newtech = TechsListsAI.aggressiveTechs()
@@ -103,7 +103,7 @@ def generateResearchOrders():
             except:
                 print "    Error: failed attempt to enqueued Tech: " + name
                 print "    Error: exception triggered and caught:  ",  traceback.format_exc()
-        if foAI.foAIstate.aggression in [0, 1]:
+        if foAI.foAIstate.aggression <= fo.aggression.cautious:
             researchQueueList = getResearchQueueTechs()
             defTechs=TechsListsAI.defenseTechs1()
             for defTech in defTechs:

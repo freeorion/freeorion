@@ -1380,6 +1380,8 @@ Mature
 GSETUP_ANCIENT
 Ancient
 
+GSETUP_BEGINNER
+Beginner Mode
 GSETUP_TURTLE
 Turtle
 GSETUP_DEFENSIVE
@@ -5598,7 +5600,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Increases the max population of Adequate, Poor, & Hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
+'''Increases the max population of Good and Adequate planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
 
 GRO_GENETIC_MED
 Genetic Medicine
@@ -5624,7 +5626,7 @@ GRO_XENO_GENETICS
 Xenological Genetics
 
 GRO_XENO_GENETICS_DESC
-'''Increases the max population of Good, Adequate, Poor, & Hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Increases the max population of Adequate planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10. Makes Poor planets habitable (but they need another bonus to have a population above zero).
 
 The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
 
@@ -5648,7 +5650,7 @@ GRO_XENO_HYBRIDS
 Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
-'''Increases the max population of Adequate, Poor, & Hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Increases the max population of Poor planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10. Makes Hostile planets habitable (but they need another bonus to have a population above zero).
 
 Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
 
@@ -8344,6 +8346,9 @@ HOSTILE_ENVIRONMENT_LABEL
 
 ENV_ENCAPSUL_LABEL
 '''%1% Environmental Encapsulation'''
+
+SELF_SUSTAINING_LABEL
+'''Self-Sustaining'''
 
 TUNNELS_LABEL
 '''Subterranean Bonus'''

@@ -298,6 +298,7 @@ GG_ENUM_STREAM_OUT(Shape)
 /** levels of AI Aggression during galaxy generation */
 enum Aggression {
     INVALID_AGGRESSION = -1,
+    BEGINNER,
     TURTLE,        ///< very defensive
     CAUTIOUS,      ///< Somewhat Defensive
     TYPICAL,       ///< Typical
@@ -309,6 +310,7 @@ enum Aggression {
 namespace GG {
     GG_ENUM_MAP_BEGIN(Aggression)
     GG_ENUM_MAP_INSERT(INVALID_AGGRESSION)
+    GG_ENUM_MAP_INSERT(BEGINNER)
     GG_ENUM_MAP_INSERT(TURTLE)
     GG_ENUM_MAP_INSERT(CAUTIOUS)
     GG_ENUM_MAP_INSERT(TYPICAL)

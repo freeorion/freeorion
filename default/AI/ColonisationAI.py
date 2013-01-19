@@ -102,7 +102,7 @@ def getColonyFleets():
         annexableRing2.difference_update(annexableSystemIDs)
         print "Second Ring of annexable systems: ",  PlanetUtilsAI.sysNameIDs(annexableRing2)
         annexableSystemIDs.update(annexableRing2)
-        if foAI.foAIstate.aggression > 1:
+        if foAI.foAIstate.aggression > fo.aggression.cautious:
             for sysID in list(annexableRing2):
                 for nID in  universe.getImmediateNeighbors(sysID,  empireID):
                     annexableRing3.add(nID)
@@ -522,10 +522,10 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
 
         retval=0.0
         if popSize<0  and (miningBonus or (fo.currentTurn() >= 10)) : #can still have industry focus bonuses and buildings
-            if foAI.foAIstate.aggression > 2:
+            if foAI.foAIstate.aggression > fo.aggression.typical:
                 retval  = starBonus+asteroidBonus+gasGiantBonus
         elif popSize==0 and (miningBonus or( fo.currentTurn() >= 10)):
-            if foAI.foAIstate.aggression > 2:
+            if foAI.foAIstate.aggression > fo.aggression.typical:
                 retval  = starBonus+max(asteroidBonus+gasGiantBonus,  miningBonus)
         else:
             retval  = starBonus+max(asteroidBonus+gasGiantBonus,  miningBonus) + valMod + 2*popSize
@@ -571,7 +571,7 @@ def removeLowValuePlanets(evaluatedPlanets):
 
     removeIDs = []
     minVal = AIstate.minimalColoniseValue
-    if foAI.foAIstate.aggression <2:
+    if foAI.foAIstate.aggression <fo.aggression.typical:
         minVal *= 3
 
     # print ":: min:" + str(AIstate.minimalColoniseValue)
