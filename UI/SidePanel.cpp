@@ -1045,9 +1045,25 @@ namespace {
     bool CanColonizePlanetType(const Ship* ship, PlanetType planet_type) {
         if (!ship || planet_type == INVALID_PLANET_TYPE)
             return false;
+
+        const ShipDesign* design = 0;
+        double colony_ship_capacity = 0.0;
+
+        design = ship->Design();
+        if (design)
+            colony_ship_capacity = design->ColonyCapacity();
+
         if (const Species* colony_ship_species = GetSpecies(ship->SpeciesName())) {
             PlanetEnvironment planet_env_for_colony_species = colony_ship_species->GetPlanetEnvironment(planet_type);
-            return planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
+
+            // One-Click Colonize planets that are colonizable (even if they are
+            // not hospitable), and One-Click Outpost planets that are not
+            // colonizable.
+            if (colony_ship_capacity > 0.0) {
+                return planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
+            } else {
+                return planet_env_for_colony_species < PE_HOSTILE || planet_env_for_colony_species > PE_GOOD;
+            }
         }
         return false;
     }
