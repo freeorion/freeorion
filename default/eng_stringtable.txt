@@ -3368,6 +3368,8 @@ Occupied Planets:
 ENVIRONMENTAL_PREFERENCES
 Environmental Preferences:
 
+### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt.  Copy&Paste for accurate description.
+
 SP_HUMAN
 Human
 SP_HUMAN_DESC
@@ -3994,14 +3996,6 @@ SP_SUPER_TEST_DESC
 [[GOOD_POPULATION]]
 '''
 
-SP_TEST
-Testing Guinea Pig
-SP_TEST_DESC
-'''Try all your experimental scripting on this guy, he'll appear a lot.
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-'''
 
 
 
@@ -5624,7 +5618,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Increases the max population of Good and Adequate planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
+'''Increases the max population of Good, Adequate, & Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
 
 GRO_GENETIC_MED
 Genetic Medicine
@@ -5650,7 +5644,7 @@ GRO_XENO_GENETICS
 Xenological Genetics
 
 GRO_XENO_GENETICS_DESC
-'''Increases the max population of Adequate planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10. Makes Poor planets habitable (but they need another bonus to have a population above zero).
+'''Increases the max population of Adequate & Poor planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10, and Hostile Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
 The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
 
@@ -5674,7 +5668,7 @@ GRO_XENO_HYBRIDS
 Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
-'''Increases the max population of Poor planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10. Makes Hostile planets habitable (but they need another bonus to have a population above zero).
+'''Increases the max population of Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5, and Hostile Poor planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10
 
 Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
 
@@ -5903,13 +5897,13 @@ CON_ORBITAL_HAB
 Orbital Habitation
 
 CON_ORBITAL_HAB_DESC
-'''If this planet is inhabitable, increases the Population capacity of this planet by 5.'''
+'''If this planet is inhabitable, increases Population capacity by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
 
 CON_NDIM_STRC
 N-Dimensional Structures
 
 CON_NDIM_STRC_DESC
-'''If this planet is inhabitable, increases the Population capacity of this planet by 15.
+'''If this planet is inhabitable, increases Population capacity by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10.
 
 The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
 
@@ -6272,7 +6266,7 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Increases the max population on hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Increases the max population on Hostile planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10.
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 

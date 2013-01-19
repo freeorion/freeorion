@@ -1,5 +1,7 @@
 include "shared_macros.txt"
 
+// Note: Description Macros for species in the stringtables are named the same as the Effect controlling Macros in species.txt.  Copy&Paste for accurate description.
+
 //#######################################################\\
 //####                                               ####\\
 //####       P L A Y A B L E   S P E C I E S         ####\\
@@ -39,7 +41,6 @@ Species
     [[TERRAN_STANDARD_EP]]
     
     graphic = "icons/species/human.png"
-
 
 Species
     name = "SP_SCYLIOR"
@@ -175,6 +176,7 @@ Species
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_POPULATION]]
         [[SELF_SUSTAINING_POPULATION]]
         [[LARGE_PLANET]]
     ]
@@ -574,7 +576,6 @@ Species
         [[STANDARD_CONSTRUCTION]]
         [[AVERAGE_POPULATION]]
         [[PHOTOTROPHIC_POPULATION]]
-
     ]
     
     [[SWAMP_BROAD_EP]]
@@ -834,7 +835,6 @@ Species
         [[GREAT_GROUND_TROOPS]]
         [[GOOD_POPULATION]]
         
-        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
@@ -979,41 +979,7 @@ Species
     [[TOXIC_STANDARD_EP]]
     
     graphic = "icons/species/gis-guf-gthrim.png"
-
-/*
-Species
-    name = "SP_HIDDENGARDENER"
-    description = "SP_HIDDENGARDENER_DESC"
-    Native
-
-    tags = "ORGANIC"
     
-    foci = [
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[GOOD_STEALTH]]
-        
-        [[NO_INDUSTRY]]
-        [[NO_RESEARCH]]
-        
-        [[NO_GROUND_TROOPS]]
-        
-        [[AVERAGE_POPULATION]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-        
-        [[NOT_HUGE_PLANET]]
-    ]
-        
-    [[TERRAN_STANDARD_EP]]
-    
-    graphic = "icons/species/hidden-gardener.png"
-*/
-
 
 Species
     name = "SP_ABADDONNIANS"
@@ -1281,12 +1247,11 @@ Species
     [[VERY_TOLERANT_EP]]
 
     graphic = "icons/species/two-headed-03.png"
-        
 
 Species
     name = "SP_SUPER_TEST"
     description = "SP_SUPER_TEST_DESC"
-    //Playable
+    // Playable
     CanProduceShips
     CanColonize
 
@@ -1320,7 +1285,6 @@ Species
         [[GOOD_POPULATION]]
         [[SELF_SUSTAINING_POPULATION]]
         
-        
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
 
@@ -1329,43 +1293,42 @@ Species
     [[VERY_TOLERANT_EP]]
 
     graphic = "icons/species/other-04.png"
-
+        
 /*
 Species
-    name = "SP_TEST"
-    description = "SP_TEST_DESC"
+    name = "SP_HIDDENGARDENER"
+    description = "SP_HIDDENGARDENER_DESC"
     Native
-    CanProduceShips
-    CanColonize
 
     tags = "ORGANIC"
     
     foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
+        [[GOOD_STEALTH]]
         
-        [[AVERAGE_GROUND_TROOPS]]
+        [[NO_INDUSTRY]]
+        [[NO_RESEARCH]]
         
+        [[NO_GROUND_TROOPS]]
+        
+        [[AVERAGE_POPULATION]]
         
         [[ADVANCED_FOCUS_EFFECTS]]
         [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
+        
+        [[NOT_HUGE_PLANET]]
     ]
-
-    [[TOLERANT_EP]]
-
-    graphic = "icons/species/amorphous-03.png"
-
+        
+    [[TERRAN_STANDARD_EP]]
+    
+    graphic = "icons/species/hidden-gardener.png"
 */
+
+
 
 
 //#######################################################\\
@@ -1951,38 +1914,140 @@ STANDARD_CONSTRUCTION
             
 '''
 
-BASIC_POPULATION
-'''     //#####     H O M E W O R L D   P O P U L A T I O N   B O O S T S    #####  
+//#####     P O P U L A T I O N   #####  
 
+AVERAGE_POPULATION
+'''
+        [[HOMEWORLD_BONUS_POPULATION]]
+        [[ENVIRONMENT_MODIFIER]]
+        [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
+        [[GAIA_POP_MODIFIER]]
+        [[TUNNELS_MODIFIER]]
+        [[POPULATION_TECHS]]
+'''
+
+BAD_POPULATION
+'''     [[AVERAGE_POPULATION]]
+    
         EffectsGroup
-            scope = AND [
-                Source
-                Homeworld name = Source.Species
-            ]
-            activation = And [
-                Planet
-                NOT HasTag "SELF_SUSTAINING"
-            ]
-            stackinggroup = "HOMEWORLD_STACK"
-            accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  
+            scope = Source
+            activation = Planet
+            accountinglabel = "BAD_POPULATION_LABEL"
+            effects = SetTargetPopulation Value*.75   // doesn't matter if these modifiers don't match ther other 'bad' modifiers.
+'''
 
-//#####     B A S E   P O P U L A T I O N     #####
+GOOD_POPULATION
+'''     [[AVERAGE_POPULATION]]
 
         EffectsGroup
             scope = Source
-            activation = AND [
-                Planet environment = Good
-                NOT HasTag "SELF_SUSTAINING"
-            ]
-            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble
+            activation = Planet
+            accountinglabel = "GOOD_POPULATION_LABEL"
+            effects = SetTargetPopulation Value*1.25  // doesn't matter if these modifiers don't match ther other 'good' modifiers.
 '''
 
-SELF_SUSTAINING_POPULATION
-'''     //#####     H O M E W O R L D   P O P U L A T I O N   B O O S T S    #####
+/*
+* Implements environmental modifiers from Growth techs.
+* Changes to the growth tree should take this into account.
+*/
+ENVIRONMENT_MODIFIER
+'''     EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Hostile
+            ]
+            accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value - 4 * Source.SizeAsDouble
+            
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Poor
+            ]
+            accountinglabel = "POOR_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value - 2 * Source.SizeAsDouble
+
+/*        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Adequate
+            ]
+            accountinglabel = "ADEQUATE_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value + 0 * Source.SizeAsDouble
+*/
 
         EffectsGroup
+            scope = Source
+            activation = Planet environment = Good
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Good Adequate Poor ]
+                OwnerHasTech "GRO_SYMBIOTIC_BIO"
+            ]
+            accountinglabel = "GRO_SYMBIOTIC_BIO"
+            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Adequate Poor ]
+                OwnerHasTech "GRO_XENO_GENETICS"
+            ]
+            accountinglabel = "GRO_XENO_GENETICS"
+            effects = SetTargetPopulation Value + 2 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Hostile ]
+                OwnerHasTech "GRO_XENO_GENETICS"
+            ]
+            accountinglabel = "GRO_XENO_GENETICS"
+            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Poor ]
+                OwnerHasTech "GRO_XENO_HYBRIDS"
+            ]
+            accountinglabel = "GRO_XENO_HYBRIDS"
+            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Hostile ]
+                OwnerHasTech "GRO_XENO_HYBRIDS"
+            ]
+            accountinglabel = "GRO_XENO_HYBRIDS"
+            effects = SetTargetPopulation Value + 2 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Hostile ]
+                OwnerHasTech "GRO_CYBORG"
+            ]
+            accountinglabel = "GRO_CYBORG"
+            effects = SetTargetPopulation Value + 2 * Source.SizeAsDouble  
+'''
+
+HOMEWORLD_BONUS_POPULATION
+'''     EffectsGroup
             scope = AND [
                 Source
                 Homeworld name = Source.Species
@@ -1990,34 +2055,108 @@ SELF_SUSTAINING_POPULATION
             activation = Planet
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 2 * Source.SizeAsDouble  // Get double the homeworld bonus
+            effects = SetTargetPopulation Value + 2 * Target.SizeAsDouble  
+'''
 
-//#####     B A S E   P O P U L A T I O N     #####
+HOMEWORLD_GROWTH_FOCUS_BOOST
+'''     EffectsGroup 
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Number low = 1 condition = And [
+                    Source
+                    Planet
+                    Homeworld name = RootCandidate.Species
+                ]
+                TargetPopulation low = 0 high = 9999
+            ]
+            activation = And [
+                Planet
+                Focus "FOCUS_GROWTH"
+            ]
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_SUPPLY"
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+'''
 
+TUNNELS_MODIFIER
+'''     EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Or [
+                    HasSpecial "TUNNELS_SPECIAL"
+                    OwnerHasTech "GRO_SUBTER_HAB"
+                ]
+                Not HasSpecial "TECTONIC_INSTABILITY_SPECIAL"
+                TargetPopulation low = 0 high = 9999
+            ]
+            accountinglabel = "TUNNELS_LABEL"
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+'''
+
+GAIA_POP_MODIFIER
+'''     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasSpecial "GAIA_SPECIAL"
+                Planet environment = Good
+                TargetPopulation low = 0 high = 9999
+            ]
+            effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble
+'''
+
+POPULATION_TECHS
+'''     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnerHasTech "CON_NDIM_STRC"
+                TargetPopulation low = 0 high = 9999
+            ]
+            accountinglabel = "NDIM_STRC_LABEL"
+            effects = SetTargetPopulation Value + 2 * Target.SizeAsDouble
+            
         EffectsGroup
             scope = Source
-            activation = Planet environment = Good
-            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 6 * Target.SizeAsDouble    // Gets double the base population
+            activation = AND [
+                Planet
+                OwnerHasTech "CON_ORBITAL_HAB"
+                TargetPopulation low = 0 high = 9999
+            ]
+            accountinglabel = "ORBITAL_HAB_LABEL"
+            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+'''
+
+SELF_SUSTAINING_POPULATION
+'''     EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                TargetPopulation low = 0 high = 9999
+            ]
+            accountinglabel = "SELF_SUSTAINING_LABEL"
+            effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble    // Gets double the base population
 '''
 
 PHOTOTROPHIC_POPULATION
-''' //#####     P H O T O T R O P H I C   S T U F F     #####
-
-        EffectsGroup
+'''     EffectsGroup
             scope = Contains Source
             activation = AND [
                 Planet
                 Turn high = 0
                 NOT Star type = [Orange]
             ]
-            effects = SetStarType Yellow
+            effects = SetStarType Yellow // start with a normal star to be balanced
  
         EffectsGroup
             scope = Source
             activation = AND [
                 Planet
                 Star type = [Blue]
+                TargetPopulation low = 0 high = 9999
             ]
             accountinglabel = "VERY_BRIGHT_STAR"
             effects = SetTargetPopulation Value + 3 * Source.SizeAsDouble
@@ -2027,6 +2166,7 @@ PHOTOTROPHIC_POPULATION
             activation = AND [
                 Planet
                 Star type = [White]
+                TargetPopulation low = 0 high = 9999
             ]
             accountinglabel = "BRIGHT_STAR"
             effects = SetTargetPopulation Value + 1.5 * Source.SizeAsDouble
@@ -2049,184 +2189,7 @@ PHOTOTROPHIC_POPULATION
             accountinglabel = "NO_STAR"
             effects = SetTargetPopulation Value - 10 * Source.SizeAsDouble
 '''
-
-BAD_POPULATION
-'''[[BASIC_POPULATION]]
-
-        [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
-        [[TUNNELS_MODIFIER]]
-        [[ENVIRONMENT_MODIFIER]]
-        [[POPULATION_TECHS]]
-        
-        EffectsGroup
-            scope = Source
-            activation = Planet
-            accountinglabel = "BAD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value*.75   // doesn't matter if these modifiers don't match ther other 'bad' modifiers.
-'''
-
-AVERAGE_POPULATION
-'''[[BASIC_POPULATION]]
-
-        [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
-        [[TUNNELS_MODIFIER]]
-        [[ENVIRONMENT_MODIFIER]]
-        [[POPULATION_TECHS]]
-'''
-
-GOOD_POPULATION
-'''[[BASIC_POPULATION]]
-
-        [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
-        [[TUNNELS_MODIFIER]]
-        [[ENVIRONMENT_MODIFIER]]
-        [[POPULATION_TECHS]]
-        
-        EffectsGroup
-            scope = Source
-            activation = Planet
-            accountinglabel = "GOOD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value*1.25  // doesn't matter if these modifiers don't match ther other 'good' modifiers.
-'''
-
-HOMEWORLD_GROWTH_FOCUS_BOOST
-'''//#####     H O M E W O R L D   G R O W T H   F O C U S  B O O S T     #####  
-
-        EffectsGroup 
-            scope = And [
-                Planet
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected empire = Source.Owner condition = Source
-                Number low = 1 condition = And [
-                    Source
-                    Planet
-                    Homeworld name = RootCandidate.Species
-                ]   
-            ]
-            activation = And [
-                Planet
-                Focus "FOCUS_GROWTH"
-            ]
-            stackinggroup = "HOMEWORLD_STACK"
-            accountinglabel = "HOMEWORLD_SUPPLY"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
-'''
-
-TUNNELS_MODIFIER
-'''EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                Or [
-                    HasSpecial "TUNNELS_SPECIAL"
-                    OwnerHasTech "GRO_SUBTER_HAB"
-                ]
-                Not HasSpecial "TECTONIC_INSTABILITY_SPECIAL"
-            ]
-            accountinglabel = "TUNNELS_LABEL"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
-'''
-
-POPULATION_TECHS
-'''EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                OwnerHasTech "CON_NDIM_STRC"
-                TargetPopulation low = 0 high = 9999
-            ]
-            accountinglabel = "NDIM_STRC_LABEL"
-            effects = SetTargetPopulation Value + 15
-            
-            EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                OwnerHasTech "CON_ORBITAL_HAB"
-                TargetPopulation low = 0 high = 9999
-            ]
-            accountinglabel = "ORBITAL_HAB_LABEL"
-            effects = SetTargetPopulation Value + 5
-            
-'''
-
-
-/*
-* Implements environmental modifiers from Growth techs.
-* Changes to the growth tree should take this into account.
-*/
-ENVIRONMENT_MODIFIER
-'''     EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                Planet environment = Hostile
-            ]
-            accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value - 3 * Source.SizeAsDouble
-            
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                Planet environment = Poor
-            ]
-            accountinglabel = "POOR_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value - 1 * Source.SizeAsDouble
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                Planet environment = Adequate
-            ]
-            accountinglabel = "ADEQUATE_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 0 * Source.SizeAsDouble
-
-
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                Planet environment = [ Adequate Poor Hostile ]
-                OwnerHasTech "GRO_SYMBIOTIC_BIO"
-            ]
-            accountinglabel = "GRO_SYMBIOTIC_BIO"
-            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                Planet environment = [ Good Adequate Poor Hostile ]
-                OwnerHasTech "GRO_XENO_GENETICS"
-            ]
-            accountinglabel = "GRO_XENO_GENETICS"
-            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                Planet environment = [ Adequate Poor Hostile ]
-                OwnerHasTech "GRO_XENO_HYBRIDS"
-            ]
-            accountinglabel = "GRO_XENO_HYBRIDS"
-            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                Planet environment = [ Adequate Poor Hostile ]
-                OwnerHasTech "GRO_CYBORG"
-            ]
-            accountinglabel = "GRO_CYBORG"
-            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
-            
-'''
-
+// Population end
 
 ADVANCED_FOCUS_EFFECTS
 '''     EffectsGroup

@@ -853,9 +853,10 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 12
-    researchturns = 4
+    researchcost = 50
+    researchturns = 6
     prerequisites = "GRO_PLANET_ECOL"
+    // Effects are located in species.txt
     graphic = "icons/tech/symbiosis_biology.png"
 
 Tech
@@ -874,12 +875,13 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 40
-    researchturns = 6
+    researchcost = 75
+    researchturns = 8
     prerequisites = [
         "GRO_SYMBIOTIC_BIO"
         "GRO_GENETIC_ENG"
     ]
+    // Effects are located in species.txt
     graphic = "icons/tech/xenological_genetics.png"
 
 Tech
@@ -912,9 +914,10 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 100
-    researchturns = 7
+    researchcost = 150
+    researchturns = 10
     prerequisites = "GRO_XENO_GENETICS"
+    // Effects are located in species.txt
     graphic = "icons/tech/xenological_hybridization.png"
     
 Tech
@@ -923,9 +926,10 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 200
+    researchcost = 250
     researchturns = 10
     prerequisites = "GRO_NANO_CYBERNET"
+    // Effects are located in species.txt
 
 Tech
     name = "GRO_GENETIC_MED"

@@ -467,10 +467,7 @@ Special
                     empire = Source.Owner
             ]
 
-        EffectsGroup
-            scope = Source
-            activation = Planet environment = Good
-            effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble
+        // population effects in species.txt
 
         EffectsGroup     
             scope = Source     
@@ -1088,6 +1085,7 @@ Special
                 Planet
                 OwnedBy TheEmpire Source.Owner
                 HasTag "ORGANIC"
+                TargetPopulation low = 0 high = 9999
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation =  Focus "FOCUS_GROWTH"
@@ -1129,6 +1127,7 @@ Special
                 OwnedBy TheEmpire Source.Owner
                 HasTag "ORGANIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+                TargetPopulation low = 0 high = 9999
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "FRUIT_STACK"
@@ -1168,6 +1167,7 @@ Special
                 OwnedBy TheEmpire Source.Owner
                 HasTag "ORGANIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+                TargetPopulation low = 0 high = 9999
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "SPICE_STACK"
@@ -1209,6 +1209,7 @@ Special
                 OwnedBy TheEmpire Source.Owner
                 HasTag "ROBOTIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+                TargetPopulation low = 0 high = 9999
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "MONOPOLE_STACK"
@@ -1250,6 +1251,7 @@ Special
                 OwnedBy TheEmpire Source.Owner
                 HasTag "ROBOTIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+                TargetPopulation low = 0 high = 9999
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "SUPERCONDUCTOR_STACK"
@@ -1292,6 +1294,7 @@ Special
                 OwnedBy TheEmpire Source.Owner
                 HasTag "ROBOTIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+                TargetPopulation low = 0 high = 9999
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "POSITRONIUM_STACK"
@@ -1334,6 +1337,7 @@ Special
                 OwnedBy TheEmpire Source.Owner
                 HasTag "LITHIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+                TargetPopulation low = 0 high = 9999
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "MINERALS_STACK"
@@ -1375,6 +1379,7 @@ Special
                 OwnedBy TheEmpire Source.Owner
                 HasTag "LITHIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+                TargetPopulation low = 0 high = 9999
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "CRYSTALS_STACK"
@@ -1417,6 +1422,7 @@ Special
                 OwnedBy TheEmpire Source.Owner
                 HasTag "LITHIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+                TargetPopulation low = 0 high = 9999
             ]
             activation =  Focus "FOCUS_GROWTH"
             stackinggroup = "METALOIDS_STACK"
