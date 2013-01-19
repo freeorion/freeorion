@@ -1918,6 +1918,12 @@ Design
 MAP_BTN_PEDIA
 Pedia
 
+MAP_PRODUCTION_TITLE
+Production
+
+MAP_PRODUCTION_TEXT
+Empire total production output
+
 MAP_PROD_WASTED_TITLE
 Unused Production
 
@@ -1926,6 +1932,12 @@ MAP_PROD_WASTED_TEXT
 Wasted Production : %2%
 
 Click here to open the production menu'''
+
+MAP_RESEARCH_TITLE
+Research
+
+MAP_RESEARCH_TEXT
+Empire total research output
 
 MAP_RES_WASTED_TITLE
 Unused Research
@@ -1941,6 +1953,18 @@ Census
 
 MAP_POPULATION_COUNT
 %1%: %2%
+
+MAP_DETECTION_TITLE
+Empire Detection
+
+MAP_DETECTION_TEXT
+Empire Detection Strength
+
+MAP_TRADE_TITLE
+Trade
+
+MAP_TRADE_TEXT
+Empire total trade output. (Trade does nothing)
 
 #################
 # SidePanel     #

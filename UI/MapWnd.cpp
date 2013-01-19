@@ -226,9 +226,8 @@ namespace {
     GG::X WndRight(const GG::Wnd* wnd) { return wnd ? wnd->LowerRight().x : GG::X0; }
     GG::Y WndTop(const GG::Wnd* wnd) { return wnd ? wnd->UpperLeft().y : GG::Y0; }
     GG::Y WndBottom(const GG::Wnd* wnd) { return wnd ? wnd->LowerRight().y : GG::Y0; }
-    bool InRect(GG::X left, GG::Y top, GG::X right, GG::Y bottom, const GG::Pt& pt) {
-        return pt.x >= left && pt.y >= top && pt.x < right && pt.y < bottom;  //pt >= ul && pt < lr;
-    }
+    bool InRect(GG::X left, GG::Y top, GG::X right, GG::Y bottom, const GG::Pt& pt)
+    { return pt.x >= left && pt.y >= top && pt.x < right && pt.y < bottom; } //pt >= ul && pt < lr;
 
     GG::X AppWidth() {
         if (HumanClientApp* app = HumanClientApp::GetApp())
@@ -242,9 +241,8 @@ namespace {
         return GG::Y0;
     }
 
-    GG::X SidePanelWidth() {
-        return GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
-    }
+    GG::X SidePanelWidth()
+    { return GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width")); }
 }
 
 
@@ -792,7 +790,7 @@ MapWnd::MapWnd() :
                                 ClientUI::MeterIcon(METER_TRADE),
                                 0, 3, false);
     m_trade->SetName("Trade StatisticIcon");
-    
+
     m_detection = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
                                     ClientUI::MeterIcon(METER_DETECTION),
                                     0, 3, false);
@@ -856,15 +854,15 @@ MapWnd::MapWnd() :
     layout->SetColumnStretch(layout_column, 1.0);
     layout->Add(m_trade,            0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
-    
+
     layout->SetColumnStretch(layout_column, 1.0);
     layout->Add(m_population,       0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
-    
+
     layout->SetColumnStretch(layout_column, 1.0);
     layout->Add(m_detection,        0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
-    
+
     layout->SetMinimumColumnWidth(layout_column, m_btn_objects->Width());
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_btn_objects,      0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
@@ -4253,6 +4251,9 @@ void MapWnd::RefreshTradeResourceIndicator() {
         return;
     }
     m_trade->SetValue(empire->ResourceStockpile(RE_TRADE));
+    m_trade->ClearBrowseInfoWnd();
+    m_trade->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_TRADE_TITLE"), UserString("MAP_TRADE_TEXT"))));
 }
 
 void MapWnd::RefreshResearchResourceIndicator() {
@@ -4263,12 +4264,17 @@ void MapWnd::RefreshResearchResourceIndicator() {
         return;
     }
     m_research->SetValue(empire->ResourceProduction(RE_RESEARCH));
+    m_research->ClearBrowseInfoWnd();
+    m_research->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_RESEARCH_TITLE"), UserString("MAP_RESEARCH_TEXT"))));
+
     //Logger().debugStream() << "Research spend: " << empire->GetResearchQueue().TotalRPsSpent() << " output: " << empire->ResourceProduction(RE_RESEARCH);
     double totalRPSpent = empire->GetResearchQueue().TotalRPsSpent();
     double totalProduction = empire->ResourceProduction(RE_RESEARCH);
     double totalWastedRP = totalProduction - totalRPSpent;
     if (totalWastedRP > 1E-6) {
         m_research_wasted->Show();
+        m_research_wasted->ClearBrowseInfoWnd();
         m_research_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_RES_WASTED_TITLE"),
                               boost::io::str(FlexibleFormat(UserString("MAP_RES_WASTED_TEXT"))
@@ -4284,6 +4290,9 @@ void MapWnd::RefreshDetectionIndicator() {
     if (!empire)
         return;
     m_detection->SetValue(empire->GetMeter("METER_DETECTION_STRENGTH")->Current());
+    m_detection->ClearBrowseInfoWnd();
+    m_detection->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_DETECTION_TITLE"), UserString("MAP_DETECTION_TEXT"))));
 }
 
 void MapWnd::RefreshIndustryResourceIndicator() {
@@ -4294,12 +4303,17 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         return;
     }
     m_industry->SetValue(empire->ResourceProduction(RE_INDUSTRY));
+    m_industry->ClearBrowseInfoWnd();
+    m_industry->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_PRODUCTION_TITLE"), UserString("MAP_PRODUCTION_TEXT"))));
+
     //Logger().debugStream() << "Industry spend: " << empire->GetProductionQueue().TotalPPsSpent() << " output: " << empire->ResourceProduction(RE_INDUSTRY);
     double totalPPSpent = empire->GetProductionQueue().TotalPPsSpent();
     double totalProduction = empire->ResourceProduction(RE_INDUSTRY);
     double totalWastedPP = totalProduction - totalPPSpent;
     if (totalWastedPP > 1E-6) {
         m_industry_wasted->Show();
+        m_industry_wasted->ClearBrowseInfoWnd();
         m_industry_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_PROD_WASTED_TITLE"),
                               boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
@@ -4317,6 +4331,7 @@ void MapWnd::RefreshPopulationIndicator() {
         return;
     }
     m_population->SetValue(empire->GetPopulationPool().Population());
+    m_population->ClearBrowseInfoWnd();
 
     const std::vector<int> pop_center_ids = empire->GetPopulationPool().PopCenterIDs();
     std::map<std::string, float> population_counts;
