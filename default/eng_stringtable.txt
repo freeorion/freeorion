@@ -2242,6 +2242,9 @@ Fleet Count - Equal to the total number of ships in the fleet.
 FW_SPLIT_DAMAGED_FLEET
 Split Damaged Ships From Fleet
 
+FW_SPLIT_UNFUELED_FLEET
+Split Unfueled Ships From Fleet
+
 FW_SPLIT_FLEET
 Split Fleet
 

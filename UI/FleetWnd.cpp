@@ -2647,38 +2647,51 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     damaged_ship_ids.reserve(ship_ids_set.size());
     for (std::set<int>::const_iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
         const Ship* ship = GetShip(*it);
-        if (!ship)
-            continue;
         if (ship->CurrentMeterValue(METER_STRUCTURE) < ship->CurrentMeterValue(METER_MAX_STRUCTURE))
             damaged_ship_ids.push_back(*it);
     }
 
+    // find ships with no remaining fuel
+    std::vector<int> unfueled_ship_ids;
+    unfueled_ship_ids.reserve(ship_ids_set.size());
+    for (std::set<int>::const_iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
+        const Ship* ship = GetShip(*it);
+        if (!ship)
+            continue;
+        if (ship->CurrentMeterValue(METER_FUEL) < 1)
+            unfueled_ship_ids.push_back(*it);
+    }
+
     GG::MenuItem menu_contents;
 
-    // add a fleet poput command to send the fleet exploring, and stop it from exploring
+    // add a fleet popup command to send the fleet exploring, and stop it from exploring
     if (system && !ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()) )
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),      6, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),        7, false, false));
     else if(system)
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), 7, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), 8, false, false));
 
     // Split damaged ships - need some, but not all, ships damaged, and need to be in a system
     if (system && ship_ids_set.size() > 1 && !damaged_ship_ids.empty() && damaged_ship_ids.size() != ship_ids_set.size())
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_DAMAGED_FLEET"),   2, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_DAMAGED_FLEET"),     2, false, false));
+
+    // Split unfueled ships - need some, but not all, ships unfueled, and need to be in a system
+    if (system && ship_ids_set.size() > 1 && unfueled_ship_ids.size() > 0 && unfueled_ship_ids.size() < ship_ids_set.size())
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_UNFUELED_FLEET"),    3, false, false));
 
     // Split fleet - can't split fleets without more than one ship, or which are not in a system
     if (system && ship_ids_set.size() > 1)
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_FLEET"),           3, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_FLEET"),             4, false, false));
 
     // Rename fleet
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"),                       1, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"),                         1, false, false));
 
     // add a fleet popup command to order all ships in the fleet scrapped
     if (system && fleet->HasShipsWithoutScrapOrders())
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),        4, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),          5, false, false));
 
     // add a fleet popup command to cancel all scrap orders on ships in this fleet
     if (system && fleet->HasShipsOrderedScrapped())
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_SCRAP"), 5, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_SCRAP"),   6, false, false));
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
@@ -2705,7 +2718,12 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             break;
         }
 
-        case 3: {   // split
+        case 3: { // split unfueled
+            CreateNewFleetFromShips(unfueled_ship_ids, fleet->Aggressive());
+            break;
+        }
+
+        case 4: {   // split
             // remove first ship from set
             std::set<int>::iterator it = ship_ids_set.begin();
             ship_ids_set.erase(it);
@@ -2722,7 +2740,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             break;
         }
 
-        case 4: { // issue scrap orders to all ships in this fleet
+        case 5: { // issue scrap orders to all ships in this fleet
             std::set<int> ship_ids_set = fleet->ShipIDs();
             for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
                 int ship_id = *it;
@@ -2733,7 +2751,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             break;
         }
 
-        case 5: { // cancel scrap orders for all ships in this fleet
+        case 6: { // cancel scrap orders for all ships in this fleet
             std::set<int> ship_ids_set = fleet->ShipIDs();
             for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
                 int ship_id = *it;
@@ -2742,12 +2760,12 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
             break;
         }
 
-        case 6: { // send order to explore to the fleet
+        case 7: { // send order to explore to the fleet
             ClientUI::GetClientUI()->GetMapWnd()->SetFleetExploring(fleet->ID());
             break;
         }
 
-        case 7: { // send order to stop exploring to the fleet
+        case 8: { // send order to stop exploring to the fleet
             ClientUI::GetClientUI()->GetMapWnd()->StopFleetExploring(fleet->ID());
             break;
         }
