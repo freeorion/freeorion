@@ -3413,6 +3413,18 @@ Prefer Swamp planets.
 
 [[GOOD_POPULATION]]
 [[BAD_GROUND_TROOPS]]
+
+The Gyisache are a herbivorous species that has always been the prey. They seek to remove all that threatens them, until every place in the universe is safe.
+
+Description:
+The Gyisache are bipedal, each leg has two forward knees and one backward knee in between. When they crouch, the leg folds into an efficient 'W' making them only half a meter tall (compared to 2.5 meters when fully erect).
+Their oblong bodies lack anything resembling a head, instead they have three identical eye stalks that are located at the forward tip of the body. A small mouth is located at the base of them.
+
+Personality:
+The Gyisache are always wary of predators and are easily alarmed. Their natural response is to run away from everything. Their government system is dispersed as each individual is completely independent and forms no bonds with other individuals. They do have a herding tendency though and this keeps them together when faced with danger.
+
+Homeworld:
+Their homeworld has a thick atmosphere of nitrogen, ammonina and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water.
 '''
 
 SP_CHATO
@@ -3429,6 +3441,12 @@ Prefer Toxic planets.
 [[BAD_GROUND_TROOPS]]
         
 [[BROAD_EP]]
+
+Description:
+The Chato'matou'Gormoshk are actually two species together, however it is not entirely clear if the connection between the species should be called symbiosis or parasitism. The master species are the Chato'matou, crystalline life forms about 30 Centimeters in height and 10 Centimeters in width. Their color ranges from a light blue to a deep crimson. They get the energy they need to live from the sun or in exceptional cases from the Gormoshk they are attached to. The Gormoshk are predatory animals formerly living in underground caverns. Their bodies are flat and round and rest on five insect-like legs. The Chato'matou attach themselves to the flat part on top of the Gormoshk's bodies, directly above the brain. Through a crystalline outgrowth they can control the Gormoshk completely.
+
+Social Structure:
+In Chato'matou society, age is the most important factor as they are nearly immortal. Every command the elders issue is obeyed at once and to disobey an elder is the greatest crime in Chato'matou society. They developed a system to transmit signals without delay throughout an entire colony, enabling them to converse with near the speed of light. This greatly enhanced the species mental capabilities, as all new ideas and theories could be instantly processed throughout the colony. The Gormoshk are valued as mounts and well cared for under normal circumstances, however they are also seen mostly as animals.
 '''
 
 SP_TRITH
@@ -3490,6 +3508,12 @@ Prefer Toxic planets.
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
+
+Description:
+The Derthrean consciousness represents a half parasitic, half symbiotic relationship of viruses living in the bodies of plants. The virus has no intelligence and the plant without it is but an empty shell, yet somehow together, their neural synapses are compatible to create a reasonable being. Although the virus brings awareness to the plant, it is also toxic to its nervous system, inflicting great amounts of pain to the host, slowly murdering it the greater it spawns, and in the end, killing the plant itself, effectively meaning that the greater the intelligence of a Derthrean, the more pain he endures.
+
+Social Structure:
+The Derthrean are a sharply divided race, split by the legacy of their forebears into castes. They are born into a caste, they mate in their caste, and they die as a member of a caste. Because the breeding has been so isolated throughout the millennia, there are even physical varieties in different castes. The castes are divided as follows: the most benevolent Priest caste, the Worker caste, the Grower caste, the Provider caste, the Scholar caste and the most despised of all, the Warrior caste. Religion plays the fundamental role in their society. Each Derthrean is a pacifist and lives to please their Goddess, in hopes of relieving the terrible burden of pain and earning forgiveness for the betrayal and bloodlust of their ancestors.
 '''
 
 SP_LAENFA
@@ -3521,6 +3545,19 @@ Prefer Swamp planets.
         
 [[BAD_GROUND_TROOPS]]
 [[GOOD_POPULATION]]
+
+Description:
+Scyliori are shelled cephalopods similar to a Nautilus. They possess advanced vision provided by four eyes and have four antennae containing millions of neuromasts, allowing the Scyliori to detect changes in water pressure and also electrical fields. Scyliori have three large, strong feeding tentacles which they use to grasp and hold tools or food while it is broken up by the beak and ingested.
+
+Chromatophores provide the race with their main form of communication. When two Scyliori wish to communicate with each other, they rapidly change the coloring and patterning of their skin.
+
+Scyliori are without gender and reproduce in an iteroparous style. The lifespan of a Scylior is roughly 30 years in which they never stop growing, hatching with a shell diameter of only 5cm and experiencing roughly 10 percent growth each year.
+
+Society:
+The remnant of a once-mighty telepathic hive brain, referred to as the Mind is treated by the Scyliori as a benevolent god. It has instilled in them a mission to journey the stars in hopes of returning to it's former might. Scyliori are highly social and came to love learning things and sharing knowledge with the Mind.
+
+History:
+Millennia ago an expedition of the precursors discovered the Mind controlling the whole planet with his telepathic powers. The Mind immediately reached out and began copying the knowledge of the scientists and their ship crew, but the scientists cut out most of the Mind's brain and took it with them as a sample. The rest survived and lusted to recover the memories that had been taken from it. The Mind, however, was immobile, and for the time being, had no nearby intelligent beings to act as it's hands. Enter the Scyliori.
 '''
 
 
@@ -3536,6 +3573,13 @@ Prefer Desert planets.
 
 [[GREAT_WEAPONS]]
 [[GREAT_GROUND_TROOPS]]
+
+Description:
+Hhhoh are large, warm blooded creatures measuring over 16 meters in length (including leg/tail), 6 meters in width, stand at 5 and a half meters tall and weigh over 5 tons. They have a very thick layer of white fur.
+Hhhoh locomotion is performed by using their two, large front legs, while using their hind leg to balance their large back. They also have four long trunk-like appendages of 8 meters in length, with four sharp fingered claws they use to handle objects. When not in use, Hhhoh’s curl these trunks under their bodies and bury them in large fat pouches to conserve heat. They are omnivorous, but do not actively hunt or farm large domesticated life.
+
+Personality:
+Hhhoh's describe themselves as social pragmatists. Elders are very much revered, some living close to 230 years. Their sloth-like disposition makes them aversive to any fast movements, as well as hasty decisions.
 '''
 
 
@@ -3635,6 +3679,15 @@ Prefer Inferno planets.
 
 [[BAD_POPULATION]]
 [[NARROW_EP]]
+
+Description:
+Egassem are several kilometers across and have no fixed shape, they are capable of operating multiple instruments at once through custom formed appendages. Egassem are incredibly slow, capable of moving at most a few meters an hour as moving was only necessary to strip an area of resources. They reproduce by budding, releasing a young that is a mere hundred thousand tons.
+
+Social Structure:
+Egassem society is essentially feudalistic, with each Egassem individual being one 'fiefdom'. The fact that Egassem are typically long-lived (effectively ageless) means that they are highly conservative and highly concerned with wealth.
+
+Homeworld:
+A world wracked with tidal and geological heating, as well as the more conventional solar radiation. Large 'oceans' of liquid rock cover most of the surface.  
 '''
 
 SP_SSLITH
