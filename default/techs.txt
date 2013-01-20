@@ -2666,7 +2666,10 @@ Tech
     researchcost = 100
     researchturns = 5
     prerequisites = "SHP_GAL_EXPLO"
-    unlock = Item type = ShipPart name = "DT_DETECTOR_2"
+    unlock = [
+        Item type = ShipPart name = "DT_DETECTOR_2"
+        Item type = Building name = "BLD_SCANNING_FACILITY"
+    ]
     effectsgroups = [
         EffectsGroup
             scope = And [

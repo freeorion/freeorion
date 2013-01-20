@@ -6804,7 +6804,7 @@ SPY_DETECT_2
 Active Radar
 
 SPY_DETECT_2_DESC
-'''Unlocks the Active Radar ship part, increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 75, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 30.
+'''Unlocks the Active Radar ship part and the Scanning Facility building, increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 75, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 30.
 
 Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened. By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
 
@@ -7168,6 +7168,14 @@ Interstellar Lighthouse
 
 BLD_LIGHTHOUSE_DESC
 Increases speed of ships departing this system, and decreases the [[encyclopedia STEALTH_TITLE]] of all objects in the same system by 30. This building can be built at an outpost.
+
+BLD_SCANNING_FACILITY
+Scanning Facility
+
+BLD_SCANNING_FACILITY_DESC
+'''Increases [[encyclopedia DETECTION_RANGE_TITLE]] of the planet by 75.
+
+A combination of long-range scanning devices and great computing power to analyze the data allows a larger area of space to be scanned for any objects.'''
 
 BLD_HEAVY_MINE_PROCESSOR
 Heavy Mining Processor

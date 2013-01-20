@@ -386,6 +386,22 @@ BuildingType
     icon = "icons/building/lighthouse.png"
 
 BuildingType
+    name = "BLD_SCANNING_FACILITY"
+    description = "BLD_SCANNING_FACILITY_DESC"
+    buildcost = 25
+    buildtime = 5
+    location = AND [
+        Not Contains Building "BLD_SCANNING_FACILITY"
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Object Source.PlanetID
+            SetDetection Value + 75
+    ]
+    icon = "icons/building/lighthouse.png"
+
+BuildingType
     name = "BLD_HEAVY_MINE_PROCESSOR"
     description = "BLD_HEAVY_MINE_PROCESSOR_DESC"
     buildcost = 75
