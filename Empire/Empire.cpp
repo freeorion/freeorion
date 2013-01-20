@@ -2080,6 +2080,7 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
                     if (to_empire) {
                         // item removed from current queue, added to conquerer's queue
                         ProductionQueue::Element build(item, elem.ordered, elem.remaining, location_id);
+                        build.progress=elem.progress;
                         to_empire->m_production_queue.push_back(build);
 
                         queue_it = queue.erase(queue_it);
