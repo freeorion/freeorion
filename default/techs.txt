@@ -693,12 +693,12 @@ Tech
                     OwnedBy TheEmpire Source.Owner
                     Planet
                     TargetPopulation low = 1
-                    Random .1
                 ]
+                Not OwnedBy TheEmpire Source.Owner
                 VisibleToEmpire Source.Owner
+                Random .1
                 Ship
                 Not Monster
-                HasTag "ORGANIC"
                 Not HasTag "TELEPATHIC"
                 Not OwnerHasTech "LRN_PSY_DOM"
             ]
@@ -1038,7 +1038,6 @@ Tech
     researchcost = 4
     researchturns = 2
     // Effect is specified in species.txt
-
     graphic = "icons/tech/subterranean_construction.png"
 
 Tech
@@ -1272,8 +1271,8 @@ Tech
 Tech
     name = "PRO_ZERO_GEN"
     description = "PRO_ZERO_GEN_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Application
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 500
     researchturns = 7
@@ -1282,7 +1281,6 @@ Tech
         "PRO_SINGULAR_GEN"
         "LRN_EVERYTHING"
     ]
-    unlock = Item type = Building name = "BLD_HYPER_DAM"
     graphic = "icons/tech/zero_point_energy.png"
 
 Tech
