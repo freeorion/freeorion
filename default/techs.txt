@@ -736,7 +736,7 @@ Tech
     short_description = "VICTORY_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 2500
+    researchcost = 25000
     researchturns = 20
     prerequisites = [
         "CON_TRANS_ARCH"
