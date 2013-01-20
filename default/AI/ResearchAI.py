@@ -80,7 +80,8 @@ def generateResearchOrders():
         if foAI.foAIstate.aggression <=fo.aggression.typical:
             newtech = TechsListsAI.primaryMetaTechsList()
         else:
-            newtech = TechsListsAI.aggressiveTechs()
+            #newtech = TechsListsAI.aggressiveTechs()
+            newtech = TechsListsAI.primaryMetaTechsList()
         #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
         pLTsToEnqueue = newtech[:]
         techBase = set(completedTechs+researchQueueList)
@@ -110,6 +111,18 @@ def generateResearchOrders():
                 if   defTech not in researchQueueList[:5]  and  empire.getTechStatus(defTech) != fo.techStatus.complete:
                     res=fo.issueEnqueueTechOrder(defTech, min(3,  len(researchQueueList)))
                     print "Empire is very defensive,  so attempted to fast-track %s,  got result %d"%(defTech, res)
+        if foAI.foAIstate.aggression >= fo.aggression.aggressive:
+            researchQueueList = getResearchQueueTechs()
+            if "CON_CONC_CAMP" in researchQueueList:
+                insertIdx = min(40,  researchQueueList.index("CON_CONC_CAMP"))
+            else:
+                insertIdx=max(0,  min(40, len(researchQueueList)-10))
+            if "SHP_ASTEROID_HULLS" in researchQueueList:
+                insertIdx = min(insertIdx,  researchQueueList.index("SHP_ASTEROID_HULLS"))
+            for ccTech in [  "CON_ARCH_PSYCH",  "CON_CONC_CAMP"]:
+                if   ccTech not in researchQueueList[:insertIdx+1]  and  empire.getTechStatus(ccTech) != fo.techStatus.complete:
+                    res=fo.issueEnqueueTechOrder(ccTech, insertIdx)
+                    print "Empire is very aggressive,  so attempted to fast-track %s,  got result %d"%(ccTech, res)
         print""
         generateDefaultResearchOrders()
         print "\n\nAll techs:"

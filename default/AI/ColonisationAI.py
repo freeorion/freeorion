@@ -19,18 +19,20 @@ annexablePlanetIDs=set([])
 curBestMilShipRating = 20
 
 # makes these mapped to string version of values in case any sizes become reals instead of int
-planetSIzes=            {   str(fo.planetSize.tiny): 1,     str(fo.planetSize.small): 2,    str(fo.planetSize.medium): 3,   str(fo.planetSize.large): 4,    str(fo.planetSize.huge): 5,  str(fo.planetSize.asteroids): 0,  str(fo.planetSize.gasGiant): 0 }
+planetSIzes=            {   str(fo.planetSize.tiny): 1,     str(fo.planetSize.small): 2,    str(fo.planetSize.medium): 3,   str(fo.planetSize.large): 4,    str(fo.planetSize.huge): 5,  str(fo.planetSize.asteroids): 3,  str(fo.planetSize.gasGiant): 3 }
 environs =                  { str(fo.planetEnvironment.uninhabitable): 0,  str(fo.planetEnvironment.hostile): 1,  str(fo.planetEnvironment.poor): 2,  str(fo.planetEnvironment.adequate): 3,  str(fo.planetEnvironment.good):4 }
+photoMap= { fo.starType.blue:3    , fo.starType.white:1.5  , fo.starType.red:-1 ,  fo.starType.neutron: -1 , fo.starType.blackHole: -10 , fo.starType.noStar: -10     }
 #   mods per environ    uninhab   hostile    poor   adequate    good
 popSizeModMap={
-                            "env":          [ 0, -3, -1, 0,  3 ], 
-                            "subHab":   [ 0,  1,  1,  1,  1 ], 
-                            "symBio":   [ 0,  1,  1,  1,  0 ], 
-                            "xenoGen": [ 0,  1,  1,  1,  1 ], 
-                            "xenoHyb": [ 0,  1,  1,  1,  0 ], 
-                            "cyborg":   [ 0,  1,  1,  1,  0 ], 
-                            "ndim":       [ 0,15,15,15,15], 
-                            "orbit":     [ 0,  5,  5,  5,  5 ], 
+                            "env":               [ 0, -4, -2, 0,  3 ], 
+                            "subHab":      [ 0,  1,  1,  1,  1 ], 
+                            "symBio":       [ 0,  0,  1,  1,  1 ], 
+                            "xenoGen":  [ 0,  1,  2,  2,  0 ], 
+                            "xenoHyb":   [ 0,  2,  1,  0,  0 ], 
+                            "cyborg":       [ 0,  2,  0,  0,  0 ], 
+                            "ndim":            [ 0, 2,  2,  2,   2 ], 
+                            "orbit":            [ 0,  1,  1,  1,  1 ], 
+                            "gaia":             [ 0,  3,  3,  3,  3 ], 
                             }
 
 
@@ -353,7 +355,10 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
     starBonus=0
     if species:
         tagList = [tag for tag in species.tags]
+    starPopMod=0
     if system:
+        if "PHOTOTROPHIC" in tagList:
+            starPopMod = photoMap.get( system.starType,  0 )
         if (empire.getTechStatus("PRO_SOL_ORB_GEN") == fo.techStatus.complete) or (  "PRO_SOL_ORB_GEN"  in empireResearchList[:8])  :    
             if system.starType in [fo.starType.blue, fo.starType.white]:
                 if len (AIstate.empireStars.get(fo.starType.blue,  [])+AIstate.empireStars.get(fo.starType.white,  []))==0:
@@ -448,7 +453,10 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             return -9999
         popSizeMod=0
         popSizeMod += popSizeModMap["env"][planetEnv]
-        if empire.getTechStatus("GRO_SUBTER_HAB") == fo.techStatus.complete:    
+        if "SELF_SUSTAINING" in tagList:
+            popSizeMod+=3
+        popSizeMod += starPopMod
+        if (empire.getTechStatus("GRO_SUBTER_HAB") == fo.techStatus.complete)  or "TUNNELS_SPECIAL" in planetSpecials:    
             if "TECTONIC_INSTABILITY_SPECIAL" not in planetSpecials:
                 popSizeMod += popSizeModMap["subHab"][planetEnv]
         if empire.getTechStatus("GRO_SYMBIOTIC_BIO") == fo.techStatus.complete:
@@ -459,21 +467,18 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             popSizeMod += popSizeModMap["xenoHyb"][planetEnv]
         if empire.getTechStatus("GRO_CYBORG") == fo.techStatus.complete:
             popSizeMod += popSizeModMap["cyborg"][planetEnv]
+        if empire.getTechStatus("CON_NDIM_STRUC") == fo.techStatus.complete:
+            popSizeMod += popSizeModMap["ndim"][planetEnv]
+        if empire.getTechStatus("CON_ORBITAL_HAB") == fo.techStatus.complete:
+            popSizeMod += popSizeModMap["orbit"][planetEnv]
+
+        if "GAIA_SPECIAL" in planet.specials:
+            popSizeMod += 3
 
         for special in [ "SLOW_ROTATION_SPECIAL",  "SOLID_CORE_SPECIAL"] :
             if special in planetSpecials:
                 popSizeMod -= 1
 
-        #have to use these namelists since species tags don't seem available to AI currently
-        #for special, namelist in [ ("PROBIOTIC_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYSACHE",  "SP_HHHOH",  "SP_EAXAW"]),
-        #                                                   ("FRUIT_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYSACHE",  "SP_HHHOH",  "SP_EAXAW",  "SP_TRITH"]),
-        #                                                   ("SPICE_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYSACHE",  "SP_HHHOH",  "SP_EAXAW"]),
-        #                                                   ("MONOPOLE_SPECIAL",  ["SP_CRAY"]),
-        #                                                   ("SUPERCONDUCTOR_SPECIAL",  ["SP_CRAY"]),
-        #                                                   ("POSITRONIUM_SPECIAL",  ["SP_CRAY"]),
-        #                                                   ("MINERALS_SPECIAL",  ["SP_GEORGE",  "SP_EGASSEM"]),
-        #                                                   ("METALOIDS_SPECIAL",  ["SP_GEORGE",  "SP_EGASSEM"]),
-        #                                             ]:
         for special, tag in [ ("PROBIOTIC_SPECIAL",  "ORGANIC"),
                                                            ("FRUIT_SPECIAL",  "ORGANIC"),
                                                            ("SPICE_SPECIAL",  "ORGANIC"),
@@ -491,14 +496,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                 #else:
                 #    print "planet %s had special %s without pop mod for species %s"%(planet.name,  special,  species.name)
             
-        if "GAIA_SPECIAL" in planet.specials:
-            popSizeMod += 3
-
         popSize = planet.size * popSizeMod
-        if empire.getTechStatus("CON_NDIM_STRUC") == fo.techStatus.complete:
-            popSize += popSizeModMap["ndim"][planetEnv]
-        if empire.getTechStatus("CON_ORBITAL_HAB") == fo.techStatus.complete:
-            popSize += popSizeModMap["orbit"][planetEnv]
 
         if "DIM_RIFT_MASTER_SPECIAL" in planet.specials:
             popSize -= 4
