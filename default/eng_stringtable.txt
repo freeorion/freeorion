@@ -3414,14 +3414,14 @@ Prefer Swamp planets.
 [[GOOD_POPULATION]]
 [[BAD_GROUND_TROOPS]]
 
-The Gyisache are a herbivorous species that has always been the prey. They seek to remove all that threatens them, until every place in the universe is safe.
+The Gysache are a herbivorous species that has always been the prey. They seek to remove all that threatens them, until every place in the universe is safe.
 
 Description:
-The Gyisache are bipedal, each leg has two forward knees and one backward knee in between. When they crouch, the leg folds into an efficient 'W' making them only half a meter tall (compared to 2.5 meters when fully erect).
+The Gysache are bipedal, each leg has two forward knees and one backward knee in between. When they crouch, the leg folds into an efficient 'W' making them only half a meter tall (compared to 2.5 meters when fully erect).
 Their oblong bodies lack anything resembling a head, instead they have three identical eye stalks that are located at the forward tip of the body. A small mouth is located at the base of them.
 
 Personality:
-The Gyisache are always wary of predators and are easily alarmed. Their natural response is to run away from everything. Their government system is dispersed as each individual is completely independent and forms no bonds with other individuals. They do have a herding tendency though and this keeps them together when faced with danger.
+The Gysache are always wary of predators and are easily alarmed. Their natural response is to run away from everything. Their government system is dispersed as each individual is completely independent and forms no bonds with other individuals. They do have a herding tendency though and this keeps them together when faced with danger.
 
 Homeworld:
 Their homeworld has a thick atmosphere of nitrogen, ammonina and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water.
