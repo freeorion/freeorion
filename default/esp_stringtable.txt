@@ -2120,10 +2120,10 @@ Trith
 SP_TRITH_DESC
 Desconsolados xenófobos telépatas.
 
-SP_GYISACHE
-Gyisache
+SP_GYSACHE
+GYSACHE
 
-SP_GYISACHE_DESC
+SP_GYSACHE_DESC
 Cobardes Herbivoros.
 
 ####################

@@ -465,9 +465,9 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                 popSizeMod -= 1
 
         #have to use these namelists since species tags don't seem available to AI currently
-        #for special, namelist in [ ("PROBIOTIC_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYISACHE",  "SP_HHHOH",  "SP_EAXAW"]),
-        #                                                   ("FRUIT_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYISACHE",  "SP_HHHOH",  "SP_EAXAW",  "SP_TRITH"]),
-        #                                                   ("SPICE_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYISACHE",  "SP_HHHOH",  "SP_EAXAW"]),
+        #for special, namelist in [ ("PROBIOTIC_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYSACHE",  "SP_HHHOH",  "SP_EAXAW"]),
+        #                                                   ("FRUIT_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYSACHE",  "SP_HHHOH",  "SP_EAXAW",  "SP_TRITH"]),
+        #                                                   ("SPICE_SPECIAL",  ["SP_HUMAN",  "SP_SCYLIOR",  "SP_GYSACHE",  "SP_HHHOH",  "SP_EAXAW"]),
         #                                                   ("MONOPOLE_SPECIAL",  ["SP_CRAY"]),
         #                                                   ("SUPERCONDUCTOR_SPECIAL",  ["SP_CRAY"]),
         #                                                   ("POSITRONIUM_SPECIAL",  ["SP_CRAY"]),

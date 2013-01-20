@@ -3382,6 +3382,9 @@ Prefer Terran planets.
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
+
+[[AVERAGE_POPULATION]]
+[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_SCYLIOR
@@ -3395,11 +3398,12 @@ Prefer Ocean planets.
 [[GREAT_RESEARCH]]
 
 [[GOOD_POPULATION]]
+[[AVERAGE_GROUND_TROOPS]]
 '''
 
-SP_GYISACHE
-Gyisache
-SP_GYISACHE_DESC
+SP_GYSACHE
+Gysache
+SP_GYSACHE_DESC
 '''Cowardly, freakish sheep-like herbivores.
 Prefer Swamp planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -3407,8 +3411,8 @@ Prefer Swamp planets.
 [[GOOD_INDUSTRY]]
 [[GREAT_RESEARCH]]
 
-[[BAD_GROUND_TROOPS]]
 [[GOOD_POPULATION]]
+[[BAD_GROUND_TROOPS]]
 '''
 
 SP_CHATO
@@ -3421,7 +3425,9 @@ Prefer Toxic planets.
 [[AVERAGE_INDUSTRY]]
 [[GREAT_RESEARCH]]
         
+[[AVERAGE_POPULATION]]
 [[BAD_GROUND_TROOPS]]
+        
 [[BROAD_EP]]
 '''
 
@@ -3432,11 +3438,14 @@ SP_TRITH_DESC
 Prefer Desert planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
-[[GREAT_DETECTION]]
-[[GOOD_STEALTH]]
-
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
+        
+[[AVERAGE_POPULATION]]
+[[AVERAGE_GROUND_TROOPS]]
+        
+[[GREAT_DETECTION]]
+[[GOOD_STEALTH]]
 
 [[NARROW_EP]]
 '''
@@ -3450,9 +3459,11 @@ Prefer Tundra planets.
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
-
-[[GOOD_WEAPONS]]
+        
+[[AVERAGE_POPULATION]]
 [[GREAT_GROUND_TROOPS]]
+        
+[[GOOD_WEAPONS]]
 '''
 
 SP_EAXAW
@@ -3465,6 +3476,8 @@ Prefer Terran planets.
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
 
+[[AVERAGE_POPULATION]]
+[[AVERAGE_GROUND_TROOPS]]
 [[ULTIMATE_WEAPONS]]
 '''
 
@@ -3486,14 +3499,14 @@ SP_LAENFA_DESC
 Prefer Ocean Planets.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
-[[GREAT_DETECTION]]
-[[GREAT_STEALTH]]
-
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
-
-[[BAD_GROUND_TROOPS]]
+        
 [[GOOD_POPULATION]]
+[[BAD_GROUND_TROOPS]]
+
+[[GREAT_DETECTION]]
+[[GREAT_STEALTH]]
 '''
 
 SP_TAEGHIRUS
@@ -3535,6 +3548,9 @@ Prefers Tundra planets.
 
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
+        
+[[AVERAGE_POPULATION]]
+[[AVERAGE_GROUND_TROOPS]]
 
 [[BROAD_EP]]
 '''
@@ -3549,8 +3565,10 @@ Prefer Barren planets.
 
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
-
+        
+[[AVERAGE_POPULATION]]
 [[GOOD_GROUND_TROOPS]]
+        
 [[BROAD_EP]]
 '''
 
@@ -3562,14 +3580,16 @@ SP_ETTY_DESC
 Prefer Desert planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
-[[BAD_DETECTION]]
-[[GOOD_STEALTH]]
-    
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
-[[GREAT_WEAPONS]]
+[[AVERAGE_POPULATION]]
 [[GOOD_GROUND_TROOPS]]
+                
+[[GREAT_WEAPONS]]
+        
+[[BAD_DETECTION]]
+[[GOOD_STEALTH]]
 '''
 
 
@@ -3583,7 +3603,9 @@ Prefer Swamp planets.
 [[NO_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
+[[AVERAGE_POPULATION]]
 [[GOOD_GROUND_TROOPS]]
+        
 [[BROAD_EP]]
 '''
 
@@ -3596,6 +3618,9 @@ Prefer Swamp planets.
 
 [[AVERAGE_INDUSTRY]]
 [[NO_RESEARCH]]
+                
+[[AVERAGE_POPULATION]]
+[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_EGASSEM
@@ -3622,7 +3647,9 @@ Prefer Tundra planets.
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
+[[AVERAGE_POPULATION]]
 [[BAD_GROUND_TROOPS]]
+        
 [[NARROW_EP]]
 '''
 
@@ -3635,9 +3662,9 @@ Prefer Swamp planets.
 
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
-
-[[BAD_GROUND_TROOPS]]
+        
 [[BAD_POPULATION]]
+[[BAD_GROUND_TROOPS]]
 
 Biology:
 Adult Fifty-Seven are between 10 and 20 m long. The main deviation from the tapering serpentine body are the two resonating domes on the forward dorsal side. Various fins provide fine control. Entirely blind, they rely on smell, hearing, an exquisitely honed pressure sensitivity, and when the need arises bursts of echolocation. Fifty-Seven are omnivores: eating flocks of small flying creatures with the same relish as the floating phytoplankton. Since they remain aloft their entire lives and have no manipulator limbs, the Fifty-Seven have no material technology.
@@ -3660,13 +3687,13 @@ SP_SETINON_DESC
 Prefer Swamp planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
-[[GREAT_STEALTH]]
-
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
-[[NO_GROUND_TROOPS]]
 [[GOOD_POPULATION]]
+[[NO_GROUND_TROOPS]]  
+        
+[[GREAT_STEALTH]]
 '''
 
 
@@ -3677,14 +3704,14 @@ SP_NYMNMN_DESC
 Prefer Desert planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 
-[[GREAT_DETECTION]]
-[[GOOD_STEALTH]]
-
 [[NO_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
-        
-[[BAD_GROUND_TROOPS]]
+
 [[BAD_POPULATION]]
+[[BAD_GROUND_TROOPS]]
+
+[[GREAT_DETECTION]]
+[[GOOD_STEALTH]]
 '''
 
 
@@ -3698,6 +3725,7 @@ Prefers Barren planets.
 [[GOOD_INDUSTRY]]
 [[NO_RESEARCH]]
         
+[[AVERAGE_POPULATION]]
 [[BAD_GROUND_TROOPS]]
 '''
 
@@ -3711,7 +3739,8 @@ Prefer Terran planets.
 
 [[BAD_INDUSTRY]]
 [[NO_RESEARCH]]
-
+                
+[[AVERAGE_POPULATION]]
 [[ULTIMATE_GROUND_TROOPS]]
 
 The Raaagh are 1.5 meter tall stripe-furred bipeds.  The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance.  The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage-- they must survive on their own competing against their siblings for hiding places and stealing food like vermin.  After three years usually only one is left, and the surviving young begin to learn to speak.  This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
@@ -3737,8 +3766,8 @@ Prefers Radiated planets.
 [[GREAT_INDUSTRY]]
 [[NO_RESEARCH]]
         
-[[GREAT_GROUND_TROOPS]]
 [[GOOD_POPULATION]]
+[[GREAT_GROUND_TROOPS]]
 
 The entire planet is covered in a beige haze of Nanites. It is unknown wheather they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials.  However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
 '''
@@ -3752,6 +3781,9 @@ Prefer Terran planets.
 
 [[NO_INDUSTRY]]
 [[BAD_RESEARCH]]
+        
+[[AVERAGE_POPULATION]]
+[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_KOBUNTURA
@@ -3764,13 +3796,14 @@ Prefer Barren planets.
 [[GREAT_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
         
+[[AVERAGE_POPULATION]]
 [[BAD_GROUND_TROOPS]]
 '''
 
 
-SP_UGMORRS
+SP_UGMORS
 Ugmors
-SP_UGMORRS_DESC
+SP_UGMORS_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Prefer Inferno planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -3778,6 +3811,7 @@ Prefer Inferno planets.
 [[GOOD_INDUSTRY]]
 [[BAD_RESEARCH]]
         
+[[AVERAGE_POPULATION]]
 [[GOOD_GROUND_TROOPS]]
 
 The Ugmors is a race of sentient yeast which uses rocks and minerals to make temporary bodies designed to perform specific tasks.
@@ -3804,6 +3838,7 @@ Prefer Toxic planets.
 [[BAD_INDUSTRY]]
 [[GOOD_RESEARCH]]
         
+[[AVERAGE_POPULATION]]
 [[BAD_GROUND_TROOPS]]
 
 Most of the equatorial region of the Gis Guf Gthrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis lifecycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
@@ -3832,16 +3867,17 @@ Their terran homeworld is an eerily park-like place with plants arranged with un
 The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet, and since the Hidden Gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.'''
 
 
-SP_ABADDONNIANS
+SP_ABADDONI
 Abaddoni
-SP_ABADDONNIANS_DESC
+SP_ABADDONI_DESC
 '''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
 Prefers Inferno planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
-        
+                
+[[AVERAGE_POPULATION]]
 [[BAD_GROUND_TROOPS]]
 '''
 
@@ -3855,6 +3891,9 @@ Prefers Radiated planets.
 
 [[GREAT_INDUSTRY]]
 [[GOOD_RESEARCH]]
+        
+[[AVERAGE_POPULATION]]
+[[AVERAGE_GROUND_TROOPS]]
 
 Description
 An Acirem is a 10-30 m ellipsoidal energy beings with large (30-100m) ''wings''. As they age they tend to accumulate material from around them developing a dusty and eventually rocky appearance (still maintaining the visible energy flows through their body and the gaps). Most Acirema live in a universe where the physical constants are slightly different, and there is only one place where they can get through to our universe, on their "Homeworld" of Portal. However, upon doing that they immediately begin to 'age' differently than in their own universe. Acirema cannot survive more than a few fractions of a galactic cycle in this universe. So an Acirem rarely spends much time before crossing back into their own universe.
@@ -3877,10 +3916,13 @@ SP_OURBOOLS_DESC
 Prefer Ocean planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
-[[ULTIMATE_DETECTION]]
-
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
+                
+[[AVERAGE_POPULATION]]
+[[AVERAGE_GROUND_TROOPS]]
+        
+[[ULTIMATE_DETECTION]]
 
 
 Biology:
@@ -3906,8 +3948,9 @@ Prefer Barren planets.
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
-
-[[GOOD_POPULATION]]
+        
+[[GOOD_POPULATION]]        
+[[AVERAGE_GROUND_TROOPS]]
 
 Description:
 The Volp-Uglush are an asexual species approximately 300 meters in length that live in tunnels on their homeworld. They subsist on silicates and have a vast number of short arm/mouth parts on the front of their thick cylindrical bodies that they use for manipulation/tunnelling/eating and for sending messages through their tunnel network. In early historical times there were several different strains of Volp-Uglush but they were in constant conflict. Groups that successfully organized themselves were the best competers for resources, and as they moved from industrial to information age, one strain became dominant, and the remainder died out. The remaining strain began to optimize their homeworld for most efficient use of resources. They became incredibly adept at recognizing resouce needs, as well as how societal structures affected individual behavior.
@@ -3928,14 +3971,14 @@ SP_FURTHEST_DESC
 Prefer Tundra planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
-[[GOOD_DETECTION]]
-[[GREAT_STEALTH]]
-        
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
-        
-[[GOOD_GROUND_TROOPS]]
+                
 [[BAD_POPULATION]]
+[[GOOD_GROUND_TROOPS]]
+        
+[[GOOD_DETECTION]]
+[[GREAT_STEALTH]]
 
 Biology:
 The Furthest are furry, 1.5 m tall creatures.  Radially symmetric, they have three long legs, and three long flexible necks. Atop each neck, is a compound eye, and a mouth used for ingestion and for manipulating objects.  This allows the creature too keep watch in most directions at once.  The actual brain is in the center of the body.
@@ -3959,6 +4002,7 @@ SP_EXOBOT_DESC
 [[AVERAGE_INDUSTRY]]
 [[BAD_RESEARCH]]
         
+[[AVERAGE_POPULATION]]
 [[BAD_GROUND_TROOPS]]
 
 While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
@@ -3974,11 +4018,11 @@ SP_EXPERIMENTOR_DESC
 [[NO_INDUSTRY]]
 [[ULTIMATE_RESEARCH]]
 
+[[GOOD_POPULATION]]
+[[ULTIMATE_GROUND_TROOPS]]
+        
 [[ULTIMATE_STEALTH]]
 [[ULTIMATE_DETECTION]]
-
-[[ULTIMATE_GROUND_TROOPS]]
-[[GOOD_POPULATION]]
 
 The Experimentors are an ancient precursor race, whose existence is devoted to the pursuit of knowledge.  Their desire to learn is unmatched, and they unashamed to treat even entire galaxies as mere laboratories for their experiments.'''
 
@@ -3994,9 +4038,10 @@ SP_SUPER_TEST_DESC
 [[GREAT_INDUSTRY]]
 [[GREAT_RESEARCH]]
         
-[[GREAT_GROUND_TROOPS]]
-[[ULTIMATE_WEAPONS]]
 [[GOOD_POPULATION]]
+[[GREAT_GROUND_TROOPS]]
+        
+[[ULTIMATE_WEAPONS]]
 '''
 
 
@@ -8373,6 +8418,9 @@ SELF_SUSTAINING_LABEL
 
 TUNNELS_LABEL
 '''Subterranean Bonus'''
+
+GAIA_LABEL
+'''Gaia Bonus'''
 
 HOMEWORLD_LABEL
 '''Homeworld'''

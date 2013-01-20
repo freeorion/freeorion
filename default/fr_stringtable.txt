@@ -3286,9 +3286,9 @@ Préfére les planètes océaniques.
 [[GOOD_POPULATION]]
 '''
 
-SP_GYISACHE
-Gyisache
-SP_GYISACHE_DESC
+SP_GYSACHE
+GYSACHE
+SP_GYSACHE_DESC
 '''Cowardly, freakish sheep-like herbivores.
 Préfére les planètes marécageuses.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -3654,9 +3654,9 @@ Préfére les planètes stériles.
 '''
 
 
-SP_UGMORRS
+SP_UGMORS
 Ugmors
-SP_UGMORRS_DESC
+SP_UGMORS_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Préfére les planètes infernales.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
@@ -3705,9 +3705,9 @@ Their terran homeworld is an eerily park-like place with plants arranged with un
 The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet, and since the Hidden Gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.'''
 
 
-SP_ABADDONNIANS
+SP_ABADDONI
 Abaddoni
-SP_ABADDONNIANS_DESC
+SP_ABADDONI_DESC
 '''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
 Préfére les planètes infernales.
 [[encyclopedia LITHIC_SPECIES_TITLE]]

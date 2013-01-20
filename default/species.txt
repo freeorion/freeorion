@@ -1,989 +1,20 @@
 include "shared_macros.txt"
 
+//#######################################################\\
+//####                                               ####\\
+//####                S P E C I E S                  ####\\
+//####                                               ####\\
+//#######################################################\\
+
 // Note: Description Macros for species in the stringtables are named the same as the Effect controlling Macros in species.txt.  Copy&Paste for accurate description.
+//       Macros after the "// not for description" are not to be included in the stringtable descriptions
 
-//#######################################################\\
-//####                                               ####\\
-//####       P L A Y A B L E   S P E C I E S         ####\\
-//####                                               ####\\
-//#######################################################\\
-
-Species
-    name = "SP_HUMAN"
-    description = "SP_HUMAN_DESC"
-    Playable
-    CanProduceShips
-    CanColonize
-    
-    tags = [ "ORGANIC" "STYLISH" ]
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-
-        [[AVERAGE_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-        [[LARGE_PLANET]]
-    ]
-    
-    [[TERRAN_STANDARD_EP]]
-    
-    graphic = "icons/species/human.png"
-
-Species
-    name = "SP_SCYLIOR"
-    description = "SP_SCYLIOR_DESC"
-    //Playable
-    Native
-    CanProduceShips
-    CanColonize
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[AVERAGE_INDUSTRY]]
-        [[GREAT_RESEARCH]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
-        [[GOOD_POPULATION]]
-        
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-        [[LARGE_PLANET]]
-    ]
-    
-    [[OCEAN_STANDARD_EP]]
-    
-    graphic = "icons/species/scylior.png"
+//  L I S T   I N   A L P H A B E T I C A L   O R D E R
 
 
 Species
-    name = "SP_GYISACHE"
-    description = "SP_GYISACHE_DESC"
-    Playable
-    CanProduceShips
-    CanColonize
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[GOOD_INDUSTRY]]
-        [[GREAT_RESEARCH]]
-
-        [[BAD_GROUND_TROOPS]]
-        [[GOOD_POPULATION]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[LARGE_PLANET]]
-    ]
-    
-    [[SWAMP_STANDARD_EP]]
-    
-    graphic = "icons/species/gyisache.png"
-
-
-Species
-    name = "SP_CHATO"
-    description = "SP_CHATO_DESC"
-    Playable
-    CanProduceShips
-    CanColonize
-
-    tags = "PHOTOTROPHIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[AVERAGE_INDUSTRY]]
-        [[GREAT_RESEARCH]]
-        
-        [[BAD_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_POPULATION]]
-        [[PHOTOTROPHIC_POPULATION]]
-        [[LARGE_PLANET]]
-    ]
-    
-    [[TOXIC_BROAD_EP]]
-    
-    graphic = "icons/species/chato-matou-gormoshk.png"
-
-
-Species
-    name = "SP_TRITH"
-    description = "SP_TRITH_DESC"
-    Playable
-    CanProduceShips
-    CanColonize
-
-    tags = [ "SELF_SUSTAINING" "TELEPATHIC" ]
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[GREAT_DETECTION]]
-        [[GOOD_STEALTH]]
-        
-        [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-
-        [[AVERAGE_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_POPULATION]]
-        [[SELF_SUSTAINING_POPULATION]]
-        [[LARGE_PLANET]]
-    ]
-    
-    [[DESERT_NARROW_EP]]
-    
-    graphic = "icons/species/trith.png"
-
-
-Species
-    name = "SP_HHHOH"
-    description = "SP_HHHOH_DESC"
-    //Playable
-    Native
-    CanProduceShips
-    CanColonize
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[GOOD_WEAPONS]]
-        [[GREAT_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-        [[LARGE_PLANET]]
-    ]
-    
-    [[TUNDRA_STANDARD_EP]]
-    
-    graphic = "icons/species/hhhoh.png"
-
-
-Species
-    name = "SP_EAXAW"
-    description = "SP_EAXAW_DESC"
-    Playable
-    CanProduceShips
-    CanColonize
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[ULTIMATE_WEAPONS]]
-        [[AVERAGE_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-        [[LARGE_PLANET]]
-    ]
-    
-    [[TERRAN_STANDARD_EP]]
-    
-    graphic = "icons/species/eaxaw.png"
-
-
-Species
-    name = "SP_LAENFA"
-    description = "SP_LAENFA_DESC"
-    Playable
-    CanProduceShips
-    CanColonize
-
-    tags = [ "PHOTOTROPHIC" "TELEPATHIC" ]
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[GREAT_DETECTION]]
-        [[GREAT_STEALTH]]
-        
-        [[AVERAGE_INDUSTRY]]
-        [[BAD_RESEARCH]]
-
-        [[BAD_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[GOOD_POPULATION]]
-        [[PHOTOTROPHIC_POPULATION]]
-        [[LARGE_PLANET]]
-    ]
-    
-    [[OCEAN_STANDARD_EP]]
-    
-    graphic = "icons/species/laenfa.png"
-
-
-Species
-    name = "SP_GEORGE"
-    description = "SP_GEORGE_DESC"
-    Playable
-    CanProduceShips
-    CanColonize
-
-    tags = [ "LITHIC" "TELEPATHIC" ]
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[GOOD_INDUSTRY]]
-        [[BAD_RESEARCH]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-        [[LARGE_PLANET]]
-    ]
-    
-    [[TUNDRA_BROAD_EP]]
-    
-    graphic = "icons/species/george.png"
-
-
-Species
-    name = "SP_CRAY"
-    description = "SP_CRAY_DESC"
-    Playable
-    CanProduceShips
-    CanColonize
-    
-    tags = "ROBOTIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[BAD_INDUSTRY]]
-        [[GOOD_RESEARCH]]
-
-        [[GOOD_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_POPULATION]]
-        [[LARGE_PLANET]]
-    ]
-
-    [[BARREN_BROAD_EP]]
-    
-    graphic = "icons/species/cray.png"
-
-
-Species
-    name = "SP_EGASSEM"
-    description = "SP_EGASSEM_DESC"
-    Playable
-    CanProduceShips
-    CanColonize
-    
-    tags = "LITHIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[ULTIMATE_INDUSTRY]]
-        [[BAD_RESEARCH]]
-        
-        [[GREAT_GROUND_TROOPS]]
-
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[BAD_POPULATION]]
-        [[LARGE_PLANET]]
-    ]
-    
-    [[INFERNO_NARROW_EP]]
-    
-    graphic = "icons/species/egassem.png"
-
-
-//#######################################################\\
-//####                                               ####\\
-//####          M I N O R   S P E C I E S            ####\\
-//####                                               ####\\
-//#######################################################\\
-
-
-Species
-    name = "SP_DERTHREAN"
-    description = "SP_DERTHREAN_DESC"
-    Native
-    CanProduceShips
-    CanColonize
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-    ]
-    
-    [[TOXIC_STANDARD_EP]]
-    
-    graphic = "icons/species/derthrean.png"
-
-
-Species
-    name = "SP_TAEGHIRUS"
-    description = "SP_TAEGHIRUS_DESC"
-    Native
-    CanProduceShips
-    CanColonize
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[GOOD_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[BAD_GROUND_TROOPS]]
-        [[GOOD_POPULATION]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-    ]
-    
-    [[SWAMP_STANDARD_EP]]
-    
-    graphic = "icons/species/t-aeghirus.png"
-
-
-Species
-    name = "SP_MUURSH"
-    description = "SP_MUURSH_DESC"
-    Native
-    CanProduceShips
-    CanColonize
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[AVERAGE_INDUSTRY]]
-        [[BAD_RESEARCH]]
-        
-        [[GREAT_WEAPONS]]
-        [[GREAT_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-    ]
-    
-    [[DESERT_STANDARD_EP]]
-    
-    graphic = "icons/species/muursh.png"
-
-
-Species
-    name = "SP_ETTY"
-    description = "SP_ETTY_DESC"
-    Playable
-    //Native
-    CanProduceShips
-    CanColonize
-
-    tags = "ROBOTIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[BAD_DETECTION]]
-        [[GOOD_STEALTH]]
-    
-        [[BAD_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[GREAT_WEAPONS]]
-        [[GOOD_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-    ]
-    
-    [[DESERT_STANDARD_EP]]
-    
-    graphic = "icons/species/etty.png"
-
-
-Species
-    name = "SP_CYNOS"
-    description = "SP_CYNOS_DESC"
-    Native
-    CanProduceShips
-
-    tags = "PHOTOTROPHIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        /*[[HAS_RESEARCH_FOCUS]]*/
-        [[HAS_GROWTH_FOCUS]]
-        /*[[HAS_MINING_FOCUS]]*/
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[NO_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[GOOD_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_POPULATION]]
-        [[PHOTOTROPHIC_POPULATION]]
-    ]
-    
-    [[SWAMP_BROAD_EP]]
-    
-    graphic = "icons/species/cynos.png"
-
-
-Species
-    name = "SP_PHINNERT"
-    description = "SP_PHINNERT_DESC"
-    Native
-    CanColonize
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        /*[[HAS_RESEARCH_FOCUS]]*/
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[AVERAGE_INDUSTRY]]
-        [[NO_RESEARCH]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
-
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_POPULATION]]
-    ]
-    
-    [[SWAMP_STANDARD_EP]]
-    
-    graphic = "icons/species/phinnert.png"
-
-
-Species
-    name = "SP_SSLITH"
-    description = "SP_SSLITH_DESC"
-    Native
-    CanProduceShips
-    CanColonize
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[BAD_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[BAD_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-    ]
-    
-    [[TUNDRA_NARROW_EP]]
-    
-    graphic = "icons/species/sslith.png"
-
-
-Species
-    name = "SP_FIFTYSEVEN"
-    description = "SP_FIFTYSEVEN_DESC"
-    Native
-
-    tags = "ORGANIC"
-    
-    foci = [
-        /*[[HAS_INDUSTRY_FOCUS]]*/
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        /*[[HAS_MINING_FOCUS]]*/
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[NO_INDUSTRY]]
-        [[ULTIMATE_RESEARCH]]
-        
-        [[BAD_GROUND_TROOPS]]  
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[BAD_POPULATION]]
-    ]
-    
-    [[SWAMP_STANDARD_EP]]
-    
-    graphic = "icons/species/fifty-seven.png"
-
-
-Species
-    name = "SP_SETINON"
-    description = "SP_SETINON_DESC"
-    Native
-    CanProduceShips
-    CanColonize
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[GREAT_STEALTH]]
-        
-        [[BAD_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[NO_GROUND_TROOPS]]
-        [[GOOD_POPULATION]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-    ]
-    
-    [[SWAMP_STANDARD_EP]]
-    
-    graphic = "icons/species/amorphous-02.png"
-
-
-Species
-    name = "SP_NYMNMN"
-    description = "SP_NYMNMN_DESC"
-    Native
-    
-    tags = "SELF_SUSTAINING"
-    
-    foci = [
-        /*[[HAS_INDUSTRY_FOCUS]]*/
-        [[HAS_RESEARCH_FOCUS]]
-        /*[[HAS_GROWTH_FOCUS]]*/
-        /*[[HAS_MINING_FOCUS]]*/
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[GREAT_DETECTION]]
-        [[GOOD_STEALTH]]
-        
-        [[NO_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[BAD_GROUND_TROOPS]]
-        [[BAD_POPULATION]]
-        [[SELF_SUSTAINING_POPULATION]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-    ]
-    
-    [[DESERT_STANDARD_EP]]
-    
-    graphic = "icons/species/intangible-05.png"
-
-
-Species
-    name = "SP_TRENCHERS"
-    description = "SP_TRENCHERS_DESC"
-    Native
-    
-    Tags = "ROBOTIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        /*[[HAS_RESEARCH_FOCUS]]*/
-        /*[[HAS_GROWTH_FOCUS]]*/
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[GOOD_INDUSTRY]]
-        [[NO_RESEARCH]]
-        
-        [[BAD_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-    ]
-    
-    [[BARREN_STANDARD_EP]]
-    
-    graphic = "icons/species/robotic-02.png"
-
-Species
-    name = "SP_RAAAGH"
-    description = "SP_RAAAGH_DESC"
-    Native
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[BAD_INDUSTRY]]
-        [[NO_RESEARCH]]
-        
-        [[ULTIMATE_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_POPULATION]]
-    ]
-    
-    [[TERRAN_STANDARD_EP]]
-    
-    graphic = "icons/species/bipedial-11.png"
-    
-
-Species
-    name = "SP_BEIGEGOO"
-    description = "SP_BEIGEGOO_DESC"
-    Native
-    
-    Tags = "ROBOTIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        /*[[HAS_RESEARCH_FOCUS]]*/
-        /*[[HAS_GROWTH_FOCUS]]*/
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[GREAT_INDUSTRY]]
-        [[NO_RESEARCH]]
-        
-        [[GREAT_GROUND_TROOPS]]
-        [[GOOD_POPULATION]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-    ]
-    
-    [[RADIATED_STANDARD_EP]]
-    
-    graphic = "icons/species/beige-goo.png"
-
-
-Species
-    name = "SP_SILEXIAN"
-    description = "SP_SILEXIAN_DESC"
-    Native
-    
-    CanColonize
-    
-    Tags = "ROBOTIC"
-    
-    foci = [
-        /*[[HAS_INDUSTRY_FOCUS]]*/
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[NO_INDUSTRY]]
-        [[BAD_RESEARCH]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-    ]
-    
-    [[TERRAN_STANDARD_EP]]
-    
-    graphic = "icons/species/robotic-06.png"
-
-
-Species
-    name = "SP_KOBUNTURA"
-    description = "SP_KOBUNTURA_DESC"
-    Native
-    CanProduceShips
-    CanColonize
-    
-    tags = "SELF_SUSTAINING"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[GREAT_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[BAD_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-        [[SELF_SUSTAINING_POPULATION]]
-    ]
-    
-    [[BARREN_STANDARD_EP]]
-    
-    graphic = "icons/species/intangible-04.png"
-
-
-Species
-    name = "SP_UGMORRS"
-    description = "SP_UGMORRS_DESC"
-    Native
-    CanProduceShips
-    CanColonize
-
-    tags = "LITHIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[GOOD_INDUSTRY]]
-        [[BAD_RESEARCH]]
-        
-        [[GOOD_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
-        [[AVERAGE_POPULATION]]
-    ]
-    
-    [[INFERNO_NARROW_EP]]
-    
-    graphic = "icons/species/amorphous-06.png"
-
-
-Species
-    name = "SP_GISGUFGTHRIM"
-    description = "SP_GISGUFGTHRIM_DESC"
-    Native
-    CanProduceShips
-
-    tags = "ORGANIC"
-    
-    foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
-    ]
-    
-    effectsgroups = [
-        [[BAD_INDUSTRY]]
-        [[GOOD_RESEARCH]]
-        
-        [[BAD_GROUND_TROOPS]]
-
-        [[AVERAGE_POPULATION]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-    ]
-    
-    [[TOXIC_STANDARD_EP]]
-    
-    graphic = "icons/species/gis-guf-gthrim.png"
-    
-
-Species
-    name = "SP_ABADDONNIANS"
-    description = "SP_ABADDONNIANS_DESC"
+    name = "SP_ABADDONI"
+    description = "SP_ABADDONI_DESC"
     Native
     CanProduceShips
     CanColonize
@@ -1001,13 +32,11 @@ Species
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[BAD_RESEARCH]]
-        
+                
+        [[AVERAGE_POPULATION]]
         [[BAD_GROUND_TROOPS]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_POPULATION]]
-        
+        // not for description
         [[TUNNELS_SPECIAL]]
     ]
     
@@ -1036,14 +65,11 @@ Species
         [[GREAT_INDUSTRY]]
         [[GOOD_RESEARCH]]
         
-        [[AVERAGE_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
         [[AVERAGE_POPULATION]]
-        [[SELF_SUSTAINING_POPULATION]]
+        [[AVERAGE_GROUND_TROOPS]]
 
+        // not for description
+        
         EffectsGroup
             scope = Source
             activation = AND [
@@ -1073,44 +99,43 @@ Species
     
     graphic = "icons/species/acirema.png"
 
-Species
-    name = "SP_OURBOOLS"
-    description = "SP_OURBOOLS_DESC"
-    Native
 
-    tags = "ORGANIC"
+Species
+    name = "SP_BEIGEGOO"
+    description = "SP_BEIGEGOO_DESC"
+    Native
+    
+    Tags = "ROBOTIC"
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
+        /*[[HAS_RESEARCH_FOCUS]]*/
+        /*[[HAS_GROWTH_FOCUS]]*/
         [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
     
     effectsgroups = [
-        [[ULTIMATE_DETECTION]]
+        [[GREAT_INDUSTRY]]
+        [[NO_RESEARCH]]
         
-        [[BAD_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
-        
-        [[AVERAGE_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-        [[AVERAGE_POPULATION]]
+        [[GOOD_POPULATION]]
+        [[GREAT_GROUND_TROOPS]]
     ]
     
-    [[OCEAN_STANDARD_EP]]
+    [[RADIATED_STANDARD_EP]]
     
-    graphic = "icons/species/ourbools.png"
+    graphic = "icons/species/beige-goo.png"
+
 
 Species
-    name = "SP_VOLP"
-    description = "SP_VOLP_DESC"
-    Native
+    name = "SP_CHATO"
+    description = "SP_CHATO_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
 
-    tags = "LITHIC"
+    tags = "PHOTOTROPHIC"
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -1122,27 +147,87 @@ Species
     
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
-        [[AVERAGE_RESEARCH]]
+        [[GREAT_RESEARCH]]
         
-        [[AVERAGE_GROUND_TROOPS]]
-        [[GOOD_POPULATION]]
-         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
+        [[AVERAGE_POPULATION]]
+        [[BAD_GROUND_TROOPS]]
         
-        [[TUNNELS_SPECIAL]]
-        [[HUGE_PLANET]]
+        // not for description
+        [[LARGE_PLANET]]
     ]
     
-    [[BARREN_STANDARD_EP]]
+    [[TOXIC_BROAD_EP]]
     
-    graphic = "icons/species/volp.png"
+    graphic = "icons/species/chato-matou-gormoshk.png"
+
 
 Species
-    name = "SP_FURTHEST"
-    description = "SP_FURTHEST_DESC"
-    Native
+    name = "SP_CRAY"
+    description = "SP_CRAY_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
     
+    tags = "ROBOTIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[BAD_INDUSTRY]]
+        [[GOOD_RESEARCH]]
+        
+        [[AVERAGE_POPULATION]]
+        [[GOOD_GROUND_TROOPS]]
+        
+        // not for description
+        [[LARGE_PLANET]]
+    ]
+
+    [[BARREN_BROAD_EP]]
+    
+    graphic = "icons/species/cray.png"
+
+
+Species
+    name = "SP_CYNOS"
+    description = "SP_CYNOS_DESC"
+    Native
+    CanProduceShips
+
+    tags = "PHOTOTROPHIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        /*[[HAS_RESEARCH_FOCUS]]*/
+        [[HAS_GROWTH_FOCUS]]
+        /*[[HAS_MINING_FOCUS]]*/
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[NO_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[AVERAGE_POPULATION]]
+        [[GOOD_GROUND_TROOPS]]
+    ]
+    
+    [[SWAMP_BROAD_EP]]
+    
+    graphic = "icons/species/cynos.png"
+
+
+Species
+    name = "SP_DERTHREAN"
+    description = "SP_DERTHREAN_DESC"
+    Native
+    CanProduceShips
     CanColonize
 
     tags = "ORGANIC"
@@ -1156,22 +241,121 @@ Species
     ]
     
     effectsgroups = [
-        [[GOOD_DETECTION]]
-        [[GREAT_STEALTH]]
-        
         [[AVERAGE_INDUSTRY]]
-        [[BAD_RESEARCH]]
+        [[AVERAGE_RESEARCH]]
         
-        [[GOOD_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-        [[BAD_POPULATION]]
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_GROUND_TROOPS]]    
     ]
     
-    [[TUNDRA_STANDARD_EP]]
+    [[TOXIC_STANDARD_EP]]
     
-    graphic = "icons/species/furthest.png"
+    graphic = "icons/species/derthrean.png"
+
+
+Species
+    name = "SP_EAXAW"
+    description = "SP_EAXAW_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_GROUND_TROOPS]]
+        
+        [[ULTIMATE_WEAPONS]]
+        
+        // not for description
+        [[LARGE_PLANET]]
+    ]
+    
+    [[TERRAN_STANDARD_EP]]
+    
+    graphic = "icons/species/eaxaw.png"
+
+
+Species
+    name = "SP_EGASSEM"
+    description = "SP_EGASSEM_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
+    
+    tags = "LITHIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[ULTIMATE_INDUSTRY]]
+        [[BAD_RESEARCH]]
+        
+        [[BAD_POPULATION]]
+        [[GREAT_GROUND_TROOPS]]
+        
+        // not for description
+        [[LARGE_PLANET]]
+    ]
+    
+    [[INFERNO_NARROW_EP]]
+    
+    graphic = "icons/species/egassem.png"
+
+
+Species
+    name = "SP_ETTY"
+    description = "SP_ETTY_DESC"
+    Playable
+    //Native
+    CanProduceShips
+    CanColonize
+
+    tags = "ROBOTIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[BAD_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[AVERAGE_POPULATION]]
+        [[GOOD_GROUND_TROOPS]]
+                
+        [[GREAT_WEAPONS]]
+        
+        [[BAD_DETECTION]]
+        [[GOOD_STEALTH]]
+    ]
+    
+    [[DESERT_STANDARD_EP]]
+    
+    graphic = "icons/species/etty.png"
+
 
 Species
     name = "SP_EXOBOT"
@@ -1193,12 +377,8 @@ Species
         [[AVERAGE_INDUSTRY]]
         [[BAD_RESEARCH]]
         
-        [[BAD_GROUND_TROOPS]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
-
         [[AVERAGE_POPULATION]]
+        [[BAD_GROUND_TROOPS]]
     ]
     
     environments = [
@@ -1216,6 +396,7 @@ Species
     ]
     
     graphic = "icons/species/robotic-01.png"
+
 
 Species
     name = "SP_EXPERIMENTOR"
@@ -1235,27 +416,54 @@ Species
         [[NO_INDUSTRY]]
         [[ULTIMATE_RESEARCH]]
 
-        [[ULTIMATE_GROUND_TROOPS]]
-
         [[GOOD_POPULATION]]
-        [[SELF_SUSTAINING_POPULATION]]
-
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
+        [[ULTIMATE_GROUND_TROOPS]]
+        
+        [[ULTIMATE_STEALTH]]
+        [[ULTIMATE_DETECTION]]
     ]
 
     [[VERY_TOLERANT_EP]]
 
     graphic = "icons/species/two-headed-03.png"
 
+
 Species
-    name = "SP_SUPER_TEST"
-    description = "SP_SUPER_TEST_DESC"
-    // Playable
-    CanProduceShips
+    name = "SP_FIFTYSEVEN"
+    description = "SP_FIFTYSEVEN_DESC"
+    Native
+
+    tags = "ORGANIC"
+    
+    foci = [
+        /*[[HAS_INDUSTRY_FOCUS]]*/
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        /*[[HAS_MINING_FOCUS]]*/
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[NO_INDUSTRY]]
+        [[ULTIMATE_RESEARCH]]
+        
+        [[BAD_POPULATION]]
+        [[BAD_GROUND_TROOPS]]
+    ]
+    
+    [[SWAMP_STANDARD_EP]]
+    
+    graphic = "icons/species/fifty-seven.png"
+
+
+Species
+    name = "SP_FURTHEST"
+    description = "SP_FURTHEST_DESC"
+    Native
+    
     CanColonize
 
-    tags = [ "ORGANIC" "ROBOTIC" "LITHIC" "TELEPATHIC" ]
+    tags = "ORGANIC"
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -1266,6 +474,553 @@ Species
     ]
     
     effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[BAD_RESEARCH]]
+                
+        [[BAD_POPULATION]]
+        [[GOOD_GROUND_TROOPS]]
+        
+        [[GOOD_DETECTION]]
+        [[GREAT_STEALTH]]
+    ]
+    
+    [[TUNDRA_STANDARD_EP]]
+    
+    graphic = "icons/species/furthest.png"
+
+
+Species
+    name = "SP_GEORGE"
+    description = "SP_GEORGE_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
+
+    tags = [ "LITHIC" "TELEPATHIC" ]
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[GOOD_INDUSTRY]]
+        [[BAD_RESEARCH]]
+        
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_GROUND_TROOPS]]
+        
+        // not for description
+        [[LARGE_PLANET]]
+    ]
+    
+    [[TUNDRA_BROAD_EP]]
+    
+    graphic = "icons/species/george.png"
+
+Species
+    name = "SP_GISGUFGTHRIM"
+    description = "SP_GISGUFGTHRIM_DESC"
+    Native
+    CanProduceShips
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[BAD_INDUSTRY]]
+        [[GOOD_RESEARCH]]
+        
+        [[AVERAGE_POPULATION]]
+        [[BAD_GROUND_TROOPS]]
+    ]
+    
+    [[TOXIC_STANDARD_EP]]
+    
+    graphic = "icons/species/gis-guf-gthrim.png"
+    
+
+Species
+    name = "SP_GYSACHE"
+    description = "SP_GYSACHE_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[GOOD_INDUSTRY]]
+        [[GREAT_RESEARCH]]
+
+        [[GOOD_POPULATION]]
+        [[BAD_GROUND_TROOPS]]
+        
+        // not for description
+        [[LARGE_PLANET]]
+    ]
+    
+    [[SWAMP_STANDARD_EP]]
+    
+    graphic = "icons/species/GYSACHE.png"
+
+
+Species
+    name = "SP_HHHOH"
+    description = "SP_HHHOH_DESC"
+    //Playable
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[AVERAGE_POPULATION]]
+        [[GREAT_GROUND_TROOPS]]
+        
+        [[GOOD_WEAPONS]]
+       
+        // not for description
+        [[LARGE_PLANET]]
+    ]
+    
+    [[TUNDRA_STANDARD_EP]]
+    
+    graphic = "icons/species/hhhoh.png"
+
+
+Species
+    name = "SP_HUMAN"
+    description = "SP_HUMAN_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
+    
+    tags = [ "ORGANIC" "STYLISH" ]
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_GROUND_TROOPS]]
+        
+        // not for description
+        [[LARGE_PLANET]]
+    ]
+    
+    [[TERRAN_STANDARD_EP]]
+    
+    graphic = "icons/species/human.png"
+
+
+Species
+    name = "SP_KOBUNTURA"
+    description = "SP_KOBUNTURA_DESC"
+    Native
+    CanProduceShips
+    CanColonize
+    
+    tags = "SELF_SUSTAINING"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[GREAT_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[AVERAGE_POPULATION]]
+        [[BAD_GROUND_TROOPS]]
+    ]
+    
+    [[BARREN_STANDARD_EP]]
+    
+    graphic = "icons/species/intangible-04.png"
+
+
+Species
+    name = "SP_LAENFA"
+    description = "SP_LAENFA_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
+
+    tags = [ "PHOTOTROPHIC" "TELEPATHIC" ]
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[BAD_RESEARCH]]
+        
+        [[GOOD_POPULATION]]
+        [[BAD_GROUND_TROOPS]]
+
+        [[GREAT_DETECTION]]
+        [[GREAT_STEALTH]]
+        
+        // not for description
+        [[LARGE_PLANET]]
+    ]
+    
+    [[OCEAN_STANDARD_EP]]
+    
+    graphic = "icons/species/laenfa.png"
+
+
+Species
+    name = "SP_MUURSH"
+    description = "SP_MUURSH_DESC"
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[BAD_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[GREAT_GROUND_TROOPS]]
+        
+        [[GREAT_WEAPONS]] 
+    ]
+    
+    [[DESERT_STANDARD_EP]]
+    
+    graphic = "icons/species/muursh.png"
+
+
+Species
+    name = "SP_NYMNMN"
+    description = "SP_NYMNMN_DESC"
+    Native
+    
+    tags = "SELF_SUSTAINING"
+    
+    foci = [
+        /*[[HAS_INDUSTRY_FOCUS]]*/
+        [[HAS_RESEARCH_FOCUS]]
+        /*[[HAS_GROWTH_FOCUS]]*/
+        /*[[HAS_MINING_FOCUS]]*/
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[NO_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[BAD_POPULATION]]
+        [[BAD_GROUND_TROOPS]]
+        
+        [[GREAT_DETECTION]]
+        [[GOOD_STEALTH]]
+    ]
+    
+    [[DESERT_STANDARD_EP]]
+    
+    graphic = "icons/species/intangible-05.png"
+
+
+Species
+    name = "SP_OURBOOLS"
+    description = "SP_OURBOOLS_DESC"
+    Native
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[BAD_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+                
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_GROUND_TROOPS]]
+        
+        [[ULTIMATE_DETECTION]]
+    ]
+    
+    [[OCEAN_STANDARD_EP]]
+    
+    graphic = "icons/species/ourbools.png"
+
+
+Species
+    name = "SP_PHINNERT"
+    description = "SP_PHINNERT_DESC"
+    Native
+    CanColonize
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        /*[[HAS_RESEARCH_FOCUS]]*/
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[NO_RESEARCH]]
+                
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_GROUND_TROOPS]]
+    ]
+    
+    [[SWAMP_STANDARD_EP]]
+    
+    graphic = "icons/species/phinnert.png"
+
+
+Species
+    name = "SP_RAAAGH"
+    description = "SP_RAAAGH_DESC"
+    Native
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[BAD_INDUSTRY]]
+        [[NO_RESEARCH]]
+                
+        [[AVERAGE_POPULATION]]
+        [[ULTIMATE_GROUND_TROOPS]]
+    ]
+    
+    [[TERRAN_STANDARD_EP]]
+    
+    graphic = "icons/species/bipedial-11.png"
+    
+
+Species
+    name = "SP_SCYLIOR"
+    description = "SP_SCYLIOR_DESC"
+    //Playable
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[GREAT_RESEARCH]]
+        
+        [[GOOD_POPULATION]]
+        [[AVERAGE_GROUND_TROOPS]]
+        
+        // not for description
+        [[LARGE_PLANET]]
+    ]
+    
+    [[OCEAN_STANDARD_EP]]
+    
+    graphic = "icons/species/scylior.png"
+
+
+Species
+    name = "SP_SETINON"
+    description = "SP_SETINON_DESC"
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[BAD_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[GOOD_POPULATION]]
+        [[NO_GROUND_TROOPS]]  
+        
+        [[GREAT_STEALTH]]
+    ]
+    
+    [[SWAMP_STANDARD_EP]]
+    
+    graphic = "icons/species/amorphous-02.png"
+
+
+Species
+    name = "SP_SILEXIAN"
+    description = "SP_SILEXIAN_DESC"
+    Native
+    
+    CanColonize
+    
+    Tags = "ROBOTIC"
+    
+    foci = [
+        /*[[HAS_INDUSTRY_FOCUS]]*/
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[NO_INDUSTRY]]
+        [[BAD_RESEARCH]]
+        
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_GROUND_TROOPS]]
+    ]
+    
+    [[TERRAN_STANDARD_EP]]
+    
+    graphic = "icons/species/robotic-06.png"
+
+
+Species
+    name = "SP_SSLITH"
+    description = "SP_SSLITH_DESC"
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[BAD_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[AVERAGE_POPULATION]]
+        [[BAD_GROUND_TROOPS]]
+    ]
+    
+    [[TUNDRA_NARROW_EP]]
+    
+    graphic = "icons/species/sslith.png"
+    
+    
+Species
+    name = "SP_SUPER_TEST"
+    description = "SP_SUPER_TEST_DESC"
+    // Playable
+    CanProduceShips
+    CanColonize
+
+    tags = [ "ORGANIC" "ROBOTIC" "LITHIC" "PHOTOTROPHIC" "SELF_SUSTAINING" "TELEPATHIC" ]
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[GREAT_INDUSTRY]]
+        [[GREAT_RESEARCH]]
+        
+        [[GOOD_POPULATION]]
+        [[GREAT_GROUND_TROOPS]]
+        
+        [[ULTIMATE_WEAPONS]]
+
+        // not for description
         EffectsGroup
             scope = Source
             effects = SetDetection Value + 10000
@@ -1276,17 +1031,6 @@ Species
                 Capital
                 ]
             effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 200  // Omniscient Detection
-        
-        [[GREAT_INDUSTRY]]
-        [[GREAT_RESEARCH]]
-        
-        [[GREAT_GROUND_TROOPS]]
-        [[ULTIMATE_WEAPONS]]
-        [[GOOD_POPULATION]]
-        [[SELF_SUSTAINING_POPULATION]]
-        
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
 
     ]
 
@@ -1294,6 +1038,163 @@ Species
 
     graphic = "icons/species/other-04.png"
         
+
+Species
+    name = "SP_TAEGHIRUS"
+    description = "SP_TAEGHIRUS_DESC"
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = "ORGANIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[GOOD_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+
+        [[GOOD_POPULATION]]
+        [[BAD_GROUND_TROOPS]]
+    ]
+    
+    [[SWAMP_STANDARD_EP]]
+    
+    graphic = "icons/species/t-aeghirus.png"
+
+
+Species
+    name = "SP_TRENCHERS"
+    description = "SP_TRENCHERS_DESC"
+    Native
+    
+    Tags = "ROBOTIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        /*[[HAS_RESEARCH_FOCUS]]*/
+        /*[[HAS_GROWTH_FOCUS]]*/
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[GOOD_INDUSTRY]]
+        [[NO_RESEARCH]]
+        
+        [[AVERAGE_POPULATION]]
+        [[BAD_GROUND_TROOPS]]
+    ]
+    
+    [[BARREN_STANDARD_EP]]
+    
+    graphic = "icons/species/robotic-02.png"
+
+
+Species
+    name = "SP_TRITH"
+    description = "SP_TRITH_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
+
+    tags = [ "SELF_SUSTAINING" "TELEPATHIC" ]
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_GROUND_TROOPS]]
+        
+        [[GREAT_DETECTION]]
+        [[GOOD_STEALTH]]
+        
+        // not for description
+        [[LARGE_PLANET]]
+    ]
+    
+    [[DESERT_NARROW_EP]]
+    
+    graphic = "icons/species/trith.png"
+
+
+Species
+    name = "SP_UGMORS"
+    description = "SP_UGMORS_DESC"
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = "LITHIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[GOOD_INDUSTRY]]
+        [[BAD_RESEARCH]]
+        
+        [[AVERAGE_POPULATION]]
+        [[GOOD_GROUND_TROOPS]]
+    ]
+    
+    [[INFERNO_NARROW_EP]]
+    
+    graphic = "icons/species/amorphous-06.png"
+
+
+Species
+    name = "SP_VOLP"
+    description = "SP_VOLP_DESC"
+    Native
+
+    tags = "LITHIC"
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        
+        [[GOOD_POPULATION]]        
+        [[AVERAGE_GROUND_TROOPS]]
+        
+        // not for description
+        [[TUNNELS_SPECIAL]]
+        [[HUGE_PLANET]]
+    ]
+    
+    [[BARREN_STANDARD_EP]]
+    
+    graphic = "icons/species/volp.png"
+
+
 /*
 Species
     name = "SP_HIDDENGARDENER"
@@ -1317,8 +1218,6 @@ Species
         
         [[AVERAGE_POPULATION]]
         
-        [[ADVANCED_FOCUS_EFFECTS]]
-        [[STANDARD_CONSTRUCTION]]
         
         [[NOT_HUGE_PLANET]]
     ]
@@ -1920,10 +1819,17 @@ AVERAGE_POPULATION
 '''
         [[HOMEWORLD_BONUS_POPULATION]]
         [[ENVIRONMENT_MODIFIER]]
+        [[SELF_SUSTAINING_BONUS]]
+        [[PHOTOTROPHIC_BONUS]]
         [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
         [[GAIA_POP_MODIFIER]]
         [[TUNNELS_MODIFIER]]
         [[POPULATION_TECHS]]
+        
+        // Since all species have the same advanced focus effects and infrastructure, the macros are stashed here were they don't need to be manually included in each species macros.
+        
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_CONSTRUCTION]]
 '''
 
 BAD_POPULATION
@@ -2105,6 +2011,7 @@ GAIA_POP_MODIFIER
                 Planet environment = Good
                 TargetPopulation low = 0 high = 9999
             ]
+            accountinglabel = "GAIA_LABEL"
             effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble
 '''
 
@@ -2130,22 +2037,24 @@ POPULATION_TECHS
             effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
 '''
 
-SELF_SUSTAINING_POPULATION
+SELF_SUSTAINING_BONUS
 '''     EffectsGroup
             scope = Source
             activation = And [
                 Planet
+                HasTag "SELF_SUSTAINING"
                 TargetPopulation low = 0 high = 9999
             ]
             accountinglabel = "SELF_SUSTAINING_LABEL"
             effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble    // Gets double the base population
 '''
 
-PHOTOTROPHIC_POPULATION
+PHOTOTROPHIC_BONUS
 '''     EffectsGroup
             scope = Contains Source
             activation = AND [
                 Planet
+                HasTag "PHOTOTROPHIC"
                 Turn high = 0
                 NOT Star type = [Orange]
             ]
@@ -2155,6 +2064,7 @@ PHOTOTROPHIC_POPULATION
             scope = Source
             activation = AND [
                 Planet
+                HasTag "PHOTOTROPHIC"
                 Star type = [Blue]
                 TargetPopulation low = 0 high = 9999
             ]
@@ -2165,6 +2075,7 @@ PHOTOTROPHIC_POPULATION
             scope = Source
             activation = AND [
                 Planet
+                HasTag "PHOTOTROPHIC"
                 Star type = [White]
                 TargetPopulation low = 0 high = 9999
             ]
@@ -2175,6 +2086,7 @@ PHOTOTROPHIC_POPULATION
             scope = Source
             activation = AND [
                 Planet
+                HasTag "PHOTOTROPHIC"
                 Star type = [Red Neutron]
             ]
             accountinglabel = "DIM_STAR"
@@ -2184,6 +2096,7 @@ PHOTOTROPHIC_POPULATION
             scope = Source
             activation = AND [
                 Planet
+                HasTag "PHOTOTROPHIC"
                 Star type = [BlackHole NoStar]
             ]
             accountinglabel = "NO_STAR"
