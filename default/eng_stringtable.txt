@@ -6240,7 +6240,7 @@ CON_FRC_ENRG_CAMO
 Force-Energy Camouflage
 
 CON_FRC_ENRG_CAMO_DESC
-'''Increases the [[encyclopedia STEALTH_TITLE]] of all buildings by 50.
+'''Increases the [[encyclopedia STEALTH_TITLE]] of all buildings by 20.
 
 Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials. A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one color to another at will. While most buildings are easily visible from many uus away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.'''
 
@@ -6773,20 +6773,20 @@ SPY_DETECT_5
 Omni-scanner
 
 SPY_DETECT_5_DESC
-The ultimate in detection. Increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 300, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 90.
+The ultimate in detection. Increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 300, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 200.
 
 
 SPY_STEALTH_1
 Electromagnetic Damper
 
 SPY_STEALTH_1_DESC
-Unlocks the Electromagnetic Damper ship part and increases the [[encyclopedia STEALTH_TITLE]] of all planets, systems and buildings by 5. This bonus is not cumulative with that of other stealth techs.
+Unlocks the Electromagnetic Damper ship part and increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20. This bonus is not cumulative with that of other stealth techs.
 
 SPY_STEALTH_2
 Absorption Field
 
 SPY_STEALTH_2_DESC
-'''Increases the [[encyclopedia STEALTH_TITLE]] of all planets, systems, and buildings by 30. This bonus is not cumulative with that of other stealth techs.
+'''Increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 40. This bonus is not cumulative with that of other stealth techs.
 
 Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the [[encyclopedia STEALTH_TITLE]] of a ship can be greatly increased.'''
 
@@ -6794,13 +6794,13 @@ SPY_STEALTH_3
 Dimensional Cloak
 
 SPY_STEALTH_3_DESC
-Unlocks the Dimensional Cloak ship part and increases the [[encyclopedia STEALTH_TITLE]] of all planets, systems and buildings by 15. This bonus is not cumulative with that of other stealth techs.
+Unlocks the Dimensional Cloak ship part and increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 60. This bonus is not cumulative with that of other stealth techs.
 
 SPY_STEALTH_4
 Phasing Cloak
 
 SPY_STEALTH_4_DESC
-'''Increases the [[encyclopedia STEALTH_TITLE]] of all planets, systems and buildings by 80. This bonus is not cumulative with that of other stealth techs.
+'''Increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 80. This bonus is not cumulative with that of other stealth techs.
 
 Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
 

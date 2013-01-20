@@ -633,6 +633,7 @@ Special
 Special
     name = "CLOUD_COVER_MASTER_SPECIAL"
     description = "CLOUD_COVER_MASTER_SPECIAL_DESC"
+    stealth = 30
     effectsgroups = [
         [[STEALTH_BOOST_PLUS_PLUS]]
         [[SYSTEM_STEALTH_PLUS_PLUS]]
@@ -659,19 +660,6 @@ Special
             effects = RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
 
         EffectsGroup
-            scope = And [
-                Contains Source
-                System
-            ]
-            activation = Not ContainedBy Contains Or [
-                HasSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
-                HasSpecial "DIM_RIFT_SLAVE_SPECIAL"
-                HasSpecial "VOID_SLAVE_SPECIAL"
-            ]
-            stackinggroup = "TECH_STEALTH_STACK"
-            effects = SetStealth Value + [[LOW_STEALTH]]
-
-        EffectsGroup
             scope = Source
             effects = SetTexture name = "planets/overlays/clouds.png" 
     ]
@@ -680,6 +668,7 @@ Special
 Special
     name = "VOLCANIC_ASH_MASTER_SPECIAL"
     description = "VOLCANIC_ASH_MASTER_SPECIAL_DESC"
+    stealth = 50
     effectsgroups = [
         [[STEALTH_BOOST_PLUS_PLUS]]
         [[SYSTEM_STEALTH_PLUS_PLUS]]
@@ -718,18 +707,6 @@ Special
             effects = RemoveSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
 
         EffectsGroup
-            scope = And [
-                Contains Source
-                System
-            ]
-            activation = Not ContainedBy Contains Or [
-                HasSpecial "DIM_RIFT_SLAVE_SPECIAL"
-                HasSpecial "VOID_SLAVE_SPECIAL"
-            ]
-            stackinggroup = "TECH_STEALTH_STACK"
-            effects = SetStealth Value + [[MEDIUM_STEALTH]]
-
-        EffectsGroup
             scope = Source
             effects = SetTexture name = "planets/overlays/ash.png" 
     ]
@@ -738,6 +715,7 @@ Special
 Special
     name = "DIM_RIFT_MASTER_SPECIAL"
     description = "DIM_RIFT_MASTER_SPECIAL_DESC"
+    stealth = 70
     effectsgroups = [
         [[STEALTH_BOOST_PLUS_PLUS]]
         [[SYSTEM_STEALTH_PLUS_PLUS]]
@@ -770,14 +748,6 @@ Special
             effects = RemoveSpecial "DIM_RIFT_SLAVE_SPECIAL"
 
         EffectsGroup
-            scope = And [
-                Contains Source
-                System
-            ]
-            activation = Not ContainedBy Contains HasSpecial "VOID_SLAVE_SPECIAL"
-            effects = SetStealth Value + [[HIGH_STEALTH]]
-
-        EffectsGroup
             scope = Source
             effects = SetTexture name = "planets/overlays/rift.png" 
     ]
@@ -786,6 +756,7 @@ Special
 Special
     name = "VOID_MASTER_SPECIAL"
     description = "VOID_MASTER_SPECIAL_DESC"
+    stealth = 90
     effectsgroups = [
         [[STEALTH_BOOST_PLUS_PLUS]]
         [[SYSTEM_STEALTH_PLUS_PLUS]]
@@ -814,14 +785,6 @@ Special
                 Not OwnerHasTech "SPY_STEALTH_4"
             ]
             effects = RemoveSpecial "VOID_SLAVE_SPECIAL"
-
-        EffectsGroup
-            scope = And [
-                Contains Source
-                System
-            ]
-            stackinggroup = "TECH_STEALTH_STACK"
-            effects = SetStealth Value + [[VERY_HIGH_STEALTH]]
     ]
     graphic = "icons/specials_huge/void.png"
 

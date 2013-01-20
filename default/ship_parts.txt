@@ -677,7 +677,7 @@ Part
             scope = WithinDistance 0 Source
             activation = Source
             stackinggroup = "SP_DISTORTION_MODULATOR_STACK"
-            effects = SetStealth Value - 10
+            effects = SetStealth Value - 20
     icon = ""
 
 Part

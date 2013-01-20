@@ -1683,7 +1683,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Building
             ]
-            effects = SetStealth Value + 10
+            effects = SetStealth Value + 20
 
 Tech
     name = "CON_PLANET_DRIVE"
