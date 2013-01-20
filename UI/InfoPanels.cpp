@@ -2447,7 +2447,7 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
                                  const std::map<std::string, float>& population_counts) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, BROWSE_TEXT_WIDTH, GG::Y1)
 {
-    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
+    //const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
     const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
     const GG::Y ROW_HEIGHT(MeterIconSize().y);
 
@@ -2457,8 +2457,9 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
 
     m_offset = GG::Pt(GG::X0, ICON_BROWSE_ICON_HEIGHT/2); //lower the window
 
-    m_title_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, GG::Y0 + m_offset.y, BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text,
-        font_bold, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    m_title_text = new GG::TextControl(GG::X(EDGE_PAD) + m_offset.x, GG::Y0 + m_offset.y,
+                                       BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text, font_bold,
+                                       ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     AttachChild(m_title_text);
 
 

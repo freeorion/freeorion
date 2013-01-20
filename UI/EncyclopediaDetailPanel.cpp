@@ -560,7 +560,6 @@ void EncyclopediaDetailPanel::Refresh() {
     if (m_items.empty())
         return;
 
-    const Universe& universe = GetUniverse();
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     const ObjectMap& objects = Objects();
 

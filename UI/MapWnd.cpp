@@ -2306,9 +2306,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 for (std::set<int>::iterator endSys=++nextSys; endSys!=resPoolSysIt->second.end(); endSys++) {
                     //Logger().debugStream() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*startSys) << " to "<< (*endSys) ;
                     std::vector<int> path = GetLeastJumps(*startSys, *endSys, resPoolToGroupMap[resPoolSysIt->first], resource_supply_lanes, Objects());
-                    int plen = path.size();
-                    //Logger().debugStream() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< plen ;
-                    for (std::vector<int>::iterator pathSys= path.begin(); pathSys!= path.end(); pathSys++) {
+                    //Logger().debugStream() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< path.size();
+                    for (std::vector<int>::iterator pathSys = path.begin(); pathSys!= path.end(); pathSys++) {
                         resGroupCores[ resPoolSysIt->first ].insert(*pathSys);
                         resGrpCoreMembers.insert(*pathSys);
                         memberToPool[*pathSys] = resPoolSysIt->first;
@@ -4383,7 +4382,7 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects) 
     const ObjectMap& objects = GetUniverse().Objects();
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
-    const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
+    //const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
 
     if (object_id == INVALID_OBJECT_ID) {

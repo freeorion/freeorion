@@ -1767,7 +1767,6 @@ public:
                 continue;
 
             ShipRow* row = new ShipRow(GG::X1, row_size.y, ship_id);
-            ShipsListBox::iterator row_it = Insert(row);
             row->Resize(row_size);
         }
 

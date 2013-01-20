@@ -58,7 +58,7 @@ namespace {
         GetUniverse().UpdateMeterEstimates(objvec);
     }
 
-    void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                   &Universe::UpdateMeterEstimates;
+    //void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                   &Universe::UpdateMeterEstimates;
 
     double                  LinearDistance(const Universe& universe, int system1_id, int system2_id) {
         double retval = 9999999.9;  // arbitrary large value

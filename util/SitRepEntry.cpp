@@ -214,21 +214,21 @@ SitRepEntry CreatePlanetColonizedSitRep(int planet_id) {
 SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id) {
     const Fleet* fleet = GetFleet(fleet_id);
 
-    bool system_contains_recipient_empire_planets = false;
-    if (const System* system = GetSystem(system_id)) {
-        std::vector<int> system_planets = system->FindObjectIDs<Planet>();
-        for (std::vector<int>::const_iterator planet_it = system_planets.begin();
-             planet_it != system_planets.end(); ++planet_it)
-        {
-            const Planet* planet = GetPlanet(*planet_it);
-            if (!planet || planet->Unowned())
-                continue;
-            if (planet->OwnedBy(recipient_empire_id)) {
-                system_contains_recipient_empire_planets = true;
-                break;
-            }
-        }
-    }
+    //bool system_contains_recipient_empire_planets = false;
+    //if (const System* system = GetSystem(system_id)) {
+    //    std::vector<int> system_planets = system->FindObjectIDs<Planet>();
+    //    for (std::vector<int>::const_iterator planet_it = system_planets.begin();
+    //         planet_it != system_planets.end(); ++planet_it)
+    //    {
+    //        const Planet* planet = GetPlanet(*planet_it);
+    //        if (!planet || planet->Unowned())
+    //            continue;
+    //        if (planet->OwnedBy(recipient_empire_id)) {
+    //            system_contains_recipient_empire_planets = true;
+    //            break;
+    //        }
+    //    }
+    //}
 
     // TODO: More variants for systems with / without recipient-owned planets
 
