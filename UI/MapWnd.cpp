@@ -1926,8 +1926,10 @@ void MapWnd::InitTurnRendering() {
         boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
         std::string shader_text;
         ReadFile(shader_path, shader_text);
-        m_scanline_shader = boost::shared_ptr<ShaderProgram>(
-            ShaderProgram::shaderProgramFactory("", shader_text));
+        if (!shader_text.empty()) {
+            m_scanline_shader = boost::shared_ptr<ShaderProgram>(
+                ShaderProgram::shaderProgramFactory("", shader_text));
+        }
     }
 
     // adjust size of map window for universe and application size
