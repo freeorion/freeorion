@@ -6,6 +6,7 @@ import FleetUtilsAI
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
 import AIstate
+import ProductionAI
 
 from AIAbstractMission import AIAbstractMission
 
@@ -166,7 +167,7 @@ class AIFleetMission(AIAbstractMission):
                                 if f2MType  in [  AIFleetMissionType.FLEET_MISSION_DEFEND,  
                                                                     AIFleetMissionType.FLEET_MISSION_SECURE, #actually, currently this is probably the onle one of all four that should really be possibile in this situation
                                                                     ]:
-                                    needLeft = 1.5*sum( [  (sysStat.get('fleetThreat', 0)-max(0,  sysStat.get('monsterThreat', 0)-200) ) for sysStat in 
+                                    needLeft = 1.5*sum( [  sysStat.get('fleetThreat', 0) for sysStat in 
                                                                                                           [foAI.foAIstate.systemStatus.get(neighbor, {}) for neighbor in  
                                                                                                           [ nid for nid in foAI.foAIstate.systemStatus.get(systemID, {}).get('neighbors', []) if nid != mMT0ID    ]   ]  ] )
                                     fBRating = foAI.foAIstate.getRating(fid)
@@ -270,7 +271,8 @@ class AIFleetMission(AIAbstractMission):
             else: #check that we're not held up by a Big Monster
                 if aiFleetOrder.getAIFleetOrderType() == AIFleetOrderType.ORDER_MOVE:
                     thisSysID = aiFleetOrder.getTargetAITarget().getTargetID()
-                    if (foAI.foAIstate.systemStatus.setdefault(thisSysID, {}).setdefault('monsterThreat', 0) > 3000) or (fo.currentTurn() <20  and foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'] > 300):  #move blocked by Big Monster
+                    thisStatus = foAI.foAIstate.systemStatus.setdefault(thisSysID, {})
+                    if ( thisStatus.get('monsterThreat', 0) >  fo.currentTurn() * ProductionAI.curBestMilShipRating()/4.0 )   :
                         if ( ( (self.getAIMissionTypes() + [-1] )[0] not in [  AIFleetMissionType.FLEET_MISSION_ATTACK,   
                                                                                         AIFleetMissionType.FLEET_MISSION_MILITARY, 
                                                                                         AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN, 

@@ -29,6 +29,8 @@ hullStats = {
 
 
 def curBestMilShipRating():
+    if (fo.currentTurn()+1) in bestMilRatingsHistory:
+        bestMilRatingsHistory.clear()
     if fo.currentTurn() not in bestMilRatingsHistory:
         bestShip,  bestDesign,  buildChoices = getBestShipInfo( AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
         if bestDesign is None:
@@ -547,6 +549,7 @@ def generateProductionOrders():
     
 
     movedCapital=False
+    bldgExpense=0.0
     if not homeworld:
         print "no capital, should get around to capturing or colonizing a new one"#TODO
     else:
@@ -574,7 +577,6 @@ def generateProductionOrders():
             print ""
             print "Buildings already in Production Queue:"
             capitolQueuedBldgs=[]
-            bldgExpense=0.0
             for element in [e for e in productionQueue if (e.buildType == AIEmpireProductionTypes.BT_BUILDING)]:
                 bldgExpense += element.allocation
                 if ( element.locationID==homeworld.id):
@@ -963,7 +965,7 @@ def generateProductionOrders():
                     for bldg in planet.buildingIDs:
                         if universe.getObject(bldg).buildingTypeName  == bldName:
                             res=fo.issueScrapOrder( bldg)
-                            print "Tried scrapping %s at planet %s,  got result %d"%(bldName,  planet.Name,  res)
+                            print "Tried scrapping %s at planet %s,  got result %d"%(bldName,  planet.name,  res)
 
 
     totalPPSpent = fo.getEmpire().productionQueue.totalSpent
@@ -974,9 +976,10 @@ def generateProductionOrders():
 
     print ""
     print "Possible ship designs to build:"
-    for shipDesignID in empire.availableShipDesigns:
-        shipDesign = fo.getShipDesign(shipDesignID)
-        print "    " + str(shipDesign.name(True)) + " cost:" + str(shipDesign.productionCost(empire.empireID,  homeworld.id) )+ " time:" + str(shipDesign.productionTime(empire.empireID,  homeworld.id))
+    if homeworld:
+        for shipDesignID in empire.availableShipDesigns:
+            shipDesign = fo.getShipDesign(shipDesignID)
+            print "    " + str(shipDesign.name(True)) + " cost:" + str(shipDesign.productionCost(empire.empireID,  homeworld.id) )+ " time:" + str(shipDesign.productionTime(empire.empireID,  homeworld.id))
 
     print ""
     print "Projects already in Production Queue:"
@@ -1112,7 +1115,7 @@ def generateProductionOrders():
         else:
             loc = choice(buildChoices)
         numShips=1
-        perTurnCost = (float(bestDesign.productionCost(empire.empireID,  homeworld.id)) / bestDesign.productionTime(empire.empireID,  loc))
+        perTurnCost = (float(bestDesign.productionCost(empire.empireID,  loc)) / bestDesign.productionTime(empire.empireID,  loc))
         if  not ( makingColonyShip ): #TODO: consider whether to allow multiples of colony  ships; if not, priority sampling gets skewed
             while ( totalPP > 40*perTurnCost):
                 numShips *= 2

@@ -94,7 +94,7 @@ class AIstate(object):
         self.exploredSystemIDs = {}
         self.unexploredSystemIDs = {self.origHomeSystemID:1}
         self.fleetStatus={}
-        self.systemStatus={} #keys: 'fleetThreat'. 'planetThreat', 'monsterThreat', 'myfleets', 'neighbors', 'name'
+        self.systemStatus={} #keys: 'fleetThreat'. 'planetThreat', 'monsterThreat' (specifically, immobile nonplanet threat), 'myfleets', 'neighbors', 'name'
         self.needsEmergencyExploration=[]
         self.newlySplitFleets={}
         self.aggression=aggression
@@ -270,11 +270,6 @@ class AIstate(object):
                 print "Can't see into system %d ( %s ) -- basing threat assessment on old info and lost ships"%(sysID,  sysStatus.get('name',  "name unknown"))
                 sysStatus['planetThreat'] = int( sysStatus.get('planetThreat',  0) ) # if no current info, leave as previous, or 0 if no previous rating
                 sysStatus['fleetThreat'] = int( max(enemyRating,  max( sysStatus.get('fleetThreat',  0) ,  1.05*sum(fleetsLostBySystem.get(sysID,  []) )))   ) # if no current info, leave as previous, or 0 if no previous rating ,  or rating of fleets lost
-                if sysStatus.get('monsterThreat',  0) == 0:
-                    sysStatus['monsterThreat']=0
-                else:
-                    sysStatus['monsterThreat']=int( max( sysStatus.get('monsterThreat',  0) ,  1.05*sum(fleetsLostBySystem.get(sysID,  []) ))   ) # if no current info, leave as previous, or 0 if no previous rating ,  or rating of fleets lost
-                #self.systemStatus[sysID] = sysStatus #should no longer be necessary because of use of setdefault
                 continue
             else: #system considered visible #TODO: reevaluate as visibility rules change
                 threat=0
@@ -285,26 +280,22 @@ class AIstate(object):
                     sawContents=True #apparently can be logged as visisble for rest of turn even if can no longer get sys contents
                     fleet = universe.getFleet(fleetID)
                     if ( fleet) and  (not fleet.ownedBy(self.empireID)):
-                        if fleet.hasMonsters:
+                        if fleet.speed==0:
                             monsterThreat += self.rateFleet(fleetID).get('overall',0)#
                         else:
                             threat += self.rateFleet(fleetID).get('overall',0)#currently treating all unowned fleets as hostile
                 if sawContents:
-                    sysStatus['fleetThreat'] = max( int( threat )+int(monsterThreat),  1.05*sum(fleetsLostBySystem.get(sysID,  []) ))  #fleetThreat always includes monster threat, and may not have seen stealthed enemies
+                    sysStatus['fleetThreat'] = max( int( threat ),  1.05*sum(fleetsLostBySystem.get(sysID,  []) ))  #fleetThreat always includes monster threat, and may not have seen stealthed enemies
                     sysStatus['monsterThreat']=int(monsterThreat)
                 else:
                     sysStatus['fleetThreat'] = int( max( sysStatus.get('fleetThreat',  0) ,  1.05*sum(fleetsLostBySystem.get(sysID,  []) ))  )
-                    if sysStatus.get('monsterThreat',  0)== 0:
-                        sysStatus['monsterThreat']=0
-                    else:
-                        sysStatus['monsterThreat']=  int( max( sysStatus.get('monsterThreat',  0) ,  1.05*sum(fleetsLostBySystem.get(sysID,  []) ))  )
-                    threat=0
+                threat=0
                 for planetID in system.planetIDs:
                     planet = universe.getPlanet(planetID)
                     # even if planet object says we own it, if we can't see it then we must have lost ownership
                     if planet and ( not planet.unowned ) and not (planet.ownedBy(self.empireID) and  (universe.getVisibility(planetID,  self.empireID) >= fo.visibility.partial) ) :
                         try:
-                            threat += ( planet.currentMeterValue(fo.meterType.defense) ) * ( planet.currentMeterValue(fo.meterType.shield) +1)
+                            threat += ( planet.currentMeterValue(fo.meterType.defense) ) * ( planet.currentMeterValue(fo.meterType.defense)+planet.currentMeterValue(fo.meterType.shield) )
                         except:
                             print "Error:  couldn't read meters for threat assessment of visible planet %d : %s"%(planetID,  planet.name)
                             print "Error: exception triggered and caught:  ",  traceback.format_exc()
@@ -335,11 +326,7 @@ class AIstate(object):
                 for neighborID in neighbors:
                     neighborStatus= self.systemStatus.get(neighborID,  {})
                     nfthreat = neighborStatus.get('fleetThreat', 0)
-                    nmthreat = neighborStatus.get('monsterThreat', 0)
-                    if nmthreat > 1000:  # the really big monsters don't travel
-                        threat += 0.5* max(0,  (nfthreat - nmthreat) )
-                    else:
-                        threat += 0.5* nfthreat
+                    threat += 0.5* nfthreat
                         
                 sysStatus['neighborThreat'] = int( threat + 0.5 )
                 self.systemStatus[sysID] = sysStatus

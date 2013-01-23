@@ -265,8 +265,10 @@ def calculateMilitaryPriority():
     empire = fo.getEmpire()
     empireID = empire.empireID
     capitalID = PlanetUtilsAI.getCapital()
-    homeworld = universe.getPlanet(capitalID)
-    
+    if capitalID:
+        homeworld = universe.getPlanet(capitalID)
+    else:
+        return 0# no capitol (not even a capitol-in-the-making), means can't produce any ships
     targetPlanetIDs =  [pid for pid, pscore, trp in AIstate.invasionTargets[:10] ] + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:10]  ] + [pid for pid,  pscore in foAI.foAIstate.colonisableOutpostIDs[:10]  ]
     
     mySystems = set( AIstate.popCtrSystemIDs ).union( AIstate.outpostSystemIDs   )

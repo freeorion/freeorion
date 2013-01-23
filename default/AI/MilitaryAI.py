@@ -168,13 +168,13 @@ def getMilitaryFleets(tryReset=True):
     # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
     if len( otherTargetedSystemIDs ) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0))  )   for oSID in   otherTargetedSystemIDs      ]
+        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0))  )   for oSID in   otherTargetedSystemIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
             curAlloc=0.8*alreadyAssignedRating[sid]
             thisAlloc=0
-            if thrt>curAlloc and remainingMilRating > 10+ 1.5*(thrt-curAlloc) and foAI.foAIstate.systemStatus.get(sid, {}).get('monsterThreat', 0) < 0.4*totMilRating: #only record an allocation for this invasion if we have enough rating available
+            if thrt>curAlloc and remainingMilRating > (10+ 1.5*(thrt-curAlloc)): #only record an allocation for this invasion if we have enough rating available
                 thisAlloc =int(10.99999 + (thrt-curAlloc)*1.5)
                 allocations.append(  (sid,  thisAlloc,  False,  3) )
                 remainingMilRating -= thisAlloc
@@ -194,13 +194,13 @@ def getMilitaryFleets(tryReset=True):
     # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
     if len( otherTargetedSystemIDs ) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0))  )   for oSID in   otherTargetedSystemIDs      ]
+        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0))  )   for oSID in   otherTargetedSystemIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
             curAlloc=0.8*alreadyAssignedRating[sid]
             thisAlloc=0
-            if thrt>curAlloc and remainingMilRating > 10+ 1.5*(thrt-curAlloc) and foAI.foAIstate.systemStatus.get(sid, {}).get('monsterThreat', 0) < 0.4*totMilRating: #only record an allocation for this invasion if we have enough rating available
+            if thrt>curAlloc and remainingMilRating > 10+ 1.5*(thrt-curAlloc) : #only record an allocation for this invasion if we have enough rating available
                 thisAlloc =int(10.99999 + (thrt-curAlloc)*1.5)
                 allocations.append(  (sid,  thisAlloc,  False,  3) )
                 remainingMilRating -= thisAlloc
@@ -216,13 +216,13 @@ def getMilitaryFleets(tryReset=True):
     # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
     if len( otherTargetedSystemIDs ) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  safetyFactor*(threatBias +foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0)  ))   for oSID in   otherTargetedSystemIDs      ]
+        otSysThreat = [  ( oSID,  safetyFactor*(threatBias +foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0)  ))   for oSID in   otherTargetedSystemIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
             curAlloc=0.8*alreadyAssignedRating[sid]
             thisAlloc=0
-            if (thrt > curAlloc) and remainingMilRating > 1.5*(thrt-curAlloc)  and foAI.foAIstate.systemStatus.get(sid, {}).get('monsterThreat', 0) < 0.4*totMilRating:
+            if (thrt > curAlloc) and remainingMilRating > 1.5*(thrt-curAlloc):
                 thisAlloc = min( min( int(0.99999 + (thrt-curAlloc)*1.5),  remainingMilRating ),  0.5*availMilRating)
                 allocations.append(  (sid,  thisAlloc,  False,  2.0) )
                 remainingMilRating -= thisAlloc
@@ -248,13 +248,13 @@ def getMilitaryFleets(tryReset=True):
     # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
     if len( otherTargetedSystemIDs ) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0)  ))   for oSID in   otherTargetedSystemIDs      ]
+        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0)  ))   for oSID in   otherTargetedSystemIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
             curAlloc=0.8*alreadyAssignedRating[sid]
             thisAlloc=0
-            if (thrt > curAlloc) and remainingMilRating > 1.5*(thrt-curAlloc)  and foAI.foAIstate.systemStatus.get(sid, {}).get('monsterThreat', 0) < 0.4*totMilRating:
+            if (thrt > curAlloc) and remainingMilRating > 1.5*(thrt-curAlloc):
                 thisAlloc = min( min( int(0.99999 + (thrt-curAlloc)*1.5),  remainingMilRating ),  0.5*availMilRating)
                 allocations.append(  (sid,  thisAlloc,  False,  10) )
                 remainingMilRating -= thisAlloc
@@ -303,7 +303,7 @@ def getMilitaryFleets(tryReset=True):
     # for these, calc fleet  threat only, no neighbor threat, but use a multiplier for fleet safety
     if len(exploTargetIDs) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0) ))   for oSID in   exploTargetIDs      ]
+        otSysThreat = [  ( oSID,  safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0) ))   for oSID in   exploTargetIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         if availMilRating <1125:
@@ -337,7 +337,7 @@ def getMilitaryFleets(tryReset=True):
     # for these, calc fleet  threat only, no neighbor threat, but use a multiplier for fleet safety
     if len(borderTargets) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0))  )   for oSID in   borderTargets      ]
+        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0))  )   for oSID in   borderTargets      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:

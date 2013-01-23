@@ -7,10 +7,12 @@ import AITarget
 import PlanetUtilsAI
 import TechsListsAI
 import ProductionAI 
+import AIDependencies
 
 empireSpecies = {}
 empireSpeciesSystems={}
 empireColonizers = {}
+activeGrowthSpecials={}
 annexableSystemIDs=set([])
 annexableRing1=set([])
 annexableRing2=set([])
@@ -426,7 +428,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             return 0   
         elif ( planet.size  ==  fo.planetSize.asteroids ):
             if  (species and species.name  in [  "SP_EXOBOT", "SP_SUPER_TEST"  ]):
-                for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] : #even though as of time of writing only crystals can be in asteroids it seems
+                for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] : 
                     if special in planetSpecials:
                         retval+=60
                     else:
@@ -479,6 +481,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             if special in planetSpecials:
                 popSizeMod -= 1
 
+        """
         for special, tag in [ ("PROBIOTIC_SPECIAL",  "ORGANIC"),
                                                            ("FRUIT_SPECIAL",  "ORGANIC"),
                                                            ("SPICE_SPECIAL",  "ORGANIC"),
@@ -488,13 +491,11 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                                                            ("MINERALS_SPECIAL",  "LITHIC"),
                                                            ("METALOIDS_SPECIAL",  "LITHIC"),
                                                      ]:
-            if special in planetSpecials:
-                valMod += 5  # extra bonus due to potential applicability to other planets, or to industry
-                if  tag in tagList:
-                    popSizeMod += 1
-                #    print "planet %s had special %s that triggers pop mod for species %s"%(planet.name,  special,  species.name)
-                #else:
-                #    print "planet %s had special %s without pop mod for species %s"%(planet.name,  special,  species.name)
+                                                     """
+        for special in [ spec for spec in AIDependencies.metabolimBoosts  if spec in planetSpecials]:
+            valMod += 10  # extra bonus due to potential applicability to other planets
+        for thisTag in [ tag for tag in tagList if tag in  AIDependencies.metabolims]:
+            popSizeMod +=  len( (set(planetSpecials).union([key for key in activeGrowthSpecials.keys() if  len(activeGrowthSpecials[key])>0 ] )).intersection(AIDependencies.metabolimBoostMap.get(thisTag,  []) ) )
             
         popSize = planet.size * popSizeMod
 
