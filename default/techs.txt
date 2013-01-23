@@ -1710,8 +1710,6 @@ Tech
     prerequisites = "CON_GAL_INFRA"
     unlock = [
         Item type = Building name = "BLD_STARGATE"
-        Item type = Building name = "BLD_STARGATE_ACTIVATOR"
-        Item type = Building name = "BLD_STARGATE_BEACON"
     ]
 
 Tech

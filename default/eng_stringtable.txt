@@ -3326,6 +3326,11 @@ Evacuees have settled at %planet%.
 EFFECT_EVACUEES_LABEL
 Evacuees
 
+EFFECT_STARGATE
+The fleet %fleet% has traveled by Stargate to the %system% system.
+EFFECT_STARGATE_LABEL
+Stargate Use
+
 
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
@@ -4517,8 +4522,14 @@ FOCUS_STEALTH
 Stealth
 FOCUS_BIOTERROR
 Bioterror
-FOCUS_STARGATE
-Stargate
+FOCUS_STARGATE_SEND
+Stargate Send
+FOCUS_STARGATE_SEND_DESC
+Send ships in the system through the Stargate
+FOCUS_STARGATE_RECEIVE
+Stargate Receive
+FOCUS_STARGATE_RECEIVE_DESC
+Open the Stargate to ships being sent from elsewhere
 FOCUS_PLANET_DRIVE
 Planet Drive
 FOCUS_DISTORTION
@@ -7412,21 +7423,9 @@ BLD_STARGATE
 Stargate
 
 BLD_STARGATE_DESC
-'''Capable of creating a shortcut through space-time between itself and any other stargate owned by the empire.
+'''Capable of creating a shortcut through space-time between itself and any other stargate owned by the empire. The power expenditures of such a device can shut down a whole planet while it is being activated, although there are no adverse effects at other times. Unfortunately, due to quantum fluctuations, it is impossible to predict where a sent ship will end up if more than one Stargate is open for receiving at a time.
 
-To activate the stargate, set the planet to the Stargate focus, and build a stargate activator on a planet in the source system, and a stargate beacon on a planet set to the Stargate focus in the destination system.'''
-
-BLD_STARGATE_ACTIVATOR
-Stargate Activator
-
-BLD_STARGATE_ACTIVATOR_DESC
-Designates the source of ships being sent through a stargate.
-
-BLD_STARGATE_BEACON
-Stargate Beacon
-
-BLD_STARGATE_BEACON_DESC
-Designates the destination of ships being sent through a stargate.
+To activate the stargate, set the planet to the Stargate Send focus and a planet with a Stargate in another system to the Stargate Receive focus.'''
 
 BLD_GAS_GIANT_GEN
 Gas Giant Generator

@@ -1094,62 +1094,18 @@ BuildingType
 BuildingType
     name = "BLD_STARGATE"
     description = "BLD_STARGATE_DESC"
-    buildcost = 125
-    buildtime = 5
+    buildcost = 250 + 100 *
+                    Count condition = And [
+                        Building "BLD_STARGATE"
+                        OwnedBy TheEmpire Source.Owner
+                    ]
+    buildtime = 10
     tags = "ORBITAL"
     location = AND [
         Not Contains Building "BLD_STARGATE"
         OwnedBy TheEmpire Source.Owner
-        ]
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                ContainedBy Contains Source
-                Fleet
-                OwnedBy TheEmpire Source.Owner
-            ]
-            activation = And [
-                ContainedBy Contains Building "BLD_STARGATE_ACTIVATOR"
-                Focus "FOCUS_STARGATE"
-            ]
-            effects = MoveTo And [
-                Focus "FOCUS_STARGATE"
-                Contains Building "BLD_STARGATE_BEACON"
-                OwnedBy TheEmpire Source.Owner
-            ]
+    ]
     icon = ""
-
-BuildingType
-    name = "BLD_STARGATE_ACTIVATOR"
-    description = "BLD_STARGATE_ACTIVATOR_DESC"
-    buildcost = 1
-    buildtime = 1
-    location = AND [
-        Not Contains Building "BLD_STARGATE_ACTIVATOR"
-        OwnedBy TheEmpire Source.Owner
-        ]
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = Destroy
-    icon = ""
-
-BuildingType
-    name = "BLD_STARGATE_BEACON"
-    description = "BLD_STARGATE_BEACON_DESC"
-    buildcost = 1
-    buildtime = 1
-    location = AND [
-        Not Contains Building "BLD_STARGATE_BEACON"
-        OwnedBy TheEmpire Source.Owner
-        ]
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = Destroy
-    icon = "icons/building/beacon.png"
 
 BuildingType
     name = "BLD_GAS_GIANT_GEN"

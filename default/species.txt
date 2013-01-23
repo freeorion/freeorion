@@ -1762,8 +1762,8 @@ HAS_ADVANCED_FOCI
             graphic = "icons/focus/bioterror.png"
 
         Focus
-            name = "FOCUS_STARGATE"
-            description = "FOCUS_STARGATE_DESC"
+            name = "FOCUS_STARGATE_SEND"
+            description = "FOCUS_STARGATE_SEND_DESC"
             location = Or [
                 Contains Building "BLD_STARGATE"
                 And [
@@ -1771,7 +1771,19 @@ HAS_ADVANCED_FOCI
                     OwnerHasTech "CON_STARGATE"
                 ]
             ]
-            graphic = "icons/focus/stargate.png"
+            graphic = "icons/focus/stargate_send.png"
+
+        Focus
+            name = "FOCUS_STARGATE_RECEIVE"
+            description = "FOCUS_STARGATE_RECEIVE_DESC"
+            location = Or [
+                Contains Building "BLD_STARGATE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_STARGATE"
+                ]
+            ]
+            graphic = "icons/focus/stargate_receive.png"
 
         Focus
             name = "FOCUS_PLANET_DRIVE"
@@ -2128,25 +2140,31 @@ ADVANCED_FOCUS_EFFECTS
 
         EffectsGroup
             scope = And [
-                WithinDistance 0 Source
                 Fleet
+                OwnedBy TheEmpire Source.Owner
+                ContainedBy Contains And [
+                    Planet
+                    OwnedBy TheEmpire Source.Owner
+                    Focus "FOCUS_STARGATE_SEND"
+                ]
             ]
             activation = And [
                 Planet
-                Focus "FOCUS_STARGATE"
-                ContainedBy And [
-                    System
-                    Contains And [
-                        Building "BLD_STARGATE_ACTIVATOR"
-                        OwnedBy TheEmpire Source.Owner
-                    ]
-                ]
+                Focus "FOCUS_STARGATE_RECEIVE"
             ]
-            effects = MoveTo And [
-                Focus "FOCUS_STARGATE"
-                Contains And [
-                    Building "BLD_STARGATE_BEACON"
-                    OwnedBy TheEmpire Source.Owner
+            stackinggroup = "STARGATE_STACK"
+            effects = [
+                GenerateSitrepMessage
+                    message = "EFFECT_STARGATE"
+                    icon = "icons/focus/stargate_receive.png"
+                    parameters = [
+                        tag = "fleet" data = Target.ID
+                        tag = "system" data = Source.SystemID
+                    ]
+                    empire = Source.Owner
+                MoveTo And [
+                    Contains Source
+                    System
                 ]
             ]
 
