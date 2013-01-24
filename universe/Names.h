@@ -9,6 +9,7 @@
 
 
 #define NAMES_SEQ_1                             \
+    (Abs)                                       \
     (AccountingLabel)                           \
     (Activation)                                \
     (AddedBefore)                               \

@@ -773,6 +773,11 @@ namespace ValueRef {
                 break;
             }
 
+            case ABS: {
+                return std::abs(m_operand1->Eval(context));
+                break;
+            }
+
             case LOGARITHM: {
                 double op1 = m_operand1->Eval(context);
                 if (op1 <= 0.0)
@@ -840,6 +845,11 @@ namespace ValueRef {
                 double op1 = m_operand1->Eval(context);
                 double op2 = m_operand2->Eval(context);
                 return static_cast<int>(std::pow(op1, op2));
+                break;
+            }
+
+            case ABS: {
+                return static_cast<int>(std::abs(m_operand1->Eval(context)));
                 break;
             }
 

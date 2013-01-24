@@ -1035,6 +1035,8 @@ std::string ValueRef::Operation<T>::Description() const
         }
     }
 
+    if (m_op_type == ABS)
+        return "abs(" + m_operand1->Description() + ")";
     if (m_op_type == LOGARITHM)
         return "log(" + m_operand1->Description() + ")";
     if (m_op_type == SINE)
@@ -1120,6 +1122,8 @@ std::string ValueRef::Operation<T>::Dump() const
         }
     }
 
+    if (m_op_type == ABS)
+        return "abs(" + m_operand1->Dump() + ")";
     if (m_op_type == LOGARITHM)
         return "log(" + m_operand1->Dump() + ")";
     if (m_op_type == SINE)

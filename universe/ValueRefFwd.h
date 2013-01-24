@@ -43,6 +43,7 @@ namespace ValueRef {
         DIVIDE,
         NEGATE,
         EXPONENTIATE,
+        ABS,
         LOGARITHM,
         SINE,
         COSINE,

@@ -99,6 +99,7 @@ void initialize_expression_parsers(
                         tok.Sin_    [ _c = ValueRef::SINE ]
                     |   tok.Cos_    [ _c = ValueRef::COSINE ]
                     |   tok.Log_    [ _c = ValueRef::LOGARITHM ]
+                    |   tok.Abs_    [ _c = ValueRef::ABS ]
                     )
                     >> '(' > expr [ _val = new_<ValueRef::Operation<T> >(_c, _1) ] > ')'
                 )
