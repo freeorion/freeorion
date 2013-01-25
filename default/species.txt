@@ -2049,16 +2049,32 @@ POPULATION_TECHS
             effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
 '''
 
+// This is dependent on current placement in population effects calc, just after Homeworld and Environment
 SELF_SUSTAINING_BONUS
 '''     EffectsGroup
-            scope = Source
+            scope = AND [
+                Source
+                NOT Homeworld name = Source.Species
+            ]
             activation = And [
                 Planet
                 HasTag "SELF_SUSTAINING"
                 TargetPopulation low = 0 high = 9999
             ]
             accountinglabel = "SELF_SUSTAINING_LABEL"
-            effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble    // Gets double the base population
+            effects = SetTargetPopulation Value * 2    // Gets double the population based on environment and environment techs
+        EffectsGroup
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = And [
+                Planet
+                HasTag "SELF_SUSTAINING"
+                TargetPopulation low = 0 high = 9999
+            ]
+            accountinglabel = "SELF_SUSTAINING_LABEL"
+            effects = SetTargetPopulation Value * 2 - (2 * Target.SizeAsDouble)    // prevents doubled homeworld bonus
 '''
 
 PHOTOTROPHIC_BONUS
