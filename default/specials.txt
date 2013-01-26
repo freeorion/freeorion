@@ -486,6 +486,7 @@ Special
 Special
     name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
     description = "ANCIENT_RUINS_DEPLETED_SPECIAL_DESC"
+    spawnrate = 0.0
     stealth = 20
     effectsgroups =
         EffectsGroup
@@ -634,6 +635,7 @@ Special
     name = "CLOUD_COVER_MASTER_SPECIAL"
     description = "CLOUD_COVER_MASTER_SPECIAL_DESC"
     stealth = 30
+    spawnrate = 0.0
     effectsgroups = [
         [[STEALTH_BOOST_PLUS_PLUS]]
         [[SYSTEM_STEALTH_PLUS_PLUS]]
@@ -648,6 +650,7 @@ Special
 Special
     name = "CLOUD_COVER_SLAVE_SPECIAL"
     description = "CLOUD_COVER_SLAVE_SPECIAL_DESC"
+    spawnrate = 0.0
     effectsgroups = [
         [[STEALTH_BOOST_LOW_NO_ORBITAL]]
 
@@ -669,6 +672,7 @@ Special
     name = "VOLCANIC_ASH_MASTER_SPECIAL"
     description = "VOLCANIC_ASH_MASTER_SPECIAL_DESC"
     stealth = 50
+    spawnrate = 0.0
     effectsgroups = [
         [[STEALTH_BOOST_PLUS_PLUS]]
         [[SYSTEM_STEALTH_PLUS_PLUS]]
@@ -685,6 +689,7 @@ Special
 Special
     name = "VOLCANIC_ACTIVITY_SPECIAL"
     description = "VOLCANIC_ACTIVITY_SPECIAL"
+    spawnrate = 0.0
     effectsgroups =
         EffectsGroup
             scope = Source
@@ -695,6 +700,7 @@ Special
 Special
     name = "VOLCANIC_ASH_SLAVE_SPECIAL"
     description = "VOLCANIC_ASH_SLAVE_SPECIAL_DESC"
+    spawnrate = 0.0
     effectsgroups = [
         [[STEALTH_BOOST_MEDIUM_NO_ORBITAL]]
 
@@ -716,6 +722,7 @@ Special
     name = "DIM_RIFT_MASTER_SPECIAL"
     description = "DIM_RIFT_MASTER_SPECIAL_DESC"
     stealth = 70
+    spawnrate = 0.0
     effectsgroups = [
         [[STEALTH_BOOST_PLUS_PLUS]]
         [[SYSTEM_STEALTH_PLUS_PLUS]]
@@ -736,6 +743,7 @@ Special
 Special
     name = "DIM_RIFT_SLAVE_SPECIAL"
     description = "DIM_RIFT_SLAVE_SPECIAL_DESC"
+    spawnrate = 0.0
     effectsgroups = [
         [[STEALTH_BOOST_HIGH_NO_ORBITAL]]
 
@@ -757,6 +765,7 @@ Special
     name = "VOID_MASTER_SPECIAL"
     description = "VOID_MASTER_SPECIAL_DESC"
     stealth = 90
+    spawnrate = 0.0
     effectsgroups = [
         [[STEALTH_BOOST_PLUS_PLUS]]
         [[SYSTEM_STEALTH_PLUS_PLUS]]
@@ -775,6 +784,7 @@ Special
 Special
     name = "VOID_SLAVE_SPECIAL"
     description = "VOID_SLAVE_SPECIAL_DESC"
+    spawnrate = 0.0
     effectsgroups = [
         [[STEALTH_BOOST_ULTIMATE_NO_ORBITAL]]
 
