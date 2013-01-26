@@ -1347,7 +1347,10 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 150
     researchturns = 5
-    prerequisites = "PRO_CORE_MINE"
+    prerequisites = [
+        "PRO_CORE_MINE"
+        "LRN_STELLAR_TOMOGRAPHY"
+    ]
     unlock = [
         Item type = Building name = "BLD_NEUTRONIUM_EXTRACTOR"
         Item type = Building name = "BLD_NEUTRONIUM_FORGE"
@@ -1887,11 +1890,11 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 450
+    researchcost = 100
     researchturns = 3
     prerequisites = "SHP_ASTEROID_HULLS"
     unlock = [
-        Item type = ShipHull name = "SH_AGREGATE_ASTEROID"
+        //Item type = ShipHull name = "SH_AGREGATE_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
         Item type = ShipPart name = "AR_ROCK_PLATE"
     ]
@@ -1902,7 +1905,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 1200
+    researchcost = 800
     researchturns = 5
     prerequisites = "SHP_ASTEROID_REFORM"
     unlock = [
@@ -2313,10 +2316,21 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 200
+    researchcost = 300
     researchturns = 3
     prerequisites = "SHP_LEAD_PLATE"
     unlock = Item type = ShipPart name = "AR_ZORTRIUM_PLATE"
+
+Tech
+    name = "SHP_DIAMOND_PLATE"
+    description = "SHP_DIAMOND_PLATE_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 450
+    researchturns = 5
+    prerequisites = "SHP_ZORTRIUM_PLATE"
+    unlock = Item type = ShipPart name = "AR_DIAMOND_PLATE"
 
 Tech
     name = "SHP_ANTIMATTER_TANK"

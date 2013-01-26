@@ -241,28 +241,29 @@ Part
     buildcost = 1
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStarlaneSpeed Value - 5
     icon = "icons/ship_parts/lead_armor_plating.png"
 
 Part
     name = "AR_ZORTRIUM_PLATE"
     description = "AR_ZORTRIUM_PLATE_DESC"
     class = Armour
-    capacity = 30
+    capacity = 25
     mountableSlotTypes = External
-    buildcost = 2
+    buildcost = 3
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStarlaneSpeed Value - 3
     icon = "icons/ship_parts/zortrium_plating.png"
+
+Part
+    name = "AR_DIAMOND_PLATE"
+    description = "AR_DIAMOND_PLATE_DESC"
+    class = Armour
+    capacity = 50
+    mountableSlotTypes = External
+    buildcost = 6
+    buildtime = 4
+    location = OwnedBy TheEmpire Source.Owner
+    icon = "icons/ship_parts/crystal_plating.png"
 
 Part
     name = "AR_ROCK_PLATE"
@@ -270,7 +271,7 @@ Part
     class = Armour
     capacity = 15
     mountableSlotTypes = External
-    buildcost = 1.0
+    buildcost = 1
     buildtime = 1
     location = And [
         Number low = 1 high = 999 And [
@@ -282,11 +283,6 @@ Part
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStarlaneSpeed Value - 3
     icon = "icons/ship_parts/rock_plating.png"
 
 Part
@@ -295,7 +291,7 @@ Part
     class = Armour
     capacity = 80
     mountableSlotTypes = External
-    buildcost = 4
+    buildcost = 8
     buildtime = 3
     location = And [
         Number low = 1 high = 999 And [
@@ -307,11 +303,6 @@ Part
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStarlaneSpeed Value - 3
     icon = "icons/ship_parts/crystal_plating.png"
 
 Part
@@ -320,7 +311,7 @@ Part
     class = Armour
     capacity = 100
     mountableSlotTypes = External
-    buildcost = 3
+    buildcost = 9
     buildtime = 4
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -333,11 +324,6 @@ Part
             ]
         ]
     ]
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStarlaneSpeed Value - 5
     icon = "icons/ship_parts/neutronium_plating.png"
     
 Part

@@ -770,7 +770,7 @@ BuildingType
         TargetPopulation low = 1
         Not Planet type = [Asteroids GasGiant]
         Not Planet environment = [Uninhabitable Good]
-        ]
+    ]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -863,7 +863,7 @@ BuildingType
     location = AND [
         Not Contains Building "BLD_CONC_CAMP"
         OwnedBy TheEmpire Source.Owner
-        ]
+    ]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -920,7 +920,7 @@ BuildingType
     location = AND [
         Not Contains Building "BLD_REPLICATORS"
         OwnedBy TheEmpire Source.Owner
-        ]
+    ]
     icon = ""
 
 BuildingType
@@ -943,7 +943,7 @@ BuildingType
     location = AND [
         Not Contains Building "BLD_PLANET_BEACON"
         OwnedBy TheEmpire Source.Owner
-        ]
+    ]
     effectsgroups =
         EffectsGroup
             scope = Source
@@ -1002,7 +1002,7 @@ BuildingType
     location = AND [
         Not Contains Building "BLD_TRANSFORMER"
         OwnedBy TheEmpire Source.Owner
-        ]
+    ]
     icon = ""
 
 BuildingType
@@ -1013,7 +1013,7 @@ BuildingType
     location = AND [
         Not Contains Building "BLD_GATEWAY_VOID"
         OwnedBy TheEmpire Source.Owner
-        ]
+    ]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1055,7 +1055,7 @@ BuildingType
     location = AND [
         Not Contains Building "BLD_ENCLAVE_VOID"
         OwnedBy TheEmpire Source.Owner
-        ]
+    ]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1077,7 +1077,7 @@ BuildingType
     location = AND [
         Not Contains Building "BLD_PLANET_CLOAK"
         OwnedBy TheEmpire Source.Owner
-        ]
+    ]
     icon = ""
 
 BuildingType
@@ -1088,7 +1088,7 @@ BuildingType
     location = AND [
         Not Contains Building "BLD_SPATIAL_DISTORT_GEN"
         OwnedBy TheEmpire Source.Owner
-        ]
+    ]
     icon = ""
 
 BuildingType

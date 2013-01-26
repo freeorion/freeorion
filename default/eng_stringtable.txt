@@ -6910,6 +6910,12 @@ Zortrium Armor Plating
 SHP_ZORTRIUM_PLATE_DESC
 Unlocks Zortrium Armor Plating ship part.
 
+SHP_DIAMOND_PLATE
+Diamond Armor Plating
+
+SHP_DIAMOND_PLATE_DESC
+Unlocks Diamond Armor Plating ship part.
+
 SPY_DIST_MOD
 Distortion Modulator
 
@@ -7800,41 +7806,37 @@ AR_LEAD_PLATE
 Lead Armor Plating
 
 AR_LEAD_PLATE_DESC
-'''Weak defense with large mass. 
-
-All armor carries a speed penalty due to the extra energy needed to move the additional mass. However, due to its simplicity, armor is very cost effective.'''
+'''Weak defense with large mass.'''
 
 AR_ZORTRIUM_PLATE
 Zortrium Armor Plating
 
 AR_ZORTRIUM_PLATE_DESC
-'''Stronger defense than lead plating
+'''Stronger defense than lead plating.'''
 
-All armor carries a speed penalty due to the extra energy needed to move the additional mass. However, due to its simplicity, armor is very cost effective.'''
+AR_DIAMOND_PLATE
+Diamond Armor Plating
+
+AR_DIAMOND_PLATE_DESC
+'''Stronger defense than zortrium plating.'''
 
 AR_ROCK_PLATE
 Rock Armor Plating
 
 AR_ROCK_PLATE_DESC
-'''A strong, cheap alternative to alloys. This part can only be built if there is an Asteroid Reformation Facility at an asteroid belt somewhere in the empire or an ally's empire.
-
-All armor carries a speed penalty due to the extra energy needed to move the additional mass. However, due to its simplicity, armor is very cost effective.'''
+'''A strong, cheap alternative to alloys. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.'''
 
 AR_CRYSTAL_PLATE
 Crystal Armor Plating
 
 AR_CRYSTAL_PLATE_DESC
-'''An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is a [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.
-
-All armor carries a speed penalty due to the extra energy needed to move the additional mass. However, due to its simplicity, armor is very cost effective.'''
+'''An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.'''
 
 AR_NEUTRONIUM_PLATE
 Neutronium Armor Plating
 
 AR_NEUTRONIUM_PLATE_DESC
-'''Admirable defense.
-
-All armor carries a speed penalty due to the extra energy needed to move the additional mass. However, due to its simplicity, armor is very cost effective.'''
+'''Admirable defense.'''
 
 AR_PRECURSOR_PLATE
 Precursor Armor Plating
