@@ -580,7 +580,7 @@ Species
     
     [[SWAMP_STANDARD_EP]]
     
-    graphic = "icons/species/GYSACHE.png"
+    graphic = "icons/species/gysache.png"
 
 
 Species
