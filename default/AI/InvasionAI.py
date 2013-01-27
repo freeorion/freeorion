@@ -180,7 +180,12 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     troops = planet.currentMeterValue(fo.meterType.troops)
     specName=planet.speciesName
     species=fo.getSpecies(specName)
-    if not species:# perhaps stealth might make species info inaccessible
+    productionVal = 8*(planet.currentMeterValue(fo.meterType.targetIndustry)+planet.currentMeterValue(fo.meterType.targetResearch))
+    supplyVal=0
+    enemyVal=0
+    if planet.owner!=-1 :
+        enemyVal=productionVal #value in taking this away from an enemy
+    if not species:#TODO:  perhaps stealth makes planet inacccesible & should abort
         try:
             targetPop=planet.currentMeterValue(fo.meterType.targetPopulation)
             popVal =  2*targetPop
@@ -188,16 +193,16 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
             popVal=0
     else:
         popVal = evaluatePlanet(planetID,  AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  species,  empire) #evaluatePlanet is implorted from ColonisationAI
-    if planetID not in fleetSupplyablePlanetIDs:
-        popVal =  2.0*popVal#assign higher value if the colony would extend our supply range
+    if planetID not in fleetSupplyablePlanetIDs: #extends supply and probably visibility
+        supplyVal =  20#TODO: better analysis here if supply obstructed by defending ships
     planetSpecials = list(planet.specials)
     specialVal=0
     if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_ASTEROID_MINE") == fo.techStatus.complete ) ): 
-            specialVal= 15   # asteroid mining is great, fast return
+            specialVal= 15   #TODO: should do more eval re asteroid mining here
     for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
         if special in planetSpecials:
             specialVal = 40 
-    return popVal+specialVal+bldTally,  troops
+    return popVal+supplyVal+specialVal+bldTally+productionVal+enemyVal-8*troops,  troops
 
 def getPlanetPopulation(planetID):
     "return planet population"
@@ -256,4 +261,8 @@ def assignInvasionFleetsToInvade():
     invasionFleetIDs = AIstate.invasionFleetIDs
 
     sendInvasionFleets(invasionFleetIDs, AIstate.invasionTargets, AIFleetMissionType.FLEET_MISSION_INVASION)
+    allInvasionFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION)
+    for fid in  FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allInvasionFleetIDs):
+        thisMission = foAI.foAIstate.getAIFleetMission(fid)
+        thisMission.checkMergers(context="Post-send consolidation of unassigned troops")
 

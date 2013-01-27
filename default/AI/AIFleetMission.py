@@ -100,6 +100,8 @@ class AIFleetMission(AIAbstractMission):
                                                                         AIFleetMissionType.FLEET_MISSION_DEFEND, 
                                                                         AIFleetMissionType.FLEET_MISSION_LAST_STAND ,  
                                                                         AIFleetMissionType.FLEET_MISSION_MILITARY, 
+                                                                        AIFleetMissionType.FLEET_MISSION_INVASION, 
+                                                                        AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION, 
                                                                         AIFleetMissionType.FLEET_MISSION_SECURE, 
                                                                         AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE, 
                                                                     ]:
@@ -117,17 +119,26 @@ class AIFleetMission(AIAbstractMission):
             return #nothing of record to merge with
         mainMissionTargets = self.getAITargets(mainMissionType)
         if mainMissionTargets == []:
-            return
+            pass
+            #return  #let's let invasion fleets with no target get merged
+            mMT0=None
+            mMT0ID = None
+        else:
+            mMT0=mainMissionTargets[0]
+            mMT0ID = mMT0.getTargetID()
         if len(mainMissionTargets)>1: 
             pass
             print "\tConsidering merging fleets into  fleet  %d, but it has multiple targets: %s"%(fleetID,  str(mainMissionTargets))
         sys1=universe.getSystem(systemID)
         sysName = (sys1 and sys1.name) or "unknown"
-        mMT0=mainMissionTargets[0]
-        mMT0ID = mMT0.getTargetID()
+        compatibileRolesMap={ AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE:         [AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE], 
+                                                                AIFleetMissionType.FLEET_MISSION_MILITARY:                               [AIFleetMissionType.FLEET_MISSION_MILITARY], 
+                                                                AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION:        [AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION], 
+                                                                AIFleetMissionType.FLEET_MISSION_INVASION:                              [AIFleetMissionType.FLEET_MISSION_INVASION], 
+                                                                }
         for fid in otherFleetsHere:
             fleetRoleA = foAI.foAIstate.getFleetRole(fid)
-            if fleetRoleA not in  [ AIFleetMissionType.FLEET_MISSION_MILITARY,  AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE]: #TODO: if fleetRoles such as LongRange start being used, adjust this
+            if fleetRoleA not in  compatibileRolesMap[fleetRoleB] : #TODO: if fleetRoles such as LongRange start being used, adjust this
                 continue # will only considering subsuming fleets that have a compatible role
             fleet2 = universe.getFleet(fid)
             if not (fleet2 and (fleet2.systemID == systemID)):
@@ -140,6 +151,9 @@ class AIFleetMission(AIAbstractMission):
             if  ( fleetRoleA== AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE ) or  (fleetRoleB== AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE ):
                 if fleetRoleA==fleetRoleB:
                     doMerge=True
+            elif  ( fleetRoleA== AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION ) or  (fleetRoleB== AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION ):
+                if fleetRoleA==fleetRoleB:
+                    doMerge=False#TODO: could  allow merger if both orb invaders and both same target
             elif not f2Mission and (fleetB.speed > 0) and (fleet2.speed > 0):
                 doMerge=True
             else:

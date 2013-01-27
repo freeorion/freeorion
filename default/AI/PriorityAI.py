@@ -13,6 +13,9 @@ import ExplorationAI
 from ProductionAI import curBestMilShipRating,  getBestShipInfo
 import math
 
+allottedInvasionTargets=0
+allottedColonyTargets=0
+
 def calculatePriorities():
     "calculates the priorities of the AI player"
     print("calculating priorities")
@@ -177,13 +180,20 @@ def calculateExplorationPriority():
 
 def calculateColonisationPriority():
     "calculates the demand for colony ships by colonisable planets"
+    global allottedColonyTargets
+    totalPP=fo.getEmpire().productionPoints
+    colonyCost=250*(1+ 0.1*len( list(AIstate.popCtrIDs) + list(AIstate.outpostIDs) ))
+    turnsToBuild=8
+    allottedPortion = 0.3
+    #allottedColonyTargets = 1+ int(fo.currentTurn()/50)
+    allottedColonyTargets = 1 + int( totalPP*turnsToBuild*allottedPortion/colonyCost)
 
-    numColonisablePlanetIDs = len(foAI.foAIstate.colonisablePlanetIDs)
+    numColonisablePlanetIDs = len(    [  pid   for (pid,  (score, specName) ) in  foAI.foAIstate.colonisablePlanetIDs if score > 100 ][:allottedColonyTargets] )
     if (numColonisablePlanetIDs == 0): return 0
 
     colonyshipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
     numColonyships = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(colonyshipIDs))
-    colonisationPriority = 121 * (2+numColonisablePlanetIDs - numColonyships) / (numColonisablePlanetIDs+1)
+    colonisationPriority = 121 * (1+numColonisablePlanetIDs - numColonyships) / (numColonisablePlanetIDs+1)
 
     # print ""
     # print "Number of Colony Ships        : " + str(numColonyships)
@@ -198,6 +208,7 @@ def calculateOutpostPriority():
     "calculates the demand for outpost ships by colonisable planets"
 
     numOutpostPlanetIDs = len(foAI.foAIstate.colonisableOutpostIDs)
+    numOutpostPlanetIDs = len(    [  pid   for (pid,  (score, specName) ) in  foAI.foAIstate.colonisableOutpostIDs if score > 100 ][:allottedColonyTargets] )
     completedTechs = getCompletedTechs()
     if numOutpostPlanetIDs == 0 or not 'CON_ENV_ENCAPSUL' in completedTechs:
         return 0
@@ -217,14 +228,16 @@ def calculateOutpostPriority():
 
 def calculateInvasionPriority():
     "calculates the demand for troop ships by opponent planets"
+    global allottedInvasionTargets
     troopsPerPod=2
     empire=fo.getEmpire()
     
     if foAI.foAIstate.aggression==fo.aggression.beginner and fo.currentTurn()<150:
         return 0
     
-    totalVal= sum( [pscore for pid, pscore, trp in AIstate.invasionTargets[:10] ] )
-    troopsNeeded= sum( [(trp+4) for pid, pscore, trp in AIstate.invasionTargets[:10] ] )
+    allottedInvasionTargets = 1+ int(fo.currentTurn()/25)
+    totalVal= sum( [pscore for pid, pscore, trp in AIstate.invasionTargets[:allottedInvasionTargets] ] )
+    troopsNeeded= sum( [(trp+4) for pid, pscore, trp in AIstate.invasionTargets[:allottedInvasionTargets] ] )
 
     if totalVal == 0: 
         return 10  #hsould always have at least a  low lvl of production going into troop fleets
@@ -250,7 +263,7 @@ def calculateInvasionPriority():
     numTroopPods =  sum([ FleetUtilsAI.countPartsFleetwide(fleetID,  ["GT_TROOP_POD"]) for fleetID in  troopFleetIDs])
     troopShipsNeeded = math.ceil((opponentTroopPods - (numTroopPods+ queuedTroopPods ))/troopsPerBestShip)  
      
-    invasionPriority = max(  10+ 200*max(0,  troopShipsNeeded ) ,  totalVal )
+    invasionPriority = max(  10+ 200*max(0,  troopShipsNeeded ) , int(0.1* totalVal) )
     if invasionPriority < 0: 
         return 0
     if foAI.foAIstate.aggression==fo.aggression.beginner:

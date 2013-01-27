@@ -98,6 +98,7 @@ class AIstate(object):
         self.needsEmergencyExploration=[]
         self.newlySplitFleets={}
         self.aggression=aggression
+        self.militaryRating=0
 
     def __del__(self):
         "destructor"

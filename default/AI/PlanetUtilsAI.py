@@ -22,6 +22,9 @@ def planetNameIDs(planetIDs):
 def getCapital(): # if no current capital returns planet with biggest pop
     universe = fo.getUniverse()
     empire = fo.getEmpire()
+    if empire == None:
+        print "Danger Danger! FO can't find an empire for me!!!!"
+        return None
     empireID = empire.empireID
     capitalID = empire.capitalID
     homeworld = universe.getPlanet(capitalID)
