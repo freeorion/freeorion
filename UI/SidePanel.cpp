@@ -1183,14 +1183,12 @@ std::set<const Ship*> AutomaticallyChosenInvasionShips(int target_planet_id) {
         return retval;
 
     //Can't invade owned-by-self planets; early exit
-    if ( target_planet->OwnedBy(empire_id))
+    if (target_planet->OwnedBy(empire_id))
         return retval; 
 
 
     // get "just enough" ships that can invade and that are free to do so
-
-    double defending_troops = target_planet->CurrentMeterValue(METER_TROOPS);
-
+    double defending_troops = target_planet->NextTurnCurrentMeterValue(METER_TROOPS);
 
     const ObjectMap& objects = Objects();
     std::vector<const Ship*> ships = objects.FindObjects<Ship>();
@@ -1204,12 +1202,9 @@ std::set<const Ship*> AutomaticallyChosenInvasionShips(int target_planet_id) {
         if (const ShipDesign* design = ship->Design())
             invasion_troops += design->TroopCapacity();
 
-
         retval.insert(ship);
 
-        //Rational for "+1" : Based on observation, ground combat seems to round up the defending troops value when it's fractional.
-        //Either that or growth of the planet's troop meter tends to need a little buffer when invading. 
-        if (invasion_troops > (defending_troops +1))
+        if (invasion_troops > defending_troops)
             break;
     }
 
