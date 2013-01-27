@@ -2621,7 +2621,7 @@ Tech
         EffectsGroup
             scope = Building
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
-            effects = SetStealth Value + 1
+            effects = SetStealth Value + 0.01
     graphic = ""
 
 

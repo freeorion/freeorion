@@ -1313,7 +1313,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Not Contains Building "BLD_EVACUATION"
-        Population low = 1
+        TargetPopulation low = 1
     ]
     effectsgroups = [
         EffectsGroup            // add population to connected plants with room and suitable species
