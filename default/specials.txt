@@ -486,8 +486,8 @@ Special
 Special
     name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
     description = "ANCIENT_RUINS_DEPLETED_SPECIAL_DESC"
-    spawnrate = 0.0
     stealth = 20
+    spawnrate = 0.0
     effectsgroups =
         EffectsGroup
             scope = Source
