@@ -2580,7 +2580,13 @@ ULTIMATE_DETECTION
 
 BAD_STEALTH
 '''EffectsGroup
-            scope = Source
+            scope = Or [
+                Source
+                And [
+                    ContainedBy Source
+                    Not HasTag "ORBITAL"
+                ]
+            ]
             activation = Planet
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value - 15
@@ -2588,7 +2594,13 @@ BAD_STEALTH
 
 GOOD_STEALTH
 '''EffectsGroup
-            scope = Source
+            scope = Or [
+                Source
+                And [
+                    ContainedBy Source
+                    Not HasTag "ORBITAL"
+                ]
+            ]
             activation = Planet
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value + 15
@@ -2596,7 +2608,13 @@ GOOD_STEALTH
             
 GREAT_STEALTH
 '''EffectsGroup
-            scope = Source
+            scope = Or [
+                Source
+                And [
+                    ContainedBy Source
+                    Not HasTag "ORBITAL"
+                ]
+            ]
             activation = Planet
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value + 40
@@ -2604,7 +2622,13 @@ GREAT_STEALTH
 
 ULTIMATE_STEALTH
 '''EffectsGroup
-            scope = Source
+            scope = Or [
+                Source
+                And [
+                    ContainedBy Source
+                    Not HasTag "ORBITAL"
+                ]
+            ]
             activation = Planet
             stackinggroup = "SPECIES_STEALTH_STACK"
             effects = SetStealth Value + 60
