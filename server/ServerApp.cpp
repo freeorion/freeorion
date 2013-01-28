@@ -1117,7 +1117,7 @@ namespace {
             {
                 // include planets visible to empire
                 Visibility planet_vis = GetUniverse().GetObjectVisibilityByEmpire(*planet_it, empire_id);
-                if (planet_vis < VIS_BASIC_VISIBILITY)
+                if (planet_vis <= VIS_BASIC_VISIBILITY)
                     continue;
                 // skip planets that have no owner and that are unpopulated; don't matter for combat conditions test
                 const Planet* planet = GetPlanet(*planet_it);
