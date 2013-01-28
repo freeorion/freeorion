@@ -623,7 +623,7 @@ Tech
                 Star type = Neutron
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + 1.5 * Target.Population * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch Value + 1.75 * Target.Population * [[RESEARCH_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -632,7 +632,7 @@ Tech
                 Star type = [Blue White]
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + 1 * Target.Population * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch Value + 1.5 * Target.Population * [[RESEARCH_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -641,7 +641,7 @@ Tech
                 Star type = [Red Orange Yellow]
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value  + 0.5 * Target.Population * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch Value  + 1.25 * Target.Population * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/stellar_tomography.png"
 
