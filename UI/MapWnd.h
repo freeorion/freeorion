@@ -130,6 +130,7 @@ public:
     void            CenterOnObject(int id);                                 //!< centers the map on object with id \a id
     void            CenterOnObject(const UniverseObject* obj);              //!< centers the map on object \a id
 
+    void            ShowPlanet(int planet_id);                              //!< brings up encyclpedia panel and displays info about the planet
     void            ShowTech(const std::string& tech_name);                 //!< brings up the research screen and centers the tech tree on \a tech_name
     void            ShowBuildingType(const std::string& building_type_name);//!< brings up the production screen and displays info about the buildtype \a type_name
     void            ShowPartType(const std::string& part_type_name);        //!< brings up the production screen and displays info about the buildtype \a type_name

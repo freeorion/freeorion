@@ -2577,6 +2577,13 @@ void MapWnd::CenterOnMapCoord(double x, double y) {
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
 }
 
+
+void MapWnd::ShowPlanet(int planet_id) {
+    if (!m_pedia_panel->Visible())
+        TogglePedia();
+    m_pedia_panel->SetPlanet(planet_id);
+}
+
 void MapWnd::ShowTech(const std::string& tech_name) {
     if (!m_research_wnd->Visible())
         ToggleResearch();

@@ -36,6 +36,7 @@ namespace {
     const std::string EMPTY_STRING;
     const std::string INCOMPLETE_DESIGN = "incomplete design";
     const std::string UNIVERSE_OBJECT = "universe object";
+    const std::string PLANET_SUITABILITY_REPORT = "planet suitability report";
 }
 
 namespace {
@@ -398,6 +399,8 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
     try {
         if (link_type == VarText::PLANET_ID_TAG) {
             ClientUI::GetClientUI()->ZoomToPlanet(lexical_cast<int>(data));
+            this->SetPlanet(lexical_cast<int>(data));
+
         } else if (link_type == VarText::SYSTEM_ID_TAG) {
             ClientUI::GetClientUI()->ZoomToSystem(lexical_cast<int>(data));
         } else if (link_type == VarText::FLEET_ID_TAG) {
@@ -1120,6 +1123,116 @@ void EncyclopediaDetailPanel::Refresh() {
                 return;
             }
         }
+    } else if (m_items_it->first == PLANET_SUITABILITY_REPORT) {        
+        general_type = UserString("SP_PLANET_SUITABILITY");
+
+        int planet_id = boost::lexical_cast<int>(m_items_it->second);
+        Planet* planet = GetPlanet(planet_id);
+
+        std::string original_planet_species = planet->SpeciesName();
+        int original_owner_id = planet->Owner();
+        name = planet->PublicName(planet_id);
+
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(empire_id);
+        if (!empire) {            
+            return;
+        }        
+        const std::vector<int> pop_center_ids = empire->GetPopulationPool().PopCenterIDs();
+
+        std::set<std::string> species_names;
+        std::map<std::string, std::pair<PlanetEnvironment, float> > population_counts;
+
+        //Collect species colonizing/environment hospitality information
+        for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); it++) {
+            const UniverseObject* obj = objects.Object(*it);
+            const PopCenter* pc = dynamic_cast<const PopCenter*>(obj);
+            if (!pc)
+                continue;
+
+            const std::string& species_name = pc->SpeciesName();
+            if (species_name.empty())
+                continue;
+
+            species_names.insert(species_name);
+        }
+
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+        GG::X max_species_name_column1_width(0);
+
+        for (std::set<std::string>::const_iterator it = species_names.begin(); it != species_names.end(); it++) {
+            std::string species_name = *it;
+
+            std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % UserString(species_name)); 
+            max_species_name_column1_width = std::max(font->TextExtent(species_name_column1).x, max_species_name_column1_width);
+
+            // Setting the planet's species allows all of it meters to reflect species (and empire) properties, such as environment type preferences and tech.
+            // @see also: MapWnd::UpdateMeterEstimates()
+            planet->SetSpecies(species_name);
+            planet->SetOwner(empire_id);
+
+            GetUniverse().UpdateMeterEstimates(planet_id);
+
+            const Species* species = GetSpecies(species_name);
+            PlanetEnvironment planet_environment = PE_UNINHABITABLE;
+            if (species)
+                planet_environment = species->GetPlanetEnvironment(planet->Type());
+
+            double planet_capacity = ((planet_environment == PE_UNINHABITABLE) ? 0 : planet->CurrentMeterValue(METER_TARGET_POPULATION));
+
+            population_counts[species_name].first = planet_environment;
+            population_counts[species_name].second = planet_capacity;            
+        }
+
+        std::multimap<float, std::pair<std::string, PlanetEnvironment> > target_population_species;
+        for (std::map<std::string, std::pair<PlanetEnvironment, float> >::const_iterator it = population_counts.begin();
+            it != population_counts.end(); ++it)
+        { target_population_species.insert(std::make_pair(it->second.second, std::make_pair(it->first, it->second.first))); }
+
+
+        bool positive_header_placed = false;
+        bool negative_header_placed = false;
+
+        for (std::multimap<float, std::pair<std::string, PlanetEnvironment> >::const_reverse_iterator it = target_population_species.rbegin(); it != target_population_species.rend(); it++) {
+            std::string user_species_name = UserString(it->second.first);
+            std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % user_species_name); 
+
+            while (font->TextExtent(species_name_column1).x < max_species_name_column1_width) {
+                species_name_column1 += "\t";
+            }
+
+            if (it->first > 0) {
+                if (!positive_header_placed) {
+                    detailed_description += str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_POSITIVE_HEADER")) % planet->PublicName(planet_id));                    
+                    positive_header_placed = true;
+                }
+
+                detailed_description += str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
+                    % species_name_column1                
+                    % UserString(boost::lexical_cast<std::string>(it->second.second))
+                    % (GG::RgbaTag(ClientUI::StatIncrColor()) + DoubleToString(it->first, 2, true) + "</rgba>") );
+
+            } else if (it->first <= 0) {
+                if (!negative_header_placed) {
+                    if (positive_header_placed)
+                        detailed_description += "\n\n";
+
+                    detailed_description += str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_NEGATIVE_HEADER")) % planet->PublicName(planet_id));                    
+                    negative_header_placed = true;
+                }
+
+                detailed_description += str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
+                    % species_name_column1
+                    % UserString(boost::lexical_cast<std::string>(it->second.second))
+                    % (GG::RgbaTag(ClientUI::StatDecrColor()) + DoubleToString(it->first, 2, true) + "</rgba>") );
+            }
+
+            detailed_description += "\n";
+        }
+
+        planet->SetSpecies(original_planet_species);
+        planet->SetOwner(original_owner_id);
+        GetUniverse().UpdateMeterEstimates(planet_id);
     }
 
     // Create Icons
@@ -1218,6 +1331,22 @@ void EncyclopediaDetailPanel::SetText(const std::string& text, bool lookup_in_st
         SetIndex();
     else
         AddItem(TextLinker::ENCYCLOPEDIA_TAG, (text.empty() || !lookup_in_stringtable) ? text : UserString(text));
+}
+
+
+void EncyclopediaDetailPanel::SetPlanet(int planet_id) {
+    
+    int current_item_id = INVALID_OBJECT_ID;
+    if (m_items_it != m_items.end()) {
+        try {
+            current_item_id = boost::lexical_cast<int>(m_items_it->second);
+        } catch (...) {
+        }
+    }
+    if (planet_id == current_item_id)
+        return;
+
+    AddItem(PLANET_SUITABILITY_REPORT, boost::lexical_cast<std::string>(planet_id));
 }
 
 void EncyclopediaDetailPanel::SetTech(const std::string& tech_name) {
@@ -1325,6 +1454,9 @@ void EncyclopediaDetailPanel::SetIncompleteDesign(boost::weak_ptr<const ShipDesi
 
 void EncyclopediaDetailPanel::SetIndex()
 { AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX"); }
+
+void EncyclopediaDetailPanel::SetItem(const Planet* planet)
+{ SetPlanet(planet ? planet->ID() : INVALID_OBJECT_ID); }
 
 void EncyclopediaDetailPanel::SetItem(const Tech* tech)
 { SetTech(tech ? tech->Name() : EMPTY_STRING); }

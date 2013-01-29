@@ -515,6 +515,12 @@ bool ClientUI::ZoomToPlanet(int id) {
     return false;
 }
 
+bool ClientUI::ZoomToPlanetPedia(int id) {    
+    if (const Planet* planet = GetPlanet(id))
+        m_map_wnd->ShowPlanet(id);
+    return false;
+}
+
 bool ClientUI::ZoomToSystem(int id) {
     if (const System* system = GetSystem(id)) {
         ZoomToSystem(system);

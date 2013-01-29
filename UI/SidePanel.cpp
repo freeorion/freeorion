@@ -1472,11 +1472,15 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     const Planet* planet = GetPlanet(m_planet_id);
-    if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()) || !m_order_issuing_enabled)
+    if (!planet)
         return;
 
+
     GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_PLANET"), 1, false, false));
+    if (planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()) && m_order_issuing_enabled )
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_PLANET"), 1, false, false));
+
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), 2, false, false));
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
 
@@ -1494,6 +1498,10 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
                 m_planet_name->SetText(planet->Name());
             }
             break;
+        }
+        case 2:
+        {   // colonizable/suitability report
+            ClientUI::GetClientUI()->ZoomToPlanetPedia(m_planet_id);
         }
         default:
         break;

@@ -2119,6 +2119,9 @@ Rename Planet
 SP_ENTER_NEW_PLANET_NAME
 Enter new planet name
 
+SP_PLANET_SUITABILITY
+Planet Suitability
+
 #################
 # Fleet Window  #
 #################
@@ -2519,6 +2522,21 @@ Delete Design
 ####               E N C Y C L O P E D I A               ####
 #############################################################
 
+ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
+%1%:	
+
+ENC_SPECIES_PLANET_TYPE_SUITABILITY
+%1%	%2% (%3%)
+
+ENC_SUITABILITY_REPORT_POSITIVE_HEADER
+'''%1% is suitable for colonization by these species.  
+
+'''
+
+ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
+'''%1% is not suitable for colonization by these species. Attempts to colonize will either fail or eventually die off. 
+
+'''
 
 # types of things that can be shown in encyclopedia
 ENC_SHIP_PART

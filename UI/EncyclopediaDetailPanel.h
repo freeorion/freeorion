@@ -4,6 +4,7 @@
 
 #include "CUIWnd.h"
 
+class Planet;
 class Tech;
 class PartType;
 class HullType;
@@ -42,6 +43,8 @@ public:
     int             GetItemsSize () { return m_items.size(); }
 
     void            SetText(const std::string& text, bool lookup_in_stringtable = true);
+    void            SetPlanet(int planet_id);
+    void            SetItem(const Planet* planet);
     void            SetTech(const std::string& tech_name);
     void            SetItem(const Tech* tech);
     void            SetPartType(const std::string& part_name);
