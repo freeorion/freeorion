@@ -948,8 +948,8 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 12
-    researchturns = 4
+    researchcost = 150
+    researchturns = 6
     prerequisites = "GRO_MEDICAL_PATH"
     unlock = Item type = ShipPart name = "CO_SUSPEND_ANIM_POD"
     graphic = "icons/tech/lifecycle_manipulation.png"

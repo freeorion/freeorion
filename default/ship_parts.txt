@@ -630,8 +630,8 @@ Part
     class = Colony
     capacity = 3
     mountableSlotTypes = Internal
-    buildcost = 500 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 12
+    buildcost = 250 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
         Population low = 3 high = 999
@@ -1343,7 +1343,7 @@ Part
 */
 
 COLONY_UPKEEP_MULTIPLICATOR
-'''(1 + 0.1 *
+'''(1 + 0.04 *
         Count condition = And [
             Planet
             OwnedBy TheEmpire Source.Owner
