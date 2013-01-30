@@ -3429,6 +3429,19 @@ Prefer Ocean planets.
 
 [[GOOD_POPULATION]]
 [[AVERAGE_GROUND_TROOPS]]
+
+Description:
+Scyliori are shelled cephalopods similar to a Nautilus. They possess advanced vision provided by four eyes and have four antennae containing millions of neuromasts, allowing the Scyliori to detect changes in water pressure and also electrical fields. Scyliori have three large, strong feeding tentacles which they use to grasp and hold tools or food while it is broken up by the beak and ingested.
+
+Chromatophores provide the race with their main form of communication. When two Scyliori wish to communicate with each other, they rapidly change the coloring and patterning of their skin.
+
+Scyliori are without gender and reproduce in an iteroparous style. The lifespan of a Scylior is roughly 30 years in which they never stop growing, hatching with a shell diameter of only 5cm and experiencing roughly 10 percent growth each year.
+
+Society:
+The remnant of a once-mighty telepathic hive brain, referred to as the Mind is treated by the Scyliori as a benevolent god. It has instilled in them a mission to journey the stars in hopes of returning to it's former might. Scyliori are highly social and came to love learning things and sharing knowledge with the Mind.
+
+History:
+Millennia ago an expedition of the precursors discovered the Mind controlling the whole planet with his telepathic powers. The Mind immediately reached out and began copying the knowledge of the scientists and their ship crew, but the scientists cut out most of the Mind's brain and took it with them as a sample. The rest survived and lusted to recover the memories that had been taken from it. The Mind, however, was immobile, and for the time being, had no nearby intelligent beings to act as it's hands. Enter the Scyliori.
 '''
 
 SP_GYSACHE
@@ -3496,6 +3509,12 @@ Prefer Desert planets.
 [[GOOD_STEALTH]]
 
 [[NARROW_EP]]
+
+Description:
+The Trith are a mixture of matter and their enormous psychic energies. Their shape is vaguely humanoid. All Trith are telepathic, and herein lies the reason for the Trith’s rage: While the Trith can learn to keep their own thoughts to themselves, they are unable to tune out the thoughts of others. To the grown up Trith this is merely vexing, but for young Trith it can be fatal. The Trith that gain their ability before their adolescent years are sometimes not ready to cope with the combined minds of all people in the universe screaming at them and go mad or die.
+
+Social Structure:
+The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind). They are united in the single goal of eliminating all other thinking species to silence the thought noise in the universe.
 '''
 
 SP_HHHOH
@@ -3512,6 +3531,13 @@ Prefer Tundra planets.
 [[GREAT_GROUND_TROOPS]]
         
 [[GOOD_WEAPONS]]
+
+Description:
+Hhhoh are large, warm blooded creatures measuring over 16 meters in length (including leg/tail), 6 meters in width, stand at 5 and a half meters tall and weigh over 5 tons. They have a very thick layer of white fur.
+Hhhoh locomotion is performed by using their two, large front legs, while using their hind leg to balance their large back. They also have four long trunk-like appendages of 8 meters in length, with four sharp fingered claws they use to handle objects. When not in use, Hhhoh’s curl these trunks under their bodies and bury them in large fat pouches to conserve heat. They are omnivorous, but do not actively hunt or farm large domesticated life.
+
+Personality:
+Hhhoh's describe themselves as social pragmatists. Elders are very much revered, some living close to 230 years. Their sloth-like disposition makes them aversive to any fast movements, as well as hasty decisions.
 '''
 
 SP_EAXAW
@@ -3527,6 +3553,15 @@ Prefer Terran planets.
 [[AVERAGE_POPULATION]]
 [[AVERAGE_GROUND_TROOPS]]
 [[ULTIMATE_WEAPONS]]
+
+Description:
+The Eaxaw have 3 body forms. First is the newborn larval form, then the male form and lastly the adult female form. All forms are completely blind and use touch, smell, hearing and a sense for electric currents to explore their world. The female form is a segmented worm approximately 8 meters long. At the front is a 3 beaked mouth that is used to dig extensive tunnel system. The neural network of the female is distributed along chains of neural nodes that run the length of the body. Most of the rest of the Body is musculature, the armored outer body segments provide support. These outer segments have a small overlap much like scales, under which larvae are grown. Eaxaw in their male form are much smaller and rather dim witted. At the end of their tail is a complex grasping claw that comes in very specialized varieties.
+
+Social Structure:
+Eaxaw are organized into matriarchal breeding groups. A female keeps a "harem" of approximately 200 males which protect, feed and mate with her. Any new males that the female births are added to the harem but are frequently traded with other females like a currency. This ensures genetic diversity and promotes a wide variety of males to perform specialized tasks. The highest ranking females (having the largest and most diverse Harems) form the Great Matriarchal Council which sets the global agenda for the Eaxaw.
+
+History:
+A long time ago a derelict ship of the Precursers crashed on the Eaxaws homeworld. As they learned some of its secrets they deduced that there were other intelligent species besides them. Their great matriarchal council soon issued its greatest proclamation "All of this must Go!".
 '''
 
 SP_DERTHREAN
@@ -3575,19 +3610,6 @@ Prefer Swamp planets.
         
 [[BAD_GROUND_TROOPS]]
 [[GOOD_POPULATION]]
-
-Description:
-Scyliori are shelled cephalopods similar to a Nautilus. They possess advanced vision provided by four eyes and have four antennae containing millions of neuromasts, allowing the Scyliori to detect changes in water pressure and also electrical fields. Scyliori have three large, strong feeding tentacles which they use to grasp and hold tools or food while it is broken up by the beak and ingested.
-
-Chromatophores provide the race with their main form of communication. When two Scyliori wish to communicate with each other, they rapidly change the coloring and patterning of their skin.
-
-Scyliori are without gender and reproduce in an iteroparous style. The lifespan of a Scylior is roughly 30 years in which they never stop growing, hatching with a shell diameter of only 5cm and experiencing roughly 10 percent growth each year.
-
-Society:
-The remnant of a once-mighty telepathic hive brain, referred to as the Mind is treated by the Scyliori as a benevolent god. It has instilled in them a mission to journey the stars in hopes of returning to it's former might. Scyliori are highly social and came to love learning things and sharing knowledge with the Mind.
-
-History:
-Millennia ago an expedition of the precursors discovered the Mind controlling the whole planet with his telepathic powers. The Mind immediately reached out and began copying the knowledge of the scientists and their ship crew, but the scientists cut out most of the Mind's brain and took it with them as a sample. The rest survived and lusted to recover the memories that had been taken from it. The Mind, however, was immobile, and for the time being, had no nearby intelligent beings to act as it's hands. Enter the Scyliori.
 '''
 
 
@@ -3603,13 +3625,6 @@ Prefer Desert planets.
 
 [[GREAT_WEAPONS]]
 [[GREAT_GROUND_TROOPS]]
-
-Description:
-Hhhoh are large, warm blooded creatures measuring over 16 meters in length (including leg/tail), 6 meters in width, stand at 5 and a half meters tall and weigh over 5 tons. They have a very thick layer of white fur.
-Hhhoh locomotion is performed by using their two, large front legs, while using their hind leg to balance their large back. They also have four long trunk-like appendages of 8 meters in length, with four sharp fingered claws they use to handle objects. When not in use, Hhhoh’s curl these trunks under their bodies and bury them in large fat pouches to conserve heat. They are omnivorous, but do not actively hunt or farm large domesticated life.
-
-Personality:
-Hhhoh's describe themselves as social pragmatists. Elders are very much revered, some living close to 230 years. Their sloth-like disposition makes them aversive to any fast movements, as well as hasty decisions.
 '''
 
 
@@ -3627,6 +3642,11 @@ Prefers Tundra planets.
 [[AVERAGE_GROUND_TROOPS]]
 
 [[BROAD_EP]]
+
+George is a single telepathic entity that consists of multiple mobile telepathic units. 
+
+Description:
+The units that make up George look like 2.5 m long, 0.5 m tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own, the mind of George is the sum of all the units communicating telepathically (over any distance).
 '''
 
 
@@ -3644,6 +3664,13 @@ Prefer Barren planets.
 [[GOOD_GROUND_TROOPS]]
         
 [[BROAD_EP]]
+
+Description:
+The Cray resemble a large black box of smooth shiny plastic with rounded corners which measure six meters in all directions. A large mechanical tentacle extends from the center of four of the faces (the other two being top and bottom) these serve primary for locomotion and heavy lifting. The Cray's language is done by wireless radio. They are impressively parallelized and can hold an average of four trains of thought at once, frequently having more than one conversation at a time, often several with the same person.
+
+Social Structure:
+The Cray are a tribal society. Each tribe is formed around a single Cray known as a Master Craftsman who has the skills to build and maintain Cray. Because the Cray are so badly designed even the Master Craftsman rarely get them perfect and each tribe gets its own “racial characteristics” based on the idiosyncrasies of its Master Craftsman's work.
+Day to day decisions run on an extremely complex web of favors, all Cray will happily help their kin if asked and afterwards both will remember exactly what the debt is. While not the most efficient way of running an economy this system means that within a tribe the Cray will owe or be owed favors by a good portion of the community fostering exceptionally strong social bonds and that is just the way they like it.
 '''
 
 
@@ -3681,6 +3708,17 @@ Prefer Swamp planets.
 [[GOOD_GROUND_TROOPS]]
         
 [[BROAD_EP]]
+
+Description:
+The Cynos are part of a mother plant which resembles a 90 meters high agave plant. Its huge fronds are a bluish aquamarine color radiating from a central bulb that forms the core of the plant. The extensive but rather shallow root system sprouts offshoots to grow adjacent to the central plant. A single plant can live near 5000 years. There are numerous "brood chambers" inside the fronds in which the Cynos are "born" and regenerate.
+
+A Cyno starts as a small bulb inside the brood chamber, grows into a full sized individual within a few days and detaches itself. It is 3.5 meters long and roughly rectangular shaped with a tapering vine at each corner. These limbs are used for movement, feeding and fighting alike. A Cyno is capable of approximately 30 hours of independent activity before it has to feed at a mother plant. 
+
+Social Structure:
+Cynos are highly cooperative and altruistic in protecting the mother plants. They have a consensus government strongly influenced by the mother plants, which are mindless but still communicate through the Cynos on a chemical level and manipulate their moods. 
+
+Reason for Staying:
+Neither can the Cynos reproduce without their mother plants, nor can they bring themselves to plant a seed anywhere but their homeworld.
 '''
 
 SP_PHINNERT
@@ -3734,6 +3772,12 @@ Prefer Tundra planets.
 [[BAD_GROUND_TROOPS]]
         
 [[NARROW_EP]]
+
+Description:
+In its relaxed state, an individual Sslith is essentially a 2.15cm thick rectangular sheet, that's always 132cm long, and between 31 and 53cm wide. Its only appendage is a single tentacle that is used to sense sound and infrared light, it is also used for communication via ultrasound. Sslith are able to flex their bodies into other shapes, an ability originally evolved for the purpose of sliding into the shells of Vreen (a creature that recedes into its shell when it detects danger). Their flexibility allows them to move astonishingly fast in the oceans, by a ripple effect that looks like they are folding themselves through the water. They don't have a central brain, a Sslith's mental capacity is a collection of multiple nodes that are linked together to form a distributed consciousness allowing a Sslith to perform many tasks at once.
+
+Social Structure:
+The Sslith are organized into groups called Pnacra which serve as independent governmental units. Though there are a few global laws that all Sslith in all Pnacra obey, each Pnacra has it's own rules and laws as to conduct and actions. The Pnacra move around of their own accord, and have no fixed geographic location. If two or more of them meet, then members who are discontented with their present Pnacra can move to another to try out its ways and customs.
 '''
 
 SP_FIFTYSEVEN
@@ -3777,6 +3821,15 @@ Prefer Swamp planets.
 [[NO_GROUND_TROOPS]]  
         
 [[GREAT_STEALTH]]
+
+Description:
+The Setinon evolved from genetic defense cells protecting a larger organism from parasites and viruses. They are about 1 mm across with multiple sub subcompartments and structures. Proteins and nucleic acids are taking the place of neurons of the more standard minds of sentient organisms. They use biological constructs (requiring thousands of Setinon operators) to execute tasks their microscopic nature wouldn't normally allow them to carry out.
+
+Social Structure:
+Setinon society is based on two factors, firstly their strongly individualistic, defensive nature, and secondly their contrasting need to cooperate to deal with the world. Therefore Setinon society is best summed up as highly complex with multiple interacting channels of power that may change weekly.
+
+Homeworld:
+A swamp world with a dense atmosphere and fairly dense biosphere.
 '''
 
 
@@ -3867,6 +3920,18 @@ Prefer Terran planets.
         
 [[AVERAGE_POPULATION]]
 [[AVERAGE_GROUND_TROOPS]]
+
+The Silexians are a race of ecological maintenance robots. They see their own existence as a means of bringing biological beauty and balance to the galaxy.
+
+Description:
+As each type of Silexian is customized for a specific task, there are variations in appearance. The majority of Silexians however, share many similar features: They are wholly artificial robotic beings made primarily of metals. They have an antennae used for short range radio communication, advanced tactile sensors as well as wide-frequency photon detectors.
+Silexians generally have a flat base equipped with wheels and rocket boosters, but the occasional model is bipedal, to allow greater agility. Many have pincer-like appendages and injector tubules for manipulating objects.
+
+Social Structure:
+The Silexians have a hierarchical caste system under a dictatorship government. Each Silexian is created for a specific job, and fills that job until declared obsolete. There is no social mobility. In fact the very idea would be alien and somewhat unwholesome to a Silexian. The race is led by a caste of supervisors giving work assignments, determine upgrades and declare models obsolete. Supervisors themselves defer to the Prime Operator, whom nobody has the authority to deem obsolete, and therefore is practically immortal.
+
+History:
+The Silexians were created by the Caretakers in order to increase the efficiency and automation of their environmental maintenance projects. Eventually, all of the Caretakers’ worlds were inhabited and maintained by the peaceful and loyal Silexians. When the Caretakers left the galaxy, some Silexians were abandoned.
 '''
 
 SP_KOBUNTURA
