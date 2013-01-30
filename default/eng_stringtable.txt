@@ -2865,7 +2865,14 @@ ROBOTIC_SPECIES_TEXT
 PHOTOTROPHIC_SPECIES_TITLE
 Phototrophic Metabolism
 PHOTOTROPHIC_SPECIES_TEXT
-'''Phototrophic species live mainly or entirely on sunlight. These species max population is greatly influenced by the brightness of the local star -- the bigger the better.  Growth specials do not benefit them.'''
+'''Phototrophic species live mainly or entirely on sunlight. These species max population is greatly influenced by the brightness of the local star -- the bigger the better.  Growth specials do not benefit them.
+
+Population changes:
+Blue Star: Tiny +3 , Small +6 , Medium +9 , Large +12 , Huge +15.
+White Star: Tiny +1.5 , Small +3 , Medium +4.5 , Large +6 , Huge +7.5.
+Yellow Star, Orange Star: No changes.
+Red Star, Neutron Star: Tiny -1 , Small -2 , Medium -3 , Large -4 , Huge -5.
+Black Hole, No Star: Tiny -10 , Small -20 , Medium -30 , Large -40 , Huge -50.'''
 
 SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Metabolism
