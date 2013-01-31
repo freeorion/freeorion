@@ -379,7 +379,7 @@ def primaryMetaTechsList(index=0):
             "PRO_ORBITAL_GEN",
             "PRO_MICROGRAV_MAN",
             "DEF_GARRISON_2", 
-            #"GRO_LIFECYCLE_MAN", # ship part  is too expensive for now
+            "GRO_LIFECYCLE_MAN", 
             "SHP_ENDOCRINE_SYSTEMS", 
             "LRN_GRAVITONICS",
             "CON_CONTGRAV_ARCH", 
