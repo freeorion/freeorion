@@ -411,9 +411,10 @@ def setPlanetResourceFoci():
                         ntPP, ntRP= newTargets[pid].get(RFocus,  (0, 0))
                         print "pID (%3d)  %22s |  c:  %5.1f / %5.1f |   cT:  %5.1f / %5.1f  |  cF: %8s |  nF: %8s  | cT:  %5.1f / %5.1f |         %.2f"%(pid,  planetMap[pid].name, cRP, cPP,   otRP, otPP,  fociMap.get(oldFocus, 'unknown'),  fociMap[RFocus] , ntRP, ntPP , ratio)
                         continue  # RP is getting too expensive, but might be willing to still allocate from a planet with less PP to lose
-            newFoci[pid] = RFocus
-            curTargetRP += (RR-IR)
-            curTargetPP -= (II-RI)
+            if planetMap[pid].currentMeterValue(fo.meterType.targetPopulation) > 0:
+                newFoci[pid] = RFocus
+                curTargetRP += (RR-IR)
+                curTargetPP -= (II-RI)
         print "============================"
         print "Planet Focus Assignments to achieve target RP/PP ratio of %.2f from current ratio of %.2f  ( %.1f / %.1f )"%(priorityRatio,  rp/(pp+0.0001),  rp,  pp)
         print "Max Industry assignments would result in target RP/PP ratio of %.2f  ( %.1f / %.1f )"%( ctRP0/ (ctPP0 + 0.0001), ctRP0,  ctPP0 )

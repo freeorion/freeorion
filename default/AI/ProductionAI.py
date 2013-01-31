@@ -457,13 +457,13 @@ def addColonyDesigns():
     is1,  is2 = "FU_BASIC_TANK",  "ST_CLOAK_1"
     for id in [1, 2, 3, 4]:
         newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  cp],  "",  model)    for iw in range(2, 6) ]
-#    for id in [1, 2, 3, 4]:
-#        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  cp],  "",  model)    for iw in range(6, 9) ] # when farther along, use 2 pods
-
-    nb,  hull =  designNameBases[2]+"%1d_%1d",   "SH_ENDOMORPHIC"
-    cp = "CO_SUSPEND_ANIM_POD"
     for id in [1, 2, 3, 4]:
-        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  "",   cp,  is1],  "",  model)    for iw in range(2, 9) ]
+        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  cp],  "",  model)    for iw in range(6, 9) ] # when farther along, use 2 pods
+
+    nb =  designNameBases[2]+"%1d_%1d"
+    cp2 = "CO_SUSPEND_ANIM_POD"
+    for id in [1, 2, 3, 4]:
+        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  cp2],  "",  model)    for iw in range(2, 9) ]
 
     currentTurn=fo.currentTurn()
     needsAdding=[]
@@ -988,39 +988,49 @@ def generateProductionOrders():
                                         break #only initiate max of one new build per turn
 
     bldName = "BLD_CONC_CAMP"
-    if foAI.foAIstate.aggression>fo.aggression.typical and empire.buildingTypeAvailable(bldName):
-        queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
-        bldType = fo.getBuildingType(bldName)
-        for pid in AIstate.popCtrIDs:
-            planet=universe.getPlanet(pid)
-            if not planet:
-                continue
-            tPop = planet.currentMeterValue(fo.meterType.targetPopulation)
-            tInd=planet.currentMeterValue(fo.meterType.targetIndustry)
-            cInd=planet.currentMeterValue(fo.meterType.industry)
-            if (tPop >= 25):
-                cPop = planet.currentMeterValue(fo.meterType.population)
-                if (cPop >=0.95*tPop) and cInd < 1.5* tInd:
-                    if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
-                        if planet.focus in [ AIFocusType.FOCUS_INDUSTRY,  AIFocusType.FOCUS_MINING ]:
-                             fo.issueChangeFocusOrder(pid, AIFocusType.FOCUS_RESEARCH)
-                        res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
-                        print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
-                        if res: 
-                            queuedBldLocs.append(pid)
-                            res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
-                elif (cPop < 18 ) or cPop < 0.75*tPop:
-                    for bldg in planet.buildingIDs:
-                        if universe.getObject(bldg).buildingTypeName  == bldName:
-                            res=fo.issueScrapOrder( bldg)
-                            print "Tried scrapping %s at planet %s,  got result %d"%(bldName,  planet.name,  res)
+    bldType = fo.getBuildingType(bldName)
+    for pid in AIstate.popCtrIDs:
+        planet=universe.getPlanet(pid)
+        if not planet:
+            continue
+        tPop = planet.currentMeterValue(fo.meterType.targetPopulation)
+        tInd=planet.currentMeterValue(fo.meterType.targetIndustry)
+        cInd=planet.currentMeterValue(fo.meterType.industry)
+        cPop = planet.currentMeterValue(fo.meterType.population)
+        if (cPop < 18 ) or cPop < 0.75*tPop:  #check even if not aggressive, etc, just in case acquired planet with a ConcCamp on it
+            for bldg in planet.buildingIDs:
+                if universe.getObject(bldg).buildingTypeName  == bldName:
+                    res=fo.issueScrapOrder( bldg)
+                    print "Tried scrapping %s at planet %s,  got result %d"%(bldName,  planet.name,  res)
+        elif foAI.foAIstate.aggression>fo.aggression.typical and empire.buildingTypeAvailable(bldName) and (tPop >= 25) and ((empire.empireID+pid)%3 == 0):
+            queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
+            if (cPop >=0.95*tPop) and cInd < 1.5* tInd:
+                if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
+                    if planet.focus in [ AIFocusType.FOCUS_INDUSTRY,  AIFocusType.FOCUS_MINING ]:
+                         fo.issueChangeFocusOrder(pid, AIFocusType.FOCUS_RESEARCH)
+                    res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
+                    print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
+                    if res: 
+                        queuedBldLocs.append(pid)
+                        res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
 
+    bldName = "BLD_EVACUATION"
+    bldType = fo.getBuildingType(bldName)
+    for pid in AIstate.popCtrIDs:
+        planet=universe.getPlanet(pid)
+        if not planet:
+            continue
+        for bldg in planet.buildingIDs:
+            if universe.getObject(bldg).buildingTypeName  == bldName:
+                res=fo.issueScrapOrder( bldg)
+                print "Tried scrapping %s at planet %s,  got result %d"%(bldName,  planet.name,  res)
 
     totalPPSpent = fo.getEmpire().productionQueue.totalSpent
     print "  Total Production Points Spent:     " + str(totalPPSpent)
 
-    wastedPP = totalPP - totalPPSpent
+    wastedPP = max(0,  totalPP - totalPPSpent)
     print "  Wasted Production Points:          " + str(wastedPP)
+    availPP = totalPP*1.1 - totalPPSpent
 
     print ""
     print "Possible ship designs to build:"
@@ -1132,9 +1142,9 @@ def generateProductionOrders():
     #print "\n ship priority selection list: \n %s \n\n"%str(priorityChoices)
     loopCount = 0
         
-    while (wastedPP > 0) and (loopCount <100) and (priorityChoices != [] ): #make sure don't get stuck in some nonbreaking loop like if all shipyards captured
+    while (availPP > 0) and (loopCount <100) and (priorityChoices != [] ): #make sure don't get stuck in some nonbreaking loop like if all shipyards captured
         loopCount +=1
-        print "Beginning  build enqueue loop %d; %.1f PP available"%(loopCount,  wastedPP)
+        print "Beginning  build enqueue loop %d; %.1f PP available"%(loopCount,  availPP)
         thisPriority = choice( priorityChoices )
         print "selected priority: ",  AIPriorityNames[thisPriority]
         makingColonyShip=False
@@ -1177,12 +1187,21 @@ def generateProductionOrders():
             print ""
             if numShips>1:
                 fo.issueChangeProductionQuantityOrder(productionQueue.size -1,  1,  numShips)
-            wastedPP -=  perTurnCost
+            availPP -=  perTurnCost
             if makingColonyShip:
                 totColonyFleets +=numShips  
-                res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                if totalPP > 4* perTurnCost:
+                    res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                continue
             if makingOutpostShip:
                 totOutpostFleets +=numShips
+                if totalPP > 4* perTurnCost:
+                    res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                continue
+            if totalPP > 10* perTurnCost and productionQueue[ productionQueue.size -1].allocation < 0.5* perTurnCost :
+                leadingBlockPP = sum( [ elem.allocation for elem in [productionQueue[elemi] for elemi in range(0,  min(4,  productionQueue.size))]])
+                if leadingBlockPP > 0.5* totalPP:
+                    res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
     print ""
 
 def getAvailableBuildLocations(shipDesignID):

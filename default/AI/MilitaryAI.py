@@ -95,7 +95,7 @@ def getMilitaryFleets(tryReset=True):
                 sysID = status['sysID']
                 if len( list( universe.getSystem(sysID).planetIDs  ) ) ==0:
                     continue
-                systemDict[sysID] = systemDict.get( sysID,  0) + status['rating']
+                systemDict[sysID] = systemDict.get( sysID,  0) + status.get('rating',  {}).get('overall',  0)
         rankedSystems = sorted( [(val,  sysID) for sysID, val in systemDict.items()  ]   )
         if rankedSystems:
             capitalSysID = rankedSystems[-1][-1]

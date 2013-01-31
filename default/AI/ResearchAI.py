@@ -78,7 +78,7 @@ def generateResearchOrders():
         print ""
     if fo.currentTurn()==1:
         if foAI.foAIstate.aggression <=fo.aggression.typical:
-            newtech = TechsListsAI.primaryMetaTechsList()
+            newtech = TechsListsAI.primaryMetaTechsList( index=empireID%2 )
         else:
             #newtech = TechsListsAI.aggressiveTechs()
             newtech = TechsListsAI.primaryMetaTechsList()

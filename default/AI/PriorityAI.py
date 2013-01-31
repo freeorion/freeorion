@@ -122,22 +122,25 @@ def calculateResearchPriority():
     planets = map(universe.getPlanet,  ownedPlanetIDs)
     targetRP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetResearch),  planets) )
 
+    styleIndex = empireID%2
+    styleAdjustmentMap = {0:0,  1:0}
+    styleAdjustment = styleAdjustmentMap.get( styleIndex,  0 )
     if industrySurge:
         researchPriority =  5
     else:
         if  (fo.currentTurn() < 20) or not gotAlgo:
             researchPriority = 60 # mid industry , high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
         elif fo.currentTurn() < 30:
-            researchPriority = 30 # mid industry , mid research 
+            researchPriority = 30 +styleAdjustment# mid industry , mid research 
         elif fo.currentTurn() < 40:
-            researchPriority = 20 # high  industry , low research 
+            researchPriority = 20+styleAdjustment # high  industry , low research 
         else:
             researchQueue = list(empire.researchQueue)
-            researchPriority = 15 # high  industry , low research 
+            researchPriority = 15+styleAdjustment # high  industry , low research 
             if len(researchQueue) == 0 :
                 researchPriority = 0 # done with research
             elif len(researchQueue) <5 and researchQueue[-1].allocation > 0 :
-                researchPriority = 1 # barely not done with research 
+                researchPriority =  len(researchQueue) # barely not done with research 
             elif len(researchQueue) <10 and researchQueue[-1].allocation > 0 :
                 researchPriority = 2 # almost done with research 
             elif len(researchQueue) <20 and researchQueue[int(len(researchQueue)/2)].allocation > 0 :
@@ -182,8 +185,8 @@ def calculateColonisationPriority():
     "calculates the demand for colony ships by colonisable planets"
     global allottedColonyTargets
     totalPP=fo.getEmpire().productionPoints
-    colonyCost=250*(1+ 0.1*len( list(AIstate.popCtrIDs) + list(AIstate.outpostIDs) ))
-    turnsToBuild=8
+    colonyCost=250*(1+ 0.04*len( list(AIstate.popCtrIDs) + list(AIstate.outpostIDs) ))
+    turnsToBuild=8#TODO: check for susp anim pods, build time 10
     allottedPortion = 0.3
     #allottedColonyTargets = 1+ int(fo.currentTurn()/50)
     allottedColonyTargets = 1 + int( totalPP*turnsToBuild*allottedPortion/colonyCost)
