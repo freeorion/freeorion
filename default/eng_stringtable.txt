@@ -1966,6 +1966,12 @@ Trade
 MAP_TRADE_TEXT
 Empire total trade output. (Trade does nothing)
 
+MAP_FLEET_TITLE
+Fleet Count
+
+MAP_FLEET_TEXT
+Total number of ships
+
 #################
 # SidePanel     #
 #################

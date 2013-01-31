@@ -179,6 +179,7 @@ protected:
 
 private:
     void            RefreshTradeResourceIndicator();
+    void            RefreshFleetResourceIndicator();
     void            RefreshResearchResourceIndicator();
     void            RefreshIndustryResourceIndicator();
     void            RefreshPopulationIndicator();
@@ -414,7 +415,7 @@ private:
     bool                        m_sidepanel_open_before_showing_other;  //!< was the sidepanel open before switching to production, research or design screens?  If so, it should be restored when leaving them.
 
     CUIToolBar*                 m_toolbar;
-    StatisticIcon               *m_trade, *m_population, *m_research, *m_industry, *m_detection;
+    StatisticIcon               *m_trade, *m_population, *m_research, *m_industry, *m_detection, *m_fleet;
     GG::Button                  *m_industry_wasted, *m_research_wasted;
     SettableInWindowCUIButton   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_pedia, *m_btn_objects, *m_btn_menu;
     FPSIndicator*               m_FPS;

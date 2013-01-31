@@ -551,6 +551,7 @@ MapWnd::MapWnd() :
     m_sidepanel_open_before_showing_other(false),
     m_toolbar(0),
     m_trade(0),
+    m_fleet(0),
     m_population(0),
     m_research(0),
     m_industry(0),
@@ -791,6 +792,11 @@ MapWnd::MapWnd() :
                                 0, 3, false);
     m_trade->SetName("Trade StatisticIcon");
 
+    m_fleet = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
+                                ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
+                                0, 3, false);
+    m_fleet->SetName("Fleet StatisticIcon");
+
     m_detection = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
                                     ClientUI::MeterIcon(METER_DETECTION),
                                     0, 3, false);
@@ -851,8 +857,12 @@ MapWnd::MapWnd() :
     layout->Add(m_research,         0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
+    //layout->SetColumnStretch(layout_column, 1.0);
+    //layout->Add(m_trade,            0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
+    //++layout_column;
+
     layout->SetColumnStretch(layout_column, 1.0);
-    layout->Add(m_trade,            0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
+    layout->Add(m_fleet,            0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
     layout->SetColumnStretch(layout_column, 1.0);
@@ -1896,6 +1906,7 @@ void MapWnd::InitTurn() {
     RefreshIndustryResourceIndicator();
     RefreshResearchResourceIndicator();
     RefreshTradeResourceIndicator();
+    RefreshFleetResourceIndicator();
     RefreshPopulationIndicator();
     RefreshDetectionIndicator();
 
@@ -4262,6 +4273,31 @@ void MapWnd::RefreshTradeResourceIndicator() {
     m_trade->ClearBrowseInfoWnd();
     m_trade->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_TRADE_TITLE"), UserString("MAP_TRADE_TEXT"))));
+}
+
+void MapWnd::RefreshFleetResourceIndicator() {
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(empire_id);
+    if (!empire) {
+        m_fleet->SetValue(0.0);
+        return;
+    }
+
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
+
+    int total_fleet_count = 0;
+    const ObjectMap& objects = Objects();
+    std::vector<const Ship*> ships = objects.FindObjects<Ship>();
+    for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
+        const Ship* ship = *it;
+        if (ship->OwnedBy(empire_id) && this_client_known_destroyed_objects.find(ship->ID()) == this_client_known_destroyed_objects.end())
+            total_fleet_count++;
+    }
+
+    m_fleet->SetValue(total_fleet_count);
+    m_fleet->ClearBrowseInfoWnd();
+    m_fleet->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_FLEET_TITLE"), UserString("MAP_FLEET_TEXT"))));
 }
 
 void MapWnd::RefreshResearchResourceIndicator() {
