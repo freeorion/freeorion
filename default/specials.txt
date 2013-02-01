@@ -495,11 +495,18 @@ Special
     description = "ANCIENT_RUINS_DEPLETED_SPECIAL_DESC"
     stealth = 20
     spawnrate = 0.0
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = Source
             effects = SetTexture name = "planets/overlays/ruins.png"
 
+        EffectsGroup
+            scope = And [
+                Source
+                Focus "FOCUS_RESEARCH"
+            ]
+            effects = SetTargetResearch Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
+        ]
     graphic = "icons/specials_huge/ancient_ruins.png"
     
 Special

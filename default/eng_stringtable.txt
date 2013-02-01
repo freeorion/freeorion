@@ -6503,7 +6503,7 @@ LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with any focus by 0.2 per Population.
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with any focus by 0.1 per Population.
 
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
 
