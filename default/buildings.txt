@@ -552,7 +552,7 @@ BuildingType
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_INDUSTRY_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * 2.5 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -565,7 +565,7 @@ BuildingType
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_RESEARCH_EFFECT"
-            effects = SetTargetResearch Value + Target.Population * 3.0 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
     icon = ""
 
@@ -1065,7 +1065,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BLD_ENCLAVE_VOID_STACK"
-            effects = SetTargetResearch Value + Target.Population * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 3.75 *  [[RESEARCH_PER_POP]]
     ]
     icon = ""
 

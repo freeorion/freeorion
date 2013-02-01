@@ -4217,7 +4217,7 @@ ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-'''Triples the [[encyclopedia RESEARCH_TITLE]] on this planet and increases [[encyclopedia RESEARCH_TITLE]] on Research-focused planets by one twentieth (non-stacking).
+'''Increases Target [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population.
 
 This planet holds the ruins of an unknown, advanced ancient race. A valuable discovery has already been made here.'''
 
@@ -4225,7 +4225,7 @@ ANCIENT_RUINS_SPECIAL
 Ancient Ruins
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-'''Triples the [[encyclopedia RESEARCH_TITLE]] on this planet and increases [[encyclopedia RESEARCH_TITLE]] on Research-focused planets by one twentieth (non-stacking).
+'''Increases Target [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population.
 
 This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
 
@@ -4303,14 +4303,14 @@ This planet has a natural satellite, the orbital period of which is in 1:1 reson
 COMPUTRONIUM_SPECIAL
 Computronium Moon
 COMPUTRONIUM_SPECIAL_DESC
-'''When a planet with a Computronium Moon is focused on [[encyclopedia RESEARCH_TITLE]], all research focused planets in the empire gain .5 [[encyclopedia RESEARCH_TITLE]] per Population.
+'''When a planet with a Computronium Moon is focused on [[encyclopedia RESEARCH_TITLE]], all research focused planets in the empire gain 0.2 [[encyclopedia RESEARCH_TITLE]] per Population.
 
 Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
 
 PHILOSOPHER_SPECIAL
 Philosopher Planet
 PHILOSOPHER_SPECIAL_DESC
-'''As long as the Philosopher Planet is uninhabited, all research focused planets in the same system have their [[encyclopedia RESEARCH_TITLE]] increased by 10. [[encyclopedia INFRASTRUCTURE_TITLE]] on the Philosopher Planet is decreased by 20.
+'''As long as the Philosopher Planet is uninhabited, all inhabited planets in the same system have their [[encyclopedia RESEARCH_TITLE]] increased by 5. [[encyclopedia INFRASTRUCTURE_TITLE]] on the Philosopher Planet is decreased by 20.
 
 The lone remnant of a planet-sized space wandering species has found his final rest orbiting in this system like a normal planet. Having lived for thousands of years he lost the will and ability to travel and resorts to pondering about the mysteries of the universe he has seen and learned about. Eccentric and slightly demented he refuses to communicate with anything that isn't the size and shape of his kin, leaving scientists no choice but to ask questions via the planet they are living on. Understandably colonizing the Philosopher Planet will disturb him gravely and he will fall silent. Construction on his surface is difficult as is to be expected from a living being.'''
 
@@ -5692,7 +5692,7 @@ LRN_ALGO_ELEGANCE
 Algorithmic Elegance
 
 LRN_ALGO_ELEGANCE_DESC
-'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all Research focused planets by 0.25 per Population.
+'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all Research focused planets by 0.1 per Population.
 
 With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity. At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.'''
 
@@ -5716,7 +5716,7 @@ LRN_ARTIF_MINDS
 Nacent Artificial Intelligence
 
 LRN_ARTIF_MINDS_DESC
-'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all planets by the greater of 0.5 per 5 units of Population.
+'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all planets by 0.2 per Population.
 
 While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience. While these traits remain elusive, reasonable faximilies may be produced. These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
 
@@ -5785,7 +5785,7 @@ LRN_QUANT_NET
 Quantum Networking
 
 LRN_QUANT_NET_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.2 per units of population.
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population.
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes. This advancement greatly facilitates research throughout the empire.
 
@@ -5898,7 +5898,7 @@ GRO_ENERGY_META
 Pure-Energy Metabolism
 
 GRO_ENERGY_META_DESC
-'''Increases max Fuel on all ships by 2, max [[encyclopedia DEFENSE_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_TITLE]] on all planets by 5, target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by one quarter of the planet's population, and target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by one fifth.
+'''Increases max Fuel on all ships by 2, max [[encyclopedia DEFENSE_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_TITLE]] on all planets by 5, target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by one quarter of the planet's population, and target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by .5 per pop.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -6503,7 +6503,7 @@ LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per 5 units of Population.
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with any focus by 0.2 per Population.
 
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
 
@@ -6511,7 +6511,7 @@ LRN_STELLAR_TOMOGRAPHY
 Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on planets with the Research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively, times the greater of 1 per 5 units of Population.
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on planets with the Research focus per Population by 1, 0.75, 0.5, or 0.2 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively.
 
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 
@@ -6548,12 +6548,6 @@ LRN_PSY_DOM_DESC
 '''Has a 10% chance of taking control of any enemy ship within one starlane jump of a colony owned by the empire, provided that the ship is not owned by an empire who also has this tech or piloted by a telepathic species.
 
 It is difficult to force a conscious individual to submit to the total mental control of another entity against its will. By manipulating the timeframes involved however, the mental force exerted by a population over a period of hours may be brought to bear on a single individual in the span of a few seconds, creating an almost irresistible compulsion to join the unified mind.'''
-
-LRN_RUINS_MOD
-Ancient Ruins Modifier
-
-LRN_RUINS_MOD_DESC
-Due to the order in which effects groups are processed, the Ancient Ruins special cannot have the desired effect of multiplying research on the planet where it is located. This technology makes it possible.
 
 MIND_CONTROL_SHORT_DESC
 Allows Mind Control
@@ -7347,7 +7341,7 @@ BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by ??? per unit of Population, and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by 3 per 5 units of Population. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.5 per Population, and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by 0.5 per Population. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 
@@ -7363,7 +7357,7 @@ BLD_ENCLAVE_VOID
 Enclave of the Void
 
 BLD_ENCLAVE_VOID_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 1 per 5 units of population.
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by .75 per Population.
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
 

@@ -1,5 +1,8 @@
 /*   R E S O U R C E    P R O D U C T I O N    */
 
+// Base Production Values
+// Production Boosters based on population should be calculate based on these.
+
 INDUSTRY_PER_POP
 '''0.2'''
 

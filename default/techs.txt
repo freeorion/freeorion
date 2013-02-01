@@ -385,7 +385,7 @@ Tech
                 ProductionCenter
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 0.25
+            effects = SetTargetResearch Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/algorithmic_elegance.png"
 
@@ -517,7 +517,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
             ]
-            effects = SetTargetResearch Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/basic_autolabs.png"
 
@@ -535,9 +535,9 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Focus "FOCUS_RESEARCH"
+                // Focus "FOCUS_RESEARCH"  //Does not require research Focus
             ]
-            effects = SetTargetResearch Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
     ]
 
 Tech
@@ -594,7 +594,7 @@ Tech
                 ProductionCenter
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
 
 Tech
@@ -614,7 +614,7 @@ Tech
                 Star type = BlackHole
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + 2 * Target.Population * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -623,7 +623,7 @@ Tech
                 Star type = Neutron
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + 1.75 * Target.Population * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 3.75 * [[RESEARCH_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -632,7 +632,7 @@ Tech
                 Star type = [Blue White]
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + 1.5 * Target.Population * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -641,7 +641,7 @@ Tech
                 Star type = [Red Orange Yellow]
                 Focus "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value  + 1.25 * Target.Population * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/stellar_tomography.png"
 
@@ -755,43 +755,6 @@ Tech
                 ]
     graphic = "icons/tech/singularity_of_transcendence.png"
 
-Tech
-    name = "LRN_RUINS_MOD"
-    description = "LRN_RUINS_MOD_DESC"
-    short_description = "GAME_MAKE_WORK_SHORT_DESC"
-    techtype = Application
-    category = "LEARNING_CATEGORY"
-    researchcost = 1
-    researchturns = 1
-    Unresearchable
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Or [
-                    HasSpecial "ANCIENT_RUINS_SPECIAL"
-                    HasSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
-                ]
-                Focus "FOCUS_RESEARCH"
-            ]
-            stackinggroup = "ANCIENT_RUINS_RESEARCH_EFFECT"
-            effects = SetTargetResearch Value + Target.Population * [[RESEARCH_PER_POP]]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_RESEARCH"
-            ]
-            activation = Number low = 1 And [
-                Or [
-                    HasSpecial "ANCIENT_RUINS_SPECIAL"
-                    HasSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
-                ]
-                OwnedBy TheEmpire Source.Owner
-            ]
-            stackinggroup = "ANCIENT_RUINS_RESEARCH_EFFECT"
-            effects = SetTargetResearch Value + Target.Population * 0.25 * [[RESEARCH_PER_POP]]
-    ]
 
 
 //########################################################
@@ -1025,7 +988,7 @@ Tech
                 Focus "FOCUS_RESEARCH"
 
             ]
-            effects = SetTargetResearch Value  + Target.Population * 0.25 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch Value  + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/pure-energy_metabolism.png"
 

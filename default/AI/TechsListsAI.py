@@ -515,7 +515,6 @@ MasterTechList=[  #currently with typos, just for reference
         "LRN_PSIONICS",
         "LRN_PSY_DOM",
         "LRN_QUANT_NET",
-        "LRN_RUINS_MOD",
         "LRN_SPATIAL_DISTORT_GEN",
         "LRN_STELLAR_TOMOGRAPHY",
         "LRN_TIME_MECH",
