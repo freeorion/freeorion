@@ -954,7 +954,7 @@ bool ServerApp::AllOrdersReceived() {
         if (!it->second)
             Logger().debugStream() << " ... no orders from empire id: " << it->first;
         else
-            Logger().debugStream() << " ... have ordres from empire id: " << it->first;
+            Logger().debugStream() << " ... have orders from empire id: " << it->first;
     }
 
     // Loop through to find empire ID and check for valid orders pointer

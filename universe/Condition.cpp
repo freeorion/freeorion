@@ -286,14 +286,19 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
         int low = (m_low ? m_low->Eval(local_context) : 0);
         int high = (m_high ? m_high->Eval(local_context) : INT_MAX);
 
+        const std::set<int> destroyed_object_ids = GetUniverse().DestroyedObjectIds();
+
         // get set of all UniverseObjects that satisfy m_condition
         ObjectMap& objects = GetUniverse().Objects();
         ObjectSet condition_matches;
         condition_matches.reserve(objects.NumObjects());
         ObjectSet condition_non_matches;
         condition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit)
+        for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit) {
+            if (destroyed_object_ids.find(uit->first) != destroyed_object_ids.end())
+                continue;
             condition_non_matches.push_back(uit->second);
+        }
         // can evaluate subcondition once for all objects being tested by this condition
         m_condition->Eval(local_context, condition_matches, condition_non_matches, NON_MATCHES);
         // compare number of objects that satisfy m_condition to the acceptable range of such objects
@@ -327,14 +332,19 @@ bool Condition::Number::Match(const ScriptingContext& local_context) const {
     double low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
     double high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
 
+    const std::set<int> destroyed_object_ids = GetUniverse().DestroyedObjectIds();
+
     // get set of all UniverseObjects that satisfy m_condition
     ObjectMap& objects = GetUniverse().Objects();
     ObjectSet condition_matches;
     condition_matches.reserve(objects.NumObjects());
     ObjectSet condition_non_matches;
     condition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit)
+    for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit) {
+        if (destroyed_object_ids.find(uit->first) != destroyed_object_ids.end())
+            continue;
         condition_non_matches.push_back(uit->second);
+    }
     m_condition->Eval(local_context, condition_matches, condition_non_matches, NON_MATCHES);
 
     // compare number of objects that satisfy m_condition to the acceptable range of such objects

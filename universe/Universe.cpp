@@ -1113,9 +1113,11 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
 
     Logger().debugStream() << "Universe::GetEffectsAndTargets";
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "All objects:";
-        for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it)
-            Logger().debugStream() << "... object (" << it->first << "): " << it->second->Name();
+        Logger().debugStream() << "target objects:";
+        for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it) {
+            if (const UniverseObject* obj = GetUniverseObject(*it))
+                Logger().debugStream() << obj->Dump();
+        }
     }
 
     boost::timer type_timer;
