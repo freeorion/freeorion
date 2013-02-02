@@ -4439,7 +4439,7 @@ MONOPOLE_SPECIAL
 Monopole Magnets
 MONOPOLE_SPECIAL_DESC
 '''Increases max Population if inhabited by Robotic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Monopole Magnets is focused on Growth, all connected planets with Robotic species receive the same bonus.
+When a planet with Monopole Magnets is focused on Growth, all connected planets with Robotic species receive the same bonus. When focused on Industry, tncreases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
 
 Monopole Magnets make better robots!'''
 
@@ -4447,7 +4447,7 @@ SUPERCONDUCTOR_SPECIAL
 Ambient Superconductors
 SUPERCONDUCTOR_SPECIAL_DESC
 '''Increases max Population if inhabited by Robotic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Ambient Superconductors is focused on Growth, all connected planets with Robotic species receive the same bonus.
+When a planet with Ambient Superconductors is focused on Growth, all connected planets with Robotic species receive the same bonus. When focused on Industry, tncreases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
 
 Ambient Superconductors make better robots!'''
 
@@ -4455,7 +4455,7 @@ POSITRONIUM_SPECIAL
 Positronium Ash
 POSITRONIUM_SPECIAL_DESC
 '''Increases max Population if inhabited by Robotic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Positronium Ash is focused on Growth, all connected planets with Robotic species receive the same bonus.
+When a planet with Positronium Ash is focused on Growth, all connected planets with Robotic species receive the same bonus. When focused on Industry, tncreases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
 
 Positronium Ash make better robots brains!'''
 
@@ -5898,7 +5898,7 @@ GRO_ENERGY_META
 Pure-Energy Metabolism
 
 GRO_ENERGY_META_DESC
-'''Increases max Fuel on all ships by 2, max [[encyclopedia DEFENSE_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_TITLE]] on all planets by 5, target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by one quarter of the planet's population, and target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by .5 per pop.
+'''Increases max Fuel on all ships by 2, max [[encyclopedia DEFENSE_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_TITLE]] on all planets by 5, target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by 0.2 per Population, and target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -5928,7 +5928,7 @@ PRO_ROBOTIC_PROD
 Robotic Production
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by the greater of 0.2 per 5 units of Population.
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by 0.1 per Population.
 
 Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
 
@@ -5949,7 +5949,7 @@ PRO_FUSION_GEN
 Fusion Generation
 
 PRO_FUSION_GEN_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by the greater of 0.5 per 5 units of Population.
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.2 per Population.
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -7151,7 +7151,7 @@ BLD_CULTURE_ARCHIVES
 Cultural Archives
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] by 5, target [[encyclopedia INDUSTRY_TITLE]] by the planet's Population.
+'''Increases target [[encyclopedia RESEARCH_TITLE]] by 5, target [[encyclopedia INDUSTRY_TITLE]] by half the planet's Population.
 
 Stores the sum accumulated knowledge from thousands of years of life on this planet, giving bonuses to many aspects of planetary productivity.'''
 

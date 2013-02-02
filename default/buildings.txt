@@ -16,7 +16,7 @@ BuildingType
             ]
             effects = [
                 SetTargetResearch Value + 5
-                SetTargetIndustry Value + Target.Population
+                SetTargetIndustry Value + Target.Population / 2
             ]
             
         EffectsGroup
@@ -436,7 +436,7 @@ BuildingType
                 Not OwnerHasTech "PRO_INDUSTRY_CENTER_II"
             ]
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry Value + Target.Population * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -722,7 +722,7 @@ BuildingType
                 ]
             ]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -908,7 +908,7 @@ BuildingType
             ]
             activation = Star type = BlackHole
             stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * 4 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * 6 * [[INDUSTRY_PER_POP]]
     ]
     icon = "icons/building/blackhole.png"
 

@@ -37,7 +37,7 @@ Special
             scope = Source
             effects = [
                 SetTargetConstruction Value - 20
-                SetTargetIndustry Value + Target.Population * 0.2
+                SetTargetIndustry Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
             ]
     ]
     graphic = "icons/specials_huge/tidal_lock.png"
@@ -1445,7 +1445,7 @@ STANDARD_INDUSTRY_BOOST
 '''EffectsGroup
             scope = Source
             activation = Focus "FOCUS_INDUSTRY"
-            effects = SetTargetIndustry Value + Target.Population * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
 '''
 
