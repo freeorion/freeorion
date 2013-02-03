@@ -1013,8 +1013,11 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "UpdateMeterEstimatesImpl after resetting meters";
-        Logger().debugStream() << m_objects.Dump();
+        Logger().debugStream() << "UpdateMeterEstimatesImpl after resetting meters objects:";
+        for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
+            if (const UniverseObject* obj = GetUniverseObject(*it))
+                Logger().debugStream() << obj->Dump();
+        }
     }
 
     // cache all activation and scoping condition results before applying Effects, since the application of
@@ -1026,8 +1029,11 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     ExecuteEffects(targets_causes, true, true, false, false);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "UpdateMeterEstimatesImpl after executing effects";
-        Logger().debugStream() << m_objects.Dump();
+        Logger().debugStream() << "UpdateMeterEstimatesImpl after executing effects objects:";
+        for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
+            if (const UniverseObject* obj = GetUniverseObject(*it))
+                Logger().debugStream() << obj->Dump();
+        }
     }
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
@@ -1079,8 +1085,11 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "UpdateMeterEstimatesImpl after discrepancies and clamping";
-        Logger().debugStream() << m_objects.Dump();
+        Logger().debugStream() << "UpdateMeterEstimatesImpl after discrepancies and clamping objects:";
+        for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
+            if (const UniverseObject* obj = GetUniverseObject(*it))
+                Logger().debugStream() << obj->Dump();
+        }
     }
 }
 
