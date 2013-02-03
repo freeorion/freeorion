@@ -37,6 +37,8 @@ Species
         [[BAD_GROUND_TROOPS]]
         
         // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         [[TUNNELS_SPECIAL]]
     ]
     
@@ -93,6 +95,10 @@ Species
                 SetMaxShield Value + 5
                 SetMaxDefense Value + 5
             ]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+
     ]
     
     [[RADIATED_STANDARD_EP]]
@@ -121,7 +127,11 @@ Species
         
         [[GOOD_POPULATION]]
         [[GREAT_GROUND_TROOPS]]
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
+
+
     
     [[RADIATED_STANDARD_EP]]
     
@@ -153,6 +163,8 @@ Species
         [[BAD_GROUND_TROOPS]]
         
         // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
     ]
     
@@ -186,6 +198,8 @@ Species
         [[GOOD_GROUND_TROOPS]]
         
         // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
     ]
 
@@ -216,6 +230,8 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[GOOD_GROUND_TROOPS]]
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[SWAMP_BROAD_EP]]
@@ -246,6 +262,8 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_GROUND_TROOPS]]    
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[TOXIC_STANDARD_EP]]
@@ -276,6 +294,9 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[ULTIMATE_WEAPONS]]
         
@@ -313,6 +334,8 @@ Species
         [[GREAT_GROUND_TROOPS]]
         
         // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
     ]
     
@@ -345,6 +368,9 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[GOOD_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
                 
         [[GREAT_WEAPONS]]
         
@@ -379,6 +405,8 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[BAD_GROUND_TROOPS]]
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     environments = [
@@ -418,6 +446,9 @@ Species
 
         [[GOOD_POPULATION]]
         [[ULTIMATE_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[ULTIMATE_STEALTH]]
         [[ULTIMATE_DETECTION]]
@@ -449,6 +480,9 @@ Species
         
         [[BAD_POPULATION]]
         [[BAD_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -479,6 +513,9 @@ Species
                 
         [[BAD_POPULATION]]
         [[GOOD_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[GOOD_DETECTION]]
         [[GREAT_STEALTH]]
@@ -512,6 +549,10 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+
         
         // not for description
         [[LARGE_PLANET]]
@@ -543,6 +584,10 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[BAD_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+
     ]
     
     [[TOXIC_STANDARD_EP]]
@@ -575,6 +620,8 @@ Species
         [[BAD_GROUND_TROOPS]]
         
         // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
     ]
     
@@ -607,6 +654,9 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[GREAT_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[GOOD_WEAPONS]]
        
@@ -644,6 +694,8 @@ Species
         [[AVERAGE_GROUND_TROOPS]]
         
         // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
     ]
     
@@ -675,6 +727,9 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[BAD_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[BARREN_STANDARD_EP]]
@@ -705,6 +760,9 @@ Species
         
         [[GOOD_POPULATION]]
         [[BAD_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
 
         [[GREAT_DETECTION]]
         [[GREAT_STEALTH]]
@@ -741,6 +799,9 @@ Species
 
         [[AVERAGE_POPULATION]]
         [[GREAT_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[GREAT_WEAPONS]] 
     ]
@@ -771,6 +832,9 @@ Species
         
         [[BAD_POPULATION]]
         [[BAD_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[GREAT_DETECTION]]
         [[GOOD_STEALTH]]
@@ -802,6 +866,9 @@ Species
                 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[ULTIMATE_DETECTION]]
     ]
@@ -833,6 +900,9 @@ Species
                 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -861,6 +931,9 @@ Species
                 
         [[AVERAGE_POPULATION]]
         [[ULTIMATE_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[TERRAN_STANDARD_EP]]
@@ -894,6 +967,8 @@ Species
         [[AVERAGE_GROUND_TROOPS]]
         
         // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
     ]
     
@@ -925,6 +1000,9 @@ Species
         
         [[GOOD_POPULATION]]
         [[NO_GROUND_TROOPS]]  
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[GREAT_STEALTH]]
     ]
@@ -957,6 +1035,9 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[TERRAN_STANDARD_EP]]
@@ -987,6 +1068,9 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[BAD_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[TUNDRA_NARROW_EP]]
@@ -1017,6 +1101,9 @@ Species
         
         [[GOOD_POPULATION]]
         [[GREAT_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[ULTIMATE_WEAPONS]]
 
@@ -1062,6 +1149,9 @@ Species
 
         [[GOOD_POPULATION]]
         [[BAD_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -1090,6 +1180,9 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[BAD_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[BARREN_STANDARD_EP]]
@@ -1125,6 +1218,8 @@ Species
         [[GOOD_STEALTH]]
         
         // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
     ]
     
@@ -1156,6 +1251,9 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[GOOD_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[INFERNO_NARROW_EP]]
@@ -1186,6 +1284,8 @@ Species
         [[AVERAGE_GROUND_TROOPS]]
         
         // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         [[TUNNELS_SPECIAL]]
         [[HUGE_PLANET]]
     ]
@@ -1215,6 +1315,9 @@ Species
         [[NO_RESEARCH]]
         
         [[NO_GROUND_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[AVERAGE_POPULATION]]
         
@@ -1715,7 +1818,7 @@ HAS_MINING_FOCUS
 '''Focus
             name = "FOCUS_MINING"
             description = "FOCUS_MINING_DESC"
-            location = Or [
+            location = And [
                 HasSpecial "MINERALS_SPECIAL"
                 HasSpecial "CRYSTALS_SPECIAL"
                 HasSpecial "METALOIDS_SPECIAL"
@@ -2382,7 +2485,7 @@ EffectsGroup
             accountinglabel = "BAD_TROOPS_LABEL"
             effects = SetMaxTroops Value * .5
             
-    [[PROTECTION_FOCUS]]
+    [[PROTECTION_FOCUS_TROOPS]]
 '''
 
 AVERAGE_GROUND_TROOPS
@@ -2394,7 +2497,7 @@ EffectsGroup
             accountinglabel = "AVERAGE_TROOPS_LABEL"
             effects = SetMaxTroops Value * 1
             
-    [[PROTECTION_FOCUS]]
+    [[PROTECTION_FOCUS_TROOPS]]
 '''
 
 GOOD_GROUND_TROOPS
@@ -2406,7 +2509,7 @@ EffectsGroup
             accountinglabel = "GOOD_TROOPS_LABEL"
             effects = SetMaxTroops Value * 1.5
             
-    [[PROTECTION_FOCUS]]
+    [[PROTECTION_FOCUS_TROOPS]]
 '''
 
 GREAT_GROUND_TROOPS
@@ -2418,7 +2521,7 @@ EffectsGroup
             accountinglabel = "GREAT_TROOPS_LABEL"
             effects = SetMaxTroops Value * 2
             
-    [[PROTECTION_FOCUS]]
+    [[PROTECTION_FOCUS_TROOPS]]
 '''
 
 ULTIMATE_GROUND_TROOPS
@@ -2430,7 +2533,7 @@ EffectsGroup
             accountinglabel = "ULTIMATE_TROOPS_LABEL"
             effects = SetMaxTroops Value * 3
             
-    [[PROTECTION_FOCUS]]
+    [[PROTECTION_FOCUS_TROOPS]]
 '''
 
 BASIC_GROUND_TROOPS
@@ -2534,7 +2637,7 @@ EffectsGroup
 
 '''
 
-PROTECTION_FOCUS
+PROTECTION_FOCUS_TROOPS
 '''            EffectsGroup
             scope = Source
             activation = And [
@@ -2544,9 +2647,171 @@ PROTECTION_FOCUS
             accountinglabel = "FOCUS_PROTECTION_LABEL"
             effects = [
                 SetMaxTroops Value * 2
-                SetMaxDefense Value + 25
-                SetMaxShield Value + 25
+//                SetMaxDefense Value + 25
+//                SetMaxShield Value + 25
             ]
+'''
+
+//#####      P L A N E T A R Y   S H I E L D S     #####//
+
+AVERAGE_PLANETARY_SHIELDS
+'''[[BASIC_PLANETARY_SHIELDS]]
+
+//EffectsGroup
+//            scope = Source
+//            activation = Planet
+//          accountinglabel = "AVERAGE_SHIELDS_LABEL"
+//            effects = SetMaxShield Value * 1
+            
+    [[PROTECTION_FOCUS_SHIELDS]]
+'''
+
+BASIC_PLANETARY_SHIELDS
+'''EffectsGroup
+            scope = And [
+                Source
+                Planet
+            ]
+            activation = OwnerHasTech "LRN_FORCE_FIELD"
+            accountinglabel = "LRN_FORCE_FIELD"
+            effects = SetMaxShield Value + 10
+
+EffectsGroup
+            scope = And [
+                Source
+                Planet
+            ]
+            activation = OwnerHasTech "DEF_PLAN_BARRIER_SHLD_1"
+            accountinglabel = "DEF_PLAN_BARRIER_SHLD_1"
+            SetMaxShield Value + 30
+
+EffectsGroup
+            scope = And [
+                Source
+                Planet
+            ]
+            activation = OwnerHasTech "DEF_PLAN_BARRIER_SHLD_2"
+            accountinglabel = "DEF_PLAN_BARRIER_SHLD_2"
+            SetMaxShield Value + 60
+
+EffectsGroup
+            scope = And [
+                Source
+                Planet
+            ]
+            activation = OwnerHasTech "DEF_PLAN_BARRIER_SHLD_3"
+            accountinglabel = "DEF_PLAN_BARRIER_SHLD_3"
+            SetMaxShield Value + 90
+
+EffectsGroup
+            scope = And [
+                Source
+                Planet
+            ]
+            activation = OwnerHasTech "DEF_PLAN_BARRIER_SHLD_4"
+            accountinglabel = "DEF_PLAN_BARRIER_SHLD_4"
+            SetMaxShield Value + 150
+
+EffectsGroup
+            scope = And [
+                Source
+                Planet
+            ]
+            activation = OwnerHasTech "DEF_PLAN_BARRIER_SHLD_5"
+            accountinglabel = "DEF_PLAN_BARRIER_SHLD_5"
+            SetMaxShield Value + 150
+
+EffectsGroup
+            scope = And [
+                Source
+                PopulationCenter
+            ]
+            activation = OwnerHasTech "GRO_ENERGY_META"
+            accountinglabel = "GRO_ENERGY_META"
+            SetMaxShield Value + 50
+'''
+
+PROTECTION_FOCUS_SHIELDS
+'''            EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus "FOCUS_PROTECTION"
+            ]
+            accountinglabel = "FOCUS_PROTECTION_LABEL"
+            effects = SetMaxShield Value * 2
+'''
+
+//#####      P L A N E T A R Y   D E F E N S E     #####//
+
+AVERAGE_PLANETARY_DEFENSE
+'''[[BASIC_PLANETARY_DEFENSE]]
+
+//EffectsGroup
+//            scope = Source
+//            activation = Planet
+//          accountinglabel = "AVERAGE_SHIELDS_LABEL"
+//            effects = SetMaxDefense Value * 1
+            
+    [[PROTECTION_FOCUS_DEFENSE]]
+'''
+
+BASIC_PLANETARY_DEFENSE
+'''EffectsGroup
+            scope = And [
+                Source
+                Planet
+                Contains Building name = "BLD_IMPERIAL_PALACE"
+            ]
+            accountinglabel = "BLD_IMPERIAL_PALACE"
+            effects = SetMaxDefense Value + 5
+
+EffectsGroup
+            scope = And [
+                Source
+                Planet
+            ]
+            activation = OwnerHasTech "DEF_DEFENSE_NET_1"
+            accountinglabel = "DEF_DEFENSE_NET_1"
+            effects = SetMaxDefense Value + 5
+
+EffectsGroup
+            scope = And [
+                Source
+                Planet
+            ]
+            activation = OwnerHasTech "DEF_DEFENSE_NET_2"
+            accountinglabel = "DEF_DEFENSE_NET_2"
+            effects = SetMaxDefense Value + 15
+
+EffectsGroup
+            scope = And [
+                Source
+                Planet
+            ]
+            activation = OwnerHasTech "DEF_DEFENSE_NET_3"
+            accountinglabel = "DEF_DEFENSE_NET_3"
+            effects = SetMaxDefense Value + 25
+
+EffectsGroup
+            scope = And [
+                Source
+                Planet
+            ]
+            activation = OwnerHasTech "GRO_ENERGY_META"
+            accountinglabel = "GRO_ENERGY_META"
+            effects = SetMaxDefense Value + 10
+'''
+
+PROTECTION_FOCUS_DEFENSE
+'''            EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus "FOCUS_PROTECTION"
+            ]
+            accountinglabel = "FOCUS_PROTECTION_LABEL"
+            effects = SetMaxDefense Value * 2
 '''
 
 //#####      D E T E C T I O N     #####//

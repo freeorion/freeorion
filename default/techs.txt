@@ -38,6 +38,7 @@ Category
 //########################################################
 //#     D E F E N S E
 //########################################################
+//CORRESPONDING MAX TROOP, DEFENSE, & SHIELD VALUES ARE SPECIFIED IN SPECIES.TXT
 
 Tech
     Name = "DEF_ROOT_DEFENSE"
@@ -103,13 +104,6 @@ Tech
     researchcost = 16
     researchturns = 3
     prerequisites = "DEF_ROOT_DEFENSE"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet
-            ]
-            effects = SetMaxDefense Value + 5
             
 Tech
     name = "DEF_DEFENSE_NET_2"
@@ -120,13 +114,6 @@ Tech
     researchcost = 80
     researchturns = 4
     prerequisites = "DEF_DEFENSE_NET_1"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet
-            ]
-            effects = SetMaxDefense Value + 15
 
 Tech
     name = "DEF_DEFENSE_NET_3"
@@ -137,13 +124,6 @@ Tech
     researchcost = 160
     researchturns = 6
     prerequisites = "DEF_DEFENSE_NET_2"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet
-            ]
-            effects = SetMaxDefense Value + 25
 
 Tech
     name = "DEF_DEFENSE_NET_REGEN_1"
@@ -195,7 +175,7 @@ Tech
                 Planet
             ]
             effects = [
-                SetMaxShield Value + 30
+//                SetMaxShield Value + 30
                 SetShield Value + 0.25*Target.Construction
             ]
 
@@ -215,7 +195,7 @@ Tech
                 Planet
             ]
             effects = [
-                SetMaxShield Value + 60
+//                SetMaxShield Value + 60
                 SetShield Value + 0.75*Target.Construction
             ]
 
@@ -235,7 +215,7 @@ Tech
                 Planet
             ]
             effects = [
-                SetMaxShield Value + 90
+//                SetMaxShield Value + 90
                 SetShield Value + 1.0*Target.Construction
             ]
 
@@ -255,7 +235,7 @@ Tech
                 Planet
             ]
             effects = [
-                SetMaxShield Value + 150
+//                SetMaxShield Value + 150
                 SetShield Value + 1.5*Target.Construction
             ]
 
@@ -275,7 +255,7 @@ Tech
                 Planet
             ]
             effects = [
-                SetMaxShield Value + 150
+//                SetMaxShield Value + 150
                 SetShield Value + 2.5*Target.Construction
             ]
 
@@ -449,13 +429,6 @@ Tech
     researchturns = 5
     prerequisites = "LRN_ARTIF_MINDS"
     unlock = Item type = ShipPart name = "SH_DEFLECTOR"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy TheEmpire Source.Owner
-            ]
-            effects = SetMaxShield Value + 10
     graphic = "icons/tech/force-field_harmonics.png"
 
 Tech
@@ -962,15 +935,7 @@ Tech
             ]
             effects = SetMaxFuel Value + 2
 
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-            ]
-            effects = [
-                SetMaxDefense Value + 5
-                SetMaxShield Value + 10
-            ]
+//Shield & defense now adjusted in Species.txt
 
         EffectsGroup
             scope = And [
