@@ -127,6 +127,8 @@ Species
         
         [[GOOD_POPULATION]]
         [[GREAT_GROUND_TROOPS]]
+        
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
@@ -230,6 +232,8 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[GOOD_GROUND_TROOPS]]
+        
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
@@ -261,7 +265,9 @@ Species
         [[AVERAGE_RESEARCH]]
         
         [[AVERAGE_POPULATION]]
-        [[AVERAGE_GROUND_TROOPS]]    
+        [[AVERAGE_GROUND_TROOPS]]   
+        
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
@@ -294,13 +300,12 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_GROUND_TROOPS]]
-
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[ULTIMATE_WEAPONS]]
         
         // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
     ]
     
@@ -369,13 +374,15 @@ Species
         [[AVERAGE_POPULATION]]
         [[GOOD_GROUND_TROOPS]]
 
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
                 
         [[GREAT_WEAPONS]]
         
         [[BAD_DETECTION]]
         [[GOOD_STEALTH]]
+        
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -404,7 +411,9 @@ Species
         [[BAD_RESEARCH]]
         
         [[AVERAGE_POPULATION]]
-        [[BAD_GROUND_TROOPS]]
+        
+        
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
@@ -446,12 +455,13 @@ Species
 
         [[GOOD_POPULATION]]
         [[ULTIMATE_GROUND_TROOPS]]
-
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[ULTIMATE_STEALTH]]
         [[ULTIMATE_DETECTION]]
+        
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
 
     [[VERY_TOLERANT_EP]]
@@ -481,6 +491,7 @@ Species
         [[BAD_POPULATION]]
         [[BAD_GROUND_TROOPS]]
 
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
@@ -513,12 +524,13 @@ Species
                 
         [[BAD_POPULATION]]
         [[GOOD_GROUND_TROOPS]]
-
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[GOOD_DETECTION]]
         [[GREAT_STEALTH]]
+        
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[TUNDRA_STANDARD_EP]]
@@ -549,12 +561,10 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[AVERAGE_GROUND_TROOPS]]
-
+     
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
-
-        
-        // not for description
         [[LARGE_PLANET]]
     ]
     
@@ -585,9 +595,9 @@ Species
         [[AVERAGE_POPULATION]]
         [[BAD_GROUND_TROOPS]]
 
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
-
     ]
     
     [[TOXIC_STANDARD_EP]]
@@ -654,13 +664,12 @@ Species
         
         [[AVERAGE_POPULATION]]
         [[GREAT_GROUND_TROOPS]]
-
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[GOOD_WEAPONS]]
        
         // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
     ]
     
@@ -728,6 +737,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[BAD_GROUND_TROOPS]]
 
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
@@ -761,13 +771,12 @@ Species
         [[GOOD_POPULATION]]
         [[BAD_GROUND_TROOPS]]
 
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
-
         [[GREAT_DETECTION]]
         [[GREAT_STEALTH]]
         
         // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
     ]
     
@@ -800,10 +809,11 @@ Species
         [[AVERAGE_POPULATION]]
         [[GREAT_GROUND_TROOPS]]
 
+        [[GREAT_WEAPONS]]
+        
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
-        
-        [[GREAT_WEAPONS]] 
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -832,12 +842,13 @@ Species
         
         [[BAD_POPULATION]]
         [[BAD_GROUND_TROOPS]]
-
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
-        
+   
         [[GREAT_DETECTION]]
         [[GOOD_STEALTH]]
+        
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -866,11 +877,12 @@ Species
                 
         [[AVERAGE_POPULATION]]
         [[AVERAGE_GROUND_TROOPS]]
-
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[ULTIMATE_DETECTION]]
+        
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[OCEAN_STANDARD_EP]]
@@ -901,6 +913,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_GROUND_TROOPS]]
 
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
@@ -932,6 +945,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[ULTIMATE_GROUND_TROOPS]]
 
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
@@ -1000,11 +1014,12 @@ Species
         
         [[GOOD_POPULATION]]
         [[NO_GROUND_TROOPS]]  
-
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[GREAT_STEALTH]]
+        
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
     ]
     
     [[SWAMP_STANDARD_EP]]
@@ -1036,6 +1051,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_GROUND_TROOPS]]
 
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
@@ -1069,6 +1085,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[BAD_GROUND_TROOPS]]
 
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
@@ -1101,13 +1118,13 @@ Species
         
         [[GOOD_POPULATION]]
         [[GREAT_GROUND_TROOPS]]
-
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
         
         [[ULTIMATE_WEAPONS]]
 
         // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        
         EffectsGroup
             scope = Source
             effects = SetDetection Value + 10000
@@ -1150,6 +1167,7 @@ Species
         [[GOOD_POPULATION]]
         [[BAD_GROUND_TROOPS]]
 
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
@@ -1181,6 +1199,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[BAD_GROUND_TROOPS]]
 
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
@@ -1252,6 +1271,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[GOOD_GROUND_TROOPS]]
 
+        // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
