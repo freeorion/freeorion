@@ -201,7 +201,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
             specialVal= 15   #TODO: should do more eval re asteroid mining here
     for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
         if special in planetSpecials:
-            specialVal = 40 
+            specialVal = 0#TODO: fix
     return popVal+supplyVal+specialVal+bldTally+productionVal+enemyVal-8*troops,  troops
 
 def getPlanetPopulation(planetID):

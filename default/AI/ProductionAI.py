@@ -564,7 +564,17 @@ def generateProductionOrders():
         
         capitalBldgs = [universe.getObject(bldg).buildingTypeName for bldg in homeworld.buildingIDs]
         
-        possibleBuildingTypeIDs = [bldTID for bldTID in empire.availableBuildingTypes if  fo.getBuildingType(bldTID).canBeProduced(empire.empireID,  homeworld.id)]
+        #possibleBuildingTypeIDs = [bldTID for bldTID in empire.availableBuildingTypes if   fo.getBuildingType(bldTID).canBeProduced(empire.empireID,  homeworld.id)]
+        possibleBuildingTypeIDs = []
+        for bldTID in empire.availableBuildingTypes:
+            try:
+                if   fo.getBuildingType(bldTID).canBeProduced(empire.empireID,  homeworld.id):
+                    possibleBuildingTypeIDs.append(bldTID)
+            except:
+                if fo.getBuildingType(bldTID) == None:
+                    print "For empire %d,  'available Building Type ID' %s  returns Nonetype from fo.getBuildingType(bldTID)"%(empire.empireID,  bldTID)
+                else:
+                    print "For empire %d,  problem getting BuildingTypeID for  'available Building Type ID' %s"%(empire.empireID,  bldTID)
         if  possibleBuildingTypeIDs:
             print "Possible building types to build:"
             for buildingTypeID in possibleBuildingTypeIDs:
@@ -1172,7 +1182,7 @@ def generateProductionOrders():
         bestShip,  bestDesign,  buildChoices = bestShips[thisPriority]
         if makingColonyShip:
             loc = choice(colonyBuildChoices)
-            bestShip,  colDesign,  buildChoices = getBestShipInfo(AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  loc)
+            bestShip,  bestDesign,  buildChoices = getBestShipInfo(AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  loc)
         else:
             loc = choice(buildChoices)
         numShips=1

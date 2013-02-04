@@ -185,7 +185,7 @@ def calculateColonisationPriority():
     "calculates the demand for colony ships by colonisable planets"
     global allottedColonyTargets
     totalPP=fo.getEmpire().productionPoints
-    colonyCost=250*(1+ 0.04*len( list(AIstate.popCtrIDs) + list(AIstate.outpostIDs) ))
+    colonyCost=120*(1+ 0.05*len( list(AIstate.popCtrIDs) + list(AIstate.outpostIDs) ))
     turnsToBuild=8#TODO: check for susp anim pods, build time 10
     allottedPortion = 0.3
     #allottedColonyTargets = 1+ int(fo.currentTurn()/50)
@@ -211,7 +211,7 @@ def calculateOutpostPriority():
     "calculates the demand for outpost ships by colonisable planets"
 
     numOutpostPlanetIDs = len(foAI.foAIstate.colonisableOutpostIDs)
-    numOutpostPlanetIDs = len(    [  pid   for (pid,  (score, specName) ) in  foAI.foAIstate.colonisableOutpostIDs if score > 100 ][:allottedColonyTargets] )
+    numOutpostPlanetIDs = len(    [  pid   for (pid,  (score, specName) ) in  foAI.foAIstate.colonisableOutpostIDs if score > 60 ][:allottedColonyTargets] )
     completedTechs = getCompletedTechs()
     if numOutpostPlanetIDs == 0 or not 'CON_ENV_ENCAPSUL' in completedTechs:
         return 0

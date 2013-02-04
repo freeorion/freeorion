@@ -430,24 +430,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         asteroidBonus=0
         gasGiantBonus=0
         miningBonus=0
-        if   (planet.size==fo.planetSize.gasGiant) and not (species and species.name  ==  "SP_SUPER_TEST"): 
-            return 0   
-        elif ( planet.size  ==  fo.planetSize.asteroids ):
-            if  (species and species.name  in [  "SP_EXOBOT", "SP_SUPER_TEST"  ]):
-                for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] : 
-                    if special in planetSpecials:
-                        retval+=25*discountMultiplier
-                    else:
-                        retval+=20
-                thrtRatio = foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0) / float(ProductionAI.curBestMilShipRating())
-                if thrtRatio > 4:
-                    retval = 2 * retval / thrtRatio
-                elif thrtRatio >= 2:
-                    retval = 0.6* retval
-                elif thrtRatio > 0:
-                    retval = 0.8* retval
-                return int(retval)
-            return 0
+        planetSize = planet.size
         if system:
             for pid  in [id for id in system.planetIDs if id != planetID]:
                 p2 = universe.getPlanet(pid)
@@ -456,7 +439,24 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                         asteroidBonus = 30
                     if p2.size== fo.planetSize.gasGiant :
                         gasGiantBonus += 50
-        planetEnv  = environs[ str(species.getPlanetEnvironment(planet.type)) ]
+        if   (planet.size==fo.planetSize.gasGiant):
+            if not (species and species.name  ==  "SP_SUPER_TEST"): 
+                return 0
+            else:
+                planetEnv = fo.planetEnvironment.good#I think
+                planetSize=4 #I think
+        elif ( planet.size  ==  fo.planetSize.asteroids ):
+            planetSize=3 #I think
+            if  not species or (species.name not in [  "SP_EXOBOT", "SP_SUPER_TEST"  ]):
+                return 0
+            elif species.name == "SP_EXOBOT":
+                planetEnv =fo.planetEnvironment.poor
+            elif species.name == "SP_SUPER_TEST":
+                planetEnv = fo.planetEnvironment.good#I think
+            else:
+                return 0
+        else:
+            planetEnv  = environs[ str(species.getPlanetEnvironment(planet.type)) ]
         if planetEnv==0:
             return -9999
         popSizeMod=0
@@ -503,14 +503,14 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         for thisTag in [ tag for tag in tagList if tag in  AIDependencies.metabolims]:
             popSizeMod +=  len( (set(planetSpecials).union([key for key in activeGrowthSpecials.keys() if  len(activeGrowthSpecials[key])>0 ] )).intersection(AIDependencies.metabolimBoostMap.get(thisTag,  []) ) )
             
-        popSize = planet.size * popSizeMod
+        popSize = planetSize * popSizeMod
 
         if "DIM_RIFT_MASTER_SPECIAL" in planet.specials:
             popSize -= 4
 
         for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] : 
             if special in planetSpecials:
-                miningBonus=200
+                miningBonus+=1
         
         proSingVal = [0, 4][(len( AIstate.empireStars.get(fo.starType.blackHole,  [])) > 0)]
         basePopInd=0.2
@@ -528,6 +528,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         indVal = 0
         if (empire.getTechStatus("PRO_SENTIENT_AUTOMATION") == fo.techStatus.complete):
             indVal += discountMultiplier * 5
+        indVal += discountMultiplier * basePopInd * popSize*miningBonus
         for tech in indTechMap:
             if (empire.getTechStatus(tech) == fo.techStatus.complete):
                 indVal += discountMultiplier * basePopInd * popSize * indTechMap[tech]
@@ -544,14 +545,14 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             distanceFactor = 0
 
         retval=0.0
-        if popSize<0  and (miningBonus or (fo.currentTurn() >= 10)) : #can still have industry focus bonuses and buildings
-            if foAI.foAIstate.aggression > fo.aggression.typical:
-                retval  = starBonus+max(asteroidBonus+gasGiantBonus,  miningBonus)
-        elif popSize==0 and (miningBonus or( fo.currentTurn() >= 10)):
-            if foAI.foAIstate.aggression > fo.aggression.typical:
-                retval  = starBonus+max(asteroidBonus+gasGiantBonus,  miningBonus)
+        if popSize<0:
+            if foAI.foAIstate.aggression > fo.aggression.typical and (fo.currentTurn() >= 10):
+                retval  = starBonus+asteroidBonus+gasGiantBonus
+        elif popSize==0:
+            if foAI.foAIstate.aggression > fo.aggression.typical and (fo.currentTurn() >= 10):
+                retval  = 0.5*( starBonus+asteroidBonus+gasGiantBonus) #actually is kind of a pain if the pop goes close to zero but not actually zero
         else:
-            retval  = starBonus+max(indVal+asteroidBonus+gasGiantBonus,  miningBonus) + valMod
+            retval  = starBonus+indVal+asteroidBonus+gasGiantBonus + valMod
             if planet.systemID in annexableRing1:
                 retval += 10
             elif planet.systemID in annexableRing2:
@@ -608,7 +609,7 @@ def removeLowValuePlanets(evaluatedPlanets):
 def sendColonyShips(colonyFleetIDs, evaluatedPlanets, missionType):
     "sends a list of colony ships to a list of planet_value_pairs"
     fleetPool = colonyFleetIDs[:]
-    potentialTargets =   [  (pid, (score, specName)  )  for (pid,  (score, specName) ) in  evaluatedPlanets if score > 100 ]
+    potentialTargets =   [  (pid, (score, specName)  )  for (pid,  (score, specName) ) in  evaluatedPlanets if score > 50 ]
 
     print "colony/outpost  ship matching -- fleets  %s to planets %s"%( fleetPool,  evaluatedPlanets)
     #for planetID_value_pair in evaluatedPlanets:

@@ -616,7 +616,7 @@ Part
     class = Colony
     capacity = 1
     mountableSlotTypes = Internal
-    buildcost = 250 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildcost = 120 * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 8
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -630,7 +630,7 @@ Part
     class = Colony
     capacity = 3
     mountableSlotTypes = Internal
-    buildcost = 250 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildcost = 120 * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -644,7 +644,7 @@ Part
     class = Colony
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 150* [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildcost = 80* [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/tech/habitation_domes.png"
@@ -1343,7 +1343,7 @@ Part
 */
 
 COLONY_UPKEEP_MULTIPLICATOR
-'''(1 + 0.04 *
+'''(1 + 0.05 *
         Count condition = And [
             Planet
             OwnedBy TheEmpire Source.Owner
