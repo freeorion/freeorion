@@ -3602,6 +3602,12 @@ Prefer Ocean Planets.
 
 [[GREAT_DETECTION]]
 [[GREAT_STEALTH]]
+
+Description:
+The Laenfa are long and vine-like, able to attach and detach into any number of larger or smaller vines at will. Each leaf has its own consciousness, separate from the others and has direct control over the small length of vine to which it is attached. Laenfa have high underwater mobility and reasonable ground mobility , as they are able to swim and slither like a serpent. The increased effectiveness of attached Laenfa's telepathic communication allows them to synchronize the motions of a single vine for more effective transportation.
+
+Social Structure:
+The Laenfa have a unified culture due to their telepathy, but as their ability to communicate telepathically weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret, but takes into account the voices of all Laenfa they are able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goal of gaining knowledge of other species and protecting knowledge of themselves.
 '''
 
 SP_TAEGHIRUS
@@ -3616,6 +3622,12 @@ Prefer Swamp planets.
         
 [[BAD_GROUND_TROOPS]]
 [[GOOD_POPULATION]]
+
+Description:
+The Tae Ghirus have a fragile grey body, making them look like feather-less vultures. Their wings were designed for gliding, not flying, but even this aerodynamic function was lost in evolution.
+
+Social Structure:
+The Tae Ghirus are very social and cooperative to make up for their weak bodies. Their social and political system, called "The Allegiance", is a mixture of participative democracy and a brotherhood.
 '''
 
 
