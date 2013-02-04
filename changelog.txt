@@ -40,6 +40,7 @@ Balancing:
  ~ ~ Rock/Crystallized Armor Plating now requires an Asteroid Reformation Processor somewhere in the empire.
  ~ Rebalancing of weapons, ship hulls, armour, and shield parts.
  ~ Made Terraforming more expensive, and made it get more expensive for repeatedly terraforming the same planet.
+ ~ Made colony ships more expensive.
  ~ Disable production of shipyards at outposts.
  ~ Adjusted Microgravity Industry to "Increases Industry by +5 on all Industry-focused colonies in system with an asteroid belt outposts. Additional asteriod outposts do not provide additional benefit."
  ~ Removed loophole that made Exobot Origin buildings cheaper than building Exobot colony ships on Exobot worlds.
@@ -74,6 +75,7 @@ Balancing:
   ~ Added a ship speed boost effect to lighthouses
   ~ New engine ship parts
   ~ Added planetary shield and defense boosting techs.
+  ~ Reworked stargate mechanics.
   
  Graphics:
   ~ New Focus & Planet meter icons with matching chart colors.
@@ -93,11 +95,14 @@ Balancing:
   ~ Added right-click popup menu commands to:
   ~ ~ set map / misc options (enabled in options screen).
   ~ ~ split damaged ships from a fleet.
+  ~ ~ split unfueled ships from a fleet.
   ~ ~ scrap a whole fleet.
   ~ ~ have a fleet automatically explore.
   ~ ~ look up special icons in the 'pedia.
   ~ ~ look up ship designs in the 'pedia.
+  ~ ~ generate planet-species suitability report
   ~ New Census tootlip that shows the species breakdown of the player's empire's population
+  ~ Other empire resource icons have simple tooltips.
   ~ Adjusted contrast of progress bars.
   ~ Hid some details of projects on production queue when there is insufficient screen space.
   ~ Added red/green colour coding of colony predicted target populations on colonize button.
@@ -112,7 +117,9 @@ Balancing:
   ~ Changed how names are shown for enemy ships and fleets.
   ~ Added Can Produce Ships and Can Colonize conditions to popups for ship designs in the production screen, to better indicate why they can / can't be produced at a location.
   ~ Added links to techs that can unlock buildings, ship hulls, and ship parts in their 'pedia entries.
- 
+  ~ Added empire summary icons for empire detection and a count of ships owned.
+  ~ ~ Removed mineral and trade icons.
+   
  Bugs:
   ~ Disabled building shipyards at outposts.
   ~ Disabled the construction of any duplicate buildings at the same location.  It is still possible to double-queue a building and get multiples.
