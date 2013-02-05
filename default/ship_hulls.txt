@@ -2616,6 +2616,7 @@ MONSTER_MOVE_ALWAYS
                 Fleet
             ]
             activation = And [
+                Turn low = 10
                 Stationary
                 Not OwnedBy AnyEmpire
                 Not ContainedBy Contains And [

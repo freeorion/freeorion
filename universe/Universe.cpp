@@ -492,7 +492,6 @@ const std::set<int>& Universe::EmpireKnownDestroyedObjectIDs(int empire_id) cons
     ObjectKnowledgeMap::const_iterator it = m_empire_known_destroyed_object_ids.find(empire_id);
     if (it != m_empire_known_destroyed_object_ids.end())
         return it->second;
-    static std::set<int> EMPTY_SET;
     return m_destroyed_object_ids;
 }
 
