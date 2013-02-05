@@ -84,7 +84,7 @@ Special
 Special
     name = "SOLID_CORE_SPECIAL"
     description = "SOLID_CORE_SPECIAL_DESC"
-    stealth = 20
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -101,7 +101,7 @@ Special
 Special
     name = "TECTONIC_INSTABILITY_SPECIAL"
     description = "TECTONIC_INSTABILITY_SPECIAL_DESC"
-    stealth = 20
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -118,7 +118,7 @@ Special
 Special
     name = "ANCIENT_RUINS_SPECIAL"
     description = "ANCIENT_RUINS_SPECIAL_DESCRIPTION"
-    stealth = 20
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -240,7 +240,7 @@ Special
 Special
     name = "PANOPTICON_SPECIAL"
     description = "PANOPTICON_SPECIAL_DESC"
-    stealth = 2
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 1
     location = And [
@@ -284,7 +284,7 @@ Special
 Special
     name = "TUNNELS_SPECIAL"
     description = "TUNNELS_SPECIAL_DESCRIPTION"
-    stealth = 30
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 9999
     location = And [
@@ -410,7 +410,7 @@ Special
 Special
     name = "ABANDONED_COLONY_SPECIAL"
     description = "ABANDONED_COLONY_SPECIAL_DESC"
-    stealth = 20
+    stealth = 0
     spawnrate = 0.4
     spawnlimit = 9999
     location = And [
@@ -443,7 +443,7 @@ Special
 Special
     name = "GAIA_SPECIAL"
     description = "GAIA_SPECIAL_DESC"
-    stealth = 5
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 12
     location = And [
@@ -493,7 +493,7 @@ Special
 Special
     name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
     description = "ANCIENT_RUINS_DEPLETED_SPECIAL_DESC"
-    stealth = 20
+    stealth = 0
     spawnrate = 0.0
     effectsgroups = [
         EffectsGroup
@@ -1303,7 +1303,7 @@ Special
 Special
     name = "MINERALS_SPECIAL"
     description = "MINERALS_SPECIAL_DESC"
-    stealth = 20
+    stealth = 0
     spawnrate = 1.0
     spawnlimit = 8
     location = And [
