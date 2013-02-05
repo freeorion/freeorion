@@ -2603,7 +2603,7 @@ Tech
     short_description = "DETECTION_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
-    researchcost = 100
+    researchcost = 50
     researchturns = 5
     prerequisites = "SHP_GAL_EXPLO"
     unlock = [
