@@ -988,6 +988,8 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
 
 void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + boost::lexical_cast<std::string>(objects_vec.size()) + " objects", true);
+    if (objects_vec.empty())
+        return;
 
     for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
         int obj_id = *obj_it;
@@ -1113,6 +1115,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes) {
 
 void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const std::vector<int>& target_objects) {
     ScopedTimer timer("Universe::GetEffectsAndTargets");
+    if (target_objects.empty())
+        return;
 
     // transfer target objects from input vector to a set
     Effect::TargetSet all_potential_targets;
