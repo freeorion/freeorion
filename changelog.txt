@@ -1,5 +1,24 @@
 v0.4.2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+Key Changes:
+
+ ~ Very much improved, non-cheating AI. Sometimes experienced 4X players loose.
+ 
+ ~ Many GUI enhancements and shortcuts.
+
+ ~ Galactopedia expanded with game mechanics articles and many cross-links.
+
+ ~ Batch production of ships now possible.
+
+ ~ Improved sitrep notifications
+
+ ~ Reworked stealth and detection
+
+ ~ Almost everything has been enhanced, reworked, and better balanced.
+
+
+Detailed Changelog:
+
 New Features / Improvements:
  ~ Very much improved AI.
  ~ ~ Added an AI aggression setting during game setup.
