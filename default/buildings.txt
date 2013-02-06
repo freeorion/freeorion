@@ -484,7 +484,7 @@ BuildingType
                 CreateShip "SD_COLONY_SHIP" Source.Owner "SP_EXOBOT"
                 GenerateSitRepMessage
                     message = "EFFECT_EXOBOT"
-                    icon = "icons/species/robotic-1.png"
+                    icon = "icons/species/robotic-01.png"
                     parameters = tag = "planet" data = Target.ID
                     empire = Source.Owner
                     

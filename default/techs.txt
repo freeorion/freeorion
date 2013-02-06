@@ -675,8 +675,17 @@ Tech
                 Not HasTag "TELEPATHIC"
                 Not OwnerHasTech "LRN_PSY_DOM"
             ]
-            effects = SetOwner Source.Owner
-
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_PSY_DOM"
+                    icon = "icons/sitrep/ship_produced.png"
+                    parameters = [
+                        tag = "empire" data = Target.Owner
+                        tag = "ship" data = Target.ID
+                    ]
+                    empire = Source.Owner
+                SetOwner Source.Owner
+            ]
 Tech
     name = "LRN_ART_BLACK_HOLE"
     description = "LRN_ART_BLACK_HOLE_DESC"
@@ -724,8 +733,10 @@ Tech
             effects = [
                 GenerateSitRepMessage
                     message = "SITREP_VICTORY_TECH"
+                    icon = "icons/sitrep/victory.png"
+                    empire = Source.Owner
                 Victory "TECH_VICTORY"
-                ]
+            ]
     graphic = "icons/tech/singularity_of_transcendence.png"
 
 

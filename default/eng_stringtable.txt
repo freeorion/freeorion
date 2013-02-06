@@ -3362,6 +3362,11 @@ The fleet %fleet% has traveled by Stargate to the %system% system.
 EFFECT_STARGATE_LABEL
 Stargate Use
 
+EFFECT_PSY_DOM
+The %empire% ship %ship% has been psychically controlled!
+EFFECT_PSY_DOM_LABEL
+Psychogenic Domination
+
 
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
