@@ -1239,7 +1239,7 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 20
+    researchcost = 30
     researchturns = 4
     prerequisites = "PRO_ROBOTIC_PROD"
     unlock = Item type = Building name = "BLD_INDUSTRY_CENTER"
@@ -1251,7 +1251,7 @@ Tech
     short_description = "BUILDING_REFINE_SHORT_DESC"
     techtype = Refinement
     category = "PRODUCTION_CATEGORY"
-    researchcost = 40
+    researchcost = 150
     researchturns = 5
     prerequisites = "PRO_INDUSTRY_CENTER_I"
     graphic = "icons/tech/industrial_centre_ii.png"
@@ -1262,7 +1262,7 @@ Tech
     short_description = "BUILDING_REFINE_SHORT_DESC"
     techtype = Refinement
     category = "PRODUCTION_CATEGORY"
-    researchcost = 200
+    researchcost = 500
     researchturns = 7
     prerequisites = "PRO_INDUSTRY_CENTER_II"
     graphic = "icons/tech/industrial_centre_iii.png"
