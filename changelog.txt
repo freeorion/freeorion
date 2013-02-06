@@ -119,6 +119,7 @@ Balancing:
   ~ Added links to techs that can unlock buildings, ship hulls, and ship parts in their 'pedia entries.
   ~ Added empire summary icons for empire detection and a count of ships owned.
   ~ ~ Removed mineral and trade icons.
+  ~ Added a plain-text stealth indicator to the building tooltip.
    
  Bugs:
   ~ Disabled building shipyards at outposts.
@@ -130,6 +131,7 @@ Balancing:
   ~ Hopefully fixed crashes when manipulating fleets.
   ~ Fixed miscalculation of number of production projects in progress.
   ~ Fixed building indicator progress bar
+  ~ Prevented ships from engaging in combat with planets of which they have only basic visibility.
   
 
 v0.4.1 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
