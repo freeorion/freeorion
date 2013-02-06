@@ -1477,8 +1477,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     }
     // format window
     GG::Pt client_sz = ClientSize();
-    GG::Pt layout_size(std::max(client_sz.x, m_graph.GetWidth() + 2 * TECH_PANEL_MARGIN_X + PROGRESS_PANEL_LEFT_EXTRUSION),
-                       std::max(client_sz.y, m_graph.GetHeight() + 2 * TECH_PANEL_MARGIN_Y + PROGRESS_PANEL_BOTTOM_EXTRUSION));
+    GG::Pt layout_size(client_sz.x + m_graph.GetWidth(), client_sz.y + m_graph.GetHeight());
     m_layout_surface->Resize(layout_size);
     // format scrollbar
     m_vscroll->SizeScroll(0, Value(layout_size.y - 1), std::max(50, Value(std::min(layout_size.y / 10, client_sz.y))), Value(client_sz.y));
