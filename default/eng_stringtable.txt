@@ -7463,7 +7463,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-Increases [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 4 per 5 units of Population. This building can be built at an outpost.
+Increases [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 1.2 per Population. This building can be built at an outpost, but must be in a black hole system.
 
 BLD_REPLICATORS
 Replicators
