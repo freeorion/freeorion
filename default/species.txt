@@ -219,8 +219,8 @@ Species
     tags = "PHOTOTROPHIC"
     
     foci = [
-        [[HAS_INDUSTRY_FOCUS]]
-        /*[[HAS_RESEARCH_FOCUS]]*/
+        /* [[HAS_INDUSTRY_FOCUS]]*/
+        [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
         /*[[HAS_MINING_FOCUS]]*/
         [[HAS_ADVANCED_FOCI]]
