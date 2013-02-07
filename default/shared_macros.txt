@@ -10,6 +10,8 @@ RESEARCH_PER_POP
 '''0.2'''
 
 
+TECH_COST_MULTIPLIER
+'''1.0'''
 
 
 /*   S T E A L T H   */
