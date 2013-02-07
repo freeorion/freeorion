@@ -3580,7 +3580,7 @@ Derthrean
 SP_DERTHREAN_DESC
 '''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
 Prefer Toxic planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3620,7 +3620,7 @@ Tae Ghirus
 SP_TAEGHIRUS_DESC
 '''Weak, flightless birds, united in total mutual cooperation.
 Prefer Swamp planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[GOOD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3786,7 +3786,7 @@ Sslith
 SP_SSLITH_DESC
 '''Flat, aquatic, pliable creatures.
 Prefer Tundra planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
 [[BAD_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -5731,7 +5731,7 @@ LRN_PSIONICS
 Psionics
 
 LRN_PSIONICS_DESC
-'''[[encyclopedia RESEARCH_TITLE]] Cost is greatly reduced when the empire includes a telepathic species.
+'''[[encyclopedia RESEARCH_TITLE]] cost is greatly reduced for empires that include a telepathic species.
 
 Through deep introspection or artificial enhancement, the brain may develop abilities to directly interact with the universe around it, bypassing the limitations of a physical body. Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives. Applications of these powers, including mind control, personality alteration and possession have profound implications for the relationship between talented and untalented beings.'''
 
