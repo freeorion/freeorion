@@ -468,12 +468,12 @@ BuildingType
 BuildingType
     name = "BLD_EXOBOT_SHIP"
     description = "BLD_EXOBOT_SHIP_DESC"
-    buildcost = 140
+    buildcost = 140 * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 12
     location = And [
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1
-        ]
+    ]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1389,3 +1389,11 @@ BuildingType
     ]
     icon = "icons/species/other-04.png"
 */
+
+COLONY_UPKEEP_MULTIPLICATOR
+'''(1 + 0.05 *
+        Count condition = And [
+            Planet
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ])'''
