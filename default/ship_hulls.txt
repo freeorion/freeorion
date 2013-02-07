@@ -984,7 +984,7 @@ Hull
             activation = Source
             effects = SetDetection Value + 50
     ]
-    icon = "icons/ship_hulls/endosymbiotic_hull_small.png"
+    icon = "icons/ship_hulls/symbiotic_hull_small.png"
     graphic = "hulls_design/symbiotic_hull.png"
 
 Hull
