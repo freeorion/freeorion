@@ -113,6 +113,7 @@ def getMilitaryFleets(tryReset=True):
     else:
         threatBias = 400
     
+    threatBias = 0
 
     safetyFactor = [ 4.0,  3.0,  1.5,  1.0,  0.95,  0.95    ][foAI.foAIstate.aggression] 
     

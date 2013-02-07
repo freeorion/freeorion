@@ -81,7 +81,7 @@ def generateResearchOrders():
             newtech = TechsListsAI.primaryMetaTechsList( index=empireID%2 )
         else:
             #newtech = TechsListsAI.aggressiveTechs()
-            newtech = TechsListsAI.primaryMetaTechsList()
+            newtech = TechsListsAI.primaryMetaTechsList(empireID%2)
         #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
         pLTsToEnqueue = newtech[:]
         techBase = set(completedTechs+researchQueueList)
