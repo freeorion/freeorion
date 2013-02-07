@@ -2643,6 +2643,7 @@ Tech
             ]
             effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 30
     ]
+    graphic = "icons/tech/active_radar.png"
     
 Tech
     name = "SPY_DETECT_3"
