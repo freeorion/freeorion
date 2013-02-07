@@ -170,6 +170,8 @@ struct ProductionQueue {
         int             location;                   ///< the ID of the UniverseObject at which this item is being produced
         double          allocated_pp;               ///< PP allocated to this ProductionQueue Element by Empire production update
         double          progress;                   ///< PP that has been spent on this production element (will increase by allocation during next turn processing)
+        double          progress_memory;            ///< updated by server turn processing; aides in allowing blocksize changes to be undone in same turn w/o progress loss
+        int             blocksize_memory;           ///< used along with progress_memory
         int             turns_left_to_next_item;
         int             turns_left_to_completion;
 

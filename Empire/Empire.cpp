@@ -509,6 +509,8 @@ ProductionQueue::Element::Element() :
     location(INVALID_OBJECT_ID),
     allocated_pp(0.0),
     progress(0.0),
+    progress_memory(0.0),
+    blocksize_memory(1),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1)
 {}
@@ -522,6 +524,8 @@ ProductionQueue::Element::Element(ProductionItem item_, int ordered_,
     location(location_),
     allocated_pp(0.0),
     progress(0.0),
+    progress_memory(0.0),
+    blocksize_memory(1),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1)
 {}
@@ -535,6 +539,8 @@ ProductionQueue::Element::Element(BuildType build_type, std::string name, int or
     location(location_),
     allocated_pp(0.0),
     progress(0.0),
+    progress_memory(0.0),
+    blocksize_memory(1),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1)
 {}
@@ -548,6 +554,8 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int order
     location(location_),
     allocated_pp(0.0),
     progress(0.0),
+    progress_memory(0.0),
+    blocksize_memory(1),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1)
 {}
@@ -1989,8 +1997,8 @@ void Empire::SetBuildQuantityAndBlocksize(int index, int quantity, int blocksize
     m_production_queue[index].remaining = quantity;
     m_production_queue[index].ordered += quantity - original_quantity;
     m_production_queue[index].blocksize = blocksize;
-    if (blocksize < original_blocksize) // must lose the progress from the excess former blocksize, or min-turns-to-build could be bypassed
-        m_production_queue[index].progress = (m_production_queue[index].progress / original_blocksize ) * blocksize;
+    if (blocksize !=original_blocksize) // if reducing, may lose the progress from the excess former blocksize, or min-turns-to-build could be bypassed; if increasing, may be able to claim credit if undoing a recent decrease
+        m_production_queue[index].progress = (m_production_queue[index].progress_memory / m_production_queue[index].blocksize_memory ) * std::min( m_production_queue[index].blocksize_memory, blocksize);
 }
 
 void Empire::SetBuildQuantity(int index, int quantity) {
@@ -2377,11 +2385,13 @@ void Empire::CheckProductionProgress() {
         boost::tie(item_cost, build_turns) = ProductionCostAndTime(elem);
         item_cost *= elem.blocksize;
         elem.progress += elem.allocated_pp;   // add allocated PP to queue item
-
+        elem.progress_memory = elem.progress;
+        elem.blocksize_memory = elem.blocksize;
 
         // if accumulated PP is sufficient, the item is complete
         if (item_cost - EPSILON <= elem.progress) {
             elem.progress -= item_cost; // this is the correct calculation -- item_cost is now for one full item, not just one turn's portion
+            elem.progress_memory = elem.progress;
 
             switch (elem.item.build_type) {
             case BT_BUILDING: {

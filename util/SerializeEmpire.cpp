@@ -52,6 +52,8 @@ void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version
         & BOOST_SERIALIZATION_NVP(location)
         & BOOST_SERIALIZATION_NVP(allocated_pp)
         & BOOST_SERIALIZATION_NVP(progress)
+        & BOOST_SERIALIZATION_NVP(progress_memory)
+        & BOOST_SERIALIZATION_NVP(blocksize_memory)
         & BOOST_SERIALIZATION_NVP(turns_left_to_next_item)
         & BOOST_SERIALIZATION_NVP(turns_left_to_completion);
 }
