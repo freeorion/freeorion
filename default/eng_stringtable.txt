@@ -5739,7 +5739,7 @@ LRN_ARTIF_MINDS
 Nacent Artificial Intelligence
 
 LRN_ARTIF_MINDS_DESC
-'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all planets by 0.2 per Population.
+'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all planets by 2.
 
 While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience. While these traits remain elusive, reasonable faximilies may be produced. These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
 
