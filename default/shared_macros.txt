@@ -146,3 +146,11 @@ PLUS_STEALTH
 PLUS_PLUS_STEALTH
 '''[[PLUS_STEALTH]] + [[PLUS_STEALTH]]'''
 
+COLONY_UPKEEP_MULTIPLICATOR
+'''(1 + 0.06 *
+        Count condition = And [
+            Planet
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+            Not Population high = 0
+        ])'''

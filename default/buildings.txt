@@ -1390,10 +1390,3 @@ BuildingType
     icon = "icons/species/other-04.png"
 */
 
-COLONY_UPKEEP_MULTIPLICATOR
-'''(1 + 0.05 *
-        Count condition = And [
-            Planet
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])'''

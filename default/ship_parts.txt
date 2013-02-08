@@ -1,3 +1,4 @@
+include "shared_macros.txt"
 
 Part
     name = "GT_TROOP_POD"
@@ -1341,11 +1342,3 @@ Part
     ]
     icon = ""
 */
-
-COLONY_UPKEEP_MULTIPLICATOR
-'''(1 + 0.05 *
-        Count condition = And [
-            Planet
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])'''
