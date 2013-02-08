@@ -488,6 +488,7 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
+                NOT TargetPopulation low = 0 high = 0
                 ProductionCenter
             ]
             effects = SetTargetResearch Value + 10 * [[RESEARCH_PER_POP]]
