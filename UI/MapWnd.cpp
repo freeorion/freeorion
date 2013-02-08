@@ -1495,19 +1495,20 @@ void MapWnd::RenderVisibilityRadii() {
         return;
 
     int                     client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    const std::set<int>&    known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const std::set<int>&    destroyed_object_ids = GetUniverse().DestroyedObjectIds();
+    const std::set<int>&    stale_object_ids = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
     const ObjectMap&        objects = GetUniverse().Objects();
-    const std::set<int>     visible_object_ids = GetUniverse().EmpireVisibleObjectIDs();
 
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<double, double> >, float> empire_position_max_detection_ranges;
+
     for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
         int object_id = it->first;
         // skip destroyed objects
-        if (known_destroyed_object_ids.find(object_id) != known_destroyed_object_ids.end())
+        if (destroyed_object_ids.find(object_id) != destroyed_object_ids.end())
             continue;
-        // skip objects not visible this turn
-        if (visible_object_ids.find(object_id) == visible_object_ids.end())
+        // skip stale objects
+        if (stale_object_ids.find(object_id) != stale_object_ids.end())
             continue;
 
         const UniverseObject* obj = it->second;
@@ -1516,12 +1517,20 @@ void MapWnd::RenderVisibilityRadii() {
         if (obj->Unowned())
             continue;
 
-        // don't show radii for moving fleets or ships
-        const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
-        if (!fleet)
-            if (const Ship* ship = universe_object_cast<const Ship*>(obj))
-                fleet = objects.Object<Fleet>(ship->FleetID());
-        if (fleet) {
+        // skip objects not at least partially visible this turn
+        if (obj->GetVisibility(client_empire_id) <= VIS_BASIC_VISIBILITY)
+            continue;
+
+        // don't show radii for fleets or moving ships
+        if (obj->ObjectType() == OBJ_FLEET)
+            continue;
+        if (obj->ObjectType() == OBJ_SHIP) {
+            const Ship* ship = universe_object_cast<const Ship*>(obj);
+            if (!ship)
+                continue;
+            const Fleet* fleet = objects.Object<Fleet>(ship->FleetID());
+            if (!fleet)
+                continue;
             int next_id = fleet->NextSystemID();
             int cur_id = fleet->SystemID();
             if (next_id != INVALID_OBJECT_ID && next_id != cur_id)
