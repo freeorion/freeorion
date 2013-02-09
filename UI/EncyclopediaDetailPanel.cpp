@@ -1123,7 +1123,7 @@ void EncyclopediaDetailPanel::Refresh() {
                 return;
             }
         }
-    } else if (m_items_it->first == PLANET_SUITABILITY_REPORT) {        
+    } else if (m_items_it->first == PLANET_SUITABILITY_REPORT) {
         general_type = UserString("SP_PLANET_SUITABILITY");
 
         int planet_id = boost::lexical_cast<int>(m_items_it->second);
@@ -1135,15 +1135,15 @@ void EncyclopediaDetailPanel::Refresh() {
 
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(empire_id);
-        if (!empire) {            
+        if (!empire) {
             return;
-        }        
+        }
         const std::vector<int> pop_center_ids = empire->GetPopulationPool().PopCenterIDs();
 
         std::set<std::string> species_names;
         std::map<std::string, std::pair<PlanetEnvironment, float> > population_counts;
 
-        //Collect species colonizing/environment hospitality information
+        // Collect species colonizing/environment hospitality information
         for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); it++) {
             const UniverseObject* obj = objects.Object(*it);
             const PopCenter* pc = dynamic_cast<const PopCenter*>(obj);
@@ -1154,6 +1154,19 @@ void EncyclopediaDetailPanel::Refresh() {
             if (species_name.empty())
                 continue;
 
+            const Species* species = GetSpecies(species_name);
+            if (!species)
+                continue;
+
+            // Exclude species that can't colonize this planet (either by virtue
+            // of "can't produce ships" or "cannot colonize" traits) UNLESS they
+            // are already here (aka: it's their home planet). Showing them on
+            // their own planet allows comparison vs other races, which might
+            // be better suited to this planet. 
+            if (!species->CanProduceShips() || !species->CanColonize()) {
+                if (species_name != planet->SpeciesName())
+                    continue;
+            }
             species_names.insert(species_name);
         }
 
@@ -1166,7 +1179,9 @@ void EncyclopediaDetailPanel::Refresh() {
             std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % UserString(species_name)); 
             max_species_name_column1_width = std::max(font->TextExtent(species_name_column1).x, max_species_name_column1_width);
 
-            // Setting the planet's species allows all of it meters to reflect species (and empire) properties, such as environment type preferences and tech.
+            // Setting the planet's species allows all of it meters to reflect
+            // species (and empire) properties, such as environment type
+            // preferences and tech.
             // @see also: MapWnd::UpdateMeterEstimates()
             planet->SetSpecies(species_name);
             planet->SetOwner(empire_id);
@@ -1181,7 +1196,7 @@ void EncyclopediaDetailPanel::Refresh() {
             double planet_capacity = ((planet_environment == PE_UNINHABITABLE) ? 0 : planet->CurrentMeterValue(METER_TARGET_POPULATION));
 
             population_counts[species_name].first = planet_environment;
-            population_counts[species_name].second = planet_capacity;            
+            population_counts[species_name].second = planet_capacity;
         }
 
         std::multimap<float, std::pair<std::string, PlanetEnvironment> > target_population_species;
@@ -1208,7 +1223,7 @@ void EncyclopediaDetailPanel::Refresh() {
                 }
 
                 detailed_description += str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
-                    % species_name_column1                
+                    % species_name_column1
                     % UserString(boost::lexical_cast<std::string>(it->second.second))
                     % (GG::RgbaTag(ClientUI::StatIncrColor()) + DoubleToString(it->first, 2, true) + "</rgba>") );
 
