@@ -145,12 +145,18 @@ ShaderProgram* ShaderProgram::shaderProgramFactory(const std::string& vertex_sha
 
 ShaderProgram::~ShaderProgram() {
     glGetError();
-    glDeleteShader(m_vertex_shader_id);
-    CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteShader(m_vertex_shader_id)");
-    glDeleteShader(m_fragment_shader_id);
-    CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteShader(m_fragment_shader_id)");
-    glDeleteProgram(m_program_id);
-    CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteProgram()");
+    if (glIsShader(m_vertex_shader_id)) {
+        glDeleteShader(m_vertex_shader_id);
+        CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteShader(m_vertex_shader_id)");
+    }
+    if (glIsShader(m_fragment_shader_id)) {
+        glDeleteShader(m_fragment_shader_id);
+        CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteShader(m_fragment_shader_id)");
+    }
+    if (glIsProgram(m_program_id)) {
+        glDeleteProgram(m_program_id);
+        CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteProgram()");
+    }
 }
 
 GLuint ShaderProgram::ProgramID() const
