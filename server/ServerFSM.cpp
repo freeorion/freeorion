@@ -89,6 +89,53 @@ namespace {
         }
         return "";
     }
+
+    void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData> >& psd) {
+        Logger().debugStream() << "PlayerSetupData:";
+        for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = psd.begin(); it != psd.end(); ++it)
+            Logger().debugStream() << boost::lexical_cast<std::string>(it->first) << " : "
+                                   << it->second.m_player_name << ", "
+                                   << it->second.m_client_type << ", "
+                                   << it->second.m_starting_species_name;
+    }
+
+    void LoadEmpireNames(std::list<std::string>& names) {
+        boost::filesystem::ifstream ifs(GetResourceDir() / "empire_names.txt");
+        while (ifs) {
+            std::string latest_name;
+            std::getline(ifs, latest_name);
+            if (!latest_name.empty())
+                names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
+        }
+    }
+
+    std::string GenerateEmpireName(std::list<std::pair<int, PlayerSetupData> > &players) {
+        // load default empire names
+        static std::list<std::string> empire_names;
+        if (empire_names.empty())
+            LoadEmpireNames(empire_names);
+        std::set<std::string> validNames(empire_names.begin(), empire_names.end());
+        for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = players.begin(); player_setup_it != players.end(); player_setup_it++) {
+            std::set<std::string>::iterator name_it = validNames.find(player_setup_it->second.m_empire_name);
+            if (name_it != validNames.end())
+                validNames.erase(name_it);
+        }
+        if (!validNames.empty()) {
+            // pick a name from the list of empire names
+            int empire_name_idx = RandSmallInt(0, static_cast<int>(validNames.size()) - 1);
+            std::set<std::string>::iterator it = validNames.begin();
+            std::advance(it, empire_name_idx);
+            return *it;
+        } else {
+            // use a generic name
+            return UserString("EMPIRE");
+        }
+    }
+
+    std::string GenerateEmpireName() {
+        std::list<std::pair<int, PlayerSetupData> > empty_data;
+        return GenerateEmpireName(empty_data);
+    }
 }
 
 
@@ -276,10 +323,9 @@ MPLobby::MPLobby(my_context c) :
     PlayerSetupData& player_setup_data = m_lobby_data->m_players.begin()->second;
 
     player_setup_data.m_player_name =           player_connection->PlayerName();
-    player_setup_data.m_empire_name =           player_connection->PlayerName();    // default empire name to same as player name, for lack of a better choice
+    player_setup_data.m_empire_name =           GenerateEmpireName(m_lobby_data->m_players);
     player_setup_data.m_empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
-    if (!sm.empty())
-        player_setup_data.m_starting_species_name = sm.begin()->first;
+    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
     // leaving save game empire id as default
     player_setup_data.m_client_type =           player_connection->GetClientType();
 
@@ -419,55 +465,6 @@ sc::result MPLobby::react(const JoinGame& msg) {
     }
 
     return discard_event();
-}
-
-namespace {
-    void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData> >& psd) {
-        Logger().debugStream() << "PlayerSetupData:";
-        for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = psd.begin(); it != psd.end(); ++it)
-            Logger().debugStream() << boost::lexical_cast<std::string>(it->first) << " : "
-                                   << it->second.m_player_name << ", "
-                                   << it->second.m_client_type << ", "
-                                   << it->second.m_starting_species_name;
-    }
-
-    void LoadEmpireNames(std::list<std::string>& names) {
-        boost::filesystem::ifstream ifs(GetResourceDir() / "empire_names.txt");
-        while (ifs) {
-            std::string latest_name;
-            std::getline(ifs, latest_name);
-            if (!latest_name.empty())
-                names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
-        }
-    }
-
-    std::string GenerateEmpireName(std::list<std::pair<int, PlayerSetupData> > &players) {
-        // load default empire names
-        static std::list<std::string> empire_names;
-        if (empire_names.empty())
-            LoadEmpireNames(empire_names);
-        std::set<std::string> validNames(empire_names.begin(), empire_names.end());
-        for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = players.begin(); player_setup_it != players.end(); player_setup_it++) {
-            std::set<std::string>::iterator name_it = validNames.find(player_setup_it->second.m_empire_name);
-            if (name_it != validNames.end())
-                validNames.erase(name_it);
-        }
-        if (!validNames.empty()) {
-            // pick a name from the list of empire names
-            int empire_name_idx = RandSmallInt(0, static_cast<int>(validNames.size()) - 1);
-            std::set<std::string>::iterator it = validNames.begin();
-            std::advance(it, empire_name_idx);
-            return *it;
-        } else {
-            // use a generic name
-            return UserString("EMPIRE");
-        }
-    }
-}
-
-const std::string& GenerateEmpireName() {
-    std::list<std::pair<int, PlayerSetupData> > empty_data;
-    return GenerateEmpireName(empty_data);
 }
 
 sc::result MPLobby::react(const LobbyUpdate& msg) {
