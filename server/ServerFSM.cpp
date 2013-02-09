@@ -440,8 +440,8 @@ namespace {
                 names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
         }
     }
-    
-    const std::string& GenerateEmpireName(std::list<std::pair<int, PlayerSetupData> > &players) {
+
+    std::string GenerateEmpireName(std::list<std::pair<int, PlayerSetupData> > &players) {
         // load default empire names
         static std::list<std::string> empire_names;
         if (empire_names.empty())
