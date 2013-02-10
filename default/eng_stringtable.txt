@@ -2794,12 +2794,17 @@ Industry
 INDUSTRY_TEXT
 '''Industry represents the production and modification of physical goods. It is needed to produce buildings, space ships and other projects.
 
-The Industry of a planet can be used for any production projects of [[encyclopedia SUPPLY_TITLE]] line connected planets. Any un-allocated Industry is lost each turn.'''
+The Industry of a planet can be used for any production projects of [[encyclopedia SUPPLY_TITLE]] line connected planets. Any un-allocated Industry is lost each turn.
+
+Each project has a minimum number of turns required to build it.  For example, if a project that cost 15 PPs, and had a minimum time of 3 turns, 5 PPs is the maximum that could be put towards its completion per turn.
+The project at the top of the queue is given PPs first.  Any remaining PP are then given to the next project in the queue, and if there is still more remaining to the next-- and so on.  You can re-prioritize the items in the queue by dragging the most important items closer to the top.
+'''
 
 RESEARCH_TITLE
 Research
 RESEARCH_TEXT
-'''The Research of all planets in the empire is combined to research new technologies. Any un-allocated Research is lost each turn.
+'''The Research (or RP "Research Points") of all planets in the empire is combined to discover new technologies. Any Research that cannot be spent on a tech is lost each turn. Each tech has a minimum number of turns required to research it.  For example, if a tech that cost 15 RPs, and had a minimum time of 3 turns, 5 RPs is the maximum that could be put towards its completion per turn.
+The tech at the top of the queue is given RPs first.  Any remaining RP are then given to the next tech in the queue, and if there is still more remaining to the next-- and so on.  You can re-prioritize the items in the queue by dragging the most important items closer to the top.
 
 Research does not require [[encyclopedia SUPPLY_TITLE]] line connections to be used.'''
 
