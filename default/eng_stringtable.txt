@@ -4239,7 +4239,7 @@ ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-'''Increases Target [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population.
+'''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population when Focus is set to Research.
 
 This planet holds the ruins of an unknown, advanced ancient race. A valuable discovery has already been made here.'''
 
@@ -4247,14 +4247,14 @@ ANCIENT_RUINS_SPECIAL
 Ancient Ruins
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-'''Increases Target [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population.
+'''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population when Focus is set to Research.
 
 This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
 
 PANOPTICON_SPECIAL
 Panopticon Complex
 PANOPTICON_SPECIAL_DESC
-'''Extends empire-wide [[encyclopedia DETECTION_TITLE]] by +10
+'''Increases empire-wide [[encyclopedia DETECTION_TITLE]] by 10. Also increases [[encyclopedia DETECTION_RANGE_TITLE]] on this planet by 75.
 
 Buried deep within the crust of the planet, the Panopticon is a powerful relic of an unknown precursor civilization. When fed the data from an empire's detection equipment, it has the power to pull reliable information from the chaotic static beyond the edges of certainty.'''
 
@@ -4302,7 +4302,7 @@ TIDAL_LOCK_SPECIAL
 Tidally Locked Rotation
 
 TIDAL_LOCK_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 20, but [[encyclopedia INDUSTRY_TITLE]] is increased by one fifth the planet's Population.
+'''[[encyclopedia INFRASTRUCTURE_TITLE]] on this planet is decreased by 10, but [[encyclopedia INDUSTRY_TITLE]] is increased by 0.2 per Population when Focus is set to Industry.
 
 This planet is tidally locked with the star it orbits. Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night. Infrastructure growth is hampered, though once established, industrial capacity benefits from the locally stable surface conditions.'''
 
@@ -4364,7 +4364,7 @@ This planet is populated with aerial creatures that emit humidity, causing high 
 CLOUD_COVER_SLAVE_SPECIAL
 High Cloud Cover
 CLOUD_COVER_SLAVE_SPECIAL_DESC
-This planet has unusually dense cloud cover, increasing its [[encyclopedia STEALTH_TITLE]].
+This planet has unusually dense cloud cover, increasing its [[encyclopedia STEALTH_TITLE]] by 20.
 
 VOLCANIC_ASH_MASTER_SPECIAL
 Hidden Burrowers
@@ -4379,7 +4379,7 @@ VOLCANIC_ACTIVITY_SPECIAL_DESC
 VOLCANIC_ASH_SLAVE_SPECIAL
 Volcanic Ash
 VOLCANIC_ASH_SLAVE_SPECIAL_DESC
-This planet is surrounded by volcanic ash, increasing its [[encyclopedia STEALTH_TITLE]].
+This planet is surrounded by volcanic ash, increasing its [[encyclopedia STEALTH_TITLE]] by 40.
 
 DIM_RIFT_MASTER_SPECIAL
 Dimensional Burrowers
@@ -4389,7 +4389,7 @@ This planet has monsters burrowing around in its core causing dimensional tears 
 DIM_RIFT_SLAVE_SPECIAL
 Dimensional Rift
 DIM_RIFT_SLAVE_SPECIAL_DESC
-This planet is partially concealed by a dimensional rift, increasing its [[encyclopedia STEALTH_TITLE]].
+This planet is partially concealed by a dimensional rift, increasing its [[encyclopedia STEALTH_TITLE]] by 60.
 
 VOID_MASTER_SPECIAL
 Void Monsters
@@ -4399,7 +4399,7 @@ Monsters inside the core of this planet are dragging it into the void.  There sh
 VOID_SLAVE_SPECIAL
 Void Metamorphisis
 VOID_SLAVE_SPECIAL_DESC
-This planet exists partially in this universe and partially in the void, increasing its [[encyclopedia STEALTH_TITLE]] by 80.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
+This planet exists partially in this universe and partially in the void, increasing its [[encyclopedia STEALTH_TITLE]] by 80.
 
 DERELICT_SPECIAL
 Derelict
