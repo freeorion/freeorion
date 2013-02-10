@@ -550,6 +550,7 @@ Special
             scope = Source
             activation = AND [
                 Planet
+                Turn low = 10
                 Not OwnedBy AnyEmpire
                 Random probability = 0.12
             ]
@@ -595,6 +596,7 @@ Special
             scope = Source
             activation = AND [
                 Planet
+                Turn low = 10
                 Not OwnedBy AnyEmpire
                 Random probability = 0.12
             ]
@@ -640,6 +642,7 @@ Special
             scope = Source
             activation = AND [
                 Planet
+                Turn low = 10
                 Not OwnedBy AnyEmpire
                 Random probability = 0.12
             ]
