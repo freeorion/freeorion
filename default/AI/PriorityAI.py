@@ -123,16 +123,17 @@ def calculateResearchPriority():
     targetRP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetResearch),  planets) )
 
     styleIndex = empireID%2
-    styleAdjustmentMap = {0:0,  1:0}
+    styleAdjustmentMap = {0:0,  1:0}#TODO: decide if I want to do anything with this
     styleAdjustment = styleAdjustmentMap.get( styleIndex,  0 )
+    cutoffs = [ [30, 45, 60  ],  [40,  75,  100  ]   ][styleIndex  ]
     if industrySurge:
         researchPriority =  10+styleAdjustment
     else:
-        if  (fo.currentTurn() < 30) or not gotAlgo:
+        if  (fo.currentTurn() < cutoffs[0]) or not gotAlgo:
             researchPriority = 60 # mid industry , high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
-        elif fo.currentTurn() < 45:
+        elif fo.currentTurn() < cutoffs[1]:
             researchPriority = 30 +styleAdjustment# mid industry , mid research 
-        elif fo.currentTurn() < 60:
+        elif fo.currentTurn() < cutoffs[2]:
             researchPriority = 20+styleAdjustment # high  industry , low research 
         else:
             researchQueue = list(empire.researchQueue)
@@ -185,14 +186,14 @@ def calculateColonisationPriority():
     "calculates the demand for colony ships by colonisable planets"
     global allottedColonyTargets
     totalPP=fo.getEmpire().productionPoints
-    colonyCost=120*(1+ 0.04*len( list(AIstate.popCtrIDs) + list(AIstate.outpostIDs) ))
+    colonyCost=120*(1+ 0.06*len( list(AIstate.popCtrIDs) ))
     turnsToBuild=8#TODO: check for susp anim pods, build time 10
-    allottedPortion = 0.5
+    allottedPortion = 0.4
     #allottedColonyTargets = 1+ int(fo.currentTurn()/50)
     allottedColonyTargets = 1 + int( totalPP*turnsToBuild*allottedPortion/colonyCost)
 
     numColonisablePlanetIDs = len(    [  pid   for (pid,  (score, specName) ) in  foAI.foAIstate.colonisablePlanetIDs if score > 50 ][:allottedColonyTargets] )
-    if (numColonisablePlanetIDs == 0): return 0
+    if (numColonisablePlanetIDs == 0): return 1
 
     colonyshipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
     numColonyships = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(colonyshipIDs))
@@ -203,7 +204,7 @@ def calculateColonisationPriority():
     # print "Number of Colonisable planets : " + str(numColonisablePlanetIDs)
     # print "Priority for colony ships     : " + str(colonisationPriority)
 
-    if colonisationPriority < 0: return 0
+    if colonisationPriority < 1: return 1
 
     return colonisationPriority
 
@@ -226,7 +227,7 @@ def calculateOutpostPriority():
     # print "Number of Colonisable outposts: " + str(numOutpostPlanetIDs)
     print "Priority for outpost ships    : " + str(outpostPriority)
 
-    if outpostPriority < 0: return 0
+    if outpostPriority < 1: return 1
 
     return outpostPriority
 
@@ -244,7 +245,7 @@ def calculateInvasionPriority():
     troopsNeeded= sum( [(trp+4) for pid, pscore, trp in AIstate.invasionTargets[:allottedInvasionTargets] ] )
 
     if totalVal == 0: 
-        return 10  #hsould always have at least a  low lvl of production going into troop fleets
+        return 0 
     opponentTroopPods = int(troopsNeeded/troopsPerPod)
 
     productionQueue = empire.productionQueue
@@ -267,7 +268,8 @@ def calculateInvasionPriority():
     numTroopPods =  sum([ FleetUtilsAI.countPartsFleetwide(fleetID,  ["GT_TROOP_POD"]) for fleetID in  troopFleetIDs])
     troopShipsNeeded = math.ceil((opponentTroopPods - (numTroopPods+ queuedTroopPods ))/troopsPerBestShip)  
      
-    invasionPriority = max(  10+ 200*max(0,  troopShipsNeeded ) , int(0.1* totalVal) )
+    #invasionPriority = max(  10+ 200*max(0,  troopShipsNeeded ) , int(0.1* totalVal) )
+    invasionPriority = 10+ 100*max(1,  troopShipsNeeded )
     if invasionPriority < 0: 
         return 0
     if foAI.foAIstate.aggression==fo.aggression.beginner:

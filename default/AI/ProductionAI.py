@@ -1128,13 +1128,12 @@ def generateProductionOrders():
     if filteredPriorities == {}:
         print "No non-building-production priorities with nonzero score, setting to default: Military"
         filteredPriorities [AIPriorityType.PRIORITY_PRODUCTION_MILITARY ] =  1 
-    while (topscore >900):
-        topscore = 0
-        for pty in filteredPriorities:
-            score = filteredPriorities[pty] ** 0.5
-            filteredPriorities[pty] = score
-            if score > topscore:
-                topscore=score
+    if topscore <= 100:
+        scalingPower = 1.0
+    else:
+        scalingPower = math.log(100)/math.log(topscore) 
+    for pty in filteredPriorities:
+        filteredPriorities[pty]  = filteredPriorities[pty] **scalingPower
 
     bestShips={}
     for priority in list(filteredPriorities):
