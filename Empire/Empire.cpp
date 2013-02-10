@@ -252,12 +252,11 @@ ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const {
     for (const_iterator it = begin(); it != end(); ++it) {
         if (const Tech* tech = GetTech(it->name)) {
             if (it->allocated_rp &&
-                it->allocated_rp < tech->ResearchCost(m_empire_id)
+                it->allocated_rp < tech->PerTurnCost(m_empire_id)
                 && 1 < it->turns_left)
             {
                 return it;
             }
-            return end();
         }
     }
     return end();
