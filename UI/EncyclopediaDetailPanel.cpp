@@ -1210,7 +1210,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
         for (std::multimap<float, std::pair<std::string, PlanetEnvironment> >::const_reverse_iterator it = target_population_species.rbegin(); it != target_population_species.rend(); it++) {
             std::string user_species_name = UserString(it->second.first);
-            std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % user_species_name); 
+            std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % LinkTaggedText(VarText::SPECIES_TAG, it->second.first));
 
             while (font->TextExtent(species_name_column1).x < max_species_name_column1_width) {
                 species_name_column1 += "\t";
