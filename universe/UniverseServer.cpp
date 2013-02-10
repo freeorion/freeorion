@@ -218,16 +218,19 @@ namespace {
         const double system_noise = 0.15;
         double ellipse_width_vs_height = RandDouble(0.2,0.5);
         // first innermost pair hold cluster position, second innermost pair stores help values for cluster rotation (sin,cos)
-        std::vector<std::pair<std::pair<double,double>,std::pair<double,double> > > clusters_position;
+        std::vector<std::pair<std::pair<double, double>, std::pair<double, double> > > clusters_position;
         unsigned int i,j,attempts;
 
-        DoubleDistType    random_zero_to_one = DoubleDist  (0.0,  1.0);
-        DoubleDistType    random_angle  = DoubleDist  (0.0,2.0*PI);
+        DoubleDistType random_zero_to_one = DoubleDist(0.0, 1.0);
+        DoubleDistType random_angle = DoubleDist(0.0, 2.0*PI);
 
-        for (i = 0, attempts = 0; i < clusters && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM; i++ , attempts++) {
+        for (i = 0, attempts = 0;
+             i < clusters && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM;
+             i++, attempts++)
+        {
             // prevent cluster position near borders (and on border)
-            double x = ((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters,
-                y = ((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters;
+            double x = ((random_zero_to_one()*2.0 - 1.0) / (clusters + 1.0))*clusters;
+            double y = ((random_zero_to_one()*2.0 - 1.0) / (clusters + 1.0))*clusters;
 
 
             // ensure all clusters have a min separation to each other (search isn't opimized, not worth the effort)
@@ -248,11 +251,11 @@ namespace {
 
         for (i = 0, attempts = 0; i < stars && attempts<100; i++, attempts++) {
             double x,y;
-            if (random_zero_to_one()<system_noise) {
+            if (random_zero_to_one() < system_noise) {
                 x = random_zero_to_one() * 2.0 - 1.0;
                 y = random_zero_to_one() * 2.0 - 1.0;
             } else {
-                short  cluster = i%clusters_position.size();
+                short  cluster = i % clusters_position.size();
                 double radius  = random_zero_to_one();
                 double angle   = random_angle();
                 double x1,y1;
@@ -273,10 +276,12 @@ namespace {
                 continue;
 
             // See if new star is too close to any existing star.
-            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
+            double lowest_dist = CalcNewPosNearestNeighbour(std::pair<double,double>(x,y), positions);
 
             // If so, we try again.
-            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
+            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION &&
+                attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1)
+            {
                 --i;
                 continue;
             }
@@ -1525,22 +1530,26 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
         if (!average_clusters)
             average_clusters = 2;
         int clusters = RandSmallInt(average_clusters * 8 / 10, average_clusters * 12 / 10); // +/- 20%
-        ClusterGalaxyCalcPositions(positions, clusters, size, m_universe_width, m_universe_width);
+        if (clusters >= 2)
+            ClusterGalaxyCalcPositions(positions, clusters, size, m_universe_width, m_universe_width);
         break;
     }
     case ELLIPTICAL:
         EllipticalGalaxyCalcPositions(positions, size, m_universe_width, m_universe_width);
         break;
-    case IRREGULAR:
-        IrregularGalaxyPositions(positions, size, m_universe_width, m_universe_width);
-        break;
     case RING:
         RingGalaxyCalcPositions(positions, size, m_universe_width, m_universe_width);
         break;
+    case IRREGULAR:
     default:
-        Logger().errorStream() << "Universe::Universe : Unknown galaxy shape: " << shape << ".  Using IRREGULAR as default.";
         IrregularGalaxyPositions(positions, size, m_universe_width, m_universe_width);
+        break;
     }
+
+    // backup in case requested algorithm failed...
+    if (positions.empty())
+        IrregularGalaxyPositions(positions, size, m_universe_width, m_universe_width);
+
     GenerateStarField(*this, age, positions, adjacency_grid, m_universe_width / ADJACENCY_BOXES);
 
     PopulateSystems(planet_density);
