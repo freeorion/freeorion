@@ -1094,7 +1094,7 @@ BuildingType
 BuildingType
     name = "BLD_STARGATE"
     description = "BLD_STARGATE_DESC"
-    buildcost = 250 + 100 *
+    buildcost = 500 + 50 *
                     Count condition = And [
                         Building "BLD_STARGATE"
                         OwnedBy TheEmpire Source.Owner
