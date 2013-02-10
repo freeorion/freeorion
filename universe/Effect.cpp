@@ -1259,7 +1259,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
     std::string building_type_name = m_building_type_name->Eval(context);
     const BuildingType* building_type = GetBuildingType(building_type_name);
     if (!building_type) {
-        Logger().errorStream() << "CreateBuilding::Execute couldn't get building type";
+        Logger().errorStream() << "CreateBuilding::Execute couldn't get building type: " << building_type_name;
         return;
     }
 
