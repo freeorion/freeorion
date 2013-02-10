@@ -2675,7 +2675,18 @@ INFINITE_FUEL
 
 HUNT_BUILDINGS
 '''EffectsGroup
-            scope = Object id = Source.FleetID
+            scope = And [
+                Object id = Source.FleetID
+                Number low = 1 And [
+                    System
+                    Contains And [
+                        Building
+                        OwnedBy AnyEmpire
+                        Stealth high = Source.Detection
+                        WithinDistance Source.Detection Source
+                    ]
+                ]
+            ]
             activation = Not OwnedBy AnyEmpire
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
@@ -2692,8 +2703,7 @@ HUNT_BUILDINGS
 HUNT_SHIPS
 '''EffectsGroup
             scope = And [
-                Contains Source
-                Fleet
+                Object id = Source.FleetID
                 Number low = 1 And [
                     Ship
                     OwnedBy AnyEmpire
@@ -2717,8 +2727,7 @@ HUNT_SHIPS
 HUNT_PLANETS
 '''EffectsGroup
             scope = And [
-                Contains Source
-                Fleet
+                Object id = Source.FleetID
                 Number low = 1 And [
                     Planet
                     OwnedBy AnyEmpire
