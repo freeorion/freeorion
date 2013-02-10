@@ -1289,7 +1289,7 @@ BuildingType
                 WithinDistance 100 Source
                 System
             ]
-    ]                
+    ]
     icon = ""
 
 BuildingType

@@ -2619,11 +2619,6 @@ MONSTER_MOVE_ALWAYS
                 Turn low = 10
                 Stationary
                 Not OwnedBy AnyEmpire
-                Not ContainedBy Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                    Stealth high = Source.Detection
-                ]
             ]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
@@ -2680,16 +2675,7 @@ INFINITE_FUEL
 
 HUNT_BUILDINGS
 '''EffectsGroup
-            scope = And [
-                Contains Source
-                Fleet
-                Number low = 1 high = 999 And [
-                    Building
-                    OwnedBy AnyEmpire
-                    Stealth high = Source.Detection
-                    WithinDistance Source.Detection Source
-                ]
-            ]
+            scope = Object id = Source.FleetID
             activation = Not OwnedBy AnyEmpire
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
