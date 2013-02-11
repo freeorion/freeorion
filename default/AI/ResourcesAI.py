@@ -411,7 +411,7 @@ def setPlanetResourceFoci():
                         ntPP, ntRP= newTargets[pid].get(RFocus,  (0, 0))
                         print "pID (%3d)  %22s |  c:  %5.1f / %5.1f |   cT:  %5.1f / %5.1f  |  cF: %8s |  nF: %8s  | cT:  %5.1f / %5.1f |         %.2f"%(pid,  planetMap[pid].name, cRP, cPP,   otRP, otPP,  fociMap.get(oldFocus, 'unknown'),  fociMap[RFocus] , ntRP, ntPP , ratio)
                         continue  # RP is getting too expensive, but might be willing to still allocate from a planet with less PP to lose
-            if planetMap[pid].currentMeterValue(fo.meterType.targetPopulation) > 0:
+            if planetMap[pid].currentMeterValue(fo.meterType.targetPopulation) >0: #only set to research if  pop won't die out
                 newFoci[pid] = RFocus
                 curTargetRP += (RR-IR)
                 curTargetPP -= (II-RI)
@@ -463,18 +463,20 @@ def generateResourcesOrders():
     "generate resources focus orders"
 
     timer= [ time() ]
-    # calculate top resource priority
-    #topResourcePriority()
+    ## calculate top resource priority
+    ##topResourcePriority()
     timer.append( time() )
-    # set resource foci of planets
-    #setCapitalIDResourceFocus()
+    ## set resource foci of planets
+    ##setCapitalIDResourceFocus()
     timer.append( time() )
+    #------------------------------
     #setGeneralPlanetResourceFocus()
     setPlanetResourceFoci()
     timer.append( time() )
-    #setAsteroidsResourceFocus()
+    #-------------------------------
+    ##setAsteroidsResourceFocus()
     timer.append( time() )
-    #setGasGiantsResourceFocus()
+    ##setGasGiantsResourceFocus()
     timer.append( time() )
 
     printResourcesPriority()
