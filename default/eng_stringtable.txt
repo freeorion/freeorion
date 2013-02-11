@@ -2777,7 +2777,8 @@ GROWTH_FOCUS_TEXT
 MINING_FOCUS_TITLE
 Mining Focus
 MINING_FOCUS_TEXT
-'''The Mining Focus is only available on planets with certain rare specials.  Focusing on Mining provides a significant production bonus.'''
+'''Mining Focus is currently disabled.'''
+#The Mining Focus is only available on planets with certain rare specials.  Focusing on Mining provides a significant production bonus.
 
 TRADE_FOCUS_TITLE
 Trade Focus
@@ -2787,7 +2788,7 @@ TRADE_FOCUS_TEXT
 PROTECTION_FOCUS_TITLE
 Protection Focus
 PROTECTION_FOCUS_TEXT
-'''The Protection focus represents a planet wholly focused on defending itself.  [[encyclopedia TROOP_TITLE]], Planetary [[encyclopedia DEFENSE_TITLE]], and Planetary [[encyclopedia SHIELDS_TITLE]] are all increased.'''
+'''The Protection focus represents a planet wholly focused on defending itself.  [[encyclopedia TROOP_TITLE]], Planetary [[encyclopedia DEFENSE_TITLE]], and Planetary [[encyclopedia SHIELDS_TITLE]] are doubled.'''
 
 INDUSTRY_TITLE
 Industry
@@ -2833,21 +2834,21 @@ Space ships and planets have a Shields meter.'''
 STEALTH_TITLE
 Stealth
 STEALTH_TEXT
-'''The term Stealth represents the ability of an object to dodge all kinds of sensors. Only empires with a [[encyclopedia DETECTION_TITLE]] value higher than or equal to the Stealth value can see the object.
+'''The term Stealth represents the ability of an object to dodge all kinds of sensors. Only empires with a [[encyclopedia DETECTION_TITLE]] higher than or equal to the Stealth value can see the object.
 
 Space ships, buildings, specials, systems and planets have a Stealth meter.'''
 
 DETECTION_TITLE
 Detection Strength
 DETECTION_TEXT
-'''The term Detection Strength represents the technological level of an empire's sensors. An empire can only see objects that have a [[encyclopedia STEALTH_TITLE]] value lower than or equal to its Detection Strength value and are within [[encyclopedia DETECTION_RANGE_TITLE]] of a controlled space ship or planet.
+'''The term Detection Strength represents the technological level of an empire's sensors. An empire can only see objects that have a [[encyclopedia STEALTH_TITLE]] value lower than or equal to its Detection Strength and are within [[encyclopedia DETECTION_RANGE_TITLE]] of a controlled space ship or planet.
 
 Empires have a Detection Strength meter.'''
 
 DETECTION_RANGE_TITLE
 Detection Range
 DETECTION_RANGE_TEXT
-'''The Detection Range represents the number of uus sensors can reach. An empire can only see objects that have a [[encyclopedia STEALTH_TITLE]] value lower than or equal to its [[encyclopedia DETECTION_TITLE]] value and are within Detection Range of a controlled space ship or planet.
+'''The Detection Range represents the number of uus sensors can reach. An empire can only see objects that have a [[encyclopedia STEALTH_TITLE]] value lower than or equal to its [[encyclopedia DETECTION_TITLE]] and are within Detection Range of a controlled space ship or planet.
 
 Space ships and planets have a Detection Range meter. There is the option to display Detection Range circles in the Galaxy Map section of the Options menu.'''
 
@@ -6217,9 +6218,7 @@ SHP_ASTEROID_REFORM
 Asteroid Reformation
 
 SHP_ASTEROID_REFORM_DESC
-'''This massive hull is formed by combining several large asteroids. It has fifteen external slots and four internal slots. Structure is good, but speed is very low. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-While modifying asteroids to serve as ship's hulls is very efficient, it is limited by the available sizes and shapes of available asteroids. By combining or breaking apart asteroids, asteroid hulls of extremely large or small sizes could be produced.'''
+Through advanced processing of asteroid bodies rock armor can be produced which is as cheap as but more durable than lead armor plating.
 
 SHP_MONOMOLEC_LATTICE
 Monomolecular Latticing
