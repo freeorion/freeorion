@@ -3635,10 +3635,10 @@ Prefer Swamp planets.
 [[GOOD_POPULATION]]
 
 Description:
-The Tae Ghirus have a fragile grey body, making them look like feather-less vultures. Their wings were designed for gliding, not flying, but even this aerodynamic function was lost in evolution.
+The Tae Ghirus look like feather-less vultures with a fragile grey body. Their wings were designed for gliding, not flying, but even this aerodynamic function was lost in evolution.
 
 Social Structure:
-The Tae Ghirus are very social and cooperative to make up for their weak bodies. Their social and political system, called "The Allegiance", is a mixture of participative democracy and a brotherhood.
+The Tae Ghirus are very social and cooperative to make up for their weak bodies. Their social and political system, called "The Allegiance", is a mixture of participative democracy and a brotherhood which works surprisingly well.
 '''
 
 
@@ -3720,6 +3720,14 @@ Prefer Desert planets.
         
 [[BAD_DETECTION]]
 [[GOOD_STEALTH]]
+
+Description:
+Etty are an unnaturally evolved race of intelligent plants. They can grow up to half a meter in length and have a central brain found in a large bulb. Etty have very strong sent which they can vary at will, this evolutionary adoption allowed them to protect themselves from plant eaters by mimicking the sent of greater predators, they also have a powerful sense of smell.
+
+The robot bodies of the Etty serve as legs, eyes, ears and hands. A socket connects the body with the Etty, allowing them to move from one body to another without needing to painfully uproot themselves. The robot form itself is highly varied based on its function.
+
+Social Structure:
+The Etty are exceedingly polite and strictly honor all contracts and agreements. Their culture is very clean, civil, kind and courteous, but very withdrawn. Etty government is a true democracy with a strong civil service held in check by a powerful press.
 '''
 
 
@@ -3975,6 +3983,12 @@ Prefer Barren planets.
         
 [[AVERAGE_POPULATION]]
 [[BAD_GROUND_TROOPS]]
+
+Description:
+A Kobuntura is composed of trillions of magnetic dust particles. Their dense core of vibrating molecules generates a magnetic field which manipulates a less dense cloud of particles orbiting it in complex patterns. Kobuntura can directly detect and manipulate objects on the outer reaches of their particle clouds, but can indirectly detect, manipulate and communicate with objects and individuals much further away using there magnetic fields. The primary method of locomotion involves interaction with the planet’s magnetic field. Whenever a Kobuntura moves, there is a small chance that the movement will magnetize and agitate the surrounding dust particles to a sufficient extent to trigger a chain reaction which causes a new fully matured Kobuntura to form in a matter of seconds.
+
+Social Structure:
+The Kobuntura have a guild system since ancient times, but one of the guilds, the Dark Enclave specialized in martial arts, has gained control over all the other guilds and established a military dictatorship. Despite this, there are no secrets amongst Kobuntura as they can't communicate without all the other Kobuntura noticing. Recreation and trade are very limited, as the sole intent of the Dark Enclave, and indeed all of Kobuntura society, is to find one of the Precursor species, the Builders, and unlock the greatest secrets of construction. This goal is the impetus driving their entire civilization.
 '''
 
 
