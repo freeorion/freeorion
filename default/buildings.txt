@@ -608,6 +608,7 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         Planet environment = Good
         Not Planet type = [Asteroids GasGiant]
+        Not HasSpecial name = "GAIA_SPECIAL"
     ]
     effectsgroups = [
         EffectsGroup
