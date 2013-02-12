@@ -312,7 +312,7 @@ def addMarkDesigns():
     else:
         maxEM= 10
     
-    nb,  hull =  designNameBases[3]+"-%1d",   "SH_ENDOMORPHIC"
+    nb,  hull =  designNameBases[3]+"-1-%1d",   "SH_ENDOMORPHIC"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + 2*[ is1],  "",  model)    for iw in [5, 6, 7 ] ]
 
     nb =  designNameBases[3]+"-2-%1d"
@@ -324,22 +324,22 @@ def addMarkDesigns():
     nb =  designNameBases[3]+"-4-%1d"
     #newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar1] + [ is1, is2],  "",  model)    for iw in [7, 8,   10, 11, 12 ] ]
 
-    nb =  designNameBases[4]+"-5-%1d"
+    nb =  designNameBases[3]+"-5-%1d"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + 2*[ is2],  "",  model)    for iw in range(7,  maxEM+1) ]
     
-    nb =  designNameBases[4]+"-6-%1d"
+    nb =  designNameBases[3]+"-6-%1d"
     if foAI.foAIstate.aggression <=fo.aggression.turtle: 
         newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw] +[ar3, ar3]+ 2*[ is2],  "",  model)    for iw in range(8,  maxEM+1) ]
     else:
         newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] +[ar3]+ 2*[ is2],  "",  model)    for iw in range(8,  maxEM+1) ]
 
-    nb =  designNameBases[4]+"-7-%1d"
+    nb =  designNameBases[3]+"-7-%1d"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
     
-    nb =  designNameBases[4]+"-8-%1d"
+    nb =  designNameBases[3]+"-8-%1d"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
     
-    nb =  designNameBases[4]+"-9-%1d"
+    nb =  designNameBases[3]+"-9-%1d"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar3] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
     
     if foAI.foAIstate.aggression >=fo.aggression.typical: 
