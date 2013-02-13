@@ -1125,6 +1125,7 @@ BuildingType
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
             ]
+            stackinggroup = "GAS_GIANT_GEN_STACK"
             effects = SetTargetIndustry Value + 10
     ]
     icon = ""

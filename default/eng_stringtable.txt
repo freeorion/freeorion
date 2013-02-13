@@ -7569,7 +7569,7 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a gas giant and gives a +10 [[encyclopedia INDUSTRY_TITLE]] bonus to planets with the Industry focus in the same system.
+'''This building can only be constructed at a gas giant and gives a +10 [[encyclopedia INDUSTRY_TITLE]] bonus to planets with the Industry focus in the same system. A second gas giant generator in the same system provides no additional benefit.
 
 A power generator designed to harvest the energy of a Gas Giant.'''
 
