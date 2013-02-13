@@ -995,7 +995,8 @@ OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
 Sets whether to show rendered planets / asteroids on the side-panel.
 
 OPTIONS_DB_GAMESETUP_STARS
-The number of systems in the galaxy to be generated.
+'''The approximate number of systems in the galaxy to be generated.
+For recommended game balance use 15-30 systems per empire.'''
 
 OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
 The shape of the galaxy to be generated.
