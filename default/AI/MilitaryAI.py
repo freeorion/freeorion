@@ -9,7 +9,7 @@ from random import choice,  random
 import ExplorationAI
 import PriorityAI
 
-MinThreat = 6 # the minimum threat level that will be ascribed to an unkown threat capable of killing scouts
+MinThreat = 10 # the minimum threat level that will be ascribed to an unkown threat capable of killing scouts
 MilitaryAllocations = []
 minMilAllocations = {}
 totMilRating=0

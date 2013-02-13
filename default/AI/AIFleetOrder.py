@@ -292,7 +292,7 @@ class AIFleetOrder(object):
             fleetRating = foAI.foAIstate.getRating(fleetID).get('overall', 0)
             threat = foAI.foAIstate.systemStatus.get(targetID,  {}).get('fleetThreat',  0) + foAI.foAIstate.systemStatus.get(targetID,  {}).get('planetThreat',  0)
 
-            safetyFactor = 1.0
+            safetyFactor = 1.1
             if fleetRating >= safetyFactor* threat:
                 return True
             else:

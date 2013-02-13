@@ -8,6 +8,8 @@ def sysNameIDs(sysIDs):
         sys = universe.getSystem(sysID)
         if sys:
             res.append( "%s:%d"%(sys.name, sysID ) )
+        else:
+            res.append("unkown:%d"%sysID )
     return res
 
 def planetNameIDs(planetIDs):
@@ -17,6 +19,8 @@ def planetNameIDs(planetIDs):
         planet = universe.getSystem(pid)
         if planet:
             res.append( "%s:%d"%(planet.name, pid ) )
+        else:
+            res.append("unkown:%d"%pid )
     return res
 
 def getCapital(): # if no current capital returns planet with biggest pop

@@ -254,6 +254,9 @@ class AIFleetMission(AIAbstractMission):
         # TODO: priority
         ordersCompleted = True
         print "Checking orders for fleet %d"%(self.getAITargetID())
+        #print "\t Full Orders are:"
+        #for aiFleetOrder2 in self.getAIFleetOrders():
+        #    print "\t\t %s"%aiFleetOrder2
         for aiFleetOrder in self.getAIFleetOrders():
             print "   %s"%(aiFleetOrder)
             clearAll=False

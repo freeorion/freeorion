@@ -4,6 +4,7 @@ from EnumsAI import AITargetType, AIFleetOrderType
 import AITarget
 import AIFleetOrder
 from ColonisationAI import annexableSystemIDs,  annexableRing1,  annexableRing2,  annexableRing3
+import PlanetUtilsAI
 
 def getAIFleetOrdersFromSystemAITargets(fleetAITarget, aiTargets):
     result = []
@@ -15,7 +16,9 @@ def getAIFleetOrdersFromSystemAITargets(fleetAITarget, aiTargets):
     # for every system which fleet wanted to visit, determine systems to visit and create move orders 
     for aiTarget in aiTargets:
         # determine systems required to visit(with possible return to supplied system)
+        #print "checking system targets"
         systemAITargets = canTravelToSystem(fleetAITarget.getTargetID(), lastSystemAITarget, aiTarget, empireID)
+        #print "making path with %d targets: "%len(systemAITargets) ,   PlanetUtilsAI.sysNameIDs( [sysTarg. getTargetID() for sysTarg in systemAITargets])
         if len(systemAITargets) > 0:
             # for every system required to visit create move order
             for systemAITarget in systemAITargets:
@@ -42,27 +45,37 @@ def  canTravelToSystem(fleetID, fromSystemAITarget, toSystemAITarget, empireID, 
     fuel = int(fleet.fuel)
     if fuel < 1.0 or fromSystemAITarget.getTargetID() == toSystemAITarget.getTargetID:
         return []
-    if foAI.foAIstate.aggression<=fo.aggression.typical:
+    if foAI.foAIstate.aggression<=fo.aggression.typical or True: #TODO: sort out if shortestPath leaves off some intermediate destinations
         pathFunc=universe.leastJumpsPath
     else:
         pathFunc=universe.shortestPath
     startSysID = fromSystemAITarget.getTargetID()
     targetSysID = toSystemAITarget.getTargetID()
-    shortPath= pathFunc(startSysID, targetSysID, empireID)
+    shortPath= list( pathFunc(startSysID, targetSysID, empireID) )
     suppliedStops = [ sid for sid in shortPath if sid in fleetSupplyableSystemIDs  ] 
     unsuppliedStops = [sid for sid in shortPath if sid not in suppliedStops ]
-    if len( unsuppliedStops) == 0:
-        return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
-    elif targetSysID in fleetSupplyableSystemIDs and len( unsuppliedStops) < fuel -1:
-        return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
-    elif targetSysID in fleetSupplyableSystemIDs.union(annexableRing1) and len( unsuppliedStops) < fuel -1:
-        return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
-    elif foAI.foAIstate.aggression >=fo.aggression.typical  and targetSysID in fleetSupplyableSystemIDs.union(annexableRing2) and len( unsuppliedStops) < fuel -2:
-        return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
-    elif foAI.foAIstate.aggression >=fo.aggression.aggressive  and targetSysID in fleetSupplyableSystemIDs.union(annexableRing3) and len( unsuppliedStops) < fuel -3:
-        return [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
+    retPath=[]
+    print "getting path from %s to %s "%(PlanetUtilsAI.sysNameIDs([  startSysID ]), PlanetUtilsAI.sysNameIDs([  targetSysID ])  ), 
+    print " ::: found initial path  %s having suppliedStops  %s and  unsuppliedStops  %s ; tot fuel available is %.1f"%( PlanetUtilsAI.sysNameIDs( shortPath[:] ),  suppliedStops,  unsuppliedStops,  fuel)
+    if False:
+        if  targetSysID in fleetSupplyableSystemIDs:
+            print "target has FleetSupply"
+        elif targetSysID in annexableRing1:
+            print "target in Ring 1"
+        elif  targetSysID in annexableRing2:
+            print "target in Ring 2,  has enough aggression is ",  foAI.foAIstate.aggression >=fo.aggression.typical
+        elif targetSysID in annexableRing3:
+            print "target in Ring 2,  has enough aggression is ",   foAI.foAIstate.aggression >=fo.aggression.aggressive
+    if  ( len( unsuppliedStops) == 0 or  
+                targetSysID in fleetSupplyableSystemIDs and len( unsuppliedStops) < fuel or 
+                targetSysID in annexableRing1 and len( unsuppliedStops) < fuel or
+                foAI.foAIstate.aggression >=fo.aggression.typical  and targetSysID in annexableRing2 and len( unsuppliedStops) < fuel -1 or 
+                foAI.foAIstate.aggression >=fo.aggression.aggressive  and targetSysID in annexableRing3 and len( unsuppliedStops) < fuel -2 ):
+                            retPath =  [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
     else:
-        return canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAITarget, empireID)
+        print " getting path from 'canTravelToSystemAndReturnToResupply' ", 
+        retPath =  canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAITarget, empireID,  verbose=True)
+    return retPath
  
 def canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAITarget, empireID,  verbose=False):
     "check if fleet can travel from starting system to wanted system"
@@ -82,14 +95,14 @@ def canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAI
 
         # try to find path without going resupply first
         supplySystemAITarget = getNearestSuppliedSystem(toSystemAITarget.getTargetID(), empireID)
-        systemAITargets = __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAITarget, empireID, systemAITargets, fleetSupplyableSystemIDs, maxFuel, fuel, supplySystemAITarget)
+        __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAITarget, empireID, systemAITargets, fleetSupplyableSystemIDs, maxFuel, fuel, supplySystemAITarget)
         # resupply in system first is required to find path
         if not(fromSystemAITarget.getTargetID() in fleetSupplyableSystemIDs) and len(systemAITargets) == 0:
             # add supply system to visit
             fromSystemAITarget = getNearestSuppliedSystem(fromSystemAITarget.getTargetID(), empireID)
             systemAITargets.append(fromSystemAITarget)
             # find path from supplied system to wanted system
-            systemAITargets = __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAITarget, empireID, systemAITargets, fleetSupplyableSystemIDs, maxFuel, maxFuel, supplySystemAITarget)
+            __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAITarget, empireID, systemAITargets, fleetSupplyableSystemIDs, maxFuel, maxFuel, supplySystemAITarget)
 
     return systemAITargets
 
@@ -118,6 +131,7 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
 
     result = True
     # try to find if there is possible path to wanted system from system
+    newTargets = resultSystemAITargets[:]
     if fromSystemAITarget.isValid() and toSystemAITarget.isValid() and supplySystemAITarget.isValid():
         universe = fo.getUniverse()
         leastJumpsPath = universe.leastJumpsPath(fromSystemAITarget.getTargetID(), toSystemAITarget.getTargetID(), empireID)
@@ -132,8 +146,8 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
 
                 # leastJumpPath can differ from shortestPath
                 # TODO: use Graph Theory to optimize
-                if (not systemID == toSystemAITarget.getTargetID()) and (systemID in fleetSupplyableSystemIDs):
-                    resultSystemAITargets.append(AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID))
+                if True or ((not systemID == toSystemAITarget.getTargetID()) and (systemID in fleetSupplyableSystemIDs)):#TODO:   restructure
+                    newTargets.append(AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID))
 
                 if fuel < 0:
                     result = False
@@ -150,12 +164,12 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
         if minJumps > fuel:
             # print "fleetID:" + str(fleetID) + " fuel:" + str(fuel) + " required: " + str(minJumps)
             result = False
-        else:
-            resultSystemAITargets.append(toSystemAITarget)
+        #else:
+            #resultSystemAITargets.append(toSystemAITarget)
 
     if result == False:
-        resultSystemAITargets = []
-
+        return []
+    resultSystemAITargets[:] = newTargets
     return resultSystemAITargets
 
 def getResupplyAIFleetOrder(fleetAITarget, currentSystemAITarget):

@@ -604,6 +604,10 @@ class AIstate(object):
                         sys=universe.getSystem(sysID)
                         sysName=(sys and sys.name) or "unknown"
                         print "Fleet %d  with role %s was used up, lost or destroyed at sys (%d) %s"%(fleetID,  self.__fleetRoleByID[fleetID],  sysID, sysName)  #perhaps diff message for successful colony fleets
+                        #print "\t\tFleet %d Full set of Orders were:"%fleetID
+                        #for aiFleetOrder2 in self.__aiMissionsByFleetID[fleetID].getAIFleetOrders():
+                        #    print "\t\t %s"%aiFleetOrder2
+                        
                 if fleetID in self.__fleetRoleByID:
                     del self.__fleetRoleByID[fleetID]
                 if fleetID in self.__aiMissionsByFleetID:
