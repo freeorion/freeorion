@@ -1077,7 +1077,6 @@ Tech
                     Planet type = Asteroids
                     OwnedBy TheEmpire Source.Owner
                     Planet
-                    Population high = 0
                 ]
                 Focus "FOCUS_INDUSTRY"
             ]
