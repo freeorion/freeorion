@@ -576,12 +576,17 @@ class AIstate(object):
         universe = fo.getUniverse()
         okFleets=FleetUtilsAI.getEmpireFleetIDs()
         fleetList = sorted( list( self.__fleetRoleByID ))
+        unaccountedFleets = set( okFleets ) - set( fleetList )
+        shipCount=0
         print "----------------------------------------------------------------------------------"
         print "in CleanFleetRoles"
         print "fleetList : %s"%fleetList
         print "-----------"
         print "FleetUtils empire-owned fleetList : %s"%okFleets
         print "-----------"
+        if unaccountedFleets:
+            print "Fleets unaccounted for in Empire Records: ",  unaccountedFleets
+            print "-----------"
         print "statusList %s"%[self.fleetStatus[fid] for fid in sorted( self.fleetStatus.keys() ) ]
         print "-----------"
         for fleetID in fleetList:
@@ -595,6 +600,7 @@ class AIstate(object):
             if fleet:
                 sysID = fleet.systemID
                 status['nships']=len(fleet.shipIDs)
+                shipCount += status['nships']
             else:
                 sysID = oldSysID #can still retrieve a fleet object even if fleet was just destroyed
             if (fleetID not in okFleets):# or fleet.empty:
@@ -641,6 +647,9 @@ class AIstate(object):
                 #if sysID != -1:
                 #    self.systemStatus.setdefault(sysID, {}).setdefault('myFleetRating', 0) 
                 #    self.systemStatus[sysID]['myFleetRating'] += newRating #moved to updateSystemStatus
+        print "------------------------"
+        print "Empire Ship Count: ",  shipCount
+        print "------------------------"
                     
     def getExplorableSystems(self, explorableSystemsType):
         "get all explorable systems determined by type "

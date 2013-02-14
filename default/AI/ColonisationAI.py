@@ -358,6 +358,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
     system = universe.getSystem(planet.systemID)
     tagList=[]
     starBonus=0
+    colonyStarBonus=0
     if species:
         tagList = [tag for tag in species.tags]
     starPopMod=0
@@ -388,9 +389,15 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         if (empire.getTechStatus("PRO_NEUTRONIUM_EXTRACTION") == fo.techStatus.complete) or (  "PRO_NEUTRONIUM_EXTRACTION"  in empireResearchList[:8])  :    
             if system.starType in [fo.starType.neutron]:
                 if len (AIstate.empireStars.get(fo.starType.neutron,  []))==0:
-                    starBonus +=40*discountMultiplier #pretty rare planets, good for armor
+                    starBonus +=80*discountMultiplier #pretty rare planets, good for armor
                 else:
-                    starBonus +=10*discountMultiplier #still has extra value as an alternate location for generators & for bnlocking enemies generators
+                    starBonus +=20*discountMultiplier #still has extra value as an alternate location for generators & for bnlocking enemies generators
+        if (empire.getTechStatus("SHP_ENRG_BOUND_MAN") == fo.techStatus.complete) or (  "SHP_ENRG_BOUND_MAN"  in empireResearchList[:6])  :    
+            if system.starType in [fo.starType.blackHole,  fo.starType.blue] :
+                if len (AIstate.empireStars.get(fo.starType.blackHole,  [])  +  AIstate.empireStars.get(fo.starType.blue,  []) )    ==0:
+                    colonyStarBonus +=100*discountMultiplier #pretty rare planets, good for generator
+                elif  planet.systemID not in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs):
+                    colonyStarBonus +=50*discountMultiplier #still has extra value as an alternate location for generators & for bnlocking enemies generators
     retval = starBonus
     
     planetSpecials = list(planet.specials)
@@ -427,6 +434,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             retval = retval / 2.0
         return int(retval)
     else: #colonization mission
+        retval += colonyStarBonus
         asteroidBonus=0
         gasGiantBonus=0
         miningBonus=0

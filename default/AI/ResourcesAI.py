@@ -67,28 +67,33 @@ def getResourceTargetTotals():
     
     newFocus= IFocus
     for pid in empirePlanetIDs:
+        canFocus= planetMap[pid].currentMeterValue(fo.meterType.targetPopulation) >0
         currentFocus[pid] = planetMap[pid].focus
-        if  currentFocus[pid] == MFocus:
-            mtarget=planetMap[pid].currentMeterValue(fo.meterType.targetIndustry)
+        #if  currentFocus[pid] == MFocus:
+        #    mtarget=planetMap[pid].currentMeterValue(fo.meterType.targetIndustry)
         currentOutput.setdefault(pid,  {} )[ IFocus] =  planetMap[pid].currentMeterValue(fo.meterType.industry)
         currentOutput[pid][ RFocus] =  planetMap[pid].currentMeterValue(fo.meterType.research)
-        fo.issueChangeFocusOrder(pid, IFocus) #may not be able to take, but try
+        if canFocus:
+            fo.issueChangeFocusOrder(pid, IFocus) #may not be able to take, but try
     universe.updateMeterEstimates(empirePlanetIDs)
     for pid in empirePlanetIDs:
+        canFocus= planetMap[pid].currentMeterValue(fo.meterType.targetPopulation) >0
         itarget=planetMap[pid].currentMeterValue(fo.meterType.targetIndustry)
         rtarget=planetMap[pid].currentMeterValue(fo.meterType.targetResearch)
         newTargets.setdefault(pid,  {}).setdefault(IFocus,  (0, 0))
         newTargets[pid][IFocus] = ( itarget,  rtarget )
-        if  currentFocus[pid] == MFocus:
-            newTargets[pid][MFocus] = ( mtarget,  rtarget )
-        fo.issueChangeFocusOrder(pid, RFocus) #may not be able to take, but try
+        #if  currentFocus[pid] == MFocus:
+        #    newTargets[pid][MFocus] = ( mtarget,  rtarget )
+        if canFocus:
+            fo.issueChangeFocusOrder(pid, RFocus) #may not be able to take, but try
     universe.updateMeterEstimates(empirePlanetIDs)
     for pid in empirePlanetIDs:
+        canFocus= planetMap[pid].currentMeterValue(fo.meterType.targetPopulation) >0
         itarget=planetMap[pid].currentMeterValue(fo.meterType.targetIndustry)
         rtarget=planetMap[pid].currentMeterValue(fo.meterType.targetResearch)
         newTargets.setdefault(pid,  {}).setdefault(RFocus,  (0, 0))
         newTargets[pid][RFocus] = ( itarget,  rtarget )
-        if currentFocus[pid]  != RFocus:
+        if canFocus and currentFocus[pid]  != RFocus:
             fo.issueChangeFocusOrder(pid, currentFocus[pid]) #put it back to what it was
     universe.updateMeterEstimates(empirePlanetIDs)
     return targetPP,  targetRP
@@ -361,8 +366,8 @@ def setPlanetResourceFoci():
         for pid in newTargets:
             II, IR = newTargets[pid][IFocus]
             RI, RR = newTargets[pid][RFocus]
-            if currentFocus[pid] == MFocus:
-                II = max( II,  newTargets[pid][MFocus][0] ) 
+            #if currentFocus[pid] == MFocus:
+            #    II = max( II,  newTargets[pid][MFocus][0] ) 
             curTargetPP += II  #icurTargets initially calculated by Industry focus, which will be our default focus
             curTargetRP += IR
             newFoci[pid] = IFocus
@@ -393,8 +398,8 @@ def setPlanetResourceFoci():
                     break
             II, IR = newTargets[pid][IFocus]
             RI, RR = newTargets[pid][RFocus]
-            if currentFocus[pid] == MFocus:
-                II = max( II,  newTargets[pid][MFocus][0] ) 
+            #if currentFocus[pid] == MFocus:
+            #    II = max( II,  newTargets[pid][MFocus][0] ) 
             if gotAlgo and (
                    (ratio > 2.0 and curTargetPP < 15) or   
                    (ratio > 2.5 and curTargetPP < 25  and II > 5) or 
@@ -422,6 +427,7 @@ def setPlanetResourceFoci():
         print "%34s|%20s|%15s |%15s|%15s |%15s "%("                      Planet  ", " current RP/PP ", " current target RP/PP ", "current Focus ","  newFocus  ", " new target RP/PP ")
         totalChanged=0
         for pid in newTargets:
+            canFocus= planetMap[pid].currentMeterValue(fo.meterType.targetPopulation) >0
             oldFocus=currentFocus[pid]
             changeFocus=False
             newFocus = newFoci[pid]
@@ -429,13 +435,13 @@ def setPlanetResourceFoci():
             if newFocus==RFocus and oldFocus!=RFocus:
                 changeFocus = True
             elif newFocus == IFocus:
-                if  ( MFocus in planetMap[pid].availableFoci )  and ( newTargets[pid].setdefault(MFocus,  (25, IR))[0] > newTargets[pid][IFocus][0]):
-                    newFocus=MFocus
+                #if  ( MFocus in planetMap[pid].availableFoci )  and ( newTargets[pid].setdefault(MFocus,  (25, IR))[0] > newTargets[pid][IFocus][0]):
+                #    newFocus=MFocus
                 if newFocus !=oldFocus:
                     changeFocus = True
             else:
                 pass #not supporting growth focus yet
-            if changeFocus:
+            if canFocus and changeFocus:
                 totalChanged+=1
                 fo.issueChangeFocusOrder(pid, newFocus)
             otPP, otRP= newTargets[pid].get(oldFocus,  (0, 0))

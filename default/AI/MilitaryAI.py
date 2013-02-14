@@ -115,7 +115,7 @@ def getMilitaryFleets(tryReset=True):
     
     threatBias = 0
 
-    safetyFactor = [ 4.0,  3.0,  1.5,  1.0,  0.95,  0.95    ][foAI.foAIstate.aggression] 
+    safetyFactor = [ 4.0,  3.0,  1.5,  1.0,  1.0,  0.9    ][foAI.foAIstate.aggression] 
     
     topTargetPlanets = [pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets]  if pscore > 20]  + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:10]  if pscore > 20] 
     topTargetSystems = []

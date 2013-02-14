@@ -155,11 +155,11 @@ def addTroopDesigns():
     
     for ari in [1, 2]:
         nb,  hull =  designNameBases[ari+2]+"%1d-%1d",   "SH_ORGANIC"
-        newTroopDesigns += [ (nb%(2,  ari+1),  desc,  hull,  ["SR_WEAPON_2",  arL[ari],  tp,  tp],  "",  model) ]
-        newTroopDesigns += [ (nb%(3,  ari+1),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp],  "",  model) ]
+        #newTroopDesigns += [ (nb%(2,  ari+1),  desc,  hull,  ["SR_WEAPON_2",  arL[ari],  tp,  tp],  "",  model) ]
+        #newTroopDesigns += [ (nb%(3,  ari+1),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp],  "",  model) ]
         nb,  hull =  designNameBases[ari+2]+"%1d-%1d",   "SH_STATIC_MULTICELLULAR"
-        newTroopDesigns += [ (nb%(4,  ari+1),  desc,  hull,  ["SR_WEAPON_2",  arL[ari],  tp,  tp,  tp],  "",  model) ]
-        newTroopDesigns += [ (nb%(5,  ari+1),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp,  tp],  "",  model) ]
+        #newTroopDesigns += [ (nb%(4,  ari+1),  desc,  hull,  ["SR_WEAPON_2",  arL[ari],  tp,  tp,  tp],  "",  model) ]
+        #newTroopDesigns += [ (nb%(5,  ari+1),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp,  tp],  "",  model) ]
         nb,  hull =  designNameBases[ari+2]+"%1d-%1d",   "SH_ENDOMORPHIC"
         newTroopDesigns += [ (nb%(6,  ari+1),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp,  tp,  tp],  "",  model) ]
         newTroopDesigns += [ (nb%(7,  ari+1),  desc,  hull,  ["SR_WEAPON_8",  arL[ari],  tp,  tp,  tp,  tp],  "",  model) ]
@@ -296,14 +296,14 @@ def addMarkDesigns():
     ar2= "AR_ZORTRIUM_PLATE"
     ar3= "AR_NEUTRONIUM_PLATE"
     nb,  hull =  designNameBases[1]+"-%1d",   "SH_BASIC_MEDIUM"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ""],  "",  model)    for iw in range(1, 9) ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ""],  "",  model)    for iw in range(1, 6) ]
 
-    newMarkDesigns += [ ((nb%iw)+'N',  desc,  hull,  [ srb%iw,  ar3,  ""],  "",  model)    for iw in range(1, 8) ]
+    #newMarkDesigns += [ ((nb%iw)+'N',  desc,  hull,  [ srb%iw,  ar3,  ""],  "",  model)    for iw in range(1, 8) ]
 
     nb,  hull =  designNameBases[2]+"-1-%1d",   "SH_ORGANIC"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1],  "",  model)    for iw in range(2, 9) ]
     nb,  hull =  designNameBases[2]+"-2-%1d",   "SH_STATIC_MULTICELLULAR"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(7, 9) ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(6, 9) ]
     
     if foAI.foAIstate.aggression in [fo.aggression.beginner, fo.aggression.turtle]: 
         maxEM= 8
@@ -312,55 +312,66 @@ def addMarkDesigns():
     else:
         maxEM= 10
     
-    nb,  hull =  designNameBases[3]+"-1-%1d",   "SH_ENDOMORPHIC"
+    nb,  hull =  designNameBases[3]+"-1-%1x",   "SH_ENDOMORPHIC"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + 2*[ is1],  "",  model)    for iw in [5, 6, 7 ] ]
 
-    nb =  designNameBases[3]+"-2-%1d"
+    nb =  designNameBases[3]+"-2-%1x"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + [ is2,  is2],  "",  model)    for iw in range(6,  maxEM+1) ]
 
-    nb =  designNameBases[3]+"3-%1d"
+    nb =  designNameBases[3]+"3-%1x"
     #newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar1] + [ is1,  is1],  "",  model)    for iw in [5, 6, 7, 8,   10, 11, 12 ] ]
 
-    nb =  designNameBases[3]+"-4-%1d"
+    nb =  designNameBases[3]+"-4-%1x"
     #newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar1] + [ is1, is2],  "",  model)    for iw in [7, 8,   10, 11, 12 ] ]
 
-    nb =  designNameBases[3]+"-5-%1d"
+    nb =  designNameBases[3]+"-5-%1x"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + 2*[ is2],  "",  model)    for iw in range(7,  maxEM+1) ]
     
-    nb =  designNameBases[3]+"-6-%1d"
+    nb =  designNameBases[3]+"-6-%1x"
     if foAI.foAIstate.aggression <=fo.aggression.turtle: 
         newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw] +[ar3, ar3]+ 2*[ is2],  "",  model)    for iw in range(8,  maxEM+1) ]
     else:
         newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] +[ar3]+ 2*[ is2],  "",  model)    for iw in range(8,  maxEM+1) ]
 
-    nb =  designNameBases[3]+"-7-%1d"
+    nb =  designNameBases[3]+"-7-%1x"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
     
-    nb =  designNameBases[3]+"-8-%1d"
+    nb =  designNameBases[3]+"-8-%1x"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
     
-    nb =  designNameBases[3]+"-9-%1d"
+    nb =  designNameBases[3]+"-9-%1x"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar3] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
     
     if foAI.foAIstate.aggression >=fo.aggression.typical: 
-        nb,  hull =  designNameBases[4]+"-%1d-%1d",   "SH_ENDOSYMBIOTIC"
-        newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  3*[srb%iw]+[ar2] + 3*[ is2],  "",  model)    for iw in range(7,  12) ]
-        newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  3*[srb%iw]+[ar3] + 3*[ is2],  "",  model)    for iw in range(8,  12) ]
-        newMarkDesigns += [ (nb%(3, iw),  desc,  hull,  3*[srb%iw]+[ar2] + 3*[ is3],  "",  model)    for iw in range(7,  12) ]
-        newMarkDesigns += [ (nb%(4, iw),  desc,  hull,  3*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(8,  12) ]
-        #bioadaptive
-        nb,  hull =  designNameBases[4]+"-%1d-%1d",   "SH_BIOADAPTIVE"
-        newMarkDesigns += [ (nb%(5, iw),  desc,  hull,  3*[srb%iw] + 3*[ is2],  "",  model)    for iw in range(9,  14) ]
-        newMarkDesigns += [ (nb%(6, iw),  desc,  hull,  2*[srb%iw]+[ar2] + 3*[ is2],  "",  model)    for iw in range(9,  14) ]
-        newMarkDesigns += [ (nb%(7, iw),  desc,  hull,  3*[srb%iw] + 3*[ is3],  "",  model)    for iw in range(9,  14) ]
-        newMarkDesigns += [ (nb%(8, iw),  desc,  hull,  2*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(9,  14) ]
-    if foAI.foAIstate.aggression >fo.aggression.typical: 
-        nb,  hull =  designNameBases[5]+"-%1d-%1d",   "SH_SENTIENT"
-        newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  4*[srb%iw]+2*[ar2] + 3*[ is2],  "",  model)    for iw in range(10,  17) ]
-        newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  5*[srb%iw]+[ar3] + 3*[ is2],  "",  model)    for iw in range(10,  17) ]
-        newMarkDesigns += [ (nb%(3, iw),  desc,  hull,  5*[srb%iw]+[ar2] + 3*[ is3],  "",  model)    for iw in range(10,  17) ]
-        newMarkDesigns += [ (nb%(4, iw),  desc,  hull,  5*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(10,  17) ]
+        nb,  hull =  designNameBases[4]+"-%1x-%1x",   "SH_ENDOSYMBIOTIC"
+        newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  4*[srb%iw] + 3*[ is2],  "",  model)    for iw in range(7,  14) ]
+        newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  4*[srb%iw] + 3*[ is3],  "",  model)    for iw in range(7,  14) ]
         
+        newMarkDesigns += [ (nb%(3, iw),  desc,  hull,  3*[srb%iw]+[ar2] + 3*[ is2],  "",  model)    for iw in range(7,  14) ]
+        newMarkDesigns += [ (nb%(4, iw),  desc,  hull,  3*[srb%iw]+[ar3] + 3*[ is2],  "",  model)    for iw in range(8,  14) ]
+        newMarkDesigns += [ (nb%(5, iw),  desc,  hull,  3*[srb%iw]+[ar2] + 3*[ is3],  "",  model)    for iw in range(7,  14) ]
+        newMarkDesigns += [ (nb%(6, iw),  desc,  hull,  3*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(8,  14) ]
+        #bioadaptive
+        nb,  hull =  designNameBases[4]+"-%1x-%1x",   "SH_BIOADAPTIVE"
+        newMarkDesigns += [ (nb%(7, iw),  desc,  hull,  3*[srb%iw] + 3*[ is2],  "",  model)    for iw in range(9,  14) ]
+        newMarkDesigns += [ (nb%(8, iw),  desc,  hull,  2*[srb%iw]+[ar2] + 3*[ is2],  "",  model)    for iw in range(9,  14) ]
+        newMarkDesigns += [ (nb%(9, iw),  desc,  hull,  3*[srb%iw] + 3*[ is3],  "",  model)    for iw in range(9,  14) ]
+        newMarkDesigns += [ (nb%(10, iw),  desc,  hull,  2*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(9,  14) ]
+    if foAI.foAIstate.aggression >fo.aggression.typical: 
+        nb,  hull =  designNameBases[5]+"-%1x-%02x",   "SH_SENTIENT"
+        newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  4*[srb%iw]+2*[ar2] + 3*[ is2],  "",  model)    for iw in range(10,  18) ]
+        newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  5*[srb%iw]+[ar3] + 3*[ is2],  "",  model)    for iw in range(10,  18) ]
+        newMarkDesigns += [ (nb%(3, iw),  desc,  hull,  5*[srb%iw]+[ar2] + 3*[ is3],  "",  model)    for iw in range(10,  18) ]
+        newMarkDesigns += [ (nb%(4, iw),  desc,  hull,  5*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(10,  18) ]
+
+    if foAI.foAIstate.aggression >fo.aggression.typical: 
+        nb,  hull =  designNameBases[6]+"-%1x-%02x",   "SH_FRACTAL_ENERGY"
+        newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  8*[srb%iw]+3*[ar2] + 3*[ is2],  "",  model)    for iw in range(10,  18) ]
+        newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  9*[srb%iw]+3*[ar3] + 2*[ is2],  "",  model)    for iw in range(10,  18) ]
+        newMarkDesigns += [ (nb%(3, iw),  desc,  hull,  8*[srb%iw]+3*[ar2] + 3*[ is3],  "",  model)    for iw in range(10,  18) ]
+        newMarkDesigns += [ (nb%(4, iw),  desc,  hull,  9*[srb%iw]+3*[ar3] + 2*[ is3],  "",  model)    for iw in range(10,  18) ]
+
+
     currentTurn=fo.currentTurn()
     needsAdding=[]
     namesToAdd=[]
@@ -666,14 +677,14 @@ def generateProductionOrders():
 
 #TODO: add totalPP checks below, so don't overload queue
 
-    maxDefensePortion = [0.7,  0.7,  0.6,  0.5,  0.3,  0.2  ][ foAI.foAIstate.aggression]
+    maxDefensePortion = [0.7,  0.4,  0.3,  0.2,  0.1,  0.0  ][ foAI.foAIstate.aggression]
     aggrIndex=max(1, foAI.foAIstate.aggression)
-    if (fo.currentTurn() %( aggrIndex))==0:
+    if ( (fo.currentTurn() %( aggrIndex))==0) and foAI.foAIstate.aggression < fo.aggression.maniacal:
         sysOrbitalDefenses={}
         queuedDefenses={}
         orbitalDefenseNames = shipTypeNames( AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE )
         defenseAllocation=0.0
-        targetOrbitals=   int( ((fo.currentTurn()+4)/( 8.0*(aggrIndex)**1.5))**0.8)
+        targetOrbitals=  min(  int( ((fo.currentTurn()+4)/( 8.0*(aggrIndex)**1.5))**0.8) ,  fo.aggression.maniacal - aggrIndex )
         print "Orbital Defense Check -- target Defense Orbitals: ",  targetOrbitals
         for element in productionQueue:
             if ( element.buildType == AIEmpireProductionTypes.BT_SHIP) and (foAI.foAIstate.getShipRole(element.designID) ==  AIShipRoleType.SHIP_ROLE_BASE_DEFENSE):
@@ -708,10 +719,10 @@ def generateProductionOrders():
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
                         defenseAllocation += productionQueue[0].allocation
                         break
-            
+
     queuedShipyardLocs = [element.locationID for element in productionQueue if (element.name=="BLD_SHIPYARD_BASE") ]
-    colonySystems={}
-    colonyPlanets={} 
+    systemColonies={}
+    colonySystems={} 
     for specName in empireColonizers:
         if (len( empireColonizers[specName])==0) and (specName in empireSpecies): #no current shipyards for this species#TODO: also allow orbital incubators and/or asteroid ships
             for pID in empireSpecies.get(specName, []): #SP_EXOBOT may not actually have a colony yet but be in empireColonizers
@@ -727,12 +738,62 @@ def generateProductionOrders():
         for pid in empireSpecies.get(specName, []): 
             planet=universe.getPlanet(pid)
             if planet:
-                colonySystems.setdefault(planet.systemID,  {}).setdefault('pids', []).append(pid)
-                colonyPlanets[pid]=planet.systemID
-
+                systemColonies.setdefault(planet.systemID,  {}).setdefault('pids', []).append(pid)
+                colonySystems[pid]=planet.systemID
+    
     popCtrs = list(AIstate.popCtrIDs)
+    enrgyShipyardLocs=[]
+    for bldName in [ "BLD_SHIPYARD_ENRG_COMP"  ]:
+        if empire.buildingTypeAvailable(bldName) and (bldgExpense<0.5*totalPP) and ( totalPP >200 or fo.currentTurn() > 150 ):
+            queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
+            bldType = fo.getBuildingType(bldName)
+            for pid in popCtrs:
+                if len(queuedBldLocs)>1: #build a max of 2 at once
+                    break
+                if colonySystems.get(pid,  -1) not in   ( AIstate.empireStars.get(fo.starType.blackHole,  [])  +  AIstate.empireStars.get(fo.starType.blue,  [])  ):
+                    continue
+                enrgyShipyardLocs.append(pid)
+                if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
+                    res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
+                    print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
+                    if res: 
+                        queuedBldLocs.append(pid)
+                        res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                        bldgExpense += productionQueue[0].allocation
+                        print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
+
+    for bldName in [ "BLD_SHIPYARD_BASE" ]:
+        if empire.buildingTypeAvailable(bldName) and (bldgExpense<0.5*totalPP) and ( totalPP >50 or fo.currentTurn() > 80 ):
+            queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
+            bldType = fo.getBuildingType(bldName)
+            for pid in enrgyShipyardLocs:
+                if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
+                    res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
+                    print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
+                    if res: 
+                        queuedBldLocs.append(pid)
+                        res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                        bldgExpense += productionQueue[0].allocation
+                        print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
+
     for bldName in [ "BLD_SHIPYARD_ORG_ORB_INC" ,  "BLD_SHIPYARD_ORG_XENO_FAC" ]:
         if empire.buildingTypeAvailable(bldName) and (bldgExpense<0.5*totalPP) and ( totalPP >40 or fo.currentTurn() > 40 ):
+            queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
+            bldType = fo.getBuildingType(bldName)
+            for pid in popCtrs:
+                if len(queuedBldLocs)>1+int(totalPP/200.0) : # limit build  at once
+                    break
+                if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
+                    res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
+                    print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
+                    if res: 
+                        queuedBldLocs.append(pid)
+                        res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                        bldgExpense += productionQueue[0].allocation
+                        print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
+
+    for bldName in [ "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB" ]:
+        if empire.buildingTypeAvailable(bldName) and (bldgExpense<0.5*totalPP) and ( totalPP >50 or fo.currentTurn() > 80 ):
             queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
             bldType = fo.getBuildingType(bldName)
             for pid in popCtrs:
@@ -1040,7 +1101,7 @@ def generateProductionOrders():
 
     wastedPP = max(0,  totalPP - totalPPSpent)
     print "  Wasted Production Points:          " + str(wastedPP)
-    availPP = totalPP*1.1 - totalPPSpent
+    availPP = totalPP*1.05 - totalPPSpent
 
     print ""
     print "Possible ship designs to build:"

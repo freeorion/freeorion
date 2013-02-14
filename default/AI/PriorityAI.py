@@ -125,7 +125,8 @@ def calculateResearchPriority():
     styleIndex = empireID%2
     styleAdjustmentMap = {0:0,  1:0}#TODO: decide if I want to do anything with this
     styleAdjustment = styleAdjustmentMap.get( styleIndex,  0 )
-    cutoffs = [ [30, 45, 60  ],  [40,  75,  100  ]   ][styleIndex  ]
+    #cutoffs = [ [30, 45, 60  ],  [40,  75,  100  ]   ][styleIndex  ] #1 doing better
+    cutoffs = [ [40, 65, 90  ],  [40,  75,  100  ]   ][styleIndex  ] #1 doing better
     if industrySurge:
         researchPriority =  10+styleAdjustment
     else:

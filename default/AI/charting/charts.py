@@ -1,10 +1,4 @@
 # installation of scipy probably necessary to get pylab
-#
-#This script easiest to use if you copy it to the directory your log files are saved to, and then execute it as
-# OS_Prompt>   python charts.py
-#
-# alternatively you can edit the DataDir variable below to point to your log files folder, and that should work also
-# I do plan to further improve this to test for OS and automatically look in the corresponding default location
 from pylab import *
 import os
 import sys
@@ -31,7 +25,7 @@ def show_only_some(x, pos):
     return ''
 
 
-for plotType in ["PP", "RP"]:
+for plotType in ["PP", "RP", "ShipCount"]:
 
     if plotType=="PP":
         caption="Production"
@@ -69,10 +63,14 @@ for plotType in ["PP", "RP"]:
             turnsP = [ int( parts[0]) for parts in [line.split(')') for line in datalines]]
             PP = [ float( parts[1].split('/')[-1])  for parts in [line.split(')') for line in datalines]]
             RP = [ float( parts[1].split('/')[-2].split('(')[-1])  for parts in [line.split(')') for line in datalines]]
+            shipCount = [int(lines.split('\n')[0]) for lines in dat1.split("Empire Ship Count:")[1:]]
+             
             if plotType=="PP":
                 data=PP
-            else:
+            elif plotType=="RP":
                 data=RP
+	    else:
+		data = shipCount
             if data != []:
                 ymin = min(ymin, min(data))
                 ymax = max(ymax, max(data))
@@ -100,14 +98,17 @@ for plotType in ["PP", "RP"]:
               turnsAI = [ int( parts[0]) for parts in [line.split(')') for line in datalines]]
               PP = [ float( parts[1].split('/')[-1])  for parts in [line.split(')') for line in datalines]]
               RP = [ float( parts[1].split('/')[-2].split('(')[-1])  for parts in [line.split(')') for line in datalines]]
+              shipCount = [1+int(lines.split('\n')[0]) for lines in dat1.split("Empire Ship Count:")[1:]]
               if plotType=="PP":
                   data=PP
                   rankings.append( (PP[-1], empireName) )
-              else:
+              elif plotType=="RP":
                   data=RP
+              else:
+                data = shipCount
               if data != []:
-		  thisMin=min(data)
-                  if thisMin>4: ymin = min(ymin, thisMin)
+                  thisMin=min(data)
+                  if thisMin>0: ymin = min(ymin, thisMin)
                   ymax = max(ymax, max(data))
               #plot(turnsAI[:50],data[:50],  label=specName,  linewidth=2.0)
               species[empireName]=specName
@@ -120,8 +121,8 @@ for plotType in ["PP", "RP"]:
     rankings.sort()
     legend(loc='upper left',prop={"size":'medium'})
     xlabel('Turn')
-    ylabel(plotType+' per turn')
-    title(caption+' Point progression')
+    ylabel(plotType)
+    title(caption+' Progression')
     #if saveFile:
     #    savefig(graphDir+os.sep+plotType+"_"+fileRoot+"_toTurn50.png")
     #show()
@@ -138,9 +139,11 @@ for plotType in ["PP", "RP"]:
         print "can't find playerData in allData"
     else:
         if playerName in empireColors:
-          plot(turnsP, allData[playerName], 'o-', color=empireColors[playerName],  label=playerName,  linewidth=2.0)
+              print "plotting with color for player: ", playerName, "data min/max: ", min(allData[playerName]), ' | ', max(allData[playerName])
+              plot(turnsP, allData[playerName], 'o-', color=empireColors[playerName],  label=playerName,  linewidth=2.0)
         else:
-          plot(turnsP, allData[playerName], 'bx-',  label=playerName,  linewidth=2.0)
+              print "plotting withOUT color for player: ", playerName, "data min/max: ", min(allData[playerName]), ' | ', max(allData[playerName])
+              plot(turnsP, allData[playerName], 'bx-',  label=playerName,  linewidth=2.0)
     #show()
     #for i in range(len(species)):
     #    name=empires[i]
@@ -151,8 +154,8 @@ for plotType in ["PP", "RP"]:
           plot(range(turns[0], turns[0]+len(allData[name])), allData[name], label="(%d) "%(empires.index(name)+1)+name+" : "+species[name],  linewidth=2.0)
     legend(loc='upper left', prop={"size":9},labelspacing=0.2)
     xlabel('Turn')
-    ylabel(plotType+' per turn')
-    title(caption+' Point progression w/ Max Aggression=Maniacal')
+    ylabel(plotType)
+    title(caption+' Progression w/ Max Aggression=Maniacal')
     x1,x2,y1,y2 = axis()
     newY2=y2
     for yi in range(1, 10):

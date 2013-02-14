@@ -88,11 +88,11 @@ def getInvasionFleets():
 
     print ""
     if sortedPlanets:
-        print "Invadable planetIDs,    ID | Score | Race | Troops | Name:"
+        print "Invadable planets\nIDs,    ID | Score | Name           | Race             | Troops"
         for pid,  pscore,  ptroops in sortedPlanets:
             planet = universe.getPlanet(pid)
             if planet:
-                print "%6d | %6d | %s | %s | %d"%(pid,  pscore,  planet.name,  planet.speciesName,  ptroops)
+                print "%6d | %6d | %16s | %16s | %d"%(pid,  pscore,  planet.name,  planet.speciesName,  ptroops)
             else:
                 print "%6d | %6d | Error: invalid planet ID"%(pid,  pscore)
     else:
@@ -146,7 +146,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
                                             "BLD_SHIPYARD_ENRG_COMP":           500, 
                                             "BLD_SHIPYARD_ENRG_SOLAR":          1500, 
                                             "BLD_INDUSTRY_CENTER":                   500, 
-                                            "BLD_GAS_GIANT_GEN":                           50, 
+                                            "BLD_GAS_GIANT_GEN":                           200, 
                                             "BLD_SOL_ORB_GEN":                              800, 
                                             "BLD_BLACK_HOLE_POW_GEN":       2000, 
                                             "BLD_ENCLAVE_VOID":                             500, 
@@ -155,11 +155,12 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
                                             "BLD_NEUTRONIUM_FORGE":             1000, 
                                             "BLD_CONC_CAMP":                                    100, 
                                             "BLD_BIOTERROR_PROJECTOR":      1000, 
+                                            "BLD_SHIPYARD_ENRG_COMP":         3000, 
                                             }
     #TODO: add more factors, as used for colonization
     universe = fo.getUniverse()
     empireID = empire.empireID
-    distanceFactor = 0
+    maxJumps=8
     planet = universe.getPlanet(planetID)
     if (planet == None) :  #TODO: exclude planets with stealth higher than empireDetection
         print "invasion AI couldn't get current info on planet %d"%planetID
@@ -169,18 +170,20 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     for bldType in [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]:
         bldTally += buildingValues.get(bldType,  50)
         
-    #    capitalID = PlanetUtilsAI.getCapital()
-    #    homeworld = universe.getPlanet(capitalID)
-    #    if homeworld:
-    #        homeSystemID = homeworld.systemID
-    #        evalSystemID = planet.systemID
-    #        leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
-    #        distanceFactor = 4.0/(leastJumpsPath + 1)
+        capitolID = PlanetUtilsAI.getCapital()
+        if capitolID:
+            homeworld = universe.getPlanet(capitolID)
+            if homeworld:
+                homeSystemID = homeworld.systemID
+                evalSystemID = planet.systemID
+                leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
+            maxJumps =  leastJumpsPath
         
     troops = planet.currentMeterValue(fo.meterType.troops)
+    maxTroops = planet.currentMeterValue(fo.meterType.maxTroops)
     specName=planet.speciesName
     species=fo.getSpecies(specName)
-    productionVal = 8*(planet.currentMeterValue(fo.meterType.targetIndustry)+planet.currentMeterValue(fo.meterType.targetResearch))
+    productionVal = 20*(planet.currentMeterValue(fo.meterType.targetPopulation)/planet.currentMeterValue(fo.meterType.population) )*max(planet.currentMeterValue(fo.meterType.targetIndustry),  2*planet.currentMeterValue(fo.meterType.targetResearch))
     supplyVal=0
     enemyVal=0
     if planet.owner!=-1 :
@@ -202,7 +205,8 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
         if special in planetSpecials:
             specialVal +=10 #
-    return popVal+supplyVal+specialVal+bldTally+productionVal+enemyVal-8*troops,  troops
+    buildTime=4
+    return max(0,  popVal+supplyVal+specialVal+bldTally+productionVal+enemyVal-8*troops),  min(troops+maxJumps+buildTime,  maxTroops)
 
 def getPlanetPopulation(planetID):
     "return planet population"
