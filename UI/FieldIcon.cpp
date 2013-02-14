@@ -27,7 +27,7 @@ namespace {
 // FieldIcon
 ////////////////////////////////////////////////
 FieldIcon::FieldIcon(GG::X x, GG::Y y, int field_id) :
-    GG::Control(x, y, GG::X1, GG::Y1, GG::INTERACTIVE),
+    GG::Control(x, y, GG::X1, GG::Y1, GG::Flags<GG::WndFlag>()),
     m_field_id(field_id),
     m_selection_indicator(0),
     m_mouseover_indicator(0),
