@@ -516,7 +516,7 @@ Scarab
 Scheat
 Schedar
 Schmidt
-Schwarzchild
+Schwarzschild
 Scorpii
 Seginus
 Setag
