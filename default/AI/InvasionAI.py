@@ -195,7 +195,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         except:
             popVal=0
     else:
-        popVal = evaluatePlanet(planetID,  AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  species,  empire) #evaluatePlanet is implorted from ColonisationAI
+        popVal = evaluatePlanet(planetID,  AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  species,  empire) #evaluatePlanet is imported from ColonisationAI
     if planetID not in fleetSupplyablePlanetIDs: #extends supply and probably visibility
         supplyVal =  20#TODO: better analysis here if supply obstructed by defending ships
     planetSpecials = list(planet.specials)

@@ -232,7 +232,7 @@ def defenseTechs2():
 def primaryMetaTechsList(index=0):
     "primary techs for all categories"
     #index=1
-    if index == 0:
+    if index == 1:
         primaryMetaTechs = [
             "GRO_PLANET_ECOL",
             "GRO_SUBTER_HAB", 
@@ -253,8 +253,8 @@ def primaryMetaTechsList(index=0):
             "DEF_DEFENSE_NET_2",
             "DEF_PLAN_BARRIER_SHLD_1",
             "SPY_DETECT_2",
-            "CON_ORBITAL_CON", 
             "PRO_ORBITAL_GEN",
+            "CON_ORBITAL_CON", 
             "SHP_WEAPON_7",
             "CON_METRO_INFRA", 
             "CON_SUBTER_CONST", 
@@ -264,6 +264,8 @@ def primaryMetaTechsList(index=0):
             "DEF_PLAN_BARRIER_SHLD_2",
             "PRO_SOL_ORB_GEN",
             "GRO_GENETIC_ENG", 
+            "LRN_GRAVITONICS",
+            "CON_CONTGRAV_ARCH", 
             "LRN_PHYS_BRAIN", 
             "LRN_TRANSLING_THT", 
             "PRO_SENTIENT_AUTOMATION", 
@@ -277,8 +279,6 @@ def primaryMetaTechsList(index=0):
             "DEF_GARRISON_2", 
             "GRO_LIFECYCLE_MAN", 
             "SHP_ENDOCRINE_SYSTEMS", 
-            "LRN_GRAVITONICS",
-            "CON_CONTGRAV_ARCH", 
             "DEF_GARRISON_3", 
             "SHP_WEAPON_8",
             "PRO_INDUSTRY_CENTER_II", 
@@ -341,7 +341,7 @@ def primaryMetaTechsList(index=0):
             "SHP_WEAPON_16",
             "SHP_WEAPON_17",
             ]
-    elif index == 1:
+    elif index == 0:
         primaryMetaTechs = [
             "GRO_PLANET_ECOL",
             "GRO_SUBTER_HAB", 
@@ -372,6 +372,8 @@ def primaryMetaTechsList(index=0):
             "DEF_DEFENSE_NET_REGEN_1",
             "DEF_PLAN_BARRIER_SHLD_2",
             "PRO_SOL_ORB_GEN",
+            "LRN_GRAVITONICS",
+            "CON_CONTGRAV_ARCH", 
             "GRO_GENETIC_ENG", 
             "LRN_PHYS_BRAIN", 
             "LRN_TRANSLING_THT", 
@@ -386,8 +388,6 @@ def primaryMetaTechsList(index=0):
             "DEF_GARRISON_2", 
             "GRO_LIFECYCLE_MAN", 
             "SHP_ENDOCRINE_SYSTEMS", 
-            "LRN_GRAVITONICS",
-            "CON_CONTGRAV_ARCH", 
             "DEF_GARRISON_3", 
             "SHP_WEAPON_8",
             "PRO_INDUSTRY_CENTER_II", 

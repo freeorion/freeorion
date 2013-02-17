@@ -210,10 +210,13 @@ def addScoutDesigns():
     db = "DT_DETECTOR_%1d"
     is1,  is2 = "FU_BASIC_TANK",  "ST_CLOAK_1"
     for id in [1, 2, 3, 4]:
-        newScoutDesigns += [ (nb%(id, iw),  desc,  hull,  [ db%id,  srb%iw, srb%iw,  is1],  "",  model)    for iw in range(1, 9) ]
+        newScoutDesigns += [ (nb%(id, 0),  desc,  "SH_BASIC_SMALL",  [ db%id],  "",  model)   ]
+    #for id in [1, 2, 3, 4]:
+    #    newScoutDesigns += [ (nb%(id, iw),  desc,  hull,  [ db%id,  srb%iw, srb%iw,  is1],  "",  model)    for iw in range(1, 9) ]
     nb,  hull =  designNameBases[2]+"%1d-%1d",   "SH_ENDOMORPHIC"
     for id in [1, 2, 3, 4]:
-        newScoutDesigns += [ (nb%(id, iw),  desc,  hull,  [ db%id,  srb%iw, srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(1, 9) ]
+        newScoutDesigns += [ (nb%(id, 0),  desc,  hull,  [ db%id,  "", "", "",  is1,  is1],  "",  model)    for iw in range(1, 9) ]
+        #newScoutDesigns += [ (nb%(id, iw),  desc,  hull,  [ db%id,  srb%iw, srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(1, 9) ]
 
     currentTurn=fo.currentTurn()
     needsAdding=[]
@@ -692,6 +695,8 @@ def generateProductionOrders():
                 defenseAllocation += element.allocation
         print "Queued Defenses:",  [( PlanetUtilsAI.sysNameIDs([sysID]),  num) for sysID,  num in   queuedDefenses.items()]
         for sysID in empireSpeciesSystems:
+            if foAI.foAIstate.systemStatus.get(sysID,  {}).get('fleetThreat',  1) > 0:
+                continue#don't build  orbital shields if enemy fleet present
             if defenseAllocation > maxDefensePortion * totalPP:
                 break
             #print "checking ",  PlanetUtilsAI.sysNameIDs([sysID])

@@ -88,8 +88,8 @@ def calculateIndustryPriority():
     elif fo.currentTurn() < 45:
         industryPriority = 25 # mid industry , mid research 
     elif fo.currentTurn() < 60:
-        industryPriority = 40 # high  industry , mid research 
-    elif fo.currentTurn() < 80:
+        industryPriority = 30 # high  industry , mid research 
+    elif fo.currentTurn() < 100:
         industryPriority = 50 # high  industry , mid research 
     else:
         industryPriority = 60 # high  industry , low-mid research 
@@ -126,19 +126,19 @@ def calculateResearchPriority():
     styleAdjustmentMap = {0:0,  1:0}#TODO: decide if I want to do anything with this
     styleAdjustment = styleAdjustmentMap.get( styleIndex,  0 )
     #cutoffs = [ [30, 45, 60  ],  [40,  75,  100  ]   ][styleIndex  ] #1 doing better
-    cutoffs = [ [40, 65, 90  ],  [40,  75,  100  ]   ][styleIndex  ] #1 doing better
-    if industrySurge:
+    cutoffs = [ [40, 65, 90  ],  [40,  90,  150  ]   ][styleIndex  ] #1 doing better
+    if industrySurge and False:
         researchPriority =  10+styleAdjustment
     else:
         if  (fo.currentTurn() < cutoffs[0]) or not gotAlgo:
-            researchPriority = 60 # mid industry , high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
+            researchPriority = 50 # mid industry , high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
         elif fo.currentTurn() < cutoffs[1]:
-            researchPriority = 30 +styleAdjustment# mid industry , mid research 
+            researchPriority = 40 +styleAdjustment# mid industry , mid research 
         elif fo.currentTurn() < cutoffs[2]:
-            researchPriority = 20+styleAdjustment # high  industry , low research 
+            researchPriority = 30+styleAdjustment # high  industry , low research 
         else:
             researchQueue = list(empire.researchQueue)
-            researchPriority = 15+styleAdjustment # high  industry , low research 
+            researchPriority = 20+styleAdjustment # high  industry , low research 
             if len(researchQueue) == 0 :
                 researchPriority = 0 # done with research
             elif len(researchQueue) <5 and researchQueue[-1].allocation > 0 :

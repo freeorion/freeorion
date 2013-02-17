@@ -37,6 +37,19 @@ popSizeModMap={
                             "gaia":             [ 0,  3,  3,  3,  3 ], 
                             }
 
+def resetCAIGlobals():
+    global curBestMilShipRating
+    empireSpecies.clear()
+    empireSpeciesSystems.clear()
+    empireColonizers.clear()
+    activeGrowthSpecials.clear()
+    annexableSystemIDs.clear()
+    annexableRing1.clear()
+    annexableRing2.clear()
+    annexableRing3.clear()
+    annexablePlanetIDs.clear()
+    curBestMilShipRating = 20
+    
 
 def getColonyFleets():
     global empireSpecies,  empireColonizers,  empireSpeciesSystems,  annexableSystemIDs,  annexableRing1,  annexableRing2,  annexableRing3
@@ -349,6 +362,8 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
     "returns the colonisation value of a planet"
     # TODO: in planet evaluation consider specials and distance
     discountMultiplier = 20.0
+    priorityScaling=1.0
+    
 
     valMod = 0
     universe = fo.getUniverse()
@@ -419,7 +434,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                     elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID:
                         astVal+=20 * discountMultiplier
                 retval += astVal
-        if  ( ( planet.size  ==  fo.planetSize.gasGiant ) and  ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:10]) )): 
+        if  ( ( planet.size  ==  fo.planetSize.gasGiant ) and  ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:3]) )):
             if system:
                 orbGenVal=0
                 for pid in system.planetIDs:
@@ -438,15 +453,20 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         asteroidBonus=0
         gasGiantBonus=0
         miningBonus=0
+        maxGGGs=8
+        perGGG=9*discountMultiplier
         planetSize = planet.size
         if system:
             for pid  in [id for id in system.planetIDs if id != planetID]:
                 p2 = universe.getPlanet(pid)
                 if p2:
                     if p2.size== fo.planetSize.asteroids :
-                        asteroidBonus = 30
+                        if ( (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete ) or (  "PRO_MICROGRAV_MAN"  in empireResearchList[:3]) ):
+                            asteroidBonus = 5*discountMultiplier
                     if p2.size== fo.planetSize.gasGiant :
-                        gasGiantBonus += 50
+                        if ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:3]) ):
+                            gasGiantBonus += perGGG
+        gasGiantBonus = min( gasGiantBonus,  maxGGGs * perGGG )
         if   (planet.size==fo.planetSize.gasGiant):
             if not (species and species.name  ==  "SP_SUPER_TEST"): 
                 return 0
@@ -507,7 +527,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                                                      ]:
                                                      """
         for special in [ spec for spec in AIDependencies.metabolimBoosts  if spec in planetSpecials]:
-            valMod += 10  # extra bonus due to potential applicability to other planets
+            valMod += 3*discountMultiplier  # extra bonus due to potential applicability to other planets
         for thisTag in [ tag for tag in tagList if tag in  AIDependencies.metabolims]:
             popSizeMod +=  len( (set(planetSpecials).union([key for key in activeGrowthSpecials.keys() if  len(activeGrowthSpecials[key])>0 ] )).intersection(AIDependencies.metabolimBoostMap.get(thisTag,  []) ) )
             
@@ -529,7 +549,6 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                                             "PRO_INDUSTRY_CENTER_II":1, 
                                             "PRO_INDUSTRY_CENTER_III":1, 
                                             "PRO_SOL_ORB_GEN":  2.0,   #assumes will build a gen at a blue/white star
-                                            "PRO_SOL_ORB_GEN": 5,   # half the max value
                                             "PRO_SINGULAR_GEN": proSingVal, 
                                             }
                                             
@@ -558,7 +577,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                 retval  = starBonus+asteroidBonus+gasGiantBonus
         elif popSize==0:
             if foAI.foAIstate.aggression > fo.aggression.typical and (fo.currentTurn() >= 10):
-                retval  = 0.5*( starBonus+asteroidBonus+gasGiantBonus) #actually is kind of a pain if the pop goes close to zero but not actually zero
+                retval  = 0.6*( starBonus+asteroidBonus+gasGiantBonus) #actually is kind of a pain if the pop goes close to zero but not actually zero
         else:
             retval  = starBonus+indVal+asteroidBonus+gasGiantBonus + valMod
             if planet.systemID in annexableRing1:
@@ -567,7 +586,14 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                 retval += 20
             elif planet.systemID in annexableRing3:
                 retval += 10
+            if (gasGiantBonus ==0):
+                    if (  indVal + valMod  < 10*discountMultiplier):
+                        if fo.currentTurn() < 15:
+                            priorityScaling = 0
+                        elif fo.currentTurn() < 50:
+                            priorityScaling = 0.5
         
+        retval *= priorityScaling
         thrtRatio = (foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0)+0.2*foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('neighborThreat', 0)) / float(curBestMilShipRating)
         if thrtRatio > 4:
             retval = 0.3*retval 

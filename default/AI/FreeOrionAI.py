@@ -40,7 +40,7 @@ def initFreeOrionAI():
 
 # called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
 # and set up whatever is needed for AI to generate orders
-def startNewGame(aggression=fo.aggression.beginner):
+def startNewGame(aggression=fo.aggression.aggressive):
     global __timerFile,  lastTurnTimestamp,  __timerBucketFile
     print "New game started, AI Agression level %d"%aggression
 
@@ -150,7 +150,7 @@ def resumeLoadedGame(savedStateString):
     except:
         print "failed to parse saved state string"
         #assigning new state
-        foAIstate = AIstate.AIstate(aggression=fo.aggression.beginner)
+        foAIstate = AIstate.AIstate(aggression=fo.aggression.aggressive)
         foAIstate.sessionStartCleanup()
         print "Error: exception triggered and caught:  ",  traceback.format_exc()
     if __timerFile:
