@@ -55,8 +55,8 @@ def  canTravelToSystem(fleetID, fromSystemAITarget, toSystemAITarget, empireID, 
     suppliedStops = [ sid for sid in shortPath if sid in fleetSupplyableSystemIDs  ] 
     unsuppliedStops = [sid for sid in shortPath if sid not in suppliedStops ]
     retPath=[]
-    print "getting path from %s to %s "%(PlanetUtilsAI.sysNameIDs([  startSysID ]), PlanetUtilsAI.sysNameIDs([  targetSysID ])  ), 
-    print " ::: found initial path  %s having suppliedStops  %s and  unsuppliedStops  %s ; tot fuel available is %.1f"%( PlanetUtilsAI.sysNameIDs( shortPath[:] ),  suppliedStops,  unsuppliedStops,  fuel)
+    #print "getting path from %s to %s "%(PlanetUtilsAI.sysNameIDs([  startSysID ]), PlanetUtilsAI.sysNameIDs([  targetSysID ])  ), 
+    #print " ::: found initial path  %s having suppliedStops  %s and  unsuppliedStops  %s ; tot fuel available is %.1f"%( PlanetUtilsAI.sysNameIDs( shortPath[:] ),  suppliedStops,  unsuppliedStops,  fuel)
     if False:
         if  targetSysID in fleetSupplyableSystemIDs:
             print "target has FleetSupply"
@@ -73,7 +73,7 @@ def  canTravelToSystem(fleetID, fromSystemAITarget, toSystemAITarget, empireID, 
                 foAI.foAIstate.aggression >=fo.aggression.aggressive  and targetSysID in annexableRing3 and len( unsuppliedStops) < fuel -2 ):
                             retPath =  [ AITarget.AITarget(AITargetType.TARGET_SYSTEM, sid) for sid in shortPath]
     else:
-        print " getting path from 'canTravelToSystemAndReturnToResupply' ", 
+        #print " getting path from 'canTravelToSystemAndReturnToResupply' ", 
         retPath =  canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAITarget, empireID,  verbose=True)
     return retPath
  

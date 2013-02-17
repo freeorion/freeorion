@@ -392,12 +392,14 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                     starBonus +=10
                 else:
                     starBonus +=2 #still has extra value as an alternate location for solar generators
+        if system.starType in [fo.starType.blackHole] :
+            starBonus +=50*discountMultiplier #whether have tech yet or not, assign some base value
         if (empire.getTechStatus("PRO_SINGULAR_GEN") == fo.techStatus.complete) or (  "PRO_SINGULAR_GEN"  in empireResearchList[:8])  :    
             if system.starType in [fo.starType.blackHole] :
                 if len (AIstate.empireStars.get(fo.starType.blackHole,  []))==0:
-                    starBonus +=80*discountMultiplier #pretty rare planets, good for generator
+                    starBonus +=200*discountMultiplier #pretty rare planets, good for generator
                 elif  planet.systemID not in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs):
-                    starBonus +=40*discountMultiplier #still has extra value as an alternate location for generators & for bnlocking enemies generators
+                    starBonus +=100*discountMultiplier #still has extra value as an alternate location for generators & for bnlocking enemies generators
             elif system.starType in [fo.starType.red] and ( len (AIstate.empireStars.get(fo.starType.blackHole,  [])) + len (AIstate.empireStars.get(fo.starType.red,  [])))==0:
                 if  planet.systemID not in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs):
                     starBonus +=40*discountMultiplier # can be used for artificial black hole

@@ -95,6 +95,9 @@ def calculateIndustryPriority():
         industryPriority = 60 # high  industry , low-mid research 
 
 
+    industryPriority = 50 # try a flat number, adjust research
+
+
     # increase demand for industry industry production is low
     #industryPriority = 380 / (industryProduction + 0.001)
 
@@ -125,20 +128,20 @@ def calculateResearchPriority():
     styleIndex = empireID%2
     styleAdjustmentMap = {0:0,  1:0}#TODO: decide if I want to do anything with this
     styleAdjustment = styleAdjustmentMap.get( styleIndex,  0 )
-    #cutoffs = [ [30, 45, 60  ],  [40,  75,  100  ]   ][styleIndex  ] #1 doing better
-    cutoffs = [ [40, 65, 90  ],  [40,  90,  150  ]   ][styleIndex  ] #1 doing better
+    cutoffs = [ [30, 45, 60  ],  [40,  75,  100  ]   ][styleIndex  ] #1 doing better
+    #cutoffs = [ [40, 65, 90  ],  [40,  90,  150  ]   ][styleIndex  ] #1 doing better
     if industrySurge and False:
         researchPriority =  10+styleAdjustment
     else:
         if  (fo.currentTurn() < cutoffs[0]) or not gotAlgo:
             researchPriority = 50 # mid industry , high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
         elif fo.currentTurn() < cutoffs[1]:
-            researchPriority = 40 +styleAdjustment# mid industry , mid research 
+            researchPriority = 50 +styleAdjustment# mid industry , mid research 
         elif fo.currentTurn() < cutoffs[2]:
-            researchPriority = 30+styleAdjustment # high  industry , low research 
+            researchPriority = 50+styleAdjustment # high  industry , low research 
         else:
             researchQueue = list(empire.researchQueue)
-            researchPriority = 20+styleAdjustment # high  industry , low research 
+            researchPriority = 30+styleAdjustment # high  industry , low research 
             if len(researchQueue) == 0 :
                 researchPriority = 0 # done with research
             elif len(researchQueue) <5 and researchQueue[-1].allocation > 0 :
@@ -149,7 +152,6 @@ def calculateResearchPriority():
                 researchPriority = 5 # closing in on end of research 
             elif len(researchQueue) <20:
                 researchPriority = 10 # high  industry , low research 
-
 
     print  ""
     print  "Research Production (current/target) : ( %.1f / %.1f )"%(totalRP,  targetRP)

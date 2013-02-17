@@ -332,7 +332,7 @@ def setPlanetResourceFoci():
     empireID = empire.empireID
     currentTurn = fo.currentTurn()
     freq = (1.0 + currentTurn/4.0)**(1.0/3)
-    if random() > 1.0/freq:
+    if ( currentTurn > 120 ) and ( random() > 1.0/freq ) :
         timer = 6*[time()]
     else:
         timer= [ time() ] # getPlanets

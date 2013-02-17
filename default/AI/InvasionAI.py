@@ -239,7 +239,7 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
         if not planet: continue
         sysID = planet.systemID
         foundFleets = []
-        podsNeeded= int(math.ceil( (ptroops+2)/2)+0.0001)
+        podsNeeded= int(math.ceil( (ptroops+1.1)/2.0)+0.0001)
         foundStats={}
         minStats= {'rating':0, 'troopPods':podsNeeded}
         targetStats={'rating':10,'troopPods':podsNeeded+2} 

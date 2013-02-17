@@ -565,6 +565,7 @@ def generateProductionOrders():
 
     movedCapital=False
     bldgExpense=0.0
+    bldgRatio = [ 0.5,  0.4,  0.3  ][fo.empireID()%3]
     if not homeworld:
         print "no capital, should get around to capturing or colonizing a new one"#TODO
     else:
@@ -612,7 +613,7 @@ def generateProductionOrders():
             print
             queuedBldgNames=[ bldg.name for bldg in capitolQueuedBldgs ]
             
-            if ( totalPP >40 or fo.currentTurn() > 40 ) and ("BLD_INDUSTRY_CENTER" in possibleBuildingTypes) and ("BLD_INDUSTRY_CENTER" not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<0.5*totalPP):
+            if ( totalPP >40 or fo.currentTurn() > 40 ) and ("BLD_INDUSTRY_CENTER" in possibleBuildingTypes) and ("BLD_INDUSTRY_CENTER" not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<bldgRatio*totalPP):
                 res=fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", empire.capitalID)
                 print "Enqueueing BLD_INDUSTRY_CENTER, with result %d"%res
                 if res: 
@@ -627,7 +628,7 @@ def generateProductionOrders():
                     print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
             for bldName in [ "BLD_SHIPYARD_ORG_ORB_INC" ]:
-                if  (bldName in possibleBuildingTypes) and (bldName not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<0.5*totalPP):
+                if  (bldName in possibleBuildingTypes) and (bldName not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<bldgRatio*totalPP):
                     try:
                         res=fo.issueEnqueueBuildingProductionOrder(bldName, empire.capitalID)
                         print "Enqueueing %s at capitol, with result %d"%(bldName,  res)
@@ -639,7 +640,7 @@ def generateProductionOrders():
                         print "Error: exception triggered and caught:  ",  traceback.format_exc()
 
             for bldName in [ "BLD_SHIPYARD_ORG_XENO_FAC",  "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"   ]:
-                if  ( totalPP >30 or fo.currentTurn() > 30 ) and (bldName in possibleBuildingTypes) and (bldName not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<0.5*totalPP):
+                if  ( totalPP >30 or fo.currentTurn() > 30 ) and (bldName in possibleBuildingTypes) and (bldName not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<bldgRatio*totalPP):
                     try:
                         res=fo.issueEnqueueBuildingProductionOrder(bldName, empire.capitalID)
                         print "Enqueueing %s at capitol, with result %d"%(bldName,  res)
@@ -749,7 +750,7 @@ def generateProductionOrders():
     popCtrs = list(AIstate.popCtrIDs)
     enrgyShipyardLocs=[]
     for bldName in [ "BLD_SHIPYARD_ENRG_COMP"  ]:
-        if empire.buildingTypeAvailable(bldName) and (bldgExpense<0.5*totalPP) and ( totalPP >200 or fo.currentTurn() > 150 ):
+        if empire.buildingTypeAvailable(bldName) and (bldgExpense<bldgRatio*totalPP) and ( totalPP >200 or fo.currentTurn() > 150 ):
             queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
             bldType = fo.getBuildingType(bldName)
             for pid in popCtrs:
@@ -768,7 +769,7 @@ def generateProductionOrders():
                         print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
 
     for bldName in [ "BLD_SHIPYARD_BASE" ]:
-        if empire.buildingTypeAvailable(bldName) and (bldgExpense<0.5*totalPP) and ( totalPP >50 or fo.currentTurn() > 80 ):
+        if empire.buildingTypeAvailable(bldName) and (bldgExpense<bldgRatio*totalPP) and ( totalPP >50 or fo.currentTurn() > 80 ):
             queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
             bldType = fo.getBuildingType(bldName)
             for pid in enrgyShipyardLocs:
@@ -782,7 +783,7 @@ def generateProductionOrders():
                         print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
 
     for bldName in [ "BLD_SHIPYARD_ORG_ORB_INC" ,  "BLD_SHIPYARD_ORG_XENO_FAC" ]:
-        if empire.buildingTypeAvailable(bldName) and (bldgExpense<0.5*totalPP) and ( totalPP >40 or fo.currentTurn() > 40 ):
+        if empire.buildingTypeAvailable(bldName) and (bldgExpense<bldgRatio*totalPP) and ( totalPP >40 or fo.currentTurn() > 40 ):
             queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
             bldType = fo.getBuildingType(bldName)
             for pid in popCtrs:
@@ -798,7 +799,7 @@ def generateProductionOrders():
                         print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
 
     for bldName in [ "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB" ]:
-        if empire.buildingTypeAvailable(bldName) and (bldgExpense<0.5*totalPP) and ( totalPP >50 or fo.currentTurn() > 80 ):
+        if empire.buildingTypeAvailable(bldName) and (bldgExpense<bldgRatio*totalPP) and ( totalPP >50 or fo.currentTurn() > 80 ):
             queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
             bldType = fo.getBuildingType(bldName)
             for pid in popCtrs:

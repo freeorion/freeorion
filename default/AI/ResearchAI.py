@@ -26,8 +26,8 @@ def generateResearchOrders():
         print "%25s  %25s  %25s"%tline
     print""
     
+    researchQueueList = getResearchQueueTechs()
     if tRP >= 20  and foAI.foAIstate.aggression > fo.aggression.cautious:
-        researchQueueList = getResearchQueueTechs()
         if (empire.getTechStatus("LRN_PSIONICS") != fo.techStatus.complete)  and ( "LRN_PSIONICS" not in researchQueueList[:5]  )  :
             for specName in ColonisationAI.empireSpecies:
                 thisSpec=fo.getSpecies(specName)
@@ -124,6 +124,7 @@ def generateResearchOrders():
                     res=fo.issueEnqueueTechOrder(ccTech, insertIdx)
                     print "Empire is very aggressive,  so attempted to fast-track %s,  got result %d"%(ccTech, res)
         print""
+        
         generateDefaultResearchOrders()
         print "\n\nAll techs:"
         alltechs = fo.techs() # returns names of all techs
@@ -134,8 +135,14 @@ def generateResearchOrders():
         for tname in [tn for tn in alltechs if tn not in coveredTechs]:
             print tname
 
-    elif fo.currentTurn() >50:
+    elif fo.currentTurn() >100:
         generateDefaultResearchOrders()
+        
+    #researchQueueList = getResearchQueueTechs()
+    if len (AIstate.empireStars.get(fo.starType.blackHole,  []))!=0 and foAI.foAIstate.aggression > fo.aggression.cautious:
+        if (empire.getTechStatus("PRO_SINGULAR_GEN") != fo.techStatus.complete) and (  "PRO_SINGULAR_GEN"  not in researchQueueList[:2])  :    
+            res=fo.issueEnqueueTechOrder("PRO_SINGULAR_GEN",0)
+            print "have a black hole star outpost/colony, so attempted to fast-track %s,  got result %d"%("PRO_SINGULAR_GEN", res)
 
 def generateResearchOrders_old():
     "generate research orders"

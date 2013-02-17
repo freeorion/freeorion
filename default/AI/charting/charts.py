@@ -155,7 +155,7 @@ for plotType in ["PP", "RP", "ShipCount"]:
     legend(loc='upper left', prop={"size":9},labelspacing=0.2)
     xlabel('Turn')
     ylabel(plotType)
-    title(caption+' Progression w/ Max Aggression=Maniacal')
+    title(caption+' Progression ')
     x1,x2,y1,y2 = axis()
     newY2=y2
     for yi in range(1, 10):
