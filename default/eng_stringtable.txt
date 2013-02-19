@@ -996,7 +996,8 @@ Sets whether to show rendered planets / asteroids on the side-panel.
 
 OPTIONS_DB_GAMESETUP_STARS
 '''The approximate number of systems in the galaxy to be generated.
-For recommended game balance use 15-30 systems per empire.'''
+For recommended game balance use 15-30 systems per empire.
+Very high numbers of systems may cause FreeOrion to lag, especially later in the game.'''
 
 OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
 The shape of the galaxy to be generated.
@@ -1023,16 +1024,17 @@ OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
 The maximum aggression level for AI opponents
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
-The name used in the game for your empire.
+'''Your empire's name.'''
 
 OPTIONS_DB_GAMESETUP_PLAYER_NAME
-The name used in the game to represent the player in single player games.
+'''The name used in the game to represent the player in single player games.'''
 
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
-The color used in the game for your empire.
+'''Your empire's color.'''
 
 OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
-The species on your homeworld at the start of the game.
+'''Your empire's starting species.
+Has no effect on planets in your empire colonized by other species.'''
 
 OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
 The number of AI opponents in the game.
