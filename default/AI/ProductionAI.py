@@ -299,7 +299,7 @@ def addMarkDesigns():
     ar2= "AR_ZORTRIUM_PLATE"
     ar3= "AR_NEUTRONIUM_PLATE"
     nb,  hull =  designNameBases[1]+"-%1d",   "SH_BASIC_MEDIUM"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ""],  "",  model)    for iw in range(1, 6) ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ""],  "",  model)    for iw in range(1, 8) ]
 
     #newMarkDesigns += [ ((nb%iw)+'N',  desc,  hull,  [ srb%iw,  ar3,  ""],  "",  model)    for iw in range(1, 8) ]
 
