@@ -128,20 +128,22 @@ def calculateResearchPriority():
     styleIndex = empireID%2
     styleAdjustmentMap = {0:0,  1:0}#TODO: decide if I want to do anything with this
     styleAdjustment = styleAdjustmentMap.get( styleIndex,  0 )
-    cutoffs = [ [30, 45, 60  ],  [40,  75,  100  ]   ][styleIndex  ] #1 doing better
+    cutoffs =  [ [30, 40, 60  ],  [35,  50,  70  ]   ][styleIndex  ] #1 doing better
+    settings = [ [50, 40, 35, 30  ],  [50,  40,  30,  25  ]   ][styleIndex  ] 
+    
     #cutoffs = [ [40, 65, 90  ],  [40,  90,  150  ]   ][styleIndex  ] #1 doing better
     if industrySurge and False:
         researchPriority =  10+styleAdjustment
     else:
         if  (fo.currentTurn() < cutoffs[0]) or not gotAlgo:
-            researchPriority = 50 # mid industry , high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
+            researchPriority = settings[0] # mid industry , high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
         elif fo.currentTurn() < cutoffs[1]:
-            researchPriority = 50 +styleAdjustment# mid industry , mid research 
+            researchPriority = settings[1] +styleAdjustment# mid industry , mid research 
         elif fo.currentTurn() < cutoffs[2]:
-            researchPriority = 50+styleAdjustment # high  industry , low research 
+            researchPriority = settings[2]+styleAdjustment # high  industry , low research 
         else:
             researchQueue = list(empire.researchQueue)
-            researchPriority = 30+styleAdjustment # high  industry , low research 
+            researchPriority = settings[3]+styleAdjustment # high  industry , low research 
             if len(researchQueue) == 0 :
                 researchPriority = 0 # done with research
             elif len(researchQueue) <5 and researchQueue[-1].allocation > 0 :
@@ -272,7 +274,7 @@ def calculateInvasionPriority():
     troopShipsNeeded = math.ceil((opponentTroopPods - (numTroopPods+ queuedTroopPods ))/troopsPerBestShip)  
      
     #invasionPriority = max(  10+ 200*max(0,  troopShipsNeeded ) , int(0.1* totalVal) )
-    invasionPriority = 10+ 100*max(1,  troopShipsNeeded )
+    invasionPriority = 20+ 120*max(0,  troopShipsNeeded )
     if invasionPriority < 0: 
         return 0
     if foAI.foAIstate.aggression==fo.aggression.beginner:
@@ -291,7 +293,8 @@ def calculateMilitaryPriority():
         homeworld = universe.getPlanet(capitalID)
     else:
         return 0# no capitol (not even a capitol-in-the-making), means can't produce any ships
-    targetPlanetIDs =  [pid for pid, pscore, trp in AIstate.invasionTargets[:10] ] + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:10]  ] + [pid for pid,  pscore in foAI.foAIstate.colonisableOutpostIDs[:10]  ]
+    allottedInvasionTargets = 1+ int(fo.currentTurn()/25)
+    targetPlanetIDs =  [pid for pid, pscore, trp in AIstate.invasionTargets[:allottedInvasionTargets] ] + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:allottedColonyTargets]  ] + [pid for pid,  pscore in foAI.foAIstate.colonisableOutpostIDs[:allottedColonyTargets]  ]
     
     mySystems = set( AIstate.popCtrSystemIDs ).union( AIstate.outpostSystemIDs   )
     targetSystems = set( PlanetUtilsAI.getSystems(targetPlanetIDs)  )
@@ -299,6 +302,7 @@ def calculateMilitaryPriority():
     curShipRating = curBestMilShipRating()
 
     unmetThreat = 0.0
+    currentTurn=fo.currentTurn()
     for sysID in mySystems.union(targetSystems) :
         status=foAI.foAIstate.systemStatus.get( sysID,  {} )
         myAttack,  myHealth =0, 0
@@ -307,12 +311,21 @@ def calculateMilitaryPriority():
             myAttack += rating.get('attack', 0)
             myHealth += rating.get('health', 0)
         myRating = myAttack*myHealth
-        threat = 0.0
-        if sysID in mySystems:
-            threat += status.get('fleetThreat', 0) + status.get('planetThreat', 0) + 0.3* status.get('neighborThreat', 0)   
+        baseMonsterThreat = status.get('monsterThreat', 0)
+        if currentTurn>200:
+            monsterThreat = baseMonsterThreat
+        elif currentTurn>100:
+            if baseMonsterThreat <2000:
+                monsterThreat = baseMonsterThreat
+            else:
+                monsterThreat = 2000 + (currentTurn/100.0 - 1) *(baseMonsterThreat-2000)
         else:
-            threat += status.get('fleetThreat', 0) + status.get('planetThreat', 0) + 0.1* status.get('neighborThreat', 0)   
-        unmetThreat += max( 0,  threat - myRating )
+            monsterThreat = 0
+        if sysID in mySystems:
+            threat = status.get('fleetThreat', 0) + status.get('planetThreat', 0) + 0.3* status.get('neighborThreat', 0)   
+        else:
+            threat = status.get('fleetThreat', 0) + status.get('planetThreat', 0) + 0.1* status.get('neighborThreat', 0)   
+        unmetThreat += max( 0,  threat + monsterThreat - myRating )
         
     militaryPriority = int( 40 + max(0,  75*unmetThreat / curShipRating) )  
     return max( militaryPriority,  0)

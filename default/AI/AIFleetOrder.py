@@ -7,6 +7,8 @@ import ExplorationAI
 AIFleetOrderTypeNames=AIFleetOrderType()
 AIFleetMissionTypeNames = AIFleetMissionType()
 
+dumpTurn=0
+
 class AIFleetOrder(object):
     "Stores information about orders which can be executed"
 
@@ -76,6 +78,10 @@ class AIFleetOrder(object):
                     planet = universe.getPlanet(self.getTargetAITarget().getTargetID())
                     if planet.unowned:
                         targetAITargetTypeValid = True
+                    else:#try to get order cancelled out
+                        self.__setExecuted()
+                        self.__setExecutionCompleted()
+                    
             # colonise
             elif AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
                 # with ship
@@ -93,6 +99,9 @@ class AIFleetOrder(object):
                     planet = universe.getPlanet(self.getTargetAITarget().getTargetID())
                     if planet.unowned or  (planet.ownedBy(fo.empireID()) and   planet.currentMeterValue(fo.meterType.population)==0 ):
                         targetAITargetTypeValid = True
+                    else:#try to get order cancelled out
+                        self.__setExecuted()
+                        self.__setExecutionCompleted()
             # invade
             elif AIFleetOrderType.ORDER_INVADE == self.getAIFleetOrderType():
                 # with ship
@@ -111,6 +120,9 @@ class AIFleetOrder(object):
                     planetPopulation = planet.currentMeterValue(fo.meterType.population)
                     if not planet.unowned or planetPopulation > 0:
                         targetAITargetTypeValid = True
+                    else:#try to get order cancelled out
+                        self.__setExecuted()
+                        self.__setExecutionCompleted()
                 # military
                 elif AIFleetOrderType.ORDER_MILITARY == self.getAIFleetOrderType():
                     # with ship
@@ -180,7 +192,8 @@ class AIFleetOrder(object):
     def canIssueOrder(self,  considerMergers=False,  verbose=False):
         "if FleetOrder can be issued now"
 
-        if self.isExecuted():
+        #for some orders, may need to re-issue if invasion/outposting/colonization was interrupted
+        if self.isExecuted()  and self.getAIFleetOrderType() not in [ AIFleetOrderType.ORDER_OUTPOST,  AIFleetOrderType.ORDER_COLONISE,  AIFleetOrderType.ORDER_INVADE   ]:
             return False
         if not self.isValid():
             return False
@@ -246,7 +259,7 @@ class AIFleetOrder(object):
                     shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_BASE_INVASION)
             ship = universe.getShip(shipID)
             planet = universe.getPlanet(self.getTargetAITarget().getTargetID())
-            if (ship != None) and (fleet.systemID == planet.systemID) and ship.canInvade:
+            if (ship != None) and (fleet.systemID == planet.systemID) and ship.canInvade and ( planet.currentMeterValue(fo.meterType.shield) ==0 or planet.owner==-1):# native planets currently shouldnt have shields, but a bug sometimes makes it look like they do
                 return True
             return False
         #
@@ -290,7 +303,7 @@ class AIFleetOrder(object):
             targ1 = universe.getSystem(targetID)
             targ1Name = (targ1 and targ1.name) or "unknown"
             fleetRating = foAI.foAIstate.getRating(fleetID).get('overall', 0)
-            threat = foAI.foAIstate.systemStatus.get(targetID,  {}).get('fleetThreat',  0) + foAI.foAIstate.systemStatus.get(targetID,  {}).get('planetThreat',  0)
+            threat = foAI.foAIstate.systemStatus.get(targetID,  {}).get('fleetThreat',  0) + foAI.foAIstate.systemStatus.get(targetID,  {}).get('planetThreat',  0)+ foAI.foAIstate.systemStatus.get(targetID,  {}).get('monsterThreat',  0)
 
             safetyFactor = 1.1
             if fleetRating >= safetyFactor* threat:
@@ -313,6 +326,7 @@ class AIFleetOrder(object):
             return True
 
     def issueOrder(self,  considerMergers=False):
+        global dumpTurn
         if not self.canIssueOrder(considerMergers=False):  #appears to be redundant with check in IAFleetMission?
             print "\tcan't issue %s"%self
         else:
@@ -320,6 +334,10 @@ class AIFleetOrder(object):
             self.__setExecuted()
             # outpost
             if AIFleetOrderType.ORDER_OUTPOST == self.getAIFleetOrderType():
+                planet=universe.getPlanet(  self.getTargetAITarget().getTargetID() )
+                if not planet.unowned:
+                    self.__setExecutionCompleted()
+                    return
                 shipID = None
                 if AITargetType.TARGET_SHIP == self.getSourceAITarget().getAITargetType():
                     shipID = self.getSourceAITarget().getTargetID()
@@ -328,7 +346,9 @@ class AIFleetOrder(object):
                     shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST)
                     if shipID is None:
                         shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_BASE_OUTPOST)
-                fo.issueColonizeOrder(shipID, self.getTargetAITarget().getTargetID())
+                result=fo.issueColonizeOrder(shipID, self.getTargetAITarget().getTargetID())
+                if result==0:
+                    self.__executed = False
             # colonise
             elif AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
                 shipID = None
@@ -345,6 +365,8 @@ class AIFleetOrder(object):
                 planetName = (planet and planet.name) or "apparently invisible"
                 result = fo.issueColonizeOrder(shipID, planetID)
                 print "Ordered colony ship ID %d to colonize %s, got result %d"%(shipID, planetName,  result)
+                if result==0:
+                    self.__executed = False
             # invade
             elif AIFleetOrderType.ORDER_INVADE == self.getAIFleetOrderType():
                 result = False
@@ -361,13 +383,25 @@ class AIFleetOrder(object):
                         ship = universe.getShip(shipID)
                         if (foAI.foAIstate.getShipRole(ship.design.id) in [AIShipRoleType.SHIP_ROLE_MILITARY_INVASION,  AIShipRoleType.SHIP_ROLE_BASE_INVASION]):
                             result = fo.issueInvadeOrder(shipID, planetID)  or  result #will track if at least one invasion troops successfully deployed
-                            print "Ordered troop ship ID %d to invade %s, got result %d"%(shipID, planetName,  result)
+                            detailStr = ""
+                            if result == 0:
+                                pstealth = planet.currentMeterValue(fo.meterType.stealth)
+                                pop = planet.currentMeterValue(fo.meterType.population)
+                                shields = planet.currentMeterValue(fo.meterType.shield)
+                                owner = planet.owner
+                                detailStr= " -- planet has %.1f stealth, shields %.1f,  %.1f population and is owned by empire %d"%(pstealth,  shields,  pop,  owner)
+                            print "Ordered troop ship ID %d to invade %s, got result %d"%(shipID, planetName,  result),  detailStr
                             if result == 0:
                                 if 'needsEmergencyExploration' not in dir(foAI.foAIstate):
                                     foAI.foAIstate.needsEmergencyExploration=[]
                                 if  fleet.systemID not in foAI.foAIstate.needsEmergencyExploration:
                                     foAI.foAIstate.needsEmergencyExploration.append(fleet.systemID)
                                     print "Due to trouble invading,  adding system %d to Emergency Exploration List"%fleet.systemID
+                                    self.__executed = False
+                                if shields >0 and owner==-1 and dumpTurn<fo.currentTurn():
+                                    dumpTurn=fo.currentTurn()
+                                    print "Universe Dump to debug invasions:"
+                                    universe.dump()
                                 break
             # military
             elif AIFleetOrderType.ORDER_MILITARY == self.getAIFleetOrderType():
@@ -381,7 +415,7 @@ class AIFleetOrder(object):
                 targetSysID = self.getTargetAITarget().getTargetID()
                 fleet = fo.getUniverse().getFleet(fleetID)
                 systemStatus =  foAI.foAIstate.systemStatus.get(targetSysID,  {})
-                if (fleet )and ( fleet.systemID==targetSysID ) and ((systemStatus.get('fleetThreat', 0) + systemStatus.get('planetThreat', 0))==0):
+                if (fleet )and ( fleet.systemID==targetSysID ) and ((systemStatus.get('fleetThreat', 0) + systemStatus.get('planetThreat', 0)+ systemStatus.get('monsterThreat', 0))==0):
                     self.__setExecutionCompleted()
 
             # move or resupply

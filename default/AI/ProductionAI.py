@@ -469,15 +469,13 @@ def addColonyDesigns():
     cp = "CO_COLONY_POD"
     db = "DT_DETECTOR_%1d"
     is1,  is2 = "FU_BASIC_TANK",  "ST_CLOAK_1"
-    for id in [1, 2, 3, 4]:
-        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  cp],  "",  model)    for iw in range(2, 6) ]
-    for id in [1, 2, 3, 4]:
-        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  cp],  "",  model)    for iw in range(6, 9) ] # when farther along, use 2 pods
+    for id in [1, 2, 3]:
+        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, srb%iw, db%id,  cp],  "",  model)    for iw in [1, 2, 5, 8] ]
 
     nb =  designNameBases[2]+"%1d_%1d"
     cp2 = "CO_SUSPEND_ANIM_POD"
-    for id in [1, 2, 3, 4]:
-        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  cp2],  "",  model)    for iw in range(2, 9) ]
+    for id in [1, 2, 3]:
+        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  cp2],  "",  model)    for iw in [5, 6, 7, 8]  ]
 
     currentTurn=fo.currentTurn()
     needsAdding=[]
@@ -565,7 +563,7 @@ def generateProductionOrders():
 
     movedCapital=False
     bldgExpense=0.0
-    bldgRatio = [ 0.5,  0.4,  0.3  ][fo.empireID()%3]
+    bldgRatio = [ 0.4,  0.35,  0.30  ][fo.empireID()%3]
     if not homeworld:
         print "no capital, should get around to capturing or colonizing a new one"#TODO
     else:
@@ -1106,15 +1104,16 @@ def generateProductionOrders():
     print "  Total Production Points Spent:     " + str(totalPPSpent)
 
     wastedPP = max(0,  totalPP - totalPPSpent)
-    print "  Wasted Production Points:          " + str(wastedPP)
+    print "  Wasted Production Points:          " + str(wastedPP)#TODO: add resource group analysis
     availPP = totalPP*1.05 - totalPPSpent
 
     print ""
-    print "Possible ship designs to build:"
-    if homeworld:
-        for shipDesignID in empire.availableShipDesigns:
-            shipDesign = fo.getShipDesign(shipDesignID)
-            print "    " + str(shipDesign.name(True)) + " cost:" + str(shipDesign.productionCost(empire.empireID,  homeworld.id) )+ " time:" + str(shipDesign.productionTime(empire.empireID,  homeworld.id))
+    if False:
+        print "Possible ship designs to build:"
+        if homeworld:
+            for shipDesignID in empire.availableShipDesigns:
+                shipDesign = fo.getShipDesign(shipDesignID)
+                print "    " + str(shipDesign.name(True)) + " cost:" + str(shipDesign.productionCost(empire.empireID,  homeworld.id) )+ " time:" + str(shipDesign.productionTime(empire.empireID,  homeworld.id))
 
     print ""
     print "Projects already in Production Queue:"

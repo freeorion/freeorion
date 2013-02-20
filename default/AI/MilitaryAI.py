@@ -115,7 +115,7 @@ def getMilitaryFleets(tryReset=True):
     
     threatBias = 0
 
-    safetyFactor = [ 4.0,  3.0,  1.5,  1.0,  1.0,  0.9    ][foAI.foAIstate.aggression] 
+    safetyFactor = [ 4.0,  3.0,  1.5,  1.0,  1.0,  0.95    ][foAI.foAIstate.aggression] 
     
     topTargetPlanets = [pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets]  if pscore > 20]  + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:10]  if pscore > 20] 
     topTargetSystems = []
@@ -146,7 +146,7 @@ def getMilitaryFleets(tryReset=True):
     print "Empire-Occupied  Systems:  %s"%(   [ "| %d %s |"%(eoSysID,  universe.getSystem(eoSysID).name)  for eoSysID in empireOccupiedSystemIDs  ]  )
     print "-----------------"
     if len( empireOccupiedSystemIDs ) > 0:
-        ocSysTotThreat = [  ( oSID,  threatBias +safetyFactor*sum( [ foAI.foAIstate.systemStatus.get(oSID,  {}).get(thrtKey, 0) for thrtKey in ['fleetThreat', 'planetThreat', 'neighborThreat']] ) )  for oSID in   empireOccupiedSystemIDs      ]
+        ocSysTotThreat = [  ( oSID,  threatBias +safetyFactor*sum( [ foAI.foAIstate.systemStatus.get(oSID,  {}).get(thrtKey, 0) for thrtKey in ['fleetThreat', 'monsterThreat','planetThreat', 'neighborThreat']] ) )  for oSID in   empireOccupiedSystemIDs      ]
         totocSysThreat = sum( [thrt  for sid,  thrt in ocSysTotThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid]  for sid,  thrt in ocSysTotThreat] )
         allocationFactor = min(  1.2,  remainingMilRating /max(0.01,  ( totocSysThreat -totCurAlloc) ))
@@ -181,7 +181,7 @@ def getMilitaryFleets(tryReset=True):
             curAlloc=0.8*alreadyAssignedRating[sid]
             thisAlloc=0
             if 2*thrt>curAlloc and  (curAlloc>0  or remainingMilRating > (10+ (2*thrt-curAlloc))): #only record more allocation for this invasion if we already started or have enough rating available
-                thisAlloc =int(10.99999 + (2*thrt-curAlloc))
+                thisAlloc =int(10.99999 + (1.5*thrt-curAlloc))
                 takeAny= curAlloc>0
                 allocations.append(  (sid,  thisAlloc, takeAny  ,4) )
                 remainingMilRating -= thisAlloc
@@ -201,7 +201,7 @@ def getMilitaryFleets(tryReset=True):
     # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
     if len( otherTargetedSystemIDs ) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0))  )   for oSID in   otherTargetedSystemIDs      ]
+        otSysThreat = [  ( oSID, max(10,   threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0))  ) )   for oSID in   otherTargetedSystemIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
@@ -281,7 +281,7 @@ def getMilitaryFleets(tryReset=True):
     # for these, calc fleet  threat only, no neighbor threat, but use a multiplier for fleet safety
     if len(interiorTargets) >0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +safetyFactor*foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)  )   for oSID in   interiorTargets      ]
+        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0))  )   for oSID in   interiorTargets      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
@@ -374,7 +374,7 @@ def getMilitaryFleets(tryReset=True):
     # for these, calc fleet  threat only, no neighbor threat, but use a multiplier for fleet safety
     if len(monsterDens) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0) ) )   for oSID in   monsterDens      ]
+        otSysThreat = [  ( oSID,  safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0) ) )   for oSID in   monsterDens      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:

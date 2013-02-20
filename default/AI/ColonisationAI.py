@@ -20,8 +20,6 @@ annexableRing3=set([])
 annexablePlanetIDs=set([])
 curBestMilShipRating = 20
 
-# makes these mapped to string version of values in case any sizes become reals instead of int
-planetSIzes=            {   str(fo.planetSize.tiny): 1,     str(fo.planetSize.small): 2,    str(fo.planetSize.medium): 3,   str(fo.planetSize.large): 4,    str(fo.planetSize.huge): 5,  str(fo.planetSize.asteroids): 3,  str(fo.planetSize.gasGiant): 3 }
 environs =                  { str(fo.planetEnvironment.uninhabitable): 0,  str(fo.planetEnvironment.hostile): 1,  str(fo.planetEnvironment.poor): 2,  str(fo.planetEnvironment.adequate): 3,  str(fo.planetEnvironment.good):4 }
 photoMap= { fo.starType.blue:3    , fo.starType.white:1.5  , fo.starType.red:-1 ,  fo.starType.neutron: -1 , fo.starType.blackHole: -10 , fo.starType.noStar: -10     }
 #   mods per environ    uninhab   hostile    poor   adequate    good
@@ -447,7 +445,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                     elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID:
                         orbGenVal+=10*discountMultiplier
                 retval += orbGenVal
-        if foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0) > 2*curBestMilShipRating:
+        if ( foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0)  + foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('monsterThreat', 0) )> 2*curBestMilShipRating:
             retval = retval / 2.0
         return int(retval)
     else: #colonization mission
@@ -596,7 +594,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                             priorityScaling = 0.5
         
         retval *= priorityScaling
-        thrtRatio = (foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0)+0.2*foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('neighborThreat', 0)) / float(curBestMilShipRating)
+        thrtRatio = (foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0)+foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('monsterThreat', 0)+0.2*foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('neighborThreat', 0)) / float(curBestMilShipRating)
         if thrtRatio > 4:
             retval = 0.3*retval 
         elif thrtRatio >= 2:
@@ -606,25 +604,6 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
 
     return retval
 
-def getPlanetHospitality(planetID, species):
-    "returns a value depending on the planet type"
-
-    universe = fo.getUniverse()
-
-    planet = universe.getPlanet(planetID)
-    if planet == None: return 0
-
-    planetEnvironment = species.getPlanetEnvironment(planet.type)
-    # print ":: planet:" + str(planetID) + " type:" + str(planet.type) + " size:" + str(planet.size) + " env:" + str(planetEnvironment)
-
-    # reworked with races
-    if planetEnvironment == fo.planetEnvironment.good: return 2.75
-    if planetEnvironment == fo.planetEnvironment.adequate: return 1
-    if planetEnvironment == fo.planetEnvironment.poor: return 0.5
-    if planetEnvironment == fo.planetEnvironment.hostile: return 0.25
-    if planetEnvironment == fo.planetEnvironment.uninhabitable: return 0.1
-
-    return 0
 
 def removeLowValuePlanets(evaluatedPlanets):
     "removes all planets with a colonisation value < minimalColoniseValue"

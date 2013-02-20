@@ -621,7 +621,7 @@ class AIstate(object):
                 if fleetID in self.fleetStatus:
                     del self.fleetStatus[fleetID]
                 continue
-            else:#fleet not in ok fleets
+            else:#fleet  in ok fleets
                 sys1 =  universe.getSystem(sysID)
                 sys1Name = (sys1 and sys1.name ) or "unknown"
                 sys2 =  universe.getSystem(fleet.nextSystemID)

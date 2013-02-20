@@ -6,7 +6,7 @@ import FleetUtilsAI
 import PlanetUtilsAI
 import AITarget
 import math
-from ProductionAI import  getBestShipInfo
+from ProductionAI import  getBestShipInfo,  curBestMilShipRating
 from ColonisationAI import evaluatePlanet,  annexableSystemIDs,  annexableRing1,  annexableRing2,  annexableRing3
 import ColonisationAI
 
@@ -85,6 +85,7 @@ def getInvasionFleets():
 
     sortedPlanets = [(pid,  pscore,  ptroops) for (pid,  (pscore, ptroops)) in evaluatedPlanets.items() ]
     sortedPlanets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
+    sortedPlanets = [(pid,  pscore%10000,  ptroops) for (pid,  pscore, ptroops) in sortedPlanets ]
 
     print ""
     if sortedPlanets:
@@ -183,11 +184,43 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     maxTroops = planet.currentMeterValue(fo.meterType.maxTroops)
     specName=planet.speciesName
     species=fo.getSpecies(specName)
-    productionVal = 20*(planet.currentMeterValue(fo.meterType.targetPopulation)/planet.currentMeterValue(fo.meterType.population) )*max(planet.currentMeterValue(fo.meterType.targetIndustry),  2*planet.currentMeterValue(fo.meterType.targetResearch))
+    popTSize = planet.currentMeterValue(fo.meterType.targetPopulation)#TODO: adjust for empire tech
+    planetSpecials = list(planet.specials)
+    pSysID = planet.systemID#TODO: check star value
+    
+    indVal = 0
+    basePopInd=0.2
+    prodFactor = 1
+    discountMultiplier=20
+    for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] : 
+        if special in planetSpecials:
+            prodFactor+=1
+    
+    proSingVal = [0, 4][(len( AIstate.empireStars.get(fo.starType.blackHole,  [])) > 0)]
+    indTechMap={    "GRO_ENERGY_META":  0.5, 
+                                        "PRO_ROBOTIC_PROD":0.4, 
+                                        "PRO_FUSION_GEN":       1.0, 
+                                        "PRO_INDUSTRY_CENTER_I": 1, 
+                                        "PRO_INDUSTRY_CENTER_II":1, 
+                                        "PRO_INDUSTRY_CENTER_III":1, 
+                                        "PRO_SOL_ORB_GEN":  2.0,   #assumes will build a gen at a blue/white star
+                                        "PRO_SINGULAR_GEN": proSingVal, 
+                                        }
+    for tech in indTechMap:
+        if (empire.getTechStatus(tech) == fo.techStatus.complete):
+            prodFactor +=  indTechMap[tech]
+    indVal = discountMultiplier * basePopInd *prodFactor*popTSize
+    if (empire.getTechStatus("PRO_SENTIENT_AUTOMATION") == fo.techStatus.complete):
+        indVal += discountMultiplier * 5
+    
+    pmaxShield = planet.currentMeterValue(fo.meterType.maxShield)
+    sysFThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('fleetThreat', 1000 )
+    sysMThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('monsterThreat', 0 )
+    print "invasion eval of %s  %d --- maxShields %.1f -- sysFleetThreat %.1f  -- sysMonsterThreat %.1f"%(planet.name,  planetID,  pmaxShield,  sysFThrt,  sysMThrt)
     supplyVal=0
     enemyVal=0
-    if planet.owner!=-1 :
-        enemyVal=productionVal #value in taking this away from an enemy
+    if planet.owner!=-1 : #value in taking this away from an enemy
+        enemyVal= 20* max(planet.currentMeterValue(fo.meterType.targetIndustry),  2*planet.currentMeterValue(fo.meterType.targetResearch))
     if not species:#TODO:  perhaps stealth makes planet inacccesible & should abort
         try:
             targetPop=planet.currentMeterValue(fo.meterType.targetPopulation)
@@ -196,8 +229,15 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
             popVal=0
     else:
         popVal = evaluatePlanet(planetID,  AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  species,  empire) #evaluatePlanet is imported from ColonisationAI
-    if planetID not in fleetSupplyablePlanetIDs: #extends supply and probably visibility
-        supplyVal =  20#TODO: better analysis here if supply obstructed by defending ships
+    if planetID  in fleetSupplyablePlanetIDs: #TODO: extend to rings
+        supplyVal =  100
+        if planet.owner== -1:
+        #if  (pmaxShield <10):
+            if ( sysFThrt < 0.5*curBestMilShipRating() ):
+               if ( sysMThrt < 3*curBestMilShipRating()):
+                    supplyVal = 10000
+               else:
+                    supplyVal = 50
     planetSpecials = list(planet.specials)
     specialVal=0
     if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_ASTEROID_MINE") == fo.techStatus.complete ) ): 
@@ -206,7 +246,7 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         if special in planetSpecials:
             specialVal +=10 #
     buildTime=4
-    return max(0,  popVal+supplyVal+specialVal+bldTally+productionVal+enemyVal-8*troops),  min(troops+maxJumps+buildTime,  maxTroops)
+    return max(0,  popVal+supplyVal+specialVal+bldTally+indVal+enemyVal-20*troops),  min(troops+maxJumps+buildTime,  maxTroops)
 
 def getPlanetPopulation(planetID):
     "return planet population"
@@ -230,10 +270,10 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
     else:
         troopsPerBestShip=5 #may actually not have any troopers available, but this num will do for now
         
-    sortedTargets=sorted( [  ( pscore-ptroops/2 ,  pID,  pscore,  ptroops) for pID,  pscore,  ptroops in evaluatedPlanets ] ,  reverse=True)
+    #sortedTargets=sorted( [  ( pscore-ptroops/2 ,  pID,  pscore,  ptroops) for pID,  pscore,  ptroops in evaluatedPlanets ] ,  reverse=True)
 
     invasionPool=set(invasionPool)
-    for modscrore,  pID,  pscore,  ptroops in sortedTargets: # evaluatedPlanets is a dictionary
+    for  pID,  pscore,  ptroops in evaluatedPlanets: # 
         if not invasionPool: return
         planet=universe.getPlanet(pID)
         if not planet: continue

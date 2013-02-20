@@ -80,8 +80,7 @@ def generateResearchOrders():
         if foAI.foAIstate.aggression <=fo.aggression.typical:
             newtech = TechsListsAI.primaryMetaTechsList( index=empireID%2 )
         else:
-            #newtech = TechsListsAI.aggressiveTechs()
-            newtech = TechsListsAI.primaryMetaTechsList(empireID%2)
+            newtech = TechsListsAI.primaryMetaTechsList( index=empireID%2 )
         #pLTsToEnqueue = (set(newtech)-(set(completedTechs)|set(researchQueueList)))
         pLTsToEnqueue = newtech[:]
         techBase = set(completedTechs+researchQueueList)
@@ -90,6 +89,7 @@ def generateResearchOrders():
             if (tech not in  techBase): 
                 thisTech=fo.getTech(tech)
                 if thisTech is None:
+                    print "Error: desired tech '%s' appears to not exist"%tech
                     continue
                 missingPrereqs = [preReq for preReq in thisTech.recursivePrerequisites(empireID) if preReq not in techBase] 
                 techsToAdd.extend( missingPrereqs+[tech] )
@@ -131,8 +131,8 @@ def generateResearchOrders():
         for tname in alltechs:
             print tname
         print "\n-------------------------------\nAll unqueued techs:"
-        coveredTechs = newtech+completedTechs
-        for tname in [tn for tn in alltechs if tn not in coveredTechs]:
+        #coveredTechs = newtech+completedTechs
+        for tname in [tn for tn in alltechs if tn not in techBase]:
             print tname
 
     elif fo.currentTurn() >100:
