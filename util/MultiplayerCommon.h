@@ -197,6 +197,8 @@ struct MultiplayerLobbyData : public GalaxySetupData {
     explicit MultiplayerLobbyData(bool build_save_game_list); ///< Basic ctor.
     //@}
 
+    std::string Dump() const;
+
     bool                                        m_new_game;
     int                                         m_save_file_index;
     std::list<std::pair<int, PlayerSetupData> > m_players;              // <player_id, PlayerSetupData>
