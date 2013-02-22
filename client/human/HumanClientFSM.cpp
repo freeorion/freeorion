@@ -626,15 +626,13 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Client().m_ui->GetMessageWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
     Client().m_ui->GetPlayerListWnd()->Refresh();
     Client().m_ui->GetPlayerListWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
-    Client().m_ui->GetMapWnd()->EnableOrderIssuing(Client().EmpireID() != ALL_EMPIRES);
+    Client().m_ui->GetMapWnd()->EnableOrderIssuing(true);   // MapWnd
 
-    // if not controlling an empire, the player (observer) can't do anything
-    // other than waiting for more turn updates.  Turn updates received when not
-    // in WaitingForTurnData state will be ignored, and the Turn button is
-    // disabled.  So, posting TurnEnded here has the effect of automatically
-    // keeping observers in the WaitingForTurnData state so they can receive
+    // observers can't do anything but wait for the next update, and need to
+    // be back in WaitingForTurnData, so posting TurnEnded here has the effect
+    // of keeping observers in the WaitingForTurnData state so they can receive
     // updates from the server.
-    if (Client().EmpireID() == ALL_EMPIRES)
+    if (Client().GetApp()->GetPlayerClientType(Client().PlayerID()) == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
         post_event(TurnEnded());
 
     else if (GetOptionsDB().Get<bool>("auto-advance-first-turn")) {
