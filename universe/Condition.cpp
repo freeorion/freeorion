@@ -327,6 +327,9 @@ bool Condition::Number::RootCandidateInvariant() const {
 bool Condition::Number::TargetInvariant() const
 { return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()) && m_condition->TargetInvariant(); }
 
+bool Condition::Number::SourceInvariant() const
+{ return (!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant()) && m_condition->SourceInvariant(); }
+
 bool Condition::Number::Match(const ScriptingContext& local_context) const {
     // get acceptable range of subcondition matches for candidate
     double low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
@@ -405,6 +408,9 @@ bool Condition::Turn::RootCandidateInvariant() const
 
 bool Condition::Turn::TargetInvariant() const
 { return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()); }
+
+bool Condition::Turn::SourceInvariant() const
+{ return (!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant()); }
 
 std::string Condition::Turn::Description(bool negated/* = false*/) const {
     std::string low_str;
@@ -736,6 +742,21 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
     }
 }
 
+bool Condition::SortedNumberOf::RootCandidateInvariant() const
+{ return ((!m_number || m_number->SourceInvariant()) &&
+          (!m_sort_key || m_sort_key->SourceInvariant()) &&
+          (!m_condition || m_condition->SourceInvariant())); }
+
+bool Condition::SortedNumberOf::TargetInvariant() const
+{ return ((!m_number || m_number->SourceInvariant()) &&
+          (!m_sort_key || m_sort_key->SourceInvariant()) &&
+          (!m_condition || m_condition->SourceInvariant())); }
+
+bool Condition::SortedNumberOf::SourceInvariant() const
+{ return ((!m_number || m_number->SourceInvariant()) &&
+          (!m_sort_key || m_sort_key->SourceInvariant()) &&
+          (!m_condition || m_condition->SourceInvariant())); }
+
 std::string Condition::SortedNumberOf::Description(bool negated/* = false*/) const {
     std::string number_str = ValueRef::ConstantExpr(m_number) ? boost::lexical_cast<std::string>(m_number->Dump()) : m_number->Description();
 
@@ -904,6 +925,9 @@ bool Condition::EmpireAffiliation::RootCandidateInvariant() const
 
 bool Condition::EmpireAffiliation::TargetInvariant() const
 { return m_empire_id ? m_empire_id->TargetInvariant() : true; }
+
+bool Condition::EmpireAffiliation::SourceInvariant() const
+{ return m_empire_id ? m_empire_id->SourceInvariant() : true; }
 
 std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) const {
     std::string empire_str;
@@ -1126,6 +1150,16 @@ bool Condition::Homeworld::TargetInvariant() const {
          it != m_names.end(); ++it)
     {
         if (!(*it)->TargetInvariant())
+            return false;
+    }
+    return true;
+}
+
+bool Condition::Homeworld::SourceInvariant() const {
+    for (std::vector<const ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
+         it != m_names.end(); ++it)
+    {
+        if (!(*it)->SourceInvariant())
             return false;
     }
     return true;
@@ -1356,6 +1390,9 @@ bool Condition::Type::RootCandidateInvariant() const
 bool Condition::Type::TargetInvariant() const
 { return m_type->TargetInvariant(); }
 
+bool Condition::Type::SourceInvariant() const
+{ return m_type->SourceInvariant(); }
+
 std::string Condition::Type::Description(bool negated/* = false*/) const {
     std::string value_str = ValueRef::ConstantExpr(m_type) ?
                                 UserString(boost::lexical_cast<std::string>(m_type->Eval())) :
@@ -1478,6 +1515,16 @@ bool Condition::Building::TargetInvariant() const {
          it != m_names.end(); ++it)
     {
         if (!(*it)->TargetInvariant())
+            return false;
+    }
+    return true;
+}
+
+bool Condition::Building::SourceInvariant() const {
+    for (std::vector<const ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
+         it != m_names.end(); ++it)
+    {
+        if (!(*it)->SourceInvariant())
             return false;
     }
     return true;
@@ -1608,6 +1655,10 @@ bool Condition::HasSpecial::TargetInvariant() const
 { return ((!m_since_turn_low || m_since_turn_low->TargetInvariant()) &&
           (!m_since_turn_high || m_since_turn_high->TargetInvariant())); }
 
+bool Condition::HasSpecial::SourceInvariant() const
+{ return ((!m_since_turn_low || m_since_turn_low->SourceInvariant()) &&
+          (!m_since_turn_high || m_since_turn_high->SourceInvariant())); }
+
 std::string Condition::HasSpecial::Description(bool negated/* = false*/) const {
     if (!m_since_turn_low && !m_since_turn_high) {
         std::string description_str = "DESC_SPECIAL";
@@ -1734,6 +1785,9 @@ bool Condition::CreatedOnTurn::RootCandidateInvariant() const
 bool Condition::CreatedOnTurn::TargetInvariant() const
 { return ((!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant())); }
 
+bool Condition::CreatedOnTurn::SourceInvariant() const
+{ return ((!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant())); }
+
 std::string Condition::CreatedOnTurn::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
                                     boost::lexical_cast<std::string>(m_low->Eval()) :
@@ -1835,6 +1889,9 @@ bool Condition::Contains::RootCandidateInvariant() const
 
 bool Condition::Contains::TargetInvariant() const
 { return m_condition->TargetInvariant(); }
+
+bool Condition::Contains::SourceInvariant() const
+{ return m_condition->SourceInvariant(); }
 
 std::string Condition::Contains::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_CONTAINS";
@@ -1942,6 +1999,9 @@ bool Condition::ContainedBy::RootCandidateInvariant() const
 bool Condition::ContainedBy::TargetInvariant() const
 { return m_condition->TargetInvariant(); }
 
+bool Condition::ContainedBy::SourceInvariant() const
+{ return m_condition->SourceInvariant(); }
+
 std::string Condition::ContainedBy::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_CONTAINED_BY";
     if (negated)
@@ -2032,6 +2092,9 @@ bool Condition::InSystem::RootCandidateInvariant() const
 bool Condition::InSystem::TargetInvariant() const
 { return !m_system_id || m_system_id->TargetInvariant(); }
 
+bool Condition::InSystem::SourceInvariant() const
+{ return !m_system_id || m_system_id->SourceInvariant(); }
+
 std::string Condition::InSystem::Description(bool negated/* = false*/) const {
     std::string system_str;
     int system_id = INVALID_OBJECT_ID;
@@ -2112,6 +2175,9 @@ bool Condition::ObjectID::RootCandidateInvariant() const
 
 bool Condition::ObjectID::TargetInvariant() const
 { return !m_object_id || m_object_id->TargetInvariant(); }
+
+bool Condition::ObjectID::SourceInvariant() const
+{ return !m_object_id || m_object_id->SourceInvariant(); }
 
 std::string Condition::ObjectID::Description(bool negated/* = false*/) const {
     std::string object_str;
@@ -2229,6 +2295,16 @@ bool Condition::PlanetType::TargetInvariant() const {
          it != m_types.end(); ++it)
     {
         if (!(*it)->TargetInvariant())
+            return false;
+    }
+    return true;
+}
+
+bool Condition::PlanetType::SourceInvariant() const {
+    for (std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
+         it != m_types.end(); ++it)
+    {
+        if (!(*it)->SourceInvariant())
             return false;
     }
     return true;
@@ -2384,6 +2460,16 @@ bool Condition::PlanetSize::TargetInvariant() const {
     return true;
 }
 
+bool Condition::PlanetSize::SourceInvariant() const {
+    for (std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>::const_iterator it = m_sizes.begin();
+         it != m_sizes.end(); ++it)
+    {
+        if (!(*it)->SourceInvariant())
+            return false;
+    }
+    return true;
+}
+
 std::string Condition::PlanetSize::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_sizes.size(); ++i) {
@@ -2527,6 +2613,16 @@ bool Condition::PlanetEnvironment::TargetInvariant() const {
          it != m_environments.end(); ++it)
     {
         if (!(*it)->TargetInvariant())
+            return false;
+    }
+    return true;
+}
+
+bool Condition::PlanetEnvironment::SourceInvariant() const {
+    for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
+         it != m_environments.end(); ++it)
+    {
+        if (!(*it)->SourceInvariant())
             return false;
     }
     return true;
@@ -2678,6 +2774,16 @@ bool Condition::Species::TargetInvariant() const {
          it != m_names.end(); ++it)
     {
         if (!(*it)->TargetInvariant())
+            return false;
+    }
+    return true;
+}
+
+bool Condition::Species::SourceInvariant() const {
+    for (std::vector<const ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
+         it != m_names.end(); ++it)
+    {
+        if (!(*it)->SourceInvariant())
             return false;
     }
     return true;
@@ -2888,6 +2994,15 @@ bool Condition::Enqueued::TargetInvariant() const {
     return true;    return true;
 }
 
+bool Condition::Enqueued::SourceInvariant() const {
+    if ((m_design_id && !m_design_id->SourceInvariant()) ||
+        (m_empire_id && !m_empire_id->SourceInvariant()) ||
+        (m_low &&       !m_low->SourceInvariant()) ||
+        (m_high &&      !m_high->SourceInvariant()))
+    { return false; }
+    return true;    return true;
+}
+
 std::string Condition::Enqueued::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
@@ -3060,6 +3175,16 @@ bool Condition::FocusType::TargetInvariant() const {
     return true;
 }
 
+bool Condition::FocusType::SourceInvariant() const {
+    for (std::vector<const ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
+         it != m_names.end(); ++it)
+    {
+        if (!(*it)->SourceInvariant())
+            return false;
+    }
+    return true;
+}
+
 std::string Condition::FocusType::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
@@ -3191,6 +3316,16 @@ bool Condition::StarType::TargetInvariant() const {
          it != m_types.end(); ++it)
     {
         if (!(*it)->TargetInvariant())
+            return false;
+    }
+    return true;
+}
+
+bool Condition::StarType::SourceInvariant() const {
+    for (std::vector<const ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
+         it != m_types.end(); ++it)
+    {
+        if (!(*it)->SourceInvariant())
             return false;
     }
     return true;
@@ -3340,6 +3475,9 @@ bool Condition::DesignHasPart::RootCandidateInvariant() const
 bool Condition::DesignHasPart::TargetInvariant() const
 { return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
 
+bool Condition::DesignHasPart::SourceInvariant() const
+{ return (m_low->SourceInvariant() && m_high->SourceInvariant()); }
+
 std::string Condition::DesignHasPart::Description(bool negated/* = false*/) const {
     std::string low_str = "0";
     if (m_low) {
@@ -3449,6 +3587,9 @@ bool Condition::DesignHasPartClass::RootCandidateInvariant() const
 bool Condition::DesignHasPartClass::TargetInvariant() const
 { return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
 
+bool Condition::DesignHasPartClass::SourceInvariant() const
+{ return (m_low->SourceInvariant() && m_high->SourceInvariant()); }
+
 std::string Condition::DesignHasPartClass::Description(bool negated/* = false*/) const {
     std::string low_str = "0";
     if (m_low) {
@@ -3488,7 +3629,7 @@ bool Condition::DesignHasPartClass::Match(const ScriptingContext& local_context)
 }
 
 ///////////////////////////////////////////////////////////
-// PredefinedShipDesign                                         //
+// PredefinedShipDesign                                  //
 ///////////////////////////////////////////////////////////
 std::string Condition::PredefinedShipDesign::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_PREDEFINED_SHIP_DESIGN";
@@ -3525,7 +3666,7 @@ bool Condition::PredefinedShipDesign::Match(const ScriptingContext& local_contex
 }
 
 ///////////////////////////////////////////////////////////
-// NumberedShipDesign                                      //
+// NumberedShipDesign                                    //
 ///////////////////////////////////////////////////////////
 Condition::NumberedShipDesign::~NumberedShipDesign()
 { delete m_design_id; }
@@ -3573,6 +3714,9 @@ bool Condition::NumberedShipDesign::RootCandidateInvariant() const
 
 bool Condition::NumberedShipDesign::TargetInvariant() const
 { return m_design_id->TargetInvariant(); }
+
+bool Condition::NumberedShipDesign::SourceInvariant() const
+{ return m_design_id->SourceInvariant(); }
 
 std::string Condition::NumberedShipDesign::Description(bool negated/* = false*/) const {
     std::string id_str = ValueRef::ConstantExpr(m_design_id) ?
@@ -3649,6 +3793,9 @@ bool Condition::ProducedByEmpire::RootCandidateInvariant() const
 bool Condition::ProducedByEmpire::TargetInvariant() const
 { return m_empire_id->TargetInvariant(); }
 
+bool Condition::ProducedByEmpire::SourceInvariant() const
+{ return m_empire_id->SourceInvariant(); }
+
 std::string Condition::ProducedByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
@@ -3723,6 +3870,9 @@ bool Condition::Chance::RootCandidateInvariant() const
 
 bool Condition::Chance::TargetInvariant() const
 { return m_chance->TargetInvariant(); }
+
+bool Condition::Chance::SourceInvariant() const
+{ return m_chance->SourceInvariant(); }
 
 std::string Condition::Chance::Description(bool negated/* = false*/) const {
     std::string value_str;
@@ -3846,6 +3996,9 @@ bool Condition::MeterValue::RootCandidateInvariant() const
 bool Condition::MeterValue::TargetInvariant() const
 { return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()); }
 
+bool Condition::MeterValue::SourceInvariant() const
+{ return (!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant()); }
+
 std::string Condition::MeterValue::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
                                     boost::lexical_cast<std::string>(m_low->Eval()) :
@@ -3951,6 +4104,11 @@ bool Condition::ShipPartMeterValue::RootCandidateInvariant() const {
 bool Condition::ShipPartMeterValue::TargetInvariant() const {
     return ((!m_low || m_low->TargetInvariant()) &&
             (!m_high || m_high->TargetInvariant()));
+}
+
+bool Condition::ShipPartMeterValue::SourceInvariant() const {
+    return ((!m_low || m_low->SourceInvariant()) &&
+            (!m_high || m_high->SourceInvariant()));
 }
 
 std::string Condition::ShipPartMeterValue::Description(bool negated/* = false*/) const {
@@ -4065,6 +4223,12 @@ bool Condition::EmpireMeterValue::TargetInvariant() const {
     return (!m_empire_id || m_empire_id->TargetInvariant()) &&
            (!m_low || m_low->TargetInvariant()) &&
            (!m_high || m_high->TargetInvariant());
+}
+
+bool Condition::EmpireMeterValue::SourceInvariant() const {
+    return (!m_empire_id || m_empire_id->SourceInvariant()) &&
+           (!m_low || m_low->SourceInvariant()) &&
+           (!m_high || m_high->SourceInvariant());
 }
 
 std::string Condition::EmpireMeterValue::Description(bool negated/* = false*/) const {
@@ -4187,6 +4351,9 @@ bool Condition::EmpireStockpileValue::RootCandidateInvariant() const
 
 bool Condition::EmpireStockpileValue::TargetInvariant() const
 { return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
+
+bool Condition::EmpireStockpileValue::SourceInvariant() const
+{ return (m_low->SourceInvariant() && m_high->SourceInvariant()); }
 
 std::string Condition::EmpireStockpileValue::Description(bool negated/* = false*/) const {
     std::string low_str = ValueRef::ConstantExpr(m_low) ?
@@ -4361,6 +4528,9 @@ bool Condition::VisibleToEmpire::RootCandidateInvariant() const
 bool Condition::VisibleToEmpire::TargetInvariant() const
 { return m_empire_id->TargetInvariant(); }
 
+bool Condition::VisibleToEmpire::SourceInvariant() const
+{ return m_empire_id->SourceInvariant(); }
+
 std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
@@ -4467,6 +4637,9 @@ bool Condition::WithinDistance::RootCandidateInvariant() const
 
 bool Condition::WithinDistance::TargetInvariant() const
 { return m_distance->TargetInvariant() && m_condition->TargetInvariant(); }
+
+bool Condition::WithinDistance::SourceInvariant() const
+{ return m_distance->SourceInvariant() && m_condition->SourceInvariant(); }
 
 std::string Condition::WithinDistance::Description(bool negated/* = false*/) const {
     std::string value_str = ValueRef::ConstantExpr(m_distance) ?
@@ -4680,6 +4853,9 @@ bool Condition::WithinStarlaneJumps::RootCandidateInvariant() const
 bool Condition::WithinStarlaneJumps::TargetInvariant() const
 { return m_jumps->TargetInvariant() && m_condition->TargetInvariant(); }
 
+bool Condition::WithinStarlaneJumps::SourceInvariant() const
+{ return m_jumps->SourceInvariant() && m_condition->SourceInvariant(); }
+
 std::string Condition::WithinStarlaneJumps::Description(bool negated/* = false*/) const {
     std::string value_str = ValueRef::ConstantExpr(m_jumps) ? boost::lexical_cast<std::string>(m_jumps->Eval()) : m_jumps->Description();
     std::string description_str = "DESC_WITHIN_STARLANE_JUMPS";
@@ -4778,6 +4954,9 @@ bool Condition::CanAddStarlaneConnection::RootCandidateInvariant() const
 
 bool Condition::CanAddStarlaneConnection::TargetInvariant() const
 { return m_condition->TargetInvariant(); }
+
+bool Condition::CanAddStarlaneConnection::SourceInvariant() const
+{ return m_condition->SourceInvariant(); }
 
 std::string Condition::CanAddStarlaneConnection::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_CAN_ADD_STARLANE_CONNECTION";
@@ -4945,6 +5124,9 @@ bool Condition::CanRemoveStarlaneConnection::RootCandidateInvariant() const
 bool Condition::CanRemoveStarlaneConnection::TargetInvariant() const
 { return m_condition->TargetInvariant(); }
 
+bool Condition::CanRemoveStarlaneConnection::SourceInvariant() const
+{ return m_condition->SourceInvariant(); }
+
 std::string Condition::CanRemoveStarlaneConnection::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_CAN_REMOVE_STARLANE_CONNECTION";
     if (negated)
@@ -5087,6 +5269,9 @@ bool Condition::ExploredByEmpire::RootCandidateInvariant() const
 bool Condition::ExploredByEmpire::TargetInvariant() const
 { return m_empire_id->TargetInvariant(); }
 
+bool Condition::ExploredByEmpire::SourceInvariant() const
+{ return m_empire_id->SourceInvariant(); }
+
 std::string Condition::ExploredByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
@@ -5214,6 +5399,9 @@ bool Condition::FleetSupplyableByEmpire::RootCandidateInvariant() const
 bool Condition::FleetSupplyableByEmpire::TargetInvariant() const
 { return m_empire_id->TargetInvariant(); }
 
+bool Condition::FleetSupplyableByEmpire::SourceInvariant() const
+{ return m_empire_id->SourceInvariant(); }
+
 std::string Condition::FleetSupplyableByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
@@ -5336,6 +5524,9 @@ bool Condition::ResourceSupplyConnectedByEmpire::RootCandidateInvariant() const
 
 bool Condition::ResourceSupplyConnectedByEmpire::TargetInvariant() const
 { return m_empire_id->TargetInvariant() && m_condition->TargetInvariant(); }
+
+bool Condition::ResourceSupplyConnectedByEmpire::SourceInvariant() const
+{ return m_empire_id->SourceInvariant() && m_condition->SourceInvariant(); }
 
 bool Condition::ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_context) const {
     const UniverseObject* candidate = local_context.condition_local_candidate;
@@ -5576,6 +5767,13 @@ bool Condition::And::TargetInvariant() const {
     return true;
 }
 
+bool Condition::And::SourceInvariant() const {
+    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it)
+        if (!(*it)->SourceInvariant())
+            return false;
+    return true;
+}
+
 std::string Condition::And::Description(bool negated/* = false*/) const {
     if (m_operands.size() == 1) {
         return m_operands[0]->Description();
@@ -5667,6 +5865,13 @@ bool Condition::Or::TargetInvariant() const {
     return true;
 }
 
+bool Condition::Or::SourceInvariant() const {
+    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it)
+        if (!(*it)->SourceInvariant())
+            return false;
+    return true;
+}
+
 std::string Condition::Or::Description(bool negated/* = false*/) const {
     if (m_operands.size() == 1) {
         return m_operands[0]->Description();
@@ -5722,6 +5927,9 @@ bool Condition::Not::RootCandidateInvariant() const
 
 bool Condition::Not::TargetInvariant() const
 { return m_operand->TargetInvariant(); }
+
+bool Condition::Not::SourceInvariant() const
+{ return m_operand->SourceInvariant(); }
 
 std::string Condition::Not::Description(bool negated/* = false*/) const
 { return m_operand->Description(true); }

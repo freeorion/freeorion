@@ -125,6 +125,7 @@ struct ValueRef::ValueRefBase
     virtual bool        RootCandidateInvariant() const { return false; }
     virtual bool        LocalCandidateInvariant() const { return false; }
     virtual bool        TargetInvariant() const { return false; }
+    virtual bool        SourceInvariant() const { return false; }
 
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0; ///< returns a text description of this type of special
@@ -148,6 +149,7 @@ struct ValueRef::Constant : public ValueRef::ValueRefBase<T>
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        LocalCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
 
     virtual std::string Description() const;
     virtual std::string Dump() const;
@@ -175,6 +177,7 @@ struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
     virtual bool                    RootCandidateInvariant() const;
     virtual bool                    LocalCandidateInvariant() const;
     virtual bool                    TargetInvariant() const;
+    virtual bool                    SourceInvariant() const;
 
     virtual std::string             Description() const;
     virtual std::string             Dump() const;
@@ -211,6 +214,7 @@ struct ValueRef::Statistic : public ValueRef::Variable<T>
     virtual bool                    RootCandidateInvariant() const;
     virtual bool                    LocalCandidateInvariant() const;
     virtual bool                    TargetInvariant() const;
+    virtual bool                    SourceInvariant() const;
 
     virtual std::string             Description() const;
     virtual std::string             Dump() const;
@@ -251,6 +255,7 @@ struct ValueRef::StaticCast : public ValueRef::Variable<ToType>
     virtual bool        RootCandidateInvariant() const;
     virtual bool        LocalCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -275,6 +280,7 @@ struct ValueRef::StringCast : public ValueRef::Variable<std::string>
     virtual bool        RootCandidateInvariant() const;
     virtual bool        LocalCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -304,6 +310,7 @@ struct ValueRef::Operation : public ValueRef::ValueRefBase<T>
     virtual bool            RootCandidateInvariant() const;
     virtual bool            LocalCandidateInvariant() const;
     virtual bool            TargetInvariant() const;
+    virtual bool            SourceInvariant() const;
     virtual std::string     Description() const;
     virtual std::string     Dump() const;
 
@@ -449,6 +456,10 @@ bool ValueRef::Variable<T>::TargetInvariant() const
 { return m_ref_type != EFFECT_TARGET_REFERENCE; }
 
 template <class T>
+bool ValueRef::Variable<T>::SourceInvariant() const
+{ return m_ref_type != SOURCE_REFERENCE; }
+
+template <class T>
 std::string ValueRef::Variable<T>::Description() const
 {
     boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" + boost::lexical_cast<std::string>(m_property_name.size() - 1)));
@@ -585,6 +596,10 @@ bool ValueRef::Statistic<T>::LocalCandidateInvariant() const
 template <class T>
 bool ValueRef::Statistic<T>::TargetInvariant() const
 { return ValueRef::Variable<T>::TargetInvariant() && m_sampling_condition->TargetInvariant(); }
+
+template <class T>
+bool ValueRef::Statistic<T>::SourceInvariant() const
+{ return ValueRef::Variable<T>::SourceInvariant() && m_sampling_condition->SourceInvariant(); }
 
 template <class T>
 std::string ValueRef::Statistic<T>::Description() const
@@ -863,6 +878,10 @@ bool ValueRef::StaticCast<FromType, ToType>::TargetInvariant() const
 { return m_value_ref->TargetInvariant(); }
 
 template <class FromType, class ToType>
+bool ValueRef::StaticCast<FromType, ToType>::SourceInvariant() const
+{ return m_value_ref->SourceInvariant(); }
+
+template <class FromType, class ToType>
 std::string ValueRef::StaticCast<FromType, ToType>::Description() const
 { return m_value_ref->Description(); }
 
@@ -906,6 +925,10 @@ bool ValueRef::StringCast<FromType>::LocalCandidateInvariant() const
 template <class FromType>
 bool ValueRef::StringCast<FromType>::TargetInvariant() const
 { return m_value_ref->TargetInvariant(); }
+
+template <class FromType>
+bool ValueRef::StringCast<FromType>::SourceInvariant() const
+{ return m_value_ref->SourceInvariant(); }
 
 template <class FromType>
 std::string ValueRef::StringCast<FromType>::Description() const
@@ -1014,6 +1037,16 @@ bool ValueRef::Operation<T>::TargetInvariant() const
     if (m_operand1 && !m_operand1->TargetInvariant())
         return false;
     if (m_operand2 && !m_operand2->TargetInvariant())
+        return false;
+    return true;
+}
+
+template <class T>
+bool ValueRef::Operation<T>::SourceInvariant() const
+{
+    if (m_operand1 && !m_operand1->SourceInvariant())
+        return false;
+    if (m_operand2 && !m_operand2->SourceInvariant())
         return false;
     return true;
 }

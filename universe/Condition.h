@@ -151,6 +151,10 @@ struct Condition::ConditionBase {
       * target object.*/
     virtual bool        TargetInvariant() const { return false; }
 
+    /** Returns true iff this condition's evaluation does not reference the
+      * source object.*/
+    virtual bool        SourceInvariant() const { return false; }
+
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -182,6 +186,7 @@ struct Condition::Number : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
@@ -213,6 +218,7 @@ struct Condition::Turn : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
@@ -261,6 +267,9 @@ struct Condition::SortedNumberOf : public Condition::ConditionBase {
     virtual ~SortedNumberOf();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*      Number() const { return m_number; }
@@ -290,6 +299,7 @@ struct Condition::All : public Condition::ConditionBase {
     virtual std::string Dump() const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -316,6 +326,7 @@ struct Condition::EmpireAffiliation : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
@@ -337,6 +348,7 @@ struct Condition::Source : public Condition::ConditionBase {
     Source() : ConditionBase() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    //virtual bool        SourceInvariant() const { return false; } // same as ConditionBase
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -356,6 +368,7 @@ struct Condition::RootCandidate : public Condition::ConditionBase {
     RootCandidate() : ConditionBase() {}
     virtual bool        RootCandidateInvariant() const { return false; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -375,6 +388,7 @@ struct Condition::Target : public Condition::ConditionBase {
     Target() : ConditionBase() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return false; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -404,6 +418,7 @@ struct Condition::Homeworld : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
@@ -423,6 +438,7 @@ struct Condition::Capital : public Condition::ConditionBase {
     Capital() : ConditionBase() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -439,6 +455,7 @@ struct Condition::Monster : public Condition::ConditionBase {
     Monster() : ConditionBase() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -455,6 +472,7 @@ struct Condition::Armed : public Condition::ConditionBase {
     Armed() {};
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -478,6 +496,7 @@ struct Condition::Type : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<UniverseObjectType>*   GetType() const { return m_type; }
@@ -505,6 +524,7 @@ struct Condition::Building : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
@@ -540,6 +560,7 @@ struct Condition::HasSpecial : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::string&                  Name() const { return m_name; }
@@ -565,6 +586,7 @@ struct Condition::HasTag : public Condition::ConditionBase {
     {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::string&  Name() const { return m_name; }
@@ -592,6 +614,7 @@ struct Condition::CreatedOnTurn : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
@@ -622,6 +645,7 @@ struct Condition::Contains : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ConditionBase*GetCondition() const { return m_condition; }
@@ -650,6 +674,7 @@ struct Condition::ContainedBy : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ConditionBase*GetCondition() const { return m_condition; }
@@ -676,6 +701,7 @@ struct Condition::InSystem : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  SystemId() const { return m_system_id; }
@@ -702,6 +728,7 @@ struct Condition::ObjectID : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  ObjectId() const { return m_object_id; }
@@ -730,6 +757,7 @@ struct Condition::PlanetType : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>&    Types() const { return m_types; }
@@ -758,6 +786,7 @@ struct Condition::PlanetSize : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>&    Sizes() const { return m_sizes; }
@@ -786,6 +815,7 @@ struct Condition::PlanetEnvironment : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& Environments() const { return m_environments; }
@@ -818,6 +848,7 @@ struct Condition::Species : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ValueRef::ValueRefBase<std::string>*>&  Names() const { return m_names; }
@@ -872,6 +903,7 @@ struct Condition::Enqueued : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     BuildType           GetBuildType() const { return m_build_type; }
@@ -908,6 +940,7 @@ struct Condition::FocusType : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ValueRef::ValueRefBase<std::string>*>&  Names() const { return m_names; }
@@ -935,6 +968,7 @@ struct Condition::StarType : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ValueRef::ValueRefBase< ::StarType>*>&  Types() const { return m_types; }
@@ -956,6 +990,7 @@ struct Condition::DesignHasHull : public Condition::ConditionBase {
     {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::string&  Name() const { return m_name; }
@@ -986,6 +1021,7 @@ struct Condition::DesignHasPart : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
@@ -1020,6 +1056,7 @@ struct Condition::DesignHasPartClass : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
@@ -1046,6 +1083,7 @@ struct Condition::PredefinedShipDesign : public Condition::ConditionBase {
     {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::string&  Name() const { return m_name; }
@@ -1072,6 +1110,7 @@ struct Condition::NumberedShipDesign : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  DesignID() const { return m_design_id; }
@@ -1098,6 +1137,7 @@ struct Condition::ProducedByEmpire : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
@@ -1124,6 +1164,7 @@ struct Condition::Chance : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<double>*   GetChance() const { return m_chance; }
@@ -1153,6 +1194,7 @@ struct Condition::MeterValue : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<double>*   Low() const { return m_low; }
@@ -1190,6 +1232,7 @@ struct Condition::ShipPartMeterValue : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::string&                      PartName() const { return m_part_name; }
@@ -1233,6 +1276,7 @@ struct Condition::EmpireMeterValue : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::string&                      Meter() const { return m_meter; }
@@ -1265,6 +1309,7 @@ struct Condition::EmpireStockpileValue : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<double>*   Low() const { return m_low; }
@@ -1290,6 +1335,7 @@ struct Condition::OwnerHasTech : public Condition::ConditionBase {
     {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::string&  Tech() const { return m_name; }
@@ -1311,6 +1357,7 @@ struct Condition::OwnerHasBuildingTypeAvailable : public Condition::ConditionBas
     {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::string&  GetBuildingType() const { return m_name; }
@@ -1332,6 +1379,7 @@ struct Condition::OwnerHasShipDesignAvailable : public Condition::ConditionBase 
     {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     int                 GetDesignID() const { return m_id; }
@@ -1358,6 +1406,7 @@ struct Condition::VisibleToEmpire : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
@@ -1388,6 +1437,7 @@ struct Condition::WithinDistance : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -1418,6 +1468,7 @@ struct Condition::WithinStarlaneJumps : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -1449,6 +1500,7 @@ struct Condition::CanAddStarlaneConnection :  Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -1475,6 +1527,7 @@ struct Condition::CanRemoveStarlaneConnection :  Condition::ConditionBase {
     virtual ~CanRemoveStarlaneConnection();
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -1501,6 +1554,7 @@ struct Condition::ExploredByEmpire : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -1521,6 +1575,7 @@ struct Condition::Stationary : public Condition::ConditionBase {
     virtual ~Stationary() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -1545,6 +1600,7 @@ struct Condition::FleetSupplyableByEmpire : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -1573,6 +1629,7 @@ struct Condition::ResourceSupplyConnectedByEmpire : public Condition::ConditionB
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -1592,6 +1649,7 @@ struct Condition::CanColonize : public Condition::ConditionBase {
     virtual ~CanColonize() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -1608,6 +1666,7 @@ struct Condition::CanProduceShips : public Condition::ConditionBase {
     virtual ~CanProduceShips() {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -1631,6 +1690,7 @@ struct Condition::And : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ConditionBase*>&
@@ -1656,6 +1716,7 @@ struct Condition::Or : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<const ConditionBase*>&
@@ -1681,6 +1742,7 @@ struct Condition::Not : public Condition::ConditionBase {
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ConditionBase*Operand() const { return m_operand; }
