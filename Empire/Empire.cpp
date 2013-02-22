@@ -127,7 +127,7 @@ namespace {
             // get resource sharing group and amount of resource available to build this item
             const std::set<int>& group = queue_element_resource_sharing_object_groups[i];
             if (group.empty()) {
-                Logger().debugStream() << "resource sharing group for queue element is empty.  not allocating any resources to element";
+                //Logger().debugStream() << "resource sharing group for queue element is empty.  not allocating any resources to element";
                 queue_element.allocated_pp = 0.0;
                 continue;
             }
@@ -135,7 +135,7 @@ namespace {
             std::map<std::set<int>, double>::iterator available_pp_it = available_pp.find(group);
             if (available_pp_it == available_pp.end()) {
                 // item is not being built at an object that has access to resources, so it can't be built.
-                Logger().debugStream() << "no resource sharing group for production queue element";
+                //Logger().debugStream() << "no resource sharing group for production queue element";
                 queue_element.allocated_pp = 0.0;
                 continue;
             }
@@ -155,7 +155,7 @@ namespace {
             if (!empire->BuildableItem(queue_element.item, queue_element.location)) {
                 // can't be built at this location this turn.
                 queue_element.allocated_pp = 0.0;
-                Logger().debugStream() << "item can't be built at location this turn";
+                //Logger().debugStream() << "item can't be built at location this turn";
                 continue;
             }
 
