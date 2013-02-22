@@ -65,7 +65,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;_DLL;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../Boost/include/boost_1_51/;../../GG/;../include/;../../../include/OGRE/;../../../include/bullet/;../../../include/zlib/;../../../include/AL/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../Boost/include/boost_1_51/;../../GG/;../include/;../../../include/OGRE/;../../../include/bullet/;../../../include/zlib/;../../../include/AL/;../../OIS/</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
@@ -84,7 +84,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>../../../lib/;../../../lib/bullet/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Common.lib;Parsers.lib;log4cpp.lib;GiGi.lib;GiGiOgre.lib;OgreMain.lib;opengl32.lib;glu32.lib;libpng.lib;jpeg.lib;BulletCollision.lib;LinearMath.lib;glew32.lib;OpenAL32.lib;zlib.lib;ALut.lib;libvorbisfile.lib;Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Common.lib;Parsers.lib;log4cpp.lib;GiGi.lib;GiGiOgre.lib;OgreMain.lib;GiGiOgrePlugin_OIS.lib;opengl32.lib;glu32.lib;libpng.lib;jpeg.lib;BulletCollision.lib;LinearMath.lib;glew32.lib;OpenAL32.lib;zlib.lib;ALut.lib;libvorbisfile.lib;Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
       <LinkStatus>
       </LinkStatus>

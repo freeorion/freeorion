@@ -49,28 +49,25 @@ using namespace GG;
 namespace {
     struct CleanQuit {};
 
-    class OgreModalEventPump : public ModalEventPump
-    {
+    class OgreModalEventPump : public ModalEventPump {
     public:
         OgreModalEventPump(const bool& done) : ModalEventPump(done) {}
-        virtual void operator()()
-            {
-                GUI* gui = GUI::GetGUI();
-                EventPumpState& state = State();
-                Ogre::Root& root = Ogre::Root::getSingleton();
-                while (!Done()) {
-                    Ogre::WindowEventUtilities::messagePump();
-                    LoopBody(gui, state, true, false);
-                    gui->HandleSystemEvents();
-                    if (!root.renderOneFrame())
-                        break;
-                }
+        virtual void operator()() {
+            GUI* gui = GUI::GetGUI();
+            EventPumpState& state = State();
+            Ogre::Root& root = Ogre::Root::getSingleton();
+            while (!Done()) {
+                Ogre::WindowEventUtilities::messagePump();
+                LoopBody(gui, state, true, false);
+                gui->HandleSystemEvents();
+                if (!root.renderOneFrame())
+                    break;
             }
+        }
     };
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-    void* aglGetProcAddress (char* symbol_name)
-    {
+    void* aglGetProcAddress (char* symbol_name) {
         return NSIsSymbolNameDefined(symbol_name) ?
             NSAddressOfSymbol(NSLookupAndBindSymbol(symbol_name)) :
             0;
@@ -97,8 +94,7 @@ OgreGUI::OgreGUI(Ogre::RenderWindow* window, const boost::filesystem::path& conf
     }
 }
 
-OgreGUI::~OgreGUI()
-{
+OgreGUI::~OgreGUI() {
     Ogre::WindowEventUtilities::removeWindowEventListener(m_window, this);
     m_window->removeListener(this);
 }
@@ -118,8 +114,7 @@ Y OgreGUI::AppHeight() const
 const Ogre::SharedPtr<Ogre::DataStream>& OgreGUI::ConfigFileStream() const
 { return m_config_file_data; }
 
-void OgreGUI::Exit(int code)
-{
+void OgreGUI::Exit(int code) {
     if (code == 0)
         throw CleanQuit();
     else
@@ -132,8 +127,7 @@ OgreGUI* OgreGUI::GetGUI()
 void OgreGUI::RenderBegin() {}
 void OgreGUI::RenderEnd() {}
 
-void OgreGUI::Run()
-{
+void OgreGUI::Run() {
     Ogre::Root& root = Ogre::Root::getSingleton();
     Ogre::RenderSystem* active_renderer = root.getRenderSystem();
     assert(active_renderer);
@@ -149,8 +143,7 @@ void OgreGUI::Run()
 void OgreGUI::HandleSystemEvents()
 { HandleSystemEventsSignal(); }
 
-void OgreGUI::Enter2DMode()
-{
+void OgreGUI::Enter2DMode() {
     glPushAttrib(GL_ALL_ATTRIB_BITS);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 
@@ -241,33 +234,53 @@ void OgreGUI::Enter2DMode()
     glDisableClientState(GL_EDGE_FLAG_ARRAY);
 }
 
-void OgreGUI::Exit2DMode()
-{
+void OgreGUI::Exit2DMode() {
     glPopClientAttrib();
     glPopAttrib();
 }
 
-void OgreGUI::postRenderTargetUpdate(const Ogre::RenderTargetEvent& event)
-{
+void OgreGUI::postRenderTargetUpdate(const Ogre::RenderTargetEvent& event) {
     RenderBegin();
     Render();
     RenderEnd();
 }
 
-void OgreGUI::windowResized(Ogre::RenderWindow* window)
-{
-    if (window == m_window) {
-        unsigned int width, height, depth;
-        int left, top;
-        window->getMetrics(width, height, depth, left, top);
-        WindowResizedSignal(X(width), Y(height));
-    }
+void OgreGUI::windowMoved(Ogre::RenderWindow* window) {
+    if (window != m_window)
+        return;
+    unsigned int width, height, depth;
+    int left, top;
+    window->getMetrics(width, height, depth, left, top);
+    WindowMovedSignal(X(left), Y(top));
 }
 
-void OgreGUI::windowClosed(Ogre::RenderWindow* window)
-{
-    if (window == m_window) {
-        WindowClosedSignal();
-        Exit(0);
-    }
+void OgreGUI::windowResized(Ogre::RenderWindow* window) {
+    if (window != m_window)
+        return;
+    unsigned int width, height, depth;
+    int left, top;
+    window->getMetrics(width, height, depth, left, top);
+    WindowResizedSignal(X(width), Y(height));
 }
+
+bool OgreGUI::windowClosing(Ogre::RenderWindow* window) {
+    if (window != m_window)
+        return true;
+    WindowClosingSignal();
+    return true;
+}
+
+void OgreGUI::windowClosed(Ogre::RenderWindow* window) {
+    if (window != m_window)
+        return;
+    WindowClosedSignal();
+    Exit(0);
+}
+
+void OgreGUI::windowFocusChange(Ogre::RenderWindow* window) {
+    if (window != m_window)
+        return;
+    FocusChangedSignal();
+    return;
+}
+

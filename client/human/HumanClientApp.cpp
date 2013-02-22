@@ -234,10 +234,11 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     SetCursor(boost::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(GG::X(6), GG::Y(3)))));
     RenderCursor(true);
 
-
+    GG::Connect(WindowMovedSignal,      &HumanClientApp::HandleWindowMove,      this);
     GG::Connect(WindowResizedSignal,    &HumanClientApp::HandleWindowResize,    this);
+    GG::Connect(WindowClosingSignal,    &HumanClientApp::HandleWindowClosing,   this);
     GG::Connect(WindowClosedSignal,     &HumanClientApp::HandleWindowClose,     this);
-
+    GG::Connect(FocusChangedSignal,     &HumanClientApp::HandleFocusChange,     this);
 
     unsigned int width, height, c;
     int left, top;
@@ -595,6 +596,24 @@ Ogre::Camera* HumanClientApp::Camera()
 Ogre::Viewport* HumanClientApp::Viewport()
 { return m_viewport; }
 
+std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
+    bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
+    int left(0), top(0);
+
+    left = GetOptionsDB().Get<int>("app-left-windowed");
+    top = GetOptionsDB().Get<int>("app-top-windowed");
+
+    // clamp to edges to avoid weird bug with maximizing windows setting their
+    // left and top to -9 which lead to weird issues when attmepting to recreate
+    // the window at those positions next execution
+    if (std::abs(left) < 10)
+        left = 0;
+    if (std::abs(top) < 10)
+        top = 0;
+
+    return std::make_pair(left, top);
+}
+
 std::pair<int, int> HumanClientApp::GetWindowWidthHeight(Ogre::RenderSystem* render_system) {
     int width(800), height(600);
     if (!render_system)
@@ -651,20 +670,33 @@ void HumanClientApp::Reinitialize() {
     if (!render_system)
         return;
 
-    //int colour_depth = GetOptionsDB().Get<int>("color-depth");
-    std::pair<unsigned int, unsigned int> width_height = GetWindowWidthHeight(render_system);
+    std::pair<int, int> width_height = GetWindowWidthHeight(render_system);
     unsigned int width(width_height.first), height(width_height.second);
+    std::pair<int, int> left_top = GetWindowLeftTop();
+    int left(left_top.first), top(left_top.second);
     bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
 
-    Ogre::RenderWindow* window = m_root->getAutoCreatedWindow();
+    Ogre::RenderWindow* window = this->GetRenderWindow();
+    if (!window) {
+        Logger().errorStream() << "HumanClientApp::Reinitialize unable to get render window";
+        return;
+    }
 
-    if (fullscreen != window->isFullScreen()) {
-        window->setFullscreen(fullscreen, width, height);
-    } else if (width != window->getWidth() || height != window->getHeight()) {
-        if (fullscreen)
-            window->setFullscreen(fullscreen, width, height);
-        else
+    if (fullscreen) {
+        window->setFullscreen(true, width, height);
+    } else {
+        if (window->isFullScreen())
+            window->setFullscreen(false, width, height);
+
+        unsigned int cur_width, cur_height, cur_colour_depth;
+        int cur_left, cur_top;
+        window->getMetrics(cur_width, cur_height, cur_colour_depth, cur_left, cur_top);
+
+        if (width != cur_width || height != cur_height)
             window->resize(width, height);
+
+        if (left != cur_left || top != cur_top)
+            window->reposition(left, top);
     }
 
 #ifdef FREEORION_MACOSX
@@ -685,7 +717,11 @@ namespace {
 }
 
 void HumanClientApp::Enter2DMode() {
-    Ogre::RenderWindow* window = m_root->getAutoCreatedWindow();
+    Ogre::RenderWindow* window = this->GetRenderWindow();
+    if (!window) {
+        Logger().errorStream() << "HumanClientApp::Enter2DMode couldn't get render window...";
+        return;
+    }
     unsigned int width, height, c;
     int left, top;
     window->getMetrics(width, height, c, left, top);
@@ -797,8 +833,28 @@ void HumanClientApp::HandleSaveGameDataRequest() {
     m_networking.SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
 }
 
+void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
+    //Logger().debugStream() << "HumanClientApp::HandleWindowMove(" << Value(w) << ", " << Value(h) << ")";
+
+    GetOptionsDB().Set<int>("app-left-windowed", Value(w));
+    GetOptionsDB().Set<int>("app-top-windowed", Value(h));
+
+    // Save the changes:
+    {
+        boost::filesystem::ofstream ofs(GetConfigPath());
+        if (ofs) {
+            GetOptionsDB().GetXML().WriteDoc(ofs);
+        } else {
+            std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
+            std::cerr << PathString(GetConfigPath()) << std::endl;
+            Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
+            Logger().errorStream() << PathString(GetConfigPath());
+        }
+    }
+}
+
 void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
-    Logger().debugStream() << "HumanClientApp::HandleWindowResize(" << Value(w) << ", " << Value(h) << ")";
+    //Logger().debugStream() << "HumanClientApp::HandleWindowResize(" << Value(w) << ", " << Value(h) << ")";
     if (ClientUI* ui = ClientUI::GetClientUI()) {
         if (MapWnd* map_wnd = ui->GetMapWnd())
             map_wnd->DoLayout();
@@ -810,25 +866,34 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
 
     // store resize if window is not full-screen (so that fullscreen
     // resolution doesn't overwrite windowed resolution)
-    Ogre::RenderWindow* window = m_root->getAutoCreatedWindow();
-    if (window && !window->isFullScreen()) {
-        GetOptionsDB().Set<int>("app-width-windowed", Value(w));
-        GetOptionsDB().Set<int>("app-height-windowed", Value(h));
+    Ogre::RenderWindow* window = this->GetRenderWindow();
+    if (!window) {
+        Logger().errorStream() << "HumanClientApp::HandleWindowResize couldn't get render window...";
+        return;
+    }
 
-        // Save the changes:
-        {
-            boost::filesystem::ofstream ofs(GetConfigPath());
-            if (ofs) {
-                GetOptionsDB().GetXML().WriteDoc(ofs);
-            } else {
-                std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
-                std::cerr << PathString(GetConfigPath()) << std::endl;
-                Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
-                Logger().errorStream() << PathString(GetConfigPath());
-            }
+    if (window->isFullScreen())
+        return;
+
+    GetOptionsDB().Set<int>("app-width-windowed", Value(w));
+    GetOptionsDB().Set<int>("app-height-windowed", Value(h));
+
+    // Save the changes:
+    {
+        boost::filesystem::ofstream ofs(GetConfigPath());
+        if (ofs) {
+            GetOptionsDB().GetXML().WriteDoc(ofs);
+        } else {
+            std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
+            std::cerr << PathString(GetConfigPath()) << std::endl;
+            Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
+            Logger().errorStream() << PathString(GetConfigPath());
         }
     }
 }
+
+void HumanClientApp::HandleWindowClosing()
+{ Logger().debugStream() << "HumanClientApp::HandleWindowClosing()"; }
 
 void HumanClientApp::HandleWindowClose() {
     Logger().debugStream() << "HumanClientApp::HandleWindowClose()";
@@ -836,6 +901,9 @@ void HumanClientApp::HandleWindowClose() {
     //Exit(0);  // want to call Exit here, to cleanly quit, but doing so doesn't work on Win7
     exit(0);
 }
+
+void HumanClientApp::HandleFocusChange()
+{ Logger().debugStream() << "HumanClientApp::HandleFocusChange()"; }
 
 void HumanClientApp::StartGame() {
     m_game_started = true;

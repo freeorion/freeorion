@@ -149,18 +149,31 @@ public:
         config_filename was not supplied to the ctor. */
     const Ogre::SharedPtr<Ogre::DataStream>& ConfigFileStream() const;
 
+    Ogre::RenderWindow* GetRenderWindow() const { return m_window; }
+
     virtual void Exit(int code);
 
     /** Emitted whenever the OgreGUI is ready for human input from the
         keyboard, mouse, etc. */
     boost::signal<void ()> HandleSystemEventsSignal;
 
+    /** Emitted whenever the OgreGUI's window's left and top positions change. */
+    boost::signal<void (X, Y)> WindowMovedSignal;
+
     /** Emitted whenever the OgreGUI's AppWidth() and/or AppHeight() change. */
     boost::signal<void (X, Y)> WindowResizedSignal;
 
     /** Emitted when the Ogre::RenderWindow in which the OgreGUI is operating
+        is about to close. */
+    boost::signal<void ()> WindowClosingSignal;
+
+    /** Emitted when the Ogre::RenderWindow in which the OgreGUI is operating
         closes or is about to close. */
     boost::signal<void ()> WindowClosedSignal;
+
+    /** Emitted when the Ogre::RenderWindow in which the OgreGUI is operating
+        gains or loses focus. */
+    boost::signal<void ()> FocusChangedSignal;
 
     /** Allows any code to access the gui framework by calling GG::OgreGUI::GetGUI(). */
     static OgreGUI* GetGUI();
@@ -175,8 +188,11 @@ protected:
 
 private:
     virtual void postRenderTargetUpdate(const Ogre::RenderTargetEvent& event);
+    virtual void windowMoved(Ogre::RenderWindow* window);
     virtual void windowResized(Ogre::RenderWindow* window);
+    virtual bool windowClosing(Ogre::RenderWindow* window);
     virtual void windowClosed(Ogre::RenderWindow* window);
+    virtual void windowFocusChange(Ogre::RenderWindow* window);
 
     Ogre::RenderWindow*               m_window;
     mutable Ogre::Timer               m_timer;

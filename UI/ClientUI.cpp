@@ -353,6 +353,8 @@ namespace {
         db.Add("app-height",            "OPTIONS_DB_APP_HEIGHT",            768,    RangedValidator<int>(600, 1600));
         db.Add("app-width-windowed",    "OPTIONS_DB_APP_WIDTH_WINDOWED",    1024,   RangedValidator<int>(800, 2560));
         db.Add("app-height-windowed",   "OPTIONS_DB_APP_HEIGHT_WINDOWED",   768,    RangedValidator<int>(600, 1600));
+        db.Add("app-left-windowed",     "OPTIONS_DB_APP_LEFT_WINDOWED",     0,      RangedValidator<int>(-600, 600));
+        db.Add("app-top-windowed",      "OPTIONS_DB_APP_TOP_WINDOWED",      0,      RangedValidator<int>(-512, 1024));
 
         db.Add('c', "color-depth",      "OPTIONS_DB_COLOR_DEPTH",           32,     RangedStepValidator<int>(8, 16, 32));
         db.Add("show-fps",              "OPTIONS_DB_SHOW_FPS",              false);

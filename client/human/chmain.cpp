@@ -2,10 +2,8 @@
 #include "OgrePlugins/OgreOctreePlugin.h"
 #include "OgrePlugins/OgreParticleFXPlugin.h"
 #include "OgrePlugins/OgreGLPlugin.h"
-#include <GG/Ogre/Plugins/OISInput.h>
-#elif defined(FREEORION_MACOSX)
-#include <GG/Ogre/Plugins/OISInput.h>
 #endif
+#include <GG/Ogre/Plugins/OISInput.h>
 
 #include "HumanClientApp.h"
 #include "../../parse/Parse.h"
@@ -34,15 +32,6 @@
 #include <iostream>
 
 #include "chmain.h"
-
-
-#ifndef OGRE_STATIC_LIB
-#  ifdef FREEORION_WIN32
-const std::string OGRE_INPUT_PLUGIN_NAME("GiGiOgrePlugin_OIS.dll");
-#  else
-const std::string OGRE_INPUT_PLUGIN_NAME("libGiGiOgrePlugin_OIS.so");
-#  endif
-#endif
 
 
 // The STORE_FULLSCREEN_FLAG parameter below controls whether the fullscreen
@@ -113,6 +102,8 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().AddFlag('g', "generate-config-xml",  "OPTIONS_DB_GENERATE_CONFIG_XML",   false);
         GetOptionsDB().AddFlag('f', "fullscreen",           "OPTIONS_DB_FULLSCREEN",            STORE_FULLSCREEN_FLAG);
         GetOptionsDB().Add("reset-fullscreen-size",         "OPTIONS_DB_RESET_FSSIZE",          true);
+        GetOptionsDB().Add<int>("fullscreen-monitor-id",    "OPTIONS_DB_FULLSCREEN_MONITOR_ID",
+                                0,  RangedValidator<int>(0, 5));
         GetOptionsDB().AddFlag('q', "quickstart",           "OPTIONS_DB_QUICKSTART",            false);
         GetOptionsDB().AddFlag("auto-advance-first-turn",   "OPTIONS_DB_AUTO_FIRST_TURN",       false);
         GetOptionsDB().Add<std::string>("load", "OPTIONS_DB_LOAD", "", Validator<std::string>(),false);
@@ -200,10 +191,8 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 int mainSetupAndRunOgre() {
     Ogre::LogManager*       log_manager = 0;
     Ogre::Root*             root = 0;
-#ifdef FREEORION_MACOSX
     OISInput*               ois_input_plugin = 0;
-#elif defined(OGRE_STATIC_LIB)
-    OISInput*               ois_input_plugin = 0;
+#ifdef OGRE_STATIC_LIB
     Ogre::OctreePlugin*     octree_plugin = 0;
     Ogre::ParticleFXPlugin* particle_fx_plugin = 0;
     Ogre::GLPlugin*         gl_plugin = 0;
@@ -251,16 +240,24 @@ int mainSetupAndRunOgre() {
         bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
         std::pair<int, int> width_height = HumanClientApp::GetWindowWidthHeight(selected_render_system);
         int width(width_height.first), height(width_height.second);
+        std::pair<int, int> left_top = HumanClientApp::GetWindowLeftTop();
+        int left(left_top.first), top(left_top.second);
 
-        selected_render_system->setConfigOption("Full Screen", fullscreen ? "Yes" : "No");
-        std::string video_mode_str =
-            boost::io::str(boost::format("%1% x %2% @ %3%-bit colour") %
-                           width %
-                           height %
-                           colour_depth);
-        selected_render_system->setConfigOption("Video Mode", video_mode_str);
+        root->initialise(false);
 
-        RenderWindow* window = root->initialise(true, "FreeOrion " + FreeOrionVersionString());
+        Ogre::NameValuePairList misc_window_params;
+        misc_window_params["title"] = "FreeOrion " + FreeOrionVersionString();
+        misc_window_params["colourDepth"] = boost::lexical_cast<std::string>(colour_depth);
+        misc_window_params["left"] = boost::lexical_cast<std::string>(left);
+        misc_window_params["top"] = boost::lexical_cast<std::string>(top);
+        misc_window_params["macAPI"] = "carbon";
+        misc_window_params["border"] = "resize";
+        if (fullscreen)
+            misc_window_params["monitorIndex"] = boost::lexical_cast<std::string>(
+                GetOptionsDB().Get<int>("fullscreen-monitor-id"));
+
+        RenderWindow* window = root->createRenderWindow("FreeOrion " + FreeOrionVersionString(),
+                                                        width, height, fullscreen, &misc_window_params);
 
 #ifdef FREEORION_WIN32
 #  ifdef IDI_ICON1
@@ -289,15 +286,11 @@ int mainSetupAndRunOgre() {
         parse::init();
         HumanClientApp app(root, window, scene_manager, camera, viewport, GetRootDataDir() / "OISInput.cfg");
 
-#ifdef FREEORION_MACOSX
+
         ois_input_plugin = new OISInput;
+        ois_input_plugin->SetRenderWindow(window);
         root->installPlugin(ois_input_plugin);
-#elif defined(OGRE_STATIC_LIB)
-        ois_input_plugin = new OISInput;
-        root->installPlugin(ois_input_plugin);
-#else
-        root->loadPlugin(OGRE_INPUT_PLUGIN_NAME);
-#endif
+
 
         if (GetOptionsDB().Get<bool>("quickstart")) {
             // immediately start the server, establish network connections, and
@@ -342,21 +335,18 @@ int mainSetupAndRunOgre() {
     }
 
     if (root) {
-#ifdef FREEORION_MACOSX
         root->uninstallPlugin(ois_input_plugin);
         delete ois_input_plugin;
-#elif defined(OGRE_STATIC_LIB)
-        root->uninstallPlugin(ois_input_plugin);
+
+#ifdef OGRE_STATIC_LIB
         root->uninstallPlugin(octree_plugin);
         root->uninstallPlugin(particle_fx_plugin);
         root->uninstallPlugin(gl_plugin);
-        delete ois_input_plugin;
         delete octree_plugin;
         delete particle_fx_plugin;
         delete gl_plugin;
-#else
-        root->unloadPlugin(OGRE_INPUT_PLUGIN_NAME);
 #endif
+
         delete root;
     }
 

@@ -74,6 +74,7 @@ public:
     //@}
 
     static std::pair<int, int>  GetWindowWidthHeight(Ogre::RenderSystem* render_system);
+    static std::pair<int, int>  GetWindowLeftTop();
 
     static HumanClientApp*      GetApp();               ///< returns HumanClientApp pointer to the single instance of the app
 
@@ -84,8 +85,11 @@ private:
     void            HandleMessage(Message& msg);
     void            HandleSaveGameDataRequest();
 
+    void            HandleWindowMove(GG::X w, GG::Y h);
     void            HandleWindowResize(GG::X w, GG::Y h);
+    void            HandleWindowClosing();
     void            HandleWindowClose();
+    void            HandleFocusChange();
 
     void            StartGame();
     void            Autosave();                         ///< autosaves the current game, iff autosaves are enabled and any turn number requirements are met

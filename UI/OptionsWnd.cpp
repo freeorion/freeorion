@@ -559,6 +559,12 @@ void OptionsWnd::ResolutionOption() {
     boost::shared_ptr<const RangedValidator<int> > windowed_height_validator =
         boost::dynamic_pointer_cast<const RangedValidator<int> >(
             GetOptionsDB().GetValidator("app-height-windowed"));
+    boost::shared_ptr<const RangedValidator<int> > windowed_left_validator =
+        boost::dynamic_pointer_cast<const RangedValidator<int> >(
+            GetOptionsDB().GetValidator("app-left-windowed"));
+    boost::shared_ptr<const RangedValidator<int> > windowed_top_validator =
+        boost::dynamic_pointer_cast<const RangedValidator<int> >(
+            GetOptionsDB().GetValidator("app-top-windowed"));
 
     Ogre::RenderSystem* render_system = Ogre::Root::getSingleton().getRenderSystem();
     if (!render_system) {
@@ -638,6 +644,10 @@ void OptionsWnd::ResolutionOption() {
     if (drop_list->NumRows() >= 1 && current_resolution_index != -1)
         drop_list->Select(current_resolution_index);
 
+    // fullscreen / windowed toggle
+    BoolOption("fullscreen",            UserString("OPTIONS_FULLSCREEN"));
+    IntOption("fullscreen-monitor-id",  UserString("OPTIONS_FULLSCREEN_MONITOR_ID"));
+
 
     // customizable windowed width and height
     GG::TextControl* windowed_spinner_label =
@@ -651,13 +661,10 @@ void OptionsWnd::ResolutionOption() {
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), windowed_spinner_label, m_indentation_level));
     m_current_option_list->Insert(row);
 
-    IntOption("app-width-windowed", UserString("OPTIONS_APP_WIDTH_WINDOWED"));
-    IntOption("app-height-windowed", UserString("OPTIONS_APP_HEIGHT_WINDOWED"));
-
-
-    // fullscreen / windowed toggle
-    BoolOption("fullscreen", UserString("OPTIONS_FULLSCREEN"));
-
+    IntOption("app-width-windowed",     UserString("OPTIONS_APP_WIDTH_WINDOWED"));
+    IntOption("app-height-windowed",    UserString("OPTIONS_APP_HEIGHT_WINDOWED"));
+    IntOption("app-left-windowed",      UserString("OPTIONS_APP_LEFT_WINDOWED"));
+    IntOption("app-top-windowed",       UserString("OPTIONS_APP_TOP_WINDOWED"));
 
     // fps
     BoolOption("show-fps", UserString("OPTIONS_SHOW_FPS"));
@@ -672,7 +679,8 @@ void OptionsWnd::ResolutionOption() {
     // apply button, sized to fit text
     std::string apply_button_text = UserString("OPTIONS_APPLY");
     //GG::X button_width = ClientUI::GetFont()->TextExtent(apply_button_text).x + GG::X(LAYOUT_MARGIN);
-    GG::Button* apply_button = new CUIButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20), apply_button_text, ClientUI::GetFont());
+    GG::Button* apply_button = new CUIButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20),
+                                             apply_button_text, ClientUI::GetFont());
     row = new GG::ListBox::Row();
     row->Resize(GG::Pt(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), apply_button, m_indentation_level));
