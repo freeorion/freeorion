@@ -40,7 +40,11 @@ find_library(
     NAMES GiGiOgre
     HINTS ${GIGI_LIBRARY_DIRS}
 )
-
+find_library(
+    GIGI_GIGIOGREOIS_LIBRARY
+    NAMES GiGiOgrePlugin_OIS
+    HINTS ${GIGI_LIBRARY_DIRS}
+)
 if (GIGI_INCLUDE_DIR AND
     GIGI_GIGI_LIBRARY)
     set(GIGI_FOUND true)
@@ -50,6 +54,9 @@ if (GIGI_INCLUDE_DIR AND
     endif ()
     if (GIGI_GIGIOGRE_LIBRARY)
         set(GIGI_LIBRARIES ${GIGI_LIBRARIES} ${GIGI_GIGIOGRE_LIBRARY})
+    endif ()
+    if (GIGI_GIGIOGREOIS_LIBRARY)
+        set(GIGI_LIBRARIES ${GIGI_LIBRARIES} ${GIGI_GIGIOGREOIS_LIBRARY})
     endif ()
 else ()
     set(GIGI_FOUND false)
