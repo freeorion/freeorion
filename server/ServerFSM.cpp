@@ -442,27 +442,18 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
     // assign player info from defaults or from connection to lobby data players list
     PlayerSetupData player_setup_data;
-    player_setup_data.m_player_name = player_name;
-    player_setup_data.m_client_type = client_type;
-    player_setup_data.m_empire_color = GetUnusedEmpireColour(m_lobby_data->m_players);
-    // TODO: generate a default empire name, or get one from the list of empire names
-    player_setup_data.m_empire_name = player_name;
-    // default to "Human" species if available.  otherwise use first in species manager.
-    if (!sm.empty()) {
-        if (sm.GetSpecies("SP_HUMAN"))
-            player_setup_data.m_starting_species_name = "SP_HUMAN";
-        else
-            player_setup_data.m_starting_species_name = sm.begin()->first;
-    }
+    player_setup_data.m_player_name =           player_name;
+    player_setup_data.m_client_type =           client_type;
+    player_setup_data.m_empire_name =           GenerateEmpireName(m_lobby_data->m_players);
+    player_setup_data.m_empire_color =          GetUnusedEmpireColour(m_lobby_data->m_players);
+    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
 
     // after setting all details, push into lobby data
     m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
 
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
-    {
-        (*it)->SendMessage(ServerLobbyUpdateMessage((*it)->PlayerID(), *m_lobby_data));
-    }
+    { (*it)->SendMessage(ServerLobbyUpdateMessage((*it)->PlayerID(), *m_lobby_data)); }
 
     return discard_event();
 }
@@ -842,7 +833,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         if (it->m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             m_expected_ai_player_names.insert(it->m_player_name);
 
-        server.CreateAIClients(players, m_single_player_setup_data->m_ai_aggr);    // also disconnects any currently-connected AI clients
+    server.CreateAIClients(players, m_single_player_setup_data->m_ai_aggr);    // also disconnects any currently-connected AI clients
 
     // force immediate check if all expected AIs are present, so that the FSM
     // won't get stuck in this state waiting for JoinGame messages that will
@@ -1083,6 +1074,7 @@ sc::result PlayingGame::react(const Diplomacy& msg) {
     return discard_event();
 }
 
+
 ////////////////////////////////////////////////////////////
 // WaitingForTurnEnd
 ////////////////////////////////////////////////////////////
@@ -1103,33 +1095,65 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     OrderSet* order_set = new OrderSet;
     ExtractMessageData(message, *order_set);
 
-    // check order validity -- all orders must originate from this empire in order to be considered valid
     int player_id = message.SendingPlayer();
-    Empire* empire = server.GetPlayerEmpire(player_id);
-    if (!empire) {
-        Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
-        server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS", false));
-        return discard_event();
-    }
+    Networking::ClientType client_type = msg.m_player_connection->GetClientType();
 
-    for (OrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
-        OrderPtr order = it->second;
-        if (!order) {
-            Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get order from order set!";
-            continue;
-        }
-        if (empire->EmpireID() != order->EmpireID()) {
-            Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
-                                   << message.SendingPlayer() << ") who controls empire " << empire->EmpireID()
-                                   << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
-            server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "ORDERS_FOR_WRONG_EMPIRE", false));
+    if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+        // observers cannot submit orders. ignore.
+        Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
+                               << msg.m_player_connection->PlayerName()
+                               << "(id: " << message.SendingPlayer() << ") "
+                               << "who is an observer and should not be sending orders. Orders being ignored.";
+        server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "ORDERS_FOR_WRONG_EMPIRE", false));
+        return discard_event();
+
+    } else if (client_type == Networking::INVALID_CLIENT_TYPE) {
+        // ??? lingering connection? shouldn't get to here. ignore.
+        Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
+                               << msg.m_player_connection->PlayerName()
+                               << "(id: " << message.SendingPlayer() << ") "
+                               << "who has an invalid player type. The server is confused, and the orders being ignored.";
+        server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "ORDERS_FOR_WRONG_EMPIRE", false));
+        return discard_event();
+
+    } else if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
+        // if the moderator ends the turn, it is done, regardless of what
+        // players are doing or haven't done
+        if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : Moderator ended turn.";
+        post_event(ProcessTurn());
+        return transit<ProcessingTurn>();
+
+    } else if (client_type == Networking::CLIENT_TYPE_AI_PLAYER ||
+               client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+    {
+        // store empire orders and resume waiting for more
+        const Empire* empire = server.GetPlayerEmpire(player_id);
+        if (!empire) {
+            Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
+            server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS", false));
             return discard_event();
         }
+
+        for (OrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
+            OrderPtr order = it->second;
+            if (!order) {
+                Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get order from order set!";
+                continue;
+            }
+            if (empire->EmpireID() != order->EmpireID()) {
+                Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
+                                    << message.SendingPlayer() << ") who controls empire " << empire->EmpireID()
+                                    << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
+                server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "ORDERS_FOR_WRONG_EMPIRE", false));
+                return discard_event();
+            }
+        }
+
+        if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : Received orders from player " << message.SendingPlayer();
+
+        server.SetEmpireTurnOrders(empire->EmpireID(), order_set);
     }
 
-    if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : Received orders from player " << message.SendingPlayer();
-
-    server.SetEmpireTurnOrders(empire->EmpireID(), order_set);
 
     // notify other player that this player submitted orders
     for (ServerNetworking::const_established_iterator player_it = server.m_networking.established_begin();
@@ -1176,9 +1200,14 @@ sc::result WaitingForTurnEnd::react(const RequestDesignID& msg) {
 sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.CheckTurnEndConditions";
     ServerApp& server = Server();
-    if ((server.AllOrdersReceived() /* && minium_time_passed */)
-        /* || maximum_time_passed*/)
-    {
+    // is there a moderator in the game?  If so, do nothing, as the turn does
+    // not proceed until the moderator orders it
+    if (server.m_networking.ModeratorsInGame())
+        return discard_event();
+
+    // no moderator; wait for all player orders to be submitted before
+    // processing turn.
+    if (server.AllOrdersReceived()) {
         // if all players have submitted orders, proceed to turn processing
         if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : All orders received.";
         post_event(ProcessTurn());

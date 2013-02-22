@@ -117,6 +117,7 @@ ServerApp::ServerApp() :
 }
 
 ServerApp::~ServerApp() {
+    Logger().debugStream() << "ServerApp::~ServerApp";
     CleanupAIs();
     delete m_fsm;
 }
@@ -145,6 +146,7 @@ namespace {
 #endif
 
 void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int maxAggr) {
+    Logger().debugStream() << "ServerApp::CreateAIClients: " << player_setup_data.size() << " player (maybe not all AIs) at max aggression: " << maxAggr;
     // check if AI clients are needed for given setup data
     bool need_AIs = false;
     for (int i = 0; i < static_cast<int>(player_setup_data.size()); ++i) {
@@ -240,10 +242,37 @@ void ServerApp::Run() {
 }
 
 void ServerApp::CleanupAIs() {
+    Logger().debugStream() << "ServerApp::CleanupAIs() telling AIs game is ending";
+    bool ai_connection_lingering = false;
+    try {
+        for (ServerNetworking::const_iterator it = m_networking.begin(); it != m_networking.end(); ++it) {
+            PlayerConnectionPtr player = *it;
+            if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
+                player->SendMessage(EndGameMessage(player->PlayerID(), Message::YOU_ARE_ELIMINATED));
+                ai_connection_lingering = true;
+            }
+        }
+    } catch (...) {
+        Logger().errorStream() << "ServerApp::CleanupAIs() exception while sending end game messages";
+    }
+
+    if (ai_connection_lingering)
+        Sleep(1000);    // time for AIs to react?
+
     Logger().debugStream() << "ServerApp::CleanupAIs() killing " << m_ai_client_processes.size() << " AI clients.";
-    for (std::vector<Process>::iterator it = m_ai_client_processes.begin(); it != m_ai_client_processes.end(); ++it)
-        it->Kill();
-    m_ai_client_processes.clear();
+    try {
+        for (std::vector<Process>::iterator it = m_ai_client_processes.begin();
+            it != m_ai_client_processes.end(); ++it)
+        { it->Kill(); }
+    } catch (...) {
+        Logger().errorStream() << "ServerApp::CleanupAIs() exception while killing processes";
+    }
+
+    try {
+        m_ai_client_processes.clear();
+    } catch (...) {
+        Logger().errorStream() << "ServerApp::CleanupAIs() exception while clearing client processes";
+    }
 }
 
 void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
@@ -302,9 +331,7 @@ void ServerApp::HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_c
     case Message::HOST_SP_GAME: m_fsm->process_event(HostSPGame(msg, player_connection));   break;
     case Message::HOST_MP_GAME: m_fsm->process_event(HostMPGame(msg, player_connection));   break;
     case Message::JOIN_GAME:    m_fsm->process_event(JoinGame(msg, player_connection));     break;
-#ifndef FREEORION_RELEASE
     case Message::DEBUG:        break;
-#endif
     default:
         Logger().errorStream() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
                                      << msg.Type() << "\" for a non-player Message.  Terminating connection.";
@@ -330,9 +357,7 @@ void ServerApp::SelectNewHost() {
         if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
             player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
             player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-        {
-            new_host_id = player_connection->PlayerID();
-        }
+        { new_host_id = player_connection->PlayerID(); }
     }
 
     if (new_host_id == Networking::INVALID_PLAYER_ID) {
@@ -890,7 +915,13 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(),
                                                             player_info_map, *orders, psgd.m_ui_data.get()));
-
+        } else if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+                   client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        {
+            player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, ALL_EMPIRES,
+                                                            m_current_turn, m_empires, m_universe,
+                                                            GetSpeciesManager(),
+                                                            player_info_map));
         } else {
             Logger().errorStream() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
         }
@@ -1773,35 +1804,45 @@ namespace {
             int planet_id = planet_it->first;
             Planet* planet = GetPlanet(planet_id);
             std::set<int> all_involved_empires;
+            int planet_initial_owner_id = planet->Owner();
 
             std::map<int, double>& empires_troops = planet_it->second;
-            if (empires_troops.size() < 2) { // no single participant battles
-                if ( planet->OwnedBy( empires_troops.begin()->first ) ) {
-                    continue;   // if troops all belong to planet owner, nothing to do...
+            if (empires_troops.empty())
+                continue;
+            else if (empires_troops.size() < 2) {
+                int empire_with_troops_id = empires_troops.begin()->first;
+                if (planet->OwnedBy(empire_with_troops_id)) {
+                    continue;   // if troops all belong to planet owner, not a combat.
                 } else {
                     Logger().debugStream() << "Ground combat on " << planet->Name() << " was unopposed";
+                    if (planet_initial_owner_id != ALL_EMPIRES)
+                        all_involved_empires.insert(planet_initial_owner_id);
+                    if (empire_with_troops_id != ALL_EMPIRES)
+                        all_involved_empires.insert(empire_with_troops_id);
                 }
             } else {
-
                 Logger().debugStream() << "Ground combat on " << planet->Name();
                 for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
-                        empire_it != empires_troops.end(); ++empire_it)
+                     empire_it != empires_troops.end(); ++empire_it)
                 { Logger().debugStream() << " empire: " << empire_it->first << ": " << empire_it->second; }
-
 
                 // create sitreps for all empires involved in battle
                 for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
                     empire_it != empires_troops.end(); ++empire_it)
                 {
-                    all_involved_empires.insert(empire_it->first);
-                    if (Empire* empire = Empires().Lookup(empire_it->first))
-                        empire->AddSitRepEntry(CreateGroundCombatSitRep(planet_id));
+                    if (empire_it->first != ALL_EMPIRES)
+                        all_involved_empires.insert(empire_it->first);
                 }
 
                 ResolveGroundCombat(empires_troops);
             }
 
-            int planet_initial_owner_id = planet->Owner();
+            for (std::set<int>::const_iterator empire_it = all_involved_empires.begin();
+                 empire_it != all_involved_empires.end(); ++empire_it)
+            {
+                if (Empire* empire = Empires().Lookup(*empire_it))
+                    empire->AddSitRepEntry(CreateGroundCombatSitRep(planet_id));
+            }
 
             // who won?
             if (empires_troops.size() == 1) {
@@ -1884,6 +1925,10 @@ void ServerApp::PreCombatProcessTurns() {
     // execute orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         OrderSet* order_set = it->second;
+        if (!order_set) {
+            Logger().debugStream() << "No OrderSet for empire " << it->first;
+            continue;
+        }
         for (OrderSet::const_iterator order_it = order_set->begin(); order_it != order_set->end(); ++order_it)
             order_it->second->Execute();
     }

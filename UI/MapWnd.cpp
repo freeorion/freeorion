@@ -1727,9 +1727,17 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_ke
 }
 
 void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
-    // disallow order enabling if there is no empire for this client
-    if (HumanClientApp::GetApp()->EmpireID() == ALL_EMPIRES)
+    // disallow order enabling if this client does not have an empire
+    // and is not a moderator
+    HumanClientApp* app = HumanClientApp::GetApp();
+    if (!app) {
         enable = false;
+    } else {
+        bool have_empire = (app->EmpireID() != ALL_EMPIRES);
+        bool moderator = (app->GetPlayerClientType(app->PlayerID()) == Networking::CLIENT_TYPE_HUMAN_MODERATOR);
+        if (!have_empire && !moderator)
+            enable = false;
+    }
 
     m_turn_update->Disable(!enable);
     m_side_panel->EnableOrderIssuing(enable);
@@ -2596,7 +2604,6 @@ void MapWnd::CenterOnMapCoord(double x, double y) {
 
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
 }
-
 
 void MapWnd::ShowPlanet(int planet_id) {
     if (!m_pedia_panel->Visible())
@@ -5016,7 +5023,6 @@ namespace{ //helper function for DispatchFleetsExploring
 
         return std::pair<int, int>(INVALID_OBJECT_ID, INT_MAX);
     }
-
 };
 
 void MapWnd::DispatchFleetsExploring() {
