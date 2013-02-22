@@ -8,7 +8,7 @@ set(CMAKE_VERBOSE_MAKEFILE false)
 ########################################
 project(FreeOrion)
 
-set(FREEORION_VERSION 0.4.1)
+set(FREEORION_VERSION 0.4.2)
 set(FREEORION_RELEASE false)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
