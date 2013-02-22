@@ -295,10 +295,13 @@ ServerNetworking::const_established_iterator ServerNetworking::established_end()
 
 int ServerNetworking::NewPlayerID() const {
     int biggest_current_player_id(0);
-    for (PlayerConnections::const_iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
-        int player_id = (*it)->PlayerID();
+    for (PlayerConnections::const_iterator it = m_player_connections.begin();
+         it != m_player_connections.end(); ++it)
+    {
+        const PlayerConnectionPtr player = *it;
+        int player_id = player->PlayerID();
         if (player_id != INVALID_PLAYER_ID && player_id > biggest_current_player_id)
-            biggest_current_player_id = (*it)->PlayerID();
+            biggest_current_player_id = player_id;
     }
     return biggest_current_player_id + 1;
 }
@@ -310,6 +313,17 @@ bool ServerNetworking::PlayerIsHost(int player_id) const {
     if (player_id == Networking::INVALID_PLAYER_ID)
         return false;
     return player_id == m_host_player_id;
+}
+
+bool ServerNetworking::ModeratorsInGame() const {
+    for (PlayerConnections::const_iterator it = m_player_connections.begin();
+         it != m_player_connections.end(); ++it)
+    {
+        const PlayerConnectionPtr player = *it;
+        if (player->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+            return true;
+    }
+    return false;
 }
 
 void ServerNetworking::SendMessage(const Message& message,

@@ -85,6 +85,9 @@ public:
 
     /** Returns whether the indicated player ID is the host. */
     bool PlayerIsHost(int player_id) const;
+
+    /** Returns whether there are any moderators in the game. */
+    bool ModeratorsInGame() const;
     //@}
 
     /** \name Mutators */ //@{
