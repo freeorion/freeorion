@@ -290,6 +290,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
 
     case Message::END_GAME: {
+        Logger().debugStream() << "Message::END_GAME : Exiting";
         Exit(0);
         break;
     }

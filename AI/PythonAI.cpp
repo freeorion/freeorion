@@ -122,6 +122,11 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 
     def("currentTurn",              AIInterface::CurrentTurn);
 
+    def("updateMeterEstimates",     AIInterface::UpdateMeterEstimates);
+    def("updateResourcePools",      AIInterface::UpdateResourcePools);
+    def("updateResearchQueue",      AIInterface::UpdateResearchQueue);
+    def("updateProductionQueue",    AIInterface::UpdateProductionQueue);
+
     def("issueFleetMoveOrder",                  AIInterface::IssueFleetMoveOrder);
     def("issueRenameOrder",                     AIInterface::IssueRenameOrder);
     def("issueScrapOrder",                      AIIntScrap);

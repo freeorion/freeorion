@@ -172,7 +172,7 @@ namespace AIInterface {
         InitMeterEstimatesAndDiscrepancies();
         UpdateMeterEstimates();
         InitResourcePoolsAndSupply();
-        UpdateResourcePoolsAndQueues();
+        UpdateResourcePools();
 
         Logger().debugStream() << "AIInterface::InitTurn time: " << (turn_init_timer.elapsed() * 1000.0);
     }
@@ -214,10 +214,30 @@ namespace AIInterface {
         }
     }
 
-    void UpdateResourcePoolsAndQueues() {
+    void UpdateResourcePools() {
         EmpireManager& manager = AIClientApp::GetApp()->Empires();
         for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
             it->second->UpdateResourcePools();
+    }
+
+    void                UpdateResearchQueue() {
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        Empire* empire = Empires().Lookup(empire_id);
+        if (!empire) {
+            Logger().errorStream() << "AIInterface::UpdateResearchQueue : couldn't get empire with id " << empire_id;
+            return;
+        }
+        empire->UpdateResearchQueue();
+    }
+
+    void                UpdateProductionQueue() {
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        Empire* empire = Empires().Lookup(empire_id);
+        if (!empire) {
+            Logger().errorStream() << "AIInterface::UpdateProductionQueue : couldn't get empire with id " << empire_id;
+            return;
+        }
+        empire->UpdateProductionQueue();
     }
 
     int IssueFleetMoveOrder(int fleet_id, int destination_id) {
@@ -616,7 +636,7 @@ namespace AIInterface {
         }
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, BT_BUILDING, item_name, 1, location_id)));
-        empire->UpdateProductionQueue();
+
         return 1;
     }
 
@@ -630,7 +650,7 @@ namespace AIInterface {
         }
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, BT_SHIP, design_id, 1, location_id)));
-        empire->UpdateProductionQueue();
+
         return 1;
     }
 
@@ -649,7 +669,7 @@ namespace AIInterface {
         }
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, queue_index, new_quantity, new_blocksize)));
-        empire->UpdateProductionQueue();
+
         return 1;
     }
 
@@ -681,7 +701,7 @@ namespace AIInterface {
         }
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, old_queue_index, new_queue_index)));
-        empire->UpdateProductionQueue();
+
         return 1;
     }
 
@@ -696,7 +716,7 @@ namespace AIInterface {
         }
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, queue_index)));
-        empire->UpdateProductionQueue();
+
         return 1;
     }
 
