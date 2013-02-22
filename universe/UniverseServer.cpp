@@ -378,10 +378,6 @@ namespace {
         const std::vector<int>& base_star_type_dist = UniverseDataTables()["BaseStarTypeDist"][0];
         const std::vector<std::vector<int> >& universe_age_mod_to_star_type_dist = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
 
-        static std::list<std::string> star_names;
-        if (star_names.empty())
-            LoadSystemNames(star_names);
-
         // generate new star
 
         // pick a star type
@@ -399,6 +395,10 @@ namespace {
         star_type = StarType(idx);
 
         // pick a name for the system
+        static std::list<std::string> star_names;
+        if (star_names.empty())
+            LoadSystemNames(star_names);
+
         std::string star_name;
         if (!star_names.empty()) {
             int star_name_idx = RandSmallInt(0, static_cast<int>(star_names.size()) - 1);
