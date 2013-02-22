@@ -20,6 +20,9 @@ using namespace Networking;
 namespace {
     const bool TRACE_EXECUTION = false;
 
+    const int HEADER_SIZE = ClientNetworking::MessageHeaderBuffer::static_size *
+                            sizeof(ClientNetworking::MessageHeaderBuffer::value_type);
+
     /** A simple client that broadcasts UDP datagrams on the local network for
         FreeOrion servers, and reports any it finds. */
     class ServerDiscoverer {
@@ -314,6 +317,7 @@ void ClientNetworking::NetworkingThread() {
                 break;
             } catch (const boost::system::system_error& error) {
                 HandleException(error);
+                break;
             }
         }
     } catch (const boost::system::system_error& error) {

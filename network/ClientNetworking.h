@@ -40,11 +40,11 @@
     even if it is not at the front of the queue at the time.  This implies
     that some response messages may be handled out of order with respect to
     regular messages, but these are in fact the desired semantics. */
-class ClientNetworking
-{
+class ClientNetworking {
 public:
     /** The type of list returned by a call to DiscoverLANServers(). */
-    typedef std::vector<std::pair<boost::asio::ip::address, std::string> > ServerList;
+    typedef std::vector<std::pair<boost::asio::ip::address, std::string> >  ServerList;
+    typedef boost::array<int, 5>                                            MessageHeaderBuffer;
 
     /** \name Structors */ //@{
     ClientNetworking(); ///< Basic ctor.
@@ -108,21 +108,16 @@ public:
     //@}
 
 private:
-    typedef boost::array<int, 5> MessageHeaderBuffer;
-
     void HandleException(const boost::system::system_error& error);
     void HandleConnection(boost::asio::ip::tcp::resolver::iterator* it,
                           boost::asio::deadline_timer* timer,
                           const boost::system::error_code& error);
     void CancelRetries();
     void NetworkingThread();
-    void HandleMessageBodyRead(boost::system::error_code error,
-                               std::size_t bytes_transferred);
-    void HandleMessageHeaderRead(boost::system::error_code error,
-                                 std::size_t bytes_transferred);
+    void HandleMessageBodyRead(     boost::system::error_code error, std::size_t bytes_transferred);
+    void HandleMessageHeaderRead(   boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncReadMessage();
-    void HandleMessageWrite(boost::system::error_code error,
-                            std::size_t bytes_transferred);
+    void HandleMessageWrite(        boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncWriteMessage();
     void SendMessageImpl(Message message);
     void DisconnectFromServerImpl();
@@ -141,11 +136,6 @@ private:
     MessageHeaderBuffer             m_incoming_header;
     Message                         m_incoming_message;
     MessageHeaderBuffer             m_outgoing_header;
-
-    enum {
-        HEADER_SIZE =
-        MessageHeaderBuffer::static_size * sizeof(MessageHeaderBuffer::value_type)
-    };
 };
 
 #endif
