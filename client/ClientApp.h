@@ -44,8 +44,8 @@ public:
     const OrderSet&         Orders() const;      ///< returns Order set for this client's player
     const CombatOrderSet&   CombatOrders() const;///< returns CombatOrder set for this client's player
     const ClientNetworking& Networking() const;  ///< returns the networking object for this client's player
-    const Networking::ClientType
-                            GetEmpireClientType(int empire_id) const;  ///< returns the networking client type for the given empireID
+    const Networking::ClientType    GetEmpireClientType(int empire_id) const;   ///< returns the networking client type for the given empire_id
+    const Networking::ClientType    GetPlayerClientType(int player_id) const;   ///< returns the networking client type for the given player_id
     //@}
 
     /** \name Mutators */ //@{
