@@ -285,8 +285,7 @@ OISInput::OISInput() :
     m_keyboard(0)
 {}
 
-OISInput::~OISInput()
-{
+OISInput::~OISInput() {
     CleanupInputManager();
     DisconnectHandlers();
 }
@@ -297,9 +296,10 @@ const Ogre::String& OISInput::getName() const
 void OISInput::install()
 {}
 
-void OISInput::initialise()
-{
+void OISInput::initialise() {
     Ogre::RenderWindow* window = GetRenderWindow();
+    if (!window)
+        return;
 
     typedef OIS::ParamList::value_type ParamType;
 
@@ -316,9 +316,7 @@ void OISInput::initialise()
     if (!config_file_stream.isNull()) {
         Ogre::ConfigFile config_file;
         config_file.load(config_file_stream);
-        for (Ogre::ConfigFile::SettingsIterator it = config_file.getSettingsIterator();
-             it.hasMoreElements();
-             it.getNext()) {
+        for (Ogre::ConfigFile::SettingsIterator it = config_file.getSettingsIterator(); it.hasMoreElements(); it.getNext()) {
             param_list.insert(ParamType(it.peekNextKey(), it.peekNextValue()));
             Ogre::LogManager::getSingleton().logMessage("OISPlugin using config setting " + it.peekNextKey() + "=" + it.peekNextValue());
         }

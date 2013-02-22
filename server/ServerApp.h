@@ -195,7 +195,7 @@ private:
                          boost::shared_ptr<ServerSaveGameData> server_save_game_data);
 
     void    CleanupAIs();   ///< cleans up AI processes: kills the process and empties the container of AI processes
-    
+
     /** Sets the priority for all AI processes */
     void    SetAIsProcessPriorityToLow(bool set_to_low);
 
@@ -212,7 +212,7 @@ private:
 
     /** Called when the host player has disconnected.  Select a new host player*/
     void    SelectNewHost();
-    
+
     /** Called when this server's EmpireManager changes the diplomatic status
       * between two empires. Updates those empires of the change. */
     void    HandleDiplomaticStatusChange(int empire1_id, int empire2_id);

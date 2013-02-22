@@ -45,8 +45,7 @@ void OgreGUIInputPlugin::SetRenderWindow(Ogre::RenderWindow* window)
 Ogre::RenderWindow* OgreGUIInputPlugin::GetRenderWindow()
 { return s_render_window ? s_render_window : Ogre::Root::getSingleton().getAutoCreatedWindow(); }
 
-void OgreGUIInputPlugin::ConnectHandlers()
-{
+void OgreGUIInputPlugin::ConnectHandlers() {
     OgreGUI* gui = OgreGUI::GetGUI();
     assert(gui);
 
@@ -55,8 +54,7 @@ void OgreGUIInputPlugin::ConnectHandlers()
     m_close_connection = Connect(gui->WindowClosedSignal, &OgreGUIInputPlugin::HandleWindowClose, this);
 }
 
-void OgreGUIInputPlugin::DisconnectHandlers()
-{
+void OgreGUIInputPlugin::DisconnectHandlers() {
     m_handle_events_connection.disconnect();
     m_resize_connection.disconnect();
     m_close_connection.disconnect();

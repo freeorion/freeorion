@@ -130,13 +130,17 @@ namespace {
                     // For human players on host, have "Player", "Observer", and "Drop" options.  TODO: have "Ban" option.
                     Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_PLAYER));   // "Human" display / option
                     Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_OBSERVER)); // "Observer" display / option
-                    //Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_MODERATOR));// "Moderator" display / option
+                    Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_MODERATOR));// "Moderator" display / option
                     Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
                     SetDropHeight(h * 4);
                     if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
                         Select(0);
-                    else
+                    else if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
                         Select(1);
+                    else if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+                        Select(2);
+                    else
+                        Select(3);
                 }
             } else {
                 if (disabled) {
@@ -494,8 +498,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 bool MultiPlayerLobbyWnd::LoadGameSelected() const
 { return m_new_load_game_buttons->CheckedButton() == 1; }
 
-void MultiPlayerLobbyWnd::Render()
-{
+void MultiPlayerLobbyWnd::Render() {
     CUIWnd::Render();
     GG::Pt image_ul = g_preview_ul + ClientUpperLeft(), image_lr = image_ul + PREVIEW_SZ;
     GG::FlatRectangle(GG::Pt(image_ul.x - PREVIEW_MARGIN, image_ul.y - PREVIEW_MARGIN),
@@ -503,8 +506,7 @@ void MultiPlayerLobbyWnd::Render()
                       GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
-void MultiPlayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
-{
+void MultiPlayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) && GG::GUI::GetGUI()->FocusWnd() == m_chat_input_edit) {
         int receiver = Networking::INVALID_PLAYER_ID; // all players by default
         std::string text = m_chat_input_edit->Text();
@@ -528,16 +530,15 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, 
     } else if (m_start_game_bn && !m_start_game_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
         m_start_game_bn->ClickedSignal();
     } else if (key == GG::GGK_ESCAPE) {
-       m_cancel_bn->ClickedSignal();
+        m_cancel_bn->ClickedSignal();
     }
 }
 
-void MultiPlayerLobbyWnd::ChatMessage(int player_id, const std::string& msg)
-{
+void MultiPlayerLobbyWnd::ChatMessage(int player_id, const std::string& msg) {
     // look up player name by ID
     std::string player_name;
     for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = m_lobby_data.m_players.begin();
-            it != m_lobby_data.m_players.end(); ++it)
+         it != m_lobby_data.m_players.end(); ++it)
     {
         if (it->first == HumanClientApp::GetApp()->PlayerID() && it->first != Networking::INVALID_PLAYER_ID) {
             player_name = it->second.m_player_name;
@@ -560,8 +561,7 @@ namespace {
     }
 }
 
-void MultiPlayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data)
-{
+void MultiPlayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data) {
     m_new_load_game_buttons->SetCheck(!lobby_data.m_new_game);
     m_galaxy_setup_panel->SetFromSetupData(lobby_data);
 
@@ -582,8 +582,7 @@ void MultiPlayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data)
     LogPlayerSetupData(m_lobby_data.m_players);
 }
 
-void MultiPlayerLobbyWnd::Refresh()
-{
+void MultiPlayerLobbyWnd::Refresh() {
     if (ThisClientIsHost()) {
         for (std::size_t i = 0; i < m_new_load_game_buttons->NumButtons(); ++i)
             m_new_load_game_buttons->DisableButton(i, false);
@@ -599,8 +598,7 @@ void MultiPlayerLobbyWnd::Refresh()
     m_start_game_bn->Disable(!ThisClientIsHost() || !CanStart());
 }
 
-void MultiPlayerLobbyWnd::NewLoadClicked(std::size_t idx)
-{
+void MultiPlayerLobbyWnd::NewLoadClicked(std::size_t idx) {
     switch (idx) {
     case std::size_t(0):
         m_lobby_data.m_new_game = true;
@@ -619,22 +617,19 @@ void MultiPlayerLobbyWnd::NewLoadClicked(std::size_t idx)
     SendUpdate();
 }
 
-void MultiPlayerLobbyWnd::GalaxySetupPanelChanged()
-{
+void MultiPlayerLobbyWnd::GalaxySetupPanelChanged() {
     m_galaxy_setup_panel->GetSetupData(m_lobby_data);
     SendUpdate();
 }
 
-void MultiPlayerLobbyWnd::SaveGameChanged(GG::DropDownList::iterator it)
-{
+void MultiPlayerLobbyWnd::SaveGameChanged(GG::DropDownList::iterator it) {
     m_lobby_data.m_save_file_index = m_saved_games_list->IteratorToIndex(it);
     m_lobby_data.m_save_game_empire_data.clear();
     PopulatePlayerList();
     SendUpdate();
 }
 
-void MultiPlayerLobbyWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image)
-{
+void MultiPlayerLobbyWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image) {
     if (m_preview_image) {
         DeleteChild(m_preview_image);
         m_preview_image = 0;
@@ -643,8 +638,7 @@ void MultiPlayerLobbyWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new
     AttachChild(m_preview_image);
 }
 
-void MultiPlayerLobbyWnd::PlayerDataChangedLocally()
-{
+void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
     m_lobby_data.m_players.clear();
     for (GG::ListBox::iterator it = m_players_lb->begin(); it != m_players_lb->end(); ++it) {
         const PlayerRow* row = dynamic_cast<const PlayerRow*>(*it);
@@ -665,8 +659,7 @@ void MultiPlayerLobbyWnd::PlayerDataChangedLocally()
     SendUpdate();
 }
 
-bool MultiPlayerLobbyWnd::PopulatePlayerList()
-{
+bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     bool send_update_back_retval = false;
 
     m_players_lb->Clear();
@@ -722,15 +715,13 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList()
     return send_update_back_retval;
 }
 
-void MultiPlayerLobbyWnd::SendUpdate()
-{
+void MultiPlayerLobbyWnd::SendUpdate() {
     int player_id = HumanClientApp::GetApp()->PlayerID();
     if (player_id != Networking::INVALID_PLAYER_ID)
         HumanClientApp::GetApp()->Networking().SendMessage(LobbyUpdateMessage(player_id, m_lobby_data));
 }
 
-bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const
-{
+bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const {
     std::set<std::string> empire_names;
     std::set<unsigned int> empire_colors;
     int num_players_excluding_observers(0);
@@ -779,12 +770,9 @@ bool MultiPlayerLobbyWnd::CanStart() const
 { return PlayerDataAcceptable(); }
 
 bool MultiPlayerLobbyWnd::ThisClientIsHost() const
-{
-    return HumanClientApp::GetApp()->Networking().PlayerIsHost(HumanClientApp::GetApp()->Networking().PlayerID());
-}
+{ return HumanClientApp::GetApp()->Networking().PlayerIsHost(HumanClientApp::GetApp()->Networking().PlayerID()); }
 
-void MultiPlayerLobbyWnd::StartGameClicked()
-{
+void MultiPlayerLobbyWnd::StartGameClicked() {
     if (CanStart() && ThisClientIsHost()) {
         m_start_game_bn->Disable();
         HumanClientApp::GetApp()->StartMultiPlayerGameFromLobby();
@@ -792,6 +780,4 @@ void MultiPlayerLobbyWnd::StartGameClicked()
 }
 
 void MultiPlayerLobbyWnd::CancelClicked()
-{
-    HumanClientApp::GetApp()->CancelMultiplayerGameFromLobby();
-}
+{ HumanClientApp::GetApp()->CancelMultiplayerGameFromLobby(); }
