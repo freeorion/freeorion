@@ -91,9 +91,32 @@ void Process::ProcessImpl::Kill() {
             err_str += buf;
             LocalFree(buf);
         }
+        Logger().errorStream() << "Process::ProcessImpl::Kill : Error terminating process: " << err_str;
     }
-    CloseHandle(m_process_info.hProcess);
-    CloseHandle(m_process_info.hThread);
+
+    if (!CloseHandle(m_process_info.hProcess)) {
+        std::string err_str;
+        DWORD err = GetLastError();
+        DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
+        LPSTR buf;
+        if (FormatMessageA(flags, 0, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buf, 0, 0)) {
+            err_str += buf;
+            LocalFree(buf);
+        }
+        Logger().errorStream() << "Process::ProcessImpl::Kill : Error closing process handle: " << err_str;
+    }
+
+    if (!CloseHandle(m_process_info.hThread)) {
+        std::string err_str;
+        DWORD err = GetLastError();
+        DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
+        LPSTR buf;
+        if (FormatMessageA(flags, 0, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buf, 0, 0)) {
+            err_str += buf;
+            LocalFree(buf);
+        }
+        Logger().errorStream() << "Process::ProcessImpl::Kill : Error closing thread handle: " << err_str;
+    }
 }
 
 #elif defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
