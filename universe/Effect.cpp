@@ -2,6 +2,7 @@
 
 #include "../util/AppInterface.h"
 #include "../util/Random.h"
+#include "../util/Directories.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "ValueRef.h"
@@ -16,6 +17,8 @@
 #include "Ship.h"
 #include "Tech.h"
 #include "Species.h"
+
+#include <boost/filesystem/fstream.hpp>
 
 #include <cctype>
 
@@ -210,6 +213,42 @@ namespace {
         retval[0] = Target_name;
         retval[1] = Owner_name;
         return retval;
+    }
+
+    void LoadSystemNames(std::list<std::string>& names) {
+        boost::filesystem::ifstream ifs(GetResourceDir() / "starnames.txt");
+        while (ifs) {
+            std::string latest_name;
+            std::getline(ifs, latest_name);
+            if (!latest_name.empty())
+                names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
+        }
+    }
+
+    std::string GenerateSystemName() {
+        static std::list<std::string> star_names;
+        if (star_names.empty())
+            LoadSystemNames(star_names);
+
+        const ObjectMap& objects = Objects();
+        std::vector<const System*> systems = objects.FindObjects<System>();
+
+        // pick a name for the system
+        for (std::list<std::string>::const_iterator it = star_names.begin(); it != star_names.end(); ++it) {
+            // does an existing system have this name?
+            bool dupe = false;
+            for (std::vector<const System*>::const_iterator sys_it = systems.begin();
+                 sys_it != systems.end(); ++sys_it)
+            {
+                if ((*sys_it)->Name() == *it) {
+                    dupe = true;
+                    break;  // another systme has this name. skip to next potential name.
+                }
+            }
+            if (!dupe)
+                return *it; // no systems have this name yet. use it.
+        }
+        return "";  // fallback to empty name.
     }
 }
 
@@ -1161,12 +1200,19 @@ std::string SetOwner::Dump() const
 ///////////////////////////////////////////////////////////
 // CreatePlanet                                          //
 ///////////////////////////////////////////////////////////
-CreatePlanet::CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type, const ValueRef::ValueRefBase<PlanetSize>* size) :
+CreatePlanet::CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type,
+                           const ValueRef::ValueRefBase<PlanetSize>* size) :
     m_type(type),
     m_size(size)
-{}
+{
+    Logger().debugStream() << "CreatePlanet::CreatePlanet";
+    Logger().debugStream() << "    type: " << (m_type ? m_type->Dump() : "no type");
+    Logger().debugStream() << "    size: " << (m_size ? m_size->Dump() : "no size");
+    Logger().debugStream() << Dump();
+}
 
 CreatePlanet::~CreatePlanet() {
+    Logger().debugStream() << "CreatePlanet::~CreatePlanet";
     delete m_type;
     delete m_size;
 }
@@ -1229,7 +1275,10 @@ std::string CreatePlanet::Description() const {
 }
 
 std::string CreatePlanet::Dump() const
-{ return DumpIndent() + "CreatePlanet size = " + m_size->Dump() + " type = " + m_type->Dump() + "\n"; }
+{
+    Logger().debugStream() << "CreatePlanet::Dump()";
+    return DumpIndent() + "CreatePlanet size = " + m_size->Dump() + " type = " + m_type->Dump() + "\n";
+}
 
 
 ///////////////////////////////////////////////////////////
@@ -1475,6 +1524,7 @@ std::string CreateShip::Dump() const {
     return retval;
 }
 
+
 ///////////////////////////////////////////////////////////
 // CreateField                                           //
 ///////////////////////////////////////////////////////////
@@ -1546,8 +1596,8 @@ void CreateField::Execute(const ScriptingContext& context) const {
 }
 
 std::string CreateField::Description() const {
-    std::string size_str;
     if (m_size) {
+        std::string size_str;
         if (ValueRef::ConstantExpr(m_size)) {
             size_str = boost::lexical_cast<std::string>(m_size->Eval());
         } else {
@@ -1574,6 +1624,94 @@ std::string CreateField::Dump() const {
     return retval;
 }
 
+
+///////////////////////////////////////////////////////////
+// CreateSystem                                          //
+///////////////////////////////////////////////////////////
+CreateSystem::CreateSystem(const ValueRef::ValueRefBase<::StarType>* type,
+                           const ValueRef::ValueRefBase<double>* x,
+                           const ValueRef::ValueRefBase<double>* y) :
+    m_type(type),
+    m_x(x),
+    m_y(y)
+{}
+
+CreateSystem::CreateSystem(const ValueRef::ValueRefBase<double>* x,
+                           const ValueRef::ValueRefBase<double>* y) :
+    m_type(0),
+    m_x(x),
+    m_y(y)
+{}
+
+CreateSystem::~CreateSystem() {
+    delete m_type;
+    delete m_x;
+    delete m_y;
+}
+
+void CreateSystem::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target) {
+        Logger().errorStream() << "CreateSystem::Execute passed null target";
+        return;
+    }
+    const UniverseObject* target = context.effect_target;
+
+    // pick a star type
+    StarType star_type = STAR_NONE;
+    if (m_type) {
+        star_type = m_type->Eval(context);
+    } else {
+        int max_type_idx = int(NUM_STAR_TYPES) - 1;
+        int type_idx = RandSmallInt(0, max_type_idx);
+        star_type = StarType(type_idx);
+    }
+
+    // pick location
+    double x = 0.0;
+    double y = 0.0;
+    if (m_x)
+        x = m_x->Eval(context);
+    if (m_y)
+        y = m_y->Eval(context);
+
+    const int MAX_SYSTEM_ORBITS = 9;    // hard coded value in UniverseServer.cpp
+
+    System* system = new System(star_type, MAX_SYSTEM_ORBITS, GenerateSystemName(), x, y);
+    if (!system) {
+        Logger().errorStream() << "CreateSystem::Execute couldn't create system!";
+        return;
+    }
+
+    int new_id = GetNewObjectID();
+    GetUniverse().InsertID(system, new_id);
+}
+
+std::string CreateSystem::Description() const {
+    if (m_type) {
+        std::string type_str;
+        if (ValueRef::ConstantExpr(m_type)) {
+            type_str = boost::lexical_cast<std::string>(m_type->Eval());
+        } else {
+            type_str = m_type->Description();
+        }
+        return str(FlexibleFormat(UserString("DESC_CREATE_SYSTEM_TYPE"))
+                   % UserString(type_str));
+    } else {
+        return UserString("DESC_CREATE_SYSTEM");
+    }
+}
+
+std::string CreateSystem::Dump() const {
+    std::string retval = DumpIndent() + "CreateSystem";
+    if (m_type)
+        retval += " type = " + m_type->Dump();
+    if (m_x)
+        retval += " x = " + m_x->Dump();
+    if (m_y)
+        retval += " y = " + m_y->Dump();
+    retval += "\n";
+    return retval;
+}
 
 ///////////////////////////////////////////////////////////
 // Destroy                                               //

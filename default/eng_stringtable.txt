@@ -680,7 +680,10 @@ OPTIONS_DB_BG_MUSIC
 Sets the background track to play.
 
 OPTIONS_DB_FULLSCREEN
-Start the game in fullscreen.
+Start the game in fullscreen. Clicking Apply may cause this to take effect, or may require a restart.
+
+OPTIONS_DB_FULLSCREEN_MONITOR_ID
+Select which monitor to use in fullscreen mode. Primary monitor should be index 0. May require a restart to take effect.
 
 OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
 Time interval, in seconds, after which the multiplayer chat window will disappear if nothing is added to it. A value of 0 indicates that the window should never disappear.
@@ -752,16 +755,22 @@ OPTIONS_DB_UI_MAIN_MENU_Y
 Position of the center of the intro screen main menu, as a portion of the application's total height.
 
 OPTIONS_DB_APP_WIDTH
-Sets horizontal app resolution in fullscreen mode.
+Sets horizontal app resolution in fullscreen mode. Options are determined by the rendering plugin, and may not match the actual monitor size.
 
 OPTIONS_DB_APP_HEIGHT
-Sets vertical app resolution in fullscreen mode.
+Sets vertical app resolution in fullscreen mode. Options are determined by the rendering plugin, and may not match the actual monitor size.
 
 OPTIONS_DB_APP_WIDTH_WINDOWED
-Sets horizontal app resolution in windowed mode.
+Sets horizontal resolution in windowed mode.
 
 OPTIONS_DB_APP_HEIGHT_WINDOWED
-Sets vertical app resolution in windowed mode.
+Sets vertical resolution in windowed mode.
+
+OPTIONS_DB_APP_LEFT_WINDOWED
+Sets horizontal position in windowed mode. Relative to primary monitor left.
+
+OPTIONS_DB_APP_TOP_WINDOWED
+Sets vertical position in windowed mode. Relative to primary monitor top.
 
 OPTIONS_DB_COLOR_DEPTH
 Sets screen color depth, in bits per pixel.
@@ -1518,13 +1527,22 @@ OPTIONS_VIDEO_SETTINGS
 Video Settings
 
 OPTIONS_APP_WIDTH_WINDOWED
-Windowed Width
+Window Width
 
 OPTIONS_APP_HEIGHT_WINDOWED
-Windowed Height
+Window Height
+
+OPTIONS_APP_LEFT_WINDOWED
+Window Left Edge Position
+
+OPTIONS_APP_TOP_WINDOWED
+Window Top Position
 
 OPTIONS_FULLSCREEN
 Fullscreen
+
+OPTIONS_FULLSCREEN_MONITOR_ID
+Fullscreen Monitor ID
 
 OPTIONS_SHOW_FPS
 Show FPS
@@ -5300,6 +5318,12 @@ Creates a new field of type %1% with radius %2%
 
 DESC_CREATE_FIELD
 Creates a new field of type %1%
+
+DESC_CREATE_SYSTEM_TYPE
+Creates a new system of star type %1%
+
+DESC_CREATE_SYSTEM
+Creates a new system
 
 
 # Conditions

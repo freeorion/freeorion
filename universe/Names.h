@@ -65,6 +65,7 @@
     (CreateField)                               \
     (CreatePlanet)                              \
     (CreateShip)                                \
+    (CreateSystem)                              \
     (CreationTurn)                              \
     (CurrentTurn)                               \
     (Damage)                                    \

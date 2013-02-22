@@ -36,6 +36,7 @@ namespace Effect {
     class CreateBuilding;
     class CreateShip;
     class CreateField;
+    class CreateSystem;
     class Destroy;
     class AddSpecial;
     class RemoveSpecial;
@@ -460,7 +461,6 @@ public:
                 const ValueRef::ValueRefBase<double>* x,
                 const ValueRef::ValueRefBase<double>* y,
                 const ValueRef::ValueRefBase<double>* size = 0);
-
     virtual ~CreateField();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -471,6 +471,30 @@ private:
     const ValueRef::ValueRefBase<double>*   m_x;
     const ValueRef::ValueRefBase<double>*   m_y;
     const ValueRef::ValueRefBase<double>*   m_size;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Creates a new system with the specified \a colour and at the specified
+  * location. */
+class Effect::CreateSystem : public Effect::EffectBase {
+public:
+    CreateSystem(const ValueRef::ValueRefBase<::StarType>* type,
+                 const ValueRef::ValueRefBase<double>* x,
+                 const ValueRef::ValueRefBase<double>* y);
+    CreateSystem(const ValueRef::ValueRefBase<double>* x,
+                 const ValueRef::ValueRefBase<double>* y);
+    virtual ~CreateSystem();
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+private:
+    const ValueRef::ValueRefBase<::StarType>*   m_type;
+    const ValueRef::ValueRefBase<double>*       m_x;
+    const ValueRef::ValueRefBase<double>*       m_y;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -954,6 +978,15 @@ void Effect::CreateField::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_x)
         & BOOST_SERIALIZATION_NVP(m_y)
         & BOOST_SERIALIZATION_NVP(m_size);
+}
+
+template <class Archive>
+void Effect::CreateSystem::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_type)
+        & BOOST_SERIALIZATION_NVP(m_x)
+        & BOOST_SERIALIZATION_NVP(m_y);
 }
 
 template <class Archive>

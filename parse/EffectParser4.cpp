@@ -37,13 +37,14 @@ namespace {
             const parse::value_ref_parser_rule<int>::type& int_value_ref =                  parse::value_ref_parser<int>();
             const parse::value_ref_parser_rule<double>::type& double_value_ref =            parse::value_ref_parser<double>();
             const parse::value_ref_parser_rule<std::string>::type& string_value_ref =       parse::value_ref_parser<std::string>();
-            const parse::value_ref_parser_rule<PlanetType>::type& planet_type_value_ref =   parse::value_ref_parser<PlanetType>();
-            const parse::value_ref_parser_rule<PlanetSize>::type& planet_size_value_ref =   parse::value_ref_parser<PlanetSize>();
+            const parse::value_ref_parser_rule<::PlanetType>::type& planet_type_value_ref = parse::value_ref_parser<::PlanetType>();
+            const parse::value_ref_parser_rule<::PlanetSize>::type& planet_size_value_ref = parse::value_ref_parser<::PlanetSize>();
+            const parse::value_ref_parser_rule<::StarType>::type& star_type_value_ref =     parse::value_ref_parser<::StarType>();
 
             create_planet
                 =    tok.CreatePlanet_
                 >>   parse::label(Type_name)       >> planet_type_value_ref [ _a = _1 ]
-                >>   parse::label(PlanetSize_name) >> planet_size_value_ref [ new_<Effect::CreatePlanet>(_a, _1) ]
+                >>   parse::label(PlanetSize_name) >> planet_size_value_ref [ _val = new_<Effect::CreatePlanet>(_a, _1) ]
                 ;
 
             create_building
@@ -91,6 +92,21 @@ namespace {
                     )
                 ;
 
+            create_system
+                =   tok.CreateSystem_
+                >>  (
+                        (
+                            parse::label(Type_name)     >> star_type_value_ref [ _a = _1 ]
+                        >>  parse::label(X_name)        >> double_value_ref [ _b = _1 ]
+                        >>  parse::label(Y_name)        >> double_value_ref [ _val = new_<Effect::CreateSystem>(_a, _b, _1) ]
+                        )
+                    |   (
+                            parse::label(X_name)        >> double_value_ref [ _b = _1 ]
+                        >>  parse::label(Y_name)        >> double_value_ref [ _val = new_<Effect::CreateSystem>(_b, _1) ]
+                        )
+                    )
+                ;
+
             string_and_string_ref // TODO: Try to make this simpler.
                 =    parse::label(Tag_name)  >> tok.string [ _a = _1 ]
                 >>   parse::label(Data_name) >> string_value_ref [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
@@ -109,6 +125,7 @@ namespace {
                 |    create_ship_3
                 |    create_ship_4
                 |    create_field
+                |    create_system
                 ;
 
             create_planet.name("CreatePlanet");
@@ -118,6 +135,7 @@ namespace {
             create_ship_3.name("CreateShip (string DesignName and empire)");
             create_ship_4.name("CreateShip (string DesignName only)");
             create_field.name("CreateField");
+            create_system.name("CreateSystem");
 
 #if DEBUG_EFFECT_PARSERS
             debug(create_planet);
@@ -127,6 +145,7 @@ namespace {
             debug(create_ship_3);
             debug(create_ship_4);
             debug(create_field);
+            debug(create_system);
 #endif
         }
 
@@ -136,6 +155,16 @@ namespace {
             qi::locals<ValueRef::ValueRefBase< ::PlanetType>*>,
             parse::skipper_type
         > create_planet_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            Effect::EffectBase* (),
+            qi::locals<
+                ValueRef::ValueRefBase< ::StarType>*,
+                ValueRef::ValueRefBase<double>*
+            >,
+            parse::skipper_type
+        > create_system_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -193,6 +222,7 @@ namespace {
         string_and_intref_and_intref_rule   create_ship_3;
         string_and_intref_and_intref_rule   create_ship_4;
         string_and_doubleref_rule           create_field;
+        create_system_rule                  create_system;
         string_and_string_ref_rule          string_and_string_ref;
         string_and_string_ref_vector_rule   string_and_string_ref_vector;
         parse::effect_parser_rule           start;
