@@ -37,9 +37,9 @@ namespace {
             const parse::value_ref_parser_rule<int>::type& int_value_ref =                  parse::value_ref_parser<int>();
             const parse::value_ref_parser_rule<double>::type& double_value_ref =            parse::value_ref_parser<double>();
             const parse::value_ref_parser_rule<std::string>::type& string_value_ref =       parse::value_ref_parser<std::string>();
-            const parse::value_ref_parser_rule<::PlanetType>::type& planet_type_value_ref = parse::value_ref_parser<::PlanetType>();
-            const parse::value_ref_parser_rule<::PlanetSize>::type& planet_size_value_ref = parse::value_ref_parser<::PlanetSize>();
-            const parse::value_ref_parser_rule<::StarType>::type& star_type_value_ref =     parse::value_ref_parser<::StarType>();
+            const parse::value_ref_parser_rule< ::PlanetType>::type& planet_type_value_ref= parse::value_ref_parser< ::PlanetType>();
+            const parse::value_ref_parser_rule< ::PlanetSize>::type& planet_size_value_ref= parse::value_ref_parser< ::PlanetSize>();
+            const parse::value_ref_parser_rule< ::StarType>::type& star_type_value_ref =    parse::value_ref_parser< ::StarType>();
 
             create_planet
                 =    tok.CreatePlanet_

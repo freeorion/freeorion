@@ -481,7 +481,7 @@ private:
   * location. */
 class Effect::CreateSystem : public Effect::EffectBase {
 public:
-    CreateSystem(const ValueRef::ValueRefBase<::StarType>* type,
+    CreateSystem(const ValueRef::ValueRefBase< ::StarType>* type,
                  const ValueRef::ValueRefBase<double>* x,
                  const ValueRef::ValueRefBase<double>* y);
     CreateSystem(const ValueRef::ValueRefBase<double>* x,
@@ -492,7 +492,7 @@ public:
     virtual std::string Description() const;
     virtual std::string Dump() const;
 private:
-    const ValueRef::ValueRefBase<::StarType>*   m_type;
+    const ValueRef::ValueRefBase< ::StarType>*   m_type;
     const ValueRef::ValueRefBase<double>*       m_x;
     const ValueRef::ValueRefBase<double>*       m_y;
 

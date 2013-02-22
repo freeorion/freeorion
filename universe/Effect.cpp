@@ -1628,7 +1628,7 @@ std::string CreateField::Dump() const {
 ///////////////////////////////////////////////////////////
 // CreateSystem                                          //
 ///////////////////////////////////////////////////////////
-CreateSystem::CreateSystem(const ValueRef::ValueRefBase<::StarType>* type,
+CreateSystem::CreateSystem(const ValueRef::ValueRefBase< ::StarType>* type,
                            const ValueRef::ValueRefBase<double>* x,
                            const ValueRef::ValueRefBase<double>* y) :
     m_type(type),
