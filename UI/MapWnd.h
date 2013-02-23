@@ -208,7 +208,6 @@ private:
         std::vector<Vertex>                 vertices;   // cached apparent universe positions of starts and ends of line segments drawn to represent move path
     };
 
-    struct FleetButtonClickedFunctor;
     class MapScaleLine;
 
     void            Zoom(int delta);                            //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent)
@@ -279,7 +278,7 @@ private:
 
     void            PlotFleetMovement(int system_id, bool execute_move);   //!< issues fleet move orders to appropriate fleets in active FleetWnd
 
-    void            FleetButtonClicked(FleetButton& fleet_btn);
+    void            FleetButtonClicked(const FleetButton* fleet_btn);
 
     void            UniverseObjectDeleted(const UniverseObject *obj);
 

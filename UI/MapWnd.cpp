@@ -484,22 +484,6 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
 }
 
 
-/////////////////////////////////////////
-// MapWnd::FleetButtonClickedFunctor
-/////////////////////////////////////////
-struct MapWnd::FleetButtonClickedFunctor {
-    FleetButtonClickedFunctor(FleetButton& fleet_btn, MapWnd& map_wnd) :
-        m_fleet_btn(fleet_btn),
-        m_map_wnd(map_wnd)
-    {}
-    void operator()() {
-        m_map_wnd.FleetButtonClicked(m_fleet_btn);
-    }
-    FleetButton&    m_fleet_btn;
-    MapWnd&         m_map_wnd;
-};
-
-
 ///////////////////////////
 // MapWnd
 ///////////////////////////
@@ -3281,7 +3265,7 @@ void MapWnd::RefreshFleetButtons() {
 
             AttachChild(fb);
             MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
-            GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
+            GG::Connect(fb->ClickedSignal, boost::bind(&MapWnd::FleetButtonClicked, this, fb));
         }
     }
 
@@ -3316,7 +3300,7 @@ void MapWnd::RefreshFleetButtons() {
 
             AttachChild(fb);
             MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
-            GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
+            GG::Connect(fb->ClickedSignal, boost::bind(&MapWnd::FleetButtonClicked, this, fb));
         }
     }
 
@@ -3352,7 +3336,7 @@ void MapWnd::RefreshFleetButtons() {
 
             AttachChild(fb);
             MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
-            GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
+            GG::Connect(fb->ClickedSignal, boost::bind(&MapWnd::FleetButtonClicked, this, fb));
         }
     }
 
@@ -3663,8 +3647,10 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
     }
 }
 
-void MapWnd::FleetButtonClicked(FleetButton& fleet_btn) {
+void MapWnd::FleetButtonClicked(const FleetButton* fleet_btn) {
     //std::cout << "MapWnd::FleetButtonClicked" << std::endl;
+    if (!fleet_btn)
+        return;
 
     // allow switching to fleetView even when in production mode
     if (m_in_production_view_mode) {
@@ -3673,7 +3659,7 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn) {
 
 
     // get possible fleets to select from, and a pointer to one of those fleets
-    const std::vector<int>& btn_fleets = fleet_btn.Fleets();
+    const std::vector<int>& btn_fleets = fleet_btn->Fleets();
     if (btn_fleets.empty()) {
         Logger().errorStream() << "Clicked FleetButton contained no fleets!";
         return;
