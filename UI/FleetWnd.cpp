@@ -879,6 +879,7 @@ private:
     void                AggressionToggleButtonPressed();
 
     void                Refresh();
+    void                SetStatIconValues();
     void                UpdateAggressionToggle();
     double              StatValue(const std::string& stat_name) const;
     std::string         StatTooltip(const std::string& stat_name) const;
@@ -1204,7 +1205,6 @@ void FleetDataPanel::Refresh() {
 
     } else if (const Fleet* fleet = GetFleet(m_fleet_id)) {
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-
         // set fleet name and destination text
         m_fleet_name_text->SetText(fleet->PublicName(client_empire_id));
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
@@ -1234,14 +1234,69 @@ void FleetDataPanel::Refresh() {
             AttachChild(m_scanline_control);
         }
 
-        // set stat icon values
-        for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it =
-             m_stat_icons.begin(); it != m_stat_icons.end(); ++it)
-        { it->second->SetValue(StatValue(it->first)); }
+        SetStatIconValues();
     }
 
     UpdateAggressionToggle();
     DoLayout();
+}
+
+void FleetDataPanel::SetStatIconValues() {
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
+    int ship_count =        0;
+    float damage_tally =    0.0;
+    float structure_tally = 0.0;
+    float shield_tally =    0.0;
+    float min_fuel =        0;
+    float min_speed =       0;
+    std::vector<float> fuels;
+    std::vector<float> speeds;
+
+    const Fleet* fleet = GetFleet(m_fleet_id);
+
+    fuels.reserve(fleet->NumShips());
+    speeds.reserve(fleet->NumShips());
+    for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
+        int ship_id = *it;
+        // skip known destroyed and stale info objects
+        if (this_client_known_destroyed_objects.find(ship_id) != this_client_known_destroyed_objects.end())
+            continue;
+        if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
+            continue;
+        if (const Ship* ship = GetShip(ship_id)) {
+            if (const ShipDesign* design = ship->Design()) {
+                ship_count++;
+                damage_tally += design->Attack();
+                structure_tally += ship->NextTurnCurrentMeterValue(METER_STRUCTURE);
+                shield_tally += ship->NextTurnCurrentMeterValue(METER_SHIELD);
+                fuels.push_back(ship->NextTurnCurrentMeterValue(METER_FUEL));
+                speeds.push_back(ship->NextTurnCurrentMeterValue(METER_STARLANE_SPEED));
+            }
+        }
+    }
+    if (!fuels.empty())
+        min_fuel = *std::min_element(fuels.begin(), fuels.end());
+    if (!speeds.empty())
+        min_speed = *std::min_element(speeds.begin(), speeds.end());
+    for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it =
+        m_stat_icons.begin(); it != m_stat_icons.end(); ++it) 
+    {
+        const std::string stat_name = it->first;
+        if (stat_name == SPEED_STAT_STRING)
+            it->second->SetValue(min_speed); 
+        else if (stat_name == MeterStatString(METER_FUEL))
+            it->second->SetValue(min_fuel);
+        else if (stat_name == SHIELD_STAT_STRING)
+            it->second->SetValue(shield_tally);
+        else if (stat_name == STRUCTURE_STAT_STRING)
+            it->second->SetValue(structure_tally);
+        else if (stat_name == DAMAGE_STAT_STRING)
+            it->second->SetValue(damage_tally);
+        else if (stat_name == COUNT_STAT_STRING)
+            it->second->SetValue(ship_count);
+    }
 }
 
 void FleetDataPanel::UpdateAggressionToggle() {
@@ -1276,27 +1331,6 @@ void FleetDataPanel::UpdateAggressionToggle() {
             FleetPassiveIcon(), UserString("FW_PASSIVE"), UserString("FW_PASSIVE_DESC")));
         m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
     }
-}
-
-double FleetDataPanel::StatValue(const std::string& stat_name) const {
-    if (m_new_fleet_drop_target)
-        return 0.0;
-
-    if (const Fleet* fleet = GetFleet(m_fleet_id)) {
-        if (stat_name == SPEED_STAT_STRING)
-            return fleet->Speed();
-        else if (stat_name == MeterStatString(METER_FUEL))
-            return fleet->Fuel();
-        else if (stat_name == SHIELD_STAT_STRING)
-            return fleet->Shields();
-        else if (stat_name == STRUCTURE_STAT_STRING)
-            return fleet->Structure();
-        else if (stat_name == DAMAGE_STAT_STRING)
-            return fleet->Damage();
-        else if (stat_name == COUNT_STAT_STRING)
-            return fleet->NumShips();
-    }
-    return 0.0;
 }
 
 std::string FleetDataPanel::StatTooltip(const std::string& stat_name) const {
