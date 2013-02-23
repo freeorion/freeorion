@@ -659,7 +659,7 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
                                boost::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
     // Need to determine which data in player_save_game_data should be assigned to which established player
-    std::map<int, int> player_id_to_save_game_data_index;
+    std::vector<std::pair<int, int> > player_id_to_save_game_data_index;
 
     ServerNetworking::const_established_iterator established_player_it = m_networking.established_begin();
 
@@ -670,7 +670,7 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
             // In a single player game, the host player is always the human player, so
             // this is just a matter of finding which entry in player_save_game_data was
             // a human player, and assigning that saved player data to the host player ID
-            player_id_to_save_game_data_index[m_networking.HostPlayerID()] = i;
+            player_id_to_save_game_data_index.push_back(std::make_pair(m_networking.HostPlayerID(), i));
 
         } else if (psgd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // All saved AI player data, as determined from their client type, is
@@ -683,7 +683,7 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
                 // if player is an AI, assign it to this 
                 if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
                     int player_id = player_connection->PlayerID();
-                    player_id_to_save_game_data_index[player_id] = i;
+                    player_id_to_save_game_data_index.push_back(std::make_pair(player_id, i));
                     break;
                 }
             }
@@ -701,7 +701,7 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
                                boost::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
     // Need to determine which data in player_save_game_data should be assigned to which established player
-    std::map<int, int> player_id_to_save_game_data_index;
+    std::vector<std::pair<int, int> > player_id_to_save_game_data_index;
 
 
     //ServerNetworking::const_established_iterator established_player_it = m_networking.established_begin();
@@ -728,7 +728,7 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
         for (int i = 0; i < static_cast<int>(player_save_game_data.size()); ++i) {
             const PlayerSaveGameData& psgd = player_save_game_data.at(i);
             if (psgd.m_empire_id == player_setup_empire_id) {
-                player_id_to_save_game_data_index[player_id] = i;
+                player_id_to_save_game_data_index.push_back(std::make_pair(player_id, i));
                 break;
             }
         }
@@ -738,7 +738,7 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
 }
 
 void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
-                             const std::map<int, int>& player_id_to_save_game_data_index,
+                             const std::vector<std::pair<int, int> >& player_id_to_save_game_data_index,
                              boost::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
     Logger().debugStream() << "ServerApp::LoadGameInit";
@@ -783,6 +783,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     m_victors =         server_save_game_data->m_victors;
     // todo: save and restore m_eliminated_players ?
 
+    std::map<int, PlayerSaveGameData> player_id_save_game_data;
 
     // add empires to turn processing and record empires for each player
     for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
@@ -790,17 +791,38 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     {
         const PlayerConnectionPtr player_connection = *player_connection_it;
         int player_id = player_connection->PlayerID();
-
-        // get index indo save game data for this player
-        std::map<int, int>::const_iterator index_it = player_id_to_save_game_data_index.find(player_id);
-        if (index_it == player_id_to_save_game_data_index.end()) {
-            Logger().errorStream() << "ServerApp::LoadGameInit couldn't find save game data index for player with id " << player_id;
+        if (player_id == Networking::INVALID_PLAYER_ID) {
+            Logger().errorStream() << "LoadGameInit got invalid player id from connection";
             continue;
         }
-        int player_save_game_data_index = index_it->second;
-        // and get the player's saved game data
-        const PlayerSaveGameData& psgd = player_save_game_data.at(player_save_game_data_index);
-        int empire_id = psgd.m_empire_id;   // can't use GetPlayerEmpireID here because m_player_empire_ids hasn't been set up yet.
+
+
+        // get index into save game data for this player id
+        int player_save_game_data_index = -1;   // default invalid index
+        for (std::vector<std::pair<int, int> >::const_iterator index_it = player_id_to_save_game_data_index.begin();
+             index_it != player_id_to_save_game_data_index.end(); ++index_it)
+        {
+            int index_player_id = index_it->first;
+            if (player_id != index_player_id)
+                continue;
+            player_save_game_data_index = index_it->second;
+        }
+        if (player_save_game_data_index == -1) {
+            Logger().debugStream() << "No save game data index for player with id " << player_id;
+            continue;
+        }
+
+
+        // get the player's saved game data
+        int empire_id = ALL_EMPIRES;
+        try {
+            const PlayerSaveGameData& psgd = player_save_game_data.at(player_save_game_data_index);
+            empire_id = psgd.m_empire_id;               // can't use GetPlayerEmpireID here because m_player_empire_ids hasn't been set up yet.
+            player_id_save_game_data[player_id] = psgd; // store by player ID for easier access later
+        } catch (...) {
+            Logger().errorStream() << "ServerApp::LoadGameInit couldn't find save game data with index " << player_save_game_data_index;
+            continue;
+        }
 
 
         // record player id to empire id mapping in loaded game.  Player IDs
@@ -837,6 +859,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
+
 
     // compile information about players to send out to other players at start of game.
     Logger().debugStream() << "ServerApp::CommonGameInit: Compiling PlayerInfo for each player";
@@ -878,18 +901,15 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         const PlayerConnectionPtr player_connection = *player_connection_it;
         int player_id = player_connection->PlayerID();
 
-        // get index indo save game data for this player
-        std::map<int, int>::const_iterator index_it = player_id_to_save_game_data_index.find(player_id);
-        if (index_it == player_id_to_save_game_data_index.end()) {
-            Logger().errorStream() << "ServerApp::LoadGameInit couldn't find save game data index for player with id " << player_id;
-            continue;
-        }
-        int player_save_game_data_index = index_it->second;
-        // and get the player's saved game data
-        const PlayerSaveGameData& psgd = player_save_game_data.at(player_save_game_data_index);
-
+        std::map<int, PlayerSaveGameData>::const_iterator save_data_it = player_id_save_game_data.find(player_id);
+        if (save_data_it == player_id_save_game_data.end())
+            continue;   // no data for this player
+        const PlayerSaveGameData& psgd = save_data_it->second;
 
         int empire_id = PlayerEmpireID(player_id);
+        if (empire_id != psgd.m_empire_id) {
+            Logger().errorStream() << "LoadGameInit got inconsistent empire ids between player save game data and result of PlayerEmpireID";
+        }
 
 
         // get saved orders.  these will be re-executed on client and re-sent
