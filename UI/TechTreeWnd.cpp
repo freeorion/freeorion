@@ -2044,7 +2044,7 @@ void TechTreeWnd::Update()
 
 void TechTreeWnd::Clear() {
     m_tech_navigator->SetTech("");
-    m_enc_detail_panel->OnUp();
+    m_enc_detail_panel->OnIndex();
     m_layout_panel->Clear();
 }
 

@@ -224,23 +224,34 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     const int NAME_PTS = PTS*3/2;
     const int COST_PTS = PTS;
     const int SUMMARY_PTS = PTS*4/3;
+    const int ICON_WIDTH(32);
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
     m_name_text =       new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetBoldFont(NAME_PTS),  ClientUI::TextColor());
     m_cost_text =       new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(COST_PTS),      ClientUI::TextColor());
     m_summary_text =    new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(SUMMARY_PTS),   ClientUI::TextColor());
-    m_up_button =       new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("UP"));
-    m_back_button =     new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("BACK"));
-    m_next_button =     new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("NEXT"));
 
-    m_up_button->Disable();             // all nav buttons disabled at the beginning
+    m_index_button =    new GG::Button(GG::X0, GG::Y0, GG::X(ICON_WIDTH), GG::Y(ICON_WIDTH), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
+    m_back_button =     new GG::Button(GG::X0, GG::Y0, GG::X(ICON_WIDTH), GG::Y(ICON_WIDTH), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
+    m_next_button =     new GG::Button(GG::X0, GG::Y0, GG::X(ICON_WIDTH), GG::Y(ICON_WIDTH), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
     m_back_button->Disable();
     m_next_button->Disable();
+
+    m_index_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"      ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_index_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"     ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_index_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_back_button->SetUnpressedGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrownormal.png"    ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_back_button->SetPressedGraphic   (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowclicked.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_back_button->SetRolloverGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowmouseover.png" ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_next_button->SetUnpressedGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_next_button->SetPressedGraphic   (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_next_button->SetRolloverGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
 
     CUILinkTextMultiEdit* desc_box = new CUILinkTextMultiEdit(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     GG::Connect(desc_box->LinkClickedSignal,        &EncyclopediaDetailPanel::HandleLinkClick,          this);
     GG::Connect(desc_box->LinkDoubleClickedSignal,  &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
     GG::Connect(desc_box->LinkRightClickedSignal,   &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
-    GG::Connect(m_up_button->ClickedSignal,         &EncyclopediaDetailPanel::OnUp,                     this);
+    GG::Connect(m_index_button->ClickedSignal,      &EncyclopediaDetailPanel::OnIndex,                  this);
     GG::Connect(m_back_button->ClickedSignal,       &EncyclopediaDetailPanel::OnBack,                   this);
     GG::Connect(m_next_button->ClickedSignal,       &EncyclopediaDetailPanel::OnNext,                   this);
     m_description_box = desc_box;
@@ -251,7 +262,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     AttachChild(m_cost_text);
     AttachChild(m_summary_text);
     AttachChild(m_description_box);
-    AttachChild(m_up_button);
+    AttachChild(m_index_button);
     AttachChild(m_back_button);
     AttachChild(m_next_button);
 
@@ -270,7 +281,7 @@ void EncyclopediaDetailPanel::DoLayout() {
 
     const int ICON_SIZE = 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
 
-    const int BTN_WIDTH = 40;
+    const int BTN_WIDTH = 32;
 
     // name
     GG::Pt ul = GG::Pt();
@@ -300,7 +311,7 @@ void EncyclopediaDetailPanel::DoLayout() {
     // "up" button
     ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 2 - 4, Height() - BORDER_BOTTOM*3 - PTS);
     lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH - 4, Height() - BORDER_BOTTOM*3);
-    m_up_button->SizeMove(ul, lr);
+    m_index_button->SizeMove(ul, lr);
 
     // "next" button
     ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH, Height() - BORDER_BOTTOM*2 - PTS);
@@ -1321,7 +1332,6 @@ void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string
     if (!m_next_button->Disabled())                      // disable Next button
         m_next_button->Disable(true);
 
-    CheckUpButton();
     Refresh();
 }
 
@@ -1500,21 +1510,8 @@ void EncyclopediaDetailPanel::SetItem(const Empire* empire)
 void EncyclopediaDetailPanel::SetItem(const ShipDesign* design)
 { SetDesign(design ? design->ID() : ShipDesign::INVALID_DESIGN_ID); }
 
-void EncyclopediaDetailPanel::OnUp() {
-    if (!m_items.empty()) {
-        if (m_items_it->first == TextLinker::ENCYCLOPEDIA_TAG ||
-            m_items_it->first == INCOMPLETE_DESIGN            ||
-            m_items_it->first == UNIVERSE_OBJECT)
-        {
-            if (m_items_it->second != "ENC_INDEX")
-                AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX");
-        } else {
-            AddItem(TextLinker::ENCYCLOPEDIA_TAG, m_items_it->first);
-        }
-    } else {
-        AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX");
-    }
-}
+void EncyclopediaDetailPanel::OnIndex()
+{ AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX"); }
 
 void EncyclopediaDetailPanel::OnBack() {
     if (m_items_it != m_items.begin())
@@ -1525,7 +1522,6 @@ void EncyclopediaDetailPanel::OnBack() {
     if (m_next_button->Disabled())                  // enable Next button
         m_next_button->Disable(false);
 
-    CheckUpButton();
     Refresh();
 }
 
@@ -1540,18 +1536,7 @@ void EncyclopediaDetailPanel::OnNext() {
     if (m_back_button->Disabled())                  // enable Back button
         m_back_button->Disable(false);
 
-    CheckUpButton();
     Refresh();
-}
-
-void EncyclopediaDetailPanel::CheckUpButton() {
-    if (m_items_it->second == "ENC_INDEX") {
-        if (!m_up_button->Disabled())
-            m_up_button->Disable(true);
-    } else {
-        if (m_up_button->Disabled())
-            m_up_button->Disable(false);
-    }
 }
 
 Encyclopedia::Encyclopedia() :

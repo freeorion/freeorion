@@ -68,9 +68,9 @@ public:
     void            SetItem(const ShipDesign* design);
     void            SetIncompleteDesign(boost::weak_ptr<const ShipDesign> incomplete_design);
     void            SetIndex();
-    
+
     void            Refresh();
-    void            OnUp();
+    void            OnIndex();
     void            OnBack();
     void            OnNext();
     //@}
@@ -80,7 +80,6 @@ private:
 
     void HandleLinkClick(const std::string& link_type, const std::string& data);
     void HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
-    void CheckUpButton();
 
     static std::list<std::pair <std::string, std::string> >             m_items;    // stores all items which have been observed in the past
                                                                                     // .first == item type; .second == item.name
@@ -93,7 +92,7 @@ private:
     GG::MultiEdit*      m_description_box;  // detailed and lengthy description
     GG::StaticGraphic*  m_icon;
     GG::StaticGraphic*  m_other_icon;
-    GG::Button*         m_up_button;
+    GG::Button*         m_index_button;
     GG::Button*         m_back_button;
     GG::Button*         m_next_button;
 };
