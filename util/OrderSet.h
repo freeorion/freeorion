@@ -13,8 +13,7 @@
 typedef boost::shared_ptr<Order> OrderPtr;
 
 /** a collection of orders that may be searched using arbitrary predicate functions and functors*/
-class OrderSet
-{
+class OrderSet {
 private:
     typedef std::map<int, OrderPtr> OrderMap;
 
