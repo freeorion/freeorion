@@ -9,8 +9,17 @@
 #include <boost/serialization/access.hpp>
 
 class Universe;
-class UniverseObject;
 struct UniverseObjectVisitor;
+
+class UniverseObject;
+class ResourceCenter;
+class PopCenter;
+class Ship;
+class Fleet;
+class Planet;
+class System;
+class Building;
+class Field;
 
 extern const int ALL_EMPIRES;
 extern const int INVALID_OBJECT_ID;
@@ -18,9 +27,66 @@ extern const int INVALID_OBJECT_ID;
 /** Contains a set of objects that make up a (known or complete) Universe. */
 class ObjectMap {
 public:
-    typedef std::map<int, UniverseObject*>::const_iterator          iterator;       ///< iterator that allows modification of pointed-to UniverseObjects
-    typedef std::map<int, const UniverseObject*>::const_iterator    const_iterator; ///< iterator that does not allow modification of UniverseObjects
 
+    /* templated iterators. These allow us to iterate over a specific type
+     * of UniverseObject, expose const iterators without a soring a separate
+     * map of const pointers, and expose iterators over only the values stored
+     * in the map. TODO: consider whether the iterator over key/value pairs is
+     * really needed, or if the iterator over values is adequate, or if the
+     * iterator over key/value pairs should only be used privately to lookup
+     * objects by id */
+    template <class T = UniverseObject>
+    struct iterator : std::map<int, T*>::const_iterator {
+        iterator(typename std::map<int, T*>::const_iterator base) : std::map<int, T*>::const_iterator(base) {}
+    };
+    
+    template <class T = UniverseObject>
+    struct const_iterator : std::map<int, T*>::const_iterator {
+        const_iterator(typename std::map<int, T*>::const_iterator base) : std::map<int, T*>::const_iterator(base) {}
+
+        const std::pair<int, const T*> operator *() {
+             return std::map<int, T*>::const_iterator::operator*();
+        }
+
+        const std::pair<int, const T*>* operator ->() {
+            return &**this;
+        }
+    };
+
+    template <class T = UniverseObject>
+    struct value_iterator : std::map<int, T*>::const_iterator {
+        value_iterator(typename std::map<int, T*>::const_iterator base) : std::map<int, T*>::const_iterator(base) {}
+
+        T& operator *() const {
+            return *std::map<int, T*>::const_iterator::operator*().second;
+        }
+
+        T* operator ->() const {
+            return &**this;
+        }
+
+        operator T*() const {
+            return this->operator->();
+        }
+    };
+
+    template <class T = UniverseObject>
+    struct const_value_iterator : std::map<int, T*>::const_iterator {
+        const_value_iterator(typename std::map<int, T*>::const_iterator base) : std::map<int, T*>::const_iterator(base) {}
+
+        const T& operator *() const {
+            return *std::map<int, T*>::const_iterator::operator*().second;
+        }
+
+        const T* operator ->() const {
+            return &**this;
+        }
+
+        operator const T*() const {
+            return this->operator->();
+        }
+    };
+    
     /** \name Structors */ //@{
     ObjectMap();            ///< default ctor
     ~ObjectMap();           ///< dtor
@@ -33,6 +99,8 @@ public:
 
     /** \name Accessors */ //@{
     /** Returns number of objects in this ObjectMap */
+    int                     NumObjects() const;
+    template <class T>
     int                     NumObjects() const;
 
     /** Returns true if this ObjectMap contains no objects */
@@ -89,10 +157,32 @@ public:
     std::vector<int>        FindObjectIDs() const;
 
     /** iterators */
-    iterator            begin();
-    iterator            end();
-    const_iterator      const_begin() const;
-    const_iterator      const_end() const;
+    // these first 8 are primarily for convenience
+    iterator<>              begin();
+    iterator<>              end();
+    const_iterator<>        begin() const;
+    const_iterator<>        end() const;
+    value_iterator<>        begin_values();
+    value_iterator<>        end_values();
+    const_value_iterator<>  begin_values() const;
+    const_value_iterator<>  end_values() const;
+
+    template <class T>
+    iterator<T>             begin();
+    template <class T>
+    iterator<T>             end();
+    template <class T>
+    const_iterator<T>       begin() const;
+    template <class T>
+    const_iterator<T>       end() const;
+    template <class T>
+    value_iterator<T>       begin_values();
+    template <class T>
+    value_iterator<T>       end_values();
+    template <class T>
+    const_value_iterator<T> begin_values() const;
+    template <class T>
+    const_value_iterator<T> end_values() const;
 
     std::string         Dump() const;
     //@}
@@ -117,10 +207,11 @@ public:
       * existing information about that object or creating a new object in this
       * map as appropriate with UniverseObject::Copy or UniverseObject::Clone.
       * The object is fully copied if \a empire_id is ALL_EMPIRES, but if
-      * another empire id is specified, then the copied informatio is limited
-      * by passed that \a empire_id to Copy or Clone of the object.  The
-      * passed object is unchanged. */
-    void                Copy(const UniverseObject* obj, int empire_id = ALL_EMPIRES);
+      * another empire id is specified, then the copied information is limited
+      * by passing the visibility of the object by the empire specified by
+      * \a empire_id to Copy or Clone of the object.  The passed object is
+      * unchanged. */
+    void                CopyObject(const UniverseObject* source, int empire_id = ALL_EMPIRES);
 
     /** Copies the objects of the ObjectMap \a copied_map that are visible to
       * the empire with id \a empire_id into this ObjectMap.  Copied objects
@@ -135,10 +226,10 @@ public:
     /** Adds object \a obj to the map under id \a id if id is a valid object id
       * and obj is an object with that id set.  If there already was an object
       * in the map with the id \a id then that object is first removed, and
-      * is returned. This ObjectMap takes ownership of the passed
-      * UniverseObject. The caller takes ownership of any returned
-      * UniverseObject. */
-    UniverseObject*     Insert(int id, UniverseObject* obj);
+      * is returned, otherwise 0 is returned. This ObjectMap takes ownership
+      * of the passed UniverseObject. The caller takes ownership of any
+      * returned UniverseObject. */
+    UniverseObject*     Insert(UniverseObject* obj);
 
     /** Removes object with id \a id from map, and returns that object, if
       * there was an object under that ID in the map.  If no such object
@@ -159,12 +250,31 @@ public:
     //@}
 
 private:
-    void                CopyObjectsToConstObjects();
+    void                CopyObjectsToSpecializedMaps();
+    template <class T>
+    const std::map<int, T*>& Map() const;
+    template <class T>
+    std::map<int, T*>& Map();
+
+    template<class T>
+    static void         ClearMap(std::map<int, T*>& map);
+    template <class T>
+    static void         TryInsertIntoMap(std::map<int, T*>& map, UniverseObject* item);
+    template <class T>
+    static void         EraseFromMap(std::map<int, T*>& map, int id);
+    template <class T>
+    static void         SwapMap(std::map<int, T*>& map, ObjectMap& rhs);
 
     std::map<int, UniverseObject*>          m_objects;
-    std::map<int, const UniverseObject*>    m_const_objects;
+    std::map<int, ResourceCenter*>          m_resource_centers;
+    std::map<int, PopCenter*>               m_pop_centers;
+    std::map<int, Ship*>                    m_ships;
+    std::map<int, Fleet*>                   m_fleets;
+    std::map<int, Planet*>                  m_planets;
+    std::map<int, System*>                  m_systems;
+    std::map<int, Building*>                m_buildings;
+    std::map<int, Field*>                   m_fields;
 
-    friend class Universe;
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -176,54 +286,105 @@ private:
 #endif
 
 template <class T>
-const T* ObjectMap::Object(int id) const
-{
-    const_iterator it = m_const_objects.find(id);
-    return (it != m_const_objects.end() ?
-            static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())) :
-            0);
+ObjectMap::iterator<T> ObjectMap::begin()
+{ return Map<T>().begin(); }
+
+template <class T>
+ObjectMap::iterator<T> ObjectMap::end()
+{ return Map<T>().end(); }
+
+template <class T>
+ObjectMap::const_iterator<T> ObjectMap::begin() const
+{ return Map<T>().begin(); }
+
+template <class T>
+ObjectMap::const_iterator<T> ObjectMap::end() const
+{ return Map<T>().end(); }
+
+template <class T>
+ObjectMap::value_iterator<T> ObjectMap::begin_values()
+{ return Map<T>().begin(); }
+
+template <class T>
+ObjectMap::value_iterator<T> ObjectMap::end_values()
+{ return Map<T>().end(); }
+
+template <class T>
+ObjectMap::const_value_iterator<T> ObjectMap::begin_values() const
+{ return Map<T>().begin(); }
+
+template <class T>
+ObjectMap::const_value_iterator<T> ObjectMap::end_values() const
+{ return Map<T>().end(); }
+
+template <class T>
+const T* ObjectMap::Object(int id) const {
+    const_iterator<T> it = Map<T>().find(id);
+    return (it != Map<T>().end() ? it->second : 0);
 }
 
 template <class T>
-T* ObjectMap::Object(int id)
-{
-    iterator it = m_objects.find(id);
-    return (it != m_objects.end() ?
-            static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())) :
-            0);
+T* ObjectMap::Object(int id) {
+    iterator<T> it = Map<T>().find(id);
+    return (it != Map<T>().end() ? it->second : 0);
 }
 
 template <class T>
-std::vector<const T*> ObjectMap::FindObjects() const
-{
-    std::vector<const T*> retval;
-    for (ObjectMap::const_iterator it = m_const_objects.begin(); it != m_const_objects.end(); ++it) {
-        if (const T* obj = static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-            retval.push_back(obj);
-    }
-    return retval;
+std::vector<const T*> ObjectMap::FindObjects() const {
+    std::vector<const T*> result;
+    for (const_value_iterator<T> it = begin_values<T>(); it != end_values<T>(); ++it)
+        result.push_back(it);
+    return result;
 }
 
 template <class T>
-std::vector<T*> ObjectMap::FindObjects()
-{
-    std::vector<T*> retval;
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (T* obj = static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-            retval.push_back(obj);
-    }
-    return retval;
+std::vector<T*> ObjectMap::FindObjects() {
+    std::vector<T*> result;
+    for (value_iterator<T> it = begin_values<T>(); it != end_values<T>(); ++it)
+        result.push_back(it);
+    return result;
 }
 
 template <class T>
-std::vector<int> ObjectMap::FindObjectIDs() const
-{
-    std::vector<int> retval;
-    for (ObjectMap::const_iterator it = m_const_objects.begin(); it != m_const_objects.end(); ++it) {
-        if (static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-            retval.push_back(it->first);
-    }
-    return retval;
+std::vector<int> ObjectMap::FindObjectIDs() const {
+    std::vector<int> result;
+    for (const_iterator<T> it = begin<T>(); it != end<T>(); ++it)
+        result.push_back(it->first);
+    return result;
 }
+
+template <class T>
+int ObjectMap::NumObjects() const {
+    return Map<T>().size();
+}
+
+// template specializations
+
+template <>
+const std::map<int, UniverseObject*>&  ObjectMap::Map() const;
+
+template <>
+const std::map<int, ResourceCenter*>&  ObjectMap::Map() const;
+
+template <>
+const std::map<int, PopCenter*>&  ObjectMap::Map() const;
+
+template <>
+const std::map<int, Ship*>&  ObjectMap::Map() const;
+
+template <>
+const std::map<int, Fleet*>&  ObjectMap::Map() const;
+
+template <>
+const std::map<int, Planet*>&  ObjectMap::Map() const;
+
+template <>
+const std::map<int, System*>&  ObjectMap::Map() const;
+
+template <>
+const std::map<int, Building*>&  ObjectMap::Map() const;
+
+template <>
+const std::map<int, Field*>&  ObjectMap::Map() const;
 
 #endif

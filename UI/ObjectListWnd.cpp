@@ -501,8 +501,8 @@ private:
             // collect all valid tags on any object in universe
             std::set<std::string> all_tags;
             const ObjectMap& known_objects = Objects();
-            for (ObjectMap::const_iterator obj_it = known_objects.const_begin();
-                 obj_it != known_objects.const_end(); ++obj_it)
+            for (ObjectMap::const_iterator<> obj_it = known_objects.begin();
+                 obj_it != known_objects.end(); ++obj_it)
             {
                 std::vector<std::string> obj_tags = obj_it->second->Tags();
                 std::copy(obj_tags.begin(), obj_tags.end(), std::inserter(all_tags, all_tags.end()));
@@ -596,8 +596,8 @@ private:
             // collect all valid foci on any object in universe
             std::set<std::string> all_foci;
             const ObjectMap& known_objects = Objects();
-            for (ObjectMap::const_iterator obj_it = known_objects.const_begin();
-                 obj_it != known_objects.const_end(); ++obj_it)
+            for (ObjectMap::const_iterator<> obj_it = known_objects.begin();
+                 obj_it != known_objects.end(); ++obj_it)
             {
                 const UniverseObject* obj = obj_it->second;
                 if (obj->ObjectType() != OBJ_PLANET)
@@ -1239,7 +1239,7 @@ public:
             std::map<int, std::set<int> >   planet_buildings;
             std::set<int>                   fields;
 
-            for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
+            for (ObjectMap::const_iterator<> it = objects.begin(); it != objects.end(); ++it) {
                 int object_id = it->first;
                 const UniverseObject* obj = it->second;
 

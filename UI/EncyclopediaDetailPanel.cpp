@@ -505,7 +505,7 @@ namespace {
         // TODO: only loop over planets?
         // TODO: pass in a location condition, and pick a location that matches it if possible
         if (!location) {
-            for (ObjectMap::const_iterator obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
+            for (ObjectMap::const_iterator<> obj_it = Objects().begin(); obj_it != Objects().end(); ++obj_it) {
                 if (obj_it->second->OwnedBy(empire_id)) {
                     location = obj_it->second;
                     break;
@@ -766,7 +766,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
         // objects that have special
         std::vector<const UniverseObject*> objects_with_special;
-        for (ObjectMap::const_iterator obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it)
+        for (ObjectMap::const_iterator<> obj_it = objects.begin(); obj_it != objects.end(); ++obj_it)
             if (obj_it->second->Specials().find(m_items_it->second) != obj_it->second->Specials().end())
                 objects_with_special.push_back(obj_it->second);
 

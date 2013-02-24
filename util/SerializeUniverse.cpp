@@ -25,8 +25,10 @@ void ObjectMap::serialize(Archive& ar, const unsigned int version)
 {
     ar & BOOST_SERIALIZATION_NVP(m_objects);
 
+    // If loading from the archive, propagate the changes to the specialized maps.
+    // This involves a lot of casting, 
     if (Archive::is_loading::value) {
-        CopyObjectsToConstObjects();
+        CopyObjectsToSpecializedMaps();
     }
 }
 

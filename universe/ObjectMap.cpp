@@ -2,8 +2,27 @@
 
 #include "Universe.h"
 #include "UniverseObject.h"
+#include "Ship.h"
+#include "Fleet.h"
+#include "Planet.h"
+#include "System.h"
+#include "Building.h"
+#include "Field.h"
 #include "Enums.h"
 #include "../util/AppInterface.h"
+
+
+#define FOR_EACH_SPECIALIZED_MAP(f, ...)  { f(m_resource_centers, ##__VA_ARGS__);   \
+                                            f(m_pop_centers, ##__VA_ARGS__);        \
+                                            f(m_ships, ##__VA_ARGS__);              \
+                                            f(m_fleets, ##__VA_ARGS__);             \
+                                            f(m_planets, ##__VA_ARGS__);            \
+                                            f(m_systems, ##__VA_ARGS__);            \
+                                            f(m_buildings, ##__VA_ARGS__);          \
+                                            f(m_fields, ##__VA_ARGS__); }
+
+#define FOR_EACH_MAP(f, ...)              { f(m_objects, ##__VA_ARGS__);            \
+                                            FOR_EACH_SPECIALIZED_MAP(f, ##__VA_ARGS__); }
 
 /////////////////////////////////////////////
 // class ObjectMap
@@ -23,24 +42,25 @@ void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*
 
     // loop through objects in copied map, copying or cloning each depending
     // on whether there already is a corresponding object in this map
-    for (ObjectMap::const_iterator it = copied_map.const_begin(); it != copied_map.const_end(); ++it)
-        this->Copy(it->second, empire_id);
+    for (const_value_iterator<> it = copied_map.begin_values(); it != copied_map.end_values(); ++it)
+        this->CopyObject(it, empire_id);
 }
 
-void ObjectMap::Copy(const UniverseObject* obj, int empire_id/* = ALL_EMPIRES*/) {
-    if (!obj)
+void ObjectMap::CopyObject(const UniverseObject* source, int empire_id/* = ALL_EMPIRES*/) {
+    if (!source)
         return;
-    int object_id = obj->ID();
+
+    int source_id = source->ID();
 
     // can empire see object at all?  if not, skip copying object's info
-    if (GetUniverse().GetObjectVisibilityByEmpire(object_id, empire_id) <= VIS_NO_VISIBILITY)
+    if (GetUniverse().GetObjectVisibilityByEmpire(source_id, empire_id) <= VIS_NO_VISIBILITY)
         return;
 
-    if (UniverseObject* copy_to_object = this->Object(object_id)) {
-        copy_to_object->Copy(obj, empire_id);           // there already is a version of this object present in this ObjectMap, so just update it
+    if (UniverseObject* destination = this->Object(source_id)) {
+        destination->Copy(source, empire_id); // there already is a version of this object present in this ObjectMap, so just update it
     } else {
-        UniverseObject* clone = obj->Clone(empire_id);  // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
-        this->Insert(object_id, clone);
+        UniverseObject* clone = source->Clone();  // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
+        Insert(clone);
     }
 }
 
@@ -50,7 +70,7 @@ void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id/*
 
     // loop through objects in copied map, copying or cloning each depending
     // on whether there already is a corresponding object in this map
-    for (ObjectMap::const_iterator it = copied_map.const_begin(); it != copied_map.const_end(); ++it) {
+    for (const_iterator<> it = copied_map.begin(); it != copied_map.end(); ++it) {
         int object_id = it->first;
 
         // can empire see object at all?  if not, skip copying object's info
@@ -61,14 +81,14 @@ void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id/*
         // appropriate for the actual visibility level.  this ensures that any
         // details previously learned about object will still be recorded in
         // copied-to ObjectMap
-        this->Copy(it->second, ALL_EMPIRES);
+        this->CopyObject(it->second, ALL_EMPIRES);
    }
 }
 
 ObjectMap* ObjectMap::Clone(int empire_id) const {
-    ObjectMap* retval = new ObjectMap();
-    retval->Copy(*this, empire_id);
-    return retval;
+    ObjectMap* result = new ObjectMap();
+    result->Copy(*this, empire_id);
+    return result;
 }
 
 int ObjectMap::NumObjects() const
@@ -78,156 +98,249 @@ bool ObjectMap::Empty() const
 { return m_objects.empty(); }
 
 const UniverseObject* ObjectMap::Object(int id) const {
-    const_iterator it = m_const_objects.find(id);
-    return (it != m_const_objects.end() ? it->second : 0);
+    const_iterator<> it = m_objects.find(id);
+    return (it != m_objects.end() ? it->second : 0);
 }
 
 UniverseObject* ObjectMap::Object(int id) {
-    iterator it = m_objects.find(id);
+    iterator<> it = m_objects.find(id);
     return (it != m_objects.end() ? it->second : 0);
 }
 
 std::vector<const UniverseObject*> ObjectMap::FindObjects(const std::vector<int>& object_ids) const {
-    std::vector<const UniverseObject*> retval;
+    std::vector<const UniverseObject*> result;
     for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
         if (const UniverseObject* obj = Object(*it))
-            retval.push_back(obj);
+            result.push_back(obj);
         else
             Logger().errorStream() << "ObjectMap::FindObjects couldn't find object with id " << *it;
-    return retval;
+    return result;
 }
-
+    
 std::vector<UniverseObject*> ObjectMap::FindObjects(const std::vector<int>& object_ids) {
-    std::vector<UniverseObject*> retval;
+    std::vector<UniverseObject*> result;
     for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
         if (UniverseObject* obj = Object(*it))
-            retval.push_back(obj);
+            result.push_back(obj);
         else
             Logger().errorStream() << "ObjectMap::FindObjects couldn't find object with id " << *it;
-    return retval;
+    return result;
 }
 
 std::vector<const UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const {
-    std::vector<const UniverseObject*> retval;
-    for (const_iterator it = m_const_objects.begin(); it != m_const_objects.end(); ++it) {
-        if (UniverseObject* obj = it->second->Accept(visitor))
-            retval.push_back(obj);
+    std::vector<const UniverseObject*> result;
+    for (const_value_iterator<> it = begin_values(); it != end_values(); ++it) {
+        if (UniverseObject* obj = it->Accept(visitor))
+            result.push_back(obj);
     }
-    return retval;
+    return result;
 }
 
 std::vector<UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) {
-    std::vector<UniverseObject*> retval;
-    for (iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (UniverseObject* obj = it->second->Accept(visitor))
-            retval.push_back(obj);
+    std::vector<UniverseObject*> result;
+    for (value_iterator<> it = begin_values(); it != end_values(); ++it) {
+        if (UniverseObject* obj = it->Accept(visitor))
+            result.push_back(obj);
     }
-    return retval;
+    return result;
 }
 
 std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) const {
-    std::vector<int> retval;
-    for (const_iterator it = m_const_objects.begin(); it != m_const_objects.end(); ++it) {
+    std::vector<int> result;
+    for (const_iterator<> it = begin(); it != end(); ++it) {
         if (it->second->Accept(visitor))
-            retval.push_back(it->first);
+            result.push_back(it->first);
     }
-    return retval;
+    return result;
 }
 
 std::vector<int> ObjectMap::FindObjectIDs() const {
-    std::vector<int> retval;
-    for (const_iterator it = m_const_objects.begin(); it != m_const_objects.end(); ++it)
-        retval.push_back(it->first);
-    return retval;
+    std::vector<int> result;
+    for (const_iterator<> it = begin(); it != end(); ++it)
+        result.push_back(it->first);
+    return result;
 }
 
-ObjectMap::iterator ObjectMap::begin()
-{ return m_objects.begin(); }
+ObjectMap::iterator<> ObjectMap::begin()
+{ return begin<UniverseObject>(); }
 
-ObjectMap::iterator ObjectMap::end()
-{ return m_objects.end(); }
+ObjectMap::iterator<> ObjectMap::end()
+{ return end<UniverseObject>(); }
 
-ObjectMap::const_iterator ObjectMap::const_begin() const
-{ return m_const_objects.begin(); }
+ObjectMap::const_iterator<> ObjectMap::begin() const
+{ return begin<UniverseObject>(); }
 
-ObjectMap::const_iterator ObjectMap::const_end() const
-{ return m_const_objects.end(); }
+ObjectMap::const_iterator<> ObjectMap::end() const
+{ return end<UniverseObject>(); }
 
-UniverseObject* ObjectMap::Insert(int id, UniverseObject* obj) {
-    // safety checks...
-    if (!obj || id == INVALID_OBJECT_ID)
+ObjectMap::value_iterator<> ObjectMap::begin_values()
+{ return begin_values<UniverseObject>(); }
+
+ObjectMap::value_iterator<> ObjectMap::end_values()
+{ return end_values<UniverseObject>(); }
+
+ObjectMap::const_value_iterator<> ObjectMap::begin_values() const
+{ return begin_values<UniverseObject>(); }
+
+ObjectMap::const_value_iterator<> ObjectMap::end_values() const
+{ return end_values<UniverseObject>(); }
+
+
+UniverseObject* ObjectMap::Insert(UniverseObject* item) {
+    if (!item)
         return 0;
 
-    if (obj->ID() != id) {
-        Logger().errorStream() << "ObjectMap::Insert passed object and id that doesn't match the object's id";
-        obj->SetID(id);
-    }
-
+    FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, item);
+    
     // check if an object is in the map already with specified id
-    std::map<int, UniverseObject*>::iterator it = m_objects.find(id);
+    std::map<int, UniverseObject*>::iterator it = m_objects.find(item->ID());
     if (it == m_objects.end()) {
-        // no pre-existing object was stored under specified id, so just insert
-        // the new object
-        m_objects[id] = obj;
-        m_const_objects[id] = obj;
+        // no pre-existing object was stored under specified id,
+        // so just insert the new object
+        m_objects[item->ID()] = item;
         return 0;
     }
-
-    // pre-existing object is present.  need to get it and store it first...
-    UniverseObject* old_obj = it->second;
-
-    // and update maps
-    it->second = obj;
-    m_const_objects[id] = obj;
-
-    // and return old object for external handling
-    return old_obj;
+    else {
+        UniverseObject* old_item = it->second;  // pre-existing object is present. Need to get it and store it first...
+        it->second = item;                      // and update map...
+        return old_item;                        // and return old object for external handling
+    }
 }
 
 UniverseObject* ObjectMap::Remove(int id) {
     // search for object in objects maps
-    std::map<int, UniverseObject*>::iterator it = m_objects.find(id);
+    iterator<> it = m_objects.find(id);
     if (it == m_objects.end())
         return 0;
-
+    Logger().debugStream() << "Object was removed: " << it->second->Dump();
     // object found, so store pointer for later...
-    UniverseObject* retval = it->second;
+    UniverseObject* result = it->second;
 
     // and erase from pointer maps
     m_objects.erase(it);
-    m_const_objects.erase(id);
+    FOR_EACH_SPECIALIZED_MAP(EraseFromMap, id);
 
-    return retval;
+    return result;
 }
 
 void ObjectMap::Delete(int id)
 { delete Remove(id); }
 
 void ObjectMap::Clear() {
-    for (iterator it = m_objects.begin(); it != m_objects.end(); ++it)
-        delete it->second;
-    m_objects.clear();
-    m_const_objects.clear();
+    for (value_iterator<> it = begin_values(); it != end_values(); ++it)
+        delete it;
+    FOR_EACH_MAP(ClearMap);
 }
 
 void ObjectMap::swap(ObjectMap& rhs) {
-    m_objects.swap(rhs.m_objects);
-    m_const_objects.swap(rhs.m_const_objects);
+    FOR_EACH_MAP(SwapMap, rhs);
 }
 
-void ObjectMap::CopyObjectsToConstObjects() {
-    // remove existing entries in const objects and replace with values from non-const objects
-    m_const_objects.clear();
-    m_const_objects.insert(m_objects.begin(), m_objects.end());
+void ObjectMap::CopyObjectsToSpecializedMaps() {
+    FOR_EACH_SPECIALIZED_MAP(ClearMap);
+    for (value_iterator<> it = begin_values(); it != end_values(); ++it)
+        FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, it);
 }
 
 std::string ObjectMap::Dump() const {
-    std::ostringstream os;
-    os << "ObjectMap contains UniverseObjects: " << std::endl;
-    for (ObjectMap::const_iterator it = const_begin(); it != const_end(); ++it) {
-        os << it->second->Dump() << std::endl;
-    }
-    os << std::endl;
-    return os.str();
+    std::ostringstream dump_stream;
+    dump_stream << "ObjectMap contains UniverseObjects: " << std::endl;
+    for (const_value_iterator<> it = begin_values(); it != end_values(); ++it)
+        dump_stream << it->Dump() << std::endl;
+    dump_stream << std::endl;
+    return dump_stream.str();
 }
 
+// Static helpers
+
+template<class T>
+void ObjectMap::EraseFromMap(std::map<int, T*>& map, int id)
+{ map.erase(id); }
+
+template<class T>
+void ObjectMap::ClearMap(std::map<int, T*>& map)
+{ map.clear(); }
+
+template<class T>
+void ObjectMap::SwapMap(std::map<int, T*>& map, ObjectMap& rhs)
+{ map.swap(rhs.Map<T>()); }
+
+template <class T>
+void ObjectMap::TryInsertIntoMap(std::map<int, T*>& map, UniverseObject* item) {
+    if (T* t_item = dynamic_cast<T*>(item))
+        map[item->ID()] = t_item;
+}
+
+// template specializations
+
+template <>
+const std::map<int, UniverseObject*>&  ObjectMap::Map() const
+{ return m_objects; }
+
+template <>
+const std::map<int, ResourceCenter*>&  ObjectMap::Map() const
+{ return m_resource_centers; }
+
+template <>
+const std::map<int, PopCenter*>&  ObjectMap::Map() const
+{ return m_pop_centers; }
+
+template <>
+const std::map<int, Ship*>&  ObjectMap::Map() const
+{ return m_ships; }
+
+template <>
+const std::map<int, Fleet*>&  ObjectMap::Map() const
+{ return m_fleets; }
+
+template <>
+const std::map<int, Planet*>&  ObjectMap::Map() const
+{ return m_planets; }
+
+template <>
+const std::map<int, System*>&  ObjectMap::Map() const
+{ return m_systems; }
+
+template <>
+const std::map<int, Building*>&  ObjectMap::Map() const
+{ return m_buildings; }
+
+template <>
+const std::map<int, Field*>&  ObjectMap::Map() const
+{ return m_fields; }
+
+template <>
+std::map<int, UniverseObject*>&  ObjectMap::Map()
+{ return m_objects; }
+
+template <>
+std::map<int, ResourceCenter*>&  ObjectMap::Map()
+{ return m_resource_centers; }
+
+template <>
+std::map<int, PopCenter*>&  ObjectMap::Map()
+{ return m_pop_centers; }
+
+template <>
+std::map<int, Ship*>&  ObjectMap::Map()
+{ return m_ships; }
+
+template <>
+std::map<int, Fleet*>&  ObjectMap::Map()
+{ return m_fleets; }
+
+template <>
+std::map<int, Planet*>&  ObjectMap::Map()
+{ return m_planets; }
+
+template <>
+std::map<int, System*>&  ObjectMap::Map()
+{ return m_systems; }
+
+template <>
+std::map<int, Building*>&  ObjectMap::Map()
+{ return m_buildings; }
+
+template <>
+std::map<int, Field*>&  ObjectMap::Map()
+{ return m_fields; }

@@ -1773,17 +1773,16 @@ const std::map<int, std::set<int> > Empire::KnownStarlanes() const {
     const Universe& universe = GetUniverse();
 
     const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
-    std::vector<const System*> systems = EmpireKnownObjects(this->EmpireID()).FindObjects<const System>();
-
-    for (std::vector<const System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
-        const System* system = *it;
-        int start_id = system->ID();
+    for (ObjectMap::const_value_iterator<System> sys_it = Objects().begin_values<System>();
+         sys_it != Objects().end_values<System>(); ++sys_it)
+    {
+        int start_id = sys_it->ID();
 
         // exclude lanes starting at systems known to be destroyed
         if (known_destroyed_objects.find(start_id) != known_destroyed_objects.end())
             continue;
 
-        System::StarlaneMap lanes = system->StarlanesWormholes();
+        System::StarlaneMap lanes = sys_it->StarlanesWormholes();
         for (System::StarlaneMap::const_iterator lane_it = lanes.begin(); lane_it != lanes.end(); ++lane_it) {
             if (lane_it->second || known_destroyed_objects.find(lane_it->second) != known_destroyed_objects.end())
                 continue;   // is a wormhole, not a starlane, or is connected to a known destroyed system
@@ -1802,20 +1801,17 @@ const std::map<int, std::set<int> > Empire::VisibleStarlanes() const {
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
 
-    std::vector<const System*> systems = objects.FindObjects<const System>();
-
-    for (std::vector<const System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
-        const System* system = *it;
-        if (!system)
-            continue;
-        int start_id = system->ID();
+    for (ObjectMap::const_value_iterator<System> sys_it = Objects().begin_values<System>();
+         sys_it != Objects().end_values<System>(); ++sys_it)
+    {
+        int start_id = sys_it->ID();
 
         // is system visible to this empire?
         if (universe.GetObjectVisibilityByEmpire(start_id, m_id) <= VIS_NO_VISIBILITY)
             continue;
 
         // get system's visible lanes for this empire
-        System::StarlaneMap lanes = system->VisibleStarlanesWormholes(m_id);
+        System::StarlaneMap lanes = sys_it->VisibleStarlanesWormholes(m_id);
 
         // copy to retval
         for (System::StarlaneMap::const_iterator lane_it = lanes.begin(); lane_it != lanes.end(); ++lane_it) {
@@ -2598,9 +2594,11 @@ void Empire::InitResourcePools() {
     // set non-blockadeable resource pools to share resources between all systems
     std::set<std::set<int> > sets_set;
     std::set<int> all_systems_set;
-    const std::vector<const System*> all_systems_vec = objects.FindObjects<System>();
-    for (std::vector<const System*>::const_iterator it = all_systems_vec.begin(); it != all_systems_vec.end(); ++it)
-        all_systems_set.insert((*it)->ID());
+    for (ObjectMap::const_value_iterator<System> sys_it = Objects().begin_values<System>();
+         sys_it != Objects().end_values<System>(); ++sys_it)
+    {
+        all_systems_set.insert(sys_it->ID());
+    }
     sets_set.insert(all_systems_set);
     m_resource_pools[RE_RESEARCH]->SetConnectedSupplyGroups(sets_set);
     m_resource_pools[RE_TRADE]->SetConnectedSupplyGroups(sets_set);

@@ -1442,7 +1442,7 @@ void MapWnd::RenderVisibilityRadii() {
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<double, double> >, float> empire_position_max_detection_ranges;
 
-    for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
+    for (ObjectMap::const_iterator<> it = objects.begin(); it != objects.end(); ++it) {
         int object_id = it->first;
         // skip destroyed objects
         if (destroyed_object_ids.find(object_id) != destroyed_object_ids.end())
@@ -4392,7 +4392,7 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects) 
         // update meters for all objects.  Value of updated_contained_objects is
         // irrelivant and is ignored in this case.
         std::vector<int> object_ids;
-        for (ObjectMap::const_iterator obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it) {
+        for (ObjectMap::const_iterator<> obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
             int object_id = obj_it->first;
             // skip known destroyed objects, but do update for stale objects
             if (this_client_known_destroyed_objects.find(object_id) != this_client_known_destroyed_objects.end())

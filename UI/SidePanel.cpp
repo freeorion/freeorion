@@ -2296,14 +2296,13 @@ void SidePanel::RefreshImpl() {
 
 
     // populate droplist of system names
-    std::vector<const System*> sys_vec = Objects().FindObjects<const System>();
-
     int system_names_in_droplist = 0;
-    for (unsigned int i = 0; i < sys_vec.size(); i++) {
-        const System* sys = sys_vec[i];
-        int sys_id = sys->ID();
+    for (ObjectMap::const_value_iterator<System> sys_it = Objects().begin_values<System>();
+         sys_it != Objects().end_values<System>(); ++sys_it)
+    {
+        int sys_id = sys_it->ID();
 
-        if (sys->Name().empty() && sys_id != s_system_id)
+        if (sys_it->Name().empty() && sys_id != s_system_id)
             continue;   // skip rows for systems that aren't known to this client, except the selected system
 
         GG::DropDownList::iterator latest_it = m_system_name->Insert(new SystemRow(sys_id));

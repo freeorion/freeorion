@@ -1531,7 +1531,7 @@ namespace {
              it != system_combat_info.end(); ++it)
         {
             ObjectMap& objects = it->second.objects;
-            for (ObjectMap::iterator obj_it = objects.begin(); obj_it != objects.end(); ++obj_it)
+            for (ObjectMap::iterator<> obj_it = objects.begin(); obj_it != objects.end(); ++obj_it)
                 obj_it->second->BackPropegateMeters();
         }
     }
@@ -1618,7 +1618,7 @@ namespace {
                 for (std::set<int>::const_iterator empire_it = combat_info.empire_ids.begin();
                      empire_it != combat_info.empire_ids.end(); ++empire_it)
                 {
-                    universe.EmpireKnownObjects(*empire_it).Copy(system, ALL_EMPIRES);
+                    universe.EmpireKnownObjects(*empire_it).CopyObject(system, ALL_EMPIRES);
                 }
             }
         }
@@ -2070,7 +2070,7 @@ namespace {
             if (planet_initial_owner_id != ALL_EMPIRES && planet_initial_owner_id != planet->Owner()) {
                 // get empire's knowledge of object
                 ObjectMap& empire_latest_known_objects = EmpireKnownObjects(planet_initial_owner_id);
-                empire_latest_known_objects.Copy(planet, planet_initial_owner_id);
+                empire_latest_known_objects.CopyObject(planet, planet_initial_owner_id);
             }
         }
     }
@@ -2119,7 +2119,7 @@ void ServerApp::PreCombatProcessTurns() {
 
     // scrap orders
     std::vector<int> objects_to_scrap;
-    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
+    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it) {
         int object_id = it->first;
         if (Ship* ship = universe_object_cast<Ship*>(it->second)) {
             if (ship->OrderedScrapped())
@@ -2393,7 +2393,7 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // Population growth or loss, resource current meter growth, etc.
-    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
+    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();
         it->second->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }

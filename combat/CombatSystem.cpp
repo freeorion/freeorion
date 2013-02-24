@@ -40,7 +40,7 @@ CombatInfo::CombatInfo(int system_id_) :
 
     // add copy of system to full / complete objects in combat
     System* copy_system = system->Clone();
-    objects.Insert(system_id, copy_system);
+    objects.Insert(copy_system);
 
 
     // find ships and their owners in system
@@ -58,7 +58,7 @@ CombatInfo::CombatInfo(int system_id_) :
 
         // add copy of ship to full / complete copy of objects in system
         Ship* copy = ship->Clone();
-        objects.Insert(ship_id, copy);
+        objects.Insert(copy);
     }
 
     // find planets and their owners in system
@@ -77,7 +77,7 @@ CombatInfo::CombatInfo(int system_id_) :
 
         // add copy of ship to full / complete copy of objects in system
         Planet* copy = planet->Clone();
-        objects.Insert(planet_id, copy);
+        objects.Insert(copy);
     }
 
     // TODO: should buildings be considered separately?
@@ -92,7 +92,7 @@ CombatInfo::CombatInfo(int system_id_) :
         if (empire_id == ALL_EMPIRES)
             continue;
         System* visibility_limited_copy = system->Clone(empire_id);
-        empire_known_objects[empire_id].Insert(system_id, visibility_limited_copy);
+        empire_known_objects[empire_id].Insert(visibility_limited_copy);
     }
     // ships
     for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
@@ -119,7 +119,7 @@ CombatInfo::CombatInfo(int system_id_) :
                         Empires().GetDiplomaticStatus(empire_id, fleet->Owner()) == DIPLO_WAR)))
             {
                 Ship* visibility_limited_copy = ship->Clone(empire_id);
-                empire_known_objects[empire_id].Insert(ship_id, visibility_limited_copy);
+                empire_known_objects[empire_id].Insert(visibility_limited_copy);
             }
         }
     }
@@ -138,7 +138,7 @@ CombatInfo::CombatInfo(int system_id_) :
                 continue;
             if (universe.GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_BASIC_VISIBILITY) {
                 Planet* visibility_limited_copy = planet->Clone(empire_id);
-                empire_known_objects[empire_id].Insert(planet_id, visibility_limited_copy);
+                empire_known_objects[empire_id].Insert(visibility_limited_copy);
             }
         }
     }
@@ -533,7 +533,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     std::map<int, std::set<int> > empire_valid_attacker_object_ids; // objects that can attack that each empire owns
     float monster_detection = 0.0;
 
-    for (ObjectMap::iterator it = combat_info.objects.begin(); it != combat_info.objects.end(); ++it) {
+    for (ObjectMap::iterator<> it = combat_info.objects.begin(); it != combat_info.objects.end(); ++it) {
         const UniverseObject* obj = it->second;
         //Logger().debugStream() << "Considerting object " << obj->Name() << " owned by " << obj->Owner();
         if (ObjectCanAttack(obj)) {

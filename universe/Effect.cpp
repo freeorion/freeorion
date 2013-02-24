@@ -303,7 +303,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const {
     ObjectMap& objects = GetUniverse().Objects();
     TargetSet potential_targets;
     potential_targets.reserve(objects.NumObjects());
-    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
+    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
         potential_targets.push_back(it->second);
     GetTargetSet(source_id, targets, potential_targets);
 }
@@ -1808,7 +1808,7 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
     // get all objects in an ObjectSet
     Condition::ObjectSet potential_endpoint_objects;
     potential_endpoint_objects.reserve(objects.NumObjects());
-    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
+    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
         potential_endpoint_objects.push_back(it->second);
 
     Condition::ObjectSet endpoint_objects;
@@ -1882,7 +1882,7 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
     // get all objects in an ObjectSet
     Condition::ObjectSet potential_endpoint_objects;
     potential_endpoint_objects.reserve(objects.NumObjects());
-    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
+    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
         potential_endpoint_objects.push_back(it->second);
 
     Condition::ObjectSet endpoint_objects;
@@ -1980,7 +1980,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
     // get all objects in an ObjectSet
     Condition::ObjectSet potential_locations;
     potential_locations.reserve(objects.NumObjects());
-    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
+    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
         potential_locations.push_back(it->second);
 
     Condition::ObjectSet valid_locations;
@@ -2419,7 +2419,7 @@ void SetDestination::Execute(const ScriptingContext& context) const {
     // get all objects in an ObjectSet
     Condition::ObjectSet potential_locations;
     potential_locations.reserve(objects.NumObjects());
-    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
+    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
         potential_locations.push_back(it->second);
 
     Condition::ObjectSet valid_locations;
