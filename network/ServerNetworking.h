@@ -67,7 +67,7 @@ public:
     std::size_t NumEstablishedPlayers() const;
 
     /** Returns an iterator to the established PlayerConnection object with ID
-        \a id, or end() if none is found. */
+        \a id, or established_end() if none is found. */
     const_established_iterator GetPlayer(int id) const;
 
     /** Returns an iterator to the first \a established PlayerConnection object. */

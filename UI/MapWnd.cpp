@@ -1217,50 +1217,6 @@ void MapWnd::RenderSystems() {
     glPopClientAttrib();
 }
 
-/* void MapWnd::RenderStarlanes() {
-    bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
-
-    if (m_starlane_vertices.size() && (m_starlane_colors.size() || !coloured)) {
-        // render starlanes with vertex buffer (and possibly colour buffer)
-        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
-
-        glDisable(GL_TEXTURE_2D);
-        glEnable(GL_LINE_SMOOTH);
-        glEnable(GL_LINE_STIPPLE);
-
-        glLineWidth(static_cast<GLfloat>(GetOptionsDB().Get<double>("UI.starlane-thickness")));
-        glLineStipple(1, 0xffff);   // solid line / no stipple
-
-        glPushAttrib(GL_COLOR_BUFFER_BIT);
-        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-        glEnableClientState(GL_VERTEX_ARRAY);
-
-        if (coloured)
-            glEnableClientState(GL_COLOR_ARRAY);
-        else
-            glColor(UNOWNED_LANE_COLOUR);
-
-        m_starlane_vertices.activate();
-
-        if (coloured) {
-            m_starlane_colors.activate();
-        }
-
-        glDrawArrays(GL_LINES, 0, m_starlane_vertices.size());
-
-        glLineWidth(1.0);
-
-        glPopClientAttrib();
-        glPopAttrib();
-
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_LINE_SMOOTH);
-        glDisable(GL_LINE_STIPPLE);
-    }
-
-    glLineWidth(1.0);
-} */
-
 void MapWnd::RenderStarlanes() {
     bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
     float core_multiplier = static_cast<float>(GetOptionsDB().Get<double>("UI.starlane-core-multiplier"));
