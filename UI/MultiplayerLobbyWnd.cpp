@@ -263,7 +263,7 @@ namespace {
             if (disabled)
                 type_drop->Disable();
             else
-                GG::Connect(type_drop->TypeChangedSignal,           &LoadGamePlayerRow::PlayerTypeChanged,   this);
+                GG::Connect(type_drop->TypeChangedSignal, &LoadGamePlayerRow::PlayerTypeChanged, this);
 
             // player name text
             push_back(player_data.m_player_name, ClientUI::GetFont(), ClientUI::TextColor());
@@ -272,7 +272,9 @@ namespace {
             m_empire_list = new CUIDropDownList(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, 5 * PLAYER_ROW_HEIGHT);
             m_empire_list->SetStyle(GG::LIST_NOSORT);
             std::map<int, SaveGameEmpireData>::const_iterator save_game_empire_it = m_save_game_empire_data.end();
-            for (std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin(); it != m_save_game_empire_data.end(); ++it) {
+            for (std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin();
+                 it != m_save_game_empire_data.end(); ++it)
+            {
                 // insert row into droplist of empires for this player row
                 m_empire_list->Insert(new CUISimpleDropDownListRow(it->second.m_empire_name));
 
@@ -281,7 +283,9 @@ namespace {
                 // save gamge empire id, or if this empire row's player name
                 // matches this player data's player name, select the row
                 if ((it->first == m_player_data.m_save_game_empire_id) ||
-                    (it->second.m_player_name == m_player_data.m_player_name))
+                        (m_player_data.m_save_game_empire_id == ALL_EMPIRES &&
+                         it->second.m_player_name == m_player_data.m_player_name)
+                   )
                 {
                     m_empire_list->Select(--m_empire_list->end());
                     m_player_data.m_empire_name =           it->second.m_empire_name;
