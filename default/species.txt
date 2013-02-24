@@ -506,7 +506,7 @@ Species
     description = "SP_FURTHEST_DESC"
     Native
     
-    CanColonize
+    //CanColonize
 
     tags = "ORGANIC"
     
@@ -894,7 +894,8 @@ Species
     name = "SP_PHINNERT"
     description = "SP_PHINNERT_DESC"
     Native
-    CanColonize
+    
+    //CanColonize
 
     tags = "ORGANIC"
     
@@ -1032,7 +1033,7 @@ Species
     description = "SP_SILEXIAN_DESC"
     Native
     
-    CanColonize
+    //CanColonize
     
     Tags = "ROBOTIC"
     
