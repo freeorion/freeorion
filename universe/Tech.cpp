@@ -213,9 +213,15 @@ double Tech::ResearchCost(int empire_id) const {
             return m_research_cost->Eval();
 
         const UniverseObject* source = SourceForEmpire(empire_id);
-        ScriptingContext context(source);
 
-        return m_research_cost->Eval(context);
+        if (source || m_research_cost->SourceInvariant()) {
+            ScriptingContext context(source);
+            return m_research_cost->Eval(context);
+
+        } else {
+            // if cost depends on a source object, but no such object is present, default to arbitrary large value
+            return 9999999.9;
+        }
     }
 }
 
