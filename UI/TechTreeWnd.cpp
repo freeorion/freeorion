@@ -181,8 +181,8 @@ namespace {
 //////////////////////////////////////////////////
 // TechTreeWnd::TechTreeControls                //
 //////////////////////////////////////////////////
-/** A panel of buttons that control how the tech tree is displayed: what categories, statuses and
-    types of techs to show. */
+/** A panel of buttons that control how the tech tree is displayed: what
+  * categories, statuses and types of techs to show. */
 class TechTreeWnd::TechTreeControls : public CUIWnd {
 public:
     //! \name Structors //@{
@@ -198,13 +198,14 @@ public:
 private:
     void            DoButtonLayout();
 
-    /** These values are determined when doing button layout, and stored.  They are later
-      * used when rendering separator lines between the groups of buttons */
-    int m_buttons_per_row;                  // number of buttons that can fit into available horizontal space
-    GG::X m_col_offset;                // horizontal distance between each column of buttons
-    GG::Y m_row_offset;                // vertical distance between each row of buttons
-    int m_category_button_rows;             // number of rows used for category buttons
-    int m_status_or_type_button_rows;       // number of rows used for status buttons and for type buttons (both groups have the same number of buttons (three) so use the same number of rows)
+    /** These values are determined when doing button layout, and stored.
+      * They are later used when rendering separator lines between the groups
+      * of buttons */
+    int m_buttons_per_row;              // number of buttons that can fit into available horizontal space
+    GG::X m_col_offset;                 // horizontal distance between each column of buttons
+    GG::Y m_row_offset;                 // vertical distance between each row of buttons
+    int m_category_button_rows;         // number of rows used for category buttons
+    int m_status_or_type_button_rows;   // number of rows used for status buttons and for type buttons (both groups have the same number of buttons (three) so use the same number of rows)
 
     /** These values are used for rendering separator lines between groups of buttons */
     static const int BUTTON_SEPARATION; // vertical or horizontal sepration between adjacent buttons
@@ -296,7 +297,9 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
 
     // place category buttons: fill each row completely before starting next row
     int row = 0, col = -1;
-    for (std::vector<CUIButton*>::iterator it = m_category_buttons.begin(); it != m_category_buttons.end(); ++it) {
+    for (std::vector<CUIButton*>::iterator it = m_category_buttons.begin();
+         it != m_category_buttons.end(); ++it)
+    {
         ++col;
         if (col >= m_buttons_per_row) {
             ++row;
@@ -312,7 +315,9 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
     m_category_button_rows = ++row;
 
     // place type buttons: fill each row completely before starting next row
-    for (std::map<TechType, CUIButton*>::iterator it = m_tech_type_buttons.begin(); it != m_tech_type_buttons.end(); ++it) {
+    for (std::map<TechType, CUIButton*>::iterator it = m_tech_type_buttons.begin();
+         it != m_tech_type_buttons.end(); ++it)
+    {
         ++col;
         if (col >= m_buttons_per_row) {
             ++row;
@@ -330,7 +335,9 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
     }
 
     // place status buttons: fill each row completely before starting next row
-    for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_status_buttons.begin(); it != m_tech_status_buttons.end(); ++it) {
+    for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_status_buttons.begin();
+         it != m_tech_status_buttons.end(); ++it)
+    {
         ++col;
         if (col >= m_buttons_per_row) {
             ++row;
@@ -367,7 +374,8 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
         m_status_or_type_button_rows = 1;   // only one row, three buttons per row
 
     // prevent window from being shrunk less than one button width, or current number of rows of height
-    SetMinSize(GG::Pt(UPPER_LEFT_PAD + MIN_BUTTON_WIDTH + 3*RIGHT_EDGE_PAD, CUIWnd::BORDER_TOP + CUIWnd::BORDER_BOTTOM + UPPER_LEFT_PAD + (++row)*m_row_offset));
+    SetMinSize(GG::Pt(UPPER_LEFT_PAD + MIN_BUTTON_WIDTH + 3*RIGHT_EDGE_PAD,
+                      CUIWnd::BORDER_TOP + CUIWnd::BORDER_BOTTOM + UPPER_LEFT_PAD + (++row)*m_row_offset));
 }
 
 void TechTreeWnd::TechTreeControls::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1519,9 +1527,6 @@ bool TechTreeWnd::LayoutPanel::TechVisible(const std::string& tech_name) {
     const Tech* tech = GetTech(tech_name);
     if (!tech)
         return false;
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire)
-        return true;
 
     // Unresearchable techs are never to be shown on tree
     if (!tech->Researchable())
@@ -1532,6 +1537,10 @@ bool TechTreeWnd::LayoutPanel::TechVisible(const std::string& tech_name) {
         return false;
     if (m_categories_shown.find(tech->Category()) == m_categories_shown.end())
         return false;
+
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return true;    // if no empire, techs have no status, so just return true
     if (m_tech_statuses_shown.find(empire->GetTechStatus(tech->Name())) == m_tech_statuses_shown.end())
         return false;
 
