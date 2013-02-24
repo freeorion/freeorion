@@ -92,11 +92,20 @@ namespace {
 
     void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData> >& psd) {
         Logger().debugStream() << "PlayerSetupData:";
-        for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = psd.begin(); it != psd.end(); ++it)
-            Logger().debugStream() << boost::lexical_cast<std::string>(it->first) << " : "
-                                   << it->second.m_player_name << ", "
-                                   << it->second.m_client_type << ", "
-                                   << it->second.m_starting_species_name;
+        for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = psd.begin(); it != psd.end(); ++it) {
+            std::stringstream ss;
+            ss << boost::lexical_cast<std::string>(it->first) << " : "
+               << it->second.m_player_name << ", ";
+            switch (it->second.m_client_type) {
+            case Networking::CLIENT_TYPE_AI_PLAYER:         ss << "AI_PLAYER, ";    break;
+            case Networking::CLIENT_TYPE_HUMAN_MODERATOR:   ss << "MODERATOR, ";    break;
+            case Networking::CLIENT_TYPE_HUMAN_OBSERVER:    ss << "OBSERVER, ";     break;
+            case Networking::CLIENT_TYPE_HUMAN_PLAYER:      ss << "HUMAN_PLAYER, "; break;
+            default:                                        ss << "<invalid client type>, ";
+            }
+            ss << it->second.m_starting_species_name;
+            Logger().debugStream() << " ... " << ss.str();
+        }
     }
 
     void LoadEmpireNames(std::list<std::string>& names) {
