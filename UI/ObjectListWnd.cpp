@@ -7,6 +7,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/AppInterface.h"
+#include "../util/ModeratorAction.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../universe/System.h"
@@ -1672,17 +1673,34 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     int object_id = ObjectInRow(it);
     if (object_id == INVALID_OBJECT_ID)
         return;
+    ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+    const HumanClientApp* app = HumanClientApp::GetApp();
+    bool moderator = false;
+    if (app && app->GetPlayerClientType(app->PlayerID()) == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        moderator = true;
 
-    // create popup menu with diplomacy options in it
+
+    // create popup menu with object commands in it
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("DUMP"), 1, false, false));
 
+    // moderator actions...
+    if (moderator) {
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESTROY"), 10, false, false));
+    }
+
+
+    // run popup and respond
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor());
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: {
             ObjectDumpSignal(object_id);
+            break;
+        }
+        case 10: {
+            net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::DestroyUniverseObject(object_id)));
             break;
         }
         default:

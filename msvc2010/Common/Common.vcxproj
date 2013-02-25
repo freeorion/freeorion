@@ -182,6 +182,7 @@
     <ClInclude Include="..\..\util\GLStateComparator.h" />
     <ClInclude Include="..\..\util\GZStream.h" />
     <ClInclude Include="..\..\util\Math.h" />
+    <ClInclude Include="..\..\util\ModeratorAction.h" />
     <ClInclude Include="..\..\util\MultiplayerCommon.h" />
     <ClInclude Include="..\..\util\OptionsDB.h" />
     <ClInclude Include="..\..\util\OptionValidators.h" />
@@ -242,6 +243,7 @@
     <ClCompile Include="..\..\util\Directories.cpp" />
     <ClCompile Include="..\..\util\GZStream.cpp" />
     <ClCompile Include="..\..\util\Math.cpp" />
+    <ClCompile Include="..\..\util\ModeratorAction.cpp" />
     <ClCompile Include="..\..\util\MultiplayerCommon.cpp" />
     <ClCompile Include="..\..\util\OptionsDB.cpp" />
     <ClCompile Include="..\..\util\Order.cpp" />

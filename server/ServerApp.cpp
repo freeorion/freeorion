@@ -312,6 +312,7 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
     case Message::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg, player_connection));        break;
     case Message::REQUEST_NEW_OBJECT_ID:    m_fsm->process_event(RequestObjectID(msg, player_connection));  break;
     case Message::REQUEST_NEW_DESIGN_ID:    m_fsm->process_event(RequestDesignID(msg, player_connection));  break;
+    case Message::MODERATOR_ACTION:         break;
 
     // TODO: For prototyping only.
     case Message::COMBAT_END:               m_fsm->process_event(CombatComplete()); break;
@@ -587,9 +588,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
     // moderators are not included.
     for (std::map<int, PlayerSetupData>::const_iterator player_setup_it = active_players_id_setup_data.begin();
          player_setup_it != active_players_id_setup_data.end(); ++player_setup_it)
-    {
-        m_player_empire_ids[player_setup_it->first] = player_setup_it->first;
-    }
+    { m_player_empire_ids[player_setup_it->first] = player_setup_it->first; }
 
 
     // add empires to turn processing

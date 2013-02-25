@@ -181,6 +181,7 @@ set(THIS_LIB_SOURCES
     util/DataTable.cpp
     util/GZStream.cpp
     util/Math.cpp
+    util/ModeratorAction.cpp
     util/MultiplayerCommon.cpp
     util/OptionsDB.cpp
     util/Order.cpp

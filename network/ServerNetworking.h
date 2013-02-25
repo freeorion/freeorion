@@ -183,7 +183,7 @@ public:
     /** Returns the type of client associated with this connection (AI client,
       * human client, ...) */
     Networking::ClientType GetClientType() const;
-    
+
     /** Checks if client associated with this connection runs on the same
         physical machine as the server */
     bool IsLocalConnection() const;

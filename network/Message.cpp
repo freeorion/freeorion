@@ -6,6 +6,7 @@
 #include "../Empire/Diplomacy.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/ModeratorAction.h"
 #include "../universe/Meter.h"
 #include "../universe/System.h"
 #include "../universe/Universe.h"
@@ -83,6 +84,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::DISPATCH_NEW_DESIGN_ID)
     GG_ENUM_MAP_INSERT(Message::VICTORY_DEFEAT)
     GG_ENUM_MAP_INSERT(Message::END_GAME)
+    GG_ENUM_MAP_INSERT(Message::MODERATOR_ACTION)
     GG_ENUM_MAP_END
 }
 
@@ -552,6 +554,15 @@ Message EndGameMessage(int receiver, Message::EndGameReason reason,
            << BOOST_SERIALIZATION_NVP(reason_player_name);
     }
     return Message(Message::END_GAME, Networking::INVALID_PLAYER_ID, receiver, os.str());
+}
+
+Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& action) {
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(action);
+    }
+    return Message(Message::MODERATOR_ACTION, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
 ////////////////////////////////////////////////

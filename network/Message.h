@@ -37,6 +37,9 @@ class Universe;
 class UniverseObject;
 class DiplomaticMessage;
 struct DiplomaticStatusUpdateInfo;
+namespace Moderator {
+    class ModeratorAction;
+}
 
 typedef std::vector<CombatOrder> CombatOrderSet;
 typedef std::map<int, ShipDesign*> ShipDesignMap;
@@ -56,7 +59,7 @@ class Message {
 public:
     /** Represents the type of the message */
     enum MessageType {
-        UNDEFINED,
+        UNDEFINED = 0,
         DEBUG,                  ///< used to send special messages used for debugging purposes
         ERROR,                  ///< used to communicate errors between server and clients
         HOST_SP_GAME,           ///< sent when a client wishes to establish a single player game at the server
@@ -89,7 +92,8 @@ public:
         DISPATCH_NEW_DESIGN_ID, ///< sent by server to client with the new design ID.
         VICTORY_DEFEAT,         ///< sent by server to all clients when one or more players have met victory or defeat conditions
         PLAYER_ELIMINATED,      ///< sent by server to all clients (except the eliminated player) when a player is eliminated
-        END_GAME                ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
+        END_GAME,               ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
+        MODERATOR_ACTION        ///< sent by client to server when a moderator edits the universe
     };
 
     enum TurnProgressPhase {
@@ -312,6 +316,9 @@ Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& 
 
 /** creates an END_GAME message used to terminate an active game. */
 Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name = "");
+
+/** creates a MODERATOR_ACTION message used to implement moderator commands. */
+Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& action);
 
 
 ////////////////////////////////////////////////

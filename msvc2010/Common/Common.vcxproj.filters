@@ -277,6 +277,9 @@
     <ClInclude Include="..\..\universe\Field.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\util\ModeratorAction.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">
@@ -452,6 +455,9 @@
     </ClCompile>
     <ClCompile Include="..\..\universe\Field.cpp">
       <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\ModeratorAction.cpp">
+      <Filter>Source Files\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
