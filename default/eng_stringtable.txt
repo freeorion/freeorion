@@ -3804,6 +3804,7 @@ Prefer Inferno planets.
 [[BAD_RESEARCH]]
 
 [[BAD_POPULATION]]
+[[GREAT_GROUND_TROOPS]]
 [[NARROW_EP]]
 
 Description:
