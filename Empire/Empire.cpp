@@ -1801,8 +1801,8 @@ const std::map<int, std::set<int> > Empire::VisibleStarlanes() const {
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
 
-    for (ObjectMap::const_value_iterator<System> sys_it = Objects().begin_values<System>();
-         sys_it != Objects().end_values<System>(); ++sys_it)
+    for (ObjectMap::const_value_iterator<System> sys_it = objects.begin_values<System>();
+         sys_it != objects.end_values<System>(); ++sys_it)
     {
         int start_id = sys_it->ID();
 
