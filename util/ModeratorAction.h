@@ -55,7 +55,7 @@ template <class Archive>
 void Moderator::DestroyUniverseObject::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
-        & BOOST_SERIALIZATION_BASE_OBJECT_NVP(m_object_id);
+        & BOOST_SERIALIZATION_NVP(m_object_id);
 }
 
 #endif // _Moderator_Action_h_

@@ -50,14 +50,14 @@ namespace {
     std::vector<int>        BuildingIDs(const Universe& universe)
     { return Objects().FindObjectIDs<Building>(); }
 
-    std::vector<std::string>     SpeciesFoci(const Species& thisSpecies) {
+    std::vector<std::string>    SpeciesFoci(const Species& species) {
         std::vector<std::string> retval;
-        const std::vector<FocusType> foci = thisSpecies.Foci();
+        const std::vector<FocusType>& foci = species.Foci();
         for (std::vector<FocusType>::const_iterator f_it = foci.begin(); f_it != foci.end(); f_it++ )
             retval.push_back(f_it->Name());
-        return retval;         
+        return retval;
     }
-    
+
     void                    UpdateMetersWrapper(const Universe& universe, boost::python::list objList) {
         std::vector<int> objvec;
         int const numObjects = boost::python::len(objList);

@@ -115,7 +115,7 @@ public:
     const std::string&              Description() const { return m_description; }   ///< returns a text description of this type of species
     const std::set<int>&            Homeworlds() const  { return m_homeworlds; }    ///< returns the ids of objects that are homeworlds for this species
     std::string                     Dump() const;                                   ///< returns a data file format representation of this object
-    const std::vector<FocusType>&   Foci() const        { return m_foci; }          ///< returns the focus types this species can use, indexed by name
+    const std::vector<FocusType>&   Foci() const        { return m_foci; }          ///< returns the focus types this species can use
     const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
     PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;         ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
     PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const; ///< returns the next better PlanetType for this species from the \a initial_planet_type specified
