@@ -2073,6 +2073,8 @@ namespace {
 
                 int object_id = obj_it->first;
                 const UniverseObject* obj = objects.Object(object_id);
+                if (!obj)
+                    continue;
                 const std::map<std::string, int>& all_object_specials = obj->Specials();
                 if (all_object_specials.empty())
                     continue;
@@ -2433,17 +2435,25 @@ void Universe::RecursiveDestroy(int object_id) {
             Destroy(fleet->ID());
 
     } else if (Fleet* fleet = universe_object_cast<Fleet*>(obj)) {
-        for (Fleet::iterator it = fleet->begin(); it != fleet->end(); ++it)
-            Destroy(*it);
+        std::set<int> fleet_ships = fleet->ShipIDs();           // copy, so destroying ships can't change the initial list / invalidate iterators, etc.
+        for (std::set<int>::const_iterator it = fleet_ships.begin();
+             it != fleet_ships.end(); ++it)
+        { Destroy(*it); }
         Destroy(object_id);
 
     } else if (Planet* planet = universe_object_cast<Planet*>(obj)) {
-        for (std::set<int>::const_iterator it = planet->Buildings().begin(); it != planet->Buildings().end(); ++it)
-            Destroy(*it);
+        std::set<int> planet_buildings = planet->Buildings();   // copy, so destroying buildings can't change the initial list / invalidate iterators, etc.
+        for (std::set<int>::const_iterator it = planet_buildings.begin();
+             it != planet_buildings.end(); ++it)
+        { Destroy(*it); }
         Destroy(object_id);
 
-    } else if (obj->ObjectType() == OBJ_SYSTEM) {
-        // unsupported: do nothing
+    } else if (System* system = universe_object_cast<System*>(obj)) {
+        std::vector<int> system_objs = system->FindObjectIDs();
+        for (std::vector<int>::const_iterator it = system_objs.begin();
+             it != system_objs.end(); ++it)
+        { Destroy(*it); }
+        Destroy(object_id);
 
     } else if (obj->ObjectType() == OBJ_BUILDING) {
         Destroy(object_id);
