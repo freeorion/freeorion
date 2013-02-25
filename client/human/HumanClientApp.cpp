@@ -836,6 +836,10 @@ void HumanClientApp::HandleSaveGameDataRequest() {
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
     //Logger().debugStream() << "HumanClientApp::HandleWindowMove(" << Value(w) << ", " << Value(h) << ")";
 
+    // for some reason on Linux, the value returned by window->getMetrics(...)
+    // in OgreGUI::windowMoved and eventually passed here is incorrect, so needs
+    // to be ignored...
+#ifndef FREEORION_LINUX
     GetOptionsDB().Set<int>("app-left-windowed", Value(w));
     GetOptionsDB().Set<int>("app-top-windowed", Value(h));
 
@@ -851,6 +855,7 @@ void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
             Logger().errorStream() << PathString(GetConfigPath());
         }
     }
+#endif
 }
 
 void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
