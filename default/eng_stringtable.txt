@@ -8237,7 +8237,7 @@ Static Multicellular Hull
 SH_STATIC_MULTICELLULAR_DESC
 '''Despite being organic, this hull is non-living, being produced via multi-cellular casting. The versatility of the interior and the lack of necessity for internal organs increases its capacity, but without living systems, it cannot replenish health or energy. It has three external slots and two internal slots. Structure is average and speed is good, but [[encyclopedia STEALTH_TITLE]] is low. This hull regenerates neither structure nor fuel between combats.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is constructed.'''
+Requires a [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is constructed.'''
 
 SH_ENDOMORPHIC
 Endomorphic Hull
