@@ -1105,7 +1105,7 @@ def generateProductionOrders():
 
     wastedPP = max(0,  totalPP - totalPPSpent)
     print "  Wasted Production Points:          " + str(wastedPP)#TODO: add resource group analysis
-    availPP = totalPP*1.05 - totalPPSpent
+    availPP = totalPP - totalPPSpent - 0.0001
 
     print ""
     if False:

@@ -197,6 +197,23 @@ class AIstate(object):
             system = universe.getSystem(sysID)
             print "System %4d  ( %12s ) : %s"%(sysID,  (system and system.name) or "unknown",  sysStatus)
 
+    def assessPlanetThreat(self,  pid,  sightingAge=0):
+        sightingAge+=1#play it safe
+        universe = fo.getUniverse()
+        planet = universe.getPlanet(pid)
+        if not planet:
+            return 0,  0
+        cShields = planet.currentMeterValue(fo.meterType.shield)
+        tShields = planet.currentMeterValue(fo.meterType.maxShield)
+        cDefense = planet.currentMeterValue(fo.meterType.defense)
+        tDefense = planet.currentMeterValue(fo.meterType.maxDefense)
+        shields = min(tShields,  cShields+2*sightingAge)#TODO: base off regen tech
+        defense = min(tDefense,  cDefense+2*sightingAge)#TODO: base off regen tech
+        cInfra = planet.currentMeterValue(fo.meterType.construction)
+        tInfra = planet.currentMeterValue(fo.meterType.targetConstruction)
+        infra = min(tInfra,  cInfra+2*sightingAge)#TODO: base off regen tech
+        return  (defense ,  (defense + shields + infra ) )
+
     def updateSystemStatus(self,  sysIDList=None):
         print"-------\nUpdating System Threats\n---------"
         universe = fo.getUniverse()
@@ -256,7 +273,8 @@ class AIstate(object):
                     localEnemyFleetIDs.append(fid)
                     glimpsedEnemies.append(fid)
             #update threats
-            partialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(sysID,  fo.empireID())).get(fo.visibility.partial, -9999)
+            sysVisDict = dictFromMap(universe.getVisibilityTurnsMap(sysID,  fo.empireID()))
+            partialVisTurn = sysVisDict.get(fo.visibility.partial, -9999)
             enemyRating=0
             monsterRating=0
             if fleetsLostBySystem.get(sysID,  []) != []:
@@ -267,9 +285,23 @@ class AIstate(object):
                     monsterRatings = [self.rateFleet(fid) for fid in localEnemyFleetIDs  ] 
                     enemyRating = sum( [rating.get('attack', 0) for rating in enemyRatings]) * sum( [rating.get('health', 0) for rating in enemyRatings])
                     monsterRating = sum( [rating.get('attack', 0) for rating in enemyRatings]) * sum( [rating.get('health', 0) for rating in enemyRatings])
-            if (not system) or not (universe.getVisibility(sysID,  self.empireID) >= fo.visibility.partial):#TODO split off treatment of no system from not visible
-                print "Can't see into system %d ( %s ) -- basing threat assessment on old info and lost ships"%(sysID,  sysStatus.get('name',  "name unknown"))
+            if (not system) or partialVisTurn==-9999:
+                print "Have never had partial vis for system %d ( %s ) -- basing threat assessment on old info and lost ships"%(sysID,  sysStatus.get('name',  "name unknown"))
                 sysStatus['planetThreat'] = int( sysStatus.get('planetThreat',  0) ) # if no current info, leave as previous, or 0 if no previous rating
+                sysStatus['fleetThreat'] = int( max(enemyRating,  max( sysStatus.get('fleetThreat',  0) ,  1.05*sum(fleetsLostBySystem.get(sysID,  []) )))   ) # if no current info, leave as previous, or 0 if no previous rating ,  or rating of fleets lost
+                continue
+            elif  not   partialVisTurn == currentTurn:  #(universe.getVisibility(sysID,  self.empireID) >= fo.visibility.partial):
+                print "Stale visibility for system %d ( %s ) -- last seen %d, current Turn %d -- basing threat assessment on old info and lost ships"%(sysID,  sysStatus.get('name',  "name unknown"),  partialVisTurn,  currentTurn)
+                pthreat = 0#TODO: track planet threat like fleet threat, with attack & shield info for each planet, & owner
+                pattack = 0
+                phealth = 0
+                for pid in system.planetIDs:
+                    if pid in popCtrIDs+outpostIDs:#TODO: check for diplomatic status
+                        continue
+                    thisAttack,  thisHP = self.assessPlanetThreat(pid,  sightingAge=currentTurn-partialVisTurn)
+                    pattack += thisAttack
+                    phealth += thisHP
+                sysStatus['planetThreat'] = pattack*phealth
                 sysStatus['fleetThreat'] = int( max(enemyRating,  max( sysStatus.get('fleetThreat',  0) ,  1.05*sum(fleetsLostBySystem.get(sysID,  []) )))   ) # if no current info, leave as previous, or 0 if no previous rating ,  or rating of fleets lost
                 continue
             else: #system considered visible #TODO: reevaluate as visibility rules change
@@ -290,17 +322,16 @@ class AIstate(object):
                     sysStatus['monsterThreat']=int(monsterThreat)
                 else:
                     sysStatus['fleetThreat'] = int( max( sysStatus.get('fleetThreat',  0) ,  1.05*sum(fleetsLostBySystem.get(sysID,  []) ))  )
-                threat=0
-                for planetID in system.planetIDs:
-                    planet = universe.getPlanet(planetID)
-                    # even if planet object says we own it, if we can't see it then we must have lost ownership
-                    if planet and ( not planet.unowned ) and not (planet.ownedBy(self.empireID) and  (universe.getVisibility(planetID,  self.empireID) >= fo.visibility.partial) ) :
-                        try:
-                            threat += ( planet.currentMeterValue(fo.meterType.defense) ) * ( planet.currentMeterValue(fo.meterType.defense)+planet.currentMeterValue(fo.meterType.shield) )
-                        except:
-                            print "Error:  couldn't read meters for threat assessment of visible planet %d : %s"%(planetID,  planet.name)
-                            print "Error: exception triggered and caught:  ",  traceback.format_exc()
-                sysStatus['planetThreat'] = int( threat )
+                pthreat = 0#TODO: track planet threat like fleet threat, with attack & shield info for each planet, & owner
+                pattack = 0
+                phealth = 0
+                for pid in system.planetIDs:
+                    if pid in popCtrIDs+outpostIDs:#TODO: check for diplomatic status
+                        continue
+                    thisAttack,  thisHP = self.assessPlanetThreat(pid,  sightingAge=0)
+                    pattack += thisAttack
+                    phealth += thisHP
+                sysStatus['planetThreat'] = pattack*phealth
             #self.systemStatus[sysID] = sysStatus #no longer necessary because using setdefault
 
         #assess secondary threats (one half of threats of surrounding systems  and update my fleet rating
@@ -564,7 +595,7 @@ class AIstate(object):
         popCtrIDs[:] = []
         outpostIDs[:] = []
         outpostSystemIDs[:] = []
-        
+        ResourcesAI.lastFociCheck[0]=0
 
     def __cleanFleetRoles(self,  justResumed=False):
         "removes fleetRoles if a fleet has been lost, and update fleet Ratings"

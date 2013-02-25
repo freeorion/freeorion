@@ -13,6 +13,7 @@ MinThreat = 10 # the minimum threat level that will be ascribed to an unkown thr
 MilitaryAllocations = []
 minMilAllocations = {}
 totMilRating=0
+milShips=0
 
 def tryAgain(milFleetIDs,  tryReset=False):
     for fid in milFleetIDs:
@@ -45,6 +46,9 @@ def getMilitaryFleets(tryReset=True):
         tryAgain(allMilitaryFleetIDs)
     
     totMilRating = sum(  map(lambda x: foAI.foAIstate.getRating(x).get('overall', 0),  allMilitaryFleetIDs   )  )
+    milShips = 0
+    for fid in allMilitaryFleetIDs:
+        milShips += foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0)
     print "=================================================="
     print "Total Military Rating: %d"%totMilRating
     print "---------------------------------"

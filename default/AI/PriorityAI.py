@@ -20,7 +20,7 @@ def calculatePriorities():
     "calculates the priorities of the AI player"
     print("calculating priorities")
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH, calculateResearchPriority())
-    ColonisationAI.getColonyFleets() # sets foAI.foAIstate.colonisablePlanetIDs and foAI.foAIstate.outpostPlanetIDs
+    ColonisationAI.getColonyFleets() # sets foAI.foAIstate.colonisablePlanetIDs and foAI.foAIstate.outpostPlanetIDs  and many other values used by other modules
     InvasionAI.getInvasionFleets() # sets AIstate.invasionFleetIDs, AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
     MilitaryAI.getMilitaryFleets() # sets AIstate.militaryFleetIDs and AIstate.militaryTargetedSystemIDs
 
@@ -175,14 +175,15 @@ def calculateExplorationPriority():
         element=productionQueue[queue_index]
         if element.buildType == AIEmpireProductionTypes.BT_SHIP:
              if foAI.foAIstate.getShipRole(element.designID) ==       AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION  :
-                 queuedScoutShips +=element.remaining
+                 queuedScoutShips += element.remaining * element.blocksize
 
-    
-    explorationPriority = 95*math.ceil(  math.sqrt(max(0,  (numUnexploredSystems - (numScouts+queuedScoutShips)) / (numUnexploredSystems +0.001) )))
+    milShips = MilitaryAI.milShips
+    explorationPriority = int(40*(  math.sqrt( min(milShips,  max(0,  (numUnexploredSystems - (numScouts+queuedScoutShips)))) / (numUnexploredSystems +0.001) )  )  )
 
     print ""
     print "Number of Scouts            : " + str(numScouts)
     print "Number of Unexplored systems: " + str(numUnexploredSystems)
+    print "military size: ",  milShips
     print "Priority for scouts         : " + str(explorationPriority)
 
     return explorationPriority

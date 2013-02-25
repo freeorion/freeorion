@@ -5,9 +5,10 @@ metabolimBoostMap= {  "ORGANIC": ["FRUIT_SPECIAL",  "PROBIOTIC_SPECIAL",  "SPICE
                                                         "SELF_SUSTAINING":[], 
                                                     }
 metabolims= metabolimBoostMap.keys()
-metabolimBoosts=[ ]
+metabolimBoosts={}
 for metab in metabolimBoostMap:
-    metabolimBoosts.extend( metabolimBoostMap[metab] )
+    for boost in metabolimBoostMap[metab] :
+        metabolimBoosts[boost]=metab
 
 
 

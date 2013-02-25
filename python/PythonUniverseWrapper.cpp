@@ -50,6 +50,14 @@ namespace {
     std::vector<int>        BuildingIDs(const Universe& universe)
     { return Objects().FindObjectIDs<Building>(); }
 
+    std::vector<std::string>     SpeciesFoci(const Species& thisSpecies) {
+        std::vector<std::string> retval;
+        const std::vector<FocusType> foci = thisSpecies.Foci();
+        for (std::vector<FocusType>::const_iterator f_it = foci.begin(); f_it != foci.end(); f_it++ )
+            retval.push_back(f_it->Name());
+        return retval;         
+    }
+    
     void                    UpdateMetersWrapper(const Universe& universe, boost::python::list objList) {
         std::vector<int> objvec;
         int const numObjects = boost::python::len(objList);
@@ -580,6 +588,7 @@ namespace FreeOrionPython {
             .add_property("name",               make_function(&Species::Name,           return_value_policy<copy_const_reference>()))
             .add_property("description",        make_function(&Species::Description,    return_value_policy<copy_const_reference>()))
             .add_property("homeworlds",         make_function(&Species::Homeworlds,     return_value_policy<copy_const_reference>()))
+            .add_property("foci",               &SpeciesFoci)
             .add_property("canColonize",        make_function(&Species::CanColonize,    return_value_policy<return_by_value>()))
             .add_property("canProduceShips",    make_function(&Species::CanProduceShips,return_value_policy<return_by_value>()))
             .add_property("tags",               make_function(&Species::Tags,           return_value_policy<return_by_value>()))
