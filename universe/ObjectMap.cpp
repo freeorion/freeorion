@@ -116,7 +116,7 @@ std::vector<const UniverseObject*> ObjectMap::FindObjects(const std::vector<int>
             Logger().errorStream() << "ObjectMap::FindObjects couldn't find object with id " << *it;
     return result;
 }
-    
+
 std::vector<UniverseObject*> ObjectMap::FindObjects(const std::vector<int>& object_ids) {
     std::vector<UniverseObject*> result;
     for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
@@ -191,7 +191,7 @@ UniverseObject* ObjectMap::Insert(UniverseObject* item) {
         return 0;
 
     FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, item);
-    
+
     // check if an object is in the map already with specified id
     std::map<int, UniverseObject*>::iterator it = m_objects.find(item->ID());
     if (it == m_objects.end()) {

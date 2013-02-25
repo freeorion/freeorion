@@ -80,26 +80,33 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.stars")));
     AttachChild(label);
-    m_stars_spin = new CUISpin<int>(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, GG::X(75), 100, 1, 10, 500, true);
+    m_stars_spin = new CUISpin<int>(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING,
+                                    GG::X(75), 100, 1, 10, 5000, true);
     m_stars_spin->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_stars_spin->Height()) / 2));
 
     // galaxy shape
-    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SHAPE"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT,
+                                UserString("GSETUP_SHAPE"), font, ClientUI::TextColor(),
+                                GG::FORMAT_RIGHT, GG::INTERACTIVE);
     label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-shape")));
     AttachChild(label);
     GG::Y drop_height = std::min(TEXT_ROW_HEIGHT * GALAXY_SHAPES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_galaxy_shapes_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
+    m_galaxy_shapes_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING,
+                                               DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_galaxy_shapes_list->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_galaxy_shapes_list->Height()) / 2));
     m_galaxy_shapes_list->SetStyle(GG::LIST_NOSORT);
 
     // galaxy age
-    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_AGE"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT,
+                                UserString("GSETUP_AGE"), font, ClientUI::TextColor(),
+                                GG::FORMAT_RIGHT, GG::INTERACTIVE);
     label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-age")));
     AttachChild(label);
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_galaxy_ages_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
+    m_galaxy_ages_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING,
+                                             DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_galaxy_ages_list->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_galaxy_ages_list->Height()) / 2));
     m_galaxy_ages_list->SetStyle(GG::LIST_NOSORT);
 
@@ -109,17 +116,21 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starlane-frequency")));
     AttachChild(label);
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_starlane_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
+    m_starlane_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING,
+                                               DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_starlane_freq_list->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_starlane_freq_list->Height()) / 2));
     m_starlane_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // planet density
-    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_PLANET_DENSITY"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT,
+                                UserString("GSETUP_PLANET_DENSITY"), font, ClientUI::TextColor(),
+                                GG::FORMAT_RIGHT, GG::INTERACTIVE);
     label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.planet-density")));
     AttachChild(label);
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_planet_density_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
+    m_planet_density_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING,
+                                                DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_planet_density_list->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_planet_density_list->Height()) / 2));
     m_planet_density_list->SetStyle(GG::LIST_NOSORT);
 
@@ -236,7 +247,7 @@ void GalaxySetupPanel::Init() {
     AttachChild(m_monster_freq_list);
     AttachChild(m_native_freq_list);
     AttachChild(m_ai_aggression_list);
-    
+
     GG::Connect(m_stars_spin->ValueChangedSignal,           &GalaxySetupPanel::SettingChanged_, this);
     GG::Connect(m_galaxy_shapes_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
     GG::Connect(m_galaxy_ages_list->SelChangedSignal,       &GalaxySetupPanel::SettingChanged,  this);
@@ -296,14 +307,14 @@ void GalaxySetupPanel::Init() {
     m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
     m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
     m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
-    
+
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_BEGINNER")));
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_TURTLE")));
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_DEFENSIVE")));
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MODERATE")));
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_AGGRESSIVE")));
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MANIACAL")));
-    
+
     // initial settings from stored results or defaults
     m_stars_spin->SetValue(GetOptionsDB().Get<int>("GameSetup.stars"));
     m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape"));
@@ -315,7 +326,7 @@ void GalaxySetupPanel::Init() {
     m_monster_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.monster-frequency"));
     m_native_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.native-frequency"));
     m_ai_aggression_list->Select(GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression"));
-    
+
     SettingsChangedSignal();
 }
 
