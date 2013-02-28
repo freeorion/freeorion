@@ -180,3 +180,10 @@ Article
     description = "FLEET_UPKEEP_TEXT"
     icon = "icons/ship_hulls/fractal_energy_hull_small.png"    
     
+Article
+    name = "AI_LEVELS_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "DIPLOMACY_ARTICLE_SHORT_DESC"
+    description = "AI_LEVELS_TEXT"
+    icon = "icons/ai.png"
+    
