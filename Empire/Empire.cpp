@@ -1773,8 +1773,8 @@ const std::map<int, std::set<int> > Empire::KnownStarlanes() const {
     const Universe& universe = GetUniverse();
 
     const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
-    for (ObjectMap::const_value_iterator<System> sys_it = Objects().begin_values<System>();
-         sys_it != Objects().end_values<System>(); ++sys_it)
+    for (ObjectMap::const_value_iterator<System> sys_it = Objects().begin<System>();
+         sys_it != Objects().end<System>(); ++sys_it)
     {
         int start_id = sys_it->ID();
 
@@ -2594,8 +2594,8 @@ void Empire::InitResourcePools() {
     // set non-blockadeable resource pools to share resources between all systems
     std::set<std::set<int> > sets_set;
     std::set<int> all_systems_set;
-    for (ObjectMap::const_value_iterator<System> sys_it = Objects().begin_values<System>();
-         sys_it != Objects().end_values<System>(); ++sys_it)
+    for (ObjectMap::const_value_iterator<System> sys_it = Objects().begin<System>();
+         sys_it != Objects().end<System>(); ++sys_it)
     {
         all_systems_set.insert(sys_it->ID());
     }

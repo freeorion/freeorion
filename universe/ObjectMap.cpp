@@ -43,7 +43,7 @@ void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*
     // loop through objects in copied map, copying or cloning each depending
     // on whether there already is a corresponding object in this map
     for (const_value_iterator<> it = copied_map.begin_values(); it != copied_map.end_values(); ++it)
-        this->CopyObject(it, empire_id);
+        this->CopyObject(*it, empire_id);
 }
 
 void ObjectMap::CopyObject(const UniverseObject* source, int empire_id/* = ALL_EMPIRES*/) {
@@ -98,12 +98,12 @@ bool ObjectMap::Empty() const
 { return m_objects.empty(); }
 
 const UniverseObject* ObjectMap::Object(int id) const {
-    const_iterator<> it = m_objects.find(id);
+    std::map<int, UniverseObject*>::const_iterator it = m_objects.find(id);
     return (it != m_objects.end() ? it->second : 0);
 }
 
 UniverseObject* ObjectMap::Object(int id) {
-    iterator<> it = m_objects.find(id);
+    std::map<int, UniverseObject*>::iterator it = m_objects.find(id);
     return (it != m_objects.end() ? it->second : 0);
 }
 
@@ -209,7 +209,7 @@ UniverseObject* ObjectMap::Insert(UniverseObject* item) {
 
 UniverseObject* ObjectMap::Remove(int id) {
     // search for object in objects maps
-    iterator<> it = m_objects.find(id);
+    std::map<int, UniverseObject*>::iterator it = m_objects.find(id);
     if (it == m_objects.end())
         return 0;
     Logger().debugStream() << "Object was removed: " << it->second->Dump();
@@ -228,7 +228,7 @@ void ObjectMap::Delete(int id)
 
 void ObjectMap::Clear() {
     for (value_iterator<> it = begin_values(); it != end_values(); ++it)
-        delete it;
+        delete *it;
     FOR_EACH_MAP(ClearMap);
 }
 
@@ -239,7 +239,7 @@ void ObjectMap::swap(ObjectMap& rhs) {
 void ObjectMap::CopyObjectsToSpecializedMaps() {
     FOR_EACH_SPECIALIZED_MAP(ClearMap);
     for (value_iterator<> it = begin_values(); it != end_values(); ++it)
-        FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, it);
+        FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, *it);
 }
 
 std::string ObjectMap::Dump() const {
