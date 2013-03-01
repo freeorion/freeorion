@@ -2627,7 +2627,7 @@ EffectsGroup
             scope = AND [
                 Planet
                 OwnedBy TheEmpire Source.Owner
-                Planet Population high = 0
+                Population high = 0
             ]
             stackinggroup = "OUTPOST_TROOPS_STACK"
             accountinglabel = "OUTPOST_TROOP_LABEL"
@@ -2779,7 +2779,7 @@ EffectsGroup
             scope = And [
                 Planet
                 OwnedBy TheEmpire Source.Owner
-                Planet Population low = 0.000001
+                Population low = 0.000001
             ]
             activation = And [
                 Planet
