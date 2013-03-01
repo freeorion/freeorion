@@ -439,6 +439,7 @@
 		82592EF0147E381B00B840A5 /* EffectAccounting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EEF147E381B00B840A5 /* EffectAccounting.cpp */; };
 		82592EF5147E387100B840A5 /* Names.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF1147E387100B840A5 /* Names.cpp */; };
 		82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF3147E387100B840A5 /* ObjectMap.cpp */; };
+		825EA76016DB9DB10002A797 /* ModeratorAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */; };
 		8273F49515DD774C000F6A09 /* changelog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8273F49415DD7724000F6A09 /* changelog.txt */; };
 		828AB7D415F7BCDD0075BE24 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 828AB7D315F7BCDD0075BE24 /* libpng.a */; };
 		828C793F160778AA0075F220 /* FieldIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828C793D160778AA0075F220 /* FieldIcon.cpp */; };
@@ -2589,6 +2590,8 @@
 		8259376A147E3B1C00B840A5 /* UniverseObjectTypeValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseObjectTypeValueRefParser.cpp; sourceTree = "<group>"; };
 		8259376B147E3B1C00B840A5 /* ValueRefParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefParser.h; sourceTree = "<group>"; };
 		8259376C147E3B1C00B840A5 /* ValueRefParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRefParserImpl.h; sourceTree = "<group>"; };
+		825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModeratorAction.cpp; sourceTree = "<group>"; };
+		825EA75F16DB9DB10002A797 /* ModeratorAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModeratorAction.h; sourceTree = "<group>"; };
 		8273F49415DD7724000F6A09 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = changelog.txt; path = ../changelog.txt; sourceTree = SOURCE_ROOT; };
 		828AB7D315F7BCDD0075BE24 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.a; sourceTree = "<group>"; };
 		828C793D160778AA0075F220 /* FieldIcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FieldIcon.cpp; sourceTree = "<group>"; };
@@ -4282,6 +4285,8 @@
 		471D5D170A98A3F900DA9C21 /* util */ = {
 			isa = PBXGroup;
 			children = (
+				825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */,
+				825EA75F16DB9DB10002A797 /* ModeratorAction.h */,
 				34C44954118271590071E09A /* Math.cpp */,
 				34C44955118271590071E09A /* Math.h */,
 				34C44956118271590071E09A /* Serialize.ipp */,
@@ -5686,6 +5691,7 @@
 				82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */,
 				82BEB659159853B300B024CB /* Diplomacy.cpp in Sources */,
 				8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */,
+				825EA76016DB9DB10002A797 /* ModeratorAction.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8660,6 +8666,417 @@
 			};
 			name = Release_10_5;
 		};
+		8263A0C916DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = i386;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/dep/Frameworks\"";
+				GCC_DEBUGGING_SYMBOLS = full;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_MODEL_TUNING = "";
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					OGRE_GUI_GLX,
+					FREEORION_MACOSX,
+					__MACOSX__,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = 4.2;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SOURCE_ROOT)/dep/include\"",
+					"\"$(SOURCE_ROOT)/dep/include/bullet\"",
+					"\"$(SOURCE_ROOT)/dep/alut\"",
+					"\"$(SOURCE_ROOT)/../GG\"",
+					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
+					"\"$(SOURCE_ROOT)/../OIS\"",
+					"\"$(SOURCE_ROOT)/../log4cpp\"",
+					"\"$(SOURCE_ROOT)/../network\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
+					"\"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SRCROOT)/dep/lib\"",
+					"\"$(SRCROOT)/dep/dyn_lib\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fvisibility=default",
+				);
+				SDKROOT = macosx10.6;
+				SEPARATE_STRIP = NO;
+				STRIP_INSTALLED_PRODUCT = YES;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0CA16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = INIT;
+			};
+			name = Test_GCC42;
+		};
+		8263A0CB16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherit)",
+					HAVE_CONFIG_H,
+				);
+				PRODUCT_NAME = FREEALUT;
+				SDKROOT = macosx10.6;
+				ZERO_LINK = YES;
+			};
+			name = Test_GCC42;
+		};
+		8263A0CC16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = GG;
+				ZERO_LINK = YES;
+			};
+			name = Test_GCC42;
+		};
+		8263A0CD16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = OIS;
+				USER_HEADER_SEARCH_PATHS = "\"$(SOURCE_ROOT)/../OIS/OIS\"";
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0CE16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = log4cpp;
+				USER_HEADER_SEARCH_PATHS = "\"$(SOURCE_ROOT)/../OIS/OIS\"";
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0CF16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = AlignmentsParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0D016DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = BuildingsParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0D116DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = ConditionParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0D216DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = DoubleValueRefParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0D316DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = EffectParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0D416DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = EncyclopediaParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0D516DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = EnumParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0D616DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = FieldsParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0D716DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = FleetPlansParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0D816DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = IntValueRefParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0D916DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = ItemsParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0DA16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = KeymapParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0DB16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = Lexer;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0DC16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = MonsterFleetPlansParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0DD16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = Parse;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0DE16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = ParserMisc;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0DF16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = PlanetEnvironmentValueRefParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0E016DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = PlanetSizeValueRefParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0E116DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = PlanetTypeValueRefParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0E216DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = ReportParseError;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0E316DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = ShipDesignsParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0E416DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = ShipHullsParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0E516DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = ShipPartsParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0E616DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = SpecialsParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0E716DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = SpeciesParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0E816DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = StarTypeValueRefParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0E916DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = StringValueRefParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0EA16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = TechsParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0EB16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = UniverseObjectTypeValueRefParser;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0EC16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = Common;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0ED16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = ClientCommon;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0EE16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					FREEORION_BUILD_SERVER,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/dep/lib\"",
+				);
+				PRODUCT_NAME = freeoriond;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0EF16DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					FREEORION_BUILD_HUMAN,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/dep/lib\"",
+					"\"$(SRCROOT)/dep/dyn_lib\"",
+				);
+				PRODUCT_NAME = FreeOrion;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0F016DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					FREEORION_BUILD_AI,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/dep/lib\"",
+					"\"$(SRCROOT)/dep/dyn_lib\"",
+				);
+				PRODUCT_NAME = freeorionca;
+				ZERO_LINK = NO;
+			};
+			name = Test_GCC42;
+		};
+		8263A0F116DDFC9400A2AACD /* Test_GCC42 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				INFOPLIST_FILE = Info.plist;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PRODUCT_NAME = FreeOrion;
+			};
+			name = Test_GCC42;
+		};
 		829C76361689EFD4005881B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8782,6 +9199,7 @@
 			buildConfigurations = (
 				1DEB923208733DC60010E9CD /* Debug */,
 				8218683114A9F82D009441B8 /* Test */,
+				8263A0EF16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B254160F2211007D86B9 /* Release */,
 				8219A9A014AAFFC300EEE387 /* Release_LLVM */,
 				8218684114AA28BE009441B8 /* Release_10_5 */,
@@ -8794,6 +9212,7 @@
 			buildConfigurations = (
 				1DEB923608733DC60010E9CD /* Debug */,
 				8218682814A9F82D009441B8 /* Test */,
+				8263A0C916DDFC9400A2AACD /* Test_GCC42 */,
 				8221B22F160F2211007D86B9 /* Release */,
 				8219A98014AAFFC300EEE387 /* Release_LLVM */,
 				8218683814AA28BE009441B8 /* Release_10_5 */,
@@ -8806,6 +9225,7 @@
 			buildConfigurations = (
 				3402E25F0F5A317400DF6FE7 /* Debug */,
 				8218683314A9F82D009441B8 /* Test */,
+				8263A0F116DDFC9400A2AACD /* Test_GCC42 */,
 				8221B256160F2211007D86B9 /* Release */,
 				8219A9A214AAFFC300EEE387 /* Release_LLVM */,
 				8218684314AA28BE009441B8 /* Release_10_5 */,
@@ -8818,6 +9238,7 @@
 			buildConfigurations = (
 				47103BE40CF04DC700A7DF2B /* Debug */,
 				8218682E14A9F82D009441B8 /* Test */,
+				8263A0EC16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B251160F2211007D86B9 /* Release */,
 				8219A99D14AAFFC300EEE387 /* Release_LLVM */,
 				8218683E14AA28BE009441B8 /* Release_10_5 */,
@@ -8830,6 +9251,7 @@
 			buildConfigurations = (
 				471D5A3B0A988D8600DA9C21 /* Debug */,
 				8218682A14A9F82D009441B8 /* Test */,
+				8263A0CC16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B231160F2211007D86B9 /* Release */,
 				8219A98214AAFFC300EEE387 /* Release_LLVM */,
 				8218683A14AA28BE009441B8 /* Release_10_5 */,
@@ -8842,6 +9264,7 @@
 			buildConfigurations = (
 				471D5D6C0A98A48500DA9C21 /* Debug */,
 				8218683014A9F82D009441B8 /* Test */,
+				8263A0EE16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B253160F2211007D86B9 /* Release */,
 				8219A99F14AAFFC300EEE387 /* Release_LLVM */,
 				8218684014AA28BE009441B8 /* Release_10_5 */,
@@ -8854,6 +9277,7 @@
 			buildConfigurations = (
 				471FEFD50A9A629800C36AA3 /* Debug */,
 				8218683214A9F82D009441B8 /* Test */,
+				8263A0F016DDFC9400A2AACD /* Test_GCC42 */,
 				8221B255160F2211007D86B9 /* Release */,
 				8219A9A114AAFFC300EEE387 /* Release_LLVM */,
 				8218684214AA28BE009441B8 /* Release_10_5 */,
@@ -8866,6 +9290,7 @@
 			buildConfigurations = (
 				478417AF0CF0592E00BE4710 /* Debug */,
 				8218682F14A9F82D009441B8 /* Test */,
+				8263A0ED16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B252160F2211007D86B9 /* Release */,
 				8219A99E14AAFFC300EEE387 /* Release_LLVM */,
 				8218683F14AA28BE009441B8 /* Release_10_5 */,
@@ -8878,6 +9303,7 @@
 			buildConfigurations = (
 				47B615C50CF099DC00318761 /* Debug */,
 				8218682914A9F82D009441B8 /* Test */,
+				8263A0CB16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B230160F2211007D86B9 /* Release */,
 				8219A98114AAFFC300EEE387 /* Release_LLVM */,
 				8218683914AA28BE009441B8 /* Release_10_5 */,
@@ -8890,6 +9316,7 @@
 			buildConfigurations = (
 				820638A014A87AF200A83D5A /* Debug */,
 				8218682B14A9F82D009441B8 /* Test */,
+				8263A0D316DDFC9400A2AACD /* Test_GCC42 */,
 				8221B238160F2211007D86B9 /* Release */,
 				8219A98714AAFFC300EEE387 /* Release_LLVM */,
 				8218683B14AA28BE009441B8 /* Release_10_5 */,
@@ -8902,6 +9329,7 @@
 			buildConfigurations = (
 				8218687214AA6E77009441B8 /* Debug */,
 				8218687314AA6E77009441B8 /* Test */,
+				8263A0CF16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B234160F2211007D86B9 /* Release */,
 				8219A98314AAFFC300EEE387 /* Release_LLVM */,
 				8218687414AA6E77009441B8 /* Release_10_5 */,
@@ -8914,6 +9342,7 @@
 			buildConfigurations = (
 				8218689814AA6F67009441B8 /* Debug */,
 				8218689914AA6F67009441B8 /* Test */,
+				8263A0D016DDFC9400A2AACD /* Test_GCC42 */,
 				8221B235160F2211007D86B9 /* Release */,
 				8219A98414AAFFC300EEE387 /* Release_LLVM */,
 				8218689A14AA6F67009441B8 /* Release_10_5 */,
@@ -8926,6 +9355,7 @@
 			buildConfigurations = (
 				821868BA14AA6FE2009441B8 /* Debug */,
 				821868BB14AA6FE2009441B8 /* Test */,
+				8263A0DE16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B243160F2211007D86B9 /* Release */,
 				8219A98F14AAFFC300EEE387 /* Release_LLVM */,
 				821868BC14AA6FE2009441B8 /* Release_10_5 */,
@@ -8938,6 +9368,7 @@
 			buildConfigurations = (
 				821868E914AA707E009441B8 /* Debug */,
 				821868EA14AA707E009441B8 /* Test */,
+				8263A0D216DDFC9400A2AACD /* Test_GCC42 */,
 				8221B237160F2211007D86B9 /* Release */,
 				8219A98614AAFFC300EEE387 /* Release_LLVM */,
 				821868EB14AA707E009441B8 /* Release_10_5 */,
@@ -8950,6 +9381,7 @@
 			buildConfigurations = (
 				8218690814AA70C4009441B8 /* Debug */,
 				8218690914AA70C4009441B8 /* Test */,
+				8263A0D516DDFC9400A2AACD /* Test_GCC42 */,
 				8221B23A160F2211007D86B9 /* Release */,
 				8219A98814AAFFC300EEE387 /* Release_LLVM */,
 				8218690A14AA70C4009441B8 /* Release_10_5 */,
@@ -8962,6 +9394,7 @@
 			buildConfigurations = (
 				8218692714AA70E9009441B8 /* Debug */,
 				8218692814AA70E9009441B8 /* Test */,
+				8263A0D716DDFC9400A2AACD /* Test_GCC42 */,
 				8221B23C160F2211007D86B9 /* Release */,
 				8219A98914AAFFC300EEE387 /* Release_LLVM */,
 				8218692914AA70E9009441B8 /* Release_10_5 */,
@@ -8974,6 +9407,7 @@
 			buildConfigurations = (
 				8218694614AA712B009441B8 /* Debug */,
 				8218694714AA712B009441B8 /* Test */,
+				8263A0D816DDFC9400A2AACD /* Test_GCC42 */,
 				8221B23D160F2211007D86B9 /* Release */,
 				8219A98A14AAFFC300EEE387 /* Release_LLVM */,
 				8218694814AA712B009441B8 /* Release_10_5 */,
@@ -8986,6 +9420,7 @@
 			buildConfigurations = (
 				8218696514AA7152009441B8 /* Debug */,
 				8218696614AA7152009441B8 /* Test */,
+				8263A0D916DDFC9400A2AACD /* Test_GCC42 */,
 				8221B23E160F2211007D86B9 /* Release */,
 				8219A98B14AAFFC300EEE387 /* Release_LLVM */,
 				8218696714AA7152009441B8 /* Release_10_5 */,
@@ -8998,6 +9433,7 @@
 			buildConfigurations = (
 				8218698414AA7171009441B8 /* Debug */,
 				8218698514AA7171009441B8 /* Test */,
+				8263A0DB16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B240160F2211007D86B9 /* Release */,
 				8219A98C14AAFFC300EEE387 /* Release_LLVM */,
 				8218698614AA7171009441B8 /* Release_10_5 */,
@@ -9010,6 +9446,7 @@
 			buildConfigurations = (
 				821869A314AA7190009441B8 /* Debug */,
 				821869A414AA7190009441B8 /* Test */,
+				8263A0DC16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B241160F2211007D86B9 /* Release */,
 				8219A98D14AAFFC300EEE387 /* Release_LLVM */,
 				821869A514AA7190009441B8 /* Release_10_5 */,
@@ -9022,6 +9459,7 @@
 			buildConfigurations = (
 				821869C214AA71CF009441B8 /* Debug */,
 				821869C314AA71CF009441B8 /* Test */,
+				8263A0DF16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B244160F2211007D86B9 /* Release */,
 				8219A99014AAFFC300EEE387 /* Release_LLVM */,
 				821869C414AA71CF009441B8 /* Release_10_5 */,
@@ -9034,6 +9472,7 @@
 			buildConfigurations = (
 				821869E114AA71FF009441B8 /* Debug */,
 				821869E214AA71FF009441B8 /* Test */,
+				8263A0E016DDFC9400A2AACD /* Test_GCC42 */,
 				8221B245160F2211007D86B9 /* Release */,
 				8219A99114AAFFC300EEE387 /* Release_LLVM */,
 				821869E314AA71FF009441B8 /* Release_10_5 */,
@@ -9046,6 +9485,7 @@
 			buildConfigurations = (
 				82186A0014AA7235009441B8 /* Debug */,
 				82186A0114AA7235009441B8 /* Test */,
+				8263A0E116DDFC9400A2AACD /* Test_GCC42 */,
 				8221B246160F2211007D86B9 /* Release */,
 				8219A99214AAFFC300EEE387 /* Release_LLVM */,
 				82186A0214AA7235009441B8 /* Release_10_5 */,
@@ -9058,6 +9498,7 @@
 			buildConfigurations = (
 				82186A1F14AA7265009441B8 /* Debug */,
 				82186A2014AA7265009441B8 /* Test */,
+				8263A0E216DDFC9400A2AACD /* Test_GCC42 */,
 				8221B247160F2211007D86B9 /* Release */,
 				8219A99314AAFFC300EEE387 /* Release_LLVM */,
 				82186A2114AA7265009441B8 /* Release_10_5 */,
@@ -9070,6 +9511,7 @@
 			buildConfigurations = (
 				82186A3E14AA7290009441B8 /* Debug */,
 				82186A3F14AA7290009441B8 /* Test */,
+				8263A0E316DDFC9400A2AACD /* Test_GCC42 */,
 				8221B248160F2211007D86B9 /* Release */,
 				8219A99414AAFFC300EEE387 /* Release_LLVM */,
 				82186A4014AA7290009441B8 /* Release_10_5 */,
@@ -9082,6 +9524,7 @@
 			buildConfigurations = (
 				82186A5D14AA72B4009441B8 /* Debug */,
 				82186A5E14AA72B4009441B8 /* Test */,
+				8263A0E416DDFC9400A2AACD /* Test_GCC42 */,
 				8221B249160F2211007D86B9 /* Release */,
 				8219A99514AAFFC300EEE387 /* Release_LLVM */,
 				82186A5F14AA72B4009441B8 /* Release_10_5 */,
@@ -9094,6 +9537,7 @@
 			buildConfigurations = (
 				82186A7C14AA72EB009441B8 /* Debug */,
 				82186A7D14AA72EB009441B8 /* Test */,
+				8263A0E516DDFC9400A2AACD /* Test_GCC42 */,
 				8221B24A160F2211007D86B9 /* Release */,
 				8219A99614AAFFC300EEE387 /* Release_LLVM */,
 				82186A7E14AA72EB009441B8 /* Release_10_5 */,
@@ -9106,6 +9550,7 @@
 			buildConfigurations = (
 				82186A9B14AA730C009441B8 /* Debug */,
 				82186A9C14AA730C009441B8 /* Test */,
+				8263A0E616DDFC9400A2AACD /* Test_GCC42 */,
 				8221B24B160F2211007D86B9 /* Release */,
 				8219A99714AAFFC300EEE387 /* Release_LLVM */,
 				82186A9D14AA730C009441B8 /* Release_10_5 */,
@@ -9118,6 +9563,7 @@
 			buildConfigurations = (
 				82186ABA14AA7344009441B8 /* Debug */,
 				82186ABB14AA7344009441B8 /* Test */,
+				8263A0E716DDFC9400A2AACD /* Test_GCC42 */,
 				8221B24C160F2211007D86B9 /* Release */,
 				8219A99814AAFFC300EEE387 /* Release_LLVM */,
 				82186ABC14AA7344009441B8 /* Release_10_5 */,
@@ -9130,6 +9576,7 @@
 			buildConfigurations = (
 				82186AD914AA735E009441B8 /* Debug */,
 				82186ADA14AA735E009441B8 /* Test */,
+				8263A0E816DDFC9400A2AACD /* Test_GCC42 */,
 				8221B24D160F2211007D86B9 /* Release */,
 				8219A99914AAFFC300EEE387 /* Release_LLVM */,
 				82186ADB14AA735E009441B8 /* Release_10_5 */,
@@ -9142,6 +9589,7 @@
 			buildConfigurations = (
 				82186AF814AA7388009441B8 /* Debug */,
 				82186AF914AA7388009441B8 /* Test */,
+				8263A0E916DDFC9400A2AACD /* Test_GCC42 */,
 				8221B24E160F2211007D86B9 /* Release */,
 				8219A99A14AAFFC300EEE387 /* Release_LLVM */,
 				82186AFA14AA7388009441B8 /* Release_10_5 */,
@@ -9154,6 +9602,7 @@
 			buildConfigurations = (
 				82186B1714AA73AF009441B8 /* Debug */,
 				82186B1814AA73AF009441B8 /* Test */,
+				8263A0EA16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B24F160F2211007D86B9 /* Release */,
 				8219A99B14AAFFC300EEE387 /* Release_LLVM */,
 				82186B1914AA73AF009441B8 /* Release_10_5 */,
@@ -9166,6 +9615,7 @@
 			buildConfigurations = (
 				82186B3614AA73E1009441B8 /* Debug */,
 				82186B3714AA73E1009441B8 /* Test */,
+				8263A0EB16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B250160F2211007D86B9 /* Release */,
 				8219A99C14AAFFC300EEE387 /* Release_LLVM */,
 				82186B3814AA73E1009441B8 /* Release_10_5 */,
@@ -9178,6 +9628,7 @@
 			buildConfigurations = (
 				821CB90515F8C15A00D48537 /* Debug */,
 				821CB90615F8C15A00D48537 /* Test */,
+				8263A0CE16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B233160F2211007D86B9 /* Release */,
 				821CB90715F8C15A00D48537 /* Release_LLVM */,
 				821CB90815F8C15A00D48537 /* Release_10_5 */,
@@ -9190,6 +9641,7 @@
 			buildConfigurations = (
 				82271C3615F8AB900063179C /* Debug */,
 				82271C3715F8AB900063179C /* Test */,
+				8263A0CD16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B232160F2211007D86B9 /* Release */,
 				82271C3815F8AB900063179C /* Release_LLVM */,
 				82271C3915F8AB900063179C /* Release_10_5 */,
@@ -9202,6 +9654,7 @@
 			buildConfigurations = (
 				8230803C14A87FFB00C1BC15 /* Debug */,
 				8218682C14A9F82D009441B8 /* Test */,
+				8263A0D116DDFC9400A2AACD /* Test_GCC42 */,
 				8221B236160F2211007D86B9 /* Release */,
 				8219A98514AAFFC300EEE387 /* Release_LLVM */,
 				8218683C14AA28BE009441B8 /* Release_10_5 */,
@@ -9214,6 +9667,7 @@
 			buildConfigurations = (
 				8250FDEB15FCF0A400523C1C /* Debug */,
 				8250FDEC15FCF0A400523C1C /* Test */,
+				8263A0D616DDFC9400A2AACD /* Test_GCC42 */,
 				8221B23B160F2211007D86B9 /* Release */,
 				8250FDED15FCF0A400523C1C /* Release_LLVM */,
 				8250FDEE15FCF0A400523C1C /* Release_10_5 */,
@@ -9226,6 +9680,7 @@
 			buildConfigurations = (
 				829C76361689EFD4005881B4 /* Debug */,
 				829C76371689EFD4005881B4 /* Test */,
+				8263A0CA16DDFC9400A2AACD /* Test_GCC42 */,
 				829C76381689EFD4005881B4 /* Release */,
 				829C76391689EFD4005881B4 /* Release_LLVM */,
 				829C763A1689EFD4005881B4 /* Release_10_5 */,
@@ -9238,6 +9693,7 @@
 			buildConfigurations = (
 				82BB838715AAD2AB006F635F /* Debug */,
 				82BB838815AAD2AB006F635F /* Test */,
+				8263A0D416DDFC9400A2AACD /* Test_GCC42 */,
 				8221B239160F2211007D86B9 /* Release */,
 				82BB838915AAD2AB006F635F /* Release_LLVM */,
 				82BB838A15AAD2AB006F635F /* Release_10_5 */,
@@ -9250,6 +9706,7 @@
 			buildConfigurations = (
 				82C07435149DE46200E76876 /* Debug */,
 				8218682D14A9F82D009441B8 /* Test */,
+				8263A0DD16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B242160F2211007D86B9 /* Release */,
 				8219A98E14AAFFC300EEE387 /* Release_LLVM */,
 				8218683D14AA28BE009441B8 /* Release_10_5 */,
@@ -9262,6 +9719,7 @@
 			buildConfigurations = (
 				82D68C7515F4F805006B772D /* Debug */,
 				82D68C7615F4F805006B772D /* Test */,
+				8263A0DA16DDFC9400A2AACD /* Test_GCC42 */,
 				8221B23F160F2211007D86B9 /* Release */,
 				82D68C7715F4F805006B772D /* Release_LLVM */,
 				82D68C7815F4F805006B772D /* Release_10_5 */,
