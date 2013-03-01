@@ -2943,6 +2943,8 @@ During an evacuation production drops to nothing. When the colony is empty, it r
 
 AI_LEVELS_TITLE
 AI Aggression Levels
+
+AI_LEVELS_TEXT
 '''AI aggression levels are meant to be roughly akin to difficulty levels, but not exactly, particularly in that they are differentiated in various aspects of risk-taking and aggression, with only some actual limitations being applied to the lower level ones. They can all still play pretty well, but the lower aggression ones may be a bit easier to manage, even if not necessarily easier to actually take over. The more aggressive ones do a bit better over the course of a game.
 
 AIs rename their capitol planet on turn 1, adding a prefix. Once you discover their home system you can determine their personality.
