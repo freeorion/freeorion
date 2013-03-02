@@ -1269,10 +1269,10 @@ void FleetDataPanel::SetStatIconValues() {
             if (const ShipDesign* design = ship->Design()) {
                 ship_count++;
                 damage_tally += design->Attack();
-                structure_tally += ship->NextTurnCurrentMeterValue(METER_STRUCTURE);
-                shield_tally += ship->NextTurnCurrentMeterValue(METER_SHIELD);
-                fuels.push_back(ship->NextTurnCurrentMeterValue(METER_FUEL));
-                speeds.push_back(ship->NextTurnCurrentMeterValue(METER_STARLANE_SPEED));
+                structure_tally += ship->CurrentMeterValue(METER_STRUCTURE);
+                shield_tally += ship->CurrentMeterValue(METER_SHIELD);
+                fuels.push_back(ship->CurrentMeterValue(METER_FUEL));
+                speeds.push_back(ship->CurrentMeterValue(METER_STARLANE_SPEED));
             }
         }
     }
