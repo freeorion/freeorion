@@ -9,14 +9,16 @@
 # finding GiGi.
 
 find_package(PkgConfig)
-if (PKG_CONFIG_FOUND)
-    pkg_check_modules(GIGI GiGi)
-    if (GIGI_FOUND)
-        set(GIGI_INCLUDE_DIR ${GIGI_INCLUDE_DIRS})
-    endif ()
+if (GIGIDIR)
+    set(GIGI_INCLUDE_DIRS ${GIGIDIR})
+    set(GIGI_LIBRARY_DIRS ${GIGIDIR})
 else ()
-    set(GIGI_INCLUDE_DIRS ${GIGIDIR}/include)
-    set(GIGI_LIBRARY_DIRS ${GIGIDIR}/lib)
+    if (PKG_CONFIG_FOUND)
+        pkg_check_modules(GIGI GiGi)
+        if (GIGI_FOUND)
+            set(GIGI_INCLUDE_DIR ${GIGI_INCLUDE_DIRS})
+        endif ()
+    endif ()
 endif ()
 
 find_path(
