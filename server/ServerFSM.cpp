@@ -1088,11 +1088,26 @@ sc::result PlayingGame::react(const Diplomacy& msg) {
 sc::result PlayingGame::react(const ModeratorAct& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame.ModeratorAct";
     const Message& message = msg.m_message;
+    int player_id = message.SendingPlayer();
+    ServerApp& server = Server();
+
+    // TODO: Check that sender is a moderator
+    //if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
 
     Moderator::ModeratorAction* action = 0;
     ExtractMessageData(message, action);
 
     Logger().debugStream() << "PlayingGame::react(ModeratorAct): " << (action ? action->Dump() : "(null)");
+
+    if (action) {
+        // execute action
+        action->Execute();
+
+        // update player(s) of changed gamestate as result of action
+        server.m_networking.SendMessage(TurnProgressMessage(Message::DOWNLOADING, player_id));
+        server.m_networking.SendMessage(TurnPartialUpdateMessage(player_id, server.PlayerEmpireID(player_id),
+                                                                 GetUniverse()));
+    }
 
     delete action;
 

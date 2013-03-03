@@ -2200,8 +2200,7 @@ void ServerApp::PreCombatProcessTurns() {
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
-        player->SendMessage(TurnPartialUpdateMessage(player_id,
-                                                     PlayerEmpireID(player_id),
+        player->SendMessage(TurnPartialUpdateMessage(player_id, PlayerEmpireID(player_id),
                                                      m_universe));
     }
 }
