@@ -559,8 +559,9 @@ Message EndGameMessage(int receiver, Message::EndGameReason reason,
 Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& action) {
     std::ostringstream os;
     {
+        const Moderator::ModeratorAction* mod_action = &action;
         FREEORION_OARCHIVE_TYPE oa(os);
-        oa << BOOST_SERIALIZATION_NVP(action);
+        oa << BOOST_SERIALIZATION_NVP(mod_action);
     }
     return Message(Message::MODERATOR_ACTION, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
@@ -870,17 +871,16 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason,
     }
 }
 
-void ExtractMessageData(const Message& msg, Moderator::ModeratorAction& action) {
+void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& mod_action) {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
-        ia >> BOOST_SERIALIZATION_NVP(action);
+        ia >> BOOST_SERIALIZATION_NVP(mod_action);
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, Moderator::ModeratorAction& mod_act) "
                                << "failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
-        action = Moderator::ModeratorAction();
     }
 }
 

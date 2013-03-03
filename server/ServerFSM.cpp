@@ -1089,10 +1089,12 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame.ModeratorAct";
     const Message& message = msg.m_message;
 
-    Moderator::ModeratorAction action;
+    Moderator::ModeratorAction* action = 0;
     ExtractMessageData(message, action);
 
-    Logger().debugStream() << "PlayingGame::react(ModeratorAct): " << action.Dump();
+    Logger().debugStream() << "PlayingGame::react(ModeratorAct): " << (action ? action->Dump() : "(null)");
+
+    delete action;
 
     return discard_event();
 }

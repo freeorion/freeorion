@@ -318,7 +318,7 @@ Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& 
 Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name = "");
 
 /** creates a MODERATOR_ACTION message used to implement moderator commands. */
-Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& action);
+Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& mod_action);
 
 
 ////////////////////////////////////////////////
@@ -397,7 +397,7 @@ void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data);
 
 void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name);
 
-void ExtractMessageData(const Message& msg, Moderator::ModeratorAction& action);
+void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& action);
 
 void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name);
 

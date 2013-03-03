@@ -459,6 +459,9 @@
     <ClCompile Include="..\..\util\ModeratorAction.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\util\SerializeModeratorAction.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\src\Version.template">

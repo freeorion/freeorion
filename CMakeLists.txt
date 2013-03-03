@@ -189,6 +189,7 @@ set(THIS_LIB_SOURCES
     util/Process.cpp
     util/Random.cpp
     util/SerializeEmpire.cpp
+    util/SerializeModeratorAction.cpp
     util/SerializeMultiplayerCommon.cpp
     util/SerializeOrderSet.cpp
     util/SerializePathingEngine.cpp

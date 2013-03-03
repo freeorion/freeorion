@@ -18,7 +18,7 @@ namespace Moderator {
   * (if applicable) */
 class ModeratorAction {
 public:
-    ModeratorAction() {}
+    ModeratorAction();
     virtual ~ModeratorAction() {}
     virtual void        Execute() const {}
     virtual std::string Dump() const { return "ModeratorAction"; }
@@ -30,9 +30,8 @@ private:
 
 class DestroyUniverseObject : public ModeratorAction {
 public:
-    explicit DestroyUniverseObject(int object_id) :
-        m_object_id(object_id)
-    {}
+    DestroyUniverseObject();
+    explicit DestroyUniverseObject(int object_id);
     virtual ~DestroyUniverseObject() {}
     virtual void        Execute() const;
     virtual std::string Dump() const;
@@ -44,18 +43,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-}
-
-// template implementations
-template <class Archive>
-void Moderator::ModeratorAction::serialize(Archive& ar, const unsigned int version)
-{}
-
-template <class Archive>
-void Moderator::DestroyUniverseObject::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModeratorAction)
-        & BOOST_SERIALIZATION_NVP(m_object_id);
 }
 
 #endif // _Moderator_Action_h_
