@@ -1137,7 +1137,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
                client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
     {
         // store empire orders and resume waiting for more
-        const Empire* empire = Empires().Lookup(player_id);
+        const Empire* empire = Empires().Lookup(server.PlayerEmpireID(player_id));
         if (!empire) {
             Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
             server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS", false));

@@ -538,7 +538,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
                        loaded_game_data,            ui_data_available,      ui_data,
                        save_state_string_available, save_state_string);
 
-    Logger().debugStream() << "Extracted GameStart message for turn: " << current_turn;
+    Logger().debugStream() << "Extracted GameStart message for turn: " << current_turn << " with empire: " << empire_id;
 
     Client().SetSinglePlayerGame(single_player_game);
     Client().SetEmpireID(empire_id);

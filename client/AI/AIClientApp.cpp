@@ -153,8 +153,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
     case Message::JOIN_GAME: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             if (PlayerID() == Networking::INVALID_PLAYER_ID) {
-                m_networking.SetPlayerID(msg.ReceivingPlayer());
                 Logger().debugStream() << "AIClientApp::HandleMessage : Received JOIN_GAME acknowledgement";
+                m_networking.SetPlayerID(msg.ReceivingPlayer());
             } else {
                 Logger().errorStream() << "AIClientApp::HandleMessage : Received erroneous JOIN_GAME acknowledgement when already in a game";
             }
@@ -177,6 +177,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
                                GetSpeciesManager(),     m_player_info,          m_orders,
                                loaded_game_data,        ui_data_available,      ui_data,
                                state_string_available,  save_state_string);
+
+            Logger().debugStream() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
             GetUniverse().InitializeSystemGraph(m_empire_id);
 
@@ -220,7 +222,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
                 }
                 Logger().debugStream() << "Message::GAME_START getting AI aggression, max is  "<< m_max_aggression;
                 Logger().debugStream() << "Message::GAME_START starting new game with AI aggression set to "<< thisAggr <<" from int("<< rand1<<"+"<<rand2<<"+1)/2";
-                
+
                 m_AI->SetAggression(thisAggr);
                 m_AI->StartNewGame();
             }
