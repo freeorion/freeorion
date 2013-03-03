@@ -397,6 +397,8 @@ void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data);
 
 void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name);
 
+void ExtractMessageData(const Message& msg, Moderator::ModeratorAction& action);
+
 void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name);
 
 void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message);

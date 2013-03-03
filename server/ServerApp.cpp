@@ -313,7 +313,7 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
     case Message::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg, player_connection));        break;
     case Message::REQUEST_NEW_OBJECT_ID:    m_fsm->process_event(RequestObjectID(msg, player_connection));  break;
     case Message::REQUEST_NEW_DESIGN_ID:    m_fsm->process_event(RequestDesignID(msg, player_connection));  break;
-    case Message::MODERATOR_ACTION:         break;
+    case Message::MODERATOR_ACTION:         m_fsm->process_event(ModeratorAct(msg, player_connection));     break;
 
     // TODO: For prototyping only.
     case Message::COMBAT_END:               m_fsm->process_event(CombatComplete()); break;

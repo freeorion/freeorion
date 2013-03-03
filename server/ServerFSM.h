@@ -62,21 +62,22 @@ struct MessageEventBase {
 };
 
 // Define Boost.Preprocessor list of all Message events
-#define MESSAGE_EVENTS                          \
-    (HostMPGame)                                \
-        (HostSPGame)                            \
-        (StartMPGame)                           \
-        (LobbyUpdate)                           \
-        (LobbyChat)                             \
-        (JoinGame)                              \
-        (SaveGameRequest)                       \
-        (TurnOrders)                            \
-        (CombatTurnOrders)                      \
-        (ClientSaveData)                        \
-        (RequestObjectID)                       \
-        (RequestDesignID)                       \
-        (PlayerChat)                            \
-        (Diplomacy)
+#define MESSAGE_EVENTS                      \
+    (HostMPGame)                            \
+    (HostSPGame)                            \
+    (StartMPGame)                           \
+    (LobbyUpdate)                           \
+    (LobbyChat)                             \
+    (JoinGame)                              \
+    (SaveGameRequest)                       \
+    (TurnOrders)                            \
+    (CombatTurnOrders)                      \
+    (ClientSaveData)                        \
+    (RequestObjectID)                       \
+    (RequestDesignID)                       \
+    (PlayerChat)                            \
+    (Diplomacy)                             \
+    (ModeratorAct)
 
 
 #define DECLARE_MESSAGE_EVENT(r, data, name)                                \
@@ -86,7 +87,7 @@ struct MessageEventBase {
     {                                                                       \
         name(Message& message, PlayerConnectionPtr& player_connection) :    \
             MessageEventBase(message, player_connection)                    \
-            {}                                                              \
+        {}                                                                  \
     };
 
 BOOST_PP_SEQ_FOR_EACH(DECLARE_MESSAGE_EVENT, _, MESSAGE_EVENTS)
@@ -245,7 +246,8 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     typedef boost::mpl::list<
         sc::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
         sc::custom_reaction<PlayerChat>,
-        sc::custom_reaction<Diplomacy>
+        sc::custom_reaction<Diplomacy>,
+        sc::custom_reaction<ModeratorAct>
     > reactions;
 
     PlayingGame(my_context c);
@@ -253,6 +255,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
 
     sc::result react(const PlayerChat& msg);
     sc::result react(const Diplomacy& msg);
+    sc::result react(const ModeratorAct& msg);
 
     SERVER_ACCESSOR
 };

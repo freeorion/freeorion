@@ -12,6 +12,7 @@
 #include "../util/OrderSet.h"
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
+#include "../util/ModeratorAction.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -1080,6 +1081,18 @@ sc::result PlayingGame::react(const Diplomacy& msg) {
     DiplomaticMessage diplo_message;
     ExtractMessageData(message, diplo_message);
     Empires().HandleDiplomaticMessage(diplo_message);
+
+    return discard_event();
+}
+
+sc::result PlayingGame::react(const ModeratorAct& msg) {
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame.ModeratorAct";
+    const Message& message = msg.m_message;
+
+    Moderator::ModeratorAction action;
+    ExtractMessageData(message, action);
+
+    Logger().debugStream() << "PlayingGame::react(ModeratorAct): " << action.Dump();
 
     return discard_event();
 }

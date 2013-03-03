@@ -870,6 +870,20 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason,
     }
 }
 
+void ExtractMessageData(const Message& msg, Moderator::ModeratorAction& action) {
+    try {
+        std::istringstream is(msg.Text());
+        FREEORION_IARCHIVE_TYPE ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(action);
+    } catch (const std::exception& err) {
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, Moderator::ModeratorAction& mod_act) "
+                               << "failed!  Message:\n"
+                               << msg.Text() << "\n"
+                               << "Error: " << err.what();
+        action = Moderator::ModeratorAction();
+    }
+}
+
 void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name) {
     try {
         std::istringstream is(msg.Text());
