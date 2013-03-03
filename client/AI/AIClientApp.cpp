@@ -172,13 +172,13 @@ void AIClientApp::HandleMessage(const Message& msg) {
             bool state_string_available;    // ignored, as save_state_string is sent even if not set by ExtractMessageData
             std::string save_state_string;
 
-            ExtractMessageData(msg,                     single_player_game,     EmpireIDRef(),
-                               CurrentTurnRef(),        Empires(),              GetUniverse(),
-                               GetSpeciesManager(),     m_player_info,          Orders(),
+            ExtractMessageData(msg,                     single_player_game,     m_empire_id,
+                               m_current_turn,          m_empires,              m_universe,
+                               GetSpeciesManager(),     m_player_info,          m_orders,
                                loaded_game_data,        ui_data_available,      ui_data,
                                state_string_available,  save_state_string);
 
-            GetUniverse().InitializeSystemGraph(EmpireIDRef());
+            GetUniverse().InitializeSystemGraph(m_empire_id);
 
             Logger().debugStream() << "Message::GAME_START loaded_game_data: " << loaded_game_data;
             if (loaded_game_data) {
@@ -239,12 +239,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
     case Message::TURN_UPDATE: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             //Logger().debugStream() << "AIClientApp::HandleMessage : extracting turn update message data";
-            ExtractMessageData(msg,
-                               EmpireIDRef(),
-                               CurrentTurnRef(),
-                               Empires(),
-                               GetUniverse(),
-                               GetSpeciesManager(),
+            ExtractMessageData(msg,             m_empire_id,        m_current_turn,
+                               m_empires,       m_universe,         GetSpeciesManager(),
                                m_player_info);
             //Logger().debugStream() << "AIClientApp::HandleMessage : generating orders";
             GetUniverse().InitializeSystemGraph(m_empire_id);
@@ -255,11 +251,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
     }
 
     case Message::TURN_PARTIAL_UPDATE:
-        if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
-            ExtractMessageData(msg,
-                               EmpireIDRef(),
-                               GetUniverse());
-        }
+        if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID)
+            ExtractMessageData(msg, m_empire_id, m_universe);
         break;
 
     case Message::TURN_PROGRESS:

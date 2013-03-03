@@ -185,7 +185,6 @@ ObjectMap::const_value_iterator<> ObjectMap::begin_values() const
 ObjectMap::const_value_iterator<> ObjectMap::end_values() const
 { return end_values<UniverseObject>(); }
 
-
 UniverseObject* ObjectMap::Insert(UniverseObject* item) {
     if (!item)
         return 0;

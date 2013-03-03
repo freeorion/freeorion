@@ -226,8 +226,10 @@ void ClientNetworking::DisconnectFromServer() {
     Sleep(1000); // HACK! wait a bit for the disconnect to occur
 }
 
-void ClientNetworking::SetPlayerID(int player_id)
-{ m_player_id = player_id; }
+void ClientNetworking::SetPlayerID(int player_id) {
+    Logger().debugStream() << "ClientNetworking::SetPlayerID: player id set to: " << player_id;
+    m_player_id = player_id;
+}
 
 void ClientNetworking::SetHostPlayerID(int host_player_id)
 { m_host_player_id = host_player_id; }

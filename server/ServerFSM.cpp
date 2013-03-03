@@ -3,6 +3,7 @@
 #include "SaveLoad.h"
 #include "ServerApp.h"
 #include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
 #include "../network/ServerNetworking.h"
@@ -1136,7 +1137,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
                client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
     {
         // store empire orders and resume waiting for more
-        const Empire* empire = server.GetPlayerEmpire(player_id);
+        const Empire* empire = Empires().Lookup(player_id);
         if (!empire) {
             Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
             server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS", false));
@@ -1310,7 +1311,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     // going on here with the two possible sets of orders.  apparently the
     // received orders are ignored if there are already existing orders?
     boost::shared_ptr<OrderSet> order_set;
-    if (const Empire* empire = server.GetPlayerEmpire(player_id)) {
+    if (const Empire* empire = Empires().Lookup(player_id)) {
         OrderSet* existing_orders = server.m_turn_sequence[empire->EmpireID()];
         if (existing_orders)
             order_set.reset(new OrderSet(*existing_orders));
@@ -1350,12 +1351,8 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
 
         // save game...
         try {
-            SaveGame(save_filename,
-                     server_data,
-                     m_player_save_game_data,
-                     GetUniverse(),
-                     Empires(),
-                     GetSpeciesManager());
+            SaveGame(save_filename,     server_data,    m_player_save_game_data,
+                     GetUniverse(),     Empires(),      GetSpeciesManager());
         } catch (const std::exception&) {
             SendMessageToAllPlayers(ErrorMessage("UNABLE_TO_WRITE_SAVE_FILE", false));
         }
@@ -1484,13 +1481,11 @@ ResolvingCombat::ResolvingCombat(my_context c) :
 
     std::cerr << "ResolvingCombat: waiting for orders from empires ";
 
-    for (ServerNetworking::const_established_iterator it =
-             server.m_networking.established_begin();
-         it != server.m_networking.established_end();
-         ++it)
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+         it != server.m_networking.established_end(); ++it)
     {
         int player_id = (*it)->PlayerID();
-        int empire_id = server.GetPlayerEmpire(player_id)->EmpireID();
+        int empire_id = server.PlayerEmpireID(player_id);
         if (context<ProcessingTurn>().m_combat_empire_ids.find(empire_id) !=
             context<ProcessingTurn>().m_combat_empire_ids.end())
         {
@@ -1526,7 +1521,7 @@ sc::result ResolvingCombat::react(const CombatTurnOrders& msg) {
     ExtractMessageData(message, *order_set);
 
     // check order validity -- all orders must originate from this empire in order to be considered valid
-    Empire* empire = server.GetPlayerEmpire(message.SendingPlayer());
+    Empire* empire = Empires().Lookup(message.SendingPlayer());
     assert(empire);
     for (CombatOrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
         const CombatOrder& order = *it;
@@ -1579,7 +1574,7 @@ sc::result ResolvingCombat::react(const CombatTurnOrders& msg) {
              ++it)
         {
             int player_id = (*it)->PlayerID();
-            int empire_id = server.GetPlayerEmpire(player_id)->EmpireID();
+            int empire_id = server.PlayerEmpireID(player_id);
             if (context<ProcessingTurn>().m_combat_empire_ids.find(empire_id) !=
                 context<ProcessingTurn>().m_combat_empire_ids.end())
             {
@@ -1604,18 +1599,15 @@ sc::result ResolvingCombat::react(const CombatComplete& cc) {
     ServerApp& server = Server();
     delete server.m_current_combat;
     server.m_current_combat = 0;
- 
+    const std::set<int>& combat_empire_ids = context<ProcessingTurn>().m_combat_empire_ids;
+
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
-         it != server.m_networking.established_end();
-         ++it)
+         it != server.m_networking.established_end(); ++it)
     {
         int player_id = (*it)->PlayerID();
-        int empire_id = server.GetPlayerEmpire(player_id)->EmpireID();
-        if (context<ProcessingTurn>().m_combat_empire_ids.find(empire_id) !=
-            context<ProcessingTurn>().m_combat_empire_ids.end())
-        {
-            (*it)->SendMessage(ServerCombatEndMessage(player_id));
-        }
+        int empire_id = server.PlayerEmpireID(player_id);
+        if (combat_empire_ids.find(empire_id) != combat_empire_ids.end())
+        { (*it)->SendMessage(ServerCombatEndMessage(player_id)); }
     }
 
     return transit<ProcessingTurnIdle>();

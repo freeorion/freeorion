@@ -135,7 +135,7 @@ namespace AIInterface {
     { return AIClientApp::GetApp()->Empires().Lookup(empire_id); }
 
     int EmpirePlayerID(int empire_id) {
-        int player_id = AIClientApp::GetApp()->GetEmpirePlayerID(empire_id);
+        int player_id = AIClientApp::GetApp()->EmpirePlayerID(empire_id);
         if (-1 == player_id)
             Logger().debugStream() << "AIInterface::EmpirePlayerID(" << boost::lexical_cast<std::string>(empire_id) << ") - passed an invalid empire_id";
         return player_id;
@@ -764,7 +764,7 @@ namespace AIInterface {
         int sender_player_id = app->PlayerID();
         if (sender_player_id == Networking::INVALID_PLAYER_ID) return;
         int recipient_empire_id = diplo_message.RecipientEmpireID();
-        int recipient_player_id = app->GetEmpirePlayerID(recipient_empire_id);
+        int recipient_player_id = app->EmpirePlayerID(recipient_empire_id);
         if (recipient_player_id == Networking::INVALID_PLAYER_ID) return;
         app->Networking().SendMessage(DiplomacyMessage(sender_player_id, recipient_player_id, diplo_message));
     }

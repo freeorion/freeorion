@@ -292,8 +292,9 @@ void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
 
 void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection) {
     if (msg.SendingPlayer() != player_connection->PlayerID()) {
-        Logger().errorStream() << "ServerApp::HandleMessage : Received an message with a sender ID that differs from the sending player's ID.  Terminating connection.";
-        m_networking.Disconnect(player_connection);
+        Logger().errorStream() << "ServerApp::HandleMessage : Received an message with a sender ID ("
+                               << msg.SendingPlayer() << ") that differs from the sending player connection ID: "
+                               << player_connection->PlayerID() << ".  Ignoring.";
         return;
     }
 
@@ -1092,9 +1093,6 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         }
     }
 }
-
-Empire* ServerApp::GetPlayerEmpire(int player_id) const
-{ return Empires().Lookup(PlayerEmpireID(player_id)); }
 
 int ServerApp::PlayerEmpireID(int player_id) const {
     std::map<int, int>::const_iterator it = m_player_empire_ids.find(player_id);

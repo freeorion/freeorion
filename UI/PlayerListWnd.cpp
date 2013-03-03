@@ -487,7 +487,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
     if (clicked_player_id == client_player_id)
         return;
-    const Empire* clicked_empire = app->GetPlayerEmpire(clicked_player_id);
+    const Empire* clicked_empire = Empires().Lookup(clicked_player_id);
     if (!clicked_empire)
         return;
     int clicked_empire_id = clicked_empire->EmpireID();

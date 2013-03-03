@@ -47,6 +47,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    void                SetSinglePlayerGame(bool sp = true);
+
     void                StartServer();                  ///< starts a server process on localhost
     void                FreeServer();                   ///< frees (relinquishes ownership and control of) any running server process already started by this client; performs no cleanup of other processes, such as AIs
     void                KillServer();                   ///< kills any running server process already started by this client; performs no cleanup of other processes, such as AIs
@@ -55,12 +57,17 @@ public:
     void                StartMultiPlayerGameFromLobby();                ///< begins
     void                CancelMultiplayerGameFromLobby();               ///< cancels out of multiplayer game
     void                SaveGame(const std::string& filename);          ///< saves the current game; blocks until all save-related network traffic is resolved.
-    void                EndGame();                                      ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state
+    void                StartGame();
+    void                EndGame(bool suppress_FSM_reset = false);       ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state
     void                LoadSinglePlayerGame(std::string filename = "");///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
+    void                Autosave();                                     ///< autosaves the current game, iff autosaves are enabled and any turn number requirements are met
 
     Ogre::SceneManager* SceneManager();
     Ogre::Camera*       Camera();
     Ogre::Viewport*     Viewport();
+
+    boost::shared_ptr<ClientUI>
+                        GetClientUI() { return m_ui; }
 
     void                Reinitialize();
 
@@ -71,6 +78,8 @@ public:
     virtual void        StartTurn();
 
     virtual void        Exit(int code);
+
+    void                HandleSaveGameDataRequest();
     //@}
 
     static std::pair<int, int>  GetWindowWidthHeight(Ogre::RenderSystem* render_system);
@@ -83,7 +92,6 @@ private:
     virtual void    RenderBegin();
 
     void            HandleMessage(Message& msg);
-    void            HandleSaveGameDataRequest();
 
     void            HandleWindowMove(GG::X w, GG::Y h);
     void            HandleWindowResize(GG::X w, GG::Y h);
@@ -91,9 +99,6 @@ private:
     void            HandleWindowClose();
     void            HandleFocusChange();
 
-    void            StartGame();
-    void            Autosave();                         ///< autosaves the current game, iff autosaves are enabled and any turn number requirements are met
-    void            EndGame(bool suppress_FSM_reset);
     void            UpdateFPSLimit();                   ///< polls options database to find if FPS should be limited, and if so, to what rate
 
     void            DisconnectedFromServer();           ///< called by ClientNetworking when the TCP connection to the server is lost
@@ -109,18 +114,6 @@ private:
     Ogre::SceneManager*         m_scene_manager;
     Ogre::Camera*               m_camera;
     Ogre::Viewport*             m_viewport;
-
-    friend struct HumanClientFSM;
-    friend struct IntroMenu;
-    friend struct PlayingGame;
-    friend struct WaitingForSPHostAck;
-    friend struct WaitingForMPHostAck;
-    friend struct WaitingForMPJoinAck;
-    friend struct MPLobby;
-    friend struct WaitingForTurnData;
-    friend struct PlayingTurn;
-    friend struct WaitingForTurnDataIdle;
-    friend struct ResolvingCombat;
 };
 
 #endif // _HumanClientApp_h_

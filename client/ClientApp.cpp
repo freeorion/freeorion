@@ -5,6 +5,7 @@
 #include "../util/Serialize.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
 #include "../network/Networking.h"
 
 #include <stdexcept>
@@ -54,21 +55,7 @@ const CombatOrderSet& ClientApp::CombatOrders() const
 const ClientNetworking& ClientApp::Networking() const
 { return m_networking; }
 
-const Empire* ClientApp::GetPlayerEmpire(int player_id) const {
-    std::map<int, PlayerInfo>::const_iterator it = m_player_info.find(player_id);
-    if (it != m_player_info.end())
-        return m_empires.Lookup(it->second.empire_id);
-    return 0;
-}
-
-Empire* ClientApp::GetPlayerEmpire(int player_id) {
-    std::map<int, PlayerInfo>::const_iterator it = m_player_info.find(player_id);
-    if (it != m_player_info.end())
-        return m_empires.Lookup(it->second.empire_id);
-    return 0;
-}
-
-int ClientApp::GetEmpirePlayerID(int empire_id) const {
+int ClientApp::EmpirePlayerID(int empire_id) const {
     for (std::map<int, PlayerInfo>::const_iterator it = m_player_info.begin(); it != m_player_info.end(); ++it)
         if (it->second.empire_id == empire_id)
             return it->first;
@@ -76,7 +63,7 @@ int ClientApp::GetEmpirePlayerID(int empire_id) const {
 }
 
 const Networking::ClientType ClientApp::GetEmpireClientType(int empire_id) const
-{ return GetPlayerClientType(ClientApp::GetEmpirePlayerID(empire_id)); }
+{ return GetPlayerClientType(ClientApp::EmpirePlayerID(empire_id)); }
 
 const Networking::ClientType ClientApp::GetPlayerClientType(int player_id) const {
     if (player_id == Networking::INVALID_PLAYER_ID)
@@ -88,6 +75,9 @@ const Networking::ClientType ClientApp::GetPlayerClientType(int player_id) const
 }
 
 const std::map<int, PlayerInfo>& ClientApp::Players() const
+{ return m_player_info; }
+
+std::map<int, PlayerInfo>& ClientApp::Players()
 { return m_player_info; }
 
 void ClientApp::StartTurn() {
@@ -148,9 +138,3 @@ void ClientApp::SetEmpireID(int id)
 
 void ClientApp::SetCurrentTurn(int turn)
 { m_current_turn = turn; }
-
-int& ClientApp::EmpireIDRef()
-{ return m_empire_id; }
-
-int& ClientApp::CurrentTurnRef()
-{ return m_current_turn; }

@@ -72,10 +72,6 @@ public:
     /** \name Accessors */ //@{
     int     CurrentTurn() const {return m_current_turn;}   ///< returns current turn of the server
 
-    /** Returns the object for the empire that that the player with
-      * ID \a player_id is playing */
-    Empire* GetPlayerEmpire(int player_id) const;
-
     /** Returns the empire ID for the player with ID \a player_id */
     int     PlayerEmpireID(int player_id) const;
 

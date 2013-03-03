@@ -3031,6 +3031,12 @@ Creating AI Clients
 TURN_BEGIN
 Begin Turn %1%
 
+ERROR_PROCESSING_SERVER_MESSAGE
+Error processing message from server
+
+ERROR_EARLY_TURN_UPDATE
+Received unexpected turn update from server.
+
 ########################
 # Messages Panel       #
 ########################

@@ -33,8 +33,7 @@ public:
     int                     EmpireID() const;         ///< returns the empire ID of this client
     int                     CurrentTurn() const;      ///< returns the current game turn
 
-    const Empire*           GetPlayerEmpire(int player_id) const;   ///< returns the object for the empire that the player with ID \a player_id is playing
-    int                     GetEmpirePlayerID(int empire_id) const; ///< returns the player ID for the player playing the empire with ID \a empire_id
+    int                     EmpirePlayerID(int empire_id) const; ///< returns the player ID for the player playing the empire with ID \a empire_id
 
     const std::map<int, PlayerInfo>& Players() const; ///< returns the map, indexed by player ID, of PlayerInfo structs containing info about players in the game
     //@}
@@ -49,17 +48,20 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void            StartTurn();         ///< encodes order sets and sends turn orders message
-    virtual void            SendCombatSetup();   ///< encodes and sends combat setup orders message
-    virtual void            StartCombatTurn();   ///< encodes combat order sets and sends combat turn orders message
+    virtual void            StartTurn();        ///< encodes order sets and sends turn orders message
+    virtual void            SendCombatSetup();  ///< encodes and sends combat setup orders message
+    virtual void            StartCombatTurn();  ///< encodes combat order sets and sends combat turn orders message
 
-    Empire*                 GetPlayerEmpire(int player_id); ///< returns the object for the empire that the player with ID \a player_id is playing
+    Universe&                   GetUniverse();  ///< returns client's local copy of Universe
+    EmpireManager&              Empires();      ///< returns the set of known Empires
+    OrderSet&                   Orders();       ///< returns Order set for this client's player
+    CombatOrderSet&             CombatOrders(); ///< returns CombatOrder set for this client's player
+    ClientNetworking&           Networking();   ///< returns the networking object for this client's player
+    std::map<int, PlayerInfo>&  Players();      ///< returns the map, indexed by player ID, of PlayerInfo structs containing info about players in the game
 
-    Universe&               GetUniverse();       ///< returns client's local copy of Universe
-    EmpireManager&          Empires();           ///< returns the set of known Empires
-    OrderSet&               Orders();            ///< returns Order set for this client's player
-    CombatOrderSet&         CombatOrders();      ///< returns CombatOrder set for this client's player
-    ClientNetworking&       Networking();        ///< returns the networking object for this client's player
+    void SetEmpireID(int id);                   ///< sets the empire ID of this client
+    void SetCurrentTurn(int turn);              ///< sets the current game turn
+    void SetSinglePlayerGame(bool sp = true);   ///< sets whether the current game is single player (sp = true) or multiplayer (sp = false)
 
     /** returns a universe object ID which can be used for new objects created by the client.
         Can return INVALID_OBJECT_ID if an ID cannot be created. */
@@ -77,13 +79,6 @@ public:
     static ClientApp*       GetApp(); ///< returns the singleton ClientApp object
 
 protected:
-    /** \name Mutators */ //@{
-    void SetEmpireID(int id);       ///< sets the empire ID of this client
-    void SetCurrentTurn(int turn);  ///< sets the current game turn
-    int& EmpireIDRef();             ///< returns the empire ID of this client
-    int& CurrentTurnRef();          ///< returns the current game turn
-    //@}
-
     Universe                  m_universe;
     EmpireManager             m_empires;
     OrderSet                  m_orders;

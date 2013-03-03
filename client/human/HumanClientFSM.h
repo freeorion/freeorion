@@ -18,12 +18,6 @@
 #include <vector>
 
 
-enum WaitingForDataMode {
-    WAITING_FOR_NEW_GAME,
-    WAITING_FOR_LOADED_GAME,
-    WAITING_FOR_NEW_TURN
-};
-
 /** This function returns true iff the FSM's state instrumentation should be
   * output to the logger's debug stream. */
 bool TraceHumanClientFSMExecution();
@@ -38,10 +32,7 @@ struct StartMPGameClicked : boost::statechart::event<StartMPGameClicked> {};
 struct CancelMPGameClicked : boost::statechart::event<CancelMPGameClicked> {};
 
 // Indicates that an SP-host request was sent to the server.
-struct HostSPGameRequested : boost::statechart::event<HostSPGameRequested> {
-    HostSPGameRequested(WaitingForDataMode waiting_for_data_mode) : m_waiting_for_data_mode(waiting_for_data_mode) {}
-    WaitingForDataMode m_waiting_for_data_mode;
-};
+struct HostSPGameRequested : boost::statechart::event<HostSPGameRequested> {};
 
 // Indicates that a MP-host request was sent to the server.
 struct HostMPGameRequested : boost::statechart::event<HostMPGameRequested> {};
@@ -82,11 +73,9 @@ struct IntroMenuIdle;
 struct MPLobby;
 
 // Substates of PlayingGame
+struct WaitingForGameStart;
 struct WaitingForTurnData;
 struct PlayingTurn;
-
-// Substates of WaitingForTurnData
-struct WaitingForTurnDataIdle;
 struct ResolvingCombat;
 
 
@@ -122,7 +111,6 @@ struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMe
     using Base::post_event;
 
     HumanClientApp&    m_client;
-    WaitingForDataMode m_next_waiting_for_data_mode;
 };
 
 
@@ -245,8 +233,8 @@ struct MPLobby : boost::statechart::state<MPLobby, IntroMenu> {
 
 /** The human client state in which a game has been started, and a turn is being
   * played. */
-struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM, WaitingForTurnData> {
-    typedef boost::statechart::simple_state<PlayingGame, HumanClientFSM, WaitingForTurnData> Base;
+struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM, WaitingForGameStart> {
+    typedef boost::statechart::simple_state<PlayingGame, HumanClientFSM, WaitingForGameStart> Base;
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<HostID>,
@@ -259,7 +247,9 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
         boost::statechart::custom_reaction<PlayerEliminated>,
         boost::statechart::custom_reaction<EndGame>,
         boost::statechart::custom_reaction<ResetToIntroMenu>,
-        boost::statechart::custom_reaction<Error>
+        boost::statechart::custom_reaction<Error>,
+        boost::statechart::custom_reaction<TurnProgress>,
+        boost::statechart::custom_reaction<TurnPartialUpdate>
     > reactions;
 
     PlayingGame();
@@ -276,53 +266,48 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
     boost::statechart::result react(const EndGame& msg);
     boost::statechart::result react(const ResetToIntroMenu& msg);
     boost::statechart::result react(const Error& msg);
+    boost::statechart::result react(const TurnProgress& msg);
+    boost::statechart::result react(const TurnPartialUpdate& msg);
 
     CLIENT_ACCESSOR
 };
 
 
-/** The substate of PlayingGame in which a game is about to start, or the player is waiting for turn resolution and a
-    new turn. */
-struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, PlayingGame, WaitingForTurnDataIdle> {
-    typedef boost::statechart::state<WaitingForTurnData, PlayingGame, WaitingForTurnDataIdle> Base;
+/** The human client state in which a game has been started but the start of
+  * game message hasn't been received yet from the server. */
+struct WaitingForGameStart : boost::statechart::state<WaitingForGameStart, PlayingGame> {
+    typedef boost::statechart::state<WaitingForGameStart, PlayingGame> Base;
 
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction<TurnProgress>,
-        boost::statechart::custom_reaction<TurnUpdate>,
-        boost::statechart::custom_reaction<TurnPartialUpdate>,
-        boost::statechart::custom_reaction<CombatStart>,
-        boost::statechart::custom_reaction<GameStart>,
+        boost::statechart::custom_reaction<GameStart>
+    > reactions;
+
+    WaitingForGameStart(my_context ctx);
+    ~WaitingForGameStart();
+
+    boost::statechart::result react(const GameStart& msg);
+
+    CLIENT_ACCESSOR
+};
+
+
+/** The substate of PlayingGame in which a game is about to start, or the
+  * player is waiting for turn resolution and a new turn. */
+struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, PlayingGame> {
+    typedef boost::statechart::state<WaitingForTurnData, PlayingGame> Base;
+
+    typedef boost::mpl::list<
         boost::statechart::custom_reaction<SaveGame>,
-        boost::statechart::deferral<VictoryDefeat>,
-        boost::statechart::deferral<PlayerEliminated>
+        boost::statechart::custom_reaction<CombatStart>,
+        boost::statechart::custom_reaction<TurnUpdate>
     > reactions;
 
     WaitingForTurnData(my_context ctx);
     ~WaitingForTurnData();
 
-    boost::statechart::result react(const TurnProgress& msg);
+    boost::statechart::result react(const SaveGame& d);
+    boost::statechart::result react(const CombatStart& msg);
     boost::statechart::result react(const TurnUpdate& msg);
-    boost::statechart::result react(const TurnPartialUpdate& msg);
-    boost::statechart::result react(const CombatStart& msg);
-    boost::statechart::result react(const GameStart& msg);
-    boost::statechart::result react(const SaveGame& msg);
-
-    CLIENT_ACCESSOR
-};
-
-
-/** The initial substate of WaitingForTurnData. */
-struct WaitingForTurnDataIdle : boost::statechart::state<WaitingForTurnDataIdle, WaitingForTurnData> {
-    typedef boost::statechart::state<WaitingForTurnDataIdle, WaitingForTurnData> Base;
-
-    typedef boost::mpl::list<
-        boost::statechart::custom_reaction<CombatStart>
-    > reactions;
-
-    WaitingForTurnDataIdle(my_context ctx);
-    ~WaitingForTurnDataIdle();
-
-    boost::statechart::result react(const CombatStart& msg);
 
     CLIENT_ACCESSOR
 };
@@ -334,24 +319,26 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame> {
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<SaveGame>,
-        boost::statechart::custom_reaction<TurnEnded>,
-        boost::statechart::custom_reaction<AutoAdvanceFirstTurn>
+        boost::statechart::custom_reaction<AutoAdvanceFirstTurn>,
+        boost::statechart::custom_reaction<TurnUpdate>,
+        boost::statechart::custom_reaction<TurnEnded>
     > reactions;
 
     PlayingTurn(my_context ctx);
     ~PlayingTurn();
 
     boost::statechart::result react(const SaveGame& d);
-    boost::statechart::result react(const TurnEnded& d);
     boost::statechart::result react(const AutoAdvanceFirstTurn& d);
+    boost::statechart::result react(const TurnUpdate& msg);
+    boost::statechart::result react(const TurnEnded& d);
 
     CLIENT_ACCESSOR
 };
 
 
 /** The substate of WaitingForTurnData in which the player is resolving a combat. */
-struct ResolvingCombat : boost::statechart::state<ResolvingCombat, WaitingForTurnData> {
-    typedef boost::statechart::state<ResolvingCombat, WaitingForTurnData> Base;
+struct ResolvingCombat : boost::statechart::state<ResolvingCombat, PlayingGame> {
+    typedef boost::statechart::state<ResolvingCombat, PlayingGame> Base;
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<CombatStart>,
@@ -367,9 +354,9 @@ struct ResolvingCombat : boost::statechart::state<ResolvingCombat, WaitingForTur
     boost::statechart::result react(const CombatRoundUpdate& msg);
     boost::statechart::result react(const CombatEnd& msg);
 
-    std::auto_ptr<CombatData> m_previous_combat_data;
-    std::auto_ptr<CombatData> m_combat_data;
-    std::auto_ptr<CombatWnd> m_combat_wnd;
+    std::auto_ptr<CombatData>   m_previous_combat_data;
+    std::auto_ptr<CombatData>   m_combat_data;
+    std::auto_ptr<CombatWnd>    m_combat_wnd;
 
     CLIENT_ACCESSOR
 };

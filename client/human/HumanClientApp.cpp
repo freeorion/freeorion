@@ -292,6 +292,9 @@ HumanClientApp::~HumanClientApp() {
 bool HumanClientApp::SinglePlayerGame() const
 { return m_single_player_game; }
 
+void HumanClientApp::SetSinglePlayerGame(bool sp/* = true*/)
+{ m_single_player_game = sp; }
+
 namespace {
     std::string ServerClientExe() {
 #ifdef FREEORION_WIN32
@@ -433,7 +436,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
             }
 
             m_networking.SendMessage(HostSPGameMessage(setup_data));
-            m_fsm->process_event(HostSPGameRequested(WAITING_FOR_NEW_GAME));
+            m_fsm->process_event(HostSPGameRequested());
         }
     } else {
         failed = true;
@@ -510,9 +513,6 @@ void HumanClientApp::SaveGame(const std::string& filename) {
     HandleSaveGameDataRequest();
 }
 
-void HumanClientApp::EndGame()
-{ EndGame(false); }
-
 void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     if (!filename.empty()) {
 #if defined(FREEORION_WIN32)
@@ -583,7 +583,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
 
 
         m_networking.SendMessage(HostSPGameMessage(setup_data));
-        m_fsm->process_event(HostSPGameRequested(WAITING_FOR_LOADED_GAME));
+        m_fsm->process_event(HostSPGameRequested());
     }
 }
 
