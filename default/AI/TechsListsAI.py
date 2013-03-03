@@ -231,7 +231,7 @@ def defenseTechs2():
 
 def primaryMetaTechsList(index=0):
     "primary techs for all categories"
-    #index=0
+    index=1-index
     if index == 0:
         primaryMetaTechs = [
             "SHP_WEAPON_2",
@@ -240,21 +240,22 @@ def primaryMetaTechsList(index=0):
             "LRN_ALGO_ELEGANCE", 
             "SHP_DOMESTIC_MONSTER",
             "SHP_ORG_HULL", 
-            "CON_ENV_ENCAPSUL", 
             "SHP_WEAPON_5",
             "LRN_ARTIF_MINDS", 
-            "DEF_DEFENSE_NET_1", 
-            "DEF_GARRISON_1", 
             "GRO_SYMBIOTIC_BIO", 
+            "CON_ENV_ENCAPSUL", 
             "LRN_FORCE_FIELD",
-            "PRO_FUSION_GEN", 
-            "PRO_ROBOTIC_PROD", 
+            "DEF_DEFENSE_NET_1", 
             "SHP_WEAPON_6",
-            "CON_ORBITAL_CON", 
+            "DEF_GARRISON_1", 
+            "PRO_ROBOTIC_PROD", 
+            "PRO_FUSION_GEN", 
             "PRO_ORBITAL_GEN",
+            "CON_ORBITAL_CON", 
+            "SPY_DETECT_2",
             "DEF_DEFENSE_NET_2",
             "DEF_PLAN_BARRIER_SHLD_1",
-            "SPY_DETECT_2",
+            "LRN_GRAVITONICS",
             "SHP_WEAPON_7",
             "CON_METRO_INFRA", 
             "CON_SUBTER_CONST", 
@@ -263,7 +264,6 @@ def primaryMetaTechsList(index=0):
             "DEF_DEFENSE_NET_REGEN_1",
             "DEF_PLAN_BARRIER_SHLD_2",
             "PRO_SOL_ORB_GEN",
-            "LRN_GRAVITONICS",
             "CON_CONTGRAV_ARCH", 
             "GRO_GENETIC_ENG", 
             "LRN_PHYS_BRAIN", 

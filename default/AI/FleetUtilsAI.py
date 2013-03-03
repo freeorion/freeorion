@@ -1,8 +1,7 @@
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
 import EnumsAI
-from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType
-import ProductionAI
+from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType,  AIShipDesignTypes
 
 __designStats={}
 __AIShipRoleTypeNames = AIShipRoleType()
@@ -331,7 +330,8 @@ def assessShipDesignRole(design):
             
     stats = foAI.foAIstate.getDesignStats(design)
     rating = stats['attack'] * ( stats['structure'] + stats['shields'] )
-    if  ( "SD_SCOUT" in design.name(False)  )  or (rating < 0.2* ProductionAI.curBestMilShipRating()):
+    scoutNames = AIShipDesignTypes.explorationShip.keys()
+    if  ( "SD_SCOUT" in design.name(False)  )  or  ( design.name(False).split('-')[0] in scoutNames )    :
         for part in design.parts:
             if "DT_DETECTOR" in part:
                 return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION

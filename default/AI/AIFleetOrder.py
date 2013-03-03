@@ -2,7 +2,6 @@ from EnumsAI import AIFleetOrderType, AITargetType, AIShipRoleType,  AIFleetMiss
 import FleetUtilsAI
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
-import ExplorationAI
 
 AIFleetOrderTypeNames=AIFleetOrderType()
 AIFleetMissionTypeNames = AIFleetMissionType()
@@ -426,7 +425,7 @@ class AIFleetOrder(object):
                 if  systemID not in [fleet.systemID,  fleet.nextSystemID] :
                     fo.issueFleetMoveOrder(fleetID, systemID)
                 if systemID == fleet.systemID:
-                    if  fleetID in ExplorationAI.currentScoutFleetIDs:
+                    if    foAI.foAIstate.getFleetRole(fleetID) == AIFleetMissionType.FLEET_MISSION_EXPLORATION :
                         if 'needsEmergencyExploration' not in dir(foAI.foAIstate):
                             foAI.foAIstate.needsEmergencyExploration=[]
                         if systemID in foAI.foAIstate.needsEmergencyExploration:

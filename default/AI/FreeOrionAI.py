@@ -1,20 +1,23 @@
-import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client
+import os
 import pickle                       # Python object serialization library
+import sys
+import traceback
+from time import time
+
+import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client
+
 import AIstate
-import FleetUtilsAI
-import ExplorationAI
 import ColonisationAI
-import PriorityAI
-import ResearchAI
-import ProductionAI
-import ResourcesAI
+import ExplorationAI
+import FleetUtilsAI
 import InvasionAI
 import MilitaryAI
-import sys
 import PlanetUtilsAI
-from time import time
-import os
-import traceback
+import PriorityAI
+import ProductionAI
+import ResearchAI
+import ResourcesAI
+
 
 aggressions={fo.aggression.beginner:"Beginner",  fo.aggression.turtle:"Turtle",  fo.aggression.cautious:"Cautious",  fo.aggression.typical:"Moderate",  
              fo.aggression.aggressive:"Aggressive",  fo.aggression.maniacal:"Maniacal"}

@@ -1,15 +1,16 @@
 import copy
-import sys
-import traceback
+
 import freeOrionAIInterface as fo
-import EnumsAI
-from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType,  AITargetType
+
 import AIFleetMission
-import FleetUtilsAI
+import EnumsAI
 import ExplorationAI
-from MilitaryAI import MinThreat
+import FleetUtilsAI
 import ProductionAI
 import ResourcesAI
+from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
+from MilitaryAI import MinThreat
+
 
 ##moving ALL or NEARLY ALL  'global' variables into AIState object rather than module
 # global variables

@@ -59,35 +59,44 @@ namespace {
         return *it;
     }
     boost::function<const SitRepEntry&(const Empire&, int)> GetEmpireSitRepFunc =                       GetSitRep;
-}
 
-template<class T1, class T2>
-struct PairToTupleConverter {
-    static PyObject* convert(const std::pair<T1, T2>& pair) {
-        return boost::python::incref(boost::python::make_tuple(pair.first, pair.second).ptr());
-    }
-};
+    template<class T1, class T2>
+    struct PairToTupleConverter {
+        static PyObject* convert(const std::pair<T1, T2>& pair) {
+            return boost::python::incref(boost::python::make_tuple(pair.first, pair.second).ptr());
+        }
+    };
 
-typedef PairToTupleConverter<int, int> myIntIntPairConverter;
+    typedef PairToTupleConverter<int, int> myIntIntPairConverter;
 
-typedef std::pair<int, int> IntPair;
+    typedef std::pair<int, int> IntPair;
 
-typedef std::map<std::pair<int, int>,int > PairIntInt_IntMap;
+    typedef std::map<std::pair<int, int>,int > PairIntInt_IntMap;
 
-std::vector<IntPair>   obstructedStarlanesP(const Empire& empire) {
-    std::set<IntPair > laneset;
-    std::vector<IntPair>  retval;
-    try {
-        laneset = empire.SupplyOstructedStarlaneTraversals();
-        for (std::set<std::pair<int, int> >::const_iterator it = laneset.begin(); it != laneset.end(); ++it)
-        {retval.push_back(*it); }
+    std::vector<IntPair>   obstructedStarlanesP(const Empire& empire) {
+        std::set<IntPair > laneset;
+        std::vector<IntPair>  retval;
+        try {
+            laneset = empire.SupplyOstructedStarlaneTraversals();
+            for (std::set<std::pair<int, int> >::const_iterator it = laneset.begin(); it != laneset.end(); ++it)
+            {retval.push_back(*it); }
+            return retval;
+        } catch (...) {
+        }
         return retval;
-    } catch (...) {
     }
-    return retval;
-}
-boost::function<std::vector<IntPair>(const Empire&)> obstructedStarlanesFunc =      &obstructedStarlanesP;
+    boost::function<std::vector<IntPair>(const Empire&)> obstructedStarlanesFunc =      &obstructedStarlanesP;
 
+    typedef std::pair<double, int> DoubleIntPair;
+
+    typedef PairToTupleConverter<double, int> DoubleIntPairConverter;
+
+    //boost::mpl::vector<DoubleIntPair, const Empire&, const ProductionQueue::Element&>()
+    DoubleIntPair ProductionCostAndTimeP(const Empire& empire, const ProductionQueue::Element& element)
+    { return empire.ProductionCostAndTime(element); }
+    boost::function<DoubleIntPair(const Empire&,const ProductionQueue::Element& element )> ProductionCostAndTimeFunc = &ProductionCostAndTimeP;
+    
+}
 
 namespace FreeOrionPython {
     using boost::python::class_;
@@ -131,7 +140,8 @@ namespace FreeOrionPython {
         class_<std::vector<ItemSpec> >("ItemSpecVec")
             .def(boost::python::vector_indexing_suite<std::vector<ItemSpec>, true>())
         ;
-
+        boost::python::to_python_converter<DoubleIntPair, DoubleIntPairConverter>();
+        
         ///////////////////
         //     Empire    //
         ///////////////////
@@ -150,6 +160,11 @@ namespace FreeOrionPython {
             .add_property("allShipDesigns",         make_function(&Empire::ShipDesigns,             return_value_policy<return_by_value>()))
             .add_property("availableShipDesigns",   make_function(&Empire::AvailableShipDesigns,    return_value_policy<return_by_value>()))
             .add_property("productionQueue",        make_function(&Empire::GetProductionQueue,      return_internal_reference<>()))
+            .def("productionCostAndTime",           make_function(
+                                                        ProductionCostAndTimeFunc,      
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<DoubleIntPair, const Empire&, const ProductionQueue::Element& >()
+                                                    ))
 
             .def("techResearched",                  &Empire::TechResearched)
             .add_property("availableTechs",         make_function(&Empire::AvailableTechs,          return_internal_reference<>()))
