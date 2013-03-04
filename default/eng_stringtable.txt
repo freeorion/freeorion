@@ -2296,6 +2296,17 @@ Explore
 ORDER_CANCEL_FLEET_EXPLORE
 Stop Exploring
 
+
+###############
+#  Moderator  #
+###############
+
+MOD_DESTROY
+Moderator: Destroy
+
+MOD_SET_OWNER
+Moderator: Set Owner
+
 ###############
 #  Diplomacy  #
 ###############

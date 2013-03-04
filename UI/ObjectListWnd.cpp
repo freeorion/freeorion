@@ -1686,7 +1686,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
     // moderator actions...
     if (moderator) {
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESTROY"), 10, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("MOD_DESTROY"),      10, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("MOD_SET_OWNER"),    11, false, false));
     }
 
 
@@ -1701,6 +1702,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         }
         case 10: {
             net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::DestroyUniverseObject(object_id)));
+            break;
+        }
+        case 11: {
+            net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::SetOwner(object_id, ALL_EMPIRES)));
             break;
         }
         default:
