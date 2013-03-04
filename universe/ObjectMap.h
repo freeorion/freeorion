@@ -36,7 +36,7 @@ public:
      * objects by id */
     template <class T = UniverseObject>
     struct iterator : std::map<int, T*>::const_iterator {
-        iterator(const typename  std::map<int, T*>::const_iterator& base) :
+        iterator(const typename std::map<int, T*>::const_iterator& base) :
             std::map<int, T*>::const_iterator(base)
         {}
     };
@@ -64,12 +64,12 @@ public:
 
     template <class T = UniverseObject>
     struct value_iterator : std::map<int, T*>::iterator {
-        value_iterator(const typename  std::map<int, T*>::iterator& base) :
+        value_iterator(const typename std::map<int, T*>::iterator& base) :
             std::map<int, T*>::iterator(base)
         {}
 
-        T* operator *()
-        { return std::map<int, T*>::iterator::operator*().second; }
+        T& operator *()
+        { return *std::map<int, T*>::iterator::operator*().second; }
 
         T* operator ->()
         { return std::map<int, T*>::iterator::operator*().second; }
@@ -77,12 +77,12 @@ public:
 
     template <class T = UniverseObject>
     struct const_value_iterator : std::map<int, T*>::const_iterator {
-        const_value_iterator(typename std::map<int, T*>::const_iterator base) :
+        const_value_iterator(const typename std::map<int, T*>::const_iterator& base) :
             std::map<int, T*>::const_iterator(base)
         {}
 
-        const T* operator *() const
-        { return std::map<int, T*>::const_iterator::operator*().second; }
+        const T& operator *() const
+        { return *std::map<int, T*>::const_iterator::operator*().second; }
 
         const T* operator ->() const
         { return std::map<int, T*>::const_iterator::operator*().second; }
@@ -165,8 +165,8 @@ public:
     const_iterator<>        end() const;
     value_iterator<>        begin_values();
     value_iterator<>        end_values();
-    const_value_iterator<>  begin_values() const;
-    const_value_iterator<>  end_values() const;
+    const_value_iterator<>  begin_const_values() const;
+    const_value_iterator<>  end_const_values() const;
 
     template <class T>
     iterator<T>             begin();
@@ -181,9 +181,9 @@ public:
     template <class T>
     value_iterator<T>       end_values();
     template <class T>
-    const_value_iterator<T> begin_values() const;
+    const_value_iterator<T> begin_const_values() const;
     template <class T>
-    const_value_iterator<T> end_values() const;
+    const_value_iterator<T> end_const_values() const;
 
     std::string         Dump() const;
     //@}
@@ -311,11 +311,11 @@ ObjectMap::value_iterator<T> ObjectMap::end_values()
 { return value_iterator<T>(Map<T>().end()); }
 
 template <class T>
-ObjectMap::const_value_iterator<T> ObjectMap::begin_values() const
+ObjectMap::const_value_iterator<T> ObjectMap::begin_const_values() const
 { return const_value_iterator<T>(Map<T>().begin()); }
 
 template <class T>
-ObjectMap::const_value_iterator<T> ObjectMap::end_values() const
+ObjectMap::const_value_iterator<T> ObjectMap::end_const_values() const
 { return const_value_iterator<T>(Map<T>().end()); }
 
 template <class T>
@@ -333,8 +333,8 @@ T* ObjectMap::Object(int id) {
 template <class T>
 std::vector<const T*> ObjectMap::FindObjects() const {
     std::vector<const T*> result;
-    for (const_value_iterator<T> it = begin_values<T>(); it != end_values<T>(); ++it)
-        result.push_back(*it);
+    for (const_value_iterator<T> it = begin_const_values<T>(); it != end_const_values<T>(); ++it)
+        result.push_back(&*it);
     return result;
 }
 
@@ -342,7 +342,7 @@ template <class T>
 std::vector<T*> ObjectMap::FindObjects() {
     std::vector<T*> result;
     for (value_iterator<T> it = begin_values<T>(); it != end_values<T>(); ++it)
-        result.push_back(*it);
+        result.push_back(&*it);
     return result;
 }
 
