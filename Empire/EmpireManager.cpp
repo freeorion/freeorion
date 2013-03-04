@@ -43,6 +43,9 @@ EmpireManager::const_iterator EmpireManager::begin() const
 EmpireManager::const_iterator EmpireManager::end() const
 { return m_empire_map.end(); }
 
+int EmpireManager::NumEmpires() const
+{ return m_empire_map.size(); }
+
 bool EmpireManager::Eliminated(int id) const
 { return m_eliminated_empires.find(id) != m_eliminated_empires.end(); }
 

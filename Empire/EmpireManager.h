@@ -45,6 +45,8 @@ public:
     const_iterator      begin() const;
     const_iterator      end() const;
 
+    int                 NumEmpires() const;
+
     /** Returns whether the empire with ID \a id has been eliminated, or false
       * if no such empire exists. */
     bool                Eliminated(int id) const;
