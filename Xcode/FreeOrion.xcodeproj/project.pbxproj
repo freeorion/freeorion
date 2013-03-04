@@ -453,6 +453,7 @@
 		82C07479149DE7CE00E76876 /* libParse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* libParse.a */; };
 		82C0747C149DE80300E76876 /* libParse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* libParse.a */; };
 		82C0747F149DE83000E76876 /* libParse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* libParse.a */; };
+		82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */; };
 		82D68C6F15F4F772006B772D /* ShipPartStatsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D68C6D15F4F720006B772D /* ShipPartStatsParser.cpp */; };
 		82D68C7A15F4F8A1006B772D /* KeymapParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D68C6C15F4F720006B772D /* KeymapParser.cpp */; };
 		82D68C7D15F4F907006B772D /* libKeymapParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82D68C7915F4F805006B772D /* libKeymapParser.a */; };
@@ -2604,6 +2605,7 @@
 		82BEB657159853B300B024CB /* Diplomacy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Diplomacy.cpp; sourceTree = "<group>"; };
 		82BEB658159853B300B024CB /* Diplomacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Diplomacy.h; sourceTree = "<group>"; };
 		82C07438149DE46200E76876 /* libParse.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libParse.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeModeratorAction.cpp; sourceTree = "<group>"; };
 		82D68C6C15F4F720006B772D /* KeymapParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeymapParser.cpp; sourceTree = "<group>"; };
 		82D68C6D15F4F720006B772D /* ShipPartStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShipPartStatsParser.cpp; sourceTree = "<group>"; };
 		82D68C6E15F4F720006B772D /* ShipPartStatsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipPartStatsParser.h; sourceTree = "<group>"; };
@@ -4285,6 +4287,7 @@
 		471D5D170A98A3F900DA9C21 /* util */ = {
 			isa = PBXGroup;
 			children = (
+				82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */,
 				825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */,
 				825EA75F16DB9DB10002A797 /* ModeratorAction.h */,
 				34C44954118271590071E09A /* Math.cpp */,
@@ -5692,6 +5695,7 @@
 				82BEB659159853B300B024CB /* Diplomacy.cpp in Sources */,
 				8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */,
 				825EA76016DB9DB10002A797 /* ModeratorAction.cpp in Sources */,
+				82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
