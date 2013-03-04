@@ -30,6 +30,7 @@ namespace {
 
     const std::string EMPTY_STRING;
     const std::string ALL_CONDITION("CONDITION_ALL");
+    const std::string EMPIREAFFILIATION_CONDITION("CONDITION_EMPIREAFFILIATION");
     const std::string HOMEWORLD_CONDITION("CONDITION_HOMEWORLD");
     const std::string CAPITAL_CONDITION("CONDITION_CAPITAL");
     const std::string MONSTER_CONDITION("CONDITION_MONSTER");
@@ -197,6 +198,25 @@ public:
         if (condition_key == ALL_CONDITION) {
             return new Condition::All();
 
+        } else if (condition_key == EMPIREAFFILIATION_CONDITION) {
+            EmpireAffiliationType affil = AFFIL_SELF;
+
+            const std::string& empire_name = GetString();
+            if (empire_name.empty()) {
+                return new Condition::EmpireAffiliation(affil);
+            }
+
+            // get id of empire matching name
+            int empire_id = ALL_EMPIRES;
+            const EmpireManager& empires = Empires();
+            for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it) {
+                if (it->second->Name() == empire_name) {
+                    empire_id = it->first;
+                    break;
+                }
+            }
+            return new Condition::EmpireAffiliation(new ValueRef::Constant<int>(empire_id), affil);
+
         } else if (condition_key == HOMEWORLD_CONDITION) {
             const std::string& species_name = GetString();
             if (species_name.empty())
@@ -266,12 +286,13 @@ private:
 
     class StringRow : public GG::ListBox::Row  {
     public:
-        StringRow(const std::string& text, GG::Y row_height) :
+        StringRow(const std::string& text, GG::Y row_height, bool stringtable_lookup = true) :
             GG::ListBox::Row(GG::X1, row_height, "StringRow"),
             m_string(text)
         {
             SetChildClippingMode(ClipToClient);
-            const std::string& label = text.empty() ? EMPTY_STRING : UserString(text);
+            const std::string& label = (text.empty() ? EMPTY_STRING :
+                (stringtable_lookup ? UserString(text) : text));
             push_back(new GG::TextControl(GG::X0, GG::Y0, label, ClientUI::GetFont(),
                                           ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
         }
@@ -381,12 +402,12 @@ private:
         AttachChild(m_class_drop);
 
         std::vector<std::string> row_keys;
-        row_keys.push_back(ALL_CONDITION);              row_keys.push_back(HOMEWORLD_CONDITION);
-        row_keys.push_back(CAPITAL_CONDITION);          row_keys.push_back(MONSTER_CONDITION);
-        row_keys.push_back(ARMED_CONDITION);            row_keys.push_back(STATIONARY_CONDITION);
-        row_keys.push_back(CANPRODUCESHIPS_CONDITION);  row_keys.push_back(CANCOLONIZE_CONDITION);
-        row_keys.push_back(HASSPECIAL_CONDITION);       row_keys.push_back(HASTAG_CONDITION);
-        row_keys.push_back(SPECIES_CONDITION);
+        row_keys.push_back(ALL_CONDITION);              row_keys.push_back(EMPIREAFFILIATION_CONDITION);
+        row_keys.push_back(HOMEWORLD_CONDITION);        row_keys.push_back(CAPITAL_CONDITION);
+        row_keys.push_back(MONSTER_CONDITION);          row_keys.push_back(ARMED_CONDITION);
+        row_keys.push_back(STATIONARY_CONDITION);       row_keys.push_back(CANPRODUCESHIPS_CONDITION);
+        row_keys.push_back(CANCOLONIZE_CONDITION);      row_keys.push_back(HASSPECIAL_CONDITION);
+        row_keys.push_back(HASTAG_CONDITION);           row_keys.push_back(SPECIES_CONDITION);
         row_keys.push_back(PLANETSIZE_CONDITION);       row_keys.push_back(PLANETTYPE_CONDITION);
         row_keys.push_back(FOCUSTYPE_CONDITION);        row_keys.push_back(STARTYPE_CONDITION);
         row_keys.push_back(METERVALUE_CONDITION);
@@ -654,6 +675,23 @@ private:
             AttachChild(m_param_spin2);
 
             param_widget_top += m_param_spin1->Height();
+        } else if (condition_key == EMPIREAFFILIATION_CONDITION) {
+            // droplist of empires
+            m_string_drop = new CUIDropDownList(param_widget_left, param_widget_top, DropListWidth(),
+                                                DropListHeight(), DropListDropHeight());
+            AttachChild(m_string_drop);
+
+            param_widget_top += m_string_drop->Height();
+
+            // add rows for empire names
+            GG::ListBox::iterator row_it = m_string_drop->end();
+            const EmpireManager& empires = Empires();
+            for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it) {
+                const std::string& empire_name = it->second->Name();
+                row_it = m_string_drop->Insert(new StringRow(empire_name, GG::Y(ClientUI::Pts()), false));
+            }
+            if (!m_string_drop->Empty())
+                m_string_drop->Select(0);
         }
 
         Resize(GG::Pt(Width(), param_widget_top));
