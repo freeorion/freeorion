@@ -280,7 +280,7 @@ Tech
     researchcost = 120 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
     prerequisites = "DEF_DEFENSE_NET_1"
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 ContainedBy Contains And [
@@ -290,7 +290,52 @@ Tech
                 Ship
                 OwnedBy EnemyOf Source.Owner
             ]
+            activation = Not OwnerHasTech "DEF_SYST_DEF_MINE_2"
             effects = SetStructure Value - 2
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains And [
+                    OwnedBy TheEmpire Source.Owner
+                    Planet
+                ]
+                Fleet
+                OwnedBy EnemyOf Source.Owner
+            ]
+            activation = Not OwnerHasTech "DEF_SYST_DEF_MINE_2"
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_MINES"
+                    icon = "icons/sitrep/combat_damage.png"
+                    parameters = [
+                        tag = "empire" data = Target.Owner
+                        tag = "fleet" data = Target.ID
+                        tag = "rawtext" data = "2"
+                        tag = "system" data = Target.SystemID
+                    ]
+            ]
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains And [
+                    OwnedBy TheEmpire Source.Owner
+                    Planet
+                ]
+                Ship
+                OwnedBy EnemyOf Source.Owner
+                Structure high = 2
+            ]
+            activation = Not OwnerHasTech "DEF_SYST_DEF_MINE_2"
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_MINES_SHIP_DESTROYED"
+                    icon = "icons/sitrep/combat_destroyed.png"
+                    parameters = [
+                        tag = "empire" data = Target.Owner
+                        tag = "ship" data = Target.ID
+                        tag = "system" data = Target.SystemID
+                    ]
+                Destroy
+            ]
+    ]
 
 Tech
     name = "DEF_SYST_DEF_MINE_2"
@@ -301,7 +346,7 @@ Tech
     researchcost = 240 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
     prerequisites = "DEF_SYST_DEF_MINE_1"
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 ContainedBy Contains And [
@@ -311,7 +356,52 @@ Tech
                 Ship
                 OwnedBy EnemyOf Source.Owner
             ]
-            effects = SetStructure Value - 4
+            activation = Not OwnerHasTech "DEF_SYST_DEF_MINE_3"
+            effects = SetStructure Value - 6
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains And [
+                    OwnedBy TheEmpire Source.Owner
+                    Planet
+                ]
+                Fleet
+                OwnedBy EnemyOf Source.Owner
+            ]
+            activation = Not OwnerHasTech "DEF_SYST_DEF_MINE_3"
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_MINES"
+                    icon = "icons/sitrep/combat_damage.png"
+                    parameters = [
+                        tag = "empire" data = Target.Owner
+                        tag = "fleet" data = Target.ID
+                        tag = "rawtext" data = "6"
+                        tag = "system" data = Target.SystemID
+                    ]
+            ]
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains And [
+                    OwnedBy TheEmpire Source.Owner
+                    Planet
+                ]
+                Ship
+                OwnedBy EnemyOf Source.Owner
+                Structure high = 6
+            ]
+            activation = Not OwnerHasTech "DEF_SYST_DEF_MINE_3"
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_MINES_SHIP_DESTROYED"
+                    icon = "icons/sitrep/combat_destroyed.png"
+                    parameters = [
+                        tag = "empire" data = Target.Owner
+                        tag = "ship" data = Target.ID
+                        tag = "system" data = Target.SystemID
+                    ]
+                Destroy
+            ]
+    ]
 
 Tech
     name = "DEF_SYST_DEF_MINE_3"
@@ -322,7 +412,7 @@ Tech
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
     prerequisites = "DEF_SYST_DEF_MINE_2"
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 ContainedBy Contains And [
@@ -332,7 +422,49 @@ Tech
                 Ship
                 OwnedBy EnemyOf Source.Owner
             ]
-            effects = SetStructure Value - 8
+            effects = SetStructure Value - 14
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains And [
+                    OwnedBy TheEmpire Source.Owner
+                    Planet
+                ]
+                Fleet
+                OwnedBy EnemyOf Source.Owner
+            ]
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_MINES"
+                    icon = "icons/sitrep/combat_damage.png"
+                    parameters = [
+                        tag = "empire" data = Target.Owner
+                        tag = "fleet" data = Target.ID
+                        tag = "rawtext" data = "14"
+                        tag = "system" data = Target.SystemID
+                    ]
+            ]
+        EffectsGroup
+            scope = And [
+                ContainedBy Contains And [
+                    OwnedBy TheEmpire Source.Owner
+                    Planet
+                ]
+                Ship
+                OwnedBy EnemyOf Source.Owner
+                Structure high = 14
+            ]
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_MINES_SHIP_DESTROYED"
+                    icon = "icons/sitrep/combat_destroyed.png"
+                    parameters = [
+                        tag = "empire" data = Target.Owner
+                        tag = "ship" data = Target.ID
+                        tag = "system" data = Target.SystemID
+                    ]
+                Destroy
+            ]
+    ]
 
 
 //########################################################
@@ -684,8 +816,22 @@ Tech
                         tag = "empire" data = Target.Owner
                         tag = "ship" data = Target.ID
                     ]
+                    empire = Target.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_PSY_DOM"
+                    icon = "icons/sitrep/ship_produced.png"
+                    parameters = [
+                        tag = "empire" data = Target.Owner
+                        tag = "ship" data = Target.ID
+                    ]
                     empire = Source.Owner
                 SetOwner Source.Owner
+                MoveTo NumberOf 1 And [ 
+                    System And [ 
+                        WithinStarlaneJumps 1 Target 
+                        WithinStarlaneJumps 1 Source 
+                    ]
+                
             ]
 Tech
     name = "LRN_ART_BLACK_HOLE"

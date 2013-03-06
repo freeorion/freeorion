@@ -296,7 +296,6 @@ Organic V
 SD_MARK_B_ORGANIC1_DESC
 Organic hull design with preliminary Plasma weaponry. 
 
-
 SD_MARK_C_ENDO1
 Endomorphic I
 SD_MARK_C_ENDO1_DESC
@@ -3427,6 +3426,17 @@ EFFECT_PSY_DOM
 The %empire% ship %ship% has been psychically controlled!
 EFFECT_PSY_DOM_LABEL
 Psychogenic Domination
+
+EFFECT_MINES
+The ships of %empire% fleet %fleet% have taken %rawtext% points of structure damage from mines in the %system% system.
+EFFECT_MINES_LABEL
+System Mines
+
+EFFECT_MINES_SHIP_DESTROYED
+The %empire% ship %ship% has been destroyed by mines in the %system% system!
+EFFECT_MINES_SHIP_DESTROYED_LABEL
+System Mines Destroyed Ship
+
 
 
 #############################################################
