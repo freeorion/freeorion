@@ -831,7 +831,7 @@ Tech
                         WithinStarlaneJumps 1 Target 
                         WithinStarlaneJumps 1 Source 
                     ]
-                
+                ]
             ]
 Tech
     name = "LRN_ART_BLACK_HOLE"
