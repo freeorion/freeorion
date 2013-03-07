@@ -852,15 +852,15 @@ def generateProductionOrders():
                             GGList.append(opid)
                         if  opid!=pid and otherPlanet.owner==empire.empireID and (EnumsAI.AIFocusType.FOCUS_INDUSTRY  in list(otherPlanet.availableFoci)+[otherPlanet.focus]):
                             canUseGGG=True
-                if pid in sorted(GGList)[:maxGGGs] and canUseGGG:
-                    res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
-                    if res: 
-                        queuedBldLocs.append(pid)
-                        cost,  time =   empire.productionCostAndTime( productionQueue[productionQueue.size -1]  )
-                        bldgExpense +=  cost/time  # productionQueue[productionQueue.size -1].blocksize * 
-                        res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
-                        print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
-                    print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
+                    if pid in sorted(GGList)[:maxGGGs] and canUseGGG:
+                        res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
+                        if res: 
+                            queuedBldLocs.append(pid)
+                            cost,  time =   empire.productionCostAndTime( productionQueue[productionQueue.size -1]  )
+                            bldgExpense +=  cost/time  # productionQueue[productionQueue.size -1].blocksize * 
+                            res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                            print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
+                        print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  pid, universe.getPlanet(pid).name,  res)
     
     bldName = "BLD_SOL_ORB_GEN"
     if empire.buildingTypeAvailable(bldName) and foAI.foAIstate.aggression > fo.aggression.turtle:

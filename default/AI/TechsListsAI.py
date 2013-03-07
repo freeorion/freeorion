@@ -232,7 +232,7 @@ def defenseTechs2():
 def primaryMetaTechsList(index=0):
     "primary techs for all categories"
     #index=1-index
-    index=0
+    #index=0
     if index == 0:
         primaryMetaTechs = [
             "SHP_WEAPON_2",
