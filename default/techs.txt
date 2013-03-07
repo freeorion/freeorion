@@ -796,8 +796,8 @@ Tech
         EffectsGroup
             scope = And [
                 WithinStarlaneJumps 1 And [
-                    OwnedBy TheEmpire Source.Owner
                     Planet
+                    OwnedBy TheEmpire Source.Owner
                     TargetPopulation low = 1
                 ]
                 Not OwnedBy TheEmpire Source.Owner
@@ -828,8 +828,12 @@ Tech
                 SetOwner Source.Owner
                 MoveTo NumberOf 1 And [ 
                     System And [ 
-                        WithinStarlaneJumps 1 Target 
-                        WithinStarlaneJumps 1 Source 
+                        WithinStarlaneJumps 1 Target
+                        WithinStarlaneJumps 1 And [
+                            Planet
+                            OwnedBy TheEmpire Source.Owner
+                            TargetPopulation low = 1
+                        ]
                     ]
                 ]
             ]
