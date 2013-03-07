@@ -1452,7 +1452,7 @@ namespace {
         // check for each pair of meter types.  if both exist, set active
         // meter current value equal to target meter current value.
         for (ObjectMap::iterator<> it = object_map.begin(); it != object_map.end(); ++it) {
-            UniverseObject* obj = it->second;
+            UniverseObject* obj = *it;
             for (std::map<MeterType, MeterType>::const_iterator meter_it = meters.begin(); meter_it != meters.end(); ++meter_it)
                 if (Meter* meter = obj->GetMeter(meter_it->first))
                     if (Meter* targetmax_meter = obj->GetMeter(meter_it->second))
@@ -1465,7 +1465,7 @@ namespace {
     void SetNativePopulationValues(ObjectMap& object_map) {
 
         for (ObjectMap::iterator<> it = object_map.begin(); it != object_map.end(); ++it) {
-            UniverseObject* obj = it->second;
+            UniverseObject* obj = *it;
             Meter* meter = obj->GetMeter(METER_POPULATION);
             Meter* targetmax_meter = obj->GetMeter(METER_TARGET_POPULATION);
             // only applies to unowned planets
@@ -1673,7 +1673,7 @@ void Universe::AddStartingSpecials(GalaxySetupOption specials_freq) {
     // to add that special by testing its spawn rate
     std::vector<std::string>::const_iterator special_name_it = special_names.begin();
     for (ObjectMap::iterator<> obj_it = m_objects.begin(); obj_it != m_objects.end(); ++obj_it) {
-        UniverseObject* obj = obj_it->second;
+        UniverseObject* obj = *obj_it;
         // for this object, find a suitable special
         std::vector<std::string>::const_iterator initial_special_name_it = special_name_it;
         while (true) {

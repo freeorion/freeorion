@@ -506,8 +506,8 @@ namespace {
         // TODO: pass in a location condition, and pick a location that matches it if possible
         if (!location) {
             for (ObjectMap::const_iterator<> obj_it = Objects().begin(); obj_it != Objects().end(); ++obj_it) {
-                if (obj_it->second->OwnedBy(empire_id)) {
-                    location = obj_it->second;
+                if (obj_it->OwnedBy(empire_id)) {
+                    location = *obj_it;
                     break;
                 }
             }
@@ -766,9 +766,9 @@ void EncyclopediaDetailPanel::Refresh() {
 
         // objects that have special
         std::vector<const UniverseObject*> objects_with_special;
-        for (ObjectMap::const_iterator<> obj_it = objects.begin(); obj_it != objects.end(); ++obj_it)
-            if (obj_it->second->Specials().find(m_items_it->second) != obj_it->second->Specials().end())
-                objects_with_special.push_back(obj_it->second);
+        for (ObjectMap::const_iterator<> obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it)
+            if (obj_it->Specials().find(m_items_it->second) != obj_it->Specials().end())
+                objects_with_special.push_back(*obj_it);
 
         if (!objects_with_special.empty()) {
             detailed_description += "\n\n" + UserString("OBJECTS_WITH_SPECIAL");

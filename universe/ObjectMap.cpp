@@ -42,8 +42,8 @@ void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*
 
     // loop through objects in copied map, copying or cloning each depending
     // on whether there already is a corresponding object in this map
-    for (const_value_iterator<> it = copied_map.begin_const_values(); it != copied_map.end_const_values(); ++it)
-        this->CopyObject(&*it, empire_id);
+    for (const_iterator<> it = copied_map.const_begin(); it != copied_map.const_end(); ++it)
+        this->CopyObject(*it, empire_id);
 }
 
 void ObjectMap::CopyObject(const UniverseObject* source, int empire_id/* = ALL_EMPIRES*/) {
@@ -70,8 +70,8 @@ void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id/*
 
     // loop through objects in copied map, copying or cloning each depending
     // on whether there already is a corresponding object in this map
-    for (const_iterator<> it = copied_map.begin(); it != copied_map.end(); ++it) {
-        int object_id = it->first;
+    for (const_iterator<> it = copied_map.const_begin(); it != copied_map.const_end(); ++it) {
+        int object_id = it->ID();
 
         // can empire see object at all?  if not, skip copying object's info
         if (GetUniverse().GetObjectVisibilityByEmpire(object_id, empire_id) <= VIS_NO_VISIBILITY)
@@ -81,7 +81,7 @@ void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id/*
         // appropriate for the actual visibility level.  this ensures that any
         // details previously learned about object will still be recorded in
         // copied-to ObjectMap
-        this->CopyObject(it->second, ALL_EMPIRES);
+        this->CopyObject(*it, ALL_EMPIRES);
    }
 }
 
@@ -129,7 +129,7 @@ std::vector<UniverseObject*> ObjectMap::FindObjects(const std::vector<int>& obje
 
 std::vector<const UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const {
     std::vector<const UniverseObject*> result;
-    for (const_value_iterator<> it = begin_const_values(); it != end_const_values(); ++it) {
+    for (const_iterator<> it = const_begin(); it != const_end(); ++it) {
         if (UniverseObject* obj = it->Accept(visitor))
             result.push_back(obj);
     }
@@ -138,7 +138,7 @@ std::vector<const UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVi
 
 std::vector<UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) {
     std::vector<UniverseObject*> result;
-    for (value_iterator<> it = begin_values(); it != end_values(); ++it) {
+    for (iterator<> it = begin(); it != end(); ++it) {
         if (UniverseObject* obj = it->Accept(visitor))
             result.push_back(obj);
     }
@@ -147,18 +147,15 @@ std::vector<UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVisitor&
 
 std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) const {
     std::vector<int> result;
-    for (const_iterator<> it = begin(); it != end(); ++it) {
-        if (it->second->Accept(visitor))
-            result.push_back(it->first);
+    for (const_iterator<> it = const_begin(); it != const_end(); ++it) {
+        if (it->Accept(visitor))
+            result.push_back(it->ID());
     }
     return result;
 }
 
 std::vector<int> ObjectMap::FindObjectIDs() const {
-    std::vector<int> result;
-    for (const_iterator<> it = begin(); it != end(); ++it)
-        result.push_back(it->first);
-    return result;
+    return FindObjectIDs<UniverseObject>();
 }
 
 ObjectMap::iterator<> ObjectMap::begin()
@@ -167,24 +164,11 @@ ObjectMap::iterator<> ObjectMap::begin()
 ObjectMap::iterator<> ObjectMap::end()
 { return end<UniverseObject>(); }
 
-ObjectMap::const_iterator<> ObjectMap::begin() const
-{ return begin<UniverseObject>(); }
+ObjectMap::const_iterator<> ObjectMap::const_begin() const
+{ return const_begin<UniverseObject>(); }
 
-ObjectMap::const_iterator<> ObjectMap::end() const
-{ return end<UniverseObject>(); }
-
-ObjectMap::value_iterator<> ObjectMap::begin_values()
-{ return begin_values<UniverseObject>(); }
-
-ObjectMap::value_iterator<> ObjectMap::end_values()
-{ return end_values<UniverseObject>(); }
-
-ObjectMap::const_value_iterator<> ObjectMap::begin_const_values() const
-{ return begin_const_values<UniverseObject>(); }
-
-ObjectMap::const_value_iterator<> ObjectMap::end_const_values() const
-{ return end_const_values<UniverseObject>(); }
-
+ObjectMap::const_iterator<> ObjectMap::const_end() const
+{ return const_end<UniverseObject>(); }
 
 UniverseObject* ObjectMap::Insert(UniverseObject* item) {
     if (!item)
@@ -227,8 +211,8 @@ void ObjectMap::Delete(int id)
 { delete Remove(id); }
 
 void ObjectMap::Clear() {
-    for (value_iterator<> it = begin_values(); it != end_values(); ++it)
-        delete &*it;
+    for (iterator<> it = begin(); it != end(); ++it)
+        delete *it;
     FOR_EACH_MAP(ClearMap);
 }
 
@@ -238,14 +222,14 @@ void ObjectMap::swap(ObjectMap& rhs) {
 
 void ObjectMap::CopyObjectsToSpecializedMaps() {
     FOR_EACH_SPECIALIZED_MAP(ClearMap);
-    for (value_iterator<> it = begin_values(); it != end_values(); ++it)
-        FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, &*it);
+    for (iterator<> it = begin(); it != end(); ++it)
+        FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, *it);
 }
 
 std::string ObjectMap::Dump() const {
     std::ostringstream dump_stream;
     dump_stream << "ObjectMap contains UniverseObjects: " << std::endl;
-    for (const_value_iterator<> it = begin_const_values(); it != end_const_values(); ++it)
+    for (const_iterator<> it = const_begin(); it != const_end(); ++it)
         dump_stream << it->Dump() << std::endl;
     dump_stream << std::endl;
     return dump_stream.str();

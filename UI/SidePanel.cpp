@@ -2297,8 +2297,8 @@ void SidePanel::RefreshImpl() {
 
     // populate droplist of system names
     int system_names_in_droplist = 0;
-    for (ObjectMap::const_value_iterator<System> sys_it = Objects().begin_const_values<System>();
-         sys_it != Objects().end_const_values<System>(); ++sys_it)
+    for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
+         sys_it != Objects().const_end<System>(); ++sys_it)
     {
         int sys_id = sys_it->ID();
 

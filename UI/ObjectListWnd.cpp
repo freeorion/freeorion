@@ -523,10 +523,10 @@ private:
             // collect all valid tags on any object in universe
             std::set<std::string> all_tags;
             const ObjectMap& known_objects = Objects();
-            for (ObjectMap::const_iterator<> obj_it = known_objects.begin();
-                 obj_it != known_objects.end(); ++obj_it)
+            for (ObjectMap::const_iterator<> obj_it = known_objects.const_begin();
+                 obj_it != known_objects.const_end(); ++obj_it)
             {
-                std::vector<std::string> obj_tags = obj_it->second->Tags();
+                std::vector<std::string> obj_tags = obj_it->Tags();
                 std::copy(obj_tags.begin(), obj_tags.end(), std::inserter(all_tags, all_tags.end()));
             }
 
@@ -617,18 +617,10 @@ private:
 
             // collect all valid foci on any object in universe
             std::set<std::string> all_foci;
-            const ObjectMap& known_objects = Objects();
-            for (ObjectMap::const_iterator<> obj_it = known_objects.begin();
-                 obj_it != known_objects.end(); ++obj_it)
+            for (ObjectMap::const_iterator<Planet> planet_it = Objects().const_begin<Planet>();
+                 planet_it != Objects().const_end<Planet>(); ++planet_it)
             {
-                const UniverseObject* obj = obj_it->second;
-                if (obj->ObjectType() != OBJ_PLANET)
-                    continue;
-                const Planet* planet = universe_object_cast<const Planet*>(obj);
-                if (!planet)
-                    continue;
-
-                std::vector<std::string> obj_foci = planet->AvailableFoci();
+                std::vector<std::string> obj_foci = planet_it->AvailableFoci();
                 std::copy(obj_foci.begin(), obj_foci.end(), std::inserter(all_foci, all_foci.end()));
             }
 
@@ -1278,9 +1270,9 @@ public:
             std::map<int, std::set<int> >   planet_buildings;
             std::set<int>                   fields;
 
-            for (ObjectMap::const_iterator<> it = objects.begin(); it != objects.end(); ++it) {
-                int object_id = it->first;
-                const UniverseObject* obj = it->second;
+            for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it) {
+                int object_id = it->ID();
+                const UniverseObject* obj = *it;
 
                 if (obj->ObjectType() == OBJ_SYSTEM) {
                     if (ObjectShown(object_id, OBJ_SYSTEM, true))

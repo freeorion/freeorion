@@ -524,7 +524,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     }
 
     // reasonably unpredictable but reproducible random seeding
-    const int base_seed = combat_info.objects.begin()->first + CurrentTurn();
+    const int base_seed = combat_info.objects.begin()->ID() + CurrentTurn();
 
 
     // compile list of valid objects to attack or be attacked in this combat
@@ -534,16 +534,16 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     float monster_detection = 0.0;
 
     for (ObjectMap::iterator<> it = combat_info.objects.begin(); it != combat_info.objects.end(); ++it) {
-        const UniverseObject* obj = it->second;
+        const UniverseObject* obj = *it;
         //Logger().debugStream() << "Considerting object " << obj->Name() << " owned by " << obj->Owner();
         if (ObjectCanAttack(obj)) {
             //Logger().debugStream() << "... can attack";
-            valid_attacker_object_ids.insert(it->first);
-            empire_valid_attacker_object_ids[obj->Owner()].insert(it->first);
+            valid_attacker_object_ids.insert(it->ID());
+            empire_valid_attacker_object_ids[obj->Owner()].insert(it->ID());
         }
         if (ObjectCanBeAttacked(obj)) {
             //Logger().debugStream() << "... can be attacked";
-            valid_target_object_ids.insert(it->first);
+            valid_target_object_ids.insert(it->ID());
         }
         if (obj->Unowned() && obj->ObjectType() == OBJ_SHIP)
             monster_detection = std::max(monster_detection, obj->CurrentMeterValue(METER_DETECTION));

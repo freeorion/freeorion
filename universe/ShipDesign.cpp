@@ -321,8 +321,8 @@ namespace {
         // no capital?  scan through all objects to find one owned by this empire
         if (!source) {
             for (ObjectMap::const_iterator<> obj_it = Objects().begin(); obj_it != Objects().end(); ++obj_it) {
-                if (obj_it->second->OwnedBy(empire_id)) {
-                    source = obj_it->second;
+                if (obj_it->OwnedBy(empire_id)) {
+                    source = *obj_it;
                     break;
                 }
             }

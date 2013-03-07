@@ -1596,11 +1596,11 @@ void MeterModifiersIndicator::Update() {
     const Effect::AccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
 
     // for every object that has the appropriate meter type, get its affect accounting info
-    for (ObjectMap::const_iterator<> obj_it = objects.begin();
-         obj_it != objects.end(); ++obj_it)
+    for (ObjectMap::const_iterator<> obj_it = objects.const_begin();
+         obj_it != objects.const_end(); ++obj_it)
     {
-        int target_object_id = obj_it->first;
-        const UniverseObject* obj = obj_it->second;
+        int target_object_id = obj_it->ID();
+        const UniverseObject* obj = *obj_it;
         // does object have relevant meter?
         const Meter* meter = obj->GetMeter(m_meter_type);
         if (!meter)
@@ -3286,11 +3286,11 @@ namespace {
         double modifications_sum = 0.0;
 
         // for every object that has the appropriate meter type, get its affect accounting info
-        for (ObjectMap::const_iterator<> obj_it = objects.begin();
-                obj_it != objects.end(); ++obj_it)
+        for (ObjectMap::const_iterator<> obj_it = objects.const_begin();
+                obj_it != objects.const_end(); ++obj_it)
         {
-            int target_object_id = obj_it->first;
-            const UniverseObject* target_obj = obj_it->second;
+            int target_object_id = obj_it->ID();
+            const UniverseObject* target_obj = *obj_it;
             // does object have relevant meter?
             const Meter* meter = target_obj->GetMeter(m_meter_type);
             if (!meter)

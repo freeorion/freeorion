@@ -166,9 +166,9 @@ void Condition::ConditionBase::Eval(const ScriptingContext& parent_context,
     // evaluate condition on all non-destroyed objects in Universe
     Condition::ObjectSet condition_non_targets;
     condition_non_targets.reserve(Objects().NumObjects());
-    for (ObjectMap::const_iterator<> it = Objects().begin(); it != Objects().end(); ++it)
-        if (GetUniverse().DestroyedObjectIds().find(it->first) == GetUniverse().DestroyedObjectIds().end())
-            condition_non_targets.push_back(it->second);
+    for (ObjectMap::const_iterator<> it = Objects().const_begin(); it != Objects().const_end(); ++it)
+        if (GetUniverse().DestroyedObjectIds().find(it->ID()) == GetUniverse().DestroyedObjectIds().end())
+            condition_non_targets.push_back(*it);
     Eval(parent_context, matches, condition_non_targets);
 }
 
@@ -294,10 +294,10 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
         condition_matches.reserve(objects.NumObjects());
         ObjectSet condition_non_matches;
         condition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::iterator<> uit = objects.begin(); uit != objects.end(); ++uit) {
-            if (destroyed_object_ids.find(uit->first) != destroyed_object_ids.end())
+        for (ObjectMap::const_iterator<> uit = objects.const_begin(); uit != objects.const_end(); ++uit) {
+            if (destroyed_object_ids.find(uit->ID()) != destroyed_object_ids.end())
                 continue;
-            condition_non_matches.push_back(uit->second);
+            condition_non_matches.push_back(*uit);
         }
         // can evaluate subcondition once for all objects being tested by this condition
         m_condition->Eval(local_context, condition_matches, condition_non_matches, NON_MATCHES);
@@ -343,10 +343,10 @@ bool Condition::Number::Match(const ScriptingContext& local_context) const {
     condition_matches.reserve(objects.NumObjects());
     ObjectSet condition_non_matches;
     condition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::iterator<> uit = objects.begin(); uit != objects.end(); ++uit) {
-        if (destroyed_object_ids.find(uit->first) != destroyed_object_ids.end())
+    for (ObjectMap::const_iterator<> uit = objects.const_begin(); uit != objects.const_end(); ++uit) {
+        if (destroyed_object_ids.find(uit->ID()) != destroyed_object_ids.end())
             continue;
-        condition_non_matches.push_back(uit->second);
+        condition_non_matches.push_back(*uit);
     }
     m_condition->Eval(local_context, condition_matches, condition_non_matches, NON_MATCHES);
 
@@ -1870,8 +1870,8 @@ void Condition::Contains::Eval(const ScriptingContext& parent_context, ObjectSet
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
         subcondition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-            subcondition_non_matches.push_back(it->second);
+        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+            subcondition_non_matches.push_back(*it);
         ObjectSet subcondition_matches;
         subcondition_non_matches.reserve(objects.NumObjects());
 
@@ -1920,8 +1920,8 @@ bool Condition::Contains::Match(const ScriptingContext& local_context) const {
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
     subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        subcondition_non_matches.push_back(it->second);
+    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+        subcondition_non_matches.push_back(*it);
     ObjectSet subcondition_matches;
     subcondition_matches.reserve(objects.NumObjects());
 
@@ -1979,8 +1979,8 @@ void Condition::ContainedBy::Eval(const ScriptingContext& parent_context, Object
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
         subcondition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-            subcondition_non_matches.push_back(it->second);
+        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+            subcondition_non_matches.push_back(*it);
         ObjectSet subcondition_matches;
         subcondition_matches.reserve(objects.NumObjects());
 
@@ -2029,8 +2029,8 @@ bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
     subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        subcondition_non_matches.push_back(it->second);
+    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+        subcondition_non_matches.push_back(*it);
     ObjectSet subcondition_matches;
     subcondition_matches.reserve(objects.NumObjects());
 
@@ -4616,8 +4616,8 @@ void Condition::WithinDistance::Eval(const ScriptingContext& parent_context, Obj
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
         subcondition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-            subcondition_non_matches.push_back(it->second);
+        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+            subcondition_non_matches.push_back(*it);
         ObjectSet subcondition_matches;
         subcondition_matches.reserve(objects.NumObjects());
 
@@ -4673,8 +4673,8 @@ bool Condition::WithinDistance::Match(const ScriptingContext& local_context) con
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
     subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        subcondition_non_matches.push_back(it->second);
+    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+        subcondition_non_matches.push_back(*it);
     ObjectSet subcondition_matches;
     subcondition_matches.reserve(objects.NumObjects());
 
@@ -4832,8 +4832,8 @@ void Condition::WithinStarlaneJumps::Eval(const ScriptingContext& parent_context
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
         subcondition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-            subcondition_non_matches.push_back(it->second);
+        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+            subcondition_non_matches.push_back(*it);
         ObjectSet subcondition_matches;
         subcondition_matches.reserve(objects.NumObjects());
 
@@ -4886,8 +4886,8 @@ bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
     subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        subcondition_non_matches.push_back(it->second);
+    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+        subcondition_non_matches.push_back(*it);
     ObjectSet subcondition_matches;
     subcondition_matches.reserve(objects.NumObjects());
 
@@ -4935,8 +4935,8 @@ void Condition::CanAddStarlaneConnection::Eval(const ScriptingContext& parent_co
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
         subcondition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-            subcondition_non_matches.push_back(it->second);
+        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+            subcondition_non_matches.push_back(*it);
         ObjectSet subcondition_matches;
         subcondition_matches.reserve(objects.NumObjects());
 
@@ -4985,8 +4985,8 @@ bool Condition::CanAddStarlaneConnection::Match(const ScriptingContext& local_co
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
     subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        subcondition_non_matches.push_back(it->second);
+    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+        subcondition_non_matches.push_back(*it);
     ObjectSet subcondition_matches;
     subcondition_matches.reserve(objects.NumObjects());
 
@@ -5160,8 +5160,8 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
     subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::const_iterator<> it = objects.begin(); it != objects.end(); ++it)
-        subcondition_non_matches.push_back(it->second);
+    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+        subcondition_non_matches.push_back(*it);
     ObjectSet subcondition_matches;
     subcondition_matches.reserve(objects.NumObjects());
 
@@ -5504,8 +5504,8 @@ void Condition::ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& pa
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
         subcondition_non_matches.reserve(objects.NumObjects());
-        for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-            subcondition_non_matches.push_back(it->second);
+        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+            subcondition_non_matches.push_back(*it);
         ObjectSet subcondition_matches;
         subcondition_matches.reserve(objects.NumObjects());
         m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
@@ -5540,8 +5540,8 @@ bool Condition::ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& l
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
     subcondition_non_matches.reserve(objects.NumObjects());
-    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        subcondition_non_matches.push_back(it->second);
+    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
+        subcondition_non_matches.push_back(*it);
     ObjectSet subcondition_matches;
     subcondition_matches.reserve(objects.NumObjects());
 

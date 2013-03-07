@@ -1529,7 +1529,7 @@ namespace {
         {
             ObjectMap& objects = it->second.objects;
             for (ObjectMap::iterator<> obj_it = objects.begin(); obj_it != objects.end(); ++obj_it)
-                obj_it->second->BackPropegateMeters();
+                obj_it->BackPropegateMeters();
         }
     }
 
@@ -2116,15 +2116,13 @@ void ServerApp::PreCombatProcessTurns() {
 
     // scrap orders
     std::vector<int> objects_to_scrap;
-    for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it) {
-        int object_id = it->first;
-        if (Ship* ship = universe_object_cast<Ship*>(it->second)) {
-            if (ship->OrderedScrapped())
-                objects_to_scrap.push_back(object_id);
-        } else if (Building* building = universe_object_cast<Building*>(it->second)) {
-            if (building->OrderedScrapped())
-                objects_to_scrap.push_back(object_id);
-        }
+    for (ObjectMap::iterator<Ship> it = objects.begin<Ship>(); it != objects.end<Ship>(); ++it) {
+        if (it->OrderedScrapped())
+            objects_to_scrap.push_back(it->ID());
+    }
+    for (ObjectMap::iterator<Building> it = objects.begin<Building>(); it != objects.end<Building>(); ++it) {
+        if (it->OrderedScrapped())
+            objects_to_scrap.push_back(it->ID());
     }
     for (std::vector<int>::const_iterator it = objects_to_scrap.begin(); it != objects_to_scrap.end(); ++it)
         m_universe.Destroy(*it);
@@ -2390,8 +2388,8 @@ void ServerApp::PostCombatProcessTurns() {
 
     // Population growth or loss, resource current meter growth, etc.
     for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it) {
-        it->second->PopGrowthProductionResearchPhase();
-        it->second->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
+        it->PopGrowthProductionResearchPhase();
+        it->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
 
 

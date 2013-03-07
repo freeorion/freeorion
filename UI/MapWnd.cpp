@@ -1442,8 +1442,8 @@ void MapWnd::RenderVisibilityRadii() {
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<double, double> >, float> empire_position_max_detection_ranges;
 
-    for (ObjectMap::const_iterator<> it = objects.begin(); it != objects.end(); ++it) {
-        int object_id = it->first;
+    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it) {
+        int object_id = it->ID();
         // skip destroyed objects
         if (destroyed_object_ids.find(object_id) != destroyed_object_ids.end())
             continue;
@@ -1451,7 +1451,7 @@ void MapWnd::RenderVisibilityRadii() {
         if (stale_object_ids.find(object_id) != stale_object_ids.end())
             continue;
 
-        const UniverseObject* obj = it->second;
+        const UniverseObject* obj = *it;
 
         // skip unowned objects
         if (obj->Unowned())
@@ -4392,8 +4392,8 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects) 
         // update meters for all objects.  Value of updated_contained_objects is
         // irrelivant and is ignored in this case.
         std::vector<int> object_ids;
-        for (ObjectMap::const_iterator<> obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
-            int object_id = obj_it->first;
+        for (ObjectMap::const_iterator<> obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it) {
+            int object_id = obj_it->ID();
             // skip known destroyed objects, but do update for stale objects
             if (this_client_known_destroyed_objects.find(object_id) != this_client_known_destroyed_objects.end())
                 continue;
