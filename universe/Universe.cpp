@@ -1180,7 +1180,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIALS";
     type_timer.restart();
-    for (ObjectMap::const_iterator<> it = m_objects.begin(); it != m_objects.end(); ++it) {
+    for (ObjectMap::const_iterator<> it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int source_object_id = it->ID();
         if (m_destroyed_object_ids.find(source_object_id) != m_destroyed_object_ids.end())
             continue;
@@ -1551,8 +1551,8 @@ namespace {
     {
         std::map<int, std::map<std::pair<double, double>, float> > retval;
 
-        for (ObjectMap::const_iterator<> object_it = Objects().begin();
-                object_it != Objects().end(); ++object_it)
+        for (ObjectMap::const_iterator<> object_it = Objects().const_begin();
+                object_it != Objects().const_end(); ++object_it)
         {
             // skip unowned objects, which can't provide detection to any empire
             const UniverseObject* obj = *object_it;
@@ -1766,8 +1766,8 @@ namespace {
     /** sets visibility of objects that empires own for those objects */
     void SetEmpireOwnedObjectVisibilities() {
         Universe& universe = GetUniverse();
-        for (ObjectMap::const_iterator<> object_it = Objects().begin();
-                object_it != Objects().end(); ++object_it)
+        for (ObjectMap::const_iterator<> object_it = Objects().const_begin();
+                object_it != Objects().const_end(); ++object_it)
         {
             const UniverseObject* obj = *object_it;
             if (obj->Unowned())
@@ -1780,8 +1780,8 @@ namespace {
     void SetAllObjectsVisibleToAllEmpires() {
         Universe& universe = GetUniverse();
         // set every object visible to all empires
-        for (ObjectMap::const_iterator<> obj_it = Objects().begin();
-             obj_it != Objects().end(); ++obj_it)
+        for (ObjectMap::const_iterator<> obj_it = Objects().const_begin();
+             obj_it != Objects().const_end(); ++obj_it)
         {
             for (EmpireManager::iterator empire_it = Empires().begin();
                  empire_it != Empires().end(); ++empire_it)
@@ -2160,7 +2160,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
         return;
 
     // for each object in universe
-    for (ObjectMap::const_iterator<> it = m_objects.begin(); it != m_objects.end(); ++it) {
+    for (ObjectMap::const_iterator<> it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int object_id = it->ID();
         const UniverseObject* full_object = *it; // not filtered on server by visibility
         if (!full_object) {

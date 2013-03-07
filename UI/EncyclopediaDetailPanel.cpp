@@ -505,7 +505,7 @@ namespace {
         // TODO: only loop over planets?
         // TODO: pass in a location condition, and pick a location that matches it if possible
         if (!location) {
-            for (ObjectMap::const_iterator<> obj_it = Objects().begin(); obj_it != Objects().end(); ++obj_it) {
+            for (ObjectMap::const_iterator<> obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
                 if (obj_it->OwnedBy(empire_id)) {
                     location = *obj_it;
                     break;
