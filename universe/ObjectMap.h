@@ -287,7 +287,7 @@ std::vector<T*> ObjectMap::FindObjects() {
 template <class T>
 std::vector<int> ObjectMap::FindObjectIDs() const {
     std::vector<int> result;
-    for (std::map<int, T*>::const_iterator it = Map<T>().begin(); it != Map<T>().end(); ++it)
+    for (typename std::map<int, T*>::const_iterator it = Map<T>().begin(); it != Map<T>().end(); ++it)
         result.push_back(it->first);
     return result;
 }

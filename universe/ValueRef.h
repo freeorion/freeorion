@@ -929,8 +929,8 @@ bool ValueRef::StaticCast<FromType, ToType>::operator==(const ValueRef::ValueRef
         return true;
     if (typeid(rhs) != typeid(*this))
         return false;
-    const ValueRef::StaticCast<class FromType, class ToType>& rhs_ =
-        static_cast<const ValueRef::StaticCast<class FromType, class ToType>&>(rhs);
+    const ValueRef::StaticCast<FromType, ToType>& rhs_ =
+        static_cast<const ValueRef::StaticCast<FromType, ToType>&>(rhs);
 
     if (m_value_ref == rhs_.m_value_ref) {
         // check next member

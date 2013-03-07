@@ -1773,8 +1773,8 @@ const std::map<int, std::set<int> > Empire::KnownStarlanes() const {
     const Universe& universe = GetUniverse();
 
     const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
-    for (ObjectMap::const_iterator<System> sys_it = Objects().begin<System>();
-         sys_it != Objects().end<System>(); ++sys_it)
+    for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
+         sys_it != Objects().const_end<System>(); ++sys_it)
     {
         int start_id = sys_it->ID();
 

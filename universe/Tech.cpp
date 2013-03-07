@@ -194,7 +194,7 @@ namespace {
         const UniverseObject* source = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         if (!source) {
-            for (ObjectMap::const_iterator<> obj_it = Objects().begin(); obj_it != Objects().end(); ++obj_it) {
+            for (ObjectMap::const_iterator<> obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
                 if (obj_it->OwnedBy(empire_id)) {
                     source = *obj_it;
                     break;
