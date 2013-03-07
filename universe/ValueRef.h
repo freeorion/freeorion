@@ -112,6 +112,9 @@ struct ValueRef::ValueRefBase
 {
     virtual ~ValueRefBase() {} ///< virtual dtor
 
+    virtual bool        operator==(const ValueRef::ValueRefBase<T>& rhs) const;
+    bool                operator!=(const ValueRef::ValueRefBase<T>& rhs) const { return !(*this == rhs); }
+
     /** Evaluates the expression tree and return the results; \a context
       * is used to fill in any instances of the "Value" variable or references
       * to objects such as the source, effect target, or condition candidates
@@ -142,10 +145,9 @@ struct ValueRef::Constant : public ValueRef::ValueRefBase<T>
 {
     Constant(T value); ///< basic ctor
 
-    T Value() const;
-
-    virtual T Eval(const ScriptingContext& context) const;
-
+    virtual bool        operator==(const ValueRef::ValueRefBase<T>& rhs) const;
+    T                   Value() const;
+    virtual T           Eval(const ScriptingContext& context) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        LocalCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
@@ -169,18 +171,16 @@ struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
 {
     Variable(const std::vector<adobe::name_t>& property_name);
 
-    ReferenceType                     GetReferenceType() const;
-    const std::vector<adobe::name_t>& PropertyName() const;
-
-    virtual T                       Eval(const ScriptingContext& context) const;
-
-    virtual bool                    RootCandidateInvariant() const;
-    virtual bool                    LocalCandidateInvariant() const;
-    virtual bool                    TargetInvariant() const;
-    virtual bool                    SourceInvariant() const;
-
-    virtual std::string             Description() const;
-    virtual std::string             Dump() const;
+    virtual bool                        operator==(const ValueRef::ValueRefBase<T>& rhs) const;
+    ReferenceType                       GetReferenceType() const;
+    const std::vector<adobe::name_t>&   PropertyName() const;
+    virtual T                           Eval(const ScriptingContext& context) const;
+    virtual bool                        RootCandidateInvariant() const;
+    virtual bool                        LocalCandidateInvariant() const;
+    virtual bool                        TargetInvariant() const;
+    virtual bool                        SourceInvariant() const;
+    virtual std::string                 Description() const;
+    virtual std::string                 Dump() const;
 
 protected:
     Variable(ReferenceType ref_type, const std::vector<adobe::name_t>& property_name);
@@ -205,6 +205,8 @@ struct ValueRef::Statistic : public ValueRef::Variable<T>
     Statistic(const std::vector<adobe::name_t>& property_name,
               StatisticType stat_type,
               const Condition::ConditionBase* sampling_condition);
+
+    virtual bool                    operator==(const ValueRef::ValueRefBase<T>& rhs) const;
 
     StatisticType                   GetStatisticType() const;
     const Condition::ConditionBase* SamplingCondition() const;
@@ -251,7 +253,8 @@ struct ValueRef::StaticCast : public ValueRef::Variable<ToType>
     StaticCast(const ValueRef::Variable<FromType>* value_ref);
     ~StaticCast();
 
-    virtual double      Eval(const ScriptingContext& context) const;
+    virtual bool        operator==(const ValueRef::ValueRefBase<ToType>& rhs) const;
+    virtual ToType      Eval(const ScriptingContext& context) const;
     virtual bool        RootCandidateInvariant() const;
     virtual bool        LocalCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -276,6 +279,7 @@ struct ValueRef::StringCast : public ValueRef::Variable<std::string>
     StringCast(const ValueRef::Variable<FromType>* value_ref);
     ~StringCast();
 
+    virtual bool        operator==(const ValueRef::ValueRefBase<std::string>& rhs) const;
     virtual std::string Eval(const ScriptingContext& context) const;
     virtual bool        RootCandidateInvariant() const;
     virtual bool        LocalCandidateInvariant() const;
@@ -302,10 +306,10 @@ struct ValueRef::Operation : public ValueRef::ValueRefBase<T>
     Operation(OpType op_type, const ValueRefBase<T>* operand); ///< unary operation ctor
     ~Operation(); ///< dtor
 
+    virtual bool            operator==(const ValueRef::ValueRefBase<T>& rhs) const;
     OpType                  GetOpType() const;
     const ValueRefBase<T>*  LHS() const;
     const ValueRefBase<T>*  RHS() const;
-
     virtual T               Eval(const ScriptingContext& context) const;
     virtual bool            RootCandidateInvariant() const;
     virtual bool            LocalCandidateInvariant() const;
@@ -339,6 +343,16 @@ namespace ValueRef {
 // ValueRefBase                                          //
 ///////////////////////////////////////////////////////////
 template <class T>
+bool ValueRef::ValueRefBase<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) const
+{
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    return true;
+}
+
+template <class T>
 template <class Archive>
 void ValueRef::ValueRefBase<T>::serialize(Archive& ar, const unsigned int version)
 {}
@@ -350,6 +364,18 @@ template <class T>
 ValueRef::Constant<T>::Constant(T value) :
     m_value(value)
 {}
+
+template <class T>
+bool ValueRef::Constant<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) const
+{
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    const ValueRef::Constant<T>& rhs_ = static_cast<const ValueRef::Constant<T>&>(rhs);
+
+    return m_value == rhs_.m_value;
+}
 
 template <class T>
 T ValueRef::Constant<T>::Value() const
@@ -434,6 +460,17 @@ ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::vector<adobe:
     m_ref_type(ref_type),
     m_property_name(property_name)
 {}
+
+template <class T>
+bool ValueRef::Variable<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) const
+{
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    const ValueRef::Variable<T>& rhs_ = static_cast<const ValueRef::Variable<T>&>(rhs);
+    return (m_ref_type == rhs_.m_ref_type) && (m_property_name == rhs_.m_property_name);
+}
 
 template <class T>
 ValueRef::ReferenceType ValueRef::Variable<T>::GetReferenceType() const
@@ -542,6 +579,30 @@ ValueRef::Statistic<T>::Statistic(const std::vector<adobe::name_t>& property_nam
     m_stat_type(stat_type),
     m_sampling_condition(sampling_condition)
 {}
+
+template <class T>
+bool ValueRef::Statistic<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) const
+{
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    const ValueRef::Statistic<T>& rhs_ = static_cast<const ValueRef::Statistic<T>&>(rhs);
+
+    if (m_stat_type != rhs_.m_stat_type)
+        return false;
+
+    if (m_sampling_condition == rhs_.m_sampling_condition) {
+        // check next member
+    } else if (!m_sampling_condition || !rhs_.m_sampling_condition) {
+        return false;
+    } else {
+        if (*m_sampling_condition != *(rhs_.m_sampling_condition))
+            return false;
+    }
+
+    return true;
+}
 
 template <class T>
 ValueRef::StatisticType ValueRef::Statistic<T>::GetStatisticType() const
@@ -862,7 +923,29 @@ ValueRef::StaticCast<FromType, ToType>::~StaticCast()
 { delete m_value_ref; }
 
 template <class FromType, class ToType>
-double ValueRef::StaticCast<FromType, ToType>::Eval(const ScriptingContext& context) const
+bool ValueRef::StaticCast<FromType, ToType>::operator==(const ValueRef::ValueRefBase<ToType>& rhs) const
+{
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    const ValueRef::StaticCast<class FromType, class ToType>& rhs_ =
+        static_cast<const ValueRef::StaticCast<class FromType, class ToType>&>(rhs);
+
+    if (m_value_ref == rhs_.m_value_ref) {
+        // check next member
+    } else if (!m_value_ref || !rhs_.m_value_ref) {
+        return false;
+    } else {
+        if (*m_value_ref != *(rhs_.m_value_ref))
+            return false;
+    }
+
+    return true;
+}
+
+template <class FromType, class ToType>
+ToType ValueRef::StaticCast<FromType, ToType>::Eval(const ScriptingContext& context) const
 { return static_cast<ToType>(m_value_ref->Eval(context)); }
 
 template <class FromType, class ToType>
@@ -909,6 +992,28 @@ ValueRef::StringCast<FromType>::StringCast(const ValueRef::Variable<FromType>* v
 template <class FromType>
 ValueRef::StringCast<FromType>::~StringCast()
 { delete m_value_ref; }
+
+template <class FromType>
+bool ValueRef::StringCast<FromType>::operator==(const ValueRef::ValueRefBase<std::string>& rhs) const
+{
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    const ValueRef::StringCast<FromType>& rhs_ =
+        static_cast<const ValueRef::StringCast<FromType>&>(rhs);
+
+    if (m_value_ref == rhs_.m_value_ref) {
+        // check next member
+    } else if (!m_value_ref || !rhs_.m_value_ref) {
+        return false;
+    } else {
+        if (*m_value_ref != *(rhs_.m_value_ref))
+            return false;
+    }
+
+    return true;
+}
 
 template <class FromType>
 std::string ValueRef::StringCast<FromType>::Eval(const ScriptingContext& context) const
@@ -968,6 +1073,36 @@ ValueRef::Operation<T>::~Operation()
 {
     delete m_operand1;
     delete m_operand2;
+}
+
+template <class T>
+bool ValueRef::Operation<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) const
+{
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    const ValueRef::Operation<T>& rhs_ = static_cast<const ValueRef::Operation<T>&>(rhs);
+
+    if (m_operand1 == rhs_.m_operand1) {
+        // check next member
+    } else if (!m_operand1 || !rhs_.m_operand1) {
+        return false;
+    } else {
+        if (*m_operand1 != *(rhs_.m_operand1))
+            return false;
+    }
+
+    if (m_operand2 == rhs_.m_operand2) {
+        // check next member
+    } else if (!m_operand2 || !rhs_.m_operand2) {
+        return false;
+    } else {
+        if (*m_operand2 != *(rhs_.m_operand2))
+            return false;
+    }
+
+    return true;
 }
 
 template <class T>

@@ -109,6 +109,10 @@ std::string ConditionDescription(const std::vector<const Condition::ConditionBas
 struct Condition::ConditionBase {
     ConditionBase() {};
     virtual ~ConditionBase();
+
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    bool                operator!=(const Condition::ConditionBase& rhs) const { return !(*this == rhs); }
+
     virtual void        Eval(const ScriptingContext& parent_context,
                              Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches,
@@ -180,6 +184,7 @@ struct Condition::Number : public Condition::ConditionBase {
         m_condition(condition)
     {}
     virtual ~Number();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -212,6 +217,7 @@ struct Condition::Turn : public Condition::ConditionBase {
         m_high(high)
     {}
     virtual ~Turn();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -265,6 +271,7 @@ struct Condition::SortedNumberOf : public Condition::ConditionBase {
         m_condition(condition)
     {}
     virtual ~SortedNumberOf();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual bool        RootCandidateInvariant() const;
@@ -291,6 +298,7 @@ private:
 /** Matches all objects. */
 struct Condition::All : public Condition::ConditionBase {
     All() : ConditionBase() {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -319,6 +327,7 @@ struct Condition::EmpireAffiliation : public Condition::ConditionBase {
        m_affiliation(affiliation)
     {}
     virtual ~EmpireAffiliation();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const;
@@ -346,6 +355,7 @@ private:
 /** Matches the source object only. */
 struct Condition::Source : public Condition::ConditionBase {
     Source() : ConditionBase() {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     //virtual bool        SourceInvariant() const { return false; } // same as ConditionBase
@@ -366,6 +376,7 @@ private:
   * subcondition in order to evaluate the outer condition. */
 struct Condition::RootCandidate : public Condition::ConditionBase {
     RootCandidate() : ConditionBase() {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return false; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -386,6 +397,7 @@ private:
 /** Matches the target of an effect being executed. */
 struct Condition::Target : public Condition::ConditionBase {
     Target() : ConditionBase() {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return false; }
     virtual bool        SourceInvariant() const { return true; }
@@ -412,6 +424,7 @@ struct Condition::Homeworld : public Condition::ConditionBase {
         m_names(names)
     {}
     virtual ~Homeworld();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -436,6 +449,7 @@ private:
 /** Matches planets that are an empire's capital. */
 struct Condition::Capital : public Condition::ConditionBase {
     Capital() : ConditionBase() {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -453,6 +467,7 @@ private:
 /** Matches space monsters. */
 struct Condition::Monster : public Condition::ConditionBase {
     Monster() : ConditionBase() {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -470,6 +485,7 @@ private:
 /** Matches armed ships and monsters. */
 struct Condition::Armed : public Condition::ConditionBase {
     Armed() {};
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -490,6 +506,7 @@ struct Condition::Type : public Condition::ConditionBase {
         m_type(type)
     {}
     virtual ~Type();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -518,6 +535,7 @@ struct Condition::Building : public Condition::ConditionBase {
         m_names(names)
     {}
     virtual ~Building();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -554,6 +572,7 @@ struct Condition::HasSpecial : public Condition::ConditionBase {
         m_since_turn_high(since_turn_high)
     {}
     virtual ~HasSpecial();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -584,6 +603,7 @@ struct Condition::HasTag : public Condition::ConditionBase {
     HasTag(const std::string& name) :
         m_name(name)
     {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -608,6 +628,7 @@ struct Condition::CreatedOnTurn : public Condition::ConditionBase {
         m_high(high)
     {}
     virtual ~CreatedOnTurn();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -639,6 +660,7 @@ struct Condition::Contains : public Condition::ConditionBase {
         m_condition(condition)
     {}
     virtual ~Contains();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -668,6 +690,7 @@ struct Condition::ContainedBy : public Condition::ConditionBase {
         m_condition(condition)
     {}
     virtual ~ContainedBy();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -695,6 +718,7 @@ struct Condition::InSystem : public Condition::ConditionBase {
         m_system_id(system_id)
     {}
     virtual ~InSystem();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -722,6 +746,7 @@ struct Condition::ObjectID : public Condition::ConditionBase {
         m_object_id(object_id)
     {}
     virtual ~ObjectID();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -751,6 +776,7 @@ struct Condition::PlanetType : public Condition::ConditionBase {
         m_types(types)
     {}
     virtual ~PlanetType();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -780,6 +806,7 @@ struct Condition::PlanetSize : public Condition::ConditionBase {
         m_sizes(sizes)
     {}
     virtual ~PlanetSize();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -809,6 +836,7 @@ struct Condition::PlanetEnvironment : public Condition::ConditionBase {
         m_environments(environments)
     {}
     virtual ~PlanetEnvironment();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -842,6 +870,7 @@ struct Condition::Species : public Condition::ConditionBase {
         m_names()
     {}
     virtual ~Species();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -897,6 +926,7 @@ struct Condition::Enqueued : public Condition::ConditionBase {
         m_high(0)
     {}
     virtual ~Enqueued();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -934,6 +964,7 @@ struct Condition::FocusType : public Condition::ConditionBase {
         m_names(names)
     {}
     virtual ~FocusType();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -962,6 +993,7 @@ struct Condition::StarType : public Condition::ConditionBase {
         m_types(types)
     {}
     virtual ~StarType();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -988,6 +1020,7 @@ struct Condition::DesignHasHull : public Condition::ConditionBase {
     DesignHasHull(const std::string& name) :
         m_name(name)
     {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -1015,6 +1048,7 @@ struct Condition::DesignHasPart : public Condition::ConditionBase {
         m_name(name)
     {}
     virtual ~DesignHasPart();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1050,6 +1084,7 @@ struct Condition::DesignHasPartClass : public Condition::ConditionBase {
         m_class(part_class)
     {}
     ~DesignHasPartClass();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1081,6 +1116,7 @@ struct Condition::PredefinedShipDesign : public Condition::ConditionBase {
     PredefinedShipDesign(const std::string& name) :
         m_name(name)
     {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -1104,6 +1140,7 @@ struct Condition::NumberedShipDesign : public Condition::ConditionBase {
         m_design_id(design_id)
     {}
     virtual ~NumberedShipDesign();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1131,6 +1168,7 @@ struct Condition::ProducedByEmpire : public Condition::ConditionBase {
         m_empire_id(empire_id)
     {}
     virtual ~ProducedByEmpire();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1158,6 +1196,7 @@ struct Condition::Chance : public Condition::ConditionBase {
         m_chance(chance)
     {}
     virtual ~Chance();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1188,6 +1227,7 @@ struct Condition::MeterValue : public Condition::ConditionBase {
         m_high(high)
     {}
     virtual ~MeterValue();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1226,6 +1266,7 @@ struct Condition::ShipPartMeterValue : public Condition::ConditionBase {
         m_high(high)
     {}
     virtual ~ShipPartMeterValue();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1270,6 +1311,7 @@ struct Condition::EmpireMeterValue : public Condition::ConditionBase {
         m_high(high)
     {}
     virtual ~EmpireMeterValue();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1303,6 +1345,7 @@ struct Condition::EmpireStockpileValue : public Condition::ConditionBase {
         m_high(high)
     {}
     virtual ~EmpireStockpileValue();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1333,6 +1376,7 @@ struct Condition::OwnerHasTech : public Condition::ConditionBase {
     OwnerHasTech(const std::string& name) :
         m_name(name)
     {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -1355,6 +1399,7 @@ struct Condition::OwnerHasBuildingTypeAvailable : public Condition::ConditionBas
     OwnerHasBuildingTypeAvailable(const std::string& name) :
         m_name(name)
     {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -1377,6 +1422,7 @@ struct Condition::OwnerHasShipDesignAvailable : public Condition::ConditionBase 
     OwnerHasShipDesignAvailable(int id) :
         m_id(id)
     {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -1400,6 +1446,7 @@ struct Condition::VisibleToEmpire : public Condition::ConditionBase {
         m_empire_id(empire_id)
     {}
     virtual ~VisibleToEmpire();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1431,6 +1478,7 @@ struct Condition::WithinDistance : public Condition::ConditionBase {
         m_condition(condition)
     {}
     virtual ~WithinDistance();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1462,6 +1510,7 @@ struct Condition::WithinStarlaneJumps : public Condition::ConditionBase {
         m_condition(condition)
     {}
     virtual ~WithinStarlaneJumps();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1494,6 +1543,7 @@ struct Condition::CanAddStarlaneConnection :  Condition::ConditionBase {
         m_condition(condition)
     {}
     virtual ~CanAddStarlaneConnection();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1525,6 +1575,7 @@ struct Condition::CanRemoveStarlaneConnection :  Condition::ConditionBase {
         m_condition(condition)
     {}
     virtual ~CanRemoveStarlaneConnection();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
     virtual bool        SourceInvariant() const;
@@ -1548,6 +1599,7 @@ struct Condition::ExploredByEmpire : public Condition::ConditionBase {
         m_empire_id(empire_id)
     {}
     virtual ~ExploredByEmpire();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1573,6 +1625,7 @@ private:
 struct Condition::Stationary : public Condition::ConditionBase {
     Stationary() : ConditionBase() {}
     virtual ~Stationary() {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -1594,6 +1647,7 @@ struct Condition::FleetSupplyableByEmpire : public Condition::ConditionBase {
         m_empire_id(empire_id)
     {}
     virtual ~FleetSupplyableByEmpire();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1623,6 +1677,7 @@ struct Condition::ResourceSupplyConnectedByEmpire : public Condition::ConditionB
         m_condition(condition)
     {}
     virtual ~ResourceSupplyConnectedByEmpire();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1647,6 +1702,7 @@ private:
 struct Condition::CanColonize : public Condition::ConditionBase {
     CanColonize() : ConditionBase() {}
     virtual ~CanColonize() {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -1664,6 +1720,7 @@ private:
 struct Condition::CanProduceShips : public Condition::ConditionBase {
     CanProduceShips() : ConditionBase() {}
     virtual ~CanProduceShips() {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -1684,6 +1741,7 @@ struct Condition::And : public Condition::ConditionBase {
         m_operands(operands)
     {}
     virtual ~And();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1710,6 +1768,7 @@ struct Condition::Or : public Condition::ConditionBase {
         m_operands(operands)
     {}
     virtual ~Or();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -1736,6 +1795,7 @@ struct Condition::Not : public Condition::ConditionBase {
         m_operand(operand)
     {}
     virtual ~Not();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,

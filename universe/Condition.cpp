@@ -150,6 +150,19 @@ struct Condition::ConditionBase::MatchHelper {
 Condition::ConditionBase::~ConditionBase()
 {}
 
+bool Condition::ConditionBase::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+
+    if (!this)
+        return false;
+
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    return true;
+}
+
 void Condition::ConditionBase::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                                     ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 { EvalImpl(matches, non_matches, search_domain, MatchHelper(this, parent_context)); }
@@ -212,6 +225,44 @@ Condition::Number::~Number()
     delete m_low;
     delete m_high;
     delete m_condition;
+}
+
+bool Condition::Number::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::Number& rhs_ = static_cast<const Condition::Number&>(rhs);
+
+    if (m_low == rhs_.m_low) {
+        // check next member
+    } else if (!m_low || !rhs_.m_low) {
+        return false;
+    } else {
+        if (*m_low != *(rhs_.m_low))
+            return false;
+    }
+
+    if (m_high == rhs_.m_high) {
+        // check next member
+    } else if (!m_high || !rhs_.m_high) {
+        return false;
+    } else {
+        if (*m_high != *(rhs_.m_high))
+            return false;
+    }
+
+    if (m_condition == rhs_.m_condition) {
+        // check next member
+    } else if (!m_condition || !rhs_.m_condition) {
+        return false;
+    } else {
+        if (*m_condition != *(rhs_.m_condition))
+            return false;
+    }
+
+    return true;
 }
 
 std::string Condition::Number::Description(bool negated/* = false*/) const
@@ -365,6 +416,9 @@ Condition::Turn::~Turn() {
     delete m_high;
 }
 
+bool Condition::Turn::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 void Condition::Turn::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const {
     // if ValueRef for low or high range limits depend on local candidate, then
     // they must be evaluated per-candidate.
@@ -474,6 +528,9 @@ Condition::SortedNumberOf::~SortedNumberOf() {
     delete m_sort_key;
     delete m_condition;
 }
+
+bool Condition::SortedNumberOf::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     /** Random number genrator function to use with random_shuffle */
@@ -846,6 +903,9 @@ void Condition::All::Eval(const ScriptingContext& parent_context, ObjectSet& mat
     // match this condition, so should remain in matches set
 }
 
+bool Condition::All::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::All::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_ALL";
     if (negated)
@@ -863,6 +923,9 @@ Condition::EmpireAffiliation::~EmpireAffiliation() {
     if (m_empire_id)
         delete m_empire_id;
 }
+
+bool Condition::EmpireAffiliation::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct EmpireAffiliationSimpleMatch {
@@ -992,6 +1055,9 @@ bool Condition::EmpireAffiliation::Match(const ScriptingContext& local_context) 
 ///////////////////////////////////////////////////////////
 // Source                                                //
 ///////////////////////////////////////////////////////////
+bool Condition::Source::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::Source::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_SOURCE";
     if (negated)
@@ -1011,6 +1077,9 @@ bool Condition::Source::Match(const ScriptingContext& local_context) const {
 ///////////////////////////////////////////////////////////
 // RootCandidate                                         //
 ///////////////////////////////////////////////////////////
+bool Condition::RootCandidate::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::RootCandidate::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_ROOT_CANDIDATE";
     if (negated)
@@ -1030,6 +1099,9 @@ bool Condition::RootCandidate::Match(const ScriptingContext& local_context) cons
 ///////////////////////////////////////////////////////////
 // Target                                                //
 ///////////////////////////////////////////////////////////
+bool Condition::Target::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::Target::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_TARGET";
     if (negated)
@@ -1053,6 +1125,9 @@ Condition::Homeworld::~Homeworld() {
     for (unsigned int i = 0; i < m_names.size(); ++i)
         delete m_names[i];
 }
+
+bool Condition::Homeworld::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct HomeworldSimpleMatch {
@@ -1248,6 +1323,9 @@ bool Condition::Homeworld::Match(const ScriptingContext& local_context) const {
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
+bool Condition::Capital::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::Capital::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_CAPITAL";
     if (negated)
@@ -1278,6 +1356,9 @@ bool Condition::Capital::Match(const ScriptingContext& local_context) const {
 ///////////////////////////////////////////////////////////
 // Monster                                               //
 ///////////////////////////////////////////////////////////
+bool Condition::Monster::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::Monster::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_MONSTER";
     if (negated)
@@ -1305,6 +1386,9 @@ bool Condition::Monster::Match(const ScriptingContext& local_context) const {
 ///////////////////////////////////////////////////////////
 // Armed                                                 //
 ///////////////////////////////////////////////////////////
+bool Condition::Armed::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::Armed::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_ARMED";
     if (negated)
@@ -1334,6 +1418,9 @@ bool Condition::Armed::Match(const ScriptingContext& local_context) const {
 ///////////////////////////////////////////////////////////
 Condition::Type::~Type()
 { delete m_type; }
+
+bool Condition::Type::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct TypeSimpleMatch {
@@ -1440,6 +1527,9 @@ Condition::Building::~Building() {
         delete m_names[i];
     }
 }
+
+bool Condition::Building::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct BuildingSimpleMatch
@@ -1598,6 +1688,9 @@ Condition::HasSpecial::~HasSpecial() {
     delete m_since_turn_high;
 }
 
+bool Condition::HasSpecial::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 namespace {
     struct HasSpecialSimpleMatch {
         HasSpecialSimpleMatch(const std::string& name, int low_turn, int high_turn) :
@@ -1714,6 +1807,9 @@ bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const {
 ///////////////////////////////////////////////////////////
 // HasTag                                                //
 ///////////////////////////////////////////////////////////
+bool Condition::HasTag::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::HasTag::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_HAS_TAG";
     if (negated)
@@ -1741,6 +1837,9 @@ Condition::CreatedOnTurn::~CreatedOnTurn() {
     delete m_low;
     delete m_high;
 }
+
+bool Condition::CreatedOnTurn::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct CreatedOnTurnSimpleMatch {
@@ -1831,6 +1930,9 @@ bool Condition::CreatedOnTurn::Match(const ScriptingContext& local_context) cons
 ///////////////////////////////////////////////////////////
 Condition::Contains::~Contains()
 { delete m_condition; }
+
+bool Condition::Contains::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct ContainsSimpleMatch {
@@ -1941,6 +2043,9 @@ bool Condition::Contains::Match(const ScriptingContext& local_context) const {
 Condition::ContainedBy::~ContainedBy()
 { delete m_condition; }
 
+bool Condition::ContainedBy::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 namespace {
     struct ContainedBySimpleMatch {
         ContainedBySimpleMatch(const Condition::ObjectSet& subcondition_matches) :
@@ -2050,6 +2155,9 @@ bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const 
 Condition::InSystem::~InSystem()
 { delete m_system_id; }
 
+bool Condition::InSystem::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 namespace {
     struct InSystemSimpleMatch {
         InSystemSimpleMatch(int system_id) :
@@ -2137,6 +2245,9 @@ bool Condition::InSystem::Match(const ScriptingContext& local_context) const {
 Condition::ObjectID::~ObjectID()
 { delete m_object_id; }
 
+bool Condition::ObjectID::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 namespace {
     struct ObjectIDSimpleMatch {
         ObjectIDSimpleMatch(int object_id) :
@@ -2220,6 +2331,9 @@ Condition::PlanetType::~PlanetType() {
         delete m_types[i];
     }
 }
+
+bool Condition::PlanetType::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct PlanetTypeSimpleMatch {
@@ -2375,6 +2489,9 @@ Condition::PlanetSize::~PlanetSize() {
         delete m_sizes[i];
     }
 }
+
+bool Condition::PlanetSize::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct PlanetSizeSimpleMatch {
@@ -2534,6 +2651,9 @@ Condition::PlanetEnvironment::~PlanetEnvironment() {
     }
 }
 
+bool Condition::PlanetEnvironment::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 namespace {
     struct PlanetEnvironmentSimpleMatch {
         PlanetEnvironmentSimpleMatch(const std::vector< ::PlanetEnvironment>& environments) :
@@ -2692,6 +2812,9 @@ Condition::Species::~Species() {
         delete m_names[i];
     }
 }
+
+bool Condition::Species::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct SpeciesSimpleMatch {
@@ -2871,6 +2994,9 @@ Condition::Enqueued::~Enqueued() {
     delete m_low;
     delete m_high;
 }
+
+bool Condition::Enqueued::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     int NumberOnQueue(const ProductionQueue& queue, BuildType build_type, int location_id,
@@ -3095,6 +3221,9 @@ Condition::FocusType::~FocusType() {
     }
 }
 
+bool Condition::FocusType::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 namespace {
     struct FocusTypeSimpleMatch {
         FocusTypeSimpleMatch(const std::vector<std::string>& names) :
@@ -3251,6 +3380,9 @@ Condition::StarType::~StarType() {
     }
 }
 
+bool Condition::StarType::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 namespace {
     struct StarTypeSimpleMatch {
         StarTypeSimpleMatch(const std::vector< ::StarType>& types) :
@@ -3385,6 +3517,9 @@ bool Condition::StarType::Match(const ScriptingContext& local_context) const {
 ///////////////////////////////////////////////////////////
 // DesignHasHull                                         //
 ///////////////////////////////////////////////////////////
+bool Condition::DesignHasHull::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::DesignHasHull::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_DESIGN_HAS_HULL";
     if (negated)
@@ -3415,6 +3550,9 @@ Condition::DesignHasPart::~DesignHasPart() {
     delete m_low;
     delete m_high;
 }
+
+bool Condition::DesignHasPart::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct DesignHasPartSimpleMatch {
@@ -3524,6 +3662,9 @@ Condition::DesignHasPartClass::~DesignHasPartClass() {
     delete m_high;
 }
 
+bool Condition::DesignHasPartClass::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 namespace {
     struct DesignHasPartClassSimpleMatch {
         DesignHasPartClassSimpleMatch(int low, int high, ShipPartClass part_class) :
@@ -3631,6 +3772,9 @@ bool Condition::DesignHasPartClass::Match(const ScriptingContext& local_context)
 ///////////////////////////////////////////////////////////
 // PredefinedShipDesign                                  //
 ///////////////////////////////////////////////////////////
+bool Condition::PredefinedShipDesign::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::PredefinedShipDesign::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_PREDEFINED_SHIP_DESIGN";
     if (negated)
@@ -3670,6 +3814,9 @@ bool Condition::PredefinedShipDesign::Match(const ScriptingContext& local_contex
 ///////////////////////////////////////////////////////////
 Condition::NumberedShipDesign::~NumberedShipDesign()
 { delete m_design_id; }
+
+bool Condition::NumberedShipDesign::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct NumberedShipDesignSimpleMatch {
@@ -3748,6 +3895,9 @@ bool Condition::NumberedShipDesign::Match(const ScriptingContext& local_context)
 ///////////////////////////////////////////////////////////
 Condition::ProducedByEmpire::~ProducedByEmpire()
 { delete m_empire_id; }
+
+bool Condition::ProducedByEmpire::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct ProducedByEmpireSimpleMatch {
@@ -3835,6 +3985,9 @@ bool Condition::ProducedByEmpire::Match(const ScriptingContext& local_context) c
 Condition::Chance::~Chance()
 { delete m_chance; }
 
+bool Condition::Chance::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 namespace {
     struct ChanceSimpleMatch {
         ChanceSimpleMatch(double chance) :
@@ -3905,6 +4058,9 @@ Condition::MeterValue::~MeterValue() {
     delete m_low;
     delete m_high;
 }
+
+bool Condition::MeterValue::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct MeterValueSimpleMatch {
@@ -4047,6 +4203,9 @@ Condition::ShipPartMeterValue::~ShipPartMeterValue() {
     delete m_high;
 }
 
+bool Condition::ShipPartMeterValue::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 namespace {
     struct ShipPartMeterValueSimpleMatch {
         ShipPartMeterValueSimpleMatch(const std::string& ship_part_name,
@@ -4162,6 +4321,9 @@ Condition::EmpireMeterValue::~EmpireMeterValue() {
     delete m_low;
     delete m_high;
 }
+
+bool Condition::EmpireMeterValue::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct EmpireMeterValueSimpleMatch {
@@ -4295,6 +4457,9 @@ Condition::EmpireStockpileValue::~EmpireStockpileValue() {
     delete m_high;
 }
 
+bool Condition::EmpireStockpileValue::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 namespace {
     struct EmpireStockpileValueSimpleMatch {
         EmpireStockpileValueSimpleMatch(double low, double high, ResourceType stockpile) :
@@ -4398,6 +4563,9 @@ bool Condition::EmpireStockpileValue::Match(const ScriptingContext& local_contex
 ///////////////////////////////////////////////////////////
 // OwnerHasTech                                          //
 ///////////////////////////////////////////////////////////
+bool Condition::OwnerHasTech::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::OwnerHasTech::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_OWNER_HAS_TECH";
     if (negated)
@@ -4427,6 +4595,9 @@ bool Condition::OwnerHasTech::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // OwnerHasBuildingTypeAvailable                         //
 ///////////////////////////////////////////////////////////
+bool Condition::OwnerHasBuildingTypeAvailable::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::OwnerHasBuildingTypeAvailable::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_OWNER_HAS_BUILDING_TYPE";
     if (negated)
@@ -4456,6 +4627,9 @@ bool Condition::OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& loc
 ///////////////////////////////////////////////////////////
 // OwnerHasShipDesignAvailable                           //
 ///////////////////////////////////////////////////////////
+bool Condition::OwnerHasShipDesignAvailable::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::OwnerHasShipDesignAvailable::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_OWNER_HAS_SHIP_DESIGN";
     if (negated)
@@ -4487,6 +4661,9 @@ bool Condition::OwnerHasShipDesignAvailable::Match(const ScriptingContext& local
 ///////////////////////////////////////////////////////////
 Condition::VisibleToEmpire::~VisibleToEmpire()
 { delete m_empire_id; }
+
+bool Condition::VisibleToEmpire::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct VisibleToEmpireSimpleMatch
@@ -4571,6 +4748,9 @@ Condition::WithinDistance::~WithinDistance() {
     delete m_distance;
     delete m_condition;
 }
+
+bool Condition::WithinDistance::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct WithinDistanceSimpleMatch {
@@ -4692,6 +4872,9 @@ Condition::WithinStarlaneJumps::~WithinStarlaneJumps() {
     delete m_jumps;
     delete m_condition;
 }
+
+bool Condition::WithinStarlaneJumps::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     const int MANY_JUMPS(999999);
@@ -4902,6 +5085,9 @@ bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context
 ///////////////////////////////////////////////////////////
 Condition::CanAddStarlaneConnection::~CanAddStarlaneConnection()
 { delete m_condition; }
+
+bool Condition::CanAddStarlaneConnection::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct CanAddStarlaneConnectionSimpleMatch {
@@ -5118,6 +5304,9 @@ namespace {
 Condition::CanRemoveStarlaneConnection::~CanRemoveStarlaneConnection()
 { delete m_condition; }
 
+bool Condition::CanRemoveStarlaneConnection::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 bool Condition::CanRemoveStarlaneConnection::RootCandidateInvariant() const
 { return m_condition->RootCandidateInvariant(); }
 
@@ -5226,6 +5415,9 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
 Condition::ExploredByEmpire::~ExploredByEmpire()
 { delete m_empire_id; }
 
+bool Condition::ExploredByEmpire::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 namespace {
     struct ExploredByEmpireSimpleMatch {
         ExploredByEmpireSimpleMatch(int empire_id) :
@@ -5308,6 +5500,9 @@ bool Condition::ExploredByEmpire::Match(const ScriptingContext& local_context) c
 ///////////////////////////////////////////////////////////
 // Stationary                                            //
 ///////////////////////////////////////////////////////////
+bool Condition::Stationary::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::Stationary::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_STATIONARY";
     if (negated)
@@ -5352,6 +5547,9 @@ bool Condition::Stationary::Match(const ScriptingContext& local_context) const {
 ///////////////////////////////////////////////////////////
 Condition::FleetSupplyableByEmpire::~FleetSupplyableByEmpire()
 { delete m_empire_id; }
+
+bool Condition::FleetSupplyableByEmpire::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct FleetSupplyableSimpleMatch {
@@ -5444,6 +5642,9 @@ Condition::ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire() {
     delete m_empire_id;
     delete m_condition;
 }
+
+bool Condition::ResourceSupplyConnectedByEmpire::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 namespace {
     struct ResourceSupplySimpleMatch {
@@ -5584,6 +5785,9 @@ std::string Condition::ResourceSupplyConnectedByEmpire::Dump() const {
 ///////////////////////////////////////////////////////////
 // CanColonize                                           //
 ///////////////////////////////////////////////////////////
+bool Condition::CanColonize::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::CanColonize::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_CAN_COLONIZE";
     if (negated)
@@ -5646,6 +5850,9 @@ bool Condition::CanColonize::Match(const ScriptingContext& local_context) const 
 ///////////////////////////////////////////////////////////
 // CanProduceShips                                       //
 ///////////////////////////////////////////////////////////
+bool Condition::CanProduceShips::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 std::string Condition::CanProduceShips::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_CAN_PRODUCE_SHIPS";
     if (negated)
@@ -5712,6 +5919,9 @@ Condition::And::~And() {
     for (unsigned int i = 0; i < m_operands.size(); ++i)
         delete m_operands[i];
 }
+
+bool Condition::And::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                           SearchDomain search_domain/* = NON_MATCHES*/) const
@@ -5809,6 +6019,9 @@ Condition::Or::~Or() {
         delete m_operands[i];
 }
 
+bool Condition::Or::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
 void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                          SearchDomain search_domain/* = NON_MATCHES*/) const
 {
@@ -5904,6 +6117,9 @@ std::string Condition::Or::Dump() const {
 ///////////////////////////////////////////////////////////
 Condition::Not::~Not()
 { delete m_operand; }
+
+bool Condition::Not::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
 
 void Condition::Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                           SearchDomain search_domain/* = NON_MATCHES*/) const
