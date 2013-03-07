@@ -304,7 +304,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const {
     TargetSet potential_targets;
     potential_targets.reserve(objects.NumObjects());
     for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        potential_targets.push_back(it->second);
+        potential_targets.push_back(*it);
     GetTargetSet(source_id, targets, potential_targets);
 }
 
@@ -1809,7 +1809,7 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
     Condition::ObjectSet potential_endpoint_objects;
     potential_endpoint_objects.reserve(objects.NumObjects());
     for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        potential_endpoint_objects.push_back(it->second);
+        potential_endpoint_objects.push_back(*it);
 
     Condition::ObjectSet endpoint_objects;
     endpoint_objects.reserve(potential_endpoint_objects.size());
@@ -1883,7 +1883,7 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
     Condition::ObjectSet potential_endpoint_objects;
     potential_endpoint_objects.reserve(objects.NumObjects());
     for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        potential_endpoint_objects.push_back(it->second);
+        potential_endpoint_objects.push_back(*it);
 
     Condition::ObjectSet endpoint_objects;
     endpoint_objects.reserve(potential_endpoint_objects.size());
@@ -1981,7 +1981,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
     Condition::ObjectSet potential_locations;
     potential_locations.reserve(objects.NumObjects());
     for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        potential_locations.push_back(it->second);
+        potential_locations.push_back(*it);
 
     Condition::ObjectSet valid_locations;
     valid_locations.reserve(potential_locations.size());
@@ -2420,7 +2420,7 @@ void SetDestination::Execute(const ScriptingContext& context) const {
     Condition::ObjectSet potential_locations;
     potential_locations.reserve(objects.NumObjects());
     for (ObjectMap::iterator<> it = objects.begin(); it != objects.end(); ++it)
-        potential_locations.push_back(it->second);
+        potential_locations.push_back(*it);
 
     Condition::ObjectSet valid_locations;
     valid_locations.reserve(potential_locations.size());
