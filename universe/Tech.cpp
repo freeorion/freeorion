@@ -21,41 +21,6 @@ namespace {
     const bool CHEAP_AND_FAST_TECH_RESEARCH = false;    // makes all techs cost 1 RP and take 1 turn to research
 }
 
-struct store_tech_impl
-{
-    template <class T1, class T2, class T3>
-    struct result {typedef void type;};
-    template <class T>
-    void operator()(TechManager::TechContainer& techs, std::set<std::string>& categories_seen, const T& tech) const
-    {
-        categories_seen.insert(tech->Category());
-        if (techs.get<TechManager::NameIndex>().find(tech->Name()) != techs.get<TechManager::NameIndex>().end()) {
-            std::string error_str = "ERROR: More than one tech in techs.txt has the name " + tech->Name();
-            throw std::runtime_error(error_str.c_str());
-        }
-        if (tech->Prerequisites().find(tech->Name()) != tech->Prerequisites().end()) {
-            std::string error_str = "ERROR: Tech " + tech->Name() + " depends on itself!";
-            throw std::runtime_error(error_str.c_str());
-        }
-        techs.insert(tech);
-    }
-};
-
-struct store_category_impl
-{
-    template <class T1, class T2>
-    struct result {typedef void type;};
-    template <class T>
-    void operator()(std::map<std::string, TechCategory*>& categories, const T& category) const
-    {
-        if (categories.find(category->name) != categories.end()) {
-            std::string error_str = "ERROR: More than one tech category in techs.txt name " + category->name;
-            throw std::runtime_error(error_str.c_str());
-        }
-        categories[category->name] = category;
-    }
-};
-
 namespace {
     void NextTechs(std::vector<const Tech*>& retval, const std::set<std::string>& known_techs,
                    std::set<const Tech*>& checked_techs,
