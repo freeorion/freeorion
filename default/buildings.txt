@@ -373,6 +373,7 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = WithinDistance 0 Source
+            stackinggroup = "LIGHTHOUSE_STEALTH_STACK"
             effects = SetStealth Value - 30
             
         EffectsGroup
@@ -381,7 +382,8 @@ BuildingType
                 OwnedBy TheEmpire Source.Owner
                 WithinDistance 50 Source
             ]
-        effects = SetStarlaneSpeed Value + 20
+            stackinggroup = "LIGHTHOUSE_SPEED_STACK"
+            effects = SetStarlaneSpeed Value + 20
     ]
     icon = "icons/building/lighthouse.png"
 
@@ -1124,8 +1126,10 @@ BuildingType
             scope = And [
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
+                NOT Population high = 0
+                OwnedBy TheEmpire Source.Owner
             ]
-            //stackinggroup = "GAS_GIANT_GEN_STACK"   // Commented out for 4.2 release
+            stackinggroup = "GAS_GIANT_GEN_STACK"
             effects = SetTargetIndustry Value + 10
     ]
     icon = ""
