@@ -835,6 +835,7 @@ def generateProductionOrders():
                         print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
 
     bldName = "BLD_GAS_GIANT_GEN"
+    maxGGGs=1
     if empire.buildingTypeAvailable(bldName) and foAI.foAIstate.aggression > fo.aggression.beginner:
         queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
         bldType = fo.getBuildingType(bldName)
@@ -842,6 +843,16 @@ def generateProductionOrders():
             if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
                 thisPlanet=universe.getPlanet(pid)
                 if thisPlanet.systemID in ColonisationAI.empireSpeciesSystems:
+                    GGList=[]
+                    canUseGGG=False
+                    system=universe.getSystem(thisPlanet.systemID)
+                    for opid in system.planetIDs:
+                        otherPlanet=universe.getPlanet(opid)
+                        if otherPlanet.size== fo.planetSize.gasGiant:
+                            GGList.append(opid)
+                        if  opid!=pid and otherPlanet.owner==empire.empireID and (EnumsAI.AIFocusType.FOCUS_INDUSTRY  in list(otherPlanet.availableFoci)+[otherPlanet.focus]):
+                            canUseGGG=True
+                if pid in sorted(GGList)[:maxGGGs] and canUseGGG:
                     res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
                     if res: 
                         queuedBldLocs.append(pid)

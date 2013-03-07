@@ -394,6 +394,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         detail = []
     discountMultiplier = 20.0
     priorityScaling=1.0
+    maxGGGs=1
     
     universe = fo.getUniverse()
     empireResearchList = [element.tech for element in empire.researchQueue]
@@ -499,17 +500,21 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                     detail.append( "Asteroids %.1f"%(discountMultiplier*20  )  )
         if  ( ( planet.size  ==  fo.planetSize.gasGiant ) and  ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:3]) )):
             if system:
+                GGList=[]
                 orbGenVal=0
+                GGDetail=[]
                 for pid in system.planetIDs:
                     otherPlanet=universe.getPlanet(pid)
-                    if otherPlanet.size == fo.planetSize.asteroids and otherPlanet.owner==empire.empireID:
-                        if empire.getTechStatus("PRO_EXOBOTS") == fo.techStatus.complete:
-                            orbGenVal+=10*discountMultiplier
-                            detail.append( "GGG %s  %.1f"%(otherPlanet.name,    discountMultiplier*10  )  )
-                    elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID and (AIFocusType.FOCUS_INDUSTRY  in list(otherPlanet.availableFoci)+[otherPlanet.focus]):
+                    if otherPlanet.size== fo.planetSize.gasGiant:
+                        GGList.append(pid)
+                    if  pid!=planetID and otherPlanet.owner==empire.empireID and (AIFocusType.FOCUS_INDUSTRY  in list(otherPlanet.availableFoci)+[otherPlanet.focus]):
                         orbGenVal+=10*discountMultiplier
-                        detail.append( "GGG %s  %.1f"%(otherPlanet.name,    discountMultiplier*10  )  )
-                retval += orbGenVal
+                        GGDetail.append( "GGG %s  %.1f"%(otherPlanet.name,    discountMultiplier*10  )  )
+                if planetID in sorted(GGList)[:maxGGGs]:
+                    retval += orbGenVal
+                    detail.extend( GGDetail )
+                else:
+                    detail.append( "Won't GGG")
         if ( foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0)  + foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('monsterThreat', 0) )> 2*curBestMilShipRating:
             retval = retval / 2.0
             detail.append( "threat halving value" )
@@ -521,7 +526,6 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         asteroidBonus=0
         gasGiantBonus=0
         miningBonus=0
-        maxGGGs=8
         perGGG=9*discountMultiplier
         planetSize = planet.size
         if system and AIFocusType.FOCUS_INDUSTRY in species.foci:
