@@ -144,8 +144,8 @@ def setPlanetResourceFoci(): #+
     empire = fo.getEmpire()
     empireID = empire.empireID
     currentTurn = fo.currentTurn()
-    freq = (1.0 + currentTurn/4.0)**(1.0/3)
-    if ( currentTurn > 120 ) and  ( abs(currentTurn - lastFociCheck[0] ) <1.5*freq)   and ( random() > 1.0/freq ) :
+    freq = min(3,  ( max(5,  currentTurn-120)   )/4.0)**(1.0/3) 
+    if  ( abs(currentTurn - lastFociCheck[0] ) <1.5*freq)   and ( random() < 1.0/freq ) :
         timer = 6*[time()]
     else:
         lastFociCheck[0]=currentTurn
@@ -191,7 +191,7 @@ def setPlanetResourceFoci(): #+
                         if curFocus != GFocus:
                             result = fo.issueChangeFocusOrder(spPID, GFocus)
                         if result == 1:
-                            if pid in empirePlanetIDs:
+                            if spPID in empirePlanetIDs:
                                 del empirePlanetIDs[   empirePlanetIDs.index( spPID ) ]
                             print "%s focus of planet %s (%d) at Growth Focus"%( ["set",  "left" ][  curFocus == GFocus ] ,  planetMap[spPID].name,  spPID) 
                             break
@@ -204,25 +204,31 @@ def setPlanetResourceFoci(): #+
         ratios = []
         #for each planet, calculate RP:PP value ratio at which industry/Mining focus and research focus would have the same total value, & sort by that
         # include a bias to slightly discourage changing foci
-        curTargetPP = 0
-        curTargetRP = 0
+        curTargetPP = 0.001
+        curTargetRP = 0.001
         newFoci = {}
         timer.append( time() ) #loop
         hasForce = empire.getTechStatus("CON_FRC_ENRG_STRC") == fo.techStatus.complete
         for pid in newTargets:
             II, IR = newTargets[pid][IFocus]
             RI, RR = newTargets[pid][RFocus]
-            #if currentFocus[pid] == MFocus:
-            #    II = max( II,  newTargets[pid][MFocus][0] ) 
+            CI, CR = currentOutput[pid][ IFocus],  currentOutput[pid][ RFocus]
+            #consider straddling balance range within which 1RP costs 1PP
+            if True and (foAI.foAIstate.aggression >= fo.aggression.aggressive) and ( empireID  %2 == 1):
+                if (CR<RR) and ( (CR-IR) >= (II-CI) ) and (priorityRatio > ( (curTargetRP+CR+1)/ max(0.001, curTargetPP +CI -1))):
+                    curTargetPP += CI -1 #
+                    curTargetRP +=  CR+1
+                    newFoci[pid] = RFocus
+                    continue
             curTargetPP += II  #icurTargets initially calculated by Industry focus, which will be our default focus
             curTargetRP += IR
             newFoci[pid] = IFocus
-            if foAI.foAIstate.aggression < fo.aggression.maniacal:
-                if currentFocus[pid] in [ IFocus,  MFocus] :
-                    II += min( 2,  II /4.0 )
-                elif currentFocus[pid] == RFocus:
-                    RR += min( 2,  RR/4.0 )
-                #calculate factor F at  which     II + F * RI  ==  RI + F * RR   =====>  F = ( II-RI ) / (RR-IR)
+            #if foAI.foAIstate.aggression < fo.aggression.maniacal:
+            #    if currentFocus[pid] in [ IFocus,  MFocus] :
+            #        II += min( 2,  II /4.0 )
+            #    elif currentFocus[pid] == RFocus:
+            #        RR += min( 2,  RR/4.0 )
+            #calculate factor F at  which     II + F * RI  ==  RI + F * RR   =====>  F = ( II-RI ) / (RR-IR)
             thisFactor = ( II-RI ) / max( 0.01,  RR-IR)  # don't let denominator be zero for planets where focus doesn't change RP
             if foAI.foAIstate.aggression >fo.aggression.aggressive:
                 if currentOutput[pid][ IFocus] > II +RI - RR:

@@ -1,6 +1,7 @@
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
 import AIstate
+import AIDependencies
 import EnumsAI
 import FleetUtilsAI
 import PlanetUtilsAI
@@ -132,6 +133,7 @@ def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empir
 
 def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empire):
     "return the invasion value of a planet"
+    detail = []
     buildingValues = {"BLD_IMPERIAL_PALACE":                    1000, 
                                             "BLD_CULTURE_ARCHIVES":                 1000, 
                                             "BLD_SHIPYARD_BASE":                        100, 
@@ -165,10 +167,19 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     if (planet == None) :  #TODO: exclude planets with stealth higher than empireDetection
         print "invasion AI couldn't get current info on planet %d"%planetID
         return 0, 0
-        
+
+    specName=planet.speciesName
+    species=fo.getSpecies(specName)
+    if not species:#TODO:  probably stealth makes planet inacccesible & should abort
+        return 0, 0
+    else:
+        popVal = ColonisationAI.evaluatePlanet(planetID,  EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  species,  empire, detail) #evaluatePlanet is imported from ColonisationAI
+
     bldTally=0
     for bldType in [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]:
-        bldTally += buildingValues.get(bldType,  50)
+        bval = buildingValues.get(bldType,  50)
+        bldTally += bval
+        detail.append("%s: %d"%(bldType,  bval))
         
         capitolID = PlanetUtilsAI.getCapital()
         if capitolID:
@@ -181,36 +192,10 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         
     troops = planet.currentMeterValue(fo.meterType.troops)
     maxTroops = planet.currentMeterValue(fo.meterType.maxTroops)
-    specName=planet.speciesName
-    species=fo.getSpecies(specName)
+    
     popTSize = planet.currentMeterValue(fo.meterType.targetPopulation)#TODO: adjust for empire tech
     planetSpecials = list(planet.specials)
     pSysID = planet.systemID#TODO: check star value
-    
-    indVal = 0
-    basePopInd=0.2
-    prodFactor = 1
-    discountMultiplier=20
-    for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] : 
-        if special in planetSpecials:
-            prodFactor+=1
-    
-    proSingVal = [0, 4][(len( AIstate.empireStars.get(fo.starType.blackHole,  [])) > 0)]
-    indTechMap={    "GRO_ENERGY_META":  0.5, 
-                                        "PRO_ROBOTIC_PROD":0.4, 
-                                        "PRO_FUSION_GEN":       1.0, 
-                                        "PRO_INDUSTRY_CENTER_I": 1, 
-                                        "PRO_INDUSTRY_CENTER_II":1, 
-                                        "PRO_INDUSTRY_CENTER_III":1, 
-                                        "PRO_SOL_ORB_GEN":  2.0,   #assumes will build a gen at a blue/white star
-                                        "PRO_SINGULAR_GEN": proSingVal, 
-                                        }
-    for tech in indTechMap:
-        if (empire.getTechStatus(tech) == fo.techStatus.complete):
-            prodFactor +=  indTechMap[tech]
-    indVal = discountMultiplier * basePopInd *prodFactor*popTSize
-    if (empire.getTechStatus("PRO_SENTIENT_AUTOMATION") == fo.techStatus.complete):
-        indVal += discountMultiplier * 5
     
     pmaxShield = planet.currentMeterValue(fo.meterType.maxShield)
     sysFThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('fleetThreat', 1000 )
@@ -219,33 +204,27 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     supplyVal=0
     enemyVal=0
     if planet.owner!=-1 : #value in taking this away from an enemy
-        enemyVal= 20* max(planet.currentMeterValue(fo.meterType.targetIndustry),  2*planet.currentMeterValue(fo.meterType.targetResearch))
-    if not species:#TODO:  perhaps stealth makes planet inacccesible & should abort
-        try:
-            targetPop=planet.currentMeterValue(fo.meterType.targetPopulation)
-            popVal =  2*targetPop
-        except:
-            popVal=0
-    else:
-        popVal = ColonisationAI.evaluatePlanet(planetID,  EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  species,  empire) #evaluatePlanet is imported from ColonisationAI
+        enemyVal= 20* (planet.currentMeterValue(fo.meterType.targetIndustry) +  2*planet.currentMeterValue(fo.meterType.targetResearch))
     if planetID  in fleetSupplyablePlanetIDs: #TODO: extend to rings
         supplyVal =  100
         if planet.owner== -1:
         #if  (pmaxShield <10):
             if ( sysFThrt < 0.5*ProductionAI.curBestMilShipRating() ):
                if ( sysMThrt < 3*ProductionAI.curBestMilShipRating()):
-                    supplyVal = 10000
-               else:
                     supplyVal = 50
-    planetSpecials = list(planet.specials)
-    specialVal=0
-    if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_ASTEROID_MINE") == fo.techStatus.complete ) ): 
-            specialVal= 15   #TODO: should do more eval re asteroid mining here
-    for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] :
-        if special in planetSpecials:
-            specialVal +=10 #
+               else:
+                    supplyVal = 20
+            else:
+                supplyVal *= int( min(1, ProductionAI.curBestMilShipRating() /  sysFThrt )  )
     buildTime=4
-    return max(0,  popVal+supplyVal+specialVal+bldTally+indVal+enemyVal-20*troops),  min(troops+maxJumps+buildTime,  maxTroops)
+    plannedTroops = min(troops+maxJumps+buildTime,  maxTroops)
+    if ( empire.getTechStatus("SHP_ORG_HULL") != fo.techStatus.complete ):
+        troopCost = math.ceil( plannedTroops/6.0) *  ( 40*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
+    else:
+        troopCost = math.ceil( plannedTroops/6.0) *  ( 20*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
+    invscore =  max(0,  popVal+supplyVal+bldTally+enemyVal-0.8*troopCost),  plannedTroops
+    print invscore, "projected Troop Cost:",  troopCost,  "planet detail ",   detail,  popVal,  supplyVal,  bldTally,  enemyVal
+    return   invscore
 
 def getPlanetPopulation(planetID):
     "return planet population"

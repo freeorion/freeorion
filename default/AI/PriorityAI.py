@@ -335,6 +335,7 @@ def calculateMilitaryPriority():
         unmetThreat += max( 0,  threat + monsterThreat - myRating )
         
     militaryPriority = int( 40 + max(0,  75*unmetThreat / curShipRating) )  
+    print "Calculating Military Priority:  40 + 75 * unmetThreat/curShipRating \n\t  Priority: %d    \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority,  unmetThreat,  curShipRating)
     return max( militaryPriority,  0)
 
 def calculateTopProductionQueuePriority():

@@ -10,5 +10,9 @@ for metab in metabolimBoostMap:
     for boost in metabolimBoostMap[metab] :
         metabolimBoosts[boost]=metab
 
+colonyPodCost = 120
+colonyPodUpkeep = 0.06
+outpostPodCost = 80
+shipUpkeep = 0.05
 
 

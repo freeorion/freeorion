@@ -3,6 +3,7 @@ import pickle                       # Python object serialization library
 import sys
 import traceback
 from time import time
+import random
 
 import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client
 
@@ -202,9 +203,16 @@ def handleDiplomaticMessage(message):
     if (message.type == fo.diplomaticMessageType.peaceProposal and message.recipient == fo.empireID()):
         replySender = message.recipient
         replyRecipient = message.sender
-        reply = fo.diplomaticMessage(replySender, replyRecipient, fo.diplomaticMessageType.acceptProposal)
-        print "Sending diplomatic message to empire " + str(replyRecipient) + " of type " + str(reply.type)
-        fo.sendDiplomaticMessage(reply)
+        proposalSenderPlayer = fo.empirePlayerID(message.sender)
+        fo.sendChatMessage(proposalSenderPlayer,  "So,  the Terran Hairless Plains Ape advising your empire wishes to scratch its belly for a while?")
+        if (  (foAIstate.aggression==fo.aggression.beginner )  or  
+                (foAIstate.aggression!=fo.aggression.maniacal ) and (  random.random() < 1.0/ (((foAIstate.aggression +0.01)*fo.currentTurn()/2)**0.5)  )):
+            fo.sendChatMessage(proposalSenderPlayer,  "OK, Peace offer accepted.")
+            reply = fo.diplomaticMessage(replySender, replyRecipient, fo.diplomaticMessageType.acceptProposal)
+            print "Sending diplomatic message to empire " + str(replyRecipient) + " of type " + str(reply.type)
+            fo.sendDiplomaticMessage(reply)
+        else:
+            fo.sendChatMessage(proposalSenderPlayer,  "Maybe later.  We are currently getting busy  with Experimental Test Subject yo-Ma-ma.")
 
 # called when this player receives and update about the diplomatic status between players, which may
 # or may not include this player.

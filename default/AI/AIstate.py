@@ -100,6 +100,7 @@ class AIstate(object):
         self.newlySplitFleets={}
         self.aggression=aggression
         self.militaryRating=0
+        self.shipCount = 4
 
     def __del__(self):
         "destructor"
@@ -155,6 +156,13 @@ class AIstate(object):
         print "Fleets lost by system: %s"%fleetsLostBySystem
         self.updateSystemStatus()
         ExplorationAI.updateScoutFleets() #should do this after clearing dead  fleets, currently should be already done here
+        
+    def assessSelfRating(self):
+        return 1
+        
+    def assessRating(self,  empireID):
+        """Returns assessed Rating of specified empire"""
+        return 1
 
     def updateFleetLocs(self):
         universe=fo.getUniverse()
@@ -297,7 +305,10 @@ class AIstate(object):
                 pattack = 0
                 phealth = 0
                 for pid in system.planetIDs:
-                    if pid in popCtrIDs+outpostIDs:#TODO: check for diplomatic status
+                    #if pid in popCtrIDs+outpostIDs:#TODO: check for diplomatic status, needs to be exposed to python
+                    #    continue
+                    thisPlanet=universe.getPlanet(pid)
+                    if (thisPlanet.owner == self.empireID):
                         continue
                     thisAttack,  thisHP = self.assessPlanetThreat(pid,  sightingAge=currentTurn-partialVisTurn)
                     pattack += thisAttack
@@ -679,6 +690,7 @@ class AIstate(object):
                 #if sysID != -1:
                 #    self.systemStatus.setdefault(sysID, {}).setdefault('myFleetRating', 0) 
                 #    self.systemStatus[sysID]['myFleetRating'] += newRating #moved to updateSystemStatus
+        self.shipCount = shipCount
         print "------------------------"
         print "Empire Ship Count: ",  shipCount
         print "------------------------"
