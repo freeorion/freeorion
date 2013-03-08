@@ -133,6 +133,15 @@ std::string ConditionDescription(const std::vector<const Condition::ConditionBas
     return retval;
 }
 
+#define CHECK_COND_VREF_MEMBER(m_ptr) { if (m_ptr == rhs_.m_ptr) {              \
+                                            /* check next member */             \
+                                        } else if (!m_ptr || !rhs_.m_ptr) {     \
+                                            return false;                       \
+                                        } else {                                \
+                                            if (*m_ptr != *(rhs_.m_ptr))        \
+                                                return false;                   \
+                                        }   }
+
 ///////////////////////////////////////////////////////////
 // Condition::ConditionBase                              //
 ///////////////////////////////////////////////////////////
@@ -235,38 +244,14 @@ bool Condition::Number::operator==(const Condition::ConditionBase& rhs) const {
 
     const Condition::Number& rhs_ = static_cast<const Condition::Number&>(rhs);
 
-    if (m_low == rhs_.m_low) {
-        // check next member
-    } else if (!m_low || !rhs_.m_low) {
-        return false;
-    } else {
-        if (*m_low != *(rhs_.m_low))
-            return false;
-    }
-
-    if (m_high == rhs_.m_high) {
-        // check next member
-    } else if (!m_high || !rhs_.m_high) {
-        return false;
-    } else {
-        if (*m_high != *(rhs_.m_high))
-            return false;
-    }
-
-    if (m_condition == rhs_.m_condition) {
-        // check next member
-    } else if (!m_condition || !rhs_.m_condition) {
-        return false;
-    } else {
-        if (*m_condition != *(rhs_.m_condition))
-            return false;
-    }
+    CHECK_COND_VREF_MEMBER(m_low)
+    CHECK_COND_VREF_MEMBER(m_high)
+    CHECK_COND_VREF_MEMBER(m_condition)
 
     return true;
 }
 
-std::string Condition::Number::Description(bool negated/* = false*/) const
-{
+std::string Condition::Number::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
                                     boost::lexical_cast<std::string>(m_low->Eval()) :
                                     m_low->Description())
@@ -284,8 +269,7 @@ std::string Condition::Number::Description(bool negated/* = false*/) const
                % m_condition->Description());
 }
 
-std::string Condition::Number::Dump() const
-{
+std::string Condition::Number::Dump() const {
     std::string retval = DumpIndent() + "Number";
     if (m_low)
         retval += " low = " + m_low->Dump();
@@ -375,11 +359,17 @@ bool Condition::Number::RootCandidateInvariant() const {
            m_condition->RootCandidateInvariant();
 }
 
-bool Condition::Number::TargetInvariant() const
-{ return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()) && m_condition->TargetInvariant(); }
+bool Condition::Number::TargetInvariant() const {
+    return (!m_low || m_low->TargetInvariant()) &&
+           (!m_high || m_high->TargetInvariant()) &&
+           m_condition->TargetInvariant();
+}
 
-bool Condition::Number::SourceInvariant() const
-{ return (!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant()) && m_condition->SourceInvariant(); }
+bool Condition::Number::SourceInvariant() const {
+    return (!m_low || m_low->SourceInvariant()) &&
+           (!m_high || m_high->SourceInvariant()) &&
+           m_condition->SourceInvariant();
+}
 
 bool Condition::Number::Match(const ScriptingContext& local_context) const {
     // get acceptable range of subcondition matches for candidate
@@ -407,7 +397,6 @@ bool Condition::Number::Match(const ScriptingContext& local_context) const {
     return in_range;
 }
 
-
 ///////////////////////////////////////////////////////////
 // Turn                                                  //
 ///////////////////////////////////////////////////////////
@@ -416,8 +405,19 @@ Condition::Turn::~Turn() {
     delete m_high;
 }
 
-bool Condition::Turn::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::Turn::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::Turn& rhs_ = static_cast<const Condition::Turn&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_low)
+    CHECK_COND_VREF_MEMBER(m_high)
+
+    return true;
+}
 
 void Condition::Turn::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const {
     // if ValueRef for low or high range limits depend on local candidate, then
@@ -529,8 +529,23 @@ Condition::SortedNumberOf::~SortedNumberOf() {
     delete m_condition;
 }
 
-bool Condition::SortedNumberOf::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::SortedNumberOf::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::SortedNumberOf& rhs_ = static_cast<const Condition::SortedNumberOf&>(rhs);
+
+    if (m_sorting_method != rhs_.m_sorting_method)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_number)
+    CHECK_COND_VREF_MEMBER(m_sort_key)
+    CHECK_COND_VREF_MEMBER(m_condition)
+
+    return true;
+}
 
 namespace {
     /** Random number genrator function to use with random_shuffle */
@@ -924,8 +939,21 @@ Condition::EmpireAffiliation::~EmpireAffiliation() {
         delete m_empire_id;
 }
 
-bool Condition::EmpireAffiliation::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::EmpireAffiliation::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::EmpireAffiliation& rhs_ = static_cast<const Condition::EmpireAffiliation&>(rhs);
+
+    if (m_affiliation != rhs_.m_affiliation)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+
+    return true;
+}
 
 namespace {
     struct EmpireAffiliationSimpleMatch {
@@ -1126,8 +1154,22 @@ Condition::Homeworld::~Homeworld() {
         delete m_names[i];
 }
 
-bool Condition::Homeworld::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::Homeworld::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::Homeworld& rhs_ = static_cast<const Condition::Homeworld&>(rhs);
+
+    if (m_names.size() != rhs_.m_names.size())
+        return false;
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        CHECK_COND_VREF_MEMBER(m_names.at(i))
+    }
+
+    return true;
+}
 
 namespace {
     struct HomeworldSimpleMatch {
@@ -1419,8 +1461,18 @@ bool Condition::Armed::Match(const ScriptingContext& local_context) const {
 Condition::Type::~Type()
 { delete m_type; }
 
-bool Condition::Type::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::Type::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::Type& rhs_ = static_cast<const Condition::Type&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_type)
+
+    return true;
+}
 
 namespace {
     struct TypeSimpleMatch {
@@ -1528,12 +1580,25 @@ Condition::Building::~Building() {
     }
 }
 
-bool Condition::Building::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::Building::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::Building& rhs_ = static_cast<const Condition::Building&>(rhs);
+
+    if (m_names.size() != rhs_.m_names.size())
+        return false;
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        CHECK_COND_VREF_MEMBER(m_names.at(i))
+    }
+
+    return true;
+}
 
 namespace {
-    struct BuildingSimpleMatch
-    {
+    struct BuildingSimpleMatch {
         BuildingSimpleMatch(const std::vector<std::string>& names) :
             m_names(names)
         {}
@@ -1688,8 +1753,22 @@ Condition::HasSpecial::~HasSpecial() {
     delete m_since_turn_high;
 }
 
-bool Condition::HasSpecial::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::HasSpecial::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::HasSpecial& rhs_ = static_cast<const Condition::HasSpecial&>(rhs);
+
+    if (m_name != rhs_.m_name)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_since_turn_low)
+    CHECK_COND_VREF_MEMBER(m_since_turn_high)
+
+    return true;
+}
 
 namespace {
     struct HasSpecialSimpleMatch {
@@ -1807,8 +1886,19 @@ bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const {
 ///////////////////////////////////////////////////////////
 // HasTag                                                //
 ///////////////////////////////////////////////////////////
-bool Condition::HasTag::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::HasTag::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::HasTag& rhs_ = static_cast<const Condition::HasTag&>(rhs);
+
+    if (m_name != rhs_.m_name)
+        return false;
+
+    return true;
+}
 
 std::string Condition::HasTag::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_HAS_TAG";
@@ -1838,8 +1928,19 @@ Condition::CreatedOnTurn::~CreatedOnTurn() {
     delete m_high;
 }
 
-bool Condition::CreatedOnTurn::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::CreatedOnTurn::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::CreatedOnTurn& rhs_ = static_cast<const Condition::CreatedOnTurn&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_low)
+    CHECK_COND_VREF_MEMBER(m_high)
+
+    return true;
+}
 
 namespace {
     struct CreatedOnTurnSimpleMatch {
@@ -1931,8 +2032,18 @@ bool Condition::CreatedOnTurn::Match(const ScriptingContext& local_context) cons
 Condition::Contains::~Contains()
 { delete m_condition; }
 
-bool Condition::Contains::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::Contains::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::Contains& rhs_ = static_cast<const Condition::Contains&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_condition)
+
+    return true;
+}
 
 namespace {
     struct ContainsSimpleMatch {
@@ -2043,8 +2154,18 @@ bool Condition::Contains::Match(const ScriptingContext& local_context) const {
 Condition::ContainedBy::~ContainedBy()
 { delete m_condition; }
 
-bool Condition::ContainedBy::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::ContainedBy::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::ContainedBy& rhs_ = static_cast<const Condition::ContainedBy&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_condition)
+
+    return true;
+}
 
 namespace {
     struct ContainedBySimpleMatch {
@@ -2155,8 +2276,18 @@ bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const 
 Condition::InSystem::~InSystem()
 { delete m_system_id; }
 
-bool Condition::InSystem::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::InSystem::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::InSystem& rhs_ = static_cast<const Condition::InSystem&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_system_id)
+
+    return true;
+}
 
 namespace {
     struct InSystemSimpleMatch {
@@ -2245,8 +2376,18 @@ bool Condition::InSystem::Match(const ScriptingContext& local_context) const {
 Condition::ObjectID::~ObjectID()
 { delete m_object_id; }
 
-bool Condition::ObjectID::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::ObjectID::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::ObjectID& rhs_ = static_cast<const Condition::ObjectID&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_object_id)
+
+    return true;
+}
 
 namespace {
     struct ObjectIDSimpleMatch {
@@ -2332,8 +2473,22 @@ Condition::PlanetType::~PlanetType() {
     }
 }
 
-bool Condition::PlanetType::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::PlanetType::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::PlanetType& rhs_ = static_cast<const Condition::PlanetType&>(rhs);
+
+    if (m_types.size() != rhs_.m_types.size())
+        return false;
+    for (unsigned int i = 0; i < m_types.size(); ++i) {
+        CHECK_COND_VREF_MEMBER(m_types.at(i))
+    }
+
+    return true;
+}
 
 namespace {
     struct PlanetTypeSimpleMatch {
@@ -2490,8 +2645,22 @@ Condition::PlanetSize::~PlanetSize() {
     }
 }
 
-bool Condition::PlanetSize::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::PlanetSize::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::PlanetSize& rhs_ = static_cast<const Condition::PlanetSize&>(rhs);
+
+    if (m_sizes.size() != rhs_.m_sizes.size())
+        return false;
+    for (unsigned int i = 0; i < m_sizes.size(); ++i) {
+        CHECK_COND_VREF_MEMBER(m_sizes.at(i))
+    }
+
+    return true;
+}
 
 namespace {
     struct PlanetSizeSimpleMatch {
@@ -2651,8 +2820,22 @@ Condition::PlanetEnvironment::~PlanetEnvironment() {
     }
 }
 
-bool Condition::PlanetEnvironment::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::PlanetEnvironment::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::PlanetEnvironment& rhs_ = static_cast<const Condition::PlanetEnvironment&>(rhs);
+
+    if (m_environments.size() != rhs_.m_environments.size())
+        return false;
+    for (unsigned int i = 0; i < m_environments.size(); ++i) {
+        CHECK_COND_VREF_MEMBER(m_environments.at(i))
+    }
+
+    return true;
+}
 
 namespace {
     struct PlanetEnvironmentSimpleMatch {
@@ -2813,8 +2996,22 @@ Condition::Species::~Species() {
     }
 }
 
-bool Condition::Species::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::Species::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::Species& rhs_ = static_cast<const Condition::Species&>(rhs);
+
+    if (m_names.size() != rhs_.m_names.size())
+        return false;
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        CHECK_COND_VREF_MEMBER(m_names.at(i))
+    }
+
+    return true;
+}
 
 namespace {
     struct SpeciesSimpleMatch {
@@ -2995,8 +3192,27 @@ Condition::Enqueued::~Enqueued() {
     delete m_high;
 }
 
-bool Condition::Enqueued::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::Enqueued::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::Enqueued& rhs_ = static_cast<const Condition::Enqueued&>(rhs);
+
+    if (m_build_type != rhs_.m_build_type)
+        return false;
+
+    if (m_name != rhs_.m_name)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_design_id)
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+    CHECK_COND_VREF_MEMBER(m_low)
+    CHECK_COND_VREF_MEMBER(m_high)
+
+    return true;
+}
 
 namespace {
     int NumberOnQueue(const ProductionQueue& queue, BuildType build_type, int location_id,
@@ -3221,8 +3437,22 @@ Condition::FocusType::~FocusType() {
     }
 }
 
-bool Condition::FocusType::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::FocusType::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::FocusType& rhs_ = static_cast<const Condition::FocusType&>(rhs);
+
+    if (m_names.size() != rhs_.m_names.size())
+        return false;
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        CHECK_COND_VREF_MEMBER(m_names.at(i))
+    }
+
+    return true;
+}
 
 namespace {
     struct FocusTypeSimpleMatch {
@@ -3380,8 +3610,22 @@ Condition::StarType::~StarType() {
     }
 }
 
-bool Condition::StarType::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::StarType::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::StarType& rhs_ = static_cast<const Condition::StarType&>(rhs);
+
+    if (m_types.size() != rhs_.m_types.size())
+        return false;
+    for (unsigned int i = 0; i < m_types.size(); ++i) {
+        CHECK_COND_VREF_MEMBER(m_types.at(i))
+    }
+
+    return true;
+}
 
 namespace {
     struct StarTypeSimpleMatch {
@@ -3517,8 +3761,19 @@ bool Condition::StarType::Match(const ScriptingContext& local_context) const {
 ///////////////////////////////////////////////////////////
 // DesignHasHull                                         //
 ///////////////////////////////////////////////////////////
-bool Condition::DesignHasHull::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::DesignHasHull::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::DesignHasHull& rhs_ = static_cast<const Condition::DesignHasHull&>(rhs);
+
+    if (m_name != rhs_.m_name)
+        return false;
+
+    return true;
+}
 
 std::string Condition::DesignHasHull::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_DESIGN_HAS_HULL";
@@ -3551,8 +3806,22 @@ Condition::DesignHasPart::~DesignHasPart() {
     delete m_high;
 }
 
-bool Condition::DesignHasPart::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::DesignHasPart::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::DesignHasPart& rhs_ = static_cast<const Condition::DesignHasPart&>(rhs);
+
+    if (m_name != rhs_.m_name)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_low)
+    CHECK_COND_VREF_MEMBER(m_high)
+
+    return true;
+}
 
 namespace {
     struct DesignHasPartSimpleMatch {
@@ -3662,8 +3931,22 @@ Condition::DesignHasPartClass::~DesignHasPartClass() {
     delete m_high;
 }
 
-bool Condition::DesignHasPartClass::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::DesignHasPartClass::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::DesignHasPartClass& rhs_ = static_cast<const Condition::DesignHasPartClass&>(rhs);
+
+    if (m_class != rhs_.m_class)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_low)
+    CHECK_COND_VREF_MEMBER(m_high)
+
+    return true;
+}
 
 namespace {
     struct DesignHasPartClassSimpleMatch {
@@ -3772,8 +4055,19 @@ bool Condition::DesignHasPartClass::Match(const ScriptingContext& local_context)
 ///////////////////////////////////////////////////////////
 // PredefinedShipDesign                                  //
 ///////////////////////////////////////////////////////////
-bool Condition::PredefinedShipDesign::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::PredefinedShipDesign::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::PredefinedShipDesign& rhs_ = static_cast<const Condition::PredefinedShipDesign&>(rhs);
+
+    if (m_name != rhs_.m_name)
+        return false;
+
+    return true;
+}
 
 std::string Condition::PredefinedShipDesign::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_PREDEFINED_SHIP_DESIGN";
@@ -3815,8 +4109,18 @@ bool Condition::PredefinedShipDesign::Match(const ScriptingContext& local_contex
 Condition::NumberedShipDesign::~NumberedShipDesign()
 { delete m_design_id; }
 
-bool Condition::NumberedShipDesign::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::NumberedShipDesign::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::NumberedShipDesign& rhs_ = static_cast<const Condition::NumberedShipDesign&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_design_id)
+
+    return true;
+}
 
 namespace {
     struct NumberedShipDesignSimpleMatch {
@@ -3896,8 +4200,18 @@ bool Condition::NumberedShipDesign::Match(const ScriptingContext& local_context)
 Condition::ProducedByEmpire::~ProducedByEmpire()
 { delete m_empire_id; }
 
-bool Condition::ProducedByEmpire::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::ProducedByEmpire::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::ProducedByEmpire& rhs_ = static_cast<const Condition::ProducedByEmpire&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+
+    return true;
+}
 
 namespace {
     struct ProducedByEmpireSimpleMatch {
@@ -3985,8 +4299,18 @@ bool Condition::ProducedByEmpire::Match(const ScriptingContext& local_context) c
 Condition::Chance::~Chance()
 { delete m_chance; }
 
-bool Condition::Chance::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::Chance::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::Chance& rhs_ = static_cast<const Condition::Chance&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_chance)
+
+    return true;
+}
 
 namespace {
     struct ChanceSimpleMatch {
@@ -4059,8 +4383,22 @@ Condition::MeterValue::~MeterValue() {
     delete m_high;
 }
 
-bool Condition::MeterValue::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::MeterValue::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::MeterValue& rhs_ = static_cast<const Condition::MeterValue&>(rhs);
+
+    if (m_meter != rhs_.m_meter)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_low)
+    CHECK_COND_VREF_MEMBER(m_high)
+
+    return true;
+}
 
 namespace {
     struct MeterValueSimpleMatch {
@@ -4203,8 +4541,25 @@ Condition::ShipPartMeterValue::~ShipPartMeterValue() {
     delete m_high;
 }
 
-bool Condition::ShipPartMeterValue::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::ShipPartMeterValue::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::ShipPartMeterValue& rhs_ = static_cast<const Condition::ShipPartMeterValue&>(rhs);
+
+    if (m_meter != rhs_.m_meter)
+        return false;
+
+    if (m_part_name != rhs_.m_part_name)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_low)
+    CHECK_COND_VREF_MEMBER(m_high)
+
+    return true;
+}
 
 namespace {
     struct ShipPartMeterValueSimpleMatch {
@@ -4322,8 +4677,25 @@ Condition::EmpireMeterValue::~EmpireMeterValue() {
     delete m_high;
 }
 
-bool Condition::EmpireMeterValue::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::EmpireMeterValue::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::EmpireMeterValue& rhs_ = static_cast<const Condition::EmpireMeterValue&>(rhs);
+
+    if (m_empire_id != rhs_.m_empire_id)
+        return false;
+
+    if (m_meter != rhs_.m_meter)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_low)
+    CHECK_COND_VREF_MEMBER(m_high)
+
+    return true;
+}
 
 namespace {
     struct EmpireMeterValueSimpleMatch {
@@ -4457,8 +4829,22 @@ Condition::EmpireStockpileValue::~EmpireStockpileValue() {
     delete m_high;
 }
 
-bool Condition::EmpireStockpileValue::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::EmpireStockpileValue::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::EmpireStockpileValue& rhs_ = static_cast<const Condition::EmpireStockpileValue&>(rhs);
+
+    if (m_stockpile != rhs_.m_stockpile)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_low)
+    CHECK_COND_VREF_MEMBER(m_high)
+
+    return true;
+}
 
 namespace {
     struct EmpireStockpileValueSimpleMatch {
@@ -4563,8 +4949,19 @@ bool Condition::EmpireStockpileValue::Match(const ScriptingContext& local_contex
 ///////////////////////////////////////////////////////////
 // OwnerHasTech                                          //
 ///////////////////////////////////////////////////////////
-bool Condition::OwnerHasTech::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::OwnerHasTech::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::OwnerHasTech& rhs_ = static_cast<const Condition::OwnerHasTech&>(rhs);
+
+    if (m_name != rhs_.m_name)
+        return false;
+
+    return true;
+}
 
 std::string Condition::OwnerHasTech::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_OWNER_HAS_TECH";
@@ -4595,8 +4992,19 @@ bool Condition::OwnerHasTech::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // OwnerHasBuildingTypeAvailable                         //
 ///////////////////////////////////////////////////////////
-bool Condition::OwnerHasBuildingTypeAvailable::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::OwnerHasBuildingTypeAvailable::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::OwnerHasBuildingTypeAvailable& rhs_ = static_cast<const Condition::OwnerHasBuildingTypeAvailable&>(rhs);
+
+    if (m_name != rhs_.m_name)
+        return false;
+
+    return true;
+}
 
 std::string Condition::OwnerHasBuildingTypeAvailable::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_OWNER_HAS_BUILDING_TYPE";
@@ -4627,8 +5035,19 @@ bool Condition::OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& loc
 ///////////////////////////////////////////////////////////
 // OwnerHasShipDesignAvailable                           //
 ///////////////////////////////////////////////////////////
-bool Condition::OwnerHasShipDesignAvailable::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::OwnerHasShipDesignAvailable::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::OwnerHasShipDesignAvailable& rhs_ = static_cast<const Condition::OwnerHasShipDesignAvailable&>(rhs);
+
+    if (m_id != rhs_.m_id)
+        return false;
+
+    return true;
+}
 
 std::string Condition::OwnerHasShipDesignAvailable::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_OWNER_HAS_SHIP_DESIGN";
@@ -4662,12 +5081,21 @@ bool Condition::OwnerHasShipDesignAvailable::Match(const ScriptingContext& local
 Condition::VisibleToEmpire::~VisibleToEmpire()
 { delete m_empire_id; }
 
-bool Condition::VisibleToEmpire::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::VisibleToEmpire::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::VisibleToEmpire& rhs_ = static_cast<const Condition::VisibleToEmpire&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+
+    return true;
+}
 
 namespace {
-    struct VisibleToEmpireSimpleMatch
-    {
+    struct VisibleToEmpireSimpleMatch {
         VisibleToEmpireSimpleMatch(int empire_id) :
             m_empire_id(empire_id)
         {}
@@ -4749,8 +5177,19 @@ Condition::WithinDistance::~WithinDistance() {
     delete m_condition;
 }
 
-bool Condition::WithinDistance::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::WithinDistance::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::WithinDistance& rhs_ = static_cast<const Condition::WithinDistance&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_distance)
+    CHECK_COND_VREF_MEMBER(m_condition)
+
+    return true;
+}
 
 namespace {
     struct WithinDistanceSimpleMatch {
@@ -4873,8 +5312,19 @@ Condition::WithinStarlaneJumps::~WithinStarlaneJumps() {
     delete m_condition;
 }
 
-bool Condition::WithinStarlaneJumps::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::WithinStarlaneJumps::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::WithinStarlaneJumps& rhs_ = static_cast<const Condition::WithinStarlaneJumps&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_jumps)
+    CHECK_COND_VREF_MEMBER(m_condition)
+
+    return true;
+}
 
 namespace {
     const int MANY_JUMPS(999999);
@@ -5086,8 +5536,18 @@ bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context
 Condition::CanAddStarlaneConnection::~CanAddStarlaneConnection()
 { delete m_condition; }
 
-bool Condition::CanAddStarlaneConnection::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::CanAddStarlaneConnection::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::CanAddStarlaneConnection& rhs_ = static_cast<const Condition::CanAddStarlaneConnection&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_condition)
+
+    return true;
+}
 
 namespace {
     struct CanAddStarlaneConnectionSimpleMatch {
@@ -5304,8 +5764,18 @@ namespace {
 Condition::CanRemoveStarlaneConnection::~CanRemoveStarlaneConnection()
 { delete m_condition; }
 
-bool Condition::CanRemoveStarlaneConnection::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::CanRemoveStarlaneConnection::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::CanRemoveStarlaneConnection& rhs_ = static_cast<const Condition::CanRemoveStarlaneConnection&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_condition)
+
+    return true;
+}
 
 bool Condition::CanRemoveStarlaneConnection::RootCandidateInvariant() const
 { return m_condition->RootCandidateInvariant(); }
@@ -5415,8 +5885,18 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
 Condition::ExploredByEmpire::~ExploredByEmpire()
 { delete m_empire_id; }
 
-bool Condition::ExploredByEmpire::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::ExploredByEmpire::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::ExploredByEmpire& rhs_ = static_cast<const Condition::ExploredByEmpire&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+
+    return true;
+}
 
 namespace {
     struct ExploredByEmpireSimpleMatch {
@@ -5548,8 +6028,18 @@ bool Condition::Stationary::Match(const ScriptingContext& local_context) const {
 Condition::FleetSupplyableByEmpire::~FleetSupplyableByEmpire()
 { delete m_empire_id; }
 
-bool Condition::FleetSupplyableByEmpire::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::FleetSupplyableByEmpire::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::FleetSupplyableByEmpire& rhs_ = static_cast<const Condition::FleetSupplyableByEmpire&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+
+    return true;
+}
 
 namespace {
     struct FleetSupplyableSimpleMatch {
@@ -5643,8 +6133,18 @@ Condition::ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire() {
     delete m_condition;
 }
 
-bool Condition::ResourceSupplyConnectedByEmpire::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::ResourceSupplyConnectedByEmpire::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::ResourceSupplyConnectedByEmpire& rhs_ = static_cast<const Condition::ResourceSupplyConnectedByEmpire&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+
+    return true;
+}
 
 namespace {
     struct ResourceSupplySimpleMatch {
@@ -5920,8 +6420,22 @@ Condition::And::~And() {
         delete m_operands[i];
 }
 
-bool Condition::And::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::And::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::And& rhs_ = static_cast<const Condition::And&>(rhs);
+
+    if (m_operands.size() != rhs_.m_operands.size())
+        return false;
+    for (unsigned int i = 0; i < m_operands.size(); ++i) {
+        CHECK_COND_VREF_MEMBER(m_operands.at(i))
+    }
+
+    return true;
+}
 
 void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                           SearchDomain search_domain/* = NON_MATCHES*/) const
@@ -6019,8 +6533,22 @@ Condition::Or::~Or() {
         delete m_operands[i];
 }
 
-bool Condition::Or::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::Or::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::Or& rhs_ = static_cast<const Condition::Or&>(rhs);
+
+    if (m_operands.size() != rhs_.m_operands.size())
+        return false;
+    for (unsigned int i = 0; i < m_operands.size(); ++i) {
+        CHECK_COND_VREF_MEMBER(m_operands.at(i))
+    }
+
+    return true;
+}
 
 void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                          SearchDomain search_domain/* = NON_MATCHES*/) const
@@ -6118,8 +6646,18 @@ std::string Condition::Or::Dump() const {
 Condition::Not::~Not()
 { delete m_operand; }
 
-bool Condition::Not::operator==(const Condition::ConditionBase& rhs) const
-{ return Condition::ConditionBase::operator==(rhs); }
+bool Condition::Not::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::Not& rhs_ = static_cast<const Condition::Not&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_operand)
+
+    return true;
+}
 
 void Condition::Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                           SearchDomain search_domain/* = NON_MATCHES*/) const
