@@ -214,7 +214,7 @@ def setPlanetResourceFoci(): #+
             RI, RR = newTargets[pid][RFocus]
             CI, CR = currentOutput[pid][ IFocus],  currentOutput[pid][ RFocus]
             #consider straddling balance range within which 1RP costs 1PP
-            if True and (foAI.foAIstate.aggression >= fo.aggression.aggressive) and ( empireID  %2 == 1):
+            if True and (foAI.foAIstate.aggression >= fo.aggression.aggressive):
                 if (CR<RR) and ( (CR-IR) >= (II-CI) ) and (priorityRatio > ( (curTargetRP+CR+1)/ max(0.001, curTargetPP +CI -1))):
                     curTargetPP += CI -1 #
                     curTargetRP +=  CR+1
