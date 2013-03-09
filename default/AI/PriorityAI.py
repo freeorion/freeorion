@@ -307,9 +307,11 @@ def calculateMilitaryPriority():
     targetSystems = set( PlanetUtilsAI.getSystems(targetPlanetIDs)  )
     
     curShipRating = ProductionAI.curBestMilShipRating()
+    cSRR = curShipRating**0.5
 
     unmetThreat = 0.0
     currentTurn=fo.currentTurn()
+    shipsNeeded=0
     for sysID in mySystems.union(targetSystems) :
         status=foAI.foAIstate.systemStatus.get( sysID,  {} )
         myAttack,  myHealth =0, 0
@@ -328,14 +330,20 @@ def calculateMilitaryPriority():
                 monsterThreat = 2000 + (currentTurn/100.0 - 1) *(baseMonsterThreat-2000)
         else:
             monsterThreat = 0
+            
+        threatRoot = status.get('fleetThreat', 0)**0.5 + status.get('planetThreat', 0)**0.5 + monsterThreat**0.5
         if sysID in mySystems:
-            threat = status.get('fleetThreat', 0) + status.get('planetThreat', 0) + 0.3* status.get('neighborThreat', 0)   
+             threatRoot +=  (0.3* status.get('neighborThreat', 0))**0.5   
         else:
-            threat = status.get('fleetThreat', 0) + status.get('planetThreat', 0) + 0.1* status.get('neighborThreat', 0)   
-        unmetThreat += max( 0,  threat + monsterThreat - myRating )
+             threatRoot +=  (0.1* status.get('neighborThreat', 0))**0.5   
+        threat = threatRoot**2
+        unmetThreat += max( 0,  threat - myRating )
+        shipsNeeded += math.ceil( max(0,   (threatRoot/cSRR)- (myRating/curShipRating)**0.5 ) )
         
-    militaryPriority = int( 40 + max(0,  75*unmetThreat / curShipRating) )  
-    print "Calculating Military Priority:  40 + 75 * unmetThreat/curShipRating \n\t  Priority: %d    \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority,  unmetThreat,  curShipRating)
+    #militaryPriority = int( 40 + max(0,  75*unmetThreat / curShipRating) )  
+    militaryPriority = int( 40 + max(0,  75*shipsNeeded) )  
+    #print "Calculating Military Priority:  40 + 75 * unmetThreat/curShipRating \n\t  Priority: %d    \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority,  unmetThreat,  curShipRating)
+    print "Calculating Military Priority:  40 + 75 * shipsNeeded \n\t  Priority: %d   \t shipsNeeded %d   \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority, shipsNeeded,   unmetThreat,  curShipRating)
     return max( militaryPriority,  0)
 
 def calculateTopProductionQueuePriority():

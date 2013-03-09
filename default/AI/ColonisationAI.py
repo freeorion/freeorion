@@ -687,13 +687,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                 detail.append("COMPUTRONIUM_SPECIAL")
 
         retval=0.0
-        if popSize<0:
-            if foAI.foAIstate.aggression > fo.aggression.typical and (fo.currentTurn() >= 10):
-                retval  = starBonus+asteroidBonus+gasGiantBonus +fixedRes
-        elif popSize==0:
-            if foAI.foAIstate.aggression > fo.aggression.typical and (fo.currentTurn() >= 10):
-                retval  = 0.6*( starBonus+max(asteroidBonus+gasGiantBonus,  growthVal)+fixedRes+fixedInd) #actually is kind of a pain if the pop goes close to zero but not actually zero
-        else:
+        if popSize > 0:
             retval  = starBonus+max(indVal+asteroidBonus+gasGiantBonus,  researchBonus,  growthVal)+fixedInd + fixedRes
             if planet.systemID in annexableRing1:
                 retval += 10
@@ -704,11 +698,15 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         
         retval *= priorityScaling
         thrtRatio = (foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0)+foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('monsterThreat', 0)+0.2*foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('neighborThreat', 0)) / float(curBestMilShipRating)
-        if thrtRatio > 4:
-            retval = 0.3*retval 
-        elif thrtRatio >= 2:
-            retval = 0.7* retval
-        elif thrtRatio > 0:
+        if False:
+            if thrtRatio > 4:
+                retval = 0.3*retval 
+            elif thrtRatio >= 2:
+                retval = 0.7* retval
+            elif thrtRatio > 0:
+                retval = 0.85* retval
+                
+        if thrtRatio > 1:
             retval = 0.85* retval
 
     return retval
