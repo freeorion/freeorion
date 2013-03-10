@@ -487,14 +487,14 @@ ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, std::stri
 
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int design_id_) :
     build_type(build_type_),
-    name(std::string("")),
+    name(),
     design_id(design_id_)
 {
     if (build_type == BT_SHIP) {
-        const ShipDesign* ship_design = GetShipDesign(design_id);
-        name = ship_design->Name();
-    } else {
-        name = "???";
+        if (const ShipDesign* ship_design = GetShipDesign(design_id))
+            name = ship_design->Name();
+        else
+            Logger().errorStream() << "ProductionItem::ProductionItem couldn't get ship design with id: " << design_id;
     }
 }
 
