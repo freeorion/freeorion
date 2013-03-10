@@ -1108,7 +1108,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes) {
     GetEffectsAndTargets(targets_causes, all_objects);
 }
 
-void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const std::vector<int>& target_objects) {
+void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
+                                    const std::vector<int>& target_objects)
+{
     ScopedTimer timer("Universe::GetEffectsAndTargets");
     if (target_objects.empty())
         return;
@@ -1328,6 +1330,47 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
                            << " fields: " << fields_time*1000;
 }
 
+namespace {
+    Effect::TargetSet& GetConditionMatches(const Condition::ConditionBase* cond,
+                                           std::map<const Condition::ConditionBase*, Effect::TargetSet>&
+                                               cached_condition_matches,
+                                           const UniverseObject* source,
+                                           const ScriptingContext& source_context,
+                                           Effect::TargetSet& target_objects)
+    {
+        if (!cond)
+            return cached_condition_matches[0]; // empty TargetSet
+
+        for (std::map<const Condition::ConditionBase*, Effect::TargetSet>::iterator
+             it = cached_condition_matches.begin(); it != cached_condition_matches.end(); ++it)
+        {
+            if (*cond == *(it->first)) {
+                //Logger().debugStream() << "Reused target set!";
+                return it->second;
+            }
+        }
+
+        // no cached result. calculate it...
+
+        // set up storage in cache and to return
+        Effect::TargetSet& target_set = cached_condition_matches[cond];
+        Condition::ObjectSet& matched_target_objects =
+            *static_cast<Condition::ObjectSet *>(static_cast<void *>(&target_set));
+        Condition::ObjectSet& potential_target_objects =
+            *static_cast<Condition::ObjectSet *>(static_cast<void *>(&target_objects));
+
+        // move matches from candidates in target_objects into target_set
+        cond->Eval(source_context, matched_target_objects, potential_target_objects);
+        // restore target_objects by copying objects back from targets to target_objects
+        // this should be cheaper than doing a full copy because target_set is usually small
+        target_objects.insert(target_objects.end(), target_set.begin(), target_set.end());
+
+        //Logger().debugStream() << "Generated new target set!";
+
+        return target_set;
+    }
+}
+
 void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
                                                     int source_object_id, EffectsCauseType effect_cause_type,
                                                     const std::string& specific_cause_name,
@@ -1339,16 +1382,11 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         Logger().debugStream() << "Universe::StoreTargetsAndCausesOfEffectsGroups( , source id: " << source_object_id << ", , specific cause: " << specific_cause_name << ", , )";
     }
 
-    // attempt to locate source object in target objects
-    UniverseObject* source = 0;
-    for (Effect::TargetSet::const_iterator it = target_objects.begin();
-        it != target_objects.end(); ++it)
-    {
-        if ((*it)->ID() == source_object_id && source_object_id != INVALID_OBJECT_ID) {
-            source = *it;
-            break;
-        }
-    }
+
+    std::map<const Condition::ConditionBase*, Effect::TargetSet> cached_condition_matches;
+    const UniverseObject* source = GetUniverseObject(source_object_id);
+    ScriptingContext source_context(source);
+
 
     // process all effects groups in set provided
     int eg_count = 1;
@@ -1356,28 +1394,21 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
     for (effects_it = effects_groups.begin(); effects_it != effects_groups.end(); ++effects_it) {
         ScopedTimer update_timer("... Universe::StoreTargetsAndCausesOfEffectsGroups done processing source " + boost::lexical_cast<std::string>(source_object_id) + " cause: " + specific_cause_name + " effects group " + boost::lexical_cast<std::string>(eg_count++));
 
-        // create non_targets and targets sets for current effects group
-        Effect::TargetSet target_set;   // initially empty
-
-
         // get effects group to process for this iteration
         boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
 
-        bool scope_is_source = effects_group->ScopeIsSource();
-        if (scope_is_source) {
-            if (source) {
-                const Condition::ConditionBase* activation = effects_group->Activation();
-                if (!activation || activation->Eval(ScriptingContext(source), source))
-                    target_set.push_back(source);
-            }
-        } else {
-            ScopedTimer update_timer2("... ... Universe::StoreTargetsAndCausesOfEffectsGroups get target set");
-            // get set of target objects for this effects group from potential targets specified
-            target_set.reserve(target_objects.size());
-            effects_group->GetTargetSet(source_object_id, target_set, target_objects);    // transfers objects from target_objects to target_set if they meet the condition
-        }
+        // skip inactive effects groups
+        const Condition::ConditionBase* activation = effects_group->Activation();
+        if (activation && !activation->Eval(source_context, source))
+            continue;
 
-        // abort if no targets
+        // get objects matched by scope
+        const Condition::ConditionBase* scope = effects_group->Scope();
+        if (!scope)
+            continue;
+        Effect::TargetSet& target_set = GetConditionMatches(scope, cached_condition_matches,
+                                                            source, source_context,
+                                                            target_objects);
         if (target_set.empty())
             continue;
 
@@ -1385,19 +1416,14 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         Effect::SourcedEffectsGroup sourced_effects_group(source_object_id, effects_group);
 
         // combine cause type and specific cause into effect cause
-        Effect::EffectCause effect_cause(effect_cause_type, specific_cause_name, effects_group->AccountingLabel());
+        Effect::EffectCause effect_cause(effect_cause_type, specific_cause_name,
+                                         effects_group->AccountingLabel());
 
         // combine target set and effect cause
         Effect::TargetsAndCause target_and_cause(target_set, effect_cause);
 
         // store effect cause and targets info in map, indexed by sourced effects group
         targets_causes.push_back(std::make_pair(sourced_effects_group, target_and_cause));
-
-        if (!scope_is_source) {
-            // restore target_objects by copying objects back from targets to target_objects
-            // this should be cheaper than doing a full copy because target_set is usually small
-            target_objects.insert(target_objects.end(), target_set.begin(), target_set.end());
-        }
     }
 }
 
