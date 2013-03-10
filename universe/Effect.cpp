@@ -294,8 +294,8 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& po
     // const-cast std::set<UniverseObject*> to std::set<const
     // UniverseObject*>, we're telling the compiler that one type is actually
     // the other, rather than doing a copy.
-    m_scope->Eval(ScriptingContext(source), 
-                  *static_cast<Condition::ObjectSet *>(static_cast<void *>(&targets)), 
+    m_scope->Eval(ScriptingContext(source),
+                  *static_cast<Condition::ObjectSet *>(static_cast<void *>(&targets)),
                   *static_cast<Condition::ObjectSet *>(static_cast<void *>(&potential_targets)));
 }
 

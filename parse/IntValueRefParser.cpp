@@ -84,15 +84,10 @@ namespace {
                                                expr,
                                                primary_expr);
 
-            //double_statistic
-            //    =    double_var_statistic() [ _val = new_<ValueRef::StaticCast<double, int> >(_1) ]
-            //    ;
-
             primary_expr
                 =   '(' > expr > ')'
                 |   constant
                 |   variable
-                //|   double_statistic
                 |   statistic
                 ;
 

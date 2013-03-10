@@ -961,11 +961,13 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
     bool queued_tech = false;
     bool researchable_tech = false;
 
+    const ClientApp* app = HumanClientApp::GetApp();
+    int empire_id = (app ? app->EmpireID() : ALL_EMPIRES);
     const Tech* tech = GetTech(m_tech_name);
-    int time = tech ? tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()) : 999999;        // arbitrary large value
-    double cost = tech ? tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) : 9999999.9;  // arbitrary large value
+    int time = tech ? tech->ResearchTime(empire_id) : 999999;       // arbitrary large value
+    double cost = tech ? tech->ResearchCost(empire_id) : 9999999.9; // arbitrary large value
 
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = Empires().Lookup(empire_id);
     if (empire) {
         // determine if tech is known, researchable or queued
         if (empire->TechResearched(m_tech_name)) {

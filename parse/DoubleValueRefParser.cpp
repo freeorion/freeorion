@@ -104,8 +104,8 @@ namespace {
                 =   '(' > expr > ')'
                 |   constant
                 |   variable
-                |   int_statistic
                 |   statistic
+                |   int_statistic
                 ;
 
             final_token.name("real number variable name (e.g., Growth)");
