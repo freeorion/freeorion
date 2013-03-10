@@ -1132,6 +1132,16 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
     boost::timer type_timer;
 
+
+    // caching space for each source object's results of finding matches for
+    // scope conditions. Index INVALID_OBJECT_ID stores results for
+    // source-invariant conditions
+    std::map<int, std::map<const Condition::ConditionBase*, Effect::TargetSet> >
+        cached_source_condition_matches;
+    std::map<const Condition::ConditionBase*, Effect::TargetSet>& invariant_condition_matches =
+        cached_source_condition_matches[INVALID_OBJECT_ID];
+
+
     // 1) EffectsGroups from Species
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
@@ -1151,8 +1161,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             Logger().errorStream() << "GetEffectsAndTargets couldn't get Species " << species_name;
             continue;
         }
-        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), planet->ID(), ECT_SPECIES, species_name,
-                                             all_potential_targets, targets_causes);
+        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), planet, ECT_SPECIES, species_name,
+                                             all_potential_targets, targets_causes,
+                                             cached_source_condition_matches[planet->ID()],
+                                             invariant_condition_matches);
     }
     double planet_species_time = type_timer.elapsed();
     type_timer.restart();
@@ -1172,8 +1184,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             Logger().errorStream() << "GetEffectsAndTargets couldn't get Species " << species_name;
             continue;
         }
-        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), ship->ID(), ECT_SPECIES, species_name,
-                                             all_potential_targets, targets_causes);
+        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), ship, ECT_SPECIES, species_name,
+                                             all_potential_targets, targets_causes,
+                                             cached_source_condition_matches[ship->ID()],
+                                             invariant_condition_matches);
     }
     double ship_species_time = type_timer.elapsed();
     type_timer.restart();
@@ -1183,7 +1197,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIALS";
     type_timer.restart();
     for (ObjectMap::const_iterator<> it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
-        int source_object_id = it->ID();
+        const UniverseObject* obj = *it;
+        int source_object_id = obj->ID();
         if (m_destroyed_object_ids.find(source_object_id) != m_destroyed_object_ids.end())
             continue;
         const std::map<std::string, int>& specials = it->Specials();
@@ -1194,8 +1209,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 continue;
             }
 
-            StoreTargetsAndCausesOfEffectsGroups(special->Effects(), source_object_id, ECT_SPECIAL, special->Name(),
-                                                 all_potential_targets, targets_causes);
+            StoreTargetsAndCausesOfEffectsGroups(special->Effects(), obj, ECT_SPECIAL, special->Name(),
+                                                 all_potential_targets, targets_causes,
+                                                 cached_source_condition_matches[source_object_id],
+                                                 invariant_condition_matches);
         }
     }
     double special_time = type_timer.elapsed();
@@ -1232,8 +1249,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             const Tech* tech = GetTech(*tech_it);
             if (!tech) continue;
 
-            StoreTargetsAndCausesOfEffectsGroups(tech->Effects(), source_id, ECT_TECH, tech->Name(),
-                                                 all_potential_targets, targets_causes);
+            StoreTargetsAndCausesOfEffectsGroups(tech->Effects(), source, ECT_TECH, tech->Name(),
+                                                 all_potential_targets, targets_causes,
+                                                 cached_source_condition_matches[source_id],
+                                                 invariant_condition_matches);
         }
     }
     double tech_time = type_timer.elapsed();
@@ -1255,8 +1274,11 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             continue;
         }
 
-        StoreTargetsAndCausesOfEffectsGroups(building_type->Effects(), building->ID(), ECT_BUILDING, building_type->Name(),
-                                             all_potential_targets, targets_causes);
+        StoreTargetsAndCausesOfEffectsGroups(building_type->Effects(), building,
+                                             ECT_BUILDING, building_type->Name(),
+                                             all_potential_targets, targets_causes,
+                                             cached_source_condition_matches[building->ID()],
+                                             invariant_condition_matches);
     }
     double building_time = type_timer.elapsed();
 
@@ -1281,8 +1303,11 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             continue;
         }
 
-        StoreTargetsAndCausesOfEffectsGroups(hull_type->Effects(), ship->ID(), ECT_SHIP_HULL, hull_type->Name(),
-                                             all_potential_targets, targets_causes);
+        StoreTargetsAndCausesOfEffectsGroups(hull_type->Effects(), ship, ECT_SHIP_HULL,
+                                             hull_type->Name(),
+                                             all_potential_targets, targets_causes,
+                                             cached_source_condition_matches[ship->ID()],
+                                             invariant_condition_matches);
 
         const std::vector<std::string>& parts = ship_design->Parts();
         for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
@@ -1294,8 +1319,11 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 Logger().errorStream() << "GetEffectsAndTargets couldn't get PartType";
                 continue;
             }
-            StoreTargetsAndCausesOfEffectsGroups(part_type->Effects(), ship->ID(), ECT_SHIP_PART, part_type->Name(),
-                                                 all_potential_targets, targets_causes);
+            StoreTargetsAndCausesOfEffectsGroups(part_type->Effects(), ship, ECT_SHIP_PART,
+                                                 part_type->Name(),
+                                                 all_potential_targets, targets_causes,
+                                                 cached_source_condition_matches[ship->ID()],
+                                                 invariant_condition_matches);
         }
     }
     double ships_time = type_timer.elapsed();
@@ -1316,8 +1344,11 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             continue;
         }
 
-        StoreTargetsAndCausesOfEffectsGroups(field_type->Effects(), field->ID(), ECT_FIELD, field_type->Name(),
-                                             all_potential_targets, targets_causes);
+        StoreTargetsAndCausesOfEffectsGroups(field_type->Effects(), field, ECT_FIELD,
+                                             field_type->Name(),
+                                             all_potential_targets, targets_causes,
+                                             cached_source_condition_matches[field->ID()],
+                                             invariant_condition_matches);
     }
     double fields_time = type_timer.elapsed();
 
@@ -1372,27 +1403,34 @@ namespace {
 }
 
 void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
-                                                    int source_object_id, EffectsCauseType effect_cause_type,
+                                                    const UniverseObject* source,
+                                                    EffectsCauseType effect_cause_type,
                                                     const std::string& specific_cause_name,
-                                                    Effect::TargetSet& target_objects, Effect::TargetsCauses& targets_causes)
+                                                    Effect::TargetSet& target_objects,
+                                                    Effect::TargetsCauses& targets_causes,
+                                                    std::map<const Condition::ConditionBase*, Effect::TargetSet>& source_cached_condition_matches,
+                                                    std::map<const Condition::ConditionBase*, Effect::TargetSet>& invariant_cached_condition_matches)
 {
     ScopedTimer timer("Universe::StoreTargetsAndCausesOfEffectsGroups");
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "Universe::StoreTargetsAndCausesOfEffectsGroups( , source id: " << source_object_id << ", , specific cause: " << specific_cause_name << ", , )";
+        int source_id = (source ? source->ID() : INVALID_OBJECT_ID);
+        Logger().debugStream() << "Universe::StoreTargetsAndCausesOfEffectsGroups( , source id: " << source_id << ", , specific cause: " << specific_cause_name << ", , )";
     }
 
 
-    std::map<const Condition::ConditionBase*, Effect::TargetSet> cached_condition_matches;
-    const UniverseObject* source = GetUniverseObject(source_object_id);
     ScriptingContext source_context(source);
+    int source_object_id = (source ? source->ID() : INVALID_OBJECT_ID);
 
 
     // process all effects groups in set provided
     int eg_count = 1;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_it;
     for (effects_it = effects_groups.begin(); effects_it != effects_groups.end(); ++effects_it) {
-        ScopedTimer update_timer("... Universe::StoreTargetsAndCausesOfEffectsGroups done processing source " + boost::lexical_cast<std::string>(source_object_id) + " cause: " + specific_cause_name + " effects group " + boost::lexical_cast<std::string>(eg_count++));
+        ScopedTimer update_timer("... Universe::StoreTargetsAndCausesOfEffectsGroups done processing source " +
+                                 boost::lexical_cast<std::string>(source_object_id) +
+                                 " cause: " + specific_cause_name +
+                                 " effects group " + boost::lexical_cast<std::string>(eg_count++));
 
         // get effects group to process for this iteration
         boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
@@ -1406,8 +1444,13 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         const Condition::ConditionBase* scope = effects_group->Scope();
         if (!scope)
             continue;
-        Effect::TargetSet& target_set = GetConditionMatches(scope, cached_condition_matches,
-                                                            source, source_context,
+        bool source_invariant = !source || scope->SourceInvariant();
+        Effect::TargetSet& target_set = GetConditionMatches(scope,
+                                                            source_invariant ?
+                                                                invariant_cached_condition_matches :
+                                                                source_cached_condition_matches,
+                                                            source,
+                                                            source_context,
                                                             target_objects);
         if (target_set.empty())
             continue;
