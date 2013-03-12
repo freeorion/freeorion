@@ -4437,6 +4437,16 @@ Juggernaut Nest
 JUGGERNAUT_NEST_SPECIAL_DESC
 At some point young juggernauts will rise from this place. With the proper tech, these mega-fauna could be domesticated.
 
+CONC_CAMP_MASTER_SPECIAL
+Pall of Death
+CONC_CAMP_MASTER_SPECIAL_DESC
+A visitor may not see [[buildingtype BLD_CONC_CAMP]] operating on this planet, but they have been operating relentlessly and exact a harsh toll on the population; a Pall of Death can be discerned by sensitive beings.
+
+CONC_CAMP_SLAVE_SPECIAL
+Psychic Fatigue
+CONC_CAMP_SLAVE_SPECIAL_DESC
+There may no longer be [[buildingtype BLD_CONC_CAMP]] operating on this planet today, but memories are still close to the surface, and remnants such as poorly hidden mass graves are still occasionally found. A psychic wound still lies upon the populace, and they do not thrive.
+
 CLOUD_COVER_MASTER_SPECIAL
 Cloud Spawns
 CLOUD_COVER_MASTER_SPECIAL_DESC
@@ -6507,7 +6517,7 @@ CON_CONC_CAMP
 Concentration Camps
 
 CON_CONC_CAMP_DESC
-Typically, when forced to work to death, citizens will put up some resistance and have the sympathy and support of outside observers. However, by carefully creating buildings designed to quench the fire of justice within outsiders, and to promote feelings of worthlessness and subservience in those on the inside, concentration camps can be effectively utilized without fear of revolt.
+Typically, when forced to work to death, citizens will put up some resistance and have the sympathy and support of outside observers. However, by carefully creating buildings designed to quench the fire of justice within outsiders, and to promote feelings of worthlessness and subservience in those on the inside, concentration camps can be effectively utilized without fear of revolt.  Such camps may have longer lasting negative effects than anticipated.
 
 CON_FRC_ENRG_CAMO
 Force-Energy Camouflage
@@ -7550,9 +7560,9 @@ BLD_CONC_CAMP
 Concentration Camps
 
 BLD_CONC_CAMP_DESC
-'''Decreases the planet's population at a rate of 3 per turn, and increases target [[encyclopedia INDUSTRY_TITLE]] by 5 times the planet's population.
+'''Decreases the planet's population at a rate of roughly 3 per turn, and increases target [[encyclopedia INDUSTRY_TITLE]] by twice the planet's population.
 
-Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an outpost.'''
+Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. Malignant effects may linger longer than anticipated, however.  This building can be built on an outpost.'''
 
 BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator

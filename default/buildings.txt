@@ -877,15 +877,35 @@ BuildingType
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
             ]
+            effects = SetTargetIndustry Value + Target.Population * 10 * [[INDUSTRY_PER_POP]]
+        EffectsGroup
+            scope = And [
+                Contains Source
+                PopulationCenter
+            ]
+            activation = ContainedBy And [
+                OwnedBy TheEmpire Source.Owner
+                PopulationCenter
+                Not HasSpecial "CONC_CAMP_MASTER_SPECIAL"
+            ]
+            effects = AddSpecial "CONC_CAMP_MASTER_SPECIAL"
+        EffectsGroup
+            scope = And [
+                Contains Source
+                PopulationCenter
+            ]
+            activation = ContainedBy And [
+                OwnedBy TheEmpire Source.Owner
+                PopulationCenter
+                HasSpecial "CONC_CAMP_MASTER_SPECIAL"
+            ]
             effects = [
-                SetPopulation Target.Population - max(0, Target.NextTurnPopGrowth) - 3
-                SetTargetIndustry Value + Target.Population * 10 * [[INDUSTRY_PER_POP]]
+                SetPopulation Target.Population - max(0, Target.NextTurnPopGrowth) - 3*(1+(Target.Population/50)-(2*(1-Target.Population/50)*(1-Target.Population/50)))
                 SetIndustry Target.TargetIndustry
             ]
-
         EffectsGroup
             scope = Source
-            activation = Not OwnedBy TheEmpire Source.Owner
+            activation = Not ProducedByEmpire Source.Owner
             effects = Destroy
     ]
     icon = "icons/building/concentration-camp.png"

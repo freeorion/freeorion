@@ -653,6 +653,39 @@ Special
     graphic = "icons/specials_huge/juggernaut-nest.png"
 
 Special
+    name = "CONC_CAMP_MASTER_SPECIAL"
+    description = "CONC_CAMP_MASTER_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = 
+        EffectsGroup
+            scope = Source
+            activation = Not Contains Building "BLD_CONC_CAMP"
+            effects = [                
+                AddSpecial "CONC_CAMP_SLAVE_SPECIAL"
+                RemoveSpecial "CONC_CAMP_MASTER_SPECIAL"
+            ]
+    graphic = "icons/building/concentration-camp.png"
+
+Special
+    name = "CONC_CAMP_SLAVE_SPECIAL"
+    description = "CONC_CAMP_SLAVE_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            effects = SetPopulation Target.Population - max(0, Target.NextTurnPopGrowth) -2*(1+(Target.Population/50)-(2*(1-Target.Population/50)*(1-Target.Population/50)))
+        EffectsGroup
+            scope = Source
+            activation = Industry low = Source.TargetIndustry + Source.Population * 10 * [[INDUSTRY_PER_POP]] - 2 
+            effects = SetIndustry Value - Target.Population * 10 * [[INDUSTRY_PER_POP]]
+        EffectsGroup
+            scope = Source
+            activation = Random probability = 0.125
+            effects = RemoveSpecial "CONC_CAMP_SLAVE_SPECIAL"
+    ]
+    graphic = "icons/building/concentration-camp.png"
+
+Special
     name = "CLOUD_COVER_MASTER_SPECIAL"
     description = "CLOUD_COVER_MASTER_SPECIAL_DESC"
     stealth = 30

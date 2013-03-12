@@ -312,6 +312,7 @@ Tech
                         tag = "rawtext" data = "2"
                         tag = "system" data = Target.SystemID
                     ]
+                    empire = Target.Owner
             ]
         EffectsGroup
             scope = And [
@@ -333,6 +334,7 @@ Tech
                         tag = "ship" data = Target.ID
                         tag = "system" data = Target.SystemID
                     ]
+                    empire = Target.Owner
                 Destroy
             ]
     ]
@@ -378,6 +380,7 @@ Tech
                         tag = "rawtext" data = "6"
                         tag = "system" data = Target.SystemID
                     ]
+                    empire = Target.Owner
             ]
         EffectsGroup
             scope = And [
@@ -399,6 +402,7 @@ Tech
                         tag = "ship" data = Target.ID
                         tag = "system" data = Target.SystemID
                     ]
+                    empire = Target.Owner
                 Destroy
             ]
     ]
@@ -442,6 +446,7 @@ Tech
                         tag = "rawtext" data = "14"
                         tag = "system" data = Target.SystemID
                     ]
+                    empire = Target.Owner
             ]
         EffectsGroup
             scope = And [
@@ -462,6 +467,7 @@ Tech
                         tag = "ship" data = Target.ID
                         tag = "system" data = Target.SystemID
                     ]
+                    empire = Target.Owner
                 Destroy
             ]
     ]
