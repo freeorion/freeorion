@@ -1142,7 +1142,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         // observers cannot submit orders. ignore.
         Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
                                << msg.m_player_connection->PlayerName()
-                               << "(id: " << message.SendingPlayer() << ") "
+                               << "(player id: " << message.SendingPlayer() << ") "
                                << "who is an observer and should not be sending orders. Orders being ignored.";
         server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "ORDERS_FOR_WRONG_EMPIRE", false));
         return discard_event();
@@ -1151,7 +1151,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         // ??? lingering connection? shouldn't get to here. ignore.
         Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
                                << msg.m_player_connection->PlayerName()
-                               << "(id: " << message.SendingPlayer() << ") "
+                               << "(player id: " << message.SendingPlayer() << ") "
                                << "who has an invalid player type. The server is confused, and the orders being ignored.";
         server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "ORDERS_FOR_WRONG_EMPIRE", false));
         return discard_event();
@@ -1182,8 +1182,8 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
             }
             if (empire->EmpireID() != order->EmpireID()) {
                 Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
-                                    << message.SendingPlayer() << ") who controls empire " << empire->EmpireID()
-                                    << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
+                                       << message.SendingPlayer() << ") who controls empire " << empire->EmpireID()
+                                       << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
                 server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "ORDERS_FOR_WRONG_EMPIRE", false));
                 return discard_event();
             }
@@ -1197,17 +1197,19 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
     // notify other player that this player submitted orders
     for (ServerNetworking::const_established_iterator player_it = server.m_networking.established_begin();
-         player_it != server.m_networking.established_end();
-         ++player_it)
+         player_it != server.m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player_ctn = *player_it;
-        player_ctn->SendMessage(PlayerStatusMessage(player_ctn->PlayerID(), message.SendingPlayer(), Message::WAITING));
+        player_ctn->SendMessage(PlayerStatusMessage(player_ctn->PlayerID(),
+                                                    message.SendingPlayer(),
+                                                    Message::WAITING));
     }
 
     // inform player who just submitted of their new status.  Note: not sure why
     // this only needs to be send to the submitting player and not all others as
     // well ...
-    server.m_networking.SendMessage(TurnProgressMessage(Message::WAITING_FOR_PLAYERS, message.SendingPlayer()));
+    server.m_networking.SendMessage(TurnProgressMessage(Message::WAITING_FOR_PLAYERS,
+                                                        message.SendingPlayer()));
 
     // if player who just submitted is the local human player, raise AI process priority
     // as raising process priority requires superuser privileges on OSX and Linux AFAIK,
