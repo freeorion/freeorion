@@ -1,3 +1,20 @@
+v0.4.2 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+ New Features / Improvements:
+
+
+ Content:
+
+
+ Graphics / GUI:
+ 
+ 
+ Balancing:
+
+
+ Bugs:
+ 
+
 v0.4.2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Key Changes:
