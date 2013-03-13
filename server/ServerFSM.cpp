@@ -1341,7 +1341,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     // going on here with the two possible sets of orders.  apparently the
     // received orders are ignored if there are already existing orders?
     boost::shared_ptr<OrderSet> order_set;
-    if (const Empire* empire = Empires().Lookup(player_id)) {
+    if (const Empire* empire = Empires().Lookup(server.PlayerEmpireID(player_id))) {
         OrderSet* existing_orders = server.m_turn_sequence[empire->EmpireID()];
         if (existing_orders)
             order_set.reset(new OrderSet(*existing_orders));
@@ -1551,7 +1551,7 @@ sc::result ResolvingCombat::react(const CombatTurnOrders& msg) {
     ExtractMessageData(message, *order_set);
 
     // check order validity -- all orders must originate from this empire in order to be considered valid
-    Empire* empire = Empires().Lookup(message.SendingPlayer());
+    Empire* empire = Empires().Lookup(server.PlayerEmpireID(message.SendingPlayer()));
     assert(empire);
     for (CombatOrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
         const CombatOrder& order = *it;
