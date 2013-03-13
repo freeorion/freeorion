@@ -23,9 +23,8 @@ System::System() :
     m_overlay_size(1.0)
 {}
 
-System::System(StarType star, int orbits, const std::string& name, double x, double y,
-               const std::set<int>& owners/* = std::set<int>()*/) :
-    UniverseObject(name, x, y, owners),
+System::System(StarType star, int orbits, const std::string& name, double x, double y) :
+    UniverseObject(name, x, y),
     m_star(star),
     m_orbits(orbits),
     m_last_turn_battle_here(INVALID_GAME_TURN),
@@ -42,8 +41,8 @@ System::System(StarType star, int orbits, const std::string& name, double x, dou
 }
 
 System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
-               const std::string& name, double x, double y, const std::set<int>& owners/* = std::set<int>()*/) :
-    UniverseObject(name, x, y, owners),
+               const std::string& name, double x, double y) :
+    UniverseObject(name, x, y),
     m_star(star),
     m_orbits(orbits),
     m_starlanes_wormholes(lanes_and_holes),
@@ -60,14 +59,6 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
 
     UniverseObject::Init();
 }
-
-System::System(const System& rhs) :
-    m_star(rhs.m_star),
-    m_orbits(rhs.m_orbits),
-    m_objects(rhs.m_objects),
-    m_starlanes_wormholes(rhs.m_starlanes_wormholes),
-    m_last_turn_battle_here(rhs.m_last_turn_battle_here)
-{}
 
 System* System::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
@@ -384,10 +375,8 @@ int System::Insert(UniverseObject* obj, int orbit) {
     }
 
 
-    // special cases for if object is a planet or fleet
-    if (obj->ObjectType() == OBJ_PLANET)
-        UpdateOwnership();
-    else if (Fleet* fleet = universe_object_cast<Fleet*>(obj))
+    // special case for if object is a fleet
+    if (Fleet* fleet = universe_object_cast<Fleet*>(obj))
         FleetInsertedSignal(*fleet);
 
     StateChangedSignal();
@@ -456,10 +445,9 @@ void System::Remove(UniverseObject* obj) {
 
     if (removed_something) {
         // UI bookeeping
-        if (removed_planet)
-            UpdateOwnership();
-        for (std::vector<Fleet*>::const_iterator it = removed_fleets.begin(); it != removed_fleets.end(); ++it)
-            FleetRemovedSignal(**it);
+        for (std::vector<Fleet*>::const_iterator it = removed_fleets.begin();
+             it != removed_fleets.end(); ++it)
+        { FleetRemovedSignal(**it); }
 
         StateChangedSignal();
     } else {
@@ -521,14 +509,6 @@ bool System::RemoveWormhole(int id) {
         StateChangedSignal();
     }
     return retval;
-}
-
-void System::UpdateOwnership() {
-    m_empires_with_planets_here.clear();
-    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
-        if (Planet* planet = GetPlanet(it->second))
-            if (!planet->Unowned())
-                m_empires_with_planets_here.insert(planet->Owner());
 }
 
 void System::SetLastTurnBattleHere(int turn)

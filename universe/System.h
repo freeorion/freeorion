@@ -42,17 +42,14 @@ public:
       * std::invalid_arugment if \a star is out of the range of StarType,
       * \a orbits is negative, or either x or y coordinate is outside the map
       * area.*/
-    System(StarType star, int orbits, const std::string& name, double x, double y,
-           const std::set<int>& owners = std::set<int>());
+    System(StarType star, int orbits, const std::string& name, double x, double y);
 
     /** general ctor.  \throw std::invalid_arugment May throw
       * std::invalid_arugment if \a star is out of the range of StarType,
       * \a orbits is negative, or either x or y coordinate is outside the map
       * area.*/
     System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
-           const std::string& name, double x, double y, const std::set<int>& owners = std::set<int>());
-
-    System(const System& rhs);                                          ///< copy ctor
+           const std::string& name, double x, double y);
 
     virtual System*         Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this System
     //@}
@@ -75,8 +72,6 @@ public:
     StarType                NextYoungerStarType() const;
 
     int                     Orbits() const                  { return m_orbits; }///< returns the number of orbits in this system
-
-    const std::set<int>&    ControllingEmpireIDs() const    { return m_empires_with_planets_here; } ///< returns empires which control planets in this system (may be empty)
 
     int                     NumStarlanes() const;                       ///< returns the number of starlanes from this system to other systems
     int                     NumWormholes() const;                       ///< returns the number of wormholes from this system to other systems
@@ -167,8 +162,6 @@ public:
     bool                    RemoveWormhole(int id);         ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
 
     virtual void            SetOwner(int id) {};            ///< adding owner to system objects is a no-op
-    void                    UpdateOwnership();              ///< refresh set of empire ids which control planets in this system
-
     void                    SetLastTurnBattleHere(int turn);///< Sets the last turn there was a battle at this sytem
 
     orbit_iterator          begin()                     { return m_objects.begin(); }   ///< begin iterator for all system objects
@@ -197,7 +190,6 @@ private:
     /** removes object \a obj from this system. */
     void                    Remove(UniverseObject* obj);
 
-    std::set<int>   m_empires_with_planets_here;    ///< ids of empires that control planets in this system
     StarType        m_star;
     int             m_orbits;
     ObjectMultimap  m_objects;                      ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)

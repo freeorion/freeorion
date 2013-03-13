@@ -1607,16 +1607,12 @@ namespace {
             // update system ownership after combat.  may be necessary if the
             // combat caused planets to change ownership.
             if (System* system = GetSystem(combat_info.system_id)) {
-                system->UpdateOwnership();
-
                 // ensure all participants get updates on system.  this ensures
                 // that an empire who lose all objects in the system still
                 // knows about a change in system ownership
                 for (std::set<int>::const_iterator empire_it = combat_info.empire_ids.begin();
                      empire_it != combat_info.empire_ids.end(); ++empire_it)
-                {
-                    universe.EmpireKnownObjects(*empire_it).CopyObject(system, ALL_EMPIRES);
-                }
+                { universe.EmpireKnownObjects(*empire_it).CopyObject(system, ALL_EMPIRES); }
             }
         }
     }

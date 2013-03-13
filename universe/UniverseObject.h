@@ -46,16 +46,9 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    UniverseObject();                                           ///< default ctor
-
-    /** general ctor.  \throw std::invalid_argument May throw
-        std::invalid_argument if the either x or y coordinate is
-        outside the map area.*/
-    UniverseObject(const std::string name, double x, double y, const std::set<int>& owners = std::set<int>());
-
-    UniverseObject(const UniverseObject& rhs);                  ///< copy ctor
-
-    virtual ~UniverseObject();                                  ///< dtor
+    UniverseObject();
+    UniverseObject(const std::string name, double x, double y);
+    virtual ~UniverseObject();
 
     /** returns new copy of this UniverseObject, limited to only copy data that
       * is visible to the empire with the specified \a empire_id as determined

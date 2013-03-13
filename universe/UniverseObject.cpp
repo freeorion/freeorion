@@ -31,8 +31,7 @@ UniverseObject::UniverseObject() :
     m_created_on_turn = CurrentTurn();
 }
 
-UniverseObject::UniverseObject(const std::string name, double x, double y,
-                               const std::set<int>& owners/* = std::set<int>()*/) :
+UniverseObject::UniverseObject(const std::string name, double x, double y) :
     StateChangedSignal(GetUniverse().UniverseObjectSignalsInhibited()),
     m_name(name),
     m_id(INVALID_OBJECT_ID),
@@ -43,24 +42,8 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
     m_meters(),
     m_created_on_turn(-1)
 {
-    //Logger().debugStream() << "UniverseObject::UniverseObject(" << name << ", " << x << ", " << y << ")";
-    //if (m_x < 0.0 || GetUniverse().UniverseWidth() < m_x || m_y < 0.0 || GetUniverse().UniverseWidth() < m_y)
-    //    throw std::invalid_argument("UniverseObject::UniverseObject : Attempted to create an object \"" + m_name + "\" off the map area.");
     m_created_on_turn = CurrentTurn();
 }
-
-UniverseObject::UniverseObject(const UniverseObject& rhs) :
-    StateChangedSignal(GetUniverse().UniverseObjectSignalsInhibited()),
-    m_name(rhs.m_name),
-    m_id(rhs.m_id),
-    m_x(rhs.m_x),
-    m_y(rhs.m_y),
-    m_owner_empire_id(rhs.m_owner_empire_id),
-    m_system_id(rhs.m_system_id),
-    m_specials(rhs.m_specials),
-    m_meters(rhs.m_meters),
-    m_created_on_turn(rhs.m_created_on_turn)
-{}
 
 UniverseObject::~UniverseObject()
 {}
