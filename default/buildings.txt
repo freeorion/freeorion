@@ -1393,7 +1393,7 @@ BuildingType
     ]
     icon = "icons/building/evacuation.png"
 
-/*
+
 BuildingType
     name = "BLD_SUPER_TESTERS"
     description = "BLD_SUPER_TESTERS_DESC"
@@ -1414,5 +1414,5 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/species/other-04.png"
-*/
+
 
