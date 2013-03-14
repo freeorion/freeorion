@@ -179,9 +179,8 @@ TechTreeLayout::TechTreeLayout() :
  * releases all resources
  */
 TechTreeLayout::~TechTreeLayout() {
-    for(std::vector<TechTreeLayout::Node*>::iterator p = m_nodes.begin(); p != m_nodes.end(); p++) {
+    for (std::vector<TechTreeLayout::Node*>::iterator p = m_nodes.begin(); p != m_nodes.end(); p++)
         delete *p;
-    }
     m_nodes.clear();
     m_node_map.clear();
 }
@@ -344,7 +343,7 @@ void TechTreeLayout::Debug() const {
 
 void TechTreeLayout::Clear() {
     //!!! IMPORTANT !!! Node have to be delete in order m_depth ascending or we will access freed memory!
-    for(std::vector<TechTreeLayout::Node*>::iterator p = m_nodes.begin(); p != m_nodes.end(); p++)
+    for (std::vector<TechTreeLayout::Node*>::iterator p = m_nodes.begin(); p != m_nodes.end(); p++)
         delete *p;
     m_nodes.clear();
     m_node_map.clear();
@@ -408,6 +407,8 @@ TechTreeLayout::Node::Node(Node *parent, Node *child, std::vector<Node*> & nodes
 TechTreeLayout::Node::~Node() {
     m_children.clear();
     m_parents.clear();
+    for (std::vector<Edge*>::iterator it = m_out_edges.begin(); it != m_out_edges.end(); ++it)
+        delete *it;
     m_out_edges.clear();
 }
 
