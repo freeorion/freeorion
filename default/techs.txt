@@ -1280,6 +1280,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 18 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    prerequisites = "PRO_ROBOTIC_PROD"
     effectsgroups = [
         EffectsGroup
             scope = And [
