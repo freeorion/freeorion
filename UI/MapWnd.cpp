@@ -3054,20 +3054,8 @@ void MapWnd::RefreshFleetButtons() {
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
-    Empire* empire = Empires().Lookup(client_empire_id);
-    std::set<int> systems_with_enemies;
-    std::set<int> systems_flagged_unsafe;
-    std::set<int> systems_deemed_unsafe;
-    if (empire) {
-        systems_with_enemies = empire->SystemsWithEnemies();
-        systems_flagged_unsafe = empire->SystemsFlaggedUnsafe();
-        systems_deemed_unsafe = empire->SystemsDeemedUnsafe();
-    }
     const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
 
-    systems_with_enemies.clear();
-    systems_deemed_unsafe.clear();
-    
     // for each system, each empire's fleets that are ordered to move,
     // but still at the system: "departing fleets"
     std::map<const System*, std::map<int, std::vector<const Fleet*> > > departing_fleets;
@@ -3143,11 +3131,6 @@ void MapWnd::RefreshFleetButtons() {
             continue;
 
         // store in map for the system and fleet's owner empire
-        bool notToBeTrusted = (Empires().GetDiplomaticStatus(client_empire_id, fleet->Owner())!= DIPLO_PEACE );
-        if ((fleet->GetVisibility(client_empire_id) >= VIS_BASIC_VISIBILITY) )
-            if ( !(fleet->OwnedBy(client_empire_id)) && (fleet->HasArmedShips() &&  notToBeTrusted)  )
-                systems_with_enemies.insert(obj->SystemID());
-        
         stationary_fleets[system][obj->Owner()].push_back(fleet);
     }
     stationary_fleet_objects.clear();
@@ -3184,18 +3167,6 @@ void MapWnd::RefreshFleetButtons() {
     }
     moving_fleet_objects.clear();
 
-    systems_deemed_unsafe.insert(systems_with_enemies.begin(), systems_with_enemies.end());
-    systems_deemed_unsafe.insert(systems_flagged_unsafe.begin(), systems_flagged_unsafe.end());
-    /*Logger().debugStream() << "MapWnd::RefreshFleetButtons updated systems_deemed_unsafe; new set is len "<< systems_deemed_unsafe.size() << " as follows:";
-    for (std::set<int>::iterator unsafe_it=systems_deemed_unsafe.begin(); unsafe_it != systems_deemed_unsafe.end(); unsafe_it++){
-        System* unsafeSys = GetSystem(*unsafe_it);
-        if (!unsafeSys) {
-            Logger().errorStream() << "MapWnd::RefreshFleetButtons systems_deemed_unsafe has invalid key: "<< *unsafe_it;
-        } else {
-            Logger().debugStream() << "MapWnd::RefreshFleetButtons systems_deemed_unsafe: "<<  *unsafe_it << " " << unsafeSys->Name();
-        }
-    }*/
-    
 
 
     // clear old fleet buttons
@@ -3605,14 +3576,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
             start_system = fleet->NextSystemID();
 
         // get path to destination...
-        std::list<int> route;
-        if (fleet->Aggressive() || m_systems_deemed_unsafe.find(system_id)!=m_systems_deemed_unsafe.end()) {
-            route = GetUniverse().ShortestPath(start_system, system_id, empire_id).first;
-            Logger().debugStream() << "MapWnd::PlotFleetMovementLine using path from shortestPath, length " << route.size();
-        } else {
-            route = GetUniverse().ShortestSafePath(start_system, system_id, m_systems_deemed_unsafe, empire_id).first;
-            Logger().debugStream() << "MapWnd::PlotFleetMovementLine using path from shortestSafePath, length " << route.size();
-        }
+        std::list<int> route = GetUniverse().ShortestPath(start_system, system_id, empire_id).first;
 
         // disallow "offroad" (direct non-starlane non-wormhole) travel
         if (route.size() == 2 && *route.begin() != *route.rbegin()) {
@@ -3630,13 +3594,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move) {
 
         // if actually ordering fleet movement, not just prospectively previewing, ... do so
         if (execute_move && !route.empty()){
-            if (fleet->Aggressive() || m_systems_deemed_unsafe.find(system_id)!=m_systems_deemed_unsafe.end()) {
-                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet_id, start_system, system_id)));
-                Logger().debugStream() << "MapWnd::PlotFleetMovementLine using path from shortestPath, length " << route.size();
-            } else {
-                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet_id, start_system, system_id, true, m_systems_deemed_unsafe)));
-                Logger().debugStream() << "MapWnd::PlotFleetMovementLine using path from shortestSafePath, length " << route.size();
-            }
+            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet_id, start_system, system_id)));
             StopFleetExploring(fleet_id);
         }
 
@@ -4360,7 +4318,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         m_industry_wasted->ClearBrowseInfoWnd();
         m_industry_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_PROD_WASTED_TITLE"),
-                            boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
+                              boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
                                 % DoubleToString(totalProduction, 3, false) 
                                 % DoubleToString(totalWastedPP, 3, false)))));
     } else {
@@ -5084,13 +5042,11 @@ void MapWnd::DispatchFleetsExploring() {
                 int far_system_id; //id of the closest unknown system without taking fuel into account
 
                 for (std::map<int, int>::iterator system_it = unknown_systems.begin(); system_it != unknown_systems.end(); system_it ++) {
-                    if (m_systems_deemed_unsafe.find(system_it->first) != m_systems_deemed_unsafe.end())
-                        continue;//don't try exploring into systems with visible armed enemies
                     if (systems_order_sent.find(system_it->first) != systems_order_sent.end())
                         continue; //someone already went there this turn
 
-                    std::pair<std::list<int>, double> pair = GetUniverse().ShortestSafePath(fleet->SystemID(), system_it->first, m_systems_deemed_unsafe, empire_id);
-                    
+                    std::pair<std::list<int>, double> pair = GetUniverse().ShortestPath(fleet->SystemID(), system_it->first, empire_id);
+
                     //we check for the fuel.
                     bool is_doable_for_fuel = true;
                     std::list<int> route = pair.first;
@@ -5131,20 +5087,14 @@ void MapWnd::DispatchFleetsExploring() {
                 if (!remaining_system_to_explore || min_dist == DBL_MAX) {
                     if (fleet->Fuel() == fleet->MaxFuel() && far_min_dist != DBL_MAX) {
                         //we have full fuel and no unknown planet in range. We can go to a far system, but we will have to wait for resupply
-                        std::string  thisSysName = GetSystem(far_system_id)->Name();
-                        Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Next sytem for fleet " << fleet->ID() << " is " << far_system_id << ": "<< thisSysName <<  ". Not enough fuel for the round trip";
+                        Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Next sytem for fleet " << fleet->ID() << " is " << far_system_id << ". Not enough fuel for the round trip";
                         systems_order_sent.insert(far_system_id);
-                        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), fleet->SystemID(), far_system_id, true, m_systems_deemed_unsafe)));
+                        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), fleet->SystemID(), far_system_id)));
                     } else {
                         //no unknown planet in range. Let's try to get home to resupply
                         std::pair<int, int> pair = GetNearestSupplyPoint(empire, fleet->SystemID());
-                        if (pair.first != INVALID_OBJECT_ID) {
-                            std::string  thisSysName = GetSystem(pair.first)->Name();
-                            Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Fleet " << fleet->ID() << " going to resupply at " << pair.first<< ": "<< thisSysName;
-                            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), fleet->SystemID(), pair.first, true, m_systems_deemed_unsafe)));
-                        } else {
-                            Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Fleet " << fleet->ID() << " wanted to resupply but found no available system";
-                        }
+                        Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Fleet " << fleet->ID() << " going to resupply at " << pair.first;
+                        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), fleet->SystemID(), pair.first)));
                     }
                     i = nbr_fleet_to_send; //stop the loop since every fleet will have order
                 }
@@ -5153,11 +5103,10 @@ void MapWnd::DispatchFleetsExploring() {
 
         if (min_dist != DBL_MAX) {
             //there is an unexplored system rechable
-            std::string  thisSysName = GetSystem(end_system_id)->Name();
-            Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Next sytem for fleet " << better_fleet_id << " is " << end_system_id<< ": "<< thisSysName;
+            Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Next sytem for fleet " << better_fleet_id << " is " << end_system_id;
             systems_order_sent.insert(end_system_id);
             fleet_idle.erase(better_fleet_id);
-            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, better_fleet_id, start_system_id, end_system_id,true, m_systems_deemed_unsafe)));
+            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, better_fleet_id, start_system_id, end_system_id)));
         } else {
             remaining_system_to_explore = false; //from now on, each ship will be sent to a supply depot or a far system
         }
