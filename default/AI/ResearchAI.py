@@ -173,9 +173,10 @@ def generateResearchOrders():
         
     #researchQueueList = getResearchQueueTechs()
     if len (AIstate.empireStars.get(fo.starType.blackHole,  []))!=0 and foAI.foAIstate.aggression > fo.aggression.cautious:
-        if (empire.getTechStatus("PRO_SINGULAR_GEN") != fo.techStatus.complete) and (  "PRO_SINGULAR_GEN"  not in researchQueueList[:2])  :    
-            res=fo.issueEnqueueTechOrder("PRO_SINGULAR_GEN",0)
-            print "have a black hole star outpost/colony, so attempted to fast-track %s,  got result %d"%("PRO_SINGULAR_GEN", res)
+        for singTech in [  "CON_ARCH_PSYCH",  "CON_CONC_CAMP",  "LRN_GRAVITONICS" ,  "PRO_SINGULAR_GEN"]:
+            if (empire.getTechStatus(singTech) != fo.techStatus.complete) and (  singTech  not in researchQueueList[:4])  :    
+                res=fo.issueEnqueueTechOrder(singTech,0)
+                print "have a black hole star outpost/colony, so attempted to fast-track %s,  got result %d"%(singTech, res)
 
 def generateResearchOrders_old():
     "generate research orders"

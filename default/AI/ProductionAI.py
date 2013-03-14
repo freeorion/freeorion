@@ -1112,7 +1112,7 @@ def generateProductionOrders():
                 if universe.getObject(bldg).buildingTypeName  == bldName:
                     res=fo.issueScrapOrder( bldg)
                     print "Tried scrapping %s at planet %s,  got result %d"%(bldName,  planet.name,  res)
-        elif foAI.foAIstate.aggression>fo.aggression.typical and empire.buildingTypeAvailable(bldName) and (tPop >= 32) and ((empire.empireID+pid)%3 == 0):
+        elif foAI.foAIstate.aggression>fo.aggression.typical and empire.buildingTypeAvailable(bldName) and (tPop >= 32) :
             queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
             if (cPop >=0.95*tPop) and cInd < 1.5* tInd:
                 if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building

@@ -203,7 +203,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
         elif aiFleetMissionType  in [EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST,  EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST]:
             universe = fo.getUniverse()
             fleet = universe.getFleet(self.getAITargetID())
-            if not fleet.hasColonyShips:
+            if not fleet.hasOutpostShips:
                 return False
             if aiTarget.getAITargetType() == EnumsAI.AITargetType.TARGET_PLANET:
                 planet = universe.getPlanet(aiTarget.getTargetID())
