@@ -206,11 +206,10 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
     m_tech_tree_wnd->MoveTo(GG::Pt(m_research_info_panel->Width(), GG::Y0));
 
-    GG::Connect(m_tech_tree_wnd->AddTechToQueueSignal,          &ResearchWnd::AddTechToQueueSlot,           this);
-    GG::Connect(m_tech_tree_wnd->AddMultipleTechsToQueueSignal, &ResearchWnd::AddMultipleTechsToQueueSlot,  this);
-    GG::Connect(m_queue_lb->ErasedSignal,                       &ResearchWnd::QueueItemDeletedSlot,         this);
-    GG::Connect(m_queue_lb->LeftClickedSignal,                  &ResearchWnd::QueueItemClickedSlot,         this);
-    GG::Connect(m_queue_lb->DoubleClickedSignal,                &ResearchWnd::QueueItemDoubleClickedSlot,   this);
+    GG::Connect(m_tech_tree_wnd->AddTechsToQueueSignal, &ResearchWnd::AddTechsToQueueSlot,          this);
+    GG::Connect(m_queue_lb->ErasedSignal,               &ResearchWnd::QueueItemDeletedSlot,         this);
+    GG::Connect(m_queue_lb->LeftClickedSignal,          &ResearchWnd::QueueItemClickedSlot,         this);
+    GG::Connect(m_queue_lb->DoubleClickedSignal,        &ResearchWnd::QueueItemDoubleClickedSlot,   this);
 
     AttachChild(m_research_info_panel);
     AttachChild(m_queue_lb);
@@ -312,20 +311,7 @@ void ResearchWnd::UpdateInfoPanel() {
     //empire->GetResearchResPool().ChangedSignal();
 }
 
-void ResearchWnd::AddTechToQueueSlot(const std::string& tech_name) {
-    if (!m_enabled)
-        return;
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = Empires().Lookup(empire_id);
-    if (!empire)
-        return;
-    const ResearchQueue& queue = empire->GetResearchQueue();
-    OrderSet& orders = HumanClientApp::GetApp()->Orders();
-    if (!queue.InQueue(tech_name))
-        orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name, -1)));
-}
-
-void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<std::string>& tech_vec) {
+void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, int pos) {
     if (!m_enabled)
         return;
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -336,8 +322,11 @@ void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<std::string>& te
     OrderSet& orders = HumanClientApp::GetApp()->Orders();
     for (std::vector<std::string>::const_iterator it = tech_vec.begin(); it != tech_vec.end(); ++it) {
         const std::string& tech_name = *it;
-        if (!queue.InQueue(tech_name))
-            orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name, -1)));
+        if (!queue.InQueue(tech_name)) {
+            orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name, pos)));
+            if (pos != -1)
+                pos += 1;
+        }
     }
 }
 

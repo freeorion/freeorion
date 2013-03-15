@@ -12,12 +12,10 @@ class EncyclopediaDetailPanel;
   * the tech layout, the tech navigator, and the tech detail window. */
 class TechTreeWnd : public GG::Wnd {
 public:
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void (const std::string&)>                TechBrowsedSignalType;              ///< emitted when a technology is single-clicked
-    typedef boost::signal<void (const std::string&)>                TechClickedSignalType;              ///< emitted when the mouse rolls over a technology
-    typedef boost::signal<void (const std::string&)>                TechDoubleClickedSignalType;        ///< emitted when a technology is double-clicked
-    typedef boost::signal<void (const std::vector<std::string>&)>   AddMultipleTechsToQueueSignalType;  ///< emitted to enqueue multiple techs simultaneously, without updating the GUI after each
-    //@}
+    typedef boost::signal<void (const std::string&)>                    TechSignalType;
+    typedef boost::signal<void (const std::string&,
+                                const GG::Flags<GG::ModKey>&)>          TechClickSignalType;
+    typedef boost::signal<void (const std::vector<std::string>&, int)>  QueueAddTechsSignalType;
 
     /** \name Structors */ //@{
     TechTreeWnd(GG::X w, GG::Y h);
@@ -62,24 +60,23 @@ public:
 
     static const GG::Y          NAVIGATOR_AND_DETAIL_HEIGHT;
 
-    mutable TechBrowsedSignalType               TechBrowsedSignal;
-    mutable TechClickedSignalType               TechSelectedSignal;
-    mutable TechDoubleClickedSignalType         AddTechToQueueSignal;
-    mutable AddMultipleTechsToQueueSignalType   AddMultipleTechsToQueueSignal;
+    mutable TechSignalType          TechBrowsedSignal;
+    mutable TechSignalType          TechSelectedSignal;
+    mutable QueueAddTechsSignalType AddTechsToQueueSignal;
 
 private:
     class TechTreeControls;
-    class TechNavigator;
     class LayoutPanel;
     class TechListBox;
 
     void                    TechBrowsedSlot(const std::string& tech_name);
-    void                    TechClickedSlot(const std::string& tech_name);
-    void                    TechDoubleClickedSlot(const std::string& tech_name);
+    void                    TechClickedSlot(const std::string& tech_name,
+                                            const GG::Flags<GG::ModKey>& modkeys);
+    void                    TechDoubleClickedSlot(const std::string& tech_name,
+                                                  const GG::Flags<GG::ModKey>& modkeys);
 
     TechTreeControls*           m_tech_tree_controls;
     EncyclopediaDetailPanel*    m_enc_detail_panel;
-    TechNavigator*              m_tech_navigator;
     LayoutPanel*                m_layout_panel;
     TechListBox*                m_tech_list;
 };
