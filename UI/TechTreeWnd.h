@@ -25,7 +25,6 @@ public:
     /** \name Accessors */ //@{
     double                  Scale() const;
     std::set<std::string>   GetCategoriesShown() const;
-    std::set<TechType>      GetTechTypesShown() const;
     std::set<TechStatus>    GetTechStatusesShown() const;
     //@}
 
@@ -45,10 +44,6 @@ public:
     void                    ShowStatus(const TechStatus status);
     void                    HideStatus(const TechStatus status);
     void                    ToggleStatus(const TechStatus status);
-
-    void                    ShowType(const TechType type);
-    void                    HideType(const TechType type);
-    void                    ToggleType(const TechType type);
 
     void                    ShowTreeView();
     void                    ShowListView();
