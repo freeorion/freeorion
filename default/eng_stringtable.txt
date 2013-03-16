@@ -2750,7 +2750,7 @@ ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 '''
 
 ENC_TECH_DETAIL_TYPE_STR
-%1% %2% - %3%
+%3%
 
 ENC_LOOKUP
 Pedia Lookup %1%
@@ -6060,7 +6060,7 @@ Exobots, as they become commonly known, are a marvel of form meets function. The
 Although high level initial design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks. Robots work continuously, without perpetual demands for greater economic compensation. Robots have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site. Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.'''
 
 PRO_EXOBOTS
-Semi-autonomous Exobots
+Exobots
 PRO_EXOBOTS_DESC
 Allows the construction of Exobots optimized for industry on hostile planets.
 
@@ -6095,7 +6095,7 @@ PRO_ORBITAL_GEN_DESC
 Low orbit of planetary bodies provides numerous benefits for power generation compared to planetary surfaces. Direct exposure to nearby solar radiation without atmospheric attenuation, and the orders of magnitude larger structures that may be assembled in microgravity to collect it are significant advantages. The resulting power may be used in orbit, or may be beamed to the planet to support surface industry. As well, new mechanisms of energy conversion become available in orbit, including planetary magnetic field coupling, orbital momentum exchange, and frictional heating with planetary atmospheres, which are uniquely beneficial for specialized applications.'''
 
 PRO_SENTIENT_AUTOMATION
-Self-Adaptive Automation
+Adaptive Automation
 
 PRO_SENTIENT_AUTOMATION_DESC
 '''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets by 5.
@@ -6193,7 +6193,7 @@ The flexibility and versatility of force-energy structures permits a colonies bu
 When forces and energy can be manipulated as desired to provide the same functionality as solid surfaces, there is no essential need to have physical materials enclosing the occupants of a building. Structures composed entirely of energy have many advantages, including simple reconfiguration, resilience, portability and novel design possibilities.'''
 
 CON_CONTGRAV_ARCH
-Controlled Gravity Architecture
+Gravitic Architecture
 
 CON_CONTGRAV_ARCH_DESC
 '''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies and outposts by 1.
