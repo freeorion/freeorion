@@ -322,9 +322,26 @@ void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, 
     OrderSet& orders = HumanClientApp::GetApp()->Orders();
     for (std::vector<std::string>::const_iterator it = tech_vec.begin(); it != tech_vec.end(); ++it) {
         const std::string& tech_name = *it;
-        if (!queue.InQueue(tech_name)) {
+        // AddTechsToQueueSlot is currently used for (i) adding a tech and any not-yet-queued prereqs to the
+        // end of the queue (but any already-queued prereqs are NOT to be moved to the end of the queue), or 
+        // (ii) prioritizing a tech by placing it and any not-yet-completed techs, whether currently queued or not,
+        // to the front of the queue.  If at some time this routine is desired to be used to move a group of techs from 
+        // early positions in the queue to later positions, the below tests would need to change.
+        
+        // If we're adding to the end of the queue (pos==-1), we'll need to put in a ResearchQueueOrder iff the tech is 
+        // not yet in the queue. Otherwise (adding to beginning) we'll need to put in a ResearchQueueOrder if the tech is
+        // not yet in the queue or if the tech's current position in the queue is after the desired position.  When 
+        // adding/moving a group of techs to the queue beginning, we increment our insertion point for every tech we add, 
+        // or that we skipped because it happened to already be in the right spot.
+        if (pos == -1) {
+            if (!queue.InQueue(tech_name)) {
+                orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name, pos)));
+            }
+        } else if (!queue.InQueue(tech_name) || ((queue.find(tech_name) - queue.begin()) > pos)) {
             orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name, pos)));
-            if (pos != -1)
+            pos += 1;
+        } else {
+            if ((queue.find(tech_name) - queue.begin()) == pos)
                 pos += 1;
         }
     }
