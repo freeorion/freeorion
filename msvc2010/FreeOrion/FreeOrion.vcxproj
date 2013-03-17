@@ -162,14 +162,12 @@
     <ClInclude Include="..\..\UI\OptionsWnd.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\BatchedGeometry.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\BatchPage.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\GrassLoader.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\ImpostorPage.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\MersenneTwister.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\PagedGeometry.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\PropertyMaps.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\RandomTable.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\StaticBillboardSet.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\TreeLoader2D.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\TreeLoader3D.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\WindBatchedGeometry.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\WindBatchPage.h" />
@@ -276,12 +274,10 @@
     <ClCompile Include="..\..\UI\OptionsWnd.cpp" />
     <ClCompile Include="..\..\UI\PagedGeometry\BatchedGeometry.cpp" />
     <ClCompile Include="..\..\UI\PagedGeometry\BatchPage.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\GrassLoader.cpp" />
     <ClCompile Include="..\..\UI\PagedGeometry\ImpostorPage.cpp" />
     <ClCompile Include="..\..\UI\PagedGeometry\PagedGeometry.cpp" />
     <ClCompile Include="..\..\UI\PagedGeometry\PropertyMaps.cpp" />
     <ClCompile Include="..\..\UI\PagedGeometry\StaticBillboardSet.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\TreeLoader2D.cpp" />
     <ClCompile Include="..\..\UI\PagedGeometry\TreeLoader3D.cpp" />
     <ClCompile Include="..\..\UI\PagedGeometry\WindBatchedGeometry.cpp" />
     <ClCompile Include="..\..\UI\PagedGeometry\WindBatchPage.cpp" />

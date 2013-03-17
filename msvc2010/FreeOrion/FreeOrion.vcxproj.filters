@@ -294,9 +294,6 @@
     <ClInclude Include="..\..\UI\PagedGeometry\BatchPage.h">
       <Filter>Header Files\UI\PagedGeometry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\UI\PagedGeometry\GrassLoader.h">
-      <Filter>Header Files\UI\PagedGeometry</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\UI\PagedGeometry\ImpostorPage.h">
       <Filter>Header Files\UI\PagedGeometry</Filter>
     </ClInclude>
@@ -313,9 +310,6 @@
       <Filter>Header Files\UI\PagedGeometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\UI\PagedGeometry\StaticBillboardSet.h">
-      <Filter>Header Files\UI\PagedGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\PagedGeometry\TreeLoader2D.h">
       <Filter>Header Files\UI\PagedGeometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\UI\PagedGeometry\TreeLoader3D.h">
@@ -505,9 +499,6 @@
     <ClCompile Include="..\..\network\Message.cpp">
       <Filter>Source Files\network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\UI\PagedGeometry\TreeLoader2D.cpp">
-      <Filter>Source Files\UI\PagedGeometry</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\UI\PagedGeometry\TreeLoader3D.cpp">
       <Filter>Source Files\UI\PagedGeometry</Filter>
     </ClCompile>
@@ -521,9 +512,6 @@
       <Filter>Source Files\UI\PagedGeometry</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\PagedGeometry\BatchPage.cpp">
-      <Filter>Source Files\UI\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\PagedGeometry\GrassLoader.cpp">
       <Filter>Source Files\UI\PagedGeometry</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\PagedGeometry\ImpostorPage.cpp">

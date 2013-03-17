@@ -30,12 +30,10 @@
 		2F6096CF12EF046B00F58913 /* ClientNetworking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FAA0CEF566200A7DF2B /* ClientNetworking.cpp */; };
 		3402E24D0F5A30D600DF6FE7 /* BatchedGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2370F5A30D600DF6FE7 /* BatchedGeometry.cpp */; };
 		3402E24E0F5A30D600DF6FE7 /* BatchPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2390F5A30D600DF6FE7 /* BatchPage.cpp */; };
-		3402E24F0F5A30D600DF6FE7 /* GrassLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E23B0F5A30D600DF6FE7 /* GrassLoader.cpp */; };
 		3402E2500F5A30D600DF6FE7 /* ImpostorPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E23D0F5A30D600DF6FE7 /* ImpostorPage.cpp */; };
 		3402E2510F5A30D600DF6FE7 /* PagedGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E23F0F5A30D600DF6FE7 /* PagedGeometry.cpp */; };
 		3402E2520F5A30D600DF6FE7 /* PropertyMaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2410F5A30D600DF6FE7 /* PropertyMaps.cpp */; };
 		3402E2530F5A30D600DF6FE7 /* StaticBillboardSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2430F5A30D600DF6FE7 /* StaticBillboardSet.cpp */; };
-		3402E2540F5A30D600DF6FE7 /* TreeLoader2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2450F5A30D600DF6FE7 /* TreeLoader2D.cpp */; };
 		3402E2550F5A30D600DF6FE7 /* TreeLoader3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2470F5A30D600DF6FE7 /* TreeLoader3D.cpp */; };
 		3402E2560F5A30D600DF6FE7 /* WindBatchedGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2490F5A30D600DF6FE7 /* WindBatchedGeometry.cpp */; };
 		3402E2570F5A30D600DF6FE7 /* WindBatchPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E24B0F5A30D600DF6FE7 /* WindBatchPage.cpp */; };
@@ -1308,8 +1306,6 @@
 		3402E2380F5A30D600DF6FE7 /* BatchedGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchedGeometry.h; sourceTree = "<group>"; };
 		3402E2390F5A30D600DF6FE7 /* BatchPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BatchPage.cpp; sourceTree = "<group>"; };
 		3402E23A0F5A30D600DF6FE7 /* BatchPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchPage.h; sourceTree = "<group>"; };
-		3402E23B0F5A30D600DF6FE7 /* GrassLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GrassLoader.cpp; sourceTree = "<group>"; };
-		3402E23C0F5A30D600DF6FE7 /* GrassLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GrassLoader.h; sourceTree = "<group>"; };
 		3402E23D0F5A30D600DF6FE7 /* ImpostorPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImpostorPage.cpp; sourceTree = "<group>"; };
 		3402E23E0F5A30D600DF6FE7 /* ImpostorPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImpostorPage.h; sourceTree = "<group>"; };
 		3402E23F0F5A30D600DF6FE7 /* PagedGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PagedGeometry.cpp; sourceTree = "<group>"; };
@@ -1318,8 +1314,6 @@
 		3402E2420F5A30D600DF6FE7 /* PropertyMaps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyMaps.h; sourceTree = "<group>"; };
 		3402E2430F5A30D600DF6FE7 /* StaticBillboardSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StaticBillboardSet.cpp; sourceTree = "<group>"; };
 		3402E2440F5A30D600DF6FE7 /* StaticBillboardSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticBillboardSet.h; sourceTree = "<group>"; };
-		3402E2450F5A30D600DF6FE7 /* TreeLoader2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TreeLoader2D.cpp; sourceTree = "<group>"; };
-		3402E2460F5A30D600DF6FE7 /* TreeLoader2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeLoader2D.h; sourceTree = "<group>"; };
 		3402E2470F5A30D600DF6FE7 /* TreeLoader3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TreeLoader3D.cpp; sourceTree = "<group>"; };
 		3402E2480F5A30D600DF6FE7 /* TreeLoader3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeLoader3D.h; sourceTree = "<group>"; };
 		3402E2490F5A30D600DF6FE7 /* WindBatchedGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WindBatchedGeometry.cpp; sourceTree = "<group>"; };
@@ -2869,8 +2863,6 @@
 				3402E2380F5A30D600DF6FE7 /* BatchedGeometry.h */,
 				3402E2390F5A30D600DF6FE7 /* BatchPage.cpp */,
 				3402E23A0F5A30D600DF6FE7 /* BatchPage.h */,
-				3402E23B0F5A30D600DF6FE7 /* GrassLoader.cpp */,
-				3402E23C0F5A30D600DF6FE7 /* GrassLoader.h */,
 				3402E23D0F5A30D600DF6FE7 /* ImpostorPage.cpp */,
 				3402E23E0F5A30D600DF6FE7 /* ImpostorPage.h */,
 				3402E23F0F5A30D600DF6FE7 /* PagedGeometry.cpp */,
@@ -2879,8 +2871,6 @@
 				3402E2420F5A30D600DF6FE7 /* PropertyMaps.h */,
 				3402E2430F5A30D600DF6FE7 /* StaticBillboardSet.cpp */,
 				3402E2440F5A30D600DF6FE7 /* StaticBillboardSet.h */,
-				3402E2450F5A30D600DF6FE7 /* TreeLoader2D.cpp */,
-				3402E2460F5A30D600DF6FE7 /* TreeLoader2D.h */,
 				3402E2470F5A30D600DF6FE7 /* TreeLoader3D.cpp */,
 				3402E2480F5A30D600DF6FE7 /* TreeLoader3D.h */,
 				3402E2490F5A30D600DF6FE7 /* WindBatchedGeometry.cpp */,
@@ -6170,12 +6160,10 @@
 				34972BEE0F49CBF90015C864 /* Sound.cpp in Sources */,
 				3402E24D0F5A30D600DF6FE7 /* BatchedGeometry.cpp in Sources */,
 				3402E24E0F5A30D600DF6FE7 /* BatchPage.cpp in Sources */,
-				3402E24F0F5A30D600DF6FE7 /* GrassLoader.cpp in Sources */,
 				3402E2500F5A30D600DF6FE7 /* ImpostorPage.cpp in Sources */,
 				3402E2510F5A30D600DF6FE7 /* PagedGeometry.cpp in Sources */,
 				3402E2520F5A30D600DF6FE7 /* PropertyMaps.cpp in Sources */,
 				3402E2530F5A30D600DF6FE7 /* StaticBillboardSet.cpp in Sources */,
-				3402E2540F5A30D600DF6FE7 /* TreeLoader2D.cpp in Sources */,
 				3402E2550F5A30D600DF6FE7 /* TreeLoader3D.cpp in Sources */,
 				3402E2560F5A30D600DF6FE7 /* WindBatchedGeometry.cpp in Sources */,
 				3402E2570F5A30D600DF6FE7 /* WindBatchPage.cpp in Sources */,

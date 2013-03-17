@@ -113,12 +113,10 @@ set(THIS_EXE_SOURCES
     ../../UI/ShaderProgram.cpp
     ../../UI/PagedGeometry/BatchedGeometry.cpp
     ../../UI/PagedGeometry/BatchPage.cpp
-    ../../UI/PagedGeometry/GrassLoader.cpp
     ../../UI/PagedGeometry/ImpostorPage.cpp
     ../../UI/PagedGeometry/PagedGeometry.cpp
     ../../UI/PagedGeometry/PropertyMaps.cpp
     ../../UI/PagedGeometry/StaticBillboardSet.cpp
-    ../../UI/PagedGeometry/TreeLoader2D.cpp
     ../../UI/PagedGeometry/TreeLoader3D.cpp
     ../../UI/PagedGeometry/WindBatchedGeometry.cpp
     ../../UI/PagedGeometry/WindBatchPage.cpp
