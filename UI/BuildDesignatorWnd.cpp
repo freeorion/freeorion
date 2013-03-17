@@ -839,7 +839,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
 {
     const GG::X SIDEPANEL_WIDTH =       GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
     const GG::X CHILD_WIDTHS =          w - SIDEPANEL_WIDTH;
-    const GG::Y DETAIL_PANEL_HEIGHT =   TechTreeWnd::NAVIGATOR_AND_DETAIL_HEIGHT;
+    const GG::Y DETAIL_PANEL_HEIGHT =   GG::Y(240);
     const GG::Y BUILD_SELECTOR_HEIGHT = DETAIL_PANEL_HEIGHT;
 
     m_enc_detail_panel = new EncyclopediaDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT);

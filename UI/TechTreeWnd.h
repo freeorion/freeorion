@@ -53,8 +53,6 @@ public:
     void                    SelectTech(const std::string& tech_name);
     //@}
 
-    static const GG::Y          NAVIGATOR_AND_DETAIL_HEIGHT;
-
     mutable TechSignalType          TechBrowsedSignal;
     mutable TechSignalType          TechSelectedSignal;
     mutable QueueAddTechsSignalType AddTechsToQueueSignal;
