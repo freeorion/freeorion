@@ -2732,16 +2732,12 @@ Starlane Speed: %13%
 ##
 
 ENC_UNLOCKED_BY
-'''
-
-<u>Unlocked By Techs:</u>
+'''<u>Unlocked By Techs:</u>
 
 '''
 
-ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
-'''
-
-<u>Unlocks</u>
+ENC_UNLOCKS
+'''<u>Unlocks</u>
 
 '''
 
