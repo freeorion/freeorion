@@ -34,7 +34,7 @@ namespace {
 
     const int   MAIN_PANEL_CORNER_RADIUS = 5;
     const float ARC_THICKNESS = 3.0;
-    const GG::X TECH_PANEL_WIDTH(200);
+    const GG::X TECH_PANEL_WIDTH(300);
     const GG::Y TECH_PANEL_HEIGHT(80);
 
     const double MIN_SCALE = 0.1073741824;  // = 1.0/(1.25)^10
@@ -456,6 +456,8 @@ private:
     const TechTreeWnd::LayoutPanel* m_layout_panel;
     GG::StaticGraphic*              m_icon;
     GG::TextControl*                m_tech_name_text;
+    GG::Clr                         m_colour;
+    TechStatus                      m_status;
 };
 
 TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, const LayoutPanel* panel) :
@@ -463,7 +465,9 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_tech_name(tech_name),
     m_layout_panel(panel),
     m_icon(0),
-    m_tech_name_text(0)
+    m_tech_name_text(0),
+    m_colour(GG::CLR_GRAY),
+    m_status(TS_RESEARCHABLE)
 {
     const Tech* tech = GetTech(m_tech_name);
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont(FontSize());
@@ -475,17 +479,22 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
                                    ClientUI::TechIcon(m_tech_name),
                                    GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     if (tech) {
-        GG::Clr icon_colour = ClientUI::CategoryColor(tech->Category());
         if (const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())) {
-            TechStatus status = empire->GetTechStatus(tech_name);
-            if (status == TS_UNRESEARCHABLE) {
-                icon_colour = GG::CLR_GRAY;
-                //icon_colour.r = (icon_colour.r/2 + 127);
-                //icon_colour.g = (icon_colour.g/2 + 127);
-                //icon_colour.b = (icon_colour.b/2 + 127);
-            }
-
+            m_status = empire->GetTechStatus(m_tech_name);
         }
+
+        m_colour = ClientUI::CategoryColor(tech->Category());
+        GG::Clr icon_colour = m_colour;
+
+        if (m_status == TS_UNRESEARCHABLE) {
+            icon_colour = GG::CLR_GRAY;
+            m_colour.a = 64;
+        } else if (m_status == TS_RESEARCHABLE) {
+            m_colour.a = 144;
+        } else {
+            m_colour.a = 255;
+        }
+
         m_icon->SetColor(icon_colour);
     }
 
@@ -495,7 +504,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     GG::Y text_top(PAD/2);
     GG::X text_width(TECH_PANEL_WIDTH - text_left);
     GG::Y text_height(TECH_PANEL_HEIGHT - PAD);
-    m_tech_name_text = new GG::TextControl(text_left, text_top, text_width, text_height,
+    m_tech_name_text = new ShadowedTextControl(text_left, text_top, text_width, text_height,
                                            UserString(m_tech_name), font, ClientUI::TextColor(),
                                            GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
 }
@@ -505,6 +514,7 @@ int TechTreeWnd::LayoutPanel::TechPanel::FontSize() const
 
 bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(const GG::Pt& pt) const {
     const GG::Pt p = m_layout_panel->Convert(pt) - UpperLeft();
+    //return GG::Wnd::InWindow(p - UpperLeft());
     const int PAD = 8;
     return m_icon->InWindow(p) || m_tech_name_text->InWindow(p + GG::Pt(GG::X(PAD), GG::Y0));   // shift right so clicking in gap between icon and text doesn't miss the panel
 }
@@ -512,9 +522,35 @@ bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(const GG::Pt& pt) const {
 void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     m_layout_panel->DoZoom(UpperLeft());
 
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LINE_SMOOTH);
+    glLineWidth(2.0);
+
+    GG::Pt ul(m_icon->Width() + 4, GG::Y0);
+    GG::Pt lr(Size());
+
+    glColor(GG::CLR_BLACK);
+    PartlyRoundedRect(ul, lr, 5, true, true, true, true, true);
+
+    glColor(m_colour);
+    PartlyRoundedRect(ul, lr, 5, true, true, true, true, true);
+
+    if (m_status == TS_RESEARCHABLE) {
+        GG::Clr clr = m_colour;
+        clr.a = 255;
+        glColor(clr);
+        PartlyRoundedRect(ul, lr, 5, true, true, true, true, false);
+    }
+
+    glLineWidth(1.0);
+    glDisable(GL_LINE_SMOOTH);
+    glEnable(GL_TEXTURE_2D);
+
     m_icon->Render();
-    if (FontSize() * m_layout_panel->Scale() > 12)
+
+    if (FontSize() * m_layout_panel->Scale() > 12)  // in my tests, smaller fonts appear garbled / pixilated due to rescaling for zooming
         m_tech_name_text->Render();
+
     m_layout_panel->UndoZoom();
 }
 
@@ -1430,9 +1466,9 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     GG::Connect(m_tech_list->TechDoubleClickedSignal,       &TechTreeWnd::TechDoubleClickedSlot, this);
 
     GG::X ENC_WIDTH(480);
-    GG::Y END_HEIGHT(240);
+    GG::Y ENC_HEIGHT(240);
 
-    m_enc_detail_panel = new EncyclopediaDetailPanel(ENC_WIDTH, END_HEIGHT);
+    m_enc_detail_panel = new EncyclopediaDetailPanel(ENC_WIDTH, ENC_HEIGHT);
     AttachChild(m_enc_detail_panel);
 
     m_tech_tree_controls = new TechTreeControls(GG::X1, GG::Y1, m_layout_panel->Width() - ClientUI::ScrollWidth());
