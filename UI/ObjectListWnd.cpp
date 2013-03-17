@@ -403,12 +403,12 @@ private:
 
         std::vector<std::string> row_keys;
         row_keys.push_back(ALL_CONDITION);              row_keys.push_back(EMPIREAFFILIATION_CONDITION);
+        row_keys.push_back(PLANETSIZE_CONDITION);       row_keys.push_back(PLANETTYPE_CONDITION);
         row_keys.push_back(HOMEWORLD_CONDITION);        row_keys.push_back(CAPITAL_CONDITION);
         row_keys.push_back(MONSTER_CONDITION);          row_keys.push_back(ARMED_CONDITION);
         row_keys.push_back(STATIONARY_CONDITION);       row_keys.push_back(CANPRODUCESHIPS_CONDITION);
         row_keys.push_back(CANCOLONIZE_CONDITION);      row_keys.push_back(HASSPECIAL_CONDITION);
         row_keys.push_back(HASTAG_CONDITION);           row_keys.push_back(SPECIES_CONDITION);
-        row_keys.push_back(PLANETSIZE_CONDITION);       row_keys.push_back(PLANETTYPE_CONDITION);
         row_keys.push_back(FOCUSTYPE_CONDITION);        row_keys.push_back(STARTYPE_CONDITION);
         row_keys.push_back(METERVALUE_CONDITION);
 
@@ -1146,15 +1146,15 @@ public:
 
         m_filter_condition = new Condition::All();
 
-        m_visibilities[OBJ_BUILDING].insert(SHOW_VISIBLE);
-        m_visibilities[OBJ_BUILDING].insert(SHOW_PREVIOUSLY_VISIBLE);
-        m_visibilities[OBJ_SHIP].insert(SHOW_VISIBLE);
-        m_visibilities[OBJ_FLEET].insert(SHOW_VISIBLE);
+        //m_visibilities[OBJ_BUILDING].insert(SHOW_VISIBLE);
+        //m_visibilities[OBJ_BUILDING].insert(SHOW_PREVIOUSLY_VISIBLE);
+        //m_visibilities[OBJ_SHIP].insert(SHOW_VISIBLE);
+        //m_visibilities[OBJ_FLEET].insert(SHOW_VISIBLE);
         m_visibilities[OBJ_PLANET].insert(SHOW_VISIBLE);
         m_visibilities[OBJ_PLANET].insert(SHOW_PREVIOUSLY_VISIBLE);
-        m_visibilities[OBJ_SYSTEM].insert(SHOW_VISIBLE);
-        m_visibilities[OBJ_SYSTEM].insert(SHOW_PREVIOUSLY_VISIBLE);
-        m_visibilities[OBJ_FIELD].insert(SHOW_VISIBLE);
+        //m_visibilities[OBJ_SYSTEM].insert(SHOW_VISIBLE);
+        //m_visibilities[OBJ_SYSTEM].insert(SHOW_PREVIOUSLY_VISIBLE);
+        //m_visibilities[OBJ_FIELD].insert(SHOW_VISIBLE);
 
         GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &ObjectListBox::UniverseObjectDeleted,  this);
     }
