@@ -774,6 +774,14 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id) {
     return retval;
 }
 
+bool Universe::DeleteShipDesign(int design_id) {
+    ShipDesignMap::iterator it = m_ship_designs.find(design_id);
+    if (it != m_ship_designs.end()) {
+        m_ship_designs.erase(it);
+        return true;
+    } else { return false; }
+}
+
 void Universe::ApplyAllEffectsAndUpdateMeters() {
     ScopedTimer timer("Universe::ApplyAllEffectsAndUpdateMeters");
     std::vector<int> object_ids = m_objects.FindObjectIDs();

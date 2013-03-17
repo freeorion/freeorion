@@ -369,6 +369,10 @@ public:
       * true if such an object was found, false otherwise. */
     bool            Delete(int object_id);
 
+    /** Permanently deletes the ship design with ID number \a design_id. No
+      * information about this design is retained in the Universe. */
+    bool            DeleteShipDesign(int design_id);
+
     /** Cleans up internal storage of now-invalidated empire ID. */
     void            HandleEmpireElimination(int empire_id);
 

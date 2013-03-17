@@ -1024,6 +1024,9 @@ void EncyclopediaDetailPanel::Refresh() {
             }
         }
 
+        Ship* temp = new Ship(client_empire_id, design_id, "", client_empire_id);
+        int temp_id = GetUniverse().Insert(temp);
+        GetUniverse().UpdateMeterEstimates(temp_id);
 
         detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
             % design->Description()
@@ -1033,16 +1036,18 @@ void EncyclopediaDetailPanel::Refresh() {
             % static_cast<int>(design->LRWeapons().size())
             % static_cast<int>(design->FWeapons().size())
             % static_cast<int>(design->PDWeapons().size())
-            % design->Structure()
-            % design->Shields()
-            % design->Detection()
-            % design->Stealth()
-            % design->BattleSpeed()
-            % design->StarlaneSpeed()
-            % design->Fuel()
+            % temp->CurrentMeterValue(METER_MAX_STRUCTURE)
+            % temp->CurrentMeterValue(METER_MAX_SHIELD)
+            % temp->CurrentMeterValue(METER_DETECTION)
+            % temp->CurrentMeterValue(METER_STEALTH)
+            % temp->CurrentMeterValue(METER_BATTLE_SPEED)
+            % temp->CurrentMeterValue(METER_STARLANE_SPEED)
+            % temp->CurrentMeterValue(METER_MAX_FUEL)
             % design->ColonyCapacity()
             % design->TroopCapacity()
             % design->Attack());
+
+        GetUniverse().Delete(temp_id);
 
         // ships of this design
         std::vector<const Ship*> all_ships = objects.FindObjects<Ship>();
@@ -1106,6 +1111,11 @@ void EncyclopediaDetailPanel::Refresh() {
                 }
             }
 
+            int temp_design_id = GetUniverse().InsertShipDesign(new ShipDesign(*incomplete_design.get()));
+
+            Ship* temp = new Ship(client_empire_id, temp_design_id, "", client_empire_id);
+            int temp_id = GetUniverse().Insert(temp);
+            GetUniverse().UpdateMeterEstimates(temp_id);
 
             detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
                 % incomplete_design->Description()
@@ -1115,16 +1125,19 @@ void EncyclopediaDetailPanel::Refresh() {
                 % static_cast<int>(incomplete_design->LRWeapons().size())
                 % static_cast<int>(incomplete_design->FWeapons().size())
                 % static_cast<int>(incomplete_design->PDWeapons().size())
-                % incomplete_design->Structure()
-                % incomplete_design->Shields()
-                % incomplete_design->Detection()
-                % incomplete_design->Stealth()
-                % incomplete_design->BattleSpeed()
-                % incomplete_design->StarlaneSpeed()
-                % incomplete_design->Fuel()
+                % temp->CurrentMeterValue(METER_MAX_STRUCTURE)
+                % temp->CurrentMeterValue(METER_MAX_SHIELD)
+                % temp->CurrentMeterValue(METER_DETECTION)
+                % temp->CurrentMeterValue(METER_STEALTH)
+                % temp->CurrentMeterValue(METER_BATTLE_SPEED)
+                % temp->CurrentMeterValue(METER_STARLANE_SPEED)
+                % temp->CurrentMeterValue(METER_MAX_FUEL)
                 % incomplete_design->ColonyCapacity()
                 % incomplete_design->TroopCapacity()
                 % incomplete_design->Attack());
+
+            GetUniverse().Delete(temp_id);
+            GetUniverse().DeleteShipDesign(temp_design_id);
         }
 
         general_type = UserString("ENC_INCOMPETE_SHIP_DESIGN");

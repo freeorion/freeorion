@@ -326,4 +326,31 @@ const std::map<int, Building*>&  ObjectMap::Map() const;
 template <>
 const std::map<int, Field*>&  ObjectMap::Map() const;
 
+template <>
+std::map<int, UniverseObject*>&  ObjectMap::Map();
+
+template <>
+std::map<int, ResourceCenter*>&  ObjectMap::Map();
+
+template <>
+std::map<int, PopCenter*>&  ObjectMap::Map();
+
+template <>
+std::map<int, Ship*>&  ObjectMap::Map();
+
+template <>
+std::map<int, Fleet*>&  ObjectMap::Map();
+
+template <>
+std::map<int, Planet*>&  ObjectMap::Map();
+
+template <>
+std::map<int, System*>&  ObjectMap::Map();
+
+template <>
+std::map<int, Building*>&  ObjectMap::Map();
+
+template <>
+std::map<int, Field*>&  ObjectMap::Map();
+
 #endif
