@@ -3215,14 +3215,14 @@ bool Condition::Enqueued::operator==(const Condition::ConditionBase& rhs) const 
 }
 
 namespace {
-    int NumberOnQueue(const ProductionQueue& queue, BuildType build_type, int location_id,
+    int NumberOnQueue(const ProductionQueue& queue, BuildType build_type, const int location_id,
                       const std::string& name = "", int design_id = ShipDesign::INVALID_DESIGN_ID)
     {
         int retval = 0;
         for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
             if (!(build_type == INVALID_BUILD_TYPE || build_type == it->item.build_type))
                 continue;
-            if (!(location_id == it->location))
+            if (location_id != it->location)
                 continue;
             if (build_type == BT_BUILDING) {
                 // if looking for buildings, accept specifically named building
