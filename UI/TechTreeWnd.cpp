@@ -40,6 +40,7 @@ namespace {
     const double ZOOM_STEP_SIZE = 1.08;
     const double MIN_SCALE = std::pow(ZOOM_STEP_SIZE, -25.0);
     const double MAX_SCALE = std::pow(ZOOM_STEP_SIZE, 10.0);
+    const double INITIAL_SCALE = 1.0;
 
     struct ToggleCategoryFunctor {
         ToggleCategoryFunctor(TechTreeWnd* tree_wnd, const std::string& category) : m_tree_wnd(tree_wnd), m_category(category) {}
@@ -581,7 +582,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update()
 //////////////////////////////////////////////////
 TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-    m_scale(1.0),
+    m_scale(INITIAL_SCALE),
     m_categories_shown(),
     m_tech_statuses_shown(),
     m_selected_tech_name(),
