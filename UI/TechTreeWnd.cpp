@@ -32,7 +32,7 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const int   MAIN_PANEL_CORNER_RADIUS = 5;
+    const int   MAIN_PANEL_CORNER_RADIUS = 8;
     const float ARC_THICKNESS = 3.0;
     const GG::X TECH_PANEL_WIDTH(225);
     const GG::Y TECH_PANEL_HEIGHT(60);
@@ -459,6 +459,8 @@ private:
     GG::TextControl*                m_tech_name_text;
     GG::Clr                         m_colour;
     TechStatus                      m_status;
+    bool                            m_browse_highlight;
+    bool                            m_selected;
 };
 
 TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, const LayoutPanel* panel) :
@@ -468,7 +470,9 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_icon(0),
     m_tech_name_text(0),
     m_colour(GG::CLR_GRAY),
-    m_status(TS_RESEARCHABLE)
+    m_status(TS_RESEARCHABLE),
+    m_browse_highlight(false),
+    m_selected(false)
 {
     const Tech* tech = GetTech(m_tech_name);
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont(FontSize());
@@ -521,26 +525,42 @@ bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(const GG::Pt& pt) const {
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::Render() {
+    const int PAD = 8;
+
     m_layout_panel->DoZoom(UpperLeft());
 
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(2.0);
 
-    GG::Pt ul(m_icon->Width() + 4, GG::Y0);
+    GG::Pt ul(m_icon->Width() + PAD/2, GG::Y0);
     GG::Pt lr(Size());
 
     glColor(GG::CLR_BLACK);
-    PartlyRoundedRect(ul, lr, 5, true, true, true, true, true);
+    PartlyRoundedRect(ul, lr, PAD, true, true, true, true, true);
 
     glColor(m_colour);
-    PartlyRoundedRect(ul, lr, 5, true, true, true, true, true);
+    PartlyRoundedRect(ul, lr, PAD, true, true, true, true, true);
 
-    if (m_status == TS_RESEARCHABLE) {
+    if (m_browse_highlight) {
+        // white border
+        glColor(GG::CLR_WHITE);
+        PartlyRoundedRect(ul, lr, PAD, true, true, true, true, false);
+    } else if (m_status == TS_RESEARCHABLE) {
+        // coloured border
         GG::Clr clr = m_colour;
         clr.a = 255;
         glColor(clr);
-        PartlyRoundedRect(ul, lr, 5, true, true, true, true, false);
+        PartlyRoundedRect(ul, lr, PAD, true, true, true, true, false);
+    }
+
+    if (m_selected) {
+        // enclosing larger border / box
+        glColor(GG::CLR_WHITE);
+        GG::Pt gap = GG::Pt(GG::X(PAD), GG::Y(PAD));
+        GG::Pt enc_ul(-gap);
+        GG::Pt enc_lr(lr + gap);
+        PartlyRoundedRect(enc_ul, enc_lr, PAD + 2, true, true, true, true, false);
     }
 
     glLineWidth(1.0);
@@ -549,9 +569,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
 
     m_icon->Render();
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    if (FontSize() * m_layout_panel->Scale() > 8)  // in my tests, smaller fonts appear garbled / pixilated due to rescaling for zooming
+    if (FontSize() * m_layout_panel->Scale() > 10)  // in my tests, smaller fonts appear garbled / pixilated due to rescaling for zooming
         m_tech_name_text->Render();
 
     m_layout_panel->UndoZoom();
@@ -566,14 +584,18 @@ void TechTreeWnd::LayoutPanel::TechPanel::LClick(const GG::Pt& pt, GG::Flags<GG:
 void TechTreeWnd::LayoutPanel::TechPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { TechDoubleClickedSignal(m_tech_name, mod_keys); }
 
-void TechTreeWnd::LayoutPanel::TechPanel::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ TechBrowsedSignal(m_tech_name); }
+void TechTreeWnd::LayoutPanel::TechPanel::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    TechBrowsedSignal(m_tech_name);
+    m_browse_highlight = true;
+}
 
-void TechTreeWnd::LayoutPanel::TechPanel::MouseLeave()
-{ TechBrowsedSignal(""); }
+void TechTreeWnd::LayoutPanel::TechPanel::MouseLeave() {
+    TechBrowsedSignal("");
+    m_browse_highlight = false;
+}
 
 void TechTreeWnd::LayoutPanel::TechPanel::Select(bool select)
-{}
+{ m_selected = select; }
 
 void TechTreeWnd::LayoutPanel::TechPanel::Update()
 { Select(m_layout_panel->m_selected_tech_name == m_tech_name); }
@@ -1105,7 +1127,7 @@ void TechTreeWnd::LayoutPanel::TreeZoomedSlot(int move) {
         SetScale(m_scale * ZOOM_STEP_SIZE);
     else if (move < 0)
         SetScale(m_scale / ZOOM_STEP_SIZE);
-    std::cout << m_scale << std::endl;
+    //std::cout << m_scale << std::endl;
 }
 
 void TechTreeWnd::LayoutPanel::TreeZoomInClicked()
