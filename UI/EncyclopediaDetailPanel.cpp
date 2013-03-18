@@ -698,13 +698,8 @@ void EncyclopediaDetailPanel::Refresh() {
             detailed_description += UserString("ENC_UNLOCKED_BY");
             for (std::set<std::string>::const_iterator it = unlocked_by_techs.begin();
                  it != unlocked_by_techs.end(); ++it)
-            {
-                std::string link_text = LinkTaggedText(VarText::TECH_TAG, *it);
-                detailed_description += str(FlexibleFormat(UserString("ENC_TECH_DETAIL_UNLOCKED_ITEM_STR"))
-                    % UserString("UIT_TECH")
-                    % link_text);
-            }
-            detailed_description += "\n";
+            { detailed_description += LinkTaggedText(VarText::TECH_TAG, *it) + "  "; }
+            detailed_description += "\n\n";
         }
 
         const std::set<std::string>& unlocked_techs = tech->UnlockedTechs();
