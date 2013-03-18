@@ -322,6 +322,8 @@ void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, 
     OrderSet& orders = HumanClientApp::GetApp()->Orders();
     for (std::vector<std::string>::const_iterator it = tech_vec.begin(); it != tech_vec.end(); ++it) {
         const std::string& tech_name = *it;
+        if (empire->TechResearched(tech_name))
+            continue;
         // AddTechsToQueueSlot is currently used for (i) adding a tech and any not-yet-queued prereqs to the
         // end of the queue (but any already-queued prereqs are NOT to be moved to the end of the queue), or 
         // (ii) prioritizing a tech by placing it and any not-yet-completed techs, whether currently queued or not,
