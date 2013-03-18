@@ -780,6 +780,7 @@ void EncyclopediaDetailPanel::Refresh() {
             for (std::vector<std::string>::const_iterator unlock_tech_it = unlocked_by_techs.begin();
                  unlock_tech_it != unlocked_by_techs.end(); ++unlock_tech_it)
             { detailed_description += LinkTaggedText(VarText::TECH_TAG, *unlock_tech_it) + "  "; }
+            detailed_description += "\n\n";
         }
 
         detailed_description += UserString(building_type->Description());
