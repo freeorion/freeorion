@@ -34,13 +34,13 @@ namespace {
 
     const int   MAIN_PANEL_CORNER_RADIUS = 5;
     const float ARC_THICKNESS = 3.0;
-    const GG::X TECH_PANEL_WIDTH(150);
-    const GG::Y TECH_PANEL_HEIGHT(40);
+    const GG::X TECH_PANEL_WIDTH(225);
+    const GG::Y TECH_PANEL_HEIGHT(60);
 
-    const double ZOOM_STEP_SIZE = 1.08;
+    const double ZOOM_STEP_SIZE = 1.12;
     const double MIN_SCALE = std::pow(ZOOM_STEP_SIZE, -25.0);
     const double MAX_SCALE = std::pow(ZOOM_STEP_SIZE, 10.0);
-    const double INITIAL_SCALE = 1.0;
+    const double INITIAL_SCALE = std::pow(ZOOM_STEP_SIZE, -5.0);
 
     struct ToggleCategoryFunctor {
         ToggleCategoryFunctor(TechTreeWnd* tree_wnd, const std::string& category) : m_tree_wnd(tree_wnd), m_category(category) {}
@@ -511,7 +511,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
 }
 
 int TechTreeWnd::LayoutPanel::TechPanel::FontSize() const
-{ return ClientUI::Pts(); }
+{ return ClientUI::Pts() * 3 / 2; }
 
 bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(const GG::Pt& pt) const {
     const GG::Pt p = m_layout_panel->Convert(pt) - UpperLeft();
@@ -549,6 +549,8 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
 
     m_icon->Render();
 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     if (FontSize() * m_layout_panel->Scale() > 8)  // in my tests, smaller fonts appear garbled / pixilated due to rescaling for zooming
         m_tech_name_text->Render();
 
