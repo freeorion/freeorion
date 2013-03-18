@@ -5,6 +5,7 @@
 #include "CUIDrawUtil.h"
 #include "CUIWnd.h"
 #include "Sound.h"
+#include "InfoPanels.h"
 #include "EncyclopediaDetailPanel.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/AppInterface.h"
@@ -483,25 +484,6 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE),
                                    ClientUI::TechIcon(m_tech_name),
                                    GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    if (tech) {
-        if (const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())) {
-            m_status = empire->GetTechStatus(m_tech_name);
-        }
-
-        m_colour = ClientUI::CategoryColor(tech->Category());
-        GG::Clr icon_colour = m_colour;
-
-        if (m_status == TS_UNRESEARCHABLE) {
-            icon_colour = GG::CLR_GRAY;
-            m_colour.a = 64;
-        } else if (m_status == TS_RESEARCHABLE) {
-            m_colour.a = 144;
-        } else {
-            m_colour.a = 255;
-        }
-
-        m_icon->SetColor(icon_colour);
-    }
 
     // tech name text
     const int PAD = 8;
@@ -510,8 +492,12 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     GG::X text_width(TECH_PANEL_WIDTH - text_left);
     GG::Y text_height(TECH_PANEL_HEIGHT - PAD);
     m_tech_name_text = new ShadowedTextControl(text_left, text_top, text_width, text_height,
-                                           UserString(m_tech_name), font, ClientUI::TextColor(),
-                                           GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
+                                               "", font, ClientUI::TextColor(),
+                                               GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
+
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+
+    Update();
 }
 
 int TechTreeWnd::LayoutPanel::TechPanel::FontSize() const
@@ -578,7 +564,6 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
 void TechTreeWnd::LayoutPanel::TechPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (m_layout_panel->m_selected_tech_name != m_tech_name)
         TechClickedSignal(m_tech_name, mod_keys);
-    //std::cout << "TechPanel::LClick tech name text: " << m_tech_name_text->Text() << std::endl;
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -597,8 +582,67 @@ void TechTreeWnd::LayoutPanel::TechPanel::MouseLeave() {
 void TechTreeWnd::LayoutPanel::TechPanel::Select(bool select)
 { m_selected = select; }
 
-void TechTreeWnd::LayoutPanel::TechPanel::Update()
-{ Select(m_layout_panel->m_selected_tech_name == m_tech_name); }
+namespace {
+    boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& tech_name,
+                                                               int empire_id)
+    {
+        const Empire* empire = Empires().Lookup(empire_id);
+        const Tech* tech = GetTech(tech_name);
+
+        std::string cost_turns_text, main_text;
+        if (tech) {
+            int turns = tech->ResearchTime(empire_id);
+            double cost = tech->ResearchCost(empire_id);
+            const std::string& cost_units = UserString("ENC_RP");
+
+            cost_turns_text = boost::io::str(FlexibleFormat(UserString("ENC_COST_AND_TURNS_STR"))
+                % DoubleToString(cost, 3, false)
+                % cost_units
+                % turns);
+        }
+
+        if (empire) {
+            bool tech_status = empire->GetTechStatus(tech_name);
+        }
+
+        main_text += cost_turns_text;
+
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+            ClientUI::TechIcon(tech_name), UserString(tech_name), main_text));
+        return browse_wnd;
+    }
+}
+
+void TechTreeWnd::LayoutPanel::TechPanel::Update() {
+    Select(m_layout_panel->m_selected_tech_name == m_tech_name);
+
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+
+    if (const Empire* empire = Empires().Lookup(client_empire_id)) {
+        m_status = empire->GetTechStatus(m_tech_name);
+    }
+
+    GG::Clr icon_colour = GG::CLR_WHITE;
+    if (const Tech* tech = GetTech(m_tech_name)) {
+        m_colour = ClientUI::CategoryColor(tech->Category());
+        icon_colour = m_colour;
+
+        if (m_status == TS_UNRESEARCHABLE) {
+            icon_colour = GG::CLR_GRAY;
+            m_colour.a = 64;
+        } else if (m_status == TS_RESEARCHABLE) {
+            m_colour.a = 144;
+        } else {
+            m_colour.a = 255;
+        }
+    }
+    m_icon->SetColor(icon_colour);
+
+    m_tech_name_text->SetText(UserString(m_tech_name));
+
+    ClearBrowseInfoWnd();
+    SetBrowseInfoWnd(TechPanelRowBrowseWnd(m_tech_name, client_empire_id));
+}
 
 
 //////////////////////////////////////////////////
