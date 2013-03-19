@@ -589,23 +589,56 @@ namespace {
         const Empire* empire = Empires().Lookup(empire_id);
         const Tech* tech = GetTech(tech_name);
 
-        std::string cost_turns_text, main_text;
+        std::string main_text;
+
         if (tech) {
             int turns = tech->ResearchTime(empire_id);
             double cost = tech->ResearchCost(empire_id);
             const std::string& cost_units = UserString("ENC_RP");
 
-            cost_turns_text = boost::io::str(FlexibleFormat(UserString("ENC_COST_AND_TURNS_STR"))
+            main_text += boost::io::str(FlexibleFormat(UserString("ENC_COST_AND_TURNS_STR"))
                 % DoubleToString(cost, 3, false)
                 % cost_units
-                % turns);
+                % turns)
+                + "\n";
+
+            // TODO: Receiving: 25/82 RP/turn
+            // TODO: Time to Completion: 92 turns
+
+            main_text += UserString(tech->Category()) + " ";
+            main_text += UserString(boost::lexical_cast<std::string>(tech->Type())) + "  :  ";
+            main_text += UserString(tech->ShortDescription()) + "\n";
         }
 
         if (empire) {
-            bool tech_status = empire->GetTechStatus(tech_name);
-        }
+            TechStatus tech_status = empire->GetTechStatus(tech_name);
+            if (tech_status == TS_UNRESEARCHABLE) {
+                main_text += UserString("TECH_WND_STATUS_UNRESEARCHABLE") + "\n";
+                if (tech) {
+                    const std::set<std::string>& prereqs = tech->Prerequisites();
+                    std::vector<std::string> unresearched_prereqs;
+                    for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
+                        TechStatus prereq_status = empire->GetTechStatus(*it);
+                        if (prereq_status != TS_COMPLETE)
+                            unresearched_prereqs.push_back(*it);
+                    }
+                    if (!unresearched_prereqs.empty()) {
+                        main_text += UserString("TECH_WND_UNRESEARCHED_PREREQUISITES");
+                        for (std::vector<std::string>::const_iterator it = unresearched_prereqs.begin();
+                             it != unresearched_prereqs.end(); ++it)
+                        { main_text += UserString(*it) + "  "; }
+                        main_text += "\n";
+                    }
+                }
+            } else if (tech_status == TS_RESEARCHABLE) {
+                main_text += UserString("TECH_WND_STATUS_RESEARCHABLE") + "\n";
+            } else if (tech_status == TS_COMPLETE) {
+                main_text += UserString("TECH_WND_STATUS_COMPLETED") + "\n";
+            }
 
-        main_text += cost_turns_text;
+            // TODO: On Queue At Position:
+            // TODO: Researching at 235 RP/turn
+        }
 
         boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
             ClientUI::TechIcon(tech_name), UserString(tech_name), main_text));
@@ -1202,8 +1235,6 @@ public:
     void    ShowAllCategories();
     void    HideCategory(const std::string& category);
     void    HideAllCategories();
-    void    ShowType(TechType type);
-    void    HideType(TechType type);
     void    ShowStatus(TechStatus status);
     void    HideStatus(TechStatus status);
 
@@ -1230,10 +1261,9 @@ private:
     void    PropagateDoubleClickSignal(GG::ListBox::iterator it);
     void    PropagateLeftClickSignal(GG::ListBox::iterator it, const GG::Pt& pt);
 
-    std::set<std::string> m_categories_shown;
-    std::set<TechType>    m_tech_types_shown;
-    std::set<TechStatus>  m_tech_statuses_shown;
-    std::vector<TechRow*> m_all_tech_rows;
+    std::set<std::string>                   m_categories_shown;
+    std::set<TechStatus>                    m_tech_statuses_shown;
+    std::multimap<std::string, TechRow*>    m_all_tech_rows;
 };
 
 void TechTreeWnd::TechListBox::TechRow::Render() {
@@ -1320,10 +1350,7 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
 }
 
 TechTreeWnd::TechListBox::TechListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-    CUIListBox(x, y, w, h),
-    m_categories_shown(),
-    m_tech_types_shown(),
-    m_tech_statuses_shown()
+    CUIListBox(x, y, w, h)
 {
     GG::Connect(DoubleClickedSignal,    &TechListBox::PropagateDoubleClickSignal,   this);
     GG::Connect(LeftClickedSignal,      &TechListBox::PropagateLeftClickSignal,     this);
@@ -1341,12 +1368,6 @@ TechTreeWnd::TechListBox::TechListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_tech_statuses_shown.insert(TS_UNRESEARCHABLE);
     m_tech_statuses_shown.insert(TS_RESEARCHABLE);
     m_tech_statuses_shown.insert(TS_COMPLETE);
-
-    // show all types
-    m_tech_types_shown.clear();
-    m_tech_types_shown.insert(TT_THEORY);
-    m_tech_types_shown.insert(TT_APPLICATION);
-    m_tech_types_shown.insert(TT_REFINEMENT);
 
     std::vector<GG::X> col_widths = TechRow::ColWidths(w - ClientUI::ScrollWidth() - 6);
     SetNumCols(col_widths.size());
@@ -1383,9 +1404,10 @@ void TechTreeWnd::TechListBox::Populate() {
     if (m_all_tech_rows.empty()) {
         for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
             const Tech* tech = *it;
-            const std::string& tech_name = tech->Name();
+            const std::string& tech_name = UserString(tech->Name());
             creation_timer.restart();
-            m_all_tech_rows.push_back(new TechRow(Width() - ClientUI::ScrollWidth() - 6, tech_name));
+            m_all_tech_rows.insert(std::make_pair(tech_name,
+                new TechRow(Width() - ClientUI::ScrollWidth() - 6, tech->Name())));
             creation_elapsed += creation_timer.elapsed();
         }
     }
@@ -1397,13 +1419,13 @@ void TechTreeWnd::TechListBox::Populate() {
     }
     Clear();
 
-    for (std::vector<TechRow*>::iterator it = m_all_tech_rows.begin();
+    for (std::multimap<std::string, TechRow*>::iterator it = m_all_tech_rows.begin();
          it != m_all_tech_rows.end(); ++it)
     {
-        TechRow* tech_row = *it;
+        TechRow* tech_row = it->second;
         if (TechVisible(tech_row->GetTech())) {
             insertion_timer.restart();
-            Insert(*it);
+            Insert(tech_row);
             insertion_elapsed += insertion_timer.elapsed();
         }
     }
@@ -1444,21 +1466,6 @@ void TechTreeWnd::TechListBox::HideAllCategories() {
     Populate();
 }
 
-void TechTreeWnd::TechListBox::ShowType(TechType type) {
-    if (m_tech_types_shown.find(type) == m_tech_types_shown.end()) {
-        m_tech_types_shown.insert(type);
-        Populate();
-    }
-}
-
-void TechTreeWnd::TechListBox::HideType(TechType type) {
-    std::set<TechType>::iterator it = m_tech_types_shown.find(type);
-    if (it != m_tech_types_shown.end()) {
-        m_tech_types_shown.erase(it);
-        Populate();
-    }
-}
-
 void TechTreeWnd::TechListBox::ShowStatus(TechStatus status) {
     if (m_tech_statuses_shown.find(status) == m_tech_statuses_shown.end()) {
         m_tech_statuses_shown.insert(status);
@@ -1482,10 +1489,7 @@ bool TechTreeWnd::TechListBox::TechVisible(const std::string& tech_name) {
     if (!tech)
         return false;
 
-    // check that tech's type, category and status are all visible
-    if (m_tech_types_shown.find(tech->Type()) == m_tech_types_shown.end())
-        return false;
-
+    // check that category and status are visible
     if (m_categories_shown.find(tech->Category()) == m_categories_shown.end())
         return false;
 
