@@ -122,17 +122,17 @@ public:
     bool operator<(const Node& y) const;
 
 private:
-    Node(Node *parent, Node *child, std::vector<Node*> & nodes);
+    Node(Node* parent, Node* child, std::vector<Node*>& nodes);
 
     bool    Wobble(Column & column);
     bool    IsPlaceHolder() const;
     void    AddChild(Node* node);
     void    SetDepthRecursive(int depth);
     double  CalculateFamilyDistance(int row);
-    void    CreatePlaceHolder( std::vector<Node*> & nodes);
+    void    CreatePlaceHolder(std::vector<Node*>& nodes);
     void    DoLayout(std::vector<Column> & row_index, bool cat);
     void    CalculateCoordinate(double column_width, double row_height);
-    void    CreateEdges( double x_margin, double column_width, double row_height );
+    void    CreateEdges(double x_margin, double column_width, double row_height);
 
     int                 m_depth;        // depth 1 available at beginning 2 one requisite etc
     int                 m_row;          // layout row, every node is organized in a straight tabelle system
@@ -145,7 +145,7 @@ private:
     int                 m_children_rows;// height in cells for layouting
     std::vector<Node*>  m_parents;      // parents
     std::vector<Node*>  m_children;     // children
-    Node*               m_child ;       // primary child for layout
+    Node*               m_primary_child;// primary child for layout
     std::vector<Edge*>  m_out_edges;    // outgoing edges
     const int           m_weight;       // height in rows
 

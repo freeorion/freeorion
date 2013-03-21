@@ -205,11 +205,13 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
         max_node_depth = std::max(max_node_depth, (*it)->GetDepth());
 
     //2. create placeholder nodes
-    for (std::vector<Node*>::iterator it = m_nodes.begin(); it != m_nodes.end(); ++it)
+    Logger().debugStream() << "TechTreeLayout::DoLayout creaing place holder nodes...";
+    std::vector<Node*> raw_nodes = m_nodes; // just iterator over initial nodes, not also over the placeholders
+    for (std::vector<Node*>::iterator it = raw_nodes.begin(); it != raw_nodes.end(); ++it)
         (*it)->CreatePlaceHolder(m_nodes);
 
-    //3. put notes into containers for each depth column
-    std::vector<std::vector<Node*> > nodes_at_each_depth(max_node_depth+1);
+    //3. put nodes into containers for each depth column
+    std::vector<std::vector<Node*> > nodes_at_each_depth(max_node_depth + 1);
     for (std::vector<Node*>::iterator it = m_nodes.begin(); it != m_nodes.end(); ++it) {
         Node* node = *it;
         assert(node->GetDepth() >= 0 && node->GetDepth() < nodes_at_each_depth.size());
@@ -312,20 +314,20 @@ const TechTreeLayout::Node* TechTreeLayout::GetNode(const std::string & name) co
 
 void TechTreeLayout::AddNode(const std::string& tech, GG::X width, GG::Y height) {
     assert(width > 0 && height > 0 && GetTech(tech));
-    TechTreeLayout::Node *node = new TechTreeLayout::Node(tech, width, height);
+    TechTreeLayout::Node* node = new TechTreeLayout::Node(tech, width, height);
+    //Logger().debugStream() << "Adding Node: " << node << " for tech " << tech;
     m_nodes.push_back(node);
     m_node_map[tech] = node;
 }
 
-void TechTreeLayout::AddEdge(const std::string & parent, const std::string & child) {
-    std::map< std::string, TechTreeLayout::Node*>::iterator p = m_node_map.find(parent);
-    std::map< std::string, TechTreeLayout::Node*>::iterator c = m_node_map.find(child);
+void TechTreeLayout::AddEdge(const std::string& parent, const std::string& child) {
+    std::map<std::string, TechTreeLayout::Node*>::iterator p = m_node_map.find(parent);
+    std::map<std::string, TechTreeLayout::Node*>::iterator c = m_node_map.find(child);
     assert(p != m_node_map.end() && c != m_node_map.end());
-
-    (*p).second->AddChild((*c).second);
+    p->second->AddChild(c->second);
 }
 
-const std::vector<TechTreeLayout::Edge*> & TechTreeLayout::GetOutEdges( const std::string & name) const {
+const std::vector<TechTreeLayout::Edge*>& TechTreeLayout::GetOutEdges(const std::string& name) const {
     std::map< std::string, TechTreeLayout::Node*>::const_iterator item = m_node_map.find(name);
     if (item == m_node_map.end()) {
         Logger().debugStream() << "TechTreeLayout::getNode: missing node " << name << "\n";
@@ -337,7 +339,7 @@ const std::vector<TechTreeLayout::Edge*> & TechTreeLayout::GetOutEdges( const st
 }
 
 void TechTreeLayout::Debug() const {
-    for(std::vector<TechTreeLayout::Node*>::const_iterator n = m_nodes.begin(); n != m_nodes.end(); n++)
+    for (std::vector<TechTreeLayout::Node*>::const_iterator n = m_nodes.begin(); n != m_nodes.end(); n++)
         (*n)->Debug();
 }
 
@@ -368,18 +370,18 @@ TechTreeLayout::Node::Node(const std::string& tech, GG::X width, GG::Y height) :
     m_children_rows(0),
     m_parents(),
     m_children(),
-    m_child(0),
+    m_primary_child(0),
     m_out_edges()
 { assert(width > 0 && height > 0 && ::GetTech(tech)); }
 
 /**
- * creates dummie nodes between parent and child
+ * recursively creates dummy nodes between parent and child
  */
-TechTreeLayout::Node::Node(Node *parent, Node *child, std::vector<Node*> & nodes) :
+TechTreeLayout::Node::Node(Node* parent, Node* child, std::vector<Node*>& nodes) :
     m_weight(LINE_CELL_HEIGHT),
-    m_depth(parent->m_depth + 1),
+    m_depth(-1),
     m_row(-1),
-    m_tech(child->m_tech),
+    m_tech(),
     m_x(0),
     m_y(0),
     m_width(0),
@@ -388,20 +390,62 @@ TechTreeLayout::Node::Node(Node *parent, Node *child, std::vector<Node*> & nodes
     m_children_rows(0),
     m_parents(),
     m_children(),
-    m_child(0),
+    m_primary_child(0),
     m_out_edges()
 {
     assert(parent != 0 && child != 0);
-    if (m_depth + 1 == child->m_depth) {
-        m_children.push_back(child);
-        m_child = child;
-    } else {
-        Node *placeholder = new Node(this, child, nodes);
-        m_children.push_back(placeholder);
-        m_child = placeholder;
+    // ensure passed in nodes are valid
+    if (!parent)
+        Logger().errorStream() << "Node::Node passed null parent";
+    if (!child)
+        Logger().errorStream() << "Node::Node passed null child";
+    if (!parent || !child)
+        return;
+
+    //Logger().debugStream() << "Node::Node given parent " << parent
+    //                       << " and child: " << child;
+
+    //Logger().debugStream() << "Node::Node given parent with depth " << parent->m_depth
+    //                       << "  and child with depth: " << child->m_depth;
+
+    // ensure there is space to insert node between parent and child nodes
+    if (child->m_depth <= parent->m_depth + 1) {
+        Logger().errorStream() << "no space to insert a dummy node!";
+        m_depth = child->m_depth;
+        return;
     }
-    m_parents.push_back(parent);
+
+    //Logger().debugStream() << "Node::Node adding dummy node: " << this
+    //                       << "  between parent node tech: " << parent->m_tech
+    //                       << "  and child node tech: " << child->m_tech;
+
+    // add node to main node bookkeeping
     nodes.push_back(this);
+
+    // copy parent/child connectivity
+    m_depth = parent->m_depth + 1;
+    m_tech = child->m_tech;
+    m_parents.push_back(parent);
+    m_children.push_back(child);
+    m_primary_child = child;
+
+    // update child's parents to point to this node instead of input parent
+    std::vector<Node*>& child_parents = child->m_parents;
+    for (unsigned int i = 0; i < child_parents.size(); ++i) {
+        Node*& child_parent_ref = child_parents[i];
+        if (child_parent_ref == parent)
+            child_parent_ref = this;
+    }
+
+    // update parent's child node pointers to instead point to this node
+    std::vector<Node*>& parent_children = parent->m_children;
+    for (unsigned int i = 0; i < parent_children.size(); ++i) {
+        Node*& parent_child_ref = parent_children[i];
+        if (parent_child_ref == child)
+            parent_child_ref = this;
+    }
+    if (parent->m_primary_child == child)
+        parent->m_primary_child = this;
 }
 
 TechTreeLayout::Node::~Node() {
@@ -439,7 +483,7 @@ void TechTreeLayout::Node::CalculateCoordinate(double column_width, double row_h
 }
 
 bool TechTreeLayout::Node::IsFinalNode() const
-{  return m_children.empty(); }
+{ return m_children.empty(); }
 
 bool TechTreeLayout::Node::IsStartNode() const
 { return m_parents.empty(); }
@@ -463,7 +507,7 @@ double TechTreeLayout::Node::CalculateFamilyDistance(int row) {
     return distance / familysize;
 }
 
-bool TechTreeLayout::Node::Wobble(Column & column) {
+bool TechTreeLayout::Node::Wobble(Column& column) {
     double dist, new_dist, s_dist, new_s_dist;
     dist = CalculateFamilyDistance(m_row);
 
@@ -517,17 +561,18 @@ bool TechTreeLayout::Node::operator<(const TechTreeLayout::Node& y) const {
 }
 
 void TechTreeLayout::Node::AddChild(Node* node) {
+    //Logger().debugStream() << "Node::AddChild this node: " << this << " for tech: " << m_tech << "  with child node: " << node << "  for tech: " << node->GetTech();
     assert(node);
     m_children.push_back(node);
     node->m_parents.push_back(this);
-    //Note: m_child is used as sorting criteria
+    //Note: m_primary_child is used as sorting criteria
     // nodes with the same child get drawn "together"
     // so we need to choose wisely which node is our heir
     // 1. we prefere childs with the same category
     // 2. we order lexically
-    if (!m_child) {
+    if (!m_primary_child) {
         //no choice
-        m_child = node;
+        m_primary_child = node;
         return;
     }
 
@@ -538,7 +583,7 @@ void TechTreeLayout::Node::AddChild(Node* node) {
     //we decide which node is the better child for layout decisions
     const Tech* this_node_tech = ::GetTech(m_tech);
     assert(this_node_tech);
-    const Tech* child_node_tech = ::GetTech(m_child->m_tech);
+    const Tech* child_node_tech = ::GetTech(m_primary_child->m_tech);
     assert(child_node_tech);
     const Tech* input_node_tech = ::GetTech(node->m_tech);
     assert(input_node_tech);
@@ -548,18 +593,18 @@ void TechTreeLayout::Node::AddChild(Node* node) {
         +  ((input_node_tech->Category() == this_node_tech->Category()) ? 0 : 2);
     switch (n) {
     case 0: //both categories fit
-        if (node->m_tech < m_child->m_tech)
-            m_child = node;
+        if (node->m_tech < m_primary_child->m_tech)
+            m_primary_child = node;
         break;
-    case 1:  //only m_child category fits
-        //keep m_child 
+    case 1:  //only m_primary_child category fits
+        //keep m_primary_child 
         break;
     case 2: //only node category fits
-        m_child = node;
+        m_primary_child = node;
         break;
     case 3: //both categories are wrong
         if (input_node_tech->Category() < child_node_tech->Category())
-            m_child = node;
+            m_primary_child = node;
         //else keep child
         break;
     }
@@ -572,23 +617,59 @@ void TechTreeLayout::Node::SetDepthRecursive(int depth) {
         (*it)->SetDepthRecursive(m_depth + 1);
 }
 
-void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*> & nodes) {
-    for (int i = m_children.size(); i --> 0; ) {
-        if (m_depth + 1 <  m_children[i]->m_depth) {
+void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*>& nodes) {
+    //Logger().debugStream() << "Creating PlaceHolder for node " << this;
+    //Logger().debugStream().flush();
+    //Logger().debugStream() << "  for tech: " << m_tech;
+    //Logger().debugStream().flush();
+    //Logger().debugStream() << "  which has " << m_children.size() << " children:";
+    //Logger().debugStream().flush();
+    //for (unsigned int i = 0; i < m_children.size(); ++i) {
+    //    Node*& child = m_children[i];
+    //    Logger().debugStream() << "      child: " << child << " with tech: " << child->GetTech();
+    //}
+
+
+    for (unsigned int i = 0; i < m_children.size(); ++i) {
+        Node*& child = m_children[i];
+        //Logger().debugStream() << "   processing child: " << child << " with tech: " << child->GetTech();
+
+
+        Node* current_parent_node = this;
+
+        // record extra height of placeholder or node in child row
+        if (current_parent_node->m_depth + 1 < child->m_depth) {
             m_children_rows += LINE_CELL_HEIGHT;
-            //create a dummy
-            Node* n = new Node(this,  m_children[i], nodes);
-            //replace parent with dummy
-            std::replace( m_children[i]->m_parents.begin(),  m_children[i]->m_parents.end(), this, n);
-             m_children[i] = n;
         } else {
             m_children_rows += NODE_CELL_HEIGHT;
         }
+
+
+        while (current_parent_node->m_depth + 1 < child->m_depth) {
+            // there is at least one column gap beween the horizontal positions
+            // of this node and this child node.
+            //
+            // to fill the gap visually, create dummy node(s) in the columns
+            // between them.
+            //Logger().debugStream() << "next column depth: " << current_parent_node->m_depth + 1
+            //                       << "  child_depth: " << child->m_depth;
+            //Logger().debugStream() << "current_parent_node: " << current_parent_node
+            //                       << " child: " << child;
+            Node* dummy_node = new Node(current_parent_node, child, nodes);
+            current_parent_node = dummy_node;
+        }
+
+        //Logger().debugStream() << " node now has " << m_children.size() << " children:";
+        //Logger().debugStream().flush();
+        //for (unsigned int i = 0; i < m_children.size(); ++i) {
+        //    Node*& child = m_children[i];
+        //    Logger().debugStream() << "      child: " << child << " with tech: " << child->GetTech();
+        //}
     }
     m_children_rows = std::max(m_children_rows, NODE_CELL_HEIGHT);
 }
 
-void TechTreeLayout::Node::DoLayout( std::vector<Column> & row_index, bool cat) {
+void TechTreeLayout::Node::DoLayout(std::vector<Column>& row_index, bool cat) {
     //assert(row_height > 0 && column_width > 0 && row_index != 0);
     if (m_row != -1) return; //already done
 
@@ -629,7 +710,7 @@ void TechTreeLayout::Node::CreateEdges(double x_margin, double column_width, dou
         Node* next = m_children[i];
         while (next->m_place_holder) { 
             next->CalculateCoordinate(column_width, row_height);
-            next = next->m_child; 
+            next = next->m_primary_child; 
         }
         const std::string& to = next->m_tech;
         //create drawing path
@@ -643,7 +724,7 @@ void TechTreeLayout::Node::CreateEdges(double x_margin, double column_width, dou
             //horizontal line bypassing the placeholder
             edge->AddPoint(next->m_x - 2 * x_margin, next->m_y);
             edge->AddPoint(next->m_x + m_width + x_margin, next->m_y);
-            next = next->m_child;
+            next = next->m_primary_child;
         }
         //to, line end
         edge->AddPoint(next->m_x - 2 * x_margin, next->m_y + next->m_height / 2); //double space for arrow
