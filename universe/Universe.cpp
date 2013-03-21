@@ -1240,14 +1240,16 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         {
             // find alternate object owned by this empire to act as source
             // first try to get a planet
-            std::vector<int> empire_planets = m_objects.FindObjectIDs(OwnedVisitor<Planet>(empire->EmpireID()));
+            std::vector<UniverseObject*> empire_planets = m_objects.FindObjects(OwnedVisitor<Planet>(empire->EmpireID()));
             if (!empire_planets.empty()) {
-                source_id = *empire_planets.begin();
+                source = *empire_planets.begin();
+                source_id = source->ID();
             } else {
                 // if no planet, use any owned object
-                std::vector<int> empire_objects = m_objects.FindObjectIDs(OwnedVisitor<UniverseObject>(empire->EmpireID()));
+                std::vector<UniverseObject*> empire_objects = m_objects.FindObjects(OwnedVisitor<UniverseObject>(empire->EmpireID()));
                 if (!empire_objects.empty()) {
-                    source_id = *empire_objects.begin();
+                    source = *empire_objects.begin();
+                    source_id = source->ID();
                 } else {
                     continue;   // can't do techs for this empire
                 }
@@ -1256,7 +1258,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         for (Empire::TechItr tech_it = empire->TechBegin(); tech_it != empire->TechEnd(); ++tech_it) {
             const Tech* tech = GetTech(*tech_it);
             if (!tech) continue;
-
+            if (!source) {
+                Logger().errorStream() << "somehow to to storing targets and causes of tech effectsgroup without a source...?";
+                break;
+            }
             StoreTargetsAndCausesOfEffectsGroups(tech->Effects(), source, ECT_TECH, tech->Name(),
                                                  all_potential_targets, targets_causes,
                                                  cached_source_condition_matches[source_id],
