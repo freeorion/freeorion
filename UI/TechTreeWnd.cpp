@@ -664,6 +664,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             icon_colour = GG::CLR_GRAY;
             m_colour.a = 64;
         } else if (m_status == TS_RESEARCHABLE) {
+            icon_colour = GG::CLR_GRAY;
             m_colour.a = 144;
         } else {
             m_colour.a = 255;
