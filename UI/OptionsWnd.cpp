@@ -542,7 +542,7 @@ void OptionsWnd::ColorOption(const std::string& option_name, const std::string& 
 
 void OptionsWnd::FontOption(const std::string& option_name, const std::string& text) {
     FileOption(option_name, text, GetRootDataDir() / "default",
-               std::make_pair<std::string, std::string>(option_name, "*" + FONT_FILE_SUFFIX),
+               std::make_pair<std::string, std::string>(std::string(option_name), "*" + FONT_FILE_SUFFIX),
                &ValidFontFile);
 }
 

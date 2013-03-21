@@ -1363,9 +1363,9 @@ TechTreeWnd::TechListBox::TechListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     for (std::vector<std::string>::const_iterator it = categories.begin(); it != categories.end(); ++it)
         m_categories_shown.insert(*it);
 
-    // show all statuses
+    // show all statuses except unreasearchable
     m_tech_statuses_shown.clear();
-    m_tech_statuses_shown.insert(TS_UNRESEARCHABLE);
+    //m_tech_statuses_shown.insert(TS_UNRESEARCHABLE);
     m_tech_statuses_shown.insert(TS_RESEARCHABLE);
     m_tech_statuses_shown.insert(TS_COMPLETE);
 
@@ -1709,6 +1709,7 @@ void TechTreeWnd::ShowTreeView() {
 }
 
 void TechTreeWnd::ShowListView() {
+    m_tech_list->Reset();
     AttachChild(m_tech_list);
     MoveChildDown(m_tech_list);
     DetachChild(m_layout_panel);

@@ -3024,7 +3024,7 @@ void MapWnd::DoFleetButtonsLayout() {
 
 std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(const Fleet* fleet) const {
     if (!fleet) {
-        return std::make_pair<double, double>(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+        return std::make_pair<double, double>(double(UniverseObject::INVALID_POSITION), double(UniverseObject::INVALID_POSITION));
     }
 
     // get endpoints of lane on screen, store in UnorderedIntPair which can be looked up in MapWnd's map of starlane endpoints
