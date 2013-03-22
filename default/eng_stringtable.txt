@@ -2376,10 +2376,16 @@ TECH_WND_STATUS_COMPLETED
 Complete
 
 TECH_WND_STATUS_RESEARCHABLE
-Researchable
+Available
 
-TECH_WND_STATUS_UNRESEARCHABLE
+TECH_WND_STATUS_LOCKED
 Locked
+
+TECH_WND_UNRESEARCHABLE
+Not Researchable
+
+TECH_WND_ENQUEUED
+Enqueued
 
 TECH_WND_UNRESEARCHED_PREREQUISITES
 Unresearched Prerequisites: 
@@ -2395,6 +2401,11 @@ Requires
 
 TECH_WND_UNLOCKS
 Unlocks
+
+TECH_WND_PROGRESS
+'''%1% / %2% RP
++ %3% / %4% RP/turn
+%5% turns left'''
 
 
 #######################
