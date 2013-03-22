@@ -781,8 +781,8 @@ void GUI::HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point
         s_impl->m_browse_info_wnd.reset();
         s_impl->m_browse_target = 0;
         s_impl->m_prev_wnd_under_cursor_time = curr_ticks;
-        // don't send out 0-movement wheel messages, or send wheel messages when a button is depressed
-        if (s_impl->m_curr_wnd_under_cursor && rel.y && !(s_impl->m_button_state[0] || s_impl->m_button_state[1] || s_impl->m_button_state[2]))
+        // don't send out 0-movement wheel messages
+        if (s_impl->m_curr_wnd_under_cursor && rel.y)
             s_impl->m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::MouseWheel, pos, Value(rel.y), mod_keys));
         s_impl->m_prev_wnd_under_cursor = s_impl->m_curr_wnd_under_cursor; // update this for the next time around
         break; }
