@@ -11,58 +11,12 @@
 
 include(CheckCXXSourceCompiles)
 
-set(BUILD_PLATFORM "unknown")
+if(BUILD_MULTI_THREADED)
+  find_package(Threads)
 
-# Multi-threading support
-if(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
-  set(MULTI_THREADED_COMPILE_FLAGS "-pthreads")
-  set(MULTI_THREADED_LINK_LIBS rt)
-  set(BUILD_PLATFORM "sunos")
-elseif(CMAKE_SYSTEM_NAME STREQUAL "BeOS")
-  # No threading options necessary for BeOS
-  set(BUILD_PLATFORM "beos")
-elseif(CMAKE_SYSTEM_NAME MATCHES ".*BSD")
-  set(MULTI_THREADED_COMPILE_FLAGS "-pthread")
-  set(MULTI_THREADED_LINK_LIBS pthread)
-  set(BUILD_PLATFORM "bsd")
-elseif(CMAKE_SYSTEM_NAME STREQUAL "DragonFly")
-  # DragonFly is a FreeBSD bariant
-  set(MULTI_THREADED_COMPILE_FLAGS "-pthread")
-  set(BUILD_PLATFORM "dragonfly")
-elseif(CMAKE_SYSTEM_NAME STREQUAL "IRIX")
-  # TODO: GCC on Irix doesn't support multi-threading?
-  set(BUILD_PLATFORM "irix")
-elseif(CMAKE_SYSTEM_NAME STREQUAL "HP-UX")
-  # TODO: gcc on HP-UX does not support multi-threading?
-  set(BUILD_PLATFORM "hpux")
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  # No threading options necessary for Mac OS X
-  set(BUILD_PLATFORM "macos")
-elseif(UNIX)
-  # Assume -pthread and -lrt on all other variants
-  set(MULTI_THREADED_COMPILE_FLAGS "-pthread -D_REENTRANT")
-  set(MULTI_THREADED_LINK_FLAGS "")  
-  set(MULTI_THREADED_LINK_LIBS pthread rt)
-
-  if (MINGW)
-    set(BUILD_PLATFORM "mingw")
-  elseif(CYGWIN)
-    set(BUILD_PLATFORM "cygwin")
-  elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(BUILD_PLATFORM "linux")
-  else()
-    set(BUILD_PLATFORM "unix")
-  endif()
-elseif(WIN32)
-  set(BUILD_PLATFORM "windows")
-else()
-  set(BUILD_PLATFORM "unknown")
+  set(MULTI_THREADED_LINK_FLAGS "")
+  set(MULTI_THREADED_LINK_LIBS "${CMAKE_THREAD_LIBS_INIT}")
 endif()
-
-# create cache entry
-set(BUILD_PLATFORM ${BUILD_PLATFORM} CACHE STRING "Platform name")
-
-message(STATUS "Build platform: ${BUILD_PLATFORM}")
 
 # Setup DEBUG_COMPILE_FLAGS, RELEASE_COMPILE_FLAGS, DEBUG_LINK_FLAGS and
 # and RELEASE_LINK_FLAGS based on the CMake equivalents
