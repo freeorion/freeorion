@@ -1,5 +1,6 @@
 #include "TechTreeLayout.h"
 #include "../util/AppInterface.h"
+//#include "../util/MultiplayerCommon.h" // needed for debug UserString calls...
 #include <algorithm>
 
 namespace  {
@@ -631,7 +632,7 @@ void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*>& nodes) {
 
 
     for (unsigned int i = 0; i < m_children.size(); ++i) {
-        Node*& child = m_children[i];
+        Node* child = m_children[i];
         //Logger().debugStream() << "   processing child: " << child << " with tech: " << child->GetTech();
 
 
@@ -645,6 +646,8 @@ void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*>& nodes) {
         }
 
 
+        //Logger().debugStream() << "Dummy nodes from " << UserString(this->m_tech) << " to child: " << UserString(child->GetTech());
+        //int dummy_nodes_added = 0;
         while (current_parent_node->m_depth + 1 < child->m_depth) {
             // there is at least one column gap beween the horizontal positions
             // of this node and this child node.
@@ -656,8 +659,14 @@ void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*>& nodes) {
             //Logger().debugStream() << "current_parent_node: " << current_parent_node
             //                       << " child: " << child;
             Node* dummy_node = new Node(current_parent_node, child, nodes);
+            //Logger().debugStream() << "new dummy node depth: " << dummy_node->m_depth;
             current_parent_node = dummy_node;
+            //++dummy_nodes_added;
         }
+        //Logger().debugStream() << "done adding dummy nodes.  current_parent node depth + 1: " << current_parent_node->m_depth + 1 << "  child depth: " << child->m_depth;
+        //if (dummy_nodes_added > 0) {
+        //    Logger().debugStream() << "added " << dummy_nodes_added << " dummy nodes for from tech " << UserString(m_tech);
+        //}
 
         //Logger().debugStream() << " node now has " << m_children.size() << " children:";
         //Logger().debugStream().flush();
