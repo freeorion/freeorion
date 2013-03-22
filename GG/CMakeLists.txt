@@ -320,34 +320,34 @@ endif ()
 ########################################
 # Documentation                        #
 ########################################
-find_package(Doxygen)
+if (BUILD_DOCUMENTATION)
+    find_package(Doxygen REQUIRED)
+endif ()
+
 if (DOXYGEN_FOUND)
-    if (NOT EXISTS ${CMAKE_BINARY_DIR}/doc/GG)
-        message("-- Generating Doxygen documentation")
-        execute_process(
-            COMMAND ${DOXYGEN_EXECUTABLE}
-            WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}/doc
-        )
-        if (NOT ${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_HOME_DIRECTORY})
-            execute_process(
-                COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_HOME_DIRECTORY}/doc/GG
-                ${CMAKE_BINARY_DIR}/doc/GG
-            )
-            execute_process(
-                COMMAND ${CMAKE_COMMAND} -E remove_directory
-                ${CMAKE_HOME_DIRECTORY}/doc/GG
-            )
-        endif ()
-    endif ()
-    if (BUILD_DOCUMENTATION AND NOT NO_DOCS_PACKAGE)
+    set(GG_DOC_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/doc")
+    set(GG_DOC_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/doc")
+    set(GG_DOC_STAMP_DIR "${GG_DOC_OUTPUT_DIR}/GG")
+    configure_file(
+        ${GG_DOC_SOURCE_DIR}/Doxyfile.in
+        ${GG_DOC_OUTPUT_DIR}/Doxyfile
+        @ONLY
+        IMMEDIATE
+    )
+    add_custom_command (
+        OUTPUT ${GG_DOC_STAMP_DIR}/index.html
+        COMMAND ${DOXYGEN_EXECUTABLE} ${GG_DOC_OUTPUT_DIR}/Doxyfile
+        MAIN_DEPENDENCY ${GG_DOC_OUTPUT_DIR}/Doxyfile ${GG_DOC_SOURCE_DIR}/Doxyfile.in
+        DEPENDS ${GG_DOC_SOURCE_DIR}/GGDoc.txt
+        COMMENT "Generating documentation with Doxygen" VERBATIM
+    )
+    add_custom_target (doc ALL DEPENDS ${GG_DOC_STAMP_DIR}/index.html)
+    if (NOT NO_DOCS_PACKAGE)
         install(
-            DIRECTORY ${CMAKE_BINARY_DIR}/doc/GG
+            DIRECTORY ${GG_DOC_STAMP_DIR}
             DESTINATION doc
         )
     endif ()
-elseif (BUILD_DOCUMENTATION)
-    message("   Warning: Doxygen could not be found.  Disabling the documentation build.")
 endif ()
 
 

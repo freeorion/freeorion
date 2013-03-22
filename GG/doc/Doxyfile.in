@@ -38,7 +38,7 @@ PROJECT_NUMBER         =
 # If a relative path is entered, it will be relative to the location 
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = 
+OUTPUT_DIRECTORY       =  @GG_DOC_OUTPUT_DIR@
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 
 # 4096 sub-directories (in 2 levels) under the output directory of each output 
@@ -506,8 +506,8 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = .. \
-                         ./GGDoc.txt
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@ \
+                         @CMAKE_CURRENT_SOURCE_DIR@/doc/GGDoc.txt
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -536,28 +536,28 @@ RECURSIVE              = YES
 # excluded from the INPUT source files. This way you can easily exclude a 
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = ../config.h \
-                         ../tutorial \
-                         ../libltdl \
-                         ../build_config.py \
-                         ../build_support.py \
-                         ../src/GIL \
-                         ../src/adobe \
-                         ../GG/adobe \
-                         ../GG/gen_signals.py \
-                         ../GG/ltdl.h \
-                         ../GG/ltdl_config.h \
-                         ../GG/glext.h \
-                         ../GG/SignalTemplate.h \
-                         ../GG/Signal0.h \
-                         ../GG/Signal1.h \
-                         ../GG/Signal2.h \
-                         ../GG/Signal3.h \
-                         ../GG/Signal4.h \
-                         ../GG/Signal5.h \
-                         ../GG/Signal6.h \
-                         ../GG/Signal7.h \
-                         ../GG/Signal8.h
+EXCLUDE                = @CMAKE_CURRENT_SOURCE_DIR@/config.h \
+                         @CMAKE_CURRENT_SOURCE_DIR@/tutorial \
+                         @CMAKE_CURRENT_SOURCE_DIR@/libltdl \
+                         @CMAKE_CURRENT_SOURCE_DIR@/build_config.py \
+                         @CMAKE_CURRENT_SOURCE_DIR@/build_support.py \
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/GIL \
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/adobe \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/adobe \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/gen_signals.py \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/ltdl.h \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/ltdl_config.h \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/glext.h \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/SignalTemplate.h \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal0.h \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal1.h \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal2.h \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal3.h \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal4.h \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal5.h \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal6.h \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal7.h \
+                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal8.h
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 
