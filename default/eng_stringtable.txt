@@ -6166,7 +6166,9 @@ CON_INFRA_ECOL
 Infrastructure Ecology
 
 CON_INFRA_ECOL_DESC
-The basic infrastructure of an established planetary colony may seem to be created entirely by the colonizers, and to function only according to their designs. In reality, however, the ecology of the planet on which it is built is the foundation and support mechanism for the added infrastructure, and often forms an integral part of its function. Understanding the interaction between natural and artificial components, and the limits of the resources an ecological system can provide are essential to the development of an optimal and sustainable infrastructure for any colony.
+'''Increases Starlane Speed of your ships by 20 when they are within 50 uus of a controlled planet.
+
+The basic infrastructure of an established planetary system may seem to be created entirely by the colonizers, and to function only according to their designs. In reality, however, the ecology of the system in which it is built is the foundation and support mechanism for the added infrastructure, and often forms an integral part of its function. Understanding the interaction between natural and artificial components are essential to the development of an optimal and sustainable infrastructure for any system.'''
 
 CON_ORGANIC_STRC
 Organic Structures
@@ -6180,7 +6182,9 @@ CON_METRO_INFRA
 Metroplex Infrastructure
 
 CON_METRO_INFRA_DESC
-When the entire surface of a world is covered, continued development must occur above and below pre-existing construction.  Care must be taken to ensure the stability of the undercut or overshadowed structures are not damaged, and transportation and supply routes must be rethought to support vastly increased population densities. Furthermore, novel stylistic and functional issues must be considered, to ensure that the newer levels, and the combined whole, are worth inhabiting.
+'''Increases [[encyclopedia INFRASTRUCTURE_TITLE]] by 10. Cannot improve a planet with the [[special TUNNELS_SPECIAL]] or [[special TECTONIC_INSTABILITY_SPECIAL]] special.
+
+When the entire surface of a world is covered, continued development must occur above and below pre-existing construction.  Care must be taken to ensure the stability of the undercut or overshadowed structures are not damaged, and transportation and supply routes must be rethought to support vastly increased population densities. Furthermore, novel stylistic and functional issues must be considered, to ensure that the newer levels, and the combined whole, are worth inhabiting.'''
 
 CON_ARCH_MONOFILS
 Architectural Monofilaments
@@ -6509,6 +6513,9 @@ Tames Space Monsters
 EXOBOT_SHORT_DESC
 Builds Exobot Citizens
 
+STARLANE_SPEED_SHORT_DESC
+Increases Starlane Speed
+
 CON_ORBITAL_CON
 Orbital Construction
 
@@ -6711,7 +6718,7 @@ PRO_INDUSTRY_MOD
 Industry Modifier
 
 SPY_LIGHTHOUSE
-Interstellar Lighthouses
+Interstellar Lighthouse
 
 SPY_LIGHTHOUSE_DESC
 By using a complex pattern of EM pulses and particle streams to reveal the location of objects in a system, it is possible for even very stealthy objects to be illuminated and detected with moderate detection equipment.
@@ -7616,7 +7623,7 @@ BLD_ART_MOON
 Artificial Moon
 
 BLD_ART_MOON_DESC
-'''Forms an artificial moon with 1:1 orbital period - rotational period resonance. This allows the construction of special buildings which may only be built on a resonant moon.
+'''Forms an artificial moon with 1:1 orbital period - rotational period resonance. Adds the [[special RESONANT_MOON_SPECIAL]] special to the planet.
 
 This cannot be constructed at a Gas Giant or Asteroid Belt.
 
