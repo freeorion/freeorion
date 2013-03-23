@@ -2407,6 +2407,8 @@ TECH_WND_PROGRESS
 + %3% / %4% RP/turn
 %5% turns left'''
 
+TECH_WND_MANY
+many
 
 #######################
 # ProductionInfoPanel #

@@ -458,10 +458,13 @@ private:
     const TechTreeWnd::LayoutPanel* m_layout_panel;
     GG::StaticGraphic*              m_icon;
     GG::TextControl*                m_tech_name_text;
+    GG::TextControl*                m_eta_text;
     GG::Clr                         m_colour;
     TechStatus                      m_status;
     bool                            m_browse_highlight;
     bool                            m_selected;
+    int                             m_eta;
+    bool                            m_enqueued;
 };
 
 TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, const LayoutPanel* panel) :
@@ -470,10 +473,13 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_layout_panel(panel),
     m_icon(0),
     m_tech_name_text(0),
+    m_eta_text(0),
     m_colour(GG::CLR_GRAY),
     m_status(TS_RESEARCHABLE),
     m_browse_highlight(false),
-    m_selected(false)
+    m_selected(false),
+    m_eta(-1),
+    m_enqueued(false)
 {
     const Tech* tech = GetTech(m_tech_name);
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont(FontSize());
@@ -488,12 +494,20 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     // tech name text
     const int PAD = 8;
     GG::X text_left(GG::X(GRAPHIC_SIZE) + PAD);
-    GG::Y text_top(PAD/2);
+    GG::Y text_top(0);
     GG::X text_width(TECH_PANEL_WIDTH - text_left);
-    GG::Y text_height(TECH_PANEL_HEIGHT - PAD);
+    GG::Y text_height(TECH_PANEL_HEIGHT);
     m_tech_name_text = new ShadowedTextControl(text_left, text_top, text_width, text_height,
                                                "", font, ClientUI::TextColor(),
                                                GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
+
+    text_left += text_width*3/4;
+    text_width = text_width/2;
+    text_top += text_height*7/8;
+    text_height = text_height/4;
+    m_eta_text = new ShadowedTextControl(text_left, text_top, text_width, text_height,
+                                               "", font, ClientUI::TextColor(),
+                                               GG::FORMAT_VCENTER | GG::FORMAT_CENTER);
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
@@ -519,34 +533,59 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(2.0);
 
-    GG::Pt ul(m_icon->Width() + PAD/2, GG::Y0);
-    GG::Pt lr(Size());
+    //GG::Pt ul(m_icon->Width() + PAD/2, GG::Y0);
+    GG::Pt ul = m_tech_name_text->UpperLeft() - GG::Pt(GG::X(PAD/2), GG::Y0);
+    GG::Pt lr = m_tech_name_text->LowerRight();
 
+    // black out dependency lines under panel
     glColor(GG::CLR_BLACK);
     PartlyRoundedRect(ul, lr, PAD, true, true, true, true, true);
 
+    // background of panel
     glColor(m_colour);
     PartlyRoundedRect(ul, lr, PAD, true, true, true, true, true);
 
+    // tech name
+    glEnable(GL_TEXTURE_2D);
+    if (FontSize() * m_layout_panel->Scale() > 10)  // in my tests, smaller fonts appear garbled / pixilated due to rescaling for zooming
+        m_tech_name_text->Render();
+    glDisable(GL_TEXTURE_2D);
+
+    // panel border
+    GG::Clr border_colour;
     if (m_browse_highlight) {
-        // white border
-        glColor(GG::CLR_WHITE);
-        PartlyRoundedRect(ul, lr, PAD, true, true, true, true, false);
-    } else if (m_status == TS_RESEARCHABLE) {
-        // coloured border
-        GG::Clr clr = m_colour;
-        clr.a = 255;
-        glColor(clr);
-        PartlyRoundedRect(ul, lr, PAD, true, true, true, true, false);
+        border_colour = GG::CLR_WHITE;
+    } else {
+        border_colour = m_colour;
+        border_colour.a = 255;
+    }
+    glColor(border_colour);
+    PartlyRoundedRect(ul, lr, PAD, true, true, true, true, false);
+
+    // selection indicator
+    if (m_selected) {
+        // nothing!
     }
 
-    if (m_selected) {
-        // enclosing larger border / box
+    // ETA background
+    if (m_eta != -1  &&  FontSize() * m_layout_panel->Scale() > 10) {
+        GG::Pt panel_size = lr - ul;
+        GG::Pt eta_ul = ul + GG::Pt(panel_size.x*3/4, panel_size.y*3/4) - GG::Pt(GG::X(2), GG::Y(2));
+        GG::Pt eta_lr = eta_ul + GG::Pt(panel_size.x/2, panel_size.y/2) + GG::Pt(GG::X(2), GG::Y(2));
+
+        //glColor(GG::CLR_BLACK);
+        //CircleArc(eta_ul, eta_lr, 0, 6.28, true);
+        glColor(border_colour);
+        CircleArc(eta_ul, eta_lr, 0, 6.28, true);
+    }
+
+    // box around whole panel to indicate enqueue
+    if (m_enqueued) {
         glColor(GG::CLR_WHITE);
-        GG::Pt gap = GG::Pt(GG::X(PAD), GG::Y(PAD));
+        GG::Pt gap = GG::Pt(GG::X(2*PAD), GG::Y(2*PAD));
         GG::Pt enc_ul(-gap);
         GG::Pt enc_lr(lr + gap);
-        PartlyRoundedRect(enc_ul, enc_lr, PAD + 2, true, true, true, true, false);
+        PartlyRoundedRect(enc_ul, enc_lr, PAD + 6, true, true, true, true, false);
     }
 
     glLineWidth(1.0);
@@ -555,8 +594,8 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
 
     m_icon->Render();
 
-    if (FontSize() * m_layout_panel->Scale() > 10)  // in my tests, smaller fonts appear garbled / pixilated due to rescaling for zooming
-        m_tech_name_text->Render();
+    if (m_eta != -1  &&  FontSize() * m_layout_panel->Scale() > 10)  // in my tests, smaller fonts appear garbled / pixilated due to rescaling for zooming
+        m_eta_text->Render();
 
     m_layout_panel->UndoZoom();
 }
@@ -639,6 +678,11 @@ namespace {
                 double allocation = queue_it->allocated_rp;
                 double max_allocation = tech->PerTurnCost(empire_id);
                 int ETA = queue_it->turns_left;
+                std::string eta_text;
+                if (ETA != -1)
+                    eta_text = boost::lexical_cast<std::string>(ETA);
+                else
+                    eta_text = UserString("TECH_WND_MANY");
 
                 // %1% / %2%  +  %3% / %4% [[ENC_RP]] / turn   %5% turns left
                 main_text += boost::io::str(FlexibleFormat(UserString("TECH_WND_PROGRESS"))
@@ -683,6 +727,19 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
 
     if (const Empire* empire = Empires().Lookup(client_empire_id)) {
         m_status = empire->GetTechStatus(m_tech_name);
+        m_enqueued = empire->GetResearchQueue().InQueue(m_tech_name);
+
+        const ResearchQueue& queue = empire->GetResearchQueue();
+        ResearchQueue::const_iterator queue_it = queue.find(m_tech_name);
+        if (queue_it != queue.end()) {
+            //double progress = empire->ResearchProgress(tech_name);
+            //double total_cost = tech->ResearchCost(empire_id);
+            //double allocation = queue_it->allocated_rp;
+            //double max_allocation = tech->PerTurnCost(empire_id);
+            m_eta = queue_it->turns_left;
+            if (m_eta != -1)
+                m_eta_text->SetText(boost::lexical_cast<std::string>(m_eta));
+        }
     }
 
     GG::Clr icon_colour = GG::CLR_WHITE;
@@ -695,7 +752,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             m_colour.a = 64;
         } else if (m_status == TS_RESEARCHABLE) {
             icon_colour = GG::CLR_GRAY;
-            m_colour.a = 144;
+            m_colour.a = 128;
         } else {
             m_colour.a = 255;
         }
