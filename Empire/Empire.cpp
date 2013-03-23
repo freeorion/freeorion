@@ -1907,15 +1907,12 @@ void Empire::PlaceTechInQueue(const std::string& name, int pos/* = -1*/) {
             m_research_queue.erase(it);
         m_research_queue.insert(m_research_queue.begin() + pos, name);
     }
-    m_research_queue.Update(m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
 }
 
 void Empire::RemoveTechFromQueue(const std::string& name) {
     ResearchQueue::iterator it = m_research_queue.find(name);
-    if (it != m_research_queue.end()) {
+    if (it != m_research_queue.end())
         m_research_queue.erase(it);
-        m_research_queue.Update(m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
-    }
 }
 
 void Empire::SetTechResearchProgress(const std::string& name, double progress) {

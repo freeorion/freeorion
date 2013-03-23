@@ -220,7 +220,7 @@ namespace AIInterface {
             it->second->UpdateResourcePools();
     }
 
-    void                UpdateResearchQueue() {
+    void UpdateResearchQueue() {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = Empires().Lookup(empire_id);
         if (!empire) {
@@ -230,7 +230,7 @@ namespace AIInterface {
         empire->UpdateResearchQueue();
     }
 
-    void                UpdateProductionQueue() {
+    void UpdateProductionQueue() {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = Empires().Lookup(empire_id);
         if (!empire) {
@@ -593,7 +593,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(empire_id, planet_id, focus)));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+            new ChangeFocusOrder(empire_id, planet_id, focus)));
 
         return 1;
     }
@@ -607,7 +608,8 @@ namespace AIInterface {
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name, position)));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+            new ResearchQueueOrder(empire_id, tech_name, position)));
 
         return 1;
     }
@@ -635,7 +637,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, BT_BUILDING, item_name, 1, location_id)));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+            new ProductionQueueOrder(empire_id, BT_BUILDING, item_name, 1, location_id)));
 
         return 1;
     }
@@ -649,7 +652,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, BT_SHIP, design_id, 1, location_id)));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+            new ProductionQueueOrder(empire_id, BT_SHIP, design_id, 1, location_id)));
 
         return 1;
     }
@@ -668,7 +672,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, queue_index, new_quantity, new_blocksize)));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+            new ProductionQueueOrder(empire_id, queue_index, new_quantity, new_blocksize)));
 
         return 1;
     }
@@ -700,7 +705,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, old_queue_index, new_queue_index)));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+            new ProductionQueueOrder(empire_id, old_queue_index, new_queue_index)));
 
         return 1;
     }
@@ -715,7 +721,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, queue_index)));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+            new ProductionQueueOrder(empire_id, queue_index)));
 
         return 1;
     }

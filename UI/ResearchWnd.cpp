@@ -256,10 +256,13 @@ void ResearchWnd::ShowTech(const std::string& tech_name) {
 }
 
 void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
-    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(row))
+    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(row)) {
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(),
-                                            queue_row->tech_name, position)));
+            OrderPtr(new ResearchQueueOrder(empire_id, queue_row->tech_name, position)));
+        if (Empire* empire = Empires().Lookup(empire_id))
+            empire->UpdateResearchQueue();
+    }
 }
 
 void ResearchWnd::Sanitize()
@@ -315,7 +318,7 @@ void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, 
     if (!m_enabled)
         return;
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = Empires().Lookup(empire_id);
+    Empire* empire = Empires().Lookup(empire_id);
     if (!empire)
         return;
     const ResearchQueue& queue = empire->GetResearchQueue();
@@ -347,6 +350,7 @@ void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, 
                 pos += 1;
         }
     }
+    empire->UpdateResearchQueue();
 }
 
 void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it) {
@@ -356,6 +360,8 @@ void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it) {
     OrderSet& orders = HumanClientApp::GetApp()->Orders();
     if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it))
         orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, queue_row->tech_name)));
+    if (Empire* empire = Empires().Lookup(empire_id))
+        empire->UpdateResearchQueue();
 }
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt) {
