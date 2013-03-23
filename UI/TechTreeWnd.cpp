@@ -555,9 +555,12 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     GG::Clr border_colour;
     if (m_browse_highlight) {
         border_colour = GG::CLR_WHITE;
-    } else {
+    } else if (m_status == TS_COMPLETE || m_status == TS_RESEARCHABLE) {
         border_colour = m_colour;
         border_colour.a = 255;
+    } else {
+        border_colour = m_colour;
+        border_colour.a = 127;
     }
     glColor(border_colour);
     PartlyRoundedRect(ul, lr, PAD, true, true, true, true, false);
@@ -573,8 +576,8 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
         GG::Pt eta_ul = ul + GG::Pt(panel_size.x*3/4, panel_size.y*3/4) - GG::Pt(GG::X(2), GG::Y(2));
         GG::Pt eta_lr = eta_ul + GG::Pt(panel_size.x/2, panel_size.y/2) + GG::Pt(GG::X(2), GG::Y(2));
 
-        //glColor(GG::CLR_BLACK);
-        //CircleArc(eta_ul, eta_lr, 0, 6.28, true);
+        glColor(GG::CLR_BLACK);
+        CircleArc(eta_ul, eta_lr, 0, 6.28, true);
         glColor(border_colour);
         CircleArc(eta_ul, eta_lr, 0, 6.28, true);
     }
@@ -677,19 +680,17 @@ namespace {
                 double total_cost = tech->ResearchCost(empire_id);
                 double allocation = queue_it->allocated_rp;
                 double max_allocation = tech->PerTurnCost(empire_id);
-                int ETA = queue_it->turns_left;
-                std::string eta_text;
-                if (ETA != -1)
-                    eta_text = boost::lexical_cast<std::string>(ETA);
-                else
-                    eta_text = UserString("TECH_WND_MANY");
 
-                // %1% / %2%  +  %3% / %4% [[ENC_RP]] / turn   %5% turns left
+                // %1% / %2%  +  %3% / %4% [[ENC_RP]] / turn
                 main_text += boost::io::str(FlexibleFormat(UserString("TECH_WND_PROGRESS"))
                         % DoubleToString(progress, 3, false)
                         % DoubleToString(total_cost, 3, false)
                         % DoubleToString(allocation, 3, false)
-                        % DoubleToString(max_allocation, 3, false)
+                        % DoubleToString(max_allocation, 3, false));
+
+                int ETA = queue_it->turns_left;
+                if (ETA != -1)
+                    main_text += boost::io::str(FlexibleFormat(UserString("TECH_WND_ETA"))
                         % ETA);
 
             } else if (tech->Researchable()) {
@@ -877,6 +878,23 @@ void TechTreeWnd::LayoutPanel::Render() {
     glEnable(GL_LINE_SMOOTH);
 
 
+    // highlighted dependency arcs?
+    // those leading from a complete tech to an enqueued tech
+    // those leading from an enqueued tech to an enqueued tech
+    std::vector<DependencyArcsMap::const_iterator> highlighted_arcs;
+    if (const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())) {
+        const ResearchQueue& queue = empire->GetResearchQueue();
+        highlighted_arcs.reserve(queue.size());
+        for (DependencyArcsMap::const_iterator arc_it = m_dependency_arcs.begin();
+             arc_it != m_dependency_arcs.end(); ++arc_it)
+        {
+            const std::string& tech1 = arc_it->first;
+            const std::string& tech2 = arc_it->second.first;
+            if (queue.InQueue(tech2) && (queue.InQueue(tech1) || empire->GetTechStatus(tech1) == TS_COMPLETE))
+                highlighted_arcs.push_back(arc_it);
+        }
+    }
+
     // render dependency arcs
     DoZoom(GG::Pt());
 
@@ -892,15 +910,9 @@ void TechTreeWnd::LayoutPanel::Render() {
     GG::Clr arc_highlight_colour = GG::CLR_WHITE;   arc_highlight_colour.a = 127;
     glColor(arc_highlight_colour);
     glLineWidth(ARC_THICKNESS * m_scale * 2.0);
-    for (DependencyArcsMap::const_iterator arc_it = m_dependency_arcs.begin();
-         arc_it != m_dependency_arcs.end(); ++arc_it)
-    {
-        if (arc_it->first == m_selected_tech_name ||
-            arc_it->first == m_browsed_tech_name ||
-            arc_it->second.first == m_selected_tech_name ||
-            arc_it->second.first == m_browsed_tech_name)
-        { DrawArc(arc_it, arc_colour, false); }
-    }
+    for (std::vector<DependencyArcsMap::const_iterator>::const_iterator arc_it = highlighted_arcs.begin();
+         arc_it != highlighted_arcs.end(); ++arc_it)
+    { DrawArc(*arc_it, arc_colour, false); }
 
     // retrace arcs with thinner full-alpha line
     arc_colour.a = 255;
@@ -914,15 +926,9 @@ void TechTreeWnd::LayoutPanel::Render() {
     arc_highlight_colour.a = 255;
     glColor(arc_highlight_colour);
     glLineWidth(ARC_THICKNESS * m_scale);
-    for (DependencyArcsMap::const_iterator arc_it = m_dependency_arcs.begin();
-         arc_it != m_dependency_arcs.end(); ++arc_it)
-    {
-        if (arc_it->first == m_selected_tech_name ||
-            arc_it->first == m_browsed_tech_name ||
-            arc_it->second.first == m_selected_tech_name ||
-            arc_it->second.first == m_browsed_tech_name)
-        { DrawArc(arc_it, arc_colour, false); }
-    }
+    for (std::vector<DependencyArcsMap::const_iterator>::const_iterator arc_it = highlighted_arcs.begin();
+         arc_it != highlighted_arcs.end(); ++arc_it)
+    { DrawArc(*arc_it, arc_colour, false); }
 
     glEnable(GL_TEXTURE_2D);
     EndClipping();
