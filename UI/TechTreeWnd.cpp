@@ -555,15 +555,18 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     GG::Clr border_colour;
     if (m_browse_highlight) {
         border_colour = GG::CLR_WHITE;
+        glColor(border_colour);
+        PartlyRoundedRect(ul, lr, PAD, true, true, true, true, false);
     } else if (m_status == TS_COMPLETE || m_status == TS_RESEARCHABLE) {
         border_colour = m_colour;
         border_colour.a = 255;
+        glColor(border_colour);
+        PartlyRoundedRect(ul, lr, PAD, true, true, true, true, false);
     } else {
         border_colour = m_colour;
         border_colour.a = 127;
+        // don't render border
     }
-    glColor(border_colour);
-    PartlyRoundedRect(ul, lr, PAD, true, true, true, true, false);
 
     // selection indicator
     if (m_selected) {
@@ -686,7 +689,7 @@ namespace {
                         % DoubleToString(progress, 3, false)
                         % DoubleToString(total_cost, 3, false)
                         % DoubleToString(allocation, 3, false)
-                        % DoubleToString(max_allocation, 3, false));
+                        % DoubleToString(max_allocation, 3, false)) + "\n";
 
                 int ETA = queue_it->turns_left;
                 if (ETA != -1)

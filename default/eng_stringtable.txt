@@ -2407,7 +2407,7 @@ TECH_WND_PROGRESS
 + %3% / %4% RP/turn'''
 
 TECH_WND_ETA
-%5% turns left
+%1% turns left
 
 
 #######################
