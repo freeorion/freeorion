@@ -8,6 +8,8 @@ import PlanetUtilsAI
 from random import choice,  random
 import ExplorationAI
 import PriorityAI
+import ProductionAI
+import ColonisationAI
 
 MinThreat = 10 # the minimum threat level that will be ascribed to an unkown threat capable of killing scouts
 MilitaryAllocations = []
@@ -23,6 +25,11 @@ def tryAgain(milFleetIDs,  tryReset=False):
     getMilitaryFleets(tryReset=tryReset)
     return
     
+def ratingNeeded(target,  current=0):
+    if current >= target:
+        return 0
+    else:
+        return target + current - (4*target*current)**0.5
 
 def getMilitaryFleets(tryReset=True):
     "get armed military fleets"
@@ -61,15 +68,19 @@ def getMilitaryFleets(tryReset=True):
     print "---------------------------------"
     remainingMilRating = availMilRating
     allocations = []
+    allocationGroups={}
     
     if milFleetIDs == []:
         MilitaryAllocations = []
         return
         
+    #for each system, get total rating of fleets assigned to it
     alreadyAssignedRating={}
+    assignedAttack={}
+    assignedHP={}
     for sysID in universe.systemIDs:
-        alreadyAssignedRating[sysID]=0
-
+        assignedAttack[sysID]=0
+        assignedHP[sysID]=0
     for fleetID in [fid for fid in allMilitaryFleetIDs if fid not in milFleetIDs]:
         aiFleetMission = foAI.foAIstate.getAIFleetMission(fleetID)
         sysTargets= []
@@ -80,7 +91,13 @@ def getMilitaryFleets(tryReset=True):
         if not sysTargets: #shouldn't really be possible
             continue
         lastSys = sysTargets[-1].getTargetID() # will count this fleet as assigned to last system in target list
-        alreadyAssignedRating[lastSys] +=  foAI.foAIstate.getRating(fleetID).get('overall', 0) #TODO: would preferably tally attack and health and take product 
+        assignedAttack[lastSys] +=  foAI.foAIstate.getRating(fleetID).get('attack', 0)
+        assignedHP[lastSys] +=  foAI.foAIstate.getRating(fleetID).get('health', 0)
+    for sysID in universe.systemIDs:
+        mydefenses =  foAI.foAIstate.systemStatus.get(sysID,  {}).get( 'mydefenses', {} ) 
+        mypattack = mydefenses.get('attack', 0)
+        myphealth = mydefenses.get('health',  0)
+        alreadyAssignedRating[sysID] = ( assignedAttack[sysID]  + mypattack ) * ( assignedHP[sysID] + myphealth )
 
     # get systems to defend
     capitalID = PlanetUtilsAI.getCapital()
@@ -106,39 +123,42 @@ def getMilitaryFleets(tryReset=True):
         else:
             capitalSysID = foAI.foAIstate.fleetStatus.items()[0]['sysID']
 
-    if fo.currentTurn() < 20:
-        threatBias = 0
-    elif fo.currentTurn() < 40:
-        threatBias = 10
-    elif fo.currentTurn() < 60:
-        threatBias = 80
-    elif fo.currentTurn() < 80:
-        threatBias = 200
+    if False:
+        if fo.currentTurn() < 20:
+            threatBias = 0
+        elif fo.currentTurn() < 40:
+            threatBias = 10
+        elif fo.currentTurn() < 60:
+            threatBias = 80
+        elif fo.currentTurn() < 80:
+            threatBias = 200
+        else:
+            threatBias = 400
     else:
-        threatBias = 400
-    
-    threatBias = 0
+        threatBias = 0
 
     safetyFactor = [ 4.0,  3.0,  1.5,  1.0,  1.0,  0.95    ][foAI.foAIstate.aggression] 
     
     topTargetPlanets = [pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets]  if pscore > 20]  + [pid for pid,  pscore in foAI.foAIstate.colonisablePlanetIDs[:10]  if pscore > 20] 
     topTargetSystems = []
-    for sysID in PlanetUtilsAI.getSystems(  topTargetPlanets  ):
+    for sysID in   AIstate.invasionTargetedSystemIDs + PlanetUtilsAI.getSystems(  topTargetPlanets  ):
         if sysID not in topTargetSystems:
             topTargetSystems.append(sysID) #doing this rather than set, to preserve order
 
     # allocation format: ( sysID, newAllocation, takeAny, maxMultiplier )    
     #================================
     #--------Capital Threat ----------
-    capitalThreat = safetyFactor*(2* threatBias +sum( [ foAI.foAIstate.systemStatus[capitalSysID][thrtKey] for thrtKey in [tkey for tkey in  foAI.foAIstate.systemStatus.get(capitalSysID,  {}).keys() if 'Threat' in tkey]] ))
+    capitalThreat = safetyFactor*(2* threatBias +sum( [ foAI.foAIstate.systemStatus[capitalSysID][thrtKey] for thrtKey in ['totalThreat',  'neighborThreat']] ))
+    neededRating = ratingNeeded(1.4*capitalThreat,  alreadyAssignedRating[capitalSysID])
     newAlloc=0
     if tryReset:
-        if (capitalThreat > 0.5*(availMilRating+0.8*alreadyAssignedRating[capitalSysID]) ) :
+        if (neededRating > 0.5*availMilRating) :
             tryAgain(allMilitaryFleetIDs)
             return
-    if capitalThreat > 0.8*alreadyAssignedRating[capitalSysID]:
-        newAlloc = min(remainingMilRating,  int( 0.999 + 1.2*(capitalThreat- 0.8*alreadyAssignedRating[capitalSysID]) ) )
-        allocations.append( ( capitalSysID,  newAlloc,  True,  3)  )  
+    if neededRating > 0:
+        newAlloc = min(remainingMilRating,  neededRating )
+        allocations.append( ( capitalSysID,  newAlloc,  True,  2*capitalThreat)  ) 
+        allocationGroups.setdefault('capitol',  []).append( ( capitalSysID,  newAlloc,  True,  2*capitalThreat)  ) 
         remainingMilRating -= newAlloc
     print "Empire Capital System:   (%d) %s    -- threat : %d, military allocation: existing: %d  ; new: %d"%(capitalSysID,  universe.getSystem(capitalSysID).name ,  capitalThreat,  alreadyAssignedRating[capitalSysID],  newAlloc)
     print "-----------------"
@@ -150,20 +170,22 @@ def getMilitaryFleets(tryReset=True):
     print "Empire-Occupied  Systems:  %s"%(   [ "| %d %s |"%(eoSysID,  universe.getSystem(eoSysID).name)  for eoSysID in empireOccupiedSystemIDs  ]  )
     print "-----------------"
     if len( empireOccupiedSystemIDs ) > 0:
-        ocSysTotThreat = [  ( oSID,  threatBias +safetyFactor*sum( [ foAI.foAIstate.systemStatus.get(oSID,  {}).get(thrtKey, 0) for thrtKey in ['fleetThreat', 'monsterThreat','planetThreat', 'neighborThreat']] ) )  for oSID in   empireOccupiedSystemIDs      ]
+        ocSysTotThreat = [  ( oSID,  threatBias +safetyFactor*sum( [ foAI.foAIstate.systemStatus.get(oSID,  {}).get(thrtKey, 0) for thrtKey in ['totalThreat',  'neighborThreat']] ))  
+                                                                                                                                                for oSID in empireOccupiedSystemIDs ]
         totocSysThreat = sum( [thrt  for sid,  thrt in ocSysTotThreat] )
-        totCurAlloc = sum( [0.8*alreadyAssignedRating[sid]  for sid,  thrt in ocSysTotThreat] )
-        allocationFactor = min(  1.2,  remainingMilRating /max(0.01,  ( totocSysThreat -totCurAlloc) ))
+        totCurAlloc = sum( [alreadyAssignedRating[sid]  for sid,  thrt in ocSysTotThreat] )
+        allocationFactor = min(  1.5,  remainingMilRating /max(0.01,  ( totocSysThreat -totCurAlloc) ))
         ocSysAlloc = 0
         for sid,  thrt in ocSysTotThreat:
-            curAlloc=0.8*alreadyAssignedRating[sid]
-            if (thrt > 0.8*(remainingMilRating+curAlloc )) and tryReset:
+            neededRating = ratingNeeded( 1.2*thrt,  alreadyAssignedRating[sid])
+            if (neededRating > 0.8*(remainingMilRating )) and tryReset:
                 tryAgain(allMilitaryFleetIDs)
                 return
             thisAlloc=0
-            if (thrt > curAlloc) and remainingMilRating > 0:
-                thisAlloc = max(0,  min( min( int(0.99999 + (thrt-curAlloc)*allocationFactor ),  0.5*availMilRating) ,  remainingMilRating))
-                allocations.append(  (sid,  thisAlloc,  True,  2) )
+            if ( neededRating>0 ) and remainingMilRating > 0:
+                thisAlloc = max(0,  min( neededRating,  0.5*availMilRating,  remainingMilRating))
+                allocations.append(  (sid,  thisAlloc,  True,  2*thrt) )
+                allocationGroups.setdefault('occupied',  []).append( (sid,  thisAlloc,  True,  2*thrt) )
                 remainingMilRating -= thisAlloc
                 ocSysAlloc += thisAlloc
         print "Provincial Empire-Occupied Sytems under total threat: %d  -- total mil allocation: existing %d  ; new: %d"%(totocSysThreat,  totCurAlloc,  ocSysAlloc )
@@ -178,16 +200,20 @@ def getMilitaryFleets(tryReset=True):
     # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
     if len( otherTargetedSystemIDs ) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0))  )   for oSID in   otherTargetedSystemIDs      ]
+        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('totalThreat', 0)+0.5*foAI.foAIstate.systemStatus.get(oSID, {}).get('neightborThreat', 0)  )  )   for oSID in   otherTargetedSystemIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
-        totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
+        totCurAlloc = sum( [alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
-            curAlloc=0.8*alreadyAssignedRating[sid]
+            curAlloc=alreadyAssignedRating[sid]
+            neededRating = ratingNeeded( 1.4*thrt,  curAlloc)
             thisAlloc=0
-            if 2*thrt>curAlloc and  (curAlloc>0  or remainingMilRating > (10+ (2*thrt-curAlloc))): #only record more allocation for this invasion if we already started or have enough rating available
-                thisAlloc =int(10.99999 + (1.5*thrt-curAlloc))
-                takeAny= curAlloc>0
-                allocations.append(  (sid,  thisAlloc, takeAny  ,4) )
+            #only record more allocation for this invasion if we already started or have enough rating available
+            takeAny= alreadyAssignedRating[sid] > 0
+            if ( neededRating>0 ) and (remainingMilRating > neededRating  or takeAny):
+                thisAlloc = max(0,  min( neededRating,  remainingMilRating))
+                maxAlloc = safetyFactor*3*max(  foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0),  foAI.foAIstate.systemStatus.get(sid, {}).get('neightborThreat', 0))
+                allocations.append(  (sid,  thisAlloc, takeAny , maxAlloc) )
+                allocationGroups.setdefault('topTargets', []).append( (sid,  thisAlloc, takeAny  , maxAlloc) )
                 remainingMilRating -= thisAlloc
                 otSysAlloc += thisAlloc
             print "Targeted system %4d ( %10s )  has local threat %8d  ; existing military allocation %d and new allocation %8d"%(sid,  universe.getSystem(sid).name,  thrt, curAlloc,   thisAlloc)
@@ -195,25 +221,29 @@ def getMilitaryFleets(tryReset=True):
         print "Top Colony and Invasion Targeted Systems  under total threat: %d  -- total mil allocation-- existing: %d   ; new: %d"%(tototSysThreat,  totCurAlloc,  otSysAlloc )
         print "-----------------"
 
-
     #================================
     #--------Targeted Systems ----------
     #TODO: do native invasions highest priority
-    otherTargetedSystemIDs = [sysID for sysID in AIstate.invasionTargetedSystemIDs if sysID not in topTargetSystems]
+    otherTargetedSystemIDs = [sysID for sysID in set( PlanetUtilsAI.getSystems(AIstate.opponentPlanetIDs))  if sysID not in topTargetSystems]
     print "Other Invasion Targeted Systems :  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in otherTargetedSystemIDs  ]  )
     print "-----------------"
     # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
     if len( otherTargetedSystemIDs ) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID, max(10,   threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0))  ) )   for oSID in   otherTargetedSystemIDs      ]
+        otSysThreat = [  ( oSID, threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('totalThreat', 0)+0.5*foAI.foAIstate.systemStatus.get(oSID, {}).get('neighborThreat', 0) ) )  for oSID in   otherTargetedSystemIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
-        totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
+        totCurAlloc = sum( [alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
-            curAlloc=0.8*alreadyAssignedRating[sid]
+            curAlloc=alreadyAssignedRating[sid]
+            neededRating = ratingNeeded( 1.4*thrt,  curAlloc)
             thisAlloc=0
-            if thrt>curAlloc and remainingMilRating > 10+ 1.5*(thrt-curAlloc) : #only record an allocation for this invasion if we have enough rating available
-                thisAlloc =int(10.99999 + (thrt-curAlloc)*1.5)
-                allocations.append(  (sid,  thisAlloc,  False,  3) )
+            #only record more allocation for this invasion if we already started or have enough rating available
+            takeAny= alreadyAssignedRating[sid] > 0
+            if ( neededRating>0 ) and (remainingMilRating > neededRating  or takeAny):
+                thisAlloc = max(0,  min( neededRating,  remainingMilRating))
+                maxAlloc = safetyFactor*2*max(  foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0),  foAI.foAIstate.systemStatus.get(sid, {}).get('neightborThreat', 0))
+                allocations.append(  (sid,  thisAlloc, takeAny , maxAlloc) )
+                allocationGroups.setdefault('otherTargets', []).append( (sid,  thisAlloc, takeAny  , maxAlloc) )
                 remainingMilRating -= thisAlloc
                 otSysAlloc += thisAlloc
             print "Targeted system %4d ( %10s )  has local threat %8d  ; existing military allocation %d and new allocation %8d"%(sid,  universe.getSystem(sid).name,  thrt, curAlloc,   thisAlloc)
@@ -224,18 +254,22 @@ def getMilitaryFleets(tryReset=True):
     otherTargetedSystemIDs = [sysID for sysID in  list(set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs)) if sysID not in topTargetSystems]
     print "Other Targeted Systems :  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in otherTargetedSystemIDs  ]  )
     print "-----------------"
-    # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
     if len( otherTargetedSystemIDs ) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  safetyFactor*(threatBias +foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0)  ))   for oSID in   otherTargetedSystemIDs      ]
+        otSysThreat = [  ( oSID,  safetyFactor*(threatBias +foAI.foAIstate.systemStatus.get(oSID, {}).get('totalThreat', 0)+0.5*foAI.foAIstate.systemStatus.get(oSID, {}).get('neighborThreat', 0) ) )   for oSID in   otherTargetedSystemIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
-        totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
+        totCurAlloc = sum( [alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
-            curAlloc=0.8*alreadyAssignedRating[sid]
+            curAlloc=alreadyAssignedRating[sid]
+            neededRating = ratingNeeded( 1.2*thrt,  curAlloc)
             thisAlloc=0
-            if (thrt > curAlloc) and remainingMilRating > 1.5*(thrt-curAlloc):
-                thisAlloc = min( min( int(0.99999 + (thrt-curAlloc)*1.5),  remainingMilRating ),  0.5*availMilRating)
-                allocations.append(  (sid,  thisAlloc,  False,  2.0) )
+            #only record more allocation for this invasion if we already started or have enough rating available
+            takeAny= alreadyAssignedRating[sid] > 0
+            if ( neededRating>0 ) and (remainingMilRating > neededRating  or takeAny):
+                thisAlloc = max(0,  min( neededRating,  remainingMilRating))
+                maxAlloc = safetyFactor*2*max(  foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0),  foAI.foAIstate.systemStatus.get(sid, {}).get('neightborThreat', 0))
+                allocations.append(  (sid,  thisAlloc, takeAny , maxAlloc) )
+                allocationGroups.setdefault('otherTargets', []).append( (sid,  thisAlloc, takeAny  , maxAlloc) )
                 remainingMilRating -= thisAlloc
                 otSysAlloc += thisAlloc
             print "Targeted system %4d ( %10s )  has local threat %8d  ; existing military allocation %d and new allocation %8d"%(sid,  universe.getSystem(sid).name,  thrt, curAlloc,   thisAlloc)
@@ -244,30 +278,34 @@ def getMilitaryFleets(tryReset=True):
         print "-----------------"
 
     otherTargetedSystemIDs = []
-    fleetSuppliableSystemIDs = empire.fleetSupplyableSystemIDs
+    targetableIDs = ColonisationAI.annexableSystemIDs.union( empire.fleetSupplyableSystemIDs )
     for sysID in  AIstate.opponentSystemIDs:
-        if sysID in fleetSuppliableSystemIDs:
+        if sysID in targetableIDs:
             otherTargetedSystemIDs.append(sysID)
         else:
             for nID in  universe.getImmediateNeighbors(sysID,  empireID):
-                if nID in fleetSuppliableSystemIDs:
+                if nID in targetableIDs:
                     otherTargetedSystemIDs.append(sysID)
                     break
         
     print "Blockade Targeted Systems :  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in otherTargetedSystemIDs  ]  )
     print "-----------------"
-    # for these, calc local threat only, no neighbor threat, but use a multiplier for fleet safety
     if len( otherTargetedSystemIDs ) > 0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0)+ foAI.foAIstate.systemStatus.get(oSID, {}).get('planetThreat', 0)  ))   for oSID in   otherTargetedSystemIDs      ]
+        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('totalThreat', 0)+ 0.5*foAI.foAIstate.systemStatus.get(oSID, {}).get('neighborThreat', 0) ) )   for oSID in   otherTargetedSystemIDs      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
-        totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
+        totCurAlloc = sum( [alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
-            curAlloc=0.8*alreadyAssignedRating[sid]
+            curAlloc=alreadyAssignedRating[sid]
+            neededRating = ratingNeeded( 1.2*thrt,  curAlloc)
             thisAlloc=0
-            if (thrt > curAlloc) and remainingMilRating > 1.5*(thrt-curAlloc):
-                thisAlloc = min( min( int(0.99999 + (thrt-curAlloc)*1.5),  remainingMilRating ),  0.5*availMilRating)
-                allocations.append(  (sid,  thisAlloc,  False,  10) )
+            #only record more allocation for this invasion if we already started or have enough rating available
+            takeAny= alreadyAssignedRating[sid] > 0
+            if ( neededRating>0 ) and (remainingMilRating > neededRating  or takeAny):
+                thisAlloc = max(0,  min( neededRating,  remainingMilRating))
+                maxAlloc = safetyFactor*2*max(  foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0),  foAI.foAIstate.systemStatus.get(sid, {}).get('neightborThreat', 0))
+                allocations.append(  (sid,  thisAlloc, takeAny , maxAlloc) )
+                allocationGroups.setdefault('otherTargets', []).append( (sid,  thisAlloc, takeAny  , maxAlloc) )
                 remainingMilRating -= thisAlloc
                 otSysAlloc += thisAlloc
             print "Blockade Targeted system %4d ( %10s )  has local threat %8d  ; existing military allocation %d and new allocation %8d"%(sid,  universe.getSystem(sid).name,  thrt, curAlloc,   thisAlloc)
@@ -277,23 +315,28 @@ def getMilitaryFleets(tryReset=True):
 
     currentMilSystems = [sid for sid, alloc, takeAny, mm  in allocations ]
     interiorIDs = list( foAI.foAIstate.expInteriorSystemIDs)
-    interiorTargets1 = [sid for sid in interiorIDs if (  ( sid not in currentMilSystems )) ]
-    interiorTargets = [sid for sid in interiorIDs if ( (threatBias + foAI.foAIstate.systemStatus.get(sid, {}).get('fleetThreat', 0) >0.8*alreadyAssignedRating[sid] ) ) ]
+    interiorTargets1 =   (targetableIDs.union(interiorIDs)).difference( currentMilSystems )
+    interiorTargets = [sid for sid in interiorTargets1 if ( (threatBias + foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0) >0.8*alreadyAssignedRating[sid] ) ) ]
     print ""
-    print "Other Empire-Interior Systems :  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in interiorTargets1  ]  )
+    print "Other Empire-Proximal Systems :  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in interiorTargets1  ]  )
     print "-----------------"
     # for these, calc fleet  threat only, no neighbor threat, but use a multiplier for fleet safety
     if len(interiorTargets) >0:
         otSysAlloc = 0
-        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(oSID, {}).get('monsterThreat', 0))  )   for oSID in   interiorTargets      ]
+        otSysThreat = [  ( oSID,  threatBias +safetyFactor*(foAI.foAIstate.systemStatus.get(oSID, {}).get('totalThreat', 0))  )   for oSID in   interiorTargets      ]
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
-        totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
+        totCurAlloc = sum( [alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
-            curAlloc=0.8*alreadyAssignedRating[sid]
+            curAlloc=alreadyAssignedRating[sid]
+            neededRating = ratingNeeded( 1.2*thrt,  curAlloc)
             thisAlloc=0
-            if (thrt > curAlloc) and remainingMilRating > 0 :
-                thisAlloc = min( min( int(0.99999 +( thrt-curAlloc)*1.5),  remainingMilRating ),  0.5*availMilRating)
-                allocations.append(  (sid,  thisAlloc,  True,  1.2) )
+            #only record more allocation for this invasion if we already started or have enough rating available
+            takeAny= alreadyAssignedRating[sid] > 0
+            if ( neededRating>0 ) and (remainingMilRating > neededRating  or takeAny):
+                thisAlloc = max(0,  min( neededRating,  remainingMilRating))
+                maxAlloc = safetyFactor*2*max(  foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0),  foAI.foAIstate.systemStatus.get(sid, {}).get('neightborThreat', 0))
+                allocations.append(  (sid,  thisAlloc, takeAny , maxAlloc) )
+                allocationGroups.setdefault('otherTargets', []).append( (sid,  thisAlloc, takeAny  , maxAlloc) )
                 remainingMilRating -= thisAlloc
                 otSysAlloc += thisAlloc
             print "Other interior system %4d ( %10s )  has local threat %8d  ; existing military allocation %d and new allocation %8d"%(sid,  universe.getSystem(sid).name,  thrt, curAlloc,   thisAlloc)
@@ -307,7 +350,8 @@ def getMilitaryFleets(tryReset=True):
 
     monsterDens=[]
 
-    exploTargetIDs,  _ = ExplorationAI.getCurrentExplorationInfo(verbose=False)
+    #exploTargetIDs,  _ = ExplorationAI.getCurrentExplorationInfo(verbose=False)
+    exploTargetIDs=[]
     print ""
     print "Exploration-targeted Systems:  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in exploTargetIDs  ]  )
     print "-----------------"
@@ -322,14 +366,16 @@ def getMilitaryFleets(tryReset=True):
         else:
             maxMilRating = 0.5*availMilRating
         for sid,  thrt in otSysThreat:
-            curAlloc=0.8*alreadyAssignedRating[sid]
+            curAlloc=alreadyAssignedRating[sid]
+            neededRating = ratingNeeded( 1.2*thrt,  curAlloc)
             thisAlloc=0
-            if (thrt > curAlloc) and remainingMilRating > 0:
-                if foAI.foAIstate.systemStatus.get(sid, {}).get('monsterThreat', 0) > 2000:
-                    monsterDens.append(sid)
-                    continue  # consider dealing with big monsters later
-                thisAlloc = min( min( int(0.99999 + (thrt-curAlloc)*1.5),  remainingMilRating ),  0.5*availMilRating)
-                allocations.append(  (sid,  thisAlloc,  False,  2) )
+            #only record more allocation for this invasion if we already started or have enough rating available
+            takeAny= False
+            if ( neededRating>0 ) and (remainingMilRating > neededRating  or takeAny):
+                thisAlloc = max(0,  min( neededRating,  remainingMilRating))
+                maxAlloc = safetyFactor*2*max(  foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0),  foAI.foAIstate.systemStatus.get(sid, {}).get('neightborThreat', 0))
+                allocations.append(  (sid,  thisAlloc, takeAny , maxAlloc) )
+                allocationGroups.setdefault('exploreTargets', []).append( (sid,  thisAlloc, takeAny  , maxAlloc) )
                 remainingMilRating -= thisAlloc
                 otSysAlloc += thisAlloc
             print "Exploration-targeted  %4d ( %10s )  has local threat %8d  ; existing military allocation %d and new allocation %8d"%(sid,  universe.getSystem(sid).name,  thrt, curAlloc,   thisAlloc)
@@ -352,15 +398,16 @@ def getMilitaryFleets(tryReset=True):
         tototSysThreat = sum( [thrt for sid,  thrt in otSysThreat] )
         totCurAlloc = sum( [0.8*alreadyAssignedRating[sid] for sid,  thrt in otSysThreat] )
         for sid,  thrt in otSysThreat:
-            curAlloc=0.8*alreadyAssignedRating[sid]
+            curAlloc=alreadyAssignedRating[sid]
+            neededRating = ratingNeeded( 1.2*thrt,  curAlloc)
             thisAlloc=0
-            if (thrt > curAlloc) and remainingMilRating > 0:
-                if foAI.foAIstate.systemStatus.get(sid, {}).get('monsterThreat', 0) > 2000:
-                    if sid not in monsterDens:
-                        monsterDens.append(sid)
-                    continue  # consider dealing with big monsters later
-                thisAlloc = min( min( int(0.99999 + (thrt-curAlloc)*1.5),  remainingMilRating ),  0.5*availMilRating)
-                allocations.append(  (sid,  thisAlloc,  False, 5) )
+            #only record more allocation for this invasion if we already started or have enough rating available
+            takeAny= False
+            if ( neededRating>0 ) and (remainingMilRating > neededRating  or takeAny):
+                thisAlloc = max(0,  min( neededRating,  remainingMilRating))
+                maxAlloc = safetyFactor*2*max(  foAI.foAIstate.systemStatus.get(sid, {}).get('totalThreat', 0),  foAI.foAIstate.systemStatus.get(sid, {}).get('neightborThreat', 0))
+                allocations.append(  (sid,  thisAlloc, takeAny , maxAlloc) )
+                allocationGroups.setdefault('accessibleTargets', []).append( (sid,  thisAlloc, takeAny  , maxAlloc) )
                 remainingMilRating -= thisAlloc
                 otSysAlloc += thisAlloc
             print "Other Empire-Accessible system %4d ( %10s )  has local biased threat %8d  ; existing military allocation %d and new allocation %8d"%(sid,  universe.getSystem(sid).name,  thrt, curAlloc,   thisAlloc)
@@ -372,6 +419,7 @@ def getMilitaryFleets(tryReset=True):
         print "No Other Empire-Accessible Systems  with biased local threat "
         print "-----------------"
 
+    #monster den treatment probably unnecessary now
     print ""
     print "Big-Monster Dens:  %s"%(   [ "| %d %s |"%(sysID,  universe.getSystem(sysID).name)  for sysID in monsterDens  ]  )
     print "-----------------"
@@ -396,20 +444,23 @@ def getMilitaryFleets(tryReset=True):
     if remainingMilRating <=6:
         newAllocations = [ (sid,  alc,  alc,  ta) for (sid,  alc,  ta,  mm) in allocations ]
     else:
+        #oldAllocations = dict( [ (entry[0],  entry ) for entry in allocations ] )
         try:
-            totAlloc = sum( [alloc for sid,  alloc,  takeAny,  maxMul  in allocations ] )
+            totAlloc = sum( [alloc for sid,  alloc,  takeAny,  maxAlloc  in allocations ] )
         except:
-            print "error unpacking sid,  alloc,  takeAny, maxMul  from ", allocations 
+            print "error unpacking sid,  alloc,  takeAny, maxAlloc  from ", allocations 
         factor =(2.0* remainingMilRating ) / ( totAlloc  + 0.1)
-        print "Remaining military strength allocation %d will be allocated  as %.1f %% surplus allocation to top current priorities"%(remainingMilRating,  100*factor)
+        #print "Remaining military strength allocation %d will be allocated  as %.1f %% surplus allocation to top current priorities"%(remainingMilRating,  100*factor)
+        print "Remaining military strength allocation %d will be allocated  as surplus allocation to top current priorities"%(remainingMilRating)
         newAllocations = []
-        for sid,  alloc,  takeAny,  maxMul in allocations:
-            if remainingMilRating <= 0 :
-                newAllocations.append(  ( sid, alloc,  alloc,  takeAny )  )
-            else:
-                thisAlloc =  int( max( maxMul-1,  factor )* alloc )
-                newAllocations.append(  ( sid, alloc+thisAlloc, alloc,  takeAny )  )
-                remainingMilRating -= thisAlloc
+        for cat in ['capitol', 'topTargets',  'otherTargets',  'accessibleTargets',  'occupied',  'exploreTargets']:
+            for sid,  alloc,  takeAny,  maxAlloc in allocationGroups.get(cat,  []):
+                if remainingMilRating <= 0 :
+                    newAllocations.append(  ( sid, alloc,  alloc,  takeAny )  )
+                else:
+                    newRating = min(remainingMilRating+alloc, max(alloc,  ratingNeeded( maxAlloc,  alreadyAssignedRating[sid]) ) )
+                    newAllocations.append(  ( sid, newRating, alloc,  takeAny )  )
+                    remainingMilRating -= ( newRating - alloc )
 
     MilitaryAllocations = newAllocations
     minMilAllocations = dict( [ (sid, alloc) for sid, alloc, takeAny,  mm in allocations   ]   )

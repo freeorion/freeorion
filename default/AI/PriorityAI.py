@@ -281,7 +281,7 @@ def calculateInvasionPriority():
     troopShipsNeeded = math.ceil((opponentTroopPods - (numTroopPods+ queuedTroopPods ))/troopsPerBestShip)  
      
     #invasionPriority = max(  10+ 200*max(0,  troopShipsNeeded ) , int(0.1* totalVal) )
-    invasionPriority = 20+ 120*max(0,  troopShipsNeeded )
+    invasionPriority = 30+ 150*max(0,  troopShipsNeeded )
     if invasionPriority < 0: 
         return 0
     if foAI.foAIstate.aggression==fo.aggression.beginner:

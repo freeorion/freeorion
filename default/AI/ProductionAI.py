@@ -13,6 +13,20 @@ import PriorityAI
 import ColonisationAI
 import EnumsAI
 
+bestMilRatingsHistory={}
+shipTypeMap = {   EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION:   EnumsAI.AIShipDesignTypes.explorationShip,  
+                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST:             EnumsAI.AIShipDesignTypes.outpostShip,  
+                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION:  EnumsAI.AIShipDesignTypes.colonyShip,  
+                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION:                EnumsAI.AIShipDesignTypes.troopShip,  
+                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY:                  EnumsAI.AIShipDesignTypes.attackShip, 
+                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE:                  EnumsAI.AIShipDesignTypes.defenseBase, 
+                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION:                  EnumsAI.AIShipDesignTypes.troopBase, 
+                                        } 
+
+#TODO: dynamic lookup of hull stats
+hullStats = { 
+             
+             }
 
 #get key routines declared for import by others before completing present imports, to avoid circularity problems
 def curBestMilShipRating():
@@ -51,25 +65,6 @@ def getBestShipInfo(priority,  loc=None):
             if shipDesign.productionLocationForEmpire(empireID, pid):
                 return shipDesignID,  shipDesign,  getAvailableBuildLocations(shipDesignID)
     return None,  None,  None #must be missing a Shipyard or other orbital (or missing tech)
-
-
-
-
-shipTypeMap = {   EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION:   EnumsAI.AIShipDesignTypes.explorationShip,  
-                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST:             EnumsAI.AIShipDesignTypes.outpostShip,  
-                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION:  EnumsAI.AIShipDesignTypes.colonyShip,  
-                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION:                EnumsAI.AIShipDesignTypes.troopShip,  
-                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY:                  EnumsAI.AIShipDesignTypes.attackShip, 
-                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE:                  EnumsAI.AIShipDesignTypes.defenseBase, 
-                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION:                  EnumsAI.AIShipDesignTypes.troopBase, 
-                                        } 
-
-bestMilRatingsHistory={}
-#TODO: dynamic lookup of hull stats
-hullStats = { 
-             
-             }
-
 
 def shipTypeNames(shipProdPriority):
     empire = fo.getEmpire()
@@ -1107,14 +1102,16 @@ def generateProductionOrders():
         tInd=planet.currentMeterValue(fo.meterType.targetIndustry)
         cInd=planet.currentMeterValue(fo.meterType.industry)
         cPop = planet.currentMeterValue(fo.meterType.population)
-        if (cPop < 23) or cPop < 0.7*tPop:  #check even if not aggressive, etc, just in case acquired planet with a ConcCamp on it
+        if (cPop < 23) or cPop < 0.8*tPop:  #check even if not aggressive, etc, just in case acquired planet with a ConcCamp on it
             for bldg in planet.buildingIDs:
                 if universe.getObject(bldg).buildingTypeName  == bldName:
                     res=fo.issueScrapOrder( bldg)
                     print "Tried scrapping %s at planet %s,  got result %d"%(bldName,  planet.name,  res)
         elif foAI.foAIstate.aggression>fo.aggression.typical and empire.buildingTypeAvailable(bldName) and (tPop >= 32) :
+            if  (planet.focus== EnumsAI.AIFocusType.FOCUS_GROWTH) or ("COMPUTRONIUM_SPECIAL" in planet.specials):
+                continue
             queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
-            if (cPop >=0.95*tPop) and cInd < 1.5* tInd:
+            if (cPop >=0.95*tPop):# and cInd < 1.5* tInd:
                 if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
                     #if planet.focus not in [ EnumsAI.AIFocusType.FOCUS_INDUSTRY ]:
                     #     fo.issueChangeFocusOrder(pid, EnumsAI.AIFocusType.FOCUS_INDUSTRY)
@@ -1156,6 +1153,7 @@ def generateProductionOrders():
     print "production summary: %s"%[elem.name for elem in productionQueue]
     queuedColonyShips={}
     queuedOutpostShips = 0
+    queuedTroopShips=0
     
     #TODO:  blocked items might not need dequeuing, but rather for supply lines to be un-blockaded 
     fo.updateProductionQueue()
@@ -1173,6 +1171,8 @@ def generateProductionOrders():
                  queuedColonyShips[thisSpec] =  queuedColonyShips.get(thisSpec, 0) +  element.remaining*element.blocksize
              if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST:
                  queuedOutpostShips+=  element.remaining*element.blocksize
+             if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
+                 queuedTroopShips+=  element.remaining*element.blocksize
     if queuedColonyShips:
         print "\nFound  colony ships in build queue: %s"%queuedColonyShips
     if queuedOutpostShips:

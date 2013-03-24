@@ -137,6 +137,7 @@ def tallyStream(curVal,  targetVal,  nTurns,  force=False):
 def setPlanetResourceFoci(): #+
     "set resource focus of planets "
     global __timerFile
+    newFoci = {}
 
     print "\n============================"
     print "Collecting info to assess Planet Focus Changes\n"
@@ -197,6 +198,28 @@ def setPlanetResourceFoci(): #+
                             break
                         else:
                             print "failed setting focus of planet %s (%d) at Growth Focus; focus left at %s"%(  planetMap[spPID].name,  spPID,  planetMap[spPID].focus) 
+        for pid in empirePlanetIDs:
+            planet = planetMap[pid]
+            if "COMPUTRONIUM_SPECIAL" in planet.specials:#TODO: ensure only one (extremely rarely needed)
+                curFocus = planet.focus
+                if RFocus not in planet.availableFoci:
+                    continue
+                newFoci[pid] = RFocus
+                if curFocus != RFocus:
+                    result = fo.issueChangeFocusOrder(pid, RFocus)
+                    if result == 1:
+                        universe.updateMeterEstimates(empirePlanetIDs)
+            elif  ( ("BLD_CONC_CAMP" in [bld.buildingTypeName for bld in map( universe.getObject,  planet.buildingIDs)] ) or
+                             (  [  ccspec  for ccspec in planet.specials if ccspec in [ "CONC_CAMP_MASTER_SPECIAL",  "CONC_CAMP_SLAVE_SPECIAL"  ]  ]  != [] )):
+                if IFocus not in planet.availableFoci:
+                    continue
+                curFocus = planet.focus
+                newFoci[pid] = IFocus
+                if curFocus != IFocus:
+                    result = fo.issueChangeFocusOrder(pid, IFocus)
+                    if result == 1:
+                        universe.updateMeterEstimates(empirePlanetIDs)
+                            
         pp, rp = getResourceTargetTotals(empirePlanetIDs,  planetMap)
         print "\n-----------------------------------------"
         print "Making Planet Focus Change Determinations\n"
@@ -206,10 +229,17 @@ def setPlanetResourceFoci(): #+
         # include a bias to slightly discourage changing foci
         curTargetPP = 0.001
         curTargetRP = 0.001
-        newFoci = {}
         timer.append( time() ) #loop
         hasForce = empire.getTechStatus("CON_FRC_ENRG_STRC") == fo.techStatus.complete
         for pid in newTargets:
+            if pid in newFoci:
+                if planetMap[pid].focus == newFoci[pid]:
+                    nPP,  nRP  = newTargets[pid].get( newFoci[pid],  [0, 0] )
+                    curTargetPP += nPP
+                    curTargetRP +=  nRP
+                    continue
+                else:
+                    print "Error: new focus %s set early but not applied for planet %s (%d)"%( newFoci[pid],  planetMap[pid].name,  pid )
             II, IR = newTargets[pid][IFocus]
             RI, RR = newTargets[pid][RFocus]
             CI, CR = currentOutput[pid][ IFocus],  currentOutput[pid][ RFocus]
@@ -268,10 +298,10 @@ def setPlanetResourceFoci(): #+
                         ntPP, ntRP= newTargets[pid].get(RFocus,  (0, 0))
                         print "pID (%3d)  %22s |  c:  %5.1f / %5.1f |   cT:  %5.1f / %5.1f  |  cF: %8s |  nF: %8s  | cT:  %5.1f / %5.1f |         %.2f"%(pid,  planetMap[pid].name, cRP, cPP,   otRP, otPP,  fociMap.get(oldFocus, 'unknown'),  fociMap[RFocus] , ntRP, ntPP , ratio)
                         continue  # RP is getting too expensive, but might be willing to still allocate from a planet with less PP to lose
-            if planetMap[pid].currentMeterValue(fo.meterType.targetPopulation) >0: #only set to research if  pop won't die out
-                newFoci[pid] = RFocus
-                curTargetRP += (RR-IR)
-                curTargetPP -= (II-RI)
+            #if planetMap[pid].currentMeterValue(fo.meterType.targetPopulation) >0: #only set to research if  pop won't die out
+            newFoci[pid] = RFocus
+            curTargetRP += (RR-IR)
+            curTargetPP -= (II-RI)
         print "============================"
         print "Planet Focus Assignments to achieve target RP/PP ratio of %.2f from current ratio of %.2f  ( %.1f / %.1f )"%(priorityRatio,  rp/(pp+0.0001),  rp,  pp)
         print "Max Industry assignments would result in target RP/PP ratio of %.2f  ( %.1f / %.1f )"%( ctRP0/ (ctPP0 + 0.0001), ctRP0,  ctPP0 )

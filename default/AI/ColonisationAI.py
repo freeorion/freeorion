@@ -178,7 +178,7 @@ def getColonyFleets():
     for pid in empireOwnedPlanetIDs:
         planet=universe.getPlanet(pid)
         if planet:
-            AIstate.colonizedSystems.setdefault(planet.systemID,  []).append(pid)   # track these to plan Solar Generators and Singularity Generators
+            AIstate.colonizedSystems.setdefault(planet.systemID,  []).append(pid)   # track these to plan Solar Generators and Singularity Generators, etc.
     AIstate.empireStars.clear()
     for sysID in AIstate.colonizedSystems:
         system = universe.getSystem(sysID)
