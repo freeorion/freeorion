@@ -35,8 +35,12 @@ namespace {
 
     const int   MAIN_PANEL_CORNER_RADIUS = 8;
     const float ARC_THICKNESS = 3.0;
-    const GG::X TECH_PANEL_WIDTH(225);
-    const GG::Y TECH_PANEL_HEIGHT(60);
+    GG::X   TechPanelWidth()
+    { return GG::X(ClientUI::Pts()*18); }
+    GG::Y   TechPanelHeight()
+    { return GG::Y(ClientUI::Pts()*5); }
+
+
 
     const double ZOOM_STEP_SIZE = 1.12;
     const double MIN_SCALE = std::pow(ZOOM_STEP_SIZE, -25.0);
@@ -468,7 +472,7 @@ private:
 };
 
 TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, const LayoutPanel* panel) :
-    GG::Wnd(GG::X0, GG::Y0, TECH_PANEL_WIDTH, TECH_PANEL_HEIGHT, GG::INTERACTIVE),
+    GG::Wnd(GG::X0, GG::Y0, TechPanelWidth(), TechPanelHeight(), GG::INTERACTIVE),
     m_tech_name(tech_name),
     m_layout_panel(panel),
     m_icon(0),
@@ -486,7 +490,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
 
     //REMARK: do not use AttachChild but add child->Render() to method render,
     //        as the component is zoomed tech icon
-    const int GRAPHIC_SIZE = Value(TECH_PANEL_HEIGHT);
+    const int GRAPHIC_SIZE = Value(TechPanelHeight());
     m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE),
                                    ClientUI::TechIcon(m_tech_name),
                                    GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -495,8 +499,8 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     const int PAD = 8;
     GG::X text_left(GG::X(GRAPHIC_SIZE) + PAD);
     GG::Y text_top(0);
-    GG::X text_width(TECH_PANEL_WIDTH - text_left);
-    GG::Y text_height(TECH_PANEL_HEIGHT);
+    GG::X text_width(TechPanelWidth() - text_left);
+    GG::Y text_height(TechPanelHeight());
     m_tech_name_text = new ShadowedTextControl(text_left, text_top, text_width, text_height,
                                                "", font, ClientUI::TextColor(),
                                                GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
@@ -1074,10 +1078,10 @@ GG::Pt TechTreeWnd::LayoutPanel::Convert(const GG::Pt & p) const {
 void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     const GG::X TECH_PANEL_MARGIN_X(ClientUI::Pts()*16);
     const GG::Y TECH_PANEL_MARGIN_Y(ClientUI::Pts()*16 + 100);
-    const double RANK_SEP = Value(TECH_PANEL_WIDTH) * GetOptionsDB().Get<double>("UI.tech-layout-horz-spacing");
-    const double NODE_SEP = Value(TECH_PANEL_HEIGHT) * GetOptionsDB().Get<double>("UI.tech-layout-vert-spacing");
-    const double WIDTH = Value(TECH_PANEL_WIDTH);
-    const double HEIGHT = Value(TECH_PANEL_HEIGHT);
+    const double RANK_SEP = Value(TechPanelWidth()) * GetOptionsDB().Get<double>("UI.tech-layout-horz-spacing");
+    const double NODE_SEP = Value(TechPanelHeight()) * GetOptionsDB().Get<double>("UI.tech-layout-vert-spacing");
+    const double WIDTH = Value(TechPanelWidth());
+    const double HEIGHT = Value(TechPanelHeight());
     const double X_MARGIN(12);
 
     // view state initial data
