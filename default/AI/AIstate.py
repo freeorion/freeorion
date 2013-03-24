@@ -94,7 +94,7 @@ class AIstate(object):
         self.expInteriorSystemIDs= {}
         self.exploredSystemIDs = {}
         self.unexploredSystemIDs = {self.origHomeSystemID:1}
-        self.fleetStatus={} #keys: 'sysID', 'nships'
+        self.fleetStatus={} #keys: 'sysID', 'nships', 'rating'
         self.systemStatus={} #keys: 'fleetThreat'. 'planetThreat', 'monsterThreat' (specifically, immobile nonplanet threat), 'myfleets', 'neighbors', 'name', 'myDefenses'
         self.needsEmergencyExploration=[]
         self.newlySplitFleets={}

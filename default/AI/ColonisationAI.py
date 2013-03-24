@@ -743,21 +743,42 @@ def sendColonyShips(colonyFleetIDs, evaluatedPlanets, missionType):
     potentialTargets =   [  (pid, (score, specName)  )  for (pid,  (score, specName) ) in  evaluatedPlanets if score > (0.8 * cost) ]
 
     print "colony/outpost  ship matching -- fleets  %s to planets %s"%( fleetPool,  evaluatedPlanets)
-    #for planetID_value_pair in evaluatedPlanets:
+    
+    #adding a lot of checking here because have been getting mysterious  exception, after too many recursions to get info
     fleetPool=set(fleetPool)
     universe=fo.getUniverse()
+    empireID=fo.empireID()
+    destroyedObjIDs = universe.destroyedObjectIDs(empireID)
+    for fid in fleetPool:
+        fleet = universe.getFleet(fid)
+        if not fleet  or fleet.empty:
+            print "Error: bad fleet ( ID %d ) given to colonization routine; will be skipped"%fid
+            fleetPool.remove(fid)
+            continue
+        reportStr="Fleet ID (%d): %d ships; species: "%(fid,  fleet.numShips)
+        for sid in fleet.shipIDs:
+            ship = universe.getShip(sid)
+            if not ship:
+                reportStr += "NoShip, "
+            else:
+                reportStr += "%s,  "%ship.speciesName
+        print reportStr
+    print
+    #for planetID_value_pair in evaluatedPlanets:
     while (len(fleetPool) > 0 ) and ( len(potentialTargets) >0):
         thisTarget = potentialTargets.pop(0)
         thisScore=thisTarget[1][0]
         thisPlanetID=thisTarget[0]
-        thisSysID = universe.getPlanet(thisPlanetID).systemID
+        thisPlanet = universe.getPlanet(thisPlanetID)
+        print "checking pool %s against target %s  current owner %s  targetSpec %s"%(fleetPool,  thisPlanet.name,  thisPlanet.owner,  thisTarget)
+        thisSysID = thisPlanet.systemID
         if (foAI.foAIstate.systemStatus.setdefault(thisSysID, {}).setdefault('monsterThreat', 0) > 2000) or (fo.currentTurn() <20  and foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'] > 200):
             print "Skipping colonization of system %s due to Big Monster,  threat %d"%(PlanetUtilsAI.sysNameIDs([thisSysID]),  foAI.foAIstate.systemStatus[thisSysID]['monsterThreat'])
             continue
         thisSpec=thisTarget[1][1]
         foundFleets=[]
         thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetStats={},  minStats={},  curStats={},  species=thisSpec,  systemsToCheck=[thisSysID],  systemsChecked=[], 
-                                                     fleetPoolSet = fleetPool,   fleetList=foundFleets,  verbose=False)
+                                                     fleetPoolSet = fleetPool,   fleetList=foundFleets,  triedFleets=set([]),  verbose=False)
         if thisFleetList==[]:
             fleetPool.update(foundFleets)#just to be safe
             continue #must have no compatible colony/outpost ships 

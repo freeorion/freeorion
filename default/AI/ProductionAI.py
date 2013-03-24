@@ -179,16 +179,16 @@ def addTroopDesigns():
     ar3= "AR_NEUTRONIUM_PLATE"
     arL=[ar1,  ar2,  ar3]
     
-    for ari in [1, 2]:
-        nb,  hull =  designNameBases[ari+2]+"%1d-%1d",   "SH_ORGANIC"
-        #newTroopDesigns += [ (nb%(2,  ari+1),  desc,  hull,  ["SR_WEAPON_2",  arL[ari],  tp,  tp],  "",  model) ]
-        #newTroopDesigns += [ (nb%(3,  ari+1),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp],  "",  model) ]
-        nb,  hull =  designNameBases[ari+2]+"%1d-%1d",   "SH_STATIC_MULTICELLULAR"
-        #newTroopDesigns += [ (nb%(4,  ari+1),  desc,  hull,  ["SR_WEAPON_2",  arL[ari],  tp,  tp,  tp],  "",  model) ]
-        #newTroopDesigns += [ (nb%(5,  ari+1),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp,  tp],  "",  model) ]
-        nb,  hull =  designNameBases[ari+2]+"%1d-%1d",   "SH_ENDOMORPHIC"
-        newTroopDesigns += [ (nb%(6,  ari+1),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp,  tp,  tp],  "",  model) ]
-        newTroopDesigns += [ (nb%(7,  ari+1),  desc,  hull,  ["SR_WEAPON_8",  arL[ari],  tp,  tp,  tp,  tp],  "",  model) ]
+    for ari in [1, 2]: #naming below only works because skipping Lead armor
+        nb,  hull =  designNameBases[ari+1]+"%1d-%1d",   "SH_ORGANIC"
+        newTroopDesigns += [ (nb%(1,  ari),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp],  "",  model) ]
+        newTroopDesigns += [ (nb%(2,  ari),  desc,  hull,  ["SR_WEAPON_8",  arL[ari],  tp,  tp],  "",  model) ]
+        nb,  hull =  designNameBases[ari+1]+"%1d-%1d",   "SH_STATIC_MULTICELLULAR"
+        newTroopDesigns += [ (nb%(3,  ari),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp,  tp],  "",  model) ]
+        newTroopDesigns += [ (nb%(4,  ari),  desc,  hull,  ["SR_WEAPON_8",  arL[ari],  tp,  tp,  tp],  "",  model) ]
+        nb,  hull =  designNameBases[ari+1]+"%1d-%1d",   "SH_ENDOMORPHIC"
+        newTroopDesigns += [ (nb%(5,  ari),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp,  tp,  tp],  "",  model) ]
+        newTroopDesigns += [ (nb%(6,  ari),  desc,  hull,  ["SR_WEAPON_8",  arL[ari],  tp,  tp,  tp,  tp],  "",  model) ]
 
     currentTurn=fo.currentTurn()
     needsAdding=[]
@@ -542,8 +542,10 @@ def generateProductionOrders():
     capitolID = PlanetUtilsAI.getCapital()
     if capitolID == None:
         homeworld=None
+        capitolSysID=None
     else:
         homeworld = universe.getPlanet(capitolID)
+        capitolSysID = homeworld.systemID
     print "Production Queue Management:"
     empire = fo.getEmpire()
     productionQueue = empire.productionQueue
@@ -1177,6 +1179,33 @@ def generateProductionOrders():
         print "\nFound  colony ships in build queue: %s"%queuedColonyShips
     if queuedOutpostShips:
         print "\nFound  colony ships in build queue: %s"%queuedOutpostShips
+        
+    allTroopFleetIDs =  FleetUtilsAI.getEmpireFleetIDsByRole(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION )
+    nTroopTot = sum( [ foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0) for fid in allTroopFleetIDs ] )
+    availTroopFleetIDs = list( FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allTroopFleetIDs))
+    nAvailTroopTot = sum( [ foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0) for fid in availTroopFleetIDs ] )
+    print "Trooper Status: %d total,  with %d unassigned.  %d queued"%(nTroopTot,  nAvailTroopTot,  queuedTroopShips)
+    if ( capitolID!=None and currentTurn>=40 and foAI.foAIstate.systemStatus.get(capitolSysID,  {}).get('fleetThreat', 0)==0   and 
+                                                                                           foAI.foAIstate.systemStatus.get(capitolSysID,  {}).get('neighborThreat', 0)==0):
+        bestShip,  bestDesign,  buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION)
+        if  buildChoices!=None and  len(buildChoices)>0: 
+            loc = random.choice(buildChoices)
+            prodTime = bestDesign.productionTime(empire.empireID,  loc)
+            prodCost=bestDesign.productionCost(empire.empireID,  loc)
+            troopersNeededForcing = max(0,  int( 0.99+  (currentTurn/20 - nAvailTroopTot)/max(2, prodTime-1)) )
+            numShips=troopersNeededForcing
+            perTurnCost = (float(prodCost) / prodTime)
+            if troopersNeededForcing>0  and totalPP > 3*perTurnCost*queuedTroopShips:
+                retval  = fo.issueEnqueueShipProductionOrder(bestShip, loc)
+                if retval !=0:
+                    print "forcing %d new ship(s) to production queue:  %s; per turn production cost %.1f"%(numShips,  bestDesign.name(True),  numShips*perTurnCost)
+                    print ""
+                    if numShips>1:
+                        fo.issueChangeProductionQuantityOrder(productionQueue.size -1,  1,  numShips)
+                    availPP -=  numShips*perTurnCost
+                    res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                    fo.updateProductionQueue()
+        print ""
 
     print ""
     # get the highest production priorities

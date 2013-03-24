@@ -24,8 +24,9 @@ def show_only_some(x, pos):
   else:
     return ''
 
+doPlotTypes = ["PP"]#+ [ "RP"] +[ "ShipCount"]
 
-for plotType in ["PP", "RP", "ShipCount"]:
+for plotType in doPlotTypes:
 
     if plotType=="PP":
         caption="Production"
@@ -69,8 +70,8 @@ for plotType in ["PP", "RP", "ShipCount"]:
                 data=PP
             elif plotType=="RP":
                 data=RP
-	    else:
-		data = shipCount
+            else:
+                data = shipCount
             if data != []:
                 ymin = min(ymin, min(data))
                 ymax = max(ymax, max(data))
@@ -78,6 +79,13 @@ for plotType in ["PP", "RP", "ShipCount"]:
                 allData[playerName]=data
 
     logfiles=sorted(glob(dataDir+os.sep+"A*.log"))
+    A1log = glob(dataDir+os.sep+"AI_1.log")
+    if A1log and A1log[0] in logfiles:
+        A1Time = os.path.getmtime(A1log[0])
+        for path in logfiles:
+            logtime = os.path.getmtime(path)
+            if logtime < A1Time  - 300:
+                del logfiles[ logfiles.index(path)]
     empire=0
     for lfile in logfiles:
         with open(lfile, 'r') as lf:
@@ -159,9 +167,9 @@ for plotType in ["PP", "RP", "ShipCount"]:
     x1,x2,y1,y2 = axis()
     newY2=y2
     for yi in range(1, 10):
-      if 1.05*ymax < yi*y2/10:
-	newY2= yi*y2/10
-	break
+        if 1.05*ymax < yi*y2/10:
+            newY2= yi*y2/10
+            break
     print "y1: %.1f ; ymin: %.1f ; newY2/100: %.1f"%(y1, ymin, newY2/100)
     y1 = max(y1, 4, ymin, newY2/100)
     #axis( (x1,min(x2,200),y1,y2))

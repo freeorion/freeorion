@@ -42,7 +42,7 @@ def countPartsFleetwide(fleetID,  partsList):
     return tally
 
 def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList, 
-                                                            takeAny=False,  extendSearch=True,  verbose=False): #implements breadth-first search through systems
+                                                            takeAny=False,  extendSearch=True,  triedFleets=set([]),  verbose=False): #implements breadth-first search through systems
     if verbose:
         print "getFleetsForMission: (nships:%1d,  targetStats:%s,  minStats:%s, curStats:%s,  species:%6s,  systemsToCheck:%8s,  systemsChecked:%8s, fleetPoolSet:%8s,   fleetList:%8s) "%(
                                                                                                                                         nships,  targetStats,  minStats, curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList)
@@ -122,7 +122,7 @@ def splitFleet(fleetID):
     if not fleet.ownedBy(empireID): return []
 
     if len(list(fleet.shipIDs)) <= 1:  # fleet with only one ship cannot be split
-       return [fleetID]
+       return []
     shipIDs = list( fleet.shipIDs )
     for shipID in shipIDs[1:]:
         newFleetID = fo.issueNewFleetOrder("Fleet %d"%(shipID), shipID)
@@ -140,7 +140,8 @@ def splitFleet(fleetID):
             print "Error - got no fleet ID back after trying to split a ship from fleet %d"%fleetID
     foAI.foAIstate.getFleetRole(fleetID, forceNew=True) #
     foAI.foAIstate.updateFleetRating(fleetID) #
-    foAI.foAIstate.ensureHaveFleetMissions(newfleets)
+    if newfleets !=[]:
+        foAI.foAIstate.ensureHaveFleetMissions(newfleets)
     return newfleets
 
 def mergeFleetAintoB(fleetA_ID,  fleetB_ID,  leaveRating=0,  needRating=0,  context=""):

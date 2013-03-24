@@ -205,20 +205,34 @@ def setPlanetResourceFoci(): #+
                 if RFocus not in planet.availableFoci:
                     continue
                 newFoci[pid] = RFocus
+                result=0
                 if curFocus != RFocus:
                     result = fo.issueChangeFocusOrder(pid, RFocus)
                     if result == 1:
                         universe.updateMeterEstimates(empirePlanetIDs)
+                if curFocus == RFocus  or result==1:
+                    if pid in empirePlanetIDs:
+                        del empirePlanetIDs[   empirePlanetIDs.index( pid ) ]
             elif  ( ("BLD_CONC_CAMP" in [bld.buildingTypeName for bld in map( universe.getObject,  planet.buildingIDs)] ) or
                              (  [  ccspec  for ccspec in planet.specials if ccspec in [ "CONC_CAMP_MASTER_SPECIAL",  "CONC_CAMP_SLAVE_SPECIAL"  ]  ]  != [] )):
                 if IFocus not in planet.availableFoci:
                     continue
                 curFocus = planet.focus
                 newFoci[pid] = IFocus
+                result=0
                 if curFocus != IFocus:
                     result = fo.issueChangeFocusOrder(pid, IFocus)
                     if result == 1:
+                        print ("Tried setting %s for Concentration Camp  planet %s (%d) with species %s and current focus %s, got result %d and focus %s"%
+                               ( newFoci[pid],  planet.name,  pid,  planet.speciesName, curFocus,  result,  planetMap[pid].focus ))
                         universe.updateMeterEstimates(empirePlanetIDs)
+                    if (result != 1) or planetMap[pid].focus != IFocus:
+                        newplanet=universe.getPlanet(pid)
+                        print ("Error: Failed setting %s for Concentration Camp  planet %s (%d) with species %s and current focus %s, but new planet copy shows %s"%
+                               ( newFoci[pid],  planetMap[pid].name,  pid,  planetMap[pid].speciesName, planetMap[pid].focus,  newplanet.focus ))
+                if curFocus == IFocus  or result==1:
+                    if pid in empirePlanetIDs:
+                        del empirePlanetIDs[   empirePlanetIDs.index( pid ) ]
                             
         pp, rp = getResourceTargetTotals(empirePlanetIDs,  planetMap)
         print "\n-----------------------------------------"
@@ -239,7 +253,7 @@ def setPlanetResourceFoci(): #+
                     curTargetRP +=  nRP
                     continue
                 else:
-                    print "Error: new focus %s set early but not applied for planet %s (%d)"%( newFoci[pid],  planetMap[pid].name,  pid )
+                    print "Error: new focus %s set early but not applied for planet %s (%d) with species %s"%( newFoci[pid],  planetMap[pid].name,  pid,  planetMap[pid].speciesName )
             II, IR = newTargets[pid][IFocus]
             RI, RR = newTargets[pid][RFocus]
             CI, CR = currentOutput[pid][ IFocus],  currentOutput[pid][ RFocus]
