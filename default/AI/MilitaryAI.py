@@ -109,6 +109,7 @@ def getMilitaryFleets(tryReset=True):
     if  capitalPlanet:  
         capitalSysID = capitalPlanet.systemID
     else: # should be rare, but so as to not break code below, pick a randomish  mil-centroid  system
+        capitalSysID=None #unless we can find one to use
         systemDict = {}
         for fleetID in allMilitaryFleetIDs:
             status = foAI.foAIstate.fleetStatus.get(fleetID,  None)
@@ -121,7 +122,10 @@ def getMilitaryFleets(tryReset=True):
         if rankedSystems:
             capitalSysID = rankedSystems[-1][-1]
         else:
-            capitalSysID = foAI.foAIstate.fleetStatus.items()[0]['sysID']
+            try:
+                capitalSysID = foAI.foAIstate.fleetStatus.items()[0][1]['sysID']
+            except:
+                pass
 
     if False:
         if fo.currentTurn() < 20:

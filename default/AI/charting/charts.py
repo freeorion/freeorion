@@ -82,10 +82,12 @@ for plotType in doPlotTypes:
     A1log = glob(dataDir+os.sep+"AI_1.log")
     if A1log and A1log[0] in logfiles:
         A1Time = os.path.getmtime(A1log[0])
-        for path in logfiles:
+        for path in logfiles[::-1]:
             logtime = os.path.getmtime(path)
+            print "path ",  path,  "logtime diff: %.1f"%(A1Time -logtime)
             if logtime < A1Time  - 300:
                 del logfiles[ logfiles.index(path)]
+                print "skipping stale logfile ",  path
     empire=0
     for lfile in logfiles:
         with open(lfile, 'r') as lf:
