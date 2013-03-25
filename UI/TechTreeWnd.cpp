@@ -1847,8 +1847,12 @@ void TechTreeWnd::TechBrowsedSlot(const std::string& tech_name)
 void TechTreeWnd::TechClickedSlot(const std::string& tech_name,
                                   const GG::Flags<GG::ModKey>& modkeys)
 {
-    SetEncyclopediaTech(tech_name);
-    TechSelectedSignal(tech_name);
+    if (modkeys & GG::MOD_KEY_SHIFT) {
+        TechDoubleClickedSlot(tech_name, modkeys);
+    } else {
+        SetEncyclopediaTech(tech_name);
+        TechSelectedSignal(tech_name);
+    }
 }
 
 void TechTreeWnd::TechDoubleClickedSlot(const std::string& tech_name,
