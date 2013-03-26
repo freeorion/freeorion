@@ -135,14 +135,14 @@ void CombatInfo::load(Archive & ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(filtered_empire_object_visibility)
         & BOOST_SERIALIZATION_NVP(filtered_combat_events);
 
-    empire_ids.swap(filtered_empire_ids);
-    objects.swap(filtered_objects);
-    empire_known_objects.swap(filetered_empire_known_objects);
-    damaged_object_ids.swap(filtered_damaged_object_ids);
-    destroyed_object_ids.swap(filtered_destroyed_object_ids);
-    destroyed_object_knowers.swap(filetered_destroyed_object_knowers);
+    empire_ids.swap(              filtered_empire_ids);
+    objects.swap(                 filtered_objects);
+    empire_known_objects.swap(    filtered_empire_known_objects);
+    damaged_object_ids.swap(      filtered_damaged_object_ids);
+    destroyed_object_ids.swap(    filtered_destroyed_object_ids);
+    destroyed_object_knowers.swap(filtered_destroyed_object_knowers);
     empire_object_visibility.swap(filtered_empire_object_visibility);
-    combat_events.swap(filtered_combat_events);
+    combat_events.swap(           filtered_combat_events);
 }
 
 #endif // _CombatSystem_h_
