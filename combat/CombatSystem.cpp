@@ -257,7 +257,7 @@ void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisi
 // AutoResolveCombat
 ////////////////////////////////////////////////
 namespace {
-    void AttackShipShip(Ship* attacker, float damage, Ship* target, CombatInfo& combat_info) {
+    void AttackShipShip(Ship* attacker, float damage, Ship* target, CombatInfo& combat_info, int round) {
         if (!attacker || ! target) return;
         if (damage <= 0.0f)
             return;
@@ -298,11 +298,19 @@ namespace {
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << structure_damage << " structure damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
+        AttackEvent attack;
+        attack.attacker_id = attacker->ID();
+        attack.target_id = target->ID();
+        attack.round = round;
+        attack.damage = damage;
+        attack.target_destroyed = (target_structure->Current() <= 0.0f);
+        combat_info.combat_events.push_back(attack);
+
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackShipPlanet(Ship* attacker, float damage, Planet* target, CombatInfo& combat_info) {
+    void AttackShipPlanet(Ship* attacker, float damage, Planet* target, CombatInfo& combat_info, int round) {
         if (!attacker || ! target) return;
         if (damage <= 0.0f)
             return;
@@ -362,11 +370,19 @@ namespace {
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
 
+        AttackEvent attack;
+        attack.attacker_id = attacker->ID();
+        attack.target_id = target->ID();
+        attack.round = round;
+        attack.damage = damage;
+        attack.target_destroyed = false;
+        combat_info.combat_events.push_back(attack);
+
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnAttackedByShip(CurrentTurn());
     }
 
-    void AttackPlanetShip(Planet* attacker, Ship* target, CombatInfo& combat_info) {
+    void AttackPlanetShip(Planet* attacker, Ship* target, CombatInfo& combat_info, int round) {
         if (!attacker || ! target) return;
 
         float damage = attacker->UniverseObject::GetMeter(METER_DEFENSE)->Current();   // planet "Defense" meter is actually its attack power
@@ -405,10 +421,18 @@ namespace {
             Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << structure_damage << " structure damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
+        AttackEvent attack;
+        attack.attacker_id = attacker->ID();
+        attack.target_id = target->ID();
+        attack.round = round;
+        attack.damage = damage;
+        attack.target_destroyed = (target_structure->Current() <= 0.0f);
+        combat_info.combat_events.push_back(attack);
+
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackPlanetPlanet(Planet* attacker, Planet* target, CombatInfo& combat_info) {
+    void AttackPlanetPlanet(Planet* attacker, Planet* target, CombatInfo& combat_info, int round) {
         Logger().debugStream() << "AttackPlanetPlanet does nothing!";
         // intentionally left empty
     }
@@ -678,14 +702,23 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             int attacker_owner_id = attacker->Owner();
 
             std::map<int, std::set<int> >::iterator target_vec_it = empire_valid_target_object_ids.find(attacker_owner_id);
-            if (target_vec_it == empire_valid_target_object_ids.end()) {
+            if (target_vec_it == empire_valid_target_object_ids.end() || target_vec_it->second.empty()) {
                 Logger().debugStream() << "No targets for attacker with id: " << attacker_owner_id;
                 break;
             }
 
             const std::set<int>& valid_target_ids = target_vec_it->second;
-            if (valid_target_ids.empty())
-                break; // should be redundant with this entry being erased when emptied
+
+            // DEBUG
+            std::string id_list;
+            for (std::set<int>::const_iterator target_it = valid_target_ids.begin();
+                    target_it != valid_target_ids.end(); ++target_it)
+            { id_list += boost::lexical_cast<std::string>(*target_it) + " "; }
+
+            Logger().debugStream() << "Valid targets for attacker with id: " << attacker_owner_id
+                                    << " owned by empire: " << attacker_owner_id
+                                    << " :  " << id_list;
+            // END DEBUG
 
 
             // select target object
@@ -706,18 +739,18 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             // do actual attacks, and mark attackers as valid targets for attacked object's owners
             if (attack_ship) {
                 if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
-                    AttackShipShip(attack_ship, weapon_it->part_attack, target_ship, combat_info);
+                    AttackShipShip(attack_ship, weapon_it->part_attack, target_ship, combat_info, round);
                     empire_valid_target_object_ids[target_ship->Owner()].insert(attacker_id);
                 } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
-                    AttackShipPlanet(attack_ship, weapon_it->part_attack,  target_planet, combat_info);
+                    AttackShipPlanet(attack_ship, weapon_it->part_attack,  target_planet, combat_info, round);
                     empire_valid_target_object_ids[target_planet->Owner()].insert(attacker_id);
                 }
             } else if (attack_planet) {
                 if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
-                    AttackPlanetShip(attack_planet, target_ship, combat_info);
+                    AttackPlanetShip(attack_planet, target_ship, combat_info, round);
                     empire_valid_target_object_ids[target_ship->Owner()].insert(attacker_id);
                 } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
-                    AttackPlanetPlanet(attack_planet, target_planet, combat_info);
+                    AttackPlanetPlanet(attack_planet, target_planet, combat_info, round);
                     empire_valid_target_object_ids[target_planet->Owner()].insert(attacker_id);
                 }
             }
@@ -809,4 +842,14 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         Logger().debugStream() << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
+
+    Logger().debugStream() << "combat event log:";
+    for (std::vector<AttackEvent>::const_iterator it = combat_info.combat_events.begin();
+         it != combat_info.combat_events.end(); ++it)
+    {
+        Logger().debugStream() << "rnd: " << it->round << " : "
+                               << it->attacker_id << " -> " << it->target_id << " : "
+                               << it->damage
+                               << (it->target_destroyed ? " (destroyed)" : "");
+    }
 }
