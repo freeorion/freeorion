@@ -1111,7 +1111,8 @@ def generateProductionOrders():
                     print "Tried scrapping %s at planet %s,  got result %d"%(bldName,  planet.name,  res)
         elif foAI.foAIstate.aggression>fo.aggression.typical and empire.buildingTypeAvailable(bldName) and (tPop >= 32) :
             if  (planet.focus== EnumsAI.AIFocusType.FOCUS_GROWTH) or ("COMPUTRONIUM_SPECIAL" in planet.specials):
-                continue
+                #continue
+                pass  # now that focus setting takes these into account, probably works ok to have conc camp
             queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
             if (cPop >=0.95*tPop):# and cInd < 1.5* tInd:
                 if  pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID,  pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building

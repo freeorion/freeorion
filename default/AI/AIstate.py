@@ -95,7 +95,7 @@ class AIstate(object):
         self.exploredSystemIDs = {}
         self.unexploredSystemIDs = {self.origHomeSystemID:1}
         self.fleetStatus={} #keys: 'sysID', 'nships', 'rating'
-        self.systemStatus={} #keys: 'fleetThreat'. 'planetThreat', 'monsterThreat' (specifically, immobile nonplanet threat), 'myfleets', 'neighbors', 'name', 'myDefenses'
+        self.systemStatus={} #keys: 'fleetThreat'. 'planetThreat', 'monsterThreat' (specifically, immobile nonplanet threat), 'myfleets', 'neighbors', 'name', 'myDefenses', 'myFleetsAccessible'(not just next desitination)
         self.needsEmergencyExploration=[]
         self.newlySplitFleets={}
         self.aggression=aggression
@@ -238,6 +238,7 @@ class AIstate(object):
         enemyFleetIDs = []
         enemiesBySystem = {}
         myFleetsBySystem={}
+        fleetSpotPosition={}
         sawEnemiesAtSystem={}
         currentTurn = fo.currentTurn()
         for fleetID in universe.fleetIDs:
@@ -250,6 +251,7 @@ class AIstate(object):
                 if  fleet.ownedBy(empireID):
                     if   (fleetID not in destroyedObjIDs):
                         myFleetsBySystem.setdefault( thisSysID,  [] ).append( fleetID )
+                        fleetSpotPosition.setdefault( fleet.systemID,  [] ).append( fleetID )
                 else:
                     partialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(fleetID,  empireID)).get(fo.visibility.partial, -9999)
                     if partialVisTurn >= currentTurn -1 : #only interested in immediately recent data
@@ -264,6 +266,7 @@ class AIstate(object):
             system = universe.getSystem(sysID)
             #update fleets
             sysStatus['myfleets']=myFleetsBySystem.get(sysID,  [])
+            sysStatus['myFleetsAccessible']=fleetSpotPosition.get(sysID,  [])
             localEnemyFleetIDs=enemiesBySystem.get(sysID,  [])
             if system:
                 sysStatus['name']=system.name
@@ -296,7 +299,7 @@ class AIstate(object):
             if (not system) or partialVisTurn==-9999:
                 print "Have never had partial vis for system %d ( %s ) -- basing threat assessment on old info and lost ships"%(sysID,  sysStatus.get('name',  "name unknown"))
                 sysStatus['planetThreat'] = 0
-                sysStatus['fleetThreat'] = int( max(enemyRating,  sysStatus.get('fleetThreat',  0) ,  1.1*lostFleetRating) )
+                sysStatus['fleetThreat'] = int( max(enemyRating,  0.98*sysStatus.get('fleetThreat',  0) ,  1.1*lostFleetRating) )
                 sysStatus['monsterThreat']=0
                 sysStatus['mydefenses'] = {'overall':0,  'attack':0,  'health':0 }
                 sysStatus['totalThreat'] = sysStatus['fleetThreat']
@@ -325,7 +328,7 @@ class AIstate(object):
 
             if  not   partialVisTurn == currentTurn:  #(universe.getVisibility(sysID,  self.empireID) >= fo.visibility.partial):
                 print "Stale visibility for system %d ( %s ) -- last seen %d, current Turn %d -- basing threat assessment on old info and lost ships"%(sysID,  sysStatus.get('name',  "name unknown"),  partialVisTurn,  currentTurn)
-                sysStatus['fleetThreat'] = int( enemyRating +  1.1*lostFleetRating)   
+                sysStatus['fleetThreat'] = int( max(enemyRating,  0.98*sysStatus.get('fleetThreat',  0),  1.1*lostFleetRating) )
                 sysStatus['totalThreat'] = (pattack + enemyAttack + sysStatus.get('monsterThreat', 0)**0.5) * (phealth + enemyHealth + sysStatus.get('monsterThreat', 0)**0.5)
             else: #system considered visible #TODO: reevaluate as visibility rules change
                 enemyattack,  enemyhealth,  enemythreat=0, 0, 0

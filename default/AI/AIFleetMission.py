@@ -9,6 +9,7 @@ import MoveUtilsAI
 import ProductionAI
 import AIAbstractMission
 import EnumsAI
+import MilitaryAI
 
 
 AIFleetMissionTypeNames = EnumsAI.AIFleetMissionType()
@@ -115,7 +116,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
             return # can't merge fleets in middle of starlane
         sysStatus = foAI.foAIstate.systemStatus[systemID]
         destroyedList = list( universe.destroyedObjectIDs(empireID) )
-        otherFleetsHere= [fid for fid in sysStatus.get('myfleets', []) if ( (fid != fleetID) and (fid not in destroyedList) ) ]
+        otherFleetsHere= [fid for fid in sysStatus.get('myFleetsAccessible', []) if ( (fid != fleetID) and (fid not in destroyedList) ) ]
         if otherFleetsHere==[]:
             return #nothing of record to merge with
         mainMissionTargets = self.getAITargets(mainMissionType)
@@ -315,8 +316,8 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
             if ordersCompleted:
                 orders=self.getAIFleetOrders()
                 lastOrder= orders and orders[-1]
+                universe=fo.getUniverse()
                 if orders and lastOrder.getAIFleetOrderType() == EnumsAI.AIFleetOrderType.ORDER_COLONISE:
-                    universe=fo.getUniverse()
                     planet = universe.getPlanet(lastOrder.getTargetAITarget().getTargetID())
                     pop=planet.currentMeterValue(fo.meterType.population)
                     if pop==0:
@@ -341,6 +342,12 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                                                                                                                                                 AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs))): #consider a secure mission
                         print "Fleet %d has completed initial stage of its mission to secure system %d, may release a portion of ships"%(self.getAITargetID() ,  lastOrder.getTargetAITarget().getTargetID())
                         clearAll=False
+                fleetID=self.getAITargetID()
+                fleet=universe.getFleet(fleetID)
+                if fleet.systemID != -1:
+                    loc = fleet.systemID
+                else:
+                    loc=fleet.nextSystemID
                 if clearAll:
                     print "Fleet %d has completed its mission; clearing all orders and targets."%(self.getAITargetID() )
                     print "Full set of orders were:"
@@ -348,9 +355,29 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                         print "\t\t %s"%aiFleetOrder2
                     self.clearAIFleetOrders()
                     self.clearAITargets(([-1]+ self.getAIMissionTypes()[:1])[-1])
+                    if foAI.foAIstate.getFleetRole(fleetID) in [    EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY, 
+                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_ATTACK,  
+                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND, 
+                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN, 
+                                                                                                                        EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE       ]:
+                        allocations = MilitaryAI.getMilitaryFleets(milFleetIDs=[fleetID],  tryReset=False,  round="Fleet %d Reassignment"%fleetID)
+                        if allocations:
+                            MilitaryAI.assignMilitaryFleetsToSystems(useFleetIDList=[fleetID],  allocations=allocations)
                 else:
                     #TODO: evaluate releasing a smaller portion or none of the ships 
-                    FleetUtilsAI.splitFleet(self.getAITargetID() ) #at least first stage of current task is done; release extra ships for potential other deployments
+                    newFleets=FleetUtilsAI.splitFleet(self.getAITargetID() ) #at least first stage of current task is done; release extra ships for potential other deployments
+                    newMilFleets = []
+                    for fleetID in newFleets:
+                        if foAI.foAIstate.getFleetRole(fleetID) in [    EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY, 
+                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_ATTACK,  
+                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_DEFEND, 
+                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN, 
+                                                                                                                            EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE       ]:
+                            newMilFleets.append(fleetID)
+                    allocations = MilitaryAI.getMilitaryFleets(milFleetIDs=newMilFleets,  tryReset=False,  round="Fleet Reassignment %s"%newMilFleets)
+                    if allocations:
+                        MilitaryAI.assignMilitaryFleetsToSystems(useFleetIDList=newMilFleets,  allocations=allocations)
+                        
     def generateAIFleetOrders(self):
         "generates AIFleetOrders from fleets targets to accomplish"
 
@@ -372,6 +399,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
         # for some targets fleet has to visit systems and therefore fleet visit them
         systemAITargets = self.__getRequiredToVisitSystemAITargets()
         aiFleetOrdersToVisitSystems = MoveUtilsAI.getAIFleetOrdersFromSystemAITargets(self.getAITarget(), systemAITargets)
+        #TODO: if fleet doesn't have enough fuel to get to final target, consider resetting Mission
         #print "----------------------------------------"
         #print "*+*+ fleet %d :  has fleet action system targets:  %s"%(fleetID,  [str(obj) for obj in systemAITargets])
         #print "----------"
@@ -397,7 +425,7 @@ class AIFleetMission(AIAbstractMission.AIAbstractMission):
                         self.appendAIFleetOrder(aiFleetOrder)
 
 
-        # if fleet don't have any mission, then resupply if is current location not in supplyable system
+        # if fleet doesn't have any mission, then resupply if is current location not in supplyable system
         empire = fo.getEmpire()
         fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
         if (not self.hasAnyAIMissionTypes()) and not(self.getLocationAITarget().getTargetID() in fleetSupplyableSystemIDs):

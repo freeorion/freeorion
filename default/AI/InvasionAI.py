@@ -78,7 +78,7 @@ def getInvasionFleets():
     numInvasionFleets = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(invasionFleetIDs))
     print "Invasion Fleets Without Missions:    " + str(numInvasionFleets)
 
-    evaluatedPlanetIDs = list(set(invadablePlanetIDs) - set(invasionTargetedPlanetIDs))
+    evaluatedPlanetIDs = list(set(invadablePlanetIDs) - set(invasionTargetedPlanetIDs)) #TODO: check if any invasionTargetedPlanetIDs need more troops assigned
     print "Evaluating potential invasions, PlanetIDs:               " + str(evaluatedPlanetIDs)
 
     evaluatedPlanets = assignInvasionValues(evaluatedPlanetIDs, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, fleetSupplyablePlanetIDs, empire)

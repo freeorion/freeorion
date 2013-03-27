@@ -56,7 +56,7 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
             return []
     thisSystemID = systemsToCheck.pop(0) #take the head of the line
     systemsChecked.append(thisSystemID)
-    fleetsHere = [ fid for fid in foAI.foAIstate.systemStatus.get(thisSystemID,  {}).get('myfleets',  []) if fid in fleetPoolSet]
+    fleetsHere = [ fid for fid in foAI.foAIstate.systemStatus.get(thisSystemID,  {}).get('myFleetsAccessible',  []) if fid in fleetPoolSet]
     if verbose:
         print "found fleetPool Fleets  %s"%fleetsHere
     while fleetsHere !=[]:
@@ -137,7 +137,10 @@ def splitFleet(fleetID):
             newfleets.append(newFleetID)
             foAI.foAIstate.newlySplitFleets[newFleetID]=True
         else:
-            print "Error - got no fleet ID back after trying to split a ship from fleet %d"%fleetID
+            if fleet.systemID==-1:
+                print "Error - tried to split ship id (%d) from fleet %d when fleet is in starlane"%(shipID,  fleetID)
+            else:
+                print "Error - got no fleet ID back after trying to split ship id (%d) from fleet %d"%(shipID,  fleetID)
     foAI.foAIstate.getFleetRole(fleetID, forceNew=True) #
     foAI.foAIstate.updateFleetRating(fleetID) #
     if newfleets !=[]:
@@ -426,6 +429,7 @@ def generateAIFleetOrdersForAIFleetMissions():
         print "    " + str(ODAIFleetMission)
 
     aiFleetMissions = foAI.foAIstate.getAllAIFleetMissions()
+
     for aiFleetMission in aiFleetMissions:
         aiFleetMission.generateAIFleetOrders()
 
@@ -433,15 +437,20 @@ def issueAIFleetOrdersForAIFleetMissions():
     "issues fleet orders"
 
     print ""
-    print "issuing fleet orders:"
     universe=fo.getUniverse()
     aiFleetMissions = foAI.foAIstate.getAllAIFleetMissions()
-    for aiFleetMission in aiFleetMissions:
-        fleetID = aiFleetMission.getAITargetID()
-        fleet = aiFleetMission.getAITarget().getTargetObj()
-        if (not fleet) or ( len(fleet.shipIDs)==0)  or fleetID in universe.destroyedObjectIDs(fo.empireID()):  # in case fleet was merged into another previously during this turn
-            continue
-        aiFleetMission.issueAIFleetOrders()
+    round = 0
+    while (round <3):
+        round += 1
+        print "issuing fleet orders Round %d:"%round
+        for aiFleetMission in aiFleetMissions:
+            fleetID = aiFleetMission.getAITargetID()
+            fleet = aiFleetMission.getAITarget().getTargetObj()
+            if (not fleet) or ( len(fleet.shipIDs)==0)  or fleetID in universe.destroyedObjectIDs(fo.empireID()):  # in case fleet was merged into another previously during this turn
+                continue
+            aiFleetMission.issueAIFleetOrders()
+        aiFleetMissions = foAI.foAIstate.misc.get('ReassignedFleetMissions',  [])
+        foAI.foAIstate.misc['ReassignedFleetMissions']=[]
     print ""
 
 def printSystems(systemIDs):
