@@ -495,7 +495,7 @@ class ShipDesign {
 public:
     /** \name Structors */ //@{
     ShipDesign();
-    ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
+    ShipDesign(const std::string& name, const std::string& description,
                int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
                const std::string& icon, const std::string& model,
                bool name_desc_in_stringtable = false, bool monster = false);
@@ -515,7 +515,6 @@ public:
       * returned.  otherwise, the raw name string is returned. */
     const std::string&              Description(bool stringtable_lookup = true) const;
 
-    int                             DesignedByEmpire() const{ return m_designed_by_empire_id; } ///< returns id of empire that created design
     int                             DesignedOnTurn() const  { return m_designed_on_turn; };     ///< returns turn on which design was created
 
     double                          ProductionCost(int empire_id, int location_id) const;       ///< returns the total cost to build a ship of this design
@@ -605,7 +604,6 @@ private:
     std::string                 m_name;
     std::string                 m_description;
 
-    int                         m_designed_by_empire_id;
     int                         m_designed_on_turn;
 
     std::string                 m_hull;
@@ -680,21 +678,16 @@ public:
     /** Returns iterator pointing one past the last generic design name and id. */
     generic_iterator    end_generic() const;
 
-    /** Returns the ID for the generic (not created by any empire) design in
-      * the Universe for the predefined design with the specified \a name.  If
-      * there is no generic design available for the specified \a name, then
-      * INVALID_DESIGN_ID is returned. */
-    int                 GenericDesignID(const std::string& name) const;
+    /** Returns the ID for the design in the Universe for the predefined design
+      * with the specified \a name.  If there is generic design available for
+      * the specified \a name, then INVALID_DESIGN_ID is returned. */
+    int                 GetDesignID(const std::string& name) const;
     //@}
 
     /** Adds designs in this manager to the specified \a empire using that
-      * Empire's AddShipDesign(ShipDesign*) function.  Designs are added with
-      * the specified empire as the creator of the design, so each empire
-      * for which designs are added actually creates a separate copy of the
-      * design, with different designed-by empire for each  Returns a map from
-      * ship design name to design id in universe.  Only designs specified in
+      * Empire's AddShipDesign(ShipDesign*) function.  Only designs specified in
       * \a design_names are added; others in this manager are not. */
-    std::map<std::string, int>          AddShipDesignsToEmpire(Empire* empire, const std::vector<std::string>& design_names) const;
+    void                AddShipDesignsToEmpire(Empire* empire, const std::vector<std::string>& design_names) const;
 
     /** Adds designs in this manager to the universe with the design creator
       * left as no empire.  Returns a map from ship design name to design id in

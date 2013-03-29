@@ -503,7 +503,6 @@ private:
     // details of design to create
     std::string                 m_name;
     std::string                 m_description;
-    int                         m_designed_by_empire_id;
     int                         m_designed_on_turn;
     std::string                 m_hull;
     std::vector<std::string>    m_parts;

@@ -516,8 +516,7 @@ const ShipDesign* Universe::GetGenericShipDesign(const std::string& name) const 
     for (ship_design_iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
         const ShipDesign* design = it->second;
         const std::string& design_name = design->Name(false);
-        int designed_by_empire_id = design->DesignedByEmpire();
-        if (name == design_name && designed_by_empire_id == ALL_EMPIRES)
+        if (name == design_name)
             return design;
     }
     return 0;

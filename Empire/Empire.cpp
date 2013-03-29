@@ -2130,7 +2130,7 @@ void Empire::UnlockItem(const ItemSpec& item) {
         AddHullType(item.name);
         break;
     case UIT_SHIP_DESIGN:
-        AddShipDesign(GetPredefinedShipDesignManager().GenericDesignID(item.name)); // this adds the generic version of the design, not created by any empire, to this empire's remembered designs.
+        AddShipDesign(GetPredefinedShipDesignManager().GetDesignID(item.name)); // this adds the generic version of the design, not created by any empire, to this empire's remembered designs.
         break;
     case UIT_TECH:
         AddTech(item.name);
@@ -2191,7 +2191,7 @@ std::string Empire::NewShipName() {
 }
 
 void Empire::AddShipDesign(int ship_design_id) {
-    /* Check if design id is valid.  that is, check that it corresponds to an
+    /* Check if design id is valid.  That is, check that it corresponds to an
      * existing shipdesign in the universe.  On clients, this means that this
      * empire knows about this ship design and the server consequently sent the
      * design to this player.  On the server, all existing ship designs will be
@@ -2273,7 +2273,7 @@ void Empire::LockItem(const ItemSpec& item) {
         RemoveHullType(item.name);
         break;
     case UIT_SHIP_DESIGN:
-        RemoveShipDesign(GetPredefinedShipDesignManager().GenericDesignID(item.name));
+        RemoveShipDesign(GetPredefinedShipDesignManager().GetDesignID(item.name));
         break;
     case UIT_TECH:
         RemoveTech(item.name);

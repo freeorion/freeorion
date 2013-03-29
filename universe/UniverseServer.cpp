@@ -1557,10 +1557,10 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
     InitializeSystemGraph();
     GenerateHomeworlds(total_players, homeworld_planet_ids);
     GenerateFields(GALAXY_SETUP_MEDIUM);
+    GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
     GenerateEmpires(homeworld_planet_ids, player_setup_data);
     NamePlanets();
     GenerateNatives(native_freq);
-    GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
     GenerateSpaceMonsters(monster_freq);
     AddStartingSpecials(specials_freq);
 
@@ -1903,7 +1903,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq) {
                         for (std::vector<std::string>::const_iterator monster_it = monsters.begin();
                              monster_it != monsters.end(); ++monster_it)
                         {
-                            int design_id = predefined_design_manager.GenericDesignID(*monster_it);
+                            int design_id = predefined_design_manager.GetDesignID(*monster_it);
                             if (design_id == ShipDesign::INVALID_DESIGN_ID) {
                                 Logger().errorStream() << "Couldn't find space monster with name " << *monster_it;
                                 continue;
@@ -2422,12 +2422,14 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
 
         // give new empire items and ship designs it should start with
         starting_unlocked_items.AddItemsToEmpire(empire);
-        std::map<std::string, int> design_ids = predefined_ship_designs.AddShipDesignsToEmpire(empire, starting_ship_design_names);
+        predefined_ship_designs.AddShipDesignsToEmpire(empire, starting_ship_design_names);
 
 
         // create new empire's starting fleets
-        for (FleetPlanManager::iterator it = starting_fleet_plans.begin(); it != starting_fleet_plans.end(); ++it) {
-            // create fleet itself
+        for (FleetPlanManager::iterator it = starting_fleet_plans.begin();
+             it != starting_fleet_plans.end(); ++it)
+        {
+            // create fleet
             const std::string& fleet_name = (*it)->Name();
             Fleet* fleet = new Fleet(fleet_name, home_system->X(), home_system->Y(), empire_id);
             if (!fleet) {
@@ -2439,34 +2441,35 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
 
             // create ships and add to fleet
             const std::vector<std::string>& ship_design_names = (*it)->ShipDesigns();
-            for (std::vector<std::string>::const_iterator ship_it = ship_design_names.begin(); ship_it != ship_design_names.end(); ++ship_it) {
+            for (std::vector<std::string>::const_iterator ship_it = ship_design_names.begin();
+                 ship_it != ship_design_names.end(); ++ship_it)
+            {
                 // get universe id of design by looking up name in this empire's map from name to design id
                 const std::string& design_name = *ship_it;
-                std::map<std::string, int>::const_iterator design_it = design_ids.find(design_name);
-                if (design_it != design_ids.end()) {
-                    // get actual design from universe
-                    int design_id = design_it->second;
-                    const ShipDesign* design = GetShipDesign(design_id);
-                    if (!design) {
-                        Logger().errorStream() << "unable to get ShipDesign with id " << design_id << " and name " << design_name;
-                        continue;
-                    }
-
-                    // create new ship
-                    Ship* ship = new Ship(empire_id, design_id, empire_starting_species, empire_id);
-                    if (!ship) {
-                        Logger().errorStream() << "unable to create new ship!";
-                        break;
-                    }
-
-                    ship->Rename(empire->NewShipName());
-                    int ship_id = Insert(ship);
-
-                    // add ship to fleet
-                    fleet->AddShip(ship_id);    // also moves ship to fleet's location and inserts into system
-                } else {    // design_it == design_ids.end()
+                int design_id = predefined_ship_designs.GetDesignID(design_name);
+                if (design_id == ShipDesign::INVALID_DESIGN_ID) {
                     Logger().errorStream() << "couldn't find design name " << design_name << " in map from design names to ids of designs added to empire";
+                    continue;
                 }
+
+                const ShipDesign* design = GetShipDesign(design_id);
+                if (!design) {
+                    Logger().errorStream() << "unable to get ShipDesign with id " << design_id << " and name " << design_name;
+                    continue;
+                }
+
+                // create new ship
+                Ship* ship = new Ship(empire_id, design_id, empire_starting_species, empire_id);
+                if (!ship) {
+                    Logger().errorStream() << "unable to create new ship!";
+                    break;
+                }
+
+                ship->Rename(empire->NewShipName());
+                int ship_id = Insert(ship);
+
+                // add ship to fleet
+                fleet->AddShip(ship_id);    // also moves ship to fleet's location and inserts into system
             }
         }
     }

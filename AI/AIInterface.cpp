@@ -744,7 +744,7 @@ namespace AIInterface {
         int current_turn = CurrentTurn();
 
         // create design from stuff chosen in UI
-        ShipDesign* design = new ShipDesign(name, description, empire_id, current_turn,
+        ShipDesign* design = new ShipDesign(name, description, current_turn,
                                             hull, parts, icon, model, nameDescInStringTable);
 
         if (!design) {

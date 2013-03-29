@@ -63,7 +63,7 @@ namespace {
                 >   -(
                         parse::label(Icon_name)     >> tok.string [ _e = _1 ]
                      )
-                >    parse::label(Model_name)       > tok.string [insert(_r1, new_<ShipDesign>(_a, _b, ALL_EMPIRES, 0, _c, _d, _e, _1)) ]
+                >    parse::label(Model_name)       > tok.string [insert(_r1, new_<ShipDesign>(_a, _b, 0, _c, _d, _e, _1)) ]
                 ;
 
             start

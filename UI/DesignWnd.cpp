@@ -2070,11 +2070,9 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
         return;
     }
 
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-
     // make sure name isn't blank.  TODO: prevent duplicate names?
     std::string name = this->DesignName();
-    if (name == "")
+    if (name.empty())
         name = UserString("DESIGN_NAME_DEFAULT");
 
     const std::string& description = this->DesignDescription();
@@ -2083,7 +2081,8 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
 
     // update stored design
     try {
-        m_incomplete_design.reset(new ShipDesign(name, description, empire_id, CurrentTurn(), hull, parts, icon, ""));
+        m_incomplete_design.reset(new ShipDesign(name, description, CurrentTurn(),
+                                                 hull, parts, icon, ""));
     } catch (const std::exception& e) {
         // had a weird crash in the above call a few times, but I can't seem to
         // replicate it now.  hopefully catching any exception here will
@@ -2214,7 +2213,7 @@ void DesignWnd::AddDesign() {
         icon = hull->Icon();
 
     // create design from stuff chosen in UI
-    ShipDesign design(name, description, empire_id, CurrentTurn(),
+    ShipDesign design(name, description, CurrentTurn(),
                       hull_name, parts, icon, "some model");
 
     int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();

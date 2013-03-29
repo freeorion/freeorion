@@ -867,7 +867,6 @@ ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign
     m_create_new_design(true),
     m_name(ship_design.Name()),
     m_description(ship_design.Description()),
-    m_designed_by_empire_id(ship_design.DesignedByEmpire()),
     m_designed_on_turn(ship_design.DesignedOnTurn()),
     m_hull(ship_design.Hull()),
     m_parts(ship_design.Parts()),
@@ -892,18 +891,12 @@ void ShipDesignOrder::ExecuteImpl() const {
         empire->RemoveShipDesign(m_design_id);
 
     } else if (m_create_new_design) {
-        // player is creating a new design
-        if (m_designed_by_empire_id != EmpireID()) {
-            Logger().errorStream() << "Tried to create a new ShipDesign designed by another empire";
-            return;
-        }
-
         // check if a design with this ID already exists
         if (universe.GetShipDesign(m_design_id)) {
             Logger().errorStream() << "Tried to create a new ShipDesign with an id of an already-existing ShipDesign";
             return;
         }
-        ShipDesign* new_ship_design = new ShipDesign(m_name, m_description, m_designed_by_empire_id,
+        ShipDesign* new_ship_design = new ShipDesign(m_name, m_description,
                                                      m_designed_on_turn, m_hull, m_parts,
                                                      m_icon, m_3D_model, m_name_desc_in_stringtable,
                                                      m_is_monster);
