@@ -257,9 +257,9 @@ def setPlanetResourceFoci(): #+
             II, IR = newTargets[pid][IFocus]
             RI, RR = newTargets[pid][RFocus]
             CI, CR = currentOutput[pid][ IFocus],  currentOutput[pid][ RFocus]
-            #consider straddling balance range within which 1RP costs 1PP
+            #if AI is aggressive+, and this planet in range where temporary Research focus can get an additional RP at cost of 1 PP, and still need some RP, then do it
             if True and (foAI.foAIstate.aggression >= fo.aggression.aggressive):
-                if (CR<RR) and ( (CR-IR) >= (II-CI) ) and (priorityRatio > ( (curTargetRP+CR+1)/ max(0.001, curTargetPP +CI -1))):
+                if (CR<RR) and ( (CR-IR) >= (II-CI) ) and (priorityRatio > 0.8* ( (CR+1)/ max(0.001, CI -1))):
                     curTargetPP += CI -1 #
                     curTargetRP +=  CR+1
                     newFoci[pid] = RFocus
@@ -274,9 +274,6 @@ def setPlanetResourceFoci(): #+
             #        RR += min( 2,  RR/4.0 )
             #calculate factor F at  which     II + F * RI  ==  RI + F * RR   =====>  F = ( II-RI ) / (RR-IR)
             thisFactor = ( II-RI ) / max( 0.01,  RR-IR)  # don't let denominator be zero for planets where focus doesn't change RP
-            if foAI.foAIstate.aggression >fo.aggression.aggressive:
-                if currentOutput[pid][ IFocus] > II +RI - RR:
-                    thisFactor = min(thisFactor,  1.0 + thisFactor/10.0 ) 
             ratios.append( (thisFactor,  pid ) )
                 
         ctPP0 = curTargetPP

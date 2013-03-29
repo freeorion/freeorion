@@ -23,12 +23,14 @@ scoutsNeeded = 0
 def calculatePriorities():
     "calculates the priorities of the AI player"
     print("calculating priorities")
+    foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_PRODUCTION, 50) # let this one stay fixed & just adjust Research
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_RESEARCH, calculateResearchPriority())
     ColonisationAI.getColonyFleets() # sets foAI.foAIstate.colonisablePlanetIDs and foAI.foAIstate.outpostPlanetIDs  and many other values used by other modules
     InvasionAI.getInvasionFleets() # sets AIstate.invasionFleetIDs, AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
     MilitaryAI.getMilitaryFleets() # sets AIstate.militaryFleetIDs and AIstate.militaryTargetedSystemIDs
+    
+    calculateIndustryPriority()#purely for reporting purposes
 
-    foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_PRODUCTION, calculateIndustryPriority())
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_TRADE, 0)
     foAI.foAIstate.setPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_CONSTRUCTION, 0)
 
@@ -75,7 +77,7 @@ def calculateFoodPriority():
 
     return foodPriority
 
-def calculateIndustryPriority():
+def calculateIndustryPriority(): #currently only used to print status
     "calculates the demand for industry"
 
     universe = fo.getUniverse()
@@ -87,23 +89,7 @@ def calculateIndustryPriority():
     planets = map(universe.getPlanet,  ownedPlanetIDs)
     targetPP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetIndustry),  planets) )
 
-    if fo.currentTurn() < 30:
-        industryPriority = 20 # mid industry , high research at beginning of game to get easy gro tech
-    elif fo.currentTurn() < 45:
-        industryPriority = 25 # mid industry , mid research 
-    elif fo.currentTurn() < 60:
-        industryPriority = 30 # high  industry , mid research 
-    elif fo.currentTurn() < 100:
-        industryPriority = 50 # high  industry , mid research 
-    else:
-        industryPriority = 60 # high  industry , low-mid research 
-
-
-    industryPriority = 50 # try a flat number, adjust research
-
-
-    # increase demand for industry industry production is low
-    #industryPriority = 380 / (industryProduction + 0.001)
+    industryPriority = foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_PRODUCTION) 
 
     print ""
     print "Industry Production (current/target) : ( %.1f / %.1f )  at turn %s"%(industryProduction,  targetPP,  fo.currentTurn())
@@ -117,6 +103,9 @@ def calculateResearchPriority():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
+    
+    industryPriority = foAI.foAIstate.getPriority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
+    
     gotAlgo = empire.getTechStatus("LRN_ALGO_ELEGANCE") == fo.techStatus.complete
     researchQueueList = ResearchAI.getResearchQueueTechs()
     orbGenTech = "PRO_ORBITAL_GEN"
@@ -130,34 +119,32 @@ def calculateResearchPriority():
     targetRP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetResearch),  planets) )
 
     styleIndex = empireID%2
-    styleAdjustmentMap = {0:0,  1:0}#TODO: decide if I want to do anything with this
-    styleAdjustment = styleAdjustmentMap.get( styleIndex,  0 )
     cutoffSets =  [ [25, 45, 70  ],  [35,  50,  70  ]   ]
     cutoffs = cutoffSets[styleIndex  ] 
-    settings = [ [100, 40, 35, 30  ],  [70,  40,  30,  25  ]   ][styleIndex  ] 
+    settings = [ [2, .6, .4, .35  ],  [1.4,  .7,  .4, .35   ]   ][styleIndex  ] 
     
     if industrySurge and True:
-        researchPriority =  15+styleAdjustment
+        researchPriority =  0.2 * industryPriority
     else:
         if  (fo.currentTurn() < cutoffs[0]) or not gotAlgo:
-            researchPriority = settings[0] # mid industry , high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
+            researchPriority = settings[0] * industryPriority # high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
         elif fo.currentTurn() < cutoffs[1]:
-            researchPriority = settings[1] +styleAdjustment# mid industry , mid research 
+            researchPriority = settings[1] * industryPriority# med-high research 
         elif fo.currentTurn() < cutoffs[2]:
-            researchPriority = settings[2]+styleAdjustment # high  industry , low research 
+            researchPriority = settings[2] * industryPriority # med-high  industry 
         else:
             researchQueue = list(empire.researchQueue)
-            researchPriority = settings[3]+styleAdjustment # high  industry , low research 
+            researchPriority = settings[3] * industryPriority # high  industry , low research 
             if len(researchQueue) == 0 :
                 researchPriority = 0 # done with research
             elif len(researchQueue) <5 and researchQueue[-1].allocation > 0 :
                 researchPriority =  len(researchQueue) # barely not done with research 
             elif len(researchQueue) <10 and researchQueue[-1].allocation > 0 :
-                researchPriority = 2 # almost done with research 
+                researchPriority = 4+ len(researchQueue) # almost done with research 
             elif len(researchQueue) <20 and researchQueue[int(len(researchQueue)/2)].allocation > 0 :
-                researchPriority = 5 # closing in on end of research 
+                researchPriority = 0.5 * researchPriority # closing in on end of research 
             elif len(researchQueue) <20:
-                researchPriority = 10 # high  industry , low research 
+                researchPriority = 0.7*researchPriority # high  industry , low research 
 
     print  ""
     print  "Research Production (current/target) : ( %.1f / %.1f )"%(totalRP,  targetRP)
