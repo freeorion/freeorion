@@ -56,7 +56,7 @@ option(BUILD_OGRE_OIS_PLUGIN
        ON)
 option(BUILD_DOCUMENTATION
        "Builds HTML documentation (requires Doxygen)."
-       ON)
+       OFF)
 
 set(RUNTIME_ONLY_PACKAGE false)
 set(DEVEL_ONLY_PACKAGE false)
