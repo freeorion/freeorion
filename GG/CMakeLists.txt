@@ -13,8 +13,6 @@ set(CMAKE_VERBOSE_MAKEFILE false)
 set(GIGI_VERSION 0.8.0)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
-include(Config)
-include(Util)
 
 set(MINIMUM_BOOST_VERSION 1.47.0)
 set(MINIMUM_BOOST_COMPONENTS date_time filesystem signals system thread)
@@ -37,6 +35,9 @@ if (BUILD_MULTI_THREADED)
 else ()
     set(BUILD_SINGLE_THREADED ON)
 endif ()
+
+include(Config)
+include(Util)
 
 set(BOOST_SIGNALS_NAMESPACE "signals" CACHE STRING
     "Specifies alternate namespace used for boost::signals (only needed if you changed it using the BOOST_SIGNALS_NAMESPACE define when you built boost).")

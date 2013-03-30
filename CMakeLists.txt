@@ -12,8 +12,6 @@ set(FREEORION_VERSION 0.4.2)
 set(FREEORION_RELEASE false)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
-include(Config)
-include(Util)
 
 set(MINIMUM_BOOST_VERSION 1.47.0)
 set(MINIMUM_BOOST_COMPONENTS date_time filesystem serialization signals system thread)
@@ -33,6 +31,9 @@ set(BUILD_STATIC OFF)
 set(BUILD_SHARED ON)
 set(BUILD_MULTI_THREADED ON)
 set(BUILD_SINGLE_THREADED OFF)
+
+include(Config)
+include(Util)
 
 if (WIN32)
     add_definitions(-DFREEORION_WIN32)
