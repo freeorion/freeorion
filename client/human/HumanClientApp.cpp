@@ -797,7 +797,7 @@ void HumanClientApp::HandleMessage(Message& msg) {
         std::cerr << "HumanClientApp::HandleMessage(" << MessageTypeStr(msg.Type()) << ")\n";
 
     switch (msg.Type()) {
-    case Message::ERROR:                m_fsm->process_event(Error(msg));                   break;
+    case Message::ERROR_MSG:            m_fsm->process_event(Error(msg));                   break;
     case Message::HOST_MP_GAME:         m_fsm->process_event(HostMPGame(msg));              break;
     case Message::HOST_SP_GAME:         m_fsm->process_event(HostSPGame(msg));              break;
     case Message::JOIN_GAME:            m_fsm->process_event(JoinGame(msg));                break;

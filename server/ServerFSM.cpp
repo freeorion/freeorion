@@ -17,6 +17,9 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+class CombatLogManager;
+CombatLogManager&   GetCombatLogManager();
+
 namespace {
     const bool TRACE_EXECUTION = true;
 
@@ -707,12 +710,9 @@ sc::result MPLobby::react(const StartMPGame& msg) {
             std::string save_filename = m_lobby_data->m_save_games[m_lobby_data->m_save_file_index];
 
             try {
-                LoadGame((save_dir / save_filename).string(),
-                         *m_server_save_game_data,
-                         m_player_save_game_data,
-                         GetUniverse(),
-                         Empires(),
-                         GetSpeciesManager());
+                LoadGame((save_dir / save_filename).string(),   *m_server_save_game_data,
+                         m_player_save_game_data,               GetUniverse(),
+                         Empires(),     GetSpeciesManager(),    GetCombatLogManager());
             } catch (const std::exception&) {
                 SendMessageToAllPlayers(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", true));
                 return discard_event();
@@ -916,12 +916,9 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
             server.NewSPGameInit(*m_single_player_setup_data);
         } else {
             try {
-                LoadGame(m_single_player_setup_data->m_filename,
-                         *m_server_save_game_data,
-                         m_player_save_game_data,
-                         GetUniverse(),
-                         Empires(),
-                         GetSpeciesManager());
+                LoadGame(m_single_player_setup_data->m_filename,            *m_server_save_game_data,
+                         m_player_save_game_data,   GetUniverse(),          Empires(),
+                         GetSpeciesManager(),       GetCombatLogManager());
             } catch (const std::exception&) {
                 SendMessageToHost(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", true));
                 return transit<Idle>();
@@ -1384,7 +1381,8 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
         // save game...
         try {
             SaveGame(save_filename,     server_data,    m_player_save_game_data,
-                     GetUniverse(),     Empires(),      GetSpeciesManager());
+                     GetUniverse(),     Empires(),      GetSpeciesManager(),
+                     GetCombatLogManager());
         } catch (const std::exception&) {
             SendMessageToAllPlayers(ErrorMessage("UNABLE_TO_WRITE_SAVE_FILE", false));
         }

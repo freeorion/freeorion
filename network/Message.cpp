@@ -2,6 +2,7 @@
 
 #include "../combat/CombatOrder.h"
 #include "../combat/OpenSteer/CombatObject.h"
+#include "../combat/CombatLogManager.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"
 #include "../util/AppInterface.h"
@@ -246,7 +247,7 @@ Message ErrorMessage(const std::string& problem, bool fatal/* = true*/) {
         oa << BOOST_SERIALIZATION_NVP(problem)
            << BOOST_SERIALIZATION_NVP(fatal);
     }
-    return Message(Message::ERROR, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
+    return Message(Message::ERROR_MSG, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
 }
 
 Message ErrorMessage(int player_id, const std::string& problem, bool fatal/* = true*/) {
@@ -256,7 +257,7 @@ Message ErrorMessage(int player_id, const std::string& problem, bool fatal/* = t
         oa << BOOST_SERIALIZATION_NVP(problem)
            << BOOST_SERIALIZATION_NVP(fatal);
     }
-    return Message(Message::ERROR, Networking::INVALID_PLAYER_ID, player_id, os.str());
+    return Message(Message::ERROR_MSG, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
 Message HostSPGameMessage(const SinglePlayerSetupData& setup_data) {
@@ -407,7 +408,8 @@ Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerS
 
 Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
                           const EmpireManager& empires, const Universe& universe,
-                          const SpeciesManager& species, const std::map<int, PlayerInfo>& players)
+                          const SpeciesManager& species, const CombatLogManager& combat_logs,
+                          const std::map<int, PlayerInfo>& players)
 {
     std::ostringstream os;
     {
@@ -415,7 +417,8 @@ Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
         GetUniverse().EncodingEmpire() = empire_id;
         oa << BOOST_SERIALIZATION_NVP(current_turn)
            << BOOST_SERIALIZATION_NVP(empires)
-           << BOOST_SERIALIZATION_NVP(species);
+           << BOOST_SERIALIZATION_NVP(species)
+           << BOOST_SERIALIZATION_NVP(combat_logs);
         Serialize(oa, universe);
         oa << BOOST_SERIALIZATION_NVP(players);
     }
@@ -750,7 +753,8 @@ void ExtractMessageData(const Message& msg, OrderSet& orders) {
 
 void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
                         EmpireManager& empires, Universe& universe,
-                        SpeciesManager& species, std::map<int, PlayerInfo>& players)
+                        SpeciesManager& species, CombatLogManager& combat_logs,
+                        std::map<int, PlayerInfo>& players)
 {
     try {
         std::istringstream is(msg.Text());
@@ -758,7 +762,8 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
         GetUniverse().EncodingEmpire() = empire_id;
         ia >> BOOST_SERIALIZATION_NVP(current_turn)
            >> BOOST_SERIALIZATION_NVP(empires)
-           >> BOOST_SERIALIZATION_NVP(species);
+           >> BOOST_SERIALIZATION_NVP(species)
+           >> BOOST_SERIALIZATION_NVP(combat_logs);
         Deserialize(ia, universe);
         ia >> BOOST_SERIALIZATION_NVP(players);
     } catch (const std::exception& err) {

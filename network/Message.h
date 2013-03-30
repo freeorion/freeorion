@@ -2,12 +2,6 @@
 #ifndef _Message_h_
 #define _Message_h_
 
-#ifdef FREEORION_WIN32
-#  ifdef ERROR
-#    undef ERROR
-#  endif
-#endif
-
 #include "Networking.h"
 
 #include <boost/shared_array.hpp>
@@ -25,6 +19,7 @@ class CombatOrder;
 struct CombatSetupGroup;
 class EmpireManager;
 class SpeciesManager;
+class CombatLogManager;
 class Message;
 struct MultiplayerLobbyData;
 class OrderSet;
@@ -61,7 +56,7 @@ public:
     enum MessageType {
         UNDEFINED = 0,
         DEBUG,                  ///< used to send special messages used for debugging purposes
-        ERROR,                  ///< used to communicate errors between server and clients
+        ERROR_MSG,              ///< used to communicate errors between server and clients
         HOST_SP_GAME,           ///< sent when a client wishes to establish a single player game at the server
         HOST_MP_GAME,           ///< sent when a client wishes to establish a multiplayer game at the server
         JOIN_GAME,              ///< sent when a client wishes to join a game being established at the server
@@ -186,7 +181,7 @@ std::ostream& operator<<(std::ostream& os, const Message& msg);
 // Message named ctors
 ////////////////////////////////////////////////
 
-/** creates an ERROR message*/
+/** creates an ERROR_MSG message*/
 Message ErrorMessage(const std::string& problem, bool fatal = true);
 Message ErrorMessage(int player_id, const std::string& problem, bool fatal = true);
 
@@ -243,7 +238,7 @@ Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerS
 /** creates a TURN_UPDATE message. */
 Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires,
                           const Universe& universe, const SpeciesManager& species,
-                          const std::map<int, PlayerInfo>& players);
+                          const CombatLogManager& combat_logs, const std::map<int, PlayerInfo>& players);
 
 /** create a TURN_PARTIAL_UPDATE message. */
 Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe);
@@ -381,7 +376,8 @@ void ExtractMessageData(const Message& msg, std::string& player_name, Networking
 void ExtractMessageData(const Message& msg, OrderSet& orders);
 
 void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
-                        Universe& universe, SpeciesManager& species, std::map<int, PlayerInfo>& players);
+                        Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
+                        std::map<int, PlayerInfo>& players);
 
 void ExtractMessageData(const Message& msg, int empire_id, Universe& universe);
 

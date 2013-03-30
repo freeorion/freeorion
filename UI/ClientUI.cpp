@@ -556,7 +556,7 @@ bool ClientUI::ZoomToBuilding(int id) {
 
 bool ClientUI::ZoomToCombatLog(int id) {
     if (GetCombatLogManager().LogAvailable(id)) {
-        // TODO: m_map_wnd->ShowCombatLog(id);
+        m_map_wnd->ShowCombatLog(id);
         return true;
     }
     return false;

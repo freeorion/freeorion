@@ -24,6 +24,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+class CombatLogManager;
+CombatLogManager&   GetCombatLogManager();
 
 // static member(s)
 AIClientApp*  AIClientApp::s_app = 0;
@@ -129,7 +131,7 @@ void AIClientApp::Run() {
 void AIClientApp::HandleMessage(const Message& msg) {
     //Logger().debugStream() << "AIClientApp::HandleMessage " << msg.Type();
     switch (msg.Type()) {
-    case Message::ERROR : {
+    case Message::ERROR_MSG : {
         Logger().errorStream() << "AIClientApp::HandleMessage : Received ERROR message from server: " << msg.Text();
         break;
     }
@@ -241,9 +243,9 @@ void AIClientApp::HandleMessage(const Message& msg) {
     case Message::TURN_UPDATE: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             //Logger().debugStream() << "AIClientApp::HandleMessage : extracting turn update message data";
-            ExtractMessageData(msg,             m_empire_id,        m_current_turn,
-                               m_empires,       m_universe,         GetSpeciesManager(),
-                               m_player_info);
+            ExtractMessageData(msg,                     m_empire_id,        m_current_turn,
+                               m_empires,               m_universe,         GetSpeciesManager(),
+                               GetCombatLogManager(),   m_player_info);
             //Logger().debugStream() << "AIClientApp::HandleMessage : generating orders";
             GetUniverse().InitializeSystemGraph(m_empire_id);
             m_AI->GenerateOrders();

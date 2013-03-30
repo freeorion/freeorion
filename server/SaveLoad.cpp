@@ -12,6 +12,7 @@
 #include "../universe/Species.h"
 #include "../util/OrderSet.h"
 #include "../util/Serialize.h"
+#include "../combat/CombatLogManager.h"
 
 #include <GG/utf8/checked.h>
 
@@ -42,7 +43,7 @@ namespace {
 void SaveGame(const std::string& filename, const ServerSaveGameData& server_save_game_data,
               const std::vector<PlayerSaveGameData>& player_save_game_data,
               const Universe& universe, const EmpireManager& empire_manager,
-              const SpeciesManager& species_manager)
+              const SpeciesManager& species_manager, const CombatLogManager& combat_log_manager)
 {
     GetUniverse().EncodingEmpire() = ALL_EMPIRES;
 
@@ -68,6 +69,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
         oa << BOOST_SERIALIZATION_NVP(empire_save_game_data);
         oa << BOOST_SERIALIZATION_NVP(empire_manager);
         oa << BOOST_SERIALIZATION_NVP(species_manager);
+        oa << BOOST_SERIALIZATION_NVP(combat_log_manager);
         Serialize(oa, universe);
     } catch (const std::exception& e) {
         Logger().errorStream() << UserString("UNABLE_TO_WRITE_SAVE_FILE") << " SaveGame exception: " << ": " << e.what();
@@ -77,9 +79,10 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
 
 void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_data,
               std::vector<PlayerSaveGameData>& player_save_game_data,
-              Universe& universe, EmpireManager& empire_manager, SpeciesManager& species_manager)
+              Universe& universe, EmpireManager& empire_manager,
+              SpeciesManager& species_manager, CombatLogManager& combat_log_manager)
 {
-    Sleep(5000);
+    //Sleep(5000);
 
     // player notifications
     if (ServerApp* server = ServerApp::GetApp())
@@ -116,6 +119,8 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         ia >> BOOST_SERIALIZATION_NVP(empire_manager);
         Logger().debugStream() << "LoadGame : Reading Species Data";
         ia >> BOOST_SERIALIZATION_NVP(species_manager);
+        Logger().debugStream() << "LoadGame : Reading Combat Logs";
+        ia >> BOOST_SERIALIZATION_NVP(combat_log_manager);
         Logger().debugStream() << "LoadGame : Reading Universe Data";
         Deserialize(ia, universe);
     } catch (const std::exception& e) {

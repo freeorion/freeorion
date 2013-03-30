@@ -319,7 +319,7 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
     // TODO: For prototyping only.
     case Message::COMBAT_END:               m_fsm->process_event(CombatComplete()); break;
 
-    case Message::ERROR:
+    case Message::ERROR_MSG:
     case Message::DEBUG:                    break;
 
     default:
@@ -2485,13 +2485,10 @@ void ServerApp::PostCombatProcessTurns() {
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
-        player->SendMessage(TurnUpdateMessage(player_id,
-                                              PlayerEmpireID(player_id),
-                                              m_current_turn,
-                                              m_empires,
-                                              m_universe,
-                                              GetSpeciesManager(),
-                                              players));
+        player->SendMessage(TurnUpdateMessage(player_id,                PlayerEmpireID(player_id),
+                                              m_current_turn,           m_empires,
+                                              m_universe,               GetSpeciesManager(),
+                                              GetCombatLogManager(),    players));
     }
     Logger().debugStream() << "ServerApp::PostCombatProcessTurns done";
 }

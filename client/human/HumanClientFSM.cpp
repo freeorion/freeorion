@@ -15,6 +15,8 @@
 
 #include <boost/format.hpp>
 
+class CombatLogManager;
+CombatLogManager&   GetCombatLogManager();
 
 namespace {
     const bool TRACE_EXECUTION = true;
@@ -593,9 +595,9 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     int current_turn = INVALID_GAME_TURN;
 
     try {
-        ExtractMessageData(msg.m_message,   Client().EmpireID(),    current_turn,
-                           Empires(),       GetUniverse(),          GetSpeciesManager(),
-                           Client().Players());
+        ExtractMessageData(msg.m_message,           Client().EmpireID(),    current_turn,
+                           Empires(),               GetUniverse(),          GetSpeciesManager(),
+                           GetCombatLogManager(),   Client().Players());
     } catch (...) {
         Client().GetClientUI()->GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE") + "\n");
         return discard_event();
