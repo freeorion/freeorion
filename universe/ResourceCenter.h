@@ -48,7 +48,7 @@ public:
 
     void            SetFocus(const std::string& focus);
 
-    void            Reset();                                                ///< Resets the meters, etc.  This should be called when a ResourceCenter is wiped out due to starvation, etc.
+    virtual void    Reset();                                                        ///< Resets the meters, etc.  This should be called when a ResourceCenter is wiped out due to starvation, etc.
     //@}
 
 protected:

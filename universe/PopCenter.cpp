@@ -101,7 +101,7 @@ void PopCenter::PopCenterResetTargetMaxUnpairedMeters()
 
 void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
     float cur_pop = CurrentMeterValue(METER_POPULATION);
-    float pop_growth = NextTurnPopGrowth();                        // may be negative
+    float pop_growth = NextTurnPopGrowth(); // may be negative
     float new_pop = cur_pop + pop_growth;
 
     //if (cur_pop > 0.0)
@@ -115,9 +115,8 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
     }
 }
 
-void PopCenter::PopCenterClampMeters() {
-    GetMeter(METER_POPULATION)->ClampCurrentToRange();
-}
+void PopCenter::PopCenterClampMeters()
+{ GetMeter(METER_POPULATION)->ClampCurrentToRange(); }
 
 void PopCenter::Reset() {
     GetMeter(METER_POPULATION)->Reset();

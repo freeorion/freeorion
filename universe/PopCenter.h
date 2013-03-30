@@ -36,13 +36,13 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void    Copy(const PopCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
-    void    SetSpecies(const std::string& species_name);///< sets the species of the population to \a species_name
-    void    Reset();                                    ///< Sets all meters to 0, clears race name
+    void                Copy(const PopCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    void                SetSpecies(const std::string& species_name);        ///< sets the species of the population to \a species_name
+    virtual void        Reset();                                            ///< Sets all meters to 0, clears race name
     //@}
 
 protected:
-    void    Init();                                     ///< initialization that needs to be called by derived class after derived class is constructed
+    void    Init();                                                 ///< initialization that needs to be called by derived class after derived class is constructed
 
     float   PopCenterNextTurnMeterValue(MeterType meter_type) const;///< returns estimate of the next turn's current values of meters relevant to this PopCenter
     void    PopCenterResetTargetMaxUnpairedMeters();

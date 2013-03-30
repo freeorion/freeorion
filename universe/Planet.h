@@ -163,7 +163,7 @@ public:
 
     void            SetAvailableTrade(double trade);    ///< sets the trade available at this planet for use in building maintenance
 
-    void            Reset();                            ///< Resets the meters, specials, etc., of a planet to an unowned state.  This should be called when a planet is wiped out due to starvation, etc.
+    virtual void    Reset();                            ///< Resets the meters, specials, etc., of a planet to an unowned state.  This should be called when a planet is wiped out due to starvation, etc.
 
     void            Conquer(int conquerer);             ///< Called during combat when a planet changes hands
     void            SetIsAboutToBeColonized(bool b);    ///< Called during colonization when a planet is about to be colonized
