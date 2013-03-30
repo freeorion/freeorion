@@ -33,6 +33,9 @@ namespace {
             } else if (link_type == VarText::BUILDING_ID_TAG) {
                 ClientUI::GetClientUI()->ZoomToBuilding(lexical_cast<int>(data));
 
+            } else if (link_type == VarText::COMBAT_ID_TAG) {
+                ClientUI::GetClientUI()->ZoomToCombatLog(lexical_cast<int>(data));
+
             } else if (link_type == VarText::EMPIRE_ID_TAG) {
                 ClientUI::GetClientUI()->ZoomToEmpire(lexical_cast<int>(data));
             } else if (link_type == VarText::DESIGN_ID_TAG) {

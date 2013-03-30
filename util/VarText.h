@@ -54,6 +54,8 @@ public:
     static const std::string FLEET_ID_TAG;
     static const std::string BUILDING_ID_TAG;
 
+    static const std::string COMBAT_ID_TAG;
+
     static const std::string EMPIRE_ID_TAG;
     static const std::string DESIGN_ID_TAG;
     static const std::string PREDEFINED_DESIGN_TAG;

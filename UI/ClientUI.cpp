@@ -14,6 +14,9 @@
 #undef int64_t
 
 #include "../util/Random.h"
+#include "../util/Directories.h"
+#include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
 #include "../universe/Building.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
@@ -22,10 +25,8 @@
 #include "../universe/Tech.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
+#include "../combat/CombatLogManager.h"
 #include "../client/human/HumanClientApp.h"
-#include "../util/Directories.h"
-#include "../util/MultiplayerCommon.h"
-#include "../util/OptionsDB.h"
 
 #include <GG/GUI.h>
 #include <GG/Clr.h>
@@ -517,7 +518,7 @@ bool ClientUI::ZoomToPlanet(int id) {
     return false;
 }
 
-bool ClientUI::ZoomToPlanetPedia(int id) {    
+bool ClientUI::ZoomToPlanetPedia(int id) {
     if (const Planet* planet = GetPlanet(id))
         m_map_wnd->ShowPlanet(id);
     return false;
@@ -549,6 +550,14 @@ bool ClientUI::ZoomToBuilding(int id) {
     if (const Building* building = GetBuilding(id)) {
         ZoomToBuildingType(building->BuildingTypeName());
         return ZoomToPlanet(building->PlanetID());
+    }
+    return false;
+}
+
+bool ClientUI::ZoomToCombatLog(int id) {
+    if (GetCombatLogManager().LogAvailable(id)) {
+        // TODO: m_map_wnd->ShowCombatLog(id);
+        return true;
     }
     return false;
 }

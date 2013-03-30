@@ -18,6 +18,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../client/human/HumanClientApp.h"
+#include "../combat/CombatLogManager.h"
 #include "DesignWnd.h"
 #include "Encyclopedia.h"
 #include "../parse/Parse.h"
@@ -37,6 +38,7 @@ namespace {
     const std::string INCOMPLETE_DESIGN = "incomplete design";
     const std::string UNIVERSE_OBJECT = "universe object";
     const std::string PLANET_SUITABILITY_REPORT = "planet suitability report";
+    const std::string COMBAT_LOG = "combat log";
 }
 
 namespace {
@@ -421,6 +423,9 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
         } else if (link_type == VarText::BUILDING_ID_TAG) {
             ClientUI::GetClientUI()->ZoomToBuilding(lexical_cast<int>(data));
 
+        } else if (link_type == VarText::COMBAT_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToCombatLog(lexical_cast<int>(data));
+
         } else if (link_type == VarText::EMPIRE_ID_TAG) {
             this->SetEmpire(lexical_cast<int>(data));
         } else if (link_type == VarText::DESIGN_ID_TAG) {
@@ -798,6 +803,7 @@ void EncyclopediaDetailPanel::Refresh() {
         name = UserString(m_items_it->second);
         texture = ClientUI::SpecialIcon(m_items_it->second);
         detailed_description = UserString(special->Description());
+        general_type = UserString("ENC_SPECIAL");
 
         // objects that have special
         std::vector<const UniverseObject*> objects_with_special;
@@ -1182,6 +1188,7 @@ void EncyclopediaDetailPanel::Refresh() {
                 return;
             }
         }
+
     } else if (m_items_it->first == PLANET_SUITABILITY_REPORT) {
         general_type = UserString("SP_PLANET_SUITABILITY");
 
@@ -1307,6 +1314,22 @@ void EncyclopediaDetailPanel::Refresh() {
         planet->SetSpecies(original_planet_species);
         planet->SetOwner(original_owner_id);
         GetUniverse().UpdateMeterEstimates(planet_id);
+
+    } else if (m_items_it->first == COMBAT_LOG) {
+        int log_id = boost::lexical_cast<int>(m_items_it->second);
+        bool available = CombatLogAvailable(log_id);
+        if (!available) {
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find combat log with id: " << m_items_it->second;
+            return;
+        }
+        const CombatLog& log = GetCombatLog(log_id);
+
+        name = UserString("ENC_COMBAT_LOG");
+        texture = ClientUI::GetTexture(ClientUI::ArtDir() / "/icons/sitrep/generic.png", true);
+        general_type = UserString("ENC_COMBAT_LOG");
+
+        texture = ClientUI::SpecialIcon(m_items_it->second);
+        detailed_description = "blah blah blah";
     }
 
     // Create Icons
@@ -1407,7 +1430,6 @@ void EncyclopediaDetailPanel::SetText(const std::string& text, bool lookup_in_st
 }
 
 void EncyclopediaDetailPanel::SetPlanet(int planet_id) {
-    
     int current_item_id = INVALID_OBJECT_ID;
     if (m_items_it != m_items.end()) {
         try {
@@ -1419,6 +1441,20 @@ void EncyclopediaDetailPanel::SetPlanet(int planet_id) {
         return;
 
     AddItem(PLANET_SUITABILITY_REPORT, boost::lexical_cast<std::string>(planet_id));
+}
+
+void EncyclopediaDetailPanel::SetCombatLog(int log_id) {
+    int current_item_id = -1;
+    if (m_items_it != m_items.end()) {
+        try {
+            current_item_id = boost::lexical_cast<int>(m_items_it->second);
+        } catch (...) {
+        }
+    }
+    if (log_id == current_item_id)
+        return;
+
+    AddItem(COMBAT_LOG, boost::lexical_cast<std::string>(log_id));
 }
 
 void EncyclopediaDetailPanel::SetTech(const std::string& tech_name) {
@@ -1502,7 +1538,8 @@ void EncyclopediaDetailPanel::SetDesign(int design_id) {
             current_item_id = boost::lexical_cast<int>(m_items_it->second);
         } catch (...) {
         }
-    }    if (design_id == current_item_id)
+    }
+    if (design_id == current_item_id)
         return;
     AddItem("ENC_SHIP_DESIGN", boost::lexical_cast<std::string>(design_id));
 }

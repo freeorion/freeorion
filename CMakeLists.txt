@@ -141,6 +141,8 @@ set(THIS_LIB_SOURCES
     combat/OpenSteer/CombatFighter.cpp
     combat/OpenSteer/CombatObject.cpp
     combat/OpenSteer/CombatShip.cpp
+    combat/CombatLogManager.cpp
+    combat/CombatSystem.cpp
     combat/OpenSteer/Missile.cpp
     combat/OpenSteer/Obstacle.cpp
     combat/OpenSteer/PathingEngine.cpp

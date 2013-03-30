@@ -6,7 +6,6 @@ project(freeoriond)
 message("-- Configuring freeoriond")
 
 set(THIS_EXE_SOURCES
-    ../combat/CombatSystem.cpp
     ../network/ServerNetworking.cpp
     ../server/SaveLoad.cpp
     ../server/ServerApp.cpp

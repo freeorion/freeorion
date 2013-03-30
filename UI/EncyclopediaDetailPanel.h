@@ -37,13 +37,14 @@ public:
       * the Wnd, rather than being restricted to the client area of a CUIWnd */
     virtual GG::Pt  ClientUpperLeft() const;
 
-    void            AddItem (const std::string& type, const std::string& name); //adds a new item to m_items
-    void            PopItem ();
-    void            ClearItems ();
-    int             GetItemsSize () { return m_items.size(); }
+    void            AddItem(const std::string& type, const std::string& name); // adds a new item to m_items
+    void            PopItem();
+    void            ClearItems();
+    int             GetItemsSize() { return m_items.size(); }
 
     void            SetText(const std::string& text, bool lookup_in_stringtable = true);
     void            SetPlanet(int planet_id);
+    void            SetCombatLog(int log_id);
     void            SetItem(const Planet* planet);
     void            SetTech(const std::string& tech_name);
     void            SetItem(const Tech* tech);

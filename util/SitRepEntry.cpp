@@ -88,9 +88,10 @@ SitRepEntry CreateBuildingBuiltSitRep(int building_id, int planet_id) {
     return sitrep;
 }
 
-SitRepEntry CreateCombatSitRep(int system_id) {
+SitRepEntry CreateCombatSitRep(int system_id, int log_id) {
     SitRepEntry sitrep("SITREP_COMBAT_SYSTEM", "icons/sitrep/combat.png");
-    sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
+    sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  boost::lexical_cast<std::string>(system_id));
+    sitrep.AddVariable(VarText::COMBAT_ID_TAG,  boost::lexical_cast<std::string>(log_id));
     return sitrep;
 }
 

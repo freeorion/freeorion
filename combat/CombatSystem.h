@@ -12,6 +12,13 @@ struct AttackEvent {
         damage(0.0f),
         target_destroyed(false)
     {}
+    AttackEvent(int round_, int attacker_id_, int target_id_, float damage_, bool target_destroyed_) :
+        round(round_),
+        attacker_id(attacker_id_),
+        target_id(target_id_),
+        damage(damage_),
+        target_destroyed(target_destroyed_)
+    {}
     int     round;
     int     attacker_id;
     int     target_id;
@@ -28,8 +35,8 @@ struct AttackEvent {
 struct CombatInfo {
 public:
     /** \name Structors */ //@{
-    CombatInfo();                       ///< Default ctor
-    CombatInfo(int system_id_);         ///< ctor taking \a system_id of system where combat occurs, and which will populate itself with all relevant fields and copies of objects based on the contents of that system
+    CombatInfo();
+    CombatInfo(int system_id_, int turn_);  ///< ctor taking system id where combat occurs and game turn on which combat occurs
     //@}
 
     /** \name Accessors */ //@{
@@ -41,6 +48,7 @@ public:
     System*         GetSystem();        ///< returns System object in this CombatInfo's objects if one exists with id system_id
     //@}
 
+    int                                 turn;                       ///< main game turn
     int                                 system_id;                  ///< ID of system where combat is occurring (could be INVALID_OBJECT_ID ?)
     std::set<int>                       empire_ids;                 ///< IDs of empires involved in combat
     ObjectMap                           objects;                    ///< actual state of objects relevant to combat
@@ -78,7 +86,8 @@ void AttackEvent::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(round)
         & BOOST_SERIALIZATION_NVP(attacker_id)
         & BOOST_SERIALIZATION_NVP(target_id)
-        & BOOST_SERIALIZATION_NVP(damage);
+        & BOOST_SERIALIZATION_NVP(damage),
+        & BOOST_SERIALIZATION_NVP(target_destroyed);
 }
 
 template <class Archive>
@@ -102,7 +111,8 @@ void CombatInfo::save(Archive & ar, const unsigned int version) const
     GetEmpireObjectVisibilityToSerialize(   filtered_empire_object_visibility,  GetUniverse().EncodingEmpire());
     GetCombatEventsToSerialize(             filtered_combat_events,             GetUniverse().EncodingEmpire());
 
-    ar  & BOOST_SERIALIZATION_NVP(system_id)
+    ar  & BOOST_SERIALIZATION_NVP(turn)
+        & BOOST_SERIALIZATION_NVP(system_id)
         & BOOST_SERIALIZATION_NVP(filtered_empire_ids)
         & BOOST_SERIALIZATION_NVP(filtered_objects)
         & BOOST_SERIALIZATION_NVP(filtered_empire_known_objects)
@@ -125,7 +135,8 @@ void CombatInfo::load(Archive & ar, const unsigned int version)
     Universe::EmpireObjectVisibilityMap filtered_empire_object_visibility;
     std::vector<AttackEvent>            filtered_combat_events;
 
-    ar  & BOOST_SERIALIZATION_NVP(system_id)
+    ar  & BOOST_SERIALIZATION_NVP(turn)
+        & BOOST_SERIALIZATION_NVP(system_id)
         & BOOST_SERIALIZATION_NVP(filtered_empire_ids)
         & BOOST_SERIALIZATION_NVP(filtered_objects)
         & BOOST_SERIALIZATION_NVP(filtered_empire_known_objects)

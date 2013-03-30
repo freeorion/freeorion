@@ -33,6 +33,8 @@ namespace {
         GG::Font::RegisterKnownTag(VarText::FLEET_ID_TAG);
         GG::Font::RegisterKnownTag(VarText::BUILDING_ID_TAG);
 
+        GG::Font::RegisterKnownTag(VarText::COMBAT_ID_TAG);
+
         GG::Font::RegisterKnownTag(VarText::EMPIRE_ID_TAG);
         GG::Font::RegisterKnownTag(VarText::DESIGN_ID_TAG);
         GG::Font::RegisterKnownTag(VarText::PREDEFINED_DESIGN_TAG);
@@ -246,6 +248,7 @@ void TextLinker::FindLinks() {
                     tag->tag_name == VarText::SHIP_ID_TAG ||
                     tag->tag_name == VarText::FLEET_ID_TAG ||
                     tag->tag_name == VarText::BUILDING_ID_TAG ||
+                    tag->tag_name == VarText::COMBAT_ID_TAG ||
                     tag->tag_name == VarText::EMPIRE_ID_TAG ||
                     tag->tag_name == VarText::DESIGN_ID_TAG ||
                     tag->tag_name == VarText::PREDEFINED_DESIGN_TAG ||

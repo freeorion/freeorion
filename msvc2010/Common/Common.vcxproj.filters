@@ -280,6 +280,12 @@
     <ClInclude Include="..\..\util\ModeratorAction.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\combat\CombatSystem.h">
+      <Filter>Header Files\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\CombatLogManager.h">
+      <Filter>Header Files\combat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">
@@ -461,6 +467,12 @@
     </ClCompile>
     <ClCompile Include="..\..\util\SerializeModeratorAction.cpp">
       <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\CombatSystem.cpp">
+      <Filter>Source Files\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\CombatLogManager.cpp">
+      <Filter>Source Files\combat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

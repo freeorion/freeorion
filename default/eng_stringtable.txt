@@ -2767,6 +2767,9 @@ ENC_TECH_DETAIL_TYPE_STR
 ENC_LOOKUP
 Pedia Lookup %1%
 
+ENC_COMBAT_LOG
+Combat Log
+
 ###########################################
 # ARTICLE CATAGORIES & SHORT DESCRIPTIONS #
 ###########################################
@@ -3205,9 +3208,11 @@ SITREP_TECH_RESEARCHED_LABEL
 Tech Researched
 
 SITREP_COMBAT_SYSTEM
-A battle occurred at %system%.
+A %combat% occurred at %system%.
 SITREP_COMBAT_SYSTEM_LABEL
 Combat at System
+COMBAT
+Combat
 
 SITREP_OBJECT_DESTROYED_AT_SYSTEM
 An object was destroyed at %system%.

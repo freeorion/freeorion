@@ -23,11 +23,13 @@
 // CombatInfo
 ////////////////////////////////////////////////
 CombatInfo::CombatInfo() :
-    system_id(INVALID_OBJECT_ID)
+    system_id(INVALID_OBJECT_ID),
+    turn(INVALID_GAME_TURN)
 {}
 
-CombatInfo::CombatInfo(int system_id_) :
-    system_id(system_id_)
+CombatInfo::CombatInfo(int system_id_, int turn_) :
+    system_id(system_id_),
+    turn(turn_)
 {
     const Universe& universe = GetUniverse();
     const ObjectMap& universe_objects = universe.Objects();
@@ -298,12 +300,8 @@ namespace {
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << structure_damage << " structure damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        AttackEvent attack;
-        attack.attacker_id = attacker->ID();
-        attack.target_id = target->ID();
-        attack.round = round;
-        attack.damage = damage;
-        attack.target_destroyed = (target_structure->Current() <= 0.0f);
+        AttackEvent attack(round, attacker->ID(), target->ID(), damage,
+                           (target_structure->Current() <= 0.0f));
         combat_info.combat_events.push_back(attack);
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());

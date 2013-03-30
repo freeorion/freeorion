@@ -119,10 +119,13 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Make Version.cpp</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)src\Version.cpp;%(Outputs)</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\.svn;%(AdditionalInputs)</AdditionalInputs>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\combat\CombatLogManager.h" />
     <ClInclude Include="..\..\combat\CombatOrder.h" />
+    <ClInclude Include="..\..\combat\CombatSystem.h" />
     <ClInclude Include="..\..\combat\OpenSteer\AbstractVehicle.h" />
     <ClInclude Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.h" />
     <ClInclude Include="..\..\combat\OpenSteer\CombatFighter.h" />
@@ -198,7 +201,9 @@
     <ClInclude Include="..\..\util\XMLObjectFactory.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\combat\CombatLogManager.cpp" />
     <ClCompile Include="..\..\combat\CombatOrder.cpp" />
+    <ClCompile Include="..\..\combat\CombatSystem.cpp" />
     <ClCompile Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.cpp" />
     <ClCompile Include="..\..\combat\OpenSteer\CombatFighter.cpp" />
     <ClCompile Include="..\..\combat\OpenSteer\CombatObject.cpp" />

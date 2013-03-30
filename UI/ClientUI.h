@@ -74,6 +74,7 @@ public:
     bool    ZoomToFleet(int id);                                        //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
     bool    ZoomToShip(int id);                                         //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
     bool    ZoomToBuilding(int id);                                     //!< Zooms to a particular building on the galaxy map and opens the sidepanel to show it
+    bool    ZoomToCombatLog(int id);                                    //!< Opens combat log for indicated combat
 
     void    ZoomToSystem(const System* system);                         //!< Zooms to a particular system on the galaxy map
     void    ZoomToFleet(const Fleet* fleet);                            //!< Zooms to a particular fleet on the galaxy map and opens the fleet window

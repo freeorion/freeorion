@@ -148,17 +148,3 @@ void DiplomaticMessage::serialize(Archive& ar, const unsigned int version)
 template void DiplomaticMessage::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
 template void DiplomaticMessage::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
 
-
-#if 0
-void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Empire& empire)
-{ oa << BOOST_SERIALIZATION_NVP(empire); }
-
-void Serialize(FREEORION_OARCHIVE_TYPE& oa, const EmpireManager& empire_manager)
-{ oa << BOOST_SERIALIZATION_NVP(empire_manager); }
-
-void Deserialize(FREEORION_IARCHIVE_TYPE& ia, Empire& empire)
-{ ia >> BOOST_SERIALIZATION_NVP(empire); }
-
-void Deserialize(FREEORION_IARCHIVE_TYPE& ia, EmpireManager& empire_manager)
-{ ia >> BOOST_SERIALIZATION_NVP(empire_manager); }
-#endif

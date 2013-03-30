@@ -2551,6 +2551,12 @@ void MapWnd::ShowPlanet(int planet_id) {
     m_pedia_panel->SetPlanet(planet_id);
 }
 
+void MapWnd::ShowCombatLog(int log_id) {
+    if (!m_pedia_panel->Visible())
+        TogglePedia();
+    m_pedia_panel->SetCombatLog(log_id);
+}
+
 void MapWnd::ShowTech(const std::string& tech_name) {
     if (!m_research_wnd->Visible())
         ToggleResearch();

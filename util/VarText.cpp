@@ -108,6 +108,19 @@ namespace {
 #endif
                 m_str += open_tag + name_text + close_tag;
 
+            // combat log
+            } else if (token == VarText::COMBAT_ID_TAG) {
+                int log_id = -1;    // should not be a valid log id, for default
+                try {
+                    log_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
+                } catch (const std::exception&) {
+                    Logger().errorStream() << "SubstituteAndAppend couldn't cast \"" << token_elem.Attribute("value") << "\" to int for combat log id.";
+                    m_str += UserString("ERROR");
+                    m_valid = false;
+                    return;
+                }
+                m_str += open_tag + UserString("COMBAT") + close_tag;
+
             // technology token
             } else if (token == VarText::TECH_TAG) {
                 std::string name = token_elem.Attribute("value");
@@ -248,6 +261,8 @@ const std::string VarText::SYSTEM_ID_TAG = "system";
 const std::string VarText::SHIP_ID_TAG = "ship";
 const std::string VarText::FLEET_ID_TAG = "fleet";
 const std::string VarText::BUILDING_ID_TAG = "building";
+
+const std::string VarText::COMBAT_ID_TAG = "combat";
 
 const std::string VarText::EMPIRE_ID_TAG = "empire";
 const std::string VarText::DESIGN_ID_TAG = "shipdesign";

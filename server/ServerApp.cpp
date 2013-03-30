@@ -3,6 +3,7 @@
 #include "SaveLoad.h"
 #include "ServerFSM.h"
 #include "../combat/CombatSystem.h"
+#include "../combat/CombatLogManager.h"
 #include "../universe/Building.h"
 #include "../universe/Effect.h"
 #include "../universe/Fleet.h"
@@ -1496,38 +1497,35 @@ namespace {
         return false;   // no possible conditions for combat were found
     }
 
-    /** Cleans up CombatInfo within \a system_combat_info. */
-    void CleanupSystemCombatInfo(std::map<int, CombatInfo>& system_combat_info) {
-        for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin();
-             it != system_combat_info.end(); ++it)
-        { it->second.Clear(); }
-        system_combat_info.clear();
+    /** Cleans up CombatInfo within \a combats. */
+    void CleanupSystemCombatInfo(std::vector<CombatInfo>& combats) {
+        for (std::vector<CombatInfo>::iterator it = combats.begin(); it != combats.end(); ++it)
+        { it->Clear(); }
+        combats.clear();
     }
 
-    /** Clears and refills \a system_combat_info with CombatInfo structs for
+    /** Clears and refills \a combats with CombatInfo structs for
       * every system where a combat should occur this turn. */
-    void AssembleSystemCombatInfo(std::map<int, CombatInfo>& system_combat_info) {
-        CleanupSystemCombatInfo(system_combat_info);
+    void AssembleSystemCombatInfo(std::vector<CombatInfo>& combats) {
+        CleanupSystemCombatInfo(combats);
 
         // for each system, find if a combat will occur in it, and if so, assemble
-        // necessary information about that combat in system_combat_info
+        // necessary information about that combat in combats
         std::vector<int> sys_ids = GetUniverse().Objects().FindObjectIDs<System>();
 
         for (std::vector<int>::const_iterator it = sys_ids.begin(); it != sys_ids.end(); ++it) {
             int sys_id = *it;
             if (CombatConditionsInSystem(sys_id))
-                system_combat_info.insert(std::make_pair(sys_id, CombatInfo(sys_id)));
+                combats.push_back(CombatInfo(sys_id, CurrentTurn()));
         }
     }
 
     /** Back project meter values of objects in combat info, so that changes to
       * meter values from combat aren't lost when resetting meters during meter
       * updating after combat. */
-    void BackProjectSystemCombatInfoObjectMeters(std::map<int, CombatInfo>& system_combat_info) {
-        for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin();
-             it != system_combat_info.end(); ++it)
-        {
-            ObjectMap& objects = it->second.objects;
+    void BackProjectSystemCombatInfoObjectMeters(std::vector<CombatInfo>& combats) {
+        for (std::vector<CombatInfo>::iterator it = combats.begin(); it != combats.end(); ++it) {
+            ObjectMap& objects = it->objects;
             for (ObjectMap::iterator<> obj_it = objects.begin(); obj_it != objects.end(); ++obj_it)
                 obj_it->BackPropegateMeters();
         }
@@ -1535,15 +1533,15 @@ namespace {
 
     /** Takes contents of CombatInfo struct and puts it into the universe.
       * Used to store results of combat in main universe. */
-    void DisseminateSystemCombatInfo(const std::map<int, CombatInfo>& system_combat_info) {
+    void DisseminateSystemCombatInfo(const std::vector<CombatInfo>& combats) {
         Universe& universe = GetUniverse();
 
         // loop through resolved combat infos, updating actual main universe
         // with changes from combat
-        for (std::map<int, CombatInfo>::const_iterator system_it = system_combat_info.begin();
-             system_it != system_combat_info.end(); ++system_it)
+        for (std::vector<CombatInfo>::const_iterator combat_it = combats.begin();
+             combat_it != combats.end(); ++combat_it)
         {
-            const CombatInfo& combat_info = system_it->second;
+            const CombatInfo& combat_info = *combat_it;
 
             //// DEBUG
             //const System* combat_system = combat_info.GetSystem();
@@ -1618,19 +1616,24 @@ namespace {
     }
 
     /** Creates sitreps for all empires involved in a combat. */
-    void CreateCombatSitReps(const std::map<int, CombatInfo>& system_combat_info) {
-        for (std::map<int, CombatInfo>::const_iterator it = system_combat_info.begin();
-             it != system_combat_info.end(); ++it)
-        {
-            // basic "combat occured" sitreps
-            const CombatInfo& combat_info = it->second;
-            const std::set<int>& empire_ids = combat_info.empire_ids;
-            for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
+    void CreateCombatSitReps(const std::vector<CombatInfo>& combats) {
+        CombatLogManager& log_manager = GetCombatLogManager();
 
-                Empire* empire = Empires().Lookup(*empire_it);
-                if (!empire)
-                    continue;
-                empire->AddSitRepEntry(CreateCombatSitRep(combat_info.system_id));
+        for (std::vector<CombatInfo>::const_iterator it = combats.begin();
+             it != combats.end(); ++it)
+        {
+            const CombatInfo& combat_info = *it;
+
+            // add combat log entry
+            int log_id = log_manager.AddLog(CombatLog(combat_info));
+
+            // basic "combat occured" sitreps
+            const std::set<int>& empire_ids = combat_info.empire_ids;
+            for (std::set<int>::const_iterator empire_it = empire_ids.begin();
+                 empire_it != empire_ids.end(); ++empire_it)
+            {
+                if (Empire* empire = Empires().Lookup(*empire_it))
+                    empire->AddSitRepEntry(CreateCombatSitRep(combat_info.system_id, log_id));
             }
 
             // sitreps about destroyed objects
@@ -2204,11 +2207,11 @@ void ServerApp::ProcessCombats() {
     m_networking.SendMessage(TurnProgressMessage(Message::COMBAT));
 
     std::set<int> human_controlled_empire_ids = HumanControlledEmpires(this, m_networking);
-    std::map<int, CombatInfo> system_combat_info;   // map from system ID to CombatInfo for that system
+    std::vector<CombatInfo> combats;   // map from system ID to CombatInfo for that system
 
 
     // collect data about locations where combat is to occur
-    AssembleSystemCombatInfo(system_combat_info);
+    AssembleSystemCombatInfo(combats);
 
     // TODO: inform players of locations of controllable combats, and get
     // players to specify which should be controlled and which should be
@@ -2216,8 +2219,8 @@ void ServerApp::ProcessCombats() {
 
     // loop through assembled combat infos, handling each combat to update the
     // various systems' CombatInfo structs
-    for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin(); it != system_combat_info.end(); ++it) {
-        CombatInfo& combat_info = it->second;
+    for (std::vector<CombatInfo>::iterator it = combats.begin(); it != combats.end(); ++it) {
+        CombatInfo& combat_info = *it;
 
         if (System* system = combat_info.GetSystem())
             system->SetLastTurnBattleHere(CurrentTurn());
@@ -2272,13 +2275,13 @@ void ServerApp::ProcessCombats() {
         }
     }
 
-    BackProjectSystemCombatInfoObjectMeters(system_combat_info);
+    BackProjectSystemCombatInfoObjectMeters(combats);
 
-    DisseminateSystemCombatInfo(system_combat_info);
+    DisseminateSystemCombatInfo(combats);
 
-    CreateCombatSitReps(system_combat_info);
+    CreateCombatSitReps(combats);
 
-    CleanupSystemCombatInfo(system_combat_info);
+    CleanupSystemCombatInfo(combats);
 }
 
 void ServerApp::PostCombatProcessTurns() {
