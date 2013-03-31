@@ -104,6 +104,7 @@ public:
 
     PlanetEnvironment           EnvironmentForSpecies(const std::string& species_name = "") const;
     PlanetType                  NextBetterPlanetTypeForSpecies(const std::string& species_name = "") const;
+    PlanetType                  NextCloserToOriginalPlanetType() const;
     PlanetType                  ClockwiseNextPlanetType() const;
     PlanetType                  CounterClockwiseNextPlanetType() const;
     PlanetSize                  NextLargerPlanetSize() const;
@@ -116,9 +117,6 @@ public:
     Degree                      AxialTilt() const;
 
     const std::set<int>&        Buildings() const {return m_buildings;}
-
-    double                      AvailableTrade() const;                 ///< returns the trade available at this planet for use in building maintenance
-    double                      BuildingCosts() const;                  ///< returns the cost in trade for the upkeep of all currently-enabled buildings
 
     virtual bool                        Contains(int object_id) const;  ///< returns true iff this Planet contains a building with ID \a id.
     virtual std::vector<UniverseObject*>FindObjects() const;            ///< returns objects contained within this object
@@ -161,9 +159,8 @@ public:
     void            AddBuilding(int building_id);       ///< adds the building to the planet
     bool            RemoveBuilding(int building_id);    ///< removes the building from the planet; returns false if no such building was found
 
-    void            SetAvailableTrade(double trade);    ///< sets the trade available at this planet for use in building maintenance
-
-    virtual void    Reset();                            ///< Resets the meters, specials, etc., of a planet to an unowned state.  This should be called when a planet is wiped out due to starvation, etc.
+    virtual void    Reset();                            ///< Resets the meters, specials, etc., of a planet to an unowned state.
+    virtual void    Depopulate();
 
     void            Conquer(int conquerer);             ///< Called during combat when a planet changes hands
     void            SetIsAboutToBeColonized(bool b);    ///< Called during colonization when a planet is about to be colonized
@@ -202,7 +199,6 @@ private:
     Degree          m_axial_tilt;
 
     std::set<int>   m_buildings;
-    double          m_available_trade;
 
     bool            m_just_conquered;
     bool            m_is_about_to_be_colonized;

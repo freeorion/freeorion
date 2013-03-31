@@ -61,7 +61,6 @@ Planet::Planet() :
     m_initial_orbital_position(0.0),
     m_rotational_period(1.0),
     m_axial_tilt(23.0),
-    m_available_trade(0.0),
     m_just_conquered(false),
     m_is_about_to_be_colonized(false),
     m_is_about_to_be_invaded(false),
@@ -84,7 +83,6 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_initial_orbital_position(RandZeroToOne() * 2 * 3.14159),
     m_rotational_period(1.0),
     m_axial_tilt(RandZeroToOne() * HIGH_TILT_THERSHOLD),
-    m_available_trade(0.0),
     m_just_conquered(false),
     m_is_about_to_be_colonized(false),
     m_is_about_to_be_invaded(false),
@@ -147,7 +145,6 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id) {
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
             if (vis >= VIS_FULL_VISIBILITY) {
-                this->m_available_trade =           copied_planet->m_available_trade;
                 this->m_is_about_to_be_colonized =  copied_planet->m_is_about_to_be_colonized;
                 this->m_is_about_to_be_invaded   =  copied_planet->m_is_about_to_be_invaded;
                 this->m_last_turn_attacked_by_ship= copied_planet->m_last_turn_attacked_by_ship;
@@ -274,6 +271,52 @@ PlanetType Planet::NextBetterPlanetTypeForSpecies(const std::string& species_nam
 }
 
 namespace {
+    PlanetType RingNextPlanetType(PlanetType current_type) {
+        PlanetType next(PlanetType(int(current_type)+1));
+        if (next >= PT_ASTEROIDS)
+            next = PT_SWAMP;
+        return next;
+    }
+    PlanetType RingPreviousPlanetType(PlanetType current_type) {
+        PlanetType next(PlanetType(int(current_type)-1));
+        if (next <= INVALID_PLANET_TYPE)
+            next = PT_OCEAN;
+        return next;
+    }
+}
+
+PlanetType Planet::NextCloserToOriginalPlanetType() const {
+    if (m_type == INVALID_PLANET_TYPE ||
+        m_type == PT_GASGIANT ||
+        m_type == PT_ASTEROIDS ||
+        m_original_type == INVALID_PLANET_TYPE ||
+        m_original_type == PT_GASGIANT ||
+        m_original_type == PT_ASTEROIDS)
+    { return m_type; }
+
+    if (m_type == m_original_type)
+        return m_type;
+
+    PlanetType cur_type = m_type;
+    int cw_steps = 0;
+    while (cur_type != m_original_type) {
+        cw_steps++;
+        cur_type = RingNextPlanetType(cur_type);
+    }
+
+    cur_type = m_type;
+    int ccw_steps = 0;
+    while (cur_type != m_original_type) {
+        ccw_steps++;
+        cur_type = RingPreviousPlanetType(cur_type);
+    }
+
+    if (cw_steps <= ccw_steps)
+        return RingNextPlanetType(m_type);
+    return RingPreviousPlanetType(m_type);
+}
+
+namespace {
     PlanetType LoopPlanetTypeIncrement(PlanetType initial_type, int step) {
         // avoid too large steps that would mess up enum arithmatic
         if (std::abs(step) >= PT_ASTEROIDS) {
@@ -374,19 +417,6 @@ Day Planet::RotationalPeriod() const
 
 Degree Planet::AxialTilt() const
 { return m_axial_tilt; }
-
-double Planet::AvailableTrade() const
-{ return m_available_trade; }
-
-double Planet::BuildingCosts() const {
-    double retval = 0.0;
-    //for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
-    //    const Building* building = GetBuilding(*it);
-    //    const BuildingType* bulding_type = GetBuildingType(building->BuildingTypeName());
-    //    retval += bulding_type->MaintenanceCost();
-    //}
-    return retval;
-}
 
 bool Planet::Contains(int object_id) const
 { return m_buildings.find(object_id) != m_buildings.end(); }
@@ -563,20 +593,11 @@ bool Planet::RemoveBuilding(int building_id) {
     return false;
 }
 
-void Planet::SetAvailableTrade(double trade)
-{ m_available_trade = trade; }
-
 void Planet::Reset() {
-    // remove owner
     SetOwner(ALL_EMPIRES);
-
-    // reset popcenter meters
     PopCenter::Reset();
-
-    // reset resourcecenter meters
     ResourceCenter::Reset();
 
-    // reset planet meters
     GetMeter(METER_SUPPLY)->Reset();
     GetMeter(METER_SHIELD)->Reset();
     GetMeter(METER_MAX_SHIELD)->Reset();
@@ -585,16 +606,18 @@ void Planet::Reset() {
     GetMeter(METER_DETECTION)->Reset();
     GetMeter(METER_REBEL_TROOPS)->Reset();
 
-    // reset buildings
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
         if (Building* building = GetBuilding(*it))
             building->Reset();
 
-    // reset other state
-    m_available_trade = 0.0;
     m_just_conquered = false;
     m_is_about_to_be_colonized = false;
     m_is_about_to_be_invaded = false;
+}
+
+void Planet::Depopulate() {
+    PopCenter::Depopulate();
+    ResourceCenter::Reset();
 }
 
 void Planet::Conquer(int conquerer) {
@@ -708,10 +731,8 @@ void Planet::PopGrowthProductionResearchPhase() {
         // generate starvation sitrep for empire that owns this depopulated planet
         if (Empire* empire = Empires().Lookup(this->Owner()))
             empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep(this->ID()));
-
         // remove species
         SetSpecies("");
-
     }
 
     GetMeter(METER_SHIELD)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SHIELD));

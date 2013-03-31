@@ -111,7 +111,7 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
         GetMeter(METER_POPULATION)->SetCurrent(new_pop);
     } else {
         // if population falls below threshold, kill off the remainder
-        Reset();
+        Depopulate();
     }
 }
 
@@ -121,8 +121,13 @@ void PopCenter::PopCenterClampMeters()
 void PopCenter::Reset() {
     GetMeter(METER_POPULATION)->Reset();
     GetMeter(METER_TARGET_POPULATION)->Reset();
+    GetMeter(METER_HAPPINESS)->Reset();
+    GetMeter(METER_TARGET_HAPPINESS)->Reset();
     m_species_name.clear();
 }
+
+void PopCenter::Depopulate()
+{ PopCenter::Reset(); }
 
 void PopCenter::SetSpecies(const std::string& species_name) {
     const Species* species = GetSpecies(species_name);
