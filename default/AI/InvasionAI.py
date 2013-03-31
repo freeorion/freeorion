@@ -9,6 +9,10 @@ import AITarget
 import math
 import ProductionAI
 import ColonisationAI
+import MilitaryAI
+
+def dictFromMap(map):
+    return dict(  [  (el.key(),  el.data() ) for el in map ] )
 
 def getInvasionFleets():
     "get invasion fleets"
@@ -99,6 +103,7 @@ def getInvasionFleets():
     else:
         print "No Invadable planets identified"
 
+    sortedPlanets = [(pid,  pscore,  ptroops) for (pid,  pscore, ptroops) in sortedPlanets  if pscore > 0]
     # export opponent planets for other AI modules
     AIstate.opponentPlanetIDs = [pid for pid, pscore, trp in sortedPlanets]
     AIstate.invasionTargets = sortedPlanets
@@ -168,10 +173,16 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
         print "invasion AI couldn't get current info on planet %d"%planetID
         return 0, 0
 
+    sysPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planet.systemID,  empireID)).get(fo.visibility.partial, -9999)
+    planetPartialVisTurn = dictFromMap(universe.getVisibilityTurnsMap(planetID,  empireID)).get(fo.visibility.partial, -9999)
+
+    if planetPartialVisTurn < sysPartialVisTurn:
+            return 0, 0  #last time we had partial vis of the system, the planet was stealthed to us #TODO: track detection strength, order new scouting when it goes up
+        
     specName=planet.speciesName
     species=fo.getSpecies(specName)
-    if not species:#TODO:  probably stealth makes planet inacccesible & should abort
-        return 0, 0
+    if not species:
+        popVal = ColonisationAI.evaluatePlanet(planetID,  EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST,  [planetID],  species,  empire, detail) #evaluatePlanet is imported from ColonisationAI
     else:
         popVal = ColonisationAI.evaluatePlanet(planetID,  EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  species,  empire, detail) #evaluatePlanet is imported from ColonisationAI
 
@@ -200,6 +211,8 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     pmaxShield = planet.currentMeterValue(fo.meterType.maxShield)
     sysFThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('fleetThreat', 1000 )
     sysMThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('monsterThreat', 0 )
+    sysPThrt = foAI.foAIstate.systemStatus.get(pSysID, {}).get('planetThreat', 0 )
+    sysTotThrt = sysFThrt + sysMThrt + sysPThrt
     print "invasion eval of %s  %d --- maxShields %.1f -- sysFleetThreat %.1f  -- sysMonsterThreat %.1f"%(planet.name,  planetID,  pmaxShield,  sysFThrt,  sysMThrt)
     supplyVal=0
     enemyVal=0
@@ -216,13 +229,14 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
                     supplyVal = 20
             else:
                 supplyVal *= int( min(1, ProductionAI.curBestMilShipRating() /  sysFThrt )  )
+    threatFactor = min(1,  0.2*MilitaryAI.totMilRating/(sysTotThrt+0.001))**2  #devalue invasions that would require too much military force
     buildTime=4
     plannedTroops = min(troops+maxJumps+buildTime,  maxTroops)
     if ( empire.getTechStatus("SHP_ORG_HULL") != fo.techStatus.complete ):
         troopCost = math.ceil( plannedTroops/6.0) *  ( 40*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
     else:
         troopCost = math.ceil( plannedTroops/6.0) *  ( 20*( 1+foAI.foAIstate.shipCount * AIDependencies.shipUpkeep ) )
-    invscore =  max(0,  popVal+supplyVal+bldTally+enemyVal-0.8*troopCost),  plannedTroops
+    invscore =  threatFactor*max(0,  popVal+supplyVal+bldTally+enemyVal-0.8*troopCost),  plannedTroops
     print invscore, "projected Troop Cost:",  troopCost,  "planet detail ",   detail,  popVal,  supplyVal,  bldTally,  enemyVal
     return   invscore
 

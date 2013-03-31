@@ -293,7 +293,6 @@ def getColonyFleets():
     # print "Evaluated Outpost PlanetIDs:       " + str(evaluatedOutpostPlanetIDs)
 
     evaluatedColonyPlanets = assignColonisationValues(evaluatedColonyPlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, fleetSupplyablePlanetIDs, species, empire)
-    #removeLowValuePlanets(evaluatedColonyPlanets)
 
     sortedPlanets = evaluatedColonyPlanets.items()
     sortedPlanets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
@@ -304,15 +303,16 @@ def getColonyFleets():
         print "   %15s | %5s  | %s  | %s "%(score,  ID,  universe.getPlanet(ID).name ,  list(universe.getPlanet(ID).specials)) 
     print ""
 
+    sortedPlanets = [(ID, score) for ID, score in sortedPlanets if score[0] > 0]
     # export planets for other AI modules
-    foAI.foAIstate.colonisablePlanetIDs = sortedPlanets#TODO: should include species designation corresponding to rating
+    foAI.foAIstate.colonisablePlanetIDs = sortedPlanets
 
     # get outpost fleets
     allOutpostFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST)
     AIstate.outpostFleetIDs = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allOutpostFleetIDs)
 
     evaluatedOutpostPlanets = assignColonisationValues(evaluatedOutpostPlanetIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST, fleetSupplyablePlanetIDs, species, empire)
-    removeLowValuePlanets(evaluatedOutpostPlanets) #bad! lol, was preventing all mining outposts
+    #removeLowValuePlanets(evaluatedOutpostPlanets) 
 
     sortedOutposts = evaluatedOutpostPlanets.items()
     sortedOutposts.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
@@ -322,6 +322,7 @@ def getColonyFleets():
         print "   %5s | %5s  | %s  | %s "%(score,  ID,  universe.getPlanet(ID).name ,  list(universe.getPlanet(ID).specials)) 
     print ""
 
+    sortedOutposts = [(ID, score) for ID, score in sortedOutposts if score[0] > 0]
     # export outposts for other AI modules
     foAI.foAIstate.colonisableOutpostIDs = sortedOutposts
 
@@ -686,15 +687,17 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                 researchBonus += discountMultiplier*2*10    #TODO: do actual calc
                 detail.append("COMPUTRONIUM_SPECIAL")
 
-        retval=0.0
-        if popSize > 0:
-            retval  = starBonus+max(indVal+asteroidBonus+gasGiantBonus,  researchBonus,  growthVal)+fixedInd + fixedRes
-            if planet.systemID in annexableRing1:
-                retval += 10
-            elif planet.systemID in annexableRing2:
-                retval += 20
-            elif planet.systemID in annexableRing3:
-                retval += 10
+        if popSize <= 0:
+            detail.append("Non-positive population projection for species '%s',  so no colonization value"%(species and species.name))
+            return 0
+
+        retval  += max(indVal+asteroidBonus+gasGiantBonus,  researchBonus,  growthVal)+fixedInd + fixedRes
+        if planet.systemID in annexableRing1:
+            retval += 10
+        elif planet.systemID in annexableRing2:
+            retval += 20
+        elif planet.systemID in annexableRing3:
+            retval += 10
         
         retval *= priorityScaling
         thrtRatio = (foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0)+foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('monsterThreat', 0)+0.2*foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('neighborThreat', 0)) / float(curBestMilShipRating)
