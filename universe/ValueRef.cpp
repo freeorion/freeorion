@@ -338,6 +338,9 @@ namespace ValueRef {
         } else if (property_name == OriginalType_name) {
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 return p->OriginalType();
+        } else if (property_name == NextCloserToOriginalPlanetType_name) {
+            if (const Planet* p = universe_object_cast<const Planet*>(object))
+                return p->NextCloserToOriginalPlanetType();
         } else if (property_name == NextBetterPlanetType_name) {
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 return p->NextBetterPlanetTypeForSpecies();

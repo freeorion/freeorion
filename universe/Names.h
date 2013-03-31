@@ -174,6 +174,7 @@
     (Native)                                    \
     (Neutron)                                   \
     (NextBetterPlanetType)                      \
+    (NextCloserToOriginalPlanetType)            \
     (NextLargerPlanetSize)                      \
     (NextSmallerPlanetSize)                     \
     (NextOlderStarType)                         \
