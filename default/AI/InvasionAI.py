@@ -48,16 +48,16 @@ def getInvasionFleets():
     acessiblePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(accessibleSystemIDs)
 
     #allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs)
-    allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(acessiblePlanetIDs)
+    allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(acessiblePlanetIDs)#need these for unpopulated outposts
     # print "All Owned and Populated PlanetIDs: " + str(allOwnedPlanetIDs)
     
-    allPopulatedPlanets=PlanetUtilsAI.getPopulatedPlanetIDs(acessiblePlanetIDs)
+    allPopulatedPlanets=PlanetUtilsAI.getPopulatedPlanetIDs(acessiblePlanetIDs)#need this for natives
     print "All Visible and accessible Populated PlanetIDs (including this empire's):              " + str(PlanetUtilsAI.planetNameIDs(allPopulatedPlanets))
 
     empireOwnedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
     # print "Empire Owned PlanetIDs:            " + str(empireOwnedPlanetIDs)
 
-    invadablePlanetIDs = set(primeInvadablePlanetIDs).intersection(set(allOwnedPlanetIDs) - set(empireOwnedPlanetIDs))
+    invadablePlanetIDs = set(primeInvadablePlanetIDs).intersection(set(allOwnedPlanetIDs).union(allPopulatedPlanets) - set(empireOwnedPlanetIDs))
     print "Prime Invadable PlanetIDs:              " + str(PlanetUtilsAI.planetNameIDs(invadablePlanetIDs))
 
     print ""
