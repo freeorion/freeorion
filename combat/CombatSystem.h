@@ -86,7 +86,7 @@ void AttackEvent::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(round)
         & BOOST_SERIALIZATION_NVP(attacker_id)
         & BOOST_SERIALIZATION_NVP(target_id)
-        & BOOST_SERIALIZATION_NVP(damage),
+        & BOOST_SERIALIZATION_NVP(damage)
         & BOOST_SERIALIZATION_NVP(target_destroyed);
 }
 
