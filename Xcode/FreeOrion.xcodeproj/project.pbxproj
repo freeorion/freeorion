@@ -412,6 +412,7 @@
 		82271C9A15F8AD2B0063179C /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82271C3A15F8AB900063179C /* libOIS.a */; };
 		822B16B71642A6F8000ADE58 /* EffectParser3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 822B16B51642A6F8000ADE58 /* EffectParser3.cpp */; };
 		822B16B81642A6F8000ADE58 /* EffectParser4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 822B16B61642A6F8000ADE58 /* EffectParser4.cpp */; };
+		822EB0FF170832240083EB38 /* CombatLogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 822EB0FD170832240083EB38 /* CombatLogManager.cpp */; };
 		8230805E14A8803F00C1BC15 /* ConditionParser1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936DB147E3B1B00B840A5 /* ConditionParser1.cpp */; };
 		8230805F14A8803F00C1BC15 /* ConditionParser2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936DC147E3B1B00B840A5 /* ConditionParser2.cpp */; };
 		8230806014A8803F00C1BC15 /* ConditionParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936D9147E3B1B00B840A5 /* ConditionParser.cpp */; };
@@ -2418,6 +2419,8 @@
 		82271C7915F8ABEE0063179C /* OISObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OISObject.cpp; sourceTree = "<group>"; };
 		822B16B51642A6F8000ADE58 /* EffectParser3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser3.cpp; sourceTree = "<group>"; };
 		822B16B61642A6F8000ADE58 /* EffectParser4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser4.cpp; sourceTree = "<group>"; };
+		822EB0FD170832240083EB38 /* CombatLogManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatLogManager.cpp; sourceTree = "<group>"; };
+		822EB0FE170832240083EB38 /* CombatLogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatLogManager.h; sourceTree = "<group>"; };
 		8230803F14A87FFB00C1BC15 /* libConditionParser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libConditionParser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		82483B7A15F4F24100D27614 /* libboost_date_time.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_date_time.a; sourceTree = "<group>"; };
 		82483B7B15F4F26200D27614 /* libFreeImage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFreeImage.a; sourceTree = "<group>"; };
@@ -4014,6 +4017,8 @@
 		471D5C6A0A98A3F900DA9C21 /* combat */ = {
 			isa = PBXGroup;
 			children = (
+				822EB0FD170832240083EB38 /* CombatLogManager.cpp */,
+				822EB0FE170832240083EB38 /* CombatLogManager.h */,
 				346D87E60FC5F52A0095593E /* CombatEventListener.h */,
 				3402E2320F5A300600DF6FE7 /* CombatOrder.cpp */,
 				3402E2330F5A300600DF6FE7 /* CombatOrder.h */,
@@ -5686,6 +5691,7 @@
 				8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */,
 				825EA76016DB9DB10002A797 /* ModeratorAction.cpp in Sources */,
 				82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */,
+				822EB0FF170832240083EB38 /* CombatLogManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
