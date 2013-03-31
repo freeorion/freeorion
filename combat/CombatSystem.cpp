@@ -650,9 +650,10 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         Logger().debugStream() << "Combat at " << system->Name() << " (" << combat_info.system_id << ") Round " << round;
 
         // select attacking object in battle
-        SmallIntDistType attacker_id_num_dist = SmallIntDist(0, valid_attacker_object_ids.size() - 1);
+        int attacker_idx = RandInt(0, valid_attacker_object_ids.size() - 1);
+        Logger().debugStream() << "Battle round " << round << " attacker index: " << attacker_idx << " of " << valid_attacker_object_ids.size() - 1;
         std::set<int>::const_iterator attacker_it = valid_attacker_object_ids.begin();
-        std::advance(attacker_it, attacker_id_num_dist());
+        std::advance(attacker_it, attacker_idx);
         assert(attacker_it != valid_attacker_object_ids.end());
         int attacker_id = *attacker_it;
 
@@ -720,9 +721,10 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
 
             // select target object
-            SmallIntDistType target_id_num_dist = SmallIntDist(0, valid_target_ids.size() - 1);
+            int target_idx = RandInt(0, valid_target_ids.size() - 1);
+            Logger().debugStream() << " ... target index: " << target_idx << " of " << valid_target_ids.size() - 1;
             std::set<int>::const_iterator target_it = valid_target_ids.begin();
-            std::advance(target_it, target_id_num_dist());
+            std::advance(target_it, target_idx);
             assert(target_it != valid_target_ids.end());
             int target_id = *target_it;
 
