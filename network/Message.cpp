@@ -290,6 +290,7 @@ Message HostIDMessage(int host_player_id) {
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
                          int current_turn, const EmpireManager& empires,
                          const Universe& universe, const SpeciesManager& species,
+                         const CombatLogManager& combat_logs,
                          const std::map<int, PlayerInfo>& players)
 {
     std::ostringstream os;
@@ -300,7 +301,8 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
            << BOOST_SERIALIZATION_NVP(current_turn);
         GetUniverse().EncodingEmpire() = empire_id;
         oa << BOOST_SERIALIZATION_NVP(empires)
-           << BOOST_SERIALIZATION_NVP(species);
+           << BOOST_SERIALIZATION_NVP(species)
+           << BOOST_SERIALIZATION_NVP(combat_logs);
         Serialize(oa, universe);
         bool loaded_game_data = false;
         oa << BOOST_SERIALIZATION_NVP(players)
@@ -312,6 +314,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
                          int current_turn, const EmpireManager& empires,
                          const Universe& universe, const SpeciesManager& species,
+                         const CombatLogManager& combat_logs,
                          const std::map<int, PlayerInfo>& players,
                          const OrderSet& orders, const SaveGameUIData* ui_data)
 {
@@ -323,7 +326,8 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
            << BOOST_SERIALIZATION_NVP(current_turn);
         GetUniverse().EncodingEmpire() = empire_id;
         oa << BOOST_SERIALIZATION_NVP(empires)
-           << BOOST_SERIALIZATION_NVP(species);
+           << BOOST_SERIALIZATION_NVP(species)
+           << BOOST_SERIALIZATION_NVP(combat_logs);
         Serialize(oa, universe);
         bool loaded_game_data = true;
         oa << BOOST_SERIALIZATION_NVP(players)
@@ -342,6 +346,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
                          int current_turn, const EmpireManager& empires,
                          const Universe& universe, const SpeciesManager& species,
+                         const CombatLogManager& combat_logs,
                          const std::map<int, PlayerInfo>& players,
                          const OrderSet& orders, const std::string* save_state_string)
 {
@@ -353,7 +358,8 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
            << BOOST_SERIALIZATION_NVP(current_turn);
         GetUniverse().EncodingEmpire() = empire_id;
         oa << BOOST_SERIALIZATION_NVP(empires)
-           << BOOST_SERIALIZATION_NVP(species);
+           << BOOST_SERIALIZATION_NVP(species)
+           << BOOST_SERIALIZATION_NVP(combat_logs);
         Serialize(oa, universe);
         bool loaded_game_data = true;
         oa << BOOST_SERIALIZATION_NVP(players)
@@ -671,7 +677,8 @@ void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data) {
 
 void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id,
                         int& current_turn, EmpireManager& empires, Universe& universe,
-                        SpeciesManager& species, std::map<int, PlayerInfo>& players, OrderSet& orders,
+                        SpeciesManager& species, CombatLogManager& combat_logs,
+                        std::map<int, PlayerInfo>& players, OrderSet& orders,
                         bool& loaded_game_data, bool& ui_data_available,
                         SaveGameUIData& ui_data, bool& save_state_string_available,
                         std::string& save_state_string)
@@ -688,7 +695,8 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
         ia >> BOOST_SERIALIZATION_NVP(empires);
         Logger().debugStream() << "ExtractMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
-        ia >> BOOST_SERIALIZATION_NVP(species);
+        ia >> BOOST_SERIALIZATION_NVP(species)
+           >> BOOST_SERIALIZATION_NVP(combat_logs);
 
         deserialize_timer.restart();
         Deserialize(ia, universe);

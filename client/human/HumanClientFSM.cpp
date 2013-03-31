@@ -534,11 +534,11 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     int empire_id = ALL_EMPIRES;
     int current_turn = INVALID_GAME_TURN;
 
-    ExtractMessageData(msg.m_message,               single_player_game,     empire_id,
-                       current_turn,                Empires(),              GetUniverse(),
-                       GetSpeciesManager(),         Client().Players(),     orders,
-                       loaded_game_data,            ui_data_available,      ui_data,
-                       save_state_string_available, save_state_string);
+    ExtractMessageData(msg.m_message,       single_player_game,             empire_id,
+                       current_turn,        Empires(),                      GetUniverse(),
+                       GetSpeciesManager(), GetCombatLogManager(),          Client().Players(),
+                       orders,              loaded_game_data,               ui_data_available,
+                       ui_data,             save_state_string_available,    save_state_string);
 
     Logger().debugStream() << "Extracted GameStart message for turn: " << current_turn << " with empire: " << empire_id;
 
