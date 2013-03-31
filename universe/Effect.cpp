@@ -1647,11 +1647,11 @@ CreateSystem::~CreateSystem() {
 }
 
 void CreateSystem::Execute(const ScriptingContext& context) const {
-    if (!context.effect_target) {
-        Logger().errorStream() << "CreateSystem::Execute passed null target";
-        return;
-    }
-    const UniverseObject* target = context.effect_target;
+    //if (!context.effect_target) {
+    //    Logger().errorStream() << "CreateSystem::Execute passed null target";
+    //    return;
+    //}
+    //const UniverseObject* target = context.effect_target;
 
     // pick a star type
     StarType star_type = STAR_NONE;
