@@ -545,6 +545,32 @@ namespace {
 
         return retval;
     }
+
+    const std::string& GeneralTypeOfObject(UniverseObjectType obj_type) {
+        switch (obj_type) {
+        case OBJ_SHIP:          return UserString("ENC_SHIP");          break;
+        case OBJ_FLEET:         return UserString("ENC_FLEET");         break;
+        case OBJ_PLANET:        return UserString("ENC_PLANET");        break;
+        case OBJ_BUILDING:      return UserString("ENC_BUILDING");      break;
+        case OBJ_SYSTEM:        return UserString("ENC_SYSTEM");        break;
+        case OBJ_FIELD:         return UserString("END_FIELD");         break;
+        case OBJ_POP_CENTER:    return UserString("ENC_POP_CENTER");    break;
+        case OBJ_PROD_CENTER:   return UserString("END_PROD_CENTER");   break;
+        default:                return EMPTY_STRING;
+        }
+    }
+
+    const std::string& LinkTag(UniverseObjectType obj_type) {
+        switch (obj_type) {
+        case OBJ_SHIP:          return VarText::SHIP_ID_TAG;        break;
+        case OBJ_FLEET:         return VarText::FLEET_ID_TAG;       break;
+        case OBJ_PLANET:        return VarText::PLANET_ID_TAG;      break;
+        case OBJ_BUILDING:      return VarText::BUILDING_ID_TAG;    break;
+        case OBJ_SYSTEM:        return VarText::SYSTEM_ID_TAG;      break;
+        case OBJ_FIELD:
+        default:                return EMPTY_STRING;
+        }
+    }
 }
 
 void EncyclopediaDetailPanel::Refresh() {
@@ -1162,28 +1188,9 @@ void EncyclopediaDetailPanel::Refresh() {
             }
 
             detailed_description = obj->Dump();
-
-            if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
-                name = ship->PublicName(client_empire_id);
-                general_type = UserString("ENC_SHIP");
-
-            } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
-                name = fleet->PublicName(client_empire_id);
-                general_type = UserString("ENC_FLEET");
-
-            } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
-                name = planet->PublicName(client_empire_id);
-                general_type = UserString("ENC_PLANET");
-
-            } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
-                name = building->PublicName(client_empire_id);
-                general_type = UserString("ENC_BUILDING");
-
-            } else if (const System* system = universe_object_cast<const System*>(obj)) {
-                name = system->PublicName(client_empire_id);
-                general_type = UserString("ENC_SYSTEM");
-
-            } else {
+            name = obj->PublicName(client_empire_id);
+            general_type = GeneralTypeOfObject(obj->ObjectType());
+            if (general_type.empty()) {
                 Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name() << " (" << m_items_it->second << ")";
                 return;
             }
@@ -1325,11 +1332,39 @@ void EncyclopediaDetailPanel::Refresh() {
         const CombatLog& log = GetCombatLog(log_id);
 
         name = UserString("ENC_COMBAT_LOG");
-        texture = ClientUI::GetTexture(ClientUI::ArtDir() / "/icons/sitrep/generic.png", true);
+        texture = ClientUI::GetTexture(ClientUI::ArtDir() / "/icons/sitrep/combat.png", true);
         general_type = UserString("ENC_COMBAT_LOG");
 
-        texture = ClientUI::SpecialIcon(m_items_it->second);
-        detailed_description = "blah blah blah";
+        const System* system = objects.Object<System>(log.system_id);
+        const std::string& sys_name = (system ? system->PublicName(client_empire_id) : UserString("ERROR"));
+
+        detailed_description = str(FlexibleFormat(UserString("ENC_COMBAT_LOG_DESCRIPTION_STR"))
+                                   % LinkTaggedIDText(VarText::SYSTEM_ID_TAG, log.system_id, sys_name)
+                                   % log.turn) + "\n\n";
+
+        for (std::vector<AttackEvent>::const_iterator it = log.attack_events.begin();
+             it != log.attack_events.end(); ++it)
+        {
+            const UniverseObject* attacker = objects.Object(it->attacker_id);
+            const std::string& attacker_name = (attacker ? attacker->PublicName(client_empire_id) : UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+            const std::string& attacker_tag = LinkTag(attacker ? attacker->ObjectType() : INVALID_UNIVERSE_OBJECT_TYPE);
+            std::string attacker_link = LinkTaggedIDText(attacker_tag, it->attacker_id, attacker_name);
+
+            const UniverseObject* target = objects.Object(it->target_id);
+            const std::string& target_name = (target ? target->PublicName(client_empire_id) : UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+            const std::string& target_tag = LinkTag(target ? target->ObjectType() : INVALID_UNIVERSE_OBJECT_TYPE);
+            std::string target_link = LinkTaggedIDText(target_tag, it->target_id, target_name);
+
+            const std::string& template_str = (it->target_destroyed ?
+                                               UserString("ENC_COMBAT_ATTACK_DESTROY_STR") :
+                                               UserString("ENC_COMBAT_ATTACK_STR"));
+
+            detailed_description += str(FlexibleFormat(template_str)
+                                        % attacker_link
+                                        % target_link
+                                        % it->damage
+                                        % it->round) + "\n";
+        }
     }
 
     // Create Icons
