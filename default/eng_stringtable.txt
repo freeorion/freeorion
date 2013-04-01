@@ -7563,6 +7563,12 @@ Terraforming
 BLD_TERRAFORM_DESC
 Terraforms a world one step closer to the environmental preference of the inhabiting species.
 
+BLD_TERRAFORM_REVERT
+Terraforming Reversion
+
+BLD_TERRAFORM_REVERT_DESC
+Terraforms a world one step back towards its original type.
+
 BLD_REMOTE_TERRAFORM
 Remote Terraforming
 

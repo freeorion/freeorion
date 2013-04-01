@@ -1150,7 +1150,10 @@ Tech
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
     prerequisites = "GRO_ADV_ECOMAN"
-    unlock = Item type = Building name = "BLD_TERRAFORM"
+    unlock = [
+        Item type = Building name = "BLD_TERRAFORM"
+        Item type = Building name = "BLD_TERRAFORM_REVERT"
+    ]
     graphic = "icons/tech/terraform.png"
 
 Tech
