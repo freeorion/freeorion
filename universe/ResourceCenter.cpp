@@ -36,7 +36,7 @@ void ResourceCenter::Copy(const ResourceCenter* copied_object, Visibility vis) {
         return;
     }
 
-    if (vis == VIS_FULL_VISIBILITY) {
+    if (vis >= VIS_PARTIAL_VISIBILITY) {
         this->m_focus = copied_object->m_focus;
     }
 }
