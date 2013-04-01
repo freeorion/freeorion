@@ -470,8 +470,9 @@ public:
     void            EnableOrderIssuing(bool enable = true);
     //@}
 
-    mutable boost::signal<void (int)>   LClickedSignal;     ///< emitted when the planet panel is left clicked by the user.  returns the id of the clicked planet
-    mutable boost::signal<void ()>      ResizedSignal;      ///< emitted when resized, so external container can redo layout
+    mutable boost::signal<void (int)>               LClickedSignal;     ///< emitted when the planet panel is left clicked by the user.  returns the id of the clicked planet
+    mutable boost::signal<void ()>                  ResizedSignal;      ///< emitted when resized, so external container can redo layout
+    mutable boost::signal<void (const std::string&)>FocusChangedSignal; ///< emitted when focus is changed
 
 private:
     void                    DoLayout();
@@ -479,6 +480,8 @@ private:
     void                    SetFocus(const std::string& focus); ///< set the focus of the planet to \a focus
     void                    ClickColonize();                    ///< called if colonize button is pressed
     void                    ClickInvade();                      ///< called if invade button is pressed
+
+    void                    FocusDropListSelectionChanged(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
 
     int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
     GG::TextControl*        m_planet_name;              ///< planet name
@@ -490,6 +493,7 @@ private:
     bool                    m_selected;                 ///< is this planet panel selected
     bool                    m_order_issuing_enabled;    ///< can orders be issues via this planet panel?
     GG::Clr                 m_empire_colour;            ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
+    CUIDropDownList*        m_focus_drop;               ///< displays and allows selection of planetary focus
     PopulationPanel*        m_population_panel;         ///< contains info about population and health
     ResourcePanel*          m_resource_panel;           ///< contains info about resources production and focus selection UI
     MilitaryPanel*          m_military_panel;           ///< contains icons representing military-related meters
@@ -752,6 +756,14 @@ namespace {
 ////////////////////////////////////////////////
 namespace {
     static const bool SHOW_ALL_PLANET_PANELS = false;   //!< toggles whether to show population, resource, military and building info panels on planet panels that this player doesn't control
+
+    /** How big we want meter icons with respect to the current UI font size.
+      * Meters should scale along font size, but not below the size for the
+      * default 12 points font. */
+    GG::Pt MeterIconSize() {
+        const int icon_size = std::max(ClientUI::Pts(), 12) * 4/3;
+        return GG::Pt(GG::X(icon_size), GG::Y(icon_size));
+    }
 }
 
 SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) :
@@ -766,6 +778,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_selected(false),
     m_order_issuing_enabled(true),
     m_empire_colour(GG::CLR_ZERO),
+    m_focus_drop(0),
     m_population_panel(0),
     m_resource_panel(0),
     m_military_panel(0),
@@ -827,6 +840,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
             break;
         }
     }
+
     // wrap with formatting tags
     std::string wrapped_planet_name = planet->Name();
     if (homeworld)
@@ -839,15 +853,27 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     else
         font = ClientUI::GetFont(ClientUI::Pts()*4/3);
 
+
+    GG::X panel_width = w - MaxPlanetDiameter() - 2*EDGE_PAD;
+
+
     // create planet name control
     m_planet_name = new ShadowedTextControl(GG::X(MaxPlanetDiameter() + EDGE_PAD), GG::Y0, wrapped_planet_name,
                                             font, ClientUI::TextColor());
     AttachChild(m_planet_name);
 
 
-    // create info panels and attach signals
-    GG::X panel_width = w - MaxPlanetDiameter() - 2*EDGE_PAD;
+    // focus-selection droplist
+    m_focus_drop = new CUIDropDownList(GG::X0, GG::Y0, MeterIconSize().x*4,
+                                       MeterIconSize().y*3/2, MeterIconSize().y*7/2);
+    AttachChild(m_focus_drop);
+    GG::Connect(m_focus_drop->SelChangedSignal,     &SidePanel::PlanetPanel::FocusDropListSelectionChanged,  this);
+    GG::Connect(this->FocusChangedSignal,           &SidePanel::PlanetPanel::SetFocus, this);
+    m_focus_drop->MoveTo(GG::Pt(GG::X1, GG::Y1));   // force auto-resize so height is correct for subsequent layout stuff
+    m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
+
+    // meter panels
     m_population_panel = new PopulationPanel(panel_width, m_planet_id);
     AttachChild(m_population_panel);
     GG::Connect(m_population_panel->ExpandCollapseSignal,       &SidePanel::PlanetPanel::DoLayout, this);
@@ -855,7 +881,6 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_resource_panel = new ResourcePanel(panel_width, m_planet_id);
     AttachChild(m_resource_panel);
     GG::Connect(m_resource_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::DoLayout, this);
-    GG::Connect(m_resource_panel->FocusChangedSignal,           &SidePanel::PlanetPanel::SetFocus, this);
 
     m_military_panel = new MilitaryPanel(panel_width, m_planet_id);
     AttachChild(m_military_panel);
@@ -896,6 +921,7 @@ SidePanel::PlanetPanel::~PlanetPanel() {
     delete m_colonize_button;
     delete m_invade_button;
     delete m_env_size;
+    delete m_focus_drop;
     delete m_population_panel;
     delete m_resource_panel;
     delete m_military_panel;
@@ -929,6 +955,11 @@ void SidePanel::PlanetPanel::DoLayout() {
     } else if (m_invade_button && m_invade_button->Parent() == this) {
         m_invade_button->MoveTo(GG::Pt(left, y));
         y += m_invade_button->Height() + EDGE_PAD;
+    }
+
+    if (m_focus_drop && m_focus_drop->Parent() == this) {
+        m_focus_drop->MoveTo(GG::Pt(left, y));
+        y += m_focus_drop->Height() + EDGE_PAD;
     }
 
     if (m_population_panel && m_population_panel->Parent() == this) {
@@ -1225,6 +1256,9 @@ void SidePanel::PlanetPanel::Refresh() {
         DetachChild(m_env_size);
         delete m_env_size;              m_env_size = 0;
 
+        DetachChild(m_focus_drop);      m_focus_drop = 0;
+        delete m_focus_drop;
+
         DetachChild(m_population_panel);
         delete m_population_panel;      m_population_panel = 0;
 
@@ -1327,6 +1361,7 @@ void SidePanel::PlanetPanel::Refresh() {
 
     DetachChild(m_invade_button);
     DetachChild(m_colonize_button);
+    DetachChild(m_focus_drop);
 
     std::string species_name;
     if (!planet->SpeciesName().empty())
@@ -1403,11 +1438,55 @@ void SidePanel::PlanetPanel::Refresh() {
 
     m_env_size->SetText(env_size_text);
 
-    // update panels
+    if (!planet->SpeciesName().empty()) {
+        AttachChild(m_focus_drop);
+
+        const std::vector<std::string>& available_foci = planet->AvailableFoci();
+
+        // refresh items in list
+        m_focus_drop->Clear();
+        for (std::vector<std::string>::const_iterator it = available_foci.begin();
+             it != available_foci.end(); ++it)
+        {
+            boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(
+                ClientUI::ArtDir() / planet->FocusIcon(*it), true);
+            GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x*3/2,
+                                                               MeterIconSize().y*3/2, texture,
+                                                               GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            GG::DropDownList::Row* row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "FOCUS");
+            row->push_back(dynamic_cast<GG::Control*>(graphic));
+            m_focus_drop->Insert(row);
+        }
+
+        int drop_items = std::min(5, static_cast<int>(available_foci.size()));
+        m_focus_drop->SetDropHeight(drop_items * MeterIconSize().y*3/2 + GG::Y(5));
+
+        // set browse text and select appropriate focus in droplist
+        std::string focus_text;
+        if (!planet->Focus().empty()) {
+            for (unsigned int i = 0; i < available_foci.size(); ++i) {
+                if (available_foci[i] == planet->Focus()) {
+                    m_focus_drop->Select(i);
+                    focus_text = boost::io::str(FlexibleFormat(UserString("RP_FOCUS_TOOLTIP"))
+                                                % UserString(planet->Focus()));
+                }
+            }
+        } else {
+            m_focus_drop->Select(m_focus_drop->end());
+        }
+        m_focus_drop->SetBrowseText(focus_text);
+
+        if (!planet->OwnedBy(client_empire_id))
+            m_focus_drop->Disable();
+    }
+
+
+    // other panels...
     if (m_buildings_panel)
         m_buildings_panel->Refresh();
     if (m_specials_panel)
         m_specials_panel->Update();
+
 
     // BuildingsPanel::Refresh (and other panels) emit ExpandCollapseSignal,
     // which should be connected to SidePanel::PlanetPanel::DoLayout
@@ -1747,6 +1826,37 @@ void SidePanel::PlanetPanel::ClickInvade() {
     }
 }
 
+void SidePanel::PlanetPanel::FocusDropListSelectionChanged(GG::DropDownList::iterator selected) {
+    // all this funciton needs to do is emit FocusChangedSignal.  The code
+    // preceeding that determines which focus was selected from the iterator 
+    // parameter, does some safety checks, and disables UI sounds
+
+    if (m_focus_drop->CurrentItem() == m_focus_drop->end()) {
+        Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged passed end / invalid interator";
+        return;
+    }
+
+    const UniverseObject* obj = GetUniverseObject(m_planet_id);
+    if (!obj) {
+        Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged couldn't get object with id " << m_planet_id;
+        return;
+    }
+    const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
+    if (!res) {
+        Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged couldn't convert object with id " << m_planet_id << " to a ResourceCenter";
+        return;
+    }
+
+    std::size_t i = m_focus_drop->IteratorToIndex(selected);
+    if (i >= res->AvailableFoci().size()) {
+        Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged got invalid focus selected index: " << i;
+        return;
+    }
+
+    Sound::TempUISoundDisabler sound_disabler;
+    FocusChangedSignal(res->AvailableFoci().at(i));
+}
+
 void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;
 
@@ -1758,6 +1868,12 @@ void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
     m_military_panel->EnableOrderIssuing(enable);
     m_buildings_panel->EnableOrderIssuing(enable);
     m_specials_panel->EnableOrderIssuing(enable);
+
+    const UniverseObject* obj = GetUniverseObject(m_planet_id);
+    if (!enable || !obj || !obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+        m_focus_drop->Disable();
+    else
+        m_focus_drop->Disable(false);
 }
 
 ////////////////////////////////////////////////

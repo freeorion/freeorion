@@ -550,7 +550,6 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     m_construction_stat(0),
     m_multi_icon_value_indicator(0),
     m_multi_meter_status_bar(0),
-    m_focus_drop(0),
     m_expand_button(0)
 {
     SetName("ResourcePanel");
@@ -571,13 +570,6 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     GG::Connect(m_expand_button->ClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
-
-
-    // focus-selection droplist
-    m_focus_drop = new CUIDropDownList(GG::X0, GG::Y0, MeterIconSize().x*4, MeterIconSize().y*3/2, MeterIconSize().y*7/2);
-    AttachChild(m_focus_drop);
-    GG::Connect(m_focus_drop->SelChangedSignal, &ResourcePanel::FocusDropListSelectionChanged,  this);
-    m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
 
     // small resource indicators - for use when panel is collapsed
@@ -626,8 +618,6 @@ ResourcePanel::~ResourcePanel() {
     delete m_trade_stat;
     delete m_construction_stat;
 
-    delete m_focus_drop;
-
     // don't need to manually delete m_expand_button, as it is attached as a child so will be deleted by ~Wnd
 }
 
@@ -646,8 +636,6 @@ void ResourcePanel::DoExpandCollapseLayout() {
     // initially detach everything (most things?).  Some will be reattached later.
     DetachChild(m_industry_stat);   DetachChild(m_research_stat);
     DetachChild(m_trade_stat);      DetachChild(m_construction_stat);
-
-    DetachChild(m_focus_drop);
 
     DetachChild(m_multi_meter_status_bar);
     DetachChild(m_multi_icon_value_indicator);
@@ -688,16 +676,6 @@ void ResourcePanel::DoExpandCollapseLayout() {
         Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
     } else {
         GG::Y top = GG::Y0;
-
-        // attach / show focus selector drop for planets, as these are the only
-        // things that can presently have focus set
-        if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
-            if (!planet->SpeciesName().empty()) {
-                m_focus_drop->Show();
-                AttachChild(m_focus_drop);
-                top = m_focus_drop->Height() + EDGE_PAD;
-            }
-        }
 
         // attach and show meter bars and large resource indicators
         AttachChild(m_multi_icon_value_indicator);
@@ -813,51 +791,24 @@ void ResourcePanel::Update() {
 
 
     const UniverseObject* obj = GetUniverseObject(m_rescenter_id);
-    if (!obj)
-        obj = GetEmpireKnownObject(m_rescenter_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
         Logger().errorStream() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
         return;
     }
-    const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
-    if (!res) {
-        Logger().errorStream() << "BuildingPanel::Update couldn't convert object with id " << m_rescenter_id << " to a ResourceCenter";
-        return;
-    }
+
 
     //std::cout << "ResourcePanel::Update() object: " << obj->Name() << std::endl;
     //Logger().debugStream() << "ResourcePanel::Update()";
     //Logger().debugStream() << obj->Dump();
 
-    enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
-
-    // determine ownership
-    if (obj->Unowned()) {
-        owner = OS_NONE;  // uninhabited
-    } else {
-        if (!obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-            owner = OS_FOREIGN; // inhabited by other empire
-        else
-            owner = OS_SELF; // inhabited by this empire (and possibly other empires)
-    }
-
-
-    // only allow focus changes in UI for planets this client's player's empire owns
-    if (owner == OS_SELF) {
-        m_focus_drop->Disable(false);
-    } else {
-        m_focus_drop->Disable(true);
-    }
-
-
     // meter bar displays and production stats
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
-    m_industry_stat->SetValue(res->InitialMeterValue(METER_INDUSTRY));
-    m_research_stat->SetValue(res->InitialMeterValue(METER_RESEARCH));
-    m_trade_stat->SetValue(res->InitialMeterValue(METER_TRADE));
-    m_construction_stat->SetValue(res->InitialMeterValue(METER_CONSTRUCTION));
+    m_industry_stat->SetValue(obj->InitialMeterValue(METER_INDUSTRY));
+    m_research_stat->SetValue(obj->InitialMeterValue(METER_RESEARCH));
+    m_trade_stat->SetValue(obj->InitialMeterValue(METER_TRADE));
+    m_construction_stat->SetValue(obj->InitialMeterValue(METER_CONSTRUCTION));
 
 
     // create an attach browse info wnds for each meter type on the icon + number stats used when collapsed and
@@ -883,36 +834,6 @@ void ResourcePanel::Update() {
 
     //browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterModifiersIndicatorBrowseWnd(m_rescenter_id, METER_TARGET_POPULATION));
     //m_pop_mod_stat->SetBrowseInfoWnd(browse_wnd);
-
-    // focus droplist
-    const std::vector<std::string>& available_foci = res->AvailableFoci();
-    // refresh items in list
-    m_focus_drop->Clear();
-    for (std::vector<std::string>::const_iterator it = available_foci.begin(); it != available_foci.end(); ++it) {
-        boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / res->FocusIcon(*it), true);
-        GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x*3/2, MeterIconSize().y*3/2,
-                                                           texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-        GG::DropDownList::Row* row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "FOCUS");
-        row->push_back(dynamic_cast<GG::Control*>(graphic));
-        m_focus_drop->Insert(row);
-    }
-
-    int drop_items = std::min(5, static_cast<int>(available_foci.size()));
-    m_focus_drop->SetDropHeight(drop_items * MeterIconSize().y*3/2 + GG::Y(5));
-
-    // set browse text and select appropriate focus in droplist
-    std::string focus_text;
-    if (!res->Focus().empty()) {
-        for (unsigned int i = 0; i < available_foci.size(); ++i) {
-            if (available_foci[i] == res->Focus()) {
-                m_focus_drop->Select(i);
-                focus_text = boost::io::str(FlexibleFormat(UserString("RP_FOCUS_TOOLTIP")) % UserString(res->Focus()));
-            }
-        }
-    } else {
-        m_focus_drop->Select(m_focus_drop->end());
-    }
-    m_focus_drop->SetBrowseText(focus_text);
 }
 
 void ResourcePanel::Refresh() {
@@ -920,46 +841,8 @@ void ResourcePanel::Refresh() {
     DoExpandCollapseLayout();
 }
 
-void ResourcePanel::FocusDropListSelectionChanged(GG::DropDownList::iterator selected) {
-    // all this funciton needs to do is emit FocusChangedSignal.  The code
-    // preceeding that determines which focus was selected from the iterator 
-    // parameter, does some safety checks, and disables UI sounds
-
-    if (m_focus_drop->CurrentItem() == m_focus_drop->end()) {
-        Logger().errorStream() << "ResourcePanel::FocusDropListSelectionChanged passed end / invalid interator";
-        return;
-    }
-
-    const UniverseObject* obj = GetUniverseObject(m_rescenter_id);
-    if (!obj)
-        obj = GetEmpireKnownObject(m_rescenter_id, HumanClientApp::GetApp()->EmpireID());
-    if (!obj) {
-        Logger().errorStream() << "ResourcePanel::FocusDropListSelectionChanged couldn't get object with id " << m_rescenter_id;
-        return;
-    }
-    const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
-    if (!res) {
-        Logger().errorStream() << "ResourcePanel::FocusDropListSelectionChanged couldn't convert object with id " << m_rescenter_id << " to a ResourceCenter";
-        return;
-    }
-
-    std::size_t i = m_focus_drop->IteratorToIndex(selected);
-    if (i >= res->AvailableFoci().size()) {
-        Logger().errorStream() << "ResourcePanel::FocusDropListSelectionChanged got invalid focus selected index: " << i;
-        return;
-    }
-
-    Sound::TempUISoundDisabler sound_disabler;
-    FocusChangedSignal(res->AvailableFoci().at(i));
-}
-
-void ResourcePanel::EnableOrderIssuing(bool enable/* = true*/) {
-    const UniverseObject* obj = GetUniverseObject(m_rescenter_id);
-    if (!enable || !obj || !obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-        m_focus_drop->Disable();
-    else
-        m_focus_drop->Disable(false);
-}
+void ResourcePanel::EnableOrderIssuing(bool enable/* = true*/)
+{}
 
 
 /////////////////////////////////////
@@ -1114,8 +997,6 @@ void MilitaryPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void MilitaryPanel::Update() {
     const UniverseObject* obj = GetUniverseObject(m_planet_id);
-    if (!obj)
-        obj = GetEmpireKnownObject(m_planet_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
         Logger().errorStream() << "MilitaryPanel::Update coudln't get object with id  " << m_planet_id;
         return;
@@ -1335,8 +1216,6 @@ void MultiIconValueIndicator::Update() {
         for (std::size_t j = 0; j < m_object_ids.size(); ++j) {
             int object_id = m_object_ids[j];
             const UniverseObject* obj = GetUniverseObject(object_id);
-            if (!obj)
-                obj = GetEmpireKnownObject(object_id, HumanClientApp::GetApp()->EmpireID());
             if (!obj) {
                 Logger().errorStream() << "MultiIconValueIndicator::Update couldn't get object with id " << object_id;
                 continue;
@@ -1523,8 +1402,6 @@ void MultiMeterStatusBar::Update() {
     m_target_max_values.clear();// current values of the .second MeterTypes in m_meter_types
 
     const UniverseObject* obj = GetUniverseObject(m_object_id);
-    if (!obj)
-        obj = GetEmpireKnownObject(m_object_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
         Logger().errorStream() << "MultiMeterStatusBar couldn't get object with id " << m_object_id;
         return;
@@ -1647,9 +1524,12 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
 {
     SetName("BuildingsPanel");
 
-    if (m_columns < 1) throw std::invalid_argument("Attempted to create a BuidingsPanel with less than 1 column");
+    if (m_columns < 1) {
+        Logger().errorStream() << "Attempted to create a BuidingsPanel with less than 1 column";
+        m_columns = 1;
+    }
 
-    // expand / collapse button at top right    
+    // expand / collapse button at top right
     m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
@@ -1659,8 +1539,6 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
 
     // get owner, connect its production queue changed signal to update this panel
     const UniverseObject* planet = GetUniverseObject(m_planet_id);
-    if (!planet)
-        planet = GetEmpireKnownObject(m_planet_id, HumanClientApp::GetApp()->EmpireID());
     if (planet) {
         if (const Empire* empire = Empires().Lookup(planet->Owner())) {
             const ProductionQueue& queue = empire->GetProductionQueue();
@@ -2191,8 +2069,6 @@ void SpecialsPanel::Update() {
 
     // get specials to display
     const UniverseObject* obj = GetUniverseObject(m_object_id);
-    if (!obj)
-        obj = GetEmpireKnownObject(m_object_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj) {
         Logger().errorStream() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
         return;

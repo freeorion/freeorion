@@ -111,13 +111,10 @@ public:
     //@}
 
     mutable boost::signal<void ()>                  ExpandCollapseSignal;
-    mutable boost::signal<void (const std::string&)>FocusChangedSignal;
 
 private:
     void            ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
     void            DoExpandCollapseLayout();       ///< resizes panel and positions widgets according to present collapsed / expanded status
-
-    void            FocusDropListSelectionChanged(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
 
     int                         m_rescenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
@@ -128,8 +125,6 @@ private:
 
     MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates resource production and construction meter
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
-
-    CUIDropDownList*            m_focus_drop;                   ///< displays and allows selection of primary focus
 
     GG::Button*                 m_expand_button;                ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
