@@ -261,43 +261,27 @@ void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisi
 namespace {
     void AttackShipShip(Ship* attacker, float damage, Ship* target, CombatInfo& combat_info, int round) {
         if (!attacker || ! target) return;
-        if (damage <= 0.0f)
-            return;
 
         std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
 
-        const ShipDesign* attacker_design = attacker->Design();
-        if (!attacker_design)
-            return;
-
-        Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
         Meter* target_structure = target->UniverseObject::GetMeter(METER_STRUCTURE);
-        if (!target_shield || ! target_structure) {
+        if (!target_structure) {
             Logger().errorStream() << "couldn't get target structure or shield meter";
             return;
         }
+
+        Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
+        float shield = (target_shield ? target_shield->Current() : 0.0f);
 
         Logger().debugStream() << "AttackShipShip: attacker: " << attacker->Name() << " damage: " << damage
                                << "  target: " << target->Name() << " shield: " << target_shield->Current()
                                                                  << " structure: " << target_structure->Current();
 
-        // damage shields, limited by shield current value and damage amount.
-        // remaining damage, if any, above shield current value goes to structure
-        float shield_damage = std::min(target_shield->Current(), damage);
-        float structure_damage = 0.0f;
-        if (shield_damage >= target_shield->Current())
-            structure_damage = std::min(target_structure->Current(), damage - shield_damage);
+        damage = std::max(0.0f, damage - shield);
 
-        if (shield_damage > 0 || structure_damage > 0)
-            damaged_object_ids.insert(target->ID());
-
-        if (shield_damage > 0) {
-            target_shield->AddToCurrent(-shield_damage);
-            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Ship " << target->Name() << " (" << target->ID() << ")";
-        }
-        if (structure_damage > 0) {
-            target_structure->AddToCurrent(-structure_damage);
-            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << structure_damage << " structure damage to Ship " << target->Name() << " (" << target->ID() << ")";
+        if (damage > 0.0f) {
+            target_structure->AddToCurrent(-damage);
+            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
         AttackEvent attack(round, attacker->ID(), target->ID(), damage,
@@ -368,12 +352,7 @@ namespace {
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
 
-        AttackEvent attack;
-        attack.attacker_id = attacker->ID();
-        attack.target_id = target->ID();
-        attack.round = round;
-        attack.damage = damage;
-        attack.target_destroyed = false;
+        AttackEvent attack(round, attacker->ID(), target->ID(), damage, false);
         combat_info.combat_events.push_back(attack);
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
@@ -383,48 +362,35 @@ namespace {
     void AttackPlanetShip(Planet* attacker, Ship* target, CombatInfo& combat_info, int round) {
         if (!attacker || ! target) return;
 
-        float damage = attacker->UniverseObject::GetMeter(METER_DEFENSE)->Current();   // planet "Defense" meter is actually its attack power
-        if (damage <= 0.0)
-            return;
+        float damage = 0.0f;
+        const Meter* attacker_damage = attacker->UniverseObject::GetMeter(METER_DEFENSE);
+        if (attacker_damage)
+            damage = attacker_damage->Current();   // planet "Defense" meter is actually its attack power
 
         std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
 
-        Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
         Meter* target_structure = target->UniverseObject::GetMeter(METER_STRUCTURE);
-        if (!target_shield || ! target_structure) {
+        if (!target_structure) {
             Logger().errorStream() << "couldn't get target structure or shield meter";
             return;
         }
 
+        Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
+        float shield = (target_shield ? target_shield->Current() : 0.0f);
+
         Logger().debugStream() << "AttackPlanetShip: attacker: " << attacker->Name() << " damage: " << damage
-                               << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
+                               << "  target: " << target->Name() << " shield: " << target_shield->Current()
                                                                  << " structure: " << target_structure->Current();
 
-        // damage shields, limited by shield current value and damage amount.
-        // remaining damage, if any, above shield current value goes to structure
-        float shield_damage = std::min(target_shield->Current(), damage);
-        float structure_damage = 0.0f;
-        if (shield_damage >= target_shield->Current())
-            structure_damage = std::min(target_structure->Current(), damage - shield_damage);
+        damage = std::max(0.0f, damage - shield);
 
-        if (shield_damage > 0 || structure_damage > 0)
-            damaged_object_ids.insert(target->ID());
-
-        if (shield_damage >= 0) {
-            target_shield->AddToCurrent(-shield_damage);
-            Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Ship " << target->Name() << " (" << target->ID() << ")";
-        }
-        if (structure_damage >= 0) {
-            target_structure->AddToCurrent(-structure_damage);
-            Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << structure_damage << " structure damage to Ship " << target->Name() << " (" << target->ID() << ")";
+        if (damage > 0.0f) {
+            target_structure->AddToCurrent(-damage);
+            Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        AttackEvent attack;
-        attack.attacker_id = attacker->ID();
-        attack.target_id = target->ID();
-        attack.round = round;
-        attack.damage = damage;
-        attack.target_destroyed = (target_structure->Current() <= 0.0f);
+        AttackEvent attack(round, attacker->ID(), target->ID(), damage,
+                           (target_structure->Current() <= 0.0f));
         combat_info.combat_events.push_back(attack);
 
         target->SetLastTurnActiveInCombat(CurrentTurn());
