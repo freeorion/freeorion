@@ -342,7 +342,7 @@ Part
     name = "SH_DEFENSE_GRID"
     description = "SH_DEFENSE_GRID_DESC"
     class = Shield
-    capacity = 5
+    capacity = 1
     mountableSlotTypes = [External Internal]
     buildcost = 10
     buildtime = 0
@@ -353,7 +353,7 @@ Part
     name = "SH_DEFLECTOR"
     description = "SH_DEFLECTOR_DESC"
     class = Shield
-    capacity = 15
+    capacity = 3
     mountableSlotTypes = [External Internal]
     buildcost = 20
     buildtime = 3
@@ -364,7 +364,7 @@ Part
     name = "SH_MULTISPEC"
     description = "SH_MULTISPEC_DESC"
     class = Shield
-    capacity = 40
+    capacity = 4
     mountableSlotTypes = [External Internal]
     buildcost = 10
     buildtime = 5
