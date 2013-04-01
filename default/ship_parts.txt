@@ -20,7 +20,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 1
+    buildcost = 5
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/mass-driver-1.png"
@@ -33,7 +33,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 1
+    buildcost = 5
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/mass-driver-2.png"
@@ -46,7 +46,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 1
+    buildcost = 5
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/mass-driver-3.png"
@@ -59,7 +59,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 1
+    buildcost = 5
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/mass-driver-4.png"
@@ -72,7 +72,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 3
+    buildcost = 15
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/laser-1.png"
@@ -85,7 +85,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 3
+    buildcost = 15
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/laser-2.png"
@@ -98,7 +98,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 3
+    buildcost = 15
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/laser-3.png"
@@ -111,7 +111,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 3
+    buildcost = 15
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/laser-4.png"
@@ -124,7 +124,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 8
+    buildcost = 24
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/plasma-1.png"
@@ -137,7 +137,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 8
+    buildcost = 24
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/plasma-2.png"
@@ -150,7 +150,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 8
+    buildcost = 24
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/plasma-3.png" 
@@ -163,7 +163,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 8
+    buildcost = 24
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/plasma-4.png"
@@ -176,7 +176,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 25
+    buildcost = 50
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-1.png"    
@@ -189,7 +189,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 25
+    buildcost = 50
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-2.png"
@@ -202,7 +202,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 25
+    buildcost = 50
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-3.png"
@@ -215,7 +215,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 25
+    buildcost = 50
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-4.png"
@@ -228,7 +228,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 25
+    buildcost = 50
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-5.png"  
