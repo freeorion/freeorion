@@ -20,7 +20,6 @@ set(MINIMUM_BOOST_COMPONENTS date_time filesystem signals system thread)
 option(BUILD_STATIC "Enables building of static libraries." OFF)
 option(BUILD_SHARED "Enables building of shared libraries." ON)
 option(BUILD_DEBUG "Controls generation of debug code; OFF implies release code." OFF)
-option(BUILD_MULTI_THREADED "Controls generation of multi-threaded code; OFF implies single-threaded code." ON)
 
 option(BUILD_EXPERIMENTAL_EVE_SUPPORT "Enables building of experimental Adobe Eve bindings." OFF)
 
@@ -28,12 +27,6 @@ if (BUILD_DEBUG)
     set(BUILD_RELEASE OFF)
 else ()
     set(BUILD_RELEASE ON)
-endif ()
-
-if (BUILD_MULTI_THREADED)
-    set(BUILD_SINGLE_THREADED OFF)
-else ()
-    set(BUILD_SINGLE_THREADED ON)
 endif ()
 
 include(Config)
@@ -169,7 +162,6 @@ include_directories(${CMAKE_HOME_DIRECTORY})
 # Dependencies                         #
 ########################################
 set(Boost_USE_STATIC_LIBS ${BUILD_STATIC})
-set(Boost_USE_MULTITHREADED ${BUILD_MULTI_THREADED})
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS ${MINIMUM_BOOST_COMPONENTS})
 if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})

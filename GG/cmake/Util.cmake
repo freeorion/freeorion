@@ -44,7 +44,7 @@ endmacro ()
 #   library_variant_display_name(feature1 feature2 ...)
 #
 # where feature1, feature2, etc. are the names of features to be
-# included in this variant, e.g., MULTI_THREADED, DEBUG. 
+# included in this variant, e.g., DEBUG. 
 #
 # This macro sets the string VARIANT_DISPLAY_NAME.. This is the display name
 # that describes this variant, e.g., "Debug, static, multi-threaded".
@@ -57,12 +57,6 @@ macro (library_variant_display_name)
   else (VARIANT_IS_STATIC)
     set(VARIANT_DISPLAY_NAME "Shared")
   endif (VARIANT_IS_STATIC)
-
-  # Add "multi-threaded" to the display name for multithreaded libraries.
-  list_contains(VARIANT_IS_MT MULTI_THREADED ${ARGN})
-  if (VARIANT_IS_MT)
-    set(VARIANT_DISPLAY_NAME "${VARIANT_DISPLAY_NAME}, multi-threaded")
-  endif ()
 
   # Add "debug" or "relase" to the display name.
   list_contains(VARIANT_IS_DEBUG DEBUG ${ARGN})
@@ -95,11 +89,6 @@ macro (feature_interactions PREFIX)
   # Visual C++-specific runtime library flags; with Visual C++, the dynamic
   # runtime is multi-threaded only
   if (MSVC)
-    list_contains(IS_SINGLE_THREADED SINGLE_THREADED ${ARGN})
-    if (IS_SHARED AND IS_SINGLE_THREADED)
-      set(${PREFIX}_OKAY FALSE)
-    endif (IS_SHARED AND IS_SINGLE_THREADED) 
-
     list_contains(IS_DEBUG DEBUG ${ARGN})
     if (IS_DEBUG)
       if (IS_STATIC)
@@ -256,13 +245,9 @@ endmacro ()
 
 macro (library_all_variants LIBNAME)
     library_variant(${LIBNAME} STATIC DEBUG MULTI_THREADED)
-    library_variant(${LIBNAME} STATIC DEBUG SINGLE_THREADED)
     library_variant(${LIBNAME} STATIC RELEASE MULTI_THREADED)
-    library_variant(${LIBNAME} STATIC RELEASE SINGLE_THREADED)
     library_variant(${LIBNAME} SHARED DEBUG MULTI_THREADED)
-    library_variant(${LIBNAME} SHARED DEBUG SINGLE_THREADED)
     library_variant(${LIBNAME} SHARED RELEASE MULTI_THREADED)
-    library_variant(${LIBNAME} SHARED RELEASE SINGLE_THREADED)
 endmacro ()
 
 macro (get_pkg_config_libs name)

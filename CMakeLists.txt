@@ -29,8 +29,6 @@ endif ()
 
 set(BUILD_STATIC OFF)
 set(BUILD_SHARED ON)
-set(BUILD_MULTI_THREADED ON)
-set(BUILD_SINGLE_THREADED OFF)
 
 include(Config)
 include(Util)
@@ -55,7 +53,6 @@ endif ()
 # Dependencies                         #
 ########################################
 set(Boost_USE_STATIC_LIBS ${BUILD_STATIC})
-set(Boost_USE_MULTITHREADED ${BUILD_MULTI_THREADED})
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS ${MINIMUM_BOOST_COMPONENTS})
 if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
@@ -383,13 +380,9 @@ endmacro ()
 
 macro (executable_all_variants EXENAME)
     executable_variant(${EXENAME} STATIC DEBUG MULTI_THREADED)
-    executable_variant(${EXENAME} STATIC DEBUG SINGLE_THREADED)
     executable_variant(${EXENAME} STATIC RELEASE MULTI_THREADED)
-    executable_variant(${EXENAME} STATIC RELEASE SINGLE_THREADED)
     executable_variant(${EXENAME} SHARED DEBUG MULTI_THREADED)
-    executable_variant(${EXENAME} SHARED DEBUG SINGLE_THREADED)
     executable_variant(${EXENAME} SHARED RELEASE MULTI_THREADED)
-    executable_variant(${EXENAME} SHARED RELEASE SINGLE_THREADED)
 endmacro ()
 
 ########################################

@@ -11,12 +11,11 @@
 
 include(CheckCXXSourceCompiles)
 
-if(BUILD_MULTI_THREADED)
-  find_package(Threads)
+find_package(Threads)
 
-  set(MULTI_THREADED_LINK_FLAGS "")
-  set(MULTI_THREADED_LINK_LIBS "${CMAKE_THREAD_LIBS_INIT}")
-endif()
+set(BUILD_MULTI_THREADED TRUE)
+set(MULTI_THREADED_LINK_FLAGS "")
+set(MULTI_THREADED_LINK_LIBS "${CMAKE_THREAD_LIBS_INIT}")
 
 # Setup DEBUG_COMPILE_FLAGS, RELEASE_COMPILE_FLAGS, DEBUG_LINK_FLAGS and
 # and RELEASE_LINK_FLAGS based on the CMake equivalents
