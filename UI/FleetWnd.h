@@ -145,7 +145,8 @@ private:
     void            UniverseObjectDeleted(const UniverseObject *obj);
 
     void            SystemChangedSlot();                    ///< responds to StateChangedSignal emitted by the system this FleetWnd is showing the contents of
-
+    void            SetStatIconValues();          ///< sets values for multi-fleet aggregate stat icons at top of FleetWnd
+    std::string     StatTooltip(const std::string& stat_name) const;
     mutable boost::signal<void (FleetWnd*)> ClosingSignal;
 
     boost::signals::connection  m_system_connection;
@@ -162,7 +163,8 @@ private:
 
     static GG::Pt       s_last_position;    ///< the latest position to which any FleetWnd has been moved.  This is used to keep the place of the fleet window in single-fleetwindow mode.
     static GG::Pt       s_last_size;        ///< the latest size to which any FleetWnd has been resized.  This is used to keep the size of the fleet window in single-fleetwindow mode.
-
+    std::vector<std::pair<std::string, StatisticIcon*> >    m_stat_icons;   /// statistic icons and associated meter types for multi-fleet aggregate
+    
     friend class FleetUIManager;
 };
 

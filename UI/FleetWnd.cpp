@@ -1289,7 +1289,7 @@ void FleetDataPanel::SetStatIconValues() {
         else if (stat_name == MeterStatString(METER_FUEL))
             it->second->SetValue(min_fuel);
         else if (stat_name == SHIELD_STAT_STRING)
-            it->second->SetValue(shield_tally);
+            it->second->SetValue(shield_tally/ship_count);
         else if (stat_name == STRUCTURE_STAT_STRING)
             it->second->SetValue(structure_tally);
         else if (stat_name == DAMAGE_STAT_STRING)
@@ -2229,11 +2229,11 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     m_order_issuing_enabled(order_issuing_enabled),
     m_fleets_lb(0),
     m_new_fleet_drop_target(0),
-    m_fleet_detail_panel(0)
+    m_fleet_detail_panel(0),
+    m_stat_icons()
 {
     for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it)
         m_fleet_ids.insert(*it);
-
     Init(selected_fleet_id);
 }
 
@@ -2247,7 +2247,8 @@ FleetWnd::FleetWnd(int system_id, int empire_id, bool order_issuing_enabled,
     m_order_issuing_enabled(order_issuing_enabled),
     m_fleets_lb(0),
     m_new_fleet_drop_target(0),
-    m_fleet_detail_panel(0)
+    m_fleet_detail_panel(0),
+    m_stat_icons()
 { Init(selected_fleet_id); }
 
 FleetWnd::~FleetWnd() {
@@ -2270,6 +2271,40 @@ void FleetWnd::Init(int selected_fleet_id) {
 
     Sound::TempUISoundDisabler sound_disabler;
 
+    // add fleet aggregate stat icons
+    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+    
+    // stat icon for fleet count
+    StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                            FleetCountIcon(), 0, 0, false);
+    m_stat_icons.push_back(std::make_pair(COUNT_STAT_STRING, icon));
+    icon->SetBrowseModeTime(tooltip_delay);
+    icon->SetBrowseText(StatTooltip(COUNT_STAT_STRING));
+    AttachChild(icon);
+    
+    // stat icon for fleet damage
+    icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                             DamageIcon(), 0, 0, false);
+    m_stat_icons.push_back(std::make_pair(DAMAGE_STAT_STRING, icon));
+    icon->SetBrowseModeTime(tooltip_delay);
+    icon->SetBrowseText(StatTooltip(DAMAGE_STAT_STRING));
+    AttachChild(icon);
+    
+    // stat icon for fleet structure
+    icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                             ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
+    m_stat_icons.push_back(std::make_pair(STRUCTURE_STAT_STRING, icon));
+    icon->SetBrowseModeTime(tooltip_delay);
+    icon->SetBrowseText(StatTooltip(STRUCTURE_STAT_STRING));
+    AttachChild(icon);
+    
+    // stat icon for fleet shields
+    icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                             ClientUI::MeterIcon(METER_SHIELD), 0, 0, false);
+    m_stat_icons.push_back(std::make_pair(SHIELD_STAT_STRING, icon));
+    icon->SetBrowseModeTime(tooltip_delay);
+    icon->SetBrowseText(StatTooltip(SHIELD_STAT_STRING));
+    AttachChild(icon);
 
     // create fleet list box
     m_fleets_lb = new FleetsListBox(m_order_issuing_enabled);
@@ -2311,6 +2346,69 @@ void FleetWnd::Init(int selected_fleet_id) {
     }
 
     DoLayout();
+}
+
+void FleetWnd::SetStatIconValues() {
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
+    int ship_count =        0;
+    float damage_tally =    0.0;
+    float structure_tally = 0.0;
+    float shield_tally =    0.0;
+    
+    for (std::set<int>::const_iterator it = m_fleet_ids.begin(); it != m_fleet_ids.end(); ++it) {
+        const Fleet* fleet = GetFleet(*it);
+        if ( (!fleet) || (!(m_empire_id==ALL_EMPIRES || fleet->OwnedBy(m_empire_id))) )
+            continue;
+        for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
+            int ship_id = *it;
+            // skip known destroyed and stale info objects
+            if (this_client_known_destroyed_objects.find(ship_id) != this_client_known_destroyed_objects.end())
+                continue;
+            if (this_client_stale_object_info.find(ship_id) != this_client_stale_object_info.end())
+                continue;
+            if (const Ship* ship = GetShip(ship_id)) {
+                if (const ShipDesign* design = ship->Design()) {
+                    ship_count++;
+                    damage_tally += design->Attack();
+                    structure_tally += ship->CurrentMeterValue(METER_STRUCTURE);
+                    shield_tally += ship->CurrentMeterValue(METER_SHIELD);
+                }
+            }
+        }        
+    }
+    
+    for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it =
+        m_stat_icons.begin(); it != m_stat_icons.end(); ++it) 
+    {
+        const std::string stat_name = it->first;
+        if (stat_name == SHIELD_STAT_STRING)
+            it->second->SetValue(shield_tally/ship_count);
+        else if (stat_name == STRUCTURE_STAT_STRING)
+            it->second->SetValue(structure_tally);
+        else if (stat_name == DAMAGE_STAT_STRING)
+            it->second->SetValue(damage_tally);
+        else if (stat_name == COUNT_STAT_STRING)
+            it->second->SetValue(ship_count);
+    }
+}
+
+std::string FleetWnd::StatTooltip(const std::string& stat_name) const {
+    if (stat_name == SPEED_STAT_STRING)
+        return UserString("FW_FLEET_SPEED_SUMMARY");
+    else if (stat_name ==  MeterStatString(METER_FUEL))
+        return UserString("FW_FLEET_FUEL_SUMMARY");
+    else if (stat_name == SHIELD_STAT_STRING)
+        return UserString("FW_FLEET_SHIELD_SUMMARY");
+    else if (stat_name == STRUCTURE_STAT_STRING)
+        return UserString("FW_FLEET_STRUCTURE_SUMMARY");
+    else if (stat_name == DAMAGE_STAT_STRING) 
+        return UserString("FW_FLEET_DAMAGE_SUMMARY");
+    else if (stat_name == COUNT_STAT_STRING) 
+        return UserString("FW_FLEET_COUNT_SUMMARY");
+    else
+        return "";
 }
 
 void FleetWnd::RefreshStateChangedSignals() {
@@ -2412,7 +2510,9 @@ void FleetWnd::Refresh() {
             this->SetSelectedFleets(fleet_id_set);
         }
     }
-
+    
+    SetStatIconValues();
+    
     RefreshStateChangedSignals();
 }
 
@@ -2433,13 +2533,20 @@ void FleetWnd::DoLayout() {
     const GG::X RIGHT(TOTAL_WIDTH);
 
     const GG::Y TOTAL_HEIGHT(ClientHeight());
-    const GG::Y AVAILABLE_HEIGHT(TOTAL_HEIGHT - GG::Y(INNER_BORDER_ANGLE_OFFSET));
-
-    GG::Y top(GG::Y0);
-    const GG::Y BOTTOM(AVAILABLE_HEIGHT);
-
+    const GG::Y FLEET_STAT_HEIGHT(StatIconSize().y + PAD);
+    const GG::Y AVAILABLE_HEIGHT(TOTAL_HEIGHT - GG::Y(INNER_BORDER_ANGLE_OFFSET+PAD) - FLEET_STAT_HEIGHT );
+    GG::Y top( GG::Y0 + GG::Y(PAD) );
+    const GG::Y BOTTOM(TOTAL_HEIGHT - GG::Y(INNER_BORDER_ANGLE_OFFSET));
     const GG::Y ROW_HEIGHT(m_fleets_lb->ListRowSize().y);
-
+    
+    // position fleet aggregate stat icons
+    GG::Pt icon_ul = GG::Pt(GG::X0 + DATA_PANEL_TEXT_PAD, top);
+    for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
+        it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
+        icon_ul.x += StatIconSize().x;
+    }
+    top += FLEET_STAT_HEIGHT;
+    
     // are there any fleets owned by this client's empire int his FleetWnd?
     bool this_client_owns_fleets_in_this_wnd(false);
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();

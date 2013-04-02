@@ -2257,7 +2257,7 @@ FW_FLEET_SPEED_SUMMARY
 Fleet Speed - Equal to the minimum speed of ships in the fleet.
 
 FW_FLEET_SHIELD_SUMMARY
-Fleet Shields - Equal to the total shields of ships in the fleet.
+Fleet Shields - Equal to the average shields of ships in the fleet.
 
 FW_FLEET_STRUCTURE_SUMMARY
 Fleet Structure - Equal to the total structure of ships in the fleet.
@@ -5542,11 +5542,20 @@ DESC_SPECIES_NOT
 DESC_ENQUEUED
  where empire %1% has between %2% and %3% things on the production queue
  
+DESC_ENQUEUED_NOT
+ where empire %1% does not have between %2% and %3% things on the production queue
+ 
 DESC_ENQUEUED_BUILDING
  where empire %1% has between %2% and %3% %4% buildings on the production queue
  
+DESC_ENQUEUED_BUILDING_NOT
+ where empire %1% does not have between %2% and %3% %4% buildings on the production queue
+ 
 DESC_ENQUEUED_DESIGN
  where empire %1% has between %2% and %3% %4% ships on the production queue
+
+DESC_ENQUEUED_DESIGN_NOT
+ where empire %1% dows not have between %2% and %3% %4% ships on the production queue
 
 DESC_FOCUS_TYPE
  that has focus %1%
