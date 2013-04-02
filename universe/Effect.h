@@ -747,9 +747,9 @@ private:
   * progress towards that tech has been completed. */
 class Effect::SetEmpireTechProgress : public Effect::EffectBase {
 public:
-    SetEmpireTechProgress(const std::string& tech_name,
+    SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>* tech_name,
                           ValueRef::ValueRefBase<double>* research_progress);
-    SetEmpireTechProgress(const std::string& tech_name,
+    SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>* tech_name,
                           ValueRef::ValueRefBase<double>* research_progress,
                           const ValueRef::ValueRefBase<int>* empire_id);
     virtual ~SetEmpireTechProgress();
@@ -759,7 +759,7 @@ public:
     virtual std::string Dump() const;
 
 private:
-    std::string                         m_tech_name;
+    ValueRef::ValueRefBase<std::string>*m_tech_name;
     ValueRef::ValueRefBase<double>*     m_research_progress;
     const ValueRef::ValueRefBase<int>*  m_empire_id;
 

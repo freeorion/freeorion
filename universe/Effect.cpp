@@ -2525,22 +2525,23 @@ std::string Victory::Dump() const
 ///////////////////////////////////////////////////////////
 // SetEmpireTechProgress                                 //
 ///////////////////////////////////////////////////////////
-SetEmpireTechProgress::SetEmpireTechProgress(const std::string& tech_name,
-                          ValueRef::ValueRefBase<double>* research_progress) :
+SetEmpireTechProgress::SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>* tech_name,
+                                             ValueRef::ValueRefBase<double>* research_progress) :
     m_tech_name(tech_name),
     m_research_progress(research_progress),
     m_empire_id(new ValueRef::Variable<int>(TargetOwnerVec()))
 {}
 
-SetEmpireTechProgress::SetEmpireTechProgress(const std::string& tech_name,
-                          ValueRef::ValueRefBase<double>* research_progress,
-                          const ValueRef::ValueRefBase<int>* empire_id) :
+SetEmpireTechProgress::SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>* tech_name,
+                                             ValueRef::ValueRefBase<double>* research_progress,
+                                             const ValueRef::ValueRefBase<int>* empire_id) :
     m_tech_name(tech_name),
     m_research_progress(research_progress),
     m_empire_id(empire_id)
 {}
 
 SetEmpireTechProgress::~SetEmpireTechProgress() {
+    delete m_tech_name;
     delete m_research_progress;
     delete m_empire_id;
 }
@@ -2550,15 +2551,21 @@ void SetEmpireTechProgress::Execute(const ScriptingContext& context) const {
     Empire* empire = Empires().Lookup(m_empire_id->Eval(context));
     if (!empire) return;
 
-    const Tech* tech = GetTech(m_tech_name);
+    if (!m_tech_name) {
+        Logger().errorStream() << "SetEmpireTechProgress::Execute has not tech name to evaluate";
+        return;
+    }
+    std::string tech_name = m_tech_name->Eval(context);
+
+    const Tech* tech = GetTech(tech_name);
     if (!tech) {
-        Logger().errorStream() << "SetEmpireTechProgress::Execute couldn't get tech with name " << m_tech_name;
+        Logger().errorStream() << "SetEmpireTechProgress::Execute couldn't get tech with name " << tech_name;
         return;
     }
 
     double value = m_research_progress->Eval(
-        ScriptingContext(context, empire->ResearchProgress(m_tech_name)));
-    empire->SetTechResearchProgress(m_tech_name, value);
+        ScriptingContext(context, empire->ResearchProgress(tech_name)));
+    empire->SetTechResearchProgress(tech_name, value);
 }
 
 std::string SetEmpireTechProgress::Description() const {
@@ -2574,14 +2581,25 @@ std::string SetEmpireTechProgress::Description() const {
             empire_str = m_empire_id->Description();
         }
     }
+    std::string tech_name;
+    if (m_tech_name) {
+        if (ValueRef::ConstantExpr(m_tech_name)) {
+            tech_name = m_tech_name->Eval();
+        } else {
+            tech_name = m_tech_name->Description();
+        }
+    }
+
     return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_TECH_PROGRESS"))
-               % UserString(m_tech_name)
+               % UserString(tech_name)
                % progress_str
                % empire_str);
 }
 
 std::string SetEmpireTechProgress::Dump() const {
-    std::string retval = "SetEmpireTechProgress name = \"" + m_tech_name + "\"";
+    std::string retval = "SetEmpireTechProgress name = ";
+    if (m_tech_name)
+        retval += m_tech_name->Dump();
     if (m_research_progress)
         retval += " progress = " + m_research_progress->Dump();
     if (m_empire_id)

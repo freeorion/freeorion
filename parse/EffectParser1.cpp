@@ -64,7 +64,7 @@ namespace {
 
             set_empire_tech_progress
                 =    tok.SetEmpireTechProgress_
-                >>   parse::label(Name_name) >>     tok.string [ _a = _1 ]
+                >>   parse::label(Name_name) >>     string_value_ref [ _a = _1 ]
                 >>   parse::label(Progress_name) >> double_value_ref [ _b = _1 ]
                 >>   (
                         (
@@ -166,12 +166,12 @@ namespace {
             parse::token_iterator,
             Effect::EffectBase* (),
             qi::locals<
-                std::string,
+                ValueRef::ValueRefBase<std::string>*,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*
             >,
             parse::skipper_type
-        > string_and_doubleref_rule;
+        > stringref_and_doubleref_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -203,9 +203,9 @@ namespace {
         string_and_intref_and_intref_rule   set_empire_meter_1;
         string_and_intref_and_intref_rule   set_empire_meter_2;
         string_and_intref_and_intref_rule   give_empire_tech;
-        string_and_doubleref_rule           set_empire_tech_progress;
+        stringref_and_doubleref_rule        set_empire_tech_progress;
         generate_sitrep_message_rule        generate_sitrep_message;
-        string_and_doubleref_rule           set_overlay_texture;
+        string_and_intref_and_intref_rule   set_overlay_texture;
         string_and_string_ref_rule          string_and_string_ref;
         string_and_string_ref_vector_rule   string_and_string_ref_vector;
         parse::effect_parser_rule           start;

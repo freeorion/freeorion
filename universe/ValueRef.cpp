@@ -656,6 +656,8 @@ namespace ValueRef {
         Condition::ObjectSet condition_matches;
         GetConditionMatches(context, condition_matches, m_sampling_condition);
 
+        // these two statistic types don't depend on the object property values,
+        // so can be evaluated without getting those values.
         if (m_stat_type == COUNT)
             return static_cast<double>(condition_matches.size());
         if (m_stat_type == IF)
@@ -674,6 +676,8 @@ namespace ValueRef {
         Condition::ObjectSet condition_matches;
         GetConditionMatches(context, condition_matches, m_sampling_condition);
 
+        // these two statistic types don't depend on the object property values,
+        // so can be evaluated without getting those values.
         if (m_stat_type == COUNT)
             return static_cast<int>(condition_matches.size());
         if (m_stat_type == IF)
