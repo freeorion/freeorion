@@ -863,6 +863,7 @@ private:
   * matched. */
 struct Condition::Species : public Condition::ConditionBase {
     Species(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+        ConditionBase(),
         m_names(names)
     {}
     Species() :
@@ -900,9 +901,11 @@ struct Condition::Enqueued : public Condition::ConditionBase {
              const ValueRef::ValueRefBase<int>* empire_id = 0,
              const ValueRef::ValueRefBase<int>* low = 0,
              const ValueRef::ValueRefBase<int>* high = 0) :
+        ConditionBase(),
         m_build_type(build_type),
         m_name(name),
         m_design_id(0),
+        m_empire_id(empire_id),
         m_low(low),
         m_high(high)
     {}
@@ -910,9 +913,11 @@ struct Condition::Enqueued : public Condition::ConditionBase {
              const ValueRef::ValueRefBase<int>* empire_id = 0,
              const ValueRef::ValueRefBase<int>* low = 0,
              const ValueRef::ValueRefBase<int>* high = 0) :
+        ConditionBase(),
         m_build_type(BT_SHIP),
         m_name(),
         m_design_id(design_id),
+        m_empire_id(empire_id),
         m_low(low),
         m_high(high)
     {}
