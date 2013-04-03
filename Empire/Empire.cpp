@@ -30,6 +30,7 @@
 
 namespace {
     const double EPSILON = 1.0e-5;
+    const std::string EMPTY_STRING;
 
     /** sets the .allocated_rp, value for each Tech in the queue.  Only sets
       * nonzero funding to a Tech if it is researchable this turn.  Also
@@ -1201,6 +1202,26 @@ TechStatus Empire::GetTechStatus(const std::string& name) const {
     if (TechResearched(name)) return TS_COMPLETE;
     if (ResearchableTech(name)) return TS_RESEARCHABLE;
     return TS_UNRESEARCHABLE;
+}
+
+const std::string& Empire::TopPriorityEnqueuedTech(bool only_consider_available_techs/* = false*/) {
+    return EMPTY_STRING;
+}
+
+const std::string& Empire::MostExpensiveEnqueuedTech(bool only_consider_available_techs/* = false*/) {
+    return EMPTY_STRING;
+}
+
+const std::string& Empire::LeastExpensiveEnqueuedTech(bool only_consider_available_techs/* = false*/) {
+    return EMPTY_STRING;
+}
+
+const std::string& Empire::MostRPSpentEnqueuedTech(bool only_consider_available_techs/* = false*/) {
+    return EMPTY_STRING;
+}
+
+const std::string& Empire::MostRPCostLeftEnqueuedTech(bool only_consider_available_techs/* = false*/) {
+    return EMPTY_STRING;
 }
 
 const std::set<std::string>& Empire::AvailableBuildingTypes() const

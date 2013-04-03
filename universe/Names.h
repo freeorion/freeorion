@@ -196,6 +196,11 @@
     (OwnedBy)                                   \
     (Owner)                                     \
     (OwnerHasTech)                              \
+    (OwnerLeastExpensiveEnqueuedTech)           \
+    (OwnerMostExpensiveEnqueuedTech)            \
+    (OwnerMostRPCostLeftEnqueuedTech)           \
+    (OwnerMostRPSpentEnqueuedTech)              \
+    (OwnerTopPriorityEnqueuedTech)              \
     (OwnerTradeStockpile)                       \
     (Parameters)                                \
     (Part)                                      \
