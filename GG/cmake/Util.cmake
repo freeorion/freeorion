@@ -9,19 +9,6 @@
 #   http://www.boost.org/LICENSE_1_0.txt                                 #
 ##########################################################################
 
-function (pretty_print list)
-    if (DEFINED ${list})
-        if ("${${list}}" MATCHES ";")
-            string(REPLACE ";" "\n  " pretty_list "${${list}}")
-            message("${list}=\n  ${pretty_list}")
-        else ()
-            message("${list}= ${${list}}")
-        endif ()
-    else ()
-        message("${list}= (undefined)")
-    endif ()
-endfunction ()
-
 # This utility macro determines whether a particular string value
 # occurs within a list of strings:
 #
@@ -37,35 +24,6 @@ macro (list_contains var value)
     endif (${value} STREQUAL ${value2})
   endforeach (value2)
 endmacro ()
-
-# This macro is an internal utility macro that builds the name of a
-# particular variant of a library
-#
-#   library_variant_display_name(feature1 feature2 ...)
-#
-# where feature1, feature2, etc. are the names of features to be
-# included in this variant, e.g., DEBUG. 
-#
-# This macro sets the string VARIANT_DISPLAY_NAME.. This is the display name
-# that describes this variant, e.g., "Debug, static, multi-threaded".
-#
-macro (library_variant_display_name)
-  # Add -static for static libraries, -shared for shared libraries
-  list_contains(VARIANT_IS_STATIC STATIC ${ARGN})
-  if (VARIANT_IS_STATIC)
-    set(VARIANT_DISPLAY_NAME "Static")
-  else (VARIANT_IS_STATIC)
-    set(VARIANT_DISPLAY_NAME "Shared")
-  endif (VARIANT_IS_STATIC)
-
-  # Add "debug" or "relase" to the display name.
-  list_contains(VARIANT_IS_DEBUG DEBUG ${ARGN})
-  if (VARIANT_IS_DEBUG)
-    set(VARIANT_DISPLAY_NAME "${VARIANT_DISPLAY_NAME}, debug")
-  else ()
-    set(VARIANT_DISPLAY_NAME "${VARIANT_DISPLAY_NAME}, release")
-  endif ()
-endmacro (library_variant_display_name)
 
 # This macro is an internal utility macro that updates compilation and
 # linking flags based on interactions among the features in a variant.
@@ -148,8 +106,6 @@ macro (library_variant LIBNAME)
   feature_interactions(THIS_VARIANT ${ARGN})
 
   if (THIS_VARIANT_OKAY)
-    library_variant_display_name(${ARGN})
-
     if (IS_STATIC)
       set(VARIANT_LIBNAME ${LIBNAME}_static)
     else ()
