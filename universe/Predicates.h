@@ -107,13 +107,13 @@ T1 universe_object_cast(T2 ptr)
 {
     using namespace boost;
 
-    typedef typename add_pointer<
-        typename remove_const<
-            typename remove_pointer<
-                T2
-            >::type
-        >::type
-    >::type T2ConstFreeType;
+    //typedef typename add_pointer<
+    //    typename remove_const<
+    //        typename remove_pointer<
+    //            T2
+    //        >::type
+    //    >::type
+    //>::type T2ConstFreeType;
     typedef typename add_pointer<
         typename remove_const<
             typename remove_pointer<
