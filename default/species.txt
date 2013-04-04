@@ -90,10 +90,20 @@ Species
             effects = CreateShip "SM_ACIREMA_GUARD"
 
         EffectsGroup
-            scope = Source
+            scope = And [
+                Source
+                Ship
+            ]
+            effects = SetMaxShield Value + 1
+
+        EffectsGroup
+            scope = And [
+                Source
+                Planet
+            ]
             effects = [
-                SetMaxShield Value + 5
                 SetMaxDefense Value + 5
+                SetMaxShield Value + 5
             ]
 
         [[AVERAGE_PLANETARY_SHIELDS]]
