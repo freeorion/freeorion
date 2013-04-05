@@ -1,9 +1,9 @@
 #include "CombatShip.h"
 
-#include "../../universe/Enums.h"
-#include "../../universe/ShipDesign.h"
-#include "../../universe/System.h"
-#include "../CombatEventListener.h"
+#include "../universe/Enums.h"
+#include "../universe/ShipDesign.h"
+#include "../universe/System.h"
+#include "CombatEventListener.h"
 #include "CombatFighter.h"
 #include "Missile.h"
 #include "PathingEngine.h"
@@ -656,11 +656,12 @@ void CombatShip::UpdateMissionQueue()
     }
     }
 
-    if (print_needed)
-        std::cout << "    position   =" << position() << "\n"
-                  << "    destination=" << m_mission_destination << "\n"
-                  << "    mission_weight=" << m_mission_weight << "\n"
-                  << std::endl;
+    // commented out due to lack of operatior << for OpenSteer::Vec3
+    //if (print_needed)
+    //    std::cout << "    position   =" << position() << "\n"
+    //              << "    destination=" << m_mission_destination << "\n"
+    //              << "    mission_weight=" << m_mission_weight << "\n"
+    //              << std::endl;
 }
 
 void CombatShip::FirePDDefensively()

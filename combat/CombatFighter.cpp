@@ -1,6 +1,6 @@
 #include "CombatFighter.h"
 
-#include "../CombatEventListener.h"
+#include "CombatEventListener.h"
 #include "CombatShip.h"
 #include "PathingEngine.h"
 
@@ -656,11 +656,12 @@ void CombatFighter::UpdateMissionQueue()
     }
     }
 
-    if (print_needed)
-        std::cout << "    position   =" << position() << "\n"
-                  << "    destination=" << m_mission_destination << "\n"
-                  << "    mission_weight=" << m_mission_weight << "\n"
-                  << std::endl;
+    // commented out due to lack of operatior << for OpenSteer::Vec3
+    //if (print_needed)
+    //    std::cout << "    position   =" << position() << "\n"
+    //              << "    destination=" << m_mission_destination << "\n"
+    //              << "    mission_weight=" << m_mission_weight << "\n"
+    //              << std::endl;
 }
 
 void CombatFighter::FireAtHostiles()

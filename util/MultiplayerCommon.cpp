@@ -1,8 +1,8 @@
 #include "MultiplayerCommon.h"
 
 #include "OptionsDB.h"
-#include "../combat/OpenSteer/Obstacle.h"
-#include "../combat/OpenSteer/AsteroidBeltObstacle.h"
+#include "Obstacle.h"
+#include "../combat/AsteroidBeltObstacle.h"
 #include "../UI/StringTable.h"
 #include "../util/AppInterface.h"
 #include "../util/Directories.h"

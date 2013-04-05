@@ -2,8 +2,8 @@
 #ifndef _CombatOrder_h_
 #define _CombatOrder_h_
 
-#include "OpenSteer/PathingEngineFwd.h"
-#include "OpenSteer/Vec3.h"
+#include "PathingEngineFwd.h"
+#include "Vec3.h"
 
 #include <boost/cast.hpp>
 #include <boost/serialization/access.hpp>

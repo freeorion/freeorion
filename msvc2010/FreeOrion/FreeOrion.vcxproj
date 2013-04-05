@@ -65,7 +65,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;_DLL;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../Boost/include/boost_1_51/;../../GG/;../include/;../../../include/OGRE/;../../../include/bullet/;../../../include/zlib/;../../../include/AL/;../../OIS/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../Boost/include/boost_1_51/;../../GG/;../include/;../../../include/OGRE/;../../../include/bullet/;../../../include/zlib/;../../../include/AL/;../../OIS/;../../PagedGeometry/include/;../../OpenSteer/include/</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
@@ -101,25 +101,6 @@
     <ClInclude Include="..\..\client\human\HumanClientApp.h" />
     <ClInclude Include="..\..\client\human\HumanClientFSM.h" />
     <ClInclude Include="..\..\combat\CombatOrder.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\AbstractVehicle.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\CombatFighter.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\CombatObject.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\CombatShip.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\LocalSpace.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\Missile.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\Obstacle.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\PathingEngine.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\PathingEngineFwd.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\Proximity.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\ProximityDatabase.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\SimpleVehicle.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\StandardTypes.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\SteerLibrary.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\UnusedParameter.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\Utilities.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\Vec3.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\Vec3Utilities.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\EmpireManager.h" />
     <ClInclude Include="..\..\Empire\ResourcePool.h" />
@@ -160,17 +141,6 @@
     <ClInclude Include="..\..\UI\MultiplayerLobbyWnd.h" />
     <ClInclude Include="..\..\UI\ObjectListWnd.h" />
     <ClInclude Include="..\..\UI\OptionsWnd.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\BatchedGeometry.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\BatchPage.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\ImpostorPage.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\MersenneTwister.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\PagedGeometry.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\PropertyMaps.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\RandomTable.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\StaticBillboardSet.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\TreeLoader3D.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\WindBatchedGeometry.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\WindBatchPage.h" />
     <ClInclude Include="..\..\UI\PlanetDetailWnd.h" />
     <ClInclude Include="..\..\UI\PlayerListWnd.h" />
     <ClInclude Include="..\..\UI\ProductionWnd.h" />
@@ -243,6 +213,13 @@
     <ClCompile Include="..\..\client\human\HumanClientFSM.cpp" />
     <ClCompile Include="..\..\network\ClientNetworking.cpp" />
     <ClCompile Include="..\..\network\Message.cpp" />
+    <ClCompile Include="..\..\PagedGeometry\source\BatchedGeometry.cpp" />
+    <ClCompile Include="..\..\PagedGeometry\source\BatchPage.cpp" />
+    <ClCompile Include="..\..\PagedGeometry\source\ImpostorPage.cpp" />
+    <ClCompile Include="..\..\PagedGeometry\source\PagedGeometry.cpp" />
+    <ClCompile Include="..\..\PagedGeometry\source\PropertyMaps.cpp" />
+    <ClCompile Include="..\..\PagedGeometry\source\StaticBillboardSet.cpp" />
+    <ClCompile Include="..\..\PagedGeometry\source\TreeLoader3D.cpp" />
     <ClCompile Include="..\..\UI\About.cpp" />
     <ClCompile Include="..\..\UI\BuildDesignatorWnd.cpp" />
     <ClCompile Include="..\..\UI\ChatWnd.cpp" />
@@ -272,15 +249,6 @@
     <ClCompile Include="..\..\UI\MultiplayerLobbyWnd.cpp" />
     <ClCompile Include="..\..\UI\ObjectListWnd.cpp" />
     <ClCompile Include="..\..\UI\OptionsWnd.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\BatchedGeometry.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\BatchPage.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\ImpostorPage.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\PagedGeometry.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\PropertyMaps.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\StaticBillboardSet.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\TreeLoader3D.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\WindBatchedGeometry.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\WindBatchPage.cpp" />
     <ClCompile Include="..\..\UI\PlanetDetailWnd.cpp" />
     <ClCompile Include="..\..\UI\PlayerListWnd.cpp" />
     <ClCompile Include="..\..\UI\ProductionWnd.cpp" />

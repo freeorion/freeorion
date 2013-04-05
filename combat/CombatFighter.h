@@ -5,8 +5,8 @@
 #include "PathingEngineFwd.h"
 
 #include "CombatObject.h"
-#include "../../universe/ShipDesign.h"
-#include "../CombatOrder.h"
+#include "../universe/ShipDesign.h"
+#include "CombatOrder.h"
 
 #include <list>
 

@@ -61,6 +61,8 @@ else ()
     message(FATAL_ERROR "Bullet library not found.")
 endif ()
 
+include_directories(${CMAKE_SOURCE_DIR} /PagedGeometry/include)
+
 set(THIS_EXE_SOURCES
     ../../client/ClientApp.cpp
     ../../client/ClientFSMEvents.cpp
@@ -111,15 +113,13 @@ set(THIS_EXE_SOURCES
     ../../UI/TechTreeLayout.cpp
     ../../UI/TurnProgressWnd.cpp
     ../../UI/ShaderProgram.cpp
-    ../../UI/PagedGeometry/BatchedGeometry.cpp
-    ../../UI/PagedGeometry/BatchPage.cpp
-    ../../UI/PagedGeometry/ImpostorPage.cpp
-    ../../UI/PagedGeometry/PagedGeometry.cpp
-    ../../UI/PagedGeometry/PropertyMaps.cpp
-    ../../UI/PagedGeometry/StaticBillboardSet.cpp
-    ../../UI/PagedGeometry/TreeLoader3D.cpp
-    ../../UI/PagedGeometry/WindBatchedGeometry.cpp
-    ../../UI/PagedGeometry/WindBatchPage.cpp
+    ../../PagedGeometry/BatchedGeometry.cpp
+    ../../PagedGeometry/BatchPage.cpp
+    ../../PagedGeometry/ImpostorPage.cpp
+    ../../PagedGeometry/PagedGeometry.cpp
+    ../../PagedGeometry/PropertyMaps.cpp
+    ../../PagedGeometry/StaticBillboardSet.cpp
+    ../../PagedGeometry/TreeLoader3D.cpp
     ../../util/AppInterface.cpp
     ../../util/VarText.cpp
 )

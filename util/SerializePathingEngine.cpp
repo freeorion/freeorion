@@ -1,11 +1,11 @@
 #include "Serialize.h"
 
-#include "../combat/OpenSteer/AsteroidBeltObstacle.h"
-#include "../combat/OpenSteer/CombatShip.h"
-#include "../combat/OpenSteer/CombatFighter.h"
-#include "../combat/OpenSteer/Missile.h"
-#include "../combat/OpenSteer/Obstacle.h"
-#include "../combat/OpenSteer/PathingEngine.h"
+#include "../combat/AsteroidBeltObstacle.h"
+#include "../combat/CombatShip.h"
+#include "../combat/CombatFighter.h"
+#include "../combat/Missile.h"
+#include "../combat/PathingEngine.h"
+#include "Obstacle.h"
 
 #include "Serialize.ipp"
 

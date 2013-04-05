@@ -118,7 +118,7 @@ set(LC_ALL $ENV{tmpLC_ALL})
 ########################################
 # Build common code library            #
 ########################################
-include_directories(${CMAKE_SOURCE_DIR} log4cpp)
+include_directories(${CMAKE_SOURCE_DIR} log4cpp OpenSteer/include)
 
 add_definitions(-DADOBE_STD_SERIALIZATION)
 
@@ -135,18 +135,17 @@ set(THIS_LIB_LINK_LIBS ${GIGI_GIGI_LIBRARY} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES}
 
 set(THIS_LIB_SOURCES
     combat/CombatOrder.cpp
-    combat/OpenSteer/AsteroidBeltObstacle.cpp
-    combat/OpenSteer/CombatFighter.cpp
-    combat/OpenSteer/CombatObject.cpp
-    combat/OpenSteer/CombatShip.cpp
+    combat/AsteroidBeltObstacle.cpp
+    combat/CombatFighter.cpp
+    combat/CombatObject.cpp
+    combat/CombatShip.cpp
     combat/CombatLogManager.cpp
     combat/CombatSystem.cpp
-    combat/OpenSteer/Missile.cpp
-    combat/OpenSteer/Obstacle.cpp
-    combat/OpenSteer/PathingEngine.cpp
-    combat/OpenSteer/SimpleVehicle.cpp
-    combat/OpenSteer/Vec3.cpp
-    combat/OpenSteer/Vec3Utilities.cpp
+    combat/Missile.cpp
+    combat/PathingEngine.cpp
+    OpenSteer/Obstacle.cpp
+    OpenSteer/SimpleVehicle.cpp
+    OpenSteer/Vec3.cpp
     Empire/Empire.cpp
     Empire/EmpireManager.cpp
     Empire/ResourcePool.cpp

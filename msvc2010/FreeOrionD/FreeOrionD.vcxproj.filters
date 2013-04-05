@@ -12,9 +12,6 @@
     <Filter Include="Header Files\combat">
       <UniqueIdentifier>{3602ba33-627c-4ed0-9ec6-b742f16efd8f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\combat\OpenSteer">
-      <UniqueIdentifier>{b32aee69-e551-4956-8d0c-ddac17836780}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Empire">
       <UniqueIdentifier>{8a8b6ff9-1e47-4b6e-9f9e-98b0324e11a6}</UniqueIdentifier>
     </Filter>
@@ -55,63 +52,6 @@
     </ClInclude>
     <ClInclude Include="..\..\combat\CombatEventListener.h">
       <Filter>Header Files\combat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\CombatObject.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\CombatShip.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\LocalSpace.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\Missile.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\Obstacle.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\PathingEngine.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\PathingEngineFwd.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\Proximity.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\ProximityDatabase.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\SimpleVehicle.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\StandardTypes.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\SteerLibrary.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\UnusedParameter.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\Utilities.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\Vec3.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\Vec3Utilities.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\AbstractVehicle.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\CombatFighter.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Empire\Empire.h">
       <Filter>Header Files\Empire</Filter>

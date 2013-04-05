@@ -1,7 +1,7 @@
 #include "Message.h"
 
 #include "../combat/CombatOrder.h"
-#include "../combat/OpenSteer/CombatObject.h"
+#include "../combat/CombatObject.h"
 #include "../combat/CombatLogManager.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"

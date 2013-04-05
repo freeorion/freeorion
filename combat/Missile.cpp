@@ -1,6 +1,6 @@
 #include "Missile.h"
 
-#include "../CombatEventListener.h"
+#include "CombatEventListener.h"
 #include "PathingEngine.h"
 
 

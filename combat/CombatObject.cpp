@@ -1,6 +1,6 @@
 #include "CombatObject.h"
 
-#include "../CombatEventListener.h"
+#include "CombatEventListener.h"
 
 
 namespace {

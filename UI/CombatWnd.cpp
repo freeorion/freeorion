@@ -8,10 +8,10 @@
 #include "CUIControls.h"
 #include "EntityRenderer.h" // TODO: Remove; for testing only.
 #include "InGameMenu.h"
-#include "../combat/OpenSteer/CombatFighter.h"
-#include "../combat/OpenSteer/CombatShip.h"
-#include "../combat/OpenSteer/Missile.h"
-#include "../combat/OpenSteer/PathingEngine.h"
+#include "../combat/CombatFighter.h"
+#include "../combat/CombatShip.h"
+#include "../combat/Missile.h"
+#include "../combat/PathingEngine.h"
 #include "../Empire/Empire.h"
 #include "../universe/System.h"
 #include "../universe/Planet.h"
@@ -24,17 +24,17 @@
 #include "OptionsWnd.h" // TODO: Remove this later, once the InGameMenu is in use for F10 presses instead.
 
 // TODO: Remove these once the obstacle test code is removed.
-#include "../combat/OpenSteer/AsteroidBeltObstacle.h"
-#include "../combat/OpenSteer/Obstacle.h"
-#include "../combat/OpenSteer/SimpleVehicle.h"
+#include "../combat/AsteroidBeltObstacle.h"
+#include "Obstacle.h"
+#include "SimpleVehicle.h"
 
 // TODO: Remove this.  It is only here for prototyping.
 #include "../universe/Fleet.h"
 
-#include "PagedGeometry/BatchPage.h"
-#include "PagedGeometry/ImpostorPage.h"
-#include "PagedGeometry/PagedGeometry.h"
-#include "PagedGeometry/TreeLoader3D.h"
+#include "BatchPage.h"
+#include "ImpostorPage.h"
+#include "PagedGeometry.h"
+#include "TreeLoader3D.h"
 
 #include <OgreBillboard.h>
 #include <OgreBillboardSet.h>
@@ -358,7 +358,7 @@ namespace {
         if (!paged_geometry) {
             paged_geometry = new Forests::PagedGeometry;
             paged_geometry->setTempDir((GetUserDir() / "PagedGeometry").string() + "/");    // PagedGeometry internally saves by to tempdir + fileNamePNG so the "/" must be specified here to make "PagedGeometry" a directory and not a prefix to the filename
-            paged_geometry->setCoordinateSystem(Ogre::Vector3::UNIT_Z);
+            //paged_geometry->setCoordinateSystem(Ogre::Vector3::UNIT_Z);
             paged_geometry->setCamera(camera);
             paged_geometry->setPageSize(250);
             paged_geometry->setInfinite();

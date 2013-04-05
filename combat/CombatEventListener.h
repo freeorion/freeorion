@@ -2,7 +2,7 @@
 #ifndef _CombatEventListener_h_
 #define _CombatEventListener_h_
 
-#include "OpenSteer/PathingEngineFwd.h"
+#include "PathingEngineFwd.h"
 
 
 class CombatEventListener

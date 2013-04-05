@@ -4,7 +4,7 @@
 
 #include "Serialize.h"
 #include "XMLDoc.h"
-#include "../combat/OpenSteer/PathingEngine.h"
+#include "../combat/PathingEngine.h"
 #include "../universe/Enums.h"
 #include "../network/Networking.h"
 

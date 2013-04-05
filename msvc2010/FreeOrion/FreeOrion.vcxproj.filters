@@ -22,9 +22,6 @@
     <Filter Include="Header Files\combat">
       <UniqueIdentifier>{e1903fa4-66a8-4377-9d91-eb60de6ced9a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\combat\OpenSteer">
-      <UniqueIdentifier>{330825c5-e4d2-4169-ad50-d5ff8744eedb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Empire">
       <UniqueIdentifier>{3cc43ce0-b6b4-416a-80a0-949870380ee1}</UniqueIdentifier>
     </Filter>
@@ -55,11 +52,8 @@
     <Filter Include="Source Files\util">
       <UniqueIdentifier>{4fba4d8e-44f9-4cb3-8914-7aff0a18b6da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\UI\PagedGeometry">
-      <UniqueIdentifier>{1965870f-e272-4a84-8ada-9fae2a0b8612}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\UI\PagedGeometry">
-      <UniqueIdentifier>{dce0428f-3d99-47ce-ab4d-52d1490873b8}</UniqueIdentifier>
+    <Filter Include="Source Files\PagedGeometry">
+      <UniqueIdentifier>{69c0d51a-2b2c-434a-9440-48242f0e5e58}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -77,63 +71,6 @@
     </ClInclude>
     <ClInclude Include="..\..\client\human\HumanClientApp.h">
       <Filter>Header Files\client\human</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\UnusedParameter.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\Utilities.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\Vec3.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\Vec3Utilities.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\AbstractVehicle.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\CombatFighter.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\CombatObject.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\CombatShip.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\LocalSpace.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\Missile.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\Obstacle.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\PathingEngine.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\PathingEngineFwd.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\Proximity.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\ProximityDatabase.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\SimpleVehicle.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\StandardTypes.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\OpenSteer\SteerLibrary.h">
-      <Filter>Header Files\combat\OpenSteer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\combat\CombatOrder.h">
       <Filter>Header Files\combat</Filter>
@@ -281,39 +218,6 @@
     </ClInclude>
     <ClInclude Include="..\..\UI\TechTreeWnd.h">
       <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\PagedGeometry\WindBatchedGeometry.h">
-      <Filter>Header Files\UI\PagedGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\PagedGeometry\WindBatchPage.h">
-      <Filter>Header Files\UI\PagedGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\PagedGeometry\BatchedGeometry.h">
-      <Filter>Header Files\UI\PagedGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\PagedGeometry\BatchPage.h">
-      <Filter>Header Files\UI\PagedGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\PagedGeometry\ImpostorPage.h">
-      <Filter>Header Files\UI\PagedGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\PagedGeometry\MersenneTwister.h">
-      <Filter>Header Files\UI\PagedGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\PagedGeometry\PagedGeometry.h">
-      <Filter>Header Files\UI\PagedGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\PagedGeometry\PropertyMaps.h">
-      <Filter>Header Files\UI\PagedGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\PagedGeometry\RandomTable.h">
-      <Filter>Header Files\UI\PagedGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\PagedGeometry\StaticBillboardSet.h">
-      <Filter>Header Files\UI\PagedGeometry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\UI\PagedGeometry\TreeLoader3D.h">
-      <Filter>Header Files\UI\PagedGeometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\util\GLStateComparator.h">
       <Filter>Header Files\util</Filter>
@@ -499,33 +403,6 @@
     <ClCompile Include="..\..\network\Message.cpp">
       <Filter>Source Files\network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\UI\PagedGeometry\TreeLoader3D.cpp">
-      <Filter>Source Files\UI\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\PagedGeometry\WindBatchedGeometry.cpp">
-      <Filter>Source Files\UI\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\PagedGeometry\WindBatchPage.cpp">
-      <Filter>Source Files\UI\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\PagedGeometry\BatchedGeometry.cpp">
-      <Filter>Source Files\UI\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\PagedGeometry\BatchPage.cpp">
-      <Filter>Source Files\UI\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\PagedGeometry\ImpostorPage.cpp">
-      <Filter>Source Files\UI\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\PagedGeometry\PagedGeometry.cpp">
-      <Filter>Source Files\UI\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\PagedGeometry\PropertyMaps.cpp">
-      <Filter>Source Files\UI\PagedGeometry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\PagedGeometry\StaticBillboardSet.cpp">
-      <Filter>Source Files\UI\PagedGeometry</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\UI\ShaderProgram.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
@@ -663,6 +540,27 @@
     </ClCompile>
     <ClCompile Include="..\..\UI\FieldIcon.cpp">
       <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PagedGeometry\source\PagedGeometry.cpp">
+      <Filter>Source Files\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PagedGeometry\source\StaticBillboardSet.cpp">
+      <Filter>Source Files\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PagedGeometry\source\ImpostorPage.cpp">
+      <Filter>Source Files\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PagedGeometry\source\BatchPage.cpp">
+      <Filter>Source Files\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PagedGeometry\source\BatchedGeometry.cpp">
+      <Filter>Source Files\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PagedGeometry\source\TreeLoader3D.cpp">
+      <Filter>Source Files\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PagedGeometry\source\PropertyMaps.cpp">
+      <Filter>Source Files\PagedGeometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

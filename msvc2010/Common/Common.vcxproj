@@ -77,7 +77,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;FREEORION_WIN32;_DLL;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../include/zlib/;../../../Boost/include/boost_1_51/;../../GG/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../include/zlib/;../../../Boost/include/boost_1_51/;../../GG/;../../OpenSteer/include/</AdditionalIncludeDirectories>
       <CompileAsManaged>false</CompileAsManaged>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
@@ -119,32 +119,12 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Make Version.cpp</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)src\Version.cpp;%(Outputs)</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\.svn;%(AdditionalInputs)</AdditionalInputs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\combat\CombatLogManager.h" />
     <ClInclude Include="..\..\combat\CombatOrder.h" />
     <ClInclude Include="..\..\combat\CombatSystem.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\AbstractVehicle.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\CombatFighter.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\CombatObject.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\CombatShip.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\LocalSpace.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\Missile.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\Obstacle.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\PathingEngine.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\PathingEngineFwd.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\Proximity.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\ProximityDatabase.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\SimpleVehicle.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\StandardTypes.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\SteerLibrary.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\UnusedParameter.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\Utilities.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\Vec3.h" />
-    <ClInclude Include="..\..\combat\OpenSteer\Vec3Utilities.h" />
     <ClInclude Include="..\..\Empire\Diplomacy.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\EmpireManager.h" />
@@ -201,25 +181,24 @@
     <ClInclude Include="..\..\util\XMLObjectFactory.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\combat\AsteroidBeltObstacle.cpp" />
+    <ClCompile Include="..\..\combat\CombatFighter.cpp" />
     <ClCompile Include="..\..\combat\CombatLogManager.cpp" />
+    <ClCompile Include="..\..\combat\CombatObject.cpp" />
     <ClCompile Include="..\..\combat\CombatOrder.cpp" />
+    <ClCompile Include="..\..\combat\CombatShip.cpp" />
     <ClCompile Include="..\..\combat\CombatSystem.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\CombatFighter.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\CombatObject.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\CombatShip.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\Missile.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\Obstacle.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\PathingEngine.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\SimpleVehicle.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\Vec3.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\Vec3Utilities.cpp" />
+    <ClCompile Include="..\..\combat\Missile.cpp" />
+    <ClCompile Include="..\..\combat\PathingEngine.cpp" />
     <ClCompile Include="..\..\Empire\Diplomacy.cpp" />
     <ClCompile Include="..\..\Empire\Empire.cpp" />
     <ClCompile Include="..\..\Empire\EmpireManager.cpp" />
     <ClCompile Include="..\..\Empire\ResourcePool.cpp" />
     <ClCompile Include="..\..\network\MessageQueue.cpp" />
     <ClCompile Include="..\..\network\Networking.cpp" />
+    <ClCompile Include="..\..\OpenSteer\source\Obstacle.cpp" />
+    <ClCompile Include="..\..\OpenSteer\source\SimpleVehicle.cpp" />
+    <ClCompile Include="..\..\OpenSteer\source\Vec3.cpp" />
     <ClCompile Include="..\..\UI\StringTable.cpp" />
     <ClCompile Include="..\..\universe\Building.cpp" />
     <ClCompile Include="..\..\universe\Condition.cpp" />
