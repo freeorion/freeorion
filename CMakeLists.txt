@@ -143,9 +143,10 @@ set(THIS_LIB_SOURCES
     combat/CombatSystem.cpp
     combat/Missile.cpp
     combat/PathingEngine.cpp
-    OpenSteer/Obstacle.cpp
-    OpenSteer/SimpleVehicle.cpp
-    OpenSteer/Vec3.cpp
+    OpenSteer/source/Obstacle.cpp
+    OpenSteer/source/SimpleVehicle.cpp
+    OpenSteer/source/Vec3.cpp
+    OpenSteer/source/Vec3Utilities.cpp
     Empire/Empire.cpp
     Empire/EmpireManager.cpp
     Empire/ResourcePool.cpp

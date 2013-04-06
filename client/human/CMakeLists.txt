@@ -61,7 +61,7 @@ else ()
     message(FATAL_ERROR "Bullet library not found.")
 endif ()
 
-include_directories(${CMAKE_SOURCE_DIR} /PagedGeometry/include)
+include_directories(${CMAKE_SOURCE_DIR}/PagedGeometry/include)
 
 set(THIS_EXE_SOURCES
     ../../client/ClientApp.cpp
@@ -113,13 +113,13 @@ set(THIS_EXE_SOURCES
     ../../UI/TechTreeLayout.cpp
     ../../UI/TurnProgressWnd.cpp
     ../../UI/ShaderProgram.cpp
-    ../../PagedGeometry/BatchedGeometry.cpp
-    ../../PagedGeometry/BatchPage.cpp
-    ../../PagedGeometry/ImpostorPage.cpp
-    ../../PagedGeometry/PagedGeometry.cpp
-    ../../PagedGeometry/PropertyMaps.cpp
-    ../../PagedGeometry/StaticBillboardSet.cpp
-    ../../PagedGeometry/TreeLoader3D.cpp
+    ../../PagedGeometry/source/BatchedGeometry.cpp
+    ../../PagedGeometry/source/BatchPage.cpp
+    ../../PagedGeometry/source/ImpostorPage.cpp
+    ../../PagedGeometry/source/PagedGeometry.cpp
+    ../../PagedGeometry/source/PropertyMaps.cpp
+    ../../PagedGeometry/source/StaticBillboardSet.cpp
+    ../../PagedGeometry/source/TreeLoader3D.cpp
     ../../util/AppInterface.cpp
     ../../util/VarText.cpp
 )
