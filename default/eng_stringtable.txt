@@ -3865,6 +3865,15 @@ Prefer Swamp planets.
                 
 [[AVERAGE_POPULATION]]
 [[AVERAGE_GROUND_TROOPS]]
+
+Description:
+Phinnerts are tree-dwelling mammals with size varying from 1 to 2 meters tall. They have long arms, with a wingspan of about twice their height. They have hairy, retractable flaps of skin that stretch from wrist to ankle and allow for fully functional flight in low gravity. They are very agile flyers and can catch flying bug-like creatures with a fully prehensile nose appendage. Like bats they can use echo-location, this sense is not highly developed though.
+
+Social Structure:
+Life is much shorter for Phinnerts than for most other sentient life, owing to the many dangers of the swamp. All Phinnerts are generally treated as extended family by each other and grudges do not last long. There is no central authority, there's only a vague hierarchy. The balance of power can change very quickly with the high mortality rate. Society is far less individualistic, and more focused on the group.
+
+Homeworld: 
+Their planet has low gravity and a very thick atmosphere. Its composition is unique as it has a low proportion of heavier metals, but a much higher proportion of other heavy elements, particularly noble gasses. It also has very stable tectonic formations meaning that the surface of the crust is very flat, and so is mostly covered with shallow, standing water. The entire world is like a giant everglade.
 '''
 
 SP_EGASSEM
@@ -4166,6 +4175,13 @@ Prefers Inferno planets.
                 
 [[AVERAGE_POPULATION]]
 [[BAD_GROUND_TROOPS]]
+
+Description:
+Abaddoni are shaped like a chicken egg on its side, roughly 0,8 meters tall and deep red with black spots. Their predominant feature is a large mouth starting at the point and extending back for a full third of the body.
+At the end of each of their 6 short crab like legs, is an inflatable sac which enables them to climb upside down. Because they grew up underground Abaddoni have no eyes, they mainly rely on smell and to a lesser extent sound and touch to navigate.
+
+Social Structure:
+The entire Abaddonnian species lives in a dictatorship ruled by a sentient artificial intelligence called Mother. This AI was created by the Abaddoni as a governmental assistant, but slowly took over. Now every newborn Abaddoni gets a wireless transmitter placed into the brain, for Mother to read their thoughts and being able to terminate them when necessary. There is no real social structure between the Abaddoni, they are all the same - slaves. 
 '''
 
 
