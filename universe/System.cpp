@@ -448,6 +448,9 @@ void System::Remove(UniverseObject* obj) {
         for (std::vector<Fleet*>::const_iterator it = removed_fleets.begin();
              it != removed_fleets.end(); ++it)
         { FleetRemovedSignal(**it); }
+        if (removed_planet) {
+            Logger().debugStream() << "Removed planet from system...";
+        }
 
         StateChangedSignal();
     } else {

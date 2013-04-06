@@ -23,13 +23,13 @@
 // CombatInfo
 ////////////////////////////////////////////////
 CombatInfo::CombatInfo() :
-    system_id(INVALID_OBJECT_ID),
-    turn(INVALID_GAME_TURN)
+    turn(INVALID_GAME_TURN),
+    system_id(INVALID_OBJECT_ID)
 {}
 
 CombatInfo::CombatInfo(int system_id_, int turn_) :
-    system_id(system_id_),
-    turn(turn_)
+    turn(turn_),
+    system_id(system_id_)
 {
     const Universe& universe = GetUniverse();
     const ObjectMap& universe_objects = universe.Objects();
@@ -281,6 +281,7 @@ namespace {
 
         if (damage > 0.0f) {
             target_structure->AddToCurrent(-damage);
+            damaged_object_ids.insert(target->ID());
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
