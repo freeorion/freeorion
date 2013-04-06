@@ -485,7 +485,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_eta(-1),
     m_enqueued(false)
 {
-    const Tech* tech = GetTech(m_tech_name);
+    //const Tech* tech = GetTech(m_tech_name);
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont(FontSize());
 
     //REMARK: do not use AttachChild but add child->Render() to method render,
@@ -1156,11 +1156,11 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
             std::vector<std::pair<double, double> > points;
             const std::string& from = (*edge)->GetTechFrom();
             const std::string& to   = (*edge)->GetTechTo();
-            assert(GetTech(from) && GetTech(to));
+            if (!GetTech(from) || !GetTech(to)) {
+                Logger().errorStream() << "TechTreeWnd::LayoutPanel::Layout missing arc endpoint tech";
+                continue;
+            }
             (*edge)->ReadPoints(points);
-            TechStatus arc_type = TS_RESEARCHABLE;
-            if (empire)
-                arc_type = empire->GetTechStatus(to);
             m_dependency_arcs.insert(std::make_pair(from, std::make_pair(to, points)));
         }
     }

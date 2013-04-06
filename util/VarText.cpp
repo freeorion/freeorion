@@ -110,15 +110,15 @@ namespace {
 
             // combat log
             } else if (token == VarText::COMBAT_ID_TAG) {
-                int log_id = -1;    // should not be a valid log id, for default
-                try {
-                    log_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
-                } catch (const std::exception&) {
-                    Logger().errorStream() << "SubstituteAndAppend couldn't cast \"" << token_elem.Attribute("value") << "\" to int for combat log id.";
-                    m_str += UserString("ERROR");
-                    m_valid = false;
-                    return;
-                }
+                //int log_id = -1;    // should not be a valid log id, for default
+                //try {
+                //    log_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
+                //} catch (const std::exception&) {
+                //    Logger().errorStream() << "SubstituteAndAppend couldn't cast \"" << token_elem.Attribute("value") << "\" to int for combat log id.";
+                //    m_str += UserString("ERROR");
+                //    m_valid = false;
+                //    return;
+                //}
                 m_str += open_tag + UserString("COMBAT") + close_tag;
 
             // technology token
