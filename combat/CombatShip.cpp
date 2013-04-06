@@ -656,12 +656,11 @@ void CombatShip::UpdateMissionQueue()
     }
     }
 
-    // commented out due to lack of operatior << for OpenSteer::Vec3
-    //if (print_needed)
-    //    std::cout << "    position   =" << position() << "\n"
-    //              << "    destination=" << m_mission_destination << "\n"
-    //              << "    mission_weight=" << m_mission_weight << "\n"
-    //              << std::endl;
+    if (print_needed)
+        std::cout << "    position   =" << position() << "\n"
+                  << "    destination=" << m_mission_destination << "\n"
+                  << "    mission_weight=" << m_mission_weight << "\n"
+                  << std::endl;
 }
 
 void CombatShip::FirePDDefensively()

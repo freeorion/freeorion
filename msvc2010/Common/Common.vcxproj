@@ -199,6 +199,7 @@
     <ClCompile Include="..\..\OpenSteer\source\Obstacle.cpp" />
     <ClCompile Include="..\..\OpenSteer\source\SimpleVehicle.cpp" />
     <ClCompile Include="..\..\OpenSteer\source\Vec3.cpp" />
+    <ClCompile Include="..\..\OpenSteer\source\Vec3Utilities.cpp" />
     <ClCompile Include="..\..\UI\StringTable.cpp" />
     <ClCompile Include="..\..\universe\Building.cpp" />
     <ClCompile Include="..\..\universe\Condition.cpp" />

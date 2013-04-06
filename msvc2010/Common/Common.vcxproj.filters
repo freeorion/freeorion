@@ -411,6 +411,9 @@
     <ClCompile Include="..\..\OpenSteer\source\Obstacle.cpp">
       <Filter>Source Files\OpenSteer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\OpenSteer\source\Vec3Utilities.cpp">
+      <Filter>Source Files\OpenSteer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\src\Version.template">
