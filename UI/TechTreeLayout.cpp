@@ -359,7 +359,6 @@ void TechTreeLayout::Clear() {
  * creates a node for that tech
  */
 TechTreeLayout::Node::Node(const std::string& tech, GG::X width, GG::Y height) :
-    m_weight(NODE_CELL_HEIGHT),
     m_depth(-1),
     m_row(-1),
     m_tech(tech),
@@ -372,14 +371,14 @@ TechTreeLayout::Node::Node(const std::string& tech, GG::X width, GG::Y height) :
     m_parents(),
     m_children(),
     m_primary_child(0),
-    m_out_edges()
+    m_out_edges(),
+    m_weight(NODE_CELL_HEIGHT)
 { assert(width > 0 && height > 0 && ::GetTech(tech)); }
 
 /**
  * recursively creates dummy nodes between parent and child
  */
 TechTreeLayout::Node::Node(Node* parent, Node* child, std::vector<Node*>& nodes) :
-    m_weight(LINE_CELL_HEIGHT),
     m_depth(-1),
     m_row(-1),
     m_tech(),
@@ -392,7 +391,8 @@ TechTreeLayout::Node::Node(Node* parent, Node* child, std::vector<Node*>& nodes)
     m_parents(),
     m_children(),
     m_primary_child(0),
-    m_out_edges()
+    m_out_edges(),
+    m_weight(LINE_CELL_HEIGHT)
 {
     assert(parent != 0 && child != 0);
     // ensure passed in nodes are valid
