@@ -268,7 +268,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     AttachChild(m_back_button);
     AttachChild(m_next_button);
 
-    SetChildClippingMode(ClipToClientAndWindowSeparately);
+    SetChildClippingMode(ClipToWindow);
 
     DoLayout();
 
@@ -332,6 +332,7 @@ void EncyclopediaDetailPanel::DoLayout() {
         ul = lr - GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
         m_other_icon->SizeMove(ul, lr);
     }
+    MoveChildUp(m_close_button);    // so it's over top of the top-right icon
 }
 
 void EncyclopediaDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
