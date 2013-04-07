@@ -27,9 +27,6 @@ else ()
     set(BUILD_RELEASE ON)
 endif ()
 
-set(BUILD_STATIC OFF)
-set(BUILD_SHARED ON)
-
 include(Config)
 include(Util)
 
@@ -126,8 +123,6 @@ if (FREEORION_RELEASE)
     add_definitions(-DFREEORION_RELEASE)
 endif ()
 
-set(BUILD_STATIC_TMP ${BUILD_STATIC})
-set(BUILD_SHARED_TMP ${BUILD_SHARED})
 set(BUILD_STATIC ON)
 set(BUILD_SHARED OFF)
 
@@ -279,9 +274,6 @@ library_all_variants(parse)
 set(BUILD_DEBUG ${BUILD_DEBUG_TMP})
 set(BUILD_RELEASE ${BUILD_RELEASE_TMP})
 
-set(BUILD_STATIC ${BUILD_STATIC_TMP})
-set(BUILD_SHARED ${BUILD_SHARED_TMP})
-
 
 # This macro is an internal utility macro that builds a particular variant of
 # an executable.
@@ -294,15 +286,17 @@ set(BUILD_SHARED ${BUILD_SHARED_TMP})
 #
 # This macro will define a new executable target based on exename and the
 # specific variant name, which depends on the utility target exename. The
-# compilation and linking flags for this executable are defined by
-# THIS_EXE_COMPILE_FLAGS, THIS_EXE_LINK_FLAGS, THIS_EXE_LINK_LIBS, and all of
-# the compile and linking flags implied by the features provided.
+# linked libraries for this executable are defined by THIS_EXE_LINK_LIBS,
+# and all of the compile and linking flags implied by the features provided.
 #
 # If any of the features listed conflict with this executable, no new targets
 # will be built.
 macro (executable_variant EXENAME)
-  set(THIS_VARIANT_COMPILE_FLAGS "${THIS_EXE_COMPILE_FLAGS}")
-  set(THIS_VARIANT_LINK_FLAGS "${THIS_EXE_LINK_FLAGS}")
+  set(BUILD_STATIC OFF)
+  set(BUILD_SHARED ON)
+
+  set(THIS_VARIANT_COMPILE_FLAGS)
+  set(THIS_VARIANT_LINK_FLAGS)
   set(THIS_VARIANT_LINK_LIBS ${THIS_EXE_LINK_LIBS})
 
   # Determine if it is okay to build this variant
@@ -316,57 +310,32 @@ macro (executable_variant EXENAME)
     endif (NOT BUILD_${ARG})
 
     # Accumulate compile and link flags
-    list(APPEND THIS_VARIANT_COMPILE_FLAGS ${THIS_EXE_${ARG}_COMPILE_FLAGS} ${${ARG}_COMPILE_FLAGS})
-    list(APPEND THIS_VARIANT_LINK_FLAGS ${THIS_EXE_${ARG}_LINK_FLAGS} ${${ARG}_LINK_FLAGS})
-    list(APPEND THIS_VARIANT_LINK_LIBS ${THIS_EXE_${ARG}_LINK_LIBS} ${${ARG}_LINK_LIBS})
+    list(APPEND THIS_VARIANT_COMPILE_FLAGS ${${ARG}_COMPILE_FLAGS})
+    list(APPEND THIS_VARIANT_LINK_FLAGS ${${ARG}_LINK_FLAGS})
+    list(APPEND THIS_VARIANT_LINK_LIBS ${${ARG}_LINK_LIBS})
   endforeach (ARG ${ARGN})
 
   # Handle feature interactions
   feature_interactions(THIS_VARIANT ${ARGN})
 
   if (THIS_VARIANT_OKAY)
-    if (IS_STATIC)
-      set(VARIANT_EXENAME ${EXENAME}_static)
-    else ()
-      set(VARIANT_EXENAME ${EXENAME})
-    endif ()
+    set(VARIANT_EXENAME ${EXENAME})
 
-    # We handle static vs. dynamic executables differently
-    list_contains(THIS_EXE_IS_STATIC STATIC ${ARGN})
-    if (THIS_EXE_IS_STATIC)
-      # Add the executable itself
-      add_executable(${VARIANT_EXENAME} ${THIS_EXE_SOURCES})
-
-      # Set properties on this executable
-      set_target_properties(${VARIANT_EXENAME}
-        PROPERTIES
-        OUTPUT_NAME "${EXENAME}"
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-        CLEAN_DIRECT_OUTPUT 1
-        COMPILE_FLAGS "${THIS_VARIANT_COMPILE_FLAGS}"
-        LINK_FLAGS "${THIS_VARIANT_LINK_FLAGS}"
-        LINK_SEARCH_END_STATIC true
-        LABELS "${PROJECT_NAME}"
-        )
-    else (THIS_EXE_IS_STATIC)
-      add_executable(${VARIANT_EXENAME} ${THIS_EXE_SOURCES})
-      # Set properties on this executable
-      set_target_properties(${VARIANT_EXENAME}
-        PROPERTIES
-        OUTPUT_NAME ${EXENAME}
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-        CLEAN_DIRECT_OUTPUT 1
-        COMPILE_FLAGS "${THIS_VARIANT_COMPILE_FLAGS}"
-        LINK_FLAGS "${THIS_VARIANT_LINK_FLAGS}"
-        LABELS "${PROJECT_NAME}"
-        )
-    endif (THIS_EXE_IS_STATIC)
+    # Add the executable itself
+    add_executable(${VARIANT_EXENAME} ${THIS_EXE_SOURCES})
+    # Set properties on this executable
+    set_target_properties(${VARIANT_EXENAME}
+      PROPERTIES
+      OUTPUT_NAME ${EXENAME}
+      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+      CLEAN_DIRECT_OUTPUT 1
+      COMPILE_FLAGS "${THIS_VARIANT_COMPILE_FLAGS}"
+      LINK_FLAGS "${THIS_VARIANT_LINK_FLAGS}"
+      LABELS "${PROJECT_NAME}"
+      )
 
     # Link against whatever libraries this executable depends on
     target_link_libraries(${VARIANT_EXENAME} ${THIS_VARIANT_LINK_LIBS})
-    foreach (dependency ${THIS_EXE_DEPENDS})
-      target_link_libraries(${VARIANT_EXENAME} "${dependency}")
-    endforeach (dependency)
   endif ()
 
   string(TOUPPER COMPONENT_${PROJECT_NAME} EXE_COMPONENT)
@@ -379,8 +348,6 @@ macro (executable_variant EXENAME)
 endmacro ()
 
 macro (executable_all_variants EXENAME)
-    executable_variant(${EXENAME} STATIC DEBUG MULTI_THREADED)
-    executable_variant(${EXENAME} STATIC RELEASE MULTI_THREADED)
     executable_variant(${EXENAME} SHARED DEBUG MULTI_THREADED)
     executable_variant(${EXENAME} SHARED RELEASE MULTI_THREADED)
 endmacro ()
