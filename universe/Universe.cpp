@@ -430,6 +430,27 @@ void Universe::Clear() {
     m_ship_designs.clear();
 
     m_destroyed_object_ids.clear();
+
+    m_empire_object_visibility.clear();
+    m_empire_object_visibility_turns.clear();
+
+    m_empire_object_visible_specials.clear();
+
+    m_system_id_to_graph_index.clear();
+    m_effect_accounting_map.clear();
+    m_effect_discrepancy_map.clear();
+
+    m_last_allocated_object_id = -1;
+    m_last_allocated_design_id = -1;
+
+    m_empire_known_destroyed_object_ids.clear();
+    m_empire_stale_knowledge_object_ids.clear();
+
+    m_ship_designs.clear();
+    m_empire_known_ship_design_ids.clear();
+
+    m_marked_destroyed.clear();
+    m_marked_for_victory.clear();
 }
 
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {

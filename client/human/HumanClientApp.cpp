@@ -27,6 +27,7 @@
 #include "../../universe/Planet.h"
 #include "../../universe/Species.h"
 #include "../../Empire/Empire.h"
+#include "../../combat/CombatLogManager.h"
 #include "../parse/Parse.h"
 
 #include <GG/BrowseInfoWnd.h>
@@ -547,7 +548,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         // end any currently-playing game before loading new one
         if (m_game_started) {
             EndGame();
-            Sleep(1500);    // delay to make sure old game is fully cleaned up before attempting to start a new one
+            Sleep(3000);    // delay to make sure old game is fully cleaned up before attempting to start a new one
         } else {
             Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
         }
@@ -1054,6 +1055,7 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     m_empires.Clear();
     m_orders.Reset();
     m_combat_orders.clear();
+    GetCombatLogManager().Clear();
 
     if (!suppress_FSM_reset)
         m_fsm->process_event(ResetToIntroMenu());
