@@ -38,6 +38,9 @@ namespace log4cpp {
     void Appender::_removeAppender(Appender* appender) {
         threading::ScopedLock lock(_appenderMapMutex);
         _getAllAppenders().erase(appender->getName());
+        if(_getAllAppenders().size() == 0) {
+	    delete _allAppenders; _allAppenders = 0;	// fix for #2940452 
+        }
     }
     
     bool Appender::reopenAll() {

@@ -14,18 +14,21 @@
 namespace log4cpp {
 
     namespace {
-        const std::string names[10] = {
-            "FATAL",
+	const std::string *names() {
+	    static const std::string priority_names[10] = {
+			"FATAL",
 			"ALERT",
 			"CRIT",
 			"ERROR",
 			"WARN",
-            "NOTICE",
+			"NOTICE",
 			"INFO",
 			"DEBUG",
 			"NOTSET",
 			"UNKNOWN" 
-        };
+	    };
+	    return priority_names;
+	}
     }    
 
     const int log4cpp::Priority::MESSAGE_SIZE = 8;
@@ -35,7 +38,7 @@ namespace log4cpp {
          
         priority++;
         priority /= 100;
-        return names[((priority < 0) || (priority > 8)) ? 8 : priority];
+        return names()[((priority < 0) || (priority > 8)) ? 8 : priority];
     }
 
     Priority::Value Priority::getPriorityValue(const std::string& priorityName) 
@@ -43,7 +46,7 @@ namespace log4cpp {
 	Priority::Value value = -1;
 
 	for (unsigned int i = 0; i < 10; i++) {
-	    if (priorityName == names[i]) {
+	    if (priorityName == names()[i]) {
 		value = i * 100;
 		break;
 	    }

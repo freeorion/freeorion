@@ -7,7 +7,7 @@ namespace log4cpp {
 
         std::string getThreadId() {
             char buffer[16];
-            ::sprintf(buffer, "%ld", pthread_self());
+            ::sprintf(buffer, "%lu", pthread_self());	// thread id unsigned
             return std::string(buffer);     
         }
 

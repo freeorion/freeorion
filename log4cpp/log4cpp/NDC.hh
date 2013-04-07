@@ -67,6 +67,12 @@ namespace log4cpp {
        the main process thread. </em>        
     **/
     class LOG4CPP_EXPORT NDC {
+    	/**
+    	   Whether NDC feature is ever used by the user. If it is not used then saves some time by skipping instructions
+    	   from: ver.1.1
+    	**/
+    	static bool isUsedNDC;
+    	static const std::string emptyString;
         public:
 
         struct DiagnosticContext {

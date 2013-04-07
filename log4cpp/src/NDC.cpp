@@ -24,7 +24,10 @@ namespace log4cpp {
         fullMessage(parent.fullMessage + " " + message) {
     }
 
-    namespace {
+	bool NDC::isUsedNDC = false;
+	const std::string NDC::emptyString = "";
+
+	namespace {
         threading::ThreadLocalDataHolder<NDC> _nDC;
     }
 
@@ -37,7 +40,10 @@ namespace log4cpp {
     }
 
     const std::string& NDC::get() {
-        return getNDC()._get();
+    	if (isUsedNDC)
+    		return getNDC()._get();
+    	else
+    		return emptyString;
     }
 
     size_t NDC::getDepth() {
@@ -53,6 +59,8 @@ namespace log4cpp {
     }
 
     void NDC::push(const std::string& message) {
+    	if (!isUsedNDC)
+    		isUsedNDC = true;
         getNDC()._push(message);
     }
 
