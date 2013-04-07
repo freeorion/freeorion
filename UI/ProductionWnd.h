@@ -73,8 +73,8 @@ private:
     void    ChangeBuildQuantitySlot(int queue_idx, int quantity);
     void    ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize);
     
+    void    DeleteQueueItem(GG::ListBox::iterator it);
     void    QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
-    void    QueueItemDeletedSlot(GG::ListBox::iterator it);
     void    QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt);
     void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it);
 

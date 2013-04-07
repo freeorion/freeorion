@@ -232,13 +232,15 @@ public:
     typedef boost::signal<void (const_iterator)>      ConstRowSignalType;   ///< the signature of const row-change-notification signals
     typedef boost::signal<void (iterator, const Pt&)> RowClickSignalType;   ///< the signature of row-click-notification signals
 
-    typedef RowSignalType      InsertedSignalType;       ///< emitted when a row is inserted into the list box
+    typedef RowSignalType      BeforeInsertSignalType;   ///< emitted before a row is inserted into the list box
+    typedef RowSignalType      AfterInsertSignalType;    ///< emitted after a row is inserted into the list box
     typedef RowSignalType      DroppedSignalType;        ///< emitted when a row is inserted into the list box via drag-and-drop
     typedef ConstRowSignalType DropAcceptableSignalType; ///< emitted when a row may be inserted into the list box via drag-and-drop
     typedef RowClickSignalType LeftClickedSignalType;    ///< emitted when a row in the listbox is left-clicked; provides the row left-clicked and the clicked point
     typedef RowClickSignalType RightClickedSignalType;   ///< emitted when a row in the listbox is right-clicked; provides the row right-clicked and the clicked point
     typedef RowSignalType      DoubleClickedSignalType;  ///< emitted when a row in the listbox is left-double-clicked
-    typedef RowSignalType      ErasedSignalType;         ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted before the row is removed
+    typedef RowSignalType      BeforeEraseSignalType;    ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted before the row is removed
+    typedef RowSignalType      AfterEraseSignalType;     ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted after the row is removed
     typedef RowSignalType      BrowsedSignalType;        ///< emitted when a row in the listbox is "browsed" (rolled over) by the cursor; provides the browsed row
     //@}
 
@@ -315,26 +317,18 @@ public:
         auto-scrolling. */
     unsigned int    AutoScrollInterval() const;
 
-    /** The cleared signal object for this ListBox.  Note that this signal is
-        never emitted by the ListBox.  It is provided here for convenience, to
-        provide users of a ListBox with a canonical signal with which to
-        communicate about ListBox clears. */
-    mutable ClearedSignalType        ClearedSignal;
-
-    /** The inserted signal object for this ListBox.  Note that this signal is
-        never emitted by the ListBox.  It is provided here for convenience, to
-        provide users of a ListBox with a canonical signal with which to
-        communicate about ListBox insertions. */
-    mutable InsertedSignalType       InsertedSignal;
-
-    mutable SelChangedSignalType     SelChangedSignal;     ///< the selection change signal object for this ListBox
-    mutable DroppedSignalType        DroppedSignal;        ///< the dropped signal object for this ListBox
-    mutable DropAcceptableSignalType DropAcceptableSignal; ///< the drop-acceptability signal object for this ListBox
-    mutable LeftClickedSignalType    LeftClickedSignal;    ///< the left click signal object for this ListBox
-    mutable RightClickedSignalType   RightClickedSignal;   ///< the right click signal object for this ListBox
-    mutable DoubleClickedSignalType  DoubleClickedSignal;  ///< the double click signal object for this ListBox
-    mutable ErasedSignalType         ErasedSignal;         ///< the erased signal object for this ListBox
-    mutable BrowsedSignalType        BrowsedSignal;        ///< the browsed signal object for this ListBox
+    mutable ClearedSignalType        ClearedSignal;         /// the cleared signal object for this ListBox
+    mutable BeforeInsertSignalType   BeforeInsertSignal;    ///< the before insert signal objet for this ListBox
+    mutable AfterInsertSignalType    AfterInsertSignal;     ///< the after insert signal objet for this ListBox
+    mutable SelChangedSignalType     SelChangedSignal;      ///< the selection change signal object for this ListBox
+    mutable DroppedSignalType        DroppedSignal;         ///< the dropped signal object for this ListBox
+    mutable DropAcceptableSignalType DropAcceptableSignal;  ///< the drop-acceptability signal object for this ListBox
+    mutable LeftClickedSignalType    LeftClickedSignal;     ///< the left click signal object for this ListBox
+    mutable RightClickedSignalType   RightClickedSignal;    ///< the right click signal object for this ListBox
+    mutable DoubleClickedSignalType  DoubleClickedSignal;   ///< the double click signal object for this ListBox
+    mutable BeforeEraseSignalType    BeforeEraseSignal;     ///< the before erase signal object for this ListBox
+    mutable AfterEraseSignalType     AfterEraseSignal;      ///< the after erase signal object for this ListBox
+    mutable BrowsedSignalType        BrowsedSignal;         ///< the browsed signal object for this ListBox
     //@}
 
     /** \name Mutators */ ///@{
@@ -494,7 +488,7 @@ protected:
 
     virtual bool    EventFilter(Wnd* w, const WndEvent& event);
 
-    iterator        Insert(Row* row, iterator it, bool dropped);  ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
+    iterator        Insert(Row* row, iterator it, bool dropped, bool signal); ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
     Row*            Erase(iterator it, bool removing_duplicate, bool signal); ///< erases the row at index \a idx, handling it as a duplicate removal (such as for drag-and-drops within a single ListBox) if indicated
     void            BringCaretIntoView();           ///< makes sure caret is visible when scrolling occurs due to keystrokes etc.
     void            RecreateScrolls();              ///< recreates the vertical and horizontal scrolls as needed.

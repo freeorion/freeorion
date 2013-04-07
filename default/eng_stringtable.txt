@@ -2443,6 +2443,9 @@ Research
 RESEARCH_INFO_RP
 RP
 
+RESEARCH_QUEUE_PROMPT
+Double-click or shift-click on an available item to add it to the research queue.
+
 
 ####################
 # BuildSelectorWnd #
@@ -2486,6 +2489,9 @@ Add to Queue
 
 PRODUCTION_DETAIL_CENTER_ON_BUILD
 Center on Build
+
+PRODUCTION_QUEUE_PROMPT
+Double-click on an available item to add it to the production queue.
 
 
 #################

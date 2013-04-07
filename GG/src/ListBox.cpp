@@ -489,14 +489,16 @@ ListBox::ListBox(X x, Y y, X w, Y h, Clr color, Clr interior/* = CLR_ZERO*/,
 
     if (INSTRUMENT_ALL_SIGNALS) {
         Connect(ClearedSignal, ListSignalEcho(*this, "ListBox::ClearedSignal"));
-        Connect(InsertedSignal, ListSignalEcho(*this, "ListBox::InsertedSignal"));
+        Connect(BeforeInsertSignal, ListSignalEcho(*this, "ListBox::BeforeInsertSignal"));
+        Connect(AfterInsertSignal, ListSignalEcho(*this, "ListBox::AfterinsertSignal"));
         Connect(SelChangedSignal, ListSignalEcho(*this, "ListBox::SelChangedSignal"));
         Connect(DroppedSignal, ListSignalEcho(*this, "ListBox::DroppedSignal"));
         Connect(DropAcceptableSignal, ListSignalEcho(*this, "ListBox::DropAcceptableSignal"));
         Connect(LeftClickedSignal, ListSignalEcho(*this, "ListBox::LeftClickedSignal"));
         Connect(RightClickedSignal, ListSignalEcho(*this, "ListBox::RightClickedSignal"));
         Connect(DoubleClickedSignal, ListSignalEcho(*this, "ListBox::DoubleClickedSignal"));
-        Connect(ErasedSignal, ListSignalEcho(*this, "ListBox::ErasedSignal"));
+        Connect(BeforeEraseSignal, ListSignalEcho(*this, "ListBox::BeforeEraseSignal"));
+        Connect(AfterEraseSignal, ListSignalEcho(*this, "ListBox::AfterEraseSignal"));
         Connect(BrowsedSignal, ListSignalEcho(*this, "ListBox::BrowsedSignal"));
     }
 }
@@ -678,7 +680,7 @@ void ListBox::AcceptDrops(const std::vector<Wnd*>& wnds, const Pt& pt)
     for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
         Row* row = boost::polymorphic_downcast<Row*>(*it);
         iterator insertion_it = RowUnderPt(pt);
-        Insert(row, insertion_it, true);
+        Insert(row, insertion_it, true, true);
     }
 }
 
@@ -813,10 +815,10 @@ void ListBox::SetColor(Clr c)
 }
 
 ListBox::iterator ListBox::Insert(Row* row, iterator it)
-{ return Insert(row, it, false); }
+{ return Insert(row, it, false, true); }
 
 ListBox::iterator ListBox::Insert(Row* row)
-{ return Insert(row, m_rows.end(), false); }
+{ return Insert(row, m_rows.end(), false, true); }
 
 ListBox::Row* ListBox::Erase(iterator it)
 { return Erase(it, false, false); }
@@ -845,6 +847,8 @@ void ListBox::Clear()
 
     if (m_iterator_being_erased)
         *m_iterator_being_erased = m_rows.end();
+
+    ClearedSignal();
 }
 
 void ListBox::SelectRow(iterator it)
@@ -1435,7 +1439,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     return true;
 }
 
-ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped)
+ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool signal)
 {
     // Track the originating row in case this is an intra-ListBox
     // drag-and-drop.
@@ -1480,6 +1484,9 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped)
     row->InstallEventFilter(this);
     NormalizeRow(row);
 
+    if (signal)
+        BeforeInsertSignal(it);
+
     Pt insertion_pt;
     if (m_rows.empty()) {
         m_rows.push_back(row);
@@ -1518,6 +1525,9 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped)
         if (original_dropped_position != m_rows.end())
             Erase(original_dropped_position, true, false);
     }
+
+    if (signal)
+        AfterInsertSignal(it);
 
     return retval;
 }
@@ -1562,7 +1572,7 @@ ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
         ScopedSet scoped_set(m_iterator_being_erased, &it);
 
         if (signal && !removing_duplicate)
-            ErasedSignal(it);
+            BeforeEraseSignal(it);
 
         if (it != m_rows.end()) {
             m_selections.erase(it);
@@ -1575,6 +1585,9 @@ ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
             --m_caret;
 
         AdjustScrolls(false);
+
+        if (signal && !removing_duplicate)
+            AfterEraseSignal(it);
 
         return row;
     } else {

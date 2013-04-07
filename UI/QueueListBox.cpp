@@ -5,16 +5,42 @@
 
 #include <boost/cast.hpp>
 
+////////////////////////////////////////////////////////////
+// PromptRow
+////////////////////////////////////////////////////////////
+struct PromptRow : GG::ListBox::Row {
+    PromptRow(GG::X w, std::string prompt_str) {
+        Resize(GG::Pt(w, GG::Y(3*ClientUI::Pts() + 15)));
+
+        GG::TextControl* prompt = new GG::TextControl(GG::X(2), GG::Y(2), Width() - 10, Height(), prompt_str, ClientUI::GetFont(),
+                                                      GG::LightColor(ClientUI::TextColor()),
+                                                      GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK);
+        prompt->ClipText(true);
+        Resize(prompt->Size());
+        push_back(prompt);
+    }
+};
+
 
 ////////////////////////////////////////////////////////////
 // QueueListBox
 ////////////////////////////////////////////////////////////
-QueueListBox::QueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str) :
+QueueListBox::QueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str, const std::string& prompt_str) :
     CUIListBox(x, y, w, h),
     m_drop_point(end()),
     m_show_drop_point(false),
-    m_enabled(true)
-{ AllowDropType(drop_type_str); }
+    m_enabled(true),
+    m_showing_prompt(true),
+    m_prompt_str(prompt_str)
+{
+    AllowDropType(drop_type_str);
+    
+    GG::Connect(BeforeInsertSignal, &QueueListBox::EnsurePromptHiddenSlot, this);
+    GG::Connect(AfterEraseSignal, &QueueListBox::ShowPromptConditionallySlot, this);
+    GG::Connect(ClearedSignal, &QueueListBox::ShowPromptSlot, this);
+
+    Insert(new PromptRow(w, m_prompt_str));
+}
 
 void QueueListBox::DropsAcceptable(DropsAcceptableIter first,
                                    DropsAcceptableIter last,
@@ -85,4 +111,27 @@ void QueueListBox::EnableOrderIssuing(bool enable/* = true*/)
 void QueueListBox::Clear() {
     CUIListBox::Clear();
     DragDropLeave();
+}
+
+void QueueListBox::EnsurePromptHiddenSlot(iterator it) {
+    if (m_showing_prompt) {
+        Erase(begin(), false, false); // if the prompt is shown, it must be the only row in the ListBox
+        m_showing_prompt = false;
+    }
+}
+
+void QueueListBox::ShowPromptSlot() {
+    Insert(new PromptRow(Width() - 4, m_prompt_str), begin(), false, false);
+    m_showing_prompt = true;
+}
+
+void QueueListBox::ShowPromptConditionallySlot(iterator it) {
+    if (begin() == end()) {
+        Insert(new PromptRow(Width() - 4, m_prompt_str), begin(), false, false);
+        m_showing_prompt = true;
+    }
+}
+
+bool QueueListBox::DisplayingValidQueueItems() {
+    return !m_showing_prompt;
 }

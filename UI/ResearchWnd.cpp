@@ -198,7 +198,7 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
 
     m_queue_lb = new QueueListBox(GG::X(2), m_research_info_panel->LowerRight().y,
                                   m_research_info_panel->Width() - 4, ClientSize().y - 4 - m_research_info_panel->Height(),
-                                  "RESEARCH_QUEUE_ROW");
+                                  "RESEARCH_QUEUE_ROW", UserString("RESEARCH_QUEUE_PROMPT"));
     GG::Connect(m_queue_lb->QueueItemMoved, &ResearchWnd::QueueItemMoved, this);
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
 
@@ -207,7 +207,6 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     m_tech_tree_wnd->MoveTo(GG::Pt(m_research_info_panel->Width(), GG::Y0));
 
     GG::Connect(m_tech_tree_wnd->AddTechsToQueueSignal, &ResearchWnd::AddTechsToQueueSlot,          this);
-    GG::Connect(m_queue_lb->ErasedSignal,               &ResearchWnd::QueueItemDeletedSlot,         this);
     GG::Connect(m_queue_lb->LeftClickedSignal,          &ResearchWnd::QueueItemClickedSlot,         this);
     GG::Connect(m_queue_lb->DoubleClickedSignal,        &ResearchWnd::QueueItemDoubleClickedSlot,   this);
 
@@ -353,7 +352,7 @@ void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, 
     empire->UpdateResearchQueue();
 }
 
-void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it) {
+void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     if (!m_enabled)
         return;
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -365,15 +364,18 @@ void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it) {
 }
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt) {
-    QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
-    if (!queue_row)
-        return;
-    ShowTech(queue_row->tech_name);
+    if (m_queue_lb->DisplayingValidQueueItems()) {
+        QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
+        if (!queue_row)
+            return;
+        ShowTech(queue_row->tech_name);
+    }
 }
 
 void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it) {
-    if (m_enabled)
-        m_queue_lb->ErasedSignal(it);
+    if (m_queue_lb->DisplayingValidQueueItems()) {
+        DeleteQueueItem(it);
+    }
 }
 
 void ResearchWnd::EnableOrderIssuing(bool enable/* = true*/) {

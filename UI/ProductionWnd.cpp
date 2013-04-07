@@ -475,7 +475,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     }
 
     m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4,
-                                  ClientSize().y - 4 - m_production_info_panel->Height(), "PRODUCTION_QUEUE_ROW");
+                                  ClientSize().y - 4 - m_production_info_panel->Height(), "PRODUCTION_QUEUE_ROW", UserString("PRODUCTION_QUEUE_PROMPT"));
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
 
     GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width(), GG::Y0);
@@ -489,7 +489,6 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal,     &ProductionWnd::ChangeBuildQuantitySlot, this);
     GG::Connect(m_build_designator_wnd->SystemSelectedSignal,           SystemSelectedSignal);
     GG::Connect(m_queue_lb->QueueItemMoved,                             &ProductionWnd::QueueItemMoved, this);
-    GG::Connect(m_queue_lb->ErasedSignal,                               &ProductionWnd::QueueItemDeletedSlot, this);
     GG::Connect(m_queue_lb->LeftClickedSignal,                          &ProductionWnd::QueueItemClickedSlot, this);
     GG::Connect(m_queue_lb->DoubleClickedSignal,                        &ProductionWnd::QueueItemDoubleClickedSlot, this);
 
@@ -644,8 +643,7 @@ void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, in
         empire->UpdateProductionQueue();
 }
 
-void ProductionWnd::QueueItemDeletedSlot(GG::ListBox::iterator it) {
-    //std::cout << "ProductionWnd::QueueItemDeletedSlot" << std::endl;
+void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     HumanClientApp::GetApp()->Orders().IssueOrder(
         OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(),
                                           std::distance(m_queue_lb->begin(), it))));
@@ -654,11 +652,17 @@ void ProductionWnd::QueueItemDeletedSlot(GG::ListBox::iterator it) {
         empire->UpdateProductionQueue();
 }
 
-void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt)
-{ m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_lb->begin(), it)); }
+void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt) {
+    if (m_queue_lb->DisplayingValidQueueItems()) {
+        m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_lb->begin(), it));
+    }
+}
 
-void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it)
-{ m_queue_lb->ErasedSignal(it); }
+void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it) {
+    if (m_queue_lb->DisplayingValidQueueItems()) {
+        DeleteQueueItem(it);
+    }
+}
 
 void ProductionWnd::EnableOrderIssuing(bool enable/* = true*/) {
     m_enabled = enable;
