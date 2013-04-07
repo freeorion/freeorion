@@ -214,7 +214,7 @@ std::list <std::pair<std::string, std::string> >            EncyclopediaDetailPa
 std::list <std::pair<std::string, std::string> >::iterator  EncyclopediaDetailPanel::m_items_it = m_items.begin();
 
 EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
-    CUIWnd("", GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
+    CUIWnd("", GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE),
     m_name_text(0),
     m_cost_text(0),
     m_summary_text(0),
@@ -1657,6 +1657,9 @@ void EncyclopediaDetailPanel::OnNext() {
 
     Refresh();
 }
+
+void EncyclopediaDetailPanel::CloseClicked()
+{ ClosingSignal(); }
 
 Encyclopedia::Encyclopedia() :
     articles()

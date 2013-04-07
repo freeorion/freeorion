@@ -24,6 +24,7 @@ public:
 
     mutable boost::signal<void (int)>   ObjectDoubleClickedSignal;
     mutable boost::signal<void (int)>   ObjectDumpSignal;
+    mutable boost::signal<void ()>      ClosingSignal;
 
 private:
     void            DoLayout();
@@ -36,6 +37,7 @@ private:
     void            SortClicked();
     void            ColumnsClicked();
     void            CollapseExpandClicked();
+    virtual void    CloseClicked();
 
     ObjectListBox*              m_list_box;
     GG::Button*                 m_filter_button;

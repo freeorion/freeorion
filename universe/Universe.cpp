@@ -446,7 +446,6 @@ void Universe::Clear() {
     m_empire_known_destroyed_object_ids.clear();
     m_empire_stale_knowledge_object_ids.clear();
 
-    m_ship_designs.clear();
     m_empire_known_ship_design_ids.clear();
 
     m_marked_destroyed.clear();

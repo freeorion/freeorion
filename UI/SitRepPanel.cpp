@@ -269,9 +269,6 @@ void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     }
 }
 
-void SitRepPanel::OnClose()
-{ Hide(); }
-
 void SitRepPanel::CloseClicked()
 { ClosingSignal(); }
 

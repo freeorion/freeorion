@@ -76,11 +76,15 @@ public:
     void            OnNext();
     //@}
 
-private:
-    void DoLayout();
+    mutable boost::signal<void ()> ClosingSignal;
 
-    void HandleLinkClick(const std::string& link_type, const std::string& data);
-    void HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
+private:
+    void            DoLayout();
+
+    virtual void    CloseClicked();
+
+    void            HandleLinkClick(const std::string& link_type, const std::string& data);
+    void            HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
 
     static std::list<std::pair <std::string, std::string> >             m_items;    // stores all items which have been observed in the past
                                                                                     // .first == item type; .second == item.name

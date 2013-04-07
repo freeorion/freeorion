@@ -12,10 +12,6 @@ namespace GG {
 
 class SitRepPanel : public CUIWnd {
 public:
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void ()> ClosingSignalType;   ///< emitted when the window is manually closed by user by clicking on the sitrep panel itself
-    //@}
-
     /** \name Structors */ //@{
     SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h); ///< basic ctor
     //@}
@@ -31,12 +27,11 @@ public:
 
     void            Update(); ///< loads all the relevant SitReps into the window
 
-    virtual void    OnClose();
     void            ShowSitRepsForTurn(int turn);
     void            SetHiddenSitRepTemplates(const std::set<std::string>& templates);
     //@}
 
-    mutable ClosingSignalType ClosingSignal;
+    mutable boost::signal<void ()> ClosingSignal;
 
 private:
     virtual void    CloseClicked();

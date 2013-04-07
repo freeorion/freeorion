@@ -1618,7 +1618,7 @@ private:
 // ObjectListWnd
 ////////////////////////////////////////////////
 ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
-    CUIWnd(UserString("MAP_BTN_OBJECTS"), GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
+    CUIWnd(UserString("MAP_BTN_OBJECTS"), GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE),
     m_list_box(0),
     m_filter_button(0),
     m_sort_button(0),
@@ -1703,10 +1703,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     int object_id = ObjectInRow(it);
     if (object_id == INVALID_OBJECT_ID)
         return;
-    ClientNetworking& net = HumanClientApp::GetApp()->Networking();
-    const HumanClientApp* app = HumanClientApp::GetApp();
+    HumanClientApp* app = HumanClientApp::GetApp();
+    ClientNetworking& net = app->Networking();
     bool moderator = false;
-    if (app && app->GetPlayerClientType(app->PlayerID()) == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+    if (app->GetPlayerClientType(app->PlayerID()) == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         moderator = true;
 
 
@@ -1719,7 +1719,6 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         menu_contents.next_level.push_back(GG::MenuItem(UserString("MOD_DESTROY"),      10, false, false));
         menu_contents.next_level.push_back(GG::MenuItem(UserString("MOD_SET_OWNER"),    11, false, false));
     }
-
 
     // run popup and respond
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
@@ -1778,3 +1777,7 @@ void ObjectListWnd::CollapseExpandClicked() {
         m_list_box->CollapseObject(INVALID_OBJECT_ID);
     DoLayout();
 }
+
+void ObjectListWnd::CloseClicked()
+{ ClosingSignal(); }
+

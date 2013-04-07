@@ -27,6 +27,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
+#include "../util/ModeratorAction.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
@@ -588,23 +589,24 @@ MapWnd::MapWnd() :
 
     // situation report window
     m_sitrep_panel = new SitRepPanel(GG::X0, GG::Y0, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
-    GG::Connect(m_sitrep_panel->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));    // sitrep panel is manually closed by user
+    GG::Connect(m_sitrep_panel->ClosingSignal, boost::bind(&MapWnd::ToggleSitRep, this));   // Wnd is manually closed by user
     GG::GUI::GetGUI()->Register(m_sitrep_panel);
     m_sitrep_panel->Hide();
 
 
     // encyclpedia panel
     m_pedia_panel = new EncyclopediaDetailPanel(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    GG::Connect(m_pedia_panel->ClosingSignal, boost::bind(&MapWnd::TogglePedia, this));     // Wnd is manually closed by user
     GG::GUI::GetGUI()->Register(m_pedia_panel);
     m_pedia_panel->Hide();
 
 
     // objects list
     m_object_list_wnd = new ObjectListWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
-    //GG::Connect(m_object_list_wnd->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleObjects, this)));// sitrep panel is manually closed by user
+    GG::Connect(m_object_list_wnd->ClosingSignal,       boost::bind(&MapWnd::ToggleObjects, this));   // Wnd is manually closed by user
+    GG::Connect(m_object_list_wnd->ObjectDumpSignal,    &ClientUI::DumpObject,              ClientUI::GetClientUI());
     GG::GUI::GetGUI()->Register(m_object_list_wnd);
     m_object_list_wnd->Hide();
-    GG::Connect(m_object_list_wnd->ObjectDumpSignal,    &ClientUI::DumpObject,  ClientUI::GetClientUI());
 
 
     // research window
@@ -1601,12 +1603,25 @@ void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
         m_side_panel->Hide();
     }
     m_dragged = false;
+
+
+    HumanClientApp* app = HumanClientApp::GetApp();
+    ClientNetworking& net = app->Networking();
+    bool moderator = false;
+    if (app->GetPlayerClientType(app->PlayerID()) == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        moderator = true;
+    if (!moderator)
+        return;
+
+    std::pair<double, double> u_pos = this->UniversePositionFromScreenCoords(pt);
+
+    net.SendMessage(ModeratorActionMessage(app->PlayerID(),
+        Moderator::CreateSystem(u_pos.first, u_pos.second, STAR_BLUE)));
 }
 
 void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     // Attempt to close open fleet windows (if any are open and this is allowed), then attempt to close the SidePanel (if open);
     // if these fail, go ahead with the context-sensitive popup menu . Note that this enforces a one-close-per-click policy.
-
     if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
         if (FleetUIManager::GetFleetUIManager().CloseAll())
             return;
@@ -1695,7 +1710,7 @@ void MapWnd::ProductionUpdate() {
 void MapWnd::InitTurn() {
     int turn_number = CurrentTurn();
     Logger().debugStream() << "Initializing turn " << turn_number;
-    ScopedTimer("MapWnd::InitTurn", true);
+    ScopedTimer init_timer("MapWnd::InitTurn", true);
 
     Logger().debugStream() << "Mapwnd Init -- Setting Accelerators";
     SetAccelerators();
@@ -1748,19 +1763,19 @@ void MapWnd::InitTurn() {
 
     const std::set<int>& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
 
-    // get ids of not-destroyed systems known to this empire.
-    std::set<int> this_client_known_systems;
-    std::vector<int> all_system_ids = Objects().FindObjectIDs<System>();
-    for (std::vector<int>::const_iterator it = all_system_ids.begin(); it != all_system_ids.end(); ++it)
-        if (this_client_known_destroyed_objects.find(*it) == this_client_known_destroyed_objects.end())
-            this_client_known_systems.insert(*it);
+    //// get ids of not-destroyed systems known to this empire.
+    //std::set<int> this_client_known_systems;
+    //std::vector<int> all_system_ids = Objects().FindObjectIDs<System>();
+    //for (std::vector<int>::const_iterator it = all_system_ids.begin(); it != all_system_ids.end(); ++it)
+    //    if (this_client_known_destroyed_objects.find(*it) == this_client_known_destroyed_objects.end())
+    //        this_client_known_systems.insert(*it);
 
-    // get ids of all not-destroyed objects known to this empire.
-    std::set<int> this_client_known_objects;
-    std::vector<int> all_object_ids = Objects().FindObjectIDs();
-    for (std::vector<int>::const_iterator it = all_object_ids.begin(); it != all_object_ids.end(); ++it)
-        if (this_client_known_destroyed_objects.find(*it) == this_client_known_destroyed_objects.end())
-            this_client_known_objects.insert(*it);
+    //// get ids of all not-destroyed objects known to this empire.
+    //std::set<int> this_client_known_objects;
+    //std::vector<int> all_object_ids = Objects().FindObjectIDs();
+    //for (std::vector<int>::const_iterator it = all_object_ids.begin(); it != all_object_ids.end(); ++it)
+    //    if (this_client_known_destroyed_objects.find(*it) == this_client_known_destroyed_objects.end())
+    //        this_client_known_objects.insert(*it);
 
     Logger().debugStream() << "MapWnd::InitTurn getting known starlanes and visible systems and visible objects time: " << (timer.elapsed() * 1000.0);
 
@@ -1874,7 +1889,9 @@ void MapWnd::InitTurn() {
 
 void MapWnd::MidTurnUpdate() {
     Logger().debugStream() << "MapWnd::MidTurnUpdate";
-    ScopedTimer("MapWnd::MidTurnUpdate", true);
+    ScopedTimer timer("MapWnd::MidTurnUpdate", true);
+
+    GetUniverse().InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
 
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
@@ -1888,7 +1905,7 @@ void MapWnd::MidTurnUpdate() {
 
 void MapWnd::InitTurnRendering() {
     Logger().debugStream() << "MapWnd::InitTurnRendering";
-    ScopedTimer("MapWnd::InitTurnRendering", true);
+    ScopedTimer timer("MapWnd::InitTurnRendering", true);
 
     if (!m_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
         boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
@@ -2006,7 +2023,7 @@ void MapWnd::InitTurnRendering() {
 
 void MapWnd::InitSystemRenderingBuffers() {
     Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers";
-    ScopedTimer("MapWnd::InitSystemRenderingBuffers", true);
+    ScopedTimer timer("MapWnd::InitSystemRenderingBuffers", true);
 
     // clear out all the old buffers
     ClearSystemRenderingBuffers();
@@ -2104,7 +2121,7 @@ void MapWnd::InitSystemRenderingBuffers() {
             const float GAS_Y4 = static_cast<float>(system->Y() + (Y4r * GAS_SIZE));
 
             GL2DVertexBuffer& gas_vertices = m_galaxy_gas_quad_vertices[gaseous_texture];
-            
+
             gas_vertices.store(GAS_X1,GAS_Y1); // rotated upper right
             gas_vertices.store(GAS_X2,GAS_Y2); // rotated upper left
             gas_vertices.store(GAS_X3,GAS_Y3); // rotated lower left
@@ -2186,7 +2203,7 @@ std::vector<int> MapWnd::GetLeastJumps(int startSys, int endSys, const std::set<
 
 void MapWnd::InitStarlaneRenderingBuffers() {
     Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers";
-    ScopedTimer("MapWnd::InitStarlaneRenderingBuffers", true);
+    ScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers", true);
 
     // clear old buffers
     ClearStarlaneRenderingBuffers();
@@ -2678,7 +2695,6 @@ void MapWnd::SelectSystem(int system_id) {
     if (SidePanel::SystemID() == INVALID_OBJECT_ID) {
         // no selected system.  hide sidepanel.
         m_side_panel->Hide();
-
     } else {
         // selected a valid system, show sidepanel
         m_side_panel->Show();
@@ -3052,6 +3068,7 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(const Fleet* flee
 }
 
 void MapWnd::RefreshFleetButtons() {
+    ScopedTimer timer("RefreshFleetButtons()");
     // determine fleets that need buttons so that fleets at the same location can
     // be grouped by empire owner and buttons created
     const ObjectMap& objects = GetUniverse().Objects();
@@ -3713,7 +3730,7 @@ void MapWnd::SelectedFleetsChanged() {
 
 void MapWnd::SelectedShipsChanged() {
     Logger().debugStream() << "SelectedShipsChanged starting...";
-    ScopedTimer("MapWnd::SelectedShipsChanged", true);
+    ScopedTimer timer("MapWnd::SelectedShipsChanged", true);
 
     // get selected ships
     std::set<int> selected_ship_ids;
