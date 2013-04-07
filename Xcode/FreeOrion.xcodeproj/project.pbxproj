@@ -2860,26 +2860,8 @@
 		3402E2360F5A30D600DF6FE7 /* PagedGeometry */ = {
 			isa = PBXGroup;
 			children = (
-				82592EED147E376600B840A5 /* RandomTable.h */,
-				82592EEC147E374500B840A5 /* MersenneTwister.h */,
-				3402E2370F5A30D600DF6FE7 /* BatchedGeometry.cpp */,
-				3402E2380F5A30D600DF6FE7 /* BatchedGeometry.h */,
-				3402E2390F5A30D600DF6FE7 /* BatchPage.cpp */,
-				3402E23A0F5A30D600DF6FE7 /* BatchPage.h */,
-				3402E23D0F5A30D600DF6FE7 /* ImpostorPage.cpp */,
-				3402E23E0F5A30D600DF6FE7 /* ImpostorPage.h */,
-				3402E23F0F5A30D600DF6FE7 /* PagedGeometry.cpp */,
-				3402E2400F5A30D600DF6FE7 /* PagedGeometry.h */,
-				3402E2410F5A30D600DF6FE7 /* PropertyMaps.cpp */,
-				3402E2420F5A30D600DF6FE7 /* PropertyMaps.h */,
-				3402E2430F5A30D600DF6FE7 /* StaticBillboardSet.cpp */,
-				3402E2440F5A30D600DF6FE7 /* StaticBillboardSet.h */,
-				3402E2470F5A30D600DF6FE7 /* TreeLoader3D.cpp */,
-				3402E2480F5A30D600DF6FE7 /* TreeLoader3D.h */,
-				3402E2490F5A30D600DF6FE7 /* WindBatchedGeometry.cpp */,
-				3402E24A0F5A30D600DF6FE7 /* WindBatchedGeometry.h */,
-				3402E24B0F5A30D600DF6FE7 /* WindBatchPage.cpp */,
-				3402E24C0F5A30D600DF6FE7 /* WindBatchPage.h */,
+				3A8889561710CD070063EC8C /* source */,
+				3A8889551710CC980063EC8C /* include */,
 			);
 			path = PagedGeometry;
 			sourceTree = "<group>";
@@ -2910,36 +2892,9 @@
 		34972B580F49CB100015C864 /* OpenSteer */ = {
 			isa = PBXGroup;
 			children = (
-				34B9EBC10F5E1EEB005BF6A4 /* AbstractVehicle.h */,
-				346D87E70FC5F5B00095593E /* AsteroidBeltObstacle.cpp */,
-				346D87E80FC5F5B00095593E /* AsteroidBeltObstacle.h */,
-				34B9EBC20F5E1EEB005BF6A4 /* CombatFighter.cpp */,
-				34B9EBC30F5E1EEB005BF6A4 /* CombatFighter.h */,
-				346D87E90FC5F5B00095593E /* CombatObject.cpp */,
-				346D87EA0FC5F5B00095593E /* CombatObject.h */,
-				34B9EBC40F5E1EEB005BF6A4 /* CombatShip.cpp */,
-				34B9EBC50F5E1EEB005BF6A4 /* CombatShip.h */,
+				3A8889581710CFED0063EC8C /* include */,
+				3A8889571710CF210063EC8C /* source */,
 				34972B590F49CB100015C864 /* COPYING.OPENSTEER */,
-				34B9EBC60F5E1EEB005BF6A4 /* LocalSpace.h */,
-				346D87EB0FC5F5B00095593E /* Missile.cpp */,
-				346D87EC0FC5F5B00095593E /* Missile.h */,
-				34B9EBC90F5E1EEB005BF6A4 /* Obstacle.cpp */,
-				34B9EBCA0F5E1EEB005BF6A4 /* Obstacle.h */,
-				34B9EBCD0F5E1EEB005BF6A4 /* PathingEngine.cpp */,
-				34B9EBCE0F5E1EEB005BF6A4 /* PathingEngine.h */,
-				34B9EBCF0F5E1EEB005BF6A4 /* PathingEngineFwd.h */,
-				34B9EBD80F5E1EEB005BF6A4 /* Proximity.h */,
-				34B9EBD90F5E1EEB005BF6A4 /* ProximityDatabase.h */,
-				34B9EBE40F5E1EEB005BF6A4 /* SimpleVehicle.cpp */,
-				34B9EBE50F5E1EEB005BF6A4 /* SimpleVehicle.h */,
-				34B9EBE60F5E1EEB005BF6A4 /* StandardTypes.h */,
-				34B9EBE70F5E1EEB005BF6A4 /* SteerLibrary.h */,
-				34B9EBE80F5E1EEB005BF6A4 /* UnusedParameter.h */,
-				34B9EBE90F5E1EEB005BF6A4 /* Utilities.h */,
-				34B9EBEA0F5E1EEB005BF6A4 /* Vec3.cpp */,
-				34B9EBEB0F5E1EEB005BF6A4 /* Vec3.h */,
-				34B9EBEC0F5E1EEB005BF6A4 /* Vec3Utilities.cpp */,
-				34B9EBED0F5E1EEB005BF6A4 /* Vec3Utilities.h */,
 				34972B5A0F49CB100015C864 /* doc */,
 			);
 			path = OpenSteer;
@@ -3695,6 +3650,69 @@
 			path = Ogre;
 			sourceTree = "<group>";
 		};
+		3A8889551710CC980063EC8C /* include */ = {
+			isa = PBXGroup;
+			children = (
+				3402E2380F5A30D600DF6FE7 /* BatchedGeometry.h */,
+				3402E23A0F5A30D600DF6FE7 /* BatchPage.h */,
+				3402E24C0F5A30D600DF6FE7 /* WindBatchPage.h */,
+				3402E24A0F5A30D600DF6FE7 /* WindBatchedGeometry.h */,
+				3402E2440F5A30D600DF6FE7 /* StaticBillboardSet.h */,
+				3402E2480F5A30D600DF6FE7 /* TreeLoader3D.h */,
+				3402E2420F5A30D600DF6FE7 /* PropertyMaps.h */,
+				3402E2400F5A30D600DF6FE7 /* PagedGeometry.h */,
+				3402E23E0F5A30D600DF6FE7 /* ImpostorPage.h */,
+				82592EEC147E374500B840A5 /* MersenneTwister.h */,
+				82592EED147E376600B840A5 /* RandomTable.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		3A8889561710CD070063EC8C /* source */ = {
+			isa = PBXGroup;
+			children = (
+				3402E2410F5A30D600DF6FE7 /* PropertyMaps.cpp */,
+				3402E2430F5A30D600DF6FE7 /* StaticBillboardSet.cpp */,
+				3402E2470F5A30D600DF6FE7 /* TreeLoader3D.cpp */,
+				3402E2490F5A30D600DF6FE7 /* WindBatchedGeometry.cpp */,
+				3402E23F0F5A30D600DF6FE7 /* PagedGeometry.cpp */,
+				3402E24B0F5A30D600DF6FE7 /* WindBatchPage.cpp */,
+				3402E23D0F5A30D600DF6FE7 /* ImpostorPage.cpp */,
+				3402E2390F5A30D600DF6FE7 /* BatchPage.cpp */,
+				3402E2370F5A30D600DF6FE7 /* BatchedGeometry.cpp */,
+			);
+			path = source;
+			sourceTree = "<group>";
+		};
+		3A8889571710CF210063EC8C /* source */ = {
+			isa = PBXGroup;
+			children = (
+				34B9EBC90F5E1EEB005BF6A4 /* Obstacle.cpp */,
+				34B9EBE40F5E1EEB005BF6A4 /* SimpleVehicle.cpp */,
+				34B9EBEC0F5E1EEB005BF6A4 /* Vec3Utilities.cpp */,
+				34B9EBEA0F5E1EEB005BF6A4 /* Vec3.cpp */,
+			);
+			path = source;
+			sourceTree = "<group>";
+		};
+		3A8889581710CFED0063EC8C /* include */ = {
+			isa = PBXGroup;
+			children = (
+				34B9EBD80F5E1EEB005BF6A4 /* Proximity.h */,
+				34B9EBCA0F5E1EEB005BF6A4 /* Obstacle.h */,
+				34B9EBE50F5E1EEB005BF6A4 /* SimpleVehicle.h */,
+				34B9EBE60F5E1EEB005BF6A4 /* StandardTypes.h */,
+				34B9EBEB0F5E1EEB005BF6A4 /* Vec3.h */,
+				34B9EBE90F5E1EEB005BF6A4 /* Utilities.h */,
+				34B9EBE70F5E1EEB005BF6A4 /* SteerLibrary.h */,
+				34B9EBE80F5E1EEB005BF6A4 /* UnusedParameter.h */,
+				34B9EBED0F5E1EEB005BF6A4 /* Vec3Utilities.h */,
+				34B9EBC60F5E1EEB005BF6A4 /* LocalSpace.h */,
+				34B9EBC10F5E1EEB005BF6A4 /* AbstractVehicle.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
 		471023380CEF3AAB00A7DF2B /* GG */ = {
 			isa = PBXGroup;
 			children = (
@@ -3947,6 +3965,8 @@
 		471D59B00A988A2A00DA9C21 /* FreeOrion */ = {
 			isa = PBXGroup;
 			children = (
+				34972B580F49CB100015C864 /* OpenSteer */,
+				3402E2360F5A30D600DF6FE7 /* PagedGeometry */,
 				821CC18615F8C3C600D48537 /* log4cpp */,
 				47102F9D0CEF562700A7DF2B /* AI */,
 				471023380CEF3AAB00A7DF2B /* GG */,
@@ -4017,12 +4037,25 @@
 		471D5C6A0A98A3F900DA9C21 /* combat */ = {
 			isa = PBXGroup;
 			children = (
+				346D87EA0FC5F5B00095593E /* CombatObject.h */,
+				34B9EBC40F5E1EEB005BF6A4 /* CombatShip.cpp */,
+				34B9EBCD0F5E1EEB005BF6A4 /* PathingEngine.cpp */,
+				34B9EBCE0F5E1EEB005BF6A4 /* PathingEngine.h */,
+				34B9EBCF0F5E1EEB005BF6A4 /* PathingEngineFwd.h */,
+				34B9EBD90F5E1EEB005BF6A4 /* ProximityDatabase.h */,
+				34B9EBC50F5E1EEB005BF6A4 /* CombatShip.h */,
+				34B9EBC20F5E1EEB005BF6A4 /* CombatFighter.cpp */,
+				34B9EBC30F5E1EEB005BF6A4 /* CombatFighter.h */,
+				346D87E90FC5F5B00095593E /* CombatObject.cpp */,
+				346D87EB0FC5F5B00095593E /* Missile.cpp */,
+				346D87EC0FC5F5B00095593E /* Missile.h */,
+				346D87E70FC5F5B00095593E /* AsteroidBeltObstacle.cpp */,
+				346D87E80FC5F5B00095593E /* AsteroidBeltObstacle.h */,
 				822EB0FD170832240083EB38 /* CombatLogManager.cpp */,
 				822EB0FE170832240083EB38 /* CombatLogManager.h */,
 				346D87E60FC5F52A0095593E /* CombatEventListener.h */,
 				3402E2320F5A300600DF6FE7 /* CombatOrder.cpp */,
 				3402E2330F5A300600DF6FE7 /* CombatOrder.h */,
-				34972B580F49CB100015C864 /* OpenSteer */,
 				471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */,
 				471D5C6E0A98A3F900DA9C21 /* CombatSystem.h */,
 			);
@@ -4127,7 +4160,6 @@
 				3415B09F10851BB200009F19 /* CombatSetupWnd.h */,
 				346D87ED0FC5F6080095593E /* ShaderProgram.cpp */,
 				346D87EE0FC5F6080095593E /* ShaderProgram.h */,
-				3402E2360F5A30D600DF6FE7 /* PagedGeometry */,
 				34972BEC0F49CBF90015C864 /* Sound.cpp */,
 				34972BED0F49CBF90015C864 /* Sound.h */,
 				34972BE60F49CBE80015C864 /* ChatWnd.cpp */,
@@ -5619,7 +5651,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /usr/bin/python;
-			shellScript = "import os\nimport subprocess as sp\nfrom string import Template\n\nif os.getenv(\"ACTION\") == \"build\":\n\n\tsvn_proc = sp.Popen([\"svn\", \"info\"], stdout=sp.PIPE)\n\tsvn_info = svn_proc.communicate()[0]\n\n\tfor line in svn_info.splitlines():\n\t\tif line.startswith(\"Revision:\"):\n\t\t\twc_rev = line.partition(\" \")[2]\n\n\tif wc_rev == \"\":\n\t\tprint \"WARNING: can't determine working copy revision, Version.cpp not updated!\"\n\t\tquit()\n\n\ttemplate_file = open(\"Version.template\")\n\ttemplate = Template(template_file.read())\n\ttemplate_file.close()\n\n\tversion_cpp = open(\"Version.cpp\", \"w\")\n\tversion_cpp.write(template.substitute(WCREV=wc_rev))\n\tversion_cpp.close()\n\n\tprint \"Building rev: \" + wc_rev";
+			shellScript = "import os\nimport subprocess as sp\nfrom string import Template\n\nif os.getenv(\"ACTION\") == \"build\":\n\twc_rev = \"\"\n\tsvn_proc = sp.Popen([\"svn\", \"info\"], stdout=sp.PIPE)\n\tsvn_info = svn_proc.communicate()[0]\n\n\tfor line in svn_info.splitlines():\n\t\tif line.startswith(\"Revision:\"):\n\t\t\twc_rev = line.partition(\" \")[2]\n\n\tif wc_rev == \"\":\n\t\tprint \"WARNING: can't determine working copy revision, Version.cpp not updated!\"\n\t\tquit()\n\n\ttemplate_file = open(\"Version.template\")\n\ttemplate = Template(template_file.read())\n\ttemplate_file.close()\n\n\tversion_cpp = open(\"Version.cpp\", \"w\")\n\tversion_cpp.write(template.substitute(WCREV=wc_rev))\n\tversion_cpp.close()\n\n\tprint \"Building rev: \" + wc_rev";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -6756,6 +6788,7 @@
 					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
 					"\"$(SOURCE_ROOT)/../network\"",
@@ -6902,6 +6935,7 @@
 					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
 					"\"$(SOURCE_ROOT)/../network\"",
@@ -7081,6 +7115,7 @@
 					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
 					"\"$(SOURCE_ROOT)/../network\"",
@@ -7812,6 +7847,7 @@
 					"\"$(SOURCE_ROOT)/dep/alut\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
 					"\"$(SOURCE_ROOT)/../network\"",
@@ -8212,6 +8248,7 @@
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
 					"\"$(SOURCE_ROOT)/../network\"",
 					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
@@ -8692,6 +8729,7 @@
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../GG/libltdl\"",
 					"\"$(SOURCE_ROOT)/../OIS\"",
+					"\"$(SOURCE_ROOT)/../OpenSteer/include\"",
 					"\"$(SOURCE_ROOT)/../log4cpp\"",
 					"\"$(SOURCE_ROOT)/../network\"",
 					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
