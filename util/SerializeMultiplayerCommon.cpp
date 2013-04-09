@@ -9,7 +9,8 @@
 template <class Archive>
 void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_size)
+    ar  & BOOST_SERIALIZATION_NVP(m_seed)
+        & BOOST_SERIALIZATION_NVP(m_size)
         & BOOST_SERIALIZATION_NVP(m_shape)
         & BOOST_SERIALIZATION_NVP(m_age)
         & BOOST_SERIALIZATION_NVP(m_starlane_freq)

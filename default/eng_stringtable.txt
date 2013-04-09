@@ -1002,6 +1002,10 @@ Sets size of smallest-rendered rotating planets on side-panel.
 OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
 Sets whether to show rendered planets / asteroids on the side-panel.
 
+OPTIONS_DB_GAMESETUP_SEED
+'''The seed used for randomly generating the galaxy.
+Galaxies generated with the same settings and the same seed will be identical.'''
+
 OPTIONS_DB_GAMESETUP_STARS
 '''The approximate number of systems in the galaxy to be generated.
 For recommended game balance use 15-30 systems per empire.
@@ -1341,6 +1345,10 @@ Number of AI Players
 
 #Drop-down list labels and choices####
 
+GSETUP_SEED
+Seed
+GSETUP_RANDOMIZE
+Randomize
 GSETUP_STARS
 Systems
 GSETUP_SHAPE
@@ -1374,6 +1382,8 @@ GSETUP_IRREGULAR
 Irregular
 GSETUP_RING
 Ring
+GSETUP_RANDOM
+Random
 
 GSETUP_NONE
 None

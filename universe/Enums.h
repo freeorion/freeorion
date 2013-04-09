@@ -277,6 +277,7 @@ enum Shape {
     ELLIPTICAL,     ///< an elliptical galaxy
     IRREGULAR,      ///< an irregular galaxy
     RING,           ///< a ring galaxy
+    RANDOM,         ///< a random one of the above
     GALAXY_SHAPES   ///< the number of shapes in this enum (leave this last)
 };
 

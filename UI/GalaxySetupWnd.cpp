@@ -19,7 +19,7 @@ namespace {
     const GG::X CONTROL_MARGIN(5);
     const GG::Y CONTROL_HEIGHT(30);
     const GG::Y PANEL_CONTROL_SPACING(33);
-    const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 9);
+    const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 10);
     const GG::X GAL_SETUP_WND_WD(645);
     const GG::Y GAL_SETUP_WND_HT(29 + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT);
     const GG::Pt PREVIEW_SZ(GG::X(248), GG::Y(186));
@@ -28,8 +28,9 @@ namespace {
 
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
+        db.Add("GameSetup.seed",                "OPTIONS_DB_GAMESETUP_SEED",                    std::string("0"),   Validator<std::string>());
         db.Add("GameSetup.stars",               "OPTIONS_DB_GAMESETUP_STARS",                   61,                 RangedValidator<int>(10, 500));
-        db.Add("GameSetup.galaxy-shape",        "OPTIONS_DB_GAMESETUP_GALAXY_SHAPE",            ELLIPTICAL,           RangedValidator<Shape>(SPIRAL_2, RING));
+        db.Add("GameSetup.galaxy-shape",        "OPTIONS_DB_GAMESETUP_GALAXY_SHAPE",            ELLIPTICAL,         RangedValidator<Shape>(SPIRAL_2, RANDOM));
         db.Add("GameSetup.galaxy-age",          "OPTIONS_DB_GAMESETUP_GALAXY_AGE",              GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_HIGH));
         db.Add("GameSetup.planet-density",      "OPTIONS_DB_GAMESETUP_PLANET_DENSITY",          GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_HIGH));
         db.Add("GameSetup.starlane-frequency",  "OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY",      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(ALLOW_NO_STARLANES ? GALAXY_SETUP_NONE : GALAXY_SETUP_LOW, GALAXY_SETUP_HIGH));
@@ -53,6 +54,7 @@ const GG::X GalaxySetupPanel::DEFAULT_WIDTH(305);
 
 GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/) :
     GG::Control(x, y, w, GAL_SETUP_PANEL_HT, GG::Flags<GG::WndFlag>()),
+    m_seed_edit(0),
     m_stars_spin(0),
     m_galaxy_shapes_list(0),
     m_galaxy_ages_list(0),
@@ -75,8 +77,16 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
+    // seed
+    GG::TextControl* label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SEED"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.seed")));
+    AttachChild(label);
+    m_seed_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, LABELS_WIDTH, GetOptionsDB().Get<std::string>("GameSetup.seed"));
+    m_seed_edit->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_seed_edit->Height()) / 2));
+
     // number of stars
-    GG::TextControl* label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARS"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARS"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.stars")));
     AttachChild(label);
@@ -177,6 +187,14 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     Init();
 }
 
+unsigned int GalaxySetupPanel::GetSeed() const {
+    try {
+        return boost::lexical_cast<unsigned int, std::string>(m_seed_edit->Text());
+    } catch (boost::bad_lexical_cast) {
+        return 0;
+    }
+}
+
 int GalaxySetupPanel::Systems() const
 { return m_stars_spin->Value(); }
 
@@ -213,6 +231,7 @@ void GalaxySetupPanel::Disable(bool b/* = true*/) {
 }
 
 void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
+    m_seed_edit->SetText(boost::lexical_cast<std::string>(setup_data.m_seed));
     m_stars_spin->SetValue(setup_data.m_size);
     m_galaxy_shapes_list->Select(setup_data.m_shape);
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
@@ -226,6 +245,7 @@ void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
 }
 
 void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const {
+    setup_data.m_seed =             GetSeed();
     setup_data.m_size =             Systems();
     setup_data.m_shape =            GetShape();
     setup_data.m_age =              GetAge();
@@ -238,6 +258,7 @@ void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const {
 }
 
 void GalaxySetupPanel::Init() {
+    AttachChild(m_seed_edit);
     AttachChild(m_stars_spin);
     AttachChild(m_galaxy_shapes_list);
     AttachChild(m_galaxy_ages_list);
@@ -269,6 +290,7 @@ void GalaxySetupPanel::Init() {
     m_textures[ELLIPTICAL] =ClientUI::GetTexture(ClientUI::ArtDir() / "gp_elliptical.png");
     m_textures[IRREGULAR] = ClientUI::GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
     m_textures[RING] =      ClientUI::GetTexture(ClientUI::ArtDir() / "gp_ring.png");
+    m_textures[RANDOM] =    ClientUI::GetTexture(ClientUI::ArtDir() / "gp_random.png");
 
     // fill droplists
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_2ARM")));
@@ -278,6 +300,7 @@ void GalaxySetupPanel::Init() {
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_ELLIPTICAL")));
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_IRREGULAR")));
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RING")));
+    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
 
     m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_YOUNG")));
     m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MATURE")));
@@ -316,6 +339,7 @@ void GalaxySetupPanel::Init() {
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MANIACAL")));
 
     // initial settings from stored results or defaults
+    m_seed_edit->SetText(GetOptionsDB().Get<std::string>("GameSetup.seed"));
     m_stars_spin->SetValue(GetOptionsDB().Get<int>("GameSetup.stars"));
     m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape"));
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
@@ -523,6 +547,7 @@ void GalaxySetupWnd::PlayerNameChanged(const std::string& name)
 
 void GalaxySetupWnd::OkClicked() {
     // record selected galaxy setup options as new defaults
+    GetOptionsDB().Set("GameSetup.seed",                boost::lexical_cast<std::string>(m_galaxy_setup_panel->GetSeed()));
     GetOptionsDB().Set("GameSetup.stars",               m_galaxy_setup_panel->Systems());
     GetOptionsDB().Set("GameSetup.galaxy-shape",        m_galaxy_setup_panel->GetShape());
     GetOptionsDB().Set("GameSetup.galaxy-age",          m_galaxy_setup_panel->GetAge());

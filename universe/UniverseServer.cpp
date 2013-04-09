@@ -1478,7 +1478,7 @@ namespace {
     }
 }
 
-void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, GalaxySetupOption starlane_freq,
+void Universe::CreateUniverse(unsigned int seed, int size, Shape shape, GalaxySetupOption age, GalaxySetupOption starlane_freq,
                               GalaxySetupOption planet_density, GalaxySetupOption specials_freq,
                               GalaxySetupOption monster_freq, GalaxySetupOption native_freq,
                               const std::map<int, PlayerSetupData>& player_setup_data)
@@ -1488,6 +1488,7 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
 #endif
 
     m_objects.Clear();  // wipe out anything present in the object map
+    Seed(seed); // set up RNG
 
     // these happen to be equal to INVALID_OBJECT_ID and INVALID_DESIGN_ID,
     // but the point here is that the latest used ID is incremented before
@@ -1519,6 +1520,10 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
     std::vector<std::pair<double, double> > positions;
 
     // generate the stars
+    
+    if (shape == RANDOM)
+        shape = static_cast<Shape>(RandSmallInt(SPIRAL_2, RING));
+
     switch (shape) {
     case SPIRAL_2:
     case SPIRAL_3:

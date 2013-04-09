@@ -242,7 +242,7 @@ public:
     /** Generates systems and planets, assigns homeworlds and populates them
       * with people, industry and bases, and places starting fleets.  Uses
       * predefined galaxy shapes. */
-    void            CreateUniverse(int size, Shape shape,
+    void            CreateUniverse(unsigned int seed, int size, Shape shape,
                                    GalaxySetupOption age, GalaxySetupOption starlane_freq,
                                    GalaxySetupOption planet_density, GalaxySetupOption specials_freq,
                                    GalaxySetupOption monster_freq, GalaxySetupOption native_freq,
