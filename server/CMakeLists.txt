@@ -18,7 +18,7 @@ set(THIS_EXE_SOURCES
 
 add_definitions(-DFREEORION_BUILD_SERVER)
 
-set(THIS_EXE_LINK_LIBS core_static parse_static)
+set(THIS_EXE_LINK_LIBS core_static parse_static log4cpp_static)
 
 if (WIN32)
     link_directories(${BOOST_LIBRARYDIR})

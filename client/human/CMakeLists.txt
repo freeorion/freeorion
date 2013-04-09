@@ -129,6 +129,7 @@ add_definitions(-DFREEORION_BUILD_HUMAN -DGL_GLEXT_PROTOTYPES)
 set(THIS_EXE_LINK_LIBS
     core_static
     parse_static
+    log4cpp_static
     ${GIGI_GIGI_LIBRARY}
     ${GIGI_GIGIOGRE_LIBRARY}
     ${GIGI_GIGIOGREOIS_LIBRARY}

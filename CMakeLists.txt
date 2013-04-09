@@ -193,31 +193,8 @@ set(THIS_LIB_SOURCES
     util/binreloc.c
     util/Directories.cpp
     util/XMLDoc.cpp
-    log4cpp/src/Appender.cpp
-    log4cpp/src/AppenderSkeleton.cpp
-    log4cpp/src/BasicLayout.cpp
-    log4cpp/src/Category.cpp
-    log4cpp/src/CategoryStream.cpp
-    log4cpp/src/Configurator.cpp
-    log4cpp/src/FactoryParams.cpp
-    log4cpp/src/FileAppender.cpp
-    log4cpp/src/HierarchyMaintainer.cpp
-    log4cpp/src/LayoutAppender.cpp
-    log4cpp/src/Localtime.cpp
-    log4cpp/src/LoggingEvent.cpp
-    log4cpp/src/NDC.cpp
-    log4cpp/src/PatternLayout.cpp
-    log4cpp/src/Priority.cpp
-    log4cpp/src/StringUtil.cpp
-    log4cpp/src/TimeStamp.cpp
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
-
-if (WIN32)
-    list(APPEND THIS_LIB_SOURCES log4cpp/src/MSThreads.cpp)
-else ()
-    list(APPEND THIS_LIB_SOURCES log4cpp/src/PThreads.cpp)
-endif ()
 
 library_all_variants(core)
 
@@ -355,6 +332,7 @@ endmacro ()
 ########################################
 # Recurse Into Sources                 #
 ########################################
+add_subdirectory(log4cpp)
 add_subdirectory(server)
 add_subdirectory(client/AI)
 add_subdirectory(client/human)
