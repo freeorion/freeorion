@@ -210,7 +210,7 @@ namespace {
             if (disabled)
                 edit->Disable();
             else
-                GG::Connect(edit->EditedSignal,                     &NewGamePlayerRow::EmpireNameChanged,   this);
+                GG::Connect(edit->FocusUpdateSignal,                &NewGamePlayerRow::EmpireNameChanged,   this);
 
             // empire colour selector
             EmpireColorSelector* color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
