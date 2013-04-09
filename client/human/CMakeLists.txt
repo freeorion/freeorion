@@ -113,13 +113,6 @@ set(THIS_EXE_SOURCES
     ../../UI/TechTreeLayout.cpp
     ../../UI/TurnProgressWnd.cpp
     ../../UI/ShaderProgram.cpp
-    ../../PagedGeometry/source/BatchedGeometry.cpp
-    ../../PagedGeometry/source/BatchPage.cpp
-    ../../PagedGeometry/source/ImpostorPage.cpp
-    ../../PagedGeometry/source/PagedGeometry.cpp
-    ../../PagedGeometry/source/PropertyMaps.cpp
-    ../../PagedGeometry/source/StaticBillboardSet.cpp
-    ../../PagedGeometry/source/TreeLoader3D.cpp
     ../../util/AppInterface.cpp
     ../../util/VarText.cpp
 )
@@ -130,6 +123,7 @@ set(THIS_EXE_LINK_LIBS
     core_static
     parse_static
     log4cpp_static
+    pagedgeometry_static
     ${GIGI_GIGI_LIBRARY}
     ${GIGI_GIGIOGRE_LIBRARY}
     ${GIGI_GIGIOGREOIS_LIBRARY}

@@ -333,6 +333,7 @@ endmacro ()
 # Recurse Into Sources                 #
 ########################################
 add_subdirectory(log4cpp)
+add_subdirectory(PagedGeometry)
 add_subdirectory(server)
 add_subdirectory(client/AI)
 add_subdirectory(client/human)
