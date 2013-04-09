@@ -14,6 +14,7 @@ set(THIS_EXE_SOURCES
     ../universe/UniverseServer.cpp
     ../util/AppInterface.cpp
     ../util/VarText.cpp
+    ../combat/CombatSystem.cpp
 )
 
 add_definitions(-DFREEORION_BUILD_SERVER)

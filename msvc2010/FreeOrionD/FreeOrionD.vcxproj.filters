@@ -42,6 +42,9 @@
     <Filter Include="Header Files\UI">
       <UniqueIdentifier>{8634d98f-99bf-4187-9858-b4e6e7113307}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\combat">
+      <UniqueIdentifier>{6b2d0754-7ac9-4b5b-b390-dcbd62045354}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\combat\CombatOrder.h">
@@ -246,6 +249,9 @@
     </ClCompile>
     <ClCompile Include="..\..\util\Process.cpp">
       <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\CombatSystem.cpp">
+      <Filter>Source Files\combat</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

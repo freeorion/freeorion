@@ -135,7 +135,6 @@ set(THIS_LIB_SOURCES
     combat/CombatObject.cpp
     combat/CombatShip.cpp
     combat/CombatLogManager.cpp
-    combat/CombatSystem.cpp
     combat/Missile.cpp
     combat/PathingEngine.cpp
     OpenSteer/source/Obstacle.cpp

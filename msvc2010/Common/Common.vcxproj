@@ -187,7 +187,6 @@
     <ClCompile Include="..\..\combat\CombatObject.cpp" />
     <ClCompile Include="..\..\combat\CombatOrder.cpp" />
     <ClCompile Include="..\..\combat\CombatShip.cpp" />
-    <ClCompile Include="..\..\combat\CombatSystem.cpp" />
     <ClCompile Include="..\..\combat\Missile.cpp" />
     <ClCompile Include="..\..\combat\PathingEngine.cpp" />
     <ClCompile Include="..\..\Empire\Diplomacy.cpp" />

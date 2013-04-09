@@ -399,9 +399,6 @@
     <ClCompile Include="..\..\combat\CombatShip.cpp">
       <Filter>Source Files\combat</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\combat\CombatSystem.cpp">
-      <Filter>Source Files\combat</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\combat\Missile.cpp">
       <Filter>Source Files\combat</Filter>
     </ClCompile>
