@@ -2,7 +2,6 @@
 export PKG_CONFIG_PATH=GG:../bullet-2.73
 export CC=gcc-4.3
 export CXX=g++-4.3
-#export CPPDEFINES=BOOST_ASIO_DISABLE_EVENTFD
 
 # boost_lib_suffix=-gcc42-mt-1_35
 BOOST_VERSION=1_42
@@ -19,12 +18,3 @@ scons --config=force configure \
     with_bullet_include=../bullet-2.73/src \
     with_bullet_libdir=../bullet-2.73/src \
     CC=${CC} CXX=${CXX} 
-
-#CPPDEFINES=${CPPDEFINES} \
-
-
-
-
-#with_graphviz=../graphviz-2.16.1
-#multithreaded=no 
-#with_graphviz_include=../graphviz-2.16.1/lib with_graphviz_lib=../graphviz-2.16.1/
