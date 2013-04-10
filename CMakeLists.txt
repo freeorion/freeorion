@@ -267,52 +267,21 @@ set(BUILD_RELEASE ${BUILD_RELEASE_TMP})
 #
 # If any of the features listed conflict with this executable, no new targets
 # will be built.
-macro (executable_variant EXENAME)
-  set(BUILD_STATIC OFF)
-  set(BUILD_SHARED ON)
+macro (executable_all_variants EXENAME)
+  set(VARIANT_EXENAME ${EXENAME})
 
-  set(THIS_VARIANT_COMPILE_FLAGS)
-  set(THIS_VARIANT_LINK_FLAGS)
-  set(THIS_VARIANT_LINK_LIBS ${THIS_EXE_LINK_LIBS})
+  # Add the executable itself
+  add_executable(${VARIANT_EXENAME} ${THIS_EXE_SOURCES})
+  # Set properties on this executable
+  set_target_properties(${VARIANT_EXENAME}
+    PROPERTIES
+    OUTPUT_NAME ${EXENAME}
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+    LABELS "${PROJECT_NAME}"
+    )
 
-  # Determine if it is okay to build this variant
-  set(THIS_VARIANT_OKAY TRUE)
-  foreach (ARG ${ARGN})
-    # If the user specified that we should not build any variants of
-    # this kind, don't. For example, if the BUILD_SHARED option is
-    # off, don't build shared executables.
-    if (NOT BUILD_${ARG})
-      set(THIS_VARIANT_OKAY FALSE)
-    endif (NOT BUILD_${ARG})
-
-    # Accumulate compile and link flags
-    list(APPEND THIS_VARIANT_COMPILE_FLAGS ${${ARG}_COMPILE_FLAGS})
-    list(APPEND THIS_VARIANT_LINK_FLAGS ${${ARG}_LINK_FLAGS})
-    list(APPEND THIS_VARIANT_LINK_LIBS ${${ARG}_LINK_LIBS})
-  endforeach (ARG ${ARGN})
-
-  # Handle feature interactions
-  feature_interactions(THIS_VARIANT ${ARGN})
-
-  if (THIS_VARIANT_OKAY)
-    set(VARIANT_EXENAME ${EXENAME})
-
-    # Add the executable itself
-    add_executable(${VARIANT_EXENAME} ${THIS_EXE_SOURCES})
-    # Set properties on this executable
-    set_target_properties(${VARIANT_EXENAME}
-      PROPERTIES
-      OUTPUT_NAME ${EXENAME}
-      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-      CLEAN_DIRECT_OUTPUT 1
-      COMPILE_FLAGS "${THIS_VARIANT_COMPILE_FLAGS}"
-      LINK_FLAGS "${THIS_VARIANT_LINK_FLAGS}"
-      LABELS "${PROJECT_NAME}"
-      )
-
-    # Link against whatever libraries this executable depends on
-    target_link_libraries(${VARIANT_EXENAME} ${THIS_VARIANT_LINK_LIBS})
-  endif ()
+  # Link against whatever libraries this executable depends on
+  target_link_libraries(${VARIANT_EXENAME} ${THIS_EXE_LINK_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 
   string(TOUPPER COMPONENT_${PROJECT_NAME} EXE_COMPONENT)
   install(
@@ -321,11 +290,6 @@ macro (executable_variant EXENAME)
     LIBRARY DESTINATION . COMPONENT ${EXE_COMPONENT}
     ARCHIVE DESTINATION . COMPONENT ${EXE_COMPONENT}
   )
-endmacro ()
-
-macro (executable_all_variants EXENAME)
-    executable_variant(${EXENAME} SHARED DEBUG MULTI_THREADED)
-    executable_variant(${EXENAME} SHARED RELEASE MULTI_THREADED)
 endmacro ()
 
 ########################################
