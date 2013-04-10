@@ -780,8 +780,11 @@ def sendColonyShips(colonyFleetIDs, evaluatedPlanets, missionType):
             continue
         thisSpec=thisTarget[1][1]
         foundFleets=[]
-        thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetStats={},  minStats={},  curStats={},  species=thisSpec,  systemsToCheck=[thisSysID],  systemsChecked=[], 
-                                                     fleetPoolSet = fleetPool,   fleetList=foundFleets,  triedFleets=set([]),  verbose=False)
+        try:
+            thisFleetList = FleetUtilsAI.getFleetsForMission(nships=1,  targetStats={},  minStats={},  curStats={},  species=thisSpec,  systemsToCheck=[thisSysID],  systemsChecked=[], 
+                                                         fleetPoolSet = fleetPool,   fleetList=foundFleets,  triedFleets=set([]),  verbose=False)
+        except:
+            continue
         if thisFleetList==[]:
             fleetPool.update(foundFleets)#just to be safe
             continue #must have no compatible colony/outpost ships 

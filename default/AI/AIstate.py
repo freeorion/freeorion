@@ -13,8 +13,9 @@ from MilitaryAI import MinThreat
 
 
 ##moving ALL or NEARLY ALL  'global' variables into AIState object rather than module
+##in general, leaving items as a module attribute if they are recalculated each turn without reference to prior values
 # global variables
-foodStockpileSize = 1     # food stored per population
+#foodStockpileSize = 1     # food stored per population
 minimalColoniseValue = 3  # minimal value for a planet to be colonised
 #colonisablePlanetIDs = []  # moved into AIstate
 colonyTargetedSystemIDs = []
@@ -53,24 +54,11 @@ class AIstate(object):
     def __init__(self,  aggression=fo.aggression.typical):
         "constructor"
         # 'global' (?) variables
-        self.foodStockpileSize =  1    # food stored per population
+        #self.foodStockpileSize =  1    # food stored per population
         self.minimalColoniseValue = 3  # minimal value for a planet to be colonised
         self.colonisablePlanetIDs = []  
-        self.colonyTargetedSystemIDs = []
         self.colonisableOutpostIDs = []  # 
-        self.outpostTargetedSystemIDs = []
-        self.opponentPlanetIDs = []
-        self.opponentSystemIDs=[]
-        self.invasionTargetedSystemIDs = []
-        self.militarySystemIDs = []
-        self.militaryTargetedSystemIDs = []
-        self.colonyFleetIDs = []
-        self.outpostFleetIDs = []
-        self.invasionFleetIDs = []
-        self.militaryFleetIDs = []
-        self.untaskedFleets=[]
         self.__aiMissionsByFleetID = {}
-
         self.__shipRoleByDesignID = {}
         self.__fleetRoleByID = {}
         self.__designStats={}
@@ -108,21 +96,9 @@ class AIstate(object):
         del self.__shipRoleByDesignID
         del self.__fleetRoleByID
         del self.__priorityByType
-        #del self.__explorableSystemByType
         del self.__aiMissionsByFleetID
         del self.colonisablePlanetIDs
-        del self.colonyTargetedSystemIDs
         del self.colonisableOutpostIDs
-        del self.outpostTargetedSystemIDs
-        del self.opponentPlanetIDs
-        del self.opponentSystemIDs
-        del self.invasionTargetedSystemIDs
-        del self.militarySystemIDs
-        del self.militaryTargetedSystemIDs
-        del self.colonyFleetIDs 
-        del self.outpostFleetIDs 
-        del self.invasionFleetIDs 
-        del self.militaryFleetIDs 
         del self.needsEmergencyExploration
         del self.newlySplitFleets
         del self.misc
@@ -133,7 +109,7 @@ class AIstate(object):
         
         fleetsLostBySystem.clear()
         fleetsLostByID.clear()
-        invasionTargets=[]
+        invasionTargets[:]=[]
         
         ExplorationAI.graphFlags.clear()
         print "-------------------------------------------------"
@@ -220,9 +196,10 @@ class AIstate(object):
         tDefense = planet.currentMeterValue(fo.meterType.maxDefense)
         shields = min(tShields,  cShields+2*sightingAge)#TODO: base off regen tech
         defense = min(tDefense,  cDefense+2*sightingAge)#TODO: base off regen tech
-        cInfra = planet.currentMeterValue(fo.meterType.construction)
-        tInfra = planet.currentMeterValue(fo.meterType.targetConstruction)
-        infra = min(tInfra,  cInfra+sightingAge)
+        #cInfra = planet.currentMeterValue(fo.meterType.construction)
+        #tInfra = planet.currentMeterValue(fo.meterType.targetConstruction)
+        #infra = min(tInfra,  cInfra+sightingAge)
+        infra=0 #doesn't really contribute to combat since damage to shields & 'defense' done first
         return  {'overall': defense*(defense + shields + infra ),  'attack':defense ,  'health':(defense + shields + infra ) }
 
     def updateSystemStatus(self,  sysIDList=None):

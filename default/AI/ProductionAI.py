@@ -28,6 +28,8 @@ hullStats = {
              
              }
 
+doDoubleShields=False
+
 #get key routines declared for import by others before completing present imports, to avoid circularity problems
 def curBestMilShipRating():
     if (fo.currentTurn()+1) in bestMilRatingsHistory:
@@ -327,16 +329,7 @@ def addMarkDesigns():
     ar1 = "AR_LEAD_PLATE"
     ar2= "AR_ZORTRIUM_PLATE"
     ar3= "AR_NEUTRONIUM_PLATE"
-    nb,  hull =  designNameBases[1]+"-%1d",   "SH_BASIC_MEDIUM"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ""],  "",  model)    for iw in range(1, 8) ]
 
-    #newMarkDesigns += [ ((nb%iw)+'N',  desc,  hull,  [ srb%iw,  ar3,  ""],  "",  model)    for iw in range(1, 8) ]
-
-    nb,  hull =  designNameBases[2]+"-1-%1d",   "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1],  "",  model)    for iw in range(2, 9) ]
-    nb,  hull =  designNameBases[2]+"-2-%1d",   "SH_STATIC_MULTICELLULAR"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(6, 9) ]
-    
     if foAI.foAIstate.aggression in [fo.aggression.beginner, fo.aggression.turtle]: 
         maxEM= 8
     elif foAI.foAIstate.aggression ==fo.aggression.cautious: 
@@ -344,11 +337,28 @@ def addMarkDesigns():
     else:
         maxEM= 10
     
+    nb,  hull =  designNameBases[1]+"-%1d",   "SH_BASIC_MEDIUM"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ""],  "",  model)    for iw in range(1, 8) ]
+
+    #newMarkDesigns += [ ((nb%iw)+'N',  desc,  hull,  [ srb%iw,  ar3,  ""],  "",  model)    for iw in range(1, 8) ]
+
+    nb,  hull =  designNameBases[2]+"-1-%1d",   "SH_ORGANIC"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1],  "",  model)    for iw in range(3, 9) ]
+    nb,  hull =  designNameBases[2]+"-3-%1d",   "SH_STATIC_MULTICELLULAR"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(6, 9) ]
+
+    if doDoubleShields or (empire.empireID%2 == 0) :
+        nb,  hull =  designNameBases[2]+"-2-%1x",   "SH_ORGANIC"
+        newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  is2,  is2],  "",  model)    for iw in range(5, maxEM+1) ]
+        nb,  hull =  designNameBases[2]+"-4-%1d",   "SH_STATIC_MULTICELLULAR"
+        newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is2,  is2],  "",  model)    for iw in range(6, maxEM+1) ]
+
+    
     nb,  hull =  designNameBases[3]+"-1-%1x",   "SH_ENDOMORPHIC"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + 2*[ is1],  "",  model)    for iw in [5, 6, 7 ] ]
 
     nb =  designNameBases[3]+"-2-%1x"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + [ is2,  is2],  "",  model)    for iw in range(6,  maxEM+1) ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] + [ is2,  is2, is2],  "",  model)    for iw in range(6,  maxEM+1) ]
 
     nb =  designNameBases[3]+"3-%1x"
     #newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar1] + [ is1,  is1],  "",  model)    for iw in [5, 6, 7, 8,   10, 11, 12 ] ]
@@ -366,7 +376,7 @@ def addMarkDesigns():
         newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] +[ar3]+ 2*[ is2],  "",  model)    for iw in range(8,  maxEM+1) ]
 
     nb =  designNameBases[3]+"-7-%1x"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] + [ is3,  is3, is3],  "",  model)    for iw in range(8,  maxEM+1) ]
     
     nb =  designNameBases[3]+"-8-%1x"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
@@ -376,8 +386,8 @@ def addMarkDesigns():
     
     if foAI.foAIstate.aggression >=fo.aggression.typical: 
         nb,  hull =  designNameBases[4]+"-%1x-%1x",   "SH_ENDOSYMBIOTIC"
-        newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  4*[srb%iw] + 3*[ is2],  "",  model)    for iw in range(7,  14) ]
-        newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  4*[srb%iw] + 3*[ is3],  "",  model)    for iw in range(7,  14) ]
+        newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  4*[srb%iw] + 3*[ is2],  "",  model)    for iw in range(7,  15) ]
+        newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  4*[srb%iw] + 3*[ is3],  "",  model)    for iw in range(7,  15) ]
         
         newMarkDesigns += [ (nb%(3, iw),  desc,  hull,  3*[srb%iw]+[ar2] + 3*[ is2],  "",  model)    for iw in range(7,  14) ]
         newMarkDesigns += [ (nb%(4, iw),  desc,  hull,  3*[srb%iw]+[ar3] + 3*[ is2],  "",  model)    for iw in range(8,  14) ]
@@ -704,7 +714,12 @@ def generateProductionOrders():
         print "Orbital Defense Check -- target Defense Orbitals: ",  targetOrbitals
         for element in productionQueue:
             if ( element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP) and (foAI.foAIstate.getShipRole(element.designID) ==  EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_DEFENSE):
-                queuedDefenses[element.locationID] = queuedDefenses.get( element.locationID,  0) + element.blocksize*element.remaining
+                bldPlanet = universe.getPlanet(element.locationID)
+                if not bldPlanet:
+                    print "Error: Problem getting Planet for build loc %s"%element.locationID
+                    continue
+                sysID = bldPlanet.systemID
+                queuedDefenses[sysID] = queuedDefenses.get( sysID,  0) + element.blocksize*element.remaining
                 defenseAllocation += element.allocation
         print "Queued Defenses:",  [( PlanetUtilsAI.sysNameIDs([sysID]),  num) for sysID,  num in   queuedDefenses.items()]
         for sysID in ColonisationAI.empireSpeciesSystems:
@@ -1123,6 +1138,45 @@ def generateProductionOrders():
                     if res: 
                         queuedBldLocs.append(pid)
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+
+    bldName = "BLD_SCANNING_FACILITY"
+    if empire.buildingTypeAvailable(bldName):
+        bldType = fo.getBuildingType(bldName)
+        queuedLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
+        scannerLocs={}
+        for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
+            planet=universe.getPlanet(pid)
+            if planet:
+                if ( pid in queuedLocs ) or (  bldName in [bld.buildingTypeName for bld in map( universe.getObject,  planet.buildingIDs)] ):
+                    scannerLocs[planet.systemID] = True
+        maxScannerBuilds = max(1,  int(empire.productionPoints/30))
+        for sysID in AIstate.colonizedSystems:
+            if len(queuedLocs)>= maxScannerBuilds:
+                break
+            if sysID in scannerLocs:
+                continue
+            needScanner=False
+            for nSys in AIstate.dictFromMap( universe.getSystemNeighborsMap(sysID,  empire.empireID) ):
+                if (universe.getVisibility(nSys,  empire.empireID) < fo.visibility.partial):
+                    needScanner=True
+                    break
+            if not needScanner:
+                continue
+            buildLocs=[]
+            for pid in AIstate.colonizedSystems[sysID]:
+                planet=universe.getPlanet(pid)
+                if not planet: continue
+                buildLocs.append( (planet.currentMeterValue(fo.meterType.maxTroops),  pid) )
+            if not buildLocs: continue
+            for troops,  loc in sorted( buildLocs ):
+                planet = universe.getPlanet(loc)
+                res=fo.issueEnqueueBuildingProductionOrder(bldName, loc)
+                print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName,  loc, planet.name,  res)
+                if res:
+                    res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+                    print "Requeueing %s to front of build queue, with result %d"%(bldName,  res)
+                    queuedLocs.append( planet.systemID )
+                    break
 
     bldName = "BLD_EVACUATION"
     bldType = fo.getBuildingType(bldName)

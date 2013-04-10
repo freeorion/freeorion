@@ -638,8 +638,11 @@ def assignMilitaryFleetsToSystems(useFleetIDList=None,  allocations=[]):
             break
         foundFleets = []
         foundStats={}
-        theseFleets = FleetUtilsAI.getFleetsForMission(1,  {'rating':alloc}, {'rating':minalloc},   foundStats,  "",  systemsToCheck=[sysID],  systemsChecked=[], 
-                                                        fleetPoolSet=availMilFleetIDs,   fleetList=foundFleets,  verbose=False)
+        try:
+            theseFleets = FleetUtilsAI.getFleetsForMission(1,  {'rating':alloc}, {'rating':minalloc},   foundStats,  "",  systemsToCheck=[sysID],  systemsChecked=[], 
+                                                            fleetPoolSet=availMilFleetIDs,   fleetList=foundFleets,  verbose=False)
+        except:
+            continue
         if theseFleets == []:
             if foundFleets==[]  or  not ( FleetUtilsAI.statsMeetReqs( foundStats,  {'rating':minalloc}) or takeAny):
                 if doingMain:

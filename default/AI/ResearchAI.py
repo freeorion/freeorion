@@ -12,6 +12,7 @@ inProgressTechs={}
 def generateResearchOrders():
     global inProgressTechs
     "generate research orders"
+    
     universe=fo.getUniverse()
     empire = fo.getEmpire()
     empireID = empire.empireID
@@ -102,7 +103,7 @@ def generateResearchOrders():
             else:
                 print "    %25s  allocated %6.2f RP   --  missing preReqs: %s   -- unlockable items: %s "%(element.tech,  element.allocation,  missingPrereqs,  unlockedItems)
         print ""
-    if fo.currentTurn()==1:
+    if (fo.currentTurn()==1) or ((fo.currentTurn()<5) and (len(researchQueueList)==0) ):
         if foAI.foAIstate.aggression <=fo.aggression.typical:
             newtech = TechsListsAI.primaryMetaTechsList( index=empireID%2 )
         else:
@@ -172,7 +173,7 @@ def generateResearchOrders():
         generateDefaultResearchOrders()
         
     #researchQueueList = getResearchQueueTechs()
-    if len (AIstate.empireStars.get(fo.starType.blackHole,  []))!=0 and foAI.foAIstate.aggression > fo.aggression.cautious:
+    if fo.currentTurn() >50 and len (AIstate.empireStars.get(fo.starType.blackHole,  []))!=0 and foAI.foAIstate.aggression > fo.aggression.cautious:
         for singTech in [  "CON_ARCH_PSYCH",  "CON_CONC_CAMP",  "LRN_GRAVITONICS" ,  "PRO_SINGULAR_GEN"]:
             if (empire.getTechStatus(singTech) != fo.techStatus.complete) and (  singTech  not in researchQueueList[:4])  :    
                 res=fo.issueEnqueueTechOrder(singTech,0)

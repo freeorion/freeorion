@@ -59,7 +59,8 @@ def calculateFoodPriority():
     empire = fo.getEmpire()
     foodProduction = empire.resourceProduction(fo.resourceType.food)
     foodStockpile = empire.resourceStockpile(fo.resourceType.food)
-    foodTarget = 10 * empire.population() * AIstate.foodStockpileSize
+    #foodTarget = 10 * empire.population() * AIstate.foodStockpileSize
+    foodTarget=0
 
     if (foodTarget == 0):
         return 0

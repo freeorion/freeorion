@@ -42,7 +42,7 @@ def countPartsFleetwide(fleetID,  partsList):
     return tally
 
 def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList, 
-                                                            takeAny=False,  extendSearch=True,  triedFleets=set([]),  verbose=False): #implements breadth-first search through systems
+                                                            takeAny=False,  extendSearch=True,  triedFleets=set([]),  verbose=False,  depth=0): #implements breadth-first search through systems
     if verbose:
         print "getFleetsForMission: (nships:%1d,  targetStats:%s,  minStats:%s, curStats:%s,  species:%6s,  systemsToCheck:%8s,  systemsChecked:%8s, fleetPoolSet:%8s,   fleetList:%8s) "%(
                                                                                                                                         nships,  targetStats,  minStats, curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,   fleetList)
@@ -105,9 +105,20 @@ def getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  s
     if extendSearch:
         thisSys = universe.getSystem(thisSystemID)
         for neighborID in [el.key() for el in universe.getSystemNeighborsMap(thisSystemID,  foAI.foAIstate.empireID) ]:
-            if neighborID not in systemsChecked and neighborID in foAI.foAIstate.exploredSystemIDs:
+            if neighborID not in systemsChecked  and neighborID not in systemsToCheck   and neighborID in foAI.foAIstate.exploredSystemIDs:
                 systemsToCheck.append(neighborID)
-    return getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,  fleetList,  takeAny,  extendSearch,  verbose)
+    try:
+        resList = getFleetsForMission(nships,  targetStats,  minStats,  curStats,  species,  systemsToCheck,  systemsChecked, fleetPoolSet,  fleetList,  takeAny,  extendSearch,  verbose,  depth=depth+1)
+        return resList
+    except:
+        s1=len(systemsToCheck)
+        s2=len(systemsChecked)
+        s3=len(set( systemsToCheck + systemsChecked ) )
+        print "Error: exception triggered in 'getFleetsForMissions' and caught at depth  %d  w/s1/s2/s3 (%d/%d/%d):  "%(depth+2,  s1,  s2,  s3),  traceback.format_exc()
+        #print ("Error: call parameters were targetStats: %s,  curStats: %s,  species: '%s',  systemsToCheck: %s,  systemsChecked: %s,  fleetPoolSet: %s,  fleetList: %s"%(
+        #                            targetStats,  curStats,  species,  systemsToCheck,  systemsChecked,  fleetPoolSet,  fleetList))
+        return []
+import traceback
     
 def splitFleet(fleetID):
     "splits a fleet into its ships"
