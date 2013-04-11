@@ -151,7 +151,6 @@
 		471032D00CEF6DEC00A7DF2B /* libGG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D5A300A988D5700DA9C21 /* libGG.a */; };
 		471033860CEF721B00A7DF2B /* PythonAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA00CEF562700A7DF2B /* PythonAI.cpp */; };
 		4710338A0CEF723900A7DF2B /* AIInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F9E0CEF562700A7DF2B /* AIInterface.cpp */; };
-		47103BED0CF04E5900A7DF2B /* CombatSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */; };
 		47103BF00CF04E5900A7DF2B /* DataTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D1C0A98A3F900DA9C21 /* DataTable.cpp */; };
 		47103BF10CF04E5900A7DF2B /* GZStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D230A98A3F900DA9C21 /* GZStream.cpp */; };
 		47103BF20CF04E5900A7DF2B /* MultiplayerCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D270A98A3F900DA9C21 /* MultiplayerCommon.cpp */; };
@@ -439,6 +438,7 @@
 		82592EF5147E387100B840A5 /* Names.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF1147E387100B840A5 /* Names.cpp */; };
 		82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EF3147E387100B840A5 /* ObjectMap.cpp */; };
 		825EA76016DB9DB10002A797 /* ModeratorAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */; };
+		82655A401716D9240007EEDD /* CombatSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */; };
 		8273F49515DD774C000F6A09 /* changelog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8273F49415DD7724000F6A09 /* changelog.txt */; };
 		828AB7D415F7BCDD0075BE24 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 828AB7D315F7BCDD0075BE24 /* libpng.a */; };
 		828C793F160778AA0075F220 /* FieldIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828C793D160778AA0075F220 /* FieldIcon.cpp */; };
@@ -5674,7 +5674,6 @@
 				34B9F9340F634B1D005BF6A4 /* CombatOrder.cpp in Sources */,
 				34B9F9310F634A8D005BF6A4 /* SimpleVehicle.cpp in Sources */,
 				34B9F9320F634A8D005BF6A4 /* Vec3.cpp in Sources */,
-				47103BED0CF04E5900A7DF2B /* CombatSystem.cpp in Sources */,
 				47103BF00CF04E5900A7DF2B /* DataTable.cpp in Sources */,
 				47103BF10CF04E5900A7DF2B /* GZStream.cpp in Sources */,
 				47103BF20CF04E5900A7DF2B /* MultiplayerCommon.cpp in Sources */,
@@ -5789,6 +5788,7 @@
 				2F6096CE12EF046500F58913 /* ClientApp.cpp in Sources */,
 				2F6096CF12EF046B00F58913 /* ClientNetworking.cpp in Sources */,
 				82B4313414A74E07003EEE42 /* UniverseServer.cpp in Sources */,
+				82655A401716D9240007EEDD /* CombatSystem.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
