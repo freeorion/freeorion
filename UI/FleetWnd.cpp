@@ -2893,10 +2893,18 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         }
 
         case 6: { // cancel scrap orders for all ships in this fleet
+            const OrderSet orders = HumanClientApp::GetApp()->Orders();
             std::set<int> ship_ids_set = fleet->ShipIDs();
             for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
                 int ship_id = *it;
-                GetShip(ship_id)->SetOrderedScrapped(false);
+                for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+                    if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
+                        if (order->ObjectID() == ship_id) {
+                            HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                            // could break here, but won't to ensure there are no problems with doubled orders
+                        }
+                    }
+                }
             }
             break;
         }
