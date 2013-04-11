@@ -320,9 +320,11 @@ namespace SystemPathing {
 }
 using namespace SystemPathing;  // to keep GCC 4.2 on OSX happy
 
-const int ALL_EMPIRES = -1;
-const int INVALID_OBJECT_ID = -1;   //the ID number assigned to a UniverseObject upon construction; it is assigned an ID later when it is placed in the universe
-const int MAX_ID            = 2000000000;
+extern const int ALL_EMPIRES            = -1;
+extern const int INVALID_OBJECT_ID      = -1;   //the ID number assigned to a UniverseObject upon construction; it is assigned an ID later when it is placed in the universe
+extern const int TEMPORARY_OBJECT_ID    = -2; // the ID number assigned to temporary objects
+// TODO: implement a robust, thread-safe solution for creating multiple client-local temporary objects with unique IDs that will never conflict with each other or the server.
+extern const int MAX_ID                 = 2000000000;
 
 
 /////////////////////////////////////////////

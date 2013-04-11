@@ -27,6 +27,8 @@
 #include <GG/StaticGraphic.h>
 #include <GG/GUI.h>
 
+extern const int TEMPORARY_OBJECT_ID;
+
 namespace {
     const GG::X TEXT_MARGIN_X(3);
     const GG::Y TEXT_MARGIN_Y(3);
@@ -1061,8 +1063,8 @@ void EncyclopediaDetailPanel::Refresh() {
         }
 
         Ship* temp = new Ship(client_empire_id, design_id, "", client_empire_id);
-        int temp_id = GetUniverse().Insert(temp);
-        GetUniverse().UpdateMeterEstimates(temp_id);
+        GetUniverse().InsertID(temp, TEMPORARY_OBJECT_ID);
+        GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
 
         detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
             % design->Description()
@@ -1083,7 +1085,7 @@ void EncyclopediaDetailPanel::Refresh() {
             % design->TroopCapacity()
             % design->Attack());
 
-        GetUniverse().Delete(temp_id);
+        GetUniverse().Delete(TEMPORARY_OBJECT_ID);
 
         // ships of this design
         std::vector<const Ship*> all_ships = objects.FindObjects<Ship>();
@@ -1147,11 +1149,11 @@ void EncyclopediaDetailPanel::Refresh() {
                 }
             }
 
-            int temp_design_id = GetUniverse().InsertShipDesign(new ShipDesign(*incomplete_design.get()));
+            GetUniverse().InsertShipDesignID(new ShipDesign(*incomplete_design.get()), TEMPORARY_OBJECT_ID);
 
-            Ship* temp = new Ship(client_empire_id, temp_design_id, "", client_empire_id);
-            int temp_id = GetUniverse().Insert(temp);
-            GetUniverse().UpdateMeterEstimates(temp_id);
+            Ship* temp = new Ship(client_empire_id, TEMPORARY_OBJECT_ID, "", client_empire_id);
+            GetUniverse().InsertID(temp, TEMPORARY_OBJECT_ID);
+            GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
 
             detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
                 % incomplete_design->Description()
@@ -1172,8 +1174,8 @@ void EncyclopediaDetailPanel::Refresh() {
                 % incomplete_design->TroopCapacity()
                 % incomplete_design->Attack());
 
-            GetUniverse().Delete(temp_id);
-            GetUniverse().DeleteShipDesign(temp_design_id);
+            GetUniverse().Delete(TEMPORARY_OBJECT_ID);
+            GetUniverse().DeleteShipDesign(TEMPORARY_OBJECT_ID);
         }
 
         general_type = UserString("ENC_INCOMPETE_SHIP_DESIGN");
