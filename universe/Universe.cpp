@@ -758,6 +758,8 @@ bool Universe::InsertID(UniverseObject* obj, int id) {
 
     obj->SetID(id);
     m_objects.Insert(obj);
+    if ( id > m_last_allocated_object_id )
+        m_last_allocated_object_id=id;
     return true;
 }
 
