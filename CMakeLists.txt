@@ -30,6 +30,9 @@ endif ()
 include(Config)
 include(Util)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
 if (WIN32)
     add_definitions(-DFREEORION_WIN32)
     if (MSVC)
@@ -257,8 +260,7 @@ set(BUILD_RELEASE ${BUILD_RELEASE_TMP})
 #   executable_variant(exename
 #                      feature1 feature2 ...)
 #
-# where exename is the name of the executable (e.g., "GiGiSDL") and feature1,
-# feature2, ... are the features that will be used in this variant.
+# where exename is the name of the executable (e.g., "GiGiSDL").
 #
 # This macro will define a new executable target based on exename and the
 # specific variant name, which depends on the utility target exename. The
@@ -268,27 +270,15 @@ set(BUILD_RELEASE ${BUILD_RELEASE_TMP})
 # If any of the features listed conflict with this executable, no new targets
 # will be built.
 macro (executable_all_variants EXENAME)
-  set(VARIANT_EXENAME ${EXENAME})
-
   # Add the executable itself
-  add_executable(${VARIANT_EXENAME} ${THIS_EXE_SOURCES})
-  # Set properties on this executable
-  set_target_properties(${VARIANT_EXENAME}
-    PROPERTIES
-    OUTPUT_NAME ${EXENAME}
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-    LABELS "${PROJECT_NAME}"
-    )
+  add_executable(${EXENAME} ${THIS_EXE_SOURCES})
 
   # Link against whatever libraries this executable depends on
-  target_link_libraries(${VARIANT_EXENAME} ${THIS_EXE_LINK_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+  target_link_libraries(${EXENAME} ${THIS_EXE_LINK_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 
-  string(TOUPPER COMPONENT_${PROJECT_NAME} EXE_COMPONENT)
   install(
-    TARGETS ${VARIANT_EXENAME}
-    RUNTIME DESTINATION . COMPONENT ${EXE_COMPONENT}
-    LIBRARY DESTINATION . COMPONENT ${EXE_COMPONENT}
-    ARCHIVE DESTINATION . COMPONENT ${EXE_COMPONENT}
+    TARGETS ${EXENAME}
+    RUNTIME DESTINATION . COMPONENT COMPONENT_FREEORION
   )
 endmacro ()
 

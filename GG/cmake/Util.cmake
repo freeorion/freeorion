@@ -44,9 +44,7 @@ macro (library_all_variants LIBNAME)
   # On Windows, we need static and shared libraries to have
   # different names, so we prepend "lib" to the name.
   if (BUILD_STATIC AND WIN32 AND NOT CYGWIN)
-    set (LIBPREFIX "lib")
-  else ()
-    set(LIBPREFIX "")
+    set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
   endif ()
 
   if (BUILD_SHARED)
@@ -58,18 +56,6 @@ macro (library_all_variants LIBNAME)
       LINK_SEARCH_END_STATIC true
     )
   endif ()
-
-  # Set properties on this library
-  set_target_properties(${LIBNAME}
-    PROPERTIES
-    OUTPUT_NAME "${LIBPREFIX}${LIBNAME}"
-    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-    CLEAN_DIRECT_OUTPUT 1
-    COMPILE_FLAGS "${THIS_LIB_COMPILE_FLAGS}"
-    LINK_FLAGS "${THIS_LIB_LINK_FLAGS}"
-    LABELS "${PROJECT_NAME}"
-  )
 
   # Link against whatever libraries this library depends on
   target_link_libraries(${LIBNAME} ${THIS_VARIANT_LINK_LIBS} ${THIS_LIB_LINK_LIBS})
@@ -84,7 +70,6 @@ macro (library_all_variants LIBNAME)
       if (ok_to_install)
           install(
               TARGETS ${LIBNAME}
-              RUNTIME DESTINATION bin COMPONENT ${LIB_COMPONENT}
               LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT ${LIB_COMPONENT}
               ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT ${LIB_COMPONENT}_DEVEL
           )

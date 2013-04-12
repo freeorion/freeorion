@@ -7,10 +7,6 @@ find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUI
 
 macro (make_test_exec name)
     add_executable(${name}-test Test${name}.cpp)
-    set_target_properties(${name}-test
-        PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-    )
     target_link_libraries(${name}-test GiGi ${Boost_LIBRARIES})
     if (TARGET GiGiSDL)
         target_link_libraries(${name}-test GiGiSDL ${Boost_LIBRARIES})

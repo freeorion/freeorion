@@ -26,7 +26,7 @@ set(THIS_EXE_SOURCES
 
 add_definitions(-DFREEORION_BUILD_SERVER)
 
-set(THIS_EXE_LINK_LIBS core_static parse_static)
+set(THIS_EXE_LINK_LIBS core parse log4cpp)
 
 executable_all_variants(parser_test)
 
