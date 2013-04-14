@@ -60,6 +60,39 @@ namespace {
         }
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
+
+    double getMainStat(ShipPartClass spclass, PartTypeStats spstats)  {
+        switch (spclass) {
+            case PC_SHORT_RANGE:
+            case PC_POINT_DEFENSE: {
+                const DirectFireStats& stats = boost::get<DirectFireStats>(spstats);
+                return stats.m_damage; //stats.m_ROF stats.m_range
+                break;
+            }
+            case PC_MISSILES: {
+                const LRStats& stats = boost::get<LRStats>(spstats);
+                return stats.m_damage; //stats.m_ROF stats.m_range stats.m_speed stats.m_stealth stats.m_structure stats.m_capacity
+                break;
+            }
+            case PC_FIGHTERS: {
+                const FighterStats& stats = boost::get<FighterStats>(spstats);
+                return stats.m_anti_ship_damage; //stats.m_anti_fighter_damage stats.m_launch_rate stats.m_fighter_weapon_range stats.m_speed stats.m_stealth stats.m_structure stats.m_detection stats.m_capacity
+                break;
+            }
+            case PC_SHIELD:
+            case PC_DETECTION:
+            case PC_STEALTH:
+            case PC_FUEL:
+            case PC_ARMOUR:
+            case PC_BATTLE_SPEED:
+            case PC_STARLANE_SPEED:
+                return boost::get<float>(spstats);
+                break;
+            default:
+                return 0;
+        }
+    }
+    typedef std::map<std::pair<ShipPartClass,ShipSlotType>, std::set<const PartType* > > partGroupsType;
 }
 
 //////////////////////////////////////////////////
@@ -142,6 +175,7 @@ void PartControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 void PartControl::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { DoubleClickedSignal(m_part); }
 
+
 //////////////////////////////////////////////////
 // PartsListBox                                 //
 //////////////////////////////////////////////////
@@ -167,6 +201,8 @@ public:
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
+    partGroupsType  GroupAvailableDisplayableParts(const Empire* empire);
+    void            CullSuperfluousParts(std::set<const PartType* >& thisGroup, ShipPartClass pclass, int empire_id, int loc_id);
     void            Populate();
 
     void            ShowClass(ShipPartClass part_class, bool refresh_list = true);
@@ -272,21 +308,10 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     }
 }
 
-void PartsListBox::Populate() {
-    ScopedTimer scoped_timer("PartsListBox::Populate");
 
-    const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
-    const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
-
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());  // may be 0
+partGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) {
     const PartTypeManager& manager = GetPartTypeManager();
-
-    int cur_col = NUM_COLUMNS;
-    PartsListBoxRow* cur_row = 0;
-
-    // remove parts currently in rows of listbox
-    Clear();
-
+    partGroupsType partGroups;
     // loop through all possible parts
     for (PartTypeManager::iterator part_it = manager.begin(); part_it != manager.end(); ++part_it) {
         const PartType* part = part_it->second;
@@ -298,36 +323,122 @@ void PartsListBox::Populate() {
         if (m_part_classes_shown.find(part_class) == m_part_classes_shown.end())
             continue;   // part of this class is not requested to be shown
 
-        bool can_mount_in_shown_slot_type = false;
-        for (std::set<ShipSlotType>::const_iterator it = m_slot_types_shown.begin(); it != m_slot_types_shown.end(); ++it) {
-            if (part->CanMountInSlotType(*it)) {
-                can_mount_in_shown_slot_type = true;
-                break;
-            }
-        }
-        if (!can_mount_in_shown_slot_type)
-            continue;
-
         bool part_available = empire ? empire->ShipPartAvailable(part->Name()) : true;
         if (!(part_available && m_availabilities_shown.first) && !(!part_available && m_availabilities_shown.second))
             continue;   // part is available but available parts shouldn't be shown, or part isn't available and not available parts shouldn't be shown
-
-        // part should be shown in list.
-
-        // check if current row is full, and make a new row if necessary
-        if (cur_col >= NUM_COLUMNS) {
-            if (cur_row)
-                Insert(cur_row);
-            cur_col = 0;
-            cur_row = new PartsListBoxRow(TOTAL_WIDTH, SLOT_CONTROL_HEIGHT + GG::Y(PAD));
+            
+        for (std::set<ShipSlotType>::const_iterator it = m_slot_types_shown.begin(); it != m_slot_types_shown.end(); ++it) {
+            if (part->CanMountInSlotType(*it)) {
+                partGroups[ std::make_pair<ShipPartClass,ShipSlotType>(part_class, *it) ].insert( part );
+            }
         }
-        ++cur_col;
+    }
+    return partGroups;
+}
 
-        // make new part control and add to row
-        PartControl* control = new PartControl(part);
-        GG::Connect(control->ClickedSignal,         PartsListBox::PartTypeClickedSignal);
-        GG::Connect(control->DoubleClickedSignal,   PartsListBox::PartTypeDoubleClickedSignal);
-        cur_row->push_back(control);
+void PartsListBox::CullSuperfluousParts(std::set<const PartType* >& thisGroup, ShipPartClass pclass, int empire_id, int loc_id) {
+    /// This is not merely a check for obsolescence; see PartsListBox::Populate for more info
+    std::set<const PartType* >::reverse_iterator delete_it = thisGroup.rend();
+    for (std::set<const PartType* >::reverse_iterator part_it = thisGroup.rbegin(); part_it != thisGroup.rend(); ++part_it) {
+        if (delete_it != thisGroup.rend()) {
+            thisGroup.erase( --delete_it.base());
+            delete_it = thisGroup.rend();
+        }
+        const PartType* checkPart = *part_it;
+        for (std::set<const PartType* >::iterator check_it = thisGroup.begin(); check_it != thisGroup.end(); ++check_it ) {
+            const PartType* refPart = *check_it;
+                // if thisPart is superior to a part previously put into 'keepers' flag that keeper as pared, via keepNoMore
+            if ( (getMainStat(pclass, checkPart->Stats()) < getMainStat(pclass, refPart->Stats()) ) && 
+                ( checkPart->ProductionCost(empire_id, loc_id) >= refPart->ProductionCost(empire_id, loc_id) ) &&
+                ( checkPart->ProductionTime(empire_id, loc_id) >= refPart->ProductionTime(empire_id, loc_id) ) ) {
+                delete_it = std::find(thisGroup.rbegin(), thisGroup.rend(), checkPart);
+                break;
+            }
+        }
+    }
+    if (delete_it != thisGroup.rend())
+        thisGroup.erase( --delete_it.base());
+}
+
+void PartsListBox::Populate() {
+    ScopedTimer scoped_timer("PartsListBox::Populate");
+
+    const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
+    const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = Empires().Lookup(empire_id);  // may be 0
+
+    int cur_col = NUM_COLUMNS;
+    PartsListBoxRow* cur_row = 0;
+
+    // remove parts currently in rows of listbox
+    Clear();
+    
+    /** 
+     * The Parts are first filtered for availability to this empire and according to the current selections of which part classes
+     * are to be displayed.  Then, in order to eliminate presentation of clearly suboptimal parts, such as Mass Driver I 
+     * when Mass Driver II is available at the same cost & build time, some orgnization, paring and sorting of parts is done.
+     * The previously filtered parts are grouped into sets according to (class, slot); only parts within the same set may
+     * suppress display of each other.  Within each group, parts are compared and pared for display. The paring is (currently) done
+     * on the basis of main stat, construction cost, and construction time. If two parts have the same class and slot, and one has 
+     * a lower main stat but also a lower cost, they will both be presented; if one has a higher main stat and is at least as good 
+     * on cost and time, it will suppress the other.
+     */    
+
+    /// filter parts by availability and current designation of classes for display; group according to (class, slot)
+    partGroupsType partGroups = GroupAvailableDisplayableParts(empire);
+    
+    // get empire id and location to use for cost and time comparisons
+    int loc_id = INVALID_OBJECT_ID;
+    if (empire) {
+        const UniverseObject* location = GetUniverseObject(empire->CapitalID());
+        loc_id = location ? location->ID() : INVALID_OBJECT_ID;
+    }
+
+    // if the empire id is not ALL_EMPIRES, and unavailable parts are not to be displayed, cull Parts for display
+    if ( empire_id != ALL_EMPIRES && !m_availabilities_shown.second  ) {
+        for (partGroupsType::iterator group_it=partGroups.begin(); group_it != partGroups.end(); group_it++) {
+            ShipPartClass pclass = group_it->first.first;
+            // currently, only cull ShortRange Weapons, though the culling code is more broadly applicable. 
+            if ( pclass == PC_SHORT_RANGE )
+                CullSuperfluousParts(group_it->second, pclass, empire_id, loc_id);
+        }
+    }
+    
+    // now sort the parts within each group according to main stat, via weak sorting in a multimap
+    // also, if a part was in multiple groups due to being compatible with multiple slot types, ensure it is only displayed once
+    std::set<const PartType* > alreadyAdded;
+    for (partGroupsType::iterator group_it=partGroups.begin(); group_it != partGroups.end(); group_it++) {
+        std::set<const PartType* > thisGroup = group_it->second;
+        ShipPartClass pclass = group_it->first.first;
+        std::multimap<double, const PartType*> sortedGroup;
+        for (std::set<const PartType* >::iterator part_it = thisGroup.begin(); part_it != thisGroup.end(); ++part_it) {
+            const PartType* part = *part_it;
+            if (alreadyAdded.find(part) != alreadyAdded.end())
+                continue;
+            alreadyAdded.insert(part);
+            sortedGroup.insert(std::make_pair<double, const PartType*>(getMainStat(pclass, part->Stats()), part));
+        }
+
+        // take the sorted parts and make UI elements (technically rows) for the PartsListBox
+        for (std::multimap<double, const PartType*>::iterator sorted_it = sortedGroup.begin(); sorted_it != sortedGroup.end(); ++sorted_it) {
+            const PartType* part = sorted_it->second;
+            // check if current row is full, and make a new row if necessary
+            if (cur_col >= NUM_COLUMNS) {
+                if (cur_row)
+                    Insert(cur_row);
+                cur_col = 0;
+                cur_row = new PartsListBoxRow(TOTAL_WIDTH, SLOT_CONTROL_HEIGHT + GG::Y(PAD));
+            }
+            ++cur_col;
+
+            // make new part control and add to row
+            PartControl* control = new PartControl(part);
+            GG::Connect(control->ClickedSignal,         PartsListBox::PartTypeClickedSignal);
+            GG::Connect(control->DoubleClickedSignal,   PartsListBox::PartTypeDoubleClickedSignal);
+            cur_row->push_back(control);
+        }
     }
     // add any incomplete rows
     if (cur_row)
@@ -2109,7 +2220,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::X most_panels_left = base_selector_width;
     GG::X most_panels_width = ClientWidth() - most_panels_left;
     GG::Y detail_top = GG::Y0;
-    GG::Y detail_height(180);
+    GG::Y detail_height(380);
     GG::Y main_top = detail_top + detail_height;
     GG::Y part_palette_height(160);
     GG::Y part_palette_top = ClientHeight() - part_palette_height;
