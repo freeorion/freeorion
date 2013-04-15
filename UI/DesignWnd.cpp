@@ -83,6 +83,7 @@ namespace {
             case PC_DETECTION:
             case PC_STEALTH:
             case PC_FUEL:
+            case PC_COLONY:
             case PC_ARMOUR:
             case PC_BATTLE_SPEED:
             case PC_STARLANE_SPEED:
@@ -92,7 +93,7 @@ namespace {
                 return 0;
         }
     }
-    typedef std::map<std::pair<ShipPartClass,ShipSlotType>, std::set<const PartType* > > partGroupsType;
+    typedef std::map<std::pair<ShipPartClass,ShipSlotType>, std::vector<const PartType* > > partGroupsType;
 }
 
 //////////////////////////////////////////////////
@@ -202,7 +203,7 @@ public:
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     partGroupsType  GroupAvailableDisplayableParts(const Empire* empire);
-    void            CullSuperfluousParts(std::set<const PartType* >& thisGroup, ShipPartClass pclass, int empire_id, int loc_id);
+    void            CullSuperfluousParts(std::vector<const PartType* >& thisGroup, ShipPartClass pclass, int empire_id, int loc_id);
     void            Populate();
 
     void            ShowClass(ShipPartClass part_class, bool refresh_list = true);
@@ -329,35 +330,27 @@ partGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
             
         for (std::set<ShipSlotType>::const_iterator it = m_slot_types_shown.begin(); it != m_slot_types_shown.end(); ++it) {
             if (part->CanMountInSlotType(*it)) {
-                partGroups[ std::make_pair<ShipPartClass,ShipSlotType>(part_class, *it) ].insert( part );
+                partGroups[ std::make_pair<ShipPartClass,ShipSlotType>(part_class, *it) ].push_back( part );
             }
         }
     }
     return partGroups;
 }
 
-void PartsListBox::CullSuperfluousParts(std::set<const PartType* >& thisGroup, ShipPartClass pclass, int empire_id, int loc_id) {
+void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& thisGroup, ShipPartClass pclass, int empire_id, int loc_id) {
     /// This is not merely a check for obsolescence; see PartsListBox::Populate for more info
-    std::set<const PartType* >::reverse_iterator delete_it = thisGroup.rend();
-    for (std::set<const PartType* >::reverse_iterator part_it = thisGroup.rbegin(); part_it != thisGroup.rend(); ++part_it) {
-        if (delete_it != thisGroup.rend()) {
-            thisGroup.erase( --delete_it.base());
-            delete_it = thisGroup.rend();
-        }
+    for (std::vector<const PartType* >::iterator part_it = thisGroup.begin(); part_it != thisGroup.end(); ++part_it) {
         const PartType* checkPart = *part_it;
-        for (std::set<const PartType* >::iterator check_it = thisGroup.begin(); check_it != thisGroup.end(); ++check_it ) {
+        for (std::vector<const PartType* >::iterator check_it = thisGroup.begin(); check_it != thisGroup.end(); ++check_it ) {
             const PartType* refPart = *check_it;
-                // if thisPart is superior to a part previously put into 'keepers' flag that keeper as pared, via keepNoMore
             if ( (getMainStat(pclass, checkPart->Stats()) < getMainStat(pclass, refPart->Stats()) ) && 
                 ( checkPart->ProductionCost(empire_id, loc_id) >= refPart->ProductionCost(empire_id, loc_id) ) &&
                 ( checkPart->ProductionTime(empire_id, loc_id) >= refPart->ProductionTime(empire_id, loc_id) ) ) {
-                delete_it = std::find(thisGroup.rbegin(), thisGroup.rend(), checkPart);
+                thisGroup.erase(part_it--);
                 break;
             }
         }
     }
-    if (delete_it != thisGroup.rend())
-        thisGroup.erase( --delete_it.base());
 }
 
 void PartsListBox::Populate() {
@@ -376,14 +369,22 @@ void PartsListBox::Populate() {
     Clear();
     
     /** 
-     * The Parts are first filtered for availability to this empire and according to the current selections of which part classes
-     * are to be displayed.  Then, in order to eliminate presentation of clearly suboptimal parts, such as Mass Driver I 
-     * when Mass Driver II is available at the same cost & build time, some orgnization, paring and sorting of parts is done.
-     * The previously filtered parts are grouped into sets according to (class, slot); only parts within the same set may
-     * suppress display of each other.  Within each group, parts are compared and pared for display. The paring is (currently) done
-     * on the basis of main stat, construction cost, and construction time. If two parts have the same class and slot, and one has 
-     * a lower main stat but also a lower cost, they will both be presented; if one has a higher main stat and is at least as good 
-     * on cost and time, it will suppress the other.
+     * The Parts are first filtered for availability to this empire and according to the current 
+     * selections of which part classes are to be displayed.  Then, in order to eliminate presentation
+     * of clearly suboptimal parts, such as Mass Driver I when Mass Driver II is available at the same
+     * cost & build time, some orgnization, paring and sorting of parts is done. The previously 
+     * filtered parts are grouped according to (class, slot).  Within each group, parts are compared 
+     * and pared for display; only parts within the same group may suppress display of each other.
+     * The paring is (currently) done on the basis of main stat, construction cost, and construction 
+     * time. If two parts have the same class and slot, and one has a lower main stat but also a lower
+     * cost, they will both be presented; if one has a higher main stat and is at least as good on cost
+     * and time, it will suppress the other.  
+     * 
+     * An example of one of the more subtle possible results is that if a part class had multiple parts
+     * with different but overlapping MountableSlotType patterns, then a part with two possible slot
+     * types might be rendered superfluous for the first slot type by a first other part, be rendered
+     * superfluous for the second slot type by a second other part, even if neither of the latter two
+     * parts would be considered to individually render the former part obsolete.
      */    
 
     /// filter parts by availability and current designation of classes for display; group according to (class, slot)
@@ -410,10 +411,10 @@ void PartsListBox::Populate() {
     // also, if a part was in multiple groups due to being compatible with multiple slot types, ensure it is only displayed once
     std::set<const PartType* > alreadyAdded;
     for (partGroupsType::iterator group_it=partGroups.begin(); group_it != partGroups.end(); group_it++) {
-        std::set<const PartType* > thisGroup = group_it->second;
+        std::vector<const PartType* > thisGroup = group_it->second;
         ShipPartClass pclass = group_it->first.first;
         std::multimap<double, const PartType*> sortedGroup;
-        for (std::set<const PartType* >::iterator part_it = thisGroup.begin(); part_it != thisGroup.end(); ++part_it) {
+        for (std::vector<const PartType* >::iterator part_it = thisGroup.begin(); part_it != thisGroup.end(); ++part_it) {
             const PartType* part = *part_it;
             if (alreadyAdded.find(part) != alreadyAdded.end())
                 continue;
