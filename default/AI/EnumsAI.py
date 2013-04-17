@@ -205,7 +205,7 @@ class AIShipDesignTypes(object):
     colonyBase={"SD_COLONY_BASE":"A",  "NestBase":"B"}
     outpostBase={"SD_OUTPOST_BASE":"A",  "OutpostBase":"B"}
     troopBase={"SpaceInvaders":"A"}
-    defenseBase={"OrbitalGrid":"A",  "OrbitalShield":"B",  "OrbitalMultiShield":"C"}
+    defenseBase={"Decoy":"A", "OrbitalGrid":"B",  "OrbitalShield":"C",  "OrbitalMultiShield":"D"}
     
 class AIShipRoleType(object):  #this is also used in determining fleetRoles
     SHIP_ROLE_INVALID = -1

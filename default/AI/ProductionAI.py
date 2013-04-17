@@ -68,19 +68,20 @@ def getBestShipInfo(priority,  loc=None):
                 return shipDesignID,  shipDesign,  getAvailableBuildLocations(shipDesignID)
     return None,  None,  None #must be missing a Shipyard or other orbital (or missing tech)
 
-def shipTypeNames(shipProdPriority):
+
+def addDesigns(shipType,  newDesigns,  shipProdPriority):
+    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
     empire = fo.getEmpire()
     designIDs=[]
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
     for baseName in designNameBases:
         designIDs.extend(  [shipDesignID for shipDesignID in empire.allShipDesigns if baseName  in fo.getShipDesign(shipDesignID).name(False) ] )
     shipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in designIDs]
+    print "Current %s Designs: %s"%(shipType,  shipNames)
     
-
-def addDesigns(shipType,  namesToAdd,  needsAdding,  shipProdPriority):
-    if needsAdding != []:
+    needsAdding=[ spec for spec in newDesigns if spec[0] not in shipNames   ]   #spec = ( name,  desc,  hull,  partslist,  icon,  model) 
+    if needsAdding != []:  #needsAdding = [ (name,  desc,  hull,  partslist,  icon,  model), ... ]
         print "--------------"
-        print "%s design names apparently needing to be added: %s"%(shipType,  namesToAdd)
+        print "%s design names apparently needing to be added: %s"%(shipType,  [spec[0] for  spec in needsAdding] )
         print "-------"
         for name,  desc,  hull,  partslist,  icon,  model in needsAdding:
             try:
@@ -95,240 +96,82 @@ def addDesigns(shipType,  namesToAdd,  needsAdding,  shipProdPriority):
         print "%s apparently unbuildable at present,  ruh-roh"%shipType
 
 def addBaseTroopDesigns():
-    empire = fo.getEmpire()
-    troopDesignIDs=[]
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION,  {"nomatch":0}).items(),  key=lambda x:x[1])]
-    for baseName in designNameBases:
-        troopDesignIDs.extend(  [shipDesignID for shipDesignID in empire.allShipDesigns if baseName  in fo.getShipDesign(shipDesignID).name(False) ] )
-    troopShipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in troopDesignIDs]
-    print "Current BaseTroopship Designs: %s"%troopShipNames
+    shipType,  shipProdPriority ="BaseTroopers",  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION
+    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
+    
     newTroopDesigns = []
-    desc = "StormTrooper Ship"
-    model = "fighter"
+    desc,  model = "StormTrooper Ship", "fighter"
     tp = "GT_TROOP_POD"
     nb,  hull =  designNameBases[0],   "SH_COLONY_BASE"
     newTroopDesigns += [ (nb,  desc,  hull,  [tp],  "",  model) ]
+    addDesigns(shipType,   newTroopDesigns,  shipProdPriority)
 
-    currentTurn=fo.currentTurn()
-    needsAdding=[]
-    namesToAdd=[]
-    for name,  desc,  hull,  partslist,  icon,  model in newTroopDesigns:
-        if name not in troopShipNames:
-            needsAdding.append( ( name,  desc,  hull,  partslist,  icon,  model) )
-            namesToAdd.append( name )
-
-    if needsAdding != []:
-        print "--------------"
-        print "Current Troop Base Designs: %s"%troopShipNames
-        print "-----------"
-        print "Troop base design names apparently needing to be added: %s"%namesToAdd
-        print "-------"
-        if currentTurn ==1:  #due to some apparent problem with these repeatedly being added, only do it on first turn
-            for name,  desc,  hull,  partslist,  icon,  model in needsAdding:
-                try:
-                    res=fo.issueCreateShipDesignOrder( name,  desc,  hull,  partslist,  icon,  model, False)
-                    print "added  Troop Base Design %s, with result %d"%(name,  res)
-                except:
-                    print "Error: exception triggered and caught adding troop base %s:  "%name,  traceback.format_exc()
-
-    bestShip,  bestDesign,  buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION)
-    if bestDesign:
-        print "Best TroopBaseship buildable is %s"%bestDesign.name(False)
-    else:
-        print "TroopBaseships apparently unbuildable at present,  ruh-roh"
         
 def addTroopDesigns():
     addBaseTroopDesigns()
-    empire = fo.getEmpire()
-    troopDesignIDs=[]
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION,  {"nomatch":0}).items(),  key=lambda x:x[1])]
-    for baseName in designNameBases:
-        troopDesignIDs.extend(  [shipDesignID for shipDesignID in empire.allShipDesigns if baseName  in fo.getShipDesign(shipDesignID).name(False) ] )
-    troopShipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in troopDesignIDs]
-    print "Current Troopship Designs: %s"%troopShipNames
-    
-#    if designNameBases[1] not in troopShipNames:
-#        try:
-#            res=fo.issueCreateShipDesignOrder(designNameBases[1],  "organic Hulled Troopship for economical large quantities of troops",  
-#                                                                                    "SH_ORGANIC",  ["GT_TROOP_POD",  "GT_TROOP_POD",  "GT_TROOP_POD", "GT_TROOP_POD"],  "",  "fighter",  False)
-#            print "added  Troopship %s, with result %d"%(designNameBases[1] , res)
-#        except:
-#            print "Error: exception triggered and caught:  ",  traceback.format_exc()
-#    if designNameBases[2] not in troopShipNames:
-#        try:
-#            res=fo.issueCreateShipDesignOrder(designNameBases[2],  "multicell Hulled Troopship for economical large quantities of troops",  
-#                                                                                    "SH_STATIC_MULTICELLULAR",  ["GT_TROOP_POD",  "GT_TROOP_POD",  "SR_WEAPON_5",  "GT_TROOP_POD", "GT_TROOP_POD"],  "",  "fighter",  False)
-#            print "added  Troopship %s, with result %d"%(designNameBases[2] , res)
-#        except:
-#            print "Error: exception triggered and caught:  ",  traceback.format_exc()
-
-
+    shipType,  shipProdPriority ="Troopers",  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION
+    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
     newTroopDesigns = []
-    desc = "Troop Ship"
-    model = "fighter"
+    desc,  model = "Troop Ship", "fighter"
+    srb = "SR_WEAPON_%1d"
     tp = "GT_TROOP_POD"
     nb,  hull =  designNameBases[1]+"%1d",   "SH_BASIC_MEDIUM"
     newTroopDesigns += [ (nb%(1),  desc,  hull,  3*[tp],  "",  model) ]
     nb,  hull =  designNameBases[1]+"%1d",   "SH_ORGANIC"
-    newTroopDesigns += [ (nb%(2),  desc,  hull,  ["SR_WEAPON_2"]+ 3*[tp],  "",  model) ]
-    newTroopDesigns += [ (nb%(3),  desc,  hull,  ["SR_WEAPON_5"]+ 3*[tp],  "",  model) ]
+    newTroopDesigns += [ (nb%(iw),  desc,  hull,  [srb%iw]+ 3*[tp],  "",  model) for iw in [2, 3, 4] ]
     nb,  hull =  designNameBases[1]+"%1d",   "SH_STATIC_MULTICELLULAR"
-    newTroopDesigns += [ (nb%(4),  desc,  hull,  ["SR_WEAPON_2"]+ 4*[tp],  "",  model) ]
-    newTroopDesigns += [ (nb%(5),  desc,  hull,  ["SR_WEAPON_5"]+ 4*[tp],  "",  model) ]
+    newTroopDesigns += [ (nb%(iw+3),  desc,  hull,  [srb%iw]+ 4*[tp],  "",  model) for iw in [2, 3, 4] ]
     
-    ar1 = "AR_LEAD_PLATE"
-    ar2= "AR_ZORTRIUM_PLATE"
-    ar3= "AR_NEUTRONIUM_PLATE"
+    ar1,  ar2,  ar3 = "AR_LEAD_PLATE", "AR_ZORTRIUM_PLATE",  "AR_NEUTRONIUM_PLATE"
     arL=[ar1,  ar2,  ar3]
-    
     for ari in [1, 2]: #naming below only works because skipping Lead armor
-        nb,  hull =  designNameBases[ari+1]+"%1d-%1d",   "SH_ORGANIC"
-        newTroopDesigns += [ (nb%(1,  ari),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp],  "",  model) ]
-        newTroopDesigns += [ (nb%(2,  ari),  desc,  hull,  ["SR_WEAPON_8",  arL[ari],  tp,  tp],  "",  model) ]
         nb,  hull =  designNameBases[ari+1]+"%1d-%1d",   "SH_STATIC_MULTICELLULAR"
-        newTroopDesigns += [ (nb%(3,  ari),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp,  tp],  "",  model) ]
-        newTroopDesigns += [ (nb%(4,  ari),  desc,  hull,  ["SR_WEAPON_8",  arL[ari],  tp,  tp,  tp],  "",  model) ]
+        newTroopDesigns += [ (nb%(ari,  iw),  desc,  hull,  [srb%iw,  arL[ari]]+ 3*[tp],  "",  model) for iw in [2, 3, 4] ]
         nb,  hull =  designNameBases[ari+1]+"%1d-%1d",   "SH_ENDOMORPHIC"
-        newTroopDesigns += [ (nb%(5,  ari),  desc,  hull,  ["SR_WEAPON_5",  arL[ari],  tp,  tp,  tp,  tp],  "",  model) ]
-        newTroopDesigns += [ (nb%(6,  ari),  desc,  hull,  ["SR_WEAPON_8",  arL[ari],  tp,  tp,  tp,  tp],  "",  model) ]
-
-    currentTurn=fo.currentTurn()
-    needsAdding=[]
-    namesToAdd=[]
-    for name,  desc,  hull,  partslist,  icon,  model in newTroopDesigns:
-        if name not in troopShipNames:
-            needsAdding.append( ( name,  desc,  hull,  partslist,  icon,  model) )
-            namesToAdd.append( name )
-
-    if needsAdding != []:
-        print "--------------"
-        print "Current Troop Designs: %s"%troopShipNames
-        print "-----------"
-        print "Troop design names apparently needing to be added: %s"%namesToAdd
-        print "-------"
-        if currentTurn ==1:  #due to some apparent problem with these repeatedly being added, only do it on first turn
-            for name,  desc,  hull,  partslist,  icon,  model in needsAdding:
-                try:
-                    res=fo.issueCreateShipDesignOrder( name,  desc,  hull,  partslist,  icon,  model, False)
-                    print "added  Troop Design %s, with result %d"%(name,  res)
-                except:
-                    print "Error: exception triggered and caught adding troop %s:  "%name,  traceback.format_exc()
-
-    bestShip,  bestDesign,  buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION)
-    if bestDesign:
-        print "Best Troopship buildable is %s"%bestDesign.name(False)
-    else:
-        print "Troopships apparently unbuildable at present,  ruh-roh"
+        newTroopDesigns += [ (nb%(ari,  iw+3),  desc,  hull,  [srb%iw,  arL[ari]]+ 3*[tp],  "",  model) for iw in [2, 3, 4] ]
+    addDesigns(shipType,   newTroopDesigns,  shipProdPriority)
 
 def addScoutDesigns():
-    empire = fo.getEmpire()
-    scoutDesignIDs=[]
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION,  {"nomatch":0}).items(),  key=lambda x:x[1])]
-    for baseName in designNameBases:
-        scoutDesignIDs.extend(   [shipDesignID for shipDesignID in empire.allShipDesigns if baseName  in fo.getShipDesign(shipDesignID).name(False) ]  )
-    scoutShipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in scoutDesignIDs]
-    #print "Current Scout Designs: %s"%scoutShipNames
-    #                                                            name               desc            hull                partslist                              icon                 model
-
+    shipType,  shipProdPriority ="Scout",  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION
+    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
     newScoutDesigns = []
-    desc = "Scout"
-    model = "fighter"
+    desc,  model  = "Scout",  "fighter"
     srb = "SR_WEAPON_%1d"
-    nb,  hull =  designNameBases[1]+"-%1d-%1d",   "SH_ORGANIC"
     db = "DT_DETECTOR_%1d"
-    #is1,  is2 = "FU_BASIC_TANK",  "ST_CLOAK_1"
-    is1  = "FU_BASIC_TANK"
-    is2 = "SH_DEFLECTOR"
-
+    is1,  is2  = "FU_BASIC_TANK",  "SH_DEFLECTOR"
+    
+    nb,  hull =  designNameBases[1]+"-%1d-%1d",   "SH_ORGANIC"
     for id in [1, 2, 3, 4]:
         newScoutDesigns += [ (nb%(id, 0),  desc,  "SH_BASIC_SMALL",  [ db%id],  "",  model)   ]
-    #for id in [1, 2, 3, 4]:
-    #    newScoutDesigns += [ (nb%(id, iw),  desc,  hull,  [ db%id,  srb%iw, srb%iw,  is1],  "",  model)    for iw in range(1, 9) ]
     nb,  hull =  designNameBases[2]+"-%1d-%1d",   "SH_ENDOMORPHIC"
-    for id in [1, 2, 3, 4]:
-        #newScoutDesigns += [ (nb%(id, 0),  desc,  hull,  [ db%id,  "", "", "",  is1,  is1],  "",  model)  ]
-        newScoutDesigns += [ (nb%(id, iw),  desc,  hull,  [ db%id,  srb%iw, srb%iw, srb%iw,  is2,  is2],  "",  model)    for iw in range(5, 9) ]
-
-    currentTurn=fo.currentTurn()
-    needsAdding=[]
-    namesToAdd=[]
-    for name,  desc,  hull,  partslist,  icon,  model in newScoutDesigns:
-        if name not in scoutShipNames:
-            needsAdding.append( ( name,  desc,  hull,  partslist,  icon,  model) )
-            namesToAdd.append( name )
-
-    if needsAdding != []:
-        print "--------------"
-        print "Current Scout Designs: %s"%scoutShipNames
-        print "-----------"
-        print "Scout design names apparently needing to be added: %s"%namesToAdd
-        print "-------"
-        if currentTurn ==1:  #due to some apparent problem with these repeatedly being added, only do it on first turn
-            for name,  desc,  hull,  partslist,  icon,  model in needsAdding:
-                try:
-                    res=fo.issueCreateShipDesignOrder( name,  desc,  hull,  partslist,  icon,  model, False)
-                    print "added  Scout Design %s, with result %d"%(name,  res)
-                except:
-                    print "Error: exception triggered and caught adding scout %s:  "%name,  traceback.format_exc()
-
-    bestShip,  bestDesign,  buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION)
-    if bestDesign:
-        print "Best Scout buildable is %s"%bestDesign.name(False)
-    else:
-        print "Scouts apparently unbuildable at present,  ruh-roh"
-    #TODO: add more advanced designs
+    for id in [3, 4]:
+        newScoutDesigns += [ (nb%(id, iw),  desc,  hull,  [ db%id,  srb%iw, "", "",  "",  ""],  "",  model)    for iw in range(5, 9) ]
+    addDesigns(shipType,   newScoutDesigns,  shipProdPriority)
 
 def addOrbitalDefenseDesigns():
-    shipType="OrbitalDefense"
-    shipProdPriority=EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE
-    empire = fo.getEmpire()
-    designIDs=[]
+    shipType,  shipProdPriority ="OrbitalDefense",  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE
     designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
-    for baseName in designNameBases:
-        designIDs.extend(  [shipDesignID for shipDesignID in empire.allShipDesigns if baseName  in fo.getShipDesign(shipDesignID).name(False) ] )
-    shipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in designIDs]
-    print "Current %s Designs: %s"%(shipType,  shipNames)
     newDesigns = []
-    desc = "Orbital Defense Ship"
-    model = "fighter"
-    is1= "SH_DEFENSE_GRID"
-    is2 = "SH_DEFLECTOR"
-    is3= "SH_MULTISPEC"
-    hull =  "SH_COLONY_BASE"
-    if foAI.foAIstate.aggression<=fo.aggression.cautious:
-        newDesigns += [ (designNameBases[0],  desc,  hull,  [is1],  "",  model) ]
-    newDesigns += [ (designNameBases[1],  desc,  hull,  [is2],  "",  model) ]
-    newDesigns += [ (designNameBases[2],  desc,  hull,  [is3],  "",  model) ]
+    desc,  hull,  model  = "Orbital Defense Ship",  "SH_COLONY_BASE",  "fighter"
+    is1,  is2,  is3 = "SH_DEFENSE_GRID",  "SH_DEFLECTOR",  "SH_MULTISPEC"
+    newDesigns += [ (designNameBases[0],  desc,  hull,  [""],  "",  model) ]
+    if False:
+        if foAI.foAIstate.aggression<=fo.aggression.cautious:
+            newDesigns += [ (designNameBases[1],  desc,  hull,  [is1],  "",  model) ]
+        newDesigns += [ (designNameBases[2],  desc,  hull,  [is2],  "",  model) ]
+        newDesigns += [ (designNameBases[3],  desc,  hull,  [is3],  "",  model) ]
 
-    currentTurn=fo.currentTurn()
-    needsAdding=[]
-    namesToAdd=[]
-    for name,  desc,  hull,  partslist,  icon,  model in newDesigns:
-        if name not in shipNames:
-            needsAdding.append( ( name,  desc,  hull,  partslist,  icon,  model) )
-            namesToAdd.append( name )
-    addDesigns(shipType,  namesToAdd,  needsAdding,  shipProdPriority)
+    addDesigns(shipType,   newDesigns,  shipProdPriority)
     
 def addMarkDesigns():
     addOrbitalDefenseDesigns()
-    empire = fo.getEmpire()
-    markDesignIDs = []
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY,  {"nomatch":0}).items(),  key=lambda x:x[1])]
-    for baseName in designNameBases:
-        markDesignIDs.extend(  [shipDesignID for shipDesignID in empire.allShipDesigns if baseName  in fo.getShipDesign(shipDesignID).name(False) ] )
-    markShipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in markDesignIDs]
-    #print "Current Mark Designs: %s"%markShipNames
-    #                                                            name               desc            hull                partslist                              icon                 model
+    shipType,  shipProdPriority ="Attack Ships",  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
+    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
     newMarkDesigns = []
-    desc = "military ship"
-    model = "fighter"
+    desc,  model  = "military ship", "fighter"
     srb = "SR_WEAPON_%1d"
-    is1= "FU_BASIC_TANK"
-    is2 = "SH_DEFLECTOR"
-    is3= "SH_MULTISPEC"
-    ar1 = "AR_LEAD_PLATE"
-    ar2= "AR_ZORTRIUM_PLATE"
-    ar3= "AR_NEUTRONIUM_PLATE"
+    is1,  is2,  is3 = "SH_DEFENSE_GRID",  "SH_DEFLECTOR",  "SH_MULTISPEC"
+    ar1,  ar2,  ar3 = "AR_LEAD_PLATE", "AR_ZORTRIUM_PLATE",  "AR_NEUTRONIUM_PLATE"
 
     if foAI.foAIstate.aggression in [fo.aggression.beginner, fo.aggression.turtle]: 
         maxEM= 8
@@ -340,20 +183,19 @@ def addMarkDesigns():
     nb,  hull =  designNameBases[1]+"-%1d",   "SH_BASIC_MEDIUM"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ""],  "",  model)    for iw in range(1, 8) ]
 
-    #newMarkDesigns += [ ((nb%iw)+'N',  desc,  hull,  [ srb%iw,  ar3,  ""],  "",  model)    for iw in range(1, 8) ]
-
     nb,  hull =  designNameBases[2]+"-1-%1d",   "SH_ORGANIC"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1],  "",  model)    for iw in range(3, 9) ]
-    nb,  hull =  designNameBases[2]+"-3-%1d",   "SH_STATIC_MULTICELLULAR"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1,  is2],  "",  model)    for iw in range(6, 9) ]
+    nb,  hull =  designNameBases[2]+"-2-%1d",   "SH_ORGANIC"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is2],  "",  model)    for iw in range(3, 9) ]
+    nb,  hull =  designNameBases[2]+"-4-%1d",   "SH_STATIC_MULTICELLULAR"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is2,  is2],  "",  model)    for iw in range(6, 9) ]
 
-    if doDoubleShields or (empire.empireID%2 == 0) :
-        nb,  hull =  designNameBases[2]+"-2-%1x",   "SH_ORGANIC"
+    if doDoubleShields or (fo.empireID()%2 == 0) :
+        nb,  hull =  designNameBases[2]+"-3-%1x",   "SH_ORGANIC"
         newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  is2,  is2],  "",  model)    for iw in range(5, maxEM+1) ]
-        nb,  hull =  designNameBases[2]+"-4-%1d",   "SH_STATIC_MULTICELLULAR"
-        newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is2,  is2],  "",  model)    for iw in range(6, maxEM+1) ]
+        nb,  hull =  designNameBases[2]+"-6-%1d",   "SH_STATIC_MULTICELLULAR"
+        newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, is2,  is2,  is2],  "",  model)    for iw in range(6, maxEM+1) ]
 
-    
     nb,  hull =  designNameBases[3]+"-1-%1x",   "SH_ENDOMORPHIC"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + 2*[ is1],  "",  model)    for iw in [5, 6, 7 ] ]
 
@@ -362,10 +204,8 @@ def addMarkDesigns():
 
     nb =  designNameBases[3]+"3-%1x"
     #newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar1] + [ is1,  is1],  "",  model)    for iw in [5, 6, 7, 8,   10, 11, 12 ] ]
-
     nb =  designNameBases[3]+"-4-%1x"
     #newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar1] + [ is1, is2],  "",  model)    for iw in [7, 8,   10, 11, 12 ] ]
-
     nb =  designNameBases[3]+"-5-%1x"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + 2*[ is2],  "",  model)    for iw in range(7,  maxEM+1) ]
     
@@ -413,45 +253,12 @@ def addMarkDesigns():
         newMarkDesigns += [ (nb%(3, iw),  desc,  hull,  8*[srb%iw]+3*[ar2] + 3*[ is3],  "",  model)    for iw in range(10,  18) ]
         newMarkDesigns += [ (nb%(4, iw),  desc,  hull,  9*[srb%iw]+3*[ar3] + 2*[ is3],  "",  model)    for iw in range(10,  18) ]
 
-
-    currentTurn=fo.currentTurn()
-    needsAdding=[]
-    namesToAdd=[]
-    for name,  desc,  hull,  partslist,  icon,  model in newMarkDesigns:
-        if name not in markShipNames:
-            needsAdding.append( ( name,  desc,  hull,  partslist,  icon,  model) )
-            namesToAdd.append( name )
-
-    if needsAdding != []:
-        print "--------------"
-        print "Current Mark Designs: %s"%markShipNames
-        print "-----------"
-        print "Mark design names apparently needing to be added: %s"%namesToAdd
-        print "-------"
-        if currentTurn ==1:  #due to some apparent problem with these repeatedly being added, only do it on first turn
-            for name,  desc,  hull,  partslist,  icon,  model in needsAdding:
-                try:
-                    res=fo.issueCreateShipDesignOrder( name,  desc,  hull,  partslist,  icon,  model,  False)
-                    print "added  Mark Design %s, with result %d"%(name,  res)
-                except:
-                    print "Error: exception triggered and caught adding mark %s:  "%name,  traceback.format_exc()
-
-    bestShip,  bestDesign,  buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
-    if bestDesign:
-        print "Best Mark buildable is %s"%bestDesign.name(False)
-    else:
-        print "Marks apparently unbuildable at present,  ruh-roh"
+    addDesigns(shipType,   newMarkDesigns,  shipProdPriority)
     #TODO: add more advanced designs
 
 def addOutpostDesigns():
-    empire = fo.getEmpire()
-    outpostDesignIDs = []
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST,  {"nomatch":0}).items(),  key=lambda x:x[1])]
-    for baseName in designNameBases:
-        outpostDesignIDs.extend( [shipDesignID for shipDesignID in empire.allShipDesigns if baseName in fo.getShipDesign(shipDesignID).name(False) ] )
-    outpostShipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in outpostDesignIDs]
-    #print "Current Outpost Designs: %s"%scoutShipNames
-    #                                                            name               desc            hull                partslist                              icon                 model
+    shipType,  shipProdPriority ="Outpost Ships",  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST
+    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
     newOutpostDesigns = []
     desc = "Outpost Ship"
     srb = "SR_WEAPON_%1d"
@@ -461,89 +268,26 @@ def addOutpostDesigns():
     db = "DT_DETECTOR_%1d"
     is1,  is2 = "FU_BASIC_TANK",  "ST_CLOAK_1"
     for id in [1, 2]:
-        newOutpostDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  op],  "",  model)    for iw in [2, 4, 6, 8] ]
-
-    currentTurn=fo.currentTurn()
-    needsAdding=[]
-    namesToAdd=[]
-    for name,  desc,  hull,  partslist,  icon,  model in newOutpostDesigns:
-        if name not in outpostShipNames:
-            needsAdding.append( ( name,  desc,  hull,  partslist,  icon,  model) )
-            namesToAdd.append( name )
-
-    if needsAdding != []:
-        print "--------------"
-        print "Current Outpost Designs: %s"%outpostShipNames
-        print "-----------"
-        print "Outpost design names apparently needing to be added: %s"%namesToAdd
-        print "-------"
-        if currentTurn ==1:  #due to some apparent problem with these repeatedly being added, only do it on first turn
-            for name,  desc,  hull,  partslist,  icon,  model in needsAdding:
-                try:
-                    res=fo.issueCreateShipDesignOrder( name,  desc,  hull,  partslist,  icon,  model,  False)
-                    print "added  Outposter Design %s, with result %d"%(name,  res)
-                except:
-                    print "Error: exception triggered and caught adding outposter %s:  "%name,  traceback.format_exc()
-
-    bestShip,  bestDesign,  buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST)
-    if bestDesign:
-        print "Best Outpost buildable is %s"%bestDesign.name(False)
-    else:
-        print "Outpost ships apparently unbuildable at present,  ruh-roh"
+        newOutpostDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  op],  "",  model)    for iw in [2, 3, 4] ]
+    addDesigns(shipType,   newOutpostDesigns,  shipProdPriority)
 
 def addColonyDesigns():
-    empire = fo.getEmpire()
-    colonyDesignIDs = []
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  {"nomatch":0}).items(),  key=lambda x:x[1])]
-    for baseName in designNameBases:
-        colonyDesignIDs.extend(  [shipDesignID for shipDesignID in empire.allShipDesigns if baseName  in fo.getShipDesign(shipDesignID).name(False) ] )
-    colonyShipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in colonyDesignIDs]
-    #print "Current Outpost Designs: %s"%scoutShipNames
-    #                                                            name               desc            hull                partslist                              icon                 model
+    shipType,  shipProdPriority ="Colony Ships",  EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION
+    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
     newColonyDesigns = []
-    desc = "Colony Ship"
-    model = "seed"
+    desc,  model = "Colony Ship",  "seed"
     srb = "SR_WEAPON_%1d"
     nb,  hull =  designNameBases[1]+"%1d_%1d",   "SH_ORGANIC"
-    cp = "CO_COLONY_POD"
+    cp,  cp2 = "CO_COLONY_POD",  "CO_SUSPEND_ANIM_POD"
     db = "DT_DETECTOR_%1d"
     is1,  is2 = "FU_BASIC_TANK",  "ST_CLOAK_1"
     for id in [1, 2, 3]:
-        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, srb%iw, db%id,  cp],  "",  model)    for iw in [1, 2, 5, 8] ]
+        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, "", db%id,  cp],  "",  model)    for iw in [1, 2, 3, 4] ]
 
     nb =  designNameBases[2]+"%1d_%1d"
-    cp2 = "CO_SUSPEND_ANIM_POD"
     for id in [1, 2, 3]:
-        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  cp2],  "",  model)    for iw in [5, 6, 7, 8]  ]
-
-    currentTurn=fo.currentTurn()
-    needsAdding=[]
-    namesToAdd=[]
-    for name,  desc,  hull,  partslist,  icon,  model in newColonyDesigns:
-        if name not in colonyShipNames:
-            needsAdding.append( ( name,  desc,  hull,  partslist,  icon,  model) )
-            namesToAdd.append( name )
-
-    if needsAdding != []:
-        print "--------------"
-        print "Current Colony  Designs: %s"%colonyShipNames
-        print "-----------"
-        print "Colony design names apparently needing to be added: %s"%namesToAdd
-        print "-------"
-        if currentTurn ==1:  #due to some apparent problem with these repeatedly being added, only do it on first turn
-            for name,  desc,  hull,  partslist,  icon,  model in needsAdding:
-                try:
-                    res=fo.issueCreateShipDesignOrder( name,  desc,  hull,  partslist,  icon,  model,  False)
-                    print "added  Colony Design %s, with result %d"%(name,  res)
-                except:
-                    print "Error: exception triggered and caught adding colony  %s:  "%name,  traceback.format_exc()
-
-    bestShip,  bestDesign,  buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION)
-    if bestDesign:
-        print "Best Colony ship buildable is %s"%bestDesign.name(False)
-    else:
-        print "Colony ships apparently unbuildable at present,  ruh-roh"
-
+        newColonyDesigns += [ (nb%(id, iw),  desc,  hull,  [ srb%iw, db%id, "",  cp2],  "",  model)    for iw in [3.4]  ]
+    addDesigns(shipType,   newColonyDesigns,  shipProdPriority)
     
 def generateProductionOrders():
     "generate production orders"
@@ -708,7 +452,6 @@ def generateProductionOrders():
     if ( (currentTurn %( aggrIndex))==0) and foAI.foAIstate.aggression < fo.aggression.maniacal:
         sysOrbitalDefenses={}
         queuedDefenses={}
-        orbitalDefenseNames = shipTypeNames( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE )
         defenseAllocation=0.0
         targetOrbitals=  min(  int( ((currentTurn+4)/( 8.0*(aggrIndex)**1.5))**0.8) ,  fo.aggression.maniacal - aggrIndex )
         print "Orbital Defense Check -- target Defense Orbitals: ",  targetOrbitals
