@@ -978,11 +978,14 @@ def generateProductionOrders():
     if queuedOutpostShips:
         print "\nFound  colony ships in build queue: %s"%queuedOutpostShips
         
+    allMilitaryFleetIDs =  FleetUtilsAI.getEmpireFleetIDsByRole(EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY )
+    nMilitaryTot = sum( [ foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0) for fid in allMilitaryFleetIDs ] )
     allTroopFleetIDs =  FleetUtilsAI.getEmpireFleetIDsByRole(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION )
     nTroopTot = sum( [ foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0) for fid in allTroopFleetIDs ] )
     availTroopFleetIDs = list( FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allTroopFleetIDs))
     nAvailTroopTot = sum( [ foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0) for fid in availTroopFleetIDs ] )
-    print "Trooper Status: %d total,  with %d unassigned.  %d queued"%(nTroopTot,  nAvailTroopTot,  queuedTroopShips)
+    print "Trooper Status turn %d: %d total,  with %d unassigned.  %d queued, compared to %d total Military Attack Ships"%(currentTurn,   nTroopTot,  
+                                                                                                                   nAvailTroopTot,  queuedTroopShips,  nMilitaryTot)
     if ( capitolID!=None and currentTurn>=40 and foAI.foAIstate.systemStatus.get(capitolSysID,  {}).get('fleetThreat', 0)==0   and 
                                                                                            foAI.foAIstate.systemStatus.get(capitolSysID,  {}).get('neighborThreat', 0)==0):
         bestShip,  bestDesign,  buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION)
@@ -990,7 +993,7 @@ def generateProductionOrders():
             loc = random.choice(buildChoices)
             prodTime = bestDesign.productionTime(empire.empireID,  loc)
             prodCost=bestDesign.productionCost(empire.empireID,  loc)
-            troopersNeededForcing = max(0,  int( 0.99+  (currentTurn/20 - nAvailTroopTot)/max(2, prodTime-1)) )
+            troopersNeededForcing = max(0,   int( min(0.99+  (currentTurn/20 - nAvailTroopTot)/max(2, prodTime-1),  nMilitaryTot/3 -nTroopTot)))
             numShips=troopersNeededForcing
             perTurnCost = (float(prodCost) / prodTime)
             if troopersNeededForcing>0  and totalPP > 3*perTurnCost*queuedTroopShips:
