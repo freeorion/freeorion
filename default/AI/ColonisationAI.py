@@ -428,28 +428,28 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             if system.starType in [fo.starType.blue, fo.starType.white]:
                 if len (AIstate.empireStars.get(fo.starType.blue,  [])+AIstate.empireStars.get(fo.starType.white,  []))==0:
                     starBonus +=20* discountMultiplier
-                    detail.append( "PRO_SOL_ORB_GEN  %.1f"%(20* discountMultiplier)    )
+                    detail.append( "PRO_SOL_ORB_GEN BW  %.1f"%(20* discountMultiplier)    )
                 elif   not alreadyGotThisOne:
                     starBonus +=1+10*discountMultiplier #still has extra value as an alternate location for solar generators
-                    detail.append( "PRO_SOL_ORB_GEN  %.1f"%(1+10* discountMultiplier )   )
+                    detail.append( "PRO_SOL_ORB_GEN BW Backup Location  %.1f"%(1+10* discountMultiplier )   )
                 elif fo.currentTurn() > 100:  #lock up this whole system
                     starBonus += 5 #TODO: how much?
-                    detail.append( "PRO_SOL_ORB_GEN  %.1f"%5  )
+                    detail.append( "PRO_SOL_ORB_GEN BW LockingDownSystem   %.1f"%5  )
             if system.starType in [fo.starType.yellow, fo.starType.orange]:
                 if len (     AIstate.empireStars.get(fo.starType.blue,  [])+AIstate.empireStars.get(fo.starType.white,  [])+
                                     AIstate.empireStars.get(fo.starType.yellow,  [])+AIstate.empireStars.get(fo.starType.orange,  []))==0:
                     starBonus +=10
-                    detail.append( "PRO_SOL_ORB_GEN  %.1f"%10 )
+                    detail.append( "PRO_SOL_ORB_GEN YO  %.1f"%10 )
                 else:
                     starBonus +=2 #still has extra value as an alternate location for solar generators
-                    detail.append( "PRO_SOL_ORB_GEN  %.1f"%2 )
+                    detail.append( "PRO_SOL_ORB_GEN YO Backup  %.1f"%2 )
         if system.starType in [fo.starType.blackHole] and fo.currentTurn() > 100:
             if not alreadyGotThisOne:
                 starBonus +=10*discountMultiplier #whether have tech yet or not, assign some base value
                 detail.append( "Black Hole %.1f"%(10* discountMultiplier)    )
             else:
                 starBonus += 5*discountMultiplier
-                detail.append( "Black Hole %.1f"%(5* discountMultiplier )   )
+                detail.append( "Black Hole Backup %.1f"%(5* discountMultiplier )   )
         if (empire.getTechStatus("PRO_SINGULAR_GEN") == fo.techStatus.complete) or (  "PRO_SINGULAR_GEN"  in empireResearchList[:8])  :    
             if system.starType in [fo.starType.blackHole] :
                 if len (AIstate.empireStars.get(fo.starType.blackHole,  []))==0:
@@ -457,7 +457,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                     detail.append( "PRO_SINGULAR_GEN %.1f"%(200* discountMultiplier  )  )
                 elif  planet.systemID not in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs):
                     starBonus +=100*discountMultiplier #still has extra value as an alternate location for generators & for blocking enemies generators
-                    detail.append( "PRO_SINGULAR_GEN backup %.1f"%(100* discountMultiplier  )  )
+                    detail.append( "PRO_SINGULAR_GEN Backup %.1f"%(100* discountMultiplier  )  )
             elif system.starType in [fo.starType.red] and ( len (AIstate.empireStars.get(fo.starType.blackHole,  [])) + len (AIstate.empireStars.get(fo.starType.red,  [])))==0:
                 if  planet.systemID not in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs):
                     starBonus +=40*discountMultiplier # can be used for artificial black hole
@@ -465,7 +465,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             if system.starType in [fo.starType.neutron]:
                 if len (AIstate.empireStars.get(fo.starType.neutron,  []))==0:
                     starBonus +=80*discountMultiplier #pretty rare planets, good for armor
-                    detail.append( "PRO_NEUTRONIUM_EXTRACTION  %.1f"%(80* discountMultiplier  )  )
+                    detail.append( "PRO_NEUTRONIUM_EXTRACTION  Backup %.1f"%(80* discountMultiplier  )  )
                 else:
                     starBonus +=20*discountMultiplier #still has extra value as an alternate location for generators & for bnlocking enemies generators
                     detail.append( "PRO_NEUTRONIUM_EXTRACTION  %.1f"%(20* discountMultiplier  )  )
@@ -476,7 +476,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                     detail.append( "SHP_ENRG_BOUND_MAN  %.1f"%(100* discountMultiplier  )  )
                 elif  planet.systemID not in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs):
                     colonyStarBonus +=50*discountMultiplier #still has extra value as an alternate location for generators & for bnlocking enemies generators
-                    detail.append( "SHP_ENRG_BOUND_MAN  %.1f"%(50* discountMultiplier  )  )
+                    detail.append( "SHP_ENRG_BOUND_MAN Backup  %.1f"%(50* discountMultiplier  )  )
     retval = starBonus
     
     planetSpecials = list(planet.specials)
@@ -580,57 +580,63 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             return -9999
         popSizeMod=0
         popSizeMod += popSizeModMap["env"][planetEnv]
+        detail.append("EnvironPopSizeMod(%d)"%popSizeMod)
         if "SELF_SUSTAINING" in tagList:
             popSizeMod*=2
-            detail.append("SelfSustaining" )
+            detail.append("SelfSustaining_PSM(2)" )
         if "PHOTOTROPHIC" in tagList:
             popSizeMod += starPopMod
-            detail.append("Phototropic Star Bonus %0.1f"%starPopMod)
+            detail.append("Phototropic Star Bonus_PSM(%0.1f)"%starPopMod)
         if (empire.getTechStatus("GRO_SUBTER_HAB") == fo.techStatus.complete)  or "TUNNELS_SPECIAL" in planetSpecials:    
             if "TECTONIC_INSTABILITY_SPECIAL" not in planetSpecials:
                 popSizeMod += popSizeModMap["subHab"][planetEnv]
-        if empire.getTechStatus("GRO_SYMBIOTIC_BIO") == fo.techStatus.complete:
-            popSizeMod += popSizeModMap["symBio"][planetEnv]
-        if empire.getTechStatus("GRO_XENO_GENETICS") == fo.techStatus.complete:
-            popSizeMod += popSizeModMap["xenoGen"][planetEnv]
-        if empire.getTechStatus("GRO_XENO_HYBRID") == fo.techStatus.complete:
-            popSizeMod += popSizeModMap["xenoHyb"][planetEnv]
-        if empire.getTechStatus("GRO_CYBORG") == fo.techStatus.complete:
-            popSizeMod += popSizeModMap["cyborg"][planetEnv]
-        if empire.getTechStatus("CON_NDIM_STRUC") == fo.techStatus.complete:
-            popSizeMod += popSizeModMap["ndim"][planetEnv]
-        if empire.getTechStatus("CON_ORBITAL_HAB") == fo.techStatus.complete:
-            popSizeMod += popSizeModMap["orbit"][planetEnv]
+                if "TUNNELS_SPECIAL" in planetSpecials:
+                    T_reason="Tunnels_PSM(%d)"
+                else:
+                    T_reason="Sub_Hab_PSM(%d)"
+                detail.append(T_reason%popSizeModMap["subHab"][planetEnv])
+        for gTech,  gKey in [ ("GRO_SYMBIOTIC_BIO", "symBio"), 
+                                                        ("GRO_XENO_GENETICS", "xenoGen"), 
+                                                        ("GRO_XENO_HYBRID", "xenoHyb"), 
+                                                        ("GRO_CYBORG", "cyborg"), 
+                                                        ("CON_NDIM_STRUC", "ndim"), 
+                                                        ("CON_ORBITAL_HAB", "orbit") ]:
+            if empire.getTechStatus(gTech) == fo.techStatus.complete:
+                popSizeMod += popSizeModMap[gKey][planetEnv]
+                detail.append("%s_PSM(%d)"%(gKey,  popSizeModMap["gKey"][planetEnv]))
 
         if "GAIA_SPECIAL" in planet.specials:
             popSizeMod += 3
-            detail.append("Gaia")
+            detail.append("Gaia_PSM(3)")
 
         for special in [ "SLOW_ROTATION_SPECIAL",  "SOLID_CORE_SPECIAL"] :
             if special in planetSpecials:
                 popSizeMod -= 1
-                detail.append(special)
+                detail.append("%s_PSM(-1)"%special)
 
         applicableBoosts=set([])
         for thisTag in [ tag for tag in tagList if tag in  AIDependencies.metabolims]:
             metabBoosts= AIDependencies.metabolimBoostMap.get(thisTag,  [])
             for key in activeGrowthSpecials.keys():
                 if  ( len(activeGrowthSpecials[key])>0 ) and ( key in metabBoosts ):
-                    applicableBoosts.update(key)
-                    detail.append("%s boost active")
+                    applicableBoosts.add(key)
+                    detail.append("%s boost active"%key)
             for boost in metabBoosts:
                 if boost in planetSpecials:
-                    applicableBoosts.update(boost)
-                    detail.append("%s boost present")
+                    applicableBoosts.add(boost)
+                    detail.append("%s boost present"%boost)
         
-        popSizeMod += len(applicableBoosts)
-        #popSizeMod +=  len( (set(planetSpecials).union([key for key in activeGrowthSpecials.keys() if  len(activeGrowthSpecials[key])>0 ] )).intersection(AIDependencies.metabolimBoostMap.get(thisTag,  []) ) )
+        nBoosts = len(applicableBoosts)
+        if nBoosts:
+            popSizeMod += nBoosts
+            detail.append("boosts_PSM(%d from %s)"%(nBoosts, applicableBoosts))
             
         popSize = planetSize * popSizeMod
+        detail.append("baseMaxPop size*psm %d * %d = %d"%(planetSize,  popSizeMod,  popSize) )
 
         if "DIM_RIFT_MASTER_SPECIAL" in planet.specials:
             popSize -= 4
-            detail.append("DIM_RIFT_MASTER_SPECIAL")
+            detail.append("DIM_RIFT_MASTER_SPECIAL(maxPop-4)")
         detail.append("maxPop %.1f"%popSize)
 
         for special in [ "MINERALS_SPECIAL",  "CRYSTALS_SPECIAL",  "METALOIDS_SPECIAL"] : 

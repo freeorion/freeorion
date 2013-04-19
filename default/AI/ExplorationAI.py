@@ -212,8 +212,8 @@ def updateExploredSystems():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     obsLanes = empire.obstructedStarlanes()
-    print "object is: %s"%(obsLanes,  )
-    obsLanesList = [el for el in obsLanes]
+    #print "object is: %s"%(obsLanes,  ) #IntPairVec
+    obsLanesList = [el for el in obsLanes] #should result in list of tuples (sysID1, sysID2)
     if obsLanesList:
         print "obstructed starlanes  are: %s"%( obsLanesList,  )
     else:
@@ -222,7 +222,7 @@ def updateExploredSystems():
     newlyExplored=[]
     stillUnexplored=[]
     for sysID in list(foAI.foAIstate.unexploredSystemIDs):
-        if  (empire.hasExploredSystem(sysID)): 
+        if  (empire.hasExploredSystem(sysID)):  #consider making determination according to visibility rather than actual visit, which I think is what empire.hasExploredSystem covers
             del foAI.foAIstate.unexploredSystemIDs[sysID]
             foAI.foAIstate.exploredSystemIDs[sysID] = 1
             sys=universe.getSystem(sysID)
