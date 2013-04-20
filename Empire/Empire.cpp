@@ -770,7 +770,7 @@ void ProductionQueue::Update() {
 
 
     const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
-    const double TOO_LONG_TIME = 0.1;   // max time in ms to spend simulating queue
+    const double TOO_LONG_TIME = 0.5;   // max time in ms to spend simulating queue
 
 
     // remove from simulated queue any items that can't be built due to not
