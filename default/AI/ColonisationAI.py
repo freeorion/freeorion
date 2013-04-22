@@ -579,6 +579,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         if planetEnv==0:
             return -9999
         popSizeMod=0
+        conditionalPopSizeMod=0
         popSizeMod += popSizeModMap["env"][planetEnv]
         detail.append("EnvironPopSizeMod(%d)"%popSizeMod)
         if "SELF_SUSTAINING" in tagList:
@@ -589,7 +590,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             detail.append("Phototropic Star Bonus_PSM(%0.1f)"%starPopMod)
         if (empire.getTechStatus("GRO_SUBTER_HAB") == fo.techStatus.complete)  or "TUNNELS_SPECIAL" in planetSpecials:    
             if "TECTONIC_INSTABILITY_SPECIAL" not in planetSpecials:
-                popSizeMod += popSizeModMap["subHab"][planetEnv]
+                conditionalPopSizeMod += popSizeModMap["subHab"][planetEnv]
                 if "TUNNELS_SPECIAL" in planetSpecials:
                     T_reason="Tunnels_PSM(%d)"
                 else:
@@ -617,10 +618,11 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         applicableBoosts=set([])
         for thisTag in [ tag for tag in tagList if tag in  AIDependencies.metabolims]:
             metabBoosts= AIDependencies.metabolimBoostMap.get(thisTag,  [])
-            for key in activeGrowthSpecials.keys():
-                if  ( len(activeGrowthSpecials[key])>0 ) and ( key in metabBoosts ):
-                    applicableBoosts.add(key)
-                    detail.append("%s boost active"%key)
+            if popSizeMod > 0:
+                for key in activeGrowthSpecials.keys():
+                    if  ( len(activeGrowthSpecials[key])>0 ) and ( key in metabBoosts ):
+                        applicableBoosts.add(key)
+                        detail.append("%s boost active"%key)
             for boost in metabBoosts:
                 if boost in planetSpecials:
                     applicableBoosts.add(boost)
@@ -630,7 +632,9 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         if nBoosts:
             popSizeMod += nBoosts
             detail.append("boosts_PSM(%d from %s)"%(nBoosts, applicableBoosts))
-            
+        if popSizeMod > 0:
+            popSizeMod += conditionalPopSizeMod
+
         popSize = planetSize * popSizeMod
         detail.append("baseMaxPop size*psm %d * %d = %d"%(planetSize,  popSizeMod,  popSize) )
 
