@@ -475,7 +475,7 @@ def generateProductionOrders():
             fleetsHere = foAI.foAIstate.systemStatus.get(sysID,  {}).get('myfleets',  [])
             for fid in fleetsHere:
                 if foAI.foAIstate.getFleetRole(fid)==EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE:
-                    #print "Found %d existing Orbital Defenses in %s :"%(foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0),   PlanetUtilsAI.sysNameIDs([sysID]))
+                    print "Found %d existing Orbital Defenses in %s :"%(foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0),   PlanetUtilsAI.sysNameIDs([sysID]))
                     sysOrbitalDefenses[sysID] += foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0)
             for pid in ColonisationAI.empireSpeciesSystems.get(sysID, {}).get('pids',  []):
                 sysOrbitalDefenses[sysID] += queuedDefenses.get(pid,  0)

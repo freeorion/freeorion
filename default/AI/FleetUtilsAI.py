@@ -338,9 +338,12 @@ def assessShipDesignRole(design):
             return AIShipRoleType.SHIP_ROLE_BASE_INVASION
             
     if design.starlaneSpeed == 0:
-        if design.parts[0] in [ "SH_DEFENSE_GRID", "SH_DEFLECTOR" ,  "SH_MULTISPEC" ]:
+        string1 =  "Ship Design %s has partslist %s"%(design.name(False),  [part for part in design.parts])
+        if len(design.parts)==0 or  design.parts[0] in [ "SH_DEFENSE_GRID", "SH_DEFLECTOR" ,  "SH_MULTISPEC" ] or (len(design.parts)==1 and design.parts[0]==''):
+            print string1,  "-- classifying as Base Defense"
             return AIShipRoleType.SHIP_ROLE_BASE_DEFENSE
         else:
+            print string1,  "-- classifying as Invalid"
             return AIShipRoleType.SHIP_ROLE_INVALID        
             
     stats = foAI.foAIstate.getDesignStats(design)
@@ -384,6 +387,7 @@ def generateAIFleetOrdersForAIFleetMissions():
     print "Military Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY))
     print "Orbital Defense Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE))
     print "Securing Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_SECURE)) + " (currently FLEET_MISSION_MILITARY should be used instead of this Role)"
+    print "Unclassifyable Fleets  : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVALID))
 
     print ""
     print "Explored systems  :"

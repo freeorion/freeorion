@@ -494,7 +494,7 @@ class AIstate(object):
     def getShipRole(self, shipDesignID):
         "returns ship role for given designID, assesses and adds as needed"
 
-        if shipDesignID in self.__shipRoleByDesignID:
+        if shipDesignID in self.__shipRoleByDesignID and self.__shipRoleByDesignID[shipDesignID] != EnumsAI.AIShipRoleType.SHIP_ROLE_INVALID: #if thought was invalid, recheck to be sure
             return self.__shipRoleByDesignID[shipDesignID]
         else:
             self.getDesignIDStats(shipDesignID) # just to update with infor for this new design
@@ -529,7 +529,7 @@ class AIstate(object):
     def getFleetRole(self, fleetID,  forceNew=False):
         "returns fleet role by ID"
 
-        if (not forceNew) and fleetID in self.__fleetRoleByID:
+        if (not forceNew) and fleetID in self.__fleetRoleByID and self.__fleetRoleByID[fleetID]!=AIFleetMissionType.FLEET_MISSION_INVALID :
             return self.__fleetRoleByID[fleetID]
         else:
             role=FleetUtilsAI.assessFleetRole(fleetID)

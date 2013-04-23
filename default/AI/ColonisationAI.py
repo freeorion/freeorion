@@ -604,7 +604,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                                                         ("CON_ORBITAL_HAB", "orbit") ]:
             if empire.getTechStatus(gTech) == fo.techStatus.complete:
                 popSizeMod += popSizeModMap[gKey][planetEnv]
-                detail.append("%s_PSM(%d)"%(gKey,  popSizeModMap["gKey"][planetEnv]))
+                detail.append("%s_PSM(%d)"%(gKey,  popSizeModMap[gKey][planetEnv]))
 
         if "GAIA_SPECIAL" in planet.specials:
             popSizeMod += 3
