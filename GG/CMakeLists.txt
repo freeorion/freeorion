@@ -56,6 +56,10 @@ option(BUILD_DOCUMENTATION
        "Builds HTML documentation (requires Doxygen)."
        OFF)
 
+if (MSVC)
+    set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
+endif ()
+
 set(RUNTIME_ONLY_PACKAGE false)
 set(DEVEL_ONLY_PACKAGE false)
 set(NO_DOCS_PACKAGE false)

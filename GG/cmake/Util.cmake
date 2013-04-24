@@ -41,12 +41,6 @@ endmacro ()
 # If any of the features listed conflict with this library, no new targets
 # will be built.
 macro (library_all_variants LIBNAME)
-  # On Windows, we need static and shared libraries to have
-  # different names, so we prepend "lib" to the name.
-  if (BUILD_STATIC AND WIN32 AND NOT CYGWIN)
-    set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
-  endif ()
-
   if (BUILD_SHARED)
     add_library(${LIBNAME} SHARED ${THIS_LIB_SOURCES})
   else ()

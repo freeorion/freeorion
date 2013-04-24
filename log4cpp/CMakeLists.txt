@@ -1,10 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 cmake_policy(VERSION 2.6.4)
 
-set(BUILD_STATIC ON)
-set(BUILD_SHARED OFF)
-
-set(THIS_LIB_SOURCES
+set(log4cpp_SOURCES
     src/Appender.cpp
     src/AppenderSkeleton.cpp
     src/BasicLayout.cpp
@@ -25,10 +22,10 @@ set(THIS_LIB_SOURCES
 )
 
 if (WIN32)
-    list(APPEND THIS_LIB_SOURCES src/MSThreads.cpp)
+    list(APPEND log4cpp_SOURCES src/MSThreads.cpp)
 else ()
-    list(APPEND THIS_LIB_SOURCES src/PThreads.cpp)
+    list(APPEND log4cpp_SOURCES src/PThreads.cpp)
 endif ()
 
-library_all_variants(log4cpp)
+add_library(log4cpp STATIC ${log4cpp_SOURCES})
 

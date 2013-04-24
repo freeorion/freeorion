@@ -5,23 +5,6 @@ project(freeorionca)
 
 message("-- Configuring freeorionca")
 
-set(THIS_EXE_SOURCES
-    ../../AI/AIInterface.cpp
-    ../../AI/PythonAI.cpp
-    ../../client/ClientApp.cpp
-    ../../client/ClientFSMEvents.cpp
-    ../../client/AI/AIClientApp.cpp
-    ../../client/AI/camain.cpp
-    ../../combat/CombatSystem.cpp
-    ../../network/ClientNetworking.cpp
-    ../../python/PythonEnumWrapper.cpp
-    ../../python/PythonUniverseWrapper.cpp
-    ../../python/PythonEmpireWrapper.cpp
-    ../../python/PythonLoggingWrapper.cpp
-    ../../util/AppInterface.cpp
-    ../../util/VarText.cpp
-)
-
 list(APPEND MINIMUM_BOOST_COMPONENTS iostreams python)
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS ${MINIMUM_BOOST_COMPONENTS})
 if (Boost_FOUND)
@@ -39,18 +22,43 @@ endif ()
 
 add_definitions(-DFREEORION_BUILD_AI)
 
-set(THIS_EXE_LINK_LIBS core parse log4cpp ${PYTHON_LIBRARIES})
+set(freeorionca_LINK_LIBS core parse log4cpp ${PYTHON_LIBRARIES})
 
 if (WIN32)
     link_directories(${BOOST_LIBRARYDIR})
 else ()
-    set(THIS_EXE_LINK_LIBS ${THIS_EXE_LINK_LIBS} ${Boost_LIBRARIES})
+    list(APPEND freeorionca_LINK_LIBS ${Boost_LIBRARIES})
 endif ()
 
-executable_all_variants(freeorionca)
+add_executable(freeorionca
+    ../../AI/AIInterface.cpp
+    ../../AI/PythonAI.cpp
+    ../../client/ClientApp.cpp
+    ../../client/ClientFSMEvents.cpp
+    ../../client/AI/AIClientApp.cpp
+    ../../client/AI/camain.cpp
+    ../../combat/CombatSystem.cpp
+    ../../network/ClientNetworking.cpp
+    ../../python/PythonEnumWrapper.cpp
+    ../../python/PythonUniverseWrapper.cpp
+    ../../python/PythonEmpireWrapper.cpp
+    ../../python/PythonLoggingWrapper.cpp
+    ../../util/AppInterface.cpp
+    ../../util/VarText.cpp
+)
+
+target_link_libraries(freeorionca
+    ${freeorionca_LINK_LIBS}
+    ${CMAKE_THREAD_LIBS_INIT}
+)
+
+install(
+    TARGETS freeorionca
+    RUNTIME DESTINATION .
+    COMPONENT COMPONENT_FREEORION
+)
 
 if (WIN32)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE)
     set_target_properties(freeorionca
         PROPERTIES
         COMPILE_DEFINITIONS BOOST_ALL_DYN_LINK

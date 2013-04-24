@@ -5,12 +5,9 @@ project(parser_tests)
 
 message("-- Configuring parser_test")
 
-set(BUILD_DEBUG_TMP ${BUILD_DEBUG})
-set(BUILD_RELEASE_TMP ${BUILD_RELEASE})
-set(BUILD_DEBUG OFF)
-set(BUILD_RELEASE ON)
+add_definitions(-DFREEORION_BUILD_SERVER)
 
-set(THIS_EXE_SOURCES
+add_executable(parser_test
     ../../combat/CombatSystem.cpp
     ../../network/ServerNetworking.cpp
     ../../server/SaveLoad.cpp
@@ -24,17 +21,20 @@ set(THIS_EXE_SOURCES
     lexer_test_rules.cpp
 )
 
-add_definitions(-DFREEORION_BUILD_SERVER)
+target_link_libraries(parser_test
+    core
+    parse
+    log4cpp
+    ${CMAKE_THREAD_LIBS_INIT}
+)
 
-set(THIS_EXE_LINK_LIBS core parse log4cpp)
-
-executable_all_variants(parser_test)
-
-set(BUILD_DEBUG ${BUILD_DEBUG_TMP})
-set(BUILD_RELEASE ${BUILD_RELEASE_TMP})
+install(
+    TARGETS parser_test
+    RUNTIME DESTINATION .
+    COMPONENT COMPONENT_FREEORION
+)
 
 if (WIN32)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE)
     set_target_properties(parser_test
         PROPERTIES
         COMPILE_DEFINITIONS BOOST_ALL_DYN_LINK

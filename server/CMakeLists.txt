@@ -5,7 +5,13 @@ project(freeoriond)
 
 message("-- Configuring freeoriond")
 
-set(THIS_EXE_SOURCES
+add_definitions(-DFREEORION_BUILD_SERVER)
+
+if (WIN32)
+    link_directories(${BOOST_LIBRARYDIR})
+endif ()
+
+add_executable(freeoriond
     ../network/ServerNetworking.cpp
     ../server/SaveLoad.cpp
     ../server/ServerApp.cpp
@@ -17,18 +23,20 @@ set(THIS_EXE_SOURCES
     ../combat/CombatSystem.cpp
 )
 
-add_definitions(-DFREEORION_BUILD_SERVER)
+target_link_libraries(freeoriond
+    core
+    parse
+    log4cpp
+    ${CMAKE_THREAD_LIBS_INIT}
+)
 
-set(THIS_EXE_LINK_LIBS core parse log4cpp)
+install(
+    TARGETS freeoriond
+    RUNTIME DESTINATION .
+    COMPONENT COMPONENT_FREEORION
+)
 
 if (WIN32)
-    link_directories(${BOOST_LIBRARYDIR})
-endif ()
-
-executable_all_variants(freeoriond)
-
-if (WIN32)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE)
     set_target_properties(freeoriond
         PROPERTIES
         COMPILE_DEFINITIONS BOOST_ALL_DYN_LINK

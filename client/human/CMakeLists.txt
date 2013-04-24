@@ -63,7 +63,9 @@ endif ()
 
 include_directories(${CMAKE_SOURCE_DIR}/PagedGeometry/include)
 
-set(THIS_EXE_SOURCES
+add_definitions(-DFREEORION_BUILD_HUMAN -DGL_GLEXT_PROTOTYPES)
+
+set(freeorion_SOURCES
     ../../client/ClientApp.cpp
     ../../client/ClientFSMEvents.cpp
     ../../client/human/HumanClientFSM.cpp
@@ -117,9 +119,7 @@ set(THIS_EXE_SOURCES
     ../../util/VarText.cpp
 )
 
-add_definitions(-DFREEORION_BUILD_HUMAN -DGL_GLEXT_PROTOTYPES)
-
-set(THIS_EXE_LINK_LIBS
+set(freeorion_LINK_LIBS
     core
     parse
     log4cpp
@@ -134,25 +134,37 @@ set(THIS_EXE_LINK_LIBS
     ${VORBIS_LIBRARIES}
     ${BULLET_LIBRARIES}
     ${ZLIB_LIBRARY}
+    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 if (WIN32)
     link_directories(${BOOST_LIBRARYDIR})
-    set(THIS_EXE_LINK_LIBS
-        ${THIS_EXE_LINK_LIBS}
+    list(APPEND
+        freeorion_LINK_LIBS
         ${OPENGL_gl_LIBRARY}
         ${OPENGL_glu_LIBRARY}
         jpeg.lib libpng.lib glew32.lib
     )
-    set(THIS_EXE_SOURCES ${THIS_EXE_SOURCES} ${CMAKE_BINARY_DIR}/win32_resources.rc)
+    list(APPEND freeorion_SOURCES ${CMAKE_BINARY_DIR}/win32_resources.rc)
 else ()
-    set(THIS_EXE_LINK_LIBS ${THIS_EXE_LINK_LIBS} ${Boost_LIBRARIES})
+    list(APPEND freeorion_LINK_LIBS ${Boost_LIBRARIES})
 endif ()
 
-executable_all_variants(freeorion)
+add_executable(freeorion
+    ${freeorion_SOURCES}
+)
+
+target_link_libraries(freeorion
+    ${freeorion_LINK_LIBS}
+)
+
+install(
+    TARGETS freeorion
+    RUNTIME DESTINATION .
+    COMPONENT COMPONENT_FREEORION
+)
 
 if (WIN32)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE)
     set_target_properties(freeorion
         PROPERTIES
         COMPILE_DEFINITIONS BOOST_ALL_DYN_LINK

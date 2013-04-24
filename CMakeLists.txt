@@ -34,8 +34,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 if (WIN32)
-    add_definitions(-DFREEORION_WIN32)
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -DFREEORION_WIN32)
     if (MSVC)
+        set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
         add_definitions(/wd4146 /wd4099 /wd4251 /wd4800 /wd4267 /wd4275
                         /wd4244 /wd4101 /wd4258 /wd4351 /wd4996)
     endif ()
@@ -52,7 +53,6 @@ endif ()
 ########################################
 # Dependencies                         #
 ########################################
-set(Boost_USE_STATIC_LIBS ${BUILD_STATIC})
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS ${MINIMUM_BOOST_COMPONENTS})
 if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
@@ -126,12 +126,7 @@ if (FREEORION_RELEASE)
     add_definitions(-DFREEORION_RELEASE)
 endif ()
 
-set(BUILD_STATIC ON)
-set(BUILD_SHARED OFF)
-
-set(THIS_LIB_LINK_LIBS ${GIGI_GIGI_LIBRARY} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES} ${OPENGL_LIBRARIES})
-
-set(THIS_LIB_SOURCES
+add_library(core STATIC
     combat/CombatOrder.cpp
     combat/AsteroidBeltObstacle.cpp
     combat/CombatFighter.cpp
@@ -198,14 +193,14 @@ set(THIS_LIB_SOURCES
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
 
-library_all_variants(core)
+target_link_libraries(core
+    ${GIGI_GIGI_LIBRARY}
+    ${Boost_LIBRARIES}
+    ${ZLIB_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+)
 
-set(BUILD_DEBUG_TMP ${BUILD_DEBUG})
-set(BUILD_RELEASE_TMP ${BUILD_RELEASE})
-set(BUILD_DEBUG OFF)
-set(BUILD_RELEASE ON)
-
-set(THIS_LIB_SOURCES
+add_library(parse STATIC
     parse/Lexer.cpp
     parse/ReportParseError.cpp
     parse/Int.cpp
@@ -248,39 +243,11 @@ set(THIS_LIB_SOURCES
     parse/KeymapParser.cpp
 )
 
-library_all_variants(parse)
-
-set(BUILD_DEBUG ${BUILD_DEBUG_TMP})
-set(BUILD_RELEASE ${BUILD_RELEASE_TMP})
-
-
-# This macro is an internal utility macro that builds a particular variant of
-# an executable.
-#
-#   executable_variant(exename
-#                      feature1 feature2 ...)
-#
-# where exename is the name of the executable (e.g., "GiGiSDL").
-#
-# This macro will define a new executable target based on exename and the
-# specific variant name, which depends on the utility target exename. The
-# linked libraries for this executable are defined by THIS_EXE_LINK_LIBS,
-# and all of the compile and linking flags implied by the features provided.
-#
-# If any of the features listed conflict with this executable, no new targets
-# will be built.
-macro (executable_all_variants EXENAME)
-  # Add the executable itself
-  add_executable(${EXENAME} ${THIS_EXE_SOURCES})
-
-  # Link against whatever libraries this executable depends on
-  target_link_libraries(${EXENAME} ${THIS_EXE_LINK_LIBS} ${CMAKE_THREAD_LIBS_INIT})
-
-  install(
-    TARGETS ${EXENAME}
-    RUNTIME DESTINATION . COMPONENT COMPONENT_FREEORION
-  )
-endmacro ()
+set_target_properties(parse
+    PROPERTIES
+    COMPILE_DEFINITIONS NDEBUG
+    COMPILE_FLAGS -O3
+)
 
 ########################################
 # Recurse Into Sources                 #
