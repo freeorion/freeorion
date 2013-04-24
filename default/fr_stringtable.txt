@@ -1,6 +1,6 @@
 Français
 
-#This is the French String Table file for FreeOrion. (= eng_svn5549) (with « » ^) (+5614 +~!5655)
+#This is the French String Table file for FreeOrion. (= eng_svn5559) (with « » ^) (+5614 +~!5655)
 #Translation by alchemy, shivu and zareif.
 
 #################
@@ -110,7 +110,7 @@ BACK
 «
 
 LAST
-<
+>|
 
 # used to generate names for new fleets when they are created
 NEW_FLEET_NAME
@@ -271,27 +271,27 @@ Croiseur avancé avec blindage et armement lourd pour faire le sale boulot.
 SD_MARK_A_ORGANIC1
 Organic I
 SD_MARK_A_ORGANIC1_DESC
-Organic hull design with preliminary Laser weaponry
+Coque organique avec un armement primaire laser.
 
 SD_MARK_A_ORGANIC2
 Organic II
 SD_MARK_A_ORGANIC2_DESC
-Organic hull design with Laser weaponry
+Coque organique avec un armement laser.
 
 SD_MARK_A_ORGANIC3
 Organic III
 SD_MARK_A_ORGANIC3_DESC
-Organic hull design with Laser weaponry
+Coque organique avec un armement laser.
 
 SD_MARK_A_ORGANIC4
 Organic IV
 SD_MARK_A_ORGANIC4_DESC
-Organic hull design with Laser weaponry
+Coque organique avec un armement laser.
 
 SD_MARK_B_ORGANIC1
 Organic V
 SD_MARK_B_ORGANIC1_DESC
-Organic hull design with preliminary Plasma weaponry. 
+Coque organique avec un armement primaire plasma. 
 
 
 SD_MARK_C_ENDO1
@@ -451,32 +451,32 @@ In the larval form, a kraken is a cautious and harmless type of space-bourn faun
 SM_KRAKEN_2
 Kraken
 SM_KRAKEN_2_DESC
-A formidable medium-weight space monster.
+Un formidable monstre de l'espace de poids moyen.
 
 SM_KRAKEN_3
 Great Kraken
 SM_KRAKEN_3_DESC
-A formidable medium-weight space monster.
+Un formidable monstre de l'espace de poids moyen.
 
 SM_BLACK_KRAKEN
 Black Kraken
 SM_BLACK_KRAKEN_DESC
-A powerful, unnatural-seeming space monster.
+Un puissant monstre de l'espace d'apparence contre nature.
 
 SM_SNOWFLAKE_1
 Small Snowflake
 SM_SNOWFLAKE_1_DESC
-A formidable light-weight space monster.
+Un formidable monstre de l'espace de poids léger.
 
 SM_SNOWFLAKE_2
 Snowflake
 SM_SNOWFLAKE_2_DESC
-A formidable light-weight space monster.
+Un formidable monstre de l'espace de poids léger.
 
 SM_SNOWFLAKE_3
 Large Snowflake
 SM_SNOWFLAKE_3_DESC
-A formidable light-weight space monster.
+Un formidable monstre de l'espace de poids léger.
 
 SM_PSIONIC_SNOWFLAKE
 Psionic Snowflake
@@ -486,22 +486,22 @@ A monster with the power to neutralize the minds of organic beings.
 SM_JUGGERNAUT_1
 Small Juggernaut
 SM_JUGGERNAUT_1_DESC
-A formidable heavy-weight space monster.
+Un formidable monstre de l'espace de poids lourd.
 
 SM_JUGGERNAUT_2
 Juggernaut
 SM_JUGGERNAUT_2_DESC
-A formidable heavy-weight space monster.
+Un formidable monstre de l'espace de poids lourd.
 
 SM_JUGGERNAUT_3
 Large Juggernaut
 SM_JUGGERNAUT_3_DESC
-A formidable heavy-weight space monster.
+Un formidable monstre de l'espace de poids lourd.
 
 SM_BLOATED_JUGGERNAUT
 Bloated Juggernaut
 SM_BLOATED_JUGGERNAUT_DESC
-A massive, sickly-looking space monster.
+Un monstre de l'espace massif mais d'allure maladive.
 
 SM_CLOUD
 Space Cloud
@@ -553,10 +553,10 @@ A fearsome space monster with the power to destroy entire star systems.
 ##########
 
 FLD_ION_STORM
-Ion Storm
+Tempête ionique
 
 FLD_ION_STORM_DESC
-Magnetic vortex of relativistic charged particles that can interfere with sensors and damage ships and planets.
+Tourbillon magnétique de particules relativistes chargées qui peut interférer avec les capteurs et endommager les vaisseaux et les planètes.
 
 
 ##############################
@@ -1383,7 +1383,7 @@ Ancienne
 GSETUP_BEGINNER
 Mode débutant
 GSETUP_TURTLE
-Tortue
+tortue
 GSETUP_DEFENSIVE
 prudent
 GSETUP_MODERATE
@@ -1632,10 +1632,10 @@ OPTIONS_STARLANES
 Liaisons spatiales
 
 OPTIONS_STARLANE_THICKNESS
-Epaisseur lien hyperspatial
+Epaisseur des liaisons spatiales
 
 OPTIONS_RESOURCE_STARLANE_COLOURING
-Coloration lien hyperspatial de ressource
+Coloration des liaisons spatiales de ressource
 
 OPTIONS_FLEET_SUPPLY_LINES
 Lignes d'approvisionnement de flotte
@@ -1650,7 +1650,7 @@ OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE
 Fleet supply line dot rate
 
 OPTIONS_UNOWNED_STARLANE_COLOUR
-Couleur par défaut de lien hyperspatial
+Couleur par défaut des liaisons spatiales
 
 OPTIONS_MUSIC
 Musique
@@ -2641,7 +2641,7 @@ Structure: %8%
 Contenance carburant: %14%
 Capacité colonisatrice: %15%
 Troupes: %16%
-Vitesse lien hyperspatial: %13%
+Vitesse liaisons spatiales: %13%
 '''
 
 ## Temporarily removed
@@ -2651,6 +2651,13 @@ Vitesse lien hyperspatial: %13%
 # Point Defense Parts: %7%
 # Battle Speed: %12%
 ##
+
+ENC_UNLOCKED_BY
+'''
+
+<u>Débloqué par la techn.:</u>
+
+'''
 
 ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
 '''
@@ -2734,10 +2741,24 @@ Focalisation sur la protection
 PROTECTION_FOCUS_TEXT
 '''La focalisation sur la protection signifie qu'une planète est entièrement concentrée sur sa défense. Les [[encyclopedia TROOP_TITLE]] de [[encyclopedia DEFENSE_TITLE]] et les [[encyclopedia SHIELDS_TITLE]] s'y consacre entièrement.'''
 
+INDUSTRY_TITLE
+Industry
+INDUSTRY_TEXT
+'''Industry represents the production and modification of physical goods. It is needed to produce buildings, space ships and other projects.
+
+The Industry of a planet can be used for any production projects of [[encyclopedia SUPPLY_TITLE]] line connected planets. Any un-allocated Industry is lost each turn.'''
+
+RESEARCH_TITLE
+Research
+RESEARCH_TEXT
+'''The Research of all planets in the empire is combined to research new technologies. Any un-allocated Research is lost each turn.
+
+Research does not require [[encyclopedia SUPPLY_TITLE]] line connections to be used.'''
+
 HAPPINESS_TITLE
 Bonheur
 HAPPINESS_TEXT
-'''Happiness doesn't do anything, yet.'''
+'''Happiness doesn't do anything yet.'''
 
 INFRASTRUCTURE_TITLE
 Infrastructure
@@ -3022,7 +3043,7 @@ FILTERS
 Filtres
 
 SITREP_SHIP_BUILT
-Un %shipdesign% dénommé '%ship%' a été produit dans le système %system%.
+Un %shipdesign% baptisé '%ship%' a été produit dans le système %system%.
 SITREP_SHIP_BUILT_LABEL
 Vaisseau produit
 
@@ -3052,7 +3073,7 @@ SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Objet détruit
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
-Un %shipdesign% dénommé '%ship%' de %empire% a été détruit dans le système %system%.
+Un %shipdesign% baptisé '%ship%' de %empire% a été détruit dans le système %system%.
 SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Vaisseau impérial détruit
 
@@ -3097,7 +3118,7 @@ SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
 Objet endommagé
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
-Un %shipdesign% dénommé '%ship%' de %empire% a été endommagé dans le système %system%.
+Un %shipdesign% baptisé '%ship%' de %empire% a été endommagé dans le système %system%.
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Vaisseau impérial endommagé
 
@@ -3142,19 +3163,19 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Flotte var. arrivée à 
 
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
-%fleet% has arrived at %system%.
+%fleet% est arrivée à %system%.
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL
-Monsters Fleet Arrived
+Une flotte de monstres est arrivée
 
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
-%empire% %fleet% has arrived at %system%.
+%empire%: %fleet% est arrivée à %system%.
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL
-Own Fleet Arrived
+Une flotte est arrivée
 
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
-%empire% %fleet% has arrived at %system%.
+%empire%: %fleet% est arrivée à %system%.
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
-Foreign Fleet Arrived
+Une flotte étrangère est arrivée
 
 SITREP_EMPIRE_ELIMINATED
 L'empire %empire% a été éliminé.
@@ -3321,7 +3342,7 @@ Préfére les planètes type terrestre.
 SP_SCYLIOR
 Scylior
 SP_SCYLIOR_DESC
-'''Three-tentacled, aquatic Nautiloid.
+'''Possèdent trois tentacules, nautiloide aquatique.
 Préfére les planètes océaniques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
@@ -3334,7 +3355,7 @@ Préfére les planètes océaniques.
 SP_GYSACHE
 GYSACHE
 SP_GYSACHE_DESC
-'''Cowardly, freakish sheep-like herbivores.
+'''Lâches, capricieux comme des moutons, herbivores.
 Préfére les planètes marécageuses.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
@@ -3348,7 +3369,7 @@ Préfére les planètes marécageuses.
 SP_CHATO
 Chato
 SP_CHATO_DESC
-'''Sessile crystalline entities which ride the animal Goshk.
+'''Entités cristallines sessiles qui chevauchent des animaux dénommés goshk
 Préfére les planètes toxiques.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 
@@ -3362,7 +3383,7 @@ Préfére les planètes toxiques.
 SP_TRITH
 Trith
 SP_TRITH_DESC
-'''Bereaved xenophobic telepaths.
+'''Télépathes xénophobes affligés.
 Préfére les planètes désertiques.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
@@ -3377,7 +3398,7 @@ Préfére les planètes désertiques.
 SP_HHHOH
 Hhhoh
 SP_HHHOH_DESC
-'''Huge, slow, multi-trunked Mammoths.
+'''Énormes mammouths, lents et partagés en multiples troncs
 Préfére les planètes avec toundra.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
@@ -3415,7 +3436,7 @@ Préfére les planètes toxiques.
 SP_LAENFA
 Laenfa
 SP_LAENFA_DESC
-'''Sneaky, telepathic, sentient vines.
+'''Vignes sensibles, sournoises et télépathes.
 Préfére les planètes océaniques.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
@@ -3447,7 +3468,7 @@ Préfére les planètes marécageuses.
 SP_MUURSH
 Mu Ursh
 SP_MUURSH_DESC
-'''Militantly peaceful herbivores.
+'''Herbivores pacifiques militant.
 Préfére les planètes désertiques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
@@ -3476,7 +3497,7 @@ Préfére les planètes avec toundra.
 SP_CRAY
 Cray
 SP_CRAY_DESC
-'''Cheerful enthusiastic robots.
+'''Joyeux robots enthousiastes.
 Préfére les planètes stériles.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
@@ -3491,7 +3512,7 @@ Préfére les planètes stériles.
 SP_ETTY
 Etty
 SP_ETTY_DESC
-'''Cybernetic plants.
+'''Plantes cybernétiques.
 Préfére les planètes désertiques.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
@@ -3522,7 +3543,7 @@ Préfére les planètes marécageuses.
 SP_PHINNERT
 Phinnert
 SP_PHINNERT_DESC
-'''Flying Monkeys.
+'''Singes volants.
 Préfére les planètes marécageuses.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
@@ -3547,7 +3568,7 @@ Préfére les planètes infernales.
 SP_SSLITH
 Sslith
 SP_SSLITH_DESC
-'''Flat, aquatic, pliable creatures.
+'''Créatures aquatiques souples mais plates.
 Préfére les planètes avec toundra.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
@@ -3604,7 +3625,7 @@ Préfére les planètes océaniques.
 SP_NYMNMN
 Nymnmn
 SP_NYMNMN_DESC
-'''Planet-wide sapient magnetic waveforms.
+'''Formes sage d'onde magnétique à l'échelle planétaire
 Préfére les planètes désertiques.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 
@@ -3636,7 +3657,7 @@ Préfére les planètes stériles.
 SP_RAAAGH
 Raaagh
 SP_RAAAGH_DESC
-'''Highly territorial felinoids.
+'''Genre de félidé hautement territorial.
 Préfére les planètes type terrestre.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
@@ -3677,7 +3698,7 @@ The entire planet is covered in a beige haze of Nanites. It is unknown wheather 
 SP_SILEXIAN
 Silexian
 SP_SILEXIAN_DESC
-'''Gleaming gardener robots, left on their own.
+'''Resplandissants robots jardinier , abandonnés à leur sort.
 Préfére les planètes type terrestre.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
@@ -3872,7 +3893,7 @@ The Furthest generally consider space travel far too dangerous for a sane being,
 SP_EXOBOT
 Exobot
 SP_EXOBOT_DESC
-'''Semi-autonomous robots, designed for industry on Barren, Radiated, & Inferno planets.
+'''Robots semi-autonomes, conçu pour l'industrie sur des planètes stériles, irradiées et infernales.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -3880,7 +3901,7 @@ SP_EXOBOT_DESC
         
 [[BAD_GROUND_TROOPS]]
 
-While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
+Biens que n'étant pas aussi efficace que des citoyens totalement autonome, les Exobots peuvent malgrès tout coloniser des planètes inhospitalières, et construire plus d'exobots 
 '''
 
 
@@ -3919,9 +3940,9 @@ SP_SUPER_TEST_DESC
 '''
 
 SP_TEST
-Testing Guinea Pig
+Cochon d'inde test.
 SP_TEST_DESC
-'''Try all your experimental scripting on this guy, he'll appear a lot.
+'''Essayez tous vos scripts expérimentales sur cette bestiole-là, il y apparaîtra beaucoup.
 
 [[AVERAGE_INDUSTRY]]
 [[AVERAGE_RESEARCH]]
@@ -3945,7 +3966,7 @@ ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-'''Triples the Research on this planet and increases Research on Research-focused planets by one twentieth (non-stacking).
+'''Triples the [[encyclopedia RESEARCH_TITLE]] on this planet and increases [[encyclopedia RESEARCH_TITLE]] on Research-focused planets by one twentieth (non-stacking).
 
 This planet holds the ruins of an unknown, advanced ancient race. A valuable discovery has already been made here.'''
 
@@ -3953,7 +3974,7 @@ ANCIENT_RUINS_SPECIAL
 Ruinnnes anciennes
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-'''Triple la recherche sur cette planète et augmente la recherche des planètes ayant focalisé sur la recherche d'un vingtième.
+'''Triple la [[encyclopedia RESEARCH_TITLE]] sur cette planète et augmente d'un vingtième la [[encyclopedia RESEARCH_TITLE]] des planètes ayant focalisé sur la recherche.
 
 Des ruinnes d'une ancienne race avancée, oubliées depuis longtemps, se trouvent sur cette planète. Le premier empire qui débarque sur cette planète et pour autant qu'il possède la technique [[tech LRN_XENOARCH]] reçois gratuitement une technique avancée, ou découvre une construction, ou encore un vaisseau.'''
 
@@ -3976,7 +3997,7 @@ TECTONIC_INSTABILITY_SPECIAL
 Tectonically Unstable
 
 TECTONIC_INSTABILITY_SPECIAL_DESC
-'''La [[encyclopedia INFRASTRUCTURE_TITLE]] sur cette planète est diminuée de 20. Empêche la construction sousterraine qui augmenterait par là la capacité d'habitation pour la population.
+'''La [[encyclopedia INFRASTRUCTURE_TITLE]] sur cette planète est diminuée de 20. Empêche la [[tech CON_SUBTER_CONST]] qui augmenterait par là la capacité d'habitation pour la population.
 
 Cette planète est tectoniquement instable. Des tremblements de terre fréquents, des tsunamis, des éruptions volcaniques ou l'instabilité du sol font que la construction et le développement d'infrastructures en général est difficile.'''
 
@@ -4008,7 +4029,7 @@ TIDAL_LOCK_SPECIAL
 Rotation synchrone
 
 TIDAL_LOCK_SPECIAL_DESC
-'''La [[encyclopedia INFRASTRUCTURE_TITLE]] sur cette planète est diminuée de 20, mais l'industrie est augmentée de la valeur d'un cinquième de la population de la planète.
+'''L'[[encyclopedia INFRASTRUCTURE_TITLE]] sur cette planète est diminuée de 20, mais l'[[encyclopedia INDUSTRY_TITLE]] est augmentée de la valeur d'un cinquième de la population de la planète.
 
 Cette planète a une période de rotation identique à sa période orbitale; une face de la planète est constamment illuminée, tandis que l'autre est toujours dans la pénombre. Le développement d'infrastructures est pénalisé, mais une fois établies, les industries profitent des conditions de surface localement stables.'''
 
@@ -4016,7 +4037,7 @@ ECCENTRIC_ORBIT_SPECIAL
 Orbite excentré
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''La [[encyclopedia INFRASTRUCTURE_TITLE]] sur cette planète est diminuée de 20, mais la recherche est augmenté de 3.
+'''La [[encyclopedia INFRASTRUCTURE_TITLE]] sur cette planète est diminuée de 20, mais la [[encyclopedia RESEARCH_TITLE]] est augmenté de 3.
 
 L'orbite de cette planète est très excentré, c'est-à-dire qu'il y a une grande distance entre le point où la planètre est la plus proche de son étoile et celui où elle l'est le moins. l'insolation totale varie beaucoup au cours de l'année. Les condition variées ralentissent le développement des infrastructures, mais sont bénéfiques pour la recherche scientifique.'''
 
@@ -4029,14 +4050,14 @@ This planet has a natural satellite, the orbital period of which is in 1:1 reson
 COMPUTRONIUM_SPECIAL
 Computronium Moon
 COMPUTRONIUM_SPECIAL_DESC
-'''When a planet with a Computronium Moon is focused on research, all research focused planets in the empire gain .5 RPs per Population.
+'''When a planet with a Computronium Moon is focused on [[encyclopedia RESEARCH_TITLE]], all research focused planets in the empire gain .5 [[encyclopedia RESEARCH_TITLE]] per Population.
 
 Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
 
 PHILOSOPHER_SPECIAL
 Philosopher Planet
 PHILOSOPHER_SPECIAL_DESC
-'''As long as the Philosopher Planet is uninhabited, all research focused planets in the same system have their research increased by 10. Construction on the Philosopher Planet is decreased by 20.
+'''As long as the Philosopher Planet is uninhabited, all research focused planets in the same system have their [[encyclopedia RESEARCH_TITLE]] increased by 10. [[encyclopedia INFRASTRUCTURE_TITLE]] on the Philosopher Planet is decreased by 20.
 
 The lone remnant of a planet-sized space wandering species has found his final rest orbiting in this system like a normal planet. Having lived for thousands of years he lost the will and ability to travel and resorts to pondering about the mysteries of the universe he has seen and learned about. Eccentric and slightly demented he refuses to communicate with anything that isn't the size and shape of his kin, leaving scientists no choice but to ask questions via the planet they are living on. Understandably colonizing the Philosopher Planet will disturb him gravely and he will fall silent. Construction on his surface is difficult as is to be expected from a living being.'''
 
@@ -4106,15 +4127,15 @@ VOID_SLAVE_SPECIAL_DESC
 This planet exists partially in this universe and partially in the void, increasing its [[encyclopedia STEALTH_TITLE]] by 80.  If the planet is owned by any empire, that empire's technological bonuses and the bonuses of the inhabiting species will be used instead of this bonus.
 
 DERELICT_SPECIAL
-Derelict
+Abandonné
 DERELICT_SPECIAL2
-Derelict
+Abandonné
 DERELICT_SPECIAL3
-Derelict
+Abandonné
 DERELICT_SPECIAL_REMOVE
-Derelict
+Abandonné
 DERELICT_SPECIAL_DESC
-An ancient, derelict ship from an unknown species. Who knows what it could reveal...
+Une vieille épave abandonné par une espèce inconnue. Qui sait ce qu'elle pourrait receler...
 
 SUPERNOVA_SPECIAL
 New Supernova
@@ -4451,7 +4472,7 @@ METER_SIZE
 Portée
 
 METER_DETECTION_STRENGTH
-Puissance de détection
+[[encyclopedia DETECTION_TITLE]]
 
 ALIGN_MILITARISM
 Militarisme
@@ -4589,7 +4610,7 @@ Colonisation
 PC_BATTLE_SPEED
 Vitesse de combat
 PC_STARLANE_SPEED
-Vitesse lien hyperspatial
+Vitesse liaisons spatiales
 
 
 #############################################################
@@ -5408,7 +5429,7 @@ LRN_ALGO_ELEGANCE
 L'élégance algorithmique
 
 LRN_ALGO_ELEGANCE_DESC
-'''Augmente l'objectif recherche sur toutes les planètes concentré sur la recherche de 0,25 par population.
+'''Augmente l'objectif [[encyclopedia RESEARCH_TITLE]] sur toutes les planètes concentré sur la recherche de 0,25 par population.
 
 Avec une difficulté grandissante dans les problèmes d'analyse des données, les mesures traditionnelles des performances algorithmique deviennent moins utile en raison des limites de la complexité irréductible.  À ce stade, des mesures de forme et de fonction algorithmique deviennent significatifs; esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisé.'''
 
@@ -5424,7 +5445,7 @@ LRN_PSIONICS
 Psionique
 
 LRN_PSIONICS_DESC
-'''Les coûts de la recherche sont grandement réduits si l'empire comprend une espèce télépathique.
+'''Les coûts de la [[encyclopedia RESEARCH_TITLE]] sont grandement réduits si l'empire comprend une espèce télépathique.
 
 A travers l'introspection profonde ou une augmentation artificielle, le cerveau peut développer les capacités d'interagir directement avec l'univers autour de lui, en contournant les limitations physiques du corps. Des puissances telles que la télépathie, l'empathie, la clairvoyance, la prescience, la psychokinesie et la psychoenergie peuvent remplacer ou dépasser des alternatives biologiques ou  technologiques. Les applications de ces pouvoirs, y compris le contrôle de l'esprit, la modification de personnalité et la possession ont de grandes conséquences sur la relation entre les êtres psioniques et les autres.'''
 
@@ -5432,7 +5453,7 @@ LRN_ARTIF_MINDS
 Intelligences Artificielles
 
 LRN_ARTIF_MINDS_DESC
-'''Increases Target Research on all planets by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all planets by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience. While these traits remain elusive, reasonable faximilies may be produced. These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
 
@@ -5504,7 +5525,7 @@ LRN_QUANT_NET
 Quantum Networking
 
 LRN_QUANT_NET_DESC
-'''Increases target Research on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes. This advancement greatly facilitates research throughout the empire.
 
@@ -5625,7 +5646,7 @@ GRO_ENERGY_META
 Métabolisme de pure énergie
 
 GRO_ENERGY_META_DESC
-'''Increases max Fuel on all ships by 2, max [[encyclopedia DEFENSE_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_TITLE]] on all planets by 5, target Industry on all planets with the Industry focus by one quarter of the planet's population, and target Research on all planets with the Research focus by one fifth.
+'''Increases max Fuel on all ships by 2, max [[encyclopedia DEFENSE_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_TITLE]] on all planets by 5, target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by one quarter of the planet's population, and target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by one fifth.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -5636,7 +5657,7 @@ PRO_MICROGRAV_MAN
 Fabrication sous microgravité.
 
 PRO_MICROGRAV_MAN_DESC
-'''Increases Industry by +5 on all Industry-focused colonies in system with an asteroid belt outposts. Additional asteriod outposts do not provide additional benefit.
+'''Increases [[encyclopedia INDUSTRY_TITLE]] by +5 on all Industry-focused colonies in system with an asteroid belt outposts. Additional asteriod outposts do not provide additional benefit.
 
 Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
 
@@ -5657,7 +5678,7 @@ PRO_ROBOTIC_PROD
 Production robotisée
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases target Industry on all planets with the Industry focus by the greater of 0.2 per [[POP_PER_PRODUCTION]] units of Population or 0.4 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by the greater of 0.2 per [[POP_PER_PRODUCTION]] units of Population or 0.4 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
 
@@ -5679,7 +5700,7 @@ PRO_FUSION_GEN
 Génération de la fusion
 
 PRO_FUSION_GEN_DESC
-'''Increases target Industry on planets with the Industry focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -5703,7 +5724,7 @@ PRO_SENTIENT_AUTOMATION
 Self-Adaptive Automation
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Increases target Industry on all planets by 5.
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets by 5.
 
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
@@ -5851,7 +5872,7 @@ SHP_GAL_EXPLO
 Exploration Galactique 
 
 SHP_GAL_EXPLO_DESC
-La découverte du voyage interstellaire par lien hyperspatial inaugure une nouvelle ère de développement de la société. Les vieilles querelles politiques entre factions mineures deveniennent insignifiantes lorsque la civilisation tout entière est confrontée au possibilités illimitées des étoiles ... la croissance et la prospérité, ou la destruction totale.
+La découverte du voyage interstellaire par liaisons spatiales inaugure une nouvelle ère de développement de la société. Les vieilles querelles politiques entre factions mineures deveniennent insignifiantes lorsque la civilisation tout entière est confrontée au possibilités illimitées des étoiles ... la croissance et la prospérité, ou la destruction totale.
 
 SHP_SPACE_TACTICS
 Tactiques spatiales
@@ -6162,7 +6183,7 @@ GRO_SUBTER_HAB
 Habitation sousterraine
 
 GRO_SUBTER_HAB_DESC
-'''Augmente la population maximale des planètes, suivant la taille de la planète: minuscule: +1, petite: +2, moyenne: +3, grande: +4, énorme: +5. Ne peut pas améliorer une planète avec des tunnels ou une instabilité tectonique.'''
+'''Augmente la population maximale des planètes, suivant la taille de la planète: minuscule: +1, petite: +2, moyenne: +3, grande: +4, énorme: +5. Ne peut pas améliorer une planète avec des [[special TUNNELS_SPECIAL]] ou une [[special TECTONIC_INSTABILITY_SPECIAL]].'''
 
 GRO_INDUSTRY_FARM
 Agriculture industrielle
@@ -6248,7 +6269,7 @@ LRN_DISTRIB_THOUGHT
 Pensée assistée par Ordinateur#Reflexion
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases target Research on all planets with the Research focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population, or 0.25 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
 #Le citoyen moyen gaspille litteralement son esprit, de loin l'un des plus fins esprits informatiques de l'univers. En puisant dans les cycles inactifs du cerveau d'une population suffisament large, par le biais d'un réseau de simple émetteurs-récepteurs cybernetics, les centres de recherche d'un monde peuvent accéder à une puissance de calcul abondante et à bas prix.
@@ -6257,7 +6278,7 @@ LRN_STELLAR_TOMOGRAPHY
 Tomographie Stellaire
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Increases target Research on planets with the Research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on planets with the Research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 #'''Un réseau de satellites spécialisés peut utiliser des méthodes tomographiques pour reconstruire des activités qui se produisent dans les profondeurs d'une étoile. Ces conditions couteuses à produire sont idéales pour une multitude de projets de recherche, avec les plus grands avantages pour les types d'étoiles les plus exotiques.
@@ -6291,7 +6312,7 @@ LRN_ART_BLACK_HOLE
 Artificial Black Hole
 
 LRN_ART_BLACK_HOLE_DESC
-By carefully collapsing a red star, a Black Hole can be formed. This is an expensive and dangerous task, but with great potential benefits for Research and Industry.
+By carefully collapsing a red star, a Black Hole can be formed. This is an expensive and dangerous task, but with great potential benefits for [[encyclopedia RESEARCH_TITLE]] and [[encyclopedia INDUSTRY_TITLE]].
 
 LRN_PSY_DOM
 Psychogenic Domination
@@ -6320,7 +6341,7 @@ PRO_SOL_ORB_GEN
 Solar Orbital Generation
 
 PRO_SOL_ORB_GEN_DESC
-Traditional solar generation methods rely solely on radiating solar energy. By placing generators in low orbit around the star itself, the ability to directly harness the energy of supermassive stellar phenomena becomes a possibility, and a sizable and far-reaching benefit to industry can be obtained.
+Traditional solar generation methods rely solely on radiating solar energy. By placing generators in low orbit around the star itself, the ability to directly harness the energy of supermassive stellar phenomena becomes a possibility, and a sizable and far-reaching benefit to [[encyclopedia INDUSTRY_TITLE]] can be obtained.
 
 PRO_INDUSTRY_CENTER_I
 Industrial Centers
@@ -6813,13 +6834,13 @@ PRO_INDUSTRY_CENTER_II
 Greater Industrial Center
 
 PRO_INDUSTRY_CENTER_II_DESC
-Improved centralized management of dispersed industrial activities increases the size of increased industrial output provided. The bonus to Industry will be double that provided by basic Industrial Centers.
+Improved centralized management of dispersed industrial activities increases the size of increased industrial output provided. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be double that provided by basic Industrial Centers.
 
 PRO_INDUSTRY_CENTER_III
 Supreme Industrial Center
 
 PRO_INDUSTRY_CENTER_III_DESC
-Additional experience and facilities improvements further extend the size of industrial output improvement. The bonus to Industry will be triple that provided by basic Industrial Centers.
+Additional experience and facilities improvements further extend the size of industrial output improvement. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be triple that provided by basic Industrial Centers.
 
 PRO_ENVIRO_MINING
 Environmentally Conscious Mining
@@ -6852,7 +6873,7 @@ BLD_CULTURE_ARCHIVES
 Archives culturelles
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Augment l'objectif de recherche de 5, l'objectif industrie par la population de la planète.
+'''Augment l'objectif de [[encyclopedia RESEARCH_TITLE]] de 5, l'objectif [[encyclopedia INDUSTRY_TITLE]] par la population de la planète.
 
 Conserve le savoir accumulé par des millier d'années de vie sur cette planète, donnant des bonus à bien des aspects de la productivité planètaire.'''
 
@@ -6993,7 +7014,7 @@ BLD_INDUSTRY_CENTER
 Centre industriel
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus equal to the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Initially provides a bonus to [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus equal to the greater of 0.5 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 [[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus.
 
@@ -7013,7 +7034,7 @@ BLD_MEGALITH
 Mégalithe
 
 BLD_MEGALITH_DESC
-'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to [[encyclopedia SUPPLY_TITLE]] line range, and 30 to construction. Additionally all resource meters are able to reach target in a single turn.
+'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to [[encyclopedia SUPPLY_TITLE]] line range, and 30 to [[encyclopedia INFRASTRUCTURE_TITLE]]. Additionally all resource meters are able to reach target in a single turn.
 
 The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
 #Une merveille d'architecture de l'époque de l'Exode, C'est une Mégalithe anormalement massives semblant touchées les étoiles, de plusieurs kilomètres de diamètre. Cette Mégalithe est une source d'inspiration pour les architectes de l'ensemble du secteur et est souvent le joyau d'un puissant magnat de l'immobilier  de l'empire.
@@ -7047,7 +7068,7 @@ BLD_COLLECTIVE_NET
 Réseau de pensée collective
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases Industry on planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 0.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]], and research on Planets with the Research focus by the greater of 3 per [[POP_PER_PRODUCTION]] units of Population or 1.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]]. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 0.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]], and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by the greater of 3 per [[POP_PER_PRODUCTION]] units of Population or 1.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]]. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 #En transférant des esprits dans le cyberespace, des milliers d'esprits peuvent agir à l'unisson, résolvant des problèmes et faisant des avancées qu'aucun esprit unique ne pourrait faire.
@@ -7064,7 +7085,7 @@ BLD_ENCLAVE_VOID
 Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-'''Increases target Research on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population, or 0.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of population, or 0.5 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
 #l ensemble de la population de la planète est génétiquement adapté à l'esprit du Vide et est dédiée à la transmission de sa sagesse à l'empire. Les habitants de l'Enclave du Vide sont considérés comme des prêtres, messager de la sagesse et des pensées les plus élevés. Leurs conseils sont recherchés pour toutes les questions d'importance de l'empire. Des émissaires de l'Enclave peuvent même être envoyés à travers l'empire pour aider dans des projets de recherche. Les productions industrielles et minière de ce monde ne dépassera  jamais 30.
@@ -7079,7 +7100,7 @@ BLD_HYPER_DAM
 Barrage Hyperspatial
 
 BLD_HYPER_DAM_DESC
-'''Increases target Industry on [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 2 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]], but decreases Population on such planets by 5.
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 2 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]], but decreases Population on such planets by 5.
 
 A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
 #Une déchirure dans le tissu de l'univers, contrôlée et exploitée en toute sécurité. Le barrage hyperspatial sert  de source d'énergie presque illimitée pour tout le secteur.
@@ -7094,7 +7115,7 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Increases target industry on [[encyclopedia SUPPLY_TITLE]] line connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets by 2, 1 or 0.5 for Blue and White, Yellow and Orange, or Red stars, respectively, times the greater of 1 per [[POP_PER_PRODUCTION]] units of Population or 1 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependant on star type. This building can be built at an outpost.'''
 
@@ -7146,7 +7167,7 @@ BLD_CONC_CAMP
 Concentration Camps
 
 BLD_CONC_CAMP_DESC
-'''Decreases the planet's population at a rate of 3 per turn, and increases target Industry by 5 times the planet's population.
+'''Decreases the planet's population at a rate of 3 per turn, and increases target [[encyclopedia INDUSTRY_TITLE]] by 5 times the planet's population.
 
 Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an outpost.'''
 
@@ -7154,7 +7175,7 @@ BLD_INDUSTRY_FARM
 Industrial Farms
 
 BLD_INDUSTRY_FARM_DESC
-'''Increases Farming equal to one tenth of Industry for all planets in the empire.
+'''Increases Farming equal to one tenth of [[encyclopedia INDUSTRY_TITLE]] for all planets in the empire.
 
 Long-term adaptations to factories, shipping routes and personnel that already exist allows production of food in industrial regions with no extra cost beyond that of initially developing the additional infrastructure.'''
 
@@ -7162,7 +7183,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-Increases Industry on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]]. This building can be built at an outpost.
+Increases [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by the greater of 4 per [[POP_PER_PRODUCTION]] units of Population or 4 per [[INFRA_PER_PRODUCTION]] units of [[encyclopedia INFRASTRUCTURE_TITLE]]. This building can be built at an outpost.
 
 BLD_REPLICATORS
 Replicators
@@ -7256,7 +7277,7 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a gas giant and gives a +10 Industry bonus to planets with the Industry focus in the same system.
+'''This building can only be constructed at a gas giant and gives a +10 [[encyclopedia INDUSTRY_TITLE]] bonus to planets with the Industry focus in the same system.
 
 A power generator designed to harvest the energy of a Gas Giant.'''
 
@@ -7287,7 +7308,7 @@ Increases the Growth on the planet on which it is built by 1, if that planet is 
 #############################################################
 
 HULL_DESC
-'''Vitesse lien hyperspatial: %1%
+'''Vitesse liaisons spatiales: %1%
 Contenance carburant: %2%
 Vitesse de combat: %3%
 Structure: %4%'''
@@ -8169,41 +8190,40 @@ A cosmic cloud of high energetic particles.
 
 
 NO_INDUSTRY
-'''−−−	Pas d'industrie'''
+'''−−−	Pas d'[[encyclopedia INDUSTRY_TITLE]]'''
 
 BAD_INDUSTRY
-'''−	Pauvre en industrie: -50%'''
+'''−	Pauvre en [[encyclopedia INDUSTRY_TITLE]]: -50%'''
 
 AVERAGE_INDUSTRY
-'''	Industrie moyenne: 100%'''
+'''	[[encyclopedia INDUSTRY_TITLE]] moyenne: 100%'''
 
 GOOD_INDUSTRY
-'''+	Bonne industrie: 150%'''
+'''+	Bonne [[encyclopedia INDUSTRY_TITLE]]: 150%'''
 
 GREAT_INDUSTRY
-'''++	Grande industrie: 200%'''
+'''++	Grande [[encyclopedia INDUSTRY_TITLE]]: 200%'''
 
 ULTIMATE_INDUSTRY
-'''+++	Industrie ultime: 400%'''
+'''+++	[[encyclopedia INDUSTRY_TITLE]] ultime: 400%'''
 
 NO_RESEARCH
-'''−−−	Pas de recherche'''
+'''−−−	Pas de [[encyclopedia RESEARCH_TITLE]]'''
 
 BAD_RESEARCH
-'''−	Pauvre en recherche: -50%'''
+'''−	Pauvre en [[encyclopedia RESEARCH_TITLE]]: -50%'''
 
 AVERAGE_RESEARCH
-'''	Recherche moyenne: 100%'''
+'''	[[encyclopedia RESEARCH_TITLE]] moyenne: 100%'''
 
 GOOD_RESEARCH
-'''+	Bonne recherche: 150%'''
+'''+	Bonne [[encyclopedia RESEARCH_TITLE]]: 150%'''
 
 GREAT_RESEARCH
-'''++	Grande recherche: 200%'''
+'''++	Grande [[encyclopedia RESEARCH_TITLE]]: 200%'''
 
 ULTIMATE_RESEARCH
-'''+++	Recherche ultime: 400%'''
-
+'''+++	[[encyclopedia RESEARCH_TITLE]] ultime: 400%'''
 
 NO_GROUND_TROOPS
 '''−−−	Pas de [[encyclopedia TROOP_TITLE]] terrestres'''
@@ -8251,13 +8271,13 @@ ULTIMATE_STEALTH
 '''+++	Ultime [[encyclopedia STEALTH_TITLE]]: +60 bonus.'''
 
 GOOD_WEAPONS
-'''+	Commence avec le propulseur de masse 3, & un vaisseau additionnel.'''
+'''+	Commence avec le [[tech SHP_WEAPON_3]], & un vaisseau additionnel.'''
 
 GREAT_WEAPONS
-'''++	Commence avec le laser 1, & deux vaisseaux additionnels.'''
+'''++	Commence avec le [[tech SHP_WEAPON_5]], & deux vaisseaux additionnels.'''
 
 ULTIMATE_WEAPONS
-'''++	Commence avec le laser 3, & trois vaisseaux additionnels.'''
+'''++	Commence avec le [[tech SHP_WEAPON_7]], & trois vaisseaux additionnels.'''
 
 BAD_POPULATION
 '''−	Pauvre en population 75%'''
