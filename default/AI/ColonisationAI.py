@@ -192,7 +192,7 @@ def getColonyFleets():
         tSys = universe.getSystem(sysID)
         if not tSys: continue
         claimedStars.setdefault( tSys.starType, []).append(sysID)
-    foAI.foAIstate.misc['claimedStars'] = claimedStars
+    #foAI.foAIstate.misc['claimedStars'] = claimedStars
     
     
     oldPopCtrs=[]

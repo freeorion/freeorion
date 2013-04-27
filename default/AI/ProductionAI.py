@@ -314,6 +314,13 @@ def generateProductionOrders():
         backupFactor = min(1.0,  (empire.productionPoints/200.0)**2 )
     
     claimedStars= foAI.foAIstate.misc.get('claimedStars',  {} )
+    if claimedStars == {}:
+        for sType in AIstate.empireStars:
+            claimedStars[sType] = list( AIstate.empireStars[sType] )
+        for sysID in set( AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
+            tSys = universe.getSystem(sysID)
+            if not tSys: continue
+            claimedStars.setdefault( tSys.starType, []).append(sysID)
 
 
     try:    addScoutDesigns()
