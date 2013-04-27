@@ -307,7 +307,15 @@ def generateProductionOrders():
     currentTurn = fo.currentTurn()
     print ""
     print "  Total Available Production Points: " + str(totalPP)
+
+    if empire.productionPoints <100:
+        backupFactor = 0.0
+    else:
+        backupFactor = min(1.0,  (empire.productionPoints/200.0)**2 )
     
+    claimedStars= foAI.foAIstate.misc.get('claimedStars',  {} )
+
+
     try:    addScoutDesigns()
     except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
     try:    addTroopDesigns()
@@ -677,7 +685,7 @@ def generateProductionOrders():
 
     bldName = "BLD_ART_BLACK_HOLE"
     if ( ( empire.buildingTypeAvailable(bldName) ) and (foAI.foAIstate.aggression > fo.aggression.typical) and 
-                        (len( AIstate.empireStars.get(fo.starType.blackHole,  [])) == 0 )  and   (len( AIstate.empireStars.get(fo.starType.red,  [])) > 0)   ):
+                        (len( claimedStars.get(fo.starType.blackHole,  [])) == 0 )  and   (len( AIstate.empireStars.get(fo.starType.red,  [])) > 0)   ):
         bldType = fo.getBuildingType(bldName)
         alreadyGotOne=False
         for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):

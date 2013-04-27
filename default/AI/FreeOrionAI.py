@@ -270,7 +270,7 @@ def generateOrders():
     # call AI modules
     timer=[time()]
     try: PriorityAI.calculatePriorities()
-    except: print "Error: exception triggered and caught:  ",  traceback.format_exc()
+    except: print "Error: exception triggered and caught:  ",  traceback.format_exc() # try traceback.print_exc()
     timer.append( time()  )
     try: ExplorationAI.assignScoutsToExploreSystems()
     except: print "Error: exception triggered and caught:  ",  traceback.format_exc()

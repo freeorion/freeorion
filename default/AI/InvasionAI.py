@@ -182,7 +182,8 @@ def evaluateInvasionPlanet(planetID, missionType, fleetSupplyablePlanetIDs, empi
     specName=planet.speciesName
     species=fo.getSpecies(specName)
     if not species: #TODO: iterate over this Empire's available species with which it could colonize after and invasion
-        popVal = ColonisationAI.evaluatePlanet(planetID,  EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST,  [planetID],  species,  empire, detail) #evaluatePlanet is imported from ColonisationAI
+        planetEval = ColonisationAI.assignColonisationValues([planetID],  EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  species,  empire, detail) #evaluatePlanet is imported from ColonisationAI
+        popVal = max( 0.5*planetEval[planetID][0],   ColonisationAI.evaluatePlanet(planetID,  EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST,  [planetID],  species,  empire, detail)  )
     else:
         popVal = ColonisationAI.evaluatePlanet(planetID,  EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION,  [planetID],  species,  empire, detail) #evaluatePlanet is imported from ColonisationAI
 

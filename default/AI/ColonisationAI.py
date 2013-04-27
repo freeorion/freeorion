@@ -184,6 +184,15 @@ def getColonyFleets():
         system = universe.getSystem(sysID)
         if system:
             AIstate.empireStars.setdefault(system.starType, []).append(sysID)
+
+    claimedStars = {}
+    for sType in AIstate.empireStars:
+        claimedStars[sType] = list( AIstate.empireStars[sType] )
+    for sysID in set( AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
+        tSys = universe.getSystem(sysID)
+        if not tSys: continue
+        claimedStars.setdefault( tSys.starType, []).append(sysID)
+    foAI.foAIstate.misc['claimedStars'] = claimedStars
     
     
     oldPopCtrs=[]
@@ -369,9 +378,9 @@ def assignColonyFleetsToColonise():
     # assign fleet targets to colonisable outposts
     sendColonyShips(AIstate.outpostFleetIDs, foAI.foAIstate.colonisableOutpostIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST)
 
-def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, species, empire): #TODO: clean up supplyable versus annexable
+def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, species, empire,  detail=[]): #TODO: clean up supplyable versus annexable
     "creates a dictionary that takes planetIDs as key and their colonisation score as value"
-
+    origDetail = detail
     planetValues = {}
     if   (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ):
         print "\n=========\nAssigning Outpost Values\n========="
@@ -383,7 +392,7 @@ def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, s
         pv = []
         for specName in trySpecies:
             thisSpecies=fo.getSpecies(specName)
-            detail = []
+            detail = origDetail[:]
             pv.append( (evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, thisSpecies, empire,  detail),  specName,  list(detail)) )
         best = sorted(pv)[-1:]
         if best!=[]:
@@ -399,8 +408,21 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
     discountMultiplier = 20.0
     priorityScaling=1.0
     maxGGGs=1
+    if empire.productionPoints <100:
+        backupFactor = 0.0
+    else:
+        backupFactor = min(1.0,  (empire.productionPoints/200.0)**2 )
     
     universe = fo.getUniverse()
+    claimedStars= foAI.foAIstate.misc.get('claimedStars',  {} )
+    if claimedStars == {}:
+        for sType in AIstate.empireStars:
+            claimedStars[sType] = list( AIstate.empireStars[sType] )
+        for sysID in set( AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
+            tSys = universe.getSystem(sysID)
+            if not tSys: continue
+            claimedStars.setdefault( tSys.starType, []).append(sysID)
+    
     empireResearchList = [element.tech for element in empire.researchQueue]
     planet = universe.getPlanet(planetID)
     if (planet == None): 
@@ -426,57 +448,60 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             detail.append( "PHOTOTROPHIC popMod %.1f"%starPopMod    )
         if (empire.getTechStatus("PRO_SOL_ORB_GEN") == fo.techStatus.complete) or (  "PRO_SOL_ORB_GEN"  in empireResearchList[:8])  :    
             if system.starType in [fo.starType.blue, fo.starType.white]:
-                if len (AIstate.empireStars.get(fo.starType.blue,  [])+AIstate.empireStars.get(fo.starType.white,  []))==0:
+                if len (claimedStars.get(fo.starType.blue,  [])+claimedStars.get(fo.starType.white,  []))==0:
                     starBonus +=20* discountMultiplier
                     detail.append( "PRO_SOL_ORB_GEN BW  %.1f"%(20* discountMultiplier)    )
                 elif   not alreadyGotThisOne:
-                    starBonus +=1+10*discountMultiplier #still has extra value as an alternate location for solar generators
-                    detail.append( "PRO_SOL_ORB_GEN BW Backup Location  %.1f"%(1+10* discountMultiplier )   )
+                    starBonus +=10*discountMultiplier*backupFactor #still has extra value as an alternate location for solar generators
+                    detail.append( "PRO_SOL_ORB_GEN BW Backup Location  %.1f"%(10* discountMultiplier *backupFactor)   )
                 elif fo.currentTurn() > 100:  #lock up this whole system
-                    starBonus += 5 #TODO: how much?
-                    detail.append( "PRO_SOL_ORB_GEN BW LockingDownSystem   %.1f"%5  )
+                    pass
+                    #starBonus += 5 #TODO: how much?
+                    #detail.append( "PRO_SOL_ORB_GEN BW LockingDownSystem   %.1f"%5  )
             if system.starType in [fo.starType.yellow, fo.starType.orange]:
-                if len (     AIstate.empireStars.get(fo.starType.blue,  [])+AIstate.empireStars.get(fo.starType.white,  [])+
-                                    AIstate.empireStars.get(fo.starType.yellow,  [])+AIstate.empireStars.get(fo.starType.orange,  []))==0:
-                    starBonus +=10
-                    detail.append( "PRO_SOL_ORB_GEN YO  %.1f"%10 )
+                if len (     claimedStars.get(fo.starType.blue,  [])+claimedStars.get(fo.starType.white,  [])+
+                                    claimedStars.get(fo.starType.yellow,  [])+claimedStars.get(fo.starType.orange,  []))==0:
+                    starBonus +=10* discountMultiplier
+                    detail.append( "PRO_SOL_ORB_GEN YO  %.1f"%10* discountMultiplier )
                 else:
-                    starBonus +=2 #still has extra value as an alternate location for solar generators
-                    detail.append( "PRO_SOL_ORB_GEN YO Backup  %.1f"%2 )
+                    pass
+                    #starBonus +=2 #still has extra value as an alternate location for solar generators
+                    #detail.append( "PRO_SOL_ORB_GEN YO Backup  %.1f"%2 )
         if system.starType in [fo.starType.blackHole] and fo.currentTurn() > 100:
             if not alreadyGotThisOne:
-                starBonus +=10*discountMultiplier #whether have tech yet or not, assign some base value
-                detail.append( "Black Hole %.1f"%(10* discountMultiplier)    )
+                starBonus +=10*discountMultiplier*backupFactor #whether have tech yet or not, assign some base value
+                detail.append( "Black Hole %.1f"%(10* discountMultiplier*backupFactor)    )
             else:
-                starBonus += 5*discountMultiplier
-                detail.append( "Black Hole Backup %.1f"%(5* discountMultiplier )   )
+                starBonus += 5*discountMultiplier*backupFactor
+                detail.append( "Black Hole Backup %.1f"%(5* discountMultiplier*backupFactor )   )
         if (empire.getTechStatus("PRO_SINGULAR_GEN") == fo.techStatus.complete) or (  "PRO_SINGULAR_GEN"  in empireResearchList[:8])  :    
             if system.starType in [fo.starType.blackHole] :
-                if len (AIstate.empireStars.get(fo.starType.blackHole,  []))==0:
+                if len (claimedStars.get(fo.starType.blackHole,  []))==0:
                     starBonus +=200*discountMultiplier #pretty rare planets, good for generator
                     detail.append( "PRO_SINGULAR_GEN %.1f"%(200* discountMultiplier  )  )
-                elif  planet.systemID not in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs):
-                    starBonus +=100*discountMultiplier #still has extra value as an alternate location for generators & for blocking enemies generators
-                    detail.append( "PRO_SINGULAR_GEN Backup %.1f"%(100* discountMultiplier  )  )
-            elif system.starType in [fo.starType.red] and ( len (AIstate.empireStars.get(fo.starType.blackHole,  [])) + len (AIstate.empireStars.get(fo.starType.red,  [])))==0:
-                if  planet.systemID not in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs):
-                    starBonus +=40*discountMultiplier # can be used for artificial black hole
+                elif  planet.systemID not in claimedStars.get(fo.starType.blackHole,  []):
+                    starBonus +=100*discountMultiplier*backupFactor #still has extra value as an alternate location for generators & for blocking enemies generators
+                    detail.append( "PRO_SINGULAR_GEN Backup %.1f"%(100* discountMultiplier*backupFactor  )  )
+            elif system.starType in [fo.starType.red] and ( len (claimedStars.get(fo.starType.blackHole,  [])) )==0:
+                rfactor = (1.0+len (claimedStars.get(fo.starType.red,  [])))**(-2)
+                starBonus +=40*discountMultiplier*backupFactor*rfactor # can be used for artificial black hole
+                detail.append( "Red Star for Art Black Hole  %.1f"%(20* discountMultiplier*backupFactor*rfactor  )  )
         if (empire.getTechStatus("PRO_NEUTRONIUM_EXTRACTION") == fo.techStatus.complete) or (  "PRO_NEUTRONIUM_EXTRACTION"  in empireResearchList[:8])  :    
             if system.starType in [fo.starType.neutron]:
-                if len (AIstate.empireStars.get(fo.starType.neutron,  []))==0:
+                if len (claimedStars.get(fo.starType.neutron,  []))==0:
                     starBonus +=80*discountMultiplier #pretty rare planets, good for armor
-                    detail.append( "PRO_NEUTRONIUM_EXTRACTION  Backup %.1f"%(80* discountMultiplier  )  )
+                    detail.append( "PRO_NEUTRONIUM_EXTRACTION  %.1f"%(80* discountMultiplier  )  )
                 else:
-                    starBonus +=20*discountMultiplier #still has extra value as an alternate location for generators & for bnlocking enemies generators
-                    detail.append( "PRO_NEUTRONIUM_EXTRACTION  %.1f"%(20* discountMultiplier  )  )
+                    starBonus +=20*discountMultiplier*backupFactor #still has extra value as an alternate location for generators & for bnlocking enemies generators
+                    detail.append( "PRO_NEUTRONIUM_EXTRACTION Backup  %.1f"%(20* discountMultiplier*backupFactor  )  )
         if (empire.getTechStatus("SHP_ENRG_BOUND_MAN") == fo.techStatus.complete) or (  "SHP_ENRG_BOUND_MAN"  in empireResearchList[:6])  :    
             if system.starType in [fo.starType.blackHole,  fo.starType.blue] :
-                if len (AIstate.empireStars.get(fo.starType.blackHole,  [])  +  AIstate.empireStars.get(fo.starType.blue,  []) )    ==0:
+                if len (claimedStars.get(fo.starType.blackHole,  [])  +  claimedStars.get(fo.starType.blue,  []) )    ==0:
                     colonyStarBonus +=100*discountMultiplier #pretty rare planets, good for generator
                     detail.append( "SHP_ENRG_BOUND_MAN  %.1f"%(100* discountMultiplier  )  )
-                elif  planet.systemID not in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs):
-                    colonyStarBonus +=50*discountMultiplier #still has extra value as an alternate location for generators & for bnlocking enemies generators
-                    detail.append( "SHP_ENRG_BOUND_MAN Backup  %.1f"%(50* discountMultiplier  )  )
+                elif  planet.systemID not in (claimedStars.get(fo.starType.blackHole,  [])  +  claimedStars.get(fo.starType.blue,  []) ):
+                    colonyStarBonus +=50*discountMultiplier*backupFactor #still has extra value as an alternate location for generators & for bnlocking enemies generators
+                    detail.append( "SHP_ENRG_BOUND_MAN Backup  %.1f"%(50* discountMultiplier*backupFactor  )  )
     retval = starBonus
     
     planetSpecials = list(planet.specials)
@@ -484,17 +509,15 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         fixedRes += discountMultiplier*2*3
         detail.append( "ECCENTRIC_ORBIT_SPECIAL  %.1f"%(discountMultiplier*2*3  )  )
         
-    if ( "ANCIENT_RUINS_SPECIAL" in planet.specials ):
+    if ( "ANCIENT_RUINS_SPECIAL" in planet.specials ): #TODO: add value for depleted ancient ruins
         retval += discountMultiplier*20
-        detail.append("Undepleted Ruins")
-        
+        detail.append("Undepleted Ruins %.1f"%discountMultiplier*20)
         
     if   (missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST ):
-        retval += fixedRes
         for special in planetSpecials:
             if "_NEST_" in special:
-                retval+=5*discountMultiplier # get an outpost on the nest quick
-                detail.append( "%s  %.1f"%(special,  discountMultiplier*5  )  )
+                retval+=5*discountMultiplier*backupFactor # get an outpost on the nest quick
+                detail.append( "%s  %.1f"%(special,  discountMultiplier*5*backupFactor  )  )
         if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete )): 
             if system:
                 astVal=0
@@ -535,6 +558,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
     else: #colonization mission
         if not species:
             return 0
+        retval += fixedRes
         retval += colonyStarBonus
         asteroidBonus=0
         gasGiantBonus=0
@@ -647,7 +671,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             if special in planetSpecials:
                 miningBonus+=1
         
-        proSingVal = [0, 4][(len( AIstate.empireStars.get(fo.starType.blackHole,  [])) > 0)]
+        proSingVal = [0, 4][(len( claimedStars.get(fo.starType.blackHole,  [])) > 0)]
         basePopInd=0.2
         indMult=1
         indTechMap={    "GRO_ENERGY_META":  0.5, 
