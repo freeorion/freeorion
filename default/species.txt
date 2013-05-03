@@ -2993,7 +2993,7 @@ GOOD_WEAPONS
 '''EffectsGroup
         scope = Source
         activation = Turn high = 0
-        GiveEmpireTech name = "SHP_WEAPON_3"
+        GiveEmpireTech name = "SHP_MASS_DRIVER_3"
         
         EffectsGroup
             scope = AND [
@@ -3003,14 +3003,14 @@ GOOD_WEAPONS
             ]
             activation = Turn high = 0
             stackinggroup = "STARTING_SHIP_STACK"
-            effects = CreateShip "SD_MARK_A3" Source.Owner Source.Species
+            effects = CreateShip "SD_MARK_2" Source.Owner Source.Species
 '''
 
 GREAT_WEAPONS
 '''EffectsGroup
         scope = Source
         activation = Turn high = 0
-        GiveEmpireTech name = "SHP_WEAPON_5"
+        GiveEmpireTech name = "SHP_LASER2"
         
         EffectsGroup
             scope = AND [
@@ -3021,8 +3021,8 @@ GREAT_WEAPONS
             activation = Turn high = 0
             stackinggroup = "STARTING_SHIP_STACK"
             effects = [
-                CreateShip "SD_MARK_A5" Source.Owner Source.Species
-                CreateShip "SD_MARK_A5" Source.Owner Source.Species
+                CreateShip "SD_MARK_3" Source.Owner Source.Species
+                CreateShip "SD_MARK_3" Source.Owner Source.Species
             ]
 '''
 
@@ -3030,7 +3030,7 @@ ULTIMATE_WEAPONS
 '''EffectsGroup
         scope = Source
         activation = Turn high = 0
-        GiveEmpireTech name = "SHP_WEAPON_7"
+        GiveEmpireTech name = "SHP_LASER_4"
         
         EffectsGroup
             scope = AND [
@@ -3041,9 +3041,9 @@ ULTIMATE_WEAPONS
             activation = Turn high = 0
             stackinggroup = "STARTING_SHIP_STACK"
             effects = [
-                CreateShip "SD_MARK_A7" Source.Owner Source.Species
-                CreateShip "SD_MARK_A7" Source.Owner Source.Species
-                CreateShip "SD_MARK_A7" Source.Owner Source.Species
+                CreateShip "SD_MARK_4" Source.Owner Source.Species
+                CreateShip "SD_MARK_4" Source.Owner Source.Species
+                CreateShip "SD_MARK_4" Source.Owner Source.Species
             ]
 '''
 

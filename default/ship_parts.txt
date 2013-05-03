@@ -13,194 +13,194 @@ Part
     icon = "icons/ship_parts/troops.png"
 
 Part
-    name = "SR_WEAPON_1"
-    description = "SR_WEAPON_1_DESC"
-    class = ShortRange
-    damage = 1
-    ROF = 1
-    range = 50
-    mountableSlotTypes = External
-    buildcost = 5
-    buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
-    icon = "icons/ship_parts/mass-driver-1.png"
-    
-Part
-    name = "SR_WEAPON_2"
-    description = "SR_WEAPON_2_DESC"
-    class = ShortRange
-    damage = 2
-    ROF = 1
-    range = 50
-    mountableSlotTypes = External
-    buildcost = 5
-    buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
-    icon = "icons/ship_parts/mass-driver-2.png"
-
-Part
-    name = "SR_WEAPON_3"
-    description = "SR_WEAPON_3_DESC"
+    name = "SR_MASS_DRIVER_1"
+    description = "SR_MASS_DRIVER_1_DESC"
     class = ShortRange
     damage = 3
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 5
+    buildcost = 20
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
-    icon = "icons/ship_parts/mass-driver-3.png"
+    icon = "icons/ship_parts/mass-driver-1.png"
     
 Part
-    name = "SR_WEAPON_4"
-    description = "SR_WEAPON_4_DESC"
+    name = "SR_MASS_DRIVER_2"
+    description = "SR_MASS_DRIVER_2_DESC"
     class = ShortRange
     damage = 4
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 5
+    buildcost = 20
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
-    icon = "icons/ship_parts/mass-driver-4.png"
+    icon = "icons/ship_parts/mass-driver-2.png"
+
+Part
+    name = "SR_MASS_DRIVER_3"
+    description = "SR_MASS_DRIVER_3_DESC"
+    class = ShortRange
+    damage = 5
+    ROF = 1
+    range = 50
+    mountableSlotTypes = External
+    buildcost = 20
+    buildtime = 1
+    location = OwnedBy TheEmpire Source.Owner
+    icon = "icons/ship_parts/mass-driver-3.png"
     
 Part
-    name = "SR_WEAPON_5"
-    description = "SR_WEAPON_5_DESC"
+    name = "SR_MASS_DRIVER_4"
+    description = "SR_MASS_DRIVER_4_DESC"
     class = ShortRange
     damage = 6
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 15
+    buildcost = 20
+    buildtime = 1
+    location = OwnedBy TheEmpire Source.Owner
+    icon = "icons/ship_parts/mass-driver-4.png"
+    
+Part
+    name = "SR_LASER_1"
+    description = "SR_LASER_1_DESC"
+    class = ShortRange
+    damage = 5
+    ROF = 1
+    range = 50
+    mountableSlotTypes = External
+    buildcost = 30
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/laser-1.png"
 
 Part
-    name = "SR_WEAPON_6"
-    description = "SR_WEAPON_6_DESC"
+    name = "SR_LASER_2"
+    description = "SR_LASER_2_DESC"
     class = ShortRange
-    damage = 8
+    damage = 7
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 15
+    buildcost = 30
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/laser-2.png"
 
 Part
-    name = "SR_WEAPON_7"
-    description = "SR_WEAPON_7_DESC"
+    name = "SR_LASER_3"
+    description = "SR_LASER_3_DESC"
     class = ShortRange
-    damage = 10
+    damage = 9
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 15
+    buildcost = 30
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/laser-3.png"
 
 Part
-    name = "SR_WEAPON_8"
-    description = "SR_WEAPON_8_DESC"
+    name = "SR_LASER_4"
+    description = "SR_LASER_4_DESC"
     class = ShortRange
-    damage = 12
+    damage = 11
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 15
+    buildcost = 30
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/laser-4.png"
     
 Part
-    name = "SR_WEAPON_9"
-    description = "SR_WEAPON_9_DESC"
+    name = "SR_PLASMA_CANNON_1"
+    description = "SR_PLASMA_CANNON_1_DESC"
     class = ShortRange
-    damage = 16
+    damage = 9
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 24
+    buildcost = 40
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/plasma-1.png"
     
 Part
-    name = "SR_WEAPON_10"
-    description = "SR_WEAPON_10_DESC"
+    name = "SR_PLASMA_CANNON_2"
+    description = "SR_PLASMA_CANNON_2_DESC"
     class = ShortRange
-    damage = 19
+    damage = 12
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 24
+    buildcost = 40
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/plasma-2.png"
     
 Part
-    name = "SR_WEAPON_11"
-    description = "SR_WEAPON_11_DESC"
+    name = "SR_PLASMA_CANNON_3"
+    description = "SR_PLASMA_CANNON_3_DESC"
     class = ShortRange
-    damage = 22
+    damage = 15
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 24
+    buildcost = 40
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/plasma-3.png" 
 
 Part
-    name = "SR_WEAPON_12"
-    description = "SR_WEAPON_12_DESC"
+    name = "SR_PLASMA_CANNON_4"
+    description = "SR_PLASMA_CANNON_4_DESC"
     class = ShortRange
-    damage = 25
+    damage = 18
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 24
+    buildcost = 40
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/plasma-4.png"
 
 Part
-    name = "SR_WEAPON_13"
-    description = "SR_WEAPON_13_DESC"
+    name = "SR_DEATH_RAY_1"
+    description = "SR_DEATH_RAY_1_DESC"
     class = ShortRange
-    damage = 31
+    damage = 15
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 50
+    buildcost = 60
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-1.png"    
 
 Part
-    name = "SR_WEAPON_14"
-    description = "SR_WEAPON_14_DESC"
+    name = "SR_DEATH_RAY_2"
+    description = "SR_DEATH_RAY_2_DESC"
     class = ShortRange
-    damage = 35
+    damage = 20
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 50
+    buildcost = 60
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-2.png"
 
 Part
-    name = "SR_WEAPON_15"
-    description = "SR_WEAPON_15_DESC"
+    name = "SR_DEATH_RAY_3"
+    description = "SR_DEATH_RAY_3_DESC"
     class = ShortRange
-    damage = 40
+    damage = 25
     ROF = 1
-    range = 50
+    range = 60
     mountableSlotTypes = External
     buildcost = 50
     buildtime = 4
@@ -208,50 +208,37 @@ Part
     icon = "icons/ship_parts/death-ray-3.png"
 
 Part
-    name = "SR_WEAPON_16"
-    description = "SR_WEAPON_16_DESC"
+    name = "SR_DEATH_RAY_4"
+    description = "SR_DEATH_RAY_4_DESC"
     class = ShortRange
-    damage = 45
+    damage = 30
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 50
+    buildcost = 60
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-4.png"
 
 Part
-    name = "SR_WEAPON_17"
-    description = "SR_WEAPON_17_DESC"
-    class = ShortRange
-    damage = 50
-    ROF = 1
-    range = 50
-    mountableSlotTypes = External
-    buildcost = 50
-    buildtime = 4
-    location = OwnedBy TheEmpire Source.Owner
-    icon = "icons/ship_parts/death-ray-5.png"  
-
-Part
-    name = "AR_LEAD_PLATE"
-    description = "AR_LEAD_PLATE_DESC"
+    name = "AR_STD_PLATE"
+    description = "AR_STD_PLATE_DESC"
     class = Armour
-    capacity = 10
+    capacity = 6
     mountableSlotTypes = External
-    buildcost = 1
+    buildcost = 4
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
-    icon = "icons/ship_parts/lead_armor_plating.png"
+    icon = "icons/ship_parts/std_armor_plating.png"
 
 Part
     name = "AR_ZORTRIUM_PLATE"
     description = "AR_ZORTRIUM_PLATE_DESC"
     class = Armour
-    capacity = 25
+    capacity = 11
     mountableSlotTypes = External
-    buildcost = 3
-    buildtime = 3
+    buildcost = 6
+    buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/zortrium_plating.png"
 
@@ -259,21 +246,32 @@ Part
     name = "AR_DIAMOND_PLATE"
     description = "AR_DIAMOND_PLATE_DESC"
     class = Armour
-    capacity = 50
+    capacity = 18
     mountableSlotTypes = External
-    buildcost = 6
-    buildtime = 4
+    buildcost = 8
+    buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/crystal_plating.png"
+
+Part
+    name = "AR_XENTRONIUM_PLATE"
+    description = "AR_XENTRONIUM_PLATE_DESC"
+    class = Armour
+    capacity = 30
+    mountableSlotTypes = External
+    buildcost = 12
+    buildtime = 1
+    location = OwnedBy TheEmpire Source.Owner
+    icon = "icons/ship_parts/generic_part.png"
 
 Part
     name = "AR_ROCK_PLATE"
     description = "AR_ROCK_PLATE_DESC"
     class = Armour
-    capacity = 15
+    capacity = 9
     mountableSlotTypes = External
-    buildcost = 1
-    buildtime = 1
+    buildcost = 4
+    buildtime = 2
     location = And [
         Number low = 1 high = 999 And [
             Building "BLD_SHIPYARD_AST_REF"
@@ -290,7 +288,7 @@ Part
     name = "AR_CRYSTAL_PLATE"
     description = "AR_CRYSTAL_PLATE_DESC"
     class = Armour
-    capacity = 80
+    capacity = 25
     mountableSlotTypes = External
     buildcost = 8
     buildtime = 3
@@ -310,10 +308,10 @@ Part
     name = "AR_NEUTRONIUM_PLATE"
     description = "AR_NEUTRONIUM_PLATE_DESC"
     class = Armour
-    capacity = 100
+    capacity = 40
     mountableSlotTypes = External
-    buildcost = 9
-    buildtime = 4
+    buildcost = 15
+    buildtime = 5
     location = And [
         OwnedBy TheEmpire Source.Owner
         Contains Building name = "BLD_NEUTRONIUM_FORGE"
@@ -331,7 +329,7 @@ Part
     name = "AR_PRECURSOR_PLATE"
     description = "AR_PRECURSOR_PLATE_DESC"
     class = Armour
-    capacity = 800
+    capacity = 400
     mountableSlotTypes = External
     buildcost = 1
     buildtime = 1
@@ -342,39 +340,91 @@ Part
     name = "SH_DEFENSE_GRID"
     description = "SH_DEFENSE_GRID_DESC"
     class = Shield
-    capacity = 1
-    mountableSlotTypes = [External Internal]
-    buildcost = 10
-    buildtime = 0
+    capacity = 0
+    mountableSlotTypes = Internal
+    buildcost = 60
+    buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "SHIELD_PART_STACK"
+            effects = SetMaxShield Value + 4
     icon = "icons/ship_parts/defense_grid.png"
 
 Part
     name = "SH_DEFLECTOR"
     description = "SH_DEFLECTOR_DESC"
     class = Shield
-    capacity = 3
-    mountableSlotTypes = [External Internal]
-    buildcost = 20
-    buildtime = 3
+    capacity = 0
+    mountableSlotTypes = Internal
+    buildcost = 90
+    buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "SHIELD_PART_STACK"
+            effects = SetMaxShield Value + 7
     icon = "icons/ship_parts/deflector_shield.png"
+
+Part
+    name = "SH_PLASMA"
+    description = "SH_PLASMA_DESC"
+    class = Shield
+    capacity = 0
+    mountableSlotTypes = Internal
+    buildcost = 120
+    buildtime = 6
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "SHIELD_PART_STACK"
+            effects = SetMaxShield Value + 12
+    icon = "icons/ship_parts/generic_part.png"
+
+Part
+    name = "SH_BLACK"
+    description = "SH_BLACK_DESC"
+    class = Shield
+    capacity = 0
+    mountableSlotTypes = Internal
+    buildcost = 180
+    buildtime = 8
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "SHIELD_PART_STACK"
+            effects = SetMaxShield Value + 20
+    icon = "icons/ship_parts/generic_part.png"
 
 Part
     name = "SH_MULTISPEC"
     description = "SH_MULTISPEC_DESC"
     class = Shield
-    capacity = 5
-    mountableSlotTypes = [External Internal]
-    buildcost = 10
-    buildtime = 5
+    capacity = 0
+    mountableSlotTypes = Internal
+    buildcost = 120
+    buildtime = 10
     location = OwnedBy TheEmpire Source.Owner
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Star type = [Red Orange Yellow White Blue]
-            stackinggroup = "STEALTH_PART_STACK"
+            stackinggroup = "STEALTH_SOLAR_STACK"
             effects = SetStealth Value + 60
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "SHIELD_PART_STACK"
+            effects = SetMaxShield Value + 15
+    ]
     icon = "icons/ship_parts/multi-spectral.png"
 
 Part

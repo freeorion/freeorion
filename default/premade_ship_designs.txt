@@ -54,13 +54,76 @@ ShipDesign
     model = "seed"
 
 ShipDesign
+    name = "SD_MARK_1"
+    description = "SD_MARK1_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_MASS_DRIVER_1"
+        "SR_MASS_DRIVER_1"
+        ""
+    ]
+    icon = ""
+    model = "mark1"
+
+ShipDesign
+    name = "SD_MARK_2"
+    description = "SD_MARK2_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_MASS_DRIVER_3"
+        "SR_MASS_DRIVER_3"
+        ""
+    ]
+    icon = ""
+    model = "mark1"
+
+ShipDesign
+    name = "SD_MARK_3"
+    description = "SD_MARK3_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_LASER_2"
+        "SR_LASER_2"
+        ""
+    ]
+    icon = ""
+    model = "mark1"
+
+ShipDesign
+    name = "SD_MARK_4"
+    description = "SD_MARK4_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_LASER_4"
+        "SR_LASER_4"
+        ""
+    ]
+    icon = ""
+    model = "mark1"
+
+ShipDesign
+    name = "SD_DRAGON_TOOTH"
+    description = "SD_DRAGON_TOOTH_DESC"
+    hull = "SH_XENTRONIUM"
+    parts = [
+        "DT_DETECTOR_4"
+        "SR_DEATH_RAY_2"
+        "SR_DEATH_RAY_2"
+        "SR_DEATH_RAY_2"
+        "FU_ZERO_FUEL"
+    ]
+    model = "mark1"
+
+
+/*
+ShipDesign
     name = "SD_MARK_A1"
     description = "SD_MARK1_DESC"
     hull = "SH_BASIC_MEDIUM"
     parts = [
         "SR_WEAPON_1"
         "SR_WEAPON_1"
-        "SH_DEFENSE_GRID"
+        ""
     ]
     icon = ""
     model = "mark1"
@@ -449,16 +512,4 @@ ShipDesign
         "SH_DEFLECTOR"
     ]
     model = "mark1"
-
-ShipDesign
-    name = "SD_DRAGON_TOOTH"
-    description = "SD_DRAGON_TOOTH_DESC"
-    hull = "SH_XENTRONIUM"
-    parts = [
-        "DT_DETECTOR_4"
-        "SR_WEAPON_10"
-        "SR_WEAPON_8"
-        "SR_WEAPON_8"
-        "FU_ZERO_FUEL"
-    ]
-    model = "mark1"
+*/

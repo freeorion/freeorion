@@ -1426,6 +1426,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Star type = [Blue White Yellow Orange Red]
+            stackinggroup = "STEALTH_SOLAR_STACK"
             effects = SetStealth Value + 120
 
         EffectsGroup
@@ -1468,7 +1469,7 @@ Hull
     structure = 20
     slots = [
         Slot type = External position = (0.20, 0.15)
-        Slot type = External position = (0.50, 0.15)
+        Slot type = Internal position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
     buildCost = 1
@@ -1579,7 +1580,7 @@ Hull
         Slot type = External position = (0.60, 0.15)
         Slot type = External position = (0.80, 0.15)
         Slot type = External position = (0.20, 0.65)
-        Slot type = External position = (0.40, 0.65)
+        Slot type = Internal position = (0.40, 0.65)
         Slot type = External position = (0.60, 0.65)
     ]
     buildCost = 1
@@ -1627,7 +1628,7 @@ Hull
     structure = 1000
     slots = [
         Slot type = External position = (0.20, 0.15)
-        Slot type = External position = (0.50, 0.15)
+        Slot type = Internal position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
     buildCost = 1
@@ -2755,3 +2756,6 @@ FLEET_UPKEEP_MULTIPLICATOR
             OwnedBy TheEmpire Source.Owner
             VisibleToEmpire Source.Owner
         ])'''
+
+STRUCTURE_MULTIPLICATOR
+'''2.0'''

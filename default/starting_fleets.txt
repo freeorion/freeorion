@@ -13,7 +13,7 @@ Fleet
 Fleet
     name = "FN_BATTLE_FLEET"
     ships = [
-        "SD_MARK_A1"
+        "SD_MARK_1"
     ]
     
 Fleet

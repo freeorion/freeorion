@@ -193,28 +193,40 @@ Scout
 SD_SCOUT_DESC
 Small and cheap unarmed vessel designed for recon and exploration.
 
-SD_MARK_A1
+SD_MARK_1
 Mark I
 SD_MARK1_DESC
 Basic mass-driver patrol frigate.
 
-SD_MARK_A2
+SD_MARK_2
 Mark II
 SD_MARK2_DESC
 Improved mass-driver patrol frigate.
 
-SD_MARK_A3
+SD_MARK_3
 Mark III
 SD_MARK3_DESC
-Advanced mass-driver patrol frigate.
+Basic laser patrol frigate.
+
+SD_MARK_4
+Mark IV
+SD_MARK4_DESC
+Improved laser patrol frigate.
+
+SD_MARK_A1
+Mark I
+
+SD_MARK_A2
+Mark II
+
+SD_MARK_A3
+Mark III
 
 SD_MARK_A3B
 Mark III B
 
 SD_MARK_A4
 Mark IV
-SD_MARK4_DESC
-Top-of-the-Line mass-driver patrol frigate.
 
 SD_MARK_A4B
 Mark IV B
@@ -2902,9 +2914,13 @@ DEFENSE_TEXT
 SHIELDS_TITLE
 Shields
 SHIELDS_TEXT
-'''The term Shields combines all kinds of protective forcefields. Regenerating each turn, they are usually the first barrier incoming attacks have to overcome.
+'''The term Shields combines all kinds of protective forcefields. They are usually the first barrier incoming attacks have to overcome. There are two distinct types of shields that work very differently: ship shields and planetary barrier shields.
 
-Space ships and planets have a Shields meter.'''
+Ship shields: Reduce the damage sustained by each hit by the strength rating of the shield part. A weapon can only penetrate a shield if it's damage value is higher than the shield's strength.
+
+Planetary barrier shields: Act more like some kind of planetary armor. Their strength is reduced by each hit unless they are completely depleted, further hits will finally get through and damage planetary structures. Planetary barrier shields regenerate their strength each turn at a certain rate.
+
+Both space ships and planets have a Shields meter.'''
 
 STEALTH_TITLE
 Stealth
@@ -5947,7 +5963,7 @@ LRN_FORCE_FIELD
 Force-Field Harmonics
 
 LRN_FORCE_FIELD_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on all planets by 10.
+'''Increases max [[encyclopedia SHIELDS_TITLE]] on all planets by 10 and unlocks basic ship shielding technology. [[encyclopedia SHIELDS_TITLE]] are generally much more expensive than armor, due to the technology needed to produce shielding fields, but shields provide a far stronger defense than armor. However, there can only be one active shield generator on a ship, so shield parts do not stack.
 
 Like Fourier analysis of sound, electromagnetism, strong and weak forces may be expressed as harmonic quantum standing-wave superpositions of force-carrier particles. By selectively amplifying these harmonics, forces may be arbitrarily controlled to shield, attack, contain or support.'''
 
@@ -6938,85 +6954,80 @@ Aggression
 SHP_ROOT_AGGRESSION_DESC
 Allows basic weapons and [[shippart GT_TROOP_POD]]s.
 
-SHP_WEAPON_2
+SHP_MASS_DRIVER_2
 Mass Driver 2
-SHP_WEAPON_2_DESC
+SHP_MASS_DRIVER_2_DESC
 '''Refines Mass Driver to level 2.'''
 
-SHP_WEAPON_3
+SHP_MASS_DRIVER_3
 Mass Driver 3
-SHP_WEAPON_3_DESC
+SHP_MASS_DRIVER_3_DESC
 '''Refines Mass Driver to level 3.'''
 
-SHP_WEAPON_4
+SHP_MASS_DRIVER_4
 Mass Driver 4
-SHP_WEAPON_4_DESC
+SHP_MASS_DRIVER_4_DESC
 '''Refines Mass Driver to level 4.'''
 
-SHP_WEAPON_5
+SHP_LASER_1
 Laser 1
-SHP_WEAPON_5_DESC
+SHP_LASER_1_DESC
 '''Unlocks the Laser, a more powerful ship's weapon than the Mass Driver.'''
 
-SHP_WEAPON_6
+SHP_LASER_2
 Laser 2
-SHP_WEAPON_6_DESC
+SHP_LASER_2_DESC
 '''Refines Laser to level 2.'''
 
-SHP_WEAPON_7
+SHP_LASER_3
 Laser 3
-SHP_WEAPON_7_DESC
+SHP_LASER_3_DESC
 '''Refines Laser to level 3.'''
 
-SHP_WEAPON_8
+SHP_LASER_4
 Laser 4
-SHP_WEAPON_8_DESC
+SHP_LASER_4_DESC
 '''Refines Laser to level 4.'''
 
-SHP_WEAPON_9
+SHP_PLASMA_CANNON_1
 Plasma Cannon 1
-SHP_WEAPON_9_DESC
+SHP_PLASMA_CANNON_1_DESC
 '''Unlocks the Plasma Cannon, a more powerful ship's weapon than the Laser.'''
 
-SHP_WEAPON_10
+SHP_PLASMA_CANNON_2
 Plasma Cannon 2
-SHP_WEAPON_10_DESC
+SHP_PLASMA_CANNON_2_DESC
 '''Refines Plasma Cannon to level 2.'''
 
-SHP_WEAPON_11
+SHP_PLASMA_CANNON_3
 Plasma Cannon 3
-SHP_WEAPON_11_DESC
+SHP_PLASMA_CANNON_3_DESC
 '''Refines Plasma Cannon to level 3.'''
 
-SHP_WEAPON_12
+SHP_PLASMA_CANNON_4
 Plasma Cannon 4
-SHP_WEAPON_12_DESC
+SHP_PLASMA_CANNON_4_DESC
 '''Refines Plasma Cannon to level 4.'''
 
-SHP_WEAPON_13
+SHP_DEATH_RAY_1
 Death Ray 1
-SHP_WEAPON_13_DESC
+SHP_DEATH_RAY_1_DESC
 '''Unlocks the Death Ray, the ultimate ship's weapon.'''
 
-SHP_WEAPON_14
+SHP_DEATH_RAY_2
 Death Ray 2
-SHP_WEAPON_14_DESC
+SHP_DEATH_RAY_2_DESC
 '''Refines Death Ray to level 2.'''
 
-SHP_WEAPON_15
+SHP_DEATH_RAY_3
 Death Ray 3
-SHP_WEAPON_15_DESC
+SHP_DEATH_RAY_3_DESC
 '''Refines Death Ray to level 3.'''
 
-SHP_WEAPON_16
+SHP_DEATH_RAY_4
 Death Ray 4
-SHP_WEAPON_16_DESC
-'''Refines Death Ray to level 4.'''
-
-SHP_WEAPON_17
-Death Ray 5
-SHP_WEAPON_17_DESC
-'''Refines Death Ray to level 5. The ultimate refinement of the ultimate weapon.'''
+SHP_DEATH_RAY_4_DESC
+'''Refines Death Ray to level 4. The ultimate refinement of the ultimate weapon.'''
 
 SHP_ION_CANNON
 Ion Cannon
@@ -7189,23 +7200,53 @@ Antimatter Tank
 SHP_ANTIMATTER_TANK_DESC
 Unlocks Antimatter Tank ship part.
 
-SHP_LEAD_PLATE
-Lead Armor Plating
+SHP_ROOT_ARMOR
+Armor Plating
 
-SHP_LEAD_PLATE_DESC
-Unlocks Lead Armor Plating ship part.
+SHP_ROOT_ARMOR_DESC
+Researching special alloys that allow to equip ship hulls with armor plating greatly enhances their durability, especially in battle.
 
 SHP_ZORTRIUM_PLATE
 Zortrium Armor Plating
 
 SHP_ZORTRIUM_PLATE_DESC
-Unlocks Zortrium Armor Plating ship part.
+By refining the methods to construct armor plating, better, more durable special materials can be employed, giving stronger armor parts.
 
 SHP_DIAMOND_PLATE
 Diamond Armor Plating
 
 SHP_DIAMOND_PLATE_DESC
-Unlocks Diamond Armor Plating ship part.
+Advanced processing techniques allow the construction of armor plating cut out of single huge synthetic diamonds. Provides very durable armor parts.
+
+SHP_XENTRONIUM_PLATE
+Xentronium Armor Plating
+
+SHP_XENTRONIUM_PLATE_DESC
+Xentronium is one of the most durable materials known, but also very difficult to process. Mastering the art of constructing armor plating made of xentronium  allows to build extremely durable armor parts.
+
+SHP_DEFLECTOR_SHIELD
+Deflector Shield
+
+SHP_DEFLECTOR_SHIELD_DESC
+'''Advanced ship shielding technology.
+
+By refining and perfecting basic shield technology more effective shield generators can be build.'''
+
+SHP_PLASMA_SHIELD
+Plasma Shield
+
+SHP_PLASMA_SHIELD_DESC
+'''Very advanced ship shielding technology.
+
+By combining the techniques for controlled plasma containment and advanced force field projection it becomes possible to create what can be best described as a plasma bubble around a space ship. This plasma bubble is capable of absorbing high amounts of energy, particles and projectiles.'''
+
+SHP_BLACKSHIELD
+Blackshield
+
+SHP_BLACKSHIELD_DESC
+'''Most advanced ship shielding technology.
+
+Blackshields got their name because they create what looks like an almost inpenetrable black sphere around the object they protect. A blackshield is in essence some kind of dimensional rift projected around a space ship that completely swallows up almost anything thrown at it. It requires tremendous amounts of energy to penetrate a blackshield.'''
 
 SPY_DIST_MOD
 Distortion Modulator
@@ -7804,90 +7845,85 @@ Capacity: %9% fighters'''
 #############################################################
 
 
-SR_WEAPON_1
+SR_MASS_DRIVER_1
 Mass Driver 1
-SR_WEAPON_1_DESC
+SR_MASS_DRIVER_1_DESC
 '''The Mass Driver, a basic weapon.'''
 
-SR_WEAPON_2
+SR_MASS_DRIVER_2
 Mass Driver 2
-SR_WEAPON_2_DESC
+SR_MASS_DRIVER_2_DESC
 '''Mass Driver, refined to level 2.'''
 
-SR_WEAPON_3
+SR_MASS_DRIVER_3
 Mass Driver 3
-SR_WEAPON_3_DESC
+SR_MASS_DRIVER_3_DESC
 '''Mass Driver, refined to level 3.'''
 
-SR_WEAPON_4
+SR_MASS_DRIVER_4
 Mass Driver 4
-SR_WEAPON_4_DESC
+SR_MASS_DRIVER_4_DESC
 '''Mass Driver, refined to level 4.'''
 
-SR_WEAPON_5
+SR_LASER_1
 Laser 1
-SR_WEAPON_5_DESC
+SR_LASER_1_DESC
 '''The Laser, a more powerful ship's weapon than the Mass Driver.'''
 
-SR_WEAPON_6
+SR_LASER_2
 Laser 2
-SR_WEAPON_6_DESC
+SR_LASER_2_DESC
 '''Laser, refined to level 2.'''
 
-SR_WEAPON_7
+SR_LASER_3
 Laser 3
-SR_WEAPON_7_DESC
+SR_LASER_3_DESC
 '''Laser, refined to level 3.'''
 
-SR_WEAPON_8
+SR_LASER_4
 Laser 4
-SR_WEAPON_8_DESC
+SR_LASER_4_DESC
 '''Laser, refined to level 4.'''
 
-SR_WEAPON_9
+SR_PLASMA_CANNON_1
 Plasma Cannon 1
-SR_WEAPON_9_DESC
+SR_PLASMA_CANNON_1_DESC
 '''The Plasma Cannon, a more powerful ship's weapon than the Laser.'''
 
-SR_WEAPON_10
+SR_PLASMA_CANNON_2
 Plasma Cannon 2
-SR_WEAPON_10_DESC
+SR_PLASMA_CANNON_2_DESC
 '''Plasma Cannon, refined to level 2.'''
 
-SR_WEAPON_11
+SR_PLASMA_CANNON_3
 Plasma Cannon 3
-SR_WEAPON_11_DESC
+SR_PLASMA_CANNON_3_DESC
 '''Plasma Cannon, refined to level 3.'''
 
-SR_WEAPON_12
+SR_PLASMA_CANNON_4
 Plasma Cannon 4
-SR_WEAPON_12_DESC
+SR_PLASMA_CANNON_4_DESC
 '''Plasma Cannon, refined to level 4.'''
 
-SR_WEAPON_13
+SR_DEATH_RAY_1
 Death Ray 1
-SR_WEAPON_13_DESC
+SR_DEATH_RAY_1_DESC
 '''The Death Ray, the ultimate ship's weapon.'''
 
-SR_WEAPON_14
+SR_DEATH_RAY_2
 Death Ray 2
-SR_WEAPON_14_DESC
+SR_DEATH_RAY_2_DESC
 '''Death Ray, refined to level 2.'''
 
-SR_WEAPON_15
+SR_DEATH_RAY_3
 Death Ray 3
-SR_WEAPON_15_DESC
+SR_DEATH_RAY_3_DESC
 '''Death Ray, refined to level 3.'''
 
-SR_WEAPON_16
+SR_DEATH_RAY_4
 Death Ray 4
-SR_WEAPON_16_DESC
-'''Death Ray, refined to level 4.'''
-
-SR_WEAPON_17
-Death Ray 5
-SR_WEAPON_17_DESC
-'''Death Ray, refined to level 5. The ultimate refinement of the ultimate weapon.'''
+SR_DEATH_RAY_4_DESC
+'''Death Ray, refined to level 4. The ultimate refinement of the ultimate weapon.'''
 
 SR_LASER
 Laser
@@ -8099,23 +8135,29 @@ ST_CLOAK_4_DESC
 
 Modulates the frequency of any matter waves emitted from the ship to match that of the background radiation. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
 
-AR_LEAD_PLATE
-Lead Armor Plating
+AR_STD_PLATE
+Standard Armor Plating
 
-AR_LEAD_PLATE_DESC
-'''Weak defense with large mass.'''
+AR_STD_PLATE_DESC
+'''Basic armor plating providing only moderate enhancement to a ship's hull durability.'''
 
 AR_ZORTRIUM_PLATE
 Zortrium Armor Plating
 
 AR_ZORTRIUM_PLATE_DESC
-'''Stronger defense than lead plating.'''
+'''Stronger defense than standard plating.'''
 
 AR_DIAMOND_PLATE
 Diamond Armor Plating
 
 AR_DIAMOND_PLATE_DESC
 '''Stronger defense than zortrium plating.'''
+
+AR_XENTRONIUM_PLATE
+Xentronium Armor Plating
+
+AR_XENTRONIUM_PLATE_DESC
+'''Extremely strong and durable armor plating.'''
 
 AR_ROCK_PLATE
 Rock Armor Plating
@@ -8133,7 +8175,7 @@ AR_NEUTRONIUM_PLATE
 Neutronium Armor Plating
 
 AR_NEUTRONIUM_PLATE_DESC
-'''Admirable defense.'''
+'''Strongest, most durable armor plating. Admirable defense.'''
 
 AR_PRECURSOR_PLATE
 Precursor Armor Plating
@@ -8145,23 +8187,41 @@ SH_DEFENSE_GRID
 Defense Grid
 
 SH_DEFENSE_GRID_DESC
-'''Weak defense. 
+'''Provides basic shield defense. Capable of completely negating or at least substantially reducing damage from hits by low powered weapons. Reduces damage sustained from a hit by 4.
 
-[[encyclopedia SHIELDS_TITLE]] technology is generally much more expensive than armor, due to the technology needed to produce shielding fields, but have the benefits of no speed penalties.'''
+There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_DEFLECTOR
 Deflector Shield
 
 SH_DEFLECTOR_DESC
-'''Moderate regenerating defense. 
+'''Provides advanced shield defense. Can absorb or at least substantially reduce damage dealt by moderately powered weapons. Reduces damage sustained from a hit by 7.
 
-[[encyclopedia SHIELDS_TITLE]] technology is generally much more expensive than armor, due to the technology needed to produce shielding fields, but have the benefits of no speed penalties.'''
+There can only be one active shield generator on a ship, so shield parts do not stack.'''
+
+SH_PLASMA
+Plasma Shield
+
+SH_PLASMA_DESC
+'''Powerful shield that significantly reduces damage suffered from hits even by advanced weapons, and completely absorbs anything less. Reduces damage sustained from a hit by 12.
+
+There can only be one active shield generator on a ship, so shield parts do not stack.'''
+
+SH_BLACK
+Blackshield
+
+SH_BLACK_DESC
+'''Most powerful shield defense, can only be penetrated by the most powerful weapons. Extremely expensive to research and build. Reduces damage sustained from a hit by 20.
+
+There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_MULTISPEC
 Multi-Spectral Shield
 
 SH_MULTISPEC_DESC
-Powerful [[encyclopedia SHIELDS_TITLE]] capable of protecting a ship within a star. Provides a high [[encyclopedia STEALTH_TITLE]] bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat.
+'''Powerful [[encyclopedia SHIELDS_TITLE]] capable of protecting a ship within a star. Provides a high [[encyclopedia STEALTH_TITLE]] bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat. Reduces damage sustained from a hit by 15.
+
+There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 CO_COLONY_POD
 Colony Pod
@@ -8719,13 +8779,13 @@ ULTIMATE_STEALTH
 '''+++	Ultimate [[encyclopedia STEALTH_TITLE]]: +60 bonus.'''
 
 GOOD_WEAPONS
-'''+	Starts with [[tech SHP_WEAPON_3]] and one additional ship.'''
+'''+	Starts with [[tech SHP_MASS_DRIVER_3]] and one additional ship.'''
 
 GREAT_WEAPONS
-'''++	Starts with [[tech SHP_WEAPON_5]] and two additional ships.'''
+'''++	Starts with [[tech SHP_LASER_2]] and two additional ships.'''
 
 ULTIMATE_WEAPONS
-'''+++	Starts with [[tech SHP_WEAPON_7]] and three additional ships.'''
+'''+++	Starts with [[tech SHP_LASER_4]] and three additional ships.'''
 
 BAD_POPULATION
 '''−	Bad Population 75%'''
@@ -8931,5 +8991,3 @@ Telepathic
 
 ORBITAL
 Orbital
-
-

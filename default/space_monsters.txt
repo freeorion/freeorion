@@ -16,7 +16,7 @@ ShipDesign
     hull = "SH_KRILL_2_BODY"
     parts = [
         ""
-        "SR_WEAPON_3"
+        "SR_MASS_DRIVER_3"
         ""
     ]
     icon = "icons/monsters/krill-2.png"
@@ -28,7 +28,7 @@ ShipDesign
     hull = "SH_KRILL_3_BODY"
     parts = [
         "SP_DEATH_SPORE"
-        "SR_WEAPON_8"
+        "SR_LASER_3"
         ""
         ""
     ]
@@ -41,7 +41,7 @@ ShipDesign
     hull = "SH_KRILL_4_BODY"
     parts = [
         "SP_DEATH_SPORE"
-        "SR_WEAPON_9"
+        "SR_PLASMA_CANNON_3"
         ""
         ""
     ]
@@ -52,7 +52,7 @@ ShipDesign
     name = "SM_TREE"
     description = "SM_TREE_DESC"
     hull = "SH_TREE_BODY"
-    parts = "SR_WEAPON_2"
+    parts = "SR_MASS_DRIVER_2"
     icon = "icons/monsters/tree.png"
     model = "seed"
 
@@ -62,7 +62,7 @@ ShipDesign
     hull = "SH_FLOATER_BODY"
     parts = [
         ""
-        "SH_DEFLECTOR"
+        "SH_DEFENSE_GRID"
         ""
     ]
     icon = "icons/monsters/floater.png"
@@ -73,10 +73,10 @@ ShipDesign
     description = "SM_DRAGON_DESC"
     hull = "SH_STRONG_MONSTER_BODY"
     parts = [
-        "SR_WEAPON_10"
+        "SR_DEATH_RAY_2"
         "SP_DEATH_SPORE"
         ""
-        "AR_ROCK_PLATE"
+        "AR_CRYSTAL_PLATE"
         "FU_ZERO_FUEL"
     ]
     icon = "icons/monsters/dragon.png"
@@ -87,7 +87,7 @@ ShipDesign
     description = "SM_GUARD_1"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
-        "SR_WEAPON_9"
+        "SR_LASER_4"
         ""
         ""
         ""
@@ -100,7 +100,7 @@ ShipDesign
     description = "SM_GUARD_2"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
-        "SR_WEAPON_12"
+        "SR_PLASMA_CANNON_4"
         ""
         "AR_PRECURSOR_PLATE"
         "AR_PRECURSOR_PLATE"
@@ -114,12 +114,12 @@ ShipDesign
     description = "SM_GUARD_3"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
-        "SR_WEAPON_17"
-        "SR_WEAPON_17"
+        "SR_DEATH_RAY_4"
+        "SR_DEATH_RAY_4"
         "AR_PRECURSOR_PLATE"
         "AR_PRECURSOR_PLATE"
         "AR_PRECURSOR_PLATE"
-        "AR_PRECURSOR_PLATE"
+        "SH_BLACK"
         "AR_PRECURSOR_PLATE"
     ]
     icon = "icons/monsters/warden.png"
@@ -130,8 +130,8 @@ ShipDesign
     description = "SM_DRONE_DESC"
     hull = "SH_DRONE_BODY"
     parts = [
-        "AR_ROCK_PLATE"
-        "SR_WEAPON_2"
+        "AR_ZORTRIUM_PLATE"
+        "SR_MASS_DRIVER_2"
         ""
     ]
     icon = "icons/monsters/drone.png"
@@ -142,8 +142,8 @@ ShipDesign
     description = "SM_DRONE_FACTORY_DESC"
     hull = "SH_IMMOBILE_FACTORY"
     parts = [
+        "SR_MASS_DRIVER_3"
         "SH_DEFLECTOR"
-        "SR_WEAPON_3"
         ""
     ]
     icon = "icons/monsters/factory.png"
@@ -155,7 +155,7 @@ ShipDesign
     hull = "SH_KRAKEN_1_BODY"
     parts = [
         "SP_DEATH_SPORE"
-        "SR_WEAPON_3"
+        "SR_MASS_DRIVER_3"
         ""
         ""
         ]
@@ -167,7 +167,7 @@ ShipDesign
     description = "SM_KRAKEN_2_DESC"
     hull = "SH_KRAKEN_2_BODY"
     parts = [
-        "SR_WEAPON_8"
+        "SR_LASER_4"
         "SP_DEATH_SPORE"
         ""
         ""
@@ -180,7 +180,7 @@ ShipDesign
     description = "SM_KRAKEN_3_DESC"
     hull = "SH_KRAKEN_3_BODY"
     parts = [
-        "SR_WEAPON_13"
+        "SR_PLASMA_CANNON_4"
         "SP_DEATH_SPORE"
         ""
         ""
@@ -206,7 +206,7 @@ ShipDesign
     description = "SM_SNOWFLAKE_2_DESC"
     hull = "SH_SNOWFLAKE_2_BODY"
     parts = [
-        "SR_WEAPON_8"
+        "SR_LASER_4"
         "SP_DEATH_SPORE"
         ""
         ""
@@ -219,7 +219,7 @@ ShipDesign
     description = "SM_SNOWFLAKE_3_DESC"
     hull = "SH_SNOWFLAKE_3_BODY"
     parts = [
-        "SR_WEAPON_15"
+        "SR_DEATH_RAY_3"
         "SP_DEATH_SPORE"
         ""
         ""
@@ -232,7 +232,7 @@ ShipDesign
     description = "SM_JUGGERNAUT_1_DESC"
     hull = "SH_JUGGERNAUT_1_BODY"
     parts = [
-        "SR_WEAPON_3"
+        "SR_MASS_DRIVER_3"
         "SP_DEATH_SPORE"
         ""
         "SH_DEFENSE_GRID"
@@ -245,7 +245,7 @@ ShipDesign
     description = "SM_JUGGERNAUT_2_DESC"
     hull = "SH_JUGGERNAUT_2_BODY"
     parts = [
-        "SR_WEAPON_10"
+        "SR_PLASMA_CANNON_2"
         "SP_DEATH_SPORE"
         ""
         "SH_DEFLECTOR"
@@ -258,10 +258,10 @@ ShipDesign
     description = "SM_JUGGERNAUT_3_DESC"
     hull = "SH_JUGGERNAUT_3_BODY"
     parts = [
-        "SR_WEAPON_17"
+        "SR_DEATH_RAY_4"
         "SP_DEATH_SPORE"
         ""
-        "SH_DEFLECTOR"
+        "SH_PLASMA"
         ]
     icon = "icons/monsters/juggernaut-3.png"
     model = "seed"
@@ -315,7 +315,7 @@ ShipDesign
     description = "SM_SNAIL_DESC"
     hull = "SH_ASTEROID"
     parts = [
-        "SR_WEAPON_11"
+        "SR_PLASMA_CANNON_3"
         ""
         ""
         ""
@@ -330,10 +330,12 @@ ShipDesign
     description = "SM_ACIREMA_GUARD_DESC"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
-        "SR_WEAPON_5"
-        "SH_DEFLECTOR"
+        "SR_LASER_2"
         "DT_DETECTOR_3"
         ""
+        ""
+        ""
+        "SH_DEFENSE_GRID"
         ""
     ]
     icon = "icons/monsters/sentinel.png"
@@ -366,8 +368,8 @@ ShipDesign
     parts = [
         ""
         "SP_BIOTERM"
-        "SR_WEAPON_17"
-        "SR_WEAPON_17"
+        "SR_DEATH_RAY_4"
+        "SR_DEATH_RAY_4"
         "ST_CLOAK_2"
     ]
     icon = "icons/monsters/kraken-4.png"
@@ -380,10 +382,10 @@ ShipDesign
     parts = [
         ""
         "SP_BIOTERM"
-        "SR_WEAPON_17"
-        "SR_WEAPON_17"
-        "SR_WEAPON_17"
-        "SR_WEAPON_17"
+        "SR_DEATH_RAY_4"
+        "SR_DEATH_RAY_4"
+        "SR_DEATH_RAY_4"
+        "SR_DEATH_RAY_4"
         "ST_CLOAK_3"
     ]
     icon  = "icons/monsters/juggernaut-4.png"
@@ -395,7 +397,7 @@ ShipDesign
     hull = "SH_PSIONIC_SNOWFLAKE_BODY"
     parts = [
         "SP_BIOTERM"
-        "SR_WEAPON_17"
+        "SR_DEATH_RAY_4"
         ""
         "ST_CLOAK_3"
     ]
@@ -408,10 +410,9 @@ ShipDesign
     hull = "SH_COSMIC_DRAGON_BODY"
     parts = [
         "SP_NOVA_BOMB"
-        "SR_WEAPON_17"
+        "SR_DEATH_RAY_4"
         ""
         "ST_CLOAK_4"
     ]
     icon = "icons/monsters/dragon-2.png"
     model = "seed"
-
