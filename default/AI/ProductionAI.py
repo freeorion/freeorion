@@ -48,7 +48,13 @@ def getBestShipInfo(priority,  loc=None):
     empireID = empire.empireID
     capitolID = PlanetUtilsAI.getCapital()
     if loc is None:
-        planetIDs = [capitolID] + list(AIstate.popCtrIDs) #TODO: restrict to planets with shipyards
+        shipyards=set()
+        for yardlist in ColonisationAI.empireShipBuilders.values():
+            shipyards.update(yardlist)
+        shipyards.discard(capitolID)
+        planetIDs = [capitolID] + list(shipyards) 
+    elif isinstance(loc,  list):
+        planetIDs=loc
     else:
         planetIDs=[loc]
     theseDesignIDs = []
@@ -113,7 +119,7 @@ def addTroopDesigns():
     designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
     newTroopDesigns = []
     desc,  model = "Troop Ship", "fighter"
-    srb = "SR_WEAPON_%1d"
+    srb = "SR_WEAPON_1_%1d"
     tp = "GT_TROOP_POD"
     nb,  hull =  designNameBases[1]+"%1d",   "SH_BASIC_MEDIUM"
     newTroopDesigns += [ (nb%(1),  desc,  hull,  3*[tp],  "",  model) ]
@@ -136,7 +142,7 @@ def addScoutDesigns():
     designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
     newScoutDesigns = []
     desc,  model  = "Scout",  "fighter"
-    srb = "SR_WEAPON_%1d"
+    srb = "SR_WEAPON_1_%1d"
     db = "DT_DETECTOR_%1d"
     is1,  is2  = "FU_BASIC_TANK",  "SH_DEFLECTOR"
     
@@ -144,8 +150,8 @@ def addScoutDesigns():
     for id in [1, 2, 3, 4]:
         newScoutDesigns += [ (nb%(id, 0),  desc,  "SH_BASIC_SMALL",  [ db%id],  "",  model)   ]
     nb,  hull =  designNameBases[2]+"-%1d-%1d",   "SH_ENDOMORPHIC"
-    for id in [3, 4]:
-        newScoutDesigns += [ (nb%(id, iw),  desc,  hull,  [ db%id,  srb%iw, "", "",  "",  ""],  "",  model)    for iw in range(5, 9) ]
+    #for id in [3, 4]:
+    #    newScoutDesigns += [ (nb%(id, iw),  desc,  hull,  [ db%id,  srb%iw, "", "",  "",  ""],  "",  model)    for iw in range(5, 9) ]
     addDesigns(shipType,   newScoutDesigns,  shipProdPriority)
 
 def addOrbitalDefenseDesigns():
@@ -169,9 +175,15 @@ def addMarkDesigns():
     designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
     newMarkDesigns = []
     desc,  model  = "military ship", "fighter"
-    srb = "SR_WEAPON_%1d"
-    is1,  is2,  is3 = "SH_DEFENSE_GRID",  "SH_DEFLECTOR",  "SH_MULTISPEC"
-    ar1,  ar2,  ar3 = "AR_LEAD_PLATE", "AR_ZORTRIUM_PLATE",  "AR_NEUTRONIUM_PLATE"
+    srb = "SR_WEAPON_1_%1d"
+    srb2 = "SR_WEAPON_2_%1d"
+    srb3 = "SR_WEAPON_3_%1d"
+    srb4 = "SR_WEAPON_4_%1d"
+    clk = "ST_CLOAK_%1d"
+    if1  = "FU_BASIC_TANK"
+    is1,  is2,  is3,  is4,  is5 = "SH_DEFENSE_GRID",  "SH_DEFLECTOR", "SH_PLASMA",   "SH_MULTISPEC",  "SH_BLACKSHIELD"
+    isList=["", is1, is2, is3, is4, is5]
+    ar1,  ar2,  ar3,  ar4,  ar5 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE", "AR_DIAMOND_PLATE", "AR_XENTRONIUM_PLATE",   "AR_NEUTRONIUM_PLATE"
 
     if foAI.foAIstate.aggression in [fo.aggression.beginner, fo.aggression.turtle]: 
         maxEM= 8
@@ -181,77 +193,92 @@ def addMarkDesigns():
         maxEM= 10
     
     nb,  hull =  designNameBases[1]+"-%1d",   "SH_BASIC_MEDIUM"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ""],  "",  model)    for iw in range(1, 8) ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ""],  "",  model)    for iw in [1, 2, 3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  srb2%iw,  ""],  "",  model)    for iw in [2, 3, 4] ]
 
     nb,  hull =  designNameBases[2]+"-1-%1d",   "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1],  "",  model)    for iw in range(3, 9) ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1],  "",  model)    for iw in [3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  srb2%iw, srb2%iw,  is1],  "",  model)    for iw in [2, 3, 4] ]
     nb,  hull =  designNameBases[2]+"-2-%1d",   "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is2],  "",  model)    for iw in range(3, 9) ]
-    nb,  hull =  designNameBases[2]+"-4-%1d",   "SH_STATIC_MULTICELLULAR"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is2,  is2],  "",  model)    for iw in range(6, 9) ]
-
-    if doDoubleShields or (fo.empireID()%2 == 0) :
-        nb,  hull =  designNameBases[2]+"-3-%1x",   "SH_ORGANIC"
-        newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  is2,  is2],  "",  model)    for iw in range(5, maxEM+1) ]
-        nb,  hull =  designNameBases[2]+"-6-%1d",   "SH_STATIC_MULTICELLULAR"
-        newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, is2,  is2,  is2],  "",  model)    for iw in range(6, maxEM+1) ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is2],  "",  model)    for iw in [3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  srb2%iw, srb2%iw,  is2],  "",  model)    for iw in [2, 3, 4] ]
+    nb,  hull =  designNameBases[2]+"-3-%1d",   "SH_STATIC_MULTICELLULAR"
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  srb2%iw, srb2%iw,  is2,  if1],  "",  model)    for iw in [2, 3, 4] ]
 
     nb,  hull =  designNameBases[3]+"-1-%1x",   "SH_ENDOMORPHIC"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  4*[srb%iw] + 2*[ is1],  "",  model)    for iw in [5, 6, 7 ] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  4*[srb2%iw] + [ is2, if1],  "",  model)    for iw in [ 4 ] ]
+    newMarkDesigns += [ (nb%(iw+8),  desc,  hull,  4*[srb3%iw] + [ is2, if1],  "",  model)    for iw in [ 2 ] ]
+    nb =  designNameBases[3]+"-1b-%1x"
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  4*[srb2%iw] + [ is4, if1],  "",  model)    for iw in [ 4 ] ]
+    newMarkDesigns += [ (nb%(iw+8),  desc,  hull,  4*[srb3%iw] + [ is4, if1],  "",  model)    for iw in [ 2 ] ]
 
     nb =  designNameBases[3]+"-2-%1x"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] + [ is2,  is2, is2],  "",  model)    for iw in range(6,  maxEM+1) ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  3*[srb2%iw]+[ar2]  + [ is2,  if1],  "",  model)    for iw in [4] ]
+    newMarkDesigns += [ (nb%(iw+8),  desc,  hull,  3*[srb3%iw]+[ar2]  + [ is2,  if1],  "",  model)    for iw in [2, 3, 4] ]
+    nb =  designNameBases[3]+"2b-%1x"
+    newMarkDesigns += [ (nb%(iw+8),  desc,  hull,  3*[srb3%iw]+[ar2]  + [ is3,  if1],  "",  model)    for iw in [3, 4] ]
+    nb =  designNameBases[3]+"2c-%1x"
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  3*[srb2%iw]+[ar2]  + [ is4,  if1],  "",  model)    for iw in [4] ]
+    newMarkDesigns += [ (nb%(iw+8),  desc,  hull,  3*[srb3%iw]+[ar2]  + [ is4,  if1],  "",  model)    for iw in [2, 3, 4] ]
 
-    nb =  designNameBases[3]+"3-%1x"
-    #newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar1] + [ is1,  is1],  "",  model)    for iw in [5, 6, 7, 8,   10, 11, 12 ] ]
-    nb =  designNameBases[3]+"-4-%1x"
-    #newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw]+[ar1] + [ is1, is2],  "",  model)    for iw in [7, 8,   10, 11, 12 ] ]
-    nb =  designNameBases[3]+"-5-%1x"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + 2*[ is2],  "",  model)    for iw in range(7,  maxEM+1) ]
+    nb =  designNameBases[3]+"-3-%1x"
+    newMarkDesigns += [ (nb%(iw+8),  desc,  hull,  3*[srb3%iw]+[ar3] + [ is2,  if1],  "",  model)    for iw in [2, 3, 4] ]
+    nb =  designNameBases[3]+"3b-%1x"
+    newMarkDesigns += [ (nb%(iw+8),  desc,  hull,  3*[srb3%iw]+[ar3] + [ is3,  if1],  "",  model)    for iw in [ 3, 4] ]
+    nb =  designNameBases[3]+"3c-%1x"
+    newMarkDesigns += [ (nb%(iw+8),  desc,  hull,  3*[srb3%iw]+[ar3] + [ is4,  if1],  "",  model)    for iw in [2, 3, 4] ]
+
+    nb =  designNameBases[3]+"-4b-%1x"
+    newMarkDesigns += [ (nb%(iw+12),  desc,  hull,  3*[srb4%iw]+[ar3] + [ is3,  if1],  "",  model)    for iw in [ 2, 3, 4] ]
+    nb =  designNameBases[3]+"4c-%1x"
+    newMarkDesigns += [ (nb%(iw+12),  desc,  hull,  3*[srb4%iw]+[ar3] + [ is4,  if1],  "",  model)    for iw in [2, 3, 4] ]
     
-    nb =  designNameBases[3]+"-6-%1x"
-    if foAI.foAIstate.aggression <=fo.aggression.turtle: 
-        newMarkDesigns += [ (nb%iw,  desc,  hull,  2*[srb%iw] +[ar3, ar3]+ 2*[ is2],  "",  model)    for iw in range(8,  maxEM+1) ]
+    if foAI.foAIstate.aggression < fo.aggression.typical:  #won't advance past EM hulls
+        nb =  designNameBases[3]+"4d-%1x"
+        newMarkDesigns += [ (nb%(iw+12),  desc,  hull,  3*[srb4%iw]+[ar4] + [ is3,  if1],  "",  model)    for iw in [2, 3, 4] ]
+        nb =  designNameBases[3]+"4e-%1x"
+        newMarkDesigns += [ (nb%(iw+12),  desc,  hull,  3*[srb4%iw]+[ar4] + [ is4,  if1],  "",  model)    for iw in [2, 3, 4] ]
+        nb =  designNameBases[3]+"4f-%1x"
+        newMarkDesigns += [ (nb%(iw+12),  desc,  hull,  3*[srb4%iw]+[ar5] + [ is3,  if1],  "",  model)    for iw in [2, 3, 4] ]
+        nb =  designNameBases[3]+"4g-%1x"
+        newMarkDesigns += [ (nb%(iw+12),  desc,  hull,  3*[srb4%iw]+[ar5] + [ is4,  if1],  "",  model)    for iw in [2, 3, 4] ]
     else:
-        newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] +[ar3]+ 2*[ is2],  "",  model)    for iw in range(8,  maxEM+1) ]
-
-    nb =  designNameBases[3]+"-7-%1x"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw] + [ is3,  is3, is3],  "",  model)    for iw in range(8,  maxEM+1) ]
-    
-    nb =  designNameBases[3]+"-8-%1x"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar2] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
-    
-    nb =  designNameBases[3]+"-9-%1x"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  3*[srb%iw]+[ar3] + [ is3,  is3],  "",  model)    for iw in range(8,  maxEM+1) ]
-    
-    if foAI.foAIstate.aggression >=fo.aggression.typical: 
         nb,  hull =  designNameBases[4]+"-%1x-%1x",   "SH_ENDOSYMBIOTIC"
-        newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  4*[srb%iw] + 3*[ is2],  "",  model)    for iw in range(7,  15) ]
-        newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  4*[srb%iw] + 3*[ is3],  "",  model)    for iw in range(7,  15) ]
+        #newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  4*[srb%iw] + 3*[ is2],  "",  model)    for iw in range(7,  15) ]
+        #newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  4*[srb%iw] + 3*[ is3],  "",  model)    for iw in range(7,  15) ]
         
-        newMarkDesigns += [ (nb%(3, iw),  desc,  hull,  3*[srb%iw]+[ar2] + 3*[ is2],  "",  model)    for iw in range(7,  14) ]
-        newMarkDesigns += [ (nb%(4, iw),  desc,  hull,  3*[srb%iw]+[ar3] + 3*[ is2],  "",  model)    for iw in range(8,  14) ]
-        newMarkDesigns += [ (nb%(5, iw),  desc,  hull,  3*[srb%iw]+[ar2] + 3*[ is3],  "",  model)    for iw in range(7,  14) ]
-        newMarkDesigns += [ (nb%(6, iw),  desc,  hull,  3*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(8,  14) ]
-        #bioadaptive
-        nb,  hull =  designNameBases[4]+"-%1x-%1x",   "SH_BIOADAPTIVE"
-        newMarkDesigns += [ (nb%(7, iw),  desc,  hull,  3*[srb%iw] + 3*[ is2],  "",  model)    for iw in range(9,  14) ]
-        newMarkDesigns += [ (nb%(8, iw),  desc,  hull,  2*[srb%iw]+[ar2] + 3*[ is2],  "",  model)    for iw in range(9,  14) ]
-        newMarkDesigns += [ (nb%(9, iw),  desc,  hull,  3*[srb%iw] + 3*[ is3],  "",  model)    for iw in range(9,  14) ]
-        newMarkDesigns += [ (nb%(10, iw),  desc,  hull,  2*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(9,  14) ]
-    if foAI.foAIstate.aggression >fo.aggression.typical: 
-        nb,  hull =  designNameBases[5]+"-%1x-%02x",   "SH_SENTIENT"
-        newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  4*[srb%iw]+2*[ar2] + 3*[ is2],  "",  model)    for iw in range(10,  18) ]
-        newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  5*[srb%iw]+[ar3] + 3*[ is2],  "",  model)    for iw in range(10,  18) ]
-        newMarkDesigns += [ (nb%(3, iw),  desc,  hull,  5*[srb%iw]+[ar2] + 3*[ is3],  "",  model)    for iw in range(10,  18) ]
-        newMarkDesigns += [ (nb%(4, iw),  desc,  hull,  5*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(10,  18) ]
+        #newMarkDesigns += [ (nb%(3, iw),  desc,  hull,  3*[srb%iw]+[ar2] + 3*[ is2],  "",  model)    for iw in range(7,  14) ]
+        #newMarkDesigns += [ (nb%(4, iw),  desc,  hull,  3*[srb%iw]+[ar3] + 3*[ is2],  "",  model)    for iw in range(8,  14) ]
+        #newMarkDesigns += [ (nb%(5, iw),  desc,  hull,  3*[srb%iw]+[ar2] + 3*[ is3],  "",  model)    for iw in range(7,  14) ]
+        #newMarkDesigns += [ (nb%(6, iw),  desc,  hull,  3*[srb%iw]+[ar3] + 3*[ is3],  "",  model)    for iw in range(8,  14) ]
+        
+        nb,  hull =  designNameBases[4]+"-%1xb-%1x",   "SH_BIOADAPTIVE"
+        newMarkDesigns += [ (nb%(1, iw)      ,  desc,  hull,  2*[srb3%iw]+[ar4] + [ is3,  if1, if1],  "",  model)    for iw in [4] ]
+        newMarkDesigns += [ (nb%(1, iw+4),  desc,  hull,  2*[srb4%iw]+[ar4] + [ is3,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(2, iw)      ,  desc,  hull,  2*[srb3%iw]+[ar4] + [ is4,  if1, if1],  "",  model)    for iw in [4] ]
+        newMarkDesigns += [ (nb%(2, iw+4),  desc,  hull,  2*[srb4%iw]+[ar4] + [ is4,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(3, iw)      ,  desc,  hull,  2*[srb3%iw]+[ar5] + [ is3,  if1, if1],  "",  model)    for iw in [4] ]
+        newMarkDesigns += [ (nb%(3, iw+4),  desc,  hull,  2*[srb4%iw]+[ar5] + [ is3,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        newMarkDesigns += [ (nb%(4, iw)      ,  desc,  hull,  2*[srb3%iw]+[ar5] + [ is4,  if1, if1],  "",  model)    for iw in [4] ]
+        newMarkDesigns += [ (nb%(4, iw+4),  desc,  hull,  2*[srb4%iw]+[ar5] + [ is4,  if1, if1],  "",  model)    for iw in [2, 3, 4] ]
+        
+        if foAI.foAIstate.aggression >fo.aggression.typical: 
+            hull =  "SH_SENTIENT"
+            for cld in [2, 3]:
+                nb =  designNameBases[5]+"-%%1xa%1d-%%1x"%cld
+                for isd in [3, 4, 5]:
+                    newMarkDesigns += [ (nb%(isd-2, 1),    desc,  hull,  4*[srb3%iw]+2*[ar4] + [ isList[isd],  if1,  clk%cld],  "",  model)    for iw in [4] ]
+                    newMarkDesigns += [ (nb%(isd-2, iw),  desc,  hull,  4*[srb4%iw]+2*[ar4] + [ isList[isd],  if1,  clk%cld],  "",  model)    for iw in [2, 3, 4] ]
 
-    if foAI.foAIstate.aggression >fo.aggression.typical: 
-        nb,  hull =  designNameBases[6]+"-%1x-%02x",   "SH_FRACTAL_ENERGY"
-        newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  8*[srb%iw]+3*[ar2] + 3*[ is2],  "",  model)    for iw in range(10,  18) ]
-        newMarkDesigns += [ (nb%(2, iw),  desc,  hull,  9*[srb%iw]+3*[ar3] + 2*[ is2],  "",  model)    for iw in range(10,  18) ]
-        newMarkDesigns += [ (nb%(3, iw),  desc,  hull,  8*[srb%iw]+3*[ar2] + 3*[ is3],  "",  model)    for iw in range(10,  18) ]
-        newMarkDesigns += [ (nb%(4, iw),  desc,  hull,  9*[srb%iw]+3*[ar3] + 2*[ is3],  "",  model)    for iw in range(10,  18) ]
+                nb =  designNameBases[5]+"-%%1xb%1d-%%1x"%cld
+                for isd in [3, 4, 5]:
+                    newMarkDesigns += [ (nb%(isd-2, 1),    desc,  hull,  4*[srb3%iw]+2*[ar5] + [ isList[isd],  if1,  clk%cld],  "",  model)    for iw in [4] ]
+                    newMarkDesigns += [ (nb%(isd-2, iw),  desc,  hull,  4*[srb4%iw]+2*[ar5] + [ isList[isd],  if1,  clk%cld],  "",  model)    for iw in [2, 3, 4] ]
+
+
+        if foAI.foAIstate.aggression >fo.aggression.typical: 
+            nb,  hull =  designNameBases[6]+"-%1x-%02x",   "SH_FRACTAL_ENERGY"
+            #newMarkDesigns += [ (nb%(1, iw),  desc,  hull,  8*[srb%iw]+3*[ar2] + 3*[ is2],  "",  model)    for iw in range(10,  18) ]
 
     addDesigns(shipType,   newMarkDesigns,  shipProdPriority)
     #TODO: add more advanced designs
@@ -261,7 +288,7 @@ def addOutpostDesigns():
     designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
     newOutpostDesigns = []
     desc = "Outpost Ship"
-    srb = "SR_WEAPON_%1d"
+    srb = "SR_WEAPON_1_%1d"
     model = "seed"
     nb,  hull =  designNameBases[1]+"%1d_%1d",   "SH_ORGANIC"
     op = "CO_OUTPOST_POD"
@@ -276,7 +303,7 @@ def addColonyDesigns():
     designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority,  {"nomatch":0}).items(),  key=lambda x:x[1])]
     newColonyDesigns = []
     desc,  model = "Colony Ship",  "seed"
-    srb = "SR_WEAPON_%1d"
+    srb = "SR_WEAPON_1_%1d"
     nb,  hull =  designNameBases[1]+"%1d_%1d",   "SH_ORGANIC"
     cp,  cp2 = "CO_COLONY_POD",  "CO_SUSPEND_ANIM_POD"
     db = "DT_DETECTOR_%1d"
@@ -1167,14 +1194,15 @@ def generateProductionOrders():
 def getAvailableBuildLocations(shipDesignID):
     "returns locations where shipDesign can be built"
     result = []
-    #systemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
-    #planetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(systemIDs)
     shipDesign = fo.getShipDesign(shipDesignID)
     empire = fo.getEmpire()
     empireID = empire.empireID
     capitolID = PlanetUtilsAI.getCapital()
-    planetIDs = set([capitolID]  + list(AIstate.popCtrIDs)) #TODO: restrict to planets with shipyards
-    for planetID in planetIDs:
+    shipyards=set()
+    for yardlist in ColonisationAI.empireShipBuilders.values():
+        shipyards.update(yardlist)
+    shipyards.discard(capitolID)
+    for planetID in [capitolID]  + list(shipyards):#gets capitol at front of list
         if shipDesign.productionLocationForEmpire(empireID, planetID):
             result.append(planetID)
     return result

@@ -15,6 +15,7 @@ from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType, AI
 empireSpecies = {}
 empireSpeciesSystems={}
 empireColonizers = {}
+empireShipBuilders={}
 availableGrowthSpecials={}
 empirePlanetsWithGrowthSpecials={}
 activeGrowthSpecials={}
@@ -51,6 +52,7 @@ def resetCAIGlobals():
     empireSpecies.clear()
     empireSpeciesSystems.clear()
     empireColonizers.clear()
+    empireShipBuilders.clear()
     activeGrowthSpecials.clear()
     annexableSystemIDs.clear()
     annexableRing1.clear()
@@ -61,8 +63,7 @@ def resetCAIGlobals():
     
 
 def getColonyFleets():
-    global empireSpecies,  empireColonizers,  empireSpeciesSystems,  annexableSystemIDs,  annexableRing1,  annexableRing2,  annexableRing3
-    global  annexablePlanetIDs,  curBestMilShipRating
+    global  curBestMilShipRating
     
     curBestMilShipRating = ProductionAI.curBestMilShipRating()
     
@@ -198,10 +199,13 @@ def getColonyFleets():
     oldPopCtrs=[]
     for specN in empireSpecies:
         oldPopCtrs.extend(empireSpecies[specN])
-    oldEmpSpec = empireSpecies
+    oldEmpSpec = {}
+    oldEmpSpec.update(empireSpecies)
     empireSpecies.clear()
-    oldEmpCol=empireColonizers
+    oldEmpCol= {}
+    oldEmpCol.update(empireColonizers)
     empireColonizers.clear()
+    empireShipBuilders.clear()
     empireMetabolisms.clear()
     availableGrowthSpecials.clear()
     activeGrowthSpecials.clear()
@@ -243,12 +247,14 @@ def getColonyFleets():
                         availableGrowthSpecials.setdefault(special,  []).append(pID)
                         if planet.focus == AIFocusType.FOCUS_GROWTH:
                             activeGrowthSpecials.setdefault(special,  []).append(pID)
-                if thisSpec.canColonize and thisSpec.canProduceShips:
+                if  thisSpec.canProduceShips:
                     if "BLD_SHIPYARD_BASE" in [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]:
                         shipyards.append(pID)
                 empireSpeciesSystems.setdefault(planet.systemID,  {}).setdefault('pids', []).append(pID)
-            if thisSpec.canColonize and thisSpec.canProduceShips:
-                empireColonizers[specName]=shipyards
+            if thisSpec.canProduceShips:
+                empireShipBuilders[specName]=shipyards
+                if thisSpec.canColonize:
+                    empireColonizers[specName]=shipyards
             print "%s on planets %s; can%s colonize from %d shipyards; has tags %s"%(specName,  empireSpecies[specName],  ["not", ""][thisSpec.canColonize and thisSpec.canProduceShips], len(shipyards),  list(thisSpec.tags))
         else:
             print "Unable to retrieve info for Species named %s"%specName

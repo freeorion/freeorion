@@ -188,7 +188,9 @@ def prepareForSave():
     print "Preparing for game save by serializing state"
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
-    fo.setSaveStateString(pickle.dumps(foAIstate))
+    dumpStr = pickle.dumps(foAIstate)
+    print "foAIstate pickled to string,  about to send to server"
+    fo.setSaveStateString(dumpStr)
 
 # called when this player receives a chat message.  senderID is the player who sent the message, and
 # messageText is the text of the sent message

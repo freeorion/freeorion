@@ -13,8 +13,8 @@ Part
     icon = "icons/ship_parts/troops.png"
 
 Part
-    name = "SR_MASS_DRIVER_1"
-    description = "SR_MASS_DRIVER_1_DESC"
+    name = "SR_WEAPON_1_1"
+    description = "SR_WEAPON_1_1_DESC"
     class = ShortRange
     damage = 3
     ROF = 1
@@ -26,8 +26,8 @@ Part
     icon = "icons/ship_parts/mass-driver-1.png"
     
 Part
-    name = "SR_MASS_DRIVER_2"
-    description = "SR_MASS_DRIVER_2_DESC"
+    name = "SR_WEAPON_1_2"
+    description = "SR_WEAPON_1_2_DESC"
     class = ShortRange
     damage = 4
     ROF = 1
@@ -39,8 +39,8 @@ Part
     icon = "icons/ship_parts/mass-driver-2.png"
 
 Part
-    name = "SR_MASS_DRIVER_3"
-    description = "SR_MASS_DRIVER_3_DESC"
+    name = "SR_WEAPON_1_3"
+    description = "SR_WEAPON_1_3_DESC"
     class = ShortRange
     damage = 5
     ROF = 1
@@ -52,8 +52,8 @@ Part
     icon = "icons/ship_parts/mass-driver-3.png"
     
 Part
-    name = "SR_MASS_DRIVER_4"
-    description = "SR_MASS_DRIVER_4_DESC"
+    name = "SR_WEAPON_1_4"
+    description = "SR_WEAPON_1_4_DESC"
     class = ShortRange
     damage = 6
     ROF = 1
@@ -65,8 +65,8 @@ Part
     icon = "icons/ship_parts/mass-driver-4.png"
     
 Part
-    name = "SR_LASER_1"
-    description = "SR_LASER_1_DESC"
+    name = "SR_WEAPON_2_1"
+    description = "SR_WEAPON_2_1_DESC"
     class = ShortRange
     damage = 5
     ROF = 1
@@ -78,8 +78,8 @@ Part
     icon = "icons/ship_parts/laser-1.png"
 
 Part
-    name = "SR_LASER_2"
-    description = "SR_LASER_2_DESC"
+    name = "SR_WEAPON_2_2"
+    description = "SR_WEAPON_2_2_DESC"
     class = ShortRange
     damage = 7
     ROF = 1
@@ -91,8 +91,8 @@ Part
     icon = "icons/ship_parts/laser-2.png"
 
 Part
-    name = "SR_LASER_3"
-    description = "SR_LASER_3_DESC"
+    name = "SR_WEAPON_2_3"
+    description = "SR_WEAPON_2_3_DESC"
     class = ShortRange
     damage = 9
     ROF = 1
@@ -104,8 +104,8 @@ Part
     icon = "icons/ship_parts/laser-3.png"
 
 Part
-    name = "SR_LASER_4"
-    description = "SR_LASER_4_DESC"
+    name = "SR_WEAPON_2_4"
+    description = "SR_WEAPON_2_4_DESC"
     class = ShortRange
     damage = 11
     ROF = 1
@@ -117,8 +117,8 @@ Part
     icon = "icons/ship_parts/laser-4.png"
     
 Part
-    name = "SR_PLASMA_CANNON_1"
-    description = "SR_PLASMA_CANNON_1_DESC"
+    name = "SR_WEAPON_3_1"
+    description = "SR_WEAPON_3_1_DESC"
     class = ShortRange
     damage = 9
     ROF = 1
@@ -130,8 +130,8 @@ Part
     icon = "icons/ship_parts/plasma-1.png"
     
 Part
-    name = "SR_PLASMA_CANNON_2"
-    description = "SR_PLASMA_CANNON_2_DESC"
+    name = "SR_WEAPON_3_2"
+    description = "SR_WEAPON_3_2_DESC"
     class = ShortRange
     damage = 12
     ROF = 1
@@ -143,8 +143,8 @@ Part
     icon = "icons/ship_parts/plasma-2.png"
     
 Part
-    name = "SR_PLASMA_CANNON_3"
-    description = "SR_PLASMA_CANNON_3_DESC"
+    name = "SR_WEAPON_3_3"
+    description = "SR_WEAPON_3_3_DESC"
     class = ShortRange
     damage = 15
     ROF = 1
@@ -156,8 +156,8 @@ Part
     icon = "icons/ship_parts/plasma-3.png" 
 
 Part
-    name = "SR_PLASMA_CANNON_4"
-    description = "SR_PLASMA_CANNON_4_DESC"
+    name = "SR_WEAPON_3_4"
+    description = "SR_WEAPON_3_4_DESC"
     class = ShortRange
     damage = 18
     ROF = 1
@@ -169,8 +169,8 @@ Part
     icon = "icons/ship_parts/plasma-4.png"
 
 Part
-    name = "SR_DEATH_RAY_1"
-    description = "SR_DEATH_RAY_1_DESC"
+    name = "SR_WEAPON_4_1"
+    description = "SR_WEAPON_4_1_DESC"
     class = ShortRange
     damage = 15
     ROF = 1
@@ -182,8 +182,8 @@ Part
     icon = "icons/ship_parts/death-ray-1.png"    
 
 Part
-    name = "SR_DEATH_RAY_2"
-    description = "SR_DEATH_RAY_2_DESC"
+    name = "SR_WEAPON_4_2"
+    description = "SR_WEAPON_4_2_DESC"
     class = ShortRange
     damage = 20
     ROF = 1
@@ -195,8 +195,8 @@ Part
     icon = "icons/ship_parts/death-ray-2.png"
 
 Part
-    name = "SR_DEATH_RAY_3"
-    description = "SR_DEATH_RAY_3_DESC"
+    name = "SR_WEAPON_4_3"
+    description = "SR_WEAPON_4_3_DESC"
     class = ShortRange
     damage = 25
     ROF = 1
@@ -208,8 +208,8 @@ Part
     icon = "icons/ship_parts/death-ray-3.png"
 
 Part
-    name = "SR_DEATH_RAY_4"
-    description = "SR_DEATH_RAY_4_DESC"
+    name = "SR_WEAPON_4_4"
+    description = "SR_WEAPON_4_4_DESC"
     class = ShortRange
     damage = 30
     ROF = 1
@@ -1043,8 +1043,8 @@ Part
 
 ------ TEMPORARILY REMOVED WEAPONS
 Part
-    name = "SR_LASER"
-    description = "SR_LASER_DESC"
+    name = "SR_WEAPON_2"
+    description = "SR_WEAPON_2_DESC"
     class = ShortRange
     damage = 1
     ROF = 1
@@ -1069,8 +1069,8 @@ Part
     icon = "icons/ship_parts/ion_cannon.png"
 
 Part
-    name = "SR_MASS_DRIVER"
-    description = "SR_MASS_DRIVER_DESC"
+    name = "SR_WEAPON_1"
+    description = "SR_WEAPON_1_DESC"
     class = ShortRange
     damage = 5
     ROF = 1
@@ -1082,8 +1082,8 @@ Part
     icon = "icons/ship_parts/mass_driver.png"
 
 Part
-    name = "SR_DEATH_RAY"
-    description = "SR_DEATH_RAY_DESC"
+    name = "SR_WEAPON_4"
+    description = "SR_WEAPON_4_DESC"
     class = ShortRange
     damage = 100
     ROF = 1

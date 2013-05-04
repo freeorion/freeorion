@@ -6954,79 +6954,79 @@ Aggression
 SHP_ROOT_AGGRESSION_DESC
 Allows basic weapons and [[shippart GT_TROOP_POD]]s.
 
-SHP_MASS_DRIVER_2
+SHP_WEAPON_1_2
 Mass Driver 2
-SHP_MASS_DRIVER_2_DESC
+SHP_WEAPON_1_2_DESC
 '''Refines Mass Driver to level 2.'''
 
-SHP_MASS_DRIVER_3
+SHP_WEAPON_1_3
 Mass Driver 3
-SHP_MASS_DRIVER_3_DESC
+SHP_WEAPON_1_3_DESC
 '''Refines Mass Driver to level 3.'''
 
-SHP_MASS_DRIVER_4
+SHP_WEAPON_1_4
 Mass Driver 4
-SHP_MASS_DRIVER_4_DESC
+SHP_WEAPON_1_4_DESC
 '''Refines Mass Driver to level 4.'''
 
-SHP_LASER_1
+SHP_WEAPON_2_1
 Laser 1
-SHP_LASER_1_DESC
+SHP_WEAPON_2_1_DESC
 '''Unlocks the Laser, a more powerful ship's weapon than the Mass Driver.'''
 
-SHP_LASER_2
+SHP_WEAPON_2_2
 Laser 2
-SHP_LASER_2_DESC
+SHP_WEAPON_2_2_DESC
 '''Refines Laser to level 2.'''
 
-SHP_LASER_3
+SHP_WEAPON_2_3
 Laser 3
-SHP_LASER_3_DESC
+SHP_WEAPON_2_3_DESC
 '''Refines Laser to level 3.'''
 
-SHP_LASER_4
+SHP_WEAPON_2_4
 Laser 4
-SHP_LASER_4_DESC
+SHP_WEAPON_2_4_DESC
 '''Refines Laser to level 4.'''
 
-SHP_PLASMA_CANNON_1
+SHP_WEAPON_3_1
 Plasma Cannon 1
-SHP_PLASMA_CANNON_1_DESC
+SHP_WEAPON_3_1_DESC
 '''Unlocks the Plasma Cannon, a more powerful ship's weapon than the Laser.'''
 
-SHP_PLASMA_CANNON_2
+SHP_WEAPON_3_2
 Plasma Cannon 2
-SHP_PLASMA_CANNON_2_DESC
+SHP_WEAPON_3_2_DESC
 '''Refines Plasma Cannon to level 2.'''
 
-SHP_PLASMA_CANNON_3
+SHP_WEAPON_3_3
 Plasma Cannon 3
-SHP_PLASMA_CANNON_3_DESC
+SHP_WEAPON_3_3_DESC
 '''Refines Plasma Cannon to level 3.'''
 
-SHP_PLASMA_CANNON_4
+SHP_WEAPON_3_4
 Plasma Cannon 4
-SHP_PLASMA_CANNON_4_DESC
+SHP_WEAPON_3_4_DESC
 '''Refines Plasma Cannon to level 4.'''
 
-SHP_DEATH_RAY_1
+SHP_WEAPON_4_1
 Death Ray 1
-SHP_DEATH_RAY_1_DESC
+SHP_WEAPON_4_1_DESC
 '''Unlocks the Death Ray, the ultimate ship's weapon.'''
 
-SHP_DEATH_RAY_2
+SHP_WEAPON_4_2
 Death Ray 2
-SHP_DEATH_RAY_2_DESC
+SHP_WEAPON_4_2_DESC
 '''Refines Death Ray to level 2.'''
 
-SHP_DEATH_RAY_3
+SHP_WEAPON_4_3
 Death Ray 3
-SHP_DEATH_RAY_3_DESC
+SHP_WEAPON_4_3_DESC
 '''Refines Death Ray to level 3.'''
 
-SHP_DEATH_RAY_4
+SHP_WEAPON_4_4
 Death Ray 4
-SHP_DEATH_RAY_4_DESC
+SHP_WEAPON_4_4_DESC
 '''Refines Death Ray to level 4. The ultimate refinement of the ultimate weapon.'''
 
 SHP_ION_CANNON
@@ -7035,16 +7035,16 @@ Ion Cannon
 SHP_ION_CANNON_DESC
 Unlocks Ion Cannon ship part.
 
-SHP_MASS_DRIVER
+SHP_WEAPON_1
 Mass Driver
 
-SHP_MASS_DRIVER_DESC
+SHP_WEAPON_1_DESC
 With the advent of space age weaponry, a paradigm shift tends to occur away from projectile weapons and towards energy or particle weapons. However, as the ability to manipulate matter continuously increases, it becomes possible to fire massive projectiles at relativistic speeds, more deadly than most energy weapons.
 
-SHP_DEATH_RAY
+SHP_WEAPON_4
 Death Ray
 
-SHP_DEATH_RAY_DESC
+SHP_WEAPON_4_DESC
 A devastating beam of ultra-massive high-energy particles, tearing open deadly rifts in space-time as well as delivering an incredibly high-energy impact.
 
 SHP_PULSE_LASER
@@ -7845,90 +7845,90 @@ Capacity: %9% fighters'''
 #############################################################
 
 
-SR_MASS_DRIVER_1
+SR_WEAPON_1_1
 Mass Driver 1
-SR_MASS_DRIVER_1_DESC
+SR_WEAPON_1_1_DESC
 '''The Mass Driver, a basic weapon.'''
 
-SR_MASS_DRIVER_2
+SR_WEAPON_1_2
 Mass Driver 2
-SR_MASS_DRIVER_2_DESC
+SR_WEAPON_1_2_DESC
 '''Mass Driver, refined to level 2.'''
 
-SR_MASS_DRIVER_3
+SR_WEAPON_1_3
 Mass Driver 3
-SR_MASS_DRIVER_3_DESC
+SR_WEAPON_1_3_DESC
 '''Mass Driver, refined to level 3.'''
 
-SR_MASS_DRIVER_4
+SR_WEAPON_1_4
 Mass Driver 4
-SR_MASS_DRIVER_4_DESC
+SR_WEAPON_1_4_DESC
 '''Mass Driver, refined to level 4.'''
 
-SR_LASER_1
+SR_WEAPON_2_1
 Laser 1
-SR_LASER_1_DESC
+SR_WEAPON_2_1_DESC
 '''The Laser, a more powerful ship's weapon than the Mass Driver.'''
 
-SR_LASER_2
+SR_WEAPON_2_2
 Laser 2
-SR_LASER_2_DESC
+SR_WEAPON_2_2_DESC
 '''Laser, refined to level 2.'''
 
-SR_LASER_3
+SR_WEAPON_2_3
 Laser 3
-SR_LASER_3_DESC
+SR_WEAPON_2_3_DESC
 '''Laser, refined to level 3.'''
 
-SR_LASER_4
+SR_WEAPON_2_4
 Laser 4
-SR_LASER_4_DESC
+SR_WEAPON_2_4_DESC
 '''Laser, refined to level 4.'''
 
-SR_PLASMA_CANNON_1
+SR_WEAPON_3_1
 Plasma Cannon 1
-SR_PLASMA_CANNON_1_DESC
+SR_WEAPON_3_1_DESC
 '''The Plasma Cannon, a more powerful ship's weapon than the Laser.'''
 
-SR_PLASMA_CANNON_2
+SR_WEAPON_3_2
 Plasma Cannon 2
-SR_PLASMA_CANNON_2_DESC
+SR_WEAPON_3_2_DESC
 '''Plasma Cannon, refined to level 2.'''
 
-SR_PLASMA_CANNON_3
+SR_WEAPON_3_3
 Plasma Cannon 3
-SR_PLASMA_CANNON_3_DESC
+SR_WEAPON_3_3_DESC
 '''Plasma Cannon, refined to level 3.'''
 
-SR_PLASMA_CANNON_4
+SR_WEAPON_3_4
 Plasma Cannon 4
-SR_PLASMA_CANNON_4_DESC
+SR_WEAPON_3_4_DESC
 '''Plasma Cannon, refined to level 4.'''
 
-SR_DEATH_RAY_1
+SR_WEAPON_4_1
 Death Ray 1
-SR_DEATH_RAY_1_DESC
+SR_WEAPON_4_1_DESC
 '''The Death Ray, the ultimate ship's weapon.'''
 
-SR_DEATH_RAY_2
+SR_WEAPON_4_2
 Death Ray 2
-SR_DEATH_RAY_2_DESC
+SR_WEAPON_4_2_DESC
 '''Death Ray, refined to level 2.'''
 
-SR_DEATH_RAY_3
+SR_WEAPON_4_3
 Death Ray 3
-SR_DEATH_RAY_3_DESC
+SR_WEAPON_4_3_DESC
 '''Death Ray, refined to level 3.'''
 
-SR_DEATH_RAY_4
+SR_WEAPON_4_4
 Death Ray 4
-SR_DEATH_RAY_4_DESC
+SR_WEAPON_4_4_DESC
 '''Death Ray, refined to level 4. The ultimate refinement of the ultimate weapon.'''
 
-SR_LASER
+SR_WEAPON_2
 Laser
 
-SR_LASER_DESC
+SR_WEAPON_2_DESC
 Lower power and mass
 
 SR_ION_CANNON
@@ -7937,16 +7937,16 @@ Ion Cannon
 SR_ION_CANNON_DESC
 Moderate power and mass
 
-SR_MASS_DRIVER
+SR_WEAPON_1
 Mass Driver
 
-SR_MASS_DRIVER_DESC
+SR_WEAPON_1_DESC
 A projectile weapon capable of launching objects of tremendous mass at relativistic speeds.
 
-SR_DEATH_RAY
+SR_WEAPON_4
 Death Ray
 
-SR_DEATH_RAY_DESC
+SR_WEAPON_4_DESC
 Ultimate short range weapon
 
 PD_PULSE_LASER
@@ -8779,13 +8779,13 @@ ULTIMATE_STEALTH
 '''+++	Ultimate [[encyclopedia STEALTH_TITLE]]: +60 bonus.'''
 
 GOOD_WEAPONS
-'''+	Starts with [[tech SHP_MASS_DRIVER_3]] and one additional ship.'''
+'''+	Starts with [[tech SHP_WEAPON_1_3]] and one additional ship.'''
 
 GREAT_WEAPONS
-'''++	Starts with [[tech SHP_LASER_2]] and two additional ships.'''
+'''++	Starts with [[tech SHP_WEAPON_2_2]] and two additional ships.'''
 
 ULTIMATE_WEAPONS
-'''+++	Starts with [[tech SHP_LASER_4]] and three additional ships.'''
+'''+++	Starts with [[tech SHP_WEAPON_2_4]] and three additional ships.'''
 
 BAD_POPULATION
 '''−	Bad Population 75%'''

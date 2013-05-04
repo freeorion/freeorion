@@ -2549,189 +2549,189 @@ Tech
     researchcost = 1
     researchturns = 1
     unlock = [
-        Item type = ShipPart name = "SR_MASS_DRIVER_1"
+        Item type = ShipPart name = "SR_WEAPON_1_1"
         Item type = ShipPart name = "GT_TROOP_POD"
     ]
     graphic = ""
 
 Tech
-    name = "SHP_MASS_DRIVER_2"
-    description = "SHP_MASS_DRIVER_2_DESC"
+    name = "SHP_WEAPON_1_2"
+    description = "SHP_WEAPON_1_2_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_ROOT_AGGRESSION"
-    unlock = Item type = ShipPart name = "SR_MASS_DRIVER_2"
+    unlock = Item type = ShipPart name = "SR_WEAPON_1_2"
     graphic = "icons/ship_parts/mass-driver-2.png"
     
 Tech
-    name = "SHP_MASS_DRIVER_3"
-    description = "SHP_MASS_DRIVER_3_DESC"
+    name = "SHP_WEAPON_1_3"
+    description = "SHP_WEAPON_1_3_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 6 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
-    prerequisites = "SHP_MASS_DRIVER_2"
-    unlock = Item type = ShipPart name = "SR_MASS_DRIVER_3"
+    prerequisites = "SHP_WEAPON_1_2"
+    unlock = Item type = ShipPart name = "SR_WEAPON_1_3"
     graphic = "icons/ship_parts/mass-driver-3.png"
 
 Tech
-    name = "SHP_MASS_DRIVER_4"
-    description = "SHP_MASS_DRIVER_4_DESC"
+    name = "SHP_WEAPON_1_4"
+    description = "SHP_WEAPON_1_4_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 10 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
-    prerequisites = "SHP_MASS_DRIVER_3"
-    unlock = Item type = ShipPart name = "SR_MASS_DRIVER_4"
+    prerequisites = "SHP_WEAPON_1_3"
+    unlock = Item type = ShipPart name = "SR_WEAPON_1_4"
     graphic = "icons/ship_parts/mass-driver-4.png"
 
 Tech
-    name = "SHP_LASER_1"
-    description = "SHP_LASER_1_DESC"
+    name = "SHP_WEAPON_2_1"
+    description = "SHP_WEAPON_2_1_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 30 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
     prerequisites = "SHP_ROOT_AGGRESSION"
-    unlock = Item type = ShipPart name = "SR_LASER_1"
+    unlock = Item type = ShipPart name = "SR_WEAPON_2_1"
     graphic = "icons/ship_parts/laser-1.png"
 
 Tech
-    name = "SHP_LASER_2"
-    description = "SHP_LASER_2_DESC"
+    name = "SHP_WEAPON_2_2"
+    description = "SHP_WEAPON_2_2_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 20 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
-    prerequisites = "SHP_LASER_1"
-    unlock = Item type = ShipPart name = "SR_LASER_2"
+    prerequisites = "SHP_WEAPON_2_1"
+    unlock = Item type = ShipPart name = "SR_WEAPON_2_2"
     graphic = "icons/ship_parts/laser-2.png"
 
 Tech
-    name = "SHP_LASER_3"
-    description = "SHP_LASER_3_DESC"
+    name = "SHP_WEAPON_2_3"
+    description = "SHP_WEAPON_2_3_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 30 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
-    prerequisites = "SHP_LASER_2"
-    unlock = Item type = ShipPart name = "SR_LASER_3"
+    prerequisites = "SHP_WEAPON_2_2"
+    unlock = Item type = ShipPart name = "SR_WEAPON_2_3"
     graphic = "icons/ship_parts/laser-3.png"
 
 Tech
-    name = "SHP_LASER_4"
-    description = "SHP_LASER_4_DESC"
+    name = "SHP_WEAPON_2_4"
+    description = "SHP_WEAPON_2_4_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
-    prerequisites = "SHP_LASER_3"
-    unlock = Item type = ShipPart name = "SR_LASER_4"
+    prerequisites = "SHP_WEAPON_2_3"
+    unlock = Item type = ShipPart name = "SR_WEAPON_2_4"
     graphic = "icons/ship_parts/laser-4.png"
 
 Tech
-    name = "SHP_PLASMA_CANNON_1"
-    description = "SHP_PLASMA_CANNON_1_DESC"
+    name = "SHP_WEAPON_3_1"
+    description = "SHP_WEAPON_3_1_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
-    prerequisites = "SHP_LASER_1"
-    unlock = Item type = ShipPart name = "SR_PLASMA_CANNON_1"
+    prerequisites = "SHP_WEAPON_2_1"
+    unlock = Item type = ShipPart name = "SR_WEAPON_3_1"
     graphic = "icons/ship_parts/plasma-1.png"
 
 Tech
-    name = "SHP_PLASMA_CANNON_2"
-    description = "SHP_PLASMA_CANNON_2_DESC"
+    name = "SHP_WEAPON_3_2"
+    description = "SHP_WEAPON_3_2_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
-    prerequisites = "SHP_PLASMA_CANNON_1"
-    unlock = Item type = ShipPart name = "SR_PLASMA_CANNON_2"
+    prerequisites = "SHP_WEAPON_3_1"
+    unlock = Item type = ShipPart name = "SR_WEAPON_3_2"
     graphic = "icons/ship_parts/plasma-2.png"
 
 Tech
-    name = "SHP_PLASMA_CANNON_3"
-    description = "SHP_PLASMA_CANNON_3_DESC"
+    name = "SHP_WEAPON_3_3"
+    description = "SHP_WEAPON_3_3_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
-    prerequisites = "SHP_PLASMA_CANNON_2"
-    unlock = Item type = ShipPart name = "SR_PLASMA_CANNON_3"
+    prerequisites = "SHP_WEAPON_3_2"
+    unlock = Item type = ShipPart name = "SR_WEAPON_3_3"
     graphic = "icons/ship_parts/plasma-3.png"
 
 Tech
-    name = "SHP_PLASMA_CANNON_4"
-    description = "SHP_PLASMA_CANNON_4_DESC"
+    name = "SHP_WEAPON_3_4"
+    description = "SHP_WEAPON_3_4_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
-    prerequisites = "SHP_PLASMA_CANNON_3"
-    unlock = Item type = ShipPart name = "SR_PLASMA_CANNON_4"
+    prerequisites = "SHP_WEAPON_3_3"
+    unlock = Item type = ShipPart name = "SR_WEAPON_3_4"
     graphic = "icons/ship_parts/plasma-4.png"
 
 Tech
-    name = "SHP_DEATH_RAY_1"
-    description = "SHP_DEATH_RAY_1_DESC"
+    name = "SHP_WEAPON_4_1"
+    description = "SHP_WEAPON_4_1_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
-    prerequisites = "SHP_PLASMA_CANNON_1"
-    unlock = Item type = ShipPart name = "SR_DEATH_RAY_1"
+    prerequisites = "SHP_WEAPON_3_1"
+    unlock = Item type = ShipPart name = "SR_WEAPON_4_1"
     graphic = "icons/ship_parts/death-ray-1.png"
 
 Tech
-    name = "SHP_DEATH_RAY_2"
-    description = "SHP_DEATH_RAY_2_DESC"
+    name = "SHP_WEAPON_4_2"
+    description = "SHP_WEAPON_4_2_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
-    prerequisites = "SHP_DEATH_RAY_1"
-    unlock = Item type = ShipPart name = "SR_DEATH_RAY_2"
+    prerequisites = "SHP_WEAPON_4_1"
+    unlock = Item type = ShipPart name = "SR_WEAPON_4_2"
     graphic = "icons/ship_parts/death-ray-2.png"
 
 Tech
-    name = "SHP_DEATH_RAY_3"
-    description = "SHP_DEATH_RAY_3_DESC"
+    name = "SHP_WEAPON_4_3"
+    description = "SHP_WEAPON_4_3_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
-    prerequisites = "SHP_DEATH_RAY_2"
-    unlock = Item type = ShipPart name = "SR_DEATH_RAY_3"
+    prerequisites = "SHP_WEAPON_4_2"
+    unlock = Item type = ShipPart name = "SR_WEAPON_4_3"
     graphic = "icons/ship_parts/death-ray-3.png"
 
 Tech
-    name = "SHP_DEATH_RAY_4"
-    description = "SHP_DEATH_RAY_4_DESC"
+    name = "SHP_WEAPON_4_4"
+    description = "SHP_WEAPON_4_4_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 1250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
-    prerequisites = "SHP_DEATH_RAY_3"
-    unlock = Item type = ShipPart name = "SR_DEATH_RAY_4"
+    prerequisites = "SHP_WEAPON_4_3"
+    unlock = Item type = ShipPart name = "SR_WEAPON_4_4"
     graphic = "icons/ship_parts/death-ray-4.png"
 
 

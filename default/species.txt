@@ -2993,7 +2993,7 @@ GOOD_WEAPONS
 '''EffectsGroup
         scope = Source
         activation = Turn high = 0
-        GiveEmpireTech name = "SHP_MASS_DRIVER_3"
+        GiveEmpireTech name = "SHP_WEAPON_1_3"
         
         EffectsGroup
             scope = AND [
@@ -3010,7 +3010,7 @@ GREAT_WEAPONS
 '''EffectsGroup
         scope = Source
         activation = Turn high = 0
-        GiveEmpireTech name = "SHP_LASER2"
+        GiveEmpireTech name = "SHP_WEAPON_22"
         
         EffectsGroup
             scope = AND [
@@ -3030,7 +3030,7 @@ ULTIMATE_WEAPONS
 '''EffectsGroup
         scope = Source
         activation = Turn high = 0
-        GiveEmpireTech name = "SHP_LASER_4"
+        GiveEmpireTech name = "SHP_WEAPON_2_4"
         
         EffectsGroup
             scope = AND [

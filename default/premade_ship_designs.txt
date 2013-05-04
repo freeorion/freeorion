@@ -58,8 +58,8 @@ ShipDesign
     description = "SD_MARK1_DESC"
     hull = "SH_BASIC_MEDIUM"
     parts = [
-        "SR_MASS_DRIVER_1"
-        "SR_MASS_DRIVER_1"
+        "SR_WEAPON_1_1"
+        "SR_WEAPON_1_1"
         ""
     ]
     icon = ""
@@ -70,8 +70,8 @@ ShipDesign
     description = "SD_MARK2_DESC"
     hull = "SH_BASIC_MEDIUM"
     parts = [
-        "SR_MASS_DRIVER_3"
-        "SR_MASS_DRIVER_3"
+        "SR_WEAPON_1_3"
+        "SR_WEAPON_1_3"
         ""
     ]
     icon = ""
@@ -82,8 +82,8 @@ ShipDesign
     description = "SD_MARK3_DESC"
     hull = "SH_BASIC_MEDIUM"
     parts = [
-        "SR_LASER_2"
-        "SR_LASER_2"
+        "SR_WEAPON_2_2"
+        "SR_WEAPON_2_2"
         ""
     ]
     icon = ""
@@ -94,8 +94,8 @@ ShipDesign
     description = "SD_MARK4_DESC"
     hull = "SH_BASIC_MEDIUM"
     parts = [
-        "SR_LASER_4"
-        "SR_LASER_4"
+        "SR_WEAPON_2_4"
+        "SR_WEAPON_2_4"
         ""
     ]
     icon = ""
@@ -107,9 +107,9 @@ ShipDesign
     hull = "SH_XENTRONIUM"
     parts = [
         "DT_DETECTOR_4"
-        "SR_DEATH_RAY_2"
-        "SR_DEATH_RAY_2"
-        "SR_DEATH_RAY_2"
+        "SR_WEAPON_4_2"
+        "SR_WEAPON_4_2"
+        "SR_WEAPON_4_2"
         "FU_ZERO_FUEL"
     ]
     model = "mark1"
