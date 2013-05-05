@@ -468,7 +468,7 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                 if len (     claimedStars.get(fo.starType.blue,  [])+claimedStars.get(fo.starType.white,  [])+
                                     claimedStars.get(fo.starType.yellow,  [])+claimedStars.get(fo.starType.orange,  []))==0:
                     starBonus +=10* discountMultiplier
-                    detail.append( "PRO_SOL_ORB_GEN YO  %.1f"%10* discountMultiplier )
+                    detail.append( "PRO_SOL_ORB_GEN YO  %.1f"%(10* discountMultiplier ))
                 else:
                     pass
                     #starBonus +=2 #still has extra value as an alternate location for solar generators
