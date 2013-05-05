@@ -2,8 +2,6 @@
 
 #include "EnumParser.h"
 
-#include <GG/ReportParseError.h>
-
 
 namespace { struct string_parser_rules {
         string_parser_rules() {

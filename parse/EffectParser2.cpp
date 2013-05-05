@@ -6,7 +6,6 @@
 #include "ValueRefParser.h"
 #include "../universe/Effect.h"
 //#include "../universe/ValueRef.h"
-//#include "ReportParseError.h"
 
 #include <boost/spirit/home/phoenix.hpp>
 

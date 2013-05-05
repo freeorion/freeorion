@@ -1,7 +1,5 @@
 #include "ValueRefParserImpl.h"
 
-//#include <GG/ReportParseError.h>
-
 
 name_token_rule first_token;
 name_token_rule container_token;

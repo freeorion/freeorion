@@ -4,7 +4,8 @@
 
 #define BOOST_SPIRIT_NO_PREDEFINED_TERMINALS
 
-#include <GG/LexerFwd.h>
+#include <boost/spirit/include/lex_lexertl.hpp>
+#include <boost/spirit/home/lex/lexer/lexertl/position_token.hpp>
 
 #include "../universe/Enums.h"
 #include "../universe/Names.h"

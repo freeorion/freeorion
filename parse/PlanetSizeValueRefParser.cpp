@@ -2,8 +2,6 @@
 
 #include "EnumParser.h"
 
-#include <GG/ReportParseError.h>
-
 
 namespace {
     struct planet_size_parser_rules {

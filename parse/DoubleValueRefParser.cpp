@@ -1,7 +1,6 @@
 #include "ValueRefParserImpl.h"
 
 //#include "Double.h"
-//#include <GG/ReportParseError.h>
 
 //extern name_token_rule              first_token;      // in IntValueRefParser.cpp
 //extern name_token_rule              container_token;  // in IntValueRefParser.cpp
