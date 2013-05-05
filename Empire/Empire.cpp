@@ -1244,9 +1244,9 @@ std::set<int> Empire::AvailableShipDesigns() const {
 }
 
 bool Empire::ShipDesignAvailable(int ship_design_id) const {
-    // if design isn't kept by this empire, it can't be built.
-    if (!ShipDesignKept(ship_design_id))
-        return false;   //   The empire needs to issue a ShipDesignOrder to add this design id to its kept designs
+    //// if design isn't kept by this empire, it can't be built.
+    //if (!ShipDesignKept(ship_design_id))
+    //    return false;   //   The empire needs to issue a ShipDesignOrder to add this design id to its kept designs
 
     const ShipDesign* design = GetShipDesign(ship_design_id);
     if (!design || !design->Producible()) return false;
