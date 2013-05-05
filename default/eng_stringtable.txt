@@ -1942,6 +1942,9 @@ MAP_SCALE_INDICATOR
 MAP_BTN_MENU
 Menu
 
+MAP_BTN_MODERATOR
+Moderator
+
 MAP_BTN_OBJECTS
 Objects
 
@@ -2322,11 +2325,23 @@ Stop Exploring
 #  Moderator  #
 ###############
 
+MOD_NONE
+None
+
+MOD_CREATE_PLANET
+Add Planet
+
+MOD_CREATE_SYSTEM
+Add System
+
 MOD_DESTROY
-Moderator: Destroy
+Destroy
 
 MOD_SET_OWNER
-Moderator: Set Owner
+Set Owner
+
+MOD_STARLANE
+Add Starlane
 
 ###############
 #  Diplomacy  #

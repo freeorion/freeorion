@@ -17,6 +17,7 @@
 #include "ResearchWnd.h"
 #include "EncyclopediaDetailPanel.h"
 #include "ObjectListWnd.h"
+#include "ModeratorActionsWnd.h"
 #include "SidePanel.h"
 #include "SitRepPanel.h"
 #include "SystemIcon.h"
@@ -506,6 +507,7 @@ MapWnd::MapWnd() :
     m_design_wnd(0),
     m_pedia_panel(0),
     m_object_list_wnd(0),
+    m_moderator_wnd(0),
     m_starlane_endpoints(),
     m_stationary_fleet_buttons(),
     m_departing_fleet_buttons(),
@@ -543,6 +545,7 @@ MapWnd::MapWnd() :
     m_fleet(0),
     m_industry_wasted(0),
     m_research_wasted(0),
+    m_btn_moderator(0),
     m_btn_siterep(0),
     m_btn_research(0),
     m_btn_production(0),
@@ -566,7 +569,7 @@ MapWnd::MapWnd() :
 
     GG::Layout* layout = new GG::Layout(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
                                         m_toolbar->ClientWidth(), m_toolbar->ClientHeight(),
-                                        1, 16);
+                                        1, 17);
     layout->SetName("Toolbar Layout");
     m_toolbar->SetLayout(layout);
 
@@ -607,6 +610,18 @@ MapWnd::MapWnd() :
     GG::Connect(m_object_list_wnd->ObjectDumpSignal,    &ClientUI::DumpObject,              ClientUI::GetClientUI());
     GG::GUI::GetGUI()->Register(m_object_list_wnd);
     m_object_list_wnd->Hide();
+
+    // moderator actions
+    m_moderator_wnd = new ModeratorActionsWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    GG::Connect(m_moderator_wnd->ClosingSignal,             boost::bind(&MapWnd::ToggleModeratorActions,    this));
+    GG::Connect(m_moderator_wnd->NoActionSelectedSignal,                &MapWnd::ModeratorNoActionSelected, this);
+    GG::Connect(m_moderator_wnd->CreateSystemActionSelectedSignal,      &MapWnd::ModeratorCreateSystemSelected, this);
+    GG::Connect(m_moderator_wnd->CreatePlanetActionSelectedSignal,      &MapWnd::ModeratorCreatePlanetSelected, this);
+    GG::Connect(m_moderator_wnd->DeleteObjectActionSelectedSignal,      &MapWnd::ModeratorDeleteObjectSelected, this);
+    GG::Connect(m_moderator_wnd->SetOwnerActionSelectedSignal,          &MapWnd::ModeratorSetOwnerSelected, this);
+    GG::Connect(m_moderator_wnd->CreateStarlaneActionSelectedSignal,    &MapWnd::ModeratorCreateStarlaneSelected, this);
+    GG::GUI::GetGUI()->Register(m_moderator_wnd);
+    m_moderator_wnd->Hide();
 
 
     // research window
@@ -755,6 +770,17 @@ MapWnd::MapWnd() :
     m_btn_objects->SetInWindow(in_window_func);
 
 
+    // Moderator button
+    button_width = font->TextExtent(UserString("MAP_BTN_MODERATOR")).x + BUTTON_TOTAL_MARGIN;
+    m_btn_moderator = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_MODERATOR"));
+    GG::Connect(m_btn_moderator->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleModeratorActions, this)));
+    in_window_func =
+        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_moderator),    boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, m_btn_moderator),   boost::bind(&WndBottom, m_btn_moderator),
+                    _1);
+    m_btn_moderator->SetInWindow(in_window_func);
+
+
     // resources
     const GG::X ICON_DUAL_WIDTH(100);
     const GG::X ICON_WIDTH(ICON_DUAL_WIDTH - 30);
@@ -850,7 +876,7 @@ MapWnd::MapWnd() :
     layout->SetColumnStretch(layout_column, 1.0);
     layout->Add(m_fleet,            0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
-    
+
     layout->SetColumnStretch(layout_column, 1.0);
     layout->Add(m_population,       0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
@@ -858,6 +884,11 @@ MapWnd::MapWnd() :
     layout->SetColumnStretch(layout_column, 1.0);
     layout->Add(m_detection,        0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
+
+    //layout->SetMinimumColumnWidth(layout_column, m_btn_moderator->Width());
+    //layout->SetColumnStretch(layout_column, 0.0);
+    //layout->Add(m_btn_moderator,    0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    //++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, m_btn_objects->Width());
     layout->SetColumnStretch(layout_column, 0.0);
@@ -3988,6 +4019,30 @@ bool MapWnd::EndTurn() {
     return true;
 }
 
+void MapWnd::ShowModeratorActions() {
+    // hide other "competing" windows
+    HideResearch();
+    HideProduction();
+    HideDesign();
+
+    m_moderator_wnd->Refresh();
+    m_moderator_wnd->Show();
+    m_btn_moderator->MarkSelectedGray();
+}
+
+void MapWnd::HideModeratorActions() {
+    m_moderator_wnd->Hide();
+    m_btn_moderator->MarkNotSelected();
+}
+
+bool MapWnd::ToggleModeratorActions() {
+    if (m_moderator_wnd->Visible())
+        HideModeratorActions();
+    else
+        ShowModeratorActions();
+    return true;
+}
+
 void MapWnd::ShowObjects() {
     ClearProjectedFleetMovementLines();
 
@@ -5140,5 +5195,23 @@ void MapWnd::ShowAllPopups() {
     for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ++it) {
         (*it)->Show();
     }
+}
+
+void MapWnd::ModeratorNoActionSelected() {
+}
+
+void MapWnd::ModeratorCreateSystemSelected(StarType star_type) {
+}
+
+void MapWnd::ModeratorCreatePlanetSelected(PlanetType planet_type) {
+}
+
+void MapWnd::ModeratorDeleteObjectSelected() {
+}
+
+void MapWnd::ModeratorSetOwnerSelected(int owner_id) {
+}
+
+void MapWnd::ModeratorCreateStarlaneSelected() {
 }
 

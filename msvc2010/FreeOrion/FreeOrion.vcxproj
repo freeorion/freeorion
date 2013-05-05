@@ -138,6 +138,7 @@
     <ClInclude Include="..\..\UI\LinkText.h" />
     <ClInclude Include="..\..\UI\MapWnd.h" />
     <ClInclude Include="..\..\UI\MarkupBox.h" />
+    <ClInclude Include="..\..\UI\ModeratorActionsWnd.h" />
     <ClInclude Include="..\..\UI\MultiplayerLobbyWnd.h" />
     <ClInclude Include="..\..\UI\ObjectListWnd.h" />
     <ClInclude Include="..\..\UI\OptionsWnd.h" />
@@ -246,6 +247,7 @@
     <ClCompile Include="..\..\UI\LinkText.cpp" />
     <ClCompile Include="..\..\UI\MapWnd.cpp" />
     <ClCompile Include="..\..\UI\MarkupBox.cpp" />
+    <ClCompile Include="..\..\UI\ModeratorActionsWnd.cpp" />
     <ClCompile Include="..\..\UI\MultiplayerLobbyWnd.cpp" />
     <ClCompile Include="..\..\UI\ObjectListWnd.cpp" />
     <ClCompile Include="..\..\UI\OptionsWnd.cpp" />

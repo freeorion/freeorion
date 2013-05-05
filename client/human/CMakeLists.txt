@@ -97,6 +97,7 @@ set(freeorion_SOURCES
     ../../UI/IntroScreen.cpp
     ../../UI/LinkText.cpp
     ../../UI/MapWnd.cpp
+    ../../UI/ModeratorActionsWnd.cpp
     ../../UI/GLClientAndServerBuffer.cpp
     ../../UI/MultiplayerLobbyWnd.cpp
     ../../UI/ObjectListWnd.cpp

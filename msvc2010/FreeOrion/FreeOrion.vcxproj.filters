@@ -375,6 +375,9 @@
     <ClInclude Include="..\..\universe\Field.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\ModeratorActionsWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\FreeOrion.ico">
@@ -561,6 +564,9 @@
     </ClCompile>
     <ClCompile Include="..\..\PagedGeometry\source\PropertyMaps.cpp">
       <Filter>Source Files\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ModeratorActionsWnd.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

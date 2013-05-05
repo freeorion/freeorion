@@ -23,6 +23,7 @@ class ProductionWnd;
 class ResearchWnd;
 class EncyclopediaDetailPanel;
 class ObjectListWnd;
+class ModeratorActionsWnd;
 struct SaveGameUIData;
 class SidePanel;
 class SitRepPanel;
@@ -288,6 +289,10 @@ private:
 
     bool            EndTurn();
 
+    bool            ToggleModeratorActions();
+    void            ShowModeratorActions();
+    void            HideModeratorActions();
+
     bool            ToggleObjects();
     void            ShowObjects();
     void            HideObjects();
@@ -355,6 +360,13 @@ private:
 
     void            HandleEmpireElimination(int empire_id);             //!< cleans up internal storage of now-invalidated empire ID
 
+    void            ModeratorNoActionSelected();
+    void            ModeratorCreateSystemSelected(StarType star_type);
+    void            ModeratorCreatePlanetSelected(PlanetType planet_type);
+    void            ModeratorDeleteObjectSelected();
+    void            ModeratorSetOwnerSelected(int owner_id);
+    void            ModeratorCreateStarlaneSelected();
+
     std::set<GG::Key>           m_disabled_accels_list;                 //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
 
     std::vector<boost::shared_ptr<GG::Texture> >    m_backgrounds;      //!< starfield backgrounds
@@ -373,6 +385,7 @@ private:
     DesignWnd*                  m_design_wnd;       //!< design screen
     EncyclopediaDetailPanel*    m_pedia_panel;      //!< encyclpedia panel
     ObjectListWnd*              m_object_list_wnd;  //!< filterable list of objects in universe
+    ModeratorActionsWnd*        m_moderator_wnd;    //!< buttons to select moderator actions
 
     std::map<std::pair<int, int>, LaneEndpoints>    m_starlane_endpoints;                   //!< map from starlane start and end system IDs (stored in pair in increasing order) to the universe coordiates at which to draw the starlane ends
 
@@ -417,7 +430,7 @@ private:
     CUIToolBar*                 m_toolbar;
     StatisticIcon               *m_trade, *m_population, *m_research, *m_industry, *m_detection, *m_fleet;
     GG::Button                  *m_industry_wasted, *m_research_wasted;
-    SettableInWindowCUIButton   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_pedia, *m_btn_objects, *m_btn_menu;
+    SettableInWindowCUIButton   *m_btn_moderator, *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_pedia, *m_btn_objects, *m_btn_menu;
     FPSIndicator*               m_FPS;
 
     MapScaleLine*               m_scale_line;       //!< indicates the on-screen distance that reprensents an in-universe distance
