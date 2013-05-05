@@ -181,7 +181,7 @@ def addMarkDesigns():
     srb4 = "SR_WEAPON_4_%1d"
     clk = "ST_CLOAK_%1d"
     if1  = "FU_BASIC_TANK"
-    is1,  is2,  is3,  is4,  is5 = "SH_DEFENSE_GRID",  "SH_DEFLECTOR", "SH_PLASMA",   "SH_MULTISPEC",  "SH_BLACKSHIELD"
+    is1,  is2,  is3,  is4,  is5 = "SH_DEFENSE_GRID",  "SH_DEFLECTOR", "SH_PLASMA",   "SH_MULTISPEC",  "SH_BLACK"
     isList=["", is1, is2, is3, is4, is5]
     ar1,  ar2,  ar3,  ar4,  ar5 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE", "AR_DIAMOND_PLATE", "AR_XENTRONIUM_PLATE",   "AR_NEUTRONIUM_PLATE"
 
