@@ -128,7 +128,7 @@ def addTroopDesigns():
     nb,  hull =  designNameBases[1]+"%1d",   "SH_STATIC_MULTICELLULAR"
     newTroopDesigns += [ (nb%(iw+3),  desc,  hull,  [srb%iw]+ 4*[tp],  "",  model) for iw in [2, 3, 4] ]
     
-    ar1,  ar2,  ar3 = "AR_LEAD_PLATE", "AR_ZORTRIUM_PLATE",  "AR_NEUTRONIUM_PLATE"
+    ar1,  ar2,  ar3 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE",  "AR_NEUTRONIUM_PLATE"
     arL=[ar1,  ar2,  ar3]
     for ari in [1, 2]: #naming below only works because skipping Lead armor
         nb,  hull =  designNameBases[ari+1]+"%1d-%1d",   "SH_STATIC_MULTICELLULAR"
@@ -998,15 +998,18 @@ def generateProductionOrders():
     queuedTroopShips=0
     
     #TODO:  blocked items might not need dequeuing, but rather for supply lines to be un-blockaded 
+    dequeueList=[]
     fo.updateProductionQueue()
     for queue_index  in range( len(productionQueue)):
         element=productionQueue[queue_index]
         blockStr = ["",  "in blocks of %d "%element.blocksize][element.blocksize>1]
         print "    " + element.name+blockStr + " turns:" + str(element.turnsLeft) + " PP:%.2f"%element.allocation + " being built at " + universe.getObject(element.locationID).name
         if element.turnsLeft == -1:
-            print "element %s will never be completed as stands  "%element.name 
-            #fo.issueDequeueProductionOrder(queue_index) 
-            break
+            if element.locationID not in AIstate.popCtrIDs+AIstate.outpostIDs: 
+                dequeueList.append(queue_index) #TODO add assessment of recapture -- invasion target etc.
+                print "element %s will never be completed as stands and location %d no longer owned; deleting from queue "%(element.name,  element.locationID)
+            else:
+                print "element %s will never be completed as currently stands, but will remain on queue  "%element.name
         elif element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP:
              if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
                  thisSpec=universe.getPlanet(element.locationID).speciesName
@@ -1019,6 +1022,9 @@ def generateProductionOrders():
         print "\nFound  colony ships in build queue: %s"%queuedColonyShips
     if queuedOutpostShips:
         print "\nFound  colony ships in build queue: %s"%queuedOutpostShips
+    
+    for queue_index in dequeueList[::-1]:
+        fo.issueDequeueProductionOrder(queue_index) 
         
     allMilitaryFleetIDs =  FleetUtilsAI.getEmpireFleetIDsByRole(EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY )
     nMilitaryTot = sum( [ foAI.foAIstate.fleetStatus.get(fid,  {}).get('nships', 0) for fid in allMilitaryFleetIDs ] )

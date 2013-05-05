@@ -444,6 +444,9 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
     growthVal = 0
     fixedInd = 0
     fixedRes = 0
+    haveExistingPresence=False
+    if  AIstate.colonizedSystems.get(planet.systemID,  [planetID]) != [planetID]: #if existing presence is target planet, don't count
+        haveExistingPresence=True
     if species:
         tagList = list( species.tags )
     starPopMod=0
@@ -557,9 +560,16 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
                     detail.extend( GGDetail )
                 else:
                     detail.append( "Won't GGG")
+        thrtFactor = 1.0
         if ( foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('fleetThreat', 0)  + foAI.foAIstate.systemStatus.get(planet.systemID,  {}).get('monsterThreat', 0) )> 2*curBestMilShipRating:
-            retval = retval / 2.0
-            detail.append( "threat halving value" )
+            thrtFactor = 0.5
+            retval *=thrtFactor
+            detail.append( "threat reducing value" )
+        if haveExistingPresence:
+            detail.append("multiplanet presence")
+            if thrtFactor < 1.0:
+                retval = (retval/thrtFactor) * (0.5 + 0.5*thrtFactor) #mitigate threat
+            retval *=1.5
         return int(retval)
     else: #colonization mission
         if not species:
@@ -749,8 +759,17 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             elif thrtRatio > 0:
                 retval = 0.85* retval
                 
+        thrtFactor = 1.0
         if thrtRatio > 1:
-            retval = 0.85* retval
+            detail.append("threat reducing value")
+            thrtFactor = 0.85
+            retval  *= thrtFactor
+            
+        if haveExistingPresence:
+            detail.append("multiplanet presence")
+            if thrtFactor < 1.0:
+                retval = (retval/thrtFactor) * (0.5 + 0.5*thrtFactor) #mitigate threat
+            retval *=1.5
 
     return retval
 
