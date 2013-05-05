@@ -197,7 +197,7 @@ def addMarkDesigns():
     newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  srb2%iw,  ""],  "",  model)    for iw in [2, 3, 4] ]
 
     nb,  hull =  designNameBases[2]+"-1-%1d",   "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw, srb%iw,  is1],  "",  model)    for iw in [3, 4] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar1,  srb%iw, srb%iw,  if1],  "",  model)    for iw in [3, 4] ]
     newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar1,  srb2%iw, srb2%iw,  if1],  "",  model)    for iw in [2, 3, 4] ]
     nb,  hull =  designNameBases[2]+"-2-%1d",   "SH_ORGANIC"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar1,  srb%iw, srb%iw,  is2],  "",  model)    for iw in [3, 4] ]
