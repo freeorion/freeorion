@@ -337,8 +337,8 @@ private:
     bool            ZoomToSystemWithWastedPP();
 
     void            ConnectKeyboardAcceleratorSignals();        //!< connects signals from keyboard accelerators to various GUI responses
+    void            DisconnectKeyboardAcceleratorSignals();     //!< disconnects signals
     void            SetAccelerators();                          //!< tells the GUI which keypress combinations to track and emit signals for when they occur
-    void            RemoveAccelerators();                       //!< tells GUI to stop emitting signals for keypresses
 
     /** Disables keyboard accelerators that use an alphanumeric key without
       * modifiers. This is useful if a keyboard input is required, so that the

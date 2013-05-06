@@ -135,16 +135,6 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-
-#ifndef FREEORION_RELEASE
-    bool RequestRegressionTestDump() {
-        ClientNetworking& networking = HumanClientApp::GetApp()->Networking();
-        Message msg(Message::DEBUG, HumanClientApp::GetApp()->PlayerID(), Networking::INVALID_PLAYER_ID, "EffectsRegressionTest");
-        networking.SendMessage(msg);
-        return true;
-    }
-#endif
-
     // returns an int-int pair that doesn't depend on the order of parameters
     std::pair<int, int> UnorderedIntPair(int one, int two) {
         return std::make_pair(std::min(one, two), std::max(one, two));
@@ -919,7 +909,7 @@ MapWnd::MapWnd() :
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_btn_pedia,        0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
-    
+
     layout->SetMinimumColumnWidth(layout_column, m_btn_menu->Width());
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_btn_menu,         0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
@@ -952,6 +942,7 @@ MapWnd::MapWnd() :
             &MapWnd::EnableAlphaNumAccels,     this);
 
     DoLayout();
+    SetAccelerators();
 }
 
 MapWnd::~MapWnd() {
@@ -964,7 +955,6 @@ MapWnd::~MapWnd() {
     delete m_research_wnd;
     delete m_production_wnd;
     delete m_design_wnd;
-    RemoveAccelerators();
 }
 
 void MapWnd::DoLayout()
@@ -1743,8 +1733,9 @@ void MapWnd::InitTurn() {
     Logger().debugStream() << "Initializing turn " << turn_number;
     ScopedTimer init_timer("MapWnd::InitTurn", true);
 
-    Logger().debugStream() << "Mapwnd Init -- Setting Accelerators";
-    SetAccelerators();
+    // reset hotkey signals
+    DisconnectKeyboardAcceleratorSignals();
+    ConnectKeyboardAcceleratorSignals();
 
     Universe& universe = GetUniverse();
     const ObjectMap& objects = Objects();
@@ -3866,7 +3857,7 @@ void MapWnd::RemovePopup(MapWndPopup* popup) {
 
 void MapWnd::Cleanup() {
     CloseAllPopups();
-    RemoveAccelerators();
+    DisconnectKeyboardAcceleratorSignals();
     HideResearch();
     HideProduction();
     HideDesign();
@@ -3988,16 +3979,19 @@ bool MapWnd::ReturnToMap() {
 }
 
 bool MapWnd::OpenChatWindow() {
-    if (ClientUI* cui = ClientUI::GetClientUI()) {
-        if (MessageWnd* msg_wnd = cui->GetMessageWnd()) {
-            if (GG::GUI* gui = GG::GUI::GetGUI()) {
-                gui->Register(msg_wnd); // GG comment for Register says re-registering same Wnd twice is a no-op.
-                msg_wnd->OpenForInput();
-                return true;
-            }
-        }
-    }
-    return false;
+    std::cout << "open chat window" << std::endl;
+    ClientUI* cui = ClientUI::GetClientUI();
+    if (!cui)
+        return false;
+    MessageWnd* msg_wnd = cui->GetMessageWnd();
+    if (!msg_wnd)
+        return false;
+    GG::GUI* gui = GG::GUI::GetGUI();
+    if (!gui)
+        return false;
+    gui->Register(msg_wnd); // GG comment for Register says re-registering same Wnd twice is a no-op.
+    msg_wnd->OpenForInput();
+    return true;
 }
 
 bool MapWnd::EndTurn() {
@@ -4872,14 +4866,13 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     m_keyboard_accelerator_signals.insert(
         GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b),
                     &MapWnd::ZoomToNextFleet, this));
+}
 
-#ifndef FREEORION_RELEASE
-    // Previously-used but presently ignored development-only key combo for dumping
-    // ValueRef, Condition, and Effect regression tests using the current Universe
-    m_keyboard_accelerator_signals.insert(
-        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r, GG::MOD_KEY_CTRL),
-                    &RequestRegressionTestDump));
-#endif
+void MapWnd::DisconnectKeyboardAcceleratorSignals() {
+    for (std::set<boost::signals::connection>::iterator it = m_keyboard_accelerator_signals.begin();
+         it != m_keyboard_accelerator_signals.end(); ++it)
+    { it->disconnect(); }
+    m_keyboard_accelerator_signals.clear();
 }
 
 void MapWnd::SetAccelerators() {
@@ -4914,29 +4907,6 @@ void MapWnd::SetAccelerators() {
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_g);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_v);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_b);
-
-#ifndef FREEORION_RELEASE
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_r, GG::MOD_KEY_CTRL);
-#endif
-
-    ConnectKeyboardAcceleratorSignals();
-}
-
-void MapWnd::RemoveAccelerators() {
-    GG::GUI::accel_iterator i = GG::GUI::GetGUI()->accel_begin();
-    while (i != GG::GUI::GetGUI()->accel_end()) {
-        GG::GUI::GetGUI()->RemoveAccelerator(i);
-        i = GG::GUI::GetGUI()->accel_begin();
-    }
-    m_disabled_accels_list.clear();
-
-    for (std::set<boost::signals::connection>::iterator it =
-             m_keyboard_accelerator_signals.begin();
-         it != m_keyboard_accelerator_signals.end();
-         ++it) {
-        it->disconnect();
-    }
-    m_keyboard_accelerator_signals.clear();
 }
 
 void MapWnd::DisableAlphaNumAccels() {
@@ -5004,7 +4974,7 @@ bool MapWnd::IsFleetExploring(const int fleet_id){
     return it != m_fleets_exploring.end();
 }
 
-namespace{ //helper function for DispatchFleetsExploring
+namespace { //helper function for DispatchFleetsExploring
     //return the set of all systems ID with a starlane connecting them to a system in set
     std::set<int> AddNeighboorsToSet(const Empire *empire, const std::set<int> set){
         std::set<int> retval;
