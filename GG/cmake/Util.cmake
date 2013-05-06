@@ -25,52 +25,6 @@ macro (list_contains var value)
   endforeach (value2)
 endmacro ()
 
-# This macro is an internal utility macro that builds a particular variant of
-# a library.
-#
-#   library_all_variants(libname)
-#
-# where libname is the name of the library (e.g., "GiGiSDL")
-#
-# This macro will define a new library target based on libname and the
-# specific variant name, which depends on the utility target libname. The
-# compilation and linking flags for this library are defined by
-# THIS_LIB_COMPILE_FLAGS, THIS_LIB_LINK_FLAGS, THIS_LIB_LINK_LIBS, and all of
-# the compile and linking flags implied by the features provided.
-#
-# If any of the features listed conflict with this library, no new targets
-# will be built.
-macro (library_all_variants LIBNAME)
-  if (BUILD_SHARED)
-    add_library(${LIBNAME} SHARED ${THIS_LIB_SOURCES})
-  else ()
-    add_library(${LIBNAME} STATIC ${THIS_LIB_SOURCES})
-    set_target_properties(${LIBNAME}
-      PROPERTIES
-      LINK_SEARCH_END_STATIC true
-    )
-  endif ()
-
-  # Link against whatever libraries this library depends on
-  target_link_libraries(${LIBNAME} ${THIS_VARIANT_LINK_LIBS} ${THIS_LIB_LINK_LIBS})
-
-  # Setup installation properties
-  string(TOUPPER COMPONENT_${PROJECT_NAME} LIB_COMPONENT)
-
-  # Installation of this library variant
-  if ((BUILD_STATIC AND NOT RUNTIME_ONLY_PACKAGE AND COMMAND package_compatible) OR
-      (BUILD_SHARED AND NOT DEVEL_ONLY_PACKAGE AND COMMAND package_compatible))
-      package_compatible(ok_to_install ${LIBNAME})
-      if (ok_to_install)
-          install(
-              TARGETS ${LIBNAME}
-              LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT ${LIB_COMPONENT}
-              ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT ${LIB_COMPONENT}_DEVEL
-          )
-      endif ()
-  endif ()
-endmacro ()
-
 macro (get_pkg_config_libs name)
     set(${name})
     get_directory_property(dirs LINK_DIRECTORIES)

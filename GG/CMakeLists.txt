@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 cmake_policy(VERSION 2.6.4)
 
 enable_testing()
+include(CMakeDependentOption)
 
 project(GiGi)
 
@@ -17,16 +18,21 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
 set(MINIMUM_BOOST_VERSION 1.47.0)
 set(MINIMUM_BOOST_COMPONENTS date_time filesystem signals system thread)
 
-option(BUILD_STATIC "Enables building of static libraries." OFF)
-option(BUILD_SHARED "Enables building of shared libraries." ON)
+option(BUILD_SHARED_LIBS "Enables building of shared libraries; OFF implies static libraries." ON)
 option(BUILD_DEBUG "Controls generation of debug code; OFF implies release code." OFF)
-
 option(BUILD_EXPERIMENTAL_EVE_SUPPORT "Enables building of experimental Adobe Eve bindings." OFF)
+
+cmake_dependent_option(USE_STATIC_LIBS "Favour static linking of depencendies." OFF BUILD_SHARED_LIBS OFF)
 
 if (BUILD_DEBUG)
     set(BUILD_RELEASE OFF)
 else ()
     set(BUILD_RELEASE ON)
+endif ()
+
+if (DEFINED BUILD_STATIC OR DEFINED BUILD_SHARED)
+    message(FATAL "BUILD_STATIC and BUILD_SHARED are removed in favour of BUILD_SHARED_LIBS.")
+    return()
 endif ()
 
 include(Config)
@@ -56,8 +62,17 @@ option(BUILD_DOCUMENTATION
        "Builds HTML documentation (requires Doxygen)."
        OFF)
 
+cmake_dependent_option(BUILD_TUTORIALS "Build tutorial applications." OFF BUILD_SDL_DRIVER OFF)
+cmake_dependent_option(BUILD_TESTS "Build tests applications." OFF BUILD_SDL_DRIVER OFF)
+
+if (NOT DEFINED USE_STATIC_LIBS)
+    add_definitions(-DBOOST_ALL_DYN_LINK)
+endif ()
+
 if (MSVC)
     set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
+    set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+    set (CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
 endif ()
 
 set(RUNTIME_ONLY_PACKAGE false)
@@ -121,45 +136,6 @@ else ()
     set(PACKAGE_TYPE NoPackage)
 endif ()
 
-# Determines whether ${component} is included in the package being built (if
-# any), and returns the result in ${var}.  Ignores the distinction between
-# Devel and non-Devel package types.
-macro (package_compatible var component)
-    if (${component} MATCHES GiGiSDL)
-        if (${PACKAGE_TYPE} STREQUAL NoPackage OR ${PACKAGE_TYPE} MATCHES Full OR ${PACKAGE_TYPE} MATCHES GiGiSDL)
-            set(${var} true)
-        else ()
-            set(${var} false)
-        endif ()
-    elseif (${component} MATCHES GiGiOgre)
-        if (${PACKAGE_TYPE} STREQUAL NoPackage OR ${PACKAGE_TYPE} MATCHES Full OR ${PACKAGE_TYPE} MATCHES GiGiOgre)
-            set(${var} true)
-        else ()
-            set(${var} false)
-        endif ()
-    elseif (${component} MATCHES GiGi)
-        if (${PACKAGE_TYPE} STREQUAL NoPackage OR ${PACKAGE_TYPE} MATCHES Full OR ${PACKAGE_TYPE} STREQUAL GiGi OR ${PACKAGE_TYPE} STREQUAL GiGiDevel)
-            set(${var} true)
-        else ()
-            set(${var} false)
-        endif ()
-    else ()
-        message(FATAL_ERROR "Invalid component \"${component}\" passed to package_compatible().")
-    endif ()
-endmacro ()
-
-include(CMakeDependentOption)
-cmake_dependent_option(BUILD_TUTORIALS
-                       "Build tutorial apps (requires SDL driver)."
-                       OFF
-                       BUILD_SDL_DRIVER
-                       OFF)
-
-cmake_dependent_option(BUILD_TESTS
-                       "Build test apps (requires SDL driver)."
-                       OFF
-                       BUILD_SDL_DRIVER
-                       OFF)
 
 add_definitions(-DADOBE_STD_SERIALIZATION)
 
@@ -169,7 +145,7 @@ include_directories(${CMAKE_HOME_DIRECTORY})
 ########################################
 # Dependencies                         #
 ########################################
-set(Boost_USE_STATIC_LIBS ${BUILD_STATIC})
+set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS ${MINIMUM_BOOST_COMPONENTS})
 if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
@@ -283,24 +259,6 @@ if (NOT NO_HEADERS_PACKAGE)
         PATTERN ".svn" EXCLUDE
         PATTERN "*~" EXCLUDE
     )
-endif ()
-
-macro (install_pc_file component)
-    package_compatible(ok_to_install ${component})
-    if (ok_to_install)
-        install(
-            FILES ${CMAKE_BINARY_DIR}/${component}.pc
-            DESTINATION lib${LIB_SUFFIX}/pkgconfig
-            COMPONENT COMPONENT_GIGI_DEVEL
-            OPTIONAL
-        )
-    endif ()
-endmacro ()
-
-if (UNIX AND NOT RUNTIME_ONLY_PACKAGE)
-    install_pc_file(GiGi)
-    install_pc_file(GiGiSDL)
-    install_pc_file(GiGiOgre)
 endif ()
 
 

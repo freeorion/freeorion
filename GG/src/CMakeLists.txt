@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 
 message("-- Configuring GiGi")
 
-set(THIS_LIB_SOURCES
+set(GiGi_SOURCES
 
     AdamDlg.cpp
     AdamGlue.cpp
@@ -82,7 +82,7 @@ set(THIS_LIB_SOURCES
 )
 
 if (BUILD_EXPERIMENTAL_EVE_SUPPORT)
-    set(THIS_LIB_SOURCES ${THIS_LIB_SOURCES}
+    list(APPEND GiGi_SOURCES
         EveGlue.cpp
 
         adobe/future/widgets/sources/edit_number.cpp
@@ -169,18 +169,18 @@ execute_process(
 )
 set_source_files_properties(${CMAKE_HOME_DIRECTORY}/GG/ltdl.h ${CMAKE_HOME_DIRECTORY}/GG/ltdl_config.h PROPERTIES GENERATED true)
 
-set(THIS_LIB_LINK_LIBS ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES})
+set(GiGi_LINK_LIBS ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES})
 if (USE_DEVIL)
-    list(APPEND THIS_LIB_LINK_LIBS ${IL_LIBRARY} ${ILUT_LIBRARY})
+    list(APPEND GiGi_LINK_LIBS ${IL_LIBRARY} ${ILUT_LIBRARY})
 else ()
     if (JPEG_FOUND)
-        list(APPEND THIS_LIB_LINK_LIBS ${JPEG_LIBRARIES})
+        list(APPEND GiGi_LINK_LIBS ${JPEG_LIBRARIES})
     endif ()
     if (PNG_FOUND)
-        list(APPEND THIS_LIB_LINK_LIBS ${PNG_LIBRARIES})
+        list(APPEND GiGi_LINK_LIBS ${PNG_LIBRARIES})
     endif ()
     if (TIFF_FOUND)
-        list(APPEND THIS_LIB_LINK_LIBS ${TIFF_LIBRARIES})
+        list(APPEND GiGi_LINK_LIBS ${TIFF_LIBRARIES})
     endif ()
 endif ()
 
@@ -192,30 +192,44 @@ if (WIN32)
     endif ()
 endif ()
 
-library_all_variants(GiGi)
+add_library(GiGi ${GiGi_SOURCES})
 
-if (WIN32)
-    if (TARGET GiGi)
-        set_target_properties(GiGi
-            PROPERTIES
-            COMPILE_DEFINITIONS BOOST_ALL_DYN_LINK
-            LINK_FLAGS /NODEFAULTLIB:LIBCMT
-        )
-    elseif (TARGET GiGi_static)
-        set_target_properties(GiGi_static
-            PROPERTIES
-            LINK_FLAGS /NODEFAULTLIB:LIBCMT
-        )
-    endif ()
+if (USE_STATIC_LIBS)
+    set_target_properties(GiGi
+        PROPERTIES
+        LINK_SEARCH_END_STATIC true
+    )
+endif ()
+
+target_link_libraries(GiGi ${GiGi_LINK_LIBS})
+
+# Installation of this library variant
+if (((NOT BUILD_SHARED_LIBS AND NOT RUNTIME_ONLY_PACKAGE) OR
+    (BUILD_SHARED_LIBS AND NOT DEVEL_ONLY_PACKAGE)) AND (${PACKAGE_TYPE} STREQUAL NoPackage OR ${PACKAGE_TYPE} MATCHES Full OR ${PACKAGE_TYPE} MATCHES GiGi OR ${PACKAGE_TYPE} STREQUAL GiGiDevel))
+    install(
+        TARGETS GiGi
+        LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT COMPONENT_GIGI
+        ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT COMPONENT_GIGI_DEVEL
+    )
 endif ()
 
 if (UNIX)
-    get_pkg_config_libs(pkg_config_libs ${THIS_LIB_LINK_LIBS})
+    get_pkg_config_libs(pkg_config_libs ${GiGi_LINK_LIBS})
     configure_file(
         ${CMAKE_HOME_DIRECTORY}/cmake/GiGi.pc.in
         ${CMAKE_BINARY_DIR}/GiGi.pc
         @ONLY
     )
+    if (NOT RUNTIME_ONLY_PACKAGE)
+        if (${PACKAGE_TYPE} STREQUAL NoPackage OR ${PACKAGE_TYPE} MATCHES Full OR ${PACKAGE_TYPE} STREQUAL GiGi OR ${PACKAGE_TYPE} STREQUAL GiGiDevel)
+            install(
+            FILES ${CMAKE_BINARY_DIR}/GiGi.pc
+            DESTINATION lib${LIB_SUFFIX}/pkgconfig
+            COMPONENT COMPONENT_GIGI_DEVEL
+            OPTIONAL
+        )
+        endif ()
+    endif ()
 endif ()
 
 add_subdirectory(SDL)

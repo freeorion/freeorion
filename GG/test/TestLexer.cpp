@@ -7,8 +7,7 @@
 #include <sstream>
 #include <iostream>
 
-#define BOOST_TEST_DYN_LINK
-
+#define BOOST_TEST_NO_MAIN
 #include <boost/test/unit_test.hpp>
 
 #include "TestingUtils.h"
@@ -297,7 +296,13 @@ BOOST_AUTO_TEST_CASE( eve_lexer )
 bool init_unit_test()                   {
 #else
 ::boost::unit_test::test_suite*
-init_unit_test_suite( int, char* [] )   {
+init_unit_test_suite( int, char* argv[] )   {
+#endif
+
+#if !defined(BOOST_TEST_DYN_LINK)
+    g_input_file = argv[1];
+    g_expected_output_file = argv[2];
+    g_test_type = (g_expected_output_file[0] == 'a') ? AdamTest : EveTest;
 #endif
 
 #ifdef BOOST_TEST_MODULE
@@ -308,12 +313,12 @@ init_unit_test_suite( int, char* [] )   {
 
 #ifdef BOOST_TEST_ALTERNATIVE_INIT_API
     return true;
-}
 #else
     return 0;
-}
 #endif
+}
 
+#if defined(BOOST_TEST_DYN_LINK)
 int BOOST_TEST_CALL_DECL
 main( int argc, char* argv[] )
 {
@@ -322,3 +327,5 @@ main( int argc, char* argv[] )
     g_test_type = (g_expected_output_file[0] == 'a') ? AdamTest : EveTest;
     return ::boost::unit_test::unit_test_main( &init_unit_test, argc, argv );
 }
+#endif
+

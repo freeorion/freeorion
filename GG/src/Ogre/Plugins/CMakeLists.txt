@@ -16,29 +16,30 @@ if (BUILD_OGRE_OIS_PLUGIN)
 endif ()
 
 if (BUILD_OGRE_OIS_PLUGIN)
-    set(THIS_LIB_SOURCES OgreGUIInputPlugin.cpp OISInput.cpp)
-    set(THIS_LIB_LINK_LIBS GiGiOgre ${OIS_LIBRARIES})
-    library_all_variants(GiGiOgrePlugin_OIS)
+    add_library(GiGiOgrePlugin_OIS
+        OgreGUIInputPlugin.cpp
+        OISInput.cpp
+    )
 
-    if (WIN32)
-        if (TARGET GiGiOgrePlugin_OIS)
-            set_target_properties(GiGiOgrePlugin_OIS
-                PROPERTIES
-                COMPILE_DEFINITIONS BOOST_ALL_DYN_LINK
-                LINK_FLAGS /NODEFAULTLIB:LIBCMT
-            )
-        elseif (TARGET GiGiOgrePlugin_OIS_static)
-            set_target_properties(GiGiOgrePlugin_OIS_static
-                PROPERTIES
-                LINK_FLAGS /NODEFAULTLIB:LIBCMT
-            )
-        endif ()
+    if (USE_STATIC_LIBS)
+        set_target_properties(GiGiOgrePlugin_OIS
+            PROPERTIES
+            LINK_SEARCH_END_STATIC true
+        )
     endif ()
 
-    if (TARGET GiGiOgrePlugin_OIS_static)
-        set_target_properties(GiGiOgrePlugin_OIS_static
-            PROPERTIES
-            COMPILE_DEFINITIONS OGRE_STATIC_LIB
+    target_link_libraries(GiGiOgrePlugin_OIS
+        GiGiOgre
+        ${OIS_LIBRARIES}
+    )
+
+    # Installation of this library variant
+    if (((NOT BUILD_SHARED_LIBS AND NOT RUNTIME_ONLY_PACKAGE) OR
+        (BUILD_SHARED_LIBS AND NOT DEVEL_ONLY_PACKAGE)) AND (${PACKAGE_TYPE} STREQUAL NoPackage OR ${PACKAGE_TYPE} MATCHES Full OR ${PACKAGE_TYPE} MATCHES GiGiOgrePlugin_OIS OR ${PACKAGE_TYPE} STREQUAL GiGiOgrePlugin_OISDevel))
+        install(
+            TARGETS GiGiOgrePlugin_OIS
+            LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT COMPONENT_GIGIOGREPLUGIN_OIS
+            ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT COMPONENT_GIGIOGREPLUGIN_OIS_DEVEL
         )
     endif ()
 endif ()

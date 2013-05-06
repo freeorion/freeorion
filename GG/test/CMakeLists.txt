@@ -3,13 +3,18 @@ cmake_policy(VERSION 2.6.4)
 
 message("-- Configuring Tests")
 
+set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUIRED)
+
+if (NOT USE_STATIC_LIBS)
+    add_definitions(-DBOOST_TEST_DYN_LINK)
+endif ()
 
 macro (make_test_exec name)
     add_executable(${name}-test Test${name}.cpp)
-    target_link_libraries(${name}-test GiGi ${Boost_LIBRARIES})
+    target_link_libraries(${name}-test GiGi ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
     if (TARGET GiGiSDL)
-        target_link_libraries(${name}-test GiGiSDL ${Boost_LIBRARIES})
+        target_link_libraries(${name}-test GiGiSDL)
     endif ()
 endmacro ()
 

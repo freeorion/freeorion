@@ -34,14 +34,6 @@ install(
     COMPONENT COMPONENT_FREEORION
 )
 
-if (WIN32)
-    set_target_properties(parser_test
-        PROPERTIES
-        COMPILE_DEFINITIONS BOOST_ALL_DYN_LINK
-        LINK_FLAGS /NODEFAULTLIB:LIBCMT
-    )
-endif ()
-
 macro (add_test_and_data_files name)
     set(suffix "")
     set(args "")

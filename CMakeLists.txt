@@ -34,17 +34,24 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 if (WIN32)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -DFREEORION_WIN32)
+    add_definitions(
+        -D_CRT_SECURE_NO_DEPRECATE
+        -D_SCL_SECURE_NO_DEPRECATE
+        -DBOOST_ALL_DYN_LINK
+        -DFREEORION_WIN32
+    )
     if (MSVC)
         set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
-        add_definitions(/wd4146 /wd4099 /wd4251 /wd4800 /wd4267 /wd4275
-                        /wd4244 /wd4101 /wd4258 /wd4351 /wd4996)
+        set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT /wd4099 /wd4101 /wd4146 /wd4244 /wd4251 /wd4258 /wd4267 /wd4275 /wd4351 /wd4800 /wd4996")
     endif ()
 elseif (APPLE)
     add_definitions(-DFREEORION_MACOSX)
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    add_definitions(-DFREEORION_LINUX -DENABLE_BINRELOC -Wall -Wno-parentheses)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
+    add_definitions(
+        -DFREEORION_LINUX
+        -DENABLE_BINRELOC
+    )
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wno-parentheses")
 else ()
     message(FATAL_ERROR "Unknown platform type! Your setup is not a supported platform for FreeOrion.")
 endif ()

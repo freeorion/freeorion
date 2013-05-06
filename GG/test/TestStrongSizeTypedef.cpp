@@ -1,6 +1,5 @@
 #include <GG/FontFwd.h>
 
-#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE StrongSizeTypedef
 
 #include <boost/test/unit_test.hpp>
