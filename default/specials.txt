@@ -196,18 +196,18 @@ Special
             scope = Source
             activation = And [
                 Random probability = .50
-                NotOwnerHasTech "SHP_WEAPON_13"
+                NotOwnerHasTech "SHP_WEAPON_4_1"
                 OwnerHasTech "LRN_XENOARCH"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
-                GiveEmpireTech "SHP_WEAPON_13" empire = Target.Owner
+                GiveEmpireTech "SHP_WEAPON_4_1" empire = Target.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_TECH"
                     icon = "icons/specials_large/ancient_ruins.png"
                     parameters = [
                         tag = "planet" data = Source.ID
-                        tag = "tech" data = "SHP_WEAPON_13"
+                        tag = "tech" data = "SHP_WEAPON_4_1"
                     ]
                     empire = Source.Owner
             ]
