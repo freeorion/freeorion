@@ -3030,8 +3030,12 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             name.clear();
             if (empire = Empires().Lookup(source->Owner()))
                 name = empire->Name();
-            const std::string& label_template = (info_it->custom_label.empty() ? "TT_TECH" : info_it->custom_label);
-            text += boost::io::str(FlexibleFormat(UserString(label_template)) % name % UserString(info_it->specific_cause));
+            const std::string& label_template = (info_it->custom_label.empty()
+                ? UserString("TT_TECH")
+                : UserString(info_it->custom_label));
+            text += boost::io::str(FlexibleFormat(label_template)
+                % name
+                % UserString(info_it->specific_cause));
             break;
         }
         case ECT_BUILDING: {
@@ -3039,34 +3043,58 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             if (building = universe_object_cast<const Building*>(source))
                 if (planet = GetPlanet(building->PlanetID()))
                     name = planet->Name();
-            const std::string& label_template = (info_it->custom_label.empty() ? "TT_BUILDING" : info_it->custom_label);
-            text += boost::io::str(FlexibleFormat(UserString(label_template)) % name % UserString(info_it->specific_cause));
+            const std::string& label_template = (info_it->custom_label.empty()
+                ? UserString("TT_BUILDING")
+                : UserString(info_it->custom_label));
+            text += boost::io::str(FlexibleFormat(label_template)
+                % name
+                % UserString(info_it->specific_cause));
             break;
         }
         case ECT_FIELD: {
-            const std::string& label_template = (info_it->custom_label.empty() ? "TT_FIELD" : info_it->custom_label);
-            text += boost::io::str(FlexibleFormat(UserString(label_template)) % name % UserString(info_it->specific_cause));
+            const std::string& label_template = (info_it->custom_label.empty()
+                ? UserString("TT_FIELD")
+                : UserString(info_it->custom_label));
+            text += boost::io::str(FlexibleFormat(label_template)
+                % name
+                % UserString(info_it->specific_cause));
             break;
         }
         case ECT_SPECIAL: {
-            const std::string& label_template = (info_it->custom_label.empty() ? "TT_SPECIAL" : info_it->custom_label);
-            text += boost::io::str(FlexibleFormat(UserString(label_template)) % name % UserString(info_it->specific_cause));
+            const std::string& label_template = (info_it->custom_label.empty()
+                ? UserString("TT_SPECIAL")
+                : UserString(info_it->custom_label));
+            text += boost::io::str(FlexibleFormat(label_template)
+                % name
+                % UserString(info_it->specific_cause));
             break;
         }
         case ECT_SPECIES: {
             //Logger().debugStream() << "Effect Species Meter Browse Wnd effect cause " << info_it->specific_cause << " custom label: " << info_it->custom_label;
-            const std::string& label_template = (info_it->custom_label.empty() ? "TT_SPECIES" : info_it->custom_label);
-            text += boost::io::str(FlexibleFormat(UserString(label_template)) % name % UserString(info_it->specific_cause));
+            const std::string& label_template = (info_it->custom_label.empty()
+                ? UserString("TT_SPECIES")
+                : UserString(info_it->custom_label));
+            text += boost::io::str(FlexibleFormat(label_template)
+                % name
+                % UserString(info_it->specific_cause));
             break;
         }
         case ECT_SHIP_HULL: {
-            const std::string& label_template = (info_it->custom_label.empty() ? "TT_SHIP_HULL" : info_it->custom_label);
-            text += boost::io::str(FlexibleFormat(UserString(label_template)) % name % UserString(info_it->specific_cause));
+            const std::string& label_template = (info_it->custom_label.empty()
+                ? UserString("TT_SHIP_HULL")
+                : UserString(info_it->custom_label));
+            text += boost::io::str(FlexibleFormat(label_template)
+                % name
+                % UserString(info_it->specific_cause));
             break;
         }
         case ECT_SHIP_PART: {
-            const std::string& label_template = (info_it->custom_label.empty() ? "TT_SHIP_PART" : info_it->custom_label);
-            text += boost::io::str(FlexibleFormat(UserString(label_template)) % name % UserString(info_it->specific_cause));
+            const std::string& label_template = (info_it->custom_label.empty()
+                ? UserString("TT_SHIP_PART")
+                : UserString(info_it->custom_label));
+            text += boost::io::str(FlexibleFormat(label_template)
+                % name
+                % UserString(info_it->specific_cause));
             break;
         }
         case ECT_INHERENT:
@@ -3075,8 +3103,10 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
         case ECT_UNKNOWN_CAUSE: {
         default:
-            const std::string& label_template = (info_it->custom_label.empty() ? "TT_UNKNOWN" : info_it->custom_label);
-            text += UserString(label_template);
+            const std::string& label_template = (info_it->custom_label.empty()
+                ? UserString("TT_UNKNOWN")
+                : UserString(info_it->custom_label));
+            text += label_template;
         }
         }
 

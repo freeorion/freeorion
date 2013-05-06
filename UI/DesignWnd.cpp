@@ -1555,7 +1555,7 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
 
     // set up empty slot tool tip
     SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-        new IconTextBrowseWnd(SlotBackgroundTexture(m_slot_type), UserString(((slot_type == SL_EXTERNAL) ? "SL_EXTERNAL" : "SL_INTERNAL")), UserString("SL_TOOLTIP_DESC"))));
+        new IconTextBrowseWnd(SlotBackgroundTexture(m_slot_type), ((slot_type == SL_EXTERNAL) ? UserString("SL_EXTERNAL") : UserString("SL_INTERNAL")), UserString("SL_TOOLTIP_DESC"))));
 
 }
 
@@ -1684,7 +1684,7 @@ void SlotControl::SetPart(const PartType* part_type) {
 
         // set part occupying slot's tool tip to say slot type as well
         m_part_control->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-            new IconTextBrowseWnd(ClientUI::PartIcon(part_type->Name()), UserString(part_type->Name()) + " (" + UserString(((m_slot_type == SL_EXTERNAL) ? "SL_EXTERNAL" : "SL_INTERNAL")) + ")" ,UserString(part_type->Description()))));
+            new IconTextBrowseWnd(ClientUI::PartIcon(part_type->Name()), UserString(part_type->Name()) + " (" + ((m_slot_type == SL_EXTERNAL) ? UserString("SL_EXTERNAL") : UserString("SL_INTERNAL")) + ")", UserString(part_type->Description()))));
     }
 }
 

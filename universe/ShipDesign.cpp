@@ -89,10 +89,11 @@ namespace {
         {}
         void operator()(const float& d) const {
             std::string desc_string =
-                m_class == PC_FUEL || m_class == PC_COLONY ?
-                "PART_DESC_CAPACITY" : "PART_DESC_STRENGTH";
+                m_class == PC_FUEL || m_class == PC_COLONY
+                    ? UserString("PART_DESC_CAPACITY")
+                    : UserString("PART_DESC_STRENGTH");
             m_description +=
-                str(FlexibleFormat(UserString(desc_string)) % d);
+                str(FlexibleFormat(desc_string) % d);
         }
         void operator()(const DirectFireStats& stats) const {
             m_description +=
@@ -115,7 +116,7 @@ namespace {
         void operator()(const FighterStats& stats) const {
             m_description +=
                 str(FlexibleFormat(UserString("PART_DESC_FIGHTER_STATS"))
-                    % UserString(stats.m_type == BOMBER ? "BOMBER" : "INTERCEPTOR")
+                    % (stats.m_type == BOMBER ? UserString("BOMBER") : UserString("INTERCEPTOR"))
                     % stats.m_anti_ship_damage
                     % stats.m_anti_fighter_damage
                     % stats.m_launch_rate
