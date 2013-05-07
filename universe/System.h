@@ -162,7 +162,7 @@ public:
     bool                    RemoveWormhole(int id);         ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
 
     virtual void            SetOwner(int id) {};            ///< adding owner to system objects is a no-op
-    void                    SetLastTurnBattleHere(int turn);///< Sets the last turn there was a battle at this sytem
+    void                    SetLastTurnBattleHere(int turn);///< Sets the last turn there was a battle at this system
 
     orbit_iterator          begin()                     { return m_objects.begin(); }   ///< begin iterator for all system objects
     orbit_iterator          end()                       { return m_objects.end(); }     ///< end iterator for all system objects
@@ -194,7 +194,7 @@ private:
     int             m_orbits;
     ObjectMultimap  m_objects;                      ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
     StarlaneMap     m_starlanes_wormholes;          ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
-    int             m_last_turn_battle_here;        ///< the turn on which there was last a battle in this sytem
+    int             m_last_turn_battle_here;        ///< the turn on which there was last a battle in this system
 
     std::string     m_overlay_texture;              // intentionally not serialized; set by local effects
     double          m_overlay_size;

@@ -141,7 +141,7 @@ namespace {
             {
                 if ((*sys_it)->Name() == *it) {
                     dupe = true;
-                    break;  // another systme has this name. skip to next potential name.
+                    break;  // another system has this name. skip to next potential name.
                 }
             }
             if (!dupe)

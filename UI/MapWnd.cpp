@@ -5135,7 +5135,7 @@ void MapWnd::DispatchFleetsExploring() {
                 if (!remaining_system_to_explore || min_dist == DBL_MAX) {
                     if (fleet->Fuel() == fleet->MaxFuel() && far_min_dist != DBL_MAX) {
                         //we have full fuel and no unknown planet in range. We can go to a far system, but we will have to wait for resupply
-                        Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Next sytem for fleet " << fleet->ID() << " is " << far_system_id << ". Not enough fuel for the round trip";
+                        Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Next system for fleet " << fleet->ID() << " is " << far_system_id << ". Not enough fuel for the round trip";
                         systems_order_sent.insert(far_system_id);
                         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), fleet->SystemID(), far_system_id)));
                     } else {
@@ -5151,7 +5151,7 @@ void MapWnd::DispatchFleetsExploring() {
 
         if (min_dist != DBL_MAX) {
             //there is an unexplored system rechable
-            Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Next sytem for fleet " << better_fleet_id << " is " << end_system_id;
+            Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Next system for fleet " << better_fleet_id << " is " << end_system_id;
             systems_order_sent.insert(end_system_id);
             fleet_idle.erase(better_fleet_id);
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, better_fleet_id, start_system_id, end_system_id)));

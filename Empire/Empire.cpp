@@ -1714,7 +1714,7 @@ void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
     //    int sys_id = graph_id_to_sys_id[i];
     //    const UniverseObject* sys = GetUniverse().Object(sys_id);
     //    std::string name = sys->Name();
-    //    std::cout << "ssytem " << name <<" is in component " << components[i] << std::endl;
+    //    std::cout << "system " << name <<" is in component " << components[i] << std::endl;
     //}
     //std::cout << std::endl;
 

@@ -79,7 +79,7 @@ namespace {
     void InitResourcePoolsAndSupply() {
         EmpireManager& manager = AIClientApp::GetApp()->Empires();
 
-        // determine sytems where fleets can delivery supply, and groups of systems that can exchange resources
+        // determine systems where fleets can delivery supply, and groups of systems that can exchange resources
         for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
             Empire* empire = it->second;
             empire->UpdateSupplyUnobstructedSystems();
