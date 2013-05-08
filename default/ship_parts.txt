@@ -268,9 +268,9 @@ Part
     name = "AR_ROCK_PLATE"
     description = "AR_ROCK_PLATE_DESC"
     class = Armour
-    capacity = 9
+    capacity = 18
     mountableSlotTypes = External
-    buildcost = 4
+    buildcost = 6
     buildtime = 2
     location = And [
         Number low = 1 high = 999 And [
@@ -288,7 +288,7 @@ Part
     name = "AR_CRYSTAL_PLATE"
     description = "AR_CRYSTAL_PLATE_DESC"
     class = Armour
-    capacity = 25
+    capacity = 30
     mountableSlotTypes = External
     buildcost = 8
     buildtime = 3
@@ -342,7 +342,7 @@ Part
     class = Shield
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 60
+    buildcost = 40
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -359,7 +359,7 @@ Part
     class = Shield
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 90
+    buildcost = 70
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -393,7 +393,7 @@ Part
     class = Shield
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 180
+    buildcost = 200
     buildtime = 8
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =

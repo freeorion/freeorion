@@ -2507,7 +2507,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 50 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 30 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_ROOT_ARMOR"
     unlock = Item type = ShipPart name = "AR_ZORTRIUM_PLATE"
@@ -2519,7 +2519,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 250 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
     prerequisites = "SHP_ZORTRIUM_PLATE"
     unlock = Item type = ShipPart name = "AR_DIAMOND_PLATE"
@@ -2531,7 +2531,7 @@ Tech
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 1250 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
     prerequisites = "SHP_DIAMOND_PLATE"
     unlock = Item type = ShipPart name = "AR_XENTRONIUM_PLATE"
