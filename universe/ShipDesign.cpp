@@ -88,7 +88,7 @@ namespace {
             m_description(description)
         {}
         void operator()(const float& d) const {
-            std::string desc_string =
+            const std::string& desc_string =
                 m_class == PC_FUEL || m_class == PC_COLONY
                     ? UserString("PART_DESC_CAPACITY")
                     : UserString("PART_DESC_STRENGTH");

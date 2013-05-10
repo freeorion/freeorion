@@ -261,7 +261,7 @@ std::string Condition::Number::Description(bool negated/* = false*/) const {
                                       m_high->Description())
                                    : boost::lexical_cast<std::string>(INT_MAX));
 
-    std::string description_str = (!negated)
+    const std::string& description_str = (!negated)
         ? UserString("DESC_NUMBER")
         : UserString("DESC_NUMBER_NOT");
     return str(FlexibleFormat(description_str)
