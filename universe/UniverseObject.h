@@ -89,7 +89,7 @@ public:
     virtual float               NextTurnCurrentMeterValue(MeterType type) const;///< returns an estimate of the next turn's current value of the specified meter \a type
 
     bool                        Unowned() const;                    ///< returns true iff there are no owners of this object
-    bool                        OwnedBy(int empire) const;          ///< returns true iff the empire with id \a empire owns this object
+    bool                        OwnedBy(int empire) const;          ///< returns true iff the empire with id \a empire owns this object; unowned objects always return false;
 
     Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
     virtual const std::string&  PublicName(int empire_id) const;    ///< returns the name of this objectas it appears to empire \a empire_id
