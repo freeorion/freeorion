@@ -2221,7 +2221,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::X most_panels_left = base_selector_width;
     GG::X most_panels_width = ClientWidth() - most_panels_left;
     GG::Y detail_top = GG::Y0;
-    GG::Y detail_height(380);
+    GG::Y detail_height(200);
     GG::Y main_top = detail_top + detail_height;
     GG::Y part_palette_height(160);
     GG::Y part_palette_top = ClientHeight() - part_palette_height;
