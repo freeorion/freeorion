@@ -40,7 +40,7 @@ namespace {
     const GG::X SPIN_WIDTH(65);
     const int LAYOUT_MARGIN = 3;
 
-    const std::string STRINGTABLE_FILE_SUFFIX = "_stringtable.txt";
+    const std::string STRINGTABLE_FILE_SUFFIX = ".txt";
     const std::string MUSIC_FILE_SUFFIX = ".ogg";
     const std::string SOUND_FILE_SUFFIX = ".wav";
     const std::string FONT_FILE_SUFFIX = ".ttf";
@@ -762,7 +762,7 @@ void OptionsWnd::Init() {
     BoolOption("UI.multiple-fleet-windows",     UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
     BoolOption("UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
     BoolOption("UI.sidepanel-planet-shown",     UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
-    FileOption("stringtable-filename",          UserString("OPTIONS_LANGUAGE"),     GetRootDataDir() / "default", std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"), "*" + STRINGTABLE_FILE_SUFFIX), &ValidStringtableFile);
+    FileOption("stringtable-filename",          UserString("OPTIONS_LANGUAGE"),     GetRootDataDir() / "default" / "stringtables", std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"), "*" + STRINGTABLE_FILE_SUFFIX), &ValidStringtableFile);
     IntOption("UI.tooltip-delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
     EndSection();
     BeginSection(UserString("OPTIONS_FONTS"));

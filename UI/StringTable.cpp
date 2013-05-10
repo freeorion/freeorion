@@ -12,7 +12,7 @@
 
 
 // static(s)
-const std::string StringTable_::S_DEFAULT_FILENAME = "eng_stringtable.txt";
+const std::string StringTable_::S_DEFAULT_FILENAME = "en.txt";
 const std::string StringTable_::S_ERROR_STRING = "ERROR: ";
 
 // StringTable

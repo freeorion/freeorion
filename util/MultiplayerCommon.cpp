@@ -49,7 +49,7 @@ namespace {
         db.Add<std::string>("resource-dir",         "OPTIONS_DB_RESOURCE_DIR",          PathString(GetRootDataDir() / "default"));
         db.Add<std::string>('S', "save-dir",        "OPTIONS_DB_SAVE_DIR",              PathString(GetUserDir() / "save"));
         db.Add<std::string>("log-level",            "OPTIONS_DB_LOG_LEVEL",             "DEBUG");
-        db.Add<std::string>("stringtable-filename", "OPTIONS_DB_STRINGTABLE_FILENAME",  PathString(GetRootDataDir() / "default" / "eng_stringtable.txt"));
+        db.Add<std::string>("stringtable-filename", "OPTIONS_DB_STRINGTABLE_FILENAME",  PathString(GetRootDataDir() / "default" / "stringtables" / "en.txt"));
         db.AddFlag("test-3d-combat",                "OPTIONS_DB_TEST_3D_COMBAT",        false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -57,7 +57,7 @@ namespace {
     const double TWO_PI = 8.0 * std::atan(1.0);
 
     std::string GetDefaultStringTableFileName()
-    { return PathString(GetResourceDir() / "eng_stringtable.txt"); }
+    { return PathString(GetResourceDir() / "stringtables" / "en.txt"); }
 
     std::string GetStringTableFileName() {
         std::string option_filename = GetOptionsDB().Get<std::string>("stringtable-filename");
