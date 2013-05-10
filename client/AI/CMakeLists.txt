@@ -22,7 +22,13 @@ endif ()
 
 add_definitions(-DFREEORION_BUILD_AI)
 
-set(freeorionca_LINK_LIBS core parse log4cpp ${PYTHON_LIBRARIES})
+set(freeorionca_LINK_LIBS
+    core
+    parse
+    log4cpp
+    GiGi # needed for adobe name_t implementation
+    ${PYTHON_LIBRARIES}
+)
 
 if (WIN32)
     link_directories(${BOOST_LIBRARYDIR})

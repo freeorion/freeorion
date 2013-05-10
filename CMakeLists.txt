@@ -81,13 +81,6 @@ else ()
     message(FATAL_ERROR "ZLib library not found.")
 endif ()
 
-find_package(GiGi)
-if (GIGI_FOUND)
-    include_directories(${GIGI_INCLUDE_DIR})
-else ()
-    message(FATAL_ERROR "GiGi library not found.")
-endif ()
-
 find_package(OpenGL REQUIRED)
 if(OPENGL_FOUND)
     include_directories(${OPENGL_INCLUDE_DIR})
@@ -125,7 +118,10 @@ set(LC_ALL $ENV{tmpLC_ALL})
 ########################################
 # Build common code library            #
 ########################################
-include_directories(${CMAKE_SOURCE_DIR} log4cpp OpenSteer/include)
+set(BUILD_SDL_DRIVER CACHE INTERNAL "Disable building of SDL driver." FORCE)
+add_subdirectory(GG)
+
+include_directories(${CMAKE_SOURCE_DIR} GG log4cpp OpenSteer/include)
 
 add_definitions(-DADOBE_STD_SERIALIZATION)
 

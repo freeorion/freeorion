@@ -41,7 +41,7 @@ if (BUILD_SDL_DRIVER)
     if (UNIX)
         get_pkg_config_libs(pkg_config_libs ${GiGiSDL_LINK_LIBS})
         configure_file(
-            ${CMAKE_HOME_DIRECTORY}/cmake/GiGiSDL.pc.in
+            ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/GiGiSDL.pc.in
             ${CMAKE_BINARY_DIR}/GiGiSDL.pc
             @ONLY
         )

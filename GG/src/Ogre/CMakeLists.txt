@@ -46,7 +46,7 @@ if (BUILD_OGRE_DRIVER)
     if (UNIX)
         get_pkg_config_libs(pkg_config_libs ${GiGiOgre_LINK_LIBS})
         configure_file(
-            ${CMAKE_HOME_DIRECTORY}/cmake/GiGiOgre.pc.in
+            ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/GiGiOgre.pc.in
             ${CMAKE_BINARY_DIR}/GiGiOgre.pc
             @ONLY
         )

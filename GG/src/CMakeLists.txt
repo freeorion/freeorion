@@ -50,8 +50,6 @@ set(GiGi_SOURCES
     dialogs/FileDlg.cpp
     dialogs/ThreeButtonDlg.cpp
 
-    ../libltdl/ltdl.c
-
     adobe/adam.cpp
     adobe/adam_evaluate.cpp
     adobe/adam_parser.cpp
@@ -162,13 +160,6 @@ if (BUILD_EXPERIMENTAL_EVE_SUPPORT)
     )
 endif ()
 
-set_source_files_properties(${CMAKE_HOME_DIRECTORY}/libltdl/ltdl.c PROPERTIES COMPILE_DEFINITIONS HAVE_CONFIG_H=1)
-execute_process(
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_HOME_DIRECTORY}/libltdl/ltdl.h ${CMAKE_HOME_DIRECTORY}/GG/ltdl.h
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_HOME_DIRECTORY}/libltdl/config.h ${CMAKE_HOME_DIRECTORY}/GG/ltdl_config.h
-)
-set_source_files_properties(${CMAKE_HOME_DIRECTORY}/GG/ltdl.h ${CMAKE_HOME_DIRECTORY}/GG/ltdl_config.h PROPERTIES GENERATED true)
-
 set(GiGi_LINK_LIBS ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES})
 if (USE_DEVIL)
     list(APPEND GiGi_LINK_LIBS ${IL_LIBRARY} ${ILUT_LIBRARY})
@@ -201,7 +192,7 @@ if (USE_STATIC_LIBS)
     )
 endif ()
 
-target_link_libraries(GiGi ${GiGi_LINK_LIBS})
+target_link_libraries(GiGi ltdl ${GiGi_LINK_LIBS})
 
 # Installation of this library variant
 if (((NOT BUILD_SHARED_LIBS AND NOT RUNTIME_ONLY_PACKAGE) OR
@@ -216,7 +207,7 @@ endif ()
 if (UNIX)
     get_pkg_config_libs(pkg_config_libs ${GiGi_LINK_LIBS})
     configure_file(
-        ${CMAKE_HOME_DIRECTORY}/cmake/GiGi.pc.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/GiGi.pc.in
         ${CMAKE_BINARY_DIR}/GiGi.pc
         @ONLY
     )

@@ -125,9 +125,9 @@ set(freeorion_LINK_LIBS
     parse
     log4cpp
     pagedgeometry
-    ${GIGI_GIGI_LIBRARY}
-    ${GIGI_GIGIOGRE_LIBRARY}
-    ${GIGI_GIGIOGREOIS_LIBRARY}
+    GiGi
+    GiGiOgre
+    GiGiOgrePlugin_OIS
     ${OPENAL_LIBRARY}
     ${ALUT_LIBRARY}
     ${OGRE_LIBRARIES}

@@ -35,7 +35,7 @@
 #if defined(__APPLE__) && defined(__MACH__)
 # include "../libltdl/ltdl.h"
 #else
-# include <GG/ltdl.h>
+# include <ltdl.h>
 #endif
 
 #include <string>
