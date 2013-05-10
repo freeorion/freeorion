@@ -6272,10 +6272,9 @@ bool Condition::CanColonize::operator==(const Condition::ConditionBase& rhs) con
 { return Condition::ConditionBase::operator==(rhs); }
 
 std::string Condition::CanColonize::Description(bool negated/* = false*/) const {
-    std::string description_str = "DESC_CAN_COLONIZE";
-    if (negated)
-        description_str += "_NOT";
-    return UserString(description_str);
+    return str(FlexibleFormat((!negated)
+        ? UserString("DESC_CAN_COLONIZE")
+        : UserString("DESC_CAN_COLONIZE_NOT")));
 }
 
 std::string Condition::CanColonize::Dump() const
@@ -6337,10 +6336,9 @@ bool Condition::CanProduceShips::operator==(const Condition::ConditionBase& rhs)
 { return Condition::ConditionBase::operator==(rhs); }
 
 std::string Condition::CanProduceShips::Description(bool negated/* = false*/) const {
-    std::string description_str = "DESC_CAN_PRODUCE_SHIPS";
-    if (negated)
-        description_str += "_NOT";
-    return UserString(description_str);
+    return str(FlexibleFormat((!negated)
+        ? UserString("DESC_CAN_PRODUCE_SHIPS")
+        : UserString("DESC_CAN_PRODUCE_SHIPS_NOT")));
 }
 
 std::string Condition::CanProduceShips::Dump() const
