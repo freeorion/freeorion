@@ -1,10 +1,15 @@
 [Desktop Entry]
+Version=1.0
 Name=FreeOrion
-GenericName=FreeOrion
-Comment=Run the FreeOrion client
+GenericName=Turn-based space strategy game
+Comment=turn-based space empire and galactic conquest computer game (client)
+Comment[de]=Zug basierendes Weltraum Strategie Spiel
 Exec=freeorion
+TryExec=freeorion
 Icon=freeorion
-Terminal=true
+StartupNotify=false
+Terminal=false
 Type=Application
 Categories=Game;StrategyGame;
+Keywords=space;strategy;empire;galaxy;turn-based;aliens;species;planets;fleet;research;resources;
 URL=http://www.freeorion.org
