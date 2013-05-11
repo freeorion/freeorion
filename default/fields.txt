@@ -32,4 +32,36 @@ FieldType
     ]
     graphic = "fields/rainbow_storm.png"
 
+FieldType
+    name = "FLD_MOLECULAR_CLOUD"
+    description = "FLD_MOLECULAR_CLOUD_DESC"
+    stealth = 0.01
+    tags = [ "EXOTIC" ]
+    effectsgroups = [
+        EffectsGroup    // move around, grow when near stars, shrink a bit each turn
+            scope = Source
+            effects = [
+                SetStarlaneSpeed value = 5
+                
+                MoveTowards speed = Source.StarlaneSpeed/1.4 x = UniverseCentreX y = UniverseCentreY
+                MoveInOrbit speed = Source.StarlaneSpeed/1.4 x = UniverseCentreX y = UniverseCentreY
 
+                SetSize Value - 0.1*(Count condition = And [
+                    System
+                    WithinDistance distance = 80 condition = Source
+                ])
+            ]
+            
+        EffectsGroup    // reduce shields
+            scope = And [
+                Ship
+                WithinDistance distance = Source.Size condition = Source
+            ]
+            effects = SetMaxShield Value - 15
+            
+        EffectsGroup    // dissipate when small
+            scope = Source
+            activation = Size high = 10
+            effects = Destroy
+    ]
+    graphic = "fields/rainbow_storm.png"

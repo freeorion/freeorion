@@ -572,6 +572,11 @@ Ion Storm
 FLD_ION_STORM_DESC
 Magnetic vortex of relativistic charged particles that can interfere with sensors and damage ships and planets.
 
+FLD_MOLECULAR_CLOUD
+Molecular Cloud
+
+FLD_MOLECULAR_CLOUD_DESC
+Diffuse cloud of complex molecules that disrupts ship shielding.
 
 ##############################
 # Predefined Starting Fleets #
@@ -5082,6 +5087,8 @@ PC_BATTLE_SPEED
 Battle Speed
 PC_STARLANE_SPEED
 Starlane Speed
+PC_GENERAL
+General
 
 
 #############################################################
