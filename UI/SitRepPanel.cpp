@@ -16,7 +16,7 @@
 namespace {
     /** Adds options related to SitRepPanel to Options DB. */
     void AddOptions(OptionsDB& db)
-    { db.Add("verbose-sitrep", "OPTIONS_DB_VERBOSE_SITREP_DESC",  false,  Validator<bool>()); }
+    { db.Add("verbose-sitrep", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"),  false,  Validator<bool>()); }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     void HandleLinkClick(const std::string& link_type, const std::string& data) {

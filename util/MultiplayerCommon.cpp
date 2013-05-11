@@ -46,11 +46,11 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add<std::string>("resource-dir",         "OPTIONS_DB_RESOURCE_DIR",          PathString(GetRootDataDir() / "default"));
-        db.Add<std::string>('S', "save-dir",        "OPTIONS_DB_SAVE_DIR",              PathString(GetUserDir() / "save"));
-        db.Add<std::string>("log-level",            "OPTIONS_DB_LOG_LEVEL",             "DEBUG");
-        db.Add<std::string>("stringtable-filename", "OPTIONS_DB_STRINGTABLE_FILENAME",  PathString(GetRootDataDir() / "default" / "stringtables" / "en.txt"));
-        db.AddFlag("test-3d-combat",                "OPTIONS_DB_TEST_3D_COMBAT",        false);
+        db.Add<std::string>("resource-dir",         UserStringNop("OPTIONS_DB_RESOURCE_DIR"),          PathString(GetRootDataDir() / "default"));
+        db.Add<std::string>('S', "save-dir",        UserStringNop("OPTIONS_DB_SAVE_DIR"),              PathString(GetUserDir() / "save"));
+        db.Add<std::string>("log-level",            UserStringNop("OPTIONS_DB_LOG_LEVEL"),             "DEBUG");
+        db.Add<std::string>("stringtable-filename", UserStringNop("OPTIONS_DB_STRINGTABLE_FILENAME"),  PathString(GetRootDataDir() / "default" / "stringtables" / "en.txt"));
+        db.AddFlag("test-3d-combat",                UserStringNop("OPTIONS_DB_TEST_3D_COMBAT"),        false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

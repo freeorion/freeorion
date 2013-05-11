@@ -33,8 +33,8 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("multiplayersetup.player-name",  "OPTIONS_DB_MP_PLAYER_NAME",    std::string(""),            Validator<std::string>());
-        db.Add("multiplayersetup.host-address", "OPTIONS_DB_MP_HOST_ADDRESS",   std::string("localhost"),   Validator<std::string>());
+        db.Add("multiplayersetup.player-name",  UserStringNop("OPTIONS_DB_MP_PLAYER_NAME"),    std::string(""),            Validator<std::string>());
+        db.Add("multiplayersetup.host-address", UserStringNop("OPTIONS_DB_MP_HOST_ADDRESS"),   std::string("localhost"),   Validator<std::string>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }

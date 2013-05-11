@@ -38,6 +38,9 @@ int PriorityValue(const std::string& name);
 /** Returns a language-specific string for the key-string \a str */
 const std::string& UserString(const std::string& str);
 
+/** Placeholder for non local translations, evaluates to a non operation */
+#define UserStringNop(key) key
+
 /** Wraps boost::format such that it won't crash if passed the wrong number of arguments */
 boost::format FlexibleFormat(const std::string &string_to_format);
 

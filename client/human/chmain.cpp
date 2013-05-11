@@ -98,19 +98,18 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
     // read and process command-line arguments, if any
     try {
         // add entries in options DB that have no other obvious place
-        GetOptionsDB().AddFlag('h', "help",                 "OPTIONS_DB_HELP",                  false);
-        GetOptionsDB().AddFlag('g', "generate-config-xml",  "OPTIONS_DB_GENERATE_CONFIG_XML",   false);
-        GetOptionsDB().AddFlag('f', "fullscreen",           "OPTIONS_DB_FULLSCREEN",            STORE_FULLSCREEN_FLAG);
-        GetOptionsDB().Add("reset-fullscreen-size",         "OPTIONS_DB_RESET_FSSIZE",          true);
-        GetOptionsDB().Add<int>("fullscreen-monitor-id",    "OPTIONS_DB_FULLSCREEN_MONITOR_ID",
-                                0,  RangedValidator<int>(0, 5));
-        GetOptionsDB().AddFlag('q', "quickstart",           "OPTIONS_DB_QUICKSTART",            false);
-        GetOptionsDB().AddFlag("auto-advance-first-turn",   "OPTIONS_DB_AUTO_FIRST_TURN",       false);
-        GetOptionsDB().Add<std::string>("load", "OPTIONS_DB_LOAD", "", Validator<std::string>(),false);
-        GetOptionsDB().Add("UI.sound.music-enabled",        "OPTIONS_DB_MUSIC_ON",              true);
-        GetOptionsDB().Add("UI.sound.enabled",              "OPTIONS_DB_SOUND_ON",              true);
-        GetOptionsDB().Add<std::string>("version-string",   "OPTIONS_DB_VERSION_STRING",
-                                        FreeOrionVersionString(),      Validator<std::string>(),true);
+        GetOptionsDB().AddFlag('h', "help",                 UserStringNop("OPTIONS_DB_HELP"),                  false);
+        GetOptionsDB().AddFlag('g', "generate-config-xml",  UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),   false);
+        GetOptionsDB().AddFlag('f', "fullscreen",           UserStringNop("OPTIONS_DB_FULLSCREEN"),            STORE_FULLSCREEN_FLAG);
+        GetOptionsDB().Add("reset-fullscreen-size",         UserStringNop("OPTIONS_DB_RESET_FSSIZE"),          true);
+        GetOptionsDB().Add<int>("fullscreen-monitor-id",    UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"), 0, RangedValidator<int>(0, 5));
+        GetOptionsDB().AddFlag('q', "quickstart",           UserStringNop("OPTIONS_DB_QUICKSTART"),            false);
+        GetOptionsDB().AddFlag("auto-advance-first-turn",   UserStringNop("OPTIONS_DB_AUTO_FIRST_TURN"),       false);
+        GetOptionsDB().Add<std::string>("load",             UserStringNop("OPTIONS_DB_LOAD"),                  "", Validator<std::string>(), false);
+        GetOptionsDB().Add("UI.sound.music-enabled",        UserStringNop("OPTIONS_DB_MUSIC_ON"),              true);
+        GetOptionsDB().Add("UI.sound.enabled",              UserStringNop("OPTIONS_DB_SOUND_ON"),              true);
+        GetOptionsDB().Add<std::string>("version-string",   UserStringNop("OPTIONS_DB_VERSION_STRING"),
+                                        FreeOrionVersionString(),   Validator<std::string>(),                  true);
 
 
         // read config.xml and set options entries from it, if present

@@ -1100,7 +1100,7 @@ void Empire::Init() {
         const Alignment& alignment = *it;
         m_meters[alignment.Name()];
     }
-    m_meters["METER_DETECTION_STRENGTH"];
+    m_meters[UserStringNop("METER_DETECTION_STRENGTH")];
 }
 
 Empire::~Empire()

@@ -31,12 +31,12 @@ namespace {
 
     void Options(OptionsDB& db)
     {
-        db.AddFlag("force-external-server",             "OPTIONS_DB_FORCE_EXTERNAL_SERVER",     false);
-        db.Add<std::string>("external-server-address",  "OPTIONS_DB_EXTERNAL_SERVER_ADDRESS",   "localhost");
-        db.Add("UI.main-menu.x",                        "OPTIONS_DB_UI_MAIN_MENU_X",            0.75,   RangedStepValidator<double>(0.01, 0.0, 1.0));
-        db.Add("UI.main-menu.y",                        "OPTIONS_DB_UI_MAIN_MENU_Y",            0.5,    RangedStepValidator<double>(0.01, 0.0, 1.0));
+        db.AddFlag("force-external-server",             UserStringNop("OPTIONS_DB_FORCE_EXTERNAL_SERVER"),     false);
+        db.Add<std::string>("external-server-address",  UserStringNop("OPTIONS_DB_EXTERNAL_SERVER_ADDRESS"),   "localhost");
+        db.Add("UI.main-menu.x",                        UserStringNop("OPTIONS_DB_UI_MAIN_MENU_X"),            0.75,   RangedStepValidator<double>(0.01, 0.0, 1.0));
+        db.Add("UI.main-menu.y",                        UserStringNop("OPTIONS_DB_UI_MAIN_MENU_Y"),            0.5,    RangedStepValidator<double>(0.01, 0.0, 1.0));
 
-        db.Add("checked-gl-version",                    "OPTIONS_DB_CHECKED_GL_VERSION",        false);
+        db.Add("checked-gl-version",                    UserStringNop("OPTIONS_DB_CHECKED_GL_VERSION"),        false);
     }
     bool foo_bool = RegisterOptions(&Options);
 }

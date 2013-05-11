@@ -293,7 +293,7 @@ sc::result Idle::react(const HostSPGame& msg) {
         host_player_name = GetHostNameFromSinglePlayerSetupData(*single_player_setup_data);
     } catch (const std::exception& e) {
         PlayerConnectionPtr& player_connection = msg.m_player_connection;
-        player_connection->SendMessage(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", true));
+        player_connection->SendMessage(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
         return discard_event();
     }
     // validate host name (was found and wasn't empty)
@@ -646,7 +646,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         } catch (const std::exception&) {
             // inform player who attempted to change the save file that there was a problem
             PlayerConnectionPtr& player_connection = msg.m_player_connection;
-            player_connection->SendMessage(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", false));
+            player_connection->SendMessage(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), false));
             // revert to old save file
             m_lobby_data->m_save_file_index = old_file_index;
         }
@@ -714,7 +714,7 @@ sc::result MPLobby::react(const StartMPGame& msg) {
                          m_player_save_game_data,               GetUniverse(),
                          Empires(),     GetSpeciesManager(),    GetCombatLogManager());
             } catch (const std::exception&) {
-                SendMessageToAllPlayers(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", true));
+                SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
                 return discard_event();
             }
 
@@ -747,14 +747,14 @@ sc::result MPLobby::react(const StartMPGame& msg) {
 
 sc::result MPLobby::react(const HostMPGame& msg) {
     Logger().errorStream() << "MPLobby::react(const HostMPGame& msg) recived HostMPGame message but is already in the MP Lobby.  Aborting connection";
-    msg.m_player_connection->SendMessage(ErrorMessage("SERVER_ALREADY_HOSTING_GAME", true));
+    msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_HOSTING_GAME"), true));
     Server().m_networking.Disconnect(msg.m_player_connection);
     return discard_event();
 }
 
 sc::result MPLobby::react(const HostSPGame& msg) {
     Logger().errorStream() << "MPLobby::react(const HostSPGame& msg) recived HostSPGame message but is already in the MP Lobby.  Aborting connection";
-    msg.m_player_connection->SendMessage(ErrorMessage("SERVER_ALREADY_HOSTING_GAME", true));
+    msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_HOSTING_GAME"), true));
     Server().m_networking.Disconnect(msg.m_player_connection);
     return discard_event();
 }
@@ -813,7 +813,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
             LoadPlayerSaveGameData(m_single_player_setup_data->m_filename,
                                    player_save_game_data);
         } catch (const std::exception& e) {
-            SendMessageToHost(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", true));
+            SendMessageToHost(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
             post_event(LoadSaveFileFailed());
             return;
         }
@@ -920,7 +920,7 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
                          m_player_save_game_data,   GetUniverse(),          Empires(),
                          GetSpeciesManager(),       GetCombatLogManager());
             } catch (const std::exception&) {
-                SendMessageToHost(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", true));
+                SendMessageToHost(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
                 return transit<Idle>();
             }
 
@@ -1141,7 +1141,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
                                << msg.m_player_connection->PlayerName()
                                << "(player id: " << message.SendingPlayer() << ") "
                                << "who is an observer and should not be sending orders. Orders being ignored.";
-        server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "ORDERS_FOR_WRONG_EMPIRE", false));
+        server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
 
     } else if (client_type == Networking::INVALID_CLIENT_TYPE) {
@@ -1150,7 +1150,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
                                << msg.m_player_connection->PlayerName()
                                << "(player id: " << message.SendingPlayer() << ") "
                                << "who has an invalid player type. The server is confused, and the orders being ignored.";
-        server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "ORDERS_FOR_WRONG_EMPIRE", false));
+        server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
 
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
@@ -1167,7 +1167,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         const Empire* empire = Empires().Lookup(server.PlayerEmpireID(player_id));
         if (!empire) {
             Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
-            server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS", false));
+            server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
             return discard_event();
         }
 
@@ -1181,7 +1181,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
                 Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
                                        << message.SendingPlayer() << ") who controls empire " << empire->EmpireID()
                                        << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
-                server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "ORDERS_FOR_WRONG_EMPIRE", false));
+                server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
                 return discard_event();
             }
         }
@@ -1279,7 +1279,7 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
         return discard_event();
         Logger().errorStream() << "WaitingForTurnEndIdle.SaveGameRequest : Player #" << message.SendingPlayer()
                                << " attempted to initiate a game save, but is not the host.  Ignoring request connection.";
-        player_connection->SendMessage(ErrorMessage("NON_HOST_SAVE_REQUEST_IGNORED", false));
+        player_connection->SendMessage(ErrorMessage(UserStringNop("NON_HOST_SAVE_REQUEST_IGNORED"), false));
         return discard_event();
     }
 
@@ -1331,7 +1331,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
         ExtractMessageData(message, received_orders, ui_data_available, *ui_data, save_state_string_available, save_state_string);
     } catch (const std::exception& e) {
         Logger().debugStream() << "WaitingForSaveData::react(const ClientSaveData& msg) received invalid save data from player " << player_connection->PlayerName();
-        player_connection->SendMessage(ErrorMessage("INVALID_CLIENT_SAVE_DATA_RECEIVED", false));
+        player_connection->SendMessage(ErrorMessage(UserStringNop("INVALID_CLIENT_SAVE_DATA_RECEIVED"), false));
 
         // TODO: use whatever portion of message data was extracted, and leave the rest as defaults.
     }
@@ -1384,7 +1384,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
                      GetUniverse(),     Empires(),      GetSpeciesManager(),
                      GetCombatLogManager());
         } catch (const std::exception&) {
-            SendMessageToAllPlayers(ErrorMessage("UNABLE_TO_WRITE_SAVE_FILE", false));
+            SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));
         }
 
         context<WaitingForTurnEnd>().m_save_filename = "";

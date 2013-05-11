@@ -366,7 +366,7 @@ void ServerApp::SelectNewHost() {
     if (new_host_id == Networking::INVALID_PLAYER_ID) {
         // couldn't find a host... abort
         Logger().debugStream() << "ServerApp::SelectNewHost : Host disconnected and couldn't find a replacement.";
-        m_networking.SendMessage(ErrorMessage("SERVER_UNABLE_TO_SELECT_HOST", false));
+        m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_UNABLE_TO_SELECT_HOST"), false));
     }
 
     // set new host ID
@@ -507,7 +507,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
     // ensure some reasonable inputs
     if (player_id_setup_data.empty()) {
         Logger().errorStream() << "ServerApp::NewGameInit passed empty player_id_setup_data.  Aborting";
-        m_networking.SendMessage(ErrorMessage("SERVER_FOUND_NO_ACTIVE_PLAYERS", true));
+        m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
         return;
     }
     // ensure number of players connected and for which data are provided are consistent
@@ -555,7 +555,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
 
     if (active_players_id_setup_data.empty()) {
         Logger().errorStream() << "ServerApp::NewGameInit found no active players!";
-        m_networking.SendMessage(ErrorMessage("SERVER_FOUND_NO_ACTIVE_PLAYERS", true));
+        m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
         return;
     }
 
@@ -879,7 +879,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     // ensure some reasonable inputs
     if (player_save_game_data.empty()) {
         Logger().errorStream() << "ServerApp::LoadGameInit passed empty player save game data.  Aborting";
-        m_networking.SendMessage(ErrorMessage("SERVER_FOUND_NO_ACTIVE_PLAYERS", true));
+        m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
         return;
     }
 
@@ -2533,7 +2533,7 @@ void ServerApp::CheckForEmpireEliminationOrVictory() {
     //        boost::shared_ptr<PlayerConnection> player_connection = *player_it;
     //        int cur_player_id = player_connection->PlayerID();
     //        if (eliminations.find(cur_player_id) == eliminations.end())
-    //            new_victors[cur_player_id].insert("ALL_ENEMIES_ELIMINATED_VICTORY");
+    //            new_victors[cur_player_id].insert(UserStringNop("ALL_ENEMIES_ELIMINATED_VICTORY"));
     //    }
     //}
 

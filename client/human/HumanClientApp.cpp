@@ -93,11 +93,11 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("autosave.single-player",    "OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER",    true,   Validator<bool>());
-        db.Add("autosave.multiplayer",      "OPTIONS_DB_AUTOSAVE_MULTIPLAYER",      false,  Validator<bool>());
-        db.Add("autosave.turns",            "OPTIONS_DB_AUTOSAVE_TURNS",            1,      RangedValidator<int>(1, 50));
-        db.Add("autosave.limit",            "OPTIONS_DB_AUTOSAVE_LIMIT",            10,     RangedValidator<int>(1, 100));
-        db.Add("UI.swap-mouse-lr",          "OPTIONS_DB_UI_MOUSE_LR_SWAP",          false);
+        db.Add("autosave.single-player",    UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER"),    true,   Validator<bool>());
+        db.Add("autosave.multiplayer",      UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER"),      false,  Validator<bool>());
+        db.Add("autosave.turns",            UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),            1,      RangedValidator<int>(1, 50));
+        db.Add("autosave.limit",            UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),            10,     RangedValidator<int>(1, 100));
+        db.Add("UI.swap-mouse-lr",          UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),          false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

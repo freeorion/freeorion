@@ -29,30 +29,30 @@ namespace {
     enum VIS_DISPLAY { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
 
     const std::string EMPTY_STRING;
-    const std::string ALL_CONDITION("CONDITION_ALL");
-    const std::string EMPIREAFFILIATION_CONDITION("CONDITION_EMPIREAFFILIATION");
-    const std::string HOMEWORLD_CONDITION("CONDITION_HOMEWORLD");
-    const std::string CAPITAL_CONDITION("CONDITION_CAPITAL");
-    const std::string MONSTER_CONDITION("CONDITION_MONSTER");
-    const std::string ARMED_CONDITION("CONDITION_ARMED");
-    const std::string STATIONARY_CONDITION("CONDITION_STATIONARY");
-    const std::string CANPRODUCESHIPS_CONDITION("CONDITION_CANPRODUCESHIPS");
-    const std::string CANCOLONIZE_CONDITION("CONDITION_CANCOLONIZE");
-    const std::string BUILDING_CONDITION("CONDITION_BUILDING");
-    const std::string HASSPECIAL_CONDITION("CONDITION_HASSPECIAL");
-    const std::string HASTAG_CONDITION("CONDITION_HASTAG");
-    const std::string SPECIES_CONDITION("CONDITION_SPECIES");
-    const std::string PRODUCEDBYEMPIRE_CONDITION("CONDITION_PRODUCEDBYEMPIRE");
-    const std::string EXPLOREDBYEMPIRE_CONDITION("CONDITION_EXPLOREDBYEMPIRE");
-    const std::string CONTAINEDBY_CONDITION("CONDITION_CONTAINEDBY");
-    const std::string INSYSTEM_CONDITION("CONDITION_INSYSTEM");
-    const std::string OBJECTID_CONDITION("CONDITION_OBJECTID");
-    const std::string CREATEDONTURN_CONDITION("CONDITION_CREATEDONTURN");
-    const std::string PLANETSIZE_CONDITION("CONDITION_PLANETSIZE");
-    const std::string PLANETTYPE_CONDITION("CONDITION_PLANETTYPE");
-    const std::string FOCUSTYPE_CONDITION("CONDITION_FOCUSTYPE");
-    const std::string STARTYPE_CONDITION("CONDITION_STARTYPE");
-    const std::string METERVALUE_CONDITION("CONDITION_METERVALUE");
+    const std::string ALL_CONDITION(UserStringNop("CONDITION_ALL"));
+    const std::string EMPIREAFFILIATION_CONDITION(UserStringNop("CONDITION_EMPIREAFFILIATION"));
+    const std::string HOMEWORLD_CONDITION(UserStringNop("CONDITION_HOMEWORLD"));
+    const std::string CAPITAL_CONDITION(UserStringNop("CONDITION_CAPITAL"));
+    const std::string MONSTER_CONDITION(UserStringNop("CONDITION_MONSTER"));
+    const std::string ARMED_CONDITION(UserStringNop("CONDITION_ARMED"));
+    const std::string STATIONARY_CONDITION(UserStringNop("CONDITION_STATIONARY"));
+    const std::string CANPRODUCESHIPS_CONDITION(UserStringNop("CONDITION_CANPRODUCESHIPS"));
+    const std::string CANCOLONIZE_CONDITION(UserStringNop("CONDITION_CANCOLONIZE"));
+    const std::string BUILDING_CONDITION(UserStringNop("CONDITION_BUILDING"));
+    const std::string HASSPECIAL_CONDITION(UserStringNop("CONDITION_HASSPECIAL"));
+    const std::string HASTAG_CONDITION(UserStringNop("CONDITION_HASTAG"));
+    const std::string SPECIES_CONDITION(UserStringNop("CONDITION_SPECIES"));
+    const std::string PRODUCEDBYEMPIRE_CONDITION(UserStringNop("CONDITION_PRODUCEDBYEMPIRE"));
+    const std::string EXPLOREDBYEMPIRE_CONDITION(UserStringNop("CONDITION_EXPLOREDBYEMPIRE"));
+    const std::string CONTAINEDBY_CONDITION(UserStringNop("CONDITION_CONTAINEDBY"));
+    const std::string INSYSTEM_CONDITION(UserStringNop("CONDITION_INSYSTEM"));
+    const std::string OBJECTID_CONDITION(UserStringNop("CONDITION_OBJECTID"));
+    const std::string CREATEDONTURN_CONDITION(UserStringNop("CONDITION_CREATEDONTURN"));
+    const std::string PLANETSIZE_CONDITION(UserStringNop("CONDITION_PLANETSIZE"));
+    const std::string PLANETTYPE_CONDITION(UserStringNop("CONDITION_PLANETTYPE"));
+    const std::string FOCUSTYPE_CONDITION(UserStringNop("CONDITION_FOCUSTYPE"));
+    const std::string STARTYPE_CONDITION(UserStringNop("CONDITION_STARTYPE"));
+    const std::string METERVALUE_CONDITION(UserStringNop("CONDITION_METERVALUE"));
 
     ValueRef::ValueRefBase<std::string>*    CopyStringValueRef(const ValueRef::ValueRefBase<std::string>* const value_ref) {
         if (const ValueRef::Constant<std::string>* constant =

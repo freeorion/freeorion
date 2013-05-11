@@ -445,7 +445,7 @@ namespace {
             client_ui->ZoomToObject(params) || client_ui->ZoomToContent(params, true);   // params came from chat, so will be localized, so should be reverse looked up to find internal name from human-readable name for zooming to content
         } else if (boost::iequals(command, "pedia")) {
             if (params.empty())
-                client_ui->ZoomToEncyclopediaEntry("ENC_INDEX");
+                client_ui->ZoomToEncyclopediaEntry(UserStringNop("ENC_INDEX"));
             else
                 client_ui->ZoomToContent(params, true);
         }

@@ -118,7 +118,7 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.fleet-selection-indicator-size", "OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE", 1.625, RangedStepValidator<double>(0.125, 0.5, 5));
+        db.Add("UI.fleet-selection-indicator-size", UserStringNop("OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE"), 1.625, RangedStepValidator<double>(0.125, 0.5, 5));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
