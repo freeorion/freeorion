@@ -529,6 +529,7 @@ enum ShipPartClass {
     PC_COLONY,              ///< transports colonists and allows ships to make new colonies
     PC_BATTLE_SPEED,        ///< affects ship speed in battle
     PC_STARLANE_SPEED,      ///< affects ship speed on starlanes
+    PC_GENERAL,             ///< special purpose parts that don't fall into another class
     NUM_SHIP_PART_CLASSES
 };
 
@@ -548,6 +549,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(PC_COLONY)
     GG_ENUM_MAP_INSERT(PC_BATTLE_SPEED)
     GG_ENUM_MAP_INSERT(PC_STARLANE_SPEED)
+    GG_ENUM_MAP_INSERT(PC_GENERAL)
     GG_ENUM_MAP_END
 }
 GG_ENUM_STREAM_IN(ShipPartClass)

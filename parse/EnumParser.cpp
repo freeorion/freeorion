@@ -234,6 +234,7 @@ namespace parse {
             |    tok.Colony_ [ _val = PC_COLONY ]
             |    tok.BattleSpeed_ [ _val = PC_BATTLE_SPEED ]
             |    tok.StarlaneSpeed_ [ _val = PC_STARLANE_SPEED ]
+            |    tok.General_ [ _val = PC_GENERAL ]
             ;
         static bool once = true;
         if (once) {

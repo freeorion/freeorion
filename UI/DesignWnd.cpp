@@ -89,6 +89,7 @@ namespace {
             case PC_STARLANE_SPEED:
                 return boost::get<float>(spstats);
                 break;
+            case PC_GENERAL:
             default:
                 return 0;
         }
@@ -282,9 +283,8 @@ PartsListBox::PartsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_previous_num_columns(-1)
 { SetStyle(GG::LIST_NOSEL); }
 
-const std::set<ShipPartClass>& PartsListBox::GetClassesShown() const {
-    return m_part_classes_shown;
-}
+const std::set<ShipPartClass>& PartsListBox::GetClassesShown() const
+{ return m_part_classes_shown; }
 
 const std::set<ShipSlotType>& PartsListBox::GetSlotTypesShown() const {
     return m_slot_types_shown;
@@ -308,7 +308,6 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             Populate();
     }
 }
-
 
 partGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) {
     const PartTypeManager& manager = GetPartTypeManager();

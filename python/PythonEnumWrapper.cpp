@@ -147,6 +147,7 @@ namespace FreeOrionPython {
             .value("colony",        PC_COLONY)
             .value("battleSpeed",   PC_BATTLE_SPEED)
             .value("starlaneSpeed", PC_STARLANE_SPEED)
+            .value("general",       PC_GENERAL)
         ;
         enum_<UnlockableItemType>("unlockableItemType")
             .value("building",      UIT_BUILDING)

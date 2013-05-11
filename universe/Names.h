@@ -112,6 +112,7 @@
     (FocusType)                                 \
     (Fuel)                                      \
     (GasGiant)                                  \
+    (General)                                   \
     (GenerateSitrepMessage)                     \
     (GiveEmpireTech)                            \
     (Good)                                      \

@@ -52,7 +52,7 @@ namespace {
 
             fighter_stats
                 =    fighter_stats_prefix(_a, _b, _c, _d, _e)
-                >    parse::label(Speed_name)              >  parse::double_ [ _f = _1 ]
+                >    parse::label(Speed_name)              >> parse::double_ [ _f = _1 ]
                 >    parse::label(Stealth_name)            >  parse::double_ [ _g = _1 ]
                 >    parse::label(Structure_name)          >  parse::double_ [ _h = _1 ]
                 >    parse::label(Detection_name)          >  parse::double_ [ _i = _1 ]
@@ -73,13 +73,14 @@ namespace {
                         >   parse::label(Structure_name) >  parse::double_ [ _g = _1 ]
                         >   parse::label(Capacity_name)  >  parse::int_ [ _val = construct<LRStats>(_b, _c, _d, _e, _f, _g, _1) ]
                         |   eps [ _val = construct<DirectFireStats>(_b, _c, _d) ]
-                        )
+                     )
                 ;
 
             start
                 =    fighter_stats [ _val = _1 ]
                 |    lr_df_stats [ _val = _1 ]
-                |    parse::label(Capacity_name) > parse::double_ [ _val = _1 ]
+                |    (parse::label(Capacity_name) >> parse::double_ [ _val = _1 ])
+                |    eps [ _val = 0.0 ]
                 ;
 
             fighter_stats_prefix.name("fighter stats");
