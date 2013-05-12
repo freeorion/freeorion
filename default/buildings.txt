@@ -1025,11 +1025,6 @@ BuildingType
         Not Contains Building "BLD_ART_PLANET"
         OwnedBy TheEmpire Source.Owner
         Planet type = [Asteroids GasGiant]
-        Enqueued type = Building
-                 name = "BLD_SOL_ORB_GEN"
-                 empire = 1
-                 low = 1
-                 high = 1
     ]
     effectsgroups = [
         EffectsGroup
