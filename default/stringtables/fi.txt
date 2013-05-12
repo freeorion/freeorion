@@ -71,10 +71,17 @@ UNKNOWN_VALUE_SYMBOL
 ERROR
 VIRHE
 
+RESET
+Uudelleen aseta
+
+TURN
+Vuoro
+
 CHAT_WHISPER
 kuiskaa
 
 # used to generate names for new fleets when they are created
+
 NEW_FLEET_NAME
 Uusi Laivasto %1%
 
@@ -89,6 +96,31 @@ Pommittaja
 
 INTERCEPTOR
 Torjuntahävittäjä
+
+DEFAULT_EMPIRE_NAME
+Terran Imperiumi
+
+DEFAULT_PLAYER_NAME
+Ihmis_pelaaja
+
+UNIVERSEOBJECT
+Yleinen objekti
+
+SYSTEM
+Järjestelmä
+
+FLEET
+Laivasto
+
+SHIP
+Alus
+
+PLANET
+Planeetta
+
+BUILDING
+Rakennus
+
 
 ###########################
 # Predefined Ship Designs #
@@ -105,7 +137,7 @@ SD_COLONY_SHIP
 Kolonisaatioalus
 
 SD_COLONY_SHIP_DESC
-Valtava aseistamaton alus, joka kykenee toimittamaan miljoonia kansalaisia uusiin siirtokuntiin.
+Valtava aseistamaton alus, joka kykenee toimittamaan miljoonia kansalaisia uusille planeetoille.
 
 SD_MARK1
 Mark I
@@ -153,9 +185,7 @@ LOADING
 Ladataan ...
 
 SERVER_WONT_START
-'''Palvelinta ei voitu käynnistää.
-
-Note for Linux: The server executable is presently expected to be in the working directory.  If freeorion was run from somewhere other than the directory in which the main freeorion binary is located, you might need to quit and restart from that directory.'''
+Palvelinta ei voitu käynnistää.
 
 SERVER_TIMEOUT
 Palvelin ei vastaa.
@@ -164,7 +194,7 @@ SERVER_LOST
 Yhteys palvelimeen katkennut.
 
 SERVER_GAME_END
-Palvelin on lähettänyt viestin: peli ohi. Hei hei.
+Palvelin on lähettänyt viestin. Peli ohi. Hei hei.
 
 PLAYER_DISCONNECTED
 Pelaajalla %1% ei ole enää yhteyttä palvelimeen.
@@ -180,6 +210,22 @@ Tuntematon Imperiumi
 
 LAST_OPPONENT_DEFEATED_VICTORY
 Viimeinenkin vastustajasi on lyöty ja olet voittanut!
+
+INVALID_CLIENT_SAVE_DATA_RECEIVED
+The server received invalid client save data.  Some may be ignored.
+
+UNABLE_TO_WRITE_CONFIG_XML
+Config.xml tiedoston kirjoituksessa tapahtui virhe. Asetuksia ei voitu tallentaa.
+
+UNABLE_TO_READ_CONFIG_XML
+Config.xml tiedostoa luettaessa tapahtui virhe. Käytetään oletusasetuksia. 
+
+UNABLE_TO_WRITE_SAVE_FILE
+Tallennuksessa tapahtui virhe.
+
+UNABLE_TO_READ_SAVE_FILE
+Tallennusta ladattaessa tapahtui virhe.
+
 
 ######################################
 # Command Line and OptionsDB Options #
@@ -221,6 +267,9 @@ Renderöi tähtikentät tähtijärjestelmien ympärille. Voi hidastaa renderöin
 OPTIONS_DB_GALAXY_MAP_SCALE_LINE
 Show scale line for universe distance on galaxy map.
 
+OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER
+Valitsee näytetäänkö tarkennuksen säätöpalkkia galaksin kartalla.
+
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Käytä optimoitua OpenGL 1.5 renderöintiä tähtijärjestelmiin galaksin kartalla. Voi aiheuttaa ongelmia vanhemmilla näytönohjaimilla.
 
@@ -228,7 +277,7 @@ OPTIONS_DB_STARLANE_THICKNESS
 Asettaa kuinka leveiksi tähtilinjat renderöidään pikseleissä.
 
 OPTIONS_DB_RESOURCE_STARLANE_COLOURING
-Toggles whether to colour starlanes with empire colours if empires can exchange resources along each starlane.
+Valitsee värjätäänkö tähtilinjat imperiumien väreillä, jos imperiumit pystyvät vaihtamaan resursseja niitä pitkin.
 
 OPTIONS_DB_UNOWNED_STARLANE_COLOUR
 Asettaa oletusvärin tähtilinjojen renderöintiin.
@@ -242,11 +291,29 @@ Asettaa kuinka leveiksi laivastojen täydennyslinjat renderöidään.
 OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING
 Asettaa pisteiden välimatkan laivastojen täydennyslinjoja renderöitäessä.
 
+OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE
+Asettaa kuinka nopeasti laivastojen täydennyslinjojen pisteet renderöidään.
+
+OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
+Valitsee näytetäänkö objektien ympärillä ympyrät, jotka kuvaavat objektien havainnointietäisyyttä galaksin kartalla.
+
+OPTIONS_DB_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
+Sets the target object stealth level at which to show detection range on the galaxy map.
+
+OPTIONS_DB_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
+Toggles whether to show the stealth threshold slider on the galaxy map.
+
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
-Pakottaa pelaajan olemaan käynnistämättä palvelinta, vaikka isännöisi peliä paikallistasolla, pelatessaan yksinpeliä jne.*
+Pakottaa pelaajan olemaan käynnistämättä palvelinta, vaikka isännöisi peliä paikallistasolla, pelatessaan yksinpeliä jne.
 
 OPTIONS_DB_EXTERNAL_SERVER_ADDRESS
 Address to connect to in external server mode. If used, this client becomes the manager of the game.
+
+OPTIONS_DB_MP_HOST_ADDRESS
+Osoite johon yhdistetään moninpeliin liityttäessä.
+
+OPTIONS_DB_MP_PLAYER_NAME
+Pelaajan nimi, jota käytetään moninpeliä isännöitäessä tai moninpeliin liityttäessä.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
@@ -260,6 +327,12 @@ Asettaa sovelluksen vaakasuuntaisen resoluution.
 OPTIONS_DB_APP_HEIGHT
 Asettaa sovelluksen pystysuuntaisen resoluution.
 
+OPTIONS_DB_APP_WIDTH_WINDOWED
+Asettaa sovelluksen leveyden ikkunassa.
+
+OPTIONS_DB_APP_HEIGHT_WINDOWED
+Asettaa sovelluksen korkeuden ikkunassa.
+
 OPTIONS_DB_COLOR_DEPTH
 Asettaa näytön värien syvyyden, bitteinä pikseliä kohti.
 
@@ -267,10 +340,10 @@ OPTIONS_DB_SHOW_FPS
 FPS näkyvissä tai poissa näkyvistä.
 
 OPTIONS_DB_LIMIT_FPS
-FPS rajoitin päällä tai poissa. FPS-raja asetetaan Maksimi FPS valinnalla.
+FPS rajoitin päällä tai poissa. FPS-raja asetetaan "Max FPS" valinnalla.
 
 OPTIONS_DB_MAX_FPS
-Asettaa FPS-rajan. Rajoitus otetaan käyttöön Rajoita FPS valinnalla.
+Asettaa FPS-rajan. Rajoitus otetaan käyttöön "Rajoita FPS" valinnalla.
 
 OPTIONS_DB_UI_SOUND_ENABLED
 Käyttöliittymän äänet päällä tai poissa.
@@ -288,7 +361,7 @@ OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK
 Toistettava äänitiedosto vuoropainiketta painettaessa.
 
 OPTIONS_DB_UI_SOUND_LIST_SELECT
-Toistettava äänitiedosto, joka kuuluu kun listalaatikko tai pudotuslista valitaan.*
+Toistettava äänitiedosto, joka kuuluu kun listalaatikko tai pudotuslista valitaan.
 
 OPTIONS_DB_UI_SOUND_ITEM_DROP
 Toistettava äänitiedosto, joka kuuluu kun jotain lisätään listalaatikkoon.
@@ -327,7 +400,7 @@ OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
 Tähtijärjestelmän sivupaneelin avaamisen yhteydessä toistettava äänitiedosto.
 
 OPTIONS_DB_UI_SOUND_FARMING_FOCUS
-Toistettava äänitiedosto, joka kuuluu viljelyspainotuksen valinnan yhteydessä.
+Toistettava äänitiedosto, joka kuuluu viljelypainotuksen valinnan yhteydessä.
 
 OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
 Toistettava äänitiedosto, joka kuuluu teollisuuspainotuksen valinnan yhteydessä.
@@ -377,29 +450,17 @@ Sets UI control color.
 OPTIONS_DB_UI_CTRL_BORDER_COLOR
 Sets UI control border color.
 
-OPTIONS_DB_UI_BUTTON_COLOR
-Asettaa käyttöliittymän painikevärin. 
+OPTIONS_DB_UI_STATE_BUTTON_COLOR
+Sets UI state button selected color. 
 
 OPTIONS_DB_UI_STATE_BUTTON_COLOR
 Sets UI state button color.
 
-OPTIONS_DB_UI_SCROLL_TAB_COLOR
-Sets UI scroll tab color.
-
-OPTIONS_DB_UI_DROPDOWNLIST_INTERIOR_COLOR
-Sets UI drop-down-list interior color.
-
 OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR
-Sets UI drop-down-list arrow color.
+Asettaa käyttöliittymän pudotuslistan nuolen värin.
 
 OPTIONS_DB_UI_EDIT_HILITE
 Sets color of hilighting in UI edit controls.
-
-OPTIONS_DB_UI_EDIT_INTERIOR
-Sets UI edit controls' interior color.
-
-OPTIONS_DB_UI_MULTIEDIT_INTERIOR
-Sets UI multi-line edit controls' interior color.
 
 OPTIONS_DB_UI_STAT_INCREASE_COLOR
 Sets the color of increased stats in the UI.
@@ -407,14 +468,8 @@ Sets the color of increased stats in the UI.
 OPTIONS_DB_UI_STAT_DECREASE_COLOR
 Sets the color of decreased stats in the UI.
 
-OPTIONS_DB_UI_SIDEPANEL_COLOR
-Asettaa sivupaneelin värin.
-
 OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR
 Sets UI outer border color.
-
-OPTIONS_DB_UI_WND_BORDER_COLOR
-Asettaa käyttöliittymän rajan värin.
 
 OPTIONS_DB_UI_WND_INNER_BORDER_COLOR
 Sets UI inner border color.
@@ -483,7 +538,7 @@ OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Sets size of system icon below which the special fixed-size tiny icons will be shown.
 
 OPTIONS_DB_UI_TOOLTIP_DELAY
-Sets UI tooltip popup delay, in ms.
+Asettaa käyttöliittymän lisätietoikkunoiden viiveen millisekunneissa.*
 
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 If true, clicks on multiple fleet buttons will open multiple fleet windows at the same time.  Otherwise, opening a fleet window will close any currently-open fleet window.
@@ -502,6 +557,9 @@ Sets size of largest-rendered rotating planets on sidepanel.
 
 OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER
 Sets size of smallest-rendered rotating planets on sidepanel.
+
+OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
+Asettaa näytetäänkö renderöidyt planeetat / asteroidit sivupaneelissa.
 
 OPTIONS_DB_GAMESETUP_STARS
 Tähtien määrä luotavassa galaksissa.
@@ -524,8 +582,14 @@ Erikoisuuksien esiintyminen luotavassa galaksissa.
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 Pelissä käyttämäsi imperiumin nimi.
 
+OPTIONS_DB_GAMESETUP_PLAYER_NAME
+Pelissä käyttämäsi nimi.
+
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
 Pelissä käyttämäsi imperiumin väri.
+
+OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
+Kotiplaneettasi laji pelin alussa.
 
 OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
 Tekoälyvastustajien määrä pelissä.
@@ -539,8 +603,8 @@ The vertical spacing to be placed between techs in the tech screen, in multiples
 OPTIONS_DB_SAVE_DIR
 The directory in which saved games are saved and from which they are loaded.  Directory names are taken to be relative to the location of the executable.
 
-OPTIONS_DB_SETTINGS_DIR
-Sets the root directory for the game resource files (settings and data files).
+OPTIONS_DB_RESOURCE_DIR
+Sets the root directory for the game resource files (game content and data files).
 
 OPTIONS_DB_LOG_LEVEL
 Sets the level at or above which log messages will be output (levels in order of decreasing verbosity: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, ALERT, FATAL, EMERG)
@@ -557,9 +621,6 @@ Jos päällä peli tallentaa itsensä automaattisesti tietyin väliajoin moninpe
 OPTIONS_DB_AUTOSAVE_TURNS
 Asettaa automaattitallennusten välillä kuluvan ajan (vuoroissa).
 
-OPTIONS_DB_AUTOSAVE_SAVES
-Asettaa säilytettävien automaattitallennusten määrän.
-
 OPTIONS_DB_MUSIC_VOLUME
 Asettaa musiikin äänenvoimakkuden (0-255).
 
@@ -575,6 +636,26 @@ Toggles lens flares on and off.
 OPTIONS_DB_COMBAT_FILLED_SELECTION
 Uses a filled-in effect, as opposed to an outline effect, on selected objects.
 
+OPTIONS_DB_QUICKSTART
+Aloittaa uuden nopean aloituksen pelin sivuuttaen päävalikon.
+
+OPTIONS_DB_AUTO_FIRST_TURN
+Painaa "Vuoro" nappia automaattisesti ensimmäisellä vuorolla. Hyödyllinen virheiden etsinnässä erityisesti nopean aloituksen kanssa käytettäessä.
+
+OPTIONS_DB_CHECKED_GL_VERSION
+Stores whether the OpenGL version of this system has been checked.  If false, several rendering options may be altered depending on the GL version, after which, this option will be set to true. 
+
+OPTIONS_DB_AUTO_EFFECT_DESC
+Valitsee käytetäänkö automaattisesti luotuja tekstejä tekniikoiden, rakennusten ja alusten osia kuvailtaessa.
+
+OPTIONS_DB_TECH_DEMO
+Kokeile 3D taistelujen tekniikkademoa.
+
+OPTIONS_DB_TEST_3D_COMBAT
+Testaa 3D taistelujen resoluutio.*
+
+OPTIONS_DB_LOAD
+Lataa tietyn yksinpeli tallennuksen.
 
 #################
 # File Dialog   #
@@ -635,7 +716,7 @@ COLOR_DLG_SATURATION
 S:
 
 COLOR_DLG_VALUE
-ARVO:
+AR:
 
 COLOR_DLG_ALPHA
 A:
@@ -701,8 +782,10 @@ Yhdistä palvelimeen
 
 LAN_GAME_LABEL
 Lan peli:
+
 INTERNET_GAME_LABEL
 Internet peli:
+
 PLAYER_NAME_LABEL
 Pelaajan nimi
 
@@ -723,16 +806,29 @@ Päivitä lista
 # Multiplayer Lobby    #
 ########################
 
-#Window title####
-
 MPLOBBY_WINDOW_TITLE
 Moninpeliasetukset
 
-#Strings
 MPLOBBY_HOST_ABORTED_GAME
 Isännöivä pelaaja on lopettanut tämän pelin.
 
-#Button names####
+MULTIPLAYER_GAME_START_CONDITIONS
+Imperiumien nimien ja värien tulee olla toisistaan poikkeavia.
+
+MULTIPLAYER_PLAYER_LIST_NAMES
+Pelaaja
+
+MULTIPLAYER_PLAYER_LIST_EMPIRES
+Imperiumi
+
+MULTIPLAYER_PLAYER_LIST_COLOURS
+Imperiumin väri
+
+MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES
+Edellinen pelaaja
+
+MULTIPLAYER_PLAYER_LIST_STARTING_SPECIES
+Aloitus laji
 
 NEW_GAME_BN
 Uusi peli
@@ -743,8 +839,6 @@ Lataa peli
 START_GAME_BN
 Aloita peli
 
-MULTIPLAYER_GAME_START_CONDITIONS
-Imperiumien nimien ja värien tulee olla toisistaan poikkeavia.
 
 
 ########################
@@ -757,14 +851,21 @@ GSETUP_WINDOW_TITLE
 Galaksin asetukset
 
 #Strings
+
 GSETUP_GRAPHICS_FILES
 Grafiikkatiedostot
+
+GSETUP_PLAYER_NAME
+Pelaajan nimi
 
 GSETUP_EMPIRE_NAME
 Imperiumin nimi
 
 GSETUP_EMPIRE_COLOR
 Imperiumin väri
+
+GSETUP_SPECIES
+Aloitus laji
 
 GSETUP_NUMBER_AIS
 Tekoälypelaajien määrä
@@ -816,9 +917,9 @@ Jonkin verran
 GSETUP_SEVERAL
 Useita
 GSETUP_MANY
-Monia
+Paljon
 GSETUP_VERY_MANY
-Erittäin monia
+Erittäin paljon
 
 GSETUP_LOW
 Matala
@@ -875,7 +976,7 @@ VISION
 Johtoajatus
 
 FREEORION_VISION
-FreeOrion, avoimen lähdekoodin peli, joka perustuu Master Of Orioneihin, on vuoropohjainen, eeppinen avaruusstrategiapeli.  FreeOrion rakentuu klassiselle 4X pohjalle, hyödyntäen kansakunnan rakentamiselementtejä sellaisista peleistä kuten esimerkiksi Europa Universalis 2, ja sisältäen monipuolisen taktisen taistelumoottorin. Samalla kun pelin modulaarinen, avoimeen lähdekoodiin perustuva suunnittelu mahdollistaa pelimoottorin ja tarinan suurimuotoisen muokkaamisen, on FreeOrionin kehittäjäryhmän tavoitteena luoda elävä ja hengittävä universumi, ”suuren kampanjan” muodossa. 
+FreeOrion, avoimen lähdekoodin peli, joka perustuu Master Of Orioneihin, on vuoropohjainen, eeppinen avaruusstrategiapeli.  FreeOrion rakentuu klassiselle 4X pohjalle, hyödyntäen kansakunnan rakentamiselementtejä peleistä kuten Europa Universalis 2, ja sisältäen monipuolisen taktisen taistelumoottorin. Samalla kun pelin modulaarinen, avoimeen lähdekoodiin perustuva suunnittelu mahdollistaa pelimoottorin ja tarinan suurimuotoisen muokkaamisen, on FreeOrionin kehittäjäryhmän tavoitteena luoda elävä ja hengittävä universumi, suuren kampanjan muodossa. 
 
 ###########################
 # Game Menu               #
@@ -952,31 +1053,31 @@ OPTIONS_VERTICAL
 Pystysuunta
 
 OPTIONS_TOOLTIP_DELAY
-Avustuslaatikoiden viive (ms)
+Lisätietoikkunoiden viive (ms)
 
 OPTIONS_VIDEO_MODE
-Näyttötila (käynnistä peli uudelleen saadaksesi muutokset voimaan)
+Kokonäyttötila (käynnistä peli uudelleen saadaksesi muutokset voimaan)
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
-Asettaa näytön resoluution ja värin syvyyden yhdellä asetuksella. Asettamalla tämän valinnan "Customille" voit säätää leveyden, pituuden ja värin syvyyden erikseen.
+Asettaa näytön resoluution ja värin syvyyden yhdellä asetuksella.
 
-OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION
-Custom
+OPTIONS_VIDEO_MODE_WINDOWED
+Näyttötila ikkunassa (käynnistä uudelleen saadaksesi muutokset voimaan).
+
+OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION
+Sets width and height of window in windowed mode.  Windowed bits per pixel uses full-screen mode setting.
 
 OPTIONS_VIDEO_SETTINGS
 Grafiikka-asetukset
 
-OPTIONS_APP_WIDTH
-Leveys
+OPTIONS_APP_WIDTH_WINDOWED
+Leveys ikkunassa
 
-OPTIONS_APP_HEIGHT
-Korkeus
-
-OPTIONS_COLOR_DEPTH
-Värin syvyys
+OPTIONS_APP_HEIGHT_WINDOWED
+Korkeus ikkunassa
 
 OPTIONS_FULLSCREEN
-Kokoruututila
+Kokonäyttötila
 
 OPTIONS_SHOW_FPS
 Näytä FPS
@@ -985,7 +1086,7 @@ OPTIONS_LIMIT_FPS
 Rajoita FPS
 
 OPTIONS_MAX_FPS
-Maksimi FPS
+Max FPS
 
 OPTIONS_CHAT
 Chat
@@ -999,8 +1100,11 @@ Chat-ikkunan piilotuksen viive
 OPTIONS_GALAXY_MAP
 Galaksin kartta
 
+OPTIONS_DESCRIPTIONS
+Sisällön kuvaukset
+
 OPTIONS_SYSTEM_ICONS
-Tähtijärjestelmä ikonit
+Järjestelmä ikonit
 
 OPTIONS_OPTIMIZED_SYSTEM_RENDERING
 Optimoitu tähtijärjestelmän renderöinti
@@ -1056,6 +1160,18 @@ Galaksin kartan tähtikenttärenderöinti
 OPTIONS_GALAXY_MAP_SCALE_LINE
 Galaxy distance scale line
 
+OPTIONS_GALAXY_MAP_ZOOM_SLIDER
+Galaxy map zoom slider
+
+OPTIONS_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
+Galaxy map detection range displayed stealth threshold
+
+OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
+Galaxy map stealth threshold slider
+
+OPTIONS_GALAXY_MAP_DETECTION_RANGE
+Detection range circles
+
 OPTIONS_STARLANES
 Tähtilinjat
 
@@ -1073,6 +1189,9 @@ Laivastojen täydennyslinjojen leveys
 
 OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING
 Laivastojen täydennyslinjojen pisteiden välit.
+
+OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE
+Fleet supply line dot rate
 
 OPTIONS_UNOWNED_STARLANE_COLOUR
 Tähtilinjojen oletusväri
@@ -1135,7 +1254,7 @@ OPTIONS_SOUND_SIDEPANEL
 Sivupaneelin avaus
 
 OPTIONS_SOUND_PLANET
-Planet click
+Planeetan valitseminen
 
 OPTIONS_SOUND_FOCUS
 Painotusäänet
@@ -1182,11 +1301,20 @@ Raja
 OPTIONS_TEXT_COLOR
 Teksti
 
-OPTIONS_EDIT_COLORS
-Muuta kontrolleja
-
 OPTIONS_HIGHLIGHT_COLOR
 Valinnan korostaminen
+
+OPTIONS_DROPLIST_ARROW_COLOR
+Pudotuslistan nuoli
+
+OPTIONS_STATE_BUTTON_COLOR
+Toggle button selected
+
+OPTIONS_STAT_INCREASE_COLOR
+Statistic increasing
+
+OPTIONS_STAT_DECREASE_COLOR
+Statistic decreasing
 
 OPTIONS_INTERIOR_COLOR
 Sisäpuoli
@@ -1204,7 +1332,7 @@ OPTIONS_PAGE_VIDEO
 Video
 
 OPTIONS_PAGE_AUDIO
-Ääni
+ÄÄni
 
 OPTIONS_PAGE_AUTOSAVE
 Automaattitallennus
@@ -1278,7 +1406,21 @@ Musiikkitiedostot
 OPTIONS_SOUND_FILE
 Äänitiedostot
 
+OPTIONS_AUTO_EFFECT_DESC
+Automaattisesti luodut vaikutus kuvaukset
 
+##################
+ 
+# CombatSetupWnd #
+ 
+##################
+
+AUTO_PLACE_SHIPS
+Sijoittele alukset automaattisesti
+
+REDO_PLACEMENTS
+Uudelleen sijoittele
+ 
 #################
 # Main Map      #
 #################
@@ -1319,24 +1461,30 @@ Järjestelmän tuotanto
 
 RESOURCE_PRODUCTION_TOOLTIP
 Järjestelmä %1%: %2%
-
 RESOURCE_ALLOCATION_TOOLTIP
 Järjestelmä %1%: %2%
 
+FOOD_PRODUCTION
+Ruoan tuotanto
+MINERALS_PRODUCTION
+Mineraalituotanto
+INDUSTRY_PRODUCTION
+Teollisuus
+RESEARCH_PRODUCTION
+Tutkimus
+TRADE_PRODUCTION
+Vaihdanta
+
 FOOD_CONSUMPTION
 Ruoankulutus
-
 MINERALS_CONSUMPTION
 Mineraalien kulutus
-
 INDUSTRY_CONSUMPTION
 Teollisuuden käyttö
-
 RESEARCH_CONSUMPTION
 Tutkimuskulutus
-
 TRADE_CONSUMPTION
-Trade consumption
+Kulutus
 
 INTERSYSTEM_EXCHANGE_TOOLTIP
 Järjestelmän sisäinen vaihdanta
@@ -1350,77 +1498,34 @@ Tuonti
 RESOURCE_EXPORT
 Vapaana vientiin
 
+RESOURCE_SELF_SUFFICIENT
+Ei vientiä eikä tuontia
+
 
 ##Planet Panel#############
 
 PLANET_PANEL
 Planeettapaneeli
-
 PL_ASTEROID_BELT
 Asteroidivyöhyke
-
 PL_UNINHABITED
 Asumaton
-
 PL_SIZE
 Koko
-
 PL_COLONIZE
-Kolonisoi
-
-
-##Population Panel#########
-
-PP_POPULATION
-Väestö
-
-PP_HEALTH
-Terveys
+Kolonisoi (%1% / %2%)
+PL_SELECT_COLONY_SHIP_INSTRUCTION
+Valitse kolonisaatioalus kolonisoidaksesi.
+PL_TYPE_SIZE
+%1% %2%
+PL_TYPE_SIZE_ENV
+%1% %2% (%3%)
 
 
 ## Resources Panel ##########
 
-RP_PRIMARY_FOCUS_TOOLTIP
-Ensisijainen painotus : %1%
-
-RP_SECONDARY_FOCUS_TOOLTIP
-Toissijainen painotus: %1%
-
-RP_FOOD
-Ruoantuotanto
-
-RP_MINERALS
-Mineraalien tuotanto
-
-RP_INDUSTRY
-Teollisuuskapasiteetti
-
-RP_RESEARCH
-Tutkimuskapasiteetti
-
-RP_TRADE
-Vaihdannan aste
-
-RP_CONSTRUCTION
-Rakennus infrastruktuuri
-
-
-## Military Panel ##########
-
-MP_SUPPLY
-Laivaston täydennys
-
-MP_SHIELD
-Planeetan suojakenttä
-
-MP_DEFENSE
-Planeettapuolustus
-
-MP_DETECTION
-Havaitsemiskyky
-
-MP_STEALTH
-Häivetaso
+RP_FOCUS_TOOLTIP
+Painotus: %1%
 
 
 ## Buildings Panel##########
@@ -1435,23 +1540,28 @@ BP_COMPLETE_BUILDING_TOOLTIP
 
 %2%'''
 
+ORDER_BUIDLING_SCRAP
+Pura rakennus
+
+ORDER_CANCEL_BUIDLING_SCRAP
+Peruuta rakennuksen purku
 
 ## General Tooltips#########
 
-TT_CURRENT
-Nykyinen
+TT_THIS_TURN
+Tämän vuoron
 
-TT_NEXT
+TT_NEXT_TURN
 Seuraavan vuoron
 
 TT_CHANGE
 Muutos
 
-TT_METER
-Mittari: %1% / %2%
+TT_BREAKDOWN_SUMMARY
+%1%: %2% 
 
-TT_BASIC_FOCUS_AND_UNIVERSE
-Peruspainotus ja maailmankaikkeus
+TT_INHERENT
+Inherent
 
 TT_TECH
 %1% Tekniikka <i>%2%</i>
@@ -1468,6 +1578,9 @@ Alus <i>%1%</i> Osa <i>%2%</i>
 TT_SPECIAL
 Erikoisuus <i>%1%</i>
 
+TT_SPECIES
+Laji <i>%1%</i>
+ 
 TT_UNKNOWN
 Tuntematon
 
@@ -1476,6 +1589,9 @@ TT_RESOURCE_PRODUCTION
 
 TT_RESOURCE_ALLOCATION
 %1% kuluttaa %2%
+
+TT_SPECIES_POPULATION
+%1% [[METER_POPULATION]]
 
 ## Misc. Sidepanel##########
 
@@ -1486,22 +1602,17 @@ SP_RENAME_PLANET
 Uudelleen nimeä planeetta
 
 SP_ENTER_NEW_PLANET_NAME
-Syötä planeetan uusi nimi
-
-SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
-'''Kaikille kolonisaatioaluksille tässä järjestelmässä on annettu käsky lähteä.
-
-Käytä yhtä lähtevistä kolonisaatioaluksista?'''
+Syötä uusi nimi
 
 #################
 # Fleet Window  #
 #################
 
 FW_FLEET_HOLDING_AT
-Odottaa %1% tähtijärjestelmässä
+Odottaa %1% järjestelmässä
 
 FW_FLEET_MOVING_TO
-Kohteena %1%, ASA %2% (%3%)
+Siirtyy %1% järjestelmään
 
 FW_FLEET_ETA_NEVER
 Ei koskaan
@@ -1516,14 +1627,17 @@ FW_SHIP_CLASS
 Alusluokka
 
 FW_UNKNOWN_DESIGN_NAME
-Tuntematon 
+Tuntematon tyyppi
+
+FW_SPECIES_SHIP_DESIGN_LABEL
+(%2%) %1%
 
 # the name of the new fleet icon in the fleet listbox
 FW_NEW_FLEET_LABEL
 <i>Uusi laivasto</i>
 
 FW_EMPIRE_FLEETS_AT_SYSTEM
-%1% Laivastoja %2% tähtijärjestelmässä 
+%1% Laivastoja %2% järjestelmässä 
 
 FW_EMPIRE_FLEETS
 %1% laivastot
@@ -1551,11 +1665,26 @@ Vieraslaivasto
 FW_FOREIGN_SHIP
 Vierasalus
 
-FW_FUEL
-Polttoaine
+SHIP_SPEED_STAT_TITLE
+Nopeus
+
+SHIP_SPEED_STAT_MAIN
+Suurin mahdollinen kuljettava matka yhden vuoron aikana.
 
 FW_FLEET_FUEL_SUMMARY
-'''Laivaston polttoaine - Yhtä suuri kuin laivaston alusten minimi polttoainemäärä.'''
+Laivaston polttoaine -  Yhtä suuri kuin laivaston alusten pienin polttoainemäärä.
+
+FW_FLEET_SPEED_SUMMARY
+Laivaston nopeus - Yhtä suuri kuin laivaston hitaimman aluksen nopeus.
+
+FW_SPLIT_FLEET
+Jaa laivasto
+
+ORDER_SHIP_SCRAP
+Pura alus
+
+ORDER_CANCEL_SHIP_SCRAP
+Peruuta aluksen purkaminen
 
 ###############
 # TechTreeWnd #
@@ -1571,14 +1700,13 @@ TECH_TOTAL_COST_STR
 %2% Vuoroa @ %1% TP / Vuoro
 
 TECH_TURN_COST_STR
-%2% Vuoroa @ %1% TP / Vuoro
++%1% RP
 
 TECH_TURNS_LEFT_STR
 %1% Vuoroa
 
 TECH_TURNS_LEFT_NEVER
 Ei koskaan
-
 
 TECH_WND_TECH_COMPLETED
 Valmis
@@ -1683,7 +1811,7 @@ PRODUCTION_TURNS_LEFT_STR
 %1% Vuoroa jälj.
 
 PRODUCTION_TURNS_LEFT_NEVER
-Ei ikinä
+Ei koskaan
 
 PRODUCTION_DETAIL_NUMBER_TO_BUILD
 Määrä
@@ -1709,7 +1837,17 @@ PRODUCTION_INFO_PP
 TUP
 
 PRODUCTION_QUEUE_MULTIPLES
-%1%x 
+%1%x
+
+PRODUCTION_QUEUE_EMPTY
+'''Imperiumin tuotantojono on tyhjä.
+
+Lisää projekteja jonoon valitsemalla ensin planeetta sivupaneelista ja tämän jälkeen tuplaklikkaamalla haluttua projektia.
+
+Huomaa kuitenkin että aluksia voi rakentaa ainoastaan planeetoilta, joilla on alustelakka.'''
+
+PRODUCTION_QUEUE_ITEM_LOCATION
+%1%
 
 
 ###############
@@ -1761,6 +1899,8 @@ Vahvista uusi suunnitelma
 DESIGN_WND_CLEAR
 Tyhjennä osat
 
+DESIGN_DELETE
+Poista suunitelma
 
 ####################
 #   Encyclopedia   #
@@ -1782,8 +1922,32 @@ Erikoisuus
 ENC_BUILDING_TYPE
 Rakennuksen tyyppi
 
+ENC_SPECIES
+Laji
+
 ENC_SHIP_DESIGN
 Alussuunnitelma
+
+ENC_INCOMPETE_SHIP_DESIGN
+Keskeneräinen alussuunnitelma
+
+ENC_EMPIRE
+Imperiumi
+
+ENC_SHIP
+Alus
+
+ENC_FLEET
+Laivasto
+
+ENC_PLANET
+Planeetta
+
+ENC_BUILDING
+Rakennus
+
+END_SYSTEM
+Järjestelmä
 
 # type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
 # for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
@@ -1817,9 +1981,19 @@ ENC_EFFECTS_STR
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
 
-Hyökkäys: %2%
-Puolustus: %3%
-Nopeus: %4%'''
+Suoratuliosat: %2%
+Ohjusosat: %3%
+Hävittäjähangaarit: %4%
+Lähipuolustusosat: %5%
+Runko: %6%
+Suojat: %7%
+Havainnointi: %8%
+Taistelunopeus: %9%
+Tähtilinjanopeus: %10%
+Polttoainekapasiteetti: %11%
+Kolonisaatiokapasiteetti: %12%
+Häivetaso: %13%
+'''
 
 ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
 '''
@@ -1893,7 +2067,7 @@ TURN_PROGRESS_PHASE_WAITING
 Odotetaan pelaajien lopettavan vuoronsa ...
 
 TURN_PROGRESS_PHASE_ORDERS
-Toteutetaan käskyjä ...
+Toteutetaan käskyjä...
 
 TURN_PROGRESS_PHASE_DOWNLOADING
 Ladataan uutta pelitilaa ...
@@ -1913,8 +2087,8 @@ Tilanneraportti
 # Sit Rep Entries  #
 ####################
 
-SITREP_BASE_BUILT
-%planet% on saanut valmiiksi puolustustukikohdan.
+SITREP_ERROR
+Tuntematon tapahtuma.
 
 SITREP_SHIP_BUILT
 %ship%, uusi alus,on saatu valmiiksi %system% tähtijärjestelmässä.
@@ -1925,39 +2099,53 @@ SITREP_BUILDING_BUILT
 SITREP_TECH_RESEARCHED
 %tech% on tutkittu.
 
-SITREP_COMBAT_SYSTEM_WON
-%system% tähtijärjestelmässä käytiin taistelu. Me voitimme!
+SITREP_COMBAT_SYSTEM
+%system% tähtijärjestelmässä käytiin taistelu.
 
-SITREP_COMBAT_SYSTEM_LOST
-%system% tähtijärjestelmässä käytiin taistelu. Me hävisimme!
-
-SITREP_COMBAT_SYSTEM_NO_VICTOR
-%system% tähtijärjestelmässä käytiin taistelu, joka päättyi ratkaisemattomana.
+SITREP_PLANET_CAPTURED
+%empire% valloitti %planet% planeetan.
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
-%planet% koko väestö on nääntynyt nälkään. Planeetta on menetetty!
+%planet% planeetan väestö on kuollut nälkään.  
 
 SITREP_PLANET_COLONIZED
-%planet% on kolonisoitu %system% tähtijärjestelmässä.
+%planet% on kolonisoitu.
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
-%fleet% on saapunut %system% tähtijärjestelmään ja odottaa lisäohjeita.
+%fleet% on saapunut %system% tähtijärjestelmään.
 
 SITREP_EMPIRE_ELIMINATED
 %empire% imperiumi on tuhottu.
 
 SITREP_VICTORY
-%1%
+%empire% imperiumi %text%
+
 
 ####################
 # Victory / Defeat #
 ####################
 
 TECH_VICTORY
-%1% imperiumi on saavuttanut teknologisen voiton. 
+on saavuttanut teknologisen voiton. 
 
 ALL_ENEMIES_ELIMINATED_VICTORY
-%1% imperiumi on ainoana enää jäljellä ja on näin ollen voittanut pelin. 
+on saavuttanut voiton ainoana jäljellä olevana imperiumina.
+
+####################
+# Species          #
+####################
+
+SP_HUMAN
+Ihmiset
+
+SP_HUMAN_DESC
+Normi.
+
+SP_GYISACHE
+Gyisache
+
+SP_GYISACHE_DESC
+Pelkuri- ja lammasmaisia kasvissyöjiä.
 
 
 ####################
@@ -2081,7 +2269,7 @@ tundra
 PT_DESERT
 aavikko
 PT_TERRAN
-Maankaltainen
+maankaltainen
 PT_OCEAN
 meri
 PT_ASTEROIDS
@@ -2126,8 +2314,9 @@ hyvä
 
 # FocusTypes
 
-FOCUS_UNKNOWN
-tuntematon
+
+INVALID_FOCUS_TYPE
+invalid focus type
 FOCUS_BALANCED
 tasapainotettu
 FOCUS_FARMING
@@ -2141,37 +2330,88 @@ tutkimus
 FOCUS_TRADE
 vaihdanta
   
-
 # MeterTypes
 
+INVALID_METER_TYPE
+Invalid Meter Type
+METER_TARGET_POPULATION
+Tavoite väestö
+METER_TARGET_HEALTH
+Tavoite terveys
+METER_TARGET_FARMING
+Tavoite viljelystuotanto
+METER_TARGET_INDUSTRY
+Tavoite teollisuus
+METER_TARGET_RESEARCH
+Tavoite tutkimus
+METER_TARGET_TRADE
+Tavoite vaihdanta
+METER_TARGET_MINING
+Tavoite kaivosteollisuus
+METER_TARGET_CONSTRUCTION
+Tavoite rakentaminen
+METER_MAX_FUEL
+Max Polttoaine
+METER_MAX_SHIELD
+Max Suojat
+METER_MAX_STRUCTURE
+Max Runko
+METER_MAX_DEFENSE
+Max Puolustus
 METER_POPULATION
-väestö
-METER_FARMING
-viljelys
-METER_INDUSTRY
-teollisuus
-METER_RESEARCH
-tutkimus
-METER_TRADE
-vaihdanta
-METER_MINING
-kaivosteollisuus
-METER_CONSTRUCTION
-rakentaminen
+Väestö
 METER_HEALTH
-terveys
+Terveys
+METER_FARMING
+Viljelys
+METER_INDUSTRY
+Teollisuus
+METER_RESEARCH
+Tutkimus
+METER_TRADE
+Vaihdanta
+METER_MINING
+Kaivosteollisuus
+METER_CONSTRUCTION
+Rakentaminen
 METER_FUEL
-polttoaine
-METER_SUPPLY
-täydennys
-METER_STEALTH
-häive
-METER_DETECTION
-havaitseminen
+Polttoaine
 METER_SHIELD
-suojakenttä
+Suojat
+METER_STRUCTURE
+Runko
 METER_DEFENSE
-puolustus
+Puolustus
+METER_FOOD_CONSUMPTION
+Ruoan kulutus
+METER_SUPPLY
+Täydennys
+METER_STEALTH
+Häivetaso
+METER_DETECTION
+Havaitseminen
+METER_BATTLE_SPEED
+Taistelunopeus
+METER_STARLANE_SPEED
+Tähtilinjanopeus
+METER_DAMAGE
+Vahinko
+METER_ROF
+Tulinopeus
+METER_RANGE
+Kantama
+METER_SPEED
+Nopeus
+METER_CAPACITY
+Kapasiteetti
+METER_ANTI_SHIP_DAMAGE
+Vahinko aluksia vastaan
+METER_ANTI_FIGHTER_DAMAGE
+Vahinko hävittäjiä vastaan
+METER_LAUNCH_RATE
+Laukaisutahti
+METER_FIGHTER_WEAPON_RANGE
+Hävittäjän aseiden kantama
 
 
 # EmpireAffiliationTypes
@@ -2186,13 +2426,16 @@ liittolainen
 
 # UnlockableItemTypes
 
+INVALID_UNLOCKABLE_ITEM_TYPE
+Invalid Unlockable Item Type
 UIT_BUILDING
 Rakennus
 UIT_SHIP_PART
 Aluksen osa
 UIT_SHIP_HULL
 Aluksen runko
-
+UIT_TECH
+Teknologia
 
 # TechTypes
 
@@ -2212,18 +2455,7 @@ BT_BUILDING
 rakennus
 BT_SHIP
 alus
-BT_ORBITAL
-kiertolainen
 
-
-# StockpileTypes
-
-ST_FOOD
-ruoka
-ST_MINERAL
-mineraalit
-ST_TRADE
-vaihdanta
 
 
 # Ship Slot Types
@@ -2256,6 +2488,10 @@ PC_FUEL
 Polttoaine
 PC_COLONY
 Kolonisaatio
+PC_BATTLE_SPEED
+Taistelunopeus
+PC_STARLANE_SPEED
+Tähtilinjanopeus
 
 
 ################################################
@@ -2297,113 +2533,100 @@ ensisijainen painotus
 DESC_VAR_SECONDARYFOCUS
 toissijainen painotus
 
-DESC_VAR_CURRENTFARMING
-nykyinen viljelytuotanto
-
-DESC_VAR_MAXFARMING
-maks. viljelytuotanto
-
-DESC_VAR_CURRENTINDUSTRY
-nykyinen teollinentuotanto
-
-DESC_VAR_MAXINDUSTRY
-maks. teollinentuotanto
-
-DESC_VAR_CURRENTRESEARCH
-nykyinen tutkimus
-
-DESC_VAR_MAXRESEARCH
-maks. tutkimus
-
-DESC_VAR_CURRENTTRADE
-nykyinen vaihdanta
-
-DESC_VAR_MAXTRADE
-maks. vaihdanta
-
-DESC_VAR_CURRENTMINING
-nykyinen kaivostuotanto
-
-DESC_VAR_MAXMINING
-maks. kaivostuotanto
-
-DESC_VAR_CURRENTCONSTRUCTION
-nykyinen rakentaminen
-
-DESC_VAR_MAXCONSTRUCTION
-maks. rakentaminen
-
-DESC_VAR_CURRENTHEALTH
-nykyinen terveys
-
-DESC_VAR_MAXHEALTH
-maks. terveys
-
-DESC_VAR_CURRENTPOPULATION
-nykyinen väestömäärä
-
-DESC_VAR_MAXPOPULATION
-maks. väestömäärä
-
-DESC_VAR_CURRENTFUEL
-nykyinen polttoainemäärä
-
+DESC_VAR_TARGETPOPULATION
+[[METER_TARGET_POPULATION]]
+DESC_VAR_TARGETHEALTH
+[[METER_TARGET_HEALTH]]
+DESC_VAR_TARGETFARMING
+[[METER_TARGET_FARMING]]
+DESC_VAR_TARGETINDUSTRY
+[[METER_TARGET_INDUSTRY]]
+DESC_VAR_TARGETRESEARCH
+[[METER_TARGET_RESEARCH]]
+DESC_VAR_TARGETTRADE
+[[METER_TARGET_TRADE]]
+DESC_VAR_TARGETMINING
+[[METER_TARGET_MINING]]
+DESC_VAR_TARGETCONSTRUCTION
+[[METER_TARGET_CONSTRUCTION]]
 DESC_VAR_MAXFUEL
-maks. polttoainemäärä
-
-DESC_VAR_CURRENTSUPPLY
-nykyinen täydennys
-
-DESC_VAR_MAXSUPPLY
-maks. täydennys
-
-DESC_VAR_CURRENTSTEALTH
-nykyinen häivetaso
-
-DESC_VAR_MAXSTEALTH
-maks. häivetaso
-
-DESC_VAR_CURRENTDETECTION
-nykyinen havainointi
-
-DESC_VAR_MAXDETECTION
-maks. havainnointi
-
-DESC_VAR_CURRENTSHIELD
-nykyinen suojakentän taso
-
+[[METER_MAX_FUEL]]
 DESC_VAR_MAXSHIELD
-maks. suojakentän taso
-
-DESC_VAR_CURRENTDEFENSE
-nykyinen puolustus
-
+[[METER_MAX_SHIELD]]
+DESC_VAR_MAXSTRUCTURE
+[[METER_MAX_STRUCTURE]]
 DESC_VAR_MAXDEFENSE
-maks. puolustus
+[[METER_MAX_DEFENSE]]
+DESC_VAR_POPULATION
+[[METER_POPULATION]]
+DESC_VAR_HEALTH
+[[METER_HEALTH]]
+DESC_VAR_FARMING
+[[METER_FARMING]]
+DESC_VAR_INDUSTRY
+[[METER_INDUSTRY]]
+DESC_VAR_RESEARCH
+[[METER_RESEARCH]]
+DESC_VAR_TRADE
+[[METER_TRADE]]
+DESC_VAR_MINING
+[[METER_MINING]]
+DESC_VAR_CONSTRUCTION
+[[METER_CONSTRUCTION]]
+DESC_VAR_FUEL
+[[METER_FUEL]]
+DESC_VAR_SHIELD
+[[METER_SHIELD]]
+DESC_VAR_STRUCTURE
+[[METER_STRUCTURE]]
+DESC_VAR_DEFENSE
+[[METER_DEFENSE]]
+DESC_VAR_SUPPLY
+[[METER_SUPPLY]]
+DESC_VAR_STEALTH
+[[METER_STEALTH]]
+DESC_VAR_DETECTION
+[[METER_DETECTION]]
+DESC_VAR_BATTLESPEED
+[[METER_BATTLE_SPEED]]
+DESC_VAR_STARLANESPEED
+[[METER_STARLANE_SPEED]]
+DESC_VAR_DAMAGE
+[[METER_DAMAGE]]
+DESC_VAR_ROF
+[[METER_ROF]]
+DESC_VAR_RANGE
+[[METER_RANGE]]
+DESC_VAR_SPEED
+[[METER_SPEED]]
+DESC_VAR_CAPACITY
+[[METER_CAPACITY]]
+DESC_VAR_ANTISHIPDAMAGE
+[[METER_ANTI_SHIP_DAMAGE]]
+DESC_VAR_ANTIFIGHTERDAMAGE
+[[METER_ANTI_FIGHTER_DAMAGE]]
+DESC_VAR_LAUNCHRATE
+[[METER_LAUNCH_RATE]]
+DESC_VAR_FIGHTERWEAPONRANGE
+[[METER_FIGHTER_WEAPON_RANGE]]
 
 DESC_VAR_TRADESTOCKPILE
 vaihdannan synnyttämä varanto
-
 DESC_VAR_MINERALSTOCKPILE
 mineraalivaranto
-
 DESC_VAR_FOODSTOCKPILE
 ruokavaranto
 
-DESC_VAR_TRADEPRODUCTION
+DESC_VAR_TRADEOUTPUT
 vaihdanta
-
-DESC_VAR_FOODPRODUCTION
-ruoantuotanto
-
-DESC_VAR_MINERALPRODUCTION
+DESC_VAR_FOODOUTPUT
+ruoan tuotanto
+DESC_VAR_MINERALOUTPUT
 mineraalituotanto
-
-DESC_VAR_INDUSTRYPRODUCTION
-teollisuustuotanto
-
-DESC_VAR_RESEARCHPRODUCTION
-tutkimus
+DESC_VAR_INDUSTRYOUTPUT
+Teollisuus
+DESC_VAR_RESEARCHOUTPUT
+Tutkimus
 
 DESC_VAR_OWNER
 omistaja
@@ -2451,7 +2674,7 @@ DESC_EFFECTS_GROUP_SCOPE
 Kohteet joihin vaikuttaa: Mikä tahansa kohde%1%
 
 DESC_EFFECTS_GROUP_SELF_SCOPE
-Kohteet joihin vaikuttaa: Vain lähdekohteet
+Kohteet joihin vaikuttaa: Vain lähde
 
 DESC_EFFECTS_GROUP_ACTIVATION
 Efekti on aktiivinen, jos lähde on kohde%1%
@@ -2482,17 +2705,11 @@ DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
 
 # SetMeter
 
-DESC_SIMPLE_SET_METER_MAX
-Maks. %1% %2%%3%
-
 DESC_SIMPLE_SET_METER_CURRENT
-Nykyinen %1% %2%%3%
-
-DESC_COMPLEX_SET_METER_MAX
-Asettaa maks. %1% - %2%
+%1% %2%%3%
 
 DESC_COMPLEX_SET_METER_CURRENT
-Asettaa nykyinen %1% - %2%
+Set %1% to %2%
 
 
 # others
@@ -2508,6 +2725,9 @@ Muutta planeetan %1%
 
 DESC_SET_PLANET_SIZE
 Muuttaa planeetan koon %1%
+
+DESC_SET_SPECIES
+Vaihtaa kohteen lajin %1%:ksi
 
 DESC_ADD_OWNER
 Lisää kohteen %1% imperiumin omistukseen
@@ -2556,6 +2776,8 @@ Luo uuden planeetan tyyppiä %1% ja kokoa %2%
 DESC_CREATE_BUILDING
 Luo uuden %1% rakennuksen
 
+DESC_CREATE_SHIP
+Luo uuden mallia %1% olevan aluksen, jonka omistaa %2% imperiumi
 
 # Conditions
 
@@ -2646,23 +2868,35 @@ DESC_PLANET_ENVIRONMENT
 DESC_PLANET_ENVIRONMENT_NOT
  joka ei ole %1% planeetta
 
-DESC_FOCUS_TYPE_PRIMARY
- jolla on ensisijaisena painotuksena %1%
+DESC_SPECIES
+jolla on %1% lajia
 
-DESC_FOCUS_TYPE_PRIMARY_NOT
- jolla ei ole ensisijaisena painotuksena %1%
+DESC_SPECIES_NOT
+jolla ei ole %1% lajia
 
-DESC_FOCUS_TYPE_SECONDARY
- jolla on toissijaisena painotuksena %1%
+DESC_FOCUS_TYPE
+jolla on fokus %1%
 
-DESC_FOCUS_TYPE_SECONDARY_NOT
- jolla ei ole toissijaisena painotuksena %1%
+DESC_FOCUS_TYPE_NOT
+jolla ei ole fokus %1%
 
 DESC_STAR_TYPE
- joka on järjestelmässä, jossa %1% tähti
+ joka on järjestelmässä, jossa on %1% tähti
 
 DESC_STAR_TYPE_NOT
- joka ei ole järjestelmässä, jossa %1% tähti
+ joka ei ole järjestelmässä, jossa on %1% tähti
+
+DESC_DESIGN_HAS_HULL
+jolla on runko %1%
+
+DESC_DESIGN_HAS_HULL_NOT
+jolla ei ole runkoa %1%
+
+DESC_DESIGN_HAS_PART
+that contains between %1% and %2% of the %3% part
+
+DESC_DESIGN_HAS_PART_NOT
+that does not contain between %1% and %2% of the %3% part
 
 DESC_CHANCE_PERCENTAGE
  %1%%% mahdollisuus
@@ -2695,7 +2929,7 @@ DESC_EMPIRE_STOCKPILE_VALUE_NOT
  joka ei kuuluu imperiumiin jolla on %1% varanto välillä %2% ja %3%
 
 DESC_VISIBLE_TO_SINGLE_EMPIRE
- joka on näkyvissä %1% imperiumille
+ joka on nÃäkyvissä %1% imperiumille
 
 DESC_VISIBLE_TO_SINGLE_EMPIRE_NOT
  joka ei ole näkyvissä %1% imperiumille
@@ -2718,6 +2952,24 @@ DESC_WITHIN_STARLANE_JUMPS
 DESC_WITHIN_STARLANE_JUMPS_NOT
  joka ei ole %1% tähtilinjahypyn etäisyydellä mistä tahansa kohteesta%2%
 
+DESC_EXPLORED_BY_SINGLE_EMPIRE
+jonka on tutkinut %1% imperiumi
+
+DESC_EXPLORED_BY_SINGLE_EMPIRE_NOT
+jota ei ole tutkinut %1% imperiumi
+
+DESC_EXPLORED_BY_EMPIRES
+jonka on tutkinut yksi %1% imperiumeista
+
+DESC_EXPLORED_BY_EMPIRES_NOT
+jota ei ole tutkinut yksikään %1% imperiumeista
+
+DESC_STATIONARY
+joka on paikallaan
+
+DESC_STATIONARY_NOT
+joka on liikkeessä
+
 DESC_AND_BETWEEN_OPERANDS
  ja
 
@@ -2725,10 +2977,10 @@ DESC_OR_BETWEEN_OPERANDS
  tai
 
 DESC_TURN
- kun tämän hetkinen vuoro on välillä %1% ja %2%
+ kun tämänhetkinen vuoro on välillä %1% ja %2%
 
 DESC_TURN_NOT
- kun tämän hetkinen vuoro ei ole välillä %1% ja %2%
+ kun tämänhetkinen vuoro ei ole välillä %1% ja %2%
 
 DESC_NUMBER_OF
  joka on yksi %1% kohteesta%2%
@@ -2753,6 +3005,8 @@ DESC_NUMBER
 
 DESC_NUMBER_NOT
  if there are not between %1% and %2% objects%3%
+
+
 
 ###################
 # Tech Categories #
