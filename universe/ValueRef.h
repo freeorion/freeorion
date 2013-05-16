@@ -2,19 +2,12 @@
 #ifndef _ValueRef_h_
 #define _ValueRef_h_
 
-#include "Enums.h"
 #include "Condition.h"
 #include "Names.h"
-#include "ValueRefFwd.h"
 #include "../util/MultiplayerCommon.h"
 
-#include <GG/adobe/name.hpp>
-
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/format.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/type_traits/is_enum.hpp>
 
 #include <string>
 #include <vector>

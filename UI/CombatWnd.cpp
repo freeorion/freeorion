@@ -20,6 +20,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
 #include "../util/Directories.h"
+#include "../client/human/HumanClientApp.h"
 
 #include "OptionsWnd.h" // TODO: Remove this later, once the InGameMenu is in use for F10 presses instead.
 

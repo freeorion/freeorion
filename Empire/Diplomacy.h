@@ -4,7 +4,6 @@
 
 #include <string>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
 
 class DiplomaticMessage {
 public:

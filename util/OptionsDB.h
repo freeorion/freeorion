@@ -2,15 +2,12 @@
 #ifndef _OptionsDB_h_
 #define _OptionsDB_h_
 
-#include <boost/serialization/shared_ptr.hpp>
-
 #include "OptionValidators.h"
 #include "XMLDoc.h"
 
 #include <boost/any.hpp>
 #include <boost/signal.hpp>
 
-#include <iosfwd>
 #include <map>
 
 

@@ -5,17 +5,11 @@
 #include "../ClientFSMEvents.h"
 #include "../../util/AppInterface.h"
 
-#include <boost/mpl/list.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/statechart/custom_reaction.hpp>
 #include <boost/statechart/deferral.hpp>
-#include <boost/statechart/in_state_reaction.hpp>
 #include <boost/statechart/simple_state.hpp>
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/state_machine.hpp>
-
-#include <set>
-#include <vector>
 
 
 /** This function returns true iff the FSM's state instrumentation should be

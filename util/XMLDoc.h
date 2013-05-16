@@ -40,7 +40,6 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include <iosfwd>
 #include <map>
 #include <string>
 #include <vector>

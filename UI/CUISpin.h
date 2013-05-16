@@ -4,7 +4,6 @@
 
 #include "CUIControls.h"
 #include "Sound.h"
-#include "../client/human/HumanClientApp.h"
 #include "../util/OptionsDB.h"
 
 #include <GG/Spin.h>

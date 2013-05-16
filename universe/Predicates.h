@@ -11,15 +11,10 @@ class System;
 class Field;
 
 #include <boost/mpl/assert.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/add_const.hpp>
 #include <boost/type_traits/add_pointer.hpp>
-#include <boost/type_traits/is_const.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_pointer.hpp>
-
-#include <string>
 
 extern const int ALL_EMPIRES;
 

@@ -2,8 +2,10 @@
 #include "Int.h"
 #include "Label.h"
 #include "ParseImpl.h"
+#include "ConditionParserImpl.h"
 #include "../universe/Special.h"
 
+#include <boost/spirit/home/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

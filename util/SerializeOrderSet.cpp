@@ -1,5 +1,6 @@
 #include "Serialize.h"
 
+#include "../util/Order.h"
 #include "../util/OrderSet.h"
 
 #include "../combat/CombatOrder.h"

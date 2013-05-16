@@ -2,16 +2,15 @@
 #ifndef _Order_h_
 #define _Order_h_
 
-#ifndef _Enums_h_
 #include "../universe/Enums.h"
-#endif
-
-#include "../universe/ShipDesign.h"
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
+#include <string>
 #include <vector>
+
+class ShipDesign;
 
 
 /////////////////////////////////////////////////////

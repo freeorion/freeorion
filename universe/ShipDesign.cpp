@@ -9,9 +9,10 @@
 #include "../Empire/EmpireManager.h"
 #include "Condition.h"
 #include "Effect.h"
-#include "ValueRef.h"
 #include "Planet.h"
+#include "Predicates.h"
 #include "Species.h"
+#include "ValueRef.h"
 
 #include <boost/filesystem/fstream.hpp>
 

@@ -7,6 +7,7 @@
 #include "../universe/Tech.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/AppInterface.h"
+#include "../util/Order.h"
 #include "../UI/TechTreeWnd.h"
 #include "../client/human/HumanClientApp.h"
 

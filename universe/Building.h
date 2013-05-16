@@ -3,13 +3,13 @@
 #define _Building_h_
 
 #include "UniverseObject.h"
+#include "ObjectMap.h"
 #include "ValueRefFwd.h"
 
 class BuildingType;
 namespace Effect {
     class EffectsGroup;
 }
-class Planet;
 namespace Condition {
     struct ConditionBase;
 }

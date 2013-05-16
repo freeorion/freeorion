@@ -5,9 +5,7 @@
 #include "PathingEngineFwd.h"
 #include "Vec3.h"
 
-#include <boost/cast.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
 
 #include <vector>
 

@@ -2,8 +2,6 @@
 #ifndef _CombatShip_h_
 #define _CombatShip_h_
 
-#include "PathingEngineFwd.h"
-
 #include "CombatObject.h"
 #include "CombatOrder.h"
 #include "../universe/Ship.h"

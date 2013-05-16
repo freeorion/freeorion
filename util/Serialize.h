@@ -17,7 +17,6 @@
 #  define FREEORION_OARCHIVE_TYPE boost::archive::xml_oarchive
 #endif
 
-#include <vector>
 #include <map>
 
 class OrderSet;

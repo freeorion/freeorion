@@ -4,7 +4,6 @@
 
 #include "../network/Message.h"
 
-#include <boost/preprocessor/seq/elem.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/statechart/event.hpp>
 

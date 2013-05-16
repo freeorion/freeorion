@@ -11,6 +11,7 @@
 #include "../universe/Effect.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
+#include "../util/Order.h"
 #include "../util/OptionsDB.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"

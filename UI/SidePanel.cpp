@@ -23,6 +23,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/Random.h"
 #include "../util/XMLDoc.h"
+#include "../util/Order.h"
 #include "../util/OptionsDB.h"
 #include "../client/human/HumanClientApp.h"
 
@@ -32,6 +33,7 @@
 #include <GG/Scroll.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 
+#include <boost/cast.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 #include <boost/filesystem/fstream.hpp>

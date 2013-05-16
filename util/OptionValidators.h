@@ -4,7 +4,6 @@
 
 #include <boost/any.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/limits.hpp>
 #include <cmath>
 #include <string>
 

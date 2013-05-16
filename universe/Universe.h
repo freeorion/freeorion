@@ -2,20 +2,14 @@
 #ifndef _Universe_h_
 #define _Universe_h_
 
-#include "Enums.h"
-#include "Predicates.h"
-#include "EffectAccounting.h"
+#include "Effect.h"
 #include "ObjectMap.h"
 #include "../util/AppInterface.h"
 
 #include <boost/signal.hpp>
 #include <boost/unordered_map.hpp>
-#include <boost/iostreams/filtering_stream.hpp>
 #include <boost/numeric/ublas/symmetric.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#include <boost/type_traits/remove_const.hpp>
 
 #include <vector>
 #include <list>

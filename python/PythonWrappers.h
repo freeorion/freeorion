@@ -1,7 +1,6 @@
 #ifndef PYTHON_WRAPPERS
 #define PYTHON_WRAPPERS
 
-#include "PythonSetWrapper.h"
 
 namespace FreeOrionPython {
     void WrapUniverseClasses();

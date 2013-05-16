@@ -3,6 +3,8 @@
 #include "../util/AppInterface.h"
 
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/xpressive/xpressive.hpp>
 
 
 parse::detail::info_visitor::info_visitor(std::ostream& os, const string& tag, std::size_t indent) :

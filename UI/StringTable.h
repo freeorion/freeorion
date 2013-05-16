@@ -3,11 +3,8 @@
 #ifndef StringTable__h_
 #define StringTable__h_
 
-#include <boost/lexical_cast.hpp>
-
 #include <string>
 #include <map>
-#include <fstream>
 
 // HACK! StringTable is renamed to StringTable_ because freeimage defines
 // a class StringTable too. If both are named identically, static linking

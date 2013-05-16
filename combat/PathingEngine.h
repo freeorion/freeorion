@@ -5,7 +5,6 @@
 #include "CombatFighter.h"
 #include "CombatShip.h"
 #include "PathingEngineFwd.h"
-#include "../../universe/Ship.h"
 
 #ifdef FREEORION_MACOSX
 #  ifdef check

@@ -2,12 +2,15 @@
 #ifndef _OrderSet_h_
 #define _OrderSet_h_
 
-#ifndef _Order_h_
-#include "Order.h"
-#endif
+#include <boost/shared_ptr.hpp>
+
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
 
 #include <map>
 #include <vector>
+
+class Order;
 
 /** The pointer type used to store Orders in OrderSets. */
 typedef boost::shared_ptr<Order> OrderPtr;

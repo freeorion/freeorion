@@ -2,17 +2,14 @@
 #ifndef AI_INTERFACE
 #define AI_INTERFACE
 
-#include "../universe/Universe.h"
-#include "../universe/ShipDesign.h"
-#include <boost/python/list.hpp>
-
 #include <string>
+#include <vector>
 
-class AIClientApp;
 class CombatData;
 class Empire;
 class Tech;
 class DiplomaticMessage;
+class Universe;
 struct DiplomaticStatusUpdateInfo;
 
 /* AI logic modules implement this class, and AIClientApps contain one, and call it to generate orders */

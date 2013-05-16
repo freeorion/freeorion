@@ -10,7 +10,6 @@
 #include <boost/serialization/nvp.hpp>
 
 #include <string>
-#include <sstream>
 
 /** VarText is a string tagged with variable names which are substituded with
   * actual data at runtime. The variables are stored in a XML element tree.

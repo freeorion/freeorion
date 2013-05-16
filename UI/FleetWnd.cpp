@@ -8,6 +8,7 @@
 #include "ShaderProgram.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/Order.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../client/human/HumanClientApp.h"

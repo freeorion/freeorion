@@ -3,20 +3,17 @@
 #define _Empire_h_
 
 #include <GG/Clr.h>
+#include "../util/AppInterface.h"
 #include "../util/SitRepEntry.h"
-#include "../universe/Tech.h"
-#include "../universe/UniverseObject.h"
 #include "ResourcePool.h"
 #include "../universe/Meter.h"
 
 #include <deque>
-#include <list>
 #include <string>
 
-class BuildingType;
+struct ItemSpec;
 class ShipDesign;
 class Empire;
-class Meter;
 
 class Alignment {
 public:

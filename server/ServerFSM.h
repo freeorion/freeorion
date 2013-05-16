@@ -6,8 +6,6 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/mpl/list.hpp>
-#include <boost/preprocessor/punctuation/comma_if.hpp>
-#include <boost/preprocessor/seq/elem.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/statechart/custom_reaction.hpp>
 #include <boost/statechart/deferral.hpp>

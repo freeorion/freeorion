@@ -13,8 +13,6 @@
 
 #include <GG/Wnd.h>
 
-#include <boost/tuple/tuple.hpp>
-
 
 namespace Ogre {
     class Camera;

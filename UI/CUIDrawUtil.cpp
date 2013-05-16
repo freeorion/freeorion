@@ -1,6 +1,6 @@
 #include "CUIDrawUtil.h"
 
-#include "../util/MultiplayerCommon.h"
+#include "../util/AppInterface.h"
 
 #include <GG/DrawUtil.h>
 

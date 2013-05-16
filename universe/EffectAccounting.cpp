@@ -1,6 +1,7 @@
 #include "EffectAccounting.h"
 
 #include "UniverseObject.h"
+#include "ObjectMap.h"
 
 Effect::EffectCause::EffectCause() :
     cause_type(INVALID_EFFECTS_GROUP_CAUSE_TYPE),

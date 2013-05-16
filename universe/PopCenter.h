@@ -7,7 +7,6 @@
 #include <boost/serialization/nvp.hpp>
 
 class Meter;
-class UniverseObject;
 
 /** The PopCenter class is an abstract base class for anything in the FreeOrion
   * gamestate that has population on or in it.  Most likely, such an object

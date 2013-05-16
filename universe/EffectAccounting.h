@@ -9,7 +9,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <set>
 
 class UniverseObject;
 

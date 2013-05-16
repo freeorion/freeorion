@@ -3,9 +3,6 @@
 #define _ResourceCenter_h_
 
 #include "Enums.h"
-#ifndef _Universe_h_
-#include "Universe.h"
-#endif
 #include <boost/signal.hpp>
 #include <boost/serialization/nvp.hpp>
 

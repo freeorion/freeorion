@@ -2,7 +2,11 @@
 #ifndef _Fleet_h_
 #define _Fleet_h_
 
+#include "Universe.h"
 #include "UniverseObject.h"
+#include "ObjectMap.h"
+
+#include <boost/serialization/version.hpp>
 
 ////////////////////////////////////////////////
 // MovePathNode

@@ -1,6 +1,10 @@
 #include "ParseImpl.h"
+#include "EnumParser.h"
 #include "Label.h"
+#include "ConditionParserImpl.h"
 #include "../universe/Species.h"
+
+#include <boost/spirit/home/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

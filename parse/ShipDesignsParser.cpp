@@ -1,6 +1,9 @@
 #include "ParseImpl.h"
 #include "Label.h"
 
+#include "../universe/ShipDesign.h"
+
+#include <boost/spirit/home/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

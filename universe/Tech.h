@@ -4,8 +4,6 @@
 
 #include "ValueRefFwd.h"
 
-#include <boost/serialization/shared_ptr.hpp>
-
 #include "Enums.h"
 
 #include <boost/multi_index_container.hpp>

@@ -27,6 +27,7 @@
 #include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../util/Order.h"
 #include "../util/Random.h"
 #include "../util/ModeratorAction.h"
 #include "../universe/Fleet.h"

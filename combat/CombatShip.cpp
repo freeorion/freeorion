@@ -1,6 +1,7 @@
 #include "CombatShip.h"
 
 #include "../universe/Enums.h"
+#include "../universe/ObjectMap.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "CombatEventListener.h"

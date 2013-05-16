@@ -12,10 +12,12 @@
 #include "../util/MultiplayerCommon.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
 #include "../universe/Building.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Effect.h"
 #include "../universe/Condition.h"
+#include "../client/human/HumanClientApp.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>

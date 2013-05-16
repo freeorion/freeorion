@@ -2,8 +2,6 @@
 #ifndef _InfoPanels_h_
 #define _InfoPanels_h_
 
-#include "../universe/Enums.h"
-#include "../universe/Universe.h"
 #include "CUIControls.h"
 
 #include <GG/Button.h>

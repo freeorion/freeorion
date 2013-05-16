@@ -1,5 +1,6 @@
 #include "Process.h"
 
+#include "AppInterface.h"
 #include "MultiplayerCommon.h"
 
 #include <stdexcept>

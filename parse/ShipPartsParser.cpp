@@ -1,15 +1,15 @@
 #define PHOENIX_LIMIT 11
 #define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
 
-#include "Double.h"
 #include "EnumParser.h"
-#include "Int.h"
 #include "Label.h"
 #include "ValueRefParser.h"
+#include "ConditionParserImpl.h"
 #include "ParseImpl.h"
 #include "ShipPartStatsParser.h"
 #include "../universe/Condition.h"
 
+#include <boost/spirit/home/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

@@ -3,6 +3,7 @@
 #include "Label.h"
 #include "../Empire/Empire.h"
 
+#include <boost/spirit/home/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

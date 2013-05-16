@@ -9,6 +9,7 @@
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/Order.h"
 #include "../universe/Building.h"
 
 #include <GG/DrawUtil.h>

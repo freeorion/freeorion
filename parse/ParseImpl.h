@@ -2,16 +2,13 @@
 #ifndef _ParseImpl_h_
 #define _ParseImpl_h_
 
-#include "ConditionParserImpl.h"
-#include "EnumParser.h"
-#include "Parse.h"
 #include "ReportParseError.h"
-#include "../util/MultiplayerCommon.h"
+#include "../universe/Tech.h"
 
-#include <boost/filesystem/fstream.hpp>
-#include <boost/spirit/home/phoenix.hpp>
+#include <boost/filesystem/path.hpp>
 #include <boost/spirit/include/qi.hpp>
 
+#include <GG/Clr.h>
 
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;

@@ -2,6 +2,7 @@
 
 #include "Effect.h"
 #include "../parse/Parse.h"
+#include "../universe/ObjectMap.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/AppInterface.h"

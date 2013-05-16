@@ -2,11 +2,10 @@
 #ifndef _System_h_
 #define _System_h_
 
-#ifndef _UniverseObject_h_
 #include "UniverseObject.h"
-#endif
 
-#include <boost/type_traits/remove_const.hpp>
+#include "../util/AppInterface.h"
+#include "Predicates.h"
 
 #include <map>
 

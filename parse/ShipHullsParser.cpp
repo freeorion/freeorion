@@ -3,12 +3,14 @@
 
 #include "Double.h"
 #include "EnumParser.h"
-#include "Int.h"
 #include "Label.h"
 #include "ValueRefParser.h"
+#include "ConditionParserImpl.h"
 #include "ParseImpl.h"
 #include "../universe/Condition.h"
+#include "../universe/ShipDesign.h"
 
+#include <boost/spirit/home/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

@@ -1,7 +1,5 @@
 #include "AIInterface.h"
 
-#include <boost/python.hpp>
-
 #include <string>
 
 class PythonAI : public AIBase {

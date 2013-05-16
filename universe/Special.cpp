@@ -3,7 +3,7 @@
 #include "Effect.h"
 #include "Condition.h"
 #include "../parse/Parse.h"
-#include "../util/MultiplayerCommon.h"
+#include "../util/AppInterface.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 

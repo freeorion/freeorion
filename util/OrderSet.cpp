@@ -1,5 +1,7 @@
 #include "OrderSet.h"
 
+#include "Order.h"
+
 #include "../util/MultiplayerCommon.h"
 
 

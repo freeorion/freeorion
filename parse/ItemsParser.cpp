@@ -2,6 +2,7 @@
 
 #include "Label.h"
 
+#include <boost/spirit/home/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

@@ -19,8 +19,6 @@
 #include <fstream>
 #include <vector>
 
-const Tech* GetTech(const std::string& name);
-
 #define DEBUG_CREATE_FLEET_ORDER 0
 #define DEBUG_FLEET_MOVE_ORDER   0
 #if DEBUG_CREATE_FLEET_ORDER || DEBUG_FLEET_MOVE_ORDER

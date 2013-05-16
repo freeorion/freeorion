@@ -2,26 +2,16 @@
 #ifndef _ServerApp_h_
 #define _ServerApp_h_
 
-#include "../util/AppInterface.h"
 #include "../util/Process.h"
 #include "../Empire/EmpireManager.h"
-#include "../network/Networking.h"
 #include "../network/ServerNetworking.h"
 #include "../universe/Universe.h"
-#include "../util/MultiplayerCommon.h"
-#include "ServerFSM.h"
 
 #include <set>
 #include <vector>
 
-
-namespace log4cpp {
-    class Category;
-}
-struct CombatInfo;
-class Message;
 class OrderSet;
-struct PlayerSetupData;
+struct GalaxySetupData;
 struct SaveGameUIData;
 struct ServerFSM;
 

@@ -17,6 +17,7 @@
 #include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../util/Order.h"
 #include "../util/OrderSet.h"
 #include "../util/SitRepEntry.h"
 

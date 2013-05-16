@@ -8,7 +8,6 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
-#include <set>
 #include <string>
 #include <vector>
 

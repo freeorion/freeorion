@@ -5,10 +5,7 @@
 #include "VarText.h"
 
 #include <string>
-#include <stdexcept>
 #include <vector>
-
-#include <boost/lexical_cast.hpp>
 
 /** Situation report entry, to be displayed in the SitRep screen. */
 class SitRepEntry : public VarText {

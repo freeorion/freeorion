@@ -33,7 +33,6 @@
 
 #include <map>
 #include <string>
-#include <stdexcept>
 
 /** Thrown when a generated object is requested with an unknown tag. */
 class NoSuchGenerator : public GG::ExceptionBase

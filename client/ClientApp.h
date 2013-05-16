@@ -4,16 +4,8 @@
 
 #include "../Empire/EmpireManager.h"
 #include "../network/ClientNetworking.h"
-#include "../network/Message.h"
 #include "../universe/Universe.h"
-#include "../util/AppInterface.h"
-#include "../util/MultiplayerCommon.h"
-#include "../network/Networking.h"
 #include "../util/OrderSet.h"
-
-#include <string>
-
-namespace log4cpp {class Category;};
 
 /** The abstract base class for the application framework classes AIClientApp
   * and HumanClientApp.  The static functions are designed to give both types

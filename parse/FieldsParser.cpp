@@ -1,8 +1,10 @@
 #include "Double.h"
-//#include "Int.h"
 #include "Label.h"
 #include "ParseImpl.h"
+#include "../universe/Condition.h"
 #include "../universe/Field.h"
+
+#include <boost/spirit/home/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

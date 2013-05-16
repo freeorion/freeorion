@@ -7,7 +7,6 @@
 
 #include <string>
 #include <vector>
-#include <set>
 
 namespace Effect {
     class EffectsGroup;

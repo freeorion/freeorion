@@ -2,16 +2,12 @@
 #ifndef _Effect_h_
 #define _Effect_h_
 
-#include "Enums.h"
 #include "EffectAccounting.h"
 
-#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
-#include <set>
 #include <vector>
-#include <map>
 
 class UniverseObject;
 struct ScriptingContext;

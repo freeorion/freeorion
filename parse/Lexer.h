@@ -7,9 +7,7 @@
 #include <boost/spirit/include/lex_lexertl.hpp>
 #include <boost/spirit/home/lex/lexer/lexertl/position_token.hpp>
 
-#include "../universe/Enums.h"
 #include "../universe/Names.h"
-#include "../universe/ValueRefFwd.h"
 
 
 /** \namespace parse \brief The namespace that encloses the script file lexer

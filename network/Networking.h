@@ -2,8 +2,6 @@
 #ifndef _Networking_h_
 #define _Networking_h_
 
-#include <GG/Enum.h>
-
 #include <string>
 
 

@@ -2,16 +2,11 @@
 #ifndef _MultiplayerCommon_h_
 #define _MultiplayerCommon_h_
 
-#include "Serialize.h"
-#include "XMLDoc.h"
 #include "../combat/PathingEngine.h"
-#include "../universe/Enums.h"
 #include "../network/Networking.h"
 
 #include <GG/Clr.h>
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
 #include <boost/format.hpp>
 
 #include <set>
@@ -19,6 +14,7 @@
 
 
 class System;
+class XMLElement;
 
 extern const std::string MP_SAVE_FILE_EXTENSION;
 extern const std::string SP_SAVE_FILE_EXTENSION;

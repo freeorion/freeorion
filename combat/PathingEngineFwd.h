@@ -3,7 +3,6 @@
 #define PATHING_ENGINE_FWD_H
 
 #include "ProximityDatabase.h"
-#include "../universe/Enums.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>

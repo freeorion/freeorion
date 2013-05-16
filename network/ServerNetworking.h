@@ -16,8 +16,8 @@
 
 
 class DiscoveryServer;
-class Message;
 class PlayerConnection;
+
 typedef boost::shared_ptr<PlayerConnection> PlayerConnectionPtr;
 typedef boost::function<void (Message, PlayerConnectionPtr)> MessageAndConnectionFn;
 typedef boost::function<void (PlayerConnectionPtr)> ConnectionFn;

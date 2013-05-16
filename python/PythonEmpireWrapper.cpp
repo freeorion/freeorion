@@ -2,6 +2,8 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"
 
+#include "../universe/Tech.h"
+
 #include <GG/Clr.h>
 
 #include <boost/function.hpp>

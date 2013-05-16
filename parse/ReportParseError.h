@@ -4,9 +4,6 @@
 
 #include "Lexer.h"
 
-#include <boost/tuple/tuple.hpp>
-#include <boost/xpressive/xpressive.hpp>
-
 
 namespace parse {
     namespace detail {

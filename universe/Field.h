@@ -3,6 +3,7 @@
 #define _Field_h_
 
 #include "UniverseObject.h"
+#include "Effect.h"
 
 /** a class representing a region of space */
 class Field : public UniverseObject {

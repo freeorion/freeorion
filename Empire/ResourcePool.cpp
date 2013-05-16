@@ -1,5 +1,8 @@
 #include "ResourcePool.h"
 
+#include <boost/lexical_cast.hpp>
+
+#include "../universe/ObjectMap.h"
 #include "../universe/Planet.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"

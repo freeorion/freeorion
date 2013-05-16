@@ -8,7 +8,6 @@
 
 #include <boost/serialization/access.hpp>
 
-class Universe;
 struct UniverseObjectVisitor;
 
 class UniverseObject;
@@ -234,11 +233,6 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
-
-// template implementations
-#if (10 * __GNUC__ + __GNUC_MINOR__ > 33) && (!defined _UniverseObject_h_)
-#  include "UniverseObject.h"
-#endif
 
 template <class T>
 ObjectMap::iterator<T> ObjectMap::begin()

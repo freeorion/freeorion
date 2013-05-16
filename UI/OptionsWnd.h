@@ -2,23 +2,13 @@
 #ifndef _OptionsWnd_h_
 #define _OptionsWnd_h_
 
-#ifndef _CUIWnd_h_
 #include "CUIWnd.h"
-#endif
-
-#ifndef _OptionsDB_h_
-#include "../util/OptionsDB.h"
-#endif
-
-#ifndef _CUISpin_h_
 #include "CUISpin.h"
-#endif
 
 #include <utility>
 #include <vector>
 
 
-class ColorSelector;
 class CUIStateButton;
 namespace GG { class TabWnd; }
 

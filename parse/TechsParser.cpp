@@ -1,10 +1,10 @@
-#include "Double.h"
-#include "Int.h"
 #include "Label.h"
+#include "EnumParser.h"
 #include "ValueRefParser.h"
 #include "ParseImpl.h"
 #include "../universe/Species.h"
 
+#include <boost/spirit/home/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

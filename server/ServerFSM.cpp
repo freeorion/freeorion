@@ -9,10 +9,12 @@
 #include "../network/ServerNetworking.h"
 #include "../network/Message.h"
 #include "../util/Directories.h"
+#include "../util/Order.h"
 #include "../util/OrderSet.h"
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
 #include "../util/ModeratorAction.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>

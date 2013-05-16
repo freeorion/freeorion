@@ -2,18 +2,13 @@
 
 #include "ClientUI.h"
 #include "../universe/Field.h"
-//#include "../client/human/HumanClientApp.h"
-//#include "../util/MultiplayerCommon.h"
-//#include "../util/OptionsDB.h"
+#include "../util/AppInterface.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/DynamicGraphic.h>
 #include <GG/TextControl.h>
 #include <GG/WndEvent.h>
-
-//#include <boost/format.hpp>
-//#include <boost/lexical_cast.hpp>
 
 namespace {
     const std::vector<boost::shared_ptr<GG::Texture> >& GetSelectionIndicatorTextures() {
