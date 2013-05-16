@@ -146,6 +146,9 @@ PLUS_STEALTH
 PLUS_PLUS_STEALTH
 '''[[PLUS_STEALTH]] + [[PLUS_STEALTH]]'''
 
+
+/*   M U L T I P L I C A T O R S   */
+
 COLONY_UPKEEP_MULTIPLICATOR
 '''(1 + 0.06 *
         Count condition = And [
@@ -154,3 +157,12 @@ COLONY_UPKEEP_MULTIPLICATOR
             VisibleToEmpire Source.Owner
             Not Population high = 0
         ])'''
+
+FLEET_UPKEEP_MULTIPLICATOR
+'''(1 + 0.01 *
+        Count condition = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            VisibleToEmpire Source.Owner
+        ])'''
+		

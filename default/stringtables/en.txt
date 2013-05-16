@@ -3023,7 +3023,7 @@ The supply meter on a planet represents the number of star-lanes supply can reac
 FLEET_UPKEEP_TITLE
 Fleet Upkeep
 FLEET_UPKEEP_TEXT
-'''The cost of a fleet is more than the sum of the cost of its ships due to the oporational costs associated with managing multiple ships. When producing new ships, hull costs increase by 5% for each ship already owned by the empire.'''
+'''The cost of a fleet is more than the sum of the cost of its ships due to the oporational costs associated with managing multiple ships. When producing new ships, costs increase by 1% for each ship already owned by the empire. The cost of the [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] and [[shippart CO_OUTPOST_POD]] instead increase by 6% for each planet already owned by the empire.'''
 
 EVACUATION_TITLE
 Evacuation

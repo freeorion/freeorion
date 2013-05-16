@@ -1,3 +1,5 @@
+include "shared_macros.txt"
+
 Hull
     name = "SH_XENTRONIUM"
     description = "SH_XENTRONIUM_DESC"
@@ -2748,14 +2750,6 @@ HUNT_PLANETS
                 ]
             ]
 '''
-
-FLEET_UPKEEP_MULTIPLICATOR
-'''(1 + 0.05 *
-        Count condition = And [
-            Ship
-            OwnedBy TheEmpire Source.Owner
-            VisibleToEmpire Source.Owner
-        ])'''
 
 STRUCTURE_MULTIPLICATOR
 '''2.0'''

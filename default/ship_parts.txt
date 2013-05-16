@@ -6,7 +6,7 @@ Part
     class = Troops
     capacity = 2
     mountableSlotTypes = [External Internal]
-    buildcost = 3
+    buildcost = 3 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     tags = "COMFORTABLE"
     location = OwnedBy TheEmpire Source.Owner
@@ -20,7 +20,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 20
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/mass-driver-1.png"
@@ -33,7 +33,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 20
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/mass-driver-2.png"
@@ -46,7 +46,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 20
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/mass-driver-3.png"
@@ -59,7 +59,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 20
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/mass-driver-4.png"
@@ -72,7 +72,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 30
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/laser-1.png"
@@ -85,7 +85,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 30
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/laser-2.png"
@@ -98,7 +98,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 30
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/laser-3.png"
@@ -111,7 +111,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 30
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/laser-4.png"
@@ -124,7 +124,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 40
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/plasma-1.png"
@@ -137,7 +137,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 40
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/plasma-2.png"
@@ -150,7 +150,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 40
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/plasma-3.png" 
@@ -163,7 +163,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 40
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/plasma-4.png"
@@ -176,7 +176,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 60
+    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-1.png"    
@@ -189,7 +189,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 60
+    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-2.png"
@@ -202,7 +202,7 @@ Part
     ROF = 1
     range = 60
     mountableSlotTypes = External
-    buildcost = 50
+    buildcost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-3.png"
@@ -215,7 +215,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 60
+    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/death-ray-4.png"
@@ -226,7 +226,7 @@ Part
     class = Armour
     capacity = 6
     mountableSlotTypes = External
-    buildcost = 4
+    buildcost = 4 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/std_armor_plating.png"
@@ -237,7 +237,7 @@ Part
     class = Armour
     capacity = 11
     mountableSlotTypes = External
-    buildcost = 6
+    buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/zortrium_plating.png"
@@ -248,7 +248,7 @@ Part
     class = Armour
     capacity = 18
     mountableSlotTypes = External
-    buildcost = 8
+    buildcost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/crystal_plating.png"
@@ -259,7 +259,7 @@ Part
     class = Armour
     capacity = 30
     mountableSlotTypes = External
-    buildcost = 12
+    buildcost = 12 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/generic_part.png"
@@ -270,7 +270,7 @@ Part
     class = Armour
     capacity = 18
     mountableSlotTypes = External
-    buildcost = 6
+    buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = And [
         Number low = 1 high = 999 And [
@@ -290,7 +290,7 @@ Part
     class = Armour
     capacity = 30
     mountableSlotTypes = External
-    buildcost = 8
+    buildcost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = And [
         Number low = 1 high = 999 And [
@@ -310,7 +310,7 @@ Part
     class = Armour
     capacity = 40
     mountableSlotTypes = External
-    buildcost = 15
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -331,7 +331,7 @@ Part
     class = Armour
     capacity = 400
     mountableSlotTypes = External
-    buildcost = 1
+    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = All
     icon = ""
@@ -342,7 +342,7 @@ Part
     class = Shield
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 40
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -359,7 +359,7 @@ Part
     class = Shield
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 70
+    buildcost = 70 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -376,7 +376,7 @@ Part
     class = Shield
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 120
+    buildcost = 120 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 6
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -393,7 +393,7 @@ Part
     class = Shield
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 200
+    buildcost = 200 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 8
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -410,7 +410,7 @@ Part
     class = Shield
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 120
+    buildcost = 120 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 10
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
@@ -433,7 +433,7 @@ Part
     class = Detection
     capacity = 0
     mountableSlotTypes = External
-    buildcost = 6
+    buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -450,7 +450,7 @@ Part
     class = Detection
     capacity = 0
     mountableSlotTypes = External
-    buildcost = 5
+    buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -467,7 +467,7 @@ Part
     class = Detection
     capacity = 0
     mountableSlotTypes = External
-    buildcost = 3
+    buildcost = 3 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -484,7 +484,7 @@ Part
     class = Detection
     capacity = 0
     mountableSlotTypes = External
-    buildcost = 2
+    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -500,7 +500,7 @@ Part
     description = "FU_IMPROVED_ENGINE_COUPLINGS_DESC"
     class = General
     mountableSlotTypes = Internal
-    buildcost = 40
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -516,7 +516,7 @@ Part
     description = "FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC"
     class = General
     mountableSlotTypes = Internal
-    buildcost = 100
+    buildcost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -531,7 +531,7 @@ Part
     description = "FU_SINGULARITY_ENGINE_CORE_DESC"
     class = General
     mountableSlotTypes = Internal
-    buildcost = 200
+    buildcost = 200 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -547,7 +547,7 @@ Part
     class = Fuel
     capacity = 1
     mountableSlotTypes = Internal
-    buildcost = 1
+    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/basic-tank.png"
@@ -558,7 +558,7 @@ Part
     class = Fuel
     capacity = 2
     mountableSlotTypes = Internal
-    buildcost = 2
+    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/deuterium_tank.png"
@@ -569,7 +569,7 @@ Part
     class = Fuel
     capacity = 5
     mountableSlotTypes = Internal
-    buildcost = 3
+    buildcost = 3 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 6
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/antimatter_tank.png"
@@ -580,7 +580,7 @@ Part
     class = Fuel
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 40
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -596,7 +596,7 @@ Part
     class = Stealth
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 40
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 10
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -613,7 +613,7 @@ Part
     class = Stealth
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 15
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 7
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -630,7 +630,7 @@ Part
     class = Stealth
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 5
+    buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -647,7 +647,7 @@ Part
     class = Stealth
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 2
+    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -692,7 +692,7 @@ Part
     class = Colony
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 80* [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildcost = 80 * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/tech/habitation_domes.png"
@@ -702,7 +702,7 @@ Part
     description = "SP_DISTORTION_MODULATOR_DESC"
     class = General
     mountableSlotTypes = Internal
-    buildcost = 15
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 10
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -890,7 +890,7 @@ Part
     description = "SP_DEATH_SPORE_DESC"
     class = General
     mountableSlotTypes = External
-    buildcost = 5
+    buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = All
     effectsgroups = [
@@ -942,7 +942,7 @@ Part
     description = "SP_BIOTERM_DESC"
     class = General
     mountableSlotTypes = External
-    buildcost = 5
+    buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = All
     effectsgroups = [
@@ -994,7 +994,7 @@ Part
     description = "SP_NOVA_BOMB_DESC"
     class = General
     mountableSlotTypes = External
-    buildcost = 5000
+    buildcost = 5000 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 12
     location = All
     effectsgroups = [
@@ -1039,7 +1039,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 4
+    buildcost = 4 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/laser.png"
@@ -1052,7 +1052,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 10
+    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/ion_cannon.png"
@@ -1065,7 +1065,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 15
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/mass_driver.png"
@@ -1078,7 +1078,7 @@ Part
     ROF = 1
     range = 50
     mountableSlotTypes = External
-    buildcost = 150
+    buildcost = 150 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = ""
@@ -1091,7 +1091,7 @@ Part
     ROF = 10
     range = 20
     mountableSlotTypes = External
-    buildcost = 4
+    buildcost = 4 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = ""
@@ -1104,7 +1104,7 @@ Part
     ROF = 20
     range = 20
     mountableSlotTypes = External
-    buildcost = 15
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy TheEmpire Source.Owner
     icon = ""
@@ -1117,7 +1117,7 @@ Part
     ROF = 100
     range = 20
     mountableSlotTypes = External
-    buildcost = 150
+    buildcost = 150 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = ""
@@ -1137,7 +1137,7 @@ Part
     detection = 1
     capacity = 12
     mountableSlotTypes = External
-    buildcost = 4
+    buildcost = 4 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = ""
@@ -1157,7 +1157,7 @@ Part
     detection = 1
     capacity = 6
     mountableSlotTypes = External
-    buildcost = 4
+    buildcost = 4 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = ""
@@ -1177,7 +1177,7 @@ Part
     detection = 20
     capacity = 12
     mountableSlotTypes = External
-    buildcost = 20
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy TheEmpire Source.Owner
     icon = ""
@@ -1197,7 +1197,7 @@ Part
     detection = 40
     capacity = 36
     mountableSlotTypes = External
-    buildcost = 30
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = And [
         Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB" Or [
@@ -1227,7 +1227,7 @@ Part
     detection = 40
     capacity = 18
     mountableSlotTypes = External
-    buildcost = 30
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = And [
         Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_XENO_FAC" Or [
@@ -1250,7 +1250,7 @@ Part
     structure = 1
     capacity = 20
     mountableSlotTypes = External
-    buildcost = 12
+    buildcost = 12 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/ship_parts/nuclear_missile.png"
@@ -1267,7 +1267,7 @@ Part
     structure = 6
     capacity = 20
     mountableSlotTypes = External
-    buildcost = 60
+    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 8
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -1294,7 +1294,7 @@ Part
     structure = 1
     capacity = 20
     mountableSlotTypes = External
-    buildcost = 25
+    buildcost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 6
     location = OwnedBy TheEmpire Source.Owner
     icon = ""
@@ -1311,7 +1311,7 @@ Part
     structure = 6
     capacity = 20
     mountableSlotTypes = External
-    buildcost = 125
+    buildcost = 125 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 12
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -1338,7 +1338,7 @@ Part
     structure = 1
     capacity = 10
     mountableSlotTypes = External
-    buildcost = 50
+    buildcost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = And [
         Number low = 1 high = 999 And [
@@ -1367,7 +1367,7 @@ Part
     structure = 1
     capacity = 10
     mountableSlotTypes = External
-    buildcost = 300
+    buildcost = 300 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = And [
         Number low = 1 high = 999 And [
