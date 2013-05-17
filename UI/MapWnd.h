@@ -203,7 +203,7 @@ private:
         MovementLineData();
         MovementLineData(const std::list<MovePathNode>& path_,
                          const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
-                         GG::Clr colour_ = GG::CLR_WHITE);
+                         GG::Clr colour_ = GG::CLR_WHITE, int empireID = ALL_EMPIRES);
 
         std::list<MovePathNode>             path;       // raw path data from which line rendering is determined
         GG::Clr                             colour;     // colour of line

@@ -371,12 +371,14 @@ LaneEndpoints::LaneEndpoints() :
 // MapWnd::MovementLineData::Vertex
 ////////////////////////////////////////////////
 struct MapWnd::MovementLineData::Vertex {
-    Vertex(double x_, double y_, int eta_, bool show_eta_) :
-        x(x_), y(y_), eta(eta_), show_eta(show_eta_)
+    Vertex(double x_, double y_, int eta_, bool show_eta_, bool flag_blockade_ = false, bool flag_supply_block_ = false) :
+    x(x_), y(y_), eta(eta_), show_eta(show_eta_), flag_blockade(flag_blockade_), flag_supply_block(flag_supply_block_)
     {}
     double  x, y;       // apparent in-universe position of a point on move line.  not actual universe positions, but rather where the move line vertices are drawn
     int     eta;        // turns taken to reach point by object travelling along move line
     bool    show_eta;   // should an ETA indicator / number be shown over this vertex?
+    bool    flag_blockade;
+    bool    flag_supply_block;
 };
 
 ////////////////////////////////////////////////
@@ -389,7 +391,7 @@ MapWnd::MovementLineData::MovementLineData() :
 
 MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
                                            const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
-                                           GG::Clr colour_/*= GG::CLR_WHITE*/) :
+                                           GG::Clr colour_/*= GG::CLR_WHITE*/, int empireID /*= ALL_EMPIRES*/) :
     path(path_),
     colour(colour_)
 {
@@ -411,6 +413,15 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
     int     prev_sys_id =               first_node.object_id;
     int     prev_eta =                  first_node.eta;
     int     next_sys_id =               INVALID_OBJECT_ID;
+
+    const Empire* empire = Empires().Lookup(empireID);
+    std::set<int> unobstructed;
+    bool s_flag = false;
+    bool calc_s_flag = false;
+    if (empire) {
+        unobstructed = empire->SupplyUnobstructedSystems();
+        calc_s_flag = true;
+    }
 
     for (std::list<MovePathNode>::const_iterator path_it = path.begin(); path_it != path.end(); ++path_it) {
         // stop rendering if end of path is indicated
@@ -461,8 +472,11 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
 
 
         // 3) Add points for line segment to list of Vertices
-        vertices.push_back(Vertex(start_xy.first,   start_xy.second,    prev_eta,   false));
-        vertices.push_back(Vertex(end_xy.first,     end_xy.second,      node.eta,   node.turn_end));
+        bool b_flag = path_it->post_blockade;
+        s_flag = s_flag || (calc_s_flag && 
+            ((path_it->object_id != INVALID_OBJECT_ID) && unobstructed.find(path_it->object_id)==unobstructed.end()));
+        vertices.push_back(Vertex(start_xy.first,   start_xy.second,    prev_eta,   false,          b_flag, s_flag));
+        vertices.push_back(Vertex(end_xy.first,     end_xy.second,      node.eta,   node.turn_end,  b_flag, s_flag));
 
 
         // 4) prep for next iteration
@@ -1417,6 +1431,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
     glPushMatrix();
     glLoadIdentity();
+    int flag_border = 5;
     for (std::vector<MovementLineData::Vertex>::const_iterator verts_it = vertices.begin(); verts_it != vertices.end(); ++verts_it) {
         const MovementLineData::Vertex& vert = *verts_it;
         if (!vert.show_eta)
@@ -1425,16 +1440,33 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
         // draw background disc in empire colour, or passed-in colour
         GG::Pt marker_centre = ScreenCoordsFromUniversePosition(vert.x, vert.y);
+        GG::Pt ul = marker_centre - GG::Pt(GG::X(static_cast<int>(MARKER_HALF_SIZE)), GG::Y(static_cast<int>(MARKER_HALF_SIZE)));
+        GG::Pt lr = marker_centre + GG::Pt(GG::X(static_cast<int>(MARKER_HALF_SIZE)), GG::Y(static_cast<int>(MARKER_HALF_SIZE)));
+
+        glDisable(GL_TEXTURE_2D);
+        if (vert.flag_blockade) {
+            float wedge = TWO_PI/12.0;
+            for (int n = 0; n<12; n=n+2 ) {
+                glColor(GG::CLR_BLACK);
+                CircleArc(ul + GG::Pt(-flag_border*GG::X1,  -flag_border*GG::Y1), lr + GG::Pt(flag_border*GG::X1,  flag_border*GG::Y1), n*wedge, (n+1)*wedge, true);
+                glColor(GG::CLR_RED);
+                CircleArc(ul + GG::Pt(-(flag_border)*GG::X1,  -(flag_border)*GG::Y1), lr + GG::Pt((flag_border)*GG::X1,  (flag_border)*GG::Y1), (n+1)*wedge, (n+2)*wedge, true);
+            }
+        } else if (vert.flag_supply_block){
+            float wedge = TWO_PI/12.0;
+            for (int n = 0; n<12; n=n+2 ) {
+                glColor(GG::CLR_BLACK);
+                CircleArc(ul + GG::Pt(-flag_border*GG::X1,  -flag_border*GG::Y1), lr + GG::Pt(flag_border*GG::X1,  flag_border*GG::Y1), n*wedge, (n+1)*wedge, true);
+                glColor(GG::CLR_YELLOW);
+                CircleArc(ul + GG::Pt(-(flag_border)*GG::X1,  -(flag_border)*GG::Y1), lr + GG::Pt((flag_border)*GG::X1,  (flag_border)*GG::Y1), (n+1)*wedge, (n+2)*wedge, true);
+            }
+        }
 
         if (clr == GG::CLR_ZERO)
             glColor(move_line.colour);
         else
             glColor(clr);
 
-        GG::Pt ul = marker_centre - GG::Pt(GG::X(static_cast<int>(MARKER_HALF_SIZE)), GG::Y(static_cast<int>(MARKER_HALF_SIZE)));
-        GG::Pt lr = marker_centre + GG::Pt(GG::X(static_cast<int>(MARKER_HALF_SIZE)), GG::Y(static_cast<int>(MARKER_HALF_SIZE)));
-
-        glDisable(GL_TEXTURE_2D);
         CircleArc(ul, lr, 0.0, TWO_PI, true);
         glEnable(GL_TEXTURE_2D);
 
@@ -1495,9 +1527,8 @@ void MapWnd::RenderVisibilityRadii() {
             const Fleet* fleet = objects.Object<Fleet>(ship->FleetID());
             if (!fleet)
                 continue;
-            int next_id = fleet->NextSystemID();
             int cur_id = fleet->SystemID();
-            if (next_id != INVALID_OBJECT_ID && next_id != cur_id)
+            if (cur_id == INVALID_OBJECT_ID)
                 continue;
         }
 
@@ -2874,7 +2905,22 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
         line_colour = GG::CLR_RED;
 
     // create and store line
-    m_fleet_lines[fleet_id] = MovementLineData(fleet->MovePath(), m_starlane_endpoints, line_colour);
+    std::list<int> route(fleet->TravelRoute());
+    std::list<MovePathNode> path = fleet->MovePath(route, true);
+    if (!route.empty() && fleet->SystemID() == route.front() && fleet->BlockadedAtSystem(route.front())) { //adjust ETAs if necessary
+    //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
+        std::list<int>::iterator route_it = ++route.begin();
+        //Logger().debugStream() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() << 
+        //" with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
+        if (route_it != route.end() && *route_it != fleet->ArrivalStarlane()) {
+            for (std::list<MovePathNode>::iterator it = path.begin(); it != path.end(); ++it) {
+                Logger().debugStream() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" node obj " << it->object_id <<
+                                            ", node lane end " << it->lane_end_id << ", is post-blockade (" << it->post_blockade << ")";
+                it->eta++;
+            }
+        }
+    }
+    m_fleet_lines[fleet_id] = MovementLineData(path, m_starlane_endpoints, line_colour, fleet->Owner());
 }
 
 void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& travel_route) {
@@ -2895,20 +2941,34 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
     }
 
     // get move path to show.  if there isn't one, show nothing
-    std::list<MovePathNode> path = fleet->MovePath(travel_route);
+    std::list<MovePathNode> path = fleet->MovePath(travel_route, true);
     if (path.empty()) {
         // no route to display
         RemoveProjectedFleetMovementLine(fleet_id);
         return;
     }
 
+    if (!travel_route.empty() && fleet->SystemID()==travel_route.front() && fleet->BlockadedAtSystem(travel_route.front())) {
+        //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
+        std::list<int>::const_iterator route_it = ++travel_route.begin();
+        //Logger().debugStream() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() << 
+        //" with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
+        if (route_it != travel_route.end() && *route_it != fleet->ArrivalStarlane()) {
+            for (std::list<MovePathNode>::iterator it = path.begin(); it != path.end(); ++it) {
+                Logger().debugStream() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id << " node obj " << it->object_id <<
+                                            ", node lane end " << it->lane_end_id << ", is post-blockade (" << it->post_blockade << ")";
+                it->eta++;
+            }
+        }
+    }
+        
     // get colour: empire colour, or white if no single empire applicable
     GG::Clr line_colour = GG::CLR_WHITE;
     if (const Empire* empire = Empires().Lookup(fleet->Owner()))
         line_colour = empire->Color();
 
     // create and store line
-    m_projected_fleet_lines[fleet_id] = MovementLineData(path, m_starlane_endpoints, line_colour);
+    m_projected_fleet_lines[fleet_id] = MovementLineData(path, m_starlane_endpoints, line_colour, fleet->Owner());
 }
 
 void MapWnd::SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids,

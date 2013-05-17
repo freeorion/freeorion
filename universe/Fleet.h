@@ -14,8 +14,8 @@
 /** Contains info about a single notable point on the move path of a fleet or
   * other UniverseObject. */
 struct MovePathNode {
-    MovePathNode(double x_, double y_, bool turn_end_, int eta_, int id_, int lane_start_id_, int lane_end_id_) :
-        x(x_), y(y_), turn_end(turn_end_), eta(eta_), object_id(id_), lane_start_id(lane_start_id_), lane_end_id(lane_end_id_)
+    MovePathNode(double x_, double y_, bool turn_end_, int eta_, int id_, int lane_start_id_, int lane_end_id_, bool post_blockade_ = false) :
+    x(x_), y(y_), turn_end(turn_end_), eta(eta_), object_id(id_), lane_start_id(lane_start_id_), lane_end_id(lane_end_id_), post_blockade(post_blockade_)
     {}
     double  x, y;           ///< location in Universe of node
     bool    turn_end;       ///< true if the fleet will end a turn at this point
@@ -23,6 +23,7 @@ struct MovePathNode {
     int     object_id;      ///< id of object (most likely a system) located at this node, or INVALID_OBJECT_ID if there is no object here
     int     lane_start_id;  ///< id of object (most likely a system) at the start of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
     int     lane_end_id;    ///< id of object (most likely a system) at the end of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
+    bool    post_blockade;  ///< estimation of whether this node is past a blockade for the subject fleet
 };
 
 /** Encapsulates data for a FreeOrion fleet.  Fleets are basically a group of
@@ -71,8 +72,8 @@ public:
     /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the 
         specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
         location, however the fleet's current location will not be on the list, even if it is currently in a system. */
-    std::list<MovePathNode>             MovePath(const std::list<int>& route) const;
-    std::list<MovePathNode>             MovePath() const;                   ///< Returns MovePath for fleet's current TravelRoute
+    std::list<MovePathNode>             MovePath(const std::list<int>& route, bool flag_blockades = false) const;
+    std::list<MovePathNode>             MovePath(bool flag_blockades = false) const;              ///< Returns MovePath for fleet's current TravelRoute
     std::pair<int, int>                 ETA() const;                                            ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
     std::pair<int, int>                 ETA(const std::list<MovePathNode>& move_path) const;    ///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
     double                              Damage() const;                     ///< Returns total amount of damage this fleet has, which is the sum of the ships' damage
@@ -83,6 +84,7 @@ public:
     int                                 FinalDestinationID() const          { return m_moving_to; }     ///< Returns ID of system that this fleet is moving to.
     int                                 PreviousSystemID() const            { return m_prev_system; }   ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
     int                                 NextSystemID() const                { return m_next_system; }   ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
+    bool                                BlockadedAtSystem(int systemID, bool preCombat = true) const;                ///< returns true iff this fleet's movement would be blockaded at system.
     double                              Speed() const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
     bool                                CanChangeDirectionEnRoute() const   { return false; }           ///< Returns true iff this fleet can change its direction while in interstellar space.
     bool                                HasMonsters() const;                ///< returns true iff this fleet contains monster ships.
@@ -107,8 +109,10 @@ public:
     /** Returns true iff this fleet arrived at its current System this turn. */
     bool                                ArrivedThisTurn() const             { return m_arrived_this_turn; }
 
-    /** Returns the ID of the starlane that this fleet arrived on.  The value
-        returned is undefined if ArrivedThisTurn() does not return true. */
+    /** Has two primary uses: orientation in tactical combat, and determination of starlane blockade restrictions.
+     * Returns the ID of the starlane that this fleet arrived on, if it arrived into a blockade which is not yet broken.
+     * If in a system and not blockaded, the value is the current system ID. The blockade intent is that you can't
+     * break a blockade unless you beat the blockaders (via combat or they retreat).**/
     int                                 ArrivalStarlane() const             { return m_arrival_starlane; }
 
     virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;
@@ -135,6 +139,8 @@ public:
     virtual void            SetSystem(int sys);
     virtual void            MoveTo(double x, double y);
     void                    SetNextAndPreviousSystems(int next, int prev);  ///< sets the previous and next systems for this fleet.  Useful after moving a moving fleet to a different location, so that it moves along its new local starlanes
+    void                    SetArrivalStarlane(int starlane) { m_arrival_starlane = starlane; }  ///< sets the arrival starlane, used to clear blockaded status after combat
+    void                    ClearArrivalFlag() { m_arrived_this_turn = false; } ///< used to clear the m_arrived_this_turn flag, prior to any fleets moving, for accurate blockade tests
     //@}
 
     /* returns a name for a fleet based on the specified \a ship_ids */
@@ -158,8 +164,8 @@ private:
     int                         m_moving_to;
 
     // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
-    int                         m_prev_system;  ///< the next system in the route, if any
-    int                         m_next_system;  ///< the previous system in the route, if any 
+    int                         m_prev_system;  ///< the previous system in the route, if any
+    int                         m_next_system;  ///< the next system in the route, if any
 
     bool                        m_aggressive;    ///< should this fleet attack enemies in the same system?
 
@@ -174,7 +180,7 @@ private:
     mutable double              m_travel_distance;
 
     bool                        m_arrived_this_turn;
-    int                         m_arrival_starlane;
+    int                         m_arrival_starlane; // see comment for ArrivalStarlane()
 
     friend class boost::serialization::access;
     template <class Archive>

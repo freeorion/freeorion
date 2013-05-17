@@ -75,9 +75,15 @@ void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis,
 
     if (vis >= VIS_BASIC_VISIBILITY) {
         this->m_id =                    copied_object->m_id;
+        if (this->m_system_id != copied_object->m_system_id) {
+            // as with other containers, removal from the old container (System) is triggered by the contained Object
+            System* oldSys = GetSystem(this->m_system_id);
+            if (this->ContainedBy(this->m_system_id) && (oldSys))
+                oldSys->Remove(this->m_id);
+            this->m_system_id =         copied_object->m_system_id;// actual Insertion into the new System is handled by the System::Copy process for the new System
+        }
         this->m_x =                     copied_object->m_x;
         this->m_y =                     copied_object->m_y;
-        this->m_system_id =             copied_object->m_system_id;
 
         this->m_specials.clear();
         for (std::map<std::string, int>::const_iterator copied_special_it = copied_object->m_specials.begin();

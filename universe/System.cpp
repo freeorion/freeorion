@@ -86,9 +86,24 @@ void System::Copy(const UniverseObject* copied_object, int empire_id) {
 
     UniverseObject::Copy(copied_object, vis, visible_specials);
 
+    if (vis == VIS_BASIC_VISIBILITY) {
+        // add any visible objects to contained_objects list, or update if already there, but to not erase other objects already there
+        // note that objects could have changed orbit (key)
+        //Logger().debugStream() << "System::Copy System "<<copied_object->Name()<<" ID("<<copied_object_id<<") has VIS_BASIC_VISIBILITY";
+        ObjectMultimap vis_objects = copied_system->VisibleContainedObjects(empire_id);
+        for (ObjectMultimap::iterator vis_it = vis_objects.begin(); vis_it != vis_objects.end(); ++vis_it) {
+            for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); it++){
+                if (vis_it->second == it->second) {
+                    //Logger().debugStream() << "System::Copy replaceing object ID " << it->second << " in orbit " << 
+                    //                            it->first << " with new copy in orbit " << vis_it->first;
+                    m_objects.erase(it);
+                    break; //assumes a given object can only be in one orbit at a time
+                }
+            }
+            this->m_objects.insert(std::pair<int,int>(*vis_it)); //setting of hte object's system_id is handled by the object
+        }
+    }
     if (vis >= VIS_BASIC_VISIBILITY) {
-        this->m_objects =                   copied_system->VisibleContainedObjects(empire_id);
-
         // add any visible lanes, without removing existing entries
         StarlaneMap visible_lanes_holes = copied_system->VisibleStarlanesWormholes(empire_id);
         for (StarlaneMap::const_iterator it = visible_lanes_holes.begin(); it != visible_lanes_holes.end(); ++it)
@@ -97,6 +112,7 @@ void System::Copy(const UniverseObject* copied_object, int empire_id) {
         this->m_orbits =                    copied_system->m_orbits;
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
+            this->m_objects =               copied_system->VisibleContainedObjects(empire_id); //setting of the object's system_id is handled by the object
             this->m_name =                  copied_system->m_name;
 
             this->m_star =                  copied_system->m_star;

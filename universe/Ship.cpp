@@ -134,7 +134,12 @@ void Ship::Copy(const UniverseObject* copied_object, int empire_id) {
     UniverseObject::Copy(copied_object, vis, visible_specials);;
 
     if (vis >= VIS_BASIC_VISIBILITY) {
-        this->m_fleet_id =                  copied_ship->m_fleet_id;
+        if (this->m_fleet_id != copied_ship->m_fleet_id) {
+            // as with other containers, removal from the old container is triggered by the contained Object; removal from System is handled by UniverseObject::Copy
+            if (Fleet* oldFleet = GetFleet(this->m_fleet_id)) 
+                oldFleet->RemoveShip(this->ID());
+            this->m_fleet_id =              copied_ship->m_fleet_id; // as with other containers (Systems), actual insertion into fleet ships set is handled by the fleet
+        }
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
             if (this->Unowned())

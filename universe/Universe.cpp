@@ -1682,9 +1682,8 @@ namespace {
                     fleet = Objects().Object<Fleet>(ship->FleetID());
             }
             if (fleet) {
-                int next_id = fleet->NextSystemID();
                 int cur_id = fleet->SystemID();
-                if (next_id != INVALID_OBJECT_ID && next_id != cur_id)
+                if (cur_id == INVALID_OBJECT_ID) // fleets do not grant detection when in a starlane
                     continue;
             }
 

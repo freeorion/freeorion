@@ -1363,7 +1363,7 @@ namespace {
         // 2) b) empire A has a fleet and empire B has a planet in a system
         // 3) empire A's can see the fleet or planet of empire B
         // 4) empire A's fleet is set to aggressive
-        // 5) empire A's fleet has at least one armed ship
+        // 5) empire A's fleet has at least one armed ship <-- only enforced if empire A is 'monster'
         //
         // monster ships are treated as owned by an empire at war with all other empires (may be passive or aggressive)
         // native planets are treated as owned by an empire at war with all other empires
@@ -1374,7 +1374,7 @@ namespace {
         if (empire_fleets_here.empty())
             return false;
 
-        // which empires have aggressive ships here?
+        // which empires (including monsters as id ALL_EMPIRES) have aggressive ships here?
         std::set<int> empires_with_aggressive_fleets_here;
         for (std::map<int, std::set<int> >::const_iterator empire_it = empire_fleets_here.begin();
              empire_it != empire_fleets_here.end(); ++empire_it)
@@ -1387,7 +1387,8 @@ namespace {
                 const Fleet* fleet = GetFleet(*fleet_it);
                 if (!fleet)
                     continue;
-                if (fleet->Aggressive()) {
+                // an unarmed Monster will not trigger combat
+                if ((fleet->Aggressive() || fleet->Unowned()) && (fleet->HasArmedShips() || !fleet->Unowned())  ) {
                     empires_with_aggressive_fleets_here.insert(empire_id);
                     break;
                 }
@@ -1601,7 +1602,7 @@ namespace {
 
 
             // update system ownership after combat.  may be necessary if the
-            // combat caused planets to change ownership.
+            // combat caused planets to change ownership.  Also update fleet movement blockade restrictions
             if (System* system = GetSystem(combat_info.system_id)) {
                 // ensure all participants get updates on system.  this ensures
                 // that an empire who lose all objects in the system still
@@ -1609,6 +1610,21 @@ namespace {
                 for (std::set<int>::const_iterator empire_it = combat_info.empire_ids.begin();
                      empire_it != combat_info.empire_ids.end(); ++empire_it)
                 { universe.EmpireKnownObjects(*empire_it).CopyObject(system, ALL_EMPIRES); }
+
+                //update fleet movement blockade restrictions
+                std::map<int,bool> empires_blockaded;
+                std::vector<int> system_fleet_ids = system->FindObjectIDs<Fleet>();
+                for (std::vector<int>::const_iterator fleet_it = system_fleet_ids.begin(); fleet_it != system_fleet_ids.end(); ++fleet_it) {
+                    Fleet* fleet = GetFleet(*fleet_it);
+                    if (!fleet || fleet->ArrivalStarlane() == combat_info.system_id)
+                        continue;
+                    if (empires_blockaded.find(fleet->Owner()) == empires_blockaded.end())
+                        empires_blockaded[ fleet->Owner() ] = fleet->BlockadedAtSystem(combat_info.system_id, false);
+                    if (!empires_blockaded[ fleet->Owner() ]) {
+                        fleet->SetArrivalStarlane(combat_info.system_id);
+                        fleet->CalculateRoute(); //TODO: double check if this is still necessary
+                    }
+                }
             }
         }
     }
@@ -2143,16 +2159,15 @@ void ServerApp::PreCombatProcessTurns() {
     // fleet movement
     fleets = objects.FindObjects<Fleet>();
     for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        Fleet* fleet = *it;
+        if (fleet)
+            fleet->ClearArrivalFlag();
+    }
+    for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
         // save for possible SitRep generation after moving...
         Fleet* fleet = *it;
-        if (!fleet)
-            continue;
-
-        fleet->MovementPhase();
-
-        // TODO: Do movement incrementally, and if the moving fleet encounters
-        // stationary combat fleets or planetary defenses that can hurt it, it
-        // must be resolved as a combat.
+        if (fleet)
+            fleet->MovementPhase();
     }
 
 

@@ -178,6 +178,11 @@ void NewFleetOrder::ExecuteImpl() const {
     universe.InsertID(fleet, m_new_id);
     universe.SetEmpireObjectVisibility(EmpireID(), fleet->ID(), VIS_FULL_VISIBILITY);
     system->Insert(fleet);
+    // new fleet will get same m_arrival_starlane as fleet of the first ship in the list.
+    Ship* firstShip = GetShip(validated_ships[0]);
+    Fleet* firstFleet = GetFleet(firstShip->FleetID());
+    if (firstFleet)
+        fleet->SetArrivalStarlane(firstFleet->ArrivalStarlane());
     fleet->SetAggressive(false);
     fleet->AddShips(validated_ships);
 }
