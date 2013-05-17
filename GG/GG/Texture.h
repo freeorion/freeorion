@@ -180,6 +180,11 @@ public:
         coordinates are not well formed.*/
     SubTexture(const boost::shared_ptr<const Texture>& texture, X x1, Y y1, X x2, Y y2);
 
+    /** Creates a SubTexture from a GG::Texture and uses coordinates to cover
+        the whole texture.
+        \throw GG::SubTexture::BadTexture Throws if the given Texture is null.*/
+    SubTexture(const boost::shared_ptr<const Texture>& texture);
+
     SubTexture(const SubTexture& rhs); ///< copy ctor
     const SubTexture& operator=(const SubTexture& rhs); ///< assignment operator
     virtual ~SubTexture(); ///< virtual dtor

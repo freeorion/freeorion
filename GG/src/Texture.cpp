@@ -577,6 +577,23 @@ SubTexture::SubTexture(const boost::shared_ptr<const Texture>& texture, X x1, Y 
     m_tex_coords[3] = Value(y2 * 1.0 / texture->Height());
 }
 
+SubTexture::SubTexture(const boost::shared_ptr<const Texture>& texture) :
+    m_texture(texture),
+    m_width(GG::X1),
+    m_height(GG::Y1),
+    m_tex_coords()
+{
+    if (!m_texture) throw BadTexture("Attempted to contruct subtexture from invalid texture");
+
+    m_width = texture->Width();
+    m_height = texture->Height();
+
+    m_tex_coords[0] = 0.0;
+    m_tex_coords[1] = 0.0;
+    m_tex_coords[2] = 1.0;
+    m_tex_coords[3] = 1.0;
+}
+
 SubTexture::~SubTexture()
 {}
 
