@@ -891,10 +891,10 @@ MapWnd::MapWnd() :
     layout->Add(m_detection,        0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
-    //layout->SetMinimumColumnWidth(layout_column, m_btn_moderator->Width());
-    //layout->SetColumnStretch(layout_column, 0.0);
-    //layout->Add(m_btn_moderator,    0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    //++layout_column;
+    layout->SetMinimumColumnWidth(layout_column, m_btn_moderator->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_btn_moderator,    0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
 
     layout->SetMinimumColumnWidth(layout_column, m_btn_objects->Width());
     layout->SetColumnStretch(layout_column, 0.0);
@@ -1735,15 +1735,17 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
     // disallow order enabling if this client does not have an empire
     // and is not a moderator
     HumanClientApp* app = HumanClientApp::GetApp();
+    bool moderator = false;
     if (!app) {
         enable = false;
     } else {
         bool have_empire = (app->EmpireID() != ALL_EMPIRES);
-        bool moderator = (app->GetPlayerClientType(app->PlayerID()) == Networking::CLIENT_TYPE_HUMAN_MODERATOR);
+        moderator = (app->GetPlayerClientType(app->PlayerID()) == Networking::CLIENT_TYPE_HUMAN_MODERATOR);
         if (!have_empire && !moderator)
             enable = false;
     }
 
+    m_moderator_wnd->EnableActions(enable && moderator);
     m_turn_update->Disable(!enable);
     m_side_panel->EnableOrderIssuing(enable);
     m_production_wnd->EnableOrderIssuing(enable);
@@ -1936,6 +1938,17 @@ void MapWnd::InitTurn() {
     FleetUIManager::GetFleetUIManager().RefreshAll();
 
     DispatchFleetsExploring();
+
+    HumanClientApp* app = HumanClientApp::GetApp();
+    if (app->GetPlayerClientType(app->PlayerID()) == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
+        // this client is a moderator
+        m_btn_moderator->Disable(false);
+        m_btn_moderator->Show();
+    } else {
+        HideModeratorActions();
+        m_btn_moderator->Disable();
+        m_btn_moderator->Hide();
+    }
 
     m_moderator_wnd->Refresh();
 }

@@ -21,6 +21,7 @@ namespace {
 ////////////////////////////////////////////////
 ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     CUIWnd(UserString("MODERATOR"), GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE),
+    m_actions_enabled(true),
     m_no_action_button(0),
     m_create_system_button(0),
     m_star_type_drop(0),
@@ -239,6 +240,10 @@ void ModeratorActionsWnd::Refresh() {
     }
     if (!m_empire_drop->Empty())
         m_empire_drop->Select(m_empire_drop->begin());
+}
+
+void ModeratorActionsWnd::EnableActions(bool enable/* = true*/) {
+    m_actions_enabled = enable;
 }
 
 void ModeratorActionsWnd::CloseClicked()

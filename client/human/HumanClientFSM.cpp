@@ -630,7 +630,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Client().GetClientUI()->GetMessageWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
     Client().GetClientUI()->GetPlayerListWnd()->Refresh();
     Client().GetClientUI()->GetPlayerListWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
-    Client().GetClientUI()->GetMapWnd()->EnableOrderIssuing(true);   // MapWnd
+    Client().GetClientUI()->GetMapWnd()->EnableOrderIssuing(true);
 
     // observers can't do anything but wait for the next update, and need to
     // be back in WaitingForTurnData, so posting TurnEnded here has the effect

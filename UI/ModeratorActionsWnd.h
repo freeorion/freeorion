@@ -30,6 +30,7 @@ public:
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void            Refresh();
+    void            EnableActions(bool enable = true);
     //!@}
 
     mutable boost::signal<void ()>              ClosingSignal;
@@ -53,6 +54,8 @@ private:
     void            SetOwnerClicked();
     void            EmpireSelected(GG::DropDownList::iterator it);
     void            CreateStarlaneClicked();
+
+    bool                m_actions_enabled;
 
     GG::Button*         m_no_action_button;
     GG::Button*         m_create_system_button;
