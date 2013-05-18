@@ -1349,14 +1349,24 @@ void EncyclopediaDetailPanel::Refresh() {
              it != log.attack_events.end(); ++it)
         {
             const UniverseObject* attacker = objects.Object(it->attacker_id);
-            const std::string& attacker_name = (attacker ? attacker->PublicName(client_empire_id) : UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
-            const std::string& attacker_tag = LinkTag(attacker ? attacker->ObjectType() : INVALID_UNIVERSE_OBJECT_TYPE);
-            std::string attacker_link = LinkTaggedIDText(attacker_tag, it->attacker_id, attacker_name);
+            std::string attacker_link;
+            if (attacker) {
+                const std::string& attacker_name = attacker->PublicName(client_empire_id);
+                const std::string& attacker_tag = LinkTag(attacker->ObjectType());
+                attacker_link = LinkTaggedIDText(attacker_tag, it->attacker_id, attacker_name);
+            } else {
+                attacker_link = UserString("ENC_COMBAT_UNKNOWN_OBJECT");
+            }
 
             const UniverseObject* target = objects.Object(it->target_id);
-            const std::string& target_name = (target ? target->PublicName(client_empire_id) : UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
-            const std::string& target_tag = LinkTag(target ? target->ObjectType() : INVALID_UNIVERSE_OBJECT_TYPE);
-            std::string target_link = LinkTaggedIDText(target_tag, it->target_id, target_name);
+            std::string target_link;
+            if (target) {
+                const std::string& target_name = target->PublicName(client_empire_id);
+                const std::string& target_tag = LinkTag(target->ObjectType());
+                target_link = LinkTaggedIDText(target_tag, it->target_id, target_name);
+            } else {
+                target_link = UserString("ENC_COMBAT_UNKNOWN_OBJECT");
+            }
 
             const std::string& template_str = (it->target_destroyed ?
                                                UserString("ENC_COMBAT_ATTACK_DESTROY_STR") :
