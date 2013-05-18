@@ -224,7 +224,7 @@ void MultiEdit::Render()
             } else { // just draw normal text on this line
                 Pt lr = text_pos + Pt(lines[row].char_data.back().extent, GetFont()->Height());
                 glColor(text_color_to_use);
-                GetFont()->RenderText(text_pos, text_pos + Pt(lines[row].char_data.back().extent, GetFont()->Height()), Text(), text_format, lines, state, row, CP0, row + 1, CPSize(lines[row].char_data.size()));
+                GetFont()->RenderText(text_pos, lr, Text(), text_format, lines, state, row, CP0, row + 1, CPSize(lines[row].char_data.size()));
             }
         }
         // if there's no selected text, but this row contains the caret (and MULTI_READ_ONLY is not in effect)
