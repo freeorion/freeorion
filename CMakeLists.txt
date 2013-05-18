@@ -3,15 +3,15 @@ cmake_policy(VERSION 2.6.4)
 
 set(CMAKE_VERBOSE_MAKEFILE false)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
+
 ########################################
 # Configuration                        #
 ########################################
 project(FreeOrion)
 
-set(FREEORION_VERSION 0.4.2)
+set(FreeOrion_VERSION 0.4.2)
 set(FREEORION_RELEASE false)
-
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
 
 set(MINIMUM_BOOST_VERSION 1.47.0)
 set(MINIMUM_BOOST_COMPONENTS date_time filesystem serialization signals system thread)
@@ -56,7 +56,6 @@ else ()
     message(FATAL_ERROR "Unknown platform type! Your setup is not a supported platform for FreeOrion.")
 endif ()
 
-
 ########################################
 # Dependencies                         #
 ########################################
@@ -90,29 +89,15 @@ endif()
 
 
 find_package(Subversion)
-set(svn_revision_number ???)
-set(tmpLANG $ENV{LANG})
-set(tmpLC_ALL $ENV{LC_ALL})
-set(ENV{LANG} "C")
-set(ENV{LC_ALL} "C")
-if (Subversion_FOUND)
-   execute_process(
-       COMMAND ${Subversion_SVN_EXECUTABLE} info
-       WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
-       RESULT_VARIABLE result
-       OUTPUT_VARIABLE output
-   )
-   if (NOT result)
-       string(REGEX REPLACE ".*Last Changed Rev: ([0-9]*).*" "\\1" svn_revision_number ${output})
-   endif ()
+set(FreeOrion_WC_REVISION ???)
+if (Subversion_FOUND AND IS_DIRECTORY "${CMAKE_SOURCE_DIR}/.svn")
+    Subversion_WC_INFO(${CMAKE_SOURCE_DIR} FreeOrion)
 endif ()
 configure_file(
     ${CMAKE_SOURCE_DIR}/cmake/Version.cpp.in
     ${CMAKE_BINARY_DIR}/util/Version.cpp
     @ONLY
 )
-set($ENV{LANG} ${tmpLANG})
-set(LC_ALL $ENV{tmpLC_ALL})
 
 
 ########################################
@@ -414,7 +399,7 @@ endif ()
 if (BUILD_SDK)
     set(CPACK_PACKAGE_VERSION "1.0")
 else ()
-    set(CPACK_PACKAGE_VERSION ${FREEORION_VERSION})
+    set(CPACK_PACKAGE_VERSION ${FreeOrion_VERSION})
 endif ()
 
 set(CPACK_PACKAGE_VENDOR "FreeOrion Community")
