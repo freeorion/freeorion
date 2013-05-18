@@ -2331,7 +2331,7 @@ Stop Exploring
 ###############
 
 MOD_NONE
-None
+No Moderator Action
 
 MOD_CREATE_PLANET
 Add Planet

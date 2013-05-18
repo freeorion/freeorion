@@ -618,13 +618,13 @@ MapWnd::MapWnd() :
 
     // moderator actions
     m_moderator_wnd = new ModeratorActionsWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
-    GG::Connect(m_moderator_wnd->ClosingSignal,             boost::bind(&MapWnd::ToggleModeratorActions,    this));
-    GG::Connect(m_moderator_wnd->NoActionSelectedSignal,                &MapWnd::ModeratorNoActionSelected, this);
-    GG::Connect(m_moderator_wnd->CreateSystemActionSelectedSignal,      &MapWnd::ModeratorCreateSystemSelected, this);
-    GG::Connect(m_moderator_wnd->CreatePlanetActionSelectedSignal,      &MapWnd::ModeratorCreatePlanetSelected, this);
-    GG::Connect(m_moderator_wnd->DeleteObjectActionSelectedSignal,      &MapWnd::ModeratorDeleteObjectSelected, this);
-    GG::Connect(m_moderator_wnd->SetOwnerActionSelectedSignal,          &MapWnd::ModeratorSetOwnerSelected, this);
-    GG::Connect(m_moderator_wnd->CreateStarlaneActionSelectedSignal,    &MapWnd::ModeratorCreateStarlaneSelected, this);
+    GG::Connect(m_moderator_wnd->ClosingSignal,             boost::bind(&MapWnd::ToggleModeratorActions,            this));
+    GG::Connect(m_moderator_wnd->NoActionSelectedSignal,                &MapWnd::ModeratorNoActionSelected,         this);
+    GG::Connect(m_moderator_wnd->CreateSystemActionSelectedSignal,      &MapWnd::ModeratorCreateSystemSelected,     this);
+    GG::Connect(m_moderator_wnd->CreatePlanetActionSelectedSignal,      &MapWnd::ModeratorCreatePlanetSelected,     this);
+    GG::Connect(m_moderator_wnd->DeleteObjectActionSelectedSignal,      &MapWnd::ModeratorDeleteObjectSelected,     this);
+    GG::Connect(m_moderator_wnd->SetOwnerActionSelectedSignal,          &MapWnd::ModeratorSetOwnerSelected,         this);
+    GG::Connect(m_moderator_wnd->CreateStarlaneActionSelectedSignal,    &MapWnd::ModeratorCreateStarlaneSelected,   this);
     GG::GUI::GetGUI()->Register(m_moderator_wnd);
     m_moderator_wnd->Hide();
 
@@ -1936,6 +1936,8 @@ void MapWnd::InitTurn() {
     FleetUIManager::GetFleetUIManager().RefreshAll();
 
     DispatchFleetsExploring();
+
+    m_moderator_wnd->Refresh();
 }
 
 void MapWnd::MidTurnUpdate() {
@@ -3955,7 +3957,7 @@ void MapWnd::Sanitize() {
     m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
 
     m_object_list_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN)));
-
+    m_moderator_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN)));
     m_pedia_panel->MoveTo(GG::Pt(m_sitrep_panel->UpperLeft().x, m_sitrep_panel->LowerRight().y));
 
     MoveTo(GG::Pt(-AppWidth(), -AppHeight()));
