@@ -967,13 +967,13 @@ public:
             GG::Connect(m_expand_button->ClickedSignal, &ObjectPanel::ExpandCollapseButtonPressed, this);
 
             if (m_expanded) {
-                m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "minusnormal.png"     , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-                m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "minusclicked.png"    , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-                m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "minusmouseover.png"  , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+                m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "minusnormal.png"     , true)));
+                m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "minusclicked.png"    , true)));
+                m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "minusmouseover.png"  , true)));
             } else {
-                m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "plusnormal.png"   , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-                m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "plusclicked.png"  , true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-                m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "plusmouseover.png", true), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+                m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "plusnormal.png"   , true)));
+                m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "plusclicked.png"  , true)));
+                m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "plusmouseover.png", true)));
             }
         } else {
             m_dot = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(16), GG::Y(16),

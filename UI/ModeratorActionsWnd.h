@@ -10,6 +10,10 @@
 
 #include <vector>
 
+namespace GG {
+    class Button;
+}
+
 
 class ModeratorActionsWnd : public CUIWnd {
 public:
@@ -39,7 +43,6 @@ public:
 private:
     void            DoLayout();
     virtual void    CloseClicked();
-    void            MarkButtonsUnset();
 
     void            NoActionClicked();
     void            CreateSystemClicked();
@@ -51,15 +54,15 @@ private:
     void            EmpireSelected(GG::DropDownList::iterator it);
     void            CreateStarlaneClicked();
 
-    CUIButton*          m_no_action_button;
-    CUIButton*          m_create_system_button;
+    GG::Button*         m_no_action_button;
+    GG::Button*         m_create_system_button;
     CUIDropDownList*    m_star_type_drop;
-    CUIButton*          m_create_planet_button;
+    GG::Button*         m_create_planet_button;
     CUIDropDownList*    m_planet_type_drop;
-    CUIButton*          m_delete_object_button;
-    CUIButton*          m_set_owner_button;
+    GG::Button*         m_delete_object_button;
+    GG::Button*         m_set_owner_button;
     CUIDropDownList*    m_empire_drop;
-    CUIButton*          m_create_starlane_button;
+    GG::Button*         m_create_starlane_button;
 };
 
 #endif // _ModeratorActionsWnd_h_

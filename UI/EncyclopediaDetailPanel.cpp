@@ -241,15 +241,15 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     m_back_button->Disable();
     m_next_button->Disable();
 
-    m_index_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"      ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-    m_index_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"     ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-    m_index_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-    m_back_button->SetUnpressedGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrownormal.png"    ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-    m_back_button->SetPressedGraphic   (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowclicked.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-    m_back_button->SetRolloverGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowmouseover.png" ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-    m_next_button->SetUnpressedGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-    m_next_button->SetPressedGraphic   (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-    m_next_button->SetRolloverGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_index_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"      )));
+    m_index_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"     )));
+    m_index_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"   )));
+    m_back_button->SetUnpressedGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrownormal.png"    )));
+    m_back_button->SetPressedGraphic   (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowclicked.png"   )));
+    m_back_button->SetRolloverGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowmouseover.png" )));
+    m_next_button->SetUnpressedGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrownormal.png"   )));
+    m_next_button->SetPressedGraphic   (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowclicked.png"  )));
+    m_next_button->SetRolloverGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowmouseover.png")));
 
     CUILinkTextMultiEdit* desc_box = new CUILinkTextMultiEdit(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     GG::Connect(desc_box->LinkClickedSignal,        &EncyclopediaDetailPanel::HandleLinkClick,          this);
@@ -1301,7 +1301,7 @@ void EncyclopediaDetailPanel::Refresh() {
                 detailed_description += str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
                     % species_name_column1
                     % UserString(boost::lexical_cast<std::string>(it->second.second))
-                    % (GG::RgbaTag(ClientUI::StatIncrColor()) + DoubleToString(it->first, 2, true) + "</rgba>") );
+                    % (GG::RgbaTag(ClientUI::StatIncrColor()) + DoubleToString(it->first, 2, true) + "</rgba>"));
 
             } else if (it->first <= 0) {
                 if (!negative_header_placed) {
@@ -1315,7 +1315,7 @@ void EncyclopediaDetailPanel::Refresh() {
                 detailed_description += str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
                     % species_name_column1
                     % UserString(boost::lexical_cast<std::string>(it->second.second))
-                    % (GG::RgbaTag(ClientUI::StatDecrColor()) + DoubleToString(it->first, 2, true) + "</rgba>") );
+                    % (GG::RgbaTag(ClientUI::StatDecrColor()) + DoubleToString(it->first, 2, true) + "</rgba>"));
             }
 
             detailed_description += "\n";

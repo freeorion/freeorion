@@ -66,7 +66,7 @@ namespace {
     const GG::X     SCALE_LINE_MAX_WIDTH(240);
     const int       MIN_SYSTEM_NAME_SIZE = 10;
     const int       LAYOUT_MARGIN = 5;
-    const GG::Y     TOOLBAR_HEIGHT(30);
+    const GG::Y     TOOLBAR_HEIGHT(32);
 
     struct ClrLess {
         bool operator()(const GG::Clr& rhs, const GG::Clr& lhs) const {
@@ -573,7 +573,7 @@ MapWnd::MapWnd() :
     m_toolbar->Hide();
 
     GG::Layout* layout = new GG::Layout(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
-                                        m_toolbar->ClientWidth(), m_toolbar->ClientHeight(),
+                                        m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
                                         1, 17);
     layout->SetName("Toolbar Layout");
     m_toolbar->SetLayout(layout);
@@ -788,7 +788,7 @@ MapWnd::MapWnd() :
 
     // resources
     const GG::X ICON_DUAL_WIDTH(100);
-    const GG::X ICON_WIDTH(ICON_DUAL_WIDTH - 30);
+    const GG::X ICON_WIDTH(24);
     m_population = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
                                      ClientUI::MeterIcon(METER_POPULATION),
                                      0, 3, false);
@@ -820,10 +820,11 @@ MapWnd::MapWnd() :
     m_detection->SetName("Detection StatisticIcon");
 
     m_industry_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
+    m_industry_wasted->SetMinSize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
     m_research_wasted = new GG::Button(GG::X0, GG::Y0, ICON_WIDTH, GG::Y(Value(ICON_WIDTH)), "", font, GG::CLR_WHITE, GG::CLR_ZERO);
+    m_research_wasted->SetMinSize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
 
-    boost::shared_ptr<GG::Texture> wasted_ressource_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /"wasted_resource.png", false);
-    GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(wasted_ressource_texture, GG::X(0), GG::Y(0), GG::X(32), GG::Y(32));
+    GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /"wasted_resource.png", false));
 
     m_industry_wasted->SetUnpressedGraphic(wasted_ressource_subtexture);
     m_industry_wasted->SetPressedGraphic  (wasted_ressource_subtexture);
@@ -856,7 +857,7 @@ MapWnd::MapWnd() :
     layout->Add(m_FPS,              0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
     ++layout_column;
 
-    layout->SetMinimumColumnWidth(layout_column, GG::X(Value(layout->Height())));
+    layout->SetMinimumColumnWidth(layout_column, ICON_WIDTH);
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_industry_wasted,  0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
     ++layout_column;
@@ -865,7 +866,7 @@ MapWnd::MapWnd() :
     layout->Add(m_industry,         0, layout_column, GG::ALIGN_LEFT | GG::ALIGN_VCENTER);
     ++layout_column;
 
-    layout->SetMinimumColumnWidth(layout_column, GG::X(Value(layout->Height())));
+    layout->SetMinimumColumnWidth(layout_column, ICON_WIDTH);
     layout->SetColumnStretch(layout_column, 0.0);
     layout->Add(m_research_wasted,  0, layout_column, GG::ALIGN_RIGHT | GG::ALIGN_VCENTER);
     ++layout_column;
@@ -937,10 +938,6 @@ MapWnd::MapWnd() :
     m_backgrounds.clear();
     m_bg_scroll_rate.clear();
 
-#if TEST_BROWSE_INFO
-    boost::shared_ptr<GG::BrowseInfoWnd> browser_wnd(new BrowseFoo());
-    GG::Wnd::SetDefaultBrowseInfoWnd(browser_wnd);
-#endif
 
     Connect(ClientApp::GetApp()->EmpireEliminatedSignal,
             &MapWnd::HandleEmpireElimination,   this);

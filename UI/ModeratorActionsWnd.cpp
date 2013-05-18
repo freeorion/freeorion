@@ -6,7 +6,7 @@
 #include <GG/Button.h>
 
 namespace {
-    const GG::X CONTROL_WIDTH(64);
+    const GG::X CONTROL_WIDTH(32);
     const GG::Y CONTROL_HEIGHT(32);
     const int   PAD(3);
 }
@@ -26,13 +26,18 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     m_empire_drop(0),
     m_create_starlane_button(0)
 {
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+
     // button for no action
-    m_no_action_button = new CUIButton(GG::X0, GG::Y0, CONTROL_WIDTH, UserString("MOD_NONE"));
+    m_no_action_button = new GG::Button(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT, "", font, GG::CLR_WHITE);
+    m_no_action_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "nomoderatoraction.png")));
+    m_no_action_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "nomoderatoraction_clicked.png"  )));
+    m_no_action_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "nomoderatoraction_mouseover.png")));
     AttachChild(m_no_action_button);
     GG::Connect(m_no_action_button->ClickedSignal,      &ModeratorActionsWnd::NoActionClicked,      this);
 
     // button for create system and droplist to select system type to create
-    m_create_system_button = new CUIButton(GG::X0, GG::Y0, CONTROL_WIDTH, UserString("MOD_CREATE_SYSTEM"));
+    m_create_system_button = new GG::Button(GG::X0, GG::Y0, GG::X(32), GG::Y(32), "", font, GG::CLR_WHITE);
     AttachChild(m_create_system_button);
     GG::Connect(m_create_system_button->ClickedSignal,  &ModeratorActionsWnd::CreateSystemClicked,  this);
     m_star_type_drop = new CUIDropDownList(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT, CONTROL_HEIGHT*10);
@@ -40,7 +45,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     GG::Connect(m_star_type_drop->SelChangedSignal,     &ModeratorActionsWnd::StarTypeSelected,     this);
 
     // button for create planet and droplist to select planet type to create
-    m_create_planet_button = new CUIButton(GG::X0, GG::Y0, CONTROL_WIDTH, UserString("MOD_CREATE_PLANET"));
+    m_create_planet_button = new GG::Button(GG::X0, GG::Y0, GG::X(32), GG::Y(32), "", font, GG::CLR_WHITE);
     AttachChild(m_create_planet_button);
     GG::Connect(m_create_planet_button->ClickedSignal,  &ModeratorActionsWnd::CreatePlanetClicked,  this);
     m_planet_type_drop = new CUIDropDownList(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT, CONTROL_HEIGHT*10);
@@ -48,7 +53,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     GG::Connect(m_planet_type_drop->SelChangedSignal,   &ModeratorActionsWnd::PlanetTypeSelected,   this);
 
     // button for destroying object
-    m_delete_object_button = new CUIButton(GG::X0, GG::Y0, CONTROL_WIDTH, UserString("MOD_DESTROY"));
+    m_delete_object_button = new GG::Button(GG::X0, GG::Y0, GG::X(32), GG::Y(32), "", font, GG::CLR_WHITE);
     AttachChild(m_delete_object_button);
     GG::Connect(m_delete_object_button->ClickedSignal,  &ModeratorActionsWnd::DeleteObjectClicked,  this);
 
@@ -61,57 +66,39 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     GG::Connect(m_empire_drop->SelChangedSignal,        &ModeratorActionsWnd::EmpireSelected,       this);
 
     // button for creating starlane
-    m_create_starlane_button = new CUIButton(GG::X0, GG::Y0, CONTROL_WIDTH, UserString("MOD_STARLANE"));
+    m_create_starlane_button = new GG::Button(GG::X0, GG::Y0, GG::X(32), GG::Y(32), "", font, GG::CLR_WHITE);
     AttachChild(m_create_starlane_button);
     GG::Connect(m_create_starlane_button->ClickedSignal,&ModeratorActionsWnd::CreateStarlaneClicked,this);
 
     DoLayout();
 }
 
-void ModeratorActionsWnd::NoActionClicked() {
-    NoActionSelectedSignal();
-    MarkButtonsUnset();
-    m_no_action_button->MarkSelectedGray();
-}
+void ModeratorActionsWnd::NoActionClicked()
+{ NoActionSelectedSignal(); }
 
-void ModeratorActionsWnd::CreateSystemClicked() {
-    CreateSystemActionSelectedSignal(SelectedStarType());
-    MarkButtonsUnset();
-    m_create_system_button->MarkSelectedGray();
-}
+void ModeratorActionsWnd::CreateSystemClicked()
+{ CreateSystemActionSelectedSignal(SelectedStarType()); }
 
 void ModeratorActionsWnd::StarTypeSelected(GG::DropDownList::iterator it)
 { CreateSystemClicked(); }
 
-void ModeratorActionsWnd::CreatePlanetClicked() {
-    CreatePlanetActionSelectedSignal(SelectedPlanetType());
-    MarkButtonsUnset();
-    m_create_planet_button->MarkSelectedGray();
-}
+void ModeratorActionsWnd::CreatePlanetClicked()
+{ CreatePlanetActionSelectedSignal(SelectedPlanetType()); }
 
 void ModeratorActionsWnd::PlanetTypeSelected(GG::DropDownList::iterator it)
 { CreatePlanetClicked(); }
 
-void ModeratorActionsWnd::DeleteObjectClicked() {
-    DeleteObjectActionSelectedSignal();
-    MarkButtonsUnset();
-    m_delete_object_button->MarkSelectedGray();
-}
+void ModeratorActionsWnd::DeleteObjectClicked()
+{ DeleteObjectActionSelectedSignal(); }
 
-void ModeratorActionsWnd::SetOwnerClicked() {
-    SetOwnerActionSelectedSignal(SelectedEmpire());
-    MarkButtonsUnset();
-    m_set_owner_button->MarkSelectedGray();
-}
+void ModeratorActionsWnd::SetOwnerClicked()
+{ SetOwnerActionSelectedSignal(SelectedEmpire()); }
 
 void ModeratorActionsWnd::EmpireSelected(GG::DropDownList::iterator it)
 { SetOwnerClicked(); }
 
-void ModeratorActionsWnd::CreateStarlaneClicked() {
-    CreateStarlaneActionSelectedSignal();
-    MarkButtonsUnset();
-    m_create_starlane_button->MarkSelectedGray();
-}
+void ModeratorActionsWnd::CreateStarlaneClicked()
+{ CreateStarlaneActionSelectedSignal(); }
 
 PlanetType ModeratorActionsWnd::SelectedPlanetType() const
 { return PT_SWAMP; }
@@ -161,15 +148,6 @@ void ModeratorActionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
     if (old_size != GG::Wnd::Size())
         DoLayout();
-}
-
-void ModeratorActionsWnd::MarkButtonsUnset() {
-    m_no_action_button->MarkNotSelected();
-    m_create_system_button->MarkNotSelected();
-    m_create_planet_button->MarkNotSelected();
-    m_delete_object_button->MarkNotSelected();
-    m_set_owner_button->MarkNotSelected();
-    m_create_starlane_button->MarkNotSelected();
 }
 
 void ModeratorActionsWnd::Refresh() {
