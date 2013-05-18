@@ -876,8 +876,8 @@ namespace {
                     retval.push_back(halo_texture);
             }
         } else if (obj->ObjectType() == OBJ_PLANET) {
-            //const Planet* planet = */universe_object_cast<const Planet*>(obj));;
-            // don't have any icons for each planet type, so use generic / default object icon
+            if (const Planet* planet = universe_object_cast<const Planet*>(obj))
+                retval.push_back(ClientUI::PlanetIcon(planet->Type()));
 
         } else if (obj->ObjectType() == OBJ_BUILDING) {
             const Building* building = universe_object_cast<const Building*>(obj);
