@@ -281,7 +281,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     )
 endif ()
 
-target_link_libraries(ltdl ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(ltdl ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
 add_subdirectory(src)
 
