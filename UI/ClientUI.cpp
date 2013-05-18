@@ -96,6 +96,37 @@ double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().
 
 
 // content texture getters
+boost::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {
+    std::string icon_filename;
+    switch (planet_type) {
+    case PT_SWAMP:
+        icon_filename = "swamp.png";    break;
+    case PT_TOXIC:
+        icon_filename = "toxic.png";    break;
+    case PT_INFERNO:
+        icon_filename = "inferno.png";  break;
+    case PT_RADIATED:
+        icon_filename = "radiated.png"; break;
+    case PT_BARREN:
+        icon_filename = "barren.png";   break;
+    case PT_TUNDRA:
+        icon_filename = "tundra.png";   break;
+    case PT_DESERT:
+        icon_filename = "desert.png";   break;
+    case PT_TERRAN:
+        icon_filename = "terran.png";   break;
+    case PT_OCEAN:
+        icon_filename = "ocean.png";    break;
+    case PT_ASTEROIDS:
+        icon_filename = "asteroids.png";break;
+    case PT_GASGIANT:
+        icon_filename = "gasgiant.png"; break;
+    default:
+        break;
+    }
+    return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet" / icon_filename, true);
+}
+
 boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     std::string icon_filename;
     switch (meter_type) {
