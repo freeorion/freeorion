@@ -126,7 +126,7 @@ GG_API inline Pt   operator-(const Pt& lhs, const Pt& rhs)  { return Pt(lhs.x - 
 GG_API std::ostream& operator<<(std::ostream& os, const Pt& pt); ///< Pt stream-output operator for debug output
 
 /** returns true if \a lhs is identical to \a rhs */
-GG_API inline bool operator==(const Rect& lhs, const Rect& rhs) { return lhs.ul.x == rhs.ul.x && lhs.lr.x == rhs.lr.x && lhs.lr.y == rhs.lr.y && lhs.lr.y == rhs.lr.y; }
+GG_API inline bool operator==(const Rect& lhs, const Rect& rhs) { return lhs.ul.x == rhs.ul.x && lhs.lr.x == rhs.lr.x && lhs.ul.y == rhs.ul.y && lhs.lr.y == rhs.lr.y; }
 
 /** returns true if \a lhs differs from \a rhs */
 GG_API inline bool operator!=(const Rect& lhs, const Rect& rhs) { return !(lhs == rhs); }
