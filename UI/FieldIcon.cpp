@@ -88,7 +88,7 @@ void FieldIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         GG::Pt mouse_ind_ul(static_cast<GG::X>(middle.x - SEL_IND_SIZE.x / 2.0),
                             static_cast<GG::Y>(middle.y - SEL_IND_SIZE.y / 2.0));
         m_mouseover_indicator->SizeMove(mouse_ind_ul, mouse_ind_ul + SEL_IND_SIZE);
-    } else if (m_mouseover_indicator) {
+    } else {
         DetachChild(m_mouseover_indicator);
     }
 }
