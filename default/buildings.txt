@@ -389,6 +389,7 @@ BuildingType
                 Ship
                 OwnedBy TheEmpire Source.Owner
                 WithinDistance 50 Source
+                StarlaneSpeed low = 1 // Immobile objects do not get the starlane speed boost.
             ]
             stackinggroup = "LIGHTHOUSE_SPEED_STACK"
             effects = SetStarlaneSpeed Value + 20
@@ -1193,6 +1194,10 @@ BuildingType
             ]
             stackinggroup = "GAS_GIANT_GEN_STACK"
             effects = SetTargetIndustry Value + 10
+        EffectsGroup
+            scope = Source
+            activation = Not Planet type = GasGiant
+            effects = Destroy
     ]
     icon = ""
 
