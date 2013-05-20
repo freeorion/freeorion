@@ -96,6 +96,9 @@ def generateResearchOrders():
             if element.allocation > 0.0:
                 inProgressTechs[element.tech]=True
             thisTech=fo.getTech(element.tech)
+            if not thisTech:
+                print "Error: can't retrieve tech ",  element.tech
+                continue
             missingPrereqs = [preReq for preReq in thisTech.recursivePrerequisites(empireID) if preReq not in completedTechs]
             unlockedItems = [(uli.name,  uli.type) for uli in thisTech.unlockedItems]
             if not missingPrereqs:

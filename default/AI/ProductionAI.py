@@ -194,16 +194,24 @@ def addMarkDesigns():
     
     nb,  hull =  designNameBases[1]+"-%1d",   "SH_BASIC_MEDIUM"
     newMarkDesigns += [ (nb%iw,  desc,  hull,  [ srb%iw,  srb%iw,  ""],  "",  model)    for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  srb2%iw,  ""],  "",  model)    for iw in [2, 3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ srb2%iw,  srb2%iw,  ""],  "",  model)    for iw in [ 3, 4] ]
 
     nb,  hull =  designNameBases[2]+"-1-%1d",   "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar1,  srb%iw, srb%iw,  if1],  "",  model)    for iw in [3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar1,  srb2%iw, srb2%iw,  if1],  "",  model)    for iw in [2, 3, 4] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar1,  ar1, srb%iw,  if1],  "",  model)    for iw in [3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar1,  ar1, srb2%iw,  if1],  "",  model)    for iw in [3, 4] ]
+    nb,  hull =  designNameBases[2]+"-1G-%1d",   "SH_ORGANIC"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar1,  srb%iw, srb%iw,  is1],  "",  model)    for iw in [3, 4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar1,  srb2%iw, srb2%iw,  is1],  "",  model)    for iw in [3, 4] ]
     nb,  hull =  designNameBases[2]+"-2-%1d",   "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar1,  srb%iw, srb%iw,  is2],  "",  model)    for iw in [3, 4] ]
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar1,  srb%iw, srb%iw,  is2],  "",  model)    for iw in [4] ]
     newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar1,  srb2%iw, srb2%iw,  is2],  "",  model)    for iw in [2, 3, 4] ]
-    nb,  hull =  designNameBases[2]+"-3-%1d",   "SH_STATIC_MULTICELLULAR"
-    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar1,  srb2%iw, srb2%iw,  is2,  if1],  "",  model)    for iw in [2, 3, 4] ]
+    nb,  hull =  designNameBases[2]+"-2z-%1d",   "SH_ORGANIC"
+    newMarkDesigns += [ (nb%iw,  desc,  hull,  [ ar2,  srb%iw, srb%iw,  is2],  "",  model)    for iw in [4] ]
+    newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar2,  srb2%iw, srb2%iw,  is2],  "",  model)    for iw in [2, 3, 4] ]
+    #nb,  hull =  designNameBases[2]+"-3-%1d",   "SH_STATIC_MULTICELLULAR"
+    #newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar1,  srb2%iw, srb2%iw,  is2,  if1],  "",  model)    for iw in [2, 3, 4] ]
+    #nb,  hull =  designNameBases[2]+"-3z-%1d",   "SH_STATIC_MULTICELLULAR"
+    #newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  [ ar2,  srb2%iw, srb2%iw,  is2,  if1],  "",  model)    for iw in [2, 3, 4] ]
 
     nb,  hull =  designNameBases[3]+"-1-%1x",   "SH_ENDOMORPHIC"
     newMarkDesigns += [ (nb%(iw+4),  desc,  hull,  3*[srb2%iw] + [ar1,  is2, if1],  "",  model)    for iw in [ 4 ] ]
