@@ -1,6 +1,9 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"
+#include "../universe/Predicates.h"
+#include "../universe/UniverseObject.h"
+#include "../universe/Planet.h"
 
 #include "../universe/Tech.h"
 
@@ -14,6 +17,7 @@
 #include "PythonSetWrapper.h"
 #include <boost/python/tuple.hpp>
 #include <boost/python/to_python_converter.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace {
     // Research queue tests whether it contains a Tech by name, but Python needs
@@ -73,6 +77,8 @@ namespace {
 
     typedef std::pair<int, int> IntPair;
 
+    typedef std::set<int> IntSet;
+
     typedef std::map<std::pair<int, int>,int > PairIntInt_IntMap;
 
     std::vector<IntPair>   obstructedStarlanesP(const Empire& empire) {
@@ -97,7 +103,76 @@ namespace {
     DoubleIntPair ProductionCostAndTimeP(const Empire& empire, const ProductionQueue::Element& element)
     { return empire.ProductionCostAndTime(element); }
     boost::function<DoubleIntPair(const Empire&,const ProductionQueue::Element& element )> ProductionCostAndTimeFunc = &ProductionCostAndTimeP;
-    
+
+    //.def("availablePP",                     make_function(&ProductionQueue::AvailablePP,          return_value_policy<return_by_value>()))
+    //.add_property("allocatedPP",            make_function(&ProductionQueue::AllocatedPP,          return_internal_reference<>()))
+    //.def("objectsWithWastedPP",             make_function(&ProductionQueue::ObjectsWithWastedPP,  return_value_policy<return_by_value>()))
+
+    std::map<std::set<int>, double> PlanetsWithAvailablePP_P(const Empire& empire) {
+        const boost::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
+        const ProductionQueue& prodQueue = empire.GetProductionQueue();
+        std::map<std::set<int>, double> planetsWithAvailablePP;
+        std::map<std::set<int>, double> objectsWithAvailablePP = prodQueue.AvailablePP(industry_pool);
+        for (std::map<std::set<int>, double>::iterator map_it = objectsWithAvailablePP.begin(); 
+             map_it != objectsWithAvailablePP.end(); map_it++)
+        {
+            std::set<int> planetSet;
+            std::set<int> objSet = map_it->first;
+            for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); obj_it++) {
+                UniverseObject* location = GetUniverseObject(*obj_it);
+                if (/* const Planet* planet = */ universe_object_cast<const Planet*>(location))
+                    planetSet.insert(*obj_it);
+            }
+            if (!planetSet.empty())
+                planetsWithAvailablePP[planetSet] = map_it->second;
+        }
+        return planetsWithAvailablePP;
+    }
+    boost::function<std::map<std::set<int>, double>(const Empire& )> PlanetsWithAvailablePP_Func = &PlanetsWithAvailablePP_P;
+
+    std::map<std::set<int>, double> PlanetsWithAllocatedPP_P(const Empire& empire) {
+        const ProductionQueue& prodQueue = empire.GetProductionQueue();
+        std::map<std::set<int>, double> planetsWithAllocatedPP;
+        std::map<std::set<int>, double> objectsWithAllocatedPP = prodQueue.AllocatedPP();
+        for (std::map<std::set<int>, double>::iterator map_it = objectsWithAllocatedPP.begin(); 
+             map_it != objectsWithAllocatedPP.end(); map_it++)
+             {
+                 std::set<int> planetSet;
+                 std::set<int> objSet = map_it->first;
+                 for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); obj_it++) {
+                     UniverseObject* location = GetUniverseObject(*obj_it);
+                     if (/* const Planet* planet = */ universe_object_cast<const Planet*>(location))
+                         planetSet.insert(*obj_it);
+                 }
+                 if (!planetSet.empty())
+                     planetsWithAllocatedPP[planetSet] = map_it->second;
+             }
+             return planetsWithAllocatedPP;
+    }
+    boost::function<std::map<std::set<int>, double>(const Empire& )> PlanetsWithAllocatedPP_Func = &PlanetsWithAllocatedPP_P;
+
+    std::set<std::set<int> > PlanetsWithWastedPP_P(const Empire& empire) {
+        const boost::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
+        const ProductionQueue& prodQueue = empire.GetProductionQueue();
+        std::set<std::set<int> > planetsWithWastedPP;
+        std::set<std::set<int> > objectsWithWastedPP = prodQueue.ObjectsWithWastedPP(industry_pool);
+        for (std::set<std::set<int> >::iterator sets_it = objectsWithWastedPP.begin(); 
+             sets_it != objectsWithWastedPP.end(); sets_it++)
+             {
+                 std::set<int> planetSet;
+                 std::set<int> objSet = *sets_it;
+                 for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); obj_it++) {
+                     UniverseObject* location = GetUniverseObject(*obj_it);
+                     if (/* const Planet* planet = */ universe_object_cast<const Planet*>(location))
+                         planetSet.insert(*obj_it);
+                 }
+                 if (!planetSet.empty())
+                     planetsWithWastedPP.insert(planetSet);
+             }
+             return planetsWithWastedPP;
+    }
+    boost::function<std::set<std::set<int> >(const Empire& )> PlanetsWithWastedPP_Func = &PlanetsWithWastedPP_P;
+
 }
 
 namespace FreeOrionPython {
@@ -143,6 +218,13 @@ namespace FreeOrionPython {
             .def(boost::python::vector_indexing_suite<std::vector<ItemSpec>, true>())
         ;
         boost::python::to_python_converter<DoubleIntPair, DoubleIntPairConverter>();
+
+        class_<ResourcePool, boost::shared_ptr<ResourcePool>, boost::noncopyable >("resPool", boost::python::no_init);
+        //FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
+        FreeOrionPython::SetWrapper2<IntSet>::Wrap("IntSetSet");
+        class_<std::map<std::set<int>, double> > ("resPoolMap")
+            .def(boost::python::map_indexing_suite< std::map<std::set<int>, double>, true>() )
+        ;
         
         ///////////////////
         //     Empire    //
@@ -167,6 +249,21 @@ namespace FreeOrionPython {
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<DoubleIntPair, const Empire&, const ProductionQueue::Element& >()
                                                     ))
+            .add_property("planetsWithAvailablePP", make_function(
+                                                        PlanetsWithAvailablePP_Func,
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<std::map<std::set<int>, double>, const Empire& >()
+                                                    ))
+            .add_property("planetsWithAllocatedPP", make_function(
+                                                        PlanetsWithAllocatedPP_Func,
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<std::map<std::set<int>, double>, const Empire& >()
+                                                    ))
+            .add_property("planetsWithWastedPP",    make_function(
+                                                        PlanetsWithWastedPP_Func,
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<std::set<std::set<int> >, const Empire& >()
+                                                    ))
 
             .def("techResearched",                  &Empire::TechResearched)
             .add_property("availableTechs",         make_function(&Empire::AvailableTechs,          return_internal_reference<>()))
@@ -185,6 +282,7 @@ namespace FreeOrionPython {
             //.def("resourceMaxStockpile",            &Empire::ResourceMaxStockpile)
             .def("resourceProduction",              &Empire::ResourceProduction)
             .def("resourceAvailable",               &Empire::ResourceAvailable)
+            .def("getResourcePool",                 &Empire::GetResourcePool)
 
             .def("population",                      &Empire::Population)
 
@@ -252,7 +350,7 @@ namespace FreeOrionPython {
             .add_property("progress",               &ProductionQueue::Element::progress)
             .add_property("turnsLeft",              &ProductionQueue::Element::turns_left_to_completion)
             .add_property("remaining",              &ProductionQueue::Element::remaining)
-            .add_property("blocksize",              &ProductionQueue::Element::remaining)
+            .add_property("blocksize",              &ProductionQueue::Element::blocksize)
             ;
         class_<ProductionQueue, noncopyable>("productionQueue", no_init)
             .def("__iter__",                        iterator<ProductionQueue>())  // ProductionQueue provides STL container-like interface to contained queue
@@ -262,7 +360,10 @@ namespace FreeOrionPython {
             .add_property("empty",                  &ProductionQueue::empty)
             .add_property("totalSpent",             &ProductionQueue::TotalPPsSpent)
             .add_property("empireID",               &ProductionQueue::EmpireID)
-        ;
+            .def("availablePP",                     make_function(&ProductionQueue::AvailablePP,          return_value_policy<return_by_value>()))
+            .add_property("allocatedPP",            make_function(&ProductionQueue::AllocatedPP,          return_internal_reference<>()))
+            .def("objectsWithWastedPP",             make_function(&ProductionQueue::ObjectsWithWastedPP,  return_value_policy<return_by_value>()))
+            ;
 
 
         //////////////////

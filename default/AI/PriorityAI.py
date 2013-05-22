@@ -19,6 +19,7 @@ import ResearchAI
 allottedInvasionTargets=0
 allottedColonyTargets=0
 scoutsNeeded = 0
+unmetThreat = 0
 
 def calculatePriorities():
     "calculates the priorities of the AI player"
@@ -279,6 +280,7 @@ def calculateInvasionPriority():
     
 def calculateMilitaryPriority():
     "calculates the demand for military ships by military targeted systems"
+    global unmetThreat
 
     universe = fo.getUniverse()
     empire = fo.getEmpire()

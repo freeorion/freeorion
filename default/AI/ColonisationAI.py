@@ -527,22 +527,41 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
             if "_NEST_" in special:
                 retval+=5*discountMultiplier*backupFactor # get an outpost on the nest quick
                 detail.append( "%s  %.1f"%(special,  discountMultiplier*5*backupFactor  )  )
-        if  ( ( planet.size  ==  fo.planetSize.asteroids ) and  (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete )): 
-            if system:
-                astVal=0
-                for pid in system.planetIDs:
-                    otherPlanet=universe.getPlanet(pid)
-                    if otherPlanet.size == fo.planetSize.asteroids:
-                        if pid==planetID:
-                            continue
-                        elif pid < planetID:
-                            astVal=0
-                            break
-                    elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID:
-                        astVal+=5 * discountMultiplier
-                retval += astVal
-                if astVal >0:
-                    detail.append( "Asteroids %.1f"%(discountMultiplier*20  )  )
+        if   ( planet.size  ==  fo.planetSize.asteroids ): 
+            if (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete ): 
+                if system:
+                    astVal=0
+                    for pid in system.planetIDs:
+                        otherPlanet=universe.getPlanet(pid)
+                        if otherPlanet.size == fo.planetSize.asteroids:
+                            if pid==planetID:
+                                continue
+                            elif pid < planetID:
+                                astVal=0
+                                break
+                        elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID and otherPlanet.speciesName!="":
+                            astVal+=5 * discountMultiplier
+                    retval += astVal
+                    if astVal >0:
+                        detail.append( "AsteroidMining %.1f"%(astVal  )  )
+            if (empire.getTechStatus("SHP_ASTEROID_HULLS") == fo.techStatus.complete ) or (  "SHP_ASTEROID_HULLS"  in empireResearchList[:3]) :
+                if system:
+                    astVal=0
+                    for pid in system.planetIDs:
+                        otherPlanet=universe.getPlanet(pid)
+                        if otherPlanet.size == fo.planetSize.asteroids:
+                            if pid==planetID:
+                                continue
+                            elif pid < planetID:
+                                astVal=0
+                                break
+                        elif otherPlanet.size!= fo.planetSize.gasGiant and otherPlanet.owner==empire.empireID and otherPlanet.speciesName!="":
+                            otherSpecies = fo.getSpecies(otherPlanet.speciesName)
+                            if otherSpecies and otherSpecies.canProduceShips:
+                                astVal+=20 * discountMultiplier
+                    retval += astVal
+                    if astVal >0:
+                        detail.append( "AsteroidShipBuilding %.1f"%(astVal  )  )
         if  ( ( planet.size  ==  fo.planetSize.gasGiant ) and  ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:3]) )):
             if system:
                 GGList=[]
@@ -583,13 +602,19 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
         perGGG=2*10*discountMultiplier
         planetSize = planet.size
         if system and AIFocusType.FOCUS_INDUSTRY in species.foci:
+            gotAsteroids=False
             for pid  in [id for id in system.planetIDs if id != planetID]:
                 p2 = universe.getPlanet(pid)
                 if p2:
-                    if p2.size== fo.planetSize.asteroids :
+                    if p2.size== fo.planetSize.asteroids and not gotAsteroids :
+                        gotAsteroids = True
                         if ( (empire.getTechStatus("PRO_MICROGRAV_MAN") == fo.techStatus.complete ) or (  "PRO_MICROGRAV_MAN"  in empireResearchList[:3]) ):
                             asteroidBonus = 2*5*discountMultiplier
                             detail.append( "Asteroid mining from %s  %.1f"%(p2.name,    2*discountMultiplier*5  )  )
+                        if (empire.getTechStatus("SHP_ASTEROID_HULLS") == fo.techStatus.complete ) or (  "SHP_ASTEROID_HULLS"  in empireResearchList[:3]) :
+                            if species and species.canProduceShips:
+                                asteroidBonus += 20*discountMultiplier
+                                detail.append( "Asteroid ShipBuilding from %s  %.1f"%(p2.name,    2*discountMultiplier*20  )  )
                     if p2.size== fo.planetSize.gasGiant :
                         GGPresent=True
                         if ( (empire.getTechStatus("PRO_ORBITAL_GEN") == fo.techStatus.complete ) or (  "PRO_ORBITAL_GEN"  in empireResearchList[:3]) ):

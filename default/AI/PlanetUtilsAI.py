@@ -16,11 +16,11 @@ def planetNameIDs(planetIDs):
     universe = fo.getUniverse()
     res=[]
     for pid in planetIDs:
-        planet = universe.getSystem(pid)
+        planet = universe.getPlanet(pid)
         if planet:
             res.append( "%s:%d"%(planet.name, pid ) )
         else:
-            res.append("unkown:%d"%pid )
+            res.append("unknown:%d"%pid )
     return res
 
 def getCapital(): # if no current capital returns planet with biggest pop

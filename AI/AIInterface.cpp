@@ -77,6 +77,8 @@ namespace {
     // start of turn initialization for Empire ResourcePools.  determines where supplies can be delivered, and 
     // between which systems resources can be exchanged (which is necessary to know before resource pools can be
     // updated
+    // ** not used currently because this info is all provided by Server, and having client recalculate it simply 
+    // risks overwriting with inaccurate information
     void InitResourcePoolsAndSupply() {
         EmpireManager& manager = AIClientApp::GetApp()->Empires();
 
@@ -172,7 +174,7 @@ namespace AIInterface {
 
         InitMeterEstimatesAndDiscrepancies();
         UpdateMeterEstimates();
-        InitResourcePoolsAndSupply();
+        //InitResourcePoolsAndSupply(); //unneeded & was overwriting/erasing info provided by Server
         UpdateResourcePools();
 
         Logger().debugStream() << "AIInterface::InitTurn time: " << (turn_init_timer.elapsed() * 1000.0);

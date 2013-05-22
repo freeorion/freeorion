@@ -1503,6 +1503,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
 
     // get all fleets, or just fleets visible to this client's empire
     const std::vector<Fleet*> fleets = GetUniverse().Objects().FindObjects<Fleet>();
+    const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     // find systems that contain friendly fleets or objects that can block supply
     std::set<int> systems_containing_friendly_fleets;
@@ -1512,6 +1513,8 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
         int system_id = fleet->SystemID();
         if (system_id == INVALID_OBJECT_ID) {
             continue;   // not in a system, so can't affect system obstruction
+        } else if (known_destroyed_objects.find(fleet->ID()) != known_destroyed_objects.end()) {
+            continue; //known to be destroyed so can't affect supply, important just in case being updated on client side
         } else if (fleet->OwnedBy(m_id) && fleet->HasArmedShips() && fleet->Aggressive()) {
             systems_containing_friendly_fleets.insert(system_id);
         } else if (fleet->HasArmedShips() && fleet->Aggressive()) {
@@ -1651,6 +1654,8 @@ void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
                 // current system can share resources with next system
                 supply_groups_map[cur_sys_id].insert(lane_end_sys_id);
                 supply_groups_map[lane_end_sys_id].insert(cur_sys_id);
+                //Logger().debugStream() << "added sys(" << lane_end_sys_id << ") to supply_groups_map[ " << cur_sys_id<<"]";
+                //Logger().debugStream() << "added sys(" << cur_sys_id << ") to supply_groups_map[ " << lane_end_sys_id <<"]";
             }
         }
         ++sys_list_it;
@@ -1676,9 +1681,9 @@ void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
          sys_it != supply_groups_map.end(); ++sys_it, ++graph_id)
     {
         int sys_id = sys_it->first;
-        //const UniverseObject* sys = GetUniverse().Object(sys_id);
+        //const System* sys = GetSystem(sys_id);
         //std::string name = sys->Name();
-        //Logger().debugStream() << "supply-exchanging system: " << name;
+        //Logger().debugStream() << "supply-exchanging system: " << name << " ID (" << sys_id <<")";
 
         boost::add_vertex(graph);   // should add with index = graph_id
 
@@ -1697,10 +1702,10 @@ void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
             boost::add_edge(start_graph_id, end_graph_id, graph);
 
             //int sys_id1 = graph_id_to_sys_id[start_graph_id];
-            //const UniverseObject* sys1 = GetUniverse().Object(sys_id1);
+            //const System* sys1 = GetSystem(sys_id1);
             //std::string name1 = sys1->Name();
             //int sys_id2 = graph_id_to_sys_id[end_graph_id];
-            //const UniverseObject* sys2 = GetUniverse().Object(sys_id2);
+            //const System* sys2 = GetSystem(sys_id2);
             //std::string name2 = sys2->Name();
             //Logger().debugStream() << "added edge to graph: " << name1 << " and " << name2;
         }
@@ -1712,9 +1717,9 @@ void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
 
     //for (std::vector<int>::size_type i = 0; i != components.size(); ++i) {
     //    int sys_id = graph_id_to_sys_id[i];
-    //    const UniverseObject* sys = GetUniverse().Object(sys_id);
+    //    const System* sys = GetSystem(sys_id);
     //    std::string name = sys->Name();
-    //    std::cout << "system " << name <<" is in component " << components[i] << std::endl;
+    //    Logger().debugStream() << "system " << name <<" is in component " << components[i];
     //}
     //std::cout << std::endl;
 

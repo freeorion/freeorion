@@ -61,5 +61,35 @@ namespace FreeOrionPython {
             ;
         }
     };
+    
+    
+    /* SetWrapper2 class is as SetWrapper class above, except that it does not include conversion to string, because lexical_cast
+     * of set<int>, as would be attempted for a set< set<int> > causes linking to fail */
+    template <typename ElementType>
+    class SetWrapper2 {
+    public:
+        typedef typename std::set<ElementType> Set;
+        typedef typename Set::const_iterator SetIterator;
+
+        static unsigned int size(const Set& self) {
+            return static_cast<unsigned int>(self.size());  // ignore warning http://lists.boost.org/Archives/boost/2007/04/120377.php
+        }
+        static bool empty(const Set& self) { return self.empty(); }
+        static bool contains(const Set& self, const ElementType& item) { return self.find(item) != self.end(); }
+        static unsigned int count(const Set& self, const ElementType& item) { return self.find(item) == self.end() ? 0u : 1u; }
+        static SetIterator begin(const Set& self) { return self.begin(); }
+        static SetIterator end(const Set& self) { return self.end(); }
+
+        static void Wrap(const std::string& python_name) {
+            class_<Set>(python_name.c_str(), no_init)
+            .def("__len__",         &size)
+            .def("size",            &size)
+            .def("empty",           &empty)
+            .def("__contains__",    &contains)
+            .def("count",           &count)
+            .def("__iter__",        iterator<Set>())
+            ;
+        }
+    };
 }
 #endif
