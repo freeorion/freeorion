@@ -836,13 +836,15 @@ MapWnd::MapWnd() :
     m_research_wasted->SetMinSize(GG::Pt(ICON_WIDTH, GG::Y(Value(ICON_WIDTH))));
 
     GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /"wasted_resource.png", false));
+    GG::SubTexture wasted_ressource_mouseover_subtexture = GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /"wasted_resource_mouseover.png", false));
+    GG::SubTexture wasted_ressource_clicked_subtexture = GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /"wasted_resource_clicked.png", false));
 
     m_industry_wasted->SetUnpressedGraphic(wasted_ressource_subtexture);
-    m_industry_wasted->SetPressedGraphic  (wasted_ressource_subtexture);
-    m_industry_wasted->SetRolloverGraphic (wasted_ressource_subtexture);
+    m_industry_wasted->SetPressedGraphic  (wasted_ressource_clicked_subtexture);
+    m_industry_wasted->SetRolloverGraphic (wasted_ressource_mouseover_subtexture);
     m_research_wasted->SetUnpressedGraphic(wasted_ressource_subtexture);
-    m_research_wasted->SetPressedGraphic  (wasted_ressource_subtexture);
-    m_research_wasted->SetRolloverGraphic (wasted_ressource_subtexture);
+    m_research_wasted->SetPressedGraphic  (wasted_ressource_clicked_subtexture);
+    m_research_wasted->SetRolloverGraphic (wasted_ressource_mouseover_subtexture);
 
     m_industry_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
