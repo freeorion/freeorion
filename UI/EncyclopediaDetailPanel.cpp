@@ -285,7 +285,7 @@ void EncyclopediaDetailPanel::DoLayout() {
 
     const int ICON_SIZE = 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
 
-    const int BTN_WIDTH = 32;
+    const int BTN_WIDTH = 24;
 
     // name
     GG::Pt ul = GG::Pt();
