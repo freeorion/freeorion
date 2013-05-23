@@ -1198,13 +1198,13 @@ void FleetDataPanel::AggressionToggleButtonPressed() {
 
 namespace {
     boost::shared_ptr<GG::Texture> FleetAggressiveIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet_aggressive.png"); }
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_aggressive.png"); }
     boost::shared_ptr<GG::Texture> FleetAggressiveMouseoverIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet_aggressive_mouseover.png"); }
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_aggressive_mouseover.png"); }
     boost::shared_ptr<GG::Texture> FleetPassiveIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet_passive.png"); }
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_passive.png"); }
     boost::shared_ptr<GG::Texture> FleetPassiveMouseoverIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet_passive_mouseover.png"); }
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_passive_mouseover.png"); }
 }
 
 void FleetDataPanel::Refresh() {
