@@ -90,6 +90,7 @@ class AIstate(object):
         self.militaryRating=0
         self.shipCount = 4
         self.misc={}
+        self.qualifyingColonyBaseTargets={}
 
     def __del__(self):
         "destructor"
@@ -102,6 +103,7 @@ class AIstate(object):
         del self.needsEmergencyExploration
         del self.newlySplitFleets
         del self.misc
+        del self.qualifyingColonyBaseTargets
         
     def clean(self):
         global invasionTargets
@@ -535,7 +537,8 @@ class AIstate(object):
             role=FleetUtilsAI.assessFleetRole(fleetID)
             self.__fleetRoleByID[fleetID] = role
             makeAggressive=False
-            if role in [AIFleetMissionType.FLEET_MISSION_COLONISATION,  AIFleetMissionType.FLEET_MISSION_OUTPOST]:
+            if role in [AIFleetMissionType.FLEET_MISSION_COLONISATION,  AIFleetMissionType.FLEET_MISSION_OUTPOST,  
+                                AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST]:
                 pass
             if role in [AIFleetMissionType.FLEET_MISSION_EXPLORATION]:
                 thisRating=self.getRating(fleetID)
@@ -582,6 +585,7 @@ class AIstate(object):
         outpostIDs[:] = []
         outpostSystemIDs[:] = []
         ResourcesAI.lastFociCheck[0]=0
+        self.qualifyingColonyBaseTargets.clear()
 
     def __cleanFleetRoles(self,  justResumed=False):
         "removes fleetRoles if a fleet has been lost, and update fleet Ratings"

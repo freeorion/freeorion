@@ -219,7 +219,7 @@ def getShipIDWithRole(fleetID, shipRole):
     "returns a ship with the specified role in the fleet"
 
     if not fleetHasShipWithRole(fleetID, shipRole):
-        print "No ship with role " + shipRole + " found."
+        print "No ship with role " + __AIShipRoleTypeNames.name(shipRole) + " found."
         return None
 
     universe = fo.getUniverse()
@@ -386,6 +386,7 @@ def generateAIFleetOrdersForAIFleetMissions():
     print "Invasion Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION))
     print "Military Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY))
     print "Orbital Defense Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE))
+    print "Outpost Base Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST))
     print "Securing Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_SECURE)) + " (currently FLEET_MISSION_MILITARY should be used instead of this Role)"
     print "Unclassifyable Fleets  : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVALID))
 
@@ -418,6 +419,14 @@ def generateAIFleetOrdersForAIFleetMissions():
     else:
         print "Outpost targets:  None"
     for outpostAIFleetMission in outpostAIFleetMissions:
+        print "    " + str(outpostAIFleetMission)
+
+    outpostBaseAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST])
+    if len( outpostBaseAIFleetMissions) >0:
+        print "Outpost Base targets (must have been interrupted by combat): "
+    else:
+        print "Outpost targets:  None (as expected, due to expected timing of order submission and execution)"
+    for outpostAIFleetMission in outpostBaseAIFleetMissions:
         print "    " + str(outpostAIFleetMission)
 
     invasionAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_INVASION])

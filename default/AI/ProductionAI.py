@@ -17,6 +17,7 @@ import MilitaryAI
 bestMilRatingsHistory={}
 shipTypeMap = {   EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION:   EnumsAI.AIShipDesignTypes.explorationShip,  
                                         EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST:             EnumsAI.AIShipDesignTypes.outpostShip,  
+                                        EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST:             EnumsAI.AIShipDesignTypes.outpostBase,  
                                         EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION:  EnumsAI.AIShipDesignTypes.colonyShip,  
                                         EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION:                EnumsAI.AIShipDesignTypes.troopShip,  
                                         EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY:                  EnumsAI.AIShipDesignTypes.attackShip, 
@@ -1110,12 +1111,14 @@ def generateProductionOrders():
                  queuedColonyShips[thisSpec] =  queuedColonyShips.get(thisSpec, 0) +  element.remaining*element.blocksize
              if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST:
                  queuedOutpostShips+=  element.remaining*element.blocksize
+             if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST:
+                 queuedOutpostShips+=  element.remaining*element.blocksize
              if foAI.foAIstate.getShipRole(element.designID) ==       EnumsAI.AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
                  queuedTroopShips+=  element.remaining*element.blocksize
     if queuedColonyShips:
         print "\nFound  colony ships in build queue: %s"%queuedColonyShips
     if queuedOutpostShips:
-        print "\nFound  colony ships in build queue: %s"%queuedOutpostShips
+        print "\nFound  outpost ships and bases in build queue: %s"%(queuedOutpostShips)
     
     for queue_index in dequeueList[::-1]:
         fo.issueDequeueProductionOrder(queue_index) 
@@ -1213,10 +1216,10 @@ def generateProductionOrders():
     planetsWithWastedPP = set( [tuple(pidset) for pidset in empire.planetsWithWastedPP ] )
     print "availPP ( <systems> : pp ):"
     for pSet in availablePP:
-        print "\t%s\t%.2f"%( PlanetUtilsAI.sysNameIDs(set(PlanetUtilsAI.getSystems( sorted(pSet)))),  availablePP[pSet])
+        print "\t%s\t%.2f"%( PlanetUtilsAI.sysNameIDs(set(PlanetUtilsAI.getSystems( pSet))),  availablePP[pSet])
     print "\nallocatedPP ( <systems> : pp ):"
     for pSet in allocatedPP:
-        print "\t%s\t%.2f"%( PlanetUtilsAI.sysNameIDs(set(PlanetUtilsAI.getSystems( sorted(pSet)))),  allocatedPP[pSet])
+        print "\t%s\t%.2f"%( PlanetUtilsAI.sysNameIDs(set(PlanetUtilsAI.getSystems( pSet))),  allocatedPP[pSet])
         
     print "\n\nBuilding Ships in system groups  with remaining  PP:" 
     for pSet in planetsWithWastedPP:
@@ -1224,7 +1227,7 @@ def generateProductionOrders():
         availPP =  totalPP - allocatedPP.get(pSet,  0)
         if availPP <=0.01:
             continue
-        print "%.2f PP remaining in system group: %s"%(availPP,   PlanetUtilsAI.sysNameIDs(set(PlanetUtilsAI.getSystems( sorted(pSet)))))
+        print "%.2f PP remaining in system group: %s"%(availPP,   PlanetUtilsAI.sysNameIDs(set(PlanetUtilsAI.getSystems( pSet))))
         print "\t owned planets in this group are:"
         print "\t %s"%( PlanetUtilsAI.planetNameIDs(pSet)  )
         bestShip,  bestDesign,  buildChoices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION,  list(pSet))
