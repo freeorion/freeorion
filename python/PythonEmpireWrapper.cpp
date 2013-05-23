@@ -221,7 +221,7 @@ namespace FreeOrionPython {
 
         class_<ResourcePool, boost::shared_ptr<ResourcePool>, boost::noncopyable >("resPool", boost::python::no_init);
         //FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
-        FreeOrionPython::SetWrapper2<IntSet>::Wrap("IntSetSet");
+        FreeOrionPython::SetWrapper<IntSet>::Wrap("IntSetSet");
         class_<std::map<std::set<int>, double> > ("resPoolMap")
             .def(boost::python::map_indexing_suite< std::map<std::set<int>, double>, true>() )
         ;
