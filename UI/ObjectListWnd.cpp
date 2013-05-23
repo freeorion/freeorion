@@ -1706,7 +1706,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     HumanClientApp* app = HumanClientApp::GetApp();
     ClientNetworking& net = app->Networking();
     bool moderator = false;
-    if (app->GetPlayerClientType(app->PlayerID()) == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+    if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         moderator = true;
 
 

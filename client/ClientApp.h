@@ -37,6 +37,7 @@ public:
     const ClientNetworking& Networking() const;  ///< returns the networking object for this client's player
     const Networking::ClientType    GetEmpireClientType(int empire_id) const;   ///< returns the networking client type for the given empire_id
     const Networking::ClientType    GetPlayerClientType(int player_id) const;   ///< returns the networking client type for the given player_id
+    const Networking::ClientType    GetClientType() const;                      ///< returns the networking client type for this client's player
     //@}
 
     /** \name Mutators */ //@{

@@ -151,6 +151,9 @@ namespace {
         return retval;
     }
 
+    bool ClientPlayerIsModerator()
+    { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
+
     void CreateNewFleetFromShips(const std::vector<int>& ship_ids, bool aggressive = false) {
         if (ship_ids.empty())
             return;
@@ -216,23 +219,29 @@ namespace {
         // generate new fleet name
         std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
 
+        if (!ClientPlayerIsModerator()) {
+            if (empire_id == ALL_EMPIRES)
+                return;
 
-        // create new fleet with ships
-        HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
+            // create new fleet with ships
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
 
-        // set aggression of new fleet, if not already what was requested
-        if (const Fleet* new_fleet = GetFleet(new_fleet_id))
-            if (new_fleet->Aggressive() != aggressive)
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new AggressiveOrder(empire_id, new_fleet_id, aggressive)));
+            // set aggression of new fleet, if not already what was requested
+            if (const Fleet* new_fleet = GetFleet(new_fleet_id))
+                if (new_fleet->Aggressive() != aggressive)
+                    HumanClientApp::GetApp()->Orders().IssueOrder(
+                        OrderPtr(new AggressiveOrder(empire_id, new_fleet_id, aggressive)));
 
-        // delete empty fleets from which ships may have been taken
-        for (std::set<int>::const_iterator it = original_fleet_ids.begin(); it != original_fleet_ids.end(); ++it) {
-            const Fleet* fleet = objects.Object<Fleet>(*it);
-            if (fleet && fleet->Empty())
-                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                    new DeleteFleetOrder(empire_id, fleet->ID())));
+            // delete empty fleets from which ships may have been taken
+            for (std::set<int>::const_iterator it = original_fleet_ids.begin(); it != original_fleet_ids.end(); ++it) {
+                const Fleet* fleet = objects.Object<Fleet>(*it);
+                if (fleet && fleet->Empty())
+                    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+                        new DeleteFleetOrder(empire_id, fleet->ID())));
+            }
+        } else {
+            // TODO: moderator version of fleet manipulations
         }
     }
 
@@ -1167,15 +1176,19 @@ void FleetDataPanel::AggressionToggleButtonPressed() {
         return;
     const Fleet* fleet = GetFleet(m_fleet_id);
     if (fleet) {
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-        if (client_empire_id == ALL_EMPIRES)
-            return;
+        if (!ClientPlayerIsModerator()) {
+            int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+            if (client_empire_id == ALL_EMPIRES)
+                return;
 
-        bool new_aggression_State = !fleet->Aggressive();
+            bool new_aggression_State = !fleet->Aggressive();
 
-        // toggle fleet aggression status
-        HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new AggressiveOrder(client_empire_id, m_fleet_id, new_aggression_State)));
+            // toggle fleet aggression status
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new AggressiveOrder(client_empire_id, m_fleet_id, new_aggression_State)));
+        } else {
+            // TODO: moderator action to toggle fleet aggression
+        }
     } else if (m_new_fleet_drop_target) {
         // toggle new fleet aggression
         m_new_fleet_aggression = !m_new_fleet_aggression;
@@ -1542,14 +1555,18 @@ public:
                 const std::set<int>& ship_ids_set = dropped_fleet->ShipIDs();
                 const std::vector<int> ship_ids_vec(ship_ids_set.begin(), ship_ids_set.end());
 
-                // order the transfer
-                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                    new FleetTransferOrder(empire_id, dropped_fleet_id, target_fleet_id, ship_ids_vec)));
-
-                // delete empty fleets
-                if (dropped_fleet->Empty())
+                if (!ClientPlayerIsModerator()) {
+                    // order the transfer
                     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                        new DeleteFleetOrder(empire_id, dropped_fleet_id)));
+                        new FleetTransferOrder(empire_id, dropped_fleet_id, target_fleet_id, ship_ids_vec)));
+
+                    // delete empty fleets
+                    if (dropped_fleet->Empty())
+                        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+                            new DeleteFleetOrder(empire_id, dropped_fleet_id)));
+                } else {
+                    // TODO: moderator action to transfer ships / remove empty fleets
+                }
             }
 
         } else if (!dropped_ships.empty()) {
@@ -1571,16 +1588,20 @@ public:
                 dropped_ships_fleets.insert(ship->FleetID());
             }
 
-            // order the transfer
-            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                new FleetTransferOrder(empire_id, fleet_id, target_fleet_id, ship_ids_vec)));
+            if (!ClientPlayerIsModerator()) {
+                // order the transfer
+                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+                    new FleetTransferOrder(empire_id, fleet_id, target_fleet_id, ship_ids_vec)));
 
-            // delete empty fleets
-            for (std::set<int>::const_iterator it = dropped_ships_fleets.begin(); it != dropped_ships_fleets.end(); ++it) {
-                const Fleet* fleet = GetFleet(*it);
-                if (fleet && fleet->Empty())
-                    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                        new DeleteFleetOrder(empire_id, fleet->ID())));
+                // delete empty fleets
+                for (std::set<int>::const_iterator it = dropped_ships_fleets.begin(); it != dropped_ships_fleets.end(); ++it) {
+                    const Fleet* fleet = GetFleet(*it);
+                    if (fleet && fleet->Empty())
+                        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+                            new DeleteFleetOrder(empire_id, fleet->ID())));
+                }
+            } else {
+                    // TODO: moderator action to transfer ships / remove empty fleets
             }
         }
     }
@@ -1874,15 +1895,19 @@ public:
         int dropped_ship_fleet_id = ship_from_dropped_wnd->FleetID();
         int empire_id = HumanClientApp::GetApp()->EmpireID();
 
-        HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new FleetTransferOrder(empire_id, dropped_ship_fleet_id, m_fleet_id, ship_ids)));
+        if (!ClientPlayerIsModerator()) {
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new FleetTransferOrder(empire_id, dropped_ship_fleet_id, m_fleet_id, ship_ids)));
 
-        // delete old fleet if now empty
-        const ObjectMap& objects = GetUniverse().Objects();
-        if (const Fleet* dropped_ship_old_fleet = objects.Object<Fleet>(dropped_ship_fleet_id))
-            if (dropped_ship_old_fleet->Empty())
-                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                    new DeleteFleetOrder(empire_id, dropped_ship_fleet_id)));
+            // delete old fleet if now empty
+            const ObjectMap& objects = GetUniverse().Objects();
+            if (const Fleet* dropped_ship_old_fleet = objects.Object<Fleet>(dropped_ship_fleet_id))
+                if (dropped_ship_old_fleet->Empty())
+                    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+                        new DeleteFleetOrder(empire_id, dropped_ship_fleet_id)));
+        } else {
+                    // TODO: moderator action to transfer ships / remove empty fleets
+        }
     }
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -2150,10 +2175,10 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (ship->OwnedBy(client_empire_id))
         menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
 
-    if (!ship->OrderedScrapped() && ship->OwnedBy(client_empire_id)) {
+    if (!ClientPlayerIsModerator() && !ship->OrderedScrapped() && ship->OwnedBy(client_empire_id)) {
         // create popup menu with "Scrap" option
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_SHIP_SCRAP"), 3, false, false));
-    } else if (ship->OwnedBy(client_empire_id)) {
+    } else if (!ClientPlayerIsModerator() && ship->OwnedBy(client_empire_id)) {
         // create popup menu with "Cancel Scrap" option
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_SHIP_SCRAP"), 4, false, false));
     }
@@ -2169,25 +2194,33 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
 
             std::string new_name = edit_wnd.Result();
 
-            if (new_name != "" && new_name != ship_name) {
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new RenameOrder(client_empire_id, ship->ID(), new_name)));
+            if (!ClientPlayerIsModerator()) {
+                if (new_name != "" && new_name != ship_name) {
+                    HumanClientApp::GetApp()->Orders().IssueOrder(
+                        OrderPtr(new RenameOrder(client_empire_id, ship->ID(), new_name)));
+                }
+            } else {
+                // TODO: Moderator action for renaming ships
             }
             break;
         }
 
         case 3: { // scrap ship
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new ScrapOrder(client_empire_id, ship->ID())));
+            if (!ClientPlayerIsModerator()) {
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new ScrapOrder(client_empire_id, ship->ID())));
+            }
             break;
         }
 
         case 4: { // un-scrap ship
-            // find order to scrap this ship, and recind it
-            std::map<int, int> pending_scrap_orders = PendingScrapOrders();
-            std::map<int, int>::const_iterator it = pending_scrap_orders.find(ship->ID());
-            if (it != pending_scrap_orders.end())
-                HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
+            if (!ClientPlayerIsModerator()) {
+                // find order to scrap this ship, and recind it
+                std::map<int, int> pending_scrap_orders = PendingScrapOrders();
+                std::map<int, int>::const_iterator it = pending_scrap_orders.find(ship->ID());
+                if (it != pending_scrap_orders.end())
+                    HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
+            }
             break;
         }
 
@@ -2807,9 +2840,9 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     GG::MenuItem menu_contents;
 
     // add a fleet popup command to send the fleet exploring, and stop it from exploring
-    if (system && !ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()) )
+    if (system && !ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()) && !ClientPlayerIsModerator())
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),        7, false, false));
-    else if(system)
+    else if(system && !ClientPlayerIsModerator())
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), 8, false, false));
 
     // Split damaged ships - need some, but not all, ships damaged, and need to be in a system
@@ -2828,11 +2861,11 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"),                         1, false, false));
 
     // add a fleet popup command to order all ships in the fleet scrapped
-    if (system && fleet->HasShipsWithoutScrapOrders())
+    if (system && fleet->HasShipsWithoutScrapOrders() && !ClientPlayerIsModerator())
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),          5, false, false));
 
     // add a fleet popup command to cancel all scrap orders on ships in this fleet
-    if (system && fleet->HasShipsOrderedScrapped())
+    if (system && fleet->HasShipsOrderedScrapped() && !ClientPlayerIsModerator())
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_SCRAP"),   6, false, false));
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
@@ -2847,9 +2880,13 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
 
             std::string new_name = edit_wnd.Result();
 
-            if (!new_name.empty() && new_name != fleet_name) {
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new RenameOrder(empire_id, fleet->ID(), new_name)));
+            if (!ClientPlayerIsModerator()) {
+                if (!new_name.empty() && new_name != fleet_name) {
+                    HumanClientApp::GetApp()->Orders().IssueOrder(
+                        OrderPtr(new RenameOrder(empire_id, fleet->ID(), new_name)));
+                }
+            } else {
+                // TODO: Moderator action for renaming fleet
             }
             break;
         }
@@ -2883,26 +2920,30 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         }
 
         case 5: { // issue scrap orders to all ships in this fleet
-            std::set<int> ship_ids_set = fleet->ShipIDs();
-            for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
-                int ship_id = *it;
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new ScrapOrder(empire_id, ship_id))
-                );
+            if (!ClientPlayerIsModerator()) {
+                std::set<int> ship_ids_set = fleet->ShipIDs();
+                for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
+                    int ship_id = *it;
+                    HumanClientApp::GetApp()->Orders().IssueOrder(
+                        OrderPtr(new ScrapOrder(empire_id, ship_id))
+                    );
+                }
             }
             break;
         }
 
         case 6: { // cancel scrap orders for all ships in this fleet
-            const OrderSet orders = HumanClientApp::GetApp()->Orders();
-            std::set<int> ship_ids_set = fleet->ShipIDs();
-            for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
-                int ship_id = *it;
-                for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-                    if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
-                        if (order->ObjectID() == ship_id) {
-                            HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
-                            // could break here, but won't to ensure there are no problems with doubled orders
+            if (!ClientPlayerIsModerator()) {
+                const OrderSet orders = HumanClientApp::GetApp()->Orders();
+                std::set<int> ship_ids_set = fleet->ShipIDs();
+                for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
+                    int ship_id = *it;
+                    for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+                        if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
+                            if (order->ObjectID() == ship_id) {
+                                HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                                // could break here, but won't to ensure there are no problems with doubled orders
+                            }
                         }
                     }
                 }
@@ -2911,12 +2952,14 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         }
 
         case 7: { // send order to explore to the fleet
-            ClientUI::GetClientUI()->GetMapWnd()->SetFleetExploring(fleet->ID());
+            if (!ClientPlayerIsModerator())
+                ClientUI::GetClientUI()->GetMapWnd()->SetFleetExploring(fleet->ID());
             break;
         }
 
         case 8: { // send order to stop exploring to the fleet
-            ClientUI::GetClientUI()->GetMapWnd()->StopFleetExploring(fleet->ID());
+            if (!ClientPlayerIsModerator())
+                ClientUI::GetClientUI()->GetMapWnd()->StopFleetExploring(fleet->ID());
             break;
         }
 

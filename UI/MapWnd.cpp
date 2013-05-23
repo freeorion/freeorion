@@ -213,7 +213,7 @@ namespace {
 
     /* Updated each frame to shift rendered posistion of dots that are drawn to
      * show fleet move lines. */
-    double move_line_animation_shift = 0.0;    // in pixels
+    double move_line_animation_shift = 0.0;   // in pixels
 
     GG::X WndLeft(const GG::Wnd* wnd) { return wnd ? wnd->UpperLeft().x : GG::X0; }
     GG::X WndRight(const GG::Wnd* wnd) { return wnd ? wnd->LowerRight().x : GG::X0; }
@@ -236,6 +236,17 @@ namespace {
 
     GG::X SidePanelWidth()
     { return GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width")); }
+
+    /** Used for tracking what moderator action is set */
+    enum ModeratorActionSetting {
+        MAS_NoAction,
+        MAS_Destroy,
+        MAS_SetOwner,
+        MAS_AddStarlane,
+        MAS_CreateSystem,
+        MAS_CreatePlanet
+    };
+    ModeratorActionSetting current_moderator_action = MAS_NoAction;
 }
 
 
@@ -1658,7 +1669,7 @@ void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
     HumanClientApp* app = HumanClientApp::GetApp();
     ClientNetworking& net = app->Networking();
     bool moderator = false;
-    if (app->GetPlayerClientType(app->PlayerID()) == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+    if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         moderator = true;
     if (!moderator)
         return;
@@ -1740,7 +1751,7 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
         enable = false;
     } else {
         bool have_empire = (app->EmpireID() != ALL_EMPIRES);
-        moderator = (app->GetPlayerClientType(app->PlayerID()) == Networking::CLIENT_TYPE_HUMAN_MODERATOR);
+        moderator = (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR);
         if (!have_empire && !moderator)
             enable = false;
     }
@@ -1940,7 +1951,7 @@ void MapWnd::InitTurn() {
     DispatchFleetsExploring();
 
     HumanClientApp* app = HumanClientApp::GetApp();
-    if (app->GetPlayerClientType(app->PlayerID()) == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
+    if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
         // this client is a moderator
         m_btn_moderator->Disable(false);
         m_btn_moderator->Show();

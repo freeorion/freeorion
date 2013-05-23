@@ -74,6 +74,9 @@ const Networking::ClientType ClientApp::GetPlayerClientType(int player_id) const
     return Networking::INVALID_CLIENT_TYPE;
 }
 
+const Networking::ClientType ClientApp::GetClientType() const
+{ return GetPlayerClientType(m_networking.PlayerID()); }
+
 const std::map<int, PlayerInfo>& ClientApp::Players() const
 { return m_player_info; }
 

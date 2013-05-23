@@ -630,13 +630,15 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Client().GetClientUI()->GetMessageWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
     Client().GetClientUI()->GetPlayerListWnd()->Refresh();
     Client().GetClientUI()->GetPlayerListWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
-    Client().GetClientUI()->GetMapWnd()->EnableOrderIssuing(true);
+
+    if (Client().GetApp()->GetClientType() != Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+        Client().GetClientUI()->GetMapWnd()->EnableOrderIssuing(true);
 
     // observers can't do anything but wait for the next update, and need to
     // be back in WaitingForTurnData, so posting TurnEnded here has the effect
     // of keeping observers in the WaitingForTurnData state so they can receive
     // updates from the server.
-    if (Client().GetApp()->GetPlayerClientType(Client().PlayerID()) == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+    if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
         post_event(TurnEnded());
 
     else if (GetOptionsDB().Get<bool>("auto-advance-first-turn")) {
