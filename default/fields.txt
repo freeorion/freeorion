@@ -64,4 +64,4 @@ FieldType
             activation = Size high = 10
             effects = Destroy
     ]
-    graphic = "fields/rainbow_storm.png"
+    graphic = "nebulae/nebula8.png"
