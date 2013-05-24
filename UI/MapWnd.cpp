@@ -4155,12 +4155,14 @@ void MapWnd::ShowModeratorActions() {
 
     m_moderator_wnd->Refresh();
     m_moderator_wnd->Show();
-    //m_btn_moderator->MarkSelectedGray();
+    m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
+    m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
 }
 
 void MapWnd::HideModeratorActions() {
     m_moderator_wnd->Hide();
-    //m_btn_moderator->MarkNotSelected();
+    m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
+    m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
 }
 
 bool MapWnd::ToggleModeratorActions() {
@@ -4186,12 +4188,14 @@ void MapWnd::ShowObjects() {
     m_object_list_wnd->Show();
 
     // indicate selection on button
-    //m_btn_objects->MarkSelectedGray();
+    m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
+    m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
 }
 
 void MapWnd::HideObjects() {
     m_object_list_wnd->Hide(); // necessary so it won't be visible when next toggled
-    //m_btn_objects->MarkNotSelected();
+    m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
+    m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
 }
 
 bool MapWnd::ToggleObjects() {
@@ -4217,12 +4221,14 @@ void MapWnd::ShowSitRep() {
     m_sitrep_panel->Show();
 
     // indicate selection on button
-    //m_btn_siterep->MarkSelectedGray();
+    m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
+    m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
 }
 
 void MapWnd::HideSitRep() {
     m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
-    //m_btn_siterep->MarkNotSelected();
+    m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
+    m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
 }
 
 bool MapWnd::ToggleSitRep() {
@@ -4248,12 +4254,14 @@ void MapWnd::ShowPedia() {
     GG::GUI::GetGUI()->MoveUp(m_pedia_panel);
 
     // indicate selection on button
-    //m_btn_pedia->MarkSelectedGray();
+    m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
+    m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
 }
 
 void MapWnd::HidePedia() {
     m_pedia_panel->Hide();
-    //m_btn_pedia->MarkNotSelected();
+    m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
+    m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
 }
 
 bool MapWnd::TogglePedia() {
@@ -4289,14 +4297,17 @@ void MapWnd::ShowResearch() {
     GG::GUI::GetGUI()->MoveUp(m_research_wnd);
 
     // indicate selection on button
-    //m_btn_research->MarkSelectedGray();
+    m_btn_research->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));
+    m_btn_research->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
 
     m_pedia_panel->SetText("ENC_TECH", false);
 }
 
 void MapWnd::HideResearch() {
     m_research_wnd->Hide();
-    //m_btn_research->MarkNotSelected();
+    m_btn_research->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
+    m_btn_research->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));
+
     ShowAllPopups();
     RestoreSidePanel();
 }
@@ -4327,7 +4338,8 @@ void MapWnd::ShowProduction() {
     GG::GUI::GetGUI()->MoveUp(m_production_wnd);
 
     // indicate selection on button
-    //m_btn_production->MarkSelectedGray();
+    m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
+    m_btn_production->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
 
     // if no system is currently shown in sidepanel, default to this empire's
     // home system (ie. where the capital is)
@@ -4345,7 +4357,9 @@ void MapWnd::ShowProduction() {
 void MapWnd::HideProduction() {
     m_production_wnd->Hide();
     m_in_production_view_mode = false;
-    //m_btn_production->MarkNotSelected();
+    m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
+    m_btn_production->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
+
     ShowAllPopups();
     RestoreSidePanel();
 }
@@ -4380,12 +4394,15 @@ void MapWnd::ShowDesign() {
     m_design_wnd->Reset();
 
     // indicate selection on button
-    //m_btn_design->MarkSelectedGray();
+    m_btn_design->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
+    m_btn_design->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
 }
 
 void MapWnd::HideDesign() {
     m_design_wnd->Hide();
-    //m_btn_design->MarkNotSelected();
+    m_btn_design->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
+    m_btn_design->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
+
     EnableAlphaNumAccels();
     RestoreSidePanel();
 }
@@ -4402,11 +4419,16 @@ bool MapWnd::ShowMenu() {
     if (!m_menu_showing) {
         ClearProjectedFleetMovementLines();
         m_menu_showing = true;
-        //m_btn_menu->MarkSelectedGray();
+
+        m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
+        m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
+
         InGameMenu menu;
         menu.Run();
         m_menu_showing = false;
-        //m_btn_menu->MarkNotSelected();
+
+        m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
+        m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
     }
     return true;
 }
