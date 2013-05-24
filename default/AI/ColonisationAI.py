@@ -308,8 +308,8 @@ def getColonyFleets():
     availPP_BySys={}
     for pSet in availablePP:
         availPP_BySys.update(  [ (sysID, availablePP[pSet]) for sysID in  set(PlanetUtilsAI.getSystems( pSet))] )
-    colonyCost=120*(1+ 0.06*len( list(AIstate.popCtrIDs) ))
-    outpostCost=80*(1+ 0.06*len( list(AIstate.popCtrIDs) ))
+    colonyCost= AIDependencies.colonyPodCost *(1+ AIDependencies.colonyPodUpkeep *len( list(AIstate.popCtrIDs) ))
+    outpostCost= AIDependencies.outpostPodCost *(1+ AIDependencies.colonyPodUpkeep *len( list(AIstate.popCtrIDs) ))
     productionQueue = empire.productionQueue
     queuedBases=[]
     for queue_index  in range(0,  len(productionQueue)):
@@ -341,21 +341,22 @@ def getColonyFleets():
     # print "Evaluated Colony PlanetIDs:        " + str(evaluatedColonyPlanetIDs)
 
     reservedBaseTargets = foAI.foAIstate.qualifyingColonyBaseTargets.keys()
-    for pid in (set(reservedBaseTargets) - set(outpostTargetedPlanetIDs)):
-        if pid not in unOwnedPlanetIDs: continue
-        if  foAI.foAIstate.qualifyingColonyBaseTargets[pid][1] != -1: continue  #already building for here
-        loc = foAI.foAIstate.qualifyingColonyBaseTargets[pid][0]
-        if 100 < evaluatePlanet(pid,  EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST,  fleetSupplyablePlanetIDs,  None,  empire, []): 
-            bestShip,  colDesign,  buildChoices = ProductionAI.getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST,  loc)
-            if not bestShip:
-                print "Error: no outpost base can be built at ",  PlanetUtilsAI.planetNameIDs([loc])
-                continue
-            #print "selecting  ",  PlanetUtilsAI.planetNameIDs([pid]),  " to build Orbital Defenses"
-            retval  = fo.issueEnqueueShipProductionOrder(bestShip, loc)
-            print "Enqueueing Outpost Base at %s for %s"%( PlanetUtilsAI.planetNameIDs([loc]),  PlanetUtilsAI.planetNameIDs([pid]))
-            if retval !=0:
-                foAI.foAIstate.qualifyingColonyBaseTargets[pid][1] = loc
-                #res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
+    if ( empire.getTechStatus(AIDependencies.outposting_tech) == fo.techStatus.complete):
+        for pid in (set(reservedBaseTargets) - set(outpostTargetedPlanetIDs)):
+            if pid not in unOwnedPlanetIDs: continue
+            if  foAI.foAIstate.qualifyingColonyBaseTargets[pid][1] != -1: continue  #already building for here
+            loc = foAI.foAIstate.qualifyingColonyBaseTargets[pid][0]
+            if 100 < evaluatePlanet(pid,  EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST,  fleetSupplyablePlanetIDs,  None,  empire, []): 
+                bestShip,  colDesign,  buildChoices = ProductionAI.getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST,  loc)
+                if not bestShip:
+                    print "Error: no outpost base can be built at ",  PlanetUtilsAI.planetNameIDs([loc])
+                    continue
+                #print "selecting  ",  PlanetUtilsAI.planetNameIDs([pid]),  " to build Orbital Defenses"
+                retval  = fo.issueEnqueueShipProductionOrder(bestShip, loc)
+                print "Enqueueing Outpost Base at %s for %s"%( PlanetUtilsAI.planetNameIDs([loc]),  PlanetUtilsAI.planetNameIDs([pid]))
+                if retval !=0:
+                    foAI.foAIstate.qualifyingColonyBaseTargets[pid][1] = loc
+                    #res=fo.issueRequeueProductionOrder(productionQueue.size -1,  0) # move to front
 
     evaluatedOutpostPlanetIDs = list(set(unOwnedPlanetIDs) - set(outpostTargetedPlanetIDs)- set(colonyTargetedPlanetIDs) - set(reservedBaseTargets))
     

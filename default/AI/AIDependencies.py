@@ -13,6 +13,8 @@ for metab in metabolimBoostMap:
 colonyPodCost = 120
 colonyPodUpkeep = 0.06
 outpostPodCost = 80
-shipUpkeep = 0.05
+shipUpkeep = 0.01
+
+outposting_tech = "CON_ENV_ENCAPSUL"
 
 
