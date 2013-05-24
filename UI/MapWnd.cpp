@@ -708,8 +708,11 @@ MapWnd::MapWnd() :
 
 
     // Menu button
-    button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_menu = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_MENU"));
+    m_btn_menu = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
+    m_btn_menu->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
+    m_btn_menu->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_clicked.png"  )));
+    m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
     GG::Connect(m_btn_menu->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ShowMenu, this)));
     // create custom InWindow function for Menu button that extends its
     // clickable area to the adjacent edges of the toolbar containing it
@@ -718,83 +721,125 @@ MapWnd::MapWnd() :
                              boost::bind(&WndRight, m_toolbar), boost::bind(&WndBottom, m_btn_menu),
                     _1);
     m_btn_menu->SetInWindow(in_window_func);
+    m_btn_menu->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_menu->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_BTN_MENU"), UserString("MAP_BTN_MENU"))));
 
 
     // Encyclo"pedia" button
-    button_width = font->TextExtent(UserString("MAP_BTN_PEDIA")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_pedia = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_PEDIA"));
+    m_btn_pedia = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
+    m_btn_pedia->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
+    m_btn_pedia->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_clicked.png"  )));
+    m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
     GG::Connect(m_btn_pedia->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::TogglePedia, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_pedia),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_pedia),  boost::bind(&WndBottom, m_btn_pedia),
                     _1);
     m_btn_pedia->SetInWindow(in_window_func);
+    m_btn_pedia->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_pedia->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA"))));
 
 
     // Design button
-    button_width = font->TextExtent(UserString("MAP_BTN_DESIGN")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_design = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_DESIGN"));
+    m_btn_design = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
+    m_btn_design->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_design->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
+    m_btn_design->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_clicked.png"  )));
+    m_btn_design->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
     GG::Connect(m_btn_design->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleDesign, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_design),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_design),  boost::bind(&WndBottom, m_btn_design),
                     _1);
     m_btn_design->SetInWindow(in_window_func);
+    m_btn_design->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_design->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN"))));
 
 
     // Production button
-    button_width = font->TextExtent(UserString("MAP_BTN_PRODUCTION")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_production = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_PRODUCTION"));
+    m_btn_production = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
+    m_btn_production->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
+    m_btn_production->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_clicked.png"  )));
+    m_btn_production->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
     GG::Connect(m_btn_production->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleProduction, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_production),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_production),  boost::bind(&WndBottom, m_btn_production),
                     _1);
     m_btn_production->SetInWindow(in_window_func);
+    m_btn_production->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_production->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION"))));
 
 
     // Research button
-    button_width = font->TextExtent(UserString("MAP_BTN_RESEARCH")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_research = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_RESEARCH"));
+    m_btn_research = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
+    m_btn_research->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_research->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
+    m_btn_research->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_clicked.png"  )));
+    m_btn_research->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));
     GG::Connect(m_btn_research->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_research),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_research),  boost::bind(&WndBottom, m_btn_research),
                     _1);
     m_btn_research->SetInWindow(in_window_func);
-
+    m_btn_research->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_research->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH"))));
 
     // SitRep button
-    button_width = font->TextExtent(UserString("MAP_BTN_SITREP")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_siterep = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_SITREP"));
+    m_btn_siterep = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
+    m_btn_siterep->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
+    m_btn_siterep->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_clicked.png"  )));
+    m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
     GG::Connect(m_btn_siterep->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_siterep),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_siterep),  boost::bind(&WndBottom, m_btn_siterep),
                     _1);
     m_btn_siterep->SetInWindow(in_window_func);
-
+    m_btn_siterep->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_siterep->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP"))));
 
     // Objects button
-    button_width = font->TextExtent(UserString("MAP_BTN_OBJECTS")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_objects = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_OBJECTS"));
+    m_btn_objects = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
+    m_btn_objects->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
+    m_btn_objects->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_clicked.png"  )));
+    m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
     GG::Connect(m_btn_objects->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleObjects, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_objects),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_objects),  boost::bind(&WndBottom, m_btn_objects),
                     _1);
     m_btn_objects->SetInWindow(in_window_func);
-
+    m_btn_objects->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_objects->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS"))));
 
     // Moderator button
-    button_width = font->TextExtent(UserString("MAP_BTN_MODERATOR")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_moderator = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_MODERATOR"));
+    m_btn_moderator = new SettableInWindowCUIButton(GG::X0, GG::Y0, GG::X(24), "", font, GG::CLR_WHITE);
+    m_btn_moderator->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
+    m_btn_moderator->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_clicked.png"  )));
+    m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
     GG::Connect(m_btn_moderator->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleModeratorActions, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_moderator),    boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_moderator),   boost::bind(&WndBottom, m_btn_moderator),
                     _1);
     m_btn_moderator->SetInWindow(in_window_func);
+    m_btn_moderator->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_btn_moderator->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MAP_BTN_MODERATOR"), UserString("MAP_BTN_MODERATOR"))));
 
 
     // resources
@@ -4110,12 +4155,12 @@ void MapWnd::ShowModeratorActions() {
 
     m_moderator_wnd->Refresh();
     m_moderator_wnd->Show();
-    m_btn_moderator->MarkSelectedGray();
+    //m_btn_moderator->MarkSelectedGray();
 }
 
 void MapWnd::HideModeratorActions() {
     m_moderator_wnd->Hide();
-    m_btn_moderator->MarkNotSelected();
+    //m_btn_moderator->MarkNotSelected();
 }
 
 bool MapWnd::ToggleModeratorActions() {
@@ -4141,12 +4186,12 @@ void MapWnd::ShowObjects() {
     m_object_list_wnd->Show();
 
     // indicate selection on button
-    m_btn_objects->MarkSelectedGray();
+    //m_btn_objects->MarkSelectedGray();
 }
 
 void MapWnd::HideObjects() {
     m_object_list_wnd->Hide(); // necessary so it won't be visible when next toggled
-    m_btn_objects->MarkNotSelected();
+    //m_btn_objects->MarkNotSelected();
 }
 
 bool MapWnd::ToggleObjects() {
@@ -4172,12 +4217,12 @@ void MapWnd::ShowSitRep() {
     m_sitrep_panel->Show();
 
     // indicate selection on button
-    m_btn_siterep->MarkSelectedGray();
+    //m_btn_siterep->MarkSelectedGray();
 }
 
 void MapWnd::HideSitRep() {
     m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
-    m_btn_siterep->MarkNotSelected();
+    //m_btn_siterep->MarkNotSelected();
 }
 
 bool MapWnd::ToggleSitRep() {
@@ -4203,12 +4248,12 @@ void MapWnd::ShowPedia() {
     GG::GUI::GetGUI()->MoveUp(m_pedia_panel);
 
     // indicate selection on button
-    m_btn_pedia->MarkSelectedGray();
+    //m_btn_pedia->MarkSelectedGray();
 }
 
 void MapWnd::HidePedia() {
     m_pedia_panel->Hide();
-    m_btn_pedia->MarkNotSelected();
+    //m_btn_pedia->MarkNotSelected();
 }
 
 bool MapWnd::TogglePedia() {
@@ -4244,14 +4289,14 @@ void MapWnd::ShowResearch() {
     GG::GUI::GetGUI()->MoveUp(m_research_wnd);
 
     // indicate selection on button
-    m_btn_research->MarkSelectedGray();
+    //m_btn_research->MarkSelectedGray();
 
     m_pedia_panel->SetText("ENC_TECH", false);
 }
 
 void MapWnd::HideResearch() {
     m_research_wnd->Hide();
-    m_btn_research->MarkNotSelected();
+    //m_btn_research->MarkNotSelected();
     ShowAllPopups();
     RestoreSidePanel();
 }
@@ -4282,7 +4327,7 @@ void MapWnd::ShowProduction() {
     GG::GUI::GetGUI()->MoveUp(m_production_wnd);
 
     // indicate selection on button
-    m_btn_production->MarkSelectedGray();
+    //m_btn_production->MarkSelectedGray();
 
     // if no system is currently shown in sidepanel, default to this empire's
     // home system (ie. where the capital is)
@@ -4300,7 +4345,7 @@ void MapWnd::ShowProduction() {
 void MapWnd::HideProduction() {
     m_production_wnd->Hide();
     m_in_production_view_mode = false;
-    m_btn_production->MarkNotSelected();
+    //m_btn_production->MarkNotSelected();
     ShowAllPopups();
     RestoreSidePanel();
 }
@@ -4335,12 +4380,12 @@ void MapWnd::ShowDesign() {
     m_design_wnd->Reset();
 
     // indicate selection on button
-    m_btn_design->MarkSelectedGray();
+    //m_btn_design->MarkSelectedGray();
 }
 
 void MapWnd::HideDesign() {
     m_design_wnd->Hide();
-    m_btn_design->MarkNotSelected();
+    //m_btn_design->MarkNotSelected();
     EnableAlphaNumAccels();
     RestoreSidePanel();
 }
@@ -4357,11 +4402,11 @@ bool MapWnd::ShowMenu() {
     if (!m_menu_showing) {
         ClearProjectedFleetMovementLines();
         m_menu_showing = true;
-        m_btn_menu->MarkSelectedGray();
+        //m_btn_menu->MarkSelectedGray();
         InGameMenu menu;
         menu.Run();
         m_menu_showing = false;
-        m_btn_menu->MarkNotSelected();
+        //m_btn_menu->MarkNotSelected();
     }
     return true;
 }

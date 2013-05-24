@@ -94,35 +94,47 @@ void CUIButton::SetBorderThick(int thick)
 { m_border_thick = std::max(thick, 0); }  // don't allow negative thickness borders
 
 void CUIButton::RenderPressed() {
-    GG::Clr color_to_use = Color();
-    AdjustBrightness(color_to_use, 25);
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    AngledCornerRectangle(ul, lr, color_to_use, m_border_color, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
-    OffsetMove(GG::Pt(GG::X1, GG::Y1));
-    TextControl::Render();
-    OffsetMove(GG::Pt(-GG::X1, -GG::Y1));
+    if (PressedGraphic().Empty()) {
+        GG::Clr color_to_use = Color();
+        AdjustBrightness(color_to_use, 25);
+        GG::Pt ul = UpperLeft();
+        GG::Pt lr = LowerRight();
+        AngledCornerRectangle(ul, lr, color_to_use, m_border_color, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
+        OffsetMove(GG::Pt(GG::X1, GG::Y1));
+        TextControl::Render();
+        OffsetMove(GG::Pt(-GG::X1, -GG::Y1));
+    } else {
+        GG::Button::RenderPressed();
+    }
 }
 
 void CUIButton::RenderRollover() {
-    GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-    GG::Clr border_color_to_use = m_border_color;
-    AdjustBrightness(border_color_to_use, 100);
-    if (Disabled())
-        border_color_to_use = DisabledColor(m_border_color);
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
-    TextControl::Render();
+    if (RolloverGraphic().Empty()) {
+        GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
+        GG::Clr border_color_to_use = m_border_color;
+        AdjustBrightness(border_color_to_use, 100);
+        if (Disabled())
+            border_color_to_use = DisabledColor(m_border_color);
+        GG::Pt ul = UpperLeft();
+        GG::Pt lr = LowerRight();
+        AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
+        TextControl::Render();
+    } else {
+        GG::Button::RenderRollover();
+    }
 }
 
 void CUIButton::RenderUnpressed() {
-    GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-    GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
-    TextControl::Render();
+    if (UnpressedGraphic().Empty()) {
+        GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
+        GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
+        GG::Pt ul = UpperLeft();
+        GG::Pt lr = LowerRight();
+        AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
+        TextControl::Render();
+    } else {
+        GG::Button::RenderUnpressed();
+    }
 }
 
 void CUIButton::MarkNotSelected() {
