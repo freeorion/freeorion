@@ -56,7 +56,7 @@ void Sleep(int ms);
 struct GalaxySetupData {
     /** \name Structors */ //@{
     GalaxySetupData() :
-        m_seed(0),
+        m_seed(),
         m_size(100),
         m_shape(SPIRAL_2),
         m_age(GALAXY_SETUP_MEDIUM),
@@ -69,7 +69,7 @@ struct GalaxySetupData {
     {}
     //@}
 
-    unsigned int        m_seed;
+    std::string         m_seed;
     int                 m_size;
     Shape               m_shape;
     GalaxySetupOption   m_age;

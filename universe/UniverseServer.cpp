@@ -1483,10 +1483,7 @@ void Universe::CreateUniverse(unsigned int seed, int size, Shape shape, GalaxySe
                               GalaxySetupOption monster_freq, GalaxySetupOption native_freq,
                               const std::map<int, PlayerSetupData>& player_setup_data)
 {
-#ifdef FREEORION_RELEASE
-    ClockSeed();
-#endif
-
+    Logger().debugStream() << "CreateUniverse with seed: " << seed;
     m_objects.Clear();  // wipe out anything present in the object map
     Seed(seed); // set up RNG
 

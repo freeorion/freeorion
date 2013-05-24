@@ -183,17 +183,12 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_ai_aggression_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_ai_aggression_list->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_ai_aggression_list->Height()) / 2));
     m_ai_aggression_list->SetStyle(GG::LIST_NOSORT);
-    
+
     Init();
 }
 
-unsigned int GalaxySetupPanel::GetSeed() const {
-    try {
-        return boost::lexical_cast<unsigned int, std::string>(m_seed_edit->Text());
-    } catch (boost::bad_lexical_cast) {
-        return 0;
-    }
-}
+const std::string& GalaxySetupPanel::GetSeed() const
+{ return m_seed_edit->Text(); }
 
 int GalaxySetupPanel::Systems() const
 { return m_stars_spin->Value(); }
@@ -231,7 +226,7 @@ void GalaxySetupPanel::Disable(bool b/* = true*/) {
 }
 
 void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
-    m_seed_edit->SetText(boost::lexical_cast<std::string>(setup_data.m_seed));
+    m_seed_edit->SetText(setup_data.m_seed);
     m_stars_spin->SetValue(setup_data.m_size);
     m_galaxy_shapes_list->Select(setup_data.m_shape);
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
@@ -547,7 +542,7 @@ void GalaxySetupWnd::PlayerNameChanged(const std::string& name)
 
 void GalaxySetupWnd::OkClicked() {
     // record selected galaxy setup options as new defaults
-    GetOptionsDB().Set("GameSetup.seed",                boost::lexical_cast<std::string>(m_galaxy_setup_panel->GetSeed()));
+    GetOptionsDB().Set("GameSetup.seed",                m_galaxy_setup_panel->GetSeed());
     GetOptionsDB().Set("GameSetup.stars",               m_galaxy_setup_panel->Systems());
     GetOptionsDB().Set("GameSetup.galaxy-shape",        m_galaxy_setup_panel->GetShape());
     GetOptionsDB().Set("GameSetup.galaxy-age",          m_galaxy_setup_panel->GetAge());

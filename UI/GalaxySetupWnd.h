@@ -37,7 +37,7 @@ public:
     //!@}
 
     /** \name Accessors*/ //!@{
-    unsigned int                    GetSeed() const;                //!< Returns the seed used in creating the galaxy
+    const std::string&              GetSeed() const;                //!< Returns string version of seed. This value is converted to a number or (if that fails) hashed to get the actual seed value.
     int                             Systems() const;                //!< Returns the number of star systems to use in generating the galaxy
     Shape                           GetShape() const;               //!< Returns the shape of the galaxy
     GalaxySetupOption               GetAge() const;                 //!< Returns the age of the galaxy

@@ -373,7 +373,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
             // from just having run GalaxySetupWnd
 
             // GalaxySetupData
-            setup_data.m_seed =             boost::lexical_cast<unsigned int>(GetOptionsDB().Get<std::string>("GameSetup.seed"));
+            setup_data.m_seed =             GetOptionsDB().Get<std::string>("GameSetup.seed");
             setup_data.m_size =             GetOptionsDB().Get<int>("GameSetup.stars");
             setup_data.m_shape =            GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape");
             setup_data.m_age =              GetOptionsDB().Get<GalaxySetupOption>("GameSetup.galaxy-age");
