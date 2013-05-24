@@ -80,7 +80,7 @@ namespace {
         }
     };
 
-    double  ZoomScaleFactor(double steps_in) {
+    double ZoomScaleFactor(double steps_in) {
         if (steps_in > ZOOM_IN_MAX_STEPS) {
             Logger().errorStream() << "ZoomScaleFactor passed steps in (" << steps_in << ") higher than max (" << ZOOM_IN_MAX_STEPS << "), so using max";
             steps_in = ZOOM_IN_MAX_STEPS;
@@ -237,16 +237,8 @@ namespace {
     GG::X SidePanelWidth()
     { return GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width")); }
 
-    /** Used for tracking what moderator action is set */
-    enum ModeratorActionSetting {
-        MAS_NoAction,
-        MAS_Destroy,
-        MAS_SetOwner,
-        MAS_AddStarlane,
-        MAS_CreateSystem,
-        MAS_CreatePlanet
-    };
-    ModeratorActionSetting current_moderator_action = MAS_NoAction;
+    bool ClientPlayerIsModerator()
+    { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 }
 
 
@@ -357,8 +349,7 @@ MapWndPopup::MapWndPopup(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y 
 MapWndPopup::~MapWndPopup()
 { ClientUI::GetClientUI()->GetMapWnd()->RemovePopup(this); }
 
-void MapWndPopup::CloseClicked()
-{
+void MapWndPopup::CloseClicked() {
     CUIWnd::CloseClicked();
     delete this;
 }
@@ -1714,25 +1705,27 @@ void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
         m_side_panel->Hide();
     }
     m_dragged = false;
-
-
-    HumanClientApp* app = HumanClientApp::GetApp();
-    ClientNetworking& net = app->Networking();
-    bool moderator = false;
-    if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-        moderator = true;
-    if (!moderator)
-        return;
-
-    std::pair<double, double> u_pos = this->UniversePositionFromScreenCoords(pt);
-
-    net.SendMessage(ModeratorActionMessage(app->PlayerID(),
-        Moderator::CreateSystem(u_pos.first, u_pos.second, STAR_BLUE)));
 }
 
 void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    // Attempt to close open fleet windows (if any are open and this is allowed), then attempt to close the SidePanel (if open);
-    // if these fail, go ahead with the context-sensitive popup menu . Note that this enforces a one-close-per-click policy.
+    // if in moderator mode, treat as moderator action click
+    if (ClientPlayerIsModerator()) {
+        // only supported action on empty map location at present is creating a system
+        if (m_moderator_wnd->SelectedAction() == ModeratorActionsWnd::MAS_CreateSystem) {
+            ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+            std::pair<double, double> u_pos = this->UniversePositionFromScreenCoords(pt);
+            StarType star_type = m_moderator_wnd->SelectedStarType();
+            net.SendMessage(ModeratorActionMessage(HumanClientApp::GetApp()->PlayerID(),
+                Moderator::CreateSystem(u_pos.first, u_pos.second, star_type)));
+            return;
+        }
+    }
+
+
+    // Attempt to close open fleet windows (if any are open and this is
+    // allowed), then attempt to close the SidePanel (if open);
+    // if these fail, go ahead with the context-sensitive popup menu. Note
+    // that this enforces a one-close-per-click policy.
     if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
         if (FleetUIManager::GetFleetUIManager().CloseAll())
             return;
@@ -3702,13 +3695,22 @@ void MapWnd::SystemLeftClicked(int system_id) {
 }
 
 void MapWnd::SystemRightClicked(int system_id) {
+    if (ClientPlayerIsModerator()) {
+        if (m_moderator_wnd->SelectedAction() == ModeratorActionsWnd::MAS_Destroy) {
+            ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+            net.SendMessage(ModeratorActionMessage(HumanClientApp::GetApp()->PlayerID(),
+                Moderator::DestroyUniverseObject(system_id)));
+        }
+        return;
+    }
+
     if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd()) {
         if (system_id == INVALID_OBJECT_ID)
             ClearProjectedFleetMovementLines();
         else
             PlotFleetMovement(system_id, true);
+        SystemRightClickedSignal(system_id);
     }
-    SystemRightClickedSignal(system_id);
 }
 
 void MapWnd::MouseEnteringSystem(int system_id) {

@@ -23,6 +23,7 @@ namespace {
 ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     CUIWnd(UserString("MODERATOR"), GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE),
     m_actions_enabled(true),
+    m_selected_action(MAS_NoAction),
     m_no_action_button(0),
     m_create_system_button(0),
     m_star_type_drop(0),
@@ -134,6 +135,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
 }
 
 void ModeratorActionsWnd::NoActionClicked() {
+    m_selected_action = MAS_NoAction;
     NoActionSelectedSignal();
     DetachChild(m_planet_type_drop);
     DetachChild(m_empire_drop);
@@ -141,6 +143,7 @@ void ModeratorActionsWnd::NoActionClicked() {
 }
 
 void ModeratorActionsWnd::CreateSystemClicked() {
+    m_selected_action = MAS_CreateSystem;
     CreateSystemActionSelectedSignal(SelectedStarType());
     DetachChild(m_planet_type_drop);
     DetachChild(m_empire_drop);
@@ -151,6 +154,7 @@ void ModeratorActionsWnd::StarTypeSelected(GG::DropDownList::iterator it)
 { CreateSystemClicked(); }
 
 void ModeratorActionsWnd::CreatePlanetClicked() {
+    m_selected_action = MAS_CreatePlanet;
     CreatePlanetActionSelectedSignal(SelectedPlanetType());
     DetachChild(m_star_type_drop);
     DetachChild(m_empire_drop);
@@ -161,6 +165,7 @@ void ModeratorActionsWnd::PlanetTypeSelected(GG::DropDownList::iterator it)
 { CreatePlanetClicked(); }
 
 void ModeratorActionsWnd::DeleteObjectClicked() {
+    m_selected_action = MAS_Destroy;
     DeleteObjectActionSelectedSignal();
     DetachChild(m_planet_type_drop);
     DetachChild(m_empire_drop);
@@ -168,6 +173,7 @@ void ModeratorActionsWnd::DeleteObjectClicked() {
 }
 
 void ModeratorActionsWnd::SetOwnerClicked() {
+    m_selected_action = MAS_SetOwner;
     SetOwnerActionSelectedSignal(SelectedEmpire());
     DetachChild(m_star_type_drop);
     DetachChild(m_planet_type_drop);
@@ -178,11 +184,15 @@ void ModeratorActionsWnd::EmpireSelected(GG::DropDownList::iterator it)
 { SetOwnerClicked(); }
 
 void ModeratorActionsWnd::CreateStarlaneClicked() {
-    CreateStarlaneActionSelectedSignal(); 
+    m_selected_action = MAS_AddStarlane;
+    CreateStarlaneActionSelectedSignal();
     DetachChild(m_planet_type_drop);
     DetachChild(m_empire_drop);
     DetachChild(m_star_type_drop);
 }
+
+ModeratorActionsWnd::ModeratorActionSetting ModeratorActionsWnd::SelectedAction() const
+{ return m_selected_action; }
 
 PlanetType ModeratorActionsWnd::SelectedPlanetType() const
 { return PT_SWAMP; }
