@@ -90,13 +90,17 @@ endif()
 
 find_package(Subversion)
 set(FreeOrion_WC_REVISION ???)
-if (Subversion_FOUND AND IS_DIRECTORY "${CMAKE_SOURCE_DIR}/.svn")
-    Subversion_WC_INFO(${CMAKE_SOURCE_DIR} FreeOrion)
+set(FreeOrion_BUILDSYS "CMake")
+if (Subversion_FOUND AND (
+  IS_DIRECTORY "${CMAKE_SOURCE_DIR}/.svn" OR
+  IS_DIRECTORY "${CMAKE_SOURCE_DIR}/../.svn" OR
+  IS_DIRECTORY "${CMAKE_SOURCE_DIR}/../../.svn")
+)
+    Subversion_WC_INFO("${CMAKE_SOURCE_DIR}" FreeOrion)
 endif ()
 configure_file(
     ${CMAKE_SOURCE_DIR}/cmake/Version.cpp.in
     ${CMAKE_BINARY_DIR}/util/Version.cpp
-    @ONLY
 )
 
 

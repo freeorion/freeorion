@@ -5655,8 +5655,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /usr/bin/python;
-			shellScript = "import os\nimport subprocess as sp\nfrom string import Template\n\nif os.getenv(\"ACTION\") == \"build\":\n\twc_rev = \"\"\n\tsvn_proc = sp.Popen([\"svn\", \"info\"], stdout=sp.PIPE)\n\tsvn_info = svn_proc.communicate()[0]\n\n\tfor line in svn_info.splitlines():\n\t\tif line.startswith(\"Revision:\"):\n\t\t\twc_rev = line.partition(\" \")[2]\n\n\tif wc_rev == \"\":\n\t\tprint \"WARNING: can't determine working copy revision, Version.cpp not updated!\"\n\t\tquit()\n\n\ttemplate_file = open(\"Version.template\")\n\ttemplate = Template(template_file.read())\n\ttemplate_file.close()\n\n\tversion_cpp = open(\"Version.cpp\", \"w\")\n\tversion_cpp.write(template.substitute(WCREV=wc_rev))\n\tversion_cpp.close()\n\n\tprint \"Building rev: \" + wc_rev";
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/../cmake/make_versioncpp.py\" \"${SRCROOT}/..\" \"Xcode 3\" \"${SRCROOT}/Version.cpp\"\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 

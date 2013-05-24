@@ -48,10 +48,16 @@
     <Filter Include="Source Files\OpenSteer">
       <UniqueIdentifier>{7a608bd5-e5d6-4505-97fa-c108824ad463}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\cmake">
+      <UniqueIdentifier>{6ffe6d1e-98f6-4958-9efb-3ceb8ff2c1c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\util\Serialize.ipp">
       <Filter>Source Files\util</Filter>
+    </None>
+    <None Include="..\..\cmake\make_versioncpp.py">
+      <Filter>Source Files\cmake</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -282,9 +288,6 @@
     <ClCompile Include="..\..\util\XMLDoc.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Version.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Empire\Empire.cpp">
       <Filter>Source Files\Empire</Filter>
     </ClCompile>
@@ -411,10 +414,13 @@
     <ClCompile Include="..\..\OpenSteer\source\Vec3Utilities.cpp">
       <Filter>Source Files\OpenSteer</Filter>
     </ClCompile>
+    <ClCompile Include="..\Version.cpp">
+      <Filter>Source Files\cmake</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\src\Version.template">
-      <Filter>Source Files\util</Filter>
+    <CustomBuild Include="..\..\cmake\Version.cpp.in">
+      <Filter>Source Files\cmake</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>
