@@ -259,6 +259,8 @@ private:
 
     void            CorrectMapPosition(GG::Pt &move_to_pt);     //!< ensures that the map data are positioned sensibly
 
+    void            FieldRightClicked(int field_id);
+
     void            SystemDoubleClicked(int system_id);
     void            SystemLeftClicked(int system_id);
     void            SystemRightClicked(int system_id);

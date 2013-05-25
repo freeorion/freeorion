@@ -22,7 +22,7 @@ namespace {
 // FieldIcon
 ////////////////////////////////////////////////
 FieldIcon::FieldIcon(GG::X x, GG::Y y, int field_id) :
-    GG::Control(x, y, GG::X1, GG::Y1, GG::Flags<GG::WndFlag>()),
+    GG::Control(x, y, GG::X1, GG::Y1),
     m_field_id(field_id),
     m_selection_indicator(0),
     m_mouseover_indicator(0),
@@ -122,22 +122,26 @@ void FieldIcon::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { if (!Disabled()) RightDoubleClickedSignal(m_field_id); }
 
 void FieldIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    // indicate mouseover
-    if (m_mouseover_indicator) {
-        AttachChild(m_mouseover_indicator);
-        MoveChildUp(m_mouseover_indicator);
-    } else if (m_mouseover_indicator) {
-        DetachChild(m_mouseover_indicator);
-    }
-    MouseEnteringSignal(m_field_id);
+    ForwardEventToParent();
+
+    //// indicate mouseover
+    //if (m_mouseover_indicator) {
+    //    AttachChild(m_mouseover_indicator);
+    //    MoveChildUp(m_mouseover_indicator);
+    //} else if (m_mouseover_indicator) {
+    //    DetachChild(m_mouseover_indicator);
+    //}
+    //MouseEnteringSignal(m_field_id);
 }
 
 void FieldIcon::MouseLeave() {
-    // un-indicate mouseover
-    if (m_mouseover_indicator)
-        DetachChild(m_mouseover_indicator);
+    ForwardEventToParent();
 
-    MouseLeavingSignal(m_field_id);
+    //// un-indicate mouseover
+    //if (m_mouseover_indicator)
+    //    DetachChild(m_mouseover_indicator);
+
+    //MouseLeavingSignal(m_field_id);
 }
 
 void FieldIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)

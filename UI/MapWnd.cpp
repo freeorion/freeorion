@@ -2105,16 +2105,10 @@ void MapWnd::InitTurnRendering() {
         FieldIcon* icon = new FieldIcon(GG::X0, GG::Y0, fld_id);
         m_field_icons[fld_id] = icon;
         icon->InstallEventFilter(this);
-        //if (SidePanel::SystemID() == systems[i]->ID())
-        //    icon->SetSelected(true);
+
         AttachChild(icon);
 
-        // connect UI response signals.  TODO: Make these configurable in GUI?
-        //GG::Connect(icon->LeftClickedSignal,        &MapWnd::SystemLeftClicked,         this);
-        //GG::Connect(icon->RightClickedSignal,       &MapWnd::SystemRightClicked,        this);
-        //GG::Connect(icon->LeftDoubleClickedSignal,  &MapWnd::SystemDoubleClicked,       this);
-        //GG::Connect(icon->MouseEnteringSignal,      &MapWnd::MouseEnteringSystem,       this);
-        //GG::Connect(icon->MouseLeavingSignal,       &MapWnd::MouseLeavingSystem,        this);
+        GG::Connect(icon->RightClickedSignal,   &MapWnd::FieldRightClicked, this);
     }
 
     // position field icons
@@ -3669,6 +3663,20 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt) {
             move_to_pt.y = GG::Y0;
         if (app_height < move_to_pt.y + Value(contents_width))
             move_to_pt.y = app_height - Value(contents_width);
+    }
+}
+
+void MapWnd::FieldRightClicked(int field_id) {
+    if (ClientPlayerIsModerator()) {
+        ModeratorActionsWnd::ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
+        ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+        int player_id = HumanClientApp::GetApp()->PlayerID();
+
+        if (mas == ModeratorActionsWnd::MAS_Destroy) {
+            net.SendMessage(ModeratorActionMessage(player_id,
+                Moderator::DestroyUniverseObject(field_id)));
+        }
+        return;
     }
 }
 
