@@ -69,32 +69,14 @@ void CUI_MinRestoreButton::Toggle() {
 ////////////////////////////////////////////////
 // CUI_CloseButton
 ////////////////////////////////////////////////
-CUI_CloseButton::CUI_CloseButton(GG::X x, GG::Y y) : 
+CUI_CloseButton::CUI_CloseButton(GG::X x, GG::Y y) :
     GG::Button(x, y, GG::X(12), GG::Y(12), "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
-{ GG::Connect(LeftClickedSignal, &PlayCloseSound, -1); }
-
-void CUI_CloseButton::Render() {
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    GG::Clr color_to_use = ClientUI::WndInnerBorderColor();
-    if (State() != BN_ROLLOVER)
-        AdjustBrightness(color_to_use, BUTTON_DIMMING_SCALE_FACTOR);
-    glDisable(GL_TEXTURE_2D);
-    glColor(color_to_use);
-    // this is slightly less efficient than using GL_LINES, but the lines are rasterized differently on different 
-    // OpengGL implementaions, so we do it this way to produce the "x" we want
-    glBegin(GL_POINTS);
-    for (int i = 0; i < GG::Wnd::Width(); ++i) {
-        glVertex(ul.x + i, ul.y + i + 0.5);
-    }
-    for (int i = 0; i < GG::Wnd::Width(); ++i) {
-        if (i != GG::Wnd::Width() / 2)
-            glVertex(lr.x - i - 1, ul.y + i + 0.5);
-    }
-    glEnd();
-    glEnable(GL_TEXTURE_2D);
+{
+    GG::Connect(LeftClickedSignal, &PlayCloseSound, -1);
+    SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "close.png"   )));
+    SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "close_clicked.png"  )));
+    SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "close_mouseover.png")));
 }
-
 
 ////////////////////////////////////////////////
 // CUIWnd

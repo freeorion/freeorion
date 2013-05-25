@@ -36,10 +36,7 @@ private:
 class CUI_CloseButton : public GG::Button {
 public:
    CUI_CloseButton(GG::X x, GG::Y y);
-
-   void Render();
 };
-
 
 // Aditional window creation flags
 extern GG::WndFlag MINIMIZABLE;    ///< allows the window to be minimized
@@ -77,7 +74,6 @@ extern GG::WndFlag CLOSABLE;       ///< allows the window to be closed
       OnResize() is called as part of a response to the resize signal emitted via GG::Wnd.  Users
       are advised to use this function instead of making a slot connection with GG::Connect to respond
       to the resize signal.
-    
 */
 class CUIWnd : public GG::Wnd {
 public:
