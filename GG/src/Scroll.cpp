@@ -101,8 +101,8 @@ Scroll::Scroll(X x, Y y, X w, Y h, Orientation orientation, Clr color, Clr inter
     AttachChild(m_decr);
     AttachChild(m_incr);
     AttachChild(m_tab);
-    Connect(m_decr->ClickedSignal, boost::bind(&Scroll::ScrollLineDecrImpl, this, true));
-    Connect(m_incr->ClickedSignal, boost::bind(&Scroll::ScrollLineIncrImpl, this, true));
+    Connect(m_decr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineDecrImpl, this, true));
+    Connect(m_incr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineIncrImpl, this, true));
     m_tab->InstallEventFilter(this);
 
     if (INSTRUMENT_ALL_SIGNALS) {

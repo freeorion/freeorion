@@ -653,7 +653,7 @@ MapWnd::MapWnd() :
     GG::X button_width = font->TextExtent(turn_button_longest_reasonable_text).x + BUTTON_TOTAL_MARGIN;
     // create button using determined width
     m_turn_update = new CUITurnButton(GG::X0, GG::Y0, button_width, turn_button_longest_reasonable_text);
-    GG::Connect(m_turn_update->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::EndTurn, this)));
+    GG::Connect(m_turn_update->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::EndTurn, this)));
 
 
     // FPS indicator
@@ -693,7 +693,7 @@ MapWnd::MapWnd() :
     m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
     m_btn_menu->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_clicked.png"  )));
     m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
-    GG::Connect(m_btn_menu->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ShowMenu, this)));
+    GG::Connect(m_btn_menu->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ShowMenu, this)));
     // create custom InWindow function for Menu button that extends its
     // clickable area to the adjacent edges of the toolbar containing it
     boost::function<bool(const GG::Pt&)> in_window_func =
@@ -712,7 +712,7 @@ MapWnd::MapWnd() :
     m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
     m_btn_pedia->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_clicked.png"  )));
     m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
-    GG::Connect(m_btn_pedia->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::TogglePedia, this)));
+    GG::Connect(m_btn_pedia->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::TogglePedia, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_pedia),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_pedia),  boost::bind(&WndBottom, m_btn_pedia),
@@ -729,7 +729,7 @@ MapWnd::MapWnd() :
     m_btn_design->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
     m_btn_design->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_clicked.png"  )));
     m_btn_design->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
-    GG::Connect(m_btn_design->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleDesign, this)));
+    GG::Connect(m_btn_design->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleDesign, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_design),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_design),  boost::bind(&WndBottom, m_btn_design),
@@ -746,7 +746,7 @@ MapWnd::MapWnd() :
     m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
     m_btn_production->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_clicked.png"  )));
     m_btn_production->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
-    GG::Connect(m_btn_production->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleProduction, this)));
+    GG::Connect(m_btn_production->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleProduction, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_production),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_production),  boost::bind(&WndBottom, m_btn_production),
@@ -763,7 +763,7 @@ MapWnd::MapWnd() :
     m_btn_research->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
     m_btn_research->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_clicked.png"  )));
     m_btn_research->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));
-    GG::Connect(m_btn_research->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch, this)));
+    GG::Connect(m_btn_research->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_research),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_research),  boost::bind(&WndBottom, m_btn_research),
@@ -779,7 +779,7 @@ MapWnd::MapWnd() :
     m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
     m_btn_siterep->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_clicked.png"  )));
     m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
-    GG::Connect(m_btn_siterep->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));
+    GG::Connect(m_btn_siterep->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_siterep),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_siterep),  boost::bind(&WndBottom, m_btn_siterep),
@@ -795,7 +795,7 @@ MapWnd::MapWnd() :
     m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
     m_btn_objects->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_clicked.png"  )));
     m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
-    GG::Connect(m_btn_objects->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleObjects, this)));
+    GG::Connect(m_btn_objects->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleObjects, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_objects),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_objects),  boost::bind(&WndBottom, m_btn_objects),
@@ -811,7 +811,7 @@ MapWnd::MapWnd() :
     m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
     m_btn_moderator->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_clicked.png"  )));
     m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
-    GG::Connect(m_btn_moderator->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleModeratorActions, this)));
+    GG::Connect(m_btn_moderator->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleModeratorActions, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_moderator),    boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_moderator),   boost::bind(&WndBottom, m_btn_moderator),
@@ -877,8 +877,8 @@ MapWnd::MapWnd() :
     m_industry_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-    GG::Connect(m_industry_wasted->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ZoomToSystemWithWastedPP,  this)));
-    GG::Connect(m_research_wasted->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch,            this)));
+    GG::Connect(m_industry_wasted->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ZoomToSystemWithWastedPP,  this)));
+    GG::Connect(m_research_wasted->LeftClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch,            this)));
 
     //Set the correct tooltips
     RefreshIndustryResourceIndicator();
@@ -3382,7 +3382,7 @@ void MapWnd::RefreshFleetButtons() {
 
             AttachChild(fb);
             MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
-            GG::Connect(fb->ClickedSignal, boost::bind(&MapWnd::FleetButtonClicked, this, fb));
+            GG::Connect(fb->LeftClickedSignal, boost::bind(&MapWnd::FleetButtonClicked, this, fb));
         }
     }
 
@@ -3417,7 +3417,7 @@ void MapWnd::RefreshFleetButtons() {
 
             AttachChild(fb);
             MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
-            GG::Connect(fb->ClickedSignal, boost::bind(&MapWnd::FleetButtonClicked, this, fb));
+            GG::Connect(fb->LeftClickedSignal, boost::bind(&MapWnd::FleetButtonClicked, this, fb));
         }
     }
 
@@ -3453,7 +3453,7 @@ void MapWnd::RefreshFleetButtons() {
 
             AttachChild(fb);
             MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
-            GG::Connect(fb->ClickedSignal, boost::bind(&MapWnd::FleetButtonClicked, this, fb));
+            GG::Connect(fb->LeftClickedSignal, boost::bind(&MapWnd::FleetButtonClicked, this, fb));
         }
     }
 

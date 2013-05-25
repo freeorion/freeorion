@@ -439,8 +439,8 @@ template<class T>
 void Spin<T>::ConnectSignals()
 {
     Connect(m_edit->FocusUpdateSignal, &Spin::ValueUpdated, this);
-    Connect(m_up_button->ClickedSignal, boost::bind(&Spin::IncrImpl, this, true));
-    Connect(m_down_button->ClickedSignal, boost::bind(&Spin::DecrImpl, this, true));
+    Connect(m_up_button->LeftClickedSignal, boost::bind(&Spin::IncrImpl, this, true));
+    Connect(m_down_button->LeftClickedSignal, boost::bind(&Spin::DecrImpl, this, true));
 }
 
 template<class T>

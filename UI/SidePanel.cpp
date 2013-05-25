@@ -903,13 +903,13 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
                                       UserString("PL_COLONIZE"), ClientUI::GetFont(),
                                       ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
                                       ClientUI::TextColor(), GG::INTERACTIVE);
-    GG::Connect(m_colonize_button->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
+    GG::Connect(m_colonize_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
 
     m_invade_button =  new CUIButton(GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
                                       UserString("PL_INVADE"), ClientUI::GetFont(),
                                       ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
                                       ClientUI::TextColor(), GG::INTERACTIVE);
-    GG::Connect(m_invade_button->ClickedSignal, &SidePanel::PlanetPanel::ClickInvade, this);
+    GG::Connect(m_invade_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickInvade, this);
 
     if (m_planet_graphic)
         MoveChildDown(m_planet_graphic);
@@ -2228,8 +2228,8 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
 
 
     GG::Connect(m_system_name->SelChangedSignal,                &SidePanel::SystemSelectionChanged, this);
-    GG::Connect(m_button_prev->ClickedSignal,                   &SidePanel::PrevButtonClicked,      this);
-    GG::Connect(m_button_next->ClickedSignal,                   &SidePanel::NextButtonClicked,      this);
+    GG::Connect(m_button_prev->LeftClickedSignal,               &SidePanel::PrevButtonClicked,      this);
+    GG::Connect(m_button_next->LeftClickedSignal,               &SidePanel::NextButtonClicked,      this);
     GG::Connect(m_planet_panel_container->PlanetSelectedSignal, &SidePanel::PlanetSelected,         this);
 
     SetMinSize(GG::Pt(GG::X(MaxPlanetDiameter() + BORDER_LEFT + BORDER_RIGHT + 120),

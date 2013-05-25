@@ -211,10 +211,10 @@ SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_filter_button = new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("FILTERS"));
     AttachChild(m_filter_button);
 
-    GG::Connect(m_prev_turn_button->ClickedSignal,  &SitRepPanel::PrevClicked,          this);
-    GG::Connect(m_next_turn_button->ClickedSignal,  &SitRepPanel::NextClicked,          this);
-    GG::Connect(m_last_turn_button->ClickedSignal,  &SitRepPanel::LastClicked,          this);
-    GG::Connect(m_filter_button->ClickedSignal,     &SitRepPanel::FilterClicked,        this);
+    GG::Connect(m_prev_turn_button->LeftClickedSignal,  &SitRepPanel::PrevClicked,          this);
+    GG::Connect(m_next_turn_button->LeftClickedSignal,  &SitRepPanel::NextClicked,          this);
+    GG::Connect(m_last_turn_button->LeftClickedSignal,  &SitRepPanel::LastClicked,          this);
+    GG::Connect(m_filter_button->LeftClickedSignal,     &SitRepPanel::FilterClicked,        this);
 
     DoLayout();
     Hide();

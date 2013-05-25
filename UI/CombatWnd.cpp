@@ -714,7 +714,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
     m_end_turn_button->MoveTo(
         GG::Pt(GG::X(5), GG::GUI::GetGUI()->AppHeight() - m_end_turn_button->Height() - GG::Y(5)));
-    GG::Connect(m_end_turn_button->ClickedSignal, boost::bind(&CombatWnd::EndTurn, this));
+    GG::Connect(m_end_turn_button->LeftClickedSignal, boost::bind(&CombatWnd::EndTurn, this));
     m_end_turn_button->Hide();
 
     AttachChild(m_end_turn_button);
@@ -849,7 +849,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
                           GG::GUI::GetGUI()->AppHeight() - GG::Y(25),
                           width,
                           "End Combat");
-        GG::Connect(done_button->ClickedSignal, &EndCombatButtonClicked);
+        GG::Connect(done_button->LeftClickedSignal, &EndCombatButtonClicked);
         AttachChild(done_button);
 
         // TODO: Add permanent (i.e. not just for prototyping) button for

@@ -36,7 +36,7 @@ using namespace GG;
 
 namespace {
     void ClickedEcho()
-    { std::cerr << "GG SIGNAL : Button::ClickedSignal()\n"; }
+    { std::cerr << "GG SIGNAL : Button::LeftClickedSignal()\n"; }
 
     void CheckedEcho(bool checked)
     { std::cerr << "GG SIGNAL : StateButton::CheckedSignal(checked=" << checked << ")\n"; }
@@ -64,7 +64,7 @@ Button::Button(X x, Y y, X w, Y h, const std::string& str, const boost::shared_p
     m_color = color;
 
     if (INSTRUMENT_ALL_SIGNALS)
-        Connect(ClickedSignal, &ClickedEcho);
+        Connect(LeftClickedSignal, &ClickedEcho);
 }
 
 Button::ButtonState Button::State() const
@@ -109,7 +109,7 @@ void Button::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
         ButtonState prev_state = m_state;
         m_state = BN_PRESSED;
         if (prev_state == BN_PRESSED && RepeatButtonDown())
-            ClickedSignal();
+            LeftClickedSignal();
     }
 }
 
@@ -130,7 +130,38 @@ void Button::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
         m_state = BN_ROLLOVER;
-        ClickedSignal();
+        LeftClickedSignal();
+    }
+}
+
+void Button::RButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
+{
+    if (!Disabled()) {
+        ButtonState prev_state = m_state;
+        m_state = BN_PRESSED;
+        if (prev_state == BN_PRESSED && RepeatButtonDown())
+            RightClickedSignal();
+    }
+}
+
+void Button::RDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
+{
+    if (!Disabled())
+        m_state = BN_PRESSED;
+    Wnd::LDrag(pt, move, mod_keys);
+}
+
+void Button::RButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
+{
+    if (!Disabled())
+        m_state = BN_UNPRESSED;
+}
+
+void Button::RClick(const Pt& pt, Flags<ModKey> mod_keys)
+{
+    if (!Disabled()) {
+        m_state = BN_ROLLOVER;
+        RightClickedSignal();
     }
 }
 

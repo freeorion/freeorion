@@ -777,11 +777,11 @@ private:
 
         m_cancel_button = new CUIButton(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8), UserString("CANCEL"), font);
         AttachChild(m_cancel_button);
-        GG::Connect(m_cancel_button->ClickedSignal, &FilterDialog::CancelClicked,   this);
+        GG::Connect(m_cancel_button->LeftClickedSignal, &FilterDialog::CancelClicked,   this);
 
         m_apply_button = new CUIButton(GG::X0, GG::Y0, GG::X(ClientUI::Pts()*8), UserString("APPLY"), font);
         AttachChild(m_apply_button);
-        GG::Connect(m_apply_button->ClickedSignal, &FilterDialog::AcceptClicked,   this);
+        GG::Connect(m_apply_button->LeftClickedSignal, &FilterDialog::AcceptClicked,   this);
 
         GG::Pt button_lr = this->ClientSize();
         m_cancel_button->MoveTo(GG::Pt(button_lr.x - m_cancel_button->Width(),
@@ -964,7 +964,7 @@ public:
             m_expand_button = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16),
                                                 "", font, GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
             AttachChild(m_expand_button);
-            GG::Connect(m_expand_button->ClickedSignal, &ObjectPanel::ExpandCollapseButtonPressed, this);
+            GG::Connect(m_expand_button->LeftClickedSignal, &ObjectPanel::ExpandCollapseButtonPressed, this);
 
             if (m_expanded) {
                 m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "minusnormal.png"     , true)));
@@ -1628,27 +1628,27 @@ ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
     m_list_box = new ObjectListBox();
     m_list_box->SetHiliteColor(GG::CLR_ZERO);
     m_list_box->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
-    GG::Connect(m_list_box->DoubleClickedSignal,    &ObjectListWnd::ObjectDoubleClicked,    this);
-    GG::Connect(m_list_box->RightClickedSignal,     &ObjectListWnd::ObjectRightClicked,     this);
-    GG::Connect(m_list_box->ExpandCollapseSignal,   &ObjectListWnd::DoLayout,               this);
+    GG::Connect(m_list_box->DoubleClickedSignal,        &ObjectListWnd::ObjectDoubleClicked,    this);
+    GG::Connect(m_list_box->RightClickedSignal,         &ObjectListWnd::ObjectRightClicked,     this);
+    GG::Connect(m_list_box->ExpandCollapseSignal,       &ObjectListWnd::DoLayout,               this);
     AttachChild(m_list_box);
 
     m_filter_button = new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("FILTERS"));
-    GG::Connect(m_filter_button->ClickedSignal,     &ObjectListWnd::FilterClicked,          this);
+    GG::Connect(m_filter_button->LeftClickedSignal,     &ObjectListWnd::FilterClicked,          this);
     AttachChild(m_filter_button);
 
     m_sort_button = new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("SORT"));
-    GG::Connect(m_sort_button->ClickedSignal,       &ObjectListWnd::SortClicked,            this);
+    GG::Connect(m_sort_button->LeftClickedSignal,       &ObjectListWnd::SortClicked,            this);
     AttachChild(m_sort_button);
     m_sort_button->Disable();
 
     m_columns_button = new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("COLUMNS"));
-    GG::Connect(m_columns_button->ClickedSignal,    &ObjectListWnd::ColumnsClicked,         this);
+    GG::Connect(m_columns_button->LeftClickedSignal,    &ObjectListWnd::ColumnsClicked,         this);
     AttachChild(m_columns_button);
     m_columns_button->Disable();
 
     m_collapse_button = new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("COLLAPSE_ALL"));
-    GG::Connect(m_collapse_button->ClickedSignal,   &ObjectListWnd::CollapseExpandClicked,  this);
+    GG::Connect(m_collapse_button->LeftClickedSignal,   &ObjectListWnd::CollapseExpandClicked,  this);
     AttachChild(m_collapse_button);
 
     DoLayout();

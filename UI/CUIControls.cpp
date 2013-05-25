@@ -71,7 +71,7 @@ CUIButton::CUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const bo
     Button(x, y, w, FontOrDefaultFont(font)->Lineskip() + 6, str, FontOrDefaultFont(font), color, text_color, flags),
     m_border_color(border),
     m_border_thick(thick)
-{ GG::Connect(ClickedSignal, &PlayButtonClickSound, -1); }
+{ GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
 
 bool CUIButton::InWindow(const GG::Pt& pt) const {
     GG::Pt ul = UpperLeft();
@@ -196,7 +196,7 @@ CUITurnButton::CUITurnButton(GG::X x, GG::Y y, GG::X w, const std::string& str, 
                              GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
                              GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) : 
     CUIButton(x, y, w, str, FontOrDefaultFont(font), color, border, thick, text_color, flags)
-{ GG::Connect(ClickedSignal, &PlayTurnButtonClickSound, -1); }
+{ GG::Connect(LeftClickedSignal, &PlayTurnButtonClickSound, -1); }
 
 
 ///////////////////////////////////////
@@ -206,7 +206,7 @@ CUIArrowButton::CUIArrowButton(GG::X x, GG::Y y, GG::X w, GG::Y h, ShapeOrientat
     Button(x, y, w, h, "", boost::shared_ptr<GG::Font>(), color, GG::CLR_ZERO, flags),
     m_orientation(orientation),
     m_fill_background_with_wnd_color (false)
-{ GG::Connect(ClickedSignal, &PlayButtonClickSound, -1); }
+{ GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
 
 bool CUIArrowButton::InWindow(const GG::Pt& pt) const {
     if (m_fill_background_with_wnd_color) {

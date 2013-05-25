@@ -67,11 +67,12 @@ public:
     /** Returns button state \see ButtonState */
     ButtonState       State() const;
 
-    const SubTexture& UnpressedGraphic() const; ///< Returns the SubTexture to be used as the image of the button when unpressed
-    const SubTexture& PressedGraphic() const;   ///< Returns the SubTexture to be used as the image of the button when pressed
-    const SubTexture& RolloverGraphic() const;  ///< Returns the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
+    const SubTexture& UnpressedGraphic() const;  ///< Returns the SubTexture to be used as the image of the button when unpressed
+    const SubTexture& PressedGraphic() const;    ///< Returns the SubTexture to be used as the image of the button when pressed
+    const SubTexture& RolloverGraphic() const;   ///< Returns the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
 
-    mutable ClickedSignalType ClickedSignal; ///< The clicked signal object for this Button
+    mutable ClickedSignalType LeftClickedSignal; ///< The left clicked signal object for this Button
+    mutable ClickedSignalType RightClickedSignal;///< The left clicked signal object for this Button
     //@}
 
     /** \name Mutators */ ///@{
@@ -97,6 +98,10 @@ protected:
     virtual void   LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
     virtual void   LButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void   LClick(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void   RButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void   RDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
+    virtual void   RButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void   RClick(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void   MouseHere(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void   MouseLeave();
 

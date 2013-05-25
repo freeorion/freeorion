@@ -275,9 +275,9 @@ CombatSetupWnd::CombatSetupWnd(
     m_look_at(look_at)
 {
     m_listbox->SetStyle(m_listbox->Style() | GG::LIST_SINGLESEL);
-    Connect(m_redo_placements_button->ClickedSignal, &CombatSetupWnd::RedoPlacementsButtonClicked, this);
-    Connect(m_auto_place_button->ClickedSignal, &CombatSetupWnd::AutoPlaceButtonClicked, this);
-    Connect(m_done_button->ClickedSignal, &CombatSetupWnd::DoneButtonClicked, this);
+    Connect(m_redo_placements_button->LeftClickedSignal,    &CombatSetupWnd::RedoPlacementsButtonClicked, this);
+    Connect(m_auto_place_button->LeftClickedSignal,         &CombatSetupWnd::AutoPlaceButtonClicked, this);
+    Connect(m_done_button->LeftClickedSignal,               &CombatSetupWnd::DoneButtonClicked, this);
 
     GG::Y original_button_height = m_done_button->Height();
     GG::Y original_all_buttons_height = original_button_height * 3;

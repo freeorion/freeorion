@@ -43,11 +43,11 @@ InGameMenu::InGameMenu():
     AttachChild(m_exit_btn);
     AttachChild(m_done_btn);
 
-    GG::Connect(m_save_btn->ClickedSignal,      &InGameMenu::Save,      this);
-    GG::Connect(m_load_btn->ClickedSignal,      &InGameMenu::Load,      this);
-    GG::Connect(m_options_btn->ClickedSignal,   &InGameMenu::Options,   this);
-    GG::Connect(m_exit_btn->ClickedSignal,      &InGameMenu::Exit,      this);
-    GG::Connect(m_done_btn->ClickedSignal,      &InGameMenu::Done,      this);
+    GG::Connect(m_save_btn->LeftClickedSignal,      &InGameMenu::Save,      this);
+    GG::Connect(m_load_btn->LeftClickedSignal,      &InGameMenu::Load,      this);
+    GG::Connect(m_options_btn->LeftClickedSignal,   &InGameMenu::Options,   this);
+    GG::Connect(m_exit_btn->LeftClickedSignal,      &InGameMenu::Exit,      this);
+    GG::Connect(m_done_btn->LeftClickedSignal,      &InGameMenu::Done,      this);
 
     if (!HumanClientApp::GetApp()->SinglePlayerGame()) {
         // only host can save multiplayer games

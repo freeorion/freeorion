@@ -492,9 +492,9 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     GG::Connect(m_new_load_game_buttons->ButtonChangedSignal,   &MultiPlayerLobbyWnd::NewLoadClicked,           this);
     GG::Connect(m_galaxy_setup_panel->SettingsChangedSignal,    &MultiPlayerLobbyWnd::GalaxySetupPanelChanged,  this);
     GG::Connect(m_saved_games_list->SelChangedSignal,           &MultiPlayerLobbyWnd::SaveGameChanged,          this);
-    GG::Connect(m_start_game_bn->ClickedSignal,                 &MultiPlayerLobbyWnd::StartGameClicked,         this);
+    GG::Connect(m_start_game_bn->LeftClickedSignal,             &MultiPlayerLobbyWnd::StartGameClicked,         this);
     GG::Connect(m_galaxy_setup_panel->ImageChangedSignal,       &MultiPlayerLobbyWnd::PreviewImageChanged,      this);
-    GG::Connect(m_cancel_bn->ClickedSignal,                     &MultiPlayerLobbyWnd::CancelClicked,            this);
+    GG::Connect(m_cancel_bn->LeftClickedSignal,                 &MultiPlayerLobbyWnd::CancelClicked,            this);
 
     Refresh();
 }
@@ -532,9 +532,9 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, 
         *m_chat_box += player_name + ": " + text + "\n";
 
     } else if (m_start_game_bn && !m_start_game_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
-        m_start_game_bn->ClickedSignal();
+        m_start_game_bn->LeftClickedSignal();
     } else if (key == GG::GGK_ESCAPE) {
-        m_cancel_bn->ClickedSignal();
+        m_cancel_bn->LeftClickedSignal();
     }
 }
 

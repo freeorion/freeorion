@@ -787,7 +787,7 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
 void ColorDlg::ConnectSignals()
 {
     for (std::size_t i = 0; i < m_color_buttons.size(); ++i) {
-        Connect(m_color_buttons[i]->ClickedSignal, ColorButtonClickFunctor(i, this));
+        Connect(m_color_buttons[i]->LeftClickedSignal, ColorButtonClickFunctor(i, this));
     }
     Connect(m_sliders[R]->SlidSignal, &ColorDlg::RedSliderChanged, this);
     Connect(m_sliders[G]->SlidSignal, &ColorDlg::GreenSliderChanged, this);
@@ -796,8 +796,8 @@ void ColorDlg::ConnectSignals()
     Connect(m_sliders[H]->SlidSignal, &ColorDlg::HueSliderChanged, this);
     Connect(m_sliders[S]->SlidSignal, &ColorDlg::SaturationSliderChanged, this);
     Connect(m_sliders[V]->SlidSignal, &ColorDlg::ValueSliderChanged, this);
-    Connect(m_ok->ClickedSignal, &ColorDlg::OkClicked, this);
-    Connect(m_cancel->ClickedSignal, &ColorDlg::CancelClicked, this);
+    Connect(m_ok->LeftClickedSignal, &ColorDlg::OkClicked, this);
+    Connect(m_cancel->LeftClickedSignal, &ColorDlg::CancelClicked, this);
     Connect(m_hue_saturation_picker->ChangedSignal, &ValuePicker::SetHueSaturation, m_value_picker);
     Connect(m_hue_saturation_picker->ChangedSignal, &ColorDlg::HueSaturationPickerChanged, this);
     Connect(m_value_picker->ChangedSignal, &ColorDlg::ValuePickerChanged, this);

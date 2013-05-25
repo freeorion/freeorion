@@ -31,7 +31,7 @@ namespace {
 CUI_MinRestoreButton::CUI_MinRestoreButton(GG::X x, GG::Y y) : 
     GG::Button(x, y, GG::X(12), GG::Y(12), "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor()),
     m_mode(MIN_BUTTON)
-{ GG::Connect(ClickedSignal, &CUI_MinRestoreButton::Toggle, this); }
+{ GG::Connect(LeftClickedSignal, &CUI_MinRestoreButton::Toggle, this); }
 
 void CUI_MinRestoreButton::Render() {
     GG::Pt ul = UpperLeft();
@@ -71,7 +71,7 @@ void CUI_MinRestoreButton::Toggle() {
 ////////////////////////////////////////////////
 CUI_CloseButton::CUI_CloseButton(GG::X x, GG::Y y) : 
     GG::Button(x, y, GG::X(12), GG::Y(12), "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
-{ GG::Connect(ClickedSignal, &PlayCloseSound, -1); }
+{ GG::Connect(LeftClickedSignal, &PlayCloseSound, -1); }
 
 void CUI_CloseButton::Render() {
     GG::Pt ul = UpperLeft();
@@ -297,7 +297,7 @@ void CUIWnd::InitButtons() {
     GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET) + UpperLeft() - ClientUpperLeft();
     if (m_closable) {
         m_close_button = new CUI_CloseButton(button_ul.x, button_ul.y);
-        GG::Connect(m_close_button->ClickedSignal, &CUIWnd::CloseClicked, this);
+        GG::Connect(m_close_button->LeftClickedSignal, &CUIWnd::CloseClicked, this);
         AttachChild(m_close_button);
         m_close_button->NonClientChild(true);
     }
@@ -305,7 +305,7 @@ void CUIWnd::InitButtons() {
     // create the minimize button
     if (m_minimizable) {
         m_minimize_button = new CUI_MinRestoreButton(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y);
-        GG::Connect(m_minimize_button->ClickedSignal, &CUIWnd::MinimizeClicked, this);
+        GG::Connect(m_minimize_button->LeftClickedSignal, &CUIWnd::MinimizeClicked, this);
         AttachChild(m_minimize_button);
         m_minimize_button->NonClientChild(true);
     }
@@ -389,8 +389,8 @@ CUIEditWnd::CUIEditWnd(GG::X w, const std::string& prompt_text, const std::strin
     AttachChild(m_ok_bn);
     AttachChild(m_cancel_bn);
 
-    GG::Connect(m_ok_bn->ClickedSignal, &CUIEditWnd::OkClicked, this);
-    GG::Connect(m_cancel_bn->ClickedSignal, &CUIWnd::CloseClicked, static_cast<CUIWnd*>(this));
+    GG::Connect(m_ok_bn->LeftClickedSignal,     &CUIEditWnd::OkClicked, this);
+    GG::Connect(m_cancel_bn->LeftClickedSignal, &CUIWnd::CloseClicked, static_cast<CUIWnd*>(this));
 
     m_edit->SelectAll();
 }

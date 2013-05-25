@@ -489,7 +489,7 @@ void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::strin
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     GG::Connect(edit->EditedSignal, SetOptionFunctor<std::string>(option_name, edit, string_validator));
-    GG::Connect(button->ClickedSignal, BrowseForPathButtonFunctor(path, filters, edit, directory, relative_path));
+    GG::Connect(button->LeftClickedSignal, BrowseForPathButtonFunctor(path, filters, edit, directory, relative_path));
     if (string_validator && !string_validator(edit->Text()))
         edit->SetTextColor(GG::CLR_RED);
 }
@@ -687,7 +687,7 @@ void OptionsWnd::ResolutionOption() {
     m_current_option_list->Insert(row);
 
 
-    GG::Connect(apply_button->ClickedSignal, &HumanClientApp::Reinitialize, HumanClientApp::GetApp());
+    GG::Connect(apply_button->LeftClickedSignal, &HumanClientApp::Reinitialize, HumanClientApp::GetApp());
 
     GG::Connect(drop_list->SelChangedSignal, ResolutionDropListIndexSetOptionFunctor(drop_list));
 }
@@ -888,7 +888,7 @@ void OptionsWnd::Init() {
     EndPage();
 
     // Connect the done and cancel button
-    GG::Connect(m_done_button->ClickedSignal, &OptionsWnd::DoneClicked, this);
+    GG::Connect(m_done_button->LeftClickedSignal, &OptionsWnd::DoneClicked, this);
 }
 
 OptionsWnd::~OptionsWnd()

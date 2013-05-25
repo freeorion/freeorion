@@ -660,7 +660,7 @@ boost::statechart::result PlayingTurn::react(const SaveGame& msg) {
 }
 
 boost::statechart::result PlayingTurn::react(const AutoAdvanceFirstTurn& d) {
-    Client().GetClientUI()->GetMapWnd()->m_turn_update->ClickedSignal();
+    Client().GetClientUI()->GetMapWnd()->m_turn_update->LeftClickedSignal();
     return discard_event();
 }
 

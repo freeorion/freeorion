@@ -994,7 +994,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
             m_aggression_toggle = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(),
                                                  GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
             AttachChild(m_aggression_toggle);
-            GG::Connect(m_aggression_toggle->ClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
+            GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
         }
     }
 
@@ -1025,7 +1025,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_aggression_toggle = new GG::Button(GG::X0, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(),
                                          GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
     AttachChild(m_aggression_toggle);
-    GG::Connect(m_aggression_toggle->ClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
+    GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
 
     Refresh();
 }

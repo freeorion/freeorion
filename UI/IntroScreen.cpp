@@ -287,14 +287,14 @@ IntroScreen::IntroScreen() :
     m_menu->AttachChild(m_exit_game);
 
     //connect signals and slots
-    GG::Connect(m_single_player->ClickedSignal, &IntroScreen::OnSinglePlayer,   this);
-    GG::Connect(m_quick_start->ClickedSignal,   &IntroScreen::OnQuickStart,     this);
-    GG::Connect(m_multi_player->ClickedSignal,  &IntroScreen::OnMultiPlayer,    this);
-    GG::Connect(m_load_game->ClickedSignal,     &IntroScreen::OnLoadGame,       this);
-    GG::Connect(m_options->ClickedSignal,       &IntroScreen::OnOptions,        this);
-    GG::Connect(m_about->ClickedSignal,         &IntroScreen::OnAbout,          this);
-    GG::Connect(m_credits->ClickedSignal,       &IntroScreen::OnCredits,        this);
-    GG::Connect(m_exit_game->ClickedSignal,     &IntroScreen::OnExitGame,       this);
+    GG::Connect(m_single_player->LeftClickedSignal, &IntroScreen::OnSinglePlayer,   this);
+    GG::Connect(m_quick_start->LeftClickedSignal,   &IntroScreen::OnQuickStart,     this);
+    GG::Connect(m_multi_player->LeftClickedSignal,  &IntroScreen::OnMultiPlayer,    this);
+    GG::Connect(m_load_game->LeftClickedSignal,     &IntroScreen::OnLoadGame,       this);
+    GG::Connect(m_options->LeftClickedSignal,       &IntroScreen::OnOptions,        this);
+    GG::Connect(m_about->LeftClickedSignal,         &IntroScreen::OnAbout,          this);
+    GG::Connect(m_credits->LeftClickedSignal,       &IntroScreen::OnCredits,        this);
+    GG::Connect(m_exit_game->LeftClickedSignal,     &IntroScreen::OnExitGame,       this);
 }
 
 IntroScreen::~IntroScreen() {

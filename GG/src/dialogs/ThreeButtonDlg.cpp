@@ -198,11 +198,11 @@ void ThreeButtonDlg::Init(const std::string& msg, const boost::shared_ptr<Font>&
 
 void ThreeButtonDlg::ConnectSignals()
 {
-    Connect(m_button_0->ClickedSignal, &ThreeButtonDlg::Button0Clicked, this);
+    Connect(m_button_0->LeftClickedSignal, &ThreeButtonDlg::Button0Clicked, this);
     if (m_button_1)
-        Connect(m_button_1->ClickedSignal, &ThreeButtonDlg::Button1Clicked, this);
+        Connect(m_button_1->LeftClickedSignal, &ThreeButtonDlg::Button1Clicked, this);
     if (m_button_2)
-        Connect(m_button_2->ClickedSignal, &ThreeButtonDlg::Button2Clicked, this);
+        Connect(m_button_2->LeftClickedSignal, &ThreeButtonDlg::Button2Clicked, this);
 }
 
 void ThreeButtonDlg::Button0Clicked()

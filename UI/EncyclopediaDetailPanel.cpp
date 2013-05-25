@@ -255,9 +255,9 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     GG::Connect(desc_box->LinkClickedSignal,        &EncyclopediaDetailPanel::HandleLinkClick,          this);
     GG::Connect(desc_box->LinkDoubleClickedSignal,  &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
     GG::Connect(desc_box->LinkRightClickedSignal,   &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
-    GG::Connect(m_index_button->ClickedSignal,      &EncyclopediaDetailPanel::OnIndex,                  this);
-    GG::Connect(m_back_button->ClickedSignal,       &EncyclopediaDetailPanel::OnBack,                   this);
-    GG::Connect(m_next_button->ClickedSignal,       &EncyclopediaDetailPanel::OnNext,                   this);
+    GG::Connect(m_index_button->LeftClickedSignal,  &EncyclopediaDetailPanel::OnIndex,                  this);
+    GG::Connect(m_back_button->LeftClickedSignal,   &EncyclopediaDetailPanel::OnBack,                   this);
+    GG::Connect(m_next_button->LeftClickedSignal,   &EncyclopediaDetailPanel::OnNext,                   this);
     m_description_box = desc_box;
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(ClientUI::CtrlColor());

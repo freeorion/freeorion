@@ -56,9 +56,9 @@ About::About():
 
 void About::Init()
 {
-    GG::Connect(m_done_btn->ClickedSignal, &About::OnDone, this);
-    GG::Connect(m_license->ClickedSignal, &About::OnLicense, this);
-    GG::Connect(m_vision->ClickedSignal, &About::OnVision, this);
+    GG::Connect(m_done_btn->LeftClickedSignal, &About::OnDone, this);
+    GG::Connect(m_license->LeftClickedSignal, &About::OnLicense, this);
+    GG::Connect(m_vision->LeftClickedSignal, &About::OnVision, this);
 }
 
 About::~About()

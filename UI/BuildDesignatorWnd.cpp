@@ -864,12 +864,12 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
 
 
     // connect build type button clicks to update display
-    GG::Connect(m_build_selector->m_build_type_buttons[BT_BUILDING]->ClickedSignal,     ToggleBuildTypeFunctor(this, BT_BUILDING));
-    GG::Connect(m_build_selector->m_build_type_buttons[BT_SHIP]->ClickedSignal,         ToggleBuildTypeFunctor(this, BT_SHIP));
+    GG::Connect(m_build_selector->m_build_type_buttons[BT_BUILDING]->LeftClickedSignal, ToggleBuildTypeFunctor(this, BT_BUILDING));
+    GG::Connect(m_build_selector->m_build_type_buttons[BT_SHIP]->LeftClickedSignal,     ToggleBuildTypeFunctor(this, BT_SHIP));
 
     // connect availability button clicks to update display
-    GG::Connect(m_build_selector->m_availability_buttons.at(0)->ClickedSignal, ToggleAvailabilityFunctor(this, true));    // available items
-    GG::Connect(m_build_selector->m_availability_buttons.at(1)->ClickedSignal, ToggleAvailabilityFunctor(this, false));   // UNavailable items
+    GG::Connect(m_build_selector->m_availability_buttons.at(0)->LeftClickedSignal, ToggleAvailabilityFunctor(this, true));    // available items
+    GG::Connect(m_build_selector->m_availability_buttons.at(1)->LeftClickedSignal, ToggleAvailabilityFunctor(this, false));   // UNavailable items
 
     AttachChild(m_enc_detail_panel);
     AttachChild(m_build_selector);

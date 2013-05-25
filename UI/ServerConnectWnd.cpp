@@ -105,12 +105,9 @@ ServerConnectWnd::ServerConnectWnd() :
 }
 
 void ServerConnectWnd::ModalInit()
-{
-    GG::GUI::GetGUI()->SetFocusWnd(m_player_name_edit);
-}
+{ GG::GUI::GetGUI()->SetFocusWnd(m_player_name_edit); }
 
-void ServerConnectWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
-{
+void ServerConnectWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_ok_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) { // Same behaviour as if "OK" was pressed
         OkClicked();
     } else if (key == GG::GGK_ESCAPE) { // Same behaviour as if "Cancel" was pressed
@@ -119,19 +116,16 @@ void ServerConnectWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG:
 }
 
 const std::pair<std::string, std::string>& ServerConnectWnd::Result() const
-{
-    return m_result;
-}
+{ return m_result; }
 
-void ServerConnectWnd::Init()
-{
+void ServerConnectWnd::Init() {
     Connect(m_host_or_join_radio_group->ButtonChangedSignal,    &ServerConnectWnd::HostOrJoinClicked,   this);
     Connect(m_servers_lb->SelChangedSignal,                     &ServerConnectWnd::ServerSelected,      this);
-    Connect(m_find_LAN_servers_bn->ClickedSignal,               &ServerConnectWnd::RefreshServerList,   this);
+    Connect(m_find_LAN_servers_bn->LeftClickedSignal,           &ServerConnectWnd::RefreshServerList,   this);
     Connect(m_IP_address_edit->EditedSignal,                    &ServerConnectWnd::IPAddressEdited,     this);
     Connect(m_player_name_edit->EditedSignal,                   &ServerConnectWnd::NameEdited,          this);
-    Connect(m_ok_bn->ClickedSignal,                             &ServerConnectWnd::OkClicked,           this);
-    Connect(m_cancel_bn->ClickedSignal,                         &ServerConnectWnd::CancelClicked,       this);
+    Connect(m_ok_bn->LeftClickedSignal,                         &ServerConnectWnd::OkClicked,           this);
+    Connect(m_cancel_bn->LeftClickedSignal,                     &ServerConnectWnd::CancelClicked,       this);
 
     m_host_or_join_radio_group->SetCheck(0);
     PopulateServerList();

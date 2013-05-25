@@ -310,8 +310,8 @@ TabBar::TabBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr color, Cl
     AttachChild(m_left_right_button_layout);
 
     Connect(m_tabs->ButtonChangedSignal, boost::bind(&TabBar::TabChanged, this, _1, true));
-    Connect(m_left_button->ClickedSignal, &TabBar::LeftClicked, this);
-    Connect(m_right_button->ClickedSignal, &TabBar::RightClicked, this);
+    Connect(m_left_button->LeftClickedSignal, &TabBar::LeftClicked, this);
+    Connect(m_right_button->LeftClickedSignal, &TabBar::RightClicked, this);
 
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(TabChangedSignal, TabChangedEcho("TabBar::TabChangedSignal"));

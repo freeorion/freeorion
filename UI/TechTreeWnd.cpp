@@ -824,14 +824,14 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     AttachChild(m_zoom_in_button);
     AttachChild(m_zoom_out_button);
 
-    GG::Connect(m_layout_surface->DraggedSignal,    &TechTreeWnd::LayoutPanel::TreeDraggedSlot,     this);
-    GG::Connect(m_layout_surface->ButtonUpSignal,   &TechTreeWnd::LayoutPanel::TreeDragEnd,         this);
-    GG::Connect(m_layout_surface->ButtonDownSignal, &TechTreeWnd::LayoutPanel::TreeDragBegin,       this);
-    GG::Connect(m_layout_surface->ZoomedSignal,     &TechTreeWnd::LayoutPanel::TreeZoomedSlot,      this);
-    GG::Connect(m_vscroll->ScrolledSignal,          &TechTreeWnd::LayoutPanel::ScrolledSlot,        this);
-    GG::Connect(m_hscroll->ScrolledSignal,          &TechTreeWnd::LayoutPanel::ScrolledSlot,        this);
-    GG::Connect(m_zoom_in_button->ClickedSignal,    &TechTreeWnd::LayoutPanel::TreeZoomInClicked,   this);
-    GG::Connect(m_zoom_out_button->ClickedSignal,   &TechTreeWnd::LayoutPanel::TreeZoomOutClicked,  this);
+    GG::Connect(m_layout_surface->DraggedSignal,        &TechTreeWnd::LayoutPanel::TreeDraggedSlot,     this);
+    GG::Connect(m_layout_surface->ButtonUpSignal,       &TechTreeWnd::LayoutPanel::TreeDragEnd,         this);
+    GG::Connect(m_layout_surface->ButtonDownSignal,     &TechTreeWnd::LayoutPanel::TreeDragBegin,       this);
+    GG::Connect(m_layout_surface->ZoomedSignal,         &TechTreeWnd::LayoutPanel::TreeZoomedSlot,      this);
+    GG::Connect(m_vscroll->ScrolledSignal,              &TechTreeWnd::LayoutPanel::ScrolledSlot,        this);
+    GG::Connect(m_hscroll->ScrolledSignal,              &TechTreeWnd::LayoutPanel::ScrolledSlot,        this);
+    GG::Connect(m_zoom_in_button->LeftClickedSignal,    &TechTreeWnd::LayoutPanel::TreeZoomInClicked,   this);
+    GG::Connect(m_zoom_out_button->LeftClickedSignal,   &TechTreeWnd::LayoutPanel::TreeZoomOutClicked,  this);
 
 
     // show all categories...
@@ -1653,17 +1653,17 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();
     // connect category button clicks to update display
     for (unsigned int i = 0; i < m_tech_tree_controls->m_category_buttons.size() - 1; ++i)
-        GG::Connect(m_tech_tree_controls->m_category_buttons[i]->ClickedSignal, ToggleCategoryFunctor(this, tech_categories[i]));
-    GG::Connect(m_tech_tree_controls->m_category_buttons.back()->ClickedSignal, ToggleAllCategoriesFunctor(this));  // last button should be "All" button
+        GG::Connect(m_tech_tree_controls->m_category_buttons[i]->LeftClickedSignal, ToggleCategoryFunctor(this, tech_categories[i]));
+    GG::Connect(m_tech_tree_controls->m_category_buttons.back()->LeftClickedSignal, ToggleAllCategoriesFunctor(this));  // last button should be "All" button
 
     // connect status and type button clicks to update display
     for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_tree_controls->m_tech_status_buttons.begin();
          it != m_tech_tree_controls->m_tech_status_buttons.end(); ++it)
-    { GG::Connect(it->second->ClickedSignal, ToggleTechStatusFunctor(this, it->first)); }
+    { GG::Connect(it->second->LeftClickedSignal, ToggleTechStatusFunctor(this, it->first)); }
 
     // connect view type selectors
-    GG::Connect(m_tech_tree_controls->m_tree_view_button->ClickedSignal, &TechTreeWnd::ShowTreeView, this);
-    GG::Connect(m_tech_tree_controls->m_list_view_button->ClickedSignal, &TechTreeWnd::ShowListView, this);
+    GG::Connect(m_tech_tree_controls->m_tree_view_button->LeftClickedSignal, &TechTreeWnd::ShowTreeView, this);
+    GG::Connect(m_tech_tree_controls->m_list_view_button->LeftClickedSignal, &TechTreeWnd::ShowListView, this);
 
     ShowAllCategories();
     ShowStatus(TS_RESEARCHABLE);
