@@ -3714,9 +3714,7 @@ void MapWnd::SystemRightClicked(int system_id) {
                 net.SendMessage(ModeratorActionMessage(player_id,
                     Moderator::RemoveStarlane(system_id, selected_system_id)));
             }
-
         }
-
         return;
     }
 
@@ -3889,8 +3887,32 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
         SelectFleet(fleet_to_select_id);
 }
 
-void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn)
-{}
+void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
+    if (!fleet_btn)
+        return;
+
+    // get fleets represented by clicked button
+    const std::vector<int> btn_fleets = fleet_btn->Fleets();
+    if (btn_fleets.empty()) {
+        Logger().errorStream() << "Clicked FleetButton contained no fleets!";
+        return;
+    }
+
+    if (ClientPlayerIsModerator()) {
+        ModeratorActionsWnd::ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
+        ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+        int player_id = HumanClientApp::GetApp()->PlayerID();
+
+        if (mas == ModeratorActionsWnd::MAS_Destroy) {
+            for (std::vector<int>::const_iterator it = btn_fleets.begin();
+                 it != btn_fleets.end(); ++it)
+            {
+                net.SendMessage(ModeratorActionMessage(player_id,
+                    Moderator::DestroyUniverseObject(*it)));
+            }
+        }
+    }
+}
 
 void MapWnd::SelectedFleetsChanged() {
     // get selected fleets
