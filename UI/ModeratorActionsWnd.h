@@ -34,6 +34,7 @@ public:
     /** \name Accessors */ //@{
     ModeratorActionSetting  SelectedAction() const;
     PlanetType              SelectedPlanetType() const;
+    PlanetSize              SelectedPlanetSize() const;
     StarType                SelectedStarType() const;
     int                     SelectedEmpire() const;
     //!@}
@@ -61,6 +62,7 @@ private:
     void            StarTypeSelected(GG::DropDownList::iterator it);
     void            CreatePlanetClicked();
     void            PlanetTypeSelected(GG::DropDownList::iterator it);
+    void            PlanetSizeSelected(GG::DropDownList::iterator it);
     void            DeleteObjectClicked();
     void            SetOwnerClicked();
     void            EmpireSelected(GG::DropDownList::iterator it);
@@ -68,6 +70,7 @@ private:
 
     StarType        StarTypeFromIndex(std::size_t i) const;
     PlanetType      PlanetTypeFromIndex(std::size_t i) const;
+    PlanetSize      PlanetSizeFromIndex(std::size_t i) const;
     int             EmpireIDFromIndex(std::size_t i) const;
 
     bool                    m_actions_enabled;
@@ -77,6 +80,7 @@ private:
     CUIDropDownList*        m_star_type_drop;
     GG::Button*             m_create_planet_button;
     CUIDropDownList*        m_planet_type_drop;
+    CUIDropDownList*        m_planet_size_drop;
     GG::Button*             m_delete_object_button;
     GG::Button*             m_set_owner_button;
     CUIDropDownList*        m_empire_drop;

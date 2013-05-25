@@ -127,6 +127,31 @@ boost::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {
     return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet" / icon_filename, true);
 }
 
+boost::shared_ptr<GG::Texture> ClientUI::PlanetSizeIcon(PlanetSize planet_size) {
+    std::string icon_filename;
+    switch (planet_size) {
+    case SZ_TINY:
+        icon_filename = "tiny.png";    break;
+    case SZ_SMALL:
+        icon_filename = "small.png";    break;
+    case SZ_MEDIUM:
+        icon_filename = "medium.png";  break;
+    case SZ_LARGE:
+        icon_filename = "large.png"; break;
+    case SZ_HUGE:
+        icon_filename = "huge.png";   break;
+    case SZ_ASTEROIDS:
+        icon_filename = "asteroids.png";   break;
+    case SZ_GASGIANT:
+        icon_filename = "gasgiant.png";   break;
+    default:
+        break;
+    }
+    return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet" / icon_filename, true);
+}
+
+
+
 boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     std::string icon_filename;
     switch (meter_type) {

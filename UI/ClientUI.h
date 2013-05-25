@@ -177,6 +177,7 @@ public:
 
     // Content Texture Getters
     static boost::shared_ptr<GG::Texture>   PlanetIcon(PlanetType planet_type);
+    static boost::shared_ptr<GG::Texture>   PlanetSizeIcon(PlanetSize planet_size);
     static boost::shared_ptr<GG::Texture>   MeterIcon(MeterType meter_type);
     static boost::shared_ptr<GG::Texture>   BuildingIcon(const std::string& building_type_name);
     static boost::shared_ptr<GG::Texture>   CategoryIcon(const std::string& category_name);

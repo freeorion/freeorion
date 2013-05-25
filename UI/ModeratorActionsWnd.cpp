@@ -29,6 +29,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     m_star_type_drop(0),
     m_create_planet_button(0),
     m_planet_type_drop(0),
+    m_planet_size_drop(0),
     m_delete_object_button(0),
     m_set_owner_button(0),
     m_empire_drop(0),
@@ -72,7 +73,7 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     m_star_type_drop->Select(m_star_type_drop->begin());        // default select first type
     GG::Connect(m_star_type_drop->SelChangedSignal,     &ModeratorActionsWnd::StarTypeSelected,     this);
 
-    // button for create planet and droplist to select planet type to create
+    // button for create planet and droplists to select planet type and size
     m_create_planet_button = new GG::Button(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT, "", font, GG::CLR_WHITE);
     m_create_planet_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "addplanet.png")));
     m_create_planet_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "addplanet_clicked.png"  )));
@@ -81,8 +82,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     m_create_planet_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MOD_CREATE_PLANET"), UserString("MOD_CREATE_PLANET"))));
     AttachChild(m_create_planet_button);
-
     GG::Connect(m_create_planet_button->ClickedSignal,  &ModeratorActionsWnd::CreatePlanetClicked,  this);
+
     m_planet_type_drop = new CUIDropDownList(GG::X0, GG::Y0, DROP_WIDTH, CONTROL_HEIGHT, CONTROL_HEIGHT*10);
     for (PlanetType planet_type = PT_SWAMP; planet_type != NUM_PLANET_TYPES; planet_type = PlanetType(planet_type + 1)) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::PlanetIcon(planet_type);
@@ -93,6 +94,19 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     }
     m_planet_type_drop->Select(m_planet_type_drop->begin());    // default select first type
     GG::Connect(m_planet_type_drop->SelChangedSignal,   &ModeratorActionsWnd::PlanetTypeSelected,   this);
+
+    m_planet_size_drop = new CUIDropDownList(DROP_WIDTH + PAD, GG::Y0, DROP_WIDTH, CONTROL_HEIGHT, CONTROL_HEIGHT*10);
+    for (PlanetSize planet_size = SZ_TINY; planet_size != NUM_PLANET_SIZES; planet_size = PlanetSize(planet_size + 1)) {
+        boost::shared_ptr<GG::Texture> texture = ClientUI::PlanetSizeIcon(planet_size);
+        GG::DropDownList::Row* row = new GG::DropDownList::Row();
+        row->push_back(new GG::StaticGraphic(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT,
+                                             texture, style, GG::Flags<GG::WndFlag>()));
+        m_planet_size_drop->Insert(row);
+    }
+    GG::DropDownList::iterator it = m_planet_size_drop->begin();
+    std::advance(it, 2);
+    m_planet_size_drop->Select(it); // default select 3rd size (should be medium?)
+    GG::Connect(m_planet_size_drop->SelChangedSignal,   &ModeratorActionsWnd::PlanetSizeSelected,   this);
 
     // button for destroying object
     m_delete_object_button = new GG::Button(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT, "", font, GG::CLR_WHITE);
@@ -137,17 +151,19 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
 void ModeratorActionsWnd::NoActionClicked() {
     m_selected_action = MAS_NoAction;
     NoActionSelectedSignal();
-    DetachChild(m_planet_type_drop);
-    DetachChild(m_empire_drop);
     DetachChild(m_star_type_drop);
+    DetachChild(m_planet_type_drop);
+    DetachChild(m_planet_size_drop);
+    DetachChild(m_empire_drop);
 }
 
 void ModeratorActionsWnd::CreateSystemClicked() {
     m_selected_action = MAS_CreateSystem;
     CreateSystemActionSelectedSignal(SelectedStarType());
-    DetachChild(m_planet_type_drop);
-    DetachChild(m_empire_drop);
     AttachChild(m_star_type_drop);
+    DetachChild(m_planet_type_drop);
+    DetachChild(m_planet_size_drop);
+    DetachChild(m_empire_drop);
 }
 
 void ModeratorActionsWnd::StarTypeSelected(GG::DropDownList::iterator it)
@@ -157,19 +173,24 @@ void ModeratorActionsWnd::CreatePlanetClicked() {
     m_selected_action = MAS_CreatePlanet;
     CreatePlanetActionSelectedSignal(SelectedPlanetType());
     DetachChild(m_star_type_drop);
-    DetachChild(m_empire_drop);
     AttachChild(m_planet_type_drop);
+    AttachChild(m_planet_size_drop);
+    DetachChild(m_empire_drop);
 }
 
 void ModeratorActionsWnd::PlanetTypeSelected(GG::DropDownList::iterator it)
 { CreatePlanetClicked(); }
 
+void ModeratorActionsWnd::PlanetSizeSelected(GG::DropDownList::iterator it)
+{ CreatePlanetClicked(); }
+
 void ModeratorActionsWnd::DeleteObjectClicked() {
     m_selected_action = MAS_Destroy;
     DeleteObjectActionSelectedSignal();
-    DetachChild(m_planet_type_drop);
-    DetachChild(m_empire_drop);
     DetachChild(m_star_type_drop);
+    DetachChild(m_planet_type_drop);
+    DetachChild(m_planet_size_drop);
+    DetachChild(m_empire_drop);
 }
 
 void ModeratorActionsWnd::SetOwnerClicked() {
@@ -177,6 +198,7 @@ void ModeratorActionsWnd::SetOwnerClicked() {
     SetOwnerActionSelectedSignal(SelectedEmpire());
     DetachChild(m_star_type_drop);
     DetachChild(m_planet_type_drop);
+    DetachChild(m_planet_size_drop);
     AttachChild(m_empire_drop);
 }
 
@@ -186,9 +208,10 @@ void ModeratorActionsWnd::EmpireSelected(GG::DropDownList::iterator it)
 void ModeratorActionsWnd::CreateStarlaneClicked() {
     m_selected_action = MAS_AddStarlane;
     CreateStarlaneActionSelectedSignal();
-    DetachChild(m_planet_type_drop);
-    DetachChild(m_empire_drop);
     DetachChild(m_star_type_drop);
+    DetachChild(m_planet_type_drop);
+    DetachChild(m_planet_size_drop);
+    DetachChild(m_empire_drop);
 }
 
 ModeratorActionsWnd::ModeratorActionSetting ModeratorActionsWnd::SelectedAction() const
@@ -196,6 +219,9 @@ ModeratorActionsWnd::ModeratorActionSetting ModeratorActionsWnd::SelectedAction(
 
 PlanetType ModeratorActionsWnd::SelectedPlanetType() const
 { return PlanetTypeFromIndex(m_planet_type_drop->CurrentItemIndex()); }
+
+PlanetSize ModeratorActionsWnd::SelectedPlanetSize() const
+{ return PlanetSizeFromIndex(m_planet_size_drop->CurrentItemIndex()); }
 
 StarType ModeratorActionsWnd::SelectedStarType() const
 { return StarTypeFromIndex(m_star_type_drop->CurrentItemIndex()); }
@@ -230,8 +256,11 @@ void ModeratorActionsWnd::DoLayout() {
 
     // all at same location; only one shown at a time
     m_star_type_drop->SizeMove(GG::Pt(left, top),   GG::Pt(left + DROP_WIDTH, top + CONTROL_HEIGHT));
-    m_planet_type_drop->SizeMove(GG::Pt(left, top), GG::Pt(left + DROP_WIDTH, top + CONTROL_HEIGHT));
     m_empire_drop->SizeMove(GG::Pt(left, top),      GG::Pt(left + DROP_WIDTH, top + CONTROL_HEIGHT));
+
+    m_planet_type_drop->SizeMove(GG::Pt(left, top), GG::Pt(left + DROP_WIDTH, top + CONTROL_HEIGHT));
+    left += DROP_WIDTH + PAD;
+    m_planet_size_drop->SizeMove(GG::Pt(left, top), GG::Pt(left + DROP_WIDTH, top + CONTROL_HEIGHT));
 }
 
 void ModeratorActionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -267,19 +296,21 @@ void ModeratorActionsWnd::CloseClicked()
 { ClosingSignal(); }
 
 StarType ModeratorActionsWnd::StarTypeFromIndex(std::size_t i) const {
-    if (i == -1)
-        return STAR_BLUE;
-    if (i >= NUM_STAR_TYPES)
+    if (i == -1 || i >= NUM_STAR_TYPES)
         return STAR_BLUE;
     return StarType(i);     // assumes first enum and first index are value 0, and that items in list are in same order as enum values
 }
 
 PlanetType ModeratorActionsWnd::PlanetTypeFromIndex(std::size_t i) const {
-    if (i == -1)
-        return PT_SWAMP;
-    if (i > NUM_PLANET_TYPES)
+    if (i == -1 || i >= NUM_PLANET_TYPES)
         return PT_SWAMP;
     return PlanetType(i);   // assumes first enum and first index are value 0, and that items in list are in same order as enum values
+}
+
+PlanetSize ModeratorActionsWnd::PlanetSizeFromIndex(std::size_t i) const {
+    if (i == -1 || i + 1 >= NUM_PLANET_SIZES)
+        return SZ_MEDIUM;
+    return PlanetSize(i + 1);// enum index 0 is NO_WORLD, but don't put that into the list, so have to add 1 to all the list indices
 }
 
 int ModeratorActionsWnd::EmpireIDFromIndex(std::size_t i) const {

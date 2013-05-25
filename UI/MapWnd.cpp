@@ -3700,6 +3700,11 @@ void MapWnd::SystemRightClicked(int system_id) {
             ClientNetworking& net = HumanClientApp::GetApp()->Networking();
             net.SendMessage(ModeratorActionMessage(HumanClientApp::GetApp()->PlayerID(),
                 Moderator::DestroyUniverseObject(system_id)));
+        } else if (m_moderator_wnd->SelectedAction() == ModeratorActionsWnd::MAS_CreatePlanet) {
+            ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+            net.SendMessage(ModeratorActionMessage(HumanClientApp::GetApp()->PlayerID(),
+                Moderator::CreatePlanet(system_id, m_moderator_wnd->SelectedPlanetType(),
+                                        m_moderator_wnd->SelectedPlanetSize())));
         }
         return;
     }
