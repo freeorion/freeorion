@@ -99,6 +99,42 @@ std::string Moderator::AddStarlane::Dump() const {
 }
 
 /////////////////////////////////////////////////////
+// Moderator::RemoveStarlane
+/////////////////////////////////////////////////////
+Moderator::RemoveStarlane::RemoveStarlane() :
+    m_id_1(INVALID_OBJECT_ID),
+    m_id_2(INVALID_OBJECT_ID)
+{}
+
+Moderator::RemoveStarlane::RemoveStarlane(int system_1_id, int system_2_id) :
+    m_id_1(system_1_id),
+    m_id_2(system_2_id)
+{}
+
+void Moderator::RemoveStarlane::Execute() const {
+    System* sys1 = GetSystem(m_id_1);
+    if (!sys1) {
+        Logger().errorStream() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_1;
+        return;
+    }
+    System* sys2 = GetSystem(m_id_2);
+    if (!sys2) {
+        Logger().errorStream() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_2;
+        return;
+    }
+    sys1->RemoveStarlane(m_id_2);
+    sys2->RemoveStarlane(m_id_1);
+}
+
+std::string Moderator::RemoveStarlane::Dump() const {
+    std::string retval = "Moderator::RemoveStarlane system_id_1 = "
+                       + boost::lexical_cast<std::string>(m_id_1)
+                       + " system_id_2 = "
+                       + boost::lexical_cast<std::string>(m_id_2);
+    return retval;
+}
+
+/////////////////////////////////////////////////////
 // Moderator::CreateSystem
 /////////////////////////////////////////////////////
 Moderator::CreateSystem::CreateSystem() :

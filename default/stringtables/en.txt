@@ -2345,8 +2345,11 @@ Destroy
 MOD_SET_OWNER
 Set Owner
 
-MOD_STARLANE
+MOD_ADD_STARLANE
 Add Starlane
+
+MOD_REMOVE_STARLANE
+Remove Starlane
 
 ###############
 #  Diplomacy  #

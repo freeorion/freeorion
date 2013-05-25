@@ -33,7 +33,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     m_delete_object_button(0),
     m_set_owner_button(0),
     m_empire_drop(0),
-    m_create_starlane_button(0)
+    m_add_starlane_button(0),
+    m_remove_starlane_button(0)
 {
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     ClientUI* ui = ClientUI::GetClientUI();
@@ -41,9 +42,9 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
 
     // button for no action
     m_no_action_button = new GG::Button(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT, "", font, GG::CLR_WHITE);
-    m_no_action_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "nomoderatoraction.png")));
-    m_no_action_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "nomoderatoraction_clicked.png"  )));
-    m_no_action_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "nomoderatoraction_mouseover.png")));
+    m_no_action_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "nomoderatoraction.png")));
+    m_no_action_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "nomoderatoraction_clicked.png"  )));
+    m_no_action_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "nomoderatoraction_mouseover.png")));
     m_no_action_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_no_action_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MOD_NONE"), UserString("MOD_NONE"))));
@@ -52,9 +53,9 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
 
     // button for create system and droplist to select system type to create
     m_create_system_button = new GG::Button(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT, "", font, GG::CLR_WHITE);
-    m_create_system_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "addstar.png")));
-    m_create_system_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "addstar_clicked.png"  )));
-    m_create_system_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "addstar_mouseover.png")));
+    m_create_system_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "addstar.png")));
+    m_create_system_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "addstar_clicked.png"  )));
+    m_create_system_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "addstar_mouseover.png")));
     m_create_system_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_create_system_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MOD_CREATE_SYSTEM"), UserString("MOD_CREATE_SYSTEM"))));
@@ -75,9 +76,9 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
 
     // button for create planet and droplists to select planet type and size
     m_create_planet_button = new GG::Button(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT, "", font, GG::CLR_WHITE);
-    m_create_planet_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "addplanet.png")));
-    m_create_planet_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "addplanet_clicked.png"  )));
-    m_create_planet_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "addplanet_mouseover.png")));
+    m_create_planet_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "addplanet.png")));
+    m_create_planet_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "addplanet_clicked.png"  )));
+    m_create_planet_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "addplanet_mouseover.png")));
     m_create_planet_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_create_planet_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MOD_CREATE_PLANET"), UserString("MOD_CREATE_PLANET"))));
@@ -110,9 +111,9 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
 
     // button for destroying object
     m_delete_object_button = new GG::Button(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT, "", font, GG::CLR_WHITE);
-    m_delete_object_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "delete.png")));
-    m_delete_object_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "delete_clicked.png"  )));
-    m_delete_object_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "delete_mouseover.png")));
+    m_delete_object_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "delete.png")));
+    m_delete_object_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "delete_clicked.png"  )));
+    m_delete_object_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "delete_mouseover.png")));
     m_delete_object_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_delete_object_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MOD_DESTROY"), UserString("MOD_DESTROY"))));
@@ -121,9 +122,9 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
 
     // button for setting owner
     m_set_owner_button = new GG::Button(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT, "", font, GG::CLR_WHITE);
-    m_set_owner_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "setowner.png")));
-    m_set_owner_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "setowner_clicked.png"  )));
-    m_set_owner_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "setowner_mouseover.png")));
+    m_set_owner_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "setowner.png")));
+    m_set_owner_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "setowner_clicked.png"  )));
+    m_set_owner_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "setowner_mouseover.png")));
     m_set_owner_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_set_owner_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MOD_SET_OWNER"), UserString("MOD_SET_OWNER"))));
@@ -135,15 +136,26 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     GG::Connect(m_empire_drop->SelChangedSignal,        &ModeratorActionsWnd::EmpireSelected,       this);
 
     // button for creating starlane
-    m_create_starlane_button = new GG::Button(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT, "", font, GG::CLR_WHITE);
-    m_create_starlane_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "addstarlane.png")));
-    m_create_starlane_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "addstarlane_clicked.png"  )));
-    m_create_starlane_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator" / "addstarlane_mouseover.png")));
-    m_create_starlane_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_create_starlane_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MOD_STARLANE"), UserString("MOD_STARLANE"))));
-    AttachChild(m_create_starlane_button);
-    GG::Connect(m_create_starlane_button->ClickedSignal,&ModeratorActionsWnd::CreateStarlaneClicked,this);
+    m_add_starlane_button = new GG::Button(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT, "", font, GG::CLR_WHITE);
+    m_add_starlane_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "addstarlane.png")));
+    m_add_starlane_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "addstarlane_clicked.png"  )));
+    m_add_starlane_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "addstarlane_mouseover.png")));
+    m_add_starlane_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_add_starlane_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MOD_ADD_STARLANE"), UserString("MOD_ADD_STARLANE"))));
+    AttachChild(m_add_starlane_button);
+    GG::Connect(m_add_starlane_button->ClickedSignal,&ModeratorActionsWnd::AddStarlane,         this);
+
+    // button for removing starlane
+    m_remove_starlane_button = new GG::Button(GG::X0, GG::Y0, CONTROL_WIDTH, CONTROL_HEIGHT, "", font, GG::CLR_WHITE);
+    m_remove_starlane_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "removestarlane.png")));
+    m_remove_starlane_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "removestarlane_clicked.png"  )));
+    m_remove_starlane_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "removestarlane_mouseover.png")));
+    m_remove_starlane_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_remove_starlane_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new TextBrowseWnd(UserString("MOD_REMOVE_STARLANE"), UserString("MOD_REMOVE_STARLANE"))));
+    AttachChild(m_remove_starlane_button);
+    GG::Connect(m_remove_starlane_button->ClickedSignal,&ModeratorActionsWnd::RemoveStarlane,   this);
 
     DoLayout();
 }
@@ -205,9 +217,18 @@ void ModeratorActionsWnd::SetOwnerClicked() {
 void ModeratorActionsWnd::EmpireSelected(GG::DropDownList::iterator it)
 { SetOwnerClicked(); }
 
-void ModeratorActionsWnd::CreateStarlaneClicked() {
+void ModeratorActionsWnd::AddStarlane() {
     m_selected_action = MAS_AddStarlane;
-    CreateStarlaneActionSelectedSignal();
+    AddStarlaneActionSelectedSignal();
+    DetachChild(m_star_type_drop);
+    DetachChild(m_planet_type_drop);
+    DetachChild(m_planet_size_drop);
+    DetachChild(m_empire_drop);
+}
+
+void ModeratorActionsWnd::RemoveStarlane() {
+    m_selected_action = MAS_RemoveStarlane;
+    AddStarlaneActionSelectedSignal();
     DetachChild(m_star_type_drop);
     DetachChild(m_planet_type_drop);
     DetachChild(m_planet_size_drop);
@@ -248,7 +269,10 @@ void ModeratorActionsWnd::DoLayout() {
     m_set_owner_button->SizeMove(GG::Pt(left, top), GG::Pt(left + CONTROL_WIDTH, top + CONTROL_HEIGHT));
     left += CONTROL_WIDTH + PAD;
 
-    m_create_starlane_button->SizeMove(GG::Pt(left, top), GG::Pt(left + CONTROL_WIDTH, top + CONTROL_HEIGHT));
+    m_add_starlane_button->SizeMove(GG::Pt(left, top), GG::Pt(left + CONTROL_WIDTH, top + CONTROL_HEIGHT));
+    left += CONTROL_WIDTH + PAD;
+
+    m_remove_starlane_button->SizeMove(GG::Pt(left, top), GG::Pt(left + CONTROL_WIDTH, top + CONTROL_HEIGHT));
     left += CONTROL_WIDTH + PAD;
 
     left = GG::X0 + PAD;

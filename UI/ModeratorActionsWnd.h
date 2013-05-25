@@ -23,6 +23,7 @@ public:
         MAS_Destroy,
         MAS_SetOwner,
         MAS_AddStarlane,
+        MAS_RemoveStarlane,
         MAS_CreateSystem,
         MAS_CreatePlanet
     };
@@ -51,7 +52,7 @@ public:
     mutable boost::signal<void (PlanetType)>    CreatePlanetActionSelectedSignal;
     mutable boost::signal<void ()>              DeleteObjectActionSelectedSignal;
     mutable boost::signal<void (int)>           SetOwnerActionSelectedSignal;
-    mutable boost::signal<void ()>              CreateStarlaneActionSelectedSignal;
+    mutable boost::signal<void ()>              AddStarlaneActionSelectedSignal;
 
 private:
     void            DoLayout();
@@ -66,7 +67,8 @@ private:
     void            DeleteObjectClicked();
     void            SetOwnerClicked();
     void            EmpireSelected(GG::DropDownList::iterator it);
-    void            CreateStarlaneClicked();
+    void            AddStarlane();
+    void            RemoveStarlane();
 
     StarType        StarTypeFromIndex(std::size_t i) const;
     PlanetType      PlanetTypeFromIndex(std::size_t i) const;
@@ -84,7 +86,8 @@ private:
     GG::Button*             m_delete_object_button;
     GG::Button*             m_set_owner_button;
     CUIDropDownList*        m_empire_drop;
-    GG::Button*             m_create_starlane_button;
+    GG::Button*             m_add_starlane_button;
+    GG::Button*             m_remove_starlane_button;
 };
 
 #endif // _ModeratorActionsWnd_h_

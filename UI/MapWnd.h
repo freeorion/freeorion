@@ -360,13 +360,6 @@ private:
 
     void            HandleEmpireElimination(int empire_id);             //!< cleans up internal storage of now-invalidated empire ID
 
-    void            ModeratorNoActionSelected();
-    void            ModeratorCreateSystemSelected(StarType star_type);
-    void            ModeratorCreatePlanetSelected(PlanetType planet_type);
-    void            ModeratorDeleteObjectSelected();
-    void            ModeratorSetOwnerSelected(int owner_id);
-    void            ModeratorCreateStarlaneSelected();
-
     std::set<GG::Key>           m_disabled_accels_list;                 //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
 
     std::vector<boost::shared_ptr<GG::Texture> >    m_backgrounds;      //!< starfield backgrounds
@@ -402,6 +395,7 @@ private:
     std::map<int, MovementLineData>                 m_fleet_lines;                          //!< lines used for moving fleets in the main map
     std::map<int, MovementLineData>                 m_projected_fleet_lines;                //!< lines that show the projected path of the active fleet in the FleetWnd
 
+    std::pair<int, int>                 m_line_between_systems;                             //!< set when map should render line connecting 2 systems
 
     std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>  m_star_core_quad_vertices;
     std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>  m_star_halo_quad_vertices;
@@ -436,7 +430,7 @@ private:
     MapScaleLine*               m_scale_line;       //!< indicates the on-screen distance that reprensents an in-universe distance
     GG::Slider<double>*         m_zoom_slider;      //!< allows user to set zoom level
 
-    std::set<int>              m_fleets_exploring;
+    std::set<int>               m_fleets_exploring;
 
     friend class PlayingTurn;
 };

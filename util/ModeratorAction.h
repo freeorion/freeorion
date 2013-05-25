@@ -75,6 +75,22 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+class RemoveStarlane : public ModeratorAction {
+public:
+    RemoveStarlane();
+    RemoveStarlane(int system_1_id, int system_2_id);
+    virtual ~RemoveStarlane() {}
+    virtual void        Execute() const;
+    virtual std::string Dump() const;
+private:
+    double      m_id_1;
+    double      m_id_2;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 class CreateSystem : public ModeratorAction {
 public:
     CreateSystem();

@@ -525,6 +525,7 @@ MapWnd::MapWnd() :
     m_keyboard_accelerator_signals(),
     m_fleet_lines(),
     m_projected_fleet_lines(),
+    m_line_between_systems(std::make_pair(INVALID_OBJECT_ID, INVALID_OBJECT_ID)),
     m_star_core_quad_vertices(),
     m_star_halo_quad_vertices(),
     m_galaxy_gas_quad_vertices(),
@@ -596,20 +597,17 @@ MapWnd::MapWnd() :
     // and resource pools due to this will be in the same system
     GG::Connect(SidePanel::ResourceCenterChangedSignal,     &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);
 
-
     // situation report window
     m_sitrep_panel = new SitRepPanel(GG::X0, GG::Y0, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
     GG::Connect(m_sitrep_panel->ClosingSignal, boost::bind(&MapWnd::ToggleSitRep, this));   // Wnd is manually closed by user
     GG::GUI::GetGUI()->Register(m_sitrep_panel);
     m_sitrep_panel->Hide();
 
-
     // encyclpedia panel
     m_pedia_panel = new EncyclopediaDetailPanel(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
     GG::Connect(m_pedia_panel->ClosingSignal, boost::bind(&MapWnd::TogglePedia, this));     // Wnd is manually closed by user
     GG::GUI::GetGUI()->Register(m_pedia_panel);
     m_pedia_panel->Hide();
-
 
     // objects list
     m_object_list_wnd = new ObjectListWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
@@ -620,23 +618,15 @@ MapWnd::MapWnd() :
 
     // moderator actions
     m_moderator_wnd = new ModeratorActionsWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
-    GG::Connect(m_moderator_wnd->ClosingSignal,             boost::bind(&MapWnd::ToggleModeratorActions,            this));
-    GG::Connect(m_moderator_wnd->NoActionSelectedSignal,                &MapWnd::ModeratorNoActionSelected,         this);
-    GG::Connect(m_moderator_wnd->CreateSystemActionSelectedSignal,      &MapWnd::ModeratorCreateSystemSelected,     this);
-    GG::Connect(m_moderator_wnd->CreatePlanetActionSelectedSignal,      &MapWnd::ModeratorCreatePlanetSelected,     this);
-    GG::Connect(m_moderator_wnd->DeleteObjectActionSelectedSignal,      &MapWnd::ModeratorDeleteObjectSelected,     this);
-    GG::Connect(m_moderator_wnd->SetOwnerActionSelectedSignal,          &MapWnd::ModeratorSetOwnerSelected,         this);
-    GG::Connect(m_moderator_wnd->CreateStarlaneActionSelectedSignal,    &MapWnd::ModeratorCreateStarlaneSelected,   this);
+    GG::Connect(m_moderator_wnd->ClosingSignal,         boost::bind(&MapWnd::ToggleModeratorActions,    this));
     GG::GUI::GetGUI()->Register(m_moderator_wnd);
     m_moderator_wnd->Hide();
-
 
     // research window
     m_research_wnd = new ResearchWnd(AppWidth(), AppHeight() - m_toolbar->Height());
     m_research_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_research_wnd);
     m_research_wnd->Hide();
-
 
     // production window
     m_production_wnd = new ProductionWnd(AppWidth(), AppHeight() - m_toolbar->Height());
@@ -645,7 +635,6 @@ MapWnd::MapWnd() :
     m_production_wnd->Hide();
     GG::Connect(m_production_wnd->SystemSelectedSignal,     &MapWnd::SelectSystem, this);
     GG::Connect(m_production_wnd->PlanetSelectedSignal,     &MapWnd::SelectPlanet, this);
-
 
     // design window
     m_design_wnd = new DesignWnd(AppWidth(), AppHeight() - m_toolbar->Height());
@@ -3696,16 +3685,35 @@ void MapWnd::SystemLeftClicked(int system_id) {
 
 void MapWnd::SystemRightClicked(int system_id) {
     if (ClientPlayerIsModerator()) {
-        if (m_moderator_wnd->SelectedAction() == ModeratorActionsWnd::MAS_Destroy) {
-            ClientNetworking& net = HumanClientApp::GetApp()->Networking();
-            net.SendMessage(ModeratorActionMessage(HumanClientApp::GetApp()->PlayerID(),
+        ModeratorActionsWnd::ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
+        ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+        int player_id = HumanClientApp::GetApp()->PlayerID();
+
+        if (mas == ModeratorActionsWnd::MAS_Destroy) {
+            net.SendMessage(ModeratorActionMessage(player_id,
                 Moderator::DestroyUniverseObject(system_id)));
-        } else if (m_moderator_wnd->SelectedAction() == ModeratorActionsWnd::MAS_CreatePlanet) {
-            ClientNetworking& net = HumanClientApp::GetApp()->Networking();
-            net.SendMessage(ModeratorActionMessage(HumanClientApp::GetApp()->PlayerID(),
+
+        } else if (mas == ModeratorActionsWnd::MAS_CreatePlanet) {
+            net.SendMessage(ModeratorActionMessage(player_id,
                 Moderator::CreatePlanet(system_id, m_moderator_wnd->SelectedPlanetType(),
                                         m_moderator_wnd->SelectedPlanetSize())));
+
+        } else if (mas == ModeratorActionsWnd::MAS_AddStarlane) {
+            int selected_system_id = SidePanel::SystemID();
+            if (GetSystem(selected_system_id)) {
+                net.SendMessage(ModeratorActionMessage(player_id,
+                    Moderator::AddStarlane(system_id, selected_system_id)));
+            }
+
+        } else if (mas == ModeratorActionsWnd::MAS_RemoveStarlane) {
+            int selected_system_id = SidePanel::SystemID();
+            if (GetSystem(selected_system_id)) {
+                net.SendMessage(ModeratorActionMessage(player_id,
+                    Moderator::RemoveStarlane(system_id, selected_system_id)));
+            }
+
         }
+
         return;
     }
 
@@ -3719,8 +3727,12 @@ void MapWnd::SystemRightClicked(int system_id) {
 }
 
 void MapWnd::MouseEnteringSystem(int system_id) {
-    if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
-        PlotFleetMovement(system_id, false);
+    if (ClientPlayerIsModerator()) {
+        //
+    } else {
+        if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
+            PlotFleetMovement(system_id, false);
+    }
     SystemBrowsedSignal(system_id);
 }
 
@@ -4101,6 +4113,8 @@ void MapWnd::Sanitize() {
     m_scanline_shader.reset();
 
     m_fleets_exploring.clear();
+
+    m_line_between_systems = std::make_pair(INVALID_OBJECT_ID, INVALID_OBJECT_ID);
 }
 
 bool MapWnd::ReturnToMap() {
@@ -5328,23 +5342,5 @@ void MapWnd::ShowAllPopups() {
     for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ++it) {
         (*it)->Show();
     }
-}
-
-void MapWnd::ModeratorNoActionSelected() {
-}
-
-void MapWnd::ModeratorCreateSystemSelected(StarType star_type) {
-}
-
-void MapWnd::ModeratorCreatePlanetSelected(PlanetType planet_type) {
-}
-
-void MapWnd::ModeratorDeleteObjectSelected() {
-}
-
-void MapWnd::ModeratorSetOwnerSelected(int owner_id) {
-}
-
-void MapWnd::ModeratorCreateStarlaneSelected() {
 }
 
